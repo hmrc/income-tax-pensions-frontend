@@ -5,6 +5,38 @@ val appName = "income-tax-pensions-frontend"
 
 val silencerVersion = "1.7.3"
 
+lazy val coverageSettings: Seq[Setting[_]] = {
+  import scoverage.ScoverageKeys
+
+  val excludedPackages = Seq(
+    "<empty>",
+    ".*Reverse.*",
+    ".*standardError*.*",
+    ".*govuk_wrapper*.*",
+    ".*main_template*.*",
+    "uk.gov.hmrc.BuildInfo",
+    "app.*",
+    "prod.*",
+    "config.*",
+    "testOnly.*",
+    "testOnlyDoNotUseInAppConf.*",
+    ".*feedback*.*",
+    "partials.*",
+    "controllers.testOnly.*",
+    "forms.validation.mappings",
+    "views.html.*[Tt]emplate.*",
+    "views.html.views.templates.helpers*",
+    "views.html.views.templates.inputs*",
+    "views.headerFooterTemplate"
+  )
+
+  Seq(
+    ScoverageKeys.coverageExcludedPackages := excludedPackages.mkString(";"),
+    ScoverageKeys.coverageFailOnMinimum := true,
+    ScoverageKeys.coverageHighlighting := true
+  )
+}
+
 lazy val microservice = Project(appName, file("."))
   .enablePlugins(play.sbt.PlayScala, SbtDistributablesPlugin)
   .disablePlugins(sbt.plugins.JUnitXmlReportPlugin)
