@@ -7,6 +7,9 @@ val silencerVersion = "1.7.3"
 
 lazy val microservice = Project(appName, file("."))
   .enablePlugins(play.sbt.PlayScala, SbtDistributablesPlugin)
+  .disablePlugins(sbt.plugins.JUnitXmlReportPlugin)
+  .disablePlugins(JUnitXmlReportPlugin)
+  .settings(PlayKeys.playDefaultPort := 9321)
   .settings(
     majorVersion                     := 0,
     scalaVersion                     := "2.12.13",
