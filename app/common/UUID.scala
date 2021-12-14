@@ -14,20 +14,10 @@
  * limitations under the License.
  */
 
-package config
+package common
 
-import com.google.inject.AbstractModule
-import common.UUID
-import repositories.{PensionsUserDataRepository, PensionsUserDataRepositoryImpl}
-import utils.Clock
-
-class Modules extends AbstractModule {
-
-  override def configure(): Unit = {
-    bind(classOf[AppConfig]).asEagerSingleton()
-    bind(classOf[UUID]).toInstance(UUID)
-    bind(classOf[Clock]).toInstance(Clock)
-    bind(classOf[PensionsUserDataRepository]).to(classOf[PensionsUserDataRepositoryImpl]).asEagerSingleton()
-  }
-
+trait UUID {
+  def randomUUID: String = java.util.UUID.randomUUID().toString
 }
+
+object UUID extends UUID

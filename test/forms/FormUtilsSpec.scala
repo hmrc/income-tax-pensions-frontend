@@ -14,20 +14,28 @@
  * limitations under the License.
  */
 
-package config
+package forms
 
-import com.google.inject.AbstractModule
-import common.UUID
-import repositories.{PensionsUserDataRepository, PensionsUserDataRepositoryImpl}
-import utils.Clock
+import forms.AmountForm.amountForm
+import play.api.data.Form
+import utils.UnitTest
 
-class Modules extends AbstractModule {
+class FormUtilsSpec extends UnitTest with FormUtils {
 
-  override def configure(): Unit = {
-    bind(classOf[AppConfig]).asEagerSingleton()
-    bind(classOf[UUID]).toInstance(UUID)
-    bind(classOf[Clock]).toInstance(Clock)
-    bind(classOf[PensionsUserDataRepository]).to(classOf[PensionsUserDataRepositoryImpl]).asEagerSingleton()
+  def theForm(): Form[BigDecimal] = {
+    amountForm("nothing to see here", "this not good", "too big")
   }
 
+
+  "The form" should {
+
+    "fill the form" when {
+
+      "there is data" in {
+
+        val actual = fillForm(theForm(),Some(44.44),Some(23.33))
+        actual shouldBe theForm().fill(23.33)
+      }
+    }
+  }
 }

@@ -22,6 +22,8 @@ import common.SessionValues
 import config.AppConfig
 import controllers.predicates.AuthorisedAction
 import helpers.{PlaySessionCookieBaker, WireMockHelper, WiremockStubHelpers}
+import models.IncomeTaxUserData
+import models.mongo.PensionsUserData
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
@@ -75,10 +77,10 @@ trait IntegrationTest extends AnyWordSpec with Matchers with GuiceOneServerPerSu
     "microservice.services.income-tax-submission-frontend.url" -> s"http://$wiremockHost:$wiremockPort",
     "microservice.services.auth.host" -> wiremockHost,
     "microservice.services.auth.port" -> wiremockPort.toString,
-    "microservice.services.income-tax-employment.url" -> s"http://$wiremockHost:$wiremockPort",
-    "microservice.services.income-tax-expenses.url" -> s"http://$wiremockHost:$wiremockPort",
+    "microservice.services.income-tax-pensions.url" -> s"http://$wiremockHost:$wiremockPort",
     "microservice.services.income-tax-submission.url" -> s"http://$wiremockHost:$wiremockPort",
     "microservice.services.view-and-change.url" -> s"http://$wiremockHost:$wiremockPort",
+    "microservice.services.income-tax-nrs-proxy.url" -> s"http://$wiremockHost:$wiremockPort",
     "microservice.services.sign-in.url" -> s"/auth-login-stub/gg-sign-in",
     "taxYearErrorFeatureSwitch" -> "false",
     "useEncryption" -> "true"
@@ -196,8 +198,19 @@ trait IntegrationTest extends AnyWordSpec with Matchers with GuiceOneServerPerSu
     SessionValues.CLIENT_MTDITID -> mtditid
   ) ++ extraData)
 
+
+  def userData(allData: String): IncomeTaxUserData = IncomeTaxUserData(Some(allData))
+
   val fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
 
+  def pensionsUserData: PensionsUserData = PensionsUserData(
+    sessionId,
+    mtditid,
+    nino,
+    taxYear - 1,
+    isPriorSubmission = true,
+    Some("pensions")
+  )
 }
 
 // scalastyle:off number.of.methods

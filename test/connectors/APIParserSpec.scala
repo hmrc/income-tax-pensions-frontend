@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package connectors.httpParsers
+package connectors
 
+import connectors.httpParsers.APIParser
 import models.{APIErrorBodyModel, APIErrorModel, APIErrorsBodyModel}
 import play.api.http.Status.INTERNAL_SERVER_ERROR
 import play.api.libs.json.{JsValue, Json}

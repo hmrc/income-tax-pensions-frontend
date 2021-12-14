@@ -14,20 +14,14 @@
  * limitations under the License.
  */
 
-package config
+package connectors
 
-import com.google.inject.AbstractModule
-import common.UUID
-import repositories.{PensionsUserDataRepository, PensionsUserDataRepositoryImpl}
-import utils.Clock
+import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 
-class Modules extends AbstractModule {
+trait RawResponseReads {
 
-  override def configure(): Unit = {
-    bind(classOf[AppConfig]).asEagerSingleton()
-    bind(classOf[UUID]).toInstance(UUID)
-    bind(classOf[Clock]).toInstance(Clock)
-    bind(classOf[PensionsUserDataRepository]).to(classOf[PensionsUserDataRepositoryImpl]).asEagerSingleton()
+  implicit val httpReads: HttpReads[HttpResponse] = new HttpReads[HttpResponse] {
+    override def read(method: String, url: String, response: HttpResponse) = response
   }
 
 }

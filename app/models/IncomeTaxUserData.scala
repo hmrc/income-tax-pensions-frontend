@@ -14,20 +14,12 @@
  * limitations under the License.
  */
 
-package config
+package models
 
-import com.google.inject.AbstractModule
-import common.UUID
-import repositories.{PensionsUserDataRepository, PensionsUserDataRepositoryImpl}
-import utils.Clock
+import play.api.libs.json.{Json, OFormat}
 
-class Modules extends AbstractModule {
+case class IncomeTaxUserData(pension: Option[String] = None)
 
-  override def configure(): Unit = {
-    bind(classOf[AppConfig]).asEagerSingleton()
-    bind(classOf[UUID]).toInstance(UUID)
-    bind(classOf[Clock]).toInstance(Clock)
-    bind(classOf[PensionsUserDataRepository]).to(classOf[PensionsUserDataRepositoryImpl]).asEagerSingleton()
-  }
-
+object IncomeTaxUserData {
+  implicit val formats: OFormat[IncomeTaxUserData] = Json.format[IncomeTaxUserData]
 }

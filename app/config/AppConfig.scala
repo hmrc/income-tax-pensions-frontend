@@ -22,6 +22,8 @@ import play.api.mvc.{Call, RequestHeader}
 import uk.gov.hmrc.play.bootstrap.binders.SafeRedirectUrl
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
+import scala.concurrent.duration.Duration
+
 @Singleton
 class AppConfig @Inject()(servicesConfig: ServicesConfig) {
 
@@ -35,6 +37,9 @@ class AppConfig @Inject()(servicesConfig: ServicesConfig) {
   def defaultTaxYear: Int = servicesConfig.getInt(ConfigKeys.defaultTaxYear)
 
   lazy val incomeTaxSubmissionBEBaseUrl: String = servicesConfig.getString(ConfigKeys.incomeTaxSubmissionUrl) + "/income-tax-submission-service"
+
+  lazy val nrsProxyBaseUrl: String = servicesConfig.getString(incomeTaxNrsProxyUrlKey)
+  val incomeTaxNrsProxyUrlKey = "microservice.services.income-tax-nrs-proxy.url"
 
   def incomeTaxSubmissionBaseUrl: String = servicesConfig.getString(ConfigKeys.incomeTaxSubmissionFrontendUrl) +
     servicesConfig.getString("microservice.services.income-tax-submission-frontend.context")
@@ -78,6 +83,10 @@ class AppConfig @Inject()(servicesConfig: ServicesConfig) {
   lazy val timeoutDialogTimeout: Int = servicesConfig.getInt("timeoutDialogTimeout")
   lazy val timeoutDialogCountdown: Int = servicesConfig.getInt("timeoutDialogCountdown")
 
+  //Mongo config
+  lazy val encryptionKey: String = servicesConfig.getString("mongodb.encryption.key")
+  lazy val mongoTTL: Int = Duration(servicesConfig.getString("mongodb.timeToLive")).toMinutes.toInt
+
   def taxYearErrorFeature: Boolean = servicesConfig.getBoolean("taxYearErrorFeatureSwitch")
 
   def languageMap: Map[String, Lang] = Map(
@@ -89,5 +98,9 @@ class AppConfig @Inject()(servicesConfig: ServicesConfig) {
     (lang: String) => controllers.routes.LanguageSwitchController.switchToLanguage(lang)
 
   lazy val welshToggleEnabled: Boolean = servicesConfig.getBoolean("feature-switch.welshToggleEnabled")
+
+  lazy val nrsEnabled: Boolean = servicesConfig.getBoolean("feature-switch.nrsEnabled")
+
+  lazy val useEncryption: Boolean = servicesConfig.getBoolean("useEncryption")
 
 }

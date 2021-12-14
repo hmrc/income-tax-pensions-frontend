@@ -14,20 +14,13 @@
  * limitations under the License.
  */
 
-package config
+package forms
 
-import com.google.inject.AbstractModule
-import common.UUID
-import repositories.{PensionsUserDataRepository, PensionsUserDataRepositoryImpl}
-import utils.Clock
+import play.api.data.Form
 
-class Modules extends AbstractModule {
+trait FormUtils {
 
-  override def configure(): Unit = {
-    bind(classOf[AppConfig]).asEagerSingleton()
-    bind(classOf[UUID]).toInstance(UUID)
-    bind(classOf[Clock]).toInstance(Clock)
-    bind(classOf[PensionsUserDataRepository]).to(classOf[PensionsUserDataRepositoryImpl]).asEagerSingleton()
+  def fillForm(form: Form[BigDecimal], prior: Option[BigDecimal], cya: Option[BigDecimal]): Form[BigDecimal] ={
+    cya.fold(form)(cya => if(prior.contains(cya)) form else form.fill(cya))
   }
-
 }

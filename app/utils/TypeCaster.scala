@@ -14,20 +14,17 @@
  * limitations under the License.
  */
 
-package config
+package utils
 
-import com.google.inject.AbstractModule
-import common.UUID
-import repositories.{PensionsUserDataRepository, PensionsUserDataRepositoryImpl}
-import utils.Clock
+object TypeCaster {
 
-class Modules extends AbstractModule {
-
-  override def configure(): Unit = {
-    bind(classOf[AppConfig]).asEagerSingleton()
-    bind(classOf[UUID]).toInstance(UUID)
-    bind(classOf[Clock]).toInstance(Clock)
-    bind(classOf[PensionsUserDataRepository]).to(classOf[PensionsUserDataRepositoryImpl]).asEagerSingleton()
+  trait Converter[T] { self =>
+    def convert(v: String): T
   }
 
+  object Converter {
+    implicit val stringLoader: Converter[String] = (v: String) => v
+    implicit val booleanLoader: Converter[Boolean] = (v: String) => v.toBoolean
+    implicit val bigDecimalLoader: Converter[BigDecimal] = (v: String) => BigDecimal(v)
+  }
 }
