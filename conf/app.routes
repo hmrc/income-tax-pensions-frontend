@@ -1,5 +1,22 @@
 # microservice specific routes
 
 ->         /hmrc-frontend           hmrcfrontend.Routes
-GET        /                        uk.gov.hmrc.incometaxpensionsfrontend.controllers.HelloWorldController.helloWorld
-GET        /assets/*file            controllers.Assets.versioned(path = "/public", file: Asset)
+
+GET        /assets/*file                                                    controllers.Assets.versioned(path = "/public", file: Asset)
+
+GET        /error/you-need-to-sign-up                                       controllers.errors.IndividualAuthErrorController.show
+
+GET        /error/not-authorised-to-use-service                             controllers.errors.UnauthorisedUserErrorController.show
+
+GET        /error/you-need-agent-services-account                           controllers.errors.YouNeedAgentServicesController.show
+
+GET        /error/you-need-client-authorisation                             controllers.errors.AgentAuthErrorController.show
+
+GET        /sign-out                                                        controllers.SignOutController.signOut(isAgent: Boolean)
+
+GET        /language/:lang                                                  controllers.LanguageSwitchController.switchToLanguage(lang: String)
+
+GET        /keep-alive                                                      controllers.SessionExpiredController.keepAlive
+GET        /timeout                                                         controllers.SessionExpiredController.timeout
+
+GET        /error/wrong-tax-year                                            controllers.errors.TaxYearErrorController.show
