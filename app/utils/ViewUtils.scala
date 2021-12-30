@@ -52,7 +52,7 @@ object ViewUtils {
     date.format(DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.UK))
   }
 
-  def getAgentDynamicContent(msgKey:String, isAgent:Boolean): String ={
+  def getAgentDynamicContent(msgKey: String, isAgent: Boolean): String = {
     s"$msgKey.${if (isAgent) "agent" else "individual"}"
   }
 
@@ -94,5 +94,7 @@ object ViewUtils {
     Try(BigDecimal(value))
       .map(amount => currencySymbol + f"$amount%1.2f".replace(".00", ""))
       .getOrElse(value)
+      .replaceAll("\\B(?=(\\d{3})+(?!\\d))", ",")
+
   }
 }
