@@ -41,4 +41,9 @@ class ViewUtilSpec extends UnitTest with GuiceOneAppPerSuite with ViewTest {
       ViewUtils.dateFormatter("01 March 2022") shouldBe None
     }
   }
+  "bigDecimalCurrency" should {
+    "Place comma in appropriate place when given amount over 999" in {
+      ViewUtils.bigDecimalCurrency("45000.10") shouldBe "£45,000.10"
+    }
+  }
 }
