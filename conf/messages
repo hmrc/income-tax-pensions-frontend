@@ -11,6 +11,7 @@ common.saveAndContinue = Save and continue
 common.change = Change
 common.update = Update
 common.use = use
+common.currency.hint = For example, £193.52
 
 common.error.self-assessment.paragraph.1.1 = If the web address is correct or you selected a link or button, you can use
 common.error.self-assessment.paragraph.1.2 = Self Assessment: general enquiries (opens in new tab)
