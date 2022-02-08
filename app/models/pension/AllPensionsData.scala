@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,18 @@
  * limitations under the License.
  */
 
-package models
+package models.pension
 
-import models.pension.AllPensionsData
+import models.pension.charges.PensionCharges
+import models.pension.reliefs.PensionReliefs
+import models.pension.statebenefits.StateBenefitsModel
 import play.api.libs.json.{Json, OFormat}
 
-case class IncomeTaxUserData(pension: Option[AllPensionsData] = None)
+case class AllPensionsData(pensionReliefs: Option[PensionReliefs],
+                           pensionCharges: Option[PensionCharges],
+                           stateBenefits: Option[StateBenefitsModel])
 
-object IncomeTaxUserData {
-  implicit val formats: OFormat[IncomeTaxUserData] = Json.format[IncomeTaxUserData]
+object AllPensionsData {
+  implicit val formats: OFormat[AllPensionsData] = Json.format[AllPensionsData]
+
 }

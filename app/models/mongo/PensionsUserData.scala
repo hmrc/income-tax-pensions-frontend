@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ case class PensionsUserData(sessionId: String,
                               nino: String,
                               taxYear: Int,
                               isPriorSubmission: Boolean,
-                              pensions: Option[String] = None,
+                              pensions: Option[PensionsCYAModel] = None,
                               lastUpdated: DateTime = DateTime.now(DateTimeZone.UTC))
 
 object PensionsUserData extends MongoJodaFormats {
@@ -41,7 +41,7 @@ case class EncryptedPensionsUserData(sessionId: String,
                                 nino: String,
                                 taxYear: Int,
                                 isPriorSubmission: Boolean,
-                                pensions: Option[EncryptedValue] = None,
+                                pensions: Option[EncryptedPensionCYAModel] = None,
                                 lastUpdated: DateTime = DateTime.now(DateTimeZone.UTC))
 
 object EncryptedPensionsUserData extends MongoJodaFormats {

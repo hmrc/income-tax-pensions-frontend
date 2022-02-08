@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,20 @@
  * limitations under the License.
  */
 
-package models
+package models.pension.charges
 
-import models.pension.AllPensionsData
 import play.api.libs.json.{Json, OFormat}
+import utils.EncryptedValue
 
-case class IncomeTaxUserData(pension: Option[AllPensionsData] = None)
+case class LifetimeAllowance(amount: BigDecimal, taxPaid: BigDecimal)
 
-object IncomeTaxUserData {
-  implicit val formats: OFormat[IncomeTaxUserData] = Json.format[IncomeTaxUserData]
+object LifetimeAllowance {
+  implicit val format: OFormat[LifetimeAllowance] = Json.format[LifetimeAllowance]
 }
+
+case class EncryptedLifetimeAllowance(amount: EncryptedValue, taxPaid: EncryptedValue)
+
+object EncryptedLifetimeAllowance {
+  implicit val format: OFormat[EncryptedLifetimeAllowance] = Json.format[EncryptedLifetimeAllowance]
+}
+
