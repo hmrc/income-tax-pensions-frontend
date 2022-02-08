@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -199,18 +199,9 @@ trait IntegrationTest extends AnyWordSpec with Matchers with GuiceOneServerPerSu
   ) ++ extraData)
 
 
-  def userData(allData: String): IncomeTaxUserData = IncomeTaxUserData(Some(allData))
+  def userData(allData: String): IncomeTaxUserData = IncomeTaxUserData(Some(PensionDataStubs.fullPensionsModel))
 
   val fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
-
-  def pensionsUserData: PensionsUserData = PensionsUserData(
-    sessionId,
-    mtditid,
-    nino,
-    taxYear - 1,
-    isPriorSubmission = true,
-    Some("pensions")
-  )
 }
 
 // scalastyle:off number.of.methods

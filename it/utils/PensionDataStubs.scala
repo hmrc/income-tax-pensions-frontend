@@ -14,41 +14,15 @@
  * limitations under the License.
  */
 
-package services
+package utils
 
-import config._
-import models.mongo.{DataNotFound, DataNotUpdated, PensionsCYAModel, PensionsUserData}
+import models.mongo.{PensionsCYAModel, PensionsUserData}
 import models.pension.AllPensionsData
 import models.pension.charges._
 import models.pension.reliefs.{PensionReliefs, Reliefs}
 import models.pension.statebenefits.{StateBenefit, StateBenefits, StateBenefitsModel}
-import play.api.http.Status.{INTERNAL_SERVER_ERROR, SEE_OTHER}
-import play.api.i18n.MessagesApi
-import play.api.mvc.Results.{Ok, Redirect}
-import utils.UnitTest
-import views.html.templates.{InternalServerErrorTemplate, NotFoundTemplate, ServiceUnavailableTemplate}
 
-import scala.concurrent.Future
-
-class PensionSessionServiceTest extends UnitTest
-  with MockPensionUserDataRepository
-  with MockIncomeTaxUserDataConnector {
-
-  val serviceUnavailableTemplate: ServiceUnavailableTemplate = app.injector.instanceOf[ServiceUnavailableTemplate]
-  val notFoundTemplate: NotFoundTemplate = app.injector.instanceOf[NotFoundTemplate]
-  val internalServerErrorTemplate: InternalServerErrorTemplate = app.injector.instanceOf[InternalServerErrorTemplate]
-  val mockMessagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
-  val mockFrontendAppConfig: AppConfig = app.injector.instanceOf[AppConfig]
-
-  val errorHandler = new ErrorHandler(internalServerErrorTemplate, serviceUnavailableTemplate, mockMessagesApi, notFoundTemplate)(mockFrontendAppConfig)
-
-  val messages: MessagesApi = app.injector.instanceOf[MessagesApi]
-
-  val service: PensionSessionService =
-    new PensionSessionService(mockPensionUserDataRepository, mockUserDataConnector, mockAppConfig,
-      errorHandler, mockExecutionContext)
-
-  val taxYear = 2022
+object PensionDataStubs {
 
   val fullPensionsModel: AllPensionsData = AllPensionsData(
     pensionReliefs = Some(PensionReliefs(
@@ -249,71 +223,29 @@ class PensionSessionServiceTest extends UnitTest
     )
   )
 
-
-  //TODO add view models
-  val pensionCYA: PensionsCYAModel = PensionsCYAModel(None)
-
-  val pensionDataFull: PensionsUserData = PensionsUserData(
-    sessionId, "1234567890", nino, taxYear, isPriorSubmission = true,
-    Some(pensionCYA), testClock.now()
-  )
+}
 
 
+object PensionUserDataStub {
+  implicit val testClock: Clock = UnitTestClock
+  val taxYear: Int = 2022
 
-  "getAndHandle" should {
-    "redirect if no data and redirect is set to true" in {
-      mockFind(taxYear, Right(None))
-      mockFindNoContent(nino, taxYear)
-      val response = service.getAndHandle(taxYear, redirectWhenNoPrior = true)((_, _) => Future(Ok))
-
-      status(response) shouldBe SEE_OTHER
-    }
-
-    "return an error if the call failed" in {
-      mockFind(taxYear, Right(None))
-      mockFindFail(nino, taxYear)
-
-      val response = service.getAndHandle(taxYear)((_, _) => Future(Ok))
-
-      status(response) shouldBe INTERNAL_SERVER_ERROR
-    }
-
-    "return an internal server error if the CYA find failed" in {
-      mockFind(taxYear, Left(DataNotFound))
-      mockFindNoContent(nino, taxYear)
-
-      val response = service.getAndHandle(taxYear)((_, _) => Future(Ok))
-
-      status(response) shouldBe INTERNAL_SERVER_ERROR
-    }
+  // scalastyle:off magic.number
+  def pensionUserData(
+                       sessionId: String = "sessionid",
+                       mtdItId: String = "1234567890",
+                       nino: String = "nino",
+                       taxyear: Int = taxYear,
+                       isPriorSubmission: Boolean = true,
+                       cya: Option[PensionsCYAModel] = Some(PensionsCYAModel(None))
+                     ): PensionsUserData = {
+    PensionsUserData(
+      sessionId = sessionId,
+      mtdItId = mtdItId, nino = nino, taxYear = taxyear, isPriorSubmission = isPriorSubmission, pensions = cya, lastUpdated = testClock.now()
+    )
   }
+  // scalastyle:on magic.number
 
-  ".createOrUpdateSessionData" should {
 
 
-    "return SEE_OTHER(303) status when createOrUpdate succeeds" in {
-      mockCreateOrUpdate(pensionDataFull, Right())
-
-      val response = service.createOrUpdateSessionData(
-        pensionCYA, taxYear, isPriorSubmission = true,
-        hasPriorBenefits = true,
-      )(Redirect("400"))(Redirect("303"))
-
-      status(response) shouldBe SEE_OTHER
-      redirectUrl(response) shouldBe "303"
-    }
-
-    "return BAD_REQUEST(400) status when createOrUpdate fails" in {
-
-      mockCreateOrUpdate(pensionDataFull, Left(DataNotUpdated))
-
-      val response = service.createOrUpdateSessionData(
-        pensionCYA, taxYear, isPriorSubmission = true,
-        hasPriorBenefits = true
-      )(Redirect("400"))(Redirect("303"))
-
-      status(response) shouldBe SEE_OTHER
-      redirectUrl(response) shouldBe "400"
-    }
-  }
 }

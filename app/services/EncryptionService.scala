@@ -17,19 +17,16 @@
 package services
 
 import config.AppConfig
+import models.mongo._
+import models.pension.reliefs.{EncryptedPaymentsIntoPensionViewModel, PaymentsIntoPensionViewModel}
+import utils.SecureGCMCipher
 
 import javax.inject.Inject
-import models.mongo.{EncryptedPensionCYAModel, EncryptedPensionsUserData, PensionsCYAModel, PensionsUserData, TextAndKey}
-import models.pension.charges.{EncryptedPensionChargesViewModel, PensionChargesViewModel}
-import models.pension.reliefs.{EncryptedPensionReliefsViewModel, PensionReliefsViewModel}
-import models.pension.statebenefits.{EncryptedStateBenefitsViewModel, StateBenefitsViewModel}
-import utils.SecureGCMCipher
 
 class EncryptionService @Inject()(secureGCMCipher: SecureGCMCipher, appConfig: AppConfig) {
 
   def encryptUserData(userData: PensionsUserData): EncryptedPensionsUserData = {
     implicit val textAndKey: TextAndKey = TextAndKey(userData.mtdItId, appConfig.encryptionKey)
-
     EncryptedPensionsUserData(
       sessionId = userData.sessionId,
       mtdItId = userData.mtdItId,
@@ -41,62 +38,39 @@ class EncryptionService @Inject()(secureGCMCipher: SecureGCMCipher, appConfig: A
     )
   }
 
-  def encryptPensionReliefsViewModel(p: PensionReliefsViewModel)(implicit textAndKey: TextAndKey): EncryptedPensionReliefsViewModel = {
-    EncryptedPensionReliefsViewModel(
-      question1 = p.question1.map(secureGCMCipher.encrypt),
-      answer1 = p.answer1.map(secureGCMCipher.encrypt)
+  def encryptPaymentsIntoPension(p: PaymentsIntoPensionViewModel)(implicit textAndKey: TextAndKey): EncryptedPaymentsIntoPensionViewModel = {
+    EncryptedPaymentsIntoPensionViewModel(
+      rasPensionPaymentQuestion = p.rasPensionPaymentQuestion.map(secureGCMCipher.encrypt),
+      totalRASPaymentsAndTaxReliefAnswer = p.totalRASPaymentsAndTaxReliefAnswer.map(secureGCMCipher.encrypt),
+      retirementAnnuityContractPaymentsQuestion = p.retirementAnnuityContractPaymentsQuestion.map(secureGCMCipher.encrypt),
+      totalRetirementAnnuityContractPayments = p.totalRetirementAnnuityContractPayments.map(secureGCMCipher.encrypt),
+      workplacePensionPaymentsQuestion = p.workplacePensionPaymentsQuestion.map(secureGCMCipher.encrypt),
+      totalWorkplacePensionPayments = p.totalWorkplacePensionPayments.map(secureGCMCipher.encrypt)
     )
   }
 
-  def encryptPensionChargesViewModel(p: PensionChargesViewModel)(implicit textAndKey: TextAndKey): EncryptedPensionChargesViewModel = {
-    EncryptedPensionChargesViewModel(
-      question1 = p.question1.map(secureGCMCipher.encrypt),
-      answer1 = p.answer1.map(secureGCMCipher.encrypt)
-    )
-  }
-
-  def encryptStateBenefitsViewModel(p: StateBenefitsViewModel)(implicit textAndKey: TextAndKey): EncryptedStateBenefitsViewModel = {
-    EncryptedStateBenefitsViewModel(
-      question1 = p.question1.map(secureGCMCipher.encrypt),
-      answer1 = p.answer1.map(secureGCMCipher.encrypt)
-    )
-  }
 
   private def encryptPension(pension: PensionsCYAModel)(implicit textAndKey: TextAndKey): EncryptedPensionCYAModel = {
     EncryptedPensionCYAModel(
-      pensionReliefsViewModel = pension.pensionReliefsViewModel.map(encryptPensionReliefsViewModel),
-      pensionChargesViewModel = pension.pensionChargesViewModel.map(encryptPensionChargesViewModel),
-      stateBenefitsViewModel = pension.stateBenefitsViewModel.map(encryptStateBenefitsViewModel)
+      encryptedPaymentsIntoPension = pension.paymentsIntoPension.map(encryptPaymentsIntoPension)
     )
   }
 
 
-  private def decryptPensionReliefsViewModel(p: EncryptedPensionReliefsViewModel)(implicit textAndKey: TextAndKey): PensionReliefsViewModel = {
-    PensionReliefsViewModel(
-      question1 = p.question1.map(x => secureGCMCipher.decrypt[String](x.value, x.nonce)),
-      answer1 = p.answer1.map(x => secureGCMCipher.decrypt[BigDecimal](x.value, x.nonce))
-    )
-  }
-
-  private def decryptPensionChargesViewModel(p: EncryptedPensionChargesViewModel)(implicit textAndKey: TextAndKey): PensionChargesViewModel = {
-    PensionChargesViewModel(
-      question1 = p.question1.map(x => secureGCMCipher.decrypt[String](x.value, x.nonce)),
-      answer1 = p.answer1.map(x => secureGCMCipher.decrypt[BigDecimal](x.value, x.nonce))
-    )
-  }
-
-  private def decryptStateBenefitsViewModel(p: EncryptedStateBenefitsViewModel)(implicit textAndKey: TextAndKey): StateBenefitsViewModel = {
-    StateBenefitsViewModel(
-      question1 = p.question1.map(x => secureGCMCipher.decrypt[String](x.value, x.nonce)),
-      answer1 = p.answer1.map(x => secureGCMCipher.decrypt[BigDecimal](x.value, x.nonce))
+  private def decryptPaymentsIntoPensionViewModel(p: EncryptedPaymentsIntoPensionViewModel)(implicit textAndKey: TextAndKey): PaymentsIntoPensionViewModel = {
+    PaymentsIntoPensionViewModel(
+      rasPensionPaymentQuestion = p.rasPensionPaymentQuestion.map(x => secureGCMCipher.decrypt[Boolean](x.value, x.nonce)),
+      totalRASPaymentsAndTaxReliefAnswer = p.totalRASPaymentsAndTaxReliefAnswer.map(x => secureGCMCipher.decrypt[BigDecimal](x.value, x.nonce)),
+      retirementAnnuityContractPaymentsQuestion = p.retirementAnnuityContractPaymentsQuestion.map(x => secureGCMCipher.decrypt[Boolean](x.value, x.nonce)),
+      totalRetirementAnnuityContractPayments = p.totalRetirementAnnuityContractPayments.map(x => secureGCMCipher.decrypt[BigDecimal](x.value, x.nonce)),
+      workplacePensionPaymentsQuestion = p.workplacePensionPaymentsQuestion.map(x => secureGCMCipher.decrypt[Boolean](x.value, x.nonce)),
+      totalWorkplacePensionPayments = p.totalWorkplacePensionPayments.map(x => secureGCMCipher.decrypt[BigDecimal](x.value, x.nonce))
     )
   }
 
   private def decryptPensions(pension: EncryptedPensionCYAModel)(implicit textAndKey: TextAndKey): PensionsCYAModel = {
     PensionsCYAModel(
-      pensionReliefsViewModel = pension.pensionReliefsViewModel.map(decryptPensionReliefsViewModel),
-      pensionChargesViewModel = pension.pensionChargesViewModel.map(decryptPensionChargesViewModel),
-      stateBenefitsViewModel = pension.stateBenefitsViewModel.map(decryptStateBenefitsViewModel)
+      paymentsIntoPension = pension.encryptedPaymentsIntoPension.map(decryptPaymentsIntoPensionViewModel)
     )
   }
 

@@ -20,13 +20,24 @@ import play.api.libs.json.{Json, OFormat}
 import utils.EncryptedValue
 
 //TODO fill the model with questions and answers for pension reliefs part of CYA
-case class PensionReliefsViewModel(question1: Option[String], answer1: Option[BigDecimal])
+case class PaymentsIntoPensionViewModel(rasPensionPaymentQuestion: Option[Boolean] = None,
+                                        totalRASPaymentsAndTaxReliefAnswer: Option[BigDecimal] = None,
+                                        retirementAnnuityContractPaymentsQuestion: Option[Boolean] = None,
+                                        totalRetirementAnnuityContractPayments: Option[BigDecimal] = None,
+                                        workplacePensionPaymentsQuestion: Option[Boolean] = None,
+                                        totalWorkplacePensionPayments: Option[BigDecimal] = None)
 
-object PensionReliefsViewModel {
-  implicit val format: OFormat[PensionReliefsViewModel] = Json.format[PensionReliefsViewModel]
+object PaymentsIntoPensionViewModel {
+  implicit val format: OFormat[PaymentsIntoPensionViewModel] = Json.format[PaymentsIntoPensionViewModel]
 }
 
-case class EncryptedPensionReliefsViewModel(question1: Option[EncryptedValue], answer1: Option[EncryptedValue])
-object EncryptedPensionReliefsViewModel {
-  implicit val format: OFormat[EncryptedPensionReliefsViewModel] = Json.format[EncryptedPensionReliefsViewModel]
+case class EncryptedPaymentsIntoPensionViewModel(rasPensionPaymentQuestion: Option[EncryptedValue] = None,
+                                                 totalRASPaymentsAndTaxReliefAnswer: Option[EncryptedValue] = None,
+                                                 retirementAnnuityContractPaymentsQuestion: Option[EncryptedValue] = None,
+                                                 totalRetirementAnnuityContractPayments: Option[EncryptedValue] = None,
+                                                 workplacePensionPaymentsQuestion: Option[EncryptedValue] = None,
+                                                 totalWorkplacePensionPayments: Option[EncryptedValue] = None)
+
+object EncryptedPaymentsIntoPensionViewModel {
+  implicit val format: OFormat[EncryptedPaymentsIntoPensionViewModel] = Json.format[EncryptedPaymentsIntoPensionViewModel]
 }

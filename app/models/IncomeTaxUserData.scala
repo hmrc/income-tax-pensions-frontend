@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ package models
 import models.pension.AllPensionsData
 import play.api.libs.json.{Json, OFormat}
 
-case class IncomeTaxUserData(pension: Option[AllPensionsData] = None)
+case class IncomeTaxUserData(pensions: Option[AllPensionsData] = None)
 
 object IncomeTaxUserData {
   implicit val formats: OFormat[IncomeTaxUserData] = Json.format[IncomeTaxUserData]

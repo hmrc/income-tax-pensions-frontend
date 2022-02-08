@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import com.mongodb.MongoTimeoutException
 import common.UUID
 import models.User
 import models.mongo._
+import models.pension.reliefs.PaymentsIntoPensionViewModel
 import org.joda.time.{DateTime, DateTimeZone}
 import org.mongodb.scala.model.Indexes.ascending
 import org.mongodb.scala.model.{IndexModel, IndexOptions}
@@ -61,13 +62,16 @@ class PensionsUserDataRepositoryISpec extends IntegrationTest with FutureAwaits 
 
   private val now = DateTime.now(DateTimeZone.UTC)
 
+  private val paymentsIntoPension = PaymentsIntoPensionViewModel().copy(rasPensionPaymentQuestion = Some(true))
+  private val pensionCYAModel = PensionsCYAModel(Some(paymentsIntoPension))
+
   val userDataOne: PensionsUserData = PensionsUserData(
     sessionIdOne,
     mtditid,
     nino,
     taxYear,
     isPriorSubmission = true,
-    pensions = Some("pensions"),
+    pensions = Some(pensionCYAModel),
     lastUpdated = now
   )
 
@@ -77,7 +81,7 @@ class PensionsUserDataRepositoryISpec extends IntegrationTest with FutureAwaits 
     nino,
     taxYear,
     isPriorSubmission = true,
-    pensions = Some("pensions"),
+    pensions = Some(pensionCYAModel),
     lastUpdated = now
   )
 
@@ -87,7 +91,7 @@ class PensionsUserDataRepositoryISpec extends IntegrationTest with FutureAwaits 
     nino,
     taxYear,
     isPriorSubmission = true,
-    pensions = Some("pensions"),
+    pensions = Some(pensionCYAModel),
     lastUpdated = now
   )
 
@@ -169,7 +173,7 @@ class PensionsUserDataRepositoryISpec extends IntegrationTest with FutureAwaits 
       await(repo.createOrUpdate(userDataOne)(userOne)) mustBe Right()
       count mustBe 1
 
-      private val updatedPensionsUserData = userDataOne.copy(pensions = Some("pensions2"))
+      private val updatedPensionsUserData = userDataOne.copy(pensions = Some(pensionCYAModel))
 
       await(repo.createOrUpdate(updatedPensionsUserData)(userOne)) mustBe Right()
       count mustBe 1

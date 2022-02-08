@@ -20,14 +20,16 @@ import config.{AppConfig, ErrorHandler}
 import connectors.IncomeTaxUserDataConnector
 import connectors.httpParsers.IncomeTaxUserDataHttpParser.IncomeTaxUserDataResponse
 import models.User
-import models.mongo.PensionsUserData
+import models.mongo.{PensionsCYAModel, PensionsUserData}
 import models.pension.AllPensionsData
+import org.joda.time.DateTimeZone
 import play.api.Logging
 import play.api.http.Status.INTERNAL_SERVER_ERROR
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{Request, Result}
 import repositories.PensionsUserDataRepository
 import uk.gov.hmrc.http.HeaderCarrier
+import utils.Clock
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -45,7 +47,7 @@ class PensionSessionService @Inject()(pensionUserDataRepository: PensionsUserDat
   }
 
   private def getSessionData(taxYear: Int)(implicit user: User[_], request: Request[_]): Future[Either[Result, Option[PensionsUserData]]] = {
-   pensionUserDataRepository.find(taxYear).map {
+    pensionUserDataRepository.find(taxYear).map {
       case Left(_) => Left(errorHandler.handleError(INTERNAL_SERVER_ERROR))
       case Right(value) => Right(value)
     }
@@ -59,7 +61,9 @@ class PensionSessionService @Inject()(pensionUserDataRepository: PensionsUserDat
       priorDataResponse <- getPriorData(taxYear)
     } yield {
       if (optionalCya.isRight) {
-        if (optionalCya.right.get.isEmpty) logger.info(s"[PensionSessionService][getAndHandle] No pension CYA data found for user. SessionId: ${user.sessionId}")
+        if (optionalCya.right.get.isEmpty) {
+          logger.info(s"[PensionSessionService][getAndHandle] No pension CYA data found for user. SessionId: ${user.sessionId}")
+        }
       }
 
       val pensionDataResponse = priorDataResponse.map(_.pensions)
@@ -75,4 +79,25 @@ class PensionSessionService @Inject()(pensionUserDataRepository: PensionsUserDat
     result.flatten
   }
 
+  //scalastyle:off
+  def createOrUpdateSessionData[A](cyaModel: PensionsCYAModel, taxYear: Int, isPriorSubmission: Boolean, hasPriorBenefits: Boolean)
+                                  (onFail: A)(onSuccess: A)(implicit user: User[_], clock: Clock): Future[A] = {
+
+    val userData = PensionsUserData(
+      user.sessionId,
+      user.mtditid,
+      user.nino,
+      taxYear,
+      isPriorSubmission,
+      Some(cyaModel),
+      clock.now(DateTimeZone.UTC)
+    )
+
+    pensionUserDataRepository.createOrUpdate(userData).map {
+      case Right(_) => onSuccess
+      case Left(_) => onFail
+    }
+  }
+
 }
+

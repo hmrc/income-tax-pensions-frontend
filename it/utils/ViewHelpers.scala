@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -199,8 +199,6 @@ trait ViewHelpers { self: AnyWordSpec with Matchers with WireMockHelper =>
       s"has the text '$text' and a href to '$href'" in {
 
         if(hiddenTextSelector.isDefined){
-          println(document().select(selector).text())
-          println(document().select(hiddenTextSelector.get).text())
           document().select(hiddenTextSelector.get).text() shouldBe text.split(" ").drop(1).mkString(" ")
         }
 
