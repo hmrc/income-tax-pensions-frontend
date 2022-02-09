@@ -14,13 +14,18 @@
  * limitations under the License.
  */
 
-package models
+package models.pension
 
-import models.pension.AllPensionsData
+import models.pension.charges.PensionCharges
+import models.pension.reliefs.PensionReliefs
+import models.pension.statebenefits.StateBenefitsModel
 import play.api.libs.json.{Json, OFormat}
 
-case class IncomeTaxUserData(pensions: Option[AllPensionsData] = None)
+case class AllPensionsData(pensionReliefs: Option[PensionReliefs],
+                           pensionCharges: Option[PensionCharges],
+                           stateBenefits: Option[StateBenefitsModel])
 
-object IncomeTaxUserData {
-  implicit val formats: OFormat[IncomeTaxUserData] = Json.format[IncomeTaxUserData]
+object AllPensionsData {
+  implicit val formats: OFormat[AllPensionsData] = Json.format[AllPensionsData]
+
 }

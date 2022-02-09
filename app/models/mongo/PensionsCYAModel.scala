@@ -14,13 +14,20 @@
  * limitations under the License.
  */
 
-package models
+package models.mongo
 
-import models.pension.AllPensionsData
+import models.pension.reliefs.{EncryptedPaymentsIntoPensionViewModel, PaymentsIntoPensionViewModel}
 import play.api.libs.json.{Json, OFormat}
 
-case class IncomeTaxUserData(pensions: Option[AllPensionsData] = None)
+case class PensionsCYAModel(paymentsIntoPension: Option[PaymentsIntoPensionViewModel])
 
-object IncomeTaxUserData {
-  implicit val formats: OFormat[IncomeTaxUserData] = Json.format[IncomeTaxUserData]
+object PensionsCYAModel {
+  implicit val format: OFormat[PensionsCYAModel] = Json.format[PensionsCYAModel]
 }
+
+case class EncryptedPensionCYAModel(encryptedPaymentsIntoPension: Option[EncryptedPaymentsIntoPensionViewModel])
+
+object EncryptedPensionCYAModel {
+  implicit val format: OFormat[EncryptedPensionCYAModel] = Json.format[EncryptedPensionCYAModel]
+}
+

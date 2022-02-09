@@ -199,8 +199,6 @@ trait ViewHelpers { self: AnyWordSpec with Matchers with WireMockHelper =>
       s"has the text '$text' and a href to '$href'" in {
 
         if(hiddenTextSelector.isDefined){
-          println(document().select(selector).text())
-          println(document().select(hiddenTextSelector.get).text())
           document().select(hiddenTextSelector.get).text() shouldBe text.split(" ").drop(1).mkString(" ")
         }
 

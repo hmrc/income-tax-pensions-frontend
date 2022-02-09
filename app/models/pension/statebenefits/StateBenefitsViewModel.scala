@@ -14,13 +14,20 @@
  * limitations under the License.
  */
 
-package models
+package models.pension.statebenefits
 
-import models.pension.AllPensionsData
 import play.api.libs.json.{Json, OFormat}
+import utils.EncryptedValue
 
-case class IncomeTaxUserData(pensions: Option[AllPensionsData] = None)
+//TODO fill the model with questions and answers for state benefits part of CYA
+case class StateBenefitsViewModel(question1: Option[String], answer1: Option[BigDecimal])
 
-object IncomeTaxUserData {
-  implicit val formats: OFormat[IncomeTaxUserData] = Json.format[IncomeTaxUserData]
+object StateBenefitsViewModel {
+  implicit val format: OFormat[StateBenefitsViewModel] = Json.format[StateBenefitsViewModel]
+}
+
+case class EncryptedStateBenefitsViewModel(question1: Option[EncryptedValue], answer1: Option[EncryptedValue])
+
+object EncryptedStateBenefitsViewModel {
+  implicit val format: OFormat[EncryptedStateBenefitsViewModel] = Json.format[EncryptedStateBenefitsViewModel]
 }

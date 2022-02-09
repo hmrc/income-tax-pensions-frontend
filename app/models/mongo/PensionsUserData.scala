@@ -19,14 +19,14 @@ package models.mongo
 import org.joda.time.{DateTime, DateTimeZone}
 import play.api.libs.json.{Format, Json}
 import uk.gov.hmrc.mongo.play.json.formats.MongoJodaFormats
-import utils.EncryptedValue
+import models.mongo.PensionsCYAModel._
 
 case class PensionsUserData(sessionId: String,
                               mtdItId: String,
                               nino: String,
                               taxYear: Int,
                               isPriorSubmission: Boolean,
-                              pensions: Option[String] = None,
+                              pensions: Option[PensionsCYAModel] = None,
                               lastUpdated: DateTime = DateTime.now(DateTimeZone.UTC))
 
 object PensionsUserData extends MongoJodaFormats {
@@ -41,7 +41,7 @@ case class EncryptedPensionsUserData(sessionId: String,
                                 nino: String,
                                 taxYear: Int,
                                 isPriorSubmission: Boolean,
-                                pensions: Option[EncryptedValue] = None,
+                                pensions: Option[EncryptedPensionCYAModel] = None,
                                 lastUpdated: DateTime = DateTime.now(DateTimeZone.UTC))
 
 object EncryptedPensionsUserData extends MongoJodaFormats {

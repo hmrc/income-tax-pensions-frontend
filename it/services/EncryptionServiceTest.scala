@@ -17,17 +17,17 @@
 package services
 
 import models.mongo.EncryptedPensionsUserData
-import utils.IntegrationTest
+import utils.{IntegrationTest, PensionUserDataStub}
 
 class EncryptionServiceTest extends IntegrationTest {
 
   private val underTest: EncryptionService = app.injector.instanceOf[EncryptionService]
 
   "encryptUserData" should {
-    val data = pensionsUserData.copy()
+    val data = PensionUserDataStub.pensionUserData()
 
     "encrypt relevant pensions user data" in {
-      val result = underTest.encryptUserData(pensionsUserData)
+      val result = underTest.encryptUserData(PensionUserDataStub.pensionUserData())
 
       result shouldBe EncryptedPensionsUserData(
         sessionId = data.sessionId,

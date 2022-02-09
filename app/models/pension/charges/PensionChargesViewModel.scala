@@ -14,13 +14,20 @@
  * limitations under the License.
  */
 
-package models
+package models.pension.charges
 
-import models.pension.AllPensionsData
 import play.api.libs.json.{Json, OFormat}
+import utils.EncryptedValue
 
-case class IncomeTaxUserData(pensions: Option[AllPensionsData] = None)
+//TODO fill the model will questions and answers for pension charges part of CYA
+case class PensionChargesViewModel(question1: Option[String], answer1: Option[BigDecimal])
 
-object IncomeTaxUserData {
-  implicit val formats: OFormat[IncomeTaxUserData] = Json.format[IncomeTaxUserData]
+object PensionChargesViewModel {
+  implicit val format: OFormat[PensionChargesViewModel] = Json.format[PensionChargesViewModel]
+}
+
+case class EncryptedPensionChargesViewModel(question1: Option[EncryptedValue], answer1: Option[EncryptedValue])
+
+object EncryptedPensionChargesViewModel {
+  implicit val format: OFormat[EncryptedPensionChargesViewModel] = Json.format[EncryptedPensionChargesViewModel]
 }
