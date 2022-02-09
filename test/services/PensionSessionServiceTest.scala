@@ -249,7 +249,6 @@ class PensionSessionServiceTest extends UnitTest
     )
   )
 
-
   //TODO add view models
   val pensionCYA: PensionsCYAModel = PensionsCYAModel(None)
 
@@ -257,8 +256,6 @@ class PensionSessionServiceTest extends UnitTest
     sessionId, "1234567890", nino, taxYear, isPriorSubmission = true,
     Some(pensionCYA), testClock.now()
   )
-
-
 
   "getAndHandle" should {
     "redirect if no data and redirect is set to true" in {
@@ -289,8 +286,6 @@ class PensionSessionServiceTest extends UnitTest
   }
 
   ".createOrUpdateSessionData" should {
-
-
     "return SEE_OTHER(303) status when createOrUpdate succeeds" in {
       mockCreateOrUpdate(pensionDataFull, Right())
 
@@ -304,7 +299,6 @@ class PensionSessionServiceTest extends UnitTest
     }
 
     "return BAD_REQUEST(400) status when createOrUpdate fails" in {
-
       mockCreateOrUpdate(pensionDataFull, Left(DataNotUpdated))
 
       val response = service.createOrUpdateSessionData(

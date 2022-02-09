@@ -17,24 +17,19 @@
 package utils
 
 import akka.actor.ActorSystem
-import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import common.SessionValues
 import config.AppConfig
 import controllers.predicates.AuthorisedAction
 import helpers.{PlaySessionCookieBaker, WireMockHelper, WiremockStubHelpers}
 import models.IncomeTaxUserData
-import models.mongo.PensionsUserData
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
-import play.api.http.Status.NO_CONTENT
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.libs.json.Json
 import play.api.libs.ws.WSClient
 import play.api.mvc.{AnyContentAsEmpty, MessagesControllerComponents, Result}
 import play.api.test.FakeRequest
-import play.api.test.Helpers.OK
 import play.api.{Application, Environment, Mode}
 import services.AuthService
 import uk.gov.hmrc.auth.core._

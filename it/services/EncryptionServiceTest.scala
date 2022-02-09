@@ -24,7 +24,7 @@ class EncryptionServiceTest extends IntegrationTest {
   private val underTest: EncryptionService = app.injector.instanceOf[EncryptionService]
 
   "encryptUserData" should {
-    val data = PensionUserDataStub.pensionUserData().copy()
+    val data = PensionUserDataStub.pensionUserData()
 
     "encrypt relevant pensions user data" in {
       val result = underTest.encryptUserData(PensionUserDataStub.pensionUserData())

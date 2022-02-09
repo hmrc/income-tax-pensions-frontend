@@ -19,7 +19,7 @@ package utils
 import models.mongo.{PensionsCYAModel, PensionsUserData}
 import models.pension.AllPensionsData
 import models.pension.charges._
-import models.pension.reliefs.{PensionReliefs, Reliefs}
+import models.pension.reliefs.{PaymentsIntoPensionViewModel, PensionReliefs, Reliefs}
 import models.pension.statebenefits.{StateBenefit, StateBenefits, StateBenefitsModel}
 
 object PensionDataStubs {
@@ -230,6 +230,9 @@ object PensionUserDataStub {
   implicit val testClock: Clock = UnitTestClock
   val taxYear: Int = 2022
 
+  val paymentsIntoPensionViewModel: PaymentsIntoPensionViewModel = PaymentsIntoPensionViewModel(Some(true),
+    Some(222.3),Some(true), Some(22.44), Some(true), Some(44.00))
+
   // scalastyle:off magic.number
   def pensionUserData(
                        sessionId: String = "sessionid",
@@ -237,7 +240,7 @@ object PensionUserDataStub {
                        nino: String = "nino",
                        taxyear: Int = taxYear,
                        isPriorSubmission: Boolean = true,
-                       cya: Option[PensionsCYAModel] = Some(PensionsCYAModel(None))
+                       cya: Option[PensionsCYAModel] = Some(PensionsCYAModel(Some(paymentsIntoPensionViewModel)))
                      ): PensionsUserData = {
     PensionsUserData(
       sessionId = sessionId,
