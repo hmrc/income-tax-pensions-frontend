@@ -6,7 +6,6 @@ betaBar.banner.message.3 = will help us to improve it.
 betaBar.beta = beta
 service.govUkExtension = GOV.UK
 service.name = Update and submit an Income Tax Return
-service.govUkExtension = GOV.UK
 
 #################       Common messages        ########################################
 
@@ -75,6 +74,9 @@ timeout.heading = For your security, we signed you out
 timeout.p1 = We did not save your answers.
 timeout.button = Sign in
 
+
+#################       Service pages messages       ########################################
+
 #pension summary
 
 pensions.pensionSummary.heading = Pensions
@@ -141,3 +143,27 @@ pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.whereToFind.agent = You c
 pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.howToWorkOut = To work it out yourself, divide the amount you actually paid by 80 and multiply the result by 100.
 pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.calculationHeading = Example calculation
 pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.exampleCalculation = Emma paid £500 into her pension scheme. £500 divided by 80 and multiplied by 100 is £625. Her answer is £625.
+
+#payments into pensions
+
+paymentsIntoPensions.cya.heading.individual = Check your payments into pensions
+paymentsIntoPensions.cya.heading.agent = Check your client’s payments into pensions
+paymentsIntoPensions.cya.reliefAtSource = Relief at source (RAS) pension payments
+paymentsIntoPensions.cya.reliefAtSourceTotal = Total RAS payments plus tax relief
+paymentsIntoPensions.cya.oneOff = One-off RAS payments
+paymentsIntoPensions.cya.oneOffTotal = Total one-off RAS payments plus tax relief
+paymentsIntoPensions.cya.pensionsTaxReliefNotClaimed = Pensions where tax relief is not claimed
+paymentsIntoPensions.cya.retirementAnnuity = Retirement annuity contract payments
+paymentsIntoPensions.cya.retirementAnnuityTotal = Total retirement annuity contract payments
+paymentsIntoPensions.cya.workplacePayments = Workplace pension payments
+paymentsIntoPensions.cya.workplacePaymentsTotal = Total workplace pension payments
+
+paymentsIntoPensions.cya.reliefAtSource.hidden = Change whether relief at source pensions payments were made
+paymentsIntoPensions.cya.reliefAtSourceTotal.hidden = Change total relief at source pensions payments, plus tax relief
+paymentsIntoPensions.cya.oneOff.hidden = Change whether one-off relief at source pensions payments were made
+paymentsIntoPensions.cya.oneOffTotal.hidden = Change total one-off relief at source pensions payments, plus tax relief
+paymentsIntoPensions.cya.pensionsTaxReliefNotClaimed.hidden = Change whether payments were made into a pension where tax relief was not claimed
+paymentsIntoPensions.cya.retirementAnnuity.hidden = Change whether retirement annuity contract payments were made
+paymentsIntoPensions.cya.retirementAnnuityTotal.hidden = Change total retirement annuity contract payments
+paymentsIntoPensions.cya.workplacePayments.hidden = Change whether workplace pension payments were made
+paymentsIntoPensions.cya.workplacePaymentsTotal.hidden = Change total workplace pension payments
