@@ -179,16 +179,16 @@ trait ViewTest extends UnitTest with GuiceOneAppPerSuite {
   }
 
   def checkMessagesAreUnique(initial: List[(String, String)], keysToExplore: List[(String, String)], result: Set[String]): Set[String] = {
-      keysToExplore match {
-        case Nil => result
-        case head :: tail =>
-          val (currentMessageKey, currentMessage) = (head._1, head._2)
-          val duplicate = initial.collect {
-            case (messageKey, message) if currentMessageKey != messageKey && currentMessage == message => currentMessageKey
-          }.toSet
+    keysToExplore match {
+      case Nil => result
+      case head :: tail =>
+        val (currentMessageKey, currentMessage) = (head._1, head._2)
+        val duplicate = initial.collect {
+          case (messageKey, message) if currentMessageKey != messageKey && currentMessage == message => currentMessageKey
+        }.toSet
 
-          checkMessagesAreUnique(initial, tail, duplicate ++ result)
-      }
+        checkMessagesAreUnique(initial, tail, duplicate ++ result)
+    }
   }
 
   def welshToggleCheck(activeLanguage: String)(implicit document: Document): Unit = {
@@ -212,7 +212,7 @@ trait ViewTest extends UnitTest with GuiceOneAppPerSuite {
       }
       s"has a link to change the language" in {
         document.select(".hmrc-language-select__list-item > a").attr("href") shouldBe
-          s"/update-and-submit-income-tax-return/employment-income/language/${linkLanguage(otherLanguage).toLowerCase}"
+          s"/update-and-submit-income-tax-return/pensions/language/${linkLanguage(otherLanguage).toLowerCase}"
       }
     }
   }

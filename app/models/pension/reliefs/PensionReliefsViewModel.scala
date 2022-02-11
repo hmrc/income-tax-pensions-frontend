@@ -19,9 +19,11 @@ package models.pension.reliefs
 import play.api.libs.json.{Json, OFormat}
 import utils.EncryptedValue
 
-//TODO fill the model with questions and answers for pension reliefs part of CYA
 case class PaymentsIntoPensionViewModel(rasPensionPaymentQuestion: Option[Boolean] = None,
-                                        totalRASPaymentsAndTaxReliefAnswer: Option[BigDecimal] = None,
+                                        totalRASPaymentsAndTaxRelief: Option[BigDecimal] = None,
+                                        oneOffRasPaymentPlusTaxReliefQuestion: Option[Boolean] = None,
+                                        totalOneOffRasPaymentPlusTaxRelief: Option[BigDecimal] = None,
+                                        pensionTaxReliefNotClaimedQuestion: Option[Boolean] = None,
                                         retirementAnnuityContractPaymentsQuestion: Option[Boolean] = None,
                                         totalRetirementAnnuityContractPayments: Option[BigDecimal] = None,
                                         workplacePensionPaymentsQuestion: Option[Boolean] = None,
@@ -32,7 +34,10 @@ object PaymentsIntoPensionViewModel {
 }
 
 case class EncryptedPaymentsIntoPensionViewModel(rasPensionPaymentQuestion: Option[EncryptedValue] = None,
-                                                 totalRASPaymentsAndTaxReliefAnswer: Option[EncryptedValue] = None,
+                                                 totalRASPaymentsAndTaxRelief: Option[EncryptedValue] = None,
+                                                 oneOffRasPaymentPlusTaxReliefQuestion: Option[EncryptedValue] = None,
+                                                 totalOneOffRasPaymentPlusTaxRelief: Option[EncryptedValue] = None,
+                                                 pensionTaxReliefNotClaimedQuestion: Option[EncryptedValue] = None,
                                                  retirementAnnuityContractPaymentsQuestion: Option[EncryptedValue] = None,
                                                  totalRetirementAnnuityContractPayments: Option[EncryptedValue] = None,
                                                  workplacePensionPaymentsQuestion: Option[EncryptedValue] = None,

@@ -17,19 +17,24 @@
 package utils
 
 import akka.actor.ActorSystem
+import builders.PensionsUserDataBuilder.anPensionsUserData
+import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import common.SessionValues
 import config.AppConfig
 import controllers.predicates.AuthorisedAction
 import helpers.{PlaySessionCookieBaker, WireMockHelper, WiremockStubHelpers}
 import models.IncomeTaxUserData
+import models.mongo.PensionsUserData
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.libs.json.Json
 import play.api.libs.ws.WSClient
 import play.api.mvc.{AnyContentAsEmpty, MessagesControllerComponents, Result}
 import play.api.test.FakeRequest
+import play.api.test.Helpers.OK
 import play.api.{Application, Environment, Mode}
 import services.AuthService
 import uk.gov.hmrc.auth.core._
@@ -50,8 +55,8 @@ trait IntegrationTest extends AnyWordSpec with Matchers with GuiceOneServerPerSu
   val sessionId = "sessionId-eb3158c2-0aff-4ce8-8d1b-f2208ace52fe"
   val affinityGroup = "affinityGroup"
   val taxYear = 2022
-
-  val xSessionId: (String, String) = "X-Session-ID" -> sessionId
+  val defaultUser: PensionsUserData = anPensionsUserData
+  val xSessionId: (String, String) = "X-Session-ID" -> defaultUser.sessionId
 
   implicit val ec: ExecutionContext = ExecutionContext.Implicits.global
   implicit val headerCarrier: HeaderCarrier = HeaderCarrier().withExtraHeaders("mtditid" -> mtditid)
@@ -193,6 +198,14 @@ trait IntegrationTest extends AnyWordSpec with Matchers with GuiceOneServerPerSu
     SessionValues.CLIENT_MTDITID -> mtditid
   ) ++ extraData)
 
+  def userDataStub(userData: IncomeTaxUserData, nino: String, taxYear: Int): StubMapping = {
+    stubGetWithHeadersCheck(
+      url = s"/income-tax-submission-service/income-tax/nino/$nino/sources/session\\?taxYear=$taxYear", status = OK,
+      body = Json.toJson(userData).toString(),
+      sessionHeader = "X-Session-ID" -> defaultUser.sessionId,
+      mtdidHeader = "mtditid" -> defaultUser.mtdItId
+    )
+  }
 
   def userData(allData: String): IncomeTaxUserData = IncomeTaxUserData(Some(PensionDataStubs.fullPensionsModel))
 
@@ -201,3 +214,4 @@ trait IntegrationTest extends AnyWordSpec with Matchers with GuiceOneServerPerSu
 
 // scalastyle:off number.of.methods
 // scalastyle:off number.of.types
+
