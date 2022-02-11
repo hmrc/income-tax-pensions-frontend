@@ -1,7 +1,14 @@
-service.name = Update and submit an Income Tax Return
+#################       Service messages       ########################################
 
+betaBar.banner.message.1 = This is a new service – your
+betaBar.banner.message.2 = feedback
+betaBar.banner.message.3 = will help us to improve it.
+betaBar.beta = beta
+service.govUkExtension = GOV.UK
+service.name = Update and submit an Income Tax Return
 service.govUkExtension = GOV.UK
 
+#################       Common messages        ########################################
 common.fullStop = .
 common.back = Back
 common.yes = Yes
@@ -12,6 +19,13 @@ common.change = Change
 common.update = Update
 common.use = use
 common.currency.hint = For example, £193.52
+common.help.getHelpWithThisPage = Get help with this page
+common.status.toDo = To do
+common.status.updated = Updated
+common.pensions.caption = Pensions for 6 April {0} to 5 April {1}
+common.return.overview.buttonText = Return to overview
+
+#################       Error messages        ########################################
 
 common.error.self-assessment.paragraph.1.1 = If the web address is correct or you selected a link or button, you can use
 common.error.self-assessment.paragraph.1.2 = Self Assessment: general enquiries (opens in new tab)
@@ -51,6 +65,18 @@ service-unavailable-error-template.paragraph.1 = You will be able to use this se
 internal-server-error-template.heading = Sorry, there is a problem with the service
 internal-server-error-template.paragraph.1 = Try again later.
 
+#################       Timeout messages        ########################################
+
 timeout.heading = For your security, we signed you out
 timeout.p1 = We did not save your answers.
 timeout.button = Sign in
+
+#pension summary
+
+pensions.pensionSummary.heading = Pensions
+pensions.pensionSummary.paymentsToPensions = Payments into pensions
+pensions.pensionSummary.incomeFromPensions = Income from pensions
+pensions.pensionSummary.pensionAnnualAllowance = Pension annual allowance
+pensions.pensionSummary.pensionLifetimeAllowance = Pension lifetime allowance
+pensions.pensionSummary.unauthorisedPaymentsFromPensions = Unauthorised payments from pensions
+pensions.pensionSummary.paymentsToOverseasPensions = Payments into overseas pensions

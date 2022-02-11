@@ -231,7 +231,7 @@ object PensionUserDataStub {
   val taxYear: Int = 2022
 
   val paymentsIntoPensionViewModel: PaymentsIntoPensionViewModel = PaymentsIntoPensionViewModel(Some(true),
-    Some(222.3),Some(true), Some(22.44), Some(true), Some(44.00))
+    Some(222.3), Some(true), Some(22.44), Some(true), Some(true), Some(44.00), Some(true), Some(55.55))
 
   // scalastyle:off magic.number
   def pensionUserData(
@@ -248,7 +248,5 @@ object PensionUserDataStub {
     )
   }
   // scalastyle:on magic.number
-
-
 
 }

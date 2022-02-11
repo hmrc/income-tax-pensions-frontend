@@ -41,7 +41,10 @@ class EncryptionService @Inject()(secureGCMCipher: SecureGCMCipher, appConfig: A
   def encryptPaymentsIntoPension(p: PaymentsIntoPensionViewModel)(implicit textAndKey: TextAndKey): EncryptedPaymentsIntoPensionViewModel = {
     EncryptedPaymentsIntoPensionViewModel(
       rasPensionPaymentQuestion = p.rasPensionPaymentQuestion.map(secureGCMCipher.encrypt),
-      totalRASPaymentsAndTaxReliefAnswer = p.totalRASPaymentsAndTaxReliefAnswer.map(secureGCMCipher.encrypt),
+      totalRASPaymentsAndTaxRelief = p.totalRASPaymentsAndTaxRelief.map(secureGCMCipher.encrypt),
+      oneOffRasPaymentPlusTaxReliefQuestion = p.oneOffRasPaymentPlusTaxReliefQuestion.map(secureGCMCipher.encrypt),
+      totalOneOffRasPaymentPlusTaxRelief = p.totalOneOffRasPaymentPlusTaxRelief.map(secureGCMCipher.encrypt),
+      pensionTaxReliefNotClaimedQuestion = p.pensionTaxReliefNotClaimedQuestion.map(secureGCMCipher.encrypt),
       retirementAnnuityContractPaymentsQuestion = p.retirementAnnuityContractPaymentsQuestion.map(secureGCMCipher.encrypt),
       totalRetirementAnnuityContractPayments = p.totalRetirementAnnuityContractPayments.map(secureGCMCipher.encrypt),
       workplacePensionPaymentsQuestion = p.workplacePensionPaymentsQuestion.map(secureGCMCipher.encrypt),
@@ -49,18 +52,19 @@ class EncryptionService @Inject()(secureGCMCipher: SecureGCMCipher, appConfig: A
     )
   }
 
-
   private def encryptPension(pension: PensionsCYAModel)(implicit textAndKey: TextAndKey): EncryptedPensionCYAModel = {
     EncryptedPensionCYAModel(
       encryptedPaymentsIntoPension = pension.paymentsIntoPension.map(encryptPaymentsIntoPension)
     )
   }
 
-
   private def decryptPaymentsIntoPensionViewModel(p: EncryptedPaymentsIntoPensionViewModel)(implicit textAndKey: TextAndKey): PaymentsIntoPensionViewModel = {
     PaymentsIntoPensionViewModel(
       rasPensionPaymentQuestion = p.rasPensionPaymentQuestion.map(x => secureGCMCipher.decrypt[Boolean](x.value, x.nonce)),
-      totalRASPaymentsAndTaxReliefAnswer = p.totalRASPaymentsAndTaxReliefAnswer.map(x => secureGCMCipher.decrypt[BigDecimal](x.value, x.nonce)),
+      totalRASPaymentsAndTaxRelief = p.totalRASPaymentsAndTaxRelief.map(x => secureGCMCipher.decrypt[BigDecimal](x.value, x.nonce)),
+      oneOffRasPaymentPlusTaxReliefQuestion = p.oneOffRasPaymentPlusTaxReliefQuestion.map(x => secureGCMCipher.decrypt[Boolean](x.value, x.nonce)),
+      totalOneOffRasPaymentPlusTaxRelief = p.totalOneOffRasPaymentPlusTaxRelief.map(x => secureGCMCipher.decrypt[BigDecimal](x.value, x.nonce)),
+      pensionTaxReliefNotClaimedQuestion = p.pensionTaxReliefNotClaimedQuestion.map(x => secureGCMCipher.decrypt[Boolean](x.value, x.nonce)),
       retirementAnnuityContractPaymentsQuestion = p.retirementAnnuityContractPaymentsQuestion.map(x => secureGCMCipher.decrypt[Boolean](x.value, x.nonce)),
       totalRetirementAnnuityContractPayments = p.totalRetirementAnnuityContractPayments.map(x => secureGCMCipher.decrypt[BigDecimal](x.value, x.nonce)),
       workplacePensionPaymentsQuestion = p.workplacePensionPaymentsQuestion.map(x => secureGCMCipher.decrypt[Boolean](x.value, x.nonce)),
