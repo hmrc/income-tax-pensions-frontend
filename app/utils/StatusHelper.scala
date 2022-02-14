@@ -48,7 +48,8 @@ object StatusHelper {
   }
 
   def paymentsIntoOverseasPensionsIsUpdated(prior: Option[AllPensionsData]): Boolean = {
-    prior.flatMap(_.pensionCharges.flatMap(_.pensionSchemeOverseasTransfers)).isDefined
+    prior.flatMap(_.pensionCharges.flatMap(_.pensionSchemeOverseasTransfers)).isDefined ||
+    prior.flatMap(_.pensionCharges.flatMap(_.overseasPensionContributions)).isDefined
   }
 
 }
