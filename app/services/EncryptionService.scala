@@ -33,8 +33,8 @@ class EncryptionService @Inject()(secureGCMCipher: SecureGCMCipher, appConfig: A
       nino = userData.nino,
       taxYear = userData.taxYear,
       isPriorSubmission = userData.isPriorSubmission,
-      pensions = userData.pensions.map(encryptPension),
-      lastUpdated = userData.lastUpdated
+      pensions = encryptPension(userData.pensions),
+        lastUpdated = userData.lastUpdated
     )
   }
 
@@ -54,7 +54,7 @@ class EncryptionService @Inject()(secureGCMCipher: SecureGCMCipher, appConfig: A
 
   private def encryptPension(pension: PensionsCYAModel)(implicit textAndKey: TextAndKey): EncryptedPensionCYAModel = {
     EncryptedPensionCYAModel(
-      encryptedPaymentsIntoPension = pension.paymentsIntoPension.map(encryptPaymentsIntoPension)
+      encryptedPaymentsIntoPension = encryptPaymentsIntoPension(pension.paymentsIntoPension)
     )
   }
 
@@ -74,7 +74,7 @@ class EncryptionService @Inject()(secureGCMCipher: SecureGCMCipher, appConfig: A
 
   private def decryptPensions(pension: EncryptedPensionCYAModel)(implicit textAndKey: TextAndKey): PensionsCYAModel = {
     PensionsCYAModel(
-      paymentsIntoPension = pension.encryptedPaymentsIntoPension.map(decryptPaymentsIntoPensionViewModel)
+      paymentsIntoPension = decryptPaymentsIntoPensionViewModel(pension.encryptedPaymentsIntoPension)
     )
   }
 
@@ -86,7 +86,7 @@ class EncryptionService @Inject()(secureGCMCipher: SecureGCMCipher, appConfig: A
       nino = userData.nino,
       taxYear = userData.taxYear,
       isPriorSubmission = userData.isPriorSubmission,
-      pensions = userData.pensions.map(decryptPensions),
+      pensions = decryptPensions(userData.pensions),
       lastUpdated = userData.lastUpdated
     )
   }

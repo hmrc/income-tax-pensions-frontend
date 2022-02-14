@@ -63,7 +63,7 @@ class PensionsUserDataRepositoryISpec extends IntegrationTest with FutureAwaits 
   private val now = DateTime.now(DateTimeZone.UTC)
 
   private val paymentsIntoPension = PaymentsIntoPensionViewModel().copy(rasPensionPaymentQuestion = Some(true))
-  private val pensionCYAModel = PensionsCYAModel(Some(paymentsIntoPension))
+  private val pensionCYAModel = PensionsCYAModel(paymentsIntoPension)
 
   val userDataOne: PensionsUserData = PensionsUserData(
     sessionIdOne,
@@ -71,7 +71,7 @@ class PensionsUserDataRepositoryISpec extends IntegrationTest with FutureAwaits 
     nino,
     taxYear,
     isPriorSubmission = true,
-    pensions = Some(pensionCYAModel),
+    pensions = pensionCYAModel,
     lastUpdated = now
   )
 
@@ -81,7 +81,7 @@ class PensionsUserDataRepositoryISpec extends IntegrationTest with FutureAwaits 
     nino,
     taxYear,
     isPriorSubmission = true,
-    pensions = Some(pensionCYAModel),
+    pensions = pensionCYAModel,
     lastUpdated = now
   )
 
@@ -91,7 +91,7 @@ class PensionsUserDataRepositoryISpec extends IntegrationTest with FutureAwaits 
     nino,
     taxYear,
     isPriorSubmission = true,
-    pensions = Some(pensionCYAModel),
+    pensions = pensionCYAModel,
     lastUpdated = now
   )
 
@@ -173,7 +173,7 @@ class PensionsUserDataRepositoryISpec extends IntegrationTest with FutureAwaits 
       await(repo.createOrUpdate(userDataOne)(userOne)) mustBe Right()
       count mustBe 1
 
-      private val updatedPensionsUserData = userDataOne.copy(pensions = Some(pensionCYAModel))
+      private val updatedPensionsUserData = userDataOne.copy(pensions = pensionCYAModel)
 
       await(repo.createOrUpdate(updatedPensionsUserData)(userOne)) mustBe Right()
       count mustBe 1

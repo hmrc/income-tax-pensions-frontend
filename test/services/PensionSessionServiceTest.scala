@@ -27,6 +27,7 @@ import play.api.i18n.MessagesApi
 import play.api.mvc.Results.{Ok, Redirect}
 import utils.UnitTest
 import views.html.templates.{InternalServerErrorTemplate, NotFoundTemplate, ServiceUnavailableTemplate}
+import builders.PensionsCYAModelBuilder._
 
 import scala.concurrent.Future
 
@@ -250,11 +251,11 @@ class PensionSessionServiceTest extends UnitTest
   )
 
   //TODO add view models
-  val pensionCYA: PensionsCYAModel = PensionsCYAModel(None)
+  val pensionCYA: PensionsCYAModel = aPensionsCYAEmptyModel
 
   val pensionDataFull: PensionsUserData = PensionsUserData(
     sessionId, "1234567890", nino, taxYear, isPriorSubmission = true,
-    Some(pensionCYA), testClock.now()
+    pensionCYA, testClock.now()
   )
 
   "getAndHandle" should {
@@ -291,7 +292,6 @@ class PensionSessionServiceTest extends UnitTest
 
       val response = service.createOrUpdateSessionData(
         pensionCYA, taxYear, isPriorSubmission = true,
-        hasPriorBenefits = true,
       )(Redirect("400"))(Redirect("303"))
 
       status(response) shouldBe SEE_OTHER
@@ -302,8 +302,7 @@ class PensionSessionServiceTest extends UnitTest
       mockCreateOrUpdate(pensionDataFull, Left(DataNotUpdated))
 
       val response = service.createOrUpdateSessionData(
-        pensionCYA, taxYear, isPriorSubmission = true,
-        hasPriorBenefits = true
+        pensionCYA, taxYear, isPriorSubmission = true
       )(Redirect("400"))(Redirect("303"))
 
       status(response) shouldBe SEE_OTHER

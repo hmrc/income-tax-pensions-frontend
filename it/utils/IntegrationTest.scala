@@ -17,7 +17,7 @@
 package utils
 
 import akka.actor.ActorSystem
-import builders.PensionsUserDataBuilder.anPensionsUserData
+import builders.PensionsUserDataBuilder.aPensionsUserData
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import common.SessionValues
 import config.AppConfig
@@ -55,7 +55,7 @@ trait IntegrationTest extends AnyWordSpec with Matchers with GuiceOneServerPerSu
   val sessionId = "sessionId-eb3158c2-0aff-4ce8-8d1b-f2208ace52fe"
   val affinityGroup = "affinityGroup"
   val taxYear = 2022
-  val defaultUser: PensionsUserData = anPensionsUserData
+  val defaultUser: PensionsUserData = aPensionsUserData
   val xSessionId: (String, String) = "X-Session-ID" -> defaultUser.sessionId
 
   implicit val ec: ExecutionContext = ExecutionContext.Implicits.global

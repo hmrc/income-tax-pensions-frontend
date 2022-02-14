@@ -16,12 +16,15 @@
 
 package builders
 
-import builders.PaymentsIntoPensionVewModelBuilderBuilder.anPaymentsIntoPensionViewModel
+import builders.PaymentsIntoPensionVewModelBuilder.{aPaymentsIntoPensionViewModel, aPaymentsIntoPensionsEmptyViewModel}
 import models.mongo.PensionsCYAModel
 
 object PensionsCYAModelBuilder {
 
-  val anPensionsCYAModel: PensionsCYAModel = PensionsCYAModel(
-    paymentsIntoPension = Some(anPaymentsIntoPensionViewModel)
+  val aPensionsCYAModel: PensionsCYAModel = PensionsCYAModel(
+    paymentsIntoPension = aPaymentsIntoPensionViewModel
+  )
+  val aPensionsCYAEmptyModel: PensionsCYAModel = PensionsCYAModel(
+    paymentsIntoPension = aPaymentsIntoPensionsEmptyViewModel
   )
 }

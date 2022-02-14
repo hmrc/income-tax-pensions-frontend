@@ -16,28 +16,27 @@
 
 package builders
 
-import builders.PensionsCYAModelBuilder.anPensionsCYAModel
-import models.mongo.PensionsUserData
+import builders.PensionsCYAModelBuilder.{aPensionsCYAEmptyModel, aPensionsCYAModel}
+import models.mongo.{PensionsCYAModel, PensionsUserData}
 import models.pension.reliefs.PaymentsIntoPensionViewModel
 
 object PensionsUserDataBuilder {
 
-  val anPensionsUserData: PensionsUserData = PensionsUserData(
+  val aPensionsUserData: PensionsUserData = PensionsUserData(
     sessionId = "sessionId-eb3158c2-0aff-4ce8-8d1b-f2208ace52fe",
     mtdItId = "1234567890",
     nino = "AA123456A",
     taxYear = 2021,
     isPriorSubmission = true,
-    pensions = Some(anPensionsCYAModel)
+    pensions = aPensionsCYAModel
   )
 
-  val anPensionsUserDataEmptyCya: PensionsUserData = anPensionsUserData.copy(pensions = None)
-
+  val anPensionsUserDataEmptyCya: PensionsUserData = aPensionsUserData.copy(pensions = aPensionsCYAEmptyModel)
 
   def pensionsUserDataWithPaymentsIntoPensions(paymentsIntoPension: PaymentsIntoPensionViewModel,
                                                isPriorSubmission: Boolean = true): PensionsUserData = {
-    anPensionsUserData.copy(isPriorSubmission = isPriorSubmission,
-      pensions = Some(anPensionsCYAModel.copy(paymentsIntoPension = Some(paymentsIntoPension)))
+    aPensionsUserData.copy(isPriorSubmission = isPriorSubmission,
+      pensions = aPensionsCYAModel.copy(paymentsIntoPension = paymentsIntoPension)
     )
   }
 }
