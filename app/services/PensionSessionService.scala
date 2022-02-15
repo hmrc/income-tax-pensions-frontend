@@ -53,6 +53,14 @@ class PensionSessionService @Inject()(pensionUserDataRepository: PensionsUserDat
     }
   }
 
+  def getPensionsSessionDataResult(taxYear: Int)(result: Option[PensionsUserData] => Future[Result])
+                                  (implicit user: User[_], request: Request[_]): Future[Result] = {
+    pensionUserDataRepository.find(taxYear).flatMap {
+      case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
+      case Right(value) => result(value)
+    }
+  }
+
   def getAndHandle(taxYear: Int, redirectWhenNoPrior: Boolean = false)
                   (block: (Option[PensionsUserData], Option[AllPensionsData]) => Future[Result])
                   (implicit user: User[_], hc: HeaderCarrier): Future[Result] = {
@@ -80,7 +88,7 @@ class PensionSessionService @Inject()(pensionUserDataRepository: PensionsUserDat
   }
 
   //scalastyle:off
-  def createOrUpdateSessionData[A](cyaModel: PensionsCYAModel, taxYear: Int, isPriorSubmission: Boolean, hasPriorBenefits: Boolean)
+  def createOrUpdateSessionData[A](cyaModel: PensionsCYAModel, taxYear: Int, isPriorSubmission: Boolean)
                                   (onFail: A)(onSuccess: A)(implicit user: User[_], clock: Clock): Future[A] = {
 
     val userData = PensionsUserData(
@@ -89,7 +97,7 @@ class PensionSessionService @Inject()(pensionUserDataRepository: PensionsUserDat
       user.nino,
       taxYear,
       isPriorSubmission,
-      Some(cyaModel),
+      cyaModel,
       clock.now(DateTimeZone.UTC)
     )
 

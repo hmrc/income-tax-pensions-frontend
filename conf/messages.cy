@@ -21,6 +21,8 @@ common.update = Update
 common.use = use
 common.currency.hint = For example, £193.52
 common.help.getHelpWithThisPage = Get help with this page
+common.opensInNewTab = (opens in new tab)
+common.error.errorKey = Error:
 common.status.toDo = To do
 common.status.updated = Updated
 common.pensions.caption = Pensions for 6 April {0} to 5 April {1}
@@ -81,3 +83,17 @@ pensions.pensionSummary.pensionAnnualAllowance = Pension annual allowance
 pensions.pensionSummary.pensionLifetimeAllowance = Pension lifetime allowance
 pensions.pensionSummary.unauthorisedPaymentsFromPensions = Unauthorised payments from pensions
 pensions.pensionSummary.paymentsToOverseasPensions = Payments into overseas pensions
+
+pensions.retirementAnnuityContract.error.noEntry.individual = Select yes if you paid into a retirement annuity contract
+pensions.retirementAnnuityContract.title.individual = Did you pay into a retirement annuity contract?
+pensions.retirementAnnuityContract.paragraph.individual = We only need to know about payments if your pension provider will not claim
+pensions.retirementAnnuityContract.youCanFindThisOut.individual = You can find this out from your pension provider.
+
+pensions.retirementAnnuityContract.error.noEntry.agent = Select yes if your client paid into a retirement annuity contract
+pensions.retirementAnnuityContract.title.agent = Did your client pay into a retirement annuity contract?
+pensions.retirementAnnuityContract.paragraph.agent = We only need to know about payments if your client’s pension provider will not claim
+pensions.retirementAnnuityContract.youCanFindThisOut.agent = You can find this out from your client’s pension provider.
+
+pensions.retirementAnnuityContract.details.title = What is a retirement annuity contract?
+pensions.retirementAnnuityContract.paragraph.link = tax relief
+pensions.retirementAnnuityContract.details.info = Retirement annuity contracts are a type of pension scheme. They were available before 1988 to the self-employed and to workers not offered a workplace pension.

@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,16 +12,21 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@this()
+package builders
 
-@(
-        link: String,
-        messageKey: String,
-        id: Option[String] = None,
-        isExternal: Boolean = false,
-        fullStop: Boolean = false
-)(implicit messages: Messages)
-<a href="@link" class="govuk-link" @id.map(x => s"id=$x") @if(isExternal) { target="_blank"  rel="noopener noreferrer" }>@messages(messageKey)@if(isExternal)(" " + messages("common.opensInNewTab"))</a>@{if(fullStop)messages("common.fullStop")}
+import models.User
+import play.api.mvc.AnyContentAsEmpty
+import play.api.test.FakeRequest
+import builders.PensionsUserDataBuilder.aPensionsUserData
 
+
+object UserBuilder {
+  val aUserRequest: User[AnyContentAsEmpty.type] = User(
+    mtditid =aPensionsUserData.mtdItId,
+    arn = None,
+    nino = aPensionsUserData.nino,
+    sessionId = aPensionsUserData.sessionId,
+    affinityGroup = "affinityGroup")(FakeRequest())
+}

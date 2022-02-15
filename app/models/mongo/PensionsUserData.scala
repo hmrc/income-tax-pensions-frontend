@@ -26,7 +26,7 @@ case class PensionsUserData(sessionId: String,
                               nino: String,
                               taxYear: Int,
                               isPriorSubmission: Boolean,
-                              pensions: Option[PensionsCYAModel] = None,
+                              pensions: PensionsCYAModel,
                               lastUpdated: DateTime = DateTime.now(DateTimeZone.UTC))
 
 object PensionsUserData extends MongoJodaFormats {
@@ -41,7 +41,7 @@ case class EncryptedPensionsUserData(sessionId: String,
                                 nino: String,
                                 taxYear: Int,
                                 isPriorSubmission: Boolean,
-                                pensions: Option[EncryptedPensionCYAModel] = None,
+                                pensions: EncryptedPensionCYAModel,
                                 lastUpdated: DateTime = DateTime.now(DateTimeZone.UTC))
 
 object EncryptedPensionsUserData extends MongoJodaFormats {
