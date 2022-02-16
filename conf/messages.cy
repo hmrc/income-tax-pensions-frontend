@@ -26,6 +26,7 @@ common.error.errorKey = Error:
 common.status.toDo = To do
 common.status.updated = Updated
 common.pensions.caption = Pensions for 6 April {0} to 5 April {1}
+common.paymentsIntoPensions.caption = Payments into pensions for 6 April {0} to 5 April {1}
 common.return.overview.buttonText = Return to overview
 
 common.error.self-assessment.paragraph.1.1 = If the web address is correct or you selected a link or button, you can use
