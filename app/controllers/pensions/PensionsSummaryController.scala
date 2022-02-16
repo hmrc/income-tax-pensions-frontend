@@ -18,24 +18,20 @@ package controllers.pensions
 
 import config.AppConfig
 import controllers.predicates.AuthorisedAction
-import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.pensions.PensionsSummaryView
-
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class PensionsSummaryController @Inject()(
-                                           implicit val appConfig: AppConfig,
-                                           implicit val mcc: MessagesControllerComponents,
-                                           implicit val ec: ExecutionContext,
+class PensionsSummaryController @Inject()(implicit val mcc: MessagesControllerComponents,
+                                           appConfig: AppConfig,
                                            authAction: AuthorisedAction,
                                            pensionSessionService: PensionSessionService,
-                                           pensionSummaryView: PensionsSummaryView) extends FrontendController(mcc) with I18nSupport with Logging {
+                                           pensionSummaryView: PensionsSummaryView) extends FrontendController(mcc) with I18nSupport {
 
   def show(taxYear: Int): Action[AnyContent] = authAction.async { implicit user =>
 
