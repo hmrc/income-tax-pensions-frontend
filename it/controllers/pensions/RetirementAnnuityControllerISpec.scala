@@ -29,7 +29,8 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
+import utils.PageUrls.{fullUrl, retirementAnnuityUrl}
+import utils.{IntegrationTest, PageUrls, PensionsDatabaseHelper, ViewHelpers}
 
 class RetirementAnnuityControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
 
@@ -42,10 +43,6 @@ class RetirementAnnuityControllerISpec extends IntegrationTest with ViewHelpers 
     )
   }
 
-  private def pageUrl(taxYear: Int) = s"$appUrl/$taxYear/payments-into-pensions/no-tax-relief/retirement-annuity"
-
-  private val continueLink = s"/update-and-submit-income-tax-return/pensions/$taxYearEOY/payments-into-pensions/no-tax-relief/retirement-annuity"
-
   object Selectors {
     val captionSelector: String = "#main-content > div > div > form > div > fieldset > legend > header > p"
     val continueButtonSelector: String = "#continue"
@@ -53,7 +50,6 @@ class RetirementAnnuityControllerISpec extends IntegrationTest with ViewHelpers 
     val yesSelector = "#value"
     val noSelector = "#value-no"
     val detailsSelector: String = s"#main-content > div > div > form > details > summary > span"
-    val h2Selector: String = s"#main-content > div > div > form > details > div > h2"
 
     def h3Selector(index: Int): String = s"#main-content > div > div > form > details > div > h3:nth-child($index)"
 
@@ -151,6 +147,10 @@ class RetirementAnnuityControllerISpec extends IntegrationTest with ViewHelpers 
 
   ".show" should {
     userScenarios.foreach { user =>
+
+      import Selectors._
+      import user.commonExpectedResults._
+
       s"language is ${welshTest(user.isWelsh)} and request is from an ${agentTest(user.isAgent)}" should {
         "render the retirement annuity contract question page with no pre-filled radio buttons" which {
           lazy val result: WSResponse = {
@@ -158,13 +158,10 @@ class RetirementAnnuityControllerISpec extends IntegrationTest with ViewHelpers 
             authoriseAgentOrIndividual(user.isAgent)
             val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(retirementAnnuityContractPaymentsQuestion = None)
             insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
-            urlGet(pageUrl(taxYearEOY), user.isWelsh, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+            urlGet(fullUrl(retirementAnnuityUrl(taxYearEOY)), user.isWelsh, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
           }
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
-
-          import Selectors._
-          import user.commonExpectedResults._
 
           "has an OK status" in {
             result.status shouldBe OK
@@ -181,22 +178,19 @@ class RetirementAnnuityControllerISpec extends IntegrationTest with ViewHelpers 
 
           textOnPageCheck(expectedDetailsTitle, detailsSelector)
           textOnPageCheck(expectedDetails, detailsParagraphSelector(1))
-          formPostLinkCheck(continueLink, formSelector)
+          formPostLinkCheck(retirementAnnuityUrl(taxYearEOY), formSelector)
           welshToggleCheck(user.isWelsh)
         }
 
-        "render the retirement annuity contract question page with 'Yes' pre-filled and CYA data exists" which {
+        "render the retirement annuity contract question page with 'Yes' pre-filled when CYA data exists" which {
           lazy val result: WSResponse = {
             dropPensionsDB()
             authoriseAgentOrIndividual(user.isAgent)
             insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel), aUserRequest)
-            urlGet(pageUrl(taxYearEOY), user.isWelsh, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+            urlGet(fullUrl(retirementAnnuityUrl(taxYearEOY)), user.isWelsh, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
           }
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
-
-          import Selectors._
-          import user.commonExpectedResults._
 
           "has an OK status" in {
             result.status shouldBe OK
@@ -213,7 +207,7 @@ class RetirementAnnuityControllerISpec extends IntegrationTest with ViewHelpers 
 
           textOnPageCheck(expectedDetailsTitle, detailsSelector)
           textOnPageCheck(expectedDetails, detailsParagraphSelector(1))
-          formPostLinkCheck(continueLink, formSelector)
+          formPostLinkCheck(retirementAnnuityUrl(taxYearEOY), formSelector)
           welshToggleCheck(user.isWelsh)
         }
 
@@ -223,13 +217,10 @@ class RetirementAnnuityControllerISpec extends IntegrationTest with ViewHelpers 
             authoriseAgentOrIndividual(user.isAgent)
             val paymentsIntoPensionsViewModel = aPaymentsIntoPensionViewModel.copy(retirementAnnuityContractPaymentsQuestion = Some(false))
             insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(paymentsIntoPensionsViewModel)), aUserRequest)
-            urlGet(pageUrl(taxYearEOY), user.isWelsh, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+            urlGet(fullUrl(retirementAnnuityUrl(taxYearEOY)), user.isWelsh, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
           }
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
-
-          import Selectors._
-          import user.commonExpectedResults._
 
           "has an OK status" in {
             result.status shouldBe OK
@@ -246,7 +237,7 @@ class RetirementAnnuityControllerISpec extends IntegrationTest with ViewHelpers 
 
           textOnPageCheck(expectedDetailsTitle, detailsSelector)
           textOnPageCheck(expectedDetails, detailsParagraphSelector(1))
-          formPostLinkCheck(continueLink, formSelector)
+          formPostLinkCheck(retirementAnnuityUrl(taxYearEOY), formSelector)
           welshToggleCheck(user.isWelsh)
         }
       }
@@ -255,6 +246,10 @@ class RetirementAnnuityControllerISpec extends IntegrationTest with ViewHelpers 
 
   ".submit" should {
     userScenarios.foreach { user =>
+
+      import Selectors._
+      import user.commonExpectedResults._
+
       s"language is ${welshTest(user.isWelsh)} and request is from an ${agentTest(user.isAgent)}" should {
 
         "return an error when form is submitted with no entry" which {
@@ -265,7 +260,8 @@ class RetirementAnnuityControllerISpec extends IntegrationTest with ViewHelpers 
             insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(
               aPaymentsIntoPensionViewModel.copy(retirementAnnuityContractPaymentsQuestion = None))), aUserRequest)
             authoriseAgentOrIndividual(user.isAgent)
-            urlPost(pageUrl(taxYearEOY), body = form, welsh = user.isWelsh, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+            urlPost(fullUrl(retirementAnnuityUrl(taxYearEOY)), body = form, welsh = user.isWelsh, follow = false,
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
           }
 
           "has the correct status" in {
@@ -273,8 +269,6 @@ class RetirementAnnuityControllerISpec extends IntegrationTest with ViewHelpers 
           }
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
-          import Selectors._
-          import user.commonExpectedResults._
 
           titleCheck(user.specificExpectedResults.get.expectedErrorTitle)
           h1Check(user.specificExpectedResults.get.expectedHeading)
@@ -287,22 +281,24 @@ class RetirementAnnuityControllerISpec extends IntegrationTest with ViewHelpers 
 
           textOnPageCheck(expectedDetailsTitle, detailsSelector)
           textOnPageCheck(expectedDetails, detailsParagraphSelector(1))
-          formPostLinkCheck(continueLink, formSelector)
+          formPostLinkCheck(retirementAnnuityUrl(taxYearEOY), formSelector)
           welshToggleCheck(user.isWelsh)
           errorSummaryCheck(user.specificExpectedResults.get.expectedErrorMessage, Selectors.yesSelector)
           errorAboveElementCheck(user.specificExpectedResults.get.expectedErrorMessage, Some("value"))
         }
       }
     }
+
     "redirect to Pensions Summary page when user selects 'yes' and not a prior submission" which {
       lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.yes)
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(isAgent = false)
         userDataStub(anIncomeTaxUserData, nino, taxYearEOY)
-        val paymentsIntoPensionsViewModel = aPaymentsIntoPensionViewModel.copy(retirementAnnuityContractPaymentsQuestion = Some(true))
+        val paymentsIntoPensionsViewModel = aPaymentsIntoPensionViewModel.copy(
+          retirementAnnuityContractPaymentsQuestion = Some(false), totalRetirementAnnuityContractPayments = None)
         insertCyaData(pensionsUsersData(isPrior = false, PensionsCYAModel(paymentsIntoPensionsViewModel)), aUserRequest)
-        urlPost(pageUrl(taxYearEOY), body = form, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+        urlPost(fullUrl(retirementAnnuityUrl(taxYearEOY)), body = form, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
       }
 
       "has a SEE_OTHER(303) status" in {
@@ -313,49 +309,33 @@ class RetirementAnnuityControllerISpec extends IntegrationTest with ViewHelpers 
       "updates retirement annuity contract payments question to Some(true)" in {
         lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
         cyaModel.pensions.paymentsIntoPension.retirementAnnuityContractPaymentsQuestion shouldBe Some(true)
+        cyaModel.pensions.paymentsIntoPension.totalRetirementAnnuityContractPayments shouldBe None
       }
     }
 
-    "redirect to Pensions Summary page" when {
-
-      "user selects yes and not a prior submission" which {
-        lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.yes)
-        lazy val result: WSResponse = {
-          dropPensionsDB()
-          authoriseAgentOrIndividual(isAgent = false)
-          userDataStub(anIncomeTaxUserData, nino, taxYearEOY)
-          val paymentsIntoPensionsViewModel = aPaymentsIntoPensionViewModel.copy(retirementAnnuityContractPaymentsQuestion = Some(true))
-          insertCyaData(pensionsUsersData(isPrior = false, PensionsCYAModel(paymentsIntoPensionsViewModel)), aUserRequest)
-          urlPost(pageUrl(taxYearEOY), body = form, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
-        }
-
-        "has a SEE_OTHER(303) status" in {
-          result.status shouldBe SEE_OTHER
-          result.header("location") shouldBe Some(controllers.pensions.routes.PensionsSummaryController.show(taxYearEOY).url)
-        }
-
-        "updates retirement annuity contract payments question to Some(true)" in {
-          lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
-          cyaModel.pensions.paymentsIntoPension.retirementAnnuityContractPaymentsQuestion shouldBe Some(true)
-        }
+    "redirect to Pensions Summary page when user selects 'no' and not a prior submission" which {
+      lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.no)
+      lazy val result: WSResponse = {
+        dropPensionsDB()
+        authoriseAgentOrIndividual(isAgent = false)
+        userDataStub(anIncomeTaxUserData, nino, taxYearEOY)
+        val paymentsIntoPensionsViewModel = aPaymentsIntoPensionViewModel.copy(
+          retirementAnnuityContractPaymentsQuestion = Some(true), totalRetirementAnnuityContractPayments = Some(333.44))
+        insertCyaData(pensionsUsersData(isPrior = false, PensionsCYAModel(paymentsIntoPensionsViewModel)), aUserRequest)
+        urlPost(fullUrl(retirementAnnuityUrl(taxYearEOY)), body = form, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
       }
 
-      "user selects no and it's a prior submission" which {
-        lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.no)
+      "has a SEE_OTHER(303) status" in {
+        result.status shouldBe SEE_OTHER
+        result.header("location") shouldBe Some(controllers.pensions.routes.PensionsSummaryController.show(taxYearEOY).url)
+      }
 
-        lazy val result: WSResponse = {
-          dropPensionsDB()
-          authoriseAgentOrIndividual(isAgent = false)
-          userDataStub(anIncomeTaxUserData, nino, taxYear)
-          insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel), aUserRequest)
-          urlPost(pageUrl(taxYearEOY), body = form, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
-        }
-
-        "has a SEE_OTHER(303) status" in {
-          result.status shouldBe SEE_OTHER
-          result.header("location") shouldBe Some(controllers.pensions.routes.PensionsSummaryController.show(taxYearEOY).url)
-        }
+      "updates retirement annuity contract payments question to Some(false) and deletes the totalRetirementAnnuityContractPayments amount" in {
+        lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
+        cyaModel.pensions.paymentsIntoPension.retirementAnnuityContractPaymentsQuestion shouldBe Some(false)
+        cyaModel.pensions.paymentsIntoPension.totalRetirementAnnuityContractPayments shouldBe None
       }
     }
+
   }
 }

@@ -37,13 +37,13 @@ object PageUrls extends IntegrationTest {
 
   def pensionSummaryUrl(taxYear: Int): String = s"$appUrl/$taxYear/pensions-summary"
 
-
-  //  *****************       Check your answers pages      *****************************
+  //  *****************       payment into pensions pages      ******************************
 
   def checkPaymentsIntoPensionCyaUrl(taxYear: Int): String = s"$appUrl/$taxYear/payments-into-pensions"
 
-  //  *****************       payment into pensions pages      ******************************
+  def pensionTaxReliefNotClaimedUrl(taxYear: Int): String = s"$appUrl/$taxYear/payments-into-pensions/no-tax-relief"
 
+  def retirementAnnuityUrl(taxYear: Int): String = s"$appUrl/$taxYear/payments-into-pensions/no-tax-relief/retirement-annuity"
 
   //scalastyle:on number.of.methods
 
