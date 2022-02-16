@@ -33,14 +33,20 @@
 
 @(form: Form[Boolean], taxYear: Int)(implicit user: User[_], messages: Messages, appConfig: AppConfig)
 
-@titleForUse = @{messages(s"pensions.retirementAnnuityContract.title.${if(user.isAgent) "agent" else "individual"}")}
-@headingForUse = @{titleForUse}
+@titleForUse = @{
+    messages(s"pensions.retirementAnnuityContract.title.${if(user.isAgent) "agent" else "individual"}")
+}
+@headingForUse = @{
+    titleForUse
+}
 
-@hasFormErrors = @{form.hasErrors}
+@hasFormErrors = @{
+    form.hasErrors
+}
 
 @contentHtml = {
     <p class="govuk-body">
-        @messages(s"pensions.retirementAnnuityContract.paragraph.${if(user.isAgent) "agent" else "individual"}") @link("https://www.gov.uk/tax-on-your-private-pension/pension-tax-relief","pensions.retirementAnnuityContract.paragraph.link",Some("retirementAnnuityContract-link"),true,fullStop=true)
+        @messages(s"pensions.retirementAnnuityContract.paragraph.${if(user.isAgent) "agent" else "individual"}") @link("https://www.gov.uk/tax-on-your-private-pension/pension-tax-relief", "pensions.retirementAnnuityContract.paragraph.link", Some("retirementAnnuityContract-link"), true, fullStop = true)
     </p>
     <p class="govuk-body">@messages(s"pensions.retirementAnnuityContract.youCanFindThisOut.${if(user.isAgent) "agent" else "individual"}")</p>
 }
@@ -60,13 +66,12 @@
             content = Some(contentHtml),
             classes = "govuk-!-margin-bottom-4",
             inline = true,
-            subheading = Some(messages("common.pensions.caption", (taxYear - 1).toString, taxYear.toString))
+            subheading = Some(messages("common.paymentsIntoPensions.caption", (taxYear - 1).toString, taxYear.toString))
         )
-        @button()
         @details("pensions.retirementAnnuityContract.details.title", detailsHtml)
+        @button()
     }
 }
-
 @{
     // $COVERAGE-OFF$
 }
