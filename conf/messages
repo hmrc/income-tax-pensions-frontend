@@ -25,7 +25,7 @@ common.help.getHelpWithThisPage = Get help with this page
 common.status.toDo = To do
 common.status.updated = Updated
 common.pensions.caption = Pensions for 6 April {0} to 5 April {1}
-common.paymentsIntoPensions.caption = Payments into pensions for 6 April {0} to 5 April {1}
+common.paymentIntoPensions.caption = Payments into pensions for 6 April {0} to 5 April {1}
 common.return.overview.buttonText = Return to overview
 
 #################       Error messages        ########################################
@@ -84,16 +84,28 @@ pensions.pensionSummary.pensionLifetimeAllowance = Pension lifetime allowance
 pensions.pensionSummary.unauthorisedPaymentsFromPensions = Unauthorised payments from pensions
 pensions.pensionSummary.paymentsToOverseasPensions = Payments into overseas pensions
 
+#pensions retirement annuity Contract
+
 pensions.retirementAnnuityContract.error.noEntry.individual = Select yes if you paid into a retirement annuity contract
 pensions.retirementAnnuityContract.title.individual = Did you pay into a retirement annuity contract?
 pensions.retirementAnnuityContract.paragraph.individual = We only need to know about payments if your pension provider will not claim
 pensions.retirementAnnuityContract.youCanFindThisOut.individual = You can find this out from your pension provider.
-
 pensions.retirementAnnuityContract.error.noEntry.agent = Select yes if your client paid into a retirement annuity contract
 pensions.retirementAnnuityContract.title.agent = Did your client pay into a retirement annuity contract?
 pensions.retirementAnnuityContract.paragraph.agent = We only need to know about payments if your client’s pension provider will not claim
 pensions.retirementAnnuityContract.youCanFindThisOut.agent = You can find this out from your client’s pension provider.
-
 pensions.retirementAnnuityContract.details.title = What is a retirement annuity contract?
 pensions.retirementAnnuityContract.paragraph.link = tax relief
 pensions.retirementAnnuityContract.details.info = Retirement annuity contracts are a type of pension scheme. They were available before 1988 to the self-employed and to workers not offered a workplace pension.
+
+#pensions tax relief not claimed
+
+pensions.pensionsTaxReliefNotClaimed.title = Pensions where tax relief is not claimed
+pensions.pensionsTaxReliefNotClaimed.questionsInfo.individual = These questions are about pensions you pay into where tax relief is not claimed for you.
+pensions.pensionsTaxReliefNotClaimed.questionsInfo.agent = These questions are about pensions your client pays into where tax relief is not claimed for them.
+pensions.pensionsTaxReliefNotClaimed.whereToCheck.individual = You can check your pension statements or contact your pension provider to find the information you need.
+pensions.pensionsTaxReliefNotClaimed.whereToCheck.agent = You can check your client’s pension statements or contact your client’s pension provider to find the information you need.
+pensions.pensionsTaxReliefNotClaimed.subHeading.individual = Did you pay into a pension where tax relief was not claimed for you?
+pensions.pensionsTaxReliefNotClaimed.subHeading.agent = Did your client pay into a pension where tax relief was not claimed for them?
+pensions.pensionsTaxReliefNotClaimed.error.noEntry.individual = Select yes if you paid into a pension where tax relief was not claimed for you
+pensions.pensionsTaxReliefNotClaimed.error.noEntry.agent = Select yes if your client paid into a pension where tax relief was not claimed for them

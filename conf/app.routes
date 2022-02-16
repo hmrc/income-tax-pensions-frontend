@@ -33,3 +33,6 @@ GET         /:taxYear/pensions-summary                                          
 
 GET         /:taxYear/payments-into-pensions/no-tax-relief/retirement-annuity        controllers.pensions.RetirementAnnuityController.show(taxYear: Int)
 POST        /:taxYear/payments-into-pensions/no-tax-relief/retirement-annuity        controllers.pensions.RetirementAnnuityController.submit(taxYear: Int)
+
+GET        /:taxYear/payments-into-pensions/no-tax-relief                            controllers.pensions.PensionsTaxReliefNotClaimedController.show(taxYear: Int)
+POST       /:taxYear/payments-into-pensions/no-tax-relief                            controllers.pensions.PensionsTaxReliefNotClaimedController.submit(taxYear: Int)

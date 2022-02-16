@@ -17,30 +17,28 @@
 package controllers.pensions
 
 import config.{AppConfig, ErrorHandler}
-import controllers.predicates.{AuthorisedAction, InYearAction}
+import controllers.predicates.AuthorisedAction
 import forms.YesNoForm
 import models.User
-import models.mongo.{PensionsCYAModel, PensionsUserData}
+import models.mongo.PensionsCYAModel
 import models.pension.reliefs.PaymentsIntoPensionViewModel
 import play.api.data.Form
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.{Clock, SessionHelper}
-import views.html.pensions.PayIntoRetirementAnnuityContract
-
+import utils.Clock
+import views.html.pensions.PayIntoRetirementAnnuityContractView
 import javax.inject.Inject
 import scala.concurrent.Future
 
-
 class RetirementAnnuityController @Inject()(implicit val cc: MessagesControllerComponents,
                                             authAction: AuthorisedAction,
-                                            payIntoRetirementAnnuityContract: PayIntoRetirementAnnuityContract,
+                                            payIntoRetirementAnnuityContractView: PayIntoRetirementAnnuityContractView,
                                             appConfig: AppConfig,
                                             pensionSessionService: PensionSessionService,
                                             errorHandler: ErrorHandler,
-                                            clock: Clock) extends FrontendController(cc) with I18nSupport with SessionHelper {
+                                            clock: Clock) extends FrontendController(cc) with I18nSupport {
 
 
   def yesNoForm(implicit user: User[_]): Form[Boolean] = YesNoForm.yesNoForm(
@@ -51,25 +49,26 @@ class RetirementAnnuityController @Inject()(implicit val cc: MessagesControllerC
     pensionSessionService.getPensionsSessionDataResult(taxYear) {
       case Some(data) =>
         data.pensions.paymentsIntoPension.retirementAnnuityContractPaymentsQuestion match {
-          case Some(value) => Future.successful(Ok(payIntoRetirementAnnuityContract(
+          case Some(value) => Future.successful(Ok(payIntoRetirementAnnuityContractView(
             yesNoForm.fill(value), taxYear)))
-          case None => Future.successful(Ok(payIntoRetirementAnnuityContract(yesNoForm, taxYear)))
+          case None => Future.successful(Ok(payIntoRetirementAnnuityContractView(yesNoForm, taxYear)))
         }
       case None =>
-        Future.successful(Ok(payIntoRetirementAnnuityContract(yesNoForm, taxYear)))
+        Future.successful(Ok(payIntoRetirementAnnuityContractView(yesNoForm, taxYear)))
     }
   }
 
   def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit user =>
     yesNoForm.bindFromRequest().fold(
-      formWithErrors => Future.successful(BadRequest(payIntoRetirementAnnuityContract(formWithErrors, taxYear))),
+      formWithErrors => Future.successful(BadRequest(payIntoRetirementAnnuityContractView(formWithErrors, taxYear))),
       yesNo => {
         pensionSessionService.getPensionsSessionDataResult(taxYear) {
           data =>
             val pensionsCYAModel: PensionsCYAModel = data.map(_.pensions).getOrElse(PensionsCYAModel(PaymentsIntoPensionViewModel()))
             val viewModel: PaymentsIntoPensionViewModel = pensionsCYAModel.paymentsIntoPension
             val updatedCyaModel: PensionsCYAModel = {
-              pensionsCYAModel.copy(paymentsIntoPension = viewModel.copy(retirementAnnuityContractPaymentsQuestion = Some(yesNo)))
+              pensionsCYAModel.copy(paymentsIntoPension = viewModel.copy(retirementAnnuityContractPaymentsQuestion = Some(yesNo),
+                totalRetirementAnnuityContractPayments = if(yesNo) viewModel.totalRetirementAnnuityContractPayments else None))
             }
             pensionSessionService.createOrUpdateSessionData(
               updatedCyaModel, taxYear, data.exists(_.isPriorSubmission))(errorHandler.internalServerError()) {
