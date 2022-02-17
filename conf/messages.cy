@@ -19,14 +19,14 @@ common.saveAndContinue = Save and continue
 common.change = Change
 common.update = Update
 common.use = use
+common.error.errorKey = Error:
+common.opensInNewTab = (opens in new tab)
 common.currency.hint = For example, £193.52
 common.help.getHelpWithThisPage = Get help with this page
-common.opensInNewTab = (opens in new tab)
-common.error.errorKey = Error:
 common.status.toDo = To do
 common.status.updated = Updated
 common.pensions.caption = Pensions for 6 April {0} to 5 April {1}
-common.paymentIntoPensions.caption = Payments into pensions for 6 April {0} to 5 April {1}
+common.paymentsIntoPensions.caption = Payments into pensions for 6 April {0} to 5 April {1}
 common.return.overview.buttonText = Return to overview
 
 common.error.self-assessment.paragraph.1.1 = If the web address is correct or you selected a link or button, you can use
@@ -85,6 +85,23 @@ pensions.pensionSummary.pensionLifetimeAllowance = Pension lifetime allowance
 pensions.pensionSummary.unauthorisedPaymentsFromPensions = Unauthorised payments from pensions
 pensions.pensionSummary.paymentsToOverseasPensions = Payments into overseas pensions
 
+#pensions relief at source
+
+pensions.reliefAtSourcePensions.title = Relief at source (RAS) pensions
+pensions.reliefAtSource.h2QuestionHeader.individual = Did you pay into a RAS pension?
+pensions.reliefAtSource.h2QuestionHeader.agent = Did your client pay into a RAS pension?
+pensions.reliefAtSource.paragraph.individual = These are pensions you pay into from:
+pensions.reliefAtSource.paragraph.agent = These are pensions your client pay’s into from:
+pensions.reliefAtSource.paragraph.example1.individual = your net income (after tax has been deducted), if you’re employed
+pensions.reliefAtSource.paragraph.example1.agent = your client’s net income (after tax has been deducted), if they’re employed
+pensions.reliefAtSource.paragraph.example2.individual = your taxable income, if you’re self-employed
+pensions.reliefAtSource.paragraph.example2.agent = your client’s taxable income, if they’re self-employed
+pensions.reliefAtSource.pensionProvider.individual = Your pension provider then claims tax relief for you.
+pensions.reliefAtSource.pensionProvider.agent = Your pension provider then claims tax relief for your client.
+pensions.reliefAtSource.checkProvider.individual = You can check with your pension provider whether this applies to you.
+pensions.reliefAtSource.checkProvider.agent = You can check with your pension provider whether this applies to your client.
+pensions.reliefAtSource.error.noEntry.individual = Select yes if you paid into a RAS pension
+pensions.reliefAtSource.error.noEntry.agent = Select yes if your client paid into a RAS pension
 
 #pensions retirement annuity Contract
 

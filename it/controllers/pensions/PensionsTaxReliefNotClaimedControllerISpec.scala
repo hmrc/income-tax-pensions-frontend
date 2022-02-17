@@ -21,7 +21,7 @@ import builders.PaymentsIntoPensionVewModelBuilder.aPaymentsIntoPensionViewModel
 import builders.PensionsCYAModelBuilder._
 import builders.PensionsUserDataBuilder
 import builders.UserBuilder._
-import controllers.pensions.routes._
+import controllers.pensions.routes.RetirementAnnuityController
 import forms.YesNoForm
 import models.mongo.PensionsCYAModel
 import org.jsoup.Jsoup
@@ -31,7 +31,7 @@ import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import utils.PageUrls.{fullUrl, pensionTaxReliefNotClaimedUrl}
-import utils.{IntegrationTest, PageUrls, PensionsDatabaseHelper, ViewHelpers}
+import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 class PensionsTaxReliefNotClaimedControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
 
@@ -286,8 +286,7 @@ class PensionsTaxReliefNotClaimedControllerISpec extends IntegrationTest with Vi
 
           "has a SEE_OTHER(303) status" in {
             result.status shouldBe SEE_OTHER
-            //TODO: go to the Did your client pay into a retirement annuity contract page when implemented
-            result.header("location") shouldBe Some(PensionsSummaryController.show(taxYearEOY).url)
+            result.header("location") shouldBe Some(RetirementAnnuityController.show(taxYearEOY).url)
           }
 
           "updates retirement annuity contract payments question to Some(true)" in {
@@ -311,8 +310,7 @@ class PensionsTaxReliefNotClaimedControllerISpec extends IntegrationTest with Vi
 
           "has a SEE_OTHER(303) status" in {
             result.status shouldBe SEE_OTHER
-            //TODO: go to the Did your client pay into a retirement annuity contract page when implemented
-            result.header("location") shouldBe Some(PensionsSummaryController.show(taxYearEOY).url)
+            result.header("location") shouldBe Some(RetirementAnnuityController.show(taxYearEOY).url)
           }
 
           "updates retirement annuity contract payments question to Some(true)" in {
