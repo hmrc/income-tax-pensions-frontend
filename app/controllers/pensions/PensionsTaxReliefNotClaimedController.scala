@@ -17,6 +17,7 @@
 package controllers.pensions
 
 import config.{AppConfig, ErrorHandler}
+import controllers.pensions.routes.RetirementAnnuityController
 import controllers.predicates.AuthorisedAction
 import forms.YesNoForm
 import models.User
@@ -31,13 +32,12 @@ import utils.Clock
 import views.html.pensions.PensionsTaxReliefNotClaimedView
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 
 @Singleton
 class PensionsTaxReliefNotClaimedController @Inject()(implicit val mcc: MessagesControllerComponents,
                                                       appConfig: AppConfig,
-                                                      ec: ExecutionContext,
                                                       authAction: AuthorisedAction,
                                                       pensionSessionService: PensionSessionService,
                                                       errorHandler: ErrorHandler,
@@ -70,8 +70,7 @@ class PensionsTaxReliefNotClaimedController @Inject()(implicit val mcc: Messages
             }
             pensionSessionService.createOrUpdateSessionData(
               updatedCyaModel, taxYear, data.exists(_.isPriorSubmission))(errorHandler.internalServerError()) {
-              //TODO redirect to Did your client pay into a retirement annuity contract page
-              Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear))
+              Redirect(RetirementAnnuityController.show(taxYear))
             }
         }
 
