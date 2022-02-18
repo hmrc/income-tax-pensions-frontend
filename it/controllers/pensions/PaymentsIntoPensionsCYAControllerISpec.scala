@@ -32,9 +32,11 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
+import play.api.http.Status.{SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import utils.PageUrls.{checkPaymentsIntoPensionCyaUrl, fullUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
+
 
 class PaymentsIntoPensionsCYAControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
 
@@ -44,28 +46,13 @@ class PaymentsIntoPensionsCYAControllerISpec extends IntegrationTest with ViewHe
     rasPensionPaymentQuestion = Some(true)
   )
 
-  object Selectors {
-    val paymentsIntoPensionsLink = "#payments-into-pensions-link"
-    val incomeFromPensionsLink = "#income-from-pensions-link"
-    val pensionAnnualAllowanceLink = "#pension-annual-allowance-link"
-    val pensionLifetimeAllowanceLink = "#pension-lifetime-allowance-link"
-    val unauthorisedPaymentsFromPensionsLink = "#unauthorised-payments-from-pensions-link"
-    val paymentsToOverseasPensionsLink = "#payments-to-overseas-pensions-link"
-    val insetTextSelector = "#main-content > div > div > div.govuk-inset-text"
-    val buttonSelector = "#returnToOverviewPageBtn"
-
-    def summaryListStatusTagSelector(index: Int): String = {
-      s"#pensions-Summary > dl > div:nth-child($index) > dd > strong"
-    }
-  }
-
   object ChangeLinks {
-    val reliefAtSource: String = controllers.pensions.routes.PensionsSummaryController.show(taxYear).url
+    val reliefAtSource: String = controllers.pensions.routes.ReliefAtSourcePensionsController.show(taxYear).url
     val reliefAtSourceAmount: String = controllers.pensions.routes.PensionsSummaryController.show(taxYear).url
     val oneOff: String = controllers.pensions.routes.PensionsSummaryController.show(taxYear).url
     val oneOffAmount: String = controllers.pensions.routes.PensionsSummaryController.show(taxYear).url
-    val pensionsTaxReliefNotClaimed: String = controllers.pensions.routes.PensionsSummaryController.show(taxYear).url
-    val retirementAnnuity: String = controllers.pensions.routes.PensionsSummaryController.show(taxYear).url
+    val pensionsTaxReliefNotClaimed: String = controllers.pensions.routes.PensionsTaxReliefNotClaimedController.show(taxYear).url
+    val retirementAnnuity: String = controllers.pensions.routes.RetirementAnnuityController.show(taxYear).url
     val retirementAnnuityAmount: String = controllers.pensions.routes.PensionsSummaryController.show(taxYear).url
     val workplacePayments: String = controllers.pensions.routes.PensionsSummaryController.show(taxYear).url
     val workplacePaymentsAmount: String = controllers.pensions.routes.PensionsSummaryController.show(taxYear).url
@@ -277,14 +264,12 @@ class PaymentsIntoPensionsCYAControllerISpec extends IntegrationTest with ViewHe
 
             lazy val result: WSResponse = {
               dropPensionsDB()
-              userDataStub(IncomeTaxUserData(None), nino, taxYear)
               authoriseAgentOrIndividual(user.isAgent)
-              insertCyaData(aPensionsUserData.copy(pensions = aPensionsCYAModel.copy(paymentsIntoPension = cyaDataIncomplete)), aUserRequest)
+              userDataStub(IncomeTaxUserData(None), nino, taxYear)
+              insertCyaData(aPensionsUserData.copy(pensions = aPensionsCYAModel.copy(paymentsIntoPension = cyaDataIncomplete), isPriorSubmission = false), aUserRequest)
 
               urlGet(url, welsh = user.isWelsh, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear)))
             }
-
-            implicit def document: () => Document = () => Jsoup.parse(result.body)
 
             "redirects to the correct url" in {
               result

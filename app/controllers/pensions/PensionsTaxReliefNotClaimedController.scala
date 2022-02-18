@@ -63,11 +63,18 @@ class PensionsTaxReliefNotClaimedController @Inject()(implicit val mcc: Messages
       yesNo => {
         pensionSessionService.getPensionsSessionDataResult(taxYear) {
           data =>
+            println(s"\n\nCYA: ${data}\n\n")
             val pensionsCYAModel: PensionsCYAModel = data.map(_.pensions).getOrElse(PensionsCYAModel(PaymentsIntoPensionViewModel()))
             val viewModel: PaymentsIntoPensionViewModel = pensionsCYAModel.paymentsIntoPension
-            val updatedCyaModel: PensionsCYAModel = {
-              pensionsCYAModel.copy(paymentsIntoPension = viewModel.copy(pensionTaxReliefNotClaimedQuestion = Some(yesNo)))
-            }
+            val updatedCyaModel: PensionsCYAModel = {pensionsCYAModel.copy(
+              paymentsIntoPension = viewModel.copy(
+                pensionTaxReliefNotClaimedQuestion = Some(yesNo),
+                retirementAnnuityContractPaymentsQuestion = if(yesNo) viewModel.retirementAnnuityContractPaymentsQuestion else None,
+                totalRetirementAnnuityContractPayments = if(yesNo) viewModel.totalRetirementAnnuityContractPayments else None,
+                workplacePensionPaymentsQuestion = if(yesNo) viewModel.workplacePensionPaymentsQuestion else None,
+                totalWorkplacePensionPayments = if(yesNo) viewModel.totalWorkplacePensionPayments else None
+              )
+            )}
             pensionSessionService.createOrUpdateSessionData(
               updatedCyaModel, taxYear, data.exists(_.isPriorSubmission))(errorHandler.internalServerError()) {
               Redirect(RetirementAnnuityController.show(taxYear))

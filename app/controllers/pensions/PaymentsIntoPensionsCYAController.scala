@@ -46,6 +46,7 @@ class PaymentsIntoPensionsCYAController @Inject()(implicit val cc: MessagesContr
 
   def show(taxYear: Int): Action[AnyContent] = authAction.async { implicit user =>
     pensionSessionService.getAndHandle(taxYear) { (cya, prior) =>
+      println(s"\n\nCYA: $cya\nPRIOR: $prior\n\n")
       (cya.map(_.pensions), prior) match {
         case (Some(cyaData), _) =>
           if(cyaData.paymentsIntoPension.isFinished) {
