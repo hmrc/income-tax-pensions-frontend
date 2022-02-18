@@ -63,7 +63,6 @@ class PensionsTaxReliefNotClaimedController @Inject()(implicit val mcc: Messages
       yesNo => {
         pensionSessionService.getPensionsSessionDataResult(taxYear) {
           data =>
-            println(s"\n\nCYA: ${data}\n\n")
             val pensionsCYAModel: PensionsCYAModel = data.map(_.pensions).getOrElse(PensionsCYAModel(PaymentsIntoPensionViewModel()))
             val viewModel: PaymentsIntoPensionViewModel = pensionsCYAModel.paymentsIntoPension
             val updatedCyaModel: PensionsCYAModel = {pensionsCYAModel.copy(
