@@ -46,7 +46,6 @@ class PaymentsIntoPensionsCYAController @Inject()(implicit val cc: MessagesContr
 
   def show(taxYear: Int): Action[AnyContent] = authAction.async { implicit user =>
     pensionSessionService.getAndHandle(taxYear) { (cya, prior) =>
-      println(s"\n\nCYA: $cya\nPRIOR: $prior\n\n")
       (cya.map(_.pensions), prior) match {
         case (Some(cyaData), _) =>
           if(cyaData.paymentsIntoPension.isFinished) {
@@ -69,7 +68,7 @@ class PaymentsIntoPensionsCYAController @Inject()(implicit val cc: MessagesContr
   def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit user =>
     pensionSessionService.getAndHandle(taxYear) { (cya, prior) =>
       cya.fold(
-        Future.successful(Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear)))
+        Future.successful(Redirect(appConfig.incomeTaxSubmissionOverviewUrl(taxYear)))
       ) { model =>
 
         //TODO - build submission model from cya data and submit to DES if cya data doesn't match prior data

@@ -69,11 +69,11 @@
 
 @layout(pageTitle = headingForUse, taxYear = Some(taxYear)) {
 
-    @heading(headingForUse, Some(messages("common.pensions.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-5")
+    @heading(headingForUse, Some(messages("common.paymentsIntoPensions.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-5")
 
     @summaryList(summaryRows.flatten)
 
-    @csrfForm(controllers.pensions.routes.PaymentsIntoPensionsCYAController.show(taxYear)) {
+    @csrfForm(controllers.pensions.routes.PaymentsIntoPensionsCYAController.submit(taxYear)) {
         @button("common.saveAndContinue")
     }
 }

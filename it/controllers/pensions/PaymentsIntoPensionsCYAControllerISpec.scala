@@ -18,6 +18,7 @@ package controllers.pensions
 
 import builders.AllPensionsDataBuilder.anAllPensionsData
 import builders.IncomeTaxUserDataBuilder.anIncomeTaxUserData
+import builders.PaymentsIntoPensionVewModelBuilder.aPaymentsIntoPensionViewModel
 import builders.PensionChargesBuilder.anPensionCharges
 import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import builders.PensionsUserDataBuilder.aPensionsUserData
@@ -25,14 +26,14 @@ import builders.ReliefsBuilder.anReliefs
 import builders.StateBenefitsModelBuilder.anStateBenefitsModel
 import builders.UserBuilder.aUserRequest
 import models.IncomeTaxUserData
-import models.mongo.PensionsUserData
+import models.mongo.{PensionsCYAModel, PensionsUserData}
 import models.pension.AllPensionsData
 import models.pension.reliefs.PaymentsIntoPensionViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
-import play.api.http.Status.{SEE_OTHER}
+import play.api.http.Status.SEE_OTHER
 import play.api.libs.ws.WSResponse
 import utils.PageUrls.{checkPaymentsIntoPensionCyaUrl, fullUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
@@ -44,6 +45,11 @@ class PaymentsIntoPensionsCYAControllerISpec extends IntegrationTest with ViewHe
 
   val cyaDataIncomplete = PaymentsIntoPensionViewModel(
     rasPensionPaymentQuestion = Some(true)
+  )
+
+  val cyaDataMinimal = PaymentsIntoPensionViewModel(
+    rasPensionPaymentQuestion = Some(false),
+    pensionTaxReliefNotClaimedQuestion = Some(false)
   )
 
   object ChangeLinks {
@@ -94,7 +100,7 @@ class PaymentsIntoPensionsCYAControllerISpec extends IntegrationTest with ViewHe
   }
 
   object CommonExpectedEN extends CommonExpectedResults {
-    def expectedCaption(taxYear: Int): String = s"Pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
+    def expectedCaption(taxYear: Int): String = s"Payments into pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
 
     val yes = "Yes"
     val no = "No"
@@ -124,7 +130,7 @@ class PaymentsIntoPensionsCYAControllerISpec extends IntegrationTest with ViewHe
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    def expectedCaption(taxYear: Int): String = s"Pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
+    def expectedCaption(taxYear: Int): String = s"Payments into pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
 
     val yes = "Yes"
     val no = "No"
@@ -214,67 +220,137 @@ class PaymentsIntoPensionsCYAControllerISpec extends IntegrationTest with ViewHe
 
       s"language is ${welshTest(user.isWelsh)} and request is from an ${agentTest(user.isAgent)}" should {
 
-        "render the page with a full CYA model" which {
+        "render the page with a full CYA model" when {
+
+          "there is no CYA data and a CYA model is generated from prior data" which {
+            lazy val result: WSResponse = {
+              dropPensionsDB()
+              userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYear)
+              authoriseAgentOrIndividual(user.isAgent)
+              urlGet(url, welsh = user.isWelsh, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear)))
+            }
+
+            implicit def document: () => Document = () => Jsoup.parse(result.body)
+
+            import user.commonExpectedResults._
+
+            titleCheck(user.specificExpectedResults.get.expectedTitle)
+            h1Check(user.specificExpectedResults.get.expectedH1)
+            captionCheck(user.commonExpectedResults.expectedCaption(taxYear))
+
+            //noinspection ScalaStyle
+            cyaRowCheck(reliefAtSource, yes, ChangeLinks.reliefAtSource, reliefAtSourceHidden, 1)
+            cyaRowCheck(reliefAtSourceAmount,s"${moneyContent(anReliefs.regularPensionContributions.get)}",
+              ChangeLinks.reliefAtSourceAmount, reliefAtSourceAmountHidden, 2)
+            cyaRowCheck(oneOff, yes, ChangeLinks.oneOff, oneOffHidden, 3)
+            cyaRowCheck(oneOffAmount,s"${moneyContent(anReliefs.oneOffPensionContributionsPaid.get)}",
+              ChangeLinks.oneOffAmount, oneOffAmountHidden, 4)
+            cyaRowCheck(pensionsTaxReliefNotClaimed, yes, ChangeLinks.pensionsTaxReliefNotClaimed, pensionsTaxReliefNotClaimedHidden, 5)
+            cyaRowCheck(retirementAnnuity, yes, ChangeLinks.retirementAnnuity, retirementAnnuityHidden, 6)
+            cyaRowCheck(retirementAnnuityAmount,s"${moneyContent(anReliefs.retirementAnnuityPayments.get)}",
+              ChangeLinks.retirementAnnuityAmount, retirementAnnuityAmountHidden, 7)
+            cyaRowCheck(workplacePayments, yes, ChangeLinks.workplacePayments, workplacePaymentsHidden, 8)
+            cyaRowCheck(workplacePaymentsAmount,s"${moneyContent(anReliefs.paymentToEmployersSchemeNoTaxRelief.get)}",
+              ChangeLinks.workplacePaymentsAmount, workplacePaymentsAmountHidden, 9)
+
+            buttonCheck(saveAndContinue)
+
+            welshToggleCheck(user.isWelsh)
+          }
+
+          "CYA data is finished" which {
+            lazy val result: WSResponse = {
+              dropPensionsDB()
+              insertCyaData(aPensionsUserData.copy(taxYear = taxYear), aUserRequest)
+              authoriseAgentOrIndividual(user.isAgent)
+              urlGet(url, welsh = user.isWelsh, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear)))
+            }
+
+            implicit def document: () => Document = () => Jsoup.parse(result.body)
+
+            import user.commonExpectedResults._
+
+            titleCheck(user.specificExpectedResults.get.expectedTitle)
+            h1Check(user.specificExpectedResults.get.expectedH1)
+            captionCheck(user.commonExpectedResults.expectedCaption(taxYear))
+
+            //noinspection ScalaStyle
+            cyaRowCheck(reliefAtSource, yes, ChangeLinks.reliefAtSource, reliefAtSourceHidden, 1)
+            cyaRowCheck(reliefAtSourceAmount,s"${moneyContent(aPaymentsIntoPensionViewModel.totalRASPaymentsAndTaxRelief.get)}",
+              ChangeLinks.reliefAtSourceAmount, reliefAtSourceAmountHidden, 2)
+            cyaRowCheck(oneOff, yes, ChangeLinks.oneOff, oneOffHidden, 3)
+            cyaRowCheck(oneOffAmount,s"${moneyContent(aPaymentsIntoPensionViewModel.totalOneOffRasPaymentPlusTaxRelief.get)}",
+              ChangeLinks.oneOffAmount, oneOffAmountHidden, 4)
+            cyaRowCheck(pensionsTaxReliefNotClaimed, yes, ChangeLinks.pensionsTaxReliefNotClaimed, pensionsTaxReliefNotClaimedHidden, 5)
+            cyaRowCheck(retirementAnnuity, yes, ChangeLinks.retirementAnnuity, retirementAnnuityHidden, 6)
+            cyaRowCheck(retirementAnnuityAmount,s"${moneyContent(aPaymentsIntoPensionViewModel.totalRetirementAnnuityContractPayments.get)}",
+              ChangeLinks.retirementAnnuityAmount, retirementAnnuityAmountHidden, 7)
+            cyaRowCheck(workplacePayments, yes, ChangeLinks.workplacePayments, workplacePaymentsHidden, 8)
+            cyaRowCheck(workplacePaymentsAmount,s"${moneyContent(aPaymentsIntoPensionViewModel.totalWorkplacePensionPayments.get)}",
+              ChangeLinks.workplacePaymentsAmount, workplacePaymentsAmountHidden, 9)
+
+            buttonCheck(saveAndContinue)
+
+            welshToggleCheck(user.isWelsh)
+          }
+        }
+
+        "render the page with a minimal CYA view" which {
+
           lazy val result: WSResponse = {
             dropPensionsDB()
-            userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYear)
+            insertCyaData(aPensionsUserData.copy(pensions = PensionsCYAModel(cyaDataMinimal), taxYear = taxYear), aUserRequest)
             authoriseAgentOrIndividual(user.isAgent)
             urlGet(url, welsh = user.isWelsh, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear)))
           }
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          import user.commonExpectedResults._
-
-          titleCheck(user.specificExpectedResults.get.expectedTitle)
-          h1Check(user.specificExpectedResults.get.expectedH1)
-          captionCheck(user.commonExpectedResults.expectedCaption(taxYear))
+          import user.commonExpectedResults.{no => answerNo, _}
 
           //noinspection ScalaStyle
-          cyaRowCheck(reliefAtSource, yes, ChangeLinks.reliefAtSource, reliefAtSourceHidden, 1)
-          cyaRowCheck(reliefAtSourceAmount,s"${moneyContent(anReliefs.regularPensionContributions.get)}",
-            ChangeLinks.reliefAtSourceAmount, reliefAtSourceAmountHidden, 2)
-          cyaRowCheck(oneOff, yes, ChangeLinks.oneOff, oneOffHidden, 3)
-          cyaRowCheck(oneOffAmount,s"${moneyContent(anReliefs.oneOffPensionContributionsPaid.get)}",
-            ChangeLinks.oneOffAmount, oneOffAmountHidden, 4)
-          cyaRowCheck(pensionsTaxReliefNotClaimed, yes, ChangeLinks.pensionsTaxReliefNotClaimed, pensionsTaxReliefNotClaimedHidden, 5)
-          cyaRowCheck(retirementAnnuity, yes, ChangeLinks.retirementAnnuity, retirementAnnuityHidden, 6)
-          cyaRowCheck(retirementAnnuityAmount,s"${moneyContent(anReliefs.retirementAnnuityPayments.get)}",
-            ChangeLinks.retirementAnnuityAmount, retirementAnnuityAmountHidden, 7)
-          cyaRowCheck(workplacePayments, yes, ChangeLinks.workplacePayments, workplacePaymentsHidden, 8)
-          cyaRowCheck(workplacePaymentsAmount,s"${moneyContent(anReliefs.paymentToEmployersSchemeNoTaxRelief.get)}",
-            ChangeLinks.workplacePaymentsAmount, workplacePaymentsAmountHidden, 9)
+          cyaRowCheck(reliefAtSource, answerNo, ChangeLinks.reliefAtSource, reliefAtSourceHidden, 1)
+          cyaRowCheck(pensionsTaxReliefNotClaimed, answerNo, ChangeLinks.pensionsTaxReliefNotClaimed, pensionsTaxReliefNotClaimedHidden, 2)
 
           buttonCheck(saveAndContinue)
 
           welshToggleCheck(user.isWelsh)
         }
 
-        "render the page with an almost empty CYA model" which {
+        "redirect to the summary page when the CYA data is incomplete" should {
 
+          lazy val result: WSResponse = {
+            dropPensionsDB()
+            authoriseAgentOrIndividual(user.isAgent)
+            userDataStub(IncomeTaxUserData(None), nino, taxYear)
+            insertCyaData(aPensionsUserData.copy(pensions = aPensionsCYAModel.copy(paymentsIntoPension = cyaDataIncomplete), taxYear = taxYear), aUserRequest)
+
+            urlGet(url, welsh = user.isWelsh, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear)))
+          }
+
+          "the status is SEE OTHER" in {
+            result.status shouldBe SEE_OTHER
+          }
+
+          "redirects to the pensions summary page" in {
+            result.headers("Location").head shouldBe controllers.pensions.routes.PensionsSummaryController.show(taxYear).url
+          }
         }
 
-        "return a minimal CYA view" which {
+        "redirect to the overview page when there is no CYA or prior data" when {
 
-        }
+          lazy val result: WSResponse = {
+            dropPensionsDB()
+            authoriseAgentOrIndividual(user.isAgent)
+            urlGet(url, welsh = user.isWelsh, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear)))
+          }
 
-        "redirect to the summary page" when {
+          "the status is SEE OTHER" in {
+            result.status shouldBe SEE_OTHER
+          }
 
-          "the CYA data is incomplete" should {
-
-            lazy val result: WSResponse = {
-              dropPensionsDB()
-              authoriseAgentOrIndividual(user.isAgent)
-              userDataStub(IncomeTaxUserData(None), nino, taxYear)
-              insertCyaData(aPensionsUserData.copy(pensions = aPensionsCYAModel.copy(paymentsIntoPension = cyaDataIncomplete), isPriorSubmission = false), aUserRequest)
-
-              urlGet(url, welsh = user.isWelsh, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear)))
-            }
-
-            "redirects to the correct url" in {
-              result
-              verifyGet(controllers.pensions.routes.PensionsSummaryController.show(taxYear).url)
-            }
+          "redirects to the pensions summary page" in {
+            result.headers("Location").head shouldBe appConfig.incomeTaxSubmissionOverviewUrl(taxYear)
           }
         }
       }
@@ -285,16 +361,70 @@ class PaymentsIntoPensionsCYAControllerISpec extends IntegrationTest with ViewHe
 
     "redirect to the overview page" when {
 
-      "there is no CYA data available" in {
+      "there is no CYA data available" should {
 
+        val form = Map[String, String]()
+
+        lazy val result: WSResponse = {
+          dropPensionsDB()
+          authoriseAgentOrIndividual(isAgent = false)
+          urlPost(url, form, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear)))
+        }
+
+        "have the status SEE OTHER" in {
+          result.status shouldBe SEE_OTHER
+        }
+
+        "redirects to the overview page" in {
+          result.headers("Location").head shouldBe appConfig.incomeTaxSubmissionOverviewUrl(taxYear)
+        }
+      }
+    }
+
+    "redirect to the summary page" when {
+
+      "the CYA data differs from the prior data" should {
+
+        val form = Map[String, String]()
+
+        lazy val result: WSResponse = {
+          dropPensionsDB()
+          userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYear)
+          insertCyaData(aPensionsUserData.copy(pensions = aPensionsCYAModel.copy(paymentsIntoPension = cyaDataIncomplete), taxYear = taxYear), aUserRequest)
+          authoriseAgentOrIndividual(isAgent = false)
+          urlPost(url, form, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear)))
+        }
+
+        "the status is SEE OTHER" in {
+          result.status shouldBe SEE_OTHER
+        }
+
+        "redirects to the summary page" in {
+          result.headers("Location").head shouldBe controllers.pensions.routes.PensionsSummaryController.show(taxYear).url
+        }
       }
 
-      "the request goes through successfully" in {
+      "the user makes no changes and no submission to DES is made" should {
 
-      }
+        val unchangedModel = PaymentsIntoPensionViewModel(Some(true), Some(100.00), Some(true), Some(200.00), Some(true), Some(true), Some(300.00), Some(true), Some(400.00))
 
-      "the user makes no changes and no submission to DES is made" in {
+        val form = Map[String, String]()
 
+        lazy val result: WSResponse = {
+          dropPensionsDB()
+          userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYear)
+          insertCyaData(aPensionsUserData.copy(pensions = aPensionsCYAModel.copy(paymentsIntoPension = unchangedModel), taxYear = taxYear), aUserRequest)
+          authoriseAgentOrIndividual(isAgent = false)
+          urlPost(url, form, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear)))
+        }
+
+        "the status is SEE OTHER" in {
+          result.status shouldBe SEE_OTHER
+        }
+
+        "redirects to the summary page" in {
+          result.headers("Location").head shouldBe controllers.pensions.routes.PensionsSummaryController.show(taxYear).url
+        }
       }
     }
 
