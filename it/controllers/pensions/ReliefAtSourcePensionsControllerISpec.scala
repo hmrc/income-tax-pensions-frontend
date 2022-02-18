@@ -91,7 +91,7 @@ class ReliefAtSourcePensionsControllerISpec extends IntegrationTest with BeforeA
   object ExpectedAgentEN extends SpecificExpectedResults {
     val expectedH2 = "Did your client pay into a RAS pension?"
     val expectedError = "Select yes if your client paid into a RAS pension"
-    val expectedParagraph = "These are pensions your client pay’s into from:"
+    val expectedParagraph = "These are pensions your client pays into from:"
     val expectedExample1 = "your client’s net income (after tax has been deducted), if they’re employed"
     val expectedExample2 = "your client’s taxable income, if they’re self-employed"
     val expectedPensionProviderText = "Your pension provider then claims tax relief for your client."
@@ -101,7 +101,7 @@ class ReliefAtSourcePensionsControllerISpec extends IntegrationTest with BeforeA
   object ExpectedAgentCY extends SpecificExpectedResults {
     val expectedH2 = "Did your client pay into a RAS pension?"
     val expectedError = "Select yes if your client paid into a RAS pension"
-    val expectedParagraph = "These are pensions your client pay’s into from:"
+    val expectedParagraph = "These are pensions your client pays into from:"
     val expectedExample1 = "your client’s net income (after tax has been deducted), if they’re employed"
     val expectedExample2 = "your client’s taxable income, if they’re self-employed"
     val expectedPensionProviderText = "Your pension provider then claims tax relief for your client."
