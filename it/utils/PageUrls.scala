@@ -21,7 +21,7 @@ object PageUrls extends IntegrationTest {
 
   def fullUrl(endOfUrl: String): String = s"http://localhost:$port" + endOfUrl
 
-  override lazy val appUrl = "/update-and-submit-income-tax-return/pensions"
+  override val appUrl = "/update-and-submit-income-tax-return/pensions"
 
   //  *****************       Overview page      *****************************************
 
@@ -39,7 +39,7 @@ object PageUrls extends IntegrationTest {
 
   //  *****************       payment into pensions pages      ******************************
 
-  def checkPaymentsIntoPensionCyaUrl(taxYear: Int): String = s"$appUrl/$taxYear/payments-into-pensions"
+  def checkPaymentsIntoPensionCyaUrl(taxYear: Int): String = s"$appUrl/$taxYear/payments-into-pensions/check-payments-into-pensions"
 
   def pensionTaxReliefNotClaimedUrl(taxYear: Int): String = s"$appUrl/$taxYear/payments-into-pensions/no-tax-relief"
 
