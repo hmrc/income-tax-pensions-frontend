@@ -44,7 +44,7 @@
     <p class="govuk-body">@messages(s"pensions.reliefAtSource.pensionProvider.${if(user.isAgent) "agent" else "individual"}")</p>
     <p class="govuk-body">@messages(s"pensions.reliefAtSource.checkProvider.${if(user.isAgent) "agent" else "individual"}")</p>
 
-    <h2 class="govuk-fieldset__legend--m">@messages(s"pensions.reliefAtSource.h2QuestionHeader.${if(user.isAgent) "agent" else "individual"}")</h2>
+    <h2 class="govuk-heading-m">@messages(s"pensions.reliefAtSource.h2QuestionHeader.${if(user.isAgent) "agent" else "individual"}")</h2>
 }
 @layout(pageTitle = titleForUse, taxYear = Some(taxYear), hasErrors = hasFormErrors, isAgent = user.isAgent) {
 
@@ -55,7 +55,7 @@
             form = form,
             heading = titleForUse,
             content = Some(contentHtml),
-            classes = "govuk-!-margin-bottom-4",
+            classes = "govuk-!-margin-bottom-0",
             inline = true,
             subheading = Some(messages("common.paymentsIntoPensions.caption", (taxYear - 1).toString, taxYear.toString))
         )

@@ -41,7 +41,7 @@
 
         <p class="govuk-body">@{messages(s"pensions.pensionsTaxReliefNotClaimed.questionsInfo.${if(user.isAgent) "agent" else "individual"}")}</p>
         <p class="govuk-body">@{messages(s"pensions.pensionsTaxReliefNotClaimed.whereToCheck.${if(user.isAgent) "agent" else "individual"}")}</p>
-        <h2>@{messages(s"pensions.pensionsTaxReliefNotClaimed.subHeading.${if(user.isAgent) "agent" else "individual"}")}</h2>
+        <h2 class="govuk-heading-m">@{messages(s"pensions.pensionsTaxReliefNotClaimed.subHeading.${if(user.isAgent) "agent" else "individual"}")}</h2>
     }
 
 
@@ -54,7 +54,7 @@
             form = form,
             heading = titleForUse,
             content = Some(contentHtml),
-            classes = "govuk-!-margin-bottom-4",
+            classes = "govuk-!-margin-bottom-0",
             inline = true,
             subheading = Some(messages("common.paymentsIntoPensions.caption", (taxYear - 1).toString, taxYear.toString))
         )
