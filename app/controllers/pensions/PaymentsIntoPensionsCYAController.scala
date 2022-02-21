@@ -51,7 +51,8 @@ class PaymentsIntoPensionsCYAController @Inject()(implicit val cc: MessagesContr
           if(cyaData.paymentsIntoPension.isFinished) {
             Future.successful(Ok(view(taxYear, cyaData.paymentsIntoPension)))
           } else {
-            Future.successful(Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear)))
+            //TODO - redirect to first unanswered question
+            Future.successful(Redirect(controllers.pensions.routes.ReliefAtSourcePensionsController.show(taxYear)))
           }
         case (None, Some(priorData)) =>
           val cyaModel = generateCyaFromPrior(priorData)
@@ -60,7 +61,7 @@ class PaymentsIntoPensionsCYAController @Inject()(implicit val cc: MessagesContr
             errorHandler.internalServerError())(
             Ok(view(taxYear, cyaModel.paymentsIntoPension))
           )
-        case _ => Future.successful(Redirect(appConfig.incomeTaxSubmissionOverviewUrl(taxYear)))
+        case _ => Future.successful(Redirect(controllers.pensions.routes.ReliefAtSourcePensionsController.show(taxYear)))
       }
     }
   }

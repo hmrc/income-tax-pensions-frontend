@@ -317,7 +317,7 @@ class PaymentsIntoPensionsCYAControllerISpec extends IntegrationTest with ViewHe
           welshToggleCheck(user.isWelsh)
         }
 
-        "redirect to the summary page when the CYA data is incomplete" should {
+        "redirect to the first unanswered question when the CYA data is incomplete" should {
 
           lazy val result: WSResponse = {
             dropPensionsDB()
@@ -333,11 +333,11 @@ class PaymentsIntoPensionsCYAControllerISpec extends IntegrationTest with ViewHe
           }
 
           "redirects to the pensions summary page" in {
-            result.headers("Location").head shouldBe controllers.pensions.routes.PensionsSummaryController.show(taxYear).url
+            result.headers("Location").head shouldBe controllers.pensions.routes.ReliefAtSourcePensionsController.show(taxYear).url
           }
         }
 
-        "redirect to the overview page when there is no CYA or prior data" when {
+        "redirect to the first page in the journey when there is no CYA or prior data" when {
 
           lazy val result: WSResponse = {
             dropPensionsDB()
@@ -350,7 +350,7 @@ class PaymentsIntoPensionsCYAControllerISpec extends IntegrationTest with ViewHe
           }
 
           "redirects to the pensions summary page" in {
-            result.headers("Location").head shouldBe appConfig.incomeTaxSubmissionOverviewUrl(taxYear)
+            result.headers("Location").head shouldBe controllers.pensions.routes.ReliefAtSourcePensionsController.show(taxYear).url
           }
         }
       }
