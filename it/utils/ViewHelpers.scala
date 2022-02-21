@@ -214,7 +214,10 @@ trait ViewHelpers { self: AnyWordSpec with Matchers with WireMockHelper =>
     }
   }
 
-  def inputFieldValueCheck(value: String, selector: String)(implicit document: () => Document): Unit = {
+  def inputFieldValueCheck(name: String, selector: String, value: String)(implicit document: () => Document): Unit = {
+    s"'$selector' has a name of '$name'" in {
+      document().select(selector).attr("name") shouldBe name
+    }
     s"'$selector' has a value of '$value'" in {
       document().select(selector).attr("value") shouldBe value
     }

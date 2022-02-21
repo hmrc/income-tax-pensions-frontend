@@ -17,7 +17,7 @@
 package controllers.pensions
 
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.routes.{PensionsSummaryController, PensionsTaxReliefNotClaimedController}
+import controllers.pensions.routes.{ReliefAtSourcePaymentsAndTaxReliefAmountController, PensionsTaxReliefNotClaimedController}
 import controllers.predicates.AuthorisedAction
 import forms.YesNoForm
 import models.User
@@ -63,17 +63,18 @@ class ReliefAtSourcePensionsController @Inject()(implicit val cc: MessagesContro
           val viewModel = pensionsCya.paymentsIntoPension
 
           val updatedCyaModel = {
-            if (yesNo) {
-              pensionsCya.copy(paymentsIntoPension = viewModel.copy(rasPensionPaymentQuestion = Some(true)))
-            } else {
-              pensionsCya.copy(paymentsIntoPension = viewModel.copy(rasPensionPaymentQuestion = Some(false), totalRASPaymentsAndTaxRelief = None))
-            }
+            pensionsCya.copy(
+              paymentsIntoPension = viewModel.copy(
+                rasPensionPaymentQuestion = Some(yesNo),
+                totalRASPaymentsAndTaxRelief = if(yesNo) viewModel.totalRASPaymentsAndTaxRelief else None
+              )
+            )
           }
+
           pensionSessionService.createOrUpdateSessionData(
             updatedCyaModel, taxYear, optData.exists(_.isPriorSubmission))(errorHandler.internalServerError()) {
             if (yesNo) {
-              //TODO redirect to ras amount page
-              Redirect(PensionsSummaryController.show(taxYear))
+              Redirect(ReliefAtSourcePaymentsAndTaxReliefAmountController.show(taxYear))
             } else {
               Redirect(PensionsTaxReliefNotClaimedController.show(taxYear))
             }
