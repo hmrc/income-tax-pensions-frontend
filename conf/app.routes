@@ -39,3 +39,6 @@ POST        /:taxYear/payments-into-pensions/no-tax-relief                      
 
 GET         /:taxYear/payments-into-pensions/relief-at-source                        controllers.pensions.ReliefAtSourcePensionsController.show(taxYear: Int)
 POST        /:taxYear/payments-into-pensions/relief-at-source                        controllers.pensions.ReliefAtSourcePensionsController.submit(taxYear: Int)
+
+GET         /:taxYear/payments-into-pensions/relief-at-source-amount                 controllers.pensions.ReliefAtSourcePaymentsAndTaxReliefAmountController.show(taxYear: Int)
+POST        /:taxYear/payments-into-pensions/relief-at-source-amount                 controllers.pensions.ReliefAtSourcePaymentsAndTaxReliefAmountController.submit(taxYear: Int)

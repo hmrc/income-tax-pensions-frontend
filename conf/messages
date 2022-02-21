@@ -128,3 +128,16 @@ pensions.pensionsTaxReliefNotClaimed.subHeading.individual = Did you pay into a 
 pensions.pensionsTaxReliefNotClaimed.subHeading.agent = Did your client pay into a pension where tax relief was not claimed for them?
 pensions.pensionsTaxReliefNotClaimed.error.noEntry.individual = Select yes if you paid into a pension where tax relief was not claimed for you
 pensions.pensionsTaxReliefNotClaimed.error.noEntry.agent = Select yes if your client paid into a pension where tax relief was not claimed for them
+
+#relief at source total payment amount
+
+pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.title = Total payments into relief at source (RAS) pensions, plus basic rate tax relief
+pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.error.noEntry = Enter the total paid into RAS pensions, plus basic rate tax relief
+pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.error.invalidFormat = Enter the total paid into RAS pensions, plus basic rate tax relief, in the correct format
+pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.error.overMaximum = The total paid into RAS pensions, plus basic rate tax relief, must be less than £100,000,000,000
+
+pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.whereToFind.individual = You can find the total amount you paid into RAS pensions, plus tax relief, on the pension certificate or receipt from your administrator.
+pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.whereToFind.agent = You can find the total amount your client paid into RAS pensions, plus tax relief, on the pension certificate or receipt from your administrator.
+pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.howToWorkOut = To work it out yourself, divide the amount you actually paid by 80 and multiply the result by 100.
+pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.calculationHeading = Example calculation
+pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.exampleCalculation = Emma paid £500 into her pension scheme. £500 divided by 80 and multiplied by 100 is £625. Her answer is £625.

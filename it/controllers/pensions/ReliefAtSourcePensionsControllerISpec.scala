@@ -20,7 +20,7 @@ import builders.IncomeTaxUserDataBuilder.anIncomeTaxUserData
 import builders.PaymentsIntoPensionVewModelBuilder.aPaymentsIntoPensionViewModel
 import builders.PensionsUserDataBuilder.{aPensionsUserData, anPensionsUserDataEmptyCya, pensionsUserDataWithPaymentsIntoPensions}
 import builders.UserBuilder.aUserRequest
-import controllers.pensions.routes.{PensionsSummaryController, PensionsTaxReliefNotClaimedController}
+import controllers.pensions.routes.{PensionsTaxReliefNotClaimedController, ReliefAtSourcePaymentsAndTaxReliefAmountController}
 import forms.YesNoForm
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -299,8 +299,7 @@ class ReliefAtSourcePensionsControllerISpec extends IntegrationTest with BeforeA
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        //TODO redirect to totalRASPaymentsAndTaxRelief amount page
-        result.header("location") shouldBe Some(PensionsSummaryController.show(taxYearEOY).url)
+        result.header("location") shouldBe Some(ReliefAtSourcePaymentsAndTaxReliefAmountController.show(taxYearEOY).url)
       }
 
       "updates rasPensionPaymentQuestion to Some(true)" in {
@@ -323,8 +322,7 @@ class ReliefAtSourcePensionsControllerISpec extends IntegrationTest with BeforeA
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        //TODO redirect to totalRASPaymentsAndTaxRelief amount page
-        result.header("location") shouldBe Some(PensionsSummaryController.show(taxYearEOY).url)
+        result.header("location") shouldBe Some(ReliefAtSourcePaymentsAndTaxReliefAmountController.show(taxYearEOY).url)
       }
 
       "updates rasPensionPaymentQuestion to Some(true)" in {
