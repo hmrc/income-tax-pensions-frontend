@@ -27,7 +27,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.UNAUTHORIZED
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.{fullUrl, pensionSummaryUrl}
+import utils.PageUrls._
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 class PensionsSummaryControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
@@ -133,9 +133,7 @@ class PensionsSummaryControllerISpec extends IntegrationTest with ViewHelpers wi
           captionCheck(user.commonExpectedResults.expectedCaption(taxYear))
 
           "has an payment into pensions section" which {
-            //TODO: Change to use the href below when payment into pensions cya available
-            //linkCheck("Payments into pensions", paymentsIntoPensionsLink, checkPaymentsIntoPensionCyaUrl(taxYear))
-            linkCheck("Payments into pensions", paymentsIntoPensionsLink, "#")
+            linkCheck("Payments into pensions", paymentsIntoPensionsLink, checkPaymentsIntoPensionCyaUrl(taxYear))
             textOnPageCheck(user.commonExpectedResults.updated, summaryListStatusTagSelector(1))
           }
 
@@ -201,9 +199,7 @@ class PensionsSummaryControllerISpec extends IntegrationTest with ViewHelpers wi
           captionCheck(user.commonExpectedResults.expectedCaption(taxYear))
 
           "has an payment into pensions section" which {
-            //TODO: Change to use the href below when payment into pensions cya available
-            //linkCheck("Payments into pensions", paymentsIntoPensionsLink, checkPaymentsIntoPensionCyaUrl(taxYear))
-            linkCheck("Payments into pensions", paymentsIntoPensionsLink, "#")
+            linkCheck("Payments into pensions", paymentsIntoPensionsLink, checkPaymentsIntoPensionCyaUrl(taxYear))
             textOnPageCheck(user.commonExpectedResults.updated, summaryListStatusTagSelector(1))
           }
 
@@ -261,9 +257,7 @@ class PensionsSummaryControllerISpec extends IntegrationTest with ViewHelpers wi
           captionCheck(user.commonExpectedResults.expectedCaption(taxYear))
 
           "has an payment into pensions section" which {
-            //TODO: Change to use the href below when payment into pensions cya available
-            //linkCheck("Payments into pensions", paymentsIntoPensionsLink, checkPaymentsIntoPensionCyaUrl(taxYear))
-            linkCheck("Payments into pensions", paymentsIntoPensionsLink, "#")
+            linkCheck("Payments into pensions", paymentsIntoPensionsLink, checkPaymentsIntoPensionCyaUrl(taxYear))
             textOnPageCheck(user.commonExpectedResults.toDo, summaryListStatusTagSelector(1))
           }
 
@@ -326,9 +320,7 @@ class PensionsSummaryControllerISpec extends IntegrationTest with ViewHelpers wi
           captionCheck(user.commonExpectedResults.expectedCaption(taxYear))
 
           "has an payment into pensions section" which {
-            //TODO: Change to use the href below when payment into pensions cya available
-            //linkCheck("Payments into pensions", paymentsIntoPensionsLink, checkPaymentsIntoPensionCyaUrl(taxYear))
-            linkCheck("Payments into pensions", paymentsIntoPensionsLink, "#")
+            linkCheck("Payments into pensions", paymentsIntoPensionsLink, checkPaymentsIntoPensionCyaUrl(taxYear))
             textOnPageCheck(user.commonExpectedResults.updated, summaryListStatusTagSelector(1))
           }
 
@@ -391,9 +383,7 @@ class PensionsSummaryControllerISpec extends IntegrationTest with ViewHelpers wi
           captionCheck(user.commonExpectedResults.expectedCaption(taxYear))
 
           "has an payment into pensions section" which {
-            //TODO: Change to use the href below when payment into pensions cya available
-            //linkCheck("Payments into pensions", paymentsIntoPensionsLink, checkPaymentsIntoPensionCyaUrl(taxYear))
-            linkCheck("Payments into pensions", paymentsIntoPensionsLink, "#")
+            linkCheck("Payments into pensions", paymentsIntoPensionsLink, checkPaymentsIntoPensionCyaUrl(taxYear))
             textOnPageCheck(user.commonExpectedResults.updated, summaryListStatusTagSelector(1))
           }
 

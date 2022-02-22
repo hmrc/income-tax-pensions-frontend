@@ -17,32 +17,28 @@
 package controllers.pensions
 
 import config.{AppConfig, ErrorHandler}
-import controllers.predicates.{AuthorisedAction, InYearAction}
+import controllers.predicates.AuthorisedAction
 import javax.inject.Inject
 import models.mongo.PensionsCYAModel
 import models.pension.reliefs.PaymentsIntoPensionViewModel
 import models.pension.AllPensionsData
-import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
-import utils.SessionHelper
 import views.html.pensions.PaymentsIntoPensionsCYAView
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 class PaymentsIntoPensionsCYAController @Inject()(implicit val cc: MessagesControllerComponents,
                                                   authAction: AuthorisedAction,
-                                                  inYearAction: InYearAction,
                                                   appConfig: AppConfig,
                                                   view: PaymentsIntoPensionsCYAView,
                                                   pensionSessionService: PensionSessionService,
-                                                  ec: ExecutionContext,
                                                   errorHandler: ErrorHandler,
                                                   clock: Clock
-                                                 ) extends FrontendController(cc) with I18nSupport with SessionHelper with Logging {
+                                                 ) extends FrontendController(cc) with I18nSupport {
 
   def show(taxYear: Int): Action[AnyContent] = authAction.async { implicit user =>
     pensionSessionService.getAndHandle(taxYear) { (cya, prior) =>
@@ -72,10 +68,9 @@ class PaymentsIntoPensionsCYAController @Inject()(implicit val cc: MessagesContr
         Future.successful(Redirect(appConfig.incomeTaxSubmissionOverviewUrl(taxYear)))
       ) { model =>
 
-        //TODO - build submission model from cya data and submit to DES if cya data doesn't match prior data
-        val subissionModel = AllPensionsData(None, None, None)
-
         if(comparePriorData(model.pensions, prior)){
+          //        TODO - build submission model from cya data and submit to DES if cya data doesn't match prior data
+          //        val subissionModel = AllPensionsData(None, None, None)
           Future.successful(Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear)))
         } else {
           Future.successful(Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear)))

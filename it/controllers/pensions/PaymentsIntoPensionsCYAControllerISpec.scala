@@ -19,15 +19,12 @@ package controllers.pensions
 import builders.AllPensionsDataBuilder.anAllPensionsData
 import builders.IncomeTaxUserDataBuilder.anIncomeTaxUserData
 import builders.PaymentsIntoPensionVewModelBuilder.aPaymentsIntoPensionViewModel
-import builders.PensionChargesBuilder.anPensionCharges
 import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import builders.PensionsUserDataBuilder.aPensionsUserData
 import builders.ReliefsBuilder.anReliefs
-import builders.StateBenefitsModelBuilder.anStateBenefitsModel
 import builders.UserBuilder.aUserRequest
 import models.IncomeTaxUserData
-import models.mongo.{PensionsCYAModel, PensionsUserData}
-import models.pension.AllPensionsData
+import models.mongo.PensionsCYAModel
 import models.pension.reliefs.PaymentsIntoPensionViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -43,11 +40,11 @@ class PaymentsIntoPensionsCYAControllerISpec extends IntegrationTest with ViewHe
 
   val url: String = fullUrl(checkPaymentsIntoPensionCyaUrl(taxYear))
 
-  val cyaDataIncomplete = PaymentsIntoPensionViewModel(
+  val cyaDataIncomplete: PaymentsIntoPensionViewModel = PaymentsIntoPensionViewModel(
     rasPensionPaymentQuestion = Some(true)
   )
 
-  val cyaDataMinimal = PaymentsIntoPensionViewModel(
+  val cyaDataMinimal: PaymentsIntoPensionViewModel = PaymentsIntoPensionViewModel(
     rasPensionPaymentQuestion = Some(false),
     pensionTaxReliefNotClaimedQuestion = Some(false)
   )
