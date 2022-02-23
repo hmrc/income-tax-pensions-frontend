@@ -19,7 +19,6 @@ package models.mongo
 import org.joda.time.{DateTime, DateTimeZone}
 import play.api.libs.json.{Format, Json}
 import uk.gov.hmrc.mongo.play.json.formats.MongoJodaFormats
-import models.mongo.PensionsCYAModel._
 
 case class PensionsUserData(sessionId: String,
                               mtdItId: String,

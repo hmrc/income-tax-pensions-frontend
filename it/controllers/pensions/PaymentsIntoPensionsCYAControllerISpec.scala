@@ -58,7 +58,7 @@ class PaymentsIntoPensionsCYAControllerISpec extends IntegrationTest with ViewHe
     val retirementAnnuity: String = controllers.pensions.routes.RetirementAnnuityController.show(taxYear).url
     val retirementAnnuityAmount: String = controllers.pensions.routes.PensionsSummaryController.show(taxYear).url
     val workplacePayments: String = controllers.pensions.routes.PensionsSummaryController.show(taxYear).url
-    val workplacePaymentsAmount: String = controllers.pensions.routes.PensionsSummaryController.show(taxYear).url
+    val workplacePaymentsAmount: String = controllers.pensions.routes.WorkplaceAmountController.show(taxYear).url
   }
 
   trait SpecificExpectedResults {
