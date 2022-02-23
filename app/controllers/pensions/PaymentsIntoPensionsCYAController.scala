@@ -82,7 +82,7 @@ class PaymentsIntoPensionsCYAController @Inject()(implicit val cc: MessagesContr
   private def generateCyaFromPrior(prior: AllPensionsData): PensionsCYAModel = {
     PensionsCYAModel(
       PaymentsIntoPensionViewModel(
-        prior.pensionCharges.flatMap(a => a.pensionSavingsTaxCharges.map(b => b.isAnnualAllowanceReduced)),
+        prior.pensionReliefs.map(a => a.pensionReliefs.regularPensionContributions.isDefined),
         prior.pensionReliefs.flatMap(a => a.pensionReliefs.regularPensionContributions),
         prior.pensionReliefs.map(a => a.pensionReliefs.oneOffPensionContributionsPaid.isDefined),
         prior.pensionReliefs.flatMap(a => a.pensionReliefs.oneOffPensionContributionsPaid),
