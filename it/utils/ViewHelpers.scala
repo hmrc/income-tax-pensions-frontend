@@ -24,6 +24,7 @@ import org.scalatest.wordspec.AnyWordSpec
 import play.api.http.HeaderNames
 import play.api.libs.ws.{BodyWritable, WSClient, WSResponse}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
+import utils.ViewUtils.bigDecimalCurrency
 
 trait ViewHelpers { self: AnyWordSpec with Matchers with WireMockHelper =>
 
@@ -278,5 +279,7 @@ trait ViewHelpers { self: AnyWordSpec with Matchers with WireMockHelper =>
       }
     }
   }
+
+  def moneyContent(number: BigDecimal) = bigDecimalCurrency(number.toString)
 
 }

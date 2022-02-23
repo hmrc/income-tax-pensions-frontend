@@ -27,7 +27,7 @@ trait PensionsDatabaseHelper {
   lazy val pensionsDatabase: PensionsUserDataRepositoryImpl = app.injector.instanceOf[PensionsUserDataRepositoryImpl]
 
   def dropPensionsDB(): Unit = {
-    await(pensionsDatabase.collection.deleteMany(filter = Document()).toFuture())
+    await(pensionsDatabase.collection.drop().toFutureOption())
     await(pensionsDatabase.ensureIndexes)
   }
 

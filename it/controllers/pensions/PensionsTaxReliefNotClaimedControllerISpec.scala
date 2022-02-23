@@ -295,7 +295,7 @@ class PensionsTaxReliefNotClaimedControllerISpec extends IntegrationTest with Vi
           }
         }
 
-        "redirect to Pensions Summary page when user submits a 'n' answer and updates the session value to no" which {
+        "redirect to Pensions Summary page when user submits a 'no' answer and updates the session value to no" which {
           lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.no)
           lazy val result: WSResponse = {
             dropPensionsDB()
@@ -313,9 +313,13 @@ class PensionsTaxReliefNotClaimedControllerISpec extends IntegrationTest with Vi
             result.header("location") shouldBe Some(RetirementAnnuityController.show(taxYearEOY).url)
           }
 
-          "updates retirement annuity contract payments question to Some(true)" in {
+          "updates retirement annuity contract payments question to Some(false) and clears retirements and workplace answers" in {
             lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
             cyaModel.pensions.paymentsIntoPension.pensionTaxReliefNotClaimedQuestion shouldBe Some(false)
+            cyaModel.pensions.paymentsIntoPension.retirementAnnuityContractPaymentsQuestion shouldBe None
+            cyaModel.pensions.paymentsIntoPension.totalRetirementAnnuityContractPayments shouldBe None
+            cyaModel.pensions.paymentsIntoPension.workplacePensionPaymentsQuestion shouldBe None
+            cyaModel.pensions.paymentsIntoPension.totalWorkplacePensionPayments shouldBe None
           }
         }
 

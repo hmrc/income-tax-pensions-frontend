@@ -27,7 +27,48 @@ case class PaymentsIntoPensionViewModel(rasPensionPaymentQuestion: Option[Boolea
                                         retirementAnnuityContractPaymentsQuestion: Option[Boolean] = None,
                                         totalRetirementAnnuityContractPayments: Option[BigDecimal] = None,
                                         workplacePensionPaymentsQuestion: Option[Boolean] = None,
-                                        totalWorkplacePensionPayments: Option[BigDecimal] = None)
+                                        totalWorkplacePensionPayments: Option[BigDecimal] = None) {
+
+  private def yesNoAndAmountPopulated(boolField: Option[Boolean], amountField: Option[BigDecimal]) = {
+    boolField.exists(value => !value || (value && amountField.nonEmpty))
+  }
+
+  def isFinished: Boolean = {
+    val isDone_rasPensionPaymentQuestion = yesNoAndAmountPopulated(rasPensionPaymentQuestion, totalRASPaymentsAndTaxRelief)
+    val isDone_oneOffRASPaymentsQuestion =
+      rasPensionPaymentQuestion.exists(q =>
+        if(q) yesNoAndAmountPopulated(oneOffRasPaymentPlusTaxReliefQuestion, totalOneOffRasPaymentPlusTaxRelief) else true
+    )
+    val isDone_taxReliefNotClaimedCompleted = taxReliefNotClaimedQuestionCompleted
+    val isDone_retirementAnnuityContractPaymentsQuestion =
+      pensionTaxReliefNotClaimedQuestion.exists(q =>
+        if(q) yesNoAndAmountPopulated(retirementAnnuityContractPaymentsQuestion, totalRetirementAnnuityContractPayments) else true
+      )
+    val isDone_workplacePensionPaymentsQuestion =
+      pensionTaxReliefNotClaimedQuestion.exists(q =>
+        if(q) yesNoAndAmountPopulated(workplacePensionPaymentsQuestion, totalWorkplacePensionPayments) else true
+      )
+
+
+    Seq(
+      isDone_rasPensionPaymentQuestion,
+      isDone_oneOffRASPaymentsQuestion,
+      isDone_retirementAnnuityContractPaymentsQuestion,
+      isDone_workplacePensionPaymentsQuestion,
+      isDone_taxReliefNotClaimedCompleted
+    ).forall(ans => ans)
+  }
+
+  private def taxReliefNotClaimedQuestionCompleted: Boolean = {
+    pensionTaxReliefNotClaimedQuestion match {
+      case Some(true) =>
+        retirementAnnuityContractPaymentsQuestion.contains(true) || workplacePensionPaymentsQuestion.contains(true)
+      case Some(false) =>
+        retirementAnnuityContractPaymentsQuestion.isEmpty && workplacePensionPaymentsQuestion.isEmpty
+      case _ => false
+    }
+  }
+}
 
 object PaymentsIntoPensionViewModel {
   implicit val format: OFormat[PaymentsIntoPensionViewModel] = Json.format[PaymentsIntoPensionViewModel]
