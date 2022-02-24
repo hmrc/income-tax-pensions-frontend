@@ -64,7 +64,7 @@
             rowWithContent("paymentsIntoPensions.cya.retirementAnnuity", cya.retirementAnnuityContractPaymentsQuestion.getOrElse(false), cya.pensionTaxReliefNotClaimedQuestion.getOrElse(false), changeLink = controllers.pensions.routes.RetirementAnnuityController.show(taxYear)) :+
             amountRow("paymentsIntoPensions.cya.retirementAnnuityTotal", cya.totalRetirementAnnuityContractPayments, cya.retirementAnnuityContractPaymentsQuestion.getOrElse(false), changeLink = controllers.pensions.routes.PensionsSummaryController.show(taxYear)) :+ //TODO - update change link
             rowWithContent("paymentsIntoPensions.cya.workplacePayments", cya.workplacePensionPaymentsQuestion.getOrElse(false), cya.pensionTaxReliefNotClaimedQuestion.getOrElse(false), changeLink = controllers.pensions.routes.PensionsSummaryController.show(taxYear)) :+ //TODO - update change link
-            amountRow("paymentsIntoPensions.cya.workplacePaymentsTotal", cya.totalWorkplacePensionPayments, cya.workplacePensionPaymentsQuestion.getOrElse(false), changeLink = controllers.pensions.routes.PensionsSummaryController.show(taxYear)) //TODO - update change link
+            amountRow("paymentsIntoPensions.cya.workplacePaymentsTotal", cya.totalWorkplacePensionPayments, cya.workplacePensionPaymentsQuestion.getOrElse(false), changeLink = controllers.pensions.routes.WorkplaceAmountController.show(taxYear)) //TODO - update change link
 }
 
 @layout(pageTitle = headingForUse, taxYear = Some(taxYear)) {

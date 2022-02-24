@@ -167,3 +167,17 @@ paymentsIntoPensions.cya.retirementAnnuity.hidden = Change whether retirement an
 paymentsIntoPensions.cya.retirementAnnuityTotal.hidden = Change total retirement annuity contract payments
 paymentsIntoPensions.cya.workplacePayments.hidden = Change whether workplace pension payments were made
 paymentsIntoPensions.cya.workplacePaymentsTotal.hidden = Change total workplace pension payments
+
+#workplace amount
+pensions.workplaceAmount.title.individual = How much did you pay into your workplace pensions?
+pensions.workplaceAmount.bullet1.individual = made after your pay was taxed
+pensions.workplaceAmount.bullet2.individual = your pension provider will not claim tax relief for
+pensions.workplaceAmount.youCanFindThisOut.individual = You can find this out from your employer or your pension provider.
+pensions.workplaceAmount.title.agent = How much did your client pay into their workplace pensions?
+pensions.workplaceAmount.bullet1.agent = made after your client’s pay was taxed
+pensions.workplaceAmount.bullet2.agent = your client’s pension provider will not claim tax relief for
+pensions.workplaceAmount.youCanFindThisOut.agent = Your client can find this out from their employer or pension provider.
+pensions.workplaceAmount.paragraph = Only include payments:
+pensions.workplaceAmount.error.noEntry = Enter the amount paid into workplace pensions
+pensions.workplaceAmount.error.incorrectFormat = Enter the amount paid into workplace pensions in the correct format
+pensions.workplaceAmount.error.maxAmount = The amount paid into workplace pensions must be less than £100,000,000,000
