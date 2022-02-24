@@ -221,8 +221,7 @@ class OneOffRASPaymentsAmountControllerISpec extends IntegrationTest with ViewHe
 
       "has a SEE_OTHER status and redirects correctly" in {
         result.status shouldBe SEE_OTHER
-        //TODO - update once page is available
-        result.header("location").contains(checkPaymentsIntoPensionCyaUrl(taxYearEOY)) shouldBe true
+        result.header("location").contains(reliefAtSourceOneOffPaymentsUrl(taxYearEOY)) shouldBe true
       }
     }
 
@@ -239,8 +238,7 @@ class OneOffRASPaymentsAmountControllerISpec extends IntegrationTest with ViewHe
 
       "has an SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER
-        //TODO - update once page is available
-        result.header("location").contains(checkPaymentsIntoPensionCyaUrl(taxYearEOY)) shouldBe true
+        result.header("location").contains(reliefAtSourceOneOffPaymentsUrl(taxYearEOY)) shouldBe true
       }
     }
 

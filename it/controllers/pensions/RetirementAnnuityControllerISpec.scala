@@ -29,7 +29,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.{fullUrl, retirementAnnuityUrl}
+import utils.PageUrls._
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 class RetirementAnnuityControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
@@ -242,6 +242,22 @@ class RetirementAnnuityControllerISpec extends IntegrationTest with ViewHelpers 
         }
       }
     }
+
+    "redirect to the CYA page if there is no session data" which {
+      lazy val result: WSResponse = {
+        dropPensionsDB()
+        authoriseAgentOrIndividual(isAgent = false)
+        // no cya insert
+        urlGet(fullUrl(retirementAnnuityUrl(taxYearEOY)), follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+      }
+
+      "has an SEE_OTHER status" in {
+        result.status shouldBe SEE_OTHER
+        result.header("location").contains(checkPaymentsIntoPensionCyaUrl(taxYearEOY)) shouldBe true
+      }
+
+    }
   }
 
   ".submit" should {
@@ -327,7 +343,7 @@ class RetirementAnnuityControllerISpec extends IntegrationTest with ViewHelpers 
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(controllers.pensions.routes.PensionsSummaryController.show(taxYearEOY).url)
+        result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
       }
 
       "updates retirement annuity contract payments question to Some(false) and deletes the totalRetirementAnnuityContractPayments amount" in {
@@ -339,3 +355,4 @@ class RetirementAnnuityControllerISpec extends IntegrationTest with ViewHelpers 
 
   }
 }
+

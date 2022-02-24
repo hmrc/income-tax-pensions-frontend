@@ -54,8 +54,7 @@ class ReliefAtSourcePaymentsAndTaxReliefAmountController @Inject()(implicit val 
       case Some(data) =>
         if (data.pensions.paymentsIntoPension.rasPensionPaymentQuestion.contains(true)) {
           data.pensions.paymentsIntoPension.totalRASPaymentsAndTaxRelief match {
-            case Some(amount) =>
-              Future.successful(Ok(view(amountForm.fill(amount), taxYear)))
+            case Some(amount) => Future.successful(Ok(view(amountForm.fill(amount), taxYear)))
             case None => Future.successful(Ok(view(amountForm, taxYear)))
           }
         } else {
@@ -80,8 +79,7 @@ class ReliefAtSourcePaymentsAndTaxReliefAmountController @Inject()(implicit val 
             }
             pensionSessionService.createOrUpdateSessionData(
               updatedCyaModel, taxYear, data.exists(_.isPriorSubmission))(errorHandler.internalServerError()) {
-              //TODO. Navigate to next page one off payments into relief question when available
-              Redirect(PensionsSummaryController.show(taxYear))
+              Redirect(ReliefAtSourceOneOffPaymentsController.show(taxYear))
             }
         }
 

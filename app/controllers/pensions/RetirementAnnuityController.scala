@@ -17,6 +17,7 @@
 package controllers.pensions
 
 import config.{AppConfig, ErrorHandler}
+import controllers.pensions.routes._
 import controllers.predicates.AuthorisedAction
 import forms.YesNoForm
 import models.User
@@ -29,6 +30,7 @@ import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.PayIntoRetirementAnnuityContractView
+
 import javax.inject.Inject
 import scala.concurrent.Future
 
@@ -54,7 +56,7 @@ class RetirementAnnuityController @Inject()(implicit val cc: MessagesControllerC
           case None => Future.successful(Ok(payIntoRetirementAnnuityContractView(yesNoForm, taxYear)))
         }
       case None =>
-        Future.successful(Ok(payIntoRetirementAnnuityContractView(yesNoForm, taxYear)))
+        Future.successful(Redirect(PaymentsIntoPensionsCYAController.show(taxYear)))
     }
   }
 

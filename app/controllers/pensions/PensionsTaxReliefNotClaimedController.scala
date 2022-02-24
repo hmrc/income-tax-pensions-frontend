@@ -17,7 +17,7 @@
 package controllers.pensions
 
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.routes.RetirementAnnuityController
+import controllers.pensions.routes._
 import controllers.predicates.AuthorisedAction
 import forms.YesNoForm
 import models.User
@@ -52,7 +52,7 @@ class PensionsTaxReliefNotClaimedController @Inject()(implicit val mcc: Messages
           case None => Future.successful(Ok(pensionsTaxReliefNotClaimedView(yesNoForm, taxYear)))
         }
       case _ =>
-        Future.successful(Ok(pensionsTaxReliefNotClaimedView(yesNoForm, taxYear)))
+        Future.successful(Redirect(PaymentsIntoPensionsCYAController.show(taxYear)))
     }
 
   }

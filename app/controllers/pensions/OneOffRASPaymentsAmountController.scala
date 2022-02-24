@@ -62,8 +62,7 @@ class OneOffRASPaymentsAmountController @Inject()(implicit val mcc: MessagesCont
           case (_, _, None) =>
             Future.successful(Redirect(controllers.pensions.routes.ReliefAtSourcePaymentsAndTaxReliefAmountController.show(taxYear)))
           case _ =>
-            //TODO - redirect to OneOffRASPayments page when available
-            Future.successful(Redirect(controllers.pensions.routes.PaymentsIntoPensionsCYAController.show(taxYear)))
+            Future.successful(Redirect(controllers.pensions.routes.ReliefAtSourceOneOffPaymentsController.show(taxYear)))
         }
       case _ =>
         Future.successful(Redirect(controllers.pensions.routes.PaymentsIntoPensionsCYAController.show(taxYear)))
