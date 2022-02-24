@@ -33,22 +33,22 @@
 )
 
 
-@(form: Form[BigDecimal], taxYear: Int)(implicit user: User[_], messages: Messages, appConfig: AppConfig)
+@(form: Form[BigDecimal], taxYear: Int, rasAmount: BigDecimal)(implicit user: User[_], messages: Messages, appConfig: AppConfig)
 
-@titleForUse = @{messages("pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.title")}
+@titleForUse = @{messages("paymentsIntoPensions.oneOffRasAmount.heading")}
 
 @hasFormErrors = @{form.hasErrors}
 
 @contentHtml = {
 
-    <p class="govuk-body">@{messages(s"pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.whereToFind.${if(user.isAgent) "agent" else "individual"}")}</p>
-    <p class="govuk-body">@{messages(s"pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.howToWorkOut.${if(user.isAgent) "agent" else "individual"}")}</p>
+    <p class="govuk-body">@{messages(s"paymentsIntoPensions.oneOffRasAmount.youToldUs.${if(user.isAgent) "agent" else "individual"}", rasAmount)}</p>
+    <p class="govuk-body">@{messages("paymentsIntoPensions.oneOffRasAmount.workItOut")}</p>
 
     <div class="govuk-inset-text">
         <span class="govuk-form-group ">
             <strong>@messages("paymentsIntoPensions.reliefAtSource.calculationHeading")</strong>
         </span>
-        <span>@messages("pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.exampleCalculation")</span>
+        <span>@messages("paymentsIntoPensions.oneOffRasAmount.exampleCalculation")</span>
     </div>
 
 }
@@ -58,7 +58,7 @@
 
     @errorSummary(form.errors.distinct)
 
-    @formWithCsrf(action = controllers.pensions.routes.ReliefAtSourcePaymentsAndTaxReliefAmountController.submit(taxYear)) {
+    @formWithCsrf(action = controllers.pensions.routes.OneOffRASPaymentsAmountController.submit(taxYear)) {
 
         @inputText(
             form,
