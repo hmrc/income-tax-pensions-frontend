@@ -182,3 +182,17 @@ pensions.workplaceAmount.paragraph = Only include payments:
 pensions.workplaceAmount.error.noEntry = Enter the amount paid into workplace pensions
 pensions.workplaceAmount.error.incorrectFormat = Enter the amount paid into workplace pensions in the correct format
 pensions.workplaceAmount.error.maxAmount = The amount paid into workplace pensions must be less than £100,000,000,000
+
+#workplace pension
+
+pensions.workplacePension.title.individual = Did you pay into a workplace pension and not receive tax relief?
+pensions.workplacePension.title.agent = Did your client pay into a workplace pension and not receive tax relief?
+pensions.workplacePension.info.individual = You would have made your payments after your pay was taxed.
+pensions.workplacePension.info.agent = Your client would have made their payments after their pay was taxed.
+pensions.workplacePension.theseCases.individual = These cases are unusual as most workplace pensions are set up to give you tax relief at the time of your payment.
+pensions.workplacePension.theseCases.agent = These cases are unusual as most workplace pensions are set up to give your client tax relief at the time of their payment.
+pensions.workplacePension.whereToCheck.individual = Check with your employer or pension provider which arrangement you have.
+pensions.workplacePension.whereToCheck.agent = Check with your client’s employer or pension provider which arrangement they have.
+pensions.workplacePension.findOutMore = Find out more about tax relief
+pensions.workplacePension.error.noEntry.individual = Select yes if you paid into a workplace pension and did not receive tax relief
+pensions.workplacePension.error.noEntry.agent = Select yes if your client paid into a workplace pension and did not receive tax relief
