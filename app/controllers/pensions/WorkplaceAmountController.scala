@@ -48,8 +48,8 @@ class WorkplaceAmountController @Inject()(implicit val cc: MessagesControllerCom
     exceedsMaxAmountKey = "pensions.workplaceAmount.error.maxAmount"
   )
 
-  def show(taxYear: Int): Action[AnyContent] = authAction.async { implicit user =>
-    pensionSessionService.getPensionsSessionDataResult(taxYear) {
+  def show(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
+    pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
       case Some(data) =>
         if (data.pensions.paymentsIntoPension.workplacePensionPaymentsQuestion.contains(true)) {
           data.pensions.paymentsIntoPension.totalWorkplacePensionPayments match {
@@ -67,18 +67,18 @@ class WorkplaceAmountController @Inject()(implicit val cc: MessagesControllerCom
 
   }
 
-  def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit user =>
+  def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
     amountForm.bindFromRequest.fold(
       formWithErrors => Future.successful(BadRequest(workplaceAmountView(formWithErrors, taxYear))),
       amount => {
-        pensionSessionService.getPensionsSessionDataResult(taxYear) {
+        pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
           data =>
             val pensionsCYAModel: PensionsCYAModel = data.map(_.pensions).getOrElse(PensionsCYAModel(PaymentsIntoPensionViewModel()))
             val viewModel: PaymentsIntoPensionViewModel = pensionsCYAModel.paymentsIntoPension
             val updatedCyaModel: PensionsCYAModel = {
               pensionsCYAModel.copy(paymentsIntoPension = viewModel.copy(totalWorkplacePensionPayments = Some(amount)))
             }
-            pensionSessionService.createOrUpdateSessionData(
+            pensionSessionService.createOrUpdateSessionData(request.user,
               updatedCyaModel, taxYear, data.exists(_.isPriorSubmission))(errorHandler.internalServerError()) {
               Redirect(PaymentsIntoPensionsCYAController.show(taxYear))
             }

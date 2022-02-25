@@ -30,6 +30,7 @@ import play.api.libs.ws.WSResponse
 import utils.PageUrls.{fullUrl, workplacePensionUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
+// scalastyle:off magic.number
 class WorkplacePensionControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
 
   private val taxYearEOY: Int = taxYear - 1
@@ -331,3 +332,4 @@ class WorkplacePensionControllerISpec extends IntegrationTest with ViewHelpers w
     }
   }
 }
+// scalastyle:on magic.number

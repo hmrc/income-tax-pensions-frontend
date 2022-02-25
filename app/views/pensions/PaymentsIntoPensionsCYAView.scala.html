@@ -24,12 +24,12 @@
 @import utils.ViewUtils.summaryListRow
 
 @this(layout: Layout, summaryList: SummaryList, heading: Heading, button: Button, csrfForm: FormWithCSRF)
-@(taxYear: Int, cya: PaymentsIntoPensionViewModel)(implicit messages: Messages, appConfig: AppConfig, user: User[_])
+@(taxYear: Int, cya: PaymentsIntoPensionViewModel)(implicit messages: Messages, appConfig: AppConfig, request: AuthorisationRequest[_])
 
-@headingForUse = @{messages(s"paymentsIntoPensions.cya.heading.${if(user.isAgent) "agent" else "individual"}")}
+@headingForUse = @{messages(s"paymentsIntoPensions.cya.heading.${if(request.user.isAgent) "agent" else "individual"}")}
 
 @agentOrIndividual = @{
-    if(user.isAgent) "agent" else "individual"
+    if(request.user.isAgent) "agent" else "individual"
 }
 
 @rowWithContent(textKey: String, value: Any, condition: Boolean = true, changeLink: Call = Call("GET", "#"), args: Seq[String] = Seq()) = @{

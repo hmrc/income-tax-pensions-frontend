@@ -51,6 +51,8 @@ class PensionSessionServiceTest extends UnitTest
 
   val taxYear = 2022
 
+  private val user = authorisationRequest.user
+
   val fullPensionsModel: AllPensionsData = AllPensionsData(
     pensionReliefs = Some(PensionReliefs(
       submittedOn = "2020-01-04T05:01:01Z",
@@ -260,27 +262,27 @@ class PensionSessionServiceTest extends UnitTest
 
   "getAndHandle" should {
     "redirect if no data and redirect is set to true" in {
-      mockFind(taxYear, Right(None))
+      mockFind(taxYear, user, Right(None))
       mockFindNoContent(nino, taxYear)
-      val response = service.getAndHandle(taxYear, redirectWhenNoPrior = true)((_, _) => Future(Ok))
+      val response = service.getAndHandle(taxYear, redirectWhenNoPrior = true, user = user)((_, _) => Future(Ok))
 
       status(response) shouldBe SEE_OTHER
     }
 
     "return an error if the call failed" in {
-      mockFind(taxYear, Right(None))
+      mockFind(taxYear, user, Right(None))
       mockFindFail(nino, taxYear)
 
-      val response = service.getAndHandle(taxYear)((_, _) => Future(Ok))
+      val response = service.getAndHandle(taxYear, user)((_, _) => Future(Ok))
 
       status(response) shouldBe INTERNAL_SERVER_ERROR
     }
 
     "return an internal server error if the CYA find failed" in {
-      mockFind(taxYear, Left(DataNotFound))
+      mockFind(taxYear, user, Left(DataNotFound))
       mockFindNoContent(nino, taxYear)
 
-      val response = service.getAndHandle(taxYear)((_, _) => Future(Ok))
+      val response = service.getAndHandle(taxYear, user)((_, _) => Future(Ok))
 
       status(response) shouldBe INTERNAL_SERVER_ERROR
     }
@@ -288,9 +290,9 @@ class PensionSessionServiceTest extends UnitTest
 
   ".createOrUpdateSessionData" should {
     "return SEE_OTHER(303) status when createOrUpdate succeeds" in {
-      mockCreateOrUpdate(pensionDataFull, Right())
+      mockCreateOrUpdate(pensionDataFull, user, Right())
 
-      val response = service.createOrUpdateSessionData(
+      val response = service.createOrUpdateSessionData(user,
         pensionCYA, taxYear, isPriorSubmission = true,
       )(Redirect("400"))(Redirect("303"))
 
@@ -299,9 +301,9 @@ class PensionSessionServiceTest extends UnitTest
     }
 
     "return BAD_REQUEST(400) status when createOrUpdate fails" in {
-      mockCreateOrUpdate(pensionDataFull, Left(DataNotUpdated))
+      mockCreateOrUpdate(pensionDataFull, user, Left(DataNotUpdated))
 
-      val response = service.createOrUpdateSessionData(
+      val response = service.createOrUpdateSessionData(user,
         pensionCYA, taxYear, isPriorSubmission = true
       )(Redirect("400"))(Redirect("303"))
 

@@ -49,8 +49,8 @@ class ReliefAtSourcePaymentsAndTaxReliefAmountController @Inject()(implicit val 
     exceedsMaxAmountKey = "pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.error.overMaximum"
   )
 
-  def show(taxYear: Int): Action[AnyContent] = authAction.async { implicit user =>
-    pensionSessionService.getPensionsSessionDataResult(taxYear) {
+  def show(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
+    pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
       case Some(data) =>
         if (data.pensions.paymentsIntoPension.rasPensionPaymentQuestion.contains(true)) {
           data.pensions.paymentsIntoPension.totalRASPaymentsAndTaxRelief match {
@@ -66,18 +66,18 @@ class ReliefAtSourcePaymentsAndTaxReliefAmountController @Inject()(implicit val 
 
   }
 
-  def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit user =>
+  def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
     amountForm.bindFromRequest.fold(
       formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
       amount => {
-        pensionSessionService.getPensionsSessionDataResult(taxYear) {
+        pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
           data =>
             val pensionsCYAModel: PensionsCYAModel = data.map(_.pensions).getOrElse(PensionsCYAModel(PaymentsIntoPensionViewModel()))
             val viewModel: PaymentsIntoPensionViewModel = pensionsCYAModel.paymentsIntoPension
             val updatedCyaModel: PensionsCYAModel = {
               pensionsCYAModel.copy(paymentsIntoPension = viewModel.copy(totalRASPaymentsAndTaxRelief = Some(amount)))
             }
-            pensionSessionService.createOrUpdateSessionData(
+            pensionSessionService.createOrUpdateSessionData(request.user,
               updatedCyaModel, taxYear, data.exists(_.isPriorSubmission))(errorHandler.internalServerError()) {
               Redirect(ReliefAtSourceOneOffPaymentsController.show(taxYear))
             }

@@ -29,24 +29,24 @@
     button: Button
 )
 
-@(form: Form[Boolean], taxYear: Int)(implicit user: User[_], messages: Messages, appConfig: AppConfig)
+@(form: Form[Boolean], taxYear: Int)(implicit request: AuthorisationRequest[_], messages: Messages, appConfig: AppConfig)
 
 @headingAndTitleForUse = @{messages("pensions.reliefAtSourcePensions.title")}
 
 @hasFormErrors = @{form.hasErrors}
 
 @contentHtml = {
-    <p class="govuk-body">@{messages(s"pensions.reliefAtSource.paragraph.${if(user.isAgent) "agent" else "individual"}")}</p>
+    <p class="govuk-body">@{messages(s"pensions.reliefAtSource.paragraph.${if(request.user.isAgent) "agent" else "individual"}")}</p>
     <ul class="govuk-list govuk-list--bullet">
-        <li>@{messages(s"pensions.reliefAtSource.paragraph.example1.${if(user.isAgent) "agent" else "individual"}")}</li>
-        <li>@{messages(s"pensions.reliefAtSource.paragraph.example2.${if(user.isAgent) "agent" else "individual"}")}</li>
+        <li>@{messages(s"pensions.reliefAtSource.paragraph.example1.${if(request.user.isAgent) "agent" else "individual"}")}</li>
+        <li>@{messages(s"pensions.reliefAtSource.paragraph.example2.${if(request.user.isAgent) "agent" else "individual"}")}</li>
     </ul>
-    <p class="govuk-body">@messages(s"pensions.reliefAtSource.pensionProvider.${if(user.isAgent) "agent" else "individual"}")</p>
-    <p class="govuk-body">@messages(s"pensions.reliefAtSource.checkProvider.${if(user.isAgent) "agent" else "individual"}")</p>
+    <p class="govuk-body">@messages(s"pensions.reliefAtSource.pensionProvider.${if(request.user.isAgent) "agent" else "individual"}")</p>
+    <p class="govuk-body">@messages(s"pensions.reliefAtSource.checkProvider.${if(request.user.isAgent) "agent" else "individual"}")</p>
 
-    <h2 class="govuk-heading-m">@messages(s"pensions.reliefAtSource.h2QuestionHeader.${if(user.isAgent) "agent" else "individual"}")</h2>
+    <h2 class="govuk-heading-m">@messages(s"pensions.reliefAtSource.h2QuestionHeader.${if(request.user.isAgent) "agent" else "individual"}")</h2>
 }
-@layout(pageTitle = headingAndTitleForUse, taxYear = Some(taxYear), hasErrors = hasFormErrors, isAgent = user.isAgent) {
+@layout(pageTitle = headingAndTitleForUse, taxYear = Some(taxYear), hasErrors = hasFormErrors, isAgent = request.user.isAgent) {
 
 @errorSummary(form.errors.distinct)
 

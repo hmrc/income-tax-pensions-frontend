@@ -16,9 +16,8 @@
 
 package controllers.pensions
 
-import builders.IncomeTaxUserDataBuilder.anIncomeTaxUserData
 import builders.PaymentsIntoPensionVewModelBuilder.aPaymentsIntoPensionViewModel
-import builders.PensionsUserDataBuilder.{aPensionsUserData, anPensionsUserDataEmptyCya, pensionsUserDataWithPaymentsIntoPensions}
+import builders.PensionsUserDataBuilder.{anPensionsUserDataEmptyCya, pensionsUserDataWithPaymentsIntoPensions}
 import builders.UserBuilder.aUserRequest
 import controllers.pensions.routes.{PensionsTaxReliefNotClaimedController, ReliefAtSourcePaymentsAndTaxReliefAmountController}
 import forms.YesNoForm
@@ -31,6 +30,7 @@ import play.api.libs.ws.WSResponse
 import utils.PageUrls.{fullUrl, reliefAtSourcePensionsUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
+// scalastyle:off magic.number
 class ReliefAtSourcePensionsControllerISpec extends IntegrationTest with BeforeAndAfterEach with ViewHelpers with PensionsDatabaseHelper {
 
   private val taxYearEOY: Int = taxYear - 1
@@ -381,3 +381,4 @@ class ReliefAtSourcePensionsControllerISpec extends IntegrationTest with BeforeA
     }
   }
 }
+// scalastyle:on magic.number

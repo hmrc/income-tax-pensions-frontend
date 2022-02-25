@@ -22,13 +22,13 @@
 
 @this(layout: Layout, heading: Heading, govUkButton: GovukButton, formWithCSRF: FormWithCSRF, link:Link)
 
-@(taxYear: Int, prior: Option[AllPensionsData])(implicit user: User[_], messages: Messages, appConfig: AppConfig)
+@(taxYear: Int, prior: Option[AllPensionsData])(implicit request: AuthorisationRequest[_], messages: Messages, appConfig: AppConfig)
 
 @headingForUse = @{
     messages(s"pensions.pensionSummary.heading")
 }
 
-@layout(pageTitle = headingForUse, taxYear = Some(taxYear), isAgent = user.isAgent) {
+@layout(pageTitle = headingForUse, taxYear = Some(taxYear), isAgent = request.user.isAgent) {
 
     @heading(
         headingForUse,

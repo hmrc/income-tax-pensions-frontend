@@ -33,7 +33,7 @@
 )
 
 
-@(form: Form[BigDecimal], taxYear: Int)(implicit user: User[_], messages: Messages, appConfig: AppConfig)
+@(form: Form[BigDecimal], taxYear: Int)(implicit request: AuthorisationRequest[_], messages: Messages, appConfig: AppConfig)
 
 @titleForUse = @{messages("pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.title")}
 
@@ -41,8 +41,8 @@
 
 @contentHtml = {
 
-    <p class="govuk-body">@{messages(s"pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.whereToFind.${if(user.isAgent) "agent" else "individual"}")}</p>
-    <p class="govuk-body">@{messages(s"pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.howToWorkOut.${if(user.isAgent) "agent" else "individual"}")}</p>
+    <p class="govuk-body">@{messages(s"pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.whereToFind.${if(request.user.isAgent) "agent" else "individual"}")}</p>
+    <p class="govuk-body">@{messages(s"pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.howToWorkOut.${if(request.user.isAgent) "agent" else "individual"}")}</p>
 
     <div class="govuk-inset-text">
         <span class="govuk-form-group ">
@@ -54,7 +54,7 @@
 }
 
 
-@layout(pageTitle = titleForUse, taxYear = Some(taxYear), hasErrors = hasFormErrors, isAgent = user.isAgent) {
+@layout(pageTitle = titleForUse, taxYear = Some(taxYear), hasErrors = hasFormErrors, isAgent = request.user.isAgent) {
 
     @errorSummary(form.errors.distinct)
 

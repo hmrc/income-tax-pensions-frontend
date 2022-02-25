@@ -40,8 +40,8 @@ class PaymentsIntoPensionsCYAController @Inject()(implicit val cc: MessagesContr
                                                   clock: Clock
                                                  ) extends FrontendController(cc) with I18nSupport {
 
-  def show(taxYear: Int): Action[AnyContent] = authAction.async { implicit user =>
-    pensionSessionService.getAndHandle(taxYear) { (cya, prior) =>
+  def show(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
+    pensionSessionService.getAndHandle(taxYear, request.user) { (cya, prior) =>
       (cya.map(_.pensions), prior) match {
         case (Some(cyaData), _) =>
           if(cyaData.paymentsIntoPension.isFinished) {
@@ -52,7 +52,7 @@ class PaymentsIntoPensionsCYAController @Inject()(implicit val cc: MessagesContr
           }
         case (None, Some(priorData)) =>
           val cyaModel = generateCyaFromPrior(priorData)
-          pensionSessionService.createOrUpdateSessionData(
+          pensionSessionService.createOrUpdateSessionData(request.user,
             cyaModel, taxYear, isPriorSubmission = false)(
             errorHandler.internalServerError())(
             Ok(view(taxYear, cyaModel.paymentsIntoPension))
@@ -62,8 +62,8 @@ class PaymentsIntoPensionsCYAController @Inject()(implicit val cc: MessagesContr
     }
   }
 
-  def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit user =>
-    pensionSessionService.getAndHandle(taxYear) { (cya, prior) =>
+  def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
+    pensionSessionService.getAndHandle(taxYear, request.user) { (cya, prior) =>
       cya.fold(
         Future.successful(Redirect(appConfig.incomeTaxSubmissionOverviewUrl(taxYear)))
       ) { model =>

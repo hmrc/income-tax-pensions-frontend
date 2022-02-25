@@ -16,16 +16,15 @@
 
 package config
 
+import play.api.http.Status._
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.mvc.Results._
 import play.api.mvc.{Request, RequestHeader, Result}
 import play.twirl.api.Html
 import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
 import views.html.templates.{InternalServerErrorTemplate, NotFoundTemplate, ServiceUnavailableTemplate}
-import play.api.mvc.Results._
-import play.api.http.Status._
-import javax.inject.{Inject, Singleton}
-import models.User
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
 @Singleton
@@ -40,11 +39,11 @@ class ErrorHandler @Inject()(internalServerErrorTemplate: InternalServerErrorTem
 
   override def notFoundTemplate(implicit request: Request[_]): Html = notFoundTemplate()
 
-  def internalServerError()(implicit user: User[_]): Result = {
+  def internalServerError()(implicit request: Request[_]): Result = {
     InternalServerError(internalServerErrorTemplate())
   }
 
-  def futureInternalServerError()(implicit user: User[_]): Future[Result] = {
+  def futureInternalServerError()(implicit request: Request[_]): Future[Result] = {
     Future.successful(InternalServerError(internalServerErrorTemplate()))
   }
 

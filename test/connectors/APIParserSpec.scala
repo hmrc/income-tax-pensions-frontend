@@ -43,7 +43,7 @@ class APIParserSpec extends UnitTest {
   "FakeParser" should {
     "log the correct message" in {
       val result = FakeParser.logMessage(httpResponse())
-      result shouldBe (
+      result shouldBe
         """[TestParser][read] Received 500 from service API. Body:{
           |  "failures" : [ {
           |    "code" : "SERVICE_UNAVAILABLE",
@@ -52,23 +52,23 @@ class APIParserSpec extends UnitTest {
           |    "code" : "INTERNAL_SERVER_ERROR",
           |    "reason" : "The service is currently facing issues."
           |  } ]
-          |}""".stripMargin)
+          |}""".stripMargin
     }
     "return the the correct error" in {
       val result = FakeParser.badSuccessJsonFromAPI
-      result shouldBe Left(APIErrorModel(INTERNAL_SERVER_ERROR,APIErrorBodyModel("PARSING_ERROR","Error parsing response from API")))
+      result shouldBe Left(APIErrorModel(INTERNAL_SERVER_ERROR, APIErrorBodyModel("PARSING_ERROR", "Error parsing response from API")))
     }
     "handle multiple errors" in {
       val result = FakeParser.handleAPIError(httpResponse())
-      result shouldBe Left(APIErrorModel(INTERNAL_SERVER_ERROR,APIErrorsBodyModel(Seq(
-        APIErrorBodyModel("SERVICE_UNAVAILABLE","The service is currently unavailable"),
-        APIErrorBodyModel("INTERNAL_SERVER_ERROR","The service is currently facing issues.")
+      result shouldBe Left(APIErrorModel(INTERNAL_SERVER_ERROR, APIErrorsBodyModel(Seq(
+        APIErrorBodyModel("SERVICE_UNAVAILABLE", "The service is currently unavailable"),
+        APIErrorBodyModel("INTERNAL_SERVER_ERROR", "The service is currently facing issues.")
       ))))
     }
     "handle single errors" in {
       val result = FakeParser.handleAPIError(httpResponse(Json.parse(
         """{"code":"INTERNAL_SERVER_ERROR","reason":"The service is currently facing issues."}""".stripMargin)))
-      result shouldBe Left(APIErrorModel(INTERNAL_SERVER_ERROR,APIErrorBodyModel("INTERNAL_SERVER_ERROR","The service is currently facing issues.")))
+      result shouldBe Left(APIErrorModel(INTERNAL_SERVER_ERROR, APIErrorBodyModel("INTERNAL_SERVER_ERROR", "The service is currently facing issues.")))
     }
 
     "handle response that is neither a single error or multiple errors" in {

@@ -43,36 +43,36 @@ class RetirementAnnuityController @Inject()(implicit val cc: MessagesControllerC
                                             clock: Clock) extends FrontendController(cc) with I18nSupport {
 
 
-  def yesNoForm(implicit user: User[_]): Form[Boolean] = YesNoForm.yesNoForm(
+  def yesNoForm(user: User): Form[Boolean] = YesNoForm.yesNoForm(
     missingInputError = s"pensions.retirementAnnuityContract.error.noEntry.${if (user.isAgent) "agent" else "individual"}"
   )
 
-  def show(taxYear: Int): Action[AnyContent] = authAction.async { implicit user =>
-    pensionSessionService.getPensionsSessionDataResult(taxYear) {
+  def show(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
+    pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
       case Some(data) =>
         data.pensions.paymentsIntoPension.retirementAnnuityContractPaymentsQuestion match {
           case Some(value) => Future.successful(Ok(payIntoRetirementAnnuityContractView(
-            yesNoForm.fill(value), taxYear)))
-          case None => Future.successful(Ok(payIntoRetirementAnnuityContractView(yesNoForm, taxYear)))
+            yesNoForm(request.user).fill(value), taxYear)))
+          case None => Future.successful(Ok(payIntoRetirementAnnuityContractView(yesNoForm(request.user), taxYear)))
         }
       case None =>
         Future.successful(Redirect(PaymentsIntoPensionsCYAController.show(taxYear)))
     }
   }
 
-  def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit user =>
-    yesNoForm.bindFromRequest().fold(
+  def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
+    yesNoForm(request.user).bindFromRequest().fold(
       formWithErrors => Future.successful(BadRequest(payIntoRetirementAnnuityContractView(formWithErrors, taxYear))),
       yesNo => {
-        pensionSessionService.getPensionsSessionDataResult(taxYear) {
+        pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
           data =>
             val pensionsCYAModel: PensionsCYAModel = data.map(_.pensions).getOrElse(PensionsCYAModel(PaymentsIntoPensionViewModel()))
             val viewModel: PaymentsIntoPensionViewModel = pensionsCYAModel.paymentsIntoPension
             val updatedCyaModel: PensionsCYAModel = {
               pensionsCYAModel.copy(paymentsIntoPension = viewModel.copy(retirementAnnuityContractPaymentsQuestion = Some(yesNo),
-                totalRetirementAnnuityContractPayments = if(yesNo) viewModel.totalRetirementAnnuityContractPayments else None))
+                totalRetirementAnnuityContractPayments = if (yesNo) viewModel.totalRetirementAnnuityContractPayments else None))
             }
-            pensionSessionService.createOrUpdateSessionData(
+            pensionSessionService.createOrUpdateSessionData(request.user,
               updatedCyaModel, taxYear, data.exists(_.isPriorSubmission))(errorHandler.internalServerError()) {
               if (yesNo) {
                 Redirect(controllers.pensions.routes.RetirementAnnuityAmountController.show(taxYear))

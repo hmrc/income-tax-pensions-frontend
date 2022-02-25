@@ -52,10 +52,9 @@ class AuditServiceSpec extends UnitTestWithApp {
           .expects(*, *, *)
           .returns(expected)
 
-        val event = AuditModel(auditType, transactionName, eventDetails)
+        private val event = AuditModel(auditType, transactionName, eventDetails)
         target.sendAudit(event) shouldBe expected
       }
-
 
 
       "generates an event with the correct auditSource" in new Test {
@@ -68,7 +67,7 @@ class AuditServiceSpec extends UnitTestWithApp {
           )
           .returns(expected)
 
-        val event = AuditModel(auditType, transactionName, eventDetails)
+        private val event = AuditModel(auditType, transactionName, eventDetails)
 
         target.sendAudit(event)
       }
@@ -83,8 +82,7 @@ class AuditServiceSpec extends UnitTestWithApp {
           )
           .returns(expected)
 
-        val event = AuditModel(auditType, transactionName, eventDetails)
-
+        private val event = AuditModel(auditType, transactionName, eventDetails)
         target.sendAudit(event)
       }
 
@@ -98,7 +96,7 @@ class AuditServiceSpec extends UnitTestWithApp {
           )
           .returns(expected)
 
-        val event = AuditModel(auditType, transactionName, eventDetails)
+        private val event = AuditModel(auditType, transactionName, eventDetails)
 
         target.sendAudit(event)
       }
@@ -113,7 +111,7 @@ class AuditServiceSpec extends UnitTestWithApp {
           )
           .returns(expected)
 
-        val event = AuditModel(auditType, transactionName, eventDetails)
+        private val event = AuditModel(auditType, transactionName, eventDetails)
 
         target.sendAudit(event)
       }

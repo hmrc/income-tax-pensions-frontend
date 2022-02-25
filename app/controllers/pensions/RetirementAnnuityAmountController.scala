@@ -50,8 +50,8 @@ class RetirementAnnuityAmountController @Inject()(implicit val mcc: MessagesCont
   )
 
 
-  def show(taxYear: Int): Action[AnyContent] = authAction.async { implicit user =>
-    pensionSessionService.getPensionsSessionDataResult(taxYear) {
+  def show(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
+    pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
       case Some(data) =>
         if (data.pensions.paymentsIntoPension.retirementAnnuityContractPaymentsQuestion.contains(true)) {
           data.pensions.paymentsIntoPension.totalRetirementAnnuityContractPayments match {
@@ -69,18 +69,18 @@ class RetirementAnnuityAmountController @Inject()(implicit val mcc: MessagesCont
   }
 
 
-  def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit user =>
+  def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
     amountForm.bindFromRequest.fold(
       formWithErrors => Future.successful(BadRequest(retirementAnnuityAmountView(formWithErrors, taxYear))),
       amount => {
-        pensionSessionService.getPensionsSessionDataResult(taxYear) {
+        pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
           data =>
             val pensionsCYAModel: PensionsCYAModel = data.map(_.pensions).getOrElse(PensionsCYAModel(PaymentsIntoPensionViewModel()))
             val viewModel: PaymentsIntoPensionViewModel = pensionsCYAModel.paymentsIntoPension
             val updatedCyaModel: PensionsCYAModel = {
               pensionsCYAModel.copy(paymentsIntoPension = viewModel.copy(totalRetirementAnnuityContractPayments = Some(amount)))
             }
-            pensionSessionService.createOrUpdateSessionData(
+            pensionSessionService.createOrUpdateSessionData(request.user,
               updatedCyaModel, taxYear, data.exists(_.isPriorSubmission))(errorHandler.internalServerError()) {
               Redirect(WorkplacePensionController.show(taxYear))
             }

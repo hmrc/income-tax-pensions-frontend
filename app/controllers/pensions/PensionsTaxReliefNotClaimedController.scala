@@ -44,12 +44,12 @@ class PensionsTaxReliefNotClaimedController @Inject()(implicit val mcc: Messages
                                                       pensionsTaxReliefNotClaimedView: PensionsTaxReliefNotClaimedView,
                                                       clock: Clock) extends FrontendController(mcc) with I18nSupport {
 
-  def show(taxYear: Int): Action[AnyContent] = authAction.async { implicit user =>
-    pensionSessionService.getPensionsSessionDataResult(taxYear) {
+  def show(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
+    pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
       case Some(data) =>
         data.pensions.paymentsIntoPension.pensionTaxReliefNotClaimedQuestion match {
-          case Some(question) => Future.successful(Ok(pensionsTaxReliefNotClaimedView(yesNoForm.fill(question), taxYear)))
-          case None => Future.successful(Ok(pensionsTaxReliefNotClaimedView(yesNoForm, taxYear)))
+          case Some(question) => Future.successful(Ok(pensionsTaxReliefNotClaimedView(yesNoForm(request.user).fill(question), taxYear)))
+          case None => Future.successful(Ok(pensionsTaxReliefNotClaimedView(yesNoForm(request.user), taxYear)))
         }
       case _ =>
         Future.successful(Redirect(PaymentsIntoPensionsCYAController.show(taxYear)))
@@ -57,29 +57,31 @@ class PensionsTaxReliefNotClaimedController @Inject()(implicit val mcc: Messages
 
   }
 
-  def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit user =>
-    yesNoForm.bindFromRequest().fold(
+  def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
+    yesNoForm(request.user).bindFromRequest().fold(
       formWithErrors => Future.successful(BadRequest(pensionsTaxReliefNotClaimedView(formWithErrors, taxYear))),
       yesNo => {
-        pensionSessionService.getPensionsSessionDataResult(taxYear) {
+        pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
           data =>
             val pensionsCYAModel: PensionsCYAModel = data.map(_.pensions).getOrElse(PensionsCYAModel(PaymentsIntoPensionViewModel()))
             val viewModel: PaymentsIntoPensionViewModel = pensionsCYAModel.paymentsIntoPension
-            val updatedCyaModel: PensionsCYAModel = {pensionsCYAModel.copy(
-              paymentsIntoPension = viewModel.copy(
-                pensionTaxReliefNotClaimedQuestion = Some(yesNo),
-                retirementAnnuityContractPaymentsQuestion = if(yesNo) viewModel.retirementAnnuityContractPaymentsQuestion else None,
-                totalRetirementAnnuityContractPayments = if(yesNo) viewModel.totalRetirementAnnuityContractPayments else None,
-                workplacePensionPaymentsQuestion = if(yesNo) viewModel.workplacePensionPaymentsQuestion else None,
-                totalWorkplacePensionPayments = if(yesNo) viewModel.totalWorkplacePensionPayments else None
+            val updatedCyaModel: PensionsCYAModel = {
+              pensionsCYAModel.copy(
+                paymentsIntoPension = viewModel.copy(
+                  pensionTaxReliefNotClaimedQuestion = Some(yesNo),
+                  retirementAnnuityContractPaymentsQuestion = if (yesNo) viewModel.retirementAnnuityContractPaymentsQuestion else None,
+                  totalRetirementAnnuityContractPayments = if (yesNo) viewModel.totalRetirementAnnuityContractPayments else None,
+                  workplacePensionPaymentsQuestion = if (yesNo) viewModel.workplacePensionPaymentsQuestion else None,
+                  totalWorkplacePensionPayments = if (yesNo) viewModel.totalWorkplacePensionPayments else None
+                )
               )
-            )}
+            }
             val redirectLocation = if(yesNo) {
               controllers.pensions.routes.RetirementAnnuityController.show(taxYear)
             } else {
               controllers.pensions.routes.PaymentsIntoPensionsCYAController.show(taxYear)
             }
-            pensionSessionService.createOrUpdateSessionData(
+            pensionSessionService.createOrUpdateSessionData(request.user,
               updatedCyaModel, taxYear, data.exists(_.isPriorSubmission))(errorHandler.internalServerError()) {
               Redirect(redirectLocation)
             }
@@ -89,7 +91,7 @@ class PensionsTaxReliefNotClaimedController @Inject()(implicit val mcc: Messages
     )
   }
 
-  private def yesNoForm(implicit user: User[_]): Form[Boolean] = YesNoForm.yesNoForm(
+  private def yesNoForm(user: User): Form[Boolean] = YesNoForm.yesNoForm(
     missingInputError = s"pensions.pensionsTaxReliefNotClaimed.error.noEntry.${if (user.isAgent) "agent" else "individual"}"
   )
 

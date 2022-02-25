@@ -30,8 +30,10 @@ import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.Codecs.toBson
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 import uk.gov.hmrc.mongo.play.json.formats.MongoJodaFormats
-import utils.PagerDutyHelper.PagerDutyKeys.{FAILED_TO_CREATE_UPDATE_PENSIONS_DATA, FAILED_TO_ClEAR_PENSIONS_DATA,
-  FAILED_TO_FIND_PENSIONS_DATA}
+import utils.PagerDutyHelper.PagerDutyKeys.{
+  FAILED_TO_CREATE_UPDATE_PENSIONS_DATA, FAILED_TO_ClEAR_PENSIONS_DATA,
+  FAILED_TO_FIND_PENSIONS_DATA
+}
 import utils.PagerDutyHelper.{PagerDutyKeys, pagerDutyLog}
 import javax.inject.{Inject, Singleton}
 
@@ -40,15 +42,15 @@ import scala.util.Try
 
 @Singleton
 class PensionsUserDataRepositoryImpl @Inject()(mongo: MongoComponent, appConfig: AppConfig,
-                                          encryptionService: EncryptionService)(implicit ec: ExecutionContext
-                                         ) extends PlayMongoRepository[EncryptedPensionsUserData](
+                                               encryptionService: EncryptionService)(implicit ec: ExecutionContext
+                                              ) extends PlayMongoRepository[EncryptedPensionsUserData](
   mongoComponent = mongo,
   collectionName = "pensionsUserData",
   domainFormat = EncryptedPensionsUserData.formats,
   indexes = PensionsUserDataIndexes.indexes(appConfig)
 ) with Repository with PensionsUserDataRepository with Logging {
 
-  def find[T](taxYear: Int)(implicit user: User[T]): Future[Either[DatabaseError, Option[PensionsUserData]]] = {
+  def find[T](taxYear: Int, user: User): Future[Either[DatabaseError, Option[PensionsUserData]]] = {
 
     lazy val start = "[PensionsUserDataRepositoryImpl][find]"
 
@@ -74,7 +76,7 @@ class PensionsUserDataRepositoryImpl @Inject()(mongo: MongoComponent, appConfig:
     }
   }
 
-  def createOrUpdate[T](userData: PensionsUserData)(implicit user: User[T]): Future[Either[DatabaseError, Unit]] = {
+  def createOrUpdate[T](userData: PensionsUserData, user: User): Future[Either[DatabaseError, Unit]] = {
 
     lazy val start = "[PensionsUserDataRepositoryImpl][update]"
 
@@ -101,14 +103,14 @@ class PensionsUserDataRepositoryImpl @Inject()(mongo: MongoComponent, appConfig:
     }
   }
 
-  def clear[T](taxYear: Int)(implicit user: User[T]): Future[Boolean] =
+  def clear[T](taxYear: Int, user: User): Future[Boolean] =
     collection.deleteOne(filter(user.sessionId, user.mtditid, user.nino, taxYear))
       .toFutureOption()
-      .recover(mongoRecover("Clear", FAILED_TO_ClEAR_PENSIONS_DATA))
+      .recover(mongoRecover("Clear", FAILED_TO_ClEAR_PENSIONS_DATA, user))
       .map(_.exists(_.wasAcknowledged()))
 
-  def mongoRecover[T](operation: String, pagerDutyKey: PagerDutyKeys.Value)
-                     (implicit user: User[_]): PartialFunction[Throwable, Option[T]] = new PartialFunction[Throwable, Option[T]] {
+  def mongoRecover[T](operation: String, pagerDutyKey:
+    PagerDutyKeys.Value, user: User): PartialFunction[Throwable, Option[T]] = new PartialFunction[Throwable, Option[T]] {
 
     override def isDefinedAt(x: Throwable): Boolean = x.isInstanceOf[MongoException]
 
@@ -123,10 +125,10 @@ class PensionsUserDataRepositoryImpl @Inject()(mongo: MongoComponent, appConfig:
 }
 
 trait PensionsUserDataRepository {
-  def createOrUpdate[T](userData: PensionsUserData)(implicit user: User[T]): Future[Either[DatabaseError, Unit]]
+  def createOrUpdate[T](userData: PensionsUserData, user: User): Future[Either[DatabaseError, Unit]]
 
-  def find[T](taxYear: Int)(implicit user: User[T]): Future[Either[DatabaseError, Option[PensionsUserData]]]
+  def find[T](taxYear: Int, user: User): Future[Either[DatabaseError, Option[PensionsUserData]]]
 
-  def clear[T](taxYear: Int)(implicit user: User[T]): Future[Boolean]
+  def clear[T](taxYear: Int, user: User): Future[Boolean]
 }
 

@@ -18,7 +18,6 @@ package utils
 
 import models.User
 import models.mongo.PensionsUserData
-import org.mongodb.scala.bson.collection.immutable.Document
 import repositories.PensionsUserDataRepositoryImpl
 
 trait PensionsDatabaseHelper {
@@ -31,12 +30,12 @@ trait PensionsDatabaseHelper {
     await(pensionsDatabase.ensureIndexes)
   }
 
-  def insertCyaData(cya: PensionsUserData, user: User[_]): Unit = {
-    await(pensionsDatabase.createOrUpdate(cya)(user))
+  def insertCyaData(cya: PensionsUserData, user: User): Unit = {
+    await(pensionsDatabase.createOrUpdate(cya, user))
   }
 
-  def findCyaData(taxYear: Int, user: User[_]): Option[PensionsUserData] = {
-    await(pensionsDatabase.find(taxYear)(user).map {
+  def findCyaData(taxYear: Int, user: User): Option[PensionsUserData] = {
+    await(pensionsDatabase.find(taxYear, user).map {
       case Left(_) => None
       case Right(value) => value
     })
