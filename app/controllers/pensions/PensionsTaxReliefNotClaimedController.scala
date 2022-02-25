@@ -74,9 +74,14 @@ class PensionsTaxReliefNotClaimedController @Inject()(implicit val mcc: Messages
                 totalWorkplacePensionPayments = if(yesNo) viewModel.totalWorkplacePensionPayments else None
               )
             )}
+            val redirectLocation = if(yesNo) {
+              controllers.pensions.routes.RetirementAnnuityController.show(taxYear)
+            } else {
+              controllers.pensions.routes.PaymentsIntoPensionsCYAController.show(taxYear)
+            }
             pensionSessionService.createOrUpdateSessionData(
               updatedCyaModel, taxYear, data.exists(_.isPriorSubmission))(errorHandler.internalServerError()) {
-              Redirect(RetirementAnnuityController.show(taxYear))
+              Redirect(redirectLocation)
             }
         }
 

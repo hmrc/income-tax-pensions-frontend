@@ -140,7 +140,8 @@ pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.error.overMaximum = The t
 
 pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.whereToFind.individual = You can find the total amount you paid into RAS pensions, plus tax relief, on the pension certificate or receipt from your administrator.
 pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.whereToFind.agent = You can find the total amount your client paid into RAS pensions, plus tax relief, on the pension certificate or receipt from your administrator.
-pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.howToWorkOut = To work it out yourself, divide the amount you actually paid by 80 and multiply the result by 100.
+pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.howToWorkOut.individual = To work it out yourself, divide the amount you actually paid by 80 and multiply the result by 100.
+pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.howToWorkOut.agent = To work it out yourself, divide the amount your client actually paid by 80 and multiply the result by 100.
 pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.calculationHeading = Example calculation
 pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.exampleCalculation = Emma paid £500 into her pension scheme. £500 divided by 80 and multiplied by 100 is £625. Her answer is £625.
 

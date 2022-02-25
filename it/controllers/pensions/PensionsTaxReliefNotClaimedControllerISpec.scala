@@ -310,7 +310,7 @@ class PensionsTaxReliefNotClaimedControllerISpec extends IntegrationTest with Vi
 
           "has a SEE_OTHER(303) status" in {
             result.status shouldBe SEE_OTHER
-            result.header("location") shouldBe Some(RetirementAnnuityController.show(taxYearEOY).url)
+            result.header("location") shouldBe Some(controllers.pensions.routes.PaymentsIntoPensionsCYAController.show(taxYearEOY).url)
           }
 
           "updates retirement annuity contract payments question to Some(false) and clears retirements and workplace answers" in {

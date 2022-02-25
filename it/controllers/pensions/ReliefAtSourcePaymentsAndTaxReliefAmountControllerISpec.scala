@@ -62,7 +62,6 @@ class ReliefAtSourcePaymentsAndTaxReliefAmountControllerISpec extends Integratio
     val expectedHeading: String
     val expectedTitle: String
     val expectedErrorTitle: String
-    val expectedHowToWorkOut: String
     val expectedCalculationHeading: String
     val expectedExampleCalculation: String
     val emptyErrorText: String
@@ -74,6 +73,7 @@ class ReliefAtSourcePaymentsAndTaxReliefAmountControllerISpec extends Integratio
 
   trait SpecificExpectedResults {
     val expectedWhereToFind: String
+    val expectedHowToWorkOut: String
   }
 
   object CommonExpectedEN extends CommonExpectedResults {
@@ -81,7 +81,6 @@ class ReliefAtSourcePaymentsAndTaxReliefAmountControllerISpec extends Integratio
     val expectedHeading = "Total payments into relief at source (RAS) pensions, plus basic rate tax relief"
     val expectedTitle = "Total payments into relief at source (RAS) pensions, plus basic rate tax relief"
     val expectedErrorTitle = s"Error: $expectedTitle"
-    val expectedHowToWorkOut = "To work it out yourself, divide the amount you actually paid by 80 and multiply the result by 100."
     val expectedCalculationHeading = "Example calculation"
     val expectedExampleCalculation = "Emma paid £500 into her pension scheme. £500 divided by 80 and multiplied by 100 is £625. Her answer is £625."
     val hintText = "For example, £193.52"
@@ -96,7 +95,6 @@ class ReliefAtSourcePaymentsAndTaxReliefAmountControllerISpec extends Integratio
     val expectedHeading = "Total payments into relief at source (RAS) pensions, plus basic rate tax relief"
     val expectedTitle = "Total payments into relief at source (RAS) pensions, plus basic rate tax relief"
     val expectedErrorTitle = s"Error: $expectedTitle"
-    val expectedHowToWorkOut = "To work it out yourself, divide the amount you actually paid by 80 and multiply the result by 100."
     val expectedCalculationHeading = "Example calculation"
     val expectedExampleCalculation = "Emma paid £500 into her pension scheme. £500 divided by 80 and multiplied by 100 is £625. Her answer is £625."
     val hintText = "For example, £193.52"
@@ -109,21 +107,29 @@ class ReliefAtSourcePaymentsAndTaxReliefAmountControllerISpec extends Integratio
   object ExpectedIndividualEN extends SpecificExpectedResults {
     val expectedWhereToFind =
       "You can find the total amount you paid into RAS pensions, plus tax relief, on the pension certificate or receipt from your administrator."
+    val expectedHowToWorkOut =
+      "To work it out yourself, divide the amount you actually paid by 80 and multiply the result by 100."
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
     val expectedWhereToFind =
       "You can find the total amount you paid into RAS pensions, plus tax relief, on the pension certificate or receipt from your administrator."
+    val expectedHowToWorkOut =
+      "To work it out yourself, divide the amount you actually paid by 80 and multiply the result by 100."
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
     val expectedWhereToFind =
       "You can find the total amount your client paid into RAS pensions, plus tax relief, on the pension certificate or receipt from your administrator."
+    val expectedHowToWorkOut =
+      "To work it out yourself, divide the amount your client actually paid by 80 and multiply the result by 100."
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
     val expectedWhereToFind =
       "You can find the total amount your client paid into RAS pensions, plus tax relief, on the pension certificate or receipt from your administrator."
+    val expectedHowToWorkOut =
+      "To work it out yourself, divide the amount your client actually paid by 80 and multiply the result by 100."
   }
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(
@@ -161,7 +167,7 @@ class ReliefAtSourcePaymentsAndTaxReliefAmountControllerISpec extends Integratio
           h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           textOnPageCheck(user.specificExpectedResults.get.expectedWhereToFind, paragraphSelector(2))
-          textOnPageCheck(expectedHowToWorkOut, paragraphSelector(3))
+          textOnPageCheck(user.specificExpectedResults.get.expectedHowToWorkOut, paragraphSelector(3))
           textOnPageCheck(expectedCalculationHeading, insetSpanText(1))
           textOnPageCheck(expectedExampleCalculation, insetSpanText(2))
           textOnPageCheck(hintText, hintTextSelector)
@@ -195,7 +201,7 @@ class ReliefAtSourcePaymentsAndTaxReliefAmountControllerISpec extends Integratio
           h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           textOnPageCheck(user.specificExpectedResults.get.expectedWhereToFind, paragraphSelector(2))
-          textOnPageCheck(expectedHowToWorkOut, paragraphSelector(3))
+          textOnPageCheck(user.specificExpectedResults.get.expectedHowToWorkOut, paragraphSelector(3))
           textOnPageCheck(expectedCalculationHeading, insetSpanText(1))
           textOnPageCheck(expectedExampleCalculation, insetSpanText(2))
           textOnPageCheck(hintText, hintTextSelector)
@@ -297,7 +303,7 @@ class ReliefAtSourcePaymentsAndTaxReliefAmountControllerISpec extends Integratio
           h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           textOnPageCheck(user.specificExpectedResults.get.expectedWhereToFind, paragraphSelector(2))
-          textOnPageCheck(expectedHowToWorkOut, paragraphSelector(3))
+          textOnPageCheck(user.specificExpectedResults.get.expectedHowToWorkOut, paragraphSelector(3))
           textOnPageCheck(expectedCalculationHeading, insetSpanText(1))
           textOnPageCheck(expectedExampleCalculation, insetSpanText(2))
           textOnPageCheck(hintText, hintTextSelector)
@@ -335,7 +341,7 @@ class ReliefAtSourcePaymentsAndTaxReliefAmountControllerISpec extends Integratio
           h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           textOnPageCheck(user.specificExpectedResults.get.expectedWhereToFind, paragraphSelector(2))
-          textOnPageCheck(expectedHowToWorkOut, paragraphSelector(3))
+          textOnPageCheck(user.specificExpectedResults.get.expectedHowToWorkOut, paragraphSelector(3))
           textOnPageCheck(expectedCalculationHeading, insetSpanText(1))
           textOnPageCheck(expectedExampleCalculation, insetSpanText(2))
           textOnPageCheck(hintText, hintTextSelector)
@@ -373,7 +379,7 @@ class ReliefAtSourcePaymentsAndTaxReliefAmountControllerISpec extends Integratio
           h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           textOnPageCheck(user.specificExpectedResults.get.expectedWhereToFind, paragraphSelector(2))
-          textOnPageCheck(expectedHowToWorkOut, paragraphSelector(3))
+          textOnPageCheck(user.specificExpectedResults.get.expectedHowToWorkOut, paragraphSelector(3))
           textOnPageCheck(expectedCalculationHeading, insetSpanText(1))
           textOnPageCheck(expectedExampleCalculation, insetSpanText(2))
           textOnPageCheck(hintText, hintTextSelector)
