@@ -53,7 +53,7 @@ class PaymentsIntoPensionsCYAControllerISpec extends IntegrationTest with ViewHe
     val reliefAtSource: String = controllers.pensions.routes.ReliefAtSourcePensionsController.show(taxYear).url
     val reliefAtSourceAmount: String = controllers.pensions.routes.ReliefAtSourcePaymentsAndTaxReliefAmountController.show(taxYear).url
     val oneOff: String = controllers.pensions.routes.PensionsSummaryController.show(taxYear).url
-    val oneOffAmount: String = controllers.pensions.routes.PensionsSummaryController.show(taxYear).url
+    val oneOffAmount: String = controllers.pensions.routes.OneOffRASPaymentsAmountController.show(taxYear).url
     val pensionsTaxReliefNotClaimed: String = controllers.pensions.routes.PensionsTaxReliefNotClaimedController.show(taxYear).url
     val retirementAnnuity: String = controllers.pensions.routes.RetirementAnnuityController.show(taxYear).url
     val retirementAnnuityAmount: String = controllers.pensions.routes.RetirementAnnuityAmountController.show(taxYear).url

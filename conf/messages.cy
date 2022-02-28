@@ -87,6 +87,11 @@ pensions.pensionSummary.pensionLifetimeAllowance = Pension lifetime allowance
 pensions.pensionSummary.unauthorisedPaymentsFromPensions = Unauthorised payments from pensions
 pensions.pensionSummary.paymentsToOverseasPensions = Payments into overseas pensions
 
+
+########    PAYMENTS INTO PENSIONS    ########
+
+paymentsIntoPensions.reliefAtSource.calculationHeading = Example calculation
+
 #pensions relief at source
 
 pensions.reliefAtSourcePensions.title = Relief at source (RAS) pensions
@@ -142,10 +147,20 @@ pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.whereToFind.individual = 
 pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.whereToFind.agent = You can find the total amount your client paid into RAS pensions, plus tax relief, on the pension certificate or receipt from your administrator.
 pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.howToWorkOut.individual = To work it out yourself, divide the amount you actually paid by 80 and multiply the result by 100.
 pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.howToWorkOut.agent = To work it out yourself, divide the amount your client actually paid by 80 and multiply the result by 100.
-pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.calculationHeading = Example calculation
 pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.exampleCalculation = Emma paid £500 into her pension scheme. £500 divided by 80 and multiplied by 100 is £625. Her answer is £625.
 
-#payments into pensions
+#one off RAS payments amount
+
+paymentsIntoPensions.oneOffRasAmount.heading = Total one-off payments into relief at source (RAS) pensions, plus basic rate tax relief
+paymentsIntoPensions.oneOffRasAmount.youToldUs.individual = You told us the total amount you paid plus tax relief was £{0}. Tell us how much of this was a one-off payment. Include tax relief.
+paymentsIntoPensions.oneOffRasAmount.youToldUs.agent = You told us the total amount your client paid plus tax relief was £{0}. Tell us how much of this was a one-off payment. Include tax relief.
+paymentsIntoPensions.oneOffRasAmount.workItOut = To work it out, divide your one-off payment amount by 80 and multiply the result by 100.
+paymentsIntoPensions.oneOffRasAmount.exampleCalculation = Emma made a one-off payment of £500. £500 divided by 80 and multiplied by 100 is £625. Her answer is £625.
+paymentsIntoPensions.oneOffRasAmount.error.noEntry = Enter the total amount of one-off payments paid into RAS pensions, plus basic rate tax relief
+paymentsIntoPensions.oneOffRasAmount.error.invalidFormat = Enter the total amount of one-off payments paid into RAS pensions, plus basic rate tax relief, in the correct format
+paymentsIntoPensions.oneOffRasAmount.error.overMaximum = The total amount of one-off payments paid into RAS pensions, plus basic rate tax relief, must be less than £100,000,000,000
+
+#payments into pensions CYA
 
 paymentsIntoPensions.cya.heading.individual = Check your payments into pensions
 paymentsIntoPensions.cya.heading.agent = Check your client’s payments into pensions
