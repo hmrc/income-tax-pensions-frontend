@@ -88,6 +88,7 @@ class OneOffRASPaymentsAmountController @Inject()(implicit val mcc: MessagesCont
             }
             pensionSessionService.createOrUpdateSessionData(
               updatedCyaModel, taxYear, data.exists(_.isPriorSubmission))(errorHandler.internalServerError()) {
+              // TODO - redirect to total payments into RAS pensions page when built
               Redirect(controllers.pensions.routes.PensionsTaxReliefNotClaimedController.show(taxYear))
             }
           }
