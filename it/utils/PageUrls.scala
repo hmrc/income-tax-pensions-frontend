@@ -53,6 +53,9 @@ object PageUrls extends IntegrationTest {
 
   def workplacePensionAmount(taxYear: Int): String = s"$appUrl/$taxYear/payments-into-pensions/no-tax-relief/workplace-amount"
 
+  def retirementAnnuityAmountUrl(taxYear: Int): String = s"$appUrl/$taxYear/payments-into-pensions/no-tax-relief/retirement-annuity-amount"
+
   //scalastyle:on number.of.methods
 
 }
+

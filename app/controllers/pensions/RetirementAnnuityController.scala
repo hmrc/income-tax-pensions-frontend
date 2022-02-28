@@ -73,8 +73,7 @@ class RetirementAnnuityController @Inject()(implicit val cc: MessagesControllerC
             pensionSessionService.createOrUpdateSessionData(
               updatedCyaModel, taxYear, data.exists(_.isPriorSubmission))(errorHandler.internalServerError()) {
               if (yesNo) {
-                //TODO redirect to retirement annuity amount page
-                Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear))
+                Redirect(controllers.pensions.routes.RetirementAnnuityAmountController.show(taxYear))
               } else {
                 //TODO redirect to workplace pensions page
                 Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear))

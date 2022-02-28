@@ -30,7 +30,7 @@ import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import utils.PageUrls.{fullUrl, retirementAnnuityUrl}
-import utils.{IntegrationTest, PageUrls, PensionsDatabaseHelper, ViewHelpers}
+import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 class RetirementAnnuityControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
 
@@ -303,7 +303,7 @@ class RetirementAnnuityControllerISpec extends IntegrationTest with ViewHelpers 
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(controllers.pensions.routes.PensionsSummaryController.show(taxYearEOY).url)
+        result.header("location") shouldBe Some(controllers.pensions.routes.RetirementAnnuityAmountController.show(taxYearEOY).url)
       }
 
       "updates retirement annuity contract payments question to Some(true)" in {

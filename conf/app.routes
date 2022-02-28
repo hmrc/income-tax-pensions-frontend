@@ -51,3 +51,9 @@ POST        /:taxYear/payments-into-pensions/no-tax-relief/workplace-amount     
 
 GET         /:taxYear/payments-into-pensions/no-tax-relief/workplace                 controllers.pensions.WorkplacePensionController.show(taxYear: Int)
 POST        /:taxYear/payments-into-pensions/no-tax-relief/workplace                 controllers.pensions.WorkplacePensionController.submit(taxYear: Int)
+
+
+GET         /:taxYear/payments-into-pensions/no-tax-relief/retirement-annuity-amount                   controllers.pensions.RetirementAnnuityAmountController.show(taxYear: Int)
+POST        /:taxYear/payments-into-pensions/no-tax-relief/retirement-annuity-amount                   controllers.pensions.RetirementAnnuityAmountController.submit(taxYear: Int)
+
+

@@ -197,3 +197,15 @@ pensions.workplacePension.whereToCheck.agent = Check with your client’s employ
 pensions.workplacePension.findOutMore = Find out more about tax relief
 pensions.workplacePension.error.noEntry.individual = Select yes if you paid into a workplace pension and did not receive tax relief
 pensions.workplacePension.error.noEntry.agent = Select yes if your client paid into a workplace pension and did not receive tax relief
+
+#################       Retirement Annuity Amount Messages        ########################################
+
+pensions.retirementAnnuityAmount.title.individual = How much did you pay into your retirement annuity contracts?
+pensions.retirementAnnuityAmount.title.agent = How much did your client pay into their retirement annuity contracts?
+pensions.retirementAnnuityAmount.includes.individual = Only include payments your pension provider will not claim tax relief for. You can find this out from your pension provider.
+pensions.retirementAnnuityAmount.includes.agent = Only include payments your client’s pension provider will not claim tax relief for. You can find this out from your client’s pension provider.
+pensions.retirementAnnuityAmount.error.noEntry = Enter the amount paid into retirement annuity contracts
+pensions.retirementAnnuityAmount.error.incorrectFormat = Enter the amount paid into retirement annuity contracts in the correct format
+pensions.retirementAnnuityAmount.error.overMaximum = The amount paid into retirement annuity contracts must be less than £100,000,000,000
+
+
