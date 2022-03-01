@@ -184,6 +184,15 @@ paymentsIntoPensions.cya.retirementAnnuityTotal.hidden = Change total retirement
 paymentsIntoPensions.cya.workplacePayments.hidden = Change whether workplace pension payments were made
 paymentsIntoPensions.cya.workplacePaymentsTotal.hidden = Change total workplace pension payments
 
+#pensions tax at source one off payments
+
+pensions.reliefAtSourceOneOffPayments.title.individual = Did you make any one-off payments into relief at source (RAS) pensions?
+pensions.reliefAtSourceOneOffPayments.title.agent = Did your client make any one-off payments into relief at source (RAS) pensions?
+pensions.reliefAtSourceOneOffPayments.thisIncludes.individual = You told us the total amount you paid plus tax relief was {0}. Tell us if this includes any one-off payments. A one-off payment is a single payment, made once.
+pensions.reliefAtSourceOneOffPayments.thisIncludes.agent = You told us the total amount your client paid plus tax relief was {0}. Tell us if this includes any one-off payments. A one-off payment is a single payment, made once.
+pensions.reliefAtSourceOneOffPayments.error.noEntry.individual = Select yes if you made one-off payments into RAS pensions
+pensions.reliefAtSourceOneOffPayments.error.noEntry.agent = Select yes if your client made one-off payments into RAS pensions
+
 #workplace amount
 
 pensions.workplaceAmount.title.individual = How much did you pay into your workplace pensions?

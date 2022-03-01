@@ -31,8 +31,8 @@
 
 @(form: Form[Boolean], taxYear: Int)(implicit user: User[_], messages: Messages, appConfig: AppConfig)
 
-@titleForUse = @{messages("pensions.reliefAtSourcePensions.title")}
-@headingForUse = @{titleForUse}
+@headingAndTitleForUse = @{messages("pensions.reliefAtSourcePensions.title")}
+
 @hasFormErrors = @{form.hasErrors}
 
 @contentHtml = {
@@ -46,7 +46,7 @@
 
     <h2 class="govuk-heading-m">@messages(s"pensions.reliefAtSource.h2QuestionHeader.${if(user.isAgent) "agent" else "individual"}")</h2>
 }
-@layout(pageTitle = titleForUse, taxYear = Some(taxYear), hasErrors = hasFormErrors, isAgent = user.isAgent) {
+@layout(pageTitle = headingAndTitleForUse, taxYear = Some(taxYear), hasErrors = hasFormErrors, isAgent = user.isAgent) {
 
 @errorSummary(form.errors.distinct)
 
@@ -54,7 +54,7 @@
 
         @inputRadio(
             form = form,
-            heading = titleForUse,
+            heading = headingAndTitleForUse,
             content = Some(contentHtml),
             classes = "govuk-!-margin-bottom-0",
             inline = true,

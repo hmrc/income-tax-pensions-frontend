@@ -49,6 +49,9 @@ POST        /:taxYear/payments-into-pensions/one-off-payments-amount            
 GET         /:taxYear/payments-into-pensions/check-payments-into-pensions            controllers.pensions.PaymentsIntoPensionsCYAController.show(taxYear:Int)
 POST        /:taxYear/payments-into-pensions/check-payments-into-pensions            controllers.pensions.PaymentsIntoPensionsCYAController.submit(taxYear:Int)
 
+GET         /:taxYear/payments-into-pensions/one-off-payments                        controllers.pensions.ReliefAtSourceOneOffPaymentsController.show(taxYear: Int)
+POST        /:taxYear/payments-into-pensions/one-off-payments                        controllers.pensions.ReliefAtSourceOneOffPaymentsController.submit(taxYear: Int)
+
 GET         /:taxYear/payments-into-pensions/no-tax-relief/workplace-amount          controllers.pensions.WorkplaceAmountController.show(taxYear: Int)
 POST        /:taxYear/payments-into-pensions/no-tax-relief/workplace-amount          controllers.pensions.WorkplaceAmountController.submit(taxYear: Int)
 

@@ -20,7 +20,6 @@ import builders.PaymentsIntoPensionVewModelBuilder.aPaymentsIntoPensionViewModel
 import builders.PensionsCYAModelBuilder._
 import builders.PensionsUserDataBuilder
 import builders.UserBuilder._
-import controllers.pensions.routes.PensionsSummaryController
 import forms.AmountForm
 import models.mongo.PensionsCYAModel
 import org.jsoup.Jsoup
@@ -29,7 +28,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.{checkPaymentsIntoPensionCyaUrl, fullUrl, pensionSummaryUrl, reliefAtSourcePaymentsAndTaxReliefAmountUrl, reliefAtSourcePensionsUrl}
+import utils.PageUrls._
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 class ReliefAtSourcePaymentsAndTaxReliefAmountControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
@@ -213,59 +212,58 @@ class ReliefAtSourcePaymentsAndTaxReliefAmountControllerISpec extends Integratio
 
         }
 
-        "redirect to the car rasPensionPaymentQuestion page if the question has not been answered" which {
-          lazy val result: WSResponse = {
-            dropPensionsDB()
-            authoriseAgentOrIndividual(user.isAgent)
-            val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
-              rasPensionPaymentQuestion = None, totalRASPaymentsAndTaxRelief = None)
-            insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
-            urlGet(fullUrl(reliefAtSourcePaymentsAndTaxReliefAmountUrl(taxYearEOY)), user.isWelsh, follow = false,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
-          }
-
-          "has an SEE_OTHER status" in {
-            result.status shouldBe SEE_OTHER
-            result.header("location").contains(reliefAtSourcePensionsUrl(taxYearEOY)) shouldBe true
-          }
-
-        }
-
-        "redirect to the rasPensionPaymentQuestion page if the rasPensionPaymentQuestion question has been answered as false" which {
-          lazy val result: WSResponse = {
-            dropPensionsDB()
-            authoriseAgentOrIndividual(user.isAgent)
-            val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
-              rasPensionPaymentQuestion = Some(false), totalRASPaymentsAndTaxRelief = None)
-            insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
-            urlGet(fullUrl(reliefAtSourcePaymentsAndTaxReliefAmountUrl(taxYearEOY)), user.isWelsh, follow = false,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
-          }
-
-          "has an SEE_OTHER status" in {
-            result.status shouldBe SEE_OTHER
-            result.header("location").contains(reliefAtSourcePensionsUrl(taxYearEOY)) shouldBe true
-          }
-
-        }
-
-        "redirect to the CYA page if there is no session data" which {
-          lazy val result: WSResponse = {
-            dropPensionsDB()
-            authoriseAgentOrIndividual(user.isAgent)
-            // no cya insert
-            urlGet(fullUrl(reliefAtSourcePaymentsAndTaxReliefAmountUrl(taxYearEOY)), user.isWelsh, follow = false,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
-          }
-
-          "has an SEE_OTHER status" in {
-            result.status shouldBe SEE_OTHER
-            result.header("location").contains(checkPaymentsIntoPensionCyaUrl(taxYearEOY)) shouldBe true
-          }
-
-        }
-
       }
+    }
+
+    "redirect to the rasPensionPaymentQuestion page if the question has not been answered" which {
+      lazy val result: WSResponse = {
+        dropPensionsDB()
+        authoriseAgentOrIndividual(isAgent = false)
+        val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
+          rasPensionPaymentQuestion = None, totalRASPaymentsAndTaxRelief = None)
+        insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
+        urlGet(fullUrl(reliefAtSourcePaymentsAndTaxReliefAmountUrl(taxYearEOY)), follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+      }
+
+      "has an SEE_OTHER status" in {
+        result.status shouldBe SEE_OTHER
+        result.header("location").contains(reliefAtSourcePensionsUrl(taxYearEOY)) shouldBe true
+      }
+
+    }
+
+    "redirect to the rasPensionPaymentQuestion page if the rasPensionPaymentQuestion question has been answered as false" which {
+      lazy val result: WSResponse = {
+        dropPensionsDB()
+        authoriseAgentOrIndividual(isAgent = false)
+        val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
+          rasPensionPaymentQuestion = Some(false), totalRASPaymentsAndTaxRelief = None)
+        insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
+        urlGet(fullUrl(reliefAtSourcePaymentsAndTaxReliefAmountUrl(taxYearEOY)), follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+      }
+
+      "has an SEE_OTHER status" in {
+        result.status shouldBe SEE_OTHER
+        result.header("location").contains(reliefAtSourcePensionsUrl(taxYearEOY)) shouldBe true
+      }
+    }
+
+    "redirect to the CYA page if there is no session data" which {
+      lazy val result: WSResponse = {
+        dropPensionsDB()
+        authoriseAgentOrIndividual(isAgent = false)
+        // no cya insert
+        urlGet(fullUrl(reliefAtSourcePaymentsAndTaxReliefAmountUrl(taxYearEOY)), follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+      }
+
+      "has an SEE_OTHER status" in {
+        result.status shouldBe SEE_OTHER
+        result.header("location").contains(checkPaymentsIntoPensionCyaUrl(taxYearEOY)) shouldBe true
+      }
+
     }
 
   }
@@ -392,35 +390,34 @@ class ReliefAtSourcePaymentsAndTaxReliefAmountControllerISpec extends Integratio
           welshToggleCheck(user.isWelsh)
         }
 
-        "redirect to the correct page when a valid amount is submitted and update the session amount" which {
-
-          val validAmount = "100.22"
-          val validForm: Map[String, String] = Map(AmountForm.amount -> validAmount)
-
-          lazy val result: WSResponse = {
-            dropPensionsDB()
-            val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
-              rasPensionPaymentQuestion = Some(true), totalRASPaymentsAndTaxRelief = None)
-            insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
-            authoriseAgentOrIndividual(user.isAgent)
-            urlPost(fullUrl(reliefAtSourcePaymentsAndTaxReliefAmountUrl(taxYearEOY)), body = validForm, welsh = user.isWelsh, follow = false,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
-          }
-
-          "has a SEE_OTHER(303) status" in {
-            result.status shouldBe SEE_OTHER
-            result.header("location") shouldBe Some(PensionsSummaryController.show(taxYearEOY).url)
-          }
-
-          "updates retirement annuity contract payments question to Some(true)" in {
-            lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
-            cyaModel.pensions.paymentsIntoPension.totalRASPaymentsAndTaxRelief shouldBe Some(BigDecimal(validAmount))
-          }
-        }
-
-
       }
 
+    }
+
+    "redirect to the correct page when a valid amount is submitted and update the session amount" which {
+
+      val validAmount = "100.22"
+      val validForm: Map[String, String] = Map(AmountForm.amount -> validAmount)
+
+      lazy val result: WSResponse = {
+        dropPensionsDB()
+        val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
+          rasPensionPaymentQuestion = Some(true), totalRASPaymentsAndTaxRelief = None)
+        insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
+        authoriseAgentOrIndividual(isAgent = false)
+        urlPost(fullUrl(reliefAtSourcePaymentsAndTaxReliefAmountUrl(taxYearEOY)), body = validForm, follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+      }
+
+      "has a SEE_OTHER(303) status" in {
+        result.status shouldBe SEE_OTHER
+        result.header("location") shouldBe Some(reliefAtSourceOneOffPaymentsUrl(taxYearEOY))
+      }
+
+      "updates retirement annuity contract payments question to Some(true)" in {
+        lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
+        cyaModel.pensions.paymentsIntoPension.totalRASPaymentsAndTaxRelief shouldBe Some(BigDecimal(validAmount))
+      }
     }
 
   }
