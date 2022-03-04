@@ -16,18 +16,20 @@
 
 package models.mongo
 
+import models.pension.charges.{EncryptedPensionAnnualAllowancesViewModel, PensionAnnualAllowancesViewModel}
 import models.pension.reliefs.{EncryptedPaymentsIntoPensionViewModel, PaymentsIntoPensionViewModel}
 import play.api.libs.json.{Json, OFormat}
 
-case class PensionsCYAModel(paymentsIntoPension: PaymentsIntoPensionViewModel)
+case class PensionsCYAModel(paymentsIntoPension: PaymentsIntoPensionViewModel,
+                            pensionsAnnualAllowances: PensionAnnualAllowancesViewModel)
 
 object PensionsCYAModel {
   implicit val format: OFormat[PensionsCYAModel] = Json.format[PensionsCYAModel]
 }
 
-case class EncryptedPensionCYAModel(encryptedPaymentsIntoPension: EncryptedPaymentsIntoPensionViewModel)
+case class EncryptedPensionCYAModel(encryptedPaymentsIntoPension: EncryptedPaymentsIntoPensionViewModel,
+                                    encryptedPensionAnnualAllowances: EncryptedPensionAnnualAllowancesViewModel)
 
 object EncryptedPensionCYAModel {
   implicit val format: OFormat[EncryptedPensionCYAModel] = Json.format[EncryptedPensionCYAModel]
 }
-

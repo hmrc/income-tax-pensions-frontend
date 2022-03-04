@@ -17,11 +17,12 @@
 package controllers.pensions
 
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.routes.{ReliefAtSourcePaymentsAndTaxReliefAmountController, PensionsTaxReliefNotClaimedController}
+import controllers.pensions.routes.{PensionsTaxReliefNotClaimedController, ReliefAtSourcePaymentsAndTaxReliefAmountController}
 import controllers.predicates.AuthorisedAction
 import forms.YesNoForm
 import models.User
 import models.mongo.PensionsCYAModel
+import models.pension.charges.PensionAnnualAllowancesViewModel
 import models.pension.reliefs.PaymentsIntoPensionViewModel
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -30,6 +31,7 @@ import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.ReliefAtSourcePensionsView
+
 import javax.inject.Inject
 import scala.concurrent.Future
 
@@ -59,7 +61,8 @@ class ReliefAtSourcePensionsController @Inject()(implicit val cc: MessagesContro
       yesNo => {
         pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) { optData =>
 
-          val pensionsCya = optData.map(_.pensions).getOrElse(PensionsCYAModel(PaymentsIntoPensionViewModel()))
+          val pensionsCya = optData.map(_.pensions).getOrElse(PensionsCYAModel(
+            PaymentsIntoPensionViewModel(), PensionAnnualAllowancesViewModel()))
           val viewModel = pensionsCya.paymentsIntoPension
 
           val updatedCyaModel = {

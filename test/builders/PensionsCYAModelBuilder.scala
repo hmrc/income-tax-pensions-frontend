@@ -17,14 +17,25 @@
 package builders
 
 import builders.PaymentsIntoPensionVewModelBuilder.{aPaymentsIntoPensionViewModel, aPaymentsIntoPensionsEmptyViewModel}
+import builders.PensionAnnualAllowanceViewModelBuilder.{aPensionAnnualAllowanceEmptyViewModel, aPensionAnnualAllowanceViewModel}
 import models.mongo.PensionsCYAModel
+import models.pension.charges.PensionAnnualAllowancesViewModel
+import models.pension.reliefs.PaymentsIntoPensionViewModel
 
 object PensionsCYAModelBuilder {
 
   val aPensionsCYAModel: PensionsCYAModel = PensionsCYAModel(
-    paymentsIntoPension = aPaymentsIntoPensionViewModel
+    paymentsIntoPension = aPaymentsIntoPensionViewModel,
+    pensionsAnnualAllowances = aPensionAnnualAllowanceViewModel
   )
+
   val aPensionsCYAEmptyModel: PensionsCYAModel = PensionsCYAModel(
-    paymentsIntoPension = aPaymentsIntoPensionsEmptyViewModel
+    paymentsIntoPension = aPaymentsIntoPensionsEmptyViewModel,
+    pensionsAnnualAllowances = aPensionAnnualAllowanceEmptyViewModel
   )
+
+  def paymentsIntoPensionOnlyCYAModel(paymentsIntoPensionViewModel: PaymentsIntoPensionViewModel): PensionsCYAModel = {
+    PensionsCYAModel(paymentsIntoPensionViewModel, PensionAnnualAllowancesViewModel())
+  }
+
 }

@@ -18,6 +18,7 @@ package services
 
 import config.AppConfig
 import models.mongo._
+import models.pension.charges.{EncryptedPensionAnnualAllowancesViewModel, PensionAnnualAllowancesViewModel}
 import models.pension.reliefs.{EncryptedPaymentsIntoPensionViewModel, PaymentsIntoPensionViewModel}
 import utils.SecureGCMCipher
 
@@ -34,11 +35,11 @@ class EncryptionService @Inject()(secureGCMCipher: SecureGCMCipher, appConfig: A
       taxYear = userData.taxYear,
       isPriorSubmission = userData.isPriorSubmission,
       pensions = encryptPension(userData.pensions),
-        lastUpdated = userData.lastUpdated
+      lastUpdated = userData.lastUpdated
     )
   }
 
-  def encryptPaymentsIntoPension(p: PaymentsIntoPensionViewModel)(implicit textAndKey: TextAndKey): EncryptedPaymentsIntoPensionViewModel = {
+  private def encryptPaymentsIntoPension(p: PaymentsIntoPensionViewModel)(implicit textAndKey: TextAndKey): EncryptedPaymentsIntoPensionViewModel = {
     EncryptedPaymentsIntoPensionViewModel(
       rasPensionPaymentQuestion = p.rasPensionPaymentQuestion.map(secureGCMCipher.encrypt),
       totalRASPaymentsAndTaxRelief = p.totalRASPaymentsAndTaxRelief.map(secureGCMCipher.encrypt),
@@ -52,9 +53,25 @@ class EncryptionService @Inject()(secureGCMCipher: SecureGCMCipher, appConfig: A
     )
   }
 
+  private def encryptedPensionAnnualAllowances(p: PensionAnnualAllowancesViewModel)
+                                              (implicit textAndKey: TextAndKey): EncryptedPensionAnnualAllowancesViewModel = {
+
+    EncryptedPensionAnnualAllowancesViewModel(
+      reducedAnnualAllowanceQuestion = p.reducedAnnualAllowanceQuestion.map(secureGCMCipher.encrypt),
+      moneyPurchaseAnnualAllowance = p.moneyPurchaseAnnualAllowance.map(secureGCMCipher.encrypt),
+      taperedAnnualAllowance = p.taperedAnnualAllowance.map(secureGCMCipher.encrypt),
+      aboveAnnualAllowanceQuestion = p.aboveAnnualAllowanceQuestion.map(secureGCMCipher.encrypt),
+      aboveAnnualAllowance = p.aboveAnnualAllowance.map(secureGCMCipher.encrypt),
+      pensionProvidePaidAnnualAllowanceQuestion = p.pensionProvidePaidAnnualAllowanceQuestion.map(secureGCMCipher.encrypt),
+      taxPaidByPensionProvider = p.taxPaidByPensionProvider.map(secureGCMCipher.encrypt),
+      pensionSchemeTaxReference = p.pensionSchemeTaxReference.map(_.map(secureGCMCipher.encrypt))
+    )
+  }
+
   private def encryptPension(pension: PensionsCYAModel)(implicit textAndKey: TextAndKey): EncryptedPensionCYAModel = {
     EncryptedPensionCYAModel(
-      encryptedPaymentsIntoPension = encryptPaymentsIntoPension(pension.paymentsIntoPension)
+      encryptedPaymentsIntoPension = encryptPaymentsIntoPension(pension.paymentsIntoPension),
+      encryptedPensionAnnualAllowances = encryptedPensionAnnualAllowances(pension.pensionsAnnualAllowances)
     )
   }
 
@@ -72,9 +89,25 @@ class EncryptionService @Inject()(secureGCMCipher: SecureGCMCipher, appConfig: A
     )
   }
 
+  private def decryptPensionAnnualAllowanceViewModel(p: EncryptedPensionAnnualAllowancesViewModel)
+                                                    (implicit textAndKey: TextAndKey): PensionAnnualAllowancesViewModel = {
+    PensionAnnualAllowancesViewModel(
+      reducedAnnualAllowanceQuestion = p.reducedAnnualAllowanceQuestion.map(x => secureGCMCipher.decrypt[Boolean](x.value, x.nonce)),
+      moneyPurchaseAnnualAllowance = p.moneyPurchaseAnnualAllowance.map(x => secureGCMCipher.decrypt[Boolean](x.value, x.nonce)),
+      taperedAnnualAllowance = p.taperedAnnualAllowance.map(x => secureGCMCipher.decrypt[Boolean](x.value, x.nonce)),
+      aboveAnnualAllowanceQuestion = p.aboveAnnualAllowanceQuestion.map(x => secureGCMCipher.decrypt[Boolean](x.value, x.nonce)),
+      aboveAnnualAllowance = p.aboveAnnualAllowance.map(x => secureGCMCipher.decrypt[BigDecimal](x.value, x.nonce)),
+      pensionProvidePaidAnnualAllowanceQuestion = p.pensionProvidePaidAnnualAllowanceQuestion.map(x => secureGCMCipher.decrypt[String](x.value, x.nonce)),
+      taxPaidByPensionProvider = p.taxPaidByPensionProvider.map(x => secureGCMCipher.decrypt[BigDecimal](x.value, x.nonce)),
+      pensionSchemeTaxReference = p.pensionSchemeTaxReference.map(_.map(x => secureGCMCipher.decrypt[String](x.value, x.nonce)))
+
+    )
+  }
+
   private def decryptPensions(pension: EncryptedPensionCYAModel)(implicit textAndKey: TextAndKey): PensionsCYAModel = {
     PensionsCYAModel(
-      paymentsIntoPension = decryptPaymentsIntoPensionViewModel(pension.encryptedPaymentsIntoPension)
+      paymentsIntoPension = decryptPaymentsIntoPensionViewModel(pension.encryptedPaymentsIntoPension),
+      pensionsAnnualAllowances = decryptPensionAnnualAllowanceViewModel(pension.encryptedPensionAnnualAllowances)
     )
   }
 

@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
-package models
+package common
 
-import play.api.mvc.{Request, WrappedRequest}
-
-case class AuthorisationRequest[T](user: User, request: Request[T]) extends WrappedRequest[T](request)
+object AnnualAllowanceTaxPaidValues {
+  val yes = "true"
+  val no = "false"
+  val agreedToPay = "agreedToPay"
+}

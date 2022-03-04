@@ -17,14 +17,15 @@
 package utils
 
 import models.pension.AllPensionsData
+import models.pension.charges.{LifetimeAllowance, PensionSavingsTaxCharges}
 
 object StatusHelper {
 
   def paymentsIntoPensionsIsUpdated(prior: Option[AllPensionsData]): Boolean = {
 
     // TODO: Do we care if it's deleted so might do as below instead?
-    //  val reliefs = prior.flatMap(_.pensionReliefs)
-    // reliefs.isDefined && reliefs.get.deletedOn.isEmpty
+      val reliefs = prior.flatMap(_.pensionReliefs)
+     reliefs.isDefined && reliefs.get.deletedOn.isEmpty
 
     prior.flatMap(_.pensionReliefs).isDefined
   }
@@ -36,11 +37,17 @@ object StatusHelper {
   }
 
   def pensionFromAnnualAllowanceIsUpdated(prior: Option[AllPensionsData]): Boolean = {
-    prior.flatMap(_.pensionCharges.flatMap(_.pensionSavingsTaxCharges)).isDefined
+    prior.flatMap(_.pensionCharges.flatMap(_.pensionSavingsTaxCharges)).isDefined ||
+      prior.flatMap(_.pensionCharges.flatMap(_.pensionContributions)).isDefined
   }
 
   def pensionLifetimeAllowanceIsUpdated(prior: Option[AllPensionsData]): Boolean = {
-    prior.flatMap(_.pensionCharges.flatMap(_.pensionContributions)).isDefined
+
+    val taxCharges: Option[PensionSavingsTaxCharges] = prior.flatMap(_.pensionCharges.flatMap(_.pensionSavingsTaxCharges))
+
+    taxCharges.map(_.lumpSumBenefitTakenInExcessOfLifetimeAllowance).isDefined ||
+      taxCharges.map(_.benefitInExcessOfLifetimeAllowance).isDefined
+
   }
 
   def unauthorisedPaymentsFromPensionsIsUpdated(prior: Option[AllPensionsData]): Boolean = {

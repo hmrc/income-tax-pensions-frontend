@@ -19,12 +19,15 @@ package controllers.pensions
 import builders.AllPensionsDataBuilder.anAllPensionsData
 import builders.IncomeTaxUserDataBuilder.anIncomeTaxUserData
 import builders.PaymentsIntoPensionVewModelBuilder.aPaymentsIntoPensionViewModel
-import builders.PensionsCYAModelBuilder.aPensionsCYAModel
+import builders.PensionChargesBuilder.anPensionCharges
+import builders.PensionContributionsBuilder.anPensionContributions
+import builders.PensionSavingTaxChargesBuilder.anPensionSavngTaxCharges
+import builders.PensionsCYAModelBuilder.{aPensionsCYAModel, paymentsIntoPensionOnlyCYAModel}
 import builders.PensionsUserDataBuilder.aPensionsUserData
 import builders.ReliefsBuilder.anReliefs
 import builders.UserBuilder.aUserRequest
 import models.IncomeTaxUserData
-import models.mongo.PensionsCYAModel
+import models.pension.charges.PensionAnnualAllowancesViewModel
 import models.pension.reliefs.PaymentsIntoPensionViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -296,7 +299,7 @@ class PaymentsIntoPensionsCYAControllerISpec extends IntegrationTest with ViewHe
 
           lazy val result: WSResponse = {
             dropPensionsDB()
-            insertCyaData(aPensionsUserData.copy(pensions = PensionsCYAModel(cyaDataMinimal), taxYear = taxYear), aUserRequest)
+            insertCyaData(aPensionsUserData.copy(pensions = paymentsIntoPensionOnlyCYAModel(cyaDataMinimal), taxYear = taxYear), aUserRequest)
             authoriseAgentOrIndividual(user.isAgent)
             urlGet(url, welsh = user.isWelsh, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear)))
           }
@@ -404,14 +407,25 @@ class PaymentsIntoPensionsCYAControllerISpec extends IntegrationTest with ViewHe
       "the user makes no changes and no submission to DES is made" should {
 
         val unchangedModel =
-          PaymentsIntoPensionViewModel(Some(true), Some(100.00), Some(true), Some(200.00), Some(true), Some(true), Some(300.00), Some(true), Some(400.00))
+          PaymentsIntoPensionViewModel(
+            Some(true), anReliefs.regularPensionContributions,
+            Some(true), anReliefs.oneOffPensionContributionsPaid, Some(true), Some(true),
+            anReliefs.retirementAnnuityPayments, Some(true), anReliefs.paymentToEmployersSchemeNoTaxRelief)
+
+        val unchangedAllowances = PensionAnnualAllowancesViewModel(
+          Some(anPensionSavngTaxCharges.isAnnualAllowanceReduced),
+          anPensionSavngTaxCharges.moneyPurchasedAllowance, anPensionSavngTaxCharges.taperedAnnualAllowance,
+          Some(true), Some(anPensionContributions.inExcessOfTheAnnualAllowance), Some("true"),
+          Some(anPensionContributions.annualAllowanceTaxPaid),
+          Some(anPensionContributions.pensionSchemeTaxReference))
 
         val form = Map[String, String]()
 
         lazy val result: WSResponse = {
           dropPensionsDB()
           userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYear)
-          insertCyaData(aPensionsUserData.copy(pensions = aPensionsCYAModel.copy(paymentsIntoPension = unchangedModel), taxYear = taxYear), aUserRequest)
+          insertCyaData(aPensionsUserData.copy(pensions = aPensionsCYAModel.copy
+          (paymentsIntoPension = unchangedModel, pensionsAnnualAllowances = unchangedAllowances), taxYear = taxYear), aUserRequest)
           authoriseAgentOrIndividual(isAgent = false)
           urlPost(url, form, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear)))
         }

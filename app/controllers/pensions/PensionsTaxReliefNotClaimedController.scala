@@ -22,6 +22,7 @@ import controllers.predicates.AuthorisedAction
 import forms.YesNoForm
 import models.User
 import models.mongo.PensionsCYAModel
+import models.pension.charges.PensionAnnualAllowancesViewModel
 import models.pension.reliefs.PaymentsIntoPensionViewModel
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -63,7 +64,8 @@ class PensionsTaxReliefNotClaimedController @Inject()(implicit val mcc: Messages
       yesNo => {
         pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
           data =>
-            val pensionsCYAModel: PensionsCYAModel = data.map(_.pensions).getOrElse(PensionsCYAModel(PaymentsIntoPensionViewModel()))
+            val pensionsCYAModel: PensionsCYAModel = data.map(_.pensions).getOrElse(PensionsCYAModel(
+              PaymentsIntoPensionViewModel(),PensionAnnualAllowancesViewModel()))
             val viewModel: PaymentsIntoPensionViewModel = pensionsCYAModel.paymentsIntoPension
             val updatedCyaModel: PensionsCYAModel = {
               pensionsCYAModel.copy(
