@@ -28,9 +28,10 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.{checkPaymentsIntoPensionCyaUrl, fullUrl, pensionSummaryUrl, reliefAtSourcePaymentsAndTaxReliefAmountUrl, reliefAtSourcePensionsUrl, workplacePensionAmount, workplacePensionUrl}
+import utils.PageUrls.{checkPaymentsIntoPensionCyaUrl, fullUrl, workplacePensionAmount, workplacePensionUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
+// scalastyle:off magic.number
 class WorkplaceAmountControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
 
   private val taxYearEOY: Int = taxYear - 1
@@ -421,3 +422,4 @@ class WorkplaceAmountControllerISpec extends IntegrationTest with ViewHelpers wi
 
   }
 }
+// scalastyle:on magic.number

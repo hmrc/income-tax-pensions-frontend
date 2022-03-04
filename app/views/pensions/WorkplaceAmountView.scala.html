@@ -27,10 +27,10 @@
         button: Button
 )
 
-@(form: Form[BigDecimal], taxYear: Int)(implicit user: User[_], messages: Messages, appConfig: AppConfig)
+@(form: Form[BigDecimal], taxYear: Int)(implicit request: AuthorisationRequest[_], messages: Messages, appConfig: AppConfig)
 
 @titleForUse = @{
-    messages(s"pensions.workplaceAmount.title.${if(user.isAgent) "agent" else "individual"}")
+    messages(s"pensions.workplaceAmount.title.${if(request.user.isAgent) "agent" else "individual"}")
 }
 @headingForUse = @{
     titleForUse
@@ -46,18 +46,18 @@
     }</p>
     <ul class="govuk-list govuk-list--bullet">
         <li>@{
-            messages(s"pensions.workplaceAmount.bullet1.${if(user.isAgent) "agent" else "individual"}")
+            messages(s"pensions.workplaceAmount.bullet1.${if(request.user.isAgent) "agent" else "individual"}")
         }</li>
         <li>@{
-            messages(s"pensions.workplaceAmount.bullet2.${if(user.isAgent) "agent" else "individual"}")
+            messages(s"pensions.workplaceAmount.bullet2.${if(request.user.isAgent) "agent" else "individual"}")
         }</li>
     </ul>
     <p class="govuk-body">@{
-        messages(s"pensions.workplaceAmount.youCanFindThisOut.${if(user.isAgent) "agent" else "individual"}")
+        messages(s"pensions.workplaceAmount.youCanFindThisOut.${if(request.user.isAgent) "agent" else "individual"}")
     }</p>
 }
 
-@layout(pageTitle = titleForUse, taxYear = Some(taxYear), hasErrors = hasFormErrors, isAgent = user.isAgent) {
+@layout(pageTitle = titleForUse, taxYear = Some(taxYear), hasErrors = hasFormErrors, isAgent = request.user.isAgent) {
 
     @errorSummary(form.errors.distinct)
 

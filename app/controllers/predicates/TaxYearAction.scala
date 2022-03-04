@@ -19,8 +19,9 @@ package controllers.predicates
 import common.SessionValues
 import common.SessionValues._
 import config.AppConfig
+
 import javax.inject.Inject
-import models.User
+import models.{AuthorisationRequest, User}
 import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Results.Redirect
@@ -31,13 +32,13 @@ import scala.concurrent.{ExecutionContext, Future}
 class TaxYearAction @Inject()(taxYear: Int, missingTaxYearReset: Boolean)(
   implicit val appConfig: AppConfig,
   val messagesApi: MessagesApi
-) extends ActionRefiner[User, User] with I18nSupport {
+) extends ActionRefiner[AuthorisationRequest, AuthorisationRequest] with I18nSupport {
 
   implicit val executionContext: ExecutionContext = ExecutionContext.global
   lazy val logger: Logger = Logger.apply(this.getClass)
 
-  override def refine[A](request: User[A]): Future[Either[Result, User[A]]] = {
-    implicit val implicitUser: User[A] = request
+  override def refine[A](request: AuthorisationRequest[A]): Future[Either[Result, AuthorisationRequest[A]]] = {
+    implicit val implicitUser: AuthorisationRequest[A] = request
 
     Future.successful(
       if (!appConfig.taxYearErrorFeature || taxYear == appConfig.defaultTaxYear) {

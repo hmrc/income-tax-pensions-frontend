@@ -42,31 +42,31 @@ class PensionSessionService @Inject()(pensionUserDataRepository: PensionsUserDat
                                       implicit val ec: ExecutionContext) extends Logging {
 
 
-  def getPriorData(taxYear: Int)(implicit user: User[_], hc: HeaderCarrier): Future[IncomeTaxUserDataResponse] = {
+  def getPriorData(taxYear: Int, user: User)(implicit hc: HeaderCarrier): Future[IncomeTaxUserDataResponse] = {
     incomeTaxUserDataConnector.getUserData(user.nino, taxYear)(hc.withExtraHeaders("mtditid" -> user.mtditid))
   }
 
-  private def getSessionData(taxYear: Int)(implicit user: User[_], request: Request[_]): Future[Either[Result, Option[PensionsUserData]]] = {
-    pensionUserDataRepository.find(taxYear).map {
+  private def getSessionData(taxYear: Int, user: User)(implicit request: Request[_]): Future[Either[Result, Option[PensionsUserData]]] = {
+    pensionUserDataRepository.find(taxYear, user).map {
       case Left(_) => Left(errorHandler.handleError(INTERNAL_SERVER_ERROR))
       case Right(value) => Right(value)
     }
   }
 
-  def getPensionsSessionDataResult(taxYear: Int)(result: Option[PensionsUserData] => Future[Result])
-                                  (implicit user: User[_], request: Request[_]): Future[Result] = {
-    pensionUserDataRepository.find(taxYear).flatMap {
+  def getPensionsSessionDataResult(taxYear: Int, user: User)(result: Option[PensionsUserData] => Future[Result])
+                                  (implicit request: Request[_]): Future[Result] = {
+    pensionUserDataRepository.find(taxYear, user).flatMap {
       case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
       case Right(value) => result(value)
     }
   }
 
-  def getAndHandle(taxYear: Int, redirectWhenNoPrior: Boolean = false)
+  def getAndHandle(taxYear: Int, user: User, redirectWhenNoPrior: Boolean = false)
                   (block: (Option[PensionsUserData], Option[AllPensionsData]) => Future[Result])
-                  (implicit user: User[_], hc: HeaderCarrier): Future[Result] = {
+                  (implicit request: Request[_], hc: HeaderCarrier): Future[Result] = {
     val result = for {
-      optionalCya <- getSessionData(taxYear)
-      priorDataResponse <- getPriorData(taxYear)
+      optionalCya <- getSessionData(taxYear, user)
+      priorDataResponse <- getPriorData(taxYear, user)
     } yield {
       if (optionalCya.isRight) {
         if (optionalCya.right.get.isEmpty) {
@@ -88,8 +88,8 @@ class PensionSessionService @Inject()(pensionUserDataRepository: PensionsUserDat
   }
 
   //scalastyle:off
-  def createOrUpdateSessionData[A](cyaModel: PensionsCYAModel, taxYear: Int, isPriorSubmission: Boolean)
-                                  (onFail: A)(onSuccess: A)(implicit user: User[_], clock: Clock): Future[A] = {
+  def createOrUpdateSessionData[A](user: User, cyaModel: PensionsCYAModel, taxYear: Int, isPriorSubmission: Boolean)
+                                  (onFail: A)(onSuccess: A)(implicit clock: Clock): Future[A] = {
 
     val userData = PensionsUserData(
       user.sessionId,
@@ -101,7 +101,7 @@ class PensionSessionService @Inject()(pensionUserDataRepository: PensionsUserDat
       clock.now(DateTimeZone.UTC)
     )
 
-    pensionUserDataRepository.createOrUpdate(userData).map {
+    pensionUserDataRepository.createOrUpdate(userData, user).map {
       case Right(_) => onSuccess
       case Left(_) => onFail
     }

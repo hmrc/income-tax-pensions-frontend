@@ -43,14 +43,14 @@ class ReliefAtSourceOneOffPaymentsController @Inject()(implicit val mcc: Message
                                                        view: ReliefAtSourceOneOffPaymentsView,
                                                        clock: Clock) extends FrontendController(mcc) with I18nSupport {
 
-  def show(taxYear: Int): Action[AnyContent] = authAction.async { implicit user =>
-    pensionSessionService.getPensionsSessionDataResult(taxYear) {
+  def show(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
+    pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
       case Some(data) =>
         data.pensions.paymentsIntoPension.totalRASPaymentsAndTaxRelief match {
           case Some(totalRASPaymentsAndTaxRelief) =>
             data.pensions.paymentsIntoPension.oneOffRasPaymentPlusTaxReliefQuestion match {
-              case Some(question) => Future.successful(Ok(view(yesNoForm.fill(question), taxYear, totalRASPaymentsAndTaxRelief)))
-              case None => Future.successful(Ok(view(yesNoForm, taxYear, totalRASPaymentsAndTaxRelief)))
+              case Some(question) => Future.successful(Ok(view(yesNoForm(request.user).fill(question), taxYear, totalRASPaymentsAndTaxRelief)))
+              case None => Future.successful(Ok(view(yesNoForm(request.user), taxYear, totalRASPaymentsAndTaxRelief)))
             }
           case _ => Future.successful(Redirect(PaymentsIntoPensionsCYAController.show(taxYear)))
         }
@@ -59,12 +59,12 @@ class ReliefAtSourceOneOffPaymentsController @Inject()(implicit val mcc: Message
 
   }
 
-  def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit user =>
-    pensionSessionService.getPensionsSessionDataResult(taxYear) {
+  def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
+    pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
       case Some(data) =>
         data.pensions.paymentsIntoPension.totalRASPaymentsAndTaxRelief match {
           case Some(totalRASPaymentsAndTaxRelief) =>
-            yesNoForm.bindFromRequest().fold(
+            yesNoForm(request.user).bindFromRequest().fold(
               formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear, totalRASPaymentsAndTaxRelief))),
               yesNo => {
                 val pensionsCYAModel: PensionsCYAModel = data.pensions
@@ -74,7 +74,7 @@ class ReliefAtSourceOneOffPaymentsController @Inject()(implicit val mcc: Message
                   pensionsCYAModel.copy(paymentsIntoPension = paymentsIntoPension.copy(oneOffRasPaymentPlusTaxReliefQuestion = Some(yesNo),
                     totalOneOffRasPaymentPlusTaxRelief = if (yesNo) paymentsIntoPension.totalOneOffRasPaymentPlusTaxRelief else None))
                 }
-                pensionSessionService.createOrUpdateSessionData(
+                pensionSessionService.createOrUpdateSessionData(request.user,
                   updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
                   if (yesNo) {
                     Redirect(OneOffRASPaymentsAmountController.show(taxYear))
@@ -91,7 +91,7 @@ class ReliefAtSourceOneOffPaymentsController @Inject()(implicit val mcc: Message
 
   }
 
-  private def yesNoForm(implicit user: User[_]): Form[Boolean] = YesNoForm.yesNoForm(
+  private def yesNoForm(user: User): Form[Boolean] = YesNoForm.yesNoForm(
     missingInputError = s"pensions.reliefAtSourceOneOffPayments.error.noEntry.${if (user.isAgent) "agent" else "individual"}"
   )
 

@@ -26,6 +26,9 @@ import play.api.libs.ws.{BodyWritable, WSClient, WSResponse}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import utils.ViewUtils.bigDecimalCurrency
 
+// scalastyle:off number.of.methods
+// scalastyle:off number.of.types
+
 trait ViewHelpers {
   self: AnyWordSpec with Matchers with WireMockHelper =>
 
@@ -289,3 +292,5 @@ trait ViewHelpers {
 
 }
 
+// scalastyle:on number.of.methods
+// scalastyle:on number.of.types

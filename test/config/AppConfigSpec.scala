@@ -31,8 +31,10 @@ class AppConfigSpec extends UnitTest {
 
   (mockServicesConfig.getString(_: String)).expects("microservice.services.contact-frontend.url").returns("http://contact-frontend:9250")
   (mockServicesConfig.getString(_: String)).expects("microservice.services.income-tax-submission.url").returns("http://income-tax-submission")
-  (mockServicesConfig.getString(_: String)).expects("microservice.services.income-tax-submission-frontend.url").returns("http://income-tax-submission-frontend").twice()
-  (mockServicesConfig.getString(_: String)).expects("microservice.services.income-tax-submission-frontend.context").returns("/update-and-submit-income-tax-return").twice()
+  (mockServicesConfig.getString(_: String)).expects("microservice.services.income-tax-submission-frontend.url")
+    .returns("http://income-tax-submission-frontend").twice()
+  (mockServicesConfig.getString(_: String)).expects("microservice.services.income-tax-submission-frontend.context")
+    .returns("/update-and-submit-income-tax-return").twice()
   (mockServicesConfig.getString(_: String)).expects("microservice.services.income-tax-submission-frontend.iv-redirect").returns("/iv-uplift")
   (mockServicesConfig.getString(_: String)).expects("microservice.services.view-and-change.url").returns("http://view-and-change")
   (mockServicesConfig.getString(_: String)).expects("microservice.services.sign-in.url").returns("http://sign-in")

@@ -16,10 +16,6 @@
 
 package models
 
-case class User(mtditid: String,
-                arn: Option[String],
-                nino: String,
-                sessionId: String,
-                affinityGroup: String) {
-  def isAgent: Boolean = arn.nonEmpty
-}
+import play.api.mvc.{Request, WrappedRequest}
+
+case class AuthorisationRequest[T](user: User, request: Request[T]) extends WrappedRequest[T](request)

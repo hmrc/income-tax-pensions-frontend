@@ -47,8 +47,8 @@ class OneOffRASPaymentsAmountController @Inject()(implicit val mcc: MessagesCont
     exceedsMaxAmountKey = "paymentsIntoPensions.oneOffRasAmount.error.overMaximum"
   )
 
-  def show(taxYear: Int): Action[AnyContent] = authAction.async { implicit user =>
-    pensionSessionService.getPensionsSessionDataResult(taxYear) {
+  def show(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
+    pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
       case Some(data) =>
         val viewModel = data.pensions.paymentsIntoPension
 
@@ -70,8 +70,8 @@ class OneOffRASPaymentsAmountController @Inject()(implicit val mcc: MessagesCont
 
   }
 
-  def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit user =>
-    pensionSessionService.getPensionsSessionDataResult(taxYear) {
+  def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
+    pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
       data =>
         amountForm.bindFromRequest.fold(
           formWithErrors => {
@@ -85,7 +85,7 @@ class OneOffRASPaymentsAmountController @Inject()(implicit val mcc: MessagesCont
             val updatedCyaModel: PensionsCYAModel = {
               pensionsCYAModel.copy(paymentsIntoPension = viewModel.copy(totalOneOffRasPaymentPlusTaxRelief = Some(amount)))
             }
-            pensionSessionService.createOrUpdateSessionData(
+            pensionSessionService.createOrUpdateSessionData(request.user,
               updatedCyaModel, taxYear, data.exists(_.isPriorSubmission))(errorHandler.internalServerError()) {
               // TODO - redirect to total payments into RAS pensions page when built
               Redirect(controllers.pensions.routes.PensionsTaxReliefNotClaimedController.show(taxYear))

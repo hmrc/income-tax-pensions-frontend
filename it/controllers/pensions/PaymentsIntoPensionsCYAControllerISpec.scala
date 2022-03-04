@@ -35,7 +35,7 @@ import play.api.libs.ws.WSResponse
 import utils.PageUrls.{checkPaymentsIntoPensionCyaUrl, fullUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
-
+// scalastyle:off magic.number
 class PaymentsIntoPensionsCYAControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
 
   val url: String = fullUrl(checkPaymentsIntoPensionCyaUrl(taxYear))
@@ -237,17 +237,17 @@ class PaymentsIntoPensionsCYAControllerISpec extends IntegrationTest with ViewHe
 
             //noinspection ScalaStyle
             cyaRowCheck(reliefAtSource, yes, ChangeLinks.reliefAtSource, reliefAtSourceHidden, 1)
-            cyaRowCheck(reliefAtSourceAmount,s"${moneyContent(anReliefs.regularPensionContributions.get)}",
+            cyaRowCheck(reliefAtSourceAmount, s"${moneyContent(anReliefs.regularPensionContributions.get)}",
               ChangeLinks.reliefAtSourceAmount, reliefAtSourceAmountHidden, 2)
             cyaRowCheck(oneOff, yes, ChangeLinks.oneOff, oneOffHidden, 3)
-            cyaRowCheck(oneOffAmount,s"${moneyContent(anReliefs.oneOffPensionContributionsPaid.get)}",
+            cyaRowCheck(oneOffAmount, s"${moneyContent(anReliefs.oneOffPensionContributionsPaid.get)}",
               ChangeLinks.oneOffAmount, oneOffAmountHidden, 4)
             cyaRowCheck(pensionsTaxReliefNotClaimed, yes, ChangeLinks.pensionsTaxReliefNotClaimed, pensionsTaxReliefNotClaimedHidden, 5)
             cyaRowCheck(retirementAnnuity, yes, ChangeLinks.retirementAnnuity, retirementAnnuityHidden, 6)
-            cyaRowCheck(retirementAnnuityAmount,s"${moneyContent(anReliefs.retirementAnnuityPayments.get)}",
+            cyaRowCheck(retirementAnnuityAmount, s"${moneyContent(anReliefs.retirementAnnuityPayments.get)}",
               ChangeLinks.retirementAnnuityAmount, retirementAnnuityAmountHidden, 7)
             cyaRowCheck(workplacePayments, yes, ChangeLinks.workplacePayments, workplacePaymentsHidden, 8)
-            cyaRowCheck(workplacePaymentsAmount,s"${moneyContent(anReliefs.paymentToEmployersSchemeNoTaxRelief.get)}",
+            cyaRowCheck(workplacePaymentsAmount, s"${moneyContent(anReliefs.paymentToEmployersSchemeNoTaxRelief.get)}",
               ChangeLinks.workplacePaymentsAmount, workplacePaymentsAmountHidden, 9)
 
             buttonCheck(saveAndContinue)
@@ -273,17 +273,17 @@ class PaymentsIntoPensionsCYAControllerISpec extends IntegrationTest with ViewHe
 
             //noinspection ScalaStyle
             cyaRowCheck(reliefAtSource, yes, ChangeLinks.reliefAtSource, reliefAtSourceHidden, 1)
-            cyaRowCheck(reliefAtSourceAmount,s"${moneyContent(aPaymentsIntoPensionViewModel.totalRASPaymentsAndTaxRelief.get)}",
+            cyaRowCheck(reliefAtSourceAmount, s"${moneyContent(aPaymentsIntoPensionViewModel.totalRASPaymentsAndTaxRelief.get)}",
               ChangeLinks.reliefAtSourceAmount, reliefAtSourceAmountHidden, 2)
             cyaRowCheck(oneOff, yes, ChangeLinks.oneOff, oneOffHidden, 3)
-            cyaRowCheck(oneOffAmount,s"${moneyContent(aPaymentsIntoPensionViewModel.totalOneOffRasPaymentPlusTaxRelief.get)}",
+            cyaRowCheck(oneOffAmount, s"${moneyContent(aPaymentsIntoPensionViewModel.totalOneOffRasPaymentPlusTaxRelief.get)}",
               ChangeLinks.oneOffAmount, oneOffAmountHidden, 4)
             cyaRowCheck(pensionsTaxReliefNotClaimed, yes, ChangeLinks.pensionsTaxReliefNotClaimed, pensionsTaxReliefNotClaimedHidden, 5)
             cyaRowCheck(retirementAnnuity, yes, ChangeLinks.retirementAnnuity, retirementAnnuityHidden, 6)
-            cyaRowCheck(retirementAnnuityAmount,s"${moneyContent(aPaymentsIntoPensionViewModel.totalRetirementAnnuityContractPayments.get)}",
+            cyaRowCheck(retirementAnnuityAmount, s"${moneyContent(aPaymentsIntoPensionViewModel.totalRetirementAnnuityContractPayments.get)}",
               ChangeLinks.retirementAnnuityAmount, retirementAnnuityAmountHidden, 7)
             cyaRowCheck(workplacePayments, yes, ChangeLinks.workplacePayments, workplacePaymentsHidden, 8)
-            cyaRowCheck(workplacePaymentsAmount,s"${moneyContent(aPaymentsIntoPensionViewModel.totalWorkplacePensionPayments.get)}",
+            cyaRowCheck(workplacePaymentsAmount, s"${moneyContent(aPaymentsIntoPensionViewModel.totalWorkplacePensionPayments.get)}",
               ChangeLinks.workplacePaymentsAmount, workplacePaymentsAmountHidden, 9)
 
             buttonCheck(saveAndContinue)
@@ -403,7 +403,8 @@ class PaymentsIntoPensionsCYAControllerISpec extends IntegrationTest with ViewHe
 
       "the user makes no changes and no submission to DES is made" should {
 
-        val unchangedModel = PaymentsIntoPensionViewModel(Some(true), Some(100.00), Some(true), Some(200.00), Some(true), Some(true), Some(300.00), Some(true), Some(400.00))
+        val unchangedModel =
+          PaymentsIntoPensionViewModel(Some(true), Some(100.00), Some(true), Some(200.00), Some(true), Some(true), Some(300.00), Some(true), Some(400.00))
 
         val form = Map[String, String]()
 
@@ -433,3 +434,4 @@ class PaymentsIntoPensionsCYAControllerISpec extends IntegrationTest with ViewHe
     }
   }
 }
+// scalastyle:on magic.number

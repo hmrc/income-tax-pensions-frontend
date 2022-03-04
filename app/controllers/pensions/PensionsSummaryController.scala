@@ -33,9 +33,9 @@ class PensionsSummaryController @Inject()(implicit val mcc: MessagesControllerCo
                                            pensionSessionService: PensionSessionService,
                                            pensionSummaryView: PensionsSummaryView) extends FrontendController(mcc) with I18nSupport {
 
-  def show(taxYear: Int): Action[AnyContent] = authAction.async { implicit user =>
+  def show(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
 
-    pensionSessionService.getAndHandle(taxYear) { (_, prior) =>
+    pensionSessionService.getAndHandle(taxYear, request.user) { (_, prior) =>
       Future.successful(Ok(pensionSummaryView(taxYear, prior)
       ))
     }

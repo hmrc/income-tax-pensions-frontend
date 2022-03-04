@@ -17,7 +17,7 @@
 package builders
 
 import builders.PensionsCYAModelBuilder.{aPensionsCYAEmptyModel, aPensionsCYAModel}
-import models.mongo.{PensionsCYAModel, PensionsUserData}
+import models.mongo.PensionsUserData
 import models.pension.reliefs.PaymentsIntoPensionViewModel
 
 object PensionsUserDataBuilder {

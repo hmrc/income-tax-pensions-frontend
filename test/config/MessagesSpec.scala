@@ -51,8 +51,8 @@ class MessagesSpec extends ViewTest with GuiceOneAppPerSuite {
 
   lazy val allLanguages: Map[String, Map[String, String]] = app.injector.instanceOf[MessagesApi].messages
 
-  val defaults = allLanguages("default")
-  val welsh = allLanguages("cy")
+  private val defaults = allLanguages("default")
+  private val welsh = allLanguages("cy")
 
 
   "the messages file must have welsh translations" should {

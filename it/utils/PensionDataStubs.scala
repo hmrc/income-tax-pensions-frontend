@@ -240,7 +240,7 @@ object PensionUserDataStub {
                        nino: String = "nino",
                        taxyear: Int = taxYear,
                        isPriorSubmission: Boolean = true,
-                       cya: PensionsCYAModel = (PensionsCYAModel(paymentsIntoPensionViewModel))
+                       cya: PensionsCYAModel = PensionsCYAModel(paymentsIntoPensionViewModel)
                      ): PensionsUserData = {
     PensionsUserData(
       sessionId = sessionId,

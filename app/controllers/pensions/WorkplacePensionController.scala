@@ -42,22 +42,22 @@ class WorkplacePensionController @Inject()(implicit val mcc: MessagesControllerC
                                            workplacePensionView: WorkplacePensionView,
                                            clock: Clock) extends FrontendController(mcc) with I18nSupport {
 
-  def show(taxYear: Int): Action[AnyContent] = authAction.async { implicit user =>
-    pensionSessionService.getPensionsSessionDataResult(taxYear) {
+  def show(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
+    pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
       case Some(data) =>
         data.pensions.paymentsIntoPension.workplacePensionPaymentsQuestion match {
-          case Some(value) => Future.successful(Ok(workplacePensionView(yesNoForm.fill(value), taxYear)))
-          case None => Future.successful(Ok(workplacePensionView(yesNoForm, taxYear)))
+          case Some(value) => Future.successful(Ok(workplacePensionView(yesNoForm(request.user).fill(value), taxYear)))
+          case None => Future.successful(Ok(workplacePensionView(yesNoForm(request.user), taxYear)))
         }
       case _ => Future.successful(Redirect(PaymentsIntoPensionsCYAController.show(taxYear)))
     }
   }
 
-  def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit user =>
-    yesNoForm.bindFromRequest().fold(
+  def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
+    yesNoForm(request.user).bindFromRequest().fold(
       formWithErrors => Future.successful(BadRequest(workplacePensionView(formWithErrors, taxYear))),
       yesNo =>
-        pensionSessionService.getPensionsSessionDataResult(taxYear) {
+        pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
           data =>
             val pensionsCYAModel: PensionsCYAModel = data.map(_.pensions).getOrElse(PensionsCYAModel(PaymentsIntoPensionViewModel()))
             val viewModel: PaymentsIntoPensionViewModel = pensionsCYAModel.paymentsIntoPension
@@ -65,7 +65,7 @@ class WorkplacePensionController @Inject()(implicit val mcc: MessagesControllerC
               pensionsCYAModel.copy(paymentsIntoPension = viewModel.copy(workplacePensionPaymentsQuestion = Some(yesNo),
                 totalWorkplacePensionPayments = if (yesNo) viewModel.totalWorkplacePensionPayments else None))
             }
-            pensionSessionService.createOrUpdateSessionData(
+            pensionSessionService.createOrUpdateSessionData(request.user,
               updatedCyaModel, taxYear, data.exists(_.isPriorSubmission))(errorHandler.internalServerError()) {
               if (yesNo) {
                 Redirect(WorkplaceAmountController.show(taxYear))
@@ -77,7 +77,7 @@ class WorkplacePensionController @Inject()(implicit val mcc: MessagesControllerC
     )
   }
 
-  private def yesNoForm(implicit user: User[_]): Form[Boolean] = YesNoForm.yesNoForm(
+  private def yesNoForm(user: User): Form[Boolean] = YesNoForm.yesNoForm(
     missingInputError = s"pensions.workplacePension.error.noEntry.${if (user.isAgent) "agent" else "individual"}"
   )
 }

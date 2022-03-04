@@ -27,26 +27,26 @@ trait MockPensionUserDataRepository extends MockFactory {
 
   val mockPensionUserDataRepository: PensionsUserDataRepository = mock[PensionsUserDataRepository]
 
-  def mockFind(taxYear: Int,
+  def mockFind(taxYear: Int, user: User,
                repositoryResponse: Either[DatabaseError, Option[PensionsUserData]]
-              ): CallHandler2[Int, User[_], Future[Either[DatabaseError, Option[PensionsUserData]]]] = {
-    (mockPensionUserDataRepository.find(_: Int)(_: User[_]))
-      .expects(taxYear, *)
+              ): CallHandler2[Int, User, Future[Either[DatabaseError, Option[PensionsUserData]]]] = {
+    (mockPensionUserDataRepository.find(_: Int, _: User))
+      .expects(taxYear, user)
       .returns(Future.successful(repositoryResponse))
       .anyNumberOfTimes()
   }
 
-  def mockCreateOrUpdate(PensionUserData: PensionsUserData,
-                         response: Either[DatabaseError, Unit]): CallHandler2[PensionsUserData, User[_], Future[Either[DatabaseError, Unit]]] = {
-    (mockPensionUserDataRepository.createOrUpdate(_: PensionsUserData)(_: User[_]))
-      .expects(PensionUserData, *)
+  def mockCreateOrUpdate(PensionUserData: PensionsUserData, user: User,
+                         response: Either[DatabaseError, Unit]): CallHandler2[PensionsUserData, User, Future[Either[DatabaseError, Unit]]] = {
+    (mockPensionUserDataRepository.createOrUpdate(_: PensionsUserData, _: User))
+      .expects(PensionUserData, user)
       .returns(Future.successful(response))
       .anyNumberOfTimes()
   }
 
-  def mockClear(taxYear: Int, response: Boolean): Unit = {
-    (mockPensionUserDataRepository.clear(_: Int)(_: User[_]))
-      .expects(taxYear, *)
+  def mockClear(taxYear: Int, user: User, response: Boolean): Unit = {
+    (mockPensionUserDataRepository.clear(_: Int, _: User))
+      .expects(taxYear, user)
       .returns(Future.successful(response))
       .anyNumberOfTimes()
   }

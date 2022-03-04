@@ -24,15 +24,17 @@ class UserSpec extends UnitTest {
 
   ".isAgent method" should {
 
-    val user: User[AnyContent] = new User[AnyContent]("1234567890", None, "AA123456A", sessionId, AffinityGroup.Agent.toString)(fakeRequest)
-    val agent: User[AnyContent] = new User[AnyContent]("1234567890", Some("thing"), "AA123456A", sessionId, AffinityGroup.Individual.toString)(fakeRequest)
+    val request: AuthorisationRequest[AnyContent] =
+      new AuthorisationRequest[AnyContent](User("1234567890", None, "AA123456A", sessionId, AffinityGroup.Agent.toString), fakeRequest)
+    val agent: AuthorisationRequest[AnyContent] =
+      new AuthorisationRequest[AnyContent](User("1234567890", Some("thing"), "AA123456A", sessionId, AffinityGroup.Individual.toString), fakeRequest)
 
     "return true if an arn exists" in {
-      agent.isAgent shouldBe true
+      agent.user.isAgent shouldBe true
     }
 
     "return false if an arn does not exist" in {
-      user.isAgent shouldBe false
+      request.user.isAgent shouldBe false
     }
   }
 
