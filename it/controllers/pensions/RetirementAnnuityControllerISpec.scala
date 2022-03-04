@@ -18,6 +18,7 @@ package controllers.pensions
 
 import builders.IncomeTaxUserDataBuilder.anIncomeTaxUserData
 import builders.PaymentsIntoPensionVewModelBuilder._
+import builders.PensionAnnualAllowanceViewModelBuilder.aPensionAnnualAllowanceEmptyViewModel
 import builders.PensionsCYAModelBuilder._
 import builders.PensionsUserDataBuilder
 import builders.UserBuilder._
@@ -313,7 +314,7 @@ class RetirementAnnuityControllerISpec extends IntegrationTest with ViewHelpers 
         userDataStub(anIncomeTaxUserData, nino, taxYearEOY)
         val paymentsIntoPensionsViewModel = aPaymentsIntoPensionViewModel.copy(
           retirementAnnuityContractPaymentsQuestion = Some(false), totalRetirementAnnuityContractPayments = None)
-        insertCyaData(pensionsUsersData(isPrior = false, PensionsCYAModel(paymentsIntoPensionsViewModel)), aUserRequest)
+        insertCyaData(pensionsUsersData(isPrior = false, paymentsIntoPensionOnlyCYAModel(paymentsIntoPensionsViewModel)), aUserRequest)
         urlPost(fullUrl(retirementAnnuityUrl(taxYearEOY)), body = form, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
       }
 
@@ -337,7 +338,7 @@ class RetirementAnnuityControllerISpec extends IntegrationTest with ViewHelpers 
         userDataStub(anIncomeTaxUserData, nino, taxYearEOY)
         val paymentsIntoPensionsViewModel = aPaymentsIntoPensionViewModel.copy(
           retirementAnnuityContractPaymentsQuestion = Some(true), totalRetirementAnnuityContractPayments = Some(333.44))
-        insertCyaData(pensionsUsersData(isPrior = false, PensionsCYAModel(paymentsIntoPensionsViewModel)), aUserRequest)
+        insertCyaData(pensionsUsersData(isPrior = false, PensionsCYAModel(paymentsIntoPensionsViewModel, aPensionAnnualAllowanceEmptyViewModel)), aUserRequest)
         urlPost(fullUrl(retirementAnnuityUrl(taxYearEOY)), body = form, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
       }
 
@@ -355,4 +356,3 @@ class RetirementAnnuityControllerISpec extends IntegrationTest with ViewHelpers 
 
   }
 }
-

@@ -21,6 +21,7 @@ import models.pension.AllPensionsData
 import models.pension.charges._
 import models.pension.reliefs.{PaymentsIntoPensionViewModel, PensionReliefs, Reliefs}
 import models.pension.statebenefits.{StateBenefit, StateBenefits, StateBenefitsModel}
+import utils.PensionUserDataStub.pensionsAnnualAllowancesViewModel
 
 object PensionDataStubs {
 
@@ -233,6 +234,17 @@ object PensionUserDataStub {
   val paymentsIntoPensionViewModel: PaymentsIntoPensionViewModel = PaymentsIntoPensionViewModel(Some(true),
     Some(222.3), Some(true), Some(22.44), Some(true), Some(true), Some(44.00), Some(true), Some(55.55))
 
+  val pensionsAnnualAllowancesViewModel: PensionAnnualAllowancesViewModel = PensionAnnualAllowancesViewModel(
+    reducedAnnualAllowanceQuestion = Some(true),
+    moneyPurchaseAnnualAllowance = Some(true),
+    taperedAnnualAllowance = Some(true),
+    aboveAnnualAllowanceQuestion = Some(true),
+    aboveAnnualAllowance = Some(12.44),
+    pensionProvidePaidAnnualAllowanceQuestion = Some("Yes"),
+    taxPaidByPensionProvider = Some(14.55),
+    pensionSchemeTaxReference = Some(Seq("1234567CRC","12345678RB","1234567DRD"))
+  )
+
   // scalastyle:off magic.number
   def pensionUserData(
                        sessionId: String = "sessionid",
@@ -240,7 +252,7 @@ object PensionUserDataStub {
                        nino: String = "nino",
                        taxyear: Int = taxYear,
                        isPriorSubmission: Boolean = true,
-                       cya: PensionsCYAModel = PensionsCYAModel(paymentsIntoPensionViewModel)
+                       cya: PensionsCYAModel = (PensionsCYAModel(paymentsIntoPensionViewModel, pensionsAnnualAllowancesViewModel))
                      ): PensionsUserData = {
     PensionsUserData(
       sessionId = sessionId,

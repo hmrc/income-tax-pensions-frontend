@@ -55,7 +55,7 @@ class SecureGCMCipher @Inject()(implicit private val appConfig: AppConfig) exten
   private[utils] def getCipherInstance: Cipher = Cipher.getInstance(ALGORITHM_TO_TRANSFORM_STRING)
 
   def encrypt[T](valueToEncrypt: T)(implicit textAndKey: TextAndKey): EncryptedValue = {
-    if (appConfig.useEncryption) {
+    if(appConfig.useEncryption){
       val initialisationVector = generateInitialisationVector
       val nonce = new String(Base64.getEncoder.encode(initialisationVector))
       val gcmParameterSpec = new GCMParameterSpec(TAG_BIT_LENGTH, initialisationVector)

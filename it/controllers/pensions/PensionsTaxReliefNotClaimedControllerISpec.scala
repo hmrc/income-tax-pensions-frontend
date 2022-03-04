@@ -23,6 +23,8 @@ import builders.PensionsUserDataBuilder
 import builders.UserBuilder._
 import forms.YesNoForm
 import models.mongo.PensionsCYAModel
+import models.pension.charges.PensionAnnualAllowancesViewModel
+import models.pension.reliefs.PaymentsIntoPensionViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterEach
@@ -299,7 +301,7 @@ class PensionsTaxReliefNotClaimedControllerISpec extends IntegrationTest with Vi
         authoriseAgentOrIndividual(isAgent = false)
         userDataStub(anIncomeTaxUserData, nino, taxYearEOY)
         val paymentsIntoPensionsViewModel = aPaymentsIntoPensionViewModel.copy(pensionTaxReliefNotClaimedQuestion = None)
-        insertCyaData(pensionsUsersData(isPrior = false, PensionsCYAModel(paymentsIntoPensionsViewModel)), aUserRequest)
+        insertCyaData(pensionsUsersData(isPrior = false, paymentsIntoPensionOnlyCYAModel(paymentsIntoPensionsViewModel)), aUserRequest)
         urlPost(fullUrl(pensionTaxReliefNotClaimedUrl(taxYearEOY)), body = validFormYes, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
 
@@ -323,7 +325,7 @@ class PensionsTaxReliefNotClaimedControllerISpec extends IntegrationTest with Vi
         authoriseAgentOrIndividual(isAgent = false)
         userDataStub(anIncomeTaxUserData, nino, taxYearEOY)
         val paymentsIntoPensionsViewModel = aPaymentsIntoPensionViewModel.copy(pensionTaxReliefNotClaimedQuestion = None)
-        insertCyaData(pensionsUsersData(isPrior = false, PensionsCYAModel(paymentsIntoPensionsViewModel)), aUserRequest)
+        insertCyaData(pensionsUsersData(isPrior = false, paymentsIntoPensionOnlyCYAModel(paymentsIntoPensionsViewModel)), aUserRequest)
         urlPost(fullUrl(pensionTaxReliefNotClaimedUrl(taxYearEOY)), body = validFormNo, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
 

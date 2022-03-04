@@ -21,6 +21,7 @@ import com.mongodb.MongoTimeoutException
 import common.UUID
 import models.User
 import models.mongo._
+import models.pension.charges.PensionAnnualAllowancesViewModel
 import models.pension.reliefs.PaymentsIntoPensionViewModel
 import org.joda.time.{DateTime, DateTimeZone}
 import org.mongodb.scala.model.Indexes.ascending
@@ -58,7 +59,8 @@ class PensionsUserDataRepositoryISpec extends IntegrationTest with FutureAwaits 
   private val now = DateTime.now(DateTimeZone.UTC)
 
   private val paymentsIntoPension = PaymentsIntoPensionViewModel().copy(rasPensionPaymentQuestion = Some(true))
-  private val pensionCYAModel = PensionsCYAModel(paymentsIntoPension)
+  private val pensionAnnualAllownaces = PensionAnnualAllowancesViewModel(reducedAnnualAllowanceQuestion = Some(true))
+  private val pensionCYAModel = PensionsCYAModel(paymentsIntoPension, pensionAnnualAllownaces)
 
   val userDataOne: PensionsUserData = PensionsUserData(
     sessionIdOne,
