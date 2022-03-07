@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package controllers.pensions
+package controllers.pensions.paymentsIntoPension
 
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.routes._
+import controllers.pensions.paymentsIntoPension.routes._
 import controllers.predicates.AuthorisedAction
 import forms.YesNoForm
 import models.User
@@ -64,8 +64,7 @@ class PensionsTaxReliefNotClaimedController @Inject()(implicit val mcc: Messages
       yesNo => {
         pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
           data =>
-            val pensionsCYAModel: PensionsCYAModel = data.map(_.pensions).getOrElse(PensionsCYAModel(
-              PaymentsIntoPensionViewModel(),PensionAnnualAllowancesViewModel()))
+            val pensionsCYAModel: PensionsCYAModel = data.map(_.pensions).getOrElse(PensionsCYAModel.emptyModels)
             val viewModel: PaymentsIntoPensionViewModel = pensionsCYAModel.paymentsIntoPension
             val updatedCyaModel: PensionsCYAModel = {
               pensionsCYAModel.copy(
@@ -78,10 +77,10 @@ class PensionsTaxReliefNotClaimedController @Inject()(implicit val mcc: Messages
                 )
               )
             }
-            val redirectLocation = if(yesNo) {
-              controllers.pensions.routes.RetirementAnnuityController.show(taxYear)
+            val redirectLocation = if (yesNo) {
+              controllers.pensions.paymentsIntoPension.routes.RetirementAnnuityController.show(taxYear)
             } else {
-              controllers.pensions.routes.PaymentsIntoPensionsCYAController.show(taxYear)
+              controllers.pensions.paymentsIntoPension.routes.PaymentsIntoPensionsCYAController.show(taxYear)
             }
             pensionSessionService.createOrUpdateSessionData(request.user,
               updatedCyaModel, taxYear, data.exists(_.isPriorSubmission))(errorHandler.internalServerError()) {

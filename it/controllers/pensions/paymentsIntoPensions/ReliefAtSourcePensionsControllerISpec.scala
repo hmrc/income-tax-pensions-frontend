@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package controllers.pensions
+package controllers.pensions.paymentsIntoPensions
 
 import builders.PaymentsIntoPensionVewModelBuilder.aPaymentsIntoPensionViewModel
 import builders.PensionsUserDataBuilder.{anPensionsUserDataEmptyCya, pensionsUserDataWithPaymentsIntoPensions}
 import builders.UserBuilder.aUserRequest
-import controllers.pensions.routes.{PensionsTaxReliefNotClaimedController, ReliefAtSourcePaymentsAndTaxReliefAmountController}
+import controllers.pensions.paymentsIntoPension.routes.{PensionsTaxReliefNotClaimedController, ReliefAtSourcePaymentsAndTaxReliefAmountController}
 import forms.YesNoForm
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -27,7 +27,8 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.{fullUrl, reliefAtSourcePensionsUrl}
+import utils.PageUrls.PaymentIntoPensions.reliefAtSourcePensionsUrl
+import utils.PageUrls.fullUrl
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 // scalastyle:off magic.number

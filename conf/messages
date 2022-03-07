@@ -273,6 +273,13 @@ pensions.ReducedAnnualAllowanceType.details.moneyPurchaseInfo.agent = Your clien
 pensions.ReducedAnnualAllowanceType.details.taperedInfo.individual = You’ll have this type of annual allowance if both your ‘threshold income’ and ‘adjusted income’ are
 pensions.ReducedAnnualAllowanceType.details.taperedInfo.agent = Your client will have this type of annual allowance if both their ‘threshold income’ and ‘adjusted income’ are
 
+#################       Reduced Annual Allowance Amount Messages         ########################################
+pensions.reducedAnnualAllowanceAmount.title.individual = How much above your reduced annual allowance are you??
+pensions.reducedAnnualAllowanceAmount.title.agent = How much above your client’s reduced annual allowance are they?
+pensions.reducedAnnualAllowanceAmount.paragraph = This is the amount on which tax is due.
+pensions.reducedAnnualAllowanceAmount.error.noEntry = Enter the amount above the annual allowance
+pensions.reducedAnnualAllowanceAmount.error.incorrectFormat = Enter the amount above the annual allowance in the correct format
+pensions.reducedAnnualAllowanceAmount.error.overMaximum = The amount above the annual allowance must be less than £100,000,000,000
 #################       Above Reduced Annual Allowance Messages        ########################################
 
 pensions.aboveReducedAnnualAllowance.title.individual = Have you gone above your reduced annual allowance?

@@ -2,66 +2,70 @@
 
 #################       Service pages       ########################################
 
-->          /hmrc-frontend                                                           hmrcfrontend.Routes
+->          /hmrc-frontend                                                                  hmrcfrontend.Routes
 
-GET         /assets/*file                                                            controllers.Assets.versioned(path = "/public", file: Asset)
+GET         /assets/*file                                                                   controllers.Assets.versioned(path = "/public", file: Asset)
 
-GET         /sign-out                                                                controllers.SignOutController.signOut(isAgent: Boolean)
+GET         /sign-out                                                                       controllers.SignOutController.signOut(isAgent: Boolean)
 
-GET         /language/:lang                                                          controllers.LanguageSwitchController.switchToLanguage(lang: String)
+GET         /language/:lang                                                                 controllers.LanguageSwitchController.switchToLanguage(lang: String)
 
-GET         /keep-alive                                                              controllers.SessionExpiredController.keepAlive
-GET         /timeout                                                                 controllers.SessionExpiredController.timeout
+GET         /keep-alive                                                                     controllers.SessionExpiredController.keepAlive
+GET         /timeout                                                                        controllers.SessionExpiredController.timeout
 
 ###########################     Error pages     ####################################
 
-GET         /error/you-need-to-sign-up                                               controllers.errors.IndividualAuthErrorController.show
+GET         /error/you-need-to-sign-up                                                      controllers.errors.IndividualAuthErrorController.show
 
-GET         /error/not-authorised-to-use-service                                     controllers.errors.UnauthorisedUserErrorController.show
+GET         /error/not-authorised-to-use-service                                            controllers.errors.UnauthorisedUserErrorController.show
 
-GET         /error/you-need-agent-services-account                                   controllers.errors.YouNeedAgentServicesController.show
+GET         /error/you-need-agent-services-account                                          controllers.errors.YouNeedAgentServicesController.show
 
-GET         /error/you-need-client-authorisation                                     controllers.errors.AgentAuthErrorController.show
+GET         /error/you-need-client-authorisation                                            controllers.errors.AgentAuthErrorController.show
 
-GET         /error/wrong-tax-year                                                    controllers.errors.TaxYearErrorController.show
+GET         /error/wrong-tax-year                                                           controllers.errors.TaxYearErrorController.show
 
 ###########################     Pension summary pages     ####################################
 
-GET         /:taxYear/pensions-summary                                               controllers.pensions.PensionsSummaryController.show(taxYear: Int)
+GET         /:taxYear/pensions-summary                                                      controllers.pensions.PensionsSummaryController.show(taxYear: Int)
 
 ###########################     Payments into Pension pages     ####################################
 
-GET         /:taxYear/payments-into-pensions/no-tax-relief/retirement-annuity                   controllers.pensions.RetirementAnnuityController.show(taxYear: Int)
-POST        /:taxYear/payments-into-pensions/no-tax-relief/retirement-annuity                   controllers.pensions.RetirementAnnuityController.submit(taxYear: Int)
+GET         /:taxYear/payments-into-pensions/no-tax-relief/retirement-annuity               controllers.pensions.paymentsIntoPension.RetirementAnnuityController.show(taxYear: Int)
+POST        /:taxYear/payments-into-pensions/no-tax-relief/retirement-annuity               controllers.pensions.paymentsIntoPension.RetirementAnnuityController.submit(taxYear: Int)
 
-GET         /:taxYear/payments-into-pensions/no-tax-relief                                      controllers.pensions.PensionsTaxReliefNotClaimedController.show(taxYear: Int)
-POST        /:taxYear/payments-into-pensions/no-tax-relief                                      controllers.pensions.PensionsTaxReliefNotClaimedController.submit(taxYear: Int)
+GET         /:taxYear/payments-into-pensions/no-tax-relief                                  controllers.pensions.paymentsIntoPension.PensionsTaxReliefNotClaimedController.show(taxYear: Int)
+POST        /:taxYear/payments-into-pensions/no-tax-relief                                  controllers.pensions.paymentsIntoPension.PensionsTaxReliefNotClaimedController.submit(taxYear: Int)
 
-GET         /:taxYear/payments-into-pensions/relief-at-source                                   controllers.pensions.ReliefAtSourcePensionsController.show(taxYear: Int)
-POST        /:taxYear/payments-into-pensions/relief-at-source                                   controllers.pensions.ReliefAtSourcePensionsController.submit(taxYear: Int)
+GET         /:taxYear/payments-into-pensions/relief-at-source                               controllers.pensions.paymentsIntoPension.ReliefAtSourcePensionsController.show(taxYear: Int)
+POST        /:taxYear/payments-into-pensions/relief-at-source                               controllers.pensions.paymentsIntoPension.ReliefAtSourcePensionsController.submit(taxYear: Int)
 
-GET         /:taxYear/payments-into-pensions/relief-at-source-amount                            controllers.pensions.ReliefAtSourcePaymentsAndTaxReliefAmountController.show(taxYear: Int)
-POST        /:taxYear/payments-into-pensions/relief-at-source-amount                            controllers.pensions.ReliefAtSourcePaymentsAndTaxReliefAmountController.submit(taxYear: Int)
+GET         /:taxYear/payments-into-pensions/relief-at-source-amount                        controllers.pensions.paymentsIntoPension.ReliefAtSourcePaymentsAndTaxReliefAmountController.show(taxYear: Int)
+POST        /:taxYear/payments-into-pensions/relief-at-source-amount                        controllers.pensions.paymentsIntoPension.ReliefAtSourcePaymentsAndTaxReliefAmountController.submit(taxYear: Int)
 
-GET         /:taxYear/payments-into-pensions/one-off-payments-amount                            controllers.pensions.OneOffRASPaymentsAmountController.show(taxYear: Int)
-POST        /:taxYear/payments-into-pensions/one-off-payments-amount                            controllers.pensions.OneOffRASPaymentsAmountController.submit(taxYear: Int)
+GET         /:taxYear/payments-into-pensions/one-off-payments-amount                        controllers.pensions.paymentsIntoPension.OneOffRASPaymentsAmountController.show(taxYear: Int)
+POST        /:taxYear/payments-into-pensions/one-off-payments-amount                        controllers.pensions.paymentsIntoPension.OneOffRASPaymentsAmountController.submit(taxYear: Int)
 
-GET         /:taxYear/payments-into-pensions/check-payments-into-pensions                       controllers.pensions.PaymentsIntoPensionsCYAController.show(taxYear:Int)
-POST        /:taxYear/payments-into-pensions/check-payments-into-pensions                       controllers.pensions.PaymentsIntoPensionsCYAController.submit(taxYear:Int)
+GET         /:taxYear/payments-into-pensions/check-payments-into-pensions                   controllers.pensions.paymentsIntoPension.PaymentsIntoPensionsCYAController.show(taxYear:Int)
+POST        /:taxYear/payments-into-pensions/check-payments-into-pensions                   controllers.pensions.paymentsIntoPension.PaymentsIntoPensionsCYAController.submit(taxYear:Int)
 
-GET         /:taxYear/payments-into-pensions/one-off-payments                                   controllers.pensions.ReliefAtSourceOneOffPaymentsController.show(taxYear: Int)
-POST        /:taxYear/payments-into-pensions/one-off-payments                                   controllers.pensions.ReliefAtSourceOneOffPaymentsController.submit(taxYear: Int)
+GET         /:taxYear/payments-into-pensions/one-off-payments                               controllers.pensions.paymentsIntoPension.ReliefAtSourceOneOffPaymentsController.show(taxYear: Int)
+POST        /:taxYear/payments-into-pensions/one-off-payments                               controllers.pensions.paymentsIntoPension.ReliefAtSourceOneOffPaymentsController.submit(taxYear: Int)
 
-GET         /:taxYear/payments-into-pensions/no-tax-relief/workplace-amount                     controllers.pensions.WorkplaceAmountController.show(taxYear: Int)
-POST        /:taxYear/payments-into-pensions/no-tax-relief/workplace-amount                     controllers.pensions.WorkplaceAmountController.submit(taxYear: Int)
+GET         /:taxYear/payments-into-pensions/no-tax-relief/workplace-amount                 controllers.pensions.paymentsIntoPension.WorkplaceAmountController.show(taxYear: Int)
+POST        /:taxYear/payments-into-pensions/no-tax-relief/workplace-amount                 controllers.pensions.paymentsIntoPension.WorkplaceAmountController.submit(taxYear: Int)
 
-GET         /:taxYear/payments-into-pensions/no-tax-relief/workplace                            controllers.pensions.WorkplacePensionController.show(taxYear: Int)
-POST        /:taxYear/payments-into-pensions/no-tax-relief/workplace                            controllers.pensions.WorkplacePensionController.submit(taxYear: Int)
+GET         /:taxYear/payments-into-pensions/no-tax-relief/workplace                        controllers.pensions.paymentsIntoPension.WorkplacePensionController.show(taxYear: Int)
+POST        /:taxYear/payments-into-pensions/no-tax-relief/workplace                        controllers.pensions.paymentsIntoPension.WorkplacePensionController.submit(taxYear: Int)
 
-GET         /:taxYear/payments-into-pensions/no-tax-relief/retirement-annuity-amount            controllers.pensions.RetirementAnnuityAmountController.show(taxYear: Int)
-POST        /:taxYear/payments-into-pensions/no-tax-relief/retirement-annuity-amount            controllers.pensions.RetirementAnnuityAmountController.submit(taxYear: Int)
+
+GET         /:taxYear/payments-into-pensions/no-tax-relief/retirement-annuity-amount        controllers.pensions.paymentsIntoPension.RetirementAnnuityAmountController.show(taxYear: Int)
+POST        /:taxYear/payments-into-pensions/no-tax-relief/retirement-annuity-amount        controllers.pensions.paymentsIntoPension.RetirementAnnuityAmountController.submit(taxYear: Int)
 
 ###########################     Annual Allowance pages     ####################################
+
+GET         /:taxYear/annual-allowance/amount-above-reduced-annual-allowance                controllers.pensions.annualAllowance.AboveReducedAnnualAllowanceAmountController.show(taxYear: Int)
+POST        /:taxYear/annual-allowance/amount-above-reduced-annual-allowance                controllers.pensions.annualAllowance.AboveReducedAnnualAllowanceAmountController.submit(taxYear: Int)
 
 GET         /:taxYear/annual-allowance/reduced-annual-allowance                                 controllers.pensions.annualAllowance.ReducedAnnualAllowanceController.show(taxYear: Int)
 POST        /:taxYear/annual-allowance/reduced-annual-allowance                                 controllers.pensions.annualAllowance.ReducedAnnualAllowanceController.submit(taxYear: Int)

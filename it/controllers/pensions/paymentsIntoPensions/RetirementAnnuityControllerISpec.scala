@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.pensions
+package controllers.pensions.paymentsIntoPensions
 
 import builders.IncomeTaxUserDataBuilder.anIncomeTaxUserData
 import builders.PaymentsIntoPensionVewModelBuilder._
@@ -30,6 +30,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
+import utils.PageUrls.PaymentIntoPensions.{checkPaymentsIntoPensionCyaUrl, retirementAnnuityUrl}
 import utils.PageUrls._
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
@@ -320,7 +321,7 @@ class RetirementAnnuityControllerISpec extends IntegrationTest with ViewHelpers 
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(controllers.pensions.routes.RetirementAnnuityAmountController.show(taxYearEOY).url)
+        result.header("location") shouldBe Some(controllers.pensions.paymentsIntoPension.routes.RetirementAnnuityAmountController.show(taxYearEOY).url)
       }
 
       "updates retirement annuity contract payments question to Some(true)" in {

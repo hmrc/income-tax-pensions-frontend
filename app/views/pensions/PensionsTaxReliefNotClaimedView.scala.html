@@ -48,7 +48,7 @@
 
     @errorSummary(form.errors.distinct)
 
-    @formWithCsrf(action = controllers.pensions.routes.PensionsTaxReliefNotClaimedController.submit(taxYear)) {
+    @formWithCsrf(action = controllers.pensions.paymentsIntoPension.routes.PensionsTaxReliefNotClaimedController.submit(taxYear)) {
         @inputRadio(
             form = form,
             heading = titleForUse,

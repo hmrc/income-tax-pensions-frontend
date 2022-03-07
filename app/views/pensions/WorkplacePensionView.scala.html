@@ -54,7 +54,7 @@
 
     @errorSummary(form.errors.distinct)
 
-    @formWithCsrf(action = controllers.pensions.routes.WorkplacePensionController.submit(taxYear)) {
+    @formWithCsrf(action = controllers.pensions.paymentsIntoPension.routes.WorkplacePensionController.submit(taxYear)) {
         @inputRadio(
             form = form,
             heading = titleForUse,

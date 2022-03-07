@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package controllers.pensions
+package controllers.pensions.paymentsIntoPension
 
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.routes.{PaymentsIntoPensionsCYAController, WorkplaceAmountController}
+import controllers.pensions.paymentsIntoPension.routes.{PaymentsIntoPensionsCYAController, WorkplaceAmountController}
 import controllers.predicates.AuthorisedAction
 import forms.YesNoForm
 import models.User
@@ -60,8 +60,7 @@ class WorkplacePensionController @Inject()(implicit val mcc: MessagesControllerC
       yesNo =>
         pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
           data =>
-            val pensionsCYAModel: PensionsCYAModel = data.map(_.pensions).getOrElse(PensionsCYAModel(
-              PaymentsIntoPensionViewModel(), PensionAnnualAllowancesViewModel()))
+            val pensionsCYAModel: PensionsCYAModel = data.map(_.pensions).getOrElse(PensionsCYAModel.emptyModels)
             val viewModel: PaymentsIntoPensionViewModel = pensionsCYAModel.paymentsIntoPension
             val updatedCyaModel: PensionsCYAModel = {
               pensionsCYAModel.copy(paymentsIntoPension = viewModel.copy(workplacePensionPaymentsQuestion = Some(yesNo),

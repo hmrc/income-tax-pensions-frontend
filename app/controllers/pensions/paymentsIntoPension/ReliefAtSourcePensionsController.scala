@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package controllers.pensions
+package controllers.pensions.paymentsIntoPension
 
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.routes.{PensionsTaxReliefNotClaimedController, ReliefAtSourcePaymentsAndTaxReliefAmountController}
+import controllers.pensions.paymentsIntoPension.routes.{PensionsTaxReliefNotClaimedController, ReliefAtSourcePaymentsAndTaxReliefAmountController}
 import controllers.predicates.AuthorisedAction
 import forms.YesNoForm
 import models.User
