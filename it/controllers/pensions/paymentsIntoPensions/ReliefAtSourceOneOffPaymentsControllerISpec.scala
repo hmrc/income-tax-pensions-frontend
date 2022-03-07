@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.pensions
+package controllers.pensions.paymentsIntoPensions
 
 import builders.PaymentsIntoPensionVewModelBuilder.aPaymentsIntoPensionViewModel
 import builders.PensionsCYAModelBuilder._
@@ -28,6 +28,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
+import utils.PageUrls.PaymentIntoPensions.{checkPaymentsIntoPensionCyaUrl, oneOffReliefAtSourcePaymentsAmountUrl, pensionTaxReliefNotClaimedUrl, reliefAtSourceOneOffPaymentsUrl}
 import utils.PageUrls._
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 

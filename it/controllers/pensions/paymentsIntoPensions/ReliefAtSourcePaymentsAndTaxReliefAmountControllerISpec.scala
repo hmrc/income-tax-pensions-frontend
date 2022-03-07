@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.pensions
+package controllers.pensions.paymentsIntoPensions
 
 import builders.PaymentsIntoPensionVewModelBuilder.aPaymentsIntoPensionViewModel
 import builders.PensionsCYAModelBuilder._
@@ -28,11 +28,11 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.{checkPaymentsIntoPensionCyaUrl, fullUrl, workplacePensionAmount, workplacePensionUrl}
+import utils.PageUrls.PaymentIntoPensions.{checkPaymentsIntoPensionCyaUrl, reliefAtSourceOneOffPaymentsUrl, reliefAtSourcePaymentsAndTaxReliefAmountUrl, reliefAtSourcePensionsUrl}
+import utils.PageUrls._
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
-// scalastyle:off magic.number
-class WorkplaceAmountControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
+class ReliefAtSourcePaymentsAndTaxReliefAmountControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
 
   private val taxYearEOY: Int = taxYear - 1
   private val poundPrefixText = "£"
@@ -53,89 +53,83 @@ class WorkplaceAmountControllerISpec extends IntegrationTest with ViewHelpers wi
     val poundPrefixSelector = ".govuk-input__prefix"
     val inputSelector = "#amount"
     val expectedErrorHref = "#amount"
-
-    def bulletListSelector(index: Int): String = s"#main-content > div > div > form > div > label > ul > li:nth-child($index)"
-
     def insetSpanText(index: Int): String = s"#main-content > div > div > form > div > label > div > span:nth-child($index)"
-
     def paragraphSelector(index: Int): String = s"#main-content > div > div > form > div > label > p:nth-child($index)"
   }
 
   trait CommonExpectedResults {
     val expectedCaption: Int => String
-    val emptyErrorText: String
-    val invalidFormatErrorText: String
-    val maxAmountErrorText: String
-    val expectedParagraph: String
-    val hintText: String
-    val buttonText: String
-
-  }
-
-  trait SpecificExpectedResults {
     val expectedHeading: String
     val expectedTitle: String
     val expectedErrorTitle: String
-    val expectedBullet1: String
-    val expectedBullet2: String
-    val expectedYouCanFindThisOut: String
+    val expectedCalculationHeading: String
+    val expectedExampleCalculation: String
+    val emptyErrorText: String
+    val invalidFormatErrorText: String
+    val maxAmountErrorText: String
+    val hintText: String
+    val buttonText: String
+  }
+
+  trait SpecificExpectedResults {
+    val expectedWhereToFind: String
+    val expectedHowToWorkOut: String
   }
 
   object CommonExpectedEN extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Payments into pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
+    val expectedHeading = "Total payments into relief at source (RAS) pensions, plus basic rate tax relief"
+    val expectedTitle = "Total payments into relief at source (RAS) pensions, plus basic rate tax relief"
+    val expectedErrorTitle = s"Error: $expectedTitle"
+    val expectedCalculationHeading = "Example calculation"
+    val expectedExampleCalculation = "Emma paid £500 into her pension scheme. £500 divided by 80 and multiplied by 100 is £625. Her answer is £625."
     val hintText = "For example, £193.52"
-    val emptyErrorText = "Enter the amount paid into workplace pensions"
-    val invalidFormatErrorText = "Enter the amount paid into workplace pensions in the correct format"
-    val maxAmountErrorText = "The amount paid into workplace pensions must be less than £100,000,000,000"
+    val emptyErrorText = "Enter the total paid into RAS pensions, plus basic rate tax relief"
+    val invalidFormatErrorText = "Enter the total paid into RAS pensions, plus basic rate tax relief, in the correct format"
+    val maxAmountErrorText = "The total paid into RAS pensions, plus basic rate tax relief, must be less than £100,000,000,000"
     val buttonText = "Continue"
-    val expectedParagraph = "Only include payments:"
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Payments into pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
+    val expectedHeading = "Total payments into relief at source (RAS) pensions, plus basic rate tax relief"
+    val expectedTitle = "Total payments into relief at source (RAS) pensions, plus basic rate tax relief"
+    val expectedErrorTitle = s"Error: $expectedTitle"
+    val expectedCalculationHeading = "Example calculation"
+    val expectedExampleCalculation = "Emma paid £500 into her pension scheme. £500 divided by 80 and multiplied by 100 is £625. Her answer is £625."
     val hintText = "For example, £193.52"
-    val emptyErrorText = "Enter the amount paid into workplace pensions"
-    val invalidFormatErrorText = "Enter the amount paid into workplace pensions in the correct format"
-    val maxAmountErrorText = "The amount paid into workplace pensions must be less than £100,000,000,000"
+    val emptyErrorText = "Enter the total paid into RAS pensions, plus basic rate tax relief"
+    val invalidFormatErrorText = "Enter the total paid into RAS pensions, plus basic rate tax relief, in the correct format"
+    val maxAmountErrorText = "The total paid into RAS pensions, plus basic rate tax relief, must be less than £100,000,000,000"
     val buttonText = "Continue"
-    val expectedParagraph = "Only include payments:"
   }
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
-    val expectedHeading = "How much did you pay into your workplace pensions?"
-    val expectedTitle = "How much did you pay into your workplace pensions?"
-    val expectedErrorTitle = s"Error: $expectedTitle"
-    val expectedBullet1 = "made after your pay was taxed"
-    val expectedBullet2 = "your pension provider will not claim tax relief for"
-    val expectedYouCanFindThisOut = "You can find this out from your employer or your pension provider."
+    val expectedWhereToFind =
+      "You can find the total amount you paid into RAS pensions, plus tax relief, on the pension certificate or receipt from your administrator."
+    val expectedHowToWorkOut =
+      "To work it out yourself, divide the amount you actually paid by 80 and multiply the result by 100."
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
-    val expectedHeading = "How much did you pay into your workplace pensions?"
-    val expectedTitle = "How much did you pay into your workplace pensions?"
-    val expectedErrorTitle = s"Error: $expectedTitle"
-    val expectedBullet1 = "made after your pay was taxed"
-    val expectedBullet2 = "your pension provider will not claim tax relief for"
-    val expectedYouCanFindThisOut = "You can find this out from your employer or your pension provider."
-
+    val expectedWhereToFind =
+      "You can find the total amount you paid into RAS pensions, plus tax relief, on the pension certificate or receipt from your administrator."
+    val expectedHowToWorkOut =
+      "To work it out yourself, divide the amount you actually paid by 80 and multiply the result by 100."
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
-    val expectedHeading = "How much did your client pay into their workplace pensions?"
-    val expectedTitle = "How much did your client pay into their workplace pensions?"
-    val expectedErrorTitle = s"Error: $expectedTitle"
-    val expectedBullet1 = "made after your client’s pay was taxed"
-    val expectedBullet2 = "your client’s pension provider will not claim tax relief for"
-    val expectedYouCanFindThisOut = "Your client can find this out from their employer or pension provider."
+    val expectedWhereToFind =
+      "You can find the total amount your client paid into RAS pensions, plus tax relief, on the pension certificate or receipt from your administrator."
+    val expectedHowToWorkOut =
+      "To work it out yourself, divide the amount your client actually paid by 80 and multiply the result by 100."
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
-    val expectedHeading = "How much did your client pay into their workplace pensions?"
-    val expectedTitle = "How much did your client pay into their workplace pensions?"
-    val expectedErrorTitle = s"Error: $expectedTitle"
-    val expectedBullet1 = "made after your client’s pay was taxed"
-    val expectedBullet2 = "your client’s pension provider will not claim tax relief for"
-    val expectedYouCanFindThisOut = "Your client can find this out from their employer or pension provider."
+    val expectedWhereToFind =
+      "You can find the total amount your client paid into RAS pensions, plus tax relief, on the pension certificate or receipt from your administrator."
+    val expectedHowToWorkOut =
+      "To work it out yourself, divide the amount your client actually paid by 80 and multiply the result by 100."
   }
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(
@@ -152,14 +146,14 @@ class WorkplaceAmountControllerISpec extends IntegrationTest with ViewHelpers wi
       import user.commonExpectedResults._
 
       s"language is ${welshTest(user.isWelsh)} and request is from an ${agentTest(user.isAgent)}" should {
-        "render how much did you pay into your workplace pensions amount page with no pre filling" which {
+        "render Total payments into relief at source (RAS) pensions, plus basic rate tax relief page with no value when no cya data" which {
           lazy val result: WSResponse = {
             dropPensionsDB()
             authoriseAgentOrIndividual(user.isAgent)
             val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
-              workplacePensionPaymentsQuestion = Some(true), totalWorkplacePensionPayments = None)
+              rasPensionPaymentQuestion = Some(true), totalRASPaymentsAndTaxRelief = None)
             insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
-            urlGet(fullUrl(workplacePensionAmount(taxYearEOY)),
+            urlGet(fullUrl(reliefAtSourcePaymentsAndTaxReliefAmountUrl(taxYearEOY)),
               user.isWelsh, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
           }
 
@@ -169,31 +163,31 @@ class WorkplaceAmountControllerISpec extends IntegrationTest with ViewHelpers wi
             result.status shouldBe OK
           }
 
-          titleCheck(user.specificExpectedResults.get.expectedTitle)
-          h1Check(user.specificExpectedResults.get.expectedHeading)
+          titleCheck(expectedTitle)
+          h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
-          textOnPageCheck(expectedParagraph, paragraphSelector(2))
-          textOnPageCheck(user.specificExpectedResults.get.expectedBullet1, bulletListSelector(1))
-          textOnPageCheck(user.specificExpectedResults.get.expectedBullet2, bulletListSelector(2))
-          textOnPageCheck(user.specificExpectedResults.get.expectedYouCanFindThisOut, paragraphSelector(4))
+          textOnPageCheck(user.specificExpectedResults.get.expectedWhereToFind, paragraphSelector(2))
+          textOnPageCheck(user.specificExpectedResults.get.expectedHowToWorkOut, paragraphSelector(3))
+          textOnPageCheck(expectedCalculationHeading, insetSpanText(1))
+          textOnPageCheck(expectedExampleCalculation, insetSpanText(2))
           textOnPageCheck(hintText, hintTextSelector)
           textOnPageCheck(poundPrefixText, poundPrefixSelector)
           inputFieldValueCheck(amountInputName, inputSelector, "")
           buttonCheck(buttonText, continueButtonSelector)
-          formPostLinkCheck(workplacePensionAmount(taxYearEOY), formSelector)
+          formPostLinkCheck(reliefAtSourcePaymentsAndTaxReliefAmountUrl(taxYearEOY), formSelector)
           welshToggleCheck(user.isWelsh)
         }
 
-        "render how much did you pay into your workplace pensions amount page when cya data" which {
+        "render Total payments into relief at source (RAS) pensions, plus basic rate tax relief page prefilled when cya data" which {
 
           val existingAmount: String = "999.88"
           lazy val result: WSResponse = {
             dropPensionsDB()
             authoriseAgentOrIndividual(user.isAgent)
             val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
-              workplacePensionPaymentsQuestion = Some(true), totalWorkplacePensionPayments = Some(BigDecimal(existingAmount)))
+              rasPensionPaymentQuestion = Some(true), totalRASPaymentsAndTaxRelief = Some(BigDecimal(existingAmount)))
             insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
-            urlGet(fullUrl(workplacePensionAmount(taxYearEOY)), user.isWelsh, follow = false,
+            urlGet(fullUrl(reliefAtSourcePaymentsAndTaxReliefAmountUrl(taxYearEOY)), user.isWelsh, follow = false,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
           }
 
@@ -202,56 +196,59 @@ class WorkplaceAmountControllerISpec extends IntegrationTest with ViewHelpers wi
           "has an OK status" in {
             result.status shouldBe OK
           }
-          titleCheck(user.specificExpectedResults.get.expectedTitle)
-          h1Check(user.specificExpectedResults.get.expectedHeading)
+
+          titleCheck(expectedTitle)
+          h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
-          textOnPageCheck(expectedParagraph, paragraphSelector(2))
-          textOnPageCheck(user.specificExpectedResults.get.expectedBullet1, bulletListSelector(1))
-          textOnPageCheck(user.specificExpectedResults.get.expectedBullet2, bulletListSelector(2))
-          textOnPageCheck(user.specificExpectedResults.get.expectedYouCanFindThisOut, paragraphSelector(4))
+          textOnPageCheck(user.specificExpectedResults.get.expectedWhereToFind, paragraphSelector(2))
+          textOnPageCheck(user.specificExpectedResults.get.expectedHowToWorkOut, paragraphSelector(3))
+          textOnPageCheck(expectedCalculationHeading, insetSpanText(1))
+          textOnPageCheck(expectedExampleCalculation, insetSpanText(2))
           textOnPageCheck(hintText, hintTextSelector)
           textOnPageCheck(poundPrefixText, poundPrefixSelector)
           inputFieldValueCheck(amountInputName, inputSelector, existingAmount)
           buttonCheck(buttonText, continueButtonSelector)
-          formPostLinkCheck(workplacePensionAmount(taxYearEOY), formSelector)
+          formPostLinkCheck(reliefAtSourcePaymentsAndTaxReliefAmountUrl(taxYearEOY), formSelector)
           welshToggleCheck(user.isWelsh)
+
         }
+
       }
     }
-    "redirect to the Workplace pension question page if the question has not been answered" which {
+
+    "redirect to the rasPensionPaymentQuestion page if the question has not been answered" which {
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(isAgent = false)
         val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
-          workplacePensionPaymentsQuestion = None, totalWorkplacePensionPayments = None)
+          rasPensionPaymentQuestion = None, totalRASPaymentsAndTaxRelief = None)
         insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
-        urlGet(fullUrl(workplacePensionAmount(taxYearEOY)), follow = false,
+        urlGet(fullUrl(reliefAtSourcePaymentsAndTaxReliefAmountUrl(taxYearEOY)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
       }
 
       "has an SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location").contains(workplacePensionUrl(taxYearEOY)) shouldBe true
+        result.header("location").contains(reliefAtSourcePensionsUrl(taxYearEOY)) shouldBe true
       }
 
     }
 
-    "redirect to the workplace question page if the workplaceQuestion has been answered as false" which {
+    "redirect to the rasPensionPaymentQuestion page if the rasPensionPaymentQuestion question has been answered as false" which {
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(isAgent = false)
         val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
-          workplacePensionPaymentsQuestion = Some(false), totalWorkplacePensionPayments = None)
+          rasPensionPaymentQuestion = Some(false), totalRASPaymentsAndTaxRelief = None)
         insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
-        urlGet(fullUrl(workplacePensionAmount(taxYearEOY)), follow = false,
+        urlGet(fullUrl(reliefAtSourcePaymentsAndTaxReliefAmountUrl(taxYearEOY)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
       }
 
       "has an SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location").contains(workplacePensionUrl(taxYearEOY)) shouldBe true
+        result.header("location").contains(reliefAtSourcePensionsUrl(taxYearEOY)) shouldBe true
       }
-
     }
 
     "redirect to the CYA page if there is no session data" which {
@@ -259,7 +256,7 @@ class WorkplaceAmountControllerISpec extends IntegrationTest with ViewHelpers wi
         dropPensionsDB()
         authoriseAgentOrIndividual(isAgent = false)
         // no cya insert
-        urlGet(fullUrl(workplacePensionAmount(taxYearEOY)), follow = false,
+        urlGet(fullUrl(reliefAtSourcePaymentsAndTaxReliefAmountUrl(taxYearEOY)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
       }
 
@@ -269,6 +266,7 @@ class WorkplaceAmountControllerISpec extends IntegrationTest with ViewHelpers wi
       }
 
     }
+
   }
 
   ".submit" should {
@@ -287,10 +285,10 @@ class WorkplaceAmountControllerISpec extends IntegrationTest with ViewHelpers wi
           lazy val result: WSResponse = {
             dropPensionsDB()
             val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
-              workplacePensionPaymentsQuestion = Some(true), totalWorkplacePensionPayments = None)
+              rasPensionPaymentQuestion = Some(true), totalRASPaymentsAndTaxRelief = None)
             insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
             authoriseAgentOrIndividual(user.isAgent)
-            urlPost(fullUrl(workplacePensionAmount(taxYearEOY)), body = emptyForm, welsh = user.isWelsh,
+            urlPost(fullUrl(reliefAtSourcePaymentsAndTaxReliefAmountUrl(taxYearEOY)), body = emptyForm, welsh = user.isWelsh,
               follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
           }
 
@@ -300,18 +298,18 @@ class WorkplaceAmountControllerISpec extends IntegrationTest with ViewHelpers wi
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(user.specificExpectedResults.get.expectedErrorTitle)
-          h1Check(user.specificExpectedResults.get.expectedHeading)
+          titleCheck(expectedErrorTitle)
+          h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
-          textOnPageCheck(expectedParagraph, paragraphSelector(2))
-          textOnPageCheck(user.specificExpectedResults.get.expectedBullet1, bulletListSelector(1))
-          textOnPageCheck(user.specificExpectedResults.get.expectedBullet2, bulletListSelector(2))
-          textOnPageCheck(user.specificExpectedResults.get.expectedYouCanFindThisOut, paragraphSelector(4))
+          textOnPageCheck(user.specificExpectedResults.get.expectedWhereToFind, paragraphSelector(2))
+          textOnPageCheck(user.specificExpectedResults.get.expectedHowToWorkOut, paragraphSelector(3))
+          textOnPageCheck(expectedCalculationHeading, insetSpanText(1))
+          textOnPageCheck(expectedExampleCalculation, insetSpanText(2))
           textOnPageCheck(hintText, hintTextSelector)
           textOnPageCheck(poundPrefixText, poundPrefixSelector)
           inputFieldValueCheck(amountInputName, inputSelector, amountEmpty)
           buttonCheck(buttonText, continueButtonSelector)
-          formPostLinkCheck(workplacePensionAmount(taxYearEOY), formSelector)
+          formPostLinkCheck(reliefAtSourcePaymentsAndTaxReliefAmountUrl(taxYearEOY), formSelector)
           errorSummaryCheck(emptyErrorText, expectedErrorHref)
           errorAboveElementCheck(emptyErrorText)
           welshToggleCheck(user.isWelsh)
@@ -325,10 +323,10 @@ class WorkplaceAmountControllerISpec extends IntegrationTest with ViewHelpers wi
           lazy val result: WSResponse = {
             dropPensionsDB()
             val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
-              workplacePensionPaymentsQuestion = Some(true), totalWorkplacePensionPayments = None)
+              rasPensionPaymentQuestion = Some(true), totalRASPaymentsAndTaxRelief = None)
             insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
             authoriseAgentOrIndividual(user.isAgent)
-            urlPost(fullUrl(workplacePensionAmount(taxYearEOY)), body = invalidFormatForm, welsh = user.isWelsh,
+            urlPost(fullUrl(reliefAtSourcePaymentsAndTaxReliefAmountUrl(taxYearEOY)), body = invalidFormatForm, welsh = user.isWelsh,
               follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
           }
 
@@ -338,18 +336,18 @@ class WorkplaceAmountControllerISpec extends IntegrationTest with ViewHelpers wi
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(user.specificExpectedResults.get.expectedErrorTitle)
-          h1Check(user.specificExpectedResults.get.expectedHeading)
+          titleCheck(expectedErrorTitle)
+          h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
-          textOnPageCheck(expectedParagraph, paragraphSelector(2))
-          textOnPageCheck(user.specificExpectedResults.get.expectedBullet1, bulletListSelector(1))
-          textOnPageCheck(user.specificExpectedResults.get.expectedBullet2, bulletListSelector(2))
-          textOnPageCheck(user.specificExpectedResults.get.expectedYouCanFindThisOut, paragraphSelector(4))
+          textOnPageCheck(user.specificExpectedResults.get.expectedWhereToFind, paragraphSelector(2))
+          textOnPageCheck(user.specificExpectedResults.get.expectedHowToWorkOut, paragraphSelector(3))
+          textOnPageCheck(expectedCalculationHeading, insetSpanText(1))
+          textOnPageCheck(expectedExampleCalculation, insetSpanText(2))
           textOnPageCheck(hintText, hintTextSelector)
           textOnPageCheck(poundPrefixText, poundPrefixSelector)
           inputFieldValueCheck(amountInputName, inputSelector, amountInvalidFormat)
           buttonCheck(buttonText, continueButtonSelector)
-          formPostLinkCheck(workplacePensionAmount(taxYearEOY), formSelector)
+          formPostLinkCheck(reliefAtSourcePaymentsAndTaxReliefAmountUrl(taxYearEOY), formSelector)
           errorSummaryCheck(invalidFormatErrorText, expectedErrorHref)
           errorAboveElementCheck(invalidFormatErrorText)
           welshToggleCheck(user.isWelsh)
@@ -363,10 +361,10 @@ class WorkplaceAmountControllerISpec extends IntegrationTest with ViewHelpers wi
           lazy val result: WSResponse = {
             dropPensionsDB()
             val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
-              workplacePensionPaymentsQuestion = Some(true), totalWorkplacePensionPayments = None)
+              rasPensionPaymentQuestion = Some(true), totalRASPaymentsAndTaxRelief = None)
             insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
             authoriseAgentOrIndividual(user.isAgent)
-            urlPost(fullUrl(workplacePensionAmount(taxYearEOY)), body = overMaximumForm, welsh = user.isWelsh,
+            urlPost(fullUrl(reliefAtSourcePaymentsAndTaxReliefAmountUrl(taxYearEOY)), body = overMaximumForm, welsh = user.isWelsh,
               follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
           }
 
@@ -376,24 +374,27 @@ class WorkplaceAmountControllerISpec extends IntegrationTest with ViewHelpers wi
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(user.specificExpectedResults.get.expectedErrorTitle)
-          h1Check(user.specificExpectedResults.get.expectedHeading)
+          titleCheck(expectedErrorTitle)
+          h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
-          textOnPageCheck(expectedParagraph, paragraphSelector(2))
-          textOnPageCheck(user.specificExpectedResults.get.expectedBullet1, bulletListSelector(1))
-          textOnPageCheck(user.specificExpectedResults.get.expectedBullet2, bulletListSelector(2))
-          textOnPageCheck(user.specificExpectedResults.get.expectedYouCanFindThisOut, paragraphSelector(4))
+          textOnPageCheck(user.specificExpectedResults.get.expectedWhereToFind, paragraphSelector(2))
+          textOnPageCheck(user.specificExpectedResults.get.expectedHowToWorkOut, paragraphSelector(3))
+          textOnPageCheck(expectedCalculationHeading, insetSpanText(1))
+          textOnPageCheck(expectedExampleCalculation, insetSpanText(2))
           textOnPageCheck(hintText, hintTextSelector)
           textOnPageCheck(poundPrefixText, poundPrefixSelector)
           inputFieldValueCheck(amountInputName, inputSelector, amountOverMaximum)
           buttonCheck(buttonText, continueButtonSelector)
-          formPostLinkCheck(workplacePensionAmount(taxYearEOY), formSelector)
+          formPostLinkCheck(reliefAtSourcePaymentsAndTaxReliefAmountUrl(taxYearEOY), formSelector)
           errorSummaryCheck(maxAmountErrorText, expectedErrorHref)
           errorAboveElementCheck(maxAmountErrorText)
           welshToggleCheck(user.isWelsh)
         }
+
       }
+
     }
+
     "redirect to the correct page when a valid amount is submitted and update the session amount" which {
 
       val validAmount = "100.22"
@@ -402,24 +403,23 @@ class WorkplaceAmountControllerISpec extends IntegrationTest with ViewHelpers wi
       lazy val result: WSResponse = {
         dropPensionsDB()
         val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
-          workplacePensionPaymentsQuestion = Some(true), totalWorkplacePensionPayments = None)
+          rasPensionPaymentQuestion = Some(true), totalRASPaymentsAndTaxRelief = None)
         insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
         authoriseAgentOrIndividual(isAgent = false)
-        urlPost(fullUrl(workplacePensionAmount(taxYearEOY)), body = validForm, follow = false,
+        urlPost(fullUrl(reliefAtSourcePaymentsAndTaxReliefAmountUrl(taxYearEOY)), body = validForm, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
       }
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(checkPaymentsIntoPensionCyaUrl(taxYearEOY))
+        result.header("location") shouldBe Some(reliefAtSourceOneOffPaymentsUrl(taxYearEOY))
       }
 
-      "updates workplace amount" in {
+      "updates retirement annuity contract payments question to Some(true)" in {
         lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
-        cyaModel.pensions.paymentsIntoPension.totalWorkplacePensionPayments shouldBe Some(BigDecimal(validAmount))
+        cyaModel.pensions.paymentsIntoPension.totalRASPaymentsAndTaxRelief shouldBe Some(BigDecimal(validAmount))
       }
     }
 
   }
 }
-// scalastyle:on magic.number

@@ -27,6 +27,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.UNAUTHORIZED
 import play.api.libs.ws.WSResponse
+import utils.PageUrls.PaymentIntoPensions.checkPaymentsIntoPensionCyaUrl
 import utils.PageUrls._
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 

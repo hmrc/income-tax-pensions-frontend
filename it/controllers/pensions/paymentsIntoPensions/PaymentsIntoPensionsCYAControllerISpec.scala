@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package controllers.pensions
+package controllers.pensions.paymentsIntoPensions
 
 import builders.AllPensionsDataBuilder.anAllPensionsData
 import builders.IncomeTaxUserDataBuilder.anIncomeTaxUserData
 import builders.PaymentsIntoPensionVewModelBuilder.aPaymentsIntoPensionViewModel
-import builders.PensionChargesBuilder.anPensionCharges
 import builders.PensionContributionsBuilder.anPensionContributions
 import builders.PensionSavingTaxChargesBuilder.anPensionSavngTaxCharges
 import builders.PensionsCYAModelBuilder.{aPensionsCYAModel, paymentsIntoPensionOnlyCYAModel}
@@ -35,7 +34,8 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.SEE_OTHER
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.{checkPaymentsIntoPensionCyaUrl, fullUrl}
+import utils.PageUrls.PaymentIntoPensions.checkPaymentsIntoPensionCyaUrl
+import utils.PageUrls.fullUrl
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 // scalastyle:off magic.number
@@ -53,15 +53,15 @@ class PaymentsIntoPensionsCYAControllerISpec extends IntegrationTest with ViewHe
   )
 
   object ChangeLinks {
-    val reliefAtSource: String = controllers.pensions.routes.ReliefAtSourcePensionsController.show(taxYear).url
-    val reliefAtSourceAmount: String = controllers.pensions.routes.ReliefAtSourcePaymentsAndTaxReliefAmountController.show(taxYear).url
-    val oneOff: String = controllers.pensions.routes.ReliefAtSourceOneOffPaymentsController.show(taxYear).url
-    val oneOffAmount: String = controllers.pensions.routes.OneOffRASPaymentsAmountController.show(taxYear).url
-    val pensionsTaxReliefNotClaimed: String = controllers.pensions.routes.PensionsTaxReliefNotClaimedController.show(taxYear).url
-    val retirementAnnuity: String = controllers.pensions.routes.RetirementAnnuityController.show(taxYear).url
-    val retirementAnnuityAmount: String = controllers.pensions.routes.RetirementAnnuityAmountController.show(taxYear).url
-    val workplacePayments: String = controllers.pensions.routes.WorkplacePensionController.show(taxYear).url
-    val workplacePaymentsAmount: String = controllers.pensions.routes.WorkplaceAmountController.show(taxYear).url
+    val reliefAtSource: String = controllers.pensions.paymentsIntoPension.routes.ReliefAtSourcePensionsController.show(taxYear).url
+    val reliefAtSourceAmount: String = controllers.pensions.paymentsIntoPension.routes.ReliefAtSourcePaymentsAndTaxReliefAmountController.show(taxYear).url
+    val oneOff: String = controllers.pensions.paymentsIntoPension.routes.ReliefAtSourceOneOffPaymentsController.show(taxYear).url
+    val oneOffAmount: String = controllers.pensions.paymentsIntoPension.routes.OneOffRASPaymentsAmountController.show(taxYear).url
+    val pensionsTaxReliefNotClaimed: String = controllers.pensions.paymentsIntoPension.routes.PensionsTaxReliefNotClaimedController.show(taxYear).url
+    val retirementAnnuity: String = controllers.pensions.paymentsIntoPension.routes.RetirementAnnuityController.show(taxYear).url
+    val retirementAnnuityAmount: String = controllers.pensions.paymentsIntoPension.routes.RetirementAnnuityAmountController.show(taxYear).url
+    val workplacePayments: String = controllers.pensions.paymentsIntoPension.routes.WorkplacePensionController.show(taxYear).url
+    val workplacePaymentsAmount: String = controllers.pensions.paymentsIntoPension.routes.WorkplaceAmountController.show(taxYear).url
   }
 
   trait SpecificExpectedResults {
@@ -333,7 +333,7 @@ class PaymentsIntoPensionsCYAControllerISpec extends IntegrationTest with ViewHe
           }
 
           "redirects to the pensions summary page" in {
-            result.headers("Location").head shouldBe controllers.pensions.routes.ReliefAtSourcePensionsController.show(taxYear).url
+            result.headers("Location").head shouldBe controllers.pensions.paymentsIntoPension.routes.ReliefAtSourcePensionsController.show(taxYear).url
           }
         }
 
@@ -350,7 +350,7 @@ class PaymentsIntoPensionsCYAControllerISpec extends IntegrationTest with ViewHe
           }
 
           "redirects to the pensions summary page" in {
-            result.headers("Location").head shouldBe controllers.pensions.routes.ReliefAtSourcePensionsController.show(taxYear).url
+            result.headers("Location").head shouldBe controllers.pensions.paymentsIntoPension.routes.ReliefAtSourcePensionsController.show(taxYear).url
           }
         }
       }

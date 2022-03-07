@@ -26,6 +26,7 @@ common.status.toDo = To do
 common.status.updated = Updated
 common.pensions.caption = Pensions for 6 April {0} to 5 April {1}
 common.paymentsIntoPensions.caption = Payments into pensions for 6 April {0} to 5 April {1}
+common.pensionAnnualAllowance.caption = Pension annual allowance for 6 April {0} to 5 April {1}
 common.return.overview.buttonText = Return to overview
 
 common.error.self-assessment.paragraph.1.1 = If the web address is correct or you selected a link or button, you can use
@@ -232,4 +233,10 @@ pensions.retirementAnnuityAmount.error.noEntry = Enter the amount paid into reti
 pensions.retirementAnnuityAmount.error.incorrectFormat = Enter the amount paid into retirement annuity contracts in the correct format
 pensions.retirementAnnuityAmount.error.overMaximum = The amount paid into retirement annuity contracts must be less than £100,000,000,000
 
-
+#################       Reduced Annual Allowance Amount Messages         ########################################
+pensions.reducedAnnualAllowanceAmount.title.individual = How much above your annual allowance are you?
+pensions.reducedAnnualAllowanceAmount.title.agent = How much above your client’s reduced annual allowance are they?
+pensions.reducedAnnualAllowanceAmount.paragraph = This is the amount on which tax is due.
+pensions.reducedAnnualAllowanceAmount.error.noEntry = Enter the amount above your reduced annual allowance
+pensions.reducedAnnualAllowanceAmount.error.incorrectFormat = Enter the amount above your reduced annual allowance in the correct format
+pensions.reducedAnnualAllowanceAmount.error.overMaximum = The amount above your reduced annual allowance must be less than £100,000,000,000

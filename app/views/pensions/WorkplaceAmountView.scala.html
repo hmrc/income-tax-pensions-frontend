@@ -61,7 +61,7 @@
 
     @errorSummary(form.errors.distinct)
 
-    @formWithCsrf(action = controllers.pensions.routes.WorkplaceAmountController.submit(taxYear)) {
+    @formWithCsrf(action = controllers.pensions.paymentsIntoPension.routes.WorkplaceAmountController.submit(taxYear)) {
         @inputText(
             form,
             id = "amount",

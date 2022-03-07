@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package controllers.pensions
+package controllers.pensions.paymentsIntoPension
 
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.routes._
+import controllers.pensions.paymentsIntoPension.routes._
 import controllers.predicates.AuthorisedAction
 import forms.AmountForm
 import models.mongo.PensionsCYAModel
@@ -29,38 +29,37 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
-import views.html.pensions.WorkplaceAmountView
+import views.html.pensions.ReliefAtSourcePaymentsAndTaxReliefAmountView
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
-class WorkplaceAmountController @Inject()(implicit val cc: MessagesControllerComponents,
-                                          authAction: AuthorisedAction,
-                                          workplaceAmountView: WorkplaceAmountView,
-                                          appConfig: AppConfig,
-                                          pensionSessionService: PensionSessionService,
-                                          errorHandler: ErrorHandler,
-                                          clock: Clock) extends FrontendController(cc) with I18nSupport {
 
+@Singleton
+class ReliefAtSourcePaymentsAndTaxReliefAmountController @Inject()(implicit val mcc: MessagesControllerComponents,
+                                                                   appConfig: AppConfig,
+                                                                   authAction: AuthorisedAction,
+                                                                   pensionSessionService: PensionSessionService,
+                                                                   errorHandler: ErrorHandler,
+                                                                   view: ReliefAtSourcePaymentsAndTaxReliefAmountView,
+                                                                   clock: Clock) extends FrontendController(mcc) with I18nSupport {
 
   val amountForm: Form[BigDecimal] = AmountForm.amountForm(
-    emptyFieldKey = "pensions.workplaceAmount.error.noEntry",
-    wrongFormatKey = "pensions.workplaceAmount.error.incorrectFormat",
-    exceedsMaxAmountKey = "pensions.workplaceAmount.error.maxAmount"
+    emptyFieldKey = "pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.error.noEntry",
+    wrongFormatKey = "pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.error.invalidFormat",
+    exceedsMaxAmountKey = "pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.error.overMaximum"
   )
 
   def show(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
     pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
       case Some(data) =>
-        if (data.pensions.paymentsIntoPension.workplacePensionPaymentsQuestion.contains(true)) {
-          data.pensions.paymentsIntoPension.totalWorkplacePensionPayments match {
-            case Some(amount) =>
-              Future.successful(Ok(workplaceAmountView(amountForm.fill(amount), taxYear)))
-            case None =>
-              Future.successful(Ok(workplaceAmountView(amountForm, taxYear)))
+        if (data.pensions.paymentsIntoPension.rasPensionPaymentQuestion.contains(true)) {
+          data.pensions.paymentsIntoPension.totalRASPaymentsAndTaxRelief match {
+            case Some(amount) => Future.successful(Ok(view(amountForm.fill(amount), taxYear)))
+            case None => Future.successful(Ok(view(amountForm, taxYear)))
           }
         } else {
-          Future.successful(Redirect(WorkplacePensionController.show(taxYear)))
+          Future.successful(Redirect(ReliefAtSourcePensionsController.show(taxYear)))
         }
       case _ =>
         Future.successful(Redirect(PaymentsIntoPensionsCYAController.show(taxYear)))
@@ -70,23 +69,23 @@ class WorkplaceAmountController @Inject()(implicit val cc: MessagesControllerCom
 
   def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
     amountForm.bindFromRequest.fold(
-      formWithErrors => Future.successful(BadRequest(workplaceAmountView(formWithErrors, taxYear))),
+      formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
       amount => {
         pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
           data =>
-            val pensionsCYAModel: PensionsCYAModel = data.map(_.pensions).getOrElse(PensionsCYAModel(PaymentsIntoPensionViewModel(),
-              PensionAnnualAllowancesViewModel()))
+            val pensionsCYAModel: PensionsCYAModel = data.map(_.pensions).getOrElse(PensionsCYAModel.emptyModels)
             val viewModel: PaymentsIntoPensionViewModel = pensionsCYAModel.paymentsIntoPension
             val updatedCyaModel: PensionsCYAModel = {
-              pensionsCYAModel.copy(paymentsIntoPension = viewModel.copy(totalWorkplacePensionPayments = Some(amount)))
+              pensionsCYAModel.copy(paymentsIntoPension = viewModel.copy(totalRASPaymentsAndTaxRelief = Some(amount)))
             }
             pensionSessionService.createOrUpdateSessionData(request.user,
               updatedCyaModel, taxYear, data.exists(_.isPriorSubmission))(errorHandler.internalServerError()) {
-              Redirect(PaymentsIntoPensionsCYAController.show(taxYear))
+              Redirect(ReliefAtSourceOneOffPaymentsController.show(taxYear))
             }
         }
 
       }
     )
   }
+
 }

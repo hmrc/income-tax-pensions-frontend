@@ -58,7 +58,7 @@
 
     @errorSummary(form.errors.distinct)
 
-    @formWithCsrf(action = controllers.pensions.routes.OneOffRASPaymentsAmountController.submit(taxYear)) {
+    @formWithCsrf(action = controllers.pensions.paymentsIntoPension.routes.OneOffRASPaymentsAmountController.submit(taxYear)) {
 
         @inputText(
             form,

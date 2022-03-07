@@ -14,17 +14,15 @@
  * limitations under the License.
  */
 
-package controllers.pensions
+package controllers.pensions.paymentsIntoPension
 
 import common.AnnualAllowanceTaxPaidValues
 import config.{AppConfig, ErrorHandler}
 import controllers.predicates.AuthorisedAction
-
-import javax.inject.Inject
 import models.mongo.PensionsCYAModel
-import models.pension.reliefs.PaymentsIntoPensionViewModel
 import models.pension.AllPensionsData
 import models.pension.charges.PensionAnnualAllowancesViewModel
+import models.pension.reliefs.PaymentsIntoPensionViewModel
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
@@ -32,6 +30,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.PaymentsIntoPensionsCYAView
 
+import javax.inject.Inject
 import scala.concurrent.Future
 
 class PaymentsIntoPensionsCYAController @Inject()(implicit val cc: MessagesControllerComponents,
@@ -51,7 +50,7 @@ class PaymentsIntoPensionsCYAController @Inject()(implicit val cc: MessagesContr
             Future.successful(Ok(view(taxYear, cyaData.paymentsIntoPension)))
           } else {
             //TODO - redirect to first unanswered question
-            Future.successful(Redirect(controllers.pensions.routes.ReliefAtSourcePensionsController.show(taxYear)))
+            Future.successful(Redirect(controllers.pensions.paymentsIntoPension.routes.ReliefAtSourcePensionsController.show(taxYear)))
           }
         case (None, Some(priorData)) =>
           val cyaModel = generateCyaFromPrior(priorData)
@@ -60,7 +59,7 @@ class PaymentsIntoPensionsCYAController @Inject()(implicit val cc: MessagesContr
             errorHandler.internalServerError())(
             Ok(view(taxYear, cyaModel.paymentsIntoPension))
           )
-        case _ => Future.successful(Redirect(controllers.pensions.routes.ReliefAtSourcePensionsController.show(taxYear)))
+        case _ => Future.successful(Redirect(controllers.pensions.paymentsIntoPension.routes.ReliefAtSourcePensionsController.show(taxYear)))
       }
     }
   }

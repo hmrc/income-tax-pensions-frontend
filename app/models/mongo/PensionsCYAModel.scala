@@ -21,10 +21,12 @@ import models.pension.reliefs.{EncryptedPaymentsIntoPensionViewModel, PaymentsIn
 import play.api.libs.json.{Json, OFormat}
 
 case class PensionsCYAModel(paymentsIntoPension: PaymentsIntoPensionViewModel,
-                            pensionsAnnualAllowances: PensionAnnualAllowancesViewModel)
+                            pensionsAnnualAllowances: PensionAnnualAllowancesViewModel) {
+}
 
 object PensionsCYAModel {
   implicit val format: OFormat[PensionsCYAModel] = Json.format[PensionsCYAModel]
+  def emptyModels: PensionsCYAModel = PensionsCYAModel(PaymentsIntoPensionViewModel(), PensionAnnualAllowancesViewModel())
 }
 
 case class EncryptedPensionCYAModel(encryptedPaymentsIntoPension: EncryptedPaymentsIntoPensionViewModel,
