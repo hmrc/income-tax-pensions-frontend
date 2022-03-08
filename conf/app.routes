@@ -63,6 +63,10 @@ GET         /:taxYear/payments-into-pensions/no-tax-relief/retirement-annuity-am
 POST        /:taxYear/payments-into-pensions/no-tax-relief/retirement-annuity-amount        controllers.pensions.paymentsIntoPension.RetirementAnnuityAmountController.submit(taxYear: Int)
 
 
+###########################     Pension Annual Allowance Pages     ####################################
+
+GET         /:taxYear/annual-allowance/above-reduced-annual-allowance                       controllers.pensions.annualAllowance.AboveReducedAnnualAllowanceController.show(taxYear: Int)
+POST        /:taxYear/annual-allowance/above-reduced-annual-allowance                       controllers.pensions.annualAllowance.AboveReducedAnnualAllowanceController.submit(taxYear: Int)
+
 GET         /:taxYear/annual-allowance/amount-above-reduced-annual-allowance                controllers.pensions.annualAllowance.AboveReducedAnnualAllowanceAmountController.show(taxYear: Int)
 POST        /:taxYear/annual-allowance/amount-above-reduced-annual-allowance                controllers.pensions.annualAllowance.AboveReducedAnnualAllowanceAmountController.submit(taxYear: Int)
-

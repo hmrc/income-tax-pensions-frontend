@@ -233,6 +233,17 @@ pensions.retirementAnnuityAmount.error.noEntry = Enter the amount paid into reti
 pensions.retirementAnnuityAmount.error.incorrectFormat = Enter the amount paid into retirement annuity contracts in the correct format
 pensions.retirementAnnuityAmount.error.overMaximum = The amount paid into retirement annuity contracts must be less than £100,000,000,000
 
+
+#################       Above Reduced Annual Allowance Messages        ########################################
+
+pensions.aboveReducedAnnualAllowance.title.individual = Have you gone above your reduced annual allowance?
+pensions.aboveReducedAnnualAllowance.title.agent = Has your client gone above their reduced annual allowance?
+pensions.aboveReducedAnnualAllowance.paragraph = Use a calculator
+pensions.aboveReducedAnnualAllowance.paragraph.link = if you need to work this out
+pensions.aboveReducedAnnualAllowance.error.noEntry.individual = Select yes if you have gone above your reduced annual allowance
+pensions.aboveReducedAnnualAllowance.error.noEntry.agent = Select yes if your client has gone above their reduced annual allowance
+
+
 #################       Reduced Annual Allowance Amount Messages         ########################################
 pensions.reducedAnnualAllowanceAmount.title.individual = How much above your annual allowance are you?
 pensions.reducedAnnualAllowanceAmount.title.agent = How much above your client’s reduced annual allowance are they?
@@ -240,3 +251,4 @@ pensions.reducedAnnualAllowanceAmount.paragraph = This is the amount on which ta
 pensions.reducedAnnualAllowanceAmount.error.noEntry = Enter the amount above your reduced annual allowance
 pensions.reducedAnnualAllowanceAmount.error.incorrectFormat = Enter the amount above your reduced annual allowance in the correct format
 pensions.reducedAnnualAllowanceAmount.error.overMaximum = The amount above your reduced annual allowance must be less than £100,000,000,000
+

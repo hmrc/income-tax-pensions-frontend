@@ -57,8 +57,7 @@ class AboveReducedAnnualAllowanceAmountController @Inject()(implicit val mcc: Me
             case None => Future.successful(Ok(view(amountForm, taxYear)))
           }
         } else {
-          //TODO: redirect to "Above allowance question page?" page
-          Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
+          Future.successful(Redirect(controllers.pensions.annualAllowance.routes.AboveReducedAnnualAllowanceController.show(taxYear)))
         }
       case _ =>
         Future.successful(Redirect(PensionsSummaryController.show(taxYear)))

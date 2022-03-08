@@ -67,6 +67,8 @@ object PageUrls extends IntegrationTest {
 
   object PensionAnnualAllowancePages {
     def aboveReducedAnnualAllowanceAmountUrl(taxYear: Int): String = s"$appUrl/$taxYear/annual-allowance/amount-above-reduced-annual-allowance"
+
+    def aboveReducedAnnualAllowanceUrl (taxYear: Int): String = s"$appUrl/$taxYear/annual-allowance/above-reduced-annual-allowance"
   }
 }
 

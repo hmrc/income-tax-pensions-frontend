@@ -28,7 +28,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.PensionAnnualAllowancePages.aboveReducedAnnualAllowanceAmountUrl
+import utils.PageUrls.PensionAnnualAllowancePages.{aboveReducedAnnualAllowanceAmountUrl, aboveReducedAnnualAllowanceUrl}
 import utils.PageUrls.{fullUrl, pensionSummaryUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
@@ -185,7 +185,6 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
       }
     }
 
-    //TODO redirect to question page
     "redirect to the PensionSummary page if the question has not been answered" which {
       lazy val result: WSResponse = {
         dropPensionsDB()
@@ -201,11 +200,11 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
 
       "has an SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location").contains(pensionSummaryUrl(taxYearEOY)) shouldBe true
+        result.header("location").contains(aboveReducedAnnualAllowanceUrl(taxYearEOY)) shouldBe true
       }
     }
 
-    //TODO redirect to question page
+
     "redirect to the PensionSummary page if the retirementAnnuityContract question has been answered as false" which {
       lazy val result: WSResponse = {
         dropPensionsDB()
@@ -221,7 +220,7 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
 
       "has an SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location").contains(pensionSummaryUrl(taxYearEOY)) shouldBe true
+        result.header("location").contains(aboveReducedAnnualAllowanceUrl(taxYearEOY)) shouldBe true
       }
     }
 
