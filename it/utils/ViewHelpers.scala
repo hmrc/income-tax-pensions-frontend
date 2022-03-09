@@ -203,6 +203,25 @@ trait ViewHelpers {
     }
   }
 
+  def checkBoxCheck(text: String, checkBoxNumber: Int, checked: Option[Boolean] = None)(implicit document: () => Document): Unit = {
+    s"have a $text checkbox" which {
+      s"is of type check box" in {
+        val selector = ".govuk-checkboxes__input"
+        document().select(selector).get(checkBoxNumber - 1).attr("type") shouldBe "checkbox"
+      }
+      s"has the text $text" in {
+        val selector = ".govuk-checkboxes__label"
+        document().select(selector).get(checkBoxNumber - 1).text() shouldBe text
+      }
+      if (checked.isDefined) {
+        s"has the checked value set to ${checked.get}" in {
+          val selector = ".govuk-checkboxes__input"
+          document().select(selector).get(checkBoxNumber - 1).hasAttr("checked") shouldBe checked.get
+        }
+      }
+    }
+  }
+
   def linkCheck(text: String, selector: String, href: String, hiddenTextSelector: Option[String] = None)(implicit document: () => Document): Unit = {
     s"have a $text link" which {
       s"has the text '$text' and a href to '$href'" in {

@@ -24,8 +24,8 @@ object StatusHelper {
   def paymentsIntoPensionsIsUpdated(prior: Option[AllPensionsData]): Boolean = {
 
     // TODO: Do we care if it's deleted so might do as below instead?
-      val reliefs = prior.flatMap(_.pensionReliefs)
-     reliefs.isDefined && reliefs.get.deletedOn.isEmpty
+    // val reliefs = prior.flatMap(_.pensionReliefs)
+    // reliefs.isDefined && reliefs.get.deletedOn.isEmpty
 
     prior.flatMap(_.pensionReliefs).isDefined
   }

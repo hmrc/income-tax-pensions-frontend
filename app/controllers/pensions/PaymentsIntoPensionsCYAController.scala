@@ -101,6 +101,7 @@ class PaymentsIntoPensionsCYAController @Inject()(implicit val cc: MessagesContr
 
       //TODO: validate and amend when building the annual allowance CYA page
       PensionAnnualAllowancesViewModel(
+
         prior.pensionCharges.flatMap(a => a.pensionSavingsTaxCharges).map(_.isAnnualAllowanceReduced),
         prior.pensionCharges.flatMap(a => a.pensionSavingsTaxCharges).flatMap(_.moneyPurchasedAllowance),
         prior.pensionCharges.flatMap(a => a.pensionSavingsTaxCharges).flatMap(_.taperedAnnualAllowance),

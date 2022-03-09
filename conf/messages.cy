@@ -26,6 +26,7 @@ common.status.toDo = To do
 common.status.updated = Updated
 common.pensions.caption = Pensions for 6 April {0} to 5 April {1}
 common.paymentsIntoPensions.caption = Payments into pensions for 6 April {0} to 5 April {1}
+common.pensionAnnualAllowance.caption = Pension annual allowance for 6 April {0} to 5 April {1}
 common.return.overview.buttonText = Return to overview
 
 common.error.self-assessment.paragraph.1.1 = If the web address is correct or you selected a link or button, you can use
@@ -232,4 +233,20 @@ pensions.retirementAnnuityAmount.error.noEntry = Enter the amount paid into reti
 pensions.retirementAnnuityAmount.error.incorrectFormat = Enter the amount paid into retirement annuity contracts in the correct format
 pensions.retirementAnnuityAmount.error.overMaximum = The amount paid into retirement annuity contracts must be less than £100,000,000,000
 
+#################       Reduced Annual Allowance Type Messages        ########################################
 
+pensions.ReducedAnnualAllowanceType.title.individual = What type of reduced annual allowance do you have?
+pensions.ReducedAnnualAllowanceType.title.agent = What type of reduced annual allowance does your client have?
+pensions.ReducedAnnualAllowanceType.checkbox.hint = Select all that apply.
+pensions.ReducedAnnualAllowanceType.moneyPurchaseCheckbox.text = Money purchase annual allowance
+pensions.ReducedAnnualAllowanceType.taperedCheckbox.text = Tapered annual allowance
+pensions.ReducedAnnualAllowanceType.checkbox.error.individual = Select the type of reduced annual allowance you have
+pensions.ReducedAnnualAllowanceType.checkbox.error.agent = Select the type of reduced annual allowance your client has
+pensions.ReducedAnnualAllowanceType.details.heading = More information about the types of reduced annual allowance
+pensions.ReducedAnnualAllowanceType.details.moneyPurchaseInfo.individual = You’ll have this type of allowance if you flexibly access your pension. For example, this could include taking:
+pensions.ReducedAnnualAllowanceType.details.moneyPurchaseInfo.agent = Your client will have this type of allowance if they flexibly access their pension. For example, this could include taking:
+pensions.ReducedAnnualAllowanceType.details.bulletOne = income from a flexi-access drawdown fund
+pensions.ReducedAnnualAllowanceType.details.bulletTwo = cash directly from a pension pot (‘uncrystallised funds pension lump sums’)
+pensions.ReducedAnnualAllowanceType.details.taperedInfo.individual = You’ll have this type of annual allowance if both your ‘threshold income’ and ‘adjusted income’ are
+pensions.ReducedAnnualAllowanceType.details.taperedInfo.agent = Your client will have this type of annual allowance if both their ‘threshold income’ and ‘adjusted income’ are
+pensions.ReducedAnnualAllowanceType.details.taperedLink = over the limit
