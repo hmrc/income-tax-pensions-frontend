@@ -59,11 +59,15 @@ object PageUrls extends IntegrationTest {
 
   def oneOffReliefAtSourcePaymentsAmountUrl(taxYear: Int): String = s"$appUrl/$taxYear/payments-into-pensions/one-off-payments-amount"
 
-  //scalastyle:on number.of.methods
+  //  *****************       annual allowance pages      ******************************
 
   object PensionAnnualAllowancePages {
+    def reducedAnnualAllowanceUrl(taxYear: Int): String = s"$appUrl/$taxYear/annual-allowance/reduced-annual-allowance"
+
     def reducedAnnualAllowanceTypeUrl(taxYear: Int): String = s"$appUrl/$taxYear/annual-allowance/reduced-annual-allowance-type"
   }
+
+  //scalastyle:on number.of.methods
 
 }
 
