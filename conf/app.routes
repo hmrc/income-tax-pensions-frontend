@@ -62,4 +62,6 @@ POST        /:taxYear/payments-into-pensions/no-tax-relief/workplace            
 GET         /:taxYear/payments-into-pensions/no-tax-relief/retirement-annuity-amount                   controllers.pensions.RetirementAnnuityAmountController.show(taxYear: Int)
 POST        /:taxYear/payments-into-pensions/no-tax-relief/retirement-annuity-amount                   controllers.pensions.RetirementAnnuityAmountController.submit(taxYear: Int)
 
-
+###########################     annual allowance pages     ####################################
+GET         /:taxYear/annual-allowance/reduced-annual-allowance-type                  controllers.pensions.annualAllowance.ReducedAnnualAllowanceTypeController.show(taxYear: Int)
+POST        /:taxYear/annual-allowance/reduced-annual-allowance-type                  controllers.pensions.annualAllowance.ReducedAnnualAllowanceTypeController.submit(taxYear: Int)
