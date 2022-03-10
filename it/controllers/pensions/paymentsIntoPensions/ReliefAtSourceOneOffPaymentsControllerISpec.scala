@@ -28,8 +28,8 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.PaymentIntoPensions.{checkPaymentsIntoPensionCyaUrl, oneOffReliefAtSourcePaymentsAmountUrl, pensionTaxReliefNotClaimedUrl, reliefAtSourceOneOffPaymentsUrl}
-import utils.PageUrls._
+import utils.PageUrls.PaymentIntoPensions._
+import utils.PageUrls.fullUrl
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 class ReliefAtSourceOneOffPaymentsControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
@@ -362,7 +362,7 @@ class ReliefAtSourceOneOffPaymentsControllerISpec extends IntegrationTest with V
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(pensionTaxReliefNotClaimedUrl(taxYearEOY))
+        result.header("location") shouldBe Some(totalPaymentsIntoRASUrl(taxYearEOY))
       }
 
       "updates OffRasPaymentPlusTaxReliefQuestion question to Some(false) and clear the totalOneOffRasPaymentPlusTaxRelief amount" in {

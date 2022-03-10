@@ -28,6 +28,8 @@ common.pensions.caption = Pensions for 6 April {0} to 5 April {1}
 common.paymentsIntoPensions.caption = Payments into pensions for 6 April {0} to 5 April {1}
 common.pensionAnnualAllowance.caption = Pension annual allowance for 6 April {0} to 5 April {1}
 common.return.overview.buttonText = Return to overview
+common.currencyAmount = £{0}
+common.total = Total
 
 common.error.self-assessment.paragraph.1.1 = If the web address is correct or you selected a link or button, you can use
 common.error.self-assessment.paragraph.1.2 = Self Assessment: general enquiries (opens in new tab)
@@ -111,31 +113,6 @@ pensions.reliefAtSource.checkProvider.agent = You can check with your pension pr
 pensions.reliefAtSource.error.noEntry.individual = Select yes if you paid into a RAS pension
 pensions.reliefAtSource.error.noEntry.agent = Select yes if your client paid into a RAS pension
 
-#pensions retirement annuity Contract
-
-pensions.retirementAnnuityContract.error.noEntry.individual = Select yes if you paid into a retirement annuity contract
-pensions.retirementAnnuityContract.title.individual = Did you pay into a retirement annuity contract?
-pensions.retirementAnnuityContract.paragraph.individual = We only need to know about payments if your pension provider will not claim
-pensions.retirementAnnuityContract.youCanFindThisOut.individual = You can find this out from your pension provider.
-pensions.retirementAnnuityContract.error.noEntry.agent = Select yes if your client paid into a retirement annuity contract
-pensions.retirementAnnuityContract.title.agent = Did your client pay into a retirement annuity contract?
-pensions.retirementAnnuityContract.paragraph.agent = We only need to know about payments if your client’s pension provider will not claim
-pensions.retirementAnnuityContract.youCanFindThisOut.agent = You can find this out from your client’s pension provider.
-pensions.retirementAnnuityContract.details.title = What is a retirement annuity contract?
-pensions.retirementAnnuityContract.paragraph.link = tax relief
-pensions.retirementAnnuityContract.details.info = Retirement annuity contracts are a type of pension scheme. They were available before 1988 to the self-employed and to workers not offered a workplace pension.
-
-#pensions tax relief not claimed
-
-pensions.pensionsTaxReliefNotClaimed.title = Pensions where tax relief is not claimed
-pensions.pensionsTaxReliefNotClaimed.questionsInfo.individual = These questions are about pensions you pay into where tax relief is not claimed for you.
-pensions.pensionsTaxReliefNotClaimed.questionsInfo.agent = These questions are about pensions your client pays into where tax relief is not claimed for them.
-pensions.pensionsTaxReliefNotClaimed.whereToCheck.individual = You can check your pension statements or contact your pension provider to find the information you need.
-pensions.pensionsTaxReliefNotClaimed.whereToCheck.agent = You can check your client’s pension statements or contact your client’s pension provider to find the information you need.
-pensions.pensionsTaxReliefNotClaimed.subHeading.individual = Did you pay into a pension where tax relief was not claimed for you?
-pensions.pensionsTaxReliefNotClaimed.subHeading.agent = Did your client pay into a pension where tax relief was not claimed for them?
-pensions.pensionsTaxReliefNotClaimed.error.noEntry.individual = Select yes if you paid into a pension where tax relief was not claimed for you
-pensions.pensionsTaxReliefNotClaimed.error.noEntry.agent = Select yes if your client paid into a pension where tax relief was not claimed for them
 
 #relief at source total payment amount
 
@@ -150,6 +127,17 @@ pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.howToWorkOut.individual =
 pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.howToWorkOut.agent = To work it out yourself, divide the amount your client actually paid by 80 and multiply the result by 100.
 pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.exampleCalculation = Emma paid £500 into her pension scheme. £500 divided by 80 and multiplied by 100 is £625. Her answer is £625.
 
+
+#pensions tax at source one off payments
+
+pensions.reliefAtSourceOneOffPayments.title.individual = Did you make any one-off payments into relief at source (RAS) pensions?
+pensions.reliefAtSourceOneOffPayments.title.agent = Did your client make any one-off payments into relief at source (RAS) pensions?
+pensions.reliefAtSourceOneOffPayments.thisIncludes.individual = You told us the total amount you paid plus tax relief was {0}. Tell us if this includes any one-off payments. A one-off payment is a single payment, made once.
+pensions.reliefAtSourceOneOffPayments.thisIncludes.agent = You told us the total amount your client paid plus tax relief was {0}. Tell us if this includes any one-off payments. A one-off payment is a single payment, made once.
+pensions.reliefAtSourceOneOffPayments.error.noEntry.individual = Select yes if you made one-off payments into RAS pensions
+pensions.reliefAtSourceOneOffPayments.error.noEntry.agent = Select yes if your client made one-off payments into RAS pensions
+
+
 #one off RAS payments amount
 
 paymentsIntoPensions.oneOffRasAmount.heading = Total one-off payments into relief at source (RAS) pensions, plus basic rate tax relief
@@ -160,6 +148,92 @@ paymentsIntoPensions.oneOffRasAmount.exampleCalculation = Emma made a one-off pa
 paymentsIntoPensions.oneOffRasAmount.error.noEntry = Enter the total amount of one-off payments paid into RAS pensions, plus basic rate tax relief
 paymentsIntoPensions.oneOffRasAmount.error.invalidFormat = Enter the total amount of one-off payments paid into RAS pensions, plus basic rate tax relief, in the correct format
 paymentsIntoPensions.oneOffRasAmount.error.overMaximum = The total amount of one-off payments paid into RAS pensions, plus basic rate tax relief, must be less than £100,000,000,000
+
+
+#total payments into RAS pensions
+
+paymentsIntoPensions.totalRASPayments.title.individual = Your total payments into relief at source (RAS) pensions
+paymentsIntoPensions.totalRASPayments.title.agent = Your client’s total payments into relief at source (RAS) pensions
+paymentsIntoPensions.totalRASPayments.error = Select yes if the figures are correct
+paymentsIntoPensions.totalRASPayments.youPaid.individual = The total amount you paid, plus basic rate tax relief, is
+paymentsIntoPensions.totalRASPayments.youPaid.agent = The total amount your client paid, plus basic rate tax relief, is
+paymentsIntoPensions.totalRASPayments.youCanFind.individual = You can find this figure on the pension certificate or receipt from your administrator.
+paymentsIntoPensions.totalRASPayments.youCanFind.agent = You can find this figure on the pension certificate or receipt from your client’s administrator.
+paymentsIntoPensions.totalRASPayments.totalPayments = Total pension payments
+paymentsIntoPensions.totalRASPayments.includingOneOff = (Including {0} one-off payments)
+paymentsIntoPensions.totalRASPayments.taxReliefClaimed = Tax relief claimed by scheme
+paymentsIntoPensions.totalRASPayments.isThisCorrect = Is this correct?
+
+
+#pensions tax relief not claimed
+
+pensions.pensionsTaxReliefNotClaimed.title = Pensions where tax relief is not claimed
+pensions.pensionsTaxReliefNotClaimed.questionsInfo.individual = These questions are about pensions you pay into where tax relief is not claimed for you.
+pensions.pensionsTaxReliefNotClaimed.questionsInfo.agent = These questions are about pensions your client pays into where tax relief is not claimed for them.
+pensions.pensionsTaxReliefNotClaimed.whereToCheck.individual = You can check your pension statements or contact your pension provider to find the information you need.
+pensions.pensionsTaxReliefNotClaimed.whereToCheck.agent = You can check your client’s pension statements or contact your client’s pension provider to find the information you need.
+pensions.pensionsTaxReliefNotClaimed.subHeading.individual = Did you pay into a pension where tax relief was not claimed for you?
+pensions.pensionsTaxReliefNotClaimed.subHeading.agent = Did your client pay into a pension where tax relief was not claimed for them?
+pensions.pensionsTaxReliefNotClaimed.error.noEntry.individual = Select yes if you paid into a pension where tax relief was not claimed for you
+pensions.pensionsTaxReliefNotClaimed.error.noEntry.agent = Select yes if your client paid into a pension where tax relief was not claimed for them
+
+
+#pensions retirement annuity Contract
+
+pensions.retirementAnnuityContract.error.noEntry.individual = Select yes if you paid into a retirement annuity contract
+pensions.retirementAnnuityContract.title.individual = Did you pay into a retirement annuity contract?
+pensions.retirementAnnuityContract.paragraph.individual = We only need to know about payments if your pension provider will not claim
+pensions.retirementAnnuityContract.youCanFindThisOut.individual = You can find this out from your pension provider.
+pensions.retirementAnnuityContract.error.noEntry.agent = Select yes if your client paid into a retirement annuity contract
+pensions.retirementAnnuityContract.title.agent = Did your client pay into a retirement annuity contract?
+pensions.retirementAnnuityContract.paragraph.agent = We only need to know about payments if your client’s pension provider will not claim
+pensions.retirementAnnuityContract.youCanFindThisOut.agent = You can find this out from your client’s pension provider.
+pensions.retirementAnnuityContract.details.title = What is a retirement annuity contract?
+pensions.retirementAnnuityContract.paragraph.link = tax relief
+pensions.retirementAnnuityContract.details.info = Retirement annuity contracts are a type of pension scheme. They were available before 1988 to the self-employed and to workers not offered a workplace pension.
+
+
+#retirement annuity contract amount
+
+pensions.retirementAnnuityAmount.title.individual = How much did you pay into your retirement annuity contracts?
+pensions.retirementAnnuityAmount.title.agent = How much did your client pay into their retirement annuity contracts?
+pensions.retirementAnnuityAmount.includes.individual = Only include payments your pension provider will not claim tax relief for. You can find this out from your pension provider.
+pensions.retirementAnnuityAmount.includes.agent = Only include payments your client’s pension provider will not claim tax relief for. You can find this out from your client’s pension provider.
+pensions.retirementAnnuityAmount.error.noEntry = Enter the amount paid into retirement annuity contracts
+pensions.retirementAnnuityAmount.error.incorrectFormat = Enter the amount paid into retirement annuity contracts in the correct format
+pensions.retirementAnnuityAmount.error.overMaximum = The amount paid into retirement annuity contracts must be less than £100,000,000,000
+
+
+#workplace pension
+
+pensions.workplacePension.title.individual = Did you pay into a workplace pension and not receive tax relief?
+pensions.workplacePension.title.agent = Did your client pay into a workplace pension and not receive tax relief?
+pensions.workplacePension.info.individual = You would have made your payments after your pay was taxed.
+pensions.workplacePension.info.agent = Your client would have made their payments after their pay was taxed.
+pensions.workplacePension.theseCases.individual = These cases are unusual as most workplace pensions are set up to give you tax relief at the time of your payment.
+pensions.workplacePension.theseCases.agent = These cases are unusual as most workplace pensions are set up to give your client tax relief at the time of their payment.
+pensions.workplacePension.whereToCheck.individual = Check with your employer or pension provider which arrangement you have.
+pensions.workplacePension.whereToCheck.agent = Check with your client’s employer or pension provider which arrangement they have.
+pensions.workplacePension.findOutMore = Find out more about tax relief
+pensions.workplacePension.error.noEntry.individual = Select yes if you paid into a workplace pension and did not receive tax relief
+pensions.workplacePension.error.noEntry.agent = Select yes if your client paid into a workplace pension and did not receive tax relief
+
+
+#workplace amount
+
+pensions.workplaceAmount.title.individual = How much did you pay into your workplace pensions?
+pensions.workplaceAmount.bullet1.individual = made after your pay was taxed
+pensions.workplaceAmount.bullet2.individual = your pension provider will not claim tax relief for
+pensions.workplaceAmount.youCanFindThisOut.individual = You can find this out from your employer or your pension provider.
+pensions.workplaceAmount.title.agent = How much did your client pay into their workplace pensions?
+pensions.workplaceAmount.bullet1.agent = made after your client’s pay was taxed
+pensions.workplaceAmount.bullet2.agent = your client’s pension provider will not claim tax relief for
+pensions.workplaceAmount.youCanFindThisOut.agent = Your client can find this out from their employer or pension provider.
+pensions.workplaceAmount.paragraph = Only include payments:
+pensions.workplaceAmount.error.noEntry = Enter the amount paid into workplace pensions
+pensions.workplaceAmount.error.incorrectFormat = Enter the amount paid into workplace pensions in the correct format
+pensions.workplaceAmount.error.maxAmount = The amount paid into workplace pensions must be less than £100,000,000,000
+
 
 #payments into pensions CYA
 
@@ -185,53 +259,6 @@ paymentsIntoPensions.cya.retirementAnnuityTotal.hidden = Change total retirement
 paymentsIntoPensions.cya.workplacePayments.hidden = Change whether workplace pension payments were made
 paymentsIntoPensions.cya.workplacePaymentsTotal.hidden = Change total workplace pension payments
 
-#pensions tax at source one off payments
-
-pensions.reliefAtSourceOneOffPayments.title.individual = Did you make any one-off payments into relief at source (RAS) pensions?
-pensions.reliefAtSourceOneOffPayments.title.agent = Did your client make any one-off payments into relief at source (RAS) pensions?
-pensions.reliefAtSourceOneOffPayments.thisIncludes.individual = You told us the total amount you paid plus tax relief was {0}. Tell us if this includes any one-off payments. A one-off payment is a single payment, made once.
-pensions.reliefAtSourceOneOffPayments.thisIncludes.agent = You told us the total amount your client paid plus tax relief was {0}. Tell us if this includes any one-off payments. A one-off payment is a single payment, made once.
-pensions.reliefAtSourceOneOffPayments.error.noEntry.individual = Select yes if you made one-off payments into RAS pensions
-pensions.reliefAtSourceOneOffPayments.error.noEntry.agent = Select yes if your client made one-off payments into RAS pensions
-
-#workplace amount
-
-pensions.workplaceAmount.title.individual = How much did you pay into your workplace pensions?
-pensions.workplaceAmount.bullet1.individual = made after your pay was taxed
-pensions.workplaceAmount.bullet2.individual = your pension provider will not claim tax relief for
-pensions.workplaceAmount.youCanFindThisOut.individual = You can find this out from your employer or your pension provider.
-pensions.workplaceAmount.title.agent = How much did your client pay into their workplace pensions?
-pensions.workplaceAmount.bullet1.agent = made after your client’s pay was taxed
-pensions.workplaceAmount.bullet2.agent = your client’s pension provider will not claim tax relief for
-pensions.workplaceAmount.youCanFindThisOut.agent = Your client can find this out from their employer or pension provider.
-pensions.workplaceAmount.paragraph = Only include payments:
-pensions.workplaceAmount.error.noEntry = Enter the amount paid into workplace pensions
-pensions.workplaceAmount.error.incorrectFormat = Enter the amount paid into workplace pensions in the correct format
-pensions.workplaceAmount.error.maxAmount = The amount paid into workplace pensions must be less than £100,000,000,000
-
-#workplace pension
-
-pensions.workplacePension.title.individual = Did you pay into a workplace pension and not receive tax relief?
-pensions.workplacePension.title.agent = Did your client pay into a workplace pension and not receive tax relief?
-pensions.workplacePension.info.individual = You would have made your payments after your pay was taxed.
-pensions.workplacePension.info.agent = Your client would have made their payments after their pay was taxed.
-pensions.workplacePension.theseCases.individual = These cases are unusual as most workplace pensions are set up to give you tax relief at the time of your payment.
-pensions.workplacePension.theseCases.agent = These cases are unusual as most workplace pensions are set up to give your client tax relief at the time of their payment.
-pensions.workplacePension.whereToCheck.individual = Check with your employer or pension provider which arrangement you have.
-pensions.workplacePension.whereToCheck.agent = Check with your client’s employer or pension provider which arrangement they have.
-pensions.workplacePension.findOutMore = Find out more about tax relief
-pensions.workplacePension.error.noEntry.individual = Select yes if you paid into a workplace pension and did not receive tax relief
-pensions.workplacePension.error.noEntry.agent = Select yes if your client paid into a workplace pension and did not receive tax relief
-
-#retirement Annuity Amount
-
-pensions.retirementAnnuityAmount.title.individual = How much did you pay into your retirement annuity contracts?
-pensions.retirementAnnuityAmount.title.agent = How much did your client pay into their retirement annuity contracts?
-pensions.retirementAnnuityAmount.includes.individual = Only include payments your pension provider will not claim tax relief for. You can find this out from your pension provider.
-pensions.retirementAnnuityAmount.includes.agent = Only include payments your client’s pension provider will not claim tax relief for. You can find this out from your client’s pension provider.
-pensions.retirementAnnuityAmount.error.noEntry = Enter the amount paid into retirement annuity contracts
-pensions.retirementAnnuityAmount.error.incorrectFormat = Enter the amount paid into retirement annuity contracts in the correct format
-pensions.retirementAnnuityAmount.error.overMaximum = The amount paid into retirement annuity contracts must be less than £100,000,000,000
 
 #################       ANNUAL ALLOWANCE        ########################################
 

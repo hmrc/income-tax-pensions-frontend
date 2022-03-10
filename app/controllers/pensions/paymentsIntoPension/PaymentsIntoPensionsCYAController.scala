@@ -89,6 +89,7 @@ class PaymentsIntoPensionsCYAController @Inject()(implicit val cc: MessagesContr
         prior.pensionReliefs.flatMap(a => a.pensionReliefs.regularPensionContributions),
         prior.pensionReliefs.map(a => a.pensionReliefs.oneOffPensionContributionsPaid.isDefined),
         prior.pensionReliefs.flatMap(a => a.pensionReliefs.oneOffPensionContributionsPaid),
+        Some(true),
         prior.pensionReliefs.map(a =>
           a.pensionReliefs.retirementAnnuityPayments.isDefined || a.pensionReliefs.paymentToEmployersSchemeNoTaxRelief.isDefined
         ),

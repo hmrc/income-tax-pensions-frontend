@@ -79,7 +79,7 @@ class ReliefAtSourceOneOffPaymentsController @Inject()(implicit val mcc: Message
                   if (yesNo) {
                     Redirect(OneOffRASPaymentsAmountController.show(taxYear))
                   } else {
-                    Redirect(PensionsTaxReliefNotClaimedController.show(taxYear))
+                    Redirect(controllers.pensions.paymentsIntoPension.routes.TotalPaymentsIntoRASController.show(taxYear))
                   }
                 }
               }

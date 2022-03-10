@@ -25,6 +25,7 @@ object PaymentsIntoPensionVewModelBuilder {
     totalRASPaymentsAndTaxRelief = Some(189.01),
     oneOffRasPaymentPlusTaxReliefQuestion = Some(true),
     totalOneOffRasPaymentPlusTaxRelief = Some(190.01),
+    totalPaymentsIntoRASQuestion = Some(true),
     pensionTaxReliefNotClaimedQuestion = Some(true),
     retirementAnnuityContractPaymentsQuestion = Some(true),
     totalRetirementAnnuityContractPayments = Some(191.01),
