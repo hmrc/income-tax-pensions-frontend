@@ -274,18 +274,30 @@ pensions.ReducedAnnualAllowanceType.details.taperedInfo.individual = You’ll ha
 pensions.ReducedAnnualAllowanceType.details.taperedInfo.agent = Your client will have this type of annual allowance if both their ‘threshold income’ and ‘adjusted income’ are
 
 #################       Reduced Annual Allowance Amount Messages         ########################################
-pensions.reducedAnnualAllowanceAmount.title.individual = How much above your reduced annual allowance are you??
-pensions.reducedAnnualAllowanceAmount.title.agent = How much above your client’s reduced annual allowance are they?
+pensions.reducedAnnualAllowanceAmount.reduced.title.individual = How much above your reduced annual allowance are you?
+pensions.reducedAnnualAllowanceAmount.reduced.title.agent = How much above your client’s reduced annual allowance are they?
+pensions.reducedAnnualAllowanceAmount.nonReduced.title.individual = How much above your annual allowance are you?
+pensions.reducedAnnualAllowanceAmount.nonReduced.title.agent = How much above your client’s annual allowance are they?
 pensions.reducedAnnualAllowanceAmount.paragraph = This is the amount on which tax is due.
-pensions.reducedAnnualAllowanceAmount.error.noEntry = Enter the amount above the annual allowance
-pensions.reducedAnnualAllowanceAmount.error.incorrectFormat = Enter the amount above the annual allowance in the correct format
-pensions.reducedAnnualAllowanceAmount.error.overMaximum = The amount above the annual allowance must be less than £100,000,000,000
+pensions.reducedAnnualAllowanceAmount.reduced.error.noEntry.individual = Enter the amount above your reduced annual allowance
+pensions.reducedAnnualAllowanceAmount.reduced.error.incorrectFormat.individual = Enter the amount above your reduced annual allowance in the correct format
+pensions.reducedAnnualAllowanceAmount.reduced.error.overMaximum.individual = The amount above your reduced annual allowance must be less than £100,000,000,000
+pensions.reducedAnnualAllowanceAmount.reduced.error.noEntry.agent = Enter the amount above your client’s reduced annual allowance
+pensions.reducedAnnualAllowanceAmount.reduced.error.incorrectFormat.agent = Enter the amount above your client’s reduced annual allowance in the correct format
+pensions.reducedAnnualAllowanceAmount.reduced.error.overMaximum.agent = The amount above your client’s reduced annual allowance must be less than £100,000,000,000
+pensions.reducedAnnualAllowanceAmount.nonReduced.error.noEntry = Enter the amount above the annual allowance
+pensions.reducedAnnualAllowanceAmount.nonReduced.error.incorrectFormat = Enter the amount above the annual allowance in the correct format
+pensions.reducedAnnualAllowanceAmount.nonReduced.error.overMaximum = The amount above the annual allowance must be less than £100,000,000,000
+
 #################       Above Reduced Annual Allowance Messages        ########################################
 
-pensions.aboveReducedAnnualAllowance.title.individual = Have you gone above your reduced annual allowance?
-pensions.aboveReducedAnnualAllowance.title.agent = Has your client gone above their reduced annual allowance?
+pensions.aboveReducedAnnualAllowance.reduced.title.individual = Have you gone above your reduced annual allowance?
+pensions.aboveReducedAnnualAllowance.reduced.title.agent = Has your client gone above their reduced annual allowance?
+pensions.aboveReducedAnnualAllowance.nonReduced.title.individual = Have you gone above the annual allowance?
+pensions.aboveReducedAnnualAllowance.nonReduced.title.agent = Has your client gone above the annual allowance?
 pensions.aboveReducedAnnualAllowance.paragraph = Use a calculator
 pensions.aboveReducedAnnualAllowance.paragraph.link = if you need to work this out
-pensions.aboveReducedAnnualAllowance.error.noEntry.individual = Select yes if you have gone above your reduced annual allowance
-pensions.aboveReducedAnnualAllowance.error.noEntry.agent = Select yes if your client has gone above their reduced annual allowance
-
+pensions.aboveReducedAnnualAllowance.reduced.error.noEntry.individual = Select yes if you have gone above your reduced annual allowance
+pensions.aboveReducedAnnualAllowance.reduced.error.noEntry.agent = Select yes if your client has gone above their reduced annual allowance
+pensions.aboveReducedAnnualAllowance.nonReduced.error.noEntry.individual = Select yes if you have gone above the annual allowance
+pensions.aboveReducedAnnualAllowance.nonReduced.error.noEntry.agent = Select yes if your client has gone above the annual allowance

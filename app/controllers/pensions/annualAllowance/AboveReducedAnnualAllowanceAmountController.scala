@@ -18,8 +18,10 @@ package controllers.pensions.annualAllowance
 
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.routes.PensionsSummaryController
+import controllers.pensions.annualAllowance.routes.{ReducedAnnualAllowanceController, AboveReducedAnnualAllowanceController }
 import controllers.predicates.AuthorisedAction
 import forms.{AmountForm, FormUtils}
+import models.User
 import models.mongo.PensionsCYAModel
 import models.pension.charges.PensionAnnualAllowancesViewModel
 import play.api.data.Form
@@ -40,28 +42,47 @@ class AboveReducedAnnualAllowanceAmountController @Inject()(implicit val mcc: Me
                                                             pensionSessionService: PensionSessionService,
                                                             errorHandler: ErrorHandler,
                                                             clock: Clock) extends FrontendController(mcc) with I18nSupport with SessionHelper with FormUtils {
-  val amountForm: Form[BigDecimal] = AmountForm.amountForm(
-    emptyFieldKey = "pensions.reducedAnnualAllowanceAmount.error.noEntry",
-    wrongFormatKey = "pensions.reducedAnnualAllowanceAmount.error.incorrectFormat",
-    exceedsMaxAmountKey = "pensions.reducedAnnualAllowanceAmount.error.overMaximum"
-  )
 
+  def amountForm(reducedAnnualAllowanceQuestion: Boolean, user: User): Form[BigDecimal] = {
+    val (emptyFieldKey, wrongFormatKey, exceedsMaxAmountKey) =
+      if (reducedAnnualAllowanceQuestion) {
+        (
+          s"pensions.reducedAnnualAllowanceAmount.reduced.error.noEntry.${if (user.isAgent) "agent" else "individual"}",
+          s"pensions.reducedAnnualAllowanceAmount.reduced.error.incorrectFormat.${if (user.isAgent) "agent" else "individual"}",
+          s"pensions.reducedAnnualAllowanceAmount.reduced.error.overMaximum.${if (user.isAgent) "agent" else "individual"}"
+        )
+      } else {
+        (
+          "pensions.reducedAnnualAllowanceAmount.nonReduced.error.noEntry",
+          "pensions.reducedAnnualAllowanceAmount.nonReduced.error.incorrectFormat",
+          "pensions.reducedAnnualAllowanceAmount.nonReduced.error.overMaximum"
+        )
+      }
+    AmountForm.amountForm(
+      emptyFieldKey = emptyFieldKey,
+      wrongFormatKey = wrongFormatKey,
+      exceedsMaxAmountKey = exceedsMaxAmountKey
+    )
+  }
 
   def show(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
     pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
       case Some(data) =>
-        if (data.pensions.pensionsAnnualAllowances.aboveAnnualAllowanceQuestion.contains(true)) {
-          data.pensions.pensionsAnnualAllowances.aboveAnnualAllowance match {
-            case Some(amount) =>
-              Future.successful(Ok(view(amountForm.fill(amount), taxYear)))
-            case None => Future.successful(Ok(view(amountForm, taxYear)))
-          }
-        } else {
-          //TODO: redirect to the annual allowances CYA page when available
-          Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
+        data.pensions.pensionsAnnualAllowances.reducedAnnualAllowanceQuestion match {
+          case Some(reducedAnnualAllowanceQuestion) =>
+            if (data.pensions.pensionsAnnualAllowances.aboveAnnualAllowanceQuestion.contains(true)) {
+              data.pensions.pensionsAnnualAllowances.aboveAnnualAllowance match {
+                case Some(amount) =>
+                  Future.successful(Ok(view(amountForm(reducedAnnualAllowanceQuestion, request.user).fill(amount), taxYear, reducedAnnualAllowanceQuestion)))
+                case None => Future.successful(Ok(view(amountForm(reducedAnnualAllowanceQuestion, request.user), taxYear, reducedAnnualAllowanceQuestion)))
+              }
+            } else {
+              Future.successful(Redirect(AboveReducedAnnualAllowanceController.show(taxYear)))
+            }
+          case None => Future.successful(Redirect(ReducedAnnualAllowanceController.show(taxYear)))
         }
       case _ =>
-
+        //TODO: redirect to the annual allowances CYA page when available
         Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
     }
 
@@ -69,24 +90,27 @@ class AboveReducedAnnualAllowanceAmountController @Inject()(implicit val mcc: Me
 
 
   def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
-    amountForm.bindFromRequest.fold(
-      formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
-      amount => {
-        pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
-          data =>
-            val pensionsCYAModel: PensionsCYAModel = data.map(_.pensions).getOrElse(PensionsCYAModel.emptyModels)
-            val viewModel: PensionAnnualAllowancesViewModel = pensionsCYAModel.pensionsAnnualAllowances
-            val updatedCyaModel: PensionsCYAModel = {
-              pensionsCYAModel.copy(pensionsAnnualAllowances = viewModel.copy(aboveAnnualAllowance = Some(amount)))
-            }
-            pensionSessionService.createOrUpdateSessionData(request.user,
-              updatedCyaModel, taxYear, data.exists(_.isPriorSubmission))(errorHandler.internalServerError()) {
-              //TODO: redirect to "Has your client's pension provider paid the annual allowance tax?" page
-              Redirect(PensionsSummaryController.show(taxYear))
-            }
+    pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
+      data =>
+        val pensionsCYAModel: PensionsCYAModel = data.map(_.pensions).getOrElse(PensionsCYAModel.emptyModels)
+        pensionsCYAModel.pensionsAnnualAllowances.reducedAnnualAllowanceQuestion match {
+          case Some(reducedAnnualAllowanceQuestion) =>
+            amountForm(reducedAnnualAllowanceQuestion, request.user).bindFromRequest.fold(
+              formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear, reducedAnnualAllowanceQuestion))),
+              amount => {
+                val viewModel: PensionAnnualAllowancesViewModel = pensionsCYAModel.pensionsAnnualAllowances
+                val updatedCyaModel: PensionsCYAModel = {
+                  pensionsCYAModel.copy(pensionsAnnualAllowances = viewModel.copy(aboveAnnualAllowance = Some(amount)))
+                }
+                pensionSessionService.createOrUpdateSessionData(request.user,
+                  updatedCyaModel, taxYear, data.exists(_.isPriorSubmission))(errorHandler.internalServerError()) {
+                  //TODO: redirect to "Has your client's pension provider paid the annual allowance tax?" page
+                  Redirect(PensionsSummaryController.show(taxYear))
+                }
+              }
+            )
+          case None => Future.successful(Redirect(ReducedAnnualAllowanceController.show(taxYear)))
         }
-      }
-    )
+    }
   }
-
 }
