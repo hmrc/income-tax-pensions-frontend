@@ -27,8 +27,8 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.PensionAnnualAllowancePages.reducedAnnualAllowanceTypeUrl
-import utils.PageUrls.{checkPaymentsIntoPensionCyaUrl, fullUrl, pensionSummaryUrl}
+import utils.PageUrls.PensionAnnualAllowancePages.{aboveReducedAnnualAllowanceUrl, reducedAnnualAllowanceTypeUrl, reducedAnnualAllowanceUrl}
+import utils.PageUrls.{fullUrl, pensionSummaryUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 // scalastyle:off magic.number
@@ -363,8 +363,7 @@ class ReducedAnnualAllowanceTypeControllersControllerISpec extends IntegrationTe
 
       "has an SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER
-        //TODO - go to the 'Do you have a reduced annual allowance?' page when available
-        result.header("location").contains(pensionSummaryUrl(taxYearEOY)) shouldBe true
+        result.header("location").contains(reducedAnnualAllowanceUrl(taxYearEOY)) shouldBe true
       }
 
     }
@@ -387,8 +386,7 @@ class ReducedAnnualAllowanceTypeControllersControllerISpec extends IntegrationTe
 
       "has an SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER
-        //TODO - go to the 'Do you have a reduced annual allowance?' page when available
-        result.header("location").contains(pensionSummaryUrl(taxYearEOY)) shouldBe true
+        result.header("location").contains(reducedAnnualAllowanceUrl(taxYearEOY)) shouldBe true
       }
 
     }
@@ -494,8 +492,7 @@ class ReducedAnnualAllowanceTypeControllersControllerISpec extends IntegrationTe
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        //TODO: navigate to 'Have you gone above your reduced annual allowance?' page when available
-        result.header("location").contains(pensionSummaryUrl(taxYearEOY)) shouldBe true
+        result.header("location").contains(aboveReducedAnnualAllowanceUrl(taxYearEOY)) shouldBe true
       }
 
       "updates moneyPurchaseAnnualAllowance and taperedAnnualAllowance to Some(true)" in {
@@ -526,8 +523,7 @@ class ReducedAnnualAllowanceTypeControllersControllerISpec extends IntegrationTe
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        //TODO: navigate to 'Have you gone above your reduced annual allowance?' page when available
-        result.header("location").contains(pensionSummaryUrl(taxYearEOY)) shouldBe true
+        result.header("location").contains(aboveReducedAnnualAllowanceUrl(taxYearEOY)) shouldBe true
       }
 
       "updates moneyPurchaseAnnualAllowance to Some(false) and taperedAnnualAllowance to Some(true)" in {
@@ -558,8 +554,7 @@ class ReducedAnnualAllowanceTypeControllersControllerISpec extends IntegrationTe
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        //TODO: navigate to 'Have you gone above your reduced annual allowance?' page when available
-        result.header("location").contains(pensionSummaryUrl(taxYearEOY)) shouldBe true
+        result.header("location").contains(aboveReducedAnnualAllowanceUrl(taxYearEOY)) shouldBe true
       }
 
       "updates moneyPurchaseAnnualAllowance to Some(true) and taperedAnnualAllowance to Some(false)" in {
@@ -587,8 +582,7 @@ class ReducedAnnualAllowanceTypeControllersControllerISpec extends IntegrationTe
 
       "has an SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER
-        //TODO - go to the 'Do you have a reduced annual allowance?' page when available
-        result.header("location").contains(pensionSummaryUrl(taxYearEOY)) shouldBe true
+        result.header("location").contains(reducedAnnualAllowanceUrl(taxYearEOY)) shouldBe true
       }
 
     }
@@ -611,8 +605,7 @@ class ReducedAnnualAllowanceTypeControllersControllerISpec extends IntegrationTe
 
       "has an SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER
-        //TODO - go to the 'Do you have a reduced annual allowance?' page when available
-        result.header("location").contains(pensionSummaryUrl(taxYearEOY)) shouldBe true
+        result.header("location").contains(reducedAnnualAllowanceUrl(taxYearEOY)) shouldBe true
       }
 
     }

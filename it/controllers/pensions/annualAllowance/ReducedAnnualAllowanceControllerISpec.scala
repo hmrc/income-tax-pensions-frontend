@@ -27,7 +27,7 @@ import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import utils.PageUrls.{fullUrl, pensionSummaryUrl}
-import utils.PageUrls.PensionAnnualAllowancePages.{reducedAnnualAllowanceUrl, reducedAnnualAllowanceTypeUrl}
+import utils.PageUrls.PensionAnnualAllowancePages.{aboveReducedAnnualAllowanceUrl, reducedAnnualAllowanceTypeUrl, reducedAnnualAllowanceUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 // scalastyle:off magic.number
@@ -396,10 +396,9 @@ class ReducedAnnualAllowanceControllerISpec extends IntegrationTest with BeforeA
         urlPost(fullUrl(reducedAnnualAllowanceUrl(taxYearEOY)), body = form, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
       }
-      //TODO: redirect to Have you gone above the annual allowance? page
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
+        result.header("location") shouldBe Some(aboveReducedAnnualAllowanceUrl(taxYearEOY))
       }
 
       "updates reducedAnnualAllowanceQuestion to Some(false) and wipe moneyPurchaseAnnualAllowance and taperedAnnualAllowance values" in {

@@ -65,6 +65,8 @@ object PageUrls extends IntegrationTest {
     def reducedAnnualAllowanceUrl(taxYear: Int): String = s"$appUrl/$taxYear/annual-allowance/reduced-annual-allowance"
 
     def reducedAnnualAllowanceTypeUrl(taxYear: Int): String = s"$appUrl/$taxYear/annual-allowance/reduced-annual-allowance-type"
+
+    def aboveReducedAnnualAllowanceUrl (taxYear: Int): String = s"$appUrl/$taxYear/annual-allowance/above-reduced-annual-allowance"
   }
 
   //scalastyle:on number.of.methods
