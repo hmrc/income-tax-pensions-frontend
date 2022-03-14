@@ -29,6 +29,7 @@ import utils.Clock
 import views.html.pensions.annualAllowance.ReducedAnnualAllowanceTypeView
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
+import controllers.pensions.annualAllowance.routes._
 
 @Singleton
 class ReducedAnnualAllowanceTypeController @Inject()(implicit val mcc: MessagesControllerComponents,
@@ -48,8 +49,7 @@ class ReducedAnnualAllowanceTypeController @Inject()(implicit val mcc: MessagesC
           val form = ReducedAnnualAllowanceTypeQuestionForm.reducedAnnualAllowanceTypeForm(request.user.isAgent)
           Future.successful(Ok(view(form, taxYear, moneyPurchaseAnnualAllowance, taperedAnnualAllowance)))
         } else {
-          //TODO: navigate to 'Do you have a reduced annual allowance?' page when available
-          Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
+          Future.successful(Redirect(ReducedAnnualAllowanceController.show(taxYear)))
         }
       case _ =>
         //TODO: navigate to annual allowance CYA when available
@@ -76,14 +76,12 @@ class ReducedAnnualAllowanceTypeController @Inject()(implicit val mcc: MessagesC
               }
               pensionSessionService.createOrUpdateSessionData(request.user,
                 updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
-                //TODO: navigate to 'Have you gone above your reduced annual allowance?' page when available
-                Redirect(PensionsSummaryController.show(taxYear))
+                Redirect(AboveReducedAnnualAllowanceController.show(taxYear))
               }
             }
           )
         } else {
-          //TODO: Do you have a reduced annual allowance?' page when available
-          Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
+          Future.successful(Redirect(ReducedAnnualAllowanceController.show(taxYear)))
         }
 
       case _ =>

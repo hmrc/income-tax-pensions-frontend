@@ -273,3 +273,12 @@ pensions.ReducedAnnualAllowanceType.details.moneyPurchaseInfo.agent = Your clien
 pensions.ReducedAnnualAllowanceType.details.taperedInfo.individual = You’ll have this type of annual allowance if both your ‘threshold income’ and ‘adjusted income’ are
 pensions.ReducedAnnualAllowanceType.details.taperedInfo.agent = Your client will have this type of annual allowance if both their ‘threshold income’ and ‘adjusted income’ are
 
+#################       Above Reduced Annual Allowance Messages        ########################################
+
+pensions.aboveReducedAnnualAllowance.title.individual = Have you gone above your reduced annual allowance?
+pensions.aboveReducedAnnualAllowance.title.agent = Has your client gone above their reduced annual allowance?
+pensions.aboveReducedAnnualAllowance.paragraph = Use a calculator
+pensions.aboveReducedAnnualAllowance.paragraph.link = if you need to work this out
+pensions.aboveReducedAnnualAllowance.error.noEntry.individual = Select yes if you have gone above your reduced annual allowance
+pensions.aboveReducedAnnualAllowance.error.noEntry.agent = Select yes if your client has gone above their reduced annual allowance
+

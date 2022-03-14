@@ -18,7 +18,7 @@ package controllers.pensions.annualAllowance
 
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.routes.PensionsSummaryController
-import controllers.pensions.annualAllowance.routes.ReducedAnnualAllowanceTypeController
+import controllers.pensions.annualAllowance.routes.{AboveReducedAnnualAllowanceController, ReducedAnnualAllowanceTypeController}
 import controllers.predicates.AuthorisedAction
 import forms.YesNoForm
 import models.User
@@ -30,6 +30,7 @@ import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.annualAllowance.ReducedAnnualAllowanceView
+
 import javax.inject.Inject
 import scala.concurrent.Future
 
@@ -77,8 +78,7 @@ class ReducedAnnualAllowanceController @Inject()(implicit val cc: MessagesContro
               if (yesNo) {
                 Redirect(ReducedAnnualAllowanceTypeController.show(taxYear))
               } else {
-                //TODO: redirect to Have you gone above the annual allowance? question page
-                Redirect(PensionsSummaryController.show(taxYear))
+                Redirect(AboveReducedAnnualAllowanceController.show(taxYear))
               }
             }
         }
