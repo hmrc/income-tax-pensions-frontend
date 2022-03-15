@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package controllers.pensions
+package controllers.pensions.paymentsIntoPension
 
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.routes._
+import controllers.pensions.paymentsIntoPension.routes._
 import controllers.predicates.AuthorisedAction
 import forms.YesNoForm
 import models.User
@@ -67,9 +67,7 @@ class RetirementAnnuityController @Inject()(implicit val cc: MessagesControllerC
       yesNo => {
         pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
           data =>
-            val pensionsCYAModel: PensionsCYAModel = data.map(_.pensions).getOrElse(
-              PensionsCYAModel(PaymentsIntoPensionViewModel(),
-              PensionAnnualAllowancesViewModel()))
+            val pensionsCYAModel: PensionsCYAModel = data.map(_.pensions).getOrElse(PensionsCYAModel.emptyModels)
             val viewModel: PaymentsIntoPensionViewModel = pensionsCYAModel.paymentsIntoPension
             val updatedCyaModel: PensionsCYAModel = {
               pensionsCYAModel.copy(paymentsIntoPension = viewModel.copy(retirementAnnuityContractPaymentsQuestion = Some(yesNo),
@@ -78,7 +76,7 @@ class RetirementAnnuityController @Inject()(implicit val cc: MessagesControllerC
             pensionSessionService.createOrUpdateSessionData(request.user,
               updatedCyaModel, taxYear, data.exists(_.isPriorSubmission))(errorHandler.internalServerError()) {
               if (yesNo) {
-                Redirect(controllers.pensions.routes.RetirementAnnuityAmountController.show(taxYear))
+                Redirect(controllers.pensions.paymentsIntoPension.routes.RetirementAnnuityAmountController.show(taxYear))
               } else {
                 //TODO redirect to workplace pensions page
                 Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear))

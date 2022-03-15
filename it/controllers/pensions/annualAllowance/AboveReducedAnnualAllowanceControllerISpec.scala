@@ -31,7 +31,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.PensionAnnualAllowancePages.{aboveReducedAnnualAllowanceUrl}
+import utils.PageUrls.PensionAnnualAllowancePages.{aboveReducedAnnualAllowanceAmountUrl, aboveReducedAnnualAllowanceUrl, reducedAnnualAllowanceUrl}
 import utils.PageUrls._
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
@@ -74,10 +74,14 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
   }
 
   trait SpecificExpectedResults {
-    val expectedTitle: String
-    val expectedHeading: String
-    val expectedErrorTitle: String
-    val expectedErrorMessage: String
+    val expectedReducedTitle: String
+    val expectedReducedHeading: String
+    val expectedReducedErrorTitle: String
+    val expectedReducedErrorMessage: String
+    val expectedNonReducedTitle: String
+    val expectedNonReducedHeading: String
+    val expectedNonReducedErrorTitle: String
+    val expectedNonReducedErrorMessage: String
 
   }
 
@@ -100,32 +104,52 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
   }
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
-    val expectedTitle = "Have you gone above your reduced annual allowance?"
-    val expectedHeading = "Have you gone above your reduced annual allowance?"
-    val expectedErrorTitle = s"Error: $expectedTitle"
-    val expectedErrorMessage = "Select yes if you have gone above your reduced annual allowance"
+    val expectedReducedTitle = "Have you gone above your reduced annual allowance?"
+    val expectedReducedHeading = "Have you gone above your reduced annual allowance?"
+    val expectedReducedErrorTitle = s"Error: $expectedReducedTitle"
+    val expectedReducedErrorMessage = "Select yes if you have gone above your reduced annual allowance"
+
+    val expectedNonReducedTitle = "Have you gone above the annual allowance?"
+    val expectedNonReducedHeading = "Have you gone above the annual allowance?"
+    val expectedNonReducedErrorTitle = s"Error: $expectedNonReducedTitle"
+    val expectedNonReducedErrorMessage = "Select yes if you have gone above the annual allowance"
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
-    val expectedTitle = "Have you gone above your reduced annual allowance?"
-    val expectedHeading = "Have you gone above your reduced annual allowance?"
-    val expectedErrorTitle = s"Error: $expectedTitle"
-    val expectedErrorMessage = "Select yes if you have gone above your reduced annual allowance"
+    val expectedReducedTitle = "Have you gone above your reduced annual allowance?"
+    val expectedReducedHeading = "Have you gone above your reduced annual allowance?"
+    val expectedReducedErrorTitle = s"Error: $expectedReducedTitle"
+    val expectedReducedErrorMessage = "Select yes if you have gone above your reduced annual allowance"
+
+    val expectedNonReducedTitle = "Have you gone above the annual allowance?"
+    val expectedNonReducedHeading = "Have you gone above the annual allowance?"
+    val expectedNonReducedErrorTitle = s"Error: $expectedNonReducedTitle"
+    val expectedNonReducedErrorMessage = "Select yes if you have gone above the annual allowance"
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
-    val expectedTitle = "Has your client gone above their reduced annual allowance?"
-    val expectedHeading = "Has your client gone above their reduced annual allowance?"
-    val expectedErrorTitle = s"Error: $expectedTitle"
-    val expectedErrorMessage = "Select yes if your client has gone above their reduced annual allowance"
+    val expectedReducedTitle = "Has your client gone above their reduced annual allowance?"
+    val expectedReducedHeading = "Has your client gone above their reduced annual allowance?"
+    val expectedReducedErrorTitle = s"Error: $expectedReducedTitle"
+    val expectedReducedErrorMessage = "Select yes if your client has gone above their reduced annual allowance"
+
+    val expectedNonReducedTitle = "Has your client gone above the annual allowance?"
+    val expectedNonReducedHeading = "Has your client gone above the annual allowance?"
+    val expectedNonReducedErrorTitle = s"Error: $expectedNonReducedTitle"
+    val expectedNonReducedErrorMessage = "Select yes if your client has gone above the annual allowance"
 
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
-    val expectedTitle = "Has your client gone above their reduced annual allowance?"
-    val expectedHeading = "Has your client gone above their reduced annual allowance?"
-    val expectedErrorTitle = s"Error: $expectedTitle"
-    val expectedErrorMessage = "Select yes if your client has gone above their reduced annual allowance"
+    val expectedReducedTitle = "Has your client gone above their reduced annual allowance?"
+    val expectedReducedHeading = "Has your client gone above their reduced annual allowance?"
+    val expectedReducedErrorTitle = s"Error: $expectedReducedTitle"
+    val expectedReducedErrorMessage = "Select yes if your client has gone above their reduced annual allowance"
+
+    val expectedNonReducedTitle = "Has your client gone above the annual allowance?"
+    val expectedNonReducedHeading = "Has your client gone above the annual allowance?"
+    val expectedNonReducedErrorTitle = s"Error: $expectedNonReducedTitle"
+    val expectedNonReducedErrorMessage = "Select yes if your client has gone above the annual allowance"
   }
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(
@@ -141,89 +165,186 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
       import Selectors._
       import user.commonExpectedResults._
 
-      s"language is ${welshTest(user.isWelsh)} and request is from an ${agentTest(user.isAgent)}" should {
-        "render the above reduced annual allowance question page with no pre-filled radio buttons" which {
-          lazy val result: WSResponse = {
-            dropPensionsDB()
-            authoriseAgentOrIndividual(user.isAgent)
-            val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(aboveAnnualAllowanceQuestion = None)
-            insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel), aUserRequest)
-            urlGet(fullUrl(aboveReducedAnnualAllowanceUrl(taxYearEOY)),
-              user.isWelsh, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+      s"language is ${welshTest(user.isWelsh)} and request is from an ${agentTest(user.isAgent)}" when {
+
+        "reducedAnnualAllowanceQuestion is true" should {
+
+          "render the above reduced annual allowance question page with no pre-filled radio buttons" which {
+
+            lazy val result: WSResponse = {
+              dropPensionsDB()
+              authoriseAgentOrIndividual(user.isAgent)
+              val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(aboveAnnualAllowanceQuestion = None, reducedAnnualAllowanceQuestion = Some(true))
+              insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel), aUserRequest)
+              urlGet(fullUrl(aboveReducedAnnualAllowanceUrl(taxYearEOY)),
+                user.isWelsh, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+            }
+
+            implicit def document: () => Document = () => Jsoup.parse(result.body)
+
+            "has an OK status" in {
+              result.status shouldBe OK
+            }
+
+            titleCheck(user.specificExpectedResults.get.expectedReducedTitle)
+            h1Check(user.specificExpectedResults.get.expectedReducedHeading)
+            captionCheck(expectedCaption(taxYearEOY), captionSelector)
+            radioButtonCheck(yesText, 1, checked = Some(false))
+            radioButtonCheck(noText, 2, checked = Some(false))
+            linkCheck(expectedLinkText, expectedLinkSelector, externalHref)
+            buttonCheck(buttonText, continueButtonSelector)
+            textOnPageCheck(expectedDetails, detailsSelector)
+            formPostLinkCheck(aboveReducedAnnualAllowanceUrl(taxYearEOY), formSelector)
+            welshToggleCheck(user.isWelsh)
           }
 
-          implicit def document: () => Document = () => Jsoup.parse(result.body)
+          "render above reduced annual allowance question page with 'Yes' pre-filled when CYA data exists" which {
+            lazy val result: WSResponse = {
+              dropPensionsDB()
+              authoriseAgentOrIndividual(user.isAgent)
+              val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(aboveAnnualAllowanceQuestion = Some(true),
+                reducedAnnualAllowanceQuestion = Some(true))
+              insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel), aUserRequest)
+              urlGet(fullUrl(aboveReducedAnnualAllowanceUrl(taxYearEOY)), user.isWelsh, follow = false,
+                headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+            }
 
-          "has an OK status" in {
-            result.status shouldBe OK
+            implicit def document: () => Document = () => Jsoup.parse(result.body)
+
+            "has an OK status" in {
+              result.status shouldBe OK
+            }
+
+            titleCheck(user.specificExpectedResults.get.expectedReducedTitle)
+            h1Check(user.specificExpectedResults.get.expectedReducedHeading)
+            captionCheck(expectedCaption(taxYearEOY), captionSelector)
+            radioButtonCheck(yesText, 1, checked = Some(true))
+            radioButtonCheck(noText, 2, checked = Some(false))
+            linkCheck(expectedLinkText, expectedLinkSelector, externalHref)
+            buttonCheck(buttonText, continueButtonSelector)
+            textOnPageCheck(expectedDetails, detailsSelector)
+            formPostLinkCheck(aboveReducedAnnualAllowanceUrl(taxYearEOY), formSelector)
+            welshToggleCheck(user.isWelsh)
           }
 
-          titleCheck(user.specificExpectedResults.get.expectedTitle)
-          h1Check(user.specificExpectedResults.get.expectedHeading)
-          captionCheck(expectedCaption(taxYearEOY), captionSelector)
-          radioButtonCheck(yesText, 1, checked = Some(false))
-          radioButtonCheck(noText, 2, checked = Some(false))
-          linkCheck(expectedLinkText,expectedLinkSelector, externalHref)
-          buttonCheck(buttonText, continueButtonSelector)
-          textOnPageCheck(expectedDetails, detailsSelector)
-          formPostLinkCheck(aboveReducedAnnualAllowanceUrl(taxYearEOY), formSelector)
-          welshToggleCheck(user.isWelsh)
+          "render the above reduced annual allowance question page with 'No' pre-filled and not a prior submission" which {
+            lazy val result: WSResponse = {
+              dropPensionsDB()
+              authoriseAgentOrIndividual(user.isAgent)
+              val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(aboveAnnualAllowanceQuestion = Some(false),
+                reducedAnnualAllowanceQuestion = Some(true))
+              insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel), aUserRequest)
+              urlGet(fullUrl(aboveReducedAnnualAllowanceUrl(taxYearEOY)), user.isWelsh, follow = false,
+                headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+            }
+
+            implicit def document: () => Document = () => Jsoup.parse(result.body)
+
+            "has an OK status" in {
+              result.status shouldBe OK
+            }
+
+            titleCheck(user.specificExpectedResults.get.expectedReducedTitle)
+            h1Check(user.specificExpectedResults.get.expectedReducedHeading)
+            captionCheck(expectedCaption(taxYearEOY), captionSelector)
+            radioButtonCheck(yesText, 1, checked = Some(false))
+            radioButtonCheck(noText, 2, checked = Some(true))
+            linkCheck(expectedLinkText, expectedLinkSelector, externalHref)
+            buttonCheck(buttonText, continueButtonSelector)
+            textOnPageCheck(expectedDetails, detailsSelector)
+            formPostLinkCheck(aboveReducedAnnualAllowanceUrl(taxYearEOY), formSelector)
+            welshToggleCheck(user.isWelsh)
+          }
         }
 
-        "render above reduced annual allowance question page with 'Yes' pre-filled when CYA data exists" which {
-          lazy val result: WSResponse = {
-            dropPensionsDB()
-            authoriseAgentOrIndividual(user.isAgent)
-            val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(aboveAnnualAllowanceQuestion = Some(true))
-            insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel), aUserRequest)
-            urlGet(fullUrl(aboveReducedAnnualAllowanceUrl(taxYearEOY)), user.isWelsh, follow = false,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+        "reducedAnnualAllowanceQuestion is false" should {
+          "render the above reduced annual allowance question page with no pre-filled radio buttons" which {
+
+            lazy val result: WSResponse = {
+              dropPensionsDB()
+              authoriseAgentOrIndividual(user.isAgent)
+              val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(aboveAnnualAllowanceQuestion = None, reducedAnnualAllowanceQuestion = Some(false))
+              insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel), aUserRequest)
+              urlGet(fullUrl(aboveReducedAnnualAllowanceUrl(taxYearEOY)),
+                user.isWelsh, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+            }
+
+            implicit def document: () => Document = () => Jsoup.parse(result.body)
+
+            "has an OK status" in {
+              result.status shouldBe OK
+            }
+
+            titleCheck(user.specificExpectedResults.get.expectedNonReducedTitle)
+            h1Check(user.specificExpectedResults.get.expectedNonReducedHeading)
+            captionCheck(expectedCaption(taxYearEOY), captionSelector)
+            radioButtonCheck(yesText, 1, checked = Some(false))
+            radioButtonCheck(noText, 2, checked = Some(false))
+            linkCheck(expectedLinkText, expectedLinkSelector, externalHref)
+            buttonCheck(buttonText, continueButtonSelector)
+            textOnPageCheck(expectedDetails, detailsSelector)
+            formPostLinkCheck(aboveReducedAnnualAllowanceUrl(taxYearEOY), formSelector)
+            welshToggleCheck(user.isWelsh)
           }
 
-          implicit def document: () => Document = () => Jsoup.parse(result.body)
+          "render above reduced annual allowance question page with 'Yes' pre-filled when CYA data exists" which {
+            lazy val result: WSResponse = {
+              dropPensionsDB()
+              authoriseAgentOrIndividual(user.isAgent)
+              val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(aboveAnnualAllowanceQuestion = Some(true),
+                reducedAnnualAllowanceQuestion = Some(false))
+              insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel), aUserRequest)
+              urlGet(fullUrl(aboveReducedAnnualAllowanceUrl(taxYearEOY)), user.isWelsh, follow = false,
+                headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+            }
 
-          "has an OK status" in {
-            result.status shouldBe OK
+            implicit def document: () => Document = () => Jsoup.parse(result.body)
+
+            "has an OK status" in {
+              result.status shouldBe OK
+            }
+
+            titleCheck(user.specificExpectedResults.get.expectedNonReducedTitle)
+            h1Check(user.specificExpectedResults.get.expectedNonReducedHeading)
+            captionCheck(expectedCaption(taxYearEOY), captionSelector)
+            radioButtonCheck(yesText, 1, checked = Some(true))
+            radioButtonCheck(noText, 2, checked = Some(false))
+            linkCheck(expectedLinkText, expectedLinkSelector, externalHref)
+            buttonCheck(buttonText, continueButtonSelector)
+            textOnPageCheck(expectedDetails, detailsSelector)
+            formPostLinkCheck(aboveReducedAnnualAllowanceUrl(taxYearEOY), formSelector)
+            welshToggleCheck(user.isWelsh)
           }
 
-          titleCheck(user.specificExpectedResults.get.expectedTitle)
-          h1Check(user.specificExpectedResults.get.expectedHeading)
-          captionCheck(expectedCaption(taxYearEOY), captionSelector)
-          radioButtonCheck(yesText, 1, checked = Some(true))
-          radioButtonCheck(noText, 2, checked = Some(false))
-          linkCheck(expectedLinkText,expectedLinkSelector, externalHref)
-          buttonCheck(buttonText, continueButtonSelector)
-          textOnPageCheck(expectedDetails, detailsSelector)
-          formPostLinkCheck(aboveReducedAnnualAllowanceUrl(taxYearEOY), formSelector)
-          welshToggleCheck(user.isWelsh)
-        }
+          "render the above reduced annual allowance question page with 'No' pre-filled and not a prior submission" which {
+            lazy val result: WSResponse = {
+              dropPensionsDB()
+              authoriseAgentOrIndividual(user.isAgent)
+              val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(aboveAnnualAllowanceQuestion = Some(false),
+                reducedAnnualAllowanceQuestion = Some(false))
+              insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel), aUserRequest)
+              urlGet(fullUrl(aboveReducedAnnualAllowanceUrl(taxYearEOY)), user.isWelsh, follow = false,
+                headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+            }
 
-        "render the above reduced annual allowance question page with 'No' pre-filled and not a prior submission" which {
-          lazy val result: WSResponse = {
-            dropPensionsDB()
-            authoriseAgentOrIndividual(user.isAgent)
-            val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(aboveAnnualAllowanceQuestion = Some(false))
-            insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel), aUserRequest)
-            urlGet(fullUrl(aboveReducedAnnualAllowanceUrl(taxYearEOY)), user.isWelsh, follow = false,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+            implicit def document: () => Document = () => Jsoup.parse(result.body)
+
+            "has an OK status" in {
+              result.status shouldBe OK
+            }
+
+            titleCheck(user.specificExpectedResults.get.expectedNonReducedTitle)
+            h1Check(user.specificExpectedResults.get.expectedNonReducedHeading)
+            captionCheck(expectedCaption(taxYearEOY), captionSelector)
+            radioButtonCheck(yesText, 1, checked = Some(false))
+            radioButtonCheck(noText, 2, checked = Some(true))
+            linkCheck(expectedLinkText, expectedLinkSelector, externalHref)
+            buttonCheck(buttonText, continueButtonSelector)
+            textOnPageCheck(expectedDetails, detailsSelector)
+            formPostLinkCheck(aboveReducedAnnualAllowanceUrl(taxYearEOY), formSelector)
+            welshToggleCheck(user.isWelsh)
           }
 
-          implicit def document: () => Document = () => Jsoup.parse(result.body)
-
-          "has an OK status" in {
-            result.status shouldBe OK
-          }
-
-          titleCheck(user.specificExpectedResults.get.expectedTitle)
-          h1Check(user.specificExpectedResults.get.expectedHeading)
-          captionCheck(expectedCaption(taxYearEOY), captionSelector)
-          radioButtonCheck(yesText, 1, checked = Some(false))
-          radioButtonCheck(noText, 2, checked = Some(true))
-          linkCheck(expectedLinkText,expectedLinkSelector, externalHref)
-          buttonCheck(buttonText, continueButtonSelector)
-          textOnPageCheck(expectedDetails, detailsSelector)
-          formPostLinkCheck(aboveReducedAnnualAllowanceUrl(taxYearEOY), formSelector)
-          welshToggleCheck(user.isWelsh)
         }
       }
     }
@@ -244,6 +365,25 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
       }
 
     }
+    "redirect to reduced annual allowance page if question has not been answered" which {
+      lazy val result: WSResponse = {
+        dropPensionsDB()
+        authoriseAgentOrIndividual(isAgent = false)
+        val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(
+          aboveAnnualAllowanceQuestion = Some(true), reducedAnnualAllowanceQuestion = None)
+        insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)), aUserRequest)
+
+        urlGet(fullUrl(aboveReducedAnnualAllowanceUrl(taxYearEOY)), follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+      }
+
+      "has an SEE_OTHER status" in {
+        result.status shouldBe SEE_OTHER
+        //TODO redirect to annual CYA Page
+        result.header("location").contains(reducedAnnualAllowanceUrl(taxYearEOY)) shouldBe true
+      }
+
+    }
   }
 
   ".submit" should {
@@ -254,11 +394,12 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
 
       s"language is ${welshTest(user.isWelsh)} and request is from an ${agentTest(user.isAgent)}" should {
 
-        "return an error when form is submitted with no entry" which {
+        "return an error when form is submitted with no entry and reducedAnnualAllowanceQuestion is true" when {
+
           lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> "")
           lazy val result: WSResponse = {
             dropPensionsDB()
-            val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(aboveAnnualAllowanceQuestion = None)
+            val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(aboveAnnualAllowanceQuestion = None, reducedAnnualAllowanceQuestion = Some(true))
             insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)), aUserRequest)
             authoriseAgentOrIndividual(user.isAgent)
             urlPost(fullUrl(aboveReducedAnnualAllowanceUrl(taxYearEOY)), body = form, welsh = user.isWelsh, follow = false,
@@ -271,22 +412,71 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(user.specificExpectedResults.get.expectedErrorTitle)
-          h1Check(user.specificExpectedResults.get.expectedHeading)
+          titleCheck(user.specificExpectedResults.get.expectedReducedErrorTitle)
+          h1Check(user.specificExpectedResults.get.expectedReducedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           radioButtonCheck(yesText, 1, checked = Some(false))
           radioButtonCheck(noText, 2, checked = Some(false))
           buttonCheck(buttonText, continueButtonSelector)
-          linkCheck(expectedLinkText,expectedLinkSelector, externalHref)
+          linkCheck(expectedLinkText, expectedLinkSelector, externalHref)
           textOnPageCheck(expectedDetails, detailsSelector)
           formPostLinkCheck(aboveReducedAnnualAllowanceUrl(taxYearEOY), formSelector)
           welshToggleCheck(user.isWelsh)
-          errorSummaryCheck(user.specificExpectedResults.get.expectedErrorMessage, Selectors.yesSelector)
-          errorAboveElementCheck(user.specificExpectedResults.get.expectedErrorMessage, Some("value"))
+          errorSummaryCheck(user.specificExpectedResults.get.expectedReducedErrorMessage, Selectors.yesSelector)
+          errorAboveElementCheck(user.specificExpectedResults.get.expectedReducedErrorMessage, Some("value"))
+        }
+
+        "return an error when form is submitted with no entry and reducedAnnualAllowanceQuestion is false" when {
+
+          lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> "")
+          lazy val result: WSResponse = {
+            dropPensionsDB()
+            val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(aboveAnnualAllowanceQuestion = None, reducedAnnualAllowanceQuestion = Some(false))
+            insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)), aUserRequest)
+            authoriseAgentOrIndividual(user.isAgent)
+            urlPost(fullUrl(aboveReducedAnnualAllowanceUrl(taxYearEOY)), body = form, welsh = user.isWelsh, follow = false,
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+          }
+
+          "has the correct status" in {
+            result.status shouldBe BAD_REQUEST
+          }
+
+          implicit def document: () => Document = () => Jsoup.parse(result.body)
+
+          titleCheck(user.specificExpectedResults.get.expectedNonReducedErrorTitle)
+          h1Check(user.specificExpectedResults.get.expectedNonReducedHeading)
+          captionCheck(expectedCaption(taxYearEOY), captionSelector)
+          radioButtonCheck(yesText, 1, checked = Some(false))
+          radioButtonCheck(noText, 2, checked = Some(false))
+          buttonCheck(buttonText, continueButtonSelector)
+          linkCheck(expectedLinkText, expectedLinkSelector, externalHref)
+          textOnPageCheck(expectedDetails, detailsSelector)
+          formPostLinkCheck(aboveReducedAnnualAllowanceUrl(taxYearEOY), formSelector)
+          welshToggleCheck(user.isWelsh)
+          errorSummaryCheck(user.specificExpectedResults.get.expectedNonReducedErrorMessage, Selectors.yesSelector)
+          errorAboveElementCheck(user.specificExpectedResults.get.expectedNonReducedErrorMessage, Some("value"))
         }
       }
     }
 
+    "redirect to reduced annual allowance page if question has not been answered" which {
+      lazy val result: WSResponse = {
+        dropPensionsDB()
+        authoriseAgentOrIndividual(isAgent = false)
+        val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(
+          aboveAnnualAllowanceQuestion = Some(true), reducedAnnualAllowanceQuestion = None)
+        insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)), aUserRequest)
+
+        urlGet(fullUrl(aboveReducedAnnualAllowanceUrl(taxYearEOY)), follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+      }
+
+      "has an SEE_OTHER status" in {
+        result.status shouldBe SEE_OTHER
+        result.header("location").contains(reducedAnnualAllowanceUrl(taxYearEOY)) shouldBe true
+      }
+    }
 
     "redirect to the above annual allowance amount page when user selects 'yes' and not a prior submission" which {
       lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.yes)
@@ -304,8 +494,7 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        //TODO redirect to above annual allowance amount page
-        result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
+        result.header("location") shouldBe Some(aboveReducedAnnualAllowanceAmountUrl(taxYearEOY))
 
       }
 

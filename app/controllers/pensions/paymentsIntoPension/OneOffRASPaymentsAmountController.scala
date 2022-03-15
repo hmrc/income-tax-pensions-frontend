@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.pensions
+package controllers.pensions.paymentsIntoPension
 
 import config.{AppConfig, ErrorHandler}
 import controllers.predicates.AuthorisedAction
@@ -61,12 +61,12 @@ class OneOffRASPaymentsAmountController @Inject()(implicit val mcc: MessagesCont
             val form = amount.fold(amountForm)(a => amountForm.fill(a))
             Future.successful(Ok(view(form, taxYear, rasAmount)))
           case (_, _, None) =>
-            Future.successful(Redirect(controllers.pensions.routes.ReliefAtSourcePaymentsAndTaxReliefAmountController.show(taxYear)))
+            Future.successful(Redirect(controllers.pensions.paymentsIntoPension.routes.ReliefAtSourcePaymentsAndTaxReliefAmountController.show(taxYear)))
           case _ =>
-            Future.successful(Redirect(controllers.pensions.routes.ReliefAtSourceOneOffPaymentsController.show(taxYear)))
+            Future.successful(Redirect(controllers.pensions.paymentsIntoPension.routes.ReliefAtSourceOneOffPaymentsController.show(taxYear)))
         }
       case _ =>
-        Future.successful(Redirect(controllers.pensions.routes.PaymentsIntoPensionsCYAController.show(taxYear)))
+        Future.successful(Redirect(controllers.pensions.paymentsIntoPension.routes.PaymentsIntoPensionsCYAController.show(taxYear)))
     }
 
   }
@@ -77,12 +77,11 @@ class OneOffRASPaymentsAmountController @Inject()(implicit val mcc: MessagesCont
         amountForm.bindFromRequest.fold(
           formWithErrors => {
             data.flatMap(_.pensions.paymentsIntoPension.totalRASPaymentsAndTaxRelief).fold(
-              Future.successful(Redirect(controllers.pensions.routes.ReliefAtSourcePaymentsAndTaxReliefAmountController.show(taxYear)))
+              Future.successful(Redirect(controllers.pensions.paymentsIntoPension.routes.ReliefAtSourcePaymentsAndTaxReliefAmountController.show(taxYear)))
             )(rasAmount => Future.successful(BadRequest(view(formWithErrors, taxYear, rasAmount))))
           },
           amount => {
-            val pensionsCYAModel: PensionsCYAModel = data.map(_.pensions).getOrElse(PensionsCYAModel(
-              PaymentsIntoPensionViewModel(), PensionAnnualAllowancesViewModel()))
+            val pensionsCYAModel: PensionsCYAModel = data.map(_.pensions).getOrElse(PensionsCYAModel.emptyModels)
             val viewModel: PaymentsIntoPensionViewModel = pensionsCYAModel.paymentsIntoPension
             val updatedCyaModel: PensionsCYAModel = {
               pensionsCYAModel.copy(paymentsIntoPension = viewModel.copy(totalOneOffRasPaymentPlusTaxRelief = Some(amount)))
@@ -90,7 +89,7 @@ class OneOffRASPaymentsAmountController @Inject()(implicit val mcc: MessagesCont
             pensionSessionService.createOrUpdateSessionData(request.user,
               updatedCyaModel, taxYear, data.exists(_.isPriorSubmission))(errorHandler.internalServerError()) {
               // TODO - redirect to total payments into RAS pensions page when built
-              Redirect(controllers.pensions.routes.PensionsTaxReliefNotClaimedController.show(taxYear))
+              Redirect(controllers.pensions.paymentsIntoPension.routes.PensionsTaxReliefNotClaimedController.show(taxYear))
             }
           }
         )

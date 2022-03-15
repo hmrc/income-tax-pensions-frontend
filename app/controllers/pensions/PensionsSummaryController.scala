@@ -23,8 +23,9 @@ import play.api.mvc._
 import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.pensions.PensionsSummaryView
+
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 @Singleton
 class PensionsSummaryController @Inject()(implicit val mcc: MessagesControllerComponents,

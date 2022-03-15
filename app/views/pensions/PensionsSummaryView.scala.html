@@ -41,7 +41,7 @@
 
             <div class="govuk-summary-list__row" id="payments-into-Pensions-row">
                 <dt class="govuk-summary-list__key govuk-!-width-two-third">
-                @link(s"${controllers.pensions.routes.PaymentsIntoPensionsCYAController.show(taxYear)}", "pensions.pensionSummary.paymentsToPensions",Some("payments-into-pensions-link"))
+                @link(s"${controllers.pensions.paymentsIntoPension.routes.PaymentsIntoPensionsCYAController.show(taxYear)}", "pensions.pensionSummary.paymentsToPensions",Some("payments-into-pensions-link"))
                 </dt>
                 <dd class="govuk-summary-list__actions govuk-!-two-third">
                 @if(paymentsIntoPensionsIsUpdated(prior)) {
