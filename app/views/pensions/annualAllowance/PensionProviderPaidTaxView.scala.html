@@ -20,6 +20,8 @@
 @import views.html.templates.helpers.InputRadio
 @import views.html.templates.helpers.Details
 @import views.html.templates.helpers.Link
+@import forms.{Yes, No, NoButHasAgreedToPay, PensionProviderPaidTaxAnswers}
+
 
 @this(
         layout: Layout,
@@ -31,10 +33,10 @@
         link: Link
 )
 
-@(form: Form[Boolean], taxYear: Int)(implicit request: AuthorisationRequest[_], messages: Messages, appConfig: AppConfig)
+@(form: Form[PensionProviderPaidTaxAnswers], taxYear: Int)(implicit request: AuthorisationRequest[_], messages: Messages, appConfig: AppConfig)
 
 @titleForUse = @{
-    messages(s"pensions.retirementAnnuityContract.title.${if(request.user.isAgent) "agent" else "individual"}")
+    messages(s"pensions.pensionProviderPaidTax.title.${if(request.user.isAgent) "agent" else "individual"}")
 }
 @headingForUse = @{
     titleForUse
@@ -45,30 +47,42 @@
 }
 
 @contentHtml = {
-    <p class="govuk-body">
-        @messages(s"pensions.retirementAnnuityContract.paragraph.${if(request.user.isAgent) "agent" else "individual"}") @link("https://www.gov.uk/tax-on-your-private-pension/pension-tax-relief", "pensions.retirementAnnuityContract.paragraph.link", Some("retirementAnnuityContract-link"), true, fullStop = true)
-    </p>
+    <p class="govuk-body">@messages(s"pensions.pensionProviderPaidTax.title.paragraph")</p>
     <p class="govuk-body">@messages(s"common.youCanFindThisOut.${if(request.user.isAgent) "agent" else "individual"}")</p>
-}
-
-@detailsHtml = {
-    <p class="govuk-body">@messages(s"pensions.retirementAnnuityContract.details.info")</p>
 }
 
 @layout(pageTitle = titleForUse, taxYear = Some(taxYear), hasErrors = hasFormErrors, isAgent = request.user.isAgent) {
 
     @errorSummary(form.errors.distinct)
 
-    @formWithCsrf(action = controllers.pensions.paymentsIntoPension.routes.RetirementAnnuityController.submit(taxYear)) {
+    @formWithCsrf(action = controllers.pensions.annualAllowance.routes.PensionProviderPaidTaxController.submit(taxYear)) {
+
+
         @inputRadio(
             form = form,
             heading = headingForUse,
             content = Some(contentHtml),
             classes = "govuk-!-margin-bottom-4",
-            inline = true,
-            subheading = Some(messages("common.paymentsIntoPensions.caption", (taxYear - 1).toString, taxYear.toString))
+            inline = false,
+            subheading = Some(messages("common.pensionAnnualAllowance.caption", (taxYear - 1).toString, taxYear.toString)),
+            items = Seq(
+                RadioItem(id = Some("value"),
+                    value = Some("Yes"),
+                    content = Text(messages("common.yes")),
+                    checked = form("value").value.contains(Yes.toString)
+                ),
+                RadioItem(id = Some("value-no-agreed-to-pay"),
+                    value = Some("NoButHasAgreedToPay"),
+                    content = Text(messages("pensions.pensionProviderPaidTax.radio.hasAgreedToPay")),
+                    checked = form("value").value.contains(NoButHasAgreedToPay.toString)
+                ),
+                RadioItem(id = Some("value-no"),
+                    value = Some("No"),
+                    content = Text(messages("common.no")),
+                    checked = form("value").value.contains(No.toString)
+                )
+            )
         )
-        @details("pensions.retirementAnnuityContract.details.title", detailsHtml)
         @button()
     }
 }

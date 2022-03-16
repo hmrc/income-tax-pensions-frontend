@@ -30,6 +30,8 @@ common.pensionAnnualAllowance.caption = Pension annual allowance for 6 April {0}
 common.return.overview.buttonText = Return to overview
 common.currencyAmount = £{0}
 common.total = Total
+common.youCanFindThisOut.individual = You can find this out from your pension provider.
+common.youCanFindThisOut.agent = You can find this out from your client’s pension provider.
 
 common.error.self-assessment.paragraph.1.1 = If the web address is correct or you selected a link or button, you can use
 common.error.self-assessment.paragraph.1.2 = Self Assessment: general enquiries (opens in new tab)
@@ -183,11 +185,9 @@ pensions.pensionsTaxReliefNotClaimed.error.noEntry.agent = Select yes if your cl
 pensions.retirementAnnuityContract.error.noEntry.individual = Select yes if you paid into a retirement annuity contract
 pensions.retirementAnnuityContract.title.individual = Did you pay into a retirement annuity contract?
 pensions.retirementAnnuityContract.paragraph.individual = We only need to know about payments if your pension provider will not claim
-pensions.retirementAnnuityContract.youCanFindThisOut.individual = You can find this out from your pension provider.
 pensions.retirementAnnuityContract.error.noEntry.agent = Select yes if your client paid into a retirement annuity contract
 pensions.retirementAnnuityContract.title.agent = Did your client pay into a retirement annuity contract?
 pensions.retirementAnnuityContract.paragraph.agent = We only need to know about payments if your client’s pension provider will not claim
-pensions.retirementAnnuityContract.youCanFindThisOut.agent = You can find this out from your client’s pension provider.
 pensions.retirementAnnuityContract.details.title = What is a retirement annuity contract?
 pensions.retirementAnnuityContract.paragraph.link = tax relief
 pensions.retirementAnnuityContract.details.info = Retirement annuity contracts are a type of pension scheme. They were available before 1988 to the self-employed and to workers not offered a workplace pension.
@@ -328,3 +328,11 @@ pensions.aboveReducedAnnualAllowance.reduced.error.noEntry.individual = Select y
 pensions.aboveReducedAnnualAllowance.reduced.error.noEntry.agent = Select yes if your client has gone above their reduced annual allowance
 pensions.aboveReducedAnnualAllowance.nonReduced.error.noEntry.individual = Select yes if you have gone above the annual allowance
 pensions.aboveReducedAnnualAllowance.nonReduced.error.noEntry.agent = Select yes if your client has gone above the annual allowance
+
+# Pension Provider Paid Tax Messages
+pensions.pensionProviderPaidTax.title.individual = Has your pension provider paid your annual allowance tax?
+pensions.pensionProviderPaidTax.title.paragraph = If more than one pension scheme deals with the tax, you can add their details later.
+pensions.pensionProviderPaidTax.radio.hasAgreedToPay = No, but has agreed to pay
+pensions.pensionProviderPaidTax.title.agent = Has your client’s pension provider paid the annual allowance tax?
+pensions.pensionProviderPaidTax.error.noEntry.individual = Select yes if your pension provider paid your annual allowance tax
+pensions.pensionProviderPaidTax.error.noEntry.agent = Select yes if your client’s pension provider paid the annual allowance tax

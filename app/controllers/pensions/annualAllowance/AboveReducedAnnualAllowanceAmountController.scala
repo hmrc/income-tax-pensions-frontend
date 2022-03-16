@@ -18,7 +18,8 @@ package controllers.pensions.annualAllowance
 
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.routes.PensionsSummaryController
-import controllers.pensions.annualAllowance.routes.{ReducedAnnualAllowanceController, AboveReducedAnnualAllowanceController }
+import controllers.pensions.annualAllowance.routes.{
+  ReducedAnnualAllowanceController, AboveReducedAnnualAllowanceController, PensionProviderPaidTaxController}
 import controllers.predicates.AuthorisedAction
 import forms.{AmountForm, FormUtils}
 import models.User
@@ -104,8 +105,7 @@ class AboveReducedAnnualAllowanceAmountController @Inject()(implicit val mcc: Me
                 }
                 pensionSessionService.createOrUpdateSessionData(request.user,
                   updatedCyaModel, taxYear, data.exists(_.isPriorSubmission))(errorHandler.internalServerError()) {
-                  //TODO: redirect to "Has your client's pension provider paid the annual allowance tax?" page
-                  Redirect(PensionsSummaryController.show(taxYear))
+                  Redirect(PensionProviderPaidTaxController.show(taxYear))
                 }
               }
             )
