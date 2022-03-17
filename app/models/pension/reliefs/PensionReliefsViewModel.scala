@@ -23,6 +23,7 @@ case class PaymentsIntoPensionViewModel(rasPensionPaymentQuestion: Option[Boolea
                                         totalRASPaymentsAndTaxRelief: Option[BigDecimal] = None,
                                         oneOffRasPaymentPlusTaxReliefQuestion: Option[Boolean] = None,
                                         totalOneOffRasPaymentPlusTaxRelief: Option[BigDecimal] = None,
+                                        totalPaymentsIntoRASQuestion: Option[Boolean] = None,
                                         pensionTaxReliefNotClaimedQuestion: Option[Boolean] = None,
                                         retirementAnnuityContractPaymentsQuestion: Option[Boolean] = None,
                                         totalRetirementAnnuityContractPayments: Option[BigDecimal] = None,
@@ -39,6 +40,7 @@ case class PaymentsIntoPensionViewModel(rasPensionPaymentQuestion: Option[Boolea
       rasPensionPaymentQuestion.exists(q =>
         if(q) yesNoAndAmountPopulated(oneOffRasPaymentPlusTaxReliefQuestion, totalOneOffRasPaymentPlusTaxRelief) else true
     )
+    val isDone_totalPaymentsIntoRASQuestion = rasPensionPaymentQuestion.exists(q => if(q) totalPaymentsIntoRASQuestion.contains(true) else true)
     val isDone_taxReliefNotClaimedCompleted = taxReliefNotClaimedQuestionCompleted
     val isDone_retirementAnnuityContractPaymentsQuestion =
       pensionTaxReliefNotClaimedQuestion.exists(q =>
@@ -53,6 +55,7 @@ case class PaymentsIntoPensionViewModel(rasPensionPaymentQuestion: Option[Boolea
     Seq(
       isDone_rasPensionPaymentQuestion,
       isDone_oneOffRASPaymentsQuestion,
+      isDone_totalPaymentsIntoRASQuestion,
       isDone_retirementAnnuityContractPaymentsQuestion,
       isDone_workplacePensionPaymentsQuestion,
       isDone_taxReliefNotClaimedCompleted
@@ -78,6 +81,7 @@ case class EncryptedPaymentsIntoPensionViewModel(rasPensionPaymentQuestion: Opti
                                                  totalRASPaymentsAndTaxRelief: Option[EncryptedValue] = None,
                                                  oneOffRasPaymentPlusTaxReliefQuestion: Option[EncryptedValue] = None,
                                                  totalOneOffRasPaymentPlusTaxRelief: Option[EncryptedValue] = None,
+                                                 totalPaymentsIntoRASQuestion: Option[EncryptedValue] = None,
                                                  pensionTaxReliefNotClaimedQuestion: Option[EncryptedValue] = None,
                                                  retirementAnnuityContractPaymentsQuestion: Option[EncryptedValue] = None,
                                                  totalRetirementAnnuityContractPayments: Option[EncryptedValue] = None,

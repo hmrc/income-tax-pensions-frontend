@@ -28,8 +28,8 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.PaymentIntoPensions.{checkPaymentsIntoPensionCyaUrl, oneOffReliefAtSourcePaymentsAmountUrl, reliefAtSourceOneOffPaymentsUrl, reliefAtSourcePaymentsAndTaxReliefAmountUrl}
-import utils.PageUrls._
+import utils.PageUrls.fullUrl
+import utils.PageUrls.PaymentIntoPensions._
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 class OneOffRASPaymentsAmountControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
@@ -438,8 +438,7 @@ class OneOffRASPaymentsAmountControllerISpec extends IntegrationTest with ViewHe
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        // TODO - redirect to total payments into RAS pensions page when built
-        result.header("location") shouldBe Some(controllers.pensions.paymentsIntoPension.routes.PensionsTaxReliefNotClaimedController.show(taxYearEOY).url)
+        result.header("location") shouldBe Some(totalPaymentsIntoRASUrl(taxYearEOY))
       }
 
       "updates totalOneOffRasPaymentPlusTaxRelief to Some(100.22)" in {
