@@ -32,6 +32,8 @@ common.currencyAmount = £{0}
 common.total = Total
 common.youCanFindThisOut.individual = You can find this out from your pension provider.
 common.youCanFindThisOut.agent = You can find this out from your client’s pension provider.
+common.moreThanOnePensionScheme.individual = If more than one of your pension schemes paid the tax, you can add these details later.
+common.moreThanOnePensionScheme.agent = If more than one of your client’s pension schemes paid the tax, you can add these details later.
 
 common.error.self-assessment.paragraph.1.1 = If the web address is correct or you selected a link or button, you can use
 common.error.self-assessment.paragraph.1.2 = Self Assessment: general enquiries (opens in new tab)
@@ -341,11 +343,18 @@ pensions.pensionProviderPaidTax.error.noEntry.agent = Select yes if your client�
 #################       Tax Paid By Pension Provider Annual Allowance Messages         ########################################
 pensions.annualAllowanceTaxPaidByPensionProviderAmount.title.individual = How much tax did your pension provider pay?
 pensions.annualAllowanceTaxPaidByPensionProviderAmount.title.agent = How much tax did your client’s pension provider pay?
-pensions.annualAllowanceTaxPaidByPensionProviderAmount.paragraph.individual = If more than one of your pension schemes paid the tax, you can add these details later.
-pensions.annualAllowanceTaxPaidByPensionProviderAmount.paragraph.agent = If more than one of your client’s pension schemes paid the tax, you can add these details later.
 pensions.annualAllowanceTaxPaidByPensionProviderAmount.error.noEntry.individual = Enter the amount of tax your pension provider paid
 pensions.annualAllowanceTaxPaidByPensionProviderAmount.error.incorrectFormat.individual = Enter the amount of tax your pension provider paid in the correct format
 pensions.annualAllowanceTaxPaidByPensionProviderAmount.error.overMaximum.individual = The amount of tax your pension provider paid must be less than £100,000,000,000
 pensions.annualAllowanceTaxPaidByPensionProviderAmount.error.noEntry.agent = Enter the amount of tax your client’s pension provider paid
 pensions.annualAllowanceTaxPaidByPensionProviderAmount.error.incorrectFormat.agent = Enter the amount of tax your client’s pension provider paid in the correct format
 pensions.annualAllowanceTaxPaidByPensionProviderAmount.error.overMaximum.agent = The amount of tax your client’s pension provider paid must be less than £100,000,000,000
+
+#Pension Scheme Tax Reference Messages
+pension.pensionSchemeTaxReference.title = Pension Scheme Tax Reference
+pension.pensionSchemeTaxReference.paragraph1 = Enter the reference for the pension scheme that paid the tax.
+pension.pensionSchemeTaxReference.forExample = For example, ’12345678RA’
+pension.pensionSchemeTaxReference.error.noEntry.individual = Enter your PSTR
+pension.pensionSchemeTaxReference.error.incorrectFormat.individual = Enter your PSTR in the correct format
+pension.pensionSchemeTaxReference.error.noEntry.agent = Enter your client’s PSTR
+pension.pensionSchemeTaxReference.error.incorrectFormat.agent = Enter your client’s PSTR in the correct format
