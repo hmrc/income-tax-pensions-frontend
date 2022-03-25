@@ -18,7 +18,7 @@ package services
 
 import config.AppConfig
 import models.mongo._
-import models.pension.charges.{EncryptedPensionAnnualAllowancesViewModel, PensionAnnualAllowancesViewModel}
+import models.pension.charges.{EncryptedPensionAnnualAllowancesViewModel, PensionAnnualAllowancesViewModel, PensionLifetimeAllowancesViewModel}
 import models.pension.reliefs.{EncryptedPaymentsIntoPensionViewModel, PaymentsIntoPensionViewModel}
 import utils.SecureGCMCipher
 
@@ -26,8 +26,10 @@ import javax.inject.Inject
 
 class EncryptionService @Inject()(secureGCMCipher: SecureGCMCipher, appConfig: AppConfig) {
 
+
   def encryptUserData(userData: PensionsUserData): EncryptedPensionsUserData = {
     implicit val textAndKey: TextAndKey = TextAndKey(userData.mtdItId, appConfig.encryptionKey)
+
     EncryptedPensionsUserData(
       sessionId = userData.sessionId,
       mtdItId = userData.mtdItId,
@@ -70,9 +72,12 @@ class EncryptionService @Inject()(secureGCMCipher: SecureGCMCipher, appConfig: A
   }
 
   private def encryptPension(pension: PensionsCYAModel)(implicit textAndKey: TextAndKey): EncryptedPensionCYAModel = {
+    //TODO: temporary implicit - this service will be removed completely go once all models updated for new encryption
+    implicit val secureGCMCipher: SecureGCMCipher = this.secureGCMCipher
     EncryptedPensionCYAModel(
       encryptedPaymentsIntoPension = encryptPaymentsIntoPension(pension.paymentsIntoPension),
-      encryptedPensionAnnualAllowances = encryptedPensionAnnualAllowances(pension.pensionsAnnualAllowances)
+      encryptedPensionAnnualAllowances = encryptedPensionAnnualAllowances(pension.pensionsAnnualAllowances),
+      pensionLifetimeAllowances = pension.pensionLifetimeAllowances.encrypted()
     )
   }
 
@@ -107,9 +112,13 @@ class EncryptionService @Inject()(secureGCMCipher: SecureGCMCipher, appConfig: A
   }
 
   private def decryptPensions(pension: EncryptedPensionCYAModel)(implicit textAndKey: TextAndKey): PensionsCYAModel = {
+
+    //TODO: temporary implicit - this service will be removed completely go once all models updated for new encryption
+    implicit val secureGCMCipher: SecureGCMCipher = this.secureGCMCipher
     PensionsCYAModel(
       paymentsIntoPension = decryptPaymentsIntoPensionViewModel(pension.encryptedPaymentsIntoPension),
-      pensionsAnnualAllowances = decryptPensionAnnualAllowanceViewModel(pension.encryptedPensionAnnualAllowances)
+      pensionsAnnualAllowances = decryptPensionAnnualAllowanceViewModel(pension.encryptedPensionAnnualAllowances),
+        pensionLifetimeAllowances = pension.pensionLifetimeAllowances.decrypted()
     )
   }
 

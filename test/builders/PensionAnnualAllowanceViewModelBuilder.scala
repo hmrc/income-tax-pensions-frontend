@@ -16,7 +16,7 @@
 
 package builders
 
-import models.pension.charges.PensionAnnualAllowancesViewModel
+import models.pension.charges.{PensionAnnualAllowancesViewModel, PensionLifetimeAllowancesViewModel}
 
 object PensionAnnualAllowanceViewModelBuilder {
 

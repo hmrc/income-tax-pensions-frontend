@@ -16,6 +16,8 @@
 
 package utils
 
+import java.time.Month
+
 object TypeCaster {
 
   trait Converter[T] { self =>
@@ -26,5 +28,6 @@ object TypeCaster {
     implicit val stringLoader: Converter[String] = (v: String) => v
     implicit val booleanLoader: Converter[Boolean] = (v: String) => v.toBoolean
     implicit val bigDecimalLoader: Converter[BigDecimal] = (v: String) => BigDecimal(v)
+    implicit val monthLoader: Converter[Month] = (v: String) => Month.valueOf(v)
   }
 }

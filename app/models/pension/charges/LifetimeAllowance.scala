@@ -16,16 +16,34 @@
 
 package models.pension.charges
 
+import models.mongo.TextAndKey
 import play.api.libs.json.{Json, OFormat}
-import utils.EncryptedValue
+import utils.{EncryptedValue, SecureGCMCipher}
+import utils.DecryptableSyntax.DecryptableOps
+import utils.DecryptorInstances.bigDecimalDecryptor
+import utils.EncryptableSyntax.EncryptableOps
+import utils.EncryptorInstances.bigDecimalEncryptor
 
-case class LifetimeAllowance(amount: BigDecimal, taxPaid: BigDecimal)
+case class LifetimeAllowance(amount: BigDecimal, taxPaid: BigDecimal) {
+
+  def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedLifetimeAllowance =
+    EncryptedLifetimeAllowance(
+      amount = amount.encrypted,
+      taxPaid = taxPaid.encrypted
+    )
+}
 
 object LifetimeAllowance {
   implicit val format: OFormat[LifetimeAllowance] = Json.format[LifetimeAllowance]
 }
 
-case class EncryptedLifetimeAllowance(amount: EncryptedValue, taxPaid: EncryptedValue)
+case class EncryptedLifetimeAllowance(amount: EncryptedValue, taxPaid: EncryptedValue) {
+
+  def decrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): LifetimeAllowance = LifetimeAllowance(
+    amount = amount.decrypted[BigDecimal],
+    taxPaid = taxPaid.decrypted[BigDecimal]
+  )
+}
 
 object EncryptedLifetimeAllowance {
   implicit val format: OFormat[EncryptedLifetimeAllowance] = Json.format[EncryptedLifetimeAllowance]
