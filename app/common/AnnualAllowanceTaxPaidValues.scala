@@ -17,7 +17,7 @@
 package common
 
 object AnnualAllowanceTaxPaidValues {
-  val yes = "true"
-  val no = "false"
-  val agreedToPay = "agreedToPay"
+  val yes = "Yes"
+  val no = "No"
+  val agreedToPay = "NoButHasAgreedToPay"
 }

@@ -29,7 +29,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.PensionAnnualAllowancePages.{aboveReducedAnnualAllowanceAmountUrl, aboveReducedAnnualAllowanceUrl, reducedAnnualAllowanceUrl}
+import utils.PageUrls.PensionAnnualAllowancePages.{aboveReducedAnnualAllowanceAmountUrl, aboveReducedAnnualAllowanceUrl, pensionProviderPaidTaxUrl, reducedAnnualAllowanceUrl}
 import utils.PageUrls.{fullUrl, pensionSummaryUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
@@ -566,7 +566,7 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
       }
     }
 
-    "redirect to the correct page when a valid amount is submitted and update the session amount" which {
+    "redirect to the pension provider paid tax page when a valid amount is submitted and update the session amount" which {
 
       val validAmount = "1888.88"
       val validForm: Map[String, String] = Map(AmountForm.amount -> validAmount)
@@ -582,10 +582,9 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
       }
 
-      //TODO: redirect to "Has your client’s pension provider paid the annual allowance tax?" page
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
+        result.header("location") shouldBe Some(pensionProviderPaidTaxUrl(taxYearEOY))
       }
 
       "updates above Annual Allowance amount to Some(1888.88)" in {

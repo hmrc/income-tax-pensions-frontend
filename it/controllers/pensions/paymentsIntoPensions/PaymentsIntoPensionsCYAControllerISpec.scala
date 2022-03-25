@@ -25,6 +25,7 @@ import builders.PensionsCYAModelBuilder.{aPensionsCYAModel, paymentsIntoPensionO
 import builders.PensionsUserDataBuilder.aPensionsUserData
 import builders.ReliefsBuilder.anReliefs
 import builders.UserBuilder.aUserRequest
+import forms.Yes
 import models.IncomeTaxUserData
 import models.pension.charges.PensionAnnualAllowancesViewModel
 import models.pension.reliefs.PaymentsIntoPensionViewModel
@@ -415,7 +416,7 @@ class PaymentsIntoPensionsCYAControllerISpec extends IntegrationTest with ViewHe
         val unchangedAllowances = PensionAnnualAllowancesViewModel(
           Some(anPensionSavngTaxCharges.isAnnualAllowanceReduced),
           anPensionSavngTaxCharges.moneyPurchasedAllowance, anPensionSavngTaxCharges.taperedAnnualAllowance,
-          Some(true), Some(anPensionContributions.inExcessOfTheAnnualAllowance), Some("true"),
+          Some(true), Some(anPensionContributions.inExcessOfTheAnnualAllowance), Some(Yes.toString),
           Some(anPensionContributions.annualAllowanceTaxPaid),
           Some(anPensionContributions.pensionSchemeTaxReference))
 

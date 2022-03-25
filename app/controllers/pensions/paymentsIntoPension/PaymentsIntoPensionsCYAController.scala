@@ -19,6 +19,7 @@ package controllers.pensions.paymentsIntoPension
 import common.AnnualAllowanceTaxPaidValues
 import config.{AppConfig, ErrorHandler}
 import controllers.predicates.AuthorisedAction
+import forms.{No, Yes}
 import models.mongo.PensionsCYAModel
 import models.pension.AllPensionsData
 import models.pension.charges.PensionAnnualAllowancesViewModel
@@ -46,7 +47,7 @@ class PaymentsIntoPensionsCYAController @Inject()(implicit val cc: MessagesContr
     pensionSessionService.getAndHandle(taxYear, request.user) { (cya, prior) =>
       (cya.map(_.pensions), prior) match {
         case (Some(cyaData), _) =>
-          if(cyaData.paymentsIntoPension.isFinished) {
+          if (cyaData.paymentsIntoPension.isFinished) {
             Future.successful(Ok(view(taxYear, cyaData.paymentsIntoPension)))
           } else {
             //TODO - redirect to first unanswered question
@@ -70,7 +71,7 @@ class PaymentsIntoPensionsCYAController @Inject()(implicit val cc: MessagesContr
         Future.successful(Redirect(appConfig.incomeTaxSubmissionOverviewUrl(taxYear)))
       ) { model =>
 
-        if(comparePriorData(model.pensions, prior)){
+        if (comparePriorData(model.pensions, prior)) {
           //        TODO - build submission model from cya data and submit to DES if cya data doesn't match prior data
           //        val submissionModel = AllPensionsData(None, None, None)
           Future.successful(Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear)))
@@ -101,17 +102,15 @@ class PaymentsIntoPensionsCYAController @Inject()(implicit val cc: MessagesContr
 
       //TODO: validate and amend when building the annual allowance CYA page
       PensionAnnualAllowancesViewModel(
-
         prior.pensionCharges.flatMap(a => a.pensionSavingsTaxCharges).map(_.isAnnualAllowanceReduced),
         prior.pensionCharges.flatMap(a => a.pensionSavingsTaxCharges).flatMap(_.moneyPurchasedAllowance),
         prior.pensionCharges.flatMap(a => a.pensionSavingsTaxCharges).flatMap(_.taperedAnnualAllowance),
         prior.pensionCharges.map(a => a.pensionContributions.isDefined),
         prior.pensionCharges.flatMap(a => a.pensionContributions).map(_.inExcessOfTheAnnualAllowance),
-        // yes, no, and intend to pay are the values for this but from prior are always either yes or no
-        //TODO: For the following two, if you answered 'no' and 'yes' in any order you still have to populate the amount for both
-        // i.e. if one is supplied the other is mandatory. The only way to resolve that might be to populate it with 0.00 for the 'No' question
-        // We may need to decide in that case that the question is set to false if we check the value as zero. Not done here so far.
-        if(prior.pensionCharges.map(a => a.pensionContributions).isDefined) Some(AnnualAllowanceTaxPaidValues.yes) else Some(AnnualAllowanceTaxPaidValues.no),
+        prior.pensionCharges.flatMap(a => a.pensionContributions.map(x => x.annualAllowanceTaxPaid)) match {
+          case Some(taxVal) if taxVal > 0 => Some(Yes.toString)
+          case _ => Some(No.toString)
+        },
         prior.pensionCharges.flatMap(a => a.pensionContributions).map(_.annualAllowanceTaxPaid),
         prior.pensionCharges.flatMap(a => a.pensionContributions).map(_.pensionSchemeTaxReference)
       )
