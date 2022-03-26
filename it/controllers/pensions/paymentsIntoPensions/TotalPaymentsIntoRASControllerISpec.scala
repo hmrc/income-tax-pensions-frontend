@@ -17,6 +17,7 @@
 package controllers.pensions.paymentsIntoPensions
 
 import builders.PensionAnnualAllowanceViewModelBuilder.aPensionAnnualAllowanceEmptyViewModel
+import builders.PensionLifetimeAllowanceViewModelBuilder.aPensionLifetimeAllowancesEmptyViewModel
 import builders.PensionsUserDataBuilder
 import builders.PensionsUserDataBuilder.anPensionsUserDataEmptyCya
 import builders.UserBuilder.aUserRequest
@@ -45,7 +46,7 @@ class TotalPaymentsIntoRASControllerISpec extends IntegrationTest with BeforeAnd
 
   private def pensionsUsersData(paymentsIntoPensionViewModel: PaymentsIntoPensionViewModel) = {
     PensionsUserDataBuilder.aPensionsUserData.copy(
-      pensions = PensionsCYAModel(paymentsIntoPensionViewModel, aPensionAnnualAllowanceEmptyViewModel)
+      pensions = PensionsCYAModel(paymentsIntoPensionViewModel, aPensionAnnualAllowanceEmptyViewModel, aPensionLifetimeAllowancesEmptyViewModel)
     )
   }
 

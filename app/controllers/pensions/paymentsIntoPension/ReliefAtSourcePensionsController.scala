@@ -61,8 +61,7 @@ class ReliefAtSourcePensionsController @Inject()(implicit val cc: MessagesContro
       yesNo => {
         pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) { optData =>
 
-          val pensionsCya = optData.map(_.pensions).getOrElse(PensionsCYAModel(
-            PaymentsIntoPensionViewModel(), PensionAnnualAllowancesViewModel()))
+          val pensionsCya = optData.map(_.pensions).getOrElse(PensionsCYAModel.emptyModels)
           val viewModel = pensionsCya.paymentsIntoPension
 
           val updatedCyaModel = {

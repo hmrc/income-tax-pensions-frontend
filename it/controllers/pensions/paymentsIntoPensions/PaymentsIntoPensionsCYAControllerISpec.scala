@@ -20,6 +20,7 @@ import builders.AllPensionsDataBuilder.anAllPensionsData
 import builders.IncomeTaxUserDataBuilder.anIncomeTaxUserData
 import builders.PaymentsIntoPensionVewModelBuilder.aPaymentsIntoPensionViewModel
 import builders.PensionContributionsBuilder.anPensionContributions
+import builders.PensionLifetimeAllowanceViewModelBuilder.aPensionLifetimeAllowanceViewModel
 import builders.PensionSavingTaxChargesBuilder.anPensionSavngTaxCharges
 import builders.PensionsCYAModelBuilder.{aPensionsCYAModel, paymentsIntoPensionOnlyCYAModel}
 import builders.PensionsUserDataBuilder.aPensionsUserData
@@ -27,7 +28,7 @@ import builders.ReliefsBuilder.anReliefs
 import builders.UserBuilder.aUserRequest
 import forms.Yes
 import models.IncomeTaxUserData
-import models.pension.charges.PensionAnnualAllowancesViewModel
+import models.pension.charges.{PensionAnnualAllowancesViewModel, PensionLifetimeAllowancesViewModel}
 import models.pension.reliefs.PaymentsIntoPensionViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -426,7 +427,8 @@ class PaymentsIntoPensionsCYAControllerISpec extends IntegrationTest with ViewHe
           dropPensionsDB()
           userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYear)
           insertCyaData(aPensionsUserData.copy(pensions = aPensionsCYAModel.copy
-          (paymentsIntoPension = unchangedModel, pensionsAnnualAllowances = unchangedAllowances), taxYear = taxYear), aUserRequest)
+          (paymentsIntoPension = unchangedModel, pensionsAnnualAllowances = unchangedAllowances,
+            pensionLifetimeAllowances = aPensionLifetimeAllowanceViewModel), taxYear = taxYear), aUserRequest)
           authoriseAgentOrIndividual(isAgent = false)
           urlPost(url, form, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear)))
         }

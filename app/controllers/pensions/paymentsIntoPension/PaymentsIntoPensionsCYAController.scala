@@ -16,13 +16,12 @@
 
 package controllers.pensions.paymentsIntoPension
 
-import common.AnnualAllowanceTaxPaidValues
 import config.{AppConfig, ErrorHandler}
 import controllers.predicates.AuthorisedAction
 import forms.{No, Yes}
 import models.mongo.PensionsCYAModel
 import models.pension.AllPensionsData
-import models.pension.charges.PensionAnnualAllowancesViewModel
+import models.pension.charges.{LifetimeAllowance, PensionAnnualAllowancesViewModel, PensionLifetimeAllowancesViewModel}
 import models.pension.reliefs.PaymentsIntoPensionViewModel
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -82,7 +81,16 @@ class PaymentsIntoPensionsCYAController @Inject()(implicit val cc: MessagesContr
     }
   }
 
+  // scalastyle:off method.length
   private def generateCyaFromPrior(prior: AllPensionsData): PensionsCYAModel = {
+
+    val getAboveLifetimeAllowanceQuestion: Option[Boolean] = if (prior.pensionCharges.flatMap(a => a.pensionSavingsTaxCharges).map(
+      _.benefitInExcessOfLifetimeAllowance).isDefined || prior.pensionCharges.flatMap(
+      a => a.pensionSavingsTaxCharges).map(_.lumpSumBenefitTakenInExcessOfLifetimeAllowance).isDefined) {
+      Some(true)
+    } else {
+      None
+    }
 
     PensionsCYAModel(
       PaymentsIntoPensionViewModel(
@@ -100,7 +108,7 @@ class PaymentsIntoPensionsCYAController @Inject()(implicit val cc: MessagesContr
         prior.pensionReliefs.flatMap(a => a.pensionReliefs.paymentToEmployersSchemeNoTaxRelief)
       ),
 
-      //TODO: validate and amend when building the annual allowance CYA page
+      //TODO: validate and amend if necessary when building the annual allowance CYA page
       PensionAnnualAllowancesViewModel(
         prior.pensionCharges.flatMap(a => a.pensionSavingsTaxCharges).map(_.isAnnualAllowanceReduced),
         prior.pensionCharges.flatMap(a => a.pensionSavingsTaxCharges).flatMap(_.moneyPurchasedAllowance),
@@ -113,9 +121,24 @@ class PaymentsIntoPensionsCYAController @Inject()(implicit val cc: MessagesContr
         },
         prior.pensionCharges.flatMap(a => a.pensionContributions).map(_.annualAllowanceTaxPaid),
         prior.pensionCharges.flatMap(a => a.pensionContributions).map(_.pensionSchemeTaxReference)
+      ),
+
+      //TODO: validate and amend if necessary when building the lifetime allowance CYA page
+      pensionLifetimeAllowances = PensionLifetimeAllowancesViewModel(
+        aboveLifetimeAllowanceQuestion = getAboveLifetimeAllowanceQuestion,
+        pensionAsLumpSumQuestion = prior.pensionCharges.flatMap(
+          a => a.pensionSavingsTaxCharges).map(_.lumpSumBenefitTakenInExcessOfLifetimeAllowance.isDefined),
+        pensionAsLumpSum = prior.pensionCharges.flatMap(
+          a => a.pensionSavingsTaxCharges).flatMap(_.lumpSumBenefitTakenInExcessOfLifetimeAllowance),
+        pensionPaidAnotherWayQuestion = prior.pensionCharges.flatMap(
+          a => a.pensionSavingsTaxCharges).map(_.benefitInExcessOfLifetimeAllowance.isDefined),
+        pensionPaidAnotherWay = prior.pensionCharges.flatMap(
+          a => a.pensionSavingsTaxCharges).flatMap(_.benefitInExcessOfLifetimeAllowance)
+
       )
     )
   }
+  // scalastyle:on method.length
 
   private def comparePriorData(cyaData: PensionsCYAModel, priorData: Option[AllPensionsData]): Boolean = {
     priorData match {

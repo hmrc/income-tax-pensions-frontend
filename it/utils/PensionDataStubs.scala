@@ -16,6 +16,7 @@
 
 package utils
 
+import builders.PensionLifetimeAllowanceViewModelBuilder.aPensionLifetimeAllowanceViewModel
 import models.mongo.{PensionsCYAModel, PensionsUserData}
 import models.pension.AllPensionsData
 import models.pension.charges._
@@ -252,7 +253,7 @@ object PensionUserDataStub {
                        nino: String = "nino",
                        taxyear: Int = taxYear,
                        isPriorSubmission: Boolean = true,
-                       cya: PensionsCYAModel = (PensionsCYAModel(paymentsIntoPensionViewModel, pensionsAnnualAllowancesViewModel))
+                       cya: PensionsCYAModel = (PensionsCYAModel(paymentsIntoPensionViewModel, pensionsAnnualAllowancesViewModel, aPensionLifetimeAllowanceViewModel))
                      ): PensionsUserData = {
     PensionsUserData(
       sessionId = sessionId,
