@@ -337,3 +337,15 @@ pensions.pensionProviderPaidTax.radio.hasAgreedToPay = No, but has agreed to pay
 pensions.pensionProviderPaidTax.title.agent = Has your client’s pension provider paid the annual allowance tax?
 pensions.pensionProviderPaidTax.error.noEntry.individual = Select yes if your pension provider paid your annual allowance tax
 pensions.pensionProviderPaidTax.error.noEntry.agent = Select yes if your client’s pension provider paid the annual allowance tax
+
+#################       Tax Paid By Pension Provider Annual Allowance Messages         ########################################
+pensions.annualAllowanceTaxPaidByPensionProviderAmount.title.individual = How much tax did your pension provider pay?
+pensions.annualAllowanceTaxPaidByPensionProviderAmount.title.agent = How much tax did your client’s pension provider pay?
+pensions.annualAllowanceTaxPaidByPensionProviderAmount.paragraph.individual = If more than one of your pension schemes paid the tax, you can add these details later.
+pensions.annualAllowanceTaxPaidByPensionProviderAmount.paragraph.agent = If more than one of your client’s pension schemes paid the tax, you can add these details later.
+pensions.annualAllowanceTaxPaidByPensionProviderAmount.error.noEntry.individual = Enter the amount of tax your pension provider paid
+pensions.annualAllowanceTaxPaidByPensionProviderAmount.error.incorrectFormat.individual = Enter the amount of tax your pension provider paid in the correct format
+pensions.annualAllowanceTaxPaidByPensionProviderAmount.error.overMaximum.individual = The amount of tax your pension provider paid must be less than £100,000,000,000
+pensions.annualAllowanceTaxPaidByPensionProviderAmount.error.noEntry.agent = Enter the amount of tax your client’s pension provider paid
+pensions.annualAllowanceTaxPaidByPensionProviderAmount.error.incorrectFormat.agent = Enter the amount of tax your client’s pension provider paid in the correct format
+pensions.annualAllowanceTaxPaidByPensionProviderAmount.error.overMaximum.agent = The amount of tax your client’s pension provider paid must be less than £100,000,000,000
