@@ -29,7 +29,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.annualAllowance.PensionProviderPaidTaxView
 import controllers.pensions.routes.PensionsSummaryController
-
+import controllers.pensions.annualAllowance.routes._
 
 import javax.inject.Inject
 import scala.concurrent.Future
@@ -42,7 +42,7 @@ class PensionProviderPaidTaxController @Inject()(implicit val cc: MessagesContro
                                                  errorHandler: ErrorHandler,
                                                  clock: Clock) extends FrontendController(cc) with I18nSupport {
 
-  def yesNoForm(implicit user: User): Form[PensionProviderPaidTaxAnswers] = PensionProviderPaidTaxQuestionForm.yesNoForm(
+  def providerPaidTaxForm(implicit user: User): Form[PensionProviderPaidTaxAnswers] = PensionProviderPaidTaxQuestionForm.providerPaidTaxForm(
     missingInputError = s"pensions.pensionProviderPaidTax.error.noEntry.${if (user.isAgent) "agent" else "individual"}"
   )
 
@@ -56,36 +56,38 @@ class PensionProviderPaidTaxController @Inject()(implicit val cc: MessagesContro
               case "No" => No
               case "NoButHasAgreedToPay" => NoButHasAgreedToPay
             }
-            Future.successful(Ok(pensionProviderPaidTaxView(yesNoForm(request.user).fill(prefillValue), taxYear)))
-          case None => Future.successful(Ok(pensionProviderPaidTaxView(yesNoForm(request.user), taxYear)))
+            Future.successful(Ok(pensionProviderPaidTaxView(providerPaidTaxForm(request.user).fill(prefillValue), taxYear)))
+          case None =>
+            Future.successful(Ok(pensionProviderPaidTaxView(providerPaidTaxForm(request.user), taxYear)))
         }
       case _ =>
+        //TODO" navigate to CYA controller
         Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
     }
   }
 
   def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
-    yesNoForm(request.user).bindFromRequest().fold(
+    providerPaidTaxForm(request.user).bindFromRequest().fold(
       formWithErrors => Future.successful(BadRequest(pensionProviderPaidTaxView(formWithErrors, taxYear))),
-      yesNo => {
+      valueFieldName => {
         pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
           data =>
             val pensionsCYAModel: PensionsCYAModel = data.map(_.pensions).getOrElse(PensionsCYAModel.emptyModels)
             val viewModel = pensionsCYAModel.pensionsAnnualAllowances
 
-            //TODO update amount answer to none
             val updatedCyaModel = pensionsCYAModel.copy(pensionsAnnualAllowances = viewModel.copy(
-              pensionProvidePaidAnnualAllowanceQuestion = Some(yesNo.toString)
+              pensionProvidePaidAnnualAllowanceQuestion = Some(valueFieldName.toString),
+              taxPaidByPensionProvider = if (valueFieldName.toString == No.toString) None else viewModel.taxPaidByPensionProvider
             ))
 
             pensionSessionService.createOrUpdateSessionData(request.user,
               updatedCyaModel, taxYear, data.exists(_.isPriorSubmission))(errorHandler.internalServerError()) {
-              yesNo match {
-                case Yes =>
-                  //TODO redirect to correct pages
+              valueFieldName match {
+                case No =>
+                  //TODO redirect to correct page
                   Redirect(PensionsSummaryController.show(taxYear))
-                case No => Redirect(PensionsSummaryController.show(taxYear))
-                case NoButHasAgreedToPay => Redirect(PensionsSummaryController.show(taxYear))
+                // yes and no, agreed to pay (soft yes)
+                case _ => Redirect(TaxPaidByPensionProviderAmountController.show(taxYear))
               }
             }
         }

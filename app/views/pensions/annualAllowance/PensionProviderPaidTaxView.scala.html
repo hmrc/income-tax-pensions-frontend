@@ -67,17 +67,17 @@
             subheading = Some(messages("common.pensionAnnualAllowance.caption", (taxYear - 1).toString, taxYear.toString)),
             items = Seq(
                 RadioItem(id = Some("value"),
-                    value = Some("Yes"),
+                    value = Some(Yes.toString),
                     content = Text(messages("common.yes")),
                     checked = form("value").value.contains(Yes.toString)
                 ),
                 RadioItem(id = Some("value-no-agreed-to-pay"),
-                    value = Some("NoButHasAgreedToPay"),
+                    value = Some(NoButHasAgreedToPay.toString),
                     content = Text(messages("pensions.pensionProviderPaidTax.radio.hasAgreedToPay")),
                     checked = form("value").value.contains(NoButHasAgreedToPay.toString)
                 ),
                 RadioItem(id = Some("value-no"),
-                    value = Some("No"),
+                    value = Some(No.toString),
                     content = Text(messages("common.no")),
                     checked = form("value").value.contains(No.toString)
                 )
