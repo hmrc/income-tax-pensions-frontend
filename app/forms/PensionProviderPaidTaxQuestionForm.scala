@@ -28,7 +28,7 @@ case object NoButHasAgreedToPay extends PensionProviderPaidTaxAnswers
 
 object PensionProviderPaidTaxQuestionForm {
 
-  val yesNo = "value"
+  val valueFieldName = "value"
   val yes = "Yes"
   val no = "No"
   val noHasAgreedToPay = "NoButHasAgreedToPay"
@@ -50,9 +50,9 @@ object PensionProviderPaidTaxQuestionForm {
     }
   }
 
-  def yesNoForm(missingInputError: String): Form[PensionProviderPaidTaxAnswers] = Form(
+  def providerPaidTaxForm(missingInputError: String): Form[PensionProviderPaidTaxAnswers] = Form(
     single(
-      yesNo -> of(formatter(missingInputError))
+      valueFieldName -> of(formatter(missingInputError))
     )
   )
 
