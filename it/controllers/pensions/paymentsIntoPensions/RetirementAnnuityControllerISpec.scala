@@ -16,6 +16,7 @@
 
 package controllers.pensions.paymentsIntoPensions
 
+import builders.IncomeFromPensionsViewModelBuilder.anIncomeFromPensionEmptyViewModel
 import builders.IncomeTaxUserDataBuilder.anIncomeTaxUserData
 import builders.PaymentsIntoPensionVewModelBuilder._
 import builders.PensionAnnualAllowanceViewModelBuilder.aPensionAnnualAllowanceEmptyViewModel
@@ -341,7 +342,7 @@ class RetirementAnnuityControllerISpec extends IntegrationTest with ViewHelpers 
         val paymentsIntoPensionsViewModel = aPaymentsIntoPensionViewModel.copy(
           retirementAnnuityContractPaymentsQuestion = Some(true), totalRetirementAnnuityContractPayments = Some(333.44))
         insertCyaData(pensionsUsersData(isPrior = false, PensionsCYAModel(paymentsIntoPensionsViewModel,
-          aPensionAnnualAllowanceEmptyViewModel, aPensionLifetimeAllowancesEmptyViewModel)), aUserRequest)
+          aPensionAnnualAllowanceEmptyViewModel, aPensionLifetimeAllowancesEmptyViewModel, anIncomeFromPensionEmptyViewModel)), aUserRequest)
         urlPost(fullUrl(retirementAnnuityUrl(taxYearEOY)), body = form, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
       }
 
