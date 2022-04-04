@@ -16,30 +16,35 @@
 
 package builders
 
+import builders.IncomeFromPensionsViewModelBuilder.{anIncomeFromPensionEmptyViewModel, anIncomeFromPensionsViewModel}
 import builders.PaymentsIntoPensionVewModelBuilder.{aPaymentsIntoPensionViewModel, aPaymentsIntoPensionsEmptyViewModel}
 import builders.PensionAnnualAllowanceViewModelBuilder.{aPensionAnnualAllowanceEmptyViewModel, aPensionAnnualAllowanceViewModel}
 import builders.PensionLifetimeAllowanceViewModelBuilder.{aPensionLifetimeAllowanceViewModel, aPensionLifetimeAllowancesEmptyViewModel}
 import models.mongo.PensionsCYAModel
 import models.pension.charges.{PensionAnnualAllowancesViewModel, PensionLifetimeAllowancesViewModel}
 import models.pension.reliefs.PaymentsIntoPensionViewModel
+import models.pension.statebenefits.IncomeFromPensionsViewModel
 
 object PensionsCYAModelBuilder {
 
   val aPensionsCYAModel: PensionsCYAModel = PensionsCYAModel(
     paymentsIntoPension = aPaymentsIntoPensionViewModel,
     pensionsAnnualAllowances = aPensionAnnualAllowanceViewModel,
-    pensionLifetimeAllowances = aPensionLifetimeAllowanceViewModel
+    pensionLifetimeAllowances = aPensionLifetimeAllowanceViewModel,
+    incomeFromPensions = anIncomeFromPensionsViewModel
   )
 
   val aPensionsCYAEmptyModel: PensionsCYAModel = PensionsCYAModel(
     paymentsIntoPension = aPaymentsIntoPensionsEmptyViewModel,
     pensionsAnnualAllowances = aPensionAnnualAllowanceEmptyViewModel,
-    pensionLifetimeAllowances = aPensionLifetimeAllowancesEmptyViewModel
+    pensionLifetimeAllowances = aPensionLifetimeAllowancesEmptyViewModel,
+    incomeFromPensions = anIncomeFromPensionEmptyViewModel
 
   )
 
   def paymentsIntoPensionOnlyCYAModel(paymentsIntoPensionViewModel: PaymentsIntoPensionViewModel): PensionsCYAModel = {
-    PensionsCYAModel(paymentsIntoPensionViewModel, PensionAnnualAllowancesViewModel(), PensionLifetimeAllowancesViewModel())
+    PensionsCYAModel(paymentsIntoPensionViewModel, PensionAnnualAllowancesViewModel(),
+      PensionLifetimeAllowancesViewModel(), IncomeFromPensionsViewModel())
   }
 
 }

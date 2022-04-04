@@ -17,6 +17,7 @@
 package controllers.pensions.paymentsIntoPensions
 
 import builders.AllPensionsDataBuilder.anAllPensionsData
+import builders.IncomeFromPensionsViewModelBuilder.anIncomeFromPensionsViewModel
 import builders.IncomeTaxUserDataBuilder.anIncomeTaxUserData
 import builders.PaymentsIntoPensionVewModelBuilder.aPaymentsIntoPensionViewModel
 import builders.PensionContributionsBuilder.anPensionContributions
@@ -428,7 +429,8 @@ class PaymentsIntoPensionsCYAControllerISpec extends IntegrationTest with ViewHe
           userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYear)
           insertCyaData(aPensionsUserData.copy(pensions = aPensionsCYAModel.copy
           (paymentsIntoPension = unchangedModel, pensionsAnnualAllowances = unchangedAllowances,
-            pensionLifetimeAllowances = aPensionLifetimeAllowanceViewModel), taxYear = taxYear), aUserRequest)
+            pensionLifetimeAllowances = aPensionLifetimeAllowanceViewModel,
+            incomeFromPensions = anIncomeFromPensionsViewModel), taxYear = taxYear), aUserRequest)
           authoriseAgentOrIndividual(isAgent = false)
           urlPost(url, form, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear)))
         }

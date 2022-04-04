@@ -21,8 +21,9 @@ import controllers.predicates.AuthorisedAction
 import forms.{No, Yes}
 import models.mongo.PensionsCYAModel
 import models.pension.AllPensionsData
-import models.pension.charges.{LifetimeAllowance, PensionAnnualAllowancesViewModel, PensionLifetimeAllowancesViewModel}
+import models.pension.charges.{PensionAnnualAllowancesViewModel, PensionLifetimeAllowancesViewModel}
 import models.pension.reliefs.PaymentsIntoPensionViewModel
+import models.pension.statebenefits.{IncomeFromPensionsViewModel, StateBenefit, StateBenefitViewModel}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
@@ -81,16 +82,21 @@ class PaymentsIntoPensionsCYAController @Inject()(implicit val cc: MessagesContr
     }
   }
 
-  // scalastyle:off method.length
-  private def generateCyaFromPrior(prior: AllPensionsData): PensionsCYAModel = {
-
-    val getAboveLifetimeAllowanceQuestion: Option[Boolean] = if (prior.pensionCharges.flatMap(a => a.pensionSavingsTaxCharges).map(
+  private def getAboveLifetimeAllowanceQuestion(prior: AllPensionsData): Option[Boolean] = {
+    if (prior.pensionCharges.flatMap(a => a.pensionSavingsTaxCharges).map(
       _.benefitInExcessOfLifetimeAllowance).isDefined || prior.pensionCharges.flatMap(
       a => a.pensionSavingsTaxCharges).map(_.lumpSumBenefitTakenInExcessOfLifetimeAllowance).isDefined) {
       Some(true)
     } else {
       None
     }
+  }
+
+  // scalastyle:off method.length
+  private def generateCyaFromPrior(prior: AllPensionsData): PensionsCYAModel = {
+
+    val statePension: Option[StateBenefit] = prior.stateBenefits.flatMap(_.stateBenefits.flatMap(_.statePension))
+    val statePensionLumpSum: Option[StateBenefit] = prior.stateBenefits.flatMap(_.stateBenefits.flatMap(_.statePensionLumpSum))
 
     PensionsCYAModel(
       PaymentsIntoPensionViewModel(
@@ -125,7 +131,7 @@ class PaymentsIntoPensionsCYAController @Inject()(implicit val cc: MessagesContr
 
       //TODO: validate and amend if necessary when building the lifetime allowance CYA page
       pensionLifetimeAllowances = PensionLifetimeAllowancesViewModel(
-        aboveLifetimeAllowanceQuestion = getAboveLifetimeAllowanceQuestion,
+        aboveLifetimeAllowanceQuestion = getAboveLifetimeAllowanceQuestion(prior),
         pensionAsLumpSumQuestion = prior.pensionCharges.flatMap(
           a => a.pensionSavingsTaxCharges).map(_.lumpSumBenefitTakenInExcessOfLifetimeAllowance.isDefined),
         pensionAsLumpSum = prior.pensionCharges.flatMap(
@@ -135,10 +141,37 @@ class PaymentsIntoPensionsCYAController @Inject()(implicit val cc: MessagesContr
         pensionPaidAnotherWay = prior.pensionCharges.flatMap(
           a => a.pensionSavingsTaxCharges).flatMap(_.benefitInExcessOfLifetimeAllowance)
 
+      ),
+
+      //TODO: validate as necessary on building CYA page
+      incomeFromPensions = IncomeFromPensionsViewModel(
+        statePension = getSatePensionModel(statePension),
+        statePensionLumpSum = getSatePensionModel(statePensionLumpSum)
       )
     )
   }
   // scalastyle:on method.length
+
+  private def getSatePensionModel(statePension: Option[StateBenefit]): Option[StateBenefitViewModel] = {
+    statePension match {
+      case Some(benefit) => Some(StateBenefitViewModel(
+        benefitId = Some(benefit.benefitId),
+        startDateQuestion = Some(true),
+        startDate = Some(benefit.startDate),
+        endDateQuestion = Some(benefit.endDate.isDefined),
+        endDate = benefit.endDate,
+        submittedOnQuestion = Some(benefit.submittedOn.isDefined),
+        submittedOn = benefit.submittedOn,
+        dateIgnoredQuestion = Some(benefit.dateIgnored.isDefined),
+        dateIgnored = benefit.dateIgnored,
+        amountPaidQuestion = Some(benefit.amount.isDefined),
+        amount = benefit.amount,
+        taxPaidQuestion = Some(benefit.taxPaid.isDefined),
+        taxPaid = benefit.taxPaid)
+      )
+      case _ => None
+    }
+  }
 
   private def comparePriorData(cyaData: PensionsCYAModel, priorData: Option[AllPensionsData]): Boolean = {
     priorData match {
