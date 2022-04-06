@@ -16,7 +16,7 @@
 
 @import views.html.templates.Layout
 @import views.html.templates.helpers.Heading
-@import views.html.templates.helpers.InputRadio
+@import views.html.templates.helpers.InputRadioAlt
 @import views.html.templates.helpers.Button
 @import views.html.templates.helpers.ErrorSummary
 @import views.html.templates.helpers.Link
@@ -27,7 +27,7 @@
     heading: Heading,
     button: Button,
     formWithCsrf: FormWithCSRF,
-    inputRadio: InputRadio,
+    inputRadio: InputRadioAlt,
     errorSummary: ErrorSummary,
     link: Link
 )
@@ -54,14 +54,15 @@
 
     @errorSummary(form.errors.distinct)
 
+    @heading(titleForUse, Some(messages("common.paymentsIntoPensions.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-3")
+    @contentHtml
+
     @formWithCsrf(action = controllers.pensions.paymentsIntoPension.routes.WorkplacePensionController.submit(taxYear)) {
         @inputRadio(
             form = form,
-            heading = titleForUse,
-            content = Some(contentHtml),
-            classes = "govuk-!-margin-bottom-4",
+            legendHeading = Some(Html(titleForUse)),
+            legendHidden = true,
             inline = true,
-            subheading = Some(messages("common.paymentsIntoPensions.caption", (taxYear - 1).toString, taxYear.toString))
         )
         @findOutMoreLink
         @button()

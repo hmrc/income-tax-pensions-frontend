@@ -45,14 +45,14 @@ class PensionsTaxReliefNotClaimedControllerISpec extends IntegrationTest with Vi
   }
 
   object Selectors {
-    val captionSelector: String = "#main-content > div > div > form > div > fieldset > legend > header > p"
+    val captionSelector: String = "#main-content > div > div > header > p"
     val continueButtonSelector: String = "#continue"
     val formSelector: String = "#main-content > div > div > form"
     val yesSelector = "#value"
     val noSelector = "#value-no"
-    val h2Selector: String = s"#main-content > div > div > form > div > fieldset > legend > h2"
+    val h2Selector: String = s"#main-content > div > div > form > div > fieldset > legend"
 
-    def paragraphSelector(index: Int): String = s"#main-content > div > div > form > div > fieldset > legend > p:nth-child($index)"
+    def paragraphSelector(index: Int): String = s"#main-content > div > div > p:nth-of-type($index)"
 
   }
 
@@ -154,8 +154,8 @@ class PensionsTaxReliefNotClaimedControllerISpec extends IntegrationTest with Vi
           titleCheck(expectedTitle)
           h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
-          textOnPageCheck(user.specificExpectedResults.get.expectedQuestionsInfoText, paragraphSelector(2))
-          textOnPageCheck(user.specificExpectedResults.get.expectedWhereToCheck, paragraphSelector(3))
+          textOnPageCheck(user.specificExpectedResults.get.expectedQuestionsInfoText, paragraphSelector(1))
+          textOnPageCheck(user.specificExpectedResults.get.expectedWhereToCheck, paragraphSelector(2))
           textOnPageCheck(user.specificExpectedResults.get.expectedSubHeading, h2Selector)
           radioButtonCheck(yesText, 1, checked = Some(false))
           radioButtonCheck(noText, 2, checked = Some(false))
@@ -182,8 +182,8 @@ class PensionsTaxReliefNotClaimedControllerISpec extends IntegrationTest with Vi
           titleCheck(expectedTitle)
           h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
-          textOnPageCheck(user.specificExpectedResults.get.expectedQuestionsInfoText, paragraphSelector(2))
-          textOnPageCheck(user.specificExpectedResults.get.expectedWhereToCheck, paragraphSelector(3))
+          textOnPageCheck(user.specificExpectedResults.get.expectedQuestionsInfoText, paragraphSelector(1))
+          textOnPageCheck(user.specificExpectedResults.get.expectedWhereToCheck, paragraphSelector(2))
           textOnPageCheck(user.specificExpectedResults.get.expectedSubHeading, h2Selector)
           radioButtonCheck(yesText, 1, checked = Some(true))
           radioButtonCheck(noText, 2, checked = Some(false))
@@ -212,8 +212,8 @@ class PensionsTaxReliefNotClaimedControllerISpec extends IntegrationTest with Vi
           titleCheck(expectedTitle)
           h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
-          textOnPageCheck(user.specificExpectedResults.get.expectedQuestionsInfoText, paragraphSelector(2))
-          textOnPageCheck(user.specificExpectedResults.get.expectedWhereToCheck, paragraphSelector(3))
+          textOnPageCheck(user.specificExpectedResults.get.expectedQuestionsInfoText, paragraphSelector(1))
+          textOnPageCheck(user.specificExpectedResults.get.expectedWhereToCheck, paragraphSelector(2))
           textOnPageCheck(user.specificExpectedResults.get.expectedSubHeading, h2Selector)
           radioButtonCheck(yesText, 1, checked = Some(false))
           radioButtonCheck(noText, 2, checked = Some(true))
@@ -277,8 +277,8 @@ class PensionsTaxReliefNotClaimedControllerISpec extends IntegrationTest with Vi
           titleCheck(expectedErrorTitle)
           h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
-          textOnPageCheck(user.specificExpectedResults.get.expectedQuestionsInfoText, paragraphSelector(2))
-          textOnPageCheck(user.specificExpectedResults.get.expectedWhereToCheck, paragraphSelector(3))
+          textOnPageCheck(user.specificExpectedResults.get.expectedQuestionsInfoText, paragraphSelector(1))
+          textOnPageCheck(user.specificExpectedResults.get.expectedWhereToCheck, paragraphSelector(2))
           textOnPageCheck(user.specificExpectedResults.get.expectedSubHeading, h2Selector)
           radioButtonCheck(yesText, 1, checked = Some(false))
           radioButtonCheck(noText, 2, checked = Some(false))

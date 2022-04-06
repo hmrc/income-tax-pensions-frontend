@@ -47,7 +47,7 @@ class WorkplaceAmountControllerISpec extends IntegrationTest with ViewHelpers wi
   }
 
   object Selectors {
-    val captionSelector: String = "#main-content > div > div > form > div > label > header > p"
+    val captionSelector: String = "#main-content > div > div > header > p"
     val continueButtonSelector: String = "#continue"
     val formSelector: String = "#main-content > div > div > form"
     val hintTextSelector = "#amount-hint"
@@ -55,11 +55,11 @@ class WorkplaceAmountControllerISpec extends IntegrationTest with ViewHelpers wi
     val inputSelector = "#amount"
     val expectedErrorHref = "#amount"
 
-    def bulletListSelector(index: Int): String = s"#main-content > div > div > form > div > label > ul > li:nth-child($index)"
+    def bulletListSelector(index: Int): String = s"#main-content > div > div > ul > li:nth-child($index)"
 
-    def insetSpanText(index: Int): String = s"#main-content > div > div > form > div > label > div > span:nth-child($index)"
+    def insetSpanText(index: Int): String = s"#main-content > div > div > div > span:nth-child($index)"
 
-    def paragraphSelector(index: Int): String = s"#main-content > div > div > form > div > label > p:nth-child($index)"
+    def paragraphSelector(index: Int): String = s"#main-content > div > div > p:nth-of-type($index)"
   }
 
   trait CommonExpectedResults {
@@ -173,10 +173,10 @@ class WorkplaceAmountControllerISpec extends IntegrationTest with ViewHelpers wi
           titleCheck(user.specificExpectedResults.get.expectedTitle)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
-          textOnPageCheck(expectedParagraph, paragraphSelector(2))
+          textOnPageCheck(expectedParagraph, paragraphSelector(1))
           textOnPageCheck(user.specificExpectedResults.get.expectedBullet1, bulletListSelector(1))
           textOnPageCheck(user.specificExpectedResults.get.expectedBullet2, bulletListSelector(2))
-          textOnPageCheck(user.specificExpectedResults.get.expectedYouCanFindThisOut, paragraphSelector(4))
+          textOnPageCheck(user.specificExpectedResults.get.expectedYouCanFindThisOut, paragraphSelector(2))
           textOnPageCheck(hintText, hintTextSelector)
           textOnPageCheck(poundPrefixText, poundPrefixSelector)
           inputFieldValueCheck(amountInputName, inputSelector, "")
@@ -206,10 +206,10 @@ class WorkplaceAmountControllerISpec extends IntegrationTest with ViewHelpers wi
           titleCheck(user.specificExpectedResults.get.expectedTitle)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
-          textOnPageCheck(expectedParagraph, paragraphSelector(2))
+          textOnPageCheck(expectedParagraph, paragraphSelector(1))
           textOnPageCheck(user.specificExpectedResults.get.expectedBullet1, bulletListSelector(1))
           textOnPageCheck(user.specificExpectedResults.get.expectedBullet2, bulletListSelector(2))
-          textOnPageCheck(user.specificExpectedResults.get.expectedYouCanFindThisOut, paragraphSelector(4))
+          textOnPageCheck(user.specificExpectedResults.get.expectedYouCanFindThisOut, paragraphSelector(2))
           textOnPageCheck(hintText, hintTextSelector)
           textOnPageCheck(poundPrefixText, poundPrefixSelector)
           inputFieldValueCheck(amountInputName, inputSelector, existingAmount)
@@ -304,10 +304,10 @@ class WorkplaceAmountControllerISpec extends IntegrationTest with ViewHelpers wi
           titleCheck(user.specificExpectedResults.get.expectedErrorTitle)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
-          textOnPageCheck(expectedParagraph, paragraphSelector(2))
+          textOnPageCheck(expectedParagraph, paragraphSelector(1))
           textOnPageCheck(user.specificExpectedResults.get.expectedBullet1, bulletListSelector(1))
           textOnPageCheck(user.specificExpectedResults.get.expectedBullet2, bulletListSelector(2))
-          textOnPageCheck(user.specificExpectedResults.get.expectedYouCanFindThisOut, paragraphSelector(4))
+          textOnPageCheck(user.specificExpectedResults.get.expectedYouCanFindThisOut, paragraphSelector(2))
           textOnPageCheck(hintText, hintTextSelector)
           textOnPageCheck(poundPrefixText, poundPrefixSelector)
           inputFieldValueCheck(amountInputName, inputSelector, amountEmpty)
@@ -342,10 +342,10 @@ class WorkplaceAmountControllerISpec extends IntegrationTest with ViewHelpers wi
           titleCheck(user.specificExpectedResults.get.expectedErrorTitle)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
-          textOnPageCheck(expectedParagraph, paragraphSelector(2))
+          textOnPageCheck(expectedParagraph, paragraphSelector(1))
           textOnPageCheck(user.specificExpectedResults.get.expectedBullet1, bulletListSelector(1))
           textOnPageCheck(user.specificExpectedResults.get.expectedBullet2, bulletListSelector(2))
-          textOnPageCheck(user.specificExpectedResults.get.expectedYouCanFindThisOut, paragraphSelector(4))
+          textOnPageCheck(user.specificExpectedResults.get.expectedYouCanFindThisOut, paragraphSelector(2))
           textOnPageCheck(hintText, hintTextSelector)
           textOnPageCheck(poundPrefixText, poundPrefixSelector)
           inputFieldValueCheck(amountInputName, inputSelector, amountInvalidFormat)
@@ -380,10 +380,10 @@ class WorkplaceAmountControllerISpec extends IntegrationTest with ViewHelpers wi
           titleCheck(user.specificExpectedResults.get.expectedErrorTitle)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
-          textOnPageCheck(expectedParagraph, paragraphSelector(2))
+          textOnPageCheck(expectedParagraph, paragraphSelector(1))
           textOnPageCheck(user.specificExpectedResults.get.expectedBullet1, bulletListSelector(1))
           textOnPageCheck(user.specificExpectedResults.get.expectedBullet2, bulletListSelector(2))
-          textOnPageCheck(user.specificExpectedResults.get.expectedYouCanFindThisOut, paragraphSelector(4))
+          textOnPageCheck(user.specificExpectedResults.get.expectedYouCanFindThisOut, paragraphSelector(2))
           textOnPageCheck(hintText, hintTextSelector)
           textOnPageCheck(poundPrefixText, poundPrefixSelector)
           inputFieldValueCheck(amountInputName, inputSelector, amountOverMaximum)

@@ -46,17 +46,16 @@ class OneOffRASPaymentsAmountControllerISpec extends IntegrationTest with ViewHe
   }
 
   object Selectors {
-    val captionSelector: String = "#main-content > div > div > form > div > label > header > p"
+    val captionSelector: String = "#main-content > div > div > header > p"
     val continueButtonSelector: String = "#continue"
     val formSelector: String = "#main-content > div > div > form"
     val hintTextSelector = "#amount-hint"
     val poundPrefixSelector = ".govuk-input__prefix"
     val inputSelector = "#amount"
     val expectedErrorHref = "#amount"
-    def insetSpanText(index: Int): String = s"#main-content > div > div > form > div > label > div > span:nth-child($index)"
-    def paragraphSelector(index: Int): String = s"#main-content > div > div > form > div > label > p:nth-child($index)"
+    def insetSpanText(index: Int): String = s"#main-content > div > div > div > span:nth-child($index)"
+    def paragraphSelector(index: Int): String = s"#main-content > div > div > p:nth-of-type($index)"
   }
-
   trait CommonExpectedResults {
     val expectedCaption: Int => String
     val expectedHeading: String
@@ -160,8 +159,8 @@ class OneOffRASPaymentsAmountControllerISpec extends IntegrationTest with ViewHe
           titleCheck(expectedTitle)
           h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
-          textOnPageCheck(user.specificExpectedResults.get.expectedYouToldUs, paragraphSelector(2))
-          textOnPageCheck(expectedHowToWorkOut, paragraphSelector(3))
+          textOnPageCheck(user.specificExpectedResults.get.expectedYouToldUs, paragraphSelector(1))
+          textOnPageCheck(expectedHowToWorkOut, paragraphSelector(2))
           textOnPageCheck(expectedCalculationHeading, insetSpanText(1))
           textOnPageCheck(expectedExampleCalculation, insetSpanText(2))
           textOnPageCheck(hintText, hintTextSelector)
@@ -194,8 +193,8 @@ class OneOffRASPaymentsAmountControllerISpec extends IntegrationTest with ViewHe
           titleCheck(expectedTitle)
           h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
-          textOnPageCheck(user.specificExpectedResults.get.expectedYouToldUs, paragraphSelector(2))
-          textOnPageCheck(expectedHowToWorkOut, paragraphSelector(3))
+          textOnPageCheck(user.specificExpectedResults.get.expectedYouToldUs, paragraphSelector(1))
+          textOnPageCheck(expectedHowToWorkOut, paragraphSelector(2))
           textOnPageCheck(expectedCalculationHeading, insetSpanText(1))
           textOnPageCheck(expectedExampleCalculation, insetSpanText(2))
           textOnPageCheck(hintText, hintTextSelector)
@@ -308,8 +307,8 @@ class OneOffRASPaymentsAmountControllerISpec extends IntegrationTest with ViewHe
           titleCheck(expectedErrorTitle)
           h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
-          textOnPageCheck(user.specificExpectedResults.get.expectedYouToldUs, paragraphSelector(2))
-          textOnPageCheck(expectedHowToWorkOut, paragraphSelector(3))
+          textOnPageCheck(user.specificExpectedResults.get.expectedYouToldUs, paragraphSelector(1))
+          textOnPageCheck(expectedHowToWorkOut, paragraphSelector(2))
           textOnPageCheck(expectedCalculationHeading, insetSpanText(1))
           textOnPageCheck(expectedExampleCalculation, insetSpanText(2))
           textOnPageCheck(hintText, hintTextSelector)
@@ -346,8 +345,8 @@ class OneOffRASPaymentsAmountControllerISpec extends IntegrationTest with ViewHe
           titleCheck(expectedErrorTitle)
           h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
-          textOnPageCheck(user.specificExpectedResults.get.expectedYouToldUs, paragraphSelector(2))
-          textOnPageCheck(expectedHowToWorkOut, paragraphSelector(3))
+          textOnPageCheck(user.specificExpectedResults.get.expectedYouToldUs, paragraphSelector(1))
+          textOnPageCheck(expectedHowToWorkOut, paragraphSelector(2))
           textOnPageCheck(expectedCalculationHeading, insetSpanText(1))
           textOnPageCheck(expectedExampleCalculation, insetSpanText(2))
           textOnPageCheck(hintText, hintTextSelector)
@@ -384,8 +383,8 @@ class OneOffRASPaymentsAmountControllerISpec extends IntegrationTest with ViewHe
           titleCheck(expectedErrorTitle)
           h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
-          textOnPageCheck(user.specificExpectedResults.get.expectedYouToldUs, paragraphSelector(2))
-          textOnPageCheck(expectedHowToWorkOut, paragraphSelector(3))
+          textOnPageCheck(user.specificExpectedResults.get.expectedYouToldUs, paragraphSelector(1))
+          textOnPageCheck(expectedHowToWorkOut, paragraphSelector(2))
           textOnPageCheck(expectedCalculationHeading, insetSpanText(1))
           textOnPageCheck(expectedExampleCalculation, insetSpanText(2))
           textOnPageCheck(hintText, hintTextSelector)

@@ -46,15 +46,15 @@ class ReliefAtSourcePaymentsAndTaxReliefAmountControllerISpec extends Integratio
   }
 
   object Selectors {
-    val captionSelector: String = "#main-content > div > div > form > div > label > header > p"
+    val captionSelector: String = "#main-content > div > div > header > p"
     val continueButtonSelector: String = "#continue"
     val formSelector: String = "#main-content > div > div > form"
     val hintTextSelector = "#amount-hint"
     val poundPrefixSelector = ".govuk-input__prefix"
     val inputSelector = "#amount"
     val expectedErrorHref = "#amount"
-    def insetSpanText(index: Int): String = s"#main-content > div > div > form > div > label > div > span:nth-child($index)"
-    def paragraphSelector(index: Int): String = s"#main-content > div > div > form > div > label > p:nth-child($index)"
+    def insetSpanText(index: Int): String = s"#main-content > div > div > div > span:nth-child($index)"
+    def paragraphSelector(index: Int): String = s"#main-content > div > div > p:nth-of-type($index)"
   }
 
   trait CommonExpectedResults {
@@ -166,8 +166,8 @@ class ReliefAtSourcePaymentsAndTaxReliefAmountControllerISpec extends Integratio
           titleCheck(expectedTitle)
           h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
-          textOnPageCheck(user.specificExpectedResults.get.expectedWhereToFind, paragraphSelector(2))
-          textOnPageCheck(user.specificExpectedResults.get.expectedHowToWorkOut, paragraphSelector(3))
+          textOnPageCheck(user.specificExpectedResults.get.expectedWhereToFind, paragraphSelector(1))
+          textOnPageCheck(user.specificExpectedResults.get.expectedHowToWorkOut, paragraphSelector(2))
           textOnPageCheck(expectedCalculationHeading, insetSpanText(1))
           textOnPageCheck(expectedExampleCalculation, insetSpanText(2))
           textOnPageCheck(hintText, hintTextSelector)
@@ -200,8 +200,8 @@ class ReliefAtSourcePaymentsAndTaxReliefAmountControllerISpec extends Integratio
           titleCheck(expectedTitle)
           h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
-          textOnPageCheck(user.specificExpectedResults.get.expectedWhereToFind, paragraphSelector(2))
-          textOnPageCheck(user.specificExpectedResults.get.expectedHowToWorkOut, paragraphSelector(3))
+          textOnPageCheck(user.specificExpectedResults.get.expectedWhereToFind, paragraphSelector(1))
+          textOnPageCheck(user.specificExpectedResults.get.expectedHowToWorkOut, paragraphSelector(2))
           textOnPageCheck(expectedCalculationHeading, insetSpanText(1))
           textOnPageCheck(expectedExampleCalculation, insetSpanText(2))
           textOnPageCheck(hintText, hintTextSelector)
@@ -301,8 +301,8 @@ class ReliefAtSourcePaymentsAndTaxReliefAmountControllerISpec extends Integratio
           titleCheck(expectedErrorTitle)
           h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
-          textOnPageCheck(user.specificExpectedResults.get.expectedWhereToFind, paragraphSelector(2))
-          textOnPageCheck(user.specificExpectedResults.get.expectedHowToWorkOut, paragraphSelector(3))
+          textOnPageCheck(user.specificExpectedResults.get.expectedWhereToFind, paragraphSelector(1))
+          textOnPageCheck(user.specificExpectedResults.get.expectedHowToWorkOut, paragraphSelector(2))
           textOnPageCheck(expectedCalculationHeading, insetSpanText(1))
           textOnPageCheck(expectedExampleCalculation, insetSpanText(2))
           textOnPageCheck(hintText, hintTextSelector)
@@ -339,8 +339,8 @@ class ReliefAtSourcePaymentsAndTaxReliefAmountControllerISpec extends Integratio
           titleCheck(expectedErrorTitle)
           h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
-          textOnPageCheck(user.specificExpectedResults.get.expectedWhereToFind, paragraphSelector(2))
-          textOnPageCheck(user.specificExpectedResults.get.expectedHowToWorkOut, paragraphSelector(3))
+          textOnPageCheck(user.specificExpectedResults.get.expectedWhereToFind, paragraphSelector(1))
+          textOnPageCheck(user.specificExpectedResults.get.expectedHowToWorkOut, paragraphSelector(2))
           textOnPageCheck(expectedCalculationHeading, insetSpanText(1))
           textOnPageCheck(expectedExampleCalculation, insetSpanText(2))
           textOnPageCheck(hintText, hintTextSelector)
@@ -377,8 +377,8 @@ class ReliefAtSourcePaymentsAndTaxReliefAmountControllerISpec extends Integratio
           titleCheck(expectedErrorTitle)
           h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
-          textOnPageCheck(user.specificExpectedResults.get.expectedWhereToFind, paragraphSelector(2))
-          textOnPageCheck(user.specificExpectedResults.get.expectedHowToWorkOut, paragraphSelector(3))
+          textOnPageCheck(user.specificExpectedResults.get.expectedWhereToFind, paragraphSelector(1))
+          textOnPageCheck(user.specificExpectedResults.get.expectedHowToWorkOut, paragraphSelector(2))
           textOnPageCheck(expectedCalculationHeading, insetSpanText(1))
           textOnPageCheck(expectedExampleCalculation, insetSpanText(2))
           textOnPageCheck(hintText, hintTextSelector)
