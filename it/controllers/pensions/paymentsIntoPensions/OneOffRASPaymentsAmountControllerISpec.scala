@@ -420,7 +420,7 @@ class OneOffRASPaymentsAmountControllerISpec extends IntegrationTest with ViewHe
       }
     }
 
-    "redirect to the correct page when a valid amount is submitted and update the session amount" which {
+    "redirect to the total RAS payments page when a valid amount is submitted and update the session amount" which {
 
       val validAmount = "100.22"
       val validForm: Map[String, String] = Map(AmountForm.amount -> validAmount)
@@ -428,7 +428,7 @@ class OneOffRASPaymentsAmountControllerISpec extends IntegrationTest with ViewHe
       lazy val result: WSResponse = {
         dropPensionsDB()
         val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
-          oneOffRasPaymentPlusTaxReliefQuestion = Some(true), totalOneOffRasPaymentPlusTaxRelief = None)
+          totalOneOffRasPaymentPlusTaxRelief = None, totalPaymentsIntoRASQuestion = Some(true))
         insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
         authoriseAgentOrIndividual(isAgent = false)
         urlPost(fullUrl(oneOffReliefAtSourcePaymentsAmountUrl(taxYearEOY)), body = validForm,
@@ -443,6 +443,7 @@ class OneOffRASPaymentsAmountControllerISpec extends IntegrationTest with ViewHe
       "updates totalOneOffRasPaymentPlusTaxRelief to Some(100.22)" in {
         lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
         cyaModel.pensions.paymentsIntoPension.totalOneOffRasPaymentPlusTaxRelief shouldBe Some(BigDecimal(validAmount))
+        cyaModel.pensions.paymentsIntoPension.totalPaymentsIntoRASQuestion shouldBe None
       }
     }
   }

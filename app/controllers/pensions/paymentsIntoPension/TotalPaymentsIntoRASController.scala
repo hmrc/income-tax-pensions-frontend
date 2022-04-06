@@ -25,12 +25,15 @@ import forms.YesNoForm
 import javax.inject.{Inject, Singleton}
 import models.User
 import models.mongo.PensionsCYAModel
+import models.redirects.ConditionalRedirect
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
+import services.RedirectService.{isFinishedCheck, PaymentsIntoPensionsRedirects, redirectBasedOnCurrentAnswers}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
+import utils.PaymentsIntoPensionPages.TotalRasPage
 import views.html.pensions.TotalPaymentsIntoRASView
 
 import scala.concurrent.Future
@@ -50,8 +53,9 @@ class TotalPaymentsIntoRASController @Inject()(implicit val mcc: MessagesControl
   )
 
   def show(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
-    pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
-      case Some(data) =>
+    pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) { optData =>
+      redirectBasedOnCurrentAnswers(taxYear, optData)(redirects(_, taxYear)) { data =>
+
         val model = data.pensions.paymentsIntoPension
         model.totalRASPaymentsAndTaxRelief match {
           case Some(totalRAS) =>
@@ -61,13 +65,14 @@ class TotalPaymentsIntoRASController @Inject()(implicit val mcc: MessagesControl
           case _ =>
             Future.successful(Redirect(controllers.pensions.paymentsIntoPension.routes.ReliefAtSourcePaymentsAndTaxReliefAmountController.show(taxYear)))
         }
-      case _ => Future.successful(Redirect(controllers.pensions.paymentsIntoPension.routes.PaymentsIntoPensionsCYAController.show(taxYear)))
+      }
     }
   }
 
   def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
-    pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
-      case Some(data) =>
+    pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) { optData =>
+      redirectBasedOnCurrentAnswers(taxYear, optData)(redirects(_, taxYear)) { data =>
+
         val cya = data.pensions
         val model = cya.paymentsIntoPension
         yesNoForm(request.user).bindFromRequest().fold(
@@ -84,18 +89,19 @@ class TotalPaymentsIntoRASController @Inject()(implicit val mcc: MessagesControl
           yesNo => {
             val updatedCyaModel: PensionsCYAModel =
               cya.copy(paymentsIntoPension = model.copy(totalPaymentsIntoRASQuestion = Some(yesNo)))
+            val redirectLocation = if (yesNo) {
+              controllers.pensions.paymentsIntoPension.routes.PensionsTaxReliefNotClaimedController.show(taxYear)
+            } else {
+              controllers.pensions.paymentsIntoPension.routes.ReliefAtSourcePaymentsAndTaxReliefAmountController.show(taxYear)
+            }
 
             pensionSessionService.createOrUpdateSessionData(request.user,
               updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
-              if (yesNo) {
-                Redirect(controllers.pensions.paymentsIntoPension.routes.PensionsTaxReliefNotClaimedController.show(taxYear))
-              } else {
-                Redirect(controllers.pensions.paymentsIntoPension.routes.ReliefAtSourcePaymentsAndTaxReliefAmountController.show(taxYear))
-              }
+              isFinishedCheck(updatedCyaModel, taxYear, redirectLocation)
             }
           }
         )
-      case _ => Future.successful(Redirect(controllers.pensions.paymentsIntoPension.routes.PaymentsIntoPensionsCYAController.show(taxYear)))
+      }
     }
   }
 
@@ -113,6 +119,10 @@ class TotalPaymentsIntoRASController @Inject()(implicit val mcc: MessagesControl
       formatNoZeros(total.*(0.8)),
       formatNoZeros(total.*(0.2))
     )
+  }
+
+  private def redirects(cya: PensionsCYAModel, taxYear: Int): Seq[ConditionalRedirect] = {
+    PaymentsIntoPensionsRedirects.journeyCheck(TotalRasPage, cya, taxYear)
   }
 
 }

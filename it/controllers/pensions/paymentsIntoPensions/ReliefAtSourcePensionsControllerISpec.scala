@@ -19,7 +19,7 @@ package controllers.pensions.paymentsIntoPensions
 import builders.PaymentsIntoPensionVewModelBuilder.aPaymentsIntoPensionViewModel
 import builders.PensionsUserDataBuilder.{anPensionsUserDataEmptyCya, pensionsUserDataWithPaymentsIntoPensions}
 import builders.UserBuilder.aUserRequest
-import controllers.pensions.paymentsIntoPension.routes.{PensionsTaxReliefNotClaimedController, ReliefAtSourcePaymentsAndTaxReliefAmountController}
+import controllers.pensions.paymentsIntoPension.routes.{PensionsTaxReliefNotClaimedController, ReliefAtSourcePaymentsAndTaxReliefAmountController, PaymentsIntoPensionsCYAController}
 import forms.YesNoForm
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -354,7 +354,7 @@ class ReliefAtSourcePensionsControllerISpec extends IntegrationTest with BeforeA
       }
     }
 
-    "redirect to Payment Into Pensions CYA page when user selects No and there is cya data" which {
+    "redirect to Payment Into Pensions CYA page when user selects No which completes the CYA model" which {
       lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.no)
 
       lazy val result: WSResponse = {
@@ -369,13 +369,15 @@ class ReliefAtSourcePensionsControllerISpec extends IntegrationTest with BeforeA
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        //TODO redirect to payment into pensions cya page
-        result.header("location") shouldBe Some(PensionsTaxReliefNotClaimedController.show(taxYearEOY).url)
+        result.header("location") shouldBe Some(PaymentsIntoPensionsCYAController.show(taxYearEOY).url)
       }
 
       "updates rasPensionPaymentQuestion to Some(false) and remove totalRASPaymentsAndTaxRelief" in {
         lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
         cyaModel.pensions.paymentsIntoPension.rasPensionPaymentQuestion shouldBe Some(false)
+        cyaModel.pensions.paymentsIntoPension.totalRASPaymentsAndTaxRelief shouldBe None
+        cyaModel.pensions.paymentsIntoPension.oneOffRasPaymentPlusTaxReliefQuestion shouldBe None
+        cyaModel.pensions.paymentsIntoPension.totalOneOffRasPaymentPlusTaxRelief shouldBe None
         cyaModel.pensions.paymentsIntoPension.totalRASPaymentsAndTaxRelief shouldBe None
       }
     }

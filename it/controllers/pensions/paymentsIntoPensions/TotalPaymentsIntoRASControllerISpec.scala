@@ -19,8 +19,9 @@ package controllers.pensions.paymentsIntoPensions
 import builders.IncomeFromPensionsViewModelBuilder.anIncomeFromPensionEmptyViewModel
 import builders.PensionAnnualAllowanceViewModelBuilder.aPensionAnnualAllowanceEmptyViewModel
 import builders.PensionLifetimeAllowanceViewModelBuilder.aPensionLifetimeAllowancesEmptyViewModel
+import builders.PensionsCYAModelBuilder.aPensionsCYAEmptyModel
 import builders.PensionsUserDataBuilder
-import builders.PensionsUserDataBuilder.anPensionsUserDataEmptyCya
+import builders.PensionsUserDataBuilder.aPensionsUserData
 import builders.UserBuilder.aUserRequest
 import forms.YesNoForm
 import models.mongo.PensionsCYAModel
@@ -249,10 +250,14 @@ class TotalPaymentsIntoRASControllerISpec extends IntegrationTest with BeforeAnd
 
     "redirect to the 'RAS Payments And Tax Relief Amount' page if does not have a RAS amount in CYA" when {
 
+      val userDataModel = aPensionsUserData.copy(
+        pensions = aPensionsCYAEmptyModel.copy(
+          paymentsIntoPension = PaymentsIntoPensionViewModel(rasPensionPaymentQuestion = Some(true))))
+
       lazy val result: WSResponse = {
         authoriseAgentOrIndividual(isAgent = false)
         dropPensionsDB()
-        insertCyaData(anPensionsUserDataEmptyCya, aUserRequest)
+        insertCyaData(userDataModel, aUserRequest)
         urlGet(fullUrl(totalPaymentsIntoRASUrl(taxYearEOY)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
       }
@@ -366,10 +371,14 @@ class TotalPaymentsIntoRASControllerISpec extends IntegrationTest with BeforeAnd
       "the user does not have a value for 'totalRASPaymentsAndTaxRelief' in session and does not select an answer" should {
         lazy val invalidForm: Map[String, String] = Map(YesNoForm.yesNo -> "")
 
+        val userDataModel = aPensionsUserData.copy(
+          pensions = aPensionsCYAEmptyModel.copy(
+            paymentsIntoPension = PaymentsIntoPensionViewModel(rasPensionPaymentQuestion = Some(true))))
+
         lazy val result: WSResponse = {
           authoriseAgentOrIndividual(isAgent = false)
           dropPensionsDB()
-          insertCyaData(anPensionsUserDataEmptyCya, aUserRequest)
+          insertCyaData(userDataModel, aUserRequest)
           urlPost(fullUrl(totalPaymentsIntoRASUrl(taxYearEOY)), body = invalidForm, follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
         }
