@@ -17,7 +17,7 @@
 @import views.html.templates.Layout
 @import views.html.templates.helpers.Heading
 @import views.html.templates.helpers.Button
-@import views.html.templates.helpers.InputRadio
+@import views.html.templates.helpers.InputRadioAlt
 @import views.html.templates.helpers.ErrorSummary
 @import views.html.templates.helpers.Table
 
@@ -27,7 +27,7 @@
         button: Button,
         table: Table,
         csrfForm: FormWithCSRF,
-        inputRadio: InputRadio,
+        inputRadio: InputRadioAlt,
         errorSummary: ErrorSummary
 )
 
@@ -62,21 +62,22 @@
         (messages("common.total"), totalRAS, "govuk-!-font-weight-bold")
     ))
 
-    <h2 class="govuk-fieldset__heading govuk-!-font-weight-bold">@messages("paymentsIntoPensions.totalRASPayments.isThisCorrect")</h2>
 }
 
 @layout(pageTitle = headingForUse, taxYear = Some(taxYear), hasErrors = hasFormErrors, isAgent = request.user.isAgent) {
 
     @errorSummary(form.errors.distinct)
 
+    @heading(headingForUse, Some(messages("common.paymentsIntoPensions.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-3")
+    @contentHtml
+
     @csrfForm(action = controllers.pensions.paymentsIntoPension.routes.TotalPaymentsIntoRASController.submit(taxYear)) {
         @inputRadio(
             form = form,
-            heading = headingForUse,
-            content = Some(contentHtml),
-            classes = "govuk-!-margin-bottom-4",
-            inline = true,
-            subheading = Some(messages("common.paymentsIntoPensions.caption", (taxYear - 1).toString, taxYear.toString))
+            legendHeading = Some(Html(messages("paymentsIntoPensions.totalRASPayments.isThisCorrect"))),
+            legendHidden = false,
+            legendAsLabel = true,
+            inline = true
         )
 
         @button()

@@ -37,16 +37,15 @@ class ReliefAtSourcePensionsControllerISpec extends IntegrationTest with BeforeA
   private val taxYearEOY: Int = taxYear - 1
 
   object Selectors {
-    val captionSelector: String = "#main-content > div > div > form > div > fieldset > legend > header > p"
+    val captionSelector: String = "#main-content > div > div > header > p"
     val continueButtonSelector: String = "#continue"
     val formSelector: String = "#main-content > div > div > form"
     val yesSelector = "#value"
     val noSelector = "#value-no"
-    val h2Selector = "#main-content > div > div > form > div > fieldset > legend > h2"
-    val example1TextSelector = "#main-content > div > div > form > div > fieldset > legend > ul > li:nth-child(1)"
-    val example2TextSelector = "#main-content > div > div > form > div > fieldset > legend > ul > li:nth-child(2)"
-
-    def paragraphSelector(index: Int): String = s"#main-content > div > div > form > div > fieldset > legend > p:nth-child($index)"
+    val h2Selector = "#main-content > div > div > form > div > fieldset > legend"
+    val example1TextSelector = "#main-content > div > div > ul > li:nth-child(1)"
+    val example2TextSelector = "#main-content > div > div > ul > li:nth-child(2)"
+    def paragraphSelector(index: Int): String = s"#main-content > div > div > p:nth-of-type($index)"
   }
 
   trait SpecificExpectedResults {
@@ -168,11 +167,11 @@ class ReliefAtSourcePensionsControllerISpec extends IntegrationTest with BeforeA
           welshToggleCheck(user.isWelsh)
 
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
-          textOnPageCheck(user.specificExpectedResults.get.expectedParagraph, paragraphSelector(2))
+          textOnPageCheck(user.specificExpectedResults.get.expectedParagraph, paragraphSelector(1))
           textOnPageCheck(user.specificExpectedResults.get.expectedExample1, example1TextSelector)
           textOnPageCheck(user.specificExpectedResults.get.expectedExample2, example2TextSelector)
-          textOnPageCheck(user.specificExpectedResults.get.expectedPensionProviderText, paragraphSelector(4))
-          textOnPageCheck(user.specificExpectedResults.get.expectedCheckProviderText, paragraphSelector(5))
+          textOnPageCheck(user.specificExpectedResults.get.expectedPensionProviderText, paragraphSelector(2))
+          textOnPageCheck(user.specificExpectedResults.get.expectedCheckProviderText, paragraphSelector(3))
         }
 
         "render 'Relief at source (RAS) pensions' page with correct content and yes pre-filled" which {
@@ -201,11 +200,11 @@ class ReliefAtSourcePensionsControllerISpec extends IntegrationTest with BeforeA
 
           textOnPageCheck(user.specificExpectedResults.get.expectedH2, h2Selector)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
-          textOnPageCheck(user.specificExpectedResults.get.expectedParagraph, paragraphSelector(2))
+          textOnPageCheck(user.specificExpectedResults.get.expectedParagraph, paragraphSelector(1))
           textOnPageCheck(user.specificExpectedResults.get.expectedExample1, example1TextSelector)
           textOnPageCheck(user.specificExpectedResults.get.expectedExample2, example2TextSelector)
-          textOnPageCheck(user.specificExpectedResults.get.expectedPensionProviderText, paragraphSelector(4))
-          textOnPageCheck(user.specificExpectedResults.get.expectedCheckProviderText, paragraphSelector(5))
+          textOnPageCheck(user.specificExpectedResults.get.expectedPensionProviderText, paragraphSelector(2))
+          textOnPageCheck(user.specificExpectedResults.get.expectedCheckProviderText, paragraphSelector(3))
         }
 
         "render 'Relief at source (RAS) pensions' page with correct content and no pre-filled" which {
@@ -234,11 +233,11 @@ class ReliefAtSourcePensionsControllerISpec extends IntegrationTest with BeforeA
 
           textOnPageCheck(user.specificExpectedResults.get.expectedH2, h2Selector)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
-          textOnPageCheck(user.specificExpectedResults.get.expectedParagraph, paragraphSelector(2))
+          textOnPageCheck(user.specificExpectedResults.get.expectedParagraph, paragraphSelector(1))
           textOnPageCheck(user.specificExpectedResults.get.expectedExample1, example1TextSelector)
           textOnPageCheck(user.specificExpectedResults.get.expectedExample2, example2TextSelector)
-          textOnPageCheck(user.specificExpectedResults.get.expectedPensionProviderText, paragraphSelector(4))
-          textOnPageCheck(user.specificExpectedResults.get.expectedCheckProviderText, paragraphSelector(5))
+          textOnPageCheck(user.specificExpectedResults.get.expectedPensionProviderText, paragraphSelector(2))
+          textOnPageCheck(user.specificExpectedResults.get.expectedCheckProviderText, paragraphSelector(3))
 
         }
       }
@@ -276,11 +275,11 @@ class ReliefAtSourcePensionsControllerISpec extends IntegrationTest with BeforeA
           welshToggleCheck(user.isWelsh)
 
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
-          textOnPageCheck(user.specificExpectedResults.get.expectedParagraph, paragraphSelector(2))
+          textOnPageCheck(user.specificExpectedResults.get.expectedParagraph, paragraphSelector(1))
           textOnPageCheck(user.specificExpectedResults.get.expectedExample1, example1TextSelector)
           textOnPageCheck(user.specificExpectedResults.get.expectedExample2, example2TextSelector)
-          textOnPageCheck(user.specificExpectedResults.get.expectedPensionProviderText, paragraphSelector(4))
-          textOnPageCheck(user.specificExpectedResults.get.expectedCheckProviderText, paragraphSelector(5))
+          textOnPageCheck(user.specificExpectedResults.get.expectedPensionProviderText, paragraphSelector(2))
+          textOnPageCheck(user.specificExpectedResults.get.expectedCheckProviderText, paragraphSelector(3))
           errorSummaryCheck(user.specificExpectedResults.get.expectedError, yesSelector)
           errorAboveElementCheck(user.specificExpectedResults.get.expectedError, Some("value"))
         }

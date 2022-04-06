@@ -37,7 +37,7 @@ class WorkplacePensionControllerISpec extends IntegrationTest with ViewHelpers w
   private val taxYearEOY: Int = taxYear - 1
 
   object Selectors {
-    val captionSelector: String = "#main-content > div > div > form > div > fieldset > legend > header > p"
+    val captionSelector: String = "#main-content > div > div > header > p"
     val continueButtonSelector: String = "#continue"
     val formSelector: String = "#main-content > div > div > form"
     val yesSelector = "#value"
@@ -45,7 +45,7 @@ class WorkplacePensionControllerISpec extends IntegrationTest with ViewHelpers w
     val h2Selector: String = s"#main-content > div > div > form > div > fieldset > legend > h2"
     val findOutMoreSelector: String = s"#findOutMore-link"
 
-    def paragraphSelector(index: Int): String = s"#main-content > div > div > form > div > fieldset > legend > p:nth-child($index)"
+    def paragraphSelector(index: Int): String = s"#main-content > div > div > p:nth-of-type($index)"
   }
 
   trait CommonExpectedResults {
@@ -156,9 +156,9 @@ class WorkplacePensionControllerISpec extends IntegrationTest with ViewHelpers w
           titleCheck(user.specificExpectedResults.get.expectedTitle)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
-          textOnPageCheck(user.specificExpectedResults.get.expectedInfoText, paragraphSelector(2))
-          textOnPageCheck(user.specificExpectedResults.get.expectedTheseCases, paragraphSelector(3))
-          textOnPageCheck(user.specificExpectedResults.get.expectedWhereToCheck, paragraphSelector(4))
+          textOnPageCheck(user.specificExpectedResults.get.expectedInfoText, paragraphSelector(1))
+          textOnPageCheck(user.specificExpectedResults.get.expectedTheseCases, paragraphSelector(2))
+          textOnPageCheck(user.specificExpectedResults.get.expectedWhereToCheck, paragraphSelector(3))
           textOnPageCheck(expectedFindOutMoreText, findOutMoreSelector)
           radioButtonCheck(yesText, 1, checked = Some(false))
           radioButtonCheck(noText, 2, checked = Some(false))
@@ -185,9 +185,9 @@ class WorkplacePensionControllerISpec extends IntegrationTest with ViewHelpers w
           titleCheck(user.specificExpectedResults.get.expectedTitle)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
-          textOnPageCheck(user.specificExpectedResults.get.expectedInfoText, paragraphSelector(2))
-          textOnPageCheck(user.specificExpectedResults.get.expectedTheseCases, paragraphSelector(3))
-          textOnPageCheck(user.specificExpectedResults.get.expectedWhereToCheck, paragraphSelector(4))
+          textOnPageCheck(user.specificExpectedResults.get.expectedInfoText, paragraphSelector(1))
+          textOnPageCheck(user.specificExpectedResults.get.expectedTheseCases, paragraphSelector(2))
+          textOnPageCheck(user.specificExpectedResults.get.expectedWhereToCheck, paragraphSelector(3))
           textOnPageCheck(expectedFindOutMoreText, findOutMoreSelector)
           radioButtonCheck(yesText, 1, checked = Some(true))
           radioButtonCheck(noText, 2, checked = Some(false))
@@ -215,9 +215,9 @@ class WorkplacePensionControllerISpec extends IntegrationTest with ViewHelpers w
           titleCheck(user.specificExpectedResults.get.expectedTitle)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
-          textOnPageCheck(user.specificExpectedResults.get.expectedInfoText, paragraphSelector(2))
-          textOnPageCheck(user.specificExpectedResults.get.expectedTheseCases, paragraphSelector(3))
-          textOnPageCheck(user.specificExpectedResults.get.expectedWhereToCheck, paragraphSelector(4))
+          textOnPageCheck(user.specificExpectedResults.get.expectedInfoText, paragraphSelector(1))
+          textOnPageCheck(user.specificExpectedResults.get.expectedTheseCases, paragraphSelector(2))
+          textOnPageCheck(user.specificExpectedResults.get.expectedWhereToCheck, paragraphSelector(3))
           textOnPageCheck(expectedFindOutMoreText, findOutMoreSelector)
           radioButtonCheck(yesText, 1, checked = Some(false))
           radioButtonCheck(noText, 2, checked = Some(true))
@@ -271,9 +271,9 @@ class WorkplacePensionControllerISpec extends IntegrationTest with ViewHelpers w
           titleCheck(user.specificExpectedResults.get.expectedErrorTitle)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
-          textOnPageCheck(user.specificExpectedResults.get.expectedInfoText, paragraphSelector(2))
-          textOnPageCheck(user.specificExpectedResults.get.expectedTheseCases, paragraphSelector(3))
-          textOnPageCheck(user.specificExpectedResults.get.expectedWhereToCheck, paragraphSelector(4))
+          textOnPageCheck(user.specificExpectedResults.get.expectedInfoText, paragraphSelector(1))
+          textOnPageCheck(user.specificExpectedResults.get.expectedTheseCases, paragraphSelector(2))
+          textOnPageCheck(user.specificExpectedResults.get.expectedWhereToCheck, paragraphSelector(3))
           radioButtonCheck(yesText, 1, checked = Some(false))
           radioButtonCheck(noText, 2, checked = Some(false))
           buttonCheck(buttonText, continueButtonSelector)

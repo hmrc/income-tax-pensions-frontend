@@ -60,15 +60,15 @@ class TotalPaymentsIntoRASControllerISpec extends IntegrationTest with BeforeAnd
   )
 
   object Selectors {
-    val captionSelector: String = "#main-content > div > div > form > div > fieldset > legend > header > p"
+    val captionSelector: String = "#main-content > div > div > header > p"
     val continueButtonSelector: String = "#continue"
     val formSelector: String = "#main-content > div > div > form"
     val yesSelector = "#value"
     val noSelector = "#value-no"
-    val pSelector = "#main-content > div > div > form > div > fieldset > legend > p"
-    val isCorrectSelector = "#main-content > div > div > form > div > fieldset > legend > h2"
+    val pSelector = "#main-content > div > div > p"
+    val isCorrectSelector = "#main-content > div > div > form > div > fieldset > legend"
     val tableSelector: (Int, Int) => String = (row, column) =>
-      s"#main-content > div > div > form > div > fieldset > legend > table > tbody > tr:nth-child($row) > td:nth-child($column)"
+      s"#main-content > div > div > table > tbody > tr:nth-child($row) > td:nth-of-type($column)"
   }
 
   trait SpecificExpectedResults {

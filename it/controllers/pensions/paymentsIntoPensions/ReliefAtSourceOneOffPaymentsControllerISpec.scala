@@ -47,7 +47,7 @@ class ReliefAtSourceOneOffPaymentsControllerISpec extends IntegrationTest with V
   }
 
   object Selectors {
-    val captionSelector: String = "#main-content > div > div > form > div > fieldset > legend > header > p"
+    val captionSelector: String = "#main-content > div > div > header > p"
     val continueButtonSelector: String = "#continue"
     val formSelector: String = "#main-content > div > div > form"
     val yesSelector = "#value"

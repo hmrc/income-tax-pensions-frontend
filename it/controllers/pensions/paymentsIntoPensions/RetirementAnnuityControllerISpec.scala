@@ -48,7 +48,7 @@ class RetirementAnnuityControllerISpec extends IntegrationTest with ViewHelpers 
   }
 
   object Selectors {
-    val captionSelector: String = "#main-content > div > div > form > div > fieldset > legend > header > p"
+    val captionSelector: String = "#main-content > div > div > header > p"
     val continueButtonSelector: String = "#continue"
     val formSelector: String = "#main-content > div > div > form"
     val yesSelector = "#value"
@@ -57,9 +57,9 @@ class RetirementAnnuityControllerISpec extends IntegrationTest with ViewHelpers 
 
     def h3Selector(index: Int): String = s"#main-content > div > div > form > details > div > h3:nth-child($index)"
 
-    def paragraphSelector(index: Int): String = s"#main-content > div > div > form > div > fieldset > legend > p:nth-child($index)"
+    def paragraphSelector(index: Int): String = s"#main-content > div > div > p:nth-of-type($index)"
 
-    def bulletListSelector(index: Int): String = s"#main-content > div > div > form > div > fieldset > legend > ul > li:nth-child($index)"
+    def bulletListSelector(index: Int): String = s"#main-content > div > div > ul > li:nth-child($index)"
 
     def detailsParagraphSelector(index: Int): String = s"#main-content > div > div > form > details > div > p:nth-child($index)"
 
@@ -174,8 +174,8 @@ class RetirementAnnuityControllerISpec extends IntegrationTest with ViewHelpers 
           titleCheck(user.specificExpectedResults.get.expectedTitle)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
-          textOnPageCheck(user.specificExpectedResults.get.expectedParagraphText, paragraphSelector(2))
-          textOnPageCheck(user.specificExpectedResults.get.expectedYouCanFindThisOut, paragraphSelector(3))
+          textOnPageCheck(user.specificExpectedResults.get.expectedParagraphText, paragraphSelector(1))
+          textOnPageCheck(user.specificExpectedResults.get.expectedYouCanFindThisOut, paragraphSelector(2))
           radioButtonCheck(yesText, 1, checked = Some(false))
           radioButtonCheck(noText, 2, checked = Some(false))
           buttonCheck(buttonText, continueButtonSelector)
@@ -203,8 +203,8 @@ class RetirementAnnuityControllerISpec extends IntegrationTest with ViewHelpers 
           titleCheck(user.specificExpectedResults.get.expectedTitle)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
-          textOnPageCheck(user.specificExpectedResults.get.expectedParagraphText, paragraphSelector(2))
-          textOnPageCheck(user.specificExpectedResults.get.expectedYouCanFindThisOut, paragraphSelector(3))
+          textOnPageCheck(user.specificExpectedResults.get.expectedParagraphText, paragraphSelector(1))
+          textOnPageCheck(user.specificExpectedResults.get.expectedYouCanFindThisOut, paragraphSelector(2))
           radioButtonCheck(yesText, 1, checked = Some(true))
           radioButtonCheck(noText, 2, checked = Some(false))
           buttonCheck(buttonText, continueButtonSelector)
@@ -233,8 +233,8 @@ class RetirementAnnuityControllerISpec extends IntegrationTest with ViewHelpers 
           titleCheck(user.specificExpectedResults.get.expectedTitle)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
-          textOnPageCheck(user.specificExpectedResults.get.expectedParagraphText, paragraphSelector(2))
-          textOnPageCheck(user.specificExpectedResults.get.expectedYouCanFindThisOut, paragraphSelector(3))
+          textOnPageCheck(user.specificExpectedResults.get.expectedParagraphText, paragraphSelector(1))
+          textOnPageCheck(user.specificExpectedResults.get.expectedYouCanFindThisOut, paragraphSelector(2))
           radioButtonCheck(yesText, 1, checked = Some(false))
           radioButtonCheck(noText, 2, checked = Some(true))
           buttonCheck(buttonText, continueButtonSelector)
@@ -293,8 +293,8 @@ class RetirementAnnuityControllerISpec extends IntegrationTest with ViewHelpers 
           titleCheck(user.specificExpectedResults.get.expectedErrorTitle)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
-          textOnPageCheck(user.specificExpectedResults.get.expectedParagraphText, paragraphSelector(2))
-          textOnPageCheck(user.specificExpectedResults.get.expectedYouCanFindThisOut, paragraphSelector(3))
+          textOnPageCheck(user.specificExpectedResults.get.expectedParagraphText, paragraphSelector(1))
+          textOnPageCheck(user.specificExpectedResults.get.expectedYouCanFindThisOut, paragraphSelector(2))
           radioButtonCheck(yesText, 1, checked = Some(false))
           radioButtonCheck(noText, 2, checked = Some(false))
           buttonCheck(buttonText, continueButtonSelector)
