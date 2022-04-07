@@ -32,7 +32,7 @@ class ViewUtilSpec extends UnitTest with GuiceOneAppPerSuite with ViewTest {
 
   "calling method DateFormatter" should {
     "reformat date when valid date is passed" in{
-      ViewUtils.dateFormatter("2022-03-10").get shouldBe "10 March 2022"
+      ViewUtils.dateFormatter(s"$taxYear-03-10").get shouldBe "10 March 2022"
     }
 
     "return None when invalid date is passed" in{
