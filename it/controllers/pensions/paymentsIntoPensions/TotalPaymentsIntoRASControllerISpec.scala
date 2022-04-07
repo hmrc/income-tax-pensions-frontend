@@ -38,8 +38,6 @@ import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 class TotalPaymentsIntoRASControllerISpec extends IntegrationTest with BeforeAndAfterEach with ViewHelpers with PensionsDatabaseHelper {
 
-  private val taxYearEOY: Int = taxYear - 1
-
   private val oneOffAmount: String = "1,400"
   private val rasTotal: String = "8,800"
 

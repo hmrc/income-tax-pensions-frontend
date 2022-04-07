@@ -42,7 +42,6 @@ class PensionProviderPaidTaxControllerISpec extends IntegrationTest with BeforeA
   }
 
   private val existingAmount: Option[BigDecimal] = Some(44.55)
-  private val taxYearEOY: Int = taxYear - 1
 
   object Selectors {
     val captionSelector: String = "#main-content > div > div > form > div > fieldset > legend > header > p"

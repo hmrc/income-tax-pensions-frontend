@@ -34,8 +34,6 @@ import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 // scalastyle:off magic.number
 class ReliefAtSourcePensionsControllerISpec extends IntegrationTest with BeforeAndAfterEach with ViewHelpers with PensionsDatabaseHelper {
 
-  private val taxYearEOY: Int = taxYear - 1
-
   object Selectors {
     val captionSelector: String = "#main-content > div > div > header > p"
     val continueButtonSelector: String = "#continue"

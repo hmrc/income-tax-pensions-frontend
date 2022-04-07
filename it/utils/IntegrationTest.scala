@@ -25,6 +25,7 @@ import controllers.predicates.AuthorisedAction
 import helpers.{PlaySessionCookieBaker, WireMockHelper, WiremockStubHelpers}
 import models.IncomeTaxUserData
 import models.mongo.PensionsUserData
+import org.joda.time.DateTime
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
@@ -54,9 +55,15 @@ trait IntegrationTest extends AnyWordSpec with Matchers with GuiceOneServerPerSu
   val mtditid = "1234567890"
   val sessionId = "sessionId-eb3158c2-0aff-4ce8-8d1b-f2208ace52fe"
   val affinityGroup = "affinityGroup"
-  val taxYear = 2022
   val defaultUser: PensionsUserData = aPensionsUserData
   val xSessionId: (String, String) = "X-Session-ID" -> defaultUser.sessionId
+
+  private val month = DateTime.now().monthOfYear().get()
+  private val dayOfMonth = DateTime.now().dayOfMonth().get()
+
+  val taxYear: Int = if (month >= 4 && dayOfMonth > 5) DateTime.now().year().get() + 1 else DateTime.now().year().get()
+  val taxYearEOY: Int = taxYear - 1
+  val taxYearEndOfYearMinusOne: Int = taxYearEOY -1
 
   implicit val ec: ExecutionContext = ExecutionContext.Implicits.global
   implicit val headerCarrier: HeaderCarrier = HeaderCarrier().withExtraHeaders("mtditid" -> mtditid)
@@ -72,6 +79,7 @@ trait IntegrationTest extends AnyWordSpec with Matchers with GuiceOneServerPerSu
   def await[T](awaitable: Awaitable[T]): T = Await.result(awaitable, Duration.Inf)
 
   def config: Map[String, String] = Map(
+    "defaultTaxYear" -> taxYear.toString,
     "auditing.enabled" -> "false",
     "play.filters.csrf.header.bypassHeaders.Csrf-Token" -> "nocheck",
     "microservice.services.income-tax-submission-frontend.url" -> s"http://$wiremockHost:$wiremockPort",
@@ -87,6 +95,7 @@ trait IntegrationTest extends AnyWordSpec with Matchers with GuiceOneServerPerSu
   )
 
   def configWithInvalidEncryptionKey: Map[String, String] = Map(
+    "defaultTaxYear" -> taxYear.toString,
     "auditing.enabled" -> "false",
     "play.filters.csrf.header.bypassHeaders.Csrf-Token" -> "nocheck",
     "microservice.services.income-tax-submission-frontend.url" -> s"http://$wiremockHost:$wiremockPort",
@@ -103,6 +112,7 @@ trait IntegrationTest extends AnyWordSpec with Matchers with GuiceOneServerPerSu
   )
 
   def externalConfig: Map[String, String] = Map(
+    "defaultTaxYear" -> taxYear.toString,
     "auditing.enabled" -> "false",
     "play.filters.csrf.header.bypassHeaders.Csrf-Token" -> "nocheck",
     "microservice.services.income-tax-submission.url" -> s"http://127.0.0.1:$wiremockPort",

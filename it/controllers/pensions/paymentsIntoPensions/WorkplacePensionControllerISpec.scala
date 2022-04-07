@@ -36,8 +36,6 @@ import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 // scalastyle:off magic.number
 class WorkplacePensionControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
 
-  private val taxYearEOY: Int = taxYear - 1
-
   val noWorkplaceCYAModel: PensionsUserData = aPensionsUserData.copy(
     pensions = aPensionsCYAModel.copy(
       paymentsIntoPension = aPaymentsIntoPensionViewModel.copy(

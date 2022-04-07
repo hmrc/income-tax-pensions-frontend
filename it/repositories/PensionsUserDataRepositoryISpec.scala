@@ -218,8 +218,7 @@ class PensionsUserDataRepositoryISpec extends IntegrationTest with FutureAwaits 
     }
 
     "return None when find operation succeeds but no data is found for the given inputs" in new EmptyDatabase {
-      val taxYear = 2021
-      await(repo.find(taxYear, userOne)) mustBe Right(None)
+      await(repo.find(taxYearEOY, userOne)) mustBe Right(None)
     }
   }
 
