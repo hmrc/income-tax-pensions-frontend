@@ -293,7 +293,32 @@ class PensionsTaxReliefNotClaimedControllerISpec extends IntegrationTest with Vi
 
     }
 
-    "redirect to Pensions Summary page when user submits a 'yes' answer and updates the session value to yes" which {
+    "redirect to Pensions Summary page when user submits a 'yes' answer which doesnt complete CYA model and updates the session value to yes" which {
+
+      lazy val result: WSResponse = {
+        dropPensionsDB()
+        authoriseAgentOrIndividual(isAgent = false)
+        userDataStub(anIncomeTaxUserData, nino, taxYearEOY)
+        val paymentsIntoPensionsViewModel = aPaymentsIntoPensionViewModel.copy(
+          pensionTaxReliefNotClaimedQuestion = None, retirementAnnuityContractPaymentsQuestion = None)
+        insertCyaData(pensionsUsersData(isPrior = false, paymentsIntoPensionOnlyCYAModel(paymentsIntoPensionsViewModel)), aUserRequest)
+        urlPost(fullUrl(pensionTaxReliefNotClaimedUrl(taxYearEOY)), body = validFormYes, follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+
+      }
+
+      "has a SEE_OTHER(303) status" in {
+        result.status shouldBe SEE_OTHER
+        result.header("location") shouldBe Some(retirementAnnuityUrl(taxYearEOY))
+      }
+
+      "updates retirement annuity contract payments question to Some(true)" in {
+        lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
+        cyaModel.pensions.paymentsIntoPension.pensionTaxReliefNotClaimedQuestion shouldBe Some(true)
+      }
+    }
+
+    "redirect to CYA page when user submits a 'yes' answer which completes CYA model and updates the session value to yes" which {
 
       lazy val result: WSResponse = {
         dropPensionsDB()
@@ -308,7 +333,7 @@ class PensionsTaxReliefNotClaimedControllerISpec extends IntegrationTest with Vi
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(retirementAnnuityUrl(taxYearEOY))
+        result.header("location") shouldBe Some(checkPaymentsIntoPensionCyaUrl(taxYearEOY))
       }
 
       "updates retirement annuity contract payments question to Some(true)" in {

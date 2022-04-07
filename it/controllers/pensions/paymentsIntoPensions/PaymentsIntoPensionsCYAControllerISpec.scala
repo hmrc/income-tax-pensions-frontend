@@ -336,7 +336,8 @@ class PaymentsIntoPensionsCYAControllerISpec extends IntegrationTest with ViewHe
           }
 
           "redirects to the pensions summary page" in {
-            result.headers("Location").head shouldBe controllers.pensions.paymentsIntoPension.routes.ReliefAtSourcePensionsController.show(taxYear).url
+            result.headers("Location").head shouldBe
+              controllers.pensions.paymentsIntoPension.routes.ReliefAtSourcePaymentsAndTaxReliefAmountController.show(taxYear).url
           }
         }
 

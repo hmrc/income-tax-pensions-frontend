@@ -17,10 +17,12 @@
 package controllers.pensions.paymentsIntoPensions
 
 import builders.PaymentsIntoPensionVewModelBuilder.aPaymentsIntoPensionViewModel
-import builders.PensionsUserDataBuilder.{anPensionsUserDataEmptyCya, pensionsUserDataWithPaymentsIntoPensions}
+import builders.PensionsCYAModelBuilder.aPensionsCYAModel
+import builders.PensionsUserDataBuilder.{aPensionsUserData, anPensionsUserDataEmptyCya, pensionsUserDataWithPaymentsIntoPensions}
 import builders.UserBuilder._
 import controllers.pensions.paymentsIntoPension.routes._
 import forms.YesNoForm
+import models.mongo.PensionsUserData
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterEach
@@ -35,6 +37,12 @@ import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 class WorkplacePensionControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
 
   private val taxYearEOY: Int = taxYear - 1
+
+  val noWorkplaceCYAModel: PensionsUserData = aPensionsUserData.copy(
+    pensions = aPensionsCYAModel.copy(
+      paymentsIntoPension = aPaymentsIntoPensionViewModel.copy(
+        workplacePensionPaymentsQuestion = None
+      )))
 
   object Selectors {
     val captionSelector: String = "#main-content > div > div > header > p"
@@ -143,7 +151,7 @@ class WorkplacePensionControllerISpec extends IntegrationTest with ViewHelpers w
           lazy val result: WSResponse = {
             dropPensionsDB()
             authoriseAgentOrIndividual(user.isAgent)
-            insertCyaData(anPensionsUserDataEmptyCya, aUserRequest)
+            insertCyaData(noWorkplaceCYAModel, aUserRequest)
             urlGet(fullUrl(workplacePensionUrl(taxYearEOY)), user.isWelsh, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
           }
 

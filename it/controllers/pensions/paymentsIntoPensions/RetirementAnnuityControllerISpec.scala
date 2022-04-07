@@ -32,7 +32,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.PaymentIntoPensions.{checkPaymentsIntoPensionCyaUrl, retirementAnnuityUrl}
+import utils.PageUrls.PaymentIntoPensions.{checkPaymentsIntoPensionCyaUrl, retirementAnnuityUrl, workplacePensionUrl}
 import utils.PageUrls._
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
@@ -333,14 +333,14 @@ class RetirementAnnuityControllerISpec extends IntegrationTest with ViewHelpers 
       }
     }
 
-    "redirect to Pensions Summary page when user selects 'no' and not a prior submission" which {
+    "redirect to Workplace pension page when user selects 'no' and doesnt complete CYA model" which {
       lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.no)
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(isAgent = false)
         userDataStub(anIncomeTaxUserData, nino, taxYearEOY)
         val paymentsIntoPensionsViewModel = aPaymentsIntoPensionViewModel.copy(
-          retirementAnnuityContractPaymentsQuestion = Some(true), totalRetirementAnnuityContractPayments = Some(333.44))
+          retirementAnnuityContractPaymentsQuestion = Some(true), workplacePensionPaymentsQuestion = None)
         insertCyaData(pensionsUsersData(isPrior = false, PensionsCYAModel(paymentsIntoPensionsViewModel,
           aPensionAnnualAllowanceEmptyViewModel, aPensionLifetimeAllowancesEmptyViewModel, anIncomeFromPensionEmptyViewModel)), aUserRequest)
         urlPost(fullUrl(retirementAnnuityUrl(taxYearEOY)), body = form, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
@@ -348,7 +348,32 @@ class RetirementAnnuityControllerISpec extends IntegrationTest with ViewHelpers 
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
+        result.header("location") shouldBe Some(workplacePensionUrl(taxYearEOY))
+      }
+
+      "updates retirement annuity contract payments question to Some(false) and deletes the totalRetirementAnnuityContractPayments amount" in {
+        lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
+        cyaModel.pensions.paymentsIntoPension.retirementAnnuityContractPaymentsQuestion shouldBe Some(false)
+        cyaModel.pensions.paymentsIntoPension.totalRetirementAnnuityContractPayments shouldBe None
+      }
+    }
+
+    "redirect to CYA page when user selects 'no' which completes CYA model" which {
+      lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.no)
+      lazy val result: WSResponse = {
+        dropPensionsDB()
+        authoriseAgentOrIndividual(isAgent = false)
+        userDataStub(anIncomeTaxUserData, nino, taxYearEOY)
+        val paymentsIntoPensionsViewModel = aPaymentsIntoPensionViewModel.copy(
+          retirementAnnuityContractPaymentsQuestion = Some(true))
+        insertCyaData(pensionsUsersData(isPrior = false, PensionsCYAModel(paymentsIntoPensionsViewModel,
+          aPensionAnnualAllowanceEmptyViewModel, aPensionLifetimeAllowancesEmptyViewModel, anIncomeFromPensionEmptyViewModel)), aUserRequest)
+        urlPost(fullUrl(retirementAnnuityUrl(taxYearEOY)), body = form, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+      }
+
+      "has a SEE_OTHER(303) status" in {
+        result.status shouldBe SEE_OTHER
+        result.header("location") shouldBe Some(checkPaymentsIntoPensionCyaUrl(taxYearEOY))
       }
 
       "updates retirement annuity contract payments question to Some(false) and deletes the totalRetirementAnnuityContractPayments amount" in {
