@@ -85,6 +85,11 @@ object PageUrls extends IntegrationTest {
     def pensionSchemeTaxReferenceUrl (taxYear: Int, pensionSchemeTaxReference: Int): String =
       s"$appUrl/$taxYear/annual-allowance/pension-scheme-tax-reference?pensionSchemeTaxReferenceIndex=$pensionSchemeTaxReference"
   }
+
+  object PensionIncomeFromPensionPages {
+
+    def taxOnLumpSumUrl(taxYear: Int): String = s"$appUrl/$taxYear/pension-income/state-pension-lump-sum-tax"
+  }
 }
 
   //scalastyle:on number.of.methods

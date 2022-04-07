@@ -37,9 +37,7 @@ import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
 
-  private val taxYearEOY: Int = taxYear - 1
   private val externalHref = "https://www.tax.service.gov.uk/pension-annual-allowance-calculator"
-
 
   private def pensionsUsersData(isPrior: Boolean = false, pensionsCyaModel: PensionsCYAModel) = {
     PensionsUserDataBuilder.aPensionsUserData.copy(

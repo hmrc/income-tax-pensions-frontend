@@ -35,7 +35,7 @@ import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 
 class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
-  private val taxYearEOY: Int = taxYear - 1
+
   private val poundPrefixText = "£"
   private val amountInputName = "amount"
 

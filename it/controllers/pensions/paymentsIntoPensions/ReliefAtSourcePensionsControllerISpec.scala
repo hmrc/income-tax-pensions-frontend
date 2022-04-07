@@ -19,7 +19,7 @@ package controllers.pensions.paymentsIntoPensions
 import builders.PaymentsIntoPensionVewModelBuilder.aPaymentsIntoPensionViewModel
 import builders.PensionsUserDataBuilder.{anPensionsUserDataEmptyCya, pensionsUserDataWithPaymentsIntoPensions}
 import builders.UserBuilder.aUserRequest
-import controllers.pensions.paymentsIntoPension.routes.{PensionsTaxReliefNotClaimedController, ReliefAtSourcePaymentsAndTaxReliefAmountController}
+import controllers.pensions.paymentsIntoPension.routes._
 import forms.YesNoForm
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -33,8 +33,6 @@ import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 // scalastyle:off magic.number
 class ReliefAtSourcePensionsControllerISpec extends IntegrationTest with BeforeAndAfterEach with ViewHelpers with PensionsDatabaseHelper {
-
-  private val taxYearEOY: Int = taxYear - 1
 
   object Selectors {
     val captionSelector: String = "#main-content > div > div > header > p"

@@ -23,7 +23,6 @@ import models.pension.AllPensionsData
 import models.pension.charges._
 import models.pension.reliefs.{PaymentsIntoPensionViewModel, PensionReliefs, Reliefs}
 import models.pension.statebenefits.{StateBenefit, StateBenefits, StateBenefitsModel}
-import utils.PensionUserDataStub.pensionsAnnualAllowancesViewModel
 
 object PensionDataStubs {
 
@@ -229,9 +228,8 @@ object PensionDataStubs {
 }
 
 
-object PensionUserDataStub {
+object PensionUserDataStub extends TaxYearHelper {
   implicit val testClock: Clock = UnitTestClock
-  val taxYear: Int = 2022
 
   val paymentsIntoPensionViewModel: PaymentsIntoPensionViewModel = PaymentsIntoPensionViewModel(Some(true),
     Some(222.3), Some(true), Some(22.44), Some(true), Some(true), Some(true), Some(44.00), Some(true), Some(55.55))
