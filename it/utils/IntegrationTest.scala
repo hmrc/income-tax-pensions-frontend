@@ -25,7 +25,6 @@ import controllers.predicates.AuthorisedAction
 import helpers.{PlaySessionCookieBaker, WireMockHelper, WiremockStubHelpers}
 import models.IncomeTaxUserData
 import models.mongo.PensionsUserData
-import org.joda.time.DateTime
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
@@ -50,20 +49,13 @@ import scala.concurrent.{Await, Awaitable, ExecutionContext, Future}
 // scalastyle:off number.of.methods
 // scalastyle:off number.of.types
 trait IntegrationTest extends AnyWordSpec with Matchers with GuiceOneServerPerSuite with WireMockHelper
-  with WiremockStubHelpers with BeforeAndAfterAll {
+  with WiremockStubHelpers with BeforeAndAfterAll with TaxYearHelper {
   val nino = "AA123456A"
   val mtditid = "1234567890"
   val sessionId = "sessionId-eb3158c2-0aff-4ce8-8d1b-f2208ace52fe"
   val affinityGroup = "affinityGroup"
   val defaultUser: PensionsUserData = aPensionsUserData
   val xSessionId: (String, String) = "X-Session-ID" -> defaultUser.sessionId
-
-  private val month = DateTime.now().monthOfYear().get()
-  private val dayOfMonth = DateTime.now().dayOfMonth().get()
-
-  val taxYear: Int = if (month >= 4 && dayOfMonth > 5) DateTime.now().year().get() + 1 else DateTime.now().year().get()
-  val taxYearEOY: Int = taxYear - 1
-  val taxYearEndOfYearMinusOne: Int = taxYearEOY -1
 
   implicit val ec: ExecutionContext = ExecutionContext.Implicits.global
   implicit val headerCarrier: HeaderCarrier = HeaderCarrier().withExtraHeaders("mtditid" -> mtditid)
@@ -79,7 +71,7 @@ trait IntegrationTest extends AnyWordSpec with Matchers with GuiceOneServerPerSu
   def await[T](awaitable: Awaitable[T]): T = Await.result(awaitable, Duration.Inf)
 
   def config: Map[String, String] = Map(
-    "defaultTaxYear" -> taxYear.toString,
+    "defaultTaxYearEOY" -> taxYearEOY.toString,
     "auditing.enabled" -> "false",
     "play.filters.csrf.header.bypassHeaders.Csrf-Token" -> "nocheck",
     "microservice.services.income-tax-submission-frontend.url" -> s"http://$wiremockHost:$wiremockPort",
@@ -90,12 +82,12 @@ trait IntegrationTest extends AnyWordSpec with Matchers with GuiceOneServerPerSu
     "microservice.services.view-and-change.url" -> s"http://$wiremockHost:$wiremockPort",
     "microservice.services.income-tax-nrs-proxy.url" -> s"http://$wiremockHost:$wiremockPort",
     "microservice.services.sign-in.url" -> s"/auth-login-stub/gg-sign-in",
-    "taxYearErrorFeatureSwitch" -> "false",
+    "taxYearEOYErrorFeatureSwitch" -> "false",
     "useEncryption" -> "true"
   )
 
   def configWithInvalidEncryptionKey: Map[String, String] = Map(
-    "defaultTaxYear" -> taxYear.toString,
+    "defaultTaxYearEOY" -> taxYearEOY.toString,
     "auditing.enabled" -> "false",
     "play.filters.csrf.header.bypassHeaders.Csrf-Token" -> "nocheck",
     "microservice.services.income-tax-submission-frontend.url" -> s"http://$wiremockHost:$wiremockPort",
@@ -106,13 +98,13 @@ trait IntegrationTest extends AnyWordSpec with Matchers with GuiceOneServerPerSu
     "microservice.services.income-tax-submission.url" -> s"http://$wiremockHost:$wiremockPort",
     "microservice.services.view-and-change.url" -> s"http://$wiremockHost:$wiremockPort",
     "microservice.services.sign-in.url" -> s"/auth-login-stub/gg-sign-in",
-    "taxYearErrorFeatureSwitch" -> "false",
+    "taxYearEOYErrorFeatureSwitch" -> "false",
     "useEncryption" -> "true",
     "mongodb.encryption.key" -> "key"
   )
 
   def externalConfig: Map[String, String] = Map(
-    "defaultTaxYear" -> taxYear.toString,
+    "defaultTaxYearEOY" -> taxYearEOY.toString,
     "auditing.enabled" -> "false",
     "play.filters.csrf.header.bypassHeaders.Csrf-Token" -> "nocheck",
     "microservice.services.income-tax-submission.url" -> s"http://127.0.0.1:$wiremockPort",
@@ -201,16 +193,16 @@ trait IntegrationTest extends AnyWordSpec with Matchers with GuiceOneServerPerSu
     )) and Some(AffinityGroup.Individual) and ConfidenceLevel.L200
   )
 
-  def playSessionCookies(taxYear: Int, extraData: Map[String, String] = Map.empty): String = PlaySessionCookieBaker.bakeSessionCookie(Map(
-    SessionValues.TAX_YEAR -> taxYear.toString,
+  def playSessionCookies(taxYearEOY: Int, extraData: Map[String, String] = Map.empty): String = PlaySessionCookieBaker.bakeSessionCookie(Map(
+    SessionValues.TAX_YEAR -> taxYearEOY.toString,
     SessionKeys.sessionId -> sessionId,
     SessionValues.CLIENT_NINO -> nino,
     SessionValues.CLIENT_MTDITID -> mtditid
   ) ++ extraData)
 
-  def userDataStub(userData: IncomeTaxUserData, nino: String, taxYear: Int): StubMapping = {
+  def userDataStub(userData: IncomeTaxUserData, nino: String, taxYearEOY: Int): StubMapping = {
     stubGetWithHeadersCheck(
-      url = s"/income-tax-submission-service/income-tax/nino/$nino/sources/session\\?taxYear=$taxYear", status = OK,
+      url = s"/income-tax-submission-service/income-tax/nino/$nino/sources/session\\?taxYearEOY=$taxYearEOY", status = OK,
       body = Json.toJson(userData).toString(),
       sessionHeader = "X-Session-ID" -> defaultUser.sessionId,
       mtdidHeader = "mtditid" -> defaultUser.mtdItId

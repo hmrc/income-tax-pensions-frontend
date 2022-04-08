@@ -27,7 +27,7 @@ object PensionsUserDataBuilder {
     sessionId = "sessionId-eb3158c2-0aff-4ce8-8d1b-f2208ace52fe",
     mtdItId = "1234567890",
     nino = "AA123456A",
-    taxYear = 2021,
+    taxYear = 2022,
     isPriorSubmission = true,
     pensions = aPensionsCYAModel
   )
