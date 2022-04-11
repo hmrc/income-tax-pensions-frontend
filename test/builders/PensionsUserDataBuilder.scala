@@ -28,7 +28,7 @@ object PensionsUserDataBuilder extends UnitTest {
     sessionId = "sessionId-eb3158c2-0aff-4ce8-8d1b-f2208ace52fe",
     mtdItId = "1234567890",
     nino = "AA123456A",
-    taxYear = taxYear,
+    taxYear = taxYearEOY,
     isPriorSubmission = true,
     pensions = aPensionsCYAModel
   )

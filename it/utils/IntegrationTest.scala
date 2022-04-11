@@ -71,7 +71,7 @@ trait IntegrationTest extends AnyWordSpec with Matchers with GuiceOneServerPerSu
   def await[T](awaitable: Awaitable[T]): T = Await.result(awaitable, Duration.Inf)
 
   def config: Map[String, String] = Map(
-    "defaultTaxYearEOY" -> taxYearEOY.toString,
+    "defaultTaxYear" -> taxYear.toString,
     "auditing.enabled" -> "false",
     "play.filters.csrf.header.bypassHeaders.Csrf-Token" -> "nocheck",
     "microservice.services.income-tax-submission-frontend.url" -> s"http://$wiremockHost:$wiremockPort",
@@ -87,7 +87,7 @@ trait IntegrationTest extends AnyWordSpec with Matchers with GuiceOneServerPerSu
   )
 
   def configWithInvalidEncryptionKey: Map[String, String] = Map(
-    "defaultTaxYearEOY" -> taxYearEOY.toString,
+    "defaultTaxYear" -> taxYear.toString,
     "auditing.enabled" -> "false",
     "play.filters.csrf.header.bypassHeaders.Csrf-Token" -> "nocheck",
     "microservice.services.income-tax-submission-frontend.url" -> s"http://$wiremockHost:$wiremockPort",
@@ -104,7 +104,7 @@ trait IntegrationTest extends AnyWordSpec with Matchers with GuiceOneServerPerSu
   )
 
   def externalConfig: Map[String, String] = Map(
-    "defaultTaxYearEOY" -> taxYearEOY.toString,
+    "defaultTaxYear" -> taxYear.toString,
     "auditing.enabled" -> "false",
     "play.filters.csrf.header.bypassHeaders.Csrf-Token" -> "nocheck",
     "microservice.services.income-tax-submission.url" -> s"http://127.0.0.1:$wiremockPort",
