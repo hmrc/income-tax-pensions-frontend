@@ -34,7 +34,6 @@ import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 // scalastyle:off magic.number
 class ReducedAnnualAllowanceTypeControllersControllerISpec extends IntegrationTest with BeforeAndAfterEach with ViewHelpers with PensionsDatabaseHelper {
 
-  private val taxYearEOY: Int = taxYear - 1
   private val externalHref = "https://www.gov.uk/guidance/pension-schemes-work-out-your-tapered-annual-allowance"
 
   object Selectors {

@@ -21,7 +21,6 @@ import builders.PensionsCYAModelBuilder._
 import builders.PensionsUserDataBuilder
 import builders.UserBuilder._
 import forms.AmountForm
-import forms.AmountForm.amount
 import models.mongo.PensionsCYAModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -35,7 +34,6 @@ import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 
 class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
-  private val taxYearEOY: Int = taxYear - 1
   private val poundPrefixText = "£"
   private val amountInputName = "amount"
 

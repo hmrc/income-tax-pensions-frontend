@@ -18,7 +18,7 @@ package controllers.pensions.paymentsIntoPensions
 
 import builders.PaymentsIntoPensionVewModelBuilder.aPaymentsIntoPensionViewModel
 import builders.PensionsCYAModelBuilder.aPensionsCYAModel
-import builders.PensionsUserDataBuilder.{aPensionsUserData, anPensionsUserDataEmptyCya, pensionsUserDataWithPaymentsIntoPensions}
+import builders.PensionsUserDataBuilder.{aPensionsUserData, pensionsUserDataWithPaymentsIntoPensions}
 import builders.UserBuilder._
 import controllers.pensions.paymentsIntoPension.routes._
 import forms.YesNoForm
@@ -35,8 +35,6 @@ import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 // scalastyle:off magic.number
 class WorkplacePensionControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
-
-  private val taxYearEOY: Int = taxYear - 1
 
   val noWorkplaceCYAModel: PensionsUserData = aPensionsUserData.copy(
     pensions = aPensionsCYAModel.copy(

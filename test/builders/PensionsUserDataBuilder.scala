@@ -20,14 +20,15 @@ import builders.PensionsCYAModelBuilder.{aPensionsCYAEmptyModel, aPensionsCYAMod
 import models.mongo.PensionsUserData
 import models.pension.charges.PensionAnnualAllowancesViewModel
 import models.pension.reliefs.PaymentsIntoPensionViewModel
+import utils.UnitTest
 
-object PensionsUserDataBuilder {
+object PensionsUserDataBuilder extends UnitTest {
 
   val aPensionsUserData: PensionsUserData = PensionsUserData(
     sessionId = "sessionId-eb3158c2-0aff-4ce8-8d1b-f2208ace52fe",
     mtdItId = "1234567890",
     nino = "AA123456A",
-    taxYear = 2021,
+    taxYear = taxYearEOY,
     isPriorSubmission = true,
     pensions = aPensionsCYAModel
   )

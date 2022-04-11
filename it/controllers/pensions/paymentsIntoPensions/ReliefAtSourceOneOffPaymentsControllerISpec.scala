@@ -34,7 +34,6 @@ import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 class ReliefAtSourceOneOffPaymentsControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
 
-  private val taxYearEOY: Int = taxYear - 1
   private val someRasAmount: BigDecimal = 33.33
   private val validFormYes: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.yes)
   private val validFormNo: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.no)

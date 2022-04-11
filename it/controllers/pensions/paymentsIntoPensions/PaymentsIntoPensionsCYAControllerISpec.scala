@@ -29,7 +29,7 @@ import builders.ReliefsBuilder.anReliefs
 import builders.UserBuilder.aUserRequest
 import forms.Yes
 import models.IncomeTaxUserData
-import models.pension.charges.{PensionAnnualAllowancesViewModel, PensionLifetimeAllowancesViewModel}
+import models.pension.charges.PensionAnnualAllowancesViewModel
 import models.pension.reliefs.PaymentsIntoPensionViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
