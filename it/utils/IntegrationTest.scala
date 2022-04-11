@@ -49,12 +49,11 @@ import scala.concurrent.{Await, Awaitable, ExecutionContext, Future}
 // scalastyle:off number.of.methods
 // scalastyle:off number.of.types
 trait IntegrationTest extends AnyWordSpec with Matchers with GuiceOneServerPerSuite with WireMockHelper
-  with WiremockStubHelpers with BeforeAndAfterAll {
+  with WiremockStubHelpers with BeforeAndAfterAll with TaxYearHelper {
   val nino = "AA123456A"
   val mtditid = "1234567890"
   val sessionId = "sessionId-eb3158c2-0aff-4ce8-8d1b-f2208ace52fe"
   val affinityGroup = "affinityGroup"
-  val taxYear = 2022
   val defaultUser: PensionsUserData = aPensionsUserData
   val xSessionId: (String, String) = "X-Session-ID" -> defaultUser.sessionId
 
@@ -72,6 +71,7 @@ trait IntegrationTest extends AnyWordSpec with Matchers with GuiceOneServerPerSu
   def await[T](awaitable: Awaitable[T]): T = Await.result(awaitable, Duration.Inf)
 
   def config: Map[String, String] = Map(
+    "defaultTaxYear" -> taxYear.toString,
     "auditing.enabled" -> "false",
     "play.filters.csrf.header.bypassHeaders.Csrf-Token" -> "nocheck",
     "microservice.services.income-tax-submission-frontend.url" -> s"http://$wiremockHost:$wiremockPort",
@@ -87,6 +87,7 @@ trait IntegrationTest extends AnyWordSpec with Matchers with GuiceOneServerPerSu
   )
 
   def configWithInvalidEncryptionKey: Map[String, String] = Map(
+    "defaultTaxYear" -> taxYear.toString,
     "auditing.enabled" -> "false",
     "play.filters.csrf.header.bypassHeaders.Csrf-Token" -> "nocheck",
     "microservice.services.income-tax-submission-frontend.url" -> s"http://$wiremockHost:$wiremockPort",
@@ -103,6 +104,7 @@ trait IntegrationTest extends AnyWordSpec with Matchers with GuiceOneServerPerSu
   )
 
   def externalConfig: Map[String, String] = Map(
+    "defaultTaxYear" -> taxYear.toString,
     "auditing.enabled" -> "false",
     "play.filters.csrf.header.bypassHeaders.Csrf-Token" -> "nocheck",
     "microservice.services.income-tax-submission.url" -> s"http://127.0.0.1:$wiremockPort",

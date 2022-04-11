@@ -46,7 +46,7 @@ class SessionExpiredControllerISpec extends IntegrationTest with ViewHelpers {
     val h1Expected = "For your security, we signed you out"
     val p1Expected = "We did not save your answers."
     val buttonExpectedText = "Sign in"
-    val buttonExpectedUrl: String = "http://localhost:11111/update-and-submit-income-tax-return/2022/start"
+    val buttonExpectedUrl: String = s"http://localhost:11111/update-and-submit-income-tax-return/$taxYear/start"
     val buttonExpectedUrl2030: String = "http://localhost:11111/update-and-submit-income-tax-return/2030/start"
   }
 
@@ -54,7 +54,7 @@ class SessionExpiredControllerISpec extends IntegrationTest with ViewHelpers {
     val h1Expected = "For your security, we signed you out"
     val p1Expected = "We did not save your answers."
     val buttonExpectedText = "Sign in"
-    val buttonExpectedUrl: String = "http://localhost:11111/update-and-submit-income-tax-return/2022/start"
+    val buttonExpectedUrl: String = s"http://localhost:11111/update-and-submit-income-tax-return/$taxYear/start"
     val buttonExpectedUrl2030: String = "http://localhost:11111/update-and-submit-income-tax-return/2030/start"
   }
 

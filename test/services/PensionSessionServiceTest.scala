@@ -49,8 +49,6 @@ class PensionSessionServiceTest extends UnitTest
     new PensionSessionService(mockPensionUserDataRepository, mockUserDataConnector, mockAppConfig,
       errorHandler, mockExecutionContext)
 
-  val taxYear = 2022
-
   private val user = authorisationRequest.user
 
   val fullPensionsModel: AllPensionsData = AllPensionsData(

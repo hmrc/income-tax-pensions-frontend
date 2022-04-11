@@ -38,7 +38,6 @@ import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 class RetirementAnnuityControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
 
-  private val taxYearEOY: Int = taxYear - 1
 
   private def pensionsUsersData(isPrior: Boolean = false, pensionsCyaModel: PensionsCYAModel) = {
     PensionsUserDataBuilder.aPensionsUserData.copy(

@@ -62,7 +62,7 @@ error.unauthorised.2 = create an agent services account
 error.unauthorised.2a = sign up for Making Tax Digital for Income Tax
 error.unauthorised.3 = before you can view this page.
 
-taxYear-error-template.paragraph.1 = You can only enter information for the 2021 to 2022 tax year.
+taxYear-error-template.paragraph.1 = You can only enter information for the {0} to {1} tax year.
 taxYear-error-template.paragraph.2 = Check that you’ve entered the correct web address.
 
 not-found-template.heading = Page not found
