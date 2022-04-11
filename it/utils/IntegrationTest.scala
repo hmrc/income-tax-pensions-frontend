@@ -82,7 +82,7 @@ trait IntegrationTest extends AnyWordSpec with Matchers with GuiceOneServerPerSu
     "microservice.services.view-and-change.url" -> s"http://$wiremockHost:$wiremockPort",
     "microservice.services.income-tax-nrs-proxy.url" -> s"http://$wiremockHost:$wiremockPort",
     "microservice.services.sign-in.url" -> s"/auth-login-stub/gg-sign-in",
-    "taxYearEOYErrorFeatureSwitch" -> "false",
+    "taxYearErrorFeatureSwitch" -> "false",
     "useEncryption" -> "true"
   )
 
@@ -98,7 +98,7 @@ trait IntegrationTest extends AnyWordSpec with Matchers with GuiceOneServerPerSu
     "microservice.services.income-tax-submission.url" -> s"http://$wiremockHost:$wiremockPort",
     "microservice.services.view-and-change.url" -> s"http://$wiremockHost:$wiremockPort",
     "microservice.services.sign-in.url" -> s"/auth-login-stub/gg-sign-in",
-    "taxYearEOYErrorFeatureSwitch" -> "false",
+    "taxYearErrorFeatureSwitch" -> "false",
     "useEncryption" -> "true",
     "mongodb.encryption.key" -> "key"
   )
@@ -193,16 +193,16 @@ trait IntegrationTest extends AnyWordSpec with Matchers with GuiceOneServerPerSu
     )) and Some(AffinityGroup.Individual) and ConfidenceLevel.L200
   )
 
-  def playSessionCookies(taxYearEOY: Int, extraData: Map[String, String] = Map.empty): String = PlaySessionCookieBaker.bakeSessionCookie(Map(
-    SessionValues.TAX_YEAR -> taxYearEOY.toString,
+  def playSessionCookies(taxYear: Int, extraData: Map[String, String] = Map.empty): String = PlaySessionCookieBaker.bakeSessionCookie(Map(
+    SessionValues.TAX_YEAR -> taxYear.toString,
     SessionKeys.sessionId -> sessionId,
     SessionValues.CLIENT_NINO -> nino,
     SessionValues.CLIENT_MTDITID -> mtditid
   ) ++ extraData)
 
-  def userDataStub(userData: IncomeTaxUserData, nino: String, taxYearEOY: Int): StubMapping = {
+  def userDataStub(userData: IncomeTaxUserData, nino: String, taxYear: Int): StubMapping = {
     stubGetWithHeadersCheck(
-      url = s"/income-tax-submission-service/income-tax/nino/$nino/sources/session\\?taxYearEOY=$taxYearEOY", status = OK,
+      url = s"/income-tax-submission-service/income-tax/nino/$nino/sources/session\\?taxYear=$taxYear", status = OK,
       body = Json.toJson(userData).toString(),
       sessionHeader = "X-Session-ID" -> defaultUser.sessionId,
       mtdidHeader = "mtditid" -> defaultUser.mtdItId
