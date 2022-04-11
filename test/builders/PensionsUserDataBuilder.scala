@@ -22,6 +22,7 @@ import models.pension.charges.PensionAnnualAllowancesViewModel
 import models.pension.reliefs.PaymentsIntoPensionViewModel
 import models.pension.statebenefits.IncomeFromPensionsViewModel
 import utils.UnitTest
+import models.pension.statebenefits.IncomeFromPensionsViewModel
 
 object PensionsUserDataBuilder extends UnitTest {
 
@@ -50,11 +51,10 @@ object PensionsUserDataBuilder extends UnitTest {
     )
   }
 
-  def pensionsUserDataWithIncomeFromPensions(incomeFromPensionsAllowancesViewModel: IncomeFromPensionsViewModel,
-                                             isPriorSubmission: Boolean = true): PensionsUserData = {
+  def pensionsUserDataWithIncomeFromPensions(incomeFromPensionsViewModel: IncomeFromPensionsViewModel,
+                                           isPriorSubmission: Boolean = true): PensionsUserData = {
     aPensionsUserData.copy(isPriorSubmission = isPriorSubmission,
-      pensions = aPensionsCYAModel.copy(incomeFromPensions = incomeFromPensionsAllowancesViewModel)
+      pensions = aPensionsCYAModel.copy(incomeFromPensions = incomeFromPensionsViewModel)
     )
   }
-
 }

@@ -17,8 +17,8 @@
 package controllers.pensions.incomeFromPensions
 
 import builders.IncomeFromPensionsViewModelBuilder.anIncomeFromPensionsViewModel
-import builders.PensionsUserDataBuilder.{aPensionsUserData, pensionsUserDataWithIncomeFromPensions}
-import builders.StateBenefitViewModelBuilder.anStateBenefitViewModelOne
+import builders.PensionsUserDataBuilder.{aPensionsUserData, anPensionsUserDataEmptyCya, pensionsUserDataWithIncomeFromPensions}
+import builders.StateBenefitViewModelBuilder.anStateBenefitViewModelTwo
 import builders.UserBuilder.aUserRequest
 import forms.YesNoForm
 import org.jsoup.Jsoup
@@ -27,12 +27,11 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.IncomeFromPensionsPages.taxOnLumpSumUrl
-import utils.PageUrls.{fullUrl, overviewUrl, pensionSummaryUrl}
+import utils.PageUrls.{fullUrl, pensionSummaryUrl}
+import utils.PageUrls.IncomeFromPensionsPages.statePensionLumpSumUrl
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
-// scalastyle:off magic.number
-class TaxPaidOnStatePensionLumpSumControllerISpec extends IntegrationTest with BeforeAndAfterEach with ViewHelpers with PensionsDatabaseHelper {
+class StatePensionLumpSumControllerISpec extends IntegrationTest with BeforeAndAfterEach with ViewHelpers with PensionsDatabaseHelper {
 
   object Selectors {
     val captionSelector: String = "#main-content > div > div > header > p"
@@ -40,12 +39,11 @@ class TaxPaidOnStatePensionLumpSumControllerISpec extends IntegrationTest with B
     val formSelector: String = "#main-content > div > div > form"
     val yesSelector = "#value"
     val noSelector = "#value-no"
-    val findOutLinkSelector = "#annual-allowance-link"
-    val overLimitLinkSelector = "#over-limit-link"
+    val whereToFindSelector = "#main-content > div > div > form > details > summary > span"
+    val youCanFindSelector = "#main-content > div > div > form > details > div > p"
     val detailsSelector = "#main-content > div > div > form > details > summary > span"
-    val paragraphSelector: String = "#main-content > div > div > form > details > div > p"
-    def detailsBulletSelector(index: Int): String = s"#main-content > div > div > form > details > div > ul > li:nth-child($index)"
-
+    def paragraphSelector(index: Int, withError: Boolean = false): String = s"#main-content > div > div > p:nth-child(${index + (if(withError) 2 else 1)})"
+    def bulletSelector(index: Int): String = s"#main-content > div > div > form > details > div > ul > li:nth-child($index)"
   }
 
   trait SpecificExpectedResults {
@@ -53,60 +51,66 @@ class TaxPaidOnStatePensionLumpSumControllerISpec extends IntegrationTest with B
     val expectedHeading: String
     val expectedErrorTitle: String
     val expectedError: String
-    val expectedDetailsBullet1: String
-    val expectedDetailsBullet2: String
-
+    val expectedP1: String
+    val expectedBullet1: String
+    val expectedBullet2: String
   }
 
   trait CommonExpectedResults {
     val expectedCaption: Int => String
-    val expectedDetailsTitle: String
-    val expectedDetailsWhereToFind: String
+    val expectedWhereToFind: String
+    val expectedYouCanFind: String
+    val expectedP2: String
     val expectedButtonText: String
     val yesText: String
     val noText: String
   }
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
-    val expectedTitle = "Did you pay tax on the State Pension lump sum?"
-    val expectedHeading = "Did you pay tax on the State Pension lump sum?"
+    val expectedTitle = "Did you get a State Pension lump sum?"
+    val expectedHeading = "Did you get a State Pension lump sum?"
     val expectedErrorTitle = s"Error: $expectedTitle"
-    val expectedError = "Select yes if you paid tax on the State Pension lump sum"
-    val expectedDetailsBullet1 = "your P60"
-    val expectedDetailsBullet2 = "the ‘About general increases in benefits’ letter the Pension Service sent you"
+    val expectedError = "Select yes if you got a State Pension lump sum"
+    val expectedP1 = "You might have got a one-off lump sum payment if you delayed claiming your State Pension for 12 months in a row."
+    val expectedBullet1 = "your P60"
+    val expectedBullet2 = "the ‘About general increases in benefits’ letter the Pension Service sent you"
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
-    val expectedTitle = "Did you pay tax on the State Pension lump sum?"
-    val expectedHeading = "Did you pay tax on the State Pension lump sum?"
+    val expectedTitle = "Did you get a State Pension lump sum?"
+    val expectedHeading = "Did you get a State Pension lump sum?"
     val expectedErrorTitle = s"Error: $expectedTitle"
-    val expectedError = "Select yes if you paid tax on the State Pension lump sum"
-    val expectedDetailsBullet1 = "your P60"
-    val expectedDetailsBullet2 = "the ‘About general increases in benefits’ letter the Pension Service sent you"
+    val expectedError = "Select yes if you got a State Pension lump sum"
+    val expectedP1 = "You might have got a one-off lump sum payment if you delayed claiming your State Pension for 12 months in a row."
+    val expectedBullet1 = "your P60"
+    val expectedBullet2 = "the ‘About general increases in benefits’ letter the Pension Service sent you"
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
-    val expectedTitle = "Did your client pay tax on the State Pension lump sum?"
-    val expectedHeading = "Did your client pay tax on the State Pension lump sum?"
+    val expectedTitle = "Did your client get a State Pension lump sum?"
+    val expectedHeading = "Did your client get a State Pension lump sum?"
     val expectedErrorTitle = s"Error: $expectedTitle"
-    val expectedError = "Select yes if your client paid tax on the State Pension lump sum"
-    val expectedDetailsBullet1 = "your client’s P60"
-    val expectedDetailsBullet2 = "the ‘About general increases in benefits’ letter the Pension Service sent your client"
+    val expectedError = "Select yes if your client got a State Pension lump sum"
+    val expectedP1 = "Your client might have got a one-off lump sum payment if they delayed claiming their State Pension for 12 months in a row."
+    val expectedBullet1 = "your client’s P60"
+    val expectedBullet2 = "the ‘About general increases in benefits’ letter the Pension Service sent your client"
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
-    val expectedTitle = "Did your client pay tax on the State Pension lump sum?"
-    val expectedHeading = "Did your client pay tax on the State Pension lump sum?"
+    val expectedTitle = "Did your client get a State Pension lump sum?"
+    val expectedHeading = "Did your client get a State Pension lump sum?"
     val expectedErrorTitle = s"Error: $expectedTitle"
-    val expectedError = "Select yes if your client paid tax on the State Pension lump sum"
-    val expectedDetailsBullet1 = "your client’s P60"
-    val expectedDetailsBullet2 = "the ‘About general increases in benefits’ letter the Pension Service sent your client"
+    val expectedError = "Select yes if your client got a State Pension lump sum"
+    val expectedP1 = "Your client might have got a one-off lump sum payment if they delayed claiming their State Pension for 12 months in a row."
+    val expectedBullet1 = "your client’s P60"
+    val expectedBullet2 = "the ‘About general increases in benefits’ letter the Pension Service sent your client"
   }
 
   object CommonExpectedEN extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Income from pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val expectedDetailsTitle = "Where to find this information"
-    val expectedDetailsWhereToFind = "You can find this information in:"
+    val expectedWhereToFind = "Where to find this information"
+    val expectedYouCanFind = "You can find this information in:"
+    val expectedP2 = "This only applies to people who reach State Pension age before 6 April 2016."
     val expectedButtonText = "Continue"
     val yesText = "Yes"
     val noText = "No"
@@ -114,8 +118,9 @@ class TaxPaidOnStatePensionLumpSumControllerISpec extends IntegrationTest with B
 
   object CommonExpectedCY extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Income from pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val expectedDetailsTitle = "Where to find this information"
-    val expectedDetailsWhereToFind = "You can find this information in:"
+    val expectedWhereToFind = "Where to find this information"
+    val expectedYouCanFind = "You can find this information in:"
+    val expectedP2 = "This only applies to people who reach State Pension age before 6 April 2016."
     val expectedButtonText = "Continue"
     val yesText = "Yes"
     val noText = "No"
@@ -135,14 +140,12 @@ class TaxPaidOnStatePensionLumpSumControllerISpec extends IntegrationTest with B
         import Selectors._
         import user.commonExpectedResults._
 
-        "render the 'Did you pay tax on State Pension lump sum' page when there is no CYA session data for the question" which {
+        "render the 'Did you get a lump sum' page with correct content and no pre-filling" which {
           implicit lazy val result: WSResponse = {
             authoriseAgentOrIndividual(user.isAgent)
             dropPensionsDB()
-            val pensionsViewModel = anIncomeFromPensionsViewModel.copy(statePensionLumpSum =
-              Some(anStateBenefitViewModelOne.copy(taxPaidQuestion = None)))
-            insertCyaData(pensionsUserDataWithIncomeFromPensions(pensionsViewModel), aUserRequest)
-            urlGet(fullUrl(taxOnLumpSumUrl(taxYearEOY)), user.isWelsh, follow = false,
+            insertCyaData(anPensionsUserDataEmptyCya, aUserRequest)
+            urlGet(fullUrl(statePensionLumpSumUrl(taxYearEOY)), user.isWelsh, follow = false,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
           }
 
@@ -152,29 +155,30 @@ class TaxPaidOnStatePensionLumpSumControllerISpec extends IntegrationTest with B
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          formPostLinkCheck(taxOnLumpSumUrl(taxYearEOY), formSelector)
           titleCheck(user.specificExpectedResults.get.expectedTitle)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
+          textOnPageCheck(user.specificExpectedResults.get.expectedP1, paragraphSelector(1))
+          textOnPageCheck(expectedP2, paragraphSelector(2))
+          textOnPageCheck(expectedWhereToFind, whereToFindSelector)
+          textOnPageCheck(expectedYouCanFind, youCanFindSelector)
+          textOnPageCheck(user.specificExpectedResults.get.expectedBullet1, bulletSelector(1))
+          textOnPageCheck(user.specificExpectedResults.get.expectedBullet2, bulletSelector(2))
           radioButtonCheck(yesText, 1, checked = Some(false))
           radioButtonCheck(noText, 2, checked = Some(false))
-          textOnPageCheck(expectedDetailsTitle, detailsSelector)
-          textOnPageCheck(expectedDetailsWhereToFind, paragraphSelector)
-          textOnPageCheck(user.specificExpectedResults.get.expectedDetailsBullet1, detailsBulletSelector(1))
-          textOnPageCheck(user.specificExpectedResults.get.expectedDetailsBullet2, detailsBulletSelector(2))
           buttonCheck(expectedButtonText, continueButtonSelector)
+          formPostLinkCheck(statePensionLumpSumUrl(taxYearEOY), formSelector)
           welshToggleCheck(user.isWelsh)
         }
 
-        "render the 'Did you pay tax on State Pension lump sum' page with correct content and yes pre-filled" which {
+        "render the 'Did you get a lump sum' page with correct content and yes pre-filled" which {
 
           implicit lazy val result: WSResponse = {
             dropPensionsDB()
-            val pensionsViewModel = anIncomeFromPensionsViewModel.copy(statePensionLumpSum =
-              Some(anStateBenefitViewModelOne.copy(taxPaidQuestion = Some(true))))
+            val pensionsViewModel = anIncomeFromPensionsViewModel
             insertCyaData(pensionsUserDataWithIncomeFromPensions(pensionsViewModel), aUserRequest)
             authoriseAgentOrIndividual(user.isAgent)
-            urlGet(fullUrl(taxOnLumpSumUrl(taxYearEOY)), user.isWelsh, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+            urlGet(fullUrl(statePensionLumpSumUrl(taxYearEOY)), user.isWelsh, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
           }
 
           "has an OK status" in {
@@ -183,29 +187,35 @@ class TaxPaidOnStatePensionLumpSumControllerISpec extends IntegrationTest with B
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          formPostLinkCheck(taxOnLumpSumUrl(taxYearEOY), formSelector)
           titleCheck(user.specificExpectedResults.get.expectedTitle)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
+          textOnPageCheck(user.specificExpectedResults.get.expectedP1, paragraphSelector(1))
+          textOnPageCheck(expectedP2, paragraphSelector(2))
+          textOnPageCheck(expectedWhereToFind, whereToFindSelector)
+          textOnPageCheck(expectedYouCanFind, youCanFindSelector)
+          textOnPageCheck(user.specificExpectedResults.get.expectedBullet1, bulletSelector(1))
+          textOnPageCheck(user.specificExpectedResults.get.expectedBullet2, bulletSelector(2))
           radioButtonCheck(yesText, 1, checked = Some(true))
           radioButtonCheck(noText, 2, checked = Some(false))
-          textOnPageCheck(expectedDetailsTitle, detailsSelector)
-          textOnPageCheck(expectedDetailsWhereToFind, paragraphSelector)
-          textOnPageCheck(user.specificExpectedResults.get.expectedDetailsBullet1, detailsBulletSelector(1))
-          textOnPageCheck(user.specificExpectedResults.get.expectedDetailsBullet2, detailsBulletSelector(2))
           buttonCheck(expectedButtonText, continueButtonSelector)
+          formPostLinkCheck(statePensionLumpSumUrl(taxYearEOY), formSelector)
           welshToggleCheck(user.isWelsh)
         }
 
-        "render the 'Did you pay tax on State Pension lump sum' page with correct content and no pre-filled" which {
+        "render the 'Did you get a lump sum' page with correct content and no pre-filled" which {
 
           implicit lazy val result: WSResponse = {
             dropPensionsDB()
-            authoriseAgentOrIndividual(user.isAgent)
-            val pensionsViewModel = anIncomeFromPensionsViewModel.copy(statePensionLumpSum =
-              Some(anStateBenefitViewModelOne.copy(taxPaidQuestion = Some(false))))
+            val pensionsViewModel =
+              anIncomeFromPensionsViewModel.copy(
+                statePensionLumpSum = Some(anStateBenefitViewModelTwo.copy(
+                  amountPaidQuestion = Some(false)
+                ))
+              )
             insertCyaData(pensionsUserDataWithIncomeFromPensions(pensionsViewModel), aUserRequest)
-            urlGet(fullUrl(taxOnLumpSumUrl(taxYearEOY)), user.isWelsh, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+            authoriseAgentOrIndividual(user.isAgent)
+            urlGet(fullUrl(statePensionLumpSumUrl(taxYearEOY)), user.isWelsh, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
           }
 
           "has an OK status" in {
@@ -214,65 +224,41 @@ class TaxPaidOnStatePensionLumpSumControllerISpec extends IntegrationTest with B
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          formPostLinkCheck(taxOnLumpSumUrl(taxYearEOY), formSelector)
           titleCheck(user.specificExpectedResults.get.expectedTitle)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
+          textOnPageCheck(user.specificExpectedResults.get.expectedP1, paragraphSelector(1))
+          textOnPageCheck(expectedP2, paragraphSelector(2))
+          textOnPageCheck(expectedWhereToFind, whereToFindSelector)
+          textOnPageCheck(expectedYouCanFind, youCanFindSelector)
+          textOnPageCheck(user.specificExpectedResults.get.expectedBullet1, bulletSelector(1))
+          textOnPageCheck(user.specificExpectedResults.get.expectedBullet2, bulletSelector(2))
           radioButtonCheck(yesText, 1, checked = Some(false))
           radioButtonCheck(noText, 2, checked = Some(true))
-          textOnPageCheck(expectedDetailsTitle, detailsSelector)
-          textOnPageCheck(expectedDetailsWhereToFind, paragraphSelector)
-          textOnPageCheck(user.specificExpectedResults.get.expectedDetailsBullet1, detailsBulletSelector(1))
-          textOnPageCheck(user.specificExpectedResults.get.expectedDetailsBullet2, detailsBulletSelector(2))
           buttonCheck(expectedButtonText, continueButtonSelector)
+          formPostLinkCheck(statePensionLumpSumUrl(taxYearEOY), formSelector)
           welshToggleCheck(user.isWelsh)
         }
       }
     }
-
-
-    "redirect to Pensions overview page if it is not end of year" should {
-      lazy val result: WSResponse = {
-        dropPensionsDB()
-
-        val pensionsViewModel = anIncomeFromPensionsViewModel.copy(statePensionLumpSum =
-          Some(anStateBenefitViewModelOne.copy(taxPaidQuestion = None)))
-        insertCyaData(pensionsUserDataWithIncomeFromPensions(pensionsViewModel), aUserRequest)
-
-        authoriseAgentOrIndividual(isAgent = false)
-        urlGet(fullUrl(taxOnLumpSumUrl(taxYear)), follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear)))
-      }
-
-      "has an SEE_OTHER status" in {
-        result.status shouldBe SEE_OTHER
-        result.header("location")shouldBe  Some(overviewUrl(taxYear))
-      }
-    }
-
 
     "redirect to Pensions Summary page if there is no session data" should {
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(isAgent = false)
-        urlGet(fullUrl(taxOnLumpSumUrl(taxYearEOY)), follow = false,
+        urlGet(fullUrl(statePensionLumpSumUrl(taxYearEOY)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
       }
 
       "has an SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER
-        //TODO: navigate to the income from pensions CYA page
         result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
       }
     }
   }
 
   ".submit" should {
-    import Selectors._
     userScenarios.foreach { user =>
-
-      import user.commonExpectedResults._
-
       s"language is ${welshTest(user.isWelsh)} and request is from an ${agentTest(user.isAgent)}" should {
 
         s"return $BAD_REQUEST error when no value is submitted" which {
@@ -282,7 +268,7 @@ class TaxPaidOnStatePensionLumpSumControllerISpec extends IntegrationTest with B
             dropPensionsDB()
             authoriseAgentOrIndividual(user.isAgent)
             insertCyaData(aPensionsUserData, aUserRequest)
-            urlPost(fullUrl(taxOnLumpSumUrl(taxYearEOY)), body = form, follow = false, welsh = user.isWelsh,
+            urlPost(fullUrl(statePensionLumpSumUrl(taxYearEOY)), body = form, follow = false, welsh = user.isWelsh,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
           }
 
@@ -291,103 +277,100 @@ class TaxPaidOnStatePensionLumpSumControllerISpec extends IntegrationTest with B
           }
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
-
-
-          formPostLinkCheck(taxOnLumpSumUrl(taxYearEOY), formSelector)
+          import Selectors._
+          import user.commonExpectedResults._
           titleCheck(user.specificExpectedResults.get.expectedErrorTitle)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
+          textOnPageCheck(user.specificExpectedResults.get.expectedP1, paragraphSelector(1, withError = true))
+          textOnPageCheck(expectedP2, paragraphSelector(2, withError = true))
+          textOnPageCheck(expectedWhereToFind, whereToFindSelector)
+          textOnPageCheck(expectedYouCanFind, youCanFindSelector)
+          textOnPageCheck(user.specificExpectedResults.get.expectedBullet1, bulletSelector(1))
+          textOnPageCheck(user.specificExpectedResults.get.expectedBullet2, bulletSelector(2))
           radioButtonCheck(yesText, 1, checked = Some(false))
           radioButtonCheck(noText, 2, checked = Some(false))
-          errorSummaryCheck(user.specificExpectedResults.get.expectedError, Selectors.yesSelector)
-          errorAboveElementCheck(user.specificExpectedResults.get.expectedError, Some("value"))
-          textOnPageCheck(expectedDetailsTitle, detailsSelector)
-          textOnPageCheck(expectedDetailsWhereToFind, paragraphSelector)
-          textOnPageCheck(user.specificExpectedResults.get.expectedDetailsBullet1, detailsBulletSelector(1))
-          textOnPageCheck(user.specificExpectedResults.get.expectedDetailsBullet2, detailsBulletSelector(2))
           buttonCheck(expectedButtonText, continueButtonSelector)
+          formPostLinkCheck(statePensionLumpSumUrl(taxYearEOY), formSelector)
           welshToggleCheck(user.isWelsh)
 
+          errorSummaryCheck(user.specificExpectedResults.get.expectedError, Selectors.yesSelector)
+          errorAboveElementCheck(user.specificExpectedResults.get.expectedError, Some("value"))
         }
       }
     }
 
-    "redirect to the overview page if it is not end of year" which {
-      lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.yes)
-
-      lazy val result: WSResponse = {
-        dropPensionsDB()
-
-        val pensionsViewModel = anIncomeFromPensionsViewModel.copy(statePensionLumpSum =
-          Some(anStateBenefitViewModelOne.copy(taxPaidQuestion = None)))
-        insertCyaData(pensionsUserDataWithIncomeFromPensions(pensionsViewModel), aUserRequest)
-
-        authoriseAgentOrIndividual(isAgent = false)
-
-        urlPost(fullUrl(taxOnLumpSumUrl(taxYear)), body = form, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear)))
-      }
-
-      "has a SEE_OTHER(303) status" in {
-        result.status shouldBe SEE_OTHER
-        result.header("location")shouldBe  Some(overviewUrl(taxYear))
-      }
-
-    }
-
-    "redirect and update question to 'Yes' when user selects yes" which {
+    "redirect and update question to 'Yes' when user selects yes when there is no cya data" which {
       lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.yes)
 
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(isAgent = false)
-
-        val pensionsViewModel = anIncomeFromPensionsViewModel.copy(statePensionLumpSum =
-          Some(anStateBenefitViewModelOne.copy(taxPaidQuestion = None)))
-        insertCyaData(pensionsUserDataWithIncomeFromPensions(pensionsViewModel), aUserRequest)
-
-        urlPost(fullUrl(taxOnLumpSumUrl(taxYearEOY)), body = form, follow = false,
+        urlPost(fullUrl(statePensionLumpSumUrl(taxYearEOY)), body = form, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
       }
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        //TODO: navigate to the correct next page
         result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
       }
 
-      "updates taxPaidQuestion to Some(true)" in {
+      "updates amountPaidQuestion to Some(true)" in {
         lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
-        cyaModel.pensions.incomeFromPensions.statePensionLumpSum.get.taxPaidQuestion shouldBe Some(true)
+        cyaModel.pensions.incomeFromPensions.statePensionLumpSum.get.amountPaidQuestion shouldBe Some(true)
       }
     }
 
-    "redirect and update question to No and delete the tax paid amount when user selects no" which {
+    "redirect and update question to 'Yes' when user selects yes and cya data exists" which {
+      lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.yes)
+
+      lazy val result: WSResponse = {
+        dropPensionsDB()
+        authoriseAgentOrIndividual(isAgent = false)
+        val pensionsViewModel =
+          anIncomeFromPensionsViewModel.copy(
+            statePensionLumpSum = Some(anStateBenefitViewModelTwo.copy(
+              amountPaidQuestion = Some(false)
+            ))
+          )
+        insertCyaData(pensionsUserDataWithIncomeFromPensions(pensionsViewModel), aUserRequest)
+        urlPost(fullUrl(statePensionLumpSumUrl(taxYearEOY)), body = form, follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+      }
+
+      "has a SEE_OTHER(303) status" in {
+        result.status shouldBe SEE_OTHER
+        result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
+      }
+
+      "updates amountPaidQuestion to Some(true)" in {
+        lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
+        cyaModel.pensions.incomeFromPensions.statePensionLumpSum.get.amountPaidQuestion shouldBe Some(true)
+      }
+    }
+
+    "redirect and update question to 'No' when user selects no and cya data exists" which {
       lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.no)
 
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(isAgent = false)
-
-        val pensionsViewModel = anIncomeFromPensionsViewModel.copy(statePensionLumpSum =
-          Some(anStateBenefitViewModelOne.copy(taxPaidQuestion = Some(true), taxPaid = Some(44.55))))
+        val pensionsViewModel = anIncomeFromPensionsViewModel
         insertCyaData(pensionsUserDataWithIncomeFromPensions(pensionsViewModel), aUserRequest)
-
-        urlPost(fullUrl(taxOnLumpSumUrl(taxYearEOY)), body = form, follow = false,
+        urlPost(fullUrl(statePensionLumpSumUrl(taxYearEOY)), body = form, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
       }
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        //TODO: navigate to the correct next page
         result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
       }
 
-      "updates taxPaidQuestion to Some(false) and wipe the taxPaid value to None" in {
+      "updates amountPaidQuestion to Some(false) and wipes amount value" in {
         lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
-        cyaModel.pensions.incomeFromPensions.statePensionLumpSum.get.taxPaidQuestion shouldBe Some(false)
-        cyaModel.pensions.incomeFromPensions.statePensionLumpSum.get.taxPaid shouldBe None
+        cyaModel.pensions.incomeFromPensions.statePensionLumpSum.get.amountPaidQuestion shouldBe Some(false)
+        cyaModel.pensions.incomeFromPensions.statePensionLumpSum.get.amount shouldBe None
       }
     }
   }
+
 }
-// scalastyle:on magic.number

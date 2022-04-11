@@ -379,6 +379,15 @@ pensions.incomeFromPensionsDetails.bullet.aboutGeneralIncreases.individual = the
 pensions.incomeFromPensionsDetails.bullet.yourP60.agent = your client’s P60
 pensions.incomeFromPensionsDetails.bullet.aboutGeneralIncreases.agent = the ‘About general increases in benefits’ letter the Pension Service sent your client
 
+#state pension lump sum question
+incomeFromPensions.statePensionLumpSum.title.individual = Did you get a State Pension lump sum?
+incomeFromPensions.statePensionLumpSum.title.agent = Did your client get a State Pension lump sum?
+incomeFromPensions.statePensionLumpSum.para.individual = You might have got a one-off lump sum payment if you delayed claiming your State Pension for 12 months in a row.
+incomeFromPensions.statePensionLumpSum.para.agent = Your client might have got a one-off lump sum payment if they delayed claiming their State Pension for 12 months in a row.
+incomeFromPensions.statePensionLumpSum.onlyApplies = This only applies to people who reach State Pension age before 6 April 2016.
+incomeFromPensions.statePensionLumpSum.error.noEntry.individual = Select yes if you got a State Pension lump sum
+incomeFromPensions.statePensionLumpSum.error.noEntry.agent = Select yes if your client got a State Pension lump sum
+
 #state pension lump sum
 pensions.statePensionLumpSum.title.individual =How much was your State Pension lump sum?
 pensions.statePensionLumpSum.title.agent = How much was your client’s State Pension lump sum?
@@ -391,6 +400,6 @@ pensions.statePensionLumpSum.error.overMaximum.agent = Your client’s State Pen
 
 #tax paid on state pension lump sum
 pensions.taxPaidOnStatePensionLumpSum.title.individual = Did you pay tax on the State Pension lump sum?
-pensions.taxPaidOnStatePensionLumpSum.error.noEntry.individual = Select yes if you got a State Pension lump sum
+pensions.taxPaidOnStatePensionLumpSum.error.noEntry.individual = Select yes if you paid tax on the State Pension lump sum
 pensions.taxPaidOnStatePensionLumpSum.title.agent = Did your client pay tax on the State Pension lump sum?
-pensions.taxPaidOnStatePensionLumpSum.error.noEntry.agent = Select yes if your client got a State Pension lump sum
+pensions.taxPaidOnStatePensionLumpSum.error.noEntry.agent = Select yes if your client paid tax on the State Pension lump sum
