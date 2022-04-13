@@ -27,12 +27,12 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.{fullUrl, pensionSummaryUrl}
+import utils.PageUrls.{fullUrl, pensionSummaryUrl, overviewUrl}
 import utils.PageUrls.IncomeFromPensionsPages.statePensionLumpSumUrl
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 class StatePensionLumpSumControllerISpec extends IntegrationTest with BeforeAndAfterEach with ViewHelpers with PensionsDatabaseHelper {
-
+  
   object Selectors {
     val captionSelector: String = "#main-content > div > div > header > p"
     val continueButtonSelector: String = "#continue"
@@ -255,6 +255,25 @@ class StatePensionLumpSumControllerISpec extends IntegrationTest with BeforeAndA
         result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
       }
     }
+
+    "redirect to Pensions overview page if it is not end of year" should {
+      lazy val result: WSResponse = {
+        dropPensionsDB()
+
+        val pensionsViewModel = anIncomeFromPensionsViewModel.copy(statePensionLumpSum =
+          Some(anStateBenefitViewModelTwo.copy(amountPaidQuestion = None)))
+        insertCyaData(pensionsUserDataWithIncomeFromPensions(pensionsViewModel), aUserRequest)
+
+        authoriseAgentOrIndividual(isAgent = false)
+        urlGet(fullUrl(statePensionLumpSumUrl(taxYear)), follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear)))
+      }
+
+      "has an SEE_OTHER status" in {
+        result.status shouldBe SEE_OTHER
+        result.header("location")shouldBe  Some(overviewUrl(taxYear))
+      }
+    }
   }
 
   ".submit" should {
@@ -298,6 +317,29 @@ class StatePensionLumpSumControllerISpec extends IntegrationTest with BeforeAndA
           errorAboveElementCheck(user.specificExpectedResults.get.expectedError, Some("value"))
         }
       }
+    }
+
+    "redirect to the overview page if it is not end of year" which {
+      lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.yes)
+
+      lazy val result: WSResponse = {
+        dropPensionsDB()
+
+        val pensionsViewModel = anIncomeFromPensionsViewModel.copy(statePensionLumpSum =
+          Some(anStateBenefitViewModelTwo.copy(amountPaidQuestion = None)))
+        insertCyaData(pensionsUserDataWithIncomeFromPensions(pensionsViewModel), aUserRequest)
+
+        authoriseAgentOrIndividual(isAgent = false)
+
+        urlPost(fullUrl(statePensionLumpSumUrl(taxYear)), body = form, follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear)))
+      }
+
+      "has a SEE_OTHER(303) status" in {
+        result.status shouldBe SEE_OTHER
+        result.header("location")shouldBe  Some(overviewUrl(taxYear))
+      }
+
     }
 
     "redirect and update question to 'Yes' when user selects yes when there is no cya data" which {
