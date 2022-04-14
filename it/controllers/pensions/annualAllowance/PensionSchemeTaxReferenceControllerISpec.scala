@@ -26,7 +26,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.PensionAnnualAllowancePages.pensionSchemeTaxReferenceUrl
+import utils.PageUrls.PensionAnnualAllowancePages.{pensionSchemeTaxReferenceUrl, pstrSummaryUrl}
 import utils.PageUrls.{fullUrl, pensionSummaryUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
@@ -206,8 +206,7 @@ class PensionSchemeTaxReferenceControllerISpec extends IntegrationTest with Befo
 
       "has an SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER
-//        TODO REDIRECT TO PSTR SUMMARY PAGE
-        result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
+        result.header("location") shouldBe Some(pstrSummaryUrl(taxYearEOY))
       }
     }
 
@@ -312,8 +311,7 @@ class PensionSchemeTaxReferenceControllerISpec extends IntegrationTest with Befo
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        //TODO: navigate to pension scheme summary page
-        result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
+        result.header("location") shouldBe Some(pstrSummaryUrl(taxYearEOY))
       }
 
       "updates pension scheme tax reference to contain tax reference" in {
@@ -337,8 +335,7 @@ class PensionSchemeTaxReferenceControllerISpec extends IntegrationTest with Befo
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        //TODO: Redirect to the pstr summary page
-        result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
+        result.header("location") shouldBe Some(pstrSummaryUrl(taxYearEOY))
       }
 
       "updates pension scheme tax reference to contain both tax reference" in {
@@ -362,8 +359,7 @@ class PensionSchemeTaxReferenceControllerISpec extends IntegrationTest with Befo
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        //TODO: Redirect to the pstr summary page
-        result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
+        result.header("location") shouldBe Some(pstrSummaryUrl(taxYearEOY))
       }
 
       "updates pension scheme tax reference to contain both tax reference" in {
@@ -387,8 +383,7 @@ class PensionSchemeTaxReferenceControllerISpec extends IntegrationTest with Befo
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        //TODO: Redirect to the pstr summary page
-        result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
+        result.header("location") shouldBe Some(pstrSummaryUrl(taxYearEOY))
       }
 
       "updates pension scheme tax reference to contain both tax reference" in {
