@@ -15,48 +15,59 @@
  *@
 
 @import views.html.templates.Layout
-@import views.html.templates.helpers.InputText
+@import views.html.templates.helpers.InputTextAlt
 @import views.html.templates.helpers.Heading
 @import views.html.templates.helpers.Button
 @import views.html.templates.helpers.ErrorSummary
+@import views.html.templates.helpers.Details
+
 
 @this(
         layout: Layout,
         heading: Heading,
         button: Button,
         formWithCsrf: FormWithCSRF,
-        inputText: InputText,
+        inputText: InputTextAlt,
+        details: Details,
         errorSummary: ErrorSummary
 )
 
-@(form: Form[BigDecimal], taxYear: Int, reducedAnnualAllowanceQuestion: Boolean)(implicit request: AuthorisationRequest[_], messages: Messages, appConfig: AppConfig)
+@(form: Form[BigDecimal], taxYear: Int)(implicit request: AuthorisationRequest[_], messages: Messages, appConfig: AppConfig)
+
 @titleText = @{
-  messages(s"pensions.reducedAnnualAllowanceAmount.${if(reducedAnnualAllowanceQuestion) "reduced" else "nonReduced"}.title.${if(request.user.isAgent) "agent" else "individual"}")
+    messages(s"pensions.statePensionLumpSum.title.${if(request.user.isAgent) "agent" else "individual"}")
 }
+
 
 @hasFormErrors = @{form.hasErrors}
 
-@contentHtml = {
-    <p class="govuk-body">@{messages(s"pensions.reducedAnnualAllowanceAmount.paragraph")}</p>
+
+@detailsHtml = {
+    <p class="govuk-body">@messages("pensions.incomeFromPensionDetails.canFindInformation")</p>
+    <ul class="govuk-list govuk-list--bullet">
+        <li>@messages(s"pensions.incomeFromPensionDetails.p60.${if(request.user.isAgent) "agent" else "individual"}")</li>
+        <li>@messages(s"pensions.incomeFromPensionDetails.aboutGeneralIncreases.${if(request.user.isAgent) "agent" else "individual"}")</li>
+
+    </ul>
 }
 
 @layout(pageTitle = titleText, taxYear = Some(taxYear), hasErrors = hasFormErrors, isAgent = request.user.isAgent) {
 
     @errorSummary(form.errors.distinct)
 
-    @formWithCsrf(action = controllers.pensions.annualAllowance.routes.AboveReducedAnnualAllowanceAmountController.submit(taxYear)) {
+    @heading(titleText, Some(messages("common.incomeFromPensions.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-2")
+
+    @formWithCsrf(action = controllers.pensions.incomeFromPensions.routes.StatePensionLumpSumAmountController.submit(taxYear)) {
         @inputText(
             form,
             id = "amount",
             name = "amount",
-            heading = titleText,
-            headingClasses = "govuk-!-margin-bottom-2",
-            subheading = Some(messages("common.pensionAnnualAllowance.caption", (taxYear - 1).toString, taxYear.toString)),
-            content = Some(contentHtml),
-            hint = Some(Html(messages("common.currency.hint"))),
-            isPageHeading = false,
+            hint = Some(messages("common.currency.hint")),
+            label = titleText,
+            labelHidden = true,
             currency = true
         )
+	    @details("pensions.incomeFromPensionDetails.whereToFindInformation", detailsHtml)
         @button()
     }
 }

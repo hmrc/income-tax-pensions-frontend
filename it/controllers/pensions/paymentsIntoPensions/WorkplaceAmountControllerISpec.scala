@@ -394,7 +394,7 @@ class WorkplaceAmountControllerISpec extends IntegrationTest with ViewHelpers wi
         }
       }
     }
-    "redirect to the correct page when a valid amount is submitted and update the session amount" which {
+    "redirect to the CYA page when a valid amount is submitted and update the session amount completing the journey" which {
 
       val validAmount = "100.22"
       val validForm: Map[String, String] = Map(AmountForm.amount -> validAmount)

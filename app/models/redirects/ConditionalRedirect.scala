@@ -14,17 +14,15 @@
  * limitations under the License.
  */
 
-package utils
+package models.redirects
 
-import org.joda.time.DateTime
+import play.api.mvc.Call
 
-trait TaxYearHelper {
+case class ConditionalRedirect(condition: Boolean, redirect: Call, journeyNo: Option[Int] = None)
 
-  private val month = DateTime.now().monthOfYear().get()
-  private val dayOfMonth = DateTime.now().dayOfMonth().get()
+object ConditionalRedirect {
 
-  val taxYear: Int = if (month >= 4 && dayOfMonth > 5) DateTime.now().year().get() + 1 else DateTime.now().year().get()
-  val taxYearEOY: Int = taxYear - 1
-  val taxYearEndOfYearMinusOne: Int = taxYearEOY - 1
-
+  def apply(call: Call): ConditionalRedirect = {
+    ConditionalRedirect(condition = true, call)
+  }
 }

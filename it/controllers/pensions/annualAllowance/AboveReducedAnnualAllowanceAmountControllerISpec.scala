@@ -21,7 +21,6 @@ import builders.PensionsCYAModelBuilder._
 import builders.PensionsUserDataBuilder
 import builders.UserBuilder._
 import forms.AmountForm
-import forms.AmountForm.amount
 import models.mongo.PensionsCYAModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -29,7 +28,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.PensionAnnualAllowancePages.{aboveReducedAnnualAllowanceAmountUrl, aboveReducedAnnualAllowanceUrl, pensionProviderPaidTaxUrl, reducedAnnualAllowanceUrl}
+import utils.PageUrls.PensionAnnualAllowancePages._
 import utils.PageUrls.{fullUrl, pensionSummaryUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 

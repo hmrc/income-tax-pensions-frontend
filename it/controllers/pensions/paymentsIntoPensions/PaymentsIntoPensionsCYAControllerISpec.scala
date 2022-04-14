@@ -29,7 +29,7 @@ import builders.ReliefsBuilder.anReliefs
 import builders.UserBuilder.aUserRequest
 import forms.Yes
 import models.IncomeTaxUserData
-import models.pension.charges.{PensionAnnualAllowancesViewModel, PensionLifetimeAllowancesViewModel}
+import models.pension.charges.PensionAnnualAllowancesViewModel
 import models.pension.reliefs.PaymentsIntoPensionViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -335,8 +335,9 @@ class PaymentsIntoPensionsCYAControllerISpec extends IntegrationTest with ViewHe
             result.status shouldBe SEE_OTHER
           }
 
-          "redirects to the pensions summary page" in {
-            result.headers("Location").head shouldBe controllers.pensions.paymentsIntoPension.routes.ReliefAtSourcePensionsController.show(taxYear).url
+          "redirects to the RAS Pensions page" in {
+            result.headers("Location").head shouldBe
+              controllers.pensions.paymentsIntoPension.routes.ReliefAtSourcePaymentsAndTaxReliefAmountController.show(taxYear).url
           }
         }
 
@@ -352,7 +353,7 @@ class PaymentsIntoPensionsCYAControllerISpec extends IntegrationTest with ViewHe
             result.status shouldBe SEE_OTHER
           }
 
-          "redirects to the pensions summary page" in {
+          "redirects to the RAS Pensions page" in {
             result.headers("Location").head shouldBe controllers.pensions.paymentsIntoPension.routes.ReliefAtSourcePensionsController.show(taxYear).url
           }
         }

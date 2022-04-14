@@ -30,8 +30,11 @@ import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.PaymentsIntoPensionsCYAView
-
 import javax.inject.Inject
+import models.redirects.ConditionalRedirect
+import services.RedirectService.{PaymentsIntoPensionsRedirects, redirectBasedOnCurrentAnswers}
+import utils.PaymentsIntoPensionPages.CheckYourAnswersPage
+
 import scala.concurrent.Future
 
 class PaymentsIntoPensionsCYAController @Inject()(implicit val cc: MessagesControllerComponents,
@@ -45,14 +48,12 @@ class PaymentsIntoPensionsCYAController @Inject()(implicit val cc: MessagesContr
 
   def show(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
     pensionSessionService.getAndHandle(taxYear, request.user) { (cya, prior) =>
-      (cya.map(_.pensions), prior) match {
-        case (Some(cyaData), _) =>
-          if (cyaData.paymentsIntoPension.isFinished) {
-            Future.successful(Ok(view(taxYear, cyaData.paymentsIntoPension)))
-          } else {
-            //TODO - redirect to first unanswered question
-            Future.successful(Redirect(controllers.pensions.paymentsIntoPension.routes.ReliefAtSourcePensionsController.show(taxYear)))
-          }
+
+      (cya, prior) match {
+        case (Some(_), _) =>
+            redirectBasedOnCurrentAnswers(taxYear, cya)(redirects(_, taxYear)) { data =>
+              Future.successful(Ok(view(taxYear, data.pensions.paymentsIntoPension)))
+            }
         case (None, Some(priorData)) =>
           val cyaModel = generateCyaFromPrior(priorData)
           pensionSessionService.createOrUpdateSessionData(request.user,
@@ -178,6 +179,10 @@ class PaymentsIntoPensionsCYAController @Inject()(implicit val cc: MessagesContr
       case None => true
       case Some(prior) => !cyaData.equals(generateCyaFromPrior(prior))
     }
+  }
+
+  private def redirects(cya: PensionsCYAModel, taxYear: Int): Seq[ConditionalRedirect] = {
+    PaymentsIntoPensionsRedirects.journeyCheck(CheckYourAnswersPage, cya, taxYear)
   }
 
 }

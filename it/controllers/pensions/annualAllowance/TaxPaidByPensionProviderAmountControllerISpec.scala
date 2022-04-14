@@ -32,7 +32,6 @@ import utils.PageUrls.PensionAnnualAllowancePages._
 import utils.PageUrls.{fullUrl, pensionSummaryUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
-
 class TaxPaidByPensionProviderAmountControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
 
   private val poundPrefixText = "£"

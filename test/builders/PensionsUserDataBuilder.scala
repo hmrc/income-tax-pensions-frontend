@@ -21,9 +21,10 @@ import models.mongo.PensionsUserData
 import models.pension.charges.PensionAnnualAllowancesViewModel
 import models.pension.reliefs.PaymentsIntoPensionViewModel
 import models.pension.statebenefits.IncomeFromPensionsViewModel
-import utils.TaxYearHelper
+import utils.UnitTest
 
-object PensionsUserDataBuilder extends TaxYearHelper{
+
+object PensionsUserDataBuilder extends UnitTest {
 
   val aPensionsUserData: PensionsUserData = PensionsUserData(
     sessionId = "sessionId-eb3158c2-0aff-4ce8-8d1b-f2208ace52fe",

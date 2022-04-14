@@ -22,7 +22,6 @@ import controllers.predicates.AuthorisedAction
 import forms.YesNoForm
 import models.User
 import models.mongo.PensionsCYAModel
-import models.pension.charges.PensionAnnualAllowancesViewModel
 import models.pension.reliefs.PaymentsIntoPensionViewModel
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -30,9 +29,12 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
+import utils.PaymentsIntoPensionPages.WorkplacePensionPage
 import views.html.pensions.WorkplacePensionView
-
 import javax.inject.Inject
+import models.redirects.ConditionalRedirect
+import services.RedirectService.{isFinishedCheck, PaymentsIntoPensionsRedirects, redirectBasedOnCurrentAnswers}
+
 import scala.concurrent.Future
 
 class WorkplacePensionController @Inject()(implicit val mcc: MessagesControllerComponents,
@@ -44,13 +46,14 @@ class WorkplacePensionController @Inject()(implicit val mcc: MessagesControllerC
                                            clock: Clock) extends FrontendController(mcc) with I18nSupport {
 
   def show(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
-    pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
-      case Some(data) =>
+    pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) { optData =>
+      redirectBasedOnCurrentAnswers(taxYear, optData)(redirects(_, taxYear)) { data =>
+
         data.pensions.paymentsIntoPension.workplacePensionPaymentsQuestion match {
           case Some(value) => Future.successful(Ok(workplacePensionView(yesNoForm(request.user).fill(value), taxYear)))
           case None => Future.successful(Ok(workplacePensionView(yesNoForm(request.user), taxYear)))
         }
-      case _ => Future.successful(Redirect(PaymentsIntoPensionsCYAController.show(taxYear)))
+      }
     }
   }
 
@@ -58,22 +61,25 @@ class WorkplacePensionController @Inject()(implicit val mcc: MessagesControllerC
     yesNoForm(request.user).bindFromRequest().fold(
       formWithErrors => Future.successful(BadRequest(workplacePensionView(formWithErrors, taxYear))),
       yesNo =>
-        pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
-          data =>
-            val pensionsCYAModel: PensionsCYAModel = data.map(_.pensions).getOrElse(PensionsCYAModel.emptyModels)
+        pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) { optData =>
+          redirectBasedOnCurrentAnswers(taxYear, optData)(redirects(_, taxYear)) { data =>
+
+            val pensionsCYAModel: PensionsCYAModel = data.pensions
             val viewModel: PaymentsIntoPensionViewModel = pensionsCYAModel.paymentsIntoPension
             val updatedCyaModel: PensionsCYAModel = {
               pensionsCYAModel.copy(paymentsIntoPension = viewModel.copy(workplacePensionPaymentsQuestion = Some(yesNo),
                 totalWorkplacePensionPayments = if (yesNo) viewModel.totalWorkplacePensionPayments else None))
             }
-            pensionSessionService.createOrUpdateSessionData(request.user,
-              updatedCyaModel, taxYear, data.exists(_.isPriorSubmission))(errorHandler.internalServerError()) {
-              if (yesNo) {
-                Redirect(WorkplaceAmountController.show(taxYear))
-              } else {
-                Redirect(PaymentsIntoPensionsCYAController.show(taxYear))
-              }
+            val redirectLocation = if (yesNo) {
+              WorkplaceAmountController.show(taxYear)
+            } else {
+              PaymentsIntoPensionsCYAController.show(taxYear)
             }
+            pensionSessionService.createOrUpdateSessionData(request.user,
+              updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
+              isFinishedCheck(updatedCyaModel, taxYear, redirectLocation)
+            }
+          }
         }
     )
   }
@@ -81,4 +87,8 @@ class WorkplacePensionController @Inject()(implicit val mcc: MessagesControllerC
   private def yesNoForm(user: User): Form[Boolean] = YesNoForm.yesNoForm(
     missingInputError = s"pensions.workplacePension.error.noEntry.${if (user.isAgent) "agent" else "individual"}"
   )
+
+  private def redirects(cya: PensionsCYAModel, taxYear: Int): Seq[ConditionalRedirect] = {
+    PaymentsIntoPensionsRedirects.journeyCheck(WorkplacePensionPage, cya, taxYear)
+  }
 }

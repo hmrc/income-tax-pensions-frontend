@@ -27,7 +27,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.PensionIncomeFromPensionPages.taxOnLumpSumUrl
+import utils.PageUrls.IncomeFromPensionsPages.taxOnLumpSumUrl
 import utils.PageUrls.{fullUrl, overviewUrl, pensionSummaryUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
@@ -73,7 +73,7 @@ class TaxPaidOnStatePensionLumpSumControllerISpec extends IntegrationTest with B
     val expectedErrorTitle = s"Error: $expectedTitle"
     val expectedError = "Select yes if you got a State Pension lump sum"
     val expectedDetailsBullet1 = "your P60"
-    val expectedDetailsBullet2 = "the ‘About general increases in benefits’ letter the Pension Service sent to you"
+    val expectedDetailsBullet2 = "the ‘About general increases in benefits’ letter the Pension Service sent you"
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
@@ -82,7 +82,7 @@ class TaxPaidOnStatePensionLumpSumControllerISpec extends IntegrationTest with B
     val expectedErrorTitle = s"Error: $expectedTitle"
     val expectedError = "Select yes if you got a State Pension lump sum"
     val expectedDetailsBullet1 = "your P60"
-    val expectedDetailsBullet2 = "the ‘About general increases in benefits’ letter the Pension Service sent to you"
+    val expectedDetailsBullet2 = "the ‘About general increases in benefits’ letter the Pension Service sent you"
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {

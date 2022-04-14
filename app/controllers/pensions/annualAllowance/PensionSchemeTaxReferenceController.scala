@@ -28,6 +28,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.annualAllowance.PensionSchemeTaxReferenceView
 import controllers.pensions.routes.PensionsSummaryController
+import controllers.pensions.annualAllowance.routes.PstrSummaryController
 import models.User
 
 import javax.inject.Inject
@@ -63,8 +64,7 @@ class PensionSchemeTaxReferenceController @Inject()(implicit val cc: MessagesCon
           )
           Future.successful(Ok(pensionSchemeTaxReferenceView(form, taxYear, pensionSchemeTaxReferenceIndex)))
         } else {
-          //TODO: Redirect to the pstr summary page
-          Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
+          Future.successful(Redirect(PstrSummaryController.show(taxYear)))
         }
       case _ =>
         //TODO: redirect to the annual allowances CYA page
@@ -103,12 +103,10 @@ class PensionSchemeTaxReferenceController @Inject()(implicit val cc: MessagesCon
 
                 pensionSessionService.createOrUpdateSessionData(request.user,
                   updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
-//              TODO: Redirect to PSTR summary page
-                  Redirect(PensionsSummaryController.show(taxYear))
+                  Redirect(PstrSummaryController.show(taxYear))
                 }
               } else {
-                //TODO: Redirect to the pstr summary page
-                Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
+                Future.successful(Redirect(PstrSummaryController.show(taxYear)))
               }
             }
             //TODO: redirect to the annual allowances CYA page

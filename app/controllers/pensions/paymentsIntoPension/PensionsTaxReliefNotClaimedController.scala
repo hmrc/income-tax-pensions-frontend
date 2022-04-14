@@ -17,22 +17,23 @@
 package controllers.pensions.paymentsIntoPension
 
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.paymentsIntoPension.routes._
 import controllers.predicates.AuthorisedAction
 import forms.YesNoForm
 import models.User
 import models.mongo.PensionsCYAModel
-import models.pension.charges.PensionAnnualAllowancesViewModel
 import models.pension.reliefs.PaymentsIntoPensionViewModel
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
+import services.RedirectService.{isFinishedCheck, PaymentsIntoPensionsRedirects, redirectBasedOnCurrentAnswers}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
+import utils.PaymentsIntoPensionPages.TaxReliefNotClaimedPage
 import views.html.pensions.PensionsTaxReliefNotClaimedView
-
 import javax.inject.{Inject, Singleton}
+import models.redirects.ConditionalRedirect
+
 import scala.concurrent.Future
 
 
@@ -46,25 +47,25 @@ class PensionsTaxReliefNotClaimedController @Inject()(implicit val mcc: Messages
                                                       clock: Clock) extends FrontendController(mcc) with I18nSupport {
 
   def show(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
-    pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
-      case Some(data) =>
+    pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) { optData =>
+      redirectBasedOnCurrentAnswers(taxYear, optData)(redirects(_, taxYear)) { data =>
+
         data.pensions.paymentsIntoPension.pensionTaxReliefNotClaimedQuestion match {
           case Some(question) => Future.successful(Ok(pensionsTaxReliefNotClaimedView(yesNoForm(request.user).fill(question), taxYear)))
           case None => Future.successful(Ok(pensionsTaxReliefNotClaimedView(yesNoForm(request.user), taxYear)))
         }
-      case _ =>
-        Future.successful(Redirect(PaymentsIntoPensionsCYAController.show(taxYear)))
+      }
     }
-
   }
 
   def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
     yesNoForm(request.user).bindFromRequest().fold(
       formWithErrors => Future.successful(BadRequest(pensionsTaxReliefNotClaimedView(formWithErrors, taxYear))),
       yesNo => {
-        pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
-          data =>
-            val pensionsCYAModel: PensionsCYAModel = data.map(_.pensions).getOrElse(PensionsCYAModel.emptyModels)
+        pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) { optData =>
+          redirectBasedOnCurrentAnswers(taxYear, optData)(redirects(_, taxYear)) { data =>
+
+            val pensionsCYAModel: PensionsCYAModel = data.pensions
             val viewModel: PaymentsIntoPensionViewModel = pensionsCYAModel.paymentsIntoPension
             val updatedCyaModel: PensionsCYAModel = {
               pensionsCYAModel.copy(
@@ -83,11 +84,11 @@ class PensionsTaxReliefNotClaimedController @Inject()(implicit val mcc: Messages
               controllers.pensions.paymentsIntoPension.routes.PaymentsIntoPensionsCYAController.show(taxYear)
             }
             pensionSessionService.createOrUpdateSessionData(request.user,
-              updatedCyaModel, taxYear, data.exists(_.isPriorSubmission))(errorHandler.internalServerError()) {
-              Redirect(redirectLocation)
+              updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
+              isFinishedCheck(updatedCyaModel, taxYear, redirectLocation)
             }
+          }
         }
-
       }
     )
   }
@@ -95,5 +96,9 @@ class PensionsTaxReliefNotClaimedController @Inject()(implicit val mcc: Messages
   private def yesNoForm(user: User): Form[Boolean] = YesNoForm.yesNoForm(
     missingInputError = s"pensions.pensionsTaxReliefNotClaimed.error.noEntry.${if (user.isAgent) "agent" else "individual"}"
   )
+
+  private def redirects(cya: PensionsCYAModel, taxYear: Int): Seq[ConditionalRedirect] = {
+    PaymentsIntoPensionsRedirects.journeyCheck(TaxReliefNotClaimedPage, cya, taxYear)
+  }
 
 }

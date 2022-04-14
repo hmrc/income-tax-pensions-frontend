@@ -17,12 +17,14 @@
 package utils
 
 import builders.IncomeFromPensionsViewModelBuilder.anIncomeFromPensionsViewModel
+import builders.PensionAnnualAllowanceViewModelBuilder.aPensionAnnualAllowanceViewModel
 import builders.PensionLifetimeAllowanceViewModelBuilder.aPensionLifetimeAllowanceViewModel
 import models.mongo.{PensionsCYAModel, PensionsUserData}
 import models.pension.AllPensionsData
 import models.pension.charges._
 import models.pension.reliefs.{PaymentsIntoPensionViewModel, PensionReliefs, Reliefs}
 import models.pension.statebenefits.{StateBenefit, StateBenefits, StateBenefitsModel}
+
 
 object PensionDataStubs {
 
@@ -227,23 +229,13 @@ object PensionDataStubs {
 
 }
 
+object PensionUserDataStub extends IntegrationTest {
 
-object PensionUserDataStub extends TaxYearHelper {
   implicit val testClock: Clock = UnitTestClock
 
   val paymentsIntoPensionViewModel: PaymentsIntoPensionViewModel = PaymentsIntoPensionViewModel(Some(true),
     Some(222.3), Some(true), Some(22.44), Some(true), Some(true), Some(true), Some(44.00), Some(true), Some(55.55))
 
-  val pensionsAnnualAllowancesViewModel: PensionAnnualAllowancesViewModel = PensionAnnualAllowancesViewModel(
-    reducedAnnualAllowanceQuestion = Some(true),
-    moneyPurchaseAnnualAllowance = Some(true),
-    taperedAnnualAllowance = Some(true),
-    aboveAnnualAllowanceQuestion = Some(true),
-    aboveAnnualAllowance = Some(12.44),
-    pensionProvidePaidAnnualAllowanceQuestion = Some("Yes"),
-    taxPaidByPensionProvider = Some(14.55),
-    pensionSchemeTaxReference = Some(Seq("1234567CRC","12345678RB","1234567DRD"))
-  )
 
   // scalastyle:off magic.number
   def pensionUserData(
@@ -252,7 +244,7 @@ object PensionUserDataStub extends TaxYearHelper {
                        nino: String = "nino",
                        taxyear: Int = taxYear,
                        isPriorSubmission: Boolean = true,
-                       cya: PensionsCYAModel = (PensionsCYAModel(paymentsIntoPensionViewModel, pensionsAnnualAllowancesViewModel,
+                       cya: PensionsCYAModel = (PensionsCYAModel(paymentsIntoPensionViewModel, aPensionAnnualAllowanceViewModel,
                          aPensionLifetimeAllowanceViewModel, anIncomeFromPensionsViewModel))
                      ): PensionsUserData = {
     PensionsUserData(

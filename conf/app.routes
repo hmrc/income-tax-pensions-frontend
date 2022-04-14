@@ -87,7 +87,14 @@ POST        /:taxYear/annual-allowance/pension-provider-paid-tax-amount         
 GET         /:taxYear/annual-allowance/pension-scheme-tax-reference                         controllers.pensions.annualAllowance.PensionSchemeTaxReferenceController.show(taxYear: Int, pensionSchemeTaxReferenceIndex: Option[Int])
 POST        /:taxYear/annual-allowance/pension-scheme-tax-reference                         controllers.pensions.annualAllowance.PensionSchemeTaxReferenceController.submit(taxYear: Int, pensionSchemeTaxReferenceIndex: Option[Int])
 
+
 ###########################     Income from Pension pages     ####################################
+
+GET         /:taxYear/pension-income/state-pension-lump-sum-amount                          controllers.pensions.incomeFromPensions.StatePensionLumpSumAmountController.show(taxYear: Int)
+POST        /:taxYear/pension-income/state-pension-lump-sum-amount                          controllers.pensions.incomeFromPensions.StatePensionLumpSumAmountController.submit(taxYear: Int)
 
 GET         /:taxYear/pension-income/state-pension-lump-sum-tax                             controllers.pensions.incomeFromPensions.TaxPaidOnStatePensionLumpSumController.show(taxYear: Int)
 POST        /:taxYear/pension-income/state-pension-lump-sum-tax                             controllers.pensions.incomeFromPensions.TaxPaidOnStatePensionLumpSumController.submit(taxYear: Int)
+
+GET         /:taxYear/annual-allowance/pension-scheme-tax-reference-summary                 controllers.pensions.annualAllowance.PstrSummaryController.show(taxYear: Int)
+

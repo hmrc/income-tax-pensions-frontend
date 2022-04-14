@@ -22,8 +22,6 @@ import controllers.predicates.AuthorisedAction
 import forms.YesNoForm
 import models.User
 import models.mongo.PensionsCYAModel
-import models.pension.charges.PensionAnnualAllowancesViewModel
-import models.pension.reliefs.PaymentsIntoPensionViewModel
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -31,8 +29,9 @@ import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.ReliefAtSourcePensionsView
-
 import javax.inject.Inject
+import services.RedirectService.isFinishedCheck
+
 import scala.concurrent.Future
 
 class ReliefAtSourcePensionsController @Inject()(implicit val cc: MessagesControllerComponents,
@@ -68,18 +67,22 @@ class ReliefAtSourcePensionsController @Inject()(implicit val cc: MessagesContro
             pensionsCya.copy(
               paymentsIntoPension = viewModel.copy(
                 rasPensionPaymentQuestion = Some(yesNo),
-                totalRASPaymentsAndTaxRelief = if (yesNo) viewModel.totalRASPaymentsAndTaxRelief else None
+                totalRASPaymentsAndTaxRelief = if (yesNo) viewModel.totalRASPaymentsAndTaxRelief else None,
+                oneOffRasPaymentPlusTaxReliefQuestion = if (yesNo) viewModel.oneOffRasPaymentPlusTaxReliefQuestion else None,
+                totalOneOffRasPaymentPlusTaxRelief = if(yesNo) viewModel.totalOneOffRasPaymentPlusTaxRelief else None,
+                totalPaymentsIntoRASQuestion = if(yesNo) viewModel.totalPaymentsIntoRASQuestion else None
               )
             )
+          }
+          val redirectLocation = if (yesNo) {
+            ReliefAtSourcePaymentsAndTaxReliefAmountController.show(taxYear)
+          } else {
+            PensionsTaxReliefNotClaimedController.show(taxYear)
           }
 
           pensionSessionService.createOrUpdateSessionData(request.user,
             updatedCyaModel, taxYear, optData.exists(_.isPriorSubmission))(errorHandler.internalServerError()) {
-            if (yesNo) {
-              Redirect(ReliefAtSourcePaymentsAndTaxReliefAmountController.show(taxYear))
-            } else {
-              Redirect(PensionsTaxReliefNotClaimedController.show(taxYear))
-            }
+            isFinishedCheck(updatedCyaModel, taxYear, redirectLocation)
           }
         }
       }

@@ -231,7 +231,7 @@ class ReliefAtSourceOneOffPaymentsControllerISpec extends IntegrationTest with V
       }
     }
     
-    "redirect to the check your answers CYA page if the previous totalRASPaymentsAndTaxRelief Amount has not been populated" which {
+    "redirect to the RAS Amount page if the previous totalRASPaymentsAndTaxRelief Amount has not been populated" which {
 
       lazy val result: WSResponse = {
         dropPensionsDB()
@@ -245,7 +245,7 @@ class ReliefAtSourceOneOffPaymentsControllerISpec extends IntegrationTest with V
       
       "has an SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location").contains(checkPaymentsIntoPensionCyaUrl(taxYearEOY)) shouldBe true
+        result.header("location").contains(reliefAtSourcePaymentsAndTaxReliefAmountUrl(taxYearEOY)) shouldBe true
       }
 
     }
@@ -320,7 +320,8 @@ class ReliefAtSourceOneOffPaymentsControllerISpec extends IntegrationTest with V
         val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
           totalOneOffRasPaymentPlusTaxRelief = Some(someRasAmount),
           totalRASPaymentsAndTaxRelief = Some(someRasAmount),
-          oneOffRasPaymentPlusTaxReliefQuestion = None)
+          oneOffRasPaymentPlusTaxReliefQuestion = None,
+          workplacePensionPaymentsQuestion = None)
         insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
 
         urlPost(fullUrl(reliefAtSourceOneOffPaymentsUrl(taxYearEOY)), body = validFormYes, follow = false,
@@ -351,7 +352,8 @@ class ReliefAtSourceOneOffPaymentsControllerISpec extends IntegrationTest with V
         val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
           totalOneOffRasPaymentPlusTaxRelief = Some(someRasAmount),
           totalRASPaymentsAndTaxRelief = Some(someRasAmount),
-          oneOffRasPaymentPlusTaxReliefQuestion = None)
+          oneOffRasPaymentPlusTaxReliefQuestion = None,
+          workplacePensionPaymentsQuestion = None)
 
         insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
 
@@ -390,7 +392,7 @@ class ReliefAtSourceOneOffPaymentsControllerISpec extends IntegrationTest with V
 
     }
 
-    "redirect to the check your answers CYA page if the previous totalRASPaymentsAndTaxRelief amount has not been populated" which {
+    "redirect to the RAS Amount page if the previous totalRASPaymentsAndTaxRelief amount has not been populated" which {
 
       lazy val result: WSResponse = {
         dropPensionsDB()
@@ -406,7 +408,7 @@ class ReliefAtSourceOneOffPaymentsControllerISpec extends IntegrationTest with V
 
       "has an SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location").contains(checkPaymentsIntoPensionCyaUrl(taxYearEOY)) shouldBe true
+        result.header("location").contains(reliefAtSourcePaymentsAndTaxReliefAmountUrl(taxYearEOY)) shouldBe true
       }
 
     }
