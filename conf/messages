@@ -27,6 +27,7 @@ common.status.updated = Updated
 common.pensions.caption = Pensions for 6 April {0} to 5 April {1}
 common.paymentsIntoPensions.caption = Payments into pensions for 6 April {0} to 5 April {1}
 common.pensionAnnualAllowance.caption = Pension annual allowance for 6 April {0} to 5 April {1}
+common.incomeFromPensions.caption = Income from pensions for 6 April {0} to 5 April {1}
 common.return.overview.buttonText = Return to overview
 common.currencyAmount = £{0}
 common.total = Total
@@ -357,3 +358,25 @@ pension.pensionSchemeTaxReference.error.noEntry.individual = Enter your PSTR
 pension.pensionSchemeTaxReference.error.incorrectFormat.individual = Enter your PSTR in the correct format
 pension.pensionSchemeTaxReference.error.noEntry.agent = Enter your client’s PSTR
 pension.pensionSchemeTaxReference.error.incorrectFormat.agent = Enter your client’s PSTR in the correct format
+
+#################       INCOME FROM PENSIONS        ########################################
+pensions.details.whereToFindInformation.title = Where to find this information
+pensions.details.FindInformation = You can find this information in:
+pensions.details.bullet.yourP60.individual = your P60
+pensions.details.bullet.aboutGeneralIncreases.individual = the ‘About general increases in benefits’ letter the Pension Service sent you
+pensions.details.bullet.yourP60.agent = your client’s P60
+pensions.details.bullet.aboutGeneralIncreases.agent = the ‘About general increases in benefits’ letter the Pension Service sent your client
+
+
+#################       How Much Was Your State Pension Lump Sum Messages         #####################################
+pensions.statePensionLumpSum.title.individual =How much was your State Pension lump sum?
+pensions.statePensionLumpSum.title.agent = How much was your client’s State Pension lump sum?
+pensions.statePensionLumpSum.error.noEntry.individual = Enter your State Pension lump sum amount
+pensions.statePensionLumpSum.error.incorrectFormat.individual = Enter your State Pension lump sum amount in the correct format
+pensions.statePensionLumpSum.error.overMaximum.individual = Your State Pension lump sum amount must be less than £100,000,000,000
+pensions.statePensionLumpSum.error.noEntry.agent = Enter your client’s State Pension lump sum amount
+pensions.statePensionLumpSum.error.incorrectFormat.agent = Enter your client’s State Pension lump sum amount in the correct format
+pensions.statePensionLumpSum.error.overMaximum.agent = Your client’s State Pension lump sum amount must be less than £100,000,000,000
+
+
+

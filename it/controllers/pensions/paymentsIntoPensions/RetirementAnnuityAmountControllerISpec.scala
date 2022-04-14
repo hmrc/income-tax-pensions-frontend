@@ -221,7 +221,7 @@ class RetirementAnnuityAmountControllerISpec extends IntegrationTest with ViewHe
       implicit def document: () => Document = () => Jsoup.parse(result.body)
 
       "has an SEE_OTHER status" in {
-//        result.status shouldBe SEE_OTHER
+        result.status shouldBe SEE_OTHER
         result.header("location").contains(retirementAnnuityUrl(taxYearEOY)) shouldBe true
       }
     }
