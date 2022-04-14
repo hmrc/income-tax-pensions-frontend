@@ -32,7 +32,7 @@
 @(form: Form[String], taxYear: Int, pensionSchemeTaxReference: Option[Int])(implicit request: AuthorisationRequest[_], messages: Messages, appConfig: AppConfig)
 
 @titleForUse = @{
-    messages("pension.pensionSchemeTaxReference.title")
+    messages("common.pensionSchemeTaxReference")
 }
 
 @hasFormErrors = @{form.hasErrors}

@@ -17,6 +17,7 @@ common.continue = Continue
 common.saveAndContinue = Save and continue
 common.change = Change
 common.update = Update
+common.remove = Remove
 common.use = use
 common.error.errorKey = Error:
 common.opensInNewTab = (opens in new tab)
@@ -35,6 +36,7 @@ common.youCanFindThisOut.individual = You can find this out from your pension pr
 common.youCanFindThisOut.agent = You can find this out from your client’s pension provider.
 common.moreThanOnePensionScheme.individual = If more than one of your pension schemes paid the tax, you can add these details later.
 common.moreThanOnePensionScheme.agent = If more than one of your client’s pension schemes paid the tax, you can add these details later.
+common.pensionSchemeTaxReference = Pension Scheme Tax Reference
 
 common.error.self-assessment.paragraph.1.1 = If the web address is correct or you selected a link or button, you can use
 common.error.self-assessment.paragraph.1.2 = Self Assessment: general enquiries (opens in new tab)
@@ -303,7 +305,8 @@ pensions.ReducedAnnualAllowanceType.details.moneyPurchaseInfo.agent = Your clien
 pensions.ReducedAnnualAllowanceType.details.taperedInfo.individual = You’ll have this type of annual allowance if both your ‘threshold income’ and ‘adjusted income’ are
 pensions.ReducedAnnualAllowanceType.details.taperedInfo.agent = Your client will have this type of annual allowance if both their ‘threshold income’ and ‘adjusted income’ are
 
-# Reduced Annual Allowance Amount Messages
+#Reduced Annual Allowance Amount Messages
+
 pensions.reducedAnnualAllowanceAmount.reduced.title.individual = How much above your reduced annual allowance are you?
 pensions.reducedAnnualAllowanceAmount.reduced.title.agent = How much above your client’s reduced annual allowance are they?
 pensions.reducedAnnualAllowanceAmount.nonReduced.title.individual = How much above your annual allowance are you?
@@ -319,7 +322,7 @@ pensions.reducedAnnualAllowanceAmount.nonReduced.error.noEntry = Enter the amoun
 pensions.reducedAnnualAllowanceAmount.nonReduced.error.incorrectFormat = Enter the amount above the annual allowance in the correct format
 pensions.reducedAnnualAllowanceAmount.nonReduced.error.overMaximum = The amount above the annual allowance must be less than £100,000,000,000
 
-# Above Reduced Annual Allowance Messages
+#Above Reduced Annual Allowance Messages
 
 pensions.aboveReducedAnnualAllowance.reduced.title.individual = Have you gone above your reduced annual allowance?
 pensions.aboveReducedAnnualAllowance.reduced.title.agent = Has your client gone above their reduced annual allowance?
@@ -332,8 +335,8 @@ pensions.aboveReducedAnnualAllowance.reduced.error.noEntry.agent = Select yes if
 pensions.aboveReducedAnnualAllowance.nonReduced.error.noEntry.individual = Select yes if you have gone above the annual allowance
 pensions.aboveReducedAnnualAllowance.nonReduced.error.noEntry.agent = Select yes if your client has gone above the annual allowance
 
+#Pension Provider Paid Tax Messages
 
-# Pension Provider Paid Tax Messages
 pensions.pensionProviderPaidTax.title.individual = Has your pension provider paid your annual allowance tax?
 pensions.pensionProviderPaidTax.title.paragraph = If more than one pension scheme deals with the tax, you can add their details later.
 pensions.pensionProviderPaidTax.radio.hasAgreedToPay = No, but has agreed to pay
@@ -341,7 +344,8 @@ pensions.pensionProviderPaidTax.title.agent = Has your client’s pension provid
 pensions.pensionProviderPaidTax.error.noEntry.individual = Select yes if your pension provider paid your annual allowance tax
 pensions.pensionProviderPaidTax.error.noEntry.agent = Select yes if your client’s pension provider paid the annual allowance tax
 
-#################       Tax Paid By Pension Provider Annual Allowance Messages         ########################################
+#Tax Paid By Pension Provider Annual Allowance Messages
+
 pensions.annualAllowanceTaxPaidByPensionProviderAmount.title.individual = How much tax did your pension provider pay?
 pensions.annualAllowanceTaxPaidByPensionProviderAmount.title.agent = How much tax did your client’s pension provider pay?
 pensions.annualAllowanceTaxPaidByPensionProviderAmount.error.noEntry.individual = Enter the amount of tax your pension provider paid
@@ -352,13 +356,19 @@ pensions.annualAllowanceTaxPaidByPensionProviderAmount.error.incorrectFormat.age
 pensions.annualAllowanceTaxPaidByPensionProviderAmount.error.overMaximum.agent = The amount of tax your client’s pension provider paid must be less than £100,000,000,000
 
 #Pension Scheme Tax Reference Messages
-pension.pensionSchemeTaxReference.title = Pension Scheme Tax Reference
 pension.pensionSchemeTaxReference.paragraph1 = Enter the reference for the pension scheme that paid the tax.
 pension.pensionSchemeTaxReference.forExample = For example, ’12345678RA’
 pension.pensionSchemeTaxReference.error.noEntry.individual = Enter your PSTR
 pension.pensionSchemeTaxReference.error.incorrectFormat.individual = Enter your PSTR in the correct format
 pension.pensionSchemeTaxReference.error.noEntry.agent = Enter your client’s PSTR
 pension.pensionSchemeTaxReference.error.incorrectFormat.agent = Enter your client’s PSTR in the correct format
+
+#Pension Scheme Tax Reference Summary Page
+
+annualAllowance.pstrSummary.title = Pension Scheme Tax Reference (PSTR) summary
+annualAllowance.addAnotherPstrLink = Add another PSTR
+annualAllowance.addPstrLink = Add a PSTR
+
 
 #################       INCOME FROM PENSIONS        ########################################
 pensions.details.whereToFindInformation.title = Where to find this information

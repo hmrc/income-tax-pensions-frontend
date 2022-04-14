@@ -291,7 +291,7 @@ class PensionsTaxReliefNotClaimedControllerISpec extends IntegrationTest with Vi
 
     }
 
-    "redirect to Pensions Summary page when user submits a 'yes' answer which doesnt complete CYA model and updates the session value to yes" which {
+    "redirect to Retirement Annuity Question page when user submits a 'yes' answer which doesnt complete CYA model and updates the session value to yes" which {
 
       lazy val result: WSResponse = {
         dropPensionsDB()
@@ -340,7 +340,7 @@ class PensionsTaxReliefNotClaimedControllerISpec extends IntegrationTest with Vi
       }
     }
 
-    "redirect to Pensions Summary page when user submits a 'no' answer and updates the session value to no" which {
+    "redirect to CYA page when user submits a 'no' answer and updates the session value to no" which {
 
       lazy val result: WSResponse = {
         dropPensionsDB()

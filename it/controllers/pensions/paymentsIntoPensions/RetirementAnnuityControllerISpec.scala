@@ -308,7 +308,7 @@ class RetirementAnnuityControllerISpec extends IntegrationTest with ViewHelpers 
       }
     }
 
-    "redirect to Pensions Summary page when user selects 'yes' and not a prior submission" which {
+    "redirect to Retirement Annuity Amount page when user selects 'yes' and not a prior submission" which {
       lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.yes)
       lazy val result: WSResponse = {
         dropPensionsDB()

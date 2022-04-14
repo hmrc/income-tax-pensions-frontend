@@ -335,7 +335,7 @@ class PaymentsIntoPensionsCYAControllerISpec extends IntegrationTest with ViewHe
             result.status shouldBe SEE_OTHER
           }
 
-          "redirects to the pensions summary page" in {
+          "redirects to the RAS Pensions page" in {
             result.headers("Location").head shouldBe
               controllers.pensions.paymentsIntoPension.routes.ReliefAtSourcePaymentsAndTaxReliefAmountController.show(taxYear).url
           }
@@ -353,7 +353,7 @@ class PaymentsIntoPensionsCYAControllerISpec extends IntegrationTest with ViewHe
             result.status shouldBe SEE_OTHER
           }
 
-          "redirects to the pensions summary page" in {
+          "redirects to the RAS Pensions page" in {
             result.headers("Location").head shouldBe controllers.pensions.paymentsIntoPension.routes.ReliefAtSourcePensionsController.show(taxYear).url
           }
         }
