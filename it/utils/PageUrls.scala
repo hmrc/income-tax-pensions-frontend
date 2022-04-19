@@ -89,13 +89,15 @@ object PageUrls extends IntegrationTest {
 
   }
 
-  object PensionIncomeFromPensionPages {
+  //  *****************     Income from pensions pages      ******************************
 
+  object IncomeFromPensionsPages {
     def taxOnLumpSumUrl(taxYear: Int): String = s"$appUrl/$taxYear/pension-income/state-pension-lump-sum-tax"
 
     def statePensionLumpSumAmountUrl(taxYear: Int): String = s"$appUrl/$taxYear/pension-income/state-pension-lump-sum-amount"
-  }
 
+    def statePensionLumpSumUrl(taxYear: Int): String = s"$appUrl/$taxYear/pension-income/state-pension-lump-sum"
+  }
 }
 
   //scalastyle:on number.of.methods

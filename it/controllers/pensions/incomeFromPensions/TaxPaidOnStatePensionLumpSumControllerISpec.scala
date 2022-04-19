@@ -27,7 +27,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.PensionIncomeFromPensionPages.taxOnLumpSumUrl
+import utils.PageUrls.IncomeFromPensionsPages.taxOnLumpSumUrl
 import utils.PageUrls.{fullUrl, overviewUrl, pensionSummaryUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
@@ -71,7 +71,7 @@ class TaxPaidOnStatePensionLumpSumControllerISpec extends IntegrationTest with B
     val expectedTitle = "Did you pay tax on the State Pension lump sum?"
     val expectedHeading = "Did you pay tax on the State Pension lump sum?"
     val expectedErrorTitle = s"Error: $expectedTitle"
-    val expectedError = "Select yes if you got a State Pension lump sum"
+    val expectedError = "Select yes if you paid tax on the State Pension lump sum"
     val expectedDetailsBullet1 = "your P60"
     val expectedDetailsBullet2 = "the ‘About general increases in benefits’ letter the Pension Service sent you"
   }
@@ -80,7 +80,7 @@ class TaxPaidOnStatePensionLumpSumControllerISpec extends IntegrationTest with B
     val expectedTitle = "Did you pay tax on the State Pension lump sum?"
     val expectedHeading = "Did you pay tax on the State Pension lump sum?"
     val expectedErrorTitle = s"Error: $expectedTitle"
-    val expectedError = "Select yes if you got a State Pension lump sum"
+    val expectedError = "Select yes if you paid tax on the State Pension lump sum"
     val expectedDetailsBullet1 = "your P60"
     val expectedDetailsBullet2 = "the ‘About general increases in benefits’ letter the Pension Service sent you"
   }
@@ -89,7 +89,7 @@ class TaxPaidOnStatePensionLumpSumControllerISpec extends IntegrationTest with B
     val expectedTitle = "Did your client pay tax on the State Pension lump sum?"
     val expectedHeading = "Did your client pay tax on the State Pension lump sum?"
     val expectedErrorTitle = s"Error: $expectedTitle"
-    val expectedError = "Select yes if your client got a State Pension lump sum"
+    val expectedError = "Select yes if your client paid tax on the State Pension lump sum"
     val expectedDetailsBullet1 = "your client’s P60"
     val expectedDetailsBullet2 = "the ‘About general increases in benefits’ letter the Pension Service sent your client"
   }
@@ -98,7 +98,7 @@ class TaxPaidOnStatePensionLumpSumControllerISpec extends IntegrationTest with B
     val expectedTitle = "Did your client pay tax on the State Pension lump sum?"
     val expectedHeading = "Did your client pay tax on the State Pension lump sum?"
     val expectedErrorTitle = s"Error: $expectedTitle"
-    val expectedError = "Select yes if your client got a State Pension lump sum"
+    val expectedError = "Select yes if your client paid tax on the State Pension lump sum"
     val expectedDetailsBullet1 = "your client’s P60"
     val expectedDetailsBullet2 = "the ‘About general increases in benefits’ letter the Pension Service sent your client"
   }
