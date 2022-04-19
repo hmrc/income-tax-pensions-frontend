@@ -89,13 +89,12 @@ object PageUrls extends IntegrationTest {
 
   }
 
-  //  *****************     Income from pensions pages      ******************************
+  object PensionIncomeFromPensionPages {
 
-  object IncomeFromPensionsPages {
+    def taxOnLumpSumUrl(taxYear: Int): String = s"$appUrl/$taxYear/pension-income/state-pension-lump-sum-tax"
+
     def statePensionLumpSumAmountUrl(taxYear: Int): String = s"$appUrl/$taxYear/pension-income/state-pension-lump-sum-amount"
-
   }
-
 
 }
 
