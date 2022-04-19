@@ -28,11 +28,11 @@ import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import utils.PageUrls.{fullUrl, pensionSummaryUrl, overviewUrl}
-import utils.PageUrls.IncomeFromPensionsPages.statePensionLumpSumUrl
+import utils.PageUrls.IncomeFromPensionsPages.{statePensionLumpSumUrl, statePensionLumpSumAmountUrl, taxOnLumpSumUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 class StatePensionLumpSumControllerISpec extends IntegrationTest with BeforeAndAfterEach with ViewHelpers with PensionsDatabaseHelper {
-  
+
   object Selectors {
     val captionSelector: String = "#main-content > div > div > header > p"
     val continueButtonSelector: String = "#continue"
@@ -250,6 +250,8 @@ class StatePensionLumpSumControllerISpec extends IntegrationTest with BeforeAndA
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
       }
 
+
+      //TODO - redirect to CYA page once implemented
       "has an SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER
         result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
@@ -352,9 +354,9 @@ class StatePensionLumpSumControllerISpec extends IntegrationTest with BeforeAndA
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
       }
 
-      "has a SEE_OTHER(303) status" in {
+      "has a SEE_OTHER(303) status and redirect to the lump sum amount page" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
+        result.header("location") shouldBe Some(statePensionLumpSumAmountUrl(taxYearEOY))
       }
 
       "updates amountPaidQuestion to Some(true)" in {
@@ -380,9 +382,9 @@ class StatePensionLumpSumControllerISpec extends IntegrationTest with BeforeAndA
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
       }
 
-      "has a SEE_OTHER(303) status" in {
+      "has a SEE_OTHER(303) status and redirect to the lump sum amount page" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
+        result.header("location") shouldBe Some(statePensionLumpSumAmountUrl(taxYearEOY))
       }
 
       "updates amountPaidQuestion to Some(true)" in {
@@ -402,9 +404,9 @@ class StatePensionLumpSumControllerISpec extends IntegrationTest with BeforeAndA
         urlPost(fullUrl(statePensionLumpSumUrl(taxYearEOY)), body = form, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
       }
-      "has a SEE_OTHER(303) status" in {
+      "has a SEE_OTHER(303) status and redirect to the tax paid on lump sum page" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
+        result.header("location") shouldBe Some(taxOnLumpSumUrl(taxYearEOY))
       }
 
       "updates amountPaidQuestion to Some(false) and wipes amount value" in {

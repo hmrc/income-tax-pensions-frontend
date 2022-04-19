@@ -25,7 +25,7 @@ import models.mongo.PensionsCYAModel
 import models.pension.statebenefits.StateBenefitViewModel
 import play.api.data.Form
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
@@ -67,6 +67,12 @@ class StatePensionLumpSumController @Inject()(implicit val mcc: MessagesControll
             data =>
               val pensionsCYAModel: PensionsCYAModel = data.map(_.pensions).getOrElse(PensionsCYAModel.emptyModels)
               val viewModel = pensionsCYAModel.incomeFromPensions
+              val redirectLocation: Call =
+                if(yesNo){
+                  controllers.pensions.incomeFromPensions.routes.StatePensionLumpSumAmountController.show(taxYear)
+                } else {
+                  controllers.pensions.incomeFromPensions.routes.TaxPaidOnStatePensionLumpSumController.show(taxYear)
+                }
 
               val updatedBenefitModel: StateBenefitViewModel =
                 if(yesNo){
@@ -82,15 +88,7 @@ class StatePensionLumpSumController @Inject()(implicit val mcc: MessagesControll
 
               pensionSessionService.createOrUpdateSessionData(
                 request.user,
-                updatedCyaModel, taxYear, data.exists(_.isPriorSubmission))(errorHandler.internalServerError()) {
-                if(yesNo) {
-                  //TODO - redirect to 'How much was your State Pension lump sum' page
-                  Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear))
-                } else {
-                  //TODO - redirect to 'Did you pay tax on the State Pension lump sum' page
-                  Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear))
-                }
-              }
+                updatedCyaModel, taxYear, data.exists(_.isPriorSubmission))(errorHandler.internalServerError())(Redirect(redirectLocation))
           }
       )
     }
