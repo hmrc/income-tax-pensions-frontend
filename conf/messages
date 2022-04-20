@@ -402,3 +402,9 @@ pensions.taxPaidOnStatePensionLumpSum.title.individual = Did you pay tax on the 
 pensions.taxPaidOnStatePensionLumpSum.error.noEntry.individual = Select yes if you paid tax on the State Pension lump sum
 pensions.taxPaidOnStatePensionLumpSum.title.agent = Did your client pay tax on the State Pension lump sum?
 pensions.taxPaidOnStatePensionLumpSum.error.noEntry.agent = Select yes if your client paid tax on the State Pension lump sum
+
+# Pension Income
+pensions.statePension.title.individual = Did you get State Pension this year?
+pensions.statePension.title.agent = Did your client get State Pension this year?
+pensions.statePension.error.noEntry.individual = Select yes if you got State Pension this year
+pensions.statePension.error.noEntry.agent = Select yes if your client got State Pension this year
