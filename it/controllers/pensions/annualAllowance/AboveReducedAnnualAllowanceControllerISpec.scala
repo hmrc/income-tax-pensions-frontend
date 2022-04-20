@@ -31,7 +31,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.PensionAnnualAllowancePages.{aboveReducedAnnualAllowanceAmountUrl, aboveReducedAnnualAllowanceUrl, reducedAnnualAllowanceUrl}
+import utils.PageUrls.PensionAnnualAllowancePages.{amountAboveAnnualAllowanceUrl, aboveAnnualAllowanceUrl, reducedAnnualAllowanceUrl}
 import utils.PageUrls._
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
@@ -174,7 +174,7 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
               authoriseAgentOrIndividual(user.isAgent)
               val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(aboveAnnualAllowanceQuestion = None, reducedAnnualAllowanceQuestion = Some(true))
               insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel), aUserRequest)
-              urlGet(fullUrl(aboveReducedAnnualAllowanceUrl(taxYearEOY)),
+              urlGet(fullUrl(aboveAnnualAllowanceUrl(taxYearEOY)),
                 user.isWelsh, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
             }
 
@@ -192,7 +192,7 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
             linkCheck(expectedLinkText, expectedLinkSelector, externalHref)
             buttonCheck(buttonText, continueButtonSelector)
             textOnPageCheck(expectedDetails, detailsSelector)
-            formPostLinkCheck(aboveReducedAnnualAllowanceUrl(taxYearEOY), formSelector)
+            formPostLinkCheck(aboveAnnualAllowanceUrl(taxYearEOY), formSelector)
             welshToggleCheck(user.isWelsh)
           }
 
@@ -203,7 +203,7 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
               val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(aboveAnnualAllowanceQuestion = Some(true),
                 reducedAnnualAllowanceQuestion = Some(true))
               insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel), aUserRequest)
-              urlGet(fullUrl(aboveReducedAnnualAllowanceUrl(taxYearEOY)), user.isWelsh, follow = false,
+              urlGet(fullUrl(aboveAnnualAllowanceUrl(taxYearEOY)), user.isWelsh, follow = false,
                 headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
             }
 
@@ -221,7 +221,7 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
             linkCheck(expectedLinkText, expectedLinkSelector, externalHref)
             buttonCheck(buttonText, continueButtonSelector)
             textOnPageCheck(expectedDetails, detailsSelector)
-            formPostLinkCheck(aboveReducedAnnualAllowanceUrl(taxYearEOY), formSelector)
+            formPostLinkCheck(aboveAnnualAllowanceUrl(taxYearEOY), formSelector)
             welshToggleCheck(user.isWelsh)
           }
 
@@ -232,7 +232,7 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
               val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(aboveAnnualAllowanceQuestion = Some(false),
                 reducedAnnualAllowanceQuestion = Some(true))
               insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel), aUserRequest)
-              urlGet(fullUrl(aboveReducedAnnualAllowanceUrl(taxYearEOY)), user.isWelsh, follow = false,
+              urlGet(fullUrl(aboveAnnualAllowanceUrl(taxYearEOY)), user.isWelsh, follow = false,
                 headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
             }
 
@@ -250,7 +250,7 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
             linkCheck(expectedLinkText, expectedLinkSelector, externalHref)
             buttonCheck(buttonText, continueButtonSelector)
             textOnPageCheck(expectedDetails, detailsSelector)
-            formPostLinkCheck(aboveReducedAnnualAllowanceUrl(taxYearEOY), formSelector)
+            formPostLinkCheck(aboveAnnualAllowanceUrl(taxYearEOY), formSelector)
             welshToggleCheck(user.isWelsh)
           }
         }
@@ -263,7 +263,7 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
               authoriseAgentOrIndividual(user.isAgent)
               val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(aboveAnnualAllowanceQuestion = None, reducedAnnualAllowanceQuestion = Some(false))
               insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel), aUserRequest)
-              urlGet(fullUrl(aboveReducedAnnualAllowanceUrl(taxYearEOY)),
+              urlGet(fullUrl(aboveAnnualAllowanceUrl(taxYearEOY)),
                 user.isWelsh, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
             }
 
@@ -281,7 +281,7 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
             linkCheck(expectedLinkText, expectedLinkSelector, externalHref)
             buttonCheck(buttonText, continueButtonSelector)
             textOnPageCheck(expectedDetails, detailsSelector)
-            formPostLinkCheck(aboveReducedAnnualAllowanceUrl(taxYearEOY), formSelector)
+            formPostLinkCheck(aboveAnnualAllowanceUrl(taxYearEOY), formSelector)
             welshToggleCheck(user.isWelsh)
           }
 
@@ -292,7 +292,7 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
               val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(aboveAnnualAllowanceQuestion = Some(true),
                 reducedAnnualAllowanceQuestion = Some(false))
               insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel), aUserRequest)
-              urlGet(fullUrl(aboveReducedAnnualAllowanceUrl(taxYearEOY)), user.isWelsh, follow = false,
+              urlGet(fullUrl(aboveAnnualAllowanceUrl(taxYearEOY)), user.isWelsh, follow = false,
                 headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
             }
 
@@ -310,7 +310,7 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
             linkCheck(expectedLinkText, expectedLinkSelector, externalHref)
             buttonCheck(buttonText, continueButtonSelector)
             textOnPageCheck(expectedDetails, detailsSelector)
-            formPostLinkCheck(aboveReducedAnnualAllowanceUrl(taxYearEOY), formSelector)
+            formPostLinkCheck(aboveAnnualAllowanceUrl(taxYearEOY), formSelector)
             welshToggleCheck(user.isWelsh)
           }
 
@@ -321,7 +321,7 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
               val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(aboveAnnualAllowanceQuestion = Some(false),
                 reducedAnnualAllowanceQuestion = Some(false))
               insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel), aUserRequest)
-              urlGet(fullUrl(aboveReducedAnnualAllowanceUrl(taxYearEOY)), user.isWelsh, follow = false,
+              urlGet(fullUrl(aboveAnnualAllowanceUrl(taxYearEOY)), user.isWelsh, follow = false,
                 headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
             }
 
@@ -339,7 +339,7 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
             linkCheck(expectedLinkText, expectedLinkSelector, externalHref)
             buttonCheck(buttonText, continueButtonSelector)
             textOnPageCheck(expectedDetails, detailsSelector)
-            formPostLinkCheck(aboveReducedAnnualAllowanceUrl(taxYearEOY), formSelector)
+            formPostLinkCheck(aboveAnnualAllowanceUrl(taxYearEOY), formSelector)
             welshToggleCheck(user.isWelsh)
           }
 
@@ -352,7 +352,7 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(isAgent = false)
-        urlGet(fullUrl(aboveReducedAnnualAllowanceUrl(taxYearEOY)), follow = false,
+        urlGet(fullUrl(aboveAnnualAllowanceUrl(taxYearEOY)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
       }
 
@@ -371,7 +371,7 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
           aboveAnnualAllowanceQuestion = Some(true), reducedAnnualAllowanceQuestion = None)
         insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)), aUserRequest)
 
-        urlGet(fullUrl(aboveReducedAnnualAllowanceUrl(taxYearEOY)), follow = false,
+        urlGet(fullUrl(aboveAnnualAllowanceUrl(taxYearEOY)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
       }
 
@@ -400,7 +400,7 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
             val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(aboveAnnualAllowanceQuestion = None, reducedAnnualAllowanceQuestion = Some(true))
             insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)), aUserRequest)
             authoriseAgentOrIndividual(user.isAgent)
-            urlPost(fullUrl(aboveReducedAnnualAllowanceUrl(taxYearEOY)), body = form, welsh = user.isWelsh, follow = false,
+            urlPost(fullUrl(aboveAnnualAllowanceUrl(taxYearEOY)), body = form, welsh = user.isWelsh, follow = false,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
           }
 
@@ -418,7 +418,7 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
           buttonCheck(buttonText, continueButtonSelector)
           linkCheck(expectedLinkText, expectedLinkSelector, externalHref)
           textOnPageCheck(expectedDetails, detailsSelector)
-          formPostLinkCheck(aboveReducedAnnualAllowanceUrl(taxYearEOY), formSelector)
+          formPostLinkCheck(aboveAnnualAllowanceUrl(taxYearEOY), formSelector)
           welshToggleCheck(user.isWelsh)
           errorSummaryCheck(user.specificExpectedResults.get.expectedReducedErrorMessage, Selectors.yesSelector)
           errorAboveElementCheck(user.specificExpectedResults.get.expectedReducedErrorMessage, Some("value"))
@@ -432,7 +432,7 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
             val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(aboveAnnualAllowanceQuestion = None, reducedAnnualAllowanceQuestion = Some(false))
             insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)), aUserRequest)
             authoriseAgentOrIndividual(user.isAgent)
-            urlPost(fullUrl(aboveReducedAnnualAllowanceUrl(taxYearEOY)), body = form, welsh = user.isWelsh, follow = false,
+            urlPost(fullUrl(aboveAnnualAllowanceUrl(taxYearEOY)), body = form, welsh = user.isWelsh, follow = false,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
           }
 
@@ -450,7 +450,7 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
           buttonCheck(buttonText, continueButtonSelector)
           linkCheck(expectedLinkText, expectedLinkSelector, externalHref)
           textOnPageCheck(expectedDetails, detailsSelector)
-          formPostLinkCheck(aboveReducedAnnualAllowanceUrl(taxYearEOY), formSelector)
+          formPostLinkCheck(aboveAnnualAllowanceUrl(taxYearEOY), formSelector)
           welshToggleCheck(user.isWelsh)
           errorSummaryCheck(user.specificExpectedResults.get.expectedNonReducedErrorMessage, Selectors.yesSelector)
           errorAboveElementCheck(user.specificExpectedResults.get.expectedNonReducedErrorMessage, Some("value"))
@@ -466,7 +466,7 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
           aboveAnnualAllowanceQuestion = Some(true), reducedAnnualAllowanceQuestion = None)
         insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)), aUserRequest)
 
-        urlGet(fullUrl(aboveReducedAnnualAllowanceUrl(taxYearEOY)), follow = false,
+        urlGet(fullUrl(aboveAnnualAllowanceUrl(taxYearEOY)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
       }
 
@@ -486,13 +486,13 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
           aboveAnnualAllowanceQuestion = Some(true), aboveAnnualAllowance = None)
         insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)), aUserRequest)
 
-        urlPost(fullUrl(aboveReducedAnnualAllowanceUrl(taxYearEOY)), body = form, follow = false,
+        urlPost(fullUrl(aboveAnnualAllowanceUrl(taxYearEOY)), body = form, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
       }
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(aboveReducedAnnualAllowanceAmountUrl(taxYearEOY))
+        result.header("location") shouldBe Some(amountAboveAnnualAllowanceUrl(taxYearEOY))
 
       }
 
@@ -511,7 +511,7 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
         val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(
           aboveAnnualAllowanceQuestion = Some(true), aboveAnnualAllowance = Some(333.44))
         insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)), aUserRequest)
-        urlPost(fullUrl(aboveReducedAnnualAllowanceUrl(taxYearEOY)), body = form, follow = false,
+        urlPost(fullUrl(aboveAnnualAllowanceUrl(taxYearEOY)), body = form, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
       }
 

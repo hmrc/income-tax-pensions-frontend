@@ -72,11 +72,11 @@ object PageUrls extends IntegrationTest {
 
     def pensionProviderPaidTaxUrl(taxYear: Int): String = s"$appUrl/$taxYear/annual-allowance/pension-provider-paid-tax"
 
-    def aboveReducedAnnualAllowanceAmountUrl(taxYear: Int): String = s"$appUrl/$taxYear/annual-allowance/amount-above-reduced-annual-allowance"
+    def amountAboveAnnualAllowanceUrl(taxYear: Int): String = s"$appUrl/$taxYear/annual-allowance/amount-above-annual-allowance"
 
     def reducedAnnualAllowanceTypeUrl(taxYear: Int): String = s"$appUrl/$taxYear/annual-allowance/reduced-annual-allowance-type"
 
-    def aboveReducedAnnualAllowanceUrl (taxYear: Int): String = s"$appUrl/$taxYear/annual-allowance/above-reduced-annual-allowance"
+    def aboveAnnualAllowanceUrl(taxYear: Int): String = s"$appUrl/$taxYear/annual-allowance/above-annual-allowance"
 
     def pensionProviderPaidTaxAmountUrl (taxYear: Int): String = s"$appUrl/$taxYear/annual-allowance/pension-provider-paid-tax-amount"
 
