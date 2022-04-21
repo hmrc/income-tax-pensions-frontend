@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package controllers.pensions.pensionIncome
+package controllers.pensions.incomeFromPensions
 
 import builders.IncomeFromPensionsViewModelBuilder.anIncomeFromPensionsViewModel
 import builders.IncomeTaxUserDataBuilder.anIncomeTaxUserData
 import builders.PensionsCYAModelBuilder._
 import builders.PensionsUserDataBuilder
-import builders.StateBenefitViewModelBuilder.{anStateBenefitViewModelOne}
+import builders.StateBenefitViewModelBuilder.anStateBenefitViewModelOne
 import builders.UserBuilder._
 import forms.YesNoForm
 import models.mongo.PensionsCYAModel
@@ -30,7 +30,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.IncomeFromPensionsPages.{statePension}
+import utils.PageUrls.IncomeFromPensionsPages.statePension
 import utils.PageUrls._
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
