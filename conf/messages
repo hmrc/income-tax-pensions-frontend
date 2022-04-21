@@ -408,3 +408,19 @@ pensions.statePension.title.individual = Did you get State Pension this year?
 pensions.statePension.title.agent = Did your client get State Pension this year?
 pensions.statePension.error.noEntry.individual = Select yes if you got State Pension this year
 pensions.statePension.error.noEntry.agent = Select yes if your client got State Pension this year
+
+#How Much Was Your State Pension Amount Messages
+pensions.statePensionAmount.title.individual = How much was your State Pension?
+pensions.statePensionAmount.title.agent = How much was your client’s State Pension?
+pensions.statePensionAmount.paragraph.individual = You told us you did not get State Pension of £8,400 this year. Tell us how much you got.
+pensions.statePensionAmount.paragraph.agent = You told us your client did not get State Pension of £8,400 this year. Tell us how much they got.
+pensions.statePensionAmount.error.noEntry.individual = Enter your State Pension amount
+pensions.statePensionAmount.error.incorrectFormat.individual = Enter your State Pension amount in the correct format
+pensions.statePensionAmount.error.overMaximum.individual = Your State Pension amount must be less than £100,000,000,000
+pensions.statePensionAmount.error.noEntry.agent = Enter your client’s State Pension amount
+pensions.statePensionAmount.error.incorrectFormat.agent = Enter your client’s State Pension amount in the correct format
+pensions.statePensionAmount.error.overMaximum.agent = Your client’s State Pension amount must be less than £100,000,000,000
+
+
+
+
