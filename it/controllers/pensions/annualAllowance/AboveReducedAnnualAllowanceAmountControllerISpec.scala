@@ -28,7 +28,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.PensionAnnualAllowancePages.{aboveReducedAnnualAllowanceAmountUrl, aboveReducedAnnualAllowanceUrl, pensionProviderPaidTaxUrl, reducedAnnualAllowanceUrl}
+import utils.PageUrls.PensionAnnualAllowancePages.{amountAboveAnnualAllowanceUrl, aboveAnnualAllowanceUrl, pensionProviderPaidTaxUrl, reducedAnnualAllowanceUrl}
 import utils.PageUrls.{fullUrl, pensionSummaryUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
@@ -164,7 +164,7 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
               val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(
                 aboveAnnualAllowanceQuestion = Some(true), aboveAnnualAllowance = None, reducedAnnualAllowanceQuestion = Some(true))
               insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)), aUserRequest)
-              urlGet(fullUrl(aboveReducedAnnualAllowanceAmountUrl(taxYearEOY)), user.isWelsh, follow = false,
+              urlGet(fullUrl(amountAboveAnnualAllowanceUrl(taxYearEOY)), user.isWelsh, follow = false,
                 headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
             }
 
@@ -181,7 +181,7 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
             textOnPageCheck(poundPrefixText, poundPrefixSelector)
             inputFieldValueCheck(amountInputName, inputSelector, "")
             buttonCheck(buttonText, continueButtonSelector)
-            formPostLinkCheck(aboveReducedAnnualAllowanceAmountUrl(taxYearEOY), formSelector)
+            formPostLinkCheck(amountAboveAnnualAllowanceUrl(taxYearEOY), formSelector)
             welshToggleCheck(user.isWelsh)
           }
           "render How much above your annual allowance are you page prefilled when cya data" which {
@@ -193,7 +193,7 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
               val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(
                 aboveAnnualAllowanceQuestion = Some(true), aboveAnnualAllowance = Some(BigDecimal(existingAmount)), reducedAnnualAllowanceQuestion = Some(true))
               insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)), aUserRequest)
-              urlGet(fullUrl(aboveReducedAnnualAllowanceAmountUrl(taxYearEOY)), user.isWelsh, follow = false,
+              urlGet(fullUrl(amountAboveAnnualAllowanceUrl(taxYearEOY)), user.isWelsh, follow = false,
                 headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
             }
 
@@ -210,7 +210,7 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
             textOnPageCheck(poundPrefixText, poundPrefixSelector)
             inputFieldValueCheck(amountInputName, inputSelector, existingAmount)
             buttonCheck(buttonText, continueButtonSelector)
-            formPostLinkCheck(aboveReducedAnnualAllowanceAmountUrl(taxYearEOY), formSelector)
+            formPostLinkCheck(amountAboveAnnualAllowanceUrl(taxYearEOY), formSelector)
             welshToggleCheck(user.isWelsh)
           }
         }
@@ -222,7 +222,7 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
               val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(
                 aboveAnnualAllowanceQuestion = Some(true), aboveAnnualAllowance = None, reducedAnnualAllowanceQuestion = Some(false))
               insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)), aUserRequest)
-              urlGet(fullUrl(aboveReducedAnnualAllowanceAmountUrl(taxYearEOY)), user.isWelsh, follow = false,
+              urlGet(fullUrl(amountAboveAnnualAllowanceUrl(taxYearEOY)), user.isWelsh, follow = false,
                 headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
             }
 
@@ -239,7 +239,7 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
             textOnPageCheck(poundPrefixText, poundPrefixSelector)
             inputFieldValueCheck(amountInputName, inputSelector, "")
             buttonCheck(buttonText, continueButtonSelector)
-            formPostLinkCheck(aboveReducedAnnualAllowanceAmountUrl(taxYearEOY), formSelector)
+            formPostLinkCheck(amountAboveAnnualAllowanceUrl(taxYearEOY), formSelector)
             welshToggleCheck(user.isWelsh)
           }
           "render How much above your annual allowance are you page prefilled when cya data" which {
@@ -251,7 +251,7 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
               val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(
                 aboveAnnualAllowanceQuestion = Some(true), aboveAnnualAllowance = Some(BigDecimal(existingAmount)), reducedAnnualAllowanceQuestion = Some(false))
               insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)), aUserRequest)
-              urlGet(fullUrl(aboveReducedAnnualAllowanceAmountUrl(taxYearEOY)), user.isWelsh, follow = false,
+              urlGet(fullUrl(amountAboveAnnualAllowanceUrl(taxYearEOY)), user.isWelsh, follow = false,
                 headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
             }
 
@@ -268,7 +268,7 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
             textOnPageCheck(poundPrefixText, poundPrefixSelector)
             inputFieldValueCheck(amountInputName, inputSelector, existingAmount)
             buttonCheck(buttonText, continueButtonSelector)
-            formPostLinkCheck(aboveReducedAnnualAllowanceAmountUrl(taxYearEOY), formSelector)
+            formPostLinkCheck(amountAboveAnnualAllowanceUrl(taxYearEOY), formSelector)
             welshToggleCheck(user.isWelsh)
           }
         }
@@ -282,7 +282,7 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
         val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(
           aboveAnnualAllowanceQuestion = None, aboveAnnualAllowance = None)
         insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)), aUserRequest)
-        urlGet(fullUrl(aboveReducedAnnualAllowanceAmountUrl(taxYearEOY)), follow = false,
+        urlGet(fullUrl(amountAboveAnnualAllowanceUrl(taxYearEOY)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
       }
 
@@ -290,7 +290,7 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
 
       "has an SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location").contains(aboveReducedAnnualAllowanceUrl(taxYearEOY)) shouldBe true
+        result.header("location").contains(aboveAnnualAllowanceUrl(taxYearEOY)) shouldBe true
       }
     }
 
@@ -301,7 +301,7 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
         val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(
           aboveAnnualAllowanceQuestion = Some(false), aboveAnnualAllowance = None)
         insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)), aUserRequest)
-        urlGet(fullUrl(aboveReducedAnnualAllowanceAmountUrl(taxYearEOY)), follow = false,
+        urlGet(fullUrl(amountAboveAnnualAllowanceUrl(taxYearEOY)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
       }
 
@@ -309,7 +309,7 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
 
       "has an SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location").contains(aboveReducedAnnualAllowanceUrl(taxYearEOY)) shouldBe true
+        result.header("location").contains(aboveAnnualAllowanceUrl(taxYearEOY)) shouldBe true
       }
     }
 
@@ -317,7 +317,7 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(isAgent = false)
-        urlGet(fullUrl(aboveReducedAnnualAllowanceAmountUrl(taxYearEOY)), follow = false,
+        urlGet(fullUrl(amountAboveAnnualAllowanceUrl(taxYearEOY)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
       }
 
@@ -336,7 +336,7 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
           aboveAnnualAllowanceQuestion = Some(true), reducedAnnualAllowanceQuestion = None)
         insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)), aUserRequest)
 
-        urlGet(fullUrl(aboveReducedAnnualAllowanceUrl(taxYearEOY)), follow = false,
+        urlGet(fullUrl(aboveAnnualAllowanceUrl(taxYearEOY)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
       }
 
@@ -366,7 +366,7 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
                 aboveAnnualAllowanceQuestion = Some(true), aboveAnnualAllowance = None, reducedAnnualAllowanceQuestion = Some(true))
               insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)), aUserRequest)
               authoriseAgentOrIndividual(user.isAgent)
-              urlPost(fullUrl(aboveReducedAnnualAllowanceAmountUrl(taxYearEOY)), body = emptyForm, welsh = user.isWelsh,
+              urlPost(fullUrl(amountAboveAnnualAllowanceUrl(taxYearEOY)), body = emptyForm, welsh = user.isWelsh,
                 follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
             }
             "has the correct status" in {
@@ -383,7 +383,7 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
             textOnPageCheck(poundPrefixText, poundPrefixSelector)
             inputFieldValueCheck(amountInputName, inputSelector, amountEmpty)
             buttonCheck(buttonText, continueButtonSelector)
-            formPostLinkCheck(aboveReducedAnnualAllowanceAmountUrl(taxYearEOY), formSelector)
+            formPostLinkCheck(amountAboveAnnualAllowanceUrl(taxYearEOY), formSelector)
             errorSummaryCheck(user.specificExpectedResults.get.emptyReducedErrorText, expectedErrorHref)
             errorAboveElementCheck(user.specificExpectedResults.get.emptyReducedErrorText)
             welshToggleCheck(user.isWelsh)
@@ -400,7 +400,7 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
                 aboveAnnualAllowanceQuestion = Some(true), aboveAnnualAllowance = None, reducedAnnualAllowanceQuestion = Some(true))
               insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)), aUserRequest)
               authoriseAgentOrIndividual(user.isAgent)
-              urlPost(fullUrl(aboveReducedAnnualAllowanceAmountUrl(taxYearEOY)), body = invalidFormatForm, welsh = user.isWelsh,
+              urlPost(fullUrl(amountAboveAnnualAllowanceUrl(taxYearEOY)), body = invalidFormatForm, welsh = user.isWelsh,
                 follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
             }
 
@@ -418,7 +418,7 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
             textOnPageCheck(poundPrefixText, poundPrefixSelector)
             inputFieldValueCheck(amountInputName, inputSelector, amountInvalidFormat)
             buttonCheck(buttonText, continueButtonSelector)
-            formPostLinkCheck(aboveReducedAnnualAllowanceAmountUrl(taxYearEOY), formSelector)
+            formPostLinkCheck(amountAboveAnnualAllowanceUrl(taxYearEOY), formSelector)
             errorSummaryCheck(user.specificExpectedResults.get.invalidFormatReducedErrorText, expectedErrorHref)
             errorAboveElementCheck(user.specificExpectedResults.get.invalidFormatReducedErrorText)
             welshToggleCheck(user.isWelsh)
@@ -435,7 +435,7 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
                 aboveAnnualAllowanceQuestion = Some(true), aboveAnnualAllowance = None, reducedAnnualAllowanceQuestion = Some(true))
               insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)), aUserRequest)
               authoriseAgentOrIndividual(user.isAgent)
-              urlPost(fullUrl(aboveReducedAnnualAllowanceAmountUrl(taxYearEOY)),
+              urlPost(fullUrl(amountAboveAnnualAllowanceUrl(taxYearEOY)),
                 body = overMaximumForm, welsh = user.isWelsh, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
             }
             "has the correct status" in {
@@ -452,7 +452,7 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
             textOnPageCheck(poundPrefixText, poundPrefixSelector)
             inputFieldValueCheck(amountInputName, inputSelector, amountOverMaximum)
             buttonCheck(buttonText, continueButtonSelector)
-            formPostLinkCheck(aboveReducedAnnualAllowanceAmountUrl(taxYearEOY), formSelector)
+            formPostLinkCheck(amountAboveAnnualAllowanceUrl(taxYearEOY), formSelector)
             errorSummaryCheck(user.specificExpectedResults.get.maxAmountReducedErrorText, expectedErrorHref)
             errorAboveElementCheck(user.specificExpectedResults.get.maxAmountReducedErrorText)
             welshToggleCheck(user.isWelsh)
@@ -469,7 +469,7 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
                 aboveAnnualAllowanceQuestion = Some(true), aboveAnnualAllowance = None, reducedAnnualAllowanceQuestion = Some(false))
               insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)), aUserRequest)
               authoriseAgentOrIndividual(user.isAgent)
-              urlPost(fullUrl(aboveReducedAnnualAllowanceAmountUrl(taxYearEOY)), body = emptyForm, welsh = user.isWelsh,
+              urlPost(fullUrl(amountAboveAnnualAllowanceUrl(taxYearEOY)), body = emptyForm, welsh = user.isWelsh,
                 follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
             }
             "has the correct status" in {
@@ -486,7 +486,7 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
             textOnPageCheck(poundPrefixText, poundPrefixSelector)
             inputFieldValueCheck(amountInputName, inputSelector, amountEmpty)
             buttonCheck(buttonText, continueButtonSelector)
-            formPostLinkCheck(aboveReducedAnnualAllowanceAmountUrl(taxYearEOY), formSelector)
+            formPostLinkCheck(amountAboveAnnualAllowanceUrl(taxYearEOY), formSelector)
             errorSummaryCheck(emptyNonReducedErrorText, expectedErrorHref)
             errorAboveElementCheck(emptyNonReducedErrorText)
             welshToggleCheck(user.isWelsh)
@@ -503,7 +503,7 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
                 aboveAnnualAllowanceQuestion = Some(true), aboveAnnualAllowance = None, reducedAnnualAllowanceQuestion = Some(false))
               insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)), aUserRequest)
               authoriseAgentOrIndividual(user.isAgent)
-              urlPost(fullUrl(aboveReducedAnnualAllowanceAmountUrl(taxYearEOY)), body = invalidFormatForm, welsh = user.isWelsh,
+              urlPost(fullUrl(amountAboveAnnualAllowanceUrl(taxYearEOY)), body = invalidFormatForm, welsh = user.isWelsh,
                 follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
             }
 
@@ -521,7 +521,7 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
             textOnPageCheck(poundPrefixText, poundPrefixSelector)
             inputFieldValueCheck(amountInputName, inputSelector, amountInvalidFormat)
             buttonCheck(buttonText, continueButtonSelector)
-            formPostLinkCheck(aboveReducedAnnualAllowanceAmountUrl(taxYearEOY), formSelector)
+            formPostLinkCheck(amountAboveAnnualAllowanceUrl(taxYearEOY), formSelector)
             errorSummaryCheck(invalidFormatNonReducedErrorText, expectedErrorHref)
             errorAboveElementCheck(invalidFormatNonReducedErrorText)
             welshToggleCheck(user.isWelsh)
@@ -538,7 +538,7 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
                 aboveAnnualAllowanceQuestion = Some(true), aboveAnnualAllowance = None, reducedAnnualAllowanceQuestion = Some(false))
               insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)), aUserRequest)
               authoriseAgentOrIndividual(user.isAgent)
-              urlPost(fullUrl(aboveReducedAnnualAllowanceAmountUrl(taxYearEOY)),
+              urlPost(fullUrl(amountAboveAnnualAllowanceUrl(taxYearEOY)),
                 body = overMaximumForm, welsh = user.isWelsh, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
             }
             "has the correct status" in {
@@ -555,7 +555,7 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
             textOnPageCheck(poundPrefixText, poundPrefixSelector)
             inputFieldValueCheck(amountInputName, inputSelector, amountOverMaximum)
             buttonCheck(buttonText, continueButtonSelector)
-            formPostLinkCheck(aboveReducedAnnualAllowanceAmountUrl(taxYearEOY), formSelector)
+            formPostLinkCheck(amountAboveAnnualAllowanceUrl(taxYearEOY), formSelector)
             errorSummaryCheck(maxAmountNonReducedErrorText, expectedErrorHref)
             errorAboveElementCheck(maxAmountNonReducedErrorText)
             welshToggleCheck(user.isWelsh)
@@ -575,7 +575,7 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
           aboveAnnualAllowanceQuestion = Some(true), aboveAnnualAllowance = None)
         insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)), aUserRequest)
         authoriseAgentOrIndividual(isAgent = false)
-        urlPost(fullUrl(aboveReducedAnnualAllowanceAmountUrl(taxYearEOY)),
+        urlPost(fullUrl(amountAboveAnnualAllowanceUrl(taxYearEOY)),
           body = validForm, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
       }

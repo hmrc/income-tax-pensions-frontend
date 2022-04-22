@@ -27,7 +27,7 @@ import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import utils.PageUrls.{fullUrl, pensionSummaryUrl}
-import utils.PageUrls.PensionAnnualAllowancePages.{aboveReducedAnnualAllowanceUrl, reducedAnnualAllowanceTypeUrl, reducedAnnualAllowanceUrl}
+import utils.PageUrls.PensionAnnualAllowancePages.{aboveAnnualAllowanceUrl, reducedAnnualAllowanceTypeUrl, reducedAnnualAllowanceUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 // scalastyle:off magic.number
@@ -396,7 +396,7 @@ class ReducedAnnualAllowanceControllerISpec extends IntegrationTest with BeforeA
       }
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(aboveReducedAnnualAllowanceUrl(taxYearEOY))
+        result.header("location") shouldBe Some(aboveAnnualAllowanceUrl(taxYearEOY))
       }
 
       "updates reducedAnnualAllowanceQuestion to Some(false) and wipe moneyPurchaseAnnualAllowance and taperedAnnualAllowance values" in {

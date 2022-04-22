@@ -66,8 +66,8 @@ POST        /:taxYear/payments-into-pensions/no-tax-relief/workplace-amount     
 
 ###########################     Annual Allowance pages     ####################################
 
-GET         /:taxYear/annual-allowance/amount-above-reduced-annual-allowance                controllers.pensions.annualAllowance.AboveReducedAnnualAllowanceAmountController.show(taxYear: Int)
-POST        /:taxYear/annual-allowance/amount-above-reduced-annual-allowance                controllers.pensions.annualAllowance.AboveReducedAnnualAllowanceAmountController.submit(taxYear: Int)
+GET         /:taxYear/annual-allowance/amount-above-annual-allowance                controllers.pensions.annualAllowance.AboveReducedAnnualAllowanceAmountController.show(taxYear: Int)
+POST        /:taxYear/annual-allowance/amount-above-annual-allowance                controllers.pensions.annualAllowance.AboveReducedAnnualAllowanceAmountController.submit(taxYear: Int)
 
 GET         /:taxYear/annual-allowance/reduced-annual-allowance                             controllers.pensions.annualAllowance.ReducedAnnualAllowanceController.show(taxYear: Int)
 POST        /:taxYear/annual-allowance/reduced-annual-allowance                             controllers.pensions.annualAllowance.ReducedAnnualAllowanceController.submit(taxYear: Int)
@@ -75,8 +75,8 @@ POST        /:taxYear/annual-allowance/reduced-annual-allowance                 
 GET         /:taxYear/annual-allowance/reduced-annual-allowance-type                        controllers.pensions.annualAllowance.ReducedAnnualAllowanceTypeController.show(taxYear: Int)
 POST        /:taxYear/annual-allowance/reduced-annual-allowance-type                        controllers.pensions.annualAllowance.ReducedAnnualAllowanceTypeController.submit(taxYear: Int)
 
-GET         /:taxYear/annual-allowance/above-reduced-annual-allowance                       controllers.pensions.annualAllowance.AboveReducedAnnualAllowanceController.show(taxYear: Int)
-POST        /:taxYear/annual-allowance/above-reduced-annual-allowance                       controllers.pensions.annualAllowance.AboveReducedAnnualAllowanceController.submit(taxYear: Int)
+GET         /:taxYear/annual-allowance/above-annual-allowance                       controllers.pensions.annualAllowance.AboveReducedAnnualAllowanceController.show(taxYear: Int)
+POST        /:taxYear/annual-allowance/above-annual-allowance                       controllers.pensions.annualAllowance.AboveReducedAnnualAllowanceController.submit(taxYear: Int)
 
 GET         /:taxYear/annual-allowance/pension-provider-paid-tax                            controllers.pensions.annualAllowance.PensionProviderPaidTaxController.show(taxYear: Int)
 POST        /:taxYear/annual-allowance/pension-provider-paid-tax                            controllers.pensions.annualAllowance.PensionProviderPaidTaxController.submit(taxYear: Int)
