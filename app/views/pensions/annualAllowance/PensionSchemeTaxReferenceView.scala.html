@@ -16,16 +16,18 @@
 
 @import views.html.templates.Layout
 @import views.html.templates.helpers.ErrorSummary
+@import views.html.templates.helpers.Heading
 @import views.html.templates.helpers.Button
-@import views.html.templates.helpers.InputText
+@import views.html.templates.helpers.InputTextAlt
 @import forms.PensionSchemeTaxReferenceForm.taxReferenceId
 
 @this(
         layout: Layout,
         formWithCsrf: FormWithCSRF,
-        inputText: InputText,
+        inputText: InputTextAlt,
         errorSummary: ErrorSummary,
         button: Button,
+        heading: Heading
 )
 
 
@@ -46,6 +48,8 @@
 @layout(pageTitle = titleForUse, taxYear = Some(taxYear), hasErrors = hasFormErrors, isAgent = request.user.isAgent) {
 
     @errorSummary(form.errors.distinct)
+    @heading(titleForUse, Some(messages("common.pensionAnnualAllowance.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-2")
+    @contentHtml
 
     @formWithCsrf(action = controllers.pensions.annualAllowance.routes.PensionSchemeTaxReferenceController.submit(taxYear, pensionSchemeTaxReference)) {
 
@@ -53,13 +57,12 @@
             form,
             id = taxReferenceId,
             name = taxReferenceId,
-            heading = titleForUse,
-            isPageHeading = false,
-            hint = Some(Html(messages("pension.pensionSchemeTaxReference.forExample"))),
-            subheading = Some(messages("common.pensionAnnualAllowance.caption", (taxYear - 1).toString, taxYear.toString)),
-            content = Some(contentHtml),
+            hint = Some(messages("pension.pensionSchemeTaxReference.forExample")),
+            label = titleForUse,
+            labelHidden = true,
+            currency = false,
             classes = Some("govuk-input--width-10"),
-            headingClasses = "govuk-!-margin-bottom-2"
+
         )
         @button()
     }

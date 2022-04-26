@@ -52,12 +52,12 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
   }
 
   object Selectors {
-    val captionSelector: String = "#main-content > div > div > form > div > fieldset > legend > header > p"
+    val captionSelector: String = "#main-content > div > div > header > p"
     val continueButtonSelector: String = "#continue"
     val formSelector: String = "#main-content > div > div > form"
     val yesSelector = "#value"
     val noSelector = "#value-no"
-    val detailsSelector: String = s"#main-content > div > div > form > div > fieldset > legend > p"
+    val paragraphSelector: String = s"#main-content > div > div > p"
     val expectedLinkSelector = "#above-reduced-annual-allowance-link"
 
   }
@@ -67,7 +67,7 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
     val yesText: String
     val noText: String
     val buttonText: String
-    val expectedDetails: String
+    val expectedUseACalculator: String
     val expectedLinkText: String
   }
 
@@ -88,7 +88,7 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
     val yesText = "Yes"
     val noText = "No"
     val buttonText = "Continue"
-    val expectedDetails: String = "Use a calculator if you need to work this out (opens in new tab)."
+    val expectedUseACalculator: String = "Use a calculator if you need to work this out (opens in new tab)."
     val expectedLinkText = "if you need to work this out (opens in new tab)"
   }
 
@@ -97,7 +97,7 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
     val yesText = "Yes"
     val noText = "No"
     val buttonText = "Continue"
-    val expectedDetails: String = "Use a calculator if you need to work this out (opens in new tab)."
+    val expectedUseACalculator: String = "Use a calculator if you need to work this out (opens in new tab)."
     val expectedLinkText = "if you need to work this out (opens in new tab)"
   }
 
@@ -191,7 +191,7 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
             radioButtonCheck(noText, 2, checked = Some(false))
             linkCheck(expectedLinkText, expectedLinkSelector, externalHref)
             buttonCheck(buttonText, continueButtonSelector)
-            textOnPageCheck(expectedDetails, detailsSelector)
+            textOnPageCheck(expectedUseACalculator, paragraphSelector)
             formPostLinkCheck(aboveAnnualAllowanceUrl(taxYearEOY), formSelector)
             welshToggleCheck(user.isWelsh)
           }
@@ -220,7 +220,7 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
             radioButtonCheck(noText, 2, checked = Some(false))
             linkCheck(expectedLinkText, expectedLinkSelector, externalHref)
             buttonCheck(buttonText, continueButtonSelector)
-            textOnPageCheck(expectedDetails, detailsSelector)
+            textOnPageCheck(expectedUseACalculator, paragraphSelector)
             formPostLinkCheck(aboveAnnualAllowanceUrl(taxYearEOY), formSelector)
             welshToggleCheck(user.isWelsh)
           }
@@ -249,7 +249,7 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
             radioButtonCheck(noText, 2, checked = Some(true))
             linkCheck(expectedLinkText, expectedLinkSelector, externalHref)
             buttonCheck(buttonText, continueButtonSelector)
-            textOnPageCheck(expectedDetails, detailsSelector)
+            textOnPageCheck(expectedUseACalculator, paragraphSelector)
             formPostLinkCheck(aboveAnnualAllowanceUrl(taxYearEOY), formSelector)
             welshToggleCheck(user.isWelsh)
           }
@@ -280,7 +280,7 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
             radioButtonCheck(noText, 2, checked = Some(false))
             linkCheck(expectedLinkText, expectedLinkSelector, externalHref)
             buttonCheck(buttonText, continueButtonSelector)
-            textOnPageCheck(expectedDetails, detailsSelector)
+            textOnPageCheck(expectedUseACalculator, paragraphSelector)
             formPostLinkCheck(aboveAnnualAllowanceUrl(taxYearEOY), formSelector)
             welshToggleCheck(user.isWelsh)
           }
@@ -309,7 +309,7 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
             radioButtonCheck(noText, 2, checked = Some(false))
             linkCheck(expectedLinkText, expectedLinkSelector, externalHref)
             buttonCheck(buttonText, continueButtonSelector)
-            textOnPageCheck(expectedDetails, detailsSelector)
+            textOnPageCheck(expectedUseACalculator, paragraphSelector)
             formPostLinkCheck(aboveAnnualAllowanceUrl(taxYearEOY), formSelector)
             welshToggleCheck(user.isWelsh)
           }
@@ -338,7 +338,7 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
             radioButtonCheck(noText, 2, checked = Some(true))
             linkCheck(expectedLinkText, expectedLinkSelector, externalHref)
             buttonCheck(buttonText, continueButtonSelector)
-            textOnPageCheck(expectedDetails, detailsSelector)
+            textOnPageCheck(expectedUseACalculator, paragraphSelector)
             formPostLinkCheck(aboveAnnualAllowanceUrl(taxYearEOY), formSelector)
             welshToggleCheck(user.isWelsh)
           }
@@ -417,7 +417,7 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
           radioButtonCheck(noText, 2, checked = Some(false))
           buttonCheck(buttonText, continueButtonSelector)
           linkCheck(expectedLinkText, expectedLinkSelector, externalHref)
-          textOnPageCheck(expectedDetails, detailsSelector)
+          textOnPageCheck(expectedUseACalculator, paragraphSelector)
           formPostLinkCheck(aboveAnnualAllowanceUrl(taxYearEOY), formSelector)
           welshToggleCheck(user.isWelsh)
           errorSummaryCheck(user.specificExpectedResults.get.expectedReducedErrorMessage, Selectors.yesSelector)
@@ -449,7 +449,7 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
           radioButtonCheck(noText, 2, checked = Some(false))
           buttonCheck(buttonText, continueButtonSelector)
           linkCheck(expectedLinkText, expectedLinkSelector, externalHref)
-          textOnPageCheck(expectedDetails, detailsSelector)
+          textOnPageCheck(expectedUseACalculator, paragraphSelector)
           formPostLinkCheck(aboveAnnualAllowanceUrl(taxYearEOY), formSelector)
           welshToggleCheck(user.isWelsh)
           errorSummaryCheck(user.specificExpectedResults.get.expectedNonReducedErrorMessage, Selectors.yesSelector)

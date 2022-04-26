@@ -68,7 +68,7 @@
 
     @errorSummary(form.errors.distinct)
 
-    @heading(headingForUse, Some(messages("common.paymentsIntoPensions.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-3")
+    @heading(headingForUse, Some(messages("common.paymentsIntoPensions.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-2")
     @contentHtml
 
     @csrfForm(action = controllers.pensions.paymentsIntoPension.routes.TotalPaymentsIntoRASController.submit(taxYear)) {

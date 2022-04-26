@@ -34,22 +34,13 @@ import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 class PensionSchemeTaxReferenceControllerISpec extends IntegrationTest with BeforeAndAfterEach with ViewHelpers with PensionsDatabaseHelper {
 
   object Selectors {
-    val captionSelector: String = "#main-content > div > div > form > div > fieldset > legend > header > p"
+    val captionSelector: String = "#main-content > div > div > header > p"
     val continueButtonSelector: String = "#continue"
     val formSelector: String = "#main-content > div > div > form"
-    val yesSelector = "#value"
-    val noSelector = "#value-no"
-    val findOutLinkSelector = "#annual-allowance-link"
-    val overLimitLinkSelector = "#over-limit-link"
-    val detailsSelector = "#main-content > div > div > form > details > summary > span"
     val inputSelector = "#taxReferenceId"
     val hintTextSelector = "#taxReferenceId-hint"
 
-    def paragraphSelector(index: Int): String = s"#main-content > div > div > form > div > label > p:nth-child($index)"
-
-    def bulletSelector(index: Int): String = s"#main-content > div > div > form > div > fieldset > legend > ul > li:nth-child($index)"
-
-    def detailsBulletSelector(index: Int): String = s"#main-content > div > div > form > details > div > ul > li:nth-child($index)"
+    def paragraphSelector(index: Int): String = s"#main-content > div > div > p:nth-of-type($index)"
   }
 
   trait SpecificExpectedResults {
@@ -153,8 +144,8 @@ class PensionSchemeTaxReferenceControllerISpec extends IntegrationTest with Befo
           titleCheck(expectedTitle)
           h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY))
-          textOnPageCheck(expectedParagraph1, paragraphSelector(2))
-          textOnPageCheck(user.specificExpectedResults.get.expectedParagraph2, paragraphSelector(3))
+          textOnPageCheck(expectedParagraph1, paragraphSelector(1))
+          textOnPageCheck(user.specificExpectedResults.get.expectedParagraph2, paragraphSelector(2))
           textOnPageCheck(hintText, hintTextSelector)
           inputFieldValueCheck(inputName, inputSelector, "")
           buttonCheck(expectedButtonText, continueButtonSelector)
@@ -183,8 +174,8 @@ class PensionSchemeTaxReferenceControllerISpec extends IntegrationTest with Befo
           titleCheck(expectedTitle)
           h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY))
-          textOnPageCheck(expectedParagraph1, paragraphSelector(2))
-          textOnPageCheck(user.specificExpectedResults.get.expectedParagraph2, paragraphSelector(3))
+          textOnPageCheck(expectedParagraph1, paragraphSelector(1))
+          textOnPageCheck(user.specificExpectedResults.get.expectedParagraph2, paragraphSelector(2))
           textOnPageCheck(hintText, hintTextSelector)
           inputFieldValueCheck(inputName, inputSelector, taxSchemeRef)
           buttonCheck(expectedButtonText, continueButtonSelector)
@@ -253,8 +244,8 @@ class PensionSchemeTaxReferenceControllerISpec extends IntegrationTest with Befo
           titleCheck(expectedErrorTitle)
           h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY))
-          textOnPageCheck(expectedParagraph1, paragraphSelector(2))
-          textOnPageCheck(user.specificExpectedResults.get.expectedParagraph2, paragraphSelector(3))
+          textOnPageCheck(expectedParagraph1, paragraphSelector(1))
+          textOnPageCheck(user.specificExpectedResults.get.expectedParagraph2, paragraphSelector(2))
           textOnPageCheck(hintText, hintTextSelector)
           inputFieldValueCheck(inputName, inputSelector, "")
           buttonCheck(expectedButtonText, continueButtonSelector)
@@ -284,8 +275,8 @@ class PensionSchemeTaxReferenceControllerISpec extends IntegrationTest with Befo
           titleCheck(expectedErrorTitle)
           h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY))
-          textOnPageCheck(expectedParagraph1, paragraphSelector(2))
-          textOnPageCheck(user.specificExpectedResults.get.expectedParagraph2, paragraphSelector(3))
+          textOnPageCheck(expectedParagraph1, paragraphSelector(1))
+          textOnPageCheck(user.specificExpectedResults.get.expectedParagraph2, paragraphSelector(2))
           textOnPageCheck(hintText, hintTextSelector)
           inputFieldValueCheck(inputName, inputSelector, "incorrect-format")
           buttonCheck(expectedButtonText, continueButtonSelector)

@@ -34,7 +34,7 @@ import services.RedirectService.{isFinishedCheck, PaymentsIntoPensionsRedirects,
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import utils.PaymentsIntoPensionPages.TotalRasPage
-import views.html.pensions.TotalPaymentsIntoRASView
+import views.html.pensions.paymentsIntoPensions.TotalPaymentsIntoRASView
 
 import scala.concurrent.Future
 

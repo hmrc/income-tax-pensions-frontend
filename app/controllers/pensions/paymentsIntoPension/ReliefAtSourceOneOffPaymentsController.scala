@@ -29,7 +29,7 @@ import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import utils.PaymentsIntoPensionPages.OneOffRasPage
-import views.html.pensions.ReliefAtSourceOneOffPaymentsView
+import views.html.pensions.paymentsIntoPensions.ReliefAtSourceOneOffPaymentsView
 import javax.inject.{Inject, Singleton}
 import models.redirects.ConditionalRedirect
 import services.RedirectService.{isFinishedCheck, PaymentsIntoPensionsRedirects, redirectBasedOnCurrentAnswers}

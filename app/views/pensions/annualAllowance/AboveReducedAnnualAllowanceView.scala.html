@@ -17,16 +17,18 @@
 @import views.html.templates.Layout
 @import views.html.templates.helpers.ErrorSummary
 @import views.html.templates.helpers.Button
-@import views.html.templates.helpers.InputRadio
+@import views.html.templates.helpers.InputRadioAlt
 @import views.html.templates.helpers.Link
+@import views.html.templates.helpers.Heading
 
 @this(
         layout: Layout,
-        inputRadio: InputRadio,
+        inputRadio: InputRadioAlt,
         formWithCsrf: FormWithCSRF,
         errorSummary: ErrorSummary,
         button: Button,
-        link: Link
+        link: Link,
+        heading: Heading
 )
 
 @(form: Form[Boolean], taxYear: Int, reducedAnnualAllowanceQuestion: Boolean)(implicit request: AuthorisationRequest[_], messages: Messages, appConfig: AppConfig)
@@ -35,9 +37,6 @@
     messages(s"pensions.aboveReducedAnnualAllowance.${if(reducedAnnualAllowanceQuestion) "reduced" else "nonReduced"}.title.${if(request.user.isAgent) "agent" else "individual"}")
 }
 
-@headingForUse = @{
-    titleForUse
-}
 
 @hasFormErrors = @{
     form.hasErrors
@@ -54,14 +53,14 @@
 
     @errorSummary(form.errors.distinct)
 
+    @heading(titleForUse, Some(messages("common.pensionAnnualAllowance.caption", (taxYear - 1).toString, taxYear.toString)),  "govuk-!-margin-bottom-2")
+    @contentHtml
     @formWithCsrf(action = controllers.pensions.annualAllowance.routes.AboveReducedAnnualAllowanceController.submit(taxYear)) {
         @inputRadio(
             form = form,
-            heading = headingForUse,
-            content = Some(contentHtml),
-            classes = "govuk-!-margin-bottom-4",
-            inline = true,
-            subheading = Some(messages("common.pensionAnnualAllowance.caption", (taxYear - 1).toString, taxYear.toString))
+            legendHeading = Some(Html(titleForUse)),
+            legendHidden = true,
+            inline = true
         )
         @button()
     }

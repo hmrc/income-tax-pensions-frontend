@@ -34,7 +34,7 @@ import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 class ReducedAnnualAllowanceControllerISpec extends IntegrationTest with BeforeAndAfterEach with ViewHelpers with PensionsDatabaseHelper {
 
   object Selectors {
-    val captionSelector: String = "#main-content > div > div > form > div > fieldset > legend > header > p"
+    val captionSelector: String = "#main-content > div > div > header > p"
     val continueButtonSelector: String = "#continue"
     val formSelector: String = "#main-content > div > div > form"
     val yesSelector = "#value"
@@ -43,8 +43,8 @@ class ReducedAnnualAllowanceControllerISpec extends IntegrationTest with BeforeA
     val overLimitLinkSelector = "#over-limit-link"
     val detailsSelector = "#main-content > div > div > form > details > summary > span"
 
-    def paragraphSelector(index: Int): String = s"#main-content > div > div > form > div > fieldset > legend > p:nth-child($index)"
-    def bulletSelector(index: Int): String = s"#main-content > div > div > form > div > fieldset > legend > ul > li:nth-child($index)"
+    def paragraphSelector(index: Int): String = s"#main-content > div > div > p:nth-of-type($index)"
+    def bulletSelector(index: Int): String = s"#main-content > div > div > ul > li:nth-child($index)"
     def detailsBulletSelector(index: Int): String = s"#main-content > div > div > form > details > div > ul > li:nth-child($index)"
   }
 
@@ -177,9 +177,9 @@ class ReducedAnnualAllowanceControllerISpec extends IntegrationTest with BeforeA
           titleCheck(user.specificExpectedResults.get.expectedTitle)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
-          textOnPageCheck(user.specificExpectedResults.get.expectedInfo, paragraphSelector(2))
-          textOnPageCheck(expectedFindOut, paragraphSelector(3))
-          textOnPageCheck(user.specificExpectedResults.get.expectedWillBeReducedIf, paragraphSelector(4))
+          textOnPageCheck(user.specificExpectedResults.get.expectedInfo, paragraphSelector(1))
+          textOnPageCheck(expectedFindOut, paragraphSelector(2))
+          textOnPageCheck(user.specificExpectedResults.get.expectedWillBeReducedIf, paragraphSelector(3))
           textOnPageCheck(user.specificExpectedResults.get.expectedExample1, bulletSelector(1))
           textOnPageCheck(user.specificExpectedResults.get.expectedExample2, bulletSelector(2))
           radioButtonCheck(yesText, 1, checked = Some(false))
@@ -215,9 +215,9 @@ class ReducedAnnualAllowanceControllerISpec extends IntegrationTest with BeforeA
           titleCheck(user.specificExpectedResults.get.expectedTitle)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
-          textOnPageCheck(user.specificExpectedResults.get.expectedInfo, paragraphSelector(2))
-          textOnPageCheck(expectedFindOut, paragraphSelector(3))
-          textOnPageCheck(user.specificExpectedResults.get.expectedWillBeReducedIf, paragraphSelector(4))
+          textOnPageCheck(user.specificExpectedResults.get.expectedInfo, paragraphSelector(1))
+          textOnPageCheck(expectedFindOut, paragraphSelector(2))
+          textOnPageCheck(user.specificExpectedResults.get.expectedWillBeReducedIf, paragraphSelector(3))
           textOnPageCheck(user.specificExpectedResults.get.expectedExample1, bulletSelector(1))
           textOnPageCheck(user.specificExpectedResults.get.expectedExample2, bulletSelector(2))
           radioButtonCheck(yesText, 1, checked = Some(true))
@@ -253,9 +253,9 @@ class ReducedAnnualAllowanceControllerISpec extends IntegrationTest with BeforeA
           titleCheck(user.specificExpectedResults.get.expectedTitle)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
-          textOnPageCheck(user.specificExpectedResults.get.expectedInfo, paragraphSelector(2))
-          textOnPageCheck(expectedFindOut, paragraphSelector(3))
-          textOnPageCheck(user.specificExpectedResults.get.expectedWillBeReducedIf, paragraphSelector(4))
+          textOnPageCheck(user.specificExpectedResults.get.expectedInfo, paragraphSelector(1))
+          textOnPageCheck(expectedFindOut, paragraphSelector(2))
+          textOnPageCheck(user.specificExpectedResults.get.expectedWillBeReducedIf, paragraphSelector(3))
           textOnPageCheck(user.specificExpectedResults.get.expectedExample1, bulletSelector(1))
           textOnPageCheck(user.specificExpectedResults.get.expectedExample2, bulletSelector(2))
           radioButtonCheck(yesText, 1, checked = Some(false))
@@ -314,9 +314,9 @@ class ReducedAnnualAllowanceControllerISpec extends IntegrationTest with BeforeA
           titleCheck(user.specificExpectedResults.get.expectedErrorTitle)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
-          textOnPageCheck(user.specificExpectedResults.get.expectedInfo, paragraphSelector(2))
-          textOnPageCheck(expectedFindOut, paragraphSelector(3))
-          textOnPageCheck(user.specificExpectedResults.get.expectedWillBeReducedIf, paragraphSelector(4))
+          textOnPageCheck(user.specificExpectedResults.get.expectedInfo, paragraphSelector(1))
+          textOnPageCheck(expectedFindOut, paragraphSelector(2))
+          textOnPageCheck(user.specificExpectedResults.get.expectedWillBeReducedIf, paragraphSelector(3))
           textOnPageCheck(user.specificExpectedResults.get.expectedExample1, bulletSelector(1))
           textOnPageCheck(user.specificExpectedResults.get.expectedExample2, bulletSelector(2))
           radioButtonCheck(yesText, 1, checked = Some(false))

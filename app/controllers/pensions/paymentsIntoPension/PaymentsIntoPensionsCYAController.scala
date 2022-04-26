@@ -29,7 +29,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
-import views.html.pensions.PaymentsIntoPensionsCYAView
+import views.html.pensions.paymentsIntoPensions.PaymentsIntoPensionsCYAView
 import javax.inject.Inject
 import models.redirects.ConditionalRedirect
 import services.RedirectService.{PaymentsIntoPensionsRedirects, redirectBasedOnCurrentAnswers}

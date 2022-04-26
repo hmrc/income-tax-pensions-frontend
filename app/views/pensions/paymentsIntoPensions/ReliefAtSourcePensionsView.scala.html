@@ -49,7 +49,7 @@
 
     @errorSummary(form.errors.distinct)
 
-    @heading(headingAndTitleForUse, Some(messages("common.paymentsIntoPensions.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-3")
+    @heading(headingAndTitleForUse, Some(messages("common.paymentsIntoPensions.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-2")
     @contentHtml
 
     @formWithCsrf(action = controllers.pensions.paymentsIntoPension.routes.ReliefAtSourcePensionsController.submit(taxYear)) {

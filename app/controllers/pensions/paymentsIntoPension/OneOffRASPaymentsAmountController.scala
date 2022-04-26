@@ -30,7 +30,7 @@ import services.RedirectService.{redirectBasedOnCurrentAnswers, PaymentsIntoPens
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import utils.PaymentsIntoPensionPages.OneOffRasAmountPage
-import views.html.pensions.OneOffRASPaymentsAmountView
+import views.html.pensions.paymentsIntoPensions.OneOffRASPaymentsAmountView
 import javax.inject.{Inject, Singleton}
 import models.redirects.ConditionalRedirect
 

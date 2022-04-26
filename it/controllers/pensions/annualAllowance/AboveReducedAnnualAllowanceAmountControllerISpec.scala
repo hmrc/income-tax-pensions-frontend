@@ -42,14 +42,14 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
   }
 
   object Selectors {
-    val captionSelector: String = "#main-content > div > div > form > div > label > header > p"
+    val captionSelector: String = "#main-content > div > div > header > p"
     val continueButtonSelector: String = "#continue"
     val formSelector: String = "#main-content > div > div > form"
     val hintTextSelector = "#amount-hint"
     val poundPrefixSelector = ".govuk-input__prefix"
     val inputSelector = "#amount"
     val expectedErrorHref = "#amount"
-    val paragraphSelector: String = "#main-content > div > div > form > div > label > p"
+    val paragraphSelector: String = "#main-content > div > div > p"
   }
 
   trait CommonExpectedResults {
