@@ -28,7 +28,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
-import views.html.pensions.ReliefAtSourcePensionsView
+import views.html.pensions.paymentsIntoPensions.ReliefAtSourcePensionsView
 import javax.inject.Inject
 import services.RedirectService.isFinishedCheck
 

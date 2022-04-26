@@ -44,21 +44,15 @@ class PensionProviderPaidTaxControllerISpec extends IntegrationTest with BeforeA
   private val existingAmount: Option[BigDecimal] = Some(44.55)
 
   object Selectors {
-    val captionSelector: String = "#main-content > div > div > form > div > fieldset > legend > header > p"
+    val captionSelector: String = "#main-content > div > div > header > p"
     val continueButtonSelector: String = "#continue"
     val formSelector: String = "#main-content > div > div > form"
     val yesSelector = "#value"
     val noSelector = "#value-no"
     val noButAgreedToPaySelector = "#value-no-agreed-to-pay"
-    val findOutLinkSelector = "#annual-allowance-link"
-    val overLimitLinkSelector = "#over-limit-link"
-    val detailsSelector = "#main-content > div > div > form > details > summary > span"
 
-    def paragraphSelector(index: Int): String = s"#main-content > div > div > form > div > fieldset > legend > p:nth-child($index)"
+    def paragraphSelector(index: Int): String = s"#main-content > div > div > p:nth-of-type($index)"
 
-    def bulletSelector(index: Int): String = s"#main-content > div > div > form > div > fieldset > legend > ul > li:nth-child($index)"
-
-    def detailsBulletSelector(index: Int): String = s"#main-content > div > div > form > details > div > ul > li:nth-child($index)"
   }
 
   trait SpecificExpectedResults {
@@ -162,8 +156,8 @@ class PensionProviderPaidTaxControllerISpec extends IntegrationTest with BeforeA
           titleCheck(user.specificExpectedResults.get.expectedTitle)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
-          textOnPageCheck(expectedParagraph, paragraphSelector(2))
-          textOnPageCheck(user.specificExpectedResults.get.expectedYouCanFindThisOut, paragraphSelector(3))
+          textOnPageCheck(expectedParagraph, paragraphSelector(1))
+          textOnPageCheck(user.specificExpectedResults.get.expectedYouCanFindThisOut, paragraphSelector(2))
           radioButtonCheck(yesText, 1, checked = Some(false))
           radioButtonCheck(expectedNoButAgreedToPayRadio, 2, checked = Some(false))
           radioButtonCheck(noText, 3, checked = Some(false))
@@ -190,8 +184,8 @@ class PensionProviderPaidTaxControllerISpec extends IntegrationTest with BeforeA
           titleCheck(user.specificExpectedResults.get.expectedTitle)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
-          textOnPageCheck(expectedParagraph, paragraphSelector(2))
-          textOnPageCheck(user.specificExpectedResults.get.expectedYouCanFindThisOut, paragraphSelector(3))
+          textOnPageCheck(expectedParagraph, paragraphSelector(1))
+          textOnPageCheck(user.specificExpectedResults.get.expectedYouCanFindThisOut, paragraphSelector(2))
           radioButtonCheck(yesText, 1, checked = Some(true))
           radioButtonCheck(expectedNoButAgreedToPayRadio, 2, checked = Some(false))
           radioButtonCheck(noText, 3, checked = Some(false))
@@ -217,8 +211,8 @@ class PensionProviderPaidTaxControllerISpec extends IntegrationTest with BeforeA
           titleCheck(user.specificExpectedResults.get.expectedTitle)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
-          textOnPageCheck(expectedParagraph, paragraphSelector(2))
-          textOnPageCheck(user.specificExpectedResults.get.expectedYouCanFindThisOut, paragraphSelector(3))
+          textOnPageCheck(expectedParagraph, paragraphSelector(1))
+          textOnPageCheck(user.specificExpectedResults.get.expectedYouCanFindThisOut, paragraphSelector(2))
           radioButtonCheck(yesText, 1, checked = Some(false))
           radioButtonCheck(expectedNoButAgreedToPayRadio, 2, checked = Some(false))
           radioButtonCheck(noText, 3, checked = Some(true))
@@ -244,8 +238,8 @@ class PensionProviderPaidTaxControllerISpec extends IntegrationTest with BeforeA
           titleCheck(user.specificExpectedResults.get.expectedTitle)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
-          textOnPageCheck(expectedParagraph, paragraphSelector(2))
-          textOnPageCheck(user.specificExpectedResults.get.expectedYouCanFindThisOut, paragraphSelector(3))
+          textOnPageCheck(expectedParagraph, paragraphSelector(1))
+          textOnPageCheck(user.specificExpectedResults.get.expectedYouCanFindThisOut, paragraphSelector(2))
           radioButtonCheck(yesText, 1, checked = Some(false))
           radioButtonCheck(expectedNoButAgreedToPayRadio, 2, checked = Some(true))
           radioButtonCheck(noText, 3, checked = Some(false))
@@ -296,8 +290,8 @@ class PensionProviderPaidTaxControllerISpec extends IntegrationTest with BeforeA
           titleCheck(user.specificExpectedResults.get.expectedErrorTitle)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
-          textOnPageCheck(expectedParagraph, paragraphSelector(2))
-          textOnPageCheck(user.specificExpectedResults.get.expectedYouCanFindThisOut, paragraphSelector(3))
+          textOnPageCheck(expectedParagraph, paragraphSelector(1))
+          textOnPageCheck(user.specificExpectedResults.get.expectedYouCanFindThisOut, paragraphSelector(2))
           radioButtonCheck(yesText, 1, checked = Some(false))
           radioButtonCheck(expectedNoButAgreedToPayRadio, 2, checked = Some(false))
           radioButtonCheck(noText, 3, checked = Some(false))

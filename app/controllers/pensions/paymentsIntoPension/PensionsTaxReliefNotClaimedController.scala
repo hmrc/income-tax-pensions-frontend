@@ -30,7 +30,7 @@ import services.RedirectService.{isFinishedCheck, PaymentsIntoPensionsRedirects,
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import utils.PaymentsIntoPensionPages.TaxReliefNotClaimedPage
-import views.html.pensions.PensionsTaxReliefNotClaimedView
+import views.html.pensions.paymentsIntoPensions.PensionsTaxReliefNotClaimedView
 import javax.inject.{Inject, Singleton}
 import models.redirects.ConditionalRedirect
 
