@@ -17,13 +17,15 @@
 package builders
 
 import builders.StateBenefitViewModelBuilder.{anStateBenefitViewModelOne, anStateBenefitViewModelTwo}
+import builders.UkPensionIncomeViewModelBuilder.{anUkPensionIncomeViewModelOne, anUkPensionIncomeViewModelTwo}
 import models.pension.statebenefits.IncomeFromPensionsViewModel
 
 object IncomeFromPensionsViewModelBuilder {
 
   val anIncomeFromPensionsViewModel: IncomeFromPensionsViewModel = IncomeFromPensionsViewModel(
     statePension = Some(anStateBenefitViewModelOne),
-    statePensionLumpSum = Some(anStateBenefitViewModelTwo)
+    statePensionLumpSum = Some(anStateBenefitViewModelTwo),
+    uKPensionIncomes = Seq(anUkPensionIncomeViewModelOne, anUkPensionIncomeViewModelTwo)
   )
 
   val anIncomeFromPensionEmptyViewModel: IncomeFromPensionsViewModel = IncomeFromPensionsViewModel()
