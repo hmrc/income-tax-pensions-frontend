@@ -100,6 +100,58 @@ class PaymentsIntoPensionsCYAController @Inject()(implicit val cc: MessagesContr
     val statePension: Option[StateBenefit] = prior.stateBenefits.flatMap(_.stateBenefits.flatMap(_.statePension))
     val statePensionLumpSum: Option[StateBenefit] = prior.stateBenefits.flatMap(_.stateBenefits.flatMap(_.statePensionLumpSum))
 
+    //TODO: get the list of UK income from the prior data as the combined list from
+    // the hmrcEmploymentData and customerEmploymentData when it's been added to the backend data
+    val getUkPensionIncome: Seq[UkPensionIncomeViewModel] = {
+
+      Seq(UkPensionIncomeViewModel(
+        employmentId = Some("00000000-0000-1000-8000-000000000001"),
+        pensionId = Some("Some Customer ref 1"),
+        startDate = Some("2019-10-23"),
+        endDate = Some("2020-10-24"),
+        pensionSchemeName = Some("pension name 1"),
+        pensionSchemeRef = Some("666/66666"),
+        amount = Some(211.33),
+        taxPaid = Some(14.77),
+        isCustomerEmploymentData = Some(true)
+      ),
+        UkPensionIncomeViewModel(
+          employmentId = Some("00000000-0000-1000-8000-000000000002"),
+          pensionId = Some("Some Customer ref 2"),
+          startDate = Some("2019-11-23"),
+          endDate = Some("2020-11-24"),
+          pensionSchemeName = Some("pension name 2"),
+          pensionSchemeRef = Some("777/77777"),
+          amount = Some(311.44),
+          taxPaid = Some(34.88),
+          isCustomerEmploymentData = Some(true)
+        ),
+        UkPensionIncomeViewModel(
+          employmentId = Some("00000000-0000-1000-8000-000000000003"),
+          pensionId = Some("Some hmrc ref 3"),
+          startDate = Some("2019-07-23"),
+          endDate = Some("2020-07-24"),
+          pensionSchemeName = Some("pension name 3"),
+          pensionSchemeRef = Some("888/88888"),
+          amount = Some(411.55),
+          taxPaid = Some(44.89),
+          isCustomerEmploymentData = Some(false)
+        ),
+        UkPensionIncomeViewModel(
+          employmentId = Some("00000000-0000-1000-8000-000000000004"),
+          pensionId = Some("Some hmrc ref 4"),
+          startDate = Some("2019-09-23"),
+          endDate = Some("2020-09-24"),
+          pensionSchemeName = Some("pension name 4"),
+          pensionSchemeRef = Some("999/99999"),
+          amount = Some(514.56),
+          taxPaid = Some(55.12),
+          isCustomerEmploymentData = Some(false)
+        )
+      )
+
+    }
+
     PensionsCYAModel(
       PaymentsIntoPensionViewModel(
         prior.pensionReliefs.map(a => a.pensionReliefs.regularPensionContributions.isDefined),
@@ -149,7 +201,9 @@ class PaymentsIntoPensionsCYAController @Inject()(implicit val cc: MessagesContr
       incomeFromPensions = IncomeFromPensionsViewModel(
         statePension = getStatePensionModel(statePension),
         statePensionLumpSum = getStatePensionModel(statePensionLumpSum),
-        uKPensionIncomes = getUkPensionIncome(prior)
+        //TODO: set the question below based on the list from backend
+        uKPensionIncomesQuestion = Some(getUkPensionIncome.nonEmpty),
+        uKPensionIncomes = getUkPensionIncome
       )
     )
   }
@@ -174,57 +228,6 @@ class PaymentsIntoPensionsCYAController @Inject()(implicit val cc: MessagesContr
       )
       case _ => None
     }
-  }
-
-  private def getUkPensionIncome(prior: AllPensionsData): Seq[UkPensionIncomeViewModel] = {
-    //TODO: get the list of UK income from the prior data as the combined list from
-    // the hmrcEmploymentData and customerEmploymentData when it's been added to the backend data
-    Seq(UkPensionIncomeViewModel(
-      employmentId = Some("00000000-0000-1000-8000-000000000001"),
-      pensionId = Some("Some Customer ref 1"),
-      startDate = Some("2019-10-23"),
-      endDate = Some("2020-10-24"),
-      pensionSchemeName = Some("pension name 1"),
-      pensionSchemeRef = Some("666/66666"),
-      amount = Some(211.33),
-      taxPaid = Some(14.77),
-      isCustomerEmploymentData = Some(true)
-    ),
-      UkPensionIncomeViewModel(
-        employmentId = Some("00000000-0000-1000-8000-000000000002"),
-        pensionId = Some("Some Customer ref 2"),
-        startDate = Some("2019-11-23"),
-        endDate = Some("2020-11-24"),
-        pensionSchemeName = Some("pension name 2"),
-        pensionSchemeRef = Some("777/77777"),
-        amount = Some(311.44),
-        taxPaid = Some(34.88),
-        isCustomerEmploymentData = Some(true)
-      ),
-      UkPensionIncomeViewModel(
-        employmentId = Some("00000000-0000-1000-8000-000000000003"),
-        pensionId = Some("Some hmrc ref 3"),
-        startDate = Some("2019-07-23"),
-        endDate = Some("2020-07-24"),
-        pensionSchemeName = Some("pension name 3"),
-        pensionSchemeRef = Some("888/88888"),
-        amount = Some(411.55),
-        taxPaid = Some(44.89),
-        isCustomerEmploymentData = Some(false)
-      ),
-      UkPensionIncomeViewModel(
-        employmentId = Some("00000000-0000-1000-8000-000000000004"),
-        pensionId = Some("Some hmrc ref 4"),
-        startDate = Some("2019-09-23"),
-        endDate = Some("2020-09-24"),
-        pensionSchemeName = Some("pension name 4"),
-        pensionSchemeRef = Some("999/99999"),
-        amount = Some(514.56),
-        taxPaid = Some(55.12),
-        isCustomerEmploymentData = Some(false)
-      )
-    )
-
   }
 
   private def comparePriorData(cyaData: PensionsCYAModel, priorData: Option[AllPensionsData]): Boolean = {
