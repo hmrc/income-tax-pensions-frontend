@@ -27,7 +27,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.IncomeFromPensionsPages.taxOnLumpSumUrl
+import utils.PageUrls.IncomeFromPensionsPages.{taxOnLumpSumAmountUrl, taxOnLumpSumUrl}
 import utils.PageUrls.{fullUrl, overviewUrl, pensionSummaryUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
@@ -352,8 +352,7 @@ class TaxPaidOnStatePensionLumpSumControllerISpec extends IntegrationTest with B
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        //TODO: navigate to the correct next page
-        result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
+        result.header("location") shouldBe Some(taxOnLumpSumAmountUrl(taxYearEOY))
       }
 
       "updates taxPaidQuestion to Some(true)" in {

@@ -18,6 +18,7 @@ package controllers.pensions.incomeFromPensions
 
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.routes.PensionsSummaryController
+import controllers.pensions.incomeFromPensions.routes._
 import controllers.predicates.{AuthorisedAction, InYearAction}
 import forms.{AmountForm, FormUtils}
 import models.mongo.PensionsCYAModel
@@ -60,8 +61,7 @@ class StatePensionLumpSumAmountController @Inject()(implicit val mcc: MessagesCo
               case None => Future.successful(Ok(statePensionLumpSumAmountView(amountForm(request.user.isAgent), taxYear)))
             }
           } else {
-            // todo - Did you get a State Pension lump sum? page
-            Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
+            Future.successful(Redirect(StatePensionLumpSumController.show(taxYear)))
           }
         case _ =>
           //todo - cya page
@@ -89,13 +89,11 @@ class StatePensionLumpSumAmountController @Inject()(implicit val mcc: MessagesCo
                 }
                 pensionSessionService.createOrUpdateSessionData(request.user,
                   updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
-                  //TODO: redirect to - did you pay tax on the state pension lump sum question page
-                  Redirect(PensionsSummaryController.show(taxYear))
+                  Redirect(TaxPaidOnStatePensionLumpSumController.show(taxYear))
                 }
 
               } else {
-                //TODO: redirect to - did you get state pension lump sum question page
-                Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
+                Future.successful(Redirect(StatePensionLumpSumController.show(taxYear)))
               }
 
             case _ =>
