@@ -23,13 +23,14 @@ import models.mongo.PensionsCYAModel
 import models.pension.AllPensionsData
 import models.pension.charges.{PensionAnnualAllowancesViewModel, PensionLifetimeAllowancesViewModel}
 import models.pension.reliefs.PaymentsIntoPensionViewModel
-import models.pension.statebenefits.{IncomeFromPensionsViewModel, StateBenefit, StateBenefitViewModel}
+import models.pension.statebenefits.{IncomeFromPensionsViewModel, StateBenefit, StateBenefitViewModel, UkPensionIncomeViewModel}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.paymentsIntoPensions.PaymentsIntoPensionsCYAView
+
 import javax.inject.Inject
 import models.redirects.ConditionalRedirect
 import services.RedirectService.{PaymentsIntoPensionsRedirects, redirectBasedOnCurrentAnswers}
@@ -51,9 +52,9 @@ class PaymentsIntoPensionsCYAController @Inject()(implicit val cc: MessagesContr
 
       (cya, prior) match {
         case (Some(_), _) =>
-            redirectBasedOnCurrentAnswers(taxYear, cya)(redirects(_, taxYear)) { data =>
-              Future.successful(Ok(view(taxYear, data.pensions.paymentsIntoPension)))
-            }
+          redirectBasedOnCurrentAnswers(taxYear, cya)(redirects(_, taxYear)) { data =>
+            Future.successful(Ok(view(taxYear, data.pensions.paymentsIntoPension)))
+          }
         case (None, Some(priorData)) =>
           val cyaModel = generateCyaFromPrior(priorData)
           pensionSessionService.createOrUpdateSessionData(request.user,
@@ -146,14 +147,15 @@ class PaymentsIntoPensionsCYAController @Inject()(implicit val cc: MessagesContr
 
       //TODO: validate as necessary on building CYA page
       incomeFromPensions = IncomeFromPensionsViewModel(
-        statePension = getSatePensionModel(statePension),
-        statePensionLumpSum = getSatePensionModel(statePensionLumpSum)
+        statePension = getStatePensionModel(statePension),
+        statePensionLumpSum = getStatePensionModel(statePensionLumpSum),
+        uKPensionIncomes = getUkPensionIncome(prior)
       )
     )
   }
   // scalastyle:on method.length
 
-  private def getSatePensionModel(statePension: Option[StateBenefit]): Option[StateBenefitViewModel] = {
+  private def getStatePensionModel(statePension: Option[StateBenefit]): Option[StateBenefitViewModel] = {
     statePension match {
       case Some(benefit) => Some(StateBenefitViewModel(
         benefitId = Some(benefit.benefitId),
@@ -172,6 +174,57 @@ class PaymentsIntoPensionsCYAController @Inject()(implicit val cc: MessagesContr
       )
       case _ => None
     }
+  }
+
+  private def getUkPensionIncome(prior: AllPensionsData): Seq[UkPensionIncomeViewModel] = {
+    //TODO: get the list of UK income from the prior data as the combined list from
+    // the hmrcEmploymentData and customerEmploymentData when it's been added to the backend data
+    Seq(UkPensionIncomeViewModel(
+      employmentId = Some("00000000-0000-1000-8000-000000000001"),
+      pensionId = Some("Some Customer ref 1"),
+      startDate = Some("2019-10-23"),
+      endDate = Some("2020-10-24"),
+      pensionSchemeName = Some("pension name 1"),
+      pensionSchemeRef = Some("666/66666"),
+      amount = Some(211.33),
+      taxPaid = Some(14.77),
+      isCustomerEmploymentData = Some(true)
+    ),
+      UkPensionIncomeViewModel(
+        employmentId = Some("00000000-0000-1000-8000-000000000002"),
+        pensionId = Some("Some Customer ref 2"),
+        startDate = Some("2019-11-23"),
+        endDate = Some("2020-11-24"),
+        pensionSchemeName = Some("pension name 2"),
+        pensionSchemeRef = Some("777/77777"),
+        amount = Some(311.44),
+        taxPaid = Some(34.88),
+        isCustomerEmploymentData = Some(true)
+      ),
+      UkPensionIncomeViewModel(
+        employmentId = Some("00000000-0000-1000-8000-000000000003"),
+        pensionId = Some("Some hmrc ref 3"),
+        startDate = Some("2019-07-23"),
+        endDate = Some("2020-07-24"),
+        pensionSchemeName = Some("pension name 3"),
+        pensionSchemeRef = Some("888/88888"),
+        amount = Some(411.55),
+        taxPaid = Some(44.89),
+        isCustomerEmploymentData = Some(false)
+      ),
+      UkPensionIncomeViewModel(
+        employmentId = Some("00000000-0000-1000-8000-000000000004"),
+        pensionId = Some("Some hmrc ref 4"),
+        startDate = Some("2019-09-23"),
+        endDate = Some("2020-09-24"),
+        pensionSchemeName = Some("pension name 4"),
+        pensionSchemeRef = Some("999/99999"),
+        amount = Some(514.56),
+        taxPaid = Some(55.12),
+        isCustomerEmploymentData = Some(false)
+      )
+    )
+
   }
 
   private def comparePriorData(cyaData: PensionsCYAModel, priorData: Option[AllPensionsData]): Boolean = {
