@@ -25,6 +25,7 @@ object IncomeFromPensionsViewModelBuilder {
   val anIncomeFromPensionsViewModel: IncomeFromPensionsViewModel = IncomeFromPensionsViewModel(
     statePension = Some(anStateBenefitViewModelOne),
     statePensionLumpSum = Some(anStateBenefitViewModelTwo),
+    uKPensionIncomesQuestion = Some(true),
     uKPensionIncomes = Seq(anUkPensionIncomeViewModelOne, anUkPensionIncomeViewModelTwo)
   )
 
