@@ -211,6 +211,19 @@ trait IntegrationTest extends AnyWordSpec with Matchers with GuiceOneServerPerSu
 
   def userData(allData: String): IncomeTaxUserData = IncomeTaxUserData(Some(PensionDataStubs.fullPensionsModel))
 
+  val userDataJson: String = {
+    s"""
+      |{
+      |  "pensions":{
+      |    ${Json.toJson(PensionDataStubs.fullPensionsModel)}
+      |  },
+      |  "employment":{
+      |    ${PensionDataStubs.employmentPensionsJson}
+      |  }
+      |}
+      |""".stripMargin
+  }
+
   val fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
 }
 

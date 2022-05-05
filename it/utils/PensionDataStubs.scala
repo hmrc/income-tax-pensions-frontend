@@ -19,7 +19,7 @@ package utils
 import builders.IncomeFromPensionsViewModelBuilder.anIncomeFromPensionsViewModel
 import builders.PensionLifetimeAllowanceViewModelBuilder.aPensionLifetimeAllowanceViewModel
 import models.mongo.{PensionsCYAModel, PensionsUserData}
-import models.pension.AllPensionsData
+import models.pension.{AllPensionsData, EmploymentPensionModel, EmploymentPensions}
 import models.pension.charges._
 import models.pension.reliefs.{PaymentsIntoPensionViewModel, PensionReliefs, Reliefs}
 import models.pension.statebenefits.{StateBenefit, StateBenefits, StateBenefitsModel}
@@ -226,6 +226,82 @@ object PensionDataStubs {
       )))
     )
   )
+
+  val employmentPensionsJson: String = {
+    """
+      |{
+      |  "hmrcEmploymentData":[
+      |    {
+      |      "employmentId":"1234567890",
+      |      "employerName":"HMRC pensions scheme",
+      |      "employerRef":"Some HMRC ref",
+      |      "payrollId":"Payroll ID",
+      |      "startDate":"very early",
+      |      "cessationDate":"too late",
+      |      "dateIgnored":"ignoredField",
+      |      "submittedOn":"ignoredField",
+      |      "employmentData":{
+      |        "occPen":true,
+      |        "pay":{
+      |           "taxablePayToDate":"127000",
+      |           "totalTaxToDate":"450"
+      |        }
+      |      }
+      |    },
+      |    {
+      |      "employmentId":"1234567891",
+      |      "employerName":"Extra pensions scheme",
+      |      "employerRef":"Some other HMRC ref",
+      |      "payrollId":"ignoredField",
+      |      "startDate":"ignoredField",
+      |      "cessationDate":"ignoredField",
+      |      "dateIgnored":"ignoredField",
+      |      "submittedOn":"ignoredField",
+      |      "employmentData":{
+      |        "submittedOn":"ignoredField",
+      |        "employmentSequenceNumber":"ignoredField",
+      |        "companyDirector":"ignoredField",
+      |        "closeCompany":"ignoredField",
+      |        "directorshipCeasedDate":"ignoredField",
+      |        "occPen":false,
+      |        "disguisedRemuneration":"ignoredField",
+      |        "pay":{
+      |           "taxablePayToDate":"127001"
+      |        }
+      |      }
+      |    }
+      |  ],
+      |  "customerEmploymentData":[
+      |    {
+      |      "employmentId":"1234567892",
+      |      "employerName":"Customer pension scheme",
+      |      "employerRef":"Some customer ref",
+      |      "payrollId":"ignoredField",
+      |      "startDate":"ignoredField",
+      |      "cessationDate":"ignoredField",
+      |      "dateIgnored":"ignoredField",
+      |      "submittedOn":"ignoredField",
+      |      "employmentData":{
+      |        "submittedOn":"ignoredField",
+      |        "employmentSequenceNumber":"ignoredField",
+      |        "companyDirector":"ignoredField",
+      |        "closeCompany":"ignoredField",
+      |        "directorshipCeasedDate":"ignoredField",
+      |        "disguisedRemuneration":"ignoredField",
+      |        "pay":{
+      |           "taxablePayToDate":"129000",
+      |           "totalTaxToDate":"470",
+      |           "payFrequency":"ignoredField"
+      |        }
+      |      }
+      |    }
+      |  ],
+      |  "customerExpenses": {
+      |      "submittedOn":"someDate"
+      |  }
+      |}
+      |""".stripMargin
+  }
 
 }
 

@@ -16,6 +16,7 @@
 
 package connectors.httpParsers
 
+import models.pension.EmploymentPensions
 import models.{APIErrorModel, IncomeTaxUserData}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, NO_CONTENT, OK, SERVICE_UNAVAILABLE}
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
@@ -33,7 +34,18 @@ object IncomeTaxUserDataHttpParser extends APIParser {
       response.status match {
         case OK => response.json.validate[IncomeTaxUserData].fold[IncomeTaxUserDataResponse](
           _ => badSuccessJsonFromAPI,
-          parsedModel => Right(parsedModel)
+          parsedModel =>
+            parsedModel.employment match {
+              case Some(employment) =>
+                Right(IncomeTaxUserData(
+                  pensions = parsedModel.pensions,
+                  employment = Some(EmploymentPensions(
+                    employment.hmrcEmploymentData.filter(_.occPen.contains(true)),
+                    employment.customerEmploymentData.filter(_.occPen.contains(true))
+                  ))
+                ))
+              case _ => Right(parsedModel)
+            }
         )
         case NO_CONTENT => Right(IncomeTaxUserData())
         case INTERNAL_SERVER_ERROR =>
