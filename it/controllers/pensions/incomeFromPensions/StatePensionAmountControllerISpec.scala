@@ -30,12 +30,13 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.IncomeFromPensionsPages.{statePension, statePensionAmountUrl}
+import utils.PageUrls.IncomeFromPensionsPages.{statePension, statePensionAmountUrl, statePensionLumpSumUrl}
 import utils.PageUrls.{fullUrl, overviewUrl, pensionSummaryUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 class StatePensionAmountControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
 
+  private val existingAmount: String = "999.88"
   private val newAmount = 25
   private val poundPrefixText = "£"
   private val amountInputName = "amount"
@@ -85,7 +86,6 @@ class StatePensionAmountControllerISpec extends IntegrationTest with ViewHelpers
     val buttonText = "Continue"
     val expectedWhereToFindThisInformation = "Where to find this information"
     val expectedYouCanFindThisInformationIn = "You can find this information in:"
-
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
@@ -105,7 +105,7 @@ class StatePensionAmountControllerISpec extends IntegrationTest with ViewHelpers
     val maxAmountErrorText = "Your State Pension amount must be less than £100,000,000,000"
     val expectedDetailsExample1 = "your P60"
     val expectedDetailsExample2 = "the ‘About general increases in benefits’ letter the Pension Service sent you"
-    val expectedYouToldUsText = "You told us you did not get State Pension of £8,400 this year. Tell us how much you got."
+    val expectedYouToldUsText = s"You told us you did not get State Pension of £$existingAmount this year. Tell us how much you got."
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
@@ -117,7 +117,7 @@ class StatePensionAmountControllerISpec extends IntegrationTest with ViewHelpers
     val maxAmountErrorText = "Your State Pension amount must be less than £100,000,000,000"
     val expectedDetailsExample1 = "your P60"
     val expectedDetailsExample2 = "the ‘About general increases in benefits’ letter the Pension Service sent you"
-    val expectedYouToldUsText = "You told us you did not get State Pension of £8,400 this year. Tell us how much you got."
+    val expectedYouToldUsText = s"You told us you did not get State Pension of £$existingAmount this year. Tell us how much you got."
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
@@ -129,7 +129,7 @@ class StatePensionAmountControllerISpec extends IntegrationTest with ViewHelpers
     val maxAmountErrorText = "Your client’s State Pension amount must be less than £100,000,000,000"
     val expectedDetailsExample1 = "your client’s P60"
     val expectedDetailsExample2 = "the ‘About general increases in benefits’ letter the Pension Service sent your client"
-    val expectedYouToldUsText = "You told us your client did not get State Pension of £8,400 this year. Tell us how much they got."
+    val expectedYouToldUsText = s"You told us your client did not get State Pension of £$existingAmount this year. Tell us how much they got."
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
@@ -141,7 +141,7 @@ class StatePensionAmountControllerISpec extends IntegrationTest with ViewHelpers
     val maxAmountErrorText = "Your client’s State Pension amount must be less than £100,000,000,000"
     val expectedDetailsExample1 = "your client’s P60"
     val expectedDetailsExample2 = "the ‘About general increases in benefits’ letter the Pension Service sent your client"
-    val expectedYouToldUsText = "You told us your client did not get State Pension of £8,400 this year. Tell us how much they got."
+    val expectedYouToldUsText = s"You told us your client did not get State Pension of £$existingAmount this year. Tell us how much they got."
   }
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(
@@ -178,6 +178,7 @@ class StatePensionAmountControllerISpec extends IntegrationTest with ViewHelpers
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           textOnPageCheck(hintText, hintTextSelector)
           textOnPageCheck(poundPrefixText, poundPrefixSelector)
+          elementNotOnPageCheck(expectedYouToldUsSelector)
           textOnPageCheck(expectedWhereToFindThisInformation, whereToFindThisInformationSelector)
           textOnPageCheck(expectedYouCanFindThisInformationIn, paragraphFindThisInfoSelector)
           textOnPageCheck(user.specificExpectedResults.get.expectedDetailsExample1, paragraphSelector(1))
@@ -190,7 +191,6 @@ class StatePensionAmountControllerISpec extends IntegrationTest with ViewHelpers
 
         "render Did you get a state pension amount page page prefilled when cya data" which {
 
-          val existingAmount: String = "999.88"
           lazy val result: WSResponse = {
             dropPensionsDB()
             authoriseAgentOrIndividual(user.isAgent)
@@ -211,6 +211,7 @@ class StatePensionAmountControllerISpec extends IntegrationTest with ViewHelpers
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           textOnPageCheck(poundPrefixText, poundPrefixSelector)
           textOnPageCheck(hintText, hintTextSelector)
+          textOnPageCheck(user.specificExpectedResults.get.expectedYouToldUsText, expectedYouToldUsSelector)
           textOnPageCheck(expectedWhereToFindThisInformation, whereToFindThisInformationSelector)
           textOnPageCheck(expectedYouCanFindThisInformationIn, paragraphFindThisInfoSelector)
           textOnPageCheck(user.specificExpectedResults.get.expectedDetailsExample1, paragraphSelector(1))
@@ -323,7 +324,7 @@ class StatePensionAmountControllerISpec extends IntegrationTest with ViewHelpers
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           textOnPageCheck(poundPrefixText, poundPrefixSelector)
           textOnPageCheck(hintText, hintTextSelector)
-          textOnPageCheck(user.specificExpectedResults.get.expectedYouToldUsText, expectedYouToldUsSelector)
+          elementNotOnPageCheck(expectedYouToldUsSelector)
           textOnPageCheck(expectedWhereToFindThisInformation, whereToFindThisInformationSelector)
           textOnPageCheck(expectedYouCanFindThisInformationIn, paragraphFindThisInfoSelector)
           textOnPageCheck(user.specificExpectedResults.get.expectedDetailsExample1, paragraphSelector(1))
@@ -362,7 +363,7 @@ class StatePensionAmountControllerISpec extends IntegrationTest with ViewHelpers
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           textOnPageCheck(poundPrefixText, poundPrefixSelector)
           textOnPageCheck(hintText, hintTextSelector)
-          textOnPageCheck(user.specificExpectedResults.get.expectedYouToldUsText, expectedYouToldUsSelector)
+          elementNotOnPageCheck(expectedYouToldUsSelector)
           textOnPageCheck(expectedWhereToFindThisInformation, whereToFindThisInformationSelector)
           textOnPageCheck(expectedYouCanFindThisInformationIn, paragraphFindThisInfoSelector)
           textOnPageCheck(user.specificExpectedResults.get.expectedDetailsExample1, paragraphSelector(1))
@@ -401,7 +402,7 @@ class StatePensionAmountControllerISpec extends IntegrationTest with ViewHelpers
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           textOnPageCheck(poundPrefixText, poundPrefixSelector)
           textOnPageCheck(hintText, hintTextSelector)
-          textOnPageCheck(user.specificExpectedResults.get.expectedYouToldUsText, expectedYouToldUsSelector)
+          elementNotOnPageCheck(expectedYouToldUsSelector)
           textOnPageCheck(expectedWhereToFindThisInformation, whereToFindThisInformationSelector)
           textOnPageCheck(expectedYouCanFindThisInformationIn, paragraphFindThisInfoSelector)
           textOnPageCheck(user.specificExpectedResults.get.expectedDetailsExample1, paragraphSelector(1))
@@ -462,7 +463,7 @@ class StatePensionAmountControllerISpec extends IntegrationTest with ViewHelpers
       }
     }
 
-    "redirect to the correct page when a valid amount is submitted and update the session amount" which {
+    "redirect to State Pension Lump Sum question page when a valid amount is submitted and update the session amount" which {
 
       lazy val form: Map[String, String] = Map(AmountForm.amount -> s"$newAmount")
       lazy val result: WSResponse = {
@@ -479,7 +480,7 @@ class StatePensionAmountControllerISpec extends IntegrationTest with ViewHelpers
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
         //todo - redirect to cya page
-        result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
+        result.header("location") shouldBe Some(statePensionLumpSumUrl(taxYearEOY))
       }
 
       "update state pension amount to Some(newAmount)" in {

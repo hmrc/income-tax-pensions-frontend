@@ -66,8 +66,8 @@ POST        /:taxYear/payments-into-pensions/no-tax-relief/workplace-amount     
 
 ###########################     Annual Allowance pages     ####################################
 
-GET         /:taxYear/annual-allowance/amount-above-annual-allowance                controllers.pensions.annualAllowance.AboveReducedAnnualAllowanceAmountController.show(taxYear: Int)
-POST        /:taxYear/annual-allowance/amount-above-annual-allowance                controllers.pensions.annualAllowance.AboveReducedAnnualAllowanceAmountController.submit(taxYear: Int)
+GET         /:taxYear/annual-allowance/amount-above-annual-allowance                        controllers.pensions.annualAllowance.AboveReducedAnnualAllowanceAmountController.show(taxYear: Int)
+POST        /:taxYear/annual-allowance/amount-above-annual-allowance                        controllers.pensions.annualAllowance.AboveReducedAnnualAllowanceAmountController.submit(taxYear: Int)
 
 GET         /:taxYear/annual-allowance/reduced-annual-allowance                             controllers.pensions.annualAllowance.ReducedAnnualAllowanceController.show(taxYear: Int)
 POST        /:taxYear/annual-allowance/reduced-annual-allowance                             controllers.pensions.annualAllowance.ReducedAnnualAllowanceController.submit(taxYear: Int)
@@ -75,8 +75,8 @@ POST        /:taxYear/annual-allowance/reduced-annual-allowance                 
 GET         /:taxYear/annual-allowance/reduced-annual-allowance-type                        controllers.pensions.annualAllowance.ReducedAnnualAllowanceTypeController.show(taxYear: Int)
 POST        /:taxYear/annual-allowance/reduced-annual-allowance-type                        controllers.pensions.annualAllowance.ReducedAnnualAllowanceTypeController.submit(taxYear: Int)
 
-GET         /:taxYear/annual-allowance/above-annual-allowance                       controllers.pensions.annualAllowance.AboveReducedAnnualAllowanceController.show(taxYear: Int)
-POST        /:taxYear/annual-allowance/above-annual-allowance                       controllers.pensions.annualAllowance.AboveReducedAnnualAllowanceController.submit(taxYear: Int)
+GET         /:taxYear/annual-allowance/above-annual-allowance                               controllers.pensions.annualAllowance.AboveReducedAnnualAllowanceController.show(taxYear: Int)
+POST        /:taxYear/annual-allowance/above-annual-allowance                               controllers.pensions.annualAllowance.AboveReducedAnnualAllowanceController.submit(taxYear: Int)
 
 GET         /:taxYear/annual-allowance/pension-provider-paid-tax                            controllers.pensions.annualAllowance.PensionProviderPaidTaxController.show(taxYear: Int)
 POST        /:taxYear/annual-allowance/pension-provider-paid-tax                            controllers.pensions.annualAllowance.PensionProviderPaidTaxController.submit(taxYear: Int)
@@ -91,18 +91,20 @@ GET         /:taxYear/annual-allowance/pension-scheme-tax-reference-summary     
 
 ###########################     Income from Pension pages     ####################################
 
-GET         /:taxYear/pension-income/state-pension-lump-sum-tax                             controllers.pensions.incomeFromPensions.TaxPaidOnStatePensionLumpSumController.show(taxYear: Int)
-POST        /:taxYear/pension-income/state-pension-lump-sum-tax                             controllers.pensions.incomeFromPensions.TaxPaidOnStatePensionLumpSumController.submit(taxYear: Int)
+GET         /:taxYear/pension-income/state-pension                                          controllers.pensions.incomeFromPensions.StatePensionController.show(taxYear:Int)
+POST        /:taxYear/pension-income/state-pension                                          controllers.pensions.incomeFromPensions.StatePensionController.submit(taxYear: Int)
 
-GET         /:taxYear/pension-income/state-pension-lump-sum-amount                          controllers.pensions.incomeFromPensions.StatePensionLumpSumAmountController.show(taxYear: Int)
-POST        /:taxYear/pension-income/state-pension-lump-sum-amount                          controllers.pensions.incomeFromPensions.StatePensionLumpSumAmountController.submit(taxYear: Int)
+GET         /:taxYear/pension-income/state-pension-amount                                   controllers.pensions.incomeFromPensions.StatePensionAmountController.show(taxYear: Int)
+POST        /:taxYear/pension-income/state-pension-amount                                   controllers.pensions.incomeFromPensions.StatePensionAmountController.submit(taxYear: Int)
 
 GET         /:taxYear/pension-income/state-pension-lump-sum                                 controllers.pensions.incomeFromPensions.StatePensionLumpSumController.show(taxYear: Int)
 POST        /:taxYear/pension-income/state-pension-lump-sum                                 controllers.pensions.incomeFromPensions.StatePensionLumpSumController.submit(taxYear: Int)
 
-GET         /:taxYear/pension-income/state-pension                                          controllers.pensions.incomeFromPensions.StatePensionController.show(taxYear:Int)
-POST        /:taxYear/pension-income/state-pension                                          controllers.pensions.incomeFromPensions.StatePensionController.submit(taxYear: Int)
+GET         /:taxYear/pension-income/state-pension-lump-sum-amount                          controllers.pensions.incomeFromPensions.StatePensionLumpSumAmountController.show(taxYear: Int)
+POST        /:taxYear/pension-income/state-pension-lump-sum-amount                          controllers.pensions.incomeFromPensions.StatePensionLumpSumAmountController.submit(taxYear: Int)
 
-GET         /:taxYear/pension-income/state-pension-amount                                  controllers.pensions.incomeFromPensions.StatePensionAmountController.show(taxYear: Int)
-POST        /:taxYear/pension-income/state-pension-amount                                  controllers.pensions.incomeFromPensions.StatePensionAmountController.submit(taxYear: Int)
+GET         /:taxYear/pension-income/state-pension-lump-sum-tax                             controllers.pensions.incomeFromPensions.TaxPaidOnStatePensionLumpSumController.show(taxYear: Int)
+POST        /:taxYear/pension-income/state-pension-lump-sum-tax                             controllers.pensions.incomeFromPensions.TaxPaidOnStatePensionLumpSumController.submit(taxYear: Int)
 
+GET         /:taxYear/pension-income/state-pension-lump-sum-tax-amount                      controllers.pensions.incomeFromPensions.TaxPaidOnLumpSumAmountController.show(taxYear: Int)
+POST        /:taxYear/pension-income/state-pension-lump-sum-tax-amount                      controllers.pensions.incomeFromPensions.TaxPaidOnLumpSumAmountController.submit(taxYear: Int)

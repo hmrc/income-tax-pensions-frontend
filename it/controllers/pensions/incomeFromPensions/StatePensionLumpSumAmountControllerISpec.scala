@@ -30,7 +30,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.IncomeFromPensionsPages.statePensionLumpSumAmountUrl
+import utils.PageUrls.IncomeFromPensionsPages.{statePensionLumpSumAmountUrl, statePensionLumpSumUrl, taxOnLumpSumUrl}
 import utils.PageUrls.{fullUrl, overviewUrl, pensionSummaryUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
@@ -251,8 +251,7 @@ class StatePensionLumpSumAmountControllerISpec extends IntegrationTest with View
 
       "has an SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER
-        //todo - redirect to did you get state pension lump sum Question page
-        result.header("location").contains(pensionSummaryUrl(taxYearEOY)) shouldBe true
+        result.header("location").contains(statePensionLumpSumUrl(taxYearEOY)) shouldBe true
       }
     }
 
@@ -271,8 +270,7 @@ class StatePensionLumpSumAmountControllerISpec extends IntegrationTest with View
 
       "has an SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER
-        //todo - redirect to did you get state pension lump sum Question page
-        result.header("location").contains(pensionSummaryUrl(taxYearEOY)) shouldBe true
+        result.header("location").contains(statePensionLumpSumUrl(taxYearEOY)) shouldBe true
       }
     }
 
@@ -411,7 +409,7 @@ class StatePensionLumpSumAmountControllerISpec extends IntegrationTest with View
 
       }
     }
-    "Redirect user to the pension summary page when in year" which {
+    "Redirect user to the tax overview page when in year" which {
       lazy val form: Map[String, String] = Map(AmountForm.amount -> s"$newAmount")
       lazy val result: WSResponse = {
         dropPensionsDB()
@@ -448,8 +446,7 @@ class StatePensionLumpSumAmountControllerISpec extends IntegrationTest with View
 
       "has an SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER
-        //todo - redirect to did you get state pension lump sum Question page
-        result.header("location").contains(pensionSummaryUrl(taxYearEOY)) shouldBe true
+        result.header("location").contains(statePensionLumpSumUrl(taxYearEOY)) shouldBe true
       }
 
       "update state lump sum amount to None" in {
@@ -476,8 +473,7 @@ class StatePensionLumpSumAmountControllerISpec extends IntegrationTest with View
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        //todo - redirect to did your client pay tax on the state pension lump sum page
-        result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
+        result.header("location") shouldBe Some(taxOnLumpSumUrl(taxYearEOY))
       }
 
       "update state lump sum amount to Some(validAmount)" in {

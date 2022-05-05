@@ -28,7 +28,8 @@ import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import controllers.pensions.routes.PensionsSummaryController
-import controllers.pensions.incomeFromPensions.routes.StatePensionController
+import controllers.pensions.incomeFromPensions.routes.{StatePensionController, StatePensionLumpSumController}
+
 import javax.inject.Inject
 import scala.concurrent.Future
 import views.html.pensions.incomeFromPensions.StatePensionAmountView
@@ -52,11 +53,12 @@ class StatePensionAmountController @Inject()(implicit val mcc: MessagesControlle
     inYearAction.notInYear(taxYear) {
       pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
         case Some(data) =>
+          val prevAmount = data.pensions.incomeFromPensions.statePension.flatMap(_.amount)
           if (data.pensions.incomeFromPensions.statePension.flatMap(_.amountPaidQuestion).contains(true)) {
             data.pensions.incomeFromPensions.statePension.flatMap(_.amount) match {
               case Some(amount) =>
-                Future.successful(Ok(statePensionAmountView(amountForm(request.user.isAgent).fill(amount), taxYear)))
-              case None => Future.successful(Ok(statePensionAmountView(amountForm(request.user.isAgent), taxYear)))
+                Future.successful(Ok(statePensionAmountView(amountForm(request.user.isAgent).fill(amount), taxYear, prevAmount)))
+              case None => Future.successful(Ok(statePensionAmountView(amountForm(request.user.isAgent), taxYear, None)))
             }
           } else {
             Future.successful(Redirect(StatePensionController.show(taxYear)))
@@ -72,11 +74,15 @@ class StatePensionAmountController @Inject()(implicit val mcc: MessagesControlle
 
   def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
     inYearAction.notInYear(taxYear) {
-      amountForm(request.user.isAgent).bindFromRequest.fold(
-        formWithErrors => Future.successful(BadRequest(statePensionAmountView(formWithErrors, taxYear))),
-        amount => {
-          pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
-            case Some(data) =>
+      pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
+        case Some(data) =>
+          amountForm(request.user.isAgent).bindFromRequest.fold(
+            formWithErrors => {
+              val prevAmount = data.pensions.incomeFromPensions.statePension.flatMap(_.amount)
+              Future.successful(BadRequest(statePensionAmountView(formWithErrors, taxYear, prevAmount)))
+            },
+            amount => {
+
               if (data.pensions.incomeFromPensions.statePension.flatMap(_.amountPaidQuestion).contains(true)) {
 
                 val pensionsCYAModel: PensionsCYAModel = data.pensions
@@ -87,21 +93,20 @@ class StatePensionAmountController @Inject()(implicit val mcc: MessagesControlle
                 }
                 pensionSessionService.createOrUpdateSessionData(request.user,
                   updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
-                  // TODO: redirect to - redirect to the income from pensions CYA page
-                  Redirect(PensionsSummaryController.show(taxYear))
+                  Redirect(StatePensionLumpSumController.show(taxYear))
                 }
 
               } else {
                 Future.successful(Redirect(StatePensionController.show(taxYear)))
               }
+            })
 
-            case _ =>
-              // TODO: redirect to the income from pensions CYA page
-              Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
-          }
+        case _ =>
+          // TODO: redirect to the income from pensions CYA page
+          Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
+      }
 
-        }
-      )
+
     }
 
   }

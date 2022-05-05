@@ -30,6 +30,7 @@ import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.incomeFromPensions.StatePensionView
+import controllers.pensions.incomeFromPensions.routes._
 
 import javax.inject.Inject
 import scala.concurrent.Future
@@ -82,11 +83,9 @@ class StatePensionController @Inject()(implicit val cc: MessagesControllerCompon
               pensionSessionService.createOrUpdateSessionData(request.user,
                 updatedCyaModel, taxYear, data.exists(_.isPriorSubmission))(errorHandler.internalServerError()) {
                 if (yesNo) {
-                  //TODO redirect to Pension CYA page
-                  Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear))
+                  Redirect(StatePensionAmountController.show(taxYear))
                 } else {
-                  //TODO redirect to Pension CYA page
-                  Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear))
+                  Redirect(StatePensionLumpSumController.show(taxYear))
                 }
               }
           }

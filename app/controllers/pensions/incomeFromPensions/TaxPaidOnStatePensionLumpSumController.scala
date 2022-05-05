@@ -29,7 +29,7 @@ import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.incomeFromPensions.TaxPaidOnStatePensionLumpSumView
-import controllers.pensions.routes.PensionsSummaryController
+import controllers.pensions.incomeFromPensions.routes.TaxPaidOnLumpSumAmountController
 import models.pension.statebenefits.{IncomeFromPensionsViewModel, StateBenefitViewModel}
 
 import javax.inject.Inject
@@ -87,9 +87,7 @@ class TaxPaidOnStatePensionLumpSumController @Inject()(implicit val cc: Messages
               pensionSessionService.createOrUpdateSessionData(request.user,
                 updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
                 if (yesNo) {
-                  //TODO: redirect to the next page - income from pensions CYA page or other UK income?
-                  // not sure from prototype but next section is not ready yet
-                  Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear))
+                  Redirect(TaxPaidOnLumpSumAmountController.show(taxYear))
                 } else {
                   //TODO: redirect to the next page - income from pensions CYA page or other UK income?
                   // not sure from prototype but next section is not ready yet

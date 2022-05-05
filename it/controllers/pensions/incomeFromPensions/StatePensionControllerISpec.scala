@@ -30,7 +30,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.IncomeFromPensionsPages.statePension
+import utils.PageUrls.IncomeFromPensionsPages.{statePension, statePensionAmountUrl, statePensionLumpSumUrl}
 import utils.PageUrls._
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
@@ -352,8 +352,7 @@ class StatePensionControllerISpec extends IntegrationTest with ViewHelpers with 
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        //TODO redirect to Pension CYA page
-        result.header("location") shouldBe Some(controllers.pensions.routes.PensionsSummaryController.show(taxYearEOY).url)
+        result.header("location") shouldBe Some(statePensionAmountUrl(taxYearEOY))
       }
 
       "updates amount paid question to Some(true)" in {
@@ -382,8 +381,7 @@ class StatePensionControllerISpec extends IntegrationTest with ViewHelpers with 
 
     "has a SEE_OTHER(303) status" in {
       result.status shouldBe SEE_OTHER
-      //TODO redirect to Pension CYA page
-      result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
+      result.header("location") shouldBe Some(statePensionLumpSumUrl(taxYearEOY))
     }
 
     "updates amount paid question to Some(false) and deletes the amount paid amount" in {
