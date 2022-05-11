@@ -83,7 +83,7 @@ class StatePensionController @Inject()(implicit val cc: MessagesControllerCompon
               pensionSessionService.createOrUpdateSessionData(request.user,
                 updatedCyaModel, taxYear, data.exists(_.isPriorSubmission))(errorHandler.internalServerError()) {
                 if (yesNo) {
-                  Redirect(StatePensionAmountController.show(taxYear))
+                  Redirect(UkPensionSchemePaymentsController.show(taxYear))
                 } else {
                   Redirect(StatePensionLumpSumController.show(taxYear))
                 }
