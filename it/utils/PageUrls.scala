@@ -103,6 +103,8 @@ object PageUrls extends IntegrationTest {
     def statePensionLumpSumUrl(taxYear: Int): String = s"$appUrl/$taxYear/pension-income/state-pension-lump-sum"
 
     def statePension(taxYear: Int):String = s"$appUrl/$taxYear/pension-income/state-pension"
+
+    def ukPensionSchemePayments(taxYear: Int):String = s"$appUrl/$taxYear/pension-income/uk-pension-schemes"
   }
 }
 

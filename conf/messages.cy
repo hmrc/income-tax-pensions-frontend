@@ -27,6 +27,7 @@ common.status.toDo = To do
 common.status.updated = Updated
 common.pensions.caption = Pensions for 6 April {0} to 5 April {1}
 common.paymentsIntoPensions.caption = Payments into pensions for 6 April {0} to 5 April {1}
+common.dividends.incomeFromPensions.caption = Dividends for 6 April {0} to 5 April {1}
 common.pensionAnnualAllowance.caption = Pension annual allowance for 6 April {0} to 5 April {1}
 common.incomeFromPensions.caption = Income from pensions for 6 April {0} to 5 April {1}
 common.return.overview.buttonText = Return to overview
@@ -430,3 +431,14 @@ incomeFromPensions.taxPaidOnLumpSumAmount.paragraph.agent = You told us your cli
 incomeFromPensions.taxPaidOnLumpSumAmount.error.error.noEntry = Enter the amount of tax paid on the State Pension lump sum
 incomeFromPensions.taxPaidOnLumpSumAmount.error.error.incorrectFormat = Enter the amount of tax paid on the State Pension lump sum in the correct format
 incomeFromPensions.taxPaidOnLumpSumAmount.error.error.overMaximum = The amount of tax paid on the State Pension lump sum must be less than £100,000,000,000
+
+#Do You Get UK Pension Scheme Payments Messages
+pensions.ukPensionSchemePayments.title.individual = Do you get UK pension scheme payments?
+pensions.ukPensionSchemePayments.title.agent = Does your client get UK pension scheme payments?
+pensions.ukPensionSchemePayments.error.noEntry.individual = Select Yes if you got payments from UK pension schemes
+pensions.ukPensionSchemePayments.error.noEntry.agent = Select Yes if your client got payments from UK pension schemes
+pensions.ukPensionSchemePayments.doesNot.Include = This does not include State Pension.
+
+
+
+
