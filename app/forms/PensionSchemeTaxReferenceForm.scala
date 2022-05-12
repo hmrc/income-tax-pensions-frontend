@@ -16,6 +16,7 @@
 
 package forms
 
+import filters.InputFilters
 import forms.validation.StringConstraints.{validateChar, validateSize}
 import forms.validation.mappings.MappingUtil.trimmedText
 import forms.validation.utils.ConstraintUtil.ConstraintUtil
@@ -23,7 +24,7 @@ import play.api.data.Form
 import play.api.data.validation.Constraint
 import play.api.data.validation.Constraints.nonEmpty
 
-object PensionSchemeTaxReferenceForm {
+object PensionSchemeTaxReferenceForm extends InputFilters {
 
   val taxReferenceId: String = "taxReferenceId"
   val regex: String = "^\\d{8}[R]{1}[a-zA-Z]{1}$"
@@ -40,7 +41,7 @@ object PensionSchemeTaxReferenceForm {
     })
 
   def pensionSchemeTaxReferenceForm(isAgent: Boolean): Form[String] = Form(
-    taxReferenceId -> trimmedText.verifying(
+    taxReferenceId -> trimmedText.transform[String](filter, identity).verifying(
       notEmpty(isAgent) andThen validateFormat(isAgent)
     )
   )
