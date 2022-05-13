@@ -439,5 +439,8 @@ pensions.ukPensionSchemePayments.error.noEntry.individual = Select Yes if you go
 pensions.ukPensionSchemePayments.error.noEntry.agent = Select Yes if your client got payments from UK pension schemes
 pensions.ukPensionSchemePayments.doesNot.Include = This does not include State Pension.
 
+#Uk Pension Income Summary Page
 
-
+pensions.ukPensionIncomeSummary.title = UK pension income
+pensions.ukPensionIncomeSummary.addAnotherPensionIncomeLink = Add another pension scheme
+pensions.ukPensionIncomeSummary.addPensionIncomeLink = Add a pension scheme

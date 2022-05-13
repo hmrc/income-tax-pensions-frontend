@@ -1,0 +1,99 @@
+@*
+ * Copyright 2022 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.html.templates.Layout
+@import views.html.templates.helpers.SummaryList
+@import views.html.templates.helpers.Heading
+@import views.html.templates.helpers.Link
+@import controllers.pensions.routes.PensionsSummaryController
+@import models.pension.statebenefits.UkPensionIncomeViewModel
+
+@this(
+    layout: Layout,
+    summaryList: SummaryList,
+    heading: Heading,
+    button: GovukButton,
+    link: Link)
+
+
+@(taxYear: Int, pensionIncomeList: Seq[UkPensionIncomeViewModel])(implicit messages: Messages, appConfig: AppConfig, request: AuthorisationRequest[_])
+
+@headingForUse = @{messages("pensions.ukPensionIncomeSummary.title")}
+@addAnotherLink() = {
+    @if(pensionIncomeList.isEmpty){
+        @*TODO: update # href below to go to the pension income details page when available passing None as the index
+         i.e. replace "#" with PensionSchemeDetailsController.show(taxYear, None).url
+        *@
+        <p class="govuk-body">@link("#", "pensions.ukPensionIncomeSummary.addPensionIncomeLink", Some("add-pension-income-link"), fullStop = false)</p>
+    } else {
+        @*TODO: update # href below to go to the pension income details page when available passing None as the index
+        i.e. replace "#" with PensionSchemeDetailsController.show(taxYear, None).url
+        *@
+        <p class="govuk-body">@link("#", "pensions.ukPensionIncomeSummary.addAnotherPensionIncomeLink", Some("add-another-pension-link"), fullStop = false)</p>
+    }
+}
+
+@pensionIncomeSummaryList = {
+    @if(pensionIncomeList.nonEmpty){
+        <div class="govuk-form-group" id="pensionIncomeSummaryList">
+            <dl class="hmrc-add-to-a-list hmrc-add-to-a-list--short">
+                @for((pensionIncome, index) <- pensionIncomeList.zipWithIndex){
+                    <div class="hmrc-add-to-a-list__contents">
+                        <dt class="hmrc-add-to-a-list__identifier hmrc-add-to-a-list__identifier--light">
+                            @pensionIncome.pensionSchemeName.getOrElse("")
+                        </dt>
+                        <dd class="hmrc-add-to-a-list__change">
+                        @*TODO:Update the link to the pension sopecific CYA details page with index when page available like below:
+                            i.e. replace "#"with "@UkPensionSchemeDetailsCYAController.show(taxYear, Some(index))"
+                        *@
+                        <a class="govuk-link" href="#">
+                            <span aria-hidden="true">@messages("common.change")</span>
+                            <span class="govuk-visually-hidden">@{s"${messages("common.change")} ${pensionIncome.pensionSchemeName.getOrElse("")}"}</span>
+                            </a>
+                        </dd>
+                        <dd class="hmrc-add-to-a-list__remove">
+                        @*TODO:Update the link to the pension details page with index when page available like below:
+                            i.e. replace "#"with "@RemoveUkPensionSchemeDetailsController.show(taxYear, Some(index))"
+                        *@
+                        <a class="govuk-link" href="#">
+                                <span aria-hidden="true">@messages("common.remove")</span>
+                                <span class="govuk-visually-hidden">@{s"${messages("common.remove")} ${pensionIncome.pensionSchemeName.getOrElse("")}"}</span>
+                            </a>
+                        </dd>
+                    </div>
+                }
+            </dl>
+        </div>
+    }
+}
+
+
+@layout(pageTitle = headingForUse, taxYear = Some(taxYear)) {
+    @heading(headingForUse, Some(messages("common.incomeFromPensions.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-2")
+    @pensionIncomeSummaryList
+    @addAnotherLink()
+    @*TODO: button to navigate to income from pensions CYA when available*@
+    @button(Button(
+        attributes = Map("id" -> "continue"),
+        preventDoubleClick = true,
+        content = Text(messages("common.continue")),
+        classes = "govuk-button govuk-!-margin-top-2",
+        href = Some(PensionsSummaryController.show(taxYear).url)
+    ))
+}
+@{
+// $COVERAGE-OFF$
+}
