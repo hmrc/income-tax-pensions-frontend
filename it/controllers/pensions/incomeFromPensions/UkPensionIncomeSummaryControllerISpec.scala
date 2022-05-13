@@ -116,7 +116,7 @@ class UkPensionIncomeSummaryControllerISpec extends IntegrationTest with BeforeA
           textOnPageCheck(pensionName1, pensionNameSelector(1))
           textOnPageCheck(pensionName2, pensionNameSelector(2))
           
-          //TODO: replace hrefs "#" below with link to first details page when available .e.g. PensionSchemeDetailsController.show(taxYearEOY, Some(1)).url
+          //TODO: replace hrefs "#" below with link to first details page when available .e.g. UkPensionSchemeDetailsCYAController.show(taxYearEOY, Some(1)).url
           linkCheck(s"$change $change $pensionName1", changeLinkSelector(1), "#")
           linkCheck(s"$change $change $pensionName2", changeLinkSelector(2),"#")
           //TODO: replace hrefs "#" below with link to remove page when available .e.g. RemovePensionSchemeDetailsController.show(taxYearEOY, Some(1)).url

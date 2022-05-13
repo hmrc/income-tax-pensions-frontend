@@ -54,7 +54,6 @@ class StatePensionController @Inject()(implicit val cc: MessagesControllerCompon
 
       pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
         case Some(data) =>
-          val hh: Boolean =data.pensions.incomeFromPensions.statePension.flatMap(_.amountPaidQuestion).contains(true)
           data.pensions.incomeFromPensions.statePension.flatMap(_.amountPaidQuestion) match {
             case Some(value) => Future.successful(Ok(statePensionView(
               yesNoForm(request.user).fill(value), taxYear)))

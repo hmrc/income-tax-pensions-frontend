@@ -43,24 +43,24 @@
     @if(pstrList.nonEmpty){
         <div class="govuk-form-group">
             <dl class="hmrc-add-to-a-list hmrc-add-to-a-list--short">
-            @for((pstr, index) <- pstrList.zipWithIndex){
-                <div class="hmrc-add-to-a-list__contents">
-                    <dt class="hmrc-add-to-a-list__identifier hmrc-add-to-a-list__identifier--light">
-                        @pstr
-                    </dt>
-                    <dd class="hmrc-add-to-a-list__change">
-                        <a class="govuk-link" href="@PensionSchemeTaxReferenceController.show(taxYear, Some(index))">
-                            <span aria-hidden="true">@messages("common.change")</span>
-                            <span class="govuk-visually-hidden">@{s"${messages("common.change")} ${messages("common.pensionSchemeTaxReference")} $pstr"}</span>
-                        </a>
-                    </dd>
-                    <dd class="hmrc-add-to-a-list__remove">
-                        <a class="govuk-link" href="#">
-                            <span aria-hidden="true">@messages("common.remove")</span>
-                            <span class="govuk-visually-hidden">@{s"${messages("common.remove")} ${messages("common.pensionSchemeTaxReference")} $pstr"}</span>
-                        </a>
-                    </dd>
-                </div>
+                @for((pstr, index) <- pstrList.zipWithIndex){
+                    <div class="hmrc-add-to-a-list__contents">
+                        <dt class="hmrc-add-to-a-list__identifier hmrc-add-to-a-list__identifier--light">
+                            @pstr
+                        </dt>
+                        <dd class="hmrc-add-to-a-list__change">
+                            <a class="govuk-link" href="@PensionSchemeTaxReferenceController.show(taxYear, Some(index))">
+                                <span aria-hidden="true">@messages("common.change")</span>
+                                <span class="govuk-visually-hidden">@{s"${messages("common.change")} ${messages("common.pensionSchemeTaxReference")} $pstr"}</span>
+                            </a>
+                        </dd>
+                        <dd class="hmrc-add-to-a-list__remove">
+                            <a class="govuk-link" href="#">
+                                <span aria-hidden="true">@messages("common.remove")</span>
+                                <span class="govuk-visually-hidden">@{s"${messages("common.remove")} ${messages("common.pensionSchemeTaxReference")} $pstr"}</span>
+                            </a>
+                        </dd>
+                    </div>
                 }
             </dl>
         </div>
