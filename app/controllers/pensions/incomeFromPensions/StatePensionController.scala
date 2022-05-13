@@ -51,8 +51,10 @@ class StatePensionController @Inject()(implicit val cc: MessagesControllerCompon
 
   def show(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
     inYearAction.notInYear(taxYear) {
+
       pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
         case Some(data) =>
+          val hh: Boolean =data.pensions.incomeFromPensions.statePension.flatMap(_.amountPaidQuestion).contains(true)
           data.pensions.incomeFromPensions.statePension.flatMap(_.amountPaidQuestion) match {
             case Some(value) => Future.successful(Ok(statePensionView(
               yesNoForm(request.user).fill(value), taxYear)))

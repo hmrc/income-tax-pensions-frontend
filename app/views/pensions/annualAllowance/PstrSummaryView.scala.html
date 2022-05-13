@@ -31,7 +31,7 @@
 @(taxYear: Int, pstrList: Seq[String])(implicit messages: Messages, appConfig: AppConfig, request: AuthorisationRequest[_])
 
 @headingForUse = @{messages("annualAllowance.pstrSummary.title")}
-@addAnotherLink = {
+@addAnotherLink() = {
     @if(pstrList.isEmpty){
         <p class="govuk-body">@link(PensionSchemeTaxReferenceController.show(taxYear, None).url, "annualAllowance.addPstrLink", Some("add-pstr-link"), fullStop = false)</p>
     } else {
@@ -43,13 +43,13 @@
     @if(pstrList.nonEmpty){
         <div class="govuk-form-group">
             <dl class="hmrc-add-to-a-list hmrc-add-to-a-list--short">
-                @for(pstr <- pstrList){
+            @for((pstr, index) <- pstrList.zipWithIndex){
                 <div class="hmrc-add-to-a-list__contents">
                     <dt class="hmrc-add-to-a-list__identifier hmrc-add-to-a-list__identifier--light">
                         @pstr
                     </dt>
                     <dd class="hmrc-add-to-a-list__change">
-                        <a class="govuk-link" href="@PensionSchemeTaxReferenceController.show(taxYear, Some(pstrList.indexOf(pstr)))">
+                        <a class="govuk-link" href="@PensionSchemeTaxReferenceController.show(taxYear, Some(index))">
                             <span aria-hidden="true">@messages("common.change")</span>
                             <span class="govuk-visually-hidden">@{s"${messages("common.change")} ${messages("common.pensionSchemeTaxReference")} $pstr"}</span>
                         </a>
@@ -71,7 +71,7 @@
 @layout(pageTitle = headingForUse, taxYear = Some(taxYear)) {
     @heading(headingForUse, Some(messages("common.pensionAnnualAllowance.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-2")
     @pstrSummaryList
-    @addAnotherLink
+    @addAnotherLink()
     @button(Button(
         attributes = Map("id" -> "continue"),
         preventDoubleClick = true,
