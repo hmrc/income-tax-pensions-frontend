@@ -105,51 +105,69 @@ class PaymentsIntoPensionsCYAController @Inject()(implicit val cc: MessagesContr
     // the hmrcEmploymentData and customerEmploymentData when it's been added to the backend data
     val getUkPensionIncome: Seq[UkPensionIncomeViewModel] = {
 
-      Seq(UkPensionIncomeViewModel(
-        employmentId = Some("00000000-0000-1000-8000-000000000001"),
-        pensionId = Some("Some Customer ref 1"),
-        startDate = Some("2019-10-23"),
-        endDate = Some("2020-10-24"),
-        pensionSchemeName = Some("pension name 1"),
-        pensionSchemeRef = Some("666/66666"),
-        amount = Some(211.33),
-        taxPaid = Some(14.77),
-        isCustomerEmploymentData = Some(true)
-      ),
-        UkPensionIncomeViewModel(
-          employmentId = Some("00000000-0000-1000-8000-000000000002"),
-          pensionId = Some("Some Customer ref 2"),
-          startDate = Some("2019-11-23"),
-          endDate = Some("2020-11-24"),
-          pensionSchemeName = Some("pension name 2"),
-          pensionSchemeRef = Some("777/77777"),
-          amount = Some(311.44),
-          taxPaid = Some(34.88),
-          isCustomerEmploymentData = Some(true)
-        ),
-        UkPensionIncomeViewModel(
-          employmentId = Some("00000000-0000-1000-8000-000000000003"),
-          pensionId = Some("Some hmrc ref 3"),
-          startDate = Some("2019-07-23"),
-          endDate = Some("2020-07-24"),
-          pensionSchemeName = Some("pension name 3"),
-          pensionSchemeRef = Some("888/88888"),
-          amount = Some(411.55),
-          taxPaid = Some(44.89),
-          isCustomerEmploymentData = Some(false)
-        ),
-        UkPensionIncomeViewModel(
-          employmentId = Some("00000000-0000-1000-8000-000000000004"),
-          pensionId = Some("Some hmrc ref 4"),
-          startDate = Some("2019-09-23"),
-          endDate = Some("2020-09-24"),
-          pensionSchemeName = Some("pension name 4"),
-          pensionSchemeRef = Some("999/99999"),
-          amount = Some(514.56),
-          taxPaid = Some(55.12),
-          isCustomerEmploymentData = Some(false)
-        )
-      )
+      prior.employmentPensions match {
+        case Some(ep) =>
+          ep.employmentData.map(data =>
+            UkPensionIncomeViewModel(
+              employmentId = Some(data.employmentId),
+              pensionId = data.pensionId,
+              startDate = data.startDate,
+              endDate = data.endDate,
+              pensionSchemeName = Some(data.pensionSchemeName),
+              pensionSchemeRef = data.pensionSchemeRef,
+              amount = data.amount,
+              taxPaid = data.taxPaid,
+              isCustomerEmploymentData = data.isCustomerEmploymentData
+            )
+          )
+        case _ => Seq()
+      }
+
+//      Seq(UkPensionIncomeViewModel(
+//        employmentId = Some("00000000-0000-1000-8000-000000000001"),
+//        pensionId = Some("Some Customer ref 1"),
+//        startDate = Some("2019-10-23"),
+//        endDate = Some("2020-10-24"),
+//        pensionSchemeName = Some("pension name 1"),
+//        pensionSchemeRef = Some("666/66666"),
+//        amount = Some(211.33),
+//        taxPaid = Some(14.77),
+//        isCustomerEmploymentData = Some(true)
+//      ),
+//        UkPensionIncomeViewModel(
+//          employmentId = Some("00000000-0000-1000-8000-000000000002"),
+//          pensionId = Some("Some Customer ref 2"),
+//          startDate = Some("2019-11-23"),
+//          endDate = Some("2020-11-24"),
+//          pensionSchemeName = Some("pension name 2"),
+//          pensionSchemeRef = Some("777/77777"),
+//          amount = Some(311.44),
+//          taxPaid = Some(34.88),
+//          isCustomerEmploymentData = Some(true)
+//        ),
+//        UkPensionIncomeViewModel(
+//          employmentId = Some("00000000-0000-1000-8000-000000000003"),
+//          pensionId = Some("Some hmrc ref 3"),
+//          startDate = Some("2019-07-23"),
+//          endDate = Some("2020-07-24"),
+//          pensionSchemeName = Some("pension name 3"),
+//          pensionSchemeRef = Some("888/88888"),
+//          amount = Some(411.55),
+//          taxPaid = Some(44.89),
+//          isCustomerEmploymentData = Some(false)
+//        ),
+//        UkPensionIncomeViewModel(
+//          employmentId = Some("00000000-0000-1000-8000-000000000004"),
+//          pensionId = Some("Some hmrc ref 4"),
+//          startDate = Some("2019-09-23"),
+//          endDate = Some("2020-09-24"),
+//          pensionSchemeName = Some("pension name 4"),
+//          pensionSchemeRef = Some("999/99999"),
+//          amount = Some(514.56),
+//          taxPaid = Some(55.12),
+//          isCustomerEmploymentData = Some(false)
+//        )
+//      )
 
     }
 

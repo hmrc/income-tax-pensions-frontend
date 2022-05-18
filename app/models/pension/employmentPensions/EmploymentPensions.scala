@@ -14,21 +14,18 @@
  * limitations under the License.
  */
 
-package models.pension
+package models.pension.employmentPensions
 
-import models.pension.charges.PensionCharges
-import models.pension.employmentPensions.EmploymentPensions
-import models.pension.reliefs.PensionReliefs
-import models.pension.statebenefits.StateBenefitsModel
 import play.api.libs.json.{Json, OFormat}
 
-case class AllPensionsData(pensionReliefs: Option[PensionReliefs],
-                           pensionCharges: Option[PensionCharges],
-                           stateBenefits: Option[StateBenefitsModel],
-                           employmentPensions: Option[EmploymentPensions]
-                          )
+case class EmploymentPensions(employmentData: Seq[EmploymentPensionModel])
 
-object AllPensionsData {
-  implicit val formats: OFormat[AllPensionsData] = Json.format[AllPensionsData]
+object EmploymentPensions {
+  implicit val format: OFormat[EmploymentPensions] = Json.format[EmploymentPensions]
+}
 
+case class EncryptedEmploymentPensions(employmentData: Seq[EncryptedEmploymentPensionModel])
+
+object EncryptedEmploymentPensions {
+  implicit val format: OFormat[EncryptedEmploymentPensions] = Json.format[EncryptedEmploymentPensions]
 }
