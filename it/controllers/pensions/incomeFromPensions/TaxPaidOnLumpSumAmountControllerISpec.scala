@@ -152,7 +152,7 @@ class TaxPaidOnLumpSumAmountControllerISpec extends IntegrationTest with ViewHel
             val viewModel = anIncomeFromPensionsViewModel.copy(statePensionLumpSum = Some(anStateBenefitViewModelTwo.copy(taxPaid = None)))
             insertCyaData(pensionsUserDataWithIncomeFromPensions(viewModel), aUserRequest)
             urlGet(fullUrl(taxOnLumpSumAmountUrl(taxYearEOY)), user.isWelsh, follow = false,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
@@ -183,7 +183,7 @@ class TaxPaidOnLumpSumAmountControllerISpec extends IntegrationTest with ViewHel
             val viewModel = anIncomeFromPensionsViewModel.copy(statePensionLumpSum = Some(anStateBenefitViewModelTwo.copy(taxPaid = Some(newAmount))))
             insertCyaData(pensionsUserDataWithIncomeFromPensions(viewModel), aUserRequest)
             urlGet(fullUrl(taxOnLumpSumAmountUrl(taxYearEOY)), user.isWelsh, follow = false,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
@@ -216,7 +216,7 @@ class TaxPaidOnLumpSumAmountControllerISpec extends IntegrationTest with ViewHel
         val viewModel = anIncomeFromPensionsViewModel.copy(statePensionLumpSum = Some(anStateBenefitViewModelTwo.copy(taxPaid = None)))
         insertCyaData(pensionsUserDataWithIncomeFromPensions(viewModel), aUserRequest)
         urlGet(fullUrl(taxOnLumpSumAmountUrl(taxYear)), follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear)))
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
       }
 
       "has an SEE_OTHER(303 status" in {
@@ -233,7 +233,7 @@ class TaxPaidOnLumpSumAmountControllerISpec extends IntegrationTest with ViewHel
           taxPaidQuestion = Some(false), taxPaid = None)))
         insertCyaData(pensionsUserDataWithIncomeFromPensions(viewModel), aUserRequest)
         urlGet(fullUrl(taxOnLumpSumAmountUrl(taxYearEOY)), follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
       "has an SEE_OTHER(303 status" in {
@@ -247,7 +247,7 @@ class TaxPaidOnLumpSumAmountControllerISpec extends IntegrationTest with ViewHel
         dropPensionsDB()
         authoriseAgentOrIndividual(isAgent = false)
         urlGet(fullUrl(taxOnLumpSumAmountUrl(taxYearEOY)), follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
       "has an SEE_OTHER(303 status" in {
@@ -274,7 +274,7 @@ class TaxPaidOnLumpSumAmountControllerISpec extends IntegrationTest with ViewHel
             val viewModel = anIncomeFromPensionsViewModel.copy(statePensionLumpSum = Some(anStateBenefitViewModelTwo.copy(taxPaid = None)))
             insertCyaData(pensionsUserDataWithIncomeFromPensions(viewModel), aUserRequest)
             urlPost(fullUrl(taxOnLumpSumAmountUrl(taxYearEOY)), welsh = user.isWelsh, body = Map(AmountForm.amount -> emptyAmount),
-              follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+              follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
 
           "has a BAD_REQUEST status" in {
@@ -311,7 +311,7 @@ class TaxPaidOnLumpSumAmountControllerISpec extends IntegrationTest with ViewHel
             val viewModel = anIncomeFromPensionsViewModel.copy(statePensionLumpSum = Some(anStateBenefitViewModelTwo.copy(taxPaid = None)))
             insertCyaData(pensionsUserDataWithIncomeFromPensions(viewModel), aUserRequest)
             urlPost(fullUrl(taxOnLumpSumAmountUrl(taxYearEOY)), welsh = user.isWelsh, body = Map(AmountForm.amount -> invalidAmount),
-              follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+              follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
 
           "has a BAD_REQUEST status" in {
@@ -347,7 +347,7 @@ class TaxPaidOnLumpSumAmountControllerISpec extends IntegrationTest with ViewHel
             val viewModel = anIncomeFromPensionsViewModel.copy(statePensionLumpSum = Some(anStateBenefitViewModelTwo.copy(taxPaid = None)))
             insertCyaData(pensionsUserDataWithIncomeFromPensions(viewModel), aUserRequest)
             urlPost(fullUrl(taxOnLumpSumAmountUrl(taxYearEOY)), welsh = user.isWelsh, body = Map(AmountForm.amount -> overMaxAmount),
-              follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+              follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
 
           "has a BAD_REQUEST status" in {
@@ -385,7 +385,7 @@ class TaxPaidOnLumpSumAmountControllerISpec extends IntegrationTest with ViewHel
           taxPaidQuestion = Some(true), taxPaid = None)))
         insertCyaData(pensionsUserDataWithIncomeFromPensions(viewModel), aUserRequest)
         urlPost(fullUrl(taxOnLumpSumAmountUrl(taxYear)), body = validForm, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear)))
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
       }
 
       "has a SEE_OTHER(303) status" in {
@@ -405,7 +405,7 @@ class TaxPaidOnLumpSumAmountControllerISpec extends IntegrationTest with ViewHel
           taxPaidQuestion = Some(false), taxPaid = None)))
         insertCyaData(pensionsUserDataWithIncomeFromPensions(viewModel), aUserRequest)
         urlPost(fullUrl(taxOnLumpSumAmountUrl(taxYearEOY)), body = validForm, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
       "has a SEE_OTHER(303) status" in {
@@ -426,7 +426,7 @@ class TaxPaidOnLumpSumAmountControllerISpec extends IntegrationTest with ViewHel
           taxPaidQuestion = Some(true), taxPaid = Some(100.10))))
         insertCyaData(pensionsUserDataWithIncomeFromPensions(viewModel), aUserRequest)
         urlPost(fullUrl(taxOnLumpSumAmountUrl(taxYearEOY)), body = validForm, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER

@@ -97,7 +97,7 @@ class SessionExpiredControllerISpec extends IntegrationTest with ViewHelpers {
       s"language is ${welshTest(user.isWelsh)} and request is from an ${agentTest(user.isAgent)} with a tax year in session" should {
 
         val differentTaxYear = 2030
-        lazy val cookies = playSessionCookies(differentTaxYear)
+        lazy val cookies = playSessionCookies(differentTaxYear, validTaxYearList)
 
         "render the page with the right content" which {
 

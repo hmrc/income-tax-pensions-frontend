@@ -17,7 +17,6 @@
 package controllers.pensions.incomeFromPensions
 
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.incomeFromPensions.routes._
 import controllers.predicates.{AuthorisedAction, InYearAction}
 import forms.YesNoForm
 import models.User
@@ -30,6 +29,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.incomeFromPensions.TaxPaidOnStatePensionLumpSumView
 import controllers.pensions.incomeFromPensions.routes.TaxPaidOnLumpSumAmountController
+import controllers.predicates.TaxYearAction.taxYearAction
 import models.pension.statebenefits.{IncomeFromPensionsViewModel, StateBenefitViewModel}
 
 import javax.inject.Inject
@@ -49,7 +49,7 @@ class TaxPaidOnStatePensionLumpSumController @Inject()(implicit val cc: Messages
     missingInputError = s"pensions.taxPaidOnStatePensionLumpSum.error.noEntry.${if (user.isAgent) "agent" else "individual"}"
   )
 
-  def show(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
+  def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     inYearAction.notInYear(taxYear) {
       pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
         case Some(data) =>

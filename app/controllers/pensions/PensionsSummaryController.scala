@@ -17,6 +17,7 @@
 package controllers.pensions
 
 import config.AppConfig
+import controllers.predicates.TaxYearAction.taxYearAction
 import controllers.predicates.AuthorisedAction
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -34,7 +35,7 @@ class PensionsSummaryController @Inject()(implicit val mcc: MessagesControllerCo
                                            pensionSessionService: PensionSessionService,
                                            pensionSummaryView: PensionsSummaryView) extends FrontendController(mcc) with I18nSupport {
 
-  def show(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
+  def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
 
     pensionSessionService.getAndHandle(taxYear, request.user) { (_, prior) =>
       Future.successful(Ok(pensionSummaryView(taxYear, prior)

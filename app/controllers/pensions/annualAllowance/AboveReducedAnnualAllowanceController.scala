@@ -21,6 +21,7 @@ import controllers.pensions.routes.PensionsSummaryController
 import controllers.pensions.annualAllowance.routes.AboveReducedAnnualAllowanceAmountController
 import controllers.pensions.annualAllowance.routes.ReducedAnnualAllowanceController
 import controllers.predicates.AuthorisedAction
+import controllers.predicates.TaxYearAction.taxYearAction
 import forms.YesNoForm
 import models.User
 import models.mongo.PensionsCYAModel
@@ -51,7 +52,7 @@ class AboveReducedAnnualAllowanceController @Inject()(implicit val cc: MessagesC
       s"error.noEntry.${if (user.isAgent) "agent" else "individual"}"
   )
 
-  def show(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
+  def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
       case Some(data) =>
         data.pensions.pensionsAnnualAllowances.reducedAnnualAllowanceQuestion match {

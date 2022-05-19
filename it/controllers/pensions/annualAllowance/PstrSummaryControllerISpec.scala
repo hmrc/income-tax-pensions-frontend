@@ -102,7 +102,7 @@ class PstrSummaryControllerISpec extends IntegrationTest with BeforeAndAfterEach
             val viewModel = aPensionAnnualAllowanceViewModel.copy(pensionSchemeTaxReference = Some(Seq(pstr1, pstr2)))
             insertCyaData(pensionsUserDataWithAnnualAllowances(viewModel), aUserRequest)
             urlGet(fullUrl(pstrSummaryUrl(taxYearEOY)), user.isWelsh, follow = false,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
 
           "has an OK status" in {
@@ -135,7 +135,7 @@ class PstrSummaryControllerISpec extends IntegrationTest with BeforeAndAfterEach
             val viewModel = aPensionAnnualAllowanceViewModel.copy(pensionSchemeTaxReference = Some(Seq()))
             insertCyaData(pensionsUserDataWithAnnualAllowances(viewModel), aUserRequest)
             urlGet(fullUrl(pstrSummaryUrl(taxYearEOY)), user.isWelsh, follow = false,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
 
           "has an OK status" in {
@@ -162,7 +162,7 @@ class PstrSummaryControllerISpec extends IntegrationTest with BeforeAndAfterEach
         dropPensionsDB()
         authoriseAgentOrIndividual(isAgent = false)
         urlGet(fullUrl(pensionSchemeTaxReferenceUrl(taxYearEOY)), follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
       "has an SEE_OTHER status" in {

@@ -30,6 +30,7 @@ import utils.{Clock, SessionHelper}
 import views.html.pensions.annualAllowance.TaxPaidByPensionProviderAmountView
 import controllers.pensions.routes.PensionsSummaryController
 import controllers.pensions.annualAllowance.routes._
+import controllers.predicates.TaxYearAction.taxYearAction
 
 import javax.inject.Inject
 import scala.concurrent.Future
@@ -48,7 +49,7 @@ class TaxPaidByPensionProviderAmountController @Inject()(implicit val mcc: Messa
     exceedsMaxAmountKey = s"pensions.annualAllowanceTaxPaidByPensionProviderAmount.error.overMaximum.${if (isAgent) "agent" else "individual"}"
   )
 
-  def show(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
+  def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
       case Some(data) =>
         if (data.pensions.pensionsAnnualAllowances.pensionProvidePaidAnnualAllowanceQuestion.isDefined

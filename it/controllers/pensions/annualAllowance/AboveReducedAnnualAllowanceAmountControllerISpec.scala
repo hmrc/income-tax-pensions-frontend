@@ -165,7 +165,7 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
                 aboveAnnualAllowanceQuestion = Some(true), aboveAnnualAllowance = None, reducedAnnualAllowanceQuestion = Some(true))
               insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)), aUserRequest)
               urlGet(fullUrl(amountAboveAnnualAllowanceUrl(taxYearEOY)), user.isWelsh, follow = false,
-                headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+                headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
             }
 
             implicit def document: () => Document = () => Jsoup.parse(result.body)
@@ -194,7 +194,7 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
                 aboveAnnualAllowanceQuestion = Some(true), aboveAnnualAllowance = Some(BigDecimal(existingAmount)), reducedAnnualAllowanceQuestion = Some(true))
               insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)), aUserRequest)
               urlGet(fullUrl(amountAboveAnnualAllowanceUrl(taxYearEOY)), user.isWelsh, follow = false,
-                headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+                headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
             }
 
             implicit def document: () => Document = () => Jsoup.parse(result.body)
@@ -223,7 +223,7 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
                 aboveAnnualAllowanceQuestion = Some(true), aboveAnnualAllowance = None, reducedAnnualAllowanceQuestion = Some(false))
               insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)), aUserRequest)
               urlGet(fullUrl(amountAboveAnnualAllowanceUrl(taxYearEOY)), user.isWelsh, follow = false,
-                headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+                headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
             }
 
             implicit def document: () => Document = () => Jsoup.parse(result.body)
@@ -252,7 +252,7 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
                 aboveAnnualAllowanceQuestion = Some(true), aboveAnnualAllowance = Some(BigDecimal(existingAmount)), reducedAnnualAllowanceQuestion = Some(false))
               insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)), aUserRequest)
               urlGet(fullUrl(amountAboveAnnualAllowanceUrl(taxYearEOY)), user.isWelsh, follow = false,
-                headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+                headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
             }
 
             implicit def document: () => Document = () => Jsoup.parse(result.body)
@@ -283,7 +283,7 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
           aboveAnnualAllowanceQuestion = None, aboveAnnualAllowance = None)
         insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)), aUserRequest)
         urlGet(fullUrl(amountAboveAnnualAllowanceUrl(taxYearEOY)), follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
       implicit def document: () => Document = () => Jsoup.parse(result.body)
@@ -302,7 +302,7 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
           aboveAnnualAllowanceQuestion = Some(false), aboveAnnualAllowance = None)
         insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)), aUserRequest)
         urlGet(fullUrl(amountAboveAnnualAllowanceUrl(taxYearEOY)), follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
       implicit def document: () => Document = () => Jsoup.parse(result.body)
@@ -318,7 +318,7 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
         dropPensionsDB()
         authoriseAgentOrIndividual(isAgent = false)
         urlGet(fullUrl(amountAboveAnnualAllowanceUrl(taxYearEOY)), follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
       //TODO redirect to annual allowance CYA Page
@@ -337,7 +337,7 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
         insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)), aUserRequest)
 
         urlGet(fullUrl(aboveAnnualAllowanceUrl(taxYearEOY)), follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
       "has an SEE_OTHER status" in {
@@ -367,7 +367,7 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
               insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)), aUserRequest)
               authoriseAgentOrIndividual(user.isAgent)
               urlPost(fullUrl(amountAboveAnnualAllowanceUrl(taxYearEOY)), body = emptyForm, welsh = user.isWelsh,
-                follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+                follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
             }
             "has the correct status" in {
               result.status shouldBe BAD_REQUEST
@@ -401,7 +401,7 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
               insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)), aUserRequest)
               authoriseAgentOrIndividual(user.isAgent)
               urlPost(fullUrl(amountAboveAnnualAllowanceUrl(taxYearEOY)), body = invalidFormatForm, welsh = user.isWelsh,
-                follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+                follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
             }
 
             "has the correct status" in {
@@ -436,7 +436,7 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
               insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)), aUserRequest)
               authoriseAgentOrIndividual(user.isAgent)
               urlPost(fullUrl(amountAboveAnnualAllowanceUrl(taxYearEOY)),
-                body = overMaximumForm, welsh = user.isWelsh, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+                body = overMaximumForm, welsh = user.isWelsh, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
             }
             "has the correct status" in {
               result.status shouldBe BAD_REQUEST
@@ -470,7 +470,7 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
               insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)), aUserRequest)
               authoriseAgentOrIndividual(user.isAgent)
               urlPost(fullUrl(amountAboveAnnualAllowanceUrl(taxYearEOY)), body = emptyForm, welsh = user.isWelsh,
-                follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+                follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
             }
             "has the correct status" in {
               result.status shouldBe BAD_REQUEST
@@ -504,7 +504,7 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
               insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)), aUserRequest)
               authoriseAgentOrIndividual(user.isAgent)
               urlPost(fullUrl(amountAboveAnnualAllowanceUrl(taxYearEOY)), body = invalidFormatForm, welsh = user.isWelsh,
-                follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+                follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
             }
 
             "has the correct status" in {
@@ -539,7 +539,7 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
               insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)), aUserRequest)
               authoriseAgentOrIndividual(user.isAgent)
               urlPost(fullUrl(amountAboveAnnualAllowanceUrl(taxYearEOY)),
-                body = overMaximumForm, welsh = user.isWelsh, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+                body = overMaximumForm, welsh = user.isWelsh, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
             }
             "has the correct status" in {
               result.status shouldBe BAD_REQUEST
@@ -577,7 +577,7 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
         authoriseAgentOrIndividual(isAgent = false)
         urlPost(fullUrl(amountAboveAnnualAllowanceUrl(taxYearEOY)),
           body = validForm, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
       "has a SEE_OTHER(303) status" in {

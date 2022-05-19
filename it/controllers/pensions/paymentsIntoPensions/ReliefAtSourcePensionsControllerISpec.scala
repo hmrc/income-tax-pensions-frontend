@@ -146,7 +146,7 @@ class ReliefAtSourcePensionsControllerISpec extends IntegrationTest with BeforeA
             dropPensionsDB()
             insertCyaData(anPensionsUserDataEmptyCya, aUserRequest)
             urlGet(fullUrl(reliefAtSourcePensionsUrl(taxYearEOY)), user.isWelsh, follow = false,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
 
           "has an OK status" in {
@@ -179,7 +179,7 @@ class ReliefAtSourcePensionsControllerISpec extends IntegrationTest with BeforeA
             val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(rasPensionPaymentQuestion = Some(true))
             insertCyaData(pensionsUserDataWithPaymentsIntoPensions(pensionsViewModel), aUserRequest)
             authoriseAgentOrIndividual(user.isAgent)
-            urlGet(fullUrl(reliefAtSourcePensionsUrl(taxYearEOY)), user.isWelsh, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+            urlGet(fullUrl(reliefAtSourcePensionsUrl(taxYearEOY)), user.isWelsh, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
 
           "has an OK status" in {
@@ -212,7 +212,7 @@ class ReliefAtSourcePensionsControllerISpec extends IntegrationTest with BeforeA
             authoriseAgentOrIndividual(user.isAgent)
             val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(rasPensionPaymentQuestion = Some(false))
             insertCyaData(pensionsUserDataWithPaymentsIntoPensions(pensionsViewModel), aUserRequest)
-            urlGet(fullUrl(reliefAtSourcePensionsUrl(taxYearEOY)), user.isWelsh, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+            urlGet(fullUrl(reliefAtSourcePensionsUrl(taxYearEOY)), user.isWelsh, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
 
           "has an OK status" in {
@@ -254,7 +254,7 @@ class ReliefAtSourcePensionsControllerISpec extends IntegrationTest with BeforeA
             insertCyaData(anPensionsUserDataEmptyCya, aUserRequest)
             authoriseAgentOrIndividual(user.isAgent)
             urlPost(fullUrl(reliefAtSourcePensionsUrl(taxYearEOY)), body = form, welsh = user.isWelsh, follow = false,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
           "has the correct status" in {
             result.status shouldBe BAD_REQUEST
@@ -292,7 +292,7 @@ class ReliefAtSourcePensionsControllerISpec extends IntegrationTest with BeforeA
         insertCyaData(anPensionsUserDataEmptyCya, aUserRequest)
         authoriseAgentOrIndividual(isAgent = false)
         urlPost(fullUrl(reliefAtSourcePensionsUrl(taxYearEOY)), body = form, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
       "has a SEE_OTHER(303) status" in {
@@ -315,7 +315,7 @@ class ReliefAtSourcePensionsControllerISpec extends IntegrationTest with BeforeA
           rasPensionPaymentQuestion = Some(false), totalRASPaymentsAndTaxRelief = None)), aUserRequest)
         authoriseAgentOrIndividual(isAgent = false)
         urlPost(fullUrl(reliefAtSourcePensionsUrl(taxYearEOY)), body = form, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
       "has a SEE_OTHER(303) status" in {
@@ -337,7 +337,7 @@ class ReliefAtSourcePensionsControllerISpec extends IntegrationTest with BeforeA
         insertCyaData(anPensionsUserDataEmptyCya, aUserRequest)
         authoriseAgentOrIndividual(isAgent = false)
         urlPost(fullUrl(reliefAtSourcePensionsUrl(taxYearEOY)), body = form, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
       "has a SEE_OTHER(303) status" in {
@@ -362,7 +362,7 @@ class ReliefAtSourcePensionsControllerISpec extends IntegrationTest with BeforeA
         insertCyaData(pensionsUserDataWithPaymentsIntoPensions(paymentsIntoPensionsViewModel), aUserRequest)
         authoriseAgentOrIndividual(isAgent = false)
         urlPost(fullUrl(reliefAtSourcePensionsUrl(taxYearEOY)), body = form, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
       "has a SEE_OTHER(303) status" in {

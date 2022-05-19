@@ -101,7 +101,7 @@ class UkPensionIncomeSummaryControllerISpec extends IntegrationTest with BeforeA
             val viewModel = anIncomeFromPensionsViewModel.copy(uKPensionIncomes = Seq(anUkPensionIncomeViewModelOne, anUkPensionIncomeViewModelTwo))
             insertCyaData(pensionsUserDataWithIncomeFromPensions(viewModel), aUserRequest)
             urlGet(fullUrl(ukPensionSchemeSummaryListUrl(taxYearEOY)), user.isWelsh, follow = false,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
 
           "has an OK status" in {
@@ -137,7 +137,7 @@ class UkPensionIncomeSummaryControllerISpec extends IntegrationTest with BeforeA
             insertCyaData(pensionsUserDataWithIncomeFromPensions(viewModel), aUserRequest)
 
             urlGet(fullUrl(ukPensionSchemeSummaryListUrl(taxYearEOY)), user.isWelsh, follow = false,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
 
           "has an OK status" in {
@@ -165,7 +165,7 @@ class UkPensionIncomeSummaryControllerISpec extends IntegrationTest with BeforeA
         dropPensionsDB()
         authoriseAgentOrIndividual(isAgent = false)
         urlGet(fullUrl(ukPensionSchemeSummaryListUrl(taxYearEOY)), follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
       "has an SEE_OTHER status" in {

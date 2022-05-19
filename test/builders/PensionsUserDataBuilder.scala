@@ -22,7 +22,6 @@ import models.pension.charges.PensionAnnualAllowancesViewModel
 import models.pension.reliefs.PaymentsIntoPensionViewModel
 import models.pension.statebenefits.IncomeFromPensionsViewModel
 import utils.UnitTest
-import models.pension.statebenefits.IncomeFromPensionsViewModel
 
 object PensionsUserDataBuilder extends UnitTest {
 

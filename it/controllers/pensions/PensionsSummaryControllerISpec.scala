@@ -124,7 +124,7 @@ class PensionsSummaryControllerISpec extends IntegrationTest with ViewHelpers wi
               pensionCharges = Some(anPensionCharges.copy(pensionSchemeOverseasTransfers = None)))
 
             userDataStub(anIncomeTaxUserData.copy(pensions = Some(allUpdatedNoOverseasTransfersOrCustomerStateBenefits)), nino, taxYear)
-            urlGet(fullUrl(pensionSummaryUrl(taxYear)), welsh = user.isWelsh, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear)))
+            urlGet(fullUrl(pensionSummaryUrl(taxYear)), welsh = user.isWelsh, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
           }
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
@@ -189,7 +189,7 @@ class PensionsSummaryControllerISpec extends IntegrationTest with ViewHelpers wi
               pensionCharges = Some(anPensionCharges.copy(overseasPensionContributions = None)))
 
             userDataStub(anIncomeTaxUserData.copy(pensions = Some(allUpdatedNoOverseasContributionsOrStateBenefits)), nino, taxYear)
-            urlGet(fullUrl(pensionSummaryUrl(taxYear)), welsh = user.isWelsh, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear)))
+            urlGet(fullUrl(pensionSummaryUrl(taxYear)), welsh = user.isWelsh, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
 
           }
 
@@ -248,7 +248,7 @@ class PensionsSummaryControllerISpec extends IntegrationTest with ViewHelpers wi
           implicit lazy val result: WSResponse = {
             authoriseAgentOrIndividual(user.isAgent)
             userDataStub(anIncomeTaxUserData.copy(pensions = None), nino, taxYear)
-            urlGet(fullUrl(pensionSummaryUrl(taxYear)), welsh = user.isWelsh, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear)))
+            urlGet(fullUrl(pensionSummaryUrl(taxYear)), welsh = user.isWelsh, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
           }
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
@@ -311,7 +311,7 @@ class PensionsSummaryControllerISpec extends IntegrationTest with ViewHelpers wi
 
             userDataStub(anIncomeTaxUserData.copy(pensions = Some(halfPensionChargesData)), nino, taxYear)
 
-            urlGet(fullUrl(pensionSummaryUrl(taxYear)), welsh = user.isWelsh, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear)))
+            urlGet(fullUrl(pensionSummaryUrl(taxYear)), welsh = user.isWelsh, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
           }
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
@@ -374,7 +374,7 @@ class PensionsSummaryControllerISpec extends IntegrationTest with ViewHelpers wi
 
             userDataStub(anIncomeTaxUserData.copy(pensions = Some(otherHalfPensionChargesData)), nino, taxYear)
 
-            urlGet(fullUrl(pensionSummaryUrl(taxYear)), welsh = user.isWelsh, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear)))
+            urlGet(fullUrl(pensionSummaryUrl(taxYear)), welsh = user.isWelsh, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
           }
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)

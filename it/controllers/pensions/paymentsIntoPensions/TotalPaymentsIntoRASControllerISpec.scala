@@ -163,7 +163,7 @@ class TotalPaymentsIntoRASControllerISpec extends IntegrationTest with BeforeAnd
             dropPensionsDB()
             insertCyaData(pensionsUsersData(requiredViewModel), aUserRequest)
             urlGet(fullUrl(totalPaymentsIntoRASUrl(taxYearEOY)), user.isWelsh, follow = false,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
 
           "has an OK status" in {
@@ -202,7 +202,7 @@ class TotalPaymentsIntoRASControllerISpec extends IntegrationTest with BeforeAnd
           totalOneOffRasPaymentPlusTaxRelief = None)
         ), aUserRequest)
         urlGet(fullUrl(totalPaymentsIntoRASUrl(taxYearEOY)), follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
       "has an OK status" in {
@@ -221,7 +221,7 @@ class TotalPaymentsIntoRASControllerISpec extends IntegrationTest with BeforeAnd
         dropPensionsDB()
         insertCyaData(pensionsUsersData(requiredViewModel.copy(totalPaymentsIntoRASQuestion = Some(true))), aUserRequest)
         urlGet(fullUrl(totalPaymentsIntoRASUrl(taxYearEOY)), follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
       implicit def document: () => Document = () => Jsoup.parse(result.body)
 
@@ -237,7 +237,7 @@ class TotalPaymentsIntoRASControllerISpec extends IntegrationTest with BeforeAnd
         authoriseAgentOrIndividual(isAgent = false)
         dropPensionsDB()
         urlGet(fullUrl(totalPaymentsIntoRASUrl(taxYearEOY)), follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
       "has a SEE_OTHER status and redirects correctly" in {
@@ -257,7 +257,7 @@ class TotalPaymentsIntoRASControllerISpec extends IntegrationTest with BeforeAnd
         dropPensionsDB()
         insertCyaData(userDataModel, aUserRequest)
         urlGet(fullUrl(totalPaymentsIntoRASUrl(taxYearEOY)), follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
       "has a SEE_OTHER status and redirects correctly" in {
@@ -284,7 +284,7 @@ class TotalPaymentsIntoRASControllerISpec extends IntegrationTest with BeforeAnd
             dropPensionsDB()
             insertCyaData(pensionsUsersData(requiredViewModel), aUserRequest)
             urlPost(fullUrl(totalPaymentsIntoRASUrl(taxYearEOY)), body = invalidForm, user.isWelsh, follow = false,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
 
           "has the correct status" in {
@@ -326,7 +326,7 @@ class TotalPaymentsIntoRASControllerISpec extends IntegrationTest with BeforeAnd
         dropPensionsDB()
         insertCyaData(pensionsUsersData(requiredViewModel), aUserRequest)
         urlPost(fullUrl(totalPaymentsIntoRASUrl(taxYearEOY)), body = yesForm, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
       "has a SEE_OTHER(303) status" in {
@@ -351,7 +351,7 @@ class TotalPaymentsIntoRASControllerISpec extends IntegrationTest with BeforeAnd
           dropPensionsDB()
           insertCyaData(pensionsUsersData(requiredViewModel), aUserRequest)
           urlPost(fullUrl(totalPaymentsIntoRASUrl(taxYearEOY)), body = noForm, follow = false,
-            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
         }
 
         "has a SEE_OTHER(303) status" in {
@@ -378,7 +378,7 @@ class TotalPaymentsIntoRASControllerISpec extends IntegrationTest with BeforeAnd
           dropPensionsDB()
           insertCyaData(userDataModel, aUserRequest)
           urlPost(fullUrl(totalPaymentsIntoRASUrl(taxYearEOY)), body = invalidForm, follow = false,
-            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
         }
 
         "has a SEE_OTHER(303) status" in {
@@ -401,7 +401,7 @@ class TotalPaymentsIntoRASControllerISpec extends IntegrationTest with BeforeAnd
         authoriseAgentOrIndividual(isAgent = false)
         dropPensionsDB()
         urlPost(fullUrl(totalPaymentsIntoRASUrl(taxYearEOY)), body = noForm, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
       "has a SEE_OTHER(303) status" in {

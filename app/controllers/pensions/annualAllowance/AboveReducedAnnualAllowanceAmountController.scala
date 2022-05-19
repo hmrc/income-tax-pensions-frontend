@@ -18,9 +18,9 @@ package controllers.pensions.annualAllowance
 
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.routes.PensionsSummaryController
-import controllers.pensions.annualAllowance.routes.{
-  ReducedAnnualAllowanceController, AboveReducedAnnualAllowanceController, PensionProviderPaidTaxController}
+import controllers.pensions.annualAllowance.routes.{AboveReducedAnnualAllowanceController, PensionProviderPaidTaxController, ReducedAnnualAllowanceController}
 import controllers.predicates.AuthorisedAction
+import controllers.predicates.TaxYearAction.taxYearAction
 import forms.{AmountForm, FormUtils}
 import models.User
 import models.mongo.PensionsCYAModel
@@ -66,7 +66,7 @@ class AboveReducedAnnualAllowanceAmountController @Inject()(implicit val mcc: Me
     )
   }
 
-  def show(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
+  def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
       case Some(data) =>
         data.pensions.pensionsAnnualAllowances.reducedAnnualAllowanceQuestion match {

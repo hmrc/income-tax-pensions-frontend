@@ -18,6 +18,7 @@ package controllers.errors
 
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import play.api.http.HeaderNames
 import play.api.http.Status.OK
 import play.api.libs.ws.WSResponse
 import utils.{IntegrationTest, ViewHelpers}
@@ -37,6 +38,7 @@ class TaxYearErrorControllerISpec extends IntegrationTest with ViewHelpers {
   trait CommonExpectedResults {
     val h1Expected: String
     val p1Expected: String
+    val p1ExpectedSingle: String
     val p2Expected: String
     val p3Expected: String
     val p3ExpectedLink: String
@@ -45,7 +47,8 @@ class TaxYearErrorControllerISpec extends IntegrationTest with ViewHelpers {
 
   object CommonExpectedEN extends CommonExpectedResults {
     val h1Expected = "Page not found"
-    val p1Expected = s"You can only enter information for the $taxYearEOY to $taxYear tax year."
+    val p1Expected = s"You can only enter information for the tax years $taxYearEndOfYearMinusOne to $taxYear."
+    val p1ExpectedSingle = "You can only enter information for a valid tax year."
     val p2Expected = "Check that you’ve entered the correct web address."
     val p3Expected: String = "If the web address is correct or you selected a link or button, you can use Self Assessment: " +
       "general enquiries (opens in new tab) to speak to someone about your income tax."
@@ -55,7 +58,8 @@ class TaxYearErrorControllerISpec extends IntegrationTest with ViewHelpers {
 
   object CommonExpectedCY extends CommonExpectedResults {
     val h1Expected = "Page not found"
-    val p1Expected = s"You can only enter information for the $taxYearEOY to $taxYear tax year."
+    val p1Expected = s"Dim ond gwybodaeth ar gyfer y blynyddoedd treth $taxYearEndOfYearMinusOne i $taxYear y gallwch ei nodi."
+    val p1ExpectedSingle = "Dim ond gwybodaeth ar gyfer blwyddyn dreth ddilys y gallwch ei nodi."
     val p2Expected = "Check that you’ve entered the correct web address."
     val p3Expected: String = "If the web address is correct or you selected a link or button, you can use Self Assessment: " +
       "general enquiries (opens in new tab) to speak to someone about your income tax."
@@ -71,14 +75,20 @@ class TaxYearErrorControllerISpec extends IntegrationTest with ViewHelpers {
   ".show" when {
     import Selectors._
 
+    val invalidTaxYear: Int = 2050
+
     userScenarios.foreach { user =>
       s"language is ${welshTest(user.isWelsh)} and request is from an ${agentTest(user.isAgent)}" should {
 
-        "render the page with the right content" which {
+        "render the page with an invalid tax year outside the valid tax year list" which {
 
           implicit lazy val result: WSResponse = {
             authoriseAgentOrIndividual(user.isAgent)
-            urlGet(url, welsh = user.isWelsh)
+            urlGet(
+              url,
+              welsh = user.isWelsh,
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(invalidTaxYear, validTaxYearList))
+            )
           }
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
@@ -92,10 +102,35 @@ class TaxYearErrorControllerISpec extends IntegrationTest with ViewHelpers {
           titleCheck(h1Expected)
           welshToggleCheck(user.isWelsh)
           h1Check(h1Expected, "xl")
-          textOnPageCheck(p1Expected,p1Selector)
-          textOnPageCheck(p2Expected,p2Selector)
-          textOnPageCheck(p3Expected,p3Selector)
+          textOnPageCheck(p1Expected, p1Selector)
+          textOnPageCheck(p2Expected, p2Selector)
+          textOnPageCheck(p3Expected, p3Selector)
           linkCheck(p3ExpectedLinkText, linkSelector, p3ExpectedLink)
+        }
+
+        "render the page with an invalid tax year outside the valid tax year list which contains a single year" which {
+
+          implicit lazy val result: WSResponse = {
+            authoriseAgentOrIndividual(user.isAgent)
+            urlGet(
+              url,
+              welsh = user.isWelsh,
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(invalidTaxYear, validTaxYearListSingle))
+            )
+          }
+
+          implicit def document: () => Document = () => Jsoup.parse(result.body)
+
+          "has an OK status" in {
+            result.status shouldBe OK
+          }
+
+          import user.commonExpectedResults._
+
+          titleCheck(h1Expected)
+          welshToggleCheck(user.isWelsh)
+          h1Check(h1Expected, "xl")
+          textOnPageCheck(p1ExpectedSingle, p1Selector)
         }
       }
     }

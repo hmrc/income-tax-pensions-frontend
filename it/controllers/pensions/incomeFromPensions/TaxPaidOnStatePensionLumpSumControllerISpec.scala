@@ -143,7 +143,7 @@ class TaxPaidOnStatePensionLumpSumControllerISpec extends IntegrationTest with B
               Some(anStateBenefitViewModelOne.copy(taxPaidQuestion = None)))
             insertCyaData(pensionsUserDataWithIncomeFromPensions(pensionsViewModel), aUserRequest)
             urlGet(fullUrl(taxOnLumpSumUrl(taxYearEOY)), user.isWelsh, follow = false,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
 
           "has an OK status" in {
@@ -174,7 +174,7 @@ class TaxPaidOnStatePensionLumpSumControllerISpec extends IntegrationTest with B
               Some(anStateBenefitViewModelOne.copy(taxPaidQuestion = Some(true))))
             insertCyaData(pensionsUserDataWithIncomeFromPensions(pensionsViewModel), aUserRequest)
             authoriseAgentOrIndividual(user.isAgent)
-            urlGet(fullUrl(taxOnLumpSumUrl(taxYearEOY)), user.isWelsh, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+            urlGet(fullUrl(taxOnLumpSumUrl(taxYearEOY)), user.isWelsh, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
 
           "has an OK status" in {
@@ -205,7 +205,7 @@ class TaxPaidOnStatePensionLumpSumControllerISpec extends IntegrationTest with B
             val pensionsViewModel = anIncomeFromPensionsViewModel.copy(statePensionLumpSum =
               Some(anStateBenefitViewModelOne.copy(taxPaidQuestion = Some(false))))
             insertCyaData(pensionsUserDataWithIncomeFromPensions(pensionsViewModel), aUserRequest)
-            urlGet(fullUrl(taxOnLumpSumUrl(taxYearEOY)), user.isWelsh, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+            urlGet(fullUrl(taxOnLumpSumUrl(taxYearEOY)), user.isWelsh, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
 
           "has an OK status" in {
@@ -241,7 +241,7 @@ class TaxPaidOnStatePensionLumpSumControllerISpec extends IntegrationTest with B
 
         authoriseAgentOrIndividual(isAgent = false)
         urlGet(fullUrl(taxOnLumpSumUrl(taxYear)), follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear)))
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
       }
 
       "has an SEE_OTHER status" in {
@@ -256,7 +256,7 @@ class TaxPaidOnStatePensionLumpSumControllerISpec extends IntegrationTest with B
         dropPensionsDB()
         authoriseAgentOrIndividual(isAgent = false)
         urlGet(fullUrl(taxOnLumpSumUrl(taxYearEOY)), follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
       "has an SEE_OTHER status" in {
@@ -283,7 +283,7 @@ class TaxPaidOnStatePensionLumpSumControllerISpec extends IntegrationTest with B
             authoriseAgentOrIndividual(user.isAgent)
             insertCyaData(aPensionsUserData, aUserRequest)
             urlPost(fullUrl(taxOnLumpSumUrl(taxYearEOY)), body = form, follow = false, welsh = user.isWelsh,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
 
           "has the correct status" in {
@@ -325,7 +325,7 @@ class TaxPaidOnStatePensionLumpSumControllerISpec extends IntegrationTest with B
         authoriseAgentOrIndividual(isAgent = false)
 
         urlPost(fullUrl(taxOnLumpSumUrl(taxYear)), body = form, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear)))
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
       }
 
       "has a SEE_OTHER(303) status" in {
@@ -347,7 +347,7 @@ class TaxPaidOnStatePensionLumpSumControllerISpec extends IntegrationTest with B
         insertCyaData(pensionsUserDataWithIncomeFromPensions(pensionsViewModel), aUserRequest)
 
         urlPost(fullUrl(taxOnLumpSumUrl(taxYearEOY)), body = form, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
       "has a SEE_OTHER(303) status" in {
@@ -373,7 +373,7 @@ class TaxPaidOnStatePensionLumpSumControllerISpec extends IntegrationTest with B
         insertCyaData(pensionsUserDataWithIncomeFromPensions(pensionsViewModel), aUserRequest)
 
         urlPost(fullUrl(taxOnLumpSumUrl(taxYearEOY)), body = form, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER

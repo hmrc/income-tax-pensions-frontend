@@ -66,7 +66,8 @@ error.unauthorised.2 = create an agent services account
 error.unauthorised.2a = sign up for Making Tax Digital for Income Tax
 error.unauthorised.3 = before you can view this page.
 
-taxYear-error-template.paragraph.1 = You can only enter information for the {0} to {1} tax year.
+taxYear-error-template.paragraph.1 = Dim ond gwybodaeth ar gyfer y blynyddoedd treth {0} i {1} y gallwch ei nodi.
+taxYear-error-template.paragraph.1.single = Dim ond gwybodaeth ar gyfer blwyddyn dreth ddilys y gallwch ei nodi.
 taxYear-error-template.paragraph.2 = Check that you’ve entered the correct web address.
 
 not-found-template.heading = Page not found

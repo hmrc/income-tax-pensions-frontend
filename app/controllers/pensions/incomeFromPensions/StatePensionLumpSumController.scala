@@ -17,8 +17,10 @@
 package controllers.pensions.incomeFromPensions
 
 import config.{AppConfig, ErrorHandler}
+import controllers.predicates.TaxYearAction.taxYearAction
 import controllers.predicates.{AuthorisedAction, InYearAction}
 import forms.YesNoForm
+
 import javax.inject.{Inject, Singleton}
 import models.User
 import models.mongo.PensionsCYAModel
@@ -43,7 +45,7 @@ class StatePensionLumpSumController @Inject()(implicit val mcc: MessagesControll
                                               view: StatePensionLumpSumView,
                                               clock: Clock) extends FrontendController(mcc) with I18nSupport {
 
-  def show(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
+  def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     inYearAction.notInYear(taxYear) {
       pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
         case Some(data) =>

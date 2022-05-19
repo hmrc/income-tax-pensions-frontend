@@ -30,6 +30,7 @@ import utils.Clock
 import views.html.pensions.annualAllowance.PensionProviderPaidTaxView
 import controllers.pensions.routes.PensionsSummaryController
 import controllers.pensions.annualAllowance.routes._
+import controllers.predicates.TaxYearAction.taxYearAction
 
 import javax.inject.Inject
 import scala.concurrent.Future
@@ -46,7 +47,7 @@ class PensionProviderPaidTaxController @Inject()(implicit val cc: MessagesContro
     missingInputError = s"pensions.pensionProviderPaidTax.error.noEntry.${if (user.isAgent) "agent" else "individual"}"
   )
 
-  def show(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
+  def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
       case Some(data) =>
         data.pensions.pensionsAnnualAllowances.pensionProvidePaidAnnualAllowanceQuestion match {
