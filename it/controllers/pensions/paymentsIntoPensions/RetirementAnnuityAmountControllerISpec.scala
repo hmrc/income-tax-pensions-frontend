@@ -136,7 +136,7 @@ class RetirementAnnuityAmountControllerISpec extends IntegrationTest with ViewHe
               retirementAnnuityContractPaymentsQuestion = Some(true), totalRetirementAnnuityContractPayments = None)
             insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
             urlGet(fullUrl(retirementAnnuityAmountUrl(taxYearEOY)), user.isWelsh, follow = false,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
@@ -166,7 +166,7 @@ class RetirementAnnuityAmountControllerISpec extends IntegrationTest with ViewHe
               retirementAnnuityContractPaymentsQuestion = Some(true), totalRetirementAnnuityContractPayments = Some(BigDecimal(existingAmount)))
             insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
             urlGet(fullUrl(retirementAnnuityAmountUrl(taxYearEOY)), user.isWelsh, follow = false,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
@@ -196,7 +196,7 @@ class RetirementAnnuityAmountControllerISpec extends IntegrationTest with ViewHe
           retirementAnnuityContractPaymentsQuestion = None, totalRetirementAnnuityContractPayments = None)
         insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
         urlGet(fullUrl(retirementAnnuityAmountUrl(taxYearEOY)), follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
       implicit def document: () => Document = () => Jsoup.parse(result.body)
@@ -215,7 +215,7 @@ class RetirementAnnuityAmountControllerISpec extends IntegrationTest with ViewHe
           retirementAnnuityContractPaymentsQuestion = Some(false), totalRetirementAnnuityContractPayments = None)
         insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
         urlGet(fullUrl(retirementAnnuityAmountUrl(taxYearEOY)), follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
       implicit def document: () => Document = () => Jsoup.parse(result.body)
@@ -231,7 +231,7 @@ class RetirementAnnuityAmountControllerISpec extends IntegrationTest with ViewHe
         dropPensionsDB()
         authoriseAgentOrIndividual(isAgent = false)
         urlGet(fullUrl(retirementAnnuityAmountUrl(taxYearEOY)), follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
       "has an SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER
@@ -256,7 +256,7 @@ class RetirementAnnuityAmountControllerISpec extends IntegrationTest with ViewHe
             insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
             authoriseAgentOrIndividual(user.isAgent)
             urlPost(fullUrl(retirementAnnuityAmountUrl(taxYearEOY)), body = emptyForm, welsh = user.isWelsh,
-              follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+              follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
           "has the correct status" in {
             result.status shouldBe BAD_REQUEST
@@ -290,7 +290,7 @@ class RetirementAnnuityAmountControllerISpec extends IntegrationTest with ViewHe
             insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
             authoriseAgentOrIndividual(user.isAgent)
             urlPost(fullUrl(retirementAnnuityAmountUrl(taxYearEOY)), body = invalidFormatForm, welsh = user.isWelsh,
-              follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+              follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
 
           "has the correct status" in {
@@ -325,7 +325,7 @@ class RetirementAnnuityAmountControllerISpec extends IntegrationTest with ViewHe
             insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
             authoriseAgentOrIndividual(user.isAgent)
             urlPost(fullUrl(retirementAnnuityAmountUrl(taxYearEOY)),
-              body = overMaximumForm, welsh = user.isWelsh, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+              body = overMaximumForm, welsh = user.isWelsh, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
           "has the correct status" in {
             result.status shouldBe BAD_REQUEST
@@ -362,7 +362,7 @@ class RetirementAnnuityAmountControllerISpec extends IntegrationTest with ViewHe
         authoriseAgentOrIndividual(isAgent = false)
         urlPost(fullUrl(retirementAnnuityAmountUrl(taxYearEOY)),
           body = validForm, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
       "has a SEE_OTHER(303) status" in {
@@ -389,7 +389,7 @@ class RetirementAnnuityAmountControllerISpec extends IntegrationTest with ViewHe
         authoriseAgentOrIndividual(isAgent = false)
         urlPost(fullUrl(retirementAnnuityAmountUrl(taxYearEOY)),
           body = validForm, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
       "has a SEE_OTHER(303) status" in {

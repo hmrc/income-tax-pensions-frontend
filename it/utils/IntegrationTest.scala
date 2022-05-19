@@ -43,6 +43,7 @@ import uk.gov.hmrc.auth.core.syntax.retrieved.authSyntaxForRetrieved
 import uk.gov.hmrc.http.{HeaderCarrier, SessionKeys}
 import views.html.templates.AgentAuthErrorPageView
 
+import java.time.LocalDate
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Awaitable, ExecutionContext, Future}
 
@@ -54,6 +55,12 @@ trait IntegrationTest extends AnyWordSpec with Matchers with GuiceOneServerPerSu
   val mtditid = "1234567890"
   val sessionId = "sessionId-eb3158c2-0aff-4ce8-8d1b-f2208ace52fe"
   val affinityGroup = "affinityGroup"
+
+  val taxYearEndOfYearMinusOne: Int = taxYearEOY - 1
+
+  val validTaxYearList: Seq[Int] = Seq(taxYearEndOfYearMinusOne, taxYearEOY, taxYear)
+  val validTaxYearListSingle: Seq[Int] = Seq(taxYear)
+
   val defaultUser: PensionsUserData = aPensionsUserData
   val xSessionId: (String, String) = "X-Session-ID" -> defaultUser.sessionId
 
@@ -193,8 +200,9 @@ trait IntegrationTest extends AnyWordSpec with Matchers with GuiceOneServerPerSu
     )) and Some(AffinityGroup.Individual) and ConfidenceLevel.L200
   )
 
-  def playSessionCookies(taxYear: Int, extraData: Map[String, String] = Map.empty): String = PlaySessionCookieBaker.bakeSessionCookie(Map(
+  def playSessionCookies(taxYear: Int, validTaxYears: Seq[Int], extraData: Map[String, String] = Map.empty): String = PlaySessionCookieBaker.bakeSessionCookie(Map(
     SessionValues.TAX_YEAR -> taxYear.toString,
+    SessionValues.VALID_TAX_YEARS -> validTaxYears.mkString(","),
     SessionKeys.sessionId -> sessionId,
     SessionValues.CLIENT_NINO -> nino,
     SessionValues.CLIENT_MTDITID -> mtditid

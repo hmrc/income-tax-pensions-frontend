@@ -17,18 +17,24 @@
 package controllers.errors
 
 import config.AppConfig
+import controllers.predicates.AuthorisedAction
+
 import javax.inject.Inject
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.SessionHelper
+import utils.{SessionHelper, TaxYearHelper}
 import views.html.templates.TaxYearErrorTemplate
 
-class TaxYearErrorController @Inject()(val mcc: MessagesControllerComponents,
-                                       implicit val appConfig: AppConfig,
-                                       taxYearErrorTemplate: TaxYearErrorTemplate) extends FrontendController(mcc) with I18nSupport with SessionHelper {
+import scala.concurrent.Future
 
-  def show(): Action[AnyContent] = Action { implicit request =>
-    Ok(taxYearErrorTemplate())
+class TaxYearErrorController @Inject()(val authorisedAction: AuthorisedAction,
+                                        val mcc: MessagesControllerComponents,
+                                       implicit val appConfig: AppConfig,
+                                       taxYearErrorTemplate: TaxYearErrorTemplate)
+  extends FrontendController(mcc) with I18nSupport with SessionHelper with TaxYearHelper {
+
+  def show(): Action[AnyContent] = authorisedAction.async { implicit request =>
+    Future.successful(Ok(taxYearErrorTemplate(firstClientTaxYear, latestClientTaxYear, singleValidTaxYear)))
   }
 }

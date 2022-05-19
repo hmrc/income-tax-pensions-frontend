@@ -19,6 +19,7 @@ package controllers.pensions.annualAllowance
 import config.AppConfig
 import controllers.pensions.routes.PensionsSummaryController
 import controllers.predicates.AuthorisedAction
+import controllers.predicates.TaxYearAction.taxYearAction
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
@@ -35,7 +36,7 @@ class PstrSummaryController @Inject()(implicit val cc: MessagesControllerCompone
                                       appConfig: AppConfig,
                                       pensionSessionService: PensionSessionService) extends FrontendController(cc) with I18nSupport {
 
-  def show(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
+  def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
       case Some(data) =>
         val pstrList = data.pensions.pensionsAnnualAllowances.pensionSchemeTaxReference

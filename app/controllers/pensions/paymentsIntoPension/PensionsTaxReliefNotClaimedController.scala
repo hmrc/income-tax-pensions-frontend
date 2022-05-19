@@ -18,6 +18,7 @@ package controllers.pensions.paymentsIntoPension
 
 import config.{AppConfig, ErrorHandler}
 import controllers.predicates.AuthorisedAction
+import controllers.predicates.TaxYearAction.taxYearAction
 import forms.YesNoForm
 import models.User
 import models.mongo.PensionsCYAModel
@@ -26,11 +27,12 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
-import services.RedirectService.{isFinishedCheck, PaymentsIntoPensionsRedirects, redirectBasedOnCurrentAnswers}
+import services.RedirectService.{PaymentsIntoPensionsRedirects, isFinishedCheck, redirectBasedOnCurrentAnswers}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import utils.PaymentsIntoPensionPages.TaxReliefNotClaimedPage
 import views.html.pensions.paymentsIntoPensions.PensionsTaxReliefNotClaimedView
+
 import javax.inject.{Inject, Singleton}
 import models.redirects.ConditionalRedirect
 
@@ -46,7 +48,7 @@ class PensionsTaxReliefNotClaimedController @Inject()(implicit val mcc: Messages
                                                       pensionsTaxReliefNotClaimedView: PensionsTaxReliefNotClaimedView,
                                                       clock: Clock) extends FrontendController(mcc) with I18nSupport {
 
-  def show(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
+  def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) { optData =>
       redirectBasedOnCurrentAnswers(taxYear, optData)(redirects(_, taxYear)) { data =>
 

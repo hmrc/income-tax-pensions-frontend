@@ -18,12 +18,19 @@ package utils
 
 import java.time.LocalDate
 
-trait TaxYearHelper {
+trait TestTaxYearHelper {
 
   private val dateNow: LocalDate = LocalDate.now()
   private val taxYearCutoffDate: LocalDate = LocalDate.parse(s"${dateNow.getYear}-04-05")
 
   val taxYear: Int = if (dateNow.isAfter(taxYearCutoffDate)) LocalDate.now().getYear + 1 else LocalDate.now().getYear
-  val taxYearEOY: Int = taxYear - 1
 
+  val taxYearEOY: Int = taxYear -1
+
+  val taxYearEndOfYearMinusOne: Int = taxYearEOY - 1
+
+  val validTaxYearList: Seq[Int] = Seq(taxYearEndOfYearMinusOne, taxYearEOY, taxYear)
+  val validTaxYearListSingle: Seq[Int] = Seq(taxYear)
+
+  val invalidTaxYear: Int = taxYear + 999
 }

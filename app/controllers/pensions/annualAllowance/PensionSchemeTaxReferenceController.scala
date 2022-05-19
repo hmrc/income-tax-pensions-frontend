@@ -29,6 +29,7 @@ import utils.Clock
 import views.html.pensions.annualAllowance.PensionSchemeTaxReferenceView
 import controllers.pensions.routes.PensionsSummaryController
 import controllers.pensions.annualAllowance.routes.PstrSummaryController
+import controllers.predicates.TaxYearAction.taxYearAction
 import models.User
 
 import javax.inject.Inject
@@ -50,7 +51,7 @@ class PensionSchemeTaxReferenceController @Inject()(implicit val cc: MessagesCon
     }
   }
 
-  def show(taxYear: Int, pensionSchemeTaxReferenceIndex: Option[Int]): Action[AnyContent] = authAction.async { implicit request =>
+  def show(taxYear: Int, pensionSchemeTaxReferenceIndex: Option[Int]): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
 
     pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
       case Some(data) =>

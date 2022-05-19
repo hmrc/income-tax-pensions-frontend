@@ -92,7 +92,7 @@ class AuthorisedAction @Inject()(appConfig: AppConfig)
               logger.info(s"[AuthorisedAction][individualAuthentication] - No session id in request")
               Future.successful(Redirect(appConfig.signInUrl))
             } { sessionId =>
-              block(AuthorisationRequest(models.User(mtdItId, None, nino, sessionId, affinityGroup.toString), request))
+              block(AuthorisationRequest(User(mtdItId, None, nino, sessionId, affinityGroup.toString), request))
             }
 
           case (_, None) =>

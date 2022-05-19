@@ -27,9 +27,11 @@ import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.annualAllowance.ReducedAnnualAllowanceTypeView
+
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 import controllers.pensions.annualAllowance.routes._
+import controllers.predicates.TaxYearAction.taxYearAction
 
 @Singleton
 class ReducedAnnualAllowanceTypeController @Inject()(implicit val mcc: MessagesControllerComponents,
@@ -40,7 +42,7 @@ class ReducedAnnualAllowanceTypeController @Inject()(implicit val mcc: MessagesC
                                                      view: ReducedAnnualAllowanceTypeView,
                                                      clock: Clock) extends FrontendController(mcc) with I18nSupport {
 
-  def show(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
+  def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
       case Some(data) =>
         if (data.pensions.pensionsAnnualAllowances.reducedAnnualAllowanceQuestion.contains(true)) {

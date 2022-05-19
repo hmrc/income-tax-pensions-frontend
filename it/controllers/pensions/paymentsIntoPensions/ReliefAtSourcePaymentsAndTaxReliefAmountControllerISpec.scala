@@ -153,7 +153,7 @@ class ReliefAtSourcePaymentsAndTaxReliefAmountControllerISpec extends Integratio
               rasPensionPaymentQuestion = Some(true), totalRASPaymentsAndTaxRelief = None)
             insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
             urlGet(fullUrl(reliefAtSourcePaymentsAndTaxReliefAmountUrl(taxYearEOY)),
-              user.isWelsh, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+              user.isWelsh, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
@@ -187,7 +187,7 @@ class ReliefAtSourcePaymentsAndTaxReliefAmountControllerISpec extends Integratio
               rasPensionPaymentQuestion = Some(true), totalRASPaymentsAndTaxRelief = Some(BigDecimal(existingAmount)))
             insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
             urlGet(fullUrl(reliefAtSourcePaymentsAndTaxReliefAmountUrl(taxYearEOY)), user.isWelsh, follow = false,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
@@ -223,7 +223,7 @@ class ReliefAtSourcePaymentsAndTaxReliefAmountControllerISpec extends Integratio
           rasPensionPaymentQuestion = None, totalRASPaymentsAndTaxRelief = None)
         insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
         urlGet(fullUrl(reliefAtSourcePaymentsAndTaxReliefAmountUrl(taxYearEOY)), follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
       "has an SEE_OTHER status" in {
@@ -241,7 +241,7 @@ class ReliefAtSourcePaymentsAndTaxReliefAmountControllerISpec extends Integratio
           rasPensionPaymentQuestion = Some(false), totalRASPaymentsAndTaxRelief = None)
         insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
         urlGet(fullUrl(reliefAtSourcePaymentsAndTaxReliefAmountUrl(taxYearEOY)), follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
       "has an SEE_OTHER status" in {
@@ -256,7 +256,7 @@ class ReliefAtSourcePaymentsAndTaxReliefAmountControllerISpec extends Integratio
         authoriseAgentOrIndividual(isAgent = false)
         // no cya insert
         urlGet(fullUrl(reliefAtSourcePaymentsAndTaxReliefAmountUrl(taxYearEOY)), follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
       "has an SEE_OTHER status" in {
@@ -288,7 +288,7 @@ class ReliefAtSourcePaymentsAndTaxReliefAmountControllerISpec extends Integratio
             insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
             authoriseAgentOrIndividual(user.isAgent)
             urlPost(fullUrl(reliefAtSourcePaymentsAndTaxReliefAmountUrl(taxYearEOY)), body = emptyForm, welsh = user.isWelsh,
-              follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+              follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
 
           "has the correct status" in {
@@ -326,7 +326,7 @@ class ReliefAtSourcePaymentsAndTaxReliefAmountControllerISpec extends Integratio
             insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
             authoriseAgentOrIndividual(user.isAgent)
             urlPost(fullUrl(reliefAtSourcePaymentsAndTaxReliefAmountUrl(taxYearEOY)), body = invalidFormatForm, welsh = user.isWelsh,
-              follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+              follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
 
           "has the correct status" in {
@@ -364,7 +364,7 @@ class ReliefAtSourcePaymentsAndTaxReliefAmountControllerISpec extends Integratio
             insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
             authoriseAgentOrIndividual(user.isAgent)
             urlPost(fullUrl(reliefAtSourcePaymentsAndTaxReliefAmountUrl(taxYearEOY)), body = overMaximumForm, welsh = user.isWelsh,
-              follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+              follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
 
           "has the correct status" in {
@@ -406,7 +406,7 @@ class ReliefAtSourcePaymentsAndTaxReliefAmountControllerISpec extends Integratio
         insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
         authoriseAgentOrIndividual(isAgent = false)
         urlPost(fullUrl(reliefAtSourcePaymentsAndTaxReliefAmountUrl(taxYearEOY)), body = validForm, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
       "has a SEE_OTHER(303) status" in {

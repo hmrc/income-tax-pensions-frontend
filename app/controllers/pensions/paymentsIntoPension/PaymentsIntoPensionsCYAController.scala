@@ -18,6 +18,7 @@ package controllers.pensions.paymentsIntoPension
 
 import config.{AppConfig, ErrorHandler}
 import controllers.predicates.AuthorisedAction
+import controllers.predicates.TaxYearAction.taxYearAction
 import forms.{No, Yes}
 import models.mongo.PensionsCYAModel
 import models.pension.AllPensionsData
@@ -47,7 +48,7 @@ class PaymentsIntoPensionsCYAController @Inject()(implicit val cc: MessagesContr
                                                   clock: Clock
                                                  ) extends FrontendController(cc) with I18nSupport {
 
-  def show(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
+  def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     pensionSessionService.getAndHandle(taxYear, request.user) { (cya, prior) =>
 
       (cya, prior) match {

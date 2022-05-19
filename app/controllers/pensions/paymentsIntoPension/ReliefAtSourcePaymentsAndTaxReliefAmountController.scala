@@ -19,6 +19,7 @@ package controllers.pensions.paymentsIntoPension
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.paymentsIntoPension.routes._
 import controllers.predicates.AuthorisedAction
+import controllers.predicates.TaxYearAction.taxYearAction
 import forms.AmountForm
 import models.mongo.PensionsCYAModel
 import models.pension.reliefs.PaymentsIntoPensionViewModel
@@ -30,6 +31,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import utils.PaymentsIntoPensionPages.RasAmountPage
 import views.html.pensions.paymentsIntoPensions.ReliefAtSourcePaymentsAndTaxReliefAmountView
+
 import javax.inject.{Inject, Singleton}
 import models.redirects.ConditionalRedirect
 import services.RedirectService.{PaymentsIntoPensionsRedirects, redirectBasedOnCurrentAnswers}
@@ -52,7 +54,7 @@ class ReliefAtSourcePaymentsAndTaxReliefAmountController @Inject()(implicit val 
     exceedsMaxAmountKey = "pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.error.overMaximum"
   )
 
-  def show(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
+  def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) { optData =>
       redirectBasedOnCurrentAnswers(taxYear, optData)(redirects(_, taxYear)) { data =>
 

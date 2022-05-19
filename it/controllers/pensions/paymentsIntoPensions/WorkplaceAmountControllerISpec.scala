@@ -160,7 +160,7 @@ class WorkplaceAmountControllerISpec extends IntegrationTest with ViewHelpers wi
               workplacePensionPaymentsQuestion = Some(true), totalWorkplacePensionPayments = None)
             insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
             urlGet(fullUrl(workplacePensionAmount(taxYearEOY)),
-              user.isWelsh, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+              user.isWelsh, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
@@ -194,7 +194,7 @@ class WorkplaceAmountControllerISpec extends IntegrationTest with ViewHelpers wi
               workplacePensionPaymentsQuestion = Some(true), totalWorkplacePensionPayments = Some(BigDecimal(existingAmount)))
             insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
             urlGet(fullUrl(workplacePensionAmount(taxYearEOY)), user.isWelsh, follow = false,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
@@ -226,7 +226,7 @@ class WorkplaceAmountControllerISpec extends IntegrationTest with ViewHelpers wi
           workplacePensionPaymentsQuestion = None, totalWorkplacePensionPayments = None)
         insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
         urlGet(fullUrl(workplacePensionAmount(taxYearEOY)), follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
       "has an SEE_OTHER status" in {
@@ -244,7 +244,7 @@ class WorkplaceAmountControllerISpec extends IntegrationTest with ViewHelpers wi
           workplacePensionPaymentsQuestion = Some(false), totalWorkplacePensionPayments = None)
         insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
         urlGet(fullUrl(workplacePensionAmount(taxYearEOY)), follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
       "has an SEE_OTHER status" in {
@@ -260,7 +260,7 @@ class WorkplaceAmountControllerISpec extends IntegrationTest with ViewHelpers wi
         authoriseAgentOrIndividual(isAgent = false)
         // no cya insert
         urlGet(fullUrl(workplacePensionAmount(taxYearEOY)), follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
       "has an SEE_OTHER status" in {
@@ -291,7 +291,7 @@ class WorkplaceAmountControllerISpec extends IntegrationTest with ViewHelpers wi
             insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
             authoriseAgentOrIndividual(user.isAgent)
             urlPost(fullUrl(workplacePensionAmount(taxYearEOY)), body = emptyForm, welsh = user.isWelsh,
-              follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+              follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
 
           "has the correct status" in {
@@ -329,7 +329,7 @@ class WorkplaceAmountControllerISpec extends IntegrationTest with ViewHelpers wi
             insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
             authoriseAgentOrIndividual(user.isAgent)
             urlPost(fullUrl(workplacePensionAmount(taxYearEOY)), body = invalidFormatForm, welsh = user.isWelsh,
-              follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+              follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
 
           "has the correct status" in {
@@ -367,7 +367,7 @@ class WorkplaceAmountControllerISpec extends IntegrationTest with ViewHelpers wi
             insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
             authoriseAgentOrIndividual(user.isAgent)
             urlPost(fullUrl(workplacePensionAmount(taxYearEOY)), body = overMaximumForm, welsh = user.isWelsh,
-              follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+              follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
 
           "has the correct status" in {
@@ -406,7 +406,7 @@ class WorkplaceAmountControllerISpec extends IntegrationTest with ViewHelpers wi
         insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
         authoriseAgentOrIndividual(isAgent = false)
         urlPost(fullUrl(workplacePensionAmount(taxYearEOY)), body = validForm, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
       "has a SEE_OTHER(303) status" in {

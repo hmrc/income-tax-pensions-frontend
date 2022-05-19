@@ -140,7 +140,7 @@ class PensionsTaxReliefNotClaimedControllerISpec extends IntegrationTest with Vi
             val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(pensionTaxReliefNotClaimedQuestion = None)
             insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
             urlGet(fullUrl(pensionTaxReliefNotClaimedUrl(taxYearEOY)),
-              user.isWelsh, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+              user.isWelsh, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
@@ -168,7 +168,7 @@ class PensionsTaxReliefNotClaimedControllerISpec extends IntegrationTest with Vi
             authoriseAgentOrIndividual(user.isAgent)
             insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel), aUserRequest)
             urlGet(fullUrl(pensionTaxReliefNotClaimedUrl(taxYearEOY)), user.isWelsh, follow = false,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
@@ -198,7 +198,7 @@ class PensionsTaxReliefNotClaimedControllerISpec extends IntegrationTest with Vi
             val paymentsIntoPensionsViewModel = aPaymentsIntoPensionViewModel.copy(pensionTaxReliefNotClaimedQuestion = Some(false))
             insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(paymentsIntoPensionsViewModel)), aUserRequest)
             urlGet(fullUrl(pensionTaxReliefNotClaimedUrl(taxYearEOY)), user.isWelsh, follow = false,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
@@ -230,7 +230,7 @@ class PensionsTaxReliefNotClaimedControllerISpec extends IntegrationTest with Vi
         authoriseAgentOrIndividual(isAgent = false)
         // no cya insert
         urlGet(fullUrl(pensionTaxReliefNotClaimedUrl(taxYearEOY)), follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
       "has an SEE_OTHER status" in {
@@ -263,7 +263,7 @@ class PensionsTaxReliefNotClaimedControllerISpec extends IntegrationTest with Vi
               aPaymentsIntoPensionViewModel.copy(pensionTaxReliefNotClaimedQuestion = None))), aUserRequest)
             authoriseAgentOrIndividual(user.isAgent)
             urlPost(fullUrl(pensionTaxReliefNotClaimedUrl(taxYearEOY)), body = invalidForm, welsh = user.isWelsh, follow = false,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
 
           "has the correct status" in {
@@ -301,7 +301,7 @@ class PensionsTaxReliefNotClaimedControllerISpec extends IntegrationTest with Vi
           pensionTaxReliefNotClaimedQuestion = None, retirementAnnuityContractPaymentsQuestion = None)
         insertCyaData(pensionsUsersData(isPrior = false, paymentsIntoPensionOnlyCYAModel(paymentsIntoPensionsViewModel)), aUserRequest)
         urlPost(fullUrl(pensionTaxReliefNotClaimedUrl(taxYearEOY)), body = validFormYes, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
 
       }
 
@@ -325,7 +325,7 @@ class PensionsTaxReliefNotClaimedControllerISpec extends IntegrationTest with Vi
         val paymentsIntoPensionsViewModel = aPaymentsIntoPensionViewModel.copy(pensionTaxReliefNotClaimedQuestion = None)
         insertCyaData(pensionsUsersData(isPrior = false, paymentsIntoPensionOnlyCYAModel(paymentsIntoPensionsViewModel)), aUserRequest)
         urlPost(fullUrl(pensionTaxReliefNotClaimedUrl(taxYearEOY)), body = validFormYes, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
 
       }
 
@@ -349,7 +349,7 @@ class PensionsTaxReliefNotClaimedControllerISpec extends IntegrationTest with Vi
         val paymentsIntoPensionsViewModel = aPaymentsIntoPensionViewModel.copy(pensionTaxReliefNotClaimedQuestion = None)
         insertCyaData(pensionsUsersData(isPrior = false, paymentsIntoPensionOnlyCYAModel(paymentsIntoPensionsViewModel)), aUserRequest)
         urlPost(fullUrl(pensionTaxReliefNotClaimedUrl(taxYearEOY)), body = validFormNo, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
 
       }
 

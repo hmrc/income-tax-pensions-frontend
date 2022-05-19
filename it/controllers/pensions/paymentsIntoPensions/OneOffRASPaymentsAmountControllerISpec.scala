@@ -146,7 +146,7 @@ class OneOffRASPaymentsAmountControllerISpec extends IntegrationTest with ViewHe
               oneOffRasPaymentPlusTaxReliefQuestion = Some(true), totalOneOffRasPaymentPlusTaxRelief = None)
             insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
             urlGet(fullUrl(oneOffReliefAtSourcePaymentsAmountUrl(taxYearEOY)),
-              user.isWelsh, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+              user.isWelsh, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
@@ -180,7 +180,7 @@ class OneOffRASPaymentsAmountControllerISpec extends IntegrationTest with ViewHe
               oneOffRasPaymentPlusTaxReliefQuestion = Some(true), totalOneOffRasPaymentPlusTaxRelief = Some(BigDecimal(existingAmount)))
             insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
             urlGet(fullUrl(oneOffReliefAtSourcePaymentsAmountUrl(taxYearEOY)), user.isWelsh, follow = false,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
@@ -215,7 +215,7 @@ class OneOffRASPaymentsAmountControllerISpec extends IntegrationTest with ViewHe
           oneOffRasPaymentPlusTaxReliefQuestion = None, totalOneOffRasPaymentPlusTaxRelief = None)
         insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
         urlGet(fullUrl(oneOffReliefAtSourcePaymentsAmountUrl(taxYearEOY)), follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
       "has a SEE_OTHER status and redirects correctly" in {
@@ -232,7 +232,7 @@ class OneOffRASPaymentsAmountControllerISpec extends IntegrationTest with ViewHe
           oneOffRasPaymentPlusTaxReliefQuestion = Some(false), totalOneOffRasPaymentPlusTaxRelief = None)
         insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
         urlGet(fullUrl(oneOffReliefAtSourcePaymentsAmountUrl(taxYearEOY)), follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
       "has an SEE_OTHER status" in {
@@ -249,7 +249,7 @@ class OneOffRASPaymentsAmountControllerISpec extends IntegrationTest with ViewHe
           totalRASPaymentsAndTaxRelief = None)
         insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
         urlGet(fullUrl(oneOffReliefAtSourcePaymentsAmountUrl(taxYearEOY)), follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
       "has an SEE_OTHER status and redirects to the RAS payments amount page" in {
@@ -263,7 +263,7 @@ class OneOffRASPaymentsAmountControllerISpec extends IntegrationTest with ViewHe
         dropPensionsDB()
         authoriseAgentOrIndividual(isAgent = false)
         urlGet(fullUrl(oneOffReliefAtSourcePaymentsAmountUrl(taxYearEOY)), follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
       "has an SEE_OTHER status and redirects to the CYA page" in {
@@ -294,7 +294,7 @@ class OneOffRASPaymentsAmountControllerISpec extends IntegrationTest with ViewHe
             insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
             authoriseAgentOrIndividual(user.isAgent)
             urlPost(fullUrl(oneOffReliefAtSourcePaymentsAmountUrl(taxYearEOY)), body = emptyForm, welsh = user.isWelsh,
-              follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+              follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
 
           "has the correct status" in {
@@ -332,7 +332,7 @@ class OneOffRASPaymentsAmountControllerISpec extends IntegrationTest with ViewHe
             insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
             authoriseAgentOrIndividual(user.isAgent)
             urlPost(fullUrl(oneOffReliefAtSourcePaymentsAmountUrl(taxYearEOY)), body = invalidFormatForm, welsh = user.isWelsh,
-              follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+              follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
 
           "has the correct status" in {
@@ -370,7 +370,7 @@ class OneOffRASPaymentsAmountControllerISpec extends IntegrationTest with ViewHe
             insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
             authoriseAgentOrIndividual(user.isAgent)
             urlPost(fullUrl(oneOffReliefAtSourcePaymentsAmountUrl(taxYearEOY)), body = overMaximumForm, welsh = user.isWelsh,
-              follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+              follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
 
           "has the correct status" in {
@@ -410,7 +410,7 @@ class OneOffRASPaymentsAmountControllerISpec extends IntegrationTest with ViewHe
         insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
         authoriseAgentOrIndividual(isAgent = false)
         urlPost(fullUrl(oneOffReliefAtSourcePaymentsAmountUrl(taxYearEOY)), body = overMaximumForm,
-          follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+          follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
       "has an SEE_OTHER status and redirects to the RAS payments amount page" in {
@@ -431,7 +431,7 @@ class OneOffRASPaymentsAmountControllerISpec extends IntegrationTest with ViewHe
         insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
         authoriseAgentOrIndividual(isAgent = false)
         urlPost(fullUrl(oneOffReliefAtSourcePaymentsAmountUrl(taxYearEOY)), body = validForm,
-          follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+          follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
       "has a SEE_OTHER(303) status" in {

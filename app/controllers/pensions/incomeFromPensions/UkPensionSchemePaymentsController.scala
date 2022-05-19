@@ -17,6 +17,7 @@
 package controllers.pensions.incomeFromPensions
 
 import config.{AppConfig, ErrorHandler}
+import controllers.predicates.TaxYearAction.taxYearAction
 import controllers.predicates.{AuthorisedAction, InYearAction}
 import forms.YesNoForm
 import models.User
@@ -29,6 +30,7 @@ import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.incomeFromPensions.UkPensionSchemePaymentsView
+
 import javax.inject.Inject
 import scala.concurrent.Future
 
@@ -45,7 +47,7 @@ class UkPensionSchemePaymentsController @Inject()(implicit val mcc: MessagesCont
     missingInputError = s"pensions.ukPensionSchemePayments.error.noEntry.${if (user.isAgent) "agent" else "individual"}"
   )
 
-  def show(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
+  def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     inYearAction.notInYear(taxYear) {
       pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
         case Some(data) =>

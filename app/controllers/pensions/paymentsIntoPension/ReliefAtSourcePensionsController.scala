@@ -19,6 +19,7 @@ package controllers.pensions.paymentsIntoPension
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.paymentsIntoPension.routes.{PensionsTaxReliefNotClaimedController, ReliefAtSourcePaymentsAndTaxReliefAmountController}
 import controllers.predicates.AuthorisedAction
+import controllers.predicates.TaxYearAction.taxYearAction
 import forms.YesNoForm
 import models.User
 import models.mongo.PensionsCYAModel
@@ -29,20 +30,21 @@ import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.paymentsIntoPensions.ReliefAtSourcePensionsView
+
 import javax.inject.Inject
 import services.RedirectService.isFinishedCheck
 
 import scala.concurrent.Future
 
 class ReliefAtSourcePensionsController @Inject()(implicit val cc: MessagesControllerComponents,
-                                                 auth: AuthorisedAction,
+                                                 authAction: AuthorisedAction,
                                                  rasPensionView: ReliefAtSourcePensionsView,
                                                  appConfig: AppConfig,
                                                  pensionSessionService: PensionSessionService,
                                                  errorHandler: ErrorHandler,
                                                  clock: Clock) extends FrontendController(cc) with I18nSupport {
 
-  def show(taxYear: Int): Action[AnyContent] = auth.async { implicit request =>
+  def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
       case Some(data) =>
         data.pensions.paymentsIntoPension.rasPensionPaymentQuestion match {
@@ -54,7 +56,7 @@ class ReliefAtSourcePensionsController @Inject()(implicit val cc: MessagesContro
     }
   }
 
-  def submit(taxYear: Int): Action[AnyContent] = auth.async { implicit request =>
+  def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
     yesNoForm(request.user).bindFromRequest().fold(
       formWithErrors => Future.successful(BadRequest(rasPensionView(formWithErrors, taxYear))),
       yesNo => {

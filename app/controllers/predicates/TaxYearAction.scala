@@ -16,12 +16,11 @@
 
 package controllers.predicates
 
-import common.SessionValues
 import common.SessionValues._
 import config.AppConfig
 
 import javax.inject.Inject
-import models.{AuthorisationRequest, User}
+import models.AuthorisationRequest
 import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Results.Redirect
@@ -40,25 +39,29 @@ class TaxYearAction @Inject()(taxYear: Int, missingTaxYearReset: Boolean)(
   override def refine[A](request: AuthorisationRequest[A]): Future[Either[Result, AuthorisationRequest[A]]] = {
     implicit val implicitUser: AuthorisationRequest[A] = request
 
-    Future.successful(
-      if (!appConfig.taxYearErrorFeature || taxYear == appConfig.defaultTaxYear) {
-        val sameTaxYear = request.session.get(TAX_YEAR).exists(_.toInt == taxYear)
+    val validClientTaxYears = request.session.get(VALID_TAX_YEARS)
+    lazy val validTaxYears = validClientTaxYears.get.split(",").toSeq.map(_.toInt)
 
+    if (validClientTaxYears.isDefined) {
+      if (!appConfig.taxYearErrorFeature || validTaxYears.contains(taxYear)) {
+        val sameTaxYear = request.session.get(TAX_YEAR).exists(_.toInt == taxYear)
         if (sameTaxYear || !missingTaxYearReset) {
-          Right(request)
+          Future.successful(Right(request))
         } else {
           logger.info("[TaxYearAction][refine] Tax year provided is different than that in session. Redirecting to overview.")
-          Left(
+          Future.successful(Left(
             Redirect(appConfig.incomeTaxSubmissionOverviewUrl(taxYear))
               .addingToSession(TAX_YEAR -> taxYear.toString)
-          )
+          ))
         }
       } else {
-        logger.info(s"Invalid tax year, adding default tax year to session")
-        Left(Redirect(controllers.errors.routes.TaxYearErrorController.show)
-          .addingToSession(SessionValues.TAX_YEAR -> appConfig.defaultTaxYear.toString)(request))
+        logger.info(s"[TaxYearAction][refine] Invalid tax year, redirecting to error page")
+        Future.successful(Left(Redirect(controllers.errors.routes.TaxYearErrorController.show)))
       }
-    )
+    } else {
+      logger.info(s"[TaxYearAction][refine] Valid Tax Year list not in Session, return to start page")
+      Future.successful(Left(Redirect(appConfig.incomeTaxSubmissionStartUrl(taxYear))))
+    }
   }
 }
 

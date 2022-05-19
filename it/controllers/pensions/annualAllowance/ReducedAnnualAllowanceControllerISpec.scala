@@ -165,7 +165,7 @@ class ReducedAnnualAllowanceControllerISpec extends IntegrationTest with BeforeA
             dropPensionsDB()
             insertCyaData(anPensionsUserDataEmptyCya, aUserRequest)
             urlGet(fullUrl(reducedAnnualAllowanceUrl(taxYearEOY)), user.isWelsh, follow = false,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
 
           "has an OK status" in {
@@ -203,7 +203,7 @@ class ReducedAnnualAllowanceControllerISpec extends IntegrationTest with BeforeA
             val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(reducedAnnualAllowanceQuestion = Some(true))
             insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel), aUserRequest)
             authoriseAgentOrIndividual(user.isAgent)
-            urlGet(fullUrl(reducedAnnualAllowanceUrl(taxYearEOY)), user.isWelsh, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+            urlGet(fullUrl(reducedAnnualAllowanceUrl(taxYearEOY)), user.isWelsh, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
 
           "has an OK status" in {
@@ -241,7 +241,7 @@ class ReducedAnnualAllowanceControllerISpec extends IntegrationTest with BeforeA
             authoriseAgentOrIndividual(user.isAgent)
             val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(reducedAnnualAllowanceQuestion = Some(false))
             insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel), aUserRequest)
-            urlGet(fullUrl(reducedAnnualAllowanceUrl(taxYearEOY)), user.isWelsh, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+            urlGet(fullUrl(reducedAnnualAllowanceUrl(taxYearEOY)), user.isWelsh, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
 
           "has an OK status" in {
@@ -279,7 +279,7 @@ class ReducedAnnualAllowanceControllerISpec extends IntegrationTest with BeforeA
         dropPensionsDB()
         authoriseAgentOrIndividual(isAgent = false)
         urlGet(fullUrl(reducedAnnualAllowanceUrl(taxYearEOY)), follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
       "has an SEE_OTHER status" in {
@@ -301,7 +301,7 @@ class ReducedAnnualAllowanceControllerISpec extends IntegrationTest with BeforeA
             authoriseAgentOrIndividual(user.isAgent)
             insertCyaData(aPensionsUserData, aUserRequest)
             urlPost(fullUrl(reducedAnnualAllowanceUrl(taxYearEOY)), body = form, follow = false, welsh = user.isWelsh,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
 
           "has the correct status" in {
@@ -344,7 +344,7 @@ class ReducedAnnualAllowanceControllerISpec extends IntegrationTest with BeforeA
         dropPensionsDB()
         authoriseAgentOrIndividual(isAgent = false)
         urlPost(fullUrl(reducedAnnualAllowanceUrl(taxYearEOY)), body = form, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
       "has a SEE_OTHER(303) status" in {
@@ -368,7 +368,7 @@ class ReducedAnnualAllowanceControllerISpec extends IntegrationTest with BeforeA
           reducedAnnualAllowanceQuestion = None, moneyPurchaseAnnualAllowance = None, taperedAnnualAllowance = None)
         insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel), aUserRequest)
         urlPost(fullUrl(reducedAnnualAllowanceUrl(taxYearEOY)), body = form, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
       "has a SEE_OTHER(303) status" in {
@@ -392,7 +392,7 @@ class ReducedAnnualAllowanceControllerISpec extends IntegrationTest with BeforeA
           reducedAnnualAllowanceQuestion = Some(true), moneyPurchaseAnnualAllowance = Some(true), taperedAnnualAllowance = Some(true))
         insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel), aUserRequest)
         urlPost(fullUrl(reducedAnnualAllowanceUrl(taxYearEOY)), body = form, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY)))
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER

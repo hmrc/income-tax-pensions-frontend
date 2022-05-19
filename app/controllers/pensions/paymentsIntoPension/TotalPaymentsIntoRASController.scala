@@ -18,10 +18,11 @@ package controllers.pensions.paymentsIntoPension
 
 import java.text.NumberFormat
 import java.util.Locale
-
 import config.{AppConfig, ErrorHandler}
 import controllers.predicates.AuthorisedAction
+import controllers.predicates.TaxYearAction.taxYearAction
 import forms.YesNoForm
+
 import javax.inject.{Inject, Singleton}
 import models.User
 import models.mongo.PensionsCYAModel
@@ -30,7 +31,7 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
-import services.RedirectService.{isFinishedCheck, PaymentsIntoPensionsRedirects, redirectBasedOnCurrentAnswers}
+import services.RedirectService.{PaymentsIntoPensionsRedirects, isFinishedCheck, redirectBasedOnCurrentAnswers}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import utils.PaymentsIntoPensionPages.TotalRasPage
@@ -52,7 +53,7 @@ class TotalPaymentsIntoRASController @Inject()(implicit val mcc: MessagesControl
     missingInputError = "paymentsIntoPensions.totalRASPayments.error"
   )
 
-  def show(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
+  def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) { optData =>
       redirectBasedOnCurrentAnswers(taxYear, optData)(redirects(_, taxYear)) { data =>
 

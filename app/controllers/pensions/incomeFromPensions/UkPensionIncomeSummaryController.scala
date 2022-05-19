@@ -29,6 +29,7 @@ import javax.inject.Inject
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import controllers.pensions.routes.PensionsSummaryController
+import controllers.predicates.TaxYearAction.taxYearAction
 
 class UkPensionIncomeSummaryController @Inject()(implicit val cc: MessagesControllerComponents,
                                                  authAction: AuthorisedAction,
@@ -37,7 +38,7 @@ class UkPensionIncomeSummaryController @Inject()(implicit val cc: MessagesContro
                                                  pensionSessionService: PensionSessionService) extends FrontendController(cc) with I18nSupport {
 
 
-  def show(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
+  def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
       case Some(data) =>
         val incomeFromPensionList: Seq[UkPensionIncomeViewModel] = data.pensions.incomeFromPensions.uKPensionIncomes

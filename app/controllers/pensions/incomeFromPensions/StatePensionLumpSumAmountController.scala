@@ -19,6 +19,7 @@ package controllers.pensions.incomeFromPensions
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.routes.PensionsSummaryController
 import controllers.pensions.incomeFromPensions.routes._
+import controllers.predicates.TaxYearAction.taxYearAction
 import controllers.predicates.{AuthorisedAction, InYearAction}
 import forms.{AmountForm, FormUtils}
 import models.mongo.PensionsCYAModel
@@ -50,7 +51,7 @@ class StatePensionLumpSumAmountController @Inject()(implicit val mcc: MessagesCo
     exceedsMaxAmountKey = s"pensions.statePensionLumpSum.error.overMaximum.${if (isAgent) "agent" else "individual"}"
   )
 
-  def show(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
+  def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     inYearAction.notInYear(taxYear) {
       pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
         case Some(data) =>

@@ -19,6 +19,7 @@ package controllers.pensions.paymentsIntoPension
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.paymentsIntoPension.routes.{PaymentsIntoPensionsCYAController, WorkplaceAmountController}
 import controllers.predicates.AuthorisedAction
+import controllers.predicates.TaxYearAction.taxYearAction
 import forms.YesNoForm
 import models.User
 import models.mongo.PensionsCYAModel
@@ -31,9 +32,10 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import utils.PaymentsIntoPensionPages.WorkplacePensionPage
 import views.html.pensions.paymentsIntoPensions.WorkplacePensionView
+
 import javax.inject.Inject
 import models.redirects.ConditionalRedirect
-import services.RedirectService.{isFinishedCheck, PaymentsIntoPensionsRedirects, redirectBasedOnCurrentAnswers}
+import services.RedirectService.{PaymentsIntoPensionsRedirects, isFinishedCheck, redirectBasedOnCurrentAnswers}
 
 import scala.concurrent.Future
 
@@ -45,7 +47,7 @@ class WorkplacePensionController @Inject()(implicit val mcc: MessagesControllerC
                                            workplacePensionView: WorkplacePensionView,
                                            clock: Clock) extends FrontendController(mcc) with I18nSupport {
 
-  def show(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
+  def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) { optData =>
       redirectBasedOnCurrentAnswers(taxYear, optData)(redirects(_, taxYear)) { data =>
 

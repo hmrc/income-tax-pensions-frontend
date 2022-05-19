@@ -19,6 +19,7 @@ package controllers.pensions.paymentsIntoPension
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.paymentsIntoPension.routes._
 import controllers.predicates.AuthorisedAction
+import controllers.predicates.TaxYearAction.taxYearAction
 import forms.AmountForm
 import models.mongo.PensionsCYAModel
 import models.pension.reliefs.PaymentsIntoPensionViewModel
@@ -30,9 +31,10 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import utils.PaymentsIntoPensionPages.WorkplacePensionAmountPage
 import views.html.pensions.paymentsIntoPensions.WorkplaceAmountView
+
 import javax.inject.Inject
 import models.redirects.ConditionalRedirect
-import services.RedirectService.{isFinishedCheck, PaymentsIntoPensionsRedirects, redirectBasedOnCurrentAnswers}
+import services.RedirectService.{PaymentsIntoPensionsRedirects, isFinishedCheck, redirectBasedOnCurrentAnswers}
 
 import scala.concurrent.Future
 
@@ -51,7 +53,7 @@ class WorkplaceAmountController @Inject()(implicit val cc: MessagesControllerCom
     exceedsMaxAmountKey = "pensions.workplaceAmount.error.maxAmount"
   )
 
-  def show(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
+  def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) { optData =>
       redirectBasedOnCurrentAnswers(taxYear, optData)(redirects(_, taxYear)) { data =>
 

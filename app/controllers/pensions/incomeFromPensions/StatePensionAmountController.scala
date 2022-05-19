@@ -29,6 +29,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import controllers.pensions.routes.PensionsSummaryController
 import controllers.pensions.incomeFromPensions.routes.{StatePensionController, StatePensionLumpSumController}
+import controllers.predicates.TaxYearAction.taxYearAction
 
 import javax.inject.Inject
 import scala.concurrent.Future
@@ -49,7 +50,7 @@ class StatePensionAmountController @Inject()(implicit val mcc: MessagesControlle
     exceedsMaxAmountKey = s"pensions.statePensionAmount.error.overMaximum.${if (isAgent) "agent" else "individual"}"
   )
 
-  def show(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
+  def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     inYearAction.notInYear(taxYear) {
       pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
         case Some(data) =>

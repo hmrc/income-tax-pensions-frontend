@@ -19,6 +19,7 @@ package controllers.pensions.paymentsIntoPension
 import config.{AppConfig, ErrorHandler}
 import controllers.predicates.AuthorisedAction
 import controllers.pensions.paymentsIntoPension.routes._
+import controllers.predicates.TaxYearAction.taxYearAction
 import forms.AmountForm
 import models.mongo.PensionsCYAModel
 import models.pension.reliefs.PaymentsIntoPensionViewModel
@@ -26,11 +27,12 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
-import services.RedirectService.{redirectBasedOnCurrentAnswers, PaymentsIntoPensionsRedirects}
+import services.RedirectService.{PaymentsIntoPensionsRedirects, redirectBasedOnCurrentAnswers}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import utils.PaymentsIntoPensionPages.OneOffRasAmountPage
 import views.html.pensions.paymentsIntoPensions.OneOffRASPaymentsAmountView
+
 import javax.inject.{Inject, Singleton}
 import models.redirects.ConditionalRedirect
 
@@ -51,7 +53,7 @@ class OneOffRASPaymentsAmountController @Inject()(implicit val mcc: MessagesCont
     exceedsMaxAmountKey = "paymentsIntoPensions.oneOffRasAmount.error.overMaximum"
   )
 
-  def show(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
+  def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) { optData =>
       redirectBasedOnCurrentAnswers(taxYear, optData)(redirects(_, taxYear)) { data =>
 
