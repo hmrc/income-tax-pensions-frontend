@@ -29,7 +29,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.IncomeFromPensionsPages.ukPensionSchemePayments
+import utils.PageUrls.IncomeFromPensionsPages.{pensionSchemeDetailsUrl, ukPensionSchemePayments}
 import utils.PageUrls.{fullUrl, overviewUrl, pensionSummaryUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
@@ -300,8 +300,7 @@ class UkPensionSchemePaymentsControllerISpec extends IntegrationTest with ViewHe
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        //TODO redirect to Pension Scheme details page
-        result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
+        result.header("location") shouldBe Some(pensionSchemeDetailsUrl(taxYearEOY))
       }
 
       "updates amount paid question to Some(true)" in {

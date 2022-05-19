@@ -51,26 +51,26 @@ class PensionSchemeTaxReferenceController @Inject()(implicit val cc: MessagesCon
     }
   }
 
-  def show(taxYear: Int, pensionSchemeTaxReferenceIndex: Option[Int]): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
+  def show(taxYear: Int, pensionSchemeTaxReferenceIndex: Option[Int]): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async {
+    implicit request =>
+      pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
+        case Some(data) =>
+          val pstrList: Option[Seq[String]] = data.pensions.pensionsAnnualAllowances.pensionSchemeTaxReference
 
-    pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
-      case Some(data) =>
-        val pstrList: Option[Seq[String]] = data.pensions.pensionsAnnualAllowances.pensionSchemeTaxReference
-
-        if (validatePstr(pensionSchemeTaxReferenceIndex, pstrList.getOrElse(Seq.empty))) {
-          val form = prefillValue(
-            pstrList,
-            pensionSchemeTaxReferenceIndex,
-            request.user
-          )
-          Future.successful(Ok(pensionSchemeTaxReferenceView(form, taxYear, pensionSchemeTaxReferenceIndex)))
-        } else {
-          Future.successful(Redirect(PstrSummaryController.show(taxYear)))
-        }
-      case _ =>
-        //TODO: redirect to the annual allowances CYA page
-        Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
-    }
+          if (validatePstr(pensionSchemeTaxReferenceIndex, pstrList.getOrElse(Seq.empty))) {
+            val form = prefillValue(
+              pstrList,
+              pensionSchemeTaxReferenceIndex,
+              request.user
+            )
+            Future.successful(Ok(pensionSchemeTaxReferenceView(form, taxYear, pensionSchemeTaxReferenceIndex)))
+          } else {
+            Future.successful(Redirect(PstrSummaryController.show(taxYear)))
+          }
+        case _ =>
+          //TODO: redirect to the annual allowances CYA page
+          Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
+      }
   }
 
   def submit(taxYear: Int, pensionSchemeTaxReferenceIndex: Option[Int]): Action[AnyContent] = authAction.async {

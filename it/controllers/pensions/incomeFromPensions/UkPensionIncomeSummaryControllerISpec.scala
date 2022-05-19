@@ -26,7 +26,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.IncomeFromPensionsPages.ukPensionSchemeSummaryListUrl
+import utils.PageUrls.IncomeFromPensionsPages._
 import utils.PageUrls.{fullUrl, pensionSummaryUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
@@ -122,8 +122,7 @@ class UkPensionIncomeSummaryControllerISpec extends IntegrationTest with BeforeA
           //TODO: replace hrefs "#" below with link to remove page when available .e.g. RemovePensionSchemeDetailsController.show(taxYearEOY, Some(1)).url
           linkCheck(s"$remove $remove $pensionName1", removeLinkSelector(1), "#")
           linkCheck(s"$remove $remove $pensionName2", removeLinkSelector(2), "#")
-          //TODO: replace href "#" below with link to details page when available .e.g. PensionSchemeDetailsController.show(taxYearEOY, None).url
-          linkCheck(expectedAddAnotherText, addAnotherLinkSelector, "#")
+          linkCheck(expectedAddAnotherText, addAnotherLinkSelector, pensionSchemeDetailsUrl(taxYearEOY))
           //TODO button href to go to income from pensions CYA page
           buttonCheck(expectedButtonText, continueButtonSelector, Some(pensionSummaryUrl(taxYearEOY)))
           welshToggleCheck(user.isWelsh)
@@ -150,8 +149,7 @@ class UkPensionIncomeSummaryControllerISpec extends IntegrationTest with BeforeA
           h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY))
           elementNotOnPageCheck(summaryListTableSelector)
-          //TODO: replace href "#" below with link to details page when available .e.g. PensionSchemeDetailsController.show(taxYearEOY, None).url
-          linkCheck(expectedAddPensionSchemeText, addLinkSelector, "#")
+          linkCheck(expectedAddPensionSchemeText, addLinkSelector, pensionSchemeDetailsUrl(taxYearEOY))
           //TODO button href to go to income from pensions CYA page
           buttonCheck(expectedButtonText, continueButtonSelector, Some(pensionSummaryUrl(taxYearEOY)))
           welshToggleCheck(user.isWelsh)
