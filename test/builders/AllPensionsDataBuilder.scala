@@ -18,8 +18,8 @@ package builders
 
 import builders.PensionChargesBuilder.anPensionCharges
 import builders.PensionReliefsBuilder.anPensionReliefs
-import builders.StateBenefitsModelBuilder.anStateBenefitsModel
-import builders.EmploymentPensionsBuilder.aEmploymentPensions
+import builders.StateBenefitsModelBuilder.aStateBenefitsModel
+import builders.EmploymentPensionsBuilder.anEmploymentPensions
 import models.pension.AllPensionsData
 
 object AllPensionsDataBuilder {
@@ -27,8 +27,8 @@ object AllPensionsDataBuilder {
   val anAllPensionsData: AllPensionsData = AllPensionsData(
     pensionReliefs = Some(anPensionReliefs),
     pensionCharges = Some(anPensionCharges),
-    stateBenefits = Some(anStateBenefitsModel),
-    employmentPensions = Some(aEmploymentPensions)
+    stateBenefits = Some(aStateBenefitsModel),
+    employmentPensions = Some(anEmploymentPensions)
   )
 
   val anAllPensionDataEmpty: AllPensionsData = AllPensionsData(

@@ -21,7 +21,7 @@ import models.pension.statebenefits.StateBenefitsModel
 
 object StateBenefitsModelBuilder {
 
-  val anStateBenefitsModel: StateBenefitsModel = StateBenefitsModel(
+  val aStateBenefitsModel: StateBenefitsModel = StateBenefitsModel(
     stateBenefits = Some(anStateBenefts),
     customerAddedStateBenefits = Some(anStateBenefts)
   )

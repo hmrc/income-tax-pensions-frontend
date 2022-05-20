@@ -20,10 +20,10 @@ import models.pension.employmentPensions.EmploymentPensions
 
 object EmploymentPensionsBuilder {
 
-  val aEmploymentPensions: EmploymentPensions = EmploymentPensions(
+  val anEmploymentPensions: EmploymentPensions = EmploymentPensions(
     employmentData = Seq(
-      EmploymentPensionModelBuilder.aEmploymentPensionModel,
-      EmploymentPensionModelBuilder.aOtherEmploymentPensionModel
+      EmploymentPensionModelBuilder.anEmploymentPensionModel,
+      EmploymentPensionModelBuilder.anotherEmploymentPensionModel
     )
   )
 

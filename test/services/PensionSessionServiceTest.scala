@@ -28,7 +28,7 @@ import play.api.mvc.Results.{Ok, Redirect}
 import utils.UnitTest
 import views.html.templates.{InternalServerErrorTemplate, NotFoundTemplate, ServiceUnavailableTemplate}
 import builders.PensionsCYAModelBuilder._
-import builders.EmploymentPensionsBuilder.aEmploymentPensions
+import builders.EmploymentPensionsBuilder.anEmploymentPensions
 
 import scala.concurrent.Future
 
@@ -250,7 +250,7 @@ class PensionSessionServiceTest extends UnitTest
       )))
     ),
     employmentPensions = Some(
-      aEmploymentPensions
+      anEmploymentPensions
     )
   )
 

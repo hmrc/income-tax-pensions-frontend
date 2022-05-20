@@ -20,7 +20,7 @@ import models.pension.employmentPensions.EmploymentPensionModel
 
 object EmploymentPensionModelBuilder {
 
-  val aEmploymentPensionModel: EmploymentPensionModel = EmploymentPensionModel(
+  val anEmploymentPensionModel: EmploymentPensionModel = EmploymentPensionModel(
     employmentId = "00000000-0000-1000-8000-000000000001",
     pensionId = Some("Some Customer ref 1"),
     startDate = Some("2019-10-23"),
@@ -32,7 +32,7 @@ object EmploymentPensionModelBuilder {
     isCustomerEmploymentData = Some(true)
   )
 
-  val aOtherEmploymentPensionModel: EmploymentPensionModel = EmploymentPensionModel(
+  val anotherEmploymentPensionModel: EmploymentPensionModel = EmploymentPensionModel(
     employmentId = "00000000-0000-1000-8000-000000000002",
     pensionId = Some("Some Customer ref 2"),
     startDate = Some("2019-11-23"),

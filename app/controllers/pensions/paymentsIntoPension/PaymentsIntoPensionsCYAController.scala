@@ -101,10 +101,7 @@ class PaymentsIntoPensionsCYAController @Inject()(implicit val cc: MessagesContr
     val statePension: Option[StateBenefit] = prior.stateBenefits.flatMap(_.stateBenefits.flatMap(_.statePension))
     val statePensionLumpSum: Option[StateBenefit] = prior.stateBenefits.flatMap(_.stateBenefits.flatMap(_.statePensionLumpSum))
 
-    //TODO: get the list of UK income from the prior data as the combined list from
-    // the hmrcEmploymentData and customerEmploymentData when it's been added to the backend data
     val getUkPensionIncome: Seq[UkPensionIncomeViewModel] = {
-
       prior.employmentPensions match {
         case Some(ep) =>
           ep.employmentData.map(data =>
