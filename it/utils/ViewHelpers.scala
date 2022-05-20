@@ -268,6 +268,30 @@ trait ViewHelpers {
     }
   }
 
+  def multipleSummaryErrorCheck(errors: List[(String, String)])(implicit document: () => Document): Unit = {
+
+    "contains an error summary" in {
+      elementExist(".govuk-error-summary")
+    }
+    "contains the text 'There is a problem'" in {
+      document().select(".govuk-error-summary__title").text() should (be("There is a problem") or be("Mae problem wedi codi"))
+    }
+
+    for (error <- errors) {
+      val index = errors.indexOf(error) + 1
+      val selector = s".govuk-error-summary__body > ul > li:nth-child($index) > a"
+
+      s"has a ${error._1} error in the error summary" which {
+        s"has the text '${error._1}'" in {
+          document().select(selector).text() shouldBe error._1
+        }
+        s"has a href to '${error._2}'" in {
+          document().select(selector).attr("href") shouldBe error._2
+        }
+      }
+    }
+  }
+
   def errorAboveElementCheck(text: String, id: Option[String] = None)(implicit document: () => Document): Unit = {
     s"has a $text error above the element" which {
       s"has the text '$text'" in {

@@ -23,6 +23,7 @@ import forms.YesNoForm
 import models.User
 import models.mongo.PensionsCYAModel
 import models.pension.statebenefits.IncomeFromPensionsViewModel
+import controllers.pensions.incomeFromPensions.routes.PensionSchemeDetailsController
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -79,8 +80,7 @@ class UkPensionSchemePaymentsController @Inject()(implicit val mcc: MessagesCont
               pensionSessionService.createOrUpdateSessionData(request.user,
                 updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
                 if (yesNo) {
-                  //TODO redirect to Pension Scheme details page
-                  Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear))
+                  Redirect(PensionSchemeDetailsController.show(taxYear, None))
                 } else {
                   //TODO redirect to Pension CYA page
                   Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear))

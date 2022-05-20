@@ -440,11 +440,28 @@ pensions.ukPensionSchemePayments.error.noEntry.individual = Select Yes if you go
 pensions.ukPensionSchemePayments.error.noEntry.agent = Select Yes if your client got payments from UK pension schemes
 pensions.ukPensionSchemePayments.doesNot.Include = This does not include State Pension.
 
+#pension scheme income details
+incomeFromPensions.pensionSchemeDetails.title = Pension scheme details
+incomeFromPensions.pensionSchemeDetails.youCanFind.individual = You can find this information on your pension statement. If you do not have a pension statement, you can ask your pension provider.
+incomeFromPensions.pensionSchemeDetails.youCanFind.agent = Your client can find this information on their pension statement. If they do not have a pension statement, they can ask their pension provider.
+incomeFromPensions.pensionSchemeDetails.ifYouGet.individual = If you get pension income from more than one UK pension scheme, you can add them later.
+incomeFromPensions.pensionSchemeDetails.ifYouGet.agent = If your client gets pension income from more than one UK pension scheme, you can add them later.
+incomeFromPensions.pensionSchemeDetails.providerName.subheading = Pension provider name
+incomeFromPensions.pensionSchemeDetails.schemeRef.subheading = Pension scheme PAYE reference number
+incomeFromPensions.pensionSchemeDetails.schemeRef.hint = For example 123/AB456
+incomeFromPensions.pensionSchemeDetails.pid.subheading = Pension Identification (PID)
+incomeFromPensions.pensionSchemeDetails.pid.hint.individual = Check your pension statement or P60
+incomeFromPensions.pensionSchemeDetails.pid.hint.agent = Check your client’s pension statement or P60
+incomeFromPensions.pensionSchemeDetails.providerName.error.noEntry = Enter the pension provider name
+incomeFromPensions.pensionSchemeDetails.providerName.error.overCharLimit = The pension provider name must be 74 characters or fewer
+incomeFromPensions.pensionSchemeDetails.providerName.error.incorrectFormat = The pension provider name must only include numbers 0 to 9, letters a to z, hyphens, spaces, apostrophes, commas, full stops, round brackets, and the special characters &, \, :
+incomeFromPensions.pensionSchemeDetails.schemeRef.error.noEntry = Enter the pension scheme PAYE reference number
+incomeFromPensions.pensionSchemeDetails.schemeRef.error.incorrectFormat = Enter the pension scheme PAYE reference number in the correct format
+incomeFromPensions.pensionSchemeDetails.pid.error.noEntry = Enter the pension identification (PID)
+incomeFromPensions.pensionSchemeDetails.pid.error.overCharLimit = The pension identification (PID) must be 38 characters or fewer
+incomeFromPensions.pensionSchemeDetails.pid.error.incorrectFormat = The pension identification (PID) must only include numbers 0 to 9, letters a to z, hyphens, spaces, apostrophes, commas, full stops, round brackets, and the special characters /=!"%&*;<>+:\?
 
 #Uk Pension Income Summary Page
-
 pensions.ukPensionIncomeSummary.title = UK pension income
 pensions.ukPensionIncomeSummary.addAnotherPensionIncomeLink = Add another pension scheme
 pensions.ukPensionIncomeSummary.addPensionIncomeLink = Add a pension scheme
-
-
