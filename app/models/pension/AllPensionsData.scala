@@ -17,13 +17,16 @@
 package models.pension
 
 import models.pension.charges.PensionCharges
+import models.pension.employmentPensions.EmploymentPensions
 import models.pension.reliefs.PensionReliefs
 import models.pension.statebenefits.StateBenefitsModel
 import play.api.libs.json.{Json, OFormat}
 
 case class AllPensionsData(pensionReliefs: Option[PensionReliefs],
                            pensionCharges: Option[PensionCharges],
-                           stateBenefits: Option[StateBenefitsModel])
+                           stateBenefits: Option[StateBenefitsModel],
+                           employmentPensions: Option[EmploymentPensions]
+                          )
 
 object AllPensionsData {
   implicit val formats: OFormat[AllPensionsData] = Json.format[AllPensionsData]

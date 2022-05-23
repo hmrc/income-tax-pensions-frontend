@@ -28,6 +28,7 @@ import play.api.mvc.Results.{Ok, Redirect}
 import utils.UnitTest
 import views.html.templates.{InternalServerErrorTemplate, NotFoundTemplate, ServiceUnavailableTemplate}
 import builders.PensionsCYAModelBuilder._
+import builders.EmploymentPensionsBuilder.anEmploymentPensions
 
 import scala.concurrent.Future
 
@@ -116,7 +117,7 @@ class PensionSessionServiceTest extends UnitTest
         shortServiceRefundTaxPaid = 2.22
       )))
     ),
-    Some(StateBenefitsModel(
+    stateBenefits = Some(StateBenefitsModel(
       Some(StateBenefits(
         incapacityBenefit = Some(List(StateBenefit(
           benefitId = "a1e8057e-fbbc-47a8-a8b4-78d9f015c934",
@@ -247,6 +248,9 @@ class PensionSessionServiceTest extends UnitTest
           dateIgnored = None
         )),
       )))
+    ),
+    employmentPensions = Some(
+      anEmploymentPensions
     )
   )
 

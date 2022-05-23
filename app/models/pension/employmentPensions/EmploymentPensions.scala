@@ -14,15 +14,18 @@
  * limitations under the License.
  */
 
-package builders
+package models.pension.employmentPensions
 
-import builders.StateBenefitsBuilder.anStateBenefts
-import models.pension.statebenefits.StateBenefitsModel
+import play.api.libs.json.{Json, OFormat}
 
-object StateBenefitsModelBuilder {
+case class EmploymentPensions(employmentData: Seq[EmploymentPensionModel])
 
-  val aStateBenefitsModel: StateBenefitsModel = StateBenefitsModel(
-    stateBenefits = Some(anStateBenefts),
-    customerAddedStateBenefits = Some(anStateBenefts)
-  )
+object EmploymentPensions {
+  implicit val format: OFormat[EmploymentPensions] = Json.format[EmploymentPensions]
+}
+
+case class EncryptedEmploymentPensions(employmentData: Seq[EncryptedEmploymentPensionModel])
+
+object EncryptedEmploymentPensions {
+  implicit val format: OFormat[EncryptedEmploymentPensions] = Json.format[EncryptedEmploymentPensions]
 }

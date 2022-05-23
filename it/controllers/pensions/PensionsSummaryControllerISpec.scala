@@ -19,7 +19,7 @@ package controllers.pensions
 import builders.AllPensionsDataBuilder.anAllPensionsData
 import builders.IncomeTaxUserDataBuilder.anIncomeTaxUserData
 import builders.PensionChargesBuilder.anPensionCharges
-import builders.StateBenefitsModelBuilder.anStateBenefitsModel
+import builders.StateBenefitsModelBuilder.aStateBenefitsModel
 import models.pension.AllPensionsData
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -120,7 +120,7 @@ class PensionsSummaryControllerISpec extends IntegrationTest with ViewHelpers wi
             // if customerAddedStateBenefits and pensionSchemeOverseasTransfers empty still 'updated' if
             // stateBenefits and overseasPensionContributions present
             val allUpdatedNoOverseasTransfersOrCustomerStateBenefits: AllPensionsData = anAllPensionsData.copy(
-              stateBenefits = Some(anStateBenefitsModel.copy(customerAddedStateBenefits = None)),
+              stateBenefits = Some(aStateBenefitsModel.copy(customerAddedStateBenefits = None)),
               pensionCharges = Some(anPensionCharges.copy(pensionSchemeOverseasTransfers = None)))
 
             userDataStub(anIncomeTaxUserData.copy(pensions = Some(allUpdatedNoOverseasTransfersOrCustomerStateBenefits)), nino, taxYear)
@@ -185,7 +185,7 @@ class PensionsSummaryControllerISpec extends IntegrationTest with ViewHelpers wi
             // if stateBenefits and overseasPensionContributions empty still 'updated' if
             // customerAddedStateBenefits and pensionSchemeOverseasTransfers present
             val allUpdatedNoOverseasContributionsOrStateBenefits: AllPensionsData = anAllPensionsData.copy(
-              stateBenefits = Some(anStateBenefitsModel.copy(stateBenefits = None)),
+              stateBenefits = Some(aStateBenefitsModel.copy(stateBenefits = None)),
               pensionCharges = Some(anPensionCharges.copy(overseasPensionContributions = None)))
 
             userDataStub(anIncomeTaxUserData.copy(pensions = Some(allUpdatedNoOverseasContributionsOrStateBenefits)), nino, taxYear)

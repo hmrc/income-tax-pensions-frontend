@@ -16,13 +16,15 @@
 
 package builders
 
-import builders.StateBenefitsBuilder.anStateBenefts
-import models.pension.statebenefits.StateBenefitsModel
+import models.pension.employmentPensions.EmploymentPensions
 
-object StateBenefitsModelBuilder {
+object EmploymentPensionsBuilder {
 
-  val aStateBenefitsModel: StateBenefitsModel = StateBenefitsModel(
-    stateBenefits = Some(anStateBenefts),
-    customerAddedStateBenefits = Some(anStateBenefts)
+  val anEmploymentPensions: EmploymentPensions = EmploymentPensions(
+    employmentData = Seq(
+      EmploymentPensionModelBuilder.anEmploymentPensionModel,
+      EmploymentPensionModelBuilder.anotherEmploymentPensionModel
+    )
   )
+
 }
