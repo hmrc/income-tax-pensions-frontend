@@ -104,7 +104,7 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
     val refEmptyErrorText = "Enter the pension scheme PAYE reference number"
     val pIdEmptyErrorText = "Enter the pension identification (PID)"
     val providerNameInvalidFormatErrorText: String = "The pension provider name must only include numbers 0 to 9, " +
-      "letters a to z, hyphens, spaces, apostrophes, commas, full stops, round brackets, and the special characters &, \\, :"
+      "letters a to z, hyphens, spaces, apostrophes, commas, full stops, round brackets, and the special characters &\\:"
     val refInvalidFormatErrorText = "Enter the pension scheme PAYE reference number in the correct format"
     val pIdInvalidFormatErrorText: String = "The pension identification (PID) must only include numbers " +
       "0 to 9, letters a to z, hyphens, spaces, apostrophes, commas, full stops, round brackets, and the special characters /=!\"%&*;<>+:\\?"
@@ -126,7 +126,7 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
     val refEmptyErrorText = "Enter the pension scheme PAYE reference number"
     val pIdEmptyErrorText = "Enter the pension identification (PID)"
     val providerNameInvalidFormatErrorText: String = "The pension provider name must only include numbers 0 to 9, " +
-      "letters a to z, hyphens, spaces, apostrophes, commas, full stops, round brackets, and the special characters &, \\, :"
+      "letters a to z, hyphens, spaces, apostrophes, commas, full stops, round brackets, and the special characters &\\:"
     val refInvalidFormatErrorText = "Enter the pension scheme PAYE reference number in the correct format"
     val pIdInvalidFormatErrorText: String = "The pension identification (PID) must only include numbers " +
       "0 to 9, letters a to z, hyphens, spaces, apostrophes, commas, full stops, round brackets, and the special characters /=!\"%&*;<>+:\\?"
