@@ -18,6 +18,7 @@ common.saveAndContinue = Save and continue
 common.change = Change
 common.update = Update
 common.remove = Remove
+common.cancel = Cancel
 common.use = use
 common.error.errorKey = Error:
 common.opensInNewTab = (opens in new tab)
@@ -500,3 +501,6 @@ incomeFromPensions.pensionStartDate.error.invalidFormat = The pension start date
 incomeFromPensions.pensionStartDate.error.dateInFuture = The pension start date must be in the past
 incomeFromPensions.pensionStartDate.error.tooLongAgo = The pension start date must be after 1 January 1900
 
+#Remove pension scheme page
+incomeFromPensions.removePensionScheme.title = Are you sure you want to remove {0}?
+incomeFromPensions.removePensionScheme.buttonText = Remove pension
