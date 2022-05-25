@@ -113,6 +113,10 @@ object PageUrls extends IntegrationTest {
     def pensionSchemeDetailsUrl(taxYear: Int, pensionSchemeIndex: Int): String =
       s"$appUrl/$taxYear/pension-income/pension-income-details?pensionSchemeIndex=$pensionSchemeIndex"
 
+    def pensionAmountUrl(taxYear: Int, index: Int):String = s"$appUrl/$taxYear/pension-income/pension-amount?pensionSchemeIndex=$index"
+
+     def pensionAmountUrl(taxYear: Int):String = s"$appUrl/$taxYear/pension-income/pension-amount"
+
   }
 }
 

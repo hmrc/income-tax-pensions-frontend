@@ -17,13 +17,13 @@
 package controllers.pensions.incomeFromPensions
 
 import config.{AppConfig, ErrorHandler}
+import controllers.pensions.incomeFromPensions.routes.PensionSchemeDetailsController
 import controllers.predicates.TaxYearAction.taxYearAction
 import controllers.predicates.{AuthorisedAction, InYearAction}
 import forms.YesNoForm
 import models.User
 import models.mongo.PensionsCYAModel
 import models.pension.statebenefits.IncomeFromPensionsViewModel
-import controllers.pensions.incomeFromPensions.routes.PensionSchemeDetailsController
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}

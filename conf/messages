@@ -464,3 +464,16 @@ incomeFromPensions.pensionSchemeDetails.pid.error.incorrectFormat = The pension 
 pensions.ukPensionIncomeSummary.title = UK pension income
 pensions.ukPensionIncomeSummary.addAnotherPensionIncomeLink = Add another pension scheme
 pensions.ukPensionIncomeSummary.addPensionIncomeLink = Add a pension scheme
+
+#How Much Pension Did You Get Paid
+pensions.pensionAmount.title.individual = How much pension did you get paid?
+pensions.pensionAmount.title.agent = How much pension did your client get paid?
+pensions.pensionAmount.totalTax = Total amount this tax year
+pensions.pensionAmount.totalTax.error.noEntry = Enter the amount of pension paid
+pensions.pensionAmount.totalTax.error.incorrectFormat = Enter the amount of pension paid in the correct format
+pensions.pensionAmount.totalTax.error.overMaximum = The amount of pension paid must be less than £100,000,000,000
+pensions.pensionAmount.taxPaid = Tax paid
+pensions.pensionAmount.taxPaid.error.noEntry = Enter the amount of tax paid
+pensions.pensionAmount.taxPaid.error.incorrectFormat = Enter the amount of tax paid in the correct format
+pensions.pensionAmount.taxPaid.error.overMaximum = The amount of tax paid must be less than £100,000,000,000
+
