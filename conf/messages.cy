@@ -30,6 +30,7 @@ common.paymentsIntoPensions.caption = Payments into pensions for 6 April {0} to 
 common.dividends.incomeFromPensions.caption = Dividends for 6 April {0} to 5 April {1}
 common.pensionAnnualAllowance.caption = Pension annual allowance for 6 April {0} to 5 April {1}
 common.incomeFromPensions.caption = Income from pensions for 6 April {0} to 5 April {1}
+common.lifetimeAllowance.caption = Annual and lifetime allowances for 6 April {0} to 5 April {1}
 common.return.overview.buttonText = Return to overview
 common.currencyAmount = £{0}
 common.total = Total
@@ -465,6 +466,12 @@ incomeFromPensions.pensionSchemeDetails.pid.error.incorrectFormat = The pension 
 pensions.ukPensionIncomeSummary.title = UK pension income
 pensions.ukPensionIncomeSummary.addAnotherPensionIncomeLink = Add another pension scheme
 pensions.ukPensionIncomeSummary.addPensionIncomeLink = Add a pension scheme
+
+#Did you get paid your pension as a lump sum
+lifetimeAllowance.pensionLumpSum.title.individual = Did you take the amount above your lifetime allowance as a lump sum?
+lifetimeAllowance.pensionLumpSum.title.agent = Did your client take the amount above their lifetime allowance as a lump sum?
+lifetimeAllowance.pensionLumpSum.error.noEntry.individual = Select yes if you took the amount above your lifetime allowance as a lump sum
+lifetimeAllowance.pensionLumpSum.error.noEntry.agent = Select yes if your client took the amount above their lifetime allowance as a lump sum
 
 #How Much Pension Did You Get Paid
 pensions.pensionAmount.title.individual = How much pension did you get paid?

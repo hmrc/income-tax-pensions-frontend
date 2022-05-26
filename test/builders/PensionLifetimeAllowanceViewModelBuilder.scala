@@ -19,12 +19,12 @@ package builders
 import models.pension.charges.{LifetimeAllowance, PensionLifetimeAllowancesViewModel}
 
 object PensionLifetimeAllowanceViewModelBuilder {
-
   val aPensionLifetimeAllowanceViewModel: PensionLifetimeAllowancesViewModel = PensionLifetimeAllowancesViewModel(
     aboveLifetimeAllowanceQuestion = Some(true),
     pensionAsLumpSum = Some(LifetimeAllowance(134.22, 23.55)),
     pensionPaidAnotherWayQuestion = Some(true),
-    pensionPaidAnotherWay = Some(LifetimeAllowance(1667.22, 11.33))
+    pensionPaidAnotherWay = Some(LifetimeAllowance(1667.22, 11.33)),
+    pensionAsLumpSumQuestion = Some(true)
   )
 
   val aPensionLifetimeAllowancesEmptyViewModel: PensionLifetimeAllowancesViewModel = PensionLifetimeAllowancesViewModel()
