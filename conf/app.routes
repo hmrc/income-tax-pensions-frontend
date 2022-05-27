@@ -127,4 +127,4 @@ GET         /:taxYear/annual-lifetime-allowances/lifetime-allowance-lump-sum    
 POST        /:taxYear/annual-lifetime-allowances/lifetime-allowance-lump-sum                controllers.pensions.lifetimeAllowance.PensionLumpSumController.submit(taxYear: Int)
 
 GET         /:taxYear/pension-income/remove-pension-scheme                                  controllers.pensions.incomeFromPensions.RemovePensionSchemeController.show(taxYear: Int, pensionSchemeIndex: Option[Int])
-POST        /:taxYear/pension-income/remove-pension-scheme                                  controllers.pensions.incomeFromPensions.RemovePensionSchemeController.show(taxYear: Int, pensionSchemeIndex: Option[Int])
+POST        /:taxYear/pension-income/remove-pension-scheme                                  controllers.pensions.incomeFromPensions.RemovePensionSchemeController.submit(taxYear: Int, pensionSchemeIndex: Option[Int])

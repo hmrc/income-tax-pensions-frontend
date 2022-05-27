@@ -43,7 +43,7 @@ class RemovePensionSchemeController @Inject()(implicit val mcc: MessagesControll
       case Some(data) =>
         val pensionIncomesList: Seq[UkPensionIncomeViewModel] = data.pensions.incomeFromPensions.uKPensionIncomes
 
-        checkIndex(pensionSchemeIndex, pensionIncomesList) match {
+        checkIndexScheme(pensionSchemeIndex, pensionIncomesList) match {
           case Some(scheme) =>
             Future.successful(Ok(removePensionSchemeView(taxYear, scheme.pensionSchemeName.getOrElse(""), pensionSchemeIndex)))
           case _ =>
@@ -55,12 +55,28 @@ class RemovePensionSchemeController @Inject()(implicit val mcc: MessagesControll
     }
   }
 
-  private def checkIndex(pensionSchemeIndex: Option[Int], pensionSchemesList: Seq[UkPensionIncomeViewModel]): Option[UkPensionIncomeViewModel] = {
+  def submit(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = authAction.async { implicit request =>
+    pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
+      case Some(data) =>
+        val pensionIncomesList: Seq[UkPensionIncomeViewModel] = data.pensions.incomeFromPensions.uKPensionIncomes
+
+        checkIndexScheme(pensionSchemeIndex, pensionIncomesList) match {
+          case Some(scheme) =>
+            //TODO - call API to remove pension scheme
+            Future.successful(Redirect(UkPensionIncomeSummaryController.show(taxYear)))
+          case _ =>
+            Future.successful(Redirect(UkPensionIncomeSummaryController.show(taxYear)))
+        }
+      case _ =>
+        Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
+    }
+  }
+
+  private def checkIndexScheme(pensionSchemeIndex: Option[Int], pensionSchemesList: Seq[UkPensionIncomeViewModel]): Option[UkPensionIncomeViewModel] = {
     pensionSchemeIndex match {
       case Some(index) if pensionSchemesList.size > index =>
         Some(pensionSchemesList(index))
       case _ =>
-        println(s"\n\nGOT HERE, list:\n$pensionSchemesList\n\n")
         None
     }
   }

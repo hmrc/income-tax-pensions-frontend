@@ -38,7 +38,7 @@
 @layout(pageTitle = titleText, taxYear = Some(taxYear), isAgent = request.user.isAgent) {
 
 
- @formWithCsrf(action = controllers.pensions.incomeFromPensions.routes.RemovePensionSchemeController.show(taxYear, None)) {
+ @formWithCsrf(action = controllers.pensions.incomeFromPensions.routes.RemovePensionSchemeController.submit(taxYear, pensionSchemeIndex)) {
   @heading(titleText, Some(messages("common.incomeFromPensions.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-2")
 
   <div class="govuk-button-group">

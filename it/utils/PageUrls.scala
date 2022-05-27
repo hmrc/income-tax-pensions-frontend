@@ -123,6 +123,10 @@ object PageUrls extends IntegrationTest {
     def pensionStartDateUrl(taxYear: Int): String =
       s"$appUrl/$taxYear/pension-income/pension-start-date"
 
+    def removePensionSchemeUrl(taxYear: Int, pensionSchemeIndex: Option[Int] = None): String = {
+      val addOn = if(pensionSchemeIndex.isDefined){s"?pensionSchemeIndex=${pensionSchemeIndex.get}"} else {""}
+      s"$appUrl/$taxYear/pension-income/remove-pension-scheme" + addOn
+    }
   }
 
   object PensionLifetimeAllowance {
