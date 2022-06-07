@@ -117,6 +117,8 @@ POST        /:taxYear/pension-income/uk-pension-schemes                         
 
 GET         /:taxYear/pension-income/uk-pension-income                                      controllers.pensions.incomeFromPensions.UkPensionIncomeSummaryController.show(taxYear: Int)
 
-GET         /:taxYear/pension-income/pension-amount                                         controllers.pensions.incomeFromPensions.PensionAmountController.show(taxYear: Int, pensionSchemeIndex: Int)
-POST        /:taxYear/pension-income/pension-amount                                         controllers.pensions.incomeFromPensions.PensionAmountController.submit(taxYear: Int, pensionSchemeIndex: Int)
+GET         /:taxYear/pension-income/pension-amount                                         controllers.pensions.incomeFromPensions.PensionAmountController.show(taxYear: Int, pensionSchemeIndex: Option[Int])
+POST        /:taxYear/pension-income/pension-amount                                         controllers.pensions.incomeFromPensions.PensionAmountController.submit(taxYear: Int, pensionSchemeIndex: Option[Int])
 
+GET         /:taxYear/pension-income/pension-start-date                                     controllers.pensions.incomeFromPensions.PensionSchemeStartDateController.show(taxYear: Int, pensionSchemeIndex: Option[Int])
+POST        /:taxYear/pension-income/pension-start-date                                     controllers.pensions.incomeFromPensions.PensionSchemeStartDateController.submit(taxYear: Int, pensionSchemeIndex: Option[Int])

@@ -17,7 +17,7 @@
 package controllers.pensions.incomeFromPensions
 
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.incomeFromPensions.routes.{UkPensionIncomeSummaryController, UkPensionSchemePaymentsController}
+import controllers.pensions.incomeFromPensions.routes._
 import controllers.pensions.routes.PensionsSummaryController
 import controllers.predicates.AuthorisedAction
 import controllers.predicates.TaxYearAction.taxYearAction
@@ -99,9 +99,7 @@ class PensionSchemeDetailsController @Inject()(implicit val mcc: MessagesControl
 
               pensionSessionService.createOrUpdateSessionData(request.user,
                 updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
-                //TODO: redirect to the 'When did you start getting payments from this scheme?' page with index like below
-                //Redirect(Controller.show(taxYear, pensionSchemeIndex.orElse(Some(updatedPensionIncomesList.size - 1))))
-                Redirect(UkPensionIncomeSummaryController.show(taxYear))
+                Redirect(PensionAmountController.show(taxYear, pensionSchemeIndex.orElse(Some(updatedPensionIncomesList.size - 1))))
               }
             } else {
               Future.successful(Redirect(UkPensionIncomeSummaryController.show(taxYear)))

@@ -47,7 +47,7 @@
 
     @heading(titleText, Some(messages("common.incomeFromPensions.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-2")
 
-    @formWithCsrf(action = controllers.pensions.incomeFromPensions.routes.PensionAmountController.submit(taxYear, pensionSchemeIndex)) {
+    @formWithCsrf(action = controllers.pensions.incomeFromPensions.routes.PensionAmountController.submit(taxYear, Some(pensionSchemeIndex))) {
         @inputText(
             form,
             id = "amount-1",

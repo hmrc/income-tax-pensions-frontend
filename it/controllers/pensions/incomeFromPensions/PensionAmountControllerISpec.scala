@@ -28,7 +28,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.IncomeFromPensionsPages.{pensionAmountUrl, ukPensionSchemeSummaryListUrl}
+import utils.PageUrls.IncomeFromPensionsPages.{pensionAmountUrl, pensionStartDateUrl, ukPensionSchemeSummaryListUrl}
 import utils.PageUrls.{fullUrl, pensionSummaryUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
@@ -61,7 +61,9 @@ class PensionAmountControllerISpec extends IntegrationTest with ViewHelpers with
     val expectedAmount1ErrorHref = "#amount-1"
     val expectedAmount2ErrorHref = "#amount-2"
     val poundPrefixSelector1 = ".govuk-input__prefix"
+
     def labelIndex(index: Int): String = s"#main-content > div > div > form > div:nth-child($index) > label"
+
     def poundPrefixSelector(index: Int): String = s"#main-content > div > div > form > div:nth-child($index) > div.govuk-input__wrapper > div"
   }
 
@@ -320,6 +322,21 @@ class PensionAmountControllerISpec extends IntegrationTest with ViewHelpers with
         result.header("location").contains(pensionSummaryUrl(taxYearEOY)) shouldBe true
       }
     }
+
+    "redirect to Uk Pension Incomes Summary page if no index is given" which {
+      lazy val result: WSResponse = {
+        dropPensionsDB()
+        authoriseAgentOrIndividual(isAgent = false)
+        insertCyaData(aPensionsUserData, aUserRequest)
+        urlGet(fullUrl(pensionAmountUrl(taxYearEOY)), follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+      }
+
+      "has an SEE_OTHER(303) status" in {
+        result.status shouldBe SEE_OTHER
+        result.header("location") shouldBe Some(ukPensionSchemeSummaryListUrl(taxYearEOY))
+      }
+    }
   }
 
 
@@ -463,8 +480,7 @@ class PensionAmountControllerISpec extends IntegrationTest with ViewHelpers with
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        //todo - redirect to appropriate next page when flow is confirmed
-        result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
+        result.header("location") shouldBe Some(pensionStartDateUrl(taxYearEOY, index))
       }
 
       "update state pension amount to Some (new values)" in {
@@ -487,13 +503,12 @@ class PensionAmountControllerISpec extends IntegrationTest with ViewHelpers with
           None, taxPaid = None)))), aUserRequest)
 
         urlPost(fullUrl(pensionAmountUrl(taxYearEOY, index)), body = form,
-          follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY,validTaxYearList)))
+          follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        //todo - redirect to appropriate next page when flow is confirmed
-        result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
+        result.header("location") shouldBe Some(pensionStartDateUrl(taxYearEOY, index))
       }
 
       "update state pension amount to Some (new values)" in {
@@ -513,7 +528,7 @@ class PensionAmountControllerISpec extends IntegrationTest with ViewHelpers with
           None, taxPaid = None)))), aUserRequest)
 
         urlPost(fullUrl(pensionAmountUrl(taxYearEOY, 2)), body = form,
-          follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY,validTaxYearList)))
+          follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
       "has an SEE_OTHER status" in {

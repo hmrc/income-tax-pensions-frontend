@@ -28,7 +28,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.IncomeFromPensionsPages.{pensionSchemeDetailsUrl, ukPensionSchemePayments, ukPensionSchemeSummaryListUrl}
+import utils.PageUrls.IncomeFromPensionsPages.{pensionAmountUrl, pensionSchemeDetailsUrl, ukPensionSchemePayments, ukPensionSchemeSummaryListUrl}
 import utils.PageUrls.{fullUrl, pensionSummaryUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
@@ -413,8 +413,7 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
 
     "has an SEE_OTHER(303) status" in {
       result.status shouldBe SEE_OTHER
-      //TODO redirect to Start Date page with index '1'
-      result.header("location") shouldBe Some(ukPensionSchemeSummaryListUrl(taxYearEOY))
+      result.header("location") shouldBe Some(pensionAmountUrl(taxYearEOY, 1))
     }
 
     "updates existing pension scheme with new values" in {
@@ -441,8 +440,7 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
 
     "has an SEE_OTHER(303) status" in {
       result.status shouldBe SEE_OTHER
-      //TODO redirect to Start Date page with index 0
-      result.header("location") shouldBe Some(ukPensionSchemeSummaryListUrl(taxYearEOY))
+      result.header("location") shouldBe Some(pensionAmountUrl(taxYearEOY, 0))
     }
 
     "updates existing pension scheme with new values" in {
@@ -469,8 +467,7 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
 
     "has an SEE_OTHER(303) status" in {
       result.status shouldBe SEE_OTHER
-      //TODO redirect to Start Date page with index 2
-      result.header("location") shouldBe Some(ukPensionSchemeSummaryListUrl(taxYearEOY))
+      result.header("location") shouldBe Some(pensionAmountUrl(taxYearEOY, 2))
     }
 
     "updates existing pension scheme with new values without changing existing pension schemes" in {

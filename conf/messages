@@ -477,3 +477,17 @@ pensions.pensionAmount.taxPaid.error.noEntry = Enter the amount of tax paid
 pensions.pensionAmount.taxPaid.error.incorrectFormat = Enter the amount of tax paid in the correct format
 pensions.pensionAmount.taxPaid.error.overMaximum = The amount of tax paid must be less than £100,000,000,000
 
+#pension scheme start date
+incomeFromPensions.pensionStartDate.title.individual = When did you start getting payments from this scheme?
+incomeFromPensions.pensionStartDate.title.agent = When did your client start getting payments from this scheme?
+incomeFromPensions.pensionStartDate.date.hint = For example, 12 11 2007
+incomeFromPensions.pensionStartDate.error.empty.all = Enter the pension start date
+incomeFromPensions.pensionStartDate.error.empty.day = The pension start date must include a day
+incomeFromPensions.pensionStartDate.error.empty.dayMonth = The pension start date must include a day and month
+incomeFromPensions.pensionStartDate.error.empty.dayYear = The pension start date must include a day and year
+incomeFromPensions.pensionStartDate.error.empty.month = The pension start date must include a month
+incomeFromPensions.pensionStartDate.error.empty.monthYear = The pension start date must include a month and year
+incomeFromPensions.pensionStartDate.error.empty.year = The pension start date must include a year
+incomeFromPensions.pensionStartDate.error.invalidFormat = The pension start date must be a real date
+incomeFromPensions.pensionStartDate.error.dateInFuture = The pension start date must be in the past
+incomeFromPensions.pensionStartDate.error.tooLongAgo = The pension start date must be after 1 January 1900
