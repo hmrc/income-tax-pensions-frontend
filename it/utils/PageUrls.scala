@@ -102,9 +102,9 @@ object PageUrls extends IntegrationTest {
 
     def statePensionLumpSumUrl(taxYear: Int): String = s"$appUrl/$taxYear/pension-income/state-pension-lump-sum"
 
-    def statePension(taxYear: Int):String = s"$appUrl/$taxYear/pension-income/state-pension"
+    def statePension(taxYear: Int): String = s"$appUrl/$taxYear/pension-income/state-pension"
 
-    def ukPensionSchemePayments(taxYear: Int):String = s"$appUrl/$taxYear/pension-income/uk-pension-schemes"
+    def ukPensionSchemePayments(taxYear: Int): String = s"$appUrl/$taxYear/pension-income/uk-pension-schemes"
 
     def ukPensionSchemeSummaryListUrl(taxYear: Int): String = s"$appUrl/$taxYear/pension-income/uk-pension-income"
 
@@ -113,11 +113,17 @@ object PageUrls extends IntegrationTest {
     def pensionSchemeDetailsUrl(taxYear: Int, pensionSchemeIndex: Int): String =
       s"$appUrl/$taxYear/pension-income/pension-income-details?pensionSchemeIndex=$pensionSchemeIndex"
 
-    def pensionAmountUrl(taxYear: Int, index: Int):String = s"$appUrl/$taxYear/pension-income/pension-amount?pensionSchemeIndex=$index"
+    def pensionAmountUrl(taxYear: Int, index: Int): String = s"$appUrl/$taxYear/pension-income/pension-amount?pensionSchemeIndex=$index"
 
-     def pensionAmountUrl(taxYear: Int):String = s"$appUrl/$taxYear/pension-income/pension-amount"
+    def pensionAmountUrl(taxYear: Int): String = s"$appUrl/$taxYear/pension-income/pension-amount"
+
+    def pensionStartDateUrl(taxYear: Int, pensionSchemeIndex: Int): String =
+      s"$appUrl/$taxYear/pension-income/pension-start-date?pensionSchemeIndex=$pensionSchemeIndex"
+
+    def pensionStartDateUrl(taxYear: Int): String =
+      s"$appUrl/$taxYear/pension-income/pension-start-date"
 
   }
 }
 
-  //scalastyle:on number.of.methods
+//scalastyle:on number.of.methods
