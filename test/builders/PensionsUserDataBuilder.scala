@@ -18,7 +18,7 @@ package builders
 
 import builders.PensionsCYAModelBuilder.{aPensionsCYAEmptyModel, aPensionsCYAModel}
 import models.mongo.PensionsUserData
-import models.pension.charges.PensionAnnualAllowancesViewModel
+import models.pension.charges.{PensionAnnualAllowancesViewModel, PensionLifetimeAllowancesViewModel}
 import models.pension.reliefs.PaymentsIntoPensionViewModel
 import models.pension.statebenefits.IncomeFromPensionsViewModel
 import utils.UnitTest
@@ -54,6 +54,12 @@ object PensionsUserDataBuilder extends UnitTest {
                                            isPriorSubmission: Boolean = true): PensionsUserData = {
     aPensionsUserData.copy(isPriorSubmission = isPriorSubmission,
       pensions = aPensionsCYAModel.copy(incomeFromPensions = incomeFromPensionsViewModel)
+    )
+  }
+  def pensionsUserDataWithLifetimeAllowance(pensionLifetimeAllowancesViewModel: PensionLifetimeAllowancesViewModel,
+                                           isPriorSubmission: Boolean = true): PensionsUserData = {
+    aPensionsUserData.copy(isPriorSubmission = isPriorSubmission,
+      pensions = aPensionsCYAModel.copy(pensionLifetimeAllowances = pensionLifetimeAllowancesViewModel)
     )
   }
 }

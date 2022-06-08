@@ -122,3 +122,7 @@ POST        /:taxYear/pension-income/pension-amount                             
 
 GET         /:taxYear/pension-income/pension-start-date                                     controllers.pensions.incomeFromPensions.PensionSchemeStartDateController.show(taxYear: Int, pensionSchemeIndex: Option[Int])
 POST        /:taxYear/pension-income/pension-start-date                                     controllers.pensions.incomeFromPensions.PensionSchemeStartDateController.submit(taxYear: Int, pensionSchemeIndex: Option[Int])
+
+GET         /:taxYear/annual-lifetime-allowances/lifetime-allowance-lump-sum                controllers.pensions.lifetimeAllowance.PensionLumpSumController.show(taxYear: Int)
+POST        /:taxYear/annual-lifetime-allowances/lifetime-allowance-lump-sum                controllers.pensions.lifetimeAllowance.PensionLumpSumController.submit(taxYear: Int)
+

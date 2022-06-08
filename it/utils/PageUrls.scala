@@ -124,6 +124,13 @@ object PageUrls extends IntegrationTest {
       s"$appUrl/$taxYear/pension-income/pension-start-date"
 
   }
+
+  object PensionLifetimeAllowance {
+
+    def pensionLumpSumUrl(taxYear: Int): String = s"$appUrl/$taxYear/annual-lifetime-allowances/lifetime-allowance-lump-sum"
+
+  }
+
 }
 
 //scalastyle:on number.of.methods
