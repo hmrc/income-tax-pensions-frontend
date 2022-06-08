@@ -21,7 +21,7 @@ import play.api.data.Form
 import play.api.data.Forms.tuple
 
 
-object TupleAmountForm {
+object OptionalTupleAmountForm {
 
   val amount = "amount-1"
   val amount2 = "amount-2"
@@ -35,17 +35,17 @@ object TupleAmountForm {
                   wrongFormatKey2: String = "common.error.invalid_currency_format",
                   exceedsMaxAmountKey2: String = "common.error.amountMaxLimit",
                   emptyFieldArguments2: Seq[String] = Seq.empty[String]
-                ): Form[(BigDecimal, BigDecimal)] =
+                ): Form[(Option[BigDecimal], Option[BigDecimal])] =
     Form(
       tuple(
-        amount -> currency(
+        amount -> optionCurrency(
           requiredKey = emptyFieldKey1,
           wrongFormatKey = wrongFormatKey1,
           maxAmountKey = exceedsMaxAmountKey1,
           args = emptyFieldArguments1
 
         ),
-        amount2 -> currency(
+        amount2 -> optionCurrency(
           requiredKey = emptyFieldKey2,
           wrongFormatKey = wrongFormatKey2,
           maxAmountKey = exceedsMaxAmountKey2,

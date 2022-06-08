@@ -132,6 +132,7 @@ object PageUrls extends IntegrationTest {
   object PensionLifetimeAllowance {
 
     def pensionLumpSumUrl(taxYear: Int): String = s"$appUrl/$taxYear/annual-lifetime-allowances/lifetime-allowance-lump-sum"
+    def pensionLumpSumDetails(taxYear: Int): String = s"$appUrl/$taxYear/annual-lifetime-allowances/lump-sum-details"
 
   }
 
