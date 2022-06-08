@@ -17,16 +17,13 @@
 package controllers.pensions.lifetimeAllowance
 
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.incomeFromPensions.routes._
 import controllers.pensions.routes._
 import controllers.predicates.TaxYearAction.taxYearAction
 import controllers.predicates.{AuthorisedAction, InYearAction}
-import forms.AmountForm.amount
 import forms.YesNoForm
 import models.User
 import models.mongo.PensionsCYAModel
 import models.pension.charges.PensionLifetimeAllowancesViewModel
-import models.pension.statebenefits.IncomeFromPensionsViewModel
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -53,50 +50,45 @@ class PensionLumpSumController @Inject()(implicit val cc: MessagesControllerComp
   )
 
   def show(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
-    inYearAction.notInYear(taxYear) {
-
-      pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
-        case Some(data) =>
-          data.pensions.pensionLifetimeAllowances.pensionAsLumpSumQuestion match {
-            case Some(value) => Future.successful(Ok(pensionLumpSumView(
-              yesNoForm(request.user).fill(value), taxYear)))
-            case None => Future.successful(Ok(pensionLumpSumView(yesNoForm(request.user), taxYear)))
-          }
-        case None =>
-          Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
-      }
+    pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
+      case Some(data) =>
+        data.pensions.pensionLifetimeAllowances.pensionAsLumpSumQuestion match {
+          case Some(value) => Future.successful(Ok(pensionLumpSumView(
+            yesNoForm(request.user).fill(value), taxYear)))
+          case None => Future.successful(Ok(pensionLumpSumView(yesNoForm(request.user), taxYear)))
+        }
+      case None =>
+        Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
     }
   }
 
   def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
-    inYearAction.notInYear(taxYear) {
-      yesNoForm(request.user).bindFromRequest().fold(
-        formWithErrors => Future.successful(BadRequest(pensionLumpSumView(formWithErrors, taxYear))),
-        yesNo => {
-          pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
-            data =>
-              val pensionsCYAModel: PensionsCYAModel = data.map(_.pensions).getOrElse(PensionsCYAModel.emptyModels)
-              val viewModel: PensionLifetimeAllowancesViewModel = pensionsCYAModel.pensionLifetimeAllowances
-              val updatedCyaModel: PensionsCYAModel = {
-                pensionsCYAModel.copy(
-                  pensionLifetimeAllowances = viewModel.copy(
-                    pensionAsLumpSumQuestion = Some(yesNo),
-                    pensionAsLumpSum = if(yesNo) viewModel.pensionAsLumpSum else None)
-                )
+    yesNoForm(request.user).bindFromRequest().fold(
+      formWithErrors => Future.successful(BadRequest(pensionLumpSumView(formWithErrors, taxYear))),
+      yesNo => {
+        pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
+          data =>
+            val pensionsCYAModel: PensionsCYAModel = data.map(_.pensions).getOrElse(PensionsCYAModel.emptyModels)
+            val viewModel: PensionLifetimeAllowancesViewModel = pensionsCYAModel.pensionLifetimeAllowances
+            val updatedCyaModel: PensionsCYAModel = {
+              pensionsCYAModel.copy(
+                pensionLifetimeAllowances = viewModel.copy(
+                  pensionAsLumpSumQuestion = Some(yesNo),
+                  pensionAsLumpSum = if (yesNo) viewModel.pensionAsLumpSum else None)
+              )
+            }
+            pensionSessionService.createOrUpdateSessionData(request.user,
+              updatedCyaModel, taxYear, data.exists(_.isPriorSubmission))(errorHandler.internalServerError()) {
+              if (yesNo) {
+                //TODO redirect page to Allowance Excess Lumpsum Amount Page
+                Redirect(PensionsSummaryController.show(taxYear))
+              } else {
+                //TODO redirect page to Lifetime Other Status page
+                Redirect(PensionsSummaryController.show(taxYear))
               }
-              pensionSessionService.createOrUpdateSessionData(request.user,
-                updatedCyaModel, taxYear, data.exists(_.isPriorSubmission))(errorHandler.internalServerError()) {
-                if (yesNo) {
-                  //TODO redirect page to Allowance Excess Lumpsum Amount Page
-                  Redirect(PensionsSummaryController.show(taxYear))
-                } else {
-                  //TODO redirect page to Lifetime Other Status page
-                  Redirect(PensionsSummaryController.show(taxYear))
-                }
-              }
-          }
+            }
         }
-      )
-    }
+      }
+    )
   }
 }

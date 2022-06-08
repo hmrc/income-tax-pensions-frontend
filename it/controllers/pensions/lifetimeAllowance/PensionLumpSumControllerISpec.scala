@@ -208,23 +208,6 @@ class PensionLumpSumControllerISpec extends IntegrationTest with BeforeAndAfterE
         result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
       }
     }
-
-    "redirect to Pensions overview page if it is not end of year" should {
-      lazy val result: WSResponse = {
-        dropPensionsDB()
-
-        val pensionsViewModel = aPensionLifetimeAllowanceViewModel
-        insertCyaData(pensionsUserDataWithLifetimeAllowance(pensionsViewModel), aUserRequest)
-        authoriseAgentOrIndividual(isAgent = false)
-        urlGet(fullUrl(pensionLumpSumUrl(taxYear)), follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
-      }
-
-      "has an SEE_OTHER status" in {
-        result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(overviewUrl(taxYear))
-      }
-    }
   }
 
   ".submit" should {
@@ -262,26 +245,6 @@ class PensionLumpSumControllerISpec extends IntegrationTest with BeforeAndAfterE
           errorAboveElementCheck(user.specificExpectedResults.get.expectedError, Some("value"))
         }
       }
-    }
-
-    "redirect to the overview page if it is not end of year" which {
-      lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.yes)
-
-      lazy val result: WSResponse = {
-        dropPensionsDB()
-
-        val pensionsViewModel = aPensionLifetimeAllowanceViewModel
-        insertCyaData(pensionsUserDataWithLifetimeAllowance(pensionsViewModel), aUserRequest)
-        authoriseAgentOrIndividual(isAgent = false)
-        urlPost(fullUrl(pensionLumpSumUrl(taxYear)), body = form, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
-      }
-
-      "has a SEE_OTHER(303) status" in {
-        result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(overviewUrl(taxYear))
-      }
-
     }
 
     "redirect and update question to 'Yes' when user selects yes when there is no cya data" which {
