@@ -36,7 +36,8 @@ class RemovePensionSchemeController @Inject()(implicit val mcc: MessagesControll
                                               authAction: AuthorisedAction,
                                               removePensionSchemeView: RemovePensionSchemeView,
                                               appConfig: AppConfig,
-                                              pensionSessionService: PensionSessionService) extends FrontendController(mcc) with I18nSupport with SessionHelper {
+                                              pensionSessionService: PensionSessionService
+                                             ) extends FrontendController(mcc) with I18nSupport with SessionHelper {
 
   def show(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {

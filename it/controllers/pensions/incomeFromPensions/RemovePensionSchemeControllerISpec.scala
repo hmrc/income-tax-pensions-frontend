@@ -30,6 +30,8 @@ import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 class RemovePensionSchemeControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
 
+  private val pensionName: String = "pension name 1"
+
   object Selectors {
     val captionSelector: String = "#main-content > div > div > form > header > p"
     val cancelLinkSelector: String = "#cancel-link-id"
@@ -44,16 +46,16 @@ class RemovePensionSchemeControllerISpec extends IntegrationTest with ViewHelper
   }
 
   object CommonExpectedEN extends CommonExpectedResults {
-    val expectedTitle = "Are you sure you want to remove pension name 1?"
-    val expectedHeading = "Are you sure you want to remove pension name 1?"
+    val expectedTitle = s"Are you sure you want to remove $pensionName?"
+    val expectedHeading = s"Are you sure you want to remove $pensionName?"
     val expectedCaption: Int => String = (taxYear: Int) => s"Income from pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
     val buttonText = "Remove pension"
     val cancelText = "Cancel"
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedTitle = "Are you sure you want to remove pension name 1?"
-    val expectedHeading = "Are you sure you want to remove pension name 1?"
+    val expectedTitle = s"Are you sure you want to remove $pensionName?"
+    val expectedHeading = s"Are you sure you want to remove $pensionName?"
     val expectedCaption: Int => String = (taxYear: Int) => s"Income from pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
     val buttonText = "Remove pension"
     val cancelText = "Cancel"
@@ -122,7 +124,7 @@ class RemovePensionSchemeControllerISpec extends IntegrationTest with ViewHelper
           dropPensionsDB()
           authoriseAgentOrIndividual(isAgent = false)
           insertCyaData(aPensionsUserData, aUserRequest)
-          urlGet(fullUrl(removePensionSchemeUrl(taxYearEOY, Some(3))), follow = false,
+          urlGet(fullUrl(removePensionSchemeUrl(taxYearEOY, None)), follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
         }
 
@@ -138,7 +140,7 @@ class RemovePensionSchemeControllerISpec extends IntegrationTest with ViewHelper
           dropPensionsDB()
           authoriseAgentOrIndividual(isAgent = false)
           insertCyaData(aPensionsUserData, aUserRequest)
-          urlGet(fullUrl(removePensionSchemeUrl(taxYearEOY, None)), follow = false,
+          urlGet(fullUrl(removePensionSchemeUrl(taxYearEOY, Some(3))), follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
         }
 
