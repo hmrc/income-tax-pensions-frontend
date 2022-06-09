@@ -17,6 +17,7 @@
 package controllers.pensions.incomeFromPensions
 
 import builders.PensionsUserDataBuilder.aPensionsUserData
+import builders.UkPensionIncomeViewModelBuilder.anUkPensionIncomeViewModelTwo
 import builders.UserBuilder.aUserRequest
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -171,6 +172,11 @@ class RemovePensionSchemeControllerISpec extends IntegrationTest with ViewHelper
           s"has a SEE_OTHER ($SEE_OTHER) status" in {
             result.status shouldBe SEE_OTHER
             result.header("location").contains(ukPensionSchemeSummaryListUrl(taxYearEOY)) shouldBe true
+          }
+
+          s"remove that scheme from the list" in {
+            lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
+            cyaModel.pensions.incomeFromPensions.uKPensionIncomes shouldBe Seq(anUkPensionIncomeViewModelTwo)
           }
         }
 

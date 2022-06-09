@@ -16,7 +16,7 @@
 
 package controllers.pensions.incomeFromPensions
 
-import config.AppConfig
+import config.{AppConfig, ErrorHandler}
 import controllers.pensions.incomeFromPensions.routes.UkPensionIncomeSummaryController
 import controllers.pensions.routes.PensionsSummaryController
 import controllers.predicates.AuthorisedAction
@@ -27,7 +27,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.SessionHelper
+import utils.{Clock, SessionHelper}
 import views.html.pensions.incomeFromPensions.RemovePensionSchemeView
 
 import scala.concurrent.Future
@@ -36,7 +36,9 @@ class RemovePensionSchemeController @Inject()(implicit val mcc: MessagesControll
                                               authAction: AuthorisedAction,
                                               removePensionSchemeView: RemovePensionSchemeView,
                                               appConfig: AppConfig,
-                                              pensionSessionService: PensionSessionService
+                                              pensionSessionService: PensionSessionService,
+                                              errorHandler: ErrorHandler,
+                                              clock: Clock
                                              ) extends FrontendController(mcc) with I18nSupport with SessionHelper {
 
   def show(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
@@ -59,12 +61,23 @@ class RemovePensionSchemeController @Inject()(implicit val mcc: MessagesControll
   def submit(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = authAction.async { implicit request =>
     pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
       case Some(data) =>
-        val pensionIncomesList: Seq[UkPensionIncomeViewModel] = data.pensions.incomeFromPensions.uKPensionIncomes
+        val pensionsCYAModel = data.pensions
+        val viewModel = pensionsCYAModel.incomeFromPensions
+        val pensionIncomesList: Seq[UkPensionIncomeViewModel] = viewModel.uKPensionIncomes
 
         checkIndexScheme(pensionSchemeIndex, pensionIncomesList) match {
           case Some(scheme) =>
+
+            val updatedPensionIncomesList: Seq[UkPensionIncomeViewModel] =
+              pensionIncomesList.patch(pensionSchemeIndex.get, Nil, 1)
+
+            val updatedCyaModel = pensionsCYAModel.copy(incomeFromPensions = viewModel.copy(uKPensionIncomes = updatedPensionIncomesList))
+
             //TODO - call API to remove pension scheme
-            Future.successful(Redirect(UkPensionIncomeSummaryController.show(taxYear)))
+            pensionSessionService.createOrUpdateSessionData(request.user,
+              updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
+              Redirect(UkPensionIncomeSummaryController.show(taxYear))
+            }
           case _ =>
             Future.successful(Redirect(UkPensionIncomeSummaryController.show(taxYear)))
         }
