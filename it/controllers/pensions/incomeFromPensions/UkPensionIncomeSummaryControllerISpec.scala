@@ -120,8 +120,8 @@ class UkPensionIncomeSummaryControllerISpec extends IntegrationTest with BeforeA
           linkCheck(s"$change $change $pensionName1", changeLinkSelector(1), "#")
           linkCheck(s"$change $change $pensionName2", changeLinkSelector(2),"#")
           //TODO: replace hrefs "#" below with link to remove page when available .e.g. RemovePensionSchemeDetailsController.show(taxYearEOY, Some(1)).url
-          linkCheck(s"$remove $remove $pensionName1", removeLinkSelector(1), "#")
-          linkCheck(s"$remove $remove $pensionName2", removeLinkSelector(2), "#")
+          linkCheck(s"$remove $remove $pensionName1", removeLinkSelector(1), s"${removePensionSchemeUrl(taxYearEOY, Some(0))}")
+          linkCheck(s"$remove $remove $pensionName2", removeLinkSelector(2), s"${removePensionSchemeUrl(taxYearEOY, Some(1))}")
           linkCheck(expectedAddAnotherText, addAnotherLinkSelector, pensionSchemeDetailsUrl(taxYearEOY))
           //TODO button href to go to income from pensions CYA page
           buttonCheck(expectedButtonText, continueButtonSelector, Some(pensionSummaryUrl(taxYearEOY)))
