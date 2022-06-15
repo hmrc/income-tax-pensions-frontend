@@ -21,7 +21,7 @@ import controllers.pensions.incomeFromPensions.routes.{PensionSchemeStartDateCon
 import controllers.pensions.routes.PensionsSummaryController
 import controllers.predicates.AuthorisedAction
 import controllers.predicates.TaxYearAction.taxYearAction
-import forms.{FormUtils, TupleAmountForm}
+import forms.{FormUtils, OptionalTupleAmountForm, TupleAmountForm}
 import models.mongo.PensionsCYAModel
 import models.pension.statebenefits.{IncomeFromPensionsViewModel, UkPensionIncomeViewModel}
 import play.api.data.Form
@@ -43,7 +43,7 @@ class PensionAmountController @Inject()(implicit val mcc: MessagesControllerComp
                                         errorHandler: ErrorHandler,
                                         clock: Clock) extends FrontendController(mcc) with I18nSupport with SessionHelper with FormUtils {
 
-  def amountForm: Form[(Option[BigDecimal], Option[BigDecimal])] = TupleAmountForm.amountForm(
+  def amountForm: Form[(Option[BigDecimal], Option[BigDecimal])] = OptionalTupleAmountForm.amountForm(
     emptyFieldKey1 = "pensions.pensionAmount.totalTax.error.noEntry",
     wrongFormatKey1 = s"pensions.pensionAmount.totalTax.error.incorrectFormat",
     exceedsMaxAmountKey1 = s"pensions.pensionAmount.totalTax.error.overMaximum",

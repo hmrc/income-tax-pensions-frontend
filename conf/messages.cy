@@ -504,3 +504,23 @@ incomeFromPensions.pensionStartDate.error.tooLongAgo = The pension start date mu
 #Remove pension scheme page
 incomeFromPensions.removePensionScheme.title = Are you sure you want to remove {0}?
 incomeFromPensions.removePensionScheme.buttonText = Remove pension
+
+#Pension Lump Sum Details
+lifetimeAllowance.pensionLumpSumDetails.title.individual = Your pension lump sum
+lifetimeAllowance.pensionLumpSumDetails.paragraph.individual = Check with your pension providers if you’re unsure.
+lifetimeAllowance.pensionLumpSumDetails.beforeTax.title = Total amount before tax
+lifetimeAllowance.pensionLumpSumDetails.beforeTax.paragraph.individual = If you got a lump sum payment from more than one pension scheme, give the total.
+lifetimeAllowance.pensionLumpSumDetails.taxPaid.title = Total tax paid
+lifetimeAllowance.pensionLumpSumDetails.taxPaid.paragraph.individual = If more than one of your pension schemes paid lifetime allowance tax, give the total.
+lifetimeAllowance.pensionLumpSumDetails.title.agent = Your client’s pensions lump sum
+lifetimeAllowance.pensionLumpSumDetails.paragraph.agent = Your client can check with their pension provider if you’re unsure.
+lifetimeAllowance.pensionLumpSumDetails.beforeTax.paragraph.agent = If your client got a lump sum payment from more than one pension scheme, give the total.
+lifetimeAllowance.pensionLumpSumDetails.taxPaid.paragraph.agent = If more than one of your client’s pension schemes paid lifetime allowance tax, give the total.
+lifetimeAllowance.pensionLumpSumDetails.beforeTax.error.noEntry.individual = Enter the amount you took above your lifetime allowance as a lump sum
+lifetimeAllowance.pensionLumpSumDetails.beforeTax.error.noEntry.agent = Enter the amount your client took above their lifetime allowance as a lump sum
+lifetimeAllowance.pensionLumpSumDetails.beforeTax.error.incorrectFormat = Enter the amount of lump sum in the correct format
+lifetimeAllowance.pensionLumpSumDetails.beforeTax.error.overMaximum = The amount of lifetime allowance must be less than 100,000,000,000
+lifetimeAllowance.pensionLumpSumDetails.taxPaid.error.noEntry.individual = Enter the amount of lifetime allowance tax your pension provider paid or agreed to pay on the lump sum
+lifetimeAllowance.pensionLumpSumDetails.taxPaid.error.noEntry.agent = Enter the amount of lifetime allowance tax your client’s pension provider paid or agreed to pay on the lump sum
+lifetimeAllowance.pensionLumpSumDetails.taxPaid.error.incorrectFormat = Enter the amount of lifetime allowance tax in the correct format
+lifetimeAllowance.pensionLumpSumDetails.taxPaid.error.overMaximum = The amount of lifetime allowance tax must be less than 100,000,000,000

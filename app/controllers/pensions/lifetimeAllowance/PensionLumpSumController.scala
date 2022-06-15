@@ -17,8 +17,8 @@
 package controllers.pensions.lifetimeAllowance
 
 import config.{AppConfig, ErrorHandler}
+import controllers.pensions.lifetimeAllowance.routes.PensionLumpSumDetailsController
 import controllers.pensions.routes._
-import controllers.predicates.TaxYearAction.taxYearAction
 import controllers.predicates.{AuthorisedAction, InYearAction}
 import forms.YesNoForm
 import models.User
@@ -50,6 +50,7 @@ class PensionLumpSumController @Inject()(implicit val cc: MessagesControllerComp
   )
 
   def show(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
+
     pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
       case Some(data) =>
         data.pensions.pensionLifetimeAllowances.pensionAsLumpSumQuestion match {
@@ -80,8 +81,7 @@ class PensionLumpSumController @Inject()(implicit val cc: MessagesControllerComp
             pensionSessionService.createOrUpdateSessionData(request.user,
               updatedCyaModel, taxYear, data.exists(_.isPriorSubmission))(errorHandler.internalServerError()) {
               if (yesNo) {
-                //TODO redirect page to Allowance Excess Lumpsum Amount Page
-                Redirect(PensionsSummaryController.show(taxYear))
+                Redirect(PensionLumpSumDetailsController.show(taxYear))
               } else {
                 //TODO redirect page to Lifetime Other Status page
                 Redirect(PensionsSummaryController.show(taxYear))

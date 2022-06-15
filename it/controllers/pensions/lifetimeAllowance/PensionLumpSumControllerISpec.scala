@@ -26,8 +26,8 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.PensionLifetimeAllowance.pensionLumpSumUrl
-import utils.PageUrls.{fullUrl, overviewUrl, pensionSummaryUrl}
+import utils.PageUrls.PensionLifetimeAllowance.{pensionLumpSumDetails, pensionLumpSumUrl}
+import utils.PageUrls.{fullUrl, pensionSummaryUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 class PensionLumpSumControllerISpec extends IntegrationTest with BeforeAndAfterEach with ViewHelpers with PensionsDatabaseHelper {
@@ -256,10 +256,10 @@ class PensionLumpSumControllerISpec extends IntegrationTest with BeforeAndAfterE
         urlPost(fullUrl(pensionLumpSumUrl(taxYearEOY)), body = form, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
-      //TODO redirect page to Allowance Excess Lumpsum Amount Page
+
       "has a SEE_OTHER(303) status and redirect to the lump sum amount page" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
+        result.header("location") shouldBe Some(pensionLumpSumDetails(taxYearEOY))
       }
 
       "updates pensionAsLumpSumQuestion to Some(true)" in {
@@ -282,10 +282,9 @@ class PensionLumpSumControllerISpec extends IntegrationTest with BeforeAndAfterE
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
-      //TODO redirect page to Allowance Excess Lumpsum Amount Page
       "has a SEE_OTHER(303) status and redirect to the lump sum amount page" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
+        result.header("location") shouldBe Some(pensionLumpSumDetails(taxYearEOY))
       }
 
       "updates pensionAsLumpSumQuestion to Some(true)" in {

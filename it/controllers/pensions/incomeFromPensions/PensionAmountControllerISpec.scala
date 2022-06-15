@@ -20,7 +20,7 @@ import builders.IncomeFromPensionsViewModelBuilder.{anIncomeFromPensionEmptyView
 import builders.PensionsUserDataBuilder.{aPensionsUserData, pensionsUserDataWithIncomeFromPensions}
 import builders.UkPensionIncomeViewModelBuilder.anUkPensionIncomeViewModelOne
 import builders.UserBuilder.aUserRequest
-import forms.TupleAmountForm
+import forms.OptionalTupleAmountForm
 import models.pension.statebenefits.UkPensionIncomeViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -46,8 +46,8 @@ class PensionAmountControllerISpec extends IntegrationTest with ViewHelpers with
 
 
   def pensionAmountForm(totalAmount: String, taxPaid: String): Map[String, String] = Map(
-    TupleAmountForm.amount -> totalAmount,
-    TupleAmountForm.amount2 -> taxPaid
+    OptionalTupleAmountForm.amount -> totalAmount,
+    OptionalTupleAmountForm.amount2 -> taxPaid
   )
 
   object Selectors {
