@@ -45,6 +45,8 @@ common.error.self-assessment.paragraph.1.1 = If the web address is correct or yo
 common.error.self-assessment.paragraph.1.2 = Self Assessment: general enquiries (opens in new tab)
 common.error.self-assessment.paragraph.1.3 = to speak to someone about your income tax
 common.error.self-assessment.paragraph.1.3a = to speak to someone about your income tax.
+common.useCalculator.paragraph.link = if you need to work this out
+common.useCalculator.paragraph = Use a calculator
 
 #################       Error messages        ########################################
 
@@ -326,15 +328,12 @@ pensions.reducedAnnualAllowanceAmount.nonReduced.error.noEntry = Enter the amoun
 pensions.reducedAnnualAllowanceAmount.nonReduced.error.incorrectFormat = Enter the amount above the annual allowance in the correct format
 pensions.reducedAnnualAllowanceAmount.nonReduced.error.overMaximum = The amount above the annual allowance must be less than £100,000,000,000
 
-
 #above Reduced Annual Allowance
 
 pensions.aboveReducedAnnualAllowance.reduced.title.individual = Have you gone above your reduced annual allowance?
 pensions.aboveReducedAnnualAllowance.reduced.title.agent = Has your client gone above their reduced annual allowance?
 pensions.aboveReducedAnnualAllowance.nonReduced.title.individual = Have you gone above the annual allowance?
 pensions.aboveReducedAnnualAllowance.nonReduced.title.agent = Has your client gone above the annual allowance?
-pensions.aboveReducedAnnualAllowance.paragraph = Use a calculator
-pensions.aboveReducedAnnualAllowance.paragraph.link = if you need to work this out
 pensions.aboveReducedAnnualAllowance.reduced.error.noEntry.individual = Select yes if you have gone above your reduced annual allowance
 pensions.aboveReducedAnnualAllowance.reduced.error.noEntry.agent = Select yes if your client has gone above their reduced annual allowance
 pensions.aboveReducedAnnualAllowance.nonReduced.error.noEntry.individual = Select yes if you have gone above the annual allowance
@@ -504,6 +503,12 @@ incomeFromPensions.pensionStartDate.error.tooLongAgo = The pension start date mu
 #Remove pension scheme page
 incomeFromPensions.removePensionScheme.title = Are you sure you want to remove {0}?
 incomeFromPensions.removePensionScheme.buttonText = Remove pension
+
+#Have you gone above your annual or lifetime allowance?
+lifetimeAllowance.aboveAnnualLifeTimeAllowance.title.individual = Have you gone above your annual or lifetime allowance?
+lifetimeAllowance.aboveAnnualLifeTimeAllowance.title.agent = Has your client gone above their annual or lifetime allowance?
+lifetimeAllowance.aboveAnnualLifeTimeAllowance.error.noEntry.individual = Select yes if you have gone above your lifetime allowance
+lifetimeAllowance.aboveAnnualLifeTimeAllowance.error.noEntry.agent = Select yes if your client has gone above their lifetime allowance
 
 #Pension Lump Sum Details
 lifetimeAllowance.pensionLumpSumDetails.title.individual = Your pension lump sum
