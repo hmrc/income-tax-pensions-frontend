@@ -1,0 +1,89 @@
+@*
+ * Copyright 2022 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.html.templates.Layout
+@import views.html.templates.helpers.SummaryList
+@import views.html.templates.helpers.Heading
+@import views.html.templates.helpers.Link
+@import controllers.pensions.routes.PensionsSummaryController
+@import controllers.pensions.incomeFromPensions.routes.UkPensionSchemePaymentsController
+@import controllers.pensions.incomeFromPensions.routes.UkPensionIncomeSummaryController
+@import utils.ViewUtils.summaryListRow
+@import models.pension.statebenefits.IncomeFromPensionsViewModel
+
+
+@this(
+    layout: Layout,
+    summaryList: SummaryList,
+    heading: Heading,
+    button: GovukButton,
+    link: Link)
+
+
+@(taxYear: Int, cya: IncomeFromPensionsViewModel)(implicit messages: Messages, appConfig: AppConfig, request: AuthorisationRequest[_])
+
+@headingForUse = @{messages("incomeFromPensions.title")}
+@contentHtml = {
+    <p class="govuk-body">@messages(s"incomeFromPensions.paragraph.${if(request.user.isAgent) "agent" else "individual"}")</p>
+}
+
+@schemeNames = {
+    @for(name <- cya.uKPensionIncomes.collect{case scheme => scheme.pensionSchemeName}){
+        <div class="form-group">@name</div>
+    }
+}
+
+@questionRow = @{
+    Some(summaryListRow(
+        HtmlContent(messages("common.incomeFromPensions.title")),
+        HtmlContent(
+            if(cya.uKPensionIncomesQuestion.contains(true)) messages("common.yes") else messages("common.no")
+        ),
+        actions = Seq((UkPensionSchemePaymentsController.show(taxYear), messages("common.change"), Some(messages(s"incomeFromPensions.pensionIncome.hidden.${if(request.user.isAgent) "agent" else "individual"}"))))
+    ))
+}
+
+@schemesRow = @{
+    if(cya.uKPensionIncomes.nonEmpty) {
+        Some(summaryListRow(
+            HtmlContent(messages("incomeFromPensions.pensionSchemes")),
+            HtmlContent(schemeNames),
+            actions = Seq((UkPensionIncomeSummaryController.show(taxYear), messages("common.change"), Some(messages(s"incomeFromPensions.pensionSchemes.hidden"))))
+        ))
+    } else None
+}
+
+@summaryRows = @{
+    (Nil :+ questionRow :+ schemesRow)
+}
+
+
+@layout(pageTitle = headingForUse, taxYear = Some(taxYear)) {
+    @heading(headingForUse, Some(messages("common.uKPensionIncome.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-2")
+    @contentHtml
+    @summaryList(summaryRows.flatten)
+    @button(Button(
+        attributes = Map("id" -> "continue"),
+        preventDoubleClick = true,
+        content = Text(messages("common.continue")),
+        classes = "govuk-button govuk-!-margin-top-2",
+        href = Some(PensionsSummaryController.show(taxYear).url)
+    ))
+}
+
+@{
+// $COVERAGE-OFF$
+}

@@ -135,3 +135,5 @@ POST        /:taxYear/annual-lifetime-allowances/above-annual-allowance         
 GET         /:taxYear/annual-lifetime-allowances/lump-sum-details                           controllers.pensions.lifetimeAllowance.PensionLumpSumDetailsController.show(taxYear: Int)
 POST        /:taxYear/annual-lifetime-allowances/lump-sum-details                           controllers.pensions.lifetimeAllowance.PensionLumpSumDetailsController.submit(taxYear: Int)
 
+GET         /:taxYear/pension-income/uk-pension-income/check-pension-income                 controllers.pensions.incomeFromPensions.UkPensionIncomeCYAController.show(taxYear: Int)
+POST        /:taxYear/pension-income/uk-pension-income/check-pension-income                 controllers.pensions.incomeFromPensions.UkPensionIncomeCYAController.submit(taxYear: Int)

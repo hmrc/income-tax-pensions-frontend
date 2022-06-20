@@ -51,8 +51,8 @@ object PensionsUserDataBuilder extends UnitTest {
   }
 
   def pensionsUserDataWithIncomeFromPensions(incomeFromPensionsViewModel: IncomeFromPensionsViewModel,
-                                           isPriorSubmission: Boolean = true): PensionsUserData = {
-    aPensionsUserData.copy(isPriorSubmission = isPriorSubmission,
+                                           isPriorSubmission: Boolean = true, taxYear: Int = taxYearEOY): PensionsUserData = {
+    aPensionsUserData.copy(taxYear = taxYear, isPriorSubmission = isPriorSubmission,
       pensions = aPensionsCYAModel.copy(incomeFromPensions = incomeFromPensionsViewModel)
     )
   }

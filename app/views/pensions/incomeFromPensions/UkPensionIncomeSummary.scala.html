@@ -32,7 +32,7 @@
 
 @(taxYear: Int, pensionIncomeList: Seq[UkPensionIncomeViewModel])(implicit messages: Messages, appConfig: AppConfig, request: AuthorisationRequest[_])
 
-@headingForUse = @{messages("pensions.ukPensionIncomeSummary.title")}
+@headingForUse = @{messages("common.incomeFromPensions.title")}
 @addAnotherLink() = {
     @if(pensionIncomeList.isEmpty){
         <p class="govuk-body">@link(PensionSchemeDetailsController.show(taxYear, None).url, "pensions.ukPensionIncomeSummary.addPensionIncomeLink", Some("add-pension-income-link"), fullStop = false)</p>
