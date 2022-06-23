@@ -28,7 +28,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.IncomeFromPensionsPages.{pensionAmountUrl, pensionSchemeDetailsUrl, ukPensionSchemePayments, ukPensionSchemeSummaryListUrl}
+import utils.PageUrls.IncomeFromPensionsPages.{pensionAmountUrl, pensionSchemeDetailsUrl, ukPensionIncomeCyaUrl, ukPensionSchemePayments, ukPensionSchemeSummaryListUrl}
 import utils.PageUrls.{fullUrl, pensionSummaryUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
@@ -263,7 +263,7 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
       }
     }
 
-    "redirect to Pension Summary page when there is no session data" which {
+    "redirect to Uk Pension Income CYA page when there is no session data" which {
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(isAgent = false)
@@ -273,7 +273,7 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
 
       "has an SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
+        result.header("location") shouldBe Some(ukPensionIncomeCyaUrl(taxYearEOY))
       }
     }
 
@@ -481,7 +481,7 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
     }
   }
 
-  "redirect to Pension Summary Page if there is no session data" which {
+  "redirect to Uk Pension Income CYA Page if there is no session data" which {
     lazy val form: Map[String, String] = pensionDetailsForm(validProviderName, validRef, validPensionId)
 
     lazy val result: WSResponse = {
@@ -493,8 +493,7 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
 
     "has an SEE_OTHER(303) status" in {
       result.status shouldBe SEE_OTHER
-      //TODO redirect to Income From Pensions CYA Page
-      result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
+      result.header("location") shouldBe Some(ukPensionIncomeCyaUrl(taxYearEOY))
     }
   }
 

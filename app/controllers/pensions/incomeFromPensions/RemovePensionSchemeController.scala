@@ -17,10 +17,11 @@
 package controllers.pensions.incomeFromPensions
 
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.incomeFromPensions.routes.UkPensionIncomeSummaryController
+import controllers.pensions.incomeFromPensions.routes.{UkPensionIncomeCYAController, UkPensionIncomeSummaryController}
 import controllers.pensions.routes.PensionsSummaryController
 import controllers.predicates.AuthorisedAction
 import controllers.predicates.TaxYearAction.taxYearAction
+
 import javax.inject.Inject
 import models.pension.statebenefits.UkPensionIncomeViewModel
 import play.api.i18n.I18nSupport
@@ -53,8 +54,7 @@ class RemovePensionSchemeController @Inject()(implicit val mcc: MessagesControll
             Future.successful(Redirect(UkPensionIncomeSummaryController.show(taxYear)))
         }
       case _ =>
-        //TODO redirect to Income from Pensions CYA page
-        Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
+        Future.successful(Redirect(UkPensionIncomeCYAController.show(taxYear)))
     }
   }
 
@@ -82,7 +82,7 @@ class RemovePensionSchemeController @Inject()(implicit val mcc: MessagesControll
             Future.successful(Redirect(UkPensionIncomeSummaryController.show(taxYear)))
         }
       case _ =>
-        Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
+        Future.successful(Redirect(UkPensionIncomeCYAController.show(taxYear)))
     }
   }
 

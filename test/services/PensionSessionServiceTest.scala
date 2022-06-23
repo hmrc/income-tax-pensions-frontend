@@ -16,6 +16,7 @@
 
 package services
 
+import builders.AllPensionsDataBuilder.anAllPensionDataEmpty
 import config._
 import models.mongo.{DataNotFound, DataNotUpdated, PensionsCYAModel, PensionsUserData}
 import models.pension.AllPensionsData
@@ -29,6 +30,10 @@ import utils.UnitTest
 import views.html.templates.{InternalServerErrorTemplate, NotFoundTemplate, ServiceUnavailableTemplate}
 import builders.PensionsCYAModelBuilder._
 import builders.EmploymentPensionsBuilder.anEmploymentPensions
+import builders.IncomeFromPensionsViewModelBuilder.anIncomeFromPensionEmptyViewModel
+import builders.PaymentsIntoPensionVewModelBuilder.aPaymentsIntoPensionsEmptyViewModel
+import builders.PensionAnnualAllowanceViewModelBuilder.{aPensionAnnualAllowanceEmptyViewModel, aPensionAnnualAllowanceViewModel}
+import forms.No
 
 import scala.concurrent.Future
 
@@ -311,6 +316,16 @@ class PensionSessionServiceTest extends UnitTest
 
       status(response) shouldBe SEE_OTHER
       redirectUrl(response) shouldBe "400"
+    }
+  }
+
+  "generateCyaFromPrior" should {
+    "generate a PensionsCYAModel from prior AllPensionsData" in {
+      mockCreateOrUpdate(pensionDataFull, user, Right())
+      val response = service.generateCyaFromPrior(anAllPensionDataEmpty)
+
+      response shouldBe aPensionsCYAGeneratedFromPriorEmpty
+
     }
   }
 }

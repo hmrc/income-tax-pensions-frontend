@@ -127,6 +127,8 @@ object PageUrls extends IntegrationTest {
       val addOn = if(pensionSchemeIndex.isDefined){s"?pensionSchemeIndex=${pensionSchemeIndex.get}"} else {""}
       s"$appUrl/$taxYear/pension-income/remove-pension-scheme" + addOn
     }
+
+    def ukPensionIncomeCyaUrl(taxYear: Int): String = s"$appUrl/$taxYear/pension-income/uk-pension-income/check-pension-income"
   }
 
   object PensionLifetimeAllowance {

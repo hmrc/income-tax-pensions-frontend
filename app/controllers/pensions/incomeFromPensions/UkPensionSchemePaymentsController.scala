@@ -31,6 +31,7 @@ import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.incomeFromPensions.UkPensionSchemePaymentsView
+import controllers.pensions.incomeFromPensions.routes.UkPensionIncomeCYAController
 
 import javax.inject.Inject
 import scala.concurrent.Future
@@ -57,8 +58,7 @@ class UkPensionSchemePaymentsController @Inject()(implicit val mcc: MessagesCont
             case _ => Future.successful(Ok(view(yesNoForm(request.user), taxYear)))
           }
         case _ =>
-          //TODO - redirect to CYA page once implemented
-          Future.successful(Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear)))
+          Future.successful(Redirect(UkPensionIncomeCYAController.show(taxYear)))
       }
     }
   }
@@ -82,8 +82,7 @@ class UkPensionSchemePaymentsController @Inject()(implicit val mcc: MessagesCont
                 if (yesNo) {
                   Redirect(PensionSchemeDetailsController.show(taxYear, None))
                 } else {
-                  //TODO redirect to Pension CYA page
-                  Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear))
+                  Redirect(UkPensionIncomeCYAController.show(taxYear))
                 }
               }
             case _ =>

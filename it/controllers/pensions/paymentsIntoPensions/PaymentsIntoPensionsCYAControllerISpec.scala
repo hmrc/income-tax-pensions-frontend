@@ -189,33 +189,6 @@ class PaymentsIntoPensionsCYAControllerISpec extends IntegrationTest with ViewHe
     UserScenario(isWelsh = true, isAgent = true, CommonExpectedCY, Some(ExpectedAgentCY))
   )
 
-  def cyaRowCheck(expectedText: String, expectedValue: String, changeLinkHref: String, changeLinkHiddenText: String, rowNumber: Int)
-                 (implicit document: () => Document): Unit = {
-    val keySelector = s"#main-content > div > div > dl > div:nth-child($rowNumber) > dt"
-    val valueSelector = s"#main-content > div > div > dl > div:nth-child($rowNumber) > dd.govuk-summary-list__value"
-    val changeLinkSelector = s"#main-content > div > div > dl > div:nth-child($rowNumber) > dd.govuk-summary-list__actions > a"
-    val cyaHiddenChangeLink = s"#main-content > div > div > dl > div:nth-child($rowNumber) > dd.govuk-summary-list__actions > a > span.govuk-visually-hidden"
-
-    s"row number $rowNumber is correct" which {
-
-      s"has the correct row name of '$expectedText'" in {
-        document().select(keySelector).text() shouldBe expectedText
-      }
-
-      s"has the correct row value of '$expectedValue'" in {
-        document().select(valueSelector).text() shouldBe expectedValue
-      }
-
-      s"the change link should go to '$changeLinkHref''" in {
-        document().select(changeLinkSelector).attr("href") shouldBe changeLinkHref
-      }
-
-      s"the change link should have hidden text '$changeLinkHiddenText''" in {
-        document().select(cyaHiddenChangeLink).text() shouldBe changeLinkHiddenText
-      }
-
-    }
-  }
 
   ".show" when {
 

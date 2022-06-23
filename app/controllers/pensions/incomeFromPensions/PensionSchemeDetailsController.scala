@@ -65,8 +65,7 @@ class PensionSchemeDetailsController @Inject()(implicit val mcc: MessagesControl
           Future.successful(Redirect(UkPensionIncomeSummaryController.show(taxYear)))
         }
       case None =>
-        //TODO redirect to Income from Pensions CYA page
-        Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
+        Future.successful(Redirect(UkPensionIncomeCYAController.show(taxYear)))
     }
   }
 
@@ -104,7 +103,7 @@ class PensionSchemeDetailsController @Inject()(implicit val mcc: MessagesControl
             } else {
               Future.successful(Redirect(UkPensionIncomeSummaryController.show(taxYear)))
             }
-          case None => Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
+          case None => Future.successful(Redirect(UkPensionIncomeCYAController.show(taxYear)))
         }
       })
   }

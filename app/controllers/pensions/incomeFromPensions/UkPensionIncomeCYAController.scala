@@ -14,51 +14,51 @@
  * limitations under the License.
  */
 
-package controllers.pensions.paymentsIntoPension
+package controllers.pensions.incomeFromPensions
 
 import config.{AppConfig, ErrorHandler}
+import controllers.pensions.incomeFromPensions.routes.{PensionSchemeStartDateController, UkPensionIncomeSummaryController}
+import controllers.pensions.routes.PensionsSummaryController
 import controllers.predicates.AuthorisedAction
 import controllers.predicates.TaxYearAction.taxYearAction
+import forms.{FormUtils, TupleAmountForm}
 import models.mongo.PensionsCYAModel
 import models.pension.AllPensionsData
-import models.redirects.ConditionalRedirect
+import models.pension.statebenefits.{IncomeFromPensionsViewModel, UkPensionIncomeViewModel}
+import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
-import services.RedirectService.{PaymentsIntoPensionsRedirects, redirectBasedOnCurrentAnswers}
+import services.RedirectService.redirectBasedOnCurrentAnswers
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.Clock
-import utils.PaymentsIntoPensionPages.CheckYourAnswersPage
-import views.html.pensions.paymentsIntoPensions.PaymentsIntoPensionsCYAView
+import utils.{Clock, SessionHelper}
+import views.html.pensions.incomeFromPensions.UkPensionIncomeCYAView
+import controllers.pensions.incomeFromPensions.routes.UkPensionSchemePaymentsController
 
 import javax.inject.Inject
 import scala.concurrent.Future
 
-class PaymentsIntoPensionsCYAController @Inject()(implicit val cc: MessagesControllerComponents,
-                                                  authAction: AuthorisedAction,
-                                                  appConfig: AppConfig,
-                                                  view: PaymentsIntoPensionsCYAView,
-                                                  pensionSessionService: PensionSessionService,
-                                                  errorHandler: ErrorHandler,
-                                                  clock: Clock
-                                                 ) extends FrontendController(cc) with I18nSupport {
+class UkPensionIncomeCYAController @Inject()(implicit val mcc: MessagesControllerComponents,
+                                             authAction: AuthorisedAction,
+                                             view: UkPensionIncomeCYAView,
+                                             appConfig: AppConfig,
+                                             pensionSessionService: PensionSessionService,
+                                             errorHandler: ErrorHandler,
+                                             clock: Clock) extends FrontendController(mcc) with I18nSupport with SessionHelper with FormUtils {
 
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     pensionSessionService.getAndHandle(taxYear, request.user) { (cya, prior) =>
-
       (cya, prior) match {
-        case (Some(_), _) =>
-          redirectBasedOnCurrentAnswers(taxYear, cya)(redirects(_, taxYear)) { data =>
-            Future.successful(Ok(view(taxYear, data.pensions.paymentsIntoPension)))
-          }
+        case (Some(cyaData), _) =>
+          Future.successful(Ok(view(taxYear, cyaData.pensions.incomeFromPensions)))
+
         case (None, Some(priorData)) =>
           val cyaModel = pensionSessionService.generateCyaFromPrior(priorData)
-          pensionSessionService.createOrUpdateSessionData(request.user,
-            cyaModel, taxYear, isPriorSubmission = false)(
+          pensionSessionService.createOrUpdateSessionData(request.user, cyaModel, taxYear, isPriorSubmission = false)(
             errorHandler.internalServerError())(
-            Ok(view(taxYear, cyaModel.paymentsIntoPension))
+            Ok(view(taxYear, cyaModel.incomeFromPensions))
           )
-        case _ => Future.successful(Redirect(controllers.pensions.paymentsIntoPension.routes.ReliefAtSourcePensionsController.show(taxYear)))
+        case _ => Future.successful(Redirect(UkPensionSchemePaymentsController.show(taxYear)))
       }
     }
   }
@@ -68,10 +68,8 @@ class PaymentsIntoPensionsCYAController @Inject()(implicit val cc: MessagesContr
       cya.fold(
         Future.successful(Redirect(appConfig.incomeTaxSubmissionOverviewUrl(taxYear)))
       ) { model =>
-
         if (comparePriorData(model.pensions, prior)) {
-          //        TODO - build submission model from cya data and submit to DES if cya data doesn't match prior data
-          //        val submissionModel = AllPensionsData(None, None, None)
+          //TODO - build submission model from cya data and submit to DES if cya data doesn't match prior data
           Future.successful(Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear)))
         } else {
           Future.successful(Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear)))
@@ -80,16 +78,11 @@ class PaymentsIntoPensionsCYAController @Inject()(implicit val cc: MessagesContr
     }
   }
 
-
   private def comparePriorData(cyaData: PensionsCYAModel, priorData: Option[AllPensionsData]): Boolean = {
     priorData match {
       case None => true
       case Some(prior) => !cyaData.equals(pensionSessionService.generateCyaFromPrior(prior))
     }
-  }
-
-  private def redirects(cya: PensionsCYAModel, taxYear: Int): Seq[ConditionalRedirect] = {
-    PaymentsIntoPensionsRedirects.journeyCheck(CheckYourAnswersPage, cya, taxYear)
   }
 
 }

@@ -28,7 +28,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.IncomeFromPensionsPages.{pensionAmountUrl, pensionStartDateUrl, ukPensionSchemeSummaryListUrl}
+import utils.PageUrls.IncomeFromPensionsPages.{pensionAmountUrl, pensionStartDateUrl, ukPensionIncomeCyaUrl, ukPensionSchemeSummaryListUrl}
 import utils.PageUrls.{fullUrl, pensionSummaryUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
@@ -318,8 +318,7 @@ class PensionAmountControllerISpec extends IntegrationTest with ViewHelpers with
       }
       "has an SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER
-        //todo - redirect to income from pensions cya page
-        result.header("location").contains(pensionSummaryUrl(taxYearEOY)) shouldBe true
+        result.header("location").contains(ukPensionIncomeCyaUrl(taxYearEOY)) shouldBe true
       }
     }
 

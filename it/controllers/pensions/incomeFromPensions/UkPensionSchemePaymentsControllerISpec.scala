@@ -29,7 +29,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.IncomeFromPensionsPages.{pensionSchemeDetailsUrl, ukPensionSchemePayments}
+import utils.PageUrls.IncomeFromPensionsPages.{pensionSchemeDetailsUrl, ukPensionIncomeCyaUrl, ukPensionSchemePayments}
 import utils.PageUrls.{fullUrl, overviewUrl, pensionSummaryUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
@@ -209,7 +209,7 @@ class UkPensionSchemePaymentsControllerISpec extends IntegrationTest with ViewHe
       }
     }
 
-    "redirect to the Pension Summary page if there is no session data" which {
+    "redirect to the Uk Pension Income CYA page if there is no session data" which {
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(isAgent = false)
@@ -219,7 +219,7 @@ class UkPensionSchemePaymentsControllerISpec extends IntegrationTest with ViewHe
 
       "has an SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location").contains(pensionSummaryUrl(taxYearEOY)) shouldBe true
+        result.header("location").contains(ukPensionIncomeCyaUrl(taxYearEOY)) shouldBe true
       }
 
     }
@@ -342,8 +342,7 @@ class UkPensionSchemePaymentsControllerISpec extends IntegrationTest with ViewHe
 
     "has a SEE_OTHER(303) status" in {
       result.status shouldBe SEE_OTHER
-      //TODO redirect to Pension CYA page
-      result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
+      result.header("location") shouldBe Some(ukPensionIncomeCyaUrl(taxYearEOY))
     }
 
     "updates uKPensionIncomesQuestion to Some(false) and wipe the sets the uk pensions list to Seq.empty" in {

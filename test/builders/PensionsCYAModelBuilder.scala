@@ -20,6 +20,7 @@ import builders.IncomeFromPensionsViewModelBuilder.{anIncomeFromPensionEmptyView
 import builders.PaymentsIntoPensionVewModelBuilder.{aPaymentsIntoPensionViewModel, aPaymentsIntoPensionsEmptyViewModel}
 import builders.PensionAnnualAllowanceViewModelBuilder.{aPensionAnnualAllowanceEmptyViewModel, aPensionAnnualAllowanceViewModel}
 import builders.PensionLifetimeAllowanceViewModelBuilder.{aPensionLifetimeAllowanceViewModel, aPensionLifetimeAllowancesEmptyViewModel}
+import forms.No
 import models.mongo.PensionsCYAModel
 import models.pension.charges.{PensionAnnualAllowancesViewModel, PensionLifetimeAllowancesViewModel}
 import models.pension.reliefs.PaymentsIntoPensionViewModel
@@ -40,6 +41,13 @@ object PensionsCYAModelBuilder {
     pensionLifetimeAllowances = aPensionLifetimeAllowancesEmptyViewModel,
     incomeFromPensions = anIncomeFromPensionEmptyViewModel
 
+  )
+
+  val aPensionsCYAGeneratedFromPriorEmpty:PensionsCYAModel = PensionsCYAModel(
+    paymentsIntoPension = aPaymentsIntoPensionsEmptyViewModel.copy(totalPaymentsIntoRASQuestion = Some(true)),
+    pensionsAnnualAllowances = aPensionAnnualAllowanceEmptyViewModel.copy(pensionProvidePaidAnnualAllowanceQuestion = Some(No.toString)),
+    pensionLifetimeAllowances = aPensionLifetimeAllowancesEmptyViewModel,
+    incomeFromPensions = anIncomeFromPensionEmptyViewModel.copy(uKPensionIncomesQuestion = Some(false))
   )
 
   def paymentsIntoPensionOnlyCYAModel(paymentsIntoPensionViewModel: PaymentsIntoPensionViewModel): PensionsCYAModel = {
