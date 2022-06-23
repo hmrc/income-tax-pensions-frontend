@@ -17,6 +17,7 @@
 package controllers.pensions.incomeFromPensions
 
 import config.AppConfig
+import controllers.pensions.incomeFromPensions.routes.UkPensionIncomeCYAController
 import controllers.predicates.AuthorisedAction
 import models.pension.statebenefits.UkPensionIncomeViewModel
 import play.api.i18n.I18nSupport
@@ -43,7 +44,7 @@ class UkPensionIncomeSummaryController @Inject()(implicit val cc: MessagesContro
       case Some(data) =>
         val incomeFromPensionList: Seq[UkPensionIncomeViewModel] = data.pensions.incomeFromPensions.uKPensionIncomes
         Future(Ok(ukPensionIncomeSummary(taxYear, incomeFromPensionList)))
-      case None => Future(Redirect(PensionsSummaryController.show(taxYear)))
+      case None => Future(Redirect(UkPensionIncomeCYAController.show(taxYear)))
     }
   }
 }

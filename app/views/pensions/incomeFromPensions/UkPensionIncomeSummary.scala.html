@@ -18,7 +18,7 @@
 @import views.html.templates.helpers.SummaryList
 @import views.html.templates.helpers.Heading
 @import views.html.templates.helpers.Link
-@import controllers.pensions.routes.PensionsSummaryController
+@import controllers.pensions.incomeFromPensions.routes.UkPensionIncomeCYAController
 @import controllers.pensions.incomeFromPensions.routes.PensionSchemeDetailsController
 @import models.pension.statebenefits.UkPensionIncomeViewModel
 
@@ -86,7 +86,7 @@
         preventDoubleClick = true,
         content = Text(messages("common.continue")),
         classes = "govuk-button govuk-!-margin-top-2",
-        href = Some(PensionsSummaryController.show(taxYear).url)
+        href = Some(UkPensionIncomeCYAController.show(taxYear).url)
     ))
 }
 @{

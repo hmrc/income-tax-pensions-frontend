@@ -26,7 +26,7 @@ import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import utils.PageUrls.{fullUrl, pensionSummaryUrl}
-import utils.PageUrls.IncomeFromPensionsPages.{removePensionSchemeUrl, ukPensionSchemeSummaryListUrl}
+import utils.PageUrls.IncomeFromPensionsPages.{removePensionSchemeUrl, ukPensionIncomeCyaUrl, ukPensionSchemeSummaryListUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 class RemovePensionSchemeControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
@@ -101,7 +101,7 @@ class RemovePensionSchemeControllerISpec extends IntegrationTest with ViewHelper
 
     "no data is returned" should {
 
-      "redirect to the Pensions Summary page" should {
+      "redirect to the UK Pension Income CYA page" should {
 
         lazy val result: WSResponse = {
           dropPensionsDB()
@@ -112,7 +112,7 @@ class RemovePensionSchemeControllerISpec extends IntegrationTest with ViewHelper
 
         s"has a SEE_OTHER ($SEE_OTHER) status" in {
           result.status shouldBe SEE_OTHER
-          result.header("location").contains(pensionSummaryUrl(taxYearEOY)) shouldBe true
+          result.header("location").contains(ukPensionIncomeCyaUrl(taxYearEOY)) shouldBe true
         }
       }
     }
@@ -200,7 +200,7 @@ class RemovePensionSchemeControllerISpec extends IntegrationTest with ViewHelper
 
     "no data is returned from submission backend" should {
 
-      "redirect to the pensions summary page" should {
+      "redirect to the Uk Pension Income CYA page" should {
 
         lazy val result: WSResponse = {
           dropPensionsDB()
@@ -211,7 +211,7 @@ class RemovePensionSchemeControllerISpec extends IntegrationTest with ViewHelper
 
         s"has a SEE_OTHER ($SEE_OTHER) status" in {
           result.status shouldBe SEE_OTHER
-          result.header("location").contains(pensionSummaryUrl(taxYearEOY)) shouldBe true
+          result.header("location").contains(ukPensionIncomeCyaUrl(taxYearEOY)) shouldBe true
         }
       }
     }

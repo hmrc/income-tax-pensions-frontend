@@ -209,7 +209,7 @@ class UkPensionSchemePaymentsControllerISpec extends IntegrationTest with ViewHe
       }
     }
 
-    "redirect to the Pension Summary page if there is no session data" which {
+    "redirect to the Uk Pension Income CYA page if there is no session data" which {
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(isAgent = false)
@@ -219,7 +219,7 @@ class UkPensionSchemePaymentsControllerISpec extends IntegrationTest with ViewHe
 
       "has an SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location").contains(pensionSummaryUrl(taxYearEOY)) shouldBe true
+        result.header("location").contains(ukPensionIncomeCyaUrl(taxYearEOY)) shouldBe true
       }
 
     }

@@ -58,8 +58,7 @@ class UkPensionSchemePaymentsController @Inject()(implicit val mcc: MessagesCont
             case _ => Future.successful(Ok(view(yesNoForm(request.user), taxYear)))
           }
         case _ =>
-          //TODO - redirect to CYA page once implemented
-          Future.successful(Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear)))
+          Future.successful(Redirect(UkPensionIncomeCYAController.show(taxYear)))
       }
     }
   }

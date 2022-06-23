@@ -59,7 +59,7 @@ class TaxPaidOnStatePensionLumpSumController @Inject()(implicit val cc: Messages
             case _ => Future.successful(Ok(view(yesNoForm(request.user), taxYear)))
           }
 
-        //TODO: redirect to the income from pensions CYA page
+        //TODO: redirect to the state pension CYA page
         case _ => Future.successful(Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear)))
       }
     }
@@ -95,7 +95,7 @@ class TaxPaidOnStatePensionLumpSumController @Inject()(implicit val cc: Messages
                 }
               }
 
-            //TODO: redirect to the income from pensions CYA page
+            //TODO: redirect to the state pension CYA page
             case _ => Future.successful(Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear)))
 
           }

@@ -17,7 +17,7 @@
 package controllers.pensions.incomeFromPensions
 
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.incomeFromPensions.routes.UkPensionIncomeSummaryController
+import controllers.pensions.incomeFromPensions.routes.{UkPensionIncomeCYAController, UkPensionIncomeSummaryController}
 import controllers.pensions.routes.PensionsSummaryController
 import controllers.predicates.AuthorisedAction
 import forms.PensionSchemeDateForm
@@ -63,8 +63,7 @@ class PensionSchemeStartDateController @Inject()(implicit val mcc: MessagesContr
             }
           case None => Future.successful(Redirect(UkPensionIncomeSummaryController.show(taxYear)))
         }
-      //TODO redirect to income from pensions CYA page
-      case _ => Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
+      case _ => Future.successful(Redirect(UkPensionIncomeCYAController.show(taxYear)))
     }
   }
 
@@ -97,8 +96,7 @@ class PensionSchemeStartDateController @Inject()(implicit val mcc: MessagesContr
             )
           case None => Future.successful(Redirect(UkPensionIncomeSummaryController.show(taxYear)))
         }
-      //TODO redirect to income from pensions CYA page
-      case _ => Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
+      case _ => Future.successful(Redirect(UkPensionIncomeCYAController.show(taxYear)))
     }
   }
 
