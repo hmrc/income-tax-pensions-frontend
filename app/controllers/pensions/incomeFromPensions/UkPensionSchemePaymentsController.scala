@@ -58,7 +58,7 @@ class UkPensionSchemePaymentsController @Inject()(implicit val mcc: MessagesCont
             case _ => Future.successful(Ok(view(yesNoForm(request.user), taxYear)))
           }
         case _ =>
-          Future.successful(Redirect(UkPensionIncomeCYAController.show(taxYear)))
+          Future.successful(Ok(view(yesNoForm(request.user), taxYear)))
       }
     }
   }
@@ -68,9 +68,9 @@ class UkPensionSchemePaymentsController @Inject()(implicit val mcc: MessagesCont
       yesNoForm(request.user).bindFromRequest().fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
         yesNo => {
-          pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
-            case Some(data) =>
-              val pensionsCYAModel: PensionsCYAModel = data.pensions
+          pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) { optData =>
+
+              val pensionsCYAModel: PensionsCYAModel = optData.map(_.pensions).getOrElse(PensionsCYAModel.emptyModels)
               val viewModel: IncomeFromPensionsViewModel = pensionsCYAModel.incomeFromPensions
               val updatedCyaModel: PensionsCYAModel = {
                 pensionsCYAModel.copy(
@@ -78,16 +78,13 @@ class UkPensionSchemePaymentsController @Inject()(implicit val mcc: MessagesCont
                     uKPensionIncomes = if (yesNo) viewModel.uKPensionIncomes else Seq.empty))
               }
               pensionSessionService.createOrUpdateSessionData(request.user,
-                updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
+                updatedCyaModel, taxYear, optData.exists(_.isPriorSubmission))(errorHandler.internalServerError()) {
                 if (yesNo) {
                   Redirect(PensionSchemeDetailsController.show(taxYear, None))
                 } else {
                   Redirect(UkPensionIncomeCYAController.show(taxYear))
                 }
               }
-            case _ =>
-              //TODO redirect to Pension CYA page
-              Future.successful(Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear)))
           }
         }
       )

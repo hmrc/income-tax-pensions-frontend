@@ -16,16 +16,15 @@
 
 package utils
 
+import builders.EmploymentPensionsBuilder.anEmploymentPensions
 import builders.IncomeFromPensionsViewModelBuilder.anIncomeFromPensionsViewModel
 import builders.PensionLifetimeAllowanceViewModelBuilder.aPensionLifetimeAllowanceViewModel
-import builders.EmploymentPensionsBuilder.anEmploymentPensions
+import builders.UnauthorisedPaymentsViewModelBuilder.anUnauthorisedPaymentsViewModel
 import models.mongo.{PensionsCYAModel, PensionsUserData}
 import models.pension.AllPensionsData
 import models.pension.charges._
 import models.pension.reliefs.{PaymentsIntoPensionViewModel, PensionReliefs, Reliefs}
 import models.pension.statebenefits.{StateBenefit, StateBenefits, StateBenefitsModel}
-import utils.PensionUserDataStub.pensionsAnnualAllowancesViewModel
-import utils.IntegrationTest
 
 object PensionDataStubs {
 
@@ -256,8 +255,8 @@ object PensionUserDataStub extends IntegrationTest {
                        nino: String = "nino",
                        taxyear: Int = taxYear,
                        isPriorSubmission: Boolean = true,
-                       cya: PensionsCYAModel = (PensionsCYAModel(paymentsIntoPensionViewModel, pensionsAnnualAllowancesViewModel,
-                         aPensionLifetimeAllowanceViewModel, anIncomeFromPensionsViewModel))
+                       cya: PensionsCYAModel = PensionsCYAModel(paymentsIntoPensionViewModel, pensionsAnnualAllowancesViewModel,
+                         aPensionLifetimeAllowanceViewModel, anIncomeFromPensionsViewModel, anUnauthorisedPaymentsViewModel)
                      ): PensionsUserData = {
     PensionsUserData(
       sessionId = sessionId,

@@ -23,7 +23,7 @@ import forms.{No, Yes}
 import models.User
 import models.mongo.{PensionsCYAModel, PensionsUserData}
 import models.pension.AllPensionsData
-import models.pension.charges.{PensionAnnualAllowancesViewModel, PensionLifetimeAllowancesViewModel}
+import models.pension.charges.{PensionAnnualAllowancesViewModel, PensionLifetimeAllowancesViewModel, UnauthorisedPaymentsViewModel}
 import models.pension.reliefs.PaymentsIntoPensionViewModel
 import models.pension.statebenefits.{IncomeFromPensionsViewModel, StateBenefit, StateBenefitViewModel, UkPensionIncomeViewModel}
 import org.joda.time.DateTimeZone
@@ -168,8 +168,31 @@ class PensionSessionService @Inject()(pensionUserDataRepository: PensionsUserDat
         //TODO: set the question below based on the list from backend
         uKPensionIncomesQuestion = Some(getUkPensionIncome(prior).nonEmpty),
         uKPensionIncomes = getUkPensionIncome(prior)
+      ),
+
+      unauthorisedPayments = UnauthorisedPaymentsViewModel(
+        unauthorisedPaymentsQuestion = getUnauthorisedPaymentsQuestion(prior),
+        surchargeQuestion = prior.pensionCharges.map(_.pensionSchemeUnauthorisedPayments.flatMap(_.surcharge).isDefined),
+        noSurchargeQuestion = prior.pensionCharges.map(_.pensionSchemeUnauthorisedPayments.flatMap(_.noSurcharge).isDefined),
+        surchargeAmount = prior.pensionCharges.flatMap(_.pensionSchemeUnauthorisedPayments.flatMap(_.surcharge.map(_.amount))),
+        surchargeTaxAmountQuestion = prior.pensionCharges.map(_.pensionSchemeUnauthorisedPayments.flatMap(_.surcharge.map(_.foreignTaxPaid)).isDefined),
+        surchargeTaxAmount = prior.pensionCharges.flatMap(_.pensionSchemeUnauthorisedPayments.flatMap(_.surcharge.map(_.foreignTaxPaid))),
+        noSurchargeAmount = prior.pensionCharges.flatMap(_.pensionSchemeUnauthorisedPayments.flatMap(_.noSurcharge.map(_.amount))),
+        noSurchargeTaxAmountQuestion = prior.pensionCharges.map(_.pensionSchemeUnauthorisedPayments.map(_.noSurcharge.map(_.foreignTaxPaid)).isDefined),
+        noSurchargeTaxAmount = prior.pensionCharges.flatMap(_.pensionSchemeUnauthorisedPayments.flatMap(_.noSurcharge.map(_.foreignTaxPaid))),
+        ukPensionSchemesQuestion = prior.pensionCharges.map(_.pensionSchemeUnauthorisedPayments.map(_.pensionSchemeTaxReference).isDefined),
+        pensionSchemeTaxReference = prior.pensionCharges.flatMap(_.pensionSchemeUnauthorisedPayments.map(_.pensionSchemeTaxReference))
       )
     )
+  }
+
+  private def getUnauthorisedPaymentsQuestion(prior: AllPensionsData): Option[Boolean] = {
+    if(prior.pensionCharges.flatMap(_.pensionSchemeUnauthorisedPayments.flatMap(_.surcharge)).isDefined ||
+      prior.pensionCharges.flatMap(_.pensionSchemeUnauthorisedPayments.flatMap(_.noSurcharge)).isDefined) {
+      Some(true)
+    } else {
+      None
+    }
   }
 
   private def getStatePensionModel(statePension: Option[StateBenefit]): Option[StateBenefitViewModel] = {

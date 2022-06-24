@@ -206,10 +206,11 @@ class UkPensionSchemePaymentsControllerISpec extends IntegrationTest with ViewHe
           formPostLinkCheck(ukPensionSchemePayments(taxYearEOY), formSelector)
           welshToggleCheck(user.isWelsh)
         }
+
       }
     }
 
-    "redirect to the Uk Pension Income CYA page if there is no session data" which {
+    "render the page if there is no session data" which {
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(isAgent = false)
@@ -218,10 +219,8 @@ class UkPensionSchemePaymentsControllerISpec extends IntegrationTest with ViewHe
       }
 
       "has an SEE_OTHER status" in {
-        result.status shouldBe SEE_OTHER
-        result.header("location").contains(ukPensionIncomeCyaUrl(taxYearEOY)) shouldBe true
+        result.status shouldBe OK
       }
-
     }
 
     "Redirect user to the pension summary page when in year" which {
@@ -239,7 +238,6 @@ class UkPensionSchemePaymentsControllerISpec extends IntegrationTest with ViewHe
         result.header("location").contains(overviewUrl(taxYear)) shouldBe true
       }
     }
-
   }
 
   ".submit" should {
@@ -286,7 +284,6 @@ class UkPensionSchemePaymentsControllerISpec extends IntegrationTest with ViewHe
       }
     }
 
-
     "redirect to Pension Scheme details page when user selects 'yes' and not a prior submission" which {
       lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.yes)
       lazy val result: WSResponse = {
@@ -308,23 +305,6 @@ class UkPensionSchemePaymentsControllerISpec extends IntegrationTest with ViewHe
         cyaModel.pensions.incomeFromPensions.statePension.flatMap(_.amountPaidQuestion) shouldBe Some(true)
       }
     }
-  }
-
-  "redirect to CYA page if there is no session data" which {
-    lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.yes)
-    lazy val result: WSResponse = {
-      dropPensionsDB()
-      authoriseAgentOrIndividual(isAgent = false)
-      urlPost(fullUrl(ukPensionSchemePayments(taxYearEOY)), body = form, follow = false,
-        headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
-    }
-
-    "has an SEE_OTHER status" in {
-      result.status shouldBe SEE_OTHER
-      // TODO redirect to CYA Page
-      result.header("location").contains(pensionSummaryUrl(taxYearEOY)) shouldBe true
-    }
-
   }
 
   "redirect to Pension CYA page when user selects 'no'" which {
