@@ -553,7 +553,7 @@ lifetimeAllowance.pensionLumpSumDetails.taxPaid.error.incorrectFormat = Enter th
 lifetimeAllowance.pensionLumpSumDetails.taxPaid.error.overMaximum = The amount of lifetime allowance tax must be less than 100,000,000,000
 
 #Surcharge Amount
-unauthorisedPayments.surchargeAmount.title = Amount that resulted in a surcharge  
+unauthorisedPayments.surchargeAmount.title = Amount that resulted in a surcharge
 unauthorisedPayments.surchargeAmount.giveTotal.individual = Give a total of unauthorised payments that resulted in surcharges from all your pension schemes.
 unauthorisedPayments.surchargeAmount.giveTotal.agent = Give a total of unauthorised payments that resulted in surcharges from all your client’s pension schemes.
 unauthorisedPayments.surchargeAmount.tellUsAbout = You can tell us about unauthorised payments that did not result in a surcharge later.
