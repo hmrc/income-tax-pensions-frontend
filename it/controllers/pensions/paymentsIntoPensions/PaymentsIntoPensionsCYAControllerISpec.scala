@@ -26,6 +26,7 @@ import builders.PensionSavingTaxChargesBuilder.anPensionSavngTaxCharges
 import builders.PensionsCYAModelBuilder.{aPensionsCYAModel, paymentsIntoPensionOnlyCYAModel}
 import builders.PensionsUserDataBuilder.aPensionsUserData
 import builders.ReliefsBuilder.anReliefs
+import builders.UnauthorisedPaymentsViewModelBuilder.anUnauthorisedPaymentsViewModel
 import builders.UserBuilder.aUserRequest
 import forms.Yes
 import models.IncomeTaxUserData
@@ -404,7 +405,8 @@ class PaymentsIntoPensionsCYAControllerISpec extends IntegrationTest with ViewHe
           insertCyaData(aPensionsUserData.copy(pensions = aPensionsCYAModel.copy
           (paymentsIntoPension = unchangedModel, pensionsAnnualAllowances = unchangedAllowances,
             pensionLifetimeAllowances = aPensionLifetimeAllowanceViewModel,
-            incomeFromPensions = anIncomeFromPensionsViewModel), taxYear = taxYear), aUserRequest)
+            incomeFromPensions = anIncomeFromPensionsViewModel,
+            unauthorisedPayments = anUnauthorisedPaymentsViewModel) ,taxYear = taxYear), aUserRequest)
           authoriseAgentOrIndividual(isAgent = false)
           urlPost(url, form, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
         }
