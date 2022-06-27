@@ -123,8 +123,7 @@ class UkPensionIncomeSummaryControllerISpec extends IntegrationTest with BeforeA
           linkCheck(s"$remove $remove $pensionName1", removeLinkSelector(1), s"${removePensionSchemeUrl(taxYearEOY, Some(0))}")
           linkCheck(s"$remove $remove $pensionName2", removeLinkSelector(2), s"${removePensionSchemeUrl(taxYearEOY, Some(1))}")
           linkCheck(expectedAddAnotherText, addAnotherLinkSelector, pensionSchemeDetailsUrl(taxYearEOY))
-          //TODO button href to go to income from pensions CYA page
-          buttonCheck(expectedButtonText, continueButtonSelector, Some(pensionSummaryUrl(taxYearEOY)))
+          buttonCheck(expectedButtonText, continueButtonSelector, Some(ukPensionIncomeCyaUrl(taxYearEOY)))
           welshToggleCheck(user.isWelsh)
         }
 
@@ -150,8 +149,7 @@ class UkPensionIncomeSummaryControllerISpec extends IntegrationTest with BeforeA
           captionCheck(expectedCaption(taxYearEOY))
           elementNotOnPageCheck(summaryListTableSelector)
           linkCheck(expectedAddPensionSchemeText, addLinkSelector, pensionSchemeDetailsUrl(taxYearEOY))
-          //TODO button href to go to income from pensions CYA page
-          buttonCheck(expectedButtonText, continueButtonSelector, Some(pensionSummaryUrl(taxYearEOY)))
+          buttonCheck(expectedButtonText, continueButtonSelector, Some(ukPensionIncomeCyaUrl(taxYearEOY)))
           welshToggleCheck(user.isWelsh)
         }
 
@@ -168,8 +166,7 @@ class UkPensionIncomeSummaryControllerISpec extends IntegrationTest with BeforeA
 
       "has an SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER
-        //TODO redirect to income from pensions cya page
-        result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
+        result.header("location") shouldBe Some(ukPensionIncomeCyaUrl(taxYearEOY))
       }
     }
   }

@@ -28,7 +28,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.IncomeFromPensionsPages.{pensionStartDateUrl, ukPensionSchemeSummaryListUrl}
+import utils.PageUrls.IncomeFromPensionsPages.{pensionStartDateUrl, ukPensionIncomeCyaUrl, ukPensionSchemeSummaryListUrl}
 import utils.PageUrls.{fullUrl, pensionSummaryUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
@@ -248,7 +248,7 @@ class PensionSchemeStartDateControllerISpec extends IntegrationTest with ViewHel
       }
     }
 
-    "redirect to Pension Summary page when there is no session data" which {
+    "redirect to Uk Pension Income CYA page when there is no session data" which {
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(isAgent = false)
@@ -258,8 +258,7 @@ class PensionSchemeStartDateControllerISpec extends IntegrationTest with ViewHel
 
       "has an SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        //TODO redirect to Income From Pensions CYA Page
-        result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
+        result.header("location") shouldBe Some(ukPensionIncomeCyaUrl(taxYearEOY))
       }
     }
 
@@ -634,7 +633,7 @@ class PensionSchemeStartDateControllerISpec extends IntegrationTest with ViewHel
 
     }
 
-    "redirect to Pension Summary page when there is no session data" which {
+    "redirect to Uk Pension Income CYA page when there is no session data" which {
       lazy val form = startDateForm(validDay, validMonth, validYear)
 
       lazy val result: WSResponse = {
@@ -646,7 +645,7 @@ class PensionSchemeStartDateControllerISpec extends IntegrationTest with ViewHel
 
       "has an SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
+        result.header("location") shouldBe Some(ukPensionIncomeCyaUrl(taxYearEOY))
       }
     }
   }

@@ -31,6 +31,7 @@ common.paymentsIntoPensions.caption = Payments into pensions for 6 April {0} to 
 common.dividends.incomeFromPensions.caption = Dividends for 6 April {0} to 5 April {1}
 common.pensionAnnualAllowance.caption = Pension annual allowance for 6 April {0} to 5 April {1}
 common.incomeFromPensions.caption = Income from pensions for 6 April {0} to 5 April {1}
+common.uKPensionIncome.caption = UK pension income for 6 April {0} to 5 April {1}
 common.lifetimeAllowance.caption = Annual and lifetime allowances for 6 April {0} to 5 April {1}
 common.unauthorisedPayments.caption = Unauthorised payments from pensions for 6 April {0} to 5 April {1}
 common.return.overview.buttonText = Return to overview
@@ -376,6 +377,8 @@ annualAllowance.addPstrLink = Add a PSTR
 
 #################       INCOME FROM PENSIONS        ########################################
 
+common.incomeFromPensions.title = UK pension income
+
 pensions.incomeFromPensionsDetails.whereToFindInformation.title = Where to find this information
 pensions.incomeFromPensionsDetails.FindInformation = You can find this information in:
 pensions.incomeFromPensionsDetails.bullet.yourP60.individual = your P60
@@ -464,7 +467,6 @@ incomeFromPensions.pensionSchemeDetails.pid.error.overCharLimit = The pension id
 incomeFromPensions.pensionSchemeDetails.pid.error.incorrectFormat = The pension identification (PID) must only include numbers 0 to 9, letters a to z, hyphens, spaces, apostrophes, commas, full stops, round brackets, and the special characters /=!"%&*;<>+:\?
 
 #Uk Pension Income Summary Page
-pensions.ukPensionIncomeSummary.title = UK pension income
 pensions.ukPensionIncomeSummary.addAnotherPensionIncomeLink = Add another pension scheme
 pensions.ukPensionIncomeSummary.addPensionIncomeLink = Add a pension scheme
 
@@ -504,6 +506,15 @@ incomeFromPensions.pensionStartDate.error.tooLongAgo = The pension start date mu
 #Remove pension scheme page
 incomeFromPensions.removePensionScheme.title = Are you sure you want to remove {0}?
 incomeFromPensions.removePensionScheme.buttonText = Remove pension
+
+#Uk Pension Income CYA page
+incomeFromPensions.title = Check income from pensions
+incomeFromPensions.paragraph.individual = Your income from pensions is based on the information we already hold about you.
+incomeFromPensions.paragraph.agent = Your client’s income from pensions is based on the information we already hold about them.
+incomeFromPensions.pensionSchemes = UK pension schemes
+incomeFromPensions.pensionIncome.hidden.individual = Change whether you got income from UK pensions
+incomeFromPensions.pensionIncome.hidden.agent = Change whether your client got income from UK pensions
+incomeFromPensions.pensionSchemes.hidden = Change UK pension scheme details
 
 #Have you gone above your annual or lifetime allowance?
 lifetimeAllowance.aboveAnnualLifeTimeAllowance.title.individual = Have you gone above your annual or lifetime allowance?

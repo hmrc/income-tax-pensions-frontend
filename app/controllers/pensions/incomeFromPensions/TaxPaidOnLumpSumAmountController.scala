@@ -65,7 +65,7 @@ class TaxPaidOnLumpSumAmountController @Inject()(implicit val mcc: MessagesContr
             Future.successful(Redirect(TaxPaidOnStatePensionLumpSumController.show(taxYear)))
           }
         case _ =>
-          //TODO redirect to the income from pensions CYA page
+          //TODO redirect to the state pension CYA page
           Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
       }
     }
@@ -100,7 +100,7 @@ class TaxPaidOnLumpSumAmountController @Inject()(implicit val mcc: MessagesContr
             }
           )
         case _ =>
-          //TODO redirect to the income from pensions CYA page
+          //TODO redirect to the state pension CYA page
           Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
       }
     }

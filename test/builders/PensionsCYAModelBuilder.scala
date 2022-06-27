@@ -20,8 +20,10 @@ import builders.IncomeFromPensionsViewModelBuilder.{anIncomeFromPensionEmptyView
 import builders.PaymentsIntoPensionVewModelBuilder.{aPaymentsIntoPensionViewModel, aPaymentsIntoPensionsEmptyViewModel}
 import builders.PensionAnnualAllowanceViewModelBuilder.{aPensionAnnualAllowanceEmptyViewModel, aPensionAnnualAllowanceViewModel}
 import builders.PensionLifetimeAllowanceViewModelBuilder.{aPensionLifetimeAllowanceViewModel, aPensionLifetimeAllowancesEmptyViewModel}
+import forms.No
+import builders.UnauthorisedPaymentsViewModelBuilder.{anUnauthorisedPaymentsEmptyViewModel, anUnauthorisedPaymentsViewModel}
 import models.mongo.PensionsCYAModel
-import models.pension.charges.{PensionAnnualAllowancesViewModel, PensionLifetimeAllowancesViewModel}
+import models.pension.charges.{PensionAnnualAllowancesViewModel, PensionLifetimeAllowancesViewModel, UnauthorisedPaymentsViewModel}
 import models.pension.reliefs.PaymentsIntoPensionViewModel
 import models.pension.statebenefits.IncomeFromPensionsViewModel
 
@@ -31,20 +33,30 @@ object PensionsCYAModelBuilder {
     paymentsIntoPension = aPaymentsIntoPensionViewModel,
     pensionsAnnualAllowances = aPensionAnnualAllowanceViewModel,
     pensionLifetimeAllowances = aPensionLifetimeAllowanceViewModel,
-    incomeFromPensions = anIncomeFromPensionsViewModel
+    incomeFromPensions = anIncomeFromPensionsViewModel,
+    unauthorisedPayments = anUnauthorisedPaymentsViewModel
   )
 
   val aPensionsCYAEmptyModel: PensionsCYAModel = PensionsCYAModel(
     paymentsIntoPension = aPaymentsIntoPensionsEmptyViewModel,
     pensionsAnnualAllowances = aPensionAnnualAllowanceEmptyViewModel,
     pensionLifetimeAllowances = aPensionLifetimeAllowancesEmptyViewModel,
-    incomeFromPensions = anIncomeFromPensionEmptyViewModel
+    incomeFromPensions = anIncomeFromPensionEmptyViewModel,
+    unauthorisedPayments = anUnauthorisedPaymentsEmptyViewModel
 
+  )
+
+  val aPensionsCYAGeneratedFromPriorEmpty:PensionsCYAModel = PensionsCYAModel(
+    paymentsIntoPension = aPaymentsIntoPensionsEmptyViewModel.copy(totalPaymentsIntoRASQuestion = Some(true)),
+    pensionsAnnualAllowances = aPensionAnnualAllowanceEmptyViewModel.copy(pensionProvidePaidAnnualAllowanceQuestion = Some(No.toString)),
+    pensionLifetimeAllowances = aPensionLifetimeAllowancesEmptyViewModel,
+    incomeFromPensions = anIncomeFromPensionEmptyViewModel.copy(uKPensionIncomesQuestion = Some(false)),
+    unauthorisedPayments = anUnauthorisedPaymentsEmptyViewModel
   )
 
   def paymentsIntoPensionOnlyCYAModel(paymentsIntoPensionViewModel: PaymentsIntoPensionViewModel): PensionsCYAModel = {
     PensionsCYAModel(paymentsIntoPensionViewModel, PensionAnnualAllowancesViewModel(),
-      PensionLifetimeAllowancesViewModel(), IncomeFromPensionsViewModel())
+      PensionLifetimeAllowancesViewModel(), IncomeFromPensionsViewModel(), UnauthorisedPaymentsViewModel())
   }
 
 }

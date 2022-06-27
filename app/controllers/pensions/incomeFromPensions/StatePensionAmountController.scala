@@ -103,7 +103,7 @@ class StatePensionAmountController @Inject()(implicit val mcc: MessagesControlle
             })
 
         case _ =>
-          // TODO: redirect to the income from pensions CYA page
+          // TODO: redirect to the state pension CYA page
           Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
       }
 

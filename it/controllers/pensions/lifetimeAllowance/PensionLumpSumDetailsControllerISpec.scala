@@ -27,7 +27,6 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.IncomeFromPensionsPages.pensionAmountUrl
 import utils.PageUrls.PensionLifetimeAllowance.pensionLumpSumDetails
 import utils.PageUrls.{fullUrl, pensionSummaryUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
@@ -39,7 +38,6 @@ class PensionLumpSumDetailsControllerISpec extends IntegrationTest with ViewHelp
   private val poundPrefixText = "£"
   private val amount1InputName = "amount-1"
   private val amount2InputName = "amount-2"
-  private val index = 0
   private val amountInvalidFormat = "invalid"
   private val amountEmpty = ""
   private val amountOverMaximum = "100,000,000,000"
@@ -268,13 +266,13 @@ class PensionLumpSumDetailsControllerISpec extends IntegrationTest with ViewHelp
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(isAgent = false)
-        urlGet(fullUrl(pensionAmountUrl(taxYearEOY, index)), follow = false,
+        urlGet(fullUrl(pensionLumpSumDetails(taxYearEOY)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
       "has an SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER
         //TODO: - Redirect to Annual Lifetime allowances cya page
-        result.header("location").contains(pensionSummaryUrl(taxYearEOY)) shouldBe true
+        result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
       }
     }
   }

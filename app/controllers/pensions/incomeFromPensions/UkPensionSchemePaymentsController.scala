@@ -31,6 +31,7 @@ import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.incomeFromPensions.UkPensionSchemePaymentsView
+import controllers.pensions.incomeFromPensions.routes.UkPensionIncomeCYAController
 
 import javax.inject.Inject
 import scala.concurrent.Future
@@ -57,8 +58,7 @@ class UkPensionSchemePaymentsController @Inject()(implicit val mcc: MessagesCont
             case _ => Future.successful(Ok(view(yesNoForm(request.user), taxYear)))
           }
         case _ =>
-          //TODO - redirect to CYA page once implemented
-          Future.successful(Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear)))
+          Future.successful(Ok(view(yesNoForm(request.user), taxYear)))
       }
     }
   }
@@ -68,9 +68,9 @@ class UkPensionSchemePaymentsController @Inject()(implicit val mcc: MessagesCont
       yesNoForm(request.user).bindFromRequest().fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
         yesNo => {
-          pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
-            case Some(data) =>
-              val pensionsCYAModel: PensionsCYAModel = data.pensions
+          pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) { optData =>
+
+              val pensionsCYAModel: PensionsCYAModel = optData.map(_.pensions).getOrElse(PensionsCYAModel.emptyModels)
               val viewModel: IncomeFromPensionsViewModel = pensionsCYAModel.incomeFromPensions
               val updatedCyaModel: PensionsCYAModel = {
                 pensionsCYAModel.copy(
@@ -78,17 +78,13 @@ class UkPensionSchemePaymentsController @Inject()(implicit val mcc: MessagesCont
                     uKPensionIncomes = if (yesNo) viewModel.uKPensionIncomes else Seq.empty))
               }
               pensionSessionService.createOrUpdateSessionData(request.user,
-                updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
+                updatedCyaModel, taxYear, optData.exists(_.isPriorSubmission))(errorHandler.internalServerError()) {
                 if (yesNo) {
                   Redirect(PensionSchemeDetailsController.show(taxYear, None))
                 } else {
-                  //TODO redirect to Pension CYA page
-                  Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear))
+                  Redirect(UkPensionIncomeCYAController.show(taxYear))
                 }
               }
-            case _ =>
-              //TODO redirect to Pension CYA page
-              Future.successful(Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear)))
           }
         }
       )
