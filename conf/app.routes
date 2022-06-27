@@ -135,3 +135,9 @@ POST        /:taxYear/annual-lifetime-allowances/above-annual-allowance         
 GET         /:taxYear/annual-lifetime-allowances/lump-sum-details                           controllers.pensions.lifetimeAllowance.PensionLumpSumDetailsController.show(taxYear: Int)
 POST        /:taxYear/annual-lifetime-allowances/lump-sum-details                           controllers.pensions.lifetimeAllowance.PensionLumpSumDetailsController.submit(taxYear: Int)
 
+
+###########################     Unauthorised Payments Pages     ####################################
+
+GET         /:taxYear/unauthorised-payments-from-pensions/amount-surcharged        controllers.pensions.unauthorisedPayments.SurchargeAmountController.show(taxYear: Int)
+POST        /:taxYear/unauthorised-payments-from-pensions/amount-surcharged        controllers.pensions.unauthorisedPayments.SurchargeAmountController.submit(taxYear: Int)
+
