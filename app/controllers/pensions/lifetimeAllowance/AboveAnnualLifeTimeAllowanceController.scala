@@ -18,8 +18,7 @@ package controllers.pensions.lifetimeAllowance
 
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.routes._
-import controllers.predicates.TaxYearAction.taxYearAction
-import controllers.predicates.{AuthorisedAction, InYearAction}
+import controllers.predicates.AuthorisedAction
 import forms.YesNoForm
 import models.User
 import models.mongo.PensionsCYAModel
@@ -40,7 +39,6 @@ class AboveAnnualLifeTimeAllowanceController @Inject()(implicit val cc: Messages
                                                        view: AboveAnnualLifeTimeAllowanceView,
                                                        appConfig: AppConfig,
                                                        pensionSessionService: PensionSessionService,
-                                                       inYearAction: InYearAction,
                                                        errorHandler: ErrorHandler,
                                                        clock: Clock) extends FrontendController(cc) with I18nSupport {
 
