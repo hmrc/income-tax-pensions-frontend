@@ -16,12 +16,13 @@
 
 package controllers.pensions.paymentsIntoPensions
 
-import builders.IncomeFromPensionsViewModelBuilder.anIncomeFromPensionEmptyViewModel
+import builders.IncomeFromPensionsViewModelBuilder.{anIncomeFromPensionEmptyViewModel, anIncomeFromPensionsViewModel}
 import builders.PensionAnnualAllowanceViewModelBuilder.aPensionAnnualAllowanceEmptyViewModel
 import builders.PensionLifetimeAllowanceViewModelBuilder.aPensionLifetimeAllowancesEmptyViewModel
 import builders.PensionsCYAModelBuilder.aPensionsCYAEmptyModel
 import builders.PensionsUserDataBuilder
 import builders.PensionsUserDataBuilder.aPensionsUserData
+import builders.UnauthorisedPaymentsViewModelBuilder.anUnauthorisedPaymentsViewModel
 import builders.UserBuilder.aUserRequest
 import forms.YesNoForm
 import models.mongo.PensionsCYAModel
@@ -47,7 +48,7 @@ class TotalPaymentsIntoRASControllerISpec extends IntegrationTest with BeforeAnd
   private def pensionsUsersData(paymentsIntoPensionViewModel: PaymentsIntoPensionViewModel) = {
     PensionsUserDataBuilder.aPensionsUserData.copy(
       pensions = PensionsCYAModel(paymentsIntoPensionViewModel, aPensionAnnualAllowanceEmptyViewModel,
-        aPensionLifetimeAllowancesEmptyViewModel, anIncomeFromPensionEmptyViewModel)
+        aPensionLifetimeAllowancesEmptyViewModel, anIncomeFromPensionEmptyViewModel, anUnauthorisedPaymentsViewModel)
     )
   }
 

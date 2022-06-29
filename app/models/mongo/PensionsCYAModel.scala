@@ -24,19 +24,21 @@ import play.api.libs.json.{Json, OFormat}
 case class PensionsCYAModel(paymentsIntoPension: PaymentsIntoPensionViewModel,
                             pensionsAnnualAllowances: PensionAnnualAllowancesViewModel,
                             pensionLifetimeAllowances: PensionLifetimeAllowancesViewModel,
-                            incomeFromPensions: IncomeFromPensionsViewModel) {
+                            incomeFromPensions: IncomeFromPensionsViewModel,
+                            unauthorisedPayments: UnauthorisedPaymentsViewModel) {
 }
 
 object PensionsCYAModel {
   implicit val format: OFormat[PensionsCYAModel] = Json.format[PensionsCYAModel]
   def emptyModels: PensionsCYAModel = PensionsCYAModel(PaymentsIntoPensionViewModel(),
-    PensionAnnualAllowancesViewModel(), PensionLifetimeAllowancesViewModel(), IncomeFromPensionsViewModel())
+    PensionAnnualAllowancesViewModel(), PensionLifetimeAllowancesViewModel(), IncomeFromPensionsViewModel(), UnauthorisedPaymentsViewModel())
 }
 
 case class EncryptedPensionCYAModel(encryptedPaymentsIntoPension: EncryptedPaymentsIntoPensionViewModel,
                                     encryptedPensionAnnualAllowances: EncryptedPensionAnnualAllowancesViewModel,
                                     pensionLifetimeAllowances: EncryptedPensionLifetimeAllowancesViewModel,
-                                    incomeFromPensions: EncryptedIncomeFromPensionsViewModel)
+                                    incomeFromPensions: EncryptedIncomeFromPensionsViewModel,
+                                    unauthorisedPayments: EncryptedUnauthorisedPaymentsViewModel)
 
 object EncryptedPensionCYAModel {
   implicit val format: OFormat[EncryptedPensionCYAModel] = Json.format[EncryptedPensionCYAModel]
