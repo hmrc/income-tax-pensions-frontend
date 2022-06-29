@@ -18,7 +18,7 @@ package controllers.pensions.lifetimeAllowance
 
 import config.{AppConfig, ErrorHandler}
 import controllers.predicates.TaxYearAction.taxYearAction
-import controllers.predicates.{AuthorisedAction, InYearAction}
+import controllers.predicates.AuthorisedAction
 import forms.{FormUtils, TupleAmountForm}
 import models.mongo.PensionsCYAModel
 import models.pension.charges.{LifetimeAllowance, PensionLifetimeAllowancesViewModel}
@@ -41,7 +41,6 @@ class PensionLumpSumDetailsController @Inject()(implicit val mcc: MessagesContro
                                                 pensionLumpSumDetailsView: PensionLumpSumDetailsView,
                                                 appConfig: AppConfig,
                                                 pensionSessionService: PensionSessionService,
-                                                inYearAction: InYearAction,
                                                 errorHandler: ErrorHandler,
                                                 clock: Clock) extends FrontendController(mcc) with I18nSupport with SessionHelper with FormUtils {
 
