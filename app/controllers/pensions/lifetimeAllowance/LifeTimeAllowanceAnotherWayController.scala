@@ -17,8 +17,7 @@
 package controllers.pensions.lifetimeAllowance
 
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.lifetimeAllowance.routes.PensionLumpSumDetailsController
-import controllers.pensions.routes._
+import controllers.pensions.routes.PensionsSummaryController
 import controllers.predicates.AuthorisedAction
 import forms.YesNoForm
 import models.User
@@ -30,62 +29,67 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
-import views.html.pensions.lifetimeAllowance.PensionLumpSumView
+import views.html.pensions.lifetimeAllowance.LifeTimeAllowanceAnotherWayView
 
 import javax.inject.Inject
 import scala.concurrent.Future
 
-class PensionLumpSumController @Inject()(implicit val cc: MessagesControllerComponents,
-                                         authAction: AuthorisedAction,
-                                         pensionLumpSumView: PensionLumpSumView,
-                                         appConfig: AppConfig,
-                                         pensionSessionService: PensionSessionService,
-                                         errorHandler: ErrorHandler,
-                                         clock: Clock) extends FrontendController(cc) with I18nSupport {
+class LifeTimeAllowanceAnotherWayController @Inject()(implicit val cc: MessagesControllerComponents,
+                                                       authAction: AuthorisedAction,
+                                                       view: LifeTimeAllowanceAnotherWayView,
+                                                       appConfig: AppConfig,
+                                                       pensionSessionService: PensionSessionService,
+                                                       errorHandler: ErrorHandler,
+                                                       clock: Clock) extends FrontendController(cc) with I18nSupport {
 
 
   def yesNoForm(user: User): Form[Boolean] = YesNoForm.yesNoForm(
-    missingInputError = s"lifetimeAllowance.pensionLumpSum.error.noEntry.${if (user.isAgent) "agent" else "individual"}"
+    missingInputError = s"lifetimeAllowance.lifeTimeAllowanceAnotherWay.error.noEntry.${if (user.isAgent) "agent" else "individual"}"
   )
 
   def show(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
-
     pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
       case Some(data) =>
-        data.pensions.pensionLifetimeAllowances.pensionAsLumpSumQuestion match {
-          case Some(value) => Future.successful(Ok(pensionLumpSumView(
+        data.pensions.pensionLifetimeAllowances.pensionPaidAnotherWayQuestion match {
+          case Some(value) => Future.successful(Ok(view(
             yesNoForm(request.user).fill(value), taxYear)))
-          case None => Future.successful(Ok(pensionLumpSumView(yesNoForm(request.user), taxYear)))
+          case None => Future.successful(Ok(view(yesNoForm(request.user), taxYear)))
         }
       case None =>
+        //TODO - redirect to CYA page once implemented
         Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
     }
   }
 
   def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
     yesNoForm(request.user).bindFromRequest().fold(
-      formWithErrors => Future.successful(BadRequest(pensionLumpSumView(formWithErrors, taxYear))),
+      formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
       yesNo => {
         pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
-          data =>
-            val pensionsCYAModel: PensionsCYAModel = data.map(_.pensions).getOrElse(PensionsCYAModel.emptyModels)
+          case Some(data) => {
+            val pensionsCYAModel: PensionsCYAModel = data.pensions
             val viewModel: PensionLifetimeAllowancesViewModel = pensionsCYAModel.pensionLifetimeAllowances
             val updatedCyaModel: PensionsCYAModel = {
               pensionsCYAModel.copy(
                 pensionLifetimeAllowances = viewModel.copy(
-                  pensionAsLumpSumQuestion = Some(yesNo),
-                  pensionAsLumpSum = if (yesNo) viewModel.pensionAsLumpSum else None)
+                  pensionPaidAnotherWayQuestion = Some(yesNo),
+                  pensionPaidAnotherWay = if (yesNo) viewModel.pensionPaidAnotherWay else None)
               )
             }
             pensionSessionService.createOrUpdateSessionData(request.user,
-              updatedCyaModel, taxYear, data.exists(_.isPriorSubmission))(errorHandler.internalServerError()) {
+              updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
               if (yesNo) {
-                Redirect(PensionLumpSumDetailsController.show(taxYear))
+                //TODO redirect page to "Your client's pension taken in another way" Page
+                Redirect(PensionsSummaryController.show(taxYear))
               } else {
-                //TODO redirect page to Lifetime Other Status page
+                //TODO - redirect to "Check your client's annual and lifetime allowances" Page
                 Redirect(PensionsSummaryController.show(taxYear))
               }
             }
+          }
+          case _ =>
+            //TO DO - Redirect to Annual Life Time Allowance CYA Page
+            Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
         }
       }
     )
