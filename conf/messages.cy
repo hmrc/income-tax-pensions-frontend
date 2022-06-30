@@ -33,6 +33,7 @@ common.pensionAnnualAllowance.caption = Pension annual allowance for 6 April {0}
 common.incomeFromPensions.caption = Income from pensions for 6 April {0} to 5 April {1}
 common.uKPensionIncome.caption = UK pension income for 6 April {0} to 5 April {1}
 common.lifetimeAllowance.caption = Annual and lifetime allowances for 6 April {0} to 5 April {1}
+common.unauthorisedPaymentsFromPension.caption = Unauthorised payments from pensions for 6 April {0} to 5 April {1}
 common.return.overview.buttonText = Return to overview
 common.currencyAmount = £{0}
 common.total = Total
@@ -549,3 +550,14 @@ lifetimeAllowance.pensionLumpSumDetails.taxPaid.error.noEntry.individual = Enter
 lifetimeAllowance.pensionLumpSumDetails.taxPaid.error.noEntry.agent = Enter the amount of lifetime allowance tax your client’s pension provider paid or agreed to pay on the lump sum
 lifetimeAllowance.pensionLumpSumDetails.taxPaid.error.incorrectFormat = Enter the amount of lifetime allowance tax in the correct format
 lifetimeAllowance.pensionLumpSumDetails.taxPaid.error.overMaximum = The amount of lifetime allowance tax must be less than 100,000,000,000
+
+#Did you pay non-UK tax that resulted in a surcharge
+unauthorisedPayments.didYouPayNonUkTax.title.individual = Did you pay non-UK tax on the amount that resulted in a surcharge?
+unauthorisedPayments.didYouPayNonUkTax.title.agent = Did your client pay non-UK tax on the amount that resulted in a surcharge?
+unauthorisedPayments.didYouPayNonUkTax.error.noEntry = Select yes if you paid non-UK tax on the amount surcharged
+unauthorisedPayments.didYouPayNonUkTax.Amount.Text = Total non-UK tax in pounds
+unauthorisedPayments.didYouPayNonUkTax.error.Amount.noEntry = Enter the amount of non-UK tax paid
+unauthorisedPayments.didYouPayNonUkTax.error.Amount.incorrectFormat = Enter the amount of non-UK tax in the correct format
+unauthorisedPayments.didYouPayNonUkTax.error.Amount.overMaximum = The amount of non-UK tax paid must be less than £100,000,000,000
+
+

@@ -143,6 +143,10 @@ object PageUrls extends IntegrationTest {
 
   }
 
+  object unauthorisedPaymentsPages {
+    def didYouPayNonUkTaxUrl( taxYear: Int): String = s"$appUrl/$taxYear/unauthorised-payments-from-pensions/tax-on-amount-surcharged"
+  }
+
 }
 
 //scalastyle:on number.of.methods
