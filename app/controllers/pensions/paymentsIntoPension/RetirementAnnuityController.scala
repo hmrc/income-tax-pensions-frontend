@@ -38,34 +38,29 @@ import services.RedirectService.{PaymentsIntoPensionsRedirects, isFinishedCheck,
 
 import scala.concurrent.Future
 
-class RetirementAnnuityController @Inject()(implicit val cc: MessagesControllerComponents,
-                                            authAction: AuthorisedAction,
+class RetirementAnnuityController @Inject()(authAction: AuthorisedAction,
                                             payIntoRetirementAnnuityContractView: PayIntoRetirementAnnuityContractView,
-                                            appConfig: AppConfig,
                                             pensionSessionService: PensionSessionService,
                                             errorHandler: ErrorHandler,
-                                            clock: Clock) extends FrontendController(cc) with I18nSupport {
-
-
-  def yesNoForm(user: User): Form[Boolean] = YesNoForm.yesNoForm(
-    missingInputError = s"pensions.retirementAnnuityContract.error.noEntry.${if (user.isAgent) "agent" else "individual"}"
-  )
-
+                                            formProvider: PaymentsIntoPensionFormProvider)
+                                           (implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock)
+  extends FrontendController(mcc) with I18nSupport {
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) { optData =>
       redirectBasedOnCurrentAnswers(taxYear, optData)(redirects(_, taxYear)) { data =>
 
+        val form = formProvider.retirementAnnuityForm(request.user.isAgent)
         data.pensions.paymentsIntoPension.retirementAnnuityContractPaymentsQuestion match {
           case Some(value) => Future.successful(Ok(payIntoRetirementAnnuityContractView(
-            yesNoForm(request.user).fill(value), taxYear)))
-          case None => Future.successful(Ok(payIntoRetirementAnnuityContractView(yesNoForm(request.user), taxYear)))
+            form.fill(value), taxYear)))
+          case None => Future.successful(Ok(payIntoRetirementAnnuityContractView(form, taxYear)))
         }
       }
     }
   }
 
   def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
-    yesNoForm(request.user).bindFromRequest().fold(
+    formProvider.retirementAnnuityForm(request.user.isAgent).bindFromRequest().fold(
       formWithErrors => Future.successful(BadRequest(payIntoRetirementAnnuityContractView(formWithErrors, taxYear))),
       yesNo => {
         pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) { optData =>

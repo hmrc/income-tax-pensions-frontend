@@ -20,10 +20,8 @@ import config.{AppConfig, ErrorHandler}
 import controllers.pensions.paymentsIntoPension.routes._
 import controllers.predicates.AuthorisedAction
 import controllers.predicates.TaxYearAction.taxYearAction
-import forms.{AmountForm, FormUtils}
 import models.mongo.PensionsCYAModel
 import models.pension.reliefs.PaymentsIntoPensionViewModel
-import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
@@ -40,29 +38,26 @@ import scala.concurrent.Future
 
 
 @Singleton
-class RetirementAnnuityAmountController @Inject()(implicit val mcc: MessagesControllerComponents,
-                                                  authAction: AuthorisedAction,
+class RetirementAnnuityAmountController @Inject()(authAction: AuthorisedAction,
                                                   retirementAnnuityAmountView: RetirementAnnuityAmountView,
-                                                  appConfig: AppConfig,
                                                   pensionSessionService: PensionSessionService,
                                                   errorHandler: ErrorHandler,
-                                                  clock: Clock) extends FrontendController(mcc) with I18nSupport with SessionHelper with FormUtils {
-
-  val amountForm: Form[BigDecimal] = AmountForm.amountForm(
-    emptyFieldKey = "pensions.retirementAnnuityAmount.error.noEntry",
-    wrongFormatKey = "pensions.retirementAnnuityAmount.error.incorrectFormat",
-    exceedsMaxAmountKey = "pensions.retirementAnnuityAmount.error.overMaximum"
-  )
+                                                  formProvider: PaymentsIntoPensionFormProvider)
+                                                 (implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock)
+  extends FrontendController(mcc)
+    with I18nSupport
+    with SessionHelper {
 
 
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) { optData =>
       redirectBasedOnCurrentAnswers(taxYear, optData)(redirects(_, taxYear)) { data =>
 
+        val form = formProvider.retirementAnnuityAmountForm
         data.pensions.paymentsIntoPension.totalRetirementAnnuityContractPayments match {
           case Some(amount) =>
-            Future.successful(Ok(retirementAnnuityAmountView(amountForm.fill(amount), taxYear)))
-          case None => Future.successful(Ok(retirementAnnuityAmountView(amountForm, taxYear)))
+            Future.successful(Ok(retirementAnnuityAmountView(form.fill(amount), taxYear)))
+          case None => Future.successful(Ok(retirementAnnuityAmountView(form, taxYear)))
         }
       }
     }
@@ -70,7 +65,7 @@ class RetirementAnnuityAmountController @Inject()(implicit val mcc: MessagesCont
 
 
   def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
-    amountForm.bindFromRequest.fold(
+    formProvider.retirementAnnuityAmountForm.bindFromRequest.fold(
       formWithErrors => Future.successful(BadRequest(retirementAnnuityAmountView(formWithErrors, taxYear))),
       amount => {
         pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) { optData =>
@@ -84,7 +79,8 @@ class RetirementAnnuityAmountController @Inject()(implicit val mcc: MessagesCont
             pensionSessionService.createOrUpdateSessionData(request.user,
               updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
               isFinishedCheck(updatedCyaModel, taxYear, WorkplacePensionController.show(taxYear))
-            }}
+            }
+          }
         }
       }
     )

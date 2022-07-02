@@ -16,7 +16,7 @@
 
 package controllers.pensions.paymentsIntoPension
 
-import forms.YesNoForm
+import forms.{AmountForm, YesNoForm}
 import play.api.data.Form
 
 import javax.inject.Singleton
@@ -26,5 +26,51 @@ class PaymentsIntoPensionFormProvider {
   def reliefAtSourcePensionsForm(isAgent: Boolean): Form[Boolean] = YesNoForm.yesNoForm(
     missingInputError = s"pensions.reliefAtSource.error.noEntry.${if (isAgent) "agent" else "individual"}"
   )
+
+  def reliefAtSourcePaymentsAndTaxReliefAmountForm: Form[BigDecimal] = AmountForm.amountForm(
+    emptyFieldKey = "pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.error.noEntry",
+    wrongFormatKey = "pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.error.invalidFormat",
+    exceedsMaxAmountKey = "pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.error.overMaximum"
+  )
+
+  def oneOffRASPaymentsAmountForm: Form[BigDecimal] = AmountForm.amountForm(
+    emptyFieldKey = "paymentsIntoPensions.oneOffRasAmount.error.noEntry",
+    wrongFormatKey = "paymentsIntoPensions.oneOffRasAmount.error.invalidFormat",
+    exceedsMaxAmountKey = "paymentsIntoPensions.oneOffRasAmount.error.overMaximum"
+  )
+
+  def totalPaymentsIntoRASForm: Form[Boolean] = YesNoForm.yesNoForm(
+    missingInputError = "paymentsIntoPensions.totalRASPayments.error"
+  )
+
+  def pensionsTaxReliefNotClaimedForm(isAgent: Boolean): Form[Boolean] = YesNoForm.yesNoForm(
+    missingInputError = s"pensions.pensionsTaxReliefNotClaimed.error.noEntry.${if (isAgent) "agent" else "individual"}"
+  )
+
+  def retirementAnnuityForm(isAgent: Boolean): Form[Boolean] = YesNoForm.yesNoForm(
+    missingInputError = s"pensions.retirementAnnuityContract.error.noEntry.${if (isAgent) "agent" else "individual"}"
+  )
+
+  def retirementAnnuityAmountForm: Form[BigDecimal] = AmountForm.amountForm(
+    emptyFieldKey = "pensions.retirementAnnuityAmount.error.noEntry",
+    wrongFormatKey = "pensions.retirementAnnuityAmount.error.incorrectFormat",
+    exceedsMaxAmountKey = "pensions.retirementAnnuityAmount.error.overMaximum"
+  )
+
+  def workplacePensionForm(isAgent: Boolean): Form[Boolean] = YesNoForm.yesNoForm(
+    missingInputError = s"pensions.workplacePension.error.noEntry.${if (isAgent) "agent" else "individual"}"
+  )
+
+  def workplacePensionAmountForm: Form[BigDecimal] = AmountForm.amountForm(
+    emptyFieldKey = "pensions.workplaceAmount.error.noEntry",
+    wrongFormatKey = "pensions.workplaceAmount.error.incorrectFormat",
+    exceedsMaxAmountKey = "pensions.workplaceAmount.error.maxAmount"
+  )
+
+  def reliefAtSourceOneOffPaymentsForm(isAgent: Boolean): Form[Boolean] = YesNoForm.yesNoForm(
+    missingInputError = s"pensions.reliefAtSourceOneOffPayments.error.noEntry.${if (isAgent) "agent" else "individual"}"
+  )
+
+
 }
 

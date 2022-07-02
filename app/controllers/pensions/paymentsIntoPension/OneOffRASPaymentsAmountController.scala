@@ -20,10 +20,8 @@ import config.{AppConfig, ErrorHandler}
 import controllers.predicates.AuthorisedAction
 import controllers.pensions.paymentsIntoPension.routes._
 import controllers.predicates.TaxYearAction.taxYearAction
-import forms.AmountForm
 import models.mongo.PensionsCYAModel
 import models.pension.reliefs.PaymentsIntoPensionViewModel
-import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
@@ -39,19 +37,15 @@ import models.redirects.ConditionalRedirect
 import scala.concurrent.Future
 
 @Singleton
-class OneOffRASPaymentsAmountController @Inject()(implicit val mcc: MessagesControllerComponents,
-                                                  appConfig: AppConfig,
-                                                  authAction: AuthorisedAction,
+class OneOffRASPaymentsAmountController @Inject()(authAction: AuthorisedAction,
                                                   pensionSessionService: PensionSessionService,
                                                   errorHandler: ErrorHandler,
                                                   view: OneOffRASPaymentsAmountView,
-                                                  clock: Clock) extends FrontendController(mcc) with I18nSupport {
+                                                  formProvider: PaymentsIntoPensionFormProvider)
+                                                 (implicit val mcc: MessagesControllerComponents,
+                                                  appConfig: AppConfig, clock: Clock)
+  extends FrontendController(mcc) with I18nSupport {
 
-  val amountForm: Form[BigDecimal] = AmountForm.amountForm(
-    emptyFieldKey = "paymentsIntoPensions.oneOffRasAmount.error.noEntry",
-    wrongFormatKey = "paymentsIntoPensions.oneOffRasAmount.error.invalidFormat",
-    exceedsMaxAmountKey = "paymentsIntoPensions.oneOffRasAmount.error.overMaximum"
-  )
 
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) { optData =>
@@ -64,7 +58,7 @@ class OneOffRASPaymentsAmountController @Inject()(implicit val mcc: MessagesCont
           viewModel.totalRASPaymentsAndTaxRelief
         ) match {
           case (Some(true), amount, Some(rasAmount)) =>
-            val form = amount.fold(amountForm)(a => amountForm.fill(a))
+            val form = amount.fold(formProvider.oneOffRASPaymentsAmountForm)(a => formProvider.oneOffRASPaymentsAmountForm.fill(a))
             Future.successful(Ok(view(form, taxYear, rasAmount)))
           case _ => errorHandler.futureInternalServerError()
         }
@@ -76,7 +70,7 @@ class OneOffRASPaymentsAmountController @Inject()(implicit val mcc: MessagesCont
     pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
       optData =>
         redirectBasedOnCurrentAnswers(taxYear, optData)(redirects(_, taxYear)) { data =>
-          amountForm.bindFromRequest.fold(
+          formProvider.oneOffRASPaymentsAmountForm.bindFromRequest.fold(
             formWithErrors => {
               data.pensions.paymentsIntoPension.totalRASPaymentsAndTaxRelief.fold(
                 Future.successful(Redirect(ReliefAtSourcePaymentsAndTaxReliefAmountController.show(taxYear)))

@@ -38,25 +38,19 @@ import services.RedirectService.{PaymentsIntoPensionsRedirects, isFinishedCheck,
 
 import scala.concurrent.Future
 
-class WorkplaceAmountController @Inject()(implicit val cc: MessagesControllerComponents,
-                                          authAction: AuthorisedAction,
+class WorkplaceAmountController @Inject()(authAction: AuthorisedAction,
                                           workplaceAmountView: WorkplaceAmountView,
-                                          appConfig: AppConfig,
                                           pensionSessionService: PensionSessionService,
                                           errorHandler: ErrorHandler,
-                                          clock: Clock) extends FrontendController(cc) with I18nSupport {
-
-
-  val amountForm: Form[BigDecimal] = AmountForm.amountForm(
-    emptyFieldKey = "pensions.workplaceAmount.error.noEntry",
-    wrongFormatKey = "pensions.workplaceAmount.error.incorrectFormat",
-    exceedsMaxAmountKey = "pensions.workplaceAmount.error.maxAmount"
-  )
+                                          formProvider: PaymentsIntoPensionFormProvider)
+                                         (implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock)
+  extends FrontendController(mcc) with I18nSupport {
 
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) { optData =>
       redirectBasedOnCurrentAnswers(taxYear, optData)(redirects(_, taxYear)) { data =>
 
+        val amountForm = formProvider.workplacePensionAmountForm
         data.pensions.paymentsIntoPension.totalWorkplacePensionPayments match {
           case Some(amount) =>
             Future.successful(Ok(workplaceAmountView(amountForm.fill(amount), taxYear)))
@@ -68,7 +62,7 @@ class WorkplaceAmountController @Inject()(implicit val cc: MessagesControllerCom
   }
 
   def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
-    amountForm.bindFromRequest.fold(
+    formProvider.workplacePensionAmountForm.bindFromRequest.fold(
       formWithErrors => Future.successful(BadRequest(workplaceAmountView(formWithErrors, taxYear))),
       amount => {
         pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) { optData =>

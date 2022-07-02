@@ -64,6 +64,7 @@ class PensionSessionService @Inject()(pensionUserDataRepository: PensionsUserDat
     }
   }
 
+  @deprecated("We should avoid using this method, as it's more difficult to mock. use 'getPensionSessionData' above")
   def getPensionsSessionDataResult(taxYear: Int, user: User)(result: Option[PensionsUserData] => Future[Result])
                                   (implicit request: Request[_]): Future[Result] = {
     pensionUserDataRepository.find(taxYear, user).flatMap {
