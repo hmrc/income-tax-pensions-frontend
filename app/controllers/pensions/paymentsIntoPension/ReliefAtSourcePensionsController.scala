@@ -20,10 +20,7 @@ import config.{AppConfig, ErrorHandler}
 import controllers.pensions.paymentsIntoPension.routes.{PensionsTaxReliefNotClaimedController, ReliefAtSourcePaymentsAndTaxReliefAmountController}
 import controllers.predicates.AuthorisedAction
 import controllers.predicates.TaxYearAction.taxYearAction
-import forms.YesNoForm
-import models.User
 import models.mongo.PensionsCYAModel
-import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
@@ -34,31 +31,35 @@ import views.html.pensions.paymentsIntoPensions.ReliefAtSourcePensionsView
 import javax.inject.Inject
 import services.RedirectService.isFinishedCheck
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
-class ReliefAtSourcePensionsController @Inject()(implicit val cc: MessagesControllerComponents,
-                                                 authAction: AuthorisedAction,
-                                                 rasPensionView: ReliefAtSourcePensionsView,
-                                                 appConfig: AppConfig,
+class ReliefAtSourcePensionsController @Inject()(authAction: AuthorisedAction,
+                                                 pageView: ReliefAtSourcePensionsView,
                                                  pensionSessionService: PensionSessionService,
                                                  errorHandler: ErrorHandler,
-                                                 clock: Clock) extends FrontendController(cc) with I18nSupport {
+                                                 formsProvider: PaymentsIntoPensionFormProvider)
+                                                (implicit val cc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
+  extends FrontendController(cc) with I18nSupport {
 
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
-    pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
-      case Some(data) =>
-        data.pensions.paymentsIntoPension.rasPensionPaymentQuestion match {
-          case Some(value) => Future.successful(Ok(rasPensionView(yesNoForm(request.user).fill(value), taxYear)))
-          case None => Future.successful(Ok(rasPensionView(yesNoForm(request.user), taxYear)))
-        }
-      case _ => Future.successful(Ok(rasPensionView(yesNoForm(request.user), taxYear)))
+    val yesNoForm = formsProvider.reliefAtSourcePensionsForm(request.user.isAgent)
 
+    pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
+      case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
+      case Right(optPensionUserDate) => optPensionUserDate match {
+        case Some(data) =>
+          data.pensions.paymentsIntoPension.rasPensionPaymentQuestion match {
+            case Some(value) => Future.successful(Ok(pageView(yesNoForm.fill(value), taxYear)))
+            case None => Future.successful(Ok(pageView(yesNoForm, taxYear)))
+          }
+        case None => Future.successful(Ok(pageView(yesNoForm, taxYear)))
+      }
     }
   }
 
   def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
-    yesNoForm(request.user).bindFromRequest().fold(
-      formWithErrors => Future.successful(BadRequest(rasPensionView(formWithErrors, taxYear))),
+    formsProvider.reliefAtSourcePensionsForm(request.user.isAgent).bindFromRequest().fold(
+      formWithErrors => Future.successful(BadRequest(pageView(formWithErrors, taxYear))),
       yesNo => {
         pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) { optData =>
 
@@ -71,8 +72,8 @@ class ReliefAtSourcePensionsController @Inject()(implicit val cc: MessagesContro
                 rasPensionPaymentQuestion = Some(yesNo),
                 totalRASPaymentsAndTaxRelief = if (yesNo) viewModel.totalRASPaymentsAndTaxRelief else None,
                 oneOffRasPaymentPlusTaxReliefQuestion = if (yesNo) viewModel.oneOffRasPaymentPlusTaxReliefQuestion else None,
-                totalOneOffRasPaymentPlusTaxRelief = if(yesNo) viewModel.totalOneOffRasPaymentPlusTaxRelief else None,
-                totalPaymentsIntoRASQuestion = if(yesNo) viewModel.totalPaymentsIntoRASQuestion else None
+                totalOneOffRasPaymentPlusTaxRelief = if (yesNo) viewModel.totalOneOffRasPaymentPlusTaxRelief else None,
+                totalPaymentsIntoRASQuestion = if (yesNo) viewModel.totalPaymentsIntoRASQuestion else None
               )
             )
           }
@@ -90,9 +91,4 @@ class ReliefAtSourcePensionsController @Inject()(implicit val cc: MessagesContro
       }
     )
   }
-
-  private def yesNoForm(user: User): Form[Boolean] = YesNoForm.yesNoForm(
-    missingInputError = s"pensions.reliefAtSource.error.noEntry.${if (user.isAgent) "agent" else "individual"}"
-  )
-
 }

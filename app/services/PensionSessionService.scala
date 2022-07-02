@@ -57,6 +57,13 @@ class PensionSessionService @Inject()(pensionUserDataRepository: PensionsUserDat
     }
   }
 
+  def getPensionSessionData(taxYear: Int, user: User): Future[Either[Unit, Option[PensionsUserData]]] = {
+    pensionUserDataRepository.find(taxYear, user).map {
+      case Left(_) => Left(())
+      case Right(data) => Right(data)
+    }
+  }
+
   def getPensionsSessionDataResult(taxYear: Int, user: User)(result: Option[PensionsUserData] => Future[Result])
                                   (implicit request: Request[_]): Future[Result] = {
     pensionUserDataRepository.find(taxYear, user).flatMap {
