@@ -16,7 +16,7 @@
 
 package controllers.pensions.paymentsIntoPensions
 
-import builders.IncomeFromPensionsViewModelBuilder.{anIncomeFromPensionEmptyViewModel, anIncomeFromPensionsViewModel}
+import builders.IncomeFromPensionsViewModelBuilder.anIncomeFromPensionEmptyViewModel
 import builders.PensionAnnualAllowanceViewModelBuilder.aPensionAnnualAllowanceEmptyViewModel
 import builders.PensionLifetimeAllowanceViewModelBuilder.aPensionLifetimeAllowancesEmptyViewModel
 import builders.PensionsCYAModelBuilder.aPensionsCYAEmptyModel
@@ -27,8 +27,6 @@ import builders.UserBuilder.aUserRequest
 import forms.YesNoForm
 import models.mongo.PensionsCYAModel
 import models.pension.reliefs.PaymentsIntoPensionViewModel
-import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
@@ -38,12 +36,6 @@ import utils.PageUrls.fullUrl
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 class TotalPaymentsIntoRASControllerISpec extends IntegrationTest with BeforeAndAfterEach with ViewHelpers with PensionsDatabaseHelper {
-
-  private val oneOffAmount: String = "1,400"
-  private val rasTotal: String = "8,800"
-
-  private val calculatedRAS: String = "7,040"
-  private val calculatedRelief: String = "1,760"
 
   private def pensionsUsersData(paymentsIntoPensionViewModel: PaymentsIntoPensionViewModel) = {
     PensionsUserDataBuilder.aPensionsUserData.copy(
@@ -59,138 +51,20 @@ class TotalPaymentsIntoRASControllerISpec extends IntegrationTest with BeforeAnd
     totalOneOffRasPaymentPlusTaxRelief = Some(BigDecimal(1400))
   )
 
-  object Selectors {
-    val captionSelector: String = "#main-content > div > div > header > p"
-    val continueButtonSelector: String = "#continue"
-    val formSelector: String = "#main-content > div > div > form"
-    val yesSelector = "#value"
-    val noSelector = "#value-no"
-    val pSelector = "#main-content > div > div > p"
-    val isCorrectSelector = "#main-content > div > div > form > div > fieldset > legend"
-    val tableSelector: (Int, Int) => String = (row, column) =>
-      s"#main-content > div > div > table > tbody > tr:nth-child($row) > td:nth-of-type($column)"
-  }
-
-  trait SpecificExpectedResults {
-    val expectedTitle: String
-    val expectedParagraph: String
-    val expectedErrorTitle: String
-  }
-
-  trait CommonExpectedResults {
-    val expectedCaption: Int => String
-    val totalPayments: String
-    val oneOff: String
-    val claimed: String
-    val total: String
-    val isCorrect: String
-    val expectedError: String
-    val expectedButtonText: String
-    val yesText: String
-    val noText: String
-  }
-
-  object ExpectedIndividualEN extends SpecificExpectedResults {
-    val expectedTitle: String = "Your total payments into relief at source (RAS) pensions"
-    val expectedParagraph: String = s"The total amount you paid, plus basic rate tax relief, is £$rasTotal. " +
-      "You can find this figure on the pension certificate or receipt from your administrator."
-    val expectedErrorTitle: String = s"Error: $expectedTitle"
-  }
-
-  object ExpectedIndividualCY extends SpecificExpectedResults {
-    val expectedTitle: String = "Your total payments into relief at source (RAS) pensions"
-    val expectedParagraph: String = s"The total amount you paid, plus basic rate tax relief, is £$rasTotal. " +
-      "You can find this figure on the pension certificate or receipt from your administrator."
-    val expectedErrorTitle: String = s"Error: $expectedTitle"
-  }
-
-  object ExpectedAgentEN extends SpecificExpectedResults {
-    val expectedTitle: String = "Your client’s total payments into relief at source (RAS) pensions"
-    val expectedParagraph: String = s"The total amount your client paid, plus basic rate tax relief, is £$rasTotal. " +
-      "You can find this figure on the pension certificate or receipt from your client’s administrator."
-    val expectedErrorTitle: String = s"Error: $expectedTitle"
-  }
-
-  object ExpectedAgentCY extends SpecificExpectedResults {
-    val expectedTitle: String = "Your client’s total payments into relief at source (RAS) pensions"
-    val expectedParagraph: String = s"The total amount your client paid, plus basic rate tax relief, is £$rasTotal. " +
-      "You can find this figure on the pension certificate or receipt from your client’s administrator."
-    val expectedErrorTitle: String = s"Error: $expectedTitle"
-  }
-
-  object CommonExpectedEN extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Payments into pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val totalPayments: String = "Total pension payments"
-    val oneOff: String = s"(Including £$oneOffAmount one-off payments)"
-    val claimed: String = "Tax relief claimed by scheme"
-    val total: String = "Total"
-    val isCorrect: String = "Is this correct?"
-    val expectedError: String = "Select yes if the figures are correct"
-    val expectedButtonText: String = "Continue"
-    val yesText = "Yes"
-    val noText = "No"
-  }
-
-  object CommonExpectedCY extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Payments into pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val totalPayments: String = "Total pension payments"
-    val oneOff: String = s"(Including £$oneOffAmount one-off payments)"
-    val claimed: String = "Tax relief claimed by scheme"
-    val total: String = "Total"
-    val isCorrect: String = "Is this correct?"
-    val expectedError: String = "Select yes if the figures are correct"
-    val expectedButtonText: String = "Continue"
-    val yesText = "Yes"
-    val noText = "No"
-  }
-
-  val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(
-    UserScenario(isWelsh = false, isAgent = false, CommonExpectedEN, Some(ExpectedIndividualEN)),
-    UserScenario(isWelsh = false, isAgent = true, CommonExpectedEN, Some(ExpectedAgentEN)),
-    UserScenario(isWelsh = true, isAgent = false, CommonExpectedCY, Some(ExpectedIndividualCY)),
-    UserScenario(isWelsh = true, isAgent = true, CommonExpectedCY, Some(ExpectedAgentCY))
-  )
+  val userScenarios: Seq[UserScenario[_,_]] =Seq.empty
 
   ".show" should {
-    userScenarios.foreach { user =>
-      s"language is ${welshTest(user.isWelsh)} and request is from an ${agentTest(user.isAgent)}" should {
+    "render 'Total payments into RAS pensions' page with correct content and no pre-filling" which {
+      lazy val result: WSResponse = {
+        authoriseAgentOrIndividual(isAgent = false)
+        dropPensionsDB()
+        insertCyaData(pensionsUsersData(requiredViewModel), aUserRequest)
+        urlGet(fullUrl(totalPaymentsIntoRASUrl(taxYearEOY)), follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+      }
 
-        import Selectors._
-        import user.commonExpectedResults._
-
-        "render 'Total payments into RAS pensions' page with correct content and no pre-filling" which {
-          lazy val result: WSResponse = {
-            authoriseAgentOrIndividual(user.isAgent)
-            dropPensionsDB()
-            insertCyaData(pensionsUsersData(requiredViewModel), aUserRequest)
-            urlGet(fullUrl(totalPaymentsIntoRASUrl(taxYearEOY)), user.isWelsh, follow = false,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
-          }
-
-          "has an OK status" in {
-            result.status shouldBe OK
-          }
-
-          implicit def document: () => Document = () => Jsoup.parse(result.body)
-
-          titleCheck(user.specificExpectedResults.get.expectedTitle)
-          h1Check(user.specificExpectedResults.get.expectedTitle)
-          textOnPageCheck(user.specificExpectedResults.get.expectedParagraph, pSelector)
-          textOnPageCheck(isCorrect, isCorrectSelector)
-          radioButtonCheck(yesText, 1, checked = Some(false))
-          radioButtonCheck(noText, 2, checked = Some(false))
-          buttonCheck(expectedButtonText, continueButtonSelector)
-          formPostLinkCheck(totalPaymentsIntoRASUrl(taxYearEOY), formSelector)
-          welshToggleCheck(user.isWelsh)
-
-          captionCheck(expectedCaption(taxYearEOY), captionSelector)
-          textOnPageCheck(s"$totalPayments $oneOff", tableSelector(1, 1))
-          textOnPageCheck(s"£$calculatedRAS", tableSelector(1, 2))
-          textOnPageCheck(claimed, tableSelector(2, 1))
-          textOnPageCheck(s"£$calculatedRelief", tableSelector(2, 2))
-          textOnPageCheck(total, tableSelector(3, 1))
-          textOnPageCheck(s"£$rasTotal", tableSelector(3, 2))
-        }
+      "has an OK status" in {
+        result.status shouldBe OK
       }
     }
 
@@ -209,10 +83,6 @@ class TotalPaymentsIntoRASControllerISpec extends IntegrationTest with BeforeAnd
       "has an OK status" in {
         result.status shouldBe OK
       }
-
-      implicit def document: () => Document = () => Jsoup.parse(result.body)
-
-      textOnPageCheck(s"${CommonExpectedEN.totalPayments}", Selectors.tableSelector(1, 1))
     }
 
     "render the page with the radio button pre-filled" should {
@@ -224,11 +94,9 @@ class TotalPaymentsIntoRASControllerISpec extends IntegrationTest with BeforeAnd
         urlGet(fullUrl(totalPaymentsIntoRASUrl(taxYearEOY)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
-      implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-      "have the yes button pre-filled" when {
-        radioButtonCheck(CommonExpectedEN.yesText, 1, checked = Some(true))
-        radioButtonCheck(CommonExpectedEN.noText, 2, checked = Some(false))
+      "has an OK status" in {
+        result.status shouldBe OK
       }
     }
 
@@ -269,57 +137,23 @@ class TotalPaymentsIntoRASControllerISpec extends IntegrationTest with BeforeAnd
   }
 
   ".submit" should {
+    "return an error when form is submitted with no entry" which {
+      lazy val invalidForm: Map[String, String] = Map(YesNoForm.yesNo -> "")
 
-    userScenarios.foreach { user =>
+      lazy val result: WSResponse = {
+        authoriseAgentOrIndividual(isAgent = false)
+        dropPensionsDB()
+        insertCyaData(pensionsUsersData(requiredViewModel), aUserRequest)
+        urlPost(fullUrl(totalPaymentsIntoRASUrl(taxYearEOY)), body = invalidForm, follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+      }
 
-      import Selectors._
-      import user.commonExpectedResults._
-
-      s"language is ${welshTest(user.isWelsh)} and request is from an ${agentTest(user.isAgent)}" should {
-
-        "return an error when form is submitted with no entry" which {
-          lazy val invalidForm: Map[String, String] = Map(YesNoForm.yesNo -> "")
-
-          lazy val result: WSResponse = {
-            authoriseAgentOrIndividual(user.isAgent)
-            dropPensionsDB()
-            insertCyaData(pensionsUsersData(requiredViewModel), aUserRequest)
-            urlPost(fullUrl(totalPaymentsIntoRASUrl(taxYearEOY)), body = invalidForm, user.isWelsh, follow = false,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
-          }
-
-          "has the correct status" in {
-            result.status shouldBe BAD_REQUEST
-          }
-
-          implicit def document: () => Document = () => Jsoup.parse(result.body)
-
-          titleCheck(user.specificExpectedResults.get.expectedErrorTitle)
-          h1Check(user.specificExpectedResults.get.expectedTitle)
-          textOnPageCheck(user.specificExpectedResults.get.expectedParagraph, pSelector)
-          textOnPageCheck(isCorrect, isCorrectSelector)
-          radioButtonCheck(yesText, 1, checked = Some(false))
-          radioButtonCheck(noText, 2, checked = Some(false))
-          buttonCheck(expectedButtonText, continueButtonSelector)
-          formPostLinkCheck(totalPaymentsIntoRASUrl(taxYearEOY), formSelector)
-          welshToggleCheck(user.isWelsh)
-
-          captionCheck(expectedCaption(taxYearEOY), captionSelector)
-          textOnPageCheck(s"$totalPayments $oneOff", tableSelector(1, 1))
-          textOnPageCheck(s"£$calculatedRAS", tableSelector(1, 2))
-          textOnPageCheck(claimed, tableSelector(2, 1))
-          textOnPageCheck(s"£$calculatedRelief", tableSelector(2, 2))
-          textOnPageCheck(total, tableSelector(3, 1))
-          textOnPageCheck(s"£$rasTotal", tableSelector(3, 2))
-
-          errorSummaryCheck(expectedError, Selectors.yesSelector)
-          errorAboveElementCheck(expectedError, Some("value"))
-        }
+      "has the correct status" in {
+        result.status shouldBe BAD_REQUEST
       }
     }
 
     "redirect to the next page and update the session value when the user submits 'yes'" should {
-
       lazy val yesForm: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.yes)
 
       lazy val result: WSResponse = {

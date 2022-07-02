@@ -14,35 +14,21 @@
  * limitations under the License.
  */
 
-package controllers.pensions.paymentsIntoPensions
+package views
 
-import builders.AllPensionsDataBuilder.anAllPensionsData
-import builders.IncomeFromPensionsViewModelBuilder.anIncomeFromPensionsViewModel
-import builders.IncomeTaxUserDataBuilder.anIncomeTaxUserData
-import builders.PensionContributionsBuilder.anPensionContributions
-import builders.PensionLifetimeAllowanceViewModelBuilder.aPensionLifetimeAllowanceViewModel
-import builders.PensionSavingTaxChargesBuilder.anPensionSavngTaxCharges
-import builders.PensionsCYAModelBuilder.{aPensionsCYAModel, paymentsIntoPensionOnlyCYAModel}
-import builders.PensionsUserDataBuilder.aPensionsUserData
-import builders.ReliefsBuilder.anReliefs
-import builders.UnauthorisedPaymentsViewModelBuilder.anUnauthorisedPaymentsViewModel
-import builders.UserBuilder.aUserRequest
-import forms.Yes
-import models.IncomeTaxUserData
-import models.pension.charges.PensionAnnualAllowancesViewModel
+import builders.PaymentsIntoPensionVewModelBuilder.aPaymentsIntoPensionViewModel
+import models.AuthorisationRequest
 import models.pension.reliefs.PaymentsIntoPensionViewModel
-import org.scalatest.BeforeAndAfterEach
-import play.api.http.HeaderNames
-import play.api.http.Status.{OK, SEE_OTHER}
-import play.api.libs.ws.WSResponse
-import utils.PageUrls.PaymentIntoPensions.checkPaymentsIntoPensionCyaUrl
-import utils.PageUrls.fullUrl
-import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
+import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
+import play.api.i18n.Messages
+import play.api.mvc.AnyContent
+import support.ViewUnitTest
+import views.html.pensions.paymentsIntoPensions.PaymentsIntoPensionsCYAView
 
 // scalastyle:off magic.number
-class PaymentsIntoPensionsCYAControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
+class PaymentsIntoPensionsCYAViewSpec extends ViewUnitTest {
 
-  val url: String = fullUrl(checkPaymentsIntoPensionCyaUrl(taxYear))
 
   val cyaDataIncomplete: PaymentsIntoPensionViewModel = PaymentsIntoPensionViewModel(
     rasPensionPaymentQuestion = Some(true)
@@ -187,179 +173,68 @@ class PaymentsIntoPensionsCYAControllerISpec extends IntegrationTest with ViewHe
     UserScenario(isWelsh = true, isAgent = true, CommonExpectedCY, Some(ExpectedAgentCY))
   )
 
+  private lazy val underTest = inject[PaymentsIntoPensionsCYAView]
 
-  ".show" when {
-    "render the page with a full CYA model" when {
+  userScenarios.foreach { userScenario =>
 
-      "there is no CYA data and a CYA model is generated from prior data" which {
-        lazy val result: WSResponse = {
-          dropPensionsDB()
-          userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYear)
-          authoriseAgentOrIndividual(isAgent = false)
-          urlGet(url, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
-        }
+    s"language is ${welshTest(userScenario.isWelsh)} and request is from an ${agentTest(userScenario.isAgent)}" should {
 
-        "has an OK status" in {
-          result.status shouldBe OK
-        }
+      "render the page with a full CYA model" which {
 
+        implicit val authRequest: AuthorisationRequest[AnyContent] = getAuthRequest(userScenario.isAgent)
+        implicit val messages: Messages = getMessages(userScenario.isWelsh)
+
+        val htmlFormat = underTest(taxYear, aPaymentsIntoPensionViewModel)
+
+        import userScenario.commonExpectedResults._
+
+        implicit val document: Document = Jsoup.parse(htmlFormat.body)
+
+
+        titleCheck(userScenario.specificExpectedResults.get.expectedTitle, userScenario.isWelsh)
+        h1Check(userScenario.specificExpectedResults.get.expectedH1)
+        captionCheck(userScenario.commonExpectedResults.expectedCaption(taxYear))
+
+        //noinspection ScalaStyle
+        cyaRowCheck(reliefAtSource, yes, ChangeLinks.reliefAtSource, reliefAtSourceHidden, 1)
+        cyaRowCheck(reliefAtSourceAmount, s"${moneyContent(aPaymentsIntoPensionViewModel.totalRASPaymentsAndTaxRelief.get)}",
+          ChangeLinks.reliefAtSourceAmount, reliefAtSourceAmountHidden, 2)
+        cyaRowCheck(oneOff, yes, ChangeLinks.oneOff, oneOffHidden, 3)
+        cyaRowCheck(oneOffAmount, s"${moneyContent(aPaymentsIntoPensionViewModel.totalOneOffRasPaymentPlusTaxRelief.get)}",
+          ChangeLinks.oneOffAmount, oneOffAmountHidden, 4)
+        cyaRowCheck(pensionsTaxReliefNotClaimed, yes, ChangeLinks.pensionsTaxReliefNotClaimed, pensionsTaxReliefNotClaimedHidden, 5)
+        cyaRowCheck(retirementAnnuity, yes, ChangeLinks.retirementAnnuity, retirementAnnuityHidden, 6)
+        cyaRowCheck(retirementAnnuityAmount, s"${moneyContent(aPaymentsIntoPensionViewModel.totalRetirementAnnuityContractPayments.get)}",
+          ChangeLinks.retirementAnnuityAmount, retirementAnnuityAmountHidden, 7)
+        cyaRowCheck(workplacePayments, yes, ChangeLinks.workplacePayments, workplacePaymentsHidden, 8)
+        cyaRowCheck(workplacePaymentsAmount, s"${moneyContent(aPaymentsIntoPensionViewModel.totalWorkplacePensionPayments.get)}",
+          ChangeLinks.workplacePaymentsAmount, workplacePaymentsAmountHidden, 9)
+
+        buttonCheck(saveAndContinue)
+
+        welshToggleCheck(userScenario.isWelsh)
       }
+      "render the page with a minimal CYA view" which {
 
-      "CYA data is finished" which {
-        lazy val result: WSResponse = {
-          dropPensionsDB()
-          insertCyaData(aPensionsUserData.copy(taxYear = taxYear), aUserRequest)
-          authoriseAgentOrIndividual(isAgent = false)
-          urlGet(url, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
-        }
+        implicit val authRequest: AuthorisationRequest[AnyContent] = getAuthRequest(userScenario.isAgent)
+        implicit val messages: Messages = getMessages(userScenario.isWelsh)
 
-        "has an OK status" in {
-          result.status shouldBe OK
-        }
-      }
-    }
-    "render the page with a minimal CYA view" which {
+        val htmlFormat = underTest(taxYear, cyaDataMinimal)
 
-      lazy val result: WSResponse = {
-        dropPensionsDB()
-        insertCyaData(aPensionsUserData.copy(pensions = paymentsIntoPensionOnlyCYAModel(cyaDataMinimal), taxYear = taxYear), aUserRequest)
-        authoriseAgentOrIndividual(isAgent = false)
-        urlGet(url, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
-      }
+        import userScenario.commonExpectedResults._
 
-      "has an OK status" in {
-        result.status shouldBe OK
-      }
-    }
+        implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
-    "redirect to the first unanswered question when the CYA data is incomplete" should {
 
-      lazy val result: WSResponse = {
-        dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
-        userDataStub(IncomeTaxUserData(None), nino, taxYear)
-        insertCyaData(aPensionsUserData.copy(pensions = aPensionsCYAModel.copy(paymentsIntoPension = cyaDataIncomplete), taxYear = taxYear), aUserRequest)
+        import userScenario.commonExpectedResults.{no => answerNo}
 
-        urlGet(url, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
-      }
+        //noinspection ScalaStyle
+        cyaRowCheck(reliefAtSource, answerNo, ChangeLinks.reliefAtSource, reliefAtSourceHidden, 1)
+        cyaRowCheck(pensionsTaxReliefNotClaimed, answerNo, ChangeLinks.pensionsTaxReliefNotClaimed, pensionsTaxReliefNotClaimedHidden, 2)
 
-      "the status is SEE OTHER" in {
-        result.status shouldBe SEE_OTHER
-      }
+        buttonCheck(saveAndContinue)
 
-      "redirects to the RAS Pensions page" in {
-        result.headers("Location").head shouldBe
-          controllers.pensions.paymentsIntoPension.routes.ReliefAtSourcePaymentsAndTaxReliefAmountController.show(taxYear).url
-      }
-    }
-
-    "redirect to the first page in the journey when there is no CYA or prior data" when {
-
-      lazy val result: WSResponse = {
-        dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
-        urlGet(url, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
-      }
-
-      "the status is SEE OTHER" in {
-        result.status shouldBe SEE_OTHER
-      }
-
-      "redirects to the RAS Pensions page" in {
-        result.headers("Location").head shouldBe controllers.pensions.paymentsIntoPension.routes.ReliefAtSourcePensionsController.show(taxYear).url
-      }
-    }
-  }
-  ".submit" should {
-
-    "redirect to the overview page" when {
-
-      "there is no CYA data available" should {
-
-        val form = Map[String, String]()
-
-        lazy val result: WSResponse = {
-          dropPensionsDB()
-          authoriseAgentOrIndividual(isAgent = false)
-          urlPost(url, form, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
-        }
-
-        "have the status SEE OTHER" in {
-          result.status shouldBe SEE_OTHER
-        }
-
-        "redirects to the overview page" in {
-          result.headers("Location").head shouldBe appConfig.incomeTaxSubmissionOverviewUrl(taxYear)
-        }
-      }
-    }
-
-    "redirect to the summary page" when {
-
-      "the CYA data differs from the prior data" should {
-
-        val form = Map[String, String]()
-
-        lazy val result: WSResponse = {
-          dropPensionsDB()
-          userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYear)
-          insertCyaData(aPensionsUserData.copy(pensions = aPensionsCYAModel.copy(paymentsIntoPension = cyaDataIncomplete), taxYear = taxYear), aUserRequest)
-          authoriseAgentOrIndividual(isAgent = false)
-          urlPost(url, form, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
-        }
-
-        "the status is SEE OTHER" in {
-          result.status shouldBe SEE_OTHER
-        }
-
-        "redirects to the summary page" in {
-          result.headers("Location").head shouldBe controllers.pensions.routes.PensionsSummaryController.show(taxYear).url
-        }
-      }
-
-      "the user makes no changes and no submission to DES is made" should {
-
-        val unchangedModel =
-          PaymentsIntoPensionViewModel(
-            Some(true), anReliefs.regularPensionContributions,
-            Some(true), anReliefs.oneOffPensionContributionsPaid, Some(true), Some(true), Some(true),
-            anReliefs.retirementAnnuityPayments, Some(true), anReliefs.paymentToEmployersSchemeNoTaxRelief)
-
-        val unchangedAllowances = PensionAnnualAllowancesViewModel(
-          Some(anPensionSavngTaxCharges.isAnnualAllowanceReduced),
-          anPensionSavngTaxCharges.moneyPurchasedAllowance, anPensionSavngTaxCharges.taperedAnnualAllowance,
-          Some(true), Some(anPensionContributions.inExcessOfTheAnnualAllowance), Some(Yes.toString),
-          Some(anPensionContributions.annualAllowanceTaxPaid),
-          Some(anPensionContributions.pensionSchemeTaxReference))
-
-        val form = Map[String, String]()
-
-        lazy val result: WSResponse = {
-          dropPensionsDB()
-          userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYear)
-          insertCyaData(aPensionsUserData.copy(pensions = aPensionsCYAModel.copy
-          (paymentsIntoPension = unchangedModel, pensionsAnnualAllowances = unchangedAllowances,
-            pensionLifetimeAllowances = aPensionLifetimeAllowanceViewModel,
-            incomeFromPensions = anIncomeFromPensionsViewModel,
-            unauthorisedPayments = anUnauthorisedPaymentsViewModel), taxYear = taxYear), aUserRequest)
-          authoriseAgentOrIndividual(isAgent = false)
-          urlPost(url, form, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
-        }
-
-        "the status is SEE OTHER" in {
-          result.status shouldBe SEE_OTHER
-        }
-
-        "redirects to the summary page" in {
-          result.headers("Location").head shouldBe controllers.pensions.routes.PensionsSummaryController.show(taxYear).url
-        }
-      }
-    }
-
-    "redirect to an error page" when {
-
-      "an error is returned from DES" in {
-
+        welshToggleCheck(userScenario.isWelsh)
       }
     }
   }

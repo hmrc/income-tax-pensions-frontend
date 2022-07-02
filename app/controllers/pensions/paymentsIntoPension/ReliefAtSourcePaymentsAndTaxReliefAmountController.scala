@@ -20,10 +20,8 @@ import config.{AppConfig, ErrorHandler}
 import controllers.pensions.paymentsIntoPension.routes._
 import controllers.predicates.AuthorisedAction
 import controllers.predicates.TaxYearAction.taxYearAction
-import forms.AmountForm
 import models.mongo.PensionsCYAModel
 import models.pension.reliefs.PaymentsIntoPensionViewModel
-import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
@@ -36,39 +34,35 @@ import javax.inject.{Inject, Singleton}
 import models.redirects.ConditionalRedirect
 import services.RedirectService.{PaymentsIntoPensionsRedirects, redirectBasedOnCurrentAnswers}
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 
 @Singleton
-class ReliefAtSourcePaymentsAndTaxReliefAmountController @Inject()(implicit val mcc: MessagesControllerComponents,
-                                                                   appConfig: AppConfig,
-                                                                   authAction: AuthorisedAction,
+class ReliefAtSourcePaymentsAndTaxReliefAmountController @Inject()(authAction: AuthorisedAction,
                                                                    pensionSessionService: PensionSessionService,
                                                                    errorHandler: ErrorHandler,
                                                                    view: ReliefAtSourcePaymentsAndTaxReliefAmountView,
-                                                                   clock: Clock) extends FrontendController(mcc) with I18nSupport {
-
-  val amountForm: Form[BigDecimal] = AmountForm.amountForm(
-    emptyFieldKey = "pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.error.noEntry",
-    wrongFormatKey = "pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.error.invalidFormat",
-    exceedsMaxAmountKey = "pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.error.overMaximum"
-  )
-
+                                                                   formProvider: PaymentsIntoPensionFormProvider)
+                                                                  (implicit val mcc: MessagesControllerComponents,
+                                                                   appConfig: AppConfig,
+                                                                   clock: Clock,
+                                                                   ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
-    pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) { optData =>
-      redirectBasedOnCurrentAnswers(taxYear, optData)(redirects(_, taxYear)) { data =>
-
-        data.pensions.paymentsIntoPension.totalRASPaymentsAndTaxRelief match {
-          case Some(amount) => Future.successful(Ok(view(amountForm.fill(amount), taxYear)))
-          case None => Future.successful(Ok(view(amountForm, taxYear)))
+    pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
+      case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
+      case Right(optData) =>
+        redirectBasedOnCurrentAnswers(taxYear, optData)(redirects(_, taxYear)) { data =>
+          data.pensions.paymentsIntoPension.totalRASPaymentsAndTaxRelief match {
+            case Some(amount) => Future.successful(Ok(view(formProvider.reliefAtSourcePaymentsAndTaxReliefAmountForm.fill(amount), taxYear)))
+            case None => Future.successful(Ok(view(formProvider.reliefAtSourcePaymentsAndTaxReliefAmountForm, taxYear)))
+          }
         }
-      }
     }
   }
 
 
   def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
-    amountForm.bindFromRequest.fold(
+    formProvider.reliefAtSourcePaymentsAndTaxReliefAmountForm.bindFromRequest.fold(
       formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
       amount => {
         pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) { optData =>
