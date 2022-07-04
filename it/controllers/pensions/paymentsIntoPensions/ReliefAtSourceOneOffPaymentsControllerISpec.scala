@@ -22,6 +22,8 @@ import builders.PensionsUserDataBuilder
 import builders.UserBuilder._
 import forms.YesNoForm
 import models.mongo.{PensionsCYAModel, PensionsUserData}
+import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
@@ -29,6 +31,8 @@ import play.api.libs.ws.WSResponse
 import utils.PageUrls.PaymentIntoPensions._
 import utils.PageUrls.fullUrl
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
+import views.ReliefAtSourceOneOffPaymentsViewSpec.Selectors.formSelector
+import views.ReliefAtSourceOneOffPaymentsViewSpec.{CommonExpectedEN, ExpectedIndividualEN, Selectors}
 
 class ReliefAtSourceOneOffPaymentsControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
   private val someRasAmount: BigDecimal = 33.33
@@ -63,6 +67,18 @@ class ReliefAtSourceOneOffPaymentsControllerISpec extends IntegrationTest with V
       "has an OK status" in {
         result.status shouldBe OK
       }
+
+      implicit def document: () => Document = () => Jsoup.parse(result.body)
+
+      titleCheck(ExpectedIndividualEN.expectedTitle)
+      h1Check(ExpectedIndividualEN.expectedHeading)
+      captionCheck(CommonExpectedEN.expectedCaption(taxYearEOY), Selectors.captionSelector)
+      textOnPageCheck(ExpectedIndividualEN.thisIncludes, Selectors.paragraphSelector)
+      radioButtonCheck(CommonExpectedEN.yesText, 1, checked = Some(false))
+      radioButtonCheck(CommonExpectedEN.noText, 2, checked = Some(false))
+      buttonCheck(CommonExpectedEN.buttonText, Selectors.continueButtonSelector)
+      formPostLinkCheck(reliefAtSourceOneOffPaymentsUrl(taxYearEOY), formSelector)
+      welshToggleCheck(isWelsh = false)
     }
 
     "render the one-off payments into relief at source (RAS) pensions question page with 'Yes' pre-filled when CYA data exists" which {
