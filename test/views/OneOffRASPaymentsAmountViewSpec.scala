@@ -31,31 +31,23 @@ import views.html.pensions.paymentsIntoPensions.OneOffRASPaymentsAmountView
 
 class OneOffRASPaymentsAmountViewSpec extends AltViewUnitTest {
 
-  private def amountForm: Form[BigDecimal] = new PaymentsIntoPensionFormProvider().oneOffRASPaymentsAmountForm
-
-  private lazy val viewUnderTest = inject[OneOffRASPaymentsAmountView]
+  private lazy val viewUnderTest: OneOffRASPaymentsAmountView = inject[OneOffRASPaymentsAmountView]
+  private val baseAmountForm: Form[BigDecimal] = new PaymentsIntoPensionFormProvider().oneOffRASPaymentsAmountForm
+  private val rasAmount: BigDecimal = 189.01
 
   "the view" should {
     "render as expected" when {
       "there is no cya data" when {
-
-        val rasAmount: BigDecimal = 189.01
-
-        def render(isWelsh: Boolean)(implicit authRequest: AuthorisationRequest[AnyContent]): Document = {
-          implicit val messages: Messages = getMessages(isWelsh)
-          val htmlFormat = viewUnderTest(amountForm, taxYearEOY, rasAmount)
-          Jsoup.parse(htmlFormat.body)
-        }
-
         "requested by an individual" when {
 
           implicit val authRequest: AuthorisationRequest[AnyContent] = getAuthRequest(isAgent = false)
 
           "the preferred language is English" when {
 
-            implicit val document: Document = render(isWelsh = false)
+            val isWelsh = false
+            implicit val document: Document = render(isWelsh, baseAmountForm)
 
-            verify(isWelsh = false, ExpectedContents(
+            verify(isWelsh, ExpectedContents(
               title = "Total one-off payments into relief at source (RAS) pensions, plus basic rate tax relief",
               header = "Total one-off payments into relief at source (RAS) pensions, plus basic rate tax relief",
               caption = s"Payments into pensions for 6 April ${taxYearEOY - 1} to 5 April $taxYearEOY",
@@ -72,9 +64,10 @@ class OneOffRASPaymentsAmountViewSpec extends AltViewUnitTest {
 
           "the preferred language is Welsh" when {
 
-            implicit val document: Document = render(isWelsh = true)
+            val isWelsh = true
+            implicit val document: Document = render(isWelsh, baseAmountForm)
 
-            verify(isWelsh = true, ExpectedContents(
+            verify(isWelsh, ExpectedContents(
               title = "Total one-off payments into relief at source (RAS) pensions, plus basic rate tax relief",
               header = "Total one-off payments into relief at source (RAS) pensions, plus basic rate tax relief",
               caption = s"Payments into pensions for 6 April ${taxYearEOY - 1} to 5 April $taxYearEOY",
@@ -97,7 +90,7 @@ class OneOffRASPaymentsAmountViewSpec extends AltViewUnitTest {
           "the preferred language is English" when {
 
             val isWelsh = false
-            implicit val document: Document = render(isWelsh)
+            implicit val document: Document = render(isWelsh, baseAmountForm)
 
             verify(isWelsh, ExpectedContents(
               title = "Total one-off payments into relief at source (RAS) pensions, plus basic rate tax relief",
@@ -117,7 +110,7 @@ class OneOffRASPaymentsAmountViewSpec extends AltViewUnitTest {
           "the preferred language is Welsh" when {
 
             val isWelsh = true
-            implicit val document: Document = render(isWelsh)
+            implicit val document: Document = render(isWelsh, baseAmountForm)
 
             verify(isWelsh, ExpectedContents(
               title = "Total one-off payments into relief at source (RAS) pensions, plus basic rate tax relief",
@@ -139,13 +132,6 @@ class OneOffRASPaymentsAmountViewSpec extends AltViewUnitTest {
 
       "there is cya data" when {
 
-        val rasAmount: BigDecimal = 189.01
-
-        def render(isWelsh: Boolean)(implicit authRequest: AuthorisationRequest[AnyContent]): Document = {
-          implicit val messages: Messages = getMessages(isWelsh)
-          val htmlFormat = viewUnderTest(amountForm.fill(999.88), taxYearEOY, rasAmount)
-          Jsoup.parse(htmlFormat.body)
-        }
 
         "requested by an individual" when {
 
@@ -153,9 +139,10 @@ class OneOffRASPaymentsAmountViewSpec extends AltViewUnitTest {
 
           "the preferred language is English" when {
 
-            implicit val document: Document = render(isWelsh = false)
+            val isWelsh = false
+            implicit val document: Document = render(isWelsh, baseAmountForm.fill(999.88))
 
-            verify(isWelsh = false, ExpectedContents(
+            verify(isWelsh, ExpectedContents(
               title = "Total one-off payments into relief at source (RAS) pensions, plus basic rate tax relief",
               header = "Total one-off payments into relief at source (RAS) pensions, plus basic rate tax relief",
               caption = s"Payments into pensions for 6 April ${taxYearEOY - 1} to 5 April $taxYearEOY",
@@ -172,9 +159,10 @@ class OneOffRASPaymentsAmountViewSpec extends AltViewUnitTest {
 
           "the preferred language is Welsh" when {
 
-            implicit val document: Document = render(isWelsh = true)
+            val isWelsh = true
+            implicit val document: Document = render(isWelsh, baseAmountForm.fill(999.88))
 
-            verify(isWelsh = true, ExpectedContents(
+            verify(isWelsh, ExpectedContents(
               title = "Total one-off payments into relief at source (RAS) pensions, plus basic rate tax relief",
               header = "Total one-off payments into relief at source (RAS) pensions, plus basic rate tax relief",
               caption = s"Payments into pensions for 6 April ${taxYearEOY - 1} to 5 April $taxYearEOY",
@@ -197,7 +185,7 @@ class OneOffRASPaymentsAmountViewSpec extends AltViewUnitTest {
           "the preferred language is English" when {
 
             val isWelsh = false
-            implicit val document: Document = render(isWelsh)
+            implicit val document: Document = render(isWelsh, baseAmountForm.fill(999.88))
 
             verify(isWelsh, ExpectedContents(
               title = "Total one-off payments into relief at source (RAS) pensions, plus basic rate tax relief",
@@ -217,7 +205,7 @@ class OneOffRASPaymentsAmountViewSpec extends AltViewUnitTest {
           "the preferred language is Welsh" when {
 
             val isWelsh = true
-            implicit val document: Document = render(isWelsh)
+            implicit val document: Document = render(isWelsh, baseAmountForm.fill(999.88))
 
             verify(isWelsh, ExpectedContents(
               title = "Total one-off payments into relief at source (RAS) pensions, plus basic rate tax relief",
@@ -239,14 +227,6 @@ class OneOffRASPaymentsAmountViewSpec extends AltViewUnitTest {
 
       "there is no input entry" when {
 
-        val rasAmount: BigDecimal = 189.01
-
-        def render(isWelsh: Boolean)(implicit authRequest: AuthorisationRequest[AnyContent]): Document = {
-          implicit val messages: Messages = getMessages(isWelsh)
-          val htmlFormat = viewUnderTest(amountForm.bind(Map(AmountForm.amount -> "")), taxYearEOY, rasAmount)
-          Jsoup.parse(htmlFormat.body)
-        }
-
         "requested by an individual" when {
 
           implicit val authRequest: AuthorisationRequest[AnyContent] = getAuthRequest(isAgent = false)
@@ -254,7 +234,7 @@ class OneOffRASPaymentsAmountViewSpec extends AltViewUnitTest {
           "the preferred language is English" when {
 
             val isWelsh = false
-            implicit val document: Document = render(isWelsh)
+            implicit val document: Document = render(isWelsh, baseAmountForm.bind(Map(AmountForm.amount -> "")))
 
             verify(isWelsh, ExpectedContents(
               title = "Error: Total one-off payments into relief at source (RAS) pensions, plus basic rate tax relief",
@@ -274,7 +254,7 @@ class OneOffRASPaymentsAmountViewSpec extends AltViewUnitTest {
           "the preferred language is Welsh" when {
 
             val isWelsh = true
-            implicit val document: Document = render(isWelsh)
+            implicit val document: Document = render(isWelsh, baseAmountForm.bind(Map(AmountForm.amount -> "")))
 
             verify(isWelsh, ExpectedContents(
               title = "Error: Total one-off payments into relief at source (RAS) pensions, plus basic rate tax relief",
@@ -299,7 +279,7 @@ class OneOffRASPaymentsAmountViewSpec extends AltViewUnitTest {
           "the preferred language is English" when {
 
             val isWelsh = false
-            implicit val document: Document = render(isWelsh)
+            implicit val document: Document = render(isWelsh, baseAmountForm.bind(Map(AmountForm.amount -> "")))
 
             verify(isWelsh, ExpectedContents(
               title = "Error: Total one-off payments into relief at source (RAS) pensions, plus basic rate tax relief",
@@ -319,7 +299,7 @@ class OneOffRASPaymentsAmountViewSpec extends AltViewUnitTest {
           "the preferred language is Welsh" when {
 
             val isWelsh = true
-            implicit val document: Document = render(isWelsh)
+            implicit val document: Document = render(isWelsh, baseAmountForm.bind(Map(AmountForm.amount -> "")))
 
             verify(isWelsh, ExpectedContents(
               title = "Error: Total one-off payments into relief at source (RAS) pensions, plus basic rate tax relief",
@@ -340,14 +320,6 @@ class OneOffRASPaymentsAmountViewSpec extends AltViewUnitTest {
       }
       "there an invalid format input" when {
 
-        val rasAmount: BigDecimal = 189.01
-
-        def render(isWelsh: Boolean)(implicit authRequest: AuthorisationRequest[AnyContent]): Document = {
-          implicit val messages: Messages = getMessages(isWelsh)
-          val htmlFormat = viewUnderTest(amountForm.bind(Map(AmountForm.amount -> "invalid")), taxYearEOY, rasAmount)
-          Jsoup.parse(htmlFormat.body)
-        }
-
         "requested by an individual" when {
 
           implicit val authRequest: AuthorisationRequest[AnyContent] = getAuthRequest(isAgent = false)
@@ -355,7 +327,7 @@ class OneOffRASPaymentsAmountViewSpec extends AltViewUnitTest {
           "the preferred language is English" when {
 
             val isWelsh = false
-            implicit val document: Document = render(isWelsh)
+            implicit val document: Document = render(isWelsh, baseAmountForm.bind(Map(AmountForm.amount -> "invalid")))
 
             verify(isWelsh, ExpectedContents(
               title = "Error: Total one-off payments into relief at source (RAS) pensions, plus basic rate tax relief",
@@ -375,7 +347,7 @@ class OneOffRASPaymentsAmountViewSpec extends AltViewUnitTest {
           "the preferred language is Welsh" when {
 
             val isWelsh = true
-            implicit val document: Document = render(isWelsh)
+            implicit val document: Document = render(isWelsh, baseAmountForm.bind(Map(AmountForm.amount -> "invalid")))
 
             verify(isWelsh, ExpectedContents(
               title = "Error: Total one-off payments into relief at source (RAS) pensions, plus basic rate tax relief",
@@ -400,7 +372,7 @@ class OneOffRASPaymentsAmountViewSpec extends AltViewUnitTest {
           "the preferred language is English" when {
 
             val isWelsh = false
-            implicit val document: Document = render(isWelsh)
+            implicit val document: Document = render(isWelsh, baseAmountForm.bind(Map(AmountForm.amount -> "invalid")))
 
             verify(isWelsh, ExpectedContents(
               title = "Error: Total one-off payments into relief at source (RAS) pensions, plus basic rate tax relief",
@@ -420,7 +392,7 @@ class OneOffRASPaymentsAmountViewSpec extends AltViewUnitTest {
           "the preferred language is Welsh" when {
 
             val isWelsh = true
-            implicit val document: Document = render(isWelsh)
+            implicit val document: Document = render(isWelsh, baseAmountForm.bind(Map(AmountForm.amount -> "invalid")))
 
             verify(isWelsh, ExpectedContents(
               title = "Error: Total one-off payments into relief at source (RAS) pensions, plus basic rate tax relief",
@@ -440,15 +412,6 @@ class OneOffRASPaymentsAmountViewSpec extends AltViewUnitTest {
         }
       }
       "there is an input over maximum allowed value" when {
-
-        val rasAmount: BigDecimal = 189.01
-
-        def render(isWelsh: Boolean)(implicit authRequest: AuthorisationRequest[AnyContent]): Document = {
-          implicit val messages: Messages = getMessages(isWelsh)
-          val htmlFormat = viewUnderTest(amountForm.bind(Map(AmountForm.amount -> "100,000,000,000")), taxYearEOY, rasAmount)
-          Jsoup.parse(htmlFormat.body)
-        }
-
         "requested by an individual" when {
 
           implicit val authRequest: AuthorisationRequest[AnyContent] = getAuthRequest(isAgent = false)
@@ -456,7 +419,7 @@ class OneOffRASPaymentsAmountViewSpec extends AltViewUnitTest {
           "the preferred language is English" when {
 
             val isWelsh = false
-            implicit val document: Document = render(isWelsh)
+            implicit val document: Document = render(isWelsh, baseAmountForm.bind(Map(AmountForm.amount -> "100,000,000,000")))
 
             verify(isWelsh, ExpectedContents(
               title = "Error: Total one-off payments into relief at source (RAS) pensions, plus basic rate tax relief",
@@ -477,7 +440,7 @@ class OneOffRASPaymentsAmountViewSpec extends AltViewUnitTest {
           "the preferred language is Welsh" when {
 
             val isWelsh = true
-            implicit val document: Document = render(isWelsh)
+            implicit val document: Document = render(isWelsh, baseAmountForm.bind(Map(AmountForm.amount -> "100,000,000,000")))
 
             verify(isWelsh, ExpectedContents(
               title = "Error: Total one-off payments into relief at source (RAS) pensions, plus basic rate tax relief",
@@ -502,7 +465,7 @@ class OneOffRASPaymentsAmountViewSpec extends AltViewUnitTest {
           "the preferred language is English" when {
 
             val isWelsh = false
-            implicit val document: Document = render(isWelsh)
+            implicit val document: Document = render(isWelsh, baseAmountForm.bind(Map(AmountForm.amount -> "100,000,000,000")))
 
             verify(isWelsh, ExpectedContents(
               title = "Error: Total one-off payments into relief at source (RAS) pensions, plus basic rate tax relief",
@@ -522,7 +485,7 @@ class OneOffRASPaymentsAmountViewSpec extends AltViewUnitTest {
           "the preferred language is Welsh" when {
 
             val isWelsh = true
-            implicit val document: Document = render(isWelsh)
+            implicit val document: Document = render(isWelsh, baseAmountForm.bind(Map(AmountForm.amount -> "100,000,000,000")))
 
             verify(isWelsh, ExpectedContents(
               title = "Error: Total one-off payments into relief at source (RAS) pensions, plus basic rate tax relief",
@@ -589,6 +552,12 @@ class OneOffRASPaymentsAmountViewSpec extends AltViewUnitTest {
       welshToggleCheck(isWelsh)
 
     }
+
+  private def render(isWelsh: Boolean, amountForm: Form[BigDecimal])(implicit authRequest: AuthorisationRequest[AnyContent]): Document = {
+    implicit val messages: Messages = getMessages(isWelsh)
+    val htmlFormat = viewUnderTest(amountForm, taxYearEOY, rasAmount)
+    Jsoup.parse(htmlFormat.body)
+  }
 }
 
 // scalastyle:on magic.number
