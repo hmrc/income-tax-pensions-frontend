@@ -21,266 +21,574 @@ import forms.AmountForm
 import models.AuthorisationRequest
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import play.api.data.Form
 import play.api.i18n.Messages
 import play.api.mvc.AnyContent
-import support.ViewUnitTest
+import support.AltViewUnitTest
 import views.html.pensions.paymentsIntoPensions.OneOffRASPaymentsAmountView
 
 // scalastyle:off magic.number
 
-class OneOffRASPaymentsAmountViewSpec extends ViewUnitTest {
+class OneOffRASPaymentsAmountViewSpec extends AltViewUnitTest {
 
-  private val poundPrefixText = "£"
-  private val amountInputName = "amount"
+  private def amountForm: Form[BigDecimal] = new PaymentsIntoPensionFormProvider().oneOffRASPaymentsAmountForm
 
-  object Selectors {
-    val captionSelector: String = "#main-content > div > div > header > p"
-    val continueButtonSelector: String = "#continue"
-    val formSelector: String = "#main-content > div > div > form"
-    val hintTextSelector = "#amount-hint"
-    val poundPrefixSelector = ".govuk-input__prefix"
-    val inputSelector = "#amount"
-    val expectedErrorHref = "#amount"
+  private lazy val viewUnderTest = inject[OneOffRASPaymentsAmountView]
 
-    def insetSpanText(index: Int): String = s"#main-content > div > div > div > span:nth-child($index)"
+  "the view" should {
+    "render as expected" when {
+      "there is no cya data" when {
 
-    def paragraphSelector(index: Int): String = s"#main-content > div > div > p:nth-of-type($index)"
-  }
-
-  trait CommonExpectedResults {
-    val expectedCaption: Int => String
-    val expectedHeading: String
-    val expectedTitle: String
-    val expectedErrorTitle: String
-    val expectedHowToWorkOut: String
-    val expectedCalculationHeading: String
-    val expectedExampleCalculation: String
-    val emptyErrorText: String
-    val invalidFormatErrorText: String
-    val maxAmountErrorText: String
-    val hintText: String
-    val buttonText: String
-  }
-
-  trait SpecificExpectedResults {
-    val expectedYouToldUs: String
-  }
-
-  object CommonExpectedEN extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Payments into pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val expectedHeading = "Total one-off payments into relief at source (RAS) pensions, plus basic rate tax relief"
-    val expectedTitle = "Total one-off payments into relief at source (RAS) pensions, plus basic rate tax relief"
-    val expectedErrorTitle = s"Error: $expectedTitle"
-    val expectedHowToWorkOut = "To work it out, divide your one-off payment amount by 80 and multiply the result by 100."
-    val expectedCalculationHeading = "Example calculation"
-    val expectedExampleCalculation = "Emma made a one-off payment of £500. £500 divided by 80 and multiplied by 100 is £625. Her answer is £625."
-    val hintText = "For example, £193.52"
-    val emptyErrorText = "Enter the total amount of one-off payments paid into RAS pensions, plus basic rate tax relief"
-    val invalidFormatErrorText = "Enter the total amount of one-off payments paid into RAS pensions, plus basic rate tax relief, in the correct format"
-    val maxAmountErrorText = "The total amount of one-off payments paid into RAS pensions, plus basic rate tax relief, must be less than £100,000,000,000"
-    val buttonText = "Continue"
-  }
-
-  object CommonExpectedCY extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Payments into pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val expectedHeading = "Total one-off payments into relief at source (RAS) pensions, plus basic rate tax relief"
-    val expectedTitle = "Total one-off payments into relief at source (RAS) pensions, plus basic rate tax relief"
-    val expectedErrorTitle = s"Error: $expectedTitle"
-    val expectedHowToWorkOut = "To work it out, divide your one-off payment amount by 80 and multiply the result by 100."
-    val expectedCalculationHeading = "Example calculation"
-    val expectedExampleCalculation = "Emma made a one-off payment of £500. £500 divided by 80 and multiplied by 100 is £625. Her answer is £625."
-    val hintText = "For example, £193.52"
-    val emptyErrorText = "Enter the total amount of one-off payments paid into RAS pensions, plus basic rate tax relief"
-    val invalidFormatErrorText = "Enter the total amount of one-off payments paid into RAS pensions, plus basic rate tax relief, in the correct format"
-    val maxAmountErrorText = "The total amount of one-off payments paid into RAS pensions, plus basic rate tax relief, must be less than £100,000,000,000"
-    val buttonText = "Continue"
-  }
-
-  object ExpectedIndividualEN extends SpecificExpectedResults {
-    val expectedYouToldUs =
-      "You told us the total amount you paid plus tax relief was £189.01. Tell us how much of this was a one-off payment. Include tax relief."
-  }
-
-  object ExpectedIndividualCY extends SpecificExpectedResults {
-    val expectedYouToldUs =
-      "You told us the total amount you paid plus tax relief was £189.01. Tell us how much of this was a one-off payment. Include tax relief."
-  }
-
-  object ExpectedAgentEN extends SpecificExpectedResults {
-    val expectedYouToldUs =
-      "You told us the total amount your client paid plus tax relief was £189.01. Tell us how much of this was a one-off payment. Include tax relief."
-  }
-
-  object ExpectedAgentCY extends SpecificExpectedResults {
-    val expectedYouToldUs =
-      "You told us the total amount your client paid plus tax relief was £189.01. Tell us how much of this was a one-off payment. Include tax relief."
-  }
-
-  val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(
-    UserScenario(isWelsh = false, isAgent = false, CommonExpectedEN, Some(ExpectedIndividualEN)),
-    UserScenario(isWelsh = false, isAgent = true, CommonExpectedEN, Some(ExpectedAgentEN)),
-    UserScenario(isWelsh = true, isAgent = false, CommonExpectedCY, Some(ExpectedIndividualCY)),
-    UserScenario(isWelsh = true, isAgent = true, CommonExpectedCY, Some(ExpectedAgentCY))
-  )
-
-  private def amountForm = new PaymentsIntoPensionFormProvider().oneOffRASPaymentsAmountForm
-
-  private lazy val underTest = inject[OneOffRASPaymentsAmountView]
-
-
-  userScenarios.foreach { userScenario =>
-
-    s"language is ${welshTest(userScenario.isWelsh)} and request is from an ${agentTest(userScenario.isAgent)}" should {
-      "render Total one off payments into relief at source (RAS) pensions page with no value when no cya data" which {
-        implicit val authRequest: AuthorisationRequest[AnyContent] = getAuthRequest(userScenario.isAgent)
-        implicit val messages: Messages = getMessages(userScenario.isWelsh)
         val rasAmount: BigDecimal = 189.01
 
-        val htmlFormat = underTest(amountForm, taxYearEOY, rasAmount)
+        def render(isWelsh: Boolean)(implicit authRequest: AuthorisationRequest[AnyContent]): Document = {
+          implicit val messages: Messages = getMessages(isWelsh)
+          val htmlFormat = viewUnderTest(amountForm, taxYearEOY, rasAmount)
+          Jsoup.parse(htmlFormat.body)
+        }
 
-        implicit val document: Document = Jsoup.parse(htmlFormat.body)
+        "requested by an individual" when {
 
-        import Selectors._
-        import userScenario.commonExpectedResults._
+          implicit val authRequest: AuthorisationRequest[AnyContent] = getAuthRequest(isAgent = false)
 
-        titleCheck(expectedTitle, userScenario.isWelsh)
-        h1Check(expectedHeading)
-        captionCheck(expectedCaption(taxYearEOY), captionSelector)
-        textOnPageCheck(userScenario.specificExpectedResults.get.expectedYouToldUs, paragraphSelector(1))
-        textOnPageCheck(expectedHowToWorkOut, paragraphSelector(2))
-        textOnPageCheck(expectedCalculationHeading, insetSpanText(1))
-        textOnPageCheck(expectedExampleCalculation, insetSpanText(2))
-        textOnPageCheck(hintText, hintTextSelector)
-        textOnPageCheck(poundPrefixText, poundPrefixSelector)
-        inputFieldValueCheck(amountInputName, inputSelector, "")
-        buttonCheck(buttonText, continueButtonSelector)
-        formPostLinkCheck(oneOffReliefAtSourcePaymentsAmountUrl(taxYearEOY), formSelector)
-        welshToggleCheck(userScenario.isWelsh)
+          "the preferred language is English" when {
+
+            implicit val document: Document = render(isWelsh = false)
+
+            verify(isWelsh = false, ExpectedContents(
+              title = "Total one-off payments into relief at source (RAS) pensions, plus basic rate tax relief",
+              header = "Total one-off payments into relief at source (RAS) pensions, plus basic rate tax relief",
+              caption = s"Payments into pensions for 6 April ${taxYearEOY - 1} to 5 April $taxYearEOY",
+              firstParagraph = "You told us the total amount you paid plus tax relief was £189.01. Tell us how much of this was a one-off payment. Include tax relief.",
+              secondParagraph = "To work it out, divide your one-off payment amount by 80 and multiply the result by 100.",
+              firstSpan = "Example calculation",
+              secondSpan = "Emma made a one-off payment of £500. £500 divided by 80 and multiplied by 100 is £625. Her answer is £625.",
+              hint = "For example, £193.52",
+              continueButton = "Continue",
+              currentAmount = "",
+              error = None
+            ))
+          }
+
+          "the preferred language is Welsh" when {
+
+            implicit val document: Document = render(isWelsh = true)
+
+            verify(isWelsh = true, ExpectedContents(
+              title = "Total one-off payments into relief at source (RAS) pensions, plus basic rate tax relief",
+              header = "Total one-off payments into relief at source (RAS) pensions, plus basic rate tax relief",
+              caption = s"Payments into pensions for 6 April ${taxYearEOY - 1} to 5 April $taxYearEOY",
+              firstParagraph = "You told us the total amount you paid plus tax relief was £189.01. Tell us how much of this was a one-off payment. Include tax relief.",
+              secondParagraph = "To work it out, divide your one-off payment amount by 80 and multiply the result by 100.",
+              firstSpan = "Example calculation",
+              secondSpan = "Emma made a one-off payment of £500. £500 divided by 80 and multiplied by 100 is £625. Her answer is £625.",
+              hint = "For example, £193.52",
+              continueButton = "Continue",
+              currentAmount = "",
+              error = None
+            ))
+
+          }
+        }
+        "requested by an Agent" when {
+
+          implicit val authRequest: AuthorisationRequest[AnyContent] = getAuthRequest(isAgent = true)
+
+          "the preferred language is English" when {
+
+            val isWelsh = false
+            implicit val document: Document = render(isWelsh)
+
+            verify(isWelsh, ExpectedContents(
+              title = "Total one-off payments into relief at source (RAS) pensions, plus basic rate tax relief",
+              header = "Total one-off payments into relief at source (RAS) pensions, plus basic rate tax relief",
+              caption = s"Payments into pensions for 6 April ${taxYearEOY - 1} to 5 April $taxYearEOY",
+              firstParagraph = "You told us the total amount your client paid plus tax relief was £189.01. Tell us how much of this was a one-off payment. Include tax relief.",
+              secondParagraph = "To work it out, divide your one-off payment amount by 80 and multiply the result by 100.",
+              firstSpan = "Example calculation",
+              secondSpan = "Emma made a one-off payment of £500. £500 divided by 80 and multiplied by 100 is £625. Her answer is £625.",
+              hint = "For example, £193.52",
+              continueButton = "Continue",
+              currentAmount = "",
+              error = None
+            ))
+
+          }
+          "the preferred language is Welsh" when {
+
+            val isWelsh = true
+            implicit val document: Document = render(isWelsh)
+
+            verify(isWelsh, ExpectedContents(
+              title = "Total one-off payments into relief at source (RAS) pensions, plus basic rate tax relief",
+              header = "Total one-off payments into relief at source (RAS) pensions, plus basic rate tax relief",
+              caption = s"Payments into pensions for 6 April ${taxYearEOY - 1} to 5 April $taxYearEOY",
+              firstParagraph = "You told us the total amount your client paid plus tax relief was £189.01. Tell us how much of this was a one-off payment. Include tax relief.",
+              secondParagraph = "To work it out, divide your one-off payment amount by 80 and multiply the result by 100.",
+              firstSpan = "Example calculation",
+              secondSpan = "Emma made a one-off payment of £500. £500 divided by 80 and multiplied by 100 is £625. Her answer is £625.",
+              hint = "For example, £193.52",
+              continueButton = "Continue",
+              currentAmount = "",
+              error = None
+            ))
+
+          }
+        }
       }
 
-      "render Total one off payments into relief at source (RAS) pensions page prefilled when cya data" which {
+      "there is cya data" when {
 
-        val existingAmount: String = "999.88"
-        implicit val authRequest: AuthorisationRequest[AnyContent] = getAuthRequest(userScenario.isAgent)
-        implicit val messages: Messages = getMessages(userScenario.isWelsh)
         val rasAmount: BigDecimal = 189.01
 
-        val htmlFormat = underTest(amountForm.fill(999.88), taxYearEOY, rasAmount)
+        def render(isWelsh: Boolean)(implicit authRequest: AuthorisationRequest[AnyContent]): Document = {
+          implicit val messages: Messages = getMessages(isWelsh)
+          val htmlFormat = viewUnderTest(amountForm.fill(999.88), taxYearEOY, rasAmount)
+          Jsoup.parse(htmlFormat.body)
+        }
 
-        implicit val document: Document = Jsoup.parse(htmlFormat.body)
+        "requested by an individual" when {
 
-        import Selectors._
-        import userScenario.commonExpectedResults._
+          implicit val authRequest: AuthorisationRequest[AnyContent] = getAuthRequest(isAgent = false)
 
-        titleCheck(expectedTitle, userScenario.isWelsh)
-        h1Check(expectedHeading)
-        captionCheck(expectedCaption(taxYearEOY), captionSelector)
-        textOnPageCheck(userScenario.specificExpectedResults.get.expectedYouToldUs, paragraphSelector(1))
-        textOnPageCheck(expectedHowToWorkOut, paragraphSelector(2))
-        textOnPageCheck(expectedCalculationHeading, insetSpanText(1))
-        textOnPageCheck(expectedExampleCalculation, insetSpanText(2))
-        textOnPageCheck(hintText, hintTextSelector)
-        textOnPageCheck(poundPrefixText, poundPrefixSelector)
-        inputFieldValueCheck(amountInputName, inputSelector, existingAmount)
-        buttonCheck(buttonText, continueButtonSelector)
-        formPostLinkCheck(oneOffReliefAtSourcePaymentsAmountUrl(taxYearEOY), formSelector)
-        welshToggleCheck(userScenario.isWelsh)
+          "the preferred language is English" when {
 
+            implicit val document: Document = render(isWelsh = false)
+
+            verify(isWelsh = false, ExpectedContents(
+              title = "Total one-off payments into relief at source (RAS) pensions, plus basic rate tax relief",
+              header = "Total one-off payments into relief at source (RAS) pensions, plus basic rate tax relief",
+              caption = s"Payments into pensions for 6 April ${taxYearEOY - 1} to 5 April $taxYearEOY",
+              firstParagraph = "You told us the total amount you paid plus tax relief was £189.01. Tell us how much of this was a one-off payment. Include tax relief.",
+              secondParagraph = "To work it out, divide your one-off payment amount by 80 and multiply the result by 100.",
+              firstSpan = "Example calculation",
+              secondSpan = "Emma made a one-off payment of £500. £500 divided by 80 and multiplied by 100 is £625. Her answer is £625.",
+              hint = "For example, £193.52",
+              continueButton = "Continue",
+              currentAmount = "999.88",
+              error = None
+            ))
+          }
+
+          "the preferred language is Welsh" when {
+
+            implicit val document: Document = render(isWelsh = true)
+
+            verify(isWelsh = true, ExpectedContents(
+              title = "Total one-off payments into relief at source (RAS) pensions, plus basic rate tax relief",
+              header = "Total one-off payments into relief at source (RAS) pensions, plus basic rate tax relief",
+              caption = s"Payments into pensions for 6 April ${taxYearEOY - 1} to 5 April $taxYearEOY",
+              firstParagraph = "You told us the total amount you paid plus tax relief was £189.01. Tell us how much of this was a one-off payment. Include tax relief.",
+              secondParagraph = "To work it out, divide your one-off payment amount by 80 and multiply the result by 100.",
+              firstSpan = "Example calculation",
+              secondSpan = "Emma made a one-off payment of £500. £500 divided by 80 and multiplied by 100 is £625. Her answer is £625.",
+              hint = "For example, £193.52",
+              continueButton = "Continue",
+              currentAmount = "999.88",
+              error = None
+            ))
+
+          }
+        }
+        "requested by an Agent" when {
+
+          implicit val authRequest: AuthorisationRequest[AnyContent] = getAuthRequest(isAgent = true)
+
+          "the preferred language is English" when {
+
+            val isWelsh = false
+            implicit val document: Document = render(isWelsh)
+
+            verify(isWelsh, ExpectedContents(
+              title = "Total one-off payments into relief at source (RAS) pensions, plus basic rate tax relief",
+              header = "Total one-off payments into relief at source (RAS) pensions, plus basic rate tax relief",
+              caption = s"Payments into pensions for 6 April ${taxYearEOY - 1} to 5 April $taxYearEOY",
+              firstParagraph = "You told us the total amount your client paid plus tax relief was £189.01. Tell us how much of this was a one-off payment. Include tax relief.",
+              secondParagraph = "To work it out, divide your one-off payment amount by 80 and multiply the result by 100.",
+              firstSpan = "Example calculation",
+              secondSpan = "Emma made a one-off payment of £500. £500 divided by 80 and multiplied by 100 is £625. Her answer is £625.",
+              hint = "For example, £193.52",
+              continueButton = "Continue",
+              currentAmount = "999.88",
+              error = None
+            ))
+
+          }
+          "the preferred language is Welsh" when {
+
+            val isWelsh = true
+            implicit val document: Document = render(isWelsh)
+
+            verify(isWelsh, ExpectedContents(
+              title = "Total one-off payments into relief at source (RAS) pensions, plus basic rate tax relief",
+              header = "Total one-off payments into relief at source (RAS) pensions, plus basic rate tax relief",
+              caption = s"Payments into pensions for 6 April ${taxYearEOY - 1} to 5 April $taxYearEOY",
+              firstParagraph = "You told us the total amount your client paid plus tax relief was £189.01. Tell us how much of this was a one-off payment. Include tax relief.",
+              secondParagraph = "To work it out, divide your one-off payment amount by 80 and multiply the result by 100.",
+              firstSpan = "Example calculation",
+              secondSpan = "Emma made a one-off payment of £500. £500 divided by 80 and multiplied by 100 is £625. Her answer is £625.",
+              hint = "For example, £193.52",
+              continueButton = "Continue",
+              currentAmount = "999.88",
+              error = None
+            ))
+
+          }
+        }
       }
 
-      "return an error when form is submitted with no input entry" which {
-        implicit val authRequest: AuthorisationRequest[AnyContent] = getAuthRequest(userScenario.isAgent)
-        implicit val messages: Messages = getMessages(userScenario.isWelsh)
+      "there is no input entry" when {
+
         val rasAmount: BigDecimal = 189.01
-        val htmlFormat = underTest(amountForm.bind(Map(AmountForm.amount -> "")), taxYearEOY, rasAmount)
 
+        def render(isWelsh: Boolean)(implicit authRequest: AuthorisationRequest[AnyContent]): Document = {
+          implicit val messages: Messages = getMessages(isWelsh)
+          val htmlFormat = viewUnderTest(amountForm.bind(Map(AmountForm.amount -> "")), taxYearEOY, rasAmount)
+          Jsoup.parse(htmlFormat.body)
+        }
 
-        implicit val document: Document = Jsoup.parse(htmlFormat.body)
+        "requested by an individual" when {
 
-        import Selectors._
-        import userScenario.commonExpectedResults._
+          implicit val authRequest: AuthorisationRequest[AnyContent] = getAuthRequest(isAgent = false)
 
-        titleCheck(expectedErrorTitle, userScenario.isWelsh)
-        h1Check(expectedHeading)
-        captionCheck(expectedCaption(taxYearEOY), captionSelector)
-        textOnPageCheck(userScenario.specificExpectedResults.get.expectedYouToldUs, paragraphSelector(1))
-        textOnPageCheck(expectedHowToWorkOut, paragraphSelector(2))
-        textOnPageCheck(expectedCalculationHeading, insetSpanText(1))
-        textOnPageCheck(expectedExampleCalculation, insetSpanText(2))
-        textOnPageCheck(hintText, hintTextSelector)
-        textOnPageCheck(poundPrefixText, poundPrefixSelector)
-        inputFieldValueCheck(amountInputName, inputSelector, "")
-        buttonCheck(buttonText, continueButtonSelector)
-        formPostLinkCheck(oneOffReliefAtSourcePaymentsAmountUrl(taxYearEOY), formSelector)
-        errorSummaryCheck(emptyErrorText, expectedErrorHref)
-        errorAboveElementCheck(emptyErrorText)
-        welshToggleCheck(userScenario.isWelsh)
+          "the preferred language is English" when {
+
+            val isWelsh = false
+            implicit val document: Document = render(isWelsh)
+
+            verify(isWelsh, ExpectedContents(
+              title = "Error: Total one-off payments into relief at source (RAS) pensions, plus basic rate tax relief",
+              header = "Total one-off payments into relief at source (RAS) pensions, plus basic rate tax relief",
+              caption = s"Payments into pensions for 6 April ${taxYearEOY - 1} to 5 April $taxYearEOY",
+              firstParagraph = "You told us the total amount you paid plus tax relief was £189.01. Tell us how much of this was a one-off payment. Include tax relief.",
+              secondParagraph = "To work it out, divide your one-off payment amount by 80 and multiply the result by 100.",
+              firstSpan = "Example calculation",
+              secondSpan = "Emma made a one-off payment of £500. £500 divided by 80 and multiplied by 100 is £625. Her answer is £625.",
+              hint = "For example, £193.52",
+              continueButton = "Continue",
+              currentAmount = "",
+              error = Some("Enter the total amount of one-off payments paid into RAS pensions, plus basic rate tax relief")
+            ))
+          }
+
+          "the preferred language is Welsh" when {
+
+            val isWelsh = true
+            implicit val document: Document = render(isWelsh)
+
+            verify(isWelsh, ExpectedContents(
+              title = "Error: Total one-off payments into relief at source (RAS) pensions, plus basic rate tax relief",
+              header = "Total one-off payments into relief at source (RAS) pensions, plus basic rate tax relief",
+              caption = s"Payments into pensions for 6 April ${taxYearEOY - 1} to 5 April $taxYearEOY",
+              firstParagraph = "You told us the total amount you paid plus tax relief was £189.01. Tell us how much of this was a one-off payment. Include tax relief.",
+              secondParagraph = "To work it out, divide your one-off payment amount by 80 and multiply the result by 100.",
+              firstSpan = "Example calculation",
+              secondSpan = "Emma made a one-off payment of £500. £500 divided by 80 and multiplied by 100 is £625. Her answer is £625.",
+              hint = "For example, £193.52",
+              continueButton = "Continue",
+              currentAmount = "",
+              error = Some("Enter the total amount of one-off payments paid into RAS pensions, plus basic rate tax relief")
+            ))
+
+          }
+        }
+        "requested by an Agent" when {
+
+          implicit val authRequest: AuthorisationRequest[AnyContent] = getAuthRequest(isAgent = true)
+
+          "the preferred language is English" when {
+
+            val isWelsh = false
+            implicit val document: Document = render(isWelsh)
+
+            verify(isWelsh, ExpectedContents(
+              title = "Error: Total one-off payments into relief at source (RAS) pensions, plus basic rate tax relief",
+              header = "Total one-off payments into relief at source (RAS) pensions, plus basic rate tax relief",
+              caption = s"Payments into pensions for 6 April ${taxYearEOY - 1} to 5 April $taxYearEOY",
+              firstParagraph = "You told us the total amount your client paid plus tax relief was £189.01. Tell us how much of this was a one-off payment. Include tax relief.",
+              secondParagraph = "To work it out, divide your one-off payment amount by 80 and multiply the result by 100.",
+              firstSpan = "Example calculation",
+              secondSpan = "Emma made a one-off payment of £500. £500 divided by 80 and multiplied by 100 is £625. Her answer is £625.",
+              hint = "For example, £193.52",
+              continueButton = "Continue",
+              currentAmount = "",
+              error = Some("Enter the total amount of one-off payments paid into RAS pensions, plus basic rate tax relief")
+            ))
+
+          }
+          "the preferred language is Welsh" when {
+
+            val isWelsh = true
+            implicit val document: Document = render(isWelsh)
+
+            verify(isWelsh, ExpectedContents(
+              title = "Error: Total one-off payments into relief at source (RAS) pensions, plus basic rate tax relief",
+              header = "Total one-off payments into relief at source (RAS) pensions, plus basic rate tax relief",
+              caption = s"Payments into pensions for 6 April ${taxYearEOY - 1} to 5 April $taxYearEOY",
+              firstParagraph = "You told us the total amount your client paid plus tax relief was £189.01. Tell us how much of this was a one-off payment. Include tax relief.",
+              secondParagraph = "To work it out, divide your one-off payment amount by 80 and multiply the result by 100.",
+              firstSpan = "Example calculation",
+              secondSpan = "Emma made a one-off payment of £500. £500 divided by 80 and multiplied by 100 is £625. Her answer is £625.",
+              hint = "For example, £193.52",
+              continueButton = "Continue",
+              currentAmount = "",
+              error = Some("Enter the total amount of one-off payments paid into RAS pensions, plus basic rate tax relief")
+            ))
+
+          }
+        }
       }
+      "there an invalid format input" when {
 
-      "return an error when form is submitted with an invalid format input" which {
-
-
-        implicit val authRequest: AuthorisationRequest[AnyContent] = getAuthRequest(userScenario.isAgent)
-        implicit val messages: Messages = getMessages(userScenario.isWelsh)
         val rasAmount: BigDecimal = 189.01
-        val htmlFormat = underTest(amountForm.bind(Map(AmountForm.amount -> "invalid")), taxYearEOY, rasAmount)
 
+        def render(isWelsh: Boolean)(implicit authRequest: AuthorisationRequest[AnyContent]): Document = {
+          implicit val messages: Messages = getMessages(isWelsh)
+          val htmlFormat = viewUnderTest(amountForm.bind(Map(AmountForm.amount -> "invalid")), taxYearEOY, rasAmount)
+          Jsoup.parse(htmlFormat.body)
+        }
 
-        implicit val document: Document = Jsoup.parse(htmlFormat.body)
+        "requested by an individual" when {
 
-        import Selectors._
-        import userScenario.commonExpectedResults._
+          implicit val authRequest: AuthorisationRequest[AnyContent] = getAuthRequest(isAgent = false)
 
+          "the preferred language is English" when {
 
-        titleCheck(expectedErrorTitle, userScenario.isWelsh)
-        h1Check(expectedHeading)
-        captionCheck(expectedCaption(taxYearEOY), captionSelector)
-        textOnPageCheck(userScenario.specificExpectedResults.get.expectedYouToldUs, paragraphSelector(1))
-        textOnPageCheck(expectedHowToWorkOut, paragraphSelector(2))
-        textOnPageCheck(expectedCalculationHeading, insetSpanText(1))
-        textOnPageCheck(expectedExampleCalculation, insetSpanText(2))
-        textOnPageCheck(hintText, hintTextSelector)
-        textOnPageCheck(poundPrefixText, poundPrefixSelector)
-        inputFieldValueCheck(amountInputName, inputSelector, "invalid")
-        buttonCheck(buttonText, continueButtonSelector)
-        formPostLinkCheck(oneOffReliefAtSourcePaymentsAmountUrl(taxYearEOY), formSelector)
-        errorSummaryCheck(invalidFormatErrorText, expectedErrorHref)
-        errorAboveElementCheck(invalidFormatErrorText)
-        welshToggleCheck(userScenario.isWelsh)
+            val isWelsh = false
+            implicit val document: Document = render(isWelsh)
+
+            verify(isWelsh, ExpectedContents(
+              title = "Error: Total one-off payments into relief at source (RAS) pensions, plus basic rate tax relief",
+              header = "Total one-off payments into relief at source (RAS) pensions, plus basic rate tax relief",
+              caption = s"Payments into pensions for 6 April ${taxYearEOY - 1} to 5 April $taxYearEOY",
+              firstParagraph = "You told us the total amount you paid plus tax relief was £189.01. Tell us how much of this was a one-off payment. Include tax relief.",
+              secondParagraph = "To work it out, divide your one-off payment amount by 80 and multiply the result by 100.",
+              firstSpan = "Example calculation",
+              secondSpan = "Emma made a one-off payment of £500. £500 divided by 80 and multiplied by 100 is £625. Her answer is £625.",
+              hint = "For example, £193.52",
+              continueButton = "Continue",
+              currentAmount = "invalid",
+              error = Some("Enter the total amount of one-off payments paid into RAS pensions, plus basic rate tax relief, in the correct format")
+            ))
+          }
+
+          "the preferred language is Welsh" when {
+
+            val isWelsh = true
+            implicit val document: Document = render(isWelsh)
+
+            verify(isWelsh, ExpectedContents(
+              title = "Error: Total one-off payments into relief at source (RAS) pensions, plus basic rate tax relief",
+              header = "Total one-off payments into relief at source (RAS) pensions, plus basic rate tax relief",
+              caption = s"Payments into pensions for 6 April ${taxYearEOY - 1} to 5 April $taxYearEOY",
+              firstParagraph = "You told us the total amount you paid plus tax relief was £189.01. Tell us how much of this was a one-off payment. Include tax relief.",
+              secondParagraph = "To work it out, divide your one-off payment amount by 80 and multiply the result by 100.",
+              firstSpan = "Example calculation",
+              secondSpan = "Emma made a one-off payment of £500. £500 divided by 80 and multiplied by 100 is £625. Her answer is £625.",
+              hint = "For example, £193.52",
+              continueButton = "Continue",
+              currentAmount = "invalid",
+              error = Some("Enter the total amount of one-off payments paid into RAS pensions, plus basic rate tax relief, in the correct format")
+            ))
+
+          }
+        }
+        "requested by an Agent" when {
+
+          implicit val authRequest: AuthorisationRequest[AnyContent] = getAuthRequest(isAgent = true)
+
+          "the preferred language is English" when {
+
+            val isWelsh = false
+            implicit val document: Document = render(isWelsh)
+
+            verify(isWelsh, ExpectedContents(
+              title = "Error: Total one-off payments into relief at source (RAS) pensions, plus basic rate tax relief",
+              header = "Total one-off payments into relief at source (RAS) pensions, plus basic rate tax relief",
+              caption = s"Payments into pensions for 6 April ${taxYearEOY - 1} to 5 April $taxYearEOY",
+              firstParagraph = "You told us the total amount your client paid plus tax relief was £189.01. Tell us how much of this was a one-off payment. Include tax relief.",
+              secondParagraph = "To work it out, divide your one-off payment amount by 80 and multiply the result by 100.",
+              firstSpan = "Example calculation",
+              secondSpan = "Emma made a one-off payment of £500. £500 divided by 80 and multiplied by 100 is £625. Her answer is £625.",
+              hint = "For example, £193.52",
+              continueButton = "Continue",
+              currentAmount = "invalid",
+              error = Some("Enter the total amount of one-off payments paid into RAS pensions, plus basic rate tax relief, in the correct format")
+            ))
+
+          }
+          "the preferred language is Welsh" when {
+
+            val isWelsh = true
+            implicit val document: Document = render(isWelsh)
+
+            verify(isWelsh, ExpectedContents(
+              title = "Error: Total one-off payments into relief at source (RAS) pensions, plus basic rate tax relief",
+              header = "Total one-off payments into relief at source (RAS) pensions, plus basic rate tax relief",
+              caption = s"Payments into pensions for 6 April ${taxYearEOY - 1} to 5 April $taxYearEOY",
+              firstParagraph = "You told us the total amount your client paid plus tax relief was £189.01. Tell us how much of this was a one-off payment. Include tax relief.",
+              secondParagraph = "To work it out, divide your one-off payment amount by 80 and multiply the result by 100.",
+              firstSpan = "Example calculation",
+              secondSpan = "Emma made a one-off payment of £500. £500 divided by 80 and multiplied by 100 is £625. Her answer is £625.",
+              hint = "For example, £193.52",
+              continueButton = "Continue",
+              currentAmount = "invalid",
+              error = Some("Enter the total amount of one-off payments paid into RAS pensions, plus basic rate tax relief, in the correct format")
+            ))
+
+          }
+        }
       }
+      "there is an input over maximum allowed value" when {
 
-      "return an error when form is submitted with input over maximum allowed value" which {
-
-        implicit val authRequest: AuthorisationRequest[AnyContent] = getAuthRequest(userScenario.isAgent)
-        implicit val messages: Messages = getMessages(userScenario.isWelsh)
         val rasAmount: BigDecimal = 189.01
-        val htmlFormat = underTest(amountForm.bind(Map(AmountForm.amount -> "100,000,000,000")), taxYearEOY, rasAmount)
 
+        def render(isWelsh: Boolean)(implicit authRequest: AuthorisationRequest[AnyContent]): Document = {
+          implicit val messages: Messages = getMessages(isWelsh)
+          val htmlFormat = viewUnderTest(amountForm.bind(Map(AmountForm.amount -> "100,000,000,000")), taxYearEOY, rasAmount)
+          Jsoup.parse(htmlFormat.body)
+        }
 
-        implicit val document: Document = Jsoup.parse(htmlFormat.body)
+        "requested by an individual" when {
 
-        import Selectors._
-        import userScenario.commonExpectedResults._
+          implicit val authRequest: AuthorisationRequest[AnyContent] = getAuthRequest(isAgent = false)
 
+          "the preferred language is English" when {
 
-        titleCheck(expectedErrorTitle, userScenario.isWelsh)
-        h1Check(expectedHeading)
-        captionCheck(expectedCaption(taxYearEOY), captionSelector)
-        textOnPageCheck(userScenario.specificExpectedResults.get.expectedYouToldUs, paragraphSelector(1))
-        textOnPageCheck(expectedHowToWorkOut, paragraphSelector(2))
-        textOnPageCheck(expectedCalculationHeading, insetSpanText(1))
-        textOnPageCheck(expectedExampleCalculation, insetSpanText(2))
-        textOnPageCheck(hintText, hintTextSelector)
-        textOnPageCheck(poundPrefixText, poundPrefixSelector)
-        inputFieldValueCheck(amountInputName, inputSelector, "100,000,000,000")
-        buttonCheck(buttonText, continueButtonSelector)
-        formPostLinkCheck(oneOffReliefAtSourcePaymentsAmountUrl(taxYearEOY), formSelector)
-        errorSummaryCheck(maxAmountErrorText, expectedErrorHref)
-        errorAboveElementCheck(maxAmountErrorText)
-        welshToggleCheck(userScenario.isWelsh)
+            val isWelsh = false
+            implicit val document: Document = render(isWelsh)
+
+            verify(isWelsh, ExpectedContents(
+              title = "Error: Total one-off payments into relief at source (RAS) pensions, plus basic rate tax relief",
+              header = "Total one-off payments into relief at source (RAS) pensions, plus basic rate tax relief",
+              caption = s"Payments into pensions for 6 April ${taxYearEOY - 1} to 5 April $taxYearEOY",
+              firstParagraph = "You told us the total amount you paid plus tax relief was £189.01. Tell us how much of this was a one-off payment. Include tax relief.",
+              secondParagraph = "To work it out, divide your one-off payment amount by 80 and multiply the result by 100.",
+              firstSpan = "Example calculation",
+              secondSpan = "Emma made a one-off payment of £500. £500 divided by 80 and multiplied by 100 is £625. Her answer is £625.",
+              hint = "For example, £193.52",
+              continueButton = "Continue",
+              currentAmount = "100,000,000,000",
+              error = Some("The total amount of one-off payments paid into RAS pensions, plus basic rate tax relief, must be less than £100,000,000,000")
+            ))
+
+          }
+
+          "the preferred language is Welsh" when {
+
+            val isWelsh = true
+            implicit val document: Document = render(isWelsh)
+
+            verify(isWelsh, ExpectedContents(
+              title = "Error: Total one-off payments into relief at source (RAS) pensions, plus basic rate tax relief",
+              header = "Total one-off payments into relief at source (RAS) pensions, plus basic rate tax relief",
+              caption = s"Payments into pensions for 6 April ${taxYearEOY - 1} to 5 April $taxYearEOY",
+              firstParagraph = "You told us the total amount you paid plus tax relief was £189.01. Tell us how much of this was a one-off payment. Include tax relief.",
+              secondParagraph = "To work it out, divide your one-off payment amount by 80 and multiply the result by 100.",
+              firstSpan = "Example calculation",
+              secondSpan = "Emma made a one-off payment of £500. £500 divided by 80 and multiplied by 100 is £625. Her answer is £625.",
+              hint = "For example, £193.52",
+              continueButton = "Continue",
+              currentAmount = "100,000,000,000",
+              error = Some("The total amount of one-off payments paid into RAS pensions, plus basic rate tax relief, must be less than £100,000,000,000")
+            ))
+
+          }
+        }
+        "requested by an Agent" when {
+
+          implicit val authRequest: AuthorisationRequest[AnyContent] = getAuthRequest(isAgent = true)
+
+          "the preferred language is English" when {
+
+            val isWelsh = false
+            implicit val document: Document = render(isWelsh)
+
+            verify(isWelsh, ExpectedContents(
+              title = "Error: Total one-off payments into relief at source (RAS) pensions, plus basic rate tax relief",
+              header = "Total one-off payments into relief at source (RAS) pensions, plus basic rate tax relief",
+              caption = s"Payments into pensions for 6 April ${taxYearEOY - 1} to 5 April $taxYearEOY",
+              firstParagraph = "You told us the total amount your client paid plus tax relief was £189.01. Tell us how much of this was a one-off payment. Include tax relief.",
+              secondParagraph = "To work it out, divide your one-off payment amount by 80 and multiply the result by 100.",
+              firstSpan = "Example calculation",
+              secondSpan = "Emma made a one-off payment of £500. £500 divided by 80 and multiplied by 100 is £625. Her answer is £625.",
+              hint = "For example, £193.52",
+              continueButton = "Continue",
+              currentAmount = "100,000,000,000",
+              error = Some("The total amount of one-off payments paid into RAS pensions, plus basic rate tax relief, must be less than £100,000,000,000")
+            ))
+
+          }
+          "the preferred language is Welsh" when {
+
+            val isWelsh = true
+            implicit val document: Document = render(isWelsh)
+
+            verify(isWelsh, ExpectedContents(
+              title = "Error: Total one-off payments into relief at source (RAS) pensions, plus basic rate tax relief",
+              header = "Total one-off payments into relief at source (RAS) pensions, plus basic rate tax relief",
+              caption = s"Payments into pensions for 6 April ${taxYearEOY - 1} to 5 April $taxYearEOY",
+              firstParagraph = "You told us the total amount your client paid plus tax relief was £189.01. Tell us how much of this was a one-off payment. Include tax relief.",
+              secondParagraph = "To work it out, divide your one-off payment amount by 80 and multiply the result by 100.",
+              firstSpan = "Example calculation",
+              secondSpan = "Emma made a one-off payment of £500. £500 divided by 80 and multiplied by 100 is £625. Her answer is £625.",
+              hint = "For example, £193.52",
+              continueButton = "Continue",
+              currentAmount = "100,000,000,000",
+              error = Some("The total amount of one-off payments paid into RAS pensions, plus basic rate tax relief, must be less than £100,000,000,000")
+            ))
+
+          }
+        }
       }
+
     }
   }
+
+    case class ExpectedContents(title: String,
+                                header: String,
+                                caption: String,
+                                firstParagraph: String,
+                                secondParagraph: String,
+                                firstSpan: String,
+                                secondSpan: String,
+                                hint: String,
+                                continueButton: String,
+                                currentAmount: String,
+                                error: Option[String])
+
+    private def verify(isWelsh: Boolean, expectedContents: ExpectedContents)(implicit document: Document): Unit = {
+
+      val continueButtonSelector: String = "#continue"
+      val formSelector: String = "#main-content > div > div > form"
+      val hintTextSelector = "#amount-hint"
+      val poundPrefixSelector = ".govuk-input__prefix"
+      val inputSelector = "#amount"
+      val expectedErrorHref = "#amount"
+
+      def insetSpanText(index: Int): String = s"#main-content > div > div > div > span:nth-child($index)"
+
+      def paragraphSelector(index: Int): String = s"#main-content > div > div > p:nth-of-type($index)"
+
+      titleCheck(expectedContents.title, isWelsh)
+      h1Check(expectedContents.header)
+      captionCheck(expectedContents.caption)
+      textOnPageCheck(expectedContents.firstParagraph, paragraphSelector(1))
+      textOnPageCheck(expectedContents.secondParagraph, paragraphSelector(2))
+      textOnPageCheck(expectedContents.firstSpan, insetSpanText(1))
+      textOnPageCheck(expectedContents.secondSpan, insetSpanText(2))
+      textOnPageCheck(expectedContents.hint, hintTextSelector)
+      textOnPageCheck("£", poundPrefixSelector)
+      inputFieldValueCheck("amount", inputSelector, expectedContents.currentAmount)
+      buttonCheck(expectedContents.continueButton, continueButtonSelector)
+      formPostLinkCheck(oneOffReliefAtSourcePaymentsAmountUrl(taxYearEOY), formSelector)
+      expectedContents.error.foreach { error =>
+        errorSummaryCheck(error, expectedErrorHref)
+        errorAboveElementCheck(error)
+      }
+      welshToggleCheck(isWelsh)
+
+    }
 }
 
 // scalastyle:on magic.number
