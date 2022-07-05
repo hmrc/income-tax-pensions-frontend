@@ -25,33 +25,18 @@ import play.api.data.Form
 import play.api.i18n.Messages
 import play.api.mvc.AnyContent
 import support.ViewUnitTest
+import views.ReliefAtSourceOneOffPaymentsViewSpec.{CommonExpectedCY, CommonExpectedEN, CommonExpectedResults, ExpectedAgentCY, ExpectedAgentEN, ExpectedIndividualCY, ExpectedIndividualEN, Selectors, SpecificExpectedResults, someRasAmount}
 import views.html.pensions.paymentsIntoPensions.ReliefAtSourceOneOffPaymentsView
 
-class ReliefAtSourceOneOffPaymentsViewSpec extends ViewUnitTest {
+object ReliefAtSourceOneOffPaymentsViewSpec {
 
   private val someRasAmount: BigDecimal = 33.33
-  object Selectors {
-    val captionSelector: String = "#main-content > div > div > header > p"
-    val continueButtonSelector: String = "#continue"
-    val formSelector: String = "#main-content > div > div > form"
-    val yesSelector = "#value"
-    val noSelector = "#value-no"
-    val paragraphSelector: String = "#this-includes"
-  }
 
   trait CommonExpectedResults {
     val expectedCaption: Int => String
     val yesText: String
     val noText: String
     val buttonText: String
-  }
-
-  trait SpecificExpectedResults {
-    val expectedHeading: String
-    val expectedTitle: String
-    val expectedErrorTitle: String
-    val thisIncludes: String
-    val expectedErrorMessage: String
   }
 
   object CommonExpectedEN extends CommonExpectedResults {
@@ -67,6 +52,17 @@ class ReliefAtSourceOneOffPaymentsViewSpec extends ViewUnitTest {
     val noText = "No"
     val buttonText = "Continue"
   }
+
+
+  trait SpecificExpectedResults {
+    val expectedHeading: String
+    val expectedTitle: String
+    val expectedErrorTitle: String
+    val thisIncludes: String
+    val expectedErrorMessage: String
+  }
+
+
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
     val expectedHeading = "Did you make any one-off payments into relief at source (RAS) pensions?"
@@ -108,6 +104,24 @@ class ReliefAtSourceOneOffPaymentsViewSpec extends ViewUnitTest {
     val expectedErrorMessage = "Select yes if your client made one-off payments into RAS pensions"
   }
 
+  object Selectors {
+    val captionSelector: String = "#main-content > div > div > header > p"
+    val continueButtonSelector: String = "#continue"
+    val formSelector: String = "#main-content > div > div > form"
+    val yesSelector = "#value"
+    val noSelector = "#value-no"
+    val paragraphSelector: String = "#this-includes"
+  }
+
+}
+
+class ReliefAtSourceOneOffPaymentsViewSpec extends ViewUnitTest {
+
+
+
+
+
+
   val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(
     UserScenario(isWelsh = false, isAgent = false, CommonExpectedEN, Some(ExpectedIndividualEN)),
     UserScenario(isWelsh = false, isAgent = true, CommonExpectedEN, Some(ExpectedAgentEN)),
@@ -125,7 +139,7 @@ class ReliefAtSourceOneOffPaymentsViewSpec extends ViewUnitTest {
         implicit val authRequest: AuthorisationRequest[AnyContent] = getAuthRequest(userScenario.isAgent)
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
 
-        val htmlFormat = underTest(yesNoForm(userScenario.isAgent), taxYearEOY, someRasAmount)
+        val htmlFormat = underTest(yesNoForm(userScenario.isAgent), taxYearEOY, ReliefAtSourceOneOffPaymentsViewSpec.someRasAmount)
 
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
@@ -134,7 +148,7 @@ class ReliefAtSourceOneOffPaymentsViewSpec extends ViewUnitTest {
 
         titleCheck(userScenario.specificExpectedResults.get.expectedTitle, userScenario.isWelsh)
         h1Check(userScenario.specificExpectedResults.get.expectedHeading)
-        captionCheck(expectedCaption(taxYearEOY), captionSelector)
+        captionCheck(expectedCaption(taxYearEOY), Selectors.captionSelector)
         textOnPageCheck(userScenario.specificExpectedResults.get.thisIncludes, paragraphSelector)
         radioButtonCheck(yesText, 1, checked = false)
         radioButtonCheck(noText, 2, checked = false)
