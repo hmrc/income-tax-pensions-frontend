@@ -26,11 +26,12 @@ import play.api.i18n.Messages
 import play.api.mvc.AnyContent
 import support.ViewUnitTest
 import views.html.pensions.paymentsIntoPensions.RetirementAnnuityAmountView
+import views.RetirementAnnuityAmountTestSupport._
 
 
-class RetirementAnnuityAmountViewSpec extends ViewUnitTest {
-  private val poundPrefixText = "£"
-  private val amountInputName = "amount"
+object RetirementAnnuityAmountTestSupport {
+  val poundPrefixText = "£"
+  val amountInputName = "amount"
 
   object Selectors {
     val captionSelector: String = "#main-content > div > div > header > p"
@@ -106,6 +107,9 @@ class RetirementAnnuityAmountViewSpec extends ViewUnitTest {
     val expectedHeading = "How much did your client pay into their retirement annuity contracts?"
     val expectedErrorTitle = s"Error: $expectedTitle"
   }
+}
+
+class RetirementAnnuityAmountTestSupport extends ViewUnitTest {
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(
     UserScenario(isWelsh = false, isAgent = false, CommonExpectedEN, Some(ExpectedIndividualEN)),
@@ -114,6 +118,7 @@ class RetirementAnnuityAmountViewSpec extends ViewUnitTest {
     UserScenario(isWelsh = true, isAgent = true, CommonExpectedCY, Some(ExpectedAgentCY)))
 
   private def form: Form[BigDecimal] = new PaymentsIntoPensionFormProvider().retirementAnnuityAmountForm
+
   private lazy val underTest = inject[RetirementAnnuityAmountView]
 
 

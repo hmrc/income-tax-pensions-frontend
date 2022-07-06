@@ -29,9 +29,10 @@ import play.api.i18n.Messages
 import play.api.mvc.AnyContent
 import support.ViewUnitTest
 import views.html.pensions.paymentsIntoPensions.WorkplacePensionView
+import views.WorkplacePensionControllerTestSupport._
 
 // scalastyle:off magic.number
-class WorkplacePensionControllerViewSpec extends ViewUnitTest {
+object WorkplacePensionControllerTestSupport {
 
   val noWorkplaceCYAModel: PensionsUserData = aPensionsUserData.copy(
     pensions = aPensionsCYAModel.copy(
@@ -127,6 +128,8 @@ class WorkplacePensionControllerViewSpec extends ViewUnitTest {
     val expectedErrorMessage = "Select yes if your client paid into a workplace pension and did not receive tax relief"
     val expectedErrorTitle = s"Error: $expectedTitle"
   }
+}
+class WorkplacePensionControllerTestSupport extends ViewUnitTest {
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(
     UserScenario(isWelsh = false, isAgent = false, CommonExpectedEN, Some(ExpectedIndividualEN)),

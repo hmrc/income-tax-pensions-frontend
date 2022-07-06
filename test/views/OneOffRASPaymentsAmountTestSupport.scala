@@ -24,14 +24,15 @@ import org.jsoup.nodes.Document
 import play.api.i18n.Messages
 import play.api.mvc.AnyContent
 import support.ViewUnitTest
+import views.OneOffRASPaymentsAmountTestSupport.{CommonExpectedCY, CommonExpectedEN, CommonExpectedResults, ExpectedAgentCY, ExpectedAgentEN, ExpectedIndividualCY, ExpectedIndividualEN, SpecificExpectedResults}
 import views.html.pensions.paymentsIntoPensions.OneOffRASPaymentsAmountView
 
 // scalastyle:off magic.number
 
-class OneOffRASPaymentsAmountViewSpec extends ViewUnitTest {
+object OneOffRASPaymentsAmountTestSupport {
 
-  private val poundPrefixText = "£"
-  private val amountInputName = "amount"
+  val poundPrefixText = "£"
+  val amountInputName = "amount"
 
   object Selectors {
     val captionSelector: String = "#main-content > div > div > header > p"
@@ -115,7 +116,9 @@ class OneOffRASPaymentsAmountViewSpec extends ViewUnitTest {
     val expectedYouToldUs =
       "You told us the total amount your client paid plus tax relief was £189.01. Tell us how much of this was a one-off payment. Include tax relief."
   }
+}
 
+class OneOffRASPaymentsAmountTestSupport extends ViewUnitTest {
   val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(
     UserScenario(isWelsh = false, isAgent = false, CommonExpectedEN, Some(ExpectedIndividualEN)),
     UserScenario(isWelsh = false, isAgent = true, CommonExpectedEN, Some(ExpectedAgentEN)),
@@ -126,8 +129,6 @@ class OneOffRASPaymentsAmountViewSpec extends ViewUnitTest {
   private def amountForm = new PaymentsIntoPensionFormProvider().oneOffRASPaymentsAmountForm
 
   private lazy val underTest = inject[OneOffRASPaymentsAmountView]
-
-
   userScenarios.foreach { userScenario =>
 
     s"language is ${welshTest(userScenario.isWelsh)} and request is from an ${agentTest(userScenario.isAgent)}" should {
@@ -140,7 +141,8 @@ class OneOffRASPaymentsAmountViewSpec extends ViewUnitTest {
 
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
-        import Selectors._
+        import OneOffRASPaymentsAmountTestSupport.Selectors._
+        import OneOffRASPaymentsAmountTestSupport._
         import userScenario.commonExpectedResults._
 
         titleCheck(expectedTitle, userScenario.isWelsh)
@@ -169,7 +171,8 @@ class OneOffRASPaymentsAmountViewSpec extends ViewUnitTest {
 
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
-        import Selectors._
+        import OneOffRASPaymentsAmountTestSupport.Selectors._
+        import OneOffRASPaymentsAmountTestSupport._
         import userScenario.commonExpectedResults._
 
         titleCheck(expectedTitle, userScenario.isWelsh)
@@ -197,7 +200,8 @@ class OneOffRASPaymentsAmountViewSpec extends ViewUnitTest {
 
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
-        import Selectors._
+        import OneOffRASPaymentsAmountTestSupport.Selectors._
+        import OneOffRASPaymentsAmountTestSupport._
         import userScenario.commonExpectedResults._
 
         titleCheck(expectedErrorTitle, userScenario.isWelsh)
@@ -228,7 +232,8 @@ class OneOffRASPaymentsAmountViewSpec extends ViewUnitTest {
 
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
-        import Selectors._
+        import OneOffRASPaymentsAmountTestSupport.Selectors._
+        import OneOffRASPaymentsAmountTestSupport._
         import userScenario.commonExpectedResults._
 
 
@@ -259,7 +264,8 @@ class OneOffRASPaymentsAmountViewSpec extends ViewUnitTest {
 
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
-        import Selectors._
+        import OneOffRASPaymentsAmountTestSupport.Selectors._
+        import OneOffRASPaymentsAmountTestSupport._
         import userScenario.commonExpectedResults._
 
 

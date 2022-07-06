@@ -23,6 +23,8 @@ import builders.UserBuilder._
 import controllers.pensions.paymentsIntoPension.routes._
 import forms.YesNoForm
 import models.mongo.PensionsUserData
+import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
@@ -30,6 +32,10 @@ import play.api.libs.ws.WSResponse
 import utils.PageUrls.PaymentIntoPensions.workplacePensionUrl
 import utils.PageUrls.fullUrl
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
+import views.WorkplacePensionControllerTestSupport.Selectors._
+import views.WorkplacePensionControllerTestSupport._
+import views.WorkplacePensionControllerTestSupport.CommonExpectedEN._
+import views.WorkplacePensionControllerTestSupport.ExpectedIndividualEN._
 
 // scalastyle:off magic.number
 class WorkplacePensionControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
@@ -54,6 +60,20 @@ class WorkplacePensionControllerISpec extends IntegrationTest with ViewHelpers w
       "has an OK status" in {
         result.status shouldBe OK
       }
+      implicit def document: () => Document = () => Jsoup.parse(result.body)
+
+      titleCheck(expectedTitle)
+      h1Check(expectedHeading)
+      captionCheck(expectedCaption(taxYearEOY), captionSelector)
+      textOnPageCheck(expectedInfoText, paragraphSelector(1))
+      textOnPageCheck(expectedTheseCases, paragraphSelector(2))
+      textOnPageCheck(expectedWhereToCheck, paragraphSelector(3))
+      textOnPageCheck(expectedFindOutMoreText, findOutMoreSelector)
+      radioButtonCheck(yesText, 1, checked = Some(false))
+      radioButtonCheck(noText, 2, checked = Some(false))
+      buttonCheck(buttonText, continueButtonSelector)
+      formPostLinkCheck(workplacePensionUrl(taxYearEOY), formSelector)
+      welshToggleCheck(isWelsh = false)
     }
 
     "render the 'Workplace pension and not receive tax relief' question page with 'Yes' pre-filled when CYA data exists" which {
@@ -68,6 +88,20 @@ class WorkplacePensionControllerISpec extends IntegrationTest with ViewHelpers w
       "has an OK status" in {
         result.status shouldBe OK
       }
+      implicit def document: () => Document = () => Jsoup.parse(result.body)
+
+      titleCheck(expectedTitle)
+      h1Check(expectedHeading)
+      captionCheck(expectedCaption(taxYearEOY), captionSelector)
+      textOnPageCheck(expectedInfoText, paragraphSelector(1))
+      textOnPageCheck(expectedTheseCases, paragraphSelector(2))
+      textOnPageCheck(expectedWhereToCheck, paragraphSelector(3))
+      textOnPageCheck(expectedFindOutMoreText, findOutMoreSelector)
+      radioButtonCheck(yesText, 1, checked = Some(true))
+      radioButtonCheck(noText, 2, checked = Some(false))
+      buttonCheck(buttonText, continueButtonSelector)
+      formPostLinkCheck(workplacePensionUrl(taxYearEOY), formSelector)
+      welshToggleCheck(isWelsh = false)
     }
 
     "render the 'Workplace pension and not receive tax relief' question page with 'No' pre-filled when CYA data exists" which {
@@ -82,6 +116,20 @@ class WorkplacePensionControllerISpec extends IntegrationTest with ViewHelpers w
       "has an OK status" in {
         result.status shouldBe OK
       }
+      implicit def document: () => Document = () => Jsoup.parse(result.body)
+
+      titleCheck(expectedTitle)
+      h1Check(expectedHeading)
+      captionCheck(expectedCaption(taxYearEOY), captionSelector)
+      textOnPageCheck(expectedInfoText, paragraphSelector(1))
+      textOnPageCheck(expectedTheseCases, paragraphSelector(2))
+      textOnPageCheck(expectedWhereToCheck, paragraphSelector(3))
+      textOnPageCheck(expectedFindOutMoreText, findOutMoreSelector)
+      radioButtonCheck(yesText, 1, checked = Some(false))
+      radioButtonCheck(noText, 2, checked = Some(true))
+      buttonCheck(buttonText, continueButtonSelector)
+      formPostLinkCheck(workplacePensionUrl(taxYearEOY), formSelector)
+      welshToggleCheck(isWelsh = false)
     }
     "redirect to Payments into Pension CYA page when there is no CYA session data" which {
       lazy val result: WSResponse = {
@@ -113,6 +161,21 @@ class WorkplacePensionControllerISpec extends IntegrationTest with ViewHelpers w
       "has the correct status" in {
         result.status shouldBe BAD_REQUEST
       }
+      implicit def document: () => Document = () => Jsoup.parse(result.body)
+
+      titleCheck(expectedErrorTitle)
+      h1Check(expectedHeading)
+      captionCheck(expectedCaption(taxYearEOY), captionSelector)
+      textOnPageCheck(expectedInfoText, paragraphSelector(1))
+      textOnPageCheck(expectedTheseCases, paragraphSelector(2))
+      textOnPageCheck(expectedWhereToCheck, paragraphSelector(3))
+      radioButtonCheck(yesText, 1, checked = Some(false))
+      radioButtonCheck(noText, 2, checked = Some(false))
+      buttonCheck(buttonText, continueButtonSelector)
+      formPostLinkCheck(workplacePensionUrl(taxYearEOY), formSelector)
+      welshToggleCheck(isWelsh = false)
+      errorSummaryCheck(expectedErrorMessage, Selectors.yesSelector)
+      errorAboveElementCheck(expectedErrorMessage, Some("value"))
     }
 
 

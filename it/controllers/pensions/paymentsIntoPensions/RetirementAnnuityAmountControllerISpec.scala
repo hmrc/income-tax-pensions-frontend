@@ -31,6 +31,10 @@ import play.api.libs.ws.WSResponse
 import utils.PageUrls.PaymentIntoPensions.{checkPaymentsIntoPensionCyaUrl, retirementAnnuityAmountUrl, retirementAnnuityUrl, workplacePensionUrl}
 import utils.PageUrls.fullUrl
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
+import views.RetirementAnnuityAmountTestSupport.Selectors._
+import views.RetirementAnnuityAmountTestSupport._
+import views.RetirementAnnuityAmountTestSupport.CommonExpectedEN._
+import views.RetirementAnnuityAmountTestSupport.ExpectedIndividualEN._
 
 
 class RetirementAnnuityAmountControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
@@ -57,6 +61,19 @@ class RetirementAnnuityAmountControllerISpec extends IntegrationTest with ViewHe
       "has an OK status" in {
         result.status shouldBe OK
       }
+
+      implicit def document: () => Document = () => Jsoup.parse(result.body)
+
+      titleCheck(expectedTitle)
+      h1Check(expectedHeading)
+      captionCheck(expectedCaption(taxYearEOY), captionSelector)
+      textOnPageCheck(onlyIncludePayment, paragraphSelector)
+      textOnPageCheck(hintText, hintTextSelector)
+      textOnPageCheck(poundPrefixText, poundPrefixSelector)
+      inputFieldValueCheck(amountInputName, inputSelector, "")
+      buttonCheck(buttonText, continueButtonSelector)
+      formPostLinkCheck(retirementAnnuityAmountUrl(taxYearEOY), formSelector)
+      welshToggleCheck(isWelsh = false)
     }
 
     "render How much did you pay into your retirement annuity contracts page prefilled when cya data" which {
@@ -75,6 +92,19 @@ class RetirementAnnuityAmountControllerISpec extends IntegrationTest with ViewHe
       "has an OK status" in {
         result.status shouldBe OK
       }
+
+      implicit def document: () => Document = () => Jsoup.parse(result.body)
+
+      titleCheck(expectedTitle)
+      h1Check(expectedHeading)
+      captionCheck(expectedCaption(taxYearEOY), captionSelector)
+      textOnPageCheck(onlyIncludePayment, paragraphSelector)
+      textOnPageCheck(hintText, hintTextSelector)
+      textOnPageCheck(poundPrefixText, poundPrefixSelector)
+      inputFieldValueCheck(amountInputName, inputSelector, existingAmount)
+      buttonCheck(buttonText, continueButtonSelector)
+      formPostLinkCheck(retirementAnnuityAmountUrl(taxYearEOY), formSelector)
+      welshToggleCheck(isWelsh = false)
     }
 
     "redirect to the retirementAnnuityContractQuestion page if the question has not been answered" which {
@@ -142,6 +172,21 @@ class RetirementAnnuityAmountControllerISpec extends IntegrationTest with ViewHe
       "has the correct status" in {
         result.status shouldBe BAD_REQUEST
       }
+
+      implicit def document: () => Document = () => Jsoup.parse(result.body)
+
+      titleCheck(expectedErrorTitle)
+      h1Check(expectedHeading)
+      captionCheck(expectedCaption(taxYearEOY), captionSelector)
+      textOnPageCheck(onlyIncludePayment, paragraphSelector)
+      textOnPageCheck(hintText, hintTextSelector)
+      textOnPageCheck(poundPrefixText, poundPrefixSelector)
+      inputFieldValueCheck(amountInputName, inputSelector, "")
+      buttonCheck(buttonText, continueButtonSelector)
+      formPostLinkCheck(retirementAnnuityAmountUrl(taxYearEOY), formSelector)
+      errorSummaryCheck(emptyErrorText, expectedErrorHref)
+      errorAboveElementCheck(emptyErrorText)
+      welshToggleCheck(isWelsh = false)
     }
 
     "return an error when form is submitted with an invalid format input" which {
@@ -163,6 +208,20 @@ class RetirementAnnuityAmountControllerISpec extends IntegrationTest with ViewHe
         result.status shouldBe BAD_REQUEST
       }
 
+      implicit def document: () => Document = () => Jsoup.parse(result.body)
+      titleCheck(expectedErrorTitle)
+      h1Check(expectedHeading)
+      captionCheck(expectedCaption(taxYearEOY), captionSelector)
+      textOnPageCheck(onlyIncludePayment, paragraphSelector)
+      textOnPageCheck(hintText, hintTextSelector)
+      textOnPageCheck(poundPrefixText, poundPrefixSelector)
+      inputFieldValueCheck(amountInputName, inputSelector, "invalid")
+      buttonCheck(buttonText, continueButtonSelector)
+      formPostLinkCheck(retirementAnnuityAmountUrl(taxYearEOY), formSelector)
+      errorSummaryCheck(invalidFormatErrorText, expectedErrorHref)
+      errorAboveElementCheck(invalidFormatErrorText)
+      welshToggleCheck(isWelsh = false)
+
     }
 
     "return an error when form is submitted with input over maximum allowed value" which {
@@ -182,6 +241,21 @@ class RetirementAnnuityAmountControllerISpec extends IntegrationTest with ViewHe
       "has the correct status" in {
         result.status shouldBe BAD_REQUEST
       }
+      
+      implicit def document: () => Document = () => Jsoup.parse(result.body)
+
+      titleCheck(expectedErrorTitle)
+      h1Check(expectedHeading)
+      captionCheck(expectedCaption(taxYearEOY), captionSelector)
+      textOnPageCheck(onlyIncludePayment, paragraphSelector)
+      textOnPageCheck(hintText, hintTextSelector)
+      textOnPageCheck(poundPrefixText, poundPrefixSelector)
+      inputFieldValueCheck(amountInputName, inputSelector, amountOverMaximum)
+      buttonCheck(buttonText, continueButtonSelector)
+      formPostLinkCheck(retirementAnnuityAmountUrl(taxYearEOY), formSelector)
+      errorSummaryCheck(maxAmountErrorText, expectedErrorHref)
+      errorAboveElementCheck(maxAmountErrorText)
+      welshToggleCheck(isWelsh = false)
     }
 
     "redirect to the workplace pension page when a valid amount is submitted which doesnt complete CYA model and update the session amount" which {

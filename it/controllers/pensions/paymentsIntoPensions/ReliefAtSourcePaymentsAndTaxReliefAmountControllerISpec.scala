@@ -21,22 +21,25 @@ import builders.PensionsCYAModelBuilder._
 import builders.PensionsUserDataBuilder
 import builders.UserBuilder._
 import forms.AmountForm
-import models.mongo.PensionsCYAModel
+import models.mongo.{PensionsCYAModel, PensionsUserData}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.PaymentIntoPensions.{checkPaymentsIntoPensionCyaUrl, reliefAtSourceOneOffPaymentsUrl, reliefAtSourcePaymentsAndTaxReliefAmountUrl, reliefAtSourcePensionsUrl}
+import utils.PageUrls.PaymentIntoPensions._
 import utils.PageUrls._
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
-
+import views.ReliefAtSourcePaymentsAndTaxReliefAmountTestSupport.Selectors._
+import views.ReliefAtSourcePaymentsAndTaxReliefAmountTestSupport._
+import views.ReliefAtSourcePaymentsAndTaxReliefAmountTestSupport.CommonExpectedEN._
+import views.ReliefAtSourcePaymentsAndTaxReliefAmountTestSupport.ExpectedIndividualEN._
 class ReliefAtSourcePaymentsAndTaxReliefAmountControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
 
-  private def pensionsUsersData(isPrior: Boolean = false, pensionsCyaModel: PensionsCYAModel) = {
+  private def pensionsUsersData(pensionsCyaModel: PensionsCYAModel): PensionsUserData = {
     PensionsUserDataBuilder.aPensionsUserData.copy(
-      isPriorSubmission = isPrior,
+      isPriorSubmission = false,
       pensions = pensionsCyaModel
     )
   }
@@ -49,7 +52,7 @@ class ReliefAtSourcePaymentsAndTaxReliefAmountControllerISpec extends Integratio
         authoriseAgentOrIndividual(isAgent = false)
         val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
           rasPensionPaymentQuestion = Some(true), totalRASPaymentsAndTaxRelief = None)
-        insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
         urlGet(fullUrl(reliefAtSourcePaymentsAndTaxReliefAmountUrl(taxYearEOY)),
           follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -57,6 +60,22 @@ class ReliefAtSourcePaymentsAndTaxReliefAmountControllerISpec extends Integratio
       "has an OK status" in {
         result.status shouldBe OK
       }
+
+      implicit def document: () => Document = () => Jsoup.parse(result.body)
+
+      titleCheck(expectedTitle)
+      h1Check(expectedHeading)
+      captionCheck(expectedCaption(taxYearEOY), captionSelector)
+      textOnPageCheck(expectedWhereToFind, paragraphSelector(1))
+      textOnPageCheck(expectedHowToWorkOut, paragraphSelector(2))
+      textOnPageCheck(expectedCalculationHeading, insetSpanText(1))
+      textOnPageCheck(expectedExampleCalculation, insetSpanText(2))
+      textOnPageCheck(hintText, hintTextSelector)
+      textOnPageCheck(poundPrefixText, poundPrefixSelector)
+      inputFieldValueCheck(amountInputName, inputSelector, "")
+      buttonCheck(buttonText, continueButtonSelector)
+      formPostLinkCheck(reliefAtSourcePaymentsAndTaxReliefAmountUrl(taxYearEOY), formSelector)
+      welshToggleCheck(isWelsh = false)
     }
 
     "render Total payments into relief at source (RAS) pensions, plus basic rate tax relief page prefilled when cya data" which {
@@ -67,7 +86,7 @@ class ReliefAtSourcePaymentsAndTaxReliefAmountControllerISpec extends Integratio
         authoriseAgentOrIndividual(isAgent = false)
         val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
           rasPensionPaymentQuestion = Some(true), totalRASPaymentsAndTaxRelief = Some(BigDecimal(existingAmount)))
-        insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
         urlGet(fullUrl(reliefAtSourcePaymentsAndTaxReliefAmountUrl(taxYearEOY)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -75,6 +94,21 @@ class ReliefAtSourcePaymentsAndTaxReliefAmountControllerISpec extends Integratio
       "has an OK status" in {
         result.status shouldBe OK
       }
+      implicit def document: () => Document = () => Jsoup.parse(result.body)
+
+      titleCheck(expectedTitle)
+      h1Check(expectedHeading)
+      captionCheck(expectedCaption(taxYearEOY), captionSelector)
+      textOnPageCheck(expectedWhereToFind, paragraphSelector(1))
+      textOnPageCheck(expectedHowToWorkOut, paragraphSelector(2))
+      textOnPageCheck(expectedCalculationHeading, insetSpanText(1))
+      textOnPageCheck(expectedExampleCalculation, insetSpanText(2))
+      textOnPageCheck(hintText, hintTextSelector)
+      textOnPageCheck(poundPrefixText, poundPrefixSelector)
+      inputFieldValueCheck(amountInputName, inputSelector, "999.88")
+      buttonCheck(buttonText, continueButtonSelector)
+      formPostLinkCheck(reliefAtSourcePaymentsAndTaxReliefAmountUrl(taxYearEOY), formSelector)
+      welshToggleCheck(isWelsh = false)
     }
 
     "redirect to the rasPensionPaymentQuestion page if the question has not been answered" which {
@@ -83,7 +117,7 @@ class ReliefAtSourcePaymentsAndTaxReliefAmountControllerISpec extends Integratio
         authoriseAgentOrIndividual(isAgent = false)
         val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
           rasPensionPaymentQuestion = None, totalRASPaymentsAndTaxRelief = None)
-        insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
         urlGet(fullUrl(reliefAtSourcePaymentsAndTaxReliefAmountUrl(taxYearEOY)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -101,7 +135,7 @@ class ReliefAtSourcePaymentsAndTaxReliefAmountControllerISpec extends Integratio
         authoriseAgentOrIndividual(isAgent = false)
         val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
           rasPensionPaymentQuestion = Some(false), totalRASPaymentsAndTaxRelief = None)
-        insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
         urlGet(fullUrl(reliefAtSourcePaymentsAndTaxReliefAmountUrl(taxYearEOY)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -138,7 +172,7 @@ class ReliefAtSourcePaymentsAndTaxReliefAmountControllerISpec extends Integratio
         dropPensionsDB()
         val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
           rasPensionPaymentQuestion = Some(true), totalRASPaymentsAndTaxRelief = None)
-        insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
         authoriseAgentOrIndividual(isAgent = false)
         urlPost(fullUrl(reliefAtSourcePaymentsAndTaxReliefAmountUrl(taxYearEOY)), body = emptyForm,
           follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
@@ -147,6 +181,25 @@ class ReliefAtSourcePaymentsAndTaxReliefAmountControllerISpec extends Integratio
       "has the correct status" in {
         result.status shouldBe BAD_REQUEST
       }
+
+      implicit def document: () => Document = () => Jsoup.parse(result.body)
+
+
+      titleCheck(expectedErrorTitle)
+      h1Check(expectedHeading)
+      captionCheck(expectedCaption(taxYearEOY), captionSelector)
+      textOnPageCheck(expectedWhereToFind, paragraphSelector(1))
+      textOnPageCheck(expectedHowToWorkOut, paragraphSelector(2))
+      textOnPageCheck(expectedCalculationHeading, insetSpanText(1))
+      textOnPageCheck(expectedExampleCalculation, insetSpanText(2))
+      textOnPageCheck(hintText, hintTextSelector)
+      textOnPageCheck(poundPrefixText, poundPrefixSelector)
+      inputFieldValueCheck(amountInputName, inputSelector, "")
+      buttonCheck(buttonText, continueButtonSelector)
+      formPostLinkCheck(reliefAtSourcePaymentsAndTaxReliefAmountUrl(taxYearEOY), formSelector)
+      errorSummaryCheck(emptyErrorText, expectedErrorHref)
+      errorAboveElementCheck(emptyErrorText)
+      welshToggleCheck(isWelsh = false)
 
     }
 
@@ -158,7 +211,7 @@ class ReliefAtSourcePaymentsAndTaxReliefAmountControllerISpec extends Integratio
         dropPensionsDB()
         val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
           rasPensionPaymentQuestion = Some(true), totalRASPaymentsAndTaxRelief = None)
-        insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
         authoriseAgentOrIndividual(isAgent = false)
         urlPost(fullUrl(reliefAtSourcePaymentsAndTaxReliefAmountUrl(taxYearEOY)), body = invalidFormatForm,
           follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
@@ -167,6 +220,23 @@ class ReliefAtSourcePaymentsAndTaxReliefAmountControllerISpec extends Integratio
       "has the correct status" in {
         result.status shouldBe BAD_REQUEST
       }
+      implicit def document: () => Document = () => Jsoup.parse(result.body)
+
+      titleCheck(expectedErrorTitle)
+      h1Check(expectedHeading)
+      captionCheck(expectedCaption(taxYearEOY), captionSelector)
+      textOnPageCheck(expectedWhereToFind, paragraphSelector(1))
+      textOnPageCheck(expectedHowToWorkOut, paragraphSelector(2))
+      textOnPageCheck(expectedCalculationHeading, insetSpanText(1))
+      textOnPageCheck(expectedExampleCalculation, insetSpanText(2))
+      textOnPageCheck(hintText, hintTextSelector)
+      textOnPageCheck(poundPrefixText, poundPrefixSelector)
+      inputFieldValueCheck(amountInputName, inputSelector, "invalid")
+      buttonCheck(buttonText, continueButtonSelector)
+      formPostLinkCheck(reliefAtSourcePaymentsAndTaxReliefAmountUrl(taxYearEOY), formSelector)
+      errorSummaryCheck(invalidFormatErrorText, expectedErrorHref)
+      errorAboveElementCheck(invalidFormatErrorText)
+      welshToggleCheck(isWelsh = false)
     }
 
     "return an error when form is submitted with input over maximum allowed value" which {
@@ -176,7 +246,7 @@ class ReliefAtSourcePaymentsAndTaxReliefAmountControllerISpec extends Integratio
         dropPensionsDB()
         val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
           rasPensionPaymentQuestion = Some(true), totalRASPaymentsAndTaxRelief = None)
-        insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
         authoriseAgentOrIndividual(isAgent = false)
         urlPost(fullUrl(reliefAtSourcePaymentsAndTaxReliefAmountUrl(taxYearEOY)), body = overMaximumForm,
           follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
@@ -185,6 +255,23 @@ class ReliefAtSourcePaymentsAndTaxReliefAmountControllerISpec extends Integratio
       "has the correct status" in {
         result.status shouldBe BAD_REQUEST
       }
+      implicit def document: () => Document = () => Jsoup.parse(result.body)
+
+      titleCheck(expectedErrorTitle)
+      h1Check(expectedHeading)
+      captionCheck(expectedCaption(taxYearEOY), captionSelector)
+      textOnPageCheck(expectedWhereToFind, paragraphSelector(1))
+      textOnPageCheck(expectedHowToWorkOut, paragraphSelector(2))
+      textOnPageCheck(expectedCalculationHeading, insetSpanText(1))
+      textOnPageCheck(expectedExampleCalculation, insetSpanText(2))
+      textOnPageCheck(hintText, hintTextSelector)
+      textOnPageCheck(poundPrefixText, poundPrefixSelector)
+      inputFieldValueCheck(amountInputName, inputSelector, "100,000,000,000")
+      buttonCheck(buttonText, continueButtonSelector)
+      formPostLinkCheck(reliefAtSourcePaymentsAndTaxReliefAmountUrl(taxYearEOY), formSelector)
+      errorSummaryCheck(maxAmountErrorText, expectedErrorHref)
+      errorAboveElementCheck(maxAmountErrorText)
+      welshToggleCheck(isWelsh = false)
     }
 
     "redirect to the 'RAS one-off' page when a valid amount is submitted and update the session amount" which {
@@ -196,7 +283,7 @@ class ReliefAtSourcePaymentsAndTaxReliefAmountControllerISpec extends Integratio
         dropPensionsDB()
         val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
           rasPensionPaymentQuestion = Some(true), totalRASPaymentsAndTaxRelief = None, totalPaymentsIntoRASQuestion = Some(true))
-        insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
         authoriseAgentOrIndividual(isAgent = false)
         urlPost(fullUrl(reliefAtSourcePaymentsAndTaxReliefAmountUrl(taxYearEOY)), body = validForm, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))

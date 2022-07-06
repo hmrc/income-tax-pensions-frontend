@@ -25,15 +25,15 @@ import play.api.i18n.Messages
 import play.api.mvc.AnyContent
 import support.ViewUnitTest
 import views.html.pensions.paymentsIntoPensions.TotalPaymentsIntoRASView
+import views.TotalPaymentsIntoRasTestSupport._
 
+object TotalPaymentsIntoRasTestSupport {
 
-class TotalPaymentsIntoRasViewSpec extends ViewUnitTest {
+  val oneOffAmount: String = "£1,400"
+  val rasTotal: String = "£8,800"
 
-  private val oneOffAmount: String = "£1,400"
-  private val rasTotal: String = "£8,800"
-
-  private val calculatedRAS: String = "£7,040"
-  private val calculatedRelief: String = "£1,760"
+  val calculatedRAS: String = "£7,040"
+  val calculatedRelief: String = "£1,760"
 
   object Selectors {
     val captionSelector: String = "#main-content > div > div > header > p"
@@ -119,6 +119,9 @@ class TotalPaymentsIntoRasViewSpec extends ViewUnitTest {
     val yesText = "Yes"
     val noText = "No"
   }
+}
+
+class TotalPaymentsIntoRasTestSupport extends ViewUnitTest {
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(
     UserScenario(isWelsh = false, isAgent = false, CommonExpectedEN, Some(ExpectedIndividualEN)),

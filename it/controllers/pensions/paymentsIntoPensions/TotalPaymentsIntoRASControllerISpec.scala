@@ -27,6 +27,8 @@ import builders.UserBuilder.aUserRequest
 import forms.YesNoForm
 import models.mongo.PensionsCYAModel
 import models.pension.reliefs.PaymentsIntoPensionViewModel
+import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
@@ -34,6 +36,10 @@ import play.api.libs.ws.WSResponse
 import utils.PageUrls.PaymentIntoPensions._
 import utils.PageUrls.fullUrl
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
+import views.TotalPaymentsIntoRasTestSupport.Selectors._
+import views.TotalPaymentsIntoRasTestSupport._
+import views.TotalPaymentsIntoRasTestSupport.CommonExpectedEN._
+import views.TotalPaymentsIntoRasTestSupport.ExpectedIndividualEN._
 
 class TotalPaymentsIntoRASControllerISpec extends IntegrationTest with BeforeAndAfterEach with ViewHelpers with PensionsDatabaseHelper {
 
@@ -66,6 +72,27 @@ class TotalPaymentsIntoRASControllerISpec extends IntegrationTest with BeforeAnd
       "has an OK status" in {
         result.status shouldBe OK
       }
+
+      implicit def document: () => Document = () => Jsoup.parse(result.body)
+
+      titleCheck(expectedTitle)
+      h1Check(expectedTitle)
+      textOnPageCheck(expectedParagraph, pSelector)
+      textOnPageCheck(isCorrect, isCorrectSelector)
+      radioButtonCheck(yesText, 1, checked = Some(false))
+      radioButtonCheck(noText, 2, checked = Some(false))
+      buttonCheck(expectedButtonText, continueButtonSelector)
+      formPostLinkCheck(totalPaymentsIntoRASUrl(taxYearEOY), formSelector)
+      welshToggleCheck(isWelsh = false)
+
+      captionCheck(expectedCaption(taxYearEOY), captionSelector)
+      textOnPageCheck(s"$totalPayments $oneOff", tableSelector(1, 1))
+      textOnPageCheck(s"$calculatedRAS", tableSelector(1, 2))
+      textOnPageCheck(claimed, tableSelector(2, 1))
+      textOnPageCheck(s"$calculatedRelief", tableSelector(2, 2))
+      textOnPageCheck(total, tableSelector(3, 1))
+      textOnPageCheck(s"$rasTotal", tableSelector(3, 2))
+
     }
 
     "render 'Total payments into RAS pensions' page without a one-off amount" should {
@@ -83,6 +110,11 @@ class TotalPaymentsIntoRASControllerISpec extends IntegrationTest with BeforeAnd
       "has an OK status" in {
         result.status shouldBe OK
       }
+
+      implicit def document: () => Document = () => Jsoup.parse(result.body)
+      textOnPageCheck(s"${CommonExpectedEN.totalPayments}", Selectors.tableSelector(1, 1))
+
+
     }
 
     "render the page with the radio button pre-filled" should {
@@ -98,6 +130,15 @@ class TotalPaymentsIntoRASControllerISpec extends IntegrationTest with BeforeAnd
       "has an OK status" in {
         result.status shouldBe OK
       }
+
+      implicit def document: () => Document = () => Jsoup.parse(result.body)
+
+      "have the yes button pre-filled" when {
+        radioButtonCheck(CommonExpectedEN.yesText, 1, checked = Some(true))
+        radioButtonCheck(CommonExpectedEN.noText, 2, checked = Some(false))
+      }
+
+
     }
 
     "redirect to the check your answers CYA page when there is no CYA data" when {
@@ -151,6 +192,30 @@ class TotalPaymentsIntoRASControllerISpec extends IntegrationTest with BeforeAnd
       "has the correct status" in {
         result.status shouldBe BAD_REQUEST
       }
+
+      implicit def document: () => Document = () => Jsoup.parse(result.body)
+
+
+      titleCheck(expectedErrorTitle)
+      h1Check(expectedTitle)
+      textOnPageCheck(expectedParagraph, pSelector)
+      textOnPageCheck(isCorrect, isCorrectSelector)
+      radioButtonCheck(yesText, 1, checked = Some(false))
+      radioButtonCheck(noText, 2, checked = Some(false))
+      buttonCheck(expectedButtonText, continueButtonSelector)
+      formPostLinkCheck(totalPaymentsIntoRASUrl(taxYearEOY), formSelector)
+      welshToggleCheck(isWelsh = false)
+
+      captionCheck(expectedCaption(taxYearEOY), captionSelector)
+      textOnPageCheck(s"$totalPayments $oneOff", tableSelector(1, 1))
+      textOnPageCheck(s"$calculatedRAS", tableSelector(1, 2))
+      textOnPageCheck(claimed, tableSelector(2, 1))
+      textOnPageCheck(s"$calculatedRelief", tableSelector(2, 2))
+      textOnPageCheck(total, tableSelector(3, 1))
+      textOnPageCheck(s"$rasTotal", tableSelector(3, 2))
+
+      errorSummaryCheck(expectedError, Selectors.yesSelector)
+      errorAboveElementCheck(expectedError, Some("value"))
     }
 
     "redirect to the next page and update the session value when the user submits 'yes'" should {

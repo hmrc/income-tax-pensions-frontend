@@ -33,6 +33,10 @@ import play.api.libs.ws.WSResponse
 import utils.PageUrls.PaymentIntoPensions.{checkPaymentsIntoPensionCyaUrl, retirementAnnuityUrl, workplacePensionUrl}
 import utils.PageUrls._
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
+import views.RetirementAnnuityTestSupport.Selectors._
+import views.RetirementAnnuityTestSupport._
+import views.RetirementAnnuityTestSupport.CommonExpectedEN._
+import views.RetirementAnnuityTestSupport.ExpectedIndividualEN._
 
 class RetirementAnnuityControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
 
@@ -59,6 +63,21 @@ class RetirementAnnuityControllerISpec extends IntegrationTest with ViewHelpers 
       "has an OK status" in {
         result.status shouldBe OK
       }
+      implicit def document: () => Document = () => Jsoup.parse(result.body)
+
+      titleCheck(expectedTitle)
+      h1Check(expectedHeading)
+      captionCheck(expectedCaption(taxYearEOY), captionSelector)
+      textOnPageCheck(expectedParagraphText, paragraphSelector(1))
+      textOnPageCheck(expectedYouCanFindThisOut, paragraphSelector(2))
+      radioButtonCheck(yesText, 1, checked = Some(false))
+      radioButtonCheck(noText, 2, checked = Some(false))
+      buttonCheck(buttonText, continueButtonSelector)
+
+      textOnPageCheck(expectedDetailsTitle, detailsSelector)
+      textOnPageCheck(expectedDetails, detailsParagraphSelector(1))
+      formPostLinkCheck(retirementAnnuityUrl(taxYearEOY), formSelector)
+      welshToggleCheck(isWelsh = false)
     }
 
     "render the retirement annuity contract question page with 'Yes' pre-filled when CYA data exists" which {
@@ -74,6 +93,22 @@ class RetirementAnnuityControllerISpec extends IntegrationTest with ViewHelpers 
       "has an OK status" in {
         result.status shouldBe OK
       }
+
+      implicit def document: () => Document = () => Jsoup.parse(result.body)
+
+      titleCheck(expectedTitle)
+      h1Check(expectedHeading)
+      captionCheck(expectedCaption(taxYearEOY), captionSelector)
+      textOnPageCheck(expectedParagraphText, paragraphSelector(1))
+      textOnPageCheck(expectedYouCanFindThisOut, paragraphSelector(2))
+      radioButtonCheck(yesText, 1, checked = Some(true))
+      radioButtonCheck(noText, 2, checked = Some(false))
+      buttonCheck(buttonText, continueButtonSelector)
+
+      textOnPageCheck(expectedDetailsTitle, detailsSelector)
+      textOnPageCheck(expectedDetails, detailsParagraphSelector(1))
+      formPostLinkCheck(retirementAnnuityUrl(taxYearEOY), formSelector)
+      welshToggleCheck(isWelsh = false)
     }
 
     "render the retirement annuity contract question page with 'No' pre-filled and not a prior submission" which {
@@ -90,6 +125,21 @@ class RetirementAnnuityControllerISpec extends IntegrationTest with ViewHelpers 
         result.status shouldBe OK
       }
 
+      implicit def document: () => Document = () => Jsoup.parse(result.body)
+
+      titleCheck(expectedTitle)
+      h1Check(expectedHeading)
+      captionCheck(expectedCaption(taxYearEOY), captionSelector)
+      textOnPageCheck(expectedParagraphText, paragraphSelector(1))
+      textOnPageCheck(expectedYouCanFindThisOut, paragraphSelector(2))
+      radioButtonCheck(yesText, 1, checked = Some(false))
+      radioButtonCheck(noText, 2, checked = Some(true))
+      buttonCheck(buttonText, continueButtonSelector)
+
+      textOnPageCheck(expectedDetailsTitle, detailsSelector)
+      textOnPageCheck(expectedDetails, detailsParagraphSelector(1))
+      formPostLinkCheck(retirementAnnuityUrl(taxYearEOY), formSelector)
+      welshToggleCheck(isWelsh = false)
     }
 
     "redirect to the CYA page if there is no session data" which {
@@ -124,6 +174,25 @@ class RetirementAnnuityControllerISpec extends IntegrationTest with ViewHelpers 
       "has the correct status" in {
         result.status shouldBe BAD_REQUEST
       }
+
+      implicit def document: () => Document = () => Jsoup.parse(result.body)
+
+      titleCheck(expectedErrorTitle)
+      h1Check(expectedHeading)
+      captionCheck(expectedCaption(taxYearEOY), captionSelector)
+      textOnPageCheck(expectedParagraphText, paragraphSelector(1))
+      textOnPageCheck(expectedYouCanFindThisOut, paragraphSelector(2))
+      radioButtonCheck(yesText, 1, checked = Some(false))
+      radioButtonCheck(noText, 2, checked = Some(false))
+      buttonCheck(buttonText, continueButtonSelector)
+
+      textOnPageCheck(expectedDetailsTitle, detailsSelector)
+      textOnPageCheck(expectedDetails, detailsParagraphSelector(1))
+      formPostLinkCheck(retirementAnnuityUrl(taxYearEOY), formSelector)
+      welshToggleCheck(isWelsh = false)
+      errorSummaryCheck(expectedErrorMessage, Selectors.yesSelector)
+      errorAboveElementCheck(expectedErrorMessage, Some("value"))
+
     }
 
     "redirect to Retirement Annuity Amount page when user selects 'yes' and not a prior submission" which {

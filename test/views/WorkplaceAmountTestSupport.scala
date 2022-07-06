@@ -25,12 +25,13 @@ import play.api.i18n.Messages
 import play.api.mvc.AnyContent
 import support.ViewUnitTest
 import views.html.pensions.paymentsIntoPensions.WorkplaceAmountView
+import views.WorkplaceAmountTestSupport._
 
 // scalastyle:off magic.number
-class WorkplaceAmountViewSpec extends ViewUnitTest {
+object WorkplaceAmountTestSupport {
 
-  private val poundPrefixText = "£"
-  private val amountInputName = "amount"
+  val poundPrefixText = "£"
+  val amountInputName = "amount"
 
   object Selectors {
     val captionSelector: String = "#main-content > div > div > header > p"
@@ -124,6 +125,9 @@ class WorkplaceAmountViewSpec extends ViewUnitTest {
     val expectedBullet2 = "your client’s pension provider will not claim tax relief for"
     val expectedYouCanFindThisOut = "Your client can find this out from their employer or pension provider."
   }
+}
+
+class WorkplaceAmountTestSupport extends ViewUnitTest {
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(
     UserScenario(isWelsh = false, isAgent = false, CommonExpectedEN, Some(ExpectedIndividualEN)),

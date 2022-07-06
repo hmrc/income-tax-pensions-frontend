@@ -25,11 +25,12 @@ import play.api.i18n.Messages
 import play.api.mvc.AnyContent
 import support.ViewUnitTest
 import views.html.pensions.paymentsIntoPensions.ReliefAtSourcePaymentsAndTaxReliefAmountView
+import views.ReliefAtSourcePaymentsAndTaxReliefAmountTestSupport._
 
-class ReliefAtSourcePaymentsAndTaxReliefAmountViewSpec extends ViewUnitTest {
+object ReliefAtSourcePaymentsAndTaxReliefAmountTestSupport {
 
-  private val poundPrefixText = "£"
-  private val amountInputName = "amount"
+  val poundPrefixText = "£"
+  val amountInputName = "amount"
 
   object Selectors {
     val captionSelector: String = "#main-content > div > div > header > p"
@@ -119,6 +120,9 @@ class ReliefAtSourcePaymentsAndTaxReliefAmountViewSpec extends ViewUnitTest {
     val expectedHowToWorkOut =
       "To work it out yourself, divide the amount your client actually paid by 80 and multiply the result by 100."
   }
+}
+
+class ReliefAtSourcePaymentsAndTaxReliefAmountTestSupport extends ViewUnitTest {
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(
     UserScenario(isWelsh = false, isAgent = false, CommonExpectedEN, Some(ExpectedIndividualEN)),

@@ -26,7 +26,7 @@ import play.api.mvc.AnyContent
 import support.ViewUnitTest
 import views.html.pensions.paymentsIntoPensions.PensionsTaxReliefNotClaimedView
 
-class PensionsTaxReliefNotClaimedViewSpec extends ViewUnitTest {
+object PensionsTaxReliefNotClaimedTestSupport {
   object Selectors {
     val captionSelector: String = "#main-content > div > div > header > p"
     val continueButtonSelector: String = "#continue"
@@ -103,6 +103,12 @@ class PensionsTaxReliefNotClaimedViewSpec extends ViewUnitTest {
     val expectedSubHeading = "Did your client pay into a pension where tax relief was not claimed for them?"
     val expectedErrorMessage = "Select yes if your client paid into a pension where tax relief was not claimed for them"
   }
+}
+
+class PensionsTaxReliefNotClaimedTestSupport extends ViewUnitTest {
+
+  import PensionsTaxReliefNotClaimedTestSupport._
+
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(
     UserScenario(isWelsh = false, isAgent = false, CommonExpectedEN, Some(ExpectedIndividualEN)),
@@ -121,27 +127,30 @@ class PensionsTaxReliefNotClaimedViewSpec extends ViewUnitTest {
 
       s"language is ${welshTest(userScenario.isWelsh)} and request is from an ${agentTest(userScenario.isAgent)}" should {
 
-        implicit val authRequest: AuthorisationRequest[AnyContent] = getAuthRequest(userScenario.isAgent)
-        implicit val messages: Messages = getMessages(userScenario.isWelsh)
+        "render the pensions where tax relief is not claimed question page with no pre-filled radio buttons if no CYA question data" which {
 
-        val htmlFormat = underTest(yesNoForm(userScenario.isAgent), taxYearEOY)
+          implicit val authRequest: AuthorisationRequest[AnyContent] = getAuthRequest(userScenario.isAgent)
+          implicit val messages: Messages = getMessages(userScenario.isWelsh)
 
-        implicit val document: Document = Jsoup.parse(htmlFormat.body)
+          val htmlFormat = underTest(yesNoForm(userScenario.isAgent), taxYearEOY)
 
-        import Selectors._
-        import userScenario.commonExpectedResults._
+          implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
-        titleCheck(expectedTitle, userScenario.isWelsh)
-        h1Check(expectedHeading)
-        captionCheck(expectedCaption(taxYearEOY), captionSelector)
-        textOnPageCheck(userScenario.specificExpectedResults.get.expectedQuestionsInfoText, paragraphSelector(1))
-        textOnPageCheck(userScenario.specificExpectedResults.get.expectedWhereToCheck, paragraphSelector(2))
-        textOnPageCheck(userScenario.specificExpectedResults.get.expectedSubHeading, h2Selector)
-        radioButtonCheck(yesText, 1, checked = false)
-        radioButtonCheck(noText, 2, checked = false)
-        buttonCheck(buttonText, continueButtonSelector)
-        formPostLinkCheck(pensionTaxReliefNotClaimedUrl(taxYearEOY), formSelector)
-        welshToggleCheck(userScenario.isWelsh)
+          import Selectors._
+          import userScenario.commonExpectedResults._
+
+          titleCheck(expectedTitle, userScenario.isWelsh)
+          h1Check(expectedHeading)
+          captionCheck(expectedCaption(taxYearEOY), captionSelector)
+          textOnPageCheck(userScenario.specificExpectedResults.get.expectedQuestionsInfoText, paragraphSelector(1))
+          textOnPageCheck(userScenario.specificExpectedResults.get.expectedWhereToCheck, paragraphSelector(2))
+          textOnPageCheck(userScenario.specificExpectedResults.get.expectedSubHeading, h2Selector)
+          radioButtonCheck(yesText, 1, checked = false)
+          radioButtonCheck(noText, 2, checked = false)
+          buttonCheck(buttonText, continueButtonSelector)
+          formPostLinkCheck(pensionTaxReliefNotClaimedUrl(taxYearEOY), formSelector)
+          welshToggleCheck(userScenario.isWelsh)
+        }
 
         "render the pensions where tax relief is not claimed question page with 'Yes' pre-filled when CYA data exists" which {
 

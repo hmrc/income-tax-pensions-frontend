@@ -19,19 +19,20 @@ package controllers.pensions.paymentsIntoPensions
 import builders.PaymentsIntoPensionVewModelBuilder.aPaymentsIntoPensionViewModel
 import builders.PensionsUserDataBuilder.{anPensionsUserDataEmptyCya, pensionsUserDataWithPaymentsIntoPensions}
 import builders.UserBuilder.aUserRequest
-import controllers.pensions.paymentsIntoPension.routes.{
-  PensionsTaxReliefNotClaimedController,
-  ReliefAtSourcePaymentsAndTaxReliefAmountController,
-  PaymentsIntoPensionsCYAController
-}
+import controllers.pensions.paymentsIntoPension.routes.{PaymentsIntoPensionsCYAController, PensionsTaxReliefNotClaimedController, ReliefAtSourcePaymentsAndTaxReliefAmountController}
 import forms.YesNoForm
+import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
-import play.api.http.Status.{OK, SEE_OTHER}
+import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import utils.PageUrls.PaymentIntoPensions.reliefAtSourcePensionsUrl
 import utils.PageUrls.fullUrl
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
+import views.ReliefAtSourcePensionsTestSupport.Selectors._
+import views.ReliefAtSourcePensionsTestSupport.CommonExpectedEN._
+import views.ReliefAtSourcePensionsTestSupport.ExpectedIndividualEN._
 
 // scalastyle:off magic.number
 class ReliefAtSourcePensionsControllerISpec extends IntegrationTest with BeforeAndAfterEach with ViewHelpers with PensionsDatabaseHelper {
@@ -39,7 +40,7 @@ class ReliefAtSourcePensionsControllerISpec extends IntegrationTest with BeforeA
   val userScenarios: Seq[UserScenario[_, _]] = Seq.empty
 
   ".show" should {
-    "render 'Relief at source (RAS) pensions' page " in {
+    "render 'Relief at source (RAS) pensions' page with correct content and no pre-filling" which {
       implicit lazy val result: WSResponse = {
         authoriseAgentOrIndividual(isAgent = false)
         dropPensionsDB()
@@ -47,10 +48,133 @@ class ReliefAtSourcePensionsControllerISpec extends IntegrationTest with BeforeA
         urlGet(fullUrl(reliefAtSourcePensionsUrl(taxYearEOY)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
-      result.status shouldBe OK
+
+      "has the correct status" in {
+        result.status shouldBe OK
+      }
+
+      implicit def document: () => Document = () => Jsoup.parse(result.body)
+
+      titleCheck(expectedTitle)
+      h1Check(expectedHeading)
+      textOnPageCheck(expectedH2, h2Selector)
+      radioButtonCheck(yesText, 1, checked = Some(false))
+      radioButtonCheck(noText, 2, checked = Some(false))
+      buttonCheck(expectedButtonText, continueButtonSelector)
+      formPostLinkCheck(reliefAtSourcePensionsUrl(taxYearEOY), formSelector)
+      welshToggleCheck(isWelsh = false)
+
+      captionCheck(expectedCaption(taxYearEOY), captionSelector)
+      textOnPageCheck(expectedParagraph, paragraphSelector(1))
+      textOnPageCheck(expectedExample1, example1TextSelector)
+      textOnPageCheck(expectedExample2, example2TextSelector)
+      textOnPageCheck(expectedPensionProviderText, paragraphSelector(2))
+      textOnPageCheck(expectedCheckProviderText, paragraphSelector(3))
     }
+
+    "render 'Relief at source (RAS) pensions' page with correct content and yes pre-filled" which {
+
+      implicit lazy val result: WSResponse = {
+        dropPensionsDB()
+        val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(rasPensionPaymentQuestion = Some(true))
+        insertCyaData(pensionsUserDataWithPaymentsIntoPensions(pensionsViewModel), aUserRequest)
+        authoriseAgentOrIndividual(isAgent = false)
+        urlGet(fullUrl(reliefAtSourcePensionsUrl(taxYearEOY)), headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+      }
+
+      "has an OK status" in {
+        result.status shouldBe OK
+      }
+
+      implicit def document: () => Document = () => Jsoup.parse(result.body)
+
+      titleCheck(expectedTitle)
+      h1Check(expectedHeading)
+      textOnPageCheck(expectedH2, h2Selector)
+      radioButtonCheck(yesText, 1, checked = Some(true))
+      radioButtonCheck(noText, 2, checked = Some(false))
+      buttonCheck(expectedButtonText, continueButtonSelector)
+      formPostLinkCheck(reliefAtSourcePensionsUrl(taxYearEOY), formSelector)
+      welshToggleCheck(isWelsh = false)
+
+      captionCheck(expectedCaption(taxYearEOY), captionSelector)
+      textOnPageCheck(expectedParagraph, paragraphSelector(1))
+      textOnPageCheck(expectedExample1, example1TextSelector)
+      textOnPageCheck(expectedExample2, example2TextSelector)
+      textOnPageCheck(expectedPensionProviderText, paragraphSelector(2))
+      textOnPageCheck(expectedCheckProviderText, paragraphSelector(3))
+    }
+
+    "render 'Relief at source (RAS) pensions' page with correct content and no pre-filled" which {
+
+      implicit lazy val result: WSResponse = {
+        dropPensionsDB()
+        val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(rasPensionPaymentQuestion = Some(false))
+        insertCyaData(pensionsUserDataWithPaymentsIntoPensions(pensionsViewModel), aUserRequest)
+        authoriseAgentOrIndividual(isAgent = false)
+        urlGet(fullUrl(reliefAtSourcePensionsUrl(taxYearEOY)), headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+      }
+
+      "has an OK status" in {
+        result.status shouldBe OK
+      }
+
+      implicit def document: () => Document = () => Jsoup.parse(result.body)
+
+      titleCheck(expectedTitle)
+      h1Check(expectedHeading)
+      textOnPageCheck(expectedH2, h2Selector)
+      radioButtonCheck(yesText, 1, checked = Some(false))
+      radioButtonCheck(noText, 2, checked = Some(true))
+      buttonCheck(expectedButtonText, continueButtonSelector)
+      formPostLinkCheck(reliefAtSourcePensionsUrl(taxYearEOY), formSelector)
+      welshToggleCheck(isWelsh = false)
+
+      captionCheck(expectedCaption(taxYearEOY), captionSelector)
+      textOnPageCheck(expectedParagraph, paragraphSelector(1))
+      textOnPageCheck(expectedExample1, example1TextSelector)
+      textOnPageCheck(expectedExample2, example2TextSelector)
+      textOnPageCheck(expectedPensionProviderText, paragraphSelector(2))
+      textOnPageCheck(expectedCheckProviderText, paragraphSelector(3))
+    }
+
   }
   ".submit" should {
+
+    s"return $BAD_REQUEST error when no value is submitted" which {
+      lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> "")
+
+      lazy val result: WSResponse = {
+        dropPensionsDB()
+        insertCyaData(anPensionsUserDataEmptyCya, aUserRequest)
+        authoriseAgentOrIndividual(isAgent = false)
+        urlPost(fullUrl(reliefAtSourcePensionsUrl(taxYearEOY)), body = form, follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+      }
+      "has the correct status" in {
+        result.status shouldBe BAD_REQUEST
+      }
+
+      implicit def document: () => Document = () => Jsoup.parse(result.body)
+
+      titleCheck(expectedErrorTitle)
+      h1Check(expectedHeading)
+      textOnPageCheck(expectedH2, h2Selector)
+      radioButtonCheck(yesText, 1, checked = Some(false))
+      radioButtonCheck(noText, 2, checked = Some(false))
+      buttonCheck(expectedButtonText, continueButtonSelector)
+      formPostLinkCheck(reliefAtSourcePensionsUrl(taxYearEOY), formSelector)
+      welshToggleCheck(isWelsh = false)
+
+      captionCheck(expectedCaption(taxYearEOY), captionSelector)
+      textOnPageCheck(expectedParagraph, paragraphSelector(1))
+      textOnPageCheck(expectedExample1, example1TextSelector)
+      textOnPageCheck(expectedExample2, example2TextSelector)
+      textOnPageCheck(expectedPensionProviderText, paragraphSelector(2))
+      textOnPageCheck(expectedCheckProviderText, paragraphSelector(3))
+      errorSummaryCheck(expectedError, yesSelector)
+      errorAboveElementCheck(expectedError, Some("value"))
+    }
 
     "redirect and update question to 'Yes' when user selects yes when there is no cya data" which {
       lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.yes)
