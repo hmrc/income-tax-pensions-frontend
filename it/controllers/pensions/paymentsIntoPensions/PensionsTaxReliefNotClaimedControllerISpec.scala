@@ -23,6 +23,8 @@ import builders.PensionsUserDataBuilder
 import builders.UserBuilder._
 import forms.YesNoForm
 import models.mongo.{PensionsCYAModel, PensionsUserData}
+import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
@@ -30,6 +32,11 @@ import play.api.libs.ws.WSResponse
 import utils.PageUrls.PaymentIntoPensions.{checkPaymentsIntoPensionCyaUrl, pensionTaxReliefNotClaimedUrl, retirementAnnuityUrl}
 import utils.PageUrls._
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
+import views.PensionsTaxReliefNotClaimedTestSupport.Selectors._
+import views.PensionsTaxReliefNotClaimedTestSupport.ExpectedIndividualEN._
+import views.PensionsTaxReliefNotClaimedTestSupport.CommonExpectedEN._
+import views.PensionsTaxReliefNotClaimedTestSupport.Selectors
+
 
 class PensionsTaxReliefNotClaimedControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
 
@@ -57,6 +64,20 @@ class PensionsTaxReliefNotClaimedControllerISpec extends IntegrationTest with Vi
       "has an OK status" in {
         result.status shouldBe OK
       }
+
+      implicit def document: () => Document = () => Jsoup.parse(result.body)
+
+      titleCheck(expectedTitle)
+      h1Check(expectedHeading)
+      captionCheck(expectedCaption(taxYearEOY), captionSelector)
+      textOnPageCheck(expectedQuestionsInfoText, paragraphSelector(1))
+      textOnPageCheck(expectedWhereToCheck, paragraphSelector(2))
+      textOnPageCheck(expectedSubHeading, h2Selector)
+      radioButtonCheck(yesText, 1, checked = Some(false))
+      radioButtonCheck(noText, 2, checked = Some(false))
+      buttonCheck(buttonText, continueButtonSelector)
+      formPostLinkCheck(pensionTaxReliefNotClaimedUrl(taxYearEOY), formSelector)
+      welshToggleCheck(isWelsh = false)
     }
 
     "render the pensions where tax relief is not claimed question page with 'Yes' pre-filled when CYA data exists" which {
@@ -72,6 +93,19 @@ class PensionsTaxReliefNotClaimedControllerISpec extends IntegrationTest with Vi
         result.status shouldBe OK
       }
 
+      implicit def document: () => Document = () => Jsoup.parse(result.body)
+
+      titleCheck(expectedTitle)
+      h1Check(expectedHeading)
+      captionCheck(expectedCaption(taxYearEOY), captionSelector)
+      textOnPageCheck(expectedQuestionsInfoText, paragraphSelector(1))
+      textOnPageCheck(expectedWhereToCheck, paragraphSelector(2))
+      textOnPageCheck(expectedSubHeading, h2Selector)
+      radioButtonCheck(yesText, 1, checked = Some(true))
+      radioButtonCheck(noText, 2, checked = Some(false))
+      buttonCheck(buttonText, continueButtonSelector)
+      formPostLinkCheck(pensionTaxReliefNotClaimedUrl(taxYearEOY), formSelector)
+      welshToggleCheck(isWelsh = false)
     }
 
     "render the pensions where tax relief is not claimed question page with 'No' pre-filled when CYA data exists" which {
@@ -87,6 +121,19 @@ class PensionsTaxReliefNotClaimedControllerISpec extends IntegrationTest with Vi
       "has an OK status" in {
         result.status shouldBe OK
       }
+      implicit def document: () => Document = () => Jsoup.parse(result.body)
+
+      titleCheck(expectedTitle)
+      h1Check(expectedHeading)
+      captionCheck(expectedCaption(taxYearEOY), captionSelector)
+      textOnPageCheck(expectedQuestionsInfoText, paragraphSelector(1))
+      textOnPageCheck(expectedWhereToCheck, paragraphSelector(2))
+      textOnPageCheck(expectedSubHeading, h2Selector)
+      radioButtonCheck(yesText, 1, checked = Some(false))
+      radioButtonCheck(noText, 2, checked = Some(true))
+      buttonCheck(buttonText, continueButtonSelector)
+      formPostLinkCheck(pensionTaxReliefNotClaimedUrl(taxYearEOY), formSelector)
+      welshToggleCheck(isWelsh = false)
     }
   }
 
@@ -127,7 +174,21 @@ class PensionsTaxReliefNotClaimedControllerISpec extends IntegrationTest with Vi
       "has the correct status" in {
         result.status shouldBe BAD_REQUEST
       }
+      implicit def document: () => Document = () => Jsoup.parse(result.body)
 
+      titleCheck(expectedErrorTitle)
+      h1Check(expectedHeading)
+      captionCheck(expectedCaption(taxYearEOY), captionSelector)
+      textOnPageCheck(expectedQuestionsInfoText, paragraphSelector(1))
+      textOnPageCheck(expectedWhereToCheck, paragraphSelector(2))
+      textOnPageCheck(expectedSubHeading, h2Selector)
+      radioButtonCheck(yesText, 1, checked = Some(false))
+      radioButtonCheck(noText, 2, checked = Some(false))
+      buttonCheck(buttonText, continueButtonSelector)
+      formPostLinkCheck(pensionTaxReliefNotClaimedUrl(taxYearEOY), formSelector)
+      welshToggleCheck(isWelsh = false)
+      errorSummaryCheck(expectedErrorMessage, Selectors.yesSelector)
+      errorAboveElementCheck(expectedErrorMessage, Some("value"))
     }
 
     "redirect to Retirement Annuity Question page when user submits a 'yes' answer which doesnt complete CYA model and updates the session value to yes" which {

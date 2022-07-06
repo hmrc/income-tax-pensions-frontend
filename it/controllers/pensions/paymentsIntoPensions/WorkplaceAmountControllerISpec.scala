@@ -31,6 +31,10 @@ import play.api.libs.ws.WSResponse
 import utils.PageUrls.PaymentIntoPensions.{checkPaymentsIntoPensionCyaUrl, workplacePensionAmount, workplacePensionUrl}
 import utils.PageUrls.fullUrl
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
+import views.WorkplaceAmountTestSupport.Selectors._
+import views.WorkplaceAmountTestSupport._
+import views.WorkplaceAmountTestSupport.CommonExpectedEN._
+import views.WorkplaceAmountTestSupport.ExpectedIndividualEN._
 
 // scalastyle:off magic.number
 class WorkplaceAmountControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
@@ -58,6 +62,23 @@ class WorkplaceAmountControllerISpec extends IntegrationTest with ViewHelpers wi
       "has an OK status" in {
         result.status shouldBe OK
       }
+
+      implicit def document: () => Document = () => Jsoup.parse(result.body)
+
+      titleCheck(expectedTitle)
+      h1Check(expectedHeading)
+      captionCheck(expectedCaption(taxYearEOY), captionSelector)
+      textOnPageCheck(expectedParagraph, paragraphSelector(1))
+      textOnPageCheck(expectedBullet1, bulletListSelector(1))
+      textOnPageCheck(expectedBullet2, bulletListSelector(2))
+      textOnPageCheck(expectedYouCanFindThisOut, paragraphSelector(2))
+      textOnPageCheck(hintText, hintTextSelector)
+      textOnPageCheck(poundPrefixText, poundPrefixSelector)
+      inputFieldValueCheck(amountInputName, inputSelector, "")
+      buttonCheck(buttonText, continueButtonSelector)
+      formPostLinkCheck(workplacePensionAmount(taxYearEOY), formSelector)
+      welshToggleCheck(isWelsh = false)
+      
     }
 
     "render how much did you pay into your workplace pensions amount page when cya data" which {
@@ -75,6 +96,22 @@ class WorkplaceAmountControllerISpec extends IntegrationTest with ViewHelpers wi
       "has an OK status" in {
         result.status shouldBe OK
       }
+
+      implicit def document: () => Document = () => Jsoup.parse(result.body)
+
+      titleCheck(expectedTitle)
+      h1Check(expectedHeading)
+      captionCheck(expectedCaption(taxYearEOY), captionSelector)
+      textOnPageCheck(expectedParagraph, paragraphSelector(1))
+      textOnPageCheck(expectedBullet1, bulletListSelector(1))
+      textOnPageCheck(expectedBullet2, bulletListSelector(2))
+      textOnPageCheck(expectedYouCanFindThisOut, paragraphSelector(2))
+      textOnPageCheck(hintText, hintTextSelector)
+      textOnPageCheck(poundPrefixText, poundPrefixSelector)
+      inputFieldValueCheck(amountInputName, inputSelector, existingAmount)
+      buttonCheck(buttonText, continueButtonSelector)
+      formPostLinkCheck(workplacePensionAmount(taxYearEOY), formSelector)
+      welshToggleCheck(isWelsh = false)
 
     }
 
@@ -150,6 +187,24 @@ class WorkplaceAmountControllerISpec extends IntegrationTest with ViewHelpers wi
       "has the correct status" in {
         result.status shouldBe BAD_REQUEST
       }
+      implicit def document: () => Document = () => Jsoup.parse(result.body)
+
+
+      titleCheck(expectedErrorTitle)
+      h1Check(expectedHeading)
+      captionCheck(expectedCaption(taxYearEOY), captionSelector)
+      textOnPageCheck(expectedParagraph, paragraphSelector(1))
+      textOnPageCheck(expectedBullet1, bulletListSelector(1))
+      textOnPageCheck(expectedBullet2, bulletListSelector(2))
+      textOnPageCheck(expectedYouCanFindThisOut, paragraphSelector(2))
+      textOnPageCheck(hintText, hintTextSelector)
+      textOnPageCheck(poundPrefixText, poundPrefixSelector)
+      inputFieldValueCheck(amountInputName, inputSelector, amountEmpty)
+      buttonCheck(buttonText, continueButtonSelector)
+      formPostLinkCheck(workplacePensionAmount(taxYearEOY), formSelector)
+      errorSummaryCheck(emptyErrorText, expectedErrorHref)
+      errorAboveElementCheck(emptyErrorText)
+      welshToggleCheck(isWelsh = false)
     }
 
     "return an error when form is submitted with an invalid format input" which {
@@ -170,6 +225,25 @@ class WorkplaceAmountControllerISpec extends IntegrationTest with ViewHelpers wi
       "has the correct status" in {
         result.status shouldBe BAD_REQUEST
       }
+
+      implicit def document: () => Document = () => Jsoup.parse(result.body)
+
+
+      titleCheck(expectedErrorTitle)
+      h1Check(expectedHeading)
+      captionCheck(expectedCaption(taxYearEOY), captionSelector)
+      textOnPageCheck(expectedParagraph, paragraphSelector(1))
+      textOnPageCheck(expectedBullet1, bulletListSelector(1))
+      textOnPageCheck(expectedBullet2, bulletListSelector(2))
+      textOnPageCheck(expectedYouCanFindThisOut, paragraphSelector(2))
+      textOnPageCheck(hintText, hintTextSelector)
+      textOnPageCheck(poundPrefixText, poundPrefixSelector)
+      inputFieldValueCheck(amountInputName, inputSelector, amountInvalidFormat)
+      buttonCheck(buttonText, continueButtonSelector)
+      formPostLinkCheck(workplacePensionAmount(taxYearEOY), formSelector)
+      errorSummaryCheck(invalidFormatErrorText, expectedErrorHref)
+      errorAboveElementCheck(invalidFormatErrorText)
+      welshToggleCheck(isWelsh = false)
     }
 
     "return an error when form is submitted with input over maximum allowed value" which {
@@ -190,6 +264,24 @@ class WorkplaceAmountControllerISpec extends IntegrationTest with ViewHelpers wi
       "has the correct status" in {
         result.status shouldBe BAD_REQUEST
       }
+
+      implicit def document: () => Document = () => Jsoup.parse(result.body)
+      
+      titleCheck(expectedErrorTitle)
+      h1Check(expectedHeading)
+      captionCheck(expectedCaption(taxYearEOY), captionSelector)
+      textOnPageCheck(expectedParagraph, paragraphSelector(1))
+      textOnPageCheck(expectedBullet1, bulletListSelector(1))
+      textOnPageCheck(expectedBullet2, bulletListSelector(2))
+      textOnPageCheck(expectedYouCanFindThisOut, paragraphSelector(2))
+      textOnPageCheck(hintText, hintTextSelector)
+      textOnPageCheck(poundPrefixText, poundPrefixSelector)
+      inputFieldValueCheck(amountInputName, inputSelector, amountOverMaximum)
+      buttonCheck(buttonText, continueButtonSelector)
+      formPostLinkCheck(workplacePensionAmount(taxYearEOY), formSelector)
+      errorSummaryCheck(maxAmountErrorText, expectedErrorHref)
+      errorAboveElementCheck(maxAmountErrorText)
+      welshToggleCheck(isWelsh = false)
     }
 
     "redirect to the CYA page when a valid amount is submitted and update the session amount completing the journey" which {

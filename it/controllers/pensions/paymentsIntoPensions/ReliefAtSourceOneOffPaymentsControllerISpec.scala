@@ -22,6 +22,8 @@ import builders.PensionsUserDataBuilder
 import builders.UserBuilder._
 import forms.YesNoForm
 import models.mongo.{PensionsCYAModel, PensionsUserData}
+import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
@@ -29,6 +31,10 @@ import play.api.libs.ws.WSResponse
 import utils.PageUrls.PaymentIntoPensions._
 import utils.PageUrls.fullUrl
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
+import views.ReliefAtSourceOneOffPaymentsTestSupport.Selectors._
+import views.ReliefAtSourceOneOffPaymentsTestSupport.CommonExpectedEN._
+import views.ReliefAtSourceOneOffPaymentsTestSupport.ExpectedIndividualEN._
+import views.ReliefAtSourceOneOffPaymentsTestSupport.Selectors
 
 class ReliefAtSourceOneOffPaymentsControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
   private val someRasAmount: BigDecimal = 33.33
@@ -63,6 +69,17 @@ class ReliefAtSourceOneOffPaymentsControllerISpec extends IntegrationTest with V
       "has an OK status" in {
         result.status shouldBe OK
       }
+      implicit def document: () => Document = () => Jsoup.parse(result.body)
+
+      titleCheck(expectedTitle)
+      h1Check(expectedHeading)
+      captionCheck(expectedCaption(taxYearEOY), captionSelector)
+      textOnPageCheck(thisIncludes, paragraphSelector)
+      radioButtonCheck(yesText, 1, checked = Some(false))
+      radioButtonCheck(noText, 2, checked = Some(false))
+      buttonCheck(buttonText, continueButtonSelector)
+      formPostLinkCheck(reliefAtSourceOneOffPaymentsUrl(taxYearEOY), formSelector)
+      welshToggleCheck(isWelsh = false)
     }
 
     "render the one-off payments into relief at source (RAS) pensions question page with 'Yes' pre-filled when CYA data exists" which {
@@ -82,6 +99,18 @@ class ReliefAtSourceOneOffPaymentsControllerISpec extends IntegrationTest with V
       "has an OK status" in {
         result.status shouldBe OK
       }
+
+      implicit def document: () => Document = () => Jsoup.parse(result.body)
+      
+      titleCheck(expectedTitle)
+      h1Check(expectedHeading)
+      captionCheck(expectedCaption(taxYearEOY), captionSelector)
+      textOnPageCheck(thisIncludes, paragraphSelector)
+      radioButtonCheck(yesText, 1, checked = Some(true))
+      radioButtonCheck(noText, 2, checked = Some(false))
+      buttonCheck(buttonText, continueButtonSelector)
+      formPostLinkCheck(reliefAtSourceOneOffPaymentsUrl(taxYearEOY), formSelector)
+      welshToggleCheck(isWelsh = false)
     }
 
     "render the one-off payments into relief at source (RAS) pensions question page with 'No' pre-filled when CYA data exists" which {
@@ -101,6 +130,17 @@ class ReliefAtSourceOneOffPaymentsControllerISpec extends IntegrationTest with V
       "has an OK status" in {
         result.status shouldBe OK
       }
+
+      implicit def document: () => Document = () => Jsoup.parse(result.body)
+      titleCheck(expectedTitle)
+      h1Check(expectedHeading)
+      captionCheck(expectedCaption(taxYearEOY), captionSelector)
+      textOnPageCheck(thisIncludes, paragraphSelector)
+      radioButtonCheck(yesText, 1, checked = Some(false))
+      radioButtonCheck(noText, 2, checked = Some(true))
+      buttonCheck(buttonText, continueButtonSelector)
+      formPostLinkCheck(reliefAtSourceOneOffPaymentsUrl(taxYearEOY), formSelector)
+      welshToggleCheck(isWelsh = false)
     }
 
     "redirect to the RAS Amount page if the previous totalRASPaymentsAndTaxRelief Amount has not been populated" which {
@@ -160,6 +200,21 @@ class ReliefAtSourceOneOffPaymentsControllerISpec extends IntegrationTest with V
       "has the correct status" in {
         result.status shouldBe BAD_REQUEST
       }
+
+      implicit def document: () => Document = () => Jsoup.parse(result.body)
+
+      titleCheck(expectedErrorTitle)
+      h1Check(expectedHeading)
+      captionCheck(expectedCaption(taxYearEOY), captionSelector)
+      textOnPageCheck(thisIncludes, paragraphSelector)
+      radioButtonCheck(yesText, 1, checked = Some(false))
+      radioButtonCheck(noText, 2, checked = Some(false))
+      buttonCheck(buttonText, continueButtonSelector)
+      formPostLinkCheck(reliefAtSourceOneOffPaymentsUrl(taxYearEOY), formSelector)
+      welshToggleCheck(isWelsh = false)
+      errorSummaryCheck(expectedErrorMessage, Selectors.yesSelector)
+      errorAboveElementCheck(expectedErrorMessage, Some("value"))
+
     }
 
     "redirect to the next page when user submits a 'yes' answer and updates the session value to yes" which {

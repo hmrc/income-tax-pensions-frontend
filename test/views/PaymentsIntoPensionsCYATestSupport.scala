@@ -25,10 +25,16 @@ import play.api.i18n.Messages
 import play.api.mvc.AnyContent
 import support.ViewUnitTest
 import views.html.pensions.paymentsIntoPensions.PaymentsIntoPensionsCYAView
+import views.PaymentsIntoPensionsCYATestSupport._
+
+import java.time.LocalDate
 
 // scalastyle:off magic.number
-class PaymentsIntoPensionsCYAViewSpec extends ViewUnitTest {
+object PaymentsIntoPensionsCYATestSupport {
 
+  private val dateNow: LocalDate = LocalDate.now()
+  private val taxYearCutoffDate: LocalDate = LocalDate.parse(s"${dateNow.getYear}-04-05")
+  private val taxYear: Int = if (dateNow.isAfter(taxYearCutoffDate)) LocalDate.now().getYear + 1 else LocalDate.now().getYear
 
   val cyaDataIncomplete: PaymentsIntoPensionViewModel = PaymentsIntoPensionViewModel(
     rasPensionPaymentQuestion = Some(true)
@@ -165,7 +171,9 @@ class PaymentsIntoPensionsCYAViewSpec extends ViewUnitTest {
     val expectedH1 = "Check your client’s payments into pensions"
     val expectedTitle = "Check your client’s payments into pensions"
   }
+}
 
+class PaymentsIntoPensionsCYATestSupport extends ViewUnitTest {
   val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(
     UserScenario(isWelsh = false, isAgent = false, CommonExpectedEN, Some(ExpectedIndividualEN)),
     UserScenario(isWelsh = false, isAgent = true, CommonExpectedEN, Some(ExpectedAgentEN)),

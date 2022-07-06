@@ -25,9 +25,10 @@ import play.api.i18n.Messages
 import play.api.mvc.AnyContent
 import support.ViewUnitTest
 import views.html.pensions.paymentsIntoPensions.ReliefAtSourcePensionsView
+import views.ReliefAtSourcePensionsTestSupport._
 
 // scalastyle:off magic.number
-class ReliefAtSourcePensionsViewSpec extends ViewUnitTest {
+object ReliefAtSourcePensionsTestSupport {
 
   object Selectors {
     val captionSelector: String = "#main-content > div > div > header > p"
@@ -121,6 +122,9 @@ class ReliefAtSourcePensionsViewSpec extends ViewUnitTest {
     val yesText = "Yes"
     val noText = "No"
   }
+}
+
+class ReliefAtSourcePensionsTestSupport extends ViewUnitTest {
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(
     UserScenario(isWelsh = false, isAgent = false, CommonExpectedEN, Some(ExpectedIndividualEN)),

@@ -22,6 +22,8 @@ import builders.PensionsUserDataBuilder
 import builders.UserBuilder._
 import forms.AmountForm
 import models.mongo.{PensionsCYAModel, PensionsUserData}
+import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
@@ -29,6 +31,10 @@ import play.api.libs.ws.WSResponse
 import utils.PageUrls.PaymentIntoPensions._
 import utils.PageUrls.fullUrl
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
+import views.OneOffRASPaymentsAmountTestSupport._
+import views.OneOffRASPaymentsAmountTestSupport.Selectors._
+import views.OneOffRASPaymentsAmountTestSupport.CommonExpectedEN._
+import views.OneOffRASPaymentsAmountTestSupport.ExpectedIndividualEN._
 
 class OneOffRASPaymentsAmountControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
   private def pensionsUsersData(pensionsCyaModel: PensionsCYAModel): PensionsUserData = {
@@ -55,6 +61,22 @@ class OneOffRASPaymentsAmountControllerISpec extends IntegrationTest with ViewHe
       "has an OK status" in {
         result.status shouldBe OK
       }
+
+      implicit def document: () => Document = () => Jsoup.parse(result.body)
+
+      titleCheck(expectedTitle)
+      h1Check(expectedHeading)
+      captionCheck(expectedCaption(taxYearEOY), captionSelector)
+      textOnPageCheck(expectedYouToldUs, paragraphSelector(1))
+      textOnPageCheck(expectedHowToWorkOut, paragraphSelector(2))
+      textOnPageCheck(expectedCalculationHeading, insetSpanText(1))
+      textOnPageCheck(expectedExampleCalculation, insetSpanText(2))
+      textOnPageCheck(hintText, hintTextSelector)
+      textOnPageCheck(poundPrefixText, poundPrefixSelector)
+      inputFieldValueCheck(amountInputName, inputSelector, "")
+      buttonCheck(buttonText, continueButtonSelector)
+      formPostLinkCheck(oneOffReliefAtSourcePaymentsAmountUrl(taxYearEOY), formSelector)
+      welshToggleCheck(isWelsh = false)
     }
 
     "render Total one off payments into relief at source (RAS) pensions page prefilled when cya data" which {
@@ -72,6 +94,21 @@ class OneOffRASPaymentsAmountControllerISpec extends IntegrationTest with ViewHe
       "has an OK status" in {
         result.status shouldBe OK
       }
+      implicit def document: () => Document = () => Jsoup.parse(result.body)
+
+      titleCheck(expectedTitle)
+      h1Check(expectedHeading)
+      captionCheck(expectedCaption(taxYearEOY), captionSelector)
+      textOnPageCheck(expectedYouToldUs, paragraphSelector(1))
+      textOnPageCheck(expectedHowToWorkOut, paragraphSelector(2))
+      textOnPageCheck(expectedCalculationHeading, insetSpanText(1))
+      textOnPageCheck(expectedExampleCalculation, insetSpanText(2))
+      textOnPageCheck(hintText, hintTextSelector)
+      textOnPageCheck(poundPrefixText, poundPrefixSelector)
+      inputFieldValueCheck(amountInputName, inputSelector, existingAmount)
+      buttonCheck(buttonText, continueButtonSelector)
+      formPostLinkCheck(oneOffReliefAtSourcePaymentsAmountUrl(taxYearEOY), formSelector)
+      welshToggleCheck(isWelsh = false)
     }
 
     "redirect to the oneOffRasPensionPaymentQuestion page if the question has not been answered" which {
@@ -161,6 +198,23 @@ class OneOffRASPaymentsAmountControllerISpec extends IntegrationTest with ViewHe
         result.status shouldBe BAD_REQUEST
       }
 
+      implicit def document: () => Document = () => Jsoup.parse(result.body)
+
+      titleCheck(expectedErrorTitle)
+      h1Check(expectedHeading)
+      captionCheck(expectedCaption(taxYearEOY), captionSelector)
+      textOnPageCheck(expectedYouToldUs, paragraphSelector(1))
+      textOnPageCheck(expectedHowToWorkOut, paragraphSelector(2))
+      textOnPageCheck(expectedCalculationHeading, insetSpanText(1))
+      textOnPageCheck(expectedExampleCalculation, insetSpanText(2))
+      textOnPageCheck(hintText, hintTextSelector)
+      textOnPageCheck(poundPrefixText, poundPrefixSelector)
+      inputFieldValueCheck(amountInputName, inputSelector, "")
+      buttonCheck(buttonText, continueButtonSelector)
+      formPostLinkCheck(oneOffReliefAtSourcePaymentsAmountUrl(taxYearEOY), formSelector)
+      errorSummaryCheck(emptyErrorText, expectedErrorHref)
+      errorAboveElementCheck(emptyErrorText)
+      welshToggleCheck(isWelsh = false)
     }
 
     "return an error when form is submitted with an invalid format input" which {
@@ -181,6 +235,24 @@ class OneOffRASPaymentsAmountControllerISpec extends IntegrationTest with ViewHe
       "has the correct status" in {
         result.status shouldBe BAD_REQUEST
       }
+
+      implicit def document: () => Document = () => Jsoup.parse(result.body)
+
+      titleCheck(expectedErrorTitle)
+      h1Check(expectedHeading)
+      captionCheck(expectedCaption(taxYearEOY), captionSelector)
+      textOnPageCheck(expectedYouToldUs, paragraphSelector(1))
+      textOnPageCheck(expectedHowToWorkOut, paragraphSelector(2))
+      textOnPageCheck(expectedCalculationHeading, insetSpanText(1))
+      textOnPageCheck(expectedExampleCalculation, insetSpanText(2))
+      textOnPageCheck(hintText, hintTextSelector)
+      textOnPageCheck(poundPrefixText, poundPrefixSelector)
+      inputFieldValueCheck(amountInputName, inputSelector, "invalid")
+      buttonCheck(buttonText, continueButtonSelector)
+      formPostLinkCheck(oneOffReliefAtSourcePaymentsAmountUrl(taxYearEOY), formSelector)
+      errorSummaryCheck(invalidFormatErrorText, expectedErrorHref)
+      errorAboveElementCheck(invalidFormatErrorText)
+      welshToggleCheck(isWelsh = false)
     }
 
     "return an error when form is submitted with input over maximum allowed value" which {
@@ -201,6 +273,24 @@ class OneOffRASPaymentsAmountControllerISpec extends IntegrationTest with ViewHe
       "has the correct status" in {
         result.status shouldBe BAD_REQUEST
       }
+
+      implicit def document: () => Document = () => Jsoup.parse(result.body)
+
+      titleCheck(expectedErrorTitle)
+      h1Check(expectedHeading)
+      captionCheck(expectedCaption(taxYearEOY), captionSelector)
+      textOnPageCheck(expectedYouToldUs, paragraphSelector(1))
+      textOnPageCheck(expectedHowToWorkOut, paragraphSelector(2))
+      textOnPageCheck(expectedCalculationHeading, insetSpanText(1))
+      textOnPageCheck(expectedExampleCalculation, insetSpanText(2))
+      textOnPageCheck(hintText, hintTextSelector)
+      textOnPageCheck(poundPrefixText, poundPrefixSelector)
+      inputFieldValueCheck(amountInputName, inputSelector, "100,000,000,000")
+      buttonCheck(buttonText, continueButtonSelector)
+      formPostLinkCheck(oneOffReliefAtSourcePaymentsAmountUrl(taxYearEOY), formSelector)
+      errorSummaryCheck(maxAmountErrorText, expectedErrorHref)
+      errorAboveElementCheck(maxAmountErrorText)
+      welshToggleCheck(isWelsh = false)
     }
 
     "redirect to the ReliefAtSourcePaymentsAmount page if 'totalRASPaymentsAndTaxRelief' is missing when form is submitted with an error" which {
