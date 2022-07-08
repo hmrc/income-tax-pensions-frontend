@@ -101,6 +101,8 @@ class AppConfig @Inject()(servicesConfig: ServicesConfig) {
 
   lazy val nrsEnabled: Boolean = servicesConfig.getBoolean("feature-switch.nrsEnabled")
 
+  lazy val tailoringEnabled: Boolean = servicesConfig.getBoolean("feature-switch.tailoringEnabled")
+
   lazy val useEncryption: Boolean = servicesConfig.getBoolean("useEncryption")
 
 }
