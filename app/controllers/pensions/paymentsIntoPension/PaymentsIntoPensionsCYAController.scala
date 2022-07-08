@@ -34,62 +34,60 @@ import views.html.pensions.paymentsIntoPensions.PaymentsIntoPensionsCYAView
 import javax.inject.Inject
 import scala.concurrent.Future
 
-class PaymentsIntoPensionsCYAController @Inject()(implicit val cc: MessagesControllerComponents,
-                                                  authAction: AuthorisedAction,
-                                                  appConfig: AppConfig,
+class PaymentsIntoPensionsCYAController @Inject()(authAction: AuthorisedAction,
                                                   view: PaymentsIntoPensionsCYAView,
                                                   pensionSessionService: PensionSessionService,
-                                                  errorHandler: ErrorHandler,
-                                                  clock: Clock
-                                                 ) extends FrontendController(cc) with I18nSupport {
+                                                  errorHandler: ErrorHandler)
+                                                 (implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock)
+  extends FrontendController(mcc) with I18nSupport {
 
-  def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
-    pensionSessionService.getAndHandle(taxYear, request.user) { (cya, prior) =>
+    def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
+      pensionSessionService.getAndHandle(taxYear, request.user) { (cya, prior) =>
 
-      (cya, prior) match {
-        case (Some(_), _) =>
-          redirectBasedOnCurrentAnswers(taxYear, cya)(redirects(_, taxYear)) { data =>
-            Future.successful(Ok(view(taxYear, data.pensions.paymentsIntoPension)))
-          }
-        case (None, Some(priorData)) =>
-          val cyaModel = pensionSessionService.generateCyaFromPrior(priorData)
-          pensionSessionService.createOrUpdateSessionData(request.user,
-            cyaModel, taxYear, isPriorSubmission = false)(
-            errorHandler.internalServerError())(
-            Ok(view(taxYear, cyaModel.paymentsIntoPension))
-          )
-        case _ => Future.successful(Redirect(controllers.pensions.paymentsIntoPension.routes.ReliefAtSourcePensionsController.show(taxYear)))
-      }
-    }
-  }
-
-  def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
-    pensionSessionService.getAndHandle(taxYear, request.user) { (cya, prior) =>
-      cya.fold(
-        Future.successful(Redirect(appConfig.incomeTaxSubmissionOverviewUrl(taxYear)))
-      ) { model =>
-
-        if (comparePriorData(model.pensions, prior)) {
-          //        TODO - build submission model from cya data and submit to DES if cya data doesn't match prior data
-          //        val submissionModel = AllPensionsData(None, None, None)
-          Future.successful(Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear)))
-        } else {
-          Future.successful(Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear)))
+        (cya, prior) match {
+          case (Some(_), _) =>
+            redirectBasedOnCurrentAnswers(taxYear, cya)(redirects(_, taxYear)) { data =>
+              Future.successful(Ok(view(taxYear, data.pensions.paymentsIntoPension)))
+            }
+          case (None, Some(priorData)) =>
+            val cyaModel = pensionSessionService.generateCyaFromPrior(priorData)
+            pensionSessionService.createOrUpdateSessionData(request.user,
+              cyaModel, taxYear, isPriorSubmission = false)(
+              errorHandler.internalServerError())(
+              Ok(view(taxYear, cyaModel.paymentsIntoPension))
+            )
+          case _ => Future.successful(Redirect(controllers.pensions.paymentsIntoPension.routes.ReliefAtSourcePensionsController.show(taxYear)))
         }
       }
     }
-  }
 
+    def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
+      pensionSessionService.getAndHandle(taxYear, request.user) { (cya, prior) =>
+        cya.fold(
+          Future.successful(Redirect(appConfig.incomeTaxSubmissionOverviewUrl(taxYear)))
+        ) { model =>
 
-  private def comparePriorData(cyaData: PensionsCYAModel, priorData: Option[AllPensionsData]): Boolean = {
-    priorData match {
-      case None => true
-      case Some(prior) => !cyaData.equals(pensionSessionService.generateCyaFromPrior(prior))
+          if (comparePriorData(model.pensions, prior)) {
+            //        TODO - build submission model from cya data and submit to DES if cya data doesn't match prior data
+            //        val submissionModel = AllPensionsData(None, None, None)
+            Future.successful(Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear)))
+          } else {
+            Future.successful(Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear)))
+          }
+        }
+      }
     }
-  }
 
-  private def redirects(cya: PensionsCYAModel, taxYear: Int): Seq[ConditionalRedirect] = {
-    PaymentsIntoPensionsRedirects.journeyCheck(CheckYourAnswersPage, cya, taxYear)
-  }
 
-}
+    private def comparePriorData(cyaData: PensionsCYAModel, priorData: Option[AllPensionsData]): Boolean = {
+      priorData match {
+        case None => true
+        case Some(prior) => !cyaData.equals(pensionSessionService.generateCyaFromPrior(prior))
+      }
+    }
+
+    private def redirects(cya: PensionsCYAModel, taxYear: Int): Seq[ConditionalRedirect] = {
+      PaymentsIntoPensionsRedirects.journeyCheck(CheckYourAnswersPage, cya, taxYear)
+    }
+
+  }

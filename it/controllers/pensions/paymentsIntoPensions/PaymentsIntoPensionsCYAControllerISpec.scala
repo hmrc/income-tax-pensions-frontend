@@ -36,11 +36,16 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
-import play.api.http.Status.SEE_OTHER
+import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import utils.PageUrls.PaymentIntoPensions.checkPaymentsIntoPensionCyaUrl
 import utils.PageUrls.fullUrl
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
+import views.PaymentsIntoPensionsCYATestSupport._
+import views.PaymentsIntoPensionsCYATestSupport.CommonExpectedEN._
+import views.PaymentsIntoPensionsCYATestSupport.ExpectedIndividualEN._
+import views.PaymentsIntoPensionsCYATestSupport.CommonExpectedEN.{no => answerNo}
+
 
 // scalastyle:off magic.number
 class PaymentsIntoPensionsCYAControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
@@ -56,285 +61,149 @@ class PaymentsIntoPensionsCYAControllerISpec extends IntegrationTest with ViewHe
     pensionTaxReliefNotClaimedQuestion = Some(false)
   )
 
-  object ChangeLinks {
-    val reliefAtSource: String = controllers.pensions.paymentsIntoPension.routes.ReliefAtSourcePensionsController.show(taxYear).url
-    val reliefAtSourceAmount: String = controllers.pensions.paymentsIntoPension.routes.ReliefAtSourcePaymentsAndTaxReliefAmountController.show(taxYear).url
-    val oneOff: String = controllers.pensions.paymentsIntoPension.routes.ReliefAtSourceOneOffPaymentsController.show(taxYear).url
-    val oneOffAmount: String = controllers.pensions.paymentsIntoPension.routes.OneOffRASPaymentsAmountController.show(taxYear).url
-    val pensionsTaxReliefNotClaimed: String = controllers.pensions.paymentsIntoPension.routes.PensionsTaxReliefNotClaimedController.show(taxYear).url
-    val retirementAnnuity: String = controllers.pensions.paymentsIntoPension.routes.RetirementAnnuityController.show(taxYear).url
-    val retirementAnnuityAmount: String = controllers.pensions.paymentsIntoPension.routes.RetirementAnnuityAmountController.show(taxYear).url
-    val workplacePayments: String = controllers.pensions.paymentsIntoPension.routes.WorkplacePensionController.show(taxYear).url
-    val workplacePaymentsAmount: String = controllers.pensions.paymentsIntoPension.routes.WorkplaceAmountController.show(taxYear).url
-  }
 
-  trait SpecificExpectedResults {
-    val expectedH1: String
-    val expectedTitle: String
-  }
-
-  trait CommonExpectedResults {
-    def expectedCaption(taxYear: Int): String
-
-    val yes: String
-    val no: String
-
-    val reliefAtSource: String
-    val reliefAtSourceAmount: String
-    val oneOff: String
-    val oneOffAmount: String
-    val pensionsTaxReliefNotClaimed: String
-    val retirementAnnuity: String
-    val retirementAnnuityAmount: String
-    val workplacePayments: String
-    val workplacePaymentsAmount: String
-
-    val saveAndContinue: String
-    val error: String
-
-    val reliefAtSourceHidden: String
-    val reliefAtSourceAmountHidden: String
-    val oneOffHidden: String
-    val oneOffAmountHidden: String
-    val pensionsTaxReliefNotClaimedHidden: String
-    val retirementAnnuityHidden: String
-    val retirementAnnuityAmountHidden: String
-    val workplacePaymentsHidden: String
-    val workplacePaymentsAmountHidden: String
-  }
-
-  object CommonExpectedEN extends CommonExpectedResults {
-    def expectedCaption(taxYear: Int): String = s"Payments into pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-
-    val yes = "Yes"
-    val no = "No"
-
-    val reliefAtSource = "Relief at source (RAS) pension payments"
-    val reliefAtSourceAmount = "Total RAS payments plus tax relief"
-    val oneOff = "One-off RAS payments"
-    val oneOffAmount = "Total one-off RAS payments plus tax relief"
-    val pensionsTaxReliefNotClaimed = "Pensions where tax relief is not claimed"
-    val retirementAnnuity = "Retirement annuity contract payments"
-    val retirementAnnuityAmount = "Total retirement annuity contract payments"
-    val workplacePayments = "Workplace pension payments"
-    val workplacePaymentsAmount = "Total workplace pension payments"
-
-    val saveAndContinue = "Save and continue"
-    val error = "Sorry, there is a problem with the service"
-
-    val reliefAtSourceHidden = "Change whether relief at source pensions payments were made"
-    val reliefAtSourceAmountHidden = "Change total relief at source pensions payments, plus tax relief"
-    val oneOffHidden = "Change whether one-off relief at source pensions payments were made"
-    val oneOffAmountHidden = "Change total one-off relief at source pensions payments, plus tax relief"
-    val pensionsTaxReliefNotClaimedHidden = "Change whether payments were made into a pension where tax relief was not claimed"
-    val retirementAnnuityHidden = "Change whether retirement annuity contract payments were made"
-    val retirementAnnuityAmountHidden = "Change total retirement annuity contract payments"
-    val workplacePaymentsHidden = "Change whether workplace pension payments were made"
-    val workplacePaymentsAmountHidden = "Change total workplace pension payments"
-  }
-
-  object CommonExpectedCY extends CommonExpectedResults {
-    def expectedCaption(taxYear: Int): String = s"Payments into pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-
-    val yes = "Yes"
-    val no = "No"
-
-    val reliefAtSource = "Relief at source (RAS) pension payments"
-    val reliefAtSourceAmount = "Total RAS payments plus tax relief"
-    val oneOff = "One-off RAS payments"
-    val oneOffAmount = "Total one-off RAS payments plus tax relief"
-    val pensionsTaxReliefNotClaimed = "Pensions where tax relief is not claimed"
-    val retirementAnnuity = "Retirement annuity contract payments"
-    val retirementAnnuityAmount = "Total retirement annuity contract payments"
-    val workplacePayments = "Workplace pension payments"
-    val workplacePaymentsAmount = "Total workplace pension payments"
-
-    val saveAndContinue = "Save and continue"
-    val error = "Sorry, there is a problem with the service"
-
-    val reliefAtSourceHidden = "Change whether relief at source pensions payments were made"
-    val reliefAtSourceAmountHidden = "Change total relief at source pensions payments, plus tax relief"
-    val oneOffHidden = "Change whether one-off relief at source pensions payments were made"
-    val oneOffAmountHidden = "Change total one-off relief at source pensions payments, plus tax relief"
-    val pensionsTaxReliefNotClaimedHidden = "Change whether payments were made into a pension where tax relief was not claimed"
-    val retirementAnnuityHidden = "Change whether retirement annuity contract payments were made"
-    val retirementAnnuityAmountHidden = "Change total retirement annuity contract payments"
-    val workplacePaymentsHidden = "Change whether workplace pension payments were made"
-    val workplacePaymentsAmountHidden = "Change total workplace pension payments"
-  }
-
-  object ExpectedIndividualEN extends SpecificExpectedResults {
-    val expectedH1 = "Check your payments into pensions"
-    val expectedTitle = "Check your payments into pensions"
-  }
-
-  object ExpectedAgentEN extends SpecificExpectedResults {
-    val expectedH1 = "Check your client’s payments into pensions"
-    val expectedTitle = "Check your client’s payments into pensions"
-  }
-
-  object ExpectedIndividualCY extends SpecificExpectedResults {
-    val expectedH1 = "Check your payments into pensions"
-    val expectedTitle = "Check your payments into pensions"
-  }
-
-  object ExpectedAgentCY extends SpecificExpectedResults {
-    val expectedH1 = "Check your client’s payments into pensions"
-    val expectedTitle = "Check your client’s payments into pensions"
-  }
-
-  val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(
-    UserScenario(isWelsh = false, isAgent = false, CommonExpectedEN, Some(ExpectedIndividualEN)),
-    UserScenario(isWelsh = false, isAgent = true, CommonExpectedEN, Some(ExpectedAgentEN)),
-    UserScenario(isWelsh = true, isAgent = false, CommonExpectedCY, Some(ExpectedIndividualCY)),
-    UserScenario(isWelsh = true, isAgent = true, CommonExpectedCY, Some(ExpectedAgentCY))
-  )
-
+  val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq.empty
 
   ".show" when {
+    "render the page with a full CYA model" when {
 
-    userScenarios.foreach { user =>
-
-      s"language is ${welshTest(user.isWelsh)} and request is from an ${agentTest(user.isAgent)}" should {
-
-        "render the page with a full CYA model" when {
-
-          "there is no CYA data and a CYA model is generated from prior data" which {
-            lazy val result: WSResponse = {
-              dropPensionsDB()
-              userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYear)
-              authoriseAgentOrIndividual(user.isAgent)
-              urlGet(url, welsh = user.isWelsh, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
-            }
-
-            implicit def document: () => Document = () => Jsoup.parse(result.body)
-
-            import user.commonExpectedResults._
-
-            titleCheck(user.specificExpectedResults.get.expectedTitle)
-            h1Check(user.specificExpectedResults.get.expectedH1)
-            captionCheck(user.commonExpectedResults.expectedCaption(taxYear))
-
-            //noinspection ScalaStyle
-            cyaRowCheck(reliefAtSource, yes, ChangeLinks.reliefAtSource, reliefAtSourceHidden, 1)
-            cyaRowCheck(reliefAtSourceAmount, s"${moneyContent(anReliefs.regularPensionContributions.get)}",
-              ChangeLinks.reliefAtSourceAmount, reliefAtSourceAmountHidden, 2)
-            cyaRowCheck(oneOff, yes, ChangeLinks.oneOff, oneOffHidden, 3)
-            cyaRowCheck(oneOffAmount, s"${moneyContent(anReliefs.oneOffPensionContributionsPaid.get)}",
-              ChangeLinks.oneOffAmount, oneOffAmountHidden, 4)
-            cyaRowCheck(pensionsTaxReliefNotClaimed, yes, ChangeLinks.pensionsTaxReliefNotClaimed, pensionsTaxReliefNotClaimedHidden, 5)
-            cyaRowCheck(retirementAnnuity, yes, ChangeLinks.retirementAnnuity, retirementAnnuityHidden, 6)
-            cyaRowCheck(retirementAnnuityAmount, s"${moneyContent(anReliefs.retirementAnnuityPayments.get)}",
-              ChangeLinks.retirementAnnuityAmount, retirementAnnuityAmountHidden, 7)
-            cyaRowCheck(workplacePayments, yes, ChangeLinks.workplacePayments, workplacePaymentsHidden, 8)
-            cyaRowCheck(workplacePaymentsAmount, s"${moneyContent(anReliefs.paymentToEmployersSchemeNoTaxRelief.get)}",
-              ChangeLinks.workplacePaymentsAmount, workplacePaymentsAmountHidden, 9)
-
-            buttonCheck(saveAndContinue)
-
-            welshToggleCheck(user.isWelsh)
-          }
-
-          "CYA data is finished" which {
-            lazy val result: WSResponse = {
-              dropPensionsDB()
-              insertCyaData(aPensionsUserData.copy(taxYear = taxYear), aUserRequest)
-              authoriseAgentOrIndividual(user.isAgent)
-              urlGet(url, welsh = user.isWelsh, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
-            }
-
-            implicit def document: () => Document = () => Jsoup.parse(result.body)
-
-            import user.commonExpectedResults._
-
-            titleCheck(user.specificExpectedResults.get.expectedTitle)
-            h1Check(user.specificExpectedResults.get.expectedH1)
-            captionCheck(user.commonExpectedResults.expectedCaption(taxYear))
-
-            //noinspection ScalaStyle
-            cyaRowCheck(reliefAtSource, yes, ChangeLinks.reliefAtSource, reliefAtSourceHidden, 1)
-            cyaRowCheck(reliefAtSourceAmount, s"${moneyContent(aPaymentsIntoPensionViewModel.totalRASPaymentsAndTaxRelief.get)}",
-              ChangeLinks.reliefAtSourceAmount, reliefAtSourceAmountHidden, 2)
-            cyaRowCheck(oneOff, yes, ChangeLinks.oneOff, oneOffHidden, 3)
-            cyaRowCheck(oneOffAmount, s"${moneyContent(aPaymentsIntoPensionViewModel.totalOneOffRasPaymentPlusTaxRelief.get)}",
-              ChangeLinks.oneOffAmount, oneOffAmountHidden, 4)
-            cyaRowCheck(pensionsTaxReliefNotClaimed, yes, ChangeLinks.pensionsTaxReliefNotClaimed, pensionsTaxReliefNotClaimedHidden, 5)
-            cyaRowCheck(retirementAnnuity, yes, ChangeLinks.retirementAnnuity, retirementAnnuityHidden, 6)
-            cyaRowCheck(retirementAnnuityAmount, s"${moneyContent(aPaymentsIntoPensionViewModel.totalRetirementAnnuityContractPayments.get)}",
-              ChangeLinks.retirementAnnuityAmount, retirementAnnuityAmountHidden, 7)
-            cyaRowCheck(workplacePayments, yes, ChangeLinks.workplacePayments, workplacePaymentsHidden, 8)
-            cyaRowCheck(workplacePaymentsAmount, s"${moneyContent(aPaymentsIntoPensionViewModel.totalWorkplacePensionPayments.get)}",
-              ChangeLinks.workplacePaymentsAmount, workplacePaymentsAmountHidden, 9)
-
-            buttonCheck(saveAndContinue)
-
-            welshToggleCheck(user.isWelsh)
-          }
+      "there is no CYA data and a CYA model is generated from prior data" which {
+        lazy val result: WSResponse = {
+          dropPensionsDB()
+          userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYear)
+          authoriseAgentOrIndividual(isAgent = false)
+          urlGet(url, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
         }
 
-        "render the page with a minimal CYA view" which {
-
-          lazy val result: WSResponse = {
-            dropPensionsDB()
-            insertCyaData(aPensionsUserData.copy(pensions = paymentsIntoPensionOnlyCYAModel(cyaDataMinimal), taxYear = taxYear), aUserRequest)
-            authoriseAgentOrIndividual(user.isAgent)
-            urlGet(url, welsh = user.isWelsh, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
-          }
-
-          implicit def document: () => Document = () => Jsoup.parse(result.body)
-
-          import user.commonExpectedResults.{no => answerNo, _}
-
-          //noinspection ScalaStyle
-          cyaRowCheck(reliefAtSource, answerNo, ChangeLinks.reliefAtSource, reliefAtSourceHidden, 1)
-          cyaRowCheck(pensionsTaxReliefNotClaimed, answerNo, ChangeLinks.pensionsTaxReliefNotClaimed, pensionsTaxReliefNotClaimedHidden, 2)
-
-          buttonCheck(saveAndContinue)
-
-          welshToggleCheck(user.isWelsh)
+        "has an OK status" in {
+          result.status shouldBe OK
         }
 
-        "redirect to the first unanswered question when the CYA data is incomplete" should {
+        implicit def document: () => Document = () => Jsoup.parse(result.body)
+        titleCheck(expectedTitle)
+        h1Check(expectedH1)
+        captionCheck(expectedCaption(taxYear))
 
-          lazy val result: WSResponse = {
-            dropPensionsDB()
-            authoriseAgentOrIndividual(user.isAgent)
-            userDataStub(IncomeTaxUserData(None), nino, taxYear)
-            insertCyaData(aPensionsUserData.copy(pensions = aPensionsCYAModel.copy(paymentsIntoPension = cyaDataIncomplete), taxYear = taxYear), aUserRequest)
+        //noinspection ScalaStyle
+        cyaRowCheck(reliefAtSource, yes, ChangeLinks.reliefAtSource, reliefAtSourceHidden, 1)
+        cyaRowCheck(reliefAtSourceAmount, s"${moneyContent(anReliefs.regularPensionContributions.get)}",
+          ChangeLinks.reliefAtSourceAmount, reliefAtSourceAmountHidden, 2)
+        cyaRowCheck(oneOff, yes, ChangeLinks.oneOff, oneOffHidden, 3)
+        cyaRowCheck(oneOffAmount, s"${moneyContent(anReliefs.oneOffPensionContributionsPaid.get)}",
+          ChangeLinks.oneOffAmount, oneOffAmountHidden, 4)
+        cyaRowCheck(pensionsTaxReliefNotClaimed, yes, ChangeLinks.pensionsTaxReliefNotClaimed, pensionsTaxReliefNotClaimedHidden, 5)
+        cyaRowCheck(retirementAnnuity, yes, ChangeLinks.retirementAnnuity, retirementAnnuityHidden, 6)
+        cyaRowCheck(retirementAnnuityAmount, s"${moneyContent(anReliefs.retirementAnnuityPayments.get)}",
+          ChangeLinks.retirementAnnuityAmount, retirementAnnuityAmountHidden, 7)
+        cyaRowCheck(workplacePayments, yes, ChangeLinks.workplacePayments, workplacePaymentsHidden, 8)
+        cyaRowCheck(workplacePaymentsAmount, s"${moneyContent(anReliefs.paymentToEmployersSchemeNoTaxRelief.get)}",
+          ChangeLinks.workplacePaymentsAmount, workplacePaymentsAmountHidden, 9)
 
-            urlGet(url, welsh = user.isWelsh, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
-          }
+        buttonCheck(saveAndContinue)
+        welshToggleCheck(isWelsh = false)
 
-          "the status is SEE OTHER" in {
-            result.status shouldBe SEE_OTHER
-          }
+      }
 
-          "redirects to the RAS Pensions page" in {
-            result.headers("Location").head shouldBe
-              controllers.pensions.paymentsIntoPension.routes.ReliefAtSourcePaymentsAndTaxReliefAmountController.show(taxYear).url
-          }
+      "CYA data is finished" which {
+        lazy val result: WSResponse = {
+          dropPensionsDB()
+          insertCyaData(aPensionsUserData.copy(taxYear = taxYear), aUserRequest)
+          authoriseAgentOrIndividual(isAgent = false)
+          urlGet(url, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
         }
 
-        "redirect to the first page in the journey when there is no CYA or prior data" when {
-
-          lazy val result: WSResponse = {
-            dropPensionsDB()
-            authoriseAgentOrIndividual(user.isAgent)
-            urlGet(url, welsh = user.isWelsh, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
-          }
-
-          "the status is SEE OTHER" in {
-            result.status shouldBe SEE_OTHER
-          }
-
-          "redirects to the RAS Pensions page" in {
-            result.headers("Location").head shouldBe controllers.pensions.paymentsIntoPension.routes.ReliefAtSourcePensionsController.show(taxYear).url
-          }
+        "has an OK status" in {
+          result.status shouldBe OK
         }
+
+        implicit def document: () => Document = () => Jsoup.parse(result.body)
+
+        titleCheck(expectedTitle)
+        h1Check(expectedH1)
+        captionCheck(expectedCaption(taxYear))
+
+        //noinspection ScalaStyle
+        cyaRowCheck(reliefAtSource, yes, ChangeLinks.reliefAtSource, reliefAtSourceHidden, 1)
+        cyaRowCheck(reliefAtSourceAmount, s"${moneyContent(aPaymentsIntoPensionViewModel.totalRASPaymentsAndTaxRelief.get)}",
+          ChangeLinks.reliefAtSourceAmount, reliefAtSourceAmountHidden, 2)
+        cyaRowCheck(oneOff, yes, ChangeLinks.oneOff, oneOffHidden, 3)
+        cyaRowCheck(oneOffAmount, s"${moneyContent(aPaymentsIntoPensionViewModel.totalOneOffRasPaymentPlusTaxRelief.get)}",
+          ChangeLinks.oneOffAmount, oneOffAmountHidden, 4)
+        cyaRowCheck(pensionsTaxReliefNotClaimed, yes, ChangeLinks.pensionsTaxReliefNotClaimed, pensionsTaxReliefNotClaimedHidden, 5)
+        cyaRowCheck(retirementAnnuity, yes, ChangeLinks.retirementAnnuity, retirementAnnuityHidden, 6)
+        cyaRowCheck(retirementAnnuityAmount, s"${moneyContent(aPaymentsIntoPensionViewModel.totalRetirementAnnuityContractPayments.get)}",
+          ChangeLinks.retirementAnnuityAmount, retirementAnnuityAmountHidden, 7)
+        cyaRowCheck(workplacePayments, yes, ChangeLinks.workplacePayments, workplacePaymentsHidden, 8)
+        cyaRowCheck(workplacePaymentsAmount, s"${moneyContent(aPaymentsIntoPensionViewModel.totalWorkplacePensionPayments.get)}",
+          ChangeLinks.workplacePaymentsAmount, workplacePaymentsAmountHidden, 9)
+
+        buttonCheck(saveAndContinue)
+
+        welshToggleCheck(isWelsh = false)
+      }
+    }
+    "render the page with a minimal CYA view" which {
+
+      lazy val result: WSResponse = {
+        dropPensionsDB()
+        insertCyaData(aPensionsUserData.copy(pensions = paymentsIntoPensionOnlyCYAModel(cyaDataMinimal), taxYear = taxYear), aUserRequest)
+        authoriseAgentOrIndividual(isAgent = false)
+        urlGet(url, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
+      }
+
+      "has an OK status" in {
+        result.status shouldBe OK
+      }
+      implicit def document: () => Document = () => Jsoup.parse(result.body)
+
+
+      //noinspection ScalaStyle
+      cyaRowCheck(reliefAtSource, answerNo, ChangeLinks.reliefAtSource, reliefAtSourceHidden, 1)
+      cyaRowCheck(pensionsTaxReliefNotClaimed, answerNo, ChangeLinks.pensionsTaxReliefNotClaimed, pensionsTaxReliefNotClaimedHidden, 2)
+
+      buttonCheck(saveAndContinue)
+
+      welshToggleCheck(isWelsh = false)
+    }
+
+    "redirect to the first unanswered question when the CYA data is incomplete" should {
+
+      lazy val result: WSResponse = {
+        dropPensionsDB()
+        authoriseAgentOrIndividual(isAgent = false)
+        userDataStub(IncomeTaxUserData(None), nino, taxYear)
+        insertCyaData(aPensionsUserData.copy(pensions = aPensionsCYAModel.copy(paymentsIntoPension = cyaDataIncomplete), taxYear = taxYear), aUserRequest)
+
+        urlGet(url, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
+      }
+
+      "the status is SEE OTHER" in {
+        result.status shouldBe SEE_OTHER
+      }
+
+      "redirects to the RAS Pensions page" in {
+        result.headers("Location").head shouldBe
+          controllers.pensions.paymentsIntoPension.routes.ReliefAtSourcePaymentsAndTaxReliefAmountController.show(taxYear).url
+      }
+    }
+
+    "redirect to the first page in the journey when there is no CYA or prior data" when {
+
+      lazy val result: WSResponse = {
+        dropPensionsDB()
+        authoriseAgentOrIndividual(isAgent = false)
+        urlGet(url, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
+      }
+
+      "the status is SEE OTHER" in {
+        result.status shouldBe SEE_OTHER
+      }
+
+      "redirects to the RAS Pensions page" in {
+        result.headers("Location").head shouldBe controllers.pensions.paymentsIntoPension.routes.ReliefAtSourcePensionsController.show(taxYear).url
       }
     }
   }
-
   ".submit" should {
 
     "redirect to the overview page" when {
@@ -406,7 +275,7 @@ class PaymentsIntoPensionsCYAControllerISpec extends IntegrationTest with ViewHe
           (paymentsIntoPension = unchangedModel, pensionsAnnualAllowances = unchangedAllowances,
             pensionLifetimeAllowances = aPensionLifetimeAllowanceViewModel,
             incomeFromPensions = anIncomeFromPensionsViewModel,
-            unauthorisedPayments = anUnauthorisedPaymentsViewModel) ,taxYear = taxYear), aUserRequest)
+            unauthorisedPayments = anUnauthorisedPaymentsViewModel), taxYear = taxYear), aUserRequest)
           authoriseAgentOrIndividual(isAgent = false)
           urlPost(url, form, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
         }

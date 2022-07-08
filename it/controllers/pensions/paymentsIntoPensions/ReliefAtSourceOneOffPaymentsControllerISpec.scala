@@ -21,7 +21,7 @@ import builders.PensionsCYAModelBuilder._
 import builders.PensionsUserDataBuilder
 import builders.UserBuilder._
 import forms.YesNoForm
-import models.mongo.PensionsCYAModel
+import models.mongo.{PensionsCYAModel, PensionsUserData}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterEach
@@ -31,206 +31,118 @@ import play.api.libs.ws.WSResponse
 import utils.PageUrls.PaymentIntoPensions._
 import utils.PageUrls.fullUrl
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
+import views.ReliefAtSourceOneOffPaymentsTestSupport.Selectors._
+import views.ReliefAtSourceOneOffPaymentsTestSupport.CommonExpectedEN._
+import views.ReliefAtSourceOneOffPaymentsTestSupport.ExpectedIndividualEN._
+import views.ReliefAtSourceOneOffPaymentsTestSupport.Selectors
 
 class ReliefAtSourceOneOffPaymentsControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
-
   private val someRasAmount: BigDecimal = 33.33
   private val validFormYes: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.yes)
   private val validFormNo: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.no)
 
-  private def pensionsUsersData(isPrior: Boolean = false, pensionsCyaModel: PensionsCYAModel) = {
+  private def pensionsUsersData(pensionsCyaModel: PensionsCYAModel): PensionsUserData = {
     PensionsUserDataBuilder.aPensionsUserData.copy(
-      isPriorSubmission = isPrior,
+      isPriorSubmission = false,
       pensions = pensionsCyaModel
     )
   }
 
-  object Selectors {
-    val captionSelector: String = "#main-content > div > div > header > p"
-    val continueButtonSelector: String = "#continue"
-    val formSelector: String = "#main-content > div > div > form"
-    val yesSelector = "#value"
-    val noSelector = "#value-no"
-    val paragraphSelector: String = "#this-includes"
-  }
 
-  trait CommonExpectedResults {
-    val expectedCaption: Int => String
-    val yesText: String
-    val noText: String
-    val buttonText: String
-  }
-
-  trait SpecificExpectedResults {
-    val expectedHeading: String
-    val expectedTitle: String
-    val expectedErrorTitle: String
-    val thisIncludes: String
-    val expectedErrorMessage: String
-  }
-
-  object CommonExpectedEN extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Payments into pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val yesText = "Yes"
-    val noText = "No"
-    val buttonText = "Continue"
-  }
-
-  object CommonExpectedCY extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Payments into pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val yesText = "Yes"
-    val noText = "No"
-    val buttonText = "Continue"
-  }
-
-  object ExpectedIndividualEN extends SpecificExpectedResults {
-    val expectedHeading = "Did you make any one-off payments into relief at source (RAS) pensions?"
-    val expectedTitle = "Did you make any one-off payments into relief at source (RAS) pensions?"
-    val expectedErrorTitle = s"Error: $expectedTitle"
-    val thisIncludes: String =
-      s"You told us the total amount you paid plus tax relief was £$someRasAmount. " +
-        "Tell us if this includes any one-off payments. A one-off payment is a single payment, made once."
-    val expectedErrorMessage = "Select yes if you made one-off payments into RAS pensions"
-  }
-
-  object ExpectedIndividualCY extends SpecificExpectedResults {
-    val expectedHeading = "Did you make any one-off payments into relief at source (RAS) pensions?"
-    val expectedTitle = "Did you make any one-off payments into relief at source (RAS) pensions?"
-    val expectedErrorTitle = s"Error: $expectedTitle"
-    val thisIncludes: String =
-      s"You told us the total amount you paid plus tax relief was £$someRasAmount. " +
-        "Tell us if this includes any one-off payments. A one-off payment is a single payment, made once."
-    val expectedErrorMessage = "Select yes if you made one-off payments into RAS pensions"
-  }
-
-  object ExpectedAgentEN extends SpecificExpectedResults {
-    val expectedHeading = "Did your client make any one-off payments into relief at source (RAS) pensions?"
-    val expectedTitle = "Did your client make any one-off payments into relief at source (RAS) pensions?"
-    val expectedErrorTitle = s"Error: $expectedTitle"
-    val thisIncludes: String =
-      s"You told us the total amount your client paid plus tax relief was £$someRasAmount. " +
-        "Tell us if this includes any one-off payments. A one-off payment is a single payment, made once."
-    val expectedErrorMessage = "Select yes if your client made one-off payments into RAS pensions"
-  }
-
-  object ExpectedAgentCY extends SpecificExpectedResults {
-    val expectedHeading = "Did your client make any one-off payments into relief at source (RAS) pensions?"
-    val expectedTitle = "Did your client make any one-off payments into relief at source (RAS) pensions?"
-    val expectedErrorTitle = s"Error: $expectedTitle"
-    val thisIncludes: String =
-      s"You told us the total amount your client paid plus tax relief was £$someRasAmount. " +
-        "Tell us if this includes any one-off payments. A one-off payment is a single payment, made once."
-    val expectedErrorMessage = "Select yes if your client made one-off payments into RAS pensions"
-  }
-
-  val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(
-    UserScenario(isWelsh = false, isAgent = false, CommonExpectedEN, Some(ExpectedIndividualEN)),
-    UserScenario(isWelsh = false, isAgent = true, CommonExpectedEN, Some(ExpectedAgentEN)),
-    UserScenario(isWelsh = true, isAgent = false, CommonExpectedCY, Some(ExpectedIndividualCY)),
-    UserScenario(isWelsh = true, isAgent = true, CommonExpectedCY, Some(ExpectedAgentCY))
-  )
+  val userScenarios: Seq[UserScenario[_, _]] = Seq.empty
 
   ".show" should {
-    userScenarios.foreach { user =>
 
-      import Selectors._
-      import user.commonExpectedResults._
-
-      s"language is ${welshTest(user.isWelsh)} and request is from an ${agentTest(user.isAgent)}" should {
-        "render the one-off payments into relief at source (RAS) pensions question page with no pre-filled radio buttons if no CYA question data" which {
-          lazy val result: WSResponse = {
-            dropPensionsDB()
-            authoriseAgentOrIndividual(user.isAgent)
-            val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
-              totalRASPaymentsAndTaxRelief = Some(someRasAmount),
-              oneOffRasPaymentPlusTaxReliefQuestion = None)
-            insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
-            urlGet(fullUrl(reliefAtSourceOneOffPaymentsUrl(taxYearEOY)),
-              user.isWelsh, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
-          }
-
-          implicit def document: () => Document = () => Jsoup.parse(result.body)
-
-          "has an OK status" in {
-            result.status shouldBe OK
-          }
-
-          titleCheck(user.specificExpectedResults.get.expectedTitle)
-          h1Check(user.specificExpectedResults.get.expectedHeading)
-          captionCheck(expectedCaption(taxYearEOY), captionSelector)
-          textOnPageCheck(user.specificExpectedResults.get.thisIncludes, paragraphSelector)
-          radioButtonCheck(yesText, 1, checked = Some(false))
-          radioButtonCheck(noText, 2, checked = Some(false))
-          buttonCheck(buttonText, continueButtonSelector)
-          formPostLinkCheck(reliefAtSourceOneOffPaymentsUrl(taxYearEOY), formSelector)
-          welshToggleCheck(user.isWelsh)
-        }
-
-        "render the one-off payments into relief at source (RAS) pensions question page with 'Yes' pre-filled when CYA data exists" which {
-
-          lazy val result: WSResponse = {
-            dropPensionsDB()
-            authoriseAgentOrIndividual(user.isAgent)
-            val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
-              totalRASPaymentsAndTaxRelief = Some(someRasAmount),
-              oneOffRasPaymentPlusTaxReliefQuestion = Some(true))
-            insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
-            urlGet(fullUrl(reliefAtSourceOneOffPaymentsUrl(taxYearEOY)),
-              user.isWelsh, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
-          }
-
-          implicit def document: () => Document = () => Jsoup.parse(result.body)
-
-          "has an OK status" in {
-            result.status shouldBe OK
-          }
-
-          titleCheck(user.specificExpectedResults.get.expectedTitle)
-          h1Check(user.specificExpectedResults.get.expectedHeading)
-          captionCheck(expectedCaption(taxYearEOY), captionSelector)
-          textOnPageCheck(user.specificExpectedResults.get.thisIncludes, paragraphSelector)
-          radioButtonCheck(yesText, 1, checked = Some(true))
-          radioButtonCheck(noText, 2, checked = Some(false))
-          buttonCheck(buttonText, continueButtonSelector)
-          formPostLinkCheck(reliefAtSourceOneOffPaymentsUrl(taxYearEOY), formSelector)
-          welshToggleCheck(user.isWelsh)
-
-        }
-
-        "render the one-off payments into relief at source (RAS) pensions question page with 'No' pre-filled when CYA data exists" which {
-
-          lazy val result: WSResponse = {
-            dropPensionsDB()
-            authoriseAgentOrIndividual(user.isAgent)
-            val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
-              totalRASPaymentsAndTaxRelief = Some(someRasAmount),
-              oneOffRasPaymentPlusTaxReliefQuestion = Some(false))
-            insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
-            urlGet(fullUrl(reliefAtSourceOneOffPaymentsUrl(taxYearEOY)),
-              user.isWelsh, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
-          }
-
-          implicit def document: () => Document = () => Jsoup.parse(result.body)
-
-          "has an OK status" in {
-            result.status shouldBe OK
-          }
-
-          titleCheck(user.specificExpectedResults.get.expectedTitle)
-          h1Check(user.specificExpectedResults.get.expectedHeading)
-          captionCheck(expectedCaption(taxYearEOY), captionSelector)
-          textOnPageCheck(user.specificExpectedResults.get.thisIncludes, paragraphSelector)
-          radioButtonCheck(yesText, 1, checked = Some(false))
-          radioButtonCheck(noText, 2, checked = Some(true))
-          buttonCheck(buttonText, continueButtonSelector)
-          formPostLinkCheck(reliefAtSourceOneOffPaymentsUrl(taxYearEOY), formSelector)
-          welshToggleCheck(user.isWelsh)
-
-        }
-
+    "render the one-off payments into relief at source (RAS) pensions question page with no pre-filled radio buttons if no CYA question data" which {
+      lazy val result: WSResponse = {
+        dropPensionsDB()
+        authoriseAgentOrIndividual(isAgent = false)
+        val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
+          totalRASPaymentsAndTaxRelief = Some(someRasAmount),
+          oneOffRasPaymentPlusTaxReliefQuestion = None)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
+        urlGet(
+          fullUrl(
+            reliefAtSourceOneOffPaymentsUrl(taxYearEOY)), follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
+
+      "has an OK status" in {
+        result.status shouldBe OK
+      }
+      implicit def document: () => Document = () => Jsoup.parse(result.body)
+
+      titleCheck(expectedTitle)
+      h1Check(expectedHeading)
+      captionCheck(expectedCaption(taxYearEOY), captionSelector)
+      textOnPageCheck(thisIncludes, paragraphSelector)
+      radioButtonCheck(yesText, 1, checked = Some(false))
+      radioButtonCheck(noText, 2, checked = Some(false))
+      buttonCheck(buttonText, continueButtonSelector)
+      formPostLinkCheck(reliefAtSourceOneOffPaymentsUrl(taxYearEOY), formSelector)
+      welshToggleCheck(isWelsh = false)
     }
-    
+
+    "render the one-off payments into relief at source (RAS) pensions question page with 'Yes' pre-filled when CYA data exists" which {
+
+      lazy val result: WSResponse = {
+        dropPensionsDB()
+        authoriseAgentOrIndividual(isAgent = false)
+        val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
+          totalRASPaymentsAndTaxRelief = Some(someRasAmount),
+          oneOffRasPaymentPlusTaxReliefQuestion = Some(true))
+        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
+        urlGet(
+          fullUrl(
+            reliefAtSourceOneOffPaymentsUrl(taxYearEOY)), follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+      }
+
+      "has an OK status" in {
+        result.status shouldBe OK
+      }
+
+      implicit def document: () => Document = () => Jsoup.parse(result.body)
+      
+      titleCheck(expectedTitle)
+      h1Check(expectedHeading)
+      captionCheck(expectedCaption(taxYearEOY), captionSelector)
+      textOnPageCheck(thisIncludes, paragraphSelector)
+      radioButtonCheck(yesText, 1, checked = Some(true))
+      radioButtonCheck(noText, 2, checked = Some(false))
+      buttonCheck(buttonText, continueButtonSelector)
+      formPostLinkCheck(reliefAtSourceOneOffPaymentsUrl(taxYearEOY), formSelector)
+      welshToggleCheck(isWelsh = false)
+    }
+
+    "render the one-off payments into relief at source (RAS) pensions question page with 'No' pre-filled when CYA data exists" which {
+
+      lazy val result: WSResponse = {
+        dropPensionsDB()
+        authoriseAgentOrIndividual(isAgent = false)
+        val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
+          totalRASPaymentsAndTaxRelief = Some(someRasAmount),
+          oneOffRasPaymentPlusTaxReliefQuestion = Some(false))
+        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
+        urlGet(
+          fullUrl(
+            reliefAtSourceOneOffPaymentsUrl(taxYearEOY)), follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+      }
+
+      "has an OK status" in {
+        result.status shouldBe OK
+      }
+
+      implicit def document: () => Document = () => Jsoup.parse(result.body)
+      titleCheck(expectedTitle)
+      h1Check(expectedHeading)
+      captionCheck(expectedCaption(taxYearEOY), captionSelector)
+      textOnPageCheck(thisIncludes, paragraphSelector)
+      radioButtonCheck(yesText, 1, checked = Some(false))
+      radioButtonCheck(noText, 2, checked = Some(true))
+      buttonCheck(buttonText, continueButtonSelector)
+      formPostLinkCheck(reliefAtSourceOneOffPaymentsUrl(taxYearEOY), formSelector)
+      welshToggleCheck(isWelsh = false)
+    }
+
     "redirect to the RAS Amount page if the previous totalRASPaymentsAndTaxRelief Amount has not been populated" which {
 
       lazy val result: WSResponse = {
@@ -239,10 +151,12 @@ class ReliefAtSourceOneOffPaymentsControllerISpec extends IntegrationTest with V
         val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
           totalRASPaymentsAndTaxRelief = None,
           oneOffRasPaymentPlusTaxReliefQuestion = None)
-        insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
-        urlGet(fullUrl(reliefAtSourceOneOffPaymentsUrl(taxYearEOY)), follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
+        urlGet(
+          fullUrl(
+            reliefAtSourceOneOffPaymentsUrl(taxYearEOY)), follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
-      
+
       "has an SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER
         result.header("location").contains(reliefAtSourcePaymentsAndTaxReliefAmountUrl(taxYearEOY)) shouldBe true
@@ -269,47 +183,37 @@ class ReliefAtSourceOneOffPaymentsControllerISpec extends IntegrationTest with V
   }
 
   ".submit" should {
-    userScenarios.foreach { user =>
+    "return an error when form is submitted with no entry" which {
+      lazy val invalidForm: Map[String, String] = Map(YesNoForm.yesNo -> "")
 
-      import Selectors._
-      import user.commonExpectedResults._
-
-      s"language is ${welshTest(user.isWelsh)} and request is from an ${agentTest(user.isAgent)}" should {
-
-        "return an error when form is submitted with no entry" which {
-          lazy val invalidForm: Map[String, String] = Map(YesNoForm.yesNo -> "")
-
-          lazy val result: WSResponse = {
-            dropPensionsDB()
-            val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
-              totalRASPaymentsAndTaxRelief = Some(someRasAmount),
-              oneOffRasPaymentPlusTaxReliefQuestion = None)
-            insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
-            authoriseAgentOrIndividual(user.isAgent)
-            urlPost(fullUrl(reliefAtSourceOneOffPaymentsUrl(taxYearEOY)), body = invalidForm, welsh = user.isWelsh, follow = false,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
-          }
-
-          "has the correct status" in {
-            result.status shouldBe BAD_REQUEST
-          }
-
-          implicit def document: () => Document = () => Jsoup.parse(result.body)
-
-          titleCheck(user.specificExpectedResults.get.expectedErrorTitle)
-          h1Check(user.specificExpectedResults.get.expectedHeading)
-          captionCheck(expectedCaption(taxYearEOY), captionSelector)
-          textOnPageCheck(user.specificExpectedResults.get.thisIncludes, paragraphSelector)
-          radioButtonCheck(yesText, 1, checked = Some(false))
-          radioButtonCheck(noText, 2, checked = Some(false))
-          buttonCheck(buttonText, continueButtonSelector)
-          formPostLinkCheck(reliefAtSourceOneOffPaymentsUrl(taxYearEOY), formSelector)
-          welshToggleCheck(user.isWelsh)
-          errorSummaryCheck(user.specificExpectedResults.get.expectedErrorMessage, Selectors.yesSelector)
-          errorAboveElementCheck(user.specificExpectedResults.get.expectedErrorMessage, Some("value"))
-
-        }
+      lazy val result: WSResponse = {
+        dropPensionsDB()
+        val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
+          totalRASPaymentsAndTaxRelief = Some(someRasAmount),
+          oneOffRasPaymentPlusTaxReliefQuestion = None)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
+        authoriseAgentOrIndividual(isAgent = false)
+        urlPost(fullUrl(reliefAtSourceOneOffPaymentsUrl(taxYearEOY)), body = invalidForm, follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
+
+      "has the correct status" in {
+        result.status shouldBe BAD_REQUEST
+      }
+
+      implicit def document: () => Document = () => Jsoup.parse(result.body)
+
+      titleCheck(expectedErrorTitle)
+      h1Check(expectedHeading)
+      captionCheck(expectedCaption(taxYearEOY), captionSelector)
+      textOnPageCheck(thisIncludes, paragraphSelector)
+      radioButtonCheck(yesText, 1, checked = Some(false))
+      radioButtonCheck(noText, 2, checked = Some(false))
+      buttonCheck(buttonText, continueButtonSelector)
+      formPostLinkCheck(reliefAtSourceOneOffPaymentsUrl(taxYearEOY), formSelector)
+      welshToggleCheck(isWelsh = false)
+      errorSummaryCheck(expectedErrorMessage, Selectors.yesSelector)
+      errorAboveElementCheck(expectedErrorMessage, Some("value"))
 
     }
 
@@ -322,7 +226,7 @@ class ReliefAtSourceOneOffPaymentsControllerISpec extends IntegrationTest with V
           totalRASPaymentsAndTaxRelief = Some(someRasAmount),
           oneOffRasPaymentPlusTaxReliefQuestion = None,
           workplacePensionPaymentsQuestion = None)
-        insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
 
         urlPost(fullUrl(reliefAtSourceOneOffPaymentsUrl(taxYearEOY)), body = validFormYes, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
@@ -344,7 +248,6 @@ class ReliefAtSourceOneOffPaymentsControllerISpec extends IntegrationTest with V
     }
 
     "redirect to correct page when user submits a 'no' answer and updates the session value to no" which {
-
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(isAgent = false)
@@ -355,7 +258,7 @@ class ReliefAtSourceOneOffPaymentsControllerISpec extends IntegrationTest with V
           oneOffRasPaymentPlusTaxReliefQuestion = None,
           workplacePensionPaymentsQuestion = None)
 
-        insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
 
         urlPost(fullUrl(reliefAtSourceOneOffPaymentsUrl(taxYearEOY)), body = validFormNo, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
@@ -376,7 +279,7 @@ class ReliefAtSourceOneOffPaymentsControllerISpec extends IntegrationTest with V
     }
 
     "redirect to the CYA page if there is no session data" which {
-      
+
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(isAgent = false)
@@ -400,7 +303,7 @@ class ReliefAtSourceOneOffPaymentsControllerISpec extends IntegrationTest with V
         val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
           totalRASPaymentsAndTaxRelief = None,
           oneOffRasPaymentPlusTaxReliefQuestion = Some(true))
-        insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
         urlPost(fullUrl(reliefAtSourceOneOffPaymentsUrl(taxYearEOY)), body = validFormYes, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -412,6 +315,6 @@ class ReliefAtSourceOneOffPaymentsControllerISpec extends IntegrationTest with V
       }
 
     }
-    
+
   }
 }
