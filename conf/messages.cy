@@ -33,6 +33,7 @@ common.pensionAnnualAllowance.caption = Pension annual allowance for 6 April {0}
 common.incomeFromPensions.caption = Income from pensions for 6 April {0} to 5 April {1}
 common.uKPensionIncome.caption = UK pension income for 6 April {0} to 5 April {1}
 common.lifetimeAllowance.caption = Annual and lifetime allowances for 6 April {0} to 5 April {1}
+common.unauthorisedPayments.caption = Unauthorised payments from pensions for 6 April {0} to 5 April {1}
 common.return.overview.buttonText = Return to overview
 common.currencyAmount = £{0}
 common.total = Total
@@ -540,3 +541,12 @@ lifetimeAllowance.pensionLumpSumDetails.taxPaid.error.noEntry.individual = Enter
 lifetimeAllowance.pensionLumpSumDetails.taxPaid.error.noEntry.agent = Enter the amount of lifetime allowance tax your client’s pension provider paid or agreed to pay on the lump sum
 lifetimeAllowance.pensionLumpSumDetails.taxPaid.error.incorrectFormat = Enter the amount of lifetime allowance tax in the correct format
 lifetimeAllowance.pensionLumpSumDetails.taxPaid.error.overMaximum = The amount of lifetime allowance tax must be less than 100,000,000,000
+
+
+#Surcharge Amount
+unauthorisedPayments.surchargeAmount.title = Amount that resulted in a surcharge  
+unauthorisedPayments.surchargeAmount.giveTotal.individual = Give a total of unauthorised payments that resulted in surcharges from all your pension schemes.
+unauthorisedPayments.surchargeAmount.giveTotal.agent = Give a total of unauthorised payments that resulted in surcharges from all your client’s pension schemes.
+unauthorisedPayments.surchargeAmount.tellUsAbout = You can tell us about unauthorised payments that did not result in a surcharge later.
+unauthorisedPayments.surchargeAmount.error.noEntry = Enter the total amount of unauthorised payment that resulted in a surcharge
+unauthorisedPayments.surchargeAmount.error.incorrectFormat = Enter the total amount in the correct format

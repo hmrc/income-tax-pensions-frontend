@@ -51,14 +51,22 @@ class SurchargeAmountController @Inject()(implicit val mcc: MessagesControllerCo
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
       case Some(data) =>
-        data.pensions.pensionsAnnualAllowances.aboveAnnualAllowance match {
+        if(data.pensions.unauthorisedPayments.surchargeQuestion.contains(true)){
+
+        data.pensions.unauthorisedPayments.surchargeAmount match {
           case Some(value) => Future.successful(Ok(view(
             amountForm.fill(value), taxYear)))
           case None => Future.successful(Ok(view(amountForm, taxYear)))
+          }
+        }
+        else{
+          //TODO - redirect to unauthorised payments question page once implemented
+          Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
         }
       case None =>
         //TODO - redirect to CYA page once implemented
         Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
+
     }
   }
 
@@ -70,16 +78,21 @@ class SurchargeAmountController @Inject()(implicit val mcc: MessagesControllerCo
         Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
         pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
           case Some(data) =>
-            val pensionsCYAModel: PensionsCYAModel = data.pensions
-            val viewModel = pensionsCYAModel.pensionsAnnualAllowances
-            val updatedCyaModel: PensionsCYAModel = {
-              pensionsCYAModel.copy(pensionsAnnualAllowances = viewModel.copy(aboveAnnualAllowance = Some(amount)))
-            }
-            pensionSessionService.createOrUpdateSessionData(request.user,
-              updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
+            if(data.pensions.unauthorisedPayments.surchargeQuestion.contains(true)) {
+              val pensionsCYAModel: PensionsCYAModel = data.pensions
+              val viewModel = pensionsCYAModel.unauthorisedPayments
+              val updatedCyaModel: PensionsCYAModel = {
+                pensionsCYAModel.copy(unauthorisedPayments = viewModel.copy(surchargeAmount = Some(amount)))
+              }
+              pensionSessionService.createOrUpdateSessionData(request.user,
+                updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
 
-              // TODO redirect to surcharge tax amount page
-              Redirect(PensionsSummaryController.show(taxYear))
+                // TODO redirect to surcharge tax amount page
+                Redirect(PensionsSummaryController.show(taxYear))
+              }
+            }else{
+              //TODO - redirect to unauthorised payments question page once implemented
+              Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
             }
 
           case None =>
@@ -89,5 +102,4 @@ class SurchargeAmountController @Inject()(implicit val mcc: MessagesControllerCo
       }
     )
   }
-
 }
