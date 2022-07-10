@@ -294,15 +294,17 @@ class SurchargeAmountControllerISpec extends IntegrationTest with ViewHelpers wi
         implicit def document: () => Document = () => Jsoup.parse(result.body)
 
         titleCheck(expectedErrorTitle)
+        h1Check(expectedHeading)
         captionCheck(expectedCaption(taxYearEOY), captionSelector)
         textOnPageCheck(user.specificExpectedResults.get.expectedParagraph, paragraphSelector(1))
         textOnPageCheck(expectedParagraphTwo, paragraphSelector(2))
         textOnPageCheck(hintText, hintTextSelector)
         textOnPageCheck(poundPrefixText, poundPrefixSelector)
         inputFieldValueCheck(amountInputName, inputSelector, amountOverMaximum)
+        formPostLinkCheck(surchargeAmountUrl(taxYearEOY), formSelector)
         buttonCheck(buttonText, continueButtonSelector)
         errorSummaryCheck(maxAmountErrorText, expectedErrorHref)
-        formPostLinkCheck(surchargeAmountUrl(taxYearEOY), formSelector)
+        errorAboveElementCheck(maxAmountErrorText)
         welshToggleCheck(user.isWelsh)
       }
     }
