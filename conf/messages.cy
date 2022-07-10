@@ -43,6 +43,7 @@ common.moreThanOnePensionScheme.individual = If more than one of your pension sc
 common.moreThanOnePensionScheme.agent = If more than one of your client’s pension schemes paid the tax, you can add these details later.
 common.pensionSchemeTaxReference = Pension Scheme Tax Reference
 
+common.error.amountMaxLimit = Amount must be less than £100,000,000,000
 common.error.self-assessment.paragraph.1.1 = If the web address is correct or you selected a link or button, you can use
 common.error.self-assessment.paragraph.1.2 = Self Assessment: general enquiries (opens in new tab)
 common.error.self-assessment.paragraph.1.3 = to speak to someone about your income tax

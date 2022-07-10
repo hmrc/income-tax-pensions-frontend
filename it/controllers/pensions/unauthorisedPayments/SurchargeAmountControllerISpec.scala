@@ -43,6 +43,7 @@ class SurchargeAmountControllerISpec extends IntegrationTest with ViewHelpers wi
     val expectedHeading: String
     val expectedErrorTitle: String
     val invalidFormatErrorText: String
+    val maxAmountErrorText: String
     val expectedParagraphTwo: String
     val hintText: String
     val buttonText: String
@@ -72,6 +73,7 @@ class SurchargeAmountControllerISpec extends IntegrationTest with ViewHelpers wi
     val hintText = "For example, £193.52"
     val noEntryErrorMessage = "Enter the total amount of unauthorised payment that resulted in a surcharge"
     val invalidFormatErrorText = "Enter the total amount in the correct format"
+    val maxAmountErrorText = "Amount must be less than £100,000,000,000"
     val buttonText = "Continue"
     val expectedParagraph = "Give a total of unauthorised payments that resulted in surcharges from all your client’s pension schemes."
     val expectedParagraphTwo = "You can tell us about unauthorised payments that did not result in a surcharge later."
@@ -85,6 +87,7 @@ class SurchargeAmountControllerISpec extends IntegrationTest with ViewHelpers wi
     val hintText = "For example, £193.52"
     val noEntryErrorMessage = "Enter the total amount of unauthorised payment that resulted in a surcharge"
     val invalidFormatErrorText = "Enter the total amount in the correct format"
+    val maxAmountErrorText = "Amount must be less than £100,000,000,000"
     val buttonText = "Continue"
     val expectedParagraph = "Give a total of unauthorised payments that resulted in surcharges from all your client’s pension schemes."
     val expectedParagraphTwo = "You can tell us about unauthorised payments that did not result in a surcharge later."
@@ -290,6 +293,7 @@ class SurchargeAmountControllerISpec extends IntegrationTest with ViewHelpers wi
 
         implicit def document: () => Document = () => Jsoup.parse(result.body)
 
+        titleCheck(expectedErrorTitle)
         captionCheck(expectedCaption(taxYearEOY), captionSelector)
         textOnPageCheck(user.specificExpectedResults.get.expectedParagraph, paragraphSelector(1))
         textOnPageCheck(expectedParagraphTwo, paragraphSelector(2))
@@ -297,6 +301,7 @@ class SurchargeAmountControllerISpec extends IntegrationTest with ViewHelpers wi
         textOnPageCheck(poundPrefixText, poundPrefixSelector)
         inputFieldValueCheck(amountInputName, inputSelector, amountOverMaximum)
         buttonCheck(buttonText, continueButtonSelector)
+        errorSummaryCheck(maxAmountErrorText, expectedErrorHref)
         formPostLinkCheck(surchargeAmountUrl(taxYearEOY), formSelector)
         welshToggleCheck(user.isWelsh)
       }
