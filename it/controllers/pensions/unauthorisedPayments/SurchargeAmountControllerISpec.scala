@@ -46,6 +46,7 @@ class SurchargeAmountControllerISpec extends IntegrationTest with ViewHelpers wi
     val expectedTitle: String
     val expectedHeading: String
     val expectedErrorTitle: String
+    val noEntryErrorMessage: String
     val invalidFormatErrorText: String
     val maxAmountErrorText: String
     val expectedParagraphTwo: String
@@ -241,6 +242,8 @@ class SurchargeAmountControllerISpec extends IntegrationTest with ViewHelpers wi
         inputFieldValueCheck(amountInputName, inputSelector, amountEmpty)
         buttonCheck(buttonText, continueButtonSelector)
         formPostLinkCheck(surchargeAmountUrl(taxYearEOY), formSelector)
+        errorSummaryCheck(noEntryErrorMessage, expectedErrorHref)
+        errorAboveElementCheck(noEntryErrorMessage)
         welshToggleCheck(user.isWelsh)
       }
 
