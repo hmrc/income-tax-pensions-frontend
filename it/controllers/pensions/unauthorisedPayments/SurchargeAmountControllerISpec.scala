@@ -33,7 +33,11 @@ import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 class SurchargeAmountControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
 
 
-  val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(UserScenario(isWelsh = false, isAgent = false, CommonExpectedEN, Some(ExpectedIndividualEN)), UserScenario(isWelsh = false, isAgent = true, CommonExpectedEN, Some(ExpectedAgentEN)), UserScenario(isWelsh = true, isAgent = false, CommonExpectedCY, Some(ExpectedIndividualCY)), UserScenario(isWelsh = true, isAgent = true, CommonExpectedCY, Some(ExpectedAgentCY)))
+  val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] =
+                     Seq(UserScenario(isWelsh = false, isAgent = false, CommonExpectedEN, Some(ExpectedIndividualEN)),
+                     UserScenario(isWelsh = false, isAgent = true, CommonExpectedEN, Some(ExpectedAgentEN)),
+                     UserScenario(isWelsh = true, isAgent = false, CommonExpectedCY, Some(ExpectedIndividualCY)),
+                     UserScenario(isWelsh = true, isAgent = true, CommonExpectedCY, Some(ExpectedAgentCY)))
   private val poundPrefixText = "£"
   private val amountInputName = "amount"
 
@@ -114,7 +118,7 @@ class SurchargeAmountControllerISpec extends IntegrationTest with ViewHelpers wi
       import Selectors._
       import user.commonExpectedResults._
       s"language is ${welshTest(user.isWelsh)} and request is from an ${agentTest(user.isAgent)}" should {
-      "render how much did you pay into your workplace pensions amount page with no pre filling" which {
+      "render unauthorised payments that resulted in surcharges page with no pre filling" which {
         lazy val result: WSResponse = {
           dropPensionsDB()
           authoriseAgentOrIndividual(user.isAgent)

@@ -33,13 +33,13 @@ import views.html.pensions.unauthorisedPayments.SurchargeAmountView
 import javax.inject.Inject
 import scala.concurrent.Future
 
-class SurchargeAmountController @Inject()(implicit val mcc: MessagesControllerComponents,
-                                          authAction: AuthorisedAction,
+class SurchargeAmountController @Inject()(authAction: AuthorisedAction,
                                           view: SurchargeAmountView,
-                                          appConfig: AppConfig,
                                           pensionSessionService: PensionSessionService,
-                                          errorHandler: ErrorHandler,
-                                          clock: Clock) extends FrontendController(mcc) with I18nSupport with SessionHelper with FormUtils {
+                                          errorHandler: ErrorHandler)
+                                         (implicit val mcc: MessagesControllerComponents,
+                                          appConfig: AppConfig, clock: Clock)
+  extends FrontendController(mcc) with I18nSupport with SessionHelper with FormUtils {
 
 
   val amountForm: Form[BigDecimal] = AmountForm.amountForm(
@@ -54,8 +54,7 @@ class SurchargeAmountController @Inject()(implicit val mcc: MessagesControllerCo
         if(data.pensions.unauthorisedPayments.surchargeQuestion.contains(true)){
 
         data.pensions.unauthorisedPayments.surchargeAmount match {
-          case Some(value) => Future.successful(Ok(view(
-            amountForm.fill(value), taxYear)))
+          case Some(value) => Future.successful(Ok(view(amountForm.fill(value), taxYear)))
           case None => Future.successful(Ok(view(amountForm, taxYear)))
           }
         }
@@ -81,9 +80,8 @@ class SurchargeAmountController @Inject()(implicit val mcc: MessagesControllerCo
             if(data.pensions.unauthorisedPayments.surchargeQuestion.contains(true)) {
               val pensionsCYAModel: PensionsCYAModel = data.pensions
               val viewModel = pensionsCYAModel.unauthorisedPayments
-              val updatedCyaModel: PensionsCYAModel = {
-                pensionsCYAModel.copy(unauthorisedPayments = viewModel.copy(surchargeAmount = Some(amount)))
-              }
+              val updatedCyaModel: PensionsCYAModel = pensionsCYAModel.copy(unauthorisedPayments = viewModel.copy(surchargeAmount = Some(amount)))
+
               pensionSessionService.createOrUpdateSessionData(request.user,
                 updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
 
