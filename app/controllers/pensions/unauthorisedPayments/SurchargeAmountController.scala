@@ -50,25 +50,18 @@ class SurchargeAmountController @Inject()(authAction: AuthorisedAction,
 
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
-      case Some(data) =>
-        if(data.pensions.unauthorisedPayments.surchargeQuestion.contains(true)){
-
-        data.pensions.unauthorisedPayments.surchargeAmount match {
-          case Some(value) => Future.successful(Ok(view(amountForm.fill(value), taxYear)))
-          case None => Future.successful(Ok(view(amountForm, taxYear)))
-          }
-        }
-        else{
-          //TODO - redirect to unauthorised payments question page once implemented
-          Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
-        }
+      case Some(data) if data.pensions.unauthorisedPayments.surchargeQuestion.contains(true) =>
+        data.pensions.unauthorisedPayments.surchargeAmount
+          .map(value => Future.successful(Ok(view(amountForm.fill(value), taxYear))))
+          .getOrElse(Future.successful(Ok(view(amountForm, taxYear))))
+      case Some(_) =>
+        //TODO - redirect to unauthorised payments question page once implemented
+        Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
       case None =>
         //TODO - redirect to CYA page once implemented
         Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
-
     }
   }
-
 
   def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
     amountForm.bindFromRequest.fold(
