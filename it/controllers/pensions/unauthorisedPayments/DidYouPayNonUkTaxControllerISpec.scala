@@ -252,6 +252,29 @@ class DidYouPayNonUkTaxControllerISpec extends IntegrationTest with ViewHelpers 
       }
     }
 
+    "redirect to Unauthorised payments question page when surchargeAmount has no amount defined" which {
+      lazy val form: Map[String, String] = Map(
+        RadioButtonAmountForm.yesNo -> RadioButtonAmountForm.no, RadioButtonAmountForm.amount2 -> existingAmount)
+      lazy val result: WSResponse = {
+        dropPensionsDB()
+        authoriseAgentOrIndividual(isAgent = false)
+        val unauthorisedPaymentsViewModel = anUnauthorisedPaymentsViewModel.copy(surchargeAmount = None,
+          surchargeTaxAmountQuestion = None, surchargeTaxAmount = None)
+        insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(
+          unauthorisedPayments = unauthorisedPaymentsViewModel)), aUserRequest)
+        urlPost(fullUrl(didYouPayNonUkTaxUrl(taxYearEOY)), body = form, follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+
+      }
+
+      "has a SEE_OTHER(303) status" in {
+        result.status shouldBe SEE_OTHER
+        //todo redirect to Unauthorised payments question page
+        result.header("location") shouldBe Some(controllers.pensions.routes.PensionsSummaryController.show(taxYearEOY).url)
+      }
+    }
+
+
   }
 
   ".submit" should {
@@ -294,10 +317,8 @@ class DidYouPayNonUkTaxControllerISpec extends IntegrationTest with ViewHelpers 
           inputFieldValueCheck(amountInputName, amountInputSelector, "")
           formPostLinkCheck(didYouPayNonUkTaxUrl(taxYearEOY), formSelector)
           welshToggleCheck(user.isWelsh)
-          multipleSummaryErrorCheck(List(
-            (expectedErrorMessage, yesSelector),
-            (totalNonUkTaxErrorNoEntry, expectedAmountErrorHref)))
           errorAboveElementCheck(expectedErrorMessage, Some("value"))
+          errorSummaryCheck(expectedErrorMessage, Selectors.yesSelector)
         }
 
         s"return $BAD_REQUEST error when empty amount value is submitted" which {
@@ -469,6 +490,7 @@ class DidYouPayNonUkTaxControllerISpec extends IntegrationTest with ViewHelpers 
         cyaModel.pensions.unauthorisedPayments.surchargeTaxAmount shouldBe Some(BigDecimal(zeroAmount))
       }
     }
+
   }
 
 }

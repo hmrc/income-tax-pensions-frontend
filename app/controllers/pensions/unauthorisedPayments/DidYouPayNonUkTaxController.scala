@@ -43,7 +43,7 @@ class DidYouPayNonUkTaxController @Inject()(implicit val cc: MessagesControllerC
                                             clock: Clock) extends FrontendController(cc) with I18nSupport {
 
 
-  def form(isAgent: Boolean): Form[(Boolean, BigDecimal)] = RadioButtonAmountForm.radioButtonAndAmountForm(
+  def form: Form[(Boolean, Option[BigDecimal])] = RadioButtonAmountForm.radioButtonAndAmountForm(
     missingInputError = s"unauthorisedPayments.didYouPayNonUkTax.error.noEntry",
     emptyFieldKey = s"unauthorisedPayments.didYouPayNonUkTax.error.Amount.noEntry",
     wrongFormatKey = s"unauthorisedPayments.didYouPayNonUkTax.error.Amount.incorrectFormat",
@@ -57,17 +57,17 @@ class DidYouPayNonUkTaxController @Inject()(implicit val cc: MessagesControllerC
         if (data.pensions.unauthorisedPayments.surchargeAmount.isDefined) {
           data.pensions.unauthorisedPayments.surchargeTaxAmount match {
             case Some(value) if value == 0 =>
-              Future.successful(Ok(didYouPayNonUkTaxSurchargeView(form(request.user.isAgent).fill((false, value)), taxYear)))
+              Future.successful(Ok(didYouPayNonUkTaxSurchargeView(form.fill((false, Some(value))), taxYear)))
 
             case Some(value) =>
-              Future.successful(Ok(didYouPayNonUkTaxSurchargeView(form(request.user.isAgent).fill((true, value)), taxYear)))
+              Future.successful(Ok(didYouPayNonUkTaxSurchargeView(form.fill((true, Some(value))), taxYear)))
 
             case None =>
-              Future.successful(Ok(didYouPayNonUkTaxSurchargeView(form(request.user.isAgent), taxYear)))
+              Future.successful(Ok(didYouPayNonUkTaxSurchargeView(form, taxYear)))
           }
         } else {
           //todo redirect to unauthorised cya page
-          Future.successful(Ok(didYouPayNonUkTaxSurchargeView(form(request.user.isAgent), taxYear)))
+          Future.successful(Ok(didYouPayNonUkTaxSurchargeView(form, taxYear)))
         }
       case _ =>
         //todo - redirect to unauthorised cya page
@@ -82,17 +82,16 @@ class DidYouPayNonUkTaxController @Inject()(implicit val cc: MessagesControllerC
     pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
       case Some(data) =>
         if (data.pensions.unauthorisedPayments.surchargeAmount.isDefined) {
-          form(request.user.isAgent).bindFromRequest.fold(
+          form.bindFromRequest.fold(
             formWithErrors => Future.successful(BadRequest(didYouPayNonUkTaxSurchargeView(formWithErrors, taxYear))),
             amounts => {
-
               val pensionsCYAModel: PensionsCYAModel = data.pensions
               val viewModel: UnauthorisedPaymentsViewModel = pensionsCYAModel.unauthorisedPayments
               val updatedCyaModel: PensionsCYAModel = {
                 pensionsCYAModel.copy(
                   unauthorisedPayments = viewModel.copy(
                     surchargeTaxAmountQuestion = Some(amounts._1),
-                    surchargeTaxAmount = if (amounts._1) Some(amounts._2) else Some(0)
+                    surchargeTaxAmount = if (amounts._1) amounts._2 else Some(0)
                   )
                 )
               }
@@ -113,8 +112,5 @@ class DidYouPayNonUkTaxController @Inject()(implicit val cc: MessagesControllerC
         Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
     }
   }
-
   }
-
-
 }
