@@ -43,6 +43,7 @@ common.moreThanOnePensionScheme.individual = If more than one of your pension sc
 common.moreThanOnePensionScheme.agent = If more than one of your client’s pension schemes paid the tax, you can add these details later.
 common.pensionSchemeTaxReference = Pension Scheme Tax Reference
 
+common.error.amountMaxLimit = The total amount must be less than £100,000,000,000
 common.error.self-assessment.paragraph.1.1 = If the web address is correct or you selected a link or button, you can use
 common.error.self-assessment.paragraph.1.2 = Self Assessment: general enquiries (opens in new tab)
 common.error.self-assessment.paragraph.1.3 = to speak to someone about your income tax
@@ -550,6 +551,15 @@ lifetimeAllowance.pensionLumpSumDetails.taxPaid.error.noEntry.individual = Enter
 lifetimeAllowance.pensionLumpSumDetails.taxPaid.error.noEntry.agent = Enter the amount of lifetime allowance tax your client’s pension provider paid or agreed to pay on the lump sum
 lifetimeAllowance.pensionLumpSumDetails.taxPaid.error.incorrectFormat = Enter the amount of lifetime allowance tax in the correct format
 lifetimeAllowance.pensionLumpSumDetails.taxPaid.error.overMaximum = The amount of lifetime allowance tax must be less than 100,000,000,000
+
+#Surcharge Amount
+unauthorisedPayments.surchargeAmount.title = Amount that resulted in a surcharge
+unauthorisedPayments.surchargeAmount.giveTotal.individual = Give a total of unauthorised payments that resulted in surcharges from all your pension schemes.
+unauthorisedPayments.surchargeAmount.giveTotal.agent = Give a total of unauthorised payments that resulted in surcharges from all your client’s pension schemes.
+unauthorisedPayments.surchargeAmount.tellUsAbout = You can tell us about unauthorised payments that did not result in a surcharge later.
+unauthorisedPayments.surchargeAmount.error.noEntry = Enter the total amount of unauthorised payment that resulted in a surcharge
+unauthorisedPayments.surchargeAmount.error.incorrectFormat = Enter the total amount in the correct format
+
 
 #Did you pay non-UK tax that resulted in a surcharge
 unauthorisedPayments.didYouPayNonUkTax.title.individual = Did you pay non-UK tax on the amount that resulted in a surcharge?
