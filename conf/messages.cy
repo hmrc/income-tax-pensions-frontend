@@ -34,6 +34,7 @@ common.incomeFromPensions.caption = Income from pensions for 6 April {0} to 5 Ap
 common.uKPensionIncome.caption = UK pension income for 6 April {0} to 5 April {1}
 common.lifetimeAllowance.caption = Annual and lifetime allowances for 6 April {0} to 5 April {1}
 common.unauthorisedPayments.caption = Unauthorised payments from pensions for 6 April {0} to 5 April {1}
+common.unauthorisedPaymentsFromPension.caption = Unauthorised payments from pensions for 6 April {0} to 5 April {1}
 common.return.overview.buttonText = Return to overview
 common.currencyAmount = £{0}
 common.total = Total
@@ -554,9 +555,19 @@ lifetimeAllowance.pensionLumpSumDetails.taxPaid.error.overMaximum = The amount o
 
 
 #Surcharge Amount
-unauthorisedPayments.surchargeAmount.title = Amount that resulted in a surcharge  
+unauthorisedPayments.surchargeAmount.title = Amount that resulted in a surcharge
 unauthorisedPayments.surchargeAmount.giveTotal.individual = Give a total of unauthorised payments that resulted in surcharges from all your pension schemes.
 unauthorisedPayments.surchargeAmount.giveTotal.agent = Give a total of unauthorised payments that resulted in surcharges from all your client’s pension schemes.
 unauthorisedPayments.surchargeAmount.tellUsAbout = You can tell us about unauthorised payments that did not result in a surcharge later.
 unauthorisedPayments.surchargeAmount.error.noEntry = Enter the total amount of unauthorised payment that resulted in a surcharge
 unauthorisedPayments.surchargeAmount.error.incorrectFormat = Enter the total amount in the correct format
+#Did you pay non-UK tax that resulted in a surcharge
+unauthorisedPayments.didYouPayNonUkTax.title.individual = Did you pay non-UK tax on the amount that resulted in a surcharge?
+unauthorisedPayments.didYouPayNonUkTax.title.agent = Did your client pay non-UK tax on the amount that resulted in a surcharge?
+unauthorisedPayments.didYouPayNonUkTax.error.noEntry = Select yes if you paid non-UK tax on the amount surcharged
+unauthorisedPayments.didYouPayNonUkTax.Amount.Text = Total non-UK tax in pounds
+unauthorisedPayments.didYouPayNonUkTax.error.Amount.noEntry = Enter the amount of non-UK tax paid
+unauthorisedPayments.didYouPayNonUkTax.error.Amount.incorrectFormat = Enter the amount of non-UK tax in the correct format
+unauthorisedPayments.didYouPayNonUkTax.error.Amount.overMaximum = The amount of non-UK tax paid must be less than £100,000,000,000
+
+
