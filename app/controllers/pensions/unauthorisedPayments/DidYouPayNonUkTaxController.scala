@@ -53,8 +53,7 @@ class DidYouPayNonUkTaxController @Inject()(implicit val cc: MessagesControllerC
 
   def show(taxYear: Int): Action[AnyContent] = authAction.async { implicit request => {
     pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
-      case Some(data) =>
-        if (data.pensions.unauthorisedPayments.surchargeAmount.isDefined) {
+      case Some(data) if (data.pensions.unauthorisedPayments.surchargeAmount.isDefined) =>
           data.pensions.unauthorisedPayments.surchargeTaxAmount match {
             case Some(value) if value == 0 =>
               Future.successful(Ok(didYouPayNonUkTaxSurchargeView(form.fill((false, Some(value))), taxYear)))
@@ -65,10 +64,9 @@ class DidYouPayNonUkTaxController @Inject()(implicit val cc: MessagesControllerC
             case None =>
               Future.successful(Ok(didYouPayNonUkTaxSurchargeView(form, taxYear)))
           }
-        } else {
+      case Some(data) if (data.pensions.unauthorisedPayments.surchargeAmount.isEmpty) =>
           //todo redirect to unauthorised cya page
           Future.successful(Ok(didYouPayNonUkTaxSurchargeView(form, taxYear)))
-        }
       case _ =>
         //todo - redirect to unauthorised cya page
         Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
@@ -87,13 +85,14 @@ class DidYouPayNonUkTaxController @Inject()(implicit val cc: MessagesControllerC
             amounts => {
               val pensionsCYAModel: PensionsCYAModel = data.pensions
               val viewModel: UnauthorisedPaymentsViewModel = pensionsCYAModel.unauthorisedPayments
-              val updatedCyaModel: PensionsCYAModel = {
-                pensionsCYAModel.copy(
-                  unauthorisedPayments = viewModel.copy(
-                    surchargeTaxAmountQuestion = Some(amounts._1),
-                    surchargeTaxAmount = if (amounts._1) amounts._2 else Some(0)
+              val updatedCyaModel: PensionsCYAModel = amounts match {
+                case (yesSelected, amountOpt) =>
+                  pensionsCYAModel.copy(
+                    unauthorisedPayments = viewModel.copy(
+                      surchargeTaxAmountQuestion = Some(yesSelected),
+                      surchargeTaxAmount = if (yesSelected) amountOpt else Some(0)
+                    )
                   )
-                )
               }
               pensionSessionService.createOrUpdateSessionData(request.user,
                 updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
