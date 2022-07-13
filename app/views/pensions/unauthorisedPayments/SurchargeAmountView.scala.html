@@ -46,7 +46,7 @@
 
     @errorSummary(form.errors.distinct)
 
-    @heading(titleText, Some(messages("common.unauthorisedPayments.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-2")
+    @heading(titleText, Some(messages("common.unauthorisedPaymentsFromPension.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-2")
     @contentHtml
 
     @formWithCsrf(action = controllers.pensions.unauthorisedPayments.routes.SurchargeAmountController.submit(taxYear)) {

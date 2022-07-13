@@ -33,7 +33,6 @@ common.pensionAnnualAllowance.caption = Pension annual allowance for 6 April {0}
 common.incomeFromPensions.caption = Income from pensions for 6 April {0} to 5 April {1}
 common.uKPensionIncome.caption = UK pension income for 6 April {0} to 5 April {1}
 common.lifetimeAllowance.caption = Annual and lifetime allowances for 6 April {0} to 5 April {1}
-common.unauthorisedPayments.caption = Unauthorised payments from pensions for 6 April {0} to 5 April {1}
 common.unauthorisedPaymentsFromPension.caption =Unauthorised payments from pensions for 6 April {0} to 5 April {1}
 common.return.overview.buttonText = Return to overview
 common.currencyAmount = £{0}
