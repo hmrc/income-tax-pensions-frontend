@@ -31,6 +31,9 @@ GET         /:taxYear/pensions-summary                                          
 
 ###########################     Payments into Pension pages     ####################################
 
+GET         /:taxYear/payments-into-pensions/payments-into-pensions-status                  controllers.pensions.paymentsIntoPension.PaymentsIntoPensionsStatusController.show(taxYear:Int)
+POST        /:taxYear/payments-into-pensions/payments-into-pensions-status                  controllers.pensions.paymentsIntoPension.PaymentsIntoPensionsStatusController.submit(taxYear:Int)
+
 GET         /:taxYear/payments-into-pensions/check-payments-into-pensions                   controllers.pensions.paymentsIntoPension.PaymentsIntoPensionsCYAController.show(taxYear:Int)
 POST        /:taxYear/payments-into-pensions/check-payments-into-pensions                   controllers.pensions.paymentsIntoPension.PaymentsIntoPensionsCYAController.submit(taxYear:Int)
 

@@ -274,6 +274,13 @@ paymentsIntoPensions.cya.workplacePayments.hidden = Change whether workplace pen
 paymentsIntoPensions.cya.workplacePaymentsTotal.hidden = Change total workplace pension payments
 
 
+#payments into pensions status
+paymentsIntoPensions.statusPage.title.agent = A wnaeth eich cleient unrhyw daliadau i bensiynau’r DU?
+paymentsIntoPensions.statusPage.title.individual = A wnaethoch unrhyw daliadau i bensiynau’r DU?
+paymentsIntoPensions.statusPage.error.agent = Dewiswch ‘Iawn’ os gwnaeth eich cleient daliadau i bensiynau’r DU
+paymentsIntoPensions.statusPage.error.individual = Dewiswch ‘Iawn’ os gwnaethoch daliadau i bensiynau’r DU
+
+
 #################       ANNUAL ALLOWANCE        ########################################
 
 annualAllowance.incomeFromFlexiAccess = income from a flexi-access drawdown fund

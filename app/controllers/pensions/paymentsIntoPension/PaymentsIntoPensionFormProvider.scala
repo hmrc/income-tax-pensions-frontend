@@ -71,6 +71,9 @@ class PaymentsIntoPensionFormProvider {
     missingInputError = s"pensions.reliefAtSourceOneOffPayments.error.noEntry.${if (isAgent) "agent" else "individual"}"
   )
 
+  def paymentsIntoPensionsStatusForm(isAgent: Boolean): Form[Boolean] = YesNoForm.yesNoForm(
+    missingInputError = s"paymentsIntoPensions.statusPage.error.${if (isAgent) "agent" else "individual"}"
+  )
 
 }
 
