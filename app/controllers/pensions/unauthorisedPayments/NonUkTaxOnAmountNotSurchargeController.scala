@@ -21,10 +21,10 @@ import controllers.pensions.routes.PensionsSummaryController
 import controllers.pensions.unauthorisedPayments.routes.NonUkTaxOnAmountNotSurchargeController
 import controllers.predicates.AuthorisedAction
 import forms.{RadioButtonAmountForm, YesNoForm}
+import controllers.predicates.TaxYearAction.taxYearAction
 import models.User
 import models.mongo.PensionsCYAModel
-import models.pension.charges.{PensionLifetimeAllowancesViewModel, UnauthorisedPaymentsViewModel}
-import play.api.data
+import models.pension.charges.UnauthorisedPaymentsViewModel
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -32,9 +32,9 @@ import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.unauthorisedPayments.NonUkTaxOnAmountNotSurchargeView
+import scala.concurrent.{ExecutionContext, Future}
 
 import javax.inject.Inject
-import scala.concurrent.Future
 
 class NonUkTaxOnAmountNotSurchargeController @Inject()(implicit val cc: MessagesControllerComponents,
                                                        authAction: AuthorisedAction,
@@ -42,77 +42,58 @@ class NonUkTaxOnAmountNotSurchargeController @Inject()(implicit val cc: Messages
                                                        appConfig: AppConfig,
                                                        pensionSessionService: PensionSessionService,
                                                        errorHandler: ErrorHandler,
-                                                       clock: Clock) extends FrontendController(cc) with I18nSupport{
+                                                       clock: Clock,
+                                                       ec: ExecutionContext) extends FrontendController(cc) with I18nSupport{
 
   def form: Form[(Boolean, Option[BigDecimal])] = RadioButtonAmountForm.radioButtonAndAmountForm(
-    missingInputError = s"unauthorisedPayments.didYouPayNonUkTax.error.noEntry",
-    emptyFieldKey = s"unauthorisedPayments.didYouPayNonUkTax.error.Amount.noEntry",
-    wrongFormatKey = s"unauthorisedPayments.didYouPayNonUkTax.error.Amount.incorrectFormat",
-    exceedsMaxAmountKey = s"unauthorisedPayments.didYouPayNonUkTax.error.Amount.overMaximum"
+    missingInputError = s"unauthorisedPayments.nonUkTaxOnAmountNotSurcharge.error.noEntry",
+    emptyFieldKey = s"unauthorisedPayments.nonUkTaxOnAmountNotSurcharge.error.Amount.noEntry",
+    wrongFormatKey = s"unauthorisedPayments.nonUkTaxOnAmountNotSurcharge.error.Amount.incorrectFormat",
+    exceedsMaxAmountKey = s"unauthorisedPayments.nonUkTaxOnAmountNotSurcharge.error.Amount.overMaximum"
   )
 
-  def show(taxYear: Int): Action[AnyContent] = authAction.async { implicit request => {
-    pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
-      case Some(data) if (data.pensions.unauthorisedPayments.noSurchargeAmount.isDefined) =>
-      data.pensions.unauthorisedPayments.noSurchargeTaxAmount match {
-        case Some(value) if value == 0 =>
-          Future.successful(Ok(
-            nonUkTaxOnAmountNotSurchargeView(form.fill((false, Some(value))), taxYear)))
 
-        case Some(value) =>
-          Future.successful(Ok(nonUkTaxOnAmountNotSurchargeView(form.fill((true, Some(value))), taxYear)))
-
-        case None =>
-          Future.successful(Ok(nonUkTaxOnAmountNotSurchargeView(form, taxYear)))
-      }
-      case Some(data) if (data.pensions.unauthorisedPayments.noSurchargeAmount.isEmpty) =>
-        //todo redirect to unauthorised cya page
-        Future.successful(Ok(nonUkTaxOnAmountNotSurchargeView(form, taxYear)))
-      case _ =>
-        //todo - redirect to unauthorised cya page
-        Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
+  def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async{ implicit request =>
+    pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap{
+      case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
+      case Right(Some(pensionsUserData)) =>
+        pensionsUserData.pensions.unauthorisedPayments.noSurchargeTaxAmount match {
+            case Some(amount) => Future.successful(Ok(nonUkTaxOnAmountNotSurchargeView(form.fill((true, Some(amount))), taxYear)))
+            case None =>  Future.successful(Ok(nonUkTaxOnAmountNotSurchargeView(form, taxYear)))
+          }
+      case Right(None) => Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
     }
   }
 
-  }
 
-
-  def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request => {
-    pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
-      case Some(data) =>
-        if (data.pensions.unauthorisedPayments.noSurchargeAmount.isDefined) {
-          form.bindFromRequest.fold(
-            formWithErrors => Future.successful(BadRequest(nonUkTaxOnAmountNotSurchargeView(formWithErrors, taxYear))),
-            amounts => {
-              val pensionsCYAModel: PensionsCYAModel = data.pensions
-              val viewModel: UnauthorisedPaymentsViewModel = pensionsCYAModel.unauthorisedPayments
-              val updatedCyaModel: PensionsCYAModel = {
-                pensionsCYAModel.copy(
-                  unauthorisedPayments = viewModel.copy(
-                    noSurchargeTaxAmountQuestion = Some(amounts._1),
-                    noSurchargeTaxAmount = if (amounts._1) amounts._2 else Some(0)
+  def submit(taxYear : Int) : Action[AnyContent] = authAction.async { implicit request =>
+    pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
+      case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
+      case Right(Some(optData)) =>
+        optData.pensions.unauthorisedPayments.noSurchargeAmount match {
+          case Some(_) =>
+            form.bindFromRequest.fold(
+              formWithErrors => Future.successful(BadRequest(nonUkTaxOnAmountNotSurchargeView(formWithErrors, taxYear))),
+              amounts => {
+                val pensionsCYAModel: PensionsCYAModel = optData.pensions
+                val viewModel: UnauthorisedPaymentsViewModel = pensionsCYAModel.unauthorisedPayments
+                val updatedCyaModel: PensionsCYAModel = amounts match {
+                  case (noSurchargeTaxAmountAnswer, amount) => pensionsCYAModel.copy(
+                    unauthorisedPayments = viewModel.copy(
+                      noSurchargeTaxAmountQuestion = Some(noSurchargeTaxAmountAnswer),
+                      noSurchargeTaxAmount = if (noSurchargeTaxAmountAnswer) amount else Some(0)
+                    )
                   )
-                )
+                }
+                pensionSessionService.createOrUpdateSessionData(request.user,
+                  updatedCyaModel, taxYear, optData.isPriorSubmission)(errorHandler.internalServerError()) {
+                  //TODO: next page (were any of the unauthorised payments from a uk pension scheme page)
+                  Redirect(NonUkTaxOnAmountNotSurchargeController.show(taxYear))
+                }
               }
-              pensionSessionService.createOrUpdateSessionData(request.user,
-                updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
-                //TODO: next page (were any of the unauthorised payments from a uk pension scheme page)
-                Redirect(NonUkTaxOnAmountNotSurchargeController.show(taxYear))
-              }
-            }
-          )
-        } else {
-          //todo redirect to unauthorised cya page
-          Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
+            )
+          case None => Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
         }
-      case _ =>
-        //TODO: redirect to unauthorised cya page
-        Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
     }
   }
-
-  }
-
-
-
 }
