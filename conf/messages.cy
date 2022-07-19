@@ -253,6 +253,7 @@ pensions.workplaceAmount.error.maxAmount = The amount paid into workplace pensio
 
 paymentsIntoPensions.cya.heading.individual = Check your payments into pensions
 paymentsIntoPensions.cya.heading.agent = Check your client’s payments into pensions
+paymentsIntoPensions.cya.paymentsIntoUKPensions = Payments into UK pensions
 paymentsIntoPensions.cya.reliefAtSource = Relief at source (RAS) pension payments
 paymentsIntoPensions.cya.reliefAtSourceTotal = Total RAS payments plus tax relief
 paymentsIntoPensions.cya.oneOff = One-off RAS payments
@@ -263,6 +264,7 @@ paymentsIntoPensions.cya.retirementAnnuityTotal = Total retirement annuity contr
 paymentsIntoPensions.cya.workplacePayments = Workplace pension payments
 paymentsIntoPensions.cya.workplacePaymentsTotal = Total workplace pension payments
 
+paymentsIntoPensions.cya.paymentsIntoUKPensions.hidden = Change payments into UK pensions
 paymentsIntoPensions.cya.reliefAtSource.hidden = Change whether relief at source pensions payments were made
 paymentsIntoPensions.cya.reliefAtSourceTotal.hidden = Change total relief at source pensions payments, plus tax relief
 paymentsIntoPensions.cya.oneOff.hidden = Change whether one-off relief at source pensions payments were made

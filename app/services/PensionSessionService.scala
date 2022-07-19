@@ -126,6 +126,7 @@ class PensionSessionService @Inject()(pensionUserDataRepository: PensionsUserDat
 
     PensionsCYAModel(
       PaymentsIntoPensionViewModel(
+        Some(true),
         prior.pensionReliefs.map(a => a.pensionReliefs.regularPensionContributions.isDefined),
         prior.pensionReliefs.flatMap(a => a.pensionReliefs.regularPensionContributions),
         prior.pensionReliefs.map(a => a.pensionReliefs.oneOffPensionContributionsPaid.isDefined),
