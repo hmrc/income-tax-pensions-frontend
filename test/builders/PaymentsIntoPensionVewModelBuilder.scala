@@ -21,6 +21,7 @@ import models.pension.reliefs.PaymentsIntoPensionViewModel
 object PaymentsIntoPensionVewModelBuilder {
 
   val aPaymentsIntoPensionViewModel: PaymentsIntoPensionViewModel = PaymentsIntoPensionViewModel(
+    gateway = Some(true),
     rasPensionPaymentQuestion = Some(true),
     totalRASPaymentsAndTaxRelief = Some(189.01),
     oneOffRasPaymentPlusTaxReliefQuestion = Some(true),

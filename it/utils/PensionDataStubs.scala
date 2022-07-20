@@ -234,7 +234,7 @@ object PensionDataStubs {
 object PensionUserDataStub extends IntegrationTest {
   implicit val testClock: Clock = UnitTestClock
 
-  val paymentsIntoPensionViewModel: PaymentsIntoPensionViewModel = PaymentsIntoPensionViewModel(Some(true),
+  val paymentsIntoPensionViewModel: PaymentsIntoPensionViewModel = PaymentsIntoPensionViewModel(None, Some(true),
     Some(222.3), Some(true), Some(22.44), Some(true), Some(true), Some(true), Some(44.00), Some(true), Some(55.55))
 
   val pensionsAnnualAllowancesViewModel: PensionAnnualAllowancesViewModel = PensionAnnualAllowancesViewModel(

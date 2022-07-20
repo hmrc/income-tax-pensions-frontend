@@ -55,7 +55,8 @@
 }
 
 @summaryRows = @{
-    (Nil :+ rowWithContent("paymentsIntoPensions.cya.reliefAtSource", cya.rasPensionPaymentQuestion.getOrElse(false), changeLink = controllers.pensions.paymentsIntoPension.routes.ReliefAtSourcePensionsController.show(taxYear))) :+
+    (Nil :+ rowWithContent("paymentsIntoPensions.cya.paymentsIntoUKPensions", cya.gateway.getOrElse(false), appConfig.tailoringEnabled, changeLink = controllers.pensions.paymentsIntoPension.routes.PaymentsIntoPensionsStatusController.show(taxYear))) :+
+            rowWithContent("paymentsIntoPensions.cya.reliefAtSource", cya.rasPensionPaymentQuestion.getOrElse(false), changeLink = controllers.pensions.paymentsIntoPension.routes.ReliefAtSourcePensionsController.show(taxYear)) :+
             amountRow("paymentsIntoPensions.cya.reliefAtSourceTotal", cya.totalRASPaymentsAndTaxRelief, cya.rasPensionPaymentQuestion.contains(true), changeLink = controllers.pensions.paymentsIntoPension.routes.ReliefAtSourcePaymentsAndTaxReliefAmountController.show(taxYear)) :+
             rowWithContent("paymentsIntoPensions.cya.oneOff", cya.oneOffRasPaymentPlusTaxReliefQuestion.getOrElse(false), cya.rasPensionPaymentQuestion.contains(true), changeLink = controllers.pensions.paymentsIntoPension.routes.ReliefAtSourceOneOffPaymentsController.show(taxYear)) :+
             amountRow("paymentsIntoPensions.cya.oneOffTotal", cya.totalOneOffRasPaymentPlusTaxRelief, cya.oneOffRasPaymentPlusTaxReliefQuestion.contains(true), changeLink = controllers.pensions.paymentsIntoPension.routes.OneOffRASPaymentsAmountController.show(taxYear)) :+

@@ -85,19 +85,20 @@ class PaymentsIntoPensionsCYAControllerISpec extends IntegrationTest with ViewHe
         captionCheck(expectedCaption(taxYear))
 
         //noinspection ScalaStyle
-        cyaRowCheck(reliefAtSource, yes, ChangeLinks.reliefAtSource, reliefAtSourceHidden, 1)
+        cyaRowCheck(paymentsIntoUKPensions, yes, ChangeLinks.paymentsIntoUKPensions, paymentsIntoUKPensionsHidden, 1)
+        cyaRowCheck(reliefAtSource, yes, ChangeLinks.reliefAtSource, reliefAtSourceHidden, 2)
         cyaRowCheck(reliefAtSourceAmount, s"${moneyContent(anReliefs.regularPensionContributions.get)}",
-          ChangeLinks.reliefAtSourceAmount, reliefAtSourceAmountHidden, 2)
-        cyaRowCheck(oneOff, yes, ChangeLinks.oneOff, oneOffHidden, 3)
+          ChangeLinks.reliefAtSourceAmount, reliefAtSourceAmountHidden, 3)
+        cyaRowCheck(oneOff, yes, ChangeLinks.oneOff, oneOffHidden, 4)
         cyaRowCheck(oneOffAmount, s"${moneyContent(anReliefs.oneOffPensionContributionsPaid.get)}",
-          ChangeLinks.oneOffAmount, oneOffAmountHidden, 4)
-        cyaRowCheck(pensionsTaxReliefNotClaimed, yes, ChangeLinks.pensionsTaxReliefNotClaimed, pensionsTaxReliefNotClaimedHidden, 5)
-        cyaRowCheck(retirementAnnuity, yes, ChangeLinks.retirementAnnuity, retirementAnnuityHidden, 6)
+          ChangeLinks.oneOffAmount, oneOffAmountHidden, 5)
+        cyaRowCheck(pensionsTaxReliefNotClaimed, yes, ChangeLinks.pensionsTaxReliefNotClaimed, pensionsTaxReliefNotClaimedHidden, 6)
+        cyaRowCheck(retirementAnnuity, yes, ChangeLinks.retirementAnnuity, retirementAnnuityHidden, 7)
         cyaRowCheck(retirementAnnuityAmount, s"${moneyContent(anReliefs.retirementAnnuityPayments.get)}",
-          ChangeLinks.retirementAnnuityAmount, retirementAnnuityAmountHidden, 7)
-        cyaRowCheck(workplacePayments, yes, ChangeLinks.workplacePayments, workplacePaymentsHidden, 8)
+          ChangeLinks.retirementAnnuityAmount, retirementAnnuityAmountHidden, 8)
+        cyaRowCheck(workplacePayments, yes, ChangeLinks.workplacePayments, workplacePaymentsHidden, 9)
         cyaRowCheck(workplacePaymentsAmount, s"${moneyContent(anReliefs.paymentToEmployersSchemeNoTaxRelief.get)}",
-          ChangeLinks.workplacePaymentsAmount, workplacePaymentsAmountHidden, 9)
+          ChangeLinks.workplacePaymentsAmount, workplacePaymentsAmountHidden, 10)
 
         buttonCheck(saveAndContinue)
         welshToggleCheck(isWelsh = false)
@@ -123,19 +124,20 @@ class PaymentsIntoPensionsCYAControllerISpec extends IntegrationTest with ViewHe
         captionCheck(expectedCaption(taxYear))
 
         //noinspection ScalaStyle
-        cyaRowCheck(reliefAtSource, yes, ChangeLinks.reliefAtSource, reliefAtSourceHidden, 1)
+        cyaRowCheck(paymentsIntoUKPensions, yes, ChangeLinks.paymentsIntoUKPensions, paymentsIntoUKPensionsHidden, 1)
+        cyaRowCheck(reliefAtSource, yes, ChangeLinks.reliefAtSource, reliefAtSourceHidden, 2)
         cyaRowCheck(reliefAtSourceAmount, s"${moneyContent(aPaymentsIntoPensionViewModel.totalRASPaymentsAndTaxRelief.get)}",
-          ChangeLinks.reliefAtSourceAmount, reliefAtSourceAmountHidden, 2)
-        cyaRowCheck(oneOff, yes, ChangeLinks.oneOff, oneOffHidden, 3)
+          ChangeLinks.reliefAtSourceAmount, reliefAtSourceAmountHidden, 3)
+        cyaRowCheck(oneOff, yes, ChangeLinks.oneOff, oneOffHidden, 4)
         cyaRowCheck(oneOffAmount, s"${moneyContent(aPaymentsIntoPensionViewModel.totalOneOffRasPaymentPlusTaxRelief.get)}",
-          ChangeLinks.oneOffAmount, oneOffAmountHidden, 4)
-        cyaRowCheck(pensionsTaxReliefNotClaimed, yes, ChangeLinks.pensionsTaxReliefNotClaimed, pensionsTaxReliefNotClaimedHidden, 5)
-        cyaRowCheck(retirementAnnuity, yes, ChangeLinks.retirementAnnuity, retirementAnnuityHidden, 6)
+          ChangeLinks.oneOffAmount, oneOffAmountHidden, 5)
+        cyaRowCheck(pensionsTaxReliefNotClaimed, yes, ChangeLinks.pensionsTaxReliefNotClaimed, pensionsTaxReliefNotClaimedHidden, 6)
+        cyaRowCheck(retirementAnnuity, yes, ChangeLinks.retirementAnnuity, retirementAnnuityHidden, 7)
         cyaRowCheck(retirementAnnuityAmount, s"${moneyContent(aPaymentsIntoPensionViewModel.totalRetirementAnnuityContractPayments.get)}",
-          ChangeLinks.retirementAnnuityAmount, retirementAnnuityAmountHidden, 7)
-        cyaRowCheck(workplacePayments, yes, ChangeLinks.workplacePayments, workplacePaymentsHidden, 8)
+          ChangeLinks.retirementAnnuityAmount, retirementAnnuityAmountHidden, 8)
+        cyaRowCheck(workplacePayments, yes, ChangeLinks.workplacePayments, workplacePaymentsHidden, 9)
         cyaRowCheck(workplacePaymentsAmount, s"${moneyContent(aPaymentsIntoPensionViewModel.totalWorkplacePensionPayments.get)}",
-          ChangeLinks.workplacePaymentsAmount, workplacePaymentsAmountHidden, 9)
+          ChangeLinks.workplacePaymentsAmount, workplacePaymentsAmountHidden, 10)
 
         buttonCheck(saveAndContinue)
 
@@ -158,8 +160,9 @@ class PaymentsIntoPensionsCYAControllerISpec extends IntegrationTest with ViewHe
 
 
       //noinspection ScalaStyle
-      cyaRowCheck(reliefAtSource, answerNo, ChangeLinks.reliefAtSource, reliefAtSourceHidden, 1)
-      cyaRowCheck(pensionsTaxReliefNotClaimed, answerNo, ChangeLinks.pensionsTaxReliefNotClaimed, pensionsTaxReliefNotClaimedHidden, 2)
+      cyaRowCheck(paymentsIntoUKPensions, answerNo, ChangeLinks.paymentsIntoUKPensions, paymentsIntoUKPensionsHidden, 1)
+      cyaRowCheck(reliefAtSource, answerNo, ChangeLinks.reliefAtSource, reliefAtSourceHidden, 2)
+      cyaRowCheck(pensionsTaxReliefNotClaimed, answerNo, ChangeLinks.pensionsTaxReliefNotClaimed, pensionsTaxReliefNotClaimedHidden, 3)
 
       buttonCheck(saveAndContinue)
 
@@ -255,7 +258,7 @@ class PaymentsIntoPensionsCYAControllerISpec extends IntegrationTest with ViewHe
 
         val unchangedModel =
           PaymentsIntoPensionViewModel(
-            Some(true), anReliefs.regularPensionContributions,
+            None, Some(true), anReliefs.regularPensionContributions,
             Some(true), anReliefs.oneOffPensionContributionsPaid, Some(true), Some(true), Some(true),
             anReliefs.retirementAnnuityPayments, Some(true), anReliefs.paymentToEmployersSchemeNoTaxRelief)
 
