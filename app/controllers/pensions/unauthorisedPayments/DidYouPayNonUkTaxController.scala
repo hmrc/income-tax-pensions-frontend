@@ -45,9 +45,9 @@ class DidYouPayNonUkTaxController @Inject()(implicit val cc: MessagesControllerC
 
   def form: Form[(Boolean, Option[BigDecimal])] = RadioButtonAmountForm.radioButtonAndAmountForm(
     missingInputError = s"unauthorisedPayments.didYouPayNonUkTax.error.noEntry",
-    emptyFieldKey = s"unauthorisedPayments.didYouPayNonUkTax.error.Amount.noEntry",
-    wrongFormatKey = s"unauthorisedPayments.didYouPayNonUkTax.error.Amount.incorrectFormat",
-    exceedsMaxAmountKey = s"unauthorisedPayments.didYouPayNonUkTax.error.Amount.overMaximum"
+    emptyFieldKey = s"common.unauthorisedPayments.error.Amount.noEntry",
+    wrongFormatKey = s"common.unauthorisedPayments.error.Amount.incorrectFormat",
+    exceedsMaxAmountKey = s"common.unauthorisedPayments.error.Amount.overMaximum"
   )
 
 

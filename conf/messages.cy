@@ -51,6 +51,11 @@ common.error.self-assessment.paragraph.1.3a = to speak to someone about your inc
 common.useCalculator.paragraph.link = if you need to work this out
 common.useCalculator.paragraph = Use a calculator
 
+common.unauthorisedPayments.Amount.Text = Total non-UK tax in pounds
+common.unauthorisedPayments.error.Amount.noEntry = Enter the amount of non-UK tax paid
+common.unauthorisedPayments.error.Amount.incorrectFormat = Enter the amount of non-UK tax in the correct format
+common.unauthorisedPayments.error.Amount.overMaximum = The amount of non-UK tax paid must be less than £100,000,000,000
+
 #################       Error messages        ########################################
 
 error.agent.title = There’s a problem
@@ -564,17 +569,9 @@ unauthorisedPayments.surchargeAmount.error.incorrectFormat = Enter the total amo
 unauthorisedPayments.didYouPayNonUkTax.title.individual = Did you pay non-UK tax on the amount that resulted in a surcharge?
 unauthorisedPayments.didYouPayNonUkTax.title.agent = Did your client pay non-UK tax on the amount that resulted in a surcharge?
 unauthorisedPayments.didYouPayNonUkTax.error.noEntry = Select yes if you paid non-UK tax on the amount surcharged
-unauthorisedPayments.didYouPayNonUkTax.Amount.Text = Total non-UK tax in pounds
-unauthorisedPayments.didYouPayNonUkTax.error.Amount.noEntry = Enter the amount of non-UK tax paid
-unauthorisedPayments.didYouPayNonUkTax.error.Amount.incorrectFormat = Enter the amount of non-UK tax in the correct format
-unauthorisedPayments.didYouPayNonUkTax.error.Amount.overMaximum = The amount of non-UK tax paid must be less than £100,000,000,000
 
 
 #Did you pay non-UK tax that did not result in a surcharge
 unauthorisedPayments.nonUkTaxOnAmountNotSurcharge.title.individual = Did you pay non-UK tax on the amount that did not result in a surcharge?
 unauthorisedPayments.nonUkTaxOnAmountNotSurcharge.title.agent = Did your client pay non-UK tax on the amount that did not result in a surcharge?
 unauthorisedPayments.nonUkTaxOnAmountNotSurcharge.error.noEntry = Select yes if you paid non-UK tax on the amount not surcharged
-unauthorisedPayments.nonUkTaxOnAmountNotSurcharge.Amount.Text = Total non-UK tax in pounds
-unauthorisedPayments.nonUkTaxOnAmountNotSurcharge.error.Amount.noEntry = Enter the amount of non-UK tax paid
-unauthorisedPayments.nonUkTaxOnAmountNotSurcharge.error.Amount.incorrectFormat = Enter the amount of non-UK tax in the correct format
-unauthorisedPayments.nonUkTaxOnAmountNotSurcharge.error.Amount.overMaximum = The amount of non-UK tax paid must be less than £100,000,000,000
