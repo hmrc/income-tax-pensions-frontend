@@ -370,7 +370,7 @@ class PensionsSummaryControllerISpec extends IntegrationTest with ViewHelpers wi
             authoriseAgentOrIndividual(user.isAgent)
 
             val otherHalfPensionChargesData: AllPensionsData = anAllPensionsData.copy(pensionCharges =
-              Some(anPensionCharges.copy(pensionSchemeUnauthorisedPayments = None, pensionSchemeOverseasTransfers = None, overseasPensionContributions =None)))
+              Some(anPensionCharges.copy(pensionSchemeUnauthorisedPayments = None, pensionSchemeOverseasTransfers = None, overseasPensionContributions = None)))
 
             userDataStub(anIncomeTaxUserData.copy(pensions = Some(otherHalfPensionChargesData)), nino, taxYear)
 
@@ -431,7 +431,8 @@ class PensionsSummaryControllerISpec extends IntegrationTest with ViewHelpers wi
         "render Unauthorised user error page" which {
           lazy val result: WSResponse = {
             unauthorisedAgentOrIndividual(user.isAgent)
-            urlGet(fullUrl(pensionSummaryUrl(taxYear)), welsh = user.isWelsh)
+            urlGet(fullUrl(pensionSummaryUrl(taxYear)), welsh = user.isWelsh,
+              headers = Seq(Predef.ArrowAssoc(HeaderNames.COOKIE) -> playSessionCookies(taxYear, validTaxYearList)))
           }
           "has an UNAUTHORIZED(401) status" in {
             result.status shouldBe UNAUTHORIZED
