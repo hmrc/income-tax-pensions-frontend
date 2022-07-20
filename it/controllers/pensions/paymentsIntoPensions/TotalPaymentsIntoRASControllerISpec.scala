@@ -17,6 +17,7 @@
 package controllers.pensions.paymentsIntoPensions
 
 import builders.IncomeFromPensionsViewModelBuilder.anIncomeFromPensionEmptyViewModel
+import builders.PaymentsIntoOverseasPensionsViewModelBuilder.aPaymentsIntoOverseasPensionsViewModel
 import builders.PensionAnnualAllowanceViewModelBuilder.aPensionAnnualAllowanceEmptyViewModel
 import builders.PensionLifetimeAllowanceViewModelBuilder.aPensionLifetimeAllowancesEmptyViewModel
 import builders.PensionsCYAModelBuilder.aPensionsCYAEmptyModel
@@ -44,9 +45,15 @@ import views.TotalPaymentsIntoRasTestSupport.ExpectedIndividualEN._
 class TotalPaymentsIntoRASControllerISpec extends IntegrationTest with BeforeAndAfterEach with ViewHelpers with PensionsDatabaseHelper {
 
   private def pensionsUsersData(paymentsIntoPensionViewModel: PaymentsIntoPensionViewModel) = {
+
     PensionsUserDataBuilder.aPensionsUserData.copy(
-      pensions = PensionsCYAModel(paymentsIntoPensionViewModel, aPensionAnnualAllowanceEmptyViewModel,
-        aPensionLifetimeAllowancesEmptyViewModel, anIncomeFromPensionEmptyViewModel, anUnauthorisedPaymentsViewModel)
+      pensions = PensionsCYAModel(paymentsIntoPensionViewModel,
+        aPensionAnnualAllowanceEmptyViewModel,
+        aPensionLifetimeAllowancesEmptyViewModel,
+        anIncomeFromPensionEmptyViewModel,
+        anUnauthorisedPaymentsViewModel,
+        aPaymentsIntoOverseasPensionsViewModel
+      )
     )
   }
 
@@ -57,7 +64,7 @@ class TotalPaymentsIntoRASControllerISpec extends IntegrationTest with BeforeAnd
     totalOneOffRasPaymentPlusTaxRelief = Some(BigDecimal(1400))
   )
 
-  val userScenarios: Seq[UserScenario[_,_]] =Seq.empty
+  val userScenarios: Seq[UserScenario[_, _]] = Seq.empty
 
   ".show" should {
     "render 'Total payments into RAS pensions' page with correct content and no pre-filling" which {
@@ -112,6 +119,7 @@ class TotalPaymentsIntoRASControllerISpec extends IntegrationTest with BeforeAnd
       }
 
       implicit def document: () => Document = () => Jsoup.parse(result.body)
+
       textOnPageCheck(s"${CommonExpectedEN.totalPayments}", Selectors.tableSelector(1, 1))
 
 
