@@ -17,14 +17,13 @@
 package repositories
 
 import builders.StateBenefitViewModelBuilder.anStateBenefitViewModelOne
-import builders.UserBuilder.aUser
 import com.mongodb.MongoTimeoutException
 import common.UUID
 import models.User
 import models.mongo._
-import models.pension.charges.{PensionAnnualAllowancesViewModel, PensionLifetimeAllowancesViewModel, UnauthorisedPaymentsViewModel}
+import models.pension.charges.{PaymentsIntoOverseasPensionsViewModel, PensionAnnualAllowancesViewModel, PensionLifetimeAllowancesViewModel, UnauthorisedPaymentsViewModel}
 import models.pension.reliefs.PaymentsIntoPensionViewModel
-import models.pension.statebenefits.{EncryptedIncomeFromPensionsViewModel, IncomeFromPensionsViewModel}
+import models.pension.statebenefits.IncomeFromPensionsViewModel
 import org.joda.time.{DateTime, DateTimeZone}
 import org.mongodb.scala.model.Indexes.ascending
 import org.mongodb.scala.model.{IndexModel, IndexOptions}
@@ -65,9 +64,11 @@ class PensionsUserDataRepositoryISpec extends IntegrationTest with FutureAwaits 
   private val pensionLifetimeAllowances = PensionLifetimeAllowancesViewModel(aboveLifetimeAllowanceQuestion = Some(true))
   private val incomeFromPensions = IncomeFromPensionsViewModel(statePension = Some(anStateBenefitViewModelOne))
   private val unauthorisedPayments = UnauthorisedPaymentsViewModel(unauthorisedPaymentsQuestion = Some(true))
+  private val paymentsIntoOverseasPensions = PaymentsIntoOverseasPensionsViewModel(paymentsIntoOverseasPensionsQuestions = Some(true))
+
 
   private val pensionCYAModel = PensionsCYAModel(paymentsIntoPension, pensionAnnualAllowances, pensionLifetimeAllowances,
-    incomeFromPensions, unauthorisedPayments)
+    incomeFromPensions, unauthorisedPayments, paymentsIntoOverseasPensions)
 
   val userDataOne: PensionsUserData = PensionsUserData(
     sessionIdOne,
