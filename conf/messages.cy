@@ -578,4 +578,8 @@ unauthorisedPayments.didYouPayNonUkTax.error.Amount.noEntry = Enter the amount o
 unauthorisedPayments.didYouPayNonUkTax.error.Amount.incorrectFormat = Enter the amount of non-UK tax in the correct format
 unauthorisedPayments.didYouPayNonUkTax.error.Amount.overMaximum = The amount of non-UK tax paid must be less than £100,000,000,000
 
+#Where any of the unauthorised payments from a UK pension scheme?
+unauthorisedPayments.whereAnyOfTheUnauthorisedPayments.title = Were any of the unauthorised payments from a pension scheme?
+unauthorisedPayments.whereAnyOfTheUnauthorisedPayments.error.noEntry = Select yes if you got an unauthorised payment from a pension scheme
+
 
