@@ -33,9 +33,7 @@ common.pensionAnnualAllowance.caption = Pension annual allowance for 6 April {0}
 common.incomeFromPensions.caption = Income from pensions for 6 April {0} to 5 April {1}
 common.uKPensionIncome.caption = UK pension income for 6 April {0} to 5 April {1}
 common.lifetimeAllowance.caption = Annual and lifetime allowances for 6 April {0} to 5 April {1}
-common.unauthorisedPaymentsFromPension.caption =Unauthorised payments from pensions for 6 April {0} to 5 April {1}
 common.return.overview.buttonText = Return to overview
-common.unauthorisedPaymentsFromPension.caption = Unauthorised payments from pensions for 6 April {0} to 5 April {1}
 common.currencyAmount = £{0}
 common.total = Total
 common.youCanFindThisOut.individual = You can find this out from your pension provider.
@@ -52,6 +50,7 @@ common.error.self-assessment.paragraph.1.3a = to speak to someone about your inc
 common.useCalculator.paragraph.link = if you need to work this out
 common.useCalculator.paragraph = Use a calculator
 
+common.unauthorisedPaymentsFromPension.caption = Unauthorised payments from pensions for 6 April {0} to 5 April {1}
 common.unauthorisedPayments.Amount.Text = Total non-UK tax in pounds
 common.unauthorisedPayments.error.Amount.noEntry = Enter the amount of non-UK tax paid
 common.unauthorisedPayments.error.Amount.incorrectFormat = Enter the amount of non-UK tax in the correct format
