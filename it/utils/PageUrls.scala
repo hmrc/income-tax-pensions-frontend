@@ -153,7 +153,5 @@ object PageUrls extends IntegrationTest {
 
   }
 
-
 }
-
 //scalastyle:on number.of.methods
