@@ -18,6 +18,7 @@ package controllers.pensions.lifetimeAllowance
 
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.routes.PensionsSummaryController
+import controllers.pensions.lifetimeAllowance.routes.PensionTakenAnotherWayAmountController
 import controllers.predicates.AuthorisedAction
 import forms.YesNoForm
 import models.User
@@ -79,8 +80,7 @@ class LifeTimeAllowanceAnotherWayController @Inject()(implicit val cc: MessagesC
             pensionSessionService.createOrUpdateSessionData(request.user,
               updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
               if (yesNo) {
-                //TODO redirect page to "Your client's pension taken in another way" Page
-                Redirect(PensionsSummaryController.show(taxYear))
+                Redirect(PensionTakenAnotherWayAmountController.show(taxYear))
               } else {
                 //TODO - redirect to "Check your client's annual and lifetime allowances" Page
                 Redirect(PensionsSummaryController.show(taxYear))
