@@ -47,10 +47,10 @@ class PensionLumpSumDetailsController @Inject()(implicit val mcc: MessagesContro
   def amountForm(isAgent: Boolean): Form[(BigDecimal, BigDecimal)] = TupleAmountForm.amountForm(
     emptyFieldKey1 = s"lifetimeAllowance.pensionLumpSumDetails.beforeTax.error.noEntry.${if (isAgent) "agent" else "individual"}",
     wrongFormatKey1 = s"lifetimeAllowance.pensionLumpSumDetails.beforeTax.error.incorrectFormat",
-    exceedsMaxAmountKey1 = s"lifetimeAllowance.pensionLumpSumDetails.beforeTax.error.overMaximum",
+    exceedsMaxAmountKey1 = s"common.beforeTax.error.overMaximum",
     emptyFieldKey2 = s"lifetimeAllowance.pensionLumpSumDetails.taxPaid.error.noEntry.${if (isAgent) "agent" else "individual"}",
-    wrongFormatKey2 = s"lifetimeAllowance.pensionLumpSumDetails.taxPaid.error.incorrectFormat",
-    exceedsMaxAmountKey2 = s"lifetimeAllowance.pensionLumpSumDetails.taxPaid.error.overMaximum"
+    wrongFormatKey2 = s"common.taxPaid.error.incorrectFormat",
+    exceedsMaxAmountKey2 = s"common.taxPaid.error.overMaximum"
   )
 
 

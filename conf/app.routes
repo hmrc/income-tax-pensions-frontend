@@ -152,3 +152,11 @@ POST        /:taxYear/unauthorised-payments-from-pensions/amount-surcharged     
 
 GET         /:taxYear/unauthorised-payments-from-pensions/tax-on-amount-surcharged         controllers.pensions.unauthorisedPayments.DidYouPayNonUkTaxController.show(taxYear: Int)
 POST        /:taxYear/unauthorised-payments-from-pensions/tax-on-amount-surcharged         controllers.pensions.unauthorisedPayments.DidYouPayNonUkTaxController.submit(taxYear: Int)
+
+
+###########################     Lifetime Allowance Pages     ####################################
+
+GET         /:taxYear/annual-lifetime-allowances/lifetime-allowance-another-way-details     controllers.pensions.lifetimeAllowance.PensionTakenAnotherWayAmountController.show(taxYear: Int)
+POST        /:taxYear/annual-lifetime-allowances/lifetime-allowance-another-way-details     controllers.pensions.lifetimeAllowance.PensionTakenAnotherWayAmountController.submit(taxYear: Int)
+
+

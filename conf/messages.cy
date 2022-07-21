@@ -51,6 +51,16 @@ common.error.self-assessment.paragraph.1.3a = to speak to someone about your inc
 common.useCalculator.paragraph.link = if you need to work this out
 common.useCalculator.paragraph = Use a calculator
 
+################# Common lifetime allowance #################
+
+common.lifetimeAllowance.Pension.checkWithProvider.Paragraph.individual = Check with your pension providers if you’re unsure.
+common.lifetimeAllowance.Pension.checkWithProvider.Paragraph.agent = Your client can check with their pension provider if you’re unsure.
+common.total.taxPaid.title = Total tax paid
+common.totalAmount.beforeTax.title = Total amount before tax
+common.beforeTax.error.overMaximum = The amount of lifetime allowance must be less than 100,000,000,000
+common.taxPaid.error.incorrectFormat = Enter the amount of lifetime allowance tax in the correct format
+common.taxPaid.error.overMaximum = The amount of lifetime allowance tax must be less than 100,000,000,000
+
 #################       Error messages        ########################################
 
 error.agent.title = There’s a problem
@@ -543,24 +553,16 @@ lifetimeAllowance.lifeTimeAllowanceAnotherWay.error.noEntry.agent = Select yes i
 
 #Pension Lump Sum Details
 lifetimeAllowance.pensionLumpSumDetails.title.individual = Your pension lump sum
-lifetimeAllowance.pensionLumpSumDetails.paragraph.individual = Check with your pension providers if you’re unsure.
-lifetimeAllowance.pensionLumpSumDetails.beforeTax.title = Total amount before tax
 lifetimeAllowance.pensionLumpSumDetails.beforeTax.paragraph.individual = If you got a lump sum payment from more than one pension scheme, give the total.
-lifetimeAllowance.pensionLumpSumDetails.taxPaid.title = Total tax paid
 lifetimeAllowance.pensionLumpSumDetails.taxPaid.paragraph.individual = If more than one of your pension schemes paid lifetime allowance tax, give the total.
 lifetimeAllowance.pensionLumpSumDetails.title.agent = Your client’s pensions lump sum
-lifetimeAllowance.pensionLumpSumDetails.paragraph.agent = Your client can check with their pension provider if you’re unsure.
 lifetimeAllowance.pensionLumpSumDetails.beforeTax.paragraph.agent = If your client got a lump sum payment from more than one pension scheme, give the total.
 lifetimeAllowance.pensionLumpSumDetails.taxPaid.paragraph.agent = If more than one of your client’s pension schemes paid lifetime allowance tax, give the total.
 lifetimeAllowance.pensionLumpSumDetails.beforeTax.error.noEntry.individual = Enter the amount you took above your lifetime allowance as a lump sum
 lifetimeAllowance.pensionLumpSumDetails.beforeTax.error.noEntry.agent = Enter the amount your client took above their lifetime allowance as a lump sum
 lifetimeAllowance.pensionLumpSumDetails.beforeTax.error.incorrectFormat = Enter the amount of lump sum in the correct format
-lifetimeAllowance.pensionLumpSumDetails.beforeTax.error.overMaximum = The amount of lifetime allowance must be less than 100,000,000,000
 lifetimeAllowance.pensionLumpSumDetails.taxPaid.error.noEntry.individual = Enter the amount of lifetime allowance tax your pension provider paid or agreed to pay on the lump sum
 lifetimeAllowance.pensionLumpSumDetails.taxPaid.error.noEntry.agent = Enter the amount of lifetime allowance tax your client’s pension provider paid or agreed to pay on the lump sum
-lifetimeAllowance.pensionLumpSumDetails.taxPaid.error.incorrectFormat = Enter the amount of lifetime allowance tax in the correct format
-lifetimeAllowance.pensionLumpSumDetails.taxPaid.error.overMaximum = The amount of lifetime allowance tax must be less than 100,000,000,000
-
 
 #Surcharge Amount
 unauthorisedPayments.surchargeAmount.title = Amount that resulted in a surcharge
@@ -569,6 +571,7 @@ unauthorisedPayments.surchargeAmount.giveTotal.agent = Give a total of unauthori
 unauthorisedPayments.surchargeAmount.tellUsAbout = You can tell us about unauthorised payments that did not result in a surcharge later.
 unauthorisedPayments.surchargeAmount.error.noEntry = Enter the total amount of unauthorised payment that resulted in a surcharge
 unauthorisedPayments.surchargeAmount.error.incorrectFormat = Enter the total amount in the correct format
+
 #Did you pay non-UK tax that resulted in a surcharge
 unauthorisedPayments.didYouPayNonUkTax.title.individual = Did you pay non-UK tax on the amount that resulted in a surcharge?
 unauthorisedPayments.didYouPayNonUkTax.title.agent = Did your client pay non-UK tax on the amount that resulted in a surcharge?
@@ -577,5 +580,24 @@ unauthorisedPayments.didYouPayNonUkTax.Amount.Text = Total non-UK tax in pounds
 unauthorisedPayments.didYouPayNonUkTax.error.Amount.noEntry = Enter the amount of non-UK tax paid
 unauthorisedPayments.didYouPayNonUkTax.error.Amount.incorrectFormat = Enter the amount of non-UK tax in the correct format
 unauthorisedPayments.didYouPayNonUkTax.error.Amount.overMaximum = The amount of non-UK tax paid must be less than £100,000,000,000
+
+
+#Pension Taken In Another Way
+lifetimeAllowance.pensionTakenAnotherWay.title.individual = Your pension taken in another way
+lifetimeAllowance.pensionTakenAnotherWay.title.agent = Your client’s pension taken in another way
+lifetimeAllowance.pensionTakenAnotherWay.paragraph.one.individual = Tell us the amount above your lifetime allowance you’ve taken in other ways. This could be regular payments or a cash withdrawal.
+lifetimeAllowance.pensionTakenAnotherWay.paragraph.one.agent = Tell us the amount above your client’s lifetime allowance they’ve taken in other ways. This could be regular payments or a cash withdrawal.
+lifetimeAllowance.pensionTakenAnotherWay.beforeTax.paragraph.individual = If you got payments from more than one pension scheme, give the total.
+lifetimeAllowance.pensionTakenAnotherWay.beforeTax.paragraph.agent = If your client got payments from more than one pension scheme, give the total.
+lifetimeAllowance.pensionTakenAnotherWay.taxPaid.paragraph = If more than one pension scheme paid the lifetime allowance tax, give the total.
+lifetimeAllowance.pensionTakenAnotherWay.beforeTax.error.noEntry.individual = Enter the amount you took above your lifetime allowance in another way
+lifetimeAllowance.pensionTakenAnotherWay.beforeTax.error.noEntry.agent = Enter the amount your client took above their lifetime allowance in another way
+lifetimeAllowance.pensionTakenAnotherWay.beforeTax.error.incorrectFormat.individual = Enter the amount you took above your lifetime allowance in the correct format
+lifetimeAllowance.pensionTakenAnotherWay.beforeTax.error.incorrectFormat.agent = Enter the amount your client took above their lifetime allowance in the correct format
+lifetimeAllowance.pensionTakenAnotherWay.taxPaid.error.noEntry.individual = Enter the amount of lifetime allowance tax your pension provider paid or agreed to pay on the amount taken in another way
+lifetimeAllowance.pensionTakenAnotherWay.taxPaid.error.noEntry.agent = Enter the amount of lifetime allowance tax your client’s pension provider paid or agreed to pay on the amount taken in another way
+
+
+
 
 
