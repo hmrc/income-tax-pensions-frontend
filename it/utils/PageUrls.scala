@@ -148,6 +148,8 @@ object PageUrls extends IntegrationTest {
 
   object unauthorisedPaymentsPages {
     def didYouPayNonUkTaxUrl( taxYear: Int): String = s"$appUrl/$taxYear/unauthorised-payments-from-pensions/tax-on-amount-surcharged"
+
+    def nonUKTaxOnAmountSurcharge( taxYear: Int): String = s"$appUrl/$taxYear/unauthorised-payments-from-pensions/tax-on-amount-not-surcharged"
   }
 
 }

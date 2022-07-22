@@ -46,9 +46,9 @@ object RadioButtonAmountForm {
 
   def amountFormatter(
                        requiredKey: String,
-                      wrongFormatKey: String = "common.error.invalid_currency_format",
-                      maxAmountKey: String = "common.error.amountMaxLimit",
-                      args: Seq[String] = Seq.empty[String]): Formatter[Option[BigDecimal]] = {
+                       wrongFormatKey: String = "common.error.invalid_currency_format",
+                       maxAmountKey: String = "common.error.amountMaxLimit",
+                       args: Seq[String] = Seq.empty[String]): Formatter[Option[BigDecimal]] = {
     new Formatter[Option[BigDecimal]] {
 
       val optionalCurrency: FieldMapping[Option[BigDecimal]] = optionCurrency(requiredKey = requiredKey,
