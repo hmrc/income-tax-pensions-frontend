@@ -244,7 +244,8 @@ class WhereAnyOfTheUnauthorisedPaymentsControllerISpec extends IntegrationTest w
 
      "has a SEE_OTHER(303) status and redirect to Pension Scheme Tax Reference (PSTR) Page" in {
        result.status shouldBe SEE_OTHER
-       result.header("location") shouldBe Some(pstrSummaryUrl(taxYearEOY))
+       //TODO - redirect to "Pension Scheme Tax Reference PSTR" page once implemented
+       result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
      }
 
      "updates ukPensionSchemesQuestion to Some(true)" in {

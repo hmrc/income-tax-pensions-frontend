@@ -85,7 +85,8 @@ class WhereAnyOfTheUnauthorisedPaymentsController @Inject()(implicit val cc: Mes
               pensionSessionService.createOrUpdateSessionData(request.user,
                 updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
                 if (yesNo) {
-                  Redirect(PstrSummaryController.show(taxYear))
+                  //TODO - redirect to "Pension Scheme Tax Reference PSTR" page once implemented
+                  Redirect(PensionsSummaryController.show(taxYear))
                 } else {
                   //TODO - redirect to "Check your unauthorised payments page" page once implemented
                   Redirect(PensionsSummaryController.show(taxYear))
