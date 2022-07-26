@@ -150,8 +150,10 @@ object PageUrls extends IntegrationTest {
     def didYouPayNonUkTaxUrl( taxYear: Int): String = s"$appUrl/$taxYear/unauthorised-payments-from-pensions/tax-on-amount-surcharged"
 
     def nonUKTaxOnAmountSurcharge( taxYear: Int): String = s"$appUrl/$taxYear/unauthorised-payments-from-pensions/tax-on-amount-not-surcharged"
+
+    def whereAnyOfTheUnauthorisedPaymentsUrl( taxYear: Int): String = s"$appUrl/$taxYear/unauthorised-payments-from-pensions/uk-pension-scheme"
+
   }
 
 }
-
 //scalastyle:on number.of.methods
