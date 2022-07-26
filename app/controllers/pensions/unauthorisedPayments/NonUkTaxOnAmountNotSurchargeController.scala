@@ -18,7 +18,7 @@ package controllers.pensions.unauthorisedPayments
 
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.routes.PensionsSummaryController
-import controllers.pensions.unauthorisedPayments.routes.NonUkTaxOnAmountNotSurchargeController
+import controllers.pensions.unauthorisedPayments.routes.{NonUkTaxOnAmountNotSurchargeController, WhereAnyOfTheUnauthorisedPaymentsController}
 import controllers.predicates.AuthorisedAction
 import forms.{RadioButtonAmountForm, YesNoForm}
 import controllers.predicates.TaxYearAction.taxYearAction
@@ -32,8 +32,8 @@ import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.unauthorisedPayments.NonUkTaxOnAmountNotSurchargeView
-import scala.concurrent.{ExecutionContext, Future}
 
+import scala.concurrent.{ExecutionContext, Future}
 import javax.inject.Inject
 
 class NonUkTaxOnAmountNotSurchargeController @Inject()(implicit val cc: MessagesControllerComponents,
@@ -86,8 +86,7 @@ class NonUkTaxOnAmountNotSurchargeController @Inject()(implicit val cc: Messages
                 }
                 pensionSessionService.createOrUpdateSessionData(request.user,
                   updatedCyaModel, taxYear, optData.isPriorSubmission)(errorHandler.internalServerError()) {
-                  //TODO: next page (were any of the unauthorised payments from a uk pension scheme page)
-                  Redirect(NonUkTaxOnAmountNotSurchargeController.show(taxYear))
+                  Redirect(WhereAnyOfTheUnauthorisedPaymentsController.show(taxYear))
                 }
               }
             )

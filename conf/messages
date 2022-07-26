@@ -582,6 +582,9 @@ unauthorisedPayments.didYouPayNonUkTax.title.individual = Did you pay non-UK tax
 unauthorisedPayments.didYouPayNonUkTax.title.agent = Did your client pay non-UK tax on the amount that resulted in a surcharge?
 unauthorisedPayments.didYouPayNonUkTax.error.noEntry = Select yes if you paid non-UK tax on the amount surcharged
 
+#Where any of the unauthorised payments from a UK pension scheme?
+unauthorisedPayments.whereAnyOfTheUnauthorisedPayments.title = Were any of the unauthorised payments from a UK pension scheme?
+unauthorisedPayments.whereAnyOfTheUnauthorisedPayments.error.noEntry = Select yes if you got an unauthorised payment from a pension scheme
 
 #Did you pay non-UK tax that did not result in a surcharge
 unauthorisedPayments.nonUkTaxOnAmountNotSurcharge.title.individual = Did you pay non-UK tax on the amount that did not result in a surcharge?

@@ -144,6 +144,7 @@ POST        /:taxYear/annual-lifetime-allowances/lump-sum-details               
 GET         /:taxYear/pension-income/uk-pension-income/check-pension-income                 controllers.pensions.incomeFromPensions.UkPensionIncomeCYAController.show(taxYear: Int)
 POST        /:taxYear/pension-income/uk-pension-income/check-pension-income                 controllers.pensions.incomeFromPensions.UkPensionIncomeCYAController.submit(taxYear: Int)
 
+
 ###########################     Unauthorised Payments Pages     ####################################
 
 GET         /:taxYear/unauthorised-payments-from-pensions/amount-surcharged        controllers.pensions.unauthorisedPayments.SurchargeAmountController.show(taxYear: Int)
@@ -154,3 +155,6 @@ POST        /:taxYear/unauthorised-payments-from-pensions/tax-on-amount-surcharg
 
 GET         /:taxYear/unauthorised-payments-from-pensions/tax-on-amount-not-surcharged      controllers.pensions.unauthorisedPayments.NonUkTaxOnAmountNotSurchargeController.show(taxYear: Int)
 POST        /:taxYear/unauthorised-payments-from-pensions/tax-on-amount-not-surcharged      controllers.pensions.unauthorisedPayments.NonUkTaxOnAmountNotSurchargeController.submit(taxYear: Int)
+
+GET         /:taxYear/unauthorised-payments-from-pensions/uk-pension-scheme         controllers.pensions.unauthorisedPayments.WhereAnyOfTheUnauthorisedPaymentsController.show(taxYear: Int)
+POST        /:taxYear/unauthorised-payments-from-pensions/uk-pension-scheme         controllers.pensions.unauthorisedPayments.WhereAnyOfTheUnauthorisedPaymentsController.submit(taxYear: Int)

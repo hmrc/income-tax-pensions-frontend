@@ -18,7 +18,7 @@ package controllers.pensions.unauthorisedPayments
 
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.routes.PensionsSummaryController
-import controllers.pensions.unauthorisedPayments.routes.DidYouPayNonUkTaxController
+import controllers.pensions.unauthorisedPayments.routes.{DidYouPayNonUkTaxController, WhereAnyOfTheUnauthorisedPaymentsController}
 import controllers.predicates.AuthorisedAction
 import forms.RadioButtonAmountForm
 import models.mongo.PensionsCYAModel
@@ -96,8 +96,7 @@ class DidYouPayNonUkTaxController @Inject()(implicit val cc: MessagesControllerC
               }
               pensionSessionService.createOrUpdateSessionData(request.user,
                 updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
-                //TODO: next page (were any of the unauthorised payments from a uk pension scheme page)
-                Redirect(DidYouPayNonUkTaxController.show(taxYear))
+                Redirect(WhereAnyOfTheUnauthorisedPaymentsController.show(taxYear))
               }
             }
           )

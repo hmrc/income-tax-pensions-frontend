@@ -449,8 +449,7 @@ class NonUkTaxOnAmountNotSurchargeControllerISpec extends IntegrationTest with V
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        //todo redirect to Unauthorised payments question page
-        result.header("location") shouldBe Some(controllers.pensions.unauthorisedPayments.routes.NonUkTaxOnAmountNotSurchargeController.show(taxYearEOY).url)
+        result.header("location") shouldBe Some(controllers.pensions.unauthorisedPayments.routes.WhereAnyOfTheUnauthorisedPaymentsController.show(taxYearEOY).url)
       }
 
       "updates did you non uk tax on the amount that resulted in a surcharge page to  Some(true) with valid amount" in {
@@ -477,8 +476,7 @@ class NonUkTaxOnAmountNotSurchargeControllerISpec extends IntegrationTest with V
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        //todo redirect to Unauthorised payments question page
-        result.header("location") shouldBe Some(controllers.pensions.unauthorisedPayments.routes.NonUkTaxOnAmountNotSurchargeController.show(taxYearEOY).url)
+        result.header("location") shouldBe Some(controllers.pensions.unauthorisedPayments.routes.WhereAnyOfTheUnauthorisedPaymentsController.show(taxYearEOY).url)
       }
 
       "updates did you non uk tax on the amount that resulted in a surcharge page to  Some(false) with amount set to 0" in {
