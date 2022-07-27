@@ -92,6 +92,9 @@ POST        /:taxYear/annual-allowance/pension-scheme-tax-reference             
 
 GET         /:taxYear/annual-allowance/pension-scheme-tax-reference-summary                 controllers.pensions.annualAllowance.PstrSummaryController.show(taxYear: Int)
 
+GET         /:taxYear/annual-lifetime-allowance/annual-lifetime-allowance-status            controllers.pensions.unauthorisedPayments.AnnualLifetimeAllowanceGatewayController.show(taxYear: Int)
+POST        /:taxYear/annual-lifetime-allowance/annual-lifetime-allowance-status            controllers.pensions.unauthorisedPayments.AnnualLifetimeAllowanceGatewayController.submit(taxYear: Int)
+
 ###########################     Income from Pension pages     ####################################
 
 GET         /:taxYear/pension-income/income-from-pensions                                   controllers.pensions.incomeFromPensions.IncomeFromPensionsGatewayController.show(taxYear:Int)
