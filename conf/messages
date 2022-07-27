@@ -549,14 +549,13 @@ lifetimeAllowance.aboveAnnualLifeTimeAllowance.error.noEntry.agent = Select yes 
 
 #Annual Lifetime Allowance Gateway
 annualAndLifetimeAllowance.gateway.title.individual = Have you gone above your annual allowance or lifetime allowance?
-annualAndLifetimeAllowance.gateway.title.client = Has your client gone above their annual allowance or lifetime allowance?
+annualAndLifetimeAllowance.gateway.title.agent = Has your client gone above their annual allowance or lifetime allowance?
 annualAndLifetimeAllowance.gateway.line1.individual = Your pension providers would have told you if you went above your lifetime allowance.
-annualAndLifetimeAllowance.gateway.line1.client = Your client’s pension providers would have told them if they went above their lifetime allowance.
-annualAndLifetimeAllowance.gateway.line2 = Find out more about lifetime allowance (opens in new tab)
-annualAndLifetimeAllowance.gateway.line3.start = Use a calculator
-annualAndLifetimeAllowance.gateway.line3.end = if you need to work out your annual allowance (opens in new tab)
-AnnualAndLifetimeAllowance.gateway.error.individual = Select yes  if you have a reduced annual allowance
-AnnualAndLifetimeAllowance.gateway.error.client = Select yes if your client has a reduced annual allowance
+annualAndLifetimeAllowance.gateway.line1.agent = Your client’s pension providers would have told them if they went above their lifetime allowance.
+annualAndLifetimeAllowance.gateway.line2 = Find out more about lifetime allowance
+annualAndLifetimeAllowance.gateway.line3.end = if you need to work out your annual allowance
+AnnualAndLifetimeAllowance.gateway.error.individual = Select yes if you have gone above your annual allowance or lifetime allowance
+AnnualAndLifetimeAllowance.gateway.error.agent = Select yes if your client has gone above your annual allowance or lifetime allowance
 
 #Did you take the amount above your lifetime allowance another way
 lifetimeAllowance.lifeTimeAllowanceAnotherWay.tittle.individual = Did you take the amount above your lifetime allowance another way?

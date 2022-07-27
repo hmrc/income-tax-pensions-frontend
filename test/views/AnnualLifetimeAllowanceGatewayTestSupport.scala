@@ -24,6 +24,7 @@ import org.jsoup.nodes.Document
 import play.api.i18n.Messages
 import play.api.mvc.AnyContent
 import support.ViewUnitTest
+import views.html.pensions.lifetimeAllowance.AnnualLifetimeAllowanceGatewayView
 
 class AnnualLifetimeAllowanceGatewayTestSupport extends ViewUnitTest {
 
@@ -53,21 +54,21 @@ class AnnualLifetimeAllowanceGatewayTestSupport extends ViewUnitTest {
   }
 
   object CommonExpectedEN extends CommonExpectedResults {
-    override val expectedCaption: Int => String = (taxYear: Int) => s"Annual allowance and lifetime allowance for for 6 April ${taxYear - 1} to 5 April $taxYear"
+    override val expectedCaption: Int => String = (taxYear: Int) => s"Annual and lifetime allowances for 6 April ${taxYear - 1} to 5 April $taxYear"
     override val expectedYesText: String = "Yes"
     override val expectedNoText: String = "No"
     override val expectedButtonText: String = "Continue"
-    override val expectedCalculatorText = "Use a calculator if you need to work out your annual allowance (opens in new tab)."
-    override val expectedFindOutMoreText = "Find out more about unauthorised payments (opens in new tab)"
+    override val expectedCalculatorText = "if you need to work out your annual allowance (opens in new tab)"
+    override val expectedFindOutMoreText = "Find out more about lifetime allowance (opens in new tab)"
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    override val expectedCaption: Int => String = (taxYear: Int) => s"Unauthorised payments from pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
+    override val expectedCaption: Int => String = (taxYear: Int) => s"Annual and lifetime allowances for 6 April ${taxYear - 1} to 5 April $taxYear"
     override val expectedYesText: String = "Yes"
     override val expectedNoText: String = "No"
     override val expectedButtonText: String = "Continue"
-    override val expectedCalculatorText = "Use a calculator if you need to work out your annual allowance (opens in new tab)."
-    override val expectedFindOutMoreText = "Find out more about unauthorised payments (opens in new tab)"
+    override val expectedCalculatorText = "os oes angen i chi gyfrifo’ch lwfans blynyddol (opens in new tab)"
+    override val expectedFindOutMoreText = "Dysgwch ragor am lwfans oes (opens in new tab)"
   }
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
@@ -78,10 +79,10 @@ class AnnualLifetimeAllowanceGatewayTestSupport extends ViewUnitTest {
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
-    override val expectedTitleText: String = "Have you gone above your annual allowance or lifetime allowance?"
-    override val expectedErrorText = "Select yes  if your client has a reduced annual allowance"
+    override val expectedTitleText: String = "Has your client gone above their annual allowance or lifetime allowance?"
+    override val expectedErrorText = "Select yes if your client has gone above your annual allowance or lifetime allowance"
     override val expectedErrorTitleText: String = s"Error: $expectedTitleText"
-    override val expectedText = "Your client's pension providers would have told them if they went above their lifetime allowance."
+    override val expectedText = "Your client’s pension providers would have told them if they went above their lifetime allowance."
 
   }
 
@@ -89,7 +90,7 @@ class AnnualLifetimeAllowanceGatewayTestSupport extends ViewUnitTest {
     override val expectedTitleText: String = "A ydych wedi mynd yn uwch na’ch lwfans blynyddol neu lwfans oes?"
     override val expectedErrorTitleText: String = s"Error: $expectedTitleText"
     override val expectedErrorText: String = "Dewiswch ‘Iawn’ os oes gennych lwfans blynyddol gostyngol"
-    override val expectedText = "A yw’ch cleient wedi mynd dros ei lwfans blynyddol neu lwfans oes?"
+    override val expectedText = "Byddai’ch darparwyr pensiwn wedi rhoi gwybod i chi pe baech yn mynd dros eich lwfans oes."
 
   }
 
@@ -98,15 +99,14 @@ class AnnualLifetimeAllowanceGatewayTestSupport extends ViewUnitTest {
     override val expectedErrorTitleText: String = s"Error: $expectedTitleText"
     override val expectedErrorText: String = "Dewiswch ‘Iawn’ os oes gan eich cleient lwfans blynyddol gostyngol"
     override val expectedText = "Byddai darparwyr pensiwn eich cleient wedi rhoi gwybod iddo os oedd wedi mynd dros ei lwfans oes."
-
   }
 
 
   override protected val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(
-    UserScenario(isWelsh = false, isAgent = false, CommonExpectedEN),
-    UserScenario(isWelsh = false, isAgent = true, CommonExpectedEN),
-    UserScenario(isWelsh = true, isAgent = false, CommonExpectedCY),
-    UserScenario(isWelsh = true, isAgent = true, CommonExpectedCY)
+    UserScenario(isWelsh = false, isAgent = false, CommonExpectedEN, Some(ExpectedIndividualEN)),
+    UserScenario(isWelsh = false, isAgent = true, CommonExpectedEN, Some(ExpectedAgentEN)),
+    UserScenario(isWelsh = true, isAgent = false, CommonExpectedCY, Some(ExpectedIndividualCY)),
+    UserScenario(isWelsh = true, isAgent = true, CommonExpectedCY, Some(ExpectedAgentCY))
   )
 
   private lazy val underTest = inject[AnnualLifetimeAllowanceGatewayView]
@@ -114,7 +114,7 @@ class AnnualLifetimeAllowanceGatewayTestSupport extends ViewUnitTest {
   userScenarios.foreach { userScenario =>
 
     val form = YesNoForm.yesNoForm(
-      missingInputError = s"unauthorisedPayments.gateway.error.${if (userScenario.isAgent) "agent" else "individual"}"
+      missingInputError = s"AnnualAndLifetimeAllowance.gateway.error.${if (userScenario.isAgent) "agent" else "individual"}"
     )
 
     s"language is ${welshTest(userScenario.isWelsh)} and request is from an ${agentTest(userScenario.isAgent)}" should {
@@ -133,7 +133,7 @@ class AnnualLifetimeAllowanceGatewayTestSupport extends ViewUnitTest {
         textOnPageCheck(userScenario.commonExpectedResults.expectedCalculatorText, Selectors.calculatorLinkSelector)
         radioButtonCheck(userScenario.commonExpectedResults.expectedYesText, radioNumber = 1, checked = false)
         radioButtonCheck(userScenario.commonExpectedResults.expectedNoText, radioNumber = 2, checked = false)
-        formPostLinkCheck(AboveAnnualLifeTimeAllowanceController.submit(taxYearEOY).url, Selectors.continueButtonFormSelector)
+        formPostLinkCheck(AnnualLifetimeAllowanceGatewayController.submit(taxYearEOY).url, Selectors.continueButtonFormSelector)
         buttonCheck(userScenario.commonExpectedResults.expectedButtonText, Selectors.buttonSelector)
       }
 
@@ -152,7 +152,7 @@ class AnnualLifetimeAllowanceGatewayTestSupport extends ViewUnitTest {
         textOnPageCheck(userScenario.commonExpectedResults.expectedCalculatorText, Selectors.calculatorLinkSelector)
         radioButtonCheck(userScenario.commonExpectedResults.expectedYesText, radioNumber = 1, checked = true)
         radioButtonCheck(userScenario.commonExpectedResults.expectedNoText, radioNumber = 2, checked = false)
-        formPostLinkCheck(AboveAnnualLifeTimeAllowanceController.submit(taxYearEOY).url, Selectors.continueButtonFormSelector)
+        formPostLinkCheck(AnnualLifetimeAllowanceGatewayController.submit(taxYearEOY).url, Selectors.continueButtonFormSelector)
         buttonCheck(userScenario.commonExpectedResults.expectedButtonText, Selectors.buttonSelector)
       }
 
@@ -171,7 +171,7 @@ class AnnualLifetimeAllowanceGatewayTestSupport extends ViewUnitTest {
         textOnPageCheck(userScenario.commonExpectedResults.expectedCalculatorText, Selectors.calculatorLinkSelector)
         radioButtonCheck(userScenario.commonExpectedResults.expectedYesText, radioNumber = 1, checked = false)
         radioButtonCheck(userScenario.commonExpectedResults.expectedNoText, radioNumber = 2, checked = true)
-        formPostLinkCheck(AboveAnnualLifeTimeAllowanceController.submit(taxYearEOY).url, Selectors.continueButtonFormSelector)
+        formPostLinkCheck(AnnualLifetimeAllowanceGatewayController.submit(taxYearEOY).url, Selectors.continueButtonFormSelector)
         buttonCheck(userScenario.commonExpectedResults.expectedButtonText, Selectors.buttonSelector)
       }
 
@@ -189,7 +189,7 @@ class AnnualLifetimeAllowanceGatewayTestSupport extends ViewUnitTest {
         textOnPageCheck(userScenario.commonExpectedResults.expectedCalculatorText, Selectors.calculatorLinkSelector)
         radioButtonCheck(userScenario.commonExpectedResults.expectedYesText, radioNumber = 1, checked = false)
         radioButtonCheck(userScenario.commonExpectedResults.expectedNoText, radioNumber = 2, checked = false)
-        formPostLinkCheck(AboveAnnualLifeTimeAllowanceController.submit(taxYearEOY).url, Selectors.continueButtonFormSelector)
+        formPostLinkCheck(AnnualLifetimeAllowanceGatewayController.submit(taxYearEOY).url, Selectors.continueButtonFormSelector)
         buttonCheck(userScenario.commonExpectedResults.expectedButtonText, Selectors.buttonSelector)
 
         errorSummaryCheck(userScenario.specificExpectedResults.get.expectedErrorText, Selectors.expectedErrorHref)

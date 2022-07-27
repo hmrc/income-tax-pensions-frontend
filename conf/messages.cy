@@ -555,14 +555,13 @@ lifetimeAllowance.aboveAnnualLifeTimeAllowance.error.noEntry.agent = Select yes 
 
 #Annual Lifetime Allowance Gateway
 annualAndLifetimeAllowance.gateway.title.individual = A ydych wedi mynd yn uwch na’ch lwfans blynyddol neu lwfans oes?
-annualAndLifetimeAllowance.gateway.title.client = A yw’ch cleient wedi mynd dros ei lwfans blynyddol neu lwfans oes?
+annualAndLifetimeAllowance.gateway.title.agent = A yw’ch cleient wedi mynd dros ei lwfans blynyddol neu lwfans oes?
 annualAndLifetimeAllowance.gateway.line1.individual = Byddai’ch darparwyr pensiwn wedi rhoi gwybod i chi pe baech yn mynd dros eich lwfans oes.
-annualAndLifetimeAllowance.gateway.line1.client = Byddai darparwyr pensiwn eich cleient wedi rhoi gwybod iddo os oedd wedi mynd dros ei lwfans oes.
-annualAndLifetimeAllowance.gateway.line2 = Dysgwch ragor am lwfans oes (yn agor tab newydd)
-annualAndLifetimeAllowance.gateway.line3.start = Defnyddiwch gyfrifiannell
-annualAndLifetimeAllowance.gateway.line3.end = os oes angen i chi gyfrifo’ch lwfans blynyddol (yn agor tab newydd).
+annualAndLifetimeAllowance.gateway.line1.agent = Byddai darparwyr pensiwn eich cleient wedi rhoi gwybod iddo os oedd wedi mynd dros ei lwfans oes.
+annualAndLifetimeAllowance.gateway.line2 = Dysgwch ragor am lwfans oes
+annualAndLifetimeAllowance.gateway.line3.end = os oes angen i chi gyfrifo’ch lwfans blynyddol
 AnnualAndLifetimeAllowance.gateway.error.individual = Dewiswch ‘Iawn’ os oes gennych lwfans blynyddol gostyngol
-AnnualAndLifetimeAllowance.gateway.error.client = Dewiswch ‘Iawn’ os oes gan eich cleient lwfans blynyddol gostyngol
+AnnualAndLifetimeAllowance.gateway.error.agent = Dewiswch ‘Iawn’ os oes gan eich cleient lwfans blynyddol gostyngol
 
 #Did you take the amount above your lifetime allowance another way
 lifetimeAllowance.lifeTimeAllowanceAnotherWay.tittle.individual = Did you take the amount above your lifetime allowance another way?
