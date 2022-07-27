@@ -63,6 +63,8 @@ common.aboutGeneralIncreases.individual = y llythyr ’Ynglŷn â’r cynnydd cy
 common.yourP60.agent = P60 eich cleient
 common.aboutGeneralIncreases.agent = y llythyr ’Ynglŷn â’r cynnydd cyffredinol mewn budd-daliadau’ a anfonwyd at eich cleient gan y Gwasanaeth Pensiwn
 
+common.employerFinancedRetirementScheme.caption = Cynlluniau buddiannau ymddeol a ariannwyd gan gyflogwyr ar gyfer 6 Ebrill {0} i 5 Ebrill {1}
+
 #################       Error messages        ########################################
 
 error.agent.title = There’s a problem
@@ -613,3 +615,12 @@ unauthorisedPayments.whereAnyOfTheUnauthorisedPayments.error.noEntry = Select ye
 unauthorisedPayments.nonUkTaxOnAmountNotSurcharge.title.individual = Did you pay non-UK tax on the amount that did not result in a surcharge?
 unauthorisedPayments.nonUkTaxOnAmountNotSurcharge.title.agent = Did your client pay non-UK tax on the amount that did not result in a surcharge?
 unauthorisedPayments.nonUkTaxOnAmountNotSurcharge.error.noEntry = Select yes if you paid non-UK tax on the amount not surcharged
+
+#Do you have an employer-financed retirement scheme?
+employerFinancedRetirementScheme.benefitsFromScheme.title = Cynlluniau buddiannau ymddeol a ariannwyd gan gyflogwyr
+employerFinancedRetirementScheme.benefitsFromScheme.paragraph.1 = Os nad yw cynllun pensiwn yn gofrestredig, gallai fod yn gynllun buddiant ymddeol a ariannwyd gan gyflogwyr (EFRBS).
+employerFinancedRetirementScheme.benefitsFromScheme.paragraph.2 = Cynllun yw EFRBS sy’n talu rhai buddiannau ymddeoliad neu farwolaeth ar gyfer gweithwyr neu gyn-weithwyr, a elwir yn ‘fuddiannau perthnasol’.
+employerFinancedRetirementScheme.benefitsFromScheme.question.individual = A oes gennych gynllun ymddeol a ariannwyd gan gyflogwr?
+employerFinancedRetirementScheme.benefitsFromScheme.question.agent = A oes gan eich cleient gynllun ymddeol a ariannwyd gan gyflogwr?
+employerFinancedRetirementScheme.benefitsFromScheme.error.individual = Dewiswch ‘Iawn’ os oes gennych gynllun buddiannau ymddeol a ariannwyd gan gyflogwyr
+employerFinancedRetirementScheme.benefitsFromScheme.error.agent = Dewiswch ‘Iawn’ os oes gan eich cleient gynllun buddiannau ymddeol a ariannwyd gan gyflogwyr

@@ -63,6 +63,7 @@ common.aboutGeneralIncreases.individual = the ’About general increases in bene
 common.yourP60.agent = your client’s P60
 common.aboutGeneralIncreases.agent = the ’About general increases in benefits’ letter the Pension Service sent your client
 
+common.employerFinancedRetirementScheme.caption = Employer-financed retirement benefits schemes for 6 April {0} to 5 April {1}
 
 #################       Error messages        ########################################
 
@@ -610,3 +611,12 @@ unauthorisedPayments.whereAnyOfTheUnauthorisedPayments.error.noEntry = Select ye
 unauthorisedPayments.nonUkTaxOnAmountNotSurcharge.title.individual = Did you pay non-UK tax on the amount that did not result in a surcharge?
 unauthorisedPayments.nonUkTaxOnAmountNotSurcharge.title.agent = Did your client pay non-UK tax on the amount that did not result in a surcharge?
 unauthorisedPayments.nonUkTaxOnAmountNotSurcharge.error.noEntry = Select yes if you paid non-UK tax on the amount not surcharged
+
+#Do you have an employer-financed retirement scheme?
+employerFinancedRetirementScheme.benefitsFromScheme.title = Employer-financed retirement benefits schemes
+employerFinancedRetirementScheme.benefitsFromScheme.paragraph.1 = If a pension scheme is not a registered it might be an employer-financed retirement benefit scheme (EFRBS).
+employerFinancedRetirementScheme.benefitsFromScheme.paragraph.2 = An EFRBS is a scheme that pays certain retirement or death benefits for employees or former employees called ''relevant benefits''.
+employerFinancedRetirementScheme.benefitsFromScheme.question.individual = Do you have an employer-financed retirement scheme?
+employerFinancedRetirementScheme.benefitsFromScheme.question.agent = Does your client have an employer-financed retirement scheme?
+employerFinancedRetirementScheme.benefitsFromScheme.error.individual = Select yes if you have an employer-financed retirement benefits scheme
+employerFinancedRetirementScheme.benefitsFromScheme.error.agent = Select yes if your client has an employer-financed retirement benefits scheme
