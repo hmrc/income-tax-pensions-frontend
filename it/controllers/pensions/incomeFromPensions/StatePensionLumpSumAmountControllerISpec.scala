@@ -91,8 +91,8 @@ class StatePensionLumpSumAmountControllerISpec extends IntegrationTest with View
     val expectedCaption: Int => String = (taxYear: Int) => s"Income from pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
     val hintText = "For example, £193.52"
     val buttonText = "Continue"
-    val expectedWhereToFindThisInformation = "Where to find this information"
-    val expectedYouCanFindThisInformationIn = "You can find this information in:"
+    val expectedWhereToFindThisInformation = "Ble i ddod o hyd i’r wybodaeth hon"
+    val expectedYouCanFindThisInformationIn = "Gallwch ddod o hyd i’r wybodaeth hon yn:"
   }
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
@@ -103,7 +103,7 @@ class StatePensionLumpSumAmountControllerISpec extends IntegrationTest with View
     val invalidFormatErrorText = "Enter your State Pension lump sum amount in the correct format"
     val maxAmountErrorText = "Your State Pension lump sum amount must be less than £100,000,000,000"
     val expectedDetailsExample1 = "your P60"
-    val expectedDetailsExample2 = "the ‘About general increases in benefits’ letter the Pension Service sent you"
+    val expectedDetailsExample2 = "the ’About general increases in benefits’ letter the Pension Service sent you"
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
@@ -113,8 +113,8 @@ class StatePensionLumpSumAmountControllerISpec extends IntegrationTest with View
     val emptyErrorText = "Enter your State Pension lump sum amount"
     val invalidFormatErrorText = "Enter your State Pension lump sum amount in the correct format"
     val maxAmountErrorText = "Your State Pension lump sum amount must be less than £100,000,000,000"
-    val expectedDetailsExample1 = "your P60"
-    val expectedDetailsExample2 = "the ‘About general increases in benefits’ letter the Pension Service sent you"
+    val expectedDetailsExample1 = "eich P60"
+    val expectedDetailsExample2 = "y llythyr ’Ynglŷn â’r cynnydd cyffredinol mewn budd-daliadau’ a anfonwyd atoch gan y Gwasanaeth Pensiwn"
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
@@ -125,7 +125,7 @@ class StatePensionLumpSumAmountControllerISpec extends IntegrationTest with View
     val invalidFormatErrorText = "Enter your client’s State Pension lump sum amount in the correct format"
     val maxAmountErrorText = "Your client’s State Pension lump sum amount must be less than £100,000,000,000"
     val expectedDetailsExample1 = "your client’s P60"
-    val expectedDetailsExample2 = "the ‘About general increases in benefits’ letter the Pension Service sent your client"
+    val expectedDetailsExample2 = "the ’About general increases in benefits’ letter the Pension Service sent your client"
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
@@ -135,8 +135,8 @@ class StatePensionLumpSumAmountControllerISpec extends IntegrationTest with View
     val emptyErrorText = "Enter your client’s State Pension lump sum amount"
     val invalidFormatErrorText = "Enter your client’s State Pension lump sum amount in the correct format"
     val maxAmountErrorText = "Your client’s State Pension lump sum amount must be less than £100,000,000,000"
-    val expectedDetailsExample1 = "your client’s P60"
-    val expectedDetailsExample2 = "the ‘About general increases in benefits’ letter the Pension Service sent your client"
+    val expectedDetailsExample1 = "P60 eich cleient"
+    val expectedDetailsExample2 = "y llythyr ’Ynglŷn â’r cynnydd cyffredinol mewn budd-daliadau’ a anfonwyd at eich cleient gan y Gwasanaeth Pensiwn"
   }
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(

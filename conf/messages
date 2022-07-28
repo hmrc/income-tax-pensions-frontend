@@ -56,6 +56,14 @@ common.unauthorisedPayments.error.Amount.noEntry = Enter the amount of non-UK ta
 common.unauthorisedPayments.error.Amount.incorrectFormat = Enter the amount of non-UK tax in the correct format
 common.unauthorisedPayments.error.Amount.overMaximum = The amount of non-UK tax paid must be less than £100,000,000,000
 
+common.whereToFindInformation = Where to find this information
+common.FindInformation = You can find this information in:
+common.yourP60.individual = your P60
+common.aboutGeneralIncreases.individual = the ’About general increases in benefits’ letter the Pension Service sent you
+common.yourP60.agent = your client’s P60
+common.aboutGeneralIncreases.agent = the ’About general increases in benefits’ letter the Pension Service sent your client
+
+
 #################       Error messages        ########################################
 
 error.agent.title = There’s a problem
@@ -392,14 +400,16 @@ annualAllowance.addPstrLink = Add a PSTR
 
 #################       INCOME FROM PENSIONS        ########################################
 
-common.incomeFromPensions.title = UK pension income
+#income from pensions gateway
+incomeFromPensionsGateway.statusPage.title.agent = Did your client get income from pension schemes?
+incomeFromPensionsGateway.statusPage.title.individual = Did you get income from pension schemes?
+incomeFromPensionsGateway.statusPage.error.agent = Select yes if your client got payments from pension schemes
+incomeFromPensionsGateway.statusPage.error.individual = Select yes if you got payments from pension schemes
+incomeFromPensionsGateway.paragraph = This includes:
+incomeFromPensionsGateway.paragraph.1 = State Pension
+incomeFromPensionsGateway.paragraph.2 = workplace and private pensions
 
-pensions.incomeFromPensionsDetails.whereToFindInformation.title = Where to find this information
-pensions.incomeFromPensionsDetails.FindInformation = You can find this information in:
-pensions.incomeFromPensionsDetails.bullet.yourP60.individual = your P60
-pensions.incomeFromPensionsDetails.bullet.aboutGeneralIncreases.individual = the ‘About general increases in benefits’ letter the Pension Service sent you
-pensions.incomeFromPensionsDetails.bullet.yourP60.agent = your client’s P60
-pensions.incomeFromPensionsDetails.bullet.aboutGeneralIncreases.agent = the ‘About general increases in benefits’ letter the Pension Service sent your client
+common.incomeFromPensions.title = UK pension income
 
 #state pension lump sum question
 incomeFromPensions.statePensionLumpSum.title.individual = Did you get a State Pension lump sum?

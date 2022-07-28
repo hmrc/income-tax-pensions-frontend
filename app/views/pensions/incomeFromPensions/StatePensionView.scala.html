@@ -45,10 +45,10 @@
 }
 
     @detailsHtml = {
-    <p class="govuk-body">@messages("pensions.incomeFromPensionsDetails.FindInformation")</p>
+    <p class="govuk-body">@messages("common.FindInformation")</p>
     <ul class="govuk-list govuk-list--bullet">
-        <li>@messages(s"pensions.incomeFromPensionsDetails.bullet.yourP60.${if(request.user.isAgent) "agent" else "individual"}")</li>
-        <li>@messages(s"pensions.incomeFromPensionsDetails.bullet.aboutGeneralIncreases.${if(request.user.isAgent) "agent" else "individual"}")</li>
+        <li>@messages(s"common.yourP60.${if(request.user.isAgent) "agent" else "individual"}")</li>
+        <li>@messages(s"common.aboutGeneralIncreases.${if(request.user.isAgent) "agent" else "individual"}")</li>
 
     </ul>
 }
@@ -66,7 +66,7 @@
             legendHidden = true,
             inline = true,
         )
-        @details("pensions.incomeFromPensionsDetails.whereToFindInformation.title", detailsHtml)
+        @details("common.whereToFindInformation", detailsHtml)
         @button()
     }
 }

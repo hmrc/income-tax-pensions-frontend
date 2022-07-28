@@ -88,8 +88,8 @@ class TaxPaidOnLumpSumAmountControllerISpec extends IntegrationTest with ViewHel
     val expectedCaption: Int => String = (taxYear: Int) => s"Income from pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
     val hintText = "For example, £193.52"
     val buttonText = "Continue"
-    val expectedWhereToFindThisInformation = "Where to find this information"
-    val expectedYouCanFindThisInformationIn = "You can find this information in:"
+    val expectedWhereToFindThisInformation = "Ble i ddod o hyd i’r wybodaeth hon"
+    val expectedYouCanFindThisInformationIn = "Gallwch ddod o hyd i’r wybodaeth hon yn:"
     val emptyErrorText = "Enter the amount of tax paid on the State Pension lump sum"
     val invalidFormatErrorText = "Enter the amount of tax paid on the State Pension lump sum in the correct format"
     val maxAmountErrorText = "The amount of tax paid on the State Pension lump sum must be less than £100,000,000,000"
@@ -100,7 +100,7 @@ class TaxPaidOnLumpSumAmountControllerISpec extends IntegrationTest with ViewHel
     val expectedHeading = "How much tax did you pay on the State Pension lump sum?"
     val expectedErrorTitle = s"Error: $expectedTitle"
     val expectedDetailsExample1 = "your P60"
-    val expectedDetailsExample2 = "the ‘About general increases in benefits’ letter the Pension Service sent you"
+    val expectedDetailsExample2 = "the ’About general increases in benefits’ letter the Pension Service sent you"
     val expectedParagraphText = s"You told us you did not pay £$newAmount tax on your State Pension lump sum this year. Tell us how much you paid."
   }
 
@@ -108,8 +108,8 @@ class TaxPaidOnLumpSumAmountControllerISpec extends IntegrationTest with ViewHel
     val expectedTitle = "How much tax did you pay on the State Pension lump sum?"
     val expectedHeading = "How much tax did you pay on the State Pension lump sum?"
     val expectedErrorTitle = s"Error: $expectedTitle"
-    val expectedDetailsExample1 = "your P60"
-    val expectedDetailsExample2 = "the ‘About general increases in benefits’ letter the Pension Service sent you"
+    val expectedDetailsExample1 = "eich P60"
+    val expectedDetailsExample2 = "y llythyr ’Ynglŷn â’r cynnydd cyffredinol mewn budd-daliadau’ a anfonwyd atoch gan y Gwasanaeth Pensiwn"
     val expectedParagraphText = s"You told us you did not pay £$newAmount tax on your State Pension lump sum this year. Tell us how much you paid."
   }
 
@@ -118,7 +118,7 @@ class TaxPaidOnLumpSumAmountControllerISpec extends IntegrationTest with ViewHel
     val expectedHeading = "How much tax did your client pay on the State Pension lump sum?"
     val expectedErrorTitle = s"Error: $expectedTitle"
     val expectedDetailsExample1 = "your client’s P60"
-    val expectedDetailsExample2 = "the ‘About general increases in benefits’ letter the Pension Service sent your client"
+    val expectedDetailsExample2 = "the ’About general increases in benefits’ letter the Pension Service sent your client"
     val expectedParagraphText: String = s"You told us your client did not pay £$newAmount tax on their State Pension lump sum this year. " +
       s"Tell us how much your client paid."
   }
@@ -127,8 +127,8 @@ class TaxPaidOnLumpSumAmountControllerISpec extends IntegrationTest with ViewHel
     val expectedTitle = "How much tax did your client pay on the State Pension lump sum?"
     val expectedHeading = "How much tax did your client pay on the State Pension lump sum?"
     val expectedErrorTitle = s"Error: $expectedTitle"
-    val expectedDetailsExample1 = "your client’s P60"
-    val expectedDetailsExample2 = "the ‘About general increases in benefits’ letter the Pension Service sent your client"
+    val expectedDetailsExample1 = "P60 eich cleient"
+    val expectedDetailsExample2 = "y llythyr ’Ynglŷn â’r cynnydd cyffredinol mewn budd-daliadau’ a anfonwyd at eich cleient gan y Gwasanaeth Pensiwn"
     val expectedParagraphText: String = s"You told us your client did not pay £$newAmount tax on their State Pension lump sum this year. " +
       s"Tell us how much your client paid."
   }

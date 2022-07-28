@@ -94,6 +94,9 @@ GET         /:taxYear/annual-allowance/pension-scheme-tax-reference-summary     
 
 ###########################     Income from Pension pages     ####################################
 
+GET         /:taxYear/pension-income/income-from-pensions                                   controllers.pensions.incomeFromPensions.IncomeFromPensionsGatewayController.show(taxYear:Int)
+POST        /:taxYear/pension-income/income-from-pensions                                   controllers.pensions.incomeFromPensions.IncomeFromPensionsGatewayController.submit(taxYear: Int)
+
 GET         /:taxYear/pension-income/state-pension                                          controllers.pensions.incomeFromPensions.StatePensionController.show(taxYear:Int)
 POST        /:taxYear/pension-income/state-pension                                          controllers.pensions.incomeFromPensions.StatePensionController.submit(taxYear: Int)
 
