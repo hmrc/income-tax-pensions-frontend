@@ -73,7 +73,7 @@ class StatePensionLumpSumControllerISpec extends IntegrationTest with BeforeAndA
     val expectedError = "Select yes if you got a State Pension lump sum"
     val expectedP1 = "You might have got a one-off lump sum payment if you delayed claiming your State Pension for 12 months in a row."
     val expectedBullet1 = "your P60"
-    val expectedBullet2 = "the ‘About general increases in benefits’ letter the Pension Service sent you"
+    val expectedBullet2 = "the ’About general increases in benefits’ letter the Pension Service sent you"
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
@@ -82,8 +82,8 @@ class StatePensionLumpSumControllerISpec extends IntegrationTest with BeforeAndA
     val expectedErrorTitle = s"Error: $expectedTitle"
     val expectedError = "Select yes if you got a State Pension lump sum"
     val expectedP1 = "You might have got a one-off lump sum payment if you delayed claiming your State Pension for 12 months in a row."
-    val expectedBullet1 = "your P60"
-    val expectedBullet2 = "the ‘About general increases in benefits’ letter the Pension Service sent you"
+    val expectedBullet1 = "eich P60"
+    val expectedBullet2 = "y llythyr ’Ynglŷn â’r cynnydd cyffredinol mewn budd-daliadau’ a anfonwyd atoch gan y Gwasanaeth Pensiwn"
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
@@ -93,7 +93,7 @@ class StatePensionLumpSumControllerISpec extends IntegrationTest with BeforeAndA
     val expectedError = "Select yes if your client got a State Pension lump sum"
     val expectedP1 = "Your client might have got a one-off lump sum payment if they delayed claiming their State Pension for 12 months in a row."
     val expectedBullet1 = "your client’s P60"
-    val expectedBullet2 = "the ‘About general increases in benefits’ letter the Pension Service sent your client"
+    val expectedBullet2 = "the ’About general increases in benefits’ letter the Pension Service sent your client"
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
@@ -102,8 +102,8 @@ class StatePensionLumpSumControllerISpec extends IntegrationTest with BeforeAndA
     val expectedErrorTitle = s"Error: $expectedTitle"
     val expectedError = "Select yes if your client got a State Pension lump sum"
     val expectedP1 = "Your client might have got a one-off lump sum payment if they delayed claiming their State Pension for 12 months in a row."
-    val expectedBullet1 = "your client’s P60"
-    val expectedBullet2 = "the ‘About general increases in benefits’ letter the Pension Service sent your client"
+    val expectedBullet1 = "P60 eich cleient"
+    val expectedBullet2 = "y llythyr ’Ynglŷn â’r cynnydd cyffredinol mewn budd-daliadau’ a anfonwyd at eich cleient gan y Gwasanaeth Pensiwn"
   }
 
   object CommonExpectedEN extends CommonExpectedResults {
@@ -118,8 +118,8 @@ class StatePensionLumpSumControllerISpec extends IntegrationTest with BeforeAndA
 
   object CommonExpectedCY extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Income from pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val expectedWhereToFind = "Where to find this information"
-    val expectedYouCanFind = "You can find this information in:"
+    val expectedWhereToFind = "Ble i ddod o hyd i’r wybodaeth hon"
+    val expectedYouCanFind = "Gallwch ddod o hyd i’r wybodaeth hon yn:"
     val expectedP2 = "This only applies to people who reach State Pension age before 6 April 2016."
     val expectedButtonText = "Continue"
     val yesText = "Yes"

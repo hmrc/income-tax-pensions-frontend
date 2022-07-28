@@ -56,6 +56,13 @@ common.unauthorisedPayments.error.Amount.noEntry = Enter the amount of non-UK ta
 common.unauthorisedPayments.error.Amount.incorrectFormat = Enter the amount of non-UK tax in the correct format
 common.unauthorisedPayments.error.Amount.overMaximum = The amount of non-UK tax paid must be less than £100,000,000,000
 
+common.whereToFindInformation = Ble i ddod o hyd i’r wybodaeth hon
+common.FindInformation = Gallwch ddod o hyd i’r wybodaeth hon yn:
+common.yourP60.individual = eich P60
+common.aboutGeneralIncreases.individual = y llythyr ’Ynglŷn â’r cynnydd cyffredinol mewn budd-daliadau’ a anfonwyd atoch gan y Gwasanaeth Pensiwn
+common.yourP60.agent = P60 eich cleient
+common.aboutGeneralIncreases.agent = y llythyr ’Ynglŷn â’r cynnydd cyffredinol mewn budd-daliadau’ a anfonwyd at eich cleient gan y Gwasanaeth Pensiwn
+
 #################       Error messages        ########################################
 
 error.agent.title = There’s a problem
@@ -391,6 +398,15 @@ annualAllowance.addAnotherPstrLink = Add another PSTR
 annualAllowance.addPstrLink = Add a PSTR
 
 #################       INCOME FROM PENSIONS        ########################################
+
+#income from pensions gateway
+incomeFromPensionsGateway.statusPage.title.agent = A gafodd eich cleient incwm o gynlluniau pensiwn?
+incomeFromPensionsGateway.statusPage.title.individual = A gawsoch incwm o gynlluniau pensiwn?
+incomeFromPensionsGateway.statusPage.error.agent = Dewiswch ’Iawn’ os cafodd eich cleient daliadau o gynlluniau pensiwn
+incomeFromPensionsGateway.statusPage.error.individual = Dewiswch ’Iawn’ os cawsoch daliadau o gynlluniau pensiwn
+incomeFromPensionsGateway.paragraph = Mae’r rhain yn cynnwys:
+incomeFromPensionsGateway.paragraph.1 = Pensiwn y Wladwriaeth
+incomeFromPensionsGateway.paragraph.2 = pensiynau gweithle a phreifat
 
 common.incomeFromPensions.title = UK pension income
 

@@ -96,8 +96,8 @@ class StatePensionControllerISpec extends IntegrationTest with ViewHelpers with 
     val yesText = "Yes"
     val noText = "No"
     val buttonText = "Continue"
-    val expectedDetailsTitle = "Where to find this information"
-    val expectedDetailsYouCanFindThisOut: String = "You can find this information in:"
+    val expectedDetailsTitle = "Ble i ddod o hyd i’r wybodaeth hon"
+    val expectedDetailsYouCanFindThisOut: String = "Gallwch ddod o hyd i’r wybodaeth hon yn:"
   }
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
@@ -106,7 +106,7 @@ class StatePensionControllerISpec extends IntegrationTest with ViewHelpers with 
     val expectedErrorTitle = s"Error: $expectedTitle"
     val expectedErrorMessage = "Select yes if you got State Pension this year"
     val expectedDetailsBullet1 = "your P60"
-    val expectedDetailsBullet2 = "the ‘About general increases in benefits’ letter the Pension Service sent you"
+    val expectedDetailsBullet2 = "the ’About general increases in benefits’ letter the Pension Service sent you"
 
   }
 
@@ -115,8 +115,8 @@ class StatePensionControllerISpec extends IntegrationTest with ViewHelpers with 
     val expectedHeading = "Did you get State Pension this year?"
     val expectedErrorTitle = s"Error: $expectedTitle"
     val expectedErrorMessage = "Select yes if you got State Pension this year"
-    val expectedDetailsBullet1 = "your P60"
-    val expectedDetailsBullet2 = "the ‘About general increases in benefits’ letter the Pension Service sent you"
+    val expectedDetailsBullet1 = "eich P60"
+    val expectedDetailsBullet2 = "y llythyr ’Ynglŷn â’r cynnydd cyffredinol mewn budd-daliadau’ a anfonwyd atoch gan y Gwasanaeth Pensiwn"
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
@@ -125,7 +125,7 @@ class StatePensionControllerISpec extends IntegrationTest with ViewHelpers with 
     val expectedErrorTitle = s"Error: $expectedTitle"
     val expectedErrorMessage = "Select yes if your client got State Pension this year"
     val expectedDetailsBullet1 = "your client’s P60"
-    val expectedDetailsBullet2 = "the ‘About general increases in benefits’ letter the Pension Service sent your client"
+    val expectedDetailsBullet2 = "the ’About general increases in benefits’ letter the Pension Service sent your client"
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
@@ -133,8 +133,8 @@ class StatePensionControllerISpec extends IntegrationTest with ViewHelpers with 
     val expectedHeading = "Did your client get State Pension this year?"
     val expectedErrorTitle = s"Error: $expectedTitle"
     val expectedErrorMessage = "Select yes if your client got State Pension this year"
-    val expectedDetailsBullet1 = "your client’s P60"
-    val expectedDetailsBullet2 = "the ‘About general increases in benefits’ letter the Pension Service sent your client"
+    val expectedDetailsBullet1 = "P60 eich cleient"
+    val expectedDetailsBullet2 = "y llythyr ’Ynglŷn â’r cynnydd cyffredinol mewn budd-daliadau’ a anfonwyd at eich cleient gan y Gwasanaeth Pensiwn"
   }
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(

@@ -73,7 +73,7 @@ class TaxPaidOnStatePensionLumpSumControllerISpec extends IntegrationTest with B
     val expectedErrorTitle = s"Error: $expectedTitle"
     val expectedError = "Select yes if you paid tax on the State Pension lump sum"
     val expectedDetailsBullet1 = "your P60"
-    val expectedDetailsBullet2 = "the ‘About general increases in benefits’ letter the Pension Service sent you"
+    val expectedDetailsBullet2 = "the ’About general increases in benefits’ letter the Pension Service sent you"
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
@@ -81,8 +81,8 @@ class TaxPaidOnStatePensionLumpSumControllerISpec extends IntegrationTest with B
     val expectedHeading = "Did you pay tax on the State Pension lump sum?"
     val expectedErrorTitle = s"Error: $expectedTitle"
     val expectedError = "Select yes if you paid tax on the State Pension lump sum"
-    val expectedDetailsBullet1 = "your P60"
-    val expectedDetailsBullet2 = "the ‘About general increases in benefits’ letter the Pension Service sent you"
+    val expectedDetailsBullet1 = "eich P60"
+    val expectedDetailsBullet2 = "y llythyr ’Ynglŷn â’r cynnydd cyffredinol mewn budd-daliadau’ a anfonwyd atoch gan y Gwasanaeth Pensiwn"
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
@@ -91,7 +91,7 @@ class TaxPaidOnStatePensionLumpSumControllerISpec extends IntegrationTest with B
     val expectedErrorTitle = s"Error: $expectedTitle"
     val expectedError = "Select yes if your client paid tax on the State Pension lump sum"
     val expectedDetailsBullet1 = "your client’s P60"
-    val expectedDetailsBullet2 = "the ‘About general increases in benefits’ letter the Pension Service sent your client"
+    val expectedDetailsBullet2 = "the ’About general increases in benefits’ letter the Pension Service sent your client"
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
@@ -99,8 +99,8 @@ class TaxPaidOnStatePensionLumpSumControllerISpec extends IntegrationTest with B
     val expectedHeading = "Did your client pay tax on the State Pension lump sum?"
     val expectedErrorTitle = s"Error: $expectedTitle"
     val expectedError = "Select yes if your client paid tax on the State Pension lump sum"
-    val expectedDetailsBullet1 = "your client’s P60"
-    val expectedDetailsBullet2 = "the ‘About general increases in benefits’ letter the Pension Service sent your client"
+    val expectedDetailsBullet1 = "P60 eich cleient"
+    val expectedDetailsBullet2 = "y llythyr ’Ynglŷn â’r cynnydd cyffredinol mewn budd-daliadau’ a anfonwyd at eich cleient gan y Gwasanaeth Pensiwn"
   }
 
   object CommonExpectedEN extends CommonExpectedResults {
@@ -114,8 +114,8 @@ class TaxPaidOnStatePensionLumpSumControllerISpec extends IntegrationTest with B
 
   object CommonExpectedCY extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Income from pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val expectedDetailsTitle = "Where to find this information"
-    val expectedDetailsWhereToFind = "You can find this information in:"
+    val expectedDetailsTitle = "Ble i ddod o hyd i’r wybodaeth hon"
+    val expectedDetailsWhereToFind = "Gallwch ddod o hyd i’r wybodaeth hon yn:"
     val expectedButtonText = "Continue"
     val yesText = "Yes"
     val noText = "No"
