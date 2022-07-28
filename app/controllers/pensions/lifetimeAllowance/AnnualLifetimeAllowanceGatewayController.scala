@@ -41,20 +41,20 @@ class AnnualLifetimeAllowanceGatewayController @Inject()(authAction: AuthorisedA
                                                         (implicit cc: MessagesControllerComponents, appConfig: AppConfig, ec: ExecutionContext)
   extends FrontendController(cc) with I18nSupport with SessionHelper {
 
-  def unauthorisedPaymentForm(isAgent: Boolean): Form[Boolean] = YesNoForm.yesNoForm(
+  def annualLifetimeAllowanceForm(isAgent: Boolean): Form[Boolean] = YesNoForm.yesNoForm(
     missingInputError = s"AnnualAndLifetimeAllowance.gateway.error.${if (isAgent) "agent" else "individual"}"
   )
 
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen tailoringEnabledFilterAction(taxYear) andThen taxYearAction(taxYear)).async {
     implicit request =>
       Future.successful(
-        Ok(view(taxYear, unauthorisedPaymentForm(request.user.isAgent)))
+        Ok(view(taxYear, annualLifetimeAllowanceForm(request.user.isAgent)))
       )
   }
 
   def submit(taxYear: Int): Action[AnyContent] = (authAction andThen tailoringEnabledFilterAction(taxYear)
     andThen taxYearAction(taxYear)).async { implicit request =>
-    unauthorisedPaymentForm(request.user.isAgent).bindFromRequest().fold(
+    annualLifetimeAllowanceForm(request.user.isAgent).bindFromRequest().fold(
       formWithErrors => Future.successful(BadRequest(view(taxYear, formWithErrors))),
       yesNoAnswer =>
         if (yesNoAnswer) {
