@@ -553,6 +553,16 @@ lifetimeAllowance.aboveAnnualLifeTimeAllowance.title.agent = Has your client gon
 lifetimeAllowance.aboveAnnualLifeTimeAllowance.error.noEntry.individual = Select yes if you have gone above your lifetime allowance
 lifetimeAllowance.aboveAnnualLifeTimeAllowance.error.noEntry.agent = Select yes if your client has gone above their lifetime allowance
 
+#Annual Lifetime Allowance Gateway
+annualAndLifetimeAllowance.gateway.title.individual = A ydych wedi mynd yn uwch na’ch lwfans blynyddol neu lwfans oes?
+annualAndLifetimeAllowance.gateway.title.agent = A yw’ch cleient wedi mynd dros ei lwfans blynyddol neu lwfans oes?
+annualAndLifetimeAllowance.gateway.line1.individual = Byddai’ch darparwyr pensiwn wedi rhoi gwybod i chi pe baech yn mynd dros eich lwfans oes.
+annualAndLifetimeAllowance.gateway.line1.agent = Byddai darparwyr pensiwn eich cleient wedi rhoi gwybod iddo os oedd wedi mynd dros ei lwfans oes.
+annualAndLifetimeAllowance.gateway.line2 = Dysgwch ragor am lwfans oes
+annualAndLifetimeAllowance.gateway.line3.end = os oes angen i chi gyfrifo’ch lwfans blynyddol
+AnnualAndLifetimeAllowance.gateway.error.agent = Dewiswch ‘Iawn’ os yw’ch cleient wedi mynd dros ei lwfans blynyddol neu lwfans oes
+AnnualAndLifetimeAllowance.gateway.error.individual = Dewiswch ‘Iawn’ os ydych wedi mynd yn uwch na’ch lwfans blynyddol neu lwfans oes
+
 #Did you take the amount above your lifetime allowance another way
 lifetimeAllowance.lifeTimeAllowanceAnotherWay.tittle.individual = Did you take the amount above your lifetime allowance another way?
 lifetimeAllowance.lifeTimeAllowanceAnotherWay.tittle.agent = Did your client take the amount above their lifetime allowance another way?
