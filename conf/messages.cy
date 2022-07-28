@@ -560,8 +560,8 @@ annualAndLifetimeAllowance.gateway.line1.individual = Byddai’ch darparwyr pens
 annualAndLifetimeAllowance.gateway.line1.agent = Byddai darparwyr pensiwn eich cleient wedi rhoi gwybod iddo os oedd wedi mynd dros ei lwfans oes.
 annualAndLifetimeAllowance.gateway.line2 = Dysgwch ragor am lwfans oes
 annualAndLifetimeAllowance.gateway.line3.end = os oes angen i chi gyfrifo’ch lwfans blynyddol
-AnnualAndLifetimeAllowance.gateway.error.individual = Dewiswch ‘Iawn’ os ydych wedi mynd yn uwch na’ch lwfans blynyddol neu lwfans oes
 AnnualAndLifetimeAllowance.gateway.error.agent = Dewiswch ‘Iawn’ os yw’ch cleient wedi mynd dros ei lwfans blynyddol neu lwfans oes
+AnnualAndLifetimeAllowance.gateway.error.individual = Dewiswch ‘Iawn’ os ydych wedi mynd yn uwch na’ch lwfans blynyddol neu lwfans oes
 
 #Did you take the amount above your lifetime allowance another way
 lifetimeAllowance.lifeTimeAllowanceAnotherWay.tittle.individual = Did you take the amount above your lifetime allowance another way?
