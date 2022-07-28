@@ -80,7 +80,7 @@ class AnnualLifetimeAllowanceGatewayTestSupport extends ViewUnitTest {
 
   object ExpectedAgentEN extends SpecificExpectedResults {
     override val expectedTitleText: String = "Has your client gone above their annual allowance or lifetime allowance?"
-    override val expectedErrorText = "Select yes if your client has gone above your annual allowance or lifetime allowance"
+    override val expectedErrorText = "Select yes if your client has gone above their annual allowance or lifetime allowance"
     override val expectedErrorTitleText: String = s"Error: $expectedTitleText"
     override val expectedText = "Your client’s pension providers would have told them if they went above their lifetime allowance."
 
@@ -89,7 +89,7 @@ class AnnualLifetimeAllowanceGatewayTestSupport extends ViewUnitTest {
   object ExpectedIndividualCY extends SpecificExpectedResults {
     override val expectedTitleText: String = "A ydych wedi mynd yn uwch na’ch lwfans blynyddol neu lwfans oes?"
     override val expectedErrorTitleText: String = s"Error: $expectedTitleText"
-    override val expectedErrorText: String = "Dewiswch ‘Iawn’ os oes gennych lwfans blynyddol gostyngol"
+    override val expectedErrorText = "Select yes if you have gone above your annual allowance or lifetime allowance"
     override val expectedText = "Byddai’ch darparwyr pensiwn wedi rhoi gwybod i chi pe baech yn mynd dros eich lwfans oes."
 
   }
@@ -97,7 +97,7 @@ class AnnualLifetimeAllowanceGatewayTestSupport extends ViewUnitTest {
   object ExpectedAgentCY extends SpecificExpectedResults {
     override val expectedTitleText: String = "A yw’ch cleient wedi mynd dros ei lwfans blynyddol neu lwfans oes?"
     override val expectedErrorTitleText: String = s"Error: $expectedTitleText"
-    override val expectedErrorText: String = "Dewiswch ‘Iawn’ os oes gan eich cleient lwfans blynyddol gostyngol"
+    override val expectedErrorText = "Select yes if your client has gone above their annual allowance or lifetime allowance"
     override val expectedText = "Byddai darparwyr pensiwn eich cleient wedi rhoi gwybod iddo os oedd wedi mynd dros ei lwfans oes."
   }
 

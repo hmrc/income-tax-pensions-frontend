@@ -555,7 +555,7 @@ annualAndLifetimeAllowance.gateway.line1.agent = Your client’s pension provide
 annualAndLifetimeAllowance.gateway.line2 = Find out more about lifetime allowance
 annualAndLifetimeAllowance.gateway.line3.end = if you need to work out your annual allowance
 AnnualAndLifetimeAllowance.gateway.error.individual = Select yes if you have gone above your annual allowance or lifetime allowance
-AnnualAndLifetimeAllowance.gateway.error.agent = Select yes if your client has gone above your annual allowance or lifetime allowance
+AnnualAndLifetimeAllowance.gateway.error.agent = Select yes if your client has gone above their annual allowance or lifetime allowance
 
 #Did you take the amount above your lifetime allowance another way
 lifetimeAllowance.lifeTimeAllowanceAnotherWay.tittle.individual = Did you take the amount above your lifetime allowance another way?
