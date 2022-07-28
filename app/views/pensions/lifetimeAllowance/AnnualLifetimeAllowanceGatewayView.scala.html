@@ -46,12 +46,6 @@
 @heading(headingForUse, Some(messages("common.lifetimeAllowance.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-2")
 
 @formWithCsrf(action = controllers.pensions.lifetimeAllowance.routes.AnnualLifetimeAllowanceGatewayController.submit(taxYear)) {
-    @inputRadio(
-        form = form,
-        legendHeading = Some(Html(headingForUse)),
-        legendHidden = true,
-        inline = true
-    )
 
     <p class="govuk-body" id="line1">
         @messages(s"annualAndLifetimeAllowance.gateway.line1.${if(request.user.isAgent) "agent" else "individual"}")
@@ -64,6 +58,13 @@
         @messages(s"common.useCalculator.paragraph")
         @link("https://www.tax.service.gov.uk/pension-annual-allowance-calculator", "annualAndLifetimeAllowance.gateway.line3.end", Some("taxCalculator-link"), true, fullStop = true)
     </p>
+
+    @inputRadio(
+        form = form,
+        legendHeading = Some(Html(headingForUse)),
+        legendHidden = true,
+        inline = true
+    )
 
     @button()
     }
