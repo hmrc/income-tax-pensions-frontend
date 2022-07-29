@@ -35,22 +35,23 @@
 @(form: Form[(BigDecimal, BigDecimal)], taxYear: Int)(implicit request: AuthorisationRequest[_], messages: Messages, appConfig: AppConfig)
 
     @titleText = @{
-        messages(s"lifetimeAllowance.pensionLumpSumDetails.title.${if(request.user.isAgent) "agent" else "individual"}")
+        messages(s"lifetimeAllowance.pensionTakenAnotherWay.title.${if(request.user.isAgent) "agent" else "individual"}")
     }
 
     @paragraph = {
+        <p class="govuk-body">@messages(s"lifetimeAllowance.pensionTakenAnotherWay.paragraph.one.${if(request.user.isAgent) "agent" else "individual"}")</p>
         <p class="govuk-body">@messages(s"common.lifetimeAllowance.Pension.checkWithProvider.Paragraph.${if(request.user.isAgent) "agent" else "individual"}")</p>
     }
 
 
     @beforeTaxContent = {
         <p class="govuk-label govuk-label--m">@messages("common.totalAmount.beforeTax.title")</p>
-        <p class="govuk-body">@messages(s"lifetimeAllowance.pensionLumpSumDetails.beforeTax.paragraph.${if(request.user.isAgent) "agent" else "individual"}")</p>
+        <p class="govuk-body">@messages(s"lifetimeAllowance.pensionTakenAnotherWay.beforeTax.paragraph.${if(request.user.isAgent) "agent" else "individual"}")</p>
     }
 
     @taxPaidContent = {
         <p class="govuk-label govuk-label--m">@messages("common.total.taxPaid.title")</p>
-        <p class="govuk-body">@messages(s"lifetimeAllowance.pensionLumpSumDetails.taxPaid.paragraph.${if(request.user.isAgent) "agent" else "individual"}")</p>
+        <p class="govuk-body">@messages("lifetimeAllowance.pensionTakenAnotherWay.taxPaid.paragraph")</p>
     }
 
     @hasFormErrors = @{form.hasErrors}
@@ -65,7 +66,7 @@
 
         @beforeTaxContent
 
-        @formWithCsrf(action = controllers.pensions.lifetimeAllowance.routes.PensionLumpSumDetailsController.submit(taxYear)) {
+        @formWithCsrf(action = controllers.pensions.lifetimeAllowance.routes.PensionTakenAnotherWayAmountController.submit(taxYear)) {
             @inputText(
                 form,
                 id = "amount-1",
