@@ -126,12 +126,12 @@ pensions.pensionSummary.paymentsToOverseasPensions = Taliadau i bensiynau tramor
 ########    PAYMENTS INTO PENSIONS    ########
 pensions.paymentsIntoOverseasPensions.statusPage.error.agent = Dewiswch ‘Iawn’ os gwnaeth eich cleient neu ei gyflogwr dalu i mewn i gynllun pensiwn tramor
 pensions.paymentsIntoOverseasPensions.statusPage.error.individual = Dewiswch ‘Iawn’ os gwnaethoch chi neu''ch cyflogwr dalu i mewn i gynllun pensiwn tramor
-pensions.paymentsIntoOverseasPensions.paragraph.1.individual = Rhowch wybod i ni os ydych chi neu’ch cyflogwr wedi gwneud y canlynol:
-pensions.paymentsIntoOverseasPensions.paragraph.1.agent = Rhowch wybod i ni os yw’ch cleient neu ei gyflogwr wedi gwneud y canlynol:
-pensions.paymentsIntoOverseasPensions.paragraph.2 = talu i mewn i gynllun pensiwn tramor
-pensions.paymentsIntoOverseasPensions.paragraph.3 = drosglwyddo cynilion pensiwn y DU i gynllun pensiwn tramor
-pensions.paymentsIntoOverseasPensions.paragraph.4.individual = A ydych chi neu’ch cyflogwr wedi’ch talu i mewn i bensiynau tramor?
-pensions.paymentsIntoOverseasPensions.paragraph.4.agent = A yw’ch cleient neu ei gyflogwr wedi talu i mewn i bensiynau tramor?
+pensions.paymentsIntoOverseasPensions.paragraph.individual = Rhowch wybod i ni os ydych chi neu’ch cyflogwr wedi gwneud y canlynol:
+pensions.paymentsIntoOverseasPensions.paragraph.agent = Rhowch wybod i ni os yw’ch cleient neu ei gyflogwr wedi gwneud y canlynol:
+pensions.paymentsIntoOverseasPensions.listItem.first = talu i mewn i gynllun pensiwn tramor
+pensions.paymentsIntoOverseasPensions.listItem.last = drosglwyddo cynilion pensiwn y DU i gynllun pensiwn tramor
+pensions.paymentsIntoOverseasPensions.question.individual = A ydych chi neu’ch cyflogwr wedi’ch talu i mewn i bensiynau tramor?
+pensions.paymentsIntoOverseasPensions.question.agent = A yw’ch cleient neu ei gyflogwr wedi talu i mewn i bensiynau tramor?
 
 paymentsIntoPensions.reliefAtSource.calculationHeading = Example calculation
 

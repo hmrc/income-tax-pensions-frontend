@@ -33,10 +33,10 @@ class PaymentsIntoOverseasPensionsGatewayTestSupport extends ViewUnitTest {
     val continueButtonFormSelector = "#main-content > div > div > form"
     val expectedErrorHref = "#value"
     val buttonSelector: String = "#continue"
-    val paragraph1Selector: String = "#main-content > div > div > p:nth-of-type(1)"
-    val paragraph2Selector: String = "#main-content > div > div > ul:nth-of-type(1) > li:nth-of-type(1)"
-    val paragraph3Selector: String = "#main-content > div > div > ul:nth-of-type(2) > li:nth-of-type(1)"
-    val orSelector: String = "#main-content > div > div > p:nth-of-type(2)"
+    val paragraphSelector: String = "#main-content > div > div > p:nth-of-type(1)"
+    val listItemFirstSelector: String = "#main-content > div > div > ul:nth-of-type(1) > li:nth-of-type(1)"
+    val listItemLastSelector: String = "#main-content > div > div > ul:nth-of-type(1) > li:nth-of-type(3)"
+    val orSelector: String = "#main-content > div > div > ul:nth-of-type(1) > li:nth-of-type(2)"
   }
 
   trait CommonExpectedResults {
@@ -46,14 +46,14 @@ class PaymentsIntoOverseasPensionsGatewayTestSupport extends ViewUnitTest {
     val expectedNoText: String
     val expectedButtonText: String
     val expectedOrText: String
-    val paragraph2Text: String
-    val paragraph3Text: String
+    val listItemFirstText: String
+    val listItemLastText: String
   }
 
   trait SpecificExpectedResults {
     val expectedErrorTitleText: String
-    val paragraph1Text: String
-    val paragraph4Text: String
+    val paragraphText: String
+    val questionText: String
     val expectedErrorText: String
   }
 
@@ -64,8 +64,8 @@ class PaymentsIntoOverseasPensionsGatewayTestSupport extends ViewUnitTest {
     override val expectedNoText: String = "No"
     override val expectedButtonText: String = "Continue"
     override val expectedOrText: String = "or"
-    override val paragraph2Text: String = "paid into an overseas pension scheme"
-    override val paragraph3Text: String = "transferred UK pension savings to an overseas pension scheme"
+    override val listItemFirstText: String = "paid into an overseas pension scheme"
+    override val listItemLastText: String = "transferred UK pension savings to an overseas pension scheme"
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
@@ -75,35 +75,35 @@ class PaymentsIntoOverseasPensionsGatewayTestSupport extends ViewUnitTest {
     override val expectedNoText: String = "No"
     override val expectedButtonText: String = "Continue"
     override val expectedOrText: String = "neu"
-    override val paragraph2Text: String = "talu i mewn i gynllun pensiwn tramor"
-    override val paragraph3Text: String = "drosglwyddo cynilion pensiwn y DU i gynllun pensiwn tramor"
+    override val listItemFirstText: String = "talu i mewn i gynllun pensiwn tramor"
+    override val listItemLastText: String = "drosglwyddo cynilion pensiwn y DU i gynllun pensiwn tramor"
   }
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
     override val expectedErrorText: String = "Select yes if you or your employer paid into an overseas pension scheme"
-    override val paragraph1Text: String = "Tell us if you or your employer:"
-    override val paragraph4Text: String = "Have you or your employer paid into overseas pensions?"
+    override val paragraphText: String = "Tell us if you or your employer:"
+    override val questionText: String = "Have you or your employer paid into overseas pensions?"
     override val expectedErrorTitleText: String = s"Error: Payments into overseas pensions"
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
     override val expectedErrorText: String = "Dewiswch ‘Iawn’ os gwnaethoch chi neu'ch cyflogwr dalu i mewn i gynllun pensiwn tramor"
-    override val paragraph1Text: String = "Rhowch wybod i ni os ydych chi neu’ch cyflogwr wedi gwneud y canlynol:"
-    override val paragraph4Text: String = "A ydych chi neu’ch cyflogwr wedi’ch talu i mewn i bensiynau tramor?"
+    override val paragraphText: String = "Rhowch wybod i ni os ydych chi neu’ch cyflogwr wedi gwneud y canlynol:"
+    override val questionText: String = "A ydych chi neu’ch cyflogwr wedi’ch talu i mewn i bensiynau tramor?"
     override val expectedErrorTitleText: String = s"Error: Taliadau i bensiynau tramor"
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
     override val expectedErrorText: String = "Select yes if your client or their employer paid into an overseas pension scheme"
-    override val paragraph1Text: String = "Tell us if your client or their employer:"
-    override val paragraph4Text: String = "Has your client or their employer paid into overseas pensions?"
+    override val paragraphText: String = "Tell us if your client or their employer:"
+    override val questionText: String = "Has your client or their employer paid into overseas pensions?"
     override val expectedErrorTitleText: String = s"Error: Payments into overseas pensions"
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
     override val expectedErrorText: String = "Dewiswch ‘Iawn’ os gwnaeth eich cleient neu ei gyflogwr dalu i mewn i gynllun pensiwn tramor"
-    override val paragraph1Text: String = "Rhowch wybod i ni os yw’ch cleient neu ei gyflogwr wedi gwneud y canlynol:"
-    override val paragraph4Text: String = "A yw’ch cleient neu ei gyflogwr wedi talu i mewn i bensiynau tramor?"
+    override val paragraphText: String = "Rhowch wybod i ni os yw’ch cleient neu ei gyflogwr wedi gwneud y canlynol:"
+    override val questionText: String = "A yw’ch cleient neu ei gyflogwr wedi talu i mewn i bensiynau tramor?"
     override val expectedErrorTitleText: String = s"Error: Taliadau i bensiynau tramor"
   }
 
@@ -131,11 +131,11 @@ class PaymentsIntoOverseasPensionsGatewayTestSupport extends ViewUnitTest {
         titleCheck(userScenario.commonExpectedResults.expectedTitleText, userScenario.isWelsh)
         captionCheck(userScenario.commonExpectedResults.expectedCaption(taxYearEOY))
         h1Check(userScenario.commonExpectedResults.expectedTitleText)
-        textOnPageCheck(userScenario.specificExpectedResults.get.paragraph1Text, Selectors.paragraph1Selector)
-        textOnPageCheck(userScenario.commonExpectedResults.paragraph2Text, Selectors.paragraph2Selector)
+        textOnPageCheck(userScenario.specificExpectedResults.get.paragraphText, Selectors.paragraphSelector)
+        textOnPageCheck(userScenario.commonExpectedResults.listItemFirstText, Selectors.listItemFirstSelector)
         textOnPageCheck(userScenario.commonExpectedResults.expectedOrText, Selectors.orSelector)
-        textOnPageCheck(userScenario.commonExpectedResults.paragraph3Text, Selectors.paragraph3Selector)
-        h1Check(userScenario.specificExpectedResults.get.paragraph4Text, size = "m")
+        textOnPageCheck(userScenario.commonExpectedResults.listItemLastText, Selectors.listItemLastSelector)
+        h1Check(userScenario.specificExpectedResults.get.questionText, size = "m")
         radioButtonCheck(userScenario.commonExpectedResults.expectedYesText, radioNumber = 1, checked = false)
         radioButtonCheck(userScenario.commonExpectedResults.expectedNoText, radioNumber = 2, checked = false)
         buttonCheck(userScenario.commonExpectedResults.expectedButtonText, Selectors.buttonSelector)
@@ -151,11 +151,11 @@ class PaymentsIntoOverseasPensionsGatewayTestSupport extends ViewUnitTest {
         titleCheck(userScenario.commonExpectedResults.expectedTitleText, userScenario.isWelsh)
         captionCheck(userScenario.commonExpectedResults.expectedCaption(taxYearEOY))
         h1Check(userScenario.commonExpectedResults.expectedTitleText)
-        textOnPageCheck(userScenario.specificExpectedResults.get.paragraph1Text, Selectors.paragraph1Selector)
-        textOnPageCheck(userScenario.commonExpectedResults.paragraph2Text, Selectors.paragraph2Selector)
+        textOnPageCheck(userScenario.specificExpectedResults.get.paragraphText, Selectors.paragraphSelector)
+        textOnPageCheck(userScenario.commonExpectedResults.listItemFirstText, Selectors.listItemFirstSelector)
         textOnPageCheck(userScenario.commonExpectedResults.expectedOrText, Selectors.orSelector)
-        textOnPageCheck(userScenario.commonExpectedResults.paragraph3Text, Selectors.paragraph3Selector)
-        h1Check(userScenario.specificExpectedResults.get.paragraph4Text, size = "m")
+        textOnPageCheck(userScenario.commonExpectedResults.listItemLastText, Selectors.listItemLastSelector)
+        h1Check(userScenario.specificExpectedResults.get.questionText, size = "m")
         radioButtonCheck(userScenario.commonExpectedResults.expectedYesText, radioNumber = 1, checked = true)
         radioButtonCheck(userScenario.commonExpectedResults.expectedNoText, radioNumber = 2, checked = false)
         buttonCheck(userScenario.commonExpectedResults.expectedButtonText, Selectors.buttonSelector)
@@ -171,11 +171,11 @@ class PaymentsIntoOverseasPensionsGatewayTestSupport extends ViewUnitTest {
         titleCheck(userScenario.commonExpectedResults.expectedTitleText, userScenario.isWelsh)
         captionCheck(userScenario.commonExpectedResults.expectedCaption(taxYearEOY))
         h1Check(userScenario.commonExpectedResults.expectedTitleText)
-        textOnPageCheck(userScenario.specificExpectedResults.get.paragraph1Text, Selectors.paragraph1Selector)
-        textOnPageCheck(userScenario.commonExpectedResults.paragraph2Text, Selectors.paragraph2Selector)
+        textOnPageCheck(userScenario.specificExpectedResults.get.paragraphText, Selectors.paragraphSelector)
+        textOnPageCheck(userScenario.commonExpectedResults.listItemFirstText, Selectors.listItemFirstSelector)
         textOnPageCheck(userScenario.commonExpectedResults.expectedOrText, Selectors.orSelector)
-        textOnPageCheck(userScenario.commonExpectedResults.paragraph3Text, Selectors.paragraph3Selector)
-        h1Check(userScenario.specificExpectedResults.get.paragraph4Text, size = "m")
+        textOnPageCheck(userScenario.commonExpectedResults.listItemLastText, Selectors.listItemLastSelector)
+        h1Check(userScenario.specificExpectedResults.get.questionText, size = "m")
         radioButtonCheck(userScenario.commonExpectedResults.expectedYesText, radioNumber = 1, checked = false)
         radioButtonCheck(userScenario.commonExpectedResults.expectedNoText, radioNumber = 2, checked = true)
         buttonCheck(userScenario.commonExpectedResults.expectedButtonText, Selectors.buttonSelector)
@@ -191,11 +191,11 @@ class PaymentsIntoOverseasPensionsGatewayTestSupport extends ViewUnitTest {
         titleCheck(userScenario.specificExpectedResults.get.expectedErrorTitleText, userScenario.isWelsh)
         captionCheck(userScenario.commonExpectedResults.expectedCaption(taxYearEOY))
         h1Check(userScenario.commonExpectedResults.expectedTitleText)
-        textOnPageCheck(userScenario.specificExpectedResults.get.paragraph1Text, Selectors.paragraph1Selector)
-        textOnPageCheck(userScenario.commonExpectedResults.paragraph2Text, Selectors.paragraph2Selector)
+        textOnPageCheck(userScenario.specificExpectedResults.get.paragraphText, Selectors.paragraphSelector)
+        textOnPageCheck(userScenario.commonExpectedResults.listItemFirstText, Selectors.listItemFirstSelector)
         textOnPageCheck(userScenario.commonExpectedResults.expectedOrText, Selectors.orSelector)
-        textOnPageCheck(userScenario.commonExpectedResults.paragraph3Text, Selectors.paragraph3Selector)
-        h1Check(userScenario.specificExpectedResults.get.paragraph4Text, size = "m")
+        textOnPageCheck(userScenario.commonExpectedResults.listItemLastText, Selectors.listItemLastSelector)
+        h1Check(userScenario.specificExpectedResults.get.questionText, size = "m")
         radioButtonCheck(userScenario.commonExpectedResults.expectedYesText, radioNumber = 1, checked = false)
         radioButtonCheck(userScenario.commonExpectedResults.expectedNoText, radioNumber = 2, checked = false)
         buttonCheck(userScenario.commonExpectedResults.expectedButtonText, Selectors.buttonSelector)
