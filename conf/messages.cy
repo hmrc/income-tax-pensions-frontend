@@ -13,6 +13,7 @@ common.fullStop = .
 common.back = Back
 common.yes = Yes
 common.no = No
+common.or = neu
 common.continue = Continue
 common.saveAndContinue = Save and continue
 common.change = Change
@@ -31,6 +32,7 @@ common.paymentsIntoPensions.caption = Payments into pensions for 6 April {0} to 
 common.dividends.incomeFromPensions.caption = Dividends for 6 April {0} to 5 April {1}
 common.pensionAnnualAllowance.caption = Pension annual allowance for 6 April {0} to 5 April {1}
 common.incomeFromPensions.caption = Income from pensions for 6 April {0} to 5 April {1}
+common.paymentsIntoOverseasPensions.caption = Payments into overseas pensions for 6 April {0} to 5 April {1}
 common.uKPensionIncome.caption = UK pension income for 6 April {0} to 5 April {1}
 common.lifetimeAllowance.caption = Annual and lifetime allowances for 6 April {0} to 5 April {1}
 common.return.overview.buttonText = Return to overview
@@ -118,10 +120,18 @@ pensions.pensionSummary.incomeFromPensions = Income from pensions
 pensions.pensionSummary.pensionAnnualAllowance = Pension annual allowance
 pensions.pensionSummary.pensionLifetimeAllowance = Pension lifetime allowance
 pensions.pensionSummary.unauthorisedPaymentsFromPensions = Unauthorised payments from pensions
-pensions.pensionSummary.paymentsToOverseasPensions = Payments into overseas pensions
+pensions.pensionSummary.paymentsToOverseasPensions = Taliadau i bensiynau tramor
 
 
 ########    PAYMENTS INTO PENSIONS    ########
+pensions.paymentsIntoOverseasPensions.error.agent = Dewiswch ‘Iawn’ os gwnaeth eich cleient neu ei gyflogwr dalu i mewn i gynllun pensiwn tramor
+pensions.paymentsIntoOverseasPensions.error.individual = Dewiswch ‘Iawn’ os gwnaethoch chi neu''ch cyflogwr dalu i mewn i gynllun pensiwn tramor
+pensions.paymentsIntoOverseasPensions.paragraph.individual = Rhowch wybod i ni os ydych chi neu’ch cyflogwr wedi gwneud y canlynol:
+pensions.paymentsIntoOverseasPensions.paragraph.agent = Rhowch wybod i ni os yw’ch cleient neu ei gyflogwr wedi gwneud y canlynol:
+pensions.paymentsIntoOverseasPensions.listItem.first = talu i mewn i gynllun pensiwn tramor
+pensions.paymentsIntoOverseasPensions.listItem.last = drosglwyddo cynilion pensiwn y DU i gynllun pensiwn tramor
+pensions.paymentsIntoOverseasPensions.question.individual = A ydych chi neu’ch cyflogwr wedi’ch talu i mewn i bensiynau tramor?
+pensions.paymentsIntoOverseasPensions.question.agent = A yw’ch cleient neu ei gyflogwr wedi talu i mewn i bensiynau tramor?
 
 paymentsIntoPensions.reliefAtSource.calculationHeading = Example calculation
 
