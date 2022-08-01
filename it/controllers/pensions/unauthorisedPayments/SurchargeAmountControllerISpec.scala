@@ -85,7 +85,7 @@ class SurchargeAmountControllerISpec extends IntegrationTest with ViewHelpers wi
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Unauthorised payments from pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Taliadau heb awdurdod o bensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
     val expectedTitle = "Amount that resulted in a surcharge"
     val expectedHeading = "Amount that resulted in a surcharge"
     val expectedErrorTitle = s"Error: $expectedTitle"

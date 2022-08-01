@@ -50,7 +50,7 @@ common.error.self-assessment.paragraph.1.3a = to speak to someone about your inc
 common.useCalculator.paragraph.link = if you need to work this out
 common.useCalculator.paragraph = Use a calculator
 
-common.unauthorisedPaymentsFromPension.caption = Unauthorised payments from pensions for 6 April {0} to 5 April {1}
+common.unauthorisedPaymentsFromPension.caption = Taliadau heb awdurdod o bensiynau ar gyfer 6 Ebrill {0} i 5 Ebrill {1}
 common.unauthorisedPayments.Amount.Text = Total non-UK tax in pounds
 common.unauthorisedPayments.error.Amount.noEntry = Enter the amount of non-UK tax paid
 common.unauthorisedPayments.error.Amount.incorrectFormat = Enter the amount of non-UK tax in the correct format
@@ -624,3 +624,10 @@ employerFinancedRetirementScheme.benefitsFromScheme.question.individual = A oes 
 employerFinancedRetirementScheme.benefitsFromScheme.question.agent = A oes gan eich cleient gynllun ymddeol a ariannwyd gan gyflogwr?
 employerFinancedRetirementScheme.benefitsFromScheme.error.individual = Dewiswch ‘Iawn’ os oes gennych gynllun buddiannau ymddeol a ariannwyd gan gyflogwyr
 employerFinancedRetirementScheme.benefitsFromScheme.error.agent = Dewiswch ‘Iawn’ os oes gan eich cleient gynllun buddiannau ymddeol a ariannwyd gan gyflogwyr
+
+#Did you get any unauthorised payment from a pension scheme?
+unauthorisedPayments.gateway.title.individual = A gawsoch unrhyw daliad heb awdurdod o gynllun pensiwn?
+unauthorisedPayments.gateway.title.agent = A gafodd eich cleient unrhyw daliad heb awdurdod o gynllun pensiwn?
+unauthorisedPayments.gateway.findOutMore = Dysgwch ragor am daliadau heb awdurdod
+unauthorisedPayments.gateway.error.individual = Dewiswch ‘Iawn’ os cawsoch daliadau heb awdurdod
+unauthorisedPayments.gateway.error.agent = Dewiswch ‘Iawn’ os cafodd eich cleient daliadau heb awdurdod

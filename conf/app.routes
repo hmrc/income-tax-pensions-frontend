@@ -165,6 +165,9 @@ POST        /:taxYear/unauthorised-payments-from-pensions/tax-on-amount-not-surc
 GET         /:taxYear/unauthorised-payments-from-pensions/uk-pension-scheme         controllers.pensions.unauthorisedPayments.WhereAnyOfTheUnauthorisedPaymentsController.show(taxYear: Int)
 POST        /:taxYear/unauthorised-payments-from-pensions/uk-pension-scheme         controllers.pensions.unauthorisedPayments.WhereAnyOfTheUnauthorisedPaymentsController.submit(taxYear: Int)
 
+GET         /:taxYear/unauthorised-payments-from-pensions/unauthorised-payment              controllers.pensions.unauthorisedPayments.UnauthorisedPaymentController.show(taxYear: Int)
+POST        /:taxYear/unauthorised-payments-from-pensions/unauthorised-payment              controllers.pensions.unauthorisedPayments.UnauthorisedPaymentController.submit(taxYear: Int)
+
 
 ###########################    Employer-financed Retirement Benefits Schemes Pages     ####################################
 

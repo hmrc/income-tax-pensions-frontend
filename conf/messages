@@ -620,3 +620,10 @@ employerFinancedRetirementScheme.benefitsFromScheme.question.individual = Do you
 employerFinancedRetirementScheme.benefitsFromScheme.question.agent = Does your client have an employer-financed retirement scheme?
 employerFinancedRetirementScheme.benefitsFromScheme.error.individual = Select yes if you have an employer-financed retirement benefits scheme
 employerFinancedRetirementScheme.benefitsFromScheme.error.agent = Select yes if your client has an employer-financed retirement benefits scheme
+
+#Did you get any unauthorised payment from a pension scheme?
+unauthorisedPayments.gateway.title.individual = Did you get any unauthorised payment from a pension scheme?
+unauthorisedPayments.gateway.title.agent = Did your client get any unauthorised payment from a pension scheme?
+unauthorisedPayments.gateway.findOutMore = Find out more about unauthorised payments
+unauthorisedPayments.gateway.error.individual = Select yes if you got unauthorised payments
+unauthorisedPayments.gateway.error.agent = Select yes if your client got unauthorised payments
