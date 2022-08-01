@@ -51,7 +51,7 @@ class PaymentsIntoOverseasPensionsControllerISpec extends IntegrationTest
   }
 
   private def url(taxYear: Int): String = {
-    s"/update-and-submit-income-tax-return/pensions/$taxYear/payments-into-pensions/payments-into-pensions-status"
+    s"/update-and-submit-income-tax-return/pensions/$taxYear/payments-into-pensions/payments-into-overseas-pensions/overseas-pension-scheme"
   }
 
   ".show" should {
