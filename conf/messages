@@ -124,16 +124,14 @@ pensions.pensionSummary.paymentsToOverseasPensions = Payments into overseas pens
 
 
 ########    PAYMENTS INTO PENSIONS    ########
-
-pensions.paymentsIntoOverseasPensions.statusPage.title = Payments into overseas pensions
 pensions.paymentsIntoOverseasPensions.statusPage.error.agent = Select yes if your client or their employer paid into an overseas pension scheme
-pensions.paymentsIntoOverseasPensions.statusPage.error.individual = Select yes  if you or your employer paid into an overseas pension scheme
-pensions.paymentsIntoOverseasPensions.paragraph.individual = Tell us if you or your employer:
-pensions.paymentsIntoOverseasPensions.paragraph.agent = Tell us if your client or their employer:
-pensions.paymentsIntoOverseasPensions.paragraph.1 = paid into an overseas pension scheme
-pensions.paymentsIntoOverseasPensions.paragraph.2 = transferred UK pension savings into an overseas pension scheme
-pensions.paymentsIntoOverseasPensions.secondParagraph.individual = Have you or your employer paid into overseas pensions?
-pensions.paymentsIntoOverseasPensions.secondParagraph.agent = Has your client or their employer paid into overseas pensions?
+pensions.paymentsIntoOverseasPensions.statusPage.error.individual = Select yes if you or your employer paid into an overseas pension scheme
+pensions.paymentsIntoOverseasPensions.paragraph.1.individual = Tell us if you or your employer:
+pensions.paymentsIntoOverseasPensions.paragraph.1.agent = Tell us if your client or their employer:
+pensions.paymentsIntoOverseasPensions.paragraph.2 = paid into an overseas pension scheme
+pensions.paymentsIntoOverseasPensions.paragraph.3 = transferred UK pension savings to an overseas pension scheme
+pensions.paymentsIntoOverseasPensions.paragraph.4.individual = Have you or your employer paid into overseas pensions?
+pensions.paymentsIntoOverseasPensions.paragraph.4.agent = Has your client or their employer paid into overseas pensions?
 
 paymentsIntoPensions.reliefAtSource.calculationHeading = Example calculation
 
