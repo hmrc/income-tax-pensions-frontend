@@ -21,33 +21,35 @@ import controllers.pensions.routes.PensionsSummaryController
 import controllers.predicates.TailoringEnabledFilterAction.tailoringEnabledFilterAction
 import controllers.predicates.AuthorisedAction
 import controllers.predicates.TaxYearAction.taxYearAction
+import forms.PaymentsIntoOverseasPensionsFormProvider
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.SessionHelper
-import views.html.pensions.paymentsIntoPensions.PaymentsIntoPensionsStatusView
+import views.html.pensions.paymentsIntoPensions.PaymentsIntoOverseasPensionsView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class PaymentsIntoOverseasPensionsGatewayController @Inject()(authAction: AuthorisedAction,
                                                     form: PaymentsIntoOverseasPensionsFormProvider,
-                                                    view: PaymentsIntoOverseasPensionsGatewayView,
+                                                    view: PaymentsIntoOverseasPensionsView,
                                                     pensionSessionService: PensionSessionService,
                                                     errorHandler: ErrorHandler)
                                                    (implicit cc: MessagesControllerComponents, appConfig: AppConfig, ec: ExecutionContext)
   extends FrontendController(cc) with I18nSupport with SessionHelper {
 
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen tailoringEnabledFilterAction(taxYear) andThen taxYearAction(taxYear)).async {
-    implicit request =>
+    implicit request => {
       Future.successful(
-        Ok(view(taxYear, form.PaymentsIntoOverseasPensionsFormProvider(request.user.isAgent)))
+        Ok(view(taxYear, form.paymentsIntoOverseasPensionsForm(request.user.isAgent)))
       )
+    }
   }
 
   def submit(taxYear: Int): Action[AnyContent] = (authAction andThen tailoringEnabledFilterAction(taxYear) andThen taxYearAction(taxYear)).async { implicit request =>
-    form.PaymentsIntoOverseasPensionsFormProvider(request.user.isAgent).bindFromRequest().fold(
+    form.paymentsIntoOverseasPensionsForm(request.user.isAgent).bindFromRequest().fold(
       formWithErrors => Future.successful(BadRequest(view(taxYear, formWithErrors))),
       yesNoAnswer =>
         if (yesNoAnswer) {

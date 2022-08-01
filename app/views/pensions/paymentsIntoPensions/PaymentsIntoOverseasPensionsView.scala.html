@@ -28,49 +28,43 @@
         formWithCsrf: FormWithCSRF,
         inputRadio: InputRadioAlt,
         button: Button,
-        details: Details
 )
 
 
 @(taxYear: Int, form: Form[Boolean])(implicit request: AuthorisationRequest[_], messages: Messages, appConfig: AppConfig)
 
-@titleForUse = @{messages(s"paymentsIntoOverseasPensions.statusPage.title.${if(request.user.isAgent) "agent" else "individual"}")}
+@titleForUse = @{messages(s"pensions.paymentsIntoOverseasPensions.statusPage.title.${if(request.user.isAgent) "agent" else "individual"}")}
 
 @headingForUse = @{titleForUse}
 
 @contentHtml = {
-<p class="govuk-body">@{messages("incomeFromPensionsGateway.paragraph")}</p>
+<p class="govuk-body">@{messages(s"pensions.paymentsIntoOverseasPensions.paragraph.${if(request.user.isAgent) "agent" else "individual"}")}</p>
 <ul class="govuk-list govuk-list--bullet">
-    <li>@{messages("incomeFromPensionsGateway.paragraph.1")}</li>
-    <li>@{messages("incomeFromPensionsGateway.paragraph.2")}</li>
+    <li>@{messages("pensions.paymentsIntoOverseasPensions.paragraph.1")}</li>
+<!--    </ul>-->
+<!--    <p class="govuk-list">or</p>-->
+<!--<ul class="govuk-list govuk-list&#45;&#45;bullet">-->
+    <li>or</li>
+    <li>@{messages("pensions.paymentsIntoOverseasPensions.paragraph.2")}</li>
 </ul>
-}
-
-@detailsHtml = {
-<p class="govuk-body">@{messages("common.FindInformation")}</p>
-<ul class="govuk-list govuk-list--bullet">
-    <li>@{messages(s"common.yourP60.${if(request.user.isAgent) "agent" else "individual"}")}</li>
-    <li>@{messages(s"common.aboutGeneralIncreases.${if(request.user.isAgent) "agent" else "individual"}")}</li>
-</ul>
+<p class="govuk-body">@{messages(s"pensions.paymentsIntoOverseasPensions.paragraph2.${if(request.user.isAgent) "agent" else "individual"}")}</p>
 }
 
 @layout(pageTitle = titleForUse, taxYear = Some(taxYear), hasErrors = form.hasErrors, isAgent = request.user.isAgent) {
 
     @errorSummary(form.errors)
 
-    @heading(headingForUse, Some(messages("common.paymentsIntoPensions.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-2")
+    @heading(headingForUse, Some(messages("common.paymentsIntoOverseasPensions.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-2")
 
     @contentHtml
 
-@formWithCsrf(action = controllers.pensions.paymentsIntoPension.routes.PaymentsIntoOverseasPensionsController.submit(taxYear)) {
-
-        @details("common.whereToFindInformation", detailsHtml)
+@formWithCsrf(action = controllers.pensions.paymentsIntoPension.routes.PaymentsIntoOverseasPensionsGatewayController.submit(taxYear)) {
 
         @inputRadio(
             form = form,
             legendHeading = Some(Html(headingForUse)),
             legendHidden = true,
-            inline = true
+            inline = true,
         )
 
         @button()

@@ -28,6 +28,7 @@ common.status.toDo = To do
 common.status.updated = Updated
 common.pensions.caption = Pensions for 6 April {0} to 5 April {1}
 common.paymentsIntoPensions.caption = Payments into pensions for 6 April {0} to 5 April {1}
+common.paymentsIntoOverseasPensions.caption = Payments into overseas pensions for 6 April {0} to 5 April {1}
 common.dividends.incomeFromPensions.caption = Dividends for 6 April {0} to 5 April {1}
 common.pensionAnnualAllowance.caption = Pension annual allowance for 6 April {0} to 5 April {1}
 common.incomeFromPensions.caption = Income from pensions for 6 April {0} to 5 April {1}
@@ -123,11 +124,16 @@ pensions.pensionSummary.paymentsToOverseasPensions = Payments into overseas pens
 
 ########    PAYMENTS INTO PENSIONS    ########
 
-#payments into overseas pensions
-pensions.paymentsIntoOverseasPensions.paragraph = Tell us if you or your employer:
+pensions.paymentsIntoOverseasPensions.statusPage.title.agent = Payments into overseas pensions
+pensions.paymentsIntoOverseasPensions.statusPage.title.individual = Payments into overseas pensions
+pensions.paymentsIntoOverseasPensions.statusPage.error.agent = Select yes if your client or their employer paid into an overseas pension scheme
+pensions.paymentsIntoOverseasPensions.statusPage.error.individual = Select yes  if you or your employer paid into an overseas pension scheme
+pensions.paymentsIntoOverseasPensions.paragraph.individual = Tell us if you or your employer:
+pensions.paymentsIntoOverseasPensions.paragraph.agent = Tell us if your client or their employer:
 pensions.paymentsIntoOverseasPensions.paragraph.1 = paid into an overseas pension scheme
 pensions.paymentsIntoOverseasPensions.paragraph.2 = transferred UK pension savings into an overseas pension scheme
-pensions.paymentsIntoOverseasPensions.paragraph2 = Have you or your employer paid into overseas pensions?
+pensions.paymentsIntoOverseasPensions.paragraph2.individual = Have you or your employer paid into overseas pensions?
+pensions.paymentsIntoOverseasPensions.paragraph2.agent = Has your client or their employer paid into overseas pensions?
 
 paymentsIntoPensions.reliefAtSource.calculationHeading = Example calculation
 

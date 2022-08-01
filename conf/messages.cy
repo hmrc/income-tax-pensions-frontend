@@ -123,11 +123,16 @@ pensions.pensionSummary.paymentsToOverseasPensions = Payments into overseas pens
 
 ########    PAYMENTS INTO PENSIONS    ########
 
-#payments into overseas pensions
-pensions.paymentsIntoOverseasPensions.paragraph = Rhowch wybod i ni os ydych chi neu’ch cyflogwr wedi gwneud y canlynol:
+pensions.paymentsIntoOverseasPensions.statusPage.title.agent = Taliadau i bensiynau tramor
+pensions.paymentsIntoOverseasPensions.statusPage.title.individual = Taliadau i bensiynau tramor
+pensions.paymentsIntoOverseasPensions.statusPage.error.agent = Dewiswch ‘Iawn’ os gwnaeth eich cleient neu ei gyflogwr dalu i mewn i gynllun pensiwn tramor
+pensions.paymentsIntoOverseasPensions.statusPage.error.individual = Dewiswch ‘Iawn’ os gwnaethoch chi neu'ch cyflogwr dalu i mewn i gynllun pensiwn tramor
+pensions.paymentsIntoOverseasPensions.paragraph.individual = Rhowch wybod i ni os ydych chi neu’ch cyflogwr wedi gwneud y canlynol:
+pensions.paymentsIntoOverseasPensions.paragraph.agent = Rhowch wybod i ni os yw’ch cleient neu ei gyflogwr wedi gwneud y canlynol:
 pensions.paymentsIntoOverseasPensions.paragraph.1 = talu i mewn i gynllun pensiwn tramor
 pensions.paymentsIntoOverseasPensions.paragraph.2 = drosglwyddo cynilion pensiwn y DU i gynllun pensiwn tramor
-pensions.paymentsIntoOverseasPensions.paragraph2 = A ydych chi neu’ch cyflogwr wedi’ch talu i mewn i bensiynau tramor?
+pensions.paymentsIntoOverseasPensions.paragraph2.individual = A ydych chi neu’ch cyflogwr wedi’ch talu i mewn i bensiynau tramor?
+pensions.paymentsIntoOverseasPensions.paragraph2.agent = A yw’ch cleient neu ei gyflogwr wedi talu i mewn i bensiynau tramor?
 
 paymentsIntoPensions.reliefAtSource.calculationHeading = Example calculation
 
