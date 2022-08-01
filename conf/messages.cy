@@ -123,6 +123,12 @@ pensions.pensionSummary.paymentsToOverseasPensions = Payments into overseas pens
 
 ########    PAYMENTS INTO PENSIONS    ########
 
+#payments into overseas pensions
+pensions.paymentsIntoOverseasPensions.paragraph = Rhowch wybod i ni os ydych chi neu’ch cyflogwr wedi gwneud y canlynol:
+pensions.paymentsIntoOverseasPensions.paragraph.1 = talu i mewn i gynllun pensiwn tramor
+pensions.paymentsIntoOverseasPensions.paragraph.2 = drosglwyddo cynilion pensiwn y DU i gynllun pensiwn tramor
+pensions.paymentsIntoOverseasPensions.paragraph2 = A ydych chi neu’ch cyflogwr wedi’ch talu i mewn i bensiynau tramor?
+
 paymentsIntoPensions.reliefAtSource.calculationHeading = Example calculation
 
 #pensions relief at source

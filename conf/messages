@@ -123,6 +123,12 @@ pensions.pensionSummary.paymentsToOverseasPensions = Payments into overseas pens
 
 ########    PAYMENTS INTO PENSIONS    ########
 
+#payments into overseas pensions
+pensions.paymentsIntoOverseasPensions.paragraph = Tell us if you or your employer:
+pensions.paymentsIntoOverseasPensions.paragraph.1 = paid into an overseas pension scheme
+pensions.paymentsIntoOverseasPensions.paragraph.2 = transferred UK pension savings into an overseas pension scheme
+pensions.paymentsIntoOverseasPensions.paragraph2 = Have you or your employer paid into overseas pensions?
+
 paymentsIntoPensions.reliefAtSource.calculationHeading = Example calculation
 
 #pensions relief at source
