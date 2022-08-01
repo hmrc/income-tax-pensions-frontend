@@ -124,8 +124,8 @@ pensions.pensionSummary.paymentsToOverseasPensions = Taliadau i bensiynau tramor
 
 
 ########    PAYMENTS INTO PENSIONS    ########
-pensions.paymentsIntoOverseasPensions.statusPage.error.agent = Dewiswch ‘Iawn’ os gwnaeth eich cleient neu ei gyflogwr dalu i mewn i gynllun pensiwn tramor
-pensions.paymentsIntoOverseasPensions.statusPage.error.individual = Dewiswch ‘Iawn’ os gwnaethoch chi neu''ch cyflogwr dalu i mewn i gynllun pensiwn tramor
+pensions.paymentsIntoOverseasPensions.error.agent = Dewiswch ‘Iawn’ os gwnaeth eich cleient neu ei gyflogwr dalu i mewn i gynllun pensiwn tramor
+pensions.paymentsIntoOverseasPensions.error.individual = Dewiswch ‘Iawn’ os gwnaethoch chi neu''ch cyflogwr dalu i mewn i gynllun pensiwn tramor
 pensions.paymentsIntoOverseasPensions.paragraph.individual = Rhowch wybod i ni os ydych chi neu’ch cyflogwr wedi gwneud y canlynol:
 pensions.paymentsIntoOverseasPensions.paragraph.agent = Rhowch wybod i ni os yw’ch cleient neu ei gyflogwr wedi gwneud y canlynol:
 pensions.paymentsIntoOverseasPensions.listItem.first = talu i mewn i gynllun pensiwn tramor

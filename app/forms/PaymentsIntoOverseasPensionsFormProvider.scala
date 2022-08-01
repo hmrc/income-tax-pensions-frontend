@@ -24,6 +24,6 @@ import javax.inject.Singleton
 class PaymentsIntoOverseasPensionsFormProvider {
 
   def paymentsIntoOverseasPensionsForm(isAgent: Boolean): Form[Boolean] = YesNoForm.yesNoForm(
-    missingInputError = s"pensions.paymentsIntoOverseasPensions.statusPage.error.${if (isAgent) "agent" else "individual"}"
+    missingInputError = s"pensions.paymentsIntoOverseasPensions.error.${if (isAgent) "agent" else "individual"}"
   )
 }

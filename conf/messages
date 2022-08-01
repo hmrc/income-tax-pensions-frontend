@@ -124,8 +124,8 @@ pensions.pensionSummary.paymentsToOverseasPensions = Payments into overseas pens
 
 
 ########    PAYMENTS INTO PENSIONS    ########
-pensions.paymentsIntoOverseasPensions.statusPage.error.agent = Select yes if your client or their employer paid into an overseas pension scheme
-pensions.paymentsIntoOverseasPensions.statusPage.error.individual = Select yes if you or your employer paid into an overseas pension scheme
+pensions.paymentsIntoOverseasPensions.error.agent = Select yes if your client or their employer paid into an overseas pension scheme
+pensions.paymentsIntoOverseasPensions.error.individual = Select yes if you or your employer paid into an overseas pension scheme
 pensions.paymentsIntoOverseasPensions.paragraph.individual = Tell us if you or your employer:
 pensions.paymentsIntoOverseasPensions.paragraph.agent = Tell us if your client or their employer:
 pensions.paymentsIntoOverseasPensions.listItem.first = paid into an overseas pension scheme
