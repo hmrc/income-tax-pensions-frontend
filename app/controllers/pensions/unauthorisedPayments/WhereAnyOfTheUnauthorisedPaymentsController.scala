@@ -18,7 +18,6 @@ package controllers.pensions.unauthorisedPayments
 
 
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.annualAllowance.routes.PstrSummaryController
 import controllers.predicates.AuthorisedAction
 import forms.YesNoForm
 import models.mongo.PensionsCYAModel

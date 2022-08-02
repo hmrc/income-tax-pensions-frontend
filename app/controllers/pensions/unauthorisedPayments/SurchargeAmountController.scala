@@ -67,7 +67,6 @@ class SurchargeAmountController @Inject()(authAction: AuthorisedAction,
     amountForm.bindFromRequest.fold(
       formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
       amount => {
-        Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
         pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
           case Some(data) =>
             if(data.pensions.unauthorisedPayments.surchargeQuestion.contains(true)) {
