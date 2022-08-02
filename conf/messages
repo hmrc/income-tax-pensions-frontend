@@ -679,5 +679,4 @@ unauthorisedPayments.findOutMoreAboutUnauthorisedPayment = Find out more about u
 unauthorisedPayments.didYouGetAnUnauthorisedPayment = Did you get an unauthorised payment from a pension scheme?
 unauthorisedPayments.checkbox.text1 = Yes, unauthorised payments that resulted in a surcharge
 unauthorisedPayments.checkbox.text2 = Yes, unauthorised payments that did not result in a surcharge
-unauthorisedPayments.error.noEntry = Select yes if you got an unauthorised payment from a pension scheme
 
