@@ -50,7 +50,7 @@ object UnAuthorisedPaymentsForm {
     mapping(
       unauthorisedPaymentsType -> seq(text),
     )(UnAuthorisedPaymentsModel.apply)(UnAuthorisedPaymentsModel.unapply).verifying(
-      allEmpty("unauthorisedPayments.error.noEntry")
+      allEmpty("common.unauthorisedPayments.error.checkbox.or.radioButton.noEntry")
     )
   )
 }

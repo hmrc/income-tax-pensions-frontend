@@ -55,6 +55,8 @@ common.unauthorisedPayments.Amount.Text = Total non-UK tax in pounds
 common.unauthorisedPayments.error.Amount.noEntry = Enter the amount of non-UK tax paid
 common.unauthorisedPayments.error.Amount.incorrectFormat = Enter the amount of non-UK tax in the correct format
 common.unauthorisedPayments.error.Amount.overMaximum = The amount of non-UK tax paid must be less than £100,000,000,000
+common.unauthorisedPayments.error.checkbox.or.radioButton.noEntry = Select yes if you got an unauthorised payment from a pension scheme
+
 
 common.whereToFindInformation = Ble i ddod o hyd i’r wybodaeth hon
 common.FindInformation = Gallwch ddod o hyd i’r wybodaeth hon yn:
@@ -607,7 +609,6 @@ unauthorisedPayments.didYouPayNonUkTax.error.noEntry = Select yes if you paid no
 
 #Where any of the unauthorised payments from a UK pension scheme?
 unauthorisedPayments.whereAnyOfTheUnauthorisedPayments.title = Were any of the unauthorised payments from a UK pension scheme?
-unauthorisedPayments.whereAnyOfTheUnauthorisedPayments.error.noEntry = Select yes if you got an unauthorised payment from a pension scheme
 
 #Did you pay non-UK tax that did not result in a surcharge
 unauthorisedPayments.nonUkTaxOnAmountNotSurcharge.title.individual = Did you pay non-UK tax on the amount that did not result in a surcharge?
@@ -624,4 +625,3 @@ unauthorisedPayments.findOutMoreAboutUnauthorisedPayment = Find out more about u
 unauthorisedPayments.didYouGetAnUnauthorisedPayment = Did you get an unauthorised payment from a pension scheme?
 unauthorisedPayments.checkbox.text1 = Yes, unauthorised payments that resulted in a surcharge
 unauthorisedPayments.checkbox.text2 = Yes, unauthorised payments that did not result in a surcharge
-unauthorisedPayments.error.noEntry = Select yes if you got an unauthorised payment from a pension scheme

@@ -45,7 +45,7 @@ class WhereAnyOfTheUnauthorisedPaymentsController @Inject()(implicit val cc: Mes
 
 
   def yesNoForm(): Form[Boolean] = YesNoForm.yesNoForm(
-    missingInputError = s"unauthorisedPayments.whereAnyOfTheUnauthorisedPayments.error.noEntry"
+    missingInputError = s"common.unauthorisedPayments.error.checkbox.or.radioButton.noEntry"
   )
 
 
