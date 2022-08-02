@@ -16,25 +16,23 @@
 
 package controllers.pensions.unauthorisedPayments
 
-import builders.PensionAnnualAllowanceViewModelBuilder.aPensionAnnualAllowanceViewModel
-import builders.PensionsUserDataBuilder.{aPensionsUserData, anPensionsUserDataEmptyCya, pensionsUserDataWithAnnualAllowances, pensionsUserDataWithUnauthorisedPayments}
+import builders.PensionsUserDataBuilder.pensionsUserDataWithUnauthorisedPayments
 import builders.UnauthorisedPaymentsViewModelBuilder.anUnauthorisedPaymentsViewModel
 import builders.UserBuilder.aUserRequest
 import forms.UnAuthorisedPaymentsForm.{noValue, yesNotSurchargeValue, yesSurchargeValue}
-import forms.YesNoForm
+import forms.UnAuthorisedPaymentsForm
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.PensionAnnualAllowancePages.reducedAnnualAllowanceTypeUrl
-import utils.PageUrls.PensionLifetimeAllowance.pensionAboveAnnualLifetimeAllowanceUrl
-import utils.PageUrls.unauthorisedPaymentsPages.{unauthorisedPaymentsUrl, whereAnyOfTheUnauthorisedPaymentsUrl}
+import utils.PageUrls.UnAuthorisedPayments.surchargeAmountUrl
+import utils.PageUrls.unauthorisedPaymentsPages.{nonUKTaxOnAmountSurcharge, unauthorisedPaymentsUrl}
 import utils.PageUrls.{fullUrl, pensionSummaryUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
-class XUnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAndAfterEach with ViewHelpers with PensionsDatabaseHelper {
+class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAndAfterEach with ViewHelpers with PensionsDatabaseHelper {
 
   private val externalHref = "https://www.gov.uk/guidance/pension-schemes-and-unauthorised-payments"
 
@@ -50,6 +48,7 @@ class XUnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAn
     val noSelector = "#unauthorisedPayments-4"
     val expectedDetailsLinkSelector = "#unauthorised-find-out-more-link"
     val subHeadingSelector = "#didYouGetAnUnauthorisedPayment"
+    val errorSelector = "#unauthorisedPayments-error"
 
     def labelIndex(index: Int): String = s"#main-content > div > div > form > div:nth-child($index) > label"
 
@@ -82,7 +81,7 @@ class XUnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAn
     val expectedHeading = "Unauthorised payments"
     val expectedTitle = "Unauthorised payments"
     val expectedError = "Select yes if you got an unauthorised payment from a pension scheme"
-    val expectedErrorTitle = "Select yes if you got an unauthorised payment from a pension scheme"
+    val expectedErrorTitle = s"Error: $expectedTitle"
     val expectedSubHeading = "Did you get an unauthorised payment from a pension scheme?"
     val expectedParagraphText = "Unauthorised payments are made outside the tax rules"
     val expectedParagraphText1: String = "If you got more than one unauthorised payment, you might " +
@@ -102,7 +101,7 @@ class XUnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAn
     val expectedHeading = "Unauthorised payments"
     val expectedTitle = "Unauthorised payments"
     val expectedError = "Select yes if you got an unauthorised payment from a pension scheme"
-    val expectedErrorTitle = "Select yes if you got an unauthorised payment from a pension scheme"
+    val expectedErrorTitle = s"Error: $expectedTitle"
     val expectedSubHeading = "Did you get an unauthorised payment from a pension scheme?"
     val expectedParagraphText = "Unauthorised payments are made outside the tax rules"
     val expectedParagraphText1: String = "If you got more than one unauthorised payment, you might " +
@@ -130,7 +129,7 @@ class XUnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAn
         import Selectors._
         import user.commonExpectedResults._
 
-        /*"render the 'unauthorised payments page' with no pre filling" which {
+        "render the 'unauthorised payments page' with no pre filling" which {
           implicit lazy val result: WSResponse = {
             authoriseAgentOrIndividual(user.isAgent)
             dropPensionsDB()
@@ -169,43 +168,53 @@ class XUnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAn
       }
     }
 
-        "redirect to Pensions Summary page if there is no session data" should {
-          lazy val result: WSResponse = {
-          dropPensionsDB()
-          authoriseAgentOrIndividual(isAgent = false)
-            urlGet(fullUrl(unauthorisedPaymentsUrl(taxYearEOY)), follow = false,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
-        }
-
-        "has an SEE_OTHER status" in {
-          result.status shouldBe SEE_OTHER
-          //TODO - redirect to CYA page once implemented
-          result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
-        }
+    "redirect to Pensions Summary page if there is no session data" should {
+      lazy val result: WSResponse = {
+        dropPensionsDB()
+        authoriseAgentOrIndividual(isAgent = false)
+        urlGet(fullUrl(unauthorisedPaymentsUrl(taxYearEOY)), follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
-    }*/
 
-        "render unauthorised payments page with 'Yes, unauthorised payments that resulted in a surcharge' checkbox checked" which {
+      "has an SEE_OTHER status" in {
+        result.status shouldBe SEE_OTHER
+        //TODO - redirect to CYA page once implemented
+        result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
+      }
+    }
+  }
+
+  ".submit" should {
+    userScenarios.foreach { user =>
+
+      import Selectors._
+      import user.commonExpectedResults._
+
+      s"language is ${welshTest(user.isWelsh)} and request is from an ${agentTest(user.isAgent)}" should {
+
+        val form = Map(s"${UnAuthorisedPaymentsForm.unauthorisedPaymentsType}[]" -> Seq.empty)
+
+        s"return $BAD_REQUEST error when no value is submitted" which {
 
           implicit lazy val result: WSResponse = {
+
             authoriseAgentOrIndividual(user.isAgent)
             dropPensionsDB()
-            val pensionsViewModel = anUnauthorisedPaymentsViewModel.copy(
-              surchargeQuestion = Some(true)
-            )
+
+            val pensionsViewModel = anUnauthorisedPaymentsViewModel.copy()
 
             insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false), aUserRequest)
-            urlGet(fullUrl(unauthorisedPaymentsUrl(taxYearEOY)), user.isWelsh, follow = false,
+            urlPost(fullUrl(unauthorisedPaymentsUrl(taxYearEOY)), body = form, user.isWelsh, follow = false,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
 
-          "has an OK status" in {
-            result.status shouldBe OK
+          "has an BAD_REQUEST status" in {
+            result.status shouldBe BAD_REQUEST
           }
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(user.commonExpectedResults.expectedTitle)
+          titleCheck(user.commonExpectedResults.expectedErrorTitle)
           h1Check(user.commonExpectedResults.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           hintTextCheck(checkboxHint, Selectors.checkboxHintSelector)
@@ -222,115 +231,135 @@ class XUnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAn
           buttonCheck(expectedButtonText, continueButtonSelector)
           welshToggleCheck(user.isWelsh)
           formPostLinkCheck(unauthorisedPaymentsUrl(taxYearEOY), formSelector)
+
+          errorSummaryCheck(user.commonExpectedResults.expectedError, "#")
+          errorAboveElementCheck(user.commonExpectedResults.expectedError, Some("unauthorisedPayments"))
+        }
+      }
+
+      s"redirects to surchargeAmountUrl when ${agentTest(user.isAgent)} submits a valid form with " +
+        s"yesSurcharge checkboxes checked  in Language${welshTest(user.isWelsh)}" which {
+
+        val form = {
+          Map(s"${UnAuthorisedPaymentsForm.unauthorisedPaymentsType}[]" -> Seq(yesSurchargeValue))
         }
 
-        /* ".submit" should {
-   userScenarios.foreach { user =>
-     s"language is ${welshTest(user.isWelsh)} and request is from an ${agentTest(user.isAgent)}" should {
+        implicit lazy val result: WSResponse = {
 
-       s"return $BAD_REQUEST error when no value is submitted" which {
-         lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> "")
+          authoriseAgentOrIndividual(user.isAgent)
+          dropPensionsDB()
 
-         lazy val result: WSResponse = {
-           dropPensionsDB()
-           authoriseAgentOrIndividual(user.isAgent)
-           insertCyaData(aPensionsUserData, aUserRequest)
-           urlPost(fullUrl(whereAnyOfTheUnauthorisedPaymentsUrl(taxYearEOY)), body = form, follow = false, welsh = user.isWelsh,
-             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
-         }
+          val pensionsViewModel = anUnauthorisedPaymentsViewModel.copy()
 
-         "has the correct status" in {
-           result.status shouldBe BAD_REQUEST
-         }
+          insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false), aUserRequest)
+          urlPost(fullUrl(unauthorisedPaymentsUrl(taxYearEOY)), body = form, user.isWelsh, follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        }
 
-         implicit def document: () => Document = () => Jsoup.parse(result.body)
-         import Selectors._
-         import user.commonExpectedResults._
-         titleCheck(user.specificExpectedResults.get.expectedErrorTitle)
-         h1Check(user.specificExpectedResults.get.expectedHeading)
-         captionCheck(expectedCaption(taxYearEOY), captionSelector)
-         radioButtonCheck(yesText, 1, checked = Some(false))
-         radioButtonCheck(noText, 2, checked = Some(false))
-         buttonCheck(expectedButtonText, continueButtonSelector)
-         formPostLinkCheck(whereAnyOfTheUnauthorisedPaymentsUrl(taxYearEOY), formSelector)
-         welshToggleCheck(user.isWelsh)
+        "has a SEE_OTHER(303) status" in {
+          result.status shouldBe SEE_OTHER
+          result.header("location").contains(surchargeAmountUrl(taxYearEOY)) shouldBe true
+        }
+      }
 
-         errorSummaryCheck(user.specificExpectedResults.get.noEntryErrorMessage, Selectors.yesSelector)
-         errorAboveElementCheck(user.specificExpectedResults.get.noEntryErrorMessage, Some("value"))
-       }
-     }
-   }
+      //TODO - redirect to Amount that did not result in a surcharge page once implemented
+      s"redirects to surchargeAmountUrl when ${agentTest(user.isAgent)} submits a valid form with " +
+        s"yesNotSurchargeValue checkboxes checked in Language ${welshTest(user.isWelsh)}" which {
+        val form = {
+          Map(s"${UnAuthorisedPaymentsForm.unauthorisedPaymentsType}[]" -> Seq("", yesNotSurchargeValue))
+        }
 
-        "redirect and update question to 'Yes' when there is currently no radio button value selected and the user selects 'Yes'" which {
-     lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.yes)
+        implicit lazy val result: WSResponse = {
 
-     lazy val result: WSResponse = {
-       dropPensionsDB()
-       val viewModel = anUnauthorisedPaymentsViewModel.copy(unauthorisedPaymentsQuestion = None)
-       insertCyaData(pensionsUserDataWithUnauthorisedPayments(viewModel), aUserRequest)
+          authoriseAgentOrIndividual(user.isAgent)
+          dropPensionsDB()
 
-       insertCyaData(pensionsUserDataWithUnauthorisedPayments(viewModel), aUserRequest)
+          val pensionsViewModel = anUnauthorisedPaymentsViewModel.copy()
 
-       authoriseAgentOrIndividual(isAgent = false)
-       urlPost(fullUrl(whereAnyOfTheUnauthorisedPaymentsUrl(taxYearEOY)), body = form, follow = false,
-         headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
-     }
+          insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false), aUserRequest)
+          urlPost(fullUrl(unauthorisedPaymentsUrl(taxYearEOY)), body = form, user.isWelsh, follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        }
 
-     "has a SEE_OTHER(303) status and redirect to Pension Scheme Tax Reference (PSTR) Page" in {
-       result.status shouldBe SEE_OTHER
-       //TODO - redirect to "Pension Scheme Tax Reference PSTR" page once implemented
-       result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
-     }
+        "has a SEE_OTHER(303) status" in {
+          result.status shouldBe SEE_OTHER
+          //TODO - redirect to Amount that did not result in a surcharge page once implemented
+          result.header("location").contains(nonUKTaxOnAmountSurcharge(taxYearEOY)) shouldBe true
+        }
+      }
 
-     "updates ukPensionSchemesQuestion to Some(true)" in {
-       lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
-       cyaModel.pensions.unauthorisedPayments.ukPensionSchemesQuestion shouldBe Some(true)
-     }
-   }
-
-  "redirect and update question to 'No' when there is currently no radio button value selected and the user selects 'No'" which {
-     lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.no)
-
-     lazy val result: WSResponse = {
-       dropPensionsDB()
-       val viewModel = anUnauthorisedPaymentsViewModel.copy(unauthorisedPaymentsQuestion = None)
-       insertCyaData(pensionsUserDataWithUnauthorisedPayments(viewModel), aUserRequest)
-
-       insertCyaData(pensionsUserDataWithUnauthorisedPayments(viewModel), aUserRequest)
-
-       authoriseAgentOrIndividual(isAgent = false)
-       urlPost(fullUrl(whereAnyOfTheUnauthorisedPaymentsUrl(taxYearEOY)), body = form, follow = false,
-         headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
-     }
-
-     "has a SEE_OTHER(303) status and redirect to Check your unauthorised payments page" in {
-       result.status shouldBe SEE_OTHER
-       //TODO redirect to "Check your unauthorised payments" page
-       result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
-     }
-
-     "updates ukPensionSchemesQuestion to Some(false)" in {
-       lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
-       cyaModel.pensions.unauthorisedPayments.ukPensionSchemesQuestion shouldBe Some(false)
-     }
-   }
-
-   "redirect to Pensions Summary page if there is no session data" should {
-    lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.no)
-    lazy val result: WSResponse = {
-      dropPensionsDB()
-      authoriseAgentOrIndividual(isAgent = false)
-      urlPost(fullUrl(whereAnyOfTheUnauthorisedPaymentsUrl(taxYearEOY)), body = form, follow = false,
-        headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
-
-    }
-
-    "has an SEE_OTHER status" in {
-      result.status shouldBe SEE_OTHER
       //TODO - redirect to CYA page once implemented
-      result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
-    }
-  }*/
+      s"redirects to CYA page when ${agentTest(user.isAgent)} submits a valid form with " +
+        s"noValue checkboxes checked in Language ${welshTest(user.isWelsh)}" which {
+          val form = {
+            Map(s"${UnAuthorisedPaymentsForm.unauthorisedPaymentsType}[]" -> Seq("", "", noValue))
+          }
+
+          implicit lazy val result: WSResponse = {
+
+            authoriseAgentOrIndividual(user.isAgent)
+            dropPensionsDB()
+
+            val pensionsViewModel = anUnauthorisedPaymentsViewModel.copy()
+
+            insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false), aUserRequest)
+            urlPost(fullUrl(unauthorisedPaymentsUrl(taxYearEOY)), body = form, user.isWelsh, follow = false,
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+          }
+
+          "has a SEE_OTHER(303) status" in {
+            result.status shouldBe SEE_OTHER
+            //TODO - redirect to CYA page once implemented
+            result.header("location").contains(pensionSummaryUrl(taxYearEOY)) shouldBe true
+          }
+      }
+
+      s"redirects to surchargeAmountUrl when ${agentTest(user.isAgent)} submits a valid form with both yesSurcharge " +
+        s"and yesNotSurchargeValue checkboxes checked in Language ${welshTest(user.isWelsh)}" which {
+        val form = {
+          Map(s"${UnAuthorisedPaymentsForm.unauthorisedPaymentsType}[]" -> Seq(yesSurchargeValue, yesNotSurchargeValue))
+        }
+
+        implicit lazy val result: WSResponse = {
+
+          authoriseAgentOrIndividual(user.isAgent)
+          dropPensionsDB()
+
+          val pensionsViewModel = anUnauthorisedPaymentsViewModel.copy()
+
+          insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false), aUserRequest)
+          urlPost(fullUrl(unauthorisedPaymentsUrl(taxYearEOY)), body = form, user.isWelsh, follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        }
+
+        "has a SEE_OTHER(303) status" in {
+          result.status shouldBe SEE_OTHER
+          result.header("location").contains(surchargeAmountUrl(taxYearEOY)) shouldBe true
+        }
+      }
+
+      s"redirects to surchargeAmountUrl when ${agentTest(user.isAgent)} submits a valid form with yesSurcharge " +
+        s"and yesNotSurchargeValue and noValue checkboxes checked in Language ${welshTest(user.isWelsh)}" which {
+        val form = {
+          Map(s"${UnAuthorisedPaymentsForm.unauthorisedPaymentsType}[]" -> Seq(yesSurchargeValue, yesNotSurchargeValue, noValue))
+        }
+
+        implicit lazy val result: WSResponse = {
+
+          authoriseAgentOrIndividual(user.isAgent)
+          dropPensionsDB()
+
+          val pensionsViewModel = anUnauthorisedPaymentsViewModel.copy()
+
+          insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false), aUserRequest)
+          urlPost(fullUrl(unauthorisedPaymentsUrl(taxYearEOY)), body = form, user.isWelsh, follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        }
+
+        "has a SEE_OTHER(303) status" in {
+          result.status shouldBe SEE_OTHER
+          result.header("location").contains(surchargeAmountUrl(taxYearEOY)) shouldBe true
+        }
       }
     }
   }

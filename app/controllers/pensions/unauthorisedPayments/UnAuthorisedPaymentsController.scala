@@ -44,16 +44,14 @@ class UnAuthorisedPaymentsController @Inject()(implicit val mcc: MessagesControl
                                                clock: Clock) extends FrontendController(mcc) with I18nSupport {
 
 
-
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
       case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
       case Right(optPensionUserData) => optPensionUserData match {
         case Some(data) =>
           if (data.pensions.unauthorisedPayments.unauthorisedPaymentsQuestion.contains(true)) {
-            val taperedAnnualAllowance = data.pensions.unauthorisedPayments.surchargeQuestion
             val form = UnAuthorisedPaymentsForm.unAuthorisedPaymentsTypeForm()
-            Future.successful(Ok(view(form, taxYear,taperedAnnualAllowance)))
+            Future.successful(Ok(view(form, taxYear)))
           } else {
             Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
           }

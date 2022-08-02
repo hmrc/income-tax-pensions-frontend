@@ -40,8 +40,7 @@
 )
 
 
-@(form: Form[UnAuthorisedPaymentsModel], taxYear: Int, surchargeQuestion: Option[Boolean] = None, noSurchargeQuestion: Option[Boolean] = None,
-        noSurchargeCYA: Option[Boolean] = None)(implicit request: AuthorisationRequest[_], messages: Messages, appConfig: AppConfig)
+@(form: Form[UnAuthorisedPaymentsModel], taxYear: Int)(implicit request: AuthorisationRequest[_], messages: Messages, appConfig: AppConfig)
 
 
 @titleForUse = @{messages(s"unauthorisedPayments.title")}
@@ -93,12 +92,14 @@
                     content = Text(messages("unauthorisedPayments.checkbox.text1")),
                     value = yesSurchargeValue,
                     hint = None,
-                    checked = surchargeQuestion.contains(true)),
+                    checked = false
+                ),
                 CheckboxItem(
                     content = Text(messages("unauthorisedPayments.checkbox.text2")),
                     value = yesNotSurchargeValue,
                     hint = None,
-                    checked = noSurchargeQuestion.contains(true)),
+                    checked = false
+                ),
                 CheckboxItem(
                     divider = Some("or")
                 ),
@@ -106,7 +107,7 @@
                     content = Text("No"),
                     value = noValue,
                     hint = None,
-                    checked = noSurchargeCYA.contains(true),
+                    checked = false,
                     behaviour = Some(ExclusiveCheckbox)
                 ),
             )
@@ -114,7 +115,6 @@
         )
         @button()
     }
-
 }
 
 @{
