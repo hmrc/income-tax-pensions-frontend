@@ -156,6 +156,8 @@ object PageUrls extends IntegrationTest {
 
     def whereAnyOfTheUnauthorisedPaymentsUrl( taxYear: Int): String = s"$appUrl/$taxYear/unauthorised-payments-from-pensions/uk-pension-scheme"
 
+    def pensionSchemeTaxReferenceUrl(taxYear: Int): String = s"$appUrl/$taxYear/unauthorised-payments-from-pensions/pension-scheme-tax-reference"
+
   }
 
 }
