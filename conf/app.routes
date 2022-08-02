@@ -176,3 +176,11 @@ POST        /:taxYear/unauthorised-payments-from-pensions/unauthorised-payment  
 
 GET         /:taxYear/employment-financed-retirement-benefits-scheme/benefits-from-scheme   controllers.pensions.employmentFinancedRetirementScheme.BenefitsFromSchemeController.show(taxYear: Int)
 POST        /:taxYear/employment-financed-retirement-benefits-scheme/benefits-from-scheme   controllers.pensions.employmentFinancedRetirementScheme.BenefitsFromSchemeController.submit(taxYear: Int)
+
+
+###########################     Lifetime Allowance Pages     ####################################
+
+GET         /:taxYear/annual-lifetime-allowances/lifetime-allowance-another-way-details     controllers.pensions.lifetimeAllowance.PensionTakenAnotherWayAmountController.show(taxYear: Int)
+POST        /:taxYear/annual-lifetime-allowances/lifetime-allowance-another-way-details     controllers.pensions.lifetimeAllowance.PensionTakenAnotherWayAmountController.submit(taxYear: Int)
+
+
