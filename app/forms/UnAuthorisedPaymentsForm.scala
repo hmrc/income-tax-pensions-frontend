@@ -48,7 +48,7 @@ object UnAuthorisedPaymentsForm {
 
   def unAuthorisedPaymentsTypeForm(): Form[UnAuthorisedPaymentsModel] = Form[UnAuthorisedPaymentsModel](
     mapping(
-      unauthorisedPaymentsType -> seq(text),
+      unauthorisedPaymentsType -> seq(text)
     )(UnAuthorisedPaymentsModel.apply)(UnAuthorisedPaymentsModel.unapply).verifying(
       allEmpty("common.unauthorisedPayments.error.checkbox.or.radioButton.noEntry")
     )
