@@ -96,7 +96,7 @@ class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAnd
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Unauthorised payments from pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Taliadau heb awdurdod o bensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
     val expectedButtonText = "Continue"
     val expectedHeading = "Unauthorised payments"
     val expectedTitle = "Unauthorised payments"
