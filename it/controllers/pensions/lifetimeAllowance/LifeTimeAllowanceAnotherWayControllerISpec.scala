@@ -27,7 +27,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.PensionLifetimeAllowance.pensionLifeTimeAllowanceAnotherWayUrl
+import utils.PageUrls.PensionLifetimeAllowance.{pensionLifeTimeAllowanceAnotherWayUrl, pensionTakenAnotherWayAmountUrl}
 import utils.PageUrls.{fullUrl, pensionSummaryUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
@@ -289,8 +289,7 @@ class LifeTimeAllowanceAnotherWayControllerISpec extends IntegrationTest with Be
 
       "has a SEE_OTHER(303) status and redirect Do you have a reduced annual allowance page" in {
         result.status shouldBe SEE_OTHER
-        //TODO redirect page to "Your client's pension taken in another way" Page
-        result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
+        result.header("location") shouldBe Some(pensionTakenAnotherWayAmountUrl(taxYearEOY))
       }
 
       "updates pensionPaidAnotherWayQuestion to Some(true)" in {

@@ -25,20 +25,27 @@ case class PensionsCYAModel(paymentsIntoPension: PaymentsIntoPensionViewModel,
                             pensionsAnnualAllowances: PensionAnnualAllowancesViewModel,
                             pensionLifetimeAllowances: PensionLifetimeAllowancesViewModel,
                             incomeFromPensions: IncomeFromPensionsViewModel,
-                            unauthorisedPayments: UnauthorisedPaymentsViewModel) {
+                            unauthorisedPayments: UnauthorisedPaymentsViewModel,
+                            paymentsIntoOverseasPensions: PaymentsIntoOverseasPensionsViewModel) {
 }
 
 object PensionsCYAModel {
   implicit val format: OFormat[PensionsCYAModel] = Json.format[PensionsCYAModel]
+
   def emptyModels: PensionsCYAModel = PensionsCYAModel(PaymentsIntoPensionViewModel(),
-    PensionAnnualAllowancesViewModel(), PensionLifetimeAllowancesViewModel(), IncomeFromPensionsViewModel(), UnauthorisedPaymentsViewModel())
+    PensionAnnualAllowancesViewModel(),
+    PensionLifetimeAllowancesViewModel(),
+    IncomeFromPensionsViewModel(),
+    UnauthorisedPaymentsViewModel(),
+    PaymentsIntoOverseasPensionsViewModel())
 }
 
 case class EncryptedPensionCYAModel(encryptedPaymentsIntoPension: EncryptedPaymentsIntoPensionViewModel,
                                     encryptedPensionAnnualAllowances: EncryptedPensionAnnualAllowancesViewModel,
                                     pensionLifetimeAllowances: EncryptedPensionLifetimeAllowancesViewModel,
                                     incomeFromPensions: EncryptedIncomeFromPensionsViewModel,
-                                    unauthorisedPayments: EncryptedUnauthorisedPaymentsViewModel)
+                                    unauthorisedPayments: EncryptedUnauthorisedPaymentsViewModel,
+                                    paymentsIntoOverseasPensions: EncryptedPaymentsIntoOverseasPensionsViewModel)
 
 object EncryptedPensionCYAModel {
   implicit val format: OFormat[EncryptedPensionCYAModel] = Json.format[EncryptedPensionCYAModel]

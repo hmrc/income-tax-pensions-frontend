@@ -13,6 +13,7 @@ common.fullStop = .
 common.back = Back
 common.yes = Yes
 common.no = No
+common.or = neu
 common.continue = Continue
 common.saveAndContinue = Save and continue
 common.change = Change
@@ -31,6 +32,7 @@ common.paymentsIntoPensions.caption = Payments into pensions for 6 April {0} to 
 common.dividends.incomeFromPensions.caption = Dividends for 6 April {0} to 5 April {1}
 common.pensionAnnualAllowance.caption = Pension annual allowance for 6 April {0} to 5 April {1}
 common.incomeFromPensions.caption = Income from pensions for 6 April {0} to 5 April {1}
+common.paymentsIntoOverseasPensions.caption = Payments into overseas pensions for 6 April {0} to 5 April {1}
 common.uKPensionIncome.caption = UK pension income for 6 April {0} to 5 April {1}
 common.lifetimeAllowance.caption = Annual and lifetime allowances for 6 April {0} to 5 April {1}
 common.return.overview.buttonText = Return to overview
@@ -50,7 +52,7 @@ common.error.self-assessment.paragraph.1.3a = to speak to someone about your inc
 common.useCalculator.paragraph.link = if you need to work this out
 common.useCalculator.paragraph = Use a calculator
 
-common.unauthorisedPaymentsFromPension.caption = Unauthorised payments from pensions for 6 April {0} to 5 April {1}
+common.unauthorisedPaymentsFromPension.caption = Taliadau heb awdurdod o bensiynau ar gyfer 6 Ebrill {0} i 5 Ebrill {1}
 common.unauthorisedPayments.Amount.Text = Total non-UK tax in pounds
 common.unauthorisedPayments.error.Amount.noEntry = Enter the amount of non-UK tax paid
 common.unauthorisedPayments.error.Amount.incorrectFormat = Enter the amount of non-UK tax in the correct format
@@ -64,6 +66,18 @@ common.yourP60.individual = eich P60
 common.aboutGeneralIncreases.individual = y llythyr ’Ynglŷn â’r cynnydd cyffredinol mewn budd-daliadau’ a anfonwyd atoch gan y Gwasanaeth Pensiwn
 common.yourP60.agent = P60 eich cleient
 common.aboutGeneralIncreases.agent = y llythyr ’Ynglŷn â’r cynnydd cyffredinol mewn budd-daliadau’ a anfonwyd at eich cleient gan y Gwasanaeth Pensiwn
+
+common.employerFinancedRetirementScheme.caption = Cynlluniau buddiannau ymddeol a ariannwyd gan gyflogwyr ar gyfer 6 Ebrill {0} i 5 Ebrill {1}
+
+################# Common lifetime allowance #################
+
+common.lifetimeAllowance.Pension.checkWithProvider.Paragraph.individual = Check with your pension providers if you’re unsure.
+common.lifetimeAllowance.Pension.checkWithProvider.Paragraph.agent = Your client can check with their pension provider if you’re unsure.
+common.total.taxPaid.title = Total tax paid
+common.totalAmount.beforeTax.title = Total amount before tax
+common.beforeTax.error.overMaximum = The amount of lifetime allowance must be less than 100,000,000,000
+common.taxPaid.error.incorrectFormat = Enter the amount of lifetime allowance tax in the correct format
+common.taxPaid.error.overMaximum = The amount of lifetime allowance tax must be less than 100,000,000,000
 
 #################       Error messages        ########################################
 
@@ -118,10 +132,18 @@ pensions.pensionSummary.incomeFromPensions = Income from pensions
 pensions.pensionSummary.pensionAnnualAllowance = Pension annual allowance
 pensions.pensionSummary.pensionLifetimeAllowance = Pension lifetime allowance
 pensions.pensionSummary.unauthorisedPaymentsFromPensions = Unauthorised payments from pensions
-pensions.pensionSummary.paymentsToOverseasPensions = Payments into overseas pensions
+pensions.pensionSummary.paymentsToOverseasPensions = Taliadau i bensiynau tramor
 
 
 ########    PAYMENTS INTO PENSIONS    ########
+pensions.paymentsIntoOverseasPensions.error.agent = Dewiswch ‘Iawn’ os gwnaeth eich cleient neu ei gyflogwr dalu i mewn i gynllun pensiwn tramor
+pensions.paymentsIntoOverseasPensions.error.individual = Dewiswch ‘Iawn’ os gwnaethoch chi neu''ch cyflogwr dalu i mewn i gynllun pensiwn tramor
+pensions.paymentsIntoOverseasPensions.paragraph.individual = Rhowch wybod i ni os ydych chi neu’ch cyflogwr wedi gwneud y canlynol:
+pensions.paymentsIntoOverseasPensions.paragraph.agent = Rhowch wybod i ni os yw’ch cleient neu ei gyflogwr wedi gwneud y canlynol:
+pensions.paymentsIntoOverseasPensions.listItem.first = talu i mewn i gynllun pensiwn tramor
+pensions.paymentsIntoOverseasPensions.listItem.last = drosglwyddo cynilion pensiwn y DU i gynllun pensiwn tramor
+pensions.paymentsIntoOverseasPensions.question.individual = A ydych chi neu’ch cyflogwr wedi’ch talu i mewn i bensiynau tramor?
+pensions.paymentsIntoOverseasPensions.question.agent = A yw’ch cleient neu ei gyflogwr wedi talu i mewn i bensiynau tramor?
 
 paymentsIntoPensions.reliefAtSource.calculationHeading = Example calculation
 
@@ -576,24 +598,16 @@ lifetimeAllowance.lifeTimeAllowanceAnotherWay.error.noEntry.agent = Select yes i
 
 #Pension Lump Sum Details
 lifetimeAllowance.pensionLumpSumDetails.title.individual = Your pension lump sum
-lifetimeAllowance.pensionLumpSumDetails.paragraph.individual = Check with your pension providers if you’re unsure.
-lifetimeAllowance.pensionLumpSumDetails.beforeTax.title = Total amount before tax
 lifetimeAllowance.pensionLumpSumDetails.beforeTax.paragraph.individual = If you got a lump sum payment from more than one pension scheme, give the total.
-lifetimeAllowance.pensionLumpSumDetails.taxPaid.title = Total tax paid
 lifetimeAllowance.pensionLumpSumDetails.taxPaid.paragraph.individual = If more than one of your pension schemes paid lifetime allowance tax, give the total.
 lifetimeAllowance.pensionLumpSumDetails.title.agent = Your client’s pensions lump sum
-lifetimeAllowance.pensionLumpSumDetails.paragraph.agent = Your client can check with their pension provider if you’re unsure.
 lifetimeAllowance.pensionLumpSumDetails.beforeTax.paragraph.agent = If your client got a lump sum payment from more than one pension scheme, give the total.
 lifetimeAllowance.pensionLumpSumDetails.taxPaid.paragraph.agent = If more than one of your client’s pension schemes paid lifetime allowance tax, give the total.
 lifetimeAllowance.pensionLumpSumDetails.beforeTax.error.noEntry.individual = Enter the amount you took above your lifetime allowance as a lump sum
 lifetimeAllowance.pensionLumpSumDetails.beforeTax.error.noEntry.agent = Enter the amount your client took above their lifetime allowance as a lump sum
 lifetimeAllowance.pensionLumpSumDetails.beforeTax.error.incorrectFormat = Enter the amount of lump sum in the correct format
-lifetimeAllowance.pensionLumpSumDetails.beforeTax.error.overMaximum = The amount of lifetime allowance must be less than 100,000,000,000
 lifetimeAllowance.pensionLumpSumDetails.taxPaid.error.noEntry.individual = Enter the amount of lifetime allowance tax your pension provider paid or agreed to pay on the lump sum
 lifetimeAllowance.pensionLumpSumDetails.taxPaid.error.noEntry.agent = Enter the amount of lifetime allowance tax your client’s pension provider paid or agreed to pay on the lump sum
-lifetimeAllowance.pensionLumpSumDetails.taxPaid.error.incorrectFormat = Enter the amount of lifetime allowance tax in the correct format
-lifetimeAllowance.pensionLumpSumDetails.taxPaid.error.overMaximum = The amount of lifetime allowance tax must be less than 100,000,000,000
-
 
 #Surcharge Amount
 unauthorisedPayments.surchargeAmount.title = Amount that resulted in a surcharge
@@ -602,6 +616,7 @@ unauthorisedPayments.surchargeAmount.giveTotal.agent = Give a total of unauthori
 unauthorisedPayments.surchargeAmount.tellUsAbout = You can tell us about unauthorised payments that did not result in a surcharge later.
 unauthorisedPayments.surchargeAmount.error.noEntry = Enter the total amount of unauthorised payment that resulted in a surcharge
 unauthorisedPayments.surchargeAmount.error.incorrectFormat = Enter the total amount in the correct format
+
 #Did you pay non-UK tax that resulted in a surcharge
 unauthorisedPayments.didYouPayNonUkTax.title.individual = Did you pay non-UK tax on the amount that resulted in a surcharge?
 unauthorisedPayments.didYouPayNonUkTax.title.agent = Did your client pay non-UK tax on the amount that resulted in a surcharge?
@@ -610,10 +625,26 @@ unauthorisedPayments.didYouPayNonUkTax.error.noEntry = Select yes if you paid no
 #Where any of the unauthorised payments from a UK pension scheme?
 unauthorisedPayments.whereAnyOfTheUnauthorisedPayments.title = Were any of the unauthorised payments from a UK pension scheme?
 
+#Pension Taken In Another Way
+lifetimeAllowance.pensionTakenAnotherWay.title.individual = Your pension taken in another way
+lifetimeAllowance.pensionTakenAnotherWay.title.agent = Your client’s pension taken in another way
+lifetimeAllowance.pensionTakenAnotherWay.paragraph.one.individual = Tell us the amount above your lifetime allowance you’ve taken in other ways. This could be regular payments or a cash withdrawal.
+lifetimeAllowance.pensionTakenAnotherWay.paragraph.one.agent = Tell us the amount above your client’s lifetime allowance they’ve taken in other ways. This could be regular payments or a cash withdrawal.
+lifetimeAllowance.pensionTakenAnotherWay.beforeTax.paragraph.individual = If you got payments from more than one pension scheme, give the total.
+lifetimeAllowance.pensionTakenAnotherWay.beforeTax.paragraph.agent = If your client got payments from more than one pension scheme, give the total.
+lifetimeAllowance.pensionTakenAnotherWay.taxPaid.paragraph = If more than one pension scheme paid the lifetime allowance tax, give the total.
+lifetimeAllowance.pensionTakenAnotherWay.beforeTax.error.noEntry.individual = Enter the amount you took above your lifetime allowance in another way
+lifetimeAllowance.pensionTakenAnotherWay.beforeTax.error.noEntry.agent = Enter the amount your client took above their lifetime allowance in another way
+lifetimeAllowance.pensionTakenAnotherWay.beforeTax.error.incorrectFormat.individual = Enter the amount you took above your lifetime allowance in the correct format
+lifetimeAllowance.pensionTakenAnotherWay.beforeTax.error.incorrectFormat.agent = Enter the amount your client took above their lifetime allowance in the correct format
+lifetimeAllowance.pensionTakenAnotherWay.taxPaid.error.noEntry.individual = Enter the amount of lifetime allowance tax your pension provider paid or agreed to pay on the amount taken in another way
+lifetimeAllowance.pensionTakenAnotherWay.taxPaid.error.noEntry.agent = Enter the amount of lifetime allowance tax your client’s pension provider paid or agreed to pay on the amount taken in another way
+
 #Did you pay non-UK tax that did not result in a surcharge
 unauthorisedPayments.nonUkTaxOnAmountNotSurcharge.title.individual = Did you pay non-UK tax on the amount that did not result in a surcharge?
 unauthorisedPayments.nonUkTaxOnAmountNotSurcharge.title.agent = Did your client pay non-UK tax on the amount that did not result in a surcharge?
 unauthorisedPayments.nonUkTaxOnAmountNotSurcharge.error.noEntry = Select yes if you paid non-UK tax on the amount not surcharged
+
 
 #Unauthorised Payments
 unauthorisedPayments.title = Unauthorised payments
@@ -625,3 +656,20 @@ unauthorisedPayments.findOutMoreAboutUnauthorisedPayment = Find out more about u
 unauthorisedPayments.didYouGetAnUnauthorisedPayment = Did you get an unauthorised payment from a pension scheme?
 unauthorisedPayments.checkbox.text1 = Yes, unauthorised payments that resulted in a surcharge
 unauthorisedPayments.checkbox.text2 = Yes, unauthorised payments that did not result in a surcharge
+
+#Do you have an employer-financed retirement scheme?
+employerFinancedRetirementScheme.benefitsFromScheme.title = Cynlluniau buddiannau ymddeol a ariannwyd gan gyflogwyr
+employerFinancedRetirementScheme.benefitsFromScheme.paragraph.1 = Os nad yw cynllun pensiwn yn gofrestredig, gallai fod yn gynllun buddiant ymddeol a ariannwyd gan gyflogwyr (EFRBS).
+employerFinancedRetirementScheme.benefitsFromScheme.paragraph.2 = Cynllun yw EFRBS sy’n talu rhai buddiannau ymddeoliad neu farwolaeth ar gyfer gweithwyr neu gyn-weithwyr, a elwir yn ‘fuddiannau perthnasol’.
+employerFinancedRetirementScheme.benefitsFromScheme.question.individual = A oes gennych gynllun ymddeol a ariannwyd gan gyflogwr?
+employerFinancedRetirementScheme.benefitsFromScheme.question.agent = A oes gan eich cleient gynllun ymddeol a ariannwyd gan gyflogwr?
+employerFinancedRetirementScheme.benefitsFromScheme.error.individual = Dewiswch ‘Iawn’ os oes gennych gynllun buddiannau ymddeol a ariannwyd gan gyflogwyr
+employerFinancedRetirementScheme.benefitsFromScheme.error.agent = Dewiswch ‘Iawn’ os oes gan eich cleient gynllun buddiannau ymddeol a ariannwyd gan gyflogwyr
+
+#Did you get any unauthorised payment from a pension scheme?
+unauthorisedPayments.gateway.title.individual = A gawsoch unrhyw daliad heb awdurdod o gynllun pensiwn?
+unauthorisedPayments.gateway.title.agent = A gafodd eich cleient unrhyw daliad heb awdurdod o gynllun pensiwn?
+unauthorisedPayments.gateway.findOutMore = Dysgwch ragor am daliadau heb awdurdod
+unauthorisedPayments.gateway.error.individual = Dewiswch ‘Iawn’ os cawsoch daliadau heb awdurdod
+unauthorisedPayments.gateway.error.agent = Dewiswch ‘Iawn’ os cafodd eich cleient daliadau heb awdurdod
+

@@ -23,7 +23,7 @@ import forms.{No, Yes}
 import models.User
 import models.mongo.{PensionsCYAModel, PensionsUserData}
 import models.pension.AllPensionsData
-import models.pension.charges.{PensionAnnualAllowancesViewModel, PensionLifetimeAllowancesViewModel, UnauthorisedPaymentsViewModel}
+import models.pension.charges.{PaymentsIntoOverseasPensionsViewModel, PensionAnnualAllowancesViewModel, PensionLifetimeAllowancesViewModel, UnauthorisedPaymentsViewModel}
 import models.pension.reliefs.PaymentsIntoPensionViewModel
 import models.pension.statebenefits.{IncomeFromPensionsViewModel, StateBenefit, StateBenefitViewModel, UkPensionIncomeViewModel}
 import org.joda.time.DateTimeZone
@@ -191,8 +191,10 @@ class PensionSessionService @Inject()(pensionUserDataRepository: PensionsUserDat
         noSurchargeTaxAmount = prior.pensionCharges.flatMap(_.pensionSchemeUnauthorisedPayments.flatMap(_.noSurcharge.map(_.foreignTaxPaid))),
         ukPensionSchemesQuestion = prior.pensionCharges.map(_.pensionSchemeUnauthorisedPayments.map(_.pensionSchemeTaxReference).isDefined),
         pensionSchemeTaxReference = prior.pensionCharges.flatMap(_.pensionSchemeUnauthorisedPayments.map(_.pensionSchemeTaxReference))
-      )
-    )
+      ),
+
+      //TODO Implement PaymentsIntoOverseas Endpoint
+      paymentsIntoOverseasPensions = PaymentsIntoOverseasPensionsViewModel())
   }
 
   private def getUnauthorisedPaymentsQuestion(prior: AllPensionsData): Option[Boolean] = {

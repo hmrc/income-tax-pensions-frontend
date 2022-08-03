@@ -31,6 +31,9 @@ GET         /:taxYear/pensions-summary                                          
 
 ###########################     Payments into Pension pages     ####################################
 
+GET         /:taxYear/payments-into-pensions/payments-into-overseas-pensions/overseas-pension-scheme                  controllers.pensions.paymentsIntoPension.PaymentsIntoOverseasPensionsGatewayController.show(taxYear:Int)
+POST        /:taxYear/payments-into-pensions/payments-into-overseas-pensions/overseas-pension-scheme                  controllers.pensions.paymentsIntoPension.PaymentsIntoOverseasPensionsGatewayController.submit(taxYear:Int)
+
 GET         /:taxYear/payments-into-pensions/payments-into-pensions-status                  controllers.pensions.paymentsIntoPension.PaymentsIntoPensionsStatusController.show(taxYear:Int)
 POST        /:taxYear/payments-into-pensions/payments-into-pensions-status                  controllers.pensions.paymentsIntoPension.PaymentsIntoPensionsStatusController.submit(taxYear:Int)
 
@@ -165,5 +168,23 @@ POST        /:taxYear/unauthorised-payments-from-pensions/tax-on-amount-not-surc
 GET         /:taxYear/unauthorised-payments-from-pensions/uk-pension-scheme         controllers.pensions.unauthorisedPayments.WhereAnyOfTheUnauthorisedPaymentsController.show(taxYear: Int)
 POST        /:taxYear/unauthorised-payments-from-pensions/uk-pension-scheme         controllers.pensions.unauthorisedPayments.WhereAnyOfTheUnauthorisedPaymentsController.submit(taxYear: Int)
 
+
 GET         /:taxYear/unauthorised-payments-from-pensions/unauthorised-payments        controllers.pensions.unauthorisedPayments.UnAuthorisedPaymentsController.show(taxYear: Int)
 POST        /:taxYear/unauthorised-payments-from-pensions/unauthorised-payments         controllers.pensions.unauthorisedPayments.UnAuthorisedPaymentsController.submit(taxYear: Int)
+
+GET         /:taxYear/unauthorised-payments-from-pensions/unauthorised-payment              controllers.pensions.unauthorisedPayments.UnauthorisedPaymentController.show(taxYear: Int)
+POST        /:taxYear/unauthorised-payments-from-pensions/unauthorised-payment              controllers.pensions.unauthorisedPayments.UnauthorisedPaymentController.submit(taxYear: Int)
+
+
+###########################    Employer-financed Retirement Benefits Schemes Pages     ####################################
+
+GET         /:taxYear/employment-financed-retirement-benefits-scheme/benefits-from-scheme   controllers.pensions.employmentFinancedRetirementScheme.BenefitsFromSchemeController.show(taxYear: Int)
+POST        /:taxYear/employment-financed-retirement-benefits-scheme/benefits-from-scheme   controllers.pensions.employmentFinancedRetirementScheme.BenefitsFromSchemeController.submit(taxYear: Int)
+
+
+###########################     Lifetime Allowance Pages     ####################################
+
+GET         /:taxYear/annual-lifetime-allowances/lifetime-allowance-another-way-details     controllers.pensions.lifetimeAllowance.PensionTakenAnotherWayAmountController.show(taxYear: Int)
+POST        /:taxYear/annual-lifetime-allowances/lifetime-allowance-another-way-details     controllers.pensions.lifetimeAllowance.PensionTakenAnotherWayAmountController.submit(taxYear: Int)
+
+
