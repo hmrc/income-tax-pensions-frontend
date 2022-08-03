@@ -101,7 +101,7 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec extends IntegrationTe
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Unauthorised payments from pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Taliadau heb awdurdod o bensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
     val expectedButtonText = "Continue"
     val yesText = "Yes"
     val noText = "No"
@@ -157,7 +157,6 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec extends IntegrationTe
 
         "render the 'PSTR' page with correct content with pre-filling and a PSTR index" which {
           val taxSchemeRef = "12345678RB"
-          val index = 0
 
           implicit lazy val result: WSResponse = {
             dropPensionsDB()
