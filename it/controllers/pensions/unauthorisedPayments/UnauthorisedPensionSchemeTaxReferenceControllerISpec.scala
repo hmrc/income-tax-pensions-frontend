@@ -19,12 +19,13 @@ package controllers.pensions.unauthorisedPayments
 import builders.PensionsUserDataBuilder.{aPensionsUserData, anPensionsUserDataEmptyCya, pensionsUserDataWithUnauthorisedPayments}
 import builders.UnauthorisedPaymentsViewModelBuilder.anUnauthorisedPaymentsViewModel
 import builders.UserBuilder.aUserRequest
-import forms.{PensionSchemeTaxReferenceForm, UnauthPaymentsPensionSchemeTaxReferenceForm}
-import org.jsoup.Jsoup
+import forms.PensionSchemeTaxReferenceForm
+import org.jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
+import org.jsoup.Jsoup
 import play.api.libs.ws.WSResponse
 import utils.PageUrls.unauthorisedPaymentsPages.pensionSchemeTaxReferenceUrl
 import utils.PageUrls.{fullUrl, pensionSummaryUrl}
@@ -62,29 +63,29 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec extends IntegrationTe
   }
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
-    val expectedNoEntryError: String = "Enter your PSTR"
-    val expectedIncorrectFormatError: String = "Enter your PSTR in the correct format"
+    val expectedNoEntryError: String = "Enter your Pension Scheme Tax Reference"
+    val expectedIncorrectFormatError: String = "Enter your Pension Scheme Tax Reference in the correct format"
     val expectedParagraph2: String = "If you got unauthorised payments from more than one UK pension provider, you can add the references later."
     val expectedParagraph1 = "You can get this information from your pension provider."
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
-    val expectedNoEntryError: String = "Enter your PSTR"
-    val expectedIncorrectFormatError: String = "Enter your PSTR in the correct format"
+    val expectedNoEntryError: String = "Enter your Pension Scheme Tax Reference"
+    val expectedIncorrectFormatError: String = "Enter your Pension Scheme Tax Reference in the correct format"
     val expectedParagraph2: String = "If you got unauthorised payments from more than one UK pension provider, you can add the references later."
     val expectedParagraph1 = "You can get this information from your pension provider."
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
-    val expectedNoEntryError: String = "Enter your client’s PSTR"
-    val expectedIncorrectFormatError: String = "Enter your client’s PSTR in the correct format"
+    val expectedNoEntryError: String = "Enter your client’s Pension Scheme Tax Reference"
+    val expectedIncorrectFormatError: String = "Enter your client’s Pension Scheme Tax Reference in the correct format"
     val expectedParagraph2: String = "If your client got unauthorised payments from more than UK pension provider, you can add the references later."
     val expectedParagraph1 = "Your client can get this information from their pension provider."
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
-    val expectedNoEntryError: String = "Enter your client’s PSTR"
-    val expectedIncorrectFormatError: String = "Enter your client’s PSTR in the correct format"
+    val expectedNoEntryError: String = "Enter your client’s Pension Scheme Tax Reference"
+    val expectedIncorrectFormatError: String = "Enter your client’s Pension Scheme Tax Reference in the correct format"
     val expectedParagraph2: String = "If your client got unauthorised payments from more than UK pension provider, you can add the references later."
     val expectedParagraph1 = "Your client can get this information from their pension provider."
   }
@@ -154,39 +155,8 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec extends IntegrationTe
           formPostLinkCheck(pensionSchemeTaxReferenceUrl(taxYearEOY), formSelector)
           welshToggleCheck(user.isWelsh)
         }
-
-        "render the 'PSTR' page with correct content with pre-filling and a PSTR index" which {
-          val taxSchemeRef = "12345678RB"
-
-          implicit lazy val result: WSResponse = {
-            dropPensionsDB()
-            val pensionsViewModel = anUnauthorisedPaymentsViewModel.copy(pensionSchemeTaxReference = Some(Seq(taxSchemeRef)))
-            insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel), aUserRequest)
-            authoriseAgentOrIndividual(user.isAgent)
-            urlGet(fullUrl(pensionSchemeTaxReferenceUrl(taxYearEOY)), user.isWelsh, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
-          }
-
-          "has an OK status" in {
-            result.status shouldBe OK
-          }
-
-          implicit def document: () => Document = () => Jsoup.parse(result.body)
-
-          titleCheck(expectedTitle)
-          h1Check(expectedHeading)
-          captionCheck(expectedCaption(taxYearEOY))
-          textOnPageCheck(user.specificExpectedResults.get.expectedParagraph1, paragraphSelector(1))
-          textOnPageCheck(user.specificExpectedResults.get.expectedParagraph2, paragraphSelector(2))
-          textOnPageCheck(hintText, hintTextSelector)
-          inputFieldValueCheck(inputName, inputSelector, "")
-          buttonCheck(expectedButtonText, continueButtonSelector)
-          formPostLinkCheck(pensionSchemeTaxReferenceUrl(taxYearEOY), formSelector)
-          welshToggleCheck(user.isWelsh)
-        }
-
       }
     }
-
 
     "Redirect to the annual allowance CYA page if there is no session data" should {
       lazy val result: WSResponse = {
@@ -210,7 +180,7 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec extends IntegrationTe
       s"language is ${welshTest(user.isWelsh)} and request is from an ${agentTest(user.isAgent)}" should {
 
         s"return $BAD_REQUEST error when no value is submitted" which {
-          lazy val form: Map[String, String] = Map(UnauthPaymentsPensionSchemeTaxReferenceForm.taxReferenceId -> "")
+          lazy val form: Map[String, String] = Map(PensionSchemeTaxReferenceForm.taxReferenceId -> "")
 
           lazy val result: WSResponse = {
             dropPensionsDB()
@@ -275,7 +245,7 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec extends IntegrationTe
     }
 
     "redirect and add pstr to existing list of pstr even when the pstr is already present in the model " which {
-      lazy val form: Map[String, String] = Map(UnauthPaymentsPensionSchemeTaxReferenceForm.taxReferenceId -> "12345678RB")
+      lazy val form: Map[String, String] = Map(PensionSchemeTaxReferenceForm.taxReferenceId -> "12345678RB")
 
       lazy val result: WSResponse = {
         dropPensionsDB()
@@ -299,7 +269,7 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec extends IntegrationTe
     }
 
     "redirect and add pstr to existing list of pstr" which {
-      lazy val form: Map[String, String] = Map(UnauthPaymentsPensionSchemeTaxReferenceForm.taxReferenceId -> "12345678RA")
+      lazy val form: Map[String, String] = Map(PensionSchemeTaxReferenceForm.taxReferenceId -> "12345678RA")
 
       lazy val result: WSResponse = {
         dropPensionsDB()

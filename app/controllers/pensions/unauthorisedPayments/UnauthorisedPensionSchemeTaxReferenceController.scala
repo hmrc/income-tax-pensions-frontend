@@ -41,12 +41,28 @@ class UnauthorisedPensionSchemeTaxReferenceController @Inject()(implicit val cc:
                                                                 clock: Clock,
                                                                 ec: ExecutionContext) extends FrontendController(cc) with I18nSupport {
 
+  def formDetails(isAgent : Boolean) : (String, String) = {
+    if (isAgent) {
+      (
+        "unauthorisedPayments.pension.pensionSchemeTaxReference.error.noEntry.agent",
+        "unauthorisedPayments.pension.pensionSchemeTaxReference.error.incorrectFormat.agent"
+
+      )
+    } else {
+      (
+        "unauthorisedPayments.pension.pensionSchemeTaxReference.error.noEntry.individual",
+        "unauthorisedPayments.pension.pensionSchemeTaxReference.error.incorrectFormat.individual"
+      )
+    }
+  }
 
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async{ implicit request =>
     pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap{
       case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
-      case Right(Some(pensionsUserData)) => {
-        val emptyForm: Form[String] = PensionSchemeTaxReferenceForm.pensionSchemeTaxReferenceForm(request.user.isAgent)
+      case Right(Some(_)) => {
+        val errorMsgDetails = formDetails(request.user.isAgent)
+        val emptyForm: Form[String] = PensionSchemeTaxReferenceForm.pensionSchemeTaxReferenceForm(errorMsgDetails._1, errorMsgDetails._2)
+          //TODO: capability to add or reference a particular pension scheme tax reference
           Future.successful(Ok(pensionSchemeTaxReferenceView(emptyForm, taxYear)))
         }
       case Right(None) => Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
@@ -56,7 +72,8 @@ class UnauthorisedPensionSchemeTaxReferenceController @Inject()(implicit val cc:
 
   def submit(taxYear: Int): Action[AnyContent] = authAction.async {
     implicit request =>
-      PensionSchemeTaxReferenceForm.pensionSchemeTaxReferenceForm(request.user.isAgent).bindFromRequest().fold(
+      val errorMsgDetails = formDetails(request.user.isAgent)
+      PensionSchemeTaxReferenceForm.pensionSchemeTaxReferenceForm(errorMsgDetails._1, errorMsgDetails._2).bindFromRequest().fold(
         formWithErrors => Future.successful(BadRequest(pensionSchemeTaxReferenceView(formWithErrors, taxYear))),
         pstr => {
           pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {

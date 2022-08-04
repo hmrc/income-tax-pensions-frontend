@@ -43,8 +43,23 @@ class PensionSchemeTaxReferenceController @Inject()(implicit val cc: MessagesCon
                                                     errorHandler: ErrorHandler,
                                                     clock: Clock) extends FrontendController(cc) with I18nSupport {
 
+  def formDetails(isAgent : Boolean) : (String, String) = {
+    if (isAgent) {
+      (
+        "pension.pensionSchemeTaxReference.error.noEntry.agent",
+        "pension.pensionSchemeTaxReference.error.incorrectFormat.agent"
+      )
+    } else {
+      (
+        "pension.pensionSchemeTaxReference.error.noEntry.individual",
+        "pension.pensionSchemeTaxReference.error.incorrectFormat.individual"
+      )
+    }
+  }
+
   private def prefillValue(pstrListOpt: Option[Seq[String]], pensionSchemeTaxReference: Option[Int], user: User): Form[String] = {
-    val emptyForm: Form[String] = PensionSchemeTaxReferenceForm.pensionSchemeTaxReferenceForm(user.isAgent)
+    val errorMsgDetails = formDetails(user.isAgent)
+    val emptyForm: Form[String] = PensionSchemeTaxReferenceForm.pensionSchemeTaxReferenceForm(errorMsgDetails._1, errorMsgDetails._2)
     (pstrListOpt, pensionSchemeTaxReference) match {
       case (Some(pstrList), Some(pstrIndex)) => emptyForm.fill(pstrList(pstrIndex))
       case (_, _) => emptyForm
@@ -75,7 +90,8 @@ class PensionSchemeTaxReferenceController @Inject()(implicit val cc: MessagesCon
 
   def submit(taxYear: Int, pensionSchemeTaxReferenceIndex: Option[Int]): Action[AnyContent] = authAction.async {
     implicit request =>
-      PensionSchemeTaxReferenceForm.pensionSchemeTaxReferenceForm(request.user.isAgent).bindFromRequest().fold(
+      val errorMsgDetails = formDetails(request.user.isAgent)
+      PensionSchemeTaxReferenceForm.pensionSchemeTaxReferenceForm(errorMsgDetails._1, errorMsgDetails._2).bindFromRequest().fold(
         formWithErrors => Future.successful(BadRequest(pensionSchemeTaxReferenceView(formWithErrors, taxYear, pensionSchemeTaxReferenceIndex))),
         pensionScheme => {
           pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {

@@ -29,21 +29,13 @@ object PensionSchemeTaxReferenceForm extends InputFilters {
   val taxReferenceId: String = "taxReferenceId"
   val regex: String = "^\\d{8}[R]{1}[a-zA-Z]{1}$"
 
-  def notEmpty(isAgent: Boolean): Constraint[String] =
-    nonEmpty(if (isAgent) "pension.pensionSchemeTaxReference.error.noEntry.agent" else "pension.pensionSchemeTaxReference.error.noEntry.individual")
+  def notEmpty(message : String): Constraint[String] = nonEmpty(message)
 
-  def validateFormat(isAgent: Boolean): Constraint[String] =
-    validateChar(regex)(if (isAgent) {
-      "pension.pensionSchemeTaxReference.error.incorrectFormat.agent"
-    }
-    else {
-      "pension.pensionSchemeTaxReference.error.incorrectFormat.individual"
-    })
+  def validateFormat(message : String): Constraint[String] = validateChar(regex)(message)
 
-  def pensionSchemeTaxReferenceForm(isAgent: Boolean): Form[String] = Form(
+  def pensionSchemeTaxReferenceForm(noEntryMsg : String, incorrectFormatMsg : String): Form[String] = Form(
     taxReferenceId -> trimmedText.transform[String](filter, identity).verifying(
-      notEmpty(isAgent) andThen validateFormat(isAgent)
+      notEmpty(noEntryMsg) andThen validateFormat(incorrectFormatMsg)
     )
   )
-
 }
