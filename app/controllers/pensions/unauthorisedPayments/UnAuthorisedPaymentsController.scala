@@ -49,12 +49,25 @@ class UnAuthorisedPaymentsController @Inject()(implicit val mcc: MessagesControl
       case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
       case Right(optPensionUserData) => optPensionUserData match {
         case Some(data) =>
-          if (data.pensions.unauthorisedPayments.unauthorisedPaymentsQuestion.contains(true)) {
-            val form = UnAuthorisedPaymentsForm.unAuthorisedPaymentsTypeForm()
-            Future.successful(Ok(view(form, taxYear)))
-          } else {
-            Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
+          val surchargeQuestion = data.pensions.unauthorisedPayments.surchargeQuestion
+          val noSurchargeQuestion = data.pensions.unauthorisedPayments.noSurchargeQuestion
+          var noQuestion: Option[Boolean] = Some(false)
+
+          def setNoQuestion = {
+            surchargeQuestion match {
+              case Some(true) => noQuestion = Some(false)
+              case Some(false) => noQuestion = data.pensions.unauthorisedPayments.noValueQuestion
+              case None => noQuestion = data.pensions.unauthorisedPayments.noValueQuestion
+                noSurchargeQuestion match {
+                  case Some(true) => noQuestion = Some(false)
+                  case Some(false) => noQuestion = data.pensions.unauthorisedPayments.noValueQuestion
+                  case None => noQuestion = data.pensions.unauthorisedPayments.noValueQuestion
+                }
+            }
           }
+          setNoQuestion
+          val form = UnAuthorisedPaymentsForm.unAuthorisedPaymentsTypeForm()
+            Future.successful(Ok(view(form, taxYear, surchargeQuestion, noSurchargeQuestion, noQuestion)))
         case None =>
           //TODO - redirect to CYA page once implemented
           Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
@@ -68,7 +81,6 @@ class UnAuthorisedPaymentsController @Inject()(implicit val mcc: MessagesControl
       case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
       case Right(optPensionUserData) => optPensionUserData match {
         case Some(data) =>
-          if (data.pensions.unauthorisedPayments.unauthorisedPaymentsQuestion.contains(true)) {
             UnAuthorisedPaymentsForm.unAuthorisedPaymentsTypeForm().bindFromRequest().fold(
               formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
               unauthorisedPaymentsSelection => {
@@ -76,7 +88,11 @@ class UnAuthorisedPaymentsController @Inject()(implicit val mcc: MessagesControl
                 val unauthorisedPaymentsViewModel = pensionsCYAModel.unauthorisedPayments
 
                 val updatedCyaModel: PensionsCYAModel = {
-                  pensionsCYAModel.copy(unauthorisedPayments = unauthorisedPaymentsViewModel.copy())
+                  pensionsCYAModel.copy(unauthorisedPayments = unauthorisedPaymentsViewModel.copy(
+                    surchargeQuestion = Some(unauthorisedPaymentsSelection.containsYesSurcharge),
+                    noSurchargeQuestion = Some(unauthorisedPaymentsSelection.containsYesNotSurcharge),
+                    noValueQuestion = Some(unauthorisedPaymentsSelection.containsNoVal)
+                  ))
                 }
                 pensionSessionService.createOrUpdateSessionData(request.user,
                   updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
@@ -94,10 +110,9 @@ class UnAuthorisedPaymentsController @Inject()(implicit val mcc: MessagesControl
                 }
               }
             )
-          } else {
+        case None =>
             //TODO - redirect to Check your unauthorised payments page once implemented
-            Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
-          }
+          Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
       }
     }
   }
