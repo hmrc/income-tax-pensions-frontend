@@ -316,7 +316,7 @@ class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAnd
             dropPensionsDB()
 
             val pensionsViewModel: UnauthorisedPaymentsViewModel = UnauthorisedPaymentsViewModel().copy(
-              surchargeQuestion = Some(false), noValueQuestion = Some(true)
+              surchargeQuestion = Some(false), noSurchargeQuestion= Some(false)
             )
 
             insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false), aUserRequest)
@@ -363,7 +363,7 @@ class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAnd
             dropPensionsDB()
 
             val pensionsViewModel: UnauthorisedPaymentsViewModel = UnauthorisedPaymentsViewModel().copy(
-              noValueQuestion = Some(true), surchargeQuestion = Some(true), noSurchargeQuestion = Some(true)
+              surchargeQuestion = Some(true), noSurchargeQuestion = Some(true)
             )
 
             insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false), aUserRequest)
@@ -516,7 +516,7 @@ class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAnd
         "has a SEE_OTHER(303) status" in {
           result.status shouldBe SEE_OTHER
           //TODO - redirect to Amount that did not result in a surcharge page once implemented
-          result.header("location").contains(nonUKTaxOnAmountSurcharge(taxYearEOY)) shouldBe true
+          result.header("location").contains(unauthorisedPaymentsUrl(taxYearEOY)) shouldBe true
         }
       }
 
@@ -542,7 +542,7 @@ class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAnd
           "has a SEE_OTHER(303) status" in {
             result.status shouldBe SEE_OTHER
             //TODO - redirect to CYA page once implemented
-            result.header("location").contains(pensionSummaryUrl(taxYearEOY)) shouldBe true
+            result.header("location").contains(unauthorisedPaymentsUrl(taxYearEOY)) shouldBe true
           }
       }
 

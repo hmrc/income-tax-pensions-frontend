@@ -18,19 +18,19 @@ package controllers.pensions.unauthorisedPayments
 
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.routes._
-import controllers.pensions.unauthorisedPayments.routes.{NonUkTaxOnAmountNotSurchargeController, SurchargeAmountController}
+import controllers.pensions.unauthorisedPayments.routes.{NonUkTaxOnAmountNotSurchargeController, SurchargeAmountController, UnAuthorisedPaymentsController}
 import controllers.predicates.AuthorisedAction
 import controllers.predicates.TaxYearAction.taxYearAction
 import forms.UnAuthorisedPaymentsForm
-import models.mongo.PensionsCYAModel
+import models.mongo.{PensionsCYAModel, PensionsUserData}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.unauthorisedPayments.UnauthorisedPaymentsView
-import scala.concurrent.ExecutionContext.Implicits.global
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
@@ -51,21 +51,7 @@ class UnAuthorisedPaymentsController @Inject()(implicit val mcc: MessagesControl
         case Some(data) =>
           val surchargeQuestion = data.pensions.unauthorisedPayments.surchargeQuestion
           val noSurchargeQuestion = data.pensions.unauthorisedPayments.noSurchargeQuestion
-          var noQuestion: Option[Boolean] = Some(false)
-
-          def setNoQuestion = {
-            surchargeQuestion match {
-              case Some(true) => noQuestion = Some(false)
-              case Some(false) => noQuestion = data.pensions.unauthorisedPayments.noValueQuestion
-              case None => noQuestion = data.pensions.unauthorisedPayments.noValueQuestion
-                noSurchargeQuestion match {
-                  case Some(true) => noQuestion = Some(false)
-                  case Some(false) => noQuestion = data.pensions.unauthorisedPayments.noValueQuestion
-                  case None => noQuestion = data.pensions.unauthorisedPayments.noValueQuestion
-                }
-            }
-          }
-          setNoQuestion
+          val noQuestion: Option[Boolean] = getNoQuestion(data)
           val form = UnAuthorisedPaymentsForm.unAuthorisedPaymentsTypeForm()
             Future.successful(Ok(view(form, taxYear, surchargeQuestion, noSurchargeQuestion, noQuestion)))
         case None =>
@@ -73,7 +59,11 @@ class UnAuthorisedPaymentsController @Inject()(implicit val mcc: MessagesControl
           Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
       }
     }
+  }
 
+  private def getNoQuestion(data: PensionsUserData): Option[Boolean] = {
+    if (data.pensions.unauthorisedPayments.noSurchargeQuestion.contains(false)
+      && data.pensions.unauthorisedPayments.surchargeQuestion.contains(false)) Some(true) else Some(false)
   }
 
   def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
@@ -90,8 +80,7 @@ class UnAuthorisedPaymentsController @Inject()(implicit val mcc: MessagesControl
                 val updatedCyaModel: PensionsCYAModel = {
                   pensionsCYAModel.copy(unauthorisedPayments = unauthorisedPaymentsViewModel.copy(
                     surchargeQuestion = Some(unauthorisedPaymentsSelection.containsYesSurcharge),
-                    noSurchargeQuestion = Some(unauthorisedPaymentsSelection.containsYesNotSurcharge),
-                    noValueQuestion = Some(unauthorisedPaymentsSelection.containsNoVal)
+                    noSurchargeQuestion = Some(unauthorisedPaymentsSelection.containsYesNotSurcharge)
                   ))
                 }
                 pensionSessionService.createOrUpdateSessionData(request.user,
@@ -102,10 +91,10 @@ class UnAuthorisedPaymentsController @Inject()(implicit val mcc: MessagesControl
                   }
                   else if (unauthorisedPaymentsSelection.containsYesNotSurcharge) {
                     //TODO - redirect to unauthorised payments that did not result in a surcharge page once implemented
-                    Redirect(NonUkTaxOnAmountNotSurchargeController.show(taxYear))
+                    Redirect(UnAuthorisedPaymentsController.show(taxYear))
                   } else {
                     //TODO - redirect to Check your unauthorised payments page once implemented
-                    Redirect(PensionsSummaryController.show(taxYear))
+                    Redirect(UnAuthorisedPaymentsController.show(taxYear))
                   }
                 }
               }
