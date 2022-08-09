@@ -43,12 +43,11 @@ class PensionSchemeTaxReferenceController @Inject()(implicit val cc: MessagesCon
                                                     errorHandler: ErrorHandler,
                                                     clock: Clock) extends FrontendController(cc) with I18nSupport {
 
-  val isAgent = (isAgent : Boolean) => if (isAgent) "agent" else "individual"
 
   private def prefillValue(pstrListOpt: Option[Seq[String]], pensionSchemeTaxReference: Option[Int], user: User): Form[String] = {
     val errorMsgDetails = (
-      s"pension.pensionSchemeTaxReference.error.noEntry.${isAgent(user.isAgent)}",
-      s"pension.pensionSchemeTaxReference.error.incorrectFormat.${isAgent(user.isAgent)}")
+      s"pension.pensionSchemeTaxReference.error.noEntry.${if (user.isAgent) "agent" else "individual"}",
+      s"pension.pensionSchemeTaxReference.error.incorrectFormat.${if (user.isAgent) "agent" else "individual"}")
     val emptyForm: Form[String] = PensionSchemeTaxReferenceForm.pensionSchemeTaxReferenceForm(errorMsgDetails._1, errorMsgDetails._2)
     (pstrListOpt, pensionSchemeTaxReference) match {
       case (Some(pstrList), Some(pstrIndex)) => emptyForm.fill(pstrList(pstrIndex))
@@ -81,8 +80,8 @@ class PensionSchemeTaxReferenceController @Inject()(implicit val cc: MessagesCon
   def submit(taxYear: Int, pensionSchemeTaxReferenceIndex: Option[Int]): Action[AnyContent] = authAction.async {
     implicit request =>
       val errorMsgDetails = (
-        s"pension.pensionSchemeTaxReference.error.noEntry.${isAgent(request.user.isAgent)}",
-        s"pension.pensionSchemeTaxReference.error.incorrectFormat.${isAgent(request.user.isAgent)}")
+        s"pension.pensionSchemeTaxReference.error.noEntry.${if (request.user.isAgent) "agent" else "individual"}",
+        s"pension.pensionSchemeTaxReference.error.incorrectFormat.${if (request.user.isAgent) "agent" else "individual"}")
       PensionSchemeTaxReferenceForm.pensionSchemeTaxReferenceForm(errorMsgDetails._1, errorMsgDetails._2).bindFromRequest().fold(
         formWithErrors => Future.successful(BadRequest(pensionSchemeTaxReferenceView(formWithErrors, taxYear, pensionSchemeTaxReferenceIndex))),
         pensionScheme => {
