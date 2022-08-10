@@ -667,16 +667,3 @@ unauthorisedPayments.gateway.title.agent = Did your client get any unauthorised 
 unauthorisedPayments.gateway.findOutMore = Find out more about unauthorised payments
 unauthorisedPayments.gateway.error.individual = Select yes if you got unauthorised payments
 unauthorisedPayments.gateway.error.agent = Select yes if your client got unauthorised payments
-
-
-#Unauthorised Payments
-unauthorisedPayments.title = Unauthorised payments
-unauthorisedPayments.paymentOutside = Unauthorised payments are made outside the tax rules
-unauthorisedPayments.moreThanOneUnauthorisedPayment.line1 = If you got more than one unauthorised payment, you might
-unauthorisedPayments.moreThanOneUnauthorisedPayment.line2 = have paid a surcharge (an extra fee) on some of them. It all
-unauthorisedPayments.moreThanOneUnauthorisedPayment.line3 = depends on if you’ve taken 25% or more of your pension pots.
-unauthorisedPayments.findOutMoreAboutUnauthorisedPayment = Find out more about unauthorised payments (opens in new tab)
-unauthorisedPayments.didYouGetAnUnauthorisedPayment = Did you get an unauthorised payment from a pension scheme?
-unauthorisedPayments.checkbox.text1 = Yes, unauthorised payments that resulted in a surcharge
-unauthorisedPayments.checkbox.text2 = Yes, unauthorised payments that did not result in a surcharge
-
