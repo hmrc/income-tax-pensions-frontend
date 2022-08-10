@@ -79,6 +79,10 @@ common.beforeTax.error.overMaximum = The amount of lifetime allowance must be le
 common.taxPaid.error.incorrectFormat = Enter the amount of lifetime allowance tax in the correct format
 common.taxPaid.error.overMaximum = The amount of lifetime allowance tax must be less than 100,000,000,000
 
+#################       Common PSTR        ########################################
+
+common.pensionSchemeTaxReference.forExample = For example, ’12345678RA’
+
 #################       Error messages        ########################################
 
 error.agent.title = There’s a problem
@@ -409,11 +413,23 @@ pensions.annualAllowanceTaxPaidByPensionProviderAmount.error.overMaximum.agent =
 
 #Pension Scheme Tax Reference Messages
 pension.pensionSchemeTaxReference.paragraph1 = Enter the reference for the pension scheme that paid the tax.
-pension.pensionSchemeTaxReference.forExample = For example, ’12345678RA’
 pension.pensionSchemeTaxReference.error.noEntry.individual = Enter your PSTR
 pension.pensionSchemeTaxReference.error.incorrectFormat.individual = Enter your PSTR in the correct format
 pension.pensionSchemeTaxReference.error.noEntry.agent = Enter your client’s PSTR
 pension.pensionSchemeTaxReference.error.incorrectFormat.agent = Enter your client’s PSTR in the correct format
+
+
+#Pension Scheme Tax Reference Messages
+unauthorisedPayments.pension.pensionSchemeTaxReference = Pension Scheme Tax Reference (PSTR)
+unauthorisedPayments.pension.pensionSchemeTaxReference.paragraph1.individual = You can get this information from your pension provider.
+unauthorisedPayments.pension.pensionSchemeTaxReference.paragraph1.agent = Your client can get this information from their pension provider.
+unauthorisedPayments.pension.pensionSchemeTaxReference.paragraph2.individual = If you got unauthorised payments from more than one UK pension provider, you can add the references later.
+unauthorisedPayments.pension.pensionSchemeTaxReference.paragraph2.agent = If your client got unauthorised payments from more than UK pension provider, you can add the references later.
+unauthorisedPayments.pension.pensionSchemeTaxReference.whatIsPSTR = What is the PSTR?
+unauthorisedPayments.pension.pensionSchemeTaxReference.error.noEntry.individual = Enter your Pension Scheme Tax Reference
+unauthorisedPayments.pension.pensionSchemeTaxReference.error.incorrectFormat.individual = Enter your Pension Scheme Tax Reference in the correct format
+unauthorisedPayments.pension.pensionSchemeTaxReference.error.noEntry.agent = Enter your client’s Pension Scheme Tax Reference
+unauthorisedPayments.pension.pensionSchemeTaxReference.error.incorrectFormat.agent = Enter your client’s Pension Scheme Tax Reference in the correct format
 
 #Pension Scheme Tax Reference Summary Page
 
