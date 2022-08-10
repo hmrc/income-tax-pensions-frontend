@@ -688,4 +688,3 @@ unauthorisedPayments.gateway.title.agent = A gafodd eich cleient unrhyw daliad h
 unauthorisedPayments.gateway.findOutMore = Dysgwch ragor am daliadau heb awdurdod
 unauthorisedPayments.gateway.error.individual = Dewiswch ‘Iawn’ os cawsoch daliadau heb awdurdod
 unauthorisedPayments.gateway.error.agent = Dewiswch ‘Iawn’ os cafodd eich cleient daliadau heb awdurdod
-
