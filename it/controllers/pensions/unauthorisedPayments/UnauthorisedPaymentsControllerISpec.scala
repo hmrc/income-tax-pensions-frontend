@@ -118,9 +118,9 @@ class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAnd
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, _]] = Seq(
     UserScenario(isWelsh = false, isAgent = false, CommonExpectedEN),
-   /* UserScenario(isWelsh = false, isAgent = true, CommonExpectedEN),
+    UserScenario(isWelsh = false, isAgent = true, CommonExpectedEN),
     UserScenario(isWelsh = true, isAgent = false, CommonExpectedCY),
-    UserScenario(isWelsh = true, isAgent = true, CommonExpectedCY)*/
+    UserScenario(isWelsh = true, isAgent = true, CommonExpectedCY)
   )
 
   ".show" should {

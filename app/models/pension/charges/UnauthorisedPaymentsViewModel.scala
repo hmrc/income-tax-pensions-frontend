@@ -24,8 +24,7 @@ import utils.EncryptableSyntax.EncryptableOps
 import utils.EncryptorInstances.{bigDecimalEncryptor, booleanEncryptor, stringEncryptor}
 import utils.{EncryptedValue, SecureGCMCipher}
 
-case class UnauthorisedPaymentsViewModel(unauthorisedPaymentsQuestion: Option[Boolean] = None,
-                                         surchargeQuestion: Option[Boolean] = None,
+case class UnauthorisedPaymentsViewModel(surchargeQuestion: Option[Boolean] = None,
                                          noSurchargeQuestion: Option[Boolean] = None,
                                          surchargeAmount: Option[BigDecimal] = None,
                                          surchargeTaxAmountQuestion: Option[Boolean] = None,
@@ -38,7 +37,6 @@ case class UnauthorisedPaymentsViewModel(unauthorisedPaymentsQuestion: Option[Bo
 
   def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedUnauthorisedPaymentsViewModel =
       EncryptedUnauthorisedPaymentsViewModel(
-      unauthorisedPaymentsQuestion = unauthorisedPaymentsQuestion.map(_.encrypted),
       surchargeQuestion = surchargeQuestion.map(_.encrypted),
       noSurchargeQuestion = noSurchargeQuestion.map(_.encrypted),
       surchargeAmount = surchargeAmount.map(_.encrypted),
@@ -50,14 +48,21 @@ case class UnauthorisedPaymentsViewModel(unauthorisedPaymentsQuestion: Option[Bo
       fromUkPensionSchemeQuestion = ukPensionSchemesQuestion.map(_.encrypted),
       pensionSchemeTaxReference = pensionSchemeTaxReference.map(_.map(_.encrypted))
     )
+
+  def noUnauthorisedPaymentQuestion: Option[Boolean] = {
+    (noSurchargeQuestion, surchargeQuestion) match {
+      case (Some(false), Some(false)) => Some(true)
+      case _ => Some(false)
+    }
+  }
+
 }
 
 object UnauthorisedPaymentsViewModel {
   implicit val format: OFormat[UnauthorisedPaymentsViewModel] = Json.format[UnauthorisedPaymentsViewModel]
 }
 
-case class EncryptedUnauthorisedPaymentsViewModel(unauthorisedPaymentsQuestion: Option[EncryptedValue] = None,
-                                                  surchargeQuestion: Option[EncryptedValue] = None,
+case class EncryptedUnauthorisedPaymentsViewModel(surchargeQuestion: Option[EncryptedValue] = None,
                                                   noSurchargeQuestion: Option[EncryptedValue] = None,
                                                   surchargeAmount: Option[EncryptedValue] = None,
                                                   surchargeTaxAmountQuestion: Option[EncryptedValue] = None,
@@ -70,7 +75,6 @@ case class EncryptedUnauthorisedPaymentsViewModel(unauthorisedPaymentsQuestion: 
 
   def decrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): UnauthorisedPaymentsViewModel =
     UnauthorisedPaymentsViewModel(
-      unauthorisedPaymentsQuestion = unauthorisedPaymentsQuestion.map(_.decrypted[Boolean]),
       surchargeQuestion = surchargeQuestion.map(_.decrypted[Boolean]),
       noSurchargeQuestion = noSurchargeQuestion.map(_.decrypted[Boolean]),
       surchargeAmount = surchargeAmount.map(_.decrypted[BigDecimal]),

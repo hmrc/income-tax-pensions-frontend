@@ -49,9 +49,9 @@ class UnAuthorisedPaymentsController @Inject()(implicit val mcc: MessagesControl
       case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
       case Right(optPensionUserData) => optPensionUserData match {
         case Some(data) =>
-          val surchargeQuestion = data.pensions.unauthorisedPayments.surchargeQuestion
-          val noSurchargeQuestion = data.pensions.unauthorisedPayments.noSurchargeQuestion
-          val noQuestion: Option[Boolean] = getNoQuestion(data)
+          val surchargeQuestion: Option[Boolean] = data.pensions.unauthorisedPayments.surchargeQuestion
+          val noSurchargeQuestion: Option[Boolean] = data.pensions.unauthorisedPayments.noSurchargeQuestion
+          val noQuestion: Option[Boolean] = data.pensions.unauthorisedPayments.noUnauthorisedPaymentQuestion
           val form = UnAuthorisedPaymentsForm.unAuthorisedPaymentsTypeForm()
             Future.successful(Ok(view(form, taxYear, surchargeQuestion, noSurchargeQuestion, noQuestion)))
         case None =>
@@ -59,11 +59,6 @@ class UnAuthorisedPaymentsController @Inject()(implicit val mcc: MessagesControl
           Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
       }
     }
-  }
-
-  private def getNoQuestion(data: PensionsUserData): Option[Boolean] = {
-    if (data.pensions.unauthorisedPayments.noSurchargeQuestion.contains(false)
-      && data.pensions.unauthorisedPayments.surchargeQuestion.contains(false)) Some(true) else Some(false)
   }
 
   def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>

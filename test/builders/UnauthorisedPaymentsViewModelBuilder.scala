@@ -21,7 +21,6 @@ import models.pension.charges.UnauthorisedPaymentsViewModel
 object UnauthorisedPaymentsViewModelBuilder {
 
   val anUnauthorisedPaymentsViewModel: UnauthorisedPaymentsViewModel = UnauthorisedPaymentsViewModel(
-    unauthorisedPaymentsQuestion = Some(true),
     surchargeQuestion = Some(true),
     noSurchargeQuestion = Some(true),
     surchargeAmount = Some(12.11),
