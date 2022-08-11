@@ -30,11 +30,9 @@ import utils.UnitTest
 import views.html.templates.{InternalServerErrorTemplate, NotFoundTemplate, ServiceUnavailableTemplate}
 import builders.PensionsCYAModelBuilder._
 import builders.EmploymentPensionsBuilder.anEmploymentPensions
-import builders.IncomeFromPensionsViewModelBuilder.anIncomeFromPensionEmptyViewModel
-import builders.PaymentsIntoPensionVewModelBuilder.aPaymentsIntoPensionsEmptyViewModel
-import builders.PensionAnnualAllowanceViewModelBuilder.{aPensionAnnualAllowanceEmptyViewModel, aPensionAnnualAllowanceViewModel}
 import connectors.IncomeSourceConnector
 import models.pension.AllPensionsData.generateCyaFromPrior
+import builders.PensionIncomeViewModelBuilder.aPensionIncome
 
 import scala.concurrent.Future
 
@@ -259,6 +257,9 @@ class PensionSessionServiceTest extends UnitTest
     ),
     employmentPensions = Some(
       anEmploymentPensions
+    ),
+    pensionIncome = Some(
+      aPensionIncome
     )
   )
 

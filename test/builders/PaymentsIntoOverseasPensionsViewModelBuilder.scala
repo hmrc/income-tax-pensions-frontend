@@ -16,25 +16,24 @@
 
 package builders
 
-import models.pension.charges.{PaymentsIntoOverseasPensionsViewModel, UnauthorisedPaymentsViewModel}
+import models.pension.charges.{PaymentsIntoOverseasPensionsViewModel, TaxReliefQuestion, UnauthorisedPaymentsViewModel}
 
 object PaymentsIntoOverseasPensionsViewModelBuilder {
 
-  //TODO update as part of adding overseas api model
   val aPaymentsIntoOverseasPensionsViewModel: PaymentsIntoOverseasPensionsViewModel = PaymentsIntoOverseasPensionsViewModel(
-    paymentsIntoOverseasPensionsQuestions = None,
-    paymentsIntoOverseasPensionsAmount = None,
-    employerPaymentsQuestion = None,
-    taxPaidOnEmployerPaymentsQuestion = None,
-    customerReferenceNumberQuestion = None,
-    employerPaymentsAmount = None,
-    taxReliefQuestion = None,
+    paymentsIntoOverseasPensionsQuestions = Some(true),
+    paymentsIntoOverseasPensionsAmount = Some(1999.99),
+    employerPaymentsQuestion = Some(true),
+    taxPaidOnEmployerPaymentsQuestion = Some(false),
+    customerReferenceNumberQuestion = Some("PENSIONINCOME245"),
+    employerPaymentsAmount = Some(1999.99),
+    taxReliefQuestion = Some(TaxReliefQuestion.TransitionalCorrespondingRelief),
     qualifyingOverseasPensionSchemeReferenceNumber = None,
     doubleTaxationCountryCode = None,
     doubleTaxationCountryArticle = None,
     doubleTaxationCountryTreaty = None,
     doubleTaxationReliefAmount = None,
-    sf74Reference = None
+    sf74Reference = Some("SF74-123456")
   )
 
 
