@@ -688,3 +688,24 @@ unauthorisedPayments.gateway.title.agent = A gafodd eich cleient unrhyw daliad h
 unauthorisedPayments.gateway.findOutMore = Dysgwch ragor am daliadau heb awdurdod
 unauthorisedPayments.gateway.error.individual = Dewiswch ‘Iawn’ os cawsoch daliadau heb awdurdod
 unauthorisedPayments.gateway.error.agent = Dewiswch ‘Iawn’ os cafodd eich cleient daliadau heb awdurdod
+
+#Payments into overseas pension schemes page
+overseasPension.paymentIntoOverseasPensionScheme.title = Payments into overseas pension schemes
+overseasPension.paymentIntoOverseasPensionScheme.notRegistered.text.individual = Your overseas pension schemes must not be registered in the UK.
+overseasPension.paymentIntoOverseasPensionScheme.notRegistered.text.agent = Your client’s overseas pension schemes must not be registered in the UK.
+overseasPension.paymentIntoOverseasPensionScheme.they.must = They must also be:
+overseasPension.paymentIntoOverseasPensionScheme.bullet.one = eligible for tax relief
+overseasPension.paymentIntoOverseasPensionScheme.bullet.two = paid into after tax (net income)
+overseasPension.paymentIntoOverseasPensionScheme.pension.scheme.question.individual = Did you pay into overseas pension schemes?
+overseasPension.paymentIntoOverseasPensionScheme.pension.scheme.question.agent = Did your client pay into overseas pension schemes?
+overseasPension.paymentIntoOverseasPensionScheme.Amount.Text = Total amount, in pounds
+overseasPension.paymentIntoOverseasPensionScheme.hint.two.Text.individual = Do not include payments your employer made
+overseasPension.paymentIntoOverseasPensionScheme.hint.two.Text.agent = Do not include payments your client’s employer made
+overseasPension.paymentIntoOverseasPensionScheme.radio.error.individual = Select yes if you paid into an overseas pension scheme
+overseasPension.paymentIntoOverseasPensionScheme.radio.error.agent = Select yes if your client paid into an overseas pension scheme
+overseasPension.paymentIntoOverseasPensionScheme.no.entry.error.individual = Enter the amount you paid into overseas pension schemes
+overseasPension.paymentIntoOverseasPensionScheme.no.entry.error.agent = Enter the amount your client paid into overseas pension schemes
+overseasPension.paymentIntoOverseasPensionScheme.invalid.format.error.individual = Enter the amount you paid into overseas pension schemes in the correct format
+overseasPension.paymentIntoOverseasPensionScheme.invalid.format.error.agent = Enter the amount your client paid into overseas pension schemes in the correct format
+overseasPension.paymentIntoOverseasPensionScheme.maximum.error.individual = The amount you paid into overseas pension schemes must be less than £100,000,000,000
+overseasPension.paymentIntoOverseasPensionScheme.maximum.error.agent = The amount your client paid into overseas pension schemes must be less than £100,000,000,000
