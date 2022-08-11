@@ -57,6 +57,8 @@ common.unauthorisedPayments.Amount.Text = Total non-UK tax in pounds
 common.unauthorisedPayments.error.Amount.noEntry = Enter the amount of non-UK tax paid
 common.unauthorisedPayments.error.Amount.incorrectFormat = Enter the amount of non-UK tax in the correct format
 common.unauthorisedPayments.error.Amount.overMaximum = The amount of non-UK tax paid must be less than £100,000,000,000
+common.unauthorisedPayments.error.checkbox.or.radioButton.noEntry = Select yes if you got an unauthorised payment from a pension scheme
+
 
 common.whereToFindInformation = Ble i ddod o hyd i’r wybodaeth hon
 common.FindInformation = Gallwch ddod o hyd i’r wybodaeth hon yn:
@@ -638,7 +640,6 @@ unauthorisedPayments.didYouPayNonUkTax.error.noEntry = Select yes if you paid no
 
 #Where any of the unauthorised payments from a UK pension scheme?
 unauthorisedPayments.whereAnyOfTheUnauthorisedPayments.title = Were any of the unauthorised payments from a UK pension scheme?
-unauthorisedPayments.whereAnyOfTheUnauthorisedPayments.error.noEntry = Select yes if you got an unauthorised payment from a pension scheme
 
 #Pension Taken In Another Way
 lifetimeAllowance.pensionTakenAnotherWay.title.individual = Your pension taken in another way
@@ -659,6 +660,18 @@ lifetimeAllowance.pensionTakenAnotherWay.taxPaid.error.noEntry.agent = Enter the
 unauthorisedPayments.nonUkTaxOnAmountNotSurcharge.title.individual = Did you pay non-UK tax on the amount that did not result in a surcharge?
 unauthorisedPayments.nonUkTaxOnAmountNotSurcharge.title.agent = Did your client pay non-UK tax on the amount that did not result in a surcharge?
 unauthorisedPayments.nonUkTaxOnAmountNotSurcharge.error.noEntry = Select yes if you paid non-UK tax on the amount not surcharged
+
+
+#Unauthorised Payments
+unauthorisedPayments.title = Unauthorised payments
+unauthorisedPayments.paymentOutside = Unauthorised payments are made outside the tax rules
+unauthorisedPayments.moreThanOneUnauthorisedPayment.line1 = If you got more than one unauthorised payment, you might
+unauthorisedPayments.moreThanOneUnauthorisedPayment.line2 = have paid a surcharge (an extra fee) on some of them. It all
+unauthorisedPayments.moreThanOneUnauthorisedPayment.line3 = depends on if you’ve taken 25% or more of your pension pots.
+unauthorisedPayments.findOutMoreAboutUnauthorisedPayment = Find out more about unauthorised payments (opens in new tab)
+unauthorisedPayments.didYouGetAnUnauthorisedPayment = Did you get an unauthorised payment from a pension scheme?
+unauthorisedPayments.checkbox.text1 = Yes, unauthorised payments that resulted in a surcharge
+unauthorisedPayments.checkbox.text2 = Yes, unauthorised payments that did not result in a surcharge
 
 #Do you have an employer-financed retirement scheme?
 employerFinancedRetirementScheme.benefitsFromScheme.title = Cynlluniau buddiannau ymddeol a ariannwyd gan gyflogwyr
