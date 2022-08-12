@@ -49,6 +49,7 @@ common.error.self-assessment.paragraph.1.1 = If the web address is correct or yo
 common.error.self-assessment.paragraph.1.2 = Self Assessment: general enquiries (opens in new tab)
 common.error.self-assessment.paragraph.1.3 = to speak to someone about your income tax
 common.error.self-assessment.paragraph.1.3a = to speak to someone about your income tax.
+common.error.incorrectFormat = Enter the total amount in the correct format
 common.useCalculator.paragraph.link = if you need to work this out
 common.useCalculator.paragraph = Use a calculator
 
@@ -625,7 +626,10 @@ unauthorisedPayments.surchargeAmount.giveTotal.individual = Give a total of unau
 unauthorisedPayments.surchargeAmount.giveTotal.agent = Give a total of unauthorised payments that resulted in surcharges from all your client’s pension schemes.
 unauthorisedPayments.surchargeAmount.tellUsAbout = You can tell us about unauthorised payments that did not result in a surcharge later.
 unauthorisedPayments.surchargeAmount.error.noEntry = Enter the total amount of unauthorised payment that resulted in a surcharge
-unauthorisedPayments.surchargeAmount.error.incorrectFormat = Enter the total amount in the correct format
+
+#No Surcharge Amount
+unauthorisedPayments.noSurchargeAmount.title = Amount that did not result in a surcharge
+unauthorisedPayments.noSurchargeAmount.error.noEntry = Enter the total amount of unauthorised payment that did not result in a surcharge
 
 #Did you pay non-UK tax that resulted in a surcharge
 unauthorisedPayments.didYouPayNonUkTax.title.individual = Did you pay non-UK tax on the amount that resulted in a surcharge?

@@ -18,6 +18,7 @@ package controllers.pensions.unauthorisedPayments
 
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.routes.PensionsSummaryController
+import controllers.pensions.unauthorisedPayments.routes.{DidYouPayNonUkTaxController, WhereAnyOfTheUnauthorisedPaymentsController}
 import controllers.predicates.AuthorisedAction
 import controllers.predicates.TaxYearAction.taxYearAction
 import forms.{AmountForm, FormUtils}
@@ -44,7 +45,7 @@ class SurchargeAmountController @Inject()(authAction: AuthorisedAction,
 
   val amountForm: Form[BigDecimal] = AmountForm.amountForm(
     emptyFieldKey = "unauthorisedPayments.surchargeAmount.error.noEntry",
-    wrongFormatKey = "unauthorisedPayments.surchargeAmount.error.incorrectFormat"
+    wrongFormatKey = "common.error.incorrectFormat" //changed this to common to avoid duplicate messages error on jenkins SASS-3240  unauthorisedPayments.surchargeAmount.error.incorrectFormat
   )
 
 
@@ -55,8 +56,7 @@ class SurchargeAmountController @Inject()(authAction: AuthorisedAction,
           .map(value => Future.successful(Ok(view(amountForm.fill(value), taxYear))))
           .getOrElse(Future.successful(Ok(view(amountForm, taxYear))))
       case Some(_) =>
-        //TODO - redirect to unauthorised payments question page once implemented
-        Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
+        Future.successful(Redirect(WhereAnyOfTheUnauthorisedPaymentsController.show(taxYear)))
       case None =>
         //TODO - redirect to CYA page once implemented
         Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
@@ -69,7 +69,7 @@ class SurchargeAmountController @Inject()(authAction: AuthorisedAction,
       amount => {
         pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
           case Some(data) =>
-            if(data.pensions.unauthorisedPayments.surchargeQuestion.contains(true)) {
+            if (data.pensions.unauthorisedPayments.surchargeQuestion.contains(true)) {
               val pensionsCYAModel: PensionsCYAModel = data.pensions
               val viewModel = pensionsCYAModel.unauthorisedPayments
               val updatedCyaModel: PensionsCYAModel = pensionsCYAModel.copy(unauthorisedPayments = viewModel.copy(surchargeAmount = Some(amount)))
@@ -77,12 +77,10 @@ class SurchargeAmountController @Inject()(authAction: AuthorisedAction,
               pensionSessionService.createOrUpdateSessionData(request.user,
                 updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
 
-                // TODO redirect to surcharge tax amount page
-                Redirect(PensionsSummaryController.show(taxYear))
+                Redirect(DidYouPayNonUkTaxController.show(taxYear))
               }
-            }else{
-              //TODO - redirect to unauthorised payments question page once implemented
-              Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
+            } else {
+              Future.successful(Redirect(WhereAnyOfTheUnauthorisedPaymentsController.show(taxYear)))
             }
 
           case None =>
