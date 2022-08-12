@@ -159,6 +159,9 @@ POST        /:taxYear/pension-income/uk-pension-income/check-pension-income     
 GET         /:taxYear/unauthorised-payments-from-pensions/amount-surcharged        controllers.pensions.unauthorisedPayments.SurchargeAmountController.show(taxYear: Int)
 POST        /:taxYear/unauthorised-payments-from-pensions/amount-surcharged        controllers.pensions.unauthorisedPayments.SurchargeAmountController.submit(taxYear: Int)
 
+GET         /:taxYear/unauthorised-payments-from-pensions/amount-not-surcharged        controllers.pensions.unauthorisedPayments.NoSurchargeAmountController.show(taxYear: Int)
+POST        /:taxYear/unauthorised-payments-from-pensions/amount-not-surcharged        controllers.pensions.unauthorisedPayments.NoSurchargeAmountController.submit(taxYear: Int)
+
 GET         /:taxYear/unauthorised-payments-from-pensions/tax-on-amount-surcharged         controllers.pensions.unauthorisedPayments.DidYouPayNonUkTaxController.show(taxYear: Int)
 POST        /:taxYear/unauthorised-payments-from-pensions/tax-on-amount-surcharged         controllers.pensions.unauthorisedPayments.DidYouPayNonUkTaxController.submit(taxYear: Int)
 

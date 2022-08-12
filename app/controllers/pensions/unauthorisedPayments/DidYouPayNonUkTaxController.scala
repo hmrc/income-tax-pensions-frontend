@@ -18,7 +18,7 @@ package controllers.pensions.unauthorisedPayments
 
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.routes.PensionsSummaryController
-import controllers.pensions.unauthorisedPayments.routes.{DidYouPayNonUkTaxController, WhereAnyOfTheUnauthorisedPaymentsController}
+import controllers.pensions.unauthorisedPayments.routes.WhereAnyOfTheUnauthorisedPaymentsController
 import controllers.predicates.AuthorisedAction
 import forms.RadioButtonAmountForm
 import models.mongo.PensionsCYAModel
@@ -94,6 +94,7 @@ class DidYouPayNonUkTaxController @Inject()(implicit val cc: MessagesControllerC
                     )
                   )
               }
+              //Todo check data.pensions.unauthorisedPayments.noSurchargeQuestion redirect to NoSurchargeAmountController.show(taxYear) see SASS-3228
               pensionSessionService.createOrUpdateSessionData(request.user,
                 updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
                 Redirect(WhereAnyOfTheUnauthorisedPaymentsController.show(taxYear))

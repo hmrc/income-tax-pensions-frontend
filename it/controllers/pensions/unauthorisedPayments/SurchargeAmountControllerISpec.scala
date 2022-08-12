@@ -27,6 +27,7 @@ import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import utils.PageUrls.UnAuthorisedPayments.surchargeAmountUrl
+import utils.PageUrls.unauthorisedPaymentsPages.didYouPayNonUkTaxUrl
 import utils.PageUrls.fullUrl
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
@@ -34,10 +35,10 @@ class SurchargeAmountControllerISpec extends IntegrationTest with ViewHelpers wi
 
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] =
-                     Seq(UserScenario(isWelsh = false, isAgent = false, CommonExpectedEN, Some(ExpectedIndividualEN)),
-                     UserScenario(isWelsh = false, isAgent = true, CommonExpectedEN, Some(ExpectedAgentEN)),
-                     UserScenario(isWelsh = true, isAgent = false, CommonExpectedCY, Some(ExpectedIndividualCY)),
-                     UserScenario(isWelsh = true, isAgent = true, CommonExpectedCY, Some(ExpectedAgentCY)))
+    Seq(UserScenario(isWelsh = false, isAgent = false, CommonExpectedEN, Some(ExpectedIndividualEN)),
+      UserScenario(isWelsh = false, isAgent = true, CommonExpectedEN, Some(ExpectedAgentEN)),
+      UserScenario(isWelsh = true, isAgent = false, CommonExpectedCY, Some(ExpectedIndividualCY)),
+      UserScenario(isWelsh = true, isAgent = true, CommonExpectedCY, Some(ExpectedAgentCY)))
   private val poundPrefixText = "£"
   private val amountInputName = "amount"
 
@@ -119,64 +120,64 @@ class SurchargeAmountControllerISpec extends IntegrationTest with ViewHelpers wi
       import Selectors._
       import user.commonExpectedResults._
       s"language is ${welshTest(user.isWelsh)} and request is from an ${agentTest(user.isAgent)}" should {
-      "render unauthorised payments that resulted in surcharges page with no pre filling" which {
-        lazy val result: WSResponse = {
-          dropPensionsDB()
-          authoriseAgentOrIndividual(user.isAgent)
-          val viewModel = anUnauthorisedPaymentsViewModel.copy(surchargeAmount = None)
-          insertCyaData(pensionsUserDataWithUnauthorisedPayments(viewModel, isPriorSubmission = false), aUserRequest)
-          urlGet(fullUrl(surchargeAmountUrl(taxYearEOY)), user.isWelsh, follow = false,
-            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        "render unauthorised payments that resulted in surcharges page with no pre filling" which {
+          lazy val result: WSResponse = {
+            dropPensionsDB()
+            authoriseAgentOrIndividual(user.isAgent)
+            val viewModel = anUnauthorisedPaymentsViewModel.copy(surchargeAmount = None)
+            insertCyaData(pensionsUserDataWithUnauthorisedPayments(viewModel, isPriorSubmission = false), aUserRequest)
+            urlGet(fullUrl(surchargeAmountUrl(taxYearEOY)), user.isWelsh, follow = false,
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+          }
+
+          implicit def document: () => Document = () => Jsoup.parse(result.body)
+
+          "has an OK status" in {
+            result.status shouldBe OK
+          }
+
+          titleCheck(expectedTitle)
+          h1Check(expectedHeading)
+          captionCheck(expectedCaption(taxYearEOY), captionSelector)
+          textOnPageCheck(user.specificExpectedResults.get.expectedParagraph, paragraphSelector(1))
+          textOnPageCheck(expectedParagraphTwo, paragraphSelector(2))
+          textOnPageCheck(hintText, hintTextSelector)
+          textOnPageCheck(poundPrefixText, poundPrefixSelector)
+          inputFieldValueCheck(amountInputName, inputSelector, "")
+          buttonCheck(buttonText, continueButtonSelector)
+          formPostLinkCheck(surchargeAmountUrl(taxYearEOY), formSelector)
+          welshToggleCheck(user.isWelsh)
         }
 
-        implicit def document: () => Document = () => Jsoup.parse(result.body)
+        "render into your surcharge amount page when cya data" which {
+          val existingAmount: BigDecimal = 999.88
+          lazy val result: WSResponse = {
+            dropPensionsDB()
+            authoriseAgentOrIndividual(user.isAgent)
+            val pensionsViewModel = anUnauthorisedPaymentsViewModel.copy(surchargeAmount = Some(existingAmount))
+            insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false), aUserRequest)
+            urlGet(fullUrl(surchargeAmountUrl(taxYearEOY)), user.isWelsh, follow = false,
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+          }
 
-        "has an OK status" in {
-          result.status shouldBe OK
+          implicit def document: () => Document = () => Jsoup.parse(result.body)
+
+          "has an OK status" in {
+            result.status shouldBe OK
+          }
+          titleCheck(user.commonExpectedResults.expectedTitle)
+          h1Check(user.commonExpectedResults.expectedHeading)
+          captionCheck(expectedCaption(taxYearEOY), captionSelector)
+          textOnPageCheck(user.specificExpectedResults.get.expectedParagraph, paragraphSelector(1))
+          textOnPageCheck(expectedParagraphTwo, paragraphSelector(2))
+          textOnPageCheck(hintText, hintTextSelector)
+          textOnPageCheck(poundPrefixText, poundPrefixSelector)
+          inputFieldValueCheck(amountInputName, inputSelector, s"$existingAmount")
+          buttonCheck(buttonText, continueButtonSelector)
+          formPostLinkCheck(surchargeAmountUrl(taxYearEOY), formSelector)
+          welshToggleCheck(user.isWelsh)
         }
-
-        titleCheck(expectedTitle)
-        h1Check(expectedHeading)
-        captionCheck(expectedCaption(taxYearEOY), captionSelector)
-        textOnPageCheck(user.specificExpectedResults.get.expectedParagraph, paragraphSelector(1))
-        textOnPageCheck(expectedParagraphTwo, paragraphSelector(2))
-        textOnPageCheck(hintText, hintTextSelector)
-        textOnPageCheck(poundPrefixText, poundPrefixSelector)
-        inputFieldValueCheck(amountInputName, inputSelector, "")
-        buttonCheck(buttonText, continueButtonSelector)
-        formPostLinkCheck(surchargeAmountUrl(taxYearEOY), formSelector)
-        welshToggleCheck(user.isWelsh)
       }
-
-      "render into your surcharge amount page when cya data" which {
-        val existingAmount: BigDecimal = 999.88
-        lazy val result: WSResponse = {
-          dropPensionsDB()
-          authoriseAgentOrIndividual(user.isAgent)
-          val pensionsViewModel = anUnauthorisedPaymentsViewModel.copy(surchargeAmount = Some(existingAmount))
-          insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false), aUserRequest)
-          urlGet(fullUrl(surchargeAmountUrl(taxYearEOY)), user.isWelsh, follow = false,
-            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
-        }
-
-        implicit def document: () => Document = () => Jsoup.parse(result.body)
-
-        "has an OK status" in {
-          result.status shouldBe OK
-        }
-        titleCheck(user.commonExpectedResults.expectedTitle)
-        h1Check(user.commonExpectedResults.expectedHeading)
-        captionCheck(expectedCaption(taxYearEOY), captionSelector)
-        textOnPageCheck(user.specificExpectedResults.get.expectedParagraph, paragraphSelector(1))
-        textOnPageCheck(expectedParagraphTwo, paragraphSelector(2))
-        textOnPageCheck(hintText, hintTextSelector)
-        textOnPageCheck(poundPrefixText, poundPrefixSelector)
-        inputFieldValueCheck(amountInputName, inputSelector, s"$existingAmount")
-        buttonCheck(buttonText, continueButtonSelector)
-        formPostLinkCheck(surchargeAmountUrl(taxYearEOY), formSelector)
-        welshToggleCheck(user.isWelsh)
-      }
-    }
     }
 
     "redirect to the pension summary page if the surcharge question has not been answered" which {
@@ -213,110 +214,110 @@ class SurchargeAmountControllerISpec extends IntegrationTest with ViewHelpers wi
       import Selectors._
       import user.commonExpectedResults._
       s"language is ${welshTest(user.isWelsh)} and request is from an ${agentTest(user.isAgent)}" should {
-      "return an error when form is submitted with no input entry" which {
-        val amountEmpty = ""
-        val emptyForm: Map[String, String] = Map(AmountForm.amount -> amountEmpty)
+        "return an error when form is submitted with no input entry" which {
+          val amountEmpty = ""
+          val emptyForm: Map[String, String] = Map(AmountForm.amount -> amountEmpty)
 
-        lazy val result: WSResponse = {
-          dropPensionsDB()
-          val pensionsViewModel = anUnauthorisedPaymentsViewModel.copy(surchargeAmount = None)
-          insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false), aUserRequest)
-          authoriseAgentOrIndividual(user.isAgent)
-          urlPost(fullUrl(surchargeAmountUrl(taxYearEOY)), body = emptyForm, welsh = user.isWelsh, follow = false,
-            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+          lazy val result: WSResponse = {
+            dropPensionsDB()
+            val pensionsViewModel = anUnauthorisedPaymentsViewModel.copy(surchargeAmount = None)
+            insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false), aUserRequest)
+            authoriseAgentOrIndividual(user.isAgent)
+            urlPost(fullUrl(surchargeAmountUrl(taxYearEOY)), body = emptyForm, welsh = user.isWelsh, follow = false,
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+          }
+
+          "has the correct status" in {
+            result.status shouldBe BAD_REQUEST
+          }
+
+          implicit def document: () => Document = () => Jsoup.parse(result.body)
+
+          titleCheck(expectedErrorTitle)
+          h1Check(expectedHeading)
+          captionCheck(expectedCaption(taxYearEOY), captionSelector)
+          textOnPageCheck(user.specificExpectedResults.get.expectedParagraph, paragraphSelector(1))
+          textOnPageCheck(expectedParagraphTwo, paragraphSelector(2))
+          textOnPageCheck(hintText, hintTextSelector)
+          textOnPageCheck(poundPrefixText, poundPrefixSelector)
+          inputFieldValueCheck(amountInputName, inputSelector, amountEmpty)
+          buttonCheck(buttonText, continueButtonSelector)
+          formPostLinkCheck(surchargeAmountUrl(taxYearEOY), formSelector)
+          errorSummaryCheck(noEntryErrorMessage, expectedErrorHref)
+          errorAboveElementCheck(noEntryErrorMessage)
+          welshToggleCheck(user.isWelsh)
         }
 
-        "has the correct status" in {
-          result.status shouldBe BAD_REQUEST
+        "return an error when form is submitted with an invalid format input" which {
+          val amountInvalidFormat = "invalid"
+          val invalidFormatForm: Map[String, String] = Map(AmountForm.amount -> amountInvalidFormat)
+
+          lazy val result: WSResponse = {
+            dropPensionsDB()
+            val pensionsViewModel = anUnauthorisedPaymentsViewModel.copy(surchargeAmount = None)
+            insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false), aUserRequest)
+            authoriseAgentOrIndividual(user.isAgent)
+            urlPost(fullUrl(surchargeAmountUrl(taxYearEOY)), body = invalidFormatForm, welsh = user.isWelsh, follow = false,
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+          }
+
+          "has the correct status" in {
+            result.status shouldBe BAD_REQUEST
+          }
+
+          implicit def document: () => Document = () => Jsoup.parse(result.body)
+
+          titleCheck(expectedErrorTitle)
+          h1Check(expectedHeading)
+          captionCheck(expectedCaption(taxYearEOY), captionSelector)
+          textOnPageCheck(user.specificExpectedResults.get.expectedParagraph, paragraphSelector(1))
+          textOnPageCheck(expectedParagraphTwo, paragraphSelector(2))
+          textOnPageCheck(hintText, hintTextSelector)
+          textOnPageCheck(poundPrefixText, poundPrefixSelector)
+          inputFieldValueCheck(amountInputName, inputSelector, amountInvalidFormat)
+          buttonCheck(buttonText, continueButtonSelector)
+          formPostLinkCheck(surchargeAmountUrl(taxYearEOY), formSelector)
+          errorSummaryCheck(invalidFormatErrorText, expectedErrorHref)
+          errorAboveElementCheck(invalidFormatErrorText)
+          welshToggleCheck(user.isWelsh)
         }
 
-        implicit def document: () => Document = () => Jsoup.parse(result.body)
+        "return an error when form is submitted with input over maximum allowed value" which {
+          val amountOverMaximum = "100,000,000,000"
+          val overMaximumForm: Map[String, String] = Map(AmountForm.amount -> amountOverMaximum)
 
-        titleCheck(expectedErrorTitle)
-        h1Check(expectedHeading)
-        captionCheck(expectedCaption(taxYearEOY), captionSelector)
-        textOnPageCheck(user.specificExpectedResults.get.expectedParagraph, paragraphSelector(1))
-        textOnPageCheck(expectedParagraphTwo, paragraphSelector(2))
-        textOnPageCheck(hintText, hintTextSelector)
-        textOnPageCheck(poundPrefixText, poundPrefixSelector)
-        inputFieldValueCheck(amountInputName, inputSelector, amountEmpty)
-        buttonCheck(buttonText, continueButtonSelector)
-        formPostLinkCheck(surchargeAmountUrl(taxYearEOY), formSelector)
-        errorSummaryCheck(noEntryErrorMessage, expectedErrorHref)
-        errorAboveElementCheck(noEntryErrorMessage)
-        welshToggleCheck(user.isWelsh)
-      }
+          lazy val result: WSResponse = {
+            dropPensionsDB()
+            val pensionsViewModel = anUnauthorisedPaymentsViewModel.copy(surchargeAmount = None)
+            insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false), aUserRequest)
+            authoriseAgentOrIndividual(user.isAgent)
+            urlPost(fullUrl(surchargeAmountUrl(taxYearEOY)), body = overMaximumForm, welsh = user.isWelsh, follow = false,
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+          }
 
-      "return an error when form is submitted with an invalid format input" which {
-        val amountInvalidFormat = "invalid"
-        val invalidFormatForm: Map[String, String] = Map(AmountForm.amount -> amountInvalidFormat)
+          "has the correct status" in {
+            result.status shouldBe BAD_REQUEST
+          }
 
-        lazy val result: WSResponse = {
-          dropPensionsDB()
-          val pensionsViewModel = anUnauthorisedPaymentsViewModel.copy(surchargeAmount = None)
-          insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false), aUserRequest)
-          authoriseAgentOrIndividual(user.isAgent)
-          urlPost(fullUrl(surchargeAmountUrl(taxYearEOY)), body = invalidFormatForm, welsh = user.isWelsh, follow = false,
-            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+          implicit def document: () => Document = () => Jsoup.parse(result.body)
+
+          titleCheck(expectedErrorTitle)
+          h1Check(expectedHeading)
+          captionCheck(expectedCaption(taxYearEOY), captionSelector)
+          textOnPageCheck(user.specificExpectedResults.get.expectedParagraph, paragraphSelector(1))
+          textOnPageCheck(expectedParagraphTwo, paragraphSelector(2))
+          textOnPageCheck(hintText, hintTextSelector)
+          textOnPageCheck(poundPrefixText, poundPrefixSelector)
+          inputFieldValueCheck(amountInputName, inputSelector, amountOverMaximum)
+          formPostLinkCheck(surchargeAmountUrl(taxYearEOY), formSelector)
+          buttonCheck(buttonText, continueButtonSelector)
+          errorSummaryCheck(maxAmountErrorText, expectedErrorHref)
+          errorAboveElementCheck(maxAmountErrorText)
+          welshToggleCheck(user.isWelsh)
         }
-
-        "has the correct status" in {
-          result.status shouldBe BAD_REQUEST
-        }
-
-        implicit def document: () => Document = () => Jsoup.parse(result.body)
-
-        titleCheck(expectedErrorTitle)
-        h1Check(expectedHeading)
-        captionCheck(expectedCaption(taxYearEOY), captionSelector)
-        textOnPageCheck(user.specificExpectedResults.get.expectedParagraph, paragraphSelector(1))
-        textOnPageCheck(expectedParagraphTwo, paragraphSelector(2))
-        textOnPageCheck(hintText, hintTextSelector)
-        textOnPageCheck(poundPrefixText, poundPrefixSelector)
-        inputFieldValueCheck(amountInputName, inputSelector, amountInvalidFormat)
-        buttonCheck(buttonText, continueButtonSelector)
-        formPostLinkCheck(surchargeAmountUrl(taxYearEOY), formSelector)
-        errorSummaryCheck(invalidFormatErrorText, expectedErrorHref)
-        errorAboveElementCheck(invalidFormatErrorText)
-        welshToggleCheck(user.isWelsh)
-      }
-
-      "return an error when form is submitted with input over maximum allowed value" which {
-        val amountOverMaximum = "100,000,000,000"
-        val overMaximumForm: Map[String, String] = Map(AmountForm.amount -> amountOverMaximum)
-
-        lazy val result: WSResponse = {
-          dropPensionsDB()
-          val pensionsViewModel = anUnauthorisedPaymentsViewModel.copy(surchargeAmount = None)
-          insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false), aUserRequest)
-          authoriseAgentOrIndividual(user.isAgent)
-          urlPost(fullUrl(surchargeAmountUrl(taxYearEOY)), body = overMaximumForm, welsh = user.isWelsh, follow = false,
-            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
-        }
-
-        "has the correct status" in {
-          result.status shouldBe BAD_REQUEST
-        }
-
-        implicit def document: () => Document = () => Jsoup.parse(result.body)
-
-        titleCheck(expectedErrorTitle)
-        h1Check(expectedHeading)
-        captionCheck(expectedCaption(taxYearEOY), captionSelector)
-        textOnPageCheck(user.specificExpectedResults.get.expectedParagraph, paragraphSelector(1))
-        textOnPageCheck(expectedParagraphTwo, paragraphSelector(2))
-        textOnPageCheck(hintText, hintTextSelector)
-        textOnPageCheck(poundPrefixText, poundPrefixSelector)
-        inputFieldValueCheck(amountInputName, inputSelector, amountOverMaximum)
-        formPostLinkCheck(surchargeAmountUrl(taxYearEOY), formSelector)
-        buttonCheck(buttonText, continueButtonSelector)
-        errorSummaryCheck(maxAmountErrorText, expectedErrorHref)
-        errorAboveElementCheck(maxAmountErrorText)
-        welshToggleCheck(user.isWelsh)
       }
     }
-    }
-    "redirect to the CYA page when a valid amount is submitted and update the session amount completing the journey" which {
+    "redirect to the surcharge tax amount page when a valid amount is submitted and update the session amount completing the journey" which {
       val validAmount = "100.22"
       val validForm: Map[String, String] = Map(AmountForm.amount -> validAmount)
 
@@ -330,7 +331,10 @@ class SurchargeAmountControllerISpec extends IntegrationTest with ViewHelpers wi
       }
 
       "has a SEE_OTHER(303) status" in {
-        result.status shouldBe SEE_OTHER //TODO - redirect to CYA page once implemented result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
+
+        result.status shouldBe SEE_OTHER
+        result.header("location").contains(didYouPayNonUkTaxUrl(taxYearEOY)) shouldBe true
+
       }
 
       "updates surcharge amount" in {
