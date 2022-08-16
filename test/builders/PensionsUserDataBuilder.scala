@@ -18,7 +18,7 @@ package builders
 
 import builders.PensionsCYAModelBuilder.{aPensionsCYAEmptyModel, aPensionsCYAModel}
 import models.mongo.PensionsUserData
-import models.pension.charges.{PensionAnnualAllowancesViewModel, PensionLifetimeAllowancesViewModel, UnauthorisedPaymentsViewModel}
+import models.pension.charges.{PaymentsIntoOverseasPensionsViewModel, PensionAnnualAllowancesViewModel, PensionLifetimeAllowancesViewModel, UnauthorisedPaymentsViewModel}
 import models.pension.reliefs.PaymentsIntoPensionViewModel
 import models.pension.statebenefits.IncomeFromPensionsViewModel
 import utils.UnitTest
@@ -44,28 +44,36 @@ object PensionsUserDataBuilder extends UnitTest {
   }
 
   def pensionsUserDataWithAnnualAllowances(pensionAnnualAllowancesViewModel: PensionAnnualAllowancesViewModel,
-                                               isPriorSubmission: Boolean = true): PensionsUserData = {
+                                           isPriorSubmission: Boolean = true): PensionsUserData = {
     aPensionsUserData.copy(isPriorSubmission = isPriorSubmission,
       pensions = aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionAnnualAllowancesViewModel)
     )
   }
 
   def pensionsUserDataWithIncomeFromPensions(incomeFromPensionsViewModel: IncomeFromPensionsViewModel,
-                                           isPriorSubmission: Boolean = true, taxYear: Int = taxYearEOY): PensionsUserData = {
+                                             isPriorSubmission: Boolean = true, taxYear: Int = taxYearEOY): PensionsUserData = {
     aPensionsUserData.copy(taxYear = taxYear, isPriorSubmission = isPriorSubmission,
       pensions = aPensionsCYAModel.copy(incomeFromPensions = incomeFromPensionsViewModel)
     )
   }
+
   def pensionsUserDataWithLifetimeAllowance(pensionLifetimeAllowancesViewModel: PensionLifetimeAllowancesViewModel,
-                                           isPriorSubmission: Boolean = true): PensionsUserData = {
+                                            isPriorSubmission: Boolean = true): PensionsUserData = {
     aPensionsUserData.copy(isPriorSubmission = isPriorSubmission,
       pensions = aPensionsCYAModel.copy(pensionLifetimeAllowances = pensionLifetimeAllowancesViewModel)
     )
   }
+
   def pensionsUserDataWithUnauthorisedPayments(unauthorisedPaymentViewModel: UnauthorisedPaymentsViewModel,
                                                isPriorSubmission: Boolean = true): PensionsUserData = {
     aPensionsUserData.copy(isPriorSubmission = isPriorSubmission,
       pensions = aPensionsCYAModel.copy(unauthorisedPayments = unauthorisedPaymentViewModel)
     )
+  }
+
+  def pensionUserDataWithOverseasPensions(overseasPensionViewModel: PaymentsIntoOverseasPensionsViewModel,
+                                          isPriorSubmission: Boolean = true): PensionsUserData = {
+    aPensionsUserData.copy(isPriorSubmission = isPriorSubmission,
+      pensions = aPensionsCYAModel.copy(paymentsIntoOverseasPensions = overseasPensionViewModel))
   }
 }

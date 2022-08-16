@@ -19,17 +19,16 @@ package utils
 //scalastyle:off number.of.methods
 object PageUrls extends IntegrationTest {
 
-  def fullUrl(endOfUrl: String): String = s"http://localhost:$port" + endOfUrl
-
   override val appUrl = "/update-and-submit-income-tax-return/pensions"
+  val tryAnotherExpectedHref = "http://localhost:11111/report-quarterly/income-and-expenses/view/agents/client-utr"
 
   //  *****************       Overview page      *****************************************
+
+  def fullUrl(endOfUrl: String): String = s"http://localhost:$port" + endOfUrl
 
   def overviewUrl(taxYear: Int): String = s"http://localhost:11111/update-and-submit-income-tax-return/$taxYear/view"
 
   def startUrl(taxYear: Int): String = s"http://localhost:11111/update-and-submit-income-tax-return/$taxYear/start"
-
-  val tryAnotherExpectedHref = "http://localhost:11111/report-quarterly/income-and-expenses/view/agents/client-utr"
 
   //  *****************       External pages      *****************************************
 
@@ -86,7 +85,6 @@ object PageUrls extends IntegrationTest {
       s"$appUrl/$taxYear/annual-allowance/pension-scheme-tax-reference?pensionSchemeTaxReferenceIndex=$pensionSchemeTaxReference"
 
     def pstrSummaryUrl(taxYear: Int): String = s"$appUrl/$taxYear/annual-allowance/pension-scheme-tax-reference-summary"
-
   }
 
   //  *****************     Income from pensions pages      ******************************
@@ -124,7 +122,11 @@ object PageUrls extends IntegrationTest {
       s"$appUrl/$taxYear/pension-income/pension-start-date"
 
     def removePensionSchemeUrl(taxYear: Int, pensionSchemeIndex: Option[Int] = None): String = {
-      val addOn = if(pensionSchemeIndex.isDefined){s"?pensionSchemeIndex=${pensionSchemeIndex.get}"} else {""}
+      val addOn = if (pensionSchemeIndex.isDefined) {
+        s"?pensionSchemeIndex=${pensionSchemeIndex.get}"
+      } else {
+        ""
+      }
       s"$appUrl/$taxYear/pension-income/remove-pension-scheme" + addOn
     }
 
@@ -141,33 +143,32 @@ object PageUrls extends IntegrationTest {
 
     def pensionLifeTimeAllowanceAnotherWayUrl(taxYear: Int): String = s"$appUrl/$taxYear/annual-lifetime-allowances/lifetime-allowance-another-way"
 
-    def pensionTakenAnotherWayAmountUrl (taxYear: Int) : String = s"$appUrl/$taxYear/annual-lifetime-allowances/lifetime-allowance-another-way-details"
-
+    def pensionTakenAnotherWayAmountUrl(taxYear: Int): String = s"$appUrl/$taxYear/annual-lifetime-allowances/lifetime-allowance-another-way-details"
   }
 
   object UnAuthorisedPayments {
     def surchargeAmountUrl(taxYear: Int): String = s"$appUrl/$taxYear/unauthorised-payments-from-pensions/amount-surcharged"
+
     def noSurchargeAmountUrl(taxYear: Int): String = s"$appUrl/$taxYear/unauthorised-payments-from-pensions/amount-not-surcharged"
   }
 
   object unauthorisedPaymentsPages {
-    def didYouPayNonUkTaxUrl( taxYear: Int): String = s"$appUrl/$taxYear/unauthorised-payments-from-pensions/tax-on-amount-surcharged"
+    def didYouPayNonUkTaxUrl(taxYear: Int): String = s"$appUrl/$taxYear/unauthorised-payments-from-pensions/tax-on-amount-surcharged"
 
-    def nonUKTaxOnAmountSurcharge( taxYear: Int): String = s"$appUrl/$taxYear/unauthorised-payments-from-pensions/tax-on-amount-not-surcharged"
+    def nonUKTaxOnAmountSurcharge(taxYear: Int): String = s"$appUrl/$taxYear/unauthorised-payments-from-pensions/tax-on-amount-not-surcharged"
 
-    def whereAnyOfTheUnauthorisedPaymentsUrl( taxYear: Int): String = s"$appUrl/$taxYear/unauthorised-payments-from-pensions/uk-pension-scheme"
+    def whereAnyOfTheUnauthorisedPaymentsUrl(taxYear: Int): String = s"$appUrl/$taxYear/unauthorised-payments-from-pensions/uk-pension-scheme"
 
-    def unauthorisedPaymentsUrl( taxYear: Int): String = s"$appUrl/$taxYear/unauthorised-payments-from-pensions/unauthorised-payments"
-    
+    def unauthorisedPaymentsUrl(taxYear: Int): String = s"$appUrl/$taxYear/unauthorised-payments-from-pensions/unauthorised-payments"
+
     def pensionSchemeTaxReferenceUrl(taxYear: Int): String = s"$appUrl/$taxYear/unauthorised-payments-from-pensions/pension-scheme-tax-reference"
-
   }
 
   object overseasPensionPages {
 
-    def paymentsIntoPensionSchemeUrl( taxYear: Int): String = s"$appUrl/$taxYear/overseas-pensions/payments-into-overseas-pensions/payments-into-schemes"
+    def paymentsIntoPensionSchemeUrl(taxYear: Int): String = s"$appUrl/$taxYear/overseas-pensions/payments-into-overseas-pensions/payments-into-schemes"
 
+    def employerPayOverseasPensionUrl(taxYear: Int): String = s"$appUrl/$taxYear/overseas-pensions/payments-into-overseas-pensions/employer-payments-into-schemes"
   }
-
 }
 //scalastyle:on number.of.methods
