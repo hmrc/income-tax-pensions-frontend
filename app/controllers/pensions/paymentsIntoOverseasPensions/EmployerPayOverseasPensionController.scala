@@ -87,7 +87,6 @@ class EmployerPayOverseasPensionController @Inject()(implicit val cc: MessagesCo
             }
           case _ =>
             //TODO - redirect to CYA page once implemented#
-            println()
             Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
         }
       }

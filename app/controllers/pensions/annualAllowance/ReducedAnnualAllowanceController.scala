@@ -63,6 +63,7 @@ class ReducedAnnualAllowanceController @Inject()(implicit val cc: MessagesContro
     yesNoForm(request.user).bindFromRequest().fold(
       formWithErrors => Future.successful(BadRequest(reducedAnnualAllowanceView(formWithErrors, taxYear))),
       yesNo => {
+        //todo verify what should happen if no data is present. Should be redirected to CYA page.
         pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
           data =>
             val pensionsCYAModel: PensionsCYAModel = data.map(_.pensions).getOrElse(PensionsCYAModel.emptyModels)
