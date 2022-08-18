@@ -17,7 +17,7 @@
 package controllers.pensions.paymentsIntoOverseasPensions
 
 import builders.PaymentsIntoOverseasPensionsViewModelBuilder.aPaymentsIntoOverseasPensionsViewModel
-import builders.PensionsUserDataBuilder.{aPensionsUserData, anPensionsUserDataEmptyCya, pensionUserDataWithOverseasPensions}
+import builders.PensionsUserDataBuilder.{aPensionsUserData, anPensionsUserDataEmptyCya, pensionUserDataWithOverseasPensions, pensionsUserDataWithUnauthorisedPayments}
 import builders.UserBuilder.aUserRequest
 import forms.YesNoForm
 import org.jsoup.Jsoup
@@ -28,9 +28,11 @@ import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import utils.PageUrls.overseasPensionPages.employerPayOverseasPensionUrl
 import utils.PageUrls.{fullUrl, pensionSummaryUrl}
-import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
+import utils.CommonUtils
 
-class EmployerPayOverseasPensionControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
+class EmployerPayOverseasPensionControllerISpec extends CommonUtils with BeforeAndAfterEach {
+
+  implicit val url: Int => String = employerPayOverseasPensionUrl
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(
     UserScenario(isWelsh = false, isAgent = false, CommonExpectedEN, Some(ExpectedIndividualEN)),
@@ -135,13 +137,8 @@ class EmployerPayOverseasPensionControllerISpec extends IntegrationTest with Vie
         import user.commonExpectedResults._
 
         "render the 'Employer Pay Overseas Pension' page with correct content and no pre-filling" which {
-          implicit lazy val result: WSResponse = {
-            authoriseAgentOrIndividual(user.isAgent)
-            dropPensionsDB()
-            insertCyaData(anPensionsUserDataEmptyCya, aUserRequest)
-            urlGet(fullUrl(employerPayOverseasPensionUrl(taxYearEOY)), user.isWelsh, follow = false,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
-          }
+
+          implicit lazy val result: WSResponse = showPage(user, anPensionsUserDataEmptyCya)
 
           "has an OK status" in {
             result.status shouldBe OK
@@ -163,14 +160,10 @@ class EmployerPayOverseasPensionControllerISpec extends IntegrationTest with Vie
         }
 
         "render the 'Employer Pay Overseas Pension' page with correct content and yes pre-filled" which {
+          val overseasPensionViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(employerPaymentsQuestion = Some(true))
+          val pensionsUserData = pensionUserDataWithOverseasPensions(overseasPensionViewModel)
 
-          implicit lazy val result: WSResponse = {
-            dropPensionsDB()
-            val overseasPensionViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(employerPaymentsQuestion = Some(true))
-            insertCyaData(pensionUserDataWithOverseasPensions(overseasPensionViewModel), aUserRequest)
-            authoriseAgentOrIndividual(user.isAgent)
-            urlGet(fullUrl(employerPayOverseasPensionUrl(taxYearEOY)), user.isWelsh, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
-          }
+          implicit lazy val result: WSResponse = showPage(user, pensionsUserData)
 
           "has an OK status" in {
             result.status shouldBe OK
@@ -192,14 +185,9 @@ class EmployerPayOverseasPensionControllerISpec extends IntegrationTest with Vie
         }
 
         "render the 'Employer Pay Overseas Pension' page with correct content and no pre-filled" which {
-
-          implicit lazy val result: WSResponse = {
-            dropPensionsDB()
-            authoriseAgentOrIndividual(user.isAgent)
-            val overseasPensionViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(employerPaymentsQuestion = Some(false))
-            insertCyaData(pensionUserDataWithOverseasPensions(overseasPensionViewModel), aUserRequest)
-            urlGet(fullUrl(employerPayOverseasPensionUrl(taxYearEOY)), user.isWelsh, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
-          }
+          val overseasPensionViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(employerPaymentsQuestion = Some(false))
+          val pensionsUserData = pensionUserDataWithOverseasPensions(overseasPensionViewModel)
+          implicit lazy val result: WSResponse = showPage(user, pensionsUserData)
 
           "has an OK status" in {
             result.status shouldBe OK
@@ -223,12 +211,7 @@ class EmployerPayOverseasPensionControllerISpec extends IntegrationTest with Vie
     }
 
     "redirect to Pensions Summary page if there is no session data" should {
-      lazy val result: WSResponse = {
-        dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
-        urlGet(fullUrl(employerPayOverseasPensionUrl(taxYearEOY)), follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
-      }
+      lazy val result: WSResponse = getResponseNoSessionData
 
       "has an SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER
@@ -243,13 +226,8 @@ class EmployerPayOverseasPensionControllerISpec extends IntegrationTest with Vie
         s"return $BAD_REQUEST error when no value is submitted" which {
           lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> "")
 
-          lazy val result: WSResponse = {
-            dropPensionsDB()
-            authoriseAgentOrIndividual(user.isAgent)
-            insertCyaData(aPensionsUserData, aUserRequest)
-            urlPost(fullUrl(employerPayOverseasPensionUrl(taxYearEOY)), body = form, follow = false, welsh = user.isWelsh,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
-          }
+          lazy val result: WSResponse = submitPage(user, aPensionsUserData, form)
+
 
           "has the correct status" in {
             result.status shouldBe BAD_REQUEST
@@ -278,15 +256,9 @@ class EmployerPayOverseasPensionControllerISpec extends IntegrationTest with Vie
 
     "redirect and update question to 'Yes' when user selects yes when there is no cya data" which {
       lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.yes)
-
-      lazy val result: WSResponse = {
-        dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
-        val pensionsViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(employerPaymentsQuestion = None)
-        insertCyaData(pensionUserDataWithOverseasPensions(pensionsViewModel), aUserRequest)
-        urlPost(fullUrl(employerPayOverseasPensionUrl(taxYearEOY)), body = form, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
-      }
+      val pensionsViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(employerPaymentsQuestion = None)
+      val pensionUserData = pensionUserDataWithOverseasPensions(pensionsViewModel)
+      lazy val result: WSResponse = submitPage(pensionUserData, form)
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
@@ -301,19 +273,14 @@ class EmployerPayOverseasPensionControllerISpec extends IntegrationTest with Vie
 
     "redirect and update question to 'Yes' when user selects yes and cya data exists" which {
       lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.yes)
+      val pensionsViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(employerPaymentsQuestion = None)
+      val pensionUserData = pensionUserDataWithOverseasPensions(pensionsViewModel)
 
-      lazy val result: WSResponse = {
-        dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
-        val pensionsViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(employerPaymentsQuestion = None)
-        insertCyaData(pensionUserDataWithOverseasPensions(pensionsViewModel), aUserRequest)
-        urlPost(fullUrl(employerPayOverseasPensionUrl(taxYearEOY)), body = form, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
-      }
+      lazy val result: WSResponse = submitPage(pensionUserData, form)
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(employerPayOverseasPensionUrl(taxYearEOY))
+        result.header("location") shouldBe Some(employerPayOverseasPensionUrl(taxYearEOY)) //Todo redirect to SASS-2586
       }
 
       "updates employerPaymentsQuestion to Some(true)" in {
@@ -324,18 +291,14 @@ class EmployerPayOverseasPensionControllerISpec extends IntegrationTest with Vie
 
     "redirect and update question to 'No' when user selects no and cya data exists" which {
       lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.no)
+      val pensionsViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(employerPaymentsQuestion = Some(true))
+      val pensionsUserData = pensionUserDataWithOverseasPensions(pensionsViewModel)
 
-      lazy val result: WSResponse = {
-        dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
-        val pensionsViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(employerPaymentsQuestion = Some(true))
-        insertCyaData(pensionUserDataWithOverseasPensions(pensionsViewModel), aUserRequest)
-        urlPost(fullUrl(employerPayOverseasPensionUrl(taxYearEOY)), body = form, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
-      }
+      lazy val result: WSResponse = submitPage(pensionsUserData, form)
+
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(employerPayOverseasPensionUrl(taxYearEOY))
+        result.header("location") shouldBe Some(employerPayOverseasPensionUrl(taxYearEOY)) //TODO - redirect to SASS-2587
       }
 
       "updates employerPaymentsQuestion to Some(false)" in {

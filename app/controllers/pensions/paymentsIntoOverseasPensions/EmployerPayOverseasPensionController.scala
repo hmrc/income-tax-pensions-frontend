@@ -76,10 +76,18 @@ class EmployerPayOverseasPensionController @Inject()(implicit val cc: MessagesCo
             pensionSessionService.createOrUpdateSessionData(request.user,
               updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
 
-              Redirect(EmployerPayOverseasPensionController.show(taxYear))
+              if(yesNo) {
+                //TODO - redirect to SASS-2586
+                Redirect(EmployerPayOverseasPensionController.show(taxYear))
+              }else{
+                //TODO - redirect to SASS-2587
+                Redirect(EmployerPayOverseasPensionController.show(taxYear))
+              }
+
             }
           case _ =>
             //TODO - redirect to CYA page once implemented#
+            println()
             Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
         }
       }
