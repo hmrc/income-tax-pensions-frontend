@@ -20,19 +20,18 @@ import builders.PensionsUserDataBuilder.pensionsUserDataWithUnauthorisedPayments
 import builders.UnauthorisedPaymentsViewModelBuilder.anUnauthorisedPaymentsViewModel
 import builders.UserBuilder.aUserRequest
 import forms.AmountForm
-import models.pension.charges.UnauthorisedPaymentsViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterEach
-import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
+import utils.CommonUtils
 import utils.PageUrls.UnAuthorisedPayments.noSurchargeAmountUrl
 import utils.PageUrls.{fullUrl, pensionSummaryUrl}
 import utils.PageUrls.unauthorisedPaymentsPages.{nonUKTaxOnAmountSurcharge, whereAnyOfTheUnauthorisedPaymentsUrl}
-import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
-class NoSurchargeAmountControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
+
+class NoSurchargeAmountControllerISpec extends CommonUtils with BeforeAndAfterEach {
 
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] =
@@ -43,6 +42,8 @@ class NoSurchargeAmountControllerISpec extends IntegrationTest with ViewHelpers 
 
   private val poundPrefixText = "£"
   private val amountInputName = "amount"
+
+  private implicit val url: Int => String = noSurchargeAmountUrl
 
   trait CommonExpectedResults {
     val expectedCaption: Int => String
@@ -105,7 +106,9 @@ class NoSurchargeAmountControllerISpec extends IntegrationTest with ViewHelpers 
       s"language is ${welshTest(user.isWelsh)} and request is from an ${agentTest(user.isAgent)}" should {
         "render unauthorised payments that resulted in no surcharges page with no pre filling" which {
           val viewModel = anUnauthorisedPaymentsViewModel.copy(noSurchargeAmount = None)
-          lazy val result: WSResponse = showPage(user, viewModel)
+          val pensionUserData = pensionsUserDataWithUnauthorisedPayments(viewModel, isPriorSubmission = false)
+
+          lazy val result: WSResponse = showPage(user, pensionUserData)
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
@@ -127,7 +130,9 @@ class NoSurchargeAmountControllerISpec extends IntegrationTest with ViewHelpers 
         "render into your amount not surcharge page when cya data" which {
           val existingAmount: BigDecimal = 999.88
           val viewModel = anUnauthorisedPaymentsViewModel.copy(noSurchargeAmount = Some(existingAmount))
-          lazy val result: WSResponse = showPage(user, viewModel)
+          val pensionUserData = pensionsUserDataWithUnauthorisedPayments(viewModel, isPriorSubmission = false)
+
+          lazy val result: WSResponse = showPage(user, pensionUserData)
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
@@ -150,7 +155,9 @@ class NoSurchargeAmountControllerISpec extends IntegrationTest with ViewHelpers 
 
     "redirect to the pension summary page if the amount not surcharge question has not been answered" which {
       val viewModel = anUnauthorisedPaymentsViewModel.copy(noSurchargeAmount = None, noSurchargeQuestion = None)
-      lazy val result: WSResponse = showPage(viewModel)
+      val pensionUserData = pensionsUserDataWithUnauthorisedPayments(viewModel, isPriorSubmission = false)
+      lazy val result: WSResponse = showPage(pensionUserData)
+
 
       "has a SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER //TODO - redirect to the CYA page
@@ -167,9 +174,9 @@ class NoSurchargeAmountControllerISpec extends IntegrationTest with ViewHelpers 
     "redirect to the non uk tax not surcharge page if user tries to access link directly" which {
       val validAmount = "100.22"
       val viewModel = anUnauthorisedPaymentsViewModel.copy(noSurchargeQuestion = Some(false))
-      val validForm: Map[String, String] = Map(AmountForm.amount -> validAmount)
+      val pensionUserData = pensionsUserDataWithUnauthorisedPayments(viewModel, isPriorSubmission = false)
 
-      implicit lazy val result: WSResponse = submitPage(viewModel, validForm)
+      implicit lazy val result: WSResponse = showPage(pensionUserData)
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
@@ -182,7 +189,8 @@ class NoSurchargeAmountControllerISpec extends IntegrationTest with ViewHelpers 
 
     "redirect to the CYA page if user tries to access link directly" which {
       val viewModel = anUnauthorisedPaymentsViewModel.copy(noSurchargeQuestion = None)
-      implicit lazy val result: WSResponse = showPage(viewModel)
+      val pensionUserData = pensionsUserDataWithUnauthorisedPayments(viewModel, isPriorSubmission = false)
+      implicit lazy val result: WSResponse = showPage(pensionUserData)
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
@@ -204,9 +212,9 @@ class NoSurchargeAmountControllerISpec extends IntegrationTest with ViewHelpers 
           val amountEmpty = ""
           val emptyForm: Map[String, String] = Map(AmountForm.amount -> amountEmpty)
           val viewModel = anUnauthorisedPaymentsViewModel.copy(noSurchargeAmount = None)
+          val pensionUserData = pensionsUserDataWithUnauthorisedPayments(viewModel, isPriorSubmission = false)
 
-
-          lazy val result: WSResponse = submitPage(user, viewModel, emptyForm)
+          lazy val result: WSResponse = submitPage(user, pensionUserData, emptyForm)
 
           "has the correct status" in {
             result.status shouldBe BAD_REQUEST
@@ -231,8 +239,9 @@ class NoSurchargeAmountControllerISpec extends IntegrationTest with ViewHelpers 
           val amountInvalidFormat = "invalid"
           val invalidFormatForm: Map[String, String] = Map(AmountForm.amount -> amountInvalidFormat)
           val viewModel = anUnauthorisedPaymentsViewModel.copy(noSurchargeAmount = None)
+          val pensionUserData = pensionsUserDataWithUnauthorisedPayments(viewModel, isPriorSubmission = false)
 
-          lazy val result: WSResponse = submitPage(user, viewModel, invalidFormatForm)
+          lazy val result: WSResponse = submitPage(user, pensionUserData, invalidFormatForm)
 
           "has the correct status" in {
             result.status shouldBe BAD_REQUEST
@@ -257,8 +266,9 @@ class NoSurchargeAmountControllerISpec extends IntegrationTest with ViewHelpers 
           val amountOverMaximum = "100,000,000,000"
           val overMaximumForm: Map[String, String] = Map(AmountForm.amount -> amountOverMaximum)
           val viewModel = anUnauthorisedPaymentsViewModel.copy(noSurchargeAmount = None)
+          val pensionUserData = pensionsUserDataWithUnauthorisedPayments(viewModel, isPriorSubmission = false)
 
-          lazy val result: WSResponse = submitPage(user, viewModel, overMaximumForm)
+          lazy val result: WSResponse = submitPage(user, pensionUserData, overMaximumForm)
 
           "has the correct status" in {
             result.status shouldBe BAD_REQUEST
@@ -285,8 +295,9 @@ class NoSurchargeAmountControllerISpec extends IntegrationTest with ViewHelpers 
       val validAmount = "100.22"
       val validForm: Map[String, String] = Map(AmountForm.amount -> validAmount)
       val viewModel = anUnauthorisedPaymentsViewModel.copy(noSurchargeAmount = None)
+      val pensionUserData = pensionsUserDataWithUnauthorisedPayments(viewModel, isPriorSubmission = false)
 
-      lazy val result: WSResponse = submitPage(viewModel, validForm)
+      lazy val result: WSResponse = submitPage(pensionUserData, validForm)
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
@@ -303,8 +314,9 @@ class NoSurchargeAmountControllerISpec extends IntegrationTest with ViewHelpers 
       val validAmount = "100.22"
       val validForm: Map[String, String] = Map(AmountForm.amount -> validAmount)
       val viewModel = anUnauthorisedPaymentsViewModel.copy(noSurchargeQuestion = Some(false))
+      val pensionUserData = pensionsUserDataWithUnauthorisedPayments(viewModel, isPriorSubmission = false)
 
-      implicit lazy val result: WSResponse = submitPage(viewModel, validForm)
+      implicit lazy val result: WSResponse = submitPage(pensionUserData, validForm)
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
@@ -319,8 +331,9 @@ class NoSurchargeAmountControllerISpec extends IntegrationTest with ViewHelpers 
       val validAmount = "100.22"
       val validForm: Map[String, String] = Map(AmountForm.amount -> validAmount)
       val viewModel = anUnauthorisedPaymentsViewModel.copy(noSurchargeQuestion = None)
+      val pensionUserData =  pensionsUserDataWithUnauthorisedPayments(viewModel, isPriorSubmission = false)
 
-      implicit lazy val result: WSResponse = submitPage(viewModel, validForm)
+      implicit lazy val result: WSResponse = submitPage(pensionUserData, validForm)
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
@@ -330,63 +343,5 @@ class NoSurchargeAmountControllerISpec extends IntegrationTest with ViewHelpers 
         result.header("location").contains(noSurchargeAmountUrl(taxYearEOY)) shouldBe true //Todo change this to check your answers page once implemented
       }
     }
-  }
-
-  private def showPage(user: UserScenario[CommonExpectedResults, SpecificExpectedResults],
-                          anUnauthorisedPaymentsViewModel: UnauthorisedPaymentsViewModel) = {
-    lazy val result: WSResponse = {
-      dropPensionsDB()
-      authoriseAgentOrIndividual(user.isAgent)
-      val viewModel = anUnauthorisedPaymentsViewModel
-      insertCyaData(pensionsUserDataWithUnauthorisedPayments(viewModel, isPriorSubmission = false), aUserRequest)
-      urlGet(fullUrl(noSurchargeAmountUrl(taxYearEOY)), user.isWelsh, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
-    }
-    result
-  }
-
-  private def showPage(anUnauthorisedPaymentsViewModel: UnauthorisedPaymentsViewModel) = {
-    lazy val result: WSResponse = {
-      dropPensionsDB()
-      authoriseAgentOrIndividual(isAgent = false)
-      val viewModel = anUnauthorisedPaymentsViewModel
-      insertCyaData(pensionsUserDataWithUnauthorisedPayments(viewModel, isPriorSubmission = false), aUserRequest)
-      urlGet(fullUrl(noSurchargeAmountUrl(taxYearEOY)), follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
-    }
-    result
-  }
-
-  private def submitPage(user: UserScenario[CommonExpectedResults, SpecificExpectedResults],
-                           anUnauthorisedPaymentsViewModel: UnauthorisedPaymentsViewModel,
-                           form: Map[String, String]) = {
-    val result: WSResponse = {
-      dropPensionsDB()
-      val pensionsViewModel = anUnauthorisedPaymentsViewModel.copy(noSurchargeAmount = None)
-      insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false), aUserRequest)
-      authoriseAgentOrIndividual(user.isAgent)
-      urlPost(fullUrl(noSurchargeAmountUrl(taxYearEOY)), body = form, welsh = user.isWelsh, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
-    }
-
-    result
-  }
-
-  private def submitPage(anUnauthorisedPaymentsViewModel: UnauthorisedPaymentsViewModel,
-                           form: Map[String, String]) = {
-    val result: WSResponse = {
-      dropPensionsDB()
-      insertCyaData(pensionsUserDataWithUnauthorisedPayments(anUnauthorisedPaymentsViewModel), aUserRequest)
-      authoriseAgentOrIndividual(isAgent = false)
-      urlPost(fullUrl(noSurchargeAmountUrl(taxYearEOY)), body = form, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
-    }
-
-    result
-  }
-
-  private def getResponseNoSessionData = {
-    val result: WSResponse = {
-      dropPensionsDB()
-      authoriseAgentOrIndividual(isAgent = false)
-      urlGet(fullUrl(noSurchargeAmountUrl(taxYearEOY)), follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
-    }
-    result
   }
 }

@@ -693,6 +693,8 @@ unauthorisedPayments.gateway.findOutMore = Dysgwch ragor am daliadau heb awdurdo
 unauthorisedPayments.gateway.error.individual = Dewiswch ‘Iawn’ os cawsoch daliadau heb awdurdod
 unauthorisedPayments.gateway.error.agent = Dewiswch ‘Iawn’ os cafodd eich cleient daliadau heb awdurdod
 
+#################       Overseas Pension        ########################################
+
 #Payments into overseas pension schemes page
 overseasPension.paymentIntoOverseasPensionScheme.title = Payments into overseas pension schemes
 overseasPension.paymentIntoOverseasPensionScheme.notRegistered.text.individual = Your overseas pension schemes must not be registered in the UK.
@@ -713,3 +715,15 @@ overseasPension.paymentIntoOverseasPensionScheme.invalid.format.error.individual
 overseasPension.paymentIntoOverseasPensionScheme.invalid.format.error.agent = Enter the amount your client paid into overseas pension schemes in the correct format
 overseasPension.paymentIntoOverseasPensionScheme.maximum.error.individual = The amount you paid into overseas pension schemes must be less than £100,000,000,000
 overseasPension.paymentIntoOverseasPensionScheme.maximum.error.agent = The amount your client paid into overseas pension schemes must be less than £100,000,000,000
+
+#Employer payment into overseas pension scheme page
+overseasPension.employerPayOverseasPension.title.individual = Did your employers pay into your overseas pension schemes?
+overseasPension.employerPayOverseasPension.title.agent = Did your client’s employers pay into the overseas pension schemes?
+overseasPension.employerPayOverseasPension.findOut.individual = To find out you can:
+overseasPension.employerPayOverseasPension.findOut.agent = To find out you can ask your client to:
+overseasPension.employerPayOverseasPension.bullet1.individual = check your pension statement
+overseasPension.employerPayOverseasPension.bullet1.agent = check their pension statement
+overseasPension.employerPayOverseasPension.bullet2.individual = ask your employer
+overseasPension.employerPayOverseasPension.bullet2.agent = ask their employer
+overseasPension.employerPayOverseasPension.error.noEntry.individual = Select yes if your employer paid into your overseas pension schemes
+overseasPension.employerPayOverseasPension.error.noEntry.agent = Select yes if your client’s employer paid into their overseas pension schemes
