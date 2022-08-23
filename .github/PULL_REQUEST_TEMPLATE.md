@@ -1,34 +1,45 @@
-### Description
-Please include a brief summary of the change you've made and the issue that it fixes.
+# Checklist
 
-Add a link to the relevant story in Jira
-[SASS-CHANGE-ME](ADD URL HERE)
+Jira subtask: SASS-____
 
-### Checklist PR Reviewer
-##### Before Reviewing
-- [ ]  Have you pulled the branch down?
-- [ ]  Have you assigned yourself to the PR?
-- [ ]  Have you moved the task to “in review” on JIRA?
-- [ ]  Have you checked to ensure all dependencies are up to date?
-- [ ]  Have you checked to ensure its been rebased against the current version of main?
+## Developer: Before Asking Others To Review Your Code
 
-##### Whilst Reviewing
-- [ ]  Have you run the tests?
-- [ ]  Have you run the journey tests?
-- [ ]  Have you looked at the JIRA story to make sure all Acceptance Criteria has been met?
+Have you ...
 
-##### After Reviewing
-- [ ]  Have you checked for merge conflicts or any changes in the current main that may affect the current pull request? i.e. does it need another rebase?
-- [ ]  Have you checked to make sure there are no builds in the pipeline before you merge?
-- [ ]  Have you moved the task to “in pipeline” on Jira?
+- [ ]  Had a QA verify that all acceptance criteria have been met, with comment(s) in the ticket? 
+- [ ]  Hosted a group review of your implementation?
+- [ ]  Rebased against `main`? 
+- [ ]  Ensured that your commit(s) contain the ticket key?
+- [ ]  Ensured that your branch is named after the ticket key?
+- [ ]  Successfully run the unit tests?
+- [ ]  Successfully run the integration tests?
+- [ ]  Successfully run the journey tests? If not, please add a comment explaining why it wasn't necessary.
+- [ ]  Ensured that the PR job has passed.
 
-### Checklist PR Raiser
-##### Before creating PR
-- [ ]  Have you run the tests?
-- [ ]  Have you run the journey tests? (where applicable)
-- [ ]  Have you addressed warnings where appropriate?
-- [ ]  Have you rebased against the current version of main?
-- [ ]  Have you checked code coverage isn’t lower than previously?
+## Reviewer: Before Reviewing
 
-##### After PRs been raised
-- [ ]  Have you checked the PR Builder passes?
+Have you ...
+
+- [ ]  Pulled the branch down?
+- [ ]  Assigned yourself to this PR?
+- [ ]  Moved the Jira *subtask* to “in review”?
+- [ ]  Ensured that [the dependencies](https://catalogue.tax.service.gov.uk/service/income-tax-pensions-frontend) are current or nearly so? If not upgrading, please add a comment.
+- [ ]  Ensured that it is rebased against `main`?
+
+## Developer: After Approval
+
+Have you ...
+
+- [ ]  Rebased against `main`?
+- [ ]  Moved the Jira *subtask* to “in pipeline”?
+
+## Developer: After Merging
+
+Have you ...
+
+- [ ]  Deleted the branch?
+- [ ]  Scheduled a demo? If not, please add a comment.
+
+ 
+
+
