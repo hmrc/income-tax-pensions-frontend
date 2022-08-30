@@ -23,7 +23,6 @@ Have you ...
 - [ ]  Pulled the branch down?
 - [ ]  Assigned yourself to this PR?
 - [ ]  Moved the Jira *subtask* to “in review”?
-- [ ]  Ensured that [the dependencies](https://catalogue.tax.service.gov.uk/service/income-tax-pensions-frontend) are current or nearly so? If not upgrading, please add a comment.
 - [ ]  Ensured that it is rebased against `main`?
 
 ## Developer: After Approval
