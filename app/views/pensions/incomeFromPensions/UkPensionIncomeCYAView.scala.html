@@ -59,7 +59,7 @@
 @schemesRow = @{
     if(cya.uKPensionIncomes.nonEmpty) {
         Some(summaryListRow(
-            HtmlContent(messages("incomeFromPensions.pensionSchemes")),
+            HtmlContent(messages("unauthorisedPayments.common.ukPensionSchemes")),
             HtmlContent(schemeNames),
             actions = Seq((UkPensionIncomeSummaryController.show(taxYear), messages("common.change"), Some(messages(s"incomeFromPensions.pensionSchemes.hidden"))))
         ))
