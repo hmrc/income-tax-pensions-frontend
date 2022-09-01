@@ -43,7 +43,7 @@
         noSurchargeQuestion: Option[Boolean] = None, noQuestion: Option[Boolean] = None)(implicit request: AuthorisationRequest[_], messages: Messages, appConfig: AppConfig)
 
 
-@titleForUse = @{messages(s"unauthorisedPayments.title")}
+@titleForUse = @{messages(s"unauthorisedPayments.common.title")}
 
 @hasFormErrors = @{form.hasErrors}
 

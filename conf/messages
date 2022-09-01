@@ -53,6 +53,10 @@ common.error.incorrectFormat = Enter the total amount in the correct format
 common.useCalculator.paragraph.link = if you need to work this out
 common.useCalculator.paragraph = Use a calculator
 
+unauthorisedPayments.common.title = Unauthorised payments
+unauthorisedPayments.common.title.hidden = Change unauthorised payments
+unauthorisedPayments.common.ukPensionSchemes = UK pension schemes
+unauthorisedPayments.common.ukPensionSchemes.hidden = Change UK pension schemes
 common.unauthorisedPaymentsFromPension.caption = Unauthorised payments from pensions for 6 April {0} to 5 April {1}
 common.unauthorisedPayments.Amount.Text = Total non-UK tax in pounds
 common.unauthorisedPayments.error.Amount.noEntry = Enter the amount of non-UK tax paid
@@ -576,7 +580,6 @@ incomeFromPensions.removePensionScheme.buttonText = Remove pension
 incomeFromPensions.title = Check income from pensions
 incomeFromPensions.paragraph.individual = Your income from pensions is based on the information we already hold about you.
 incomeFromPensions.paragraph.agent = Your client’s income from pensions is based on the information we already hold about them.
-incomeFromPensions.pensionSchemes = UK pension schemes
 incomeFromPensions.pensionIncome.hidden.individual = Change whether you got income from UK pensions
 incomeFromPensions.pensionIncome.hidden.agent = Change whether your client got income from UK pensions
 incomeFromPensions.pensionSchemes.hidden = Change UK pension scheme details
@@ -639,6 +642,23 @@ unauthorisedPayments.didYouPayNonUkTax.error.noEntry = Select yes if you paid no
 #Where any of the unauthorised payments from a UK pension scheme?
 unauthorisedPayments.whereAnyOfTheUnauthorisedPayments.title = Were any of the unauthorised payments from a UK pension scheme?
 
+#payments into pensions CYA
+
+unauthorisedPayments.cya.heading.individual = Check your unauthorised payments
+unauthorisedPayments.cya.heading.agent = Check your client’s unauthorised payments
+unauthorisedPayments.cya.amountSurcharged = Amount surcharged
+unauthorisedPayments.cya.nonUkTaxAmountSurcharged = Non UK-tax on amount surcharged
+unauthorisedPayments.cya.amountNotSurcharged = Amount not surcharged
+unauthorisedPayments.cya.nonUkTaxAmountNotSurcharged = Non UK-tax on amount not surcharged
+unauthorisedPayments.cya.pensionSchemeTaxReferences = Pension Scheme Tax References
+
+
+unauthorisedPayments.cya.amountSurcharged.hidden = Change amount surcharged
+unauthorisedPayments.cya.nonUkTaxAmountSurcharged.hidden = Change non UK-tax on amount surcharged
+unauthorisedPayments.cya.amountNotSurcharged.hidden = Change amount not surcharged
+unauthorisedPayments.cya.nonUkTaxAmountNotSurcharged.hidden = Change non UK-tax on amount not surcharged
+unauthorisedPayments.cya.pensionSchemeTaxReferences.hidden = Change Pension Scheme Tax References
+
 #Pension Taken In Another Way
 lifetimeAllowance.pensionTakenAnotherWay.title.individual = Your pension taken in another way
 lifetimeAllowance.pensionTakenAnotherWay.title.agent = Your client’s pension taken in another way
@@ -662,7 +682,6 @@ unauthorisedPayments.nonUkTaxOnAmountNotSurcharge.error.noEntry = Select yes if 
 
 
 #Unauthorised Payments
-unauthorisedPayments.title = Unauthorised payments
 unauthorisedPayments.paymentOutside = Unauthorised payments are made outside the tax rules
 unauthorisedPayments.moreThanOneUnauthorisedPayment.line1 = If you got more than one unauthorised payment, you might
 unauthorisedPayments.moreThanOneUnauthorisedPayment.line2 = have paid a surcharge (an extra fee) on some of them. It all
