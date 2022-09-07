@@ -52,6 +52,7 @@ case class UnauthorisedPaymentsViewModel(surchargeQuestion: Option[Boolean] = No
   def noUnauthorisedPaymentQuestion: Option[Boolean] = {
     (noSurchargeQuestion, surchargeQuestion) match {
       case (Some(false), Some(false)) => Some(true)
+      case (None, None) => None
       case _ => Some(false)
     }
   }

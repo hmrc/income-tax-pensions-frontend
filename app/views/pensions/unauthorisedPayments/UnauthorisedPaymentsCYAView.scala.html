@@ -21,6 +21,7 @@
 @import models.pension.charges.UnauthorisedPaymentsViewModel
 @import utils.ViewUtils.bigDecimalCurrency
 @import utils.ViewUtils.summaryListRow
+@import controllers.pensions.unauthorisedPayments.UnauthorisedPaymentsCYAViewHelper._
 
 @this(layout: Layout, summaryList: SummaryList, heading: Heading, button: Button, csrfForm: FormWithCSRF)
 @(taxYear: Int, cya: UnauthorisedPaymentsViewModel)(implicit messages: Messages, appConfig: AppConfig, request: AuthorisationRequest[_])
@@ -102,15 +103,7 @@ rowWithContent("unauthorisedPayments.common.ukPensionSchemes", cya.ukPensionSche
 
     @heading(headingForUse, Some(messages("common.unauthorisedPaymentsFromPension.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-5")
 
-    @summaryList((cya.surchargeQuestion.getOrElse(false), cya.noSurchargeQuestion.getOrElse(false), cya.ukPensionSchemesQuestion.getOrElse(false)) match {
-             case (true, true, false) => summaryRows.flatten
-             case (true, true, true) => (summaryRows ++ pensionSchemeTaxReferences).flatten
-             case (true, false, false) => surchargeQuestionTrueRows.flatten
-             case (true, false, true) => (surchargeQuestionTrueRows ++ pensionSchemeTaxReferences).flatten
-             case (false, true, false) => noSurchargeQuestionTrueRows.flatten
-             case (false, true, true) => (noSurchargeQuestionTrueRows ++ pensionSchemeTaxReferences).flatten
-             case (_, _, _) => unAuthorisedPaymentOnlyRow.flatten
-             })
+    @summaryList(summaryListRows(cya, taxYear)(messages))
 
     @csrfForm(controllers.pensions.unauthorisedPayments.routes.UnauthorisedPaymentsCYAController.submit(taxYear)) {
         @button("common.saveAndContinue")
