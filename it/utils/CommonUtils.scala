@@ -16,14 +16,18 @@
 
 package utils
 
+import builders.AllPensionsDataBuilder.anAllPensionsData
+import builders.IncomeTaxUserDataBuilder.anIncomeTaxUserData
 import builders.PensionsUserDataBuilder.pensionsUserDataWithUnauthorisedPayments
 import builders.UserBuilder.aUserRequest
+import com.github.tomakehurst.wiremock.stubbing.StubMapping
+import models.IncomeTaxUserData
 import models.mongo.PensionsUserData
 import models.pension.charges.UnauthorisedPaymentsViewModel
 import play.api.http.HeaderNames
 import play.api.libs.ws.WSResponse
 import utils.PageUrls.UnAuthorisedPayments.noSurchargeAmountUrl
-import utils.PageUrls.fullUrl
+import utils.PageUrls.{fullUrl, pensionSummaryUrl}
 
 trait CommonUtils extends IntegrationTest with ViewHelpers with PensionsDatabaseHelper {
 
@@ -39,6 +43,20 @@ trait CommonUtils extends IntegrationTest with ViewHelpers with PensionsDatabase
     result
   }
 
+  def showPage[A, B](user: UserScenario[A, B],
+                     pensionsUserData: PensionsUserData,
+                     userData: IncomeTaxUserData)
+                    (implicit url: Int => String): WSResponse = {
+    lazy val result: WSResponse = {
+      dropPensionsDB()
+      authoriseAgentOrIndividual(user.isAgent)
+      insertCyaData(pensionsUserData, aUserRequest)
+      userDataStub(userData, nino, taxYearEOY)
+      urlGet(fullUrl(url(taxYearEOY)), user.isWelsh, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+    }
+    result
+  }
+
   def showPage(pensionsUserData: PensionsUserData)
               (implicit url: Int => String): WSResponse = {
     lazy val result: WSResponse = {
@@ -46,6 +64,16 @@ trait CommonUtils extends IntegrationTest with ViewHelpers with PensionsDatabase
       authoriseAgentOrIndividual(isAgent = false)
       insertCyaData(pensionsUserData, aUserRequest)
       urlGet(fullUrl(url(taxYearEOY)), follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+    }
+    result
+  }
+
+  def showUnauthorisedPage[A,B](userScenario: UserScenario[A, B])
+                               (implicit url: Int => String): WSResponse = {
+    lazy val result: WSResponse = {
+      unauthorisedAgentOrIndividual(userScenario.isAgent)
+      urlGet(fullUrl(url(taxYear)), welsh = userScenario.isWelsh,
+        headers = Seq(Predef.ArrowAssoc(HeaderNames.COOKIE) -> playSessionCookies(taxYear, validTaxYearList)))
     }
     result
   }

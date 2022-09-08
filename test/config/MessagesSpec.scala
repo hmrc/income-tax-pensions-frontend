@@ -46,7 +46,8 @@ class MessagesSpec extends ViewTest with GuiceOneAppPerSuite {
     "this.section.is",
     "radios.yesnoitems.yes",
     "radios.yesnoitems.no",
-    "paymentsIntoPensions.cya.pensionsTaxReliefNotClaimed"
+    "paymentsIntoPensions.cya.pensionsTaxReliefNotClaimed",
+    "pensions.overseasPensionsSummary.paymentsIntoOverseasPensions"
   )
 
   lazy val allLanguages: Map[String, Map[String, String]] = app.injector.instanceOf[MessagesApi].messages

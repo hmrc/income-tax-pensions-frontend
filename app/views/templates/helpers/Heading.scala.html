@@ -20,10 +20,9 @@
 
 <header class="hmrc-page-heading govuk-!-margin-0 @extraClasses">
 
-    <h1 class="govuk-heading-@{size} govuk-!-margin-0 @extraClasses">@messages(heading)</h1>
     @subheading.map{ subheading =>
-        <p class="govuk-caption-@{size} hmrc-caption-xl">@messages(subheading)</p>
+    <p class="govuk-caption-@{size} hmrc-caption-xl">@messages(subheading)</p>
     }
-
+    <h1 class="govuk-heading-@{size} govuk-!-margin-0 @extraClasses">@messages(heading)</h1>
 
 </header>

@@ -16,6 +16,7 @@
 
 package utils
 
+import models.mongo.PensionsCYAModel
 import models.pension.AllPensionsData
 import models.pension.charges.{LifetimeAllowance, PensionSavingsTaxCharges}
 
@@ -54,9 +55,21 @@ object StatusHelper {
     prior.flatMap(_.pensionCharges.flatMap(_.pensionSchemeUnauthorisedPayments)).isDefined
   }
 
-  def paymentsIntoOverseasPensionsIsUpdated(prior: Option[AllPensionsData]): Boolean = {
+  def overseasPensionsIsUpdated(prior: Option[AllPensionsData]): Boolean = {
     prior.flatMap(_.pensionCharges.flatMap(_.pensionSchemeOverseasTransfers)).isDefined ||
     prior.flatMap(_.pensionCharges.flatMap(_.overseasPensionContributions)).isDefined
   }
 
+  def paymentsIntoOverseasPensionsIsUpdated(cya: Option[PensionsCYAModel]): Boolean = {
+    cya.flatMap(_.paymentsIntoOverseasPensions.paymentsIntoOverseasPensionsQuestions).isDefined
+  }
+
+  // TODO: implement when we add the page
+  def incomeFromOverseasPensionsIsUpdated(cya: Option[PensionsCYAModel]): Boolean = false
+
+  // TODO: implement when we add the page
+  def overseasPensionsTransferChargesIsUpdated(cya: Option[PensionsCYAModel]): Boolean = false
+
+  // TODO: implement when we add the page
+  def shortServiceRefundsIsUpdated(cya: Option[PensionsCYAModel]): Boolean = false
 }

@@ -29,6 +29,8 @@ GET         /error/wrong-tax-year                                               
 
 GET         /:taxYear/pensions-summary                                                      controllers.pensions.PensionsSummaryController.show(taxYear: Int)
 
+GET         /:taxYear/overseas-pensions                                                     controllers.pensions.OverseasPensionsSummaryController.show(taxYear: Int)
+
 ###########################     Payments into Pension pages     ####################################
 
 GET         /:taxYear/payments-into-pensions/payments-into-overseas-pensions/overseas-pension-scheme                  controllers.pensions.paymentsIntoPension.PaymentsIntoOverseasPensionsGatewayController.show(taxYear:Int)
