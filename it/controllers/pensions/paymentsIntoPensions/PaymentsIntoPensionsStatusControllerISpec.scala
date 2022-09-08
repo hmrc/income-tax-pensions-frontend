@@ -16,7 +16,10 @@
 
 package controllers.pensions.paymentsIntoPensions
 
+import builders.UserBuilder.aUserRequest
 import forms.YesNoForm
+import models.mongo.{PensionsCYAModel, PensionsUserData}
+import models.pension.reliefs.PaymentsIntoPensionViewModel
 import org.scalatest.BeforeAndAfterEach
 import play.api.{Application, Environment, Mode}
 import play.api.http.HeaderNames
@@ -25,6 +28,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.Result
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{route, writeableOf_AnyContentAsFormUrlEncoded}
+import utils.PageUrls.PaymentIntoPensions.{checkPaymentsIntoPensionCyaUrl, reliefAtSourcePensionsUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 import scala.concurrent.Future
@@ -76,43 +80,106 @@ class PaymentsIntoPensionsStatusControllerISpec extends IntegrationTest
     }
   }
 
-  ".submit" should {
-    "redirect to income tax submission overview when tailoring is disabled" in {
+  ".submit" when {
+    "redirect to income tax submission overview when tailoring is disabled" which {
       val request = FakeRequest("POST", url(taxYearEOY)).withHeaders(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList), csrfContent)
 
       lazy val result: Future[Result] = {
         authoriseIndividual(true)
+        dropPensionsDB()
+        emptyUserDataStub(nino, taxYearEOY)
+        insertCyaData(
+          PensionsUserData("", nino, mtditid, taxYear = taxYearEOY, isPriorSubmission = false,
+            pensions = PensionsCYAModel.emptyModels.copy(paymentsIntoPension = PaymentsIntoPensionViewModel(rasPensionPaymentQuestion = Some(true)))),
+          aUserRequest
+        )
         route(appWithTailoringDisabled, request, "{}").get
       }
 
+      "has a status of SEE_OTHER(303)" in {
       status(result) shouldBe SEE_OTHER
-      await(result).header.headers("Location") shouldBe appConfig.incomeTaxSubmissionOverviewUrl(taxYearEOY)
     }
 
-    "redirect to pensions summary when tailoring is enabled and 'Yes' is selected" in {
+    "has the correct redirect location" in {
+      await(result).header.headers("Location") shouldBe appConfig.incomeTaxSubmissionOverviewUrl(taxYearEOY)
+    }
+    }
+
+    "redirect to the next step in the journey when tailoring is enabled and 'Yes' is selected" which {
       val request = FakeRequest("POST", url(taxYearEOY)).withHeaders(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList), csrfContent)
         .withFormUrlEncodedBody(YesNoForm.yesNo -> "true")
 
       lazy val result: Future[Result] = {
         authoriseIndividual(true)
+        dropPensionsDB()
+        emptyUserDataStub(nino, taxYearEOY)
+        insertCyaData(
+          PensionsUserData("", nino, mtditid, taxYear = taxYearEOY, isPriorSubmission = false,
+            pensions = PensionsCYAModel.emptyModels.copy(paymentsIntoPension = PaymentsIntoPensionViewModel(rasPensionPaymentQuestion = Some(true)))),
+          aUserRequest
+        )
         route(app, request).get
       }
 
-      status(result) shouldBe SEE_OTHER
-      await(result).header.headers("Location") shouldBe controllers.pensions.routes.PensionsSummaryController.show(taxYearEOY).url
+      "has a status of SEE_OTHER(303)" in {
+        status(result) shouldBe SEE_OTHER
+      }
+
+      "has the correct redirect location" in {
+        await(result).header.headers("Location") shouldBe reliefAtSourcePensionsUrl(taxYearEOY)
+      }
     }
 
-    "redirect to income tax submission overview when tailoring is enabled and 'No' is selected" in {
+    "redirect to income tax submission overview when tailoring is enabled and 'No' is selected with incomplete cya data & no prior data" should {
       val request = FakeRequest("POST", url(taxYearEOY)).withHeaders(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList), csrfContent)
         .withFormUrlEncodedBody(YesNoForm.yesNo -> "false")
 
-      lazy val result: Future[Result] = {
+      lazy val result = {
         authoriseIndividual(true)
-        route(app, request).get
+        dropPensionsDB()
+        emptyUserDataStub(nino, taxYearEOY)
+        insertCyaData(
+          PensionsUserData("", nino, mtditid, taxYear = taxYearEOY, isPriorSubmission = false,
+          pensions = PensionsCYAModel.emptyModels.copy(paymentsIntoPension = PaymentsIntoPensionViewModel(rasPensionPaymentQuestion = Some(true)))),
+          aUserRequest
+        )
+        route(app, request, Map("value" -> Seq("false"))).get
       }
 
-      status(result) shouldBe SEE_OTHER
-      await(result).header.headers("Location") shouldBe appConfig.incomeTaxSubmissionOverviewUrl(taxYearEOY)
+      "has a status of SEE_OTHER(303)" in {
+        status(result) shouldBe SEE_OTHER
+      }
+
+      "has the correct redirect location" in {
+        await(result).header.headers("Location") shouldBe checkPaymentsIntoPensionCyaUrl(taxYearEOY)
+      }
     }
-  }
+
+    "redirect to pensions summary when tailoring is enabled and 'No' is selected with incomplete cya data & no prior data" which {
+
+      val request = FakeRequest("POST", url(taxYearEOY)).withHeaders(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList), csrfContent)
+        .withFormUrlEncodedBody(YesNoForm.yesNo -> "false")
+
+        lazy val result = {
+          authoriseIndividual(true)
+          dropPensionsDB()
+          emptyUserDataStub(nino, taxYearEOY)
+          insertCyaData(
+            PensionsUserData("", nino, mtditid, taxYear = taxYearEOY, isPriorSubmission = false,
+              pensions = PensionsCYAModel.emptyModels),
+            aUserRequest
+          )
+          route(app, request, Map("value" -> Seq("false"))).get
+        }
+
+        "has a status of SEE_OTHER(303)" in {
+          status(result) shouldBe SEE_OTHER
+        }
+
+        "has the correct redirect location" in {
+          await(result).header.headers("Location") shouldBe checkPaymentsIntoPensionCyaUrl(taxYearEOY)
+        }
+      }
+
+    }
 }

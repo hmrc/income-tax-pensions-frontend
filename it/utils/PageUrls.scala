@@ -40,6 +40,7 @@ object PageUrls extends IntegrationTest {
 
   object PaymentIntoPensions {
 
+    def checkPaymentsIntoPensionStatusUrl(taxYear: Int): String = s"$appUrl/$taxYear/payments-into-pensions/payments-into-pensions-status"
 
     def checkPaymentsIntoPensionCyaUrl(taxYear: Int): String = s"$appUrl/$taxYear/payments-into-pensions/check-payments-into-pensions"
 

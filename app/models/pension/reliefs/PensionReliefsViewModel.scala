@@ -35,6 +35,8 @@ case class PaymentsIntoPensionViewModel(gateway: Option[Boolean] = None,
     boolField.exists(value => !value || (value && amountField.nonEmpty))
   }
 
+  def isEmpty(): Boolean = this.productIterator.forall(_ == None)
+
   def isFinished: Boolean = {
     val isDone_gateway = gateway.contains(true)
 
@@ -99,3 +101,4 @@ case class EncryptedPaymentsIntoPensionViewModel(gateway: Option[EncryptedValue]
 object EncryptedPaymentsIntoPensionViewModel {
   implicit val format: OFormat[EncryptedPaymentsIntoPensionViewModel] = Json.format[EncryptedPaymentsIntoPensionViewModel]
 }
+

@@ -17,15 +17,11 @@
 package services
 
 import config.{AppConfig, ErrorHandler}
-import connectors.IncomeTaxUserDataConnector
+import connectors.{IncomeSourceConnector, IncomeTaxUserDataConnector}
 import connectors.httpParsers.IncomeTaxUserDataHttpParser.IncomeTaxUserDataResponse
-import forms.{No, Yes}
 import models.User
 import models.mongo.{PensionsCYAModel, PensionsUserData}
 import models.pension.AllPensionsData
-import models.pension.charges.{PaymentsIntoOverseasPensionsViewModel, PensionAnnualAllowancesViewModel, PensionLifetimeAllowancesViewModel, UnauthorisedPaymentsViewModel}
-import models.pension.reliefs.PaymentsIntoPensionViewModel
-import models.pension.statebenefits.{IncomeFromPensionsViewModel, StateBenefit, StateBenefitViewModel, UkPensionIncomeViewModel}
 import org.joda.time.DateTimeZone
 import play.api.Logging
 import play.api.http.Status.INTERNAL_SERVER_ERROR
@@ -41,6 +37,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class PensionSessionService @Inject()(pensionUserDataRepository: PensionsUserDataRepository,
                                       incomeTaxUserDataConnector: IncomeTaxUserDataConnector,
+                                      incomeSourceConnector: IncomeSourceConnector,
                                       implicit private val appConfig: AppConfig,
                                       errorHandler: ErrorHandler,
                                       implicit val ec: ExecutionContext) extends Logging {
@@ -54,6 +51,17 @@ class PensionSessionService @Inject()(pensionUserDataRepository: PensionsUserDat
     pensionUserDataRepository.find(taxYear, user).map {
       case Left(_) => Left(errorHandler.handleError(INTERNAL_SERVER_ERROR))
       case Right(value) => Right(value)
+    }
+  }
+
+  def clear[R](taxYear: Int)(onFail: R)(onSuccess: R)(implicit user: User, ec: ExecutionContext, hc: HeaderCarrier): Future[R] = {
+    incomeSourceConnector.put(taxYear, user.nino, "pensions")(hc.withExtraHeaders("mtditid" -> user.mtditid)).flatMap {
+      case Left(_) => Future.successful(onFail)
+      case _ =>
+        pensionUserDataRepository.clear(taxYear, user).map {
+          case true => onSuccess
+          case false => onFail
+        }
     }
   }
 
@@ -116,143 +124,6 @@ class PensionSessionService @Inject()(pensionUserDataRepository: PensionsUserDat
     pensionUserDataRepository.createOrUpdate(userData, user).map {
       case Right(_) => onSuccess
       case Left(_) => onFail
-    }
-  }
-
-  def generateCyaFromPrior(prior: AllPensionsData): PensionsCYAModel = {
-
-    val statePension: Option[StateBenefit] = prior.stateBenefits.flatMap(_.stateBenefits.flatMap(_.statePension))
-    val statePensionLumpSum: Option[StateBenefit] = prior.stateBenefits.flatMap(_.stateBenefits.flatMap(_.statePensionLumpSum))
-
-    PensionsCYAModel(
-      PaymentsIntoPensionViewModel(
-        Some(true),
-        prior.pensionReliefs.map(a => a.pensionReliefs.regularPensionContributions.isDefined),
-        prior.pensionReliefs.flatMap(a => a.pensionReliefs.regularPensionContributions),
-        prior.pensionReliefs.map(a => a.pensionReliefs.oneOffPensionContributionsPaid.isDefined),
-        prior.pensionReliefs.flatMap(a => a.pensionReliefs.oneOffPensionContributionsPaid),
-        Some(true),
-        prior.pensionReliefs.map(a =>
-          a.pensionReliefs.retirementAnnuityPayments.isDefined || a.pensionReliefs.paymentToEmployersSchemeNoTaxRelief.isDefined
-        ),
-        prior.pensionReliefs.map(a => a.pensionReliefs.retirementAnnuityPayments.isDefined),
-        prior.pensionReliefs.flatMap(a => a.pensionReliefs.retirementAnnuityPayments),
-        prior.pensionReliefs.map(a => a.pensionReliefs.paymentToEmployersSchemeNoTaxRelief.isDefined),
-        prior.pensionReliefs.flatMap(a => a.pensionReliefs.paymentToEmployersSchemeNoTaxRelief)
-      ),
-
-      //TODO: validate and amend if necessary when building the annual allowance CYA page
-      PensionAnnualAllowancesViewModel(
-        prior.pensionCharges.flatMap(a => a.pensionSavingsTaxCharges).map(_.isAnnualAllowanceReduced),
-        prior.pensionCharges.flatMap(a => a.pensionSavingsTaxCharges).flatMap(_.moneyPurchasedAllowance),
-        prior.pensionCharges.flatMap(a => a.pensionSavingsTaxCharges).flatMap(_.taperedAnnualAllowance),
-        prior.pensionCharges.map(a => a.pensionContributions.isDefined),
-        prior.pensionCharges.flatMap(a => a.pensionContributions).map(_.inExcessOfTheAnnualAllowance),
-        prior.pensionCharges.flatMap(a => a.pensionContributions.map(x => x.annualAllowanceTaxPaid)) match {
-          case Some(taxVal) if taxVal > 0 => Some(Yes.toString)
-          case _ => Some(No.toString)
-        },
-        prior.pensionCharges.flatMap(a => a.pensionContributions).map(_.annualAllowanceTaxPaid),
-        prior.pensionCharges.flatMap(a => a.pensionContributions).map(_.pensionSchemeTaxReference)
-      ),
-
-      //TODO: validate and amend if necessary when building the lifetime allowance CYA page
-      pensionLifetimeAllowances = PensionLifetimeAllowancesViewModel(
-        aboveLifetimeAllowanceQuestion = getAboveLifetimeAllowanceQuestion(prior),
-        pensionAsLumpSumQuestion = prior.pensionCharges.flatMap(
-          a => a.pensionSavingsTaxCharges).map(_.lumpSumBenefitTakenInExcessOfLifetimeAllowance.isDefined),
-        pensionAsLumpSum = prior.pensionCharges.flatMap(
-          a => a.pensionSavingsTaxCharges).flatMap(_.lumpSumBenefitTakenInExcessOfLifetimeAllowance),
-        pensionPaidAnotherWayQuestion = prior.pensionCharges.flatMap(
-          a => a.pensionSavingsTaxCharges).map(_.benefitInExcessOfLifetimeAllowance.isDefined),
-        pensionPaidAnotherWay = prior.pensionCharges.flatMap(
-          a => a.pensionSavingsTaxCharges).flatMap(_.benefitInExcessOfLifetimeAllowance)
-
-      ),
-
-      //TODO: validate as necessary on building CYA page
-      incomeFromPensions = IncomeFromPensionsViewModel(
-        statePension = getStatePensionModel(statePension),
-        statePensionLumpSum = getStatePensionModel(statePensionLumpSum),
-        //TODO: set the question below based on the list from backend
-        uKPensionIncomesQuestion = Some(getUkPensionIncome(prior).nonEmpty),
-        uKPensionIncomes = getUkPensionIncome(prior)
-      ),
-
-      unauthorisedPayments = UnauthorisedPaymentsViewModel(
-        surchargeQuestion = prior.pensionCharges.map(_.pensionSchemeUnauthorisedPayments.flatMap(_.surcharge).isDefined),
-        noSurchargeQuestion = prior.pensionCharges.map(_.pensionSchemeUnauthorisedPayments.flatMap(_.noSurcharge).isDefined),
-        surchargeAmount = prior.pensionCharges.flatMap(_.pensionSchemeUnauthorisedPayments.flatMap(_.surcharge.map(_.amount))),
-        surchargeTaxAmountQuestion = prior.pensionCharges.map(_.pensionSchemeUnauthorisedPayments.flatMap(_.surcharge.map(_.foreignTaxPaid)).isDefined),
-        surchargeTaxAmount = prior.pensionCharges.flatMap(_.pensionSchemeUnauthorisedPayments.flatMap(_.surcharge.map(_.foreignTaxPaid))),
-        noSurchargeAmount = prior.pensionCharges.flatMap(_.pensionSchemeUnauthorisedPayments.flatMap(_.noSurcharge.map(_.amount))),
-        noSurchargeTaxAmountQuestion = prior.pensionCharges.map(_.pensionSchemeUnauthorisedPayments.map(_.noSurcharge.map(_.foreignTaxPaid)).isDefined),
-        noSurchargeTaxAmount = prior.pensionCharges.flatMap(_.pensionSchemeUnauthorisedPayments.flatMap(_.noSurcharge.map(_.foreignTaxPaid))),
-        ukPensionSchemesQuestion = prior.pensionCharges.map(_.pensionSchemeUnauthorisedPayments.map(_.pensionSchemeTaxReference).isDefined),
-        pensionSchemeTaxReference = prior.pensionCharges.flatMap(_.pensionSchemeUnauthorisedPayments.map(_.pensionSchemeTaxReference))
-      ),
-
-      //TODO Implement PaymentsIntoOverseas Endpoint
-      paymentsIntoOverseasPensions = PaymentsIntoOverseasPensionsViewModel())
-  }
-
-  private def getUnauthorisedPaymentsQuestion(prior: AllPensionsData): Option[Boolean] = {
-    if(prior.pensionCharges.flatMap(_.pensionSchemeUnauthorisedPayments.flatMap(_.surcharge)).isDefined ||
-      prior.pensionCharges.flatMap(_.pensionSchemeUnauthorisedPayments.flatMap(_.noSurcharge)).isDefined) {
-      Some(true)
-    } else {
-      None
-    }
-  }
-
-  private def getStatePensionModel(statePension: Option[StateBenefit]): Option[StateBenefitViewModel] = {
-    statePension match {
-      case Some(benefit) => Some(StateBenefitViewModel(
-        benefitId = Some(benefit.benefitId),
-        startDateQuestion = Some(true),
-        startDate = Some(benefit.startDate),
-        endDateQuestion = Some(benefit.endDate.isDefined),
-        endDate = benefit.endDate,
-        submittedOnQuestion = Some(benefit.submittedOn.isDefined),
-        submittedOn = benefit.submittedOn,
-        dateIgnoredQuestion = Some(benefit.dateIgnored.isDefined),
-        dateIgnored = benefit.dateIgnored,
-        amountPaidQuestion = Some(benefit.amount.isDefined),
-        amount = benefit.amount,
-        taxPaidQuestion = Some(benefit.taxPaid.isDefined),
-        taxPaid = benefit.taxPaid)
-      )
-      case _ => None
-    }
-  }
-
-  private def getAboveLifetimeAllowanceQuestion(prior: AllPensionsData): Option[Boolean] = {
-    if (prior.pensionCharges.flatMap(a => a.pensionSavingsTaxCharges).map(
-      _.benefitInExcessOfLifetimeAllowance).isDefined || prior.pensionCharges.flatMap(
-      a => a.pensionSavingsTaxCharges).map(_.lumpSumBenefitTakenInExcessOfLifetimeAllowance).isDefined) {
-      Some(true)
-    } else {
-      None
-    }
-  }
-
-  private def getUkPensionIncome(prior: AllPensionsData): Seq[UkPensionIncomeViewModel] = {
-    prior.employmentPensions match {
-      case Some(ep) =>
-        ep.employmentData.map(data =>
-          UkPensionIncomeViewModel(
-            employmentId = Some(data.employmentId),
-            pensionId = data.pensionId,
-            startDate = data.startDate,
-            endDate = data.endDate,
-            pensionSchemeName = Some(data.pensionSchemeName),
-            pensionSchemeRef = data.pensionSchemeRef,
-            amount = data.amount,
-            taxPaid = data.taxPaid,
-            isCustomerEmploymentData = data.isCustomerEmploymentData
-          )
-        )
-      case _ => Seq()
     }
   }
 

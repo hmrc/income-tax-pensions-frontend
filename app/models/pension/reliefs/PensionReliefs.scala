@@ -36,3 +36,4 @@ case class EncryptedPensionReliefs(submittedOn: EncryptedValue,
 object EncryptedPensionReliefs {
   implicit val formats: OFormat[EncryptedPensionReliefs] = Json.format[EncryptedPensionReliefs]
 }
+

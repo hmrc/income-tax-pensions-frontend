@@ -34,6 +34,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.incomeFromPensions.UkPensionIncomeCYAView
 import controllers.pensions.incomeFromPensions.routes.UkPensionSchemePaymentsController
+import models.pension.AllPensionsData.generateCyaFromPrior
 
 import javax.inject.Inject
 import scala.concurrent.Future
@@ -53,7 +54,7 @@ class UkPensionIncomeCYAController @Inject()(implicit val mcc: MessagesControlle
           Future.successful(Ok(view(taxYear, cyaData.pensions.incomeFromPensions)))
 
         case (None, Some(priorData)) =>
-          val cyaModel = pensionSessionService.generateCyaFromPrior(priorData)
+          val cyaModel = generateCyaFromPrior(priorData)
           pensionSessionService.createOrUpdateSessionData(request.user, cyaModel, taxYear, isPriorSubmission = false)(
             errorHandler.internalServerError())(
             Ok(view(taxYear, cyaModel.incomeFromPensions))
@@ -81,7 +82,7 @@ class UkPensionIncomeCYAController @Inject()(implicit val mcc: MessagesControlle
   private def comparePriorData(cyaData: PensionsCYAModel, priorData: Option[AllPensionsData]): Boolean = {
     priorData match {
       case None => true
-      case Some(prior) => !cyaData.equals(pensionSessionService.generateCyaFromPrior(prior))
+      case Some(prior) => !cyaData.equals(generateCyaFromPrior(prior))
     }
   }
 

@@ -27,7 +27,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.UNAUTHORIZED
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.PaymentIntoPensions.checkPaymentsIntoPensionCyaUrl
+import utils.PageUrls.PaymentIntoPensions.{checkPaymentsIntoPensionCyaUrl, checkPaymentsIntoPensionStatusUrl}
 import utils.PageUrls._
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
@@ -261,7 +261,7 @@ class PensionsSummaryControllerISpec extends IntegrationTest with ViewHelpers wi
           captionCheck(user.commonExpectedResults.expectedCaption(taxYear))
 
           "has an payment into pensions section" which {
-            linkCheck("Payments into pensions", paymentsIntoPensionsLink, checkPaymentsIntoPensionCyaUrl(taxYear))
+            linkCheck("Payments into pensions", paymentsIntoPensionsLink, checkPaymentsIntoPensionStatusUrl(taxYear))
             textOnPageCheck(user.commonExpectedResults.toDo, summaryListStatusTagSelector(1))
           }
 

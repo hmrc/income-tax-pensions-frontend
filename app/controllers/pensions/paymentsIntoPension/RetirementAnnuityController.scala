@@ -45,7 +45,7 @@ class RetirementAnnuityController @Inject()(authAction: AuthorisedAction,
                                             formProvider: PaymentsIntoPensionFormProvider)
                                            (implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock)
   extends FrontendController(mcc) with I18nSupport {
-  def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
+  def show(taxYear: Int, fromGatewayChangeLink: Boolean = false): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) { optData =>
       redirectBasedOnCurrentAnswers(taxYear, optData)(redirects(_, taxYear)) { data =>
 
@@ -59,7 +59,7 @@ class RetirementAnnuityController @Inject()(authAction: AuthorisedAction,
     }
   }
 
-  def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
+  def submit(taxYear: Int, fromGatewayChangeLink: Boolean = false): Action[AnyContent] = authAction.async { implicit request =>
     formProvider.retirementAnnuityForm(request.user.isAgent).bindFromRequest().fold(
       formWithErrors => Future.successful(BadRequest(payIntoRetirementAnnuityContractView(formWithErrors, taxYear))),
       yesNo => {
@@ -73,14 +73,18 @@ class RetirementAnnuityController @Inject()(authAction: AuthorisedAction,
                 totalRetirementAnnuityContractPayments = if (yesNo) viewModel.totalRetirementAnnuityContractPayments else None))
             }
             val redirectLocation = if (yesNo) {
-              controllers.pensions.paymentsIntoPension.routes.RetirementAnnuityAmountController.show(taxYear)
+              controllers.pensions.paymentsIntoPension.routes.RetirementAnnuityAmountController.show(taxYear, fromGatewayChangeLink)
             } else {
-              controllers.pensions.paymentsIntoPension.routes.WorkplacePensionController.show(taxYear)
+              controllers.pensions.paymentsIntoPension.routes.WorkplacePensionController.show(taxYear, fromGatewayChangeLink)
             }
 
             pensionSessionService.createOrUpdateSessionData(request.user,
               updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
-              isFinishedCheck(updatedCyaModel, taxYear, redirectLocation)
+              if (!fromGatewayChangeLink && !yesNo){
+                isFinishedCheck(updatedCyaModel, taxYear, redirectLocation)
+              } else {
+                Redirect(redirectLocation)
+              }
             }
           }
         }

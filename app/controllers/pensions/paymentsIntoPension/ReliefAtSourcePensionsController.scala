@@ -41,7 +41,7 @@ class ReliefAtSourcePensionsController @Inject()(authAction: AuthorisedAction,
                                                 (implicit val cc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
   extends FrontendController(cc) with I18nSupport {
 
-  def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
+  def show(taxYear: Int, fromGatewayChangeLink: Boolean = false): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     val yesNoForm = formsProvider.reliefAtSourcePensionsForm(request.user.isAgent)
 
     pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
@@ -49,19 +49,20 @@ class ReliefAtSourcePensionsController @Inject()(authAction: AuthorisedAction,
       case Right(optPensionUserDate) => optPensionUserDate match {
         case Some(data) =>
           data.pensions.paymentsIntoPension.rasPensionPaymentQuestion match {
-            case Some(value) => Future.successful(Ok(pageView(yesNoForm.fill(value), taxYear)))
-            case None => Future.successful(Ok(pageView(yesNoForm, taxYear)))
+            case Some(value) => Future.successful(Ok(pageView(yesNoForm.fill(value), taxYear, fromGatewayChangeLink)))
+            case None => Future.successful(Ok(pageView(yesNoForm, taxYear, fromGatewayChangeLink)))
           }
-        case None => Future.successful(Ok(pageView(yesNoForm, taxYear)))
+        case None => Future.successful(Ok(pageView(yesNoForm, taxYear, fromGatewayChangeLink)))
       }
     }
   }
 
-  def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
+  def submit(taxYear: Int, fromGatewayChangeLink: Boolean = false): Action[AnyContent] = authAction.async { implicit request =>
     formsProvider.reliefAtSourcePensionsForm(request.user.isAgent).bindFromRequest().fold(
       formWithErrors => Future.successful(BadRequest(pageView(formWithErrors, taxYear))),
       yesNo => {
-        pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) { optData =>
+        pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
+          case Right(optData) =>
 
           val pensionsCya = optData.map(_.pensions).getOrElse(PensionsCYAModel.emptyModels)
           val viewModel = pensionsCya.paymentsIntoPension
@@ -78,14 +79,18 @@ class ReliefAtSourcePensionsController @Inject()(authAction: AuthorisedAction,
             )
           }
           val redirectLocation = if (yesNo) {
-            ReliefAtSourcePaymentsAndTaxReliefAmountController.show(taxYear)
+            ReliefAtSourcePaymentsAndTaxReliefAmountController.show(taxYear, fromGatewayChangeLink)
           } else {
-            PensionsTaxReliefNotClaimedController.show(taxYear)
+            PensionsTaxReliefNotClaimedController.show(taxYear, fromGatewayChangeLink)
           }
 
           pensionSessionService.createOrUpdateSessionData(request.user,
             updatedCyaModel, taxYear, optData.exists(_.isPriorSubmission))(errorHandler.internalServerError()) {
-            isFinishedCheck(updatedCyaModel, taxYear, redirectLocation)
+            if (!fromGatewayChangeLink && !yesNo){
+              isFinishedCheck(updatedCyaModel, taxYear, redirectLocation)
+            } else {
+              Redirect(redirectLocation)
+            }
           }
         }
       }

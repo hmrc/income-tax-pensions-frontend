@@ -38,13 +38,13 @@ object PaymentsIntoPensionsCYATestSupport {
   private val taxYear: Int = if (dateNow.isAfter(taxYearCutoffDate)) LocalDate.now().getYear + 1 else LocalDate.now().getYear
 
   val cyaDataMinimal: PaymentsIntoPensionViewModel = PaymentsIntoPensionViewModel(
-    gateway = Some(false),
+    gateway = Some(true),
     rasPensionPaymentQuestion = Some(false),
     pensionTaxReliefNotClaimedQuestion = Some(false)
   )
 
   object ChangeLinks {
-    val paymentsIntoUKPensions: String = controllers.pensions.paymentsIntoPension.routes.PaymentsIntoPensionsStatusController.show(taxYear).url
+    val paymentsIntoUKPensions: String = controllers.pensions.paymentsIntoPension.routes.PaymentsIntoPensionsStatusController.show(taxYear, fromGatewayChangeLink = true).url
     val reliefAtSource: String = controllers.pensions.paymentsIntoPension.routes.ReliefAtSourcePensionsController.show(taxYear).url
     val reliefAtSourceAmount: String = controllers.pensions.paymentsIntoPension.routes.ReliefAtSourcePaymentsAndTaxReliefAmountController.show(taxYear).url
     val oneOff: String = controllers.pensions.paymentsIntoPension.routes.ReliefAtSourceOneOffPaymentsController.show(taxYear).url
@@ -241,9 +241,10 @@ class PaymentsIntoPensionsCYATestSupport extends ViewUnitTest {
 
 
         import userScenario.commonExpectedResults.{no => answerNo}
+        import userScenario.commonExpectedResults.{yes => anseryes}
 
         //noinspection ScalaStyle
-        cyaRowCheck(paymentsIntoUKPensions, answerNo, ChangeLinks.paymentsIntoUKPensions, paymentsIntoUKPensionsHidden, 1)
+        cyaRowCheck(paymentsIntoUKPensions, anseryes, ChangeLinks.paymentsIntoUKPensions, paymentsIntoUKPensionsHidden, 1)
         cyaRowCheck(reliefAtSource, answerNo, ChangeLinks.reliefAtSource, reliefAtSourceHidden, 2)
         cyaRowCheck(pensionsTaxReliefNotClaimed, answerNo, ChangeLinks.pensionsTaxReliefNotClaimed, pensionsTaxReliefNotClaimedHidden, 3)
 

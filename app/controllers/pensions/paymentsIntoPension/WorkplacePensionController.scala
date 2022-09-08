@@ -44,21 +44,21 @@ class WorkplacePensionController @Inject()(authAction: AuthorisedAction,
                                           (implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock)
   extends FrontendController(mcc) with I18nSupport {
 
-  def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
+  def show(taxYear: Int, fromGatewayChangeLink: Boolean = false): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) { optData =>
       redirectBasedOnCurrentAnswers(taxYear, optData)(redirects(_, taxYear)) { data =>
 
         val form = formProvider.workplacePensionForm(request.user.isAgent)
 
         data.pensions.paymentsIntoPension.workplacePensionPaymentsQuestion match {
-          case Some(value) => Future.successful(Ok(workplacePensionView(form.fill(value), taxYear)))
-          case None => Future.successful(Ok(workplacePensionView(form, taxYear)))
+          case Some(value) => Future.successful(Ok(workplacePensionView(form.fill(value), taxYear, fromGatewayChangeLink)))
+          case None => Future.successful(Ok(workplacePensionView(form, taxYear, fromGatewayChangeLink)))
         }
       }
     }
   }
 
-  def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
+  def submit(taxYear: Int, fromGatewayChangeLink: Boolean = false): Action[AnyContent] = authAction.async { implicit request =>
     formProvider.workplacePensionForm(request.user.isAgent).bindFromRequest().fold(
       formWithErrors => Future.successful(BadRequest(workplacePensionView(formWithErrors, taxYear))),
       yesNo =>
@@ -72,13 +72,17 @@ class WorkplacePensionController @Inject()(authAction: AuthorisedAction,
                 totalWorkplacePensionPayments = if (yesNo) viewModel.totalWorkplacePensionPayments else None))
             }
             val redirectLocation = if (yesNo) {
-              WorkplaceAmountController.show(taxYear)
+              WorkplaceAmountController.show(taxYear, fromGatewayChangeLink)
             } else {
               PaymentsIntoPensionsCYAController.show(taxYear)
             }
             pensionSessionService.createOrUpdateSessionData(request.user,
               updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
-              isFinishedCheck(updatedCyaModel, taxYear, redirectLocation)
+              if (!fromGatewayChangeLink && !yesNo){
+                isFinishedCheck(updatedCyaModel, taxYear, redirectLocation)
+              } else {
+                Redirect(redirectLocation)
+              }
             }
           }
         }

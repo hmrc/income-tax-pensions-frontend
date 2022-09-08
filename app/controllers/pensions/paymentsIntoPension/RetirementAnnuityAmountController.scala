@@ -49,22 +49,22 @@ class RetirementAnnuityAmountController @Inject()(authAction: AuthorisedAction,
     with SessionHelper {
 
 
-  def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
+  def show(taxYear: Int, fromGatewayChangeLink: Boolean = false): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) { optData =>
       redirectBasedOnCurrentAnswers(taxYear, optData)(redirects(_, taxYear)) { data =>
 
         val form = formProvider.retirementAnnuityAmountForm
         data.pensions.paymentsIntoPension.totalRetirementAnnuityContractPayments match {
           case Some(amount) =>
-            Future.successful(Ok(retirementAnnuityAmountView(form.fill(amount), taxYear)))
-          case None => Future.successful(Ok(retirementAnnuityAmountView(form, taxYear)))
+            Future.successful(Ok(retirementAnnuityAmountView(form.fill(amount), taxYear, fromGatewayChangeLink)))
+          case None => Future.successful(Ok(retirementAnnuityAmountView(form, taxYear, fromGatewayChangeLink)))
         }
       }
     }
   }
 
 
-  def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
+  def submit(taxYear: Int, fromGatewayChangeLink: Boolean = false): Action[AnyContent] = authAction.async { implicit request =>
     formProvider.retirementAnnuityAmountForm.bindFromRequest.fold(
       formWithErrors => Future.successful(BadRequest(retirementAnnuityAmountView(formWithErrors, taxYear))),
       amount => {
@@ -78,7 +78,11 @@ class RetirementAnnuityAmountController @Inject()(authAction: AuthorisedAction,
             }
             pensionSessionService.createOrUpdateSessionData(request.user,
               updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
-              isFinishedCheck(updatedCyaModel, taxYear, WorkplacePensionController.show(taxYear))
+              if (fromGatewayChangeLink) {
+                Redirect(WorkplacePensionController.show(taxYear = taxYear, fromGatewayChangeLink = fromGatewayChangeLink))
+              } else {
+                isFinishedCheck(updatedCyaModel, taxYear, WorkplacePensionController.show(taxYear, fromGatewayChangeLink))
+              }
             }
           }
         }
