@@ -95,7 +95,6 @@ object AllPensionsData {
       ),
 
       unauthorisedPayments = UnauthorisedPaymentsViewModel(
-        unauthorisedPaymentsQuestion = getUnauthorisedPaymentsQuestion(prior),
         surchargeQuestion = prior.pensionCharges.map(_.pensionSchemeUnauthorisedPayments.flatMap(_.surcharge).isDefined),
         noSurchargeQuestion = prior.pensionCharges.map(_.pensionSchemeUnauthorisedPayments.flatMap(_.noSurcharge).isDefined),
         surchargeAmount = prior.pensionCharges.flatMap(_.pensionSchemeUnauthorisedPayments.flatMap(_.surcharge.map(_.amount))),

@@ -45,7 +45,7 @@ class TotalPaymentsIntoRASController @Inject()(authAction: AuthorisedAction,
                                                                                               clock: Clock,
                                                                                               ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport {
-  def show(taxYear: Int, fromGatewayChangeLink: Boolean = false): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
+  def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) { optData =>
       redirectBasedOnCurrentAnswers(taxYear, optData)(redirects(_, taxYear)) { data =>
 
@@ -62,7 +62,7 @@ class TotalPaymentsIntoRASController @Inject()(authAction: AuthorisedAction,
     }
   }
 
-  def submit(taxYear: Int, fromGatewayChangeLink: Boolean = false): Action[AnyContent] = authAction.async { implicit request =>
+  def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
     pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) { optData =>
       redirectBasedOnCurrentAnswers(taxYear, optData)(redirects(_, taxYear)) { data =>
 
@@ -75,16 +75,16 @@ class TotalPaymentsIntoRASController @Inject()(authAction: AuthorisedAction,
                 val viewValues = calculateViewValues(totalRAS, model.totalOneOffRasPaymentPlusTaxRelief)
                 Future.successful(BadRequest(view(formWithErrors, taxYear, viewValues._1, viewValues._2, viewValues._3, viewValues._4)))
               case _ =>
-                Future.successful(Redirect(controllers.pensions.paymentsIntoPension.routes.ReliefAtSourcePaymentsAndTaxReliefAmountController.show(taxYear, fromGatewayChangeLink)))
+                Future.successful(Redirect(controllers.pensions.paymentsIntoPension.routes.ReliefAtSourcePaymentsAndTaxReliefAmountController.show(taxYear)))
             }
           },
           yesNo => {
             val updatedCyaModel: PensionsCYAModel =
               cya.copy(paymentsIntoPension = model.copy(totalPaymentsIntoRASQuestion = Some(yesNo)))
             val redirectLocation = if (yesNo) {
-              controllers.pensions.paymentsIntoPension.routes.PensionsTaxReliefNotClaimedController.show(taxYear, fromGatewayChangeLink)
+              controllers.pensions.paymentsIntoPension.routes.PensionsTaxReliefNotClaimedController.show(taxYear)
             } else {
-              controllers.pensions.paymentsIntoPension.routes.ReliefAtSourcePaymentsAndTaxReliefAmountController.show(taxYear, fromGatewayChangeLink)
+              controllers.pensions.paymentsIntoPension.routes.ReliefAtSourcePaymentsAndTaxReliefAmountController.show(taxYear)
             }
 
             pensionSessionService.createOrUpdateSessionData(request.user,

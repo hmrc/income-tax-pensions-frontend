@@ -21,12 +21,13 @@ import controllers.predicates.AuthorisedAction
 import controllers.predicates.TaxYearAction.taxYearAction
 import models.mongo.PensionsCYAModel
 import models.pension.AllPensionsData
+import models.pension.AllPensionsData.generateCyaFromPrior
 import models.pension.charges.UnauthorisedPaymentsViewModel
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.{Clock}
+import utils.Clock
 import views.html.pensions.unauthorisedPayments.UnauthorisedPaymentsCYAView
 
 import javax.inject.Inject
@@ -45,7 +46,7 @@ class UnauthorisedPaymentsCYAController @Inject()(authAction: AuthorisedAction,
         case (Some(data), _) =>
             Future.successful(Ok(view(taxYear, data.pensions.unauthorisedPayments)))
         case (None, Some(priorData)) =>
-          val cyaModel = pensionSessionService.generateCyaFromPrior(priorData)
+          val cyaModel = generateCyaFromPrior(priorData)
           pensionSessionService.createOrUpdateSessionData(request.user,
             cyaModel, taxYear, isPriorSubmission = false)(
             errorHandler.internalServerError())(
@@ -80,7 +81,7 @@ class UnauthorisedPaymentsCYAController @Inject()(authAction: AuthorisedAction,
   private def comparePriorData(cyaData: PensionsCYAModel, priorData: Option[AllPensionsData]): Boolean = {
     priorData match {
       case None => true
-      case Some(prior) => !cyaData.equals(pensionSessionService.generateCyaFromPrior(prior))
+      case Some(prior) => !cyaData.equals(generateCyaFromPrior(prior))
     }
   }
 

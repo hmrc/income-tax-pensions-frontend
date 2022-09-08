@@ -44,7 +44,7 @@ object PaymentsIntoPensionsCYATestSupport {
   )
 
   object ChangeLinks {
-    val paymentsIntoUKPensions: String = controllers.pensions.paymentsIntoPension.routes.PaymentsIntoPensionsStatusController.show(taxYear, fromGatewayChangeLink = true).url
+    val paymentsIntoUKPensions: String = controllers.pensions.paymentsIntoPension.routes.PaymentsIntoPensionsStatusController.show(taxYear).url
     val reliefAtSource: String = controllers.pensions.paymentsIntoPension.routes.ReliefAtSourcePensionsController.show(taxYear).url
     val reliefAtSourceAmount: String = controllers.pensions.paymentsIntoPension.routes.ReliefAtSourcePaymentsAndTaxReliefAmountController.show(taxYear).url
     val oneOff: String = controllers.pensions.paymentsIntoPension.routes.ReliefAtSourceOneOffPaymentsController.show(taxYear).url

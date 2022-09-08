@@ -34,41 +34,41 @@ GET         /:taxYear/pensions-summary                                          
 GET         /:taxYear/payments-into-pensions/payments-into-overseas-pensions/overseas-pension-scheme                  controllers.pensions.paymentsIntoPension.PaymentsIntoOverseasPensionsGatewayController.show(taxYear:Int)
 POST        /:taxYear/payments-into-pensions/payments-into-overseas-pensions/overseas-pension-scheme                  controllers.pensions.paymentsIntoPension.PaymentsIntoOverseasPensionsGatewayController.submit(taxYear:Int)
 
-GET         /:taxYear/payments-into-pensions/payments-into-pensions-status                  controllers.pensions.paymentsIntoPension.PaymentsIntoPensionsStatusController.show(taxYear:Int, fromGatewayChangeLink: Boolean ?= false)
-POST        /:taxYear/payments-into-pensions/payments-into-pensions-status                  controllers.pensions.paymentsIntoPension.PaymentsIntoPensionsStatusController.submit(taxYear:Int, fromGatewayChangeLink: Boolean ?= false)
+GET         /:taxYear/payments-into-pensions/payments-into-pensions-status                  controllers.pensions.paymentsIntoPension.PaymentsIntoPensionsStatusController.show(taxYear:Int)
+POST        /:taxYear/payments-into-pensions/payments-into-pensions-status                  controllers.pensions.paymentsIntoPension.PaymentsIntoPensionsStatusController.submit(taxYear:Int)
 
 GET         /:taxYear/payments-into-pensions/check-payments-into-pensions                   controllers.pensions.paymentsIntoPension.PaymentsIntoPensionsCYAController.show(taxYear:Int)
 POST        /:taxYear/payments-into-pensions/check-payments-into-pensions                   controllers.pensions.paymentsIntoPension.PaymentsIntoPensionsCYAController.submit(taxYear:Int)
 
-GET         /:taxYear/payments-into-pensions/relief-at-source                               controllers.pensions.paymentsIntoPension.ReliefAtSourcePensionsController.show(taxYear: Int, fromGatewayChangeLink: Boolean ?= false)
-POST        /:taxYear/payments-into-pensions/relief-at-source                               controllers.pensions.paymentsIntoPension.ReliefAtSourcePensionsController.submit(taxYear: Int, fromGatewayChangeLink: Boolean ?= false)
+GET         /:taxYear/payments-into-pensions/relief-at-source                               controllers.pensions.paymentsIntoPension.ReliefAtSourcePensionsController.show(taxYear: Int)
+POST        /:taxYear/payments-into-pensions/relief-at-source                               controllers.pensions.paymentsIntoPension.ReliefAtSourcePensionsController.submit(taxYear: Int)
 
-GET         /:taxYear/payments-into-pensions/relief-at-source-amount                        controllers.pensions.paymentsIntoPension.ReliefAtSourcePaymentsAndTaxReliefAmountController.show(taxYear: Int, fromGatewayChangeLink: Boolean ?= false)
-POST        /:taxYear/payments-into-pensions/relief-at-source-amount                        controllers.pensions.paymentsIntoPension.ReliefAtSourcePaymentsAndTaxReliefAmountController.submit(taxYear: Int, fromGatewayChangeLink: Boolean ?= false)
+GET         /:taxYear/payments-into-pensions/relief-at-source-amount                        controllers.pensions.paymentsIntoPension.ReliefAtSourcePaymentsAndTaxReliefAmountController.show(taxYear: Int)
+POST        /:taxYear/payments-into-pensions/relief-at-source-amount                        controllers.pensions.paymentsIntoPension.ReliefAtSourcePaymentsAndTaxReliefAmountController.submit(taxYear: Int)
 
-GET         /:taxYear/payments-into-pensions/one-off-payments                               controllers.pensions.paymentsIntoPension.ReliefAtSourceOneOffPaymentsController.show(taxYear: Int, fromGatewayChangeLink: Boolean ?= false)
-POST        /:taxYear/payments-into-pensions/one-off-payments                               controllers.pensions.paymentsIntoPension.ReliefAtSourceOneOffPaymentsController.submit(taxYear: Int, fromGatewayChangeLink: Boolean ?= false)
+GET         /:taxYear/payments-into-pensions/one-off-payments                               controllers.pensions.paymentsIntoPension.ReliefAtSourceOneOffPaymentsController.show(taxYear: Int)
+POST        /:taxYear/payments-into-pensions/one-off-payments                               controllers.pensions.paymentsIntoPension.ReliefAtSourceOneOffPaymentsController.submit(taxYear: Int)
 
-GET         /:taxYear/payments-into-pensions/one-off-payments-amount                        controllers.pensions.paymentsIntoPension.OneOffRASPaymentsAmountController.show(taxYear: Int, fromGatewayChangeLink: Boolean ?= false)
-POST        /:taxYear/payments-into-pensions/one-off-payments-amount                        controllers.pensions.paymentsIntoPension.OneOffRASPaymentsAmountController.submit(taxYear: Int, fromGatewayChangeLink: Boolean ?= false)
+GET         /:taxYear/payments-into-pensions/one-off-payments-amount                        controllers.pensions.paymentsIntoPension.OneOffRASPaymentsAmountController.show(taxYear: Int)
+POST        /:taxYear/payments-into-pensions/one-off-payments-amount                        controllers.pensions.paymentsIntoPension.OneOffRASPaymentsAmountController.submit(taxYear: Int)
 
-GET         /:taxYear/payments-into-pensions/total-relief-at-source-check                   controllers.pensions.paymentsIntoPension.TotalPaymentsIntoRASController.show(taxYear: Int, fromGatewayChangeLink: Boolean ?= false)
-POST        /:taxYear/payments-into-pensions/total-relief-at-source-check                   controllers.pensions.paymentsIntoPension.TotalPaymentsIntoRASController.submit(taxYear: Int, fromGatewayChangeLink: Boolean ?= false)
+GET         /:taxYear/payments-into-pensions/total-relief-at-source-check                   controllers.pensions.paymentsIntoPension.TotalPaymentsIntoRASController.show(taxYear: Int)
+POST        /:taxYear/payments-into-pensions/total-relief-at-source-check                   controllers.pensions.paymentsIntoPension.TotalPaymentsIntoRASController.submit(taxYear: Int)
 
-GET         /:taxYear/payments-into-pensions/no-tax-relief                                  controllers.pensions.paymentsIntoPension.PensionsTaxReliefNotClaimedController.show(taxYear: Int, fromGatewayChangeLink: Boolean ?= false)
-POST        /:taxYear/payments-into-pensions/no-tax-relief                                  controllers.pensions.paymentsIntoPension.PensionsTaxReliefNotClaimedController.submit(taxYear: Int, fromGatewayChangeLink: Boolean ?= false)
+GET         /:taxYear/payments-into-pensions/no-tax-relief                                  controllers.pensions.paymentsIntoPension.PensionsTaxReliefNotClaimedController.show(taxYear: Int)
+POST        /:taxYear/payments-into-pensions/no-tax-relief                                  controllers.pensions.paymentsIntoPension.PensionsTaxReliefNotClaimedController.submit(taxYear: Int)
 
-GET         /:taxYear/payments-into-pensions/no-tax-relief/retirement-annuity               controllers.pensions.paymentsIntoPension.RetirementAnnuityController.show(taxYear: Int, fromGatewayChangeLink: Boolean ?= false)
-POST        /:taxYear/payments-into-pensions/no-tax-relief/retirement-annuity               controllers.pensions.paymentsIntoPension.RetirementAnnuityController.submit(taxYear: Int, fromGatewayChangeLink: Boolean ?= false)
+GET         /:taxYear/payments-into-pensions/no-tax-relief/retirement-annuity               controllers.pensions.paymentsIntoPension.RetirementAnnuityController.show(taxYear: Int)
+POST        /:taxYear/payments-into-pensions/no-tax-relief/retirement-annuity               controllers.pensions.paymentsIntoPension.RetirementAnnuityController.submit(taxYear: Int)
 
-GET         /:taxYear/payments-into-pensions/no-tax-relief/retirement-annuity-amount        controllers.pensions.paymentsIntoPension.RetirementAnnuityAmountController.show(taxYear: Int, fromGatewayChangeLink: Boolean ?= false)
-POST        /:taxYear/payments-into-pensions/no-tax-relief/retirement-annuity-amount        controllers.pensions.paymentsIntoPension.RetirementAnnuityAmountController.submit(taxYear: Int, fromGatewayChangeLink: Boolean ?= false)
+GET         /:taxYear/payments-into-pensions/no-tax-relief/retirement-annuity-amount        controllers.pensions.paymentsIntoPension.RetirementAnnuityAmountController.show(taxYear: Int)
+POST        /:taxYear/payments-into-pensions/no-tax-relief/retirement-annuity-amount        controllers.pensions.paymentsIntoPension.RetirementAnnuityAmountController.submit(taxYear: Int)
 
-GET         /:taxYear/payments-into-pensions/no-tax-relief/workplace                        controllers.pensions.paymentsIntoPension.WorkplacePensionController.show(taxYear: Int, fromGatewayChangeLink: Boolean ?= false)
-POST        /:taxYear/payments-into-pensions/no-tax-relief/workplace                        controllers.pensions.paymentsIntoPension.WorkplacePensionController.submit(taxYear: Int, fromGatewayChangeLink: Boolean ?= false)
+GET         /:taxYear/payments-into-pensions/no-tax-relief/workplace                        controllers.pensions.paymentsIntoPension.WorkplacePensionController.show(taxYear: Int)
+POST        /:taxYear/payments-into-pensions/no-tax-relief/workplace                        controllers.pensions.paymentsIntoPension.WorkplacePensionController.submit(taxYear: Int)
 
-GET         /:taxYear/payments-into-pensions/no-tax-relief/workplace-amount                 controllers.pensions.paymentsIntoPension.WorkplaceAmountController.show(taxYear: Int, fromGatewayChangeLink: Boolean ?= false)
-POST        /:taxYear/payments-into-pensions/no-tax-relief/workplace-amount                 controllers.pensions.paymentsIntoPension.WorkplaceAmountController.submit(taxYear: Int, fromGatewayChangeLink: Boolean ?= false)
+GET         /:taxYear/payments-into-pensions/no-tax-relief/workplace-amount                 controllers.pensions.paymentsIntoPension.WorkplaceAmountController.show(taxYear: Int)
+POST        /:taxYear/payments-into-pensions/no-tax-relief/workplace-amount                 controllers.pensions.paymentsIntoPension.WorkplaceAmountController.submit(taxYear: Int)
 
 ###########################     Annual Allowance pages     ####################################
 

@@ -47,9 +47,9 @@ class OneOffRASPaymentsAmountController @Inject()(authAction: AuthorisedAction,
   extends FrontendController(mcc) with I18nSupport {
 
 
-  def show(taxYear: Int, fromGatewayChangeLink: Boolean = false): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
+  def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) { optData =>
-      redirectBasedOnCurrentAnswers(taxYear, optData)(redirects(_, taxYear, fromGatewayChangeLink)) { data =>
+      redirectBasedOnCurrentAnswers(taxYear, optData)(redirects(_, taxYear)) { data =>
 
         val viewModel = data.pensions.paymentsIntoPension
 
@@ -59,21 +59,21 @@ class OneOffRASPaymentsAmountController @Inject()(authAction: AuthorisedAction,
         ) match {
           case (Some(true), amount, Some(rasAmount)) =>
             val form = amount.fold(formProvider.oneOffRASPaymentsAmountForm)(a => formProvider.oneOffRASPaymentsAmountForm.fill(a))
-            Future.successful(Ok(view(form, taxYear, rasAmount, fromGatewayChangeLink)))
+            Future.successful(Ok(view(form, taxYear, rasAmount)))
           case _ => errorHandler.futureInternalServerError()
         }
       }
     }
   }
 
-  def submit(taxYear: Int, fromGatewayChangeLink: Boolean = false): Action[AnyContent] = authAction.async { implicit request =>
+  def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
     pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
       optData =>
-        redirectBasedOnCurrentAnswers(taxYear, optData)(redirects(_, taxYear, fromGatewayChangeLink)) { data =>
+        redirectBasedOnCurrentAnswers(taxYear, optData)(redirects(_, taxYear)) { data =>
           formProvider.oneOffRASPaymentsAmountForm.bindFromRequest.fold(
             formWithErrors => {
               data.pensions.paymentsIntoPension.totalRASPaymentsAndTaxRelief.fold(
-                Future.successful(Redirect(ReliefAtSourcePaymentsAndTaxReliefAmountController.show(taxYear, fromGatewayChangeLink)))
+                Future.successful(Redirect(ReliefAtSourcePaymentsAndTaxReliefAmountController.show(taxYear)))
               )(rasAmount => Future.successful(BadRequest(view(formWithErrors, taxYear, rasAmount))))
             },
             amount => {
@@ -86,7 +86,7 @@ class OneOffRASPaymentsAmountController @Inject()(authAction: AuthorisedAction,
               }
               pensionSessionService.createOrUpdateSessionData(request.user,
                 updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
-                Redirect(TotalPaymentsIntoRASController.show(taxYear, fromGatewayChangeLink))
+                Redirect(TotalPaymentsIntoRASController.show(taxYear))
               }
             }
           )
@@ -94,11 +94,11 @@ class OneOffRASPaymentsAmountController @Inject()(authAction: AuthorisedAction,
     }
   }
 
-  private def redirects(cya: PensionsCYAModel, taxYear: Int, fromGatewayChangeLink: Boolean): Seq[ConditionalRedirect] = {
+  private def redirects(cya: PensionsCYAModel, taxYear: Int): Seq[ConditionalRedirect] = {
     PaymentsIntoPensionsRedirects.journeyCheck(OneOffRasAmountPage, cya, taxYear) ++
       Seq(ConditionalRedirect(
         cya.paymentsIntoPension.oneOffRasPaymentPlusTaxReliefQuestion.contains(false),
-        ReliefAtSourceOneOffPaymentsController.show(taxYear, fromGatewayChangeLink)
+        ReliefAtSourceOneOffPaymentsController.show(taxYear)
       ))
   }
 

@@ -47,23 +47,23 @@ class ReliefAtSourcePaymentsAndTaxReliefAmountController @Inject()(authAction: A
                                                                    appConfig: AppConfig,
                                                                    clock: Clock,
                                                                    ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
-  def show(taxYear: Int, fromGatewayChangeLink: Boolean = false): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
+  def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
       case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
       case Right(optData) =>
         redirectBasedOnCurrentAnswers(taxYear, optData)(redirects(_, taxYear)) { data =>
           data.pensions.paymentsIntoPension.totalRASPaymentsAndTaxRelief match {
-            case Some(amount) => Future.successful(Ok(view(formProvider.reliefAtSourcePaymentsAndTaxReliefAmountForm.fill(amount), taxYear, fromGatewayChangeLink)))
-            case None => Future.successful(Ok(view(formProvider.reliefAtSourcePaymentsAndTaxReliefAmountForm, taxYear, fromGatewayChangeLink)))
+            case Some(amount) => Future.successful(Ok(view(formProvider.reliefAtSourcePaymentsAndTaxReliefAmountForm.fill(amount), taxYear)))
+            case None => Future.successful(Ok(view(formProvider.reliefAtSourcePaymentsAndTaxReliefAmountForm, taxYear)))
           }
         }
     }
   }
 
 
-  def submit(taxYear: Int, fromGatewayChangeLink: Boolean = false): Action[AnyContent] = authAction.async { implicit request =>
+  def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
     formProvider.reliefAtSourcePaymentsAndTaxReliefAmountForm.bindFromRequest.fold(
-      formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear, fromGatewayChangeLink))),
+      formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
       amount => {
         pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) { optData =>
           redirectBasedOnCurrentAnswers(taxYear, optData)(redirects(_, taxYear)) { data =>
@@ -77,7 +77,7 @@ class ReliefAtSourcePaymentsAndTaxReliefAmountController @Inject()(authAction: A
             }
             pensionSessionService.createOrUpdateSessionData(request.user,
               updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
-              Redirect(ReliefAtSourceOneOffPaymentsController.show(taxYear, fromGatewayChangeLink))
+              Redirect(ReliefAtSourceOneOffPaymentsController.show(taxYear))
             }
           }
         }

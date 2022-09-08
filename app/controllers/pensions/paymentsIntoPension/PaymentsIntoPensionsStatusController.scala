@@ -43,14 +43,14 @@ class PaymentsIntoPensionsStatusController @Inject()(authAction: AuthorisedActio
                                                 (implicit cc: MessagesControllerComponents, appConfig: AppConfig, ec: ExecutionContext)
   extends FrontendController(cc) with I18nSupport with SessionHelper {
 
-  def show(taxYear: Int, fromGatewayChangeLink: Boolean = false): Action[AnyContent] = (authAction andThen tailoringEnabledFilterAction(taxYear) andThen taxYearAction(taxYear)).async {
+  def show(taxYear: Int): Action[AnyContent] = (authAction andThen tailoringEnabledFilterAction(taxYear) andThen taxYearAction(taxYear)).async {
     implicit request =>
       Future.successful(
         Ok(view(taxYear, formProvider.paymentsIntoPensionsStatusForm(request.user.isAgent)))
       )
   }
 
-  def submit(taxYear: Int, fromGatewayChangeLink: Boolean = false): Action[AnyContent] = (authAction andThen tailoringEnabledFilterAction(taxYear) andThen taxYearAction(taxYear)).async
+  def submit(taxYear: Int): Action[AnyContent] = (authAction andThen tailoringEnabledFilterAction(taxYear) andThen taxYearAction(taxYear)).async
   { implicit request =>
     if (appConfig.paymentsIntoPensionsTailoringEnabled) {
 
@@ -60,7 +60,7 @@ class PaymentsIntoPensionsStatusController @Inject()(authAction: AuthorisedActio
           pensionSessionService.getAndHandle(taxYear, request.user) {
             case (sessionData, prior) =>
               val pensionsCya: PensionsCYAModel = {
-                if (prior.isEmpty && !yesNoAnswer) {
+                if (!yesNoAnswer) {
                   PensionsCYAModel.emptyModels.copy(PaymentsIntoPensionViewModel().copy(gateway = Some(yesNoAnswer)))
                 } else {
                   sessionData.fold{PensionsCYAModel.emptyModels.copy(PaymentsIntoPensionViewModel().copy(gateway = Some(yesNoAnswer)))}
@@ -76,20 +76,21 @@ class PaymentsIntoPensionsStatusController @Inject()(authAction: AuthorisedActio
                   if (!appConfig.paymentsIntoPensionsTailoringEnabled || (appConfig.paymentsIntoPensionsTailoringEnabled && sessionData.isEmpty)) {
                     Right(Redirect(controllers.pensions.paymentsIntoPension.routes.PaymentsIntoPensionsCYAController.show(taxYear)))
                   } else {
-                    val hasNonZeroData: Boolean = pensionsCya.paymentsIntoPension.totalWorkplacePensionPayments.exists(_ != 0) ||
-                      pensionsCya.paymentsIntoPension.totalRetirementAnnuityContractPayments.exists(_ != 0) ||
-                      pensionsCya.paymentsIntoPension.totalRASPaymentsAndTaxRelief.exists(_ != 0) ||
-                      pensionsCya.paymentsIntoPension.totalOneOffRasPaymentPlusTaxRelief.exists(_ != 0)
 
-                    if (!yesNoAnswer) {
+                    if (!yesNoAnswer && prior.isDefined) {
                       updateSessionToZero(taxYear)(request.user, request)
                       Right(Redirect(controllers.pensions.paymentsIntoPension.routes.PaymentsIntoPensionsCYAController.show(taxYear)))
-                    } else {
+                    } else if(!yesNoAnswer && prior.isEmpty){
+                      Right(Redirect(controllers.pensions.paymentsIntoPension.routes.PaymentsIntoPensionsCYAController.show(taxYear)))
+                    } else if(yesNoAnswer && prior.isDefined) {
+                      Right(Redirect(controllers.pensions.paymentsIntoPension.routes.PaymentsIntoPensionsCYAController.show(taxYear)))
+                    }
+                    else {
                       Right(Redirect(controllers.pensions.paymentsIntoPension.routes.ReliefAtSourcePensionsController.show(taxYear)))
                     }
                   }
                 } else {
-                  Right(Redirect(controllers.pensions.paymentsIntoPension.routes.ReliefAtSourcePensionsController.show(taxYear, fromGatewayChangeLink)))
+                  Right(Redirect(controllers.pensions.paymentsIntoPension.routes.ReliefAtSourcePensionsController.show(taxYear)))
                 }
               }(clock).flatMap{
                 case Left(error) => Future.successful(errorHandler.handleError(BAD_REQUEST))
@@ -105,10 +106,10 @@ class PaymentsIntoPensionsStatusController @Inject()(authAction: AuthorisedActio
   private def updateModelToZero(cyaData: PaymentsIntoPensionViewModel): PaymentsIntoPensionViewModel = {
     cyaData.copy(
       gateway = Some(false),
-      totalRASPaymentsAndTaxRelief = if (cyaData.rasPensionPaymentQuestion.contains(true)) Some(0) else None,
-      totalOneOffRasPaymentPlusTaxRelief = if (cyaData.oneOffRasPaymentPlusTaxReliefQuestion.contains(true)) Some(0) else None,
-      totalRetirementAnnuityContractPayments = if (cyaData.retirementAnnuityContractPaymentsQuestion.contains(true)) Some(0) else None,
-      totalWorkplacePensionPayments = if (cyaData.workplacePensionPaymentsQuestion.contains(true)) Some(0) else None,
+      totalRASPaymentsAndTaxRelief = None,
+      totalOneOffRasPaymentPlusTaxRelief =  None,
+      totalRetirementAnnuityContractPayments = None,
+      totalWorkplacePensionPayments = None,
       rasPensionPaymentQuestion = if (cyaData.rasPensionPaymentQuestion.isDefined) Some(false) else None,
       oneOffRasPaymentPlusTaxReliefQuestion = if (cyaData.oneOffRasPaymentPlusTaxReliefQuestion.isDefined) Some(false) else None,
       retirementAnnuityContractPaymentsQuestion = if (cyaData.retirementAnnuityContractPaymentsQuestion.isDefined) Some(false) else None,

@@ -46,27 +46,27 @@ class WorkplaceAmountController @Inject()(authAction: AuthorisedAction,
                                          (implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock)
   extends FrontendController(mcc) with I18nSupport {
 
-  def show(taxYear: Int, fromGatewayChangeLink: Boolean = false): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
+  def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) { optData =>
-      redirectBasedOnCurrentAnswers(taxYear, optData)(redirects(_, taxYear, fromGatewayChangeLink)) { data =>
+      redirectBasedOnCurrentAnswers(taxYear, optData)(redirects(_, taxYear)) { data =>
 
         val amountForm = formProvider.workplacePensionAmountForm
         data.pensions.paymentsIntoPension.totalWorkplacePensionPayments match {
           case Some(amount) =>
-            Future.successful(Ok(workplaceAmountView(amountForm.fill(amount), taxYear, fromGatewayChangeLink)))
+            Future.successful(Ok(workplaceAmountView(amountForm.fill(amount), taxYear)))
           case None =>
-            Future.successful(Ok(workplaceAmountView(amountForm, taxYear, fromGatewayChangeLink)))
+            Future.successful(Ok(workplaceAmountView(amountForm, taxYear)))
         }
       }
     }
   }
 
-  def submit(taxYear: Int, fromGatewayChangeLink: Boolean = false): Action[AnyContent] = authAction.async { implicit request =>
+  def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
     formProvider.workplacePensionAmountForm.bindFromRequest.fold(
       formWithErrors => Future.successful(BadRequest(workplaceAmountView(formWithErrors, taxYear))),
       amount => {
         pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) { optData =>
-          redirectBasedOnCurrentAnswers(taxYear, optData)(redirects(_, taxYear, fromGatewayChangeLink)) { data =>
+          redirectBasedOnCurrentAnswers(taxYear, optData)(redirects(_, taxYear)) { data =>
 
             val pensionsCYAModel: PensionsCYAModel = data.pensions
             val viewModel: PaymentsIntoPensionViewModel = pensionsCYAModel.paymentsIntoPension
@@ -83,11 +83,11 @@ class WorkplaceAmountController @Inject()(authAction: AuthorisedAction,
     )
   }
 
-  private def redirects(cya: PensionsCYAModel, taxYear: Int, fromGatewayChangeLink: Boolean): Seq[ConditionalRedirect] = {
+  private def redirects(cya: PensionsCYAModel, taxYear: Int): Seq[ConditionalRedirect] = {
     PaymentsIntoPensionsRedirects.journeyCheck(WorkplacePensionAmountPage, cya, taxYear) ++
       Seq(ConditionalRedirect(
         cya.paymentsIntoPension.workplacePensionPaymentsQuestion.contains(false),
-        controllers.pensions.paymentsIntoPension.routes.WorkplacePensionController.show(taxYear,fromGatewayChangeLink)
+        controllers.pensions.paymentsIntoPension.routes.WorkplacePensionController.show(taxYear)
       ))
   }
 }

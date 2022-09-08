@@ -31,7 +31,7 @@
 )
 
 
-@(taxYear: Int, form: Form[Boolean], fromGatewayChangeLink: Boolean = false)(implicit request: AuthorisationRequest[_], messages: Messages, appConfig: AppConfig)
+@(taxYear: Int, form: Form[Boolean])(implicit request: AuthorisationRequest[_], messages: Messages, appConfig: AppConfig)
 
 @titleForUse = @{messages(s"paymentsIntoPensions.statusPage.title.${if(request.user.isAgent) "agent" else "individual"}")}
 
