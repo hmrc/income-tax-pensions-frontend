@@ -517,6 +517,12 @@ incomeFromPensions.taxPaidOnLumpSumAmount.error.error.noEntry = Enter the amount
 incomeFromPensions.taxPaidOnLumpSumAmount.error.error.incorrectFormat = Enter the amount of tax paid on the State Pension lump sum in the correct format
 incomeFromPensions.taxPaidOnLumpSumAmount.error.error.overMaximum = The amount of tax paid on the State Pension lump sum must be less than £100,000,000,000
 
+#Income From Pensions Summary
+incomeFromPensions.incomeFromPensionsSummary.statePensions = State pension
+incomeFromPensions.incomeFromPensionsSummary.otherUkPensions = Other UK Pensions
+incomeFromPensions.incomeFromPensionsSummary.otherUkPensions.text.individual = You only need to fill in the sections that apply to you.
+incomeFromPensions.incomeFromPensionsSummary.otherUkPensions.text.agent = You only need to fill in the sections that apply to your client.
+
 #Do You Get UK Pension Scheme Payments Messages
 pensions.ukPensionSchemePayments.title.individual = Do you get UK pension scheme payments?
 pensions.ukPensionSchemePayments.title.agent = Does your client get UK pension scheme payments?

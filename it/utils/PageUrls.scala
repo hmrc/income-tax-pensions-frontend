@@ -134,6 +134,8 @@ object PageUrls extends IntegrationTest {
     }
 
     def ukPensionIncomeCyaUrl(taxYear: Int): String = s"$appUrl/$taxYear/pension-income/uk-pension-income/check-pension-income"
+
+    def ukPensionincomeSummaryUrl(taxYear: Int): String = s"$appUrl/$taxYear/pension-income/pensions-income-summary"
   }
 
   object PensionLifetimeAllowance {
