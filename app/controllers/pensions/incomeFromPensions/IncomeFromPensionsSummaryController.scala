@@ -17,7 +17,7 @@
 package controllers.pensions.incomeFromPensions
 
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.routes.PensionsSummaryController
+import controllers.pensions.incomeFromPensions.routes.IncomeFromPensionsSummaryController
 import controllers.predicates.AuthorisedAction
 import controllers.predicates.TaxYearAction.taxYearAction
 import play.api.i18n.I18nSupport
@@ -47,7 +47,7 @@ class IncomeFromPensionsSummaryController @Inject()(implicit val mcc: MessagesCo
           Future.successful(Ok(view(taxYear, Some(data))))
         case None =>
           //TODO - redirect to CYA page once implemented
-          Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
+          Future.successful(Redirect(IncomeFromPensionsSummaryController.show(taxYear)))
       }
     }
   }

@@ -272,7 +272,7 @@ class IncomeFromPensionsSummaryControllerISpec extends CommonUtils with BeforeAn
           "has an SEE_OTHER status" in {
             result.status shouldBe SEE_OTHER
             //        TODO redirect to annual allowance CYA
-            result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
+            result.header("location") shouldBe Some(ukPensionincomeSummaryUrl(taxYearEOY))
           }
         }
       }
