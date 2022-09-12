@@ -40,9 +40,8 @@ class UnauthorisedPaymentsCYAViewHelperTest extends AnyWordSpec with Matchers {
 
         val summaryListRows = UnauthorisedPaymentsCYAViewHelper.summaryListRows(model, taxYear)
 
-        summaryListRows.length shouldBe 2
+        summaryListRows.length shouldBe 1
         assertRowForUnauthorisedPayments(summaryListRows.head, "")
-        assertRowForUKPensionSchemes(summaryListRows(1), "")
 
       }
       "we have only completed the 'surcharged' section" in {
@@ -51,16 +50,19 @@ class UnauthorisedPaymentsCYAViewHelperTest extends AnyWordSpec with Matchers {
           surchargeQuestion = Some(true),
           surchargeAmount = Option(BigDecimal("1000.00")),
           surchargeTaxAmountQuestion = Option(true),
-          surchargeTaxAmount = Option(BigDecimal("120.00"))
+          surchargeTaxAmount = Option(BigDecimal("120.00")),
+          ukPensionSchemesQuestion = Some(true),
+          pensionSchemeTaxReference = Some(Seq("12345678RX", "12345678RY"))
         )
 
         val summaryListRows = UnauthorisedPaymentsCYAViewHelper.summaryListRows(model, taxYear)
 
-        summaryListRows.length shouldBe 4
+        summaryListRows.length shouldBe 5
         assertRowForUnauthorisedPayments(summaryListRows.head, "Yes")
         assertRowAmountSurcharged(summaryListRows(1), "£1000.00")
         assertRowTaxOnAmountSurcharged(summaryListRows(2), "£120.00")
-        assertRowForUKPensionSchemes(summaryListRows(3), "")
+        assertRowForUKPensionSchemes(summaryListRows(3), "Yes")
+        assertRowForUKPensionSchemeTaxReferences(summaryListRows(4), "12345678RX, 12345678RY")
 
       }
       "we have only partially completed the 'surcharged' section (only the initial question)" in {
@@ -69,7 +71,9 @@ class UnauthorisedPaymentsCYAViewHelperTest extends AnyWordSpec with Matchers {
           surchargeQuestion = Some(true),
           surchargeAmount = None,
           surchargeTaxAmountQuestion = None,
-          surchargeTaxAmount = None
+          surchargeTaxAmount = None,
+          ukPensionSchemesQuestion = None,
+          pensionSchemeTaxReference = None
         )
 
         val summaryListRows = UnauthorisedPaymentsCYAViewHelper.summaryListRows(model, taxYear)
@@ -87,14 +91,15 @@ class UnauthorisedPaymentsCYAViewHelperTest extends AnyWordSpec with Matchers {
           surchargeQuestion = Some(false),
           surchargeAmount = Option(BigDecimal("1000.00")),
           surchargeTaxAmountQuestion = Option(true),
-          surchargeTaxAmount = Option(BigDecimal("120.00"))
+          surchargeTaxAmount = Option(BigDecimal("120.00")),
+          ukPensionSchemesQuestion = Some(true),
+          pensionSchemeTaxReference = Some(Seq("12345678RX", "12345678RY"))
         )
 
         val summaryListRows = UnauthorisedPaymentsCYAViewHelper.summaryListRows(model, taxYear)
 
-        summaryListRows.length shouldBe 2
+        summaryListRows.length shouldBe 1
         assertRowForUnauthorisedPayments(summaryListRows.head, "No")
-        assertRowForUKPensionSchemes(summaryListRows(1), "")
 
       }
       "we have only completed the 'not surcharged' section" in {
@@ -103,16 +108,19 @@ class UnauthorisedPaymentsCYAViewHelperTest extends AnyWordSpec with Matchers {
           noSurchargeQuestion = Some(true),
           noSurchargeAmount = Option(BigDecimal("800.00")),
           noSurchargeTaxAmountQuestion = Option(true),
-          noSurchargeTaxAmount = Option(BigDecimal("8.80"))
+          noSurchargeTaxAmount = Option(BigDecimal("8.80")),
+          ukPensionSchemesQuestion = Some(true),
+          pensionSchemeTaxReference = Some(Seq("12345678RX", "12345678RY"))
         )
 
         val summaryListRows = UnauthorisedPaymentsCYAViewHelper.summaryListRows(model, taxYear)
 
-        summaryListRows.length shouldBe 4
+        summaryListRows.length shouldBe 5
         assertRowForUnauthorisedPayments(summaryListRows.head, "Yes")
         assertRowAmountNotSurcharged(summaryListRows(1), "£800.00")
         assertRowTaxOnAmountNotSurcharged(summaryListRows(2), "£8.80")
-        assertRowForUKPensionSchemes(summaryListRows(3), "")
+        assertRowForUKPensionSchemes(summaryListRows(3), "Yes")
+        assertRowForUKPensionSchemeTaxReferences(summaryListRows(4), "12345678RX, 12345678RY")
 
       }
       "we have only partially completed the 'not surcharged' section (only the initial question)" in {
@@ -121,7 +129,9 @@ class UnauthorisedPaymentsCYAViewHelperTest extends AnyWordSpec with Matchers {
           noSurchargeQuestion = Some(true),
           noSurchargeAmount = None,
           noSurchargeTaxAmountQuestion = None,
-          noSurchargeTaxAmount = None
+          noSurchargeTaxAmount = None,
+          ukPensionSchemesQuestion = None,
+          pensionSchemeTaxReference = None
         )
 
         val summaryListRows = UnauthorisedPaymentsCYAViewHelper.summaryListRows(model, taxYear)
@@ -132,25 +142,25 @@ class UnauthorisedPaymentsCYAViewHelperTest extends AnyWordSpec with Matchers {
         assertRowTaxOnAmountNotSurcharged(summaryListRows(2), "")
         assertRowForUKPensionSchemes(summaryListRows(3), "")
 
-      }
 
-      "our data for the 'not surcharged' section has got into an unrealistic state, somehow" in{
+      }
+      "our data for the 'not surcharged' section has got into an unrealistic state, somehow" in {
 
         val model = UnauthorisedPaymentsViewModel(
           noSurchargeQuestion = Some(false),
           noSurchargeAmount = Option(BigDecimal("800.00")),
           noSurchargeTaxAmountQuestion = Option(true),
-          noSurchargeTaxAmount = Option(BigDecimal("8.80"))
+          noSurchargeTaxAmount = Option(BigDecimal("8.80")),
+          ukPensionSchemesQuestion = Some(true),
+          pensionSchemeTaxReference = Some(Seq("12345678RX", "12345678RY"))
         )
 
         val summaryListRows = UnauthorisedPaymentsCYAViewHelper.summaryListRows(model, taxYear)
 
-        summaryListRows.length shouldBe 2
+        summaryListRows.length shouldBe 1
         assertRowForUnauthorisedPayments(summaryListRows.head, "No")
-        assertRowForUKPensionSchemes(summaryListRows(1), "")
 
       }
-
       "we have declared that we have no unauthorised payments at all, with or without surcharge" in {
 
         val model = UnauthorisedPaymentsViewModel(
@@ -160,42 +170,10 @@ class UnauthorisedPaymentsCYAViewHelperTest extends AnyWordSpec with Matchers {
 
         val summaryListRows = UnauthorisedPaymentsCYAViewHelper.summaryListRows(model, taxYear)
 
-        summaryListRows.length shouldBe 2
+        summaryListRows.length shouldBe 1
         assertRowForUnauthorisedPayments(summaryListRows.head, "No")
-        assertRowForUKPensionSchemes(summaryListRows(1), "")
 
       }
-      "we have only completed the 'UK pensions schemes' section" in {
-
-        val model = UnauthorisedPaymentsViewModel(
-          ukPensionSchemesQuestion = Some(true),
-          pensionSchemeTaxReference = Some(Seq("12345678RA", "12345678RB"))
-        )
-
-        val summaryListRows = UnauthorisedPaymentsCYAViewHelper.summaryListRows(model, taxYear)
-
-        summaryListRows.length shouldBe 3
-        assertRowForUnauthorisedPayments(summaryListRows.head, "")
-        assertRowForUKPensionSchemes(summaryListRows(1), "Yes")
-        assertRowForUKPensionSchemeTaxReferences(summaryListRows(2), "12345678RA, 12345678RB")
-
-      }
-
-      "our data for the 'UK pensions schemes' section has got into an unrealistic state, somehow" in {
-
-        val model = UnauthorisedPaymentsViewModel(
-          ukPensionSchemesQuestion = Some(false),
-          pensionSchemeTaxReference = Some(Seq("12345678RA", "12345678RB"))
-        )
-
-        val summaryListRows = UnauthorisedPaymentsCYAViewHelper.summaryListRows(model, taxYear)
-
-        summaryListRows.length shouldBe 2
-        assertRowForUnauthorisedPayments(summaryListRows.head, "")
-        assertRowForUKPensionSchemes(summaryListRows(1), "No")
-
-      }
-
       "we have completed all sections" in {
 
         val model = UnauthorisedPaymentsViewModel(
@@ -226,7 +204,6 @@ class UnauthorisedPaymentsCYAViewHelperTest extends AnyWordSpec with Matchers {
       }
     }
   }
-
 
   private def assertRowForUnauthorisedPayments(summaryListRow: SummaryListRow, expectedValue: String): Unit = {
     assertSummaryListRow(summaryListRow, ExpectedSummaryRowContents(
@@ -323,7 +300,6 @@ class UnauthorisedPaymentsCYAViewHelperTest extends AnyWordSpec with Matchers {
     }
   }
 
-
   private def stubbedMessages() = {
     import collection.JavaConverters._
 
@@ -349,6 +325,5 @@ class UnauthorisedPaymentsCYAViewHelperTest extends AnyWordSpec with Matchers {
   }
 
   private case class ExpectedSummaryRowContents(label: String, value: String, linkLabel: String, linkPathEnding: String, hiddenText: String)
-
 
 }

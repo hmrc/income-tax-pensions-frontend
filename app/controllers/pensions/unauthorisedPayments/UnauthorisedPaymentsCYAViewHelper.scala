@@ -89,7 +89,7 @@ object UnauthorisedPaymentsCYAViewHelper {
       )
 
   private def summaryRowForUKPensionSchemes(unauthorisedPaymentsViewModel: UnauthorisedPaymentsViewModel, taxYear: Int)(implicit messages: Messages): Option[SummaryListRow] =
-    Some(
+    unauthorisedPaymentsViewModel.unauthorisedPaymentQuestion.filter(_ == true).map(_ =>
       summaryListRowWithBooleanValue(
         "unauthorisedPayments.common.ukPensionSchemes",
         unauthorisedPaymentsViewModel.ukPensionSchemesQuestion,
@@ -97,11 +97,13 @@ object UnauthorisedPaymentsCYAViewHelper {
     )
 
   private def summaryRowForUKPensionSchemeTaxReferences(unauthorisedPaymentsViewModel: UnauthorisedPaymentsViewModel, taxYear: Int)(implicit messages: Messages): Option[SummaryListRow] = {
-    unauthorisedPaymentsViewModel.ukPensionSchemesQuestion.filter(_ == true).map(_ =>
-      summaryListRowWithString(
-        "unauthorisedPayments.cya.pensionSchemeTaxReferences",
-        unauthorisedPaymentsViewModel.pensionSchemeTaxReference,
-        routes.UnauthorisedPensionSchemeTaxReferenceController.show(taxYear))(messages)
+    unauthorisedPaymentsViewModel.unauthorisedPaymentQuestion.filter(_ == true).flatMap(_ =>
+      unauthorisedPaymentsViewModel.ukPensionSchemesQuestion.filter(_ == true).map(_ =>
+        summaryListRowWithString(
+          "unauthorisedPayments.cya.pensionSchemeTaxReferences",
+          unauthorisedPaymentsViewModel.pensionSchemeTaxReference,
+          routes.UnauthorisedPensionSchemeTaxReferenceController.show(taxYear))(messages)
+      )
     )
   }
 
