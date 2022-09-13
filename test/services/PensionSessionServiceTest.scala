@@ -34,7 +34,6 @@ import builders.IncomeFromPensionsViewModelBuilder.anIncomeFromPensionEmptyViewM
 import builders.PaymentsIntoPensionVewModelBuilder.aPaymentsIntoPensionsEmptyViewModel
 import builders.PensionAnnualAllowanceViewModelBuilder.{aPensionAnnualAllowanceEmptyViewModel, aPensionAnnualAllowanceViewModel}
 import connectors.IncomeSourceConnector
-import forms.No
 import models.pension.AllPensionsData.generateCyaFromPrior
 
 import scala.concurrent.Future

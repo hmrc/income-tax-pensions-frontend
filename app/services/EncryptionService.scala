@@ -109,7 +109,7 @@ class EncryptionService @Inject()(secureGCMCipher: SecureGCMCipher, appConfig: A
       taperedAnnualAllowance = p.taperedAnnualAllowance.map(x => secureGCMCipher.decrypt[Boolean](x.value, x.nonce)),
       aboveAnnualAllowanceQuestion = p.aboveAnnualAllowanceQuestion.map(x => secureGCMCipher.decrypt[Boolean](x.value, x.nonce)),
       aboveAnnualAllowance = p.aboveAnnualAllowance.map(x => secureGCMCipher.decrypt[BigDecimal](x.value, x.nonce)),
-      pensionProvidePaidAnnualAllowanceQuestion = p.pensionProvidePaidAnnualAllowanceQuestion.map(x => secureGCMCipher.decrypt[String](x.value, x.nonce)),
+      pensionProvidePaidAnnualAllowanceQuestion = p.pensionProvidePaidAnnualAllowanceQuestion.map(x => secureGCMCipher.decrypt[Boolean](x.value, x.nonce)),
       taxPaidByPensionProvider = p.taxPaidByPensionProvider.map(x => secureGCMCipher.decrypt[BigDecimal](x.value, x.nonce)),
       pensionSchemeTaxReference = p.pensionSchemeTaxReference.map(_.map(x => secureGCMCipher.decrypt[String](x.value, x.nonce)))
 

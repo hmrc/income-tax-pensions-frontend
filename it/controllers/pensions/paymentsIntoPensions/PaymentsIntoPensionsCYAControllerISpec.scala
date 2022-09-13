@@ -29,7 +29,6 @@ import builders.PensionsUserDataBuilder.aPensionsUserData
 import builders.ReliefsBuilder.anReliefs
 import builders.UnauthorisedPaymentsViewModelBuilder.anUnauthorisedPaymentsViewModel
 import builders.UserBuilder.aUserRequest
-import forms.Yes
 import models.IncomeTaxUserData
 import models.pension.charges.PensionAnnualAllowancesViewModel
 import models.pension.reliefs.PaymentsIntoPensionViewModel
@@ -82,6 +81,7 @@ class PaymentsIntoPensionsCYAControllerISpec extends IntegrationTest with ViewHe
         }
 
         implicit def document: () => Document = () => Jsoup.parse(result.body)
+
         titleCheck(expectedTitle)
         h1Check(expectedH1)
         captionCheck(expectedCaption(taxYear))
@@ -104,7 +104,6 @@ class PaymentsIntoPensionsCYAControllerISpec extends IntegrationTest with ViewHe
 
         buttonCheck(saveAndContinue)
         welshToggleCheck(isWelsh = false)
-
       }
 
       "CYA data is finished" which {
@@ -158,6 +157,7 @@ class PaymentsIntoPensionsCYAControllerISpec extends IntegrationTest with ViewHe
       "has an OK status" in {
         result.status shouldBe OK
       }
+
       implicit def document: () => Document = () => Jsoup.parse(result.body)
 
 
@@ -267,7 +267,7 @@ class PaymentsIntoPensionsCYAControllerISpec extends IntegrationTest with ViewHe
         val unchangedAllowances = PensionAnnualAllowancesViewModel(
           Some(anPensionSavngTaxCharges.isAnnualAllowanceReduced),
           anPensionSavngTaxCharges.moneyPurchasedAllowance, anPensionSavngTaxCharges.taperedAnnualAllowance,
-          Some(true), Some(anPensionContributions.inExcessOfTheAnnualAllowance), Some(Yes.toString),
+          Some(true), Some(anPensionContributions.inExcessOfTheAnnualAllowance), Some(true),
           Some(anPensionContributions.annualAllowanceTaxPaid),
           Some(anPensionContributions.pensionSchemeTaxReference))
 
@@ -300,7 +300,6 @@ class PaymentsIntoPensionsCYAControllerISpec extends IntegrationTest with ViewHe
     "redirect to an error page" when {
 
       "an error is returned from DES" in {
-
       }
     }
   }

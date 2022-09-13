@@ -16,7 +16,6 @@
 
 package models.pension
 
-import forms.{No, Yes}
 import models.mongo.PensionsCYAModel
 import models.pension.charges.{PaymentsIntoOverseasPensionsViewModel, PensionAnnualAllowancesViewModel, PensionCharges, PensionLifetimeAllowancesViewModel, UnauthorisedPaymentsViewModel}
 import models.pension.employmentPensions.EmploymentPensions
@@ -64,8 +63,8 @@ object AllPensionsData {
         prior.pensionCharges.map(a => a.pensionContributions.isDefined),
         prior.pensionCharges.flatMap(a => a.pensionContributions).map(_.inExcessOfTheAnnualAllowance),
         prior.pensionCharges.flatMap(a => a.pensionContributions.map(x => x.annualAllowanceTaxPaid)) match {
-          case Some(taxVal) if taxVal > 0 => Some(Yes.toString)
-          case _ => Some(No.toString)
+          case Some(taxVal) if taxVal > 0 => Some(true)
+          case _ => Some(false)
         },
         prior.pensionCharges.flatMap(a => a.pensionContributions).map(_.annualAllowanceTaxPaid),
         prior.pensionCharges.flatMap(a => a.pensionContributions).map(_.pensionSchemeTaxReference)

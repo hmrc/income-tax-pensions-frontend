@@ -31,7 +31,6 @@ import builders.PensionsUserDataBuilder.{aPensionsUserData, anPensionsUserDataEm
 import builders.ReliefsBuilder.anReliefs
 import builders.UnauthorisedPaymentsViewModelBuilder.{anUnauthorisedPaymentsEmptyViewModel, anUnauthorisedPaymentsViewModel}
 import builders.UserBuilder.aUserRequest
-import forms.Yes
 import models.mongo.PensionsCYAModel
 import models.pension.charges.PensionAnnualAllowancesViewModel
 import models.pension.reliefs.PaymentsIntoPensionViewModel
@@ -401,7 +400,7 @@ class UnauthorisedPaymentsCYAControllerISpec extends
         val unchangedAllowances = PensionAnnualAllowancesViewModel(
           Some(anPensionSavngTaxCharges.isAnnualAllowanceReduced),
           anPensionSavngTaxCharges.moneyPurchasedAllowance, anPensionSavngTaxCharges.taperedAnnualAllowance,
-          Some(true), Some(anPensionContributions.inExcessOfTheAnnualAllowance), Some(Yes.toString),
+          Some(true), Some(anPensionContributions.inExcessOfTheAnnualAllowance), Some(true),
           Some(anPensionContributions.annualAllowanceTaxPaid),
           Some(anPensionContributions.pensionSchemeTaxReference))
 
