@@ -520,8 +520,6 @@ incomeFromPensions.taxPaidOnLumpSumAmount.error.error.overMaximum = The amount o
 #Income From Pensions Summary
 incomeFromPensions.incomeFromPensionsSummary.statePensions = State pension
 incomeFromPensions.incomeFromPensionsSummary.otherUkPensions = Other UK Pensions
-incomeFromPensions.incomeFromPensionsSummary.otherUkPensions.text.individual = You only need to fill in the sections that apply to you.
-incomeFromPensions.incomeFromPensionsSummary.otherUkPensions.text.agent = You only need to fill in the sections that apply to your client.
 
 #Do You Get UK Pension Scheme Payments Messages
 pensions.ukPensionSchemePayments.title.individual = Do you get UK pension scheme payments?
