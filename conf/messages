@@ -27,6 +27,7 @@ common.currency.hint = For example, £193.52
 common.help.getHelpWithThisPage = Get help with this page
 common.status.toDo = To do
 common.status.updated = Updated
+common.status.notStarted = Not Started
 common.pensions.caption = Pensions for 6 April {0} to 5 April {1}
 common.paymentsIntoPensions.caption = Payments into pensions for 6 April {0} to 5 April {1}
 common.paymentsIntoOverseasPensions.caption = Payments into overseas pensions for 6 April {0} to 5 April {1}
@@ -35,6 +36,7 @@ common.pensionAnnualAllowance.caption = Pension annual allowance for 6 April {0}
 common.incomeFromPensions.caption = Income from pensions for 6 April {0} to 5 April {1}
 common.uKPensionIncome.caption = UK pension income for 6 April {0} to 5 April {1}
 common.lifetimeAllowance.caption = Annual and lifetime allowances for 6 April {0} to 5 April {1}
+common.overseasPensions.caption = Overseas pensions for 6 April {0} to 5 April {1}
 common.return.overview.buttonText = Return to overview
 common.currencyAmount = £{0}
 common.total = Total
@@ -43,6 +45,8 @@ common.youCanFindThisOut.agent = You can find this out from your client’s pens
 common.moreThanOnePensionScheme.individual = If more than one of your pension schemes paid the tax, you can add these details later.
 common.moreThanOnePensionScheme.agent = If more than one of your client’s pension schemes paid the tax, you can add these details later.
 common.pensionSchemeTaxReference = Pension Scheme Tax Reference
+common.sectionsToFill.individual = You only need to fill in the sections that apply to you.
+common.sectionsToFill.agent = You only need to fill in the sections that apply to your client.
 
 common.error.amountMaxLimit = The total amount must be less than £100,000,000,000
 common.error.self-assessment.paragraph.1.1 = If the web address is correct or you selected a link or button, you can use
@@ -143,6 +147,12 @@ pensions.pensionSummary.pensionLifetimeAllowance = Pension lifetime allowance
 pensions.pensionSummary.unauthorisedPaymentsFromPensions = Unauthorised payments from pensions
 pensions.pensionSummary.paymentsToOverseasPensions = Payments into overseas pensions
 
+# overseas pensions summary
+pensions.overseasPensionsSummary.heading = Overseas pensions
+pensions.overseasPensionsSummary.paymentsIntoOverseasPensions = Payments into overseas pensions
+pensions.overseasPensionsSummary.incomeFromOverseasPensions = Income from overseas pensions
+pensions.overseasPensionsSummary.overseasTransferCharges = Overseas transfer charges
+pensions.overseasPensionsSummary.shortServiceRefunds = Short service refunds
 
 ########    PAYMENTS INTO PENSIONS    ########
 pensions.paymentsIntoOverseasPensions.error.agent = Select yes if your client or their employer paid into an overseas pension scheme

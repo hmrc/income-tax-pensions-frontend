@@ -36,6 +36,8 @@ object PageUrls extends IntegrationTest {
 
   def pensionSummaryUrl(taxYear: Int): String = s"$appUrl/$taxYear/pensions-summary"
 
+  def overseasPensionsSummaryUrl(taxYear: Int): String = s"$appUrl/$taxYear/overseas-pensions"
+
   //  *****************       payment into pensions pages      ******************************
 
   object PaymentIntoPensions {
