@@ -17,6 +17,7 @@
 package utils
 
 import models.mongo.PensionsCYAModel
+import models.mongo.{PensionsCYAModel, PensionsUserData}
 import models.pension.AllPensionsData
 import models.pension.charges.{LifetimeAllowance, PensionSavingsTaxCharges}
 
@@ -72,4 +73,13 @@ object StatusHelper {
 
   // TODO: implement when we add the page
   def shortServiceRefundsIsUpdated(cya: Option[PensionsCYAModel]): Boolean = false
+
+  def statePensionIsUpdated(pensionsUserData: Option[PensionsUserData]): Boolean = {
+    pensionsUserData.map(_.pensions).map(_.incomeFromPensions).flatMap(_.statePension).flatMap(_.amountPaidQuestion).isDefined
+  }
+
+  def ukPensionsSchemeIsUpdated(pensionsUserData: Option[PensionsUserData]): Boolean = {
+    pensionsUserData.map(_.pensions).map(_.incomeFromPensions).flatMap(_.uKPensionIncomesQuestion).isDefined
+  }
+
 }
