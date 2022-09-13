@@ -38,7 +38,7 @@ object PaymentsIntoPensionsCYATestSupport {
   private val taxYear: Int = if (dateNow.isAfter(taxYearCutoffDate)) LocalDate.now().getYear + 1 else LocalDate.now().getYear
 
   val cyaDataMinimal: PaymentsIntoPensionViewModel = PaymentsIntoPensionViewModel(
-    gateway = Some(false),
+    gateway = Some(true),
     rasPensionPaymentQuestion = Some(false),
     pensionTaxReliefNotClaimedQuestion = Some(false)
   )
@@ -241,9 +241,10 @@ class PaymentsIntoPensionsCYATestSupport extends ViewUnitTest {
 
 
         import userScenario.commonExpectedResults.{no => answerNo}
+        import userScenario.commonExpectedResults.{yes => anseryes}
 
         //noinspection ScalaStyle
-        cyaRowCheck(paymentsIntoUKPensions, answerNo, ChangeLinks.paymentsIntoUKPensions, paymentsIntoUKPensionsHidden, 1)
+        cyaRowCheck(paymentsIntoUKPensions, anseryes, ChangeLinks.paymentsIntoUKPensions, paymentsIntoUKPensionsHidden, 1)
         cyaRowCheck(reliefAtSource, answerNo, ChangeLinks.reliefAtSource, reliefAtSourceHidden, 2)
         cyaRowCheck(pensionsTaxReliefNotClaimed, answerNo, ChangeLinks.pensionsTaxReliefNotClaimed, pensionsTaxReliefNotClaimedHidden, 3)
 

@@ -17,12 +17,15 @@
 package controllers.pensions.paymentsIntoPension
 
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.routes.PensionsSummaryController
 import controllers.predicates.TailoringEnabledFilterAction.tailoringEnabledFilterAction
 import controllers.predicates.AuthorisedAction
 import controllers.predicates.TaxYearAction.taxYearAction
+import models.{AuthorisationRequest, User}
+import models.mongo.PensionsCYAModel
+import models.pension.reliefs.PaymentsIntoPensionViewModel
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import utils.Clock
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.SessionHelper
@@ -35,7 +38,8 @@ class PaymentsIntoPensionsStatusController @Inject()(authAction: AuthorisedActio
                                                      formProvider: PaymentsIntoPensionFormProvider,
                                                      view: PaymentsIntoPensionsStatusView,
                                                      pensionSessionService: PensionSessionService,
-                                                     errorHandler: ErrorHandler)
+                                                     errorHandler: ErrorHandler,
+                                                     clock: Clock)
                                                 (implicit cc: MessagesControllerComponents, appConfig: AppConfig, ec: ExecutionContext)
   extends FrontendController(cc) with I18nSupport with SessionHelper {
 
@@ -46,15 +50,84 @@ class PaymentsIntoPensionsStatusController @Inject()(authAction: AuthorisedActio
       )
   }
 
-  def submit(taxYear: Int): Action[AnyContent] = (authAction andThen tailoringEnabledFilterAction(taxYear) andThen taxYearAction(taxYear)).async { implicit request =>
-    formProvider.paymentsIntoPensionsStatusForm(request.user.isAgent).bindFromRequest().fold(
-      formWithErrors => Future.successful(BadRequest(view(taxYear, formWithErrors))),
-      yesNoAnswer =>
-        if (yesNoAnswer) {
-          Future(Redirect(PensionsSummaryController.show(taxYear)))
-        } else {
-          Future(Redirect(appConfig.incomeTaxSubmissionOverviewUrl(taxYear)))
-        }
+  def submit(taxYear: Int): Action[AnyContent] = (authAction andThen tailoringEnabledFilterAction(taxYear) andThen taxYearAction(taxYear)).async
+  { implicit request =>
+    if (appConfig.paymentsIntoPensionsTailoringEnabled) {
+
+      formProvider.paymentsIntoPensionsStatusForm(request.user.isAgent).bindFromRequest().fold(
+        formWithErrors => Future.successful(BadRequest(view(taxYear, formWithErrors))),
+        yesNoAnswer =>
+          pensionSessionService.getAndHandle(taxYear, request.user) {
+            case (sessionData, prior) =>
+              val pensionsCya: PensionsCYAModel = {
+                if (!yesNoAnswer) {
+                  PensionsCYAModel.emptyModels.copy(PaymentsIntoPensionViewModel().copy(gateway = Some(yesNoAnswer)))
+                } else {
+                  sessionData.fold{PensionsCYAModel.emptyModels.copy(PaymentsIntoPensionViewModel().copy(gateway = Some(yesNoAnswer)))}
+                  {pensionsUserData => pensionsUserData.pensions.copy(pensionsUserData.pensions.paymentsIntoPension.copy(gateway = Some(yesNoAnswer)))}
+                }
+              }
+
+              pensionSessionService.createOrUpdateSessionData[Either[Status, Result]](request.user, pensionsCya, taxYear, sessionData.fold(false)
+              (sd => sd.isPriorSubmission)) {
+                Left(BadRequest)
+              } {
+                if (pensionsCya.paymentsIntoPension.isFinished) {
+                  if (!appConfig.paymentsIntoPensionsTailoringEnabled || (appConfig.paymentsIntoPensionsTailoringEnabled && sessionData.isEmpty)) {
+                    Right(Redirect(controllers.pensions.paymentsIntoPension.routes.PaymentsIntoPensionsCYAController.show(taxYear)))
+                  } else {
+
+                    if (!yesNoAnswer && prior.isDefined) {
+                      updateSessionToZero(taxYear)(request.user, request)
+                      Right(Redirect(controllers.pensions.paymentsIntoPension.routes.PaymentsIntoPensionsCYAController.show(taxYear)))
+                    } else if(!yesNoAnswer && prior.isEmpty){
+                      Right(Redirect(controllers.pensions.paymentsIntoPension.routes.PaymentsIntoPensionsCYAController.show(taxYear)))
+                    } else if(yesNoAnswer && prior.isDefined) {
+                      Right(Redirect(controllers.pensions.paymentsIntoPension.routes.PaymentsIntoPensionsCYAController.show(taxYear)))
+                    }
+                    else {
+                      Right(Redirect(controllers.pensions.paymentsIntoPension.routes.ReliefAtSourcePensionsController.show(taxYear)))
+                    }
+                  }
+                } else {
+                  Right(Redirect(controllers.pensions.paymentsIntoPension.routes.ReliefAtSourcePensionsController.show(taxYear)))
+                }
+              }(clock).flatMap{
+                case Left(error) => Future.successful(errorHandler.handleError(BAD_REQUEST))
+                case Right(redirect) => Future.successful(redirect)
+              }(ec)
+          }
+      )
+    } else {
+      Future.successful(Redirect(appConfig.incomeTaxSubmissionOverviewUrl(taxYear)))
+    }
+  }
+
+  private def updateModelToZero(cyaData: PaymentsIntoPensionViewModel): PaymentsIntoPensionViewModel = {
+    cyaData.copy(
+      gateway = Some(false),
+      totalRASPaymentsAndTaxRelief = None,
+      totalOneOffRasPaymentPlusTaxRelief =  None,
+      totalRetirementAnnuityContractPayments = None,
+      totalWorkplacePensionPayments = None,
+      rasPensionPaymentQuestion = if (cyaData.rasPensionPaymentQuestion.isDefined) Some(false) else None,
+      oneOffRasPaymentPlusTaxReliefQuestion = if (cyaData.oneOffRasPaymentPlusTaxReliefQuestion.isDefined) Some(false) else None,
+      retirementAnnuityContractPaymentsQuestion = if (cyaData.retirementAnnuityContractPaymentsQuestion.isDefined) Some(false) else None,
+      workplacePensionPaymentsQuestion = if (cyaData.workplacePensionPaymentsQuestion.isDefined) Some(false) else None
     )
+
+  }
+
+  def updateSessionToZero(taxYear: Int)(implicit user: User, request: AuthorisationRequest[AnyContent]): Future[Result] = {
+    pensionSessionService.getAndHandle(taxYear, user) { (cya, prior) =>
+      (cya, prior) match {
+        case (Some(cyaData), _) =>
+          val newSessionData = cyaData.pensions.copy( paymentsIntoPension = updateModelToZero(cyaData.pensions.paymentsIntoPension))
+          pensionSessionService.createOrUpdateSessionData(user, newSessionData, taxYear, cyaData.isPriorSubmission)(errorHandler.internalServerError()) {
+            Redirect(controllers.pensions.paymentsIntoPension.routes.PaymentsIntoPensionsCYAController.show(taxYear))
+          }(clock)
+        case _ => Future.successful(Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear)))
+      }
+    }
   }
 }

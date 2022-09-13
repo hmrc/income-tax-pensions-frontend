@@ -19,6 +19,7 @@
 @import views.html.templates.helpers.Link
 @import models.pension.AllPensionsData
 @import utils.StatusHelper._
+@import models.pension.AllPensionsData.generateCyaFromPrior
 
 @this(layout: Layout, heading: Heading, govUkButton: GovukButton, formWithCSRF: FormWithCSRF, link:Link)
 
@@ -26,6 +27,18 @@
 
 @headingForUse = @{
     messages(s"pensions.pensionSummary.heading")
+}
+
+@paymentsIntoPensionUrlRedirect(prior: Option[AllPensionsData]) = @{
+    if(prior.isDefined) {
+        if (generateCyaFromPrior(prior.get).paymentsIntoPension.isEmpty()){
+            s"${controllers.pensions.paymentsIntoPension.routes.PaymentsIntoPensionsStatusController.show(taxYear)}"
+        } else {
+            s"${controllers.pensions.paymentsIntoPension.routes.PaymentsIntoPensionsCYAController.show(taxYear)}"
+        }
+    } else {
+            s"${controllers.pensions.paymentsIntoPension.routes.PaymentsIntoPensionsStatusController.show(taxYear)}"
+    }
 }
 
 @layout(pageTitle = headingForUse, taxYear = Some(taxYear), isAgent = request.user.isAgent) {
@@ -41,7 +54,7 @@
 
             <div class="govuk-summary-list__row" id="payments-into-Pensions-row">
                 <dt class="govuk-summary-list__key govuk-!-width-two-third">
-                @link(s"${controllers.pensions.paymentsIntoPension.routes.PaymentsIntoPensionsCYAController.show(taxYear)}", "pensions.pensionSummary.paymentsToPensions",Some("payments-into-pensions-link"))
+                @link(paymentsIntoPensionUrlRedirect(prior), "pensions.pensionSummary.paymentsToPensions",Some("payments-into-pensions-link"))
                 </dt>
                 <dd class="govuk-summary-list__actions govuk-!-two-third">
                 @if(paymentsIntoPensionsIsUpdated(prior)) {

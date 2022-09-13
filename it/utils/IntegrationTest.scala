@@ -221,6 +221,10 @@ trait IntegrationTest extends AnyWordSpec with Matchers with GuiceOneServerPerSu
 
   def userData(allData: String): IncomeTaxUserData = IncomeTaxUserData(Some(PensionDataStubs.fullPensionsModel))
 
+  def emptyUserDataStub(nino: String = nino, taxYear: Int = taxYear): StubMapping = {
+    userDataStub(IncomeTaxUserData(None), nino, taxYear)
+  }
+
   val fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
 }
 

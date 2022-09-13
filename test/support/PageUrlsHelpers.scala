@@ -37,7 +37,7 @@ trait PageUrlsHelpers  {
 
   //  *****************       payment into pensions pages      ******************************
 
-
+    def checkPaymentsIntoPensionStatusUrl(taxYear: Int): String = s"$appUrl/$taxYear/payments-into-pensions/check-payments-into-pensions-status"
 
     def checkPaymentsIntoPensionCyaUrl(taxYear: Int): String = s"$appUrl/$taxYear/payments-into-pensions/check-payments-into-pensions"
 

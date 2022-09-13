@@ -61,7 +61,8 @@ class ReliefAtSourcePensionsController @Inject()(authAction: AuthorisedAction,
     formsProvider.reliefAtSourcePensionsForm(request.user.isAgent).bindFromRequest().fold(
       formWithErrors => Future.successful(BadRequest(pageView(formWithErrors, taxYear))),
       yesNo => {
-        pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) { optData =>
+        pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
+          case Right(optData) =>
 
           val pensionsCya = optData.map(_.pensions).getOrElse(PensionsCYAModel.emptyModels)
           val viewModel = pensionsCya.paymentsIntoPension
@@ -85,7 +86,7 @@ class ReliefAtSourcePensionsController @Inject()(authAction: AuthorisedAction,
 
           pensionSessionService.createOrUpdateSessionData(request.user,
             updatedCyaModel, taxYear, optData.exists(_.isPriorSubmission))(errorHandler.internalServerError()) {
-            isFinishedCheck(updatedCyaModel, taxYear, redirectLocation)
+              isFinishedCheck(updatedCyaModel, taxYear, redirectLocation)
           }
         }
       }

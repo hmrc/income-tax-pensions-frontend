@@ -105,4 +105,6 @@ class AppConfig @Inject()(servicesConfig: ServicesConfig) {
 
   lazy val useEncryption: Boolean = servicesConfig.getBoolean("useEncryption")
 
+  lazy val paymentsIntoPensionsTailoringEnabled: Boolean = servicesConfig.getBoolean("feature-switch.paymentsIntoPensionsTailoringEnabled")
+
 }

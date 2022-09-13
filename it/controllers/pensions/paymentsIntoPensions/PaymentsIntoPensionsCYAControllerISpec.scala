@@ -58,6 +58,7 @@ class PaymentsIntoPensionsCYAControllerISpec extends IntegrationTest with ViewHe
   )
 
   val cyaDataMinimal: PaymentsIntoPensionViewModel = PaymentsIntoPensionViewModel(
+    gateway = Some(true),
     rasPensionPaymentQuestion = Some(false),
     pensionTaxReliefNotClaimedQuestion = Some(false)
   )
@@ -161,7 +162,7 @@ class PaymentsIntoPensionsCYAControllerISpec extends IntegrationTest with ViewHe
 
 
       //noinspection ScalaStyle
-      cyaRowCheck(paymentsIntoUKPensions, answerNo, ChangeLinks.paymentsIntoUKPensions, paymentsIntoUKPensionsHidden, 1)
+      cyaRowCheck(paymentsIntoUKPensions, "Yes", ChangeLinks.paymentsIntoUKPensions, paymentsIntoUKPensionsHidden, 1)
       cyaRowCheck(reliefAtSource, answerNo, ChangeLinks.reliefAtSource, reliefAtSourceHidden, 2)
       cyaRowCheck(pensionsTaxReliefNotClaimed, answerNo, ChangeLinks.pensionsTaxReliefNotClaimed, pensionsTaxReliefNotClaimedHidden, 3)
 

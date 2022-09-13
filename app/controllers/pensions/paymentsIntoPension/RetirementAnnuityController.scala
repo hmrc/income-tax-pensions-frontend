@@ -80,7 +80,7 @@ class RetirementAnnuityController @Inject()(authAction: AuthorisedAction,
 
             pensionSessionService.createOrUpdateSessionData(request.user,
               updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
-              isFinishedCheck(updatedCyaModel, taxYear, redirectLocation)
+                isFinishedCheck(updatedCyaModel, taxYear, redirectLocation)
             }
           }
         }

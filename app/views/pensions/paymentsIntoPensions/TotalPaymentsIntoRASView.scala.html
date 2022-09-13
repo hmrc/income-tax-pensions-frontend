@@ -37,7 +37,8 @@
         totalRAS: String,
         oneOffRAS: Option[String],
         totalPayments: String,
-        claimed: String)(implicit messages: Messages, appConfig: AppConfig, request: AuthorisationRequest[_])
+        claimed: String,
+        fromGatewayChangeLink: Boolean = false)(implicit messages: Messages, appConfig: AppConfig, request: AuthorisationRequest[_])
 
 @headingForUse = @{messages(s"paymentsIntoPensions.totalRASPayments.title.${if(request.user.isAgent) "agent" else "individual"}")}
 

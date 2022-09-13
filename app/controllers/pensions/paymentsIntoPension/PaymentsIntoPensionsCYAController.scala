@@ -19,38 +19,53 @@ package controllers.pensions.paymentsIntoPension
 import config.{AppConfig, ErrorHandler}
 import controllers.predicates.AuthorisedAction
 import controllers.predicates.TaxYearAction.taxYearAction
-import models.mongo.PensionsCYAModel
+import models.{APIErrorBodyModel, APIErrorModel, AuthorisationRequest, User}
+import models.mongo.{PensionsCYAModel, PensionsUserData}
 import models.pension.AllPensionsData
+import models.pension.AllPensionsData.generateCyaFromPrior
 import models.redirects.ConditionalRedirect
+import play.api.Logger
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.PensionSessionService
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import services.{ExcludeJourneyService, PensionSessionService}
 import services.RedirectService.{PaymentsIntoPensionsRedirects, redirectBasedOnCurrentAnswers}
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import utils.PaymentsIntoPensionPages.CheckYourAnswersPage
 import views.html.pensions.paymentsIntoPensions.PaymentsIntoPensionsCYAView
 
 import javax.inject.Inject
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class PaymentsIntoPensionsCYAController @Inject()(authAction: AuthorisedAction,
                                                   view: PaymentsIntoPensionsCYAView,
                                                   pensionSessionService: PensionSessionService,
-                                                  errorHandler: ErrorHandler)
+                                                  errorHandler: ErrorHandler,
+                                                  excludeJourneyService: ExcludeJourneyService
+                                                 )
                                                  (implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock)
   extends FrontendController(mcc) with I18nSupport {
 
-    def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
+  lazy val logger: Logger = Logger(this.getClass.getName)
+  implicit val executionContext: ExecutionContext = mcc.executionContext
+
+
+  def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
       pensionSessionService.getAndHandle(taxYear, request.user) { (cya, prior) =>
 
         (cya, prior) match {
-          case (Some(_), _) =>
+          case (Some(cyaData), optionalPriorData) if !cyaData.pensions.paymentsIntoPension.isFinished =>
             redirectBasedOnCurrentAnswers(taxYear, cya)(redirects(_, taxYear)) { data =>
               Future.successful(Ok(view(taxYear, data.pensions.paymentsIntoPension)))
             }
+          case (Some(cyaData), optionalPriorData) => pensionSessionService.createOrUpdateSessionData(request.user,
+            cyaData.pensions, taxYear, isPriorSubmission = false)(
+            errorHandler.internalServerError())(
+            Ok(view(taxYear, cyaData.pensions.paymentsIntoPension))
+          )
           case (None, Some(priorData)) =>
-            val cyaModel = pensionSessionService.generateCyaFromPrior(priorData)
+            val cyaModel = generateCyaFromPrior(priorData)
             pensionSessionService.createOrUpdateSessionData(request.user,
               cyaModel, taxYear, isPriorSubmission = false)(
               errorHandler.internalServerError())(
@@ -66,23 +81,50 @@ class PaymentsIntoPensionsCYAController @Inject()(authAction: AuthorisedAction,
         cya.fold(
           Future.successful(Redirect(appConfig.incomeTaxSubmissionOverviewUrl(taxYear)))
         ) { model =>
-
+          if (appConfig.paymentsIntoPensionsTailoringEnabled && model.pensions.paymentsIntoPension.gateway.contains(false)) {
+            excludeJourneyService.excludeJourney("pensions", taxYear, request.user.nino)(request.user, hc)
+          }.flatMap {
+            case Right(_) => performSubmission(taxYear, cya, prior)(request.user, hc, request)
+            case Left(_) => errorHandler.futureInternalServerError()
+          }
           if (comparePriorData(model.pensions, prior)) {
-            //        TODO - build submission model from cya data and submit to DES if cya data doesn't match prior data
-            //        val submissionModel = AllPensionsData(None, None, None)
             Future.successful(Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear)))
           } else {
-            Future.successful(Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear)))
+            performSubmission(taxYear, cya, prior)(request.user, hc, request)
           }
         }
       }
     }
 
+  private def performSubmission(taxYear:Int, cya: Option[PensionsUserData], priorData: Option[AllPensionsData])
+                               (implicit user: User, hc: HeaderCarrier, request: AuthorisationRequest[AnyContent]): Future[Result] = {
+    (cya match {
+      case Some(cyaData) =>
+        pensionSessionService.createOrUpdateSessionData[Either[APIErrorModel, Status]](user, cyaData.pensions, taxYear, cyaData.isPriorSubmission)
+        {
+          logger.info("[PaymentIntoPensionsCYAController][submit] Failed to create or update session")
+          Left(APIErrorModel(BAD_REQUEST, APIErrorBodyModel(BAD_REQUEST.toString, "Unable to createOrUpdate pension service")))
+        }{
+         Right(Ok)
+        }
+      case _ =>
+        logger.info("[PaymentIntoPensionsCYAController][submit] CYA data or NINO missing from session.")
+        Future.successful(Left(APIErrorModel(BAD_REQUEST, APIErrorBodyModel("MISSING_DATA", "CYA data or NINO missing from session."))))
+    }).flatMap{
+      case Right(_) =>
+        pensionSessionService.clear(taxYear)(errorHandler.internalServerError())(
+          Redirect(appConfig.incomeTaxSubmissionOverviewUrl(taxYear))
+        )
+      case Left(error) => Future.successful(errorHandler.handleError(error.status))
+    }
+  }
+
+
 
     private def comparePriorData(cyaData: PensionsCYAModel, priorData: Option[AllPensionsData]): Boolean = {
       priorData match {
         case None => true
-        case Some(prior) => !cyaData.equals(pensionSessionService.generateCyaFromPrior(prior))
+        case Some(prior) => !cyaData.equals(generateCyaFromPrior(prior))
       }
     }
 

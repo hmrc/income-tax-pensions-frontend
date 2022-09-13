@@ -33,7 +33,9 @@ import builders.EmploymentPensionsBuilder.anEmploymentPensions
 import builders.IncomeFromPensionsViewModelBuilder.anIncomeFromPensionEmptyViewModel
 import builders.PaymentsIntoPensionVewModelBuilder.aPaymentsIntoPensionsEmptyViewModel
 import builders.PensionAnnualAllowanceViewModelBuilder.{aPensionAnnualAllowanceEmptyViewModel, aPensionAnnualAllowanceViewModel}
+import connectors.IncomeSourceConnector
 import forms.No
+import models.pension.AllPensionsData.generateCyaFromPrior
 
 import scala.concurrent.Future
 
@@ -51,8 +53,10 @@ class PensionSessionServiceTest extends UnitTest
 
   val messages: MessagesApi = app.injector.instanceOf[MessagesApi]
 
+  val mockIncomeSourceConnector = app.injector.instanceOf[IncomeSourceConnector]
+
   val service: PensionSessionService =
-    new PensionSessionService(mockPensionUserDataRepository, mockUserDataConnector, mockAppConfig,
+    new PensionSessionService(mockPensionUserDataRepository, mockUserDataConnector, mockIncomeSourceConnector, mockAppConfig,
       errorHandler, mockExecutionContext)
 
   private val user = authorisationRequest.user
@@ -322,7 +326,7 @@ class PensionSessionServiceTest extends UnitTest
   "generateCyaFromPrior" should {
     "generate a PensionsCYAModel from prior AllPensionsData" in {
       mockCreateOrUpdate(pensionDataFull, user, Right())
-      val response = service.generateCyaFromPrior(anAllPensionDataEmpty)
+      val response = generateCyaFromPrior(anAllPensionDataEmpty)
 
       response shouldBe aPensionsCYAGeneratedFromPriorEmpty
 
