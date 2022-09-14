@@ -27,7 +27,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status.UNAUTHORIZED
 import play.api.libs.ws.WSResponse
 import utils.PageUrls._
-import utils.PageUrls.overseasPensionPages.employerPayOverseasPensionUrl
+import utils.PageUrls.overseasPensionPages.paymentsIntoPensionSchemeUrl
 import utils.{CommonUtils, PensionsDatabaseHelper, ViewHelpers}
 
 class OverseasPensionsSummaryControllerISpec extends CommonUtils with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper  {
@@ -140,7 +140,7 @@ class OverseasPensionsSummaryControllerISpec extends CommonUtils with ViewHelper
           textOnPageCheck(specific.expectedSectionsToFill, paragraphSelector(1))
 
           "has a payment into overseas pensions section" which {
-            linkCheck(common.paymentsToOverseasPensionsText, paymentsIntoOverseasPensionsLink, employerPayOverseasPensionUrl(taxYearEOY))
+            linkCheck(common.paymentsToOverseasPensionsText, paymentsIntoOverseasPensionsLink, paymentsIntoPensionSchemeUrl(taxYearEOY))
             textOnPageCheck(userScenario.commonExpectedResults.notStarted, summaryListStatusTagSelector(1))
           }
 
@@ -181,7 +181,7 @@ class OverseasPensionsSummaryControllerISpec extends CommonUtils with ViewHelper
           textOnPageCheck(specific.expectedSectionsToFill, paragraphSelector(1))
 
           "has a payment into overseas pensions section" which {
-            linkCheck(common.paymentsToOverseasPensionsText, paymentsIntoOverseasPensionsLink, employerPayOverseasPensionUrl(taxYearEOY))
+            linkCheck(common.paymentsToOverseasPensionsText, paymentsIntoOverseasPensionsLink, paymentsIntoPensionSchemeUrl(taxYearEOY))
             textOnPageCheck(userScenario.commonExpectedResults.updated, summaryListStatusTagSelector(1))
           }
 
