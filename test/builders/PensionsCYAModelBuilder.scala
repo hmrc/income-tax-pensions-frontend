@@ -21,7 +21,6 @@ import builders.PaymentsIntoOverseasPensionsViewModelBuilder.{aPaymentsIntoOvers
 import builders.PaymentsIntoPensionVewModelBuilder.{aPaymentsIntoPensionViewModel, aPaymentsIntoPensionsEmptyViewModel}
 import builders.PensionAnnualAllowanceViewModelBuilder.{aPensionAnnualAllowanceEmptyViewModel, aPensionAnnualAllowanceViewModel}
 import builders.PensionLifetimeAllowanceViewModelBuilder.{aPensionLifetimeAllowanceViewModel, aPensionLifetimeAllowancesEmptyViewModel}
-import forms.No
 import builders.UnauthorisedPaymentsViewModelBuilder.{anUnauthorisedPaymentsEmptyViewModel, anUnauthorisedPaymentsViewModel}
 import models.mongo.PensionsCYAModel
 import models.pension.charges.{PaymentsIntoOverseasPensionsViewModel, PensionAnnualAllowancesViewModel, PensionLifetimeAllowancesViewModel, UnauthorisedPaymentsViewModel}
@@ -50,7 +49,7 @@ object PensionsCYAModelBuilder {
 
   val aPensionsCYAGeneratedFromPriorEmpty:PensionsCYAModel = PensionsCYAModel(
     paymentsIntoPension = aPaymentsIntoPensionsEmptyViewModel.copy(gateway = Some(true), totalPaymentsIntoRASQuestion = Some(true)),
-    pensionsAnnualAllowances = aPensionAnnualAllowanceEmptyViewModel.copy(pensionProvidePaidAnnualAllowanceQuestion = Some(No.toString)),
+    pensionsAnnualAllowances = aPensionAnnualAllowanceEmptyViewModel.copy(pensionProvidePaidAnnualAllowanceQuestion = Some(false)),
     pensionLifetimeAllowances = aPensionLifetimeAllowancesEmptyViewModel,
     incomeFromPensions = anIncomeFromPensionEmptyViewModel.copy(uKPensionIncomesQuestion = Some(false)),
     unauthorisedPayments = anUnauthorisedPaymentsEmptyViewModel,

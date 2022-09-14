@@ -396,7 +396,6 @@ pensions.reducedAnnualAllowanceAmount.nonReduced.error.incorrectFormat = Enter t
 pensions.reducedAnnualAllowanceAmount.nonReduced.error.overMaximum = The amount above the annual allowance must be less than £100,000,000,000
 
 #above Reduced Annual Allowance
-
 pensions.aboveReducedAnnualAllowance.reduced.title.individual = Have you gone above your reduced annual allowance?
 pensions.aboveReducedAnnualAllowance.reduced.title.agent = Has your client gone above their reduced annual allowance?
 pensions.aboveReducedAnnualAllowance.nonReduced.title.individual = Have you gone above the annual allowance?
@@ -407,24 +406,17 @@ pensions.aboveReducedAnnualAllowance.nonReduced.error.noEntry.individual = Selec
 pensions.aboveReducedAnnualAllowance.nonReduced.error.noEntry.agent = Select yes if your client has gone above the annual allowance
 
 #Pension Provider Paid Tax Messages
-
-pensions.pensionProviderPaidTax.title.individual = Has your pension provider paid your annual allowance tax?
-pensions.pensionProviderPaidTax.title.paragraph = If more than one pension scheme deals with the tax, you can add their details later.
-pensions.pensionProviderPaidTax.radio.hasAgreedToPay = No, but has agreed to pay
-pensions.pensionProviderPaidTax.title.agent = Has your client’s pension provider paid the annual allowance tax?
-pensions.pensionProviderPaidTax.error.noEntry.individual = Select yes if your pension provider paid your annual allowance tax
-pensions.pensionProviderPaidTax.error.noEntry.agent = Select yes if your client’s pension provider paid the annual allowance tax
-
-#Tax Paid By Pension Provider Annual Allowance Messages
-
-pensions.annualAllowanceTaxPaidByPensionProviderAmount.title.individual = How much tax did your pension provider pay?
-pensions.annualAllowanceTaxPaidByPensionProviderAmount.title.agent = How much tax did your client’s pension provider pay?
-pensions.annualAllowanceTaxPaidByPensionProviderAmount.error.noEntry.individual = Enter the amount of tax your pension provider paid
-pensions.annualAllowanceTaxPaidByPensionProviderAmount.error.incorrectFormat.individual = Enter the amount of tax your pension provider paid in the correct format
-pensions.annualAllowanceTaxPaidByPensionProviderAmount.error.overMaximum.individual = The amount of tax your pension provider paid must be less than £100,000,000,000
-pensions.annualAllowanceTaxPaidByPensionProviderAmount.error.noEntry.agent = Enter the amount of tax your client’s pension provider paid
-pensions.annualAllowanceTaxPaidByPensionProviderAmount.error.incorrectFormat.agent = Enter the amount of tax your client’s pension provider paid in the correct format
-pensions.annualAllowanceTaxPaidByPensionProviderAmount.error.overMaximum.agent = The amount of tax your client’s pension provider paid must be less than £100,000,000,000
+pensions.pensionProviderPaidTax.title.individual = Did your pension schemes pay or agree to pay the tax?
+pensions.pensionProviderPaidTax.title.agent = Did your client’s pension schemes pay or agree to pay the tax?
+pensions.pensionProviderPaidTax.amount.text = Amount they paid or agreed to pay, in pounds
+pensions.pensionProviderPaidTax.error.noEntry.individual = Select yes if your pension provider paid or agreed to pay your annual allowance tax
+pensions.pensionProviderPaidTax.error.noEntry.agent = Select yes if your client’s pension provider paid or agreed to pay the annual allowance tax
+pensions.pensionsProviderPaidTax.error.noAmount.individual = Enter the amount of tax your pension provider paid or agreed to pay
+pensions.pensionsProviderPaidTax.error.noAmount.agent = Enter the amount of tax your client’s pension provider paid or agreed to pay
+pensions.pensionProviderPaidTax.error.incorrectFormat.individual = Enter the amount of tax your pension provider paid or agreed to pay in the correct format
+pensions.pensionProviderPaidTax.error.incorrectFormat.agent = Enter the amount of tax your client’s pension provider paid or agreed to pay in the correct format
+pensions.pensionProviderPaidTax.error.excessAmount.individual = The amount of tax your pension provider paid or agreed to pay must be less than £100,000,000,000
+pensions.pensionProviderPaidTax.error.excessAmount.agent = The amount of tax your client’s pension provider paid or agreed to pay must be less than £100,000,000,000
 
 #Pension Scheme Tax Reference Messages
 pension.pensionSchemeTaxReference.paragraph1 = Enter the reference for the pension scheme that paid the tax.

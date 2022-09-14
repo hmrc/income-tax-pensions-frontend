@@ -25,7 +25,7 @@ case class PensionAnnualAllowancesViewModel(
                                             taperedAnnualAllowance: Option[Boolean] = None,
                                             aboveAnnualAllowanceQuestion: Option[Boolean] = None,
                                             aboveAnnualAllowance: Option[BigDecimal] = None,
-                                            pensionProvidePaidAnnualAllowanceQuestion: Option[String] = None,
+                                            pensionProvidePaidAnnualAllowanceQuestion: Option[Boolean] = None,
                                             taxPaidByPensionProvider: Option[BigDecimal] = None,
                                             pensionSchemeTaxReference: Option[Seq[String]] = None)
 

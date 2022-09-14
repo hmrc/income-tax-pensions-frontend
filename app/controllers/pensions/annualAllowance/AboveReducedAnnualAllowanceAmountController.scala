@@ -18,7 +18,8 @@ package controllers.pensions.annualAllowance
 
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.routes.PensionsSummaryController
-import controllers.pensions.annualAllowance.routes.{AboveReducedAnnualAllowanceController, PensionProviderPaidTaxController, ReducedAnnualAllowanceController}
+import controllers.pensions.annualAllowance.routes.{AboveReducedAnnualAllowanceController, ReducedAnnualAllowanceController}
+import controllers.pensions.lifetimeAllowance.routes.PensionProviderPaidTaxController
 import controllers.predicates.AuthorisedAction
 import controllers.predicates.TaxYearAction.taxYearAction
 import forms.{AmountForm, FormUtils}

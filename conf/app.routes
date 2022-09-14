@@ -86,19 +86,11 @@ POST        /:taxYear/annual-allowance/reduced-annual-allowance-type            
 GET         /:taxYear/annual-allowance/above-annual-allowance                               controllers.pensions.annualAllowance.AboveReducedAnnualAllowanceController.show(taxYear: Int)
 POST        /:taxYear/annual-allowance/above-annual-allowance                               controllers.pensions.annualAllowance.AboveReducedAnnualAllowanceController.submit(taxYear: Int)
 
-GET         /:taxYear/annual-allowance/pension-provider-paid-tax                            controllers.pensions.annualAllowance.PensionProviderPaidTaxController.show(taxYear: Int)
-POST        /:taxYear/annual-allowance/pension-provider-paid-tax                            controllers.pensions.annualAllowance.PensionProviderPaidTaxController.submit(taxYear: Int)
-
-GET         /:taxYear/annual-allowance/pension-provider-paid-tax-amount                     controllers.pensions.annualAllowance.TaxPaidByPensionProviderAmountController.show(taxYear: Int)
-POST        /:taxYear/annual-allowance/pension-provider-paid-tax-amount                     controllers.pensions.annualAllowance.TaxPaidByPensionProviderAmountController.submit(taxYear: Int)
-
 GET         /:taxYear/annual-allowance/pension-scheme-tax-reference                         controllers.pensions.annualAllowance.PensionSchemeTaxReferenceController.show(taxYear: Int, pensionSchemeTaxReferenceIndex: Option[Int])
 POST        /:taxYear/annual-allowance/pension-scheme-tax-reference                         controllers.pensions.annualAllowance.PensionSchemeTaxReferenceController.submit(taxYear: Int, pensionSchemeTaxReferenceIndex: Option[Int])
 
 GET         /:taxYear/annual-allowance/pension-scheme-tax-reference-summary                 controllers.pensions.annualAllowance.PstrSummaryController.show(taxYear: Int)
 
-GET         /:taxYear/annual-lifetime-allowance/annual-lifetime-allowance-status            controllers.pensions.lifetimeAllowance.AnnualLifetimeAllowanceGatewayController.show(taxYear: Int)
-POST        /:taxYear/annual-lifetime-allowance/annual-lifetime-allowance-status            controllers.pensions.lifetimeAllowance.AnnualLifetimeAllowanceGatewayController.submit(taxYear: Int)
 
 ###########################     Income from Pension pages     ####################################
 
@@ -140,18 +132,6 @@ POST        /:taxYear/pension-income/pension-start-date                         
 GET         /:taxYear/pension-income/remove-pension-scheme                                  controllers.pensions.incomeFromPensions.RemovePensionSchemeController.show(taxYear: Int, pensionSchemeIndex: Option[Int])
 POST        /:taxYear/pension-income/remove-pension-scheme                                  controllers.pensions.incomeFromPensions.RemovePensionSchemeController.submit(taxYear: Int, pensionSchemeIndex: Option[Int])
 
-GET         /:taxYear/annual-lifetime-allowances/lifetime-allowance-lump-sum                controllers.pensions.lifetimeAllowance.PensionLumpSumController.show(taxYear: Int)
-POST        /:taxYear/annual-lifetime-allowances/lifetime-allowance-lump-sum                controllers.pensions.lifetimeAllowance.PensionLumpSumController.submit(taxYear: Int)
-
-GET         /:taxYear/annual-lifetime-allowances/lifetime-allowance-another-way                controllers.pensions.lifetimeAllowance.LifeTimeAllowanceAnotherWayController.show(taxYear: Int)
-POST        /:taxYear/annual-lifetime-allowances/lifetime-allowance-another-way                controllers.pensions.lifetimeAllowance.LifeTimeAllowanceAnotherWayController.submit(taxYear: Int)
-
-GET         /:taxYear/annual-lifetime-allowances/above-annual-allowance                     controllers.pensions.lifetimeAllowance.AboveAnnualLifeTimeAllowanceController.show(taxYear: Int)
-POST        /:taxYear/annual-lifetime-allowances/above-annual-allowance                     controllers.pensions.lifetimeAllowance.AboveAnnualLifeTimeAllowanceController.submit(taxYear: Int)
-
-GET         /:taxYear/annual-lifetime-allowances/lump-sum-details                           controllers.pensions.lifetimeAllowance.PensionLumpSumDetailsController.show(taxYear: Int)
-POST        /:taxYear/annual-lifetime-allowances/lump-sum-details                           controllers.pensions.lifetimeAllowance.PensionLumpSumDetailsController.submit(taxYear: Int)
-
 GET         /:taxYear/pension-income/uk-pension-income/check-pension-income                 controllers.pensions.incomeFromPensions.UkPensionIncomeCYAController.show(taxYear: Int)
 POST        /:taxYear/pension-income/uk-pension-income/check-pension-income                 controllers.pensions.incomeFromPensions.UkPensionIncomeCYAController.submit(taxYear: Int)
 
@@ -189,6 +169,24 @@ POST        /:taxYear/employment-financed-retirement-benefits-scheme/benefits-fr
 
 
 ###########################     Lifetime Allowance Pages     ####################################
+
+GET         /:taxYear/annual-lifetime-allowances/pension-provider-paid-tax                   controllers.pensions.lifetimeAllowance.PensionProviderPaidTaxController.show(taxYear: Int)
+POST        /:taxYear/annual-lifetime-allowances/pension-provider-paid-tax                   controllers.pensions.lifetimeAllowance.PensionProviderPaidTaxController.submit(taxYear: Int)
+
+GET         /:taxYear/annual-lifetime-allowance/annual-lifetime-allowance-status            controllers.pensions.lifetimeAllowance.AnnualLifetimeAllowanceGatewayController.show(taxYear: Int)
+POST        /:taxYear/annual-lifetime-allowance/annual-lifetime-allowance-status            controllers.pensions.lifetimeAllowance.AnnualLifetimeAllowanceGatewayController.submit(taxYear: Int)
+
+GET         /:taxYear/annual-lifetime-allowances/lifetime-allowance-lump-sum                controllers.pensions.lifetimeAllowance.PensionLumpSumController.show(taxYear: Int)
+POST        /:taxYear/annual-lifetime-allowances/lifetime-allowance-lump-sum                controllers.pensions.lifetimeAllowance.PensionLumpSumController.submit(taxYear: Int)
+
+GET         /:taxYear/annual-lifetime-allowances/lifetime-allowance-another-way             controllers.pensions.lifetimeAllowance.LifeTimeAllowanceAnotherWayController.show(taxYear: Int)
+POST        /:taxYear/annual-lifetime-allowances/lifetime-allowance-another-way             controllers.pensions.lifetimeAllowance.LifeTimeAllowanceAnotherWayController.submit(taxYear: Int)
+
+GET         /:taxYear/annual-lifetime-allowances/above-annual-allowance                     controllers.pensions.lifetimeAllowance.AboveAnnualLifeTimeAllowanceController.show(taxYear: Int)
+POST        /:taxYear/annual-lifetime-allowances/above-annual-allowance                     controllers.pensions.lifetimeAllowance.AboveAnnualLifeTimeAllowanceController.submit(taxYear: Int)
+
+GET         /:taxYear/annual-lifetime-allowances/lump-sum-details                           controllers.pensions.lifetimeAllowance.PensionLumpSumDetailsController.show(taxYear: Int)
+POST        /:taxYear/annual-lifetime-allowances/lump-sum-details                           controllers.pensions.lifetimeAllowance.PensionLumpSumDetailsController.submit(taxYear: Int)
 
 GET         /:taxYear/annual-lifetime-allowances/lifetime-allowance-another-way-details     controllers.pensions.lifetimeAllowance.PensionTakenAnotherWayAmountController.show(taxYear: Int)
 POST        /:taxYear/annual-lifetime-allowances/lifetime-allowance-another-way-details     controllers.pensions.lifetimeAllowance.PensionTakenAnotherWayAmountController.submit(taxYear: Int)
