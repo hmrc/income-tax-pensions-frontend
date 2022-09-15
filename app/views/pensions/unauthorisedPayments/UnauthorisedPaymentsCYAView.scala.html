@@ -14,103 +14,22 @@
  * limitations under the License.
  *@
 
-@import views.html.templates.Layout
-@import views.html.templates.helpers.SummaryList
-@import views.html.templates.helpers.Heading
-@import views.html.templates.helpers.Button
 @import models.pension.charges.UnauthorisedPaymentsViewModel
-@import utils.ViewUtils.bigDecimalCurrency
-@import utils.ViewUtils.summaryListRow
-
+@import views.html.templates.Layout
+@import views.html.templates.helpers.{Button, Heading, SummaryList}
+@import controllers.pensions.unauthorisedPayments.UnauthorisedPaymentsCYAViewHelper
 @this(layout: Layout, summaryList: SummaryList, heading: Heading, button: Button, csrfForm: FormWithCSRF)
 @(taxYear: Int, cya: UnauthorisedPaymentsViewModel)(implicit messages: Messages, appConfig: AppConfig, request: AuthorisationRequest[_])
 
-@headingForUse = @{messages(s"unauthorisedPayments.cya.heading.${if(request.user.isAgent) "agent" else "individual"}")}
-
-@agentOrIndividual = @{
-    if(request.user.isAgent) "agent" else "individual"
-}
-
-@rowWithContent(textKey: String, value: Any, condition: Boolean = true, changeLink: Call = Call("GET", "#"), args: Seq[String] = Seq()) = @{
-    if(condition) {
-        val realValue: String = value match {
-            case boolean: Boolean => if(boolean) messages("common.yes") else messages("common.no")
-            case number: BigDecimal => s"${bigDecimalCurrency(number.toString)}"
-            case other => s"$other"
-        }
-
-        val constructedHiddenKey = textKey + ".hidden"
-
-        Some(summaryListRow(
-            HtmlContent(messages(textKey, args: _*)),
-            HtmlContent(realValue),
-            actions = Seq((changeLink, messages("common.change"), Some(messages(constructedHiddenKey))))
-        ))
-    } else {
-        None
-    }
-}
-@amountRow(key: String, value: Option[BigDecimal], condition: Boolean, changeLink: Call = Call("GET", "#"), args: Seq[String] = Seq()) = @{
-    if(condition) value.flatMap(amount => rowWithContent(key, amount, args = args, changeLink = changeLink)) else None
-}
-
-@pensionSchemeTaxReferences = @{
-    (Nil :+  rowWithContent("unauthorisedPayments.cya.pensionSchemeTaxReferences", cya.pensionSchemeTaxReference.getOrElse(Seq()).mkString(", "), appConfig.tailoringEnabled, changeLink = controllers.pensions.unauthorisedPayments.routes.UnauthorisedPensionSchemeTaxReferenceController.show(taxYear)))
-}
-
-@unauthorisedPayments = @{
-    rowWithContent("unauthorisedPayments.common.title", "Yes", appConfig.tailoringEnabled, changeLink = controllers.pensions.unauthorisedPayments.routes.UnAuthorisedPaymentsController.show(taxYear))
-}
-
-@amountSurcharged = @{
-    rowWithContent("unauthorisedPayments.cya.amountSurcharged", if (cya.surchargeAmount.getOrElse(0) == 0) "" else cya.surchargeAmount.getOrElse(false), appConfig.tailoringEnabled, changeLink = controllers.pensions.unauthorisedPayments.routes.SurchargeAmountController.show(taxYear))
-}
-
-@nonUkTaxAmountSurcharged = @{
-    rowWithContent("unauthorisedPayments.cya.nonUkTaxAmountSurcharged", if (cya.surchargeTaxAmountQuestion == None) "" else if (cya.surchargeTaxAmountQuestion.get == false) "£0" else if (cya.surchargeTaxAmount.getOrElse(0) == 0) "" else cya.surchargeTaxAmount.getOrElse(0), appConfig.tailoringEnabled, changeLink = controllers.pensions.unauthorisedPayments.routes.DidYouPayNonUkTaxController.show(taxYear))
-}
-
-@amountNotSurcharged = @{
-    rowWithContent("unauthorisedPayments.cya.amountNotSurcharged", if (cya.noSurchargeAmount.getOrElse(0) == 0) "" else cya.noSurchargeAmount.getOrElse(false), appConfig.tailoringEnabled, changeLink = controllers.pensions.unauthorisedPayments.routes.NoSurchargeAmountController.show(taxYear))
-}
-
-@nonUkTaxAmountNotSurcharged = @{
-    rowWithContent("unauthorisedPayments.cya.nonUkTaxAmountNotSurcharged", if (cya.noSurchargeTaxAmountQuestion == None) "" else if (cya.noSurchargeTaxAmountQuestion.get == false) "£0" else if (cya.noSurchargeTaxAmount.getOrElse(0) == 0) "" else cya.noSurchargeTaxAmount.getOrElse(0), appConfig.tailoringEnabled, changeLink = controllers.pensions.unauthorisedPayments.routes.NonUkTaxOnAmountNotSurchargeController.show(taxYear))
-}
-
-@ukPensionSchemes = @{
-rowWithContent("unauthorisedPayments.common.ukPensionSchemes", cya.ukPensionSchemesQuestion.getOrElse(false), appConfig.tailoringEnabled, changeLink = controllers.pensions.unauthorisedPayments.routes.WhereAnyOfTheUnauthorisedPaymentsController.show(taxYear))
-}
-
-@summaryRows = @{
-    (Nil :+ unauthorisedPayments :+ amountSurcharged :+ nonUkTaxAmountSurcharged :+ amountNotSurcharged :+ nonUkTaxAmountNotSurcharged :+ ukPensionSchemes)
-}
-
-@surchargeQuestionTrueRows = @{
-    (Nil :+ unauthorisedPayments :+ amountSurcharged :+ nonUkTaxAmountSurcharged :+ ukPensionSchemes)
-}
-
-@noSurchargeQuestionTrueRows = @{
-     (Nil :+ unauthorisedPayments :+ amountNotSurcharged :+ nonUkTaxAmountNotSurcharged :+ ukPensionSchemes)
-}
-
-@unAuthorisedPaymentOnlyRow = @{
-     (Nil :+ rowWithContent("unauthorisedPayments.common.title", "No", appConfig.tailoringEnabled, changeLink = controllers.pensions.unauthorisedPayments.routes.UnAuthorisedPaymentsController.show(taxYear)))
+@headingForUse = @{
+    messages(s"unauthorisedPayments.cya.heading.${if(request.user.isAgent) "agent" else "individual"}")
 }
 
 @layout(pageTitle = headingForUse, taxYear = Some(taxYear)) {
 
     @heading(headingForUse, Some(messages("common.unauthorisedPaymentsFromPension.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-5")
 
-    @summaryList((cya.surchargeQuestion.getOrElse(false), cya.noSurchargeQuestion.getOrElse(false), cya.ukPensionSchemesQuestion.getOrElse(false)) match {
-             case (true, true, false) => summaryRows.flatten
-             case (true, true, true) => (summaryRows ++ pensionSchemeTaxReferences).flatten
-             case (true, false, false) => surchargeQuestionTrueRows.flatten
-             case (true, false, true) => (surchargeQuestionTrueRows ++ pensionSchemeTaxReferences).flatten
-             case (false, true, false) => noSurchargeQuestionTrueRows.flatten
-             case (false, true, true) => (noSurchargeQuestionTrueRows ++ pensionSchemeTaxReferences).flatten
-             case (_, _, _) => unAuthorisedPaymentOnlyRow.flatten
-             })
+    @summaryList(UnauthorisedPaymentsCYAViewHelper.summaryListRows(cya, taxYear)(messages))
 
     @csrfForm(controllers.pensions.unauthorisedPayments.routes.UnauthorisedPaymentsCYAController.submit(taxYear)) {
         @button("common.saveAndContinue")

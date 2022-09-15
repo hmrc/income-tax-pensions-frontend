@@ -51,7 +51,7 @@ class UnAuthorisedPaymentsController @Inject()(implicit val mcc: MessagesControl
         case Some(data) =>
           val surchargeQuestion: Option[Boolean] = data.pensions.unauthorisedPayments.surchargeQuestion
           val noSurchargeQuestion: Option[Boolean] = data.pensions.unauthorisedPayments.noSurchargeQuestion
-          val noQuestion: Option[Boolean] = data.pensions.unauthorisedPayments.noUnauthorisedPaymentQuestion
+          val noQuestion: Option[Boolean] = data.pensions.unauthorisedPayments.unauthorisedPaymentQuestion.map(!_)
           val form = UnAuthorisedPaymentsForm.unAuthorisedPaymentsTypeForm()
             Future.successful(Ok(view(form, taxYear, surchargeQuestion, noSurchargeQuestion, noQuestion)))
         case None =>

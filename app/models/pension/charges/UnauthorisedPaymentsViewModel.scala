@@ -36,7 +36,7 @@ case class UnauthorisedPaymentsViewModel(surchargeQuestion: Option[Boolean] = No
                                          pensionSchemeTaxReference: Option[Seq[String]] = None) {
 
   def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedUnauthorisedPaymentsViewModel =
-      EncryptedUnauthorisedPaymentsViewModel(
+    EncryptedUnauthorisedPaymentsViewModel(
       surchargeQuestion = surchargeQuestion.map(_.encrypted),
       noSurchargeQuestion = noSurchargeQuestion.map(_.encrypted),
       surchargeAmount = surchargeAmount.map(_.encrypted),
@@ -49,10 +49,13 @@ case class UnauthorisedPaymentsViewModel(surchargeQuestion: Option[Boolean] = No
       pensionSchemeTaxReference = pensionSchemeTaxReference.map(_.map(_.encrypted))
     )
 
-  def noUnauthorisedPaymentQuestion: Option[Boolean] = {
+  def unauthorisedPaymentQuestion: Option[Boolean] = {
     (noSurchargeQuestion, surchargeQuestion) match {
-      case (Some(false), Some(false)) => Some(true)
-      case _ => Some(false)
+      case (None, None) => None
+      case (Some(false), Some(false)) => Some(false)
+      case (Some(false), None) => Some(false)
+      case (None, Some(false)) => Some(false)
+      case _ => Some(true)
     }
   }
 
