@@ -19,6 +19,7 @@ package utils
 import builders.EmploymentPensionsBuilder.anEmploymentPensions
 import builders.IncomeFromPensionsViewModelBuilder.anIncomeFromPensionsViewModel
 import builders.PaymentsIntoOverseasPensionsViewModelBuilder.aPaymentsIntoOverseasPensionsViewModel
+import builders.PensionIncomeViewModelBuilder.aPensionIncome
 import builders.PensionLifetimeAllowanceViewModelBuilder.aPensionLifetimeAllowanceViewModel
 import builders.UnauthorisedPaymentsViewModelBuilder.anUnauthorisedPaymentsViewModel
 import models.mongo.{PensionsCYAModel, PensionsUserData}
@@ -226,7 +227,8 @@ object PensionDataStubs {
         )),
       )))
     ),
-    employmentPensions = Some(anEmploymentPensions)
+    employmentPensions = Some(anEmploymentPensions),
+    pensionIncome = Some(aPensionIncome)
   )
 
 }

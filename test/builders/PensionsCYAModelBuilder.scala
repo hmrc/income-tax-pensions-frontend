@@ -53,7 +53,7 @@ object PensionsCYAModelBuilder {
     pensionLifetimeAllowances = aPensionLifetimeAllowancesEmptyViewModel,
     incomeFromPensions = anIncomeFromPensionEmptyViewModel.copy(uKPensionIncomesQuestion = Some(false)),
     unauthorisedPayments = anUnauthorisedPaymentsEmptyViewModel,
-    paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel
+    paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsEmptyViewModel
   )
 
   def paymentsIntoPensionOnlyCYAModel(paymentsIntoPensionViewModel: PaymentsIntoPensionViewModel): PensionsCYAModel = {

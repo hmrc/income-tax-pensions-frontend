@@ -20,7 +20,7 @@ import builders.AllPensionsDataBuilder.anAllPensionsData
 import builders.IncomeTaxUserDataBuilder.anIncomeTaxUserData
 import builders.PaymentsIntoOverseasPensionsViewModelBuilder.aPaymentsIntoOverseasPensionsViewModel
 import builders.PensionsCYAModelBuilder.aPensionsCYAModel
-import builders.PensionsUserDataBuilder.aPensionsUserData
+import builders.PensionsUserDataBuilder.{aPensionsUserData, anPensionsUserDataEmptyCya}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterEach
@@ -130,7 +130,7 @@ class OverseasPensionsSummaryControllerISpec extends CommonUtils with ViewHelper
       val specific = userScenario.specificExpectedResults.get
       s"language is ${welshTest(userScenario.isWelsh)} and request is from an ${agentTest(userScenario.isAgent)}" should {
         "render the page where data does not exist and everything is 'Not Updated'" which {
-          implicit lazy val result: WSResponse = showPage(userScenario, aPensionsUserData, anIncomeTaxUserData)
+          implicit lazy val result: WSResponse = showPage(userScenario, anPensionsUserDataEmptyCya, anIncomeTaxUserData)
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 

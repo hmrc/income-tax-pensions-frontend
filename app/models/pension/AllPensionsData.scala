@@ -17,16 +17,18 @@
 package models.pension
 
 import models.mongo.PensionsCYAModel
-import models.pension.charges.{PaymentsIntoOverseasPensionsViewModel, PensionAnnualAllowancesViewModel, PensionCharges, PensionLifetimeAllowancesViewModel, UnauthorisedPaymentsViewModel}
+import models.pension.charges.{PaymentsIntoOverseasPensionsViewModel, PensionAnnualAllowancesViewModel, PensionCharges, PensionLifetimeAllowancesViewModel, TaxReliefQuestion, UnauthorisedPaymentsViewModel}
 import models.pension.employmentPensions.EmploymentPensions
 import models.pension.reliefs.{PaymentsIntoPensionViewModel, PensionReliefs}
 import models.pension.statebenefits.{IncomeFromPensionsViewModel, StateBenefit, StateBenefitViewModel, StateBenefitsModel, UkPensionIncomeViewModel}
+import models.pension.income.{OverseasPensionContribution, PensionIncome}
 import play.api.libs.json.{Json, OFormat}
 
 case class AllPensionsData(pensionReliefs: Option[PensionReliefs],
                            pensionCharges: Option[PensionCharges],
                            stateBenefits: Option[StateBenefitsModel],
-                           employmentPensions: Option[EmploymentPensions]
+                           employmentPensions: Option[EmploymentPensions],
+                           pensionIncome: Option[PensionIncome]
                           )
 
 object AllPensionsData {
@@ -106,8 +108,32 @@ object AllPensionsData {
         pensionSchemeTaxReference = prior.pensionCharges.flatMap(_.pensionSchemeUnauthorisedPayments.map(_.pensionSchemeTaxReference))
       ),
 
-      //TODO Implement PaymentsIntoOverseas Endpoint
-      paymentsIntoOverseasPensions = PaymentsIntoOverseasPensionsViewModel())
+    paymentsIntoOverseasPensions = PaymentsIntoOverseasPensionsViewModel(
+      paymentsIntoOverseasPensionsQuestions = prior.pensionReliefs.map(_.pensionReliefs.overseasPensionSchemeContributions.isDefined),
+      paymentsIntoOverseasPensionsAmount = prior.pensionReliefs.flatMap(_.pensionReliefs.overseasPensionSchemeContributions),
+      employerPaymentsQuestion = prior.pensionIncome.map(_.overseasPensionContribution.headOption.flatMap(_.customerReference).isDefined),
+      taxPaidOnEmployerPaymentsQuestion = prior.pensionIncome.map(_.overseasPensionContribution.headOption.flatMap(_.customerReference).isEmpty),
+      customerReferenceNumberQuestion = prior.pensionIncome.flatMap(_.overseasPensionContribution.headOption.flatMap(_.customerReference)),
+      employerPaymentsAmount = prior.pensionIncome.flatMap(_.overseasPensionContribution.headOption.map(_.exemptEmployersPensionContribs)),
+      taxReliefQuestion = prior.pensionIncome.flatMap(_.overseasPensionContribution.headOption.map(getTaxReliefQuestion)),
+      qualifyingOverseasPensionSchemeReferenceNumber = prior.pensionIncome.flatMap(_.overseasPensionContribution.headOption.flatMap(_.migrantMemReliefQopsRefNo)),
+      doubleTaxationCountryCode = prior.pensionIncome.flatMap(_.overseasPensionContribution.headOption.flatMap(_.dblTaxationCountry)),
+      doubleTaxationCountryArticle = prior.pensionIncome.flatMap(_.overseasPensionContribution.headOption.flatMap(_.dblTaxationArticle)),
+      doubleTaxationCountryTreaty = prior.pensionIncome.flatMap(_.overseasPensionContribution.headOption.flatMap(_.dblTaxationTreaty)),
+      doubleTaxationReliefAmount = prior.pensionIncome.flatMap(_.overseasPensionContribution.headOption.flatMap(_.dblTaxationRelief)),
+      sf74Reference = prior.pensionIncome.flatMap(_.overseasPensionContribution.headOption.flatMap(_.sf74Reference))
+    )
+    )
+  }
+
+  private def getTaxReliefQuestion(overseasPensionContribution: OverseasPensionContribution): String = {
+    if (overseasPensionContribution.sf74Reference.isDefined) {
+      TaxReliefQuestion.TransitionalCorrespondingRelief
+    } else if (overseasPensionContribution.dblTaxationCountry.isDefined) {
+      TaxReliefQuestion.DoubleTaxationRelief
+    } else if (overseasPensionContribution.migrantMemReliefQopsRefNo.isDefined) {
+      TaxReliefQuestion.MigrantMemberRelief
+    } else TaxReliefQuestion.NoTaxRelief
   }
 
   private def getUnauthorisedPaymentsQuestion(prior: AllPensionsData): Option[Boolean] = {

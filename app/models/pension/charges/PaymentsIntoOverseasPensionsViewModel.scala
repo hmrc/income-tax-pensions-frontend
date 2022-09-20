@@ -24,6 +24,12 @@ import utils.EncryptableSyntax.EncryptableOps
 import utils.EncryptorInstances.{bigDecimalEncryptor, booleanEncryptor, stringEncryptor}
 import utils.{EncryptedValue, SecureGCMCipher}
 
+object TaxReliefQuestion{
+  val NoTaxRelief = "No tax relief"
+  val TransitionalCorrespondingRelief = "Transitional corresponding relief"
+  val DoubleTaxationRelief = "Double taxation relief"
+  val MigrantMemberRelief = "Migrant member relief"
+}
 
 case class PaymentsIntoOverseasPensionsViewModel(paymentsIntoOverseasPensionsQuestions: Option[Boolean] = None,
                                                  paymentsIntoOverseasPensionsAmount: Option[BigDecimal] = None,
