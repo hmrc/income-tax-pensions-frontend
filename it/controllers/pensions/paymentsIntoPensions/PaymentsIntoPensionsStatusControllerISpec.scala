@@ -42,11 +42,9 @@ class PaymentsIntoPensionsStatusControllerISpec extends IntegrationTest
 
   val csrfContent: (String, String) = "Csrf-Token" -> "nocheck"
 
-  protected val configWithTailoringDisabled: Map[String, String] = config ++ Map("feature-switch.tailoringEnabled" -> "false")
-
-  lazy val appWithTailoringDisabled: Application = new GuiceApplicationBuilder()
+  lazy val testApp: Application = new GuiceApplicationBuilder()
     .in(Environment.simple(mode = Mode.Dev))
-    .configure(configWithTailoringDisabled)
+    .configure(config)
     .build()
 
   override protected def beforeEach(): Unit = {
@@ -59,17 +57,8 @@ class PaymentsIntoPensionsStatusControllerISpec extends IntegrationTest
   }
 
   ".show" should {
-    "redirect to income tax submission overview when tailoring is disabled" in {
-      val request = FakeRequest("GET", url(taxYearEOY)).withHeaders(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
-      lazy val result: Future[Result] = {
-        authoriseIndividual(true)
-        route(appWithTailoringDisabled, request, "{}").get
-      }
-      status(result) shouldBe SEE_OTHER
-      await(result).header.headers("Location") shouldBe appConfig.incomeTaxSubmissionOverviewUrl(taxYearEOY)
-    }
 
-    "return OK when tailoring is enabled" in {
+    "return OK when page is accessed " in {
       val request = FakeRequest("GET", url(taxYearEOY)).withHeaders(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
       lazy val result: Future[Result] = {
         authoriseIndividual(true)
@@ -81,31 +70,8 @@ class PaymentsIntoPensionsStatusControllerISpec extends IntegrationTest
   }
 
   ".submit" when {
-    "redirect to income tax submission overview when tailoring is disabled" which {
-      val request = FakeRequest("POST", url(taxYearEOY)).withHeaders(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList), csrfContent)
 
-      lazy val result: Future[Result] = {
-        authoriseIndividual(true)
-        dropPensionsDB()
-        emptyUserDataStub(nino, taxYearEOY)
-        insertCyaData(
-          PensionsUserData("", nino, mtditid, taxYear = taxYearEOY, isPriorSubmission = false,
-            pensions = PensionsCYAModel.emptyModels.copy(paymentsIntoPension = PaymentsIntoPensionViewModel(rasPensionPaymentQuestion = Some(true)))),
-          aUserRequest
-        )
-        route(appWithTailoringDisabled, request, "{}").get
-      }
-
-      "has a status of SEE_OTHER(303)" in {
-      status(result) shouldBe SEE_OTHER
-    }
-
-    "has the correct redirect location" in {
-      await(result).header.headers("Location") shouldBe appConfig.incomeTaxSubmissionOverviewUrl(taxYearEOY)
-    }
-    }
-
-    "redirect to the next step in the journey when tailoring is enabled and 'Yes' is selected" which {
+    "redirect to the next step in the journey when 'Yes' is selected" which {
       val request = FakeRequest("POST", url(taxYearEOY)).withHeaders(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList), csrfContent)
         .withFormUrlEncodedBody(YesNoForm.yesNo -> "true")
 
@@ -130,7 +96,7 @@ class PaymentsIntoPensionsStatusControllerISpec extends IntegrationTest
       }
     }
 
-    "redirect to income tax submission overview when tailoring is enabled and 'No' is selected with incomplete cya data & no prior data" should {
+    "redirect to income tax submission overview when 'No' is selected with incomplete cya data & no prior data" should {
       val request = FakeRequest("POST", url(taxYearEOY)).withHeaders(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList), csrfContent)
         .withFormUrlEncodedBody(YesNoForm.yesNo -> "false")
 
@@ -155,7 +121,7 @@ class PaymentsIntoPensionsStatusControllerISpec extends IntegrationTest
       }
     }
 
-    "redirect to pensions summary when tailoring is enabled and 'No' is selected with incomplete cya data & no prior data" which {
+    "redirect to pensions summary when 'No' is selected with incomplete cya data & no prior data" which {
 
       val request = FakeRequest("POST", url(taxYearEOY)).withHeaders(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList), csrfContent)
         .withFormUrlEncodedBody(YesNoForm.yesNo -> "false")

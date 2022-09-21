@@ -18,7 +18,6 @@ package controllers.pensions.employmentFinancedRetirementScheme
 
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.routes.PensionsSummaryController
-import controllers.predicates.TailoringEnabledFilterAction.tailoringEnabledFilterAction
 import controllers.predicates.AuthorisedAction
 import controllers.predicates.TaxYearAction.taxYearAction
 import forms.YesNoForm
@@ -44,14 +43,14 @@ class BenefitsFromSchemeController @Inject()(authAction: AuthorisedAction,
     missingInputError = s"employerFinancedRetirementScheme.benefitsFromScheme.error.${if (isAgent) "agent" else "individual"}"
   )
 
-  def show(taxYear: Int): Action[AnyContent] = (authAction andThen tailoringEnabledFilterAction(taxYear) andThen taxYearAction(taxYear)).async {
+  def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async {
     implicit request =>
       Future.successful(
         Ok(view(taxYear, benefitsFromSchemeForm(request.user.isAgent)))
       )
   }
 
-  def submit(taxYear: Int): Action[AnyContent] = (authAction andThen tailoringEnabledFilterAction(taxYear) andThen taxYearAction(taxYear)).async { implicit request =>
+  def submit(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     benefitsFromSchemeForm(request.user.isAgent).bindFromRequest().fold(
       formWithErrors => Future.successful(BadRequest(view(taxYear, formWithErrors))),
       yesNoAnswer =>

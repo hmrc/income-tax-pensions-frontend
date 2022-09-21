@@ -18,7 +18,6 @@ package controllers.pensions.paymentsIntoPension
 
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.routes.PensionsSummaryController
-import controllers.predicates.TailoringEnabledFilterAction.tailoringEnabledFilterAction
 import controllers.predicates.AuthorisedAction
 import controllers.predicates.TaxYearAction.taxYearAction
 import forms.PaymentsIntoOverseasPensionsFormProvider
@@ -40,7 +39,7 @@ class PaymentsIntoOverseasPensionsGatewayController @Inject()(authAction: Author
                                                    (implicit cc: MessagesControllerComponents, appConfig: AppConfig, ec: ExecutionContext)
   extends FrontendController(cc) with I18nSupport with SessionHelper {
 
-  def show(taxYear: Int): Action[AnyContent] = (authAction andThen tailoringEnabledFilterAction(taxYear) andThen taxYearAction(taxYear)).async {
+  def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async {
     implicit request => {
       Future.successful(
         Ok(view(taxYear, form.paymentsIntoOverseasPensionsForm(request.user.isAgent)))
@@ -48,7 +47,7 @@ class PaymentsIntoOverseasPensionsGatewayController @Inject()(authAction: Author
     }
   }
 
-  def submit(taxYear: Int): Action[AnyContent] = (authAction andThen tailoringEnabledFilterAction(taxYear) andThen taxYearAction(taxYear)).async { implicit request =>
+  def submit(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     form.paymentsIntoOverseasPensionsForm(request.user.isAgent).bindFromRequest().fold(
       formWithErrors => Future.successful(BadRequest(view(taxYear, formWithErrors))),
       yesNoAnswer =>
