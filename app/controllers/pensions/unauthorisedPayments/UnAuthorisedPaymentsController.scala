@@ -73,7 +73,7 @@ class UnAuthorisedPaymentsController @Inject()(implicit val mcc: MessagesControl
                 val unauthorisedPaymentsViewModel = pensionsCYAModel.unauthorisedPayments
 
                 val updatedCyaModel: PensionsCYAModel = {
-                  pensionsCYAModel.copy(unauthorisedPayments = unauthorisedPaymentsViewModel.copy(
+                  pensionsCYAModel.copy(unauthorisedPayments = unauthorisedPaymentsViewModel.copyWithQuestionsApplied(
                     surchargeQuestion = Some(unauthorisedPaymentsSelection.containsYesSurcharge),
                     noSurchargeQuestion = Some(unauthorisedPaymentsSelection.containsYesNotSurcharge)
                   ))
