@@ -245,6 +245,43 @@ class PaymentIntoPensionSchemeControllerISpec extends IntegrationTest with ViewH
           welshToggleCheck(user.isWelsh)
         }
 
+        "render payments into overseas pension schemes with 'no' pre-filled" which {
+
+          lazy val result: WSResponse = {
+            dropPensionsDB()
+            val viewModel = aPaymentsIntoOverseasPensionsViewModel.copy(paymentsIntoOverseasPensionsAmount = None,
+              paymentsIntoOverseasPensionsQuestions = Some(false))
+            insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(
+              paymentsIntoOverseasPensions = viewModel)), aUserRequest)
+
+            authoriseAgentOrIndividual(user.isAgent)
+            urlGet(fullUrl(paymentsIntoPensionSchemeUrl(taxYearEOY)), user.isWelsh, follow = false,
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+          }
+
+          "has an OK status" in {
+            result.status shouldBe OK
+          }
+
+          implicit def document: () => Document = () => Jsoup.parse(result.body)
+
+          titleCheck(expectedTitle)
+          h1Check(expectedHeading)
+          captionCheck(expectedCaption(taxYearEOY), captionSelector)
+          radioButtonCheck(yesText, 1, checked = Some(false))
+          radioButtonCheck(noText, 2, checked = Some(true))
+          buttonCheck(buttonText, continueButtonSelector)
+          textOnPageCheck(user.specificExpectedResults.get.paragraphOneText, paragraphOneSelector(2))
+          textOnPageCheck(paragraphTwoText, paragraphTwoTextSelector(3))
+          linkCheck(bulletPointOneLinkText, expectedLinkSelector, externalHref)
+          textOnPageCheck(bulletPointTwoText, bulletTwoTextSelector)
+          textOnPageCheck(totalAmountPounds, amountText)
+          textOnPageCheck(user.specificExpectedResults.get.HintText, amountHintSelector)
+          textOnPageCheck(poundPrefixText, poundPrefixSelector)
+          formPostLinkCheck(paymentsIntoPensionSchemeUrl(taxYearEOY), formSelector)
+          welshToggleCheck(user.isWelsh)
+        }
+
       }
 
     }

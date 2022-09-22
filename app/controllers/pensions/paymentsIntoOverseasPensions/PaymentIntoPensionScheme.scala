@@ -55,10 +55,12 @@ class PaymentIntoPensionScheme @Inject()(implicit val cc: MessagesControllerComp
       case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
       case Right(optPensionUserData) => optPensionUserData match {
         case Some(data) =>
-          data.pensions.paymentsIntoOverseasPensions.paymentsIntoOverseasPensionsAmount match {
-            case Some(value) =>
-              Future.successful(Ok(paymentIntoPensionSchemeView(form(request.user).fill((true, Some(value))), taxYear)))
-
+          data.pensions.paymentsIntoOverseasPensions.paymentsIntoOverseasPensionsQuestions match {
+            case Some(true) =>
+              val amount = data.pensions.paymentsIntoOverseasPensions.paymentsIntoOverseasPensionsAmount
+              Future.successful(Ok(paymentIntoPensionSchemeView(form(request.user).fill((true, amount)), taxYear)))
+            case Some(false) =>
+              Future.successful(Ok(paymentIntoPensionSchemeView(form(request.user).fill((false, None)), taxYear)))
             case None =>
               Future.successful(Ok(paymentIntoPensionSchemeView(form(request.user), taxYear)))
           }
