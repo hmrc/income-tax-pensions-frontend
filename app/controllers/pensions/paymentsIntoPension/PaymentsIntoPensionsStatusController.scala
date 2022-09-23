@@ -17,7 +17,6 @@
 package controllers.pensions.paymentsIntoPension
 
 import config.{AppConfig, ErrorHandler}
-import controllers.predicates.TailoringEnabledFilterAction.tailoringEnabledFilterAction
 import controllers.predicates.AuthorisedAction
 import controllers.predicates.TaxYearAction.taxYearAction
 import models.{AuthorisationRequest, User}
@@ -43,16 +42,15 @@ class PaymentsIntoPensionsStatusController @Inject()(authAction: AuthorisedActio
                                                 (implicit cc: MessagesControllerComponents, appConfig: AppConfig, ec: ExecutionContext)
   extends FrontendController(cc) with I18nSupport with SessionHelper {
 
-  def show(taxYear: Int): Action[AnyContent] = (authAction andThen tailoringEnabledFilterAction(taxYear) andThen taxYearAction(taxYear)).async {
+  def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async {
     implicit request =>
       Future.successful(
         Ok(view(taxYear, formProvider.paymentsIntoPensionsStatusForm(request.user.isAgent)))
       )
   }
 
-  def submit(taxYear: Int): Action[AnyContent] = (authAction andThen tailoringEnabledFilterAction(taxYear) andThen taxYearAction(taxYear)).async
+  def submit(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async
   { implicit request =>
-    if (appConfig.paymentsIntoPensionsTailoringEnabled) {
 
       formProvider.paymentsIntoPensionsStatusForm(request.user.isAgent).bindFromRequest().fold(
         formWithErrors => Future.successful(BadRequest(view(taxYear, formWithErrors))),
@@ -73,7 +71,7 @@ class PaymentsIntoPensionsStatusController @Inject()(authAction: AuthorisedActio
                 Left(BadRequest)
               } {
                 if (pensionsCya.paymentsIntoPension.isFinished) {
-                  if (!appConfig.paymentsIntoPensionsTailoringEnabled || (appConfig.paymentsIntoPensionsTailoringEnabled && sessionData.isEmpty)) {
+                  if (sessionData.isEmpty) {
                     Right(Redirect(controllers.pensions.paymentsIntoPension.routes.PaymentsIntoPensionsCYAController.show(taxYear)))
                   } else {
 
@@ -98,9 +96,6 @@ class PaymentsIntoPensionsStatusController @Inject()(authAction: AuthorisedActio
               }(ec)
           }
       )
-    } else {
-      Future.successful(Redirect(appConfig.incomeTaxSubmissionOverviewUrl(taxYear)))
-    }
   }
 
   private def updateModelToZero(cyaData: PaymentsIntoPensionViewModel): PaymentsIntoPensionViewModel = {

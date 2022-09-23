@@ -81,7 +81,7 @@ class PaymentsIntoPensionsCYAController @Inject()(authAction: AuthorisedAction,
         cya.fold(
           Future.successful(Redirect(appConfig.incomeTaxSubmissionOverviewUrl(taxYear)))
         ) { model =>
-          if (appConfig.paymentsIntoPensionsTailoringEnabled && model.pensions.paymentsIntoPension.gateway.contains(false)) {
+          if (model.pensions.paymentsIntoPension.gateway.contains(false)) {
             excludeJourneyService.excludeJourney("pensions", taxYear, request.user.nino)(request.user, hc)
           }.flatMap {
             case Right(_) => performSubmission(taxYear, cya, prior)(request.user, hc, request)

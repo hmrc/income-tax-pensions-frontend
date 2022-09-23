@@ -22,7 +22,7 @@ import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 class MockAppConfig extends MockFactory {
 
-  def config(encrypt: Boolean = true, enableTailoring: Boolean = true, enablePaymentIntoPensionTailoring: Boolean = true): AppConfig = new AppConfig(mock[ServicesConfig]) {
+  def config(encrypt: Boolean = true): AppConfig = new AppConfig(mock[ServicesConfig]) {
     override lazy val signInContinueUrl: String = "/continue"
     override lazy val signInUrl: String = "/signIn"
 
@@ -46,11 +46,6 @@ class MockAppConfig extends MockFactory {
     override lazy val taxYearErrorFeature: Boolean = true
 
     override lazy val welshToggleEnabled: Boolean = true
-
-    override lazy val tailoringEnabled: Boolean = enableTailoring
-
-    override lazy val paymentsIntoPensionsTailoringEnabled: Boolean = enablePaymentIntoPensionTailoring
-
 
     override def viewAndChangeEnterUtrUrl: String = "/report-quarterly/income-and-expenses/view/agents/client-utr"
 

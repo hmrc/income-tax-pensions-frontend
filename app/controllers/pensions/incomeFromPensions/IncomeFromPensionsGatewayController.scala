@@ -19,7 +19,6 @@ package controllers.pensions.incomeFromPensions
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.routes.PensionsSummaryController
 import controllers.predicates.AuthorisedAction
-import controllers.predicates.TailoringEnabledFilterAction.tailoringEnabledFilterAction
 import controllers.predicates.TaxYearAction.taxYearAction
 import forms.{IncomeFromPensionFormProvider, YesNoForm}
 import play.api.data.Form
@@ -41,14 +40,14 @@ class IncomeFromPensionsGatewayController @Inject()(authAction: AuthorisedAction
                                                    (implicit cc: MessagesControllerComponents, appConfig: AppConfig, ec: ExecutionContext)
   extends FrontendController(cc) with I18nSupport with SessionHelper {
 
-  def show(taxYear: Int): Action[AnyContent] = (authAction andThen tailoringEnabledFilterAction(taxYear) andThen taxYearAction(taxYear)).async {
+  def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async {
     implicit request =>
       Future.successful(
         Ok(view(taxYear, form.incomeFromPensionsGatewayForm(request.user.isAgent)))
       )
   }
 
-  def submit(taxYear: Int): Action[AnyContent] = (authAction andThen tailoringEnabledFilterAction(taxYear) andThen taxYearAction(taxYear)).async { implicit request =>
+  def submit(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     form.incomeFromPensionsGatewayForm(request.user.isAgent).bindFromRequest().fold(
       formWithErrors => Future.successful(BadRequest(view(taxYear, formWithErrors))),
       yesNoAnswer =>

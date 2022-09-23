@@ -38,11 +38,9 @@ class PaymentsIntoOverseasPensionsControllerISpec extends IntegrationTest
 
   val csrfContent: (String, String) = "Csrf-Token" -> "nocheck"
 
-  protected val configWithTailoringDisabled: Map[String, String] = config ++ Map("feature-switch.tailoringEnabled" -> "false")
-
-  lazy val appWithTailoringDisabled: Application = new GuiceApplicationBuilder()
+  lazy val testApp: Application = new GuiceApplicationBuilder()
     .in(Environment.simple(mode = Mode.Dev))
-    .configure(configWithTailoringDisabled)
+    .configure(config)
     .build()
 
   override protected def beforeEach(): Unit = {
@@ -55,17 +53,8 @@ class PaymentsIntoOverseasPensionsControllerISpec extends IntegrationTest
   }
 
   ".show" should {
-    "redirect to income tax submission overview when tailoring is disabled" in {
-      val request = FakeRequest("GET", url(taxYearEOY)).withHeaders(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
-      lazy val result: Future[Result] = {
-        authoriseIndividual(true)
-        route(appWithTailoringDisabled, request, "{}").get
-      }
-      status(result) shouldBe SEE_OTHER
-      await(result).header.headers("Location") shouldBe appConfig.incomeTaxSubmissionOverviewUrl(taxYearEOY)
-    }
 
-    "return OK when tailoring is enabled" in {
+    "return OK when page is accessed " in {
       val request = FakeRequest("GET", url(taxYearEOY)).withHeaders(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
       lazy val result: Future[Result] = {
         authoriseIndividual(true)
@@ -77,19 +66,8 @@ class PaymentsIntoOverseasPensionsControllerISpec extends IntegrationTest
   }
 
   ".submit" should {
-    "redirect to income tax submission overview when tailoring is disabled" in {
-      val request = FakeRequest("POST", url(taxYearEOY)).withHeaders(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList), csrfContent)
 
-      lazy val result: Future[Result] = {
-        authoriseIndividual(true)
-        route(appWithTailoringDisabled, request, "{}").get
-      }
-
-      status(result) shouldBe SEE_OTHER
-      await(result).header.headers("Location") shouldBe appConfig.incomeTaxSubmissionOverviewUrl(taxYearEOY)
-    }
-
-    "redirect to pensions summary when tailoring is enabled and 'Yes' is selected" in {
+    "redirect to pensions summary when 'Yes' is selected" in {
       val request = FakeRequest("POST", url(taxYearEOY)).withHeaders(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList), csrfContent)
         .withFormUrlEncodedBody(YesNoForm.yesNo -> "true")
 
@@ -102,7 +80,7 @@ class PaymentsIntoOverseasPensionsControllerISpec extends IntegrationTest
       await(result).header.headers("Location") shouldBe controllers.pensions.routes.PensionsSummaryController.show(taxYearEOY).url
     }
 
-    "redirect to income tax submission overview when tailoring is enabled and 'No' is selected" in {
+    "redirect to income tax submission overview and 'No' is selected" in {
       val request = FakeRequest("POST", url(taxYearEOY)).withHeaders(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList), csrfContent)
         .withFormUrlEncodedBody(YesNoForm.yesNo -> "false")
 

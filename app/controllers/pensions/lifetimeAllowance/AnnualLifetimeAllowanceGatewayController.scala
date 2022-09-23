@@ -19,7 +19,6 @@ package controllers.pensions.lifetimeAllowance
 
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.routes.PensionsSummaryController
-import controllers.predicates.TailoringEnabledFilterAction.tailoringEnabledFilterAction
 import controllers.predicates.AuthorisedAction
 import controllers.predicates.TaxYearAction.taxYearAction
 import forms.YesNoForm
@@ -45,15 +44,14 @@ class AnnualLifetimeAllowanceGatewayController @Inject()(authAction: AuthorisedA
     missingInputError = s"AnnualAndLifetimeAllowance.gateway.error.${if (isAgent) "agent" else "individual"}"
   )
 
-  def show(taxYear: Int): Action[AnyContent] = (authAction andThen tailoringEnabledFilterAction(taxYear) andThen taxYearAction(taxYear)).async {
+  def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async {
     implicit request =>
       Future.successful(
         Ok(view(taxYear, annualLifetimeAllowanceForm(request.user.isAgent)))
       )
   }
 
-  def submit(taxYear: Int): Action[AnyContent] = (authAction andThen tailoringEnabledFilterAction(taxYear)
-    andThen taxYearAction(taxYear)).async { implicit request =>
+  def submit(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     annualLifetimeAllowanceForm(request.user.isAgent).bindFromRequest().fold(
       formWithErrors => Future.successful(BadRequest(view(taxYear, formWithErrors))),
       yesNoAnswer =>
