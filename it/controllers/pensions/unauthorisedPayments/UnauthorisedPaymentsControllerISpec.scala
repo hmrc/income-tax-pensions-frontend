@@ -594,5 +594,83 @@ class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAnd
         }
       }
     }
+
+    "clear the surcharge content if the surcharge question is not marked" in {
+      val form = {
+        Map(s"${UnAuthorisedPaymentsForm.unauthorisedPaymentsType}[]" -> Seq(yesNotSurchargeValue))
+      }
+
+      implicit lazy val result: WSResponse = {
+
+        authoriseAgentOrIndividual(isAgent = false)
+        dropPensionsDB()
+
+        val pensionsViewModel = anUnauthorisedPaymentsViewModel.copy()
+
+        insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false), aUserRequest)
+        urlPost(fullUrl(unauthorisedPaymentsUrl(taxYearEOY)), body = form, follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+      }
+
+      result.status shouldBe SEE_OTHER
+
+      val unauthorisedPayments = findCyaData(taxYearEOY, aUserRequest).get.pensions.unauthorisedPayments
+      unauthorisedPayments.surchargeAmount shouldBe None
+      unauthorisedPayments.surchargeTaxAmountQuestion shouldBe None
+      unauthorisedPayments.surchargeTaxAmount shouldBe None
+    }
+
+    "clear the 'no surcharge' content if the 'no surcharge' question is not marked" in {
+      val form = {
+        Map(s"${UnAuthorisedPaymentsForm.unauthorisedPaymentsType}[]" -> Seq(yesSurchargeValue))
+      }
+
+      implicit lazy val result: WSResponse = {
+
+        authoriseAgentOrIndividual(isAgent = false)
+        dropPensionsDB()
+
+        val pensionsViewModel = anUnauthorisedPaymentsViewModel.copy()
+
+        insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false), aUserRequest)
+        urlPost(fullUrl(unauthorisedPaymentsUrl(taxYearEOY)), body = form, follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+      }
+
+      result.status shouldBe SEE_OTHER
+
+      val unauthorisedPayments = findCyaData(taxYearEOY, aUserRequest).get.pensions.unauthorisedPayments
+      unauthorisedPayments.noSurchargeAmount shouldBe None
+      unauthorisedPayments.noSurchargeTaxAmountQuestion shouldBe None
+      unauthorisedPayments.noSurchargeTaxAmount shouldBe None
+    }
+
+    "clear both the 'surcharge' and the 'no surcharge' content if the 'no' option is marked" in {
+      val form = {
+        Map(s"${UnAuthorisedPaymentsForm.unauthorisedPaymentsType}[]" -> Seq(noValue))
+      }
+
+      implicit lazy val result: WSResponse = {
+
+        authoriseAgentOrIndividual(isAgent = false)
+        dropPensionsDB()
+
+        val pensionsViewModel = anUnauthorisedPaymentsViewModel.copy()
+
+        insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false), aUserRequest)
+        urlPost(fullUrl(unauthorisedPaymentsUrl(taxYearEOY)), body = form, follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+      }
+
+      result.status shouldBe SEE_OTHER
+
+      val unauthorisedPayments = findCyaData(taxYearEOY, aUserRequest).get.pensions.unauthorisedPayments
+      unauthorisedPayments.surchargeAmount shouldBe None
+      unauthorisedPayments.surchargeTaxAmountQuestion shouldBe None
+      unauthorisedPayments.surchargeTaxAmount shouldBe None
+      unauthorisedPayments.noSurchargeAmount shouldBe None
+      unauthorisedPayments.noSurchargeTaxAmountQuestion shouldBe None
+      unauthorisedPayments.noSurchargeTaxAmount shouldBe None
+    }
   }
 }

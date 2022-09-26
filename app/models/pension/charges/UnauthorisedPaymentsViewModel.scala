@@ -59,6 +59,28 @@ case class UnauthorisedPaymentsViewModel(surchargeQuestion: Option[Boolean] = No
     }
   }
 
+  def copyWithQuestionsApplied(surchargeQuestion: Option[Boolean],
+                               noSurchargeQuestion: Option[Boolean]): UnauthorisedPaymentsViewModel = {
+    val questionsSet = copy(surchargeQuestion = surchargeQuestion, noSurchargeQuestion = noSurchargeQuestion)
+    val surchargeQuestionsApplied = {
+      if(!surchargeQuestion.getOrElse(false)) {
+        questionsSet.copy(surchargeAmount = None, surchargeTaxAmountQuestion = None, surchargeTaxAmount = None)
+      }
+      else {
+        questionsSet
+      }
+    }
+    val noSurchargeQuestionsApplied = {
+      if(!noSurchargeQuestion.getOrElse(false)) {
+        surchargeQuestionsApplied.copy(noSurchargeAmount = None, noSurchargeTaxAmountQuestion = None, noSurchargeTaxAmount = None)
+      }
+      else {
+        surchargeQuestionsApplied
+      }
+    }
+    noSurchargeQuestionsApplied
+  }
+
 }
 
 object UnauthorisedPaymentsViewModel {
