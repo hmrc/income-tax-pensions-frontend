@@ -173,8 +173,8 @@ object PageUrls extends IntegrationTest {
   object overseasPensionPages {
 
     def paymentsIntoPensionSchemeUrl(taxYear: Int): String = s"$appUrl/$taxYear/overseas-pensions/payments-into-overseas-pensions/payments-into-schemes"
-
     def employerPayOverseasPensionUrl(taxYear: Int): String = s"$appUrl/$taxYear/overseas-pensions/payments-into-overseas-pensions/employer-payments-into-schemes"
+    def taxEmployerPaymentsUrl(taxYear: Int): String = s"$appUrl/$taxYear/overseas-pensions/payments-into-overseas-pensions/tax-employer-payments"
   }
 }
 //scalastyle:on number.of.methods

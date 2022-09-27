@@ -36,7 +36,7 @@
 @(form: Form[Boolean], taxYear: Int)(implicit request: AuthorisationRequest[_], messages: Messages, appConfig: AppConfig)
 
 @titleForUse = @{
-    messages(s"overseasPension.employerPayOverseasPension.title.${if(request.user.isAgent) "agent" else "individual"}")
+    messages(s"overseasPension.taxEmployerPayments.title.${if(request.user.isAgent) "agent" else "individual"}")
 }
 
 @hasFormErrors = @{form.hasErrors}
@@ -46,7 +46,7 @@
     <p class="govuk-body">@messages(s"common.overseasPensions.findOut.${if(request.user.isAgent) "agent" else "individual"}")</p>
     <ul class="govuk-list govuk-list--bullet">
         <li>@messages(s"common.overseasPensions.checkPensionStatement.${if(request.user.isAgent) "agent" else "individual"}")</li>
-        <li>@messages(s"overseasPension.employerPayOverseasPension.bullet2.${if(request.user.isAgent) "agent" else "individual"}")</li>
+        <li>@messages(s"overseasPension.taxEmployerPayments.bullet2.${if(request.user.isAgent) "agent" else "individual"}")</li>
     </ul>
 }
 
@@ -57,7 +57,7 @@
     @heading(titleForUse, Some(messages("common.paymentsIntoOverseasPensions.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-2")
     @contentHtml
 
-    @formWithCsrf(action = controllers.pensions.paymentsIntoOverseasPensions.routes.EmployerPayOverseasPensionController.submit(taxYear)) {
+    @formWithCsrf(action = controllers.pensions.paymentsIntoOverseasPensions.routes.TaxEmployerPaymentsController.submit(taxYear)) {
         @inputRadio(
             form = form,
             legendHeading = Some(Html(titleForUse)),

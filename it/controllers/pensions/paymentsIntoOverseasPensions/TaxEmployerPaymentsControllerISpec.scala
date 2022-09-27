@@ -17,22 +17,21 @@
 package controllers.pensions.paymentsIntoOverseasPensions
 
 import builders.PaymentsIntoOverseasPensionsViewModelBuilder.aPaymentsIntoOverseasPensionsViewModel
-import builders.PensionsUserDataBuilder.{aPensionsUserData, anPensionsUserDataEmptyCya, pensionUserDataWithOverseasPensions, pensionsUserDataWithUnauthorisedPayments}
+import builders.PensionsUserDataBuilder.{aPensionsUserData, anPensionsUserDataEmptyCya, pensionUserDataWithOverseasPensions}
 import builders.UserBuilder.aUserRequest
 import forms.YesNoForm
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterEach
-import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.overseasPensionPages.{employerPayOverseasPensionUrl, taxEmployerPaymentsUrl}
-import utils.PageUrls.{fullUrl, pensionSummaryUrl}
 import utils.CommonUtils
+import utils.PageUrls.overseasPensionPages.taxEmployerPaymentsUrl
+import utils.PageUrls.pensionSummaryUrl
 
-class EmployerPayOverseasPensionControllerISpec extends CommonUtils with BeforeAndAfterEach {
+class TaxEmployerPaymentsControllerISpec extends CommonUtils with BeforeAndAfterEach {
 
-  implicit val url: Int => String = employerPayOverseasPensionUrl
+  implicit val url: Int => String = taxEmployerPaymentsUrl
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(
     UserScenario(isWelsh = false, isAgent = false, CommonExpectedEN, Some(ExpectedIndividualEN)),
@@ -75,44 +74,47 @@ class EmployerPayOverseasPensionControllerISpec extends CommonUtils with BeforeA
     def detailsBulletSelector(index: Int): String = s"#main-content > div > div > form > details > div > ul > li:nth-child($index)"
   }
 
+  //overseasPension.taxEmployerPayments.error.noEntry.agent = Select yes if your client paid tax on the amount their employer paid
+  
+  
   object ExpectedIndividualEN extends SpecificExpectedResults {
-    val expectedTitle: String = "Did your employers pay into your overseas pension schemes?"
-    val expectedHeading: String = "Did your employers pay into your overseas pension schemes?"
+    val expectedTitle: String = "Did you pay tax on the amount your employer paid?"
+    val expectedHeading: String = "Did you pay tax on the amount your employer paid?"
     val expectedErrorTitle: String = s"Error: $expectedTitle"
-    val expectedError: String = "Select yes if your employer paid into your overseas pension schemes"
+    val expectedError: String = "Select yes if you paid tax on the amount your employer paid"
     val expectedFindOut: String = "To find out you can:"
     val expectedBullet1: String = "check your pension statement"
-    val expectedBullet2: String = "ask your employer"
+    val expectedBullet2: String = "ask your pension provider"
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
-    val expectedTitle: String = "Did your employers pay into your overseas pension schemes?"
-    val expectedHeading: String = "Did your employers pay into your overseas pension schemes?"
+    val expectedTitle: String = "Did you pay tax on the amount your employer paid?"
+    val expectedHeading: String = "Did you pay tax on the amount your employer paid?"
     val expectedErrorTitle: String = s"Error: $expectedTitle"
-    val expectedError: String = "Select yes if your employer paid into your overseas pension schemes"
+    val expectedError: String = "Select yes if you paid tax on the amount your employer paid"
     val expectedFindOut: String = "To find out you can:"
     val expectedBullet1: String = "check your pension statement"
-    val expectedBullet2: String = "ask your employer"
+    val expectedBullet2: String = "ask your pension provider"
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
-    val expectedTitle: String = "Did your client’s employers pay into the overseas pension schemes?"
-    val expectedHeading: String = "Did your client’s employers pay into the overseas pension schemes?"
+    val expectedTitle: String = "Did your client pay tax on the amount their employer paid?"
+    val expectedHeading: String = "Did your client pay tax on the amount their employer paid?"
     val expectedErrorTitle: String = s"Error: $expectedTitle"
-    val expectedError: String = "Select yes if your client’s employer paid into their overseas pension schemes"
+    val expectedError: String = "Select yes if your client paid tax on the amount their employer paid"
     val expectedFindOut: String = "To find out you can ask your client to:"
     val expectedBullet1: String = "check their pension statement"
-    val expectedBullet2: String = "ask their employer"
+    val expectedBullet2: String = "ask their pension providers"
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
-    val expectedTitle: String = "Did your client’s employers pay into the overseas pension schemes?"
-    val expectedHeading: String = "Did your client’s employers pay into the overseas pension schemes?"
+    val expectedTitle: String = "Did your client pay tax on the amount their employer paid?"
+    val expectedHeading: String = "Did your client pay tax on the amount their employer paid?"
     val expectedErrorTitle: String = s"Error: $expectedTitle"
-    val expectedError: String = "Select yes if your client’s employer paid into their overseas pension schemes"
+    val expectedError: String = "Select yes if your client paid tax on the amount their employer paid"
     val expectedFindOut: String = "To find out you can ask your client to:"
     val expectedBullet1: String = "check their pension statement"
-    val expectedBullet2: String = "ask their employer"
+    val expectedBullet2: String = "ask their pension providers"
   }
 
   object CommonExpectedEN extends CommonExpectedResults {
@@ -136,7 +138,7 @@ class EmployerPayOverseasPensionControllerISpec extends CommonUtils with BeforeA
         import Selectors._
         import user.commonExpectedResults._
 
-        "render the 'Employer Pay Overseas Pension' page with correct content and no pre-filling" which {
+        "render the 'Tax Employer Payments' page with correct content and no pre-filling" which {
 
           implicit lazy val result: WSResponse = showPage(user, anPensionsUserDataEmptyCya)
 
@@ -155,12 +157,12 @@ class EmployerPayOverseasPensionControllerISpec extends CommonUtils with BeforeA
           radioButtonCheck(yesText, 1, checked = Some(false))
           radioButtonCheck(noText, 2, checked = Some(false))
           buttonCheck(expectedButtonText, continueButtonSelector)
-          formPostLinkCheck(employerPayOverseasPensionUrl(taxYearEOY), formSelector)
+          formPostLinkCheck(taxEmployerPaymentsUrl(taxYearEOY), formSelector)
           welshToggleCheck(user.isWelsh)
         }
 
-        "render the 'Employer Pay Overseas Pension' page with correct content and yes pre-filled" which {
-          val overseasPensionViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(employerPaymentsQuestion = Some(true))
+        "render the 'Tax Employer Payments' page with correct content and 'yes' pre-filled" which {
+          val overseasPensionViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(taxPaidOnEmployerPaymentsQuestion = Some(true))
           val pensionsUserData = pensionUserDataWithOverseasPensions(overseasPensionViewModel)
 
           implicit lazy val result: WSResponse = showPage(user, pensionsUserData)
@@ -180,12 +182,12 @@ class EmployerPayOverseasPensionControllerISpec extends CommonUtils with BeforeA
           radioButtonCheck(yesText, 1, checked = Some(true))
           radioButtonCheck(noText, 2, checked = Some(false))
           buttonCheck(expectedButtonText, continueButtonSelector)
-          formPostLinkCheck(employerPayOverseasPensionUrl(taxYearEOY), formSelector)
+          formPostLinkCheck(taxEmployerPaymentsUrl(taxYearEOY), formSelector)
           welshToggleCheck(user.isWelsh)
         }
 
-        "render the 'Employer Pay Overseas Pension' page with correct content and no pre-filled" which {
-          val overseasPensionViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(employerPaymentsQuestion = Some(false))
+        "render the 'Tax Employer Payments' page with correct content and 'no' pre-filled" which {
+          val overseasPensionViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(taxPaidOnEmployerPaymentsQuestion = Some(false))
           val pensionsUserData = pensionUserDataWithOverseasPensions(overseasPensionViewModel)
           implicit lazy val result: WSResponse = showPage(user, pensionsUserData)
 
@@ -204,7 +206,7 @@ class EmployerPayOverseasPensionControllerISpec extends CommonUtils with BeforeA
           radioButtonCheck(yesText, 1, checked = Some(false))
           radioButtonCheck(noText, 2, checked = Some(true))
           buttonCheck(expectedButtonText, continueButtonSelector)
-          formPostLinkCheck(employerPayOverseasPensionUrl(taxYearEOY), formSelector)
+          formPostLinkCheck(taxEmployerPaymentsUrl(taxYearEOY), formSelector)
           welshToggleCheck(user.isWelsh)
         }
       }
@@ -212,10 +214,9 @@ class EmployerPayOverseasPensionControllerISpec extends CommonUtils with BeforeA
 
     "redirect to Pensions Summary page if there is no session data" should {
       lazy val result: WSResponse = getResponseNoSessionData
-
       "has an SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY)) //todo
+        result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
       }
     }
   }
@@ -246,7 +247,7 @@ class EmployerPayOverseasPensionControllerISpec extends CommonUtils with BeforeA
           radioButtonCheck(yesText, 1, checked = Some(false))
           radioButtonCheck(noText, 2, checked = Some(false))
           buttonCheck(expectedButtonText, continueButtonSelector)
-          formPostLinkCheck(employerPayOverseasPensionUrl(taxYearEOY), formSelector)
+          formPostLinkCheck(taxEmployerPaymentsUrl(taxYearEOY), formSelector)
           welshToggleCheck(user.isWelsh)
           errorSummaryCheck(user.specificExpectedResults.get.expectedError, Selectors.yesSelector)
           errorAboveElementCheck(user.specificExpectedResults.get.expectedError, Some("value"))
@@ -254,56 +255,56 @@ class EmployerPayOverseasPensionControllerISpec extends CommonUtils with BeforeA
       }
     }
 
-    "redirect and update question to 'Yes' when user selects yes when there is no cya data" which {
+    "redirect and update question to 'Yes' when user selects yes and there was no previous selection" which {
       lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.yes)
-      val pensionsViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(employerPaymentsQuestion = None)
+      val pensionsViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(taxPaidOnEmployerPaymentsQuestion = None)
       val pensionUserData = pensionUserDataWithOverseasPensions(pensionsViewModel)
       lazy val result: WSResponse = submitPage(pensionUserData, form)
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(taxEmployerPaymentsUrl(taxYearEOY))
+        result.header("location") shouldBe Some(taxEmployerPaymentsUrl(taxYearEOY)) // Todo redirect to SASS-2587
       }
 
-      "updates employerPaymentsQuestion to Some(true)" in {
+      "updates taxPaidOnEmployerPaymentsQuestion to Some(true)" in {
         lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
         cyaModel.pensions.paymentsIntoOverseasPensions.employerPaymentsQuestion shouldBe Some(true)
       }
     }
 
-    "redirect and update question to 'Yes' when user selects yes and cya data exists" which {
+    "redirect and update question to 'Yes' when user selects yes and previously selected no" which {
       lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.yes)
-      val pensionsViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(employerPaymentsQuestion = None)
+      val pensionsViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(taxPaidOnEmployerPaymentsQuestion = Some(false))
       val pensionUserData = pensionUserDataWithOverseasPensions(pensionsViewModel)
 
       lazy val result: WSResponse = submitPage(pensionUserData, form)
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(taxEmployerPaymentsUrl(taxYearEOY)) //Todo redirect to SASS-2586
+        result.header("location") shouldBe Some(taxEmployerPaymentsUrl(taxYearEOY)) //Todo redirect to SASS-2587
       }
 
-      "updates employerPaymentsQuestion to Some(true)" in {
+      "updates taxPaidOnEmployerPaymentsQuestion to Some(true)" in {
         lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
         cyaModel.pensions.paymentsIntoOverseasPensions.employerPaymentsQuestion shouldBe Some(true)
       }
     }
 
-    "redirect and update question to 'No' when user selects no and cya data exists" which {
+    "redirect and update question to 'No' when user selects no and previously selected yes" which {
       lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.no)
-      val pensionsViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(employerPaymentsQuestion = Some(true))
+      val pensionsViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(taxPaidOnEmployerPaymentsQuestion = Some(true))
       val pensionsUserData = pensionUserDataWithOverseasPensions(pensionsViewModel)
 
       lazy val result: WSResponse = submitPage(pensionsUserData, form)
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(employerPayOverseasPensionUrl(taxYearEOY)) //TODO - redirect to SASS-2587
+        result.header("location") shouldBe Some(taxEmployerPaymentsUrl(taxYearEOY)) //TODO - redirect to SASS-2588
       }
 
-      "updates employerPaymentsQuestion to Some(false)" in {
+      "updates taxPaidOnEmployerPaymentsQuestion to Some(false)" in {
         lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
-        cyaModel.pensions.paymentsIntoOverseasPensions.employerPaymentsQuestion shouldBe Some(false)
+        cyaModel.pensions.paymentsIntoOverseasPensions.taxPaidOnEmployerPaymentsQuestion shouldBe Some(false)
       }
     }
   }
