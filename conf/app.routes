@@ -202,4 +202,7 @@ POST        /:taxYear/unauthorised-payments-from-pensions/pension-scheme-tax-ref
 GET         /:taxYear/overseas-pensions/payments-into-overseas-pensions/employer-payments-into-schemes     controllers.pensions.paymentsIntoOverseasPensions.EmployerPayOverseasPensionController.show(taxYear: Int)
 POST        /:taxYear/overseas-pensions/payments-into-overseas-pensions/employer-payments-into-schemes     controllers.pensions.paymentsIntoOverseasPensions.EmployerPayOverseasPensionController.submit(taxYear: Int)
 
+GET         /:taxYear/overseas-pensions/payments-into-overseas-pensions/tax-employer-payments     controllers.pensions.paymentsIntoOverseasPensions.TaxEmployerPaymentsController.show(taxYear: Int)
+POST        /:taxYear/overseas-pensions/payments-into-overseas-pensions/tax-employer-payments     controllers.pensions.paymentsIntoOverseasPensions.TaxEmployerPaymentsController.submit(taxYear: Int)
+
 GET         /:taxYear/pension-income/pensions-income-summary     controllers.pensions.incomeFromPensions.IncomeFromPensionsSummaryController.show(taxYear: Int)
