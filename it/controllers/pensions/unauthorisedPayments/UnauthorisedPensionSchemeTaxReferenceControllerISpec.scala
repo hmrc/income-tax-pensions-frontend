@@ -98,7 +98,7 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec extends IntegrationTe
     val expectedTitle = "Pension Scheme Tax Reference (PSTR)"
     val expectedHeading = "Pension Scheme Tax Reference (PSTR)"
     val expectedErrorTitle = s"Error: $expectedTitle"
-    val hintText = "For example, ’12345678RA’"
+    val hintText = "For example, ‘12345678RA’"
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
@@ -109,7 +109,7 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec extends IntegrationTe
     val expectedTitle = "Pension Scheme Tax Reference (PSTR)"
     val expectedHeading = "Pension Scheme Tax Reference (PSTR)"
     val expectedErrorTitle = s"Error: $expectedTitle"
-    val hintText = "For example, ’12345678RA’"
+    val hintText = "For example, ‘12345678RA’"
   }
 
   val inputName: String = "taxReferenceId"
@@ -211,7 +211,7 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec extends IntegrationTe
           errorAboveElementCheck(user.specificExpectedResults.get.expectedNoEntryError)
         }
         s"return $BAD_REQUEST error when incorrect format is submitted" which {
-          lazy val form: Map[String, String] = Map(PensionSchemeTaxReferenceForm.taxReferenceId -> "12345678AC")
+          lazy val form: Map[String, String] = Map(PensionSchemeTaxReferenceForm.taxReferenceId -> "incorrect-format")
 
           lazy val result: WSResponse = {
             dropPensionsDB()
@@ -234,7 +234,7 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec extends IntegrationTe
           textOnPageCheck(user.specificExpectedResults.get.expectedParagraph1, paragraphSelector(1))
           textOnPageCheck(user.specificExpectedResults.get.expectedParagraph2, paragraphSelector(2))
           textOnPageCheck(hintText, hintTextSelector)
-          inputFieldValueCheck(inputName, inputSelector, "12345678AC")
+          inputFieldValueCheck(inputName, inputSelector, "incorrect-format")
           buttonCheck(expectedButtonText, continueButtonSelector)
           formPostLinkCheck(pensionSchemeTaxReferenceUrl(taxYearEOY), formSelector)
           welshToggleCheck(user.isWelsh)

@@ -191,6 +191,10 @@ POST        /:taxYear/annual-lifetime-allowances/lump-sum-details               
 GET         /:taxYear/annual-lifetime-allowances/lifetime-allowance-another-way-details     controllers.pensions.lifetimeAllowance.PensionTakenAnotherWayAmountController.show(taxYear: Int)
 POST        /:taxYear/annual-lifetime-allowances/lifetime-allowance-another-way-details     controllers.pensions.lifetimeAllowance.PensionTakenAnotherWayAmountController.submit(taxYear: Int)
 
+GET         /:taxYear/lifetime-allowance/pension-scheme-tax-reference                       controllers.pensions.lifetimeAllowance.PensionSchemeTaxReferenceLifetimeController.show(taxYear: Int, pensionSchemeTaxReferenceIndex: Option[Int])
+POST        /:taxYear/lifetime-allowance/pension-scheme-tax-reference                       controllers.pensions.lifetimeAllowance.PensionSchemeTaxReferenceLifetimeController.submit(taxYear: Int, pensionSchemeTaxReferenceIndex: Option[Int])
+
+
 ###########################     Payment into overseas pension Pages     ####################################
 
 GET         /:taxYear/overseas-pensions/payments-into-overseas-pensions/payments-into-schemes     controllers.pensions.paymentsIntoOverseasPensions.PaymentIntoPensionScheme.show(taxYear: Int)

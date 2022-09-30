@@ -24,7 +24,8 @@ object PensionLifetimeAllowanceViewModelBuilder {
     pensionAsLumpSum = Some(LifetimeAllowance(134.22, 23.55)),
     pensionPaidAnotherWayQuestion = Some(true),
     pensionPaidAnotherWay = Some(LifetimeAllowance(1667.22, 11.33)),
-    pensionAsLumpSumQuestion = Some(true)
+    pensionAsLumpSumQuestion = Some(true),
+    pensionSchemeTaxReferences = Some(Seq("1234567CRC","12345678RB","1234567DRD"))
   )
 
   val aPensionLifetimeAllowancesEmptyViewModel: PensionLifetimeAllowancesViewModel = PensionLifetimeAllowancesViewModel()

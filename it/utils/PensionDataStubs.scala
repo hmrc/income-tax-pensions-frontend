@@ -248,7 +248,7 @@ object PensionUserDataStub extends IntegrationTest {
     aboveAnnualAllowance = Some(12.44),
     pensionProvidePaidAnnualAllowanceQuestion = Some(true),
     taxPaidByPensionProvider = Some(14.55),
-    pensionSchemeTaxReference = Some(Seq("1234567CRC","12345678RB","1234567DRD"))
+    pensionSchemeTaxReferences = Some(Seq("1234567CRC","12345678RB","1234567DRD"))
   )
 
   // scalastyle:off magic.number

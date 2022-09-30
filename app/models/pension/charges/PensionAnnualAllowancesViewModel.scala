@@ -27,7 +27,7 @@ case class PensionAnnualAllowancesViewModel(
                                             aboveAnnualAllowance: Option[BigDecimal] = None,
                                             pensionProvidePaidAnnualAllowanceQuestion: Option[Boolean] = None,
                                             taxPaidByPensionProvider: Option[BigDecimal] = None,
-                                            pensionSchemeTaxReference: Option[Seq[String]] = None)
+                                            pensionSchemeTaxReferences: Option[Seq[String]] = None)
 
 object PensionAnnualAllowancesViewModel {
   implicit val format: OFormat[PensionAnnualAllowancesViewModel] = Json.format[PensionAnnualAllowancesViewModel]
@@ -41,7 +41,7 @@ case class EncryptedPensionAnnualAllowancesViewModel(
                                                      aboveAnnualAllowance: Option[EncryptedValue] = None,
                                                      pensionProvidePaidAnnualAllowanceQuestion: Option[EncryptedValue] = None,
                                                      taxPaidByPensionProvider: Option[EncryptedValue] = None,
-                                                     pensionSchemeTaxReference: Option[Seq[EncryptedValue]] = None)
+                                                     pensionSchemeTaxReferences: Option[Seq[EncryptedValue]] = None)
 
 object EncryptedPensionAnnualAllowancesViewModel {
   implicit val format: OFormat[EncryptedPensionAnnualAllowancesViewModel] = Json.format[EncryptedPensionAnnualAllowancesViewModel]
