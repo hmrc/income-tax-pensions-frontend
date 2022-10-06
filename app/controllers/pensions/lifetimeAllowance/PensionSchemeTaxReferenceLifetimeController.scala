@@ -14,11 +14,15 @@
  * limitations under the License.
  */
 
-package controllers.pensions.annualAllowance
+package controllers.pensions.lifetimeAllowance
 
 import config.{AppConfig, ErrorHandler}
+import controllers.pensions.lifetimeAllowance.routes.PensionSchemeTaxReferenceLifetimeController
+import controllers.pensions.routes.PensionsSummaryController
 import controllers.predicates.AuthorisedAction
+import controllers.predicates.TaxYearAction.taxYearAction
 import forms.PensionSchemeTaxReferenceForm
+import models.User
 import models.mongo.PensionsCYAModel
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -26,28 +30,23 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
-import views.html.pensions.annualAllowance.PensionSchemeTaxReferenceView
-import controllers.pensions.routes.PensionsSummaryController
-import controllers.pensions.annualAllowance.routes.PstrSummaryController
-import controllers.predicates.TaxYearAction.taxYearAction
-import models.User
+import views.html.pensions.lifetimeAllowance.PensionSchemeTaxReferenceLifetimeView
 
 import javax.inject.Inject
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
-class PensionSchemeTaxReferenceController @Inject()(implicit val cc: MessagesControllerComponents,
-                                                    authAction: AuthorisedAction,
-                                                    pensionSchemeTaxReferenceView: PensionSchemeTaxReferenceView,
-                                                    appConfig: AppConfig,
-                                                    pensionSessionService: PensionSessionService,
-                                                    errorHandler: ErrorHandler,
-                                                    clock: Clock) extends FrontendController(cc) with I18nSupport {
+class PensionSchemeTaxReferenceLifetimeController @Inject()(authAction: AuthorisedAction,
+                                                            pensionSchemeTaxReferenceView: PensionSchemeTaxReferenceLifetimeView,
+                                                            pensionSessionService: PensionSessionService,
+                                                            errorHandler: ErrorHandler
+                                                           )(implicit val cc: MessagesControllerComponents, ec: ExecutionContext, clock: Clock, appConfig: AppConfig)
+  extends FrontendController(cc) with I18nSupport {
 
 
   private def prefillValue(pstrListOpt: Option[Seq[String]], pensionSchemeTaxReference: Option[Int], user: User): Form[String] = {
     val errorMsgDetails = (
-      s"pension.pensionSchemeTaxReference.error.noEntry.${if (user.isAgent) "agent" else "individual"}",
-      s"pension.pensionSchemeTaxReference.error.incorrectFormat.${if (user.isAgent) "agent" else "individual"}")
+      s"common.pensionSchemeTaxReference.error.noEntry.${if (user.isAgent) "agent" else "individual"}",
+      s"lifetimeAllowance.pensionSchemeTaxReference.error.incorrectFormat")
     val emptyForm: Form[String] = PensionSchemeTaxReferenceForm.pensionSchemeTaxReferenceForm(errorMsgDetails._1, errorMsgDetails._2)
     (pstrListOpt, pensionSchemeTaxReference) match {
       case (Some(pstrList), Some(pstrIndex)) => emptyForm.fill(pstrList(pstrIndex))
@@ -55,11 +54,12 @@ class PensionSchemeTaxReferenceController @Inject()(implicit val cc: MessagesCon
     }
   }
 
-  def show(taxYear: Int, pensionSchemeTaxReferenceIndex: Option[Int]): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async {
+  def show(taxYear: Int, pensionSchemeTaxReferenceIndex: Option[Int] = None): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async {
     implicit request =>
-      pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
-        case Some(data) =>
-          val pstrList: Option[Seq[String]] = data.pensions.pensionsAnnualAllowances.pensionSchemeTaxReferences
+      pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
+        case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
+        case Right(Some(data)) =>
+          val pstrList: Option[Seq[String]] = data.pensions.pensionLifetimeAllowances.pensionSchemeTaxReferences
 
           if (validatePstr(pensionSchemeTaxReferenceIndex, pstrList.getOrElse(Seq.empty))) {
             val form = prefillValue(
@@ -69,30 +69,31 @@ class PensionSchemeTaxReferenceController @Inject()(implicit val cc: MessagesCon
             )
             Future.successful(Ok(pensionSchemeTaxReferenceView(form, taxYear, pensionSchemeTaxReferenceIndex)))
           } else {
-            Future.successful(Redirect(PstrSummaryController.show(taxYear)))
+            //todo Redirect to pstr summary controller for lifetime allowances
+            Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
           }
         case _ =>
-          //TODO: redirect to the annual allowances CYA page
+          //TODO: redirect to the lifetime allowances CYA page
           Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
       }
   }
 
-  def submit(taxYear: Int, pensionSchemeTaxReferenceIndex: Option[Int]): Action[AnyContent] = authAction.async {
+  def submit(taxYear: Int, pensionSchemeTaxReferenceIndex: Option[Int] = None): Action[AnyContent] = authAction.async {
     implicit request =>
       val errorMsgDetails = (
-        s"pension.pensionSchemeTaxReference.error.noEntry.${if (request.user.isAgent) "agent" else "individual"}",
-        s"pension.pensionSchemeTaxReference.error.incorrectFormat.${if (request.user.isAgent) "agent" else "individual"}")
+        s"common.pensionSchemeTaxReference.error.noEntry.${if (request.user.isAgent) "agent" else "individual"}",
+        s"lifetimeAllowance.pensionSchemeTaxReference.error.incorrectFormat")
       PensionSchemeTaxReferenceForm.pensionSchemeTaxReferenceForm(errorMsgDetails._1, errorMsgDetails._2).bindFromRequest().fold(
         formWithErrors => Future.successful(BadRequest(pensionSchemeTaxReferenceView(formWithErrors, taxYear, pensionSchemeTaxReferenceIndex))),
         pensionScheme => {
-          pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
-            case Some(data) => {
+          pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
+            case Right(Some(data)) => {
 
-              val pstrList: Option[Seq[String]] = data.pensions.pensionsAnnualAllowances.pensionSchemeTaxReferences
+              val pstrList: Option[Seq[String]] = data.pensions.pensionLifetimeAllowances.pensionSchemeTaxReferences
 
               if (validatePstr(pensionSchemeTaxReferenceIndex, pstrList.getOrElse(Seq.empty))) {
                 val pensionsCYAModel: PensionsCYAModel = data.pensions
-                val viewModel = pensionsCYAModel.pensionsAnnualAllowances
+                val viewModel = pensionsCYAModel.pensionLifetimeAllowances
                 val newPensionSchemeTaxRef = Seq(pensionScheme)
 
                 val updatedPstrList: Seq[String] = (viewModel.pensionSchemeTaxReferences, pensionSchemeTaxReferenceIndex) match {
@@ -105,19 +106,20 @@ class PensionSchemeTaxReferenceController @Inject()(implicit val cc: MessagesCon
                 }
 
                 val updatedCyaModel = pensionsCYAModel.copy(
-                  pensionsAnnualAllowances = viewModel.copy(
+                  pensionLifetimeAllowances = viewModel.copy(
                     pensionSchemeTaxReferences = Some(updatedPstrList)
                   ))
 
                 pensionSessionService.createOrUpdateSessionData(request.user,
                   updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
-                  Redirect(PstrSummaryController.show(taxYear))
+                  Redirect(PensionSchemeTaxReferenceLifetimeController.show(taxYear, None))
                 }
               } else {
-                Future.successful(Redirect(PstrSummaryController.show(taxYear)))
+                //TODO Redirect to pstr summary controller for lifetime allowances
+                Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
               }
             }
-            //TODO: redirect to the annual allowances CYA page
+            //TODO: redirect to the lifetime allowances CYA page
             case _ => Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
           }
         }

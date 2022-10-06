@@ -27,7 +27,7 @@ import play.api.data.validation.Constraints.nonEmpty
 object PensionSchemeTaxReferenceForm extends InputFilters {
 
   val taxReferenceId: String = "taxReferenceId"
-  val regex: String = "^\\d{8}[R]{1}[a-zA-Z]{1}$"
+  val regex: String = "^\\d{8}[a-zA-Z]{2}$"
 
   def notEmpty(message : String): Constraint[String] = nonEmpty(message)
 

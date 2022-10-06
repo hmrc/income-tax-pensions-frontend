@@ -99,7 +99,7 @@ class PstrSummaryControllerISpec extends IntegrationTest with BeforeAndAfterEach
           implicit lazy val result: WSResponse = {
             authoriseAgentOrIndividual(user.isAgent)
             dropPensionsDB()
-            val viewModel = aPensionAnnualAllowanceViewModel.copy(pensionSchemeTaxReference = Some(Seq(pstr1, pstr2)))
+            val viewModel = aPensionAnnualAllowanceViewModel.copy(pensionSchemeTaxReferences = Some(Seq(pstr1, pstr2)))
             insertCyaData(pensionsUserDataWithAnnualAllowances(viewModel), aUserRequest)
             urlGet(fullUrl(pstrSummaryUrl(taxYearEOY)), user.isWelsh, follow = false,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
@@ -132,7 +132,7 @@ class PstrSummaryControllerISpec extends IntegrationTest with BeforeAndAfterEach
           implicit lazy val result: WSResponse = {
             authoriseAgentOrIndividual(user.isAgent)
             dropPensionsDB()
-            val viewModel = aPensionAnnualAllowanceViewModel.copy(pensionSchemeTaxReference = Some(Seq()))
+            val viewModel = aPensionAnnualAllowanceViewModel.copy(pensionSchemeTaxReferences = Some(Seq()))
             insertCyaData(pensionsUserDataWithAnnualAllowances(viewModel), aUserRequest)
             urlGet(fullUrl(pstrSummaryUrl(taxYearEOY)), user.isWelsh, follow = false,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))

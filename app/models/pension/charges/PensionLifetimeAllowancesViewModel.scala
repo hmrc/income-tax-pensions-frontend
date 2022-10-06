@@ -25,21 +25,25 @@ import utils.EncryptorInstances.booleanEncryptor
 import utils.{EncryptedValue, SecureGCMCipher}
 
 case class PensionLifetimeAllowancesViewModel(
-                                            aboveLifetimeAllowanceQuestion: Option[Boolean] = None,
-                                            pensionAsLumpSumQuestion: Option[Boolean] = None,
-                                            pensionAsLumpSum: Option[LifetimeAllowance] = None,
-                                            pensionPaidAnotherWayQuestion: Option[Boolean] = None,
-                                            pensionPaidAnotherWay: Option[LifetimeAllowance] = None) {
+                                               aboveLifetimeAllowanceQuestion: Option[Boolean] = None,
+                                               pensionAsLumpSumQuestion: Option[Boolean] = None,
+                                               pensionAsLumpSum: Option[LifetimeAllowance] = None,
+                                               pensionPaidAnotherWayQuestion: Option[Boolean] = None,
+                                               pensionPaidAnotherWay: Option[LifetimeAllowance] = None,
+                                               pensionSchemeTaxReferences: Option[Seq[String]] = None) {
 
-  def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedPensionLifetimeAllowancesViewModel =
+  def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedPensionLifetimeAllowancesViewModel = {
     EncryptedPensionLifetimeAllowancesViewModel(
       aboveLifetimeAllowanceQuestion = aboveLifetimeAllowanceQuestion.map(_.encrypted),
       pensionAsLumpSumQuestion = pensionAsLumpSumQuestion.map(_.encrypted),
       pensionAsLumpSum = pensionAsLumpSum.map(_.encrypted),
       pensionPaidAnotherWayQuestion = pensionPaidAnotherWayQuestion.map(_.encrypted),
-      pensionPaidAnotherWay = pensionPaidAnotherWay.map(_.encrypted)
+      pensionPaidAnotherWay = pensionPaidAnotherWay.map(_.encrypted),
+      pensionSchemeTaxReferences = pensionSchemeTaxReferences.map(_.map(pstr => secureGCMCipher.encrypt(pstr)))
 
     )
+  }
+
 }
 
 object PensionLifetimeAllowancesViewModel {
@@ -47,11 +51,12 @@ object PensionLifetimeAllowancesViewModel {
 }
 
 case class EncryptedPensionLifetimeAllowancesViewModel(
-                                                     aboveLifetimeAllowanceQuestion: Option[EncryptedValue] = None,
-                                                     pensionAsLumpSumQuestion: Option[EncryptedValue] = None,
-                                                     pensionAsLumpSum: Option[EncryptedLifetimeAllowance] = None,
-                                                     pensionPaidAnotherWayQuestion: Option[EncryptedValue] = None,
-                                                     pensionPaidAnotherWay: Option[EncryptedLifetimeAllowance] = None) {
+                                                        aboveLifetimeAllowanceQuestion: Option[EncryptedValue] = None,
+                                                        pensionAsLumpSumQuestion: Option[EncryptedValue] = None,
+                                                        pensionAsLumpSum: Option[EncryptedLifetimeAllowance] = None,
+                                                        pensionPaidAnotherWayQuestion: Option[EncryptedValue] = None,
+                                                        pensionPaidAnotherWay: Option[EncryptedLifetimeAllowance] = None,
+                                                        pensionSchemeTaxReferences: Option[Seq[EncryptedValue]] = None) {
 
   def decrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): PensionLifetimeAllowancesViewModel =
     PensionLifetimeAllowancesViewModel(
@@ -59,7 +64,8 @@ case class EncryptedPensionLifetimeAllowancesViewModel(
       pensionAsLumpSumQuestion = pensionAsLumpSumQuestion.map(_.decrypted[Boolean]),
       pensionAsLumpSum = pensionAsLumpSum.map(_.decrypted),
       pensionPaidAnotherWayQuestion = pensionPaidAnotherWayQuestion.map(_.decrypted[Boolean]),
-      pensionPaidAnotherWay = pensionPaidAnotherWay.map(_.decrypted)
+      pensionPaidAnotherWay = pensionPaidAnotherWay.map(_.decrypted),
+      pensionSchemeTaxReferences = pensionSchemeTaxReferences.map(_.map(x => secureGCMCipher.decrypt[String](x.value, x.nonce)))
     )
 }
 
