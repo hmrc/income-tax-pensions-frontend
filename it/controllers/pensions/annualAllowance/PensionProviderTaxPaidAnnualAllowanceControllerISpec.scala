@@ -25,6 +25,8 @@ import forms.RadioButtonAmountForm
 import models.mongo.PensionsCYAModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.mongodb.scala
+import org.mongodb.scala.result
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.libs.ws.WSResponse
@@ -181,7 +183,7 @@ class PensionProviderTaxPaidAnnualAllowanceControllerISpec extends CommonUtils w
           welshToggleCheck(user.isWelsh)
         }
 
-        "render page with yes pre-filled and amount field set" which {
+        "render page with 'yes' pre-filled and amount field set" which {
 
           val pensionAnnualAllowanceViewModel = aPensionAnnualAllowanceViewModel.copy(
             pensionProvidePaidAnnualAllowanceQuestion = Some(true),
@@ -209,7 +211,7 @@ class PensionProviderTaxPaidAnnualAllowanceControllerISpec extends CommonUtils w
           welshToggleCheck(user.isWelsh)
         }
 
-        "render page with no pre-filling and amount field set to 0" which {
+        "render page with 'no' pre-filled and amount field set to 0" which {
 
           val pensionAnnualAllowanceViewModel = aPensionAnnualAllowanceViewModel.copy(
             pensionProvidePaidAnnualAllowanceQuestion = Some(false),
@@ -228,7 +230,7 @@ class PensionProviderTaxPaidAnnualAllowanceControllerISpec extends CommonUtils w
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           radioButtonCheck(yesText, 1, checked = Some(false))
-          radioButtonCheck(noText, 2, checked = Some(false))
+          radioButtonCheck(noText, 2, checked = Some(true))
           buttonCheck(buttonText, continueButtonSelector)
           textOnPageCheck(poundPrefixText, poundPrefixSelector)
           textOnPageCheck(totalNonUkTax, amountText)
@@ -237,16 +239,40 @@ class PensionProviderTaxPaidAnnualAllowanceControllerISpec extends CommonUtils w
           welshToggleCheck(user.isWelsh)
         }
 
+        "render page with 'yes' pre-filled and amount field set to 0" which {
+
+          val pensionAnnualAllowanceViewModel = aPensionAnnualAllowanceViewModel.copy(
+            pensionProvidePaidAnnualAllowanceQuestion = Some(true),
+            taxPaidByPensionProvider = Some(0))
+          val pensionUserData = pensionsUserDataWithAnnualAllowances(pensionAnnualAllowanceViewModel, isPriorSubmission = false)
+
+          lazy val result: WSResponse = showPage(user, pensionUserData)
+
+          "has an OK status" in {
+            result.status shouldBe OK
+          }
+
+          implicit def document: () => Document = () => Jsoup.parse(result.body)
+
+          titleCheck(user.specificExpectedResults.get.expectedTitle)
+          h1Check(user.specificExpectedResults.get.expectedHeading)
+          captionCheck(expectedCaption(taxYearEOY), captionSelector)
+          radioButtonCheck(yesText, 1, checked = Some(true))
+          radioButtonCheck(noText, 2, checked = Some(false))
+          buttonCheck(buttonText, continueButtonSelector)
+          textOnPageCheck(poundPrefixText, poundPrefixSelector)
+          textOnPageCheck(totalNonUkTax, amountText)
+          inputFieldValueCheck(amountInputName, amountInputSelector, zeroAmount)
+          formPostLinkCheck(pensionProviderTaxPaidAnnualAllowanceUrl(taxYearEOY), formSelector)
+          welshToggleCheck(user.isWelsh)
+        }
+
+
       }
 
     }
     "redirect to Pensions Summary page if there is no session data" should {
-      lazy val result: WSResponse = {
-        dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
-        urlGet(fullUrl(pensionProviderTaxPaidAnnualAllowanceUrl(taxYearEOY)), follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
-      }
+      lazy val result: WSResponse = getResponseNoSessionData
 
       //TODO - redirect to unauthorised payments CYA page once implemented
       "has an SEE_OTHER status" in {
@@ -264,10 +290,10 @@ class PensionProviderTaxPaidAnnualAllowanceControllerISpec extends CommonUtils w
         s"language is ${welshTest(user.isWelsh)} and request is from an ${agentTest(user.isAgent)}" should {
 
 
-          "redirect to the same page when user selects 'No' and update amount to 0" which {
+          "redirect to the same page when user selects 'No' and update amount to None" which {
 
             lazy val form: Map[String, String] = Map(
-              RadioButtonAmountForm.yesNo -> RadioButtonAmountForm.no, RadioButtonAmountForm.amount2 -> zeroAmount)
+              RadioButtonAmountForm.yesNo -> RadioButtonAmountForm.no)
             val pensionAnnualAllowanceViewModel = aPensionAnnualAllowanceViewModel.copy(
               pensionProvidePaidAnnualAllowanceQuestion = Some(true),
               taxPaidByPensionProvider = Some(BigDecimal(existingAmount)))
@@ -283,11 +309,11 @@ class PensionProviderTaxPaidAnnualAllowanceControllerISpec extends CommonUtils w
             "updates did you non uk tax on the amount that resulted in a surcharge page to  Some(false) with amount set to 0" in {
               lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
               cyaModel.pensions.pensionsAnnualAllowances.pensionProvidePaidAnnualAllowanceQuestion shouldBe Some(false)
-              cyaModel.pensions.pensionsAnnualAllowances.taxPaidByPensionProvider shouldBe Some(0)
+              cyaModel.pensions.pensionsAnnualAllowances.taxPaidByPensionProvider shouldBe None
             }
           }
 
-          "redirect to PensionProviderPaidTaxController page when user selects 'yes' with a valid amount" which {
+          "redirect to the same page when user selects 'yes' with a valid amount" which {
 
             lazy val form: Map[String, String] = Map(
               RadioButtonAmountForm.yesNo -> RadioButtonAmountForm.yes, RadioButtonAmountForm.amount2 -> existingAmount)
@@ -333,13 +359,14 @@ class PensionProviderTaxPaidAnnualAllowanceControllerISpec extends CommonUtils w
             radioButtonCheck(yesText, 1, checked = Some(false))
             radioButtonCheck(noText, 2, checked = Some(false))
             buttonCheck(buttonText, continueButtonSelector)
+            inputFieldValueCheck(amountInputName, amountInputSelector, "")
             textOnPageCheck(poundPrefixText, poundPrefixSelector)
             textOnPageCheck(totalNonUkTax, amountText)
             errorAboveElementCheck(noEntryErrorMessage)
             formPostLinkCheck(pensionProviderTaxPaidAnnualAllowanceUrl(taxYearEOY), formSelector)
           }
 
-          "returns error message when user enters yes and click continue button" which {
+          "returns error message when user enters yes and enters a blank amount click continue button" which {
 
             lazy val form: Map[String, String] = Map(
               RadioButtonAmountForm.yesNo -> RadioButtonAmountForm.yes, RadioButtonAmountForm.amount2 -> "")
@@ -363,6 +390,7 @@ class PensionProviderTaxPaidAnnualAllowanceControllerISpec extends CommonUtils w
             radioButtonCheck(noText, 2, checked = Some(false))
             buttonCheck(buttonText, continueButtonSelector)
             textOnPageCheck(poundPrefixText, poundPrefixSelector)
+            inputFieldValueCheck(amountInputName, amountInputSelector, "")
             textOnPageCheck(totalNonUkTax, amountText)
             errorAboveElementCheck(user.specificExpectedResults.get.noEntryAmountErrorMessage)
             formPostLinkCheck(pensionProviderTaxPaidAnnualAllowanceUrl(taxYearEOY), formSelector)
@@ -391,6 +419,7 @@ class PensionProviderTaxPaidAnnualAllowanceControllerISpec extends CommonUtils w
             radioButtonCheck(noText, 2, checked = Some(false))
             buttonCheck(buttonText, continueButtonSelector)
             textOnPageCheck(poundPrefixText, poundPrefixSelector)
+            inputFieldValueCheck(amountInputName, amountInputSelector, zeroAmount)
             textOnPageCheck(totalNonUkTax, amountText)
             errorAboveElementCheck(amountZeroErrorMessage)
             formPostLinkCheck(pensionProviderTaxPaidAnnualAllowanceUrl(taxYearEOY), formSelector)
@@ -419,6 +448,7 @@ class PensionProviderTaxPaidAnnualAllowanceControllerISpec extends CommonUtils w
             radioButtonCheck(noText, 2, checked = Some(false))
             buttonCheck(buttonText, continueButtonSelector)
             textOnPageCheck(poundPrefixText, poundPrefixSelector)
+            inputFieldValueCheck(amountInputName, amountInputSelector, amountOverMaximum)
             textOnPageCheck(totalNonUkTax, amountText)
             errorAboveElementCheck(user.specificExpectedResults.get.amountAboveLimitErrorMessage)
             formPostLinkCheck(pensionProviderTaxPaidAnnualAllowanceUrl(taxYearEOY), formSelector)
@@ -448,6 +478,7 @@ class PensionProviderTaxPaidAnnualAllowanceControllerISpec extends CommonUtils w
             buttonCheck(buttonText, continueButtonSelector)
             textOnPageCheck(poundPrefixText, poundPrefixSelector)
             textOnPageCheck(totalNonUkTax, amountText)
+            inputFieldValueCheck(amountInputName, amountInputSelector, "INVALID")
             errorAboveElementCheck(user.specificExpectedResults.get.validAmountErrorMessage)
             formPostLinkCheck(pensionProviderTaxPaidAnnualAllowanceUrl(taxYearEOY), formSelector)
           }

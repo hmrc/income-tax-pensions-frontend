@@ -46,10 +46,10 @@ class PensionProviderTaxPaidAnnualAllowanceController @Inject()(implicit val cc:
                                                                 ec: ExecutionContext) extends FrontendController(cc)  with I18nSupport {
 
   def form(isAgent: Boolean): Form[(Boolean, Option[BigDecimal])] = RadioButtonAmountForm.radioButtonAndAmountFormWithMinCheck(
-    missingInputError = s"pensions.pensionSchemesTaxPaidAnnualAllowance.error.noEntry",
-    emptyFieldKey = s"pensions.pensionSchemesTaxPaidAnnualAllowance.error.amount.noEntry",
-    wrongFormatKey = s"pensions.pensionSchemesTaxPaidAnnualAllowance.error.amount.inCorrectFormat",
-    minAmountKey = s"common.error.amountNotZero",
+    missingInputError = "pensions.pensionSchemesTaxPaidAnnualAllowance.error.noEntry",
+    emptyFieldKey = "pensions.pensionSchemesTaxPaidAnnualAllowance.error.amount.noEntry",
+    wrongFormatKey = "pensions.pensionSchemesTaxPaidAnnualAllowance.error.amount.inCorrectFormat",
+    minAmountKey = "common.error.amountNotZero",
     exceedsMaxAmountKey = s"pensions.pensionSchemesTaxPaidAnnualAllowance.error.amount.${if (isAgent) "agent" else "individual"}.overMaximum"
   )
 
@@ -57,14 +57,15 @@ class PensionProviderTaxPaidAnnualAllowanceController @Inject()(implicit val cc:
     pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap{
       case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
       case Right(Some(pensionsUserData)) =>
-        pensionsUserData.pensions.pensionsAnnualAllowances.taxPaidByPensionProvider match {
-          case Some(value) if value == 0 =>
-            Future.successful(Ok(pensionProviderTaxPaidAnnualAllowanceView(form(request.user.isAgent).fill((false, Some(value))), taxYear)))
-
-          case Some(value) =>
+        val pensionsAnnualAllowancesModel = pensionsUserData.pensions.pensionsAnnualAllowances
+        (pensionsAnnualAllowancesModel.pensionProvidePaidAnnualAllowanceQuestion, pensionsAnnualAllowancesModel.taxPaidByPensionProvider) match {
+          case (Some(true), Some(value)) =>
             Future.successful(Ok(pensionProviderTaxPaidAnnualAllowanceView(form(request.user.isAgent).fill((true, Some(value))), taxYear)))
 
-          case None =>
+          case (Some(false), _) =>
+            Future.successful(Ok(pensionProviderTaxPaidAnnualAllowanceView(form(request.user.isAgent).fill((false, None)), taxYear)))
+
+          case (None, _) =>
             Future.successful(Ok(pensionProviderTaxPaidAnnualAllowanceView(form(request.user.isAgent), taxYear)))
 
         }
@@ -84,7 +85,7 @@ class PensionProviderTaxPaidAnnualAllowanceController @Inject()(implicit val cc:
                   case (pensionProvidePaidAnnualAllowanceAnswer, amount) => pensionsCYAModel.copy(
                     pensionsAnnualAllowances = pensionsCYAModel.pensionsAnnualAllowances.copy(
                       pensionProvidePaidAnnualAllowanceQuestion = Some(pensionProvidePaidAnnualAllowanceAnswer),
-                      taxPaidByPensionProvider = if (pensionProvidePaidAnnualAllowanceAnswer) amount else Some(0)
+                      taxPaidByPensionProvider = if (pensionProvidePaidAnnualAllowanceAnswer) amount else None
                     )
                   )
                 }
