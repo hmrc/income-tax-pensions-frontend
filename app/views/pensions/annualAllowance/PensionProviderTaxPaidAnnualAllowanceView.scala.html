@@ -37,7 +37,7 @@
 
 @(form: Form[(Boolean, Option[BigDecimal])], taxYear: Int)(implicit request: AuthorisationRequest[_], messages: Messages, appConfig: AppConfig)
 
-@titleForUse = @{messages(s"pensions.pensionSchemesTaxPaidAnnualAllowance.title.${if(request.user.isAgent) "agent" else "individual"}")}
+@titleForUse = @{messages(s"common.pensions.didYourPensionSchemesAgreeToPayTheTax.title.${if(request.user.isAgent) "agent" else "individual"}")}
 
 @hasFormErrors = @{form.hasErrors}
 
@@ -45,7 +45,7 @@
     form,
     id="amount-2",
     name="amount-2",
-    label = messages ("pensions.pensionSchemesTaxPaidAnnualAllowance.Amount.Text"),
+    label = messages ("common.pensions.amountTheyAgreedToPay.text"),
     hint = Some(messages("common.currency.hint1")),
     isSubheading=false,
     labelHidden=false,

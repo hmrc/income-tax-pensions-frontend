@@ -48,10 +48,11 @@ class PensionProviderPaidTaxController @Inject()(implicit val cc: MessagesContro
                                                  clock: Clock) extends FrontendController(cc) with I18nSupport {
 
   def providerPaidTaxForm(implicit user: User): Form[(Boolean, Option[BigDecimal])] = RadioButtonAmountForm.radioButtonAndAmountForm(
-    missingInputError = s"pensions.pensionProviderPaidTax.error.noEntry.${if (user.isAgent) "agent" else "individual"}",
+    missingInputError = s"${if (user.isAgent) "pensions.pensionProviderPaidTax.error.noEntry.agent"
+    else "common.pensions.selectYesifYourPensionProvider.noEntry"}",
     emptyFieldKey = s"pensions.pensionsProviderPaidTax.error.noAmount.${if (user.isAgent) "agent" else "individual"}",
     wrongFormatKey = s"pensions.pensionProviderPaidTax.error.incorrectFormat.${if (user.isAgent) "agent" else "individual"}",
-    exceedsMaxAmountKey = s"pensions.pensionProviderPaidTax.error.excessAmount.${if (user.isAgent) "agent" else "individual"}"
+    exceedsMaxAmountKey = s"common.pensions.error.amountMaxLimit.${if (user.isAgent) "agent" else "individual"}"
   )
 
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
