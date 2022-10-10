@@ -24,6 +24,7 @@ common.use = use
 common.error.errorKey = Error:
 common.opensInNewTab = (opens in new tab)
 common.currency.hint = For example, £193.52
+common.currency.hint1 = For example, £193.54
 common.help.getHelpWithThisPage = Get help with this page
 common.status.toDo = To do
 common.status.updated = Updated
@@ -48,6 +49,7 @@ common.sectionsToFill.individual = You only need to fill in the sections that ap
 common.sectionsToFill.agent = You only need to fill in the sections that apply to your client.
 
 common.error.amountMaxLimit = The total amount must be less than £100,000,000,000
+common.error.amountNotZero = Enter an amount greater than zero
 common.error.self-assessment.paragraph.1.1 = If the web address is correct or you selected a link or button, you can use
 common.error.self-assessment.paragraph.1.2 = Self Assessment: general enquiries (opens in new tab)
 common.error.self-assessment.paragraph.1.3 = to speak to someone about your income tax
@@ -413,6 +415,17 @@ pensions.aboveReducedAnnualAllowance.reduced.error.noEntry.individual = Select y
 pensions.aboveReducedAnnualAllowance.reduced.error.noEntry.agent = Select yes if your client has gone above their reduced annual allowance
 pensions.aboveReducedAnnualAllowance.nonReduced.error.noEntry.individual = Select yes if you have gone above the annual allowance
 pensions.aboveReducedAnnualAllowance.nonReduced.error.noEntry.agent = Select yes if your client has gone above the annual allowance
+
+#pension schemes paid for above Annual Allowance
+
+pensions.pensionSchemesTaxPaidAnnualAllowance.title.individual = Did your pension schemes pay or agree to pay the tax?
+pensions.pensionSchemesTaxPaidAnnualAllowance.title.agent = Did your client’s pension schemes pay or agree to pay the tax?
+pensions.pensionSchemesTaxPaidAnnualAllowance.Amount.Text = Amount they paid or agreed to pay, in pounds
+pensions.pensionSchemesTaxPaidAnnualAllowance.error.noEntry = Select yes if your pension provider paid or agreed to pay your annual allowance tax
+pensions.pensionSchemesTaxPaidAnnualAllowance.error.amount.noEntry = Enter the amount paid, or that needs to be paid, in pounds
+pensions.pensionSchemesTaxPaidAnnualAllowance.error.amount.inCorrectFormat = Enter the amount paid, or that needs to be paid, in the correct format
+pensions.pensionSchemesTaxPaidAnnualAllowance.error.amount.individual.overMaximum = The amount of tax your pension provider paid or agreed to pay must be less than £100,000,000,000
+pensions.pensionSchemesTaxPaidAnnualAllowance.error.amount.agent.overMaximum = The amount of tax your client’s pension provider paid or agreed to pay must be less than £100,000,000,000
 
 #Pension Provider Paid Tax Messages
 pensions.pensionProviderPaidTax.title.individual = Did your pension schemes pay or agree to pay the tax?

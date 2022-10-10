@@ -89,6 +89,9 @@ POST        /:taxYear/annual-allowance/above-annual-allowance                   
 GET         /:taxYear/annual-allowance/pension-scheme-tax-reference                         controllers.pensions.annualAllowance.PensionSchemeTaxReferenceController.show(taxYear: Int, pensionSchemeTaxReferenceIndex: Option[Int])
 POST        /:taxYear/annual-allowance/pension-scheme-tax-reference                         controllers.pensions.annualAllowance.PensionSchemeTaxReferenceController.submit(taxYear: Int, pensionSchemeTaxReferenceIndex: Option[Int])
 
+GET         /:taxYear/annual-allowance/pension-provider-paid-tax                            controllers.pensions.annualAllowance.PensionProviderTaxPaidAnnualAllowanceController.show(taxYear: Int)
+POST        /:taxYear/annual-allowance/pension-provider-paid-tax                            controllers.pensions.annualAllowance.PensionProviderTaxPaidAnnualAllowanceController.submit(taxYear: Int)
+
 GET         /:taxYear/annual-allowance/pension-scheme-tax-reference-summary                 controllers.pensions.annualAllowance.PstrSummaryController.show(taxYear: Int)
 
 

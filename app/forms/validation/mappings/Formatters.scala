@@ -110,4 +110,43 @@ trait Formatters {
         baseFormatter.unbind(key, value.getOrElse("").toString)
     }
 
+  private[mappings] def optionCurrencyFormatterWithMinCheck(requiredKey: String,
+                                                invalidNumericKey: String,
+                                                maxAmountKey: String,
+                                                minAmountkey: String,
+                                                args: Seq[String] = Seq.empty[String]
+                                               ): Formatter[Option[BigDecimal]] =
+    new Formatter[Option[BigDecimal]] {
+
+      val is2dp = """\d+|\d*\.\d{1,2}"""
+      val validNumeric = """[0-9.]*"""
+
+      private val baseFormatter = stringFormatter(requiredKey)
+
+      override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Option[BigDecimal]] = {
+        baseFormatter
+          .bind(key, data)
+          .map(_.replace(",", ""))
+          .map(_.replace("£", ""))
+          .map(_.replaceAll("""\s""", ""))
+          .flatMap {
+            case s if s.isEmpty => Left(Seq(FormError(key, requiredKey, args)))
+            case s if !s.matches(validNumeric) => Left(Seq(FormError(key,invalidNumericKey, args)))
+            case s if !s.matches(is2dp) => Left(Seq(FormError(key, invalidNumericKey, args)))
+            case s =>
+              nonFatalCatch
+                .either(BigDecimal(s.replaceAll("£", "")))
+                .left.map(_ => Seq(FormError(key, invalidNumericKey, args)))
+          }
+          .flatMap {
+            case bigDecimal if (bigDecimal == BigDecimal("0")) => Left(Seq(FormError(key, minAmountkey, args)))
+            case bigDecimal if (bigDecimal > BigDecimal("100000000000")) => Left(Seq(FormError(key, maxAmountKey, args)))
+            case bigDecimal => Right(Some(bigDecimal))
+          }
+      }
+
+      override def unbind(key: String, value: Option[BigDecimal]): Map[String, String] =
+        baseFormatter.unbind(key, value.getOrElse("").toString)
+    }
+
 }
