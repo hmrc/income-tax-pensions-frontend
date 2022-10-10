@@ -35,6 +35,7 @@ object AllPensionsData {
   implicit val formats: OFormat[AllPensionsData] = Json.format[AllPensionsData]
 
 
+  // scalastyle:off
   def generateCyaFromPrior(prior: AllPensionsData): PensionsCYAModel = {
 
     val statePension: Option[StateBenefit] = prior.stateBenefits.flatMap(_.stateBenefits.flatMap(_.statePension))
@@ -57,33 +58,26 @@ object AllPensionsData {
         prior.pensionReliefs.flatMap(a => a.pensionReliefs.paymentToEmployersSchemeNoTaxRelief)
       ),
 
-      //TODO: validate and amend if necessary when building the annual allowance CYA page
       PensionAnnualAllowancesViewModel(
-        prior.pensionCharges.flatMap(a => a.pensionSavingsTaxCharges).map(_.isAnnualAllowanceReduced),
-        prior.pensionCharges.flatMap(a => a.pensionSavingsTaxCharges).flatMap(_.moneyPurchasedAllowance),
-        prior.pensionCharges.flatMap(a => a.pensionSavingsTaxCharges).flatMap(_.taperedAnnualAllowance),
-        prior.pensionCharges.map(a => a.pensionContributions.isDefined),
-        prior.pensionCharges.flatMap(a => a.pensionContributions).map(_.inExcessOfTheAnnualAllowance),
-        prior.pensionCharges.flatMap(a => a.pensionContributions.map(x => x.annualAllowanceTaxPaid)) match {
+        reducedAnnualAllowanceQuestion = prior.pensionCharges.flatMap(a => a.pensionSavingsTaxCharges).map(_.isAnnualAllowanceReduced),
+        moneyPurchaseAnnualAllowance = prior.pensionCharges.flatMap(a => a.pensionSavingsTaxCharges).flatMap(_.moneyPurchasedAllowance),
+        taperedAnnualAllowance = prior.pensionCharges.flatMap(a => a.pensionSavingsTaxCharges).flatMap(_.taperedAnnualAllowance),
+        aboveAnnualAllowanceQuestion = prior.pensionCharges.map(a => a.pensionContributions.isDefined),
+        aboveAnnualAllowance = prior.pensionCharges.flatMap(a => a.pensionContributions).map(_.inExcessOfTheAnnualAllowance),
+        pensionProvidePaidAnnualAllowanceQuestion = prior.pensionCharges.flatMap(a => a.pensionContributions.map(x => x.annualAllowanceTaxPaid)) match {
           case Some(taxVal) if taxVal > 0 => Some(true)
           case _ => Some(false)
         },
-        prior.pensionCharges.flatMap(a => a.pensionContributions).map(_.annualAllowanceTaxPaid),
-        prior.pensionCharges.flatMap(a => a.pensionContributions).map(_.pensionSchemeTaxReference)
+        taxPaidByPensionProvider = prior.pensionCharges.flatMap(a => a.pensionContributions).map(_.annualAllowanceTaxPaid),
+        pensionSchemeTaxReferences = prior.pensionCharges.flatMap(a => a.pensionContributions).map(_.pensionSchemeTaxReference)
       ),
 
-      //TODO: validate and amend if necessary when building the lifetime allowance CYA page
       pensionLifetimeAllowances = PensionLifetimeAllowancesViewModel(
         aboveLifetimeAllowanceQuestion = getAboveLifetimeAllowanceQuestion(prior),
-        pensionAsLumpSumQuestion = prior.pensionCharges.flatMap(
-          a => a.pensionSavingsTaxCharges).map(_.lumpSumBenefitTakenInExcessOfLifetimeAllowance.isDefined),
-        pensionAsLumpSum = prior.pensionCharges.flatMap(
-          a => a.pensionSavingsTaxCharges).flatMap(_.lumpSumBenefitTakenInExcessOfLifetimeAllowance),
-        pensionPaidAnotherWayQuestion = prior.pensionCharges.flatMap(
-          a => a.pensionSavingsTaxCharges).map(_.benefitInExcessOfLifetimeAllowance.isDefined),
-        pensionPaidAnotherWay = prior.pensionCharges.flatMap(
-          a => a.pensionSavingsTaxCharges).flatMap(_.benefitInExcessOfLifetimeAllowance)
-
+        pensionAsLumpSumQuestion = prior.pensionCharges.flatMap(_.pensionSavingsTaxCharges).map(_.lumpSumBenefitTakenInExcessOfLifetimeAllowance.isDefined),
+        pensionAsLumpSum = prior.pensionCharges.flatMap(_.pensionSavingsTaxCharges).flatMap(_.lumpSumBenefitTakenInExcessOfLifetimeAllowance),
+        pensionPaidAnotherWayQuestion = prior.pensionCharges.flatMap(_.pensionSavingsTaxCharges).map(_.benefitInExcessOfLifetimeAllowance.isDefined),
+        pensionPaidAnotherWay = prior.pensionCharges.flatMap(_.pensionSavingsTaxCharges).flatMap(_.benefitInExcessOfLifetimeAllowance)
       ),
 
       //TODO: validate as necessary on building CYA page
@@ -167,7 +161,7 @@ object AllPensionsData {
   }
 
   private def getAboveLifetimeAllowanceQuestion(prior: AllPensionsData): Option[Boolean] = {
-    if (prior.pensionCharges.flatMap(a => a.pensionSavingsTaxCharges).map(
+    if (prior.pensionCharges.flatMap(_.pensionSavingsTaxCharges).map(
       _.benefitInExcessOfLifetimeAllowance).isDefined || prior.pensionCharges.flatMap(
       a => a.pensionSavingsTaxCharges).map(_.lumpSumBenefitTakenInExcessOfLifetimeAllowance).isDefined) {
       Some(true)

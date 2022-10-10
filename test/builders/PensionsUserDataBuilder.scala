@@ -76,4 +76,14 @@ object PensionsUserDataBuilder extends UnitTest {
     aPensionsUserData.copy(isPriorSubmission = isPriorSubmission,
       pensions = aPensionsCYAModel.copy(paymentsIntoOverseasPensions = overseasPensionViewModel))
   }
+
+  def pensionsUserDataWithAnnualAndLifetimeAllowance(pensionsAnnualAllowances: PensionAnnualAllowancesViewModel,
+                                                     pensionLifetimeAllowancesViewModel: PensionLifetimeAllowancesViewModel,
+                                            isPriorSubmission: Boolean = true): PensionsUserData = {
+    aPensionsUserData.copy(isPriorSubmission = isPriorSubmission,
+      pensions = aPensionsCYAModel.copy(
+        pensionsAnnualAllowances = pensionsAnnualAllowances,
+        pensionLifetimeAllowances = pensionLifetimeAllowancesViewModel)
+    )
+  }
 }

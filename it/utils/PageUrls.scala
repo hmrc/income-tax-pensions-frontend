@@ -154,6 +154,9 @@ object PageUrls extends IntegrationTest {
 
     def pensionTaxReferenceNumberLifetimeAllowanceUrlIndex: Int => Int => String =
     (pensionSchemeTaxReference:Int) =>  (taxYear:Int) => s"$appUrl/$taxYear/lifetime-allowance/pension-scheme-tax-reference?pensionSchemeTaxReferenceIndex=$pensionSchemeTaxReference"
+
+    def checkAnnualLifetimeAllowanceCYA(taxYear: Int): String = s"$appUrl/$taxYear/annual-lifetime-allowances/check-annual-and-lifetime-allowances"
+
   }
 
   object UnAuthorisedPayments {
