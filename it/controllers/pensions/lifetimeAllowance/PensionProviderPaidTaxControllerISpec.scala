@@ -16,11 +16,10 @@
 
 package controllers.pensions.lifetimeAllowance
 
-import builders.PensionsCYAModelBuilder
 import builders.PensionsCYAModelBuilder.{aPensionsCYAEmptyModel, aPensionsCYAModel}
 import controllers.PreferredLanguages.{English, Welsh}
 import controllers.UserTypes.{Agent, Individual}
-import controllers.{ControllerSpec, PreferredLanguages, UserConfig, UserTypes}
+import controllers.{ControllerSpec, UserConfig}
 import models.mongo.PensionsUserData
 import models.pension.charges.PensionAnnualAllowancesViewModel
 import org.jsoup.Jsoup.parse
@@ -28,13 +27,7 @@ import org.jsoup.nodes.Document
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.{WSClient, WSResponse}
 
-class PensionProviderPaidTaxControllerSpec extends ControllerSpec {
-
-  protected val scenarioNameForIndividualAndEnglish =  "is an individual with a preferred language of English"
-  protected val scenarioNameForIndividualAndWelsh =  "is an individual with a preferred language of Welsh"
-  protected val scenarioNameForAgentAndEnglish =  "is an agent with a preferred language of English"
-  protected val scenarioNameForAgentAndWelsh =  "is an agent with a preferred language of Welsh"
-
+class PensionProviderPaidTaxControllerISpec extends ControllerSpec {
 
   "This page" when {
     "requested to be shown" should {

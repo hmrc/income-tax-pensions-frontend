@@ -48,14 +48,15 @@ class ControllerSpec extends PlaySpec
   private val validMtdItId = "1234567890"
   private val validNino = "AA123456A"
   private val languageCodes = Map(PreferredLanguages.English -> "en", PreferredLanguages.Welsh -> "cy")
-
   private val taxYear = 2022
   private val database: PensionsUserDataRepositoryImpl = app.injector.instanceOf[PensionsUserDataRepositoryImpl]
-
   private lazy val wiremockBaseUrl = s"http://$wiremockHost:$wiremockPort"
 
-
   protected implicit val wsClient: WSClient = app.injector.instanceOf[WSClient]
+  protected val scenarioNameForIndividualAndEnglish = "is an individual with a preferred language of English"
+  protected val scenarioNameForIndividualAndWelsh = "is an individual with a preferred language of Welsh"
+  protected val scenarioNameForAgentAndEnglish = "is an agent with a preferred language of English"
+  protected val scenarioNameForAgentAndWelsh = "is an agent with a preferred language of Welsh"
 
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
     .in(Environment.simple(mode = Mode.Dev))
