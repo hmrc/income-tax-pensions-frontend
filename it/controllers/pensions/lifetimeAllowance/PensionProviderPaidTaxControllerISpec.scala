@@ -16,377 +16,1026 @@
 
 package controllers.pensions.lifetimeAllowance
 
-import builders.PensionAnnualAllowanceViewModelBuilder.aPensionAnnualAllowanceViewModel
-import builders.PensionsUserDataBuilder
-import builders.PensionsUserDataBuilder.{aPensionsUserData, anPensionsUserDataEmptyCya, pensionsUserDataWithAnnualAllowances}
-import builders.UserBuilder.aUserRequest
-import forms.RadioButtonAmountForm
-import models.mongo.PensionsCYAModel
-import org.jsoup.Jsoup
+import builders.PensionsCYAModelBuilder.{aPensionsCYAEmptyModel, aPensionsCYAModel}
+import controllers.PreferredLanguages.{English, Welsh}
+import controllers.UserTypes.{Agent, Individual}
+import controllers.{ControllerSpec, UserConfig}
+import models.mongo.PensionsUserData
+import models.pension.charges.PensionAnnualAllowancesViewModel
+import org.jsoup.Jsoup.parse
 import org.jsoup.nodes.Document
-import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
-import play.api.libs.ws.WSResponse
-import utils.PageUrls.pensionSummaryUrl
-import utils.CommonUtils
-import utils.PageUrls.PensionAnnualAllowancePages.{pensionProviderPaidTaxUrl, pensionSchemeTaxReferenceUrl}
-import utils.PageUrls.PensionLifetimeAllowance.pensionAboveAnnualLifetimeAllowanceUrl
+import play.api.libs.ws.{WSClient, WSResponse}
 
-// scalastyle:off magic.number
-class PensionProviderPaidTaxControllerISpec extends CommonUtils with BeforeAndAfterEach {
+class PensionProviderPaidTaxControllerISpec extends ControllerSpec {
 
-  private def pensionsUsersData(isPrior: Boolean = false, pensionsCyaModel: PensionsCYAModel) = {
-    PensionsUserDataBuilder.aPensionsUserData.copy(isPriorSubmission = isPrior, pensions = pensionsCyaModel)
-  }
+  "This page" when {
+    "requested to be shown" should {
+      "redirect to the summary page" when {
+        "the user has no stored session data at all" in {
 
-  implicit val url: Int => String = pensionProviderPaidTaxUrl
-  private val amountInputName = "amount-2"
-  private val existingAmount: Option[BigDecimal] = Some(44.55)
-  private val existingAmountStr = "44.55"
-  private val amountOverMaximum = "100,000,000,000"
+          val response = getPage(UserConfig(Individual, English, None))
 
-  object Selectors {
-    val captionSelector: String = "#main-content > div > div > header > p"
-    val continueButtonSelector: String = "#continue"
-    val formSelector: String = "#main-content > div > div > form"
-    val yesSelector = "#value"
-    val noSelector = "#value-no"
-    val amountInputSelector = "#amount-2"
-    val amountHintSelector = "#amount-2-hint"
-    val noButAgreedToPaySelector = "#value-no-agreed-to-pay"
-    val amountText = "#conditional-value > div > label"
+          response must haveStatus(SEE_OTHER)
+          response must haveALocationHeaderValue(relativeUrlForPensionSummaryPage)
 
-    def labelSelector(index: Int): String = s"form > div:nth-of-type($index) > label"
-  }
-
-  trait SpecificExpectedResults {
-    val expectedTitle: String
-    val expectedHeading: String
-    val expectedErrorTitle: String
-    val noOptionSelectedError: String
-    val noEntryErrorMessage: String
-    val invalidFormatErrorText: String
-    val maxAmountErrorText: String
-  }
-
-  trait CommonExpectedResults {
-    val expectedCaption: Int => String
-    val expectedLabel: String
-    val expectedButtonText: String
-    val yesText: String
-    val noText: String
-    val hint: String
-  }
-
-  object ExpectedIndividualEN extends SpecificExpectedResults {
-    val expectedTitle = "Did your pension schemes pay or agree to pay the tax?"
-    val expectedHeading = "Did your pension schemes pay or agree to pay the tax?"
-    val expectedErrorTitle = s"Error: $expectedTitle"
-    val noOptionSelectedError: String = "Select yes if your pension provider paid or agreed to pay your annual allowance tax"
-    val noEntryErrorMessage: String = "Enter the amount of tax your pension provider paid or agreed to pay"
-    val invalidFormatErrorText: String = "Enter the amount of tax your pension provider paid or agreed to pay in the correct format"
-    val maxAmountErrorText: String = "The amount of tax your pension provider paid or agreed to pay must be less than £100,000,000,000"
-  }
-
-  object ExpectedIndividualCY extends SpecificExpectedResults {
-    val expectedTitle = "Did your pension schemes pay or agree to pay the tax?"
-    val expectedHeading = "Did your pension schemes pay or agree to pay the tax?"
-    val expectedErrorTitle = s"Error: $expectedTitle"
-    val noOptionSelectedError: String = "Select yes if your pension provider paid or agreed to pay your annual allowance tax"
-    val noEntryErrorMessage: String = "Enter the amount of tax your pension provider paid or agreed to pay"
-    val invalidFormatErrorText: String = "Enter the amount of tax your pension provider paid or agreed to pay in the correct format"
-    val maxAmountErrorText: String = "The amount of tax your pension provider paid or agreed to pay must be less than £100,000,000,000"
-  }
-
-  object ExpectedAgentEN extends SpecificExpectedResults {
-    val expectedTitle = "Did your client’s pension schemes pay or agree to pay the tax?"
-    val expectedHeading = "Did your client’s pension schemes pay or agree to pay the tax?"
-    val expectedErrorTitle = s"Error: $expectedTitle"
-    val noOptionSelectedError: String = "Select yes if your client’s pension provider paid or agreed to pay the annual allowance tax"
-    val noEntryErrorMessage: String = "Enter the amount of tax your client’s pension provider paid or agreed to pay"
-    val invalidFormatErrorText: String = "Enter the amount of tax your client’s pension provider paid or agreed to pay in the correct format"
-    val maxAmountErrorText: String = "The amount of tax your client’s pension provider paid or agreed to pay must be less than £100,000,000,000"
-  }
-
-  object ExpectedAgentCY extends SpecificExpectedResults {
-    val expectedTitle = "Did your client’s pension schemes pay or agree to pay the tax?"
-    val expectedHeading = "Did your client’s pension schemes pay or agree to pay the tax?"
-    val expectedErrorTitle = s"Error: $expectedTitle"
-    val noOptionSelectedError: String = "Select yes if your client’s pension provider paid or agreed to pay the annual allowance tax"
-    val noEntryErrorMessage: String = "Enter the amount of tax your client’s pension provider paid or agreed to pay"
-    val invalidFormatErrorText: String = "Enter the amount of tax your client’s pension provider paid or agreed to pay in the correct format"
-    val maxAmountErrorText: String = "The amount of tax your client’s pension provider paid or agreed to pay must be less than £100,000,000,000"
-  }
-
-  object CommonExpectedEN extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Annual and lifetime allowances for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val yesText = "Yes"
-    val noText = "No"
-    val expectedLabel: String = "Amount they paid or agreed to pay, in pounds"
-    val hint: String = "For example, £193.52"
-    val expectedButtonText: String = "Continue"
-  }
-
-  object CommonExpectedCY extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Annual and lifetime allowances for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val yesText = "Yes"
-    val noText = "No"
-    val expectedLabel: String = "Amount they paid or agreed to pay, in pounds"
-    val hint: String = "For example, £193.52"
-    val expectedButtonText = "Continue"
-  }
-
-  val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(
-    UserScenario(isWelsh = false, isAgent = false, CommonExpectedEN, Some(ExpectedIndividualEN)),
-    UserScenario(isWelsh = false, isAgent = true, CommonExpectedEN, Some(ExpectedAgentEN)),
-    UserScenario(isWelsh = true, isAgent = false, CommonExpectedCY, Some(ExpectedIndividualCY)),
-    UserScenario(isWelsh = true, isAgent = true, CommonExpectedCY, Some(ExpectedAgentCY))
-  )
-
-  ".show" should {
-    userScenarios.foreach { user =>
-      s"language is ${welshTest(user.isWelsh)} and request is from an ${agentTest(user.isAgent)}" should {
-
-        import Selectors._
-        import user.commonExpectedResults._
-
-        "render the 'Pension Provider Paid' page with correct content and no pre-filling" which {
-          implicit lazy val result: WSResponse = showPage(user, anPensionsUserDataEmptyCya)
-
-          "has an OK status" in {
-            result.status shouldBe OK
-          }
-
-          implicit def document: () => Document = () => Jsoup.parse(result.body)
-
-          titleCheck(user.specificExpectedResults.get.expectedTitle)
-          h1Check(user.specificExpectedResults.get.expectedHeading)
-          captionCheck(expectedCaption(taxYearEOY), captionSelector)
-          radioButtonCheck(yesText, 1, checked = Some(false))
-          radioButtonCheck(noText, 2, checked = Some(false))
-          buttonCheck(expectedButtonText, continueButtonSelector)
-          formPostLinkCheck(pensionProviderPaidTaxUrl(taxYearEOY), formSelector)
-        }
-
-        "render the 'Pension Provider Paid' page with correct content and yes pre-filled with a valid amount" which {
-          val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(
-            pensionProvidePaidAnnualAllowanceQuestion = Some(true),
-            taxPaidByPensionProvider = existingAmount)
-          lazy val result = showPage(user, pensionsUserDataWithAnnualAllowances(pensionsViewModel))
-
-          "has an OK status" in {
-            result.status shouldBe OK
-          }
-
-          implicit def document: () => Document = () => Jsoup.parse(result.body)
-
-          titleCheck(user.specificExpectedResults.get.expectedTitle)
-          h1Check(user.specificExpectedResults.get.expectedHeading)
-          captionCheck(expectedCaption(taxYearEOY), captionSelector)
-          textOnPageCheck(expectedLabel, amountText)
-          textOnPageCheck(user.commonExpectedResults.hint, amountHintSelector)
-          radioButtonCheck(yesText, 1, checked = Some(true))
-          radioButtonCheck(noText, 2, checked = Some(false))
-          inputFieldValueCheck(amountInputName, amountInputSelector, existingAmountStr)
-          buttonCheck(expectedButtonText, continueButtonSelector)
-          formPostLinkCheck(pensionProviderPaidTaxUrl(taxYearEOY), formSelector)
-        }
-        "render the page with correct content and no pre-filled" which {
-          val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(pensionProvidePaidAnnualAllowanceQuestion = Some(false))
-          val pensionUserData = pensionsUserDataWithAnnualAllowances(pensionsViewModel)
-          implicit lazy val result: WSResponse = showPage(user, pensionUserData)
-
-          "has an OK status" in {
-            result.status shouldBe OK
-          }
-
-          implicit def document: () => Document = () => Jsoup.parse(result.body)
-
-          titleCheck(user.specificExpectedResults.get.expectedTitle)
-          h1Check(user.specificExpectedResults.get.expectedHeading)
-          captionCheck(expectedCaption(taxYearEOY), captionSelector)
-          radioButtonCheck(yesText, 1, checked = Some(false))
-          radioButtonCheck(noText, 2, checked = Some(true))
-          buttonCheck(expectedButtonText, continueButtonSelector)
-          formPostLinkCheck(pensionProviderPaidTaxUrl(taxYearEOY), formSelector)
         }
       }
-    }
+      "appear as expected" when {
+        "the user has no relevant session data and" when {
 
-    "redirect to pensions allowances CYA page if there is no session data" should {
-      lazy val result: WSResponse = getResponseNoSessionData
+          val sessionData = pensionsUserData(aPensionsCYAEmptyModel)
 
-      "has an SEE_OTHER status" in {
-        result.status shouldBe SEE_OTHER
-        //TODO: go to the CYA page
-        result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
-      }
-    }
-  }
+          scenarioNameForIndividualAndEnglish in {
 
-  ".submit" should {
-    userScenarios.foreach { user =>
-      s"language is ${welshTest(user.isWelsh)} and request is from an ${agentTest(user.isAgent)}" should {
+            val response = getPage(UserConfig(Individual, English, Some(sessionData)))
 
-        s"return $BAD_REQUEST error when no option is selected" which {
-          lazy val form: Map[String, String] = Map(RadioButtonAmountForm.yesNo -> "")
+            response must haveStatus(OK)
+            assertPageAsExpected(
+              parse(response.body),
+              ExpectedPageContents(
+                title = "Did your pension schemes pay or agree to pay the tax?",
+                header = "Did your pension schemes pay or agree to pay the tax?",
+                caption = "Annual and lifetime allowances for 6 April 2021 to 5 April 2022",
+                radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
+                radioButtonForNo = uncheckedExpectedRadioButton("No"),
+                buttonForContinue = ExpectedButtonForContinue("Continue", ""),
+                amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "For example, £193.52", "")
+              ))
 
-          lazy val result: WSResponse = submitPage(user, aPensionsUserData, form)
-
-          "has the correct status" in {
-            result.status shouldBe BAD_REQUEST
           }
+          scenarioNameForIndividualAndWelsh in {
 
-          implicit def document: () => Document = () => Jsoup.parse(result.body)
-          import Selectors._
-          import user.commonExpectedResults._
-          titleCheck(user.specificExpectedResults.get.expectedErrorTitle)
-          h1Check(user.specificExpectedResults.get.expectedHeading)
-          captionCheck(expectedCaption(taxYearEOY), captionSelector)
-          radioButtonCheck(yesText, 1, checked = Some(false))
-          radioButtonCheck(noText, 2, checked = Some(false))
-          buttonCheck(expectedButtonText, continueButtonSelector)
-          formPostLinkCheck(pensionProviderPaidTaxUrl(taxYearEOY), formSelector)
-          errorSummaryCheck(user.specificExpectedResults.get.noOptionSelectedError, Selectors.yesSelector)
-          errorAboveElementCheck(user.specificExpectedResults.get.noOptionSelectedError, Some(RadioButtonAmountForm.yesNo))
+            val response = getPage(UserConfig(Individual, Welsh, Some(sessionData)))
+
+            response must haveStatus(OK)
+            assertPageAsExpected(
+              parse(response.body),
+              ExpectedPageContents(
+                title = "Did your pension schemes pay or agree to pay the tax?",
+                header = "Did your pension schemes pay or agree to pay the tax?",
+                caption = "Annual and lifetime allowances for 6 April 2021 to 5 April 2022",
+                radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
+                radioButtonForNo = uncheckedExpectedRadioButton("No"),
+                buttonForContinue = ExpectedButtonForContinue("Continue", ""),
+                amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "For example, £193.52", "")
+              ))
+
+          }
+          scenarioNameForAgentAndEnglish in {
+
+            val response = getPage(UserConfig(Agent, English, Some(sessionData)))
+
+            response must haveStatus(OK)
+            assertPageAsExpected(
+              parse(response.body),
+              ExpectedPageContents(
+                title = "Did your client’s pension schemes pay or agree to pay the tax?",
+                header = "Did your client’s pension schemes pay or agree to pay the tax?",
+                caption = "Annual and lifetime allowances for 6 April 2021 to 5 April 2022",
+                radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
+                radioButtonForNo = uncheckedExpectedRadioButton("No"),
+                buttonForContinue = ExpectedButtonForContinue("Continue", ""),
+                amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "For example, £193.52", "")
+              ))
+
+          }
+          scenarioNameForAgentAndWelsh in {
+
+            val response = getPage(UserConfig(Agent, Welsh, Some(sessionData)))
+
+            response must haveStatus(OK)
+            assertPageAsExpected(
+              parse(response.body),
+              ExpectedPageContents(
+                title = "Did your client’s pension schemes pay or agree to pay the tax?",
+                header = "Did your client’s pension schemes pay or agree to pay the tax?",
+                caption = "Annual and lifetime allowances for 6 April 2021 to 5 April 2022",
+                radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
+                radioButtonForNo = uncheckedExpectedRadioButton("No"),
+                buttonForContinue = ExpectedButtonForContinue("Continue", ""),
+                amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "For example, £193.52", "")
+              ))
+
+          }
         }
+        "the user had previously answered 'Yes' with a valid amount, and" when {
 
-        s"return $BAD_REQUEST error when yes is selected but no amount is provided" which {
-          lazy val form: Map[String, String] = Map(RadioButtonAmountForm.yesNo -> RadioButtonAmountForm.yes, RadioButtonAmountForm.amount2 -> "")
+          val sessionData: PensionsUserData =
+            pensionsUserData(aPensionsCYAModel.copy(pensionsAnnualAllowances =
+              PensionAnnualAllowancesViewModel(
+                pensionProvidePaidAnnualAllowanceQuestion = Some(true),
+                taxPaidByPensionProvider = Some(42.64))
+            ))
 
-          lazy val result: WSResponse = submitPage(user, aPensionsUserData, form)
+          scenarioNameForIndividualAndEnglish in {
 
-          "has the correct status" in {
-            result.status shouldBe BAD_REQUEST
+            val response = getPage(UserConfig(Individual, English, Some(sessionData)))
+
+            response must haveStatus(OK)
+            assertPageAsExpected(
+              parse(response.body),
+              ExpectedPageContents(
+                title = "Did your pension schemes pay or agree to pay the tax?",
+                header = "Did your pension schemes pay or agree to pay the tax?",
+                caption = "Annual and lifetime allowances for 6 April 2021 to 5 April 2022",
+                radioButtonForYes = checkedExpectedRadioButton("Yes"),
+                radioButtonForNo = uncheckedExpectedRadioButton("No"),
+                buttonForContinue = ExpectedButtonForContinue("Continue", ""),
+                amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "For example, £193.52", "42.64")
+              ))
+
+          }
+          scenarioNameForIndividualAndWelsh in {
+
+            val response = getPage(UserConfig(Individual, Welsh, Some(sessionData)))
+
+            response must haveStatus(OK)
+            assertPageAsExpected(
+              parse(response.body),
+              ExpectedPageContents(
+                title = "Did your pension schemes pay or agree to pay the tax?",
+                header = "Did your pension schemes pay or agree to pay the tax?",
+                caption = "Annual and lifetime allowances for 6 April 2021 to 5 April 2022",
+                radioButtonForYes = checkedExpectedRadioButton("Yes"),
+                radioButtonForNo = uncheckedExpectedRadioButton("No"),
+                buttonForContinue = ExpectedButtonForContinue("Continue", ""),
+                amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "For example, £193.52", "42.64")
+              ))
+
+          }
+          scenarioNameForAgentAndEnglish in {
+
+            val response = getPage(UserConfig(Agent, English, Some(sessionData)))
+
+            response must haveStatus(OK)
+            assertPageAsExpected(
+              parse(response.body),
+              ExpectedPageContents(
+                title = "Did your client’s pension schemes pay or agree to pay the tax?",
+                header = "Did your client’s pension schemes pay or agree to pay the tax?",
+                caption = "Annual and lifetime allowances for 6 April 2021 to 5 April 2022",
+                radioButtonForYes = checkedExpectedRadioButton("Yes"),
+                radioButtonForNo = uncheckedExpectedRadioButton("No"),
+                buttonForContinue = ExpectedButtonForContinue("Continue", ""),
+                amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "For example, £193.52", "42.64")
+              ))
+
+          }
+          scenarioNameForAgentAndWelsh in {
+
+            val response = getPage(UserConfig(Agent, Welsh, Some(sessionData)))
+
+            response must haveStatus(OK)
+            assertPageAsExpected(
+              parse(response.body),
+              ExpectedPageContents(
+                title = "Did your client’s pension schemes pay or agree to pay the tax?",
+                header = "Did your client’s pension schemes pay or agree to pay the tax?",
+                caption = "Annual and lifetime allowances for 6 April 2021 to 5 April 2022",
+                radioButtonForYes = checkedExpectedRadioButton("Yes"),
+                radioButtonForNo = uncheckedExpectedRadioButton("No"),
+                buttonForContinue = ExpectedButtonForContinue("Continue", ""),
+                amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "For example, £193.52", "42.64")
+              ))
+
           }
 
-          implicit def document: () => Document = () => Jsoup.parse(result.body)
-          import Selectors._
-          import user.commonExpectedResults._
-          titleCheck(user.specificExpectedResults.get.expectedErrorTitle)
-          h1Check(user.specificExpectedResults.get.expectedHeading)
-          captionCheck(expectedCaption(taxYearEOY), captionSelector)
-          textOnPageCheck(expectedLabel, amountText)
-          textOnPageCheck(user.commonExpectedResults.hint, amountHintSelector)
-          radioButtonCheck(yesText, 1, checked = Some(true))
-          radioButtonCheck(noText, 2, checked = Some(false))
-          buttonCheck(expectedButtonText, continueButtonSelector)
-          formPostLinkCheck(pensionProviderPaidTaxUrl(taxYearEOY), formSelector)
-          errorSummaryCheck(user.specificExpectedResults.get.noEntryErrorMessage, amountInputSelector)
-          errorAboveElementCheck(user.specificExpectedResults.get.noEntryErrorMessage)
-          inputFieldValueCheck(amountInputName, amountInputSelector, "")
         }
-        s"return $BAD_REQUEST error when yes is selected but amount is in incorrect format" which {
-          val incorrectFormat = "aa"
-          lazy val form: Map[String, String] = Map(RadioButtonAmountForm.yesNo -> RadioButtonAmountForm.yes, RadioButtonAmountForm.amount2 -> incorrectFormat)
+        "the user had previously answered 'No' without an amount, and" when {
 
-          lazy val result: WSResponse = submitPage(user, aPensionsUserData, form)
+          val sessionData: PensionsUserData =
+            pensionsUserData(aPensionsCYAModel.copy(pensionsAnnualAllowances =
+              PensionAnnualAllowancesViewModel(
+                pensionProvidePaidAnnualAllowanceQuestion = Some(false),
+                taxPaidByPensionProvider = None)
+            ))
 
-          "has the correct status" in {
-            result.status shouldBe BAD_REQUEST
+          scenarioNameForIndividualAndEnglish in {
+
+            val response = getPage(UserConfig(Individual, English, Some(sessionData)))
+
+            response must haveStatus(OK)
+            assertPageAsExpected(
+              parse(response.body),
+              ExpectedPageContents(
+                title = "Did your pension schemes pay or agree to pay the tax?",
+                header = "Did your pension schemes pay or agree to pay the tax?",
+                caption = "Annual and lifetime allowances for 6 April 2021 to 5 April 2022",
+                radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
+                radioButtonForNo = checkedExpectedRadioButton("No"),
+                buttonForContinue = ExpectedButtonForContinue("Continue", ""),
+                amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "For example, £193.52", "")
+              ))
+
+          }
+          scenarioNameForIndividualAndWelsh in {
+
+            val response = getPage(UserConfig(Individual, Welsh, Some(sessionData)))
+
+            response must haveStatus(OK)
+            assertPageAsExpected(
+              parse(response.body),
+              ExpectedPageContents(
+                title = "Did your pension schemes pay or agree to pay the tax?",
+                header = "Did your pension schemes pay or agree to pay the tax?",
+                caption = "Annual and lifetime allowances for 6 April 2021 to 5 April 2022",
+                radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
+                radioButtonForNo = checkedExpectedRadioButton("No"),
+                buttonForContinue = ExpectedButtonForContinue("Continue", ""),
+                amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "For example, £193.52", "")
+              ))
+
+          }
+          scenarioNameForAgentAndEnglish in {
+
+            val response = getPage(UserConfig(Agent, English, Some(sessionData)))
+
+            response must haveStatus(OK)
+            assertPageAsExpected(
+              parse(response.body),
+              ExpectedPageContents(
+                title = "Did your client’s pension schemes pay or agree to pay the tax?",
+                header = "Did your client’s pension schemes pay or agree to pay the tax?",
+                caption = "Annual and lifetime allowances for 6 April 2021 to 5 April 2022",
+                radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
+                radioButtonForNo = checkedExpectedRadioButton("No"),
+                buttonForContinue = ExpectedButtonForContinue("Continue", ""),
+                amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "For example, £193.52", "")
+              ))
+
+          }
+          scenarioNameForAgentAndWelsh in {
+
+            val response = getPage(UserConfig(Agent, Welsh, Some(sessionData)))
+
+            response must haveStatus(OK)
+            assertPageAsExpected(
+              parse(response.body),
+              ExpectedPageContents(
+                title = "Did your client’s pension schemes pay or agree to pay the tax?",
+                header = "Did your client’s pension schemes pay or agree to pay the tax?",
+                caption = "Annual and lifetime allowances for 6 April 2021 to 5 April 2022",
+                radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
+                radioButtonForNo = checkedExpectedRadioButton("No"),
+                buttonForContinue = ExpectedButtonForContinue("Continue", ""),
+                amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "For example, £193.52", "")
+              ))
+
           }
 
-          implicit def document: () => Document = () => Jsoup.parse(result.body)
-          import Selectors._
-          import user.commonExpectedResults._
-          titleCheck(user.specificExpectedResults.get.expectedErrorTitle)
-          h1Check(user.specificExpectedResults.get.expectedHeading)
-          captionCheck(expectedCaption(taxYearEOY), captionSelector)
-          textOnPageCheck(expectedLabel, amountText)
-          textOnPageCheck(user.commonExpectedResults.hint, amountHintSelector)
-          radioButtonCheck(yesText, 1, checked = Some(true))
-          radioButtonCheck(noText, 2, checked = Some(false))
-          buttonCheck(expectedButtonText, continueButtonSelector)
-          formPostLinkCheck(pensionProviderPaidTaxUrl(taxYearEOY), formSelector)
-          errorSummaryCheck(user.specificExpectedResults.get.invalidFormatErrorText, Selectors.amountInputSelector)
-          errorAboveElementCheck(user.specificExpectedResults.get.invalidFormatErrorText)
-          inputFieldValueCheck(amountInputName, amountInputSelector, incorrectFormat)
-        }
-
-        s"return $BAD_REQUEST error when yes is selected but amount is in excess" which {
-          lazy val form: Map[String, String] = Map(RadioButtonAmountForm.yesNo -> RadioButtonAmountForm.yes, RadioButtonAmountForm.amount2 -> amountOverMaximum)
-
-          lazy val result: WSResponse = submitPage(user, aPensionsUserData, form)
-
-          "has the correct status" in {
-            result.status shouldBe BAD_REQUEST
-          }
-
-          implicit def document: () => Document = () => Jsoup.parse(result.body)
-          import Selectors._
-          import user.commonExpectedResults._
-          titleCheck(user.specificExpectedResults.get.expectedErrorTitle)
-          h1Check(user.specificExpectedResults.get.expectedHeading)
-          captionCheck(expectedCaption(taxYearEOY), captionSelector)
-          textOnPageCheck(expectedLabel, amountText)
-          textOnPageCheck(user.commonExpectedResults.hint, amountHintSelector)
-          radioButtonCheck(yesText, 1, checked = Some(true))
-          radioButtonCheck(noText, 2, checked = Some(false))
-          buttonCheck(expectedButtonText, continueButtonSelector)
-          formPostLinkCheck(pensionProviderPaidTaxUrl(taxYearEOY), formSelector)
-          errorSummaryCheck(user.specificExpectedResults.get.maxAmountErrorText, Selectors.amountInputSelector)
-          errorAboveElementCheck(user.specificExpectedResults.get.maxAmountErrorText)
-          inputFieldValueCheck(amountInputName, amountInputSelector, amountOverMaximum)
         }
       }
     }
-    "redirect and update question to 'Yes' when user selects yes and provides valid amount" which {
-      lazy val form: Map[String, String] = Map(RadioButtonAmountForm.yesNo -> RadioButtonAmountForm.yes, RadioButtonAmountForm.amount2 -> existingAmountStr)
+    "submitted" should {
+      "succeed" when {
+        "the user has relevant session data and" when {
 
-      lazy val result: WSResponse = submitPage(aPensionsUserData, form)
+          val sessionData = pensionsUserData(aPensionsCYAModel)
 
-      "has a SEE_OTHER(303) status" in {
-        result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(pensionProviderPaidTaxUrl(taxYearEOY))// todo update this when pages required for redirect are updated/implemented
+          "the user has selected 'No' and" when {
+
+            val expectedPensionAnnualAllowancesViewModel =
+              sessionData.pensions.pensionsAnnualAllowances.copy(
+                pensionProvidePaidAnnualAllowanceQuestion = Some(false),
+                taxPaidByPensionProvider = None
+              )
+
+            scenarioNameForIndividualAndEnglish in {
+
+              val response = submitForm(UserConfig(Individual, English, Some(sessionData)), SubmittedFormData(Some(false), None))
+
+              response must haveStatus(SEE_OTHER)
+              response must haveALocationHeaderValue(relativeUrlForPensionProviderPaidTaxPage)
+              getPensionAnnualAllowancesViewModel(sessionData) mustBe expectedPensionAnnualAllowancesViewModel
+
+            }
+            scenarioNameForIndividualAndWelsh in {
+
+              val response = submitForm(UserConfig(Individual, Welsh, Some(sessionData)), SubmittedFormData(Some(false), None))
+
+              response must haveStatus(SEE_OTHER)
+              response must haveALocationHeaderValue(relativeUrlForPensionProviderPaidTaxPage)
+              getPensionAnnualAllowancesViewModel(sessionData) mustBe expectedPensionAnnualAllowancesViewModel
+
+            }
+            scenarioNameForAgentAndEnglish in {
+
+              val response = submitForm(UserConfig(Agent, English, Some(sessionData)), SubmittedFormData(Some(false), None))
+
+              response must haveStatus(SEE_OTHER)
+              response must haveALocationHeaderValue(relativeUrlForPensionProviderPaidTaxPage)
+              getPensionAnnualAllowancesViewModel(sessionData) mustBe expectedPensionAnnualAllowancesViewModel
+
+            }
+            scenarioNameForAgentAndWelsh in {
+
+              val response = submitForm(UserConfig(Agent, Welsh, Some(sessionData)), SubmittedFormData(Some(false), None))
+
+              response must haveStatus(SEE_OTHER)
+              response must haveALocationHeaderValue(relativeUrlForPensionProviderPaidTaxPage)
+              getPensionAnnualAllowancesViewModel(sessionData) mustBe expectedPensionAnnualAllowancesViewModel
+
+            }
+          }
+          "the user has selected 'Yes' as well as a valid amount (unformatted), and" when {
+
+            val expectedPensionAnnualAllowancesViewModel =
+              sessionData.pensions.pensionsAnnualAllowances.copy(
+                pensionProvidePaidAnnualAllowanceQuestion = Some(true),
+                taxPaidByPensionProvider = Some(BigDecimal(42.64))
+              )
+
+            scenarioNameForIndividualAndEnglish in {
+
+              val response = submitForm(UserConfig(Individual, English, Some(sessionData)), SubmittedFormData(Some(true), Some("42.64")))
+
+              response must haveStatus(SEE_OTHER)
+              response must haveALocationHeaderValue(relativeUrlForPensionProviderPaidTaxPage)
+              getPensionAnnualAllowancesViewModel(sessionData) mustBe expectedPensionAnnualAllowancesViewModel
+
+            }
+            scenarioNameForIndividualAndWelsh in {
+
+              val response = submitForm(UserConfig(Individual, Welsh, Some(sessionData)), SubmittedFormData(Some(true), Some("42.64")))
+
+              response must haveStatus(SEE_OTHER)
+              response must haveALocationHeaderValue(relativeUrlForPensionProviderPaidTaxPage)
+              getPensionAnnualAllowancesViewModel(sessionData) mustBe expectedPensionAnnualAllowancesViewModel
+
+            }
+            scenarioNameForAgentAndEnglish in {
+
+              val response = submitForm(UserConfig(Agent, English, Some(sessionData)), SubmittedFormData(Some(true), Some("42.64")))
+
+              response must haveStatus(SEE_OTHER)
+              response must haveALocationHeaderValue(relativeUrlForPensionProviderPaidTaxPage)
+              getPensionAnnualAllowancesViewModel(sessionData) mustBe expectedPensionAnnualAllowancesViewModel
+
+            }
+            scenarioNameForAgentAndWelsh in {
+
+              val response = submitForm(UserConfig(Agent, Welsh, Some(sessionData)), SubmittedFormData(Some(true), Some("42.64")))
+
+              response must haveStatus(SEE_OTHER)
+              response must haveALocationHeaderValue(relativeUrlForPensionProviderPaidTaxPage)
+              getPensionAnnualAllowancesViewModel(sessionData) mustBe expectedPensionAnnualAllowancesViewModel
+
+            }
+          }
+          "the user has selected 'Yes' as well as a valid amount (formatted), and" when {
+
+            val expectedPensionAnnualAllowancesViewModel =
+              sessionData.pensions.pensionsAnnualAllowances.copy(
+                pensionProvidePaidAnnualAllowanceQuestion = Some(true),
+                taxPaidByPensionProvider = Some(BigDecimal(1042.64))
+              )
+
+            scenarioNameForIndividualAndEnglish in {
+
+              val response = submitForm(UserConfig(Individual, English, Some(sessionData)), SubmittedFormData(Some(true), Some("£1,042.64")))
+
+              response must haveStatus(SEE_OTHER)
+              response must haveALocationHeaderValue(relativeUrlForPensionProviderPaidTaxPage)
+              getPensionAnnualAllowancesViewModel(sessionData) mustBe expectedPensionAnnualAllowancesViewModel
+
+            }
+            scenarioNameForIndividualAndWelsh in {
+
+              val response = submitForm(UserConfig(Individual, Welsh, Some(sessionData)), SubmittedFormData(Some(true), Some("£1,042.64")))
+
+              response must haveStatus(SEE_OTHER)
+              response must haveALocationHeaderValue(relativeUrlForPensionProviderPaidTaxPage)
+              getPensionAnnualAllowancesViewModel(sessionData) mustBe expectedPensionAnnualAllowancesViewModel
+
+            }
+            scenarioNameForAgentAndEnglish in {
+
+              val response = submitForm(UserConfig(Agent, English, Some(sessionData)), SubmittedFormData(Some(true), Some("£1,042.64")))
+
+              response must haveStatus(SEE_OTHER)
+              response must haveALocationHeaderValue(relativeUrlForPensionProviderPaidTaxPage)
+              getPensionAnnualAllowancesViewModel(sessionData) mustBe expectedPensionAnnualAllowancesViewModel
+
+            }
+            scenarioNameForAgentAndWelsh in {
+
+              val response = submitForm(UserConfig(Agent, Welsh, Some(sessionData)), SubmittedFormData(Some(true), Some("£1,042.64")))
+
+              response must haveStatus(SEE_OTHER)
+              response must haveALocationHeaderValue(relativeUrlForPensionProviderPaidTaxPage)
+              getPensionAnnualAllowancesViewModel(sessionData) mustBe expectedPensionAnnualAllowancesViewModel
+
+            }
+          }
+
+        }
       }
+      "fail" when {
+        "the user has relevant session data and" when {
 
-      "updates pensionProvidePaidAnnualAllowanceQuestion to Some(Yes)" in {
-        lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
-        cyaModel.pensions.pensionsAnnualAllowances.pensionProvidePaidAnnualAllowanceQuestion shouldBe Some(true)
-        cyaModel.pensions.pensionsAnnualAllowances.taxPaidByPensionProvider shouldBe existingAmount
-      }
-    }
+          val sessionData = pensionsUserData(aPensionsCYAModel)
 
-    "redirect and update question to 'No' when user selects no upon entering the page for the first time" which {
-      lazy val form: Map[String, String] = Map(RadioButtonAmountForm.yesNo -> RadioButtonAmountForm.no)
+          "the user has selected neither 'Yes' nor 'No' and" when {
+            scenarioNameForIndividualAndEnglish in {
 
-      lazy val result: WSResponse = submitPage(aPensionsUserData, form)
+              val response = submitForm(UserConfig(Individual, English, Some(sessionData)), SubmittedFormData(None, None))
 
-      "has a SEE_OTHER(303) status" in {
-        result.status shouldBe SEE_OTHER
-        //TODO: navigate to CYA when available
-        result.header("location") shouldBe Some(pensionProviderPaidTaxUrl(taxYearEOY))// todo update this when pages required for redirect are updated/implemented
-      }
+              response must haveStatus(BAD_REQUEST)
+              assertPageAsExpected(
+                parse(response.body),
+                ExpectedPageContents(
+                  title = "Error: Did your pension schemes pay or agree to pay the tax?",
+                  header = "Did your pension schemes pay or agree to pay the tax?",
+                  caption = "Annual and lifetime allowances for 6 April 2021 to 5 April 2022",
+                  radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
+                  radioButtonForNo = uncheckedExpectedRadioButton("No"),
+                  buttonForContinue = ExpectedButtonForContinue("Continue", ""),
+                  amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "For example, £193.52", ""),
+                  errorSummarySectionOpt = Some(
+                    ErrorSummarySection(
+                      title = "There is a problem",
+                      body = "Select yes if your pension provider paid or agreed to pay your annual allowance tax",
+                      link = "#value")
+                  ),
+                  errorAboveElementCheckSectionOpt = Some(
+                    ErrorAboveElementCheckSection(
+                      title = "Select yes if your pension provider paid or agreed to pay your annual allowance tax",
+                      idOpt = Some("value")
+                    )
+                  )
+                ))
 
-      "updates pensionProvidePaidAnnualAllowanceQuestion to Some(false)" in {
-        lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
-        cyaModel.pensions.pensionsAnnualAllowances.pensionProvidePaidAnnualAllowanceQuestion shouldBe Some(false)
-        cyaModel.pensions.pensionsAnnualAllowances.taxPaidByPensionProvider shouldBe None
-      }
-    }
+            }
+            scenarioNameForIndividualAndWelsh in {
 
-    "redirect and update question to 'No' when user selects No when there is cya data and clears the amount" which {
-      lazy val form: Map[String, String] = Map(RadioButtonAmountForm.yesNo -> RadioButtonAmountForm.no)
+              val response = submitForm(UserConfig(Individual, Welsh, Some(sessionData)), SubmittedFormData(None, None))
 
-      val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(
-        pensionProvidePaidAnnualAllowanceQuestion = Some(true), taxPaidByPensionProvider = existingAmount)
+              response must haveStatus(BAD_REQUEST)
+              assertPageAsExpected(
+                parse(response.body),
+                ExpectedPageContents(
+                  title = "Error: Did your pension schemes pay or agree to pay the tax?",
+                  header = "Did your pension schemes pay or agree to pay the tax?",
+                  caption = "Annual and lifetime allowances for 6 April 2021 to 5 April 2022",
+                  radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
+                  radioButtonForNo = uncheckedExpectedRadioButton("No"),
+                  buttonForContinue = ExpectedButtonForContinue("Continue", ""),
+                  amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "For example, £193.52", ""),
+                  errorSummarySectionOpt = Some(
+                    ErrorSummarySection(
+                      title = "Mae problem wedi codi",
+                      body = "Select yes if your pension provider paid or agreed to pay your annual allowance tax",
+                      link = "#value")
+                  ),
+                  errorAboveElementCheckSectionOpt = Some(
+                    ErrorAboveElementCheckSection(
+                      title = "Select yes if your pension provider paid or agreed to pay your annual allowance tax",
+                      idOpt = Some("value")
+                    )
+                  )
+                ))
 
-      val pensionUserData = pensionsUserDataWithAnnualAllowances(pensionsViewModel)
+            }
+            scenarioNameForAgentAndEnglish in {
 
-      lazy val result: WSResponse = submitPage(pensionUserData, form)
+              val response = submitForm(UserConfig(Agent, English, Some(sessionData)), SubmittedFormData(None, None))
 
-      "has a SEE_OTHER(303) status" in {
-        result.status shouldBe SEE_OTHER
-        //TODO: navigate to CYA when available
-        result.header("location") shouldBe Some(pensionProviderPaidTaxUrl(taxYearEOY))// todo update this when pages required for redirect are updated/implemented
-      }
+              response must haveStatus(BAD_REQUEST)
+              assertPageAsExpected(
+                parse(response.body),
+                ExpectedPageContents(
+                  title = "Error: Did your client’s pension schemes pay or agree to pay the tax?",
+                  header = "Did your client’s pension schemes pay or agree to pay the tax?",
+                  caption = "Annual and lifetime allowances for 6 April 2021 to 5 April 2022",
+                  radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
+                  radioButtonForNo = uncheckedExpectedRadioButton("No"),
+                  buttonForContinue = ExpectedButtonForContinue("Continue", ""),
+                  amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "For example, £193.52", ""),
+                  errorSummarySectionOpt = Some(
+                    ErrorSummarySection(
+                      title = "There is a problem",
+                      body = "Select yes if your client’s pension provider paid or agreed to pay the annual allowance tax",
+                      link = "#value")
+                  ),
+                  errorAboveElementCheckSectionOpt = Some(
+                    ErrorAboveElementCheckSection(
+                      title = "Select yes if your client’s pension provider paid or agreed to pay the annual allowance tax",
+                      idOpt = Some("value")
+                    )
+                  )
+                ))
 
-      "updates pensionProvidePaidAnnualAllowanceQuestion to Some(No)" in {
-        lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
-        cyaModel.pensions.pensionsAnnualAllowances.pensionProvidePaidAnnualAllowanceQuestion shouldBe Some(false)
-        cyaModel.pensions.pensionsAnnualAllowances.taxPaidByPensionProvider shouldBe None
+            }
+            scenarioNameForAgentAndWelsh in {
+
+              val response = submitForm(UserConfig(Agent, Welsh, Some(sessionData)), SubmittedFormData(None, None))
+
+              response must haveStatus(BAD_REQUEST)
+              assertPageAsExpected(
+                parse(response.body),
+                ExpectedPageContents(
+                  title = "Error: Did your client’s pension schemes pay or agree to pay the tax?",
+                  header = "Did your client’s pension schemes pay or agree to pay the tax?",
+                  caption = "Annual and lifetime allowances for 6 April 2021 to 5 April 2022",
+                  radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
+                  radioButtonForNo = uncheckedExpectedRadioButton("No"),
+                  buttonForContinue = ExpectedButtonForContinue("Continue", ""),
+                  amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "For example, £193.52", ""),
+                  errorSummarySectionOpt = Some(
+                    ErrorSummarySection(
+                      title = "Mae problem wedi codi",
+                      body = "Select yes if your client’s pension provider paid or agreed to pay the annual allowance tax",
+                      link = "#value")
+                  ),
+                  errorAboveElementCheckSectionOpt = Some(
+                    ErrorAboveElementCheckSection(
+                      title = "Select yes if your client’s pension provider paid or agreed to pay the annual allowance tax",
+                      idOpt = Some("value")
+                    )
+                  )
+                ))
+
+            }
+          }
+          "the user has selected 'Yes' but have not provided an amount, and" when {
+            scenarioNameForIndividualAndEnglish in {
+
+              val response = submitForm(UserConfig(Individual, English, Some(sessionData)), SubmittedFormData(Some(true), None))
+
+              response must haveStatus(BAD_REQUEST)
+              assertPageAsExpected(
+                parse(response.body),
+                ExpectedPageContents(
+                  title = "Error: Did your pension schemes pay or agree to pay the tax?",
+                  header = "Did your pension schemes pay or agree to pay the tax?",
+                  caption = "Annual and lifetime allowances for 6 April 2021 to 5 April 2022",
+                  radioButtonForYes = checkedExpectedRadioButton("Yes"),
+                  radioButtonForNo = uncheckedExpectedRadioButton("No"),
+                  buttonForContinue = ExpectedButtonForContinue("Continue", ""),
+                  amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "For example, £193.52", ""),
+                  errorSummarySectionOpt = Some(
+                    ErrorSummarySection(
+                      title = "There is a problem",
+                      body = "Enter the amount of tax your pension provider paid or agreed to pay",
+                      link = "#amount-2")
+                  ),
+                  errorAboveElementCheckSectionOpt = Some(
+                    ErrorAboveElementCheckSection(
+                      title = "Enter the amount of tax your pension provider paid or agreed to pay",
+                      idOpt = Some("amount-2")
+                    )
+                  )
+                ))
+
+            }
+            scenarioNameForIndividualAndWelsh in {
+
+              val response = submitForm(UserConfig(Individual, Welsh, Some(sessionData)), SubmittedFormData(Some(true), None))
+
+              response must haveStatus(BAD_REQUEST)
+              assertPageAsExpected(
+                parse(response.body),
+                ExpectedPageContents(
+                  title = "Error: Did your pension schemes pay or agree to pay the tax?",
+                  header = "Did your pension schemes pay or agree to pay the tax?",
+                  caption = "Annual and lifetime allowances for 6 April 2021 to 5 April 2022",
+                  radioButtonForYes = checkedExpectedRadioButton("Yes"),
+                  radioButtonForNo = uncheckedExpectedRadioButton("No"),
+                  buttonForContinue = ExpectedButtonForContinue("Continue", ""),
+                  amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "For example, £193.52", ""),
+                  errorSummarySectionOpt = Some(
+                    ErrorSummarySection(
+                      title = "Mae problem wedi codi",
+                      body = "Enter the amount of tax your pension provider paid or agreed to pay",
+                      link = "#amount-2")
+                  ),
+                  errorAboveElementCheckSectionOpt = Some(
+                    ErrorAboveElementCheckSection(
+                      title = "Enter the amount of tax your pension provider paid or agreed to pay",
+                      idOpt = Some("amount-2")
+                    )
+                  )
+                ))
+
+            }
+            scenarioNameForAgentAndEnglish in {
+
+              val response = submitForm(UserConfig(Agent, English, Some(sessionData)), SubmittedFormData(Some(true), None))
+
+              response must haveStatus(BAD_REQUEST)
+              assertPageAsExpected(
+                parse(response.body),
+                ExpectedPageContents(
+                  title = "Error: Did your client’s pension schemes pay or agree to pay the tax?",
+                  header = "Did your client’s pension schemes pay or agree to pay the tax?",
+                  caption = "Annual and lifetime allowances for 6 April 2021 to 5 April 2022",
+                  radioButtonForYes = checkedExpectedRadioButton("Yes"),
+                  radioButtonForNo = uncheckedExpectedRadioButton("No"),
+                  buttonForContinue = ExpectedButtonForContinue("Continue", ""),
+                  amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "For example, £193.52", ""),
+                  errorSummarySectionOpt = Some(
+                    ErrorSummarySection(
+                      title = "There is a problem",
+                      body = "Enter the amount of tax your client’s pension provider paid or agreed to pay",
+                      link = "#amount-2")
+                  ),
+                  errorAboveElementCheckSectionOpt = Some(
+                    ErrorAboveElementCheckSection(
+                      title = "Enter the amount of tax your client’s pension provider paid or agreed to pay",
+                      idOpt = Some("amount-2")
+                    )
+                  )
+                ))
+
+            }
+            scenarioNameForAgentAndWelsh in {
+
+              val response = submitForm(UserConfig(Agent, Welsh, Some(sessionData)), SubmittedFormData(Some(true), None))
+
+              response must haveStatus(BAD_REQUEST)
+              assertPageAsExpected(
+                parse(response.body),
+                ExpectedPageContents(
+                  title = "Error: Did your client’s pension schemes pay or agree to pay the tax?",
+                  header = "Did your client’s pension schemes pay or agree to pay the tax?",
+                  caption = "Annual and lifetime allowances for 6 April 2021 to 5 April 2022",
+                  radioButtonForYes = checkedExpectedRadioButton("Yes"),
+                  radioButtonForNo = uncheckedExpectedRadioButton("No"),
+                  buttonForContinue = ExpectedButtonForContinue("Continue", ""),
+                  amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "For example, £193.52", ""),
+                  errorSummarySectionOpt = Some(
+                    ErrorSummarySection(
+                      title = "Mae problem wedi codi",
+                      body = "Enter the amount of tax your client’s pension provider paid or agreed to pay",
+                      link = "#amount-2")
+                  ),
+                  errorAboveElementCheckSectionOpt = Some(
+                    ErrorAboveElementCheckSection(
+                      title = "Enter the amount of tax your client’s pension provider paid or agreed to pay",
+                      idOpt = Some("amount-2")
+                    )
+                  )
+                ))
+
+            }
+          }
+          "the user has selected 'Yes' but has provided an amount of an invalid format, and" when {
+            scenarioNameForIndividualAndEnglish in {
+
+              val response = submitForm(UserConfig(Individual, English, Some(sessionData)), SubmittedFormData(Some(true), Some("x2.64")))
+
+              response must haveStatus(BAD_REQUEST)
+              assertPageAsExpected(
+                parse(response.body),
+                ExpectedPageContents(
+                  title = "Error: Did your pension schemes pay or agree to pay the tax?",
+                  header = "Did your pension schemes pay or agree to pay the tax?",
+                  caption = "Annual and lifetime allowances for 6 April 2021 to 5 April 2022",
+                  radioButtonForYes = checkedExpectedRadioButton("Yes"),
+                  radioButtonForNo = uncheckedExpectedRadioButton("No"),
+                  buttonForContinue = ExpectedButtonForContinue("Continue", ""),
+                  amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "For example, £193.52", "x2.64"),
+                  errorSummarySectionOpt = Some(
+                    ErrorSummarySection(
+                      title = "There is a problem",
+                      body = "Enter the amount of tax your pension provider paid or agreed to pay in the correct format",
+                      link = "#amount-2")
+                  ),
+                  errorAboveElementCheckSectionOpt = Some(
+                    ErrorAboveElementCheckSection(
+                      title = "Enter the amount of tax your pension provider paid or agreed to pay in the correct format",
+                      idOpt = Some("amount-2")
+                    )
+                  )
+                ))
+
+            }
+            scenarioNameForIndividualAndWelsh in {
+
+              val response = submitForm(UserConfig(Individual, Welsh, Some(sessionData)), SubmittedFormData(Some(true), Some("x2.64")))
+
+              response must haveStatus(BAD_REQUEST)
+              assertPageAsExpected(
+                parse(response.body),
+                ExpectedPageContents(
+                  title = "Error: Did your pension schemes pay or agree to pay the tax?",
+                  header = "Did your pension schemes pay or agree to pay the tax?",
+                  caption = "Annual and lifetime allowances for 6 April 2021 to 5 April 2022",
+                  radioButtonForYes = checkedExpectedRadioButton("Yes"),
+                  radioButtonForNo = uncheckedExpectedRadioButton("No"),
+                  buttonForContinue = ExpectedButtonForContinue("Continue", ""),
+                  amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "For example, £193.52", "x2.64"),
+                  errorSummarySectionOpt = Some(
+                    ErrorSummarySection(
+                      title = "Mae problem wedi codi",
+                      body = "Enter the amount of tax your pension provider paid or agreed to pay in the correct format",
+                      link = "#amount-2")
+                  ),
+                  errorAboveElementCheckSectionOpt = Some(
+                    ErrorAboveElementCheckSection(
+                      title = "Enter the amount of tax your pension provider paid or agreed to pay in the correct format",
+                      idOpt = Some("amount-2")
+                    )
+                  )
+                ))
+
+            }
+            scenarioNameForAgentAndEnglish in {
+
+              val response = submitForm(UserConfig(Agent, English, Some(sessionData)), SubmittedFormData(Some(true), Some("x2.64")))
+
+              response must haveStatus(BAD_REQUEST)
+              assertPageAsExpected(
+                parse(response.body),
+                ExpectedPageContents(
+                  title = "Error: Did your client’s pension schemes pay or agree to pay the tax?",
+                  header = "Did your client’s pension schemes pay or agree to pay the tax?",
+                  caption = "Annual and lifetime allowances for 6 April 2021 to 5 April 2022",
+                  radioButtonForYes = checkedExpectedRadioButton("Yes"),
+                  radioButtonForNo = uncheckedExpectedRadioButton("No"),
+                  buttonForContinue = ExpectedButtonForContinue("Continue", ""),
+                  amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "For example, £193.52", "x2.64"),
+                  errorSummarySectionOpt = Some(
+                    ErrorSummarySection(
+                      title = "There is a problem",
+                      body = "Enter the amount of tax your client’s pension provider paid or agreed to pay in the correct format",
+                      link = "#amount-2")
+                  ),
+                  errorAboveElementCheckSectionOpt = Some(
+                    ErrorAboveElementCheckSection(
+                      title = "Enter the amount of tax your client’s pension provider paid or agreed to pay in the correct format",
+                      idOpt = Some("amount-2")
+                    )
+                  )
+                ))
+
+            }
+            scenarioNameForAgentAndWelsh in {
+
+              val response = submitForm(UserConfig(Agent, Welsh, Some(sessionData)), SubmittedFormData(Some(true), Some("x2.64")))
+
+              response must haveStatus(BAD_REQUEST)
+              assertPageAsExpected(
+                parse(response.body),
+                ExpectedPageContents(
+                  title = "Error: Did your client’s pension schemes pay or agree to pay the tax?",
+                  header = "Did your client’s pension schemes pay or agree to pay the tax?",
+                  caption = "Annual and lifetime allowances for 6 April 2021 to 5 April 2022",
+                  radioButtonForYes = checkedExpectedRadioButton("Yes"),
+                  radioButtonForNo = uncheckedExpectedRadioButton("No"),
+                  buttonForContinue = ExpectedButtonForContinue("Continue", ""),
+                  amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "For example, £193.52", "x2.64"),
+                  errorSummarySectionOpt = Some(
+                    ErrorSummarySection(
+                      title = "Mae problem wedi codi",
+                      body = "Enter the amount of tax your client’s pension provider paid or agreed to pay in the correct format",
+                      link = "#amount-2")
+                  ),
+                  errorAboveElementCheckSectionOpt = Some(
+                    ErrorAboveElementCheckSection(
+                      title = "Enter the amount of tax your client’s pension provider paid or agreed to pay in the correct format",
+                      idOpt = Some("amount-2")
+                    )
+                  )
+                ))
+
+            }
+          }
+          "the user has selected 'Yes' but has provided an excessive amount, and" when {
+            scenarioNameForIndividualAndEnglish in {
+
+              val response = submitForm(UserConfig(Individual, English, Some(sessionData)), SubmittedFormData(Some(true), Some("100000000002")))
+
+              response must haveStatus(BAD_REQUEST)
+              assertPageAsExpected(
+                parse(response.body),
+                ExpectedPageContents(
+                  title = "Error: Did your pension schemes pay or agree to pay the tax?",
+                  header = "Did your pension schemes pay or agree to pay the tax?",
+                  caption = "Annual and lifetime allowances for 6 April 2021 to 5 April 2022",
+                  radioButtonForYes = checkedExpectedRadioButton("Yes"),
+                  radioButtonForNo = uncheckedExpectedRadioButton("No"),
+                  buttonForContinue = ExpectedButtonForContinue("Continue", ""),
+                  amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "For example, £193.52", "100000000002"),
+                  errorSummarySectionOpt = Some(
+                    ErrorSummarySection(
+                      title = "There is a problem",
+                      body = "The amount of tax your pension provider paid or agreed to pay must be less than £100,000,000,000",
+                      link = "#amount-2")
+                  ),
+                  errorAboveElementCheckSectionOpt = Some(
+                    ErrorAboveElementCheckSection(
+                      title = "The amount of tax your pension provider paid or agreed to pay must be less than £100,000,000,000",
+                      idOpt = Some("amount-2")
+                    )
+                  )
+                ))
+
+            }
+            scenarioNameForIndividualAndWelsh in {
+
+              val response = submitForm(UserConfig(Individual, Welsh, Some(sessionData)), SubmittedFormData(Some(true), Some("100000000002")))
+
+              response must haveStatus(BAD_REQUEST)
+              assertPageAsExpected(
+                parse(response.body),
+                ExpectedPageContents(
+                  title = "Error: Did your pension schemes pay or agree to pay the tax?",
+                  header = "Did your pension schemes pay or agree to pay the tax?",
+                  caption = "Annual and lifetime allowances for 6 April 2021 to 5 April 2022",
+                  radioButtonForYes = checkedExpectedRadioButton("Yes"),
+                  radioButtonForNo = uncheckedExpectedRadioButton("No"),
+                  buttonForContinue = ExpectedButtonForContinue("Continue", ""),
+                  amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "For example, £193.52", "100000000002"),
+                  errorSummarySectionOpt = Some(
+                    ErrorSummarySection(
+                      title = "Mae problem wedi codi",
+                      body = "The amount of tax your pension provider paid or agreed to pay must be less than £100,000,000,000",
+                      link = "#amount-2")
+                  ),
+                  errorAboveElementCheckSectionOpt = Some(
+                    ErrorAboveElementCheckSection(
+                      title = "The amount of tax your pension provider paid or agreed to pay must be less than £100,000,000,000",
+                      idOpt = Some("amount-2")
+                    )
+                  )
+                ))
+
+            }
+            scenarioNameForAgentAndEnglish in {
+
+              val response = submitForm(UserConfig(Agent, English, Some(sessionData)), SubmittedFormData(Some(true), Some("100000000002")))
+
+              response must haveStatus(BAD_REQUEST)
+              assertPageAsExpected(
+                parse(response.body),
+                ExpectedPageContents(
+                  title = "Error: Did your client’s pension schemes pay or agree to pay the tax?",
+                  header = "Did your client’s pension schemes pay or agree to pay the tax?",
+                  caption = "Annual and lifetime allowances for 6 April 2021 to 5 April 2022",
+                  radioButtonForYes = checkedExpectedRadioButton("Yes"),
+                  radioButtonForNo = uncheckedExpectedRadioButton("No"),
+                  buttonForContinue = ExpectedButtonForContinue("Continue", ""),
+                  amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "For example, £193.52", "100000000002"),
+                  errorSummarySectionOpt = Some(
+                    ErrorSummarySection(
+                      title = "There is a problem",
+                      body = "The amount of tax your client’s pension provider paid or agreed to pay must be less than £100,000,000,000",
+                      link = "#amount-2")
+                  ),
+                  errorAboveElementCheckSectionOpt = Some(
+                    ErrorAboveElementCheckSection(
+                      title = "The amount of tax your client’s pension provider paid or agreed to pay must be less than £100,000,000,000",
+                      idOpt = Some("amount-2")
+                    )
+                  )
+                ))
+
+            }
+            scenarioNameForAgentAndWelsh in {
+
+              val response = submitForm(UserConfig(Agent, Welsh, Some(sessionData)), SubmittedFormData(Some(true), Some("100000000002")))
+
+              response must haveStatus(BAD_REQUEST)
+              assertPageAsExpected(
+                parse(response.body),
+                ExpectedPageContents(
+                  title = "Error: Did your client’s pension schemes pay or agree to pay the tax?",
+                  header = "Did your client’s pension schemes pay or agree to pay the tax?",
+                  caption = "Annual and lifetime allowances for 6 April 2021 to 5 April 2022",
+                  radioButtonForYes = checkedExpectedRadioButton("Yes"),
+                  radioButtonForNo = uncheckedExpectedRadioButton("No"),
+                  buttonForContinue = ExpectedButtonForContinue("Continue", ""),
+                  amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "For example, £193.52", "100000000002"),
+                  errorSummarySectionOpt = Some(
+                    ErrorSummarySection(
+                      title = "Mae problem wedi codi",
+                      body = "The amount of tax your client’s pension provider paid or agreed to pay must be less than £100,000,000,000",
+                      link = "#amount-2")
+                  ),
+                  errorAboveElementCheckSectionOpt = Some(
+                    ErrorAboveElementCheckSection(
+                      title = "The amount of tax your client’s pension provider paid or agreed to pay must be less than £100,000,000,000",
+                      idOpt = Some("amount-2")
+                    )
+                  )
+                ))
+
+            }
+          }
+        }
       }
     }
   }
+
+  private def getPensionAnnualAllowancesViewModel(pensionsUserData: PensionsUserData): PensionAnnualAllowancesViewModel
+  = loadPensionUserData(pensionsUserData).pensions.pensionsAnnualAllowances
+
+  private def assertPageAsExpected(document: Document, expectedPageContents: ExpectedPageContents): Unit = {
+
+    document must haveTitle(expectedPageContents.title)
+    document must haveHeader(expectedPageContents.header)
+    document must haveCaption(expectedPageContents.caption)
+
+    val indexOfRadioButtonForYes = 0
+    document must haveARadioButtonAtIndex(indexOfRadioButtonForYes)
+    document must haveARadioButtonAtIndexWithLabel(indexOfRadioButtonForYes, expectedPageContents.radioButtonForYes.label)
+    if (expectedPageContents.radioButtonForYes.isChecked) document must haveACheckedRadioButtonAtIndex(indexOfRadioButtonForYes)
+    else document must not(haveACheckedRadioButtonAtIndex(indexOfRadioButtonForYes))
+
+    val indexOfRadioButtonForNo = 1
+    document must haveARadioButtonAtIndex(indexOfRadioButtonForNo)
+    document must haveARadioButtonAtIndexWithLabel(indexOfRadioButtonForNo, expectedPageContents.radioButtonForNo.label)
+    if (expectedPageContents.radioButtonForNo.isChecked) document must haveACheckedRadioButtonAtIndex(indexOfRadioButtonForNo)
+    else document must not(haveACheckedRadioButtonAtIndex(indexOfRadioButtonForNo))
+
+    document must haveAContinueButtonWithLabel(expectedPageContents.buttonForContinue.label)
+    document must haveAContinueButtonWithLink(expectedPageContents.buttonForContinue.link)
+
+    document must haveAnAmountLabel(expectedPageContents.amountSection.label)
+    document must haveAnAmountHint(expectedPageContents.amountSection.hint)
+    document must haveAnAmountValue(expectedPageContents.amountSection.value)
+    document must haveAnAmountName("amount-2")
+
+    document must haveAFormWithTargetAction(relativeUrlForPensionProviderPaidTaxPage)
+
+    expectedPageContents.errorSummarySectionOpt match {
+
+      case Some(expectedErrorSummarySection) =>
+        document must haveAnErrorSummarySection
+        document must haveAnErrorSummaryTitle(expectedErrorSummarySection.title)
+        document must haveAnErrorSummaryBody(expectedErrorSummarySection.body)
+        document must haveAnErrorSummaryLink(expectedErrorSummarySection.link)
+      case None =>
+        document must not(haveAnErrorSummarySection)
+    }
+
+    expectedPageContents.errorAboveElementCheckSectionOpt match {
+      case Some(errorAboveElementSection) =>
+        document must haveAnErrorAboveElementSection(errorAboveElementSection.idOpt)
+        document must haveAnErrorAboveElementTitle(errorAboveElementSection.idOpt, errorAboveElementSection.title)
+      case None =>
+        document must not(haveAnErrorAboveElementSection())
+    }
+
+  }
+
+  private def getPage(userConfig: UserConfig)(implicit wsClient: WSClient): WSResponse = {
+    getPage(userConfig, "/annual-lifetime-allowances/pension-provider-paid-tax")
+  }
+
+  private def submitForm(userConfig: UserConfig, submittedFormData: SubmittedFormData)(implicit wsClient: WSClient): WSResponse =
+    submitForm(userConfig, submittedFormData.asMap, "/annual-lifetime-allowances/pension-provider-paid-tax")
+
+
+  private def relativeUrlForPensionSummaryPage: String = relativeUrl("/pensions-summary")
+
+  private def relativeUrlForPensionProviderPaidTaxPage: String = relativeUrl("/annual-lifetime-allowances/pension-provider-paid-tax")
+
+  private def checkedExpectedRadioButton(label: String) = ExpectedRadioButton(label, isChecked = true)
+
+  private def uncheckedExpectedRadioButton(label: String) = ExpectedRadioButton(label, isChecked = false)
+
 }
-// scalastyle:on magic.number
+
+case class SubmittedFormData(yesOrNoOpt: Option[Boolean], amountOpt: Option[String]) {
+
+  val yesOrNoAsMap: Map[String, String] = yesOrNoOpt match {
+    case Some(true) => Map("value" -> "true")
+    case Some(false) => Map("value" -> "false")
+    case None => Map.empty
+  }
+
+  val amountAsMap: Map[String, String] = amountOpt match {
+    case Some(amount) => Map("amount-2" -> amount)
+    case None => Map.empty
+  }
+
+  val asMap: Map[String, String] = yesOrNoAsMap ++ amountAsMap
+
+}
+
+case class ExpectedPageContents(title: String,
+                                header: String,
+                                caption: String,
+                                radioButtonForYes: ExpectedRadioButton,
+                                radioButtonForNo: ExpectedRadioButton,
+                                buttonForContinue: ExpectedButtonForContinue,
+                                amountSection: ExpectedAmountSection,
+                                errorSummarySectionOpt: Option[ErrorSummarySection] = None,
+                                errorAboveElementCheckSectionOpt: Option[ErrorAboveElementCheckSection] = None
+                               )
+
+case class ExpectedAmountSection(label: String, hint: String, value: String)
+
+case class ExpectedRadioButton(label: String, isChecked: Boolean)
+
+case class ExpectedButtonForContinue(label: String, link: String)
+
+case class ErrorSummarySection(title: String, body: String, link: String)
+
+case class ErrorAboveElementCheckSection(title: String, idOpt: Option[String])
+
+
+
