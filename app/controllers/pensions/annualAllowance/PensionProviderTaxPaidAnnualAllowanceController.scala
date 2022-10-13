@@ -45,7 +45,7 @@ class PensionProviderTaxPaidAnnualAllowanceController @Inject()(implicit val cc:
                                                                 clock: Clock,
                                                                 ec: ExecutionContext) extends FrontendController(cc)  with I18nSupport {
 
-  def form(isAgent: Boolean): Form[(Boolean, Option[BigDecimal])] = RadioButtonAmountForm.radioButtonAndAmountFormWithMinCheck(
+  def form(isAgent: Boolean): Form[(Boolean, Option[BigDecimal])] = RadioButtonAmountForm.radioButtonAndAmountForm(
     missingInputError = "common.pensions.selectYesifYourPensionProvider.noEntry",
     emptyFieldKey = "pensions.pensionSchemesTaxPaidAnnualAllowance.error.amount.noEntry",
     wrongFormatKey = "pensions.pensionSchemesTaxPaidAnnualAllowance.error.amount.inCorrectFormat",

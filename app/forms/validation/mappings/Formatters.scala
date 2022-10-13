@@ -16,6 +16,7 @@
 
 package forms.validation.mappings
 
+import org.checkerframework.checker.units.qual.s
 import play.api.data.FormError
 import play.api.data.format.Formatter
 
@@ -74,53 +75,49 @@ trait Formatters {
     }
 
 
-  private[mappings] def optionCurrencyFormatter(requiredKey: String,
-                                          invalidNumericKey: String,
-                                          maxAmountKey: String,
-                                          args: Seq[String] = Seq.empty[String]
-                                          ): Formatter[Option[BigDecimal]] =
-    new Formatter[Option[BigDecimal]] {
+  def checksWithMinAmount(x : BigDecimal,
+             key : String,
+             minAmountkey : String,
+             maxAmountKey : String,
+             args: Seq[String]) : Either[Seq[FormError], Option[BigDecimal]] = x match {
+    case bigDecimal if (bigDecimal == BigDecimal("0")) => Left(Seq(FormError(key, minAmountkey, args)))
+    case bigDecimal if (bigDecimal >= BigDecimal("100000000000")) => Left(Seq(FormError(key, maxAmountKey, args)))
+    case bigDecimal => Right(Some(bigDecimal))
+  }
 
-      val is2dp = """\d+|\d*\.\d{1,2}"""
-      val validNumeric = """[0-9.]*"""
+  def checksWithOutMinAmount(x : BigDecimal,
+                          key : String,
+                          maxAmountKey : String,
+                          args: Seq[String]) : Either[Seq[FormError], Option[BigDecimal]] = x match {
+    case bigDecimal if (bigDecimal >= BigDecimal("100000000000")) => Left(Seq(FormError(key, maxAmountKey, args)))
+    case bigDecimal => Right(Some(bigDecimal))
+  }
 
-      private val baseFormatter = stringFormatter(requiredKey)
+  def checkIfValidString(inputString : String,key : String, requiredKey : String, invalidNumericKey: String,
+                         args: Seq[String]) : Either[Seq[FormError], BigDecimal] = {
 
-      override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Option[BigDecimal]] = {
-        baseFormatter
-          .bind(key, data)
-          .map(_.replace(",", ""))
-          .map(_.replace("£", ""))
-          .map(_.replaceAll("""\s""", ""))
-          .flatMap {
-            case s if s.isEmpty => Left(Seq(FormError(key, requiredKey, args)))
-            case s if !s.matches(validNumeric) => Left(Seq(FormError(key,invalidNumericKey, args)))
-            case s if !s.matches(is2dp) => Left(Seq(FormError(key, invalidNumericKey, args)))
-            case s =>
-              nonFatalCatch
-                .either(BigDecimal(s.replaceAll("£", "")))
-                .left.map(_ => Seq(FormError(key, invalidNumericKey, args)))
-          }
-          .flatMap { bigDecimal =>
-            if (bigDecimal < BigDecimal("100000000000")) Right(Some(bigDecimal)) else Left(Seq(FormError(key, maxAmountKey, args)))
-          }
-      }
+    val is2dp = """\d+|\d*\.\d{1,2}"""
+    val validNumeric = """[0-9.]*"""
 
-      override def unbind(key: String, value: Option[BigDecimal]): Map[String, String] =
-        baseFormatter.unbind(key, value.getOrElse("").toString)
+    inputString match {
+      case s if s.isEmpty => Left(Seq(FormError(key, requiredKey, args)))
+      case s if !s.matches(validNumeric) => Left(Seq(FormError(key,invalidNumericKey, args)))
+      case s if !s.matches(is2dp) => Left(Seq(FormError(key, invalidNumericKey, args)))
+      case s =>
+        nonFatalCatch
+          .either(BigDecimal(s.replaceAll("£", "")))
+          .left.map(_ => Seq(FormError(key, invalidNumericKey, args)))
     }
+  }
 
-  private[mappings] def optionCurrencyFormatterWithMinCheck(requiredKey: String,
+  private[mappings] def optionCurrencyFormatter(requiredKey: String,
                                                 invalidNumericKey: String,
-                                                maxAmountKey: String,
+                                                maxAmountKey: String = "",
                                                 minAmountkey: String,
                                                 args: Seq[String] = Seq.empty[String]
                                                ): Formatter[Option[BigDecimal]] =
     new Formatter[Option[BigDecimal]] {
 
-      val is2dp = """\d+|\d*\.\d{1,2}"""
-      val validNumeric = """[0-9.]*"""
-
       private val baseFormatter = stringFormatter(requiredKey)
 
       override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Option[BigDecimal]] = {
@@ -130,19 +127,11 @@ trait Formatters {
           .map(_.replace("£", ""))
           .map(_.replaceAll("""\s""", ""))
           .flatMap {
-            case s if s.isEmpty => Left(Seq(FormError(key, requiredKey, args)))
-            case s if !s.matches(validNumeric) => Left(Seq(FormError(key,invalidNumericKey, args)))
-            case s if !s.matches(is2dp) => Left(Seq(FormError(key, invalidNumericKey, args)))
-            case s =>
-              nonFatalCatch
-                .either(BigDecimal(s.replaceAll("£", "")))
-                .left.map(_ => Seq(FormError(key, invalidNumericKey, args)))
-          }
-          .flatMap {
-            case bigDecimal if (bigDecimal == BigDecimal("0")) => Left(Seq(FormError(key, minAmountkey, args)))
-            case bigDecimal if (bigDecimal > BigDecimal("100000000000")) => Left(Seq(FormError(key, maxAmountKey, args)))
-            case bigDecimal => Right(Some(bigDecimal))
-          }
+            case s => checkIfValidString(s, key, requiredKey, invalidNumericKey, args)
+          }.flatMap{
+          case bigDecimal if minAmountkey != ""  => checksWithMinAmount(bigDecimal, key, minAmountkey, maxAmountKey, args)
+          case bigDecimal if minAmountkey == "" => checksWithOutMinAmount(bigDecimal, key, maxAmountKey, args)
+        }
       }
 
       override def unbind(key: String, value: Option[BigDecimal]): Map[String, String] =

@@ -16,7 +16,7 @@
 
 package forms
 
-import forms.validation.mappings.MappingUtil.{ optionCurrency, optionCurrencyWithMinCheck }
+import forms.validation.mappings.MappingUtil.{ optionCurrency }
 import play.api.data.Forms.{of, tuple}
 import play.api.data.format.Formatter
 import play.api.data.{FieldMapping, Form, FormError}
@@ -48,38 +48,11 @@ object RadioButtonAmountForm {
                        requiredKey: String,
                        wrongFormatKey: String = "common.error.invalid_currency_format",
                        maxAmountKey: String = "common.error.amountMaxLimit",
+                       minAmountkey: String = "",
                        args: Seq[String] = Seq.empty[String]): Formatter[Option[BigDecimal]] = {
     new Formatter[Option[BigDecimal]] {
 
       val optionalCurrency: FieldMapping[Option[BigDecimal]] = optionCurrency(requiredKey = requiredKey,
-        wrongFormatKey = wrongFormatKey,
-        maxAmountKey = maxAmountKey,
-        args = args)
-
-      override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Option[BigDecimal]] = {
-        data.get(yesNo) match {
-          case Some("true") => optionCurrency(requiredKey = requiredKey,
-            wrongFormatKey = wrongFormatKey,
-            maxAmountKey = maxAmountKey,
-            args = args).binder.bind(key, data)
-          case _ => Right(None)
-        }
-      }
-
-      override def unbind(key: String, value: Option[BigDecimal]): Map[String, String] =
-        optionalCurrency.binder.unbind(key, value)
-    }
-  }
-
-  def amountFormatterWithGreaterThanZero(
-                       requiredKey: String,
-                       wrongFormatKey: String = "common.error.invalid_currency_format",
-                       maxAmountKey: String = "common.error.amountMaxLimit",
-                       minAmountkey: String = "common.error.amountNotZero",
-                       args: Seq[String] = Seq.empty[String]): Formatter[Option[BigDecimal]] = {
-    new Formatter[Option[BigDecimal]] {
-
-      val optionalCurrency: FieldMapping[Option[BigDecimal]] = optionCurrencyWithMinCheck(requiredKey = requiredKey,
         wrongFormatKey = wrongFormatKey,
         maxAmountKey = maxAmountKey,
         minAmountkey = minAmountkey,
@@ -87,7 +60,7 @@ object RadioButtonAmountForm {
 
       override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Option[BigDecimal]] = {
         data.get(yesNo) match {
-          case Some("true") => optionCurrencyWithMinCheck(requiredKey = requiredKey,
+          case Some("true") => optionCurrency(requiredKey = requiredKey,
             wrongFormatKey = wrongFormatKey,
             maxAmountKey = maxAmountKey,
             minAmountkey = minAmountkey,
@@ -101,45 +74,24 @@ object RadioButtonAmountForm {
     }
   }
 
-
   def radioButtonAndAmountForm(missingInputError: String,
                                emptyFieldKey: String,
                                wrongFormatKey: String = "common.error.invalid_currency_format",
                                exceedsMaxAmountKey: String = "common.error.amountMaxLimit",
+                               minAmountKey: String = "",
                                emptyFieldArguments: Seq[String] = Seq.empty[String]
                               ): Form[(Boolean, Option[BigDecimal])] = {
-
-    Form(
-      tuple(
-        yesNo -> of(formatter(missingInputError)),
-        amount2 -> of(amountFormatter(
-          requiredKey = emptyFieldKey,
-          wrongFormatKey = wrongFormatKey,
-          maxAmountKey = exceedsMaxAmountKey,
-          args = emptyFieldArguments)
-        )
-      )
-    )
-  }
-
-  def radioButtonAndAmountFormWithMinCheck(missingInputError: String,
-                               emptyFieldKey: String,
-                               wrongFormatKey: String = "common.error.invalid_currency_format",
-                               exceedsMaxAmountKey: String = "common.error.amountMaxLimit",
-                                           minAmountKey: String = "common.error.amountNotZero",
-                               emptyFieldArguments: Seq[String] = Seq.empty[String]
-                              ): Form[(Boolean, Option[BigDecimal])] = {
-    Form(
-      tuple(
-        yesNo -> of(formatter(missingInputError)),
-        amount2 -> of(amountFormatterWithGreaterThanZero(
-          requiredKey = emptyFieldKey,
-          wrongFormatKey = wrongFormatKey,
-          maxAmountKey = exceedsMaxAmountKey,
-          minAmountkey = minAmountKey,
-          args = emptyFieldArguments)
-        )
-      )
-    )
+   Form(
+     tuple(
+       yesNo -> of(formatter(missingInputError)),
+       amount2 -> of(amountFormatter(
+         requiredKey = emptyFieldKey,
+         wrongFormatKey = wrongFormatKey,
+         maxAmountKey = exceedsMaxAmountKey,
+         minAmountkey = minAmountKey,
+         args = emptyFieldArguments)
+       )
+     )
+   )
   }
 }
