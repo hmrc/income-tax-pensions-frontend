@@ -24,6 +24,8 @@ import scala.util.control.Exception.nonFatalCatch
 
 trait Formatters {
 
+  val maxAmount = "100000000000"
+
   private[mappings] def stringFormatter(errorKey: String, optional: Boolean = false): Formatter[String] = new Formatter[String] {
 
     override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] =
@@ -48,6 +50,7 @@ trait Formatters {
       val is2dp = """\d+|\d*\.\d{1,2}"""
       val validNumeric = """[0-9.]*"""
 
+
       private val baseFormatter = stringFormatter(requiredKey)
 
       override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], BigDecimal] = {
@@ -66,7 +69,7 @@ trait Formatters {
                 .left.map(_ => Seq(FormError(key, invalidNumericKey, args)))
           }
           .flatMap { bigDecimal =>
-            if (bigDecimal < BigDecimal("100000000000")) Right(bigDecimal) else Left(Seq(FormError(key, maxAmountKey, args)))
+            if (bigDecimal < BigDecimal(maxAmount)) Right(bigDecimal) else Left(Seq(FormError(key, maxAmountKey, args)))
           }
       }
 
@@ -81,7 +84,7 @@ trait Formatters {
              maxAmountKey : String,
              args: Seq[String]) : Either[Seq[FormError], Option[BigDecimal]] = x match {
     case bigDecimal if (bigDecimal == BigDecimal("0")) => Left(Seq(FormError(key, minAmountkey, args)))
-    case bigDecimal if (bigDecimal >= BigDecimal("100000000000")) => Left(Seq(FormError(key, maxAmountKey, args)))
+    case bigDecimal if (bigDecimal >= BigDecimal(maxAmount)) => Left(Seq(FormError(key, maxAmountKey, args)))
     case bigDecimal => Right(Some(bigDecimal))
   }
 
@@ -89,7 +92,7 @@ trait Formatters {
                           key : String,
                           maxAmountKey : String,
                           args: Seq[String]) : Either[Seq[FormError], Option[BigDecimal]] = x match {
-    case bigDecimal if (bigDecimal >= BigDecimal("100000000000")) => Left(Seq(FormError(key, maxAmountKey, args)))
+    case bigDecimal if (bigDecimal >= BigDecimal(maxAmount)) => Left(Seq(FormError(key, maxAmountKey, args)))
     case bigDecimal => Right(Some(bigDecimal))
   }
 

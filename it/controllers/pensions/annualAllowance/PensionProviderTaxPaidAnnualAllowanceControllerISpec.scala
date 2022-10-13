@@ -36,15 +36,9 @@ class PensionProviderTaxPaidAnnualAllowanceControllerISpec extends CommonUtils w
 
   private val poundPrefixText = "£"
   private val amountInputName = "amount-2"
-  private val amountInvalidFormat = "invalid"
   private val zeroAmount = "0"
-  private val amountOverMaximum = "100,000,000,000,000"
+  private val amountOverMaximum = "100,000,000,000"
   private val existingAmount: String = "200"
-
-  private def pensionsUsersData(isPrior: Boolean = false, pensionsCyaModel: PensionsCYAModel) = {
-    PensionsUserDataBuilder.aPensionsUserData.copy(
-      isPriorSubmission = isPrior, pensions = pensionsCyaModel)
-  }
 
   object Selectors {
     val yesSelector = "#value"
@@ -157,7 +151,7 @@ class PensionProviderTaxPaidAnnualAllowanceControllerISpec extends CommonUtils w
 
       s"language is ${welshTest(user.isWelsh)} and request is from an ${agentTest(user.isAgent)}" should {
 
-        "render did your pension schemes pay or agree to pay the tax with no pre-filling" which {
+        "render page with no pre-filling" which {
           lazy val result: WSResponse = showPage(user, anPensionsUserDataEmptyCya)
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
@@ -420,7 +414,7 @@ class PensionProviderTaxPaidAnnualAllowanceControllerISpec extends CommonUtils w
             formPostLinkCheck(pensionProviderTaxPaidAnnualAllowanceUrl(taxYearEOY), formSelector)
           }
 
-          "returns error message when user enters above 100,000,000,000 for amount and click continue button" which {
+          "returns error message when user enters above the maximum amount and clicks continue button" which {
 
             lazy val form: Map[String, String] = Map(
               RadioButtonAmountForm.yesNo -> RadioButtonAmountForm.yes, RadioButtonAmountForm.amount2 -> amountOverMaximum)
