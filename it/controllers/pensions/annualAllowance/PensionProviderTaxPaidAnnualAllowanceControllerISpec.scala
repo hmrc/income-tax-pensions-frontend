@@ -17,7 +17,6 @@
 package controllers.pensions.annualAllowance
 
 import builders.PensionAnnualAllowanceViewModelBuilder.aPensionAnnualAllowanceViewModel
-import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import builders.PensionsUserDataBuilder
 import builders.PensionsUserDataBuilder.{anPensionsUserDataEmptyCya, pensionsUserDataWithAnnualAllowances}
 import builders.UserBuilder.aUserRequest
@@ -25,15 +24,11 @@ import forms.RadioButtonAmountForm
 import models.mongo.PensionsCYAModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import org.mongodb.scala
-import org.mongodb.scala.result
 import org.scalatest.BeforeAndAfterEach
-import play.api.http.HeaderNames
 import play.api.libs.ws.WSResponse
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import utils.PageUrls.{fullUrl, pensionSummaryUrl}
 import utils.PageUrls.PensionAnnualAllowancePages.pensionProviderTaxPaidAnnualAllowanceUrl
-import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 import utils.CommonUtils
 
 
@@ -56,8 +51,8 @@ class PensionProviderTaxPaidAnnualAllowanceControllerISpec extends CommonUtils w
     val captionSelector: String = "#main-content > div > div > header > p"
     val continueButtonSelector: String = "#continue"
     val formSelector: String = "#main-content > div > div > form"
-    val amountInputSelector = "#amount-2"
-    val expectedAmountErrorHref = "#amount-2"
+    val amountInputSelector = "#amount-1"
+    val expectedAmountErrorHref = "#amount-1"
     val poundPrefixSelector = ".govuk-input__prefix"
     val amountText = "#conditional-value > div > label"
   }
@@ -183,7 +178,7 @@ class PensionProviderTaxPaidAnnualAllowanceControllerISpec extends CommonUtils w
           welshToggleCheck(user.isWelsh)
         }
 
-        "render page with 'yes' pre-filled and amount field set" which {
+        "render page with 'yes' pre-filled and amount field set to a valid amount" which {
 
           val pensionAnnualAllowanceViewModel = aPensionAnnualAllowanceViewModel.copy(
             pensionProvidePaidAnnualAllowanceQuestion = Some(true),

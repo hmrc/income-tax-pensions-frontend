@@ -19,12 +19,10 @@ package controllers.pensions.annualAllowance
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.routes.PensionsSummaryController
 import controllers.pensions.annualAllowance.routes.PensionProviderTaxPaidAnnualAllowanceController
-import controllers.pensions.lifetimeAllowance.routes.PensionProviderPaidTaxController
 import controllers.predicates.AuthorisedAction
 import controllers.predicates.TaxYearAction.taxYearAction
 import forms.RadioButtonAmountForm
 import models.mongo.PensionsCYAModel
-import models.pension.charges.{PensionAnnualAllowancesViewModel, UnauthorisedPaymentsViewModel}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}

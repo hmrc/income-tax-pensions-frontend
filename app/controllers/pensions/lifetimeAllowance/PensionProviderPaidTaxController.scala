@@ -17,8 +17,6 @@
 package controllers.pensions.lifetimeAllowance
 
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.annualAllowance.routes._
-import controllers.pensions.lifetimeAllowance.routes.AboveAnnualLifeTimeAllowanceController
 import controllers.pensions.lifetimeAllowance.routes.PensionProviderPaidTaxController
 import controllers.pensions.routes.PensionsSummaryController
 import controllers.predicates.AuthorisedAction
