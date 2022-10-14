@@ -102,7 +102,8 @@ object AnnualAndLifetimeAllowanceCYAViewHelper {
 
   private def summaryRowForAnnualAllowanceTax(lifetimeAllowancesViewModel: PensionLifetimeAllowancesViewModel, annualAllowancesViewModel: PensionAnnualAllowancesViewModel, taxYear: Int)(implicit messages: Messages): Option[SummaryListRow] = {
     lifetimeAllowancesViewModel.aboveLifetimeAllowanceQuestion.filter(_ == true).flatMap { _ =>
-      annualAllowancesViewModel.aboveAnnualAllowanceQuestion.filter(_ == true)
+      annualAllowancesViewModel.aboveAnnualAllowanceQuestion.filter(_ == true).flatMap( _ =>
+        annualAllowancesViewModel.reducedAnnualAllowanceQuestion.filter(_ == true)
         .map(_ =>
           annualAllowancesViewModel.pensionProvidePaidAnnualAllowanceQuestion match {
             case Some(true) if annualAllowancesViewModel.taxPaidByPensionProvider.isDefined =>
@@ -117,17 +118,20 @@ object AnnualAndLifetimeAllowanceCYAViewHelper {
                 routes.PensionProviderPaidTaxController.show(taxYear))(messages)
           }
         )
+      )
     }
   }
 
   private def summaryRowForAnnualAllowanceSchemeTaxReferences(lifetimeAllowancesViewModel: PensionLifetimeAllowancesViewModel, annualAllowancesViewModel: PensionAnnualAllowancesViewModel, taxYear: Int)(implicit messages: Messages): Option[SummaryListRow] = {
     lifetimeAllowancesViewModel.aboveLifetimeAllowanceQuestion.filter(_ == true).flatMap(_ =>
+    annualAllowancesViewModel.reducedAnnualAllowanceQuestion.filter(_ == true).flatMap(_ =>
+    annualAllowancesViewModel.aboveAnnualAllowanceQuestion.filter(_ == true).flatMap(_ =>
       annualAllowancesViewModel.pensionProvidePaidAnnualAllowanceQuestion.filter(_ == true).map(_ =>
         summaryListRowWithString(
           "lifetimeAllowance.cya.annualPensionSchemeTaxReferences",
           annualAllowancesViewModel.pensionSchemeTaxReferences,
           annualRoutes.PstrSummaryController.show(taxYear))(messages)
-      ))
+      ))))
   }
 
   private def summaryRowForAboveLifetimeAllowanceQuestion(lifetimeAllowancesViewModel: PensionLifetimeAllowancesViewModel, taxYear: Int)(implicit messages: Messages): Option[SummaryListRow] = {
