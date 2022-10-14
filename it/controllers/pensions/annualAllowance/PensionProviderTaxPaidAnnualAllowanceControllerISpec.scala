@@ -43,8 +43,8 @@ class PensionProviderTaxPaidAnnualAllowanceControllerISpec extends CommonUtils w
     val captionSelector: String = "#main-content > div > div > header > p"
     val continueButtonSelector: String = "#continue"
     val formSelector: String = "#main-content > div > div > form"
-    val amountInputSelector = "#amount-1"
-    val expectedAmountErrorHref = "#amount-1"
+    val amountInputSelector = "#amount-2"
+    val expectedAmountErrorHref = "#amount-2"
     val poundPrefixSelector = ".govuk-input__prefix"
     val amountText = "#conditional-value > div > label"
   }
