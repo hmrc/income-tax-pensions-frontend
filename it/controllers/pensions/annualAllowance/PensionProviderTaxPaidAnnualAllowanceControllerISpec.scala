@@ -17,17 +17,15 @@
 package controllers.pensions.annualAllowance
 
 import builders.PensionAnnualAllowanceViewModelBuilder.aPensionAnnualAllowanceViewModel
-import builders.PensionsUserDataBuilder
 import builders.PensionsUserDataBuilder.{anPensionsUserDataEmptyCya, pensionsUserDataWithAnnualAllowances}
 import builders.UserBuilder.aUserRequest
 import forms.RadioButtonAmountForm
-import models.mongo.PensionsCYAModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterEach
 import play.api.libs.ws.WSResponse
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
-import utils.PageUrls.{fullUrl, pensionSummaryUrl}
+import utils.PageUrls.pensionSummaryUrl
 import utils.PageUrls.PensionAnnualAllowancePages.pensionProviderTaxPaidAnnualAllowanceUrl
 import utils.CommonUtils
 
@@ -200,7 +198,7 @@ class PensionProviderTaxPaidAnnualAllowanceControllerISpec extends CommonUtils w
           welshToggleCheck(user.isWelsh)
         }
 
-        "render page with 'no' pre-filled and amount field set to 0" which {
+        "render page with 'no' pre-filled and no amount set" which {
 
           val pensionAnnualAllowanceViewModel = aPensionAnnualAllowanceViewModel.copy(
             pensionProvidePaidAnnualAllowanceQuestion = Some(false),
