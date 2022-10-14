@@ -149,7 +149,7 @@ object AnnualAndLifetimeAllowanceCYAViewHelper {
             "lifetimeAllowance.cya.lumpSum",
             lifetimeAllowancesViewModel.pensionAsLumpSum.map(_.amount),
             lifetimeAllowancesViewModel.pensionAsLumpSum.map(_.taxPaid),
-            routes.PensionLumpSumDetailsController.show(taxYear))(messages)
+            routes.PensionLumpSumController.show(taxYear))(messages)
         case _ =>
           summaryListRowWithBooleanValue(
             "lifetimeAllowance.cya.lumpSum",
@@ -168,7 +168,7 @@ object AnnualAndLifetimeAllowanceCYAViewHelper {
             "lifetimeAllowance.cya.otherPayments",
             lifetimeAllowancesViewModel.pensionPaidAnotherWay.map(_.amount),
             lifetimeAllowancesViewModel.pensionPaidAnotherWay.map(_.taxPaid),
-            routes.PensionTakenAnotherWayAmountController.show(taxYear))(messages)
+            routes.LifeTimeAllowanceAnotherWayController.show(taxYear))(messages)
         case _ =>
           summaryListRowWithBooleanValue(
             "lifetimeAllowance.cya.otherPayments",

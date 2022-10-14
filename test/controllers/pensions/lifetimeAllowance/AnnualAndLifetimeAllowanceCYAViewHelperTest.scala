@@ -62,7 +62,7 @@ class AnnualAndLifetimeAllowanceCYAViewHelperTest extends AnyWordSpec with Match
 
         val summaryListRows = AnnualAndLifetimeAllowanceCYAViewHelper.summaryListRows(annualModel, lifetimeModel, taxYear)
 
-        summaryListRows.length shouldBe 8
+        summaryListRows.length shouldBe 9
         assertRowForAboveAnnualOrLifeTimeAllowance(summaryListRows.head, "Yes")
         assertRowReducedAnnualAllowance(summaryListRows(1), "Yes")
         assertRowTypeOfReducedAnnualAllowance(summaryListRows(2), "Money purchase")
@@ -91,9 +91,7 @@ class AnnualAndLifetimeAllowanceCYAViewHelperTest extends AnyWordSpec with Match
         summaryListRows.length shouldBe 5
         assertRowForAboveAnnualOrLifeTimeAllowance(summaryListRows.head, "Yes")
         assertRowReducedAnnualAllowance(summaryListRows(1), "")
-        assertRowAnnualAllowanceSchemes(summaryListRows(2), "")
-        assertRowAboveLifetimeAllowance(summaryListRows(3), "")
-        assertRowLifetimeAllowanceSchemes(summaryListRows(4), expectedValue = "")
+        assertRowAboveLifetimeAllowance(summaryListRows(2), "")
       }
       "our data for the 'annual allowance' section has got into an unrealistic state" in {
         val annualModel = PensionAnnualAllowancesViewModel(
