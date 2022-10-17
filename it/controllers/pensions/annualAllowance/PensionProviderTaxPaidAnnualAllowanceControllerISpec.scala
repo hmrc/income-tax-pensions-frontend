@@ -58,7 +58,6 @@ class PensionProviderTaxPaidAnnualAllowanceControllerISpec extends CommonUtils w
     val totalNonUkTaxErrorNoEntry: String
     val totalNonUkTaxErrorIncorrectFormat: String
     val totalNonUkTaxErrorOverMaximum: String
-    val noEntryErrorMessage: String
     val amountZeroErrorMessage: String
   }
 
@@ -68,6 +67,7 @@ class PensionProviderTaxPaidAnnualAllowanceControllerISpec extends CommonUtils w
     val expectedErrorTitle: String
     val amountAboveLimitErrorMessage: String
     val validAmountErrorMessage: String
+    val noEntryErrorMessage: String
     val noEntryAmountErrorMessage: String
   }
 
@@ -80,7 +80,6 @@ class PensionProviderTaxPaidAnnualAllowanceControllerISpec extends CommonUtils w
     val totalNonUkTaxErrorNoEntry: String = "Enter the amount of non-UK tax paid"
     val totalNonUkTaxErrorIncorrectFormat: String = "Enter the amount of non-UK tax in the correct format"
     val totalNonUkTaxErrorOverMaximum: String = "The amount of non-UK tax paid must be less than £100,000,000,000"
-    val noEntryErrorMessage = "Select yes if your pension provider paid or agreed to pay your annual allowance tax"
     val amountZeroErrorMessage = "Enter an amount greater than zero"
   }
 
@@ -93,7 +92,6 @@ class PensionProviderTaxPaidAnnualAllowanceControllerISpec extends CommonUtils w
     val totalNonUkTaxErrorNoEntry: String = "Enter the amount of non-UK tax paid"
     val totalNonUkTaxErrorIncorrectFormat: String = "Enter the amount of non-UK tax in the correct format"
     val totalNonUkTaxErrorOverMaximum: String = "The amount of non-UK tax paid must be less than £100,000,000,000"
-    val noEntryErrorMessage = "Select yes if your pension provider paid or agreed to pay your annual allowance tax"
     val amountZeroErrorMessage = "Enter an amount greater than zero"
   }
 
@@ -103,6 +101,7 @@ class PensionProviderTaxPaidAnnualAllowanceControllerISpec extends CommonUtils w
     val expectedErrorTitle = s"Error: $expectedTitle"
     val amountAboveLimitErrorMessage = "The amount of tax your pension provider paid or agreed to pay must be less than £100,000,000,000"
     val validAmountErrorMessage = "Enter the amount paid, or that needs to be paid, in the correct format"
+    val noEntryErrorMessage = "Select yes if your pension provider paid or agreed to pay your annual allowance tax"
     val noEntryAmountErrorMessage = "Enter the amount paid, or that needs to be paid, in pounds"
   }
 
@@ -112,6 +111,7 @@ class PensionProviderTaxPaidAnnualAllowanceControllerISpec extends CommonUtils w
     val expectedErrorTitle = s"Error: $expectedTitle"
     val amountAboveLimitErrorMessage = "The amount of tax your pension provider paid or agreed to pay must be less than £100,000,000,000"
     val validAmountErrorMessage = "Enter the amount paid, or that needs to be paid, in the correct format"
+    val noEntryErrorMessage = "Select yes if your pension provider paid or agreed to pay your annual allowance tax"
     val noEntryAmountErrorMessage = "Enter the amount paid, or that needs to be paid, in pounds"
   }
 
@@ -121,6 +121,7 @@ class PensionProviderTaxPaidAnnualAllowanceControllerISpec extends CommonUtils w
     val expectedErrorTitle = s"Error: $expectedTitle"
     val amountAboveLimitErrorMessage = "The amount of tax your client’s pension provider paid or agreed to pay must be less than £100,000,000,000"
     val validAmountErrorMessage = "Enter the amount paid, or that needs to be paid, in the correct format"
+    val noEntryErrorMessage = "Select yes if your client’s pension provider paid or agreed to pay the annual allowance tax"
     val noEntryAmountErrorMessage = "Enter the amount paid, or that needs to be paid, in pounds"
   }
 
@@ -130,6 +131,7 @@ class PensionProviderTaxPaidAnnualAllowanceControllerISpec extends CommonUtils w
     val expectedErrorTitle = s"Error: $expectedTitle"
     val amountAboveLimitErrorMessage = "The amount of tax your client’s pension provider paid or agreed to pay must be less than £100,000,000,000"
     val validAmountErrorMessage = "Enter the amount paid, or that needs to be paid, in the correct format"
+    val noEntryErrorMessage = "Select yes if your client’s pension provider paid or agreed to pay the annual allowance tax"
     val noEntryAmountErrorMessage = "Enter the amount paid, or that needs to be paid, in pounds"
   }
 
@@ -300,7 +302,7 @@ class PensionProviderTaxPaidAnnualAllowanceControllerISpec extends CommonUtils w
             }
           }
 
-          "redirect to the same page when user selects 'yes' with a valid amount" which {
+          "redirect to PensionProviderPaidTaxController page when user selects 'yes' with a valid amount" which {
 
             lazy val form: Map[String, String] = Map(
               RadioButtonAmountForm.yesNo -> RadioButtonAmountForm.yes, RadioButtonAmountForm.amount2 -> existingAmount)
@@ -313,7 +315,7 @@ class PensionProviderTaxPaidAnnualAllowanceControllerISpec extends CommonUtils w
 
             "has a SEE_OTHER(303) status" in {
               result.status shouldBe SEE_OTHER
-              result.header("location") shouldBe Some(controllers.pensions.annualAllowance.routes.PensionProviderTaxPaidAnnualAllowanceController.show(taxYearEOY).url)
+              result.header("location") shouldBe Some(controllers.pensions.lifetimeAllowance.routes.PensionProviderPaidTaxController.show(taxYearEOY).url)
             }
 
             "updates did you non uk tax on the amount that resulted in a surcharge page to  Some(true) with valid amount" in {
@@ -349,7 +351,7 @@ class PensionProviderTaxPaidAnnualAllowanceControllerISpec extends CommonUtils w
             inputFieldValueCheck(amountInputName, amountInputSelector, "")
             textOnPageCheck(poundPrefixText, poundPrefixSelector)
             textOnPageCheck(totalNonUkTax, amountText)
-            errorAboveElementCheck(noEntryErrorMessage)
+            errorAboveElementCheck(user.specificExpectedResults.get.noEntryErrorMessage)
             formPostLinkCheck(pensionProviderTaxPaidAnnualAllowanceUrl(taxYearEOY), formSelector)
           }
 

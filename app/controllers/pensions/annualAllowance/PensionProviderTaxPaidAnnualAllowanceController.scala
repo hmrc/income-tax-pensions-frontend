@@ -19,6 +19,7 @@ package controllers.pensions.annualAllowance
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.routes.PensionsSummaryController
 import controllers.pensions.annualAllowance.routes.PensionProviderTaxPaidAnnualAllowanceController
+import controllers.pensions.lifetimeAllowance.routes.PensionProviderPaidTaxController
 import controllers.predicates.AuthorisedAction
 import controllers.predicates.TaxYearAction.taxYearAction
 import forms.RadioButtonAmountForm
@@ -44,7 +45,7 @@ class PensionProviderTaxPaidAnnualAllowanceController @Inject()(implicit val cc:
                                                                 ec: ExecutionContext) extends FrontendController(cc)  with I18nSupport {
 
   def form(isAgent: Boolean): Form[(Boolean, Option[BigDecimal])] = RadioButtonAmountForm.radioButtonAndAmountForm(
-    missingInputError = "common.pensions.selectYesifYourPensionProvider.noEntry",
+    missingInputError = s"common.pensions.selectYesifYourPensionProvider.noEntry.${if (isAgent) "agent" else "individual"}",
     emptyFieldKey = "pensions.pensionSchemesTaxPaidAnnualAllowance.error.amount.noEntry",
     wrongFormatKey = "pensions.pensionSchemesTaxPaidAnnualAllowance.error.amount.inCorrectFormat",
     minAmountKey = "common.error.amountNotZero",
@@ -90,7 +91,7 @@ class PensionProviderTaxPaidAnnualAllowanceController @Inject()(implicit val cc:
                 pensionSessionService.createOrUpdateSessionData(request.user,
                   updatedCyaModel, taxYear, optData.isPriorSubmission)(errorHandler.internalServerError()) {
                   if (input._1) {
-                    Redirect(PensionProviderTaxPaidAnnualAllowanceController.show(taxYear))
+                    Redirect(PensionProviderPaidTaxController.show(taxYear))
                   } else {
                     Redirect(PensionProviderTaxPaidAnnualAllowanceController.show(taxYear))
                   }
