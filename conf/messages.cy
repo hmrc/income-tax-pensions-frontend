@@ -454,6 +454,33 @@ unauthorisedPayments.pension.pensionSchemeTaxReference.whatIsPSTR = What is the 
 unauthorisedPayments.pension.pensionSchemeTaxReference.error.incorrectFormat.individual = Enter your Pension Scheme Tax Reference in the correct format
 unauthorisedPayments.pension.pensionSchemeTaxReference.error.incorrectFormat.agent = Enter your client’s Pension Scheme Tax Reference in the correct format
 
+
+#Annual Allowance and Lifetime Allowance CYA
+
+lifetimeAllowance.cya.heading.individual = Check your annual and lifetime allowances
+lifetimeAllowance.cya.heading.agent = Check your client’s annual and lifetime allowances
+lifetimeAllowance.cya.aboveAnnualOrLifetimeAllowance = Above annual or lifetime allowance
+lifetimeAllowance.cya.reducedAnnualAllowance = Reduced annual allowance
+lifetimeAllowance.cya.typeOfReducedAnnualAllowance = Type of reduced annual allowance
+lifetimeAllowance.cya.aboveAnnualAllowance = Above annual allowance
+lifetimeAllowance.cya.annualAllowanceTax = Annual allowance tax
+lifetimeAllowance.cya.annualPensionSchemeTaxReferences = Schemes paying annual allowance tax
+lifetimeAllowance.cya.aboveLifetimeAllowance = Above lifetime allowance
+lifetimeAllowance.cya.lumpSum = Lump sum
+lifetimeAllowance.cya.otherPayments = Other payments
+lifetimeAllowance.cya.lifetimePensionSchemeTaxReferences = Schemes paying lifetime allowance tax
+
+lifetimeAllowance.cya.aboveAnnualOrLifetimeAllowance.hidden = Change above annual or lifetime allowance
+lifetimeAllowance.cya.reducedAnnualAllowance.hidden = Change reduced annual allowance
+lifetimeAllowance.cya.typeOfReducedAnnualAllowance.hidden = Change type of reduced annual allowance
+lifetimeAllowance.cya.aboveAnnualAllowance.hidden = Change above annual allowance
+lifetimeAllowance.cya.annualAllowanceTax.hidden = Change annual allowance tax
+lifetimeAllowance.cya.annualPensionSchemeTaxReferences.hidden = Change schemes paying annual allowance tax
+lifetimeAllowance.cya.aboveLifetimeAllowance.hidden = Change above lifetime allowance
+lifetimeAllowance.cya.lumpSum.hidden = Change lump sum
+lifetimeAllowance.cya.otherPayments.hidden = Change other payments
+lifetimeAllowance.cya.lifetimePensionSchemeTaxReferences.hidden = Change schemes paying lifetime allowance tax
+
 #Pension Scheme Tax Reference Summary Page
 
 annualAllowance.pstrSummary.title = Pension Scheme Tax Reference (PSTR) summary

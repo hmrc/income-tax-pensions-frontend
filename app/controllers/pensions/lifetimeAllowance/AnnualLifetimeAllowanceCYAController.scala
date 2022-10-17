@@ -69,7 +69,6 @@ class AnnualLifetimeAllowanceCYAController @Inject()(authAction: AuthorisedActio
 
         if (comparePriorData(model.pensions, prior)) {
           //        TODO - build submission model from cya data and submit to DES if cya data doesn't match prior data
-          //        val submissionModel = AllPensionsData(None, None, None)
           Future.successful(Redirect(controllers.pensions.lifetimeAllowance.routes.AnnualLifetimeAllowanceCYAController.show(taxYear)))
         } else {
           Future.successful(Redirect(controllers.pensions.lifetimeAllowance.routes.AnnualLifetimeAllowanceCYAController.show(taxYear)))

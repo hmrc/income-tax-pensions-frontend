@@ -31,11 +31,155 @@ class AnnualAndLifetimeAllowanceCYAViewHelperTest extends AnyWordSpec with Match
   val taxYear = 2022
 
   implicit val messages: Messages = stubbedMessages()
-//scalastyle:off
   "Getting the summary rows" should {
     "return the expected" when {
-      "we haven't provided any answers" in {
+      "you have selected yes for 'reduced annual allowance question'" in {
+        val annualModel = PensionAnnualAllowancesViewModel(
+          reducedAnnualAllowanceQuestion = Some(true),
+          moneyPurchaseAnnualAllowance = None,
+          taperedAnnualAllowance = None,
+          aboveAnnualAllowanceQuestion = None,
+          aboveAnnualAllowance = None,
+          pensionProvidePaidAnnualAllowanceQuestion = None,
+          taxPaidByPensionProvider = None,
+          pensionSchemeTaxReferences = None
+        )
+        val lifetimeModel = PensionLifetimeAllowancesViewModel(
+          aboveLifetimeAllowanceQuestion = Some(true)
+        )
 
+        val summaryListRows = AnnualAndLifetimeAllowanceCYAViewHelper.summaryListRows(annualModel, lifetimeModel, taxYear)
+
+        summaryListRows.length shouldBe 7
+        assertRowForAboveAnnualOrLifeTimeAllowance(summaryListRows.head, "Yes")
+        assertRowReducedAnnualAllowance(summaryListRows(1), "Yes")
+        assertRowTypeOfReducedAnnualAllowance(summaryListRows(2), "")
+        assertRowAboveAnnualAllowance(summaryListRows(3), "")
+        assertRowAboveLifetimeAllowance(summaryListRows(4), "")
+      }
+      "you have selected no for 'reduced annual allowance question'" in {
+        val annualModel = PensionAnnualAllowancesViewModel(
+          reducedAnnualAllowanceQuestion = Some(false),
+          moneyPurchaseAnnualAllowance = None,
+          taperedAnnualAllowance = None,
+          aboveAnnualAllowanceQuestion = None,
+          aboveAnnualAllowance = None,
+          pensionProvidePaidAnnualAllowanceQuestion = None,
+          taxPaidByPensionProvider = None,
+          pensionSchemeTaxReferences = None
+        )
+        val lifetimeModel = PensionLifetimeAllowancesViewModel(
+          aboveLifetimeAllowanceQuestion = Some(true)
+        )
+
+        val summaryListRows = AnnualAndLifetimeAllowanceCYAViewHelper.summaryListRows(annualModel, lifetimeModel, taxYear)
+
+        summaryListRows.length shouldBe 5
+        assertRowForAboveAnnualOrLifeTimeAllowance(summaryListRows.head, "Yes")
+        assertRowReducedAnnualAllowance(summaryListRows(1), "No")
+        assertRowAboveLifetimeAllowance(summaryListRows(2), "")
+      }
+      "you have selected yes and an amount for 'above annual allowance question" in {
+        val annualModel = PensionAnnualAllowancesViewModel(
+          reducedAnnualAllowanceQuestion = Some(true),
+          moneyPurchaseAnnualAllowance = None,
+          taperedAnnualAllowance = None,
+          aboveAnnualAllowanceQuestion = Some(true),
+          aboveAnnualAllowance = Some(BigDecimal("1000.00")),
+          pensionProvidePaidAnnualAllowanceQuestion = None,
+          taxPaidByPensionProvider = None,
+          pensionSchemeTaxReferences = None
+        )
+        val lifetimeModel = PensionLifetimeAllowancesViewModel(
+          aboveLifetimeAllowanceQuestion = Some(true)
+        )
+
+        val summaryListRows = AnnualAndLifetimeAllowanceCYAViewHelper.summaryListRows(annualModel, lifetimeModel, taxYear)
+
+        summaryListRows.length shouldBe 8
+        assertRowForAboveAnnualOrLifeTimeAllowance(summaryListRows.head, "Yes")
+        assertRowReducedAnnualAllowance(summaryListRows(1), "Yes")
+        assertRowTypeOfReducedAnnualAllowance(summaryListRows(2), "")
+        assertRowAboveAnnualAllowance(summaryListRows(3), "£1000.00")
+        assertRowAnnualAllowanceTax(summaryListRows(4), "")
+        assertRowAboveLifetimeAllowance(summaryListRows(5), "")
+      }
+      "you have selected no for 'above annual allowance question" in {
+        val annualModel = PensionAnnualAllowancesViewModel(
+          reducedAnnualAllowanceQuestion = Some(true),
+          moneyPurchaseAnnualAllowance = None,
+          taperedAnnualAllowance = None,
+          aboveAnnualAllowanceQuestion = Some(false),
+          aboveAnnualAllowance = None,
+          pensionProvidePaidAnnualAllowanceQuestion = None,
+          taxPaidByPensionProvider = None,
+          pensionSchemeTaxReferences = None
+        )
+        val lifetimeModel = PensionLifetimeAllowancesViewModel(
+          aboveLifetimeAllowanceQuestion = Some(true)
+        )
+
+        val summaryListRows = AnnualAndLifetimeAllowanceCYAViewHelper.summaryListRows(annualModel, lifetimeModel, taxYear)
+
+        summaryListRows.length shouldBe 7
+        assertRowForAboveAnnualOrLifeTimeAllowance(summaryListRows.head, "Yes")
+        assertRowReducedAnnualAllowance(summaryListRows(1), "Yes")
+        assertRowTypeOfReducedAnnualAllowance(summaryListRows(2), "")
+        assertRowAboveAnnualAllowance(summaryListRows(3), "No")
+        assertRowAboveLifetimeAllowance(summaryListRows(4), "")
+      }
+      "you have selected yes and an amount 'annual allowance tax" in {
+        val annualModel = PensionAnnualAllowancesViewModel(
+          reducedAnnualAllowanceQuestion = Some(true),
+          moneyPurchaseAnnualAllowance = None,
+          taperedAnnualAllowance = None,
+          aboveAnnualAllowanceQuestion = Some(true),
+          aboveAnnualAllowance = Some(BigDecimal("1000.00")),
+          pensionProvidePaidAnnualAllowanceQuestion = Some(true),
+          taxPaidByPensionProvider = Some(BigDecimal("500.00")),
+          pensionSchemeTaxReferences = None
+        )
+        val lifetimeModel = PensionLifetimeAllowancesViewModel(
+          aboveLifetimeAllowanceQuestion = Some(true)
+        )
+
+        val summaryListRows = AnnualAndLifetimeAllowanceCYAViewHelper.summaryListRows(annualModel, lifetimeModel, taxYear)
+
+        summaryListRows.length shouldBe 9
+        assertRowForAboveAnnualOrLifeTimeAllowance(summaryListRows.head, "Yes")
+        assertRowReducedAnnualAllowance(summaryListRows(1), "Yes")
+        assertRowTypeOfReducedAnnualAllowance(summaryListRows(2), "")
+        assertRowAboveAnnualAllowance(summaryListRows(3), "£1000.00")
+        assertRowAnnualAllowanceTax(summaryListRows(4), "£500.00")
+        assertRowAnnualAllowanceSchemes(summaryListRows(5), "")
+        assertRowAboveLifetimeAllowance(summaryListRows(6), "")
+      }
+      "you have selected no for 'annual allowance tax" in {
+        val annualModel = PensionAnnualAllowancesViewModel(
+          reducedAnnualAllowanceQuestion = Some(true),
+          moneyPurchaseAnnualAllowance = None,
+          taperedAnnualAllowance = None,
+          aboveAnnualAllowanceQuestion = Some(true),
+          aboveAnnualAllowance = Some(BigDecimal("1000.00")),
+          pensionProvidePaidAnnualAllowanceQuestion = Some(false),
+          taxPaidByPensionProvider = None,
+          pensionSchemeTaxReferences = None
+        )
+        val lifetimeModel = PensionLifetimeAllowancesViewModel(
+          aboveLifetimeAllowanceQuestion = Some(true)
+        )
+
+        val summaryListRows = AnnualAndLifetimeAllowanceCYAViewHelper.summaryListRows(annualModel, lifetimeModel, taxYear)
+
+        summaryListRows.length shouldBe 8
+        assertRowForAboveAnnualOrLifeTimeAllowance(summaryListRows.head, "Yes")
+        assertRowReducedAnnualAllowance(summaryListRows(1), "Yes")
+        assertRowTypeOfReducedAnnualAllowance(summaryListRows(2), "")
+        assertRowAboveAnnualAllowance(summaryListRows(3), "£1000.00")
+        assertRowAnnualAllowanceTax(summaryListRows(4), "No")
+        assertRowAboveLifetimeAllowance(summaryListRows(5), "")
+      }
+      "we haven't provided any answers" in {
         val annualModel = PensionAnnualAllowancesViewModel()
         val lifetimeModel = PensionLifetimeAllowancesViewModel()
 
@@ -43,7 +187,6 @@ class AnnualAndLifetimeAllowanceCYAViewHelperTest extends AnyWordSpec with Match
 
         summaryListRows.length shouldBe 1
         assertRowForAboveAnnualOrLifeTimeAllowance(summaryListRows.head, "")
-
       }
       "we have only completed the 'annual allowance' section" in {
         val annualModel = PensionAnnualAllowancesViewModel(
@@ -71,28 +214,6 @@ class AnnualAndLifetimeAllowanceCYAViewHelperTest extends AnyWordSpec with Match
         assertRowAnnualAllowanceSchemes(summaryListRows(5), "12345678RX, 12345678RY")
         assertRowAboveLifetimeAllowance(summaryListRows(6), "")
       }
-      "we have only partially completed the 'annual allowance' section" in  {
-        val annualModel = PensionAnnualAllowancesViewModel(
-          reducedAnnualAllowanceQuestion = None,
-          moneyPurchaseAnnualAllowance = None,
-          taperedAnnualAllowance = None,
-          aboveAnnualAllowanceQuestion = None,
-          aboveAnnualAllowance = None,
-          pensionProvidePaidAnnualAllowanceQuestion = None,
-          taxPaidByPensionProvider = None,
-          pensionSchemeTaxReferences = None
-        )
-        val lifetimeModel = PensionLifetimeAllowancesViewModel(
-          aboveLifetimeAllowanceQuestion = Some(true)
-        )
-
-        val summaryListRows = AnnualAndLifetimeAllowanceCYAViewHelper.summaryListRows(annualModel, lifetimeModel, taxYear)
-
-        summaryListRows.length shouldBe 5
-        assertRowForAboveAnnualOrLifeTimeAllowance(summaryListRows.head, "Yes")
-        assertRowReducedAnnualAllowance(summaryListRows(1), "")
-        assertRowAboveLifetimeAllowance(summaryListRows(2), "")
-      }
       "our data for the 'annual allowance' section has got into an unrealistic state" in {
         val annualModel = PensionAnnualAllowancesViewModel(
           reducedAnnualAllowanceQuestion = Some(true),
@@ -113,41 +234,7 @@ class AnnualAndLifetimeAllowanceCYAViewHelperTest extends AnyWordSpec with Match
         summaryListRows.length shouldBe 1
         assertRowForAboveAnnualOrLifeTimeAllowance(summaryListRows.head, "No")
       }
-      "we have completed the 'annual allowance' and 'lifetime allowance' sections" in {
-        val annualModel = PensionAnnualAllowancesViewModel(
-          reducedAnnualAllowanceQuestion = Some(true),
-          moneyPurchaseAnnualAllowance = Some(true),
-          taperedAnnualAllowance = Some(false),
-          aboveAnnualAllowanceQuestion = Some(true),
-          aboveAnnualAllowance = Option(BigDecimal("1000.00")),
-          pensionProvidePaidAnnualAllowanceQuestion = Some(true),
-          taxPaidByPensionProvider = Option(BigDecimal("120.00")),
-          pensionSchemeTaxReferences = Some(Seq("12345678RX", "12345678RY"))
-        )
-        val lifetimeModel = PensionLifetimeAllowancesViewModel(
-          aboveLifetimeAllowanceQuestion = Some(true),
-          pensionAsLumpSumQuestion = Some(true),
-          pensionAsLumpSum = Some(LifetimeAllowance(BigDecimal("1000.00"), BigDecimal("130.00"))),
-          pensionPaidAnotherWayQuestion = Some(true),
-          pensionPaidAnotherWay = Some(LifetimeAllowance(BigDecimal("900.00"), BigDecimal("150.00"))),
-          pensionSchemeTaxReferences = Some(Seq("12345678AB", "12345678RCD"))
-        )
-
-        val summaryListRows = AnnualAndLifetimeAllowanceCYAViewHelper.summaryListRows(annualModel, lifetimeModel, taxYear)
-
-        summaryListRows.length shouldBe 10
-        assertRowForAboveAnnualOrLifeTimeAllowance(summaryListRows.head, "Yes")
-        assertRowReducedAnnualAllowance(summaryListRows(1), "Yes")
-        assertRowTypeOfReducedAnnualAllowance(summaryListRows(2), "Money purchase")
-        assertRowAboveAnnualAllowance(summaryListRows(3), "£1000.00")
-        assertRowAnnualAllowanceTax(summaryListRows(4), "£120.00")
-        assertRowAnnualAllowanceSchemes(summaryListRows(5), "12345678RX, 12345678RY")
-        assertRowAboveLifetimeAllowance(summaryListRows(6), "")
-        assertRowLumpSum(summaryListRows(7), "Amount: £1000.00 <br> Tax paid: £130.00")
-        assertRowOtherPayments(summaryListRows(8), "Amount: £900.00 <br> Tax paid: £150.00")
-        assertRowLifetimeAllowanceSchemes(summaryListRows(9), "12345678AB, 12345678RCD")
-      }
-      //TODO add lifetime allowance tests when implementing //SASS-3549
+      // TODO add lifetime allowance tests when implementing //SASS-3549
     }
   }
 
