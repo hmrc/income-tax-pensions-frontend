@@ -91,7 +91,7 @@ class PensionProviderTaxPaidAnnualAllowanceController @Inject()(implicit val cc:
                 pensionSessionService.createOrUpdateSessionData(request.user,
                   updatedCyaModel, taxYear, optData.isPriorSubmission)(errorHandler.internalServerError()) {
                   if (input._1) {
-                    Redirect(PensionProviderPaidTaxController.show(taxYear))
+                    Redirect(PensionProviderTaxPaidAnnualAllowanceController.show(taxYear))
                   } else {
                     Redirect(PensionProviderTaxPaidAnnualAllowanceController.show(taxYear))
                   }

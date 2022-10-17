@@ -302,7 +302,7 @@ class PensionProviderTaxPaidAnnualAllowanceControllerISpec extends CommonUtils w
             }
           }
 
-          "redirect to PensionProviderPaidTaxController page when user selects 'yes' with a valid amount" which {
+          "redirect to the same page when user selects 'yes' with a valid amount" which {
 
             lazy val form: Map[String, String] = Map(
               RadioButtonAmountForm.yesNo -> RadioButtonAmountForm.yes, RadioButtonAmountForm.amount2 -> existingAmount)
@@ -315,7 +315,7 @@ class PensionProviderTaxPaidAnnualAllowanceControllerISpec extends CommonUtils w
 
             "has a SEE_OTHER(303) status" in {
               result.status shouldBe SEE_OTHER
-              result.header("location") shouldBe Some(controllers.pensions.lifetimeAllowance.routes.PensionProviderPaidTaxController.show(taxYearEOY).url)
+              result.header("location") shouldBe Some(controllers.pensions.annualAllowance.routes.PensionProviderTaxPaidAnnualAllowanceController.show(taxYearEOY).url)
             }
 
             "updates did you non uk tax on the amount that resulted in a surcharge page to  Some(true) with valid amount" in {
