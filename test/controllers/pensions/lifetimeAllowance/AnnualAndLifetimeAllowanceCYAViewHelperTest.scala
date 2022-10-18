@@ -56,6 +56,8 @@ class AnnualAndLifetimeAllowanceCYAViewHelperTest extends AnyWordSpec with Match
         assertRowTypeOfReducedAnnualAllowance(summaryListRows(2), "")
         assertRowAboveAnnualAllowance(summaryListRows(3), "")
         assertRowAboveLifetimeAllowance(summaryListRows(4), "")
+        assertRowLumpSum(summaryListRows(5), "")
+        assertRowOtherPayments(summaryListRows(6), "")
       }
       "you have selected no for 'reduced annual allowance question'" in {
         val annualModel = PensionAnnualAllowancesViewModel(
@@ -78,6 +80,8 @@ class AnnualAndLifetimeAllowanceCYAViewHelperTest extends AnyWordSpec with Match
         assertRowForAboveAnnualOrLifeTimeAllowance(summaryListRows.head, "Yes")
         assertRowReducedAnnualAllowance(summaryListRows(1), "No")
         assertRowAboveLifetimeAllowance(summaryListRows(2), "")
+        assertRowLumpSum(summaryListRows(3), "")
+        assertRowOtherPayments(summaryListRows(4), "")
       }
       "you have selected yes and an amount for 'above annual allowance question" in {
         val annualModel = PensionAnnualAllowancesViewModel(
@@ -103,6 +107,8 @@ class AnnualAndLifetimeAllowanceCYAViewHelperTest extends AnyWordSpec with Match
         assertRowAboveAnnualAllowance(summaryListRows(3), "£1000.00")
         assertRowAnnualAllowanceTax(summaryListRows(4), "")
         assertRowAboveLifetimeAllowance(summaryListRows(5), "")
+        assertRowLumpSum(summaryListRows(6), "")
+        assertRowOtherPayments(summaryListRows(7), "")
       }
       "you have selected no for 'above annual allowance question" in {
         val annualModel = PensionAnnualAllowancesViewModel(
@@ -127,6 +133,8 @@ class AnnualAndLifetimeAllowanceCYAViewHelperTest extends AnyWordSpec with Match
         assertRowTypeOfReducedAnnualAllowance(summaryListRows(2), "")
         assertRowAboveAnnualAllowance(summaryListRows(3), "No")
         assertRowAboveLifetimeAllowance(summaryListRows(4), "")
+        assertRowLumpSum(summaryListRows(5), "")
+        assertRowOtherPayments(summaryListRows(6), "")
       }
       "you have selected yes and an amount 'annual allowance tax" in {
         val annualModel = PensionAnnualAllowancesViewModel(
@@ -153,6 +161,8 @@ class AnnualAndLifetimeAllowanceCYAViewHelperTest extends AnyWordSpec with Match
         assertRowAnnualAllowanceTax(summaryListRows(4), "£500.00")
         assertRowAnnualAllowanceSchemes(summaryListRows(5), "")
         assertRowAboveLifetimeAllowance(summaryListRows(6), "")
+        assertRowLumpSum(summaryListRows(7), "")
+        assertRowOtherPayments(summaryListRows(8), "")
       }
       "you have selected no for 'annual allowance tax" in {
         val annualModel = PensionAnnualAllowancesViewModel(
@@ -178,6 +188,8 @@ class AnnualAndLifetimeAllowanceCYAViewHelperTest extends AnyWordSpec with Match
         assertRowAboveAnnualAllowance(summaryListRows(3), "£1000.00")
         assertRowAnnualAllowanceTax(summaryListRows(4), "No")
         assertRowAboveLifetimeAllowance(summaryListRows(5), "")
+        assertRowLumpSum(summaryListRows(6), "")
+        assertRowOtherPayments(summaryListRows(7), "")
       }
       "we haven't provided any answers" in {
         val annualModel = PensionAnnualAllowancesViewModel()
@@ -213,6 +225,8 @@ class AnnualAndLifetimeAllowanceCYAViewHelperTest extends AnyWordSpec with Match
         assertRowAnnualAllowanceTax(summaryListRows(4), "£120.00")
         assertRowAnnualAllowanceSchemes(summaryListRows(5), "12345678RX, 12345678RY")
         assertRowAboveLifetimeAllowance(summaryListRows(6), "")
+        assertRowLumpSum(summaryListRows(7), "")
+        assertRowOtherPayments(summaryListRows(8), "")
       }
       "our data for the 'annual allowance' section has got into an unrealistic state" in {
         val annualModel = PensionAnnualAllowancesViewModel(
@@ -318,15 +332,6 @@ class AnnualAndLifetimeAllowanceCYAViewHelperTest extends AnyWordSpec with Match
       "Change",
       "/2022/annual-lifetime-allowances/lifetime-allowance-another-way",
       "lifetimeAllowance.cya.otherPayments.hidden"))
-  }
-
-  private def assertRowLifetimeAllowanceSchemes(summaryListRow: SummaryListRow, expectedValue: String): Unit = {
-    assertSummaryListRow(summaryListRow, ExpectedSummaryRowContents(
-      "Schemes paying lifetime allowance tax",
-      expectedValue,
-      "Change",
-      "/2022/annual-lifetime-allowances/check-annual-and-lifetime-allowances",
-      "lifetimeAllowance.cya.lifetimePensionSchemeTaxReferences.hidden"))
   }
 
   private def assertSummaryListRow(summaryListRow: SummaryListRow, expectedSummaryRowContents: ExpectedSummaryRowContents): Unit = {

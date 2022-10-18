@@ -173,7 +173,7 @@ POST        /:taxYear/annual-allowance/pension-provider-paid-tax                
 
 GET         /:taxYear/annual-allowance/pension-scheme-tax-reference-summary                 controllers.pensions.annualAllowance.PstrSummaryController.show(taxYear: Int)
 
-#Lifetime Allowance Pages
+#  Lifetime Allowance Pages     ####################################
 
 GET         /:taxYear/annual-lifetime-allowances/pension-provider-paid-tax                   controllers.pensions.lifetimeAllowance.PensionProviderPaidTaxController.show(taxYear: Int)
 POST        /:taxYear/annual-lifetime-allowances/pension-provider-paid-tax                   controllers.pensions.lifetimeAllowance.PensionProviderPaidTaxController.submit(taxYear: Int)

@@ -67,7 +67,7 @@ class AnnualLifetimeAllowanceCYAController @Inject()(authAction: AuthorisedActio
         Future.successful(Redirect(appConfig.incomeTaxSubmissionOverviewUrl(taxYear)))
       ) { model =>
 
-        if (comparePriorData(model.pensions, prior)) {
+        if (sessionDataDifferentThanPriorData(model.pensions, prior)) {
           //        TODO - build submission model from cya data and submit to DES if cya data doesn't match prior data (SASS-3444)
           Future.successful(Redirect(controllers.pensions.lifetimeAllowance.routes.AnnualLifetimeAllowanceCYAController.show(taxYear)))
         } else {
@@ -77,7 +77,7 @@ class AnnualLifetimeAllowanceCYAController @Inject()(authAction: AuthorisedActio
     }
   }
 
-  private def comparePriorData(cyaData: PensionsCYAModel, priorData: Option[AllPensionsData]): Boolean = {
+  private def sessionDataDifferentThanPriorData(cyaData: PensionsCYAModel, priorData: Option[AllPensionsData]): Boolean = {
     priorData match {
       case None => true
       case Some(prior) => !cyaData.equals(generateCyaFromPrior(prior))

@@ -16,17 +16,14 @@
 
 package controllers.pensions.lifetimeAllowance
 
+import controllers.pensions.annualAllowance.{routes => annualRoutes}
 import models.pension.charges.{PensionAnnualAllowancesViewModel, PensionLifetimeAllowancesViewModel}
 import play.api.i18n.Messages
-import play.api.mvc.Call
-import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
-import utils.ViewUtils
-import controllers.pensions.annualAllowance.{routes => annualRoutes}
+import utils.CYABaseHelper
 
 
-//scalastyle:off
-object AnnualAndLifetimeAllowanceCYAViewHelper {
+object AnnualAndLifetimeAllowanceCYAViewHelper extends CYABaseHelper {
 
   def summaryListRows(annualAllowancesViewModel: PensionAnnualAllowancesViewModel, lifetimeAllowancesViewModel: PensionLifetimeAllowancesViewModel, taxYear: Int)
                      (implicit messages: Messages): Seq[SummaryListRow] =
@@ -197,40 +194,4 @@ object AnnualAndLifetimeAllowanceCYAViewHelper {
       }
     )
   }
-
-  private def summaryListRowWithBooleanValue(labelMessageKey: String, valueOpt: Option[Boolean], changeLink: Call)(implicit messages: Messages): SummaryListRow =
-    summaryListRow(labelMessageKey, displayedValue(valueOpt), changeLink)
-
-  private def summaryListRowWithOptionalAmountValue(labelMessageKey: String, value: Option[BigDecimal], changeLink: Call)(implicit messages: Messages): SummaryListRow =
-    summaryListRow(labelMessageKey, displayedValueForOptionalAmount(value), changeLink)
-
-  private def summaryListRowWithAmountAndTaxValue(labelMessageKey: String, amount: Option[BigDecimal], taxPaid: Option[BigDecimal], changeLink: Call)(implicit messages: Messages): SummaryListRow =
-    summaryListRow(labelMessageKey, displayedValueForAmountAndTax(amount, taxPaid), changeLink)
-
-  private def summaryListRowWithString(labelMessageKey: String, valueOpt: Option[Seq[String]], changeLink: Call)(implicit messages: Messages): SummaryListRow =
-    summaryListRow(labelMessageKey, displayedValueForOptionalStrings(valueOpt), changeLink)
-
-  private def displayedValueForOptionalAmount(valueOpt: Option[BigDecimal]): String = valueOpt.map(displayedValue).getOrElse("")
-
-  private def displayedValueForAmountAndTax(amount: Option[BigDecimal], taxPaid: Option[BigDecimal]): String =
-    s"""Amount: ${displayedValueForOptionalAmount(amount)} <br> Tax paid: ${displayedValueForOptionalAmount(taxPaid)}"""
-
-  private def displayedValue(value: BigDecimal): String = if (value == 0) "" else s"£$value"
-
-  private def displayedValue(valueOpt: Option[Boolean])(implicit messages: Messages): String =
-    valueOpt.map(value => if (value) messages("common.yes") else messages("common.no")).getOrElse("")
-
-  private def displayedValueForOptionalStrings(valueOpt: Option[Seq[String]]): String = valueOpt.map(_.mkString(", ")).getOrElse("")
-
-
-  private def summaryListRow(labelMessageKey: String, displayedValue: String, changeLink: Call)(implicit messages: Messages): SummaryListRow = {
-    ViewUtils.summaryListRow(
-      HtmlContent(messages(labelMessageKey)),
-      HtmlContent(displayedValue),
-      actions = Seq(
-        (changeLink, messages("common.change"),
-          Some(messages(labelMessageKey + ".hidden"))))
-    )
-  }
-
 }
