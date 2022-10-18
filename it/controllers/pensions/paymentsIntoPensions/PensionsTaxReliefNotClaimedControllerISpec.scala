@@ -16,257 +16,780 @@
 
 package controllers.pensions.paymentsIntoPensions
 
-import builders.IncomeTaxUserDataBuilder.anIncomeTaxUserData
-import builders.PaymentsIntoPensionVewModelBuilder.aPaymentsIntoPensionViewModel
-import builders.PensionsCYAModelBuilder._
-import builders.PensionsUserDataBuilder
-import builders.UserBuilder._
-import forms.YesNoForm
-import models.mongo.{PensionsCYAModel, PensionsUserData}
-import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
-import org.scalatest.BeforeAndAfterEach
-import play.api.http.HeaderNames
+import builders.PensionsCYAModelBuilder.{aPensionsCYAEmptyModel, aPensionsCYAModel}
+import controllers.ControllerSpec.PreferredLanguages.{English, Welsh}
+import controllers.ControllerSpec.UserTypes.{Agent, Individual}
+import controllers.ControllerSpec._
+import controllers.YesNoControllerSpec
+import models.mongo.PensionsCYAModel
+import models.pension.reliefs.PaymentsIntoPensionViewModel
+import org.jsoup.Jsoup.parse
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
-import play.api.libs.ws.WSResponse
-import utils.PageUrls.PaymentIntoPensions.{checkPaymentsIntoPensionCyaUrl, pensionTaxReliefNotClaimedUrl, retirementAnnuityUrl}
-import utils.PageUrls._
-import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
-import views.PensionsTaxReliefNotClaimedTestSupport.Selectors._
-import views.PensionsTaxReliefNotClaimedTestSupport.ExpectedIndividualEN._
-import views.PensionsTaxReliefNotClaimedTestSupport.CommonExpectedEN._
-import views.PensionsTaxReliefNotClaimedTestSupport.Selectors
+
+class PensionsTaxReliefNotClaimedControllerISpec
+  extends YesNoControllerSpec("/payments-into-pensions/no-tax-relief") {
+
+  private val selectorForFirstParagraph = "#main-content > div > div > p:nth-of-type(1)"
+  private val selectorForSecondParagraph = "#main-content > div > div > p:nth-of-type(2)"
+  private val selectorForSubHeading = "#main-content > div > div > form > div > fieldset > legend"
+
+  val minimalSessionDataToAccessThisPage: PensionsCYAModel = aPensionsCYAEmptyModel
+    .copy(paymentsIntoPension =
+      PaymentsIntoPensionViewModel(
+        rasPensionPaymentQuestion = Some(true),
+        totalRASPaymentsAndTaxRelief = Some(BigDecimal("1.00")),
+        oneOffRasPaymentPlusTaxReliefQuestion = Some(true),
+        totalOneOffRasPaymentPlusTaxRelief = Some(BigDecimal("1.00")),
+        totalPaymentsIntoRASQuestion = Some(true)
+      ))
+
+  "This page" when {
+    "requested to be shown" should {
+      "redirect to the expected page" when {
+        "the user has no stored session data at all" in {
+
+          val response = getPage(None)
+
+          response must haveStatus(SEE_OTHER)
+          response must haveALocationHeaderValue(PageRelativeURLs.paymentsIntoPensionsCYAPage)
+
+        }
+        "the user has a session with an empty pensions model" in {
+
+          val response = getPage(Some(pensionsUserData(aPensionsCYAEmptyModel)))
+
+          response must haveStatus(SEE_OTHER)
+          response must haveALocationHeaderValue(PageRelativeURLs.paymentsIntoPensionsReliefAtSourcePage)
+
+        }
+        "the user has a session with an insufficient pensions model" when {
+          "case one" in {
+
+            val sessionData = pensionsUserData(
+              aPensionsCYAEmptyModel
+                .copy(paymentsIntoPension =
+                  PaymentsIntoPensionViewModel(
+                    rasPensionPaymentQuestion = Some(true)
+                  ))
+            )
+
+            val response = getPage(Some(sessionData))
+
+            response must haveStatus(SEE_OTHER)
+            response must haveALocationHeaderValue(PageRelativeURLs.paymentsIntoPensionsReliefAtSourceAmountPage)
+
+          }
+          "case two" in {
+
+            val sessionData = pensionsUserData(
+              aPensionsCYAEmptyModel
+                .copy(paymentsIntoPension =
+                  PaymentsIntoPensionViewModel(
+                    rasPensionPaymentQuestion = Some(true),
+                    totalRASPaymentsAndTaxRelief = Some(BigDecimal("1.00"))
+                  ))
+            )
+
+            val response = getPage(Some(sessionData))
+
+            response must haveStatus(SEE_OTHER)
+            response must haveALocationHeaderValue(PageRelativeURLs.paymentsIntoPensionsOneOffPaymentsPage)
+
+          }
+          "case three" in {
+
+            val sessionData = pensionsUserData(
+              aPensionsCYAEmptyModel
+                .copy(paymentsIntoPension =
+                  PaymentsIntoPensionViewModel(
+                    rasPensionPaymentQuestion = Some(true),
+                    totalRASPaymentsAndTaxRelief = Some(BigDecimal("1.00")),
+                    oneOffRasPaymentPlusTaxReliefQuestion = Some(true)
+                  ))
+            )
+
+            val response = getPage(Some(sessionData))
+
+            response must haveStatus(SEE_OTHER)
+            response must haveALocationHeaderValue(PageRelativeURLs.paymentsIntoPensionsOneOffPaymentsAmountPage)
+
+          }
+          "case four" in {
+
+            val sessionData = pensionsUserData(
+              aPensionsCYAEmptyModel
+                .copy(paymentsIntoPension =
+                  PaymentsIntoPensionViewModel(
+                    rasPensionPaymentQuestion = Some(true),
+                    totalRASPaymentsAndTaxRelief = Some(BigDecimal("1.00")),
+                    oneOffRasPaymentPlusTaxReliefQuestion = Some(true),
+                    totalOneOffRasPaymentPlusTaxRelief = Some(BigDecimal("1.00"))
+                  ))
+            )
+
+            val response = getPage(Some(sessionData))
+
+            response must haveStatus(SEE_OTHER)
+            response must haveALocationHeaderValue(PageRelativeURLs.paymentsIntoPensionsTotalReliefAtSourceCheckPage)
+
+          }
+        }
+      }
+
+      "appear as expected" when {
+        "the user has only the minimal session data for accessing this page and" when {
+
+          val sessionData = pensionsUserData(minimalSessionDataToAccessThisPage)
+
+          scenarioNameForIndividualAndEnglish in {
+
+            implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
+            val response = getPage
+
+            response must haveStatus(OK)
+            assertPageAsExpected(
+              parse(response.body),
+              ExpectedYesNoPageContents(
+                title = "Pensions where tax relief is not claimed",
+                header = "Pensions where tax relief is not claimed",
+                caption = "Payments into pensions for 6 April 2021 to 5 April 2022",
+                radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
+                radioButtonForNo = uncheckedExpectedRadioButton("No"),
+                buttonForContinue = ExpectedButton("Continue", ""),
+                links = Set.empty,
+                text = Set(
+                  ExpectedText(selectorForFirstParagraph, "These questions are about pensions you pay into where tax relief is not claimed for you."),
+                  ExpectedText(selectorForSecondParagraph, "You can check your pension statements or contact your pension provider to find the information you need."),
+                  ExpectedText(selectorForSubHeading, "Did you pay into a pension where tax relief was not claimed for you?")
+                )
+              ))
+
+          }
+          scenarioNameForIndividualAndWelsh in {
+
+            implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
+            val response = getPage
+
+            response must haveStatus(OK)
+            assertPageAsExpected(
+              parse(response.body),
+              ExpectedYesNoPageContents(
+                title = "Pensions where tax relief is not claimed",
+                header = "Pensions where tax relief is not claimed",
+                caption = "Payments into pensions for 6 April 2021 to 5 April 2022",
+                radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
+                radioButtonForNo = uncheckedExpectedRadioButton("No"),
+                buttonForContinue = ExpectedButton("Continue", ""),
+                links = Set.empty,
+                text = Set(
+                  ExpectedText(selectorForFirstParagraph, "These questions are about pensions you pay into where tax relief is not claimed for you."),
+                  ExpectedText(selectorForSecondParagraph, "You can check your pension statements or contact your pension provider to find the information you need."),
+                  ExpectedText(selectorForSubHeading, "Did you pay into a pension where tax relief was not claimed for you?")
+                )
+              ))
+
+          }
+          scenarioNameForAgentAndEnglish in {
+
+            implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
+            val response = getPage
+
+            response must haveStatus(OK)
+            assertPageAsExpected(
+              parse(response.body),
+              ExpectedYesNoPageContents(
+                title = "Pensions where tax relief is not claimed",
+                header = "Pensions where tax relief is not claimed",
+                caption = "Payments into pensions for 6 April 2021 to 5 April 2022",
+                radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
+                radioButtonForNo = uncheckedExpectedRadioButton("No"),
+                buttonForContinue = ExpectedButton("Continue", ""),
+                links = Set.empty,
+                text = Set(
+                  ExpectedText(selectorForFirstParagraph, "These questions are about pensions your client pays into where tax relief is not claimed for them."),
+                  ExpectedText(selectorForSecondParagraph, "You can check your client’s pension statements or contact your client’s pension provider to find the information you need."),
+                  ExpectedText(selectorForSubHeading, "Did your client pay into a pension where tax relief was not claimed for them?")
+                )
+              ))
+
+          }
+          scenarioNameForAgentAndWelsh in {
+
+            implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
+            val response = getPage
+
+            response must haveStatus(OK)
+            assertPageAsExpected(
+              parse(response.body),
+              ExpectedYesNoPageContents(
+                title = "Pensions where tax relief is not claimed",
+                header = "Pensions where tax relief is not claimed",
+                caption = "Payments into pensions for 6 April 2021 to 5 April 2022",
+                radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
+                radioButtonForNo = uncheckedExpectedRadioButton("No"),
+                buttonForContinue = ExpectedButton("Continue", ""),
+                links = Set.empty,
+                text = Set(
+                  ExpectedText(selectorForFirstParagraph, "These questions are about pensions your client pays into where tax relief is not claimed for them."),
+                  ExpectedText(selectorForSecondParagraph, "You can check your client’s pension statements or contact your client’s pension provider to find the information you need."),
+                  ExpectedText(selectorForSubHeading, "Did your client pay into a pension where tax relief was not claimed for them?")
+                )
+              ))
+
+          }
+        }
+        "the user had previously answered 'Yes', and" when {
+
+          val sessionData = pensionsUserData(
+            minimalSessionDataToAccessThisPage.copy(
+              paymentsIntoPension = minimalSessionDataToAccessThisPage.paymentsIntoPension.copy(
+                pensionTaxReliefNotClaimedQuestion = Some(true)
+              )
+            )
+          )
+
+          scenarioNameForIndividualAndEnglish in {
+
+            implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
+            val response = getPage
+
+            response must haveStatus(OK)
+            assertPageAsExpected(
+              parse(response.body),
+              ExpectedYesNoPageContents(
+                title = "Pensions where tax relief is not claimed",
+                header = "Pensions where tax relief is not claimed",
+                caption = "Payments into pensions for 6 April 2021 to 5 April 2022",
+                radioButtonForYes = checkedExpectedRadioButton("Yes"),
+                radioButtonForNo = uncheckedExpectedRadioButton("No"),
+                buttonForContinue = ExpectedButton("Continue", ""),
+                links = Set.empty,
+                text = Set(
+                  ExpectedText(selectorForFirstParagraph, "These questions are about pensions you pay into where tax relief is not claimed for you."),
+                  ExpectedText(selectorForSecondParagraph, "You can check your pension statements or contact your pension provider to find the information you need."),
+                  ExpectedText(selectorForSubHeading, "Did you pay into a pension where tax relief was not claimed for you?")
+                )
+              ))
+
+          }
+          scenarioNameForIndividualAndWelsh in {
+
+            implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
+            val response = getPage
+
+            response must haveStatus(OK)
+            assertPageAsExpected(
+              parse(response.body),
+              ExpectedYesNoPageContents(
+                title = "Pensions where tax relief is not claimed",
+                header = "Pensions where tax relief is not claimed",
+                caption = "Payments into pensions for 6 April 2021 to 5 April 2022",
+                radioButtonForYes = checkedExpectedRadioButton("Yes"),
+                radioButtonForNo = uncheckedExpectedRadioButton("No"),
+                buttonForContinue = ExpectedButton("Continue", ""),
+                links = Set.empty,
+                text = Set(
+                  ExpectedText(selectorForFirstParagraph, "These questions are about pensions you pay into where tax relief is not claimed for you."),
+                  ExpectedText(selectorForSecondParagraph, "You can check your pension statements or contact your pension provider to find the information you need."),
+                  ExpectedText(selectorForSubHeading, "Did you pay into a pension where tax relief was not claimed for you?")
+                )
+              ))
+
+          }
+          scenarioNameForAgentAndEnglish in {
+
+            implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
+            val response = getPage
+
+            response must haveStatus(OK)
+            assertPageAsExpected(
+              parse(response.body),
+              ExpectedYesNoPageContents(
+                title = "Pensions where tax relief is not claimed",
+                header = "Pensions where tax relief is not claimed",
+                caption = "Payments into pensions for 6 April 2021 to 5 April 2022",
+                radioButtonForYes = checkedExpectedRadioButton("Yes"),
+                radioButtonForNo = uncheckedExpectedRadioButton("No"),
+                buttonForContinue = ExpectedButton("Continue", ""),
+                links = Set.empty,
+                text = Set(
+                  ExpectedText(selectorForFirstParagraph, "These questions are about pensions your client pays into where tax relief is not claimed for them."),
+                  ExpectedText(selectorForSecondParagraph, "You can check your client’s pension statements or contact your client’s pension provider to find the information you need."),
+                  ExpectedText(selectorForSubHeading, "Did your client pay into a pension where tax relief was not claimed for them?")
+                )
+              ))
+
+          }
+          scenarioNameForAgentAndWelsh in {
+
+            implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
+            val response = getPage
+
+            response must haveStatus(OK)
+            assertPageAsExpected(
+              parse(response.body),
+              ExpectedYesNoPageContents(
+                title = "Pensions where tax relief is not claimed",
+                header = "Pensions where tax relief is not claimed",
+                caption = "Payments into pensions for 6 April 2021 to 5 April 2022",
+                radioButtonForYes = checkedExpectedRadioButton("Yes"),
+                radioButtonForNo = uncheckedExpectedRadioButton("No"),
+                buttonForContinue = ExpectedButton("Continue", ""),
+                links = Set.empty,
+                text = Set(
+                  ExpectedText(selectorForFirstParagraph, "These questions are about pensions your client pays into where tax relief is not claimed for them."),
+                  ExpectedText(selectorForSecondParagraph, "You can check your client’s pension statements or contact your client’s pension provider to find the information you need."),
+                  ExpectedText(selectorForSubHeading, "Did your client pay into a pension where tax relief was not claimed for them?")
+                )
+              ))
+
+          }
+
+        }
+        "the user had previously answered 'No', and" when {
+
+          val sessionData = pensionsUserData(
+            minimalSessionDataToAccessThisPage.copy(
+              paymentsIntoPension = minimalSessionDataToAccessThisPage.paymentsIntoPension.copy(
+                pensionTaxReliefNotClaimedQuestion = Some(false)
+              )
+            )
+          )
+
+          scenarioNameForIndividualAndEnglish in {
+
+            implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
+            val response = getPage
+
+            response must haveStatus(OK)
+            assertPageAsExpected(
+              parse(response.body),
+              ExpectedYesNoPageContents(
+                title = "Pensions where tax relief is not claimed",
+                header = "Pensions where tax relief is not claimed",
+                caption = "Payments into pensions for 6 April 2021 to 5 April 2022",
+                radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
+                radioButtonForNo = checkedExpectedRadioButton("No"),
+                buttonForContinue = ExpectedButton("Continue", ""),
+                links = Set.empty,
+                text = Set(
+                  ExpectedText(selectorForFirstParagraph, "These questions are about pensions you pay into where tax relief is not claimed for you."),
+                  ExpectedText(selectorForSecondParagraph, "You can check your pension statements or contact your pension provider to find the information you need."),
+                  ExpectedText(selectorForSubHeading, "Did you pay into a pension where tax relief was not claimed for you?")
+                )
+              ))
+
+          }
+          scenarioNameForIndividualAndWelsh in {
+
+            implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
+            val response = getPage
+
+            response must haveStatus(OK)
+            assertPageAsExpected(
+              parse(response.body),
+              ExpectedYesNoPageContents(
+                title = "Pensions where tax relief is not claimed",
+                header = "Pensions where tax relief is not claimed",
+                caption = "Payments into pensions for 6 April 2021 to 5 April 2022",
+                radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
+                radioButtonForNo = checkedExpectedRadioButton("No"),
+                buttonForContinue = ExpectedButton("Continue", ""),
+                links = Set.empty,
+                text = Set(
+                  ExpectedText(selectorForFirstParagraph, "These questions are about pensions you pay into where tax relief is not claimed for you."),
+                  ExpectedText(selectorForSecondParagraph, "You can check your pension statements or contact your pension provider to find the information you need."),
+                  ExpectedText(selectorForSubHeading, "Did you pay into a pension where tax relief was not claimed for you?")
+                )
+              ))
 
 
-class PensionsTaxReliefNotClaimedControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
+          }
+          scenarioNameForAgentAndEnglish in {
 
-  private def pensionsUsersData(pensionsCyaModel: PensionsCYAModel): PensionsUserData = {
-    PensionsUserDataBuilder.aPensionsUserData.copy(
-      isPriorSubmission = false,
-      pensions = pensionsCyaModel
-    )
+            implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
+            val response = getPage
+
+            response must haveStatus(OK)
+            assertPageAsExpected(
+              parse(response.body),
+              ExpectedYesNoPageContents(
+                title = "Pensions where tax relief is not claimed",
+                header = "Pensions where tax relief is not claimed",
+                caption = "Payments into pensions for 6 April 2021 to 5 April 2022",
+                radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
+                radioButtonForNo = checkedExpectedRadioButton("No"),
+                buttonForContinue = ExpectedButton("Continue", ""),
+                links = Set.empty,
+                text = Set(
+                  ExpectedText(selectorForFirstParagraph, "These questions are about pensions your client pays into where tax relief is not claimed for them."),
+                  ExpectedText(selectorForSecondParagraph, "You can check your client’s pension statements or contact your client’s pension provider to find the information you need."),
+                  ExpectedText(selectorForSubHeading, "Did your client pay into a pension where tax relief was not claimed for them?")
+                )
+              ))
+
+          }
+          scenarioNameForAgentAndWelsh in {
+
+            implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
+            val response = getPage
+
+            response must haveStatus(OK)
+            assertPageAsExpected(
+              parse(response.body),
+              ExpectedYesNoPageContents(
+                title = "Pensions where tax relief is not claimed",
+                header = "Pensions where tax relief is not claimed",
+                caption = "Payments into pensions for 6 April 2021 to 5 April 2022",
+                radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
+                radioButtonForNo = checkedExpectedRadioButton("No"),
+                buttonForContinue = ExpectedButton("Continue", ""),
+                links = Set.empty,
+                text = Set(
+                  ExpectedText(selectorForFirstParagraph, "These questions are about pensions your client pays into where tax relief is not claimed for them."),
+                  ExpectedText(selectorForSecondParagraph, "You can check your client’s pension statements or contact your client’s pension provider to find the information you need."),
+                  ExpectedText(selectorForSubHeading, "Did your client pay into a pension where tax relief was not claimed for them?")
+                )
+              ))
+
+          }
+
+        }
+      }
+    }
+    "submitted" should {
+      "succeed" when {
+        "the user has selected 'No' and" when {
+
+          val sessionData = pensionsUserData(minimalSessionDataToAccessThisPage)
+
+          val expectedViewModel =
+            sessionData.pensions.paymentsIntoPension.copy(
+              pensionTaxReliefNotClaimedQuestion = Some(false),
+              retirementAnnuityContractPaymentsQuestion = None,
+              totalRetirementAnnuityContractPayments = None,
+              workplacePensionPaymentsQuestion = None,
+              totalWorkplacePensionPayments = None
+            )
+
+          scenarioNameForIndividualAndEnglish in {
+
+            implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
+            val response = submitForm(SubmittedFormDataForYesNoPage(Some(false)))
+
+            response must haveStatus(SEE_OTHER)
+            response must haveALocationHeaderValue(PageRelativeURLs.paymentsIntoPensionsCYAPage)
+            getViewModel mustBe expectedViewModel
+
+          }
+          scenarioNameForIndividualAndWelsh in {
+
+            implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
+            val response = submitForm(SubmittedFormDataForYesNoPage(Some(false)))
+
+            response must haveStatus(SEE_OTHER)
+            response must haveALocationHeaderValue(PageRelativeURLs.paymentsIntoPensionsCYAPage)
+            getViewModel mustBe expectedViewModel
+
+          }
+          scenarioNameForAgentAndEnglish in {
+
+            implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
+            val response = submitForm(SubmittedFormDataForYesNoPage(Some(false)))
+
+            response must haveStatus(SEE_OTHER)
+            response must haveALocationHeaderValue(PageRelativeURLs.paymentsIntoPensionsCYAPage)
+            getViewModel mustBe expectedViewModel
+
+          }
+          scenarioNameForAgentAndWelsh in {
+
+            implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
+            val response = submitForm(SubmittedFormDataForYesNoPage(Some(false)))
+
+            response must haveStatus(SEE_OTHER)
+            response must haveALocationHeaderValue(PageRelativeURLs.paymentsIntoPensionsCYAPage)
+            getViewModel mustBe expectedViewModel
+
+          }
+        }
+        "the user has selected 'Yes', they've already answered 'Yes' about the 'retirement annuity' contract, and" when {
+
+          val sessionData = pensionsUserData(
+            aPensionsCYAModel.copy(
+              paymentsIntoPension = aPensionsCYAModel.paymentsIntoPension.copy(
+                retirementAnnuityContractPaymentsQuestion = Some(true)
+              )
+            ))
+
+          val expectedViewModel =
+            sessionData.pensions.paymentsIntoPension.copy(
+              pensionTaxReliefNotClaimedQuestion = Some(true),
+              retirementAnnuityContractPaymentsQuestion = Some(true)
+            )
+
+          scenarioNameForIndividualAndEnglish in {
+
+            implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
+            val response = submitForm(SubmittedFormDataForYesNoPage(Some(true)))
+
+            response must haveStatus(SEE_OTHER)
+            response must haveALocationHeaderValue(PageRelativeURLs.paymentsIntoPensionsCYAPage)
+            getViewModel mustBe expectedViewModel
+
+          }
+          scenarioNameForIndividualAndWelsh in {
+
+            implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
+            val response = submitForm(SubmittedFormDataForYesNoPage(Some(true)))
+
+            response must haveStatus(SEE_OTHER)
+            response must haveALocationHeaderValue(PageRelativeURLs.paymentsIntoPensionsCYAPage)
+            getViewModel mustBe expectedViewModel
+
+          }
+          scenarioNameForAgentAndEnglish in {
+
+            implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
+            val response = submitForm(SubmittedFormDataForYesNoPage(Some(true)))
+
+            response must haveStatus(SEE_OTHER)
+            response must haveALocationHeaderValue(PageRelativeURLs.paymentsIntoPensionsCYAPage)
+            getViewModel mustBe expectedViewModel
+
+          }
+          scenarioNameForAgentAndWelsh in {
+
+            implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
+            val response = submitForm(SubmittedFormDataForYesNoPage(Some(true)))
+
+            response must haveStatus(SEE_OTHER)
+            response must haveALocationHeaderValue(PageRelativeURLs.paymentsIntoPensionsCYAPage)
+            getViewModel mustBe expectedViewModel
+
+          }
+        }
+        "the user has selected 'Yes', but they have to answer about the 'retirement annuity' contract, and" when {
+
+          val sessionData = pensionsUserData(
+            aPensionsCYAModel.copy(
+              paymentsIntoPension = aPensionsCYAModel.paymentsIntoPension.copy(
+                retirementAnnuityContractPaymentsQuestion = None
+              )
+            ))
+
+          val expectedViewModel =
+            sessionData.pensions.paymentsIntoPension.copy(
+              pensionTaxReliefNotClaimedQuestion = Some(true)
+            )
+
+          scenarioNameForIndividualAndEnglish in {
+
+            implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
+            val response = submitForm(SubmittedFormDataForYesNoPage(Some(true)))
+
+            response must haveStatus(SEE_OTHER)
+            response must haveALocationHeaderValue(PageRelativeURLs.paymentsIntoPensionsRetirementAnnuityPage)
+            getViewModel mustBe expectedViewModel
+
+          }
+          scenarioNameForIndividualAndWelsh in {
+
+            implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
+            val response = submitForm(SubmittedFormDataForYesNoPage(Some(true)))
+
+            response must haveStatus(SEE_OTHER)
+            response must haveALocationHeaderValue(PageRelativeURLs.paymentsIntoPensionsRetirementAnnuityPage)
+            getViewModel mustBe expectedViewModel
+
+          }
+          scenarioNameForAgentAndEnglish in {
+
+            implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
+            val response = submitForm(SubmittedFormDataForYesNoPage(Some(true)))
+
+            response must haveStatus(SEE_OTHER)
+            response must haveALocationHeaderValue(PageRelativeURLs.paymentsIntoPensionsRetirementAnnuityPage)
+            getViewModel mustBe expectedViewModel
+
+          }
+          scenarioNameForAgentAndWelsh in {
+
+            implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
+            val response = submitForm(SubmittedFormDataForYesNoPage(Some(true)))
+
+            response must haveStatus(SEE_OTHER)
+            response must haveALocationHeaderValue(PageRelativeURLs.paymentsIntoPensionsRetirementAnnuityPage)
+            getViewModel mustBe expectedViewModel
+
+          }
+        }
+
+
+      }
+      "fail" when {
+        "the user has selected neither 'Yes' nor 'No' and" when {
+
+          val sessionData = pensionsUserData(minimalSessionDataToAccessThisPage)
+
+          scenarioNameForIndividualAndEnglish in {
+
+            implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
+            val response = submitForm(SubmittedFormDataForYesNoPage(None))
+
+            response must haveStatus(BAD_REQUEST)
+            assertPageAsExpected(
+              parse(response.body),
+              ExpectedYesNoPageContents(
+                title = "Error: Pensions where tax relief is not claimed",
+                header = "Pensions where tax relief is not claimed",
+                caption = "Payments into pensions for 6 April 2021 to 5 April 2022",
+                radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
+                radioButtonForNo = uncheckedExpectedRadioButton("No"),
+                buttonForContinue = ExpectedButton("Continue", ""),
+                links = Set.empty,
+                text = Set(
+                  ExpectedText(selectorForFirstParagraph, "These questions are about pensions you pay into where tax relief is not claimed for you."),
+                  ExpectedText(selectorForSecondParagraph, "You can check your pension statements or contact your pension provider to find the information you need."),
+                  ExpectedText(selectorForSubHeading, "Did you pay into a pension where tax relief was not claimed for you?")
+                ),
+                errorSummarySectionOpt = Some(
+                  ErrorSummarySection(
+                    title = "There is a problem",
+                    body = "Select yes if you paid into a pension where tax relief was not claimed for you",
+                    link = "#value")
+                ),
+                errorAboveElementCheckSectionOpt = Some(
+                  ErrorAboveElementCheckSection(
+                    title = "Error: Select yes if you paid into a pension where tax relief was not claimed for you",
+                    idOpt = Some("value")
+                  )
+                )
+              ))
+
+          }
+          scenarioNameForIndividualAndWelsh in {
+
+            implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
+            val response = submitForm(SubmittedFormDataForYesNoPage(None))
+
+            response must haveStatus(BAD_REQUEST)
+            assertPageAsExpected(
+              parse(response.body),
+              ExpectedYesNoPageContents(
+                title = "Error: Pensions where tax relief is not claimed",
+                header = "Pensions where tax relief is not claimed",
+                caption = "Payments into pensions for 6 April 2021 to 5 April 2022",
+                radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
+                radioButtonForNo = uncheckedExpectedRadioButton("No"),
+                buttonForContinue = ExpectedButton("Continue", ""),
+                links = Set.empty,
+                text = Set(
+                  ExpectedText(selectorForFirstParagraph, "These questions are about pensions you pay into where tax relief is not claimed for you."),
+                  ExpectedText(selectorForSecondParagraph, "You can check your pension statements or contact your pension provider to find the information you need."),
+                  ExpectedText(selectorForSubHeading, "Did you pay into a pension where tax relief was not claimed for you?")
+                ),
+                errorSummarySectionOpt = Some(
+                  ErrorSummarySection(
+                    title = "Mae problem wedi codi",
+                    body = "Select yes if you paid into a pension where tax relief was not claimed for you",
+                    link = "#value")
+                ),
+                errorAboveElementCheckSectionOpt = Some(
+                  ErrorAboveElementCheckSection(
+                    title = "Error: Select yes if you paid into a pension where tax relief was not claimed for you",
+                    idOpt = Some("value")
+                  )
+                )
+              ))
+
+          }
+          scenarioNameForAgentAndEnglish in {
+
+            implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
+            val response = submitForm(SubmittedFormDataForYesNoPage(None))
+
+            response must haveStatus(BAD_REQUEST)
+            assertPageAsExpected(
+              parse(response.body),
+              ExpectedYesNoPageContents(
+                title = "Error: Pensions where tax relief is not claimed",
+                header = "Pensions where tax relief is not claimed",
+                caption = "Payments into pensions for 6 April 2021 to 5 April 2022",
+                radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
+                radioButtonForNo = uncheckedExpectedRadioButton("No"),
+                buttonForContinue = ExpectedButton("Continue", ""),
+                links = Set.empty,
+                text = Set(
+                  ExpectedText(selectorForFirstParagraph, "These questions are about pensions your client pays into where tax relief is not claimed for them."),
+                  ExpectedText(selectorForSecondParagraph, "You can check your client’s pension statements or contact your client’s pension provider to find the information you need."),
+                  ExpectedText(selectorForSubHeading, "Did your client pay into a pension where tax relief was not claimed for them?")
+                ),
+                errorSummarySectionOpt = Some(
+                  ErrorSummarySection(
+                    title = "There is a problem",
+                    body = "Select yes if your client paid into a pension where tax relief was not claimed for them",
+                    link = "#value")
+                ),
+                errorAboveElementCheckSectionOpt = Some(
+                  ErrorAboveElementCheckSection(
+                    title = "Error: Select yes if your client paid into a pension where tax relief was not claimed for them",
+                    idOpt = Some("value")
+                  )
+                )
+              ))
+
+          }
+          scenarioNameForAgentAndWelsh in {
+
+            implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
+            val response = submitForm(SubmittedFormDataForYesNoPage(None))
+
+            response must haveStatus(BAD_REQUEST)
+            assertPageAsExpected(
+              parse(response.body),
+              ExpectedYesNoPageContents(
+                title = "Error: Pensions where tax relief is not claimed",
+                header = "Pensions where tax relief is not claimed",
+                caption = "Payments into pensions for 6 April 2021 to 5 April 2022",
+                radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
+                radioButtonForNo = uncheckedExpectedRadioButton("No"),
+                buttonForContinue = ExpectedButton("Continue", ""),
+                links = Set.empty,
+                text = Set(
+                  ExpectedText(selectorForFirstParagraph, "These questions are about pensions your client pays into where tax relief is not claimed for them."),
+                  ExpectedText(selectorForSecondParagraph, "You can check your client’s pension statements or contact your client’s pension provider to find the information you need."),
+                  ExpectedText(selectorForSubHeading, "Did your client pay into a pension where tax relief was not claimed for them?")
+                ),
+                errorSummarySectionOpt = Some(
+                  ErrorSummarySection(
+                    title = "Mae problem wedi codi",
+                    body = "Select yes if your client paid into a pension where tax relief was not claimed for them",
+                    link = "#value")
+                ),
+                errorAboveElementCheckSectionOpt = Some(
+                  ErrorAboveElementCheckSection(
+                    title = "Error: Select yes if your client paid into a pension where tax relief was not claimed for them",
+                    idOpt = Some("value")
+                  )
+                )
+              ))
+
+          }
+        }
+
+      }
+    }
   }
-  override val userScenarios: Seq[UserScenario[_, _]] = Seq.empty
 
-  ".show" should {
+  private def getViewModel(implicit userConfig: UserConfig): PaymentsIntoPensionViewModel =
+    loadPensionUserData.pensions.paymentsIntoPension
 
-    "render the pensions where tax relief is not claimed question page with no pre-filled radio buttons if no CYA question data" which {
-      lazy val result: WSResponse = {
-        dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
-        val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(pensionTaxReliefNotClaimedQuestion = None)
-        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
-        urlGet(
-          fullUrl(
-            pensionTaxReliefNotClaimedUrl(taxYearEOY)), follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
-      }
-
-      "has an OK status" in {
-        result.status shouldBe OK
-      }
-
-      implicit def document: () => Document = () => Jsoup.parse(result.body)
-
-      titleCheck(expectedTitle)
-      h1Check(expectedHeading)
-      captionCheck(expectedCaption(taxYearEOY), captionSelector)
-      textOnPageCheck(expectedQuestionsInfoText, paragraphSelector(1))
-      textOnPageCheck(expectedWhereToCheck, paragraphSelector(2))
-      textOnPageCheck(expectedSubHeading, h2Selector)
-      radioButtonCheck(yesText, 1, checked = Some(false))
-      radioButtonCheck(noText, 2, checked = Some(false))
-      buttonCheck(buttonText, continueButtonSelector)
-      formPostLinkCheck(pensionTaxReliefNotClaimedUrl(taxYearEOY), formSelector)
-      welshToggleCheck(isWelsh = false)
-    }
-
-    "render the pensions where tax relief is not claimed question page with 'Yes' pre-filled when CYA data exists" which {
-      lazy val result: WSResponse = {
-        dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
-        insertCyaData(pensionsUsersData(aPensionsCYAModel), aUserRequest)
-        urlGet(fullUrl(pensionTaxReliefNotClaimedUrl(taxYearEOY)), follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
-      }
-
-      "has an OK status" in {
-        result.status shouldBe OK
-      }
-
-      implicit def document: () => Document = () => Jsoup.parse(result.body)
-
-      titleCheck(expectedTitle)
-      h1Check(expectedHeading)
-      captionCheck(expectedCaption(taxYearEOY), captionSelector)
-      textOnPageCheck(expectedQuestionsInfoText, paragraphSelector(1))
-      textOnPageCheck(expectedWhereToCheck, paragraphSelector(2))
-      textOnPageCheck(expectedSubHeading, h2Selector)
-      radioButtonCheck(yesText, 1, checked = Some(true))
-      radioButtonCheck(noText, 2, checked = Some(false))
-      buttonCheck(buttonText, continueButtonSelector)
-      formPostLinkCheck(pensionTaxReliefNotClaimedUrl(taxYearEOY), formSelector)
-      welshToggleCheck(isWelsh = false)
-    }
-
-    "render the pensions where tax relief is not claimed question page with 'No' pre-filled when CYA data exists" which {
-      lazy val result: WSResponse = {
-        dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
-        val paymentsIntoPensionsViewModel = aPaymentsIntoPensionViewModel.copy(pensionTaxReliefNotClaimedQuestion = Some(false))
-        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPensionsViewModel)), aUserRequest)
-        urlGet(fullUrl(pensionTaxReliefNotClaimedUrl(taxYearEOY)), follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
-      }
-
-      "has an OK status" in {
-        result.status shouldBe OK
-      }
-      implicit def document: () => Document = () => Jsoup.parse(result.body)
-
-      titleCheck(expectedTitle)
-      h1Check(expectedHeading)
-      captionCheck(expectedCaption(taxYearEOY), captionSelector)
-      textOnPageCheck(expectedQuestionsInfoText, paragraphSelector(1))
-      textOnPageCheck(expectedWhereToCheck, paragraphSelector(2))
-      textOnPageCheck(expectedSubHeading, h2Selector)
-      radioButtonCheck(yesText, 1, checked = Some(false))
-      radioButtonCheck(noText, 2, checked = Some(true))
-      buttonCheck(buttonText, continueButtonSelector)
-      formPostLinkCheck(pensionTaxReliefNotClaimedUrl(taxYearEOY), formSelector)
-      welshToggleCheck(isWelsh = false)
-    }
-  }
-
-
-  "redirect to the CYA page if there is no session data" which {
-    lazy val result: WSResponse = {
-      dropPensionsDB()
-      authoriseAgentOrIndividual(isAgent = false)
-      // no cya insert
-      urlGet(fullUrl(pensionTaxReliefNotClaimedUrl(taxYearEOY)), follow = false,
-        headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
-    }
-
-    "has an SEE_OTHER status" in {
-      result.status shouldBe SEE_OTHER
-      result.header("location").contains(checkPaymentsIntoPensionCyaUrl(taxYearEOY)) shouldBe true
-    }
-  }
-
-
-  ".submit" should {
-
-    val validFormYes: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.yes)
-    val validFormNo: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.no)
-    val invalidForm: Map[String, String] = Map(YesNoForm.yesNo -> "")
-
-    "return an error when form is submitted with no entry" which {
-
-      lazy val result: WSResponse = {
-        dropPensionsDB()
-        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(
-                  aPaymentsIntoPensionViewModel.copy(pensionTaxReliefNotClaimedQuestion = None))), aUserRequest)
-        authoriseAgentOrIndividual(isAgent = false)
-        urlPost(fullUrl(pensionTaxReliefNotClaimedUrl(taxYearEOY)), body = invalidForm, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
-      }
-
-      "has the correct status" in {
-        result.status shouldBe BAD_REQUEST
-      }
-      implicit def document: () => Document = () => Jsoup.parse(result.body)
-
-      titleCheck(expectedErrorTitle)
-      h1Check(expectedHeading)
-      captionCheck(expectedCaption(taxYearEOY), captionSelector)
-      textOnPageCheck(expectedQuestionsInfoText, paragraphSelector(1))
-      textOnPageCheck(expectedWhereToCheck, paragraphSelector(2))
-      textOnPageCheck(expectedSubHeading, h2Selector)
-      radioButtonCheck(yesText, 1, checked = Some(false))
-      radioButtonCheck(noText, 2, checked = Some(false))
-      buttonCheck(buttonText, continueButtonSelector)
-      formPostLinkCheck(pensionTaxReliefNotClaimedUrl(taxYearEOY), formSelector)
-      welshToggleCheck(isWelsh = false)
-      errorSummaryCheck(expectedErrorMessage, Selectors.yesSelector)
-      errorAboveElementCheck(expectedErrorMessage, Some("value"))
-    }
-
-    "redirect to Retirement Annuity Question page when user submits a 'yes' answer which doesnt complete CYA model and updates the session value to yes" which {
-
-      lazy val result: WSResponse = {
-        dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
-        userDataStub(anIncomeTaxUserData, nino, taxYearEOY)
-        val paymentsIntoPensionsViewModel = aPaymentsIntoPensionViewModel.copy(
-          pensionTaxReliefNotClaimedQuestion = None, retirementAnnuityContractPaymentsQuestion = None)
-        insertCyaData(pensionsUsersData(paymentsIntoPensionOnlyCYAModel(paymentsIntoPensionsViewModel)), aUserRequest)
-        urlPost(fullUrl(pensionTaxReliefNotClaimedUrl(taxYearEOY)), body = validFormYes, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
-
-      }
-
-      "has a SEE_OTHER(303) status" in {
-        result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(retirementAnnuityUrl(taxYearEOY))
-      }
-
-      "updates retirement annuity contract payments question to Some(true)" in {
-        lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
-        cyaModel.pensions.paymentsIntoPension.pensionTaxReliefNotClaimedQuestion shouldBe Some(true)
-      }
-    }
-
-    "redirect to CYA page when user submits a 'yes' answer which completes CYA model and updates the session value to yes" which {
-
-      lazy val result: WSResponse = {
-        dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
-        userDataStub(anIncomeTaxUserData, nino, taxYearEOY)
-        val paymentsIntoPensionsViewModel = aPaymentsIntoPensionViewModel.copy(pensionTaxReliefNotClaimedQuestion = None)
-        insertCyaData(pensionsUsersData(paymentsIntoPensionOnlyCYAModel(paymentsIntoPensionsViewModel)), aUserRequest)
-        urlPost(fullUrl(pensionTaxReliefNotClaimedUrl(taxYearEOY)), body = validFormYes, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
-
-      }
-
-      "has a SEE_OTHER(303) status" in {
-        result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(checkPaymentsIntoPensionCyaUrl(taxYearEOY))
-      }
-
-      "updates retirement annuity contract payments question to Some(true)" in {
-        lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
-        cyaModel.pensions.paymentsIntoPension.pensionTaxReliefNotClaimedQuestion shouldBe Some(true)
-      }
-    }
-
-    "redirect to CYA page when user submits a 'no' answer and updates the session value to no" which {
-
-      lazy val result: WSResponse = {
-        dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
-        userDataStub(anIncomeTaxUserData, nino, taxYearEOY)
-        val paymentsIntoPensionsViewModel = aPaymentsIntoPensionViewModel.copy(pensionTaxReliefNotClaimedQuestion = None)
-        insertCyaData(pensionsUsersData(paymentsIntoPensionOnlyCYAModel(paymentsIntoPensionsViewModel)), aUserRequest)
-        urlPost(fullUrl(pensionTaxReliefNotClaimedUrl(taxYearEOY)), body = validFormNo, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
-
-      }
-
-      "has a SEE_OTHER(303) status" in {
-        result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(checkPaymentsIntoPensionCyaUrl(taxYearEOY))
-      }
-
-      "updates retirement annuity contract payments question to Some(false) and clears retirements and workplace answers" in {
-        lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
-        cyaModel.pensions.paymentsIntoPension.pensionTaxReliefNotClaimedQuestion shouldBe Some(false)
-        cyaModel.pensions.paymentsIntoPension.retirementAnnuityContractPaymentsQuestion shouldBe None
-        cyaModel.pensions.paymentsIntoPension.totalRetirementAnnuityContractPayments shouldBe None
-        cyaModel.pensions.paymentsIntoPension.workplacePensionPaymentsQuestion shouldBe None
-        cyaModel.pensions.paymentsIntoPension.totalWorkplacePensionPayments shouldBe None
-      }
-    }
-
-  }
 }
+
+
+
+
+
+
+

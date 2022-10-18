@@ -34,10 +34,11 @@ class PensionProviderPaidTaxControllerISpec
       "redirect to the summary page" when {
         "the user has no stored session data at all" in {
 
-          val response = getPage(UserConfig(Individual, English, None))
+          implicit val userConfig: UserConfig = UserConfig(Individual, English, None)
+          val response = getPage
 
           response must haveStatus(SEE_OTHER)
-          response must haveALocationHeaderValue(relativeUrlForPensionSummaryPage)
+          response must haveALocationHeaderValue(PageRelativeURLs.summaryPage)
 
         }
       }
@@ -48,7 +49,8 @@ class PensionProviderPaidTaxControllerISpec
 
           scenarioNameForIndividualAndEnglish in {
 
-            val response = getPage(UserConfig(Individual, English, Some(sessionData)))
+            implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
+            val response = getPage
 
             response must haveStatus(OK)
             assertPageAsExpected(
@@ -59,15 +61,15 @@ class PensionProviderPaidTaxControllerISpec
                 caption = "Annual and lifetime allowances for 6 April 2021 to 5 April 2022",
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
-                buttonForContinue = ExpectedButtonForContinue("Continue", ""),
+                buttonForContinue = ExpectedButton("Continue", ""),
                 amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "For example, £193.52", "")
-              ),
-              English)
+              ))
 
           }
           scenarioNameForIndividualAndWelsh in {
 
-            val response = getPage(UserConfig(Individual, Welsh, Some(sessionData)))
+            implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
+            val response = getPage
 
             response must haveStatus(OK)
             assertPageAsExpected(
@@ -78,15 +80,15 @@ class PensionProviderPaidTaxControllerISpec
                 caption = "Annual and lifetime allowances for 6 April 2021 to 5 April 2022",
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
-                buttonForContinue = ExpectedButtonForContinue("Continue", ""),
+                buttonForContinue = ExpectedButton("Continue", ""),
                 amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "For example, £193.52", "")
-              ),
-              Welsh)
+              ))
 
           }
           scenarioNameForAgentAndEnglish in {
 
-            val response = getPage(UserConfig(Agent, English, Some(sessionData)))
+            implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
+            val response = getPage
 
             response must haveStatus(OK)
             assertPageAsExpected(
@@ -97,15 +99,15 @@ class PensionProviderPaidTaxControllerISpec
                 caption = "Annual and lifetime allowances for 6 April 2021 to 5 April 2022",
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
-                buttonForContinue = ExpectedButtonForContinue("Continue", ""),
+                buttonForContinue = ExpectedButton("Continue", ""),
                 amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "For example, £193.52", "")
-              ),
-              English)
+              ))
 
           }
           scenarioNameForAgentAndWelsh in {
 
-            val response = getPage(UserConfig(Agent, Welsh, Some(sessionData)))
+            implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
+            val response = getPage
 
             response must haveStatus(OK)
             assertPageAsExpected(
@@ -116,10 +118,9 @@ class PensionProviderPaidTaxControllerISpec
                 caption = "Annual and lifetime allowances for 6 April 2021 to 5 April 2022",
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
-                buttonForContinue = ExpectedButtonForContinue("Continue", ""),
+                buttonForContinue = ExpectedButton("Continue", ""),
                 amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "For example, £193.52", "")
-              ),
-              Welsh)
+              ))
 
           }
         }
@@ -134,7 +135,8 @@ class PensionProviderPaidTaxControllerISpec
 
           scenarioNameForIndividualAndEnglish in {
 
-            val response = getPage(UserConfig(Individual, English, Some(sessionData)))
+            implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
+            val response = getPage
 
             response must haveStatus(OK)
             assertPageAsExpected(
@@ -145,15 +147,15 @@ class PensionProviderPaidTaxControllerISpec
                 caption = "Annual and lifetime allowances for 6 April 2021 to 5 April 2022",
                 radioButtonForYes = checkedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
-                buttonForContinue = ExpectedButtonForContinue("Continue", ""),
+                buttonForContinue = ExpectedButton("Continue", ""),
                 amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "For example, £193.52", "42.64")
-              ),
-              English)
+              ))
 
           }
           scenarioNameForIndividualAndWelsh in {
 
-            val response = getPage(UserConfig(Individual, Welsh, Some(sessionData)))
+            implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
+            val response = getPage
 
             response must haveStatus(OK)
             assertPageAsExpected(
@@ -164,15 +166,15 @@ class PensionProviderPaidTaxControllerISpec
                 caption = "Annual and lifetime allowances for 6 April 2021 to 5 April 2022",
                 radioButtonForYes = checkedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
-                buttonForContinue = ExpectedButtonForContinue("Continue", ""),
+                buttonForContinue = ExpectedButton("Continue", ""),
                 amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "For example, £193.52", "42.64")
-              ),
-              Welsh)
+              ))
 
           }
           scenarioNameForAgentAndEnglish in {
 
-            val response = getPage(UserConfig(Agent, English, Some(sessionData)))
+            implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
+            val response = getPage
 
             response must haveStatus(OK)
             assertPageAsExpected(
@@ -183,15 +185,15 @@ class PensionProviderPaidTaxControllerISpec
                 caption = "Annual and lifetime allowances for 6 April 2021 to 5 April 2022",
                 radioButtonForYes = checkedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
-                buttonForContinue = ExpectedButtonForContinue("Continue", ""),
+                buttonForContinue = ExpectedButton("Continue", ""),
                 amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "For example, £193.52", "42.64")
-              ),
-              English)
+              ))
 
           }
           scenarioNameForAgentAndWelsh in {
 
-            val response = getPage(UserConfig(Agent, Welsh, Some(sessionData)))
+            implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
+            val response = getPage
 
             response must haveStatus(OK)
             assertPageAsExpected(
@@ -202,10 +204,9 @@ class PensionProviderPaidTaxControllerISpec
                 caption = "Annual and lifetime allowances for 6 April 2021 to 5 April 2022",
                 radioButtonForYes = checkedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
-                buttonForContinue = ExpectedButtonForContinue("Continue", ""),
+                buttonForContinue = ExpectedButton("Continue", ""),
                 amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "For example, £193.52", "42.64")
-              ),
-              Welsh)
+              ))
 
           }
 
@@ -221,7 +222,8 @@ class PensionProviderPaidTaxControllerISpec
 
           scenarioNameForIndividualAndEnglish in {
 
-            val response = getPage(UserConfig(Individual, English, Some(sessionData)))
+            implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
+            val response = getPage
 
             response must haveStatus(OK)
             assertPageAsExpected(
@@ -232,15 +234,15 @@ class PensionProviderPaidTaxControllerISpec
                 caption = "Annual and lifetime allowances for 6 April 2021 to 5 April 2022",
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = checkedExpectedRadioButton("No"),
-                buttonForContinue = ExpectedButtonForContinue("Continue", ""),
+                buttonForContinue = ExpectedButton("Continue", ""),
                 amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "For example, £193.52", "")
-              ),
-              English)
+              ))
 
           }
           scenarioNameForIndividualAndWelsh in {
 
-            val response = getPage(UserConfig(Individual, Welsh, Some(sessionData)))
+            implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
+            val response = getPage
 
             response must haveStatus(OK)
             assertPageAsExpected(
@@ -251,15 +253,15 @@ class PensionProviderPaidTaxControllerISpec
                 caption = "Annual and lifetime allowances for 6 April 2021 to 5 April 2022",
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = checkedExpectedRadioButton("No"),
-                buttonForContinue = ExpectedButtonForContinue("Continue", ""),
+                buttonForContinue = ExpectedButton("Continue", ""),
                 amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "For example, £193.52", "")
-              ),
-              Welsh)
+              ))
 
           }
           scenarioNameForAgentAndEnglish in {
 
-            val response = getPage(UserConfig(Agent, English, Some(sessionData)))
+            implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
+            val response = getPage
 
             response must haveStatus(OK)
             assertPageAsExpected(
@@ -270,15 +272,15 @@ class PensionProviderPaidTaxControllerISpec
                 caption = "Annual and lifetime allowances for 6 April 2021 to 5 April 2022",
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = checkedExpectedRadioButton("No"),
-                buttonForContinue = ExpectedButtonForContinue("Continue", ""),
+                buttonForContinue = ExpectedButton("Continue", ""),
                 amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "For example, £193.52", "")
-              ),
-              English)
+              ))
 
           }
           scenarioNameForAgentAndWelsh in {
 
-            val response = getPage(UserConfig(Agent, Welsh, Some(sessionData)))
+            implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
+            val response = getPage
 
             response must haveStatus(OK)
             assertPageAsExpected(
@@ -289,10 +291,9 @@ class PensionProviderPaidTaxControllerISpec
                 caption = "Annual and lifetime allowances for 6 April 2021 to 5 April 2022",
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = checkedExpectedRadioButton("No"),
-                buttonForContinue = ExpectedButtonForContinue("Continue", ""),
+                buttonForContinue = ExpectedButton("Continue", ""),
                 amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "For example, £193.52", "")
-              ),
-              Welsh)
+              ))
 
           }
 
@@ -315,38 +316,42 @@ class PensionProviderPaidTaxControllerISpec
 
             scenarioNameForIndividualAndEnglish in {
 
-              val response = submitForm(UserConfig(Individual, English, Some(sessionData)), SubmittedFormDataForYesNoAmountPage(Some(false), None))
+              implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
+              val response = submitForm(SubmittedFormDataForYesNoAmountPage(Some(false), None))
 
               response must haveStatus(SEE_OTHER)
               response must haveALocationHeaderValue(relativeUrlForThisPage)
-              getViewModel(sessionData, Individual) mustBe expectedViewModel
+              getViewModel mustBe expectedViewModel
 
             }
             scenarioNameForIndividualAndWelsh in {
 
-              val response = submitForm(UserConfig(Individual, Welsh, Some(sessionData)), SubmittedFormDataForYesNoAmountPage(Some(false), None))
+              implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
+              val response = submitForm(SubmittedFormDataForYesNoAmountPage(Some(false), None))
 
               response must haveStatus(SEE_OTHER)
               response must haveALocationHeaderValue(relativeUrlForThisPage)
-              getViewModel(sessionData, Individual) mustBe expectedViewModel
+              getViewModel mustBe expectedViewModel
 
             }
             scenarioNameForAgentAndEnglish in {
 
-              val response = submitForm(UserConfig(Agent, English, Some(sessionData)), SubmittedFormDataForYesNoAmountPage(Some(false), None))
+              implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
+              val response = submitForm(SubmittedFormDataForYesNoAmountPage(Some(false), None))
 
               response must haveStatus(SEE_OTHER)
               response must haveALocationHeaderValue(relativeUrlForThisPage)
-              getViewModel(sessionData, Agent) mustBe expectedViewModel
+              getViewModel mustBe expectedViewModel
 
             }
             scenarioNameForAgentAndWelsh in {
 
-              val response = submitForm(UserConfig(Agent, Welsh, Some(sessionData)), SubmittedFormDataForYesNoAmountPage(Some(false), None))
+              implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
+              val response = submitForm(SubmittedFormDataForYesNoAmountPage(Some(false), None))
 
               response must haveStatus(SEE_OTHER)
               response must haveALocationHeaderValue(relativeUrlForThisPage)
-              getViewModel(sessionData, Agent) mustBe expectedViewModel
+              getViewModel mustBe expectedViewModel
 
             }
           }
@@ -360,38 +365,42 @@ class PensionProviderPaidTaxControllerISpec
 
             scenarioNameForIndividualAndEnglish in {
 
-              val response = submitForm(UserConfig(Individual, English, Some(sessionData)), SubmittedFormDataForYesNoAmountPage(Some(true), Some("42.64")))
+              implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
+              val response = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("42.64")))
 
               response must haveStatus(SEE_OTHER)
               response must haveALocationHeaderValue(relativeUrlForThisPage)
-              getViewModel(sessionData, Individual) mustBe expectedViewModel
+              getViewModel mustBe expectedViewModel
 
             }
             scenarioNameForIndividualAndWelsh in {
 
-              val response = submitForm(UserConfig(Individual, Welsh, Some(sessionData)), SubmittedFormDataForYesNoAmountPage(Some(true), Some("42.64")))
+              implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
+              val response = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("42.64")))
 
               response must haveStatus(SEE_OTHER)
               response must haveALocationHeaderValue(relativeUrlForThisPage)
-              getViewModel(sessionData, Individual) mustBe expectedViewModel
+              getViewModel mustBe expectedViewModel
 
             }
             scenarioNameForAgentAndEnglish in {
 
-              val response = submitForm(UserConfig(Agent, English, Some(sessionData)), SubmittedFormDataForYesNoAmountPage(Some(true), Some("42.64")))
+              implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
+              val response = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("42.64")))
 
               response must haveStatus(SEE_OTHER)
               response must haveALocationHeaderValue(relativeUrlForThisPage)
-              getViewModel(sessionData, Agent) mustBe expectedViewModel
+              getViewModel mustBe expectedViewModel
 
             }
             scenarioNameForAgentAndWelsh in {
 
-              val response = submitForm(UserConfig(Agent, Welsh, Some(sessionData)), SubmittedFormDataForYesNoAmountPage(Some(true), Some("42.64")))
+              implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
+              val response = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("42.64")))
 
               response must haveStatus(SEE_OTHER)
               response must haveALocationHeaderValue(relativeUrlForThisPage)
-              getViewModel(sessionData, Agent) mustBe expectedViewModel
+              getViewModel mustBe expectedViewModel
 
             }
           }
@@ -405,38 +414,42 @@ class PensionProviderPaidTaxControllerISpec
 
             scenarioNameForIndividualAndEnglish in {
 
-              val response = submitForm(UserConfig(Individual, English, Some(sessionData)), SubmittedFormDataForYesNoAmountPage(Some(true), Some("£1,042.64")))
+              implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
+              val response = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("£1,042.64")))
 
               response must haveStatus(SEE_OTHER)
               response must haveALocationHeaderValue(relativeUrlForThisPage)
-              getViewModel(sessionData, Individual) mustBe expectedViewModel
+              getViewModel mustBe expectedViewModel
 
             }
             scenarioNameForIndividualAndWelsh in {
 
-              val response = submitForm(UserConfig(Individual, Welsh, Some(sessionData)), SubmittedFormDataForYesNoAmountPage(Some(true), Some("£1,042.64")))
+              implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
+              val response = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("£1,042.64")))
 
               response must haveStatus(SEE_OTHER)
               response must haveALocationHeaderValue(relativeUrlForThisPage)
-              getViewModel(sessionData, Individual) mustBe expectedViewModel
+              getViewModel mustBe expectedViewModel
 
             }
             scenarioNameForAgentAndEnglish in {
 
-              val response = submitForm(UserConfig(Agent, English, Some(sessionData)), SubmittedFormDataForYesNoAmountPage(Some(true), Some("£1,042.64")))
+              implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
+              val response = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("£1,042.64")))
 
               response must haveStatus(SEE_OTHER)
               response must haveALocationHeaderValue(relativeUrlForThisPage)
-              getViewModel(sessionData, Agent) mustBe expectedViewModel
+              getViewModel mustBe expectedViewModel
 
             }
             scenarioNameForAgentAndWelsh in {
 
-              val response = submitForm(UserConfig(Agent, Welsh, Some(sessionData)), SubmittedFormDataForYesNoAmountPage(Some(true), Some("£1,042.64")))
+              implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
+              val response = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("£1,042.64")))
 
               response must haveStatus(SEE_OTHER)
               response must haveALocationHeaderValue(relativeUrlForThisPage)
-              getViewModel(sessionData, Agent) mustBe expectedViewModel
+              getViewModel mustBe expectedViewModel
 
             }
           }
@@ -451,7 +464,8 @@ class PensionProviderPaidTaxControllerISpec
           "the user has selected neither 'Yes' nor 'No' and" when {
             scenarioNameForIndividualAndEnglish in {
 
-              val response = submitForm(UserConfig(Individual, English, Some(sessionData)), SubmittedFormDataForYesNoAmountPage(None, None))
+              implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
+              val response = submitForm(SubmittedFormDataForYesNoAmountPage(None, None))
 
               response must haveStatus(BAD_REQUEST)
               assertPageAsExpected(
@@ -462,7 +476,7 @@ class PensionProviderPaidTaxControllerISpec
                   caption = "Annual and lifetime allowances for 6 April 2021 to 5 April 2022",
                   radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
-                  buttonForContinue = ExpectedButtonForContinue("Continue", ""),
+                  buttonForContinue = ExpectedButton("Continue", ""),
                   amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "For example, £193.52", ""),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
@@ -476,13 +490,13 @@ class PensionProviderPaidTaxControllerISpec
                       idOpt = Some("value")
                     )
                   )
-                ),
-                English)
+                ))
 
             }
             scenarioNameForIndividualAndWelsh in {
 
-              val response = submitForm(UserConfig(Individual, Welsh, Some(sessionData)), SubmittedFormDataForYesNoAmountPage(None, None))
+              implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
+              val response = submitForm(SubmittedFormDataForYesNoAmountPage(None, None))
 
               response must haveStatus(BAD_REQUEST)
               assertPageAsExpected(
@@ -493,7 +507,7 @@ class PensionProviderPaidTaxControllerISpec
                   caption = "Annual and lifetime allowances for 6 April 2021 to 5 April 2022",
                   radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
-                  buttonForContinue = ExpectedButtonForContinue("Continue", ""),
+                  buttonForContinue = ExpectedButton("Continue", ""),
                   amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "For example, £193.52", ""),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
@@ -507,13 +521,13 @@ class PensionProviderPaidTaxControllerISpec
                       idOpt = Some("value")
                     )
                   )
-                ),
-                Welsh)
+                ))
 
             }
             scenarioNameForAgentAndEnglish in {
 
-              val response = submitForm(UserConfig(Agent, English, Some(sessionData)), SubmittedFormDataForYesNoAmountPage(None, None))
+              implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
+              val response = submitForm(SubmittedFormDataForYesNoAmountPage(None, None))
 
               response must haveStatus(BAD_REQUEST)
               assertPageAsExpected(
@@ -524,7 +538,7 @@ class PensionProviderPaidTaxControllerISpec
                   caption = "Annual and lifetime allowances for 6 April 2021 to 5 April 2022",
                   radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
-                  buttonForContinue = ExpectedButtonForContinue("Continue", ""),
+                  buttonForContinue = ExpectedButton("Continue", ""),
                   amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "For example, £193.52", ""),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
@@ -538,13 +552,13 @@ class PensionProviderPaidTaxControllerISpec
                       idOpt = Some("value")
                     )
                   )
-                ),
-                English)
+                ))
 
             }
             scenarioNameForAgentAndWelsh in {
 
-              val response = submitForm(UserConfig(Agent, Welsh, Some(sessionData)), SubmittedFormDataForYesNoAmountPage(None, None))
+              implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
+              val response = submitForm(SubmittedFormDataForYesNoAmountPage(None, None))
 
               response must haveStatus(BAD_REQUEST)
               assertPageAsExpected(
@@ -555,7 +569,7 @@ class PensionProviderPaidTaxControllerISpec
                   caption = "Annual and lifetime allowances for 6 April 2021 to 5 April 2022",
                   radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
-                  buttonForContinue = ExpectedButtonForContinue("Continue", ""),
+                  buttonForContinue = ExpectedButton("Continue", ""),
                   amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "For example, £193.52", ""),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
@@ -569,15 +583,15 @@ class PensionProviderPaidTaxControllerISpec
                       idOpt = Some("value")
                     )
                   )
-                ),
-                Welsh)
+                ))
 
             }
           }
           "the user has selected 'Yes' but have not provided an amount, and" when {
             scenarioNameForIndividualAndEnglish in {
 
-              val response = submitForm(UserConfig(Individual, English, Some(sessionData)), SubmittedFormDataForYesNoAmountPage(Some(true), None))
+              implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
+              val response = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), None))
 
               response must haveStatus(BAD_REQUEST)
               assertPageAsExpected(
@@ -588,7 +602,7 @@ class PensionProviderPaidTaxControllerISpec
                   caption = "Annual and lifetime allowances for 6 April 2021 to 5 April 2022",
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
-                  buttonForContinue = ExpectedButtonForContinue("Continue", ""),
+                  buttonForContinue = ExpectedButton("Continue", ""),
                   amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "For example, £193.52", ""),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
@@ -602,13 +616,13 @@ class PensionProviderPaidTaxControllerISpec
                       idOpt = Some("amount-2")
                     )
                   )
-                ),
-                English)
+                ))
 
             }
             scenarioNameForIndividualAndWelsh in {
 
-              val response = submitForm(UserConfig(Individual, Welsh, Some(sessionData)), SubmittedFormDataForYesNoAmountPage(Some(true), None))
+              implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
+              val response = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), None))
 
               response must haveStatus(BAD_REQUEST)
               assertPageAsExpected(
@@ -619,7 +633,7 @@ class PensionProviderPaidTaxControllerISpec
                   caption = "Annual and lifetime allowances for 6 April 2021 to 5 April 2022",
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
-                  buttonForContinue = ExpectedButtonForContinue("Continue", ""),
+                  buttonForContinue = ExpectedButton("Continue", ""),
                   amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "For example, £193.52", ""),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
@@ -633,13 +647,13 @@ class PensionProviderPaidTaxControllerISpec
                       idOpt = Some("amount-2")
                     )
                   )
-                ),
-                Welsh)
+                ))
 
             }
             scenarioNameForAgentAndEnglish in {
 
-              val response = submitForm(UserConfig(Agent, English, Some(sessionData)), SubmittedFormDataForYesNoAmountPage(Some(true), None))
+              implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
+              val response = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), None))
 
               response must haveStatus(BAD_REQUEST)
               assertPageAsExpected(
@@ -650,7 +664,7 @@ class PensionProviderPaidTaxControllerISpec
                   caption = "Annual and lifetime allowances for 6 April 2021 to 5 April 2022",
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
-                  buttonForContinue = ExpectedButtonForContinue("Continue", ""),
+                  buttonForContinue = ExpectedButton("Continue", ""),
                   amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "For example, £193.52", ""),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
@@ -664,13 +678,13 @@ class PensionProviderPaidTaxControllerISpec
                       idOpt = Some("amount-2")
                     )
                   )
-                ),
-                English)
+                ))
 
             }
             scenarioNameForAgentAndWelsh in {
 
-              val response = submitForm(UserConfig(Agent, Welsh, Some(sessionData)), SubmittedFormDataForYesNoAmountPage(Some(true), None))
+              implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
+              val response = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), None))
 
               response must haveStatus(BAD_REQUEST)
               assertPageAsExpected(
@@ -681,7 +695,7 @@ class PensionProviderPaidTaxControllerISpec
                   caption = "Annual and lifetime allowances for 6 April 2021 to 5 April 2022",
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
-                  buttonForContinue = ExpectedButtonForContinue("Continue", ""),
+                  buttonForContinue = ExpectedButton("Continue", ""),
                   amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "For example, £193.52", ""),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
@@ -695,15 +709,15 @@ class PensionProviderPaidTaxControllerISpec
                       idOpt = Some("amount-2")
                     )
                   )
-                ),
-                Welsh)
+                ))
 
             }
           }
           "the user has selected 'Yes' but has provided an amount of an invalid format, and" when {
             scenarioNameForIndividualAndEnglish in {
 
-              val response = submitForm(UserConfig(Individual, English, Some(sessionData)), SubmittedFormDataForYesNoAmountPage(Some(true), Some("x2.64")))
+              implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
+              val response = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("x2.64")))
 
               response must haveStatus(BAD_REQUEST)
               assertPageAsExpected(
@@ -714,7 +728,7 @@ class PensionProviderPaidTaxControllerISpec
                   caption = "Annual and lifetime allowances for 6 April 2021 to 5 April 2022",
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
-                  buttonForContinue = ExpectedButtonForContinue("Continue", ""),
+                  buttonForContinue = ExpectedButton("Continue", ""),
                   amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "For example, £193.52", "x2.64"),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
@@ -728,13 +742,13 @@ class PensionProviderPaidTaxControllerISpec
                       idOpt = Some("amount-2")
                     )
                   )
-                ),
-                English)
+                ))
 
             }
             scenarioNameForIndividualAndWelsh in {
 
-              val response = submitForm(UserConfig(Individual, Welsh, Some(sessionData)), SubmittedFormDataForYesNoAmountPage(Some(true), Some("x2.64")))
+              implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
+              val response = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("x2.64")))
 
               response must haveStatus(BAD_REQUEST)
               assertPageAsExpected(
@@ -745,7 +759,7 @@ class PensionProviderPaidTaxControllerISpec
                   caption = "Annual and lifetime allowances for 6 April 2021 to 5 April 2022",
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
-                  buttonForContinue = ExpectedButtonForContinue("Continue", ""),
+                  buttonForContinue = ExpectedButton("Continue", ""),
                   amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "For example, £193.52", "x2.64"),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
@@ -759,13 +773,13 @@ class PensionProviderPaidTaxControllerISpec
                       idOpt = Some("amount-2")
                     )
                   )
-                ),
-                Welsh)
+                ))
 
             }
             scenarioNameForAgentAndEnglish in {
 
-              val response = submitForm(UserConfig(Agent, English, Some(sessionData)), SubmittedFormDataForYesNoAmountPage(Some(true), Some("x2.64")))
+              implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
+              val response = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("x2.64")))
 
               response must haveStatus(BAD_REQUEST)
               assertPageAsExpected(
@@ -776,7 +790,7 @@ class PensionProviderPaidTaxControllerISpec
                   caption = "Annual and lifetime allowances for 6 April 2021 to 5 April 2022",
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
-                  buttonForContinue = ExpectedButtonForContinue("Continue", ""),
+                  buttonForContinue = ExpectedButton("Continue", ""),
                   amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "For example, £193.52", "x2.64"),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
@@ -790,13 +804,13 @@ class PensionProviderPaidTaxControllerISpec
                       idOpt = Some("amount-2")
                     )
                   )
-                ),
-                English)
+                ))
 
             }
             scenarioNameForAgentAndWelsh in {
 
-              val response = submitForm(UserConfig(Agent, Welsh, Some(sessionData)), SubmittedFormDataForYesNoAmountPage(Some(true), Some("x2.64")))
+              implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
+              val response = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("x2.64")))
 
               response must haveStatus(BAD_REQUEST)
               assertPageAsExpected(
@@ -807,7 +821,7 @@ class PensionProviderPaidTaxControllerISpec
                   caption = "Annual and lifetime allowances for 6 April 2021 to 5 April 2022",
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
-                  buttonForContinue = ExpectedButtonForContinue("Continue", ""),
+                  buttonForContinue = ExpectedButton("Continue", ""),
                   amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "For example, £193.52", "x2.64"),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
@@ -821,15 +835,15 @@ class PensionProviderPaidTaxControllerISpec
                       idOpt = Some("amount-2")
                     )
                   )
-                ),
-                Welsh)
+                ))
 
             }
           }
           "the user has selected 'Yes' but has provided an excessive amount, and" when {
             scenarioNameForIndividualAndEnglish in {
 
-              val response = submitForm(UserConfig(Individual, English, Some(sessionData)), SubmittedFormDataForYesNoAmountPage(Some(true), Some("100000000002")))
+              implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
+              val response = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("100000000002")))
 
               response must haveStatus(BAD_REQUEST)
               assertPageAsExpected(
@@ -840,7 +854,7 @@ class PensionProviderPaidTaxControllerISpec
                   caption = "Annual and lifetime allowances for 6 April 2021 to 5 April 2022",
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
-                  buttonForContinue = ExpectedButtonForContinue("Continue", ""),
+                  buttonForContinue = ExpectedButton("Continue", ""),
                   amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "For example, £193.52", "100000000002"),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
@@ -854,13 +868,13 @@ class PensionProviderPaidTaxControllerISpec
                       idOpt = Some("amount-2")
                     )
                   )
-                ),
-                English)
+                ))
 
             }
             scenarioNameForIndividualAndWelsh in {
 
-              val response = submitForm(UserConfig(Individual, Welsh, Some(sessionData)), SubmittedFormDataForYesNoAmountPage(Some(true), Some("100000000002")))
+              implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
+              val response = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("100000000002")))
 
               response must haveStatus(BAD_REQUEST)
               assertPageAsExpected(
@@ -871,7 +885,7 @@ class PensionProviderPaidTaxControllerISpec
                   caption = "Annual and lifetime allowances for 6 April 2021 to 5 April 2022",
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
-                  buttonForContinue = ExpectedButtonForContinue("Continue", ""),
+                  buttonForContinue = ExpectedButton("Continue", ""),
                   amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "For example, £193.52", "100000000002"),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
@@ -885,13 +899,13 @@ class PensionProviderPaidTaxControllerISpec
                       idOpt = Some("amount-2")
                     )
                   )
-                ),
-                Welsh)
+                ))
 
             }
             scenarioNameForAgentAndEnglish in {
 
-              val response = submitForm(UserConfig(Agent, English, Some(sessionData)), SubmittedFormDataForYesNoAmountPage(Some(true), Some("100000000002")))
+              implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
+              val response = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("100000000002")))
 
               response must haveStatus(BAD_REQUEST)
               assertPageAsExpected(
@@ -902,7 +916,7 @@ class PensionProviderPaidTaxControllerISpec
                   caption = "Annual and lifetime allowances for 6 April 2021 to 5 April 2022",
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
-                  buttonForContinue = ExpectedButtonForContinue("Continue", ""),
+                  buttonForContinue = ExpectedButton("Continue", ""),
                   amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "For example, £193.52", "100000000002"),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
@@ -916,13 +930,13 @@ class PensionProviderPaidTaxControllerISpec
                       idOpt = Some("amount-2")
                     )
                   )
-                ),
-                English)
+                ))
 
             }
             scenarioNameForAgentAndWelsh in {
 
-              val response = submitForm(UserConfig(Agent, Welsh, Some(sessionData)), SubmittedFormDataForYesNoAmountPage(Some(true), Some("100000000002")))
+              implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
+              val response = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("100000000002")))
 
               response must haveStatus(BAD_REQUEST)
               assertPageAsExpected(
@@ -933,7 +947,7 @@ class PensionProviderPaidTaxControllerISpec
                   caption = "Annual and lifetime allowances for 6 April 2021 to 5 April 2022",
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
-                  buttonForContinue = ExpectedButtonForContinue("Continue", ""),
+                  buttonForContinue = ExpectedButton("Continue", ""),
                   amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "For example, £193.52", "100000000002"),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
@@ -947,8 +961,7 @@ class PensionProviderPaidTaxControllerISpec
                       idOpt = Some("amount-2")
                     )
                   )
-                ),
-                Welsh)
+                ))
 
             }
           }
@@ -957,8 +970,8 @@ class PensionProviderPaidTaxControllerISpec
     }
   }
 
-  private def getViewModel(pensionsUserData: PensionsUserData, userType: UserTypes.UserType): PensionAnnualAllowancesViewModel
-  = loadPensionUserData(pensionsUserData, userType).pensions.pensionsAnnualAllowances
+  private def getViewModel(implicit userConfig: UserConfig): PensionAnnualAllowancesViewModel =
+    loadPensionUserData.pensions.pensionsAnnualAllowances
 
 
 }

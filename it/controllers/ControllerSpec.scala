@@ -18,7 +18,8 @@ package controllers
 
 import builders.PensionsUserDataBuilder.taxYearEOY
 import common.SessionValues
-import controllers.ControllerSpec.PreferredLanguages.PreferredLanguage
+import controllers.ControllerSpec.PreferredLanguages.{English, PreferredLanguage}
+import controllers.ControllerSpec.UserTypes.Individual
 import controllers.ControllerSpec._
 import helpers.{PlaySessionCookieBaker, WireMockHelper, WiremockStubHelpers}
 import models.User
@@ -62,6 +63,18 @@ class ControllerSpec(val pathForThisPage: String) extends PlaySpec
 
   protected implicit val wsClient: WSClient = app.injector.instanceOf[WSClient]
 
+  object PageRelativeURLs {
+    val summaryPage: String = relativeUrl("/pensions-summary")
+    val paymentsIntoPensionsCYAPage: String = relativeUrl("/payments-into-pensions/check-payments-into-pensions")
+    val paymentsIntoPensionsOneNoTaxRelief: String = relativeUrl("/payments-into-pensions/no-tax-relief")
+    val paymentsIntoPensionsOneOffPaymentsPage: String = relativeUrl("/payments-into-pensions/one-off-payments")
+    val paymentsIntoPensionsOneOffPaymentsAmountPage: String = relativeUrl("/payments-into-pensions/one-off-payments-amount")
+    val paymentsIntoPensionsRetirementAnnuityPage: String = relativeUrl("/payments-into-pensions/no-tax-relief/retirement-annuity")
+    val paymentsIntoPensionsReliefAtSourcePage: String = relativeUrl("/payments-into-pensions/relief-at-source")
+    val paymentsIntoPensionsReliefAtSourceAmountPage: String = relativeUrl("/payments-into-pensions/relief-at-source-amount")
+    val paymentsIntoPensionsTotalReliefAtSourceCheckPage: String = relativeUrl("/payments-into-pensions/total-relief-at-source-check")
+  }
+
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
     .in(Environment.simple(mode = Mode.Dev))
     .configure(
@@ -92,7 +105,10 @@ class ControllerSpec(val pathForThisPage: String) extends PlaySpec
     super.afterAll()
   }
 
-  def assertPageAsExpected(document: Document, expectedPageContents: ExpectedPageContents, preferredLanguage: PreferredLanguage): Unit = {
+  def assertPageAsExpected(document: Document, expectedPageContents: ExpectedPageContents)(implicit userConfig: UserConfig): Unit =
+    assertPageAsExpected(document, expectedPageContents, userConfig.preferredLanguage)
+
+  private def assertPageAsExpected(document: Document, expectedPageContents: ExpectedPageContents, preferredLanguage: PreferredLanguage): Unit = {
 
     document must haveTitle(expectedPageContents.title)
     document must haveHeader(expectedPageContents.header)
@@ -140,6 +156,18 @@ class ControllerSpec(val pathForThisPage: String) extends PlaySpec
 
   }
 
+  protected def assertRadioButtonAsExpected(document: Document, index: Int, expectedRadioButton: ExpectedRadioButton): Unit = {
+    document must haveARadioButtonAtIndex(index)
+    document must haveARadioButtonAtIndexWithLabel(index, expectedRadioButton.label)
+    if (expectedRadioButton.isChecked) document must haveACheckedRadioButtonAtIndex(index)
+    else document must not(haveACheckedRadioButtonAtIndex(index))
+  }
+
+  protected def assertContinueButtonAsExpected(document: Document, expectedButton: ExpectedButton): Unit = {
+    document must haveAContinueButtonWithLabel(expectedButton.label)
+    document must haveAContinueButtonWithLink(expectedButton.link)
+  }
+
   protected def givenAuthorised(userConfig: UserConfig): Unit = {
     userConfig.userType match {
       case UserTypes.Agent => authoriseAgent()
@@ -147,16 +175,7 @@ class ControllerSpec(val pathForThisPage: String) extends PlaySpec
     }
   }
 
-  protected def getPage(userConfig: UserConfig, path: String)(implicit wsClient: WSClient): WSResponse = {
-    givenAuthorised(userConfig)
-    givenStoredSessionData(userConfig)
-    await(
-      wsClient.url(fullUrl(path))
-        .withFollowRedirects(false)
-        .withHttpHeaders(Seq(cookieHeader(userConfig), languageHeader(userConfig)): _*).get())
-  }
-
-  protected def submitForm(userConfig: UserConfig, submittedFormData: SubmittedFormData)(implicit wsClient: WSClient): WSResponse = {
+  protected def submitForm(submittedFormData: SubmittedFormData)(implicit userConfig: UserConfig, wsClient: WSClient): WSResponse = {
     givenAuthorised(userConfig)
     givenStoredSessionData(userConfig)
     await(
@@ -183,7 +202,30 @@ class ControllerSpec(val pathForThisPage: String) extends PlaySpec
     )
   }
 
-  protected def loadPensionUserData(pensionsUserData: PensionsUserData, userType: UserTypes.UserType): PensionsUserData
+  protected def loadPensionUserData(implicit userConfig: UserConfig): PensionsUserData =
+    loadPensionUserData(
+      userConfig.sessionDataOpt.getOrElse(fail("Session data is required for refreshing the session data")),
+      userConfig.userType)
+
+  protected def relativeUrlForThisPage: String = relativeUrl(pathForThisPage)
+
+  protected def getPage(implicit userConfig: UserConfig, wsClient: WSClient): WSResponse = getPage(pathForThisPage)
+
+  protected def getPage(sessionDataOpt: Option[PensionsUserData])(implicit wsClient: WSClient): WSResponse = {
+    implicit val userConfig: UserConfig = UserConfig(Individual, English, sessionDataOpt)
+    getPage(pathForThisPage)
+  }
+
+  private def getPage(path: String)(implicit userConfig: UserConfig, wsClient: WSClient): WSResponse = {
+    givenAuthorised(userConfig)
+    givenStoredSessionData(userConfig)
+    await(
+      wsClient.url(fullUrl(path))
+        .withFollowRedirects(false)
+        .withHttpHeaders(Seq(cookieHeader(userConfig), languageHeader(userConfig)): _*).get())
+  }
+
+  private def loadPensionUserData(pensionsUserData: PensionsUserData, userType: UserTypes.UserType): PensionsUserData
   = await(
     database.find(
       taxYear,
@@ -197,12 +239,6 @@ class ControllerSpec(val pathForThisPage: String) extends PlaySpec
         case Left(problem) => fail(s"Unable to get the updated session data: $problem")
         case Right(value) => value.getOrElse(fail("No session data found for that user"))
       })
-
-  protected def relativeUrlForThisPage: String = relativeUrl(pathForThisPage)
-
-  protected def relativeUrlForPensionSummaryPage: String = relativeUrl("/pensions-summary")
-
-  protected def getPage(userConfig: UserConfig)(implicit wsClient: WSClient): WSResponse = getPage(userConfig, pathForThisPage)
 
   private def cookieHeader(userConfig: UserConfig): (String, String) = {
     val cookie =
@@ -788,7 +824,7 @@ object ControllerSpec {
 
   case class ExpectedRadioButton(label: String, isChecked: Boolean)
 
-  case class ExpectedButtonForContinue(label: String, link: String)
+  case class ExpectedButton(label: String, link: String)
 
   case class ErrorSummarySection(title: String, body: String, link: String)
 
@@ -800,6 +836,19 @@ object ControllerSpec {
 
   trait SubmittedFormData {
     def asMap: Map[String, String]
+  }
+
+  trait SubmittedFormDataWithYesNo extends SubmittedFormData {
+
+    private val fieldNameForYesNoSelection = "value"
+    private val valueForYesSelection = "true"
+    private val valueForNoSelection = "false"
+
+    def yesOrNoAsMap(yesOrNoOpt: Option[Boolean]): Map[String, String] = yesOrNoOpt match {
+      case Some(true) => Map(fieldNameForYesNoSelection -> valueForYesSelection)
+      case Some(false) => Map(fieldNameForYesNoSelection -> valueForNoSelection)
+      case None => Map.empty
+    }
   }
 
 }
