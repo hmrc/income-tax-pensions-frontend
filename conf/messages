@@ -54,7 +54,8 @@ common.pensions.error.amountMaxLimit.agent = The amount of tax your client’s p
 common.pensions.amountTheyAgreedToPay.text = Amount they paid or agreed to pay, in pounds
 common.pensions.didYourPensionSchemesAgreeToPayTheTax.title.individual = Did your pension schemes pay or agree to pay the tax?
 common.pensions.didYourPensionSchemesAgreeToPayTheTax.title.agent = Did your client’s pension schemes pay or agree to pay the tax?
-common.pensions.selectYesifYourPensionProvider.noEntry = Select yes if your pension provider paid or agreed to pay your annual allowance tax
+common.pensions.selectYesifYourPensionProvider.noEntry.individual = Select yes if your pension provider paid or agreed to pay your annual allowance tax
+common.pensions.selectYesifYourPensionProvider.noEntry.agent = Select yes if your client’s pension provider paid or agreed to pay the annual allowance tax
 common.error.amountNotZero = Enter an amount greater than zero
 common.error.self-assessment.paragraph.1.1 = If the web address is correct or you selected a link or button, you can use
 common.error.self-assessment.paragraph.1.2 = Self Assessment: general enquiries (opens in new tab)
@@ -430,7 +431,6 @@ pensions.pensionSchemesTaxPaidAnnualAllowance.error.amount.inCorrectFormat = Ent
 
 #Pension Provider Paid Tax Messages
 
-pensions.pensionProviderPaidTax.error.noEntry.agent = Select yes if your client’s pension provider paid or agreed to pay the annual allowance tax
 pensions.pensionsProviderPaidTax.error.noAmount.individual = Enter the amount of tax your pension provider paid or agreed to pay
 pensions.pensionsProviderPaidTax.error.noAmount.agent = Enter the amount of tax your client’s pension provider paid or agreed to pay
 pensions.pensionProviderPaidTax.error.incorrectFormat.individual = Enter the amount of tax your pension provider paid or agreed to pay in the correct format
