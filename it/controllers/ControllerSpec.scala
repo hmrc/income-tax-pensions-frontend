@@ -183,7 +183,7 @@ class ControllerSpec(val pathForThisPage: String) extends PlaySpec
     )
   }
 
-  protected def loadPensionUserData(pensionsUserData: PensionsUserData): PensionsUserData
+  protected def loadPensionUserData(pensionsUserData: PensionsUserData, userType: UserTypes.UserType): PensionsUserData
   = await(
     database.find(
       taxYear,
@@ -192,7 +192,7 @@ class ControllerSpec(val pathForThisPage: String) extends PlaySpec
         arn = None,
         nino = pensionsUserData.nino,
         sessionId = pensionsUserData.sessionId,
-        affinityGroup = "affinityGroup"))
+        affinityGroup = userType.toString))
       .map {
         case Left(problem) => fail(s"Unable to get the updated session data: $problem")
         case Right(value) => value.getOrElse(fail("No session data found for that user"))
@@ -249,7 +249,7 @@ class ControllerSpec(val pathForThisPage: String) extends PlaySpec
           arn = None,
           nino = sessionData.nino,
           sessionId = sessionData.sessionId,
-          affinityGroup = "affinityGroup")))
+          affinityGroup = userConfig.userType.toString)))
     )
   }
 

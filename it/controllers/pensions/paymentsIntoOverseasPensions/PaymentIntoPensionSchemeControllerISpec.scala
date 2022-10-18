@@ -455,7 +455,7 @@ class PaymentIntoPensionSchemeControllerISpec
 
               response must haveStatus(SEE_OTHER)
               response must haveALocationHeaderValue(relativeUrlForThisPage)
-              getViewModel(sessionData) mustBe expectedViewModel
+              getViewModel(sessionData, Individual) mustBe expectedViewModel
 
             }
             scenarioNameForIndividualAndWelsh in {
@@ -464,7 +464,7 @@ class PaymentIntoPensionSchemeControllerISpec
 
               response must haveStatus(SEE_OTHER)
               response must haveALocationHeaderValue(relativeUrlForThisPage)
-              getViewModel(sessionData) mustBe expectedViewModel
+              getViewModel(sessionData, Individual) mustBe expectedViewModel
 
             }
             scenarioNameForAgentAndEnglish in {
@@ -473,7 +473,7 @@ class PaymentIntoPensionSchemeControllerISpec
 
               response must haveStatus(SEE_OTHER)
               response must haveALocationHeaderValue(relativeUrlForThisPage)
-              getViewModel(sessionData) mustBe expectedViewModel
+              getViewModel(sessionData, Agent) mustBe expectedViewModel
 
             }
             scenarioNameForAgentAndWelsh in {
@@ -482,7 +482,7 @@ class PaymentIntoPensionSchemeControllerISpec
 
               response must haveStatus(SEE_OTHER)
               response must haveALocationHeaderValue(relativeUrlForThisPage)
-              getViewModel(sessionData) mustBe expectedViewModel
+              getViewModel(sessionData, Agent) mustBe expectedViewModel
 
             }
           }
@@ -499,7 +499,7 @@ class PaymentIntoPensionSchemeControllerISpec
 
               response must haveStatus(SEE_OTHER)
               response must haveALocationHeaderValue(relativeUrlForThisPage)
-              getViewModel(sessionData) mustBe expectedViewModel
+              getViewModel(sessionData, Individual) mustBe expectedViewModel
 
             }
             scenarioNameForIndividualAndWelsh in {
@@ -508,7 +508,7 @@ class PaymentIntoPensionSchemeControllerISpec
 
               response must haveStatus(SEE_OTHER)
               response must haveALocationHeaderValue(relativeUrlForThisPage)
-              getViewModel(sessionData) mustBe expectedViewModel
+              getViewModel(sessionData, Individual) mustBe expectedViewModel
 
             }
             scenarioNameForAgentAndEnglish in {
@@ -517,7 +517,7 @@ class PaymentIntoPensionSchemeControllerISpec
 
               response must haveStatus(SEE_OTHER)
               response must haveALocationHeaderValue(relativeUrlForThisPage)
-              getViewModel(sessionData) mustBe expectedViewModel
+              getViewModel(sessionData, Agent) mustBe expectedViewModel
 
             }
             scenarioNameForAgentAndWelsh in {
@@ -526,7 +526,7 @@ class PaymentIntoPensionSchemeControllerISpec
 
               response must haveStatus(SEE_OTHER)
               response must haveALocationHeaderValue(relativeUrlForThisPage)
-              getViewModel(sessionData) mustBe expectedViewModel
+              getViewModel(sessionData, Agent) mustBe expectedViewModel
 
             }
           }
@@ -543,7 +543,7 @@ class PaymentIntoPensionSchemeControllerISpec
 
               response must haveStatus(SEE_OTHER)
               response must haveALocationHeaderValue(relativeUrlForThisPage)
-              getViewModel(sessionData) mustBe expectedViewModel
+              getViewModel(sessionData, Individual) mustBe expectedViewModel
 
             }
             scenarioNameForIndividualAndWelsh in {
@@ -552,7 +552,7 @@ class PaymentIntoPensionSchemeControllerISpec
 
               response must haveStatus(SEE_OTHER)
               response must haveALocationHeaderValue(relativeUrlForThisPage)
-              getViewModel(sessionData) mustBe expectedViewModel
+              getViewModel(sessionData, Individual) mustBe expectedViewModel
 
             }
             scenarioNameForAgentAndEnglish in {
@@ -561,7 +561,7 @@ class PaymentIntoPensionSchemeControllerISpec
 
               response must haveStatus(SEE_OTHER)
               response must haveALocationHeaderValue(relativeUrlForThisPage)
-              getViewModel(sessionData) mustBe expectedViewModel
+              getViewModel(sessionData, Agent) mustBe expectedViewModel
 
             }
             scenarioNameForAgentAndWelsh in {
@@ -570,7 +570,7 @@ class PaymentIntoPensionSchemeControllerISpec
 
               response must haveStatus(SEE_OTHER)
               response must haveALocationHeaderValue(relativeUrlForThisPage)
-              getViewModel(sessionData) mustBe expectedViewModel
+              getViewModel(sessionData, Agent) mustBe expectedViewModel
 
             }
           }
@@ -1267,8 +1267,8 @@ class PaymentIntoPensionSchemeControllerISpec
     }
   }
 
-  private def getViewModel(pensionsUserData: PensionsUserData): PaymentsIntoOverseasPensionsViewModel
-  = loadPensionUserData(pensionsUserData).pensions.paymentsIntoOverseasPensions
+  private def getViewModel(pensionsUserData: PensionsUserData, userType: UserTypes.UserType): PaymentsIntoOverseasPensionsViewModel
+  = loadPensionUserData(pensionsUserData, userType).pensions.paymentsIntoOverseasPensions
 
 }
 
