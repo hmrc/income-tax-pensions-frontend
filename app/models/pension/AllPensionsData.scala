@@ -34,8 +34,6 @@ case class AllPensionsData(pensionReliefs: Option[PensionReliefs],
 object AllPensionsData {
   implicit val formats: OFormat[AllPensionsData] = Json.format[AllPensionsData]
 
-
-  // scalastyle:off
   def generateCyaFromPrior(prior: AllPensionsData): PensionsCYAModel = {
 
     val statePension: Option[StateBenefit] = prior.stateBenefits.flatMap(_.stateBenefits.flatMap(_.statePension))
@@ -131,14 +129,6 @@ object AllPensionsData {
     } else TaxReliefQuestion.NoTaxRelief
   }
 
-  private def getUnauthorisedPaymentsQuestion(prior: AllPensionsData): Option[Boolean] = {
-    if(prior.pensionCharges.flatMap(_.pensionSchemeUnauthorisedPayments.flatMap(_.surcharge)).isDefined ||
-      prior.pensionCharges.flatMap(_.pensionSchemeUnauthorisedPayments.flatMap(_.noSurcharge)).isDefined) {
-      Some(true)
-    } else {
-      None
-    }
-  }
 
   private def getStatePensionModel(statePension: Option[StateBenefit]): Option[StateBenefitViewModel] = {
     statePension match {

@@ -135,7 +135,6 @@ object AnnualAndLifetimeAllowanceCYAViewHelper {
   }
 
   private def summaryRowForAboveLifetimeAllowanceQuestion(lifetimeAllowancesViewModel: PensionLifetimeAllowancesViewModel, taxYear: Int)(implicit messages: Messages): Option[SummaryListRow] = {
-    //TODO page is out of date needs to be updated as part of story
     lifetimeAllowancesViewModel.aboveLifetimeAllowanceQuestion.filter(_ == true).map(_ =>
       summaryListRowWithBooleanValue(
         "lifetimeAllowance.cya.aboveLifetimeAllowance",
@@ -146,7 +145,6 @@ object AnnualAndLifetimeAllowanceCYAViewHelper {
 
   private def summaryRowForLumpSumAmounts(lifetimeAllowancesViewModel: PensionLifetimeAllowancesViewModel, taxYear: Int)(implicit messages: Messages): Option[SummaryListRow] = {
     lifetimeAllowancesViewModel.aboveLifetimeAllowanceQuestion.filter(_ == true).map { _ =>
-      //TODO this page should only show if Above lifetime allowance is set to true
       lifetimeAllowancesViewModel.pensionAsLumpSumQuestion match {
         case Some(true) if lifetimeAllowancesViewModel.pensionAsLumpSumQuestion.isDefined =>
           summaryListRowWithAmountAndTaxValue(
@@ -165,7 +163,6 @@ object AnnualAndLifetimeAllowanceCYAViewHelper {
 
   private def summaryRowForOtherPayments(lifetimeAllowancesViewModel: PensionLifetimeAllowancesViewModel, taxYear: Int)(implicit messages: Messages): Option[SummaryListRow] = {
     lifetimeAllowancesViewModel.aboveLifetimeAllowanceQuestion.filter(_ == true).map { _ =>
-      //TODO this page should only show if Above lifetime allowance is set to true
       lifetimeAllowancesViewModel.pensionPaidAnotherWayQuestion match {
         case Some(true) if lifetimeAllowancesViewModel.pensionPaidAnotherWayQuestion.isDefined =>
           summaryListRowWithAmountAndTaxValue(
@@ -192,7 +189,6 @@ object AnnualAndLifetimeAllowanceCYAViewHelper {
     }
 
     lifetimeAllowancesViewModel.aboveLifetimeAllowanceQuestion.filter(_ == true).flatMap(_ =>
-      //TODO this page should only show if Above lifetime allowance is set to true
       combinedLumpSumOtherPaymentsQuestion.filter(_ == true).map { _ =>
         summaryListRowWithString(
           "lifetimeAllowance.cya.lifetimePensionSchemeTaxReferences",
@@ -207,9 +203,6 @@ object AnnualAndLifetimeAllowanceCYAViewHelper {
 
   private def summaryListRowWithOptionalAmountValue(labelMessageKey: String, value: Option[BigDecimal], changeLink: Call)(implicit messages: Messages): SummaryListRow =
     summaryListRow(labelMessageKey, displayedValueForOptionalAmount(value), changeLink)
-
-  private def summaryListRowWithAmountValue(labelMessageKey: String, value: BigDecimal, changeLink: Call)(implicit messages: Messages): SummaryListRow =
-    summaryListRow(labelMessageKey, displayedValue(value), changeLink)
 
   private def summaryListRowWithAmountAndTaxValue(labelMessageKey: String, amount: Option[BigDecimal], taxPaid: Option[BigDecimal], changeLink: Call)(implicit messages: Messages): SummaryListRow =
     summaryListRow(labelMessageKey, displayedValueForAmountAndTax(amount, taxPaid), changeLink)

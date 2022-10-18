@@ -68,7 +68,7 @@ class AnnualLifetimeAllowanceCYAController @Inject()(authAction: AuthorisedActio
       ) { model =>
 
         if (comparePriorData(model.pensions, prior)) {
-          //        TODO - build submission model from cya data and submit to DES if cya data doesn't match prior data
+          //        TODO - build submission model from cya data and submit to DES if cya data doesn't match prior data (SASS-3444)
           Future.successful(Redirect(controllers.pensions.lifetimeAllowance.routes.AnnualLifetimeAllowanceCYAController.show(taxYear)))
         } else {
           Future.successful(Redirect(controllers.pensions.lifetimeAllowance.routes.AnnualLifetimeAllowanceCYAController.show(taxYear)))

@@ -16,7 +16,7 @@
 
 package controllers.pensions.lifetimeAllowance
 
-import models.pension.charges.{LifetimeAllowance, PensionAnnualAllowancesViewModel, PensionLifetimeAllowancesViewModel, UnauthorisedPaymentsViewModel}
+import models.pension.charges.{PensionAnnualAllowancesViewModel, PensionLifetimeAllowancesViewModel}
 import org.scalatest.Assertion
 import org.scalatest.matchers.should._
 import org.scalatest.wordspec.AnyWordSpec

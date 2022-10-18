@@ -271,7 +271,6 @@ class AnnualLifetimeAllowanceCYAControllerISpec extends
 
   def stringToBoolean(yesNo: Boolean) = if (yesNo) "Yes" else "No"
 
-  //scalastyle:off
   ".show" should {
     userScenarios.foreach { user =>
       s"language is ${welshTest(user.isWelsh)} and request is from an ${agentTest(user.isAgent)}" should {
@@ -348,19 +347,9 @@ class AnnualLifetimeAllowanceCYAControllerISpec extends
 
           val pensionCharge = anAllPensionsData.pensionCharges.get
           val savingsTaxCharges = pensionCharge.pensionSavingsTaxCharges
-          val pensionContributions = pensionCharge.pensionContributions
 
           val annualLifeTimeQuestion = savingsTaxCharges.map(_.benefitInExcessOfLifetimeAllowance).isDefined ||
             pensionCharge.pensionSavingsTaxCharges.map(_.lumpSumBenefitTakenInExcessOfLifetimeAllowance).isDefined
-
-          val typeOfAnnualCharge: String =
-            if(savingsTaxCharges.flatMap(_.moneyPurchasedAllowance).isDefined){
-              "Money purchase"
-            }else if(savingsTaxCharges.flatMap(_.taperedAnnualAllowance).isDefined){
-              "Tapered"
-            } else {
-              ""
-            }
 
           titleCheck(user.specificExpectedResults.get.expectedTitle)
           cyaRowCheck(aboveAnnualOrLifetimeAllowance, stringToBoolean(annualLifeTimeQuestion), ChangeLinksUnauthorisedPayments.aboveAnnualOrLifetimeAllowance, aboveAnnualOrLifetimeAllowanceHidden, 1)
@@ -422,7 +411,7 @@ class AnnualLifetimeAllowanceCYAControllerISpec extends
         }
       }
 
-      "the user makes no changes and no submission to DES is made" should {
+      "the user makes no changes and no submission to backend API is made" should {
 
         val unchangedAllowances = PensionAnnualAllowancesViewModel(
           Some(anPensionSavngTaxCharges.isAnnualAllowanceReduced),
