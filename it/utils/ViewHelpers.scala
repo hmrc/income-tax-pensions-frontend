@@ -333,6 +333,14 @@ trait ViewHelpers {
 
   def moneyContent(number: BigDecimal): String = bigDecimalCurrency(number.toString)
 
+  def amountAndTaxPaidContent(amount: BigDecimal, taxPaid: BigDecimal, activeLanguage: String = "English"): String = {
+    if(activeLanguage == "English"){
+      s"Amount: ${bigDecimalCurrency(amount.toString())} Tax paid: ${bigDecimalCurrency(taxPaid.toString())}"
+    }else {
+      s"Amount: ${bigDecimalCurrency(amount.toString())} Tax paid: ${bigDecimalCurrency(taxPaid.toString())}"
+    }
+  }
+
   def cyaRowCheck(expectedText: String, expectedValue: String, changeLinkHref: String, changeLinkHiddenText: String, rowNumber: Int)
                  (implicit document: () => Document): Unit = {
     val keySelector = s"#main-content > div > div > dl > div:nth-child($rowNumber) > dt"
