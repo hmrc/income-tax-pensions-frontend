@@ -115,6 +115,7 @@ POST        /:taxYear/pension-income/remove-pension-scheme                      
 GET         /:taxYear/pension-income/uk-pension-income/check-pension-income                 controllers.pensions.incomeFromPensions.UkPensionIncomeCYAController.show(taxYear: Int)
 POST        /:taxYear/pension-income/uk-pension-income/check-pension-income                 controllers.pensions.incomeFromPensions.UkPensionIncomeCYAController.submit(taxYear: Int)
 
+GET         /:taxYear/pension-income/pensions-income-summary                                controllers.pensions.incomeFromPensions.IncomeFromPensionsSummaryController.show(taxYear: Int)
 
 ###########################     Unauthorised Payments Pages     ####################################
 
@@ -205,16 +206,17 @@ POST        /:taxYear/annual-lifetime-allowances/check-annual-and-lifetime-allow
 
 ###########################     Payment into overseas pension Pages     ####################################
 
-GET         /:taxYear/overseas-pensions/payments-into-overseas-pensions/payments-into-schemes     controllers.pensions.paymentsIntoOverseasPensions.PaymentIntoPensionScheme.show(taxYear: Int)
-POST        /:taxYear/overseas-pensions/payments-into-overseas-pensions/payments-into-schemes     controllers.pensions.paymentsIntoOverseasPensions.PaymentIntoPensionScheme.submit(taxYear: Int)
+GET         /:taxYear/overseas-pensions/payments-into-overseas-pensions/payments-into-schemes                               controllers.pensions.paymentsIntoOverseasPensions.PaymentIntoPensionScheme.show(taxYear: Int)
+POST        /:taxYear/overseas-pensions/payments-into-overseas-pensions/payments-into-schemes                               controllers.pensions.paymentsIntoOverseasPensions.PaymentIntoPensionScheme.submit(taxYear: Int)
 
-GET         /:taxYear/unauthorised-payments-from-pensions/pension-scheme-tax-reference                         controllers.pensions.unauthorisedPayments.UnauthorisedPensionSchemeTaxReferenceController.show(taxYear: Int)
-POST        /:taxYear/unauthorised-payments-from-pensions/pension-scheme-tax-reference                         controllers.pensions.unauthorisedPayments.UnauthorisedPensionSchemeTaxReferenceController.submit(taxYear: Int)
+GET         /:taxYear/unauthorised-payments-from-pensions/pension-scheme-tax-reference                                      controllers.pensions.unauthorisedPayments.UnauthorisedPensionSchemeTaxReferenceController.show(taxYear: Int)
+POST        /:taxYear/unauthorised-payments-from-pensions/pension-scheme-tax-reference                                      controllers.pensions.unauthorisedPayments.UnauthorisedPensionSchemeTaxReferenceController.submit(taxYear: Int)
 
-GET         /:taxYear/overseas-pensions/payments-into-overseas-pensions/employer-payments-into-schemes     controllers.pensions.paymentsIntoOverseasPensions.EmployerPayOverseasPensionController.show(taxYear: Int)
-POST        /:taxYear/overseas-pensions/payments-into-overseas-pensions/employer-payments-into-schemes     controllers.pensions.paymentsIntoOverseasPensions.EmployerPayOverseasPensionController.submit(taxYear: Int)
+GET         /:taxYear/overseas-pensions/payments-into-overseas-pensions/employer-payments-into-schemes                      controllers.pensions.paymentsIntoOverseasPensions.EmployerPayOverseasPensionController.show(taxYear: Int)
+POST        /:taxYear/overseas-pensions/payments-into-overseas-pensions/employer-payments-into-schemes                      controllers.pensions.paymentsIntoOverseasPensions.EmployerPayOverseasPensionController.submit(taxYear: Int)
 
-GET         /:taxYear/overseas-pensions/payments-into-overseas-pensions/tax-employer-payments     controllers.pensions.paymentsIntoOverseasPensions.TaxEmployerPaymentsController.show(taxYear: Int)
-POST        /:taxYear/overseas-pensions/payments-into-overseas-pensions/tax-employer-payments     controllers.pensions.paymentsIntoOverseasPensions.TaxEmployerPaymentsController.submit(taxYear: Int)
+GET         /:taxYear/overseas-pensions/payments-into-overseas-pensions/tax-employer-payments                               controllers.pensions.paymentsIntoOverseasPensions.TaxEmployerPaymentsController.show(taxYear: Int)
+POST        /:taxYear/overseas-pensions/payments-into-overseas-pensions/tax-employer-payments                               controllers.pensions.paymentsIntoOverseasPensions.TaxEmployerPaymentsController.submit(taxYear: Int)
 
-GET         /:taxYear/pension-income/pensions-income-summary     controllers.pensions.incomeFromPensions.IncomeFromPensionsSummaryController.show(taxYear: Int)
+GET         /:taxYear/overseas-pensions/payments-into-overseas-pensions/qualifying-overseas-pension-scheme-reference-number controllers.pensions.paymentsIntoOverseasPensions.QOPSReferenceController.show(taxYear: Int)
+POST        /:taxYear/overseas-pensions/payments-into-overseas-pensions/qualifying-overseas-pension-scheme-reference-number controllers.pensions.paymentsIntoOverseasPensions.QOPSReferenceController.submit(taxYear: Int)
