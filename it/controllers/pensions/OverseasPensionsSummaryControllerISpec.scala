@@ -27,7 +27,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status.UNAUTHORIZED
 import play.api.libs.ws.WSResponse
 import utils.PageUrls._
-import utils.PageUrls.overseasPensionPages.paymentsIntoPensionSchemeUrl
+import utils.PageUrls.OverseasPensionPages.paymentsIntoPensionSchemeUrl
 import utils.{CommonUtils, PensionsDatabaseHelper, ViewHelpers}
 
 class OverseasPensionsSummaryControllerISpec extends CommonUtils with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper  {

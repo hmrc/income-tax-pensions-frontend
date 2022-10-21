@@ -800,3 +800,11 @@ overseasPension.taxEmployerPayments.title.agent = Did your client pay tax on the
 overseasPension.taxEmployerPayments.bullet2.agent = ask their pension providers
 overseasPension.taxEmployerPayments.error.noEntry.individual = Select yes if you paid tax on the amount your employer paid
 overseasPension.taxEmployerPayments.error.noEntry.agent = Select yes if your client paid tax on the amount their employer paid
+
+#Qualifying overseas pension scheme page
+overseasPension.QOPSReference.title = Qualifying overseas pension scheme (QOPS) reference number (optional)
+overseasPension.QOPSReference.paragraph1.individual = You can find this on your pension statement.
+overseasPension.QOPSReference.paragraph1.agent = You can find this on your client’s pension statement.
+overseasPension.QOPSReference.hint = For example, QOPS123456
+overseasPension.QOPSReference.error.incorrectFormat = Enter a six digit number
+overseasPension.QOPSReference.prefix=QOPS

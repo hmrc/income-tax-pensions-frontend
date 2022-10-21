@@ -26,7 +26,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.overseasPensionPages.{employerPayOverseasPensionUrl, taxEmployerPaymentsUrl}
+import utils.PageUrls.OverseasPensionPages.{employerPayOverseasPensionUrl, taxEmployerPaymentsUrl}
 import utils.PageUrls.{fullUrl, pensionSummaryUrl}
 import utils.CommonUtils
 

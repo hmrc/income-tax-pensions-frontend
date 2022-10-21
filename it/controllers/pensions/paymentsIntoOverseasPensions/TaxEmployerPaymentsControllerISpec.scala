@@ -26,7 +26,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import utils.CommonUtils
-import utils.PageUrls.overseasPensionPages.taxEmployerPaymentsUrl
+import utils.PageUrls.OverseasPensionPages.taxEmployerPaymentsUrl
 import utils.PageUrls.pensionSummaryUrl
 
 class TaxEmployerPaymentsControllerISpec extends CommonUtils with BeforeAndAfterEach {
