@@ -16,112 +16,54 @@
 
 package controllers.pensions.lifetimeAllowance
 
+import common.MessageKeys.LifetimeAllowance.PensionProviderPaidTax
+import common.MessageKeys.YesNoAmountForm
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.lifetimeAllowance.routes.PensionProviderPaidTaxController
-import controllers.pensions.routes.PensionsSummaryController
+import controllers.BaseYesNoAmountController
 import controllers.predicates.AuthorisedAction
-import controllers.predicates.TaxYearAction.taxYearAction
-import forms.RadioButtonAmountForm
-import models.User
-import models.mongo.PensionsCYAModel
+import models.AuthorisationRequest
+import models.mongo.{PensionsCYAModel, PensionsUserData}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
+import play.twirl.api.Html
 import services.PensionSessionService
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.lifetimeAllowance.PensionProviderPaidTaxView
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
 
 
-class PensionProviderPaidTaxController @Inject()(implicit val cc: MessagesControllerComponents,
+class PensionProviderPaidTaxController @Inject()(messagesControllerComponents: MessagesControllerComponents,
                                                  authAction: AuthorisedAction,
                                                  pensionProviderPaidTaxView: PensionProviderPaidTaxView,
-                                                 appConfig: AppConfig,
                                                  pensionSessionService: PensionSessionService,
-                                                 errorHandler: ErrorHandler,
-                                                 clock: Clock) extends FrontendController(cc) with I18nSupport {
+                                                 errorHandler: ErrorHandler)
+                                                (implicit appConfig: AppConfig, clock: Clock) extends BaseYesNoAmountController(messagesControllerComponents, pensionSessionService, authAction, errorHandler) with I18nSupport {
 
-  def providerPaidTaxForm(implicit user: User): Form[(Boolean, Option[BigDecimal])] = RadioButtonAmountForm.radioButtonAndAmountForm(
-    missingInputError = s"common.pensions.selectYesifYourPensionProvider.noEntry.${if (user.isAgent) "agent" else "individual"}",
-    emptyFieldKey = s"pensions.pensionsProviderPaidTax.error.noAmount.${if (user.isAgent) "agent" else "individual"}",
-    wrongFormatKey = s"pensions.pensionProviderPaidTax.error.incorrectFormat.${if (user.isAgent) "agent" else "individual"}",
-    exceedsMaxAmountKey = s"common.pensions.error.amountMaxLimit.${if (user.isAgent) "agent" else "individual"}"
-  )
+  override val errorMessageSet: YesNoAmountForm = PensionProviderPaidTax
 
-  def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
-    pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
-      case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
-      case Right(Some(data)) =>
-        implicit val user: User = request.user
-        val amount = data.pensions.pensionsAnnualAllowances.taxPaidByPensionProvider
-        data.pensions.pensionsAnnualAllowances.pensionProvidePaidAnnualAllowanceQuestion
-          .map({
-            case true =>
-              Future.successful(Ok(pensionProviderPaidTaxView(providerPaidTaxForm.fill((true, amount)), taxYear)))
-            case false =>
-              Future.successful(Ok(pensionProviderPaidTaxView(providerPaidTaxForm.fill((false, None)), taxYear)))
-          })
-          .getOrElse(Future.successful(Ok(pensionProviderPaidTaxView(providerPaidTaxForm, taxYear))))
+  // TODO: Once we've creating the CYA page (in SASS-2470), we can redirect to it.
+  override def redirectWhenNoSessionData(taxYear: Int): Result = redirectToSummaryPage(taxYear)
 
-      case _ =>
-        //TODO" navigate to CYA controller
-        Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
-    }
-  }
+  override def redirectAfterUpdatingSessionData(taxYear: Int): Result = Redirect(controllers.pensions.lifetimeAllowance.routes.PensionProviderPaidTaxController.show(taxYear))
 
+  override def prepareView(pensionsUserData: PensionsUserData, taxYear: Int)(implicit request: AuthorisationRequest[AnyContent]): Html =
+    pensionProviderPaidTaxView(populateForm(pensionsUserData), taxYear)
 
-  def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
-    def createOrUpdateSessionDataWithRedirect(updatedCyaModel: PensionsCYAModel,
-                                              isPriorSubmission: Boolean,
-                                              page: Call)
-                                             (implicit request: Request[_], user: User) = {
+  override def onInvalidForm(form: Form[(Boolean, Option[BigDecimal])], taxYear: Int)(implicit request: AuthorisationRequest[AnyContent]): Html
+  = pensionProviderPaidTaxView(form, taxYear)
 
-      pensionSessionService.createOrUpdateSessionData(user,
-        updatedCyaModel, taxYear, isPriorSubmission)(errorHandler.internalServerError()) {
-        Redirect(page)
-      }
-    }
+  override def questionOpt(pensionsUserData: PensionsUserData): Option[Boolean] = pensionsUserData.pensions.pensionsAnnualAllowances.pensionProvidePaidAnnualAllowanceQuestion
 
-    def updateCyaModel(pensionsCyaModel: PensionsCYAModel, yesNo: Boolean, amount: Option[BigDecimal]): PensionsCYAModel = {
-      val viewModel = pensionsCyaModel.pensionsAnnualAllowances
-      pensionsCyaModel.copy(pensionsAnnualAllowances = viewModel.copy(
-        pensionProvidePaidAnnualAllowanceQuestion = Some(yesNo),
-        taxPaidByPensionProvider = amount
-      ))
-    }
+  override def amountOpt(pensionsUserData: PensionsUserData): Option[BigDecimal] = pensionsUserData.pensions.pensionsAnnualAllowances.taxPaidByPensionProvider
 
-    implicit val user: User = request.user
+  override def proposedUpdatedSessionDataModel(currentSessionData: PensionsUserData, yesSelected: Boolean, amountOpt: Option[BigDecimal]): PensionsCYAModel =
+    currentSessionData.pensions.copy(
+      pensionsAnnualAllowances = currentSessionData.pensions.pensionsAnnualAllowances.copy(
+        pensionProvidePaidAnnualAllowanceQuestion = Some(yesSelected),
+        taxPaidByPensionProvider = amountOpt.filter(_ => yesSelected)
+      )
+    )
 
-    providerPaidTaxForm.bindFromRequest().fold(
-      formWithErrors => Future.successful(BadRequest(pensionProviderPaidTaxView(formWithErrors, taxYear))),
-      yesNoAmount => {
-        pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
-          case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
-          case Right(Some(userData)) =>
-
-            yesNoAmount match {
-              case (true, amount) =>
-                createOrUpdateSessionDataWithRedirect(
-                  updateCyaModel(userData.pensions, yesNo = true, amount),
-                  userData.isPriorSubmission,
-                  PensionProviderPaidTaxController.show(taxYear))
-
-              case (false, _) =>
-                createOrUpdateSessionDataWithRedirect(
-                  updateCyaModel(userData.pensions, yesNo = false, None),
-                  userData.isPriorSubmission,
-                  PensionProviderPaidTaxController.show(taxYear))
-            }
-
-
-          case _ =>
-            //TODO" navigate to CYA controller
-            Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
-        }
-      })
-  }
 }
