@@ -21,37 +21,24 @@ import org.jsoup.nodes.Document
 
 class YesNoAmountControllerSpec(override val pathForThisPage: String) extends ControllerSpec(pathForThisPage) {
 
-  private val fieldNameForYesNoSelection = "value"
-  private val valueForYesSelection = "true"
-  private val valueForNoSelection = "false"
-  private val indexOfRadioButtonForYes = 0
-  private val indexOfRadioButtonForNo = 1
-
   private val fieldNameForAmountInput = "amount-2"
 
-  def assertPageAsExpected(document: Document, expectedPageContents: ExpectedYesNoAmountPageContents, preferredLanguage: PreferredLanguages.PreferredLanguage): Unit = {
+  def assertPageAsExpected(document: Document, expectedPageContents: ExpectedYesNoAmountPageContents)(implicit userConfig: UserConfig): Unit = {
 
-    super.assertPageAsExpected(document, expectedPageContents, preferredLanguage)
+    super.assertPageAsExpected(document, expectedPageContents)
+    assertRadioButtonAsExpected(document, 0, expectedPageContents.radioButtonForYes)
+    assertRadioButtonAsExpected(document, 1, expectedPageContents.radioButtonForNo)
+    assertContinueButtonAsExpected(document, expectedPageContents.buttonForContinue)
+    assertAmountSectionAsExpected(document, expectedPageContents.amountSection)
 
-    document must haveARadioButtonAtIndex(indexOfRadioButtonForYes)
-    document must haveARadioButtonAtIndexWithLabel(indexOfRadioButtonForYes, expectedPageContents.radioButtonForYes.label)
-    if (expectedPageContents.radioButtonForYes.isChecked) document must haveACheckedRadioButtonAtIndex(indexOfRadioButtonForYes)
-    else document must not(haveACheckedRadioButtonAtIndex(indexOfRadioButtonForYes))
+  }
 
-    document must haveARadioButtonAtIndex(indexOfRadioButtonForNo)
-    document must haveARadioButtonAtIndexWithLabel(indexOfRadioButtonForNo, expectedPageContents.radioButtonForNo.label)
-    if (expectedPageContents.radioButtonForNo.isChecked) document must haveACheckedRadioButtonAtIndex(indexOfRadioButtonForNo)
-    else document must not(haveACheckedRadioButtonAtIndex(indexOfRadioButtonForNo))
-
-    document must haveAContinueButtonWithLabel(expectedPageContents.buttonForContinue.label)
-    document must haveAContinueButtonWithLink(expectedPageContents.buttonForContinue.link)
-
-    document must haveAnAmountLabel(expectedPageContents.amountSection.label)
-    document must haveAnAmountHint(expectedPageContents.amountSection.hint)
-    document must haveAnAmountValue(expectedPageContents.amountSection.value)
+  private def assertAmountSectionAsExpected(document: Document, expectedAmountSection: ExpectedAmountSection): Unit = {
+    document must haveAnAmountLabel(expectedAmountSection.label)
+    document must haveAnAmountHint(expectedAmountSection.hint)
+    document must haveAnAmountValue(expectedAmountSection.value)
     document must haveTextContents(".govuk-input__prefix", "£")
     document must haveAnAmountName(fieldNameForAmountInput)
-
   }
 
   case class ExpectedYesNoAmountPageContents(title: String,
@@ -59,7 +46,7 @@ class YesNoAmountControllerSpec(override val pathForThisPage: String) extends Co
                                              caption: String,
                                              radioButtonForYes: ExpectedRadioButton,
                                              radioButtonForNo: ExpectedRadioButton,
-                                             buttonForContinue: ExpectedButtonForContinue,
+                                             buttonForContinue: ExpectedButton,
                                              amountSection: ExpectedAmountSection,
                                              errorSummarySectionOpt: Option[ErrorSummarySection] = None,
                                              errorAboveElementCheckSectionOpt: Option[ErrorAboveElementCheckSection] = None,
@@ -68,20 +55,14 @@ class YesNoAmountControllerSpec(override val pathForThisPage: String) extends Co
                                             ) extends ExpectedPageContents
 
 
-  case class SubmittedFormDataForYesNoAmountPage(yesOrNoOpt: Option[Boolean], amountOpt: Option[String]) extends SubmittedFormData {
-
-    val yesOrNoAsMap: Map[String, String] = yesOrNoOpt match {
-      case Some(true) => Map(fieldNameForYesNoSelection -> valueForYesSelection)
-      case Some(false) => Map(fieldNameForYesNoSelection -> valueForNoSelection)
-      case None => Map.empty
-    }
+  case class SubmittedFormDataForYesNoAmountPage(yesOrNoOpt: Option[Boolean], amountOpt: Option[String]) extends SubmittedFormDataWithYesNo {
 
     val amountAsMap: Map[String, String] = amountOpt match {
       case Some(amount) => Map(fieldNameForAmountInput -> amount)
       case None => Map.empty
     }
 
-    val asMap: Map[String, String] = yesOrNoAsMap ++ amountAsMap
+    val asMap: Map[String, String] = yesOrNoAsMap(yesOrNoOpt) ++ amountAsMap
 
   }
 
