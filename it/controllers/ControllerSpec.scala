@@ -30,6 +30,7 @@ import org.scalatest.matchers.{MatchResult, Matcher}
 import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import play.api.http.HeaderNames
+import play.api.http.Status.SEE_OTHER
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.ws.{WSClient, WSResponse}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
@@ -106,10 +107,83 @@ class ControllerSpec(val pathForThisPage: String) extends PlaySpec
     super.afterAll()
   }
 
-  def assertPageAsExpected(document: Document, expectedPageContents: ExpectedPageContents)(implicit userConfig: UserConfig): Unit =
+  def assertPageAsExpected(document: Document, expectedPageContents: BaseExpectedPageContents)(implicit userConfig: UserConfig): Unit =
     assertPageAsExpected(document, expectedPageContents, userConfig.preferredLanguage)
 
-  private def assertPageAsExpected(document: Document, expectedPageContents: ExpectedPageContents, preferredLanguage: PreferredLanguage): Unit = {
+  def assertRedirectionAsExpected(expectedLocation: String)(implicit response: WSResponse): Unit = {
+    response must haveStatus(SEE_OTHER)
+    response must haveALocationHeaderValue(expectedLocation)
+  }
+
+
+  protected def assertRadioButtonAsExpected(document: Document, index: Int, expectedRadioButton: ExpectedRadioButton): Unit = {
+    document must haveARadioButtonAtIndex(index)
+    document must haveARadioButtonAtIndexWithLabel(index, expectedRadioButton.label)
+    if (expectedRadioButton.isChecked) document must haveACheckedRadioButtonAtIndex(index)
+    else document must not(haveACheckedRadioButtonAtIndex(index))
+  }
+
+  protected def assertTextInputAsExpected(document: Document, expectedInputField: ExpectedInputField): Unit = {
+    document must haveATextInputForSelector(expectedInputField.selector)
+    document must haveATextInputName(expectedInputField.selector, expectedInputField.name)
+    document must haveATextInputValue(expectedInputField.selector, expectedInputField.value)
+  }
+
+  protected def assertContinueButtonAsExpected(document: Document, expectedButton: ExpectedButton): Unit = {
+    document must haveAContinueButtonWithLabel(expectedButton.label)
+    document must haveAContinueButtonWithLink(expectedButton.link)
+  }
+
+  protected def givenAuthorised(userConfig: UserConfig): Unit = {
+    userConfig.userType match {
+      case UserTypes.Agent => authoriseAgent()
+      case UserTypes.Individual => authoriseIndividual()
+    }
+  }
+
+  protected def submitForm(submittedFormData: SubmittedFormData)(implicit userConfig: UserConfig, wsClient: WSClient): WSResponse = {
+    givenAuthorised(userConfig)
+    givenStoredSessionData(userConfig)
+    await(
+      wsClient.url(fullUrl(pathForThisPage))
+        .withFollowRedirects(false)
+        .withHttpHeaders(Seq(cookieHeader(userConfig), languageHeader(userConfig)) ++ Seq("Csrf-Token" -> "nocheck"): _*)
+        .post(submittedFormData.asMap))
+  }
+
+  protected def checkedExpectedRadioButton(label: String): ExpectedRadioButton = ExpectedRadioButton(label, isChecked = true)
+
+  protected def uncheckedExpectedRadioButton(label: String): ExpectedRadioButton = ExpectedRadioButton(label, isChecked = false)
+
+  protected def relativeUrl(pathStartingWithSlash: String): String = s"/update-and-submit-income-tax-return/pensions/$taxYear$pathStartingWithSlash"
+
+  protected def pensionsUserData(pensionsSessionData: PensionsCYAModel): PensionsUserData = {
+    PensionsUserData(
+      sessionId = generateSessionId(),
+      mtdItId = validMtdItId,
+      nino = validNino,
+      taxYear = taxYearEOY,
+      isPriorSubmission = true,
+      pensions = pensionsSessionData
+    )
+  }
+
+  protected def loadPensionUserData(implicit userConfig: UserConfig): Option[PensionsUserData] =
+    userConfig.sessionDataOpt.flatMap(originalSessionData => loadPensionUserData(originalSessionData, userConfig.userType))
+
+  protected def relativeUrlForThisPage: String = relativeUrl(pathForThisPage)
+
+  protected def getPage(implicit userConfig: UserConfig, wsClient: WSClient): WSResponse = getPage(pathForThisPage)
+
+  protected def getPage(sessionDataOpt: Option[PensionsUserData])(implicit wsClient: WSClient): WSResponse = {
+    implicit val userConfig: UserConfig = UserConfig(Individual, English, sessionDataOpt)
+    getPage(pathForThisPage)
+  }
+
+  protected def userConfigWhenIrrelevant(sessionDataOpt: Option[PensionsUserData]): UserConfig =
+    UserConfig(Individual, English, sessionDataOpt)
+
+  private def assertPageAsExpected(document: Document, expectedPageContents: BaseExpectedPageContents, preferredLanguage: PreferredLanguage): Unit = {
 
     document must haveTitle(expectedPageContents.title)
     document must haveHeader(expectedPageContents.header)
@@ -157,66 +231,6 @@ class ControllerSpec(val pathForThisPage: String) extends PlaySpec
 
   }
 
-  protected def assertRadioButtonAsExpected(document: Document, index: Int, expectedRadioButton: ExpectedRadioButton): Unit = {
-    document must haveARadioButtonAtIndex(index)
-    document must haveARadioButtonAtIndexWithLabel(index, expectedRadioButton.label)
-    if (expectedRadioButton.isChecked) document must haveACheckedRadioButtonAtIndex(index)
-    else document must not(haveACheckedRadioButtonAtIndex(index))
-  }
-
-  protected def assertContinueButtonAsExpected(document: Document, expectedButton: ExpectedButton): Unit = {
-    document must haveAContinueButtonWithLabel(expectedButton.label)
-    document must haveAContinueButtonWithLink(expectedButton.link)
-  }
-
-  protected def givenAuthorised(userConfig: UserConfig): Unit = {
-    userConfig.userType match {
-      case UserTypes.Agent => authoriseAgent()
-      case UserTypes.Individual => authoriseIndividual()
-    }
-  }
-
-  protected def submitForm(submittedFormData: SubmittedFormData)(implicit userConfig: UserConfig, wsClient: WSClient): WSResponse = {
-    givenAuthorised(userConfig)
-    givenStoredSessionData(userConfig)
-    await(
-      wsClient.url(fullUrl(pathForThisPage))
-        .withFollowRedirects(false)
-        .withHttpHeaders(Seq(cookieHeader(userConfig), languageHeader(userConfig)) ++ Seq("Csrf-Token" -> "nocheck"): _*)
-        .post(submittedFormData.asMap))
-  }
-
-  protected def checkedExpectedRadioButton(label: String): ExpectedRadioButton = ExpectedRadioButton(label, isChecked = true)
-
-  protected def uncheckedExpectedRadioButton(label: String): ExpectedRadioButton = ExpectedRadioButton(label, isChecked = false)
-
-  protected def relativeUrl(pathStartingWithSlash: String): String = s"/update-and-submit-income-tax-return/pensions/$taxYear$pathStartingWithSlash"
-
-  protected def pensionsUserData(pensionsSessionData: PensionsCYAModel): PensionsUserData = {
-    PensionsUserData(
-      sessionId = generateSessionId(),
-      mtdItId = validMtdItId,
-      nino = validNino,
-      taxYear = taxYearEOY,
-      isPriorSubmission = true,
-      pensions = pensionsSessionData
-    )
-  }
-
-  protected def loadPensionUserData(implicit userConfig: UserConfig): PensionsUserData =
-    loadPensionUserData(
-      userConfig.sessionDataOpt.getOrElse(fail("Session data is required for refreshing the session data")),
-      userConfig.userType)
-
-  protected def relativeUrlForThisPage: String = relativeUrl(pathForThisPage)
-
-  protected def getPage(implicit userConfig: UserConfig, wsClient: WSClient): WSResponse = getPage(pathForThisPage)
-
-  protected def getPage(sessionDataOpt: Option[PensionsUserData])(implicit wsClient: WSClient): WSResponse = {
-    implicit val userConfig: UserConfig = UserConfig(Individual, English, sessionDataOpt)
-    getPage(pathForThisPage)
-  }
-
   private def getPage(path: String)(implicit userConfig: UserConfig, wsClient: WSClient): WSResponse = {
     givenAuthorised(userConfig)
     givenStoredSessionData(userConfig)
@@ -226,7 +240,7 @@ class ControllerSpec(val pathForThisPage: String) extends PlaySpec
         .withHttpHeaders(Seq(cookieHeader(userConfig), languageHeader(userConfig)): _*).get())
   }
 
-  private def loadPensionUserData(pensionsUserData: PensionsUserData, userType: UserTypes.UserType): PensionsUserData
+  private def loadPensionUserData(pensionsUserData: PensionsUserData, userType: UserTypes.UserType): Option[PensionsUserData]
   = await(
     database.find(
       taxYear,
@@ -238,7 +252,7 @@ class ControllerSpec(val pathForThisPage: String) extends PlaySpec
         affinityGroup = userType.toString))
       .map {
         case Left(problem) => fail(s"Unable to get the updated session data: $problem")
-        case Right(value) => value.getOrElse(fail("No session data found for that user"))
+        case Right(value) => value
       })
 
   private def cookieHeader(userConfig: UserConfig): (String, String) = {
@@ -695,6 +709,48 @@ object ControllerSpec {
       }
     }
 
+    class HaveATextInputForSelector(selector: String) extends Matcher[Document] {
+      override def apply(document: Document): MatchResult = {
+        val exists = !document.select(selector).isEmpty
+        val inputType = document.select(selector).attr("type")
+        val errorMessageIfExpected = s"The page doesn't have a text input for selector '$selector'."
+        val errorMessageIfNotExpected = s"The page does indeed have a text input for selector '$selector', which was not expected."
+        MatchResult(
+          exists && inputType.equals("text"),
+          errorMessageIfExpected,
+          errorMessageIfNotExpected
+        )
+      }
+    }
+
+    class HaveATextInputName(selector: String, name: String) extends Matcher[Document] {
+      override def apply(document: Document): MatchResult = {
+        val exists = !document.select(selector).isEmpty
+        val actualName = document.select(selector).attr("name")
+        val errorMessageIfExpected = s"The page doesn't have a text input for selector '$selector' with name '$name', actual name was '$actualName'"
+        val errorMessageIfNotExpected = s"The page does indeed have a text input for selector '$selector' with name '$name', which was not expected."
+        MatchResult(
+          exists && actualName.equals(name),
+          errorMessageIfExpected,
+          errorMessageIfNotExpected
+        )
+      }
+    }
+
+    class HaveATextInputValue(selector: String, name: String) extends Matcher[Document] {
+      override def apply(document: Document): MatchResult = {
+        val exists = !document.select(selector).isEmpty
+        val actualValue = document.select(selector).attr("value")
+        val errorMessageIfExpected = s"The page doesn't have a text input for selector '$selector' with value '$name', actual value was '$actualValue'"
+        val errorMessageIfNotExpected = s"The page does indeed have a text input for selector '$selector' with value '$name', which was not expected."
+        MatchResult(
+          exists && actualValue.equals(name),
+          errorMessageIfExpected,
+          errorMessageIfNotExpected
+        )
+      }
+    }
+
     def haveTitle(partialTitle: String) = new HasTitle(partialTitle)
 
     def haveHeader(header: String) = new HasHeader(header)
@@ -748,6 +804,12 @@ object ControllerSpec {
     def haveTextForSelector(selector: String) = new HaveTextForSelector(selector)
 
     def haveTextContents(selector: String, contents: String) = new HaveTextContents(selector, contents)
+
+    def haveATextInputForSelector(selector: String) = new HaveATextInputForSelector(selector)
+
+    def haveATextInputName(selector: String, name: String) = new HaveATextInputName(selector, name)
+
+    def haveATextInputValue(selector: String, value: String) = new HaveATextInputValue(selector, value)
 
   }
 
@@ -805,7 +867,7 @@ object ControllerSpec {
     val English, Welsh = Value
   }
 
-  trait ExpectedPageContents {
+  trait BaseExpectedPageContents {
     def title: String
 
     def header: String
@@ -834,6 +896,8 @@ object ControllerSpec {
   case class ExpectedLink(id: String, label: String, href: String)
 
   case class ExpectedText(selector: String, contents: String)
+
+  case class ExpectedInputField(selector: String, name: String, value: String)
 
   trait SubmittedFormData {
     def asMap: Map[String, String]

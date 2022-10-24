@@ -23,8 +23,8 @@ import controllers.ControllerSpec._
 import controllers.YesNoAmountControllerSpec
 import models.mongo.PensionsUserData
 import models.pension.charges.PaymentsIntoOverseasPensionsViewModel
-import org.jsoup.Jsoup.parse
-import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
+import play.api.http.Status.{BAD_REQUEST, OK}
+import play.api.libs.ws.WSResponse
 
 class PaymentIntoPensionSchemeControllerISpec
   extends YesNoAmountControllerSpec("/overseas-pensions/payments-into-overseas-pensions/payments-into-schemes") {
@@ -38,11 +38,10 @@ class PaymentIntoPensionSchemeControllerISpec
       "redirect to the summary page" when {
         "the user has no stored session data at all" in {
 
-          implicit val userConfig: UserConfig = UserConfig(Individual, English, None)
-          val response = getPage
+          implicit val userConfig: UserConfig = userConfigWhenIrrelevant(None)
+          implicit val response: WSResponse = getPage
 
-          response must haveStatus(SEE_OTHER)
-          response must haveALocationHeaderValue(PageRelativeURLs.summaryPage)
+          assertRedirectionAsExpected(PageRelativeURLs.summaryPage)
 
         }
       }
@@ -54,11 +53,10 @@ class PaymentIntoPensionSchemeControllerISpec
           scenarioNameForIndividualAndEnglish in {
 
             implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
-            val response = getPage
+            implicit val response: WSResponse = getPage
 
-            response must haveStatus(OK)
             assertPageAsExpected(
-              parse(response.body),
+              OK,
               ExpectedYesNoAmountPageContents(
                 title = "Payments into overseas pension schemes",
                 header = "Payments into overseas pension schemes",
@@ -84,11 +82,10 @@ class PaymentIntoPensionSchemeControllerISpec
           scenarioNameForIndividualAndWelsh in {
 
             implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
-            val response = getPage
+            implicit val response: WSResponse = getPage
 
-            response must haveStatus(OK)
             assertPageAsExpected(
-              parse(response.body),
+              OK,
               ExpectedYesNoAmountPageContents(
                 title = "Payments into overseas pension schemes",
                 header = "Payments into overseas pension schemes",
@@ -114,11 +111,10 @@ class PaymentIntoPensionSchemeControllerISpec
           scenarioNameForAgentAndEnglish in {
 
             implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
-            val response = getPage
+            implicit val response: WSResponse = getPage
 
-            response must haveStatus(OK)
             assertPageAsExpected(
-              parse(response.body),
+              OK,
               ExpectedYesNoAmountPageContents(
                 title = "Payments into overseas pension schemes",
                 header = "Payments into overseas pension schemes",
@@ -145,11 +141,10 @@ class PaymentIntoPensionSchemeControllerISpec
           scenarioNameForAgentAndWelsh in {
 
             implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
-            val response = getPage
+            implicit val response: WSResponse = getPage
 
-            response must haveStatus(OK)
             assertPageAsExpected(
-              parse(response.body),
+              OK,
               ExpectedYesNoAmountPageContents(
                 title = "Payments into overseas pension schemes",
                 header = "Payments into overseas pension schemes",
@@ -185,11 +180,10 @@ class PaymentIntoPensionSchemeControllerISpec
           scenarioNameForIndividualAndEnglish in {
 
             implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
-            val response = getPage
+            implicit val response: WSResponse = getPage
 
-            response must haveStatus(OK)
             assertPageAsExpected(
-              parse(response.body),
+              OK,
               ExpectedYesNoAmountPageContents(
                 title = "Payments into overseas pension schemes",
                 header = "Payments into overseas pension schemes",
@@ -215,11 +209,10 @@ class PaymentIntoPensionSchemeControllerISpec
           scenarioNameForIndividualAndWelsh in {
 
             implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
-            val response = getPage
+            implicit val response: WSResponse = getPage
 
-            response must haveStatus(OK)
             assertPageAsExpected(
-              parse(response.body),
+              OK,
               ExpectedYesNoAmountPageContents(
                 title = "Payments into overseas pension schemes",
                 header = "Payments into overseas pension schemes",
@@ -245,11 +238,10 @@ class PaymentIntoPensionSchemeControllerISpec
           scenarioNameForAgentAndEnglish in {
 
             implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
-            val response = getPage
+            implicit val response: WSResponse = getPage
 
-            response must haveStatus(OK)
             assertPageAsExpected(
-              parse(response.body),
+              OK,
               ExpectedYesNoAmountPageContents(
                 title = "Payments into overseas pension schemes",
                 header = "Payments into overseas pension schemes",
@@ -275,11 +267,10 @@ class PaymentIntoPensionSchemeControllerISpec
           scenarioNameForAgentAndWelsh in {
 
             implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
-            val response = getPage
+            implicit val response: WSResponse = getPage
 
-            response must haveStatus(OK)
             assertPageAsExpected(
-              parse(response.body),
+              OK,
               ExpectedYesNoAmountPageContents(
                 title = "Payments into overseas pension schemes",
                 header = "Payments into overseas pension schemes",
@@ -316,11 +307,10 @@ class PaymentIntoPensionSchemeControllerISpec
           scenarioNameForIndividualAndEnglish in {
 
             implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
-            val response = getPage
+            implicit val response: WSResponse = getPage
 
-            response must haveStatus(OK)
             assertPageAsExpected(
-              parse(response.body),
+              OK,
               ExpectedYesNoAmountPageContents(
                 title = "Payments into overseas pension schemes",
                 header = "Payments into overseas pension schemes",
@@ -346,11 +336,10 @@ class PaymentIntoPensionSchemeControllerISpec
           scenarioNameForIndividualAndWelsh in {
 
             implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
-            val response = getPage
+            implicit val response: WSResponse = getPage
 
-            response must haveStatus(OK)
             assertPageAsExpected(
-              parse(response.body),
+              OK,
               ExpectedYesNoAmountPageContents(
                 title = "Payments into overseas pension schemes",
                 header = "Payments into overseas pension schemes",
@@ -376,11 +365,10 @@ class PaymentIntoPensionSchemeControllerISpec
           scenarioNameForAgentAndEnglish in {
 
             implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
-            val response = getPage
+            implicit val response: WSResponse = getPage
 
-            response must haveStatus(OK)
             assertPageAsExpected(
-              parse(response.body),
+              OK,
               ExpectedYesNoAmountPageContents(
                 title = "Payments into overseas pension schemes",
                 header = "Payments into overseas pension schemes",
@@ -406,11 +394,10 @@ class PaymentIntoPensionSchemeControllerISpec
           scenarioNameForAgentAndWelsh in {
 
             implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
-            val response = getPage
+            implicit val response: WSResponse = getPage
 
-            response must haveStatus(OK)
             assertPageAsExpected(
-              parse(response.body),
+              OK,
               ExpectedYesNoAmountPageContents(
                 title = "Payments into overseas pension schemes",
                 header = "Payments into overseas pension schemes",
@@ -438,154 +425,64 @@ class PaymentIntoPensionSchemeControllerISpec
       }
     }
     "submitted" should {
+      "redirect to the expected page" when {
+        "the user has no stored session data at all" in {
+
+          implicit val userConfig: UserConfig = userConfigWhenIrrelevant(None)
+          implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(false), None))
+
+          assertRedirectionAsExpected(PageRelativeURLs.summaryPage)
+          getViewModel mustBe None
+
+        }
+
+      }
       "succeed" when {
         "the user has relevant session data and" when {
 
           val sessionData = pensionsUserData(aPensionsCYAModel)
 
-          "the user has selected 'No' and" when {
+          "the user has selected 'No'" in {
 
             val expectedViewModel =
               sessionData.pensions.paymentsIntoOverseasPensions.copy(
                 paymentsIntoOverseasPensionsQuestions = Some(false),
                 paymentsIntoOverseasPensionsAmount = None)
 
-            scenarioNameForIndividualAndEnglish in {
+            implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
+            implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(false), None))
 
-              implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
-              val response = submitForm(SubmittedFormDataForYesNoAmountPage(Some(false), None))
+            assertRedirectionAsExpected(relativeUrlForThisPage)
+            getViewModel mustBe Some(expectedViewModel)
 
-              response must haveStatus(SEE_OTHER)
-              response must haveALocationHeaderValue(relativeUrlForThisPage)
-              getViewModel mustBe expectedViewModel
-
-            }
-            scenarioNameForIndividualAndWelsh in {
-
-              implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
-              val response = submitForm(SubmittedFormDataForYesNoAmountPage(Some(false), None))
-
-              response must haveStatus(SEE_OTHER)
-              response must haveALocationHeaderValue(relativeUrlForThisPage)
-              getViewModel mustBe expectedViewModel
-
-            }
-            scenarioNameForAgentAndEnglish in {
-
-              implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
-              val response = submitForm(SubmittedFormDataForYesNoAmountPage(Some(false), None))
-
-              response must haveStatus(SEE_OTHER)
-              response must haveALocationHeaderValue(relativeUrlForThisPage)
-              getViewModel mustBe expectedViewModel
-
-            }
-            scenarioNameForAgentAndWelsh in {
-
-              implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
-              val response = submitForm(SubmittedFormDataForYesNoAmountPage(Some(false), None))
-
-              response must haveStatus(SEE_OTHER)
-              response must haveALocationHeaderValue(relativeUrlForThisPage)
-              getViewModel mustBe expectedViewModel
-
-            }
           }
-          "the user has selected 'Yes' as well as a valid amount (unformatted), and" when {
+          "the user has selected 'Yes' as well as a valid amount (unformatted)" in {
 
             val expectedViewModel =
               sessionData.pensions.paymentsIntoOverseasPensions.copy(
                 paymentsIntoOverseasPensionsQuestions = Some(true),
                 paymentsIntoOverseasPensionsAmount = Some(BigDecimal(42.64)))
 
-            scenarioNameForIndividualAndEnglish in {
+            implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
+            implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("42.64")))
 
-              implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
-              val response = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("42.64")))
+            assertRedirectionAsExpected(relativeUrlForThisPage)
+            getViewModel mustBe Some(expectedViewModel)
 
-              response must haveStatus(SEE_OTHER)
-              response must haveALocationHeaderValue(relativeUrlForThisPage)
-              getViewModel mustBe expectedViewModel
-
-            }
-            scenarioNameForIndividualAndWelsh in {
-
-              implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
-              val response = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("42.64")))
-
-              response must haveStatus(SEE_OTHER)
-              response must haveALocationHeaderValue(relativeUrlForThisPage)
-              getViewModel mustBe expectedViewModel
-
-            }
-            scenarioNameForAgentAndEnglish in {
-
-              implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
-              val response = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("42.64")))
-
-              response must haveStatus(SEE_OTHER)
-              response must haveALocationHeaderValue(relativeUrlForThisPage)
-              getViewModel mustBe expectedViewModel
-
-            }
-            scenarioNameForAgentAndWelsh in {
-
-              implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
-              val response = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("42.64")))
-
-              response must haveStatus(SEE_OTHER)
-              response must haveALocationHeaderValue(relativeUrlForThisPage)
-              getViewModel mustBe expectedViewModel
-
-            }
           }
-          "the user has selected 'Yes' as well as a valid amount (formatted), and" when {
+          "the user has selected 'Yes' as well as a valid amount (formatted)" in {
 
             val expectedViewModel =
               sessionData.pensions.paymentsIntoOverseasPensions.copy(
                 paymentsIntoOverseasPensionsQuestions = Some(true),
                 paymentsIntoOverseasPensionsAmount = Some(BigDecimal(1042.64)))
 
-            scenarioNameForIndividualAndEnglish in {
+            implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
+            implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("£1,042.64")))
 
-              implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
-              val response = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("£1,042.64")))
+            assertRedirectionAsExpected(relativeUrlForThisPage)
+            getViewModel mustBe Some(expectedViewModel)
 
-              response must haveStatus(SEE_OTHER)
-              response must haveALocationHeaderValue(relativeUrlForThisPage)
-              getViewModel mustBe expectedViewModel
-
-            }
-            scenarioNameForIndividualAndWelsh in {
-
-              implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
-              val response = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("£1,042.64")))
-
-              response must haveStatus(SEE_OTHER)
-              response must haveALocationHeaderValue(relativeUrlForThisPage)
-              getViewModel mustBe expectedViewModel
-
-            }
-            scenarioNameForAgentAndEnglish in {
-
-              implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
-              val response = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("£1,042.64")))
-
-              response must haveStatus(SEE_OTHER)
-              response must haveALocationHeaderValue(relativeUrlForThisPage)
-              getViewModel mustBe expectedViewModel
-
-            }
-            scenarioNameForAgentAndWelsh in {
-
-              implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
-              val response = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("£1,042.64")))
-
-              response must haveStatus(SEE_OTHER)
-              response must haveALocationHeaderValue(relativeUrlForThisPage)
-              getViewModel mustBe expectedViewModel
-
-            }
           }
 
         }
@@ -594,16 +491,16 @@ class PaymentIntoPensionSchemeControllerISpec
         "the user has relevant session data and" when {
 
           val sessionData = pensionsUserData(aPensionsCYAModel)
+          val expectedViewModel = sessionData.pensions.paymentsIntoOverseasPensions
 
           "the user has selected neither 'Yes' nor 'No' and" when {
             scenarioNameForIndividualAndEnglish in {
 
               implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
-              val response = submitForm(SubmittedFormDataForYesNoAmountPage(None, None))
+              implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(None, None))
 
-              response must haveStatus(BAD_REQUEST)
               assertPageAsExpected(
-                parse(response.body),
+                BAD_REQUEST,
                 ExpectedYesNoAmountPageContents(
                   title = "Error: Payments into overseas pension schemes",
                   header = "Payments into overseas pension schemes",
@@ -636,16 +533,16 @@ class PaymentIntoPensionSchemeControllerISpec
                     )
                   )
                 ))
+              getViewModel mustBe Some(expectedViewModel)
 
             }
             scenarioNameForIndividualAndWelsh in {
 
               implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
-              val response = submitForm(SubmittedFormDataForYesNoAmountPage(None, None))
+              implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(None, None))
 
-              response must haveStatus(BAD_REQUEST)
               assertPageAsExpected(
-                parse(response.body),
+                BAD_REQUEST,
                 ExpectedYesNoAmountPageContents(
                   title = "Error: Payments into overseas pension schemes",
                   header = "Payments into overseas pension schemes",
@@ -678,16 +575,16 @@ class PaymentIntoPensionSchemeControllerISpec
                     )
                   )
                 ))
+              getViewModel mustBe Some(expectedViewModel)
 
             }
             scenarioNameForAgentAndEnglish in {
 
               implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
-              val response = submitForm(SubmittedFormDataForYesNoAmountPage(None, None))
+              implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(None, None))
 
-              response must haveStatus(BAD_REQUEST)
               assertPageAsExpected(
-                parse(response.body),
+                BAD_REQUEST,
                 ExpectedYesNoAmountPageContents(
                   title = "Error: Payments into overseas pension schemes",
                   header = "Payments into overseas pension schemes",
@@ -720,16 +617,16 @@ class PaymentIntoPensionSchemeControllerISpec
                     )
                   )
                 ))
+              getViewModel mustBe Some(expectedViewModel)
 
             }
             scenarioNameForAgentAndWelsh in {
 
               implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
-              val response = submitForm(SubmittedFormDataForYesNoAmountPage(None, None))
+              implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(None, None))
 
-              response must haveStatus(BAD_REQUEST)
               assertPageAsExpected(
-                parse(response.body),
+                BAD_REQUEST,
                 ExpectedYesNoAmountPageContents(
                   title = "Error: Payments into overseas pension schemes",
                   header = "Payments into overseas pension schemes",
@@ -762,6 +659,7 @@ class PaymentIntoPensionSchemeControllerISpec
                     )
                   )
                 ))
+              getViewModel mustBe Some(expectedViewModel)
 
             }
           }
@@ -769,11 +667,10 @@ class PaymentIntoPensionSchemeControllerISpec
             scenarioNameForIndividualAndEnglish in {
 
               implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
-              val response = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), None))
+              implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), None))
 
-              response must haveStatus(BAD_REQUEST)
               assertPageAsExpected(
-                parse(response.body),
+                BAD_REQUEST,
                 ExpectedYesNoAmountPageContents(
                   title = "Error: Payments into overseas pension schemes",
                   header = "Payments into overseas pension schemes",
@@ -806,16 +703,16 @@ class PaymentIntoPensionSchemeControllerISpec
                     )
                   )
                 ))
+              getViewModel mustBe Some(expectedViewModel)
 
             }
             scenarioNameForIndividualAndWelsh in {
 
               implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
-              val response = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), None))
+              implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), None))
 
-              response must haveStatus(BAD_REQUEST)
               assertPageAsExpected(
-                parse(response.body),
+                BAD_REQUEST,
                 ExpectedYesNoAmountPageContents(
                   title = "Error: Payments into overseas pension schemes",
                   header = "Payments into overseas pension schemes",
@@ -848,16 +745,16 @@ class PaymentIntoPensionSchemeControllerISpec
                     )
                   )
                 ))
+              getViewModel mustBe Some(expectedViewModel)
 
             }
             scenarioNameForAgentAndEnglish in {
 
               implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
-              val response = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), None))
+              implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), None))
 
-              response must haveStatus(BAD_REQUEST)
               assertPageAsExpected(
-                parse(response.body),
+                BAD_REQUEST,
                 ExpectedYesNoAmountPageContents(
                   title = "Error: Payments into overseas pension schemes",
                   header = "Payments into overseas pension schemes",
@@ -890,16 +787,16 @@ class PaymentIntoPensionSchemeControllerISpec
                     )
                   )
                 ))
+              getViewModel mustBe Some(expectedViewModel)
 
             }
             scenarioNameForAgentAndWelsh in {
 
               implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
-              val response = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), None))
+              implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), None))
 
-              response must haveStatus(BAD_REQUEST)
               assertPageAsExpected(
-                parse(response.body),
+                BAD_REQUEST,
                 ExpectedYesNoAmountPageContents(
                   title = "Error: Payments into overseas pension schemes",
                   header = "Payments into overseas pension schemes",
@@ -932,6 +829,7 @@ class PaymentIntoPensionSchemeControllerISpec
                     )
                   )
                 ))
+              getViewModel mustBe Some(expectedViewModel)
 
             }
           }
@@ -939,11 +837,10 @@ class PaymentIntoPensionSchemeControllerISpec
             scenarioNameForIndividualAndEnglish in {
 
               implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
-              val response = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("x2.64")))
+              implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("x2.64")))
 
-              response must haveStatus(BAD_REQUEST)
               assertPageAsExpected(
-                parse(response.body),
+                BAD_REQUEST,
                 ExpectedYesNoAmountPageContents(
                   title = "Error: Payments into overseas pension schemes",
                   header = "Payments into overseas pension schemes",
@@ -976,16 +873,16 @@ class PaymentIntoPensionSchemeControllerISpec
                     )
                   )
                 ))
+              getViewModel mustBe Some(expectedViewModel)
 
             }
             scenarioNameForIndividualAndWelsh in {
 
               implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
-              val response = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("x2.64")))
+              implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("x2.64")))
 
-              response must haveStatus(BAD_REQUEST)
               assertPageAsExpected(
-                parse(response.body),
+                BAD_REQUEST,
                 ExpectedYesNoAmountPageContents(
                   title = "Error: Payments into overseas pension schemes",
                   header = "Payments into overseas pension schemes",
@@ -1018,16 +915,16 @@ class PaymentIntoPensionSchemeControllerISpec
                     )
                   )
                 ))
+              getViewModel mustBe Some(expectedViewModel)
 
             }
             scenarioNameForAgentAndEnglish in {
 
               implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
-              val response = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("x2.64")))
+              implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("x2.64")))
 
-              response must haveStatus(BAD_REQUEST)
               assertPageAsExpected(
-                parse(response.body),
+                BAD_REQUEST,
                 ExpectedYesNoAmountPageContents(
                   title = "Error: Payments into overseas pension schemes",
                   header = "Payments into overseas pension schemes",
@@ -1060,16 +957,16 @@ class PaymentIntoPensionSchemeControllerISpec
                     )
                   )
                 ))
+              getViewModel mustBe Some(expectedViewModel)
 
             }
             scenarioNameForAgentAndWelsh in {
 
               implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
-              val response = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("x2.64")))
+              implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("x2.64")))
 
-              response must haveStatus(BAD_REQUEST)
               assertPageAsExpected(
-                parse(response.body),
+                BAD_REQUEST,
                 ExpectedYesNoAmountPageContents(
                   title = "Error: Payments into overseas pension schemes",
                   header = "Payments into overseas pension schemes",
@@ -1102,6 +999,7 @@ class PaymentIntoPensionSchemeControllerISpec
                     )
                   )
                 ))
+              getViewModel mustBe Some(expectedViewModel)
 
             }
           }
@@ -1109,11 +1007,10 @@ class PaymentIntoPensionSchemeControllerISpec
             scenarioNameForIndividualAndEnglish in {
 
               implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
-              val response = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("100,000,000,000")))
+              implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("100,000,000,000")))
 
-              response must haveStatus(BAD_REQUEST)
               assertPageAsExpected(
-                parse(response.body),
+                BAD_REQUEST,
                 ExpectedYesNoAmountPageContents(
                   title = "Error: Payments into overseas pension schemes",
                   header = "Payments into overseas pension schemes",
@@ -1146,16 +1043,16 @@ class PaymentIntoPensionSchemeControllerISpec
                     )
                   )
                 ))
+              getViewModel mustBe Some(expectedViewModel)
 
             }
             scenarioNameForIndividualAndWelsh in {
 
               implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
-              val response = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("100,000,000,000")))
+              implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("100,000,000,000")))
 
-              response must haveStatus(BAD_REQUEST)
               assertPageAsExpected(
-                parse(response.body),
+                BAD_REQUEST,
                 ExpectedYesNoAmountPageContents(
                   title = "Error: Payments into overseas pension schemes",
                   header = "Payments into overseas pension schemes",
@@ -1188,16 +1085,16 @@ class PaymentIntoPensionSchemeControllerISpec
                     )
                   )
                 ))
+              getViewModel mustBe Some(expectedViewModel)
 
             }
             scenarioNameForAgentAndEnglish in {
 
               implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
-              val response = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("100,000,000,000")))
+              implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("100,000,000,000")))
 
-              response must haveStatus(BAD_REQUEST)
               assertPageAsExpected(
-                parse(response.body),
+                BAD_REQUEST,
                 ExpectedYesNoAmountPageContents(
                   title = "Error: Payments into overseas pension schemes",
                   header = "Payments into overseas pension schemes",
@@ -1230,16 +1127,16 @@ class PaymentIntoPensionSchemeControllerISpec
                     )
                   )
                 ))
+              getViewModel mustBe Some(expectedViewModel)
 
             }
             scenarioNameForAgentAndWelsh in {
 
               implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
-              val response = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("100,000,000,000")))
+              implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("100,000,000,000")))
 
-              response must haveStatus(BAD_REQUEST)
               assertPageAsExpected(
-                parse(response.body),
+                BAD_REQUEST,
                 ExpectedYesNoAmountPageContents(
                   title = "Error: Payments into overseas pension schemes",
                   header = "Payments into overseas pension schemes",
@@ -1272,6 +1169,7 @@ class PaymentIntoPensionSchemeControllerISpec
                     )
                   )
                 ))
+              getViewModel mustBe Some(expectedViewModel)
 
             }
           }
@@ -1280,8 +1178,8 @@ class PaymentIntoPensionSchemeControllerISpec
     }
   }
 
-  private def getViewModel(implicit userConfig: UserConfig): PaymentsIntoOverseasPensionsViewModel =
-    loadPensionUserData.pensions.paymentsIntoOverseasPensions
+  private def getViewModel(implicit userConfig: UserConfig): Option[PaymentsIntoOverseasPensionsViewModel] =
+    loadPensionUserData.map(_.pensions.paymentsIntoOverseasPensions)
 }
 
 

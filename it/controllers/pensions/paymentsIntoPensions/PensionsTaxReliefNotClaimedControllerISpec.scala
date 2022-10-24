@@ -23,8 +23,8 @@ import controllers.ControllerSpec._
 import controllers.YesNoControllerSpec
 import models.mongo.PensionsCYAModel
 import models.pension.reliefs.PaymentsIntoPensionViewModel
-import org.jsoup.Jsoup.parse
-import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
+import play.api.http.Status.{BAD_REQUEST, OK}
+import play.api.libs.ws.WSResponse
 
 class PensionsTaxReliefNotClaimedControllerISpec
   extends YesNoControllerSpec("/payments-into-pensions/no-tax-relief") {
@@ -48,21 +48,19 @@ class PensionsTaxReliefNotClaimedControllerISpec
       "redirect to the expected page" when {
         "the user has no stored session data at all" in {
 
-          val response = getPage(None)
+          implicit val response: WSResponse = getPage(None)
 
-          response must haveStatus(SEE_OTHER)
-          response must haveALocationHeaderValue(PageRelativeURLs.paymentsIntoPensionsCYAPage)
+          assertRedirectionAsExpected(PageRelativeURLs.paymentsIntoPensionsCYAPage)
 
         }
         "the user has a session with an empty pensions model" in {
 
-          val response = getPage(Some(pensionsUserData(aPensionsCYAEmptyModel)))
+          implicit val response: WSResponse = getPage(Some(pensionsUserData(aPensionsCYAEmptyModel)))
 
-          response must haveStatus(SEE_OTHER)
-          response must haveALocationHeaderValue(PageRelativeURLs.paymentsIntoPensionsReliefAtSourcePage)
+          assertRedirectionAsExpected(PageRelativeURLs.paymentsIntoPensionsReliefAtSourcePage)
 
         }
-        "the user has a session with an insufficient pensions model" when {
+        "the user has a session with an insufficient pensions model where" when {
           "only the RAS question has been answered" in {
 
             val sessionData = pensionsUserData(
@@ -73,10 +71,9 @@ class PensionsTaxReliefNotClaimedControllerISpec
                   ))
             )
 
-            val response = getPage(Some(sessionData))
+            implicit val response: WSResponse = getPage(Some(sessionData))
 
-            response must haveStatus(SEE_OTHER)
-            response must haveALocationHeaderValue(PageRelativeURLs.paymentsIntoPensionsReliefAtSourceAmountPage)
+            assertRedirectionAsExpected(PageRelativeURLs.paymentsIntoPensionsReliefAtSourceAmountPage)
 
           }
           "only the RAS question, and the RAS amount has been answered" in {
@@ -90,10 +87,9 @@ class PensionsTaxReliefNotClaimedControllerISpec
                   ))
             )
 
-            val response = getPage(Some(sessionData))
+            implicit val response: WSResponse = getPage(Some(sessionData))
 
-            response must haveStatus(SEE_OTHER)
-            response must haveALocationHeaderValue(PageRelativeURLs.paymentsIntoPensionsOneOffPaymentsPage)
+            assertRedirectionAsExpected(PageRelativeURLs.paymentsIntoPensionsOneOffPaymentsPage)
 
           }
           "only the RAS question, the RAS amount, and the tax relief question has been answered" in {
@@ -108,10 +104,9 @@ class PensionsTaxReliefNotClaimedControllerISpec
                   ))
             )
 
-            val response = getPage(Some(sessionData))
+            implicit val response: WSResponse = getPage(Some(sessionData))
 
-            response must haveStatus(SEE_OTHER)
-            response must haveALocationHeaderValue(PageRelativeURLs.paymentsIntoPensionsOneOffPaymentsAmountPage)
+            assertRedirectionAsExpected(PageRelativeURLs.paymentsIntoPensionsOneOffPaymentsAmountPage)
 
           }
           "only the RAS question, the RAS amount, the tax relief question, and tax relief amount has been answered" in {
@@ -127,10 +122,9 @@ class PensionsTaxReliefNotClaimedControllerISpec
                   ))
             )
 
-            val response = getPage(Some(sessionData))
+            implicit val response: WSResponse = getPage(Some(sessionData))
 
-            response must haveStatus(SEE_OTHER)
-            response must haveALocationHeaderValue(PageRelativeURLs.paymentsIntoPensionsTotalReliefAtSourceCheckPage)
+            assertRedirectionAsExpected(PageRelativeURLs.paymentsIntoPensionsTotalReliefAtSourceCheckPage)
 
           }
         }
@@ -144,11 +138,10 @@ class PensionsTaxReliefNotClaimedControllerISpec
           scenarioNameForIndividualAndEnglish in {
 
             implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
-            val response = getPage
+            implicit val response: WSResponse = getPage
 
-            response must haveStatus(OK)
             assertPageAsExpected(
-              parse(response.body),
+              OK,
               ExpectedYesNoPageContents(
                 title = "Pensions where tax relief is not claimed",
                 header = "Pensions where tax relief is not claimed",
@@ -168,11 +161,10 @@ class PensionsTaxReliefNotClaimedControllerISpec
           scenarioNameForIndividualAndWelsh in {
 
             implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
-            val response = getPage
+            implicit val response: WSResponse = getPage
 
-            response must haveStatus(OK)
             assertPageAsExpected(
-              parse(response.body),
+              OK,
               ExpectedYesNoPageContents(
                 title = "Pensions where tax relief is not claimed",
                 header = "Pensions where tax relief is not claimed",
@@ -192,11 +184,10 @@ class PensionsTaxReliefNotClaimedControllerISpec
           scenarioNameForAgentAndEnglish in {
 
             implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
-            val response = getPage
+            implicit val response: WSResponse = getPage
 
-            response must haveStatus(OK)
             assertPageAsExpected(
-              parse(response.body),
+              OK,
               ExpectedYesNoPageContents(
                 title = "Pensions where tax relief is not claimed",
                 header = "Pensions where tax relief is not claimed",
@@ -216,11 +207,10 @@ class PensionsTaxReliefNotClaimedControllerISpec
           scenarioNameForAgentAndWelsh in {
 
             implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
-            val response = getPage
+            implicit val response: WSResponse = getPage
 
-            response must haveStatus(OK)
             assertPageAsExpected(
-              parse(response.body),
+              OK,
               ExpectedYesNoPageContents(
                 title = "Pensions where tax relief is not claimed",
                 header = "Pensions where tax relief is not claimed",
@@ -251,11 +241,10 @@ class PensionsTaxReliefNotClaimedControllerISpec
           scenarioNameForIndividualAndEnglish in {
 
             implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
-            val response = getPage
+            implicit val response: WSResponse = getPage
 
-            response must haveStatus(OK)
             assertPageAsExpected(
-              parse(response.body),
+              OK,
               ExpectedYesNoPageContents(
                 title = "Pensions where tax relief is not claimed",
                 header = "Pensions where tax relief is not claimed",
@@ -275,11 +264,10 @@ class PensionsTaxReliefNotClaimedControllerISpec
           scenarioNameForIndividualAndWelsh in {
 
             implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
-            val response = getPage
+            implicit val response: WSResponse = getPage
 
-            response must haveStatus(OK)
             assertPageAsExpected(
-              parse(response.body),
+              OK,
               ExpectedYesNoPageContents(
                 title = "Pensions where tax relief is not claimed",
                 header = "Pensions where tax relief is not claimed",
@@ -299,11 +287,10 @@ class PensionsTaxReliefNotClaimedControllerISpec
           scenarioNameForAgentAndEnglish in {
 
             implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
-            val response = getPage
+            implicit val response: WSResponse = getPage
 
-            response must haveStatus(OK)
             assertPageAsExpected(
-              parse(response.body),
+              OK,
               ExpectedYesNoPageContents(
                 title = "Pensions where tax relief is not claimed",
                 header = "Pensions where tax relief is not claimed",
@@ -323,11 +310,10 @@ class PensionsTaxReliefNotClaimedControllerISpec
           scenarioNameForAgentAndWelsh in {
 
             implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
-            val response = getPage
+            implicit val response: WSResponse = getPage
 
-            response must haveStatus(OK)
             assertPageAsExpected(
-              parse(response.body),
+              OK,
               ExpectedYesNoPageContents(
                 title = "Pensions where tax relief is not claimed",
                 header = "Pensions where tax relief is not claimed",
@@ -359,11 +345,10 @@ class PensionsTaxReliefNotClaimedControllerISpec
           scenarioNameForIndividualAndEnglish in {
 
             implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
-            val response = getPage
+            implicit val response: WSResponse = getPage
 
-            response must haveStatus(OK)
             assertPageAsExpected(
-              parse(response.body),
+              OK,
               ExpectedYesNoPageContents(
                 title = "Pensions where tax relief is not claimed",
                 header = "Pensions where tax relief is not claimed",
@@ -383,11 +368,10 @@ class PensionsTaxReliefNotClaimedControllerISpec
           scenarioNameForIndividualAndWelsh in {
 
             implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
-            val response = getPage
+            implicit val response: WSResponse = getPage
 
-            response must haveStatus(OK)
             assertPageAsExpected(
-              parse(response.body),
+              OK,
               ExpectedYesNoPageContents(
                 title = "Pensions where tax relief is not claimed",
                 header = "Pensions where tax relief is not claimed",
@@ -408,11 +392,10 @@ class PensionsTaxReliefNotClaimedControllerISpec
           scenarioNameForAgentAndEnglish in {
 
             implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
-            val response = getPage
+            implicit val response: WSResponse = getPage
 
-            response must haveStatus(OK)
             assertPageAsExpected(
-              parse(response.body),
+              OK,
               ExpectedYesNoPageContents(
                 title = "Pensions where tax relief is not claimed",
                 header = "Pensions where tax relief is not claimed",
@@ -432,11 +415,10 @@ class PensionsTaxReliefNotClaimedControllerISpec
           scenarioNameForAgentAndWelsh in {
 
             implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
-            val response = getPage
+            implicit val response: WSResponse = getPage
 
-            response must haveStatus(OK)
             assertPageAsExpected(
-              parse(response.body),
+              OK,
               ExpectedYesNoPageContents(
                 title = "Pensions where tax relief is not claimed",
                 header = "Pensions where tax relief is not claimed",
@@ -458,8 +440,19 @@ class PensionsTaxReliefNotClaimedControllerISpec
       }
     }
     "submitted" should {
-      "succeed" when {
-        "the user has selected 'No' and" when {
+      "redirect to the expected page" when {
+        "the user has no stored session data at all" in {
+
+          implicit val userConfig: UserConfig = userConfigWhenIrrelevant(None)
+          implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoPage(Some(false)))
+
+          assertRedirectionAsExpected(PageRelativeURLs.paymentsIntoPensionsCYAPage)
+          getViewModel mustBe None
+
+        }
+      }
+      "succeed when" when {
+        "the user has selected 'No'" in {
 
           val sessionData = pensionsUserData(minimalSessionDataToAccessThisPage)
 
@@ -472,48 +465,14 @@ class PensionsTaxReliefNotClaimedControllerISpec
               totalWorkplacePensionPayments = None
             )
 
-          scenarioNameForIndividualAndEnglish in {
+          implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
+          implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoPage(Some(false)))
 
-            implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
-            val response = submitForm(SubmittedFormDataForYesNoPage(Some(false)))
+          assertRedirectionAsExpected(PageRelativeURLs.paymentsIntoPensionsCYAPage)
+          getViewModel mustBe Some(expectedViewModel)
 
-            response must haveStatus(SEE_OTHER)
-            response must haveALocationHeaderValue(PageRelativeURLs.paymentsIntoPensionsCYAPage)
-            getViewModel mustBe expectedViewModel
-
-          }
-          scenarioNameForIndividualAndWelsh in {
-
-            implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
-            val response = submitForm(SubmittedFormDataForYesNoPage(Some(false)))
-
-            response must haveStatus(SEE_OTHER)
-            response must haveALocationHeaderValue(PageRelativeURLs.paymentsIntoPensionsCYAPage)
-            getViewModel mustBe expectedViewModel
-
-          }
-          scenarioNameForAgentAndEnglish in {
-
-            implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
-            val response = submitForm(SubmittedFormDataForYesNoPage(Some(false)))
-
-            response must haveStatus(SEE_OTHER)
-            response must haveALocationHeaderValue(PageRelativeURLs.paymentsIntoPensionsCYAPage)
-            getViewModel mustBe expectedViewModel
-
-          }
-          scenarioNameForAgentAndWelsh in {
-
-            implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
-            val response = submitForm(SubmittedFormDataForYesNoPage(Some(false)))
-
-            response must haveStatus(SEE_OTHER)
-            response must haveALocationHeaderValue(PageRelativeURLs.paymentsIntoPensionsCYAPage)
-            getViewModel mustBe expectedViewModel
-
-          }
         }
-        "the user has selected 'Yes', they've already answered 'Yes' about the 'retirement annuity' contract, and" when {
+        "the user has selected 'Yes', they've already answered 'Yes' about the 'retirement annuity' contract" in {
 
           val sessionData = pensionsUserData(
             aPensionsCYAModel.copy(
@@ -528,48 +487,14 @@ class PensionsTaxReliefNotClaimedControllerISpec
               retirementAnnuityContractPaymentsQuestion = Some(true)
             )
 
-          scenarioNameForIndividualAndEnglish in {
+          implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
+          implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoPage(Some(true)))
 
-            implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
-            val response = submitForm(SubmittedFormDataForYesNoPage(Some(true)))
+          assertRedirectionAsExpected(PageRelativeURLs.paymentsIntoPensionsCYAPage)
+          getViewModel mustBe Some(expectedViewModel)
 
-            response must haveStatus(SEE_OTHER)
-            response must haveALocationHeaderValue(PageRelativeURLs.paymentsIntoPensionsCYAPage)
-            getViewModel mustBe expectedViewModel
-
-          }
-          scenarioNameForIndividualAndWelsh in {
-
-            implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
-            val response = submitForm(SubmittedFormDataForYesNoPage(Some(true)))
-
-            response must haveStatus(SEE_OTHER)
-            response must haveALocationHeaderValue(PageRelativeURLs.paymentsIntoPensionsCYAPage)
-            getViewModel mustBe expectedViewModel
-
-          }
-          scenarioNameForAgentAndEnglish in {
-
-            implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
-            val response = submitForm(SubmittedFormDataForYesNoPage(Some(true)))
-
-            response must haveStatus(SEE_OTHER)
-            response must haveALocationHeaderValue(PageRelativeURLs.paymentsIntoPensionsCYAPage)
-            getViewModel mustBe expectedViewModel
-
-          }
-          scenarioNameForAgentAndWelsh in {
-
-            implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
-            val response = submitForm(SubmittedFormDataForYesNoPage(Some(true)))
-
-            response must haveStatus(SEE_OTHER)
-            response must haveALocationHeaderValue(PageRelativeURLs.paymentsIntoPensionsCYAPage)
-            getViewModel mustBe expectedViewModel
-
-          }
         }
-        "the user has selected 'Yes', but they have to answer about the 'retirement annuity' contract, and" when {
+        "the user has selected 'Yes', but they have to answer about the 'retirement annuity' contract" in {
 
           val sessionData = pensionsUserData(
             aPensionsCYAModel.copy(
@@ -583,63 +508,27 @@ class PensionsTaxReliefNotClaimedControllerISpec
               pensionTaxReliefNotClaimedQuestion = Some(true)
             )
 
-          scenarioNameForIndividualAndEnglish in {
+          implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
+          implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoPage(Some(true)))
 
-            implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
-            val response = submitForm(SubmittedFormDataForYesNoPage(Some(true)))
+          assertRedirectionAsExpected(PageRelativeURLs.paymentsIntoPensionsRetirementAnnuityPage)
+          getViewModel mustBe Some(expectedViewModel)
 
-            response must haveStatus(SEE_OTHER)
-            response must haveALocationHeaderValue(PageRelativeURLs.paymentsIntoPensionsRetirementAnnuityPage)
-            getViewModel mustBe expectedViewModel
-
-          }
-          scenarioNameForIndividualAndWelsh in {
-
-            implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
-            val response = submitForm(SubmittedFormDataForYesNoPage(Some(true)))
-
-            response must haveStatus(SEE_OTHER)
-            response must haveALocationHeaderValue(PageRelativeURLs.paymentsIntoPensionsRetirementAnnuityPage)
-            getViewModel mustBe expectedViewModel
-
-          }
-          scenarioNameForAgentAndEnglish in {
-
-            implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
-            val response = submitForm(SubmittedFormDataForYesNoPage(Some(true)))
-
-            response must haveStatus(SEE_OTHER)
-            response must haveALocationHeaderValue(PageRelativeURLs.paymentsIntoPensionsRetirementAnnuityPage)
-            getViewModel mustBe expectedViewModel
-
-          }
-          scenarioNameForAgentAndWelsh in {
-
-            implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
-            val response = submitForm(SubmittedFormDataForYesNoPage(Some(true)))
-
-            response must haveStatus(SEE_OTHER)
-            response must haveALocationHeaderValue(PageRelativeURLs.paymentsIntoPensionsRetirementAnnuityPage)
-            getViewModel mustBe expectedViewModel
-
-          }
         }
-
-
       }
       "fail" when {
         "the user has selected neither 'Yes' nor 'No' and" when {
 
           val sessionData = pensionsUserData(minimalSessionDataToAccessThisPage)
+          val expectedViewModel = sessionData.pensions.paymentsIntoPension
 
           scenarioNameForIndividualAndEnglish in {
 
             implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
-            val response = submitForm(SubmittedFormDataForYesNoPage(None))
+            implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoPage(None))
 
-            response must haveStatus(BAD_REQUEST)
             assertPageAsExpected(
-              parse(response.body),
+              BAD_REQUEST,
               ExpectedYesNoPageContents(
                 title = "Error: Pensions where tax relief is not claimed",
                 header = "Pensions where tax relief is not claimed",
@@ -666,16 +555,16 @@ class PensionsTaxReliefNotClaimedControllerISpec
                   )
                 )
               ))
+            getViewModel mustBe Some(expectedViewModel)
 
           }
           scenarioNameForIndividualAndWelsh in {
 
             implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
-            val response = submitForm(SubmittedFormDataForYesNoPage(None))
+            implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoPage(None))
 
-            response must haveStatus(BAD_REQUEST)
             assertPageAsExpected(
-              parse(response.body),
+              BAD_REQUEST,
               ExpectedYesNoPageContents(
                 title = "Error: Pensions where tax relief is not claimed",
                 header = "Pensions where tax relief is not claimed",
@@ -702,16 +591,16 @@ class PensionsTaxReliefNotClaimedControllerISpec
                   )
                 )
               ))
+            getViewModel mustBe Some(expectedViewModel)
 
           }
           scenarioNameForAgentAndEnglish in {
 
             implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
-            val response = submitForm(SubmittedFormDataForYesNoPage(None))
+            implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoPage(None))
 
-            response must haveStatus(BAD_REQUEST)
             assertPageAsExpected(
-              parse(response.body),
+              BAD_REQUEST,
               ExpectedYesNoPageContents(
                 title = "Error: Pensions where tax relief is not claimed",
                 header = "Pensions where tax relief is not claimed",
@@ -738,16 +627,16 @@ class PensionsTaxReliefNotClaimedControllerISpec
                   )
                 )
               ))
+            getViewModel mustBe Some(expectedViewModel)
 
           }
           scenarioNameForAgentAndWelsh in {
 
             implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
-            val response = submitForm(SubmittedFormDataForYesNoPage(None))
+            implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoPage(None))
 
-            response must haveStatus(BAD_REQUEST)
             assertPageAsExpected(
-              parse(response.body),
+              BAD_REQUEST,
               ExpectedYesNoPageContents(
                 title = "Error: Pensions where tax relief is not claimed",
                 header = "Pensions where tax relief is not claimed",
@@ -774,6 +663,7 @@ class PensionsTaxReliefNotClaimedControllerISpec
                   )
                 )
               ))
+            getViewModel mustBe Some(expectedViewModel)
 
           }
         }
@@ -782,8 +672,8 @@ class PensionsTaxReliefNotClaimedControllerISpec
     }
   }
 
-  private def getViewModel(implicit userConfig: UserConfig): PaymentsIntoPensionViewModel =
-    loadPensionUserData.pensions.paymentsIntoPension
+  private def getViewModel(implicit userConfig: UserConfig): Option[PaymentsIntoPensionViewModel] =
+    loadPensionUserData.map(_.pensions.paymentsIntoPension)
 
 }
 

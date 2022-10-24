@@ -17,17 +17,18 @@
 package controllers
 
 import controllers.ControllerSpec._
-import org.jsoup.nodes.Document
+import org.jsoup.Jsoup.parse
+import play.api.libs.ws.WSResponse
 
 class YesNoControllerSpec(override val pathForThisPage: String) extends ControllerSpec(pathForThisPage) {
 
-  def assertPageAsExpected(document: Document, expectedPageContents: ExpectedYesNoPageContents)(implicit userConfig: UserConfig): Unit = {
-
+  def assertPageAsExpected(expectedStatusCode: Int, expectedPageContents: ExpectedYesNoPageContents)(implicit userConfig: UserConfig, response: WSResponse): Unit = {
+    val document = parse(response.body)
+    response must haveStatus(expectedStatusCode)
     super.assertPageAsExpected(document, expectedPageContents)
     assertRadioButtonAsExpected(document, 0, expectedPageContents.radioButtonForYes)
     assertRadioButtonAsExpected(document, 1, expectedPageContents.radioButtonForNo)
     assertContinueButtonAsExpected(document, expectedPageContents.buttonForContinue)
-
   }
 
   case class ExpectedYesNoPageContents(title: String,
@@ -40,7 +41,7 @@ class YesNoControllerSpec(override val pathForThisPage: String) extends Controll
                                        errorAboveElementCheckSectionOpt: Option[ErrorAboveElementCheckSection] = None,
                                        links: Set[ExpectedLink] = Set.empty,
                                        text: Set[ExpectedText] = Set.empty
-                                      ) extends ExpectedPageContents
+                                      ) extends BaseExpectedPageContents
 
 
   case class SubmittedFormDataForYesNoPage(yesOrNoOpt: Option[Boolean]) extends SubmittedFormDataWithYesNo {
