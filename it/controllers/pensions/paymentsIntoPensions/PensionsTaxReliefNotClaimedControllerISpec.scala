@@ -63,7 +63,7 @@ class PensionsTaxReliefNotClaimedControllerISpec
 
         }
         "the user has a session with an insufficient pensions model" when {
-          "case one" in {
+          "only the RAS question has been answered" in {
 
             val sessionData = pensionsUserData(
               aPensionsCYAEmptyModel
@@ -79,7 +79,7 @@ class PensionsTaxReliefNotClaimedControllerISpec
             response must haveALocationHeaderValue(PageRelativeURLs.paymentsIntoPensionsReliefAtSourceAmountPage)
 
           }
-          "case two" in {
+          "only the RAS question, and the RAS amount has been answered" in {
 
             val sessionData = pensionsUserData(
               aPensionsCYAEmptyModel
@@ -96,7 +96,7 @@ class PensionsTaxReliefNotClaimedControllerISpec
             response must haveALocationHeaderValue(PageRelativeURLs.paymentsIntoPensionsOneOffPaymentsPage)
 
           }
-          "case three" in {
+          "only the RAS question, the RAS amount, and the tax relief question has been answered" in {
 
             val sessionData = pensionsUserData(
               aPensionsCYAEmptyModel
@@ -114,7 +114,7 @@ class PensionsTaxReliefNotClaimedControllerISpec
             response must haveALocationHeaderValue(PageRelativeURLs.paymentsIntoPensionsOneOffPaymentsAmountPage)
 
           }
-          "case four" in {
+          "only the RAS question, the RAS amount, the tax relief question, and tax relief amount has been answered" in {
 
             val sessionData = pensionsUserData(
               aPensionsCYAEmptyModel
