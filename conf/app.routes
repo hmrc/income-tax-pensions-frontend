@@ -224,5 +224,5 @@ POST        /:taxYear/overseas-pensions/payments-into-overseas-pensions/qualifyi
 
 ###########################     Income from overseas pensions pages     ####################################
 
-GET         /:taxYear/overseas-pensions/income-from-overseas-pensions                               controllers.pensions.incomeFromOverseasPensions.IncomeFromOverseasPensionsController.show(taxYear: Int)
-POST        /:taxYear/overseas-pensions/income-from-overseas-pensions                               controllers.pensions.incomeFromOverseasPensions.IncomeFromOverseasPensionsController.submit(taxYear: Int)
+GET         /:taxYear/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-status                              controllers.pensions.incomeFromOverseasPensions.PensionOverseasIncomeStatus.show(taxYear: Int)
+POST        /:taxYear/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-status                              controllers.pensions.incomeFromOverseasPensions.PensionOverseasIncomeStatus.submit(taxYear: Int)

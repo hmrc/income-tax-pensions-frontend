@@ -28,21 +28,21 @@ import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.incomeFromOverseasPensions.IncomeFromOverseasPensionsView
-import controllers.pensions.incomeFromOverseasPensions.routes.IncomeFromOverseasPensionsController
+import controllers.pensions.incomeFromOverseasPensions.routes.PensionOverseasIncomeStatus
 import controllers.pensions.routes.PensionsSummaryController
 
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class IncomeFromOverseasPensionsController @Inject()(authAction: AuthorisedAction,
-                                                     incomeFromOverseasPensionsView: IncomeFromOverseasPensionsView,
-                                                     pensionSessionService: PensionSessionService,
-                                                     errorHandler: ErrorHandler
-                                             )(implicit val mcc: MessagesControllerComponents,
-                                               appConfig: AppConfig,
-                                               clock: Clock,
-                                               ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
+class PensionOverseasIncomeStatus @Inject()(authAction: AuthorisedAction,
+                                            incomeFromOverseasPensionsView: IncomeFromOverseasPensionsView,
+                                            pensionSessionService: PensionSessionService,
+                                            errorHandler: ErrorHandler
+                                           )(implicit val mcc: MessagesControllerComponents,
+                                             appConfig: AppConfig,
+                                             clock: Clock,
+                                             ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
 
   def yesNoForm(user: User): Form[Boolean] = YesNoForm.yesNoForm(
     missingInputError = s"incomeFromOverseasPensions.incomeFromOverseasPension.error.noEntry.${if (user.isAgent) "agent" else "individual"}"
@@ -76,15 +76,15 @@ class IncomeFromOverseasPensionsController @Inject()(authAction: AuthorisedActio
                 paymentsFromOverseasPensions = Some(yesNo)))
             pensionSessionService.createOrUpdateSessionData(request.user,
               updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
-              if(yesNo) {
-                Redirect(IncomeFromOverseasPensionsController.show(taxYear))  //TODO - redirect to SASS-2587
-              }else {
-                Redirect(IncomeFromOverseasPensionsController.show(taxYear))  //TODO - redirect to SASS-2588
+              if (yesNo) {
+                Redirect(PensionOverseasIncomeStatus.show(taxYear)) //TODO - redirect to SASS-2587
+              } else {
+                Redirect(PensionOverseasIncomeStatus.show(taxYear)) //TODO - redirect to SASS-2588
               }
             }
           case _ =>
             //TODO - redirect to CYA page once implemented
-            Future.successful(Redirect(IncomeFromOverseasPensionsController.show(taxYear)))
+            Future.successful(Redirect(PensionOverseasIncomeStatus.show(taxYear)))
         }
       }
     )
