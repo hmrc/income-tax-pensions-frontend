@@ -17,7 +17,7 @@
 package models.pension
 
 import models.mongo.PensionsCYAModel
-import models.pension.charges.{PaymentsIntoOverseasPensionsViewModel, PensionAnnualAllowancesViewModel, PensionCharges, PensionLifetimeAllowancesViewModel, TaxReliefQuestion, UnauthorisedPaymentsViewModel}
+import models.pension.charges.{IncomeFromOverseasPensionsViewModel, PaymentsIntoOverseasPensionsViewModel, PensionAnnualAllowancesViewModel, PensionCharges, PensionLifetimeAllowancesViewModel, TaxReliefQuestion, UnauthorisedPaymentsViewModel}
 import models.pension.employmentPensions.EmploymentPensions
 import models.pension.reliefs.{PaymentsIntoPensionViewModel, PensionReliefs}
 import models.pension.statebenefits.{IncomeFromPensionsViewModel, StateBenefit, StateBenefitViewModel, StateBenefitsModel, UkPensionIncomeViewModel}
@@ -115,7 +115,9 @@ object AllPensionsData {
       doubleTaxationCountryTreaty = prior.pensionIncome.flatMap(_.overseasPensionContribution.headOption.flatMap(_.dblTaxationTreaty)),
       doubleTaxationReliefAmount = prior.pensionIncome.flatMap(_.overseasPensionContribution.headOption.flatMap(_.dblTaxationRelief)),
       sf74Reference = prior.pensionIncome.flatMap(_.overseasPensionContribution.headOption.flatMap(_.sf74Reference))
-    )
+    ),
+      //todo
+      incomeFromOverseasPensionsViewModel = IncomeFromOverseasPensionsViewModel()
     )
   }
 
