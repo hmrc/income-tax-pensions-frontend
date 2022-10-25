@@ -814,3 +814,11 @@ overseasPension.QOPSReference.paragraph1.agent = You can find this on your clien
 overseasPension.QOPSReference.hint = For example, QOPS123456
 overseasPension.QOPSReference.error.incorrectFormat = Enter a six digit number
 overseasPension.QOPSReference.prefix=QOPS
+
+
+############################################## INCOME FROM OVERSEAS PENSIONS ##############################################
+
+incomeFromOverseasPensions.incomeFromOverseasPension.title.individual = Did you get payments from an overseas pension scheme?
+incomeFromOverseasPensions.incomeFromOverseasPension.title.agent = Did your client get payments from an overseas pension scheme?
+incomeFromOverseasPensions.incomeFromOverseasPension.error.noEntry.individual = Select yes if you had income from an overseas pension scheme
+incomeFromOverseasPensions.incomeFromOverseasPension.error.noEntry.agent = Select yes if your client had income from an overseas pension scheme
