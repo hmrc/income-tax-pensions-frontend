@@ -25,13 +25,13 @@ import utils.EncryptorInstances.{bigDecimalEncryptor, booleanEncryptor, stringEn
 import utils.{EncryptedValue, SecureGCMCipher}
 
 
-case class IncomeFromOverseasPensionsViewModel(paymentsFromOverseasPensions: Option[Boolean] = None,
-                                               overseasPensionSchemes: Option[Seq[PensionSchemeSummary]] = None) {
+case class IncomeFromOverseasPensionsViewModel(paymentsFromOverseasPensionsQuestion: Option[Boolean] = None,
+                                               pensionSchemes: Option[Seq[PensionScheme]] = None) {
 
   def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedIncomeFromOverseasPensionsViewModel =
     EncryptedIncomeFromOverseasPensionsViewModel(
-      paymentsFromOverseasPensions = paymentsFromOverseasPensions.map(_.encrypted),
-      overseasPensionSchemes = overseasPensionSchemes.map(_.map(_.encrypted()))
+      paymentsFromOverseasPensionsQuestion = paymentsFromOverseasPensionsQuestion.map(_.encrypted),
+      overseasPensionSchemes = pensionSchemes.map(_.map(_.encrypted()))
     )
 }
 
@@ -40,12 +40,12 @@ object IncomeFromOverseasPensionsViewModel {
 }
 
 
-case class EncryptedIncomeFromOverseasPensionsViewModel(paymentsFromOverseasPensions: Option[EncryptedValue] = None,
+case class EncryptedIncomeFromOverseasPensionsViewModel(paymentsFromOverseasPensionsQuestion: Option[EncryptedValue] = None,
                                                         overseasPensionSchemes: Option[Seq[EncryptedPensionSchemeSummary]] = None) {
 
   def decrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): IncomeFromOverseasPensionsViewModel =
     IncomeFromOverseasPensionsViewModel(
-      paymentsFromOverseasPensions = paymentsFromOverseasPensions.map(_.decrypted[Boolean]),
+      paymentsFromOverseasPensionsQuestion = paymentsFromOverseasPensionsQuestion.map(_.decrypted[Boolean]),
       overseasPensionSchemes.map(_.map(_.decrypted())))
 }
 
@@ -54,7 +54,7 @@ object EncryptedIncomeFromOverseasPensionsViewModel {
 }
 
 case class EncryptedPensionSchemeSummary(
-                                          country: Option[EncryptedValue] = None,
+                                          countryCode: Option[EncryptedValue] = None,
                                           pensionPaymentAmount: Option[EncryptedValue] = None,
                                           pensionPaymentTaxPaid: Option[EncryptedValue] = None,
                                           specialWithholdingTaxQuestion: Option[EncryptedValue] = None,
@@ -64,14 +64,14 @@ case class EncryptedPensionSchemeSummary(
                                         ) {
 
 
-  def decrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): PensionSchemeSummary =
-    PensionSchemeSummary(
-      country = country.map(_.decrypted[String]),
+  def decrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): PensionScheme =
+    PensionScheme(
+      countryCode = countryCode.map(_.decrypted[String]),
       pensionPaymentAmount = pensionPaymentAmount.map(_.decrypted[BigDecimal]),
       pensionPaymentTaxPaid = pensionPaymentTaxPaid.map(_.decrypted[BigDecimal]),
       specialWithholdingTaxQuestion = specialWithholdingTaxQuestion.map(_.decrypted[Boolean]),
       specialWithholdingTaxAmount = specialWithholdingTaxAmount.map(_.decrypted[BigDecimal]),
-      foreignTaxCredit = foreignTaxCredit.map(_.decrypted[Boolean]),
+      foreignTaxCreditReliefQuestion = foreignTaxCredit.map(_.decrypted[Boolean]),
       taxableAmount = taxableAmount.map(_.decrypted[BigDecimal])
     )
 
@@ -82,28 +82,28 @@ object EncryptedPensionSchemeSummary {
 }
 
 
-case class PensionSchemeSummary(
-                                 country: Option[String] = None,
-                                 pensionPaymentAmount: Option[BigDecimal] = None,
-                                 pensionPaymentTaxPaid: Option[BigDecimal] = None,
-                                 specialWithholdingTaxQuestion: Option[Boolean] = None,
-                                 specialWithholdingTaxAmount: Option[BigDecimal] = None,
-                                 foreignTaxCredit: Option[Boolean] = None,
-                                 taxableAmount: Option[BigDecimal] = None
-                               ) {
+case class PensionScheme(
+                          countryCode: Option[String] = None,
+                          pensionPaymentAmount: Option[BigDecimal] = None,
+                          pensionPaymentTaxPaid: Option[BigDecimal] = None,
+                          specialWithholdingTaxQuestion: Option[Boolean] = None,
+                          specialWithholdingTaxAmount: Option[BigDecimal] = None,
+                          foreignTaxCreditReliefQuestion: Option[Boolean] = None,
+                          taxableAmount: Option[BigDecimal] = None) {
+
   def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedPensionSchemeSummary = {
     EncryptedPensionSchemeSummary(
-      country = country.map(_.encrypted),
+      countryCode = countryCode.map(_.encrypted),
       pensionPaymentAmount = pensionPaymentAmount.map(_.encrypted),
       pensionPaymentTaxPaid = pensionPaymentTaxPaid.map(_.encrypted),
       specialWithholdingTaxQuestion = specialWithholdingTaxQuestion.map(_.encrypted),
       specialWithholdingTaxAmount = specialWithholdingTaxAmount.map(_.encrypted),
-      foreignTaxCredit = foreignTaxCredit.map(_.encrypted),
+      foreignTaxCredit = foreignTaxCreditReliefQuestion.map(_.encrypted),
       taxableAmount = taxableAmount.map(_.encrypted)
     )
   }
 }
 
-object PensionSchemeSummary {
-  implicit val format: OFormat[PensionSchemeSummary] = Json.format[PensionSchemeSummary]
+object PensionScheme {
+  implicit val format: OFormat[PensionScheme] = Json.format[PensionScheme]
 }

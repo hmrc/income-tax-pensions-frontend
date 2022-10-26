@@ -17,7 +17,7 @@
 package models.pension
 
 import models.mongo.PensionsCYAModel
-import models.pension.charges.{IncomeFromOverseasPensionsViewModel, PaymentsIntoOverseasPensionsViewModel, PensionAnnualAllowancesViewModel, PensionCharges, PensionLifetimeAllowancesViewModel, PensionSchemeSummary, TaxReliefQuestion, UnauthorisedPaymentsViewModel}
+import models.pension.charges.{IncomeFromOverseasPensionsViewModel, PaymentsIntoOverseasPensionsViewModel, PensionAnnualAllowancesViewModel, PensionCharges, PensionLifetimeAllowancesViewModel, PensionScheme, TaxReliefQuestion, UnauthorisedPaymentsViewModel}
 import models.pension.employmentPensions.EmploymentPensions
 import models.pension.reliefs.{PaymentsIntoPensionViewModel, PensionReliefs}
 import models.pension.statebenefits.{IncomeFromPensionsViewModel, StateBenefit, StateBenefitViewModel, StateBenefitsModel, UkPensionIncomeViewModel}
@@ -117,21 +117,21 @@ object AllPensionsData {
       sf74Reference = prior.pensionIncome.flatMap(_.overseasPensionContribution.headOption.flatMap(_.sf74Reference))
     ),
       incomeFromOverseasPensionsViewModel = IncomeFromOverseasPensionsViewModel(
-        paymentsFromOverseasPensions = prior.pensionIncome.map(_.foreignPension.nonEmpty),
-        overseasPensionSchemes = prior.pensionIncome.map( x => fromForeignPensionToPensionScheme(x.foreignPension)),
+        paymentsFromOverseasPensionsQuestion = prior.pensionIncome.map(_.foreignPension.nonEmpty),
+        pensionSchemes = prior.pensionIncome.map(x => fromForeignPensionToPensionScheme(x.foreignPension))
       )
     )
   }
 
   private def fromForeignPensionToPensionScheme(foreignPension: Seq[ForeignPension]) = {
     foreignPension.map( fP =>
-      PensionSchemeSummary(
-        country = Some(fP.countryCode),
+      PensionScheme(
+        countryCode = Some(fP.countryCode),
         pensionPaymentAmount = fP.amountBeforeTax,
-        pensionPaymentTaxPaid = (fP.taxTakenOff),
-        specialWithholdingTaxQuestion = Some((fP.specialWithholdingTax).isDefined),
+        pensionPaymentTaxPaid = fP.taxTakenOff,
+        specialWithholdingTaxQuestion = Some(fP.specialWithholdingTax.isDefined),
         specialWithholdingTaxAmount = fP.specialWithholdingTax,
-        foreignTaxCredit = fP.foreignTaxCreditRelief,
+        foreignTaxCreditReliefQuestion = fP.foreignTaxCreditRelief,
         taxableAmount = Some(fP.taxableAmount)
       )
     )

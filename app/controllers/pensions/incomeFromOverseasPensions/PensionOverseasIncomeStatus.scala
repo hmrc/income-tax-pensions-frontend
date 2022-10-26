@@ -53,7 +53,7 @@ class PensionOverseasIncomeStatus @Inject()(authAction: AuthorisedAction,
       case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
       case Right(optPensionUserData) => optPensionUserData match {
         case Some(data) =>
-          data.pensions.incomeFromOverseasPensionsViewModel.paymentsFromOverseasPensions match {
+          data.pensions.incomeFromOverseasPensionsViewModel.paymentsFromOverseasPensionsQuestion match {
             case Some(value) => Future.successful(Ok(incomeFromOverseasPensionsView(
               yesNoForm(request.user).fill(value), taxYear)))
             case None => Future.successful(Ok(incomeFromOverseasPensionsView(yesNoForm(request.user), taxYear)))
@@ -73,7 +73,7 @@ class PensionOverseasIncomeStatus @Inject()(authAction: AuthorisedAction,
           case Right(Some(data)) =>
             val updatedCyaModel: PensionsCYAModel = data.pensions.copy(
               incomeFromOverseasPensionsViewModel = data.pensions.incomeFromOverseasPensionsViewModel.copy(
-                paymentsFromOverseasPensions = Some(yesNo)))
+                paymentsFromOverseasPensionsQuestion = Some(yesNo)))
             pensionSessionService.createOrUpdateSessionData(request.user,
               updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
               if (yesNo) {

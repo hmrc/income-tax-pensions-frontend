@@ -143,7 +143,7 @@ class PensionOverseasIncomeStatusISpec
             val sessionData = pensionsUserData(
               minimalSessionDataToAccessThisPage.copy(
                 incomeFromOverseasPensionsViewModel = minimalSessionDataToAccessThisPage.incomeFromOverseasPensionsViewModel.copy(
-                  paymentsFromOverseasPensions = Some(true)
+                  paymentsFromOverseasPensionsQuestion = Some(true)
                 )
               )
             )
@@ -235,7 +235,7 @@ class PensionOverseasIncomeStatusISpec
             val sessionData = pensionsUserData(
               minimalSessionDataToAccessThisPage.copy(
                 incomeFromOverseasPensionsViewModel = minimalSessionDataToAccessThisPage.incomeFromOverseasPensionsViewModel.copy(
-                  paymentsFromOverseasPensions = Some(false)
+                  paymentsFromOverseasPensionsQuestion = Some(false)
                 )
               )
             )
@@ -333,8 +333,8 @@ class PensionOverseasIncomeStatusISpec
 
             val expectedViewModel =
               sessionData.pensions.incomeFromOverseasPensionsViewModel.copy(
-                paymentsFromOverseasPensions = Some(false),
-                overseasPensionSchemes = None
+                paymentsFromOverseasPensionsQuestion = Some(false),
+                pensionSchemes = None
               )
 
             scenarioNameForIndividualAndEnglish in {
@@ -384,7 +384,7 @@ class PensionOverseasIncomeStatusISpec
 
             val expectedViewModel =
               sessionData.pensions.incomeFromOverseasPensionsViewModel.copy(
-                paymentsFromOverseasPensions = Some(true)
+                paymentsFromOverseasPensionsQuestion = Some(true)
               )
 
             scenarioNameForIndividualAndEnglish in {
@@ -428,7 +428,6 @@ class PensionOverseasIncomeStatusISpec
 
             }
           }
-
 
         }
         "fail" when {

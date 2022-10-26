@@ -16,20 +16,20 @@
 
 package builders
 
-import models.pension.charges.{IncomeFromOverseasPensionsViewModel, PaymentsIntoOverseasPensionsViewModel, PensionSchemeSummary, TaxReliefQuestion}
+import models.pension.charges.{IncomeFromOverseasPensionsViewModel, PaymentsIntoOverseasPensionsViewModel, PensionScheme, TaxReliefQuestion}
 
 object IncomeFromOverseasPensionsViewModelBuilder {
 
   val anIncomeFromOverseasPensionsViewModel: IncomeFromOverseasPensionsViewModel = IncomeFromOverseasPensionsViewModel(
-    paymentsFromOverseasPensions = Some(true),
-    overseasPensionSchemes = Some(Seq(
-      PensionSchemeSummary(
-        country = Some("FRA"),
+    paymentsFromOverseasPensionsQuestion = Some(true),
+    pensionSchemes = Some(Seq(
+      PensionScheme(
+        countryCode = Some("FRA"),
         pensionPaymentAmount = Some(1999.99),
         pensionPaymentTaxPaid = Some(1999.99),
         specialWithholdingTaxQuestion = Some(true),
         specialWithholdingTaxAmount = Some(1999.99),
-        foreignTaxCredit = Some(false),
+        foreignTaxCreditReliefQuestion = Some(false),
         taxableAmount = Some(1999.99)
       )
     ))
