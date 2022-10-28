@@ -24,8 +24,8 @@ import play.api.data.validation.Constraint
 
 object PensionCustomerReferenceNumberForm extends InputFilters {
 
-  val pensionsCustomerReferenceNumberId: String = ""
-  val regex: String = "^$"
+  val pensionsCustomerReferenceNumberId: String = "pensionsCustomerReferenceNumberId"
+  val regex: String = "^(?!\\s*$).+"
 
 
   def validateFormat(message : String): Constraint[String] = validateChar(regex)(message)

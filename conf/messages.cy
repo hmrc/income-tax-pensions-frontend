@@ -820,9 +820,11 @@ overseasPension.QOPSReference.prefix=QOPS
 overseasPension.pensionsCustomerReferenceNumber.title.individual = What’s your customer reference number?
 overseasPension.pensionsCustomerReferenceNumber.title.agent = What’s your customer reference number?
 overseasPension.pensionsCustomerReferenceNumber.paragraph1.individual = Your pension provider should have given you a customer reference number.
-overseasPension.pensionsCustomerReferenceNumber.paragraph1.agent = Your client's pension provider should have given them a customer reference number.
+overseasPension.pensionsCustomerReferenceNumber.paragraph1.agent = Your client’s pension provider should have given them a customer reference number.
 overseasPension.pensionsCustomerReferenceNumber.hint = For example, 'PENSIONINCOME245'
 overseasPension.pensionsCustomerReferenceNumber.error.noEntry = Enter your client's customer reference number
+overseasPension.pensionsCustomerReferenceNumber.error.noEntry.individual = Enter your customer reference number
+overseasPension.pensionsCustomerReferenceNumber.error.noEntry.agent = Enter your client’s customer reference number
 
 ############################################## INCOME FROM OVERSEAS PENSIONS ##############################################
 

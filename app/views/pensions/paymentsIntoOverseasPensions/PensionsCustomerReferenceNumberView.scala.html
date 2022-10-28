@@ -39,12 +39,13 @@
 @hasFormErrors = @{form.hasErrors}
 
 @contentHtml = {
-    <p class="govuk-body">@messages(s"overseasPension.pensionsCustomerReferenceNumber.paragraph1.${if(request.user.isAgent) "agent" else "individual"}")</p>
+    <p class="govuk-body">@messages(s"overseasPension.pensionsCustomerReferenceNumber.paragraph1.${if (request.user.isAgent) "agent" else "individual"}")</p>
 }
 
 
 @layout(pageTitle = titleForUse, taxYear = Some(taxYear), hasErrors = hasFormErrors, isAgent = request.user.isAgent) {
 
+    @errorSummary(form.errors.distinct)
     @heading(titleForUse, Some(messages("common.paymentsIntoOverseasPensions.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-2")
     @contentHtml
 

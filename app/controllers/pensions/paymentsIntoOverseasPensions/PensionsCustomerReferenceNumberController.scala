@@ -41,7 +41,6 @@ import models.mongo.{PensionsCYAModel, PensionsUserData}
 import models.{AuthorisationRequest, User}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
-import play.api.{data, inject}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -60,8 +59,8 @@ class PensionsCustomerReferenceNumberController @Inject()(authAction: Authorised
                                                            clock: Clock,
                                                            ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
 
-  def referenceForm(): Form[String] = PensionCustomerReferenceNumberForm.pensionCustomerReferenceNumberForm(
-    incorrectFormatMsg = "overseasPension.pensionsCustomerReferenceNumber.error.noEntry"
+  def referenceForm(user : User): Form[String] = PensionCustomerReferenceNumberForm.pensionCustomerReferenceNumberForm(
+    incorrectFormatMsg = s"overseasPension.pensionsCustomerReferenceNumber.error.noEntry.${if (user.isAgent) "agent" else "individual" }"
   )
 
   def show(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
@@ -69,19 +68,19 @@ class PensionsCustomerReferenceNumberController @Inject()(authAction: Authorised
       case Left(_) => errorHandler.handleError(INTERNAL_SERVER_ERROR)
       case Right(optPensionUserData) =>
         optPensionUserData
-          .map(pensionUserData => Ok(pensionsCustomerReferenceNumberView(referenceForm(pensionUserData), taxYear)))
+          .map(pensionUserData => Ok(pensionsCustomerReferenceNumberView(fillCustomerReferenceNumber(request.user, pensionUserData), taxYear)))
           .getOrElse(Redirect(PensionsSummaryController.show(taxYear)))
     }
   }
 
 
-  private def referenceForm(pensionUserData: PensionsUserData)(implicit request: AuthorisationRequest[AnyContent]): Form[String] =
+  private def fillCustomerReferenceNumber(user : User, pensionUserData: PensionsUserData)(implicit request: AuthorisationRequest[AnyContent]): Form[String] =
     pensionUserData.pensions.paymentsIntoOverseasPensions.customerReferenceNumberQuestion
-      .map(value => referenceForm().fill(value))
-      .getOrElse(referenceForm())
+      .map(value => referenceForm(user).fill(value))
+      .getOrElse(referenceForm(user))
 
   def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
-    referenceForm().bindFromRequest.fold(
+    referenceForm(request.user).bindFromRequest.fold(
       formWithErrors => Future.successful(BadRequest(pensionsCustomerReferenceNumberView(formWithErrors, taxYear))),
       pensionCustomerReferenceNumber => {
         pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
