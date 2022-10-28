@@ -31,14 +31,6 @@ class PensionOverseasIncomeStatusISpec
   extends YesNoControllerSpec("/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-status") {
 
   val minimalSessionDataToAccessThisPage: PensionsCYAModel = aPensionsCYAEmptyModel
-    .copy(paymentsIntoPension =
-      PaymentsIntoPensionViewModel(
-        rasPensionPaymentQuestion = Some(true),
-        totalRASPaymentsAndTaxRelief = Some(BigDecimal("1.00")),
-        oneOffRasPaymentPlusTaxReliefQuestion = Some(true),
-        totalOneOffRasPaymentPlusTaxRelief = Some(BigDecimal("1.00")),
-        totalPaymentsIntoRASQuestion = Some(true)
-      ))
 
   "This page" when {
     "requested to be shown" should {
@@ -344,7 +336,7 @@ class PensionOverseasIncomeStatusISpec
 
               response must haveStatus(SEE_OTHER)
               response must haveALocationHeaderValue(PageRelativeURLs.incomeFromOverseasPensionsPage)
-              getViewModel mustBe expectedViewModel
+              getViewModel mustBe Some(expectedViewModel)
 
             }
             scenarioNameForIndividualAndWelsh in {
@@ -354,7 +346,7 @@ class PensionOverseasIncomeStatusISpec
 
               response must haveStatus(SEE_OTHER)
               response must haveALocationHeaderValue(PageRelativeURLs.incomeFromOverseasPensionsPage)
-              getViewModel mustBe expectedViewModel
+              getViewModel mustBe Some(expectedViewModel)
 
             }
             scenarioNameForAgentAndEnglish in {
@@ -364,7 +356,7 @@ class PensionOverseasIncomeStatusISpec
 
               response must haveStatus(SEE_OTHER)
               response must haveALocationHeaderValue(PageRelativeURLs.incomeFromOverseasPensionsPage)
-              getViewModel mustBe expectedViewModel
+              getViewModel mustBe Some(expectedViewModel)
 
             }
             scenarioNameForAgentAndWelsh in {
@@ -374,7 +366,7 @@ class PensionOverseasIncomeStatusISpec
 
               response must haveStatus(SEE_OTHER)
               response must haveALocationHeaderValue(PageRelativeURLs.incomeFromOverseasPensionsPage)
-              getViewModel mustBe expectedViewModel
+              getViewModel mustBe Some(expectedViewModel)
 
             }
           }
@@ -394,7 +386,7 @@ class PensionOverseasIncomeStatusISpec
 
               response must haveStatus(SEE_OTHER)
               response must haveALocationHeaderValue(PageRelativeURLs.incomeFromOverseasPensionsPage)
-              getViewModel mustBe expectedViewModel
+              getViewModel mustBe Some(expectedViewModel)
 
             }
             scenarioNameForIndividualAndWelsh in {
@@ -404,7 +396,7 @@ class PensionOverseasIncomeStatusISpec
 
               response must haveStatus(SEE_OTHER)
               response must haveALocationHeaderValue(PageRelativeURLs.incomeFromOverseasPensionsPage)
-              getViewModel mustBe expectedViewModel
+              getViewModel mustBe Some(expectedViewModel)
 
             }
             scenarioNameForAgentAndEnglish in {
@@ -414,7 +406,7 @@ class PensionOverseasIncomeStatusISpec
 
               response must haveStatus(SEE_OTHER)
               response must haveALocationHeaderValue(PageRelativeURLs.incomeFromOverseasPensionsPage)
-              getViewModel mustBe expectedViewModel
+              getViewModel mustBe Some(expectedViewModel)
 
             }
             scenarioNameForAgentAndWelsh in {
@@ -424,7 +416,7 @@ class PensionOverseasIncomeStatusISpec
 
               response must haveStatus(SEE_OTHER)
               response must haveALocationHeaderValue(PageRelativeURLs.incomeFromOverseasPensionsPage)
-              getViewModel mustBe expectedViewModel
+              getViewModel mustBe Some(expectedViewModel)
 
             }
           }
@@ -570,8 +562,8 @@ class PensionOverseasIncomeStatusISpec
     }
   }
 
-  private def getViewModel(implicit userConfig: UserConfig): IncomeFromOverseasPensionsViewModel =
-    loadPensionUserData.pensions.incomeFromOverseasPensionsViewModel
+  private def getViewModel(implicit userConfig: UserConfig): Option[IncomeFromOverseasPensionsViewModel] =
+    loadPensionUserData.map(_.pensions.incomeFromOverseasPensionsViewModel)
 
 }
 
