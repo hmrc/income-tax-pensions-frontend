@@ -26,7 +26,8 @@ case class PensionsCYAModel(paymentsIntoPension: PaymentsIntoPensionViewModel,
                             pensionLifetimeAllowances: PensionLifetimeAllowancesViewModel,
                             incomeFromPensions: IncomeFromPensionsViewModel,
                             unauthorisedPayments: UnauthorisedPaymentsViewModel,
-                            paymentsIntoOverseasPensions: PaymentsIntoOverseasPensionsViewModel) {
+                            paymentsIntoOverseasPensions: PaymentsIntoOverseasPensionsViewModel,
+                            incomeFromOverseasPensionsViewModel: IncomeFromOverseasPensionsViewModel) {
 }
 
 object PensionsCYAModel {
@@ -37,7 +38,9 @@ object PensionsCYAModel {
     PensionLifetimeAllowancesViewModel(),
     IncomeFromPensionsViewModel(),
     UnauthorisedPaymentsViewModel(),
-    PaymentsIntoOverseasPensionsViewModel())
+    PaymentsIntoOverseasPensionsViewModel(),
+    IncomeFromOverseasPensionsViewModel()
+  )
 }
 
 case class EncryptedPensionCYAModel(encryptedPaymentsIntoPension: EncryptedPaymentsIntoPensionViewModel,
@@ -45,7 +48,9 @@ case class EncryptedPensionCYAModel(encryptedPaymentsIntoPension: EncryptedPayme
                                     pensionLifetimeAllowances: EncryptedPensionLifetimeAllowancesViewModel,
                                     incomeFromPensions: EncryptedIncomeFromPensionsViewModel,
                                     unauthorisedPayments: EncryptedUnauthorisedPaymentsViewModel,
-                                    paymentsIntoOverseasPensions: EncryptedPaymentsIntoOverseasPensionsViewModel)
+                                    paymentsIntoOverseasPensions: EncryptedPaymentsIntoOverseasPensionsViewModel,
+                                    incomeFromOverseasPensionsViewModel: EncryptedIncomeFromOverseasPensionsViewModel
+                                   )
 
 object EncryptedPensionCYAModel {
   implicit val format: OFormat[EncryptedPensionCYAModel] = Json.format[EncryptedPensionCYAModel]

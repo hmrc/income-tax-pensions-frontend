@@ -34,6 +34,7 @@ common.paymentsIntoPensions.caption = Payments into pensions for 6 April {0} to 
 common.dividends.incomeFromPensions.caption = Dividends for 6 April {0} to 5 April {1}
 common.pensionAnnualAllowance.caption = Pension annual allowance for 6 April {0} to 5 April {1}
 common.incomeFromPensions.caption = Income from pensions for 6 April {0} to 5 April {1}
+common.incomeFromOverseasPensions.caption = Income from overseas pensions for 6 April {0} to 5 April {1}
 common.paymentsIntoOverseasPensions.caption = Payments into overseas pensions for 6 April {0} to 5 April {1}
 common.uKPensionIncome.caption = UK pension income for 6 April {0} to 5 April {1}
 common.lifetimeAllowance.caption = Annual and lifetime allowances for 6 April {0} to 5 April {1}
@@ -814,3 +815,11 @@ overseasPension.QOPSReference.paragraph1.agent = You can find this on your clien
 overseasPension.QOPSReference.hint = For example, QOPS123456
 overseasPension.QOPSReference.error.incorrectFormat = Enter a six digit number
 overseasPension.QOPSReference.prefix=QOPS
+
+
+############################################## INCOME FROM OVERSEAS PENSIONS ##############################################
+
+incomeFromOverseasPensions.incomeFromOverseasPension.title.individual = Did you get payments from an overseas pension scheme?
+incomeFromOverseasPensions.incomeFromOverseasPension.title.agent = Did your client get payments from an overseas pension scheme?
+incomeFromOverseasPensions.incomeFromOverseasPension.error.noEntry.individual = Select yes if you had income from an overseas pension scheme
+incomeFromOverseasPensions.incomeFromOverseasPension.error.noEntry.agent = Select yes if your client had income from an overseas pension scheme

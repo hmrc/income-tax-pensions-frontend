@@ -81,7 +81,8 @@ class EncryptionService @Inject()(secureGCMCipher: SecureGCMCipher, appConfig: A
       pensionLifetimeAllowances = pension.pensionLifetimeAllowances.encrypted(),
       incomeFromPensions = pension.incomeFromPensions.encrypted(),
       unauthorisedPayments = pension.unauthorisedPayments.encrypted(),
-      paymentsIntoOverseasPensions = pension.paymentsIntoOverseasPensions.encrypted()
+      paymentsIntoOverseasPensions = pension.paymentsIntoOverseasPensions.encrypted(),
+      incomeFromOverseasPensionsViewModel = pension.incomeFromOverseasPensionsViewModel.encrypted()
     )
   }
 
@@ -126,7 +127,8 @@ class EncryptionService @Inject()(secureGCMCipher: SecureGCMCipher, appConfig: A
       pensionLifetimeAllowances = pension.pensionLifetimeAllowances.decrypted(),
       incomeFromPensions = pension.incomeFromPensions.decrypted(),
       unauthorisedPayments = pension.unauthorisedPayments.decrypted(),
-      paymentsIntoOverseasPensions = pension.paymentsIntoOverseasPensions.decrypted()
+      paymentsIntoOverseasPensions = pension.paymentsIntoOverseasPensions.decrypted(),
+      incomeFromOverseasPensionsViewModel = pension.incomeFromOverseasPensionsViewModel.decrypted()
     )
   }
 

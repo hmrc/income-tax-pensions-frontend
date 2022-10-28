@@ -17,6 +17,7 @@
 package controllers.pensions.paymentsIntoPensions
 
 import builders.AllPensionsDataBuilder.anAllPensionsData
+import builders.IncomeFromOverseasPensionsViewModelBuilder.anIncomeFromOverseasPensionsViewModel
 import builders.IncomeFromPensionsViewModelBuilder.anIncomeFromPensionsViewModel
 import builders.IncomeTaxUserDataBuilder.anIncomeTaxUserData
 import builders.PaymentsIntoOverseasPensionsViewModelBuilder.aPaymentsIntoOverseasPensionsViewModel
@@ -281,7 +282,8 @@ class PaymentsIntoPensionsCYAControllerISpec extends IntegrationTest with ViewHe
             pensionLifetimeAllowances = aPensionLifetimeAllowanceViewModel,
             incomeFromPensions = anIncomeFromPensionsViewModel,
             unauthorisedPayments = anUnauthorisedPaymentsViewModel,
-            paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel
+            paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel,
+            incomeFromOverseasPensionsViewModel = anIncomeFromOverseasPensionsViewModel
           ), taxYear = taxYear), aUserRequest)
           authoriseAgentOrIndividual(isAgent = false)
           urlPost(url, form, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))

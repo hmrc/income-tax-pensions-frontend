@@ -17,11 +17,11 @@
 package models.pension
 
 import models.mongo.PensionsCYAModel
-import models.pension.charges.{PaymentsIntoOverseasPensionsViewModel, PensionAnnualAllowancesViewModel, PensionCharges, PensionLifetimeAllowancesViewModel, TaxReliefQuestion, UnauthorisedPaymentsViewModel}
+import models.pension.charges.{IncomeFromOverseasPensionsViewModel, PaymentsIntoOverseasPensionsViewModel, PensionAnnualAllowancesViewModel, PensionCharges, PensionLifetimeAllowancesViewModel, PensionScheme, TaxReliefQuestion, UnauthorisedPaymentsViewModel}
 import models.pension.employmentPensions.EmploymentPensions
 import models.pension.reliefs.{PaymentsIntoPensionViewModel, PensionReliefs}
 import models.pension.statebenefits.{IncomeFromPensionsViewModel, StateBenefit, StateBenefitViewModel, StateBenefitsModel, UkPensionIncomeViewModel}
-import models.pension.income.{OverseasPensionContribution, PensionIncome}
+import models.pension.income.{ForeignPension, OverseasPensionContribution, PensionIncome}
 import play.api.libs.json.{Json, OFormat}
 
 case class AllPensionsData(pensionReliefs: Option[PensionReliefs],
@@ -115,7 +115,25 @@ object AllPensionsData {
       doubleTaxationCountryTreaty = prior.pensionIncome.flatMap(_.overseasPensionContribution.headOption.flatMap(_.dblTaxationTreaty)),
       doubleTaxationReliefAmount = prior.pensionIncome.flatMap(_.overseasPensionContribution.headOption.flatMap(_.dblTaxationRelief)),
       sf74Reference = prior.pensionIncome.flatMap(_.overseasPensionContribution.headOption.flatMap(_.sf74Reference))
+    ),
+      incomeFromOverseasPensionsViewModel = IncomeFromOverseasPensionsViewModel(
+        paymentsFromOverseasPensionsQuestion = prior.pensionIncome.map(_.foreignPension.nonEmpty),
+        pensionSchemes = prior.pensionIncome.map(x => fromForeignPensionToPensionScheme(x.foreignPension))
+      )
     )
+  }
+
+  private def fromForeignPensionToPensionScheme(foreignPension: Seq[ForeignPension]) = {
+    foreignPension.map( fP =>
+      PensionScheme(
+        countryCode = Some(fP.countryCode),
+        pensionPaymentAmount = fP.amountBeforeTax,
+        pensionPaymentTaxPaid = fP.taxTakenOff,
+        specialWithholdingTaxQuestion = Some(fP.specialWithholdingTax.isDefined),
+        specialWithholdingTaxAmount = fP.specialWithholdingTax,
+        foreignTaxCreditReliefQuestion = fP.foreignTaxCreditRelief,
+        taxableAmount = Some(fP.taxableAmount)
+      )
     )
   }
 
