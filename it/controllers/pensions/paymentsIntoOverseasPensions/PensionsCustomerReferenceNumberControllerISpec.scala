@@ -44,56 +44,62 @@ class PensionsCustomerReferenceNumberControllerISpec extends CommonUtils with Be
   }
 
   trait SpecificExpectedResults {
+    val expectedHeading: String
+    val expectedTitle: String
+    val expectedErrorTitle: String
     val expectedParagraph1: String
     val expectedIncorrectFormatError: String
   }
 
   trait CommonExpectedResults {
     val expectedCaption: Int => String
-    val expectedTitle: String
-    val expectedHeading: String
-    val expectedErrorTitle: String
     val hintText: String
     val expectedButtonText: String
   }
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
+    val expectedTitle: String = "What’s your customer reference number?"
+    val expectedHeading: String = "What’s your customer reference number?"
+    val expectedErrorTitle: String = s"Error: $expectedTitle"
     val expectedParagraph1: String = "Your pension provider should have given you a customer reference number."
     val expectedIncorrectFormatError: String = "Enter your customer reference number"
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
+    val expectedTitle: String = "What’s your customer reference number?"
+    val expectedHeading: String = "What’s your customer reference number?"
+    val expectedErrorTitle: String = s"Error: $expectedTitle"
     val expectedParagraph1: String = "Your pension provider should have given you a customer reference number."
     val expectedIncorrectFormatError: String = "Enter your customer reference number"
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
+    val expectedTitle: String = "What’s your client’s customer reference number?"
+    val expectedHeading: String = "What’s your client’s customer reference number?"
+    val expectedErrorTitle: String = s"Error: $expectedTitle"
     val expectedParagraph1: String = "Your client’s pension provider should have given them a customer reference number."
     val expectedIncorrectFormatError: String = "Enter your client’s customer reference number"
 
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
+    val expectedTitle: String = "What’s your client’s customer reference number?"
+    val expectedHeading: String = "What’s your client’s customer reference number?"
+    val expectedErrorTitle: String = s"Error: $expectedTitle"
     val expectedParagraph1: String = "Your client’s pension provider should have given them a customer reference number."
     val expectedIncorrectFormatError: String = "Enter your client’s customer reference number"
   }
 
   object CommonExpectedEN extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear:Int) => s"Payments into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val expectedTitle: String = "What’s your customer reference number?"
-    val expectedHeading: String = "What’s your customer reference number?"
-    val expectedErrorTitle: String = s"Error: $expectedTitle"
-    val hintText: String = "For example, PENSIONINCOME245"
+    val hintText: String = "For example, ’PENSIONINCOME245’"
     val expectedButtonText: String = "Continue"
 
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Payments into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val expectedTitle: String = "What’s your customer reference number?"
-    val expectedHeading: String = "What’s your customer reference number?"
-    val expectedErrorTitle: String = s"Error: $expectedTitle"
-    val hintText: String = "For example, PENSIONINCOME245"
+    val hintText: String = "For example, ’PENSIONINCOME245’"
     val expectedButtonText: String = "Continue"
   }
 
@@ -124,8 +130,8 @@ class PensionsCustomerReferenceNumberControllerISpec extends CommonUtils with Be
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(expectedTitle)
-          h1Check(expectedHeading)
+          titleCheck(user.specificExpectedResults.get.expectedTitle)
+          h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY))
           textOnPageCheck(user.specificExpectedResults.get.expectedParagraph1, paragraphSelector(1))
           textOnPageCheck(hintText, hintTextSelector)
@@ -150,8 +156,8 @@ class PensionsCustomerReferenceNumberControllerISpec extends CommonUtils with Be
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(expectedTitle)
-          h1Check(expectedHeading)
+          titleCheck(user.specificExpectedResults.get.expectedTitle)
+          h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY))
           textOnPageCheck(user.specificExpectedResults.get.expectedParagraph1, paragraphSelector(1))
           textOnPageCheck(hintText, hintTextSelector)
@@ -189,8 +195,8 @@ class PensionsCustomerReferenceNumberControllerISpec extends CommonUtils with Be
           implicit def document: () => Document = () => Jsoup.parse(result.body)
           import Selectors._
           import user.commonExpectedResults._
-          titleCheck(expectedErrorTitle)
-          h1Check(expectedHeading)
+          titleCheck(user.specificExpectedResults.get.expectedErrorTitle)
+          h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY))
           textOnPageCheck(user.specificExpectedResults.get.expectedParagraph1, paragraphSelector(1))
           textOnPageCheck(hintText, hintTextSelector)
