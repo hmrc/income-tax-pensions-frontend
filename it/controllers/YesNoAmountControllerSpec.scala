@@ -17,20 +17,22 @@
 package controllers
 
 import controllers.ControllerSpec._
+import org.jsoup.Jsoup.parse
 import org.jsoup.nodes.Document
+import play.api.libs.ws.WSResponse
 
 class YesNoAmountControllerSpec(override val pathForThisPage: String) extends ControllerSpec(pathForThisPage) {
 
   private val fieldNameForAmountInput = "amount-2"
 
-  def assertPageAsExpected(document: Document, expectedPageContents: ExpectedYesNoAmountPageContents)(implicit userConfig: UserConfig): Unit = {
-
+  def assertPageAsExpected(expectedStatusCode: Int, expectedPageContents: ExpectedYesNoAmountPageContents)(implicit userConfig: UserConfig, response: WSResponse): Unit = {
+    val document = parse(response.body)
+    response must haveStatus(expectedStatusCode)
     super.assertPageAsExpected(document, expectedPageContents)
     assertRadioButtonAsExpected(document, 0, expectedPageContents.radioButtonForYes)
     assertRadioButtonAsExpected(document, 1, expectedPageContents.radioButtonForNo)
     assertContinueButtonAsExpected(document, expectedPageContents.buttonForContinue)
     assertAmountSectionAsExpected(document, expectedPageContents.amountSection)
-
   }
 
   private def assertAmountSectionAsExpected(document: Document, expectedAmountSection: ExpectedAmountSection): Unit = {
@@ -52,7 +54,7 @@ class YesNoAmountControllerSpec(override val pathForThisPage: String) extends Co
                                              errorAboveElementCheckSectionOpt: Option[ErrorAboveElementCheckSection] = None,
                                              links: Set[ExpectedLink] = Set.empty,
                                              text: Set[ExpectedText] = Set.empty
-                                            ) extends ExpectedPageContents
+                                            ) extends BaseExpectedPageContents
 
 
   case class SubmittedFormDataForYesNoAmountPage(yesOrNoOpt: Option[Boolean], amountOpt: Option[String]) extends SubmittedFormDataWithYesNo {
