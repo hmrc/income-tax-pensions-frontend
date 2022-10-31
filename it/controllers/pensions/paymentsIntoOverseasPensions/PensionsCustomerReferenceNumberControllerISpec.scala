@@ -92,14 +92,14 @@ class PensionsCustomerReferenceNumberControllerISpec extends CommonUtils with Be
 
   object CommonExpectedEN extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear:Int) => s"Payments into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val hintText: String = "For example, ’PENSIONINCOME245’"
+    val hintText: String = "For example, 'PENSIONINCOME245'"
     val expectedButtonText: String = "Continue"
 
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Payments into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val hintText: String = "For example, ’PENSIONINCOME245’"
+    val hintText: String = "For example, 'PENSIONINCOME245'"
     val expectedButtonText: String = "Continue"
   }
 
