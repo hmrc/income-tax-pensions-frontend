@@ -17,7 +17,7 @@
 package forms
 
 import filters.InputFilters
-import forms.validation.StringConstraints.validateChar
+import forms.validation.StringConstraints.nonEmpty
 import forms.validation.mappings.MappingUtil.trimmedText
 import play.api.data.Form
 import play.api.data.validation.Constraint
@@ -25,14 +25,10 @@ import play.api.data.validation.Constraint
 object PensionCustomerReferenceNumberForm extends InputFilters {
 
   val pensionsCustomerReferenceNumberId: String = "pensionsCustomerReferenceNumberId"
-  val regex: String = "^(?!\\s*$).+"
-
-
-  def validateFormat(message : String): Constraint[String] = validateChar(regex)(message)
 
   def pensionCustomerReferenceNumberForm(incorrectFormatMsg : String): Form[String] = Form(
     pensionsCustomerReferenceNumberId -> trimmedText.transform[String](filter, identity).verifying(
-      validateFormat(incorrectFormatMsg)
+      nonEmpty(incorrectFormatMsg)
     )
   )
 }

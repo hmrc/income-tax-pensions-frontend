@@ -76,7 +76,7 @@ class PensionsCustomerReferenceNumberController @Inject()(authAction: Authorised
 
   private def fillCustomerReferenceNumber(user : User, pensionUserData: PensionsUserData)(implicit request: AuthorisationRequest[AnyContent]): Form[String] =
     pensionUserData.pensions.paymentsIntoOverseasPensions.customerReferenceNumberQuestion
-      .map(value => referenceForm(user).fill(value))
+      .map(referenceForm(user).fill)
       .getOrElse(referenceForm(user))
 
   def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
@@ -90,7 +90,7 @@ class PensionsCustomerReferenceNumberController @Inject()(authAction: Authorised
                 customerReferenceNumberQuestion = Some(pensionCustomerReferenceNumber)))
             pensionSessionService.createOrUpdateSessionData(request.user,
               updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
-              Redirect(PensionsCustomerReferenceNumberController.show(taxYear)) //TODO - redirect to untaxed-employer-payments
+              Redirect(PensionsCustomerReferenceNumberController.show(taxYear)) //TODO - redirect to untaxed-employer-payments SASS-3099
             }
           case _ =>
             Future.successful(Redirect(PensionsSummaryController.show(taxYear)))

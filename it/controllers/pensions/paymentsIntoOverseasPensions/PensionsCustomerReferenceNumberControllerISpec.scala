@@ -19,7 +19,6 @@ package controllers.pensions.paymentsIntoOverseasPensions
 import builders.PaymentsIntoOverseasPensionsViewModelBuilder.aPaymentsIntoOverseasPensionsViewModel
 import builders.PensionsUserDataBuilder.{aPensionsUserData, anPensionsUserDataEmptyCya, pensionUserDataWithOverseasPensions}
 import builders.UserBuilder.aUserRequest
-//import forms.{PensionCustomerReferenceNumberForm, QOPSReferenceNumberForm}
 import forms.PensionCustomerReferenceNumberForm
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -210,7 +209,7 @@ class PensionsCustomerReferenceNumberControllerISpec extends CommonUtils with Be
       }
     }
 
-    "redirect and update question to contain customer reference number when no prior data exists" which {
+    "redirect and update question to contain customer reference number when no cya data exists" which {
       lazy val form: Map[String, String] = Map(PensionCustomerReferenceNumberForm.pensionsCustomerReferenceNumberId -> "PENSIONAINCOME245")
       val pensionsViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(customerReferenceNumberQuestion = None)
       val pensionUserData = pensionUserDataWithOverseasPensions(pensionsViewModel)
