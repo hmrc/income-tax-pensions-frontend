@@ -221,6 +221,9 @@ POST        /:taxYear/overseas-pensions/payments-into-overseas-pensions/tax-empl
 GET         /:taxYear/overseas-pensions/payments-into-overseas-pensions/qualifying-overseas-pension-scheme-reference-number controllers.pensions.paymentsIntoOverseasPensions.QOPSReferenceController.show(taxYear: Int)
 POST        /:taxYear/overseas-pensions/payments-into-overseas-pensions/qualifying-overseas-pension-scheme-reference-number controllers.pensions.paymentsIntoOverseasPensions.QOPSReferenceController.submit(taxYear: Int)
 
+GET         /:taxYear/overseas-pensions/payments-into-overseas-pensions/pensions-customer-reference-number                  controllers.pensions.paymentsIntoOverseasPensions.PensionsCustomerReferenceNumberController.show(taxYear: Int)
+POST        /:taxYear/overseas-pensions/payments-into-overseas-pensions/pensions-customer-reference-number                  controllers.pensions.paymentsIntoOverseasPensions.PensionsCustomerReferenceNumberController.submit(taxYear: Int)
+
 
 ###########################     Income from overseas pensions pages     ####################################
 
