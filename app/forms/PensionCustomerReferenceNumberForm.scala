@@ -20,7 +20,6 @@ import filters.InputFilters
 import forms.validation.StringConstraints.nonEmpty
 import forms.validation.mappings.MappingUtil.trimmedText
 import play.api.data.Form
-import play.api.data.validation.Constraint
 
 object PensionCustomerReferenceNumberForm extends InputFilters {
 

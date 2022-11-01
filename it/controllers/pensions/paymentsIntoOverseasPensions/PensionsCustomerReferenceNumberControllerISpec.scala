@@ -182,7 +182,7 @@ class PensionsCustomerReferenceNumberControllerISpec extends CommonUtils with Be
     userScenarios.foreach { user =>
       s"language is ${welshTest(user.isWelsh)} and request is from an ${agentTest(user.isAgent)}" should {
 
-        s"return $BAD_REQUEST error when incorrect format is submitted" which {
+        s"return $BAD_REQUEST error when empty value is submitted" which {
           lazy val form: Map[String, String] = Map(PensionCustomerReferenceNumberForm.pensionsCustomerReferenceNumberId -> "")
           lazy val result: WSResponse = submitPage(user, aPensionsUserData, form)
 
@@ -240,7 +240,7 @@ class PensionsCustomerReferenceNumberControllerISpec extends CommonUtils with Be
         result.header("location") shouldBe Some(pensionCustomerReferenceNumberUrl(taxYearEOY)) //todo redirect to correct page
       }
 
-      "updates pension scheme customer reference number reference to contain tax reference" in {
+      "updates pension scheme customer reference number reference " in {
         lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
         cyaModel.pensions.paymentsIntoOverseasPensions.customerReferenceNumberQuestion.get shouldBe "PENSIONAINCOME245"
       }
