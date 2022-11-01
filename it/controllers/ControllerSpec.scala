@@ -542,7 +542,7 @@ object ControllerSpec {
         val formSelector = "#main-content > div > div > form"
         val actualAction = document.select(formSelector).attr("action")
         val actualMethod = document.select(formSelector).attr("method")
-        val errorMessageIfExpected = s"The page doesn't have a form with a POST action of '$action'; the actual method is '$actualMethod'"
+        val errorMessageIfExpected = s"The page doesn't have a form with a POST action of '$action'; the actual method is '$actualMethod' and the action is '$actualAction'."
         val errorMessageIfNotExpected = s"The page does indeed have a form with a POST action of '$action', which was not expected."
         MatchResult(
           actualMethod.equalsIgnoreCase("POST") && actualAction.equals(action),
@@ -883,6 +883,7 @@ object ControllerSpec {
     def text: Set[ExpectedText]
   }
 
+  // TODO: Make the hint optional.
   case class ExpectedAmountSection(label: String, hint: String, value: String)
 
   case class ExpectedRadioButton(label: String, isChecked: Boolean)
