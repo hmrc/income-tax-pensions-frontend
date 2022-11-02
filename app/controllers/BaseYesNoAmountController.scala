@@ -42,7 +42,8 @@ abstract class BaseYesNoAmountController(
                                         (implicit appConfig: AppConfig, clock: Clock)
   extends FrontendController(messagesControllerComponents) {
 
-  def prepareView(pensionsUserData: PensionsUserData, taxYear: Int)(implicit request: AuthorisationRequest[AnyContent]): Html
+  def prepareView(pensionsUserData: PensionsUserData, taxYear: Int)
+                 (implicit request: AuthorisationRequest[AnyContent]): Html
 
   def redirectWhenNoSessionData(taxYear: Int): Result
 
@@ -54,7 +55,8 @@ abstract class BaseYesNoAmountController(
 
   def proposedUpdatedSessionDataModel(currentSessionData: PensionsUserData, yesSelected: Boolean, amountOpt: Option[BigDecimal]): PensionsCYAModel
 
-  def onInvalidForm(form: Form[(Boolean, Option[BigDecimal])], taxYear: Int)(implicit request: AuthorisationRequest[AnyContent]): Html
+  def onInvalidForm(form: Form[(Boolean, Option[BigDecimal])], taxYear: Int)
+                   (implicit request: AuthorisationRequest[AnyContent]): Html
 
   def errorMessageSet: YesNoAmountForm
 
@@ -80,7 +82,8 @@ abstract class BaseYesNoAmountController(
     }
   }
 
-  protected def populateForm(pensionsUserData: PensionsUserData)(implicit request: AuthorisationRequest[AnyContent]): Form[(Boolean, Option[BigDecimal])] = {
+  protected def populateForm(pensionsUserData: PensionsUserData)
+                            (implicit request: AuthorisationRequest[AnyContent]): Form[(Boolean, Option[BigDecimal])] = {
     val baseForm = form(request.user.isAgent)
     questionOpt(pensionsUserData) match {
       case Some(true) => baseForm.fill((true, amountOpt(pensionsUserData)))
@@ -100,12 +103,14 @@ abstract class BaseYesNoAmountController(
     exceedsMaxAmountKey = errorMessageSet.amountIsExcessive.get(isAgent)
   )
 
-  private def submit(pensionsUserData: PensionsUserData, taxYear: Int)(implicit request: AuthorisationRequest[AnyContent]): Future[Result] =
+  private def submit(pensionsUserData: PensionsUserData, taxYear: Int)
+                    (implicit request: AuthorisationRequest[AnyContent]): Future[Result] =
     form(request.user.isAgent).bindFromRequest.fold(
       formWithErrors => Future.successful(BadRequest(onInvalidForm(formWithErrors, taxYear))),
       validForm => onValidForm(pensionsUserData, taxYear, validForm))
 
-  private def onValidForm(pensionsUserData: PensionsUserData, taxYear: Int, validForm: (Boolean, Option[BigDecimal]))(implicit request: AuthorisationRequest[AnyContent], clock: Clock): Future[Result] =
+  private def onValidForm(pensionsUserData: PensionsUserData, taxYear: Int, validForm: (Boolean, Option[BigDecimal]))
+                         (implicit request: AuthorisationRequest[AnyContent], clock: Clock): Future[Result] =
     validForm match {
       case (yesWasSelected, amountOpt) =>
         pensionSessionService.createOrUpdateSessionData(

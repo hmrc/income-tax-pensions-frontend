@@ -38,7 +38,8 @@ class PaymentIntoPensionSchemeController @Inject()(messagesControllerComponents:
                                                    paymentIntoPensionSchemeView: PaymentIntoPensionSchemeView,
                                                    pensionSessionService: PensionSessionService,
                                                    errorHandler: ErrorHandler)
-                                                  (implicit appConfig: AppConfig, clock: Clock) extends BaseYesNoAmountController(messagesControllerComponents, pensionSessionService, authAction, errorHandler) with I18nSupport {
+                                                  (implicit appConfig: AppConfig, clock: Clock)
+  extends BaseYesNoAmountController(messagesControllerComponents, pensionSessionService, authAction, errorHandler) with I18nSupport {
 
   override val errorMessageSet: YesNoAmountForm = PaymentIntoScheme
 
@@ -47,10 +48,12 @@ class PaymentIntoPensionSchemeController @Inject()(messagesControllerComponents:
 
   override def redirectAfterUpdatingSessionData(taxYear: Int): Result = Redirect(controllers.pensions.paymentsIntoOverseasPensions.routes.PaymentIntoPensionSchemeController.show(taxYear))
 
-  override def prepareView(pensionsUserData: PensionsUserData, taxYear: Int)(implicit request: AuthorisationRequest[AnyContent]): Html =
+  override def prepareView(pensionsUserData: PensionsUserData, taxYear: Int)
+                          (implicit request: AuthorisationRequest[AnyContent]): Html =
     paymentIntoPensionSchemeView(populateForm(pensionsUserData), taxYear)
 
-  override def onInvalidForm(form: Form[(Boolean, Option[BigDecimal])], taxYear: Int)(implicit request: AuthorisationRequest[AnyContent]): Html
+  override def onInvalidForm(form: Form[(Boolean, Option[BigDecimal])], taxYear: Int)
+                            (implicit request: AuthorisationRequest[AnyContent]): Html
   = paymentIntoPensionSchemeView(form, taxYear)
 
   override def questionOpt(pensionsUserData: PensionsUserData): Option[Boolean] = pensionsUserData.pensions.paymentsIntoOverseasPensions.paymentsIntoOverseasPensionsQuestions

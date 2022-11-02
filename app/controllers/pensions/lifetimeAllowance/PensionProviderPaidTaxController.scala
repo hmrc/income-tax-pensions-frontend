@@ -39,7 +39,8 @@ class PensionProviderPaidTaxController @Inject()(messagesControllerComponents: M
                                                  pensionProviderPaidTaxView: PensionProviderPaidTaxView,
                                                  pensionSessionService: PensionSessionService,
                                                  errorHandler: ErrorHandler)
-                                                (implicit appConfig: AppConfig, clock: Clock) extends BaseYesNoAmountController(messagesControllerComponents, pensionSessionService, authAction, errorHandler) with I18nSupport {
+                                                (implicit appConfig: AppConfig, clock: Clock)
+  extends BaseYesNoAmountController(messagesControllerComponents, pensionSessionService, authAction, errorHandler) with I18nSupport {
 
   override val errorMessageSet: YesNoAmountForm = PensionProviderPaidTax
 
@@ -48,10 +49,12 @@ class PensionProviderPaidTaxController @Inject()(messagesControllerComponents: M
 
   override def redirectAfterUpdatingSessionData(taxYear: Int): Result = Redirect(controllers.pensions.lifetimeAllowance.routes.PensionProviderPaidTaxController.show(taxYear))
 
-  override def prepareView(pensionsUserData: PensionsUserData, taxYear: Int)(implicit request: AuthorisationRequest[AnyContent]): Html =
+  override def prepareView(pensionsUserData: PensionsUserData, taxYear: Int)
+                          (implicit request: AuthorisationRequest[AnyContent]): Html =
     pensionProviderPaidTaxView(populateForm(pensionsUserData), taxYear)
 
-  override def onInvalidForm(form: Form[(Boolean, Option[BigDecimal])], taxYear: Int)(implicit request: AuthorisationRequest[AnyContent]): Html
+  override def onInvalidForm(form: Form[(Boolean, Option[BigDecimal])], taxYear: Int)
+                            (implicit request: AuthorisationRequest[AnyContent]): Html
   = pensionProviderPaidTaxView(form, taxYear)
 
   override def questionOpt(pensionsUserData: PensionsUserData): Option[Boolean] = pensionsUserData.pensions.pensionsAnnualAllowances.pensionProvidePaidAnnualAllowanceQuestion
