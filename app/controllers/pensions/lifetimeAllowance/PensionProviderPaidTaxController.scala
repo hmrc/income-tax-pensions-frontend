@@ -47,17 +47,17 @@ class PensionProviderPaidTaxController @Inject()(messagesControllerComponents: M
   // TODO: Once we've creating the CYA page (in SASS-2470), we can redirect to it.
   override def redirectWhenNoSessionData(taxYear: Int): Result = redirectToSummaryPage(taxYear)
 
-  override def redirectAfterUpdatingSessionData(taxYear: Int): Result = Redirect(controllers.pensions.lifetimeAllowance.routes.PensionProviderPaidTaxController.show(taxYear))
+  override def redirectAfterUpdatingSessionData(taxYear: Int): Result =
+    Redirect(controllers.pensions.lifetimeAllowance.routes.PensionProviderPaidTaxController.show(taxYear))
 
   override def prepareView(pensionsUserData: PensionsUserData, taxYear: Int)
-                          (implicit request: AuthorisationRequest[AnyContent]): Html =
-    pensionProviderPaidTaxView(populateForm(pensionsUserData), taxYear)
+                          (implicit request: AuthorisationRequest[AnyContent]): Html = pensionProviderPaidTaxView(populateForm(pensionsUserData), taxYear)
 
   override def onInvalidForm(form: Form[(Boolean, Option[BigDecimal])], taxYear: Int)
-                            (implicit request: AuthorisationRequest[AnyContent]): Html
-  = pensionProviderPaidTaxView(form, taxYear)
+                            (implicit request: AuthorisationRequest[AnyContent]): Html = pensionProviderPaidTaxView(form, taxYear)
 
-  override def questionOpt(pensionsUserData: PensionsUserData): Option[Boolean] = pensionsUserData.pensions.pensionsAnnualAllowances.pensionProvidePaidAnnualAllowanceQuestion
+  override def questionOpt(pensionsUserData: PensionsUserData): Option[Boolean] =
+    pensionsUserData.pensions.pensionsAnnualAllowances.pensionProvidePaidAnnualAllowanceQuestion
 
   override def amountOpt(pensionsUserData: PensionsUserData): Option[BigDecimal] = pensionsUserData.pensions.pensionsAnnualAllowances.taxPaidByPensionProvider
 

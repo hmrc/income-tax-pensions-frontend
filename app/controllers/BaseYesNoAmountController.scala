@@ -115,7 +115,9 @@ abstract class BaseYesNoAmountController(
       case (yesWasSelected, amountOpt) =>
         pensionSessionService.createOrUpdateSessionData(
           request.user,
-          proposedUpdatedSessionDataModel(pensionsUserData, yesWasSelected, amountOpt), taxYear, pensionsUserData.isPriorSubmission)(onError)(redirectAfterUpdatingSessionData(taxYear))
+          proposedUpdatedSessionDataModel(pensionsUserData, yesWasSelected, amountOpt),
+          taxYear,
+          pensionsUserData.isPriorSubmission)(onError)(redirectAfterUpdatingSessionData(taxYear))
     }
 
 }
