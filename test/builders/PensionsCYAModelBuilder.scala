@@ -37,7 +37,7 @@ object PensionsCYAModelBuilder {
     incomeFromPensions = anIncomeFromPensionsViewModel,
     unauthorisedPayments = anUnauthorisedPaymentsViewModel,
     paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel,
-    incomeFromOverseasPensionsViewModel = anIncomeFromOverseasPensionsViewModel
+    incomeFromOverseasPensions = anIncomeFromOverseasPensionsViewModel
   )
 
   val aPensionsCYAEmptyModel: PensionsCYAModel = PensionsCYAModel(
@@ -47,7 +47,7 @@ object PensionsCYAModelBuilder {
     incomeFromPensions = anIncomeFromPensionEmptyViewModel,
     unauthorisedPayments = anUnauthorisedPaymentsEmptyViewModel,
     paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsEmptyViewModel,
-    incomeFromOverseasPensionsViewModel = anIncomeFromOverseasPensionsEmptyViewModel
+    incomeFromOverseasPensions = anIncomeFromOverseasPensionsEmptyViewModel
 
   )
 
@@ -58,7 +58,7 @@ object PensionsCYAModelBuilder {
     incomeFromPensions = anIncomeFromPensionEmptyViewModel.copy(uKPensionIncomesQuestion = Some(false)),
     unauthorisedPayments = anUnauthorisedPaymentsEmptyViewModel,
     paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsEmptyViewModel,
-    incomeFromOverseasPensionsViewModel = anIncomeFromOverseasPensionsEmptyViewModel
+    incomeFromOverseasPensions = anIncomeFromOverseasPensionsEmptyViewModel
   )
 
   def paymentsIntoPensionOnlyCYAModel(paymentsIntoPensionViewModel: PaymentsIntoPensionViewModel): PensionsCYAModel = {

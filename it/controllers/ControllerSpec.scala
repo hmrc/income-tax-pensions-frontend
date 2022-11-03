@@ -62,6 +62,7 @@ class ControllerSpec(val pathForThisPage: String) extends PlaySpec
   protected val scenarioNameForAgentAndEnglish = "is an agent with a preferred language of English"
   protected val scenarioNameForAgentAndWelsh = "is an agent with a preferred language of Welsh"
 
+
   protected implicit val wsClient: WSClient = app.injector.instanceOf[WSClient]
 
   object PageRelativeURLs {
@@ -141,14 +142,16 @@ class ControllerSpec(val pathForThisPage: String) extends PlaySpec
     }
   }
 
-  protected def submitForm(submittedFormData: SubmittedFormData)(implicit userConfig: UserConfig, wsClient: WSClient): WSResponse = {
+  protected def submitForm(submittedFormData: SubmittedFormData, queryParams: Map[String, String] = Map.empty)(implicit userConfig: UserConfig, wsClient: WSClient): WSResponse = {
     givenAuthorised(userConfig)
     givenStoredSessionData(userConfig)
     await(
       wsClient.url(fullUrl(pathForThisPage))
         .withFollowRedirects(false)
+        .withQueryStringParameters(queryParams.toList: _*)
         .withHttpHeaders(Seq(cookieHeader(userConfig), languageHeader(userConfig)) ++ Seq("Csrf-Token" -> "nocheck"): _*)
-        .post(submittedFormData.asMap))
+        .post(submittedFormData.asMap)
+    )
   }
 
   protected def checkedExpectedRadioButton(label: String): ExpectedRadioButton = ExpectedRadioButton(label, isChecked = true)
@@ -175,6 +178,8 @@ class ControllerSpec(val pathForThisPage: String) extends PlaySpec
 
   protected def getPage(implicit userConfig: UserConfig, wsClient: WSClient): WSResponse = getPage(pathForThisPage)
 
+  protected def getPage(queryParams: Map[String, String])(implicit userConfig: UserConfig, wsClient: WSClient): WSResponse = getPage(pathForThisPage, queryParams)
+
   protected def getPage(sessionDataOpt: Option[PensionsUserData])(implicit wsClient: WSClient): WSResponse = {
     implicit val userConfig: UserConfig = UserConfig(Individual, English, sessionDataOpt)
     getPage(pathForThisPage)
@@ -197,14 +202,21 @@ class ControllerSpec(val pathForThisPage: String) extends PlaySpec
     val expectedLanguageSelectorLink = if (preferredLanguage == PreferredLanguages.English) "/update-and-submit-income-tax-return/pensions/language/cymraeg" else "/update-and-submit-income-tax-return/pensions/language/english"
     document must haveLanguageSelectorLink(expectedLanguageSelectorLink)
 
-    document must haveAFormWithTargetAction(relativeUrlForThisPage)
+
+    document must haveAFormWithTargetAction(expectedPageContents.formUrl.getOrElse(relativeUrlForThisPage))
 
     expectedPageContents.errorSummarySectionOpt match {
       case Some(expectedErrorSummarySection) =>
         document must haveAnErrorSummarySection
+
+
         document must haveAnErrorSummaryTitle(expectedErrorSummarySection.title)
-        document must haveAnErrorSummaryBody(expectedErrorSummarySection.body)
-        document must haveAnErrorSummaryLink(expectedErrorSummarySection.link)
+
+        document must haveAnErrorSummaryBody(expectedErrorSummarySection.errorSummaryMessage.map(_.body).mkString(" "))
+        expectedErrorSummarySection.errorSummaryMessage.foreach {
+          a =>
+            document must haveAnErrorSummaryLink(a.link, a.body)
+        }
       case None =>
         document must not(haveAnErrorSummarySection)
     }
@@ -228,16 +240,17 @@ class ControllerSpec(val pathForThisPage: String) extends PlaySpec
       document must haveTextForSelector(text.selector)
       document must haveTextContents(text.selector, text.contents)
     })
-
   }
 
-  private def getPage(path: String)(implicit userConfig: UserConfig, wsClient: WSClient): WSResponse = {
+  private def getPage(path: String, queryParam: Map[String, String] = Map.empty)
+                     (implicit userConfig: UserConfig, wsClient: WSClient): WSResponse = {
     givenAuthorised(userConfig)
     givenStoredSessionData(userConfig)
-    await(
-      wsClient.url(fullUrl(path))
-        .withFollowRedirects(false)
-        .withHttpHeaders(Seq(cookieHeader(userConfig), languageHeader(userConfig)): _*).get())
+    await(wsClient.url(fullUrl(path))
+      .withFollowRedirects(false)
+      .withQueryStringParameters(queryParam.toList: _*)
+      .withHttpHeaders(Seq(cookieHeader(userConfig), languageHeader(userConfig)): _*).get()
+    )
   }
 
   private def loadPensionUserData(pensionsUserData: PensionsUserData, userType: UserTypes.UserType): Option[PensionsUserData]
@@ -305,7 +318,6 @@ class ControllerSpec(val pathForThisPage: String) extends PlaySpec
   }
 
   private def fullUrl(pathStartingWithSlash: String): String = s"http://localhost:$port${relativeUrl(pathStartingWithSlash)}"
-
 }
 
 object ControllerSpec {
@@ -338,7 +350,6 @@ object ControllerSpec {
           errorMessageIfNotExpected
         )
       }
-
     }
 
     class HasCaption(caption: String) extends Matcher[Document] {
@@ -353,7 +364,6 @@ object ControllerSpec {
           errorMessageIfNotExpected
         )
       }
-
     }
 
     class HaveOtherLanguageSelectorTitle(preferredLanguage: PreferredLanguage, title: String) extends Matcher[Document] {
@@ -369,7 +379,6 @@ object ControllerSpec {
           errorMessageIfNotExpected
         )
       }
-
     }
 
     class HavePreferredLanguageSelectorTitle(preferredLanguage: PreferredLanguage, title: String) extends Matcher[Document] {
@@ -385,7 +394,6 @@ object ControllerSpec {
           errorMessageIfNotExpected
         )
       }
-
     }
 
 
@@ -401,7 +409,6 @@ object ControllerSpec {
           errorMessageIfNotExpected
         )
       }
-
     }
 
     class HaveARadioButtonAtIndex(index: Int) extends Matcher[Document] {
@@ -416,7 +423,6 @@ object ControllerSpec {
           errorMessageIfNotExpected
         )
       }
-
     }
 
     class HaveARadioButtonAtIndexWithLabel(index: Int, label: String) extends Matcher[Document] {
@@ -431,7 +437,6 @@ object ControllerSpec {
           errorMessageIfNotExpected
         )
       }
-
     }
 
     class HaveACheckedRadioButtonAtIndex(index: Int) extends Matcher[Document] {
@@ -447,7 +452,6 @@ object ControllerSpec {
           errorMessageIfNotExpected
         )
       }
-
     }
 
     class HaveAContinueButtonWithLabel(label: String) extends Matcher[Document] {
@@ -508,10 +512,10 @@ object ControllerSpec {
       }
     }
 
-    class HaveAnAmountValue(value: String) extends Matcher[Document] {
+    class HaveAnAmountValue(value: String, name: String) extends Matcher[Document] {
 
       override def apply(document: Document): MatchResult = {
-        val actualValue = document.select("#amount-2").attr("value")
+        val actualValue = document.select("#" + name).attr("value")
         val errorMessageIfExpected = s"The page doesn't have an amount value of '$value'; the actual value is '$actualValue'."
         val errorMessageIfNotExpected = s"The page does indeed have an amount value of '$value', which was not expected."
         MatchResult(
@@ -525,7 +529,7 @@ object ControllerSpec {
     class HaveAnAmountName(name: String) extends Matcher[Document] {
 
       override def apply(document: Document): MatchResult = {
-        val actualName = document.select("#amount-2").attr("name")
+        val actualName = document.select("#" + name).attr("name")
         val errorMessageIfExpected = s"The page doesn't have an amount name of '$name'; the actual name is '$actualName'."
         val errorMessageIfNotExpected = s"The page does indeed have an amount name of '$actualName', which was not expected."
         MatchResult(
@@ -550,7 +554,6 @@ object ControllerSpec {
           errorMessageIfNotExpected
         )
       }
-
     }
 
     class HaveAnErrorSummarySection extends Matcher[Document] {
@@ -564,7 +567,6 @@ object ControllerSpec {
           errorMessageIfNotExpected
         )
       }
-
     }
 
     class HaveAnErrorSummaryTitle(title: String) extends Matcher[Document] {
@@ -579,7 +581,6 @@ object ControllerSpec {
           errorMessageIfNotExpected
         )
       }
-
     }
 
 
@@ -595,17 +596,16 @@ object ControllerSpec {
           errorMessageIfNotExpected
         )
       }
-
     }
 
-
-    class HaveAnErrorSummaryLink(link: String) extends Matcher[Document] {
+    class HaveAnErrorSummaryLink(link: String, body: String) extends Matcher[Document] {
       override def apply(document: Document): MatchResult = {
-        val actualLink = document.select(".govuk-error-summary__body > ul > li > a").attr("href")
+        val actualLink = document.select(".govuk-error-summary__body > ul > li > a")
+        val expectedLink = s"""<a href="$link">$body</a>"""
         val errorMessageIfExpected = s"The page doesn't have an error summary link '$link'; it was actually '$actualLink'"
         val errorMessageIfNotExpected = s"The page does indeed have an error summary link of '$link', which was not expected."
         MatchResult(
-          actualLink.equals(link),
+          actualLink.toString.contains(expectedLink),
           errorMessageIfExpected,
           errorMessageIfNotExpected
         )
@@ -777,7 +777,7 @@ object ControllerSpec {
 
     def haveAnAmountHint(link: String) = new HaveAnAmountHint(link)
 
-    def haveAnAmountValue(value: String) = new HaveAnAmountValue(value)
+    def haveAnAmountValue(value: String, name: String) = new HaveAnAmountValue(value, name)
 
     def haveAnAmountName(value: String) = new HaveAnAmountName(value)
 
@@ -789,7 +789,7 @@ object ControllerSpec {
 
     def haveAnErrorSummaryBody(body: String) = new HaveAnErrorSummaryBody(body)
 
-    def haveAnErrorSummaryLink(link: String) = new HaveAnErrorSummaryLink(link)
+    def haveAnErrorSummaryLink(link: String, body: String) = new HaveAnErrorSummaryLink(link, body)
 
     def haveAnErrorAboveElementSection(idOpt: Option[String] = None) = new HaveAnErrorAboveElementSection(idOpt)
 
@@ -810,7 +810,6 @@ object ControllerSpec {
     def haveATextInputName(selector: String, name: String) = new HaveATextInputName(selector, name)
 
     def haveATextInputValue(selector: String, value: String) = new HaveATextInputValue(selector, value)
-
   }
 
 
@@ -828,7 +827,6 @@ object ControllerSpec {
           errorMessageIfNotExpected
         )
       }
-
     }
 
 
@@ -844,13 +842,11 @@ object ControllerSpec {
           errorMessageIfNotExpected
         )
       }
-
     }
 
     def haveALocationHeaderValue(value: String) = new HaveALocationHeaderValue(value)
 
     def haveStatus(status: Int) = new MustHaveStatus(status)
-
   }
 
   case class UserConfig(userType: UserTypes.UserType,
@@ -878,6 +874,8 @@ object ControllerSpec {
 
     def errorAboveElementCheckSectionOpt: Option[ErrorAboveElementCheckSection]
 
+    def formUrl: Option[String]
+
     def links: Set[ExpectedLink]
 
     def text: Set[ExpectedText]
@@ -890,7 +888,16 @@ object ControllerSpec {
 
   case class ExpectedButton(label: String, link: String)
 
-  case class ErrorSummarySection(title: String, body: String, link: String)
+  case class ErrorSummarySection(title: String, errorSummaryMessage: Seq[ErrorSummaryMessage])
+
+  object ErrorSummarySection {
+    def apply(title: String, body: String, link: String): ErrorSummarySection = {
+      new ErrorSummarySection(title, Seq(ErrorSummaryMessage(body, link)))
+    }
+  }
+
+  case class ErrorSummaryMessage(body: String, link: String)
+
 
   case class ErrorAboveElementCheckSection(title: String, idOpt: Option[String])
 
@@ -917,4 +924,16 @@ object ControllerSpec {
     }
   }
 
+  trait SubmittedOptionTupleAmount extends SubmittedFormData {
+    private val amount1FieldName = "amount-1"
+    private val amount2FieldName = "amount-2"
+
+    def amountsAsMap(amount1: Option[String], amount2: Option[String]): Map[String, String] =
+      (amount1, amount2) match {
+        case (Some(a), Some(b)) => Map(amount1FieldName -> a, amount2FieldName -> b)
+        case (Some(a), None) => Map(amount1FieldName -> a)
+        case (None, Some(b)) => Map(amount2FieldName -> b)
+        case _ => Map.empty
+      }
+  }
 }

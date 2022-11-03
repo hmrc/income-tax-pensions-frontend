@@ -134,7 +134,7 @@ class PensionOverseasIncomeStatusISpec
 
             val sessionData = pensionsUserData(
               minimalSessionDataToAccessThisPage.copy(
-                incomeFromOverseasPensionsViewModel = minimalSessionDataToAccessThisPage.incomeFromOverseasPensionsViewModel.copy(
+                incomeFromOverseasPensions = minimalSessionDataToAccessThisPage.incomeFromOverseasPensions.copy(
                   paymentsFromOverseasPensionsQuestion = Some(true)
                 )
               )
@@ -226,7 +226,7 @@ class PensionOverseasIncomeStatusISpec
 
             val sessionData = pensionsUserData(
               minimalSessionDataToAccessThisPage.copy(
-                incomeFromOverseasPensionsViewModel = minimalSessionDataToAccessThisPage.incomeFromOverseasPensionsViewModel.copy(
+                incomeFromOverseasPensions = minimalSessionDataToAccessThisPage.incomeFromOverseasPensions.copy(
                   paymentsFromOverseasPensionsQuestion = Some(false)
                 )
               )
@@ -324,9 +324,9 @@ class PensionOverseasIncomeStatusISpec
             val sessionData = pensionsUserData(minimalSessionDataToAccessThisPage)
 
             val expectedViewModel =
-              sessionData.pensions.incomeFromOverseasPensionsViewModel.copy(
+              sessionData.pensions.incomeFromOverseasPensions.copy(
                 paymentsFromOverseasPensionsQuestion = Some(false),
-                pensionSchemes = None
+                overseasIncomePensionSchemes = Nil
               )
 
             scenarioNameForIndividualAndEnglish in {
@@ -375,7 +375,7 @@ class PensionOverseasIncomeStatusISpec
             val sessionData = pensionsUserData(minimalSessionDataToAccessThisPage)
 
             val expectedViewModel =
-              sessionData.pensions.incomeFromOverseasPensionsViewModel.copy(
+              sessionData.pensions.incomeFromOverseasPensions.copy(
                 paymentsFromOverseasPensionsQuestion = Some(true)
               )
 
@@ -563,7 +563,7 @@ class PensionOverseasIncomeStatusISpec
   }
 
   private def getViewModel(implicit userConfig: UserConfig): Option[IncomeFromOverseasPensionsViewModel] =
-    loadPensionUserData.map(_.pensions.incomeFromOverseasPensionsViewModel)
+    loadPensionUserData.map(_.pensions.incomeFromOverseasPensions)
 
 }
 

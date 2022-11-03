@@ -43,7 +43,6 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
           implicit val response: WSResponse = getPage(None)
 
           assertRedirectionAsExpected(PageRelativeURLs.summaryPage)
-
         }
       }
       "appear as expected" when {
@@ -69,8 +68,8 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
                   ExpectedText(selectorForSecondParagraph, "If you got unauthorised payments from more than one UK pension provider, you can add the references later."),
                   ExpectedText(selectorForHint, "For example, ‘12345678RA’")
                 )
-              ))
-
+              )
+            )
           }
           scenarioNameForIndividualAndWelsh in {
 
@@ -90,7 +89,8 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
                   ExpectedText(selectorForSecondParagraph, "If you got unauthorised payments from more than one UK pension provider, you can add the references later."),
                   ExpectedText(selectorForHint, "For example, ‘12345678RA’")
                 )
-              ))
+              )
+            )
           }
           scenarioNameForAgentAndEnglish in {
 
@@ -110,8 +110,8 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
                   ExpectedText(selectorForSecondParagraph, "If your client got unauthorised payments from more than UK pension provider, you can add the references later."),
                   ExpectedText(selectorForHint, "For example, ‘12345678RA’")
                 )
-              ))
-
+              )
+            )
           }
           scenarioNameForAgentAndWelsh in {
 
@@ -131,8 +131,8 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
                   ExpectedText(selectorForSecondParagraph, "If your client got unauthorised payments from more than UK pension provider, you can add the references later."),
                   ExpectedText(selectorForHint, "For example, ‘12345678RA’")
                 )
-              ))
-
+              )
+            )
           }
         }
         "the user had previously entered multiple, valid PSTRs" when {
@@ -164,8 +164,8 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
                   ExpectedText(selectorForSecondParagraph, "If you got unauthorised payments from more than one UK pension provider, you can add the references later."),
                   ExpectedText(selectorForHint, "For example, ‘12345678RA’")
                 )
-              ))
-
+              )
+            )
           }
           scenarioNameForIndividualAndWelsh in {
 
@@ -185,8 +185,8 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
                   ExpectedText(selectorForSecondParagraph, "If you got unauthorised payments from more than one UK pension provider, you can add the references later."),
                   ExpectedText(selectorForHint, "For example, ‘12345678RA’")
                 )
-              ))
-
+              )
+            )
           }
           scenarioNameForAgentAndEnglish in {
 
@@ -206,8 +206,8 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
                   ExpectedText(selectorForSecondParagraph, "If your client got unauthorised payments from more than UK pension provider, you can add the references later."),
                   ExpectedText(selectorForHint, "For example, ‘12345678RA’")
                 )
-              ))
-
+              )
+            )
           }
           scenarioNameForAgentAndWelsh in {
 
@@ -227,8 +227,8 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
                   ExpectedText(selectorForSecondParagraph, "If your client got unauthorised payments from more than UK pension provider, you can add the references later."),
                   ExpectedText(selectorForHint, "For example, ‘12345678RA’")
                 )
-              ))
-
+              )
+            )
           }
         }
       }
@@ -242,7 +242,6 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
 
           assertRedirectionAsExpected(PageRelativeURLs.summaryPage)
           getViewModel mustBe None
-
         }
       }
       "succeed" when {
@@ -262,7 +261,6 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
 
             assertRedirectionAsExpected(PageRelativeURLs.summaryPage)
             getViewModel mustBe Some(expectedViewModel)
-
           }
         }
         "the user had entered PSTRs, previously and" when {
@@ -289,7 +287,6 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
 
             assertRedirectionAsExpected(PageRelativeURLs.summaryPage)
             getViewModel mustBe Some(expectedViewModel)
-
           }
           "they enter a valid one (but with extra padding), which they haven't entered before" in {
 
@@ -303,7 +300,6 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
 
             assertRedirectionAsExpected(PageRelativeURLs.summaryPage)
             getViewModel mustBe Some(expectedViewModel)
-
           }
           "they enter a valid one, which they have had previously entered" in {
 
@@ -317,7 +313,6 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
 
             assertRedirectionAsExpected(PageRelativeURLs.summaryPage)
             getViewModel mustBe Some(expectedViewModel)
-
           }
         }
       }
@@ -360,9 +355,9 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
                       idOpt = Some("taxReferenceId")
                     )
                   )
-                ))
+                )
+              )
               getViewModel mustBe Some(expectedViewModel)
-
             }
             scenarioNameForIndividualAndWelsh in {
 
@@ -394,9 +389,9 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
                       idOpt = Some("taxReferenceId")
                     )
                   )
-                ))
+                )
+              )
               getViewModel mustBe Some(expectedViewModel)
-
             }
             scenarioNameForAgentAndEnglish in {
 
@@ -428,9 +423,9 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
                       idOpt = Some("taxReferenceId")
                     )
                   )
-                ))
+                )
+              )
               getViewModel mustBe Some(expectedViewModel)
-
             }
             scenarioNameForAgentAndWelsh in {
 
@@ -462,9 +457,9 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
                       idOpt = Some("taxReferenceId")
                     )
                   )
-                ))
+                )
+              )
               getViewModel mustBe Some(expectedViewModel)
-
             }
           }
           "the user has entered a PSTR consisting of only spaces" when {
@@ -498,9 +493,9 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
                       idOpt = Some("taxReferenceId")
                     )
                   )
-                ))
+                )
+              )
               getViewModel mustBe Some(expectedViewModel)
-
             }
             scenarioNameForIndividualAndWelsh in {
 
@@ -532,9 +527,9 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
                       idOpt = Some("taxReferenceId")
                     )
                   )
-                ))
+                )
+              )
               getViewModel mustBe Some(expectedViewModel)
-
             }
             scenarioNameForAgentAndEnglish in {
 
@@ -566,7 +561,8 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
                       idOpt = Some("taxReferenceId")
                     )
                   )
-                ))
+                )
+              )
               getViewModel mustBe Some(expectedViewModel)
             }
             scenarioNameForAgentAndWelsh in {
@@ -599,9 +595,9 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
                       idOpt = Some("taxReferenceId")
                     )
                   )
-                ))
+                )
+              )
               getViewModel mustBe Some(expectedViewModel)
-
             }
           }
           "the user has entered a PSTR with an invalid format" when {
@@ -638,9 +634,9 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
                       idOpt = Some("taxReferenceId")
                     )
                   )
-                ))
+                )
+              )
               getViewModel mustBe Some(expectedViewModel)
-
             }
             scenarioNameForIndividualAndWelsh in {
 
@@ -672,9 +668,9 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
                       idOpt = Some("taxReferenceId")
                     )
                   )
-                ))
+                )
+              )
               getViewModel mustBe Some(expectedViewModel)
-
             }
             scenarioNameForAgentAndEnglish in {
 
@@ -706,9 +702,9 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
                       idOpt = Some("taxReferenceId")
                     )
                   )
-                ))
+                )
+              )
               getViewModel mustBe Some(expectedViewModel)
-
             }
             scenarioNameForAgentAndWelsh in {
 
@@ -740,9 +736,9 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
                       idOpt = Some("taxReferenceId")
                     )
                   )
-                ))
+                )
+              )
               getViewModel mustBe Some(expectedViewModel)
-
             }
           }
         }
@@ -760,7 +756,6 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
 
   private def getViewModel(implicit userConfig: UserConfig): Option[UnauthorisedPaymentsViewModel] =
     loadPensionUserData.map(_.pensions.unauthorisedPayments)
-
 }
 
 case class ExpectedPageContents(
@@ -772,13 +767,14 @@ case class ExpectedPageContents(
                                  errorSummarySectionOpt: Option[ErrorSummarySection] = None,
                                  errorAboveElementCheckSectionOpt: Option[ErrorAboveElementCheckSection] = None,
                                  links: Set[ExpectedLink] = Set.empty,
-                                 text: Set[ExpectedText] = Set.empty)
+                                 text: Set[ExpectedText] = Set.empty,
+                                 formUrl: Option[String] = None)
+
   extends BaseExpectedPageContents
 
 case class SubmittedFormDataForPage(pstrOpt: Option[String]) extends SubmittedFormData {
 
   val asMap: Map[String, String] = pstrOpt.map(pstr => Map("taxReferenceId" -> pstr)).getOrElse(Map.empty)
-
 }
 
 

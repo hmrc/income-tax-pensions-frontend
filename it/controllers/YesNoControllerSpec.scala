@@ -40,7 +40,8 @@ class YesNoControllerSpec(override val pathForThisPage: String) extends Controll
                                        errorSummarySectionOpt: Option[ErrorSummarySection] = None,
                                        errorAboveElementCheckSectionOpt: Option[ErrorAboveElementCheckSection] = None,
                                        links: Set[ExpectedLink] = Set.empty,
-                                       text: Set[ExpectedText] = Set.empty
+                                       text: Set[ExpectedText] = Set.empty,
+                                       formUrl:Option[String] = None
                                       ) extends BaseExpectedPageContents
 
 

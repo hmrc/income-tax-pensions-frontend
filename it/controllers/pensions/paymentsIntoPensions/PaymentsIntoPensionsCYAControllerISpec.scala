@@ -283,7 +283,7 @@ class PaymentsIntoPensionsCYAControllerISpec extends IntegrationTest with ViewHe
             incomeFromPensions = anIncomeFromPensionsViewModel,
             unauthorisedPayments = anUnauthorisedPaymentsViewModel,
             paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel,
-            incomeFromOverseasPensionsViewModel = anIncomeFromOverseasPensionsViewModel
+            incomeFromOverseasPensions = anIncomeFromOverseasPensionsViewModel
           ), taxYear = taxYear), aUserRequest)
           authoriseAgentOrIndividual(isAgent = false)
           urlPost(url, form, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))

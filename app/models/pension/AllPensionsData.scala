@@ -116,9 +116,9 @@ object AllPensionsData {
       doubleTaxationReliefAmount = prior.pensionIncome.flatMap(_.overseasPensionContribution.headOption.flatMap(_.dblTaxationRelief)),
       sf74Reference = prior.pensionIncome.flatMap(_.overseasPensionContribution.headOption.flatMap(_.sf74Reference))
     ),
-      incomeFromOverseasPensionsViewModel = IncomeFromOverseasPensionsViewModel(
+      incomeFromOverseasPensions = IncomeFromOverseasPensionsViewModel(
         paymentsFromOverseasPensionsQuestion = prior.pensionIncome.map(_.foreignPension.nonEmpty),
-        pensionSchemes = prior.pensionIncome.map(x => fromForeignPensionToPensionScheme(x.foreignPension))
+        overseasIncomePensionSchemes = prior.pensionIncome.map(x => fromForeignPensionToPensionScheme(x.foreignPension)).getOrElse(Nil)
       )
     )
   }

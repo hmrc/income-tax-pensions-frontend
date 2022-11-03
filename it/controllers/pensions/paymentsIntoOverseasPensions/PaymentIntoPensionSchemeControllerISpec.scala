@@ -42,7 +42,6 @@ class PaymentIntoPensionSchemeControllerISpec
           implicit val response: WSResponse = getPage
 
           assertRedirectionAsExpected(PageRelativeURLs.summaryPage)
-
         }
       }
       "appear as expected" when {
@@ -77,7 +76,6 @@ class PaymentIntoPensionSchemeControllerISpec
                   ExpectedText(selectorForBulletPoint, "paid into after tax (net income)")
                 )
               ))
-
           }
           scenarioNameForIndividualAndWelsh in {
 
@@ -106,7 +104,6 @@ class PaymentIntoPensionSchemeControllerISpec
                   ExpectedText(selectorForBulletPoint, "paid into after tax (net income)")
                 )
               ))
-
           }
           scenarioNameForAgentAndEnglish in {
 
@@ -136,7 +133,6 @@ class PaymentIntoPensionSchemeControllerISpec
                 )
               )
             )
-
           }
           scenarioNameForAgentAndWelsh in {
 
@@ -165,7 +161,6 @@ class PaymentIntoPensionSchemeControllerISpec
                   ExpectedText(selectorForBulletPoint, "paid into after tax (net income)")
                 )
               ))
-
           }
         }
         "the user had previously answered 'Yes' with a valid amount, and" when {
@@ -204,7 +199,6 @@ class PaymentIntoPensionSchemeControllerISpec
                   ExpectedText(selectorForBulletPoint, "paid into after tax (net income)")
                 )
               ))
-
           }
           scenarioNameForIndividualAndWelsh in {
 
@@ -233,7 +227,6 @@ class PaymentIntoPensionSchemeControllerISpec
                   ExpectedText(selectorForBulletPoint, "paid into after tax (net income)")
                 )
               ))
-
           }
           scenarioNameForAgentAndEnglish in {
 
@@ -262,7 +255,6 @@ class PaymentIntoPensionSchemeControllerISpec
                   ExpectedText(selectorForBulletPoint, "paid into after tax (net income)")
                 )
               ))
-
           }
           scenarioNameForAgentAndWelsh in {
 
@@ -291,9 +283,7 @@ class PaymentIntoPensionSchemeControllerISpec
                   ExpectedText(selectorForBulletPoint, "paid into after tax (net income)")
                 )
               ))
-
           }
-
         }
         "the user had previously answered 'No' without an amount, and" when {
 
@@ -331,7 +321,6 @@ class PaymentIntoPensionSchemeControllerISpec
                   ExpectedText(selectorForBulletPoint, "paid into after tax (net income)")
                 )
               ))
-
           }
           scenarioNameForIndividualAndWelsh in {
 
@@ -360,7 +349,6 @@ class PaymentIntoPensionSchemeControllerISpec
                   ExpectedText(selectorForBulletPoint, "paid into after tax (net income)")
                 )
               ))
-
           }
           scenarioNameForAgentAndEnglish in {
 
@@ -389,7 +377,6 @@ class PaymentIntoPensionSchemeControllerISpec
                   ExpectedText(selectorForBulletPoint, "paid into after tax (net income)")
                 )
               ))
-
           }
           scenarioNameForAgentAndWelsh in {
 
@@ -418,9 +405,7 @@ class PaymentIntoPensionSchemeControllerISpec
                   ExpectedText(selectorForBulletPoint, "paid into after tax (net income)")
                 )
               ))
-
           }
-
         }
       }
     }
@@ -433,9 +418,7 @@ class PaymentIntoPensionSchemeControllerISpec
 
           assertRedirectionAsExpected(PageRelativeURLs.summaryPage)
           getViewModel mustBe None
-
         }
-
       }
       "succeed" when {
         "the user has relevant session data and" when {
@@ -454,7 +437,6 @@ class PaymentIntoPensionSchemeControllerISpec
 
             assertRedirectionAsExpected(relativeUrlForThisPage)
             getViewModel mustBe Some(expectedViewModel)
-
           }
           "the user has selected 'Yes' as well as a valid amount (unformatted)" in {
 
@@ -468,7 +450,6 @@ class PaymentIntoPensionSchemeControllerISpec
 
             assertRedirectionAsExpected(relativeUrlForThisPage)
             getViewModel mustBe Some(expectedViewModel)
-
           }
           "the user has selected 'Yes' as well as a valid amount (formatted)" in {
 
@@ -482,9 +463,7 @@ class PaymentIntoPensionSchemeControllerISpec
 
             assertRedirectionAsExpected(relativeUrlForThisPage)
             getViewModel mustBe Some(expectedViewModel)
-
           }
-
         }
       }
       "fail" when {
@@ -532,9 +511,9 @@ class PaymentIntoPensionSchemeControllerISpec
                       idOpt = Some("value")
                     )
                   )
-                ))
+                )
+              )
               getViewModel mustBe Some(expectedViewModel)
-
             }
             scenarioNameForIndividualAndWelsh in {
 
@@ -574,9 +553,9 @@ class PaymentIntoPensionSchemeControllerISpec
                       idOpt = Some("value")
                     )
                   )
-                ))
+                )
+              )
               getViewModel mustBe Some(expectedViewModel)
-
             }
             scenarioNameForAgentAndEnglish in {
 
@@ -616,9 +595,9 @@ class PaymentIntoPensionSchemeControllerISpec
                       idOpt = Some("value")
                     )
                   )
-                ))
+                )
+              )
               getViewModel mustBe Some(expectedViewModel)
-
             }
             scenarioNameForAgentAndWelsh in {
 
@@ -658,9 +637,9 @@ class PaymentIntoPensionSchemeControllerISpec
                       idOpt = Some("value")
                     )
                   )
-                ))
+                )
+              )
               getViewModel mustBe Some(expectedViewModel)
-
             }
           }
           "the user has selected 'Yes' but have not provided an amount, and" when {
@@ -702,9 +681,9 @@ class PaymentIntoPensionSchemeControllerISpec
                       idOpt = Some("amount-2")
                     )
                   )
-                ))
+                )
+              )
               getViewModel mustBe Some(expectedViewModel)
-
             }
             scenarioNameForIndividualAndWelsh in {
 
@@ -744,9 +723,9 @@ class PaymentIntoPensionSchemeControllerISpec
                       idOpt = Some("amount-2")
                     )
                   )
-                ))
+                )
+              )
               getViewModel mustBe Some(expectedViewModel)
-
             }
             scenarioNameForAgentAndEnglish in {
 
@@ -786,9 +765,9 @@ class PaymentIntoPensionSchemeControllerISpec
                       idOpt = Some("amount-2")
                     )
                   )
-                ))
+                )
+              )
               getViewModel mustBe Some(expectedViewModel)
-
             }
             scenarioNameForAgentAndWelsh in {
 
@@ -828,9 +807,9 @@ class PaymentIntoPensionSchemeControllerISpec
                       idOpt = Some("amount-2")
                     )
                   )
-                ))
+                )
+              )
               getViewModel mustBe Some(expectedViewModel)
-
             }
           }
           "the user has selected 'Yes' but has provided an amount of an invalid format, and" when {
@@ -872,9 +851,9 @@ class PaymentIntoPensionSchemeControllerISpec
                       idOpt = Some("amount-2")
                     )
                   )
-                ))
+                )
+              )
               getViewModel mustBe Some(expectedViewModel)
-
             }
             scenarioNameForIndividualAndWelsh in {
 
@@ -914,9 +893,9 @@ class PaymentIntoPensionSchemeControllerISpec
                       idOpt = Some("amount-2")
                     )
                   )
-                ))
+                )
+              )
               getViewModel mustBe Some(expectedViewModel)
-
             }
             scenarioNameForAgentAndEnglish in {
 
@@ -956,9 +935,9 @@ class PaymentIntoPensionSchemeControllerISpec
                       idOpt = Some("amount-2")
                     )
                   )
-                ))
+                )
+              )
               getViewModel mustBe Some(expectedViewModel)
-
             }
             scenarioNameForAgentAndWelsh in {
 
@@ -998,9 +977,9 @@ class PaymentIntoPensionSchemeControllerISpec
                       idOpt = Some("amount-2")
                     )
                   )
-                ))
+                )
+              )
               getViewModel mustBe Some(expectedViewModel)
-
             }
           }
           "the user has selected 'Yes' but has provided an excessive amount, and" when {
@@ -1042,9 +1021,9 @@ class PaymentIntoPensionSchemeControllerISpec
                       idOpt = Some("amount-2")
                     )
                   )
-                ))
+                )
+              )
               getViewModel mustBe Some(expectedViewModel)
-
             }
             scenarioNameForIndividualAndWelsh in {
 
@@ -1084,9 +1063,9 @@ class PaymentIntoPensionSchemeControllerISpec
                       idOpt = Some("amount-2")
                     )
                   )
-                ))
+                )
+              )
               getViewModel mustBe Some(expectedViewModel)
-
             }
             scenarioNameForAgentAndEnglish in {
 
@@ -1126,9 +1105,9 @@ class PaymentIntoPensionSchemeControllerISpec
                       idOpt = Some("amount-2")
                     )
                   )
-                ))
+                )
+              )
               getViewModel mustBe Some(expectedViewModel)
-
             }
             scenarioNameForAgentAndWelsh in {
 
@@ -1168,9 +1147,9 @@ class PaymentIntoPensionSchemeControllerISpec
                       idOpt = Some("amount-2")
                     )
                   )
-                ))
+                )
+              )
               getViewModel mustBe Some(expectedViewModel)
-
             }
           }
         }

@@ -38,7 +38,7 @@ class YesNoAmountControllerSpec(override val pathForThisPage: String) extends Co
   private def assertAmountSectionAsExpected(document: Document, expectedAmountSection: ExpectedAmountSection): Unit = {
     document must haveAnAmountLabel(expectedAmountSection.label)
     document must haveAnAmountHint(expectedAmountSection.hint)
-    document must haveAnAmountValue(expectedAmountSection.value)
+    document must haveAnAmountValue(expectedAmountSection.value, fieldNameForAmountInput)
     document must haveTextContents(".govuk-input__prefix", "£")
     document must haveAnAmountName(fieldNameForAmountInput)
   }
@@ -53,7 +53,8 @@ class YesNoAmountControllerSpec(override val pathForThisPage: String) extends Co
                                              errorSummarySectionOpt: Option[ErrorSummarySection] = None,
                                              errorAboveElementCheckSectionOpt: Option[ErrorAboveElementCheckSection] = None,
                                              links: Set[ExpectedLink] = Set.empty,
-                                             text: Set[ExpectedText] = Set.empty
+                                             text: Set[ExpectedText] = Set.empty,
+                                             formUrl: Option[String] = None
                                             ) extends BaseExpectedPageContents
 
 
@@ -65,7 +66,5 @@ class YesNoAmountControllerSpec(override val pathForThisPage: String) extends Co
     }
 
     val asMap: Map[String, String] = yesOrNoAsMap(yesOrNoOpt) ++ amountAsMap
-
   }
-
 }
