@@ -42,7 +42,7 @@
 
             <div class="govuk-summary-list__row" id="payments-into-overseas-pensions-row">
                 <dt class="govuk-summary-list__key govuk-!-width-two-third">
-                @link(s"${controllers.pensions.paymentsIntoOverseasPensions.routes.PaymentIntoPensionScheme.show(taxYear)}", "pensions.overseasPensionsSummary.paymentsIntoOverseasPensions",Some("payments-into-overseas-pensions-link"))
+                @link(s"${controllers.pensions.paymentsIntoOverseasPensions.routes.PaymentIntoPensionSchemeController.show(taxYear)}", "pensions.overseasPensionsSummary.paymentsIntoOverseasPensions",Some("payments-into-overseas-pensions-link"))
                 </dt>
                 <dd class="govuk-summary-list__actions govuk-!-two-third">
                 @if(paymentsIntoOverseasPensionsIsUpdated(cya)) {
