@@ -32,7 +32,7 @@
         errorSummary: ErrorSummary
 )
 
-@(form: Form[(BigDecimal, BigDecimal)], taxYear: Int)(implicit request: AuthorisationRequest[_], messages: Messages, appConfig: AppConfig)
+@(form: Form[(Option[BigDecimal], Option[BigDecimal])], taxYear: Int)(implicit request: AuthorisationRequest[_], messages: Messages, appConfig: AppConfig)
 
     @titleText = @{
         messages(s"lifetimeAllowance.pensionTakenAnotherWay.title.${if(request.user.isAgent) "agent" else "individual"}")
