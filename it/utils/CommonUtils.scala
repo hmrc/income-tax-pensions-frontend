@@ -16,19 +16,12 @@
 
 package utils
 
-import builders.AllPensionsDataBuilder.anAllPensionsData
-import builders.IncomeTaxUserDataBuilder.anIncomeTaxUserData
-import builders.PensionsUserDataBuilder.pensionsUserDataWithUnauthorisedPayments
 import builders.UserBuilder.aUserRequest
-import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import models.IncomeTaxUserData
 import models.mongo.PensionsUserData
-import models.pension.charges.UnauthorisedPaymentsViewModel
 import play.api.http.HeaderNames
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.PensionAnnualAllowancePages.pensionProviderTaxPaidAnnualAllowanceUrl
-import utils.PageUrls.UnAuthorisedPayments.noSurchargeAmountUrl
-import utils.PageUrls.{fullUrl, pensionSummaryUrl}
+import utils.PageUrls.fullUrl
 
 trait CommonUtils extends IntegrationTest with ViewHelpers with PensionsDatabaseHelper {
 
@@ -69,8 +62,8 @@ trait CommonUtils extends IntegrationTest with ViewHelpers with PensionsDatabase
     result
   }
 
-  def showUnauthorisedPage[A,B](userScenario: UserScenario[A, B])
-                               (implicit url: Int => String): WSResponse = {
+  def showUnauthorisedPage[A, B](userScenario: UserScenario[A, B])
+                                (implicit url: Int => String): WSResponse = {
     lazy val result: WSResponse = {
       unauthorisedAgentOrIndividual(userScenario.isAgent)
       urlGet(fullUrl(url(taxYear)), welsh = userScenario.isWelsh,
