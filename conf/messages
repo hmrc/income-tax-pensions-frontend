@@ -24,7 +24,6 @@ common.use = use
 common.error.errorKey = Error:
 common.opensInNewTab = (opens in new tab)
 common.currency.hint = For example, £193.52
-common.currency.hint1 = For example, £193.54
 common.help.getHelpWithThisPage = Get help with this page
 common.status.toDo = To do
 common.status.updated = Updated
@@ -424,11 +423,6 @@ pensions.aboveReducedAnnualAllowance.reduced.error.noEntry.individual = Select y
 pensions.aboveReducedAnnualAllowance.reduced.error.noEntry.agent = Select yes if your client has gone above their reduced annual allowance
 pensions.aboveReducedAnnualAllowance.nonReduced.error.noEntry.individual = Select yes if you have gone above the annual allowance
 pensions.aboveReducedAnnualAllowance.nonReduced.error.noEntry.agent = Select yes if your client has gone above the annual allowance
-
-#pension schemes paid for above Annual Allowance
-
-pensions.pensionSchemesTaxPaidAnnualAllowance.error.amount.noEntry = Enter the amount paid, or that needs to be paid, in pounds
-pensions.pensionSchemesTaxPaidAnnualAllowance.error.amount.inCorrectFormat = Enter the amount paid, or that needs to be paid, in the correct format
 
 #Pension Provider Paid Tax Messages
 

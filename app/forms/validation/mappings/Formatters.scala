@@ -16,7 +16,6 @@
 
 package forms.validation.mappings
 
-import org.checkerframework.checker.units.qual.s
 import play.api.data.FormError
 import play.api.data.format.Formatter
 
@@ -44,7 +43,7 @@ trait Formatters {
                                           invalidNumericKey: String,
                                           maxAmountKey: String,
                                           args: Seq[String] = Seq.empty[String]
-                                          ): Formatter[BigDecimal] =
+                                         ): Formatter[BigDecimal] =
     new Formatter[BigDecimal] {
 
       val is2dp = """\d+|\d*\.\d{1,2}"""
@@ -61,7 +60,7 @@ trait Formatters {
           .map(_.replaceAll("""\s""", ""))
           .flatMap {
             case s if s.isEmpty => Left(Seq(FormError(key, requiredKey, args)))
-            case s if !s.matches(validNumeric) => Left(Seq(FormError(key,invalidNumericKey, args)))
+            case s if !s.matches(validNumeric) => Left(Seq(FormError(key, invalidNumericKey, args)))
             case s if !s.matches(is2dp) => Left(Seq(FormError(key, invalidNumericKey, args)))
             case s =>
               nonFatalCatch
@@ -78,33 +77,33 @@ trait Formatters {
     }
 
 
-  def checksWithMinAmount(x : BigDecimal,
-             key : String,
-             minAmountkey : String,
-             maxAmountKey : String,
-             args: Seq[String]) : Either[Seq[FormError], Option[BigDecimal]] = x match {
+  def checksWithMinAmount(x: BigDecimal,
+                          key: String,
+                          minAmountkey: String,
+                          maxAmountKey: String,
+                          args: Seq[String]): Either[Seq[FormError], Option[BigDecimal]] = x match {
     case bigDecimal if (bigDecimal == BigDecimal("0")) => Left(Seq(FormError(key, minAmountkey, args)))
     case bigDecimal if (bigDecimal >= BigDecimal(maxAmount)) => Left(Seq(FormError(key, maxAmountKey, args)))
     case bigDecimal => Right(Some(bigDecimal))
   }
 
-  def checksWithOutMinAmount(x : BigDecimal,
-                          key : String,
-                          maxAmountKey : String,
-                          args: Seq[String]) : Either[Seq[FormError], Option[BigDecimal]] = x match {
+  def checksWithOutMinAmount(x: BigDecimal,
+                             key: String,
+                             maxAmountKey: String,
+                             args: Seq[String]): Either[Seq[FormError], Option[BigDecimal]] = x match {
     case bigDecimal if (bigDecimal >= BigDecimal(maxAmount)) => Left(Seq(FormError(key, maxAmountKey, args)))
     case bigDecimal => Right(Some(bigDecimal))
   }
 
-  def checkIfValidString(inputString : String,key : String, requiredKey : String, invalidNumericKey: String,
-                         args: Seq[String]) : Either[Seq[FormError], BigDecimal] = {
+  def checkIfValidString(inputString: String, key: String, requiredKey: String, invalidNumericKey: String,
+                         args: Seq[String]): Either[Seq[FormError], BigDecimal] = {
 
     val is2dp = """\d+|\d*\.\d{1,2}"""
     val validNumeric = """[0-9.]*"""
 
     inputString match {
       case s if s.isEmpty => Left(Seq(FormError(key, requiredKey, args)))
-      case s if !s.matches(validNumeric) => Left(Seq(FormError(key,invalidNumericKey, args)))
+      case s if !s.matches(validNumeric) => Left(Seq(FormError(key, invalidNumericKey, args)))
       case s if !s.matches(is2dp) => Left(Seq(FormError(key, invalidNumericKey, args)))
       case s =>
         nonFatalCatch
@@ -131,8 +130,8 @@ trait Formatters {
           .map(_.replaceAll("""\s""", ""))
           .flatMap {
             case s => checkIfValidString(s, key, requiredKey, invalidNumericKey, args)
-          }.flatMap{
-          case bigDecimal if minAmountkey != ""  => checksWithMinAmount(bigDecimal, key, minAmountkey, maxAmountKey, args)
+          }.flatMap {
+          case bigDecimal if minAmountkey != "" => checksWithMinAmount(bigDecimal, key, minAmountkey, maxAmountKey, args)
           case bigDecimal if minAmountkey == "" => checksWithOutMinAmount(bigDecimal, key, maxAmountKey, args)
         }
       }
