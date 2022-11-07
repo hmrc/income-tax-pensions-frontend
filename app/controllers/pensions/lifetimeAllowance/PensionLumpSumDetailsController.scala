@@ -58,8 +58,8 @@ class PensionLumpSumDetailsController @Inject()(implicit val mcc: MessagesContro
     pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
       case Some(data) =>
 
-        val totalTaxOpt = data.pensions.pensionLifetimeAllowances.pensionAsLumpSum.map(_.amount)
-        val taxPaidOpt = data.pensions.pensionLifetimeAllowances.pensionAsLumpSum.map(_.taxPaid)
+        val totalTaxOpt = data.pensions.pensionLifetimeAllowances.pensionAsLumpSum.flatMap(_.amount)
+        val taxPaidOpt = data.pensions.pensionLifetimeAllowances.pensionAsLumpSum.flatMap(_.taxPaid)
 
         (totalTaxOpt, taxPaidOpt) match {
           case (Some(totalTax), Some(taxPaid)) =>
@@ -86,7 +86,7 @@ class PensionLumpSumDetailsController @Inject()(implicit val mcc: MessagesContro
               val updatedCyaModel: PensionsCYAModel = {
                 pensionsCYAModel.copy(
                   pensionLifetimeAllowances = viewModel.copy(
-                    pensionAsLumpSum = Some(LifetimeAllowance(amounts._1, amounts._2)))
+                    pensionAsLumpSum = Some(LifetimeAllowance(Some(amounts._1), Some(amounts._2))))
                 )
               }
               pensionSessionService.createOrUpdateSessionData(request.user,

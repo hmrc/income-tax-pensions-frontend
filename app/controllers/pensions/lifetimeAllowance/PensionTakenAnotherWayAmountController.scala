@@ -58,8 +58,8 @@ class PensionTakenAnotherWayAmountController @Inject()(implicit val mcc: Message
     pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
       case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
       case Right(Some(data)) =>
-        val totalTaxOpt = data.pensions.pensionLifetimeAllowances.pensionPaidAnotherWay.map(_.amount)
-        val taxPaidOpt = data.pensions.pensionLifetimeAllowances.pensionPaidAnotherWay.map(_.taxPaid)
+        val totalTaxOpt = data.pensions.pensionLifetimeAllowances.pensionPaidAnotherWay.flatMap(_.amount)
+        val taxPaidOpt = data.pensions.pensionLifetimeAllowances.pensionPaidAnotherWay.flatMap(_.taxPaid)
         (totalTaxOpt, taxPaidOpt) match {
           case (Some(totalTax), Some(taxPaid)) =>
             Future.successful(Ok(pensionTakenAnotherWayAmountView(amountForm(request.user.isAgent).fill((Some(totalTax), Some(taxPaid))), taxYear)))
@@ -92,7 +92,7 @@ class PensionTakenAnotherWayAmountController @Inject()(implicit val mcc: Message
               val updatedCyaModel: PensionsCYAModel = {
                 pensionsCYAModel.copy(
                   pensionLifetimeAllowances = viewModel.copy(
-                    pensionPaidAnotherWay = Some(LifetimeAllowance(amounts._1.get, amounts._2.get)))
+                    pensionPaidAnotherWay = Some(LifetimeAllowance(amounts._1, amounts._2)))
                 )
               }
               pensionSessionService.createOrUpdateSessionData(request.user,

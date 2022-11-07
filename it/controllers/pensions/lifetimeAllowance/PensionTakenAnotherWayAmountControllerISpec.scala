@@ -19,7 +19,7 @@ package controllers.pensions.lifetimeAllowance
 import builders.PensionLifetimeAllowanceViewModelBuilder.{aPensionLifetimeAllowanceViewModel, aPensionLifetimeAllowancesEmptyViewModel}
 import builders.PensionsUserDataBuilder.{aPensionsUserData, pensionsUserDataWithLifetimeAllowance}
 import builders.UserBuilder.aUserRequest
-import forms.TupleAmountForm
+import forms.{OptionalTupleAmountForm, TupleAmountForm}
 import models.pension.charges.LifetimeAllowance
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -43,8 +43,8 @@ class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with B
 
 
   def amountForm(totalAmount: String, taxPaid: String): Map[String, String] = Map(
-    TupleAmountForm.amount -> totalAmount,
-    TupleAmountForm.amount2 -> taxPaid
+    OptionalTupleAmountForm.amount -> totalAmount,
+    OptionalTupleAmountForm.amount2 -> taxPaid
   )
 
   object Selectors {
@@ -225,7 +225,7 @@ class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with B
           implicit lazy val result: WSResponse = {
             dropPensionsDB()
             val pensionsViewModel = aPensionLifetimeAllowanceViewModel.copy(
-              pensionPaidAnotherWay = Some(LifetimeAllowance(newAmount, newAmount2))
+              pensionPaidAnotherWay = Some(LifetimeAllowance(Some(newAmount), Some(newAmount2)))
             )
             insertCyaData(pensionsUserDataWithLifetimeAllowance(pensionsViewModel), aUserRequest)
             authoriseAgentOrIndividual(user.isAgent)
@@ -255,6 +255,45 @@ class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with B
           textOnPageCheck(hintText, amount2hintTextSelector, "for amount 2")
           inputFieldValueCheck(amount1InputName, amount1inputSelector, newAmount.toString)
           inputFieldValueCheck(amount2InputName, amount2inputSelector, newAmount2.toString)
+          buttonCheck(buttonText, continueButtonSelector)
+          formPostLinkCheck(pensionTakenAnotherWayAmountUrl(taxYearEOY), formSelector)
+          welshToggleCheck(user.isWelsh)
+        }
+
+        "render pension taken another way page with prefilled value for before tax and None for tax paid" which {
+          implicit lazy val result: WSResponse = {
+            dropPensionsDB()
+            val pensionsViewModel = aPensionLifetimeAllowanceViewModel.copy(
+              pensionPaidAnotherWay = Some(LifetimeAllowance(Some(newAmount), None))
+            )
+            insertCyaData(pensionsUserDataWithLifetimeAllowance(pensionsViewModel), aUserRequest)
+            authoriseAgentOrIndividual(user.isAgent)
+            urlGet(
+              fullUrl(pensionTakenAnotherWayAmountUrl(taxYearEOY)),
+              user.isWelsh,
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+          }
+
+          implicit def document: () => Document = () => Jsoup.parse(result.body)
+
+          "has an OK status" in {
+            result.status shouldBe OK
+          }
+          titleCheck(user.specificExpectedResults.get.expectedTitle)
+          h1Check(user.specificExpectedResults.get.expectedHeading)
+          captionCheck(expectedCaption(taxYearEOY), captionSelector)
+          textOnPageCheck(user.specificExpectedResults.get.amountAboveAllowanceParagraph, mainParagraph(2))
+          textOnPageCheck(user.specificExpectedResults.get.checkThisWithProviderParagraph, mainParagraph(3))
+          textOnPageCheck(beforeTax, beforeTaxLabel)
+          textOnPageCheck(user.specificExpectedResults.get.beforeTaxParagraph, beforeTaxParagraph(5))
+          textOnPageCheck(poundPrefixText, poundPrefixSelector(2), "for amount 1")
+          textOnPageCheck(poundPrefixText, poundPrefixSelector(5), "for amount 2")
+          textOnPageCheck(hintText, amount1hintTextSelector, "for amount 1")
+          textOnPageCheck(taxPaid, taxPaidLabel)
+          textOnPageCheck(taxPaidParagraph, taxPaidParagraphSelector)
+          textOnPageCheck(hintText, amount2hintTextSelector, "for amount 2")
+          inputFieldValueCheck(amount1InputName, amount1inputSelector, newAmount.toString)
+          inputFieldValueCheck(amount2InputName, amount2inputSelector, "")
           buttonCheck(buttonText, continueButtonSelector)
           formPostLinkCheck(pensionTakenAnotherWayAmountUrl(taxYearEOY), formSelector)
           welshToggleCheck(user.isWelsh)
@@ -436,8 +475,8 @@ class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with B
 
       "update state pension amount to Some (new values)" in {
         lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
-        cyaModel.pensions.pensionLifetimeAllowances.pensionPaidAnotherWay.map(_.amount) shouldBe Some(newAmount)
-        cyaModel.pensions.pensionLifetimeAllowances.pensionPaidAnotherWay.map(_.taxPaid) shouldBe Some(newAmount2)
+        cyaModel.pensions.pensionLifetimeAllowances.pensionPaidAnotherWay.flatMap(_.amount) shouldBe Some(newAmount)
+        cyaModel.pensions.pensionLifetimeAllowances.pensionPaidAnotherWay.flatMap(_.taxPaid) shouldBe Some(newAmount2)
       }
     }
 
@@ -467,8 +506,8 @@ class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with B
 
       "update state pension amount to Some (new values)" in {
         lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
-        cyaModel.pensions.pensionLifetimeAllowances.pensionPaidAnotherWay.map(_.amount) shouldBe Some(newAmount)
-        cyaModel.pensions.pensionLifetimeAllowances.pensionPaidAnotherWay.map(_.taxPaid) shouldBe Some(newAmount2)
+        cyaModel.pensions.pensionLifetimeAllowances.pensionPaidAnotherWay.flatMap(_.amount) shouldBe Some(newAmount)
+        cyaModel.pensions.pensionLifetimeAllowances.pensionPaidAnotherWay.flatMap(_.taxPaid) shouldBe Some(newAmount2)
       }
     }
 

@@ -310,7 +310,7 @@ class LifeTimeAllowanceAnotherWayControllerISpec extends IntegrationTest with Be
         dropPensionsDB()
         val pensionsViewModel = aPensionLifetimeAllowanceViewModel.copy(
           pensionPaidAnotherWayQuestion = Some(true),
-          pensionPaidAnotherWay = Some(LifetimeAllowance(999.99, 99.99))
+          pensionPaidAnotherWay = Some(LifetimeAllowance(Some(999.99), Some(99.99)))
         )
 
         insertCyaData(pensionsUserDataWithLifetimeAllowance(pensionsViewModel), aUserRequest)

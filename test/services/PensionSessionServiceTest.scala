@@ -74,12 +74,12 @@ class PensionSessionServiceTest extends UnitTest
       pensionSavingsTaxCharges = Some(PensionSavingsTaxCharges(
         pensionSchemeTaxReference = Seq("00123456RA", "00123456RB"),
         lumpSumBenefitTakenInExcessOfLifetimeAllowance = Some(LifetimeAllowance(
-          amount = 800.02,
-          taxPaid = 200.02
+          amount = Some(800.02),
+          taxPaid = Some(200.02)
         )),
         benefitInExcessOfLifetimeAllowance = Some(LifetimeAllowance(
-          amount = 800.02,
-          taxPaid = 200.02
+          amount = Some(800.02),
+          taxPaid = Some(200.02)
         )),
         isAnnualAllowanceReduced = false,
         taperedAnnualAllowance = Some(false),
