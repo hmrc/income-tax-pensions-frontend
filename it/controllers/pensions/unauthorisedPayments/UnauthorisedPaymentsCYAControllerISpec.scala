@@ -60,7 +60,8 @@ class UnauthorisedPaymentsCYAControllerISpec extends
   object ChangeLinksUnauthorisedPayments {
     val unauthorisedPayments: String = controllers.pensions.unauthorisedPayments.routes.UnAuthorisedPaymentsController.show(taxYear).url
     val amountSurcharged: String = controllers.pensions.unauthorisedPayments.routes.SurchargeAmountController.show(taxYear).url
-    val nonUkTaxAmountSurcharged: String = controllers.pensions.unauthorisedPayments.routes.DidYouPayNonUkTaxController.show(taxYear).url
+    val nonUKTaxOnAmountResultedInSurcharge: String =
+      controllers.pensions.unauthorisedPayments.routes.NonUKTaxOnAmountResultedInSurchargeController.show(taxYear).url
     val amountNotSurcharged: String = controllers.pensions.unauthorisedPayments.routes.NoSurchargeAmountController.show(taxYear).url
     val nonUkTaxAmountNotSurcharged: String = controllers.pensions.unauthorisedPayments.routes.NonUkTaxOnAmountNotSurchargeController.show(taxYear).url
     val ukPensionSchemes: String = controllers.pensions.unauthorisedPayments.routes.WhereAnyOfTheUnauthorisedPaymentsController.show(taxYear).url
@@ -212,7 +213,7 @@ class UnauthorisedPaymentsCYAControllerISpec extends
           cyaRowCheck(amountSurcharged, s"${moneyContent(unauthorisedPaymentsFromIncomeTaxSubmission.get.surcharge.map(_.amount).get)}",
             ChangeLinksUnauthorisedPayments.amountSurcharged, amountSurchargedHidden, 2)
           cyaRowCheck(nonUkTaxAmountSurcharged, s"${moneyContent(unauthorisedPaymentsFromIncomeTaxSubmission.get.surcharge.map(_.foreignTaxPaid).get)}",
-            ChangeLinksUnauthorisedPayments.nonUkTaxAmountSurcharged, nonUkTaxAmountSurchargedHidden, 3)
+            ChangeLinksUnauthorisedPayments.nonUKTaxOnAmountResultedInSurcharge, nonUkTaxAmountSurchargedHidden, 3)
           cyaRowCheck(amountNotSurcharged, s"${moneyContent(unauthorisedPaymentsFromIncomeTaxSubmission.get.noSurcharge.map(_.amount).get)}",
             ChangeLinksUnauthorisedPayments.amountNotSurcharged, amountNotSurchargedHidden, 4)
           cyaRowCheck(nonUkTaxAmountNotSurcharged, s"${moneyContent(unauthorisedPaymentsFromIncomeTaxSubmission.get.noSurcharge.map(_.foreignTaxPaid).get)}",
@@ -294,7 +295,7 @@ class UnauthorisedPaymentsCYAControllerISpec extends
           cyaRowCheck(amountSurcharged, s"${moneyContent(unauthorisedPaymentsFromIncomeTaxSubmission.get.surcharge.map(_.amount).get)}",
             ChangeLinksUnauthorisedPayments.amountSurcharged, amountSurchargedHidden, 2)
           cyaRowCheck(nonUkTaxAmountSurcharged, s"${moneyContent(unauthorisedPaymentsFromIncomeTaxSubmission.get.surcharge.map(_.foreignTaxPaid).get)}",
-            ChangeLinksUnauthorisedPayments.nonUkTaxAmountSurcharged, nonUkTaxAmountSurchargedHidden, 3)
+            ChangeLinksUnauthorisedPayments.nonUKTaxOnAmountResultedInSurcharge, nonUkTaxAmountSurchargedHidden, 3)
           cyaRowCheck(ukPensionSchemes, stringToBoolean(unauthorisedPaymentsFromIncomeTaxSubmission.map(_.pensionSchemeTaxReference).isDefined), ChangeLinksUnauthorisedPayments.ukPensionSchemes, ukPensionSchemesHidden, 4)
           cyaRowCheck(pensionSchemeTaxReferences, s"${unauthorisedPaymentsFromIncomeTaxSubmission.get.pensionSchemeTaxReference.mkString(", ")}", ChangeLinksUnauthorisedPayments.pensionSchemeTaxReferences, pensionSchemeTaxReferencesHidden, 5)
 

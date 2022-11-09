@@ -881,8 +881,7 @@ object ControllerSpec {
     def text: Set[ExpectedText]
   }
 
-  // TODO: Make the hint optional.
-  case class ExpectedAmountSection(label: String, hint: String, value: String)
+  case class ExpectedAmountSection(label: String, value: String, hintOpt: Option[String] = None)
 
   case class ExpectedRadioButton(label: String, isChecked: Boolean)
 

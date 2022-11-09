@@ -82,8 +82,8 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
                 header = "Pension payments",
                 caption = "Income from overseas pensions for 6 April 2021 to 5 April 2022",
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection1 = ExpectedAmountSection("Amount before tax", "For example, £193.54", ""),
-                amountSection2 = ExpectedAmountSection("Non-UK tax paid", "For example, £193.54", ""),
+                amountSection1 = ExpectedAmountSection("Amount before tax", "", Some("For example, £193.54")),
+                amountSection2 = ExpectedAmountSection("Non-UK tax paid", "", Some("For example, £193.54")),
                 errorSummarySectionOpt = None,
                 errorAboveElementCheckSectionOpt = None,
                 formUrl = formUrl()
@@ -100,8 +100,8 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
                 header = "Pension payments",
                 caption = "Income from overseas pensions for 6 April 2021 to 5 April 2022",
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection1 = ExpectedAmountSection("Amount before tax", "For example, £193.54", ""),
-                amountSection2 = ExpectedAmountSection("Non-UK tax paid", "For example, £193.54", ""),
+                amountSection1 = ExpectedAmountSection("Amount before tax", "", Some("For example, £193.54")),
+                amountSection2 = ExpectedAmountSection("Non-UK tax paid", "", Some("For example, £193.54")),
                 errorSummarySectionOpt = None,
                 errorAboveElementCheckSectionOpt = None,
                 formUrl = formUrl()
@@ -119,8 +119,8 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
                 header = "Pension payments",
                 caption = "Income from overseas pensions for 6 April 2021 to 5 April 2022",
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection1 = ExpectedAmountSection("Amount before tax", "For example, £193.54", ""),
-                amountSection2 = ExpectedAmountSection("Non-UK tax paid", "For example, £193.54", ""),
+                amountSection1 = ExpectedAmountSection("Amount before tax", "", Some("For example, £193.54")),
+                amountSection2 = ExpectedAmountSection("Non-UK tax paid", "", Some("For example, £193.54")),
                 errorSummarySectionOpt = None,
                 errorAboveElementCheckSectionOpt = None,
                 formUrl = formUrl()
@@ -137,8 +137,8 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
                 header = "Pension payments",
                 caption = "Income from overseas pensions for 6 April 2021 to 5 April 2022",
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection1 = ExpectedAmountSection("Amount before tax", "For example, £193.54", ""),
-                amountSection2 = ExpectedAmountSection("Non-UK tax paid", "For example, £193.54", ""),
+                amountSection1 = ExpectedAmountSection("Amount before tax", "", Some("For example, £193.54")),
+                amountSection2 = ExpectedAmountSection("Non-UK tax paid", "", Some("For example, £193.54")),
                 errorSummarySectionOpt = None,
                 errorAboveElementCheckSectionOpt = None,
                 formUrl = formUrl()
@@ -165,8 +165,8 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
                 header = "Pension payments",
                 caption = "Income from overseas pensions for 6 April 2021 to 5 April 2022",
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection1 = ExpectedAmountSection("Amount before tax", "For example, £193.54", "1,992.36"),
-                amountSection2 = ExpectedAmountSection("Non-UK tax paid", "For example, £193.54", "1,121.31"),
+                amountSection1 = ExpectedAmountSection("Amount before tax", "1,992.36", Some("For example, £193.54")),
+                amountSection2 = ExpectedAmountSection("Non-UK tax paid", "1,121.31", Some("For example, £193.54")),
                 errorSummarySectionOpt = None,
                 errorAboveElementCheckSectionOpt = None,
                 formUrl = formUrl()
@@ -183,8 +183,8 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
                 header = "Pension payments",
                 caption = "Income from overseas pensions for 6 April 2021 to 5 April 2022",
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection1 = ExpectedAmountSection("Amount before tax", "For example, £193.54", "1,992.36"),
-                amountSection2 = ExpectedAmountSection("Non-UK tax paid", "For example, £193.54", "1,121.31"),
+                amountSection1 = ExpectedAmountSection("Amount before tax", "1,992.36", Some("For example, £193.54")),
+                amountSection2 = ExpectedAmountSection("Non-UK tax paid", "1,121.31", Some("For example, £193.54")),
                 errorSummarySectionOpt = None,
                 errorAboveElementCheckSectionOpt = None,
                 formUrl = formUrl()
@@ -202,8 +202,8 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
                 header = "Pension payments",
                 caption = "Income from overseas pensions for 6 April 2021 to 5 April 2022",
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection1 = ExpectedAmountSection("Amount before tax", "For example, £193.54", "1,992.36"),
-                amountSection2 = ExpectedAmountSection("Non-UK tax paid", "For example, £193.54", "1,121.31"),
+                amountSection1 = ExpectedAmountSection("Amount before tax", "1,992.36", Some("For example, £193.54")),
+                amountSection2 = ExpectedAmountSection("Non-UK tax paid", "1,121.31", Some("For example, £193.54")),
                 errorSummarySectionOpt = None,
                 errorAboveElementCheckSectionOpt = None,
                 formUrl = formUrl()
@@ -220,8 +220,8 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
                 header = "Pension payments",
                 caption = "Income from overseas pensions for 6 April 2021 to 5 April 2022",
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection1 = ExpectedAmountSection("Amount before tax", "For example, £193.54", "1,992.36"),
-                amountSection2 = ExpectedAmountSection("Non-UK tax paid", "For example, £193.54", "1,121.31"),
+                amountSection1 = ExpectedAmountSection("Amount before tax", "1,992.36", Some("For example, £193.54")),
+                amountSection2 = ExpectedAmountSection("Non-UK tax paid", "1,121.31", Some("For example, £193.54")),
                 errorSummarySectionOpt = None,
                 errorAboveElementCheckSectionOpt = None,
                 formUrl = formUrl()
@@ -248,8 +248,8 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
                 header = "Pension payments",
                 caption = "Income from overseas pensions for 6 April 2021 to 5 April 2022",
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection1 = ExpectedAmountSection("Amount before tax", "For example, £193.54", "1,992.36"),
-                amountSection2 = ExpectedAmountSection("Non-UK tax paid", "For example, £193.54", ""),
+                amountSection1 = ExpectedAmountSection("Amount before tax", "1,992.36", Some("For example, £193.54")),
+                amountSection2 = ExpectedAmountSection("Non-UK tax paid", "", Some("For example, £193.54")),
                 errorSummarySectionOpt = None,
                 errorAboveElementCheckSectionOpt = None,
                 formUrl = formUrl()
@@ -266,8 +266,8 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
                 header = "Pension payments",
                 caption = "Income from overseas pensions for 6 April 2021 to 5 April 2022",
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection1 = ExpectedAmountSection("Amount before tax", "For example, £193.54", "1,992.36"),
-                amountSection2 = ExpectedAmountSection("Non-UK tax paid", "For example, £193.54", ""),
+                amountSection1 = ExpectedAmountSection("Amount before tax", "1,992.36", Some("For example, £193.54")),
+                amountSection2 = ExpectedAmountSection("Non-UK tax paid", "", Some("For example, £193.54")),
                 errorSummarySectionOpt = None,
                 errorAboveElementCheckSectionOpt = None,
                 formUrl = formUrl()
@@ -285,8 +285,8 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
                 header = "Pension payments",
                 caption = "Income from overseas pensions for 6 April 2021 to 5 April 2022",
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection1 = ExpectedAmountSection("Amount before tax", "For example, £193.54", "1,992.36"),
-                amountSection2 = ExpectedAmountSection("Non-UK tax paid", "For example, £193.54", ""),
+                amountSection1 = ExpectedAmountSection("Amount before tax", "1,992.36", Some("For example, £193.54")),
+                amountSection2 = ExpectedAmountSection("Non-UK tax paid", "", Some("For example, £193.54")),
                 errorSummarySectionOpt = None,
                 errorAboveElementCheckSectionOpt = None,
                 formUrl = formUrl()
@@ -303,8 +303,8 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
                 header = "Pension payments",
                 caption = "Income from overseas pensions for 6 April 2021 to 5 April 2022",
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection1 = ExpectedAmountSection("Amount before tax", "For example, £193.54", "1,992.36"),
-                amountSection2 = ExpectedAmountSection("Non-UK tax paid", "For example, £193.54", ""),
+                amountSection1 = ExpectedAmountSection("Amount before tax", "1,992.36", Some("For example, £193.54")),
+                amountSection2 = ExpectedAmountSection("Non-UK tax paid", "", Some("For example, £193.54")),
                 errorSummarySectionOpt = None,
                 errorAboveElementCheckSectionOpt = None,
                 formUrl = formUrl()
@@ -331,8 +331,8 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
                 header = "Pension payments",
                 caption = "Income from overseas pensions for 6 April 2021 to 5 April 2022",
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection1 = ExpectedAmountSection("Amount before tax", "For example, £193.54", ""),
-                amountSection2 = ExpectedAmountSection("Non-UK tax paid", "For example, £193.54", "1,312.21"),
+                amountSection1 = ExpectedAmountSection("Amount before tax", "", Some("For example, £193.54")),
+                amountSection2 = ExpectedAmountSection("Non-UK tax paid", "1,312.21", Some("For example, £193.54")),
                 errorSummarySectionOpt = None,
                 errorAboveElementCheckSectionOpt = None,
                 formUrl = formUrl()
@@ -349,8 +349,8 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
                 header = "Pension payments",
                 caption = "Income from overseas pensions for 6 April 2021 to 5 April 2022",
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection1 = ExpectedAmountSection("Amount before tax", "For example, £193.54", ""),
-                amountSection2 = ExpectedAmountSection("Non-UK tax paid", "For example, £193.54", "1,312.21"),
+                amountSection1 = ExpectedAmountSection("Amount before tax", "", Some("For example, £193.54")),
+                amountSection2 = ExpectedAmountSection("Non-UK tax paid", "1,312.21", Some("For example, £193.54")),
                 errorSummarySectionOpt = None,
                 errorAboveElementCheckSectionOpt = None,
                 formUrl = formUrl()
@@ -368,8 +368,8 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
                 header = "Pension payments",
                 caption = "Income from overseas pensions for 6 April 2021 to 5 April 2022",
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection1 = ExpectedAmountSection("Amount before tax", "For example, £193.54", ""),
-                amountSection2 = ExpectedAmountSection("Non-UK tax paid", "For example, £193.54", "1,312.21"),
+                amountSection1 = ExpectedAmountSection("Amount before tax", "", Some("For example, £193.54")),
+                amountSection2 = ExpectedAmountSection("Non-UK tax paid", "1,312.21", Some("For example, £193.54")),
                 errorSummarySectionOpt = None,
                 errorAboveElementCheckSectionOpt = None,
                 formUrl = formUrl()
@@ -386,8 +386,8 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
                 header = "Pension payments",
                 caption = "Income from overseas pensions for 6 April 2021 to 5 April 2022",
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection1 = ExpectedAmountSection("Amount before tax", "For example, £193.54", ""),
-                amountSection2 = ExpectedAmountSection("Non-UK tax paid", "For example, £193.54", "1,312.21"),
+                amountSection1 = ExpectedAmountSection("Amount before tax", "", Some("For example, £193.54")),
+                amountSection2 = ExpectedAmountSection("Non-UK tax paid", "1,312.21", Some("For example, £193.54")),
                 errorSummarySectionOpt = None,
                 errorAboveElementCheckSectionOpt = None,
                 formUrl = formUrl()
@@ -437,8 +437,8 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
                   header = "Pension payments",
                   caption = "Income from overseas pensions for 6 April 2021 to 5 April 2022",
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection1 = ExpectedAmountSection("Amount before tax", "For example, £193.54", "1,233.41"),
-                  amountSection2 = ExpectedAmountSection("Non-UK tax paid", "For example, £193.54", ""),
+                  amountSection1 = ExpectedAmountSection("Amount before tax", "1,233.41", Some("For example, £193.54")),
+                  amountSection2 = ExpectedAmountSection("Non-UK tax paid", "", Some("For example, £193.54")),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "There is a problem",
@@ -469,8 +469,8 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
                   header = "Pension payments",
                   caption = "Income from overseas pensions for 6 April 2021 to 5 April 2022",
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection1 = ExpectedAmountSection("Amount before tax", "For example, £193.54", "1,233.41"),
-                  amountSection2 = ExpectedAmountSection("Non-UK tax paid", "For example, £193.54", ""),
+                  amountSection1 = ExpectedAmountSection("Amount before tax", "1,233.41", Some("For example, £193.54")),
+                  amountSection2 = ExpectedAmountSection("Non-UK tax paid", "", Some("For example, £193.54")),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "Mae problem wedi codi",
@@ -500,8 +500,8 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
                   header = "Pension payments",
                   caption = "Income from overseas pensions for 6 April 2021 to 5 April 2022",
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection1 = ExpectedAmountSection("Amount before tax", "For example, £193.54", "1,233.41"),
-                  amountSection2 = ExpectedAmountSection("Non-UK tax paid", "For example, £193.54", ""),
+                  amountSection1 = ExpectedAmountSection("Amount before tax", "1,233.41", Some("For example, £193.54")),
+                  amountSection2 = ExpectedAmountSection("Non-UK tax paid", "", Some("For example, £193.54")),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "There is a problem",
@@ -531,8 +531,8 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
                   header = "Pension payments",
                   caption = "Income from overseas pensions for 6 April 2021 to 5 April 2022",
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection1 = ExpectedAmountSection("Amount before tax", "For example, £193.54", "1,233.41"),
-                  amountSection2 = ExpectedAmountSection("Non-UK tax paid", "For example, £193.54", ""),
+                  amountSection1 = ExpectedAmountSection("Amount before tax", "1,233.41", Some("For example, £193.54")),
+                  amountSection2 = ExpectedAmountSection("Non-UK tax paid", "", Some("For example, £193.54")),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "Mae problem wedi codi",
@@ -564,8 +564,8 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
                   header = "Pension payments",
                   caption = "Income from overseas pensions for 6 April 2021 to 5 April 2022",
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection1 = ExpectedAmountSection("Amount before tax", "For example, £193.54", ""),
-                  amountSection2 = ExpectedAmountSection("Non-UK tax paid", "For example, £193.54", "113.91"),
+                  amountSection1 = ExpectedAmountSection("Amount before tax", "", Some("For example, £193.54")),
+                  amountSection2 = ExpectedAmountSection("Non-UK tax paid", "113.91", Some("For example, £193.54")),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "There is a problem",
@@ -595,8 +595,8 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
                   header = "Pension payments",
                   caption = "Income from overseas pensions for 6 April 2021 to 5 April 2022",
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection1 = ExpectedAmountSection("Amount before tax", "For example, £193.54", ""),
-                  amountSection2 = ExpectedAmountSection("Non-UK tax paid", "For example, £193.54", "113.91"),
+                  amountSection1 = ExpectedAmountSection("Amount before tax", "", Some("For example, £193.54")),
+                  amountSection2 = ExpectedAmountSection("Non-UK tax paid", "113.91", Some("For example, £193.54")),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "Mae problem wedi codi",
@@ -626,8 +626,8 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
                   header = "Pension payments",
                   caption = "Income from overseas pensions for 6 April 2021 to 5 April 2022",
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection1 = ExpectedAmountSection("Amount before tax", "For example, £193.54", ""),
-                  amountSection2 = ExpectedAmountSection("Non-UK tax paid", "For example, £193.54", "113.91"),
+                  amountSection1 = ExpectedAmountSection("Amount before tax", "", Some("For example, £193.54")),
+                  amountSection2 = ExpectedAmountSection("Non-UK tax paid", "113.91", Some("For example, £193.54")),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "There is a problem",
@@ -658,8 +658,8 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
                   header = "Pension payments",
                   caption = "Income from overseas pensions for 6 April 2021 to 5 April 2022",
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection1 = ExpectedAmountSection("Amount before tax", "For example, £193.54", ""),
-                  amountSection2 = ExpectedAmountSection("Non-UK tax paid", "For example, £193.54", "113.91"),
+                  amountSection1 = ExpectedAmountSection("Amount before tax", "", Some("For example, £193.54")),
+                  amountSection2 = ExpectedAmountSection("Non-UK tax paid", "113.91", Some("For example, £193.54")),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "Mae problem wedi codi",
@@ -693,8 +693,8 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
                   header = "Pension payments",
                   caption = "Income from overseas pensions for 6 April 2021 to 5 April 2022",
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection1 = ExpectedAmountSection("Amount before tax", "For example, £193.54", ""),
-                  amountSection2 = ExpectedAmountSection("Non-UK tax paid", "For example, £193.54", ""),
+                  amountSection1 = ExpectedAmountSection("Amount before tax", "", Some("For example, £193.54")),
+                  amountSection2 = ExpectedAmountSection("Non-UK tax paid", "", Some("For example, £193.54")),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection("There is a problem", Seq(
                       ErrorSummaryMessage("Enter an amount before tax", "#amount-1"),
@@ -725,8 +725,8 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
                   header = "Pension payments",
                   caption = "Income from overseas pensions for 6 April 2021 to 5 April 2022",
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection1 = ExpectedAmountSection("Amount before tax", "For example, £193.54", ""),
-                  amountSection2 = ExpectedAmountSection("Non-UK tax paid", "For example, £193.54", ""),
+                  amountSection1 = ExpectedAmountSection("Amount before tax", "", Some("For example, £193.54")),
+                  amountSection2 = ExpectedAmountSection("Non-UK tax paid", "", Some("For example, £193.54")),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection("Mae problem wedi codi", Seq(
                       ErrorSummaryMessage("Enter an amount before tax", "#amount-1"),
@@ -755,8 +755,8 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
                   header = "Pension payments",
                   caption = "Income from overseas pensions for 6 April 2021 to 5 April 2022",
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection1 = ExpectedAmountSection("Amount before tax", "For example, £193.54", ""),
-                  amountSection2 = ExpectedAmountSection("Non-UK tax paid", "For example, £193.54", ""),
+                  amountSection1 = ExpectedAmountSection("Amount before tax", "", Some("For example, £193.54")),
+                  amountSection2 = ExpectedAmountSection("Non-UK tax paid", "", Some("For example, £193.54")),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection("There is a problem", Seq(
                       ErrorSummaryMessage("Enter an amount before tax", "#amount-1"),
@@ -785,8 +785,8 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
                   header = "Pension payments",
                   caption = "Income from overseas pensions for 6 April 2021 to 5 April 2022",
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection1 = ExpectedAmountSection("Amount before tax", "For example, £193.54", ""),
-                  amountSection2 = ExpectedAmountSection("Non-UK tax paid", "For example, £193.54", ""),
+                  amountSection1 = ExpectedAmountSection("Amount before tax", "", Some("For example, £193.54")),
+                  amountSection2 = ExpectedAmountSection("Non-UK tax paid", "", Some("For example, £193.54")),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection("Mae problem wedi codi", Seq(
                       ErrorSummaryMessage("Enter an amount before tax", "#amount-1"),
@@ -817,8 +817,8 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
                   header = "Pension payments",
                   caption = "Income from overseas pensions for 6 April 2021 to 5 April 2022",
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection1 = ExpectedAmountSection("Amount before tax", "For example, £193.54", "$342.23"),
-                  amountSection2 = ExpectedAmountSection("Non-UK tax paid", "For example, £193.54", "1,233.41"),
+                  amountSection1 = ExpectedAmountSection("Amount before tax", "$342.23", Some("For example, £193.54")),
+                  amountSection2 = ExpectedAmountSection("Non-UK tax paid", "1,233.41", Some("For example, £193.54")),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "There is a problem",
@@ -849,8 +849,8 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
                   header = "Pension payments",
                   caption = "Income from overseas pensions for 6 April 2021 to 5 April 2022",
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection1 = ExpectedAmountSection("Amount before tax", "For example, £193.54", "$342.23"),
-                  amountSection2 = ExpectedAmountSection("Non-UK tax paid", "For example, £193.54", "1,233.41"),
+                  amountSection1 = ExpectedAmountSection("Amount before tax", "$342.23", Some("For example, £193.54")),
+                  amountSection2 = ExpectedAmountSection("Non-UK tax paid", "1,233.41", Some("For example, £193.54")),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "Mae problem wedi codi",
@@ -881,8 +881,8 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
                   header = "Pension payments",
                   caption = "Income from overseas pensions for 6 April 2021 to 5 April 2022",
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection1 = ExpectedAmountSection("Amount before tax", "For example, £193.54", "$342.23"),
-                  amountSection2 = ExpectedAmountSection("Non-UK tax paid", "For example, £193.54", "1,233.41"),
+                  amountSection1 = ExpectedAmountSection("Amount before tax", "$342.23", Some("For example, £193.54")),
+                  amountSection2 = ExpectedAmountSection("Non-UK tax paid", "1,233.41", Some("For example, £193.54")),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "There is a problem",
@@ -913,8 +913,8 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
                   header = "Pension payments",
                   caption = "Income from overseas pensions for 6 April 2021 to 5 April 2022",
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection1 = ExpectedAmountSection("Amount before tax", "For example, £193.54", "$342.23"),
-                  amountSection2 = ExpectedAmountSection("Non-UK tax paid", "For example, £193.54", "1,233.41"),
+                  amountSection1 = ExpectedAmountSection("Amount before tax", "$342.23", Some("For example, £193.54")),
+                  amountSection2 = ExpectedAmountSection("Non-UK tax paid", "1,233.41", Some("For example, £193.54")),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "Mae problem wedi codi",
@@ -947,8 +947,8 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
                   header = "Pension payments",
                   caption = "Income from overseas pensions for 6 April 2021 to 5 April 2022",
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection1 = ExpectedAmountSection("Amount before tax", "For example, £193.54", "1,231.26"),
-                  amountSection2 = ExpectedAmountSection("Non-UK tax paid", "For example, £193.54", "asd"),
+                  amountSection1 = ExpectedAmountSection("Amount before tax", "1,231.26", Some("For example, £193.54")),
+                  amountSection2 = ExpectedAmountSection("Non-UK tax paid", "asd", Some("For example, £193.54")),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "There is a problem",
@@ -979,8 +979,8 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
                   header = "Pension payments",
                   caption = "Income from overseas pensions for 6 April 2021 to 5 April 2022",
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection1 = ExpectedAmountSection("Amount before tax", "For example, £193.54", "1,231.26"),
-                  amountSection2 = ExpectedAmountSection("Non-UK tax paid", "For example, £193.54", "asd"),
+                  amountSection1 = ExpectedAmountSection("Amount before tax", "1,231.26", Some("For example, £193.54")),
+                  amountSection2 = ExpectedAmountSection("Non-UK tax paid", "asd", Some("For example, £193.54")),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "Mae problem wedi codi",
@@ -1011,8 +1011,8 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
                   header = "Pension payments",
                   caption = "Income from overseas pensions for 6 April 2021 to 5 April 2022",
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection1 = ExpectedAmountSection("Amount before tax", "For example, £193.54", "1,231.26"),
-                  amountSection2 = ExpectedAmountSection("Non-UK tax paid", "For example, £193.54", "asd"),
+                  amountSection1 = ExpectedAmountSection("Amount before tax", "1,231.26", Some("For example, £193.54")),
+                  amountSection2 = ExpectedAmountSection("Non-UK tax paid", "asd", Some("For example, £193.54")),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "There is a problem",
@@ -1043,8 +1043,8 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
                   header = "Pension payments",
                   caption = "Income from overseas pensions for 6 April 2021 to 5 April 2022",
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection1 = ExpectedAmountSection("Amount before tax", "For example, £193.54", "1,231.26"),
-                  amountSection2 = ExpectedAmountSection("Non-UK tax paid", "For example, £193.54", "asd"),
+                  amountSection1 = ExpectedAmountSection("Amount before tax", "1,231.26", Some("For example, £193.54")),
+                  amountSection2 = ExpectedAmountSection("Non-UK tax paid", "asd", Some("For example, £193.54")),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "Mae problem wedi codi",
@@ -1077,8 +1077,8 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
                   header = "Pension payments",
                   caption = "Income from overseas pensions for 6 April 2021 to 5 April 2022",
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection1 = ExpectedAmountSection("Amount before tax", "For example, £193.54", "-1"),
-                  amountSection2 = ExpectedAmountSection("Non-UK tax paid", "For example, £193.54", "1,233.41"),
+                  amountSection1 = ExpectedAmountSection("Amount before tax", "-1", Some("For example, £193.54")),
+                  amountSection2 = ExpectedAmountSection("Non-UK tax paid", "1,233.41", Some("For example, £193.54")),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "There is a problem",
@@ -1109,8 +1109,8 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
                   header = "Pension payments",
                   caption = "Income from overseas pensions for 6 April 2021 to 5 April 2022",
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection1 = ExpectedAmountSection("Amount before tax", "For example, £193.54", "-1"),
-                  amountSection2 = ExpectedAmountSection("Non-UK tax paid", "For example, £193.54", "1,233.41"),
+                  amountSection1 = ExpectedAmountSection("Amount before tax", "-1", Some("For example, £193.54")),
+                  amountSection2 = ExpectedAmountSection("Non-UK tax paid", "1,233.41", Some("For example, £193.54")),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "Mae problem wedi codi",
@@ -1141,8 +1141,8 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
                   header = "Pension payments",
                   caption = "Income from overseas pensions for 6 April 2021 to 5 April 2022",
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection1 = ExpectedAmountSection("Amount before tax", "For example, £193.54", "-1"),
-                  amountSection2 = ExpectedAmountSection("Non-UK tax paid", "For example, £193.54", "1,233.41"),
+                  amountSection1 = ExpectedAmountSection("Amount before tax", "-1", Some("For example, £193.54")),
+                  amountSection2 = ExpectedAmountSection("Non-UK tax paid", "1,233.41", Some("For example, £193.54")),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "There is a problem",
@@ -1173,8 +1173,8 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
                   header = "Pension payments",
                   caption = "Income from overseas pensions for 6 April 2021 to 5 April 2022",
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection1 = ExpectedAmountSection("Amount before tax", "For example, £193.54", "-1"),
-                  amountSection2 = ExpectedAmountSection("Non-UK tax paid", "For example, £193.54", "1,233.41"),
+                  amountSection1 = ExpectedAmountSection("Amount before tax", "-1", Some("For example, £193.54")),
+                  amountSection2 = ExpectedAmountSection("Non-UK tax paid", "1,233.41", Some("For example, £193.54")),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "Mae problem wedi codi",
@@ -1207,8 +1207,8 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
                   header = "Pension payments",
                   caption = "Income from overseas pensions for 6 April 2021 to 5 April 2022",
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection1 = ExpectedAmountSection("Amount before tax", "For example, £193.54", "1,231.26"),
-                  amountSection2 = ExpectedAmountSection("Non-UK tax paid", "For example, £193.54", "-1"),
+                  amountSection1 = ExpectedAmountSection("Amount before tax", "1,231.26", Some("For example, £193.54")),
+                  amountSection2 = ExpectedAmountSection("Non-UK tax paid", "-1", Some("For example, £193.54")),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "There is a problem",
@@ -1239,8 +1239,8 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
                   header = "Pension payments",
                   caption = "Income from overseas pensions for 6 April 2021 to 5 April 2022",
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection1 = ExpectedAmountSection("Amount before tax", "For example, £193.54", "1,231.26"),
-                  amountSection2 = ExpectedAmountSection("Non-UK tax paid", "For example, £193.54", "-1"),
+                  amountSection1 = ExpectedAmountSection("Amount before tax", "1,231.26", Some("For example, £193.54")),
+                  amountSection2 = ExpectedAmountSection("Non-UK tax paid", "-1", Some("For example, £193.54")),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "Mae problem wedi codi",
@@ -1271,8 +1271,8 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
                   header = "Pension payments",
                   caption = "Income from overseas pensions for 6 April 2021 to 5 April 2022",
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection1 = ExpectedAmountSection("Amount before tax", "For example, £193.54", "1,231.26"),
-                  amountSection2 = ExpectedAmountSection("Non-UK tax paid", "For example, £193.54", "-1"),
+                  amountSection1 = ExpectedAmountSection("Amount before tax", "1,231.26", Some("For example, £193.54")),
+                  amountSection2 = ExpectedAmountSection("Non-UK tax paid", "-1", Some("For example, £193.54")),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "There is a problem",
@@ -1303,8 +1303,8 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
                   header = "Pension payments",
                   caption = "Income from overseas pensions for 6 April 2021 to 5 April 2022",
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection1 = ExpectedAmountSection("Amount before tax", "For example, £193.54", "1,231.26"),
-                  amountSection2 = ExpectedAmountSection("Non-UK tax paid", "For example, £193.54", "-1"),
+                  amountSection1 = ExpectedAmountSection("Amount before tax", "1,231.26", Some("For example, £193.54")),
+                  amountSection2 = ExpectedAmountSection("Non-UK tax paid", "-1", Some("For example, £193.54")),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "Mae problem wedi codi",
@@ -1337,8 +1337,8 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
                   header = "Pension payments",
                   caption = "Income from overseas pensions for 6 April 2021 to 5 April 2022",
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection1 = ExpectedAmountSection("Amount before tax", "For example, £193.54", "1000000000001"),
-                  amountSection2 = ExpectedAmountSection("Non-UK tax paid", "For example, £193.54", "1,233.41"),
+                  amountSection1 = ExpectedAmountSection("Amount before tax", "1000000000001", Some("For example, £193.54")),
+                  amountSection2 = ExpectedAmountSection("Non-UK tax paid", "1,233.41", Some("For example, £193.54")),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "There is a problem",
@@ -1369,8 +1369,8 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
                   header = "Pension payments",
                   caption = "Income from overseas pensions for 6 April 2021 to 5 April 2022",
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection1 = ExpectedAmountSection("Amount before tax", "For example, £193.54", "1000000000001"),
-                  amountSection2 = ExpectedAmountSection("Non-UK tax paid", "For example, £193.54", "1,233.41"),
+                  amountSection1 = ExpectedAmountSection("Amount before tax", "1000000000001", Some("For example, £193.54")),
+                  amountSection2 = ExpectedAmountSection("Non-UK tax paid", "1,233.41", Some("For example, £193.54")),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "Mae problem wedi codi",
@@ -1401,8 +1401,8 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
                   header = "Pension payments",
                   caption = "Income from overseas pensions for 6 April 2021 to 5 April 2022",
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection1 = ExpectedAmountSection("Amount before tax", "For example, £193.54", "1000000000001"),
-                  amountSection2 = ExpectedAmountSection("Non-UK tax paid", "For example, £193.54", "1,233.41"),
+                  amountSection1 = ExpectedAmountSection("Amount before tax", "1000000000001", Some("For example, £193.54")),
+                  amountSection2 = ExpectedAmountSection("Non-UK tax paid", "1,233.41", Some("For example, £193.54")),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "There is a problem",
@@ -1433,8 +1433,8 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
                   header = "Pension payments",
                   caption = "Income from overseas pensions for 6 April 2021 to 5 April 2022",
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection1 = ExpectedAmountSection("Amount before tax", "For example, £193.54", "1000000000001"),
-                  amountSection2 = ExpectedAmountSection("Non-UK tax paid", "For example, £193.54", "1,233.41"),
+                  amountSection1 = ExpectedAmountSection("Amount before tax", "1000000000001", Some("For example, £193.54")),
+                  amountSection2 = ExpectedAmountSection("Non-UK tax paid", "1,233.41", Some("For example, £193.54")),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "Mae problem wedi codi",
@@ -1467,8 +1467,8 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
                   header = "Pension payments",
                   caption = "Income from overseas pensions for 6 April 2021 to 5 April 2022",
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection1 = ExpectedAmountSection("Amount before tax", "For example, £193.54", "1,233.41"),
-                  amountSection2 = ExpectedAmountSection("Non-UK tax paid", "For example, £193.54", "1000000000001"),
+                  amountSection1 = ExpectedAmountSection("Amount before tax", "1,233.41", Some("For example, £193.54")),
+                  amountSection2 = ExpectedAmountSection("Non-UK tax paid", "1000000000001", Some("For example, £193.54")),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "There is a problem",
@@ -1499,8 +1499,8 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
                   header = "Pension payments",
                   caption = "Income from overseas pensions for 6 April 2021 to 5 April 2022",
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection1 = ExpectedAmountSection("Amount before tax", "For example, £193.54", "1,233.41"),
-                  amountSection2 = ExpectedAmountSection("Non-UK tax paid", "For example, £193.54", "1000000000001"),
+                  amountSection1 = ExpectedAmountSection("Amount before tax", "1,233.41", Some("For example, £193.54")),
+                  amountSection2 = ExpectedAmountSection("Non-UK tax paid", "1000000000001", Some("For example, £193.54")),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "Mae problem wedi codi",
@@ -1531,8 +1531,8 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
                   header = "Pension payments",
                   caption = "Income from overseas pensions for 6 April 2021 to 5 April 2022",
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection1 = ExpectedAmountSection("Amount before tax", "For example, £193.54", "1,233.41"),
-                  amountSection2 = ExpectedAmountSection("Non-UK tax paid", "For example, £193.54", "1000000000001"),
+                  amountSection1 = ExpectedAmountSection("Amount before tax", "1,233.41", Some("For example, £193.54")),
+                  amountSection2 = ExpectedAmountSection("Non-UK tax paid", "1000000000001", Some("For example, £193.54")),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "There is a problem",
@@ -1563,8 +1563,8 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
                   header = "Pension payments",
                   caption = "Income from overseas pensions for 6 April 2021 to 5 April 2022",
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection1 = ExpectedAmountSection("Amount before tax", "For example, £193.54", "1,233.41"),
-                  amountSection2 = ExpectedAmountSection("Non-UK tax paid", "For example, £193.54", "1000000000001"),
+                  amountSection1 = ExpectedAmountSection("Amount before tax", "1,233.41", Some("For example, £193.54")),
+                  amountSection2 = ExpectedAmountSection("Non-UK tax paid", "1000000000001", Some("For example, £193.54")),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "Mae problem wedi codi",

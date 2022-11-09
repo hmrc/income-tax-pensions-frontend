@@ -42,7 +42,7 @@ class PensionProviderPaidTaxControllerISpec
         }
       }
       "appear as expected" when {
-        "the user has no relevant session data and" when {
+        "the user has no pension-related session data and" when {
 
           val sessionData = pensionsUserData(aPensionsCYAEmptyModel)
 
@@ -60,7 +60,7 @@ class PensionProviderPaidTaxControllerISpec
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "For example, £193.52", "")
+                amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "", Some("For example, £193.52"))
               ))
 
           }
@@ -78,7 +78,7 @@ class PensionProviderPaidTaxControllerISpec
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "For example, £193.52", "")
+                amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "", Some("For example, £193.52"))
               ))
 
           }
@@ -96,7 +96,7 @@ class PensionProviderPaidTaxControllerISpec
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "For example, £193.52", "")
+                amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "", Some("For example, £193.52"))
               ))
 
           }
@@ -114,7 +114,7 @@ class PensionProviderPaidTaxControllerISpec
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "For example, £193.52", "")
+                amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "", Some("For example, £193.52"))
               ))
 
           }
@@ -125,7 +125,7 @@ class PensionProviderPaidTaxControllerISpec
             pensionsUserData(aPensionsCYAModel.copy(pensionsAnnualAllowances =
               PensionAnnualAllowancesViewModel(
                 pensionProvidePaidAnnualAllowanceQuestion = Some(true),
-                taxPaidByPensionProvider = Some(42.64))
+                taxPaidByPensionProvider = Some(1042.64))
             ))
 
           scenarioNameForIndividualAndEnglish in {
@@ -142,7 +142,7 @@ class PensionProviderPaidTaxControllerISpec
                 radioButtonForYes = checkedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "For example, £193.52", "42.64")
+                amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "1,042.64", Some("For example, £193.52"))
               ))
 
           }
@@ -160,7 +160,7 @@ class PensionProviderPaidTaxControllerISpec
                 radioButtonForYes = checkedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "For example, £193.52", "42.64")
+                amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "1,042.64", Some("For example, £193.52"))
               ))
 
           }
@@ -178,7 +178,7 @@ class PensionProviderPaidTaxControllerISpec
                 radioButtonForYes = checkedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "For example, £193.52", "42.64")
+                amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "1,042.64", Some("For example, £193.52"))
               ))
 
           }
@@ -196,7 +196,7 @@ class PensionProviderPaidTaxControllerISpec
                 radioButtonForYes = checkedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "For example, £193.52", "42.64")
+                amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "1,042.64", Some("For example, £193.52"))
               ))
 
           }
@@ -225,7 +225,7 @@ class PensionProviderPaidTaxControllerISpec
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = checkedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "For example, £193.52", "")
+                amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "", Some("For example, £193.52"))
               ))
 
           }
@@ -243,7 +243,7 @@ class PensionProviderPaidTaxControllerISpec
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = checkedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "For example, £193.52", "")
+                amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "", Some("For example, £193.52"))
               ))
 
           }
@@ -261,7 +261,7 @@ class PensionProviderPaidTaxControllerISpec
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = checkedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "For example, £193.52", "")
+                amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "", Some("For example, £193.52"))
               ))
 
           }
@@ -279,7 +279,7 @@ class PensionProviderPaidTaxControllerISpec
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = checkedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "For example, £193.52", "")
+                amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "", Some("For example, £193.52"))
               ))
 
           }
@@ -351,6 +351,57 @@ class PensionProviderPaidTaxControllerISpec
           }
 
         }
+        "the user has no pension-related session data and" when {
+
+          val sessionData = pensionsUserData(aPensionsCYAEmptyModel)
+
+          "the user has selected 'No' and" in {
+
+            val expectedViewModel =
+              sessionData.pensions.pensionsAnnualAllowances.copy(
+                pensionProvidePaidAnnualAllowanceQuestion = Some(false),
+                taxPaidByPensionProvider = None
+              )
+
+            implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
+            implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(false), None))
+
+            assertRedirectionAsExpected(relativeUrlForThisPage)
+            getViewModel mustBe Some(expectedViewModel)
+
+          }
+          "the user has selected 'Yes' as well as a valid amount (unformatted), and" in {
+
+            val expectedViewModel =
+              sessionData.pensions.pensionsAnnualAllowances.copy(
+                pensionProvidePaidAnnualAllowanceQuestion = Some(true),
+                taxPaidByPensionProvider = Some(BigDecimal(42.64))
+              )
+
+            implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
+            implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("42.64")))
+
+            assertRedirectionAsExpected(relativeUrlForThisPage)
+            getViewModel mustBe Some(expectedViewModel)
+
+          }
+          "the user has selected 'Yes' as well as a valid amount (formatted), and" in {
+
+            val expectedViewModel =
+              sessionData.pensions.pensionsAnnualAllowances.copy(
+                pensionProvidePaidAnnualAllowanceQuestion = Some(true),
+                taxPaidByPensionProvider = Some(BigDecimal(1042.64))
+              )
+
+            implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
+            implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("£1,042.64")))
+
+            assertRedirectionAsExpected(relativeUrlForThisPage)
+            getViewModel mustBe Some(expectedViewModel)
+
+          }
+
+        }
       }
       "fail" when {
         "the user has relevant session data and" when {
@@ -373,7 +424,7 @@ class PensionProviderPaidTaxControllerISpec
                   radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "For example, £193.52", ""),
+                  amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "", Some("For example, £193.52")),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "There is a problem",
@@ -404,7 +455,7 @@ class PensionProviderPaidTaxControllerISpec
                   radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "For example, £193.52", ""),
+                  amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "", Some("For example, £193.52")),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "Mae problem wedi codi",
@@ -435,7 +486,7 @@ class PensionProviderPaidTaxControllerISpec
                   radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "For example, £193.52", ""),
+                  amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "", Some("For example, £193.52")),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "There is a problem",
@@ -466,7 +517,7 @@ class PensionProviderPaidTaxControllerISpec
                   radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "For example, £193.52", ""),
+                  amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "", Some("For example, £193.52")),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "Mae problem wedi codi",
@@ -499,7 +550,7 @@ class PensionProviderPaidTaxControllerISpec
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "For example, £193.52", ""),
+                  amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "", Some("For example, £193.52")),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "There is a problem",
@@ -530,7 +581,7 @@ class PensionProviderPaidTaxControllerISpec
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "For example, £193.52", ""),
+                  amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "", Some("For example, £193.52")),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "Mae problem wedi codi",
@@ -561,7 +612,7 @@ class PensionProviderPaidTaxControllerISpec
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "For example, £193.52", ""),
+                  amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "", Some("For example, £193.52")),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "There is a problem",
@@ -592,7 +643,7 @@ class PensionProviderPaidTaxControllerISpec
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "For example, £193.52", ""),
+                  amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "", Some("For example, £193.52")),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "Mae problem wedi codi",
@@ -625,7 +676,7 @@ class PensionProviderPaidTaxControllerISpec
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "For example, £193.52", "x2.64"),
+                  amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "x2.64", Some("For example, £193.52")),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "There is a problem",
@@ -656,7 +707,7 @@ class PensionProviderPaidTaxControllerISpec
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "For example, £193.52", "x2.64"),
+                  amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "x2.64", Some("For example, £193.52")),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "Mae problem wedi codi",
@@ -687,7 +738,7 @@ class PensionProviderPaidTaxControllerISpec
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "For example, £193.52", "x2.64"),
+                  amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "x2.64", Some("For example, £193.52")),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "There is a problem",
@@ -718,7 +769,7 @@ class PensionProviderPaidTaxControllerISpec
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "For example, £193.52", "x2.64"),
+                  amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "x2.64", Some("For example, £193.52")),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "Mae problem wedi codi",
@@ -751,7 +802,7 @@ class PensionProviderPaidTaxControllerISpec
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "For example, £193.52", "100000000002"),
+                  amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "100000000002", Some("For example, £193.52")),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "There is a problem",
@@ -782,7 +833,7 @@ class PensionProviderPaidTaxControllerISpec
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "For example, £193.52", "100000000002"),
+                  amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "100000000002", Some("For example, £193.52")),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "Mae problem wedi codi",
@@ -813,7 +864,7 @@ class PensionProviderPaidTaxControllerISpec
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "For example, £193.52", "100000000002"),
+                  amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "100000000002", Some("For example, £193.52")),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "There is a problem",
@@ -844,7 +895,7 @@ class PensionProviderPaidTaxControllerISpec
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "For example, £193.52", "100000000002"),
+                  amountSection = ExpectedAmountSection("Amount they paid or agreed to pay, in pounds", "100000000002", Some("For example, £193.52")),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "Mae problem wedi codi",

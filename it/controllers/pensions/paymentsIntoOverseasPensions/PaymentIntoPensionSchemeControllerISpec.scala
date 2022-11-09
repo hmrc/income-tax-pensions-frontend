@@ -45,7 +45,7 @@ class PaymentIntoPensionSchemeControllerISpec
         }
       }
       "appear as expected" when {
-        "the user has no relevant session data and" when {
+        "the user has no pension-related session data and" when {
 
           val sessionData = pensionsUserData(aPensionsCYAEmptyModel)
 
@@ -63,7 +63,7 @@ class PaymentIntoPensionSchemeControllerISpec
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Total amount, in pounds", "For example, £193.52 Do not include payments your employer made", ""),
+                amountSection = ExpectedAmountSection("Total amount, in pounds", "", Some("For example, £193.52 Do not include payments your employer made")),
                 links = Set(
                   ExpectedLink(
                     "eligibleForTaxRelief-link",
@@ -91,7 +91,7 @@ class PaymentIntoPensionSchemeControllerISpec
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Total amount, in pounds", "For example, £193.52 Do not include payments your employer made", ""),
+                amountSection = ExpectedAmountSection("Total amount, in pounds", "", Some("For example, £193.52 Do not include payments your employer made")),
                 links = Set(
                   ExpectedLink(
                     "eligibleForTaxRelief-link",
@@ -119,7 +119,7 @@ class PaymentIntoPensionSchemeControllerISpec
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Total amount, in pounds", "For example, £193.52 Do not include payments your client’s employer made", ""),
+                amountSection = ExpectedAmountSection("Total amount, in pounds", "", Some("For example, £193.52 Do not include payments your client’s employer made")),
                 links = Set(
                   ExpectedLink(
                     "eligibleForTaxRelief-link",
@@ -148,7 +148,7 @@ class PaymentIntoPensionSchemeControllerISpec
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Total amount, in pounds", "For example, £193.52 Do not include payments your client’s employer made", ""),
+                amountSection = ExpectedAmountSection("Total amount, in pounds", "", Some("For example, £193.52 Do not include payments your client’s employer made")),
                 links = Set(
                   ExpectedLink(
                     "eligibleForTaxRelief-link",
@@ -186,7 +186,7 @@ class PaymentIntoPensionSchemeControllerISpec
                 radioButtonForYes = checkedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Total amount, in pounds", "For example, £193.52 Do not include payments your employer made", "42.64"),
+                amountSection = ExpectedAmountSection("Total amount, in pounds", "42.64", Some("For example, £193.52 Do not include payments your employer made")),
                 links = Set(
                   ExpectedLink(
                     "eligibleForTaxRelief-link",
@@ -214,7 +214,7 @@ class PaymentIntoPensionSchemeControllerISpec
                 radioButtonForYes = checkedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Total amount, in pounds", "For example, £193.52 Do not include payments your employer made", "42.64"),
+                amountSection = ExpectedAmountSection("Total amount, in pounds", "42.64", Some("For example, £193.52 Do not include payments your employer made")),
                 links = Set(
                   ExpectedLink(
                     "eligibleForTaxRelief-link",
@@ -242,7 +242,7 @@ class PaymentIntoPensionSchemeControllerISpec
                 radioButtonForYes = checkedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Total amount, in pounds", "For example, £193.52 Do not include payments your client’s employer made", "42.64"),
+                amountSection = ExpectedAmountSection("Total amount, in pounds", "42.64", Some("For example, £193.52 Do not include payments your client’s employer made")),
                 links = Set(
                   ExpectedLink(
                     "eligibleForTaxRelief-link",
@@ -270,7 +270,7 @@ class PaymentIntoPensionSchemeControllerISpec
                 radioButtonForYes = checkedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Total amount, in pounds", "For example, £193.52 Do not include payments your client’s employer made", "42.64"),
+                amountSection = ExpectedAmountSection("Total amount, in pounds", "42.64", Some("For example, £193.52 Do not include payments your client’s employer made")),
                 links = Set(
                   ExpectedLink(
                     "eligibleForTaxRelief-link",
@@ -308,7 +308,7 @@ class PaymentIntoPensionSchemeControllerISpec
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = checkedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Total amount, in pounds", "For example, £193.52 Do not include payments your employer made", ""),
+                amountSection = ExpectedAmountSection("Total amount, in pounds", "", Some("For example, £193.52 Do not include payments your employer made")),
                 links = Set(
                   ExpectedLink(
                     "eligibleForTaxRelief-link",
@@ -336,7 +336,7 @@ class PaymentIntoPensionSchemeControllerISpec
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = checkedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Total amount, in pounds", "For example, £193.52 Do not include payments your employer made", ""),
+                amountSection = ExpectedAmountSection("Total amount, in pounds", "", Some("For example, £193.52 Do not include payments your employer made")),
                 links = Set(
                   ExpectedLink(
                     "eligibleForTaxRelief-link",
@@ -364,7 +364,7 @@ class PaymentIntoPensionSchemeControllerISpec
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = checkedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Total amount, in pounds", "For example, £193.52 Do not include payments your client’s employer made", ""),
+                amountSection = ExpectedAmountSection("Total amount, in pounds", "", Some("For example, £193.52 Do not include payments your client’s employer made")),
                 links = Set(
                   ExpectedLink(
                     "eligibleForTaxRelief-link",
@@ -392,7 +392,7 @@ class PaymentIntoPensionSchemeControllerISpec
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = checkedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Total amount, in pounds", "For example, £193.52 Do not include payments your client’s employer made", ""),
+                amountSection = ExpectedAmountSection("Total amount, in pounds", "", Some("For example, £193.52 Do not include payments your client’s employer made")),
                 links = Set(
                   ExpectedLink(
                     "eligibleForTaxRelief-link",
@@ -465,6 +465,54 @@ class PaymentIntoPensionSchemeControllerISpec
             getViewModel mustBe Some(expectedViewModel)
           }
         }
+        "the user has no pension-related session data and" when {
+
+          val sessionData = pensionsUserData(aPensionsCYAEmptyModel)
+
+          "the user has selected 'No'" in {
+
+            val expectedViewModel =
+              sessionData.pensions.paymentsIntoOverseasPensions.copy(
+                paymentsIntoOverseasPensionsQuestions = Some(false),
+                paymentsIntoOverseasPensionsAmount = None)
+
+            implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
+            implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(false), None))
+
+            assertRedirectionAsExpected(relativeUrlForThisPage)
+            getViewModel mustBe Some(expectedViewModel)
+
+          }
+          "the user has selected 'Yes' as well as a valid amount (unformatted)" in {
+
+            val expectedViewModel =
+              sessionData.pensions.paymentsIntoOverseasPensions.copy(
+                paymentsIntoOverseasPensionsQuestions = Some(true),
+                paymentsIntoOverseasPensionsAmount = Some(BigDecimal(42.64)))
+
+            implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
+            implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("42.64")))
+
+            assertRedirectionAsExpected(relativeUrlForThisPage)
+            getViewModel mustBe Some(expectedViewModel)
+
+          }
+          "the user has selected 'Yes' as well as a valid amount (formatted)" in {
+
+            val expectedViewModel =
+              sessionData.pensions.paymentsIntoOverseasPensions.copy(
+                paymentsIntoOverseasPensionsQuestions = Some(true),
+                paymentsIntoOverseasPensionsAmount = Some(BigDecimal(1042.64)))
+
+            implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
+            implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("£1,042.64")))
+
+            assertRedirectionAsExpected(relativeUrlForThisPage)
+            getViewModel mustBe Some(expectedViewModel)
+
+          }
+
+        }
       }
       "fail" when {
         "the user has relevant session data and" when {
@@ -487,7 +535,7 @@ class PaymentIntoPensionSchemeControllerISpec
                   radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Total amount, in pounds", "For example, £193.52 Do not include payments your employer made", ""),
+                  amountSection = ExpectedAmountSection("Total amount, in pounds", "", Some("For example, £193.52 Do not include payments your employer made")),
                   links = Set(
                     ExpectedLink(
                       "eligibleForTaxRelief-link",
@@ -529,7 +577,7 @@ class PaymentIntoPensionSchemeControllerISpec
                   radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Total amount, in pounds", "For example, £193.52 Do not include payments your employer made", ""),
+                  amountSection = ExpectedAmountSection("Total amount, in pounds", "", Some("For example, £193.52 Do not include payments your employer made")),
                   links = Set(
                     ExpectedLink(
                       "eligibleForTaxRelief-link",
@@ -571,7 +619,7 @@ class PaymentIntoPensionSchemeControllerISpec
                   radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Total amount, in pounds", "For example, £193.52 Do not include payments your client’s employer made", ""),
+                  amountSection = ExpectedAmountSection("Total amount, in pounds", "", Some("For example, £193.52 Do not include payments your client’s employer made")),
                   links = Set(
                     ExpectedLink(
                       "eligibleForTaxRelief-link",
@@ -613,7 +661,7 @@ class PaymentIntoPensionSchemeControllerISpec
                   radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Total amount, in pounds", "For example, £193.52 Do not include payments your client’s employer made", ""),
+                  amountSection = ExpectedAmountSection("Total amount, in pounds", "", Some("For example, £193.52 Do not include payments your client’s employer made")),
                   links = Set(
                     ExpectedLink(
                       "eligibleForTaxRelief-link",
@@ -657,7 +705,7 @@ class PaymentIntoPensionSchemeControllerISpec
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Total amount, in pounds", "For example, £193.52 Do not include payments your employer made", ""),
+                  amountSection = ExpectedAmountSection("Total amount, in pounds", "", Some("For example, £193.52 Do not include payments your employer made")),
                   links = Set(
                     ExpectedLink(
                       "eligibleForTaxRelief-link",
@@ -699,7 +747,7 @@ class PaymentIntoPensionSchemeControllerISpec
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Total amount, in pounds", "For example, £193.52 Do not include payments your employer made", ""),
+                  amountSection = ExpectedAmountSection("Total amount, in pounds", "", Some("For example, £193.52 Do not include payments your employer made")),
                   links = Set(
                     ExpectedLink(
                       "eligibleForTaxRelief-link",
@@ -741,7 +789,7 @@ class PaymentIntoPensionSchemeControllerISpec
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Total amount, in pounds", "For example, £193.52 Do not include payments your client’s employer made", ""),
+                  amountSection = ExpectedAmountSection("Total amount, in pounds", "", Some("For example, £193.52 Do not include payments your client’s employer made")),
                   links = Set(
                     ExpectedLink(
                       "eligibleForTaxRelief-link",
@@ -783,7 +831,7 @@ class PaymentIntoPensionSchemeControllerISpec
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Total amount, in pounds", "For example, £193.52 Do not include payments your client’s employer made", ""),
+                  amountSection = ExpectedAmountSection("Total amount, in pounds", "", Some("For example, £193.52 Do not include payments your client’s employer made")),
                   links = Set(
                     ExpectedLink(
                       "eligibleForTaxRelief-link",
@@ -827,7 +875,7 @@ class PaymentIntoPensionSchemeControllerISpec
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Total amount, in pounds", "For example, £193.52 Do not include payments your employer made", "x2.64"),
+                  amountSection = ExpectedAmountSection("Total amount, in pounds", "x2.64", Some("For example, £193.52 Do not include payments your employer made")),
                   links = Set(
                     ExpectedLink(
                       "eligibleForTaxRelief-link",
@@ -869,7 +917,7 @@ class PaymentIntoPensionSchemeControllerISpec
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Total amount, in pounds", "For example, £193.52 Do not include payments your employer made", "x2.64"),
+                  amountSection = ExpectedAmountSection("Total amount, in pounds", "x2.64", Some("For example, £193.52 Do not include payments your employer made")),
                   links = Set(
                     ExpectedLink(
                       "eligibleForTaxRelief-link",
@@ -911,7 +959,7 @@ class PaymentIntoPensionSchemeControllerISpec
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Total amount, in pounds", "For example, £193.52 Do not include payments your client’s employer made", "x2.64"),
+                  amountSection = ExpectedAmountSection("Total amount, in pounds", "x2.64", Some("For example, £193.52 Do not include payments your client’s employer made")),
                   links = Set(
                     ExpectedLink(
                       "eligibleForTaxRelief-link",
@@ -953,7 +1001,7 @@ class PaymentIntoPensionSchemeControllerISpec
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Total amount, in pounds", "For example, £193.52 Do not include payments your client’s employer made", "x2.64"),
+                  amountSection = ExpectedAmountSection("Total amount, in pounds", "x2.64", Some("For example, £193.52 Do not include payments your client’s employer made")),
                   links = Set(
                     ExpectedLink(
                       "eligibleForTaxRelief-link",
@@ -997,7 +1045,7 @@ class PaymentIntoPensionSchemeControllerISpec
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Total amount, in pounds", "For example, £193.52 Do not include payments your employer made", "100,000,000,000"),
+                  amountSection = ExpectedAmountSection("Total amount, in pounds", "100,000,000,000", Some("For example, £193.52 Do not include payments your employer made")),
                   links = Set(
                     ExpectedLink(
                       "eligibleForTaxRelief-link",
@@ -1039,7 +1087,7 @@ class PaymentIntoPensionSchemeControllerISpec
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Total amount, in pounds", "For example, £193.52 Do not include payments your employer made", "100,000,000,000"),
+                  amountSection = ExpectedAmountSection("Total amount, in pounds", "100,000,000,000", Some("For example, £193.52 Do not include payments your employer made")),
                   links = Set(
                     ExpectedLink(
                       "eligibleForTaxRelief-link",
@@ -1081,7 +1129,7 @@ class PaymentIntoPensionSchemeControllerISpec
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Total amount, in pounds", "For example, £193.52 Do not include payments your client’s employer made", "100,000,000,000"),
+                  amountSection = ExpectedAmountSection("Total amount, in pounds", "100,000,000,000", Some("For example, £193.52 Do not include payments your client’s employer made")),
                   links = Set(
                     ExpectedLink(
                       "eligibleForTaxRelief-link",
@@ -1123,7 +1171,7 @@ class PaymentIntoPensionSchemeControllerISpec
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Total amount, in pounds", "For example, £193.52 Do not include payments your client’s employer made", "100,000,000,000"),
+                  amountSection = ExpectedAmountSection("Total amount, in pounds", "100,000,000,000", Some("For example, £193.52 Do not include payments your client’s employer made")),
                   links = Set(
                     ExpectedLink(
                       "eligibleForTaxRelief-link",

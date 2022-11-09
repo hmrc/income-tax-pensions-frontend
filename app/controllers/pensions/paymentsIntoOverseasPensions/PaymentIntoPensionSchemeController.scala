@@ -52,8 +52,8 @@ class PaymentIntoPensionSchemeController @Inject()(messagesControllerComponents:
   override def prepareView(pensionsUserData: PensionsUserData, taxYear: Int)
                           (implicit request: AuthorisationRequest[AnyContent]): Html = paymentIntoPensionSchemeView(populateForm(pensionsUserData), taxYear)
 
-  override def onInvalidForm(form: Form[(Boolean, Option[BigDecimal])], taxYear: Int)
-                            (implicit request: AuthorisationRequest[AnyContent]): Html = paymentIntoPensionSchemeView(form, taxYear)
+  override def whenFormIsInvalid(form: Form[(Boolean, Option[BigDecimal])], taxYear: Int)
+                                (implicit request: AuthorisationRequest[AnyContent]): Html = paymentIntoPensionSchemeView(form, taxYear)
 
   override def questionOpt(pensionsUserData: PensionsUserData): Option[Boolean] =
     pensionsUserData.pensions.paymentsIntoOverseasPensions.paymentsIntoOverseasPensionsQuestions
@@ -68,5 +68,9 @@ class PaymentIntoPensionSchemeController @Inject()(messagesControllerComponents:
         paymentsIntoOverseasPensionsAmount = amountOpt.filter(_ => yesSelected)
       )
     )
+
+  override def whenSessionDataIsInsufficient(taxYear: Int): Result = redirectToSummaryPage(taxYear)
+
+  override def sessionDataIsSufficient(pensionsUserData: PensionsUserData): Boolean = true
 
 }

@@ -18,12 +18,10 @@ package controllers.pensions.unauthorisedPayments
 
 import models.pension.charges.UnauthorisedPaymentsViewModel
 import play.api.i18n.Messages
-import play.api.mvc.Call
-import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
-import utils.{CYABaseHelper, ViewUtils}
+import utils.CYABaseHelper
 
-object UnauthorisedPaymentsCYAViewHelper extends CYABaseHelper{
+object UnauthorisedPaymentsCYAViewHelper extends CYABaseHelper {
 
   def summaryListRows(unauthorisedPaymentsViewModel: UnauthorisedPaymentsViewModel, taxYear: Int)(implicit messages: Messages): Seq[SummaryListRow] =
     Seq(
@@ -63,7 +61,7 @@ object UnauthorisedPaymentsCYAViewHelper extends CYABaseHelper{
         summaryListRowWithOptionalAmountValue(
           "unauthorisedPayments.cya.nonUkTaxAmountSurcharged",
           unauthorisedPaymentsViewModel.surchargeTaxAmount,
-          routes.DidYouPayNonUkTaxController.show(taxYear))(messages)
+          controllers.pensions.unauthorisedPayments.routes.NonUKTaxOnAmountResultedInSurchargeController.show(taxYear))(messages)
       )
   }
 

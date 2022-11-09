@@ -26,7 +26,7 @@ import models.pension.charges.UnauthorisedPaymentsViewModel
 import play.api.http.Status.{BAD_REQUEST, OK}
 import play.api.libs.ws.WSResponse
 
-class DidYouPayNonUkTaxControllerISpec
+class NonUKTaxOnAmountResultedInSurchargeControllerISpec
   extends YesNoAmountControllerSpec("/unauthorised-payments-from-pensions/tax-on-amount-surcharged") {
 
   "This page" when {
@@ -40,11 +40,7 @@ class DidYouPayNonUkTaxControllerISpec
           assertRedirectionAsExpected(PageRelativeURLs.summaryPage)
 
         }
-      }
-      "appear as expected" when {
-        // TODO (SASS-3849): Similar to what we do with the submission, we should not permit the user
-        // to access this page unless they've already provided the surcharge amount
-        "even when the user had not previously specified the surcharge amount" in {
+        "the user had not previously specified the surcharge amount" in {
 
           val sessionData = pensionsUserData(aPensionsCYAModel.copy(
             unauthorisedPayments = aPensionsCYAModel.unauthorisedPayments.copy(
@@ -57,9 +53,11 @@ class DidYouPayNonUkTaxControllerISpec
           implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
           implicit val response: WSResponse = getPage
 
-          response must haveStatus(OK)
+          assertRedirectionAsExpected(PageRelativeURLs.summaryPage)
 
         }
+      }
+      "appear as expected" when {
         "the user has no session data relevant to this page and" when {
 
           val sessionData = pensionsUserData(aPensionsCYAModel.copy(
@@ -83,7 +81,7 @@ class DidYouPayNonUkTaxControllerISpec
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "", "")
+                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "")
               ))
 
           }
@@ -101,7 +99,7 @@ class DidYouPayNonUkTaxControllerISpec
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "", "")
+                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "")
               ))
 
           }
@@ -119,7 +117,7 @@ class DidYouPayNonUkTaxControllerISpec
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "", "")
+                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "")
               ))
 
           }
@@ -137,7 +135,7 @@ class DidYouPayNonUkTaxControllerISpec
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "", "")
+                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "")
               ))
 
           }
@@ -166,7 +164,7 @@ class DidYouPayNonUkTaxControllerISpec
                 radioButtonForYes = checkedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "", "42.64")
+                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "42.64")
               ))
 
           }
@@ -184,7 +182,7 @@ class DidYouPayNonUkTaxControllerISpec
                 radioButtonForYes = checkedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "", "42.64")
+                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "42.64")
               ))
 
           }
@@ -202,7 +200,7 @@ class DidYouPayNonUkTaxControllerISpec
                 radioButtonForYes = checkedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "", "42.64")
+                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "42.64")
               ))
 
           }
@@ -220,14 +218,12 @@ class DidYouPayNonUkTaxControllerISpec
                 radioButtonForYes = checkedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "", "42.64")
+                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "42.64")
               ))
 
           }
 
         }
-        // TODO (SASS-3849): When we've previously answered 'No', we should always preselect it -
-        // regardless of the amount; and we shouldn't have any value in the amount box.
         "the user had previously answered 'No' without an amount, and" when {
 
           val sessionData: PensionsUserData =
@@ -250,9 +246,9 @@ class DidYouPayNonUkTaxControllerISpec
                 header = "Did you pay non-UK tax on the amount that resulted in a surcharge?",
                 caption = "Unauthorised payments from pensions for 6 April 2021 to 5 April 2022",
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
-                radioButtonForNo = uncheckedExpectedRadioButton("No"),
+                radioButtonForNo = checkedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "", "")
+                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "")
               ))
 
           }
@@ -268,9 +264,9 @@ class DidYouPayNonUkTaxControllerISpec
                 header = "Did you pay non-UK tax on the amount that resulted in a surcharge?",
                 caption = "Taliadau heb awdurdod o bensiynau ar gyfer 6 Ebrill 2021 i 5 Ebrill 2022",
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
-                radioButtonForNo = uncheckedExpectedRadioButton("No"),
+                radioButtonForNo = checkedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "", "")
+                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "")
               ))
 
           }
@@ -286,9 +282,9 @@ class DidYouPayNonUkTaxControllerISpec
                 header = "Did your client pay non-UK tax on the amount that resulted in a surcharge?",
                 caption = "Unauthorised payments from pensions for 6 April 2021 to 5 April 2022",
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
-                radioButtonForNo = uncheckedExpectedRadioButton("No"),
+                radioButtonForNo = checkedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "", "")
+                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "")
               ))
 
           }
@@ -304,14 +300,12 @@ class DidYouPayNonUkTaxControllerISpec
                 header = "Did your client pay non-UK tax on the amount that resulted in a surcharge?",
                 caption = "Taliadau heb awdurdod o bensiynau ar gyfer 6 Ebrill 2021 i 5 Ebrill 2022",
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
-                radioButtonForNo = uncheckedExpectedRadioButton("No"),
+                radioButtonForNo = checkedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "", "")))
+                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "")))
           }
 
         }
-        // TODO (SASS-3849): When we've previously answered 'No', we should always preselect it -
-        // regardless of the amount; and we shouldn't have any value in the amount box.
         "the user had previously answered 'No' with an amount of zero, and" when {
 
           val sessionData: PensionsUserData =
@@ -336,7 +330,7 @@ class DidYouPayNonUkTaxControllerISpec
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = checkedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "", "0")
+                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "")
               ))
 
           }
@@ -354,7 +348,7 @@ class DidYouPayNonUkTaxControllerISpec
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = checkedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "", "0")
+                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "")
               ))
 
           }
@@ -372,7 +366,7 @@ class DidYouPayNonUkTaxControllerISpec
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = checkedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "", "0")
+                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "")
               ))
 
           }
@@ -390,12 +384,10 @@ class DidYouPayNonUkTaxControllerISpec
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = checkedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "", "0")))
+                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "")))
           }
 
         }
-        // TODO (SASS-3849): When we've previously answered 'No', we should always preselect it -
-        // regardless of the amount; and we shouldn't have any value in the amount box.
         "the user had previously answered 'No' with a negative amount, and" when {
 
           val sessionData: PensionsUserData =
@@ -417,10 +409,10 @@ class DidYouPayNonUkTaxControllerISpec
                 title = "Did you pay non-UK tax on the amount that resulted in a surcharge?",
                 header = "Did you pay non-UK tax on the amount that resulted in a surcharge?",
                 caption = "Unauthorised payments from pensions for 6 April 2021 to 5 April 2022",
-                radioButtonForYes = checkedExpectedRadioButton("Yes"),
-                radioButtonForNo = uncheckedExpectedRadioButton("No"),
+                radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
+                radioButtonForNo = checkedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "", "-42.64")
+                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "")
               ))
 
           }
@@ -435,10 +427,10 @@ class DidYouPayNonUkTaxControllerISpec
                 title = "Did you pay non-UK tax on the amount that resulted in a surcharge?",
                 header = "Did you pay non-UK tax on the amount that resulted in a surcharge?",
                 caption = "Taliadau heb awdurdod o bensiynau ar gyfer 6 Ebrill 2021 i 5 Ebrill 2022",
-                radioButtonForYes = checkedExpectedRadioButton("Yes"),
-                radioButtonForNo = uncheckedExpectedRadioButton("No"),
+                radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
+                radioButtonForNo = checkedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "", "-42.64")
+                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "")
               ))
 
           }
@@ -453,10 +445,10 @@ class DidYouPayNonUkTaxControllerISpec
                 title = "Did your client pay non-UK tax on the amount that resulted in a surcharge?",
                 header = "Did your client pay non-UK tax on the amount that resulted in a surcharge?",
                 caption = "Unauthorised payments from pensions for 6 April 2021 to 5 April 2022",
-                radioButtonForYes = checkedExpectedRadioButton("Yes"),
-                radioButtonForNo = uncheckedExpectedRadioButton("No"),
+                radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
+                radioButtonForNo = checkedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "", "-42.64")
+                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "")
               ))
 
           }
@@ -471,10 +463,10 @@ class DidYouPayNonUkTaxControllerISpec
                 title = "Did your client pay non-UK tax on the amount that resulted in a surcharge?",
                 header = "Did your client pay non-UK tax on the amount that resulted in a surcharge?",
                 caption = "Taliadau heb awdurdod o bensiynau ar gyfer 6 Ebrill 2021 i 5 Ebrill 2022",
-                radioButtonForYes = checkedExpectedRadioButton("Yes"),
-                radioButtonForNo = uncheckedExpectedRadioButton("No"),
+                radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
+                radioButtonForNo = checkedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "", "-42.64")
+                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "")
               ))
           }
 
@@ -518,14 +510,12 @@ class DidYouPayNonUkTaxControllerISpec
 
           val sessionData = pensionsUserData(aPensionsCYAModel)
 
-          // TODO: When we've previously answered 'No', we should always preselect it -
-          // regardless of the amount; and we shouldn't have any value in the amount box.
           "the user has selected 'No' and" in {
 
             val expectedViewModel =
               sessionData.pensions.unauthorisedPayments.copy(
                 surchargeTaxAmountQuestion = Some(false),
-                surchargeTaxAmount = Some(BigDecimal(0))
+                surchargeTaxAmount = None
               )
 
             implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
@@ -605,7 +595,7 @@ class DidYouPayNonUkTaxControllerISpec
                   radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "", ""),
+                  amountSection = ExpectedAmountSection("Total non-UK tax in pounds", ""),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "There is a problem",
@@ -636,7 +626,7 @@ class DidYouPayNonUkTaxControllerISpec
                   radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "", ""),
+                  amountSection = ExpectedAmountSection("Total non-UK tax in pounds", ""),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "Mae problem wedi codi",
@@ -667,7 +657,7 @@ class DidYouPayNonUkTaxControllerISpec
                   radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "", ""),
+                  amountSection = ExpectedAmountSection("Total non-UK tax in pounds", ""),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "There is a problem",
@@ -698,7 +688,7 @@ class DidYouPayNonUkTaxControllerISpec
                   radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "", ""),
+                  amountSection = ExpectedAmountSection("Total non-UK tax in pounds", ""),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "Mae problem wedi codi",
@@ -732,7 +722,7 @@ class DidYouPayNonUkTaxControllerISpec
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "", ""),
+                  amountSection = ExpectedAmountSection("Total non-UK tax in pounds", ""),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "There is a problem",
@@ -763,7 +753,7 @@ class DidYouPayNonUkTaxControllerISpec
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "", ""),
+                  amountSection = ExpectedAmountSection("Total non-UK tax in pounds", ""),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "Mae problem wedi codi",
@@ -794,7 +784,7 @@ class DidYouPayNonUkTaxControllerISpec
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "", ""),
+                  amountSection = ExpectedAmountSection("Total non-UK tax in pounds", ""),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "There is a problem",
@@ -825,7 +815,7 @@ class DidYouPayNonUkTaxControllerISpec
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "", ""),
+                  amountSection = ExpectedAmountSection("Total non-UK tax in pounds", ""),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "Mae problem wedi codi",
@@ -859,7 +849,7 @@ class DidYouPayNonUkTaxControllerISpec
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "", "x2.64"),
+                  amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "x2.64"),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "There is a problem",
@@ -890,7 +880,7 @@ class DidYouPayNonUkTaxControllerISpec
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "", "x2.64"),
+                  amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "x2.64"),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "Mae problem wedi codi",
@@ -921,7 +911,7 @@ class DidYouPayNonUkTaxControllerISpec
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "", "x2.64"),
+                  amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "x2.64"),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "There is a problem",
@@ -952,7 +942,7 @@ class DidYouPayNonUkTaxControllerISpec
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "", "x2.64"),
+                  amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "x2.64"),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "Mae problem wedi codi",
@@ -986,7 +976,7 @@ class DidYouPayNonUkTaxControllerISpec
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "", "100000000002"),
+                  amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "100000000002"),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "There is a problem",
@@ -1017,7 +1007,7 @@ class DidYouPayNonUkTaxControllerISpec
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "", "100000000002"),
+                  amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "100000000002"),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "Mae problem wedi codi",
@@ -1048,7 +1038,7 @@ class DidYouPayNonUkTaxControllerISpec
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "", "100000000002"),
+                  amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "100000000002"),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "There is a problem",
@@ -1079,7 +1069,7 @@ class DidYouPayNonUkTaxControllerISpec
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "", "100000000002"),
+                  amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "100000000002"),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "Mae problem wedi codi",

@@ -25,7 +25,8 @@ class YesNoAmountControllerSpec(override val pathForThisPage: String) extends Co
 
   private val fieldNameForAmountInput = "amount-2"
 
-  def assertPageAsExpected(expectedStatusCode: Int, expectedPageContents: ExpectedYesNoAmountPageContents)(implicit userConfig: UserConfig, response: WSResponse): Unit = {
+  def assertPageAsExpected(expectedStatusCode: Int, expectedPageContents: ExpectedYesNoAmountPageContents)
+                          (implicit userConfig: UserConfig, response: WSResponse): Unit = {
     val document = parse(response.body)
     response must haveStatus(expectedStatusCode)
     super.assertPageAsExpected(document, expectedPageContents)
@@ -37,7 +38,7 @@ class YesNoAmountControllerSpec(override val pathForThisPage: String) extends Co
 
   private def assertAmountSectionAsExpected(document: Document, expectedAmountSection: ExpectedAmountSection): Unit = {
     document must haveAnAmountLabel(expectedAmountSection.label)
-    document must haveAnAmountHint(expectedAmountSection.hint)
+    document must haveAnAmountHint(expectedAmountSection.hintOpt.getOrElse(""))
     document must haveAnAmountValue(expectedAmountSection.value, fieldNameForAmountInput)
     document must haveTextContents(".govuk-input__prefix", "£")
     document must haveAnAmountName(fieldNameForAmountInput)
