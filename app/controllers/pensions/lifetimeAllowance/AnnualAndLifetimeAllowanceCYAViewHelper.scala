@@ -164,8 +164,8 @@ object AnnualAndLifetimeAllowanceCYAViewHelper extends CYABaseHelper {
         case Some(true) if lifetimeAllowancesViewModel.pensionPaidAnotherWayQuestion.isDefined =>
           summaryListRowWithAmountAndTaxValue(
             "lifetimeAllowance.cya.otherPayments",
-            lifetimeAllowancesViewModel.pensionPaidAnotherWay.flatMap(_.amount),
-            lifetimeAllowancesViewModel.pensionPaidAnotherWay.flatMap(_.taxPaid),
+            lifetimeAllowancesViewModel.pensionPaidAnotherWay.amount,
+            lifetimeAllowancesViewModel.pensionPaidAnotherWay.taxPaid,
             routes.LifeTimeAllowanceAnotherWayController.show(taxYear))(messages)
         case _ =>
           summaryListRowWithBooleanValue(

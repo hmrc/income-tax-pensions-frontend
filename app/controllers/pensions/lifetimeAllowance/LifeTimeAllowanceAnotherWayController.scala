@@ -23,7 +23,7 @@ import controllers.predicates.AuthorisedAction
 import forms.YesNoForm
 import models.User
 import models.mongo.PensionsCYAModel
-import models.pension.charges.PensionLifetimeAllowancesViewModel
+import models.pension.charges.{LifetimeAllowance, PensionLifetimeAllowancesViewModel}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -31,8 +31,9 @@ import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.lifetimeAllowance.LifeTimeAllowanceAnotherWayView
-
 import javax.inject.Inject
+import models.pension.charges
+
 import scala.concurrent.Future
 
 class LifeTimeAllowanceAnotherWayController @Inject()(implicit val cc: MessagesControllerComponents,
@@ -74,7 +75,7 @@ class LifeTimeAllowanceAnotherWayController @Inject()(implicit val cc: MessagesC
               pensionsCYAModel.copy(
                 pensionLifetimeAllowances = viewModel.copy(
                   pensionPaidAnotherWayQuestion = Some(yesNo),
-                  pensionPaidAnotherWay = if (yesNo) viewModel.pensionPaidAnotherWay else None)
+                  pensionPaidAnotherWay = if (yesNo) charges.LifetimeAllowance(viewModel.pensionPaidAnotherWay.amount, viewModel.pensionPaidAnotherWay.taxPaid) else LifetimeAllowance(None, None))
               )
             }
             pensionSessionService.createOrUpdateSessionData(request.user,

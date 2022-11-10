@@ -310,7 +310,7 @@ class LifeTimeAllowanceAnotherWayControllerISpec extends IntegrationTest with Be
         dropPensionsDB()
         val pensionsViewModel = aPensionLifetimeAllowanceViewModel.copy(
           pensionPaidAnotherWayQuestion = Some(true),
-          pensionPaidAnotherWay = Some(LifetimeAllowance(Some(999.99), Some(99.99)))
+          pensionPaidAnotherWay = LifetimeAllowance(Some(999.99), Some(99.99))
         )
 
         insertCyaData(pensionsUserDataWithLifetimeAllowance(pensionsViewModel), aUserRequest)
@@ -329,7 +329,7 @@ class LifeTimeAllowanceAnotherWayControllerISpec extends IntegrationTest with Be
 
       "updates aboveLifetimeAllowanceQuestion to Some(false) and clear the rest of the annual lifetime allowance data" in {
         lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
-        cyaModel.pensions.pensionLifetimeAllowances.pensionPaidAnotherWay shouldBe None
+        cyaModel.pensions.pensionLifetimeAllowances.pensionPaidAnotherWay shouldBe LifetimeAllowance(None,None)
         cyaModel.pensions.pensionLifetimeAllowances.pensionPaidAnotherWayQuestion shouldBe Some(false)
         cyaModel.pensions.pensionLifetimeAllowances.pensionAsLumpSumQuestion shouldBe aPensionLifetimeAllowanceViewModel.pensionAsLumpSumQuestion
         cyaModel.pensions.pensionLifetimeAllowances.pensionAsLumpSum shouldBe aPensionLifetimeAllowanceViewModel.pensionAsLumpSum

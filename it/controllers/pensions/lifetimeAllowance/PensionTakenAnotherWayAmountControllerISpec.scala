@@ -185,7 +185,7 @@ class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with B
           implicit lazy val result: WSResponse = {
             dropPensionsDB()
             val pensionsViewModel = aPensionLifetimeAllowanceViewModel.copy(
-              pensionPaidAnotherWay = None
+              pensionPaidAnotherWay = LifetimeAllowance(None, None)
             )
             insertCyaData(pensionsUserDataWithLifetimeAllowance(pensionsViewModel), aUserRequest)
             authoriseAgentOrIndividual(user.isAgent)
@@ -225,7 +225,7 @@ class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with B
           implicit lazy val result: WSResponse = {
             dropPensionsDB()
             val pensionsViewModel = aPensionLifetimeAllowanceViewModel.copy(
-              pensionPaidAnotherWay = Some(LifetimeAllowance(Some(newAmount), Some(newAmount2)))
+              pensionPaidAnotherWay = LifetimeAllowance(Some(newAmount), Some(newAmount2))
             )
             insertCyaData(pensionsUserDataWithLifetimeAllowance(pensionsViewModel), aUserRequest)
             authoriseAgentOrIndividual(user.isAgent)
@@ -264,7 +264,7 @@ class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with B
           implicit lazy val result: WSResponse = {
             dropPensionsDB()
             val pensionsViewModel = aPensionLifetimeAllowanceViewModel.copy(
-              pensionPaidAnotherWay = Some(LifetimeAllowance(Some(newAmount), None))
+              pensionPaidAnotherWay = LifetimeAllowance(Some(newAmount), None)
             )
             insertCyaData(pensionsUserDataWithLifetimeAllowance(pensionsViewModel), aUserRequest)
             authoriseAgentOrIndividual(user.isAgent)
@@ -298,6 +298,8 @@ class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with B
           formPostLinkCheck(pensionTakenAnotherWayAmountUrl(taxYearEOY), formSelector)
           welshToggleCheck(user.isWelsh)
         }
+
+        //"render pension taken another way page with None value for before tax and value for tax paid"
       }
     }
 
@@ -475,8 +477,8 @@ class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with B
 
       "update state pension amount to Some (new values)" in {
         lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
-        cyaModel.pensions.pensionLifetimeAllowances.pensionPaidAnotherWay.flatMap(_.amount) shouldBe Some(newAmount)
-        cyaModel.pensions.pensionLifetimeAllowances.pensionPaidAnotherWay.flatMap(_.taxPaid) shouldBe Some(newAmount2)
+        cyaModel.pensions.pensionLifetimeAllowances.pensionPaidAnotherWay.amount shouldBe Some(newAmount)
+        cyaModel.pensions.pensionLifetimeAllowances.pensionPaidAnotherWay.taxPaid shouldBe Some(newAmount2)
       }
     }
 
@@ -491,7 +493,7 @@ class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with B
         insertCyaData(
           pensionsUserDataWithLifetimeAllowance(aPensionLifetimeAllowancesEmptyViewModel.copy(
             pensionPaidAnotherWayQuestion = Some(true),
-            pensionPaidAnotherWay = None
+            pensionPaidAnotherWay = LifetimeAllowance(None, None)
           )), aUserRequest)
 
         urlPost(fullUrl(pensionTakenAnotherWayAmountUrl(taxYearEOY)), body = form,
@@ -506,8 +508,8 @@ class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with B
 
       "update state pension amount to Some (new values)" in {
         lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
-        cyaModel.pensions.pensionLifetimeAllowances.pensionPaidAnotherWay.flatMap(_.amount) shouldBe Some(newAmount)
-        cyaModel.pensions.pensionLifetimeAllowances.pensionPaidAnotherWay.flatMap(_.taxPaid) shouldBe Some(newAmount2)
+        cyaModel.pensions.pensionLifetimeAllowances.pensionPaidAnotherWay.amount shouldBe Some(newAmount)
+        cyaModel.pensions.pensionLifetimeAllowances.pensionPaidAnotherWay.taxPaid shouldBe Some(newAmount2)
       }
     }
 
