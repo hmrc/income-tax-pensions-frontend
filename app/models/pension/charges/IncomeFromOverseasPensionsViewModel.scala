@@ -31,7 +31,7 @@ case class IncomeFromOverseasPensionsViewModel(paymentsFromOverseasPensionsQuest
   def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedIncomeFromOverseasPensionsViewModel =
     EncryptedIncomeFromOverseasPensionsViewModel(
       paymentsFromOverseasPensionsQuestion = paymentsFromOverseasPensionsQuestion.map(_.encrypted),
-      overseasPensionSchemes = overseasIncomePensionSchemes.map(_.encrypted())
+      overseasPensionSchemes = overseasIncomePensionSchemes.encrypted())
     )
 }
 
