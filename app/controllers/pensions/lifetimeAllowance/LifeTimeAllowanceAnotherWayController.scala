@@ -75,7 +75,7 @@ class LifeTimeAllowanceAnotherWayController @Inject()(implicit val cc: MessagesC
               pensionsCYAModel.copy(
                 pensionLifetimeAllowances = viewModel.copy(
                   pensionPaidAnotherWayQuestion = Some(yesNo),
-                  pensionPaidAnotherWay = if (yesNo) charges.LifetimeAllowance(viewModel.pensionPaidAnotherWay.amount, viewModel.pensionPaidAnotherWay.taxPaid) else LifetimeAllowance(None, None))
+                  pensionPaidAnotherWay = if (yesNo) charges.LifetimeAllowance(viewModel.pensionPaidAnotherWay.amount, viewModel.pensionPaidAnotherWay.taxPaid) else LifetimeAllowance())
               )
             }
             pensionSessionService.createOrUpdateSessionData(request.user,

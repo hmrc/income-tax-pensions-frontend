@@ -29,7 +29,7 @@ case class PensionLifetimeAllowancesViewModel(
                                                pensionAsLumpSumQuestion: Option[Boolean] = None,
                                                pensionAsLumpSum: Option[LifetimeAllowance] = None,
                                                pensionPaidAnotherWayQuestion: Option[Boolean] = None,
-                                               pensionPaidAnotherWay: LifetimeAllowance = LifetimeAllowance(None, None),
+                                               pensionPaidAnotherWay: LifetimeAllowance = LifetimeAllowance(),
                                                pensionSchemeTaxReferences: Option[Seq[String]] = None) {
 
   def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedPensionLifetimeAllowancesViewModel = {

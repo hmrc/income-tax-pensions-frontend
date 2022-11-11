@@ -76,7 +76,7 @@ class AboveAnnualLifeTimeAllowanceController @Inject()(implicit val cc: Messages
                   pensionAsLumpSumQuestion = if (yesNo) viewModel.pensionAsLumpSumQuestion else None,
                   pensionAsLumpSum = if (yesNo) viewModel.pensionAsLumpSum else None,
                   pensionPaidAnotherWayQuestion = if (yesNo) viewModel.pensionPaidAnotherWayQuestion else None,
-                  pensionPaidAnotherWay = if (yesNo) LifetimeAllowance(viewModel.pensionPaidAnotherWay.amount, viewModel.pensionPaidAnotherWay.taxPaid) else LifetimeAllowance(None, None))
+                  pensionPaidAnotherWay = if (yesNo) LifetimeAllowance(viewModel.pensionPaidAnotherWay.amount, viewModel.pensionPaidAnotherWay.taxPaid) else LifetimeAllowance())
               )
             }
             pensionSessionService.createOrUpdateSessionData(request.user,

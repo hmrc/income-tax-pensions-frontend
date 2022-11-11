@@ -21,7 +21,7 @@ import controllers.pensions.routes.PensionsSummaryController
 import controllers.pensions.lifetimeAllowance.routes.PensionTakenAnotherWayAmountController
 import controllers.predicates.AuthorisedAction
 import controllers.predicates.TaxYearAction.taxYearAction
-import forms.{FormUtils, OptionalTupleAmountForm, TupleAmountForm}
+import forms.{FormUtils, OptionalTupleAmountForm}
 import models.mongo.PensionsCYAModel
 import models.pension.charges.{LifetimeAllowance, PensionLifetimeAllowancesViewModel}
 import play.api.data.Form

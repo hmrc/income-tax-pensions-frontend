@@ -75,7 +75,7 @@ object AllPensionsData {
         pensionAsLumpSumQuestion = prior.pensionCharges.flatMap(_.pensionSavingsTaxCharges).map(_.lumpSumBenefitTakenInExcessOfLifetimeAllowance.isDefined),
         pensionAsLumpSum = prior.pensionCharges.flatMap(_.pensionSavingsTaxCharges).flatMap(_.lumpSumBenefitTakenInExcessOfLifetimeAllowance),
         pensionPaidAnotherWayQuestion = prior.pensionCharges.flatMap(_.pensionSavingsTaxCharges).map(_.benefitInExcessOfLifetimeAllowance.isDefined),
-        pensionPaidAnotherWay = prior.pensionCharges.flatMap(_.pensionSavingsTaxCharges).flatMap(_.benefitInExcessOfLifetimeAllowance).getOrElse(LifetimeAllowance(None, None)),
+        pensionPaidAnotherWay = prior.pensionCharges.flatMap(_.pensionSavingsTaxCharges).flatMap(_.benefitInExcessOfLifetimeAllowance).getOrElse(LifetimeAllowance()),
         pensionSchemeTaxReferences = prior.pensionCharges.flatMap(_.pensionSavingsTaxCharges.map(_.pensionSchemeTaxReference))
       ),
 

@@ -19,7 +19,7 @@ package controllers.pensions.lifetimeAllowance
 import builders.PensionLifetimeAllowanceViewModelBuilder.{aPensionLifetimeAllowanceViewModel, aPensionLifetimeAllowancesEmptyViewModel}
 import builders.PensionsUserDataBuilder.{aPensionsUserData, pensionsUserDataWithLifetimeAllowance}
 import builders.UserBuilder.aUserRequest
-import forms.{OptionalTupleAmountForm, TupleAmountForm}
+import forms.OptionalTupleAmountForm
 import models.pension.charges.LifetimeAllowance
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -299,7 +299,44 @@ class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with B
           welshToggleCheck(user.isWelsh)
         }
 
-        //"render pension taken another way page with None value for before tax and value for tax paid"
+        "render pension taken another way page with None value for before tax and value for tax paid" which {
+          implicit lazy val result: WSResponse = {
+            dropPensionsDB()
+            val pensionsViewModel = aPensionLifetimeAllowanceViewModel.copy(
+              pensionPaidAnotherWay = LifetimeAllowance(None, Some(newAmount))
+            )
+            insertCyaData(pensionsUserDataWithLifetimeAllowance(pensionsViewModel), aUserRequest)
+            authoriseAgentOrIndividual(user.isAgent)
+            urlGet(
+              fullUrl(pensionTakenAnotherWayAmountUrl(taxYearEOY)),
+              user.isWelsh,
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+          }
+
+          implicit def document: () => Document = () => Jsoup.parse(result.body)
+
+          "has an OK status" in {
+            result.status shouldBe OK
+          }
+          titleCheck(user.specificExpectedResults.get.expectedTitle)
+          h1Check(user.specificExpectedResults.get.expectedHeading)
+          captionCheck(expectedCaption(taxYearEOY), captionSelector)
+          textOnPageCheck(user.specificExpectedResults.get.amountAboveAllowanceParagraph, mainParagraph(2))
+          textOnPageCheck(user.specificExpectedResults.get.checkThisWithProviderParagraph, mainParagraph(3))
+          textOnPageCheck(beforeTax, beforeTaxLabel)
+          textOnPageCheck(user.specificExpectedResults.get.beforeTaxParagraph, beforeTaxParagraph(5))
+          textOnPageCheck(poundPrefixText, poundPrefixSelector(2), "for amount 1")
+          textOnPageCheck(poundPrefixText, poundPrefixSelector(5), "for amount 2")
+          textOnPageCheck(hintText, amount1hintTextSelector, "for amount 1")
+          textOnPageCheck(taxPaid, taxPaidLabel)
+          textOnPageCheck(taxPaidParagraph, taxPaidParagraphSelector)
+          textOnPageCheck(hintText, amount2hintTextSelector, "for amount 2")
+          inputFieldValueCheck(amount1InputName, amount1inputSelector, "")
+          inputFieldValueCheck(amount2InputName, amount2inputSelector, newAmount.toString)
+          buttonCheck(buttonText, continueButtonSelector)
+          formPostLinkCheck(pensionTakenAnotherWayAmountUrl(taxYearEOY), formSelector)
+          welshToggleCheck(user.isWelsh)
+        }
       }
     }
 
