@@ -146,8 +146,8 @@ object AnnualAndLifetimeAllowanceCYAViewHelper extends CYABaseHelper {
         case Some(true) if lifetimeAllowancesViewModel.pensionAsLumpSumQuestion.isDefined =>
           summaryListRowWithAmountAndTaxValue(
             "lifetimeAllowance.cya.lumpSum",
-            lifetimeAllowancesViewModel.pensionAsLumpSum.map(_.amount),
-            lifetimeAllowancesViewModel.pensionAsLumpSum.map(_.taxPaid),
+            lifetimeAllowancesViewModel.pensionAsLumpSum.flatMap(_.amount),
+            lifetimeAllowancesViewModel.pensionAsLumpSum.flatMap(_.taxPaid),
             routes.PensionLumpSumController.show(taxYear))(messages)
         case _ =>
           summaryListRowWithBooleanValue(
@@ -164,8 +164,8 @@ object AnnualAndLifetimeAllowanceCYAViewHelper extends CYABaseHelper {
         case Some(true) if lifetimeAllowancesViewModel.pensionPaidAnotherWayQuestion.isDefined =>
           summaryListRowWithAmountAndTaxValue(
             "lifetimeAllowance.cya.otherPayments",
-            lifetimeAllowancesViewModel.pensionPaidAnotherWay.map(_.amount),
-            lifetimeAllowancesViewModel.pensionPaidAnotherWay.map(_.taxPaid),
+            lifetimeAllowancesViewModel.pensionPaidAnotherWay.amount,
+            lifetimeAllowancesViewModel.pensionPaidAnotherWay.taxPaid,
             routes.LifeTimeAllowanceAnotherWayController.show(taxYear))(messages)
         case _ =>
           summaryListRowWithBooleanValue(

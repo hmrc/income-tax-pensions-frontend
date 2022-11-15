@@ -24,12 +24,15 @@ import utils.DecryptorInstances.bigDecimalDecryptor
 import utils.EncryptableSyntax.EncryptableOps
 import utils.EncryptorInstances.bigDecimalEncryptor
 
-case class LifetimeAllowance(amount: BigDecimal, taxPaid: BigDecimal) {
+case class LifetimeAllowance(
+                              amount: Option[BigDecimal] = None,
+                              taxPaid: Option[BigDecimal] = None
+                            ) {
 
   def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedLifetimeAllowance =
     EncryptedLifetimeAllowance(
-      amount = amount.encrypted,
-      taxPaid = taxPaid.encrypted
+      amount = amount.map(_.encrypted),
+      taxPaid = taxPaid.map(_.encrypted)
     )
 }
 
@@ -37,11 +40,13 @@ object LifetimeAllowance {
   implicit val format: OFormat[LifetimeAllowance] = Json.format[LifetimeAllowance]
 }
 
-case class EncryptedLifetimeAllowance(amount: EncryptedValue, taxPaid: EncryptedValue) {
+case class EncryptedLifetimeAllowance(
+                                       amount: Option[EncryptedValue] = None,
+                                       taxPaid: Option[EncryptedValue] = None) {
 
   def decrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): LifetimeAllowance = LifetimeAllowance(
-    amount = amount.decrypted[BigDecimal],
-    taxPaid = taxPaid.decrypted[BigDecimal]
+    amount = amount.map(_.decrypted[BigDecimal]),
+    taxPaid = taxPaid.map(_.decrypted[BigDecimal])
   )
 }
 

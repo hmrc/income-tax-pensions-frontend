@@ -20,6 +20,7 @@ import builders.PensionLifetimeAllowanceViewModelBuilder.aPensionLifetimeAllowan
 import builders.PensionsUserDataBuilder.{aPensionsUserData, anPensionsUserDataEmptyCya, pensionsUserDataWithLifetimeAllowance}
 import builders.UserBuilder.aUserRequest
 import forms.YesNoForm
+import models.pension.charges.LifetimeAllowance
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterEach
@@ -328,7 +329,7 @@ class AboveAnnualLifeTimeAllowanceControllerISpec extends IntegrationTest with B
         cyaModel.pensions.pensionLifetimeAllowances.pensionAsLumpSumQuestion shouldBe None
         cyaModel.pensions.pensionLifetimeAllowances.pensionAsLumpSum shouldBe None
         cyaModel.pensions.pensionLifetimeAllowances.pensionPaidAnotherWayQuestion shouldBe None
-        cyaModel.pensions.pensionLifetimeAllowances.pensionPaidAnotherWay shouldBe None
+        cyaModel.pensions.pensionLifetimeAllowances.pensionPaidAnotherWay shouldBe LifetimeAllowance(None,None)
 
       }
     }

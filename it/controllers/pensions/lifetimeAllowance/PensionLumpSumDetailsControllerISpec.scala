@@ -225,7 +225,7 @@ class PensionLumpSumDetailsControllerISpec extends IntegrationTest with ViewHelp
           implicit lazy val result: WSResponse = {
             dropPensionsDB()
             val pensionsViewModel = aPensionLifetimeAllowanceViewModel.copy(
-              pensionAsLumpSum = Some(LifetimeAllowance(newAmount, newAmount2))
+              pensionAsLumpSum = Some(LifetimeAllowance(Some(newAmount), Some(newAmount2)))
             )
             insertCyaData(pensionsUserDataWithLifetimeAllowance(pensionsViewModel), aUserRequest)
             authoriseAgentOrIndividual(user.isAgent)
@@ -433,8 +433,8 @@ class PensionLumpSumDetailsControllerISpec extends IntegrationTest with ViewHelp
 
       "update state pension amount to Some (new values)" in {
         lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
-        cyaModel.pensions.pensionLifetimeAllowances.pensionAsLumpSum.map(_.amount) shouldBe Some(newAmount)
-        cyaModel.pensions.pensionLifetimeAllowances.pensionAsLumpSum.map(_.taxPaid) shouldBe Some(newAmount2)
+        cyaModel.pensions.pensionLifetimeAllowances.pensionAsLumpSum.flatMap(_.amount) shouldBe Some(newAmount)
+        cyaModel.pensions.pensionLifetimeAllowances.pensionAsLumpSum.flatMap(_.taxPaid) shouldBe Some(newAmount2)
       }
     }
 
@@ -464,8 +464,8 @@ class PensionLumpSumDetailsControllerISpec extends IntegrationTest with ViewHelp
 
       "update state pension amount to Some (new values)" in {
         lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
-        cyaModel.pensions.pensionLifetimeAllowances.pensionAsLumpSum.map(_.amount) shouldBe Some(newAmount)
-        cyaModel.pensions.pensionLifetimeAllowances.pensionAsLumpSum.map(_.taxPaid) shouldBe Some(newAmount2)
+        cyaModel.pensions.pensionLifetimeAllowances.pensionAsLumpSum.flatMap(_.amount) shouldBe Some(newAmount)
+        cyaModel.pensions.pensionLifetimeAllowances.pensionAsLumpSum.flatMap(_.taxPaid) shouldBe Some(newAmount2)
       }
     }
 

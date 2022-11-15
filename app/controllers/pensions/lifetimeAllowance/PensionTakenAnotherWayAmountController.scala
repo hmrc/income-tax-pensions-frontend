@@ -21,7 +21,7 @@ import controllers.pensions.routes.PensionsSummaryController
 import controllers.pensions.lifetimeAllowance.routes.PensionTakenAnotherWayAmountController
 import controllers.predicates.AuthorisedAction
 import controllers.predicates.TaxYearAction.taxYearAction
-import forms.{FormUtils, TupleAmountForm}
+import forms.{FormUtils, OptionalTupleAmountForm}
 import models.mongo.PensionsCYAModel
 import models.pension.charges.{LifetimeAllowance, PensionLifetimeAllowancesViewModel}
 import play.api.data.Form
@@ -31,8 +31,8 @@ import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.lifetimeAllowance.PensionTakenAnotherWayAmountView
-
 import javax.inject.Inject
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
@@ -44,7 +44,7 @@ class PensionTakenAnotherWayAmountController @Inject()(implicit val mcc: Message
                                                        errorHandler: ErrorHandler,
                                                        clock: Clock) extends FrontendController(mcc) with I18nSupport with SessionHelper with FormUtils {
 
-  def amountForm(isAgent: Boolean): Form[(BigDecimal, BigDecimal)] = TupleAmountForm.amountForm(
+  def amountForm(isAgent: Boolean): Form[(Option[BigDecimal], Option[BigDecimal])] = OptionalTupleAmountForm.amountForm(
     emptyFieldKey1 = s"lifetimeAllowance.pensionTakenAnotherWay.beforeTax.error.noEntry.${if (isAgent) "agent" else "individual"}",
     wrongFormatKey1 = s"lifetimeAllowance.pensionTakenAnotherWay.beforeTax.error.incorrectFormat.${if (isAgent) "agent" else "individual"}",
     exceedsMaxAmountKey1 = s"common.beforeTax.error.overMaximum",
@@ -58,11 +58,15 @@ class PensionTakenAnotherWayAmountController @Inject()(implicit val mcc: Message
     pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
       case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
       case Right(Some(data)) =>
-        val totalTaxOpt = data.pensions.pensionLifetimeAllowances.pensionPaidAnotherWay.map(_.amount)
-        val taxPaidOpt = data.pensions.pensionLifetimeAllowances.pensionPaidAnotherWay.map(_.taxPaid)
+        val totalTaxOpt = data.pensions.pensionLifetimeAllowances.pensionPaidAnotherWay.amount
+        val taxPaidOpt = data.pensions.pensionLifetimeAllowances.pensionPaidAnotherWay.taxPaid
         (totalTaxOpt, taxPaidOpt) match {
           case (Some(totalTax), Some(taxPaid)) =>
-            Future.successful(Ok(pensionTakenAnotherWayAmountView(amountForm(request.user.isAgent).fill((totalTax, taxPaid)), taxYear)))
+            Future.successful(Ok(pensionTakenAnotherWayAmountView(amountForm(request.user.isAgent).fill((Some(totalTax), Some(taxPaid))), taxYear)))
+          case (Some(totalTax), None) =>
+            Future.successful(Ok(pensionTakenAnotherWayAmountView(amountForm(request.user.isAgent).fill((Some(totalTax), None)), taxYear)))
+          case (None, Some(taxPaid)) =>
+            Future.successful(Ok(pensionTakenAnotherWayAmountView(amountForm(request.user.isAgent).fill((None, Some(taxPaid))), taxYear)))
           case (_, _) =>
             Future.successful(Ok(pensionTakenAnotherWayAmountView(amountForm(request.user.isAgent), taxYear)))
         }
@@ -88,7 +92,7 @@ class PensionTakenAnotherWayAmountController @Inject()(implicit val mcc: Message
               val updatedCyaModel: PensionsCYAModel = {
                 pensionsCYAModel.copy(
                   pensionLifetimeAllowances = viewModel.copy(
-                    pensionPaidAnotherWay = Some(LifetimeAllowance(amounts._1, amounts._2)))
+                    pensionPaidAnotherWay = LifetimeAllowance(amounts._1, amounts._2))
                 )
               }
               pensionSessionService.createOrUpdateSessionData(request.user,
