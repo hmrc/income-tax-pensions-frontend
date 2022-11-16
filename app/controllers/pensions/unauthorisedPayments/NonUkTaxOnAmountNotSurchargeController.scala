@@ -47,9 +47,9 @@ class NonUkTaxOnAmountNotSurchargeController @Inject()(implicit val cc: Messages
 
   def form: Form[(Boolean, Option[BigDecimal])] = RadioButtonAmountForm.radioButtonAndAmountForm(
     missingInputError = s"unauthorisedPayments.nonUkTaxOnAmountNotSurcharge.error.noEntry",
-    emptyFieldKey = s"common.unauthorisedPayments.error.Amount.noEntry",
+    emptyFieldKey = s"common.pensions.error.amount.noEntry",
     wrongFormatKey = s"common.unauthorisedPayments.error.Amount.incorrectFormat",
-    exceedsMaxAmountKey = s"common.unauthorisedPayments.error.Amount.overMaximum"
+    exceedsMaxAmountKey = s"common.pensions.error.amount.overMaximum"
   )
 
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async{ implicit request =>

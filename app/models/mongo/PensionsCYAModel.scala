@@ -27,7 +27,7 @@ case class PensionsCYAModel(paymentsIntoPension: PaymentsIntoPensionViewModel,
                             incomeFromPensions: IncomeFromPensionsViewModel,
                             unauthorisedPayments: UnauthorisedPaymentsViewModel,
                             paymentsIntoOverseasPensions: PaymentsIntoOverseasPensionsViewModel,
-                            incomeFromOverseasPensionsViewModel: IncomeFromOverseasPensionsViewModel) {
+                            incomeFromOverseasPensions: IncomeFromOverseasPensionsViewModel) {
 }
 
 object PensionsCYAModel {

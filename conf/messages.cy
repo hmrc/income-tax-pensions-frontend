@@ -38,6 +38,7 @@ common.paymentsIntoOverseasPensions.caption = Payments into overseas pensions fo
 common.uKPensionIncome.caption = UK pension income for 6 April {0} to 5 April {1}
 common.lifetimeAllowance.caption = Annual and lifetime allowances for 6 April {0} to 5 April {1}
 common.overseasPensions.caption = Overseas pensions for 6 April {0} to 5 April {1}
+common.incomeFromOverseasPensions.caption = Income from overseas pensions for 6 April {0} to 5 April {1}
 common.return.overview.buttonText = Return to overview
 common.currencyAmount = £{0}
 common.total = Total
@@ -51,6 +52,8 @@ common.sectionsToFill.agent = You only need to fill in the sections that apply t
 common.error.amountMaxLimit = The total amount must be less than £100,000,000,000
 common.pensions.error.amountMaxLimit.individual = The amount of tax your pension provider paid or agreed to pay must be less than £100,000,000,000
 common.pensions.error.amountMaxLimit.agent = The amount of tax your client’s pension provider paid or agreed to pay must be less than £100,000,000,000
+common.pensions.error.amount.overMaximum = The amount of non-UK tax paid must be less than £100,000,000,000
+common.pensions.error.amount.noEntry = Enter the amount of non-UK tax paid
 common.pensions.amountTheyAgreedToPay.text = Amount they paid or agreed to pay, in pounds
 common.pensions.didYourPensionSchemesAgreeToPayTheTax.title.individual = Did your pension schemes pay or agree to pay the tax?
 common.pensions.didYourPensionSchemesAgreeToPayTheTax.title.agent = Did your client’s pension schemes pay or agree to pay the tax?
@@ -71,9 +74,7 @@ unauthorisedPayments.common.ukPensionSchemes = UK pension schemes
 unauthorisedPayments.common.ukPensionSchemes.hidden = Change UK pension schemes
 common.unauthorisedPaymentsFromPension.caption = Taliadau heb awdurdod o bensiynau ar gyfer 6 Ebrill {0} i 5 Ebrill {1}
 common.unauthorisedPayments.Amount.Text = Total non-UK tax in pounds
-common.unauthorisedPayments.error.Amount.noEntry = Enter the amount of non-UK tax paid
 common.unauthorisedPayments.error.Amount.incorrectFormat = Enter the amount of non-UK tax in the correct format
-common.unauthorisedPayments.error.Amount.overMaximum = The amount of non-UK tax paid must be less than £100,000,000,000
 common.unauthorisedPayments.error.checkbox.or.radioButton.noEntry = Select yes if you got an unauthorised payment from a pension scheme
 
 
@@ -808,6 +809,17 @@ overseasPension.QOPSReference.paragraph1.agent = You can find this on your clien
 overseasPension.QOPSReference.hint = For example, QOPS123456
 overseasPension.QOPSReference.error.incorrectFormat = Enter a six digit number
 overseasPension.QOPSReference.prefix=QOPS
+
+#Pensions Payments page
+overseasPension.pensionPayments.title = Pension payments
+overseasPension.pensionPayments.amountBeforeTax.text = Amount before tax
+overseasPension.pensionPayments.amountBeforeTax.noEntry = Enter an amount before tax
+overseasPension.pensionPayments.amountBeforeTax.incorrectFormat.individual = Enter an amount before tax in the correct format
+overseasPension.pensionPayments.amountBeforeTax.incorrectFormat.agent = Enter the amount before tax in the correct format
+overseasPension.pensionPayments.amountBeforeTax.tooBig = The amount before tax must be less than £100,000,000,000
+overseasPension.pensionPayments.nonUkTaxPaid.text = Non-UK tax paid
+overseasPension.pensionPayments.nonUkTaxPaid.incorrectFormat = Enter the amount of non-UK tax paid in the correct format
+
 
 #Pension Customer Reference Number
 overseasPension.pensionsCustomerReferenceNumber.title.individual = What’s your customer reference number?

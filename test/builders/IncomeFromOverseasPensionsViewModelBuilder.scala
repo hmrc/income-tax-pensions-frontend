@@ -22,7 +22,7 @@ object IncomeFromOverseasPensionsViewModelBuilder {
 
   val anIncomeFromOverseasPensionsViewModel: IncomeFromOverseasPensionsViewModel = IncomeFromOverseasPensionsViewModel(
     paymentsFromOverseasPensionsQuestion = Some(true),
-    pensionSchemes = Some(Seq(
+    overseasIncomePensionSchemes = Seq(
       PensionScheme(
         countryCode = Some("FRA"),
         pensionPaymentAmount = Some(1999.99),
@@ -32,7 +32,7 @@ object IncomeFromOverseasPensionsViewModelBuilder {
         foreignTaxCreditReliefQuestion = Some(false),
         taxableAmount = Some(1999.99)
       )
-    ))
+    )
   )
 
   val anIncomeFromOverseasPensionsEmptyViewModel: IncomeFromOverseasPensionsViewModel = IncomeFromOverseasPensionsViewModel()

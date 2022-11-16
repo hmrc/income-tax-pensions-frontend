@@ -26,12 +26,12 @@ import utils.{EncryptedValue, SecureGCMCipher}
 
 
 case class IncomeFromOverseasPensionsViewModel(paymentsFromOverseasPensionsQuestion: Option[Boolean] = None,
-                                               pensionSchemes: Option[Seq[PensionScheme]] = None) {
+                                               overseasIncomePensionSchemes: Seq[PensionScheme] = Nil) {
 
   def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedIncomeFromOverseasPensionsViewModel =
     EncryptedIncomeFromOverseasPensionsViewModel(
       paymentsFromOverseasPensionsQuestion = paymentsFromOverseasPensionsQuestion.map(_.encrypted),
-      overseasPensionSchemes = pensionSchemes.map(_.map(_.encrypted()))
+      overseasPensionSchemes = overseasIncomePensionSchemes.map(_.encrypted())
     )
 }
 
@@ -41,12 +41,12 @@ object IncomeFromOverseasPensionsViewModel {
 
 
 case class EncryptedIncomeFromOverseasPensionsViewModel(paymentsFromOverseasPensionsQuestion: Option[EncryptedValue] = None,
-                                                        overseasPensionSchemes: Option[Seq[EncryptedPensionSchemeSummary]] = None) {
+                                                        overseasPensionSchemes: Seq[EncryptedPensionSchemeSummary] = Nil) {
 
   def decrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): IncomeFromOverseasPensionsViewModel =
     IncomeFromOverseasPensionsViewModel(
       paymentsFromOverseasPensionsQuestion = paymentsFromOverseasPensionsQuestion.map(_.decrypted[Boolean]),
-      overseasPensionSchemes.map(_.map(_.decrypted())))
+      overseasPensionSchemes.map(_.decrypted()))
 }
 
 object EncryptedIncomeFromOverseasPensionsViewModel {
