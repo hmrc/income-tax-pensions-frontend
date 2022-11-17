@@ -81,7 +81,7 @@ class NonUkTaxOnAmountNotSurchargeControllerISpec extends YesNoAmountControllerS
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "", "")
+                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "")
               ))
 
           }
@@ -99,7 +99,7 @@ class NonUkTaxOnAmountNotSurchargeControllerISpec extends YesNoAmountControllerS
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "", "")
+                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "")
               ))
 
           }
@@ -117,7 +117,7 @@ class NonUkTaxOnAmountNotSurchargeControllerISpec extends YesNoAmountControllerS
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "", "")
+                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "")
               ))
 
           }
@@ -135,7 +135,7 @@ class NonUkTaxOnAmountNotSurchargeControllerISpec extends YesNoAmountControllerS
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "", "")
+                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "")
               ))
 
           }
@@ -164,7 +164,7 @@ class NonUkTaxOnAmountNotSurchargeControllerISpec extends YesNoAmountControllerS
                 radioButtonForYes = checkedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "", "42.64")
+                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "42.64")
               ))
 
           }
@@ -182,7 +182,7 @@ class NonUkTaxOnAmountNotSurchargeControllerISpec extends YesNoAmountControllerS
                 radioButtonForYes = checkedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "", "42.64")
+                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "42.64")
               ))
 
           }
@@ -200,7 +200,7 @@ class NonUkTaxOnAmountNotSurchargeControllerISpec extends YesNoAmountControllerS
                 radioButtonForYes = checkedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "", "42.64")
+                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "42.64")
               ))
 
           }
@@ -218,7 +218,7 @@ class NonUkTaxOnAmountNotSurchargeControllerISpec extends YesNoAmountControllerS
                 radioButtonForYes = checkedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "", "42.64")
+                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "42.64")
               ))
 
           }
@@ -250,7 +250,7 @@ class NonUkTaxOnAmountNotSurchargeControllerISpec extends YesNoAmountControllerS
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "", "")
+                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "")
               ))
 
           }
@@ -268,7 +268,7 @@ class NonUkTaxOnAmountNotSurchargeControllerISpec extends YesNoAmountControllerS
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "", "")
+                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "")
               ))
 
           }
@@ -286,7 +286,7 @@ class NonUkTaxOnAmountNotSurchargeControllerISpec extends YesNoAmountControllerS
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "", "")
+                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "")
               ))
 
           }
@@ -304,7 +304,7 @@ class NonUkTaxOnAmountNotSurchargeControllerISpec extends YesNoAmountControllerS
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "", "")))
+                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "")))
           }
 
         }
@@ -334,7 +334,7 @@ class NonUkTaxOnAmountNotSurchargeControllerISpec extends YesNoAmountControllerS
                 radioButtonForYes = checkedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "", "0")
+                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "0")
               ))
 
           }
@@ -352,7 +352,7 @@ class NonUkTaxOnAmountNotSurchargeControllerISpec extends YesNoAmountControllerS
                 radioButtonForYes = checkedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "", "0")
+                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "0")
               ))
 
           }
@@ -370,7 +370,7 @@ class NonUkTaxOnAmountNotSurchargeControllerISpec extends YesNoAmountControllerS
                 radioButtonForYes = checkedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "", "0")
+                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "0")
               ))
 
           }
@@ -388,7 +388,7 @@ class NonUkTaxOnAmountNotSurchargeControllerISpec extends YesNoAmountControllerS
                 radioButtonForYes = checkedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "", "0")))
+                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "0")))
           }
 
         }
@@ -418,7 +418,7 @@ class NonUkTaxOnAmountNotSurchargeControllerISpec extends YesNoAmountControllerS
                 radioButtonForYes = checkedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "", "-42.64")
+                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "-42.64")
               ))
 
           }
@@ -436,7 +436,7 @@ class NonUkTaxOnAmountNotSurchargeControllerISpec extends YesNoAmountControllerS
                 radioButtonForYes = checkedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "", "-42.64")
+                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "-42.64")
               ))
 
           }
@@ -454,7 +454,7 @@ class NonUkTaxOnAmountNotSurchargeControllerISpec extends YesNoAmountControllerS
                 radioButtonForYes = checkedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "", "-42.64")
+                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "-42.64")
               ))
 
           }
@@ -472,24 +472,13 @@ class NonUkTaxOnAmountNotSurchargeControllerISpec extends YesNoAmountControllerS
                 radioButtonForYes = checkedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "", "-42.64")))
+                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "-42.64")))
           }
 
         }
       }
     }
     "submitted" should {
-      "fail" when {
-        // TODO (SASS-3850): Typically, we'd redirect to the summary page is this case.
-        "the user has no stored session data at all" in {
-
-          implicit val userConfig: UserConfig = userConfigWhenIrrelevant(None)
-          implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(false), None))
-
-          response must haveStatus(INTERNAL_SERVER_ERROR)
-
-        }
-      }
       "redirect to the expected page" when {
         "the user had not previously specified the 'no surcharge' amount" in {
 
@@ -581,6 +570,15 @@ class NonUkTaxOnAmountNotSurchargeControllerISpec extends YesNoAmountControllerS
         }
       }
       "fail" when {
+        // TODO (SASS-3850): Typically, we'd redirect to the summary page is this case.
+        "the user has no stored session data at all" in {
+
+          implicit val userConfig: UserConfig = userConfigWhenIrrelevant(None)
+          implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(false), None))
+
+          response must haveStatus(INTERNAL_SERVER_ERROR)
+
+        }
         "the user has no session data relevant to this page and" when {
 
           val sessionData = pensionsUserData(aPensionsCYAModel.copy(
@@ -607,7 +605,7 @@ class NonUkTaxOnAmountNotSurchargeControllerISpec extends YesNoAmountControllerS
                   radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "", ""),
+                  amountSection = ExpectedAmountSection("Total non-UK tax in pounds", ""),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "There is a problem",
@@ -638,7 +636,7 @@ class NonUkTaxOnAmountNotSurchargeControllerISpec extends YesNoAmountControllerS
                   radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "", ""),
+                  amountSection = ExpectedAmountSection("Total non-UK tax in pounds", ""),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "Mae problem wedi codi",
@@ -669,7 +667,7 @@ class NonUkTaxOnAmountNotSurchargeControllerISpec extends YesNoAmountControllerS
                   radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "", ""),
+                  amountSection = ExpectedAmountSection("Total non-UK tax in pounds", ""),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "There is a problem",
@@ -700,7 +698,7 @@ class NonUkTaxOnAmountNotSurchargeControllerISpec extends YesNoAmountControllerS
                   radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "", ""),
+                  amountSection = ExpectedAmountSection("Total non-UK tax in pounds", ""),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "Mae problem wedi codi",
@@ -733,7 +731,7 @@ class NonUkTaxOnAmountNotSurchargeControllerISpec extends YesNoAmountControllerS
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "", ""),
+                  amountSection = ExpectedAmountSection("Total non-UK tax in pounds", ""),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "There is a problem",
@@ -764,7 +762,7 @@ class NonUkTaxOnAmountNotSurchargeControllerISpec extends YesNoAmountControllerS
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "", ""),
+                  amountSection = ExpectedAmountSection("Total non-UK tax in pounds", ""),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "Mae problem wedi codi",
@@ -795,7 +793,7 @@ class NonUkTaxOnAmountNotSurchargeControllerISpec extends YesNoAmountControllerS
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "", ""),
+                  amountSection = ExpectedAmountSection("Total non-UK tax in pounds", ""),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "There is a problem",
@@ -826,7 +824,7 @@ class NonUkTaxOnAmountNotSurchargeControllerISpec extends YesNoAmountControllerS
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "", ""),
+                  amountSection = ExpectedAmountSection("Total non-UK tax in pounds", ""),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "Mae problem wedi codi",
@@ -859,7 +857,7 @@ class NonUkTaxOnAmountNotSurchargeControllerISpec extends YesNoAmountControllerS
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "", "x2.64"),
+                  amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "x2.64"),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "There is a problem",
@@ -890,7 +888,7 @@ class NonUkTaxOnAmountNotSurchargeControllerISpec extends YesNoAmountControllerS
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "", "x2.64"),
+                  amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "x2.64"),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "Mae problem wedi codi",
@@ -921,7 +919,7 @@ class NonUkTaxOnAmountNotSurchargeControllerISpec extends YesNoAmountControllerS
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "", "x2.64"),
+                  amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "x2.64"),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "There is a problem",
@@ -952,7 +950,7 @@ class NonUkTaxOnAmountNotSurchargeControllerISpec extends YesNoAmountControllerS
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "", "x2.64"),
+                  amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "x2.64"),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "Mae problem wedi codi",
@@ -985,7 +983,7 @@ class NonUkTaxOnAmountNotSurchargeControllerISpec extends YesNoAmountControllerS
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "", "-42.64"),
+                  amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "-42.64"),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "There is a problem",
@@ -1016,7 +1014,7 @@ class NonUkTaxOnAmountNotSurchargeControllerISpec extends YesNoAmountControllerS
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "", "-42.64"),
+                  amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "-42.64"),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "Mae problem wedi codi",
@@ -1047,7 +1045,7 @@ class NonUkTaxOnAmountNotSurchargeControllerISpec extends YesNoAmountControllerS
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "", "-42.64"),
+                  amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "-42.64"),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "There is a problem",
@@ -1078,7 +1076,7 @@ class NonUkTaxOnAmountNotSurchargeControllerISpec extends YesNoAmountControllerS
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "", "-42.64"),
+                  amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "-42.64"),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "Mae problem wedi codi",
@@ -1111,7 +1109,7 @@ class NonUkTaxOnAmountNotSurchargeControllerISpec extends YesNoAmountControllerS
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "", "100000000002"),
+                  amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "100000000002"),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "There is a problem",
@@ -1142,7 +1140,7 @@ class NonUkTaxOnAmountNotSurchargeControllerISpec extends YesNoAmountControllerS
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "", "100000000002"),
+                  amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "100000000002"),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "Mae problem wedi codi",
@@ -1173,7 +1171,7 @@ class NonUkTaxOnAmountNotSurchargeControllerISpec extends YesNoAmountControllerS
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "", "100000000002"),
+                  amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "100000000002"),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "There is a problem",
@@ -1204,7 +1202,7 @@ class NonUkTaxOnAmountNotSurchargeControllerISpec extends YesNoAmountControllerS
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "", "100000000002"),
+                  amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "100000000002"),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "Mae problem wedi codi",

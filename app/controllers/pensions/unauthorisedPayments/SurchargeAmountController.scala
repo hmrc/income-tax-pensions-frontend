@@ -17,8 +17,6 @@
 package controllers.pensions.unauthorisedPayments
 
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.routes.PensionsSummaryController
-import controllers.pensions.unauthorisedPayments.routes.{DidYouPayNonUkTaxController, WhereAnyOfTheUnauthorisedPaymentsController}
 import controllers.predicates.AuthorisedAction
 import controllers.predicates.TaxYearAction.taxYearAction
 import forms.{AmountForm, FormUtils}
@@ -56,10 +54,10 @@ class SurchargeAmountController @Inject()(authAction: AuthorisedAction,
           .map(value => Future.successful(Ok(view(amountForm.fill(value), taxYear))))
           .getOrElse(Future.successful(Ok(view(amountForm, taxYear))))
       case Some(_) =>
-        Future.successful(Redirect(WhereAnyOfTheUnauthorisedPaymentsController.show(taxYear)))
+        Future.successful(Redirect(controllers.pensions.unauthorisedPayments.routes.WhereAnyOfTheUnauthorisedPaymentsController.show(taxYear)))
       case None =>
         //TODO - redirect to CYA page once implemented
-        Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
+        Future.successful(Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear)))
     }
   }
 
@@ -77,15 +75,15 @@ class SurchargeAmountController @Inject()(authAction: AuthorisedAction,
               pensionSessionService.createOrUpdateSessionData(request.user,
                 updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
 
-                Redirect(DidYouPayNonUkTaxController.show(taxYear))
+                Redirect(controllers.pensions.unauthorisedPayments.routes.NonUKTaxOnAmountResultedInSurchargeController.show(taxYear))
               }
             } else {
-              Future.successful(Redirect(WhereAnyOfTheUnauthorisedPaymentsController.show(taxYear)))
+              Future.successful(Redirect(controllers.pensions.unauthorisedPayments.routes.WhereAnyOfTheUnauthorisedPaymentsController.show(taxYear)))
             }
 
           case None =>
             //TODO - redirect to CYA page once implemented
-            Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
+            Future.successful(Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear)))
         }
       }
     )

@@ -59,8 +59,7 @@
 
     @heading(titleForUse, Some(messages("common.unauthorisedPaymentsFromPension.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-2")
 
-
-    @formWithCsrf(action = controllers.pensions.unauthorisedPayments.routes.DidYouPayNonUkTaxController.submit(taxYear)) {
+    @formWithCsrf(action = controllers.pensions.unauthorisedPayments.routes.NonUKTaxOnAmountResultedInSurchargeController.submit(taxYear)) {
         @inputRadio(
             form = form,
             legendHeading = Some(Html(titleForUse)),
