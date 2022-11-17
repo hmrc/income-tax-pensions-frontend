@@ -16,97 +16,70 @@
 
 package common
 
-
 object MessageKeys {
   object LifetimeAllowance {
     object PensionProviderPaidTax extends YesNoAmountForm {
-      override val neitherYesNorNo: UserTypeMessage = new UserTypeMessage {
-        private val individual = "common.pensions.selectYesifYourPensionProvider.noEntry.individual"
-        private val agent = "common.pensions.selectYesifYourPensionProvider.noEntry.agent"
-
-        def get(isAgent: Boolean): String = if (isAgent) agent else individual
-      }
-      override val amountEmpty: UserTypeMessage = new UserTypeMessage {
-        private val individual = "pensions.pensionsProviderPaidTax.error.noAmount.individual"
-        private val agent = "pensions.pensionsProviderPaidTax.error.noAmount.agent"
-
-        def get(isAgent: Boolean): String = if (isAgent) agent else individual
-      }
-      override val amountHasInvalidFormat: UserTypeMessage = new UserTypeMessage {
-        private val individual = "pensions.pensionProviderPaidTax.error.incorrectFormat.individual"
-        private val agent = "pensions.pensionProviderPaidTax.error.incorrectFormat.agent"
-
-        def get(isAgent: Boolean): String = if (isAgent) agent else individual
-      }
-      override val amountIsExcessive: UserTypeMessage = new UserTypeMessage {
-        private val individual = "common.pensions.error.amountMaxLimit.individual"
-        private val agent = "common.pensions.error.amountMaxLimit.agent"
-
-        def get(isAgent: Boolean): String = if (isAgent) agent else individual
-      }
+      override val neitherYesNorNo: UserTypeMessage =
+        UserTypeMessage(
+          "common.pensions.selectYesifYourPensionProvider.noEntry.individual",
+          "common.pensions.selectYesifYourPensionProvider.noEntry.agent")
+      override val amountEmpty: UserTypeMessage =
+        UserTypeMessage(
+          "pensions.pensionsProviderPaidTax.error.noAmount.individual",
+          "pensions.pensionsProviderPaidTax.error.noAmount.agent")
+      override val amountHasInvalidFormat: UserTypeMessage =
+        UserTypeMessage(
+          "pensions.pensionProviderPaidTax.error.incorrectFormat.individual",
+          "pensions.pensionProviderPaidTax.error.incorrectFormat.agent")
+      override val amountIsExcessive: UserTypeMessage =
+        UserTypeMessage(
+          "common.pensions.error.amountMaxLimit.individual",
+          "common.pensions.error.amountMaxLimit.agent")
     }
   }
-
   object OverseasPensions {
     object PaymentIntoScheme extends YesNoAmountForm {
-      override val neitherYesNorNo: UserTypeMessage = new UserTypeMessage {
-        private val individual = "overseasPension.paymentIntoOverseasPensionScheme.radio.error.individual"
-        private val agent = "overseasPension.paymentIntoOverseasPensionScheme.radio.error.agent"
-
-        def get(isAgent: Boolean): String = if (isAgent) agent else individual
-      }
-      override val amountEmpty: UserTypeMessage = new UserTypeMessage {
-        private val individual = "overseasPension.paymentIntoOverseasPensionScheme.no.entry.error.individual"
-        private val agent = "overseasPension.paymentIntoOverseasPensionScheme.no.entry.error.agent"
-
-        def get(isAgent: Boolean): String = if (isAgent) agent else individual
-      }
-      override val amountHasInvalidFormat: UserTypeMessage = new UserTypeMessage {
-        private val individual = "overseasPension.paymentIntoOverseasPensionScheme.invalid.format.error.individual"
-        private val agent = "overseasPension.paymentIntoOverseasPensionScheme.invalid.format.error.agent"
-
-        def get(isAgent: Boolean): String = if (isAgent) agent else individual
-      }
-      override val amountIsExcessive: UserTypeMessage = new UserTypeMessage {
-        private val individual = "overseasPension.paymentIntoOverseasPensionScheme.maximum.error.individual"
-        private val agent = "overseasPension.paymentIntoOverseasPensionScheme.maximum.error.agent"
-
-        def get(isAgent: Boolean): String = if (isAgent) agent else individual
-      }
+      override val neitherYesNorNo: UserTypeMessage =
+        UserTypeMessage(
+          "overseasPension.paymentIntoOverseasPensionScheme.radio.error.individual",
+          "overseasPension.paymentIntoOverseasPensionScheme.radio.error.agent")
+      override val amountEmpty: UserTypeMessage =
+        UserTypeMessage(
+          "overseasPension.paymentIntoOverseasPensionScheme.no.entry.error.individual",
+          "overseasPension.paymentIntoOverseasPensionScheme.no.entry.error.agent")
+      override val amountHasInvalidFormat: UserTypeMessage =
+        UserTypeMessage(
+          "overseasPension.paymentIntoOverseasPensionScheme.invalid.format.error.individual",
+          "overseasPension.paymentIntoOverseasPensionScheme.invalid.format.error.agent")
+      override val amountIsExcessive: UserTypeMessage =
+        UserTypeMessage(
+          "overseasPension.paymentIntoOverseasPensionScheme.maximum.error.individual",
+          "overseasPension.paymentIntoOverseasPensionScheme.maximum.error.agent")
     }
   }
-
   object UnauthorisedPayments {
     object NonUKTaxOnAmountResultedInSurcharge extends YesNoAmountForm {
-      override val neitherYesNorNo: UserTypeMessage = new UserTypeMessage {
-        private val individual = "unauthorisedPayments.didYouPayNonUkTax.error.noEntry"
-        private val agent = "unauthorisedPayments.didYouPayNonUkTax.error.noEntry"
-
-        def get(isAgent: Boolean): String = if (isAgent) agent else individual
-      }
-      override val amountEmpty: UserTypeMessage = new UserTypeMessage {
-        private val individual = "common.pensions.error.amount.noEntry"
-        private val agent = "common.pensions.error.amount.noEntry"
-
-        def get(isAgent: Boolean): String = if (isAgent) agent else individual
-      }
-      override val amountHasInvalidFormat: UserTypeMessage = new UserTypeMessage {
-        private val individual = "common.unauthorisedPayments.error.Amount.incorrectFormat"
-        private val agent = "common.unauthorisedPayments.error.Amount.incorrectFormat"
-
-        def get(isAgent: Boolean): String = if (isAgent) agent else individual
-      }
-      override val amountIsExcessive: UserTypeMessage = new UserTypeMessage {
-        private val individual = "common.pensions.error.amount.overMaximum"
-        private val agent = "common.pensions.error.amount.overMaximum"
-
-        def get(isAgent: Boolean): String = if (isAgent) agent else individual
-      }
+      override val neitherYesNorNo: UserTypeMessage =
+        UserTypeMessage(
+          "unauthorisedPayments.didYouPayNonUkTax.error.noEntry",
+          "unauthorisedPayments.didYouPayNonUkTax.error.noEntry")
+      override val amountEmpty: UserTypeMessage =
+        UserTypeMessage(
+          "common.pensions.error.amount.noEntry",
+          "common.pensions.error.amount.noEntry")
+      override val amountHasInvalidFormat: UserTypeMessage =
+        UserTypeMessage(
+          "common.unauthorisedPayments.error.Amount.incorrectFormat",
+          "common.unauthorisedPayments.error.Amount.incorrectFormat")
+      override val amountIsExcessive: UserTypeMessage =
+        UserTypeMessage(
+          "common.pensions.error.amount.overMaximum",
+          "common.pensions.error.amount.overMaximum")
     }
   }
 
-  trait UserTypeMessage {
-    def get(isAgent: Boolean): String
+  sealed case class UserTypeMessage(individual: String, agent: String) {
+    def get(isAgent: Boolean): String = if (isAgent) agent else individual
   }
 
   trait YesNoAmountForm {

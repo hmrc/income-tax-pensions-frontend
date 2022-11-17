@@ -479,17 +479,6 @@ class NonUkTaxOnAmountNotSurchargeControllerISpec extends YesNoAmountControllerS
       }
     }
     "submitted" should {
-      "fail" when {
-        // TODO (SASS-3850): Typically, we'd redirect to the summary page is this case.
-        "the user has no stored session data at all" in {
-
-          implicit val userConfig: UserConfig = userConfigWhenIrrelevant(None)
-          implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(false), None))
-
-          response must haveStatus(INTERNAL_SERVER_ERROR)
-
-        }
-      }
       "redirect to the expected page" when {
         "the user had not previously specified the 'no surcharge' amount" in {
 
@@ -581,6 +570,15 @@ class NonUkTaxOnAmountNotSurchargeControllerISpec extends YesNoAmountControllerS
         }
       }
       "fail" when {
+        // TODO (SASS-3850): Typically, we'd redirect to the summary page is this case.
+        "the user has no stored session data at all" in {
+
+          implicit val userConfig: UserConfig = userConfigWhenIrrelevant(None)
+          implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(false), None))
+
+          response must haveStatus(INTERNAL_SERVER_ERROR)
+
+        }
         "the user has no session data relevant to this page and" when {
 
           val sessionData = pensionsUserData(aPensionsCYAModel.copy(
