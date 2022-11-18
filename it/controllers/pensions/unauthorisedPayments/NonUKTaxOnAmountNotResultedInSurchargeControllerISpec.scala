@@ -23,10 +23,11 @@ import controllers.ControllerSpec._
 import controllers.YesNoAmountControllerSpec
 import models.mongo.PensionsUserData
 import models.pension.charges.UnauthorisedPaymentsViewModel
-import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, OK}
+import play.api.http.Status.{BAD_REQUEST, OK}
 import play.api.libs.ws.WSResponse
 
-class NonUkTaxOnAmountNotSurchargeControllerISpec extends YesNoAmountControllerSpec("/unauthorised-payments-from-pensions/tax-on-amount-not-surcharged") {
+class NonUKTaxOnAmountNotResultedInSurchargeControllerISpec
+  extends YesNoAmountControllerSpec("/unauthorised-payments-from-pensions/tax-on-amount-not-surcharged") {
 
   "This page" when {
     "requested to be shown" should {
@@ -39,25 +40,24 @@ class NonUkTaxOnAmountNotSurchargeControllerISpec extends YesNoAmountControllerS
           assertRedirectionAsExpected(PageRelativeURLs.summaryPage)
 
         }
-      }
-      "appear as expected" when {
-        // TODO (SASS-3850): Similar to what we do with the submission,
-        // we should not permit the user to access this page unless they've already provided the surcharge amount
-        "even when the user had not previously specified the surcharge amount" in {
+        "the user had not previously specified the surcharge amount" in {
 
           val sessionData = pensionsUserData(aPensionsCYAModel.copy(
             unauthorisedPayments = aPensionsCYAModel.unauthorisedPayments.copy(
-              noSurchargeAmount = None
+              noSurchargeAmount = None,
+              noSurchargeTaxAmountQuestion = None,
+              noSurchargeTaxAmount = None
             )
           ))
 
           implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
           implicit val response: WSResponse = getPage
 
-          response must haveStatus(OK)
-
+          assertRedirectionAsExpected(PageRelativeURLs.summaryPage)
 
         }
+      }
+      "appear as expected" when {
         "the user has no session data relevant to this page and" when {
 
           val sessionData = pensionsUserData(aPensionsCYAModel.copy(
@@ -224,8 +224,6 @@ class NonUkTaxOnAmountNotSurchargeControllerISpec extends YesNoAmountControllerS
           }
 
         }
-        // TODO (SASS-3850): When we've previously answered 'No', we should always preselect it -
-        // regardless of the amount; and we shouldn't have any value in the amount box.
         "the user had previously answered 'No' without an amount, and" when {
 
           val sessionData: PensionsUserData =
@@ -248,7 +246,7 @@ class NonUkTaxOnAmountNotSurchargeControllerISpec extends YesNoAmountControllerS
                 header = "Did you pay non-UK tax on the amount that did not result in a surcharge?",
                 caption = "Unauthorised payments from pensions for 6 April 2021 to 5 April 2022",
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
-                radioButtonForNo = uncheckedExpectedRadioButton("No"),
+                radioButtonForNo = checkedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
                 amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "")
               ))
@@ -266,7 +264,7 @@ class NonUkTaxOnAmountNotSurchargeControllerISpec extends YesNoAmountControllerS
                 header = "Did you pay non-UK tax on the amount that did not result in a surcharge?",
                 caption = "Taliadau heb awdurdod o bensiynau ar gyfer 6 Ebrill 2021 i 5 Ebrill 2022",
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
-                radioButtonForNo = uncheckedExpectedRadioButton("No"),
+                radioButtonForNo = checkedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
                 amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "")
               ))
@@ -284,7 +282,7 @@ class NonUkTaxOnAmountNotSurchargeControllerISpec extends YesNoAmountControllerS
                 header = "Did your client pay non-UK tax on the amount that did not result in a surcharge?",
                 caption = "Unauthorised payments from pensions for 6 April 2021 to 5 April 2022",
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
-                radioButtonForNo = uncheckedExpectedRadioButton("No"),
+                radioButtonForNo = checkedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
                 amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "")
               ))
@@ -302,14 +300,12 @@ class NonUkTaxOnAmountNotSurchargeControllerISpec extends YesNoAmountControllerS
                 header = "Did your client pay non-UK tax on the amount that did not result in a surcharge?",
                 caption = "Taliadau heb awdurdod o bensiynau ar gyfer 6 Ebrill 2021 i 5 Ebrill 2022",
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
-                radioButtonForNo = uncheckedExpectedRadioButton("No"),
+                radioButtonForNo = checkedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
                 amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "")))
           }
 
         }
-        // TODO (SASS-3850): When we've previously answered 'No', we should always preselect it -
-        // regardless of the amount; and we shouldn't have any value in the amount box.
         "the user had previously answered 'No' with an amount of zero, and" when {
 
           val sessionData: PensionsUserData =
@@ -331,11 +327,10 @@ class NonUkTaxOnAmountNotSurchargeControllerISpec extends YesNoAmountControllerS
                 title = "Did you pay non-UK tax on the amount that did not result in a surcharge?",
                 header = "Did you pay non-UK tax on the amount that did not result in a surcharge?",
                 caption = "Unauthorised payments from pensions for 6 April 2021 to 5 April 2022",
-                radioButtonForYes = checkedExpectedRadioButton("Yes"),
-                radioButtonForNo = uncheckedExpectedRadioButton("No"),
+                radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
+                radioButtonForNo = checkedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "0")
-              ))
+                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "")))
 
           }
           scenarioNameForIndividualAndWelsh in {
@@ -349,11 +344,10 @@ class NonUkTaxOnAmountNotSurchargeControllerISpec extends YesNoAmountControllerS
                 title = "Did you pay non-UK tax on the amount that did not result in a surcharge?",
                 header = "Did you pay non-UK tax on the amount that did not result in a surcharge?",
                 caption = "Taliadau heb awdurdod o bensiynau ar gyfer 6 Ebrill 2021 i 5 Ebrill 2022",
-                radioButtonForYes = checkedExpectedRadioButton("Yes"),
-                radioButtonForNo = uncheckedExpectedRadioButton("No"),
+                radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
+                radioButtonForNo = checkedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "0")
-              ))
+                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "")))
 
           }
           scenarioNameForAgentAndEnglish in {
@@ -367,11 +361,10 @@ class NonUkTaxOnAmountNotSurchargeControllerISpec extends YesNoAmountControllerS
                 title = "Did your client pay non-UK tax on the amount that did not result in a surcharge?",
                 header = "Did your client pay non-UK tax on the amount that did not result in a surcharge?",
                 caption = "Unauthorised payments from pensions for 6 April 2021 to 5 April 2022",
-                radioButtonForYes = checkedExpectedRadioButton("Yes"),
-                radioButtonForNo = uncheckedExpectedRadioButton("No"),
+                radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
+                radioButtonForNo = checkedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "0")
-              ))
+                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "")))
 
           }
           scenarioNameForAgentAndWelsh in {
@@ -385,15 +378,13 @@ class NonUkTaxOnAmountNotSurchargeControllerISpec extends YesNoAmountControllerS
                 title = "Did your client pay non-UK tax on the amount that did not result in a surcharge?",
                 header = "Did your client pay non-UK tax on the amount that did not result in a surcharge?",
                 caption = "Taliadau heb awdurdod o bensiynau ar gyfer 6 Ebrill 2021 i 5 Ebrill 2022",
-                radioButtonForYes = checkedExpectedRadioButton("Yes"),
-                radioButtonForNo = uncheckedExpectedRadioButton("No"),
+                radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
+                radioButtonForNo = checkedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "0")))
+                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "")))
           }
 
         }
-        // TODO: When we've previously answered 'No', we should always preselect it -
-        // regardless of the amount; and we shouldn't have any value in the amount box.
         "the user had previously answered 'No' with a negative amount, and" when {
 
           val sessionData: PensionsUserData =
@@ -415,12 +406,10 @@ class NonUkTaxOnAmountNotSurchargeControllerISpec extends YesNoAmountControllerS
                 title = "Did you pay non-UK tax on the amount that did not result in a surcharge?",
                 header = "Did you pay non-UK tax on the amount that did not result in a surcharge?",
                 caption = "Unauthorised payments from pensions for 6 April 2021 to 5 April 2022",
-                radioButtonForYes = checkedExpectedRadioButton("Yes"),
-                radioButtonForNo = uncheckedExpectedRadioButton("No"),
+                radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
+                radioButtonForNo = checkedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "-42.64")
-              ))
-
+                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "")))
           }
           scenarioNameForIndividualAndWelsh in {
 
@@ -433,11 +422,10 @@ class NonUkTaxOnAmountNotSurchargeControllerISpec extends YesNoAmountControllerS
                 title = "Did you pay non-UK tax on the amount that did not result in a surcharge?",
                 header = "Did you pay non-UK tax on the amount that did not result in a surcharge?",
                 caption = "Taliadau heb awdurdod o bensiynau ar gyfer 6 Ebrill 2021 i 5 Ebrill 2022",
-                radioButtonForYes = checkedExpectedRadioButton("Yes"),
-                radioButtonForNo = uncheckedExpectedRadioButton("No"),
+                radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
+                radioButtonForNo = checkedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "-42.64")
-              ))
+                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "")))
 
           }
           scenarioNameForAgentAndEnglish in {
@@ -451,11 +439,10 @@ class NonUkTaxOnAmountNotSurchargeControllerISpec extends YesNoAmountControllerS
                 title = "Did your client pay non-UK tax on the amount that did not result in a surcharge?",
                 header = "Did your client pay non-UK tax on the amount that did not result in a surcharge?",
                 caption = "Unauthorised payments from pensions for 6 April 2021 to 5 April 2022",
-                radioButtonForYes = checkedExpectedRadioButton("Yes"),
-                radioButtonForNo = uncheckedExpectedRadioButton("No"),
+                radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
+                radioButtonForNo = checkedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "-42.64")
-              ))
+                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "")))
 
           }
           scenarioNameForAgentAndWelsh in {
@@ -469,10 +456,10 @@ class NonUkTaxOnAmountNotSurchargeControllerISpec extends YesNoAmountControllerS
                 title = "Did your client pay non-UK tax on the amount that did not result in a surcharge?",
                 header = "Did your client pay non-UK tax on the amount that did not result in a surcharge?",
                 caption = "Taliadau heb awdurdod o bensiynau ar gyfer 6 Ebrill 2021 i 5 Ebrill 2022",
-                radioButtonForYes = checkedExpectedRadioButton("Yes"),
-                radioButtonForNo = uncheckedExpectedRadioButton("No"),
+                radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
+                radioButtonForNo = checkedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "-42.64")))
+                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "")))
           }
 
         }
@@ -499,19 +486,27 @@ class NonUkTaxOnAmountNotSurchargeControllerISpec extends YesNoAmountControllerS
           getViewModel mustBe Some(expectedViewModel)
 
         }
+        "the user has no stored session data at all" in {
+
+          implicit val userConfig: UserConfig = userConfigWhenIrrelevant(None)
+          implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(false), None))
+
+          assertRedirectionAsExpected(PageRelativeURLs.summaryPage)
+          getViewModel mustBe None
+
+        }
       }
       "succeed" when {
         "the user has relevant session data and" when {
 
           val sessionData = pensionsUserData(aPensionsCYAModel)
 
-          // TODO (SASS-3850): When selecting 'No', we should always store the amount as 'None'.
           "the user has selected 'No' with a blank amount" in {
 
             val expectedViewModel =
               sessionData.pensions.unauthorisedPayments.copy(
                 noSurchargeTaxAmountQuestion = Some(false),
-                noSurchargeTaxAmount = Some(BigDecimal(0))
+                noSurchargeTaxAmount = None
               )
 
             implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
@@ -570,15 +565,6 @@ class NonUkTaxOnAmountNotSurchargeControllerISpec extends YesNoAmountControllerS
         }
       }
       "fail" when {
-        // TODO (SASS-3850): Typically, we'd redirect to the summary page is this case.
-        "the user has no stored session data at all" in {
-
-          implicit val userConfig: UserConfig = userConfigWhenIrrelevant(None)
-          implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(false), None))
-
-          response must haveStatus(INTERNAL_SERVER_ERROR)
-
-        }
         "the user has no session data relevant to this page and" when {
 
           val sessionData = pensionsUserData(aPensionsCYAModel.copy(

@@ -83,7 +83,7 @@ object UnauthorisedPaymentsCYAViewHelper extends CYABaseHelper {
         summaryListRowWithOptionalAmountValue(
           "unauthorisedPayments.cya.nonUkTaxAmountNotSurcharged",
           unauthorisedPaymentsViewModel.noSurchargeTaxAmount,
-          routes.NonUkTaxOnAmountNotSurchargeController.show(taxYear))(messages)
+          routes.NonUKTaxOnAmountNotResultedInSurchargeController.show(taxYear))(messages)
       )
 
   private def summaryRowForUKPensionSchemes(unauthorisedPaymentsViewModel: UnauthorisedPaymentsViewModel, taxYear: Int)(implicit messages: Messages): Option[SummaryListRow] =

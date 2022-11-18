@@ -27,9 +27,9 @@ import builders.PensionSavingTaxChargesBuilder.anPensionSavngTaxCharges
 import builders.PensionSchemeUnauthorisedPaymentsBuilder.anPensionSchemeUnauthorisedPayments
 import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import builders.PensionsUserDataBuilder
-import builders.PensionsUserDataBuilder.{aPensionsUserData, anPensionsUserDataEmptyCya, pensionsUserDataWithUnauthorisedPayments}
+import builders.PensionsUserDataBuilder.{aPensionsUserData, pensionsUserDataWithUnauthorisedPayments}
 import builders.ReliefsBuilder.anReliefs
-import builders.UnauthorisedPaymentsViewModelBuilder.{anUnauthorisedPaymentsEmptyViewModel, anUnauthorisedPaymentsViewModel}
+import builders.UnauthorisedPaymentsViewModelBuilder.anUnauthorisedPaymentsViewModel
 import builders.UserBuilder.aUserRequest
 import models.mongo.PensionsCYAModel
 import models.pension.charges.PensionAnnualAllowancesViewModel
@@ -39,9 +39,9 @@ import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterEach
 import play.api.Logging
 import play.api.http.HeaderNames
-import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
+import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.{fullUrl, pensionSummaryUrl}
+import utils.PageUrls.fullUrl
 import utils.PageUrls.unauthorisedPaymentsPages.checkUnauthorisedPaymentsCyaUrl
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
@@ -63,7 +63,8 @@ class UnauthorisedPaymentsCYAControllerISpec extends
     val nonUKTaxOnAmountResultedInSurcharge: String =
       controllers.pensions.unauthorisedPayments.routes.NonUKTaxOnAmountResultedInSurchargeController.show(taxYear).url
     val amountNotSurcharged: String = controllers.pensions.unauthorisedPayments.routes.NoSurchargeAmountController.show(taxYear).url
-    val nonUkTaxAmountNotSurcharged: String = controllers.pensions.unauthorisedPayments.routes.NonUkTaxOnAmountNotSurchargeController.show(taxYear).url
+    val nonUKTaxOnAmountNotResultedInSurcharge: String =
+      controllers.pensions.unauthorisedPayments.routes.NonUKTaxOnAmountNotResultedInSurchargeController.show(taxYear).url
     val ukPensionSchemes: String = controllers.pensions.unauthorisedPayments.routes.WhereAnyOfTheUnauthorisedPaymentsController.show(taxYear).url
     val pensionSchemeTaxReferences: String = controllers.pensions.unauthorisedPayments.routes.UnauthorisedPensionSchemeTaxReferenceController.show(taxYear).url
   }
@@ -217,7 +218,7 @@ class UnauthorisedPaymentsCYAControllerISpec extends
           cyaRowCheck(amountNotSurcharged, s"${moneyContent(unauthorisedPaymentsFromIncomeTaxSubmission.get.noSurcharge.map(_.amount).get)}",
             ChangeLinksUnauthorisedPayments.amountNotSurcharged, amountNotSurchargedHidden, 4)
           cyaRowCheck(nonUkTaxAmountNotSurcharged, s"${moneyContent(unauthorisedPaymentsFromIncomeTaxSubmission.get.noSurcharge.map(_.foreignTaxPaid).get)}",
-            ChangeLinksUnauthorisedPayments.nonUkTaxAmountNotSurcharged, nonUkTaxAmountNotSurchargedHidden, 5)
+            ChangeLinksUnauthorisedPayments.nonUKTaxOnAmountNotResultedInSurcharge, nonUkTaxAmountNotSurchargedHidden, 5)
           cyaRowCheck(ukPensionSchemes, stringToBoolean(unauthorisedPaymentsFromIncomeTaxSubmission.map(_.pensionSchemeTaxReference).isDefined), ChangeLinksUnauthorisedPayments.ukPensionSchemes, ukPensionSchemesHidden, 6)
           cyaRowCheck(pensionSchemeTaxReferences, s"${unauthorisedPaymentsFromIncomeTaxSubmission.get.pensionSchemeTaxReference.mkString(", ")}", ChangeLinksUnauthorisedPayments.pensionSchemeTaxReferences, pensionSchemeTaxReferencesHidden, 7)
 
@@ -254,9 +255,9 @@ class UnauthorisedPaymentsCYAControllerISpec extends
           titleCheck(user.specificExpectedResults.get.expectedTitle)
           cyaRowCheck(unauthorisedPayments, yes, ChangeLinksUnauthorisedPayments.unauthorisedPayments, unauthorisedPaymentsHidden, 1)
           cyaRowCheck(amountNotSurcharged, s"${moneyContent(unauthorisedPaymentsFromIncomeTaxSubmission.get.noSurcharge.map(_.amount).get)}",
-                      ChangeLinksUnauthorisedPayments.amountNotSurcharged, amountNotSurchargedHidden, 2)
+            ChangeLinksUnauthorisedPayments.amountNotSurcharged, amountNotSurchargedHidden, 2)
           cyaRowCheck(nonUkTaxAmountNotSurcharged, s"${moneyContent(unauthorisedPaymentsFromIncomeTaxSubmission.get.noSurcharge.map(_.foreignTaxPaid).get)}",
-                      ChangeLinksUnauthorisedPayments.nonUkTaxAmountNotSurcharged, nonUkTaxAmountNotSurchargedHidden, 3)
+            ChangeLinksUnauthorisedPayments.nonUKTaxOnAmountNotResultedInSurcharge, nonUkTaxAmountNotSurchargedHidden, 3)
           cyaRowCheck(ukPensionSchemes, stringToBoolean(unauthorisedPaymentsFromIncomeTaxSubmission.map(_.pensionSchemeTaxReference).isDefined), ChangeLinksUnauthorisedPayments.ukPensionSchemes, ukPensionSchemesHidden, 4)
           cyaRowCheck(pensionSchemeTaxReferences, s"${unauthorisedPaymentsFromIncomeTaxSubmission.get.pensionSchemeTaxReference.mkString(", ")}", ChangeLinksUnauthorisedPayments.pensionSchemeTaxReferences, pensionSchemeTaxReferencesHidden, 5)
 

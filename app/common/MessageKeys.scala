@@ -76,6 +76,24 @@ object MessageKeys {
           "common.pensions.error.amount.overMaximum",
           "common.pensions.error.amount.overMaximum")
     }
+    object NonUKTaxOnAmountNotResultedInSurcharge extends YesNoAmountForm {
+      override val neitherYesNorNo: UserTypeMessage =
+        UserTypeMessage(
+          "unauthorisedPayments.nonUkTaxOnAmountNotSurcharge.error.noEntry",
+          "unauthorisedPayments.nonUkTaxOnAmountNotSurcharge.error.noEntry")
+      override val amountEmpty: UserTypeMessage =
+        UserTypeMessage(
+          "common.pensions.error.amount.noEntry",
+          "common.pensions.error.amount.noEntry")
+      override val amountHasInvalidFormat: UserTypeMessage =
+        UserTypeMessage(
+          "common.unauthorisedPayments.error.Amount.incorrectFormat",
+          "common.unauthorisedPayments.error.Amount.incorrectFormat")
+      override val amountIsExcessive: UserTypeMessage =
+        UserTypeMessage(
+          "common.pensions.error.amount.overMaximum",
+          "common.pensions.error.amount.overMaximum")
+    }
   }
 
   sealed case class UserTypeMessage(individual: String, agent: String) {

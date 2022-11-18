@@ -17,8 +17,6 @@
 package controllers.pensions.unauthorisedPayments
 
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.routes.PensionsSummaryController
-import controllers.pensions.unauthorisedPayments.routes.{NonUkTaxOnAmountNotSurchargeController, WhereAnyOfTheUnauthorisedPaymentsController, NoSurchargeAmountController}
 import controllers.predicates.AuthorisedAction
 import controllers.predicates.TaxYearAction.taxYearAction
 import forms.{AmountForm, FormUtils}
@@ -57,11 +55,11 @@ class NoSurchargeAmountController @Inject()(authAction: AuthorisedAction,
 
       //Todo Is this a necessary check? as opposed to caller DidYouPayNonUkTaxController.submit()
       case Right(Some(data)) if data.pensions.unauthorisedPayments.noSurchargeQuestion.contains(false) =>
-        Future.successful(Redirect(WhereAnyOfTheUnauthorisedPaymentsController.show(taxYear)))
+        Future.successful(Redirect(controllers.pensions.unauthorisedPayments.routes.WhereAnyOfTheUnauthorisedPaymentsController.show(taxYear)))
 
       case _ =>
         //Todo redirect to CYA page when implemented
-        Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
+        Future.successful(Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear)))
     }
   }
 
@@ -76,14 +74,14 @@ class NoSurchargeAmountController @Inject()(authAction: AuthorisedAction,
             pensionSessionService.createOrUpdateSessionData(request.user,
               updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
 
-              Redirect(NonUkTaxOnAmountNotSurchargeController.show(taxYear))
+              Redirect(controllers.pensions.unauthorisedPayments.routes.NonUKTaxOnAmountNotResultedInSurchargeController.show(taxYear))
             }
           //Todo strange case that may need to be looked at
           case Right(Some(data)) if data.pensions.unauthorisedPayments.noSurchargeQuestion.contains(false) =>
-            Future.successful(Redirect(WhereAnyOfTheUnauthorisedPaymentsController.show(taxYear)))
+            Future.successful(Redirect(controllers.pensions.unauthorisedPayments.routes.WhereAnyOfTheUnauthorisedPaymentsController.show(taxYear)))
           case _ =>
             //TODO - redirect to CYA page once implemented#
-            Future.successful(Redirect(NoSurchargeAmountController.show(taxYear)))
+            Future.successful(Redirect(controllers.pensions.unauthorisedPayments.routes.NoSurchargeAmountController.show(taxYear)))
         }
       }
     )
