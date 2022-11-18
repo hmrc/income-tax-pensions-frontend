@@ -836,8 +836,14 @@ incomeFromOverseasPensions.incomeFromOverseasPension.title.individual = Did you 
 incomeFromOverseasPensions.incomeFromOverseasPension.title.agent = Did your client get payments from an overseas pension scheme?
 incomeFromOverseasPensions.incomeFromOverseasPension.error.noEntry.individual = Select yes if you had income from an overseas pension scheme
 incomeFromOverseasPensions.incomeFromOverseasPension.error.noEntry.agent = Select yes if your client had income from an overseas pension scheme
+
 incomeFromOverseasPensions.pensionOverseasIncomeCountry.title = What country is the pension scheme registered in?
 incomeFromOverseasPensions.pensionOverseasIncomeCountry.paragraph = You can add pension schemes from other countries later.
 incomeFromOverseasPensions.pensionOverseasIncomeCountry.subheading = Country
 incomeFromOverseasPensions.pensionOverseasIncomeCountry.error.noEntry.individual = Enter the name of the country the pension scheme is registered in
 incomeFromOverseasPensions.pensionOverseasIncomeCountry.error.noEntry.agent = Enter the name of the country that your client’s pension scheme is registered in
+
+overseasPension.foreignTaxCreditRelief.title.individual = Are you claiming Foreign Tax Credit Relief (FTCR)?
+overseasPension.foreignTaxCreditRelief.title.agent = Is your client claiming Foreign Tax Credit Relief (FTCR)?
+overseasPension.foreignTaxCreditRelief.error.noEntry.individual = Enter yes or no if you are claiming Foreign Tax Credit Relief (FTCR)
+overseasPension.foreignTaxCreditRelief.error.noEntry.agent = Enter yes or no if your client is claiming Foreign Tax Credit Relief (FTCR)
