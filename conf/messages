@@ -835,4 +835,4 @@ incomeFromOverseasPensions.pensionOverseasIncomeCountry.title = What country is 
 incomeFromOverseasPensions.pensionOverseasIncomeCountry.paragraph = You can add pension schemes from other countries later.
 incomeFromOverseasPensions.pensionOverseasIncomeCountry.subheading = Country
 incomeFromOverseasPensions.pensionOverseasIncomeCountry.error.noEntry.individual = Enter the name of the country the pension scheme is registered in
-incomeFromOverseasPensions.pensionOverseasIncomeCountry.error.noEntry.agent = Enter the name of the country that your client's pension scheme is registered in
+incomeFromOverseasPensions.pensionOverseasIncomeCountry.error.noEntry.agent = Enter the name of the country that your client’s pension scheme is registered in

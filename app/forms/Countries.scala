@@ -52,48 +52,14 @@ object Countries {
 
   val all: List[Country] = countries filter (c => mdgCountryCodes("/mdg-country-codes.csv") contains c.countryCode)
 
-//  val allExceptIom: List[Country] =
-//    countries filter (c => mdgCountryCodes("/mdg-country-codes-not-iom.csv") contains c.countryCode)
-//
   val eu: List[Country] = countries filter (c => mdgCountryCodes("/mdg-country-codes-eu.csv") contains c.countryCode)
-//
-//  val third: List[Country] =
-//    countries filter (c => mdgCountryCodes("/mdg-country-codes-third-countries.csv") contains c.countryCode)
-//
-//  val thirdIncEu: List[Country] =
-//    countries filter (c => mdgCountryCodes("/mdg-country-codes-third-countries-inc-eu.csv") contains c.countryCode)
-//
-//  val islands: List[Country] =
-//    countries filter (c => mdgCountryCodes("/mdg-country-codes-islands.csv") contains c.countryCode)
-//
-//  def getCountryParameters(location: Option[String]): (List[Country], CountriesInCountryPicker) = location match {
-//    case Some(UserLocation.Eu) => (eu, EUCountriesInCountryPicker)
-//    case Some(UserLocation.ThirdCountry) =>
-//      (third, ThirdCountriesInCountryPicker)
-//    case Some(UserLocation.ThirdCountryIncEU) =>
-//      (thirdIncEu, ThirdCountriesIncEuInCountryPicker)
-//    case Some(UserLocation.Islands) => (islands, IslandsInCountryPicker)
-//    case _                          => (allExceptIom, AllCountriesExceptIomInCountryPicker)
-//  }
 
-  def getCountryParametersForAllCountries(): (List[Country], CountriesInCountryPicker) =
-    (all, AllCountriesInCountryPicker)
 
+  def getCountryParametersForAllCountries(): List[Country] = all
 
   def getCountryFromCode(countryCode: Option[String]): Option[Country] = {
     countryCode.flatMap(
       x => all.find(_.countryCode == x)
     )
   }
-
 }
-
-sealed trait CountriesInCountryPicker
-
-case object AllCountriesInCountryPicker          extends CountriesInCountryPicker
-case object AllCountriesExceptIomInCountryPicker extends CountriesInCountryPicker
-case object EUCountriesInCountryPicker           extends CountriesInCountryPicker
-case object ThirdCountriesInCountryPicker        extends CountriesInCountryPicker
-case object ThirdCountriesIncEuInCountryPicker   extends CountriesInCountryPicker
-case object IslandsInCountryPicker               extends CountriesInCountryPicker
-case object NoCountriesInCountryPicker           extends CountriesInCountryPicker

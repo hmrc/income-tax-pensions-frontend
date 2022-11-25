@@ -185,5 +185,12 @@ object PageUrls extends IntegrationTest {
     def qopsReferenceUrl(taxYear: Int): String = s"$appUrl/$taxYear/overseas-pensions/payments-into-overseas-pensions/qualifying-overseas-pension-scheme-reference-number"
     def pensionCustomerReferenceNumberUrl(taxYear: Int): String = s"$appUrl/$taxYear/overseas-pensions/payments-into-overseas-pensions/pensions-customer-reference-number"
   }
+
+  object IncomeFromOverseasPensionsPages {
+    def pensionOverseasIncomeCountryUrl(taxYear: Int): String = s"$appUrl/$taxYear/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-country"
+    def pensionOverseasIncomeCountryUrlIndex: Int => Int => String =
+      (countryIndex: Int) => (taxYear: Int) => s"$appUrl/$taxYear/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-country?countryIndex=$countryIndex"
+
+  }
 }
 //scalastyle:on number.of.methods

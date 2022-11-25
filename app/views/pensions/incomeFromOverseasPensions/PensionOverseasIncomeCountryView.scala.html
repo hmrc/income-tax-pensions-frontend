@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import forms.{CountriesInCountryPicker, Country}
+@import forms.Country
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import uk.gov.hmrc.hmrcfrontend.views.html.helpers.{HmrcAccessibleAutocompleteCss, HmrcAccessibleAutocompleteJavascript}
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.accessibleautocomplete.AccessibleAutocomplete
@@ -43,7 +43,6 @@
 @(form: Form[String],
         defaultValue: Option[String],
         countries: List[Country],
-        countriesInCountryPicker: CountriesInCountryPicker,
         taxYear: Int,
         countryIndex: Option[Int])(implicit request: AuthorisationRequest[_], messages: Messages, appConfig: AppConfig)
 
@@ -92,8 +91,9 @@
                 )
             },
             label = Label(
-                content = Text(messages("incomeFromOverseasPensions.pensionOverseasIncomeCountry.subheading"))
-            ),
+                content = Text(messages("incomeFromOverseasPensions.pensionOverseasIncomeCountry.subheading")),
+                classes = "govuk-label govuk-label--m"
+            )
         ).asAccessibleAutocomplete(Some(
             AccessibleAutocomplete(
                 defaultValue = defaultValue,
