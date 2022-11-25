@@ -190,6 +190,8 @@ object PageUrls extends IntegrationTest {
     def pensionOverseasIncomeCountryUrl(taxYear: Int): String = s"$appUrl/$taxYear/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-country"
     def pensionOverseasIncomeCountryUrlIndex: Int => Int => String =
       (countryIndex: Int) => (taxYear: Int) => s"$appUrl/$taxYear/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-country?countryIndex=$countryIndex"
+    def pensionOverseasIncomeCountryUrlIndex2(taxYear: Int, countryIndex: Int)
+       = s"$appUrl/$taxYear/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-country?countryIndex=$countryIndex"
 
   }
 }

@@ -18,7 +18,7 @@ package controllers.pensions.lifetimeAllowance
 
 import builders.PensionLifetimeAllowanceViewModelBuilder.{aPensionLifetimeAllowanceViewModel, aPensionLifetimeAllowancesEmptyViewModel}
 import builders.PensionsUserDataBuilder.{aPensionsUserData, anPensionsUserDataEmptyCya, pensionsUserDataWithLifetimeAllowance}
-import builders.UserBuilder.aUserRequest
+import builders.UserBuilder.{aUser, aUserRequest}
 import forms.PensionSchemeTaxReferenceForm
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -154,6 +154,8 @@ class PensionSchemeTaxReferenceLifetimeControllerISpec extends CommonUtils with 
           }
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
+          findCyaData(taxYear, aUser).get.pensions.pensionLifetimeAllowances
+
           titleCheck(expectedTitle)
           h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY))

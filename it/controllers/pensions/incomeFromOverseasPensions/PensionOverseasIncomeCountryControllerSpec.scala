@@ -18,7 +18,8 @@ package controllers.pensions.incomeFromOverseasPensions
 
 import builders.IncomeFromOverseasPensionsViewModelBuilder.{anIncomeFromOverseasPensionsEmptyViewModel, anIncomeFromOverseasPensionsViewModel}
 import builders.PaymentsIntoOverseasPensionsViewModelBuilder.aPaymentsIntoOverseasPensionsViewModel
-import builders.PensionsUserDataBuilder.{aPensionsUserData, anPensionsUserDataEmptyCya, pensionUserDataWithIncomeOverseasPension, pensionUserDataWithOverseasPensions}
+import builders.PensionsUserDataBuilder.{aPensionsUserData, anPensionsUserDataEmptyCya, pensionUserDataWithIncomeOverseasPension, pensionUserDataWithOverseasPensions, pensionsUserDataWithUnauthorisedPayments}
+import builders.UnauthorisedPaymentsViewModelBuilder.anUnauthorisedPaymentsViewModel
 import forms.CountryForm
 import models.pension.charges.PensionScheme
 import org.jsoup.Jsoup
@@ -27,10 +28,12 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import utils.CommonUtils
-import utils.PageUrls.{IncomeFromOverseasPensionsPages, pensionSummaryUrl}
-import utils.PageUrls.IncomeFromOverseasPensionsPages.{pensionOverseasIncomeCountryUrl, pensionOverseasIncomeCountryUrlIndex}
+import utils.PageUrls.{IncomeFromOverseasPensionsPages, fullUrl, pensionSummaryUrl}
+import utils.PageUrls.IncomeFromOverseasPensionsPages.{pensionOverseasIncomeCountryUrl, pensionOverseasIncomeCountryUrlIndex, pensionOverseasIncomeCountryUrlIndex2}
 import utils.PageUrls.PensionLifetimeAllowance.pensionTaxReferenceNumberLifetimeAllowanceUrl
-import builders.UserBuilder.aUserRequest
+import builders.UserBuilder.{aUser, aUserRequest}
+import play.api.http.HeaderNames
+import utils.PageUrls.UnAuthorisedPayments.surchargeAmountUrl
 
 
 class PensionOverseasIncomeCountryControllerSpec extends CommonUtils with BeforeAndAfterEach {
@@ -138,8 +141,7 @@ class PensionOverseasIncomeCountryControllerSpec extends CommonUtils with Before
         }
 
         "render the page with correct content with prefilling" which {
-          implicit val overseasIncomeCountryUrl: Int => String = IncomeFromOverseasPensionsPages.pensionOverseasIncomeCountryUrlIndex(0)
-
+          implicit val overseasIncomeCountryUrl: Int => String = pensionOverseasIncomeCountryUrlIndex(0)
           val countryCode = "GB"
 
           val pensionsViewModel = anIncomeFromOverseasPensionsViewModel.copy(
@@ -162,7 +164,7 @@ class PensionOverseasIncomeCountryControllerSpec extends CommonUtils with Before
           captionCheck(expectedCaption(taxYearEOY))
           textOnPageCheck(expectedParagraph, paragraphSelector(1))
           textOnPageCheck(expectedSubHeading, labelSelector(1))
-          inputFieldValueCheck(inputName, inputSelector, "United Kingdom")
+          inputFieldValueCheck(inputName, inputSelector, "", Some("United Kingdom"))
           formPostLinkCheck(pensionOverseasIncomeCountryUrlIndex(0)(taxYearEOY), formSelector)
           welshToggleCheck(user.isWelsh)
         }
@@ -198,8 +200,8 @@ class PensionOverseasIncomeCountryControllerSpec extends CommonUtils with Before
           implicit def document: () => Document = () => Jsoup.parse(result.body)
           import Selectors._
           import user.commonExpectedResults._
-          titleCheck(expectedTitle)
-          h1Check(expectedHeading)
+          titleCheck(expectedErrorTitle)
+          h1Check(expectedTitle)
           captionCheck(expectedCaption(taxYearEOY))
           textOnPageCheck(expectedParagraph, paragraphSelector(1))
           textOnPageCheck(expectedSubHeading, labelSelector(1))

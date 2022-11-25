@@ -242,13 +242,19 @@ trait ViewHelpers {
     }
   }
 
-  def inputFieldValueCheck(name: String, selector: String, value: String)(implicit document: () => Document): Unit = {
+  def inputFieldValueCheck(name: String, selector: String, value: String, defaultValue: Option[String] = None)(implicit document: () => Document): Unit = {
     s"'$selector' has a name of '$name'" in {
       document().select(selector).attr("name") shouldBe name
     }
     s"'$selector' has a value of '$value'" in {
       document().select(selector).attr("value") shouldBe value
     }
+
+    defaultValue.foreach( defaultValue =>
+      s"'$selector' has a default value of '$value'" in {
+        document().select(selector).attr("data-default-value") shouldBe defaultValue
+      }
+    )
   }
 
   def errorSummaryCheck(text: String, href: String)(implicit document: () => Document): Unit = {

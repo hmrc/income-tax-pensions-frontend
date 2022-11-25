@@ -82,7 +82,7 @@
         @govukSelect(Select(
             id = "countryId",
             name = "countryId",
-            errorMessage = form("country").error.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*)))),
+            errorMessage = form("countryId").error.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*)))),
             items = Seq(SelectItem(text="", attributes=Map("label" -> messages("country.select")))) ++ countries.map{ c =>
                 SelectItem(
                     value = Some(c.countryCode),
