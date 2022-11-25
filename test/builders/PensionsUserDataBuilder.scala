@@ -90,6 +90,6 @@ object PensionsUserDataBuilder extends UnitTest {
   def pensionUserDataWithIncomeOverseasPension(incomeOverseasPensions: IncomeFromOverseasPensionsViewModel,
                                           isPriorSubmission: Boolean = true): PensionsUserData = {
     aPensionsUserData.copy(isPriorSubmission = isPriorSubmission,
-      pensions = aPensionsCYAModel.copy(incomeFromOverseasPensionsViewModel = incomeOverseasPensions))
+      pensions = aPensionsCYAModel.copy(incomeFromOverseasPensions = incomeOverseasPensions))
   }
 }

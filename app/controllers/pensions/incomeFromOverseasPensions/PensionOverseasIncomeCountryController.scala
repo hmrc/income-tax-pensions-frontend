@@ -53,8 +53,7 @@ class PensionOverseasIncomeCountryController @Inject()(authAction: AuthorisedAct
       case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
       case Right(optPensionUserData) => optPensionUserData match {
         case Some(data) =>
-          val countriesToInclude =
-            Countries.getCountryParametersForAllCountries()
+          val countriesToInclude = Countries.getCountryParametersForAllCountries()
           val form = countryForm(request.user)
           countryIndex.fold {
             Future.successful(Ok(
@@ -62,7 +61,7 @@ class PensionOverseasIncomeCountryController @Inject()(authAction: AuthorisedAct
                 form, None, countriesToInclude, taxYear, None)))
           } {
             countryIndex =>
-              val prefillValue = data.pensions.incomeFromOverseasPensionsViewModel.pensionSchemes.lift(countryIndex)
+              val prefillValue = data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes.lift(countryIndex)
               prefillValue match {
                 case Some(value) =>
                   val countryName = Countries.getCountryFromCode(value.countryCode)
@@ -98,21 +97,21 @@ class PensionOverseasIncomeCountryController @Inject()(authAction: AuthorisedAct
         {
           pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
             case Right(Some(data)) => {
-              val pensionSchemeList: Seq[PensionScheme] = data.pensions.incomeFromOverseasPensionsViewModel.pensionSchemes
+              val pensionSchemeList: Seq[PensionScheme] = data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes
 
               if (validateCountryIndex(countryIndex, pensionSchemeList)) {
                 val updatedCyaModel = countryIndex match {
                   case Some(value) =>
-                    val scheme = data.pensions.incomeFromOverseasPensionsViewModel.pensionSchemes(value).copy(countryCode = Some(country))
+                    val scheme = data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes(value).copy(countryCode = Some(country))
                     data.pensions.copy(
-                    incomeFromOverseasPensionsViewModel = data.pensions.incomeFromOverseasPensionsViewModel.copy(
-                      pensionSchemes = data.pensions.incomeFromOverseasPensionsViewModel.pensionSchemes.updated(value, scheme)
+                      incomeFromOverseasPensions = data.pensions.incomeFromOverseasPensions.copy(
+                      overseasIncomePensionSchemes = data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes.updated(value, scheme)
                     ))
                   case None =>
-                    val currentSchemes = data.pensions.incomeFromOverseasPensionsViewModel.pensionSchemes
+                    val currentSchemes = data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes
                     data.pensions.copy(
-                      incomeFromOverseasPensionsViewModel = data.pensions.incomeFromOverseasPensionsViewModel.copy(
-                        pensionSchemes = currentSchemes ++ Seq(PensionScheme(Some(country)))
+                      incomeFromOverseasPensions = data.pensions.incomeFromOverseasPensions.copy(
+                        overseasIncomePensionSchemes = currentSchemes ++ Seq(PensionScheme(Some(country)))
                       ))
                 }
                 pensionSessionService.createOrUpdateSessionData(request.user,
