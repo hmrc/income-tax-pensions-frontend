@@ -168,6 +168,9 @@ POST        /:taxYear/annual-allowance/above-annual-allowance                   
 GET         /:taxYear/annual-allowance/pension-scheme-tax-reference                                                                controllers.pensions.annualAllowance.PensionSchemeTaxReferenceController.show(taxYear: Int, pensionSchemeTaxReferenceIndex: Option[Int])
 POST        /:taxYear/annual-allowance/pension-scheme-tax-reference                                                                controllers.pensions.annualAllowance.PensionSchemeTaxReferenceController.submit(taxYear: Int, pensionSchemeTaxReferenceIndex: Option[Int])
 
+
+
+
 GET         /:taxYear/annual-allowance/pension-scheme-tax-reference-summary                                                        controllers.pensions.annualAllowance.PstrSummaryController.show(taxYear: Int)
 
 #  Lifetime Allowance Pages     ####################################
@@ -220,10 +223,13 @@ POST        /:taxYear/overseas-pensions/payments-into-overseas-pensions/qualifyi
 GET         /:taxYear/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-amounts                       controllers.pensions.overseas.incomeFromOverseasPension.PensionPaymentsController.show(taxYear: Int, index: Option[Int])
 POST        /:taxYear/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-amounts                       controllers.pensions.overseas.incomeFromOverseasPension.PensionPaymentsController.submit(taxYear: Int, index: Option[Int])
 
-GET         /:taxYear/overseas-pensions/payments-into-overseas-pensions/pensions-customer-reference-number                  controllers.pensions.paymentsIntoOverseasPensions.PensionsCustomerReferenceNumberController.show(taxYear: Int)
-POST        /:taxYear/overseas-pensions/payments-into-overseas-pensions/pensions-customer-reference-number                  controllers.pensions.paymentsIntoOverseasPensions.PensionsCustomerReferenceNumberController.submit(taxYear: Int)
+GET         /:taxYear/overseas-pensions/payments-into-overseas-pensions/pensions-customer-reference-number                         controllers.pensions.paymentsIntoOverseasPensions.PensionsCustomerReferenceNumberController.show(taxYear: Int)
+POST        /:taxYear/overseas-pensions/payments-into-overseas-pensions/pensions-customer-reference-number                         controllers.pensions.paymentsIntoOverseasPensions.PensionsCustomerReferenceNumberController.submit(taxYear: Int)
 
 ###########################     Income from overseas pensions pages     ####################################
 
 GET         /:taxYear/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-status                               controllers.pensions.incomeFromOverseasPensions.PensionOverseasIncomeStatus.show(taxYear: Int)
 POST        /:taxYear/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-status                               controllers.pensions.incomeFromOverseasPensions.PensionOverseasIncomeStatus.submit(taxYear: Int)
+
+GET         /:taxYear/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-country                              controllers.pensions.incomeFromOverseasPensions.PensionOverseasIncomeCountryController.show(taxYear: Int, countryIndex: Option[Int])
+POST        /:taxYear/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-country                              controllers.pensions.incomeFromOverseasPensions.PensionOverseasIncomeCountryController.submit(taxYear: Int, countryIndex: Option[Int])
