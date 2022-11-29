@@ -86,7 +86,7 @@ class AuthorisedActionSpec extends UnitTest {
         lazy val result: Future[Result] = {
           (mockAuthConnector.authorise(_: Predicate, _: Retrieval[_])(_: HeaderCarrier, _: ExecutionContext))
             .expects(*, allEnrolments and confidenceLevel, *, *)
-            .returning(Future.successful(enrolments and ConfidenceLevel.L200))
+            .returning(Future.successful(enrolments and ConfidenceLevel.L250))
           auth.individualAuthentication[AnyContent](block, AffinityGroup.Individual)(fakeRequest, headerCarrierWithSession)
         }
 
@@ -114,7 +114,7 @@ class AuthorisedActionSpec extends UnitTest {
         lazy val result: Future[Result] = {
           (mockAuthConnector.authorise(_: Predicate, _: Retrieval[_])(_: HeaderCarrier, _: ExecutionContext))
             .expects(*, allEnrolments and confidenceLevel, *, *)
-            .returning(Future.successful(enrolments and ConfidenceLevel.L200))
+            .returning(Future.successful(enrolments and ConfidenceLevel.L250))
           auth.individualAuthentication[AnyContent](block, AffinityGroup.Individual)(fakeRequest, emptyHeaderCarrier)
         }
 
@@ -130,7 +130,7 @@ class AuthorisedActionSpec extends UnitTest {
         lazy val result: Future[Result] = {
           (mockAuthConnector.authorise(_: Predicate, _: Retrieval[_])(_: HeaderCarrier, _: ExecutionContext))
             .expects(*, allEnrolments and confidenceLevel, *, *)
-            .returning(Future.successful(enrolments and ConfidenceLevel.L200))
+            .returning(Future.successful(enrolments and ConfidenceLevel.L250))
           auth.individualAuthentication[AnyContent](block, AffinityGroup.Individual)(fakeRequest, headerCarrierWithSession)
         }
 
@@ -147,7 +147,7 @@ class AuthorisedActionSpec extends UnitTest {
         lazy val result: Future[Result] = {
           (mockAuthConnector.authorise(_: Predicate, _: Retrieval[_])(_: HeaderCarrier, _: ExecutionContext))
             .expects(*, allEnrolments and confidenceLevel, *, *)
-            .returning(Future.successful(enrolments and ConfidenceLevel.L200))
+            .returning(Future.successful(enrolments and ConfidenceLevel.L250))
           auth.individualAuthentication[AnyContent](block, AffinityGroup.Individual)(fakeRequest, headerCarrierWithSession)
         }
 

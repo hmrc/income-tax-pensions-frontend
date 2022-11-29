@@ -46,7 +46,7 @@ class AuthorisedAction @Inject()(appConfig: AppConfig)
 
   override def parser: BodyParser[AnyContent] = mcc.parsers.default
 
-  val minimumConfidenceLevel: Int = ConfidenceLevel.L200.level
+  val minimumConfidenceLevel: Int = ConfidenceLevel.L250.level
 
   override def invokeBlock[A](request: Request[A], block: AuthorisationRequest[A] => Future[Result]): Future[Result] = {
 
@@ -103,7 +103,7 @@ class AuthorisedAction @Inject()(appConfig: AppConfig)
             Future.successful(Redirect(controllers.errors.routes.IndividualAuthErrorController.show))
         }
       case _ =>
-        logger.info("[AuthorisedAction][individualAuthentication] User has confidence level below 200, routing user to IV uplift.")
+        logger.info("[AuthorisedAction][individualAuthentication] User has confidence level below 250, routing user to IV uplift.")
         Future(Redirect(appConfig.incomeTaxSubmissionIvRedirect))
     }
   }
