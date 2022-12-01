@@ -23,22 +23,16 @@ Have you ...
 - [ ]  Pulled the branch down?
 - [ ]  Assigned yourself to this PR?
 - [ ]  Moved the Jira *subtask* to “in review”?
-- [ ]  Ensured that it is rebased against `main`?
 
 ## Developer: After Approval
 
 Have you ...
 
-- [ ]  Rebased against `main`?
 - [ ]  Moved the Jira *subtask* to “in pipeline”?
 
 ## Developer: After Merging
 
 Have you ...
 
-- [ ]  Deleted the branch?
 - [ ]  Scheduled a demo? If not, please add a comment.
-
- 
-
 
