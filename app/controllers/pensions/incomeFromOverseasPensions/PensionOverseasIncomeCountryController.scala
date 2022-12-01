@@ -58,23 +58,15 @@ class PensionOverseasIncomeCountryController @Inject()(authAction: AuthorisedAct
           countryIndex.fold {
             Future.successful(Ok(
               pensionOverseasIncomeCountryView(
-                form, None, countriesToInclude, taxYear, None)))
+                form, countriesToInclude, taxYear, None)))
           } {
             countryIndex =>
               val prefillValue = data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes.lift(countryIndex)
               prefillValue match {
                 case Some(value) =>
-                  val countryName = Countries.getCountryFromCode(value.countryCode)
-                  countryName match {
-                    case countryNameValue@Some(_) =>
-                      Future.successful(Ok(
-                        pensionOverseasIncomeCountryView(
-                          form, countryNameValue.map(_.countryName), countriesToInclude, taxYear, Some(countryIndex))))
-                    case None => // TODO - resolve case where country code could not be mapped to country value by the country helper object
-                      Future.successful(Ok(
-                        pensionOverseasIncomeCountryView(
-                          form, None, countriesToInclude, taxYear, Some(countryIndex))))
-                  }
+                  Future.successful(Ok(
+                    pensionOverseasIncomeCountryView(
+                      form, countriesToInclude, taxYear, Some(countryIndex))))
                 case None =>
                   Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
               }
@@ -92,7 +84,7 @@ class PensionOverseasIncomeCountryController @Inject()(authAction: AuthorisedAct
 
     countryForm(request.user).bindFromRequest.fold(
       formWithErrors =>
-        Future.successful(BadRequest(pensionOverseasIncomeCountryView(formWithErrors, None, countriesToInclude, taxYear, countryIndex))),
+        Future.successful(BadRequest(pensionOverseasIncomeCountryView(formWithErrors, countriesToInclude, taxYear, countryIndex))),
       country => {
         {
           pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {

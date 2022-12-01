@@ -140,7 +140,7 @@ class PensionOverseasIncomeCountryControllerSpec extends CommonUtils with Before
           welshToggleCheck(user.isWelsh)
         }
 
-        "render the page with correct content with prefilling" which {
+        "render the page with correct content without prefilling" which {
           implicit val overseasIncomeCountryUrl: Int => String = pensionOverseasIncomeCountryUrlIndex(0)
           val countryCode = "GB"
 
@@ -164,7 +164,7 @@ class PensionOverseasIncomeCountryControllerSpec extends CommonUtils with Before
           captionCheck(expectedCaption(taxYearEOY))
           textOnPageCheck(expectedParagraph, paragraphSelector(1))
           textOnPageCheck(expectedSubHeading, labelSelector(1))
-          inputFieldValueCheck(inputName, inputSelector, "", Some("United Kingdom"))
+          inputFieldValueCheck(inputName, inputSelector, "", Some(""))
           formPostLinkCheck(pensionOverseasIncomeCountryUrlIndex(0)(taxYearEOY), formSelector)
           welshToggleCheck(user.isWelsh)
         }

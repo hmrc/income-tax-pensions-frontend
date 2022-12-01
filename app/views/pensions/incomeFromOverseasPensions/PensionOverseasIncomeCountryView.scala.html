@@ -41,7 +41,6 @@
 
 
 @(form: Form[String],
-        defaultValue: Option[String],
         countries: List[Country],
         taxYear: Int,
         countryIndex: Option[Int])(implicit request: AuthorisationRequest[_], messages: Messages, appConfig: AppConfig)
@@ -96,7 +95,6 @@
             )
         ).asAccessibleAutocomplete(Some(
             AccessibleAutocomplete(
-                defaultValue = defaultValue,
                 showAllValues = false,
                 autoSelect = true)
         )))
