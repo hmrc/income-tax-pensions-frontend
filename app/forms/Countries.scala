@@ -56,6 +56,7 @@ object Countries {
 
 
   def getCountryParametersForAllCountries(): List[Country] = all
+  def getOverseasCountries(): List[Country] = all.filter(_.countryCode != "GB")
 
   def getCountryFromCode(countryCode: Option[String]): Option[Country] = {
     countryCode.flatMap(
