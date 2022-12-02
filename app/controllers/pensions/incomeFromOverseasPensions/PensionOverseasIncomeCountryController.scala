@@ -53,7 +53,7 @@ class PensionOverseasIncomeCountryController @Inject()(authAction: AuthorisedAct
       case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
       case Right(optPensionUserData) => optPensionUserData match {
         case Some(data) =>
-          val countriesToInclude = Countries.getCountryParametersForAllCountries()
+          val countriesToInclude = Countries.getOverseasCountries()
           val form = countryForm(request.user)
           countryIndex.fold {
             Future.successful(Ok(
@@ -79,8 +79,8 @@ class PensionOverseasIncomeCountryController @Inject()(authAction: AuthorisedAct
   }
 
   def submit(taxYear: Int, countryIndex: Option[Int]): Action[AnyContent] = authAction.async { implicit request =>
-    val (countriesToInclude) =
-      Countries.getCountryParametersForAllCountries()
+    val countriesToInclude =
+      Countries.getOverseasCountries()
 
     countryForm(request.user).bindFromRequest.fold(
       formWithErrors =>
