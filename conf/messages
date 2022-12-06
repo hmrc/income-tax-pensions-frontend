@@ -815,6 +815,16 @@ overseasPension.pensionPayments.amountBeforeTax.tooBig = The amount before tax m
 overseasPension.pensionPayments.nonUkTaxPaid.text = Non-UK tax paid
 overseasPension.pensionPayments.nonUkTaxPaid.incorrectFormat = Enter the amount of non-UK tax paid in the correct format
 
+#Special Withholding Tax
+overseasPension.specialWithHoldingTax.title.individual = Did you have Special Withholding Tax (SWT) deducted from your pension?
+overseasPension.specialWithHoldingTax.title.agent = Did your client have Special Withholding Tax (SWT) deducted from their pension?
+overseasPension.specialWithHoldingTax.amount.Text = Amount of SWT, in pounds
+overseasPension.specialWithHoldingTax.amount.individual.noEntry = Select yes or no if you had Special Withholding Tax deducted from your pension.
+overseasPension.specialWithHoldingTax.amount.agent.noEntry = Select yes or no if your client had Special Withholding Tax deducted from their pension.
+overseasPension.specialWithHoldingTax.amount.incorrectFormat = Enter the amount of Special Withholding Tax deducted in the correct format
+overseasPension.specialWithHoldingTax.amount.tooBig = Amount of Special Withholding Tax deducted must be less than £100,000,000,000
+overseasPension.specialWithHoldingTax.amount.enteredZero = Enter an amount greater than zero
+
 #Pension Customer Reference Number
 overseasPension.pensionsCustomerReferenceNumber.title.individual = What’s your customer reference number?
 overseasPension.pensionsCustomerReferenceNumber.title.agent = What’s your client’s customer reference number?
