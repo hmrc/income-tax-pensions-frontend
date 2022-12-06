@@ -828,7 +828,6 @@ overseasPension.specialWithHoldingTax.amount.individual.noEntry = Select yes or 
 overseasPension.specialWithHoldingTax.amount.agent.noEntry = Select yes or no if your client had Special Withholding Tax deducted from their pension.
 overseasPension.specialWithHoldingTax.amount.incorrectFormat = Enter the amount of Special Withholding Tax deducted in the correct format
 overseasPension.specialWithHoldingTax.amount.tooBig = Amount of Special Withholding Tax deducted must be less than £100,000,000,000
-overseasPension.specialWithHoldingTax.amount.enteredZero = Enter an amount greater than zero
 
 
 #Pension Customer Reference Number

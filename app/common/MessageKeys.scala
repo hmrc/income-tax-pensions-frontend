@@ -120,8 +120,8 @@ object MessageKeys {
           "common.pensions.error.amount.noEntry",
           "common.pensions.error.amount.noEntry")
       override val minAmountMessage: UserTypeMessage = UserTypeMessage(
-        "overseasPension.specialWithHoldingTax.amount.enteredZero",
-        "overseasPension.specialWithHoldingTax.amount.enteredZero")
+        "common.error.amountNotZero",
+        "common.error.amountNotZero")
       override val amountHasInvalidFormat: UserTypeMessage =
         UserTypeMessage(
           "overseasPension.specialWithHoldingTax.amount.incorrectFormat",
