@@ -24,6 +24,7 @@ common.use = use
 common.error.errorKey = Error:
 common.opensInNewTab = (opens in new tab)
 common.currency.hint = For example, £193.52
+common.currency.hint1 = For example, £193.54
 common.help.getHelpWithThisPage = Get help with this page
 common.status.toDo = To do
 common.status.updated = Updated
@@ -826,6 +827,7 @@ overseasPension.specialWithHoldingTax.title.agent = Did your client have Special
 overseasPension.specialWithHoldingTax.amount.Text = Amount of SWT, in pounds
 overseasPension.specialWithHoldingTax.amount.individual.noEntry = Select yes or no if you had Special Withholding Tax deducted from your pension.
 overseasPension.specialWithHoldingTax.amount.agent.noEntry = Select yes or no if your client had Special Withholding Tax deducted from their pension.
+overseasPension.specialWithHoldingTax.amount.noAmountEntry = Enter an amount in pounds for the amount of Special Withholding Tax deducted
 overseasPension.specialWithHoldingTax.amount.incorrectFormat = Enter the amount of Special Withholding Tax deducted in the correct format
 overseasPension.specialWithHoldingTax.amount.tooBig = Amount of Special Withholding Tax deducted must be less than £100,000,000,000
 

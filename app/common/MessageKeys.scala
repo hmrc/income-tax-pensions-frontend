@@ -117,8 +117,8 @@ object MessageKeys {
           "overseasPension.specialWithHoldingTax.amount.agent.noEntry")
       override val amountEmpty: UserTypeMessage =
         UserTypeMessage(
-          "common.pensions.error.amount.noEntry",
-          "common.pensions.error.amount.noEntry")
+          "overseasPension.specialWithHoldingTax.amount.noAmountEntry",
+          "overseasPension.specialWithHoldingTax.amount.noAmountEntry")
       override val minAmountMessage: UserTypeMessage = UserTypeMessage(
         "common.error.amountNotZero",
         "common.error.amountNotZero")

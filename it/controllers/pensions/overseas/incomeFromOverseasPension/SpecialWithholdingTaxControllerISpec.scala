@@ -98,7 +98,7 @@ class SpecialWithholdingTaxControllerISpec   extends YesNoAmountControllerSpec("
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Amount of SWT, in pounds", ""),
+                amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "", Some("For example, £193.54")),
                 formUrl = formUrl()
               ))
 
@@ -117,7 +117,7 @@ class SpecialWithholdingTaxControllerISpec   extends YesNoAmountControllerSpec("
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Amount of SWT, in pounds", ""),
+                amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "", Some("For example, £193.54")),
                 formUrl = formUrl()
               ))
 
@@ -136,7 +136,7 @@ class SpecialWithholdingTaxControllerISpec   extends YesNoAmountControllerSpec("
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Amount of SWT, in pounds", ""),
+                amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "", Some("For example, £193.54")),
                 formUrl = formUrl()
               ))
 
@@ -155,7 +155,7 @@ class SpecialWithholdingTaxControllerISpec   extends YesNoAmountControllerSpec("
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Amount of SWT, in pounds", ""),
+                amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "", Some("For example, £193.54")),
                 formUrl = formUrl()
               ))
 
@@ -192,7 +192,7 @@ class SpecialWithholdingTaxControllerISpec   extends YesNoAmountControllerSpec("
                 radioButtonForYes = checkedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "1,999.99"),
+                amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "1,999.99", Some("For example, £193.54")),
                 formUrl = formUrl()
               ))
 
@@ -211,7 +211,7 @@ class SpecialWithholdingTaxControllerISpec   extends YesNoAmountControllerSpec("
                 radioButtonForYes = checkedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "1,999.99"),
+                amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "1,999.99", Some("For example, £193.54")),
                 formUrl = formUrl()
               ))
 
@@ -230,7 +230,7 @@ class SpecialWithholdingTaxControllerISpec   extends YesNoAmountControllerSpec("
                 radioButtonForYes = checkedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "1,999.99"),
+                amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "1,999.99", Some("For example, £193.54")),
                 formUrl = formUrl()
               ))
 
@@ -249,7 +249,7 @@ class SpecialWithholdingTaxControllerISpec   extends YesNoAmountControllerSpec("
                 radioButtonForYes = checkedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "1,999.99"),
+                amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "1,999.99", Some("For example, £193.54")),
                 formUrl = formUrl()
               ))
 
@@ -286,7 +286,7 @@ class SpecialWithholdingTaxControllerISpec   extends YesNoAmountControllerSpec("
                 radioButtonForYes = checkedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "1,999.99"),
+                amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "1,999.99", Some("For example, £193.54")),
                 formUrl = formUrl(1)
               ))
 
@@ -305,7 +305,7 @@ class SpecialWithholdingTaxControllerISpec   extends YesNoAmountControllerSpec("
                 radioButtonForYes = checkedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "1,999.99"),
+                amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "1,999.99", Some("For example, £193.54")),
                 formUrl = formUrl(1)
               ))
 
@@ -324,7 +324,7 @@ class SpecialWithholdingTaxControllerISpec   extends YesNoAmountControllerSpec("
                 radioButtonForYes = checkedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "1,999.99"),
+                amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "1,999.99", Some("For example, £193.54")),
                 formUrl = formUrl(1)
               ))
 
@@ -343,7 +343,7 @@ class SpecialWithholdingTaxControllerISpec   extends YesNoAmountControllerSpec("
                 radioButtonForYes = checkedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "1,999.99"),
+                amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "1,999.99", Some("For example, £193.54")),
                 formUrl = formUrl(1)
               ))
 
@@ -384,7 +384,7 @@ class SpecialWithholdingTaxControllerISpec   extends YesNoAmountControllerSpec("
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = checkedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Amount of SWT, in pounds", ""),
+                amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "", Some("For example, £193.54")),
                 formUrl = formUrl()
               ))
 
@@ -404,7 +404,7 @@ class SpecialWithholdingTaxControllerISpec   extends YesNoAmountControllerSpec("
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = checkedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Amount of SWT, in pounds", ""),
+                amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "", Some("For example, £193.54")),
                 formUrl = formUrl()
               ))
 
@@ -423,7 +423,7 @@ class SpecialWithholdingTaxControllerISpec   extends YesNoAmountControllerSpec("
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = checkedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Amount of SWT, in pounds", ""),
+                amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "", Some("For example, £193.54")),
                 formUrl = formUrl()
               ))
 
@@ -442,7 +442,7 @@ class SpecialWithholdingTaxControllerISpec   extends YesNoAmountControllerSpec("
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = checkedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Amount of SWT, in pounds", ""),
+                amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "", Some("For example, £193.54")),
                 formUrl = formUrl()
               ))
           }
@@ -482,7 +482,7 @@ class SpecialWithholdingTaxControllerISpec   extends YesNoAmountControllerSpec("
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = checkedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Amount of SWT, in pounds", ""),
+                amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "", Some("For example, £193.54")),
                 formUrl = formUrl()
               ))
 
@@ -502,7 +502,7 @@ class SpecialWithholdingTaxControllerISpec   extends YesNoAmountControllerSpec("
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = checkedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Amount of SWT, in pounds", ""),
+                amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "", Some("For example, £193.54")),
                 formUrl = formUrl()
               ))
 
@@ -521,7 +521,7 @@ class SpecialWithholdingTaxControllerISpec   extends YesNoAmountControllerSpec("
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = checkedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Amount of SWT, in pounds", ""),
+                amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "", Some("For example, £193.54")),
                 formUrl = formUrl()
               ))
 
@@ -540,7 +540,7 @@ class SpecialWithholdingTaxControllerISpec   extends YesNoAmountControllerSpec("
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = checkedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Amount of SWT, in pounds", ""),
+                amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "", Some("For example, £193.54")),
                 formUrl = formUrl()
               ))
           }
@@ -580,7 +580,7 @@ class SpecialWithholdingTaxControllerISpec   extends YesNoAmountControllerSpec("
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = checkedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Amount of SWT, in pounds", ""),
+                amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "", Some("For example, £193.54")),
                 formUrl = formUrl()
               ))
 
@@ -600,7 +600,7 @@ class SpecialWithholdingTaxControllerISpec   extends YesNoAmountControllerSpec("
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = checkedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Amount of SWT, in pounds", ""),
+                amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "", Some("For example, £193.54")),
                 formUrl = formUrl()
               ))
 
@@ -619,7 +619,7 @@ class SpecialWithholdingTaxControllerISpec   extends YesNoAmountControllerSpec("
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = checkedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Amount of SWT, in pounds", ""),
+                amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "", Some("For example, £193.54")),
                 formUrl = formUrl()
               ))
 
@@ -638,7 +638,7 @@ class SpecialWithholdingTaxControllerISpec   extends YesNoAmountControllerSpec("
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = checkedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Amount of SWT, in pounds", ""),
+                amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "", Some("For example, £193.54")),
                 formUrl = formUrl()
               ))
           }
@@ -821,7 +821,7 @@ class SpecialWithholdingTaxControllerISpec   extends YesNoAmountControllerSpec("
                   radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Amount of SWT, in pounds", ""),
+                  amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "", Some("For example, £193.54")),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "There is a problem",
@@ -853,7 +853,7 @@ class SpecialWithholdingTaxControllerISpec   extends YesNoAmountControllerSpec("
                   radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Amount of SWT, in pounds", ""),
+                  amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "", Some("For example, £193.54")),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "Mae problem wedi codi",
@@ -885,7 +885,7 @@ class SpecialWithholdingTaxControllerISpec   extends YesNoAmountControllerSpec("
                   radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Amount of SWT, in pounds", ""),
+                  amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "", Some("For example, £193.54")),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "There is a problem",
@@ -917,7 +917,7 @@ class SpecialWithholdingTaxControllerISpec   extends YesNoAmountControllerSpec("
                   radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Amount of SWT, in pounds", ""),
+                  amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "", Some("For example, £193.54")),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "Mae problem wedi codi",
@@ -951,16 +951,16 @@ class SpecialWithholdingTaxControllerISpec   extends YesNoAmountControllerSpec("
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Amount of SWT, in pounds", ""),
+                  amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "", Some("For example, £193.54")),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "There is a problem",
-                      body = "Enter the amount of non-UK tax paid",
+                      body = "Enter an amount in pounds for the amount of Special Withholding Tax deducted",
                       link = "#amount-2")
                   ),
                   errorAboveElementCheckSectionOpt = Some(
                     ErrorAboveElementCheckSection(
-                      title = "Error: Enter the amount of non-UK tax paid",
+                      title = "Error: Enter an amount in pounds for the amount of Special Withholding Tax deducted",
                       idOpt = Some("amount-2")
                     )
                   ),
@@ -983,16 +983,16 @@ class SpecialWithholdingTaxControllerISpec   extends YesNoAmountControllerSpec("
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Amount of SWT, in pounds", ""),
+                  amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "", Some("For example, £193.54")),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "Mae problem wedi codi",
-                      body = "Enter the amount of non-UK tax paid",
+                      body = "Enter an amount in pounds for the amount of Special Withholding Tax deducted",
                       link = "#amount-2")
                   ),
                   errorAboveElementCheckSectionOpt = Some(
                     ErrorAboveElementCheckSection(
-                      title = "Error: Enter the amount of non-UK tax paid",
+                      title = "Error: Enter an amount in pounds for the amount of Special Withholding Tax deducted",
                       idOpt = Some("amount-2")
                     )
                   ),
@@ -1015,16 +1015,16 @@ class SpecialWithholdingTaxControllerISpec   extends YesNoAmountControllerSpec("
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Amount of SWT, in pounds", ""),
+                  amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "", Some("For example, £193.54")),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "There is a problem",
-                      body = "Enter the amount of non-UK tax paid",
+                      body = "Enter an amount in pounds for the amount of Special Withholding Tax deducted",
                       link = "#amount-2")
                   ),
                   errorAboveElementCheckSectionOpt = Some(
                     ErrorAboveElementCheckSection(
-                      title = "Error: Enter the amount of non-UK tax paid",
+                      title = "Error: Enter an amount in pounds for the amount of Special Withholding Tax deducted",
                       idOpt = Some("amount-2")
                     )
                   ),
@@ -1047,16 +1047,16 @@ class SpecialWithholdingTaxControllerISpec   extends YesNoAmountControllerSpec("
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Amount of SWT, in pounds", ""),
+                  amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "", Some("For example, £193.54")),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "Mae problem wedi codi",
-                      body = "Enter the amount of non-UK tax paid",
+                      body = "Enter an amount in pounds for the amount of Special Withholding Tax deducted",
                       link = "#amount-2")
                   ),
                   errorAboveElementCheckSectionOpt = Some(
                     ErrorAboveElementCheckSection(
-                      title = "Error: Enter the amount of non-UK tax paid",
+                      title = "Error: Enter an amount in pounds for the amount of Special Withholding Tax deducted",
                       idOpt = Some("amount-2")
                     )
                   ),
@@ -1081,7 +1081,7 @@ class SpecialWithholdingTaxControllerISpec   extends YesNoAmountControllerSpec("
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "x2.64"),
+                  amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "x2.64", Some("For example, £193.54")),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "There is a problem",
@@ -1113,7 +1113,7 @@ class SpecialWithholdingTaxControllerISpec   extends YesNoAmountControllerSpec("
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "x2.64"),
+                  amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "x2.64", Some("For example, £193.54")),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "Mae problem wedi codi",
@@ -1145,7 +1145,7 @@ class SpecialWithholdingTaxControllerISpec   extends YesNoAmountControllerSpec("
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "x2.64"),
+                  amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "x2.64", Some("For example, £193.54")),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "There is a problem",
@@ -1177,7 +1177,7 @@ class SpecialWithholdingTaxControllerISpec   extends YesNoAmountControllerSpec("
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "x2.64"),
+                  amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "x2.64", Some("For example, £193.54")),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "Mae problem wedi codi",
@@ -1211,7 +1211,7 @@ class SpecialWithholdingTaxControllerISpec   extends YesNoAmountControllerSpec("
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "-42.64"),
+                  amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "-42.64", Some("For example, £193.54")),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "There is a problem",
@@ -1243,7 +1243,7 @@ class SpecialWithholdingTaxControllerISpec   extends YesNoAmountControllerSpec("
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "-42.64"),
+                  amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "-42.64", Some("For example, £193.54")),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "Mae problem wedi codi",
@@ -1275,7 +1275,7 @@ class SpecialWithholdingTaxControllerISpec   extends YesNoAmountControllerSpec("
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "-42.64"),
+                  amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "-42.64", Some("For example, £193.54")),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "There is a problem",
@@ -1307,7 +1307,7 @@ class SpecialWithholdingTaxControllerISpec   extends YesNoAmountControllerSpec("
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "-42.64"),
+                  amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "-42.64", Some("For example, £193.54")),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "Mae problem wedi codi",
@@ -1341,7 +1341,7 @@ class SpecialWithholdingTaxControllerISpec   extends YesNoAmountControllerSpec("
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "100000000002"),
+                  amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "100000000002", Some("For example, £193.54")),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "There is a problem",
@@ -1373,7 +1373,7 @@ class SpecialWithholdingTaxControllerISpec   extends YesNoAmountControllerSpec("
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "100000000002"),
+                  amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "100000000002", Some("For example, £193.54")),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "Mae problem wedi codi",
@@ -1405,7 +1405,7 @@ class SpecialWithholdingTaxControllerISpec   extends YesNoAmountControllerSpec("
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "100000000002"),
+                  amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "100000000002", Some("For example, £193.54")),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "There is a problem",
@@ -1437,7 +1437,7 @@ class SpecialWithholdingTaxControllerISpec   extends YesNoAmountControllerSpec("
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "100000000002"),
+                  amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "100000000002", Some("For example, £193.54")),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "Mae problem wedi codi",
@@ -1473,7 +1473,7 @@ class SpecialWithholdingTaxControllerISpec   extends YesNoAmountControllerSpec("
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "0"),
+                  amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "0", Some("For example, £193.54")),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "There is a problem",
@@ -1505,7 +1505,7 @@ class SpecialWithholdingTaxControllerISpec   extends YesNoAmountControllerSpec("
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "0"),
+                  amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "0", Some("For example, £193.54")),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "Mae problem wedi codi",
@@ -1537,7 +1537,7 @@ class SpecialWithholdingTaxControllerISpec   extends YesNoAmountControllerSpec("
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "0"),
+                  amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "0", Some("For example, £193.54")),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "There is a problem",
@@ -1569,7 +1569,7 @@ class SpecialWithholdingTaxControllerISpec   extends YesNoAmountControllerSpec("
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "0"),
+                  amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "0", Some("For example, £193.54")),
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "Mae problem wedi codi",
