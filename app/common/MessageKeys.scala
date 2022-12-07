@@ -56,7 +56,19 @@ object MessageKeys {
           "overseasPension.paymentIntoOverseasPensionScheme.maximum.error.individual",
           "overseasPension.paymentIntoOverseasPensionScheme.maximum.error.agent")
     }
+
   }
+
+  object IncomeFromOverseasPensions {
+    object ForeignTaxCreditRelief extends YesNoForm {
+      override val noEntry: UserTypeMessage =
+        UserTypeMessage(
+          "overseasPension.foreignTaxCreditRelief.error.noEntry.individual",
+          "overseasPension.foreignTaxCreditRelief.error.noEntry.agent"
+        )
+    }
+  }
+
   object UnauthorisedPayments {
     object NonUKTaxOnAmountResultedInSurcharge extends YesNoAmountForm {
       override val neitherYesNorNo: UserTypeMessage =
@@ -107,5 +119,8 @@ object MessageKeys {
     val amountIsExcessive: UserTypeMessage
   }
 
+  trait YesNoForm {
+    val noEntry: UserTypeMessage
+  }
 }
 
