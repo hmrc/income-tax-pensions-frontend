@@ -716,7 +716,7 @@ class SpecialWithholdingTaxControllerISpec   extends YesNoAmountControllerSpec("
             implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForYesNoAmountPage(Some(false), Some("")))
             implicit val index = 0
 
-            assertRedirectionAsExpected(relativeUrl("/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-swt?index=0"))
+            assertRedirectionAsExpected(relativeUrl("/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-ftcr?index=0"))
             getViewModel mustBe Some(expectedViewModel)
 
           }
@@ -746,7 +746,7 @@ class SpecialWithholdingTaxControllerISpec   extends YesNoAmountControllerSpec("
             implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForYesNoAmountPage(Some(true), Some("42.64")))
             implicit val index = 0
 
-            assertRedirectionAsExpected(relativeUrl("/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-swt?index=0"))
+            assertRedirectionAsExpected(relativeUrl("/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-ftcr?index=0"))
             getViewModel mustBe Some(expectedViewModel)
 
           }
@@ -775,7 +775,7 @@ class SpecialWithholdingTaxControllerISpec   extends YesNoAmountControllerSpec("
             implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForYesNoAmountPage(Some(true), Some("£1,042.64")))
             implicit val index = 0
 
-            assertRedirectionAsExpected(relativeUrl("/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-swt?index=0"))
+            assertRedirectionAsExpected(relativeUrl("/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-ftcr?index=0"))
             getViewModel mustBe Some(expectedViewModel)
 
           }

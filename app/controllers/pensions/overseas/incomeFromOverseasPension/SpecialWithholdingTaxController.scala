@@ -44,7 +44,7 @@ class SpecialWithholdingTaxController @Inject()(messagesControllerComponents: Me
   override def redirectWhenNoSessionData(taxYear: Int): Result = redirectToSummaryPage(taxYear)
 
   override def redirectAfterUpdatingSessionData(taxYear: Int, index : Option[Int] = None): Result =
-    Redirect(controllers.pensions.overseas.incomeFromOverseasPension.routes.SpecialWithholdingTaxController.show(taxYear, index))
+    Redirect(controllers.pensions.overseas.incomeFromOverseasPension.routes.ForeignTaxCreditReliefController.show(taxYear, index))
 
 
   override def questionOpt(pensionsUserData: PensionsUserData, index : Option[Int]): Option[Boolean] = {
