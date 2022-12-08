@@ -19,7 +19,7 @@ package controllers.pensions.overseas.incomeFromOverseasPension
 import common.MessageKeys
 import common.MessageKeys.UnauthorisedPayments.SpecialWithholdingTax
 import config.{AppConfig, ErrorHandler}
-import controllers.{BaseYesNoAmountController, BaseYesNoAmountWithIndexController}
+import controllers.BaseYesNoAmountWithIndexController
 import controllers.predicates.AuthorisedAction
 import javax.inject.Inject
 import models.AuthorisationRequest
@@ -43,66 +43,41 @@ class SpecialWithholdingTaxController @Inject()(messagesControllerComponents: Me
   // TODO: Should we be redirecting to the CYA Page? It doesn't quite make sense as we won't have any session data.
   override def redirectWhenNoSessionData(taxYear: Int): Result = redirectToSummaryPage(taxYear)
 
-  override def redirectAfterUpdatingSessionData(taxYear: Int, index : Option[Int] = None): Result =
-    Redirect(controllers.pensions.overseas.incomeFromOverseasPension.routes.ForeignTaxCreditReliefController.show(taxYear, index))
+  override def redirectAfterUpdatingSessionData(taxYear: Int, index : Int): Result =
+    Redirect(controllers.pensions.overseas.incomeFromOverseasPension.routes.ForeignTaxCreditReliefController.show(taxYear, Some(index)))
 
 
-  override def questionOpt(pensionsUserData: PensionsUserData, index : Option[Int]): Option[Boolean] = {
+  override def questionOpt(pensionsUserData: PensionsUserData, index : Int): Option[Boolean] =
+    pensionsUserData.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes(index).specialWithholdingTaxQuestion
 
-    validateIndex(index, pensionsUserData) match {
-      case Some(id) => pensionsUserData.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes(id).specialWithholdingTaxQuestion
-      case None => None
-    }
-  }
-
-  override def amountOpt(pensionsUserData: PensionsUserData, index : Option[Int]): Option[BigDecimal] =
-      validateIndex(index, pensionsUserData) match {
-        case Some(id) => {
-          pensionsUserData.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes(id).specialWithholdingTaxAmount
-        }
-        case None => None
-      }
+  override def amountOpt(pensionsUserData: PensionsUserData, index : Int): Option[BigDecimal] =
+    pensionsUserData.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes(index).specialWithholdingTaxAmount
 
 
-  override def proposedUpdatedSessionDataModel(currentSessionData: PensionsUserData, yesSelected: Boolean, amountOpt: Option[BigDecimal], index : Option[Int]): PensionsCYAModel = {
-    {
-      index match {
-        case Some(index) => {
-          currentSessionData.pensions.copy(
+  override def proposedUpdatedSessionDataModel(currentSessionData: PensionsUserData,
+                                               yesSelected: Boolean, amountOpt: Option[BigDecimal], index : Int): PensionsCYAModel =
+    currentSessionData.pensions.copy(
             incomeFromOverseasPensions = currentSessionData.pensions.incomeFromOverseasPensions.copy(
               overseasIncomePensionSchemes = currentSessionData.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes
                 .updated(index, currentSessionData.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes(index).copy(
                   specialWithholdingTaxQuestion = Some(yesSelected),
                   specialWithholdingTaxAmount = amountOpt
-                ))
-            )
-          )
-        }
-        case None => currentSessionData.pensions
-      }
-    }
-  }
+                ))))
 
 
-
-  override def whenFormIsInvalid(form: Form[(Boolean, Option[BigDecimal])], taxYear: Int, index : Option[Int])
-                                (implicit request: AuthorisationRequest[AnyContent]): Html = {
-    view(form, taxYear, index)
-  }
+  override def whenFormIsInvalid(form: Form[(Boolean, Option[BigDecimal])], taxYear: Int, index : Int)
+                                (implicit request: AuthorisationRequest[AnyContent]): Html =
+    view(form, taxYear, Some(index))
 
   override def errorMessageSet: MessageKeys.YesNoAmountForm = SpecialWithholdingTax
 
   override def whenSessionDataIsInsufficient(taxYear: Int): Result = redirectToSummaryPage(taxYear)
 
-  override def sessionDataIsSufficient(pensionsUserData: PensionsUserData, index : Option[Int]): Boolean =
-    validateIndex(index, pensionsUserData) match {
-      case Some(id) => {
-        pensionsUserData.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes(id).pensionPaymentAmount.isDefined ||
-          pensionsUserData.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes(id).pensionPaymentTaxPaid.isDefined
-      }
-      case None => false
-    }
+  override def sessionDataIsSufficient(pensionsUserData: PensionsUserData, index : Int): Boolean =
+    pensionsUserData.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes(index).pensionPaymentAmount.isDefined ||
+          pensionsUserData.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes(index).pensionPaymentTaxPaid.isDefined
 
-  override def prepareView(pensionsUserData: PensionsUserData, taxYear: Int, index : Option[Int])
-                          (implicit request: AuthorisationRequest[AnyContent]): Html = view(populateForm(pensionsUserData, index), taxYear, index)
+
+  override def prepareView(pensionsUserData: PensionsUserData, taxYear: Int, index : Int)
+                          (implicit request: AuthorisationRequest[AnyContent]): Html = view(populateForm(pensionsUserData, index), taxYear, Some(index))
 }

@@ -39,26 +39,26 @@ abstract class BaseYesNoAmountWithIndexController(messagesControllerComponents: 
                                          errorHandler: ErrorHandler)
                                         (implicit appConfig: AppConfig, clock: Clock)
   extends FrontendController(messagesControllerComponents) {
-  def prepareView(pensionsUserData: PensionsUserData, taxYear: Int, index : Option[Int] = None)(implicit request: AuthorisationRequest[AnyContent]): Html
+  def prepareView(pensionsUserData: PensionsUserData, taxYear: Int, index : Int)(implicit request: AuthorisationRequest[AnyContent]): Html
 
   def redirectWhenNoSessionData(taxYear: Int): Result
 
-  def redirectAfterUpdatingSessionData(taxYear: Int, index : Option[Int] = None): Result
+  def redirectAfterUpdatingSessionData(taxYear: Int, index : Int): Result
 
-  def questionOpt(pensionsUserData: PensionsUserData, index : Option[Int] = None): Option[Boolean]
+  def questionOpt(pensionsUserData: PensionsUserData, index : Int): Option[Boolean]
 
-  def amountOpt(pensionsUserData: PensionsUserData, index : Option[Int] = None): Option[BigDecimal]
+  def amountOpt(pensionsUserData: PensionsUserData, index : Int): Option[BigDecimal]
 
-  def proposedUpdatedSessionDataModel(currentSessionData: PensionsUserData, yesSelected: Boolean, amountOpt: Option[BigDecimal], index : Option[Int] = None): PensionsCYAModel
+  def proposedUpdatedSessionDataModel(currentSessionData: PensionsUserData, yesSelected: Boolean, amountOpt: Option[BigDecimal], index : Int): PensionsCYAModel
 
-  def whenFormIsInvalid(form: Form[(Boolean, Option[BigDecimal])], taxYear: Int, index : Option[Int] = None)
+  def whenFormIsInvalid(form: Form[(Boolean, Option[BigDecimal])], taxYear: Int, index : Int)
                        (implicit request: AuthorisationRequest[AnyContent]): Html
 
   def errorMessageSet: YesNoAmountForm
 
   def whenSessionDataIsInsufficient(taxYear: Int): Result
 
-  def sessionDataIsSufficient(pensionsUserData: PensionsUserData, index : Option[Int]): Boolean
+  def sessionDataIsSufficient(pensionsUserData: PensionsUserData, index : Int): Boolean
 
   def onError(implicit request: AuthorisationRequest[AnyContent]): Result = errorHandler.handleError(INTERNAL_SERVER_ERROR)
 
@@ -74,29 +74,29 @@ abstract class BaseYesNoAmountWithIndexController(messagesControllerComponents: 
     index.filter(i => i >= 0 && i < pensionsUserData.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes.length)
   }
 
-  private def show(pensionsUserData: PensionsUserData, taxYear: Int, index : Option[Int])
+  private def shows(pensionsUserData: PensionsUserData, taxYear: Int, index : Int)
                            (implicit request: AuthorisationRequest[AnyContent]): Future[Result] =
     Future.successful(Ok(prepareView(pensionsUserData, taxYear, index)))
 
 
-  private def ensureThatSessionDataIsSufficient(pensionsUserData: PensionsUserData, taxYear: Int, index : Option[Int])(f: (PensionsUserData, Int, Option[Int]) => Future[Result])
+  private def ensureThatSessionDataIsSufficient(pensionsUserData: PensionsUserData, taxYear: Int, index : Int)
+                                               (f: (PensionsUserData, Int, Int) => Future[Result])
                                                         (implicit request: AuthorisationRequest[AnyContent]): Future[Result] =
-    if (sessionDataIsSufficient(pensionsUserData, index)) {
-      f(pensionsUserData, taxYear, index)
-    } else Future.successful(whenSessionDataIsInsufficient(taxYear))
+    if (sessionDataIsSufficient(pensionsUserData, index)) f(pensionsUserData, taxYear, index)else Future.successful(whenSessionDataIsInsufficient(taxYear))
 
 
   def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
       case Left(_) => Future.successful(onError)
-      case Right(pensionsUserDataOpt) =>
-        pensionsUserDataOpt
-          .map(ensureThatSessionDataIsSufficient(_, taxYear, index)(show))
-          .getOrElse(Future.successful(redirectWhenNoSessionData(taxYear)))
+      case Right(Some(data)) => validateIndex(index, data) match {
+        case Some(id) => ensureThatSessionDataIsSufficient(data, taxYear, id)(shows)
+        case None => Future.successful(redirectWhenNoSessionData(taxYear))
+      }
+      case Right(None) => Future.successful(redirectWhenNoSessionData(taxYear))
     }
   }
 
-  private def submit(pensionsUserData: PensionsUserData, taxYear: Int, index : Option[Int])
+  private def submit(pensionsUserData: PensionsUserData, taxYear: Int, index : Int)
                              (implicit request: AuthorisationRequest[AnyContent]): Future[Result] =
     form(request.user.isAgent).bindFromRequest.fold(
       formWithErrors => Future.successful(BadRequest(whenFormIsInvalid(formWithErrors, taxYear, index))),
@@ -105,13 +105,14 @@ abstract class BaseYesNoAmountWithIndexController(messagesControllerComponents: 
   def submit(taxYear: Int, index: Option[Int]): Action[AnyContent] = authAction.async { implicit request => {
     pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
       case Left(_) => Future.successful(onError)
-      case Right(pensionsUserDataOpt) =>
-        pensionsUserDataOpt
-          .map(ensureThatSessionDataIsSufficient(_, taxYear, index)(submit))
-          .getOrElse(Future.successful(redirectWhenNoSessionData(taxYear)))
+      case Right(Some(data)) => validateIndex(index, data) match {
+        case Some(id) => ensureThatSessionDataIsSufficient(data, taxYear, id)(submit)
+        case None => Future.successful(redirectWhenNoSessionData(taxYear))
+      }
+      case Right(None) => Future.successful(redirectWhenNoSessionData(taxYear))
     }}}
 
-  protected def populateForm(pensionsUserData: PensionsUserData, index : Option[Int] = None)
+  protected def populateForm(pensionsUserData: PensionsUserData, index : Int)
                             (implicit request: AuthorisationRequest[AnyContent]): Form[(Boolean, Option[BigDecimal])] =
   {
     val baseForm = form(request.user.isAgent)
@@ -123,7 +124,7 @@ abstract class BaseYesNoAmountWithIndexController(messagesControllerComponents: 
   }
 
 
-  private def onValidForm(pensionsUserData: PensionsUserData, taxYear: Int, validForm: (Boolean, Option[BigDecimal]), index : Option[Int] = None)
+  private def onValidForm(pensionsUserData: PensionsUserData, taxYear: Int, validForm: (Boolean, Option[BigDecimal]), index : Int)
                          (implicit request: AuthorisationRequest[AnyContent], clock: Clock): Future[Result] = {
     validForm match {
       case (yesWasSelected, amountOpt) =>
