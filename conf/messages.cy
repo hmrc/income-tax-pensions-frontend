@@ -820,7 +820,6 @@ overseasPension.pensionPayments.amountBeforeTax.tooBig = The amount before tax m
 overseasPension.pensionPayments.nonUkTaxPaid.text = Non-UK tax paid
 overseasPension.pensionPayments.nonUkTaxPaid.incorrectFormat = Enter the amount of non-UK tax paid in the correct format
 
-
 #Pension Customer Reference Number
 overseasPension.pensionsCustomerReferenceNumber.title.individual = What’s your customer reference number?
 overseasPension.pensionsCustomerReferenceNumber.title.agent = What’s your client’s customer reference number?
@@ -829,6 +828,25 @@ overseasPension.pensionsCustomerReferenceNumber.paragraph1.agent = Your client�
 overseasPension.pensionsCustomerReferenceNumber.hint = For example, ''PENSIONINCOME245''
 overseasPension.pensionsCustomerReferenceNumber.error.noEntry.individual = Enter your customer reference number
 overseasPension.pensionsCustomerReferenceNumber.error.noEntry.agent = Enter your client’s customer reference number
+
+#Your Taxable Amount
+overseasPension.yourTaxableAmount.title.individual = Your taxable amount
+overseasPension.yourTaxableAmount.title.agent = Your client’s taxable amount
+overseasPension.yourTaxableAmount.noFtrcClaim.para.individual = Your taxable amount is the amount you got in foreign pension payments.
+overseasPension.yourTaxableAmount.noFtrcClaim.para.agent = Your client’s taxable amount is the amount they got in foreign pension payments.
+overseasPension.yourTaxableAmount.ftrcClaim.para.individual = Your taxable amount is:
+overseasPension.yourTaxableAmount.ftrcClaim.para.item1.individual = the amount you got in foreign pension payments
+overseasPension.yourTaxableAmount.ftrcClaim.para.item2.individual = minus any non-UK tax you paid
+overseasPension.yourTaxableAmount.ftrcClaim.para.agent = Your client’s taxable amount is:
+overseasPension.yourTaxableAmount.ftrcClaim.para.item1.agent = the amount your client got in foreign pension payments
+overseasPension.yourTaxableAmount.ftrcClaim.para.item2.agent = minus any non-UK tax they paid
+overseasPension.yourTaxableAmount.table.title.individual=Your taxable amount calculation
+overseasPension.yourTaxableAmount.table.title.agent=Your client's taxable amount calculation
+overseasPension.yourTaxableAmount.table.header1=Item
+overseasPension.yourTaxableAmount.table.header2=Amount
+overseasPension.yourTaxableAmount.table.foreignPayments=Foreign pension payments
+overseasPension.yourTaxableAmount.table.nonUkTax=Non-UK tax deducted
+overseasPension.yourTaxableAmount.table.taxableAmount=Taxable amount
 
 ############################################## INCOME FROM OVERSEAS PENSIONS ##############################################
 
