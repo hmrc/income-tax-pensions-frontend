@@ -113,6 +113,7 @@ abstract class BaseYesNoAmountController(
     missingInputError = errorMessageSet.neitherYesNorNo.get(isAgent),
     emptyFieldKey = errorMessageSet.amountEmpty.get(isAgent),
     wrongFormatKey = errorMessageSet.amountHasInvalidFormat.get(isAgent),
+    minAmountKey = errorMessageSet.minAmountMessage.get(isAgent),
     exceedsMaxAmountKey = errorMessageSet.amountIsExcessive.get(isAgent)
   )
 
