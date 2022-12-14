@@ -764,6 +764,11 @@ unauthorisedPayments.gateway.findOutMore = Dysgwch ragor am daliadau heb awdurdo
 unauthorisedPayments.gateway.error.individual = Dewiswch ‘Iawn’ os cawsoch daliadau heb awdurdod
 unauthorisedPayments.gateway.error.agent = Dewiswch ‘Iawn’ os cafodd eich cleient daliadau heb awdurdod
 
+#Unauthorised payments from UK pensions schemes
+unauthorisedPayments.pensionSchemeDetails.title = Unauthorised payments from UK pensions schemes
+unauthorisedPayments.pensionSchemeDetails.addAnotherPensionSchemeTaxReference = Add another Pensions Scheme Tax Reference
+unauthorisedPayments.pensionSchemeDetails.addPensionSchemeTaxReference = Add a Pensions Scheme Tax Reference
+
 #################       Overseas Pension        ########################################
 
 #Payments into overseas pension schemes page
