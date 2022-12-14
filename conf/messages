@@ -759,6 +759,11 @@ unauthorisedPayments.gateway.findOutMore = Find out more about unauthorised paym
 unauthorisedPayments.gateway.error.individual = Select yes if you got unauthorised payments
 unauthorisedPayments.gateway.error.agent = Select yes if your client got unauthorised payments
 
+#Unauthorised payments from UK pensions schemes
+unauthorisedPayments.pensionSchemeDetails.title = Unauthorised payments from UK pensions schemes
+unauthorisedPayments.pensionSchemeDetails.addAnotherPensionSchemeTaxReference = Add another Pensions Scheme Tax Reference
+unauthorisedPayments.pensionSchemeDetails.addPensionSchemeTaxReference = Add a Pensions Scheme Tax Reference
+
 #################       Overseas Pension        ########################################
 
 #Payments into overseas pension schemes page
