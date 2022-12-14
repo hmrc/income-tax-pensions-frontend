@@ -16,7 +16,7 @@
 
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.html.templates.Layout
-@import views.html.templates.helpers.{Button, Heading, Table}
+@import views.html.templates.helpers.{Button, Heading, InputTextAlt, Table}
 
 @this(
         layout: Layout,
@@ -24,6 +24,7 @@
         table: Table,
         govukTable: GovukTable,
         formWithCsrf: FormWithCSRF,
+        inputText: InputTextAlt,
         button: Button
 )
 
@@ -41,14 +42,11 @@
 }
 
 @firstMessage = {
-@{
-    messages(s"overseasPension.yourTaxableAmount.table.title.${if(request.user.isAgent) "agent" else "individual"}")
-}
+    @{messages(s"overseasPension.yourTaxableAmount.table.title.${if(request.user.isAgent) "agent" else "individual"}")}
 }
 
 @ftcrTable = {
     @govukTable(Table(
-
         rows = Seq(
             Seq(
                 TableRow(
@@ -93,7 +91,6 @@
         firstCellIsHeader = true
     ))
 }
-
 
 @noFtcrTable = {
     @govukTable(Table(
@@ -146,17 +143,14 @@
     } else {
         @noFtcrTable
     }
-
 }
 
-@layout(pageTitle = titleText, taxYear = Some(taxYear), isAgent = request.user.isAgent) {
+@layout(pageTitle = titleText, taxYear = Some(taxYear), isAgent = request.user.isAgent, backLink = true) {
     @heading(titleText, Some(messages("common.incomeFromOverseasPensions.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-2")
     @contentHtml
 
     @formWithCsrf(action = controllers.pensions.incomeFromOverseasPensions.routes.TaxableAmountController.submit(taxYear, index)) {
+        <input type="hidden" name="amount" value = @taxableAmount.getOrElse("0.00")></input>
         @button()
     }
-
 }
-
-
