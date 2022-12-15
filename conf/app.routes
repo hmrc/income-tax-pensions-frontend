@@ -238,3 +238,6 @@ POST        /:taxYear/overseas-pensions/income-from-overseas-pensions/pension-ov
 
 GET         /:taxYear/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-ftcr                                 controllers.pensions.overseas.incomeFromOverseasPension.ForeignTaxCreditReliefController.show(taxYear: Int, index:Option[Int])
 POST        /:taxYear/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-ftcr                                 controllers.pensions.overseas.incomeFromOverseasPension.ForeignTaxCreditReliefController.submit(taxYear: Int, index:Option[Int])
+
+GET         /:taxYear/overseas-pensions/income-from-overseas-pensions/check-overseas-pension-income-cya                            controllers.pensions.incomeFromOverseasPensions.IncomeFromOverseasPensionsCYAController.show(taxYear: Int)
+POST        /:taxYear/overseas-pensions/income-from-overseas-pensions/check-overseas-pension-income-cya                            controllers.pensions.incomeFromOverseasPensions.IncomeFromOverseasPensionsCYAController.submit(taxYear: Int)
