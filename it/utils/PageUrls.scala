@@ -193,7 +193,9 @@ object PageUrls extends IntegrationTest {
       (countryIndex: Int) => (taxYear: Int) => s"$appUrl/$taxYear/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-country?countryIndex=$countryIndex"
     def pensionOverseasIncomeCountryUrlIndex2(taxYear: Int, countryIndex: Int)
        = s"$appUrl/$taxYear/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-country?countryIndex=$countryIndex"
-
+    def checkIncomeFromOverseasPensionsCyaUrl(taxYear: Int): String = s"$appUrl/$taxYear/overseas-pensions/income-from-overseas-pensions/check-overseas-pension-income-cya"
+    def foreignTaxCreditReliefControllerUrl(taxYear: Int, index: Int) =
+      s"$appUrl/$taxYear/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-ftcr?index=${index}"
   }
 }
 //scalastyle:on number.of.methods
