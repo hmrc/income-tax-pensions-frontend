@@ -26,6 +26,7 @@ import play.test.Helpers.stubMessagesApi
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{ActionItem, Key, SummaryListRow, Value}
 import builders.IncomeFromOverseasPensionsViewModelBuilder.anIncomeFromOverseasPensionsViewModel
+import views.pensions.incomeFromOverseasPensions.IncomeFromOverseasPensionsCYAViewHelper
 
 class IncomeFromOverseasPensionsCYAViewHelperTest extends AnyWordSpec with Matchers {
 

@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package controllers.pensions.incomeFromOverseasPensions
+package views.pensions.incomeFromOverseasPensions
 
 import controllers.pensions.incomeFromOverseasPensions.routes.PensionOverseasIncomeStatus
 import controllers.pensions.overseas.incomeFromOverseasPension.routes.ForeignTaxCreditReliefController
+import forms.Countries
 import models.pension.charges.IncomeFromOverseasPensionsViewModel
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import utils.CYABaseHelper
-import forms.Countries
 
 object IncomeFromOverseasPensionsCYAViewHelper extends CYABaseHelper {
 
@@ -53,6 +53,7 @@ object IncomeFromOverseasPensionsCYAViewHelper extends CYABaseHelper {
           Some(summaryListRowWithStrings(
             "incomeFromOverseasPensions.cya.overseasPensionSchemes",
             if (countryName == None) incomeFromOverseasPensionsViewModel.overseasIncomePensionSchemes(index).countryCode else countryName,
+            //TODO - To change the redirect to the Oveseas Pension page
             ForeignTaxCreditReliefController.show(taxYear, Some(index)))(messages))
       }
     } else Seq(None)

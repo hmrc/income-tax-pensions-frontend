@@ -17,7 +17,7 @@
 @import models.pension.charges.IncomeFromOverseasPensionsViewModel
 @import views.html.templates.Layout
 @import views.html.templates.helpers.{Button, Heading, SummaryList}
-@import controllers.pensions.incomeFromOverseasPensions.IncomeFromOverseasPensionsCYAViewHelper
+@import views.pensions.incomeFromOverseasPensions.IncomeFromOverseasPensionsCYAViewHelper
 @this(layout: Layout, summaryList: SummaryList, heading: Heading, button: Button, csrfForm: FormWithCSRF)
 @(taxYear: Int, cya: IncomeFromOverseasPensionsViewModel)(implicit messages: Messages, appConfig: AppConfig, request: AuthorisationRequest[_])
 
