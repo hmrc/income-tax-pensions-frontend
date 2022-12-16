@@ -863,3 +863,9 @@ overseasPension.foreignTaxCreditRelief.title.individual = Are you claiming Forei
 overseasPension.foreignTaxCreditRelief.title.agent = Is your client claiming Foreign Tax Credit Relief (FTCR)?
 overseasPension.foreignTaxCreditRelief.error.noEntry.individual = Enter yes or no if you are claiming Foreign Tax Credit Relief (FTCR)
 overseasPension.foreignTaxCreditRelief.error.noEntry.agent = Enter yes or no if your client is claiming Foreign Tax Credit Relief (FTCR)
+
+incomeFromOverseasPensions.cya.heading = Check income from overseas pensions
+incomeFromOverseasPensions.cya.paymentsFromOverseasPensions = Payments from overseas pensions
+incomeFromOverseasPensions.cya.paymentsFromOverseasPensions.hidden = Change Payments from overseas pensions
+incomeFromOverseasPensions.cya.overseasPensionSchemes = Overseas pension schemes
+incomeFromOverseasPensions.cya.overseasPensionSchemes.hidden = Change Overseas pension schemes

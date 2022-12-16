@@ -46,6 +46,9 @@ trait CYABaseHelper{
    def summaryListRowWithString(labelMessageKey: String, valueOpt: Option[Seq[String]], changeLink: Call)(implicit messages: Messages): SummaryListRow =
     summaryListRow(labelMessageKey, displayedValueForOptionalStrings(valueOpt), changeLink)
 
+  def summaryListRowWithStrings(labelMessageKey: String, valueOpt: Option[String], changeLink: Call)(implicit messages: Messages): SummaryListRow =
+    summaryListRow(labelMessageKey, valueOpt.getOrElse(""), changeLink)
+
    def summaryListRowWithAmountAndTaxValue(labelMessageKey: String, amount: Option[BigDecimal], taxPaid: Option[BigDecimal], changeLink: Call)(implicit messages: Messages): SummaryListRow =
     summaryListRow(labelMessageKey, displayedValueForAmountAndTax(amount, taxPaid), changeLink)
 
