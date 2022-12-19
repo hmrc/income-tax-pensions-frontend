@@ -19,9 +19,7 @@ package controllers.pensions.incomeFromOverseasPensions
 import config.{AppConfig, ErrorHandler}
 import controllers.predicates.AuthorisedAction
 import controllers.predicates.TaxYearAction.taxYearAction
-import forms.{AmountForm, FormUtils}
-import forms.QOPSReferenceNumberForm.filter
-import forms.validation.mappings.MappingUtil.trimmedText
+import forms.FormUtils
 import models.{AuthorisationRequest, User}
 import models.mongo.{PensionsCYAModel, PensionsUserData}
 import models.pension.charges.PensionScheme
@@ -31,7 +29,6 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.PensionSessionService
 import controllers.pensions.routes.PensionsSummaryController
 import controllers.pensions.incomeFromOverseasPensions.routes.TaxableAmountController
-import play.api.data.Forms.single
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.incomeFromOverseasPensions.TaxableAmountView
@@ -55,7 +52,12 @@ class TaxableAmountController @Inject()(val authAction: AuthorisedAction,
       pensionSessionService.getPensionSessionData(taxYear, request.user).map {
         case Right(Some(data)) =>
           validateIndex(index, data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes) match {
-            case Some(i) => populateForm(data, taxYear, i)
+            case Some(i) =>
+              if (validTaxAmounts(data, taxYear, i)) {
+                populateView(data, taxYear, i)
+              } else {
+                Redirect(PensionsSummaryController.show(taxYear))
+              }
             case None => Redirect(PensionsSummaryController.show(taxYear)) // Todo should redirect to another page
           }
         case _ => Redirect(PensionsSummaryController.show(taxYear))
@@ -67,22 +69,7 @@ class TaxableAmountController @Inject()(val authAction: AuthorisedAction,
       pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
         case Right(Some(data)) =>
           validateIndex(index, data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes) match {
-            case Some(i) => {
-              println("-----------------------------")
-              amountForm(request.user).bindFromRequest.fold(
-                formWithErrors => Future.successful(BadRequest(view(
-                  formWithErrors,
-                  data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes(i).pensionPaymentAmount,
-                  data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes(i).pensionPaymentTaxPaid.map(
-                    v => if (v > 0) -v else v
-                  ),
-                  getTaxableAmount(data, i),
-                  data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes(i).foreignTaxCreditReliefQuestion,
-                  taxYear, Some(i)))),
-
-                amount =>
-                  updatePensionScheme(data, Some(amount), taxYear, i))
-            }
+            case Some(i) => updatePensionScheme(data, getTaxableAmount(data, i), taxYear, i)
             case None => Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
           }
         case _ =>
@@ -95,14 +82,24 @@ class TaxableAmountController @Inject()(val authAction: AuthorisedAction,
     index.filter(i => i >= 0 && i < pensionSchemesList.size)
   }
 
-  private def populateForm(data: PensionsUserData, taxYear: Int, index: Int)(implicit request: AuthorisationRequest[AnyContent]): Result = {
+  private def validTaxAmounts(data: PensionsUserData, taxYear: Int, index: Int): Boolean = {
+    val amountBeforeTax = data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes(index).pensionPaymentAmount
+    val nonUkTaxPaidOpt = data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes(index).pensionPaymentTaxPaid
+    if (amountBeforeTax == None && nonUkTaxPaidOpt == None) {
+      false
+    } else {
+      true
+    }
+  }
+
+  private def populateView(data: PensionsUserData, taxYear: Int, index: Int)(implicit request: AuthorisationRequest[AnyContent]): Result = {
     val amountBeforeTax = data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes(index).pensionPaymentAmount
     val nonUkTaxPaidOpt = data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes(index).pensionPaymentTaxPaid
     val signedNonUkTaxPaid = nonUkTaxPaidOpt.map(v => if (v > 0) -v else v)
     val ftcr = data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes(index).foreignTaxCreditReliefQuestion
     val taxableAmount = getTaxableAmount(data, index)
 
-    Ok(view(amountForm(request.user), amountBeforeTax, signedNonUkTaxPaid, taxableAmount, ftcr, taxYear, Some(index)))
+    Ok(view(amountBeforeTax, signedNonUkTaxPaid, taxableAmount, ftcr, taxYear, Some(index)))
   }
 
   private def getTaxableAmount(data: PensionsUserData, index: Int) = {
@@ -123,7 +120,6 @@ class TaxableAmountController @Inject()(val authAction: AuthorisedAction,
   private def updatePensionScheme(data: PensionsUserData, taxableAmount: Option[BigDecimal], taxYear: Int, index: Int)
                                  (implicit request: AuthorisationRequest[AnyContent]) = {
     val viewModel = data.pensions.incomeFromOverseasPensions
-    printf("0----------0----")
     val updatedCyaModel: PensionsCYAModel = {
       data.pensions.copy(
         incomeFromOverseasPensions = viewModel.copy(
@@ -139,6 +135,4 @@ class TaxableAmountController @Inject()(val authAction: AuthorisedAction,
       Redirect(TaxableAmountController.show(taxYear, Some(index)))
     }
   }
-
-  def amountForm(user: User): Form[BigDecimal] = AmountForm.amountForm("")
 }

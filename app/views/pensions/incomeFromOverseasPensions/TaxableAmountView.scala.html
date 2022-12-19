@@ -24,12 +24,10 @@
         table: Table,
         govukTable: GovukTable,
         formWithCsrf: FormWithCSRF,
-        inputText: InputTextAlt,
         button: Button
 )
 
 @(
-        form: Form[BigDecimal],
         foreignPensionPayment: Option[BigDecimal],
         nonUkTaxPaid: Option[BigDecimal],
         taxableAmount: Option[BigDecimal],
@@ -53,7 +51,7 @@
                     content = Text(messages("overseasPension.yourTaxableAmount.table.foreignPayments"))
                 ),
                 TableRow(
-                    content = Text(foreignPensionPayment.getOrElse(BigDecimal("0.0")).toString()),
+                    content = Text(foreignPensionPayment.getOrElse(BigDecimal("")).toString()),
                     format = Some("numeric")
                 )
             ),
@@ -62,7 +60,7 @@
                     content = Text(messages("overseasPension.yourTaxableAmount.table.nonUkTax"))
                 ),
                 TableRow(
-                    content = Text(nonUkTaxPaid.getOrElse(BigDecimal("0.0")).toString()),
+                    content = Text(nonUkTaxPaid.getOrElse(BigDecimal("")).toString()),
                     format = Some("numeric")
                 )
             ),
@@ -71,7 +69,7 @@
                     content = Text(messages("overseasPension.yourTaxableAmount.table.taxableAmount"))
                 ),
                 TableRow(
-                    content = Text(taxableAmount.getOrElse(BigDecimal("0.0")).toString()),
+                    content = Text(taxableAmount.getOrElse(BigDecimal("")).toString()),
                     format = Some("numeric")
                 )
             ),
@@ -101,7 +99,7 @@
                     content = Text(messages("overseasPension.yourTaxableAmount.table.foreignPayments"))
                 ),
                 TableRow(
-                    content = Text(foreignPensionPayment.getOrElse(BigDecimal("0.0")).toString()),
+                    content = Text(foreignPensionPayment.getOrElse(BigDecimal("")).toString()),
                     format = Some("numeric")
                 )
             ),
@@ -110,7 +108,7 @@
                     content = Text(messages("overseasPension.yourTaxableAmount.table.taxableAmount"))
                 ),
                 TableRow(
-                    content = Text(taxableAmount.getOrElse(BigDecimal("0.0")).toString()),
+                    content = Text(taxableAmount.getOrElse(BigDecimal("")).toString()),
                     format = Some("numeric")
                 )
             ),
@@ -150,7 +148,6 @@
     @contentHtml
 
     @formWithCsrf(action = controllers.pensions.incomeFromOverseasPensions.routes.TaxableAmountController.submit(taxYear, index)) {
-        <input type="hidden" name="amount" value = @taxableAmount.getOrElse("0.00")></input>
         @button()
     }
 }
