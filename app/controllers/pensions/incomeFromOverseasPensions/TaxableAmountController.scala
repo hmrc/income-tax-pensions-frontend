@@ -23,7 +23,6 @@ import forms.FormUtils
 import models.{AuthorisationRequest, User}
 import models.mongo.{PensionsCYAModel, PensionsUserData}
 import models.pension.charges.PensionScheme
-import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.PensionSessionService
@@ -85,7 +84,7 @@ class TaxableAmountController @Inject()(val authAction: AuthorisedAction,
   private def validTaxAmounts(data: PensionsUserData, taxYear: Int, index: Int): Boolean = {
     val amountBeforeTax = data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes(index).pensionPaymentAmount
     val nonUkTaxPaidOpt = data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes(index).pensionPaymentTaxPaid
-    if (amountBeforeTax == None && nonUkTaxPaidOpt == None) {
+    if (amountBeforeTax == None || nonUkTaxPaidOpt == None) {
       false
     } else {
       true
