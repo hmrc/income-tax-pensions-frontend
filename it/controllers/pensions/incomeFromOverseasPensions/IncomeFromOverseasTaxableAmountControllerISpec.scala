@@ -7,7 +7,7 @@ import play.api.libs.ws.WSResponse
 import utils.CommonUtils
 import utils.PageUrls.IncomeFromOverseasPensionsPages
 
-class TaxableAmountControllerISpec extends CommonUtils with BeforeAndAfterEach {
+class IncomeFromOverseasTaxableAmountControllerISpec extends CommonUtils with BeforeAndAfterEach {
   object Selectors {
     val captionSelector: String = "#main-content > div > div > header > p"
     val formSelector: String = "#main-content > div > div > form"

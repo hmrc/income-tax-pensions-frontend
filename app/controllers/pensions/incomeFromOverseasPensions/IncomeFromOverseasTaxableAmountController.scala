@@ -27,19 +27,21 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.PensionSessionService
 import controllers.pensions.routes.PensionsSummaryController
-import controllers.pensions.incomeFromOverseasPensions.routes.TaxableAmountController
+import controllers.pensions.incomeFromOverseasPensions.routes.IncomeFromOverseasTaxableAmountController
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
-import views.html.pensions.incomeFromOverseasPensions.TaxableAmountView
+import views.html.pensions.incomeFromOverseasPensions.IncomeFromOverseasTaxableAmountView
 
+import java.text.NumberFormat
+import java.util.Locale
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class TaxableAmountController @Inject()(val authAction: AuthorisedAction,
-                                        val pensionSessionService: PensionSessionService,
-                                        val view: TaxableAmountView,
-                                        errorHandler: ErrorHandler
+class IncomeFromOverseasTaxableAmountController @Inject()(val authAction: AuthorisedAction,
+                                                          val pensionSessionService: PensionSessionService,
+                                                          val view: IncomeFromOverseasTaxableAmountView,
+                                                          errorHandler: ErrorHandler
                                        )(implicit val mcc: MessagesControllerComponents,
                                          appConfig: AppConfig,
                                          clock: Clock,
@@ -97,8 +99,8 @@ class TaxableAmountController @Inject()(val authAction: AuthorisedAction,
     val signedNonUkTaxPaid = nonUkTaxPaidOpt.map(v => if (v > 0) -v else v)
     val ftcr = data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes(index).foreignTaxCreditReliefQuestion
     val taxableAmount = getTaxableAmount(data, index)
-
-    Ok(view(amountBeforeTax, signedNonUkTaxPaid, taxableAmount, ftcr, taxYear, Some(index)))
+    val viewValues = formatValues(amountBeforeTax, signedNonUkTaxPaid, taxableAmount)
+    Ok(view(viewValues._1, viewValues._2, viewValues._3, ftcr, taxYear, Some(index)))
   }
 
   private def getTaxableAmount(data: PensionsUserData, index: Int) = {
@@ -131,7 +133,21 @@ class TaxableAmountController @Inject()(val authAction: AuthorisedAction,
     pensionSessionService.createOrUpdateSessionData(request.user,
       updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
       //TODO: Redirect to next page when navigation is available
-      Redirect(TaxableAmountController.show(taxYear, Some(index)))
+      Redirect(IncomeFromOverseasTaxableAmountController.show(taxYear, Some(index)))
     }
+  }
+
+  private def formatValues(amountBeforeTax: Option[BigDecimal], signedNonUkTaxPaid: Option[BigDecimal], taxableAmount: Option[BigDecimal]): (Option[String], Option[String], Option[String]) = {
+
+    def formatNoZeros(amount: BigDecimal): String = {
+      NumberFormat.getCurrencyInstance(Locale.UK).format(amount)
+        .replaceAll("\\.00", "")
+    }
+
+    (
+      amountBeforeTax.map(amount => formatNoZeros(amount)),
+      signedNonUkTaxPaid.map(amount => formatNoZeros(amount)),
+      taxableAmount.map(amount => formatNoZeros(amount)),
+    )
   }
 }

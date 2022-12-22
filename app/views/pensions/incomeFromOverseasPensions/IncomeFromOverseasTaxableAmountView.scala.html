@@ -28,9 +28,9 @@
 )
 
 @(
-        foreignPensionPayment: Option[BigDecimal],
-        nonUkTaxPaid: Option[BigDecimal],
-        taxableAmount: Option[BigDecimal],
+        foreignPensionPayment: Option[String],
+        nonUkTaxPaid: Option[String],
+        taxableAmount: Option[String],
         ftcrOpt: Option[Boolean],
         taxYear: Int,
         index: Option[Int])(implicit request: AuthorisationRequest[_], messages: Messages, appConfig: AppConfig)
@@ -44,6 +44,13 @@
 }
 
 @ftcrTable = {
+    <p class="govuk-body">
+        @{messages(s"overseasPension.yourTaxableAmount.ftrcClaim.para.${if(request.user.isAgent) "agent" else "individual"}")}
+        <ul class="govuk-list govuk-list--bullet">
+            <li>@{messages(s"overseasPension.yourTaxableAmount.ftrcClaim.para.item1.${if(request.user.isAgent) "agent" else "individual"}")}</li>
+            <li>@{messages(s"overseasPension.yourTaxableAmount.ftrcClaim.para.item2.${if(request.user.isAgent) "agent" else "individual"}")}</li>
+        </ul>
+    </p>
     @govukTable(Table(
         rows = Seq(
             Seq(
@@ -51,7 +58,7 @@
                     content = Text(messages("overseasPension.yourTaxableAmount.table.foreignPayments"))
                 ),
                 TableRow(
-                    content = Text(foreignPensionPayment.getOrElse(BigDecimal("")).toString()),
+                    content = Text(foreignPensionPayment.getOrElse("")),
                     format = Some("numeric")
                 )
             ),
@@ -60,7 +67,7 @@
                     content = Text(messages("overseasPension.yourTaxableAmount.table.nonUkTax"))
                 ),
                 TableRow(
-                    content = Text(nonUkTaxPaid.getOrElse(BigDecimal("")).toString()),
+                    content = Text(nonUkTaxPaid.getOrElse("")),
                     format = Some("numeric")
                 )
             ),
@@ -69,7 +76,7 @@
                     content = Text(messages("overseasPension.yourTaxableAmount.table.taxableAmount"))
                 ),
                 TableRow(
-                    content = Text(taxableAmount.getOrElse(BigDecimal("")).toString()),
+                    content = Text(taxableAmount.getOrElse("")),
                     format = Some("numeric")
                 )
             ),
@@ -91,6 +98,9 @@
 }
 
 @noFtcrTable = {
+    <p class="govuk-body">
+        @{messages(s"overseasPension.yourTaxableAmount.noFtrcClaim.para.${if(request.user.isAgent) "agent" else "individual"}")}
+    </p>
     @govukTable(Table(
 
         rows = Seq(
@@ -99,7 +109,7 @@
                     content = Text(messages("overseasPension.yourTaxableAmount.table.foreignPayments"))
                 ),
                 TableRow(
-                    content = Text(foreignPensionPayment.getOrElse(BigDecimal("")).toString()),
+                    content = Text(foreignPensionPayment.getOrElse("")),
                     format = Some("numeric")
                 )
             ),
@@ -108,7 +118,7 @@
                     content = Text(messages("overseasPension.yourTaxableAmount.table.taxableAmount"))
                 ),
                 TableRow(
-                    content = Text(taxableAmount.getOrElse(BigDecimal("")).toString()),
+                    content = Text(taxableAmount.getOrElse("")),
                     format = Some("numeric")
                 )
             ),
@@ -129,13 +139,6 @@
 }
 
 @contentHtml = {
-    <p class="govuk-body">
-        @{
-            messages(s"overseasPension.yourTaxableAmount.noFtrcClaim.para.${if(request.user.isAgent) "agent" else "individual"}")
-        }
-        @firstMessage
-    </p>
-
     @if(ftcrOpt == Some(true)) {
         @ftcrTable
     } else {
@@ -147,7 +150,7 @@
     @heading(titleText, Some(messages("common.incomeFromOverseasPensions.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-2")
     @contentHtml
 
-    @formWithCsrf(action = controllers.pensions.incomeFromOverseasPensions.routes.TaxableAmountController.submit(taxYear, index)) {
+    @formWithCsrf(action = controllers.pensions.incomeFromOverseasPensions.routes.IncomeFromOverseasTaxableAmountController.submit(taxYear, index)) {
         @button()
     }
 }
