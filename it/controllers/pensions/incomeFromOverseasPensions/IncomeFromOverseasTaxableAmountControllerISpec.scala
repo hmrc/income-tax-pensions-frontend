@@ -16,19 +16,24 @@
 
 package controllers.pensions.incomeFromOverseasPensions
 
-import builders.PensionsUserDataBuilder.{aPensionsUserData, anPensionsUserDataEmptyCya}
+import builders.IncomeFromOverseasPensionsViewModelBuilder.anIncomeFromOverseasPensionsWithFtcrViewModel
+import builders.PensionsUserDataBuilder.{aPensionsUserData, anPensionsUserDataEmptyCya, pensionUserDataWithIncomeOverseasPension}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.CommonUtils
+import utils.{CommonUtils, PensionsDatabaseHelper}
 import utils.PageUrls.{IncomeFromOverseasPensionsPages, pensionSummaryUrl}
 
 import java.text.NumberFormat
 import java.util.Locale
 
-class IncomeFromOverseasTaxableAmountControllerISpec extends CommonUtils with BeforeAndAfterEach {
+class IncomeFromOverseasTaxableAmountControllerISpec extends
+  CommonUtils with
+  BeforeAndAfterEach with
+  PensionsDatabaseHelper {
+
   object Selectors {
     val captionSelector: String = "#main-content > div > div > header > p"
     val formSelector: String = "#main-content > div > div > form"
@@ -42,8 +47,10 @@ class IncomeFromOverseasTaxableAmountControllerISpec extends CommonUtils with Be
     val tableRowHeadSelector: (Int, Int) => String = (row, column) =>
       s"#main-content > div > div > table > tbody > tr:nth-child($row) > th:nth-of-type($column)"
 
-    def labelSelector(index: Int): String = s"form > div:nth-of-type($index) > label"
-    def paragraphSelector(index: Int): String = s"#main-content > div > div > p:nth-of-type($index)"
+    val labelSelector: Int => String = (index) => s"form > div:nth-of-type($index) > label"
+    val paragraphSelector: Int => String = (index) => s"#main-content > div > div > p:nth-of-type($index)"
+    val paraItemSelector: Int => String = (index) => s"#main-content > div > div > ul > li:nth-of-type($index)"
+
   }
 
   trait CommonExpectedResults {
@@ -51,6 +58,9 @@ class IncomeFromOverseasTaxableAmountControllerISpec extends CommonUtils with Be
     val expectedTitle: String
     val expectedHeading: String
     val expectedParagraph: String
+    val expectedFtcrParagraph: String
+    val expectedFtcrParaItem1: String
+    val expectedFtcrParaItem2: String
     val expectedTableCaption: String
     val expectedTableHeader1: String
     val expectedTableHeader2: String
@@ -69,11 +79,14 @@ class IncomeFromOverseasTaxableAmountControllerISpec extends CommonUtils with Be
     val expectedTitle: String = "Your taxable amount"
     val expectedHeading: String = "Your taxable amount"
     val expectedParagraph: String = "Your taxable amount is the amount you got in foreign pension payments."
+    val expectedFtcrParagraph: String = "Your taxable amount is:"
+    val expectedFtcrParaItem1: String = "the amount you got in foreign pension payments"
+    val expectedFtcrParaItem2: String = "minus any non-UK tax you paid"
     val expectedTableCaption: String = "Your taxable amount calculation"
     val expectedTableHeader1: String = "Item"
     val expectedTableHeader2: String = "Amount"
     val expectedRowHeading1: String = "Foreign pension payments"
-    val expectedRowHeading2: String = ""
+    val expectedRowHeading2: String = "Non-UK tax deducted"
     val expectedRowHeading3: String = "Taxable amount"
     val expectedButtonText: String = "Continue"
   }
@@ -83,6 +96,9 @@ class IncomeFromOverseasTaxableAmountControllerISpec extends CommonUtils with Be
     val expectedTitle: String = "Your client’s taxable amount"
     val expectedHeading: String = "Your client’s taxable amount"
     val expectedParagraph: String = "Your client’s taxable amount is the amount they got in foreign pension payments."
+    val expectedFtcrParagraph: String = "Your client’s taxable amount is:"
+    val expectedFtcrParaItem1: String = "the amount your client got in foreign pension payments"
+    val expectedFtcrParaItem2: String = "minus any non-UK tax they paid"
     val expectedTableCaption: String = "Your client’s taxable amount calculation"
     val expectedTableHeader1: String = "Item"
     val expectedTableHeader2: String = "Amount"
@@ -97,6 +113,9 @@ class IncomeFromOverseasTaxableAmountControllerISpec extends CommonUtils with Be
     val expectedTitle: String = "Your taxable amount"
     val expectedHeading: String = "Your taxable amount"
     val expectedParagraph: String = "Your taxable amount is the amount you got in foreign pension payments."
+    val expectedFtcrParagraph: String = "Your taxable amount is:"
+    val expectedFtcrParaItem1: String = "the amount you got in foreign pension payments"
+    val expectedFtcrParaItem2: String = "minus any non-UK tax you paid"
     val expectedTableCaption: String = "Your taxable amount calculation"
     val expectedTableHeader1: String = "Item"
     val expectedTableHeader2: String = "Amount"
@@ -111,6 +130,9 @@ class IncomeFromOverseasTaxableAmountControllerISpec extends CommonUtils with Be
     val expectedTitle: String = "Your client’s taxable amount"
     val expectedHeading: String = "Your client’s taxable amount"
     val expectedParagraph: String = "Your client’s taxable amount is the amount they got in foreign pension payments."
+    val expectedFtcrParagraph: String = "Your client’s taxable amount is:"
+    val expectedFtcrParaItem1: String = "the amount your client got in foreign pension payments"
+    val expectedFtcrParaItem2: String = "minus any non-UK tax they paid"
     val expectedTableCaption: String = "Your client’s taxable amount calculation"
     val expectedTableHeader1: String = "Item"
     val expectedTableHeader2: String = "Amount"
@@ -175,9 +197,10 @@ class IncomeFromOverseasTaxableAmountControllerISpec extends CommonUtils with Be
 
           formPostLinkCheck(IncomeFromOverseasPensionsPages.taxableAmountUrl(0)(taxYearEOY), formSelector)
           buttonCheck(expectedButtonText)
+          welshToggleCheck(user.isWelsh)
         }
 
-        "renders with correct pension payment amount from user data" should {
+        "renders correct pension payment amount from user data" should {
           implicit val overseasIncomeCountryUrl: Int => String = IncomeFromOverseasPensionsPages.taxableAmountUrl(0)
           implicit lazy val result: WSResponse = showPage(user, aPensionsUserData)
           implicit def document: () => Document = () => Jsoup.parse(result.body)
@@ -187,7 +210,7 @@ class IncomeFromOverseasTaxableAmountControllerISpec extends CommonUtils with Be
           textOnPageCheck(formattedPensionPaymentAmount, tableSelector(1, 1))
         }
 
-        "renders with correct calculated amount from user data" should {
+        "renders correct taxable amounts from user data" should {
           implicit val overseasIncomeCountryUrl: Int => String = IncomeFromOverseasPensionsPages.taxableAmountUrl(0)
           implicit lazy val result: WSResponse = showPage(user, aPensionsUserData)
           implicit def document: () => Document = () => Jsoup.parse(result.body)
@@ -195,6 +218,59 @@ class IncomeFromOverseasTaxableAmountControllerISpec extends CommonUtils with Be
           val taxableAmount = aPensionsUserData.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes(0).pensionPaymentAmount
           val formattedTaxableAmount = formatNoZeros(taxableAmount.getOrElse(BigDecimal(0)))
           textOnPageCheck(formattedTaxableAmount, tableSelector(2, 1))
+        }
+
+        "renders correctly when FTCR value is true" should {
+          implicit val overseasIncomeCountryUrl: Int => String = IncomeFromOverseasPensionsPages.taxableAmountUrl(0)
+          val pensionUserData = pensionUserDataWithIncomeOverseasPension(anIncomeFromOverseasPensionsWithFtcrViewModel)
+          implicit lazy val result: WSResponse = showPage(user, pensionUserData)
+          implicit def document: () => Document = () => Jsoup.parse(result.body)
+
+          "has an OK status" in {
+            result.status shouldBe OK
+          }
+
+          titleCheck(expectedTitle)
+          h1Check(expectedHeading)
+          captionCheck(expectedCaption(taxYearEOY))
+          textOnPageCheck(expectedFtcrParagraph, paragraphSelector(1))
+          textOnPageCheck(expectedFtcrParaItem1, paraItemSelector(1))
+          textOnPageCheck(expectedFtcrParaItem2, paraItemSelector(2))
+
+          textOnPageCheck(expectedTableCaption, tableCaptionSelector)
+          textOnPageCheck(expectedTableHeader1, tableHeadSelector(1,1))
+          textOnPageCheck(expectedTableHeader2, tableHeadSelector(1,2))
+          textOnPageCheck(expectedRowHeading1, tableRowHeadSelector(1,1))
+          textOnPageCheck(expectedRowHeading2, tableRowHeadSelector(2,1))
+          textOnPageCheck(expectedRowHeading3, tableRowHeadSelector(3,1))
+
+          formPostLinkCheck(IncomeFromOverseasPensionsPages.taxableAmountUrl(0)(taxYearEOY), formSelector)
+          buttonCheck(expectedButtonText)
+          welshToggleCheck(user.isWelsh)
+        }
+
+        "renders correct calculated amounts from user data when FTCR is true" should {
+          implicit val overseasIncomeCountryUrl: Int => String = IncomeFromOverseasPensionsPages.taxableAmountUrl(0)
+          val pensionUserData = pensionUserDataWithIncomeOverseasPension(anIncomeFromOverseasPensionsWithFtcrViewModel)
+          implicit lazy val result: WSResponse = showPage(user, pensionUserData)
+          implicit def document: () => Document = () => Jsoup.parse(result.body)
+
+          val pensionPaymentAmount = pensionUserData.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes(0).pensionPaymentAmount
+          val formattedPensionPaymentAmount = formatNoZeros(pensionPaymentAmount.getOrElse(BigDecimal(0)))
+          textOnPageCheck(formattedPensionPaymentAmount, tableSelector(1, 1))
+
+          val pensionTaxPaid = pensionUserData.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes(0).pensionPaymentTaxPaid
+          val formattedTaxPaid = formatNoZeros(-pensionTaxPaid.getOrElse(BigDecimal(0)))
+          textOnPageCheck(formattedTaxPaid, tableSelector(2, 1))
+
+          val tax = for {
+            amountBeforeTax <- pensionPaymentAmount
+            nonUkTaxPaid <- pensionTaxPaid
+            taxableAmount = amountBeforeTax - nonUkTaxPaid
+          } yield taxableAmount
+
+          val formattedTaxableAmount = formatNoZeros(tax.getOrElse(BigDecimal(0)))
+          textOnPageCheck(formattedTaxableAmount, tableSelector(3, 1))
         }
       }
     }
