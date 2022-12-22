@@ -20,7 +20,7 @@ import config.{AppConfig, ErrorHandler}
 import controllers.predicates.AuthorisedAction
 import controllers.predicates.TaxYearAction.taxYearAction
 import forms.FormUtils
-import models.{AuthorisationRequest, User}
+import models.AuthorisationRequest
 import models.mongo.{PensionsCYAModel, PensionsUserData}
 import models.pension.charges.PensionScheme
 import play.api.i18n.I18nSupport
@@ -42,10 +42,10 @@ class IncomeFromOverseasTaxableAmountController @Inject()(val authAction: Author
                                                           val pensionSessionService: PensionSessionService,
                                                           val view: IncomeFromOverseasTaxableAmountView,
                                                           errorHandler: ErrorHandler
-                                       )(implicit val mcc: MessagesControllerComponents,
-                                         appConfig: AppConfig,
-                                         clock: Clock,
-                                         ec: ExecutionContext)
+                                                         )(implicit val mcc: MessagesControllerComponents,
+                                                           appConfig: AppConfig,
+                                                           clock: Clock,
+                                                           ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport with SessionHelper with FormUtils {
 
   def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async {
@@ -63,24 +63,6 @@ class IncomeFromOverseasTaxableAmountController @Inject()(val authAction: Author
           }
         case _ => Redirect(PensionsSummaryController.show(taxYear))
       }
-  }
-
-  def submit(taxYear: Int, index: Option[Int]): Action[AnyContent] = authAction.async {
-    implicit request =>
-      pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
-        case Right(Some(data)) =>
-          validateIndex(index, data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes) match {
-            case Some(i) => updatePensionScheme(data, getTaxableAmount(data, i), taxYear, i)
-            case None => Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
-          }
-        case _ =>
-          //TODO: redirect to the lifetime allowance CYA page?
-          Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
-      }
-  }
-
-  private def validateIndex(index: Option[Int], pensionSchemesList: Seq[PensionScheme]): Option[Int] = {
-    index.filter(i => i >= 0 && i < pensionSchemesList.size)
   }
 
   private def validTaxAmounts(data: PensionsUserData, taxYear: Int, index: Int): Boolean = {
@@ -103,6 +85,39 @@ class IncomeFromOverseasTaxableAmountController @Inject()(val authAction: Author
     Ok(view(viewValues._1, viewValues._2, viewValues._3, ftcr, taxYear, Some(index)))
   }
 
+  private def formatValues(amountBeforeTax: Option[BigDecimal],
+                           signedNonUkTaxPaid: Option[BigDecimal],
+                           taxableAmount: Option[BigDecimal]): (Option[String], Option[String], Option[String]) = {
+    def formatNoZeros(amount: BigDecimal): String = {
+      NumberFormat.getCurrencyInstance(Locale.UK).format(amount)
+        .replaceAll("\\.00", "")
+    }
+
+    (
+      amountBeforeTax.map(amount => formatNoZeros(amount)),
+      signedNonUkTaxPaid.map(amount => formatNoZeros(amount)),
+      taxableAmount.map(amount => formatNoZeros(amount)),
+    )
+  }
+
+  def submit(taxYear: Int, index: Option[Int]): Action[AnyContent] = authAction.async {
+    implicit request =>
+      pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
+        case Right(Some(data)) =>
+          validateIndex(index, data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes) match {
+            case Some(i) => updatePensionScheme(data, getTaxableAmount(data, i), taxYear, i)
+            case None => Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
+          }
+        case _ =>
+          //TODO: redirect to the lifetime allowance CYA page?
+          Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
+      }
+  }
+
+  private def validateIndex(index: Option[Int], pensionSchemesList: Seq[PensionScheme]): Option[Int] = {
+    index.filter(i => i >= 0 && i < pensionSchemesList.size)
+  }
+
   private def getTaxableAmount(data: PensionsUserData, index: Int) = {
     val amountBeforeTaxOpt = data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes(index).pensionPaymentAmount
     val nonUkTaxPaidOpt = data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes(index).pensionPaymentTaxPaid
@@ -110,7 +125,7 @@ class IncomeFromOverseasTaxableAmountController @Inject()(val authAction: Author
       amountBeforeTax <- amountBeforeTaxOpt
       nonUkTaxPaid <- nonUkTaxPaidOpt
       isFtcr <- data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes(index).foreignTaxCreditReliefQuestion
-      taxableAmount = if(isFtcr) {
+      taxableAmount = if (isFtcr) {
         amountBeforeTax - nonUkTaxPaid
       } else {
         amountBeforeTax
@@ -135,19 +150,5 @@ class IncomeFromOverseasTaxableAmountController @Inject()(val authAction: Author
       //TODO: Redirect to next page when navigation is available
       Redirect(IncomeFromOverseasTaxableAmountController.show(taxYear, Some(index)))
     }
-  }
-
-  private def formatValues(amountBeforeTax: Option[BigDecimal], signedNonUkTaxPaid: Option[BigDecimal], taxableAmount: Option[BigDecimal]): (Option[String], Option[String], Option[String]) = {
-
-    def formatNoZeros(amount: BigDecimal): String = {
-      NumberFormat.getCurrencyInstance(Locale.UK).format(amount)
-        .replaceAll("\\.00", "")
-    }
-
-    (
-      amountBeforeTax.map(amount => formatNoZeros(amount)),
-      signedNonUkTaxPaid.map(amount => formatNoZeros(amount)),
-      taxableAmount.map(amount => formatNoZeros(amount)),
-    )
   }
 }
