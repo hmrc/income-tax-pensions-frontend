@@ -27,10 +27,10 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.PensionSessionService
 import controllers.pensions.routes.PensionsSummaryController
-import controllers.pensions.incomeFromOverseasPensions.routes.IncomeFromOverseasTaxableAmountController
+import controllers.pensions.incomeFromOverseasPensions.routes.TaxableAmountController
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
-import views.html.pensions.incomeFromOverseasPensions.IncomeFromOverseasTaxableAmountView
+import views.html.pensions.incomeFromOverseasPensions.TaxableAmountView
 
 import java.text.NumberFormat
 import java.util.Locale
@@ -38,10 +38,10 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class IncomeFromOverseasTaxableAmountController @Inject()(val authAction: AuthorisedAction,
-                                                          val pensionSessionService: PensionSessionService,
-                                                          val view: IncomeFromOverseasTaxableAmountView,
-                                                          errorHandler: ErrorHandler
+class TaxableAmountController @Inject()(val authAction: AuthorisedAction,
+                                        val pensionSessionService: PensionSessionService,
+                                        val view: TaxableAmountView,
+                                        errorHandler: ErrorHandler
                                                          )(implicit val mcc: MessagesControllerComponents,
                                                            appConfig: AppConfig,
                                                            clock: Clock,
@@ -148,7 +148,7 @@ class IncomeFromOverseasTaxableAmountController @Inject()(val authAction: Author
     pensionSessionService.createOrUpdateSessionData(request.user,
       updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
       //TODO: Redirect to next page when navigation is available
-      Redirect(IncomeFromOverseasTaxableAmountController.show(taxYear, Some(index)))
+      Redirect(TaxableAmountController.show(taxYear, Some(index)))
     }
   }
 }

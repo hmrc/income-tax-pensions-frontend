@@ -29,7 +29,7 @@ import utils.PageUrls.{IncomeFromOverseasPensionsPages, pensionSummaryUrl}
 import java.text.NumberFormat
 import java.util.Locale
 
-class IncomeFromOverseasTaxableAmountControllerISpec extends
+class TaxableAmountControllerISpec extends
   CommonUtils with
   BeforeAndAfterEach with
   PensionsDatabaseHelper {

@@ -150,7 +150,7 @@
     @heading(titleText, Some(messages("common.incomeFromOverseasPensions.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-2")
     @contentHtml
 
-    @formWithCsrf(action = controllers.pensions.incomeFromOverseasPensions.routes.IncomeFromOverseasTaxableAmountController.submit(taxYear, index)) {
+    @formWithCsrf(action = controllers.pensions.incomeFromOverseasPensions.routes.TaxableAmountController.submit(taxYear, index)) {
         @button()
     }
 }
