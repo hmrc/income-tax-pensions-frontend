@@ -34,16 +34,16 @@ class IncomeFromOverseasTaxableAmountControllerISpec extends CommonUtils with Be
     val formSelector: String = "#main-content > div > div > form"
     val continueButtonSelector: String = "#continue"
 
-    def labelSelector(index: Int): String = s"form > div:nth-of-type($index) > label"
-
-    def paragraphSelector(index: Int): String = s"#main-content > div > div > p:nth-of-type($index)"
-
+    val tableCaptionSelector: String = s"#main-content > div > div > table > caption"
     val tableHeadSelector: (Int, Int) => String = (row, column) =>
       s"#main-content > div > div > table > thead > tr:nth-child($row) > th:nth-of-type($column)"
     val tableSelector: (Int, Int) => String = (row, column) =>
       s"#main-content > div > div > table > tbody > tr:nth-child($row) > td:nth-of-type($column)"
     val tableRowHeadSelector: (Int, Int) => String = (row, column) =>
       s"#main-content > div > div > table > tbody > tr:nth-child($row) > th:nth-of-type($column)"
+
+    def labelSelector(index: Int): String = s"form > div:nth-of-type($index) > label"
+    def paragraphSelector(index: Int): String = s"#main-content > div > div > p:nth-of-type($index)"
   }
 
   trait CommonExpectedResults {
@@ -51,7 +51,7 @@ class IncomeFromOverseasTaxableAmountControllerISpec extends CommonUtils with Be
     val expectedTitle: String
     val expectedHeading: String
     val expectedParagraph: String
-    val expectedTableHeading: String
+    val expectedTableCaption: String
     val expectedTableHeader1: String
     val expectedTableHeader2: String
     val expectedRowHeading1: String
@@ -69,12 +69,12 @@ class IncomeFromOverseasTaxableAmountControllerISpec extends CommonUtils with Be
     val expectedTitle: String = "Your taxable amount"
     val expectedHeading: String = "Your taxable amount"
     val expectedParagraph: String = "Your taxable amount is the amount you got in foreign pension payments."
-    val expectedTableHeading: String = "Your taxable amount calculation"
+    val expectedTableCaption: String = "Your taxable amount calculation"
     val expectedTableHeader1: String = "Item"
     val expectedTableHeader2: String = "Amount"
     val expectedRowHeading1: String = "Foreign pension payments"
-    val expectedRowHeading2: String = "Taxable amount"
-    val expectedRowHeading3: String = ""
+    val expectedRowHeading2: String = ""
+    val expectedRowHeading3: String = "Taxable amount"
     val expectedButtonText: String = "Continue"
   }
 
@@ -83,12 +83,12 @@ class IncomeFromOverseasTaxableAmountControllerISpec extends CommonUtils with Be
     val expectedTitle: String = "Your client’s taxable amount"
     val expectedHeading: String = "Your client’s taxable amount"
     val expectedParagraph: String = "Your client’s taxable amount is the amount they got in foreign pension payments."
-    val expectedTableHeading: String = "Your client’s taxable amount calculation"
+    val expectedTableCaption: String = "Your client’s taxable amount calculation"
     val expectedTableHeader1: String = "Item"
     val expectedTableHeader2: String = "Amount"
     val expectedRowHeading1: String = "Foreign pension payments"
-    val expectedRowHeading2: String = "Taxable amount"
-    val expectedRowHeading3: String = ""
+    val expectedRowHeading2: String = "Non-UK tax deducted"
+    val expectedRowHeading3: String = "Taxable amount"
     val expectedButtonText: String = "Continue"
   }
 
@@ -97,12 +97,12 @@ class IncomeFromOverseasTaxableAmountControllerISpec extends CommonUtils with Be
     val expectedTitle: String = "Your taxable amount"
     val expectedHeading: String = "Your taxable amount"
     val expectedParagraph: String = "Your taxable amount is the amount you got in foreign pension payments."
-    val expectedTableHeading: String = "Your taxable amount calculation"
+    val expectedTableCaption: String = "Your taxable amount calculation"
     val expectedTableHeader1: String = "Item"
     val expectedTableHeader2: String = "Amount"
     val expectedRowHeading1: String = "Foreign pension payments"
-    val expectedRowHeading2: String = "Taxable amount"
-    val expectedRowHeading3: String = ""
+    val expectedRowHeading2: String = "Non-UK tax deducted"
+    val expectedRowHeading3: String = "Taxable amount"
     val expectedButtonText: String = "Continue"
   }
 
@@ -111,12 +111,12 @@ class IncomeFromOverseasTaxableAmountControllerISpec extends CommonUtils with Be
     val expectedTitle: String = "Your client’s taxable amount"
     val expectedHeading: String = "Your client’s taxable amount"
     val expectedParagraph: String = "Your client’s taxable amount is the amount they got in foreign pension payments."
-    val expectedTableHeading: String = "Your client’s taxable amount calculation"
+    val expectedTableCaption: String = "Your client’s taxable amount calculation"
     val expectedTableHeader1: String = "Item"
     val expectedTableHeader2: String = "Amount"
     val expectedRowHeading1: String = "Foreign pension payments"
-    val expectedRowHeading2: String = "Taxable amount"
-    val expectedRowHeading3: String = ""
+    val expectedRowHeading3: String = "Taxable amount"
+    val expectedRowHeading2: String = "Non-UK tax deducted"
     val expectedButtonText: String = "Continue"
   }
 
@@ -167,10 +167,11 @@ class IncomeFromOverseasTaxableAmountControllerISpec extends CommonUtils with Be
           captionCheck(expectedCaption(taxYearEOY))
           textOnPageCheck(expectedParagraph, paragraphSelector(1))
 
+          textOnPageCheck(expectedTableCaption, tableCaptionSelector)
           textOnPageCheck(expectedTableHeader1, tableHeadSelector(1,1))
           textOnPageCheck(expectedTableHeader2, tableHeadSelector(1,2))
           textOnPageCheck(expectedRowHeading1, tableRowHeadSelector(1,1))
-          textOnPageCheck(expectedRowHeading2, tableRowHeadSelector(2,1))
+          textOnPageCheck(expectedRowHeading3, tableRowHeadSelector(2,1))
 
           formPostLinkCheck(IncomeFromOverseasPensionsPages.taxableAmountUrl(0)(taxYearEOY), formSelector)
           buttonCheck(expectedButtonText)
