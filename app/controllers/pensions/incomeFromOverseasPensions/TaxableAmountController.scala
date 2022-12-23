@@ -96,7 +96,7 @@ class TaxableAmountController @Inject()(val authAction: AuthorisedAction,
     (
       amountBeforeTax.map(amount => formatNoZeros(amount)),
       signedNonUkTaxPaid.map(amount => formatNoZeros(amount)),
-      taxableAmount.map(amount => formatNoZeros(amount)),
+      taxableAmount.map(amount => formatNoZeros(amount))
     )
   }
 
