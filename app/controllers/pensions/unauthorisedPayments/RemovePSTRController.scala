@@ -64,7 +64,7 @@ class RemovePSTRController @Inject()(implicit val mcc: MessagesControllerCompone
         val pstrList: Seq[String] = viewModel.pensionSchemeTaxReference.getOrElse(Seq.empty)
 
         checkIndexScheme(pensionSchemeIndex, pstrList) match {
-          case Some(scheme) =>
+          case Some(_) =>
 
             val rawPstrList: Seq[String] = pstrList.patch(pensionSchemeIndex.get, Nil, 1)
 
