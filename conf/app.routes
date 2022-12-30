@@ -148,6 +148,9 @@ POST        /:taxYear/unauthorised-payments-from-pensions/pension-scheme-tax-ref
 
 GET         /:taxYear/unauthorised-payments-from-pensions/uk-pension-scheme-details                                                controllers.pensions.unauthorisedPayments.UkPensionSchemeDetailsController.show(taxYear:Int)
 
+GET         /:taxYear/unauthorised-payments-from-pensions/remove-pension-scheme-tax-reference                                      controllers.pensions.unauthorisedPayments.RemovePSTRController.show(taxYear: Int, pensionSchemeIndex: Option[Int])
+POST        /:taxYear/unauthorised-payments-from-pensions/remove-pension-scheme-tax-reference                                      controllers.pensions.unauthorisedPayments.RemovePSTRController.submit(taxYear: Int, pensionSchemeIndex: Option[Int])
+
 ###########################    Employer-financed Retirement Benefits Schemes Pages     ####################################
 
 GET         /:taxYear/employment-financed-retirement-benefits-scheme/benefits-from-scheme                                          controllers.pensions.employmentFinancedRetirementScheme.BenefitsFromSchemeController.show(taxYear: Int)

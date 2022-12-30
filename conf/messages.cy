@@ -769,6 +769,11 @@ unauthorisedPayments.pensionSchemeDetails.title = Unauthorised payments from UK 
 unauthorisedPayments.pensionSchemeDetails.addAnotherPensionSchemeTaxReference = Add another Pensions Scheme Tax Reference
 unauthorisedPayments.pensionSchemeDetails.addPensionSchemeTaxReference = Add a Pensions Scheme Tax Reference
 
+#Remove unauthorised payments from UK pensions schemes
+unauthorisedPayments.removePensionSchemeTaxReference.title = Do you want to remove this Pension Scheme Tax Reference?
+unauthorisedPayments.removePensionSchemeTaxReference.removeButton = Remove reference
+unauthorisedPayments.removePensionSchemeTaxReference.dontRemove = Don’t remove
+
 #################       Overseas Pension        ########################################
 
 #Payments into overseas pension schemes page

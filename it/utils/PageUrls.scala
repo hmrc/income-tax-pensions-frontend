@@ -177,6 +177,15 @@ object PageUrls extends IntegrationTest {
 
     def checkUnauthorisedPaymentsCyaUrl(taxYear: Int): String = s"$appUrl/$taxYear/unauthorised-payments-from-pensions/check-unauthorised-payments"
 
+    def removePensionSchemeReferenceUrl(taxYear: Int, pensionSchemeIndex: Option[Int] = None): String = {
+      val addOn = if (pensionSchemeIndex.isDefined) {
+        s"?pensionSchemeIndex=${pensionSchemeIndex.get}"
+      } else {
+        ""
+      }
+      s"$appUrl/$taxYear/unauthorised-payments-from-pensions/remove-pension-scheme-tax-reference" + addOn
+    }
+
   }
 
   object OverseasPensionPages {
