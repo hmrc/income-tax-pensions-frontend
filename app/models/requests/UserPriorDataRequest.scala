@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package support
+package models.requests
 
-import org.scalatest.matchers.should.Matchers
-import org.scalatest.wordspec.AnyWordSpec
-import play.api.test.{DefaultAwaitTimeout, FutureAwaits}
+import models.{IncomeTaxUserData, User}
+import play.api.mvc.{Request, WrappedRequest}
 
-trait UnitTest extends AnyWordSpec
-  with FutureAwaits with DefaultAwaitTimeout
-  with Matchers
+case class UserPriorDataRequest[T](incomeTaxUserData: IncomeTaxUserData,
+                                   user: User,
+                                   request: Request[T]) extends WrappedRequest[T](request)
+

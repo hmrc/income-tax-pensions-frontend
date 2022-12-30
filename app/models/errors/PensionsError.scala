@@ -14,12 +14,8 @@
  * limitations under the License.
  */
 
-package support
+package models.errors
 
-import org.scalatest.matchers.should.Matchers
-import org.scalatest.wordspec.AnyWordSpec
-import play.api.test.{DefaultAwaitTimeout, FutureAwaits}
+trait ServiceError
 
-trait UnitTest extends AnyWordSpec
-  with FutureAwaits with DefaultAwaitTimeout
-  with Matchers
+case class HttpParserError(status: Int) extends ServiceError
