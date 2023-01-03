@@ -205,6 +205,8 @@ object PageUrls extends IntegrationTest {
     def checkIncomeFromOverseasPensionsCyaUrl(taxYear: Int): String = s"$appUrl/$taxYear/overseas-pensions/income-from-overseas-pensions/check-overseas-pension-income-cya"
     def foreignTaxCreditReliefControllerUrl(taxYear: Int, index: Int) =
       s"$appUrl/$taxYear/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-ftcr?index=${index}"
+    def taxableAmountUrl: Int => Int => String =
+      (index: Int) => (taxYear: Int) => s"$appUrl/$taxYear/overseas-pensions/income-from-overseas-pensions/taxable-amount?index=${index}"
   }
 }
 //scalastyle:on number.of.methods
