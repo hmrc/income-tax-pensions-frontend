@@ -887,3 +887,9 @@ incomeFromOverseasPensions.cya.paymentsFromOverseasPensions = Payments from over
 incomeFromOverseasPensions.cya.paymentsFromOverseasPensions.hidden = Change Payments from overseas pensions
 incomeFromOverseasPensions.cya.overseasPensionSchemes = Overseas pension schemes
 incomeFromOverseasPensions.cya.overseasPensionSchemes.hidden = Change Overseas pension schemes
+
+#Overseas Pension Income Summary Page
+overseasPensionIncomeSummary.heading = Overseas pension income
+overseasPensionIncomeSummary.hidden = Change Overseas pension income
+#TODO: overseasPensionIncomeSummary.addAnotherPensionIncomeLink = Add another overseas pension scheme
+#TODO:overseasPensionIncomeSummary.addPensionIncomeLink = Add an overseas pension scheme
