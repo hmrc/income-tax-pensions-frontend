@@ -18,14 +18,13 @@ package controllers.predicates
 
 import builders.AuthorisationRequestBuilder.anAuthorisationRequest
 import builders.PensionsUserDataBuilder.{aPensionsUserData, taxYear}
-import models.errors.HttpParserError
+import models.{APIErrorBodyModel, APIErrorModel}
 import models.requests.UserSessionDataRequest
 import play.api.http.Status.INTERNAL_SERVER_ERROR
 import play.api.mvc.Results.InternalServerError
 import support.UnitTest
 import support.mocks.{MockErrorHandler, MockPensionSessionService}
 
-import java.util.UUID
 import scala.concurrent.ExecutionContext
 
 class UserSessionDataRequestRefinerActionSpec extends UnitTest
@@ -45,7 +44,8 @@ class UserSessionDataRequestRefinerActionSpec extends UnitTest
 
   ".refine" should {
     "handle InternalServerError when when getting session data result in an error" in {
-      mockGetPensionSessionData(taxYear, Left(HttpParserError(INTERNAL_SERVER_ERROR)))
+      mockGetPensionSessionData(taxYear,
+        Left(APIErrorModel(INTERNAL_SERVER_ERROR, APIErrorBodyModel("INTERNAL_SERVER_ERROR","The service is currently facing issues."))))
       mockHandleError(INTERNAL_SERVER_ERROR, InternalServerError)
 
       await(underTest.refine(anAuthorisationRequest)) shouldBe Left(InternalServerError)

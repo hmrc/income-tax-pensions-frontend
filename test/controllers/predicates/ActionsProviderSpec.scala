@@ -22,7 +22,6 @@ import builders.UserBuilder.aUser
 import common.SessionValues.{TAX_YEAR, VALID_TAX_YEARS}
 import controllers.errors.routes.UnauthorisedUserErrorController
 import models.{APIErrorBodyModel, APIErrorModel, IncomeTaxUserData}
-import models.errors.HttpParserError
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.mvc.Results.{InternalServerError, Ok, Redirect}
 import play.api.mvc.{AnyContent, AnyContentAsEmpty, Request}
@@ -110,7 +109,8 @@ class ActionsProviderSpec extends ControllerUnitTest
 
     "handle internal server error when getUserSessionData result in error" in {
       mockAuthAsIndividual(Some(aUser.nino))
-      mockGetPensionSessionData(taxYearEOY, Left(HttpParserError(INTERNAL_SERVER_ERROR)))
+      mockGetPensionSessionData(taxYearEOY,
+        Left(APIErrorModel(INTERNAL_SERVER_ERROR, APIErrorBodyModel("INTERNAL_SERVER_ERROR","The service is currently facing issues."))))
       mockHandleError(INTERNAL_SERVER_ERROR, InternalServerError)
 
       val underTest = actionsProvider.userSessionDataFor(taxYearEOY)(block = anyBlock)
