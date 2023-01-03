@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,14 @@
 
 package support.mocks
 
+import connectors.httpParsers.IncomeTaxUserDataHttpParser.IncomeTaxUserDataResponse
 import models._
 import models.mongo.PensionsUserData
 import org.scalamock.handlers._
 import org.scalamock.scalatest.MockFactory
 import play.api.mvc.{Request, Result}
 import services.PensionSessionService
+import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.Future
 
@@ -29,6 +31,14 @@ trait MockPensionSessionService extends MockFactory {
 
   val mockPensionSessionService: PensionSessionService = mock[PensionSessionService]
 
+  def mockGetPriorData(taxYear: Int,
+                       user: User,
+                       result: IncomeTaxUserDataResponse): CallHandler3[Int, User, HeaderCarrier, Future[IncomeTaxUserDataResponse]] = {
+    (mockPensionSessionService.getPriorData(_: Int, _: User)(_: HeaderCarrier))
+      .expects(taxYear, user, *)
+      .returning(Future.successful(result))
+  }
+  
   def mockGetPensionsSessionDataResult(taxYear: Int, result: Result):
   CallHandler4[Int, User, Option[PensionsUserData] => Future[Result], Request[_], Future[Result]] = {
     (mockPensionSessionService.getPensionsSessionDataResult(_: Int, _: User)
