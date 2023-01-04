@@ -412,10 +412,14 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
             implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
             implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(Some("1234.56"), Some("78.90")))
 
-            val incomeViewModel = anIncomeFromOverseasPensionsViewModel.copy(overseasIncomePensionSchemes = Seq(
-              anIncomeFromOverseasPensionsViewModel.overseasIncomePensionSchemes.head
-                .copy(pensionPaymentAmount = Some(BigDecimal(1234.56)), pensionPaymentTaxPaid = Some(BigDecimal(78.90)))))
-
+            val modifiedPensionScheme =  anIncomeFromOverseasPensionsViewModel.overseasIncomePensionSchemes.head
+                .copy(pensionPaymentAmount = Some(BigDecimal(1234.56)), pensionPaymentTaxPaid = Some(BigDecimal(78.90)))
+            
+            val remainderPensionScheme = anIncomeFromOverseasPensionsViewModel.overseasIncomePensionSchemes.tail
+            
+            val incomeViewModel = anIncomeFromOverseasPensionsViewModel.copy(
+              overseasIncomePensionSchemes = modifiedPensionScheme +: remainderPensionScheme
+            )
             assertRedirectionAsExpected(relativeUrlForThisPage + "?index=0")
             getViewModel mustBe Some(incomeViewModel)
           }
@@ -1591,7 +1595,10 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
   }
 
   private def getViewModel(implicit userConfig: UserConfig): Option[IncomeFromOverseasPensionsViewModel] =
-    loadPensionUserData.map(_.pensions.incomeFromOverseasPensions)
+    loadPensionUserData.map {pud =>
+      val pensionSchemeList = pud.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes.toList
+      pud.pensions.incomeFromOverseasPensions.copy(overseasIncomePensionSchemes = pensionSchemeList )
+    }
 
 
   private def getPageWithIndex(index: Int = 0)(implicit userConfig: UserConfig, wsClient: WSClient): WSResponse = {
