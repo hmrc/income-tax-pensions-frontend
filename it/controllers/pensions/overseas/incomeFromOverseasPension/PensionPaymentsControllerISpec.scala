@@ -1595,10 +1595,7 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
   }
 
   private def getViewModel(implicit userConfig: UserConfig): Option[IncomeFromOverseasPensionsViewModel] =
-    loadPensionUserData.map {pud =>
-      val pensionSchemeList = pud.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes.toList
-      pud.pensions.incomeFromOverseasPensions.copy(overseasIncomePensionSchemes = pensionSchemeList )
-    }
+    loadPensionUserData.map(_.pensions.incomeFromOverseasPensions)
 
 
   private def getPageWithIndex(index: Int = 0)(implicit userConfig: UserConfig, wsClient: WSClient): WSResponse = {
