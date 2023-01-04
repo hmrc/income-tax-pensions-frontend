@@ -68,4 +68,7 @@ class TaxYearAction @Inject()(taxYear: Int, missingTaxYearReset: Boolean)(
 object TaxYearAction {
   def taxYearAction(taxYear: Int, missingTaxYearReset: Boolean = true)(implicit appConfig: AppConfig, messages: MessagesApi): TaxYearAction =
     new TaxYearAction(taxYear, missingTaxYearReset)
+    
+  def apply(taxYear: Int, missingTaxYearReset: Boolean = true)(implicit appConfig: AppConfig, messages: MessagesApi): TaxYearAction =
+    taxYearAction(taxYear, missingTaxYearReset)
 }

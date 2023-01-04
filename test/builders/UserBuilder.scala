@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import models.User
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import builders.PensionsUserDataBuilder.aPensionsUserData
+import uk.gov.hmrc.auth.core.AffinityGroup
 
 
 object UserBuilder {
@@ -28,12 +29,12 @@ object UserBuilder {
     arn = None,
     nino = aPensionsUserData.nino,
     sessionId = aPensionsUserData.sessionId,
-    affinityGroup = "affinityGroup")
+    affinityGroup = AffinityGroup.Individual.toString)
 
   val aUser: User = User(
     mtditid = aPensionsUserData.mtdItId,
     arn = None,
     nino = aPensionsUserData.nino,
     sessionId = aPensionsUserData.sessionId,
-    affinityGroup = "affinityGroup")
+    affinityGroup = AffinityGroup.Individual.toString)
 }
