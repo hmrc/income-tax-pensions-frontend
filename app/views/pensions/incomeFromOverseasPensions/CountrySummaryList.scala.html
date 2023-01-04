@@ -37,9 +37,9 @@
 @headingForUse = @{messages("overseasPensionIncomeSummary.heading")}
 @addAnotherLink(countryPageUrl: String) = {
     @if(pensionIncomeList.isEmpty){       
-        <p class="govuk-body">@link(countryPageUrl, "UkPensionIncomeSummary.addPensionIncomeLink", Some("add-pension-income-link"), fullStop = false)</p> @*TODO: use suitably renamed message key*@
+        <p class="govuk-body">@link(countryPageUrl, "pensions.ukPensionIncomeSummary.addPensionIncomeLink", Some("add-pension-income-link"), fullStop = false)</p> @*TODO: use suitably renamed message key*@
     } else {
-        <p class="govuk-body">@link(countryPageUrl, "UkPensionIncomeSummary.addAnotherPensionIncomeLink", Some("add-another-pension-link"), fullStop = false)</p> @*TODO: use suitably renamed message key*@
+        <p class="govuk-body">@link(countryPageUrl, "pensions.ukPensionIncomeSummary.addAnotherPensionIncomeLink", Some("add-another-pension-link"), fullStop = false)</p> @*TODO: use suitably renamed message key*@
     }
 }
 
