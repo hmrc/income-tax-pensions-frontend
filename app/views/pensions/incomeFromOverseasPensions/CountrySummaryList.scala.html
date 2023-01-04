@@ -1,0 +1,94 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import controllers.pensions.incomeFromOverseasPensions.routes.{PensionOverseasIncomeCountryController, IncomeFromOverseasPensionsCYAController}
+@import forms.Countries.getCountryFromCodeWithDefault
+@import models.pension.charges.PensionScheme
+@import models.requests.UserSessionDataRequest
+@import utils.ViewUtils.bigDecimalCurrency
+@import views.html.templates.helpers.Heading
+@import views.html.templates.helpers.Link
+@import views.html.templates.helpers.SummaryList
+@import views.html.templates.Layout
+
+@this(
+    layout: Layout,
+    summaryList: SummaryList,
+    heading: Heading,
+    button: GovukButton,
+    link: Link)
+
+
+@(taxYear: Int, pensionIncomeList: Seq[PensionScheme])(implicit messages: Messages, appConfig: AppConfig, request: UserSessionDataRequest[_])
+
+@headingForUse = @{messages("overseasPensionIncomeSummary.heading")}
+@addAnotherLink(countryPageUrl: String) = {
+    @if(pensionIncomeList.isEmpty){       
+        <p class="govuk-body">@link(countryPageUrl, "pensions.ukPensionIncomeSummary.addPensionIncomeLink", Some("add-pension-income-link"), fullStop = false)</p> @*TODO: use suitably renamed message key*@
+    } else {
+        <p class="govuk-body">@link(countryPageUrl, "pensions.ukPensionIncomeSummary.addAnotherPensionIncomeLink", Some("add-another-pension-link"), fullStop = false)</p> @*TODO: use suitably renamed message key*@
+    }
+}
+
+getPaymentAmount(optAmount: Option[BigDecimal]) = {
+   optAmount.fold("")(bigDecimalCurrency)
+}
+
+@pensionIncomeSummaryList = {
+    @if(pensionIncomeList.nonEmpty){
+        <div class="govuk-form-group" id="pensionIncomeSummaryList">
+            <dl class="hmrc-add-to-a-list hmrc-add-to-a-list--short">
+                @for((pensionIncome, index) <- pensionIncomeList.zipWithIndex){
+                    <div class="hmrc-add-to-a-list__contents">
+                        <dt class="hmrc-add-to-a-list__identifier hmrc-add-to-a-list__identifier--light">
+                            @getCountryFromCodeWithDefault(pensionIncome.countryCode)  @*TODO: need a message when missing a country for a code*@
+                        </dt>
+                        <dt class="hmrc-add-to-a-list__identifier hmrc-add-to-a-list__identifier--light">
+                            @pensionIncome.pensionPaymentAmount.fold("")(amount => bigDecimalCurrency(amount.toString))
+                        </dt>
+                        <dd class="hmrc-add-to-a-list__change">
+                        @*TODO:Update the link to the overseas pension Scheme summary page with index when page available like below:
+                            i.e. replace "#"with "@PensionSchemeSummaryController.show(taxYear, Some(index))"
+                        *@
+                            <a class="govuk-link" href="#">
+                                <span aria-hidden="true">@messages("common.change")</span>
+                                <span class="govuk-visually-hidden">@{s"${messages("common.change")} ${getCountryFromCodeWithDefault(pensionIncome.countryCode)}"}</span>
+                            </a>
+                        </dd>
+                    </div>
+                }
+            </dl>
+        </div>
+    }
+}
+
+ 
+@layout(pageTitle = headingForUse, taxYear = Some(taxYear)) {
+    @heading(headingForUse, Some(messages("common.incomeFromOverseasPensions.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-2")
+    @pensionIncomeSummaryList
+    @addAnotherLink(PensionOverseasIncomeCountryController.show(taxYear, Some(0)).url)
+    @*TODO: button to navigate to income from pensions CYA when available*@
+    @button(Button(
+        attributes = Map("id" -> "continue"),
+        preventDoubleClick = true,
+        content = Text(messages("common.continue")),
+        classes = "govuk-button govuk-!-margin-top-2",
+        href = Some(IncomeFromOverseasPensionsCYAController.show(taxYear).url)
+    ))
+}
+@{
+// $COVERAGE-OFF$
+}

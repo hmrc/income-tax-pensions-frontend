@@ -16,7 +16,7 @@
 
 package views.pensions.incomeFromOverseasPensions
 
-import controllers.pensions.incomeFromOverseasPensions.routes.PensionOverseasIncomeStatus
+import controllers.pensions.incomeFromOverseasPensions.routes.{CountrySummaryListController, PensionOverseasIncomeStatus}
 import controllers.pensions.overseas.incomeFromOverseasPension.routes.ForeignTaxCreditReliefController
 import forms.Countries
 import models.pension.charges.IncomeFromOverseasPensionsViewModel
@@ -26,7 +26,8 @@ import utils.CYABaseHelper
 
 object IncomeFromOverseasPensionsCYAViewHelper extends CYABaseHelper {
 
-  def summaryListRows(incomeFromOverseasPensionsViewModel: IncomeFromOverseasPensionsViewModel, taxYear: Int)(implicit messages: Messages): Seq[SummaryListRow] = {
+  def summaryListRows(incomeFromOverseasPensionsViewModel: IncomeFromOverseasPensionsViewModel, taxYear: Int)
+                     (implicit messages: Messages): Seq[SummaryListRow] = {
     val summaryRowForPaymentsFromOverseasPensionsRow = summaryRowForPaymentsFromOverseasPensions(incomeFromOverseasPensionsViewModel, taxYear)
     val summaryRowForPensionSchemeCodesRows = summaryRowForPensionSchemeCodes(incomeFromOverseasPensionsViewModel, taxYear)
     (summaryRowForPaymentsFromOverseasPensionsRow +: summaryRowForPensionSchemeCodesRows).flatten
@@ -45,18 +46,22 @@ object IncomeFromOverseasPensionsCYAViewHelper extends CYABaseHelper {
 
   private def summaryRowForPensionSchemeCodes(incomeFromOverseasPensionsViewModel: IncomeFromOverseasPensionsViewModel, taxYear: Int)
                                        (implicit messages: Messages) : Seq[Option[SummaryListRow]] = {
-    val paymentsFromOverseasPensionsQuestionAnswer = incomeFromOverseasPensionsViewModel.paymentsFromOverseasPensionsQuestion.filter(_ == true)
-    if (paymentsFromOverseasPensionsQuestionAnswer == Some(true) && incomeFromOverseasPensionsViewModel.overseasIncomePensionSchemes.length > 0) {
+    
+    if (incomeFromOverseasPensionsViewModel.paymentsFromOverseasPensionsQuestion.contains(true)) {
       incomeFromOverseasPensionsViewModel.overseasIncomePensionSchemes.zipWithIndex.map{
-        case (scheme, index) =>
-          val countryName = Countries.getCountryFromCode(incomeFromOverseasPensionsViewModel.overseasIncomePensionSchemes(index).countryCode).map(_.countryName).map(_.toUpperCase)
+        case (_, index) =>
+          val countryName = Some(Countries.getCountryFromCodeWithDefault(
+            incomeFromOverseasPensionsViewModel.overseasIncomePensionSchemes(index).countryCode)
+            .toUpperCase
+          )
           Some(summaryListRowWithStrings(
             "incomeFromOverseasPensions.cya.overseasPensionSchemes",
-            if (countryName == None) incomeFromOverseasPensionsViewModel.overseasIncomePensionSchemes(index).countryCode else countryName,
+            countryName,
             //TODO - To change the redirect to the Oveseas Pension page
-            ForeignTaxCreditReliefController.show(taxYear, Some(index)))(messages))
+            ForeignTaxCreditReliefController.show(taxYear, Some(index)))(messages)
+          )
       }
-    } else Seq(None)
+    } else { Seq(None) }
   }
 
 }
