@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,10 +31,19 @@ object IncomeFromOverseasPensionsViewModelBuilder {
         specialWithholdingTaxAmount = Some(1999.99),
         foreignTaxCreditReliefQuestion = Some(false),
         taxableAmount = Some(1999.99)
+      ),
+      PensionScheme(
+        countryCode = Some("GER"),
+        pensionPaymentAmount = Some(2000.00),
+        pensionPaymentTaxPaid = Some(400.00),
+        specialWithholdingTaxQuestion = Some(true),
+        specialWithholdingTaxAmount = Some(400.00),
+        foreignTaxCreditReliefQuestion = Some(false),
+        taxableAmount = Some(1600.00)
       )
     )
   )
-
+  
   val anIncomeFromOverseasPensionsWithFtcrViewModel: IncomeFromOverseasPensionsViewModel = IncomeFromOverseasPensionsViewModel(
     paymentsFromOverseasPensionsQuestion = Some(true),
     overseasIncomePensionSchemes = Seq(
@@ -49,5 +58,6 @@ object IncomeFromOverseasPensionsViewModelBuilder {
       )
     )
   )
+  
   val anIncomeFromOverseasPensionsEmptyViewModel: IncomeFromOverseasPensionsViewModel = IncomeFromOverseasPensionsViewModel()
 }

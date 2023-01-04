@@ -63,4 +63,8 @@ object Countries {
       x => all.find(_.countryCode == x)
     )
   }
+  
+  def getCountryFromCodeWithDefault(countryCode: Option[String], defaultStr: String = "N/A"): String = {
+    getCountryFromCode(countryCode).fold(countryCode.getOrElse(defaultStr))(_.countryName)
+  }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -105,7 +105,7 @@ class IncomeFromOverseasPensionsCYAViewHelperTest extends AnyWordSpec with Match
 
         summaryListRows.length shouldBe 4
         assertRowForPaymentsFromOverseasPensions(summaryListRows.head, "Yes")
-        assertRowForOverseasPensionSchemes(summaryListRows(1), "FRANCE", index = 0)
+        assertRowForOverseasPensionSchemes(summaryListRows(1), "FRANCE")
         assertRowForOverseasPensionSchemes(summaryListRows(2), "INDIA", index = 1)
         assertRowForOverseasPensionSchemes(summaryListRows(3), "SIERRA LEONE", index = 2)
 
@@ -135,7 +135,7 @@ class IncomeFromOverseasPensionsCYAViewHelperTest extends AnyWordSpec with Match
 
         val summaryListRows = IncomeFromOverseasPensionsCYAViewHelper.summaryListRows(anIncomeFromOverseasPensionsViewModel, taxYear)
 
-        summaryListRows.length shouldBe 2
+        summaryListRows.length shouldBe 3
         assertRowForPaymentsFromOverseasPensions(summaryListRows.head, "Yes")
         assertRowForOverseasPensionSchemes(summaryListRows(1), "FRA")
       }
@@ -169,14 +169,13 @@ class IncomeFromOverseasPensionsCYAViewHelperTest extends AnyWordSpec with Match
     assertAction(summaryListRow, expectedSummaryRowContents.linkLabel, expectedSummaryRowContents.linkPathEnding, expectedSummaryRowContents.hiddenText)
   }
 
-  private def assertRowForOverseasPensionSchemes(summaryListRow: SummaryListRow, expectedValue: String, index : Int = 0): Unit = {
+  private def assertRowForOverseasPensionSchemes(summaryListRow: SummaryListRow, expectedValue: String, index : Int = 0): Unit =
     assertSummaryListRow(summaryListRow, ExpectedSummaryRowContents(
       "Overseas pension schemes",
       expectedValue,
       "Change",
       s"/2022/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-ftcr?index=${index}",
       "incomeFromOverseasPensions.cya.overseasPensionSchemes.hidden"))
-  }
 
   private def assertAction(summaryListRow: SummaryListRow, expectedLabel: String, expectedPath: String, expectedHiddenText: String): Unit = {
 
