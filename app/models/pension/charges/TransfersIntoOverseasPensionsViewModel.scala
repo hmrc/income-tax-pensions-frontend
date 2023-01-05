@@ -30,7 +30,7 @@ case class TransfersIntoOverseasPensionsViewModel(
                                                    overseasTransferChargeAmount: Option[BigDecimal] = None,
                                                    pensionSchemeTransferCharge: Option[Boolean] = None,
                                                    pensionSchemeTransferChargeAmount: Option[BigDecimal] = None,
-                                                   ukPensionSchemeTransfer: Seq[UkPensionScheme] = Nil) {
+                                                   transferPensionScheme: Seq[TransferPensionScheme] = Nil) {
 
   def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedTransfersIntoOverseasPensionsViewModel =
     EncryptedTransfersIntoOverseasPensionsViewModel(
@@ -39,7 +39,7 @@ case class TransfersIntoOverseasPensionsViewModel(
       overseasTransferChargeAmount = overseasTransferChargeAmount.map(_.encrypted),
       pensionSchemeTransferCharge = pensionSchemeTransferCharge.map(_.encrypted),
       pensionSchemeTransferChargeAmount = pensionSchemeTransferChargeAmount.map(_.encrypted),
-      ukPensionSchemeTransfer = ukPensionSchemeTransfer.map(_.encrypted())
+      transferPensionScheme = transferPensionScheme.map(_.encrypted())
   )
 }
 
@@ -53,7 +53,7 @@ case class EncryptedTransfersIntoOverseasPensionsViewModel(
                                                             overseasTransferChargeAmount: Option[EncryptedValue] = None,
                                                             pensionSchemeTransferCharge: Option[EncryptedValue] = None,
                                                             pensionSchemeTransferChargeAmount: Option[EncryptedValue] = None,
-                                                            ukPensionSchemeTransfer: Seq[EncryptedUkPensionScheme] = Nil) {
+                                                            transferPensionScheme: Seq[EncryptedTransferPensionScheme] = Nil) {
 
   def decrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): TransfersIntoOverseasPensionsViewModel =
     TransfersIntoOverseasPensionsViewModel(
@@ -62,44 +62,44 @@ case class EncryptedTransfersIntoOverseasPensionsViewModel(
       overseasTransferChargeAmount = overseasTransferChargeAmount.map(_.decrypted[BigDecimal]),
       pensionSchemeTransferCharge = pensionSchemeTransferCharge.map(_.decrypted[Boolean]),
       pensionSchemeTransferChargeAmount = pensionSchemeTransferChargeAmount.map(_.decrypted[BigDecimal]),
-      ukPensionSchemeTransfer = ukPensionSchemeTransfer.map(_.decrypted())
+      transferPensionScheme = transferPensionScheme.map(_.decrypted())
     )
 }
 
-case class UkPensionScheme(
-                            ukTransferCharge: Option[Boolean],
-                            name: Option[String],
-                            taxReference: Option[String],
-                            providerAddress: Option[String],
-                            country: Option[String]){
+case class TransferPensionScheme(
+                                  ukTransferQuestion: Option[Boolean],
+                                  name: Option[String],
+                                  taxReference: Option[String],
+                                  providerAddress: Option[String],
+                                  countryCode: Option[String]){
 
-  def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedUkPensionScheme = {
-    EncryptedUkPensionScheme(
-      ukTransferCharge = ukTransferCharge.map(_.encrypted),
+  def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedTransferPensionScheme = {
+    EncryptedTransferPensionScheme(
+      ukTransferQuestion = ukTransferQuestion.map(_.encrypted),
       name = name.map(_.encrypted),
       taxReference = taxReference.map(_.encrypted),
       providerAddress = providerAddress.map(_.encrypted),
-      country = country.map(_.encrypted)
+      countryCode = countryCode.map(_.encrypted)
     )
   }
 }
-case class EncryptedUkPensionScheme(
-                                     ukTransferCharge: Option[EncryptedValue],
+case class EncryptedTransferPensionScheme(
+                                     ukTransferQuestion: Option[EncryptedValue],
                                      name: Option[EncryptedValue],
                                      taxReference: Option[EncryptedValue],
                                      providerAddress: Option[EncryptedValue],
-                                     country: Option[EncryptedValue]){
+                                     countryCode: Option[EncryptedValue]){
 
-  def decrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): UkPensionScheme =
-    UkPensionScheme(
-      ukTransferCharge = ukTransferCharge.map(_.decrypted[Boolean]),
+  def decrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): TransferPensionScheme =
+    TransferPensionScheme(
+      ukTransferQuestion = ukTransferQuestion.map(_.decrypted[Boolean]),
       name = name.map(_.decrypted[String]),
       taxReference = taxReference.map(_.decrypted[String]),
       providerAddress = providerAddress.map(_.decrypted[String]),
-      country = country.map(_.decrypted[String])
+      countryCode = countryCode.map(_.decrypted[String])
     )
 }
 
-object UkPensionScheme {
-  implicit val format: OFormat[UkPensionScheme] = Json.format[UkPensionScheme]
+object TransferPensionScheme {
+  implicit val format: OFormat[TransferPensionScheme] = Json.format[TransferPensionScheme]
 }
