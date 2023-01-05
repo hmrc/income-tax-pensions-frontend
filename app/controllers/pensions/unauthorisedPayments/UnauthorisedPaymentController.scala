@@ -55,7 +55,7 @@ class UnauthorisedPaymentController @Inject()(authAction: AuthorisedAction,
       formWithErrors => Future.successful(BadRequest(view(taxYear, formWithErrors))),
       yesNoAnswer =>
         if (yesNoAnswer) {
-          Future(Redirect(PensionsSummaryController.show(taxYear)))
+          Future(Redirect(controllers.pensions.unauthorisedPayments.routes.UnauthorisedPaymentsController.show(taxYear)))
         } else {
           Future(Redirect(appConfig.incomeTaxSubmissionOverviewUrl(taxYear)))
         }

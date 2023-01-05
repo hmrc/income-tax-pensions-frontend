@@ -43,12 +43,16 @@ class NonUKTaxOnAmountResultedInSurchargeController @Inject()(messagesController
 
   override val errorMessageSet: YesNoAmountForm = NonUKTaxOnAmountResultedInSurcharge
 
-  // TODO: Should we be redirecting to the CYA Page? It doesn't quite make sense as we won't have any session data.
-  override def redirectWhenNoSessionData(taxYear: Int): Result = redirectToSummaryPage(taxYear)
+  override def redirectWhenNoSessionData(taxYear: Int): Result =
+    Redirect(controllers.pensions.unauthorisedPayments.routes.UnauthorisedPaymentsCYAController.show(taxYear))
 
-  // TODO: We should be redirected to NonUkTaxOnAmountNotSurchargeController if we've answered 'Yes' to unauthorisedPayments.noSurchargeQuestion. See SASS-3228.
-  override def redirectAfterUpdatingSessionData(taxYear: Int): Result =
-    Redirect(controllers.pensions.unauthorisedPayments.routes.WhereAnyOfTheUnauthorisedPaymentsController.show(taxYear))
+  override def redirectAfterUpdatingSessionData(pensionsUserData: PensionsUserData, taxYear: Int): Result = {
+    if (pensionsUserData.pensions.unauthorisedPayments.noSurchargeQuestion.contains(true)) {
+      Redirect(controllers.pensions.unauthorisedPayments.routes.NoSurchargeAmountController.show(taxYear))
+    } else {
+      Redirect(controllers.pensions.unauthorisedPayments.routes.WhereAnyOfTheUnauthorisedPaymentsController.show(taxYear))
+    }
+  }
 
   override def prepareView(pensionsUserData: PensionsUserData, taxYear: Int)
                           (implicit request: AuthorisationRequest[AnyContent]): Html = view(populateForm(pensionsUserData), taxYear)
@@ -70,9 +74,17 @@ class NonUKTaxOnAmountResultedInSurchargeController @Inject()(messagesController
       )
     )
 
-  override def whenSessionDataIsInsufficient(taxYear: Int): Result = redirectToSummaryPage(taxYear)
+  override def whenSessionDataIsInsufficient(pensionsUserData: PensionsUserData, taxYear: Int): Result = {
+    if(pensionsUserData.pensions.unauthorisedPayments.noSurchargeQuestion.contains(true)) {
+      Redirect(controllers.pensions.unauthorisedPayments.routes.NoSurchargeAmountController.show(taxYear))
+    }
+    else{
+      Redirect(controllers.pensions.unauthorisedPayments.routes.UnauthorisedPaymentsCYAController.show(taxYear))
+    }
+  }
 
   override def sessionDataIsSufficient(pensionsUserData: PensionsUserData): Boolean =
     pensionsUserData.pensions.unauthorisedPayments.surchargeAmount.isDefined
+
 
 }

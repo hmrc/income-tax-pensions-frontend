@@ -17,24 +17,29 @@
 package controllers.pensions.unauthorisedPayments
 
 import config.{AppConfig, ErrorHandler}
+import connectors.httpParsers.IncomeTaxUserDataHttpParser.IncomeTaxUserDataResponse
 import controllers.pensions.routes._
 import controllers.predicates.AuthorisedAction
 import controllers.predicates.TaxYearAction.taxYearAction
 import forms.UnAuthorisedPaymentsForm
-import models.mongo.PensionsCYAModel
+import models.APIErrorModel
+import models.mongo.{PensionsCYAModel, PensionsUserData}
+import models.pension.AllPensionsData
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.unauthorisedPayments.UnauthorisedPaymentsView
+import models.pension.AllPensionsData.generateCyaFromPrior
+import models.pension.reliefs.PaymentsIntoPensionViewModel
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
-class UnAuthorisedPaymentsController @Inject()(implicit val mcc: MessagesControllerComponents,
+class UnauthorisedPaymentsController @Inject()(implicit val mcc: MessagesControllerComponents,
                                                appConfig: AppConfig,
                                                authAction: AuthorisedAction,
                                                pensionSessionService: PensionSessionService,
@@ -54,48 +59,51 @@ class UnAuthorisedPaymentsController @Inject()(implicit val mcc: MessagesControl
           val form = UnAuthorisedPaymentsForm.unAuthorisedPaymentsTypeForm()
           Future.successful(Ok(view(form, taxYear, surchargeQuestion, noSurchargeQuestion, noQuestion)))
         case None =>
-          //TODO - redirect to CYA page once implemented
-          Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
+          val form = UnAuthorisedPaymentsForm.unAuthorisedPaymentsTypeForm()
+          Future.successful(Ok(view(form, taxYear, None, None, None)))
       }
     }
   }
 
   def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
-    pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
-      case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
-      case Right(optPensionUserData) => optPensionUserData match {
-        case Some(data) =>
-          UnAuthorisedPaymentsForm.unAuthorisedPaymentsTypeForm().bindFromRequest().fold(
-            formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
-            unauthorisedPaymentsSelection => {
-              val pensionsCYAModel: PensionsCYAModel = data.pensions
-              val unauthorisedPaymentsViewModel = pensionsCYAModel.unauthorisedPayments
 
-              val updatedCyaModel: PensionsCYAModel = {
-                pensionsCYAModel.copy(unauthorisedPayments = unauthorisedPaymentsViewModel.copyWithQuestionsApplied(
-                  surchargeQuestion = Some(unauthorisedPaymentsSelection.containsYesSurcharge),
-                  noSurchargeQuestion = Some(unauthorisedPaymentsSelection.containsYesNotSurcharge)
-                ))
-              }
-              pensionSessionService.createOrUpdateSessionData(request.user,
-                updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
+    def saveDataAndRedirect(pensionsCYAModel: PensionsCYAModel, isPriorSubmission: Boolean) = {
+      UnAuthorisedPaymentsForm.unAuthorisedPaymentsTypeForm().bindFromRequest().fold(
+        formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
+        unauthorisedPaymentsSelection => {
+          val unauthorisedPaymentsViewModel = pensionsCYAModel.unauthorisedPayments
 
-                if (unauthorisedPaymentsSelection.containsYesSurcharge) {
-                  Redirect(controllers.pensions.unauthorisedPayments.routes.SurchargeAmountController.show(taxYear))
-                }
-                else if (unauthorisedPaymentsSelection.containsYesNotSurcharge) {
-                  //TODO - redirect to unauthorised payments that did not result in a surcharge page once implemented
-                  Redirect(controllers.pensions.unauthorisedPayments.routes.UnAuthorisedPaymentsController.show(taxYear))
-                } else {
-                  //TODO - redirect to Check your unauthorised payments page once implemented
-                  Redirect(controllers.pensions.unauthorisedPayments.routes.UnAuthorisedPaymentsController.show(taxYear))
-                }
-              }
+          val updatedCyaModel: PensionsCYAModel = {
+            pensionsCYAModel.copy(unauthorisedPayments = unauthorisedPaymentsViewModel.copyWithQuestionsApplied(
+              surchargeQuestion = Some(unauthorisedPaymentsSelection.containsYesSurcharge),
+              noSurchargeQuestion = Some(unauthorisedPaymentsSelection.containsYesNotSurcharge)
+            ))
+          }
+          pensionSessionService.createOrUpdateSessionData(request.user,
+            updatedCyaModel, taxYear, isPriorSubmission)(errorHandler.internalServerError()) {
+            if (unauthorisedPaymentsSelection.containsYesSurcharge) {
+              Redirect(controllers.pensions.unauthorisedPayments.routes.SurchargeAmountController.show(taxYear))
             }
-          )
-        case None =>
-          //TODO - redirect to Check your unauthorised payments page once implemented
-          Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
+            else if (unauthorisedPaymentsSelection.containsYesNotSurcharge) {
+              Redirect(controllers.pensions.unauthorisedPayments.routes.NoSurchargeAmountController.show(taxYear))
+            } else {
+              Redirect(controllers.pensions.unauthorisedPayments.routes.UnauthorisedPaymentsCYAController.show(taxYear))
+            }
+          }
+        }
+      )
+    }
+
+    pensionSessionService.getAndHandle(taxYear, request.user) { (optSessionData, optPriorData) =>
+      (optSessionData, optPriorData) match {
+        case (Some(sessionData), _) =>
+          saveDataAndRedirect(sessionData.pensions, isPriorSubmission = false)
+        case (None, Some(priorData)) =>
+          val cya: PensionsCYAModel = generateCyaFromPrior(priorData)
+          saveDataAndRedirect(cya, isPriorSubmission = true)
+        case (None, None) =>
+          val cya = PensionsCYAModel.emptyModels.copy(PaymentsIntoPensionViewModel())
+          saveDataAndRedirect(cya, isPriorSubmission = false)
       }
     }
   }

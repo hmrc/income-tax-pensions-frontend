@@ -72,7 +72,7 @@
 
     @heading(titleForUse, Some(messages("common.unauthorisedPaymentsFromPension.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-2")
 
-    @formWithCsrf(action = controllers.pensions.unauthorisedPayments.routes.UnAuthorisedPaymentsController.submit(taxYear)) {
+    @formWithCsrf(action = controllers.pensions.unauthorisedPayments.routes.UnauthorisedPaymentsController.submit(taxYear)) {
         @govukCheckboxes(Checkboxes(
             fieldset = Some(Fieldset(
                 legend = Some(Legend(

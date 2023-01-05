@@ -15,6 +15,7 @@
  */
 
 package controllers.pensions.unauthorisedPayments
+
 import config.{AppConfig, ErrorHandler}
 import controllers.predicates.AuthorisedAction
 import forms.PensionSchemeTaxReferenceForm
@@ -28,6 +29,7 @@ import utils.Clock
 import views.html.pensions.unauthorisedPayments.PensionSchemeTaxReferenceView
 import controllers.pensions.routes.PensionsSummaryController
 import controllers.predicates.TaxYearAction.taxYearAction
+import models.User
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -41,25 +43,30 @@ class UnauthorisedPensionSchemeTaxReferenceController @Inject()(implicit val cc:
                                                                 clock: Clock,
                                                                 ec: ExecutionContext) extends FrontendController(cc) with I18nSupport {
 
+  def show(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
 
-  def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async{ implicit request =>
-    pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap{
+    val errorMsgDetails = (
+      s"common.pensionSchemeTaxReference.error.noEntry.${if (request.user.isAgent) "agent" else "individual"}",
+      s"unauthorisedPayments.pension.pensionSchemeTaxReference.error.incorrectFormat.${if (request.user.isAgent) "agent" else "individual"}"
+    )
+    val emptyForm: Form[String] = PensionSchemeTaxReferenceForm.pensionSchemeTaxReferenceForm(errorMsgDetails._1, errorMsgDetails._2)
+
+    pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
       case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
-      case Right(Some(_)) => {
-        val errorMsgDetails = (
-          s"common.pensionSchemeTaxReference.error.noEntry.${if (request.user.isAgent) "agent" else "individual"}",
-          s"unauthorisedPayments.pension.pensionSchemeTaxReference.error.incorrectFormat.${if (request.user.isAgent) "agent" else "individual"}"
-        )
-        val emptyForm: Form[String] = PensionSchemeTaxReferenceForm.pensionSchemeTaxReferenceForm(errorMsgDetails._1, errorMsgDetails._2)
-          //TODO: capability to add or reference a particular pension scheme tax reference
-          Future.successful(Ok(pensionSchemeTaxReferenceView(emptyForm, taxYear)))
+      case Right(Some(data)) =>
+        val pstrList: Seq[String] = data.pensions.unauthorisedPayments.pensionSchemeTaxReference.getOrElse(Seq.empty)
+        checkIndexScheme(pensionSchemeIndex, pstrList) match {
+          case Some(scheme) =>
+            Future.successful(Ok(pensionSchemeTaxReferenceView(emptyForm.fill(scheme), pensionSchemeIndex, taxYear)))
+          case None =>
+            Future.successful(Ok(pensionSchemeTaxReferenceView(emptyForm,pensionSchemeIndex, taxYear)))
         }
-      case Right(None) => Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
+      case Right(None) => Future.successful(Redirect(controllers.pensions.unauthorisedPayments.routes.UnauthorisedPaymentsCYAController.show(taxYear)))
     }
   }
 
 
-  def submit(taxYear: Int): Action[AnyContent] = authAction.async {
+  def submit(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = authAction.async {
     implicit request =>
       val errorMsgDetails = (
         s"common.pensionSchemeTaxReference.error.noEntry.${if (request.user.isAgent) "agent" else "individual"}",
@@ -68,37 +75,61 @@ class UnauthorisedPensionSchemeTaxReferenceController @Inject()(implicit val cc:
       PensionSchemeTaxReferenceForm.pensionSchemeTaxReferenceForm(
         errorMsgDetails._1, errorMsgDetails._2
       ).bindFromRequest().fold(
-        formWithErrors => Future.successful(BadRequest(pensionSchemeTaxReferenceView(formWithErrors, taxYear))),
+        formWithErrors => Future.successful(BadRequest(pensionSchemeTaxReferenceView(formWithErrors, pensionSchemeIndex, taxYear))),
         pstr => {
           pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
             case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
             case Right(Some(optData)) => {
+              val pensionsCYAModel: PensionsCYAModel = optData.pensions
+              val viewModel = pensionsCYAModel.unauthorisedPayments
+              val pstrList: Seq[String] = optData.pensions.unauthorisedPayments.pensionSchemeTaxReference.getOrElse(Seq.empty)
 
-              val pstrList: Option[Seq[String]] = optData.pensions.unauthorisedPayments.pensionSchemeTaxReference
-                val pensionsCYAModel: PensionsCYAModel = optData.pensions
-                val viewModelUnauthorisedPaymentsPstr = pensionsCYAModel.unauthorisedPayments
-                val newPensionSchemeTaxRef = Seq(pstr)
-
-                val updatedPstrList: Seq[String] = pstrList match {
-                  case Some(list) => list ++ newPensionSchemeTaxRef
-                  case None => newPensionSchemeTaxRef
-                }
+              if (validateIndexScheme(pensionSchemeIndex, pstrList)) {
+                val updatedList =
+                  (viewModel.pensionSchemeTaxReference, pensionSchemeIndex) match {
+                    case (Some(pstrList), Some(pensionSchemeIndex)) =>
+                      pstrList.updated(pensionSchemeIndex, pstr)
+                    case (Some(pstrList), None) =>
+                      pstrList ++ Seq(pstr)
+                    case (None, None) =>
+                      Seq(pstr)
+                  }
 
                 val updatedCyaModel = pensionsCYAModel.copy(
-                  unauthorisedPayments = viewModelUnauthorisedPaymentsPstr.copy(
-                    pensionSchemeTaxReference = Some(updatedPstrList)
+                  unauthorisedPayments = viewModel.copy(
+                    pensionSchemeTaxReference = Some(updatedList)
                   ))
-
                 pensionSessionService.createOrUpdateSessionData(request.user,
                   updatedCyaModel, taxYear, optData.isPriorSubmission)(errorHandler.internalServerError()) {
-                  //TODO: redirect to the annual allowances CYA page
-                  Redirect(PensionsSummaryController.show(taxYear))
+                  Redirect(controllers.pensions.unauthorisedPayments.routes.UkPensionSchemeDetailsController.show(taxYear))
                 }
+              } else {
+                Future.successful(Redirect(controllers.pensions.unauthorisedPayments.routes.UkPensionSchemeDetailsController.show(taxYear)))
+              }
             }
-            //TODO: redirect to the annual allowances CYA page
-            case _ => Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
+            case _ => Future.successful(Redirect(controllers.pensions.unauthorisedPayments.routes.UnauthorisedPaymentsCYAController.show(taxYear)))
           }
         }
       )
+  }
+
+  private def checkIndexScheme(pensionSchemeIndex: Option[Int], pensionSchemesList: Seq[String]): Option[String] = {
+    pensionSchemeIndex match {
+      case Some(index) if pensionSchemesList.size > index =>
+        Some(pensionSchemesList(index))
+      case _ =>
+        None
+    }
+  }
+
+  private def validateIndexScheme(pensionSchemeIndex: Option[Int], pensionSchemesList: Seq[String]): Boolean = {
+    pensionSchemeIndex match {
+      case Some(index) if pensionSchemesList.size > index =>
+        true
+      case None =>
+        true
+      case _ =>
+        false
+    }
   }
 }

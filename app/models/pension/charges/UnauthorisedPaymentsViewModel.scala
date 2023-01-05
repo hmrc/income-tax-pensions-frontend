@@ -35,6 +35,8 @@ case class UnauthorisedPaymentsViewModel(surchargeQuestion: Option[Boolean] = No
                                          ukPensionSchemesQuestion: Option[Boolean] = None,
                                          pensionSchemeTaxReference: Option[Seq[String]] = None) {
 
+  def isEmpty(): Boolean = this.productIterator.forall(_ == None)
+
   def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedUnauthorisedPaymentsViewModel =
     EncryptedUnauthorisedPaymentsViewModel(
       surchargeQuestion = surchargeQuestion.map(_.encrypted),

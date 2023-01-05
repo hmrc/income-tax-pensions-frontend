@@ -58,7 +58,7 @@ class AnnualLifetimeAllowanceCYAControllerISpec extends
 
   // TODO: Duplicates UnauthorisedPaymentsCYAControllerISpec. Should we have a single Links object?
   object ChangeLinksUnauthorisedPayments {
-    val unauthorisedPayments: String = controllers.pensions.unauthorisedPayments.routes.UnAuthorisedPaymentsController.show(taxYear).url
+    val unauthorisedPayments: String = controllers.pensions.unauthorisedPayments.routes.UnauthorisedPaymentsController.show(taxYear).url
     val amountSurcharged: String = controllers.pensions.unauthorisedPayments.routes.SurchargeAmountController.show(taxYear).url
     val nonUKTaxOnAmountResultedInSurcharge: String =
       controllers.pensions.unauthorisedPayments.routes.NonUKTaxOnAmountResultedInSurchargeController.show(taxYear).url

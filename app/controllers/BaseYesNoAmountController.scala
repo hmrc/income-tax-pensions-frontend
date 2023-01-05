@@ -47,7 +47,7 @@ abstract class BaseYesNoAmountController(
 
   def redirectWhenNoSessionData(taxYear: Int): Result
 
-  def redirectAfterUpdatingSessionData(taxYear: Int): Result
+  def redirectAfterUpdatingSessionData(pensionsUserData: PensionsUserData, taxYear: Int): Result
 
   def questionOpt(pensionsUserData: PensionsUserData): Option[Boolean]
 
@@ -60,7 +60,7 @@ abstract class BaseYesNoAmountController(
 
   def errorMessageSet: YesNoAmountForm
 
-  def whenSessionDataIsInsufficient(taxYear: Int): Result
+  def whenSessionDataIsInsufficient(pensionsUserData: PensionsUserData, taxYear: Int): Result
 
   def sessionDataIsSufficient(pensionsUserData: PensionsUserData): Boolean
 
@@ -104,7 +104,7 @@ abstract class BaseYesNoAmountController(
 
   private def ensureThatSessionDataIsSufficient(pensionsUserData: PensionsUserData, taxYear: Int)(f: (PensionsUserData, Int) => Future[Result])
                                                (implicit request: AuthorisationRequest[AnyContent]): Future[Result] =
-    if (sessionDataIsSufficient(pensionsUserData)) f(pensionsUserData, taxYear) else Future.successful(whenSessionDataIsInsufficient(taxYear))
+    if (sessionDataIsSufficient(pensionsUserData)) f(pensionsUserData, taxYear) else Future.successful(whenSessionDataIsInsufficient(pensionsUserData, taxYear))
 
 
   private def onError(implicit request: AuthorisationRequest[AnyContent]): Result = errorHandler.handleError(INTERNAL_SERVER_ERROR)
@@ -132,7 +132,7 @@ abstract class BaseYesNoAmountController(
           request.user,
           proposedUpdatedSessionDataModel(pensionsUserData, yesWasSelected, amountOpt),
           taxYear,
-          pensionsUserData.isPriorSubmission)(onError)(redirectAfterUpdatingSessionData(taxYear))
+          pensionsUserData.isPriorSubmission)(onError)(redirectAfterUpdatingSessionData(pensionsUserData, taxYear))
     }
 
 }

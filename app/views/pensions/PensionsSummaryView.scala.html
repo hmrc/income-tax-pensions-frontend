@@ -41,6 +41,18 @@
     }
 }
 
+@unauthorisedPaymentsFromPensionsUrlRedirect(prior: Option[AllPensionsData]) = @{
+    if(prior.isDefined) {
+        if (generateCyaFromPrior(prior.get).unauthorisedPayments.isEmpty()){
+            s"${controllers.pensions.unauthorisedPayments.routes.UnauthorisedPaymentsController.show(taxYear)}"
+        } else {
+            s"${controllers.pensions.unauthorisedPayments.routes.UnauthorisedPaymentsCYAController.show(taxYear)}"
+        }
+    } else {
+            s"${controllers.pensions.unauthorisedPayments.routes.UnauthorisedPaymentsController.show(taxYear)}"
+    }
+}
+
 @layout(pageTitle = headingForUse, taxYear = Some(taxYear), isAgent = request.user.isAgent) {
 
     @heading(
@@ -105,12 +117,11 @@
                     <strong class="govuk-tag govuk-tag--grey">@messages("common.status.toDo")</strong>
                 }
                 </dd>
-
             </div>
 
             <div class="govuk-summary-list__row" id="unauthorised-payments-from-pensions">
                 <dt class="govuk-summary-list__key govuk-!-width-two-third">
-                @link("#", "pensions.pensionSummary.unauthorisedPaymentsFromPensions",Some("unauthorised-payments-from-pensions-link"))
+                @link(unauthorisedPaymentsFromPensionsUrlRedirect(prior), "pensions.pensionSummary.unauthorisedPaymentsFromPensions",Some("unauthorised-payments-from-pensions-link"))
                 </dt>
                 <dd class="govuk-summary-list__actions govuk-!-two-third">
                 @if(unauthorisedPaymentsFromPensionsIsUpdated(prior)) {
