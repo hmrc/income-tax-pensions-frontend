@@ -67,7 +67,7 @@ case class EncryptedTransfersIntoOverseasPensionsViewModel(
 }
 
 case class TransferPensionScheme(
-                                  ukTransferQuestion: Option[Boolean],
+                                  ukTransferCharge: Option[Boolean],
                                   name: Option[String],
                                   taxReference: Option[String],
                                   providerAddress: Option[String],
@@ -75,7 +75,7 @@ case class TransferPensionScheme(
 
   def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedTransferPensionScheme = {
     EncryptedTransferPensionScheme(
-      ukTransferQuestion = ukTransferQuestion.map(_.encrypted),
+      ukTransferCharge = ukTransferCharge.map(_.encrypted),
       name = name.map(_.encrypted),
       taxReference = taxReference.map(_.encrypted),
       providerAddress = providerAddress.map(_.encrypted),
@@ -84,15 +84,15 @@ case class TransferPensionScheme(
   }
 }
 case class EncryptedTransferPensionScheme(
-                                     ukTransferQuestion: Option[EncryptedValue],
-                                     name: Option[EncryptedValue],
-                                     taxReference: Option[EncryptedValue],
-                                     providerAddress: Option[EncryptedValue],
-                                     countryCode: Option[EncryptedValue]){
+                                           ukTransferCharge: Option[EncryptedValue],
+                                           name: Option[EncryptedValue],
+                                           taxReference: Option[EncryptedValue],
+                                           providerAddress: Option[EncryptedValue],
+                                           countryCode: Option[EncryptedValue]){
 
   def decrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): TransferPensionScheme =
     TransferPensionScheme(
-      ukTransferQuestion = ukTransferQuestion.map(_.decrypted[Boolean]),
+      ukTransferCharge = ukTransferCharge.map(_.decrypted[Boolean]),
       name = name.map(_.decrypted[String]),
       taxReference = taxReference.map(_.decrypted[String]),
       providerAddress = providerAddress.map(_.decrypted[String]),
