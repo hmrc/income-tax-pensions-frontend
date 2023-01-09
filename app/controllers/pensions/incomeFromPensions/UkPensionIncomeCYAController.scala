@@ -26,7 +26,7 @@ import models.mongo.PensionsCYAModel
 import models.pension.AllPensionsData
 import models.pension.statebenefits.{IncomeFromPensionsViewModel, UkPensionIncomeViewModel}
 import play.api.data.Form
-import play.api.i18n.I18nSupport
+import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
 import services.RedirectService.redirectBasedOnCurrentAnswers
@@ -70,7 +70,7 @@ class UkPensionIncomeCYAController @Inject()(implicit val mcc: MessagesControlle
         Future.successful(Redirect(appConfig.incomeTaxSubmissionOverviewUrl(taxYear)))
       ) { model =>
         if (comparePriorData(model.pensions, prior)) {
-          //TODO - build submission model from cya data and submit to DES if cya data doesn't match prior data
+          //TODO - Build submission model from cya data and submit to DES if cya data doesn't match prior data
           Future.successful(Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear)))
         } else {
           Future.successful(Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear)))

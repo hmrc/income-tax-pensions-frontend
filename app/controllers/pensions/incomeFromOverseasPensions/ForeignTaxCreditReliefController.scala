@@ -14,25 +14,23 @@
  * limitations under the License.
  */
 
-package controllers.pensions.overseas.incomeFromOverseasPension
+package controllers.pensions.incomeFromOverseasPensions
 
 import common.MessageKeys.IncomeFromOverseasPensions.ForeignTaxCreditRelief
-import common.MessageKeys.LifetimeAllowance.PensionProviderPaidTax
-import common.MessageKeys.{YesNoAmountForm, YesNoForm}
+import common.MessageKeys.YesNoForm
 import config.{AppConfig, ErrorHandler}
-import controllers.{BaseYesNoAmountController, BaseYesNoController, BaseYesNoWithIndexController}
+import controllers.BaseYesNoWithIndexController
+import controllers.pensions.incomeFromOverseasPensions.routes.ForeignTaxCreditReliefController
 import controllers.predicates.AuthorisedAction
-import models.AuthorisationRequest
 import models.mongo.{PensionsCYAModel, PensionsUserData}
+import models.AuthorisationRequest
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import play.twirl.api.Html
 import services.PensionSessionService
 import utils.Clock
-import views.html.pensions.lifetimeAllowance.PensionProviderPaidTaxView
-import views.html.pensions.overseas.incomeFromOverseasPension.ForeignTaxCreditReliefView
-import controllers.pensions.overseas.incomeFromOverseasPension.routes.ForeignTaxCreditReliefController
+import views.html.pensions.incomeFromOverseasPensions.ForeignTaxCreditReliefView
 
 import javax.inject.Inject
 

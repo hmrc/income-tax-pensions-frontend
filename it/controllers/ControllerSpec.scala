@@ -17,12 +17,12 @@
 package controllers
 
 import builders.PensionsUserDataBuilder.taxYearEOY
-import common.SessionValues
 import controllers.ControllerSpec.PreferredLanguages.{English, PreferredLanguage}
 import controllers.ControllerSpec.UserTypes.Individual
 import controllers.ControllerSpec._
 import helpers.{PlaySessionCookieBaker, WireMockHelper, WiremockStubHelpers}
 import models.User
+import models.authorisation.SessionValues
 import models.mongo.{PensionsCYAModel, PensionsUserData}
 import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterAll

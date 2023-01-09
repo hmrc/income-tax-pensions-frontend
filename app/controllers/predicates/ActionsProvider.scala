@@ -17,8 +17,8 @@
 package controllers.predicates
 
 import config.{AppConfig, ErrorHandler}
-import play.api.mvc.{ActionBuilder, AnyContent}
 import models.AuthorisationRequest
+import play.api.mvc.{ActionBuilder, AnyContent}
 import models.requests.{UserPriorDataRequest, UserSessionDataRequest}
 import play.api.i18n.MessagesApi
 import services.PensionSessionService

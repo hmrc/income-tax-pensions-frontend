@@ -19,8 +19,8 @@ package controllers.predicates
 import builders.AllPensionsDataBuilder.anAllPensionsData
 import builders.PensionsUserDataBuilder.aPensionsUserData
 import builders.UserBuilder.aUser
-import common.SessionValues.{TAX_YEAR, VALID_TAX_YEARS}
 import controllers.errors.routes.UnauthorisedUserErrorController
+import models.authorisation.SessionValues.{TAX_YEAR, VALID_TAX_YEARS}
 import models.{APIErrorBodyModel, APIErrorModel, IncomeTaxUserData}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.mvc.Results.{InternalServerError, Ok, Redirect}

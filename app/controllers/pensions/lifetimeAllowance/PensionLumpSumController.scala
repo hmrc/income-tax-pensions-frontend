@@ -20,12 +20,13 @@ import config.{AppConfig, ErrorHandler}
 import controllers.pensions.lifetimeAllowance.routes.PensionLumpSumDetailsController
 import controllers.pensions.routes._
 import controllers.predicates.AuthorisedAction
+import models.AuthorisationRequest
 import forms.YesNoForm
 import models.User
 import models.mongo.PensionsCYAModel
 import models.pension.charges.PensionLifetimeAllowancesViewModel
 import play.api.data.Form
-import play.api.i18n.I18nSupport
+import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController

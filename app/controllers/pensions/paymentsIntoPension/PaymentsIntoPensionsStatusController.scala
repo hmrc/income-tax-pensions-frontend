@@ -19,9 +19,10 @@ package controllers.pensions.paymentsIntoPension
 import config.{AppConfig, ErrorHandler}
 import controllers.predicates.AuthorisedAction
 import controllers.predicates.TaxYearAction.taxYearAction
-import models.{AuthorisationRequest, User}
+import models.User
 import models.mongo.PensionsCYAModel
 import models.pension.reliefs.PaymentsIntoPensionViewModel
+import models.AuthorisationRequest
 import play.api.i18n.I18nSupport
 import utils.Clock
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}

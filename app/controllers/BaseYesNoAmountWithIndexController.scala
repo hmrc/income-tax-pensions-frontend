@@ -21,8 +21,8 @@ import forms.RadioButtonAmountForm
 import config.{AppConfig, ErrorHandler}
 import controllers.predicates.AuthorisedAction
 import controllers.predicates.TaxYearAction.taxYearAction
-import models.AuthorisationRequest
 import models.mongo.{PensionsCYAModel, PensionsUserData}
+import models.AuthorisationRequest
 import play.api.data.Form
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import play.twirl.api.Html

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.pensions.overseas.incomeFromOverseasPension
+package controllers.pensions.incomeFromOverseasPension
 
 import akka.http.scaladsl.model.headers.LinkParams.title
 import builders.PensionsCYAModelBuilder.{aPensionsCYAEmptyModel, aPensionsCYAModel}

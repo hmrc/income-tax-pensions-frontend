@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package common
+package models.authorisation
 
 object SessionValues {
   val CLIENT_MTDITID = "ClientMTDID"

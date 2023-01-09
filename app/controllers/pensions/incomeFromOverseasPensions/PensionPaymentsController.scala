@@ -14,24 +14,25 @@
  * limitations under the License.
  */
 
-package controllers.pensions.overseas.incomeFromOverseasPension
+package controllers.pensions.incomeFromOverseasPensions
 
 import config.{AppConfig, ErrorHandler}
+import controllers.pensions.incomeFromOverseasPensions.routes._
+import controllers.pensions.routes.PensionsSummaryController
 import controllers.predicates.AuthorisedAction
 import controllers.predicates.TaxYearAction.taxYearAction
 import forms.{FormUtils, OptionalTupleAmountForm}
+import models.User
 import models.mongo.{PensionsCYAModel, PensionsUserData}
 import models.pension.charges.PensionScheme
+import models.AuthorisationRequest
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
-import controllers.pensions.routes.PensionsSummaryController
-import controllers.pensions.overseas.incomeFromOverseasPension.routes.PensionPaymentsController
-import models.{AuthorisationRequest, User}
-import views.html.pensions.overseas.incomeFromOverseasPension.PensionPaymentsView
+import views.html.pensions.incomeFromOverseasPensions.PensionPaymentsView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}

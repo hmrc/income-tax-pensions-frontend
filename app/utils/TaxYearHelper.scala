@@ -16,7 +16,7 @@
 
 package utils
 
-import common.SessionValues
+import models.authorisation.SessionValues
 
 import java.time.{LocalDate, LocalDateTime, ZoneId}
 import play.api.mvc.Request
@@ -38,7 +38,7 @@ trait TaxYearHelper extends SessionHelper {
     val endOfYearCutOffDate = LocalDateTime.of(taxYear, taxYearStartMonth, taxYearStartDay, taxYearStartHour, taxYearStartMinute)
     now.atZone(londonZoneId).isBefore(endOfYearCutOffDate.atZone(londonZoneId))
   }
-  
+
   val taxYearEOY: Int = taxYear - 1
 
   def retrieveTaxYearList(implicit request: Request[_]): Seq[Int] = {

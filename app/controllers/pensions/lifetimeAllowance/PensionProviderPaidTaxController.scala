@@ -21,8 +21,8 @@ import common.MessageKeys.YesNoAmountForm
 import config.{AppConfig, ErrorHandler}
 import controllers.BaseYesNoAmountController
 import controllers.predicates.AuthorisedAction
-import models.AuthorisationRequest
 import models.mongo.{PensionsCYAModel, PensionsUserData}
+import models.AuthorisationRequest
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._

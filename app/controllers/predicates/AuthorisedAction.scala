@@ -16,10 +16,12 @@
 
 package controllers.predicates
 
-import common.{EnrolmentIdentifiers, EnrolmentKeys, SessionValues}
+import common.{EnrolmentIdentifiers, EnrolmentKeys}
 import config.AppConfig
+
 import javax.inject.Inject
-import models.User
+import models.{User, requests}
+import models.authorisation.SessionValues
 import models.AuthorisationRequest
 import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -92,7 +94,7 @@ class AuthorisedAction @Inject()(appConfig: AppConfig)
               logger.info(s"[AuthorisedAction][individualAuthentication] - No session id in request")
               Future.successful(Redirect(appConfig.signInUrl))
             } { sessionId =>
-              block(AuthorisationRequest(User(mtdItId, None, nino, sessionId, affinityGroup.toString), request))
+              block(models.AuthorisationRequest(User(mtdItId, None, nino, sessionId, affinityGroup.toString), request))
             }
 
           case (_, None) =>
@@ -134,7 +136,7 @@ class AuthorisedAction @Inject()(appConfig: AppConfig)
                   logger.info(s"[AuthorisedAction][agentAuthentication] - No session id in request")
                   Future(Redirect(appConfig.signInUrl))
                 } { sessionId =>
-                  block(AuthorisationRequest(User(mtdItId, Some(arn), nino, sessionId, AffinityGroup.Agent.toString), request))
+                  block(models.AuthorisationRequest(User(mtdItId, Some(arn), nino, sessionId, AffinityGroup.Agent.toString), request))
                 }
 
               case None =>

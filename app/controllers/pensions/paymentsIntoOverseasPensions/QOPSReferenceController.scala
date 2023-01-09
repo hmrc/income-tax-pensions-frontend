@@ -19,7 +19,7 @@ package controllers.pensions.paymentsIntoOverseasPensions
 import config.{AppConfig, ErrorHandler}
 import controllers.predicates.AuthorisedAction
 import forms.QOPSReferenceNumberForm
-import models.{AuthorisationRequest, User}
+import models.User
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -30,6 +30,7 @@ import views.html.pensions.paymentsIntoOverseasPensions.QOPSReferenceView
 import controllers.pensions.routes.PensionsSummaryController
 import controllers.pensions.paymentsIntoOverseasPensions.routes.QOPSReferenceController
 import models.mongo.{PensionsCYAModel, PensionsUserData}
+import models.AuthorisationRequest
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}

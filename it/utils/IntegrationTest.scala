@@ -19,11 +19,11 @@ package utils
 import akka.actor.ActorSystem
 import builders.PensionsUserDataBuilder.aPensionsUserData
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
-import common.SessionValues
 import config.AppConfig
 import controllers.predicates.AuthorisedAction
 import helpers.{PlaySessionCookieBaker, WireMockHelper, WiremockStubHelpers}
 import models.IncomeTaxUserData
+import models.authorisation.SessionValues
 import models.mongo.PensionsUserData
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.matchers.should.Matchers

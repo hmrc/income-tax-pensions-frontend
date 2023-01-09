@@ -16,11 +16,11 @@
 
 package controllers.predicates
 
-import common.SessionValues._
+import models.authorisation.SessionValues._
 import config.AppConfig
+import models.AuthorisationRequest
 
 import javax.inject.Inject
-import models.AuthorisationRequest
 import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Results.Redirect

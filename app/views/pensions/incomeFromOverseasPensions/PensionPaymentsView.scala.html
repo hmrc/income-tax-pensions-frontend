@@ -14,6 +14,7 @@
  * limitations under the License.
  *@
 
+@import models.AuthorisationRequest
 @import views.html.templates.Layout
 @import views.html.templates.helpers.InputTextAlt
 @import views.html.templates.helpers.Heading
@@ -46,7 +47,7 @@
 
     @heading(titleText, Some(messages("common.incomeFromOverseasPensions.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-2")
 
-    @formWithCsrf(action = controllers.pensions.overseas.incomeFromOverseasPension.routes.PensionPaymentsController.submit(taxYear, Some(index))) {
+    @formWithCsrf(action = controllers.pensions.incomeFromOverseasPensions.routes.PensionPaymentsController.submit(taxYear, Some(index))) {
         @inputText(
             form,
             id = "amount-1",

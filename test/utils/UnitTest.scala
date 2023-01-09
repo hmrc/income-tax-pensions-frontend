@@ -18,10 +18,12 @@ package utils
 
 import akka.actor.ActorSystem
 import com.codahale.metrics.SharedMetricRegistries
-import common.{EnrolmentIdentifiers, EnrolmentKeys, SessionValues}
+import common.{EnrolmentIdentifiers, EnrolmentKeys}
 import config.{AppConfig, ErrorHandler, MockAppConfig}
 import controllers.predicates.{AuthorisedAction, InYearAction}
-import models.{AuthorisationRequest, User}
+import models.User
+import models.authorisation.SessionValues
+import models.AuthorisationRequest
 import org.scalamock.handlers.CallHandler4
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.BeforeAndAfterEach

@@ -16,9 +16,10 @@
 
 package controllers.predicates
 
-import common.SessionValues
 import config.AppConfig
-import models.{AuthorisationRequest, User}
+import models.{User, requests}
+import models.authorisation.SessionValues
+import models.AuthorisationRequest
 import play.api.http.Status.SEE_OTHER
 import play.api.i18n.MessagesApi
 import uk.gov.hmrc.auth.core.AffinityGroup
@@ -36,7 +37,7 @@ class TaxYearActionSpec extends UnitTest with TestTaxYearHelper {
     "return a Right(request)" when {
 
       "the tax year is within the list of valid tax years, and matches that in session if the feature switch is on" in {
-        lazy val userRequest = AuthorisationRequest(
+        lazy val userRequest = models.AuthorisationRequest(
           User("1234567890", None, "AA123456A", sessionId, AffinityGroup.Individual.toString),
           fakeRequest.withSession(SessionValues.TAX_YEAR -> taxYear.toString,
             SessionValues.VALID_TAX_YEARS -> validTaxYearList.mkString(","))
@@ -52,7 +53,7 @@ class TaxYearActionSpec extends UnitTest with TestTaxYearHelper {
       }
 
       "the tax year is within the list of valid tax years, and matches that in session if the feature switch is off" in {
-        lazy val userRequest = AuthorisationRequest(
+        lazy val userRequest = models.AuthorisationRequest(
           User("1234567890", None, "AA123456A", sessionId, AffinityGroup.Individual.toString),
           fakeRequest.withSession(SessionValues.TAX_YEAR -> taxYearEOY.toString,
             SessionValues.VALID_TAX_YEARS -> validTaxYearList.mkString(","))
@@ -68,7 +69,7 @@ class TaxYearActionSpec extends UnitTest with TestTaxYearHelper {
       }
 
       "the tax year is different to the session value if the reset variable input is false" in {
-        lazy val userRequest = AuthorisationRequest(
+        lazy val userRequest = models.AuthorisationRequest(
           User("1234567890", None, "AA123456A", sessionId, AffinityGroup.Individual.toString),
           fakeRequest.withSession(SessionValues.TAX_YEAR -> taxYear.toString,
             SessionValues.VALID_TAX_YEARS -> validTaxYearList.mkString(","))
@@ -88,7 +89,7 @@ class TaxYearActionSpec extends UnitTest with TestTaxYearHelper {
     "return a Left(result)" when {
 
       "the VALID_TAX_YEARS session value is not present" which {
-        lazy val userRequest = AuthorisationRequest(
+        lazy val userRequest = models.AuthorisationRequest(
           User("1234567890", None, "AA123456A", sessionId, AffinityGroup.Individual.toString),
           fakeRequest.withSession(
             SessionValues.TAX_YEAR -> s"$taxYear"
@@ -113,7 +114,7 @@ class TaxYearActionSpec extends UnitTest with TestTaxYearHelper {
       }
 
       "the tax year is outside of validTaxYearList while the feature switch is on" which {
-        lazy val userRequest = AuthorisationRequest(
+        lazy val userRequest = models.AuthorisationRequest(
           User("1234567890", None, "AA123456A", sessionId, AffinityGroup.Individual.toString),
           fakeRequest.withSession(SessionValues.TAX_YEAR -> taxYear.toString,
             SessionValues.VALID_TAX_YEARS -> validTaxYearList.mkString(","))
@@ -135,7 +136,7 @@ class TaxYearActionSpec extends UnitTest with TestTaxYearHelper {
       }
 
       "the tax year is within the validTaxYearList but the missing tax year reset is true" which {
-        lazy val userRequest = AuthorisationRequest(
+        lazy val userRequest = models.AuthorisationRequest(
           User("1234567890", None, "AA123456A", sessionId, AffinityGroup.Individual.toString),
           fakeRequest.withSession(SessionValues.TAX_YEAR -> taxYear.toString,
             SessionValues.VALID_TAX_YEARS -> validTaxYearList.mkString(","))

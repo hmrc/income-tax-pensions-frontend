@@ -16,15 +16,17 @@
 
 package support
 
+import builders.PensionsUserDataBuilder.aPensionsUserData
 import builders.UserBuilder.aUser
 import config.{AppConfig, MockAppConfig}
 import models.AuthorisationRequest
+import models.requests.UserSessionDataRequest
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.i18n.{Lang, Messages, MessagesApi}
 import play.api.mvc.AnyContent
 import play.api.test.{FakeRequest, Injecting}
 import uk.gov.hmrc.auth.core.AffinityGroup
-import utils.TestTaxYearHelper
+import utils.{FakeRequestProvider, TestTaxYearHelper}
 
 trait ViewUnitTest extends UnitTest
   with UserScenarios
@@ -32,9 +34,10 @@ trait ViewUnitTest extends UnitTest
   with GuiceOneAppPerSuite
   with Injecting
   with PageUrlsHelpers
-  with TestTaxYearHelper {
+  with TestTaxYearHelper
+  with FakeRequestProvider {
 
-  private val fakeRequest = FakeRequest().withHeaders("X-Session-ID" -> aUser.sessionId)
+  //private val fakeRequest = FakeRequest().withHeaders("X-Session-ID" -> aUser.sessionId)
 
   protected implicit val mockAppConfig: AppConfig = new MockAppConfig().config()
   protected implicit lazy val messagesApi: MessagesApi = inject[MessagesApi]
@@ -46,8 +49,14 @@ trait ViewUnitTest extends UnitTest
   protected lazy val agentUserRequest =
     new AuthorisationRequest[AnyContent](aUser.copy(arn = Some("arn"), affinityGroup = AffinityGroup.Agent.toString), fakeRequest)
 
+  protected lazy val individualUserDataRequest: UserSessionDataRequest[AnyContent] = new UserSessionDataRequest(Some(aPensionsUserData), aUser, fakeRequest)
+  protected lazy val agentUserDataRequest: UserSessionDataRequest[AnyContent] = new UserSessionDataRequest(Some(aPensionsUserData), aUser.copy(arn = Some("arn"), affinityGroup = AffinityGroup.Agent.toString), fakeRequest)
+
   protected def getMessages(isWelsh: Boolean): Messages = if (isWelsh) welshMessages else defaultMessages
 
   protected def getAuthRequest(isAgent: Boolean): AuthorisationRequest[AnyContent] =
     if (isAgent) agentUserRequest else individualUserRequest
+
+  protected def getUserSession(isAgent: Boolean): UserSessionDataRequest[AnyContent] =
+    if (isAgent) individualUserDataRequest else agentUserDataRequest
 }

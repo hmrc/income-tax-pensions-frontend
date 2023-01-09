@@ -38,7 +38,8 @@ import controllers.pensions.routes.PensionsSummaryController
 import controllers.predicates.AuthorisedAction
 import forms.PensionCustomerReferenceNumberForm
 import models.mongo.{PensionsCYAModel, PensionsUserData}
-import models.{AuthorisationRequest, User}
+import models.User
+import models.AuthorisationRequest
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}

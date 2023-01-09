@@ -893,3 +893,12 @@ overseasPensionIncomeSummary.heading = Overseas pension income
 overseasPensionIncomeSummary.hidden = Change Overseas pension income
 #TODO: overseasPensionIncomeSummary.addAnotherPensionIncomeLink = Add another overseas pension scheme
 #TODO:overseasPensionIncomeSummary.addPensionIncomeLink = Add an overseas pension scheme
+
+incomeFromOverseasPensions.summary.title = Pension scheme summary
+incomeFromOverseasPensions.summary.country = Country
+incomeFromOverseasPensions.summary.pension.payments = Pensions payments
+incomeFromOverseasPensions.summary.amount = Amount: {0}
+incomeFromOverseasPensions.summary.nonUk.amount = Non-uk tax: {0}
+incomeFromOverseasPensions.summary.swt = Special Withholding Tax
+incomeFromOverseasPensions.summary.ftc = Foreign Tax Credit
+incomeFromOverseasPensions.summary.tax.amount = Taxable amount

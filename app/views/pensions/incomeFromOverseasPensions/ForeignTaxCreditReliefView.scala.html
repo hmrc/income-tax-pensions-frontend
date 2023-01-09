@@ -14,6 +14,7 @@
  * limitations under the License.
  *@
 
+@import models.AuthorisationRequest
 @import views.html.templates.Layout
 @import views.html.templates.helpers.ErrorSummary
 @import views.html.templates.helpers.Button
@@ -48,7 +49,7 @@
 
     @heading(titleForUse, Some(messages("common.incomeFromOverseasPensions.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-2")
 
-    @formWithCsrf(action = controllers.pensions.overseas.incomeFromOverseasPension.routes.ForeignTaxCreditReliefController.submit(taxYear, Some(index))) {
+    @formWithCsrf(action = controllers.pensions.incomeFromOverseasPensions.routes.ForeignTaxCreditReliefController.submit(taxYear, Some(index))) {
         @inputRadio(
             form = form,
             legendHeading = Some(Html(titleForUse)),

@@ -21,8 +21,8 @@ import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import builders.PensionsUserDataBuilder.aPensionsUserData
 import controllers.pensions.paymentsIntoPension.PaymentsIntoPensionFormProvider
 import forms.YesNoForm
-import models.AuthorisationRequest
 import models.mongo.PensionsUserData
+import models.AuthorisationRequest
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.i18n.Messages

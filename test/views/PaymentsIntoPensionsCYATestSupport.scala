@@ -18,8 +18,8 @@ package views
 
 import builders.PaymentsIntoPensionVewModelBuilder.aPaymentsIntoPensionViewModel
 import config.{AppConfig, MockAppConfig}
-import models.AuthorisationRequest
 import models.pension.reliefs.PaymentsIntoPensionViewModel
+import models.AuthorisationRequest
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.i18n.Messages

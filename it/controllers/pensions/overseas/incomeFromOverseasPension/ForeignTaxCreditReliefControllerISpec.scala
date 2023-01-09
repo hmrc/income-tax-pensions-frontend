@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.pensions.overseas.incomeFromOverseasPension
+package controllers.pensions.incomeFromOverseasPension
 
 import builders.IncomeFromOverseasPensionsViewModelBuilder.{anIncomeFromOverseasPensionsEmptyViewModel, anIncomeFromOverseasPensionsViewModel}
 import builders.PensionsCYAModelBuilder.{aPensionsCYAEmptyModel, aPensionsCYAModel, paymentsIntoPensionOnlyCYAModel}

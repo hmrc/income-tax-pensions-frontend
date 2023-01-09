@@ -17,8 +17,8 @@
 package controllers.predicates
 
 import config.ErrorHandler
-import play.api.mvc.{ActionRefiner, Result}
 import models.AuthorisationRequest
+import play.api.mvc.{ActionRefiner, Result}
 import models.requests.UserPriorDataRequest
 import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendHeaderCarrierProvider

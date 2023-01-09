@@ -30,7 +30,6 @@ import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.incomeFromOverseasPensions.IncomeFromOverseasPensionsCYAView
-
 import scala.concurrent.Future
 
 class IncomeFromOverseasPensionsCYAController @Inject()(authAction: AuthorisedAction,

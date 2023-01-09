@@ -20,7 +20,6 @@ import config.{AppConfig, ErrorHandler}
 import controllers.predicates.AuthorisedAction
 import controllers.predicates.TaxYearAction.taxYearAction
 import forms.FormUtils
-import models.AuthorisationRequest
 import models.mongo.{PensionsCYAModel, PensionsUserData}
 import models.pension.charges.PensionScheme
 import play.api.i18n.I18nSupport
@@ -28,6 +27,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.PensionSessionService
 import controllers.pensions.routes.PensionsSummaryController
 import controllers.pensions.incomeFromOverseasPensions.routes.TaxableAmountController
+import models.AuthorisationRequest
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.incomeFromOverseasPensions.TaxableAmountView

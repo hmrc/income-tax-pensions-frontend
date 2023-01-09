@@ -16,24 +16,25 @@
 
 package builders
 
-import models.{AuthorisationRequest}
-import play.api.mvc.{AnyContent}
+import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import builders.UserBuilder.aUser
+import models.requests
+import models.AuthorisationRequest
 
 object AuthorisationRequestBuilder {
 
-  val anAuthorisationRequest: AuthorisationRequest[AnyContent] = AuthorisationRequest(
+  val anAuthorisationRequest: AuthorisationRequest[AnyContent] = models.AuthorisationRequest(
     aUser.copy(affinityGroup = "affinityGroup"),
     FakeRequest()
   )
 
-  val anIndividualRequest: AuthorisationRequest[AnyContent] = AuthorisationRequest(
+  val anIndividualRequest: AuthorisationRequest[AnyContent] = models.AuthorisationRequest(
     aUser.copy(affinityGroup = "Individual"),
     FakeRequest()
   )
 
-  val anAgentRequest: AuthorisationRequest[AnyContent] = AuthorisationRequest(
+  val anAgentRequest: AuthorisationRequest[AnyContent] = models.AuthorisationRequest(
     aUser.copy(affinityGroup = "Agent"),
     FakeRequest()
   )

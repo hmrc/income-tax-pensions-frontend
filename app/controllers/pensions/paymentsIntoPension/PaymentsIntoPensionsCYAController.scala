@@ -19,11 +19,12 @@ package controllers.pensions.paymentsIntoPension
 import config.{AppConfig, ErrorHandler}
 import controllers.predicates.AuthorisedAction
 import controllers.predicates.TaxYearAction.taxYearAction
-import models.{APIErrorBodyModel, APIErrorModel, AuthorisationRequest, User}
+import models.{APIErrorBodyModel, APIErrorModel, User}
 import models.mongo.{PensionsCYAModel, PensionsUserData}
 import models.pension.AllPensionsData
 import models.pension.AllPensionsData.generateCyaFromPrior
 import models.redirects.ConditionalRedirect
+import models.AuthorisationRequest
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
