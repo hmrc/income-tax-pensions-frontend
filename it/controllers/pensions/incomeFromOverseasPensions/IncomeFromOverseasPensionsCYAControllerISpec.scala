@@ -61,7 +61,7 @@ class IncomeFromOverseasPensionsCYAControllerISpec extends
 
   object ChangeLinksIncomeFromOverseasPensions {
     val paymentsFromOverseasPensions: String = controllers.pensions.incomeFromOverseasPensions.routes.PensionOverseasIncomeStatus.show(taxYear).url
-    val foreignTaxCreditReliefController: String = controllers.pensions.overseas.incomeFromOverseasPension.routes.ForeignTaxCreditReliefController.show(taxYear, Some(0)).url
+    val countrySummaryListController : String = controllers.pensions.incomeFromOverseasPensions.routes.CountrySummaryListController.show(taxYear).url
   }
 
   trait SpecificExpectedResults {
@@ -190,7 +190,7 @@ class IncomeFromOverseasPensionsCYAControllerISpec extends
           cyaRowCheck(paymentsFromOverseasPensions, stringToBoolean(anUpdatedAllPensionsData.pensionIncome.map(_.foreignPension).isDefined),
             ChangeLinksIncomeFromOverseasPensions.paymentsFromOverseasPensions, paymentsFromOverseasPensionsHidden, 1)
           cyaRowCheck(overseasPensionsScheme, s"${Countries.getCountryFromCode(anUpdatedAllPensionsData.pensionIncome.map(x => x.foreignPension.head.countryCode)).get.countryName.map(_.toUpper)}",
-            ChangeLinksIncomeFromOverseasPensions.foreignTaxCreditReliefController, overseasPensionsSchemeHidden, 2)
+            ChangeLinksIncomeFromOverseasPensions.countrySummaryListController, overseasPensionsSchemeHidden, 2)
           buttonCheck(saveAndContinue)
           welshToggleCheck(user.isWelsh)
         }

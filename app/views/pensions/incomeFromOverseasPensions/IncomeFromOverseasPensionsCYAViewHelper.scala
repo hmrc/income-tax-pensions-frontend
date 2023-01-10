@@ -30,7 +30,7 @@ object IncomeFromOverseasPensionsCYAViewHelper extends CYABaseHelper {
                      (implicit messages: Messages): Seq[SummaryListRow] = {
     val summaryRowForPaymentsFromOverseasPensionsRow = summaryRowForPaymentsFromOverseasPensions(incomeFromOverseasPensionsViewModel, taxYear)
     val summaryRowForPensionSchemeCodesRows = summaryRowForPensionSchemeCodes(incomeFromOverseasPensionsViewModel, taxYear)
-    (summaryRowForPaymentsFromOverseasPensionsRow +: summaryRowForPensionSchemeCodesRows).flatten
+    (summaryRowForPaymentsFromOverseasPensionsRow +: Seq(summaryRowForPensionSchemeCodesRows)).flatten
   }
 
 
@@ -45,23 +45,28 @@ object IncomeFromOverseasPensionsCYAViewHelper extends CYABaseHelper {
   }
 
   private def summaryRowForPensionSchemeCodes(incomeFromOverseasPensionsViewModel: IncomeFromOverseasPensionsViewModel, taxYear: Int)
-                                       (implicit messages: Messages) : Seq[Option[SummaryListRow]] = {
-    
-    if (incomeFromOverseasPensionsViewModel.paymentsFromOverseasPensionsQuestion.contains(true)) {
-      incomeFromOverseasPensionsViewModel.overseasIncomePensionSchemes.zipWithIndex.map{
-        case (_, index) =>
-          val countryName = Some(Countries.getCountryFromCodeWithDefault(
-            incomeFromOverseasPensionsViewModel.overseasIncomePensionSchemes(index).countryCode)
-            .toUpperCase
-          )
-          Some(summaryListRowWithStrings(
-            "incomeFromOverseasPensions.cya.overseasPensionSchemes",
-            countryName,
-            //TODO - To change the redirect to the Oveseas Pension page
-            ForeignTaxCreditReliefController.show(taxYear, Some(index)))(messages)
-          )
+                                             (implicit messages: Messages) : Option[SummaryListRow] = {
+
+    if (
+      incomeFromOverseasPensionsViewModel.paymentsFromOverseasPensionsQuestion.contains(true) &&
+        incomeFromOverseasPensionsViewModel.overseasIncomePensionSchemes.length > 0
+    ) {
+      val countryNames = for {
+        pensionScheme <- incomeFromOverseasPensionsViewModel.overseasIncomePensionSchemes
+        countryCode <- pensionScheme.countryCode
+      } yield {
+        countryCode.length match {
+          case 2 => Countries.getCountryFromCodeWithDefault(Some(countryCode))
+            //TODO: Add 3 digit country code parsing as well.
+          case _ => countryCode
+        }
       }
-    } else { Seq(None) }
+      Some(summaryListRowWithStrings(
+        "incomeFromOverseasPensions.cya.overseasPensionSchemes",
+        Some(countryNames.map(_.toUpperCase).mkString(", ")),
+        CountrySummaryListController.show(taxYear))(messages)
+      )
+    } else { None }
   }
 
 }
