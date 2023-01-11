@@ -48,19 +48,17 @@ object IncomeFromOverseasPensionsCYAViewHelper extends CYABaseHelper {
                                              (implicit messages: Messages) : Option[SummaryListRow] = {
 
     if (
-      incomeFromOverseasPensionsViewModel.paymentsFromOverseasPensionsQuestion.contains(true) &&
-        incomeFromOverseasPensionsViewModel.overseasIncomePensionSchemes.length > 0
+      incomeFromOverseasPensionsViewModel.paymentsFromOverseasPensionsQuestion.contains(true)
+        && incomeFromOverseasPensionsViewModel.overseasIncomePensionSchemes.length > 0
     ) {
       val countryNames = for {
         pensionScheme <- incomeFromOverseasPensionsViewModel.overseasIncomePensionSchemes
-        countryCode <- pensionScheme.countryCode
+        countryCode = pensionScheme.countryCode.getOrElse("N/A")
       } yield {
-        countryCode.length match {
-          case 2 => Countries.getCountryFromCodeWithDefault(Some(countryCode))
+         Countries.getCountryFromCodeWithDefault(Some(countryCode))
             //TODO: Add 3 digit country code parsing as well.
-          case _ => countryCode
-        }
       }
+
       Some(summaryListRowWithStrings(
         "incomeFromOverseasPensions.cya.overseasPensionSchemes",
         Some(countryNames.map(_.toUpperCase).mkString(", ")),
