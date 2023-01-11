@@ -103,12 +103,9 @@ class IncomeFromOverseasPensionsCYAViewHelperTest extends AnyWordSpec with Match
 
         val summaryListRows = IncomeFromOverseasPensionsCYAViewHelper.summaryListRows(model, taxYear)
 
-        summaryListRows.length shouldBe 4
+        summaryListRows.length shouldBe 2
         assertRowForPaymentsFromOverseasPensions(summaryListRows.head, "Yes")
-        assertRowForOverseasPensionSchemes(summaryListRows(1), "FRANCE")
-        assertRowForOverseasPensionSchemes(summaryListRows(2), "INDIA", index = 1)
-        assertRowForOverseasPensionSchemes(summaryListRows(3), "SIERRA LEONE", index = 2)
-
+        assertRowForOverseasPensionSchemes(summaryListRows(1), "FRANCE, INDIA, SIERRA LEONE")
       }
 
       "we selected 'No' for paymentsFromOverseasPensionsQuestion and yet somehow passed in a pension income " in {
@@ -135,9 +132,9 @@ class IncomeFromOverseasPensionsCYAViewHelperTest extends AnyWordSpec with Match
 
         val summaryListRows = IncomeFromOverseasPensionsCYAViewHelper.summaryListRows(anIncomeFromOverseasPensionsViewModel, taxYear)
 
-        summaryListRows.length shouldBe 3
+        summaryListRows.length shouldBe 2
         assertRowForPaymentsFromOverseasPensions(summaryListRows.head, "Yes")
-        assertRowForOverseasPensionSchemes(summaryListRows(1), "FRA")
+        assertRowForOverseasPensionSchemes(summaryListRows(1), "FRA, GER")
       }
 
       "we selected 'Yes' for paymentsFromOverseasPensionsQuestion and yet somehow did not pass a pension income " in {
@@ -174,7 +171,7 @@ class IncomeFromOverseasPensionsCYAViewHelperTest extends AnyWordSpec with Match
       "Overseas pension schemes",
       expectedValue,
       "Change",
-      s"/2022/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-ftcr?index=${index}",
+      s"/2022/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-country-summary",
       "incomeFromOverseasPensions.cya.overseasPensionSchemes.hidden"))
 
   private def assertAction(summaryListRow: SummaryListRow, expectedLabel: String, expectedPath: String, expectedHiddenText: String): Unit = {
