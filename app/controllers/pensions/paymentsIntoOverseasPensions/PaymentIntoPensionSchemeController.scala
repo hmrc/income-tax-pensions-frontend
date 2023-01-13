@@ -46,7 +46,7 @@ class PaymentIntoPensionSchemeController @Inject()(messagesControllerComponents:
   // TODO: Once we've creating the CYA page (in SASS-3268), we can redirect to it.
   override def redirectWhenNoSessionData(taxYear: Int): Result = redirectToSummaryPage(taxYear)
 
-  override def redirectAfterUpdatingSessionData(taxYear: Int): Result =
+  override def redirectAfterUpdatingSessionData(pensionsUserData: PensionsUserData, taxYear: Int): Result =
     Redirect(controllers.pensions.paymentsIntoOverseasPensions.routes.PaymentIntoPensionSchemeController.show(taxYear))
 
   override def prepareView(pensionsUserData: PensionsUserData, taxYear: Int)
@@ -69,7 +69,7 @@ class PaymentIntoPensionSchemeController @Inject()(messagesControllerComponents:
       )
     )
 
-  override def whenSessionDataIsInsufficient(taxYear: Int): Result = redirectToSummaryPage(taxYear)
+  override def whenSessionDataIsInsufficient(pensionsUserData: PensionsUserData, taxYear: Int): Result = redirectToSummaryPage(taxYear)
 
   override def sessionDataIsSufficient(pensionsUserData: PensionsUserData): Boolean = true
 

@@ -20,6 +20,7 @@
 @import views.html.templates.helpers.Link
 @import controllers.pensions.unauthorisedPayments.routes.UnauthorisedPensionSchemeTaxReferenceController
 @import controllers.pensions.unauthorisedPayments.routes.UnauthorisedPaymentsCYAController
+@import controllers.pensions.unauthorisedPayments.routes.RemovePSTRController
 @import models.pension.statebenefits.UkPensionIncomeViewModel
 
 @this(
@@ -35,9 +36,9 @@
 @headingForUse = @{messages("unauthorisedPayments.pensionSchemeDetails.title")}
 @addAnotherLink() = {
     @if(pensionIncomeList.isEmpty){
-        <p class="govuk-body">@link(UnauthorisedPensionSchemeTaxReferenceController.show(taxYear).url, "unauthorisedPayments.pensionSchemeDetails.addPensionSchemeTaxReference", Some("add-pension-income-link"), fullStop = false)</p>
+        <p class="govuk-body">@link(UnauthorisedPensionSchemeTaxReferenceController.show(taxYear, None).url, "unauthorisedPayments.pensionSchemeDetails.addPensionSchemeTaxReference", Some("add-pension-income-link"), fullStop = false)</p>
     } else {
-        <p class="govuk-body">@link(UnauthorisedPensionSchemeTaxReferenceController.show(taxYear).url, "unauthorisedPayments.pensionSchemeDetails.addAnotherPensionSchemeTaxReference", Some("add-another-pension-link"), fullStop = false)</p>
+        <p class="govuk-body">@link(UnauthorisedPensionSchemeTaxReferenceController.show(taxYear, None).url, "unauthorisedPayments.pensionSchemeDetails.addAnotherPensionSchemeTaxReference", Some("add-another-pension-link"), fullStop = false)</p>
     }
 }
 
@@ -51,19 +52,13 @@
                             @pensionIncome
                         </dt>
                         <dd class="hmrc-add-to-a-list__change">
-                        @*TODO:Update the link to the pension specific CYA details page with index when page available like below:
-                            i.e. replace "#"with "@UkPensionSchemeDetailsCYAController.show(taxYear, Some(index))"
-                        *@
-                        <a class="govuk-link" href="#">
+                        <a class="govuk-link" href="@controllers.pensions.unauthorisedPayments.routes.UnauthorisedPensionSchemeTaxReferenceController.show(taxYear, Some(index))">
                             <span aria-hidden="true">@messages("common.change")</span>
                             <span class="govuk-visually-hidden">@{s"${messages("common.change")} ${pensionIncome}"}</span>
                             </a>
                         </dd>
                         <dd class="hmrc-add-to-a-list__remove">
-                        @*TODO:Update the link to the pension details page with index when page available like below:
-                            i.e. replace "#"with "@RemoveUkPensionSchemeDetailsController.show(taxYear, Some(index))"
-                        *@
-                        <a class="govuk-link" href="#">
+                        <a class="govuk-link" href="@controllers.pensions.unauthorisedPayments.routes.RemovePSTRController.show(taxYear, Some(index))">
                                 <span aria-hidden="true">@messages("common.remove")</span>
                                 <span class="govuk-visually-hidden">@{s"${messages("common.remove")} ${pensionIncome}"}</span>
                             </a>

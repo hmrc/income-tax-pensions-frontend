@@ -37,7 +37,7 @@ class NonUKTaxOnAmountResultedInSurchargeControllerISpec
           implicit val userConfig: UserConfig = userConfigWhenIrrelevant(None)
           implicit val response: WSResponse = getPage
 
-          assertRedirectionAsExpected(PageRelativeURLs.summaryPage)
+          assertRedirectionAsExpected(PageRelativeURLs.unauthorisedPaymentsCYAPage)
 
         }
         "the user had not previously specified the surcharge amount" in {
@@ -53,8 +53,7 @@ class NonUKTaxOnAmountResultedInSurchargeControllerISpec
           implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
           implicit val response: WSResponse = getPage
 
-          assertRedirectionAsExpected(PageRelativeURLs.summaryPage)
-
+          assertRedirectionAsExpected(relativeUrl("/unauthorised-payments-from-pensions/amount-not-surcharged"))
         }
       }
       "appear as expected" when {
@@ -481,7 +480,7 @@ class NonUKTaxOnAmountResultedInSurchargeControllerISpec
           implicit val userConfig: UserConfig = userConfigWhenIrrelevant(None)
           implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(false), None))
 
-          assertRedirectionAsExpected(PageRelativeURLs.summaryPage)
+          assertRedirectionAsExpected(PageRelativeURLs.unauthorisedPaymentsCYAPage)
           getViewModel mustBe None
 
         }
@@ -500,7 +499,7 @@ class NonUKTaxOnAmountResultedInSurchargeControllerISpec
           implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
           implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(false), None))
 
-          assertRedirectionAsExpected(PageRelativeURLs.summaryPage)
+          assertRedirectionAsExpected(relativeUrl("/unauthorised-payments-from-pensions/amount-not-surcharged"))
           getViewModel mustBe Some(expectedViewModel)
 
         }
@@ -521,7 +520,7 @@ class NonUKTaxOnAmountResultedInSurchargeControllerISpec
             implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
             implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(false), None))
 
-            assertRedirectionAsExpected(relativeUrl("/unauthorised-payments-from-pensions/uk-pension-scheme"))
+            assertRedirectionAsExpected(relativeUrl("/unauthorised-payments-from-pensions/amount-not-surcharged"))
             getViewModel mustBe Some(expectedViewModel)
 
           }
@@ -536,7 +535,7 @@ class NonUKTaxOnAmountResultedInSurchargeControllerISpec
             implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
             implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("42.64")))
 
-            assertRedirectionAsExpected(relativeUrl("/unauthorised-payments-from-pensions/uk-pension-scheme"))
+            assertRedirectionAsExpected(relativeUrl("/unauthorised-payments-from-pensions/amount-not-surcharged"))
             getViewModel mustBe Some(expectedViewModel)
 
           }
@@ -551,7 +550,7 @@ class NonUKTaxOnAmountResultedInSurchargeControllerISpec
             implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
             implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("£1,042.64")))
 
-            assertRedirectionAsExpected(relativeUrl("/unauthorised-payments-from-pensions/uk-pension-scheme"))
+            assertRedirectionAsExpected(relativeUrl("/unauthorised-payments-from-pensions/amount-not-surcharged"))
             getViewModel mustBe Some(expectedViewModel)
 
           }
@@ -566,7 +565,7 @@ class NonUKTaxOnAmountResultedInSurchargeControllerISpec
             implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
             implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("0")))
 
-            assertRedirectionAsExpected(relativeUrl("/unauthorised-payments-from-pensions/uk-pension-scheme"))
+            assertRedirectionAsExpected(relativeUrl("/unauthorised-payments-from-pensions/amount-not-surcharged"))
             getViewModel mustBe Some(expectedViewModel)
 
           }

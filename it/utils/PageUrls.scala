@@ -173,6 +173,10 @@ object PageUrls extends IntegrationTest {
     def unauthorisedPaymentsUrl(taxYear: Int): String = s"$appUrl/$taxYear/unauthorised-payments-from-pensions/unauthorised-payments"
 
     def pensionSchemeTaxReferenceUrl(taxYear: Int): String = s"$appUrl/$taxYear/unauthorised-payments-from-pensions/pension-scheme-tax-reference"
+
+    def pensionSchemeTaxReferenceUrlWithIndex(taxYear: Int, index: Int): String =
+      s"$appUrl/$taxYear/unauthorised-payments-from-pensions/pension-scheme-tax-reference?pensionSchemeIndex=$index"
+
     def ukPensionSchemeDetailsUrl(taxYear: Int): String = s"$appUrl/$taxYear/unauthorised-payments-from-pensions/uk-pension-scheme-details"
 
     def checkUnauthorisedPaymentsCyaUrl(taxYear: Int): String = s"$appUrl/$taxYear/unauthorised-payments-from-pensions/check-unauthorised-payments"
@@ -192,11 +196,11 @@ object PageUrls extends IntegrationTest {
     def paymentsIntoPensionSchemeUrl(taxYear: Int): String = s"$appUrl/$taxYear/overseas-pensions/payments-into-overseas-pensions/payments-into-schemes"
     def employerPayOverseasPensionUrl(taxYear: Int): String =
       s"$appUrl/$taxYear/overseas-pensions/payments-into-overseas-pensions/employer-payments-into-schemes"
-      
+
     def taxEmployerPaymentsUrl(taxYear: Int): String = s"$appUrl/$taxYear/overseas-pensions/payments-into-overseas-pensions/tax-employer-payments"
     def qopsReferenceUrl(taxYear: Int): String =
       s"$appUrl/$taxYear/overseas-pensions/payments-into-overseas-pensions/qualifying-overseas-pension-scheme-reference-number"
-      
+
     def pensionCustomerReferenceNumberUrl(taxYear: Int): String =
       s"$appUrl/$taxYear/overseas-pensions/payments-into-overseas-pensions/pensions-customer-reference-number"
   }
@@ -205,22 +209,22 @@ object PageUrls extends IntegrationTest {
   object IncomeFromOverseasPensionsPages {
     def pensionOverseasIncomeCountryUrl(taxYear: Int): String =
       s"$appUrl/$taxYear/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-country"
-      
+
     def pensionOverseasIncomeCountryUrlIndex: Int => Int => String = (countryIndex: Int) =>
       (taxYear: Int) => s"$appUrl/$taxYear/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-country?countryIndex=$countryIndex"
-    
+
     def pensionOverseasIncomeCountryUrlIndex2(taxYear: Int, countryIndex: Int): String =
       s"$appUrl/$taxYear/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-country?countryIndex=$countryIndex"
-      
+
     def checkIncomeFromOverseasPensionsCyaUrl(taxYear: Int): String =
       s"$appUrl/$taxYear/overseas-pensions/income-from-overseas-pensions/check-overseas-pension-income-cya"
-      
+
     def foreignTaxCreditReliefControllerUrl(taxYear: Int, index: Int): String =
       s"$appUrl/$taxYear/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-ftcr?index=$index"
 
     def taxableAmountUrl: Int => Int => String =
       (index: Int) => (taxYear: Int) => s"$appUrl/$taxYear/overseas-pensions/income-from-overseas-pensions/taxable-amount?index=$index"
-          
+
     def countrySummaryListControllerUrl(taxYear: Int): String =
       s"$appUrl/$taxYear/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-country-summary"
   }

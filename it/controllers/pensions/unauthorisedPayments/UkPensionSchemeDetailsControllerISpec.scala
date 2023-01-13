@@ -28,7 +28,7 @@ import play.api.http.HeaderNames
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import utils.PageUrls.IncomeFromPensionsPages._
-import utils.PageUrls.unauthorisedPaymentsPages.{checkUnauthorisedPaymentsCyaUrl, pensionSchemeTaxReferenceUrl, ukPensionSchemeDetailsUrl}
+import utils.PageUrls.unauthorisedPaymentsPages.{checkUnauthorisedPaymentsCyaUrl, pensionSchemeTaxReferenceUrl, pensionSchemeTaxReferenceUrlWithIndex, removePensionSchemeReferenceUrl, ukPensionSchemeDetailsUrl}
 import utils.PageUrls.{fullUrl, pensionSummaryUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
@@ -121,11 +121,11 @@ class UkPensionSchemeDetailsControllerISpec extends IntegrationTest with BeforeA
           textOnPageCheck(pensionScheme2, pensionNameSelector(2))
           
           //TODO: replace hrefs "#" below with link to first details page when available .e.g. UkPensionSchemeDetailsCYAController.show(taxYearEOY, Some(1)).url
-          linkCheck(s"$change $change $pensionScheme1", changeLinkSelector(1), "#")
-          linkCheck(s"$change $change $pensionScheme2", changeLinkSelector(2),"#")
+          linkCheck(s"$change $change $pensionScheme1", changeLinkSelector(1), pensionSchemeTaxReferenceUrlWithIndex(taxYearEOY, 0))
+          linkCheck(s"$change $change $pensionScheme2", changeLinkSelector(2),pensionSchemeTaxReferenceUrlWithIndex(taxYearEOY, 1))
           //TODO: replace hrefs "#" below with link to remove page when available .e.g. RemovePensionSchemeDetailsController.show(taxYearEOY, Some(1)).url
-          linkCheck(s"$remove $remove $pensionScheme1", removeLinkSelector(1), "#")
-          linkCheck(s"$remove $remove $pensionScheme2", removeLinkSelector(2), "#")
+          linkCheck(s"$remove $remove $pensionScheme1", removeLinkSelector(1), removePensionSchemeReferenceUrl(taxYearEOY, Some(0)))
+          linkCheck(s"$remove $remove $pensionScheme2", removeLinkSelector(2), removePensionSchemeReferenceUrl(taxYearEOY, Some(1)))
           linkCheck(expectedAddAnotherText, addAnotherLinkSelector, pensionSchemeTaxReferenceUrl(taxYearEOY))
           buttonCheck(expectedButtonText, continueButtonSelector, Some(checkUnauthorisedPaymentsCyaUrl(taxYearEOY)))
           welshToggleCheck(user.isWelsh)
@@ -170,7 +170,7 @@ class UkPensionSchemeDetailsControllerISpec extends IntegrationTest with BeforeA
 
       "has an SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
+        result.header("location") shouldBe Some(checkUnauthorisedPaymentsCyaUrl(taxYearEOY))
       }
     }
   }

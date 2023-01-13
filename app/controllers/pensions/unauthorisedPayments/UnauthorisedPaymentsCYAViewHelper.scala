@@ -39,7 +39,7 @@ object UnauthorisedPaymentsCYAViewHelper extends CYABaseHelper {
       summaryListRowWithBooleanValue(
         "unauthorisedPayments.common.title",
         unauthorisedPaymentsViewModel.unauthorisedPaymentQuestion,
-        routes.UnAuthorisedPaymentsController.show(taxYear))(messages)
+        routes.UnauthorisedPaymentsController.show(taxYear))(messages)
     )
   }
 
@@ -100,7 +100,7 @@ object UnauthorisedPaymentsCYAViewHelper extends CYABaseHelper {
         summaryListRowWithString(
           "unauthorisedPayments.cya.pensionSchemeTaxReferences",
           unauthorisedPaymentsViewModel.pensionSchemeTaxReference,
-          routes.UnauthorisedPensionSchemeTaxReferenceController.show(taxYear))(messages)
+          routes.UkPensionSchemeDetailsController.show(taxYear))(messages)
       )
     )
   }

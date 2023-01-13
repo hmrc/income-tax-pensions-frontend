@@ -76,6 +76,7 @@ class ControllerSpec(val pathForThisPage: String) extends PlaySpec
     val paymentsIntoPensionsReliefAtSourceAmountPage: String = relativeUrl("/payments-into-pensions/relief-at-source-amount")
     val paymentsIntoPensionsTotalReliefAtSourceCheckPage: String = relativeUrl("/payments-into-pensions/total-relief-at-source-check")
     val incomeFromOverseasPensionsPage: String = relativeUrl("/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-status")
+    val unauthorisedPaymentsCYAPage: String = relativeUrl("/unauthorised-payments-from-pensions/check-unauthorised-payments")
   }
 
   override implicit lazy val app: Application = new GuiceApplicationBuilder()

@@ -43,7 +43,7 @@ class SurchargeAmountController @Inject()(authAction: AuthorisedAction,
 
   val amountForm: Form[BigDecimal] = AmountForm.amountForm(
     emptyFieldKey = "unauthorisedPayments.surchargeAmount.error.noEntry",
-    wrongFormatKey = "common.error.incorrectFormat" //changed this to common to avoid duplicate messages error on jenkins SASS-3240  unauthorisedPayments.surchargeAmount.error.incorrectFormat
+    wrongFormatKey = "common.error.incorrectFormat"
   )
 
 
@@ -53,11 +53,12 @@ class SurchargeAmountController @Inject()(authAction: AuthorisedAction,
         data.pensions.unauthorisedPayments.surchargeAmount
           .map(value => Future.successful(Ok(view(amountForm.fill(value), taxYear))))
           .getOrElse(Future.successful(Ok(view(amountForm, taxYear))))
+      case Some(data) if data.pensions.unauthorisedPayments.noSurchargeQuestion.contains(true) =>
+        Future.successful(Redirect(controllers.pensions.unauthorisedPayments.routes.NoSurchargeAmountController.show(taxYear)))
       case Some(_) =>
         Future.successful(Redirect(controllers.pensions.unauthorisedPayments.routes.WhereAnyOfTheUnauthorisedPaymentsController.show(taxYear)))
       case None =>
-        //TODO - redirect to CYA page once implemented
-        Future.successful(Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear)))
+        Future.successful(Redirect(controllers.pensions.unauthorisedPayments.routes.UnauthorisedPaymentsCYAController.show(taxYear)))
     }
   }
 
@@ -66,24 +67,20 @@ class SurchargeAmountController @Inject()(authAction: AuthorisedAction,
       formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
       amount => {
         pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
-          case Some(data) =>
-            if (data.pensions.unauthorisedPayments.surchargeQuestion.contains(true)) {
-              val pensionsCYAModel: PensionsCYAModel = data.pensions
-              val viewModel = pensionsCYAModel.unauthorisedPayments
-              val updatedCyaModel: PensionsCYAModel = pensionsCYAModel.copy(unauthorisedPayments = viewModel.copy(surchargeAmount = Some(amount)))
-
-              pensionSessionService.createOrUpdateSessionData(request.user,
-                updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
-
-                Redirect(controllers.pensions.unauthorisedPayments.routes.NonUKTaxOnAmountResultedInSurchargeController.show(taxYear))
-              }
-            } else {
-              Future.successful(Redirect(controllers.pensions.unauthorisedPayments.routes.WhereAnyOfTheUnauthorisedPaymentsController.show(taxYear)))
+          case Some(data) if (data.pensions.unauthorisedPayments.surchargeQuestion.contains(true)) =>
+            val pensionsCYAModel: PensionsCYAModel = data.pensions
+            val viewModel = pensionsCYAModel.unauthorisedPayments
+            val updatedCyaModel: PensionsCYAModel = pensionsCYAModel.copy(unauthorisedPayments = viewModel.copy(surchargeAmount = Some(amount)))
+            pensionSessionService.createOrUpdateSessionData(request.user,
+              updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
+              Redirect(controllers.pensions.unauthorisedPayments.routes.NonUKTaxOnAmountResultedInSurchargeController.show(taxYear))
             }
-
+          case Some(data) if data.pensions.unauthorisedPayments.noSurchargeQuestion.contains(true) =>
+            Future.successful(Redirect(controllers.pensions.unauthorisedPayments.routes.NoSurchargeAmountController.show(taxYear)))
+          case Some(_) =>
+            Future.successful(Redirect(controllers.pensions.unauthorisedPayments.routes.WhereAnyOfTheUnauthorisedPaymentsController.show(taxYear)))
           case None =>
-            //TODO - redirect to CYA page once implemented
-            Future.successful(Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear)))
+            Future.successful(Redirect(controllers.pensions.unauthorisedPayments.routes.UnauthorisedPaymentsCYAController.show(taxYear)))
         }
       }
     )

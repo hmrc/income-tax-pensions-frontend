@@ -43,9 +43,10 @@ class NonUKTaxOnAmountNotResultedInSurchargeController @Inject()(messagesControl
 
   override val errorMessageSet: YesNoAmountForm = NonUKTaxOnAmountNotResultedInSurcharge
 
-  override def redirectWhenNoSessionData(taxYear: Int): Result = redirectToSummaryPage(taxYear)
+  override def redirectWhenNoSessionData(taxYear: Int): Result =
+    Redirect(controllers.pensions.unauthorisedPayments.routes.UnauthorisedPaymentsCYAController.show(taxYear))
 
-  override def redirectAfterUpdatingSessionData(taxYear: Int): Result =
+  override def redirectAfterUpdatingSessionData(pensionsUserData: PensionsUserData, taxYear: Int): Result =
     Redirect(controllers.pensions.unauthorisedPayments.routes.WhereAnyOfTheUnauthorisedPaymentsController.show(taxYear))
 
   override def prepareView(pensionsUserData: PensionsUserData, taxYear: Int)
@@ -68,7 +69,8 @@ class NonUKTaxOnAmountNotResultedInSurchargeController @Inject()(messagesControl
       )
     )
 
-  override def whenSessionDataIsInsufficient(taxYear: Int): Result = redirectToSummaryPage(taxYear)
+  override def whenSessionDataIsInsufficient(pensionsUserData: PensionsUserData, taxYear: Int): Result =
+    Redirect(controllers.pensions.unauthorisedPayments.routes.UnauthorisedPaymentsCYAController.show(taxYear))
 
   override def sessionDataIsSufficient(pensionsUserData: PensionsUserData): Boolean =
     pensionsUserData.pensions.unauthorisedPayments.noSurchargeAmount.isDefined

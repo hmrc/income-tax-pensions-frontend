@@ -29,6 +29,7 @@ import play.api.http.Status.UNAUTHORIZED
 import play.api.libs.ws.WSResponse
 import utils.PageUrls.PaymentIntoPensions.{checkPaymentsIntoPensionCyaUrl, checkPaymentsIntoPensionStatusUrl}
 import utils.PageUrls._
+import utils.PageUrls.unauthorisedPaymentsPages.{checkUnauthorisedPaymentsCyaUrl, unauthorisedPaymentsUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 class PensionsSummaryControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
@@ -163,9 +164,7 @@ class PensionsSummaryControllerISpec extends IntegrationTest with ViewHelpers wi
           }
 
           "has an unauthorised payments from pensions section" which {
-            //TODO: Change to use the href below when pension lifetime allowance cya page available
-            //linkCheck("Unauthorised payments from pensions", unauthorisedPaymentsFromPensionsLink, checkUnauthorisedPaymentsFromPensionsLinkCyaUrl(taxYear))
-            linkCheck("Unauthorised payments from pensions", unauthorisedPaymentsFromPensionsLink, "#")
+            linkCheck("Unauthorised payments from pensions", unauthorisedPaymentsFromPensionsLink, checkUnauthorisedPaymentsCyaUrl(taxYear))
             textOnPageCheck(user.commonExpectedResults.updated, summaryListStatusTagSelector(5))
           }
 
@@ -229,9 +228,7 @@ class PensionsSummaryControllerISpec extends IntegrationTest with ViewHelpers wi
           }
 
           "has an unauthorised payments from pensions section" which {
-            //TODO: Change to use the href below when pension lifetime allowance cya page available
-            //linkCheck("Unauthorised payments from pensions", unauthorisedPaymentsFromPensionsLink, checkUnauthorisedPaymentsFromPensionsLinkCyaUrl(taxYear))
-            linkCheck("Unauthorised payments from pensions", unauthorisedPaymentsFromPensionsLink, "#")
+            linkCheck("Unauthorised payments from pensions", unauthorisedPaymentsFromPensionsLink, checkUnauthorisedPaymentsCyaUrl(taxYear))
             textOnPageCheck(user.commonExpectedResults.updated, summaryListStatusTagSelector(5))
           }
 
@@ -287,9 +284,7 @@ class PensionsSummaryControllerISpec extends IntegrationTest with ViewHelpers wi
           }
 
           "has an unauthorised payments from pensions section" which {
-            //TODO: Change to use the href below when pension lifetime allowance cya page available
-            //linkCheck("Unauthorised payments from pensions", unauthorisedPaymentsFromPensionsLink, checkUnauthorisedPaymentsFromPensionsLinkCyaUrl(taxYear))
-            linkCheck("Unauthorised payments from pensions", unauthorisedPaymentsFromPensionsLink, "#")
+            linkCheck("Unauthorised payments from pensions", unauthorisedPaymentsFromPensionsLink, unauthorisedPaymentsUrl(taxYear))
             textOnPageCheck(user.commonExpectedResults.toDo, summaryListStatusTagSelector(5))
           }
 
@@ -350,9 +345,7 @@ class PensionsSummaryControllerISpec extends IntegrationTest with ViewHelpers wi
           }
 
           "has an unauthorised payments from pensions section" which {
-            //TODO: Change to use the href below when pension lifetime allowance cya page available
-            //linkCheck("Unauthorised payments from pensions", unauthorisedPaymentsFromPensionsLink, checkUnauthorisedPaymentsFromPensionsLinkCyaUrl(taxYear))
-            linkCheck("Unauthorised payments from pensions", unauthorisedPaymentsFromPensionsLink, "#")
+            linkCheck("Unauthorised payments from pensions", unauthorisedPaymentsFromPensionsLink, checkUnauthorisedPaymentsCyaUrl(taxYear))
             textOnPageCheck(user.commonExpectedResults.updated, summaryListStatusTagSelector(5))
           }
 
@@ -413,9 +406,7 @@ class PensionsSummaryControllerISpec extends IntegrationTest with ViewHelpers wi
           }
 
           "has an unauthorised payments from pensions section" which {
-            //TODO: Change to use the href below when pension lifetime allowance cya page available
-            //linkCheck("Unauthorised payments from pensions", unauthorisedPaymentsFromPensionsLink, checkUnauthorisedPaymentsFromPensionsLinkCyaUrl(taxYear))
-            linkCheck("Unauthorised payments from pensions", unauthorisedPaymentsFromPensionsLink, "#")
+            linkCheck("Unauthorised payments from pensions", unauthorisedPaymentsFromPensionsLink, checkUnauthorisedPaymentsCyaUrl(taxYear))
             textOnPageCheck(user.commonExpectedResults.toDo, summaryListStatusTagSelector(5))
           }
 

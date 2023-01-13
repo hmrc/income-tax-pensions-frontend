@@ -757,13 +757,6 @@ employerFinancedRetirementScheme.benefitsFromScheme.question.agent = A oes gan e
 employerFinancedRetirementScheme.benefitsFromScheme.error.individual = Dewiswch ‘Iawn’ os oes gennych gynllun buddiannau ymddeol a ariannwyd gan gyflogwyr
 employerFinancedRetirementScheme.benefitsFromScheme.error.agent = Dewiswch ‘Iawn’ os oes gan eich cleient gynllun buddiannau ymddeol a ariannwyd gan gyflogwyr
 
-#Did you get any unauthorised payment from a pension scheme?
-unauthorisedPayments.gateway.title.individual = A gawsoch unrhyw daliad heb awdurdod o gynllun pensiwn?
-unauthorisedPayments.gateway.title.agent = A gafodd eich cleient unrhyw daliad heb awdurdod o gynllun pensiwn?
-unauthorisedPayments.gateway.findOutMore = Dysgwch ragor am daliadau heb awdurdod
-unauthorisedPayments.gateway.error.individual = Dewiswch ‘Iawn’ os cawsoch daliadau heb awdurdod
-unauthorisedPayments.gateway.error.agent = Dewiswch ‘Iawn’ os cafodd eich cleient daliadau heb awdurdod
-
 #Unauthorised payments from UK pensions schemes
 unauthorisedPayments.pensionSchemeDetails.title = Unauthorised payments from UK pensions schemes
 unauthorisedPayments.pensionSchemeDetails.addAnotherPensionSchemeTaxReference = Add another Pensions Scheme Tax Reference

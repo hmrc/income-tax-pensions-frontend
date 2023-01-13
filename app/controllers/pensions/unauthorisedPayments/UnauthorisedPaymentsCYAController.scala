@@ -44,7 +44,7 @@ class UnauthorisedPaymentsCYAController @Inject()(authAction: AuthorisedAction,
     pensionSessionService.getAndHandle(taxYear, request.user) { (cya, prior) =>
       (cya, prior) match {
         case (Some(data), _) =>
-            Future.successful(Ok(view(taxYear, data.pensions.unauthorisedPayments)))
+          Future.successful(Ok(view(taxYear, data.pensions.unauthorisedPayments)))
         case (None, Some(priorData)) =>
           val cyaModel = generateCyaFromPrior(priorData)
           pensionSessionService.createOrUpdateSessionData(request.user,
@@ -70,9 +70,9 @@ class UnauthorisedPaymentsCYAController @Inject()(authAction: AuthorisedAction,
         if (comparePriorData(model.pensions, prior)) {
           //        TODO - build submission model from cya data and submit to DES if cya data doesn't match prior data
           //        val submissionModel = AllPensionsData(None, None, None)
-          Future.successful(Redirect(controllers.pensions.unauthorisedPayments.routes.UnauthorisedPaymentsCYAController.show(taxYear)))
+          Future.successful(Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear)))
         } else {
-          Future.successful(Redirect(controllers.pensions.unauthorisedPayments.routes.UnauthorisedPaymentsCYAController.show(taxYear)))
+          Future.successful(Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear)))
         }
       }
     }

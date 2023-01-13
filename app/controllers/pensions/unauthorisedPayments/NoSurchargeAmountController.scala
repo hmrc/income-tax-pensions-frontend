@@ -52,14 +52,10 @@ class NoSurchargeAmountController @Inject()(authAction: AuthorisedAction,
         data.pensions.unauthorisedPayments.noSurchargeAmount
           .map(value => Future.successful(Ok(view(amountForm.fill(value), taxYear))))
           .getOrElse(Future.successful(Ok(view(amountForm, taxYear))))
-
-      //Todo Is this a necessary check? as opposed to caller DidYouPayNonUkTaxController.submit()
       case Right(Some(data)) if data.pensions.unauthorisedPayments.noSurchargeQuestion.contains(false) =>
         Future.successful(Redirect(controllers.pensions.unauthorisedPayments.routes.WhereAnyOfTheUnauthorisedPaymentsController.show(taxYear)))
-
       case _ =>
-        //Todo redirect to CYA page when implemented
-        Future.successful(Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear)))
+        Future.successful(Redirect(controllers.pensions.unauthorisedPayments.routes.UnauthorisedPaymentsCYAController.show(taxYear)))
     }
   }
 
@@ -73,15 +69,12 @@ class NoSurchargeAmountController @Inject()(authAction: AuthorisedAction,
 
             pensionSessionService.createOrUpdateSessionData(request.user,
               updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
-
               Redirect(controllers.pensions.unauthorisedPayments.routes.NonUKTaxOnAmountNotResultedInSurchargeController.show(taxYear))
             }
-          //Todo strange case that may need to be looked at
           case Right(Some(data)) if data.pensions.unauthorisedPayments.noSurchargeQuestion.contains(false) =>
             Future.successful(Redirect(controllers.pensions.unauthorisedPayments.routes.WhereAnyOfTheUnauthorisedPaymentsController.show(taxYear)))
           case _ =>
-            //TODO - redirect to CYA page once implemented#
-            Future.successful(Redirect(controllers.pensions.unauthorisedPayments.routes.NoSurchargeAmountController.show(taxYear)))
+            Future.successful(Redirect(controllers.pensions.unauthorisedPayments.routes.UnauthorisedPaymentsCYAController.show(taxYear)))
         }
       }
     )

@@ -28,7 +28,7 @@ import play.api.libs.ws.WSResponse
 import utils.CommonUtils
 import utils.PageUrls.UnAuthorisedPayments.noSurchargeAmountUrl
 import utils.PageUrls.{fullUrl, pensionSummaryUrl}
-import utils.PageUrls.unauthorisedPaymentsPages.{nonUKTaxOnAmountSurcharge, whereAnyOfTheUnauthorisedPaymentsUrl}
+import utils.PageUrls.unauthorisedPaymentsPages.{checkUnauthorisedPaymentsCyaUrl, nonUKTaxOnAmountSurcharge, whereAnyOfTheUnauthorisedPaymentsUrl}
 
 
 class NoSurchargeAmountControllerISpec extends CommonUtils with BeforeAndAfterEach {
@@ -153,14 +153,18 @@ class NoSurchargeAmountControllerISpec extends CommonUtils with BeforeAndAfterEa
       }
     }
 
-    "redirect to the pension summary page if the amount not surcharge question has not been answered" which {
+    "redirect to the pension CYA page if the amount not surcharge question has not been answered" which {
       val viewModel = anUnauthorisedPaymentsViewModel.copy(noSurchargeAmount = None, noSurchargeQuestion = None)
       val pensionUserData = pensionsUserDataWithUnauthorisedPayments(viewModel, isPriorSubmission = false)
       lazy val result: WSResponse = showPage(pensionUserData)
 
 
       "has a SEE_OTHER status" in {
-        result.status shouldBe SEE_OTHER //TODO - redirect to the CYA page
+        result.status shouldBe SEE_OTHER
+      }
+
+      "redirects successfully to Unauthorised Payements page" in {
+        result.header("location").contains(checkUnauthorisedPaymentsCyaUrl(taxYearEOY)) shouldBe true
       }
     }
 
@@ -170,7 +174,12 @@ class NoSurchargeAmountControllerISpec extends CommonUtils with BeforeAndAfterEa
       "has an SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER //TODO - redirect to CYA page once implemented
       }
+
+      "redirects successfully to Unauthorised Payements page" in {
+        result.header("location").contains(checkUnauthorisedPaymentsCyaUrl(taxYearEOY)) shouldBe true
+      }
     }
+
     "redirect to the non uk tax not surcharge page if user tries to access link directly" which {
       val validAmount = "100.22"
       val viewModel = anUnauthorisedPaymentsViewModel.copy(noSurchargeQuestion = Some(false))
@@ -197,7 +206,7 @@ class NoSurchargeAmountControllerISpec extends CommonUtils with BeforeAndAfterEa
       }
 
       "redirects successfully to cya page" in {
-        result.header("location").contains(pensionSummaryUrl(taxYearEOY)) shouldBe true //Todo change this to check your answers page once implemented
+        result.header("location").contains(checkUnauthorisedPaymentsCyaUrl(taxYearEOY)) shouldBe true
       }
     }
   }
@@ -331,7 +340,7 @@ class NoSurchargeAmountControllerISpec extends CommonUtils with BeforeAndAfterEa
       val validAmount = "100.22"
       val validForm: Map[String, String] = Map(AmountForm.amount -> validAmount)
       val viewModel = anUnauthorisedPaymentsViewModel.copy(noSurchargeQuestion = None)
-      val pensionUserData =  pensionsUserDataWithUnauthorisedPayments(viewModel, isPriorSubmission = false)
+      val pensionUserData = pensionsUserDataWithUnauthorisedPayments(viewModel, isPriorSubmission = false)
 
       implicit lazy val result: WSResponse = submitPage(pensionUserData, validForm)
 
@@ -340,7 +349,7 @@ class NoSurchargeAmountControllerISpec extends CommonUtils with BeforeAndAfterEa
       }
 
       "redirects successfully to cya page" in {
-        result.header("location").contains(noSurchargeAmountUrl(taxYearEOY)) shouldBe true //Todo change this to check your answers page once implemented
+        result.header("location").contains(checkUnauthorisedPaymentsCyaUrl(taxYearEOY)) shouldBe true
       }
     }
   }

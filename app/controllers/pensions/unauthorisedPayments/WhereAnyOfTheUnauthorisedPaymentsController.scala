@@ -50,27 +50,25 @@ class WhereAnyOfTheUnauthorisedPaymentsController @Inject()(implicit val cc: Mes
 
 
   def show(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
-        pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
-          case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
-          case Right(optPensionUserData) => optPensionUserData match {
-            case Some(data) =>
-              data.pensions.unauthorisedPayments.ukPensionSchemesQuestion match {
-                case Some(value) => Future.successful(Ok(whereAnyOfTheUnauthorisedPaymentsView(
-                  yesNoForm().fill(value), taxYear)))
-                case None => Future.successful(Ok(whereAnyOfTheUnauthorisedPaymentsView(yesNoForm(), taxYear)))
-              }
-            case None =>
-              //TODO - redirect to CYA page once implemented
-              Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
+    pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
+      case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
+      case Right(optPensionUserData) => optPensionUserData match {
+        case Some(data) if data.pensions.unauthorisedPayments.noSurchargeQuestion.contains(true) || data.pensions.unauthorisedPayments.surchargeQuestion.contains(true) =>
+          data.pensions.unauthorisedPayments.ukPensionSchemesQuestion match {
+            case Some(value) => Future.successful(Ok(whereAnyOfTheUnauthorisedPaymentsView(
+              yesNoForm().fill(value), taxYear)))
+            case None => Future.successful(Ok(whereAnyOfTheUnauthorisedPaymentsView(yesNoForm(), taxYear)))
           }
-        }
+        case _ =>
+          Future.successful(Redirect(controllers.pensions.unauthorisedPayments.routes.UnauthorisedPaymentsCYAController.show(taxYear)))
+      }
+    }
   }
 
   def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
     yesNoForm().bindFromRequest().fold(
       formWithErrors => Future.successful(BadRequest(whereAnyOfTheUnauthorisedPaymentsView(formWithErrors, taxYear))),
       yesNo => {
-
         pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
           case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
           case Right(optPensionUserData) => optPensionUserData match {
@@ -84,16 +82,13 @@ class WhereAnyOfTheUnauthorisedPaymentsController @Inject()(implicit val cc: Mes
               pensionSessionService.createOrUpdateSessionData(request.user,
                 updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
                 if (yesNo) {
-                  //TODO - redirect to "Pension Scheme Tax Reference PSTR" page once implemented
-                  Redirect(PensionsSummaryController.show(taxYear))
+                  Redirect(controllers.pensions.unauthorisedPayments.routes.UnauthorisedPensionSchemeTaxReferenceController.show(taxYear, None))
                 } else {
-                  //TODO - redirect to "Check your unauthorised payments page" page once implemented
-                  Redirect(PensionsSummaryController.show(taxYear))
+                  Redirect(controllers.pensions.unauthorisedPayments.routes.UnauthorisedPaymentsCYAController.show(taxYear))
                 }
               }
             case _ => {
-              //TODO - redirect to CYA page once implemented
-              Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
+              Future.successful(Redirect(controllers.pensions.unauthorisedPayments.routes.UnauthorisedPaymentsCYAController.show(taxYear)))
             }
           }
         }

@@ -46,7 +46,7 @@ class UkPensionSchemeDetailsController @Inject()(implicit val cc: MessagesContro
         val pensionSchemeTaxReferenceList: Seq[String] = data.pensions.unauthorisedPayments.pensionSchemeTaxReference.getOrElse(Seq.empty)
         Future(Ok(ukPensionSchemeDetails(taxYear, pensionSchemeTaxReferenceList)))
       case None =>
-        Future.successful(Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear)))
+        Future.successful(Redirect(controllers.pensions.unauthorisedPayments.routes.UnauthorisedPaymentsCYAController.show(taxYear)))
     }
   }
 }
