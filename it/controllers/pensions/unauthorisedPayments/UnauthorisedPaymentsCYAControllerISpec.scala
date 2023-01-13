@@ -66,7 +66,8 @@ class UnauthorisedPaymentsCYAControllerISpec extends
     val nonUKTaxOnAmountNotResultedInSurcharge: String =
       controllers.pensions.unauthorisedPayments.routes.NonUKTaxOnAmountNotResultedInSurchargeController.show(taxYear).url
     val ukPensionSchemes: String = controllers.pensions.unauthorisedPayments.routes.WhereAnyOfTheUnauthorisedPaymentsController.show(taxYear).url
-    val pensionSchemeTaxReferences: String = controllers.pensions.unauthorisedPayments.routes.UnauthorisedPensionSchemeTaxReferenceController.show(taxYear).url
+    val pensionSchemeTaxReferences: String = controllers.pensions.unauthorisedPayments.routes.UnauthorisedPensionSchemeTaxReferenceController.show(taxYear, None).url
+    val pensionSchemeTaxDetails: String = controllers.pensions.unauthorisedPayments.routes.UkPensionSchemeDetailsController.show(taxYear).url
   }
 
   trait SpecificExpectedResults {
@@ -220,7 +221,7 @@ class UnauthorisedPaymentsCYAControllerISpec extends
           cyaRowCheck(nonUkTaxAmountNotSurcharged, s"${moneyContent(unauthorisedPaymentsFromIncomeTaxSubmission.get.noSurcharge.map(_.foreignTaxPaid).get)}",
             ChangeLinksUnauthorisedPayments.nonUKTaxOnAmountNotResultedInSurcharge, nonUkTaxAmountNotSurchargedHidden, 5)
           cyaRowCheck(ukPensionSchemes, stringToBoolean(unauthorisedPaymentsFromIncomeTaxSubmission.map(_.pensionSchemeTaxReference).isDefined), ChangeLinksUnauthorisedPayments.ukPensionSchemes, ukPensionSchemesHidden, 6)
-          cyaRowCheck(pensionSchemeTaxReferences, s"${unauthorisedPaymentsFromIncomeTaxSubmission.get.pensionSchemeTaxReference.mkString(", ")}", ChangeLinksUnauthorisedPayments.pensionSchemeTaxReferences, pensionSchemeTaxReferencesHidden, 7)
+          cyaRowCheck(pensionSchemeTaxReferences, s"${unauthorisedPaymentsFromIncomeTaxSubmission.get.pensionSchemeTaxReference.mkString(", ")}", ChangeLinksUnauthorisedPayments.pensionSchemeTaxDetails, pensionSchemeTaxReferencesHidden, 7)
 
           buttonCheck(saveAndContinue)
           welshToggleCheck(user.isWelsh)
@@ -259,7 +260,7 @@ class UnauthorisedPaymentsCYAControllerISpec extends
           cyaRowCheck(nonUkTaxAmountNotSurcharged, s"${moneyContent(unauthorisedPaymentsFromIncomeTaxSubmission.get.noSurcharge.map(_.foreignTaxPaid).get)}",
             ChangeLinksUnauthorisedPayments.nonUKTaxOnAmountNotResultedInSurcharge, nonUkTaxAmountNotSurchargedHidden, 3)
           cyaRowCheck(ukPensionSchemes, stringToBoolean(unauthorisedPaymentsFromIncomeTaxSubmission.map(_.pensionSchemeTaxReference).isDefined), ChangeLinksUnauthorisedPayments.ukPensionSchemes, ukPensionSchemesHidden, 4)
-          cyaRowCheck(pensionSchemeTaxReferences, s"${unauthorisedPaymentsFromIncomeTaxSubmission.get.pensionSchemeTaxReference.mkString(", ")}", ChangeLinksUnauthorisedPayments.pensionSchemeTaxReferences, pensionSchemeTaxReferencesHidden, 5)
+          cyaRowCheck(pensionSchemeTaxReferences, s"${unauthorisedPaymentsFromIncomeTaxSubmission.get.pensionSchemeTaxReference.mkString(", ")}", ChangeLinksUnauthorisedPayments.pensionSchemeTaxDetails, pensionSchemeTaxReferencesHidden, 5)
 
           buttonCheck(saveAndContinue)
           welshToggleCheck(user.isWelsh)
@@ -298,7 +299,7 @@ class UnauthorisedPaymentsCYAControllerISpec extends
           cyaRowCheck(nonUkTaxAmountSurcharged, s"${moneyContent(unauthorisedPaymentsFromIncomeTaxSubmission.get.surcharge.map(_.foreignTaxPaid).get)}",
             ChangeLinksUnauthorisedPayments.nonUKTaxOnAmountResultedInSurcharge, nonUkTaxAmountSurchargedHidden, 3)
           cyaRowCheck(ukPensionSchemes, stringToBoolean(unauthorisedPaymentsFromIncomeTaxSubmission.map(_.pensionSchemeTaxReference).isDefined), ChangeLinksUnauthorisedPayments.ukPensionSchemes, ukPensionSchemesHidden, 4)
-          cyaRowCheck(pensionSchemeTaxReferences, s"${unauthorisedPaymentsFromIncomeTaxSubmission.get.pensionSchemeTaxReference.mkString(", ")}", ChangeLinksUnauthorisedPayments.pensionSchemeTaxReferences, pensionSchemeTaxReferencesHidden, 5)
+          cyaRowCheck(pensionSchemeTaxReferences, s"${unauthorisedPaymentsFromIncomeTaxSubmission.get.pensionSchemeTaxReference.mkString(", ")}", ChangeLinksUnauthorisedPayments.pensionSchemeTaxDetails, pensionSchemeTaxReferencesHidden, 5)
 
           buttonCheck(saveAndContinue)
           welshToggleCheck(user.isWelsh)
@@ -387,7 +388,7 @@ class UnauthorisedPaymentsCYAControllerISpec extends
         }
 
         "redirects to the summary page" in {
-          result.headers("Location").head shouldBe controllers.pensions.unauthorisedPayments.routes.UnauthorisedPaymentsCYAController.show(taxYear).url
+          result.headers("Location").head shouldBe controllers.pensions.routes.PensionsSummaryController.show(taxYear).url
         }
       }
 
@@ -427,7 +428,7 @@ class UnauthorisedPaymentsCYAControllerISpec extends
         }
 
         "redirects to the summary page" in {
-          result.headers("Location").head shouldBe controllers.pensions.unauthorisedPayments.routes.UnauthorisedPaymentsCYAController.show(taxYear).url
+          result.headers("Location").head shouldBe controllers.pensions.routes.PensionsSummaryController.show(taxYear).url
         }
       }
     }

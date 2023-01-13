@@ -16,6 +16,8 @@
 
 package controllers.pensions.unauthorisedPayments
 
+import builders.AllPensionsDataBuilder.anAllPensionsData
+import builders.IncomeTaxUserDataBuilder.anIncomeTaxUserData
 import builders.PensionsUserDataBuilder.pensionsUserDataWithUnauthorisedPayments
 import builders.UnauthorisedPaymentsViewModelBuilder.{anUnauthorisedPaymentsEmptyViewModel, anUnauthorisedPaymentsViewModel}
 import builders.UserBuilder.aUserRequest
@@ -28,8 +30,8 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.UnAuthorisedPayments.surchargeAmountUrl
-import utils.PageUrls.unauthorisedPaymentsPages.{nonUKTaxOnAmountSurcharge, unauthorisedPaymentsUrl}
+import utils.PageUrls.UnAuthorisedPayments.{noSurchargeAmountUrl, surchargeAmountUrl}
+import utils.PageUrls.unauthorisedPaymentsPages.{checkUnauthorisedPaymentsCyaUrl, nonUKTaxOnAmountSurcharge, unauthorisedPaymentsUrl}
 import utils.PageUrls.{fullUrl, pensionSummaryUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
@@ -280,7 +282,6 @@ class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAnd
           "has an OK status" in {
             result.status shouldBe OK
           }
-
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
           titleCheck(user.commonExpectedResults.expectedTitle)
@@ -397,23 +398,6 @@ class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAnd
         }
       }
     }
-
-
-
-    "redirect to Pensions Summary page if there is no session data" should {
-      lazy val result: WSResponse = {
-        dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
-        urlGet(fullUrl(unauthorisedPaymentsUrl(taxYearEOY)), follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
-      }
-
-      "has an SEE_OTHER status" in {
-        result.status shouldBe SEE_OTHER
-        //TODO - redirect to CYA page once implemented
-        result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
-      }
-    }
   }
 
   ".submit" should {
@@ -432,6 +416,8 @@ class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAnd
 
             authoriseAgentOrIndividual(user.isAgent)
             dropPensionsDB()
+            insertCyaData(pensionsUserDataWithUnauthorisedPayments(anUnauthorisedPaymentsViewModel, isPriorSubmission = false), aUserRequest)
+            userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYearEOY)
 
             val pensionsViewModel = anUnauthorisedPaymentsViewModel.copy()
 
@@ -515,12 +501,10 @@ class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAnd
 
         "has a SEE_OTHER(303) status" in {
           result.status shouldBe SEE_OTHER
-          //TODO - redirect to Amount that did not result in a surcharge page once implemented
-          result.header("location").contains(unauthorisedPaymentsUrl(taxYearEOY)) shouldBe true
+          result.header("location").contains(noSurchargeAmountUrl(taxYearEOY)) shouldBe true
         }
       }
 
-      //TODO - redirect to CYA page once implemented
       s"redirects to CYA page when ${agentTest(user.isAgent)} submits a valid form with " +
         s"noValue checkboxes checked in Language ${welshTest(user.isWelsh)}" which {
           val form = {
@@ -541,8 +525,7 @@ class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAnd
 
           "has a SEE_OTHER(303) status" in {
             result.status shouldBe SEE_OTHER
-            //TODO - redirect to CYA page once implemented
-            result.header("location").contains(unauthorisedPaymentsUrl(taxYearEOY)) shouldBe true
+            result.header("location").contains(checkUnauthorisedPaymentsCyaUrl(taxYearEOY)) shouldBe true
           }
       }
 

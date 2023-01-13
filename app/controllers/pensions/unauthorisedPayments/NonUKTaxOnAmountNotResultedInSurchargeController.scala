@@ -69,7 +69,8 @@ class NonUKTaxOnAmountNotResultedInSurchargeController @Inject()(messagesControl
       )
     )
 
-  override def whenSessionDataIsInsufficient(pensionsUserData: PensionsUserData, taxYear: Int): Result = redirectToSummaryPage(taxYear)
+  override def whenSessionDataIsInsufficient(pensionsUserData: PensionsUserData, taxYear: Int): Result =
+    Redirect(controllers.pensions.unauthorisedPayments.routes.UnauthorisedPaymentsCYAController.show(taxYear))
 
   override def sessionDataIsSufficient(pensionsUserData: PensionsUserData): Boolean =
     pensionsUserData.pensions.unauthorisedPayments.noSurchargeAmount.isDefined

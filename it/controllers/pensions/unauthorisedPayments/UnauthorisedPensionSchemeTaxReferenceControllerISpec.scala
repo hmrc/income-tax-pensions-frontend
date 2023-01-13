@@ -42,7 +42,7 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
 
           implicit val response: WSResponse = getPage(None)
 
-          assertRedirectionAsExpected(PageRelativeURLs.summaryPage)
+          assertRedirectionAsExpected(PageRelativeURLs.unauthorisedPaymentsCYAPage)
         }
       }
       "appear as expected" when {
@@ -240,7 +240,7 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
           implicit val userConfig: UserConfig = userConfigWhenIrrelevant(None)
           implicit val response: WSResponse = submitForm(SubmittedFormDataForPage(Some("12345678RA")))
 
-          assertRedirectionAsExpected(PageRelativeURLs.summaryPage)
+          assertRedirectionAsExpected(PageRelativeURLs.unauthorisedPaymentsCYAPage)
           getViewModel mustBe None
         }
       }
@@ -259,7 +259,7 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
             implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
             implicit val response: WSResponse = submitForm(SubmittedFormDataForPage(Some("12345678TA")))
 
-            assertRedirectionAsExpected(PageRelativeURLs.summaryPage)
+            assertRedirectionAsExpected(relativeUrl("/unauthorised-payments-from-pensions/uk-pension-scheme-details"))
             getViewModel mustBe Some(expectedViewModel)
           }
         }
@@ -285,7 +285,7 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
             implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
             implicit val response: WSResponse = submitForm(SubmittedFormDataForPage(Some("88888888XY")))
 
-            assertRedirectionAsExpected(PageRelativeURLs.summaryPage)
+            assertRedirectionAsExpected(relativeUrl("/unauthorised-payments-from-pensions/uk-pension-scheme-details"))
             getViewModel mustBe Some(expectedViewModel)
           }
           "they enter a valid one (but with extra padding), which they haven't entered before" in {
@@ -298,7 +298,7 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
             implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
             implicit val response: WSResponse = submitForm(SubmittedFormDataForPage(Some("  88888888XY  ")))
 
-            assertRedirectionAsExpected(PageRelativeURLs.summaryPage)
+            assertRedirectionAsExpected(relativeUrl("/unauthorised-payments-from-pensions/uk-pension-scheme-details"))
             getViewModel mustBe Some(expectedViewModel)
           }
           "they enter a valid one, which they have had previously entered" in {
@@ -311,7 +311,7 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
             implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
             implicit val response: WSResponse = submitForm(SubmittedFormDataForPage(Some("22446688sA")))
 
-            assertRedirectionAsExpected(PageRelativeURLs.summaryPage)
+            assertRedirectionAsExpected(relativeUrl("/unauthorised-payments-from-pensions/uk-pension-scheme-details"))
             getViewModel mustBe Some(expectedViewModel)
           }
         }

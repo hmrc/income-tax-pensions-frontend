@@ -66,7 +66,7 @@ class AnnualLifetimeAllowanceCYAControllerISpec extends
     val nonUKTaxOnAmountNotResultedInSurcharge: String =
       controllers.pensions.unauthorisedPayments.routes.NonUKTaxOnAmountNotResultedInSurchargeController.show(taxYear).url
     val ukPensionSchemes: String = controllers.pensions.unauthorisedPayments.routes.WhereAnyOfTheUnauthorisedPaymentsController.show(taxYear).url
-    val pensionSchemeTaxReferences: String = controllers.pensions.unauthorisedPayments.routes.UnauthorisedPensionSchemeTaxReferenceController.show(taxYear).url
+    val pensionSchemeTaxReferences: String = controllers.pensions.unauthorisedPayments.routes.UnauthorisedPensionSchemeTaxReferenceController.show(taxYear, None).url
 
 
     val aboveAnnualOrLifetimeAllowance: String = controllers.pensions.lifetimeAllowance.routes.AboveAnnualLifeTimeAllowanceController.show(taxYear).url

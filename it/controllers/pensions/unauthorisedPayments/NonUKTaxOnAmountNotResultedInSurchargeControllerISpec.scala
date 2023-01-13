@@ -37,7 +37,7 @@ class NonUKTaxOnAmountNotResultedInSurchargeControllerISpec
           implicit val userConfig: UserConfig = userConfigWhenIrrelevant(None)
           implicit val response: WSResponse = getPage
 
-          assertRedirectionAsExpected(PageRelativeURLs.summaryPage)
+          assertRedirectionAsExpected(PageRelativeURLs.unauthorisedPaymentsCYAPage)
 
         }
         "the user had not previously specified the surcharge amount" in {
@@ -53,7 +53,7 @@ class NonUKTaxOnAmountNotResultedInSurchargeControllerISpec
           implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
           implicit val response: WSResponse = getPage
 
-          assertRedirectionAsExpected(PageRelativeURLs.summaryPage)
+          assertRedirectionAsExpected(PageRelativeURLs.unauthorisedPaymentsCYAPage)
 
         }
       }
@@ -482,7 +482,7 @@ class NonUKTaxOnAmountNotResultedInSurchargeControllerISpec
           implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
           implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(false), None))
 
-          assertRedirectionAsExpected(PageRelativeURLs.summaryPage)
+          assertRedirectionAsExpected(PageRelativeURLs.unauthorisedPaymentsCYAPage)
           getViewModel mustBe Some(expectedViewModel)
 
         }
@@ -491,7 +491,7 @@ class NonUKTaxOnAmountNotResultedInSurchargeControllerISpec
           implicit val userConfig: UserConfig = userConfigWhenIrrelevant(None)
           implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(false), None))
 
-          assertRedirectionAsExpected(PageRelativeURLs.summaryPage)
+          assertRedirectionAsExpected(PageRelativeURLs.unauthorisedPaymentsCYAPage)
           getViewModel mustBe None
 
         }
