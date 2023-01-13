@@ -55,7 +55,7 @@ object IncomeFromOverseasPensionsCYAViewHelper extends CYABaseHelper {
         countryCode = pensionScheme.countryCode.getOrElse("N/A")
       } yield {
          Countries.getCountryFromCodeWithDefault(Some(countryCode))
-            //TODO: Add 3 digit country code parsing as well.
+            //TODO: Add 3 digit country code parsing as well
       }
 
       Some(summaryListRowWithStrings(
