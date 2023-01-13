@@ -264,7 +264,7 @@ class UnauthorisedPaymentsCYAViewHelperTest extends AnyWordSpec with Matchers {
       "Pension Scheme Tax References",
       expectedValue,
       "Change",
-      "/2022/unauthorised-payments-from-pensions/pension-scheme-tax-reference",
+      "/2022/unauthorised-payments-from-pensions/uk-pension-scheme-details",
       "unauthorisedPayments.cya.pensionSchemeTaxReferences.hidden"))
   }
 
