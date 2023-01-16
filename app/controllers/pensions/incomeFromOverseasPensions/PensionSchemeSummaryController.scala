@@ -33,7 +33,7 @@ import scala.concurrent.ExecutionContext
 
 class PensionSchemeSummaryController @Inject()(actionsProvider: ActionsProvider,
                                                pageView:  PensionsSchemeSummary,
-                                               pensionSessionService: PensionSessionService,
+                                               pensionSessionService: PensionSessionService
                                               )
                                               (implicit mcc: MessagesControllerComponents, appConfig: AppConfig, ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport with SessionHelper {
