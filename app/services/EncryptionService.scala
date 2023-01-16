@@ -18,7 +18,7 @@ package services
 
 import config.AppConfig
 import models.mongo._
-import models.pension.charges.{EncryptedPensionAnnualAllowancesViewModel, PensionAnnualAllowancesViewModel, PensionLifetimeAllowancesViewModel}
+import models.pension.charges.{EncryptedPensionAnnualAllowancesViewModel, PensionAnnualAllowancesViewModel}
 import models.pension.reliefs.{EncryptedPaymentsIntoPensionViewModel, PaymentsIntoPensionViewModel}
 import utils.SecureGCMCipher
 
@@ -82,7 +82,8 @@ class EncryptionService @Inject()(secureGCMCipher: SecureGCMCipher, appConfig: A
       incomeFromPensions = pension.incomeFromPensions.encrypted(),
       unauthorisedPayments = pension.unauthorisedPayments.encrypted(),
       paymentsIntoOverseasPensions = pension.paymentsIntoOverseasPensions.encrypted(),
-      incomeFromOverseasPensionsViewModel = pension.incomeFromOverseasPensions.encrypted()
+      incomeFromOverseasPensions = pension.incomeFromOverseasPensions.encrypted(),
+      transfersIntoOverseasPensions = pension.transfersIntoOverseasPensions.encrypted()
     )
   }
 
@@ -128,7 +129,8 @@ class EncryptionService @Inject()(secureGCMCipher: SecureGCMCipher, appConfig: A
       incomeFromPensions = pension.incomeFromPensions.decrypted(),
       unauthorisedPayments = pension.unauthorisedPayments.decrypted(),
       paymentsIntoOverseasPensions = pension.paymentsIntoOverseasPensions.decrypted(),
-      incomeFromOverseasPensions = pension.incomeFromOverseasPensionsViewModel.decrypted()
+      incomeFromOverseasPensions = pension.incomeFromOverseasPensions.decrypted(),
+      transfersIntoOverseasPensions = pension.transfersIntoOverseasPensions.decrypted()
     )
   }
 

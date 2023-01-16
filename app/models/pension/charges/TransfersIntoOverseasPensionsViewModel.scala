@@ -66,10 +66,15 @@ case class EncryptedTransfersIntoOverseasPensionsViewModel(
     )
 }
 
+object EncryptedTransfersIntoOverseasPensionsViewModel {
+  implicit val format: OFormat[EncryptedTransfersIntoOverseasPensionsViewModel] = Json.format[EncryptedTransfersIntoOverseasPensionsViewModel]
+}
+
 case class TransferPensionScheme(
                                   ukTransferCharge: Option[Boolean],
                                   name: Option[String],
-                                  taxReference: Option[String],
+                                  pensionSchemeTaxReference: Option[String],
+                                  qualifyingRecognisedOverseasPensionScheme: Option[String],
                                   providerAddress: Option[String],
                                   countryCode: Option[String]){
 
@@ -77,7 +82,8 @@ case class TransferPensionScheme(
     EncryptedTransferPensionScheme(
       ukTransferCharge = ukTransferCharge.map(_.encrypted),
       name = name.map(_.encrypted),
-      taxReference = taxReference.map(_.encrypted),
+      pensionSchemeTaxReference = pensionSchemeTaxReference.map(_.encrypted),
+      qualifyingRecognisedOverseasPensionScheme = qualifyingRecognisedOverseasPensionScheme.map(_.encrypted),
       providerAddress = providerAddress.map(_.encrypted),
       countryCode = countryCode.map(_.encrypted)
     )
@@ -86,7 +92,8 @@ case class TransferPensionScheme(
 case class EncryptedTransferPensionScheme(
                                            ukTransferCharge: Option[EncryptedValue],
                                            name: Option[EncryptedValue],
-                                           taxReference: Option[EncryptedValue],
+                                           pensionSchemeTaxReference: Option[EncryptedValue],
+                                           qualifyingRecognisedOverseasPensionScheme: Option[EncryptedValue],
                                            providerAddress: Option[EncryptedValue],
                                            countryCode: Option[EncryptedValue]){
 
@@ -94,7 +101,8 @@ case class EncryptedTransferPensionScheme(
     TransferPensionScheme(
       ukTransferCharge = ukTransferCharge.map(_.decrypted[Boolean]),
       name = name.map(_.decrypted[String]),
-      taxReference = taxReference.map(_.decrypted[String]),
+      pensionSchemeTaxReference = pensionSchemeTaxReference.map(_.decrypted[String]),
+      qualifyingRecognisedOverseasPensionScheme = qualifyingRecognisedOverseasPensionScheme.map(_.decrypted[String]),
       providerAddress = providerAddress.map(_.decrypted[String]),
       countryCode = countryCode.map(_.decrypted[String])
     )
@@ -102,4 +110,8 @@ case class EncryptedTransferPensionScheme(
 
 object TransferPensionScheme {
   implicit val format: OFormat[TransferPensionScheme] = Json.format[TransferPensionScheme]
+}
+
+object EncryptedTransferPensionScheme {
+  implicit val format: OFormat[EncryptedTransferPensionScheme] = Json.format[EncryptedTransferPensionScheme]
 }
