@@ -230,14 +230,14 @@ POST        /:taxYear/overseas-pensions/income-from-overseas-pensions/pension-ov
 GET         /:taxYear/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-country                              controllers.pensions.incomeFromOverseasPensions.PensionOverseasIncomeCountryController.show(taxYear: Int, countryIndex: Option[Int])
 POST        /:taxYear/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-country                              controllers.pensions.incomeFromOverseasPensions.PensionOverseasIncomeCountryController.submit(taxYear: Int, countryIndex: Option[Int])
 
-GET         /:taxYear/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-amounts                              controllers.pensions.overseas.incomeFromOverseasPension.PensionPaymentsController.show(taxYear: Int, index: Option[Int])
-POST        /:taxYear/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-amounts                              controllers.pensions.overseas.incomeFromOverseasPension.PensionPaymentsController.submit(taxYear: Int, index: Option[Int])
+GET         /:taxYear/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-amounts                              controllers.pensions.incomeFromOverseasPensions.PensionPaymentsController.show(taxYear: Int, index: Option[Int])
+POST        /:taxYear/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-amounts                              controllers.pensions.incomeFromOverseasPensions.PensionPaymentsController.submit(taxYear: Int, index: Option[Int])
 
-GET         /:taxYear/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-swt                                  controllers.pensions.overseas.incomeFromOverseasPension.SpecialWithholdingTaxController.show(taxYear: Int, index: Option[Int])
-POST        /:taxYear/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-swt                                  controllers.pensions.overseas.incomeFromOverseasPension.SpecialWithholdingTaxController.submit(taxYear: Int, index: Option[Int])
+GET         /:taxYear/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-swt                                  controllers.pensions.incomeFromOverseasPensions.SpecialWithholdingTaxController.show(taxYear: Int, index: Option[Int])
+POST        /:taxYear/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-swt                                  controllers.pensions.incomeFromOverseasPensions.SpecialWithholdingTaxController.submit(taxYear: Int, index: Option[Int])
 
-GET         /:taxYear/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-ftcr                                 controllers.pensions.overseas.incomeFromOverseasPension.ForeignTaxCreditReliefController.show(taxYear: Int, index:Option[Int])
-POST        /:taxYear/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-ftcr                                 controllers.pensions.overseas.incomeFromOverseasPension.ForeignTaxCreditReliefController.submit(taxYear: Int, index:Option[Int])
+GET         /:taxYear/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-ftcr                                 controllers.pensions.incomeFromOverseasPensions.ForeignTaxCreditReliefController.show(taxYear: Int, index:Option[Int])
+POST        /:taxYear/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-ftcr                                 controllers.pensions.incomeFromOverseasPensions.ForeignTaxCreditReliefController.submit(taxYear: Int, index:Option[Int])
 
 GET         /:taxYear/overseas-pensions/income-from-overseas-pensions/taxable-amount                                               controllers.pensions.incomeFromOverseasPensions.TaxableAmountController.show(taxYear: Int, index: Option[Int])
 POST        /:taxYear/overseas-pensions/income-from-overseas-pensions/taxable-amount                                               controllers.pensions.incomeFromOverseasPensions.TaxableAmountController.submit(taxYear: Int, index: Option[Int])

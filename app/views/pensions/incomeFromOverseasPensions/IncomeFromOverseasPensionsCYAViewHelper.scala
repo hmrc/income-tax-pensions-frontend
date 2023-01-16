@@ -17,7 +17,6 @@
 package views.pensions.incomeFromOverseasPensions
 
 import controllers.pensions.incomeFromOverseasPensions.routes.{CountrySummaryListController, PensionOverseasIncomeStatus}
-import controllers.pensions.overseas.incomeFromOverseasPension.routes.ForeignTaxCreditReliefController
 import forms.Countries
 import models.pension.charges.IncomeFromOverseasPensionsViewModel
 import play.api.i18n.Messages

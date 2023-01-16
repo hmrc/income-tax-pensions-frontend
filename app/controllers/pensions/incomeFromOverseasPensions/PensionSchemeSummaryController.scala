@@ -26,13 +26,13 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.SessionHelper
-import views.html.pensions.incomeFromOverseasPensions.PensionSchemeSummary
+import views.html.pensions.incomeFromOverseasPensions.PensionsSchemeSummary
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
 class PensionSchemeSummaryController @Inject()(actionsProvider: ActionsProvider,
-                                               pageView:  PensionSchemeSummary,
+                                               pageView:  PensionsSchemeSummary,
                                                pensionSessionService: PensionSessionService,
                                               )
                                               (implicit mcc: MessagesControllerComponents, appConfig: AppConfig, ec: ExecutionContext)
