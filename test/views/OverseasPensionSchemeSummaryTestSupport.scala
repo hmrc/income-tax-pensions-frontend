@@ -28,7 +28,7 @@ import controllers.pensions.incomeFromOverseasPensions.routes
 import models.pension.charges.{IncomeFromOverseasPensionsViewModel, PensionScheme}
 import models.pension.pages.OverSeaPensionSchemeSummaryPage
 import org.jsoup.Jsoup
-import views.html.pensions.incomeFromOverseasPensions.PensionSchemeSummary
+import views.html.pensions.incomeFromOverseasPensions.PensionsSchemeSummary
 
 
 class OverseasPensionSchemeSummaryControllerTestSupport extends ViewUnitTest {
@@ -97,7 +97,7 @@ class OverseasPensionSchemeSummaryControllerTestSupport extends ViewUnitTest {
     UserScenario(isWelsh = false, isAgent = false, CommonExpectedEN),
     UserScenario(isWelsh = true, isAgent = false, CommonExpectedCY))
 
-  private lazy val underTest = inject[PensionSchemeSummary]
+  private lazy val underTest = inject[PensionsSchemeSummary]
 
   userScenarios.foreach { userScenario =>
 
