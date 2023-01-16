@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package controllers.pensions.overseas.incomeFromOverseasPension
+package controllers.pensions.incomeFromOverseasPensions
 
 import common.MessageKeys
 import common.MessageKeys.UnauthorisedPayments.SpecialWithholdingTax
 import config.{AppConfig, ErrorHandler}
 import controllers.BaseYesNoAmountWithIndexController
 import controllers.predicates.AuthorisedAction
-import javax.inject.Inject
 import models.AuthorisationRequest
 import models.mongo.{PensionsCYAModel, PensionsUserData}
 import play.api.data.Form
@@ -30,7 +29,9 @@ import play.api.mvc.{AnyContent, MessagesControllerComponents, Result}
 import play.twirl.api.Html
 import services.PensionSessionService
 import utils.Clock
-import views.html.pensions.overseas.incomeFromOverseasPension.SpecialWithholdingTaxView
+import views.html.pensions.incomeFromOverseasPensions.SpecialWithholdingTaxView
+
+import javax.inject.Inject
 
 class SpecialWithholdingTaxController @Inject()(messagesControllerComponents: MessagesControllerComponents,
                                                 authAction: AuthorisedAction,
@@ -44,7 +45,7 @@ class SpecialWithholdingTaxController @Inject()(messagesControllerComponents: Me
   override def redirectWhenNoSessionData(taxYear: Int): Result = redirectToSummaryPage(taxYear)
 
   override def redirectAfterUpdatingSessionData(taxYear: Int, index : Int): Result =
-    Redirect(controllers.pensions.overseas.incomeFromOverseasPension.routes.ForeignTaxCreditReliefController.show(taxYear, Some(index)))
+    Redirect(controllers.pensions.incomeFromOverseasPensions.routes.ForeignTaxCreditReliefController.show(taxYear, Some(index)))
 
 
   override def questionOpt(pensionsUserData: PensionsUserData, index : Int): Option[Boolean] =

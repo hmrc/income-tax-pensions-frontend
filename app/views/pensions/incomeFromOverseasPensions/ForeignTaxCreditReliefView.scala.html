@@ -48,7 +48,7 @@
 
     @heading(titleForUse, Some(messages("common.incomeFromOverseasPensions.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-2")
 
-    @formWithCsrf(action = controllers.pensions.overseas.incomeFromOverseasPension.routes.ForeignTaxCreditReliefController.submit(taxYear, Some(index))) {
+    @formWithCsrf(action = controllers.pensions.incomeFromOverseasPensions.routes.ForeignTaxCreditReliefController.submit(taxYear, Some(index))) {
         @inputRadio(
             form = form,
             legendHeading = Some(Html(titleForUse)),
