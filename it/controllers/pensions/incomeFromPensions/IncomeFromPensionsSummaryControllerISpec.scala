@@ -267,8 +267,6 @@ class IncomeFromPensionsSummaryControllerISpec extends CommonUtils with BeforeAn
         "render pensions summary page when there is no data " which {
           lazy val result: WSResponse = getResponseNoSessionData
 
-          implicit def document: () => Document = () => Jsoup.parse(result.body)
-
           "has an SEE_OTHER status" in {
             result.status shouldBe SEE_OTHER
             //        TODO redirect to annual allowance CYA

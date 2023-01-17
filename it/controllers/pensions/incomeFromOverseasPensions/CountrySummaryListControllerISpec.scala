@@ -33,6 +33,7 @@ import utils.ViewUtils.bigDecimalCurrency
 // scalastyle:off magic.number
 class CountrySummaryListControllerISpec extends IntegrationTest with BeforeAndAfterEach with ViewHelpers with PensionsDatabaseHelper {
 
+  val urlPrefix = s"/update-and-submit-income-tax-return/pensions/$taxYearEOY/"
   object Selectors {
     val captionSelector: String = "#main-content > div > div > header > p"
     val addAnotherLinkSelector = "#add-another-pension-link"
@@ -119,10 +120,10 @@ class CountrySummaryListControllerISpec extends IntegrationTest with BeforeAndAf
           textOnPageCheck(s"$pensionName2 $pensionAmount2", pensionNameSelector(2))
           
           //TODO: replace hrefs "#" below with link to first details page when available .e.g. PensionSchemeSummaryController.show(taxYear, Some(0))).url
-          linkCheck(s"$change $change $pensionName1", changeLinkSelector(1), "#")
-          linkCheck(s"$change $change $pensionName2", changeLinkSelector(2),"#")
+          linkCheck(s"$change $change $pensionName1", changeLinkSelector(1), overseasPensionsSummaryUrl(0)(taxYearEOY))
+          linkCheck(s"$change $change $pensionName2", changeLinkSelector(2), overseasPensionsSummaryUrl(1)(taxYearEOY))
           
-          linkCheck(expectedAddAnotherText, addAnotherLinkSelector, pensionOverseasIncomeCountryUrlIndex2(taxYearEOY, 0))
+          linkCheck(expectedAddAnotherText, addAnotherLinkSelector, pensionOverseasIncomeCountryUrl(taxYearEOY))
           buttonCheck(expectedButtonText, continueButtonSelector, Some(checkIncomeFromOverseasPensionsCyaUrl(taxYearEOY)))
           welshToggleCheck(user.isWelsh)
         }
@@ -148,7 +149,7 @@ class CountrySummaryListControllerISpec extends IntegrationTest with BeforeAndAf
           h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY))
           elementNotOnPageCheck(summaryListTableSelector)
-          linkCheck(expectedAddPensionSchemeText, addLinkSelector, pensionOverseasIncomeCountryUrlIndex2(taxYearEOY, 0))
+          linkCheck(expectedAddPensionSchemeText, addLinkSelector, pensionOverseasIncomeCountryUrl(taxYearEOY))
           buttonCheck(expectedButtonText, continueButtonSelector, Some(checkIncomeFromOverseasPensionsCyaUrl(taxYearEOY)))
           welshToggleCheck(user.isWelsh)
         }

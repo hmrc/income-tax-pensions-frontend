@@ -31,7 +31,7 @@ import org.jsoup.Jsoup
 import views.html.pensions.incomeFromOverseasPensions.PensionsSchemeSummary
 
 
-class OverseasPensionSchemeSummaryControllerTestSupport extends ViewUnitTest {
+class OverseasPensionSchemeSummaryTestSupport extends ViewUnitTest {
 
   object selectors {
     def getRowKey(index: Int) = s"#main-content > div > div > dl > div:nth-child($index) > dt"

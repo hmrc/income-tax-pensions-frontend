@@ -32,19 +32,37 @@ class PensionOverseasIncomeStatusISpec
 
   val minimalSessionDataToAccessThisPage: PensionsCYAModel = aPensionsCYAEmptyModel
 
+  val expectedYesNoPageContentsIndividual = ExpectedYesNoPageContents(
+    title = "Did you get payments from an overseas pension scheme?",
+    header = "Did you get payments from an overseas pension scheme?",
+    caption = s"Income from overseas pensions for 6 April ${taxYear -1} to 5 April $taxYear",
+    radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
+    radioButtonForNo = uncheckedExpectedRadioButton("No"),
+    buttonForContinue = ExpectedButton("Continue", ""),
+    links = Set.empty,
+    text = Set.empty
+  )
+  val expectedYesNoPageContentsAgent = expectedYesNoPageContentsIndividual
+    .copy(title = "Did your client get payments from an overseas pension scheme?",
+      header = "Did your client get payments from an overseas pension scheme?")
+  
   "This page" when {
     "requested to be shown" should {
-      "redirect to the expected page" when {
-        "the user has no stored session data at all" in {
-
-          val response = getPage(None)
-
-          response must haveStatus(SEE_OTHER)
-          response must haveALocationHeaderValue(PageRelativeURLs.summaryPage)
-
-        }
 
         "appear as expected" when {
+          
+          "the user has no stored session data at all" when {
+            
+            scenarioNameForIndividualAndEnglish in {
+              
+              implicit val userConfig: UserConfig = UserConfig(Individual, English, None)
+              val response = getPage
+              
+              response must haveStatus(OK)
+              assertPageAsExpected(parse(response.body), expectedYesNoPageContentsIndividual)
+            }
+          }
+          
           "the user has only the minimal session data for accessing this page and" when {
 
             val sessionData = pensionsUserData(minimalSessionDataToAccessThisPage)
@@ -55,19 +73,7 @@ class PensionOverseasIncomeStatusISpec
               val response = getPage
 
               response must haveStatus(OK)
-              assertPageAsExpected(
-                parse(response.body),
-                ExpectedYesNoPageContents(
-                  title = "Did you get payments from an overseas pension scheme?",
-                  header = "Did you get payments from an overseas pension scheme?",
-                  caption = "Income from overseas pensions for 6 April 2021 to 5 April 2022",
-                  radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
-                  radioButtonForNo = uncheckedExpectedRadioButton("No"),
-                  buttonForContinue = ExpectedButton("Continue", ""),
-                  links = Set.empty,
-                  text = Set.empty
-                ))
-
+              assertPageAsExpected(parse(response.body), expectedYesNoPageContentsIndividual)
             }
             scenarioNameForIndividualAndWelsh in {
 
@@ -75,18 +81,7 @@ class PensionOverseasIncomeStatusISpec
               val response = getPage
 
               response must haveStatus(OK)
-              assertPageAsExpected(
-                parse(response.body),
-                ExpectedYesNoPageContents(
-                  title = "Did you get payments from an overseas pension scheme?",
-                  header = "Did you get payments from an overseas pension scheme?",
-                  caption = "Income from overseas pensions for 6 April 2021 to 5 April 2022",
-                  radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
-                  radioButtonForNo = uncheckedExpectedRadioButton("No"),
-                  buttonForContinue = ExpectedButton("Continue", ""),
-                  links = Set.empty,
-                  text = Set.empty
-                ))
+              assertPageAsExpected(parse(response.body), expectedYesNoPageContentsIndividual )
 
             }
             scenarioNameForAgentAndEnglish in {
@@ -95,18 +90,7 @@ class PensionOverseasIncomeStatusISpec
               val response = getPage
 
               response must haveStatus(OK)
-              assertPageAsExpected(
-                parse(response.body),
-                ExpectedYesNoPageContents(
-                  title = "Did your client get payments from an overseas pension scheme?",
-                  header = "Did your client get payments from an overseas pension scheme?",
-                  caption = "Income from overseas pensions for 6 April 2021 to 5 April 2022",
-                  radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
-                  radioButtonForNo = uncheckedExpectedRadioButton("No"),
-                  buttonForContinue = ExpectedButton("Continue", ""),
-                  links = Set.empty,
-                  text = Set.empty
-                ))
+              assertPageAsExpected(parse(response.body), expectedYesNoPageContentsAgent)
 
             }
             scenarioNameForAgentAndWelsh in {
@@ -115,18 +99,7 @@ class PensionOverseasIncomeStatusISpec
               val response = getPage
 
               response must haveStatus(OK)
-              assertPageAsExpected(
-                parse(response.body),
-                ExpectedYesNoPageContents(
-                  title = "Did your client get payments from an overseas pension scheme?",
-                  header = "Did your client get payments from an overseas pension scheme?",
-                  caption = "Income from overseas pensions for 6 April 2021 to 5 April 2022",
-                  radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
-                  radioButtonForNo = uncheckedExpectedRadioButton("No"),
-                  buttonForContinue = ExpectedButton("Continue", ""),
-                  links = Set.empty,
-                  text = Set.empty
-                ))
+              assertPageAsExpected(parse(response.body), expectedYesNoPageContentsAgent)
 
             }
           }
@@ -146,18 +119,7 @@ class PensionOverseasIncomeStatusISpec
               val response = getPage
 
               response must haveStatus(OK)
-              assertPageAsExpected(
-                parse(response.body),
-                ExpectedYesNoPageContents(
-                  title = "Did you get payments from an overseas pension scheme?",
-                  header = "Did you get payments from an overseas pension scheme?",
-                  caption = "Income from overseas pensions for 6 April 2021 to 5 April 2022",
-                  radioButtonForYes = checkedExpectedRadioButton("Yes"),
-                  radioButtonForNo = uncheckedExpectedRadioButton("No"),
-                  buttonForContinue = ExpectedButton("Continue", ""),
-                  links = Set.empty,
-                  text = Set.empty
-                ))
+              assertPageAsExpected(parse(response.body), expectedYesNoPageContentsIndividual)
 
             }
             scenarioNameForIndividualAndWelsh in {
@@ -166,18 +128,7 @@ class PensionOverseasIncomeStatusISpec
               val response = getPage
 
               response must haveStatus(OK)
-              assertPageAsExpected(
-                parse(response.body),
-                ExpectedYesNoPageContents(
-                  title = "Did you get payments from an overseas pension scheme?",
-                  header = "Did you get payments from an overseas pension scheme?",
-                  caption = "Income from overseas pensions for 6 April 2021 to 5 April 2022",
-                  radioButtonForYes = checkedExpectedRadioButton("Yes"),
-                  radioButtonForNo = uncheckedExpectedRadioButton("No"),
-                  buttonForContinue = ExpectedButton("Continue", ""),
-                  links = Set.empty,
-                  text = Set.empty
-                ))
+              assertPageAsExpected(parse(response.body), expectedYesNoPageContentsIndividual)
 
             }
             scenarioNameForAgentAndEnglish in {
@@ -186,18 +137,7 @@ class PensionOverseasIncomeStatusISpec
               val response = getPage
 
               response must haveStatus(OK)
-              assertPageAsExpected(
-                parse(response.body),
-                ExpectedYesNoPageContents(
-                  title = "Did your client get payments from an overseas pension scheme?",
-                  header = "Did your client get payments from an overseas pension scheme?",
-                  caption = "Income from overseas pensions for 6 April 2021 to 5 April 2022",
-                  radioButtonForYes = checkedExpectedRadioButton("Yes"),
-                  radioButtonForNo = uncheckedExpectedRadioButton("No"),
-                  buttonForContinue = ExpectedButton("Continue", ""),
-                  links = Set.empty,
-                  text = Set.empty
-                ))
+              assertPageAsExpected(parse(response.body), expectedYesNoPageContentsAgent)
 
             }
             scenarioNameForAgentAndWelsh in {
@@ -206,24 +146,13 @@ class PensionOverseasIncomeStatusISpec
               val response = getPage
 
               response must haveStatus(OK)
-              assertPageAsExpected(
-                parse(response.body),
-                ExpectedYesNoPageContents(
-                  title = "Did your client get payments from an overseas pension scheme?",
-                  header = "Did your client get payments from an overseas pension scheme?",
-                  caption = "Income from overseas pensions for 6 April 2021 to 5 April 2022",
-                  radioButtonForYes = checkedExpectedRadioButton("Yes"),
-                  radioButtonForNo = uncheckedExpectedRadioButton("No"),
-                  buttonForContinue = ExpectedButton("Continue", ""),
-                  links = Set.empty,
-                  text = Set.empty
-                ))
+              assertPageAsExpected(parse(response.body), expectedYesNoPageContentsAgent)
 
             }
           }
 
           "the user had previously answered 'No', and" when {
-
+            
             val sessionData = pensionsUserData(
               minimalSessionDataToAccessThisPage.copy(
                 incomeFromOverseasPensions = minimalSessionDataToAccessThisPage.incomeFromOverseasPensions.copy(
@@ -238,85 +167,38 @@ class PensionOverseasIncomeStatusISpec
               val response = getPage
 
               response must haveStatus(OK)
-              assertPageAsExpected(
-                parse(response.body),
-                ExpectedYesNoPageContents(
-                  title = "Did you get payments from an overseas pension scheme?",
-                  header = "Did you get payments from an overseas pension scheme?",
-                  caption = "Income from overseas pensions for 6 April 2021 to 5 April 2022",
-                  radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
-                  radioButtonForNo = checkedExpectedRadioButton("No"),
-                  buttonForContinue = ExpectedButton("Continue", ""),
-                  links = Set.empty,
-                  text = Set.empty
-                ))
-
+              assertPageAsExpected(parse(response.body), expectedYesNoPageContentsIndividual)
             }
+            
             scenarioNameForIndividualAndWelsh in {
 
               implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
               val response = getPage
 
               response must haveStatus(OK)
-              assertPageAsExpected(
-                parse(response.body),
-                ExpectedYesNoPageContents(
-                  title = "Did you get payments from an overseas pension scheme?",
-                  header = "Did you get payments from an overseas pension scheme?",
-                  caption = "Income from overseas pensions for 6 April 2021 to 5 April 2022",
-                  radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
-                  radioButtonForNo = checkedExpectedRadioButton("No"),
-                  buttonForContinue = ExpectedButton("Continue", ""),
-                  links = Set.empty,
-                  text = Set.empty
-                ))
-
-
+              assertPageAsExpected(parse(response.body), expectedYesNoPageContentsIndividual)
             }
+            
             scenarioNameForAgentAndEnglish in {
 
               implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
               val response = getPage
 
               response must haveStatus(OK)
-              assertPageAsExpected(
-                parse(response.body),
-                ExpectedYesNoPageContents(
-                  title = "Did your client get payments from an overseas pension scheme?",
-                  header = "Did your client get payments from an overseas pension scheme?",
-                  caption = "Income from overseas pensions for 6 April 2021 to 5 April 2022",
-                  radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
-                  radioButtonForNo = checkedExpectedRadioButton("No"),
-                  buttonForContinue = ExpectedButton("Continue", ""),
-                  links = Set.empty,
-                  text = Set.empty
-                ))
-
+              assertPageAsExpected(parse(response.body), expectedYesNoPageContentsAgent)
             }
+            
             scenarioNameForAgentAndWelsh in {
 
               implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
               val response = getPage
 
               response must haveStatus(OK)
-              assertPageAsExpected(
-                parse(response.body),
-                ExpectedYesNoPageContents(
-                  title = "Did your client get payments from an overseas pension scheme?",
-                  header = "Did your client get payments from an overseas pension scheme?",
-                  caption = "Income from overseas pensions for 6 April 2021 to 5 April 2022",
-                  radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
-                  radioButtonForNo = checkedExpectedRadioButton("No"),
-                  buttonForContinue = ExpectedButton("Continue", ""),
-                  links = Set.empty,
-                  text = Set.empty
-                ))
-
+              assertPageAsExpected(parse(response.body), expectedYesNoPageContentsAgent)
             }
-
           }
         }
-      }
+        
       "submitted" should {
         "succeed" when {
           "the user has selected 'No' and" when {
@@ -335,7 +217,7 @@ class PensionOverseasIncomeStatusISpec
               val response = submitForm(SubmittedFormDataForYesNoPage(Some(false)))
 
               response must haveStatus(SEE_OTHER)
-              response must haveALocationHeaderValue(PageRelativeURLs.incomeFromOverseasPensionsPage)
+              response must haveALocationHeaderValue(PageRelativeURLs.incomeFromOverseasPensionsCya)
               getViewModel mustBe Some(expectedViewModel)
 
             }
@@ -345,7 +227,7 @@ class PensionOverseasIncomeStatusISpec
               val response = submitForm(SubmittedFormDataForYesNoPage(Some(false)))
 
               response must haveStatus(SEE_OTHER)
-              response must haveALocationHeaderValue(PageRelativeURLs.incomeFromOverseasPensionsPage)
+              response must haveALocationHeaderValue(PageRelativeURLs.incomeFromOverseasPensionsCya)
               getViewModel mustBe Some(expectedViewModel)
 
             }
@@ -355,7 +237,7 @@ class PensionOverseasIncomeStatusISpec
               val response = submitForm(SubmittedFormDataForYesNoPage(Some(false)))
 
               response must haveStatus(SEE_OTHER)
-              response must haveALocationHeaderValue(PageRelativeURLs.incomeFromOverseasPensionsPage)
+              response must haveALocationHeaderValue(PageRelativeURLs.incomeFromOverseasPensionsCya)
               getViewModel mustBe Some(expectedViewModel)
 
             }
@@ -365,7 +247,7 @@ class PensionOverseasIncomeStatusISpec
               val response = submitForm(SubmittedFormDataForYesNoPage(Some(false)))
 
               response must haveStatus(SEE_OTHER)
-              response must haveALocationHeaderValue(PageRelativeURLs.incomeFromOverseasPensionsPage)
+              response must haveALocationHeaderValue(PageRelativeURLs.incomeFromOverseasPensionsCya)
               getViewModel mustBe Some(expectedViewModel)
 
             }
@@ -385,7 +267,7 @@ class PensionOverseasIncomeStatusISpec
               val response = submitForm(SubmittedFormDataForYesNoPage(Some(true)))
 
               response must haveStatus(SEE_OTHER)
-              response must haveALocationHeaderValue(PageRelativeURLs.incomeFromOverseasPensionsPage)
+              response must haveALocationHeaderValue(PageRelativeURLs.incomeFromOverseasPensionsCountry)
               getViewModel mustBe Some(expectedViewModel)
 
             }
@@ -395,7 +277,7 @@ class PensionOverseasIncomeStatusISpec
               val response = submitForm(SubmittedFormDataForYesNoPage(Some(true)))
 
               response must haveStatus(SEE_OTHER)
-              response must haveALocationHeaderValue(PageRelativeURLs.incomeFromOverseasPensionsPage)
+              response must haveALocationHeaderValue(PageRelativeURLs.incomeFromOverseasPensionsCountry)
               getViewModel mustBe Some(expectedViewModel)
 
             }
@@ -405,7 +287,7 @@ class PensionOverseasIncomeStatusISpec
               val response = submitForm(SubmittedFormDataForYesNoPage(Some(true)))
 
               response must haveStatus(SEE_OTHER)
-              response must haveALocationHeaderValue(PageRelativeURLs.incomeFromOverseasPensionsPage)
+              response must haveALocationHeaderValue(PageRelativeURLs.incomeFromOverseasPensionsCountry)
               getViewModel mustBe Some(expectedViewModel)
 
             }
@@ -415,7 +297,7 @@ class PensionOverseasIncomeStatusISpec
               val response = submitForm(SubmittedFormDataForYesNoPage(Some(true)))
 
               response must haveStatus(SEE_OTHER)
-              response must haveALocationHeaderValue(PageRelativeURLs.incomeFromOverseasPensionsPage)
+              response must haveALocationHeaderValue(PageRelativeURLs.incomeFromOverseasPensionsCountry)
               getViewModel mustBe Some(expectedViewModel)
 
             }
@@ -423,104 +305,73 @@ class PensionOverseasIncomeStatusISpec
 
         }
         "fail" when {
+
+          val expectedYesNoPageContentsIndividual = ExpectedYesNoPageContents(
+            title = "Error: Did you get payments from an overseas pension scheme?",
+            header = "Did you get payments from an overseas pension scheme?",
+            caption = "Income from overseas pensions for 6 April 2021 to 5 April 2022",
+            radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
+            radioButtonForNo = uncheckedExpectedRadioButton("No"),
+            buttonForContinue = ExpectedButton("Continue", ""),
+            links = Set.empty,
+            text = Set.empty,
+            errorSummarySectionOpt = Some(
+              ErrorSummarySection(
+                title = "There is a problem",
+                body = "Select yes if you had income from an overseas pension scheme",
+                link = "#value")
+            ),
+            errorAboveElementCheckSectionOpt = Some(
+              ErrorAboveElementCheckSection(
+                title = "Error: Select yes if you had income from an overseas pension scheme",
+                idOpt = Some("value")
+              )
+            )
+          )
+          
+          val expectedYesNoPageContentsAgent = expectedYesNoPageContentsIndividual.copy(
+            title = "Error: Did your client get payments from an overseas pension scheme?",
+            header = "Did your client get payments from an overseas pension scheme?",
+            errorSummarySectionOpt = Some(ErrorSummarySection(
+              title = "There is a problem", body = "Select yes if your client had income from an overseas pension scheme", link = "#value")),
+            errorAboveElementCheckSectionOpt = Some(ErrorAboveElementCheckSection(
+              title = "Error: Select yes if your client had income from an overseas pension scheme", idOpt = Some("value")))
+          )
+          
+          def welshTitle(epc:ExpectedYesNoPageContents): Option[ErrorSummarySection] =
+            epc.errorSummarySectionOpt.map(ess => ess.copy(title = "Mae problem wedi codi"))
+            
+          
           "the user has selected neither 'Yes' nor 'No' and" when {
 
             val sessionData = pensionsUserData(minimalSessionDataToAccessThisPage)
-
+            
             scenarioNameForIndividualAndEnglish in {
 
               implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
               val response = submitForm(SubmittedFormDataForYesNoPage(None))
 
               response must haveStatus(BAD_REQUEST)
-              assertPageAsExpected(
-                parse(response.body),
-                ExpectedYesNoPageContents(
-                  title = "Error: Did you get payments from an overseas pension scheme?",
-                  header = "Did you get payments from an overseas pension scheme?",
-                  caption = "Income from overseas pensions for 6 April 2021 to 5 April 2022",
-                  radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
-                  radioButtonForNo = uncheckedExpectedRadioButton("No"),
-                  buttonForContinue = ExpectedButton("Continue", ""),
-                  links = Set.empty,
-                  text = Set.empty,
-                  errorSummarySectionOpt = Some(
-                    ErrorSummarySection(
-                      title = "There is a problem",
-                      body = "Select yes if you had income from an overseas pension scheme",
-                      link = "#value")
-                  ),
-                  errorAboveElementCheckSectionOpt = Some(
-                    ErrorAboveElementCheckSection(
-                      title = "Error: Select yes if you had income from an overseas pension scheme",
-                      idOpt = Some("value")
-                    )
-                  )
-                ))
-
+              assertPageAsExpected(parse(response.body), expectedYesNoPageContentsIndividual)
             }
+            
             scenarioNameForIndividualAndWelsh in {
 
               implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
               val response = submitForm(SubmittedFormDataForYesNoPage(None))
 
               response must haveStatus(BAD_REQUEST)
-              assertPageAsExpected(
-                parse(response.body),
-                ExpectedYesNoPageContents(
-                  title = "Error: Did you get payments from an overseas pension scheme?",
-                  header = "Did you get payments from an overseas pension scheme?",
-                  caption = "Income from overseas pensions for 6 April 2021 to 5 April 2022",
-                  radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
-                  radioButtonForNo = uncheckedExpectedRadioButton("No"),
-                  buttonForContinue = ExpectedButton("Continue", ""),
-                  links = Set.empty,
-                  text = Set.empty,
-                  errorSummarySectionOpt = Some(
-                    ErrorSummarySection(
-                      title = "Mae problem wedi codi",
-                      body = "Select yes if you had income from an overseas pension scheme",
-                      link = "#value")
-                  ),
-                  errorAboveElementCheckSectionOpt = Some(
-                    ErrorAboveElementCheckSection(
-                      title = "Error: Select yes if you had income from an overseas pension scheme",
-                      idOpt = Some("value")
-                    )
-                  )
-                ))
-
+              assertPageAsExpected(parse(response.body),
+                expectedYesNoPageContentsIndividual.copy(errorSummarySectionOpt = welshTitle(expectedYesNoPageContentsIndividual)))
             }
+            
             scenarioNameForAgentAndEnglish in {
 
               implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
               val response = submitForm(SubmittedFormDataForYesNoPage(None))
 
               response must haveStatus(BAD_REQUEST)
-              assertPageAsExpected(
-                parse(response.body),
-                ExpectedYesNoPageContents(
-                  title = "Error: Did your client get payments from an overseas pension scheme?",
-                  header = "Did your client get payments from an overseas pension scheme?",
-                  caption = "Income from overseas pensions for 6 April 2021 to 5 April 2022",
-                  radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
-                  radioButtonForNo = uncheckedExpectedRadioButton("No"),
-                  buttonForContinue = ExpectedButton("Continue", ""),
-                  links = Set.empty,
-                  text = Set.empty,
-                  errorSummarySectionOpt = Some(
-                    ErrorSummarySection(
-                      title = "There is a problem",
-                      body = "Select yes if your client had income from an overseas pension scheme",
-                      link = "#value")
-                  ),
-                  errorAboveElementCheckSectionOpt = Some(
-                    ErrorAboveElementCheckSection(
-                      title = "Error: Select yes if your client had income from an overseas pension scheme",
-                      idOpt = Some("value")
-                    )
-                  )
-                ))
+              assertPageAsExpected(parse(response.body), expectedYesNoPageContentsAgent)
 
             }
             scenarioNameForAgentAndWelsh in {
@@ -529,34 +380,11 @@ class PensionOverseasIncomeStatusISpec
               val response = submitForm(SubmittedFormDataForYesNoPage(None))
 
               response must haveStatus(BAD_REQUEST)
-              assertPageAsExpected(
-                parse(response.body),
-                ExpectedYesNoPageContents(
-                  title = "Error: Did your client get payments from an overseas pension scheme?",
-                  header = "Did your client get payments from an overseas pension scheme?",
-                  caption = "Income from overseas pensions for 6 April 2021 to 5 April 2022",
-                  radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
-                  radioButtonForNo = uncheckedExpectedRadioButton("No"),
-                  buttonForContinue = ExpectedButton("Continue", ""),
-                  links = Set.empty,
-                  text = Set.empty,
-                  errorSummarySectionOpt = Some(
-                    ErrorSummarySection(
-                      title = "Mae problem wedi codi",
-                      body = "Select yes if your client had income from an overseas pension scheme",
-                      link = "#value")
-                  ),
-                  errorAboveElementCheckSectionOpt = Some(
-                    ErrorAboveElementCheckSection(
-                      title = "Error: Select yes if your client had income from an overseas pension scheme",
-                      idOpt = Some("value")
-                    )
-                  )
-                ))
+              assertPageAsExpected(parse(response.body),
+                expectedYesNoPageContentsAgent.copy(errorSummarySectionOpt = welshTitle(expectedYesNoPageContentsAgent)))
 
             }
           }
-
         }
       }
     }

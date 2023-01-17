@@ -28,8 +28,8 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import utils.CommonUtils
-import utils.PageUrls.{IncomeFromOverseasPensionsPages, fullUrl, pensionSummaryUrl}
-import utils.PageUrls.IncomeFromOverseasPensionsPages.{pensionOverseasIncomeCountryUrl, pensionOverseasIncomeCountryUrlIndex, pensionOverseasIncomeCountryUrlIndex2}
+import utils.PageUrls.{IncomeFromOverseasPensionsPages, fullUrl, overseasPensionsSummaryUrl, pensionSummaryUrl}
+import utils.PageUrls.IncomeFromOverseasPensionsPages.{incomeFromOverseasPensionsAmounts, pensionOverseasIncomeCountryUrl, pensionOverseasIncomeCountryUrlIndex, pensionOverseasIncomeCountryUrlIndex2}
 import utils.PageUrls.PensionLifetimeAllowance.pensionTaxReferenceNumberLifetimeAllowanceUrl
 import builders.UserBuilder.{aUser, aUserRequest}
 import play.api.http.HeaderNames
@@ -141,7 +141,8 @@ class PensionOverseasIncomeCountryControllerSpec extends CommonUtils with Before
         }
 
         "render the page with correct content without prefilling" which {
-          implicit val overseasIncomeCountryUrl: Int => String = pensionOverseasIncomeCountryUrlIndex(0)
+          val index = 0
+          implicit val overseasIncomeCountryUrl: Int => String = pensionOverseasIncomeCountryUrlIndex(index)
           val countryCode = "GB"
 
           val pensionsViewModel = anIncomeFromOverseasPensionsViewModel.copy(
@@ -165,7 +166,7 @@ class PensionOverseasIncomeCountryControllerSpec extends CommonUtils with Before
           textOnPageCheck(expectedParagraph, paragraphSelector(1))
           textOnPageCheck(expectedSubHeading, labelSelector(1))
           inputFieldValueCheck(inputName, inputSelector, "", Some(""))
-          formPostLinkCheck(pensionOverseasIncomeCountryUrlIndex(0)(taxYearEOY), formSelector)
+          formPostLinkCheck(pensionOverseasIncomeCountryUrlIndex2(taxYearEOY, index), formSelector)
           welshToggleCheck(user.isWelsh)
         }
       }
@@ -177,7 +178,7 @@ class PensionOverseasIncomeCountryControllerSpec extends CommonUtils with Before
 
       "has an SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
+        result.header("location") shouldBe Some(overseasPensionsSummaryUrl(taxYearEOY))
       }
     }
 
@@ -226,7 +227,7 @@ class PensionOverseasIncomeCountryControllerSpec extends CommonUtils with Before
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(pensionOverseasIncomeCountryUrl(taxYearEOY))
+        result.header("location") shouldBe Some(incomeFromOverseasPensionsAmounts(taxYearEOY, 0))
       }
 
       "updates pension scheme tax reference to contain tax reference" in {
@@ -249,7 +250,7 @@ class PensionOverseasIncomeCountryControllerSpec extends CommonUtils with Before
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(pensionOverseasIncomeCountryUrlIndex(0)(taxYearEOY)) //todo redirect to pstr summary page when implemented
+        result.header("location") shouldBe Some(incomeFromOverseasPensionsAmounts(taxYearEOY, index))
       }
 
       "updates pension scheme tax reference to contain both tax reference" in {
@@ -269,6 +270,7 @@ class PensionOverseasIncomeCountryControllerSpec extends CommonUtils with Before
         )
       )
       val pensionUserData = pensionUserDataWithIncomeOverseasPension(pensionsViewModel)
+      val index = pensionUserData.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes.size
 
 
       implicit val url: Int => String = pensionOverseasIncomeCountryUrl
@@ -276,7 +278,7 @@ class PensionOverseasIncomeCountryControllerSpec extends CommonUtils with Before
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(pensionOverseasIncomeCountryUrl(taxYearEOY))
+        result.header("location") shouldBe Some(incomeFromOverseasPensionsAmounts(taxYearEOY, index))
       }
 
       "updates pension scheme tax reference to contain both tax reference" in {
@@ -301,7 +303,7 @@ class PensionOverseasIncomeCountryControllerSpec extends CommonUtils with Before
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
+        result.header("location") shouldBe Some(overseasPensionsSummaryUrl(taxYearEOY))
       }
 
       "updates pension scheme tax reference to contain both tax reference" in {
@@ -310,7 +312,7 @@ class PensionOverseasIncomeCountryControllerSpec extends CommonUtils with Before
       }
     }
 
-    "redirect to  CYA page if there is no session data" should {
+    "redirect to Overseas Pension Summary page there is no session data" should {
       implicit val url: Int => String = pensionOverseasIncomeCountryUrl
       lazy val form: Map[String, String] = Map(CountryForm.countryId -> "GB")
 
@@ -318,7 +320,7 @@ class PensionOverseasIncomeCountryControllerSpec extends CommonUtils with Before
 
       "has an SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
+        result.header("location") shouldBe Some(overseasPensionsSummaryUrl(taxYearEOY))
       }
     }
   }

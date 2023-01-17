@@ -27,6 +27,8 @@ case class PensionCharges(
                            pensionContributions: Option[PensionContributions],
                            overseasPensionContributions: Option[OverseasPensionContributions]) {
 
+  def isEmpty(): Boolean = this.productIterator.forall(_ == None)
+  def nonEmpty(): Boolean = ! isEmpty()
 }
 
 object PensionCharges {

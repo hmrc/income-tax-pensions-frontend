@@ -27,7 +27,11 @@ case class ForeignPension (
                             taxTakenOff: Option[BigDecimal],
                             specialWithholdingTax: Option[BigDecimal],
                             foreignTaxCreditRelief: Option[Boolean]
-                          )
+                          ){
+
+  def isEmpty(): Boolean = this.productIterator.forall(_ == None)
+  def nonEmpty(): Boolean = ! isEmpty()
+}
 
 object ForeignPension {
   implicit val format: OFormat[ForeignPension] = Json.format[ForeignPension]
