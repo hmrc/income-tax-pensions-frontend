@@ -21,7 +21,7 @@ import com.mongodb.MongoTimeoutException
 import common.UUID
 import models.User
 import models.mongo._
-import models.pension.charges.{IncomeFromOverseasPensionsViewModel, PaymentsIntoOverseasPensionsViewModel, PensionAnnualAllowancesViewModel, PensionLifetimeAllowancesViewModel, UnauthorisedPaymentsViewModel}
+import models.pension.charges.{IncomeFromOverseasPensionsViewModel, PaymentsIntoOverseasPensionsViewModel, PensionAnnualAllowancesViewModel, PensionLifetimeAllowancesViewModel, TransfersIntoOverseasPensionsViewModel, UnauthorisedPaymentsViewModel}
 import models.pension.reliefs.PaymentsIntoPensionViewModel
 import models.pension.statebenefits.IncomeFromPensionsViewModel
 import org.joda.time.{DateTime, DateTimeZone}
@@ -66,10 +66,12 @@ class PensionsUserDataRepositoryISpec extends IntegrationTest with FutureAwaits 
   private val unauthorisedPayments = UnauthorisedPaymentsViewModel()
   private val paymentsIntoOverseasPensions = PaymentsIntoOverseasPensionsViewModel(paymentsIntoOverseasPensionsQuestions = Some(true))
   private val incomeFromOverseasPensionsViewModel = IncomeFromOverseasPensionsViewModel()
+  private val transferIntoOverseasPensionsViewModel = TransfersIntoOverseasPensionsViewModel()
 
 
   private val pensionCYAModel = PensionsCYAModel(paymentsIntoPension, pensionAnnualAllowances, pensionLifetimeAllowances,
-    incomeFromPensions, unauthorisedPayments, paymentsIntoOverseasPensions, incomeFromOverseasPensionsViewModel)
+    incomeFromPensions, unauthorisedPayments, paymentsIntoOverseasPensions, incomeFromOverseasPensionsViewModel,
+    transferIntoOverseasPensionsViewModel)
 
   val userDataOne: PensionsUserData = PensionsUserData(
     sessionIdOne,

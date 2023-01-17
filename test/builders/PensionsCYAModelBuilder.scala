@@ -22,9 +22,10 @@ import builders.PaymentsIntoOverseasPensionsViewModelBuilder.{aPaymentsIntoOvers
 import builders.PaymentsIntoPensionVewModelBuilder.{aPaymentsIntoPensionViewModel, aPaymentsIntoPensionsEmptyViewModel}
 import builders.PensionAnnualAllowanceViewModelBuilder.{aPensionAnnualAllowanceEmptyViewModel, aPensionAnnualAllowanceViewModel}
 import builders.PensionLifetimeAllowanceViewModelBuilder.{aPensionLifetimeAllowanceViewModel, aPensionLifetimeAllowancesEmptyViewModel}
+import builders.TransfersIntoOverseasPensionsViewModelBuilder.{aTransfersIntoOverseasPensionsViewModel, emptyTransfersIntoOverseasPensionsViewModel}
 import builders.UnauthorisedPaymentsViewModelBuilder.{anUnauthorisedPaymentsEmptyViewModel, anUnauthorisedPaymentsViewModel}
 import models.mongo.PensionsCYAModel
-import models.pension.charges.{IncomeFromOverseasPensionsViewModel, PaymentsIntoOverseasPensionsViewModel, PensionAnnualAllowancesViewModel, PensionLifetimeAllowancesViewModel, UnauthorisedPaymentsViewModel}
+import models.pension.charges.{IncomeFromOverseasPensionsViewModel, PaymentsIntoOverseasPensionsViewModel, PensionAnnualAllowancesViewModel, PensionLifetimeAllowancesViewModel, TransfersIntoOverseasPensionsViewModel, UnauthorisedPaymentsViewModel}
 import models.pension.reliefs.PaymentsIntoPensionViewModel
 import models.pension.statebenefits.IncomeFromPensionsViewModel
 
@@ -37,7 +38,8 @@ object PensionsCYAModelBuilder {
     incomeFromPensions = anIncomeFromPensionsViewModel,
     unauthorisedPayments = anUnauthorisedPaymentsViewModel,
     paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel,
-    incomeFromOverseasPensions = anIncomeFromOverseasPensionsViewModel
+    incomeFromOverseasPensions = anIncomeFromOverseasPensionsViewModel,
+    transfersIntoOverseasPensions = aTransfersIntoOverseasPensionsViewModel
   )
 
   val aPensionsCYAEmptyModel: PensionsCYAModel = PensionsCYAModel(
@@ -47,8 +49,8 @@ object PensionsCYAModelBuilder {
     incomeFromPensions = anIncomeFromPensionEmptyViewModel,
     unauthorisedPayments = anUnauthorisedPaymentsEmptyViewModel,
     paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsEmptyViewModel,
-    incomeFromOverseasPensions = anIncomeFromOverseasPensionsEmptyViewModel
-
+    incomeFromOverseasPensions = anIncomeFromOverseasPensionsEmptyViewModel,
+    transfersIntoOverseasPensions = emptyTransfersIntoOverseasPensionsViewModel
   )
 
   val aPensionsCYAGeneratedFromPriorEmpty:PensionsCYAModel = PensionsCYAModel(
@@ -58,12 +60,15 @@ object PensionsCYAModelBuilder {
     incomeFromPensions = anIncomeFromPensionEmptyViewModel.copy(uKPensionIncomesQuestion = Some(false)),
     unauthorisedPayments = anUnauthorisedPaymentsEmptyViewModel,
     paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsEmptyViewModel,
-    incomeFromOverseasPensions = anIncomeFromOverseasPensionsEmptyViewModel
+    incomeFromOverseasPensions = anIncomeFromOverseasPensionsEmptyViewModel,
+    transfersIntoOverseasPensions = emptyTransfersIntoOverseasPensionsViewModel
   )
 
   def paymentsIntoPensionOnlyCYAModel(paymentsIntoPensionViewModel: PaymentsIntoPensionViewModel): PensionsCYAModel = {
     PensionsCYAModel(paymentsIntoPensionViewModel, PensionAnnualAllowancesViewModel(),
-      PensionLifetimeAllowancesViewModel(), IncomeFromPensionsViewModel(), UnauthorisedPaymentsViewModel(), PaymentsIntoOverseasPensionsViewModel(), IncomeFromOverseasPensionsViewModel())
+      PensionLifetimeAllowancesViewModel(), IncomeFromPensionsViewModel(),
+      UnauthorisedPaymentsViewModel(), PaymentsIntoOverseasPensionsViewModel(),
+      IncomeFromOverseasPensionsViewModel(), TransfersIntoOverseasPensionsViewModel())
   }
 
 }

@@ -24,6 +24,7 @@ import builders.PensionLifetimeAllowanceViewModelBuilder.aPensionLifetimeAllowan
 import builders.PensionsCYAModelBuilder.aPensionsCYAEmptyModel
 import builders.PensionsUserDataBuilder
 import builders.PensionsUserDataBuilder.aPensionsUserData
+import builders.TransfersIntoOverseasPensionsViewModelBuilder.emptyTransfersIntoOverseasPensionsViewModel
 import builders.UnauthorisedPaymentsViewModelBuilder.anUnauthorisedPaymentsViewModel
 import builders.UserBuilder.aUserRequest
 import forms.YesNoForm
@@ -54,7 +55,8 @@ class TotalPaymentsIntoRASControllerISpec extends IntegrationTest with BeforeAnd
         anIncomeFromPensionEmptyViewModel,
         anUnauthorisedPaymentsViewModel,
         aPaymentsIntoOverseasPensionsViewModel,
-        anIncomeFromOverseasPensionsEmptyViewModel
+        anIncomeFromOverseasPensionsEmptyViewModel,
+        emptyTransfersIntoOverseasPensionsViewModel
       )
     )
   }

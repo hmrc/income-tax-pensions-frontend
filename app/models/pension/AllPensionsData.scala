@@ -17,11 +17,11 @@
 package models.pension
 
 import models.mongo.PensionsCYAModel
-import models.pension.charges.{IncomeFromOverseasPensionsViewModel, LifetimeAllowance, PaymentsIntoOverseasPensionsViewModel, PensionAnnualAllowancesViewModel, PensionCharges, PensionLifetimeAllowancesViewModel, PensionScheme, TaxReliefQuestion, UnauthorisedPaymentsViewModel}
+import models.pension.charges._
 import models.pension.employmentPensions.EmploymentPensions
-import models.pension.reliefs.{PaymentsIntoPensionViewModel, PensionReliefs}
-import models.pension.statebenefits.{IncomeFromPensionsViewModel, StateBenefit, StateBenefitViewModel, StateBenefitsModel, UkPensionIncomeViewModel}
 import models.pension.income.{ForeignPension, OverseasPensionContribution, PensionIncome}
+import models.pension.reliefs.{PaymentsIntoPensionViewModel, PensionReliefs}
+import models.pension.statebenefits._
 import play.api.libs.json.{Json, OFormat}
 
 case class AllPensionsData(pensionReliefs: Option[PensionReliefs],
@@ -101,30 +101,53 @@ object AllPensionsData {
         pensionSchemeTaxReference = prior.pensionCharges.flatMap(_.pensionSchemeUnauthorisedPayments.map(_.pensionSchemeTaxReference))
       ),
 
-    paymentsIntoOverseasPensions = PaymentsIntoOverseasPensionsViewModel(
-      paymentsIntoOverseasPensionsQuestions = prior.pensionReliefs.map(_.pensionReliefs.overseasPensionSchemeContributions.isDefined),
-      paymentsIntoOverseasPensionsAmount = prior.pensionReliefs.flatMap(_.pensionReliefs.overseasPensionSchemeContributions),
-      employerPaymentsQuestion = prior.pensionIncome.map(_.overseasPensionContribution.headOption.flatMap(_.customerReference).isDefined),
-      taxPaidOnEmployerPaymentsQuestion = prior.pensionIncome.map(_.overseasPensionContribution.headOption.flatMap(_.customerReference).isEmpty),
-      customerReferenceNumberQuestion = prior.pensionIncome.flatMap(_.overseasPensionContribution.headOption.flatMap(_.customerReference)),
-      employerPaymentsAmount = prior.pensionIncome.flatMap(_.overseasPensionContribution.headOption.map(_.exemptEmployersPensionContribs)),
-      taxReliefQuestion = prior.pensionIncome.flatMap(_.overseasPensionContribution.headOption.map(getTaxReliefQuestion)),
-      qualifyingOverseasPensionSchemeReferenceNumber = prior.pensionIncome.flatMap(_.overseasPensionContribution.headOption.flatMap(_.migrantMemReliefQopsRefNo)),
-      doubleTaxationCountryCode = prior.pensionIncome.flatMap(_.overseasPensionContribution.headOption.flatMap(_.dblTaxationCountry)),
-      doubleTaxationCountryArticle = prior.pensionIncome.flatMap(_.overseasPensionContribution.headOption.flatMap(_.dblTaxationArticle)),
-      doubleTaxationCountryTreaty = prior.pensionIncome.flatMap(_.overseasPensionContribution.headOption.flatMap(_.dblTaxationTreaty)),
-      doubleTaxationReliefAmount = prior.pensionIncome.flatMap(_.overseasPensionContribution.headOption.flatMap(_.dblTaxationRelief)),
-      sf74Reference = prior.pensionIncome.flatMap(_.overseasPensionContribution.headOption.flatMap(_.sf74Reference))
-    ),
+      paymentsIntoOverseasPensions = PaymentsIntoOverseasPensionsViewModel(
+        paymentsIntoOverseasPensionsQuestions = prior.pensionReliefs.map(_.pensionReliefs.overseasPensionSchemeContributions.isDefined),
+        paymentsIntoOverseasPensionsAmount = prior.pensionReliefs.flatMap(_.pensionReliefs.overseasPensionSchemeContributions),
+        employerPaymentsQuestion = prior.pensionIncome.map(_.overseasPensionContribution.headOption.flatMap(_.customerReference).isDefined),
+        taxPaidOnEmployerPaymentsQuestion = prior.pensionIncome.map(_.overseasPensionContribution.headOption.flatMap(_.customerReference).isEmpty),
+        customerReferenceNumberQuestion = prior.pensionIncome.flatMap(_.overseasPensionContribution.headOption.flatMap(_.customerReference)),
+        employerPaymentsAmount = prior.pensionIncome.flatMap(_.overseasPensionContribution.headOption.map(_.exemptEmployersPensionContribs)),
+        taxReliefQuestion = prior.pensionIncome.flatMap(_.overseasPensionContribution.headOption.map(getTaxReliefQuestion)),
+        qualifyingOverseasPensionSchemeReferenceNumber = prior.pensionIncome.flatMap(_.overseasPensionContribution.headOption.flatMap(_.migrantMemReliefQopsRefNo)),
+        doubleTaxationCountryCode = prior.pensionIncome.flatMap(_.overseasPensionContribution.headOption.flatMap(_.dblTaxationCountry)),
+        doubleTaxationCountryArticle = prior.pensionIncome.flatMap(_.overseasPensionContribution.headOption.flatMap(_.dblTaxationArticle)),
+        doubleTaxationCountryTreaty = prior.pensionIncome.flatMap(_.overseasPensionContribution.headOption.flatMap(_.dblTaxationTreaty)),
+        doubleTaxationReliefAmount = prior.pensionIncome.flatMap(_.overseasPensionContribution.headOption.flatMap(_.dblTaxationRelief)),
+        sf74Reference = prior.pensionIncome.flatMap(_.overseasPensionContribution.headOption.flatMap(_.sf74Reference))
+      ),
       incomeFromOverseasPensions = IncomeFromOverseasPensionsViewModel(
         paymentsFromOverseasPensionsQuestion = prior.pensionIncome.map(_.foreignPension.nonEmpty),
         overseasIncomePensionSchemes = prior.pensionIncome.map(x => fromForeignPensionToPensionScheme(x.foreignPension)).getOrElse(Nil)
+      ),
+      transfersIntoOverseasPensions = TransfersIntoOverseasPensionsViewModel(
+        transferPensionSavings = prior.pensionCharges.map(_.pensionSchemeOverseasTransfers.map(_.transferCharge).isDefined),
+        overseasTransferCharge = prior.pensionCharges.map(_.pensionSchemeOverseasTransfers.map(_.transferCharge).isDefined),
+        overseasTransferChargeAmount = prior.pensionCharges.flatMap(_.pensionSchemeOverseasTransfers.map(_.transferCharge)),
+        pensionSchemeTransferCharge = prior.pensionCharges.map(_.pensionSchemeOverseasTransfers.map(_.transferChargeTaxPaid).isDefined),
+        pensionSchemeTransferChargeAmount = prior.pensionCharges.flatMap(_.pensionSchemeOverseasTransfers.map(_.transferChargeTaxPaid)),
+        transferPensionScheme = prior.pensionCharges.flatMap(_.pensionSchemeOverseasTransfers.map(
+          x => fromOverseasSchemeProvider(x.overseasSchemeProvider))
+        ).getOrElse(Nil)
+      )
+    )
+  }
+
+  private def fromOverseasSchemeProvider(osp: Seq[OverseasSchemeProvider]): Seq[TransferPensionScheme] = {
+    osp.map(x =>
+      TransferPensionScheme(
+        ukTransferCharge = Some(x.providerCountryCode == "GBR"),
+        name = Some(x.providerName),
+        pensionSchemeTaxReference = x.pensionSchemeTaxReference.map(_.head),
+        qualifyingRecognisedOverseasPensionScheme = x.qualifyingRecognisedOverseasPensionScheme.map(_.head),
+        providerAddress = Some(x.providerAddress),
+        countryCode = Some(x.providerCountryCode)
       )
     )
   }
 
   private def fromForeignPensionToPensionScheme(foreignPension: Seq[ForeignPension]) = {
-    foreignPension.map( fP =>
+    foreignPension.map(fP =>
       PensionScheme(
         countryCode = Some(fP.countryCode),
         pensionPaymentAmount = fP.amountBeforeTax,
