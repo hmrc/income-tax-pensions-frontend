@@ -17,7 +17,7 @@
 package models.pension.pages
 
 
-import forms.Countries.getCountryFromCode
+import forms.Countries.{getCountryFromCode, getCountryFromCodeWithDefault}
 import models.mongo.PensionsUserData
 import models.pension.charges.PensionScheme
 import play.api.i18n.Messages
@@ -26,17 +26,17 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import utils.ViewUtils.{bigDecimalCurrency, convertBoolToYesOrNo, summaryListRow}
 
-case class OverSeaPensionSchemeSummaryPage(taxYear: Int, summaryListDataRows: Seq[SummaryListRow], index: Option[Int])
+case class OverseasPensionSchemeSummaryPage(taxYear: Int, summaryListDataRows: Seq[SummaryListRow], index: Option[Int])
 
-object OverSeaPensionSchemeSummaryPage {
+object OverseasPensionSchemeSummaryPage {
 
-  def apply(taxYear: Int, pensionsUserData: PensionsUserData, index: Option[Int])(implicit messages: Messages): OverSeaPensionSchemeSummaryPage = {
+  def apply(taxYear: Int, pensionsUserData: PensionsUserData, index: Option[Int])(implicit messages: Messages): OverseasPensionSchemeSummaryPage = {
     val overSeasPensions = pensionsUserData.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes(index.getOrElse(0))
 
-    OverSeaPensionSchemeSummaryPage(taxYear, Seq(
+    OverseasPensionSchemeSummaryPage(taxYear, Seq(
       Some(summaryListRow(
         HtmlContent(Messages("incomeFromOverseasPensions.summary.country")),
-        HtmlContent(getCountryFromCode(overSeasPensions.countryCode).map(c => c.countryName).getOrElse("")),
+        HtmlContent(getCountryFromCodeWithDefault(overSeasPensions.countryCode)),
         actions = Seq((Call("GET", controllers.pensions.incomeFromOverseasPensions.routes.PensionOverseasIncomeCountryController.show(taxYear, index).url), Messages("common.change"), None)))),
       Some(summaryListRow(
         HtmlContent(Messages("incomeFromOverseasPensions.summary.pension.payments")),
