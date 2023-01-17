@@ -24,7 +24,7 @@ import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.IncomeFromOverseasPensionsPages.countrySummaryListControllerUrl
+import utils.PageUrls.IncomeFromOverseasPensionsPages.{countrySummaryListControllerUrl, overseasPensionsSchemeSummaryUrl}
 import utils.PageUrls.{IncomeFromOverseasPensionsPages, overseasPensionsSummaryUrl}
 import utils.{CommonUtils, PensionsDatabaseHelper}
 
@@ -330,7 +330,7 @@ class TaxableAmountControllerISpec extends
 
           "has a status of SEE_OTHER" in {
             result.status shouldBe SEE_OTHER
-            result.header("location") shouldBe Some(countrySummaryListControllerUrl(taxYearEOY)) //TODO redirect to overseas pension scheme summary page
+            result.header("location") shouldBe Some(overseasPensionsSchemeSummaryUrl(taxYearEOY, 0))
           }
         }
       }

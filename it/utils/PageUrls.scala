@@ -234,8 +234,8 @@ object PageUrls extends IntegrationTest {
     def countrySummaryListControllerUrl(taxYear: Int): String =
       s"$appUrl/$taxYear/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-country-summary"
       
-    def overseasPensionsSummaryUrl: Int => Int => String =
-      (index: Int) => (taxYear: Int) => s"$appUrl/$taxYear/overseas-pensions/income-from-overseas-pensions/pension-scheme-summary?index=$index"
+    def overseasPensionsSchemeSummaryUrl(taxYear: Int, index: Int): String =
+      s"$appUrl/$taxYear/overseas-pensions/income-from-overseas-pensions/pension-scheme-summary?index=$index"
       
   }
 }

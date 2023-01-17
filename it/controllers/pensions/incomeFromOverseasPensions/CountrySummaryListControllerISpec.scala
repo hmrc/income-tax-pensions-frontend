@@ -120,8 +120,8 @@ class CountrySummaryListControllerISpec extends IntegrationTest with BeforeAndAf
           textOnPageCheck(s"$pensionName2 $pensionAmount2", pensionNameSelector(2))
           
           //TODO: replace hrefs "#" below with link to first details page when available .e.g. PensionSchemeSummaryController.show(taxYear, Some(0))).url
-          linkCheck(s"$change $change $pensionName1", changeLinkSelector(1), overseasPensionsSummaryUrl(0)(taxYearEOY))
-          linkCheck(s"$change $change $pensionName2", changeLinkSelector(2), overseasPensionsSummaryUrl(1)(taxYearEOY))
+          linkCheck(s"$change $change $pensionName1", changeLinkSelector(1), overseasPensionsSchemeSummaryUrl(taxYearEOY, 0))
+          linkCheck(s"$change $change $pensionName2", changeLinkSelector(2), overseasPensionsSchemeSummaryUrl(taxYearEOY, 1))
           
           linkCheck(expectedAddAnotherText, addAnotherLinkSelector, pensionOverseasIncomeCountryUrl(taxYearEOY))
           buttonCheck(expectedButtonText, continueButtonSelector, Some(checkIncomeFromOverseasPensionsCyaUrl(taxYearEOY)))

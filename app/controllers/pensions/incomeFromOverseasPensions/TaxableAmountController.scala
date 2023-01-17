@@ -27,7 +27,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
 import controllers.pensions.routes.OverseasPensionsSummaryController
-import controllers.pensions.incomeFromOverseasPensions.routes.CountrySummaryListController
+import controllers.pensions.incomeFromOverseasPensions.routes.{CountrySummaryListController, PensionSchemeSummaryController}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.incomeFromOverseasPensions.TaxableAmountView
@@ -75,7 +75,7 @@ class TaxableAmountController @Inject()(val authAction: AuthorisedAction,
               val updatedCyaModel = updatePensionScheme(data, getTaxableAmount(data, i), taxYear, i)
               pensionSessionService.createOrUpdateSessionData(request.user,
                 updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
-                Redirect(CountrySummaryListController.show(taxYear)) //TODO: Redirect to Overseas Pensions scheme summary
+                Redirect(PensionSchemeSummaryController.show(taxYear, index))
               }
             case None => Future.successful(Redirect(OverseasPensionsSummaryController.show(taxYear)))
           }
