@@ -51,7 +51,6 @@ class OverseasTransferChargeController @Inject()(actionsProvider: ActionsProvide
 
   def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit sessionData =>
-
       sessionData.optPensionsUserData match {
         case Some(pensionData) =>
           val transferChargeAmount: Option[BigDecimal] = pensionData.pensions.transfersIntoOverseasPensions.overseasTransferChargeAmount
@@ -59,7 +58,7 @@ class OverseasTransferChargeController @Inject()(actionsProvider: ActionsProvide
 
           (transferCharge, transferChargeAmount) match {
             case (Some(a), amount) => Future.successful(Ok(view(amountForm(sessionData.user).fill((a, amount)), taxYear)))
-            case (_, _) =>  Future.successful(Ok(view(amountForm(sessionData.user), taxYear)))
+            case _ =>  Future.successful(Ok(view(amountForm(sessionData.user), taxYear)))
           }
 
         case None => Future.successful(Redirect(OverseasPensionsSummaryController.show(taxYear)))
@@ -70,8 +69,6 @@ class OverseasTransferChargeController @Inject()(actionsProvider: ActionsProvide
     implicit sessionUserData =>
       sessionUserData.optPensionsUserData match {
         case Some(pensionsUserData) =>
-
-
           amountForm(sessionUserData.user).bindFromRequest.fold(
             formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
             yesNoAmount => {
