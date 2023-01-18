@@ -19,27 +19,29 @@ package controllers.pensions
 import config.AppConfig
 import controllers.predicates.AuthorisedAction
 import controllers.predicates.TaxYearAction.taxYearAction
+import models.pension.AllPensionsData.generateCyaFromPrior
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import utils.StatusHelper.incomeFromOverseasPensionsHasPriorData
 import views.html.pensions.OverseasPensionsSummaryView
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.ExecutionContext
+import scala.concurrent.Future
 
 @Singleton
 class OverseasPensionsSummaryController @Inject()(implicit val mcc: MessagesControllerComponents,
                                                   appConfig: AppConfig,
                                                   authAction: AuthorisedAction,
                                                   pensionSessionService: PensionSessionService,
-                                                  overseasPensionsSummaryView: OverseasPensionsSummaryView,
-                                                  ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
+                                                  overseasPensionsSummaryView: OverseasPensionsSummaryView
+                                                  ) extends FrontendController(mcc) with I18nSupport {
 
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
-    pensionSessionService.getPensionSessionData(taxYear, request.user).map {
-      case Left(_) => None
-      case Right(pensionsData) => pensionsData
-    }.map(pensionsData => Ok(overseasPensionsSummaryView(taxYear, pensionsData.map(_.pensions))))
+    pensionSessionService.getAndHandle(taxYear, request.user) { (pensionsUserData, prior) =>
+      val hasPriorData = incomeFromOverseasPensionsHasPriorData(prior)
+      Future.successful(Ok(overseasPensionsSummaryView(taxYear, pensionsUserData.map(_.pensions), hasPriorData)))
+    }
   }
 }

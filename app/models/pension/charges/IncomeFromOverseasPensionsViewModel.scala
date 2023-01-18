@@ -33,6 +33,8 @@ case class IncomeFromOverseasPensionsViewModel(paymentsFromOverseasPensionsQuest
       paymentsFromOverseasPensionsQuestion = paymentsFromOverseasPensionsQuestion.map(_.encrypted),
       overseasPensionSchemes = overseasIncomePensionSchemes.map(_.encrypted())
     )
+    
+  def hasPriorData: Boolean =  paymentsFromOverseasPensionsQuestion.exists(_ && overseasIncomePensionSchemes.nonEmpty)   
 }
 
 object IncomeFromOverseasPensionsViewModel {

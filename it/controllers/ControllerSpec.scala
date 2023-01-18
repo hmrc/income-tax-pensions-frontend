@@ -41,6 +41,8 @@ import uk.gov.hmrc.http.SessionKeys
 import java.util.UUID
 import scala.concurrent.ExecutionContext.Implicits.global
 
+// scalastyle:off magic.number number.of.methods
+
 class ControllerSpec(val pathForThisPage: String) extends PlaySpec
   with GuiceOneServerPerSuite
   with WiremockStubHelpers
@@ -52,7 +54,7 @@ class ControllerSpec(val pathForThisPage: String) extends PlaySpec
   private val validMtdItId = "1234567890"
   private val validNino = "AA123456A"
   private val languageCodes = Map(PreferredLanguages.English -> "en", PreferredLanguages.Welsh -> "cy")
-  private val taxYear = 2022
+  protected val taxYear = 2022
   private val database: PensionsUserDataRepositoryImpl = app.injector.instanceOf[PensionsUserDataRepositoryImpl]
   private lazy val wiremockBaseUrl = s"http://$wiremockHost:$wiremockPort"
   private val validTaxYearsHeaderValue = Seq(taxYear).mkString(",")
@@ -67,7 +69,9 @@ class ControllerSpec(val pathForThisPage: String) extends PlaySpec
 
   object PageRelativeURLs {
     val summaryPage: String = relativeUrl("/pensions-summary")
+    
     val overseasPensionsSummary: String = relativeUrl("/overseas-pensions")
+    
     val paymentsIntoPensionsCYAPage: String = relativeUrl("/payments-into-pensions/check-payments-into-pensions")
     val paymentsIntoPensionsOneNoTaxRelief: String = relativeUrl("/payments-into-pensions/no-tax-relief")
     val paymentsIntoPensionsOneOffPaymentsPage: String = relativeUrl("/payments-into-pensions/one-off-payments")
@@ -76,8 +80,23 @@ class ControllerSpec(val pathForThisPage: String) extends PlaySpec
     val paymentsIntoPensionsReliefAtSourcePage: String = relativeUrl("/payments-into-pensions/relief-at-source")
     val paymentsIntoPensionsReliefAtSourceAmountPage: String = relativeUrl("/payments-into-pensions/relief-at-source-amount")
     val paymentsIntoPensionsTotalReliefAtSourceCheckPage: String = relativeUrl("/payments-into-pensions/total-relief-at-source-check")
-    val incomeFromOverseasPensionsPage: String = relativeUrl("/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-status")
+    
     val unauthorisedPaymentsCYAPage: String = relativeUrl("/unauthorised-payments-from-pensions/check-unauthorised-payments")
+
+    val overseasSummaryPage: String = relativeUrl("/overseas-pensions")
+
+    val paymentsIntoOverseasPensions: String = relativeUrl("/overseas-pensions/payments-into-overseas-pensions/payments-into-schemes")
+
+    val incomeFromOverseasPensionsStatus: String = relativeUrl("/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-status")
+    val incomeFromOverseasPensionsCountry: String = relativeUrl("/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-country")
+    val incomeFromOverseasPensionsAmounts: String = relativeUrl("/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-amounts")
+    val incomeFromOverseasPensionsSwt: String = relativeUrl("/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-swt")
+    val incomeFromOverseasPensionsFtcr: String = relativeUrl("/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-ftcr")
+    val incomeFromOverseasPensionstaxable: String = relativeUrl("/overseas-pensions/income-from-overseas-pensions/taxable-amount")
+    val incomeFromOverseasPensionsScheme: String = relativeUrl("/overseas-pensions/income-from-overseas-pensions/pension-scheme-summary")
+    val incomeFromOverseasPensionsCountrySummary: String = relativeUrl("/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-sountry-summary")
+    val incomeFromOverseasPensionsCya: String = relativeUrl("/overseas-pensions/income-from-overseas-pensions/check-overseas-pension-income-cya")
+
   }
 
   override implicit lazy val app: Application = new GuiceApplicationBuilder()

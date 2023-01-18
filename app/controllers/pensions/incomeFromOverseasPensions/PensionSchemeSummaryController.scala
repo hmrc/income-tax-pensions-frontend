@@ -20,7 +20,7 @@ import config.AppConfig
 import controllers.pensions.incomeFromOverseasPensions.routes.CountrySummaryListController
 import controllers.pensions.routes.PensionsSummaryController
 import controllers.predicates.ActionsProvider
-import models.pension.pages.OverSeaPensionSchemeSummaryPage
+import models.pension.pages.OverseasPensionSchemeSummaryPage
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
@@ -40,7 +40,7 @@ class PensionSchemeSummaryController @Inject()(actionsProvider: ActionsProvider,
 
   def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) { implicit sessionUserData =>
     sessionUserData.optPensionsUserData match {
-      case Some(pensionsUserData) => Ok(pageView(OverSeaPensionSchemeSummaryPage.apply (taxYear, pensionsUserData, index)))
+      case Some(pensionsUserData) => Ok(pageView(OverseasPensionSchemeSummaryPage.apply (taxYear, pensionsUserData, index)))
       case _ => Redirect(PensionsSummaryController.show(taxYear)) //todo redirect overseas summary page
     }
   }

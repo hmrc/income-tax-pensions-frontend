@@ -16,10 +16,9 @@
 
 package utils
 
-import models.mongo.PensionsCYAModel
 import models.mongo.{PensionsCYAModel, PensionsUserData}
 import models.pension.AllPensionsData
-import models.pension.charges.{LifetimeAllowance, PensionSavingsTaxCharges}
+import models.pension.charges.PensionSavingsTaxCharges
 
 object StatusHelper {
 
@@ -64,9 +63,9 @@ object StatusHelper {
   def paymentsIntoOverseasPensionsIsUpdated(cya: Option[PensionsCYAModel]): Boolean = {
     cya.flatMap(_.paymentsIntoOverseasPensions.paymentsIntoOverseasPensionsQuestions).isDefined
   }
-
-  // TODO: implement when we add the page
-  def incomeFromOverseasPensionsIsUpdated(cya: Option[PensionsCYAModel]): Boolean = false
+  
+  def incomeFromOverseasPensionsIsUpdated(cya: Option[PensionsCYAModel]): Boolean =
+    cya.flatMap((_.incomeFromOverseasPensions.paymentsFromOverseasPensionsQuestion)).isDefined
 
   // TODO: implement when we add the page
   def overseasPensionsTransferChargesIsUpdated(cya: Option[PensionsCYAModel]): Boolean = false
@@ -81,5 +80,15 @@ object StatusHelper {
   def ukPensionsSchemeIsUpdated(pensionsUserData: Option[PensionsUserData]): Boolean = {
     pensionsUserData.map(_.pensions).map(_.incomeFromPensions).flatMap(_.uKPensionIncomesQuestion).isDefined
   }
+  
+  /* ------- hasPriorData  statuses------------------*/
+  def paymentIntoPensionHasPriorData(prior: Option[AllPensionsData]): Boolean =
+    prior.exists(_.pensionReliefs.nonEmpty)
+    
+  def unauthorisedPaymentsHasPriorData(prior: Option[AllPensionsData]): Boolean =
+    prior.exists(_.pensionCharges.exists(_.pensionSchemeUnauthorisedPayments.nonEmpty))
+    
+  def incomeFromOverseasPensionsHasPriorData(prior: Option[AllPensionsData]): Boolean =
+    prior.exists(_.pensionIncome.exists(_.foreignPension.nonEmpty))
 
 }

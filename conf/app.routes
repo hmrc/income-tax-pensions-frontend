@@ -230,8 +230,8 @@ POST        /:taxYear/overseas-pensions/overseas-transfer-charges/transfer-charg
 GET         /:taxYear/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-status                               controllers.pensions.incomeFromOverseasPensions.PensionOverseasIncomeStatus.show(taxYear: Int)
 POST        /:taxYear/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-status                               controllers.pensions.incomeFromOverseasPensions.PensionOverseasIncomeStatus.submit(taxYear: Int)
 
-GET         /:taxYear/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-country                              controllers.pensions.incomeFromOverseasPensions.PensionOverseasIncomeCountryController.show(taxYear: Int, countryIndex: Option[Int])
-POST        /:taxYear/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-country                              controllers.pensions.incomeFromOverseasPensions.PensionOverseasIncomeCountryController.submit(taxYear: Int, countryIndex: Option[Int])
+GET         /:taxYear/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-country                              controllers.pensions.incomeFromOverseasPensions.PensionOverseasIncomeCountryController.show(taxYear: Int, index: Option[Int])
+POST        /:taxYear/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-country                              controllers.pensions.incomeFromOverseasPensions.PensionOverseasIncomeCountryController.submit(taxYear: Int, index: Option[Int])
 
 GET         /:taxYear/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-amounts                              controllers.pensions.incomeFromOverseasPensions.PensionPaymentsController.show(taxYear: Int, index: Option[Int])
 POST        /:taxYear/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-amounts                              controllers.pensions.incomeFromOverseasPensions.PensionPaymentsController.submit(taxYear: Int, index: Option[Int])

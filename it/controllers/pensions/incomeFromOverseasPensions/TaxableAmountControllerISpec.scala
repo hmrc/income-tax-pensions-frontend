@@ -17,7 +17,6 @@
 package controllers.pensions.incomeFromOverseasPensions
 
 import builders.IncomeFromOverseasPensionsViewModelBuilder.{anIncomeFromOverseasPensionsViewModel, anIncomeFromOverseasPensionsWithFtcrViewModel}
-import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import builders.PensionsUserDataBuilder.{aPensionsUserData, anPensionsUserDataEmptyCya, pensionUserDataWithIncomeOverseasPension}
 import models.pension.charges.PensionScheme
 import org.jsoup.Jsoup
@@ -25,8 +24,9 @@ import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
+import utils.PageUrls.IncomeFromOverseasPensionsPages.{countrySummaryListControllerUrl, overseasPensionsSchemeSummaryUrl}
+import utils.PageUrls.{IncomeFromOverseasPensionsPages, overseasPensionsSummaryUrl}
 import utils.{CommonUtils, PensionsDatabaseHelper}
-import utils.PageUrls.{IncomeFromOverseasPensionsPages, pensionSummaryUrl}
 
 import java.text.NumberFormat
 import java.util.Locale
@@ -49,9 +49,9 @@ class TaxableAmountControllerISpec extends
     val tableRowHeadSelector: (Int, Int) => String = (row, column) =>
       s"#main-content > div > div > table > tbody > tr:nth-child($row) > th:nth-of-type($column)"
 
-    val labelSelector: Int => String = (index) => s"form > div:nth-of-type($index) > label"
-    val paragraphSelector: Int => String = (index) => s"#main-content > div > div > p:nth-of-type($index)"
-    val paraItemSelector: Int => String = (index) => s"#main-content > div > div > ul > li:nth-of-type($index)"
+    val labelSelector: Int => String = index => s"form > div:nth-of-type($index) > label"
+    val paragraphSelector: Int => String = index => s"#main-content > div > div > p:nth-of-type($index)"
+    val paraItemSelector: Int => String = index => s"#main-content > div > div > ul > li:nth-of-type($index)"
 
   }
 
@@ -172,7 +172,7 @@ class TaxableAmountControllerISpec extends
 
           "has SEE_OTHER status" in {
             result.status shouldBe SEE_OTHER
-            result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
+            result.header("location") shouldBe Some(overseasPensionsSummaryUrl(taxYearEOY))
           }
         }
 
@@ -185,7 +185,7 @@ class TaxableAmountControllerISpec extends
 
           "has SEE_OTHER status" in {
             result.status shouldBe SEE_OTHER
-            result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
+            result.header("location") shouldBe Some(overseasPensionsSummaryUrl(taxYearEOY))
           }
         }
 
@@ -198,7 +198,7 @@ class TaxableAmountControllerISpec extends
 
           "has SEE_OTHER status" in {
             result.status shouldBe SEE_OTHER
-            result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
+            result.header("location") shouldBe Some(overseasPensionsSummaryUrl(taxYearEOY))
           }
         }
 
@@ -209,7 +209,7 @@ class TaxableAmountControllerISpec extends
 
           "has a SEE_OTHER(303) status" in {
             result.status shouldBe SEE_OTHER
-            result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
+            result.header("location") shouldBe Some(overseasPensionsSummaryUrl(taxYearEOY))
           }
         }
 
@@ -244,7 +244,7 @@ class TaxableAmountControllerISpec extends
           implicit lazy val result: WSResponse = showPage(user, aPensionsUserData)
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          val pensionPaymentAmount = aPensionsUserData.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes(0).pensionPaymentAmount
+          val pensionPaymentAmount = aPensionsUserData.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes.head.pensionPaymentAmount
           val formattedPensionPaymentAmount = formatNoZeros(pensionPaymentAmount.getOrElse(BigDecimal(0)))
           textOnPageCheck(formattedPensionPaymentAmount, tableSelector(1, 1))
         }
@@ -254,7 +254,7 @@ class TaxableAmountControllerISpec extends
           implicit lazy val result: WSResponse = showPage(user, aPensionsUserData)
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          val taxableAmount = aPensionsUserData.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes(0).pensionPaymentAmount
+          val taxableAmount = aPensionsUserData.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes.head.pensionPaymentAmount
           val formattedTaxableAmount = formatNoZeros(taxableAmount.getOrElse(BigDecimal(0)))
           textOnPageCheck(formattedTaxableAmount, tableSelector(2, 1))
         }
@@ -294,11 +294,11 @@ class TaxableAmountControllerISpec extends
           implicit lazy val result: WSResponse = showPage(user, pensionUserData)
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          val pensionPaymentAmount = pensionUserData.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes(0).pensionPaymentAmount
+          val pensionPaymentAmount = pensionUserData.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes.head.pensionPaymentAmount
           val formattedPensionPaymentAmount = formatNoZeros(pensionPaymentAmount.getOrElse(BigDecimal(0)))
           textOnPageCheck(formattedPensionPaymentAmount, tableSelector(1, 1))
 
-          val pensionTaxPaid = pensionUserData.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes(0).pensionPaymentTaxPaid
+          val pensionTaxPaid = pensionUserData.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes.head.pensionPaymentTaxPaid
           val formattedTaxPaid = formatNoZeros(-pensionTaxPaid.getOrElse(BigDecimal(0)))
           textOnPageCheck(formattedTaxPaid, tableSelector(2, 1))
 
@@ -318,8 +318,6 @@ class TaxableAmountControllerISpec extends
   ".submit" should {
     userScenarios.foreach { user =>
       s"language is ${welshTest(user.isWelsh)} and request is from an ${agentTest(user.isAgent)}" should {
-        import Selectors._
-        import user.commonExpectedResults._
 
         "save calculated taxable amount " which {
           implicit val taxableAmountUrl: Int => String = IncomeFromOverseasPensionsPages.taxableAmountUrl(0)
@@ -329,11 +327,10 @@ class TaxableAmountControllerISpec extends
           val pensionUserData = pensionUserDataWithIncomeOverseasPension(incomeViewModel)
 
           implicit lazy val result: WSResponse = submitPage(user, pensionUserData, Map())
-          implicit def document: () => Document = () => Jsoup.parse(result.body)
 
           "has a status of SEE_OTHER" in {
             result.status shouldBe SEE_OTHER
-            result.header("location") shouldBe Some(IncomeFromOverseasPensionsPages.taxableAmountUrl(0)(taxYearEOY)) //TODO redirect to pension scheme summary page
+            result.header("location") shouldBe Some(overseasPensionsSchemeSummaryUrl(taxYearEOY, 0))
           }
         }
       }

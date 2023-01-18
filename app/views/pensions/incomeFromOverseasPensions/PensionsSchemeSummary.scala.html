@@ -19,7 +19,7 @@
 @import views.html.templates.helpers.Heading
 @import views.html.templates.helpers.ErrorSummary
 @import views.html.templates.helpers.Button
-@import models.pension.pages.OverSeaPensionSchemeSummaryPage
+@import models.pension.pages.OverseasPensionSchemeSummaryPage
 @import requests.UserSessionDataRequest
 @import controllers.pensions.incomeFromOverseasPensions.routes.PensionSchemeSummaryController
 
@@ -31,7 +31,7 @@
   formWithCSRF: FormWithCSRF
 )
 
-@(pageModel: OverSeaPensionSchemeSummaryPage)(implicit request: UserSessionDataRequest[_], messages: Messages, appConfig: AppConfig)
+@(pageModel: OverseasPensionSchemeSummaryPage)(implicit request: UserSessionDataRequest[_], messages: Messages, appConfig: AppConfig)
 
   @titleForUse = @{messages("incomeFromOverseasPensions.summary.title")}
 

@@ -16,7 +16,8 @@
 
 package controllers.pensions
 
-import builders.AllPensionsDataBuilder.anAllPensionsData
+import builders.AllPensionsDataBuilder.{anAllPensionDataEmpty, anAllPensionsData}
+import builders.IncomeFromOverseasPensionsViewModelBuilder.anIncomeFromOverseasPensionsViewModel
 import builders.IncomeTaxUserDataBuilder.anIncomeTaxUserData
 import builders.PaymentsIntoOverseasPensionsViewModelBuilder.aPaymentsIntoOverseasPensionsViewModel
 import builders.PensionsCYAModelBuilder.aPensionsCYAModel
@@ -26,11 +27,12 @@ import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status.UNAUTHORIZED
 import play.api.libs.ws.WSResponse
+import utils.PageUrls.IncomeFromOverseasPensionsPages.{checkIncomeFromOverseasPensionsCyaUrl, incomeFromOverseasPensionsStatus}
 import utils.PageUrls._
 import utils.PageUrls.OverseasPensionPages.paymentsIntoPensionSchemeUrl
 import utils.{CommonUtils, PensionsDatabaseHelper, ViewHelpers}
 
-class OverseasPensionsSummaryControllerISpec extends CommonUtils with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper  {
+class OverseasPensionsSummaryControllerISpec extends  CommonUtils with BeforeAndAfterEach  {
 
   // scalastyle:off magic.number
 
@@ -130,7 +132,8 @@ class OverseasPensionsSummaryControllerISpec extends CommonUtils with ViewHelper
       val specific = userScenario.specificExpectedResults.get
       s"language is ${welshTest(userScenario.isWelsh)} and request is from an ${agentTest(userScenario.isAgent)}" should {
         "render the page where data does not exist and everything is 'Not Updated'" which {
-          implicit lazy val result: WSResponse = showPage(userScenario, anPensionsUserDataEmptyCya, anIncomeTaxUserData)
+          implicit lazy val result: WSResponse =
+            showPage(userScenario, anPensionsUserDataEmptyCya, anIncomeTaxUserData.copy( pensions = Some(anAllPensionDataEmpty)))
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
@@ -145,7 +148,7 @@ class OverseasPensionsSummaryControllerISpec extends CommonUtils with ViewHelper
           }
 
           "has an income from overseas pensions section" which {
-            linkCheck(common.incomeFromOverseasPensionsText, incomeFromOverseasPensionsLink, "#")
+            linkCheck(common.incomeFromOverseasPensionsText, incomeFromOverseasPensionsLink, incomeFromOverseasPensionsStatus(taxYearEOY))
             textOnPageCheck(userScenario.commonExpectedResults.notStarted, summaryListStatusTagSelector(2))
           }
 
@@ -164,10 +167,11 @@ class OverseasPensionsSummaryControllerISpec extends CommonUtils with ViewHelper
           welshToggleCheck(userScenario.isWelsh)
         }
 
-        "render the page where data exists for payments into pensions to be 'Updated'" which {
-          val pensionsViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(paymentsIntoOverseasPensionsQuestions = Some(true))
+        "render the page where data exists for payments into pensions and income for overseas pensions to be 'Updated'" which {
           val userData =  aPensionsUserData.copy(isPriorSubmission = true,
-            pensions = aPensionsCYAModel.copy(paymentsIntoOverseasPensions = pensionsViewModel)
+            pensions = aPensionsCYAModel.copy(
+              paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel,
+              incomeFromOverseasPensions = anIncomeFromOverseasPensionsViewModel)
           )
           val incomeTaxUserData = anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData))
 
@@ -186,8 +190,8 @@ class OverseasPensionsSummaryControllerISpec extends CommonUtils with ViewHelper
           }
 
           "has an income from overseas pensions section" which {
-            linkCheck(common.incomeFromOverseasPensionsText, incomeFromOverseasPensionsLink, "#")
-            textOnPageCheck(userScenario.commonExpectedResults.notStarted, summaryListStatusTagSelector(2))
+            linkCheck(common.incomeFromOverseasPensionsText, incomeFromOverseasPensionsLink, checkIncomeFromOverseasPensionsCyaUrl(taxYearEOY))
+            textOnPageCheck(userScenario.commonExpectedResults.updated, summaryListStatusTagSelector(2))
           }
 
           "has an overseas transfer charges section" which {

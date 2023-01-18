@@ -27,10 +27,10 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import play.twirl.api.Html
+import routes._
 import services.PensionSessionService
 import utils.Clock
 import views.html.pensions.incomeFromOverseasPensions.ForeignTaxCreditReliefView
-import controllers.pensions.incomeFromOverseasPensions.routes.ForeignTaxCreditReliefController
 
 import javax.inject.Inject
 
@@ -43,13 +43,17 @@ class ForeignTaxCreditReliefController @Inject()(messagesControllerComponents: M
                                                 (implicit appConfig: AppConfig, clock: Clock)
   extends BaseYesNoWithIndexController(messagesControllerComponents, pensionSessionService, authAction, errorHandler) with I18nSupport {
 
-  override def prepareView(pensionsUserData: PensionsUserData, taxYear: Int, index:Int)(implicit request: AuthorisationRequest[AnyContent]): Html = view(populateForm(pensionsUserData, index), taxYear, index)
+  override protected def redirectToSummaryPage(taxYear: Int): Result = Redirect(controllers.pensions.routes.OverseasPensionsSummaryController.show(taxYear))
+
+  override def prepareView(pensionsUserData: PensionsUserData, taxYear: Int, index:Int)
+                          (implicit request: AuthorisationRequest[AnyContent]): Html = view(populateForm(pensionsUserData, index), taxYear, index)
 
   override def redirectWhenNoSessionData(taxYear: Int): Result = redirectToSummaryPage(taxYear)
 
-  override def redirectAfterUpdatingSessionData(taxYear: Int, index:Option[Int]): Result = Redirect(ForeignTaxCreditReliefController.show(taxYear, index))
+  override def redirectAfterUpdatingSessionData(taxYear: Int, index:Option[Int]): Result = Redirect(TaxableAmountController.show(taxYear, index))
 
-  override def questionOpt(pensionsUserData: PensionsUserData, index:Int): Option[Boolean] = pensionsUserData.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes(index).foreignTaxCreditReliefQuestion
+  override def questionOpt(pensionsUserData: PensionsUserData, index:Int): Option[Boolean] =
+    pensionsUserData.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes(index).foreignTaxCreditReliefQuestion
 
   override def proposedUpdatedSessionDataModel(currentSessionData: PensionsUserData, yesSelected: Boolean, index:Int): PensionsCYAModel = {
     val incomeFromOverseasPension = currentSessionData.pensions.incomeFromOverseasPensions
@@ -60,7 +64,8 @@ class ForeignTaxCreditReliefController @Inject()(messagesControllerComponents: M
             incomeFromOverseasPension.overseasIncomePensionSchemes(index).copy(foreignTaxCreditReliefQuestion = Some(yesSelected)))
       ))
   }
-  override def whenFormIsInvalid(form: Form[Boolean], taxYear: Int, index:Int)(implicit request: AuthorisationRequest[AnyContent]): Html = view(form, taxYear, index)
+  override def whenFormIsInvalid(form: Form[Boolean], taxYear: Int, index:Int)
+                                (implicit request: AuthorisationRequest[AnyContent]): Html = view(form, taxYear, index)
 
   override def errorMessageSet: YesNoForm = ForeignTaxCreditRelief
 

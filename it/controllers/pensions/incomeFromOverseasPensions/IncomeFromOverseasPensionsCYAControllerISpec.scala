@@ -19,14 +19,13 @@ package controllers.pensions.incomeFromOverseasPensions
 import builders.AllPensionsDataBuilder.anAllPensionsData
 import builders.IncomeTaxUserDataBuilder.anIncomeTaxUserData
 import builders.PensionsUserDataBuilder.pensionUserDataWithIncomeOverseasPension
-import builders.PensionsUserDataBuilder.pensionsUserDataWithUnauthorisedPayments
 import builders.IncomeFromOverseasPensionsViewModelBuilder._
 import builders.PensionsUserDataBuilder
 import builders.UserBuilder.aUserRequest
+import controllers.pensions.routes.OverseasPensionsSummaryController
 import forms.Countries
 import models.mongo.PensionsCYAModel
 import models.pension.charges.PensionAnnualAllowancesViewModel
-import models.pension.income
 import models.pension.income.ForeignPension
 import models.pension.reliefs.PaymentsIntoPensionViewModel
 import org.jsoup.Jsoup
@@ -270,7 +269,7 @@ class IncomeFromOverseasPensionsCYAControllerISpec extends
           }
 
           "redirects to the summary page" in {
-            result.headers("Location").head shouldBe controllers.pensions.incomeFromOverseasPensions.routes.IncomeFromOverseasPensionsCYAController.show(taxYear).url
+            result.headers("Location").head shouldBe OverseasPensionsSummaryController.show(taxYear).url
           }
         }
 
@@ -310,7 +309,7 @@ class IncomeFromOverseasPensionsCYAControllerISpec extends
           }
 
           "redirects to the summary page" in {
-            result.headers("Location").head shouldBe controllers.pensions.incomeFromOverseasPensions.routes.IncomeFromOverseasPensionsCYAController.show(taxYear).url
+            result.headers("Location").head shouldBe OverseasPensionsSummaryController.show(taxYear).url
           }
         }
       }

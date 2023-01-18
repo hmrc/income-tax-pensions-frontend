@@ -16,7 +16,7 @@
 
 package views.pensions.incomeFromOverseasPensions
 
-import controllers.pensions.incomeFromOverseasPensions.routes.{CountrySummaryListController, PensionOverseasIncomeStatus}
+import controllers.pensions.incomeFromOverseasPensions.routes._
 import forms.Countries
 import models.pension.charges.IncomeFromOverseasPensionsViewModel
 import play.api.i18n.Messages
@@ -46,10 +46,7 @@ object IncomeFromOverseasPensionsCYAViewHelper extends CYABaseHelper {
   private def summaryRowForPensionSchemeCodes(incomeFromOverseasPensionsViewModel: IncomeFromOverseasPensionsViewModel, taxYear: Int)
                                              (implicit messages: Messages) : Option[SummaryListRow] = {
 
-    if (
-      incomeFromOverseasPensionsViewModel.paymentsFromOverseasPensionsQuestion.contains(true)
-        && incomeFromOverseasPensionsViewModel.overseasIncomePensionSchemes.length > 0
-    ) {
+    if ( incomeFromOverseasPensionsViewModel.hasPriorData ) {
       val countryNames = for {
         pensionScheme <- incomeFromOverseasPensionsViewModel.overseasIncomePensionSchemes
         countryCode = pensionScheme.countryCode.getOrElse("N/A")

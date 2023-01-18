@@ -17,6 +17,7 @@
 package controllers.pensions.incomeFromOverseasPensions
 
 import config.{AppConfig, ErrorHandler}
+import controllers.pensions.routes.{OverseasPensionsSummaryController, PensionsSummaryController}
 import controllers.predicates.AuthorisedAction
 import forms.YesNoForm
 import models.User
@@ -24,13 +25,11 @@ import models.mongo.PensionsCYAModel
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import routes._
 import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.incomeFromOverseasPensions.IncomeFromOverseasPensionsView
-import controllers.pensions.incomeFromOverseasPensions.routes.PensionOverseasIncomeStatus
-import controllers.pensions.routes.PensionsSummaryController
-
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -58,8 +57,8 @@ class PensionOverseasIncomeStatus @Inject()(authAction: AuthorisedAction,
             )(yesNoForm(request.user).fill(_))
           Future.successful(Ok(incomeFromOverseasPensionsView(form, taxYear)))
         case None =>
-          //TODO - redirect to CYA page once implemented
-          Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
+          //TODO - redirect to CYA page once implemented <- I think to this page with empty form
+          Future.successful(Ok(incomeFromOverseasPensionsView(yesNoForm(request.user), taxYear)))
       }
     }
   }
@@ -69,21 +68,24 @@ class PensionOverseasIncomeStatus @Inject()(authAction: AuthorisedAction,
       formWithErrors => Future.successful(BadRequest(incomeFromOverseasPensionsView(formWithErrors, taxYear))),
       yesNo => {
         pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
-          case Right(Some(data)) =>
-            val updatedCyaModel: PensionsCYAModel = data.pensions.copy(
+          case Right(optPensionsUserData) =>
+            val updatedCyaModel: PensionsCYAModel = optPensionsUserData.fold(PensionsCYAModel.emptyModels)( data => data.pensions.copy(
               incomeFromOverseasPensions = data.pensions.incomeFromOverseasPensions.copy(
-                paymentsFromOverseasPensionsQuestion = Some(yesNo)))
+                paymentsFromOverseasPensionsQuestion = Some(yesNo))
+            ))
+            
+            val isPriorSubmission = optPensionsUserData.fold(false)(_.isPriorSubmission)
+              
             pensionSessionService.createOrUpdateSessionData(request.user,
-              updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
+              updatedCyaModel, taxYear, isPriorSubmission)(errorHandler.internalServerError()) {
               if (yesNo) {
-                Redirect(PensionOverseasIncomeStatus.show(taxYear)) //TODO - redirect to SASS-2587
+                Redirect(PensionOverseasIncomeCountryController.show(taxYear, None)) //TODO - redirect to SASS-2587 <- incorrect, should be country page
               } else {
-                Redirect(PensionOverseasIncomeStatus.show(taxYear)) //TODO - redirect to SASS-2588
+                Redirect(IncomeFromOverseasPensionsCYAController.show(taxYear)) //TODO - redirect to SASS-2588 <- incorrect, should be CYA page
               }
             }
           case _ =>
-            //TODO - redirect to CYA page once implemented
-            Future.successful(Redirect(PensionOverseasIncomeStatus.show(taxYear)))
+            Future.successful(Redirect(OverseasPensionsSummaryController.show(taxYear)))
         }
       }
     )

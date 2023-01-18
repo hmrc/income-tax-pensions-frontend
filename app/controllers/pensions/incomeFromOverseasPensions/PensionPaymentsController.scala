@@ -17,8 +17,7 @@
 package controllers.pensions.incomeFromOverseasPensions
 
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.routes.PensionsSummaryController
-import controllers.pensions.incomeFromOverseasPensions.routes.PensionPaymentsController
+import controllers.pensions.routes._
 import controllers.predicates.AuthorisedAction
 import controllers.predicates.TaxYearAction.taxYearAction
 import forms.{FormUtils, OptionalTupleAmountForm}
@@ -28,6 +27,7 @@ import models.{AuthorisationRequest, User}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import routes._
 import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
@@ -54,32 +54,32 @@ class PensionPaymentsController @Inject()(authAction: AuthorisedAction,
 
   def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     pensionSessionService.getPensionSessionData(taxYear, request.user).map {
-      case Right(Some(data)) =>
+        case Right(Some(data)) =>
         validateIndex(index, data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes) match {
           case Some(i) => populateForm(data, taxYear, i)
-          case None => Redirect(PensionsSummaryController.show(taxYear)) // Todo should redirect to another page
+          case None =>
+            Redirect(OverseasPensionsSummaryController.show(taxYear)) // Todo should redirect to another page
         }
       case _ =>
-        //TODO: - Redirect to Overseas Pensions cya page??
-        Redirect(PensionsSummaryController.show(taxYear))
+        Redirect(OverseasPensionsSummaryController.show(taxYear))
     }
   }
 
-
   def submit(taxYear: Int, index: Option[Int]): Action[AnyContent] = authAction.async { implicit request =>
-
     pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
       case Right(Some(data)) =>
         validateIndex(index, data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes) match {
           case Some(i) => amountForm(request.user).bindFromRequest.fold(
-            formWithErrors => Future.successful(BadRequest(pensionPaymentsView(formWithErrors, taxYear, i))),
+            formWithErrors => Future.successful(BadRequest(pensionPaymentsView(formWithErrors, taxYear, Some(i)))),
             amounts =>
-              updatePensionScheme(data, amounts._1, amounts._2, taxYear, i))
-          case None => Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
+              updatePensionScheme(data, amounts._1, amounts._2, taxYear, i)(
+                Redirect(SpecialWithholdingTaxController.show(taxYear, index))
+              )
+          )
+          case None => Future.successful(Redirect(OverseasPensionsSummaryController.show(taxYear)))
         }
       case _ =>
-        //TODO: redirect to the lifetime allowance CYA page?
-        Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
+        Future.successful(Redirect(OverseasPensionsSummaryController.show(taxYear)))
     }
   }
 
@@ -98,10 +98,11 @@ class PensionPaymentsController @Inject()(authAction: AuthorisedAction,
       case (Some(amountBeforeTax), Some(nonUkTaxPaid)) => amountForm(request.user).fill((Some(amountBeforeTax), Some(nonUkTaxPaid)))
       case (_, _) => amountForm(request.user)
     }
-    Ok(pensionPaymentsView(form, taxYear, index))
+    Ok(pensionPaymentsView(form, taxYear, Some(index)))
   }
 
   private def updatePensionScheme(data: PensionsUserData, amountBeforeTaxOpt: Option[BigDecimal], nonUkTaxPaidOpt: Option[BigDecimal], taxYear: Int, index: Int)
+                                 (redirect: Result)
                                  (implicit request: AuthorisationRequest[AnyContent]) = {
     val viewModel = data.pensions.incomeFromOverseasPensions
     val updatedCyaModel: PensionsCYAModel = {
@@ -115,8 +116,7 @@ class PensionPaymentsController @Inject()(authAction: AuthorisedAction,
     }
     pensionSessionService.createOrUpdateSessionData(request.user,
       updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
-      //TODO: Redirect to lifetime-other-status
-      Redirect(PensionPaymentsController.show(taxYear, Some(index)))
+      redirect
     }
   }
 }

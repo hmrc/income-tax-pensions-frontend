@@ -18,18 +18,17 @@ package controllers.pensions.incomeFromOverseasPensions
 
 import config.{AppConfig, ErrorHandler}
 import controllers.predicates.AuthorisedAction
-import forms.{Countries, CountryForm, YesNoForm}
+import forms.{Countries, CountryForm}
 import models.User
-import models.mongo.PensionsCYAModel
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import routes._
 import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.incomeFromOverseasPensions.PensionOverseasIncomeCountryView
-import controllers.pensions.incomeFromOverseasPensions.routes.PensionOverseasIncomeCountryController
-import controllers.pensions.routes.PensionsSummaryController
+import controllers.pensions.routes.OverseasPensionsSummaryController
 import models.pension.charges.PensionScheme
 
 import javax.inject.Inject
@@ -48,14 +47,14 @@ class PensionOverseasIncomeCountryController @Inject()(authAction: AuthorisedAct
     noEntryMsg = s"incomeFromOverseasPensions.pensionOverseasIncomeCountry.error.noEntry.${if (user.isAgent) "agent" else "individual"}"
   )
 
-  def show(taxYear: Int, countryIndex: Option[Int]): Action[AnyContent] = authAction.async { implicit request =>
+  def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = authAction.async { implicit request =>
     pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
       case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
       case Right(optPensionUserData) => optPensionUserData match {
         case Some(data) =>
           val countriesToInclude = Countries.getOverseasCountries()
           val form = countryForm(request.user)
-          countryIndex.fold {
+          index.fold {
             Future.successful(Ok(
               pensionOverseasIncomeCountryView(
                 form, countriesToInclude, taxYear, None)))
@@ -63,61 +62,57 @@ class PensionOverseasIncomeCountryController @Inject()(authAction: AuthorisedAct
             countryIndex =>
               val prefillValue = data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes.lift(countryIndex)
               prefillValue match {
-                case Some(value) =>
+                case Some(_) =>
                   Future.successful(Ok(
                     pensionOverseasIncomeCountryView(
                       form, countriesToInclude, taxYear, Some(countryIndex))))
                 case None =>
-                  Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
+                  Future.successful(Redirect(OverseasPensionsSummaryController.show(taxYear)))  //invalid index -> Overseas Pension summary
               }
           }
         case None =>
-//        TODO - redirect to CYA page once implemented
-                  Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
+          Future.successful(Redirect(OverseasPensionsSummaryController.show(taxYear))) //No session data -> Overseas Pension summary
       }
     }
   }
 
-  def submit(taxYear: Int, countryIndex: Option[Int]): Action[AnyContent] = authAction.async { implicit request =>
-    val countriesToInclude =
-      Countries.getOverseasCountries()
+  def submit(taxYear: Int, index: Option[Int]): Action[AnyContent] = authAction.async { implicit request =>
+    val countriesToInclude = Countries.getOverseasCountries()
 
     countryForm(request.user).bindFromRequest.fold(
       formWithErrors =>
-        Future.successful(BadRequest(pensionOverseasIncomeCountryView(formWithErrors, countriesToInclude, taxYear, countryIndex))),
+        Future.successful(BadRequest(pensionOverseasIncomeCountryView(formWithErrors, countriesToInclude, taxYear, index))),
       country => {
-        {
-          pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
-            case Right(Some(data)) => {
-              val pensionSchemeList: Seq[PensionScheme] = data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes
+        pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
+          case Right(Some(data)) =>
+            val pensionSchemeList: Seq[PensionScheme] = data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes
 
-              if (validateCountryIndex(countryIndex, pensionSchemeList)) {
-                val updatedCyaModel = countryIndex match {
-                  case Some(value) =>
-                    val scheme = data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes(value).copy(countryCode = Some(country))
-                    data.pensions.copy(
-                      incomeFromOverseasPensions = data.pensions.incomeFromOverseasPensions.copy(
-                      overseasIncomePensionSchemes = data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes.updated(value, scheme)
+            if (validateCountryIndex(index, pensionSchemeList)) {
+              val updatedCyaModel = index match {
+                case Some(value) =>
+                  val scheme = pensionSchemeList(value).copy(countryCode = Some(country))
+                  data.pensions.copy(
+                    incomeFromOverseasPensions = data.pensions.incomeFromOverseasPensions.copy(
+                      overseasIncomePensionSchemes = pensionSchemeList.updated(value, scheme)
                     ))
-                  case None =>
-                    val currentSchemes = data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes
-                    data.pensions.copy(
-                      incomeFromOverseasPensions = data.pensions.incomeFromOverseasPensions.copy(
-                        overseasIncomePensionSchemes = currentSchemes ++ Seq(PensionScheme(Some(country)))
-                      ))
-                }
-                pensionSessionService.createOrUpdateSessionData(request.user,
-                  updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
-                  Redirect(PensionOverseasIncomeCountryController.show(taxYear, countryIndex))
-                }
-              } else {
-                //TODO Redirect to pstr summary controller for overseas pensions
-                Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
+                case None =>
+                  val currentSchemes = pensionSchemeList
+                  data.pensions.copy(
+                    incomeFromOverseasPensions = data.pensions.incomeFromOverseasPensions.copy(
+                      overseasIncomePensionSchemes = currentSchemes ++ Seq(PensionScheme(Some(country)))
+                    ))
               }
+              pensionSessionService.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear, data.isPriorSubmission)(
+                errorHandler.internalServerError()) {
+                val currentIndex = index.fold(
+                  Some(updatedCyaModel.incomeFromOverseasPensions.overseasIncomePensionSchemes.size - 1))(index => Some(index))
+                Redirect(PensionPaymentsController.show(taxYear, currentIndex))
+              }
+            } else {
+              Future.successful(Redirect(OverseasPensionsSummaryController.show(taxYear))) //invalid index -> Overseas Pension summary
             }
-            //TODO: redirect to CYA page
-            case _ => Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
-          }
+
+          case _ => Future.successful(Redirect(OverseasPensionsSummaryController.show(taxYear))) //No session data -> Overseas Pension summary
         }
       }
     )

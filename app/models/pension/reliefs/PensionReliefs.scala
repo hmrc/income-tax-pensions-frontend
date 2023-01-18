@@ -31,7 +31,11 @@ object PensionReliefs {
 case class EncryptedPensionReliefs(submittedOn: EncryptedValue,
                                    deletedOn: Option[EncryptedValue],
                                    pensionReliefs: EncryptedReliefs
-                                  )
+                                  ) {
+  
+  def isEmpty(): Boolean = this.productIterator.forall(_ == None)
+  def nonEmpty(): Boolean = ! isEmpty()
+}
 
 object EncryptedPensionReliefs {
   implicit val formats: OFormat[EncryptedPensionReliefs] = Json.format[EncryptedPensionReliefs]

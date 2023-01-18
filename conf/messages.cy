@@ -166,10 +166,11 @@ pensions.pensionSummary.incomeFromPensions = Income from pensions
 pensions.pensionSummary.pensionAnnualAllowance = Pension annual allowance
 pensions.pensionSummary.pensionLifetimeAllowance = Pension lifetime allowance
 pensions.pensionSummary.unauthorisedPaymentsFromPensions = Unauthorised payments from pensions
+pensions.pensionSummary.overseasPensionsSummary = Overseas pensions
 pensions.pensionSummary.paymentsToOverseasPensions = Taliadau i bensiynau tramor
 
+
 # overseas pensions summary
-pensions.overseasPensionsSummary.heading = Overseas pensions
 pensions.overseasPensionsSummary.paymentsIntoOverseasPensions = Payments into overseas pensions
 pensions.overseasPensionsSummary.incomeFromOverseasPensions = Income from overseas pensions
 pensions.overseasPensionsSummary.overseasTransferCharges = Overseas transfer charges
