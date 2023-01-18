@@ -31,23 +31,6 @@ object Countries {
       .map(_.replace("\"", ""))
       .toList
 
-  private val countries: List[Country] = {
-    def fromJsonFile: List[Country] =
-      Json.parse(getClass.getResourceAsStream("/location-autocomplete-canonical-list.json")) match {
-        case JsArray(cs) =>
-          cs.toList.collect {
-            case JsArray(Seq(c: JsString, cc: JsString)) =>
-              Country(c.value, countryCode2d(cc.value))
-          }
-        case _ =>
-          throw new IllegalArgumentException(
-            "Could not read JSON array of countries from : location-autocomplete-canonical-list.json"
-          )
-      }
-
-    fromJsonFile.sortBy(_.countryName)
-  }
-
   val countriesThreeDigitMap : Map[String, String] = {
     val filename = "conf/three-digit-country-code-to-country-name.csv"
     val lines = Source.fromFile(filename).getLines.toList
@@ -62,6 +45,25 @@ object Countries {
   val countriesThreeDigitMapFromCountryName : Map[String, String] = {
     countriesThreeDigitMap.map(_.swap)
   }
+
+  private val countries: List[Country] = {
+    def fromJsonFile: List[Country] =
+      Json.parse(getClass.getResourceAsStream("/location-autocomplete-canonical-list.json")) match {
+        case JsArray(cs) =>
+          cs.toList.collect {
+            case JsArray(Seq(c: JsString, cc: JsString)) =>
+              Country(c.value, countryCode2d(cc.value), countriesThreeDigitMapFromCountryName.getOrElse(c.value, "N/A"))
+          }
+        case _ =>
+          throw new IllegalArgumentException(
+            "Could not read JSON array of countries from : location-autocomplete-canonical-list.json"
+          )
+      }
+
+    fromJsonFile.sortBy(_.countryName)
+  }
+
+
 
   val countriesTwoDigitMap : Map[String, String] = {
     Json.parse(getClass.getResourceAsStream("/location-autocomplete-canonical-list.json")) match {
@@ -83,17 +85,17 @@ object Countries {
 
   private def countryCode2d: String => String = cc => cc.split(":")(1).trim
 
-  val all: List[Country] = countries filter (c => mdgCountryCodes("/mdg-country-codes.csv") contains c.countryCode)
+  val all: List[Country] = countries filter (c => mdgCountryCodes("/mdg-country-codes.csv") contains c.countryCode2d)
 
-  val eu: List[Country] = countries filter (c => mdgCountryCodes("/mdg-country-codes-eu.csv") contains c.countryCode)
+  val eu: List[Country] = countries filter (c => mdgCountryCodes("/mdg-country-codes-eu.csv") contains c.countryCode2d)
 
 
   def getCountryParametersForAllCountries(): List[Country] = all
-  def getOverseasCountries(): List[Country] = all.filter(_.countryCode != "GB")
+  def getOverseasCountries(): List[Country] = all.filter(_.countryCode2d != "GB")
 
   def getCountryFromCode(countryCode: Option[String]): Option[Country] = {
     countryCode.flatMap(
-      x => all.find(_.countryCode == x)
+      x => all.find(_.countryCode2d == x)
     )
   }
   
@@ -101,16 +103,11 @@ object Countries {
     getCountryFromCode(countryCode).fold(countryCode.getOrElse(defaultStr))(_.countryName)
   }
 
-  val countryNamesWithTwoDigitAndThreeDigitCodes : List[CountryNamesWithCodes] =
-    countriesTwoDigitMapFromCountryName.keySet ++ countriesThreeDigitMapFromCountryName.keySet map {
-      case countryName =>  CountryNamesWithCodes(countryName, countriesTwoDigitMapFromCountryName.getOrElse(countryName, "N/A"), countriesThreeDigitMapFromCountryName.getOrElse(countryName, "N/A"))
-    } toList
-
   def get2dCountryCodeFrom3d(countryCode3d : String) : Option[String] = {
-    countryNamesWithTwoDigitAndThreeDigitCodes.filter(country => country.countryCode3d == countryCode3d).headOption.map(_.countryCode2d)
+    countries.filter(country => country.countryCode3d == countryCode3d).headOption.map(_.countryCode2d)
   }
 
   def get3dCountryCodeFrom2d(countryCode2d : Option[String]) : Option[String] = {
-    countryCode2d.map(cc => countryNamesWithTwoDigitAndThreeDigitCodes.filter(countryNamesWithCodes => cc == countryNamesWithCodes.countryCode2d).head).map(_.countryCode3d)
+    countryCode2d.map(cc => countries.filter(countryNamesWithCodes => cc == countryNamesWithCodes.countryCode2d).head).map(_.countryCode3d)
   }
 }

@@ -18,7 +18,7 @@ package forms
 
 import play.api.libs.json._
 
-case class Country(countryName: String, countryCode: String)
+case class Country(countryName: String, countryCode2d: String, countryCode3d: String)
 
 case object Country {
   implicit val formats = Json.format[Country]
