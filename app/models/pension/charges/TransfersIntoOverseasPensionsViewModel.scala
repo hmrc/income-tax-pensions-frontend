@@ -89,6 +89,7 @@ case class TransferPensionScheme(
     )
   }
 }
+
 case class EncryptedTransferPensionScheme(
                                            ukTransferCharge: Option[EncryptedValue],
                                            name: Option[EncryptedValue],

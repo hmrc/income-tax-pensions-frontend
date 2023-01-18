@@ -67,6 +67,7 @@ class ControllerSpec(val pathForThisPage: String) extends PlaySpec
 
   object PageRelativeURLs {
     val summaryPage: String = relativeUrl("/pensions-summary")
+    val overseasPensionsSummary: String = relativeUrl("/overseas-pensions")
     val paymentsIntoPensionsCYAPage: String = relativeUrl("/payments-into-pensions/check-payments-into-pensions")
     val paymentsIntoPensionsOneNoTaxRelief: String = relativeUrl("/payments-into-pensions/no-tax-relief")
     val paymentsIntoPensionsOneOffPaymentsPage: String = relativeUrl("/payments-into-pensions/one-off-payments")
