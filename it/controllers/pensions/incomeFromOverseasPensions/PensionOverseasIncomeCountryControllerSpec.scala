@@ -147,7 +147,7 @@ class PensionOverseasIncomeCountryControllerSpec extends CommonUtils with Before
 
           val pensionsViewModel = anIncomeFromOverseasPensionsViewModel.copy(
             overseasIncomePensionSchemes = Seq(PensionScheme(
-              countryCode = Some(countryCode)
+              countryCode2d = Some(countryCode)
             ))
           )
 
@@ -233,7 +233,7 @@ class PensionOverseasIncomeCountryControllerSpec extends CommonUtils with Before
       "updates pension scheme tax reference to contain tax reference" in {
         lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
         cyaModel.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes.size shouldBe 1
-        cyaModel.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes.head.countryCode.get shouldBe "GB"
+        cyaModel.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes.head.countryCode2d.get shouldBe "GB"
       }
     }
 
@@ -242,7 +242,7 @@ class PensionOverseasIncomeCountryControllerSpec extends CommonUtils with Before
       implicit val url: Int => String = pensionOverseasIncomeCountryUrlIndex(index)
       lazy val form: Map[String, String] = Map(CountryForm.countryId -> "GB")
       val pensionsViewModel = anIncomeFromOverseasPensionsEmptyViewModel.copy(
-        overseasIncomePensionSchemes = Seq(PensionScheme(countryCode = Some("GB")))
+        overseasIncomePensionSchemes = Seq(PensionScheme(countryCode2d = Some("GB")))
       )
       val pensionUserData = pensionUserDataWithIncomeOverseasPension(pensionsViewModel)
       lazy val result: WSResponse = submitPage(pensionUserData, form)
@@ -256,7 +256,7 @@ class PensionOverseasIncomeCountryControllerSpec extends CommonUtils with Before
       "updates pension scheme tax reference to contain both tax reference" in {
         lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
         cyaModel.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes.size shouldBe 1
-        cyaModel.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes.head.countryCode.get shouldBe "GB"
+        cyaModel.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes.head.countryCode2d.get shouldBe "GB"
       }
     }
 
@@ -265,8 +265,8 @@ class PensionOverseasIncomeCountryControllerSpec extends CommonUtils with Before
       lazy val form: Map[String, String] = Map(CountryForm.countryId -> "GB")
       val pensionsViewModel = anIncomeFromOverseasPensionsEmptyViewModel.copy(
         overseasIncomePensionSchemes =  Seq(
-          PensionScheme(countryCode = Some("IE")),
-          PensionScheme(countryCode = Some("US")),
+          PensionScheme(countryCode2d = Some("IE")),
+          PensionScheme(countryCode2d = Some("US")),
         )
       )
       val pensionUserData = pensionUserDataWithIncomeOverseasPension(pensionsViewModel)
@@ -284,7 +284,7 @@ class PensionOverseasIncomeCountryControllerSpec extends CommonUtils with Before
       "updates pension scheme tax reference to contain both tax reference" in {
         lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
         cyaModel.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes.size shouldBe 3
-        cyaModel.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes.last.countryCode.get shouldBe "GB"
+        cyaModel.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes.last.countryCode2d.get shouldBe "GB"
       }
     }
 
@@ -294,8 +294,8 @@ class PensionOverseasIncomeCountryControllerSpec extends CommonUtils with Before
       lazy val form: Map[String, String] = Map(CountryForm.countryId -> "GB")
       val pensionsViewModel = anIncomeFromOverseasPensionsEmptyViewModel.copy(
         overseasIncomePensionSchemes = Seq(
-          PensionScheme(countryCode = Some("IE")),
-          PensionScheme(countryCode = Some("US")),
+          PensionScheme(countryCode2d = Some("IE")),
+          PensionScheme(countryCode2d = Some("US")),
         )
       )
       val pensionUserData = pensionUserDataWithIncomeOverseasPension(pensionsViewModel)
@@ -308,7 +308,7 @@ class PensionOverseasIncomeCountryControllerSpec extends CommonUtils with Before
 
       "updates pension scheme tax reference to contain both tax reference" in {
         lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
-        cyaModel.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes.map(_.countryCode.get) should not contain ("GB")
+        cyaModel.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes.map(_.countryCode2d.get) should not contain ("GB")
       }
     }
 

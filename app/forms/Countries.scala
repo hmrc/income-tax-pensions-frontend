@@ -37,7 +37,7 @@ object Countries {
         case JsArray(cs) =>
           cs.toList.collect {
             case JsArray(Seq(c: JsString, cc: JsString)) =>
-              Country(c.value, countryCode(cc.value))
+              Country(c.value, countryCode2d(cc.value))
           }
         case _ =>
           throw new IllegalArgumentException(
@@ -48,7 +48,40 @@ object Countries {
     fromJsonFile.sortBy(_.countryName)
   }
 
-  private def countryCode: String => String = cc => cc.split(":")(1).trim
+  val countriesThreeDigitMap : Map[String, String] = {
+    val filename = "conf/three-digit-country-code-to-country-name.csv"
+    val lines = Source.fromFile(filename).getLines.toList
+    lines.foldLeft(List[(String, String)]()) {
+      (acc, item) =>
+        val lineArray = item.split("=")
+        val (countryCode, countryName) = (lineArray.head, lineArray.last)
+        (countryCode -> countryName) :: acc
+    }.toMap
+  }
+
+  val countriesThreeDigitMapFromCountryName : Map[String, String] = {
+    countriesThreeDigitMap.map(_.swap)
+  }
+
+  val countriesTwoDigitMap : Map[String, String] = {
+    Json.parse(getClass.getResourceAsStream("/location-autocomplete-canonical-list.json")) match {
+      case JsArray(cs) =>
+        cs.toList.collect {
+          case JsArray(Seq(c: JsString, cc: JsString)) =>
+            (countryCode2d(cc.value), c.value)
+        }.toMap
+      case _ =>
+        throw new IllegalArgumentException(
+          "Could not read JSON array of countries from : location-autocomplete-canonical-list.json"
+        )
+    }
+  }
+
+  val countriesTwoDigitMapFromCountryName : Map[String, String] = {
+    countriesTwoDigitMap.filter{ case (k,_) => mdgCountryCodes("/mdg-country-codes.csv") contains(k)}.map(_.swap)
+  }
+
+  private def countryCode2d: String => String = cc => cc.split(":")(1).trim
 
   val all: List[Country] = countries filter (c => mdgCountryCodes("/mdg-country-codes.csv") contains c.countryCode)
 
@@ -66,5 +99,18 @@ object Countries {
   
   def getCountryFromCodeWithDefault(countryCode: Option[String], defaultStr: String = "N/A"): String = {
     getCountryFromCode(countryCode).fold(countryCode.getOrElse(defaultStr))(_.countryName)
+  }
+
+  val countryNamesWithTwoDigitAndThreeDigitCodes : List[CountryNamesWithCodes] =
+    countriesTwoDigitMapFromCountryName.keySet ++ countriesThreeDigitMapFromCountryName.keySet map {
+      case countryName =>  CountryNamesWithCodes(countryName, countriesTwoDigitMapFromCountryName.getOrElse(countryName, "N/A"), countriesThreeDigitMapFromCountryName.getOrElse(countryName, "N/A"))
+    } toList
+
+  def get2dCountryCodeFrom3d(countryCode3d : String) : Option[String] = {
+    countryNamesWithTwoDigitAndThreeDigitCodes.filter(country => country.countryCode3d == countryCode3d).headOption.map(_.countryCode2d)
+  }
+
+  def get3dCountryCodeFrom2d(countryCode2d : Option[String]) : Option[String] = {
+    countryCode2d.map(cc => countryNamesWithTwoDigitAndThreeDigitCodes.filter(countryNamesWithCodes => cc == countryNamesWithCodes.countryCode2d).head).map(_.countryCode3d)
   }
 }

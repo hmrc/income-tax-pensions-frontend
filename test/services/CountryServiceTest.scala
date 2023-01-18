@@ -48,5 +48,17 @@ class CountryServiceTest extends UnitTest {
       Countries.getOverseasCountries should not contain(Country("United Kingdom", "GB"))
       Countries.getOverseasCountries.size shouldBe(246)
     }
+
+    "since the link between the twoDigitCountryCode map and the threeDigitCountryCode map is country name there should be no country name missing between both " in {
+      val countries = Countries
+      val threeDigitCountriesNotInTwoDigitMap = countries.countriesThreeDigitMapFromCountryName.keySet -- countries.countriesTwoDigitMapFromCountryName.keySet
+      threeDigitCountriesNotInTwoDigitMap.size should be(0)
+
+      val twoDigitCountriesNotInThreeDigitMap = countries.countriesTwoDigitMapFromCountryName.keySet -- countries.countriesThreeDigitMapFromCountryName.keySet
+      twoDigitCountriesNotInThreeDigitMap.size should be(1)
+      //Czechoslovakia does not have three digit country code
+    }
+
+
   }
 }
