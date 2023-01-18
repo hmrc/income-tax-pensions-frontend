@@ -17,15 +17,15 @@
 package controllers.pensions.incomeFromOverseasPensions
 
 import config.{AppConfig, ErrorHandler}
+import controllers.pensions.routes._
 import controllers.predicates.AuthorisedAction
 import controllers.predicates.TaxYearAction.taxYearAction
 import javax.inject.Inject
-import models.mongo.PensionsCYAModel
-import models.pension.AllPensionsData
 import models.pension.AllPensionsData.generateCyaFromPrior
 import models.pension.charges.IncomeFromOverseasPensionsViewModel
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import routes._
 import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
@@ -55,33 +55,19 @@ class IncomeFromOverseasPensionsCYAController @Inject()(authAction: AuthorisedAc
           val emptyIncomeFromOverseasPensionsViewModel = IncomeFromOverseasPensionsViewModel(paymentsFromOverseasPensionsQuestion= None,
           overseasIncomePensionSchemes = Nil)
           Future.successful(Ok(view(taxYear, emptyIncomeFromOverseasPensionsViewModel)))
-        case _ => Future.successful(Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear)))
+        case _ => Future.successful(Redirect(OverseasPensionsSummaryController.show(taxYear)))
       }
     }
   }
 
   def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
-    pensionSessionService.getAndHandle(taxYear, request.user) { (cya, prior) =>
+    pensionSessionService.getAndHandle(taxYear, request.user) { (cya, _) =>
       cya.fold(
         Future.successful(Redirect(appConfig.incomeTaxSubmissionOverviewUrl(taxYear)))
-      ) { model =>
-
-        if (comparePriorData(model.pensions, prior)) {
-          //        TODO - build submission model from cya data and submit to DES if cya data doesn't match prior data
-          //        val submissionModel = AllPensionsData(None, None, None)
-          Future.successful(Redirect(controllers.pensions.incomeFromOverseasPensions.routes.IncomeFromOverseasPensionsCYAController.show(taxYear)))
-        } else {
-          Future.successful(Redirect(controllers.pensions.incomeFromOverseasPensions.routes.IncomeFromOverseasPensionsCYAController.show(taxYear)))
-        }
+      ) { _ =>
+        //TODO - build submission model from cya data and submit to DES if cya data doesn't match prior data
+        Future.successful(Redirect(OverseasPensionsSummaryController.show(taxYear)))
       }
     }
   }
-
-  private def comparePriorData(cyaData: PensionsCYAModel, priorData: Option[AllPensionsData]): Boolean = {
-    priorData match {
-      case None => true
-      case Some(prior) => !cyaData.equals(generateCyaFromPrior(prior))
-    }
-  }
-
 }

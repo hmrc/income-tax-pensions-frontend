@@ -207,14 +207,20 @@ object PageUrls extends IntegrationTest {
 
   //  *****************     Income from overseas pensions pages      ******************************
   object IncomeFromOverseasPensionsPages {
+    def incomeFromOverseasPensionsStatus(taxYear: Int): String =
+      s"$appUrl/$taxYear/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-status"
+      
     def pensionOverseasIncomeCountryUrl(taxYear: Int): String =
       s"$appUrl/$taxYear/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-country"
-
-    def pensionOverseasIncomeCountryUrlIndex: Int => Int => String = (countryIndex: Int) =>
-      (taxYear: Int) => s"$appUrl/$taxYear/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-country?countryIndex=$countryIndex"
-
-    def pensionOverseasIncomeCountryUrlIndex2(taxYear: Int, countryIndex: Int): String =
-      s"$appUrl/$taxYear/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-country?countryIndex=$countryIndex"
+      
+    def pensionOverseasIncomeCountryUrlIndex: Int => Int => String = (index: Int) =>
+      (taxYear: Int) => s"$appUrl/$taxYear/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-country?index=$index"
+    
+    def pensionOverseasIncomeCountryUrlIndex2(taxYear: Int, index: Int): String =
+      s"$appUrl/$taxYear/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-country?index=$index"
+      
+    def incomeFromOverseasPensionsAmounts(taxYear: Int, index: Int): String =
+      s"$appUrl/$taxYear/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-amounts?index=$index"
 
     def checkIncomeFromOverseasPensionsCyaUrl(taxYear: Int): String =
       s"$appUrl/$taxYear/overseas-pensions/income-from-overseas-pensions/check-overseas-pension-income-cya"
@@ -227,6 +233,10 @@ object PageUrls extends IntegrationTest {
 
     def countrySummaryListControllerUrl(taxYear: Int): String =
       s"$appUrl/$taxYear/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-country-summary"
+      
+    def overseasPensionsSchemeSummaryUrl(taxYear: Int, index: Int): String =
+      s"$appUrl/$taxYear/overseas-pensions/income-from-overseas-pensions/pension-scheme-summary?index=$index"
+      
   }
 }
 //scalastyle:on number.of.methods

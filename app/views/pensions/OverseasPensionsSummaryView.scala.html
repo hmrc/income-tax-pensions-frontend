@@ -22,10 +22,21 @@
 
 @this(layout: Layout, heading: Heading, govUkButton: GovukButton, formWithCSRF: FormWithCSRF, link:Link)
 
-@(taxYear: Int, cya: Option[PensionsCYAModel])(implicit request: AuthorisationRequest[_], messages: Messages, appConfig: AppConfig)
+@(taxYear: Int, cya: Option[PensionsCYAModel], hasPriorData: Boolean)(implicit request: AuthorisationRequest[_], messages: Messages, appConfig: AppConfig)
+
+@incomeOverseasPensionsUrl() = @{
+ if( hasPriorData )
+   controllers.pensions.incomeFromOverseasPensions.routes.IncomeFromOverseasPensionsCYAController.show(taxYear).url
+ else
+   controllers.pensions.incomeFromOverseasPensions.routes.PensionOverseasIncomeStatus.show(taxYear).url
+}
+
+@paymentsOverseasPensionsUrl() = @{
+  controllers.pensions.paymentsIntoOverseasPensions.routes.PaymentIntoPensionSchemeController.show(taxYear).url
+}
 
 @headingForUse = @{
-    messages(s"pensions.overseasPensionsSummary.heading")
+    messages(s"pensions.pensionSummary.overseasPensionsSummary")
 }
 
 @layout(pageTitle = headingForUse, taxYear = Some(taxYear), isAgent = request.user.isAgent) {
@@ -42,7 +53,7 @@
 
             <div class="govuk-summary-list__row" id="payments-into-overseas-pensions-row">
                 <dt class="govuk-summary-list__key govuk-!-width-two-third">
-                @link(s"${controllers.pensions.paymentsIntoOverseasPensions.routes.PaymentIntoPensionSchemeController.show(taxYear)}", "pensions.overseasPensionsSummary.paymentsIntoOverseasPensions",Some("payments-into-overseas-pensions-link"))
+                @link(paymentsOverseasPensionsUrl(), "pensions.overseasPensionsSummary.paymentsIntoOverseasPensions",Some("payments-into-overseas-pensions-link"))
                 </dt>
                 <dd class="govuk-summary-list__actions govuk-!-two-third">
                 @if(paymentsIntoOverseasPensionsIsUpdated(cya)) {
@@ -55,7 +66,7 @@
 
             <div class="govuk-summary-list__row" id="income-from-overseas-pensions-row">
                 <dt class="govuk-summary-list__key govuk-!-width-two-third">
-                @link("#", "pensions.overseasPensionsSummary.incomeFromOverseasPensions",Some("income-from-overseas-pensions-link"))
+                @link(incomeOverseasPensionsUrl(), "pensions.overseasPensionsSummary.incomeFromOverseasPensions",Some("income-from-overseas-pensions-link"))
                 </dt>
                 <dd class="govuk-summary-list__actions govuk-!-two-third">
                 @if(incomeFromOverseasPensionsIsUpdated(cya)) {

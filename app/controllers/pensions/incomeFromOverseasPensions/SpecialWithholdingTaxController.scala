@@ -41,6 +41,8 @@ class SpecialWithholdingTaxController @Inject()(messagesControllerComponents: Me
                                                (implicit appConfig: AppConfig, clock: Clock)
   extends BaseYesNoAmountWithIndexController(messagesControllerComponents, pensionSessionService, authAction, errorHandler) with I18nSupport{
 
+  override protected def redirectToSummaryPage(taxYear: Int): Result = Redirect(controllers.pensions.routes.OverseasPensionsSummaryController.show(taxYear))
+
   // TODO: Should we be redirecting to the CYA Page? It doesn't quite make sense as we won't have any session data.
   override def redirectWhenNoSessionData(taxYear: Int): Result = redirectToSummaryPage(taxYear)
 

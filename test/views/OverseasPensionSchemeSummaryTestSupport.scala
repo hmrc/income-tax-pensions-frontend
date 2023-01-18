@@ -16,7 +16,6 @@
 
 package views
 
-import builders.IncomeFromOverseasPensionsViewModelBuilder.anIncomeFromOverseasPensionsViewModel
 import builders.PensionsUserDataBuilder.aPensionsUserData
 import models.requests.UserSessionDataRequest
 import org.jsoup.nodes.Document
@@ -26,12 +25,12 @@ import support.ViewUnitTest
 import views.WorkplacePensionControllerTestSupport._
 import controllers.pensions.incomeFromOverseasPensions.routes
 import models.pension.charges.{IncomeFromOverseasPensionsViewModel, PensionScheme}
-import models.pension.pages.OverSeaPensionSchemeSummaryPage
+import models.pension.pages.OverseasPensionSchemeSummaryPage
 import org.jsoup.Jsoup
 import views.html.pensions.incomeFromOverseasPensions.PensionsSchemeSummary
 
 
-class OverseasPensionSchemeSummaryControllerTestSupport extends ViewUnitTest {
+class OverseasPensionSchemeSummaryTestSupport extends ViewUnitTest {
 
   object selectors {
     def getRowKey(index: Int) = s"#main-content > div > div > dl > div:nth-child($index) > dt"
@@ -115,7 +114,7 @@ class OverseasPensionSchemeSummaryControllerTestSupport extends ViewUnitTest {
             foreignTaxCreditReliefQuestion = Some(true),
             taxableAmount = Some(1999.99)
           )))
-        val htmlFormat = underTest(OverSeaPensionSchemeSummaryPage(taxYearEOY, aPensionsUserData.copy(pensions = aPensionsUserData.pensions.copy(incomeFromOverseasPensions = overseasIncomePensionSchemes)), None))
+        val htmlFormat = underTest(OverseasPensionSchemeSummaryPage(taxYearEOY, aPensionsUserData.copy(pensions = aPensionsUserData.pensions.copy(incomeFromOverseasPensions = overseasIncomePensionSchemes)), None))
 
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
@@ -161,7 +160,7 @@ class OverseasPensionSchemeSummaryControllerTestSupport extends ViewUnitTest {
           foreignTaxCreditReliefQuestion = Some(false),
           taxableAmount = None
         )))
-        val htmlFormat = underTest(OverSeaPensionSchemeSummaryPage(taxYearEOY, aPensionsUserData.copy(pensions = aPensionsUserData.pensions.copy(incomeFromOverseasPensions = minPensionScheme)), None))
+        val htmlFormat = underTest(OverseasPensionSchemeSummaryPage(taxYearEOY, aPensionsUserData.copy(pensions = aPensionsUserData.pensions.copy(incomeFromOverseasPensions = minPensionScheme)), None))
 
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
 

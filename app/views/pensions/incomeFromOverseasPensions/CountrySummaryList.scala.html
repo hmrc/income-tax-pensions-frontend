@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import controllers.pensions.incomeFromOverseasPensions.routes.{PensionOverseasIncomeCountryController, IncomeFromOverseasPensionsCYAController}
+@import controllers.pensions.incomeFromOverseasPensions.routes._
 @import forms.Countries.getCountryFromCodeWithDefault
 @import models.pension.charges.PensionScheme
 @import models.requests.UserSessionDataRequest
@@ -35,16 +35,13 @@
 @(taxYear: Int, pensionIncomeList: Seq[PensionScheme])(implicit messages: Messages, appConfig: AppConfig, request: UserSessionDataRequest[_])
 
 @headingForUse = @{messages("overseasPensionIncomeSummary.heading")}
+
 @addAnotherLink(countryPageUrl: String) = {
     @if(pensionIncomeList.isEmpty){       
         <p class="govuk-body">@link(countryPageUrl, "pensions.ukPensionIncomeSummary.addPensionIncomeLink", Some("add-pension-income-link"), fullStop = false)</p> @*TODO: use suitably renamed message key*@
     } else {
         <p class="govuk-body">@link(countryPageUrl, "pensions.ukPensionIncomeSummary.addAnotherPensionIncomeLink", Some("add-another-pension-link"), fullStop = false)</p> @*TODO: use suitably renamed message key*@
     }
-}
-
-getPaymentAmount(optAmount: Option[BigDecimal]) = {
-   optAmount.fold("")(bigDecimalCurrency)
 }
 
 @pensionIncomeSummaryList = {
@@ -60,10 +57,7 @@ getPaymentAmount(optAmount: Option[BigDecimal]) = {
                             @pensionIncome.pensionPaymentAmount.fold("")(amount => bigDecimalCurrency(amount.toString))
                         </dt>
                         <dd class="hmrc-add-to-a-list__change">
-                        @*TODO:Update the link to the overseas pension Scheme summary page with index when page available like below:
-                            i.e. replace "#"with "@PensionSchemeSummaryController.show(taxYear, Some(index))"
-                        *@
-                            <a class="govuk-link" href="#">
+                            <a class="govuk-link" href=@PensionSchemeSummaryController.show(taxYear, Some(index)).url>
                                 <span aria-hidden="true">@messages("common.change")</span>
                                 <span class="govuk-visually-hidden">@{s"${messages("common.change")} ${getCountryFromCodeWithDefault(pensionIncome.countryCode)}"}</span>
                             </a>
@@ -79,8 +73,7 @@ getPaymentAmount(optAmount: Option[BigDecimal]) = {
 @layout(pageTitle = headingForUse, taxYear = Some(taxYear)) {
     @heading(headingForUse, Some(messages("common.incomeFromOverseasPensions.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-2")
     @pensionIncomeSummaryList
-    @addAnotherLink(PensionOverseasIncomeCountryController.show(taxYear, Some(0)).url)
-    @*TODO: button to navigate to income from pensions CYA when available*@
+    @addAnotherLink(PensionOverseasIncomeCountryController.show(taxYear, None).url)
     @button(Button(
         attributes = Map("id" -> "continue"),
         preventDoubleClick = true,

@@ -361,7 +361,7 @@ class PensionsSummaryControllerISpec extends IntegrationTest with ViewHelpers wi
           welshToggleCheck(user.isWelsh)
         }
 
-        "render the page with prior data but an opposite subset of the underlying pension charges are presenty leading to a mix of 'updated' and To do'" which {
+        "render the page with prior data but an opposite subset of the underlying pension charges are leading to a mix of 'updated' and To do'" which {
           implicit lazy val result: WSResponse = {
             authoriseAgentOrIndividual(user.isAgent)
 
@@ -406,7 +406,7 @@ class PensionsSummaryControllerISpec extends IntegrationTest with ViewHelpers wi
           }
 
           "has an unauthorised payments from pensions section" which {
-            linkCheck("Unauthorised payments from pensions", unauthorisedPaymentsFromPensionsLink, checkUnauthorisedPaymentsCyaUrl(taxYear))
+            linkCheck("Unauthorised payments from pensions", unauthorisedPaymentsFromPensionsLink, unauthorisedPaymentsUrl(taxYear))
             textOnPageCheck(user.commonExpectedResults.toDo, summaryListStatusTagSelector(5))
           }
 
