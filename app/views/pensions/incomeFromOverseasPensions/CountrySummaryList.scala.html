@@ -59,7 +59,7 @@
                         <dd class="hmrc-add-to-a-list__change">
                             <a class="govuk-link" href=@PensionSchemeSummaryController.show(taxYear, Some(index)).url>
                                 <span aria-hidden="true">@messages("common.change")</span>
-                                <span class="govuk-visually-hidden">@{s"${messages("common.change")} ${getCountryFromCodeWithDefault(pensionIncome.countryCode2d)}"}</span>
+                                <span class="govuk-visually-hidden">@{s"${messages("common.change")} ${getCountryFromCodeWithDefault(pensionIncome.alphaTwoCode)}"}</span>
                             </a>
                         </dd>
                     </div>
