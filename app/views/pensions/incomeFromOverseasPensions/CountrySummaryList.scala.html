@@ -51,7 +51,7 @@
                 @for((pensionIncome, index) <- pensionIncomeList.zipWithIndex){
                     <div class="hmrc-add-to-a-list__contents">
                         <dt class="hmrc-add-to-a-list__identifier hmrc-add-to-a-list__identifier--light">
-                            @getCountryFromCodeWithDefault(pensionIncome.countryCode2d)  @*TODO: need a message when missing a country for a code*@
+                            @getCountryFromCodeWithDefault(pensionIncome.alphaTwoCode)  @*TODO: need a message when missing a country for a code*@
                         </dt>
                         <dt class="hmrc-add-to-a-list__identifier hmrc-add-to-a-list__identifier--light">
                             @pensionIncome.pensionPaymentAmount.fold("")(amount => bigDecimalCurrency(amount.toString))
