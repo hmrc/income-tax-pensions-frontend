@@ -78,7 +78,7 @@ class IncomeFromOverseasPensionsCYAController @Inject()(authAction: AuthorisedAc
             }))
         pensionSessionService.createOrUpdateSessionData(request.user,
           updatedCyaModel, taxYear, model.isPriorSubmission)(errorHandler.internalServerError()) {
-          Future.successful(Redirect(OverseasPensionsSummaryController.show(taxYear)))
+          Redirect(OverseasPensionsSummaryController.show(taxYear))
         }
       }
     }
