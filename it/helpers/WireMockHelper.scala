@@ -16,16 +16,22 @@
 
 package helpers
 
+import builders.UserBuilder.aUser
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.client.{MappingBuilder, WireMock}
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig
 import com.github.tomakehurst.wiremock.http.HttpHeader
+import com.github.tomakehurst.wiremock.http.HttpHeader.httpHeader
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import common.{EnrolmentIdentifiers, EnrolmentKeys}
+import models.IncomeTaxUserData
+import models.mongo.PensionsCYAModel
+import models.requests.UserSessionDataRequest
 import play.api.http.Status._
 import play.api.libs.json.{JsObject, Json}
+import play.api.mvc.AnyContent
 import uk.gov.hmrc.auth.core.{AffinityGroup, ConfidenceLevel}
 
 trait WireMockHelper {
@@ -217,6 +223,17 @@ trait WireMockHelper {
     stubPost(authoriseUri, UNAUTHORIZED, Json.prettyPrint(
       successfulAuthResponse(Some(AffinityGroup.Agent), ConfidenceLevel.L250, Seq(asAgentEnrolment, mtditEnrolment): _*)
     ))
+  }
+
+  protected def userSessionDataStub(nino: String,
+                                    taxYear: String,
+                                    response: PensionsCYAModel): StubMapping = {
+    stubPut(
+      url = s"/income-tax-submission-service/nino/$nino/sources/session?taxYear=$taxYear",
+      status = OK,
+      responseBody = Json.toJson(response).toString(),
+      requestHeaders = Seq(httpHeader("X-Session-ID",  aUser.sessionId), httpHeader("mtditid" , aUser.mtditid))
+    )
   }
 
 }

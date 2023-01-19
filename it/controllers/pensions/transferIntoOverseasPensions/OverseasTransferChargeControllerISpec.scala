@@ -357,7 +357,7 @@ class OverseasTransferChargeControllerISpec
           implicit val userConfig: UserConfig = userConfigWhenIrrelevant(None)
           implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(false), None))
 
-          assertRedirectionAsExpected(PageRelativeURLs.overseasPensionsSummary)
+          assertRedirectionAsExpected(PageRelativeURLs.summaryPage)
           getViewModel mustBe None
         }
       }

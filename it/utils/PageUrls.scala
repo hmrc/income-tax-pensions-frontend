@@ -86,6 +86,8 @@ object PageUrls extends IntegrationTest {
       s"$appUrl/$taxYear/annual-allowance/pension-scheme-tax-reference?pensionSchemeTaxReferenceIndex=$pensionSchemeTaxReference"
 
     def pstrSummaryUrl(taxYear: Int): String = s"$appUrl/$taxYear/annual-allowance/pension-scheme-tax-reference-summary"
+
+    def transferPensionSchemeTaxUrl(taxYear: Int): String = s"$appUrl/${taxYear.toString}/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-tax"
   }
 
   //  *****************     Income from pensions pages      ******************************

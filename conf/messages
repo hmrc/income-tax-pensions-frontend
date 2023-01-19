@@ -906,16 +906,29 @@ transferIntoOverseasPensions.transferPensionsSavings.error.noEntry.individual = 
 transferIntoOverseasPensions.transferPensionsSavings.error.noEntry.agent = Select yes if your client transferred savings into an overseas pension scheme
 
 #Overseas Transfer Charge
-transferIntoOverseasPensions.overseasTransferCharge.title = Did the amount result in an overseas transfer charge?
-transferIntoOverseasPensions.overseasTransferCharge.amount.text = Amount that resulted in a transfer charge, in pounds
-transferIntoOverseasPensions.overseasTransferCharge.error.noEntry = Select yes if the amount resulted in an overseas transfer charge
-transferIntoOverseasPensions.overseasTransferCharge.error.noAmountEntry.individual = Enter the amount on which you paid an overseas transfer charge
-transferIntoOverseasPensions.overseasTransferCharge.error.noAmountEntry.agent = Enter the amount that resulted in a transfer charge
-transferIntoOverseasPensions.overseasTransferCharge.error.incorrectFormat.individual = Enter the amount on which you paid an overseas transfer charge in the correct format
-transferIntoOverseasPensions.overseasTransferCharge.error.incorrectFormat.agent = Enter the amount that resulted in a transfer charge in the correct format
-transferIntoOverseasPensions.overseasTransferCharge.error.tooBig.individual = The amount on which you paid an overseas transfer charge must be less than £100,000,000,000
-transferIntoOverseasPensions.overseasTransferCharge.error.tooBig.agent = The amount that resulted in a transfer charge must be less than £100,000,000,000
+
+transferIntoOverseasPensions.overseasPensionSchemeTaxTransferCharge.title.agent = Did your client's pension schemes pay tax on the amount that resulted in a transfer charge?
+transferIntoOverseasPensions.overseasPensionSchemeTaxTransferCharge.title.individual = Did your pension schemes pay tax on the amount that resulted in a transfer charge?
+transferIntoOverseasPensions.overseasPensionSchemeTaxTransferCharge.amount.text = Total tax, in pounds
+transferIntoOverseasPensions.overseasPensionSchemeTaxTransferCharge.error.noEntry.individual = Select yes if your pension schemes paid tax on the amount on which you paid an overseas transfer charge
+transferIntoOverseasPensions.overseasPensionSchemeTaxTransferCharge.error.noEntry.agent = Select yes if your client's pension schemes paid tax on the amount that resulted in a transfer charge
+transferIntoOverseasPensions.overseasPensionSchemeTaxTransferCharge.error.noAmountEntry.individual = Enter the tax paid on the amount on which you paid an overseas transfer charge
+transferIntoOverseasPensions.overseasPensionSchemeTaxTransferCharge.error.noAmountEntry.agent = Enter the amount of tax paid on the transfer charge amount
+transferIntoOverseasPensions.overseasPensionSchemeTaxTransferCharge.error.incorrectFormat.individual = Enter the tax paid on the amount on which you paid an overseas transfer charge in the correct format
+transferIntoOverseasPensions.overseasPensionSchemeTaxTransferCharge.error.incorrectFormat.agent = Enter the amount of tax paid on the transfer charge amount in the correct format
+transferIntoOverseasPensions.overseasPensionSchemeTaxTransferCharge.error.tooBig = The amount of tax paid on the transfer charge amount must be less than £100,000,000,000
 
 #Overseas Transfer Charges Paid Status
 transferIntoOverseasPensions.overseasTransferChargesPaid.title = Did a UK pension scheme pay the transfer charge to HMRC?
 transferIntoOverseasPensions.overseasTransferChargesPaid.error.noEntry = Select yes if a UK pension scheme paid the transfer charge to HMRC
+
+transferIntoOverseasPensions.overseasPensionSchemeTaxTransferCharge.title.agent = Did your client’s pension schemes pay tax on the amount that resulted in a transfer charge?
+transferIntoOverseasPensions.overseasPensionSchemeTaxTransferCharge.title.individual = Did your pension schemes pay tax on the amount that resulted in a transfer charge?
+transferIntoOverseasPensions.overseasPensionSchemeTaxTransferCharge.amount.text = Total tax, in pounds
+transferIntoOverseasPensions.overseasPensionSchemeTaxTransferCharge.error.noEntry.individual = Select yes if your pension schemes paid tax on the amount on which you paid an overseas transfer charge
+transferIntoOverseasPensions.overseasPensionSchemeTaxTransferCharge.error.noEntry.agent = Select yes if your client’s pension schemes paid tax on the amount that resulted in a transfer charge
+transferIntoOverseasPensions.overseasPensionSchemeTaxTransferCharge.error.noAmountEntry.individual = Enter the tax paid on the amount on which you paid an overseas transfer charge
+transferIntoOverseasPensions.overseasPensionSchemeTaxTransferCharge.error.noAmountEntry.agent = Enter the amount of tax paid on the transfer charge amount
+transferIntoOverseasPensions.overseasPensionSchemeTaxTransferCharge.error.incorrectFormat.individual = Enter the tax paid on the amount on which you paid an overseas transfer charge in the correct format
+transferIntoOverseasPensions.overseasPensionSchemeTaxTransferCharge.error.incorrectFormat.agent = Enter the amount of tax paid on the transfer charge amount in the correct format
+transferIntoOverseasPensions.overseasPensionSchemeTaxTransferCharge.error.tooBig = The amount of tax paid on the transfer charge amount must be less than £100,000,000,000
