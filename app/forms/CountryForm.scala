@@ -33,7 +33,7 @@ object CountryForm extends InputFilters {
 
 
   def validateCountry(): String => Constraint[String] = msgKey => constraint[String](
-    x => if (Countries.all.map(_.countryCode2d).contains(x)) Valid else Invalid(msgKey)
+    x => if (Countries.all.map(_.alphaTwoCode).contains(x)) Valid else Invalid(msgKey)
   )
 
 

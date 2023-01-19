@@ -150,8 +150,8 @@ object AllPensionsData {
   private def fromForeignPensionToPensionScheme(foreignPension: Seq[ForeignPension]) = {
     foreignPension.map(fP =>
       PensionScheme(
-        countryCode3d = Some(fP.countryCode),
-        countryCode2d = Countries.get2dCountryCodeFrom3d(fP.countryCode),
+        alphaThreeCode = Some(fP.countryCode),
+        alphaTwoCode = Countries.get2dCountryCodeFrom3d(fP.countryCode),
         pensionPaymentAmount = fP.amountBeforeTax,
         pensionPaymentTaxPaid = fP.taxTakenOff,
         specialWithholdingTaxQuestion = Some(fP.specialWithholdingTax.isDefined),

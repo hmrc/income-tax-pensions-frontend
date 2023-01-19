@@ -92,10 +92,10 @@ class CountrySummaryListControllerISpec extends IntegrationTest with BeforeAndAf
         import Selectors._
         import user.commonExpectedResults._
 
-        val pensionName1 = countries.getCountryFromCodeWithDefault(anIncomeFromOverseasPensionsViewModel.overseasIncomePensionSchemes.head.countryCode2d)
+        val pensionName1 = countries.getCountryFromCodeWithDefault(anIncomeFromOverseasPensionsViewModel.overseasIncomePensionSchemes.head.alphaTwoCode)
         val pensionAmount1 = anIncomeFromOverseasPensionsViewModel.overseasIncomePensionSchemes.head.pensionPaymentAmount
           .fold("")(am => bigDecimalCurrency(am.toString()))
-        val pensionName2 = countries.getCountryFromCodeWithDefault(anIncomeFromOverseasPensionsViewModel.overseasIncomePensionSchemes(1).countryCode2d)
+        val pensionName2 = countries.getCountryFromCodeWithDefault(anIncomeFromOverseasPensionsViewModel.overseasIncomePensionSchemes(1).alphaTwoCode)
         val pensionAmount2 = anIncomeFromOverseasPensionsViewModel.overseasIncomePensionSchemes(1).pensionPaymentAmount
           .fold("")(am => bigDecimalCurrency(am.toString()))
 

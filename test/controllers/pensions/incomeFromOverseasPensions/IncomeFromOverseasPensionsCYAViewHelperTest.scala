@@ -51,8 +51,8 @@ class IncomeFromOverseasPensionsCYAViewHelperTest extends AnyWordSpec with Match
         val model = IncomeFromOverseasPensionsViewModel(
           paymentsFromOverseasPensionsQuestion = Some(true),
           overseasIncomePensionSchemes = Seq(PensionScheme(
-            countryCode3d = Some("FRA"),
-            countryCode2d = Some("FR"),
+            alphaThreeCode = Some("FRA"),
+            alphaTwoCode = Some("FR"),
             pensionPaymentAmount = Some(100),
             pensionPaymentTaxPaid = Some(100),
             specialWithholdingTaxQuestion = Some(true),
@@ -73,8 +73,8 @@ class IncomeFromOverseasPensionsCYAViewHelperTest extends AnyWordSpec with Match
         val model = IncomeFromOverseasPensionsViewModel(
           paymentsFromOverseasPensionsQuestion = Some(true),
           overseasIncomePensionSchemes = Seq(PensionScheme(
-            countryCode3d = Some("FRA"),
-            countryCode2d = Some("FR"),
+            alphaThreeCode = Some("FRA"),
+            alphaTwoCode = Some("FR"),
             pensionPaymentAmount = Some(100),
             pensionPaymentTaxPaid = Some(100),
             specialWithholdingTaxQuestion = Some(true),
@@ -83,8 +83,8 @@ class IncomeFromOverseasPensionsCYAViewHelperTest extends AnyWordSpec with Match
             taxableAmount = Some(100)
           ),
             PensionScheme(
-              countryCode3d = Some("IND"),
-              countryCode2d = Some("IN"),
+              alphaThreeCode = Some("IND"),
+              alphaTwoCode = Some("IN"),
               pensionPaymentAmount = Some(100),
               pensionPaymentTaxPaid = Some(100),
               specialWithholdingTaxQuestion = Some(true),
@@ -93,8 +93,8 @@ class IncomeFromOverseasPensionsCYAViewHelperTest extends AnyWordSpec with Match
               taxableAmount = Some(100)
             ),
             PensionScheme(
-              countryCode3d = Some("SLE"),
-              countryCode2d = Some("SL"),
+              alphaThreeCode = Some("SLE"),
+              alphaTwoCode = Some("SL"),
               pensionPaymentAmount = Some(100),
               pensionPaymentTaxPaid = Some(100),
               specialWithholdingTaxQuestion = Some(true),
@@ -117,7 +117,7 @@ class IncomeFromOverseasPensionsCYAViewHelperTest extends AnyWordSpec with Match
         val model = IncomeFromOverseasPensionsViewModel(
           paymentsFromOverseasPensionsQuestion = Some(false),
           overseasIncomePensionSchemes = Seq(PensionScheme(
-            countryCode3d = Some("FRA"),
+            alphaThreeCode = Some("FRA"),
             pensionPaymentAmount = Some(100),
             pensionPaymentTaxPaid = Some(100),
             specialWithholdingTaxQuestion = Some(true),
@@ -136,8 +136,8 @@ class IncomeFromOverseasPensionsCYAViewHelperTest extends AnyWordSpec with Match
 
         val wrongOverseasIncomePensionSchemes = Seq(
           PensionScheme(
-            countryCode3d = Some("ABC"),
-            countryCode2d = None,
+            alphaThreeCode = Some("ABC"),
+            alphaTwoCode = None,
             pensionPaymentAmount = Some(1999.99),
             pensionPaymentTaxPaid = Some(1999.99),
             specialWithholdingTaxQuestion = Some(true),
@@ -146,8 +146,8 @@ class IncomeFromOverseasPensionsCYAViewHelperTest extends AnyWordSpec with Match
             taxableAmount = Some(1999.99)
           ),
           PensionScheme(
-            countryCode3d = Some("XXX"),
-            countryCode2d = None,
+            alphaThreeCode = Some("XXX"),
+            alphaTwoCode = None,
             pensionPaymentAmount = Some(2000.00),
             pensionPaymentTaxPaid = Some(400.00),
             specialWithholdingTaxQuestion = Some(true),

@@ -17,6 +17,7 @@
 package services
 
 import forms.{Countries, Country}
+import org.checkerframework.checker.units.qual.A
 import utils.UnitTest
 
 class CountryServiceTest extends UnitTest {
@@ -24,15 +25,13 @@ class CountryServiceTest extends UnitTest {
   "Countries" must {
 
     "give all countries with codes in alphabetical order of country name with filtering according to permitted MDG values" in {
-      println("-----------------------------")
-      println(Countries.all)
-      println("-----------------------------")
       Countries.all should contain(Country("Afghanistan", "AF", "AFG"))
       Countries.all should contain(Country("Curaçao", "CW", "CUW"))
       Countries.all should contain(Country("Réunion", "RE", "REU"))
       Countries.all should contain(Country("Zimbabwe", "ZW", "ZWE"))
       Countries.all should contain(Country("Åland Islands", "AX", "AXA"))
       Countries.all should contain(Country("United Kingdom", "GB", "GBR"))
+      Countries.all should contain(Country("Czechoslovakia", "CS", "N/A"))
       Countries.all.size shouldBe(247)
     }
 

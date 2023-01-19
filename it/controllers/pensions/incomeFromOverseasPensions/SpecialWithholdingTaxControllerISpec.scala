@@ -85,8 +85,8 @@ class SpecialWithholdingTaxControllerISpec   extends YesNoAmountControllerSpec("
 
           val updatedPensionScheme = aPensionsCYAModel.incomeFromOverseasPensions.overseasIncomePensionSchemes.updated(
             0, PensionScheme(
-              countryCode2d = Some("FR"),
-              countryCode3d = Some("FRA"),
+              alphaTwoCode = Some("FR"),
+              alphaThreeCode = Some("FRA"),
               pensionPaymentAmount = Some(1999.99),
               pensionPaymentTaxPaid = Some(1999.99),
               specialWithholdingTaxQuestion = None,
@@ -139,8 +139,8 @@ class SpecialWithholdingTaxControllerISpec   extends YesNoAmountControllerSpec("
               incomeFromOverseasPensions = aPensionsCYAModel.incomeFromOverseasPensions.copy(overseasIncomePensionSchemes =
                 aPensionsCYAModel.incomeFromOverseasPensions.overseasIncomePensionSchemes.updated(
                   0, PensionScheme(
-                    countryCode2d = Some("FR"),
-                    countryCode3d = Some("FRA"),
+                    alphaTwoCode = Some("FR"),
+                    alphaThreeCode = Some("FRA"),
                     pensionPaymentAmount = Some(1999.99),
                     pensionPaymentTaxPaid = Some(1999.99),
                     specialWithholdingTaxQuestion = Some(true),
@@ -196,8 +196,8 @@ class SpecialWithholdingTaxControllerISpec   extends YesNoAmountControllerSpec("
         "the user has multiple pensionSchemes, and" when {
 
           val newSequence = PensionScheme(
-            countryCode2d = Some("GB"),
-            countryCode3d = Some("GBR"),
+            alphaTwoCode = Some("GB"),
+            alphaThreeCode = Some("GBR"),
             pensionPaymentAmount = Some(1999.99),
             pensionPaymentTaxPaid = Some(1999.99),
             specialWithholdingTaxQuestion = Some(true),
@@ -260,8 +260,8 @@ class SpecialWithholdingTaxControllerISpec   extends YesNoAmountControllerSpec("
 
           val updatedPensionScheme = aPensionsCYAModel.incomeFromOverseasPensions.overseasIncomePensionSchemes.updated(
             0, PensionScheme(
-              countryCode2d = Some("FR"),
-              countryCode3d = Some("FRA"),
+              alphaTwoCode = Some("FR"),
+              alphaThreeCode = Some("FRA"),
               pensionPaymentAmount = Some(1999.99),
               pensionPaymentTaxPaid = Some(1999.99),
               specialWithholdingTaxQuestion = Some(false),
@@ -324,8 +324,8 @@ class SpecialWithholdingTaxControllerISpec   extends YesNoAmountControllerSpec("
 
           val updatedPensionScheme = aPensionsCYAModel.incomeFromOverseasPensions.overseasIncomePensionSchemes.updated(
             0, PensionScheme(
-              countryCode2d = Some("FR"),
-              countryCode3d = Some("FRA"),
+              alphaTwoCode = Some("FR"),
+              alphaThreeCode = Some("FRA"),
               pensionPaymentAmount = Some(1999.99),
               pensionPaymentTaxPaid = Some(1999.99),
               specialWithholdingTaxQuestion = Some(false),
@@ -386,8 +386,8 @@ class SpecialWithholdingTaxControllerISpec   extends YesNoAmountControllerSpec("
 
           val updatedPensionScheme = aPensionsCYAModel.incomeFromOverseasPensions.overseasIncomePensionSchemes.updated(
             0, PensionScheme(
-              countryCode2d = Some("FR"),
-              countryCode3d = Some("FRA"),
+              alphaTwoCode = Some("FR"),
+              alphaThreeCode = Some("FRA"),
               pensionPaymentAmount = Some(1999.99),
               pensionPaymentTaxPaid = Some(1999.99),
               specialWithholdingTaxQuestion = Some(false),
@@ -456,8 +456,8 @@ class SpecialWithholdingTaxControllerISpec   extends YesNoAmountControllerSpec("
               incomeFromOverseasPensions = aPensionsCYAModel.incomeFromOverseasPensions.copy(overseasIncomePensionSchemes =
                 aPensionsCYAModel.incomeFromOverseasPensions.overseasIncomePensionSchemes.updated(
                   0, PensionScheme(
-                    countryCode2d = Some("FR"),
-                    countryCode3d = Some("FRA"),
+                    alphaTwoCode = Some("FR"),
+                    alphaThreeCode = Some("FRA"),
                     pensionPaymentAmount = None,
                     pensionPaymentTaxPaid = None,
                     specialWithholdingTaxQuestion = None,
@@ -500,8 +500,8 @@ class SpecialWithholdingTaxControllerISpec   extends YesNoAmountControllerSpec("
                 incomeFromOverseasPensions = sessionData.pensions.incomeFromOverseasPensions.copy(overseasIncomePensionSchemes =
                   sessionData.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes.updated(
                     0, PensionScheme(
-                      countryCode2d = Some("FR"),
-                      countryCode3d = Some("FRA"),
+                      alphaTwoCode = Some("FR"),
+                      alphaThreeCode = Some("FRA"),
                       pensionPaymentAmount = Some(1999.99),
                       pensionPaymentTaxPaid = Some(1999.99),
                       specialWithholdingTaxQuestion =  Some(false),
@@ -526,8 +526,8 @@ class SpecialWithholdingTaxControllerISpec   extends YesNoAmountControllerSpec("
 
             val updatedPensionScheme = aPensionsCYAModel.incomeFromOverseasPensions.overseasIncomePensionSchemes.updated(
               0, PensionScheme(
-                countryCode2d = Some("FR"),
-                countryCode3d = Some("FRA"),
+                alphaTwoCode = Some("FR"),
+                alphaThreeCode = Some("FRA"),
                 pensionPaymentAmount = Some(1999.99),
                 pensionPaymentTaxPaid = Some(1999.99),
                 specialWithholdingTaxQuestion =  Some(true),
@@ -557,8 +557,8 @@ class SpecialWithholdingTaxControllerISpec   extends YesNoAmountControllerSpec("
 
             val updatedPensionScheme = aPensionsCYAModel.incomeFromOverseasPensions.overseasIncomePensionSchemes.updated(
               0, PensionScheme(
-                countryCode2d = Some("FR"),
-                countryCode3d = Some("FRA"),
+                alphaTwoCode = Some("FR"),
+                alphaThreeCode = Some("FRA"),
                 pensionPaymentAmount = Some(1999.99),
                 pensionPaymentTaxPaid = Some(1999.99),
                 specialWithholdingTaxQuestion =  Some(true),
@@ -629,8 +629,8 @@ class SpecialWithholdingTaxControllerISpec   extends YesNoAmountControllerSpec("
 
           val updatedPensionScheme = aPensionsCYAModel.incomeFromOverseasPensions.overseasIncomePensionSchemes.updated(
             0, PensionScheme(
-              countryCode2d = Some("FR"),
-              countryCode3d = Some("FRA"),
+              alphaTwoCode = Some("FR"),
+              alphaThreeCode = Some("FRA"),
               pensionPaymentAmount = Some(1999.99),
               pensionPaymentTaxPaid = Some(1999.99),
               specialWithholdingTaxQuestion = None,

@@ -52,7 +52,7 @@ object Countries {
         case JsArray(cs) =>
           cs.toList.collect {
             case JsArray(Seq(c: JsString, cc: JsString)) =>
-              Country(c.value, countryCode2d(cc.value), countriesThreeDigitMapFromCountryName.getOrElse(c.value, "N/A"))
+              Country(c.value, alphaTwoCode(cc.value), countriesThreeDigitMapFromCountryName.getOrElse(c.value, "N/A"))
           }
         case _ =>
           throw new IllegalArgumentException(
@@ -70,7 +70,7 @@ object Countries {
       case JsArray(cs) =>
         cs.toList.collect {
           case JsArray(Seq(c: JsString, cc: JsString)) =>
-            (countryCode2d(cc.value), c.value)
+            (alphaTwoCode(cc.value), c.value)
         }.toMap
       case _ =>
         throw new IllegalArgumentException(
@@ -83,19 +83,19 @@ object Countries {
     countriesTwoDigitMap.filter{ case (k,_) => mdgCountryCodes("/mdg-country-codes.csv") contains(k)}.map(_.swap)
   }
 
-  private def countryCode2d: String => String = cc => cc.split(":")(1).trim
+  private def alphaTwoCode: String => String = cc => cc.split(":")(1).trim
 
-  val all: List[Country] = countries filter (c => mdgCountryCodes("/mdg-country-codes.csv") contains c.countryCode2d)
+  val all: List[Country] = countries filter (c => mdgCountryCodes("/mdg-country-codes.csv") contains c.alphaTwoCode)
 
-  val eu: List[Country] = countries filter (c => mdgCountryCodes("/mdg-country-codes-eu.csv") contains c.countryCode2d)
+  val eu: List[Country] = countries filter (c => mdgCountryCodes("/mdg-country-codes-eu.csv") contains c.alphaTwoCode)
 
 
   def getCountryParametersForAllCountries(): List[Country] = all
-  def getOverseasCountries(): List[Country] = all.filter(_.countryCode2d != "GB")
+  def getOverseasCountries(): List[Country] = all.filter(_.alphaTwoCode != "GB")
 
-  def getCountryFromCode(countryCode: Option[String]): Option[Country] = {
-    countryCode.flatMap(
-      x => all.find(_.countryCode2d == x)
+  def getCountryFromCode(alphaTwoCode: Option[String]): Option[Country] = {
+    alphaTwoCode.flatMap(
+      x => all.find(_.alphaTwoCode == x)
     )
   }
   
@@ -103,11 +103,11 @@ object Countries {
     getCountryFromCode(countryCode).fold(countryCode.getOrElse(defaultStr))(_.countryName)
   }
 
-  def get2dCountryCodeFrom3d(countryCode3d : String) : Option[String] = {
-    countries.filter(country => country.countryCode3d == countryCode3d).headOption.map(_.countryCode2d)
+  def get2dCountryCodeFrom3d(alphaThreeCode : String) : Option[String] = {
+    countries.filter(country => country.alphaThreeCode == alphaThreeCode).headOption.map(_.alphaTwoCode)
   }
 
-  def get3dCountryCodeFrom2d(countryCode2d : Option[String]) : Option[String] = {
-    countryCode2d.map(cc => countries.filter(countryNamesWithCodes => cc == countryNamesWithCodes.countryCode2d).head).map(_.countryCode3d)
+  def get3dCountryCodeFrom2d(alphaTwoCode : Option[String]) : Option[String] = {
+    alphaTwoCode.map(cc => countries.filter(countryNamesWithCodes => cc == countryNamesWithCodes.alphaTwoCode).head).map(_.alphaThreeCode)
   }
 }

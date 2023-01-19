@@ -52,7 +52,7 @@ object IncomeFromOverseasPensionsCYAViewHelper extends CYABaseHelper {
       val countryNames = for {
         pensionScheme <- incomeFromOverseasPensionsViewModel.overseasIncomePensionSchemes
       } yield {
-        Countries.getCountryFromCodeWithDefault(pensionScheme.countryCode2d)
+        Countries.getCountryFromCodeWithDefault(pensionScheme.alphaTwoCode)
       }
 
       Some(summaryListRowWithStrings(
