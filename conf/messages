@@ -33,14 +33,13 @@ common.pensions.caption = Pensions for 6 April {0} to 5 April {1}
 common.paymentsIntoPensions.caption = Payments into pensions for 6 April {0} to 5 April {1}
 common.paymentsIntoOverseasPensions.caption = Payments into overseas pensions for 6 April {0} to 5 April {1}
 common.incomeFromOverseasPensions.caption = Income from overseas pensions for 6 April {0} to 5 April {1}
+common.transferIntoOverseasPensions.caption = Transfers into overseas pensions for 6 April {0} to 5 April {1}
 common.dividends.incomeFromPensions.caption = Dividends for 6 April {0} to 5 April {1}
 common.pensionAnnualAllowance.caption = Pension annual allowance for 6 April {0} to 5 April {1}
 common.incomeFromPensions.caption = Income from pensions for 6 April {0} to 5 April {1}
 common.uKPensionIncome.caption = UK pension income for 6 April {0} to 5 April {1}
 common.lifetimeAllowance.caption = Annual and lifetime allowances for 6 April {0} to 5 April {1}
 common.overseasPensions.caption = Overseas pensions for 6 April {0} to 5 April {1}
-common.incomeFromOverseasPensions.caption = Income from overseas pensions for 6 April {0} to 5 April {1}
-common.transferIntoOverseasPension.caption = Transfers into overseas pensions for 6 April {0} to 5 April {1}
 common.return.overview.buttonText = Return to overview
 common.currencyAmount = £{0}
 common.total = Total
@@ -910,3 +909,8 @@ transferIntoOverseasPension.overseasTransferCharge.error.incorrectFormat.individ
 transferIntoOverseasPension.overseasTransferCharge.error.incorrectFormat.agent = Enter the amount that resulted in a transfer charge in the correct format
 transferIntoOverseasPension.overseasTransferCharge.error.tooBig.individual = The amount on which you paid an overseas transfer charge must be less than £100,000,000,000
 transferIntoOverseasPension.overseasTransferCharge.error.tooBig.agent = The amount that resulted in a transfer charge must be less than £100,000,000,000
+
+#Transfer Pension Savings
+overseasPension.transferIntoOverseas.title.individual = Did you transfer pension savings into an overseas pension scheme?
+overseasPension.transferIntoOverseas.title.agent = Did your client transfer pension savings into an overseas pension scheme?
+overseasPension.transferIntoOverseas.error.noEntry.individual = Select yes if you transferred savings into an overseas pension scheme
