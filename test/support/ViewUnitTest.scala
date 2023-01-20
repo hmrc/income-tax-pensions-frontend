@@ -49,8 +49,8 @@ trait ViewUnitTest extends UnitTest
   protected lazy val agentUserRequest =
     new AuthorisationRequest[AnyContent](aUser.copy(arn = Some("arn"), affinityGroup = AffinityGroup.Agent.toString), fakeRequest)
 
-  protected lazy val individualUserDataRequest: UserSessionDataRequest[AnyContent] = new UserSessionDataRequest(Some(aPensionsUserData), aUser, fakeRequest)
-  protected lazy val agentUserDataRequest: UserSessionDataRequest[AnyContent] = new UserSessionDataRequest(Some(aPensionsUserData), aUser.copy(arn = Some("arn"), affinityGroup = AffinityGroup.Agent.toString), fakeRequest)
+  protected lazy val individualUserDataRequest: UserSessionDataRequest[AnyContent] = new UserSessionDataRequest(aPensionsUserData, aUser, fakeRequest)
+  protected lazy val agentUserDataRequest: UserSessionDataRequest[AnyContent] = new UserSessionDataRequest(aPensionsUserData, aUser.copy(arn = Some("arn"), affinityGroup = AffinityGroup.Agent.toString), fakeRequest)
 
   protected def getMessages(isWelsh: Boolean): Messages = if (isWelsh) welshMessages else defaultMessages
 

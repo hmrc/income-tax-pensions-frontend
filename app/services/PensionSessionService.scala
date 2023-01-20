@@ -20,7 +20,7 @@ import config.{AppConfig, ErrorHandler}
 import connectors.{IncomeSourceConnector, IncomeTaxUserDataConnector}
 import connectors.httpParsers.IncomeTaxUserDataHttpParser.IncomeTaxUserDataResponse
 import models.User
-import models.mongo.{PensionsCYAModel, PensionsUserData}
+import models.mongo.{DatabaseError, PensionsCYAModel, PensionsUserData}
 import models.pension.AllPensionsData
 import org.joda.time.DateTimeZone
 import play.api.Logging
@@ -121,11 +121,18 @@ class PensionSessionService @Inject()(pensionUserDataRepository: PensionsUserDat
       clock.now(DateTimeZone.UTC)
     )
 
-    pensionUserDataRepository.createOrUpdate(userData, user).map {
+    pensionUserDataRepository.createOrUpdate(userData).map {
       case Right(_) => onSuccess
       case Left(_) => onFail
     }
   }
 
+
+  def createOrUpdateSessionData(pensionsUserData: PensionsUserData): Future[Either[DatabaseError, Unit]] = {
+    pensionUserDataRepository.createOrUpdate(pensionsUserData).map {
+      case Left(error: DatabaseError) => Left(error)
+      case Right(_) => Right(())
+    }
+  }
 }
 

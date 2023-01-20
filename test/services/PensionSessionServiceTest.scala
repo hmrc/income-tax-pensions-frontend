@@ -18,7 +18,7 @@ package services
 
 import builders.AllPensionsDataBuilder.anAllPensionDataEmpty
 import config._
-import models.mongo.{DataNotFound, DataNotUpdated, PensionsCYAModel, PensionsUserData}
+import models.mongo.{DataNotFound, DataNotUpdated, DatabaseError, PensionsCYAModel, PensionsUserData}
 import models.pension.AllPensionsData
 import models.pension.charges._
 import models.pension.reliefs.{PensionReliefs, Reliefs}
@@ -30,15 +30,20 @@ import utils.UnitTest
 import views.html.templates.{InternalServerErrorTemplate, NotFoundTemplate, ServiceUnavailableTemplate}
 import builders.PensionsCYAModelBuilder._
 import builders.EmploymentPensionsBuilder.anEmploymentPensions
+import builders.IncomeTaxUserDataBuilder.anIncomeTaxUserData
 import connectors.IncomeSourceConnector
 import models.pension.AllPensionsData.generateCyaFromPrior
 import builders.PensionIncomeViewModelBuilder.aPensionIncome
+import builders.PensionsUserDataBuilder.aPensionsUserData
+import org.scalatest.concurrent.ScalaFutures
+import play.api.mvc.Result
 
 import scala.concurrent.Future
 
 class PensionSessionServiceTest extends UnitTest
   with MockPensionUserDataRepository
-  with MockIncomeTaxUserDataConnector {
+  with MockIncomeTaxUserDataConnector
+  with ScalaFutures {
 
   val serviceUnavailableTemplate: ServiceUnavailableTemplate = app.injector.instanceOf[ServiceUnavailableTemplate]
   val notFoundTemplate: NotFoundTemplate = app.injector.instanceOf[NotFoundTemplate]
@@ -301,7 +306,7 @@ class PensionSessionServiceTest extends UnitTest
 
   ".createOrUpdateSessionData" should {
     "return SEE_OTHER(303) status when createOrUpdate succeeds" in {
-      mockCreateOrUpdate(pensionDataFull, user, Right())
+      mockCreateOrUpdate(pensionDataFull, Right())
 
       val response = service.createOrUpdateSessionData(user,
         pensionCYA, taxYear, isPriorSubmission = true,
@@ -312,9 +317,9 @@ class PensionSessionServiceTest extends UnitTest
     }
 
     "return BAD_REQUEST(400) status when createOrUpdate fails" in {
-      mockCreateOrUpdate(pensionDataFull, user, Left(DataNotUpdated))
+      mockCreateOrUpdate(pensionDataFull, Left(DataNotUpdated))
 
-      val response = service.createOrUpdateSessionData(user,
+      val response: Future[Result] = service.createOrUpdateSessionData(user,
         pensionCYA, taxYear, isPriorSubmission = true
       )(Redirect("400"))(Redirect("303"))
 
@@ -325,11 +330,30 @@ class PensionSessionServiceTest extends UnitTest
 
   "generateCyaFromPrior" should {
     "generate a PensionsCYAModel from prior AllPensionsData" in {
-      mockCreateOrUpdate(pensionDataFull, user, Right())
+      mockCreateOrUpdate(pensionDataFull, Right())
       val response = generateCyaFromPrior(anAllPensionDataEmpty)
 
       response shouldBe aPensionsCYAGeneratedFromPriorEmpty
 
+    }
+  }
+
+
+  ".createOrUpdateSessionData" should {
+    "return Right(unit) when createOrUpdate succeeds" in {
+      mockCreateOrUpdate(pensionDataFull, Right())
+
+
+      val response = await(service.createOrUpdateSessionData(pensionDataFull))
+
+      response shouldBe Right(())
+    }
+
+    "return Left DB Error(400) when createOrUpdate fails" in {
+      mockCreateOrUpdate(pensionDataFull, Left(DataNotUpdated))
+
+      val Left(response) = await(service.createOrUpdateSessionData(pensionDataFull))
+      response shouldBe a[DatabaseError]
     }
   }
 }

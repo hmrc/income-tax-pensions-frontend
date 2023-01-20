@@ -69,9 +69,9 @@ class ControllerSpec(val pathForThisPage: String) extends PlaySpec
 
   object PageRelativeURLs {
     val summaryPage: String = relativeUrl("/pensions-summary")
-    
+
     val overseasPensionsSummary: String = relativeUrl("/overseas-pensions")
-    
+
     val paymentsIntoPensionsCYAPage: String = relativeUrl("/payments-into-pensions/check-payments-into-pensions")
     val paymentsIntoPensionsOneNoTaxRelief: String = relativeUrl("/payments-into-pensions/no-tax-relief")
     val paymentsIntoPensionsOneOffPaymentsPage: String = relativeUrl("/payments-into-pensions/one-off-payments")
@@ -80,7 +80,7 @@ class ControllerSpec(val pathForThisPage: String) extends PlaySpec
     val paymentsIntoPensionsReliefAtSourcePage: String = relativeUrl("/payments-into-pensions/relief-at-source")
     val paymentsIntoPensionsReliefAtSourceAmountPage: String = relativeUrl("/payments-into-pensions/relief-at-source-amount")
     val paymentsIntoPensionsTotalReliefAtSourceCheckPage: String = relativeUrl("/payments-into-pensions/total-relief-at-source-check")
-    
+
     val unauthorisedPaymentsCYAPage: String = relativeUrl("/unauthorised-payments-from-pensions/check-unauthorised-payments")
 
     val overseasSummaryPage: String = relativeUrl("/overseas-pensions")
@@ -96,6 +96,7 @@ class ControllerSpec(val pathForThisPage: String) extends PlaySpec
     val incomeFromOverseasPensionsScheme: String = relativeUrl("/overseas-pensions/income-from-overseas-pensions/pension-scheme-summary")
     val incomeFromOverseasPensionsCountrySummary: String = relativeUrl("/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-sountry-summary")
     val incomeFromOverseasPensionsCya: String = relativeUrl("/overseas-pensions/income-from-overseas-pensions/check-overseas-pension-income-cya")
+    val overseasTransferChargePaid: String = relativeUrl("/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-paid")
 
   }
 
@@ -328,13 +329,7 @@ class ControllerSpec(val pathForThisPage: String) extends PlaySpec
   private def givenStoredSessionData(userConfig: UserConfig): Unit = {
     userConfig.sessionDataOpt.foreach(sessionData =>
       await(database.createOrUpdate(
-        sessionData,
-        User(
-          mtditid = sessionData.mtdItId,
-          arn = None,
-          nino = sessionData.nino,
-          sessionId = sessionData.sessionId,
-          affinityGroup = userConfig.userType.toString)))
+        sessionData))
     )
   }
 

@@ -20,7 +20,7 @@ import config.ErrorHandler
 import play.api.mvc.{ActionRefiner, Result}
 import models.AuthorisationRequest
 import models.requests.UserPriorDataRequest
-import services.PensionSessionService
+import services.{PensionSessionService, RedirectService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendHeaderCarrierProvider
 
 import scala.concurrent.{ExecutionContext, Future}
