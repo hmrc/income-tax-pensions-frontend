@@ -914,3 +914,4 @@ transferIntoOverseasPension.overseasTransferCharge.error.tooBig.agent = The amou
 overseasPension.transferIntoOverseas.title.individual = Did you transfer pension savings into an overseas pension scheme?
 overseasPension.transferIntoOverseas.title.agent = Did your client transfer pension savings into an overseas pension scheme?
 overseasPension.transferIntoOverseas.error.noEntry.individual = Select yes if you transferred savings into an overseas pension scheme
+overseasPension.transferIntoOverseas.error.noEntry.agent = Select yes if your client transferred savings into an overseas pension scheme

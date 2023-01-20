@@ -76,16 +76,19 @@ class TransferIntoOverseasController @Inject()(actionsProvider: ActionsProvider,
   }
 
   private def updateSessionData[T](pensionUserData: PensionsUserData,
-                                   yesNo: Boolean,
+                                   transferPensionSavings: Boolean,
                                    taxYear: Int
                                   )(implicit request: UserSessionDataRequest[T]) = {
     val updatedCyaModel = pensionUserData.pensions.copy(
       transfersIntoOverseasPensions = pensionUserData.pensions.transfersIntoOverseasPensions.copy(
-        transferPensionSavings = Some(yesNo)))
+        transferPensionSavings = Some(transferPensionSavings)))
 
     pensionSessionService.createOrUpdateSessionData(request.user,
       updatedCyaModel, taxYear, pensionUserData.isPriorSubmission)(errorHandler.internalServerError()) {
-      Redirect(controllers.pensions.transferIntoOverseasPension.routes.OverseasTransferChargeController.show(taxYear))
+      if(transferPensionSavings)
+        Redirect(controllers.pensions.transferIntoOverseasPension.routes.OverseasTransferChargeController.show(taxYear))
+      else
+        Redirect(OverseasPensionsSummaryController.show(taxYear))
     }
   }
 }
