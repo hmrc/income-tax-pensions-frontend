@@ -51,7 +51,8 @@ class IncomeFromOverseasPensionsCYAViewHelperTest extends AnyWordSpec with Match
         val model = IncomeFromOverseasPensionsViewModel(
           paymentsFromOverseasPensionsQuestion = Some(true),
           overseasIncomePensionSchemes = Seq(PensionScheme(
-            countryCode = Some("FR"),
+            alphaThreeCode = Some("FRA"),
+            alphaTwoCode = Some("FR"),
             pensionPaymentAmount = Some(100),
             pensionPaymentTaxPaid = Some(100),
             specialWithholdingTaxQuestion = Some(true),
@@ -72,7 +73,8 @@ class IncomeFromOverseasPensionsCYAViewHelperTest extends AnyWordSpec with Match
         val model = IncomeFromOverseasPensionsViewModel(
           paymentsFromOverseasPensionsQuestion = Some(true),
           overseasIncomePensionSchemes = Seq(PensionScheme(
-            countryCode = Some("FR"),
+            alphaThreeCode = Some("FRA"),
+            alphaTwoCode = Some("FR"),
             pensionPaymentAmount = Some(100),
             pensionPaymentTaxPaid = Some(100),
             specialWithholdingTaxQuestion = Some(true),
@@ -81,7 +83,8 @@ class IncomeFromOverseasPensionsCYAViewHelperTest extends AnyWordSpec with Match
             taxableAmount = Some(100)
           ),
             PensionScheme(
-              countryCode = Some("IN"),
+              alphaThreeCode = Some("IND"),
+              alphaTwoCode = Some("IN"),
               pensionPaymentAmount = Some(100),
               pensionPaymentTaxPaid = Some(100),
               specialWithholdingTaxQuestion = Some(true),
@@ -90,7 +93,8 @@ class IncomeFromOverseasPensionsCYAViewHelperTest extends AnyWordSpec with Match
               taxableAmount = Some(100)
             ),
             PensionScheme(
-              countryCode = Some("SL"),
+              alphaThreeCode = Some("SLE"),
+              alphaTwoCode = Some("SL"),
               pensionPaymentAmount = Some(100),
               pensionPaymentTaxPaid = Some(100),
               specialWithholdingTaxQuestion = Some(true),
@@ -113,7 +117,7 @@ class IncomeFromOverseasPensionsCYAViewHelperTest extends AnyWordSpec with Match
         val model = IncomeFromOverseasPensionsViewModel(
           paymentsFromOverseasPensionsQuestion = Some(false),
           overseasIncomePensionSchemes = Seq(PensionScheme(
-            countryCode = Some("FR"),
+            alphaThreeCode = Some("FRA"),
             pensionPaymentAmount = Some(100),
             pensionPaymentTaxPaid = Some(100),
             specialWithholdingTaxQuestion = Some(true),
@@ -128,13 +132,39 @@ class IncomeFromOverseasPensionsCYAViewHelperTest extends AnyWordSpec with Match
         assertRowForPaymentsFromOverseasPensions(summaryListRows.head, "No")
       }
 
-      "we received a wrong country code " in {
+      "we received a wrong country code from backend service " in {
 
-        val summaryListRows = IncomeFromOverseasPensionsCYAViewHelper.summaryListRows(anIncomeFromOverseasPensionsViewModel, taxYear)
+        val wrongOverseasIncomePensionSchemes = Seq(
+          PensionScheme(
+            alphaThreeCode = Some("ABC"),
+            alphaTwoCode = None,
+            pensionPaymentAmount = Some(1999.99),
+            pensionPaymentTaxPaid = Some(1999.99),
+            specialWithholdingTaxQuestion = Some(true),
+            specialWithholdingTaxAmount = Some(1999.99),
+            foreignTaxCreditReliefQuestion = Some(false),
+            taxableAmount = Some(1999.99)
+          ),
+          PensionScheme(
+            alphaThreeCode = Some("XXX"),
+            alphaTwoCode = None,
+            pensionPaymentAmount = Some(2000.00),
+            pensionPaymentTaxPaid = Some(400.00),
+            specialWithholdingTaxQuestion = Some(true),
+            specialWithholdingTaxAmount = Some(400.00),
+            foreignTaxCreditReliefQuestion = Some(false),
+            taxableAmount = Some(1600.00)
+          ))
+
+        val updatedModel = anIncomeFromOverseasPensionsViewModel.copy(
+          overseasIncomePensionSchemes = wrongOverseasIncomePensionSchemes
+        )
+
+        val summaryListRows = IncomeFromOverseasPensionsCYAViewHelper.summaryListRows(updatedModel, taxYear)
 
         summaryListRows.length shouldBe 2
         assertRowForPaymentsFromOverseasPensions(summaryListRows.head, "Yes")
-        assertRowForOverseasPensionSchemes(summaryListRows(1), "FRA, GER")
+        assertRowForOverseasPensionSchemes(summaryListRows(1), "N/A, N/A")
       }
 
       "we selected 'Yes' for paymentsFromOverseasPensionsQuestion and yet somehow did not pass a pension income " in {

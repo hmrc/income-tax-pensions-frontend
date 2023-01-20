@@ -90,7 +90,7 @@ class PensionOverseasIncomeCountryController @Inject()(authAction: AuthorisedAct
             if (validateCountryIndex(index, pensionSchemeList)) {
               val updatedCyaModel = index match {
                 case Some(value) =>
-                  val scheme = pensionSchemeList(value).copy(countryCode = Some(country))
+                  val scheme = pensionSchemeList(value).copy(alphaTwoCode = Some(country))
                   data.pensions.copy(
                     incomeFromOverseasPensions = data.pensions.incomeFromOverseasPensions.copy(
                       overseasIncomePensionSchemes = pensionSchemeList.updated(value, scheme)
@@ -99,7 +99,7 @@ class PensionOverseasIncomeCountryController @Inject()(authAction: AuthorisedAct
                   val currentSchemes = pensionSchemeList
                   data.pensions.copy(
                     incomeFromOverseasPensions = data.pensions.incomeFromOverseasPensions.copy(
-                      overseasIncomePensionSchemes = currentSchemes ++ Seq(PensionScheme(Some(country)))
+                      overseasIncomePensionSchemes = currentSchemes ++ Seq(PensionScheme(alphaTwoCode = Some(country)))
                     ))
               }
               pensionSessionService.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear, data.isPriorSubmission)(

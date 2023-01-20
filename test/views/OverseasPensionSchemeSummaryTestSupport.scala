@@ -41,7 +41,7 @@ class OverseasPensionSchemeSummaryTestSupport extends ViewUnitTest {
   trait CommonExpectedResults {
     val expectedCaption: Int => String
     val expectedTitle: String
-    val countryCode: String
+    val alphaTwoCode: String
     val countryCodeValue: String
     val pensionPayments: String
     val pensionPaymentsValue: String
@@ -59,7 +59,7 @@ class OverseasPensionSchemeSummaryTestSupport extends ViewUnitTest {
   object CommonExpectedEN extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Income from overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
     val expectedTitle: String = "Pension scheme summary"
-    val countryCode: String = "Country"
+    val alphaTwoCode: String = "Country"
     val countryCodeValue: String = "France"
     val pensionPayments: String = "Pensions payments"
     val pensionPaymentsValue: String = "Amount: £1,999.99 Non-uk tax: £1,999.99"
@@ -77,7 +77,7 @@ class OverseasPensionSchemeSummaryTestSupport extends ViewUnitTest {
   object CommonExpectedCY extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Income from overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
     val expectedTitle: String = "Pension scheme summary"
-    val countryCode: String = "Country"
+    val alphaTwoCode: String = "Country"
     val countryCodeValue: String = "France"
     val pensionPayments: String = "Pensions payments"
     val pensionPaymentsValue: String = "Amount: £1,999.99 Non-uk tax: £1,999.99"
@@ -106,7 +106,7 @@ class OverseasPensionSchemeSummaryTestSupport extends ViewUnitTest {
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
         val overseasIncomePensionSchemes = IncomeFromOverseasPensionsViewModel(Some(true), Seq(
           PensionScheme(
-            countryCode = Some("FR"),
+            alphaTwoCode = Some("FR"),
             pensionPaymentAmount = Some(1999.99),
             pensionPaymentTaxPaid = Some(1999.99),
             specialWithholdingTaxQuestion = Some(true),
@@ -125,7 +125,7 @@ class OverseasPensionSchemeSummaryTestSupport extends ViewUnitTest {
         h1Check(userScenario.commonExpectedResults.expectedTitle)
         captionCheck(expectedCaption(taxYearEOY), captionSelector)
 
-        textOnPageCheck(userScenario.commonExpectedResults.countryCode, selectors.getRowKey(1))
+        textOnPageCheck(userScenario.commonExpectedResults.alphaTwoCode, selectors.getRowKey(1))
         textOnPageCheck(userScenario.commonExpectedResults.countryCodeValue, selectors.getRowValue(1))
         linkCheck(userScenario.commonExpectedResults.change, selectors.getRowChange(1), controllers.pensions.incomeFromOverseasPensions.routes.PensionOverseasIncomeCountryController.show(taxYearEOY, None).url)
 
@@ -152,7 +152,7 @@ class OverseasPensionSchemeSummaryTestSupport extends ViewUnitTest {
         implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = getUserSession(userScenario.isAgent)
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
         val minPensionScheme = IncomeFromOverseasPensionsViewModel(Some(true), Seq(PensionScheme(
-          countryCode = Some("FR"),
+          alphaTwoCode = Some("FR"),
           pensionPaymentAmount = Some(1999.99),
           pensionPaymentTaxPaid = Some(1999.99),
           specialWithholdingTaxQuestion = Some(false),
@@ -171,7 +171,7 @@ class OverseasPensionSchemeSummaryTestSupport extends ViewUnitTest {
         h1Check(userScenario.commonExpectedResults.expectedTitle)
         captionCheck(expectedCaption(taxYearEOY), captionSelector)
 
-        textOnPageCheck(userScenario.commonExpectedResults.countryCode, selectors.getRowKey(1))
+        textOnPageCheck(userScenario.commonExpectedResults.alphaTwoCode, selectors.getRowKey(1))
         textOnPageCheck(userScenario.commonExpectedResults.countryCodeValue, selectors.getRowValue(1))
         linkCheck(userScenario.commonExpectedResults.change, selectors.getRowChange(1), controllers.pensions.incomeFromOverseasPensions.routes.PensionOverseasIncomeCountryController.show(taxYearEOY, None).url)
 
