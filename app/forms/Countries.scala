@@ -37,7 +37,14 @@ object Countries {
     lines.foldLeft(List[(String, String)]()) {
       (acc, item) =>
         val lineArray = item.split("=")
-        val (countryCode, countryName) = (lineArray.head, lineArray.last)
+        val (countryCode, countryName) = {
+          try {
+            (lineArray.head, lineArray.last)
+          }
+          catch {
+            case e => throw new RuntimeException("Could not read country data from : location-autocomplete-canonical-list.json ")
+          }
+        }
         (countryCode -> countryName) :: acc
     }.toMap
   }
