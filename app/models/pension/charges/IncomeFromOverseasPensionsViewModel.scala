@@ -56,7 +56,8 @@ object EncryptedIncomeFromOverseasPensionsViewModel {
 }
 
 case class EncryptedPensionSchemeSummary(
-                                          countryCode: Option[EncryptedValue] = None,
+                                          alphaThreeCode: Option[EncryptedValue] = None,
+                                          alphaTwoCode: Option[EncryptedValue] = None,
                                           pensionPaymentAmount: Option[EncryptedValue] = None,
                                           pensionPaymentTaxPaid: Option[EncryptedValue] = None,
                                           specialWithholdingTaxQuestion: Option[EncryptedValue] = None,
@@ -68,7 +69,8 @@ case class EncryptedPensionSchemeSummary(
 
   def decrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): PensionScheme =
     PensionScheme(
-      countryCode = countryCode.map(_.decrypted[String]),
+      alphaThreeCode = alphaThreeCode.map(_.decrypted[String]),
+      alphaTwoCode = alphaTwoCode.map(_.decrypted[String]),
       pensionPaymentAmount = pensionPaymentAmount.map(_.decrypted[BigDecimal]),
       pensionPaymentTaxPaid = pensionPaymentTaxPaid.map(_.decrypted[BigDecimal]),
       specialWithholdingTaxQuestion = specialWithholdingTaxQuestion.map(_.decrypted[Boolean]),
@@ -85,7 +87,8 @@ object EncryptedPensionSchemeSummary {
 
 
 case class PensionScheme(
-                          countryCode: Option[String] = None,
+                          alphaThreeCode: Option[String] = None,
+                          alphaTwoCode: Option[String] = None,
                           pensionPaymentAmount: Option[BigDecimal] = None,
                           pensionPaymentTaxPaid: Option[BigDecimal] = None,
                           specialWithholdingTaxQuestion: Option[Boolean] = None,
@@ -95,7 +98,8 @@ case class PensionScheme(
 
   def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedPensionSchemeSummary = {
     EncryptedPensionSchemeSummary(
-      countryCode = countryCode.map(_.encrypted),
+      alphaThreeCode = alphaThreeCode.map(_.encrypted),
+      alphaTwoCode = alphaTwoCode.map(_.encrypted),
       pensionPaymentAmount = pensionPaymentAmount.map(_.encrypted),
       pensionPaymentTaxPaid = pensionPaymentTaxPaid.map(_.encrypted),
       specialWithholdingTaxQuestion = specialWithholdingTaxQuestion.map(_.encrypted),

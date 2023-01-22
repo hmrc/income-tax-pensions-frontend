@@ -36,7 +36,7 @@ object OverseasPensionSchemeSummaryPage {
     OverseasPensionSchemeSummaryPage(taxYear, Seq(
       Some(summaryListRow(
         HtmlContent(Messages("incomeFromOverseasPensions.summary.country")),
-        HtmlContent(getCountryFromCodeWithDefault(overSeasPensions.countryCode)),
+        HtmlContent(getCountryFromCodeWithDefault(overSeasPensions.alphaTwoCode)),
         actions = Seq((Call("GET", controllers.pensions.incomeFromOverseasPensions.routes.PensionOverseasIncomeCountryController.show(taxYear, index).url), Messages("common.change"), None)))),
       Some(summaryListRow(
         HtmlContent(Messages("incomeFromOverseasPensions.summary.pension.payments")),

@@ -24,7 +24,8 @@ object IncomeFromOverseasPensionsViewModelBuilder {
     paymentsFromOverseasPensionsQuestion = Some(true),
     overseasIncomePensionSchemes = Seq(
       PensionScheme(
-        countryCode = Some("FRA"),
+        alphaThreeCode = Some("FRA"),
+        alphaTwoCode = Some("FR"),
         pensionPaymentAmount = Some(1999.99),
         pensionPaymentTaxPaid = Some(1999.99),
         specialWithholdingTaxQuestion = Some(true),
@@ -33,7 +34,8 @@ object IncomeFromOverseasPensionsViewModelBuilder {
         taxableAmount = Some(1999.99)
       ),
       PensionScheme(
-        countryCode = Some("GER"),
+        alphaThreeCode = Some("DEU"),
+        alphaTwoCode = Some("DE"),
         pensionPaymentAmount = Some(2000.00),
         pensionPaymentTaxPaid = Some(400.00),
         specialWithholdingTaxQuestion = Some(true),
@@ -48,7 +50,8 @@ object IncomeFromOverseasPensionsViewModelBuilder {
     paymentsFromOverseasPensionsQuestion = Some(true),
     overseasIncomePensionSchemes = Seq(
       PensionScheme(
-        countryCode = Some("FRA"),
+        alphaThreeCode = Some("FRA"),
+        alphaTwoCode = Some("FR"),
         pensionPaymentAmount = Some(2999.99),
         pensionPaymentTaxPaid = Some(999.99),
         specialWithholdingTaxQuestion = Some(true),

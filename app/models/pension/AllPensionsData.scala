@@ -16,6 +16,7 @@
 
 package models.pension
 
+import forms.Countries
 import models.mongo.PensionsCYAModel
 import models.pension.charges._
 import models.pension.employmentPensions.EmploymentPensions
@@ -149,7 +150,8 @@ object AllPensionsData {
   private def fromForeignPensionToPensionScheme(foreignPension: Seq[ForeignPension]) = {
     foreignPension.map(fP =>
       PensionScheme(
-        countryCode = Some(fP.countryCode),
+        alphaThreeCode = Some(fP.countryCode),
+        alphaTwoCode = Countries.get2dCountryCodeFrom3d(fP.countryCode),
         pensionPaymentAmount = fP.amountBeforeTax,
         pensionPaymentTaxPaid = fP.taxTakenOff,
         specialWithholdingTaxQuestion = Some(fP.specialWithholdingTax.isDefined),
