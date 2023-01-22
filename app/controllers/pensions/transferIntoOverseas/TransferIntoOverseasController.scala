@@ -19,6 +19,7 @@ package controllers.pensions.transferIntoOverseas
 import config.{AppConfig, ErrorHandler}
 import controllers.predicates.ActionsProvider
 import controllers.pensions.routes.OverseasPensionsSummaryController
+import forms.TransferIntoOverseasForm.yesNoForm
 import forms.YesNoForm
 import models.User
 import models.mongo.PensionsUserData
@@ -44,10 +45,6 @@ class TransferIntoOverseasController @Inject()(actionsProvider: ActionsProvider,
                                                 clock: Clock,
                                                 ec: ExecutionContext)
   extends FrontendController(cc) with I18nSupport with SessionHelper {
-
-  private def yesNoForm(user: User): Form[Boolean] = YesNoForm.yesNoForm(
-    missingInputError = s"overseasPension.transferIntoOverseas.error.noEntry.${if (user.isAgent) "agent" else "individual"}"
-  )
 
   def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit sessionData =>
