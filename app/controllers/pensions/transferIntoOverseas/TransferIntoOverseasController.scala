@@ -82,10 +82,12 @@ class TransferIntoOverseasController @Inject()(actionsProvider: ActionsProvider,
 
     pensionSessionService.createOrUpdateSessionData(request.user,
       updatedCyaModel, taxYear, pensionUserData.isPriorSubmission)(errorHandler.internalServerError()) {
-      if(transferPensionSavings)
+      if(transferPensionSavings) {
         Redirect(controllers.pensions.transferIntoOverseasPension.routes.OverseasTransferChargeController.show(taxYear))
-      else
-        Redirect(OverseasPensionsSummaryController.show(taxYear))
+      } else {
+        // TODO: Update once `/transfer-charge-summary` Transfer Charge Summary page is available. Redirecting to itself
+        Redirect(controllers.pensions.transferIntoOverseas.routes.TransferIntoOverseasController.show(taxYear))
+      }
     }
   }
 }
