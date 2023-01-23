@@ -255,6 +255,6 @@ GET         /:taxYear/overseas-pensions/income-from-overseas-pensions/pension-ov
 GET         /:taxYear/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-paid                                    controllers.pensions.overseasTransferCharges.OverseasTransferChargePaidController.show(taxYear: Int)
 POST        /:taxYear/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-paid                                    controllers.pensions.overseasTransferCharges.OverseasTransferChargePaidController.submit(taxYear: Int)
 
-GET         /:taxYear/overseas-pensions/overseas-transfer-charges/transfer-charge                                                  controllers.pensions.transferIntoOverseasPension.OverseasTransferChargeController.show(taxYear: Int)
-POST        /:taxYear/overseas-pensions/overseas-transfer-charges/transfer-charge                                                  controllers.pensions.transferIntoOverseasPension.OverseasTransferChargeController.submit(taxYear: Int)
+GET         /:taxYear/overseas-pensions/overseas-transfer-charges/transfer-charge                                                  controllers.pensions.overseasTransferCharges.OverseasTransferChargeController.show(taxYear: Int)
+POST        /:taxYear/overseas-pensions/overseas-transfer-charges/transfer-charge                                                  controllers.pensions.overseasTransferCharges.OverseasTransferChargeController.submit(taxYear: Int)
 

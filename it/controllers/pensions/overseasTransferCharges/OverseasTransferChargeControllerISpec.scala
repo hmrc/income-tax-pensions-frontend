@@ -14,15 +14,14 @@
  * limitations under the License.
  */
 
-package controllers.pensions.paymentsIntoOverseasPensions
+package controllers.pensions.overseasTransferCharges
 
 import builders.PensionsCYAModelBuilder.{aPensionsCYAEmptyModel, aPensionsCYAModel}
 import controllers.ControllerSpec.PreferredLanguages.{English, Welsh}
 import controllers.ControllerSpec.UserTypes.{Agent, Individual}
 import controllers.ControllerSpec._
 import controllers.YesNoAmountControllerSpec
-import models.mongo.PensionsUserData
-import models.pension.charges.{PaymentsIntoOverseasPensionsViewModel, TransfersIntoOverseasPensionsViewModel}
+import models.pension.charges.TransfersIntoOverseasPensionsViewModel
 import play.api.http.Status.{BAD_REQUEST, OK}
 import play.api.libs.ws.WSResponse
 

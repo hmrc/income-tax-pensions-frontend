@@ -14,22 +14,21 @@
  * limitations under the License.
  */
 
-package controllers.pensions.transferIntoOverseasPension
+package controllers.pensions.overseasTransferCharges
 
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.routes.OverseasPensionsSummaryController
 import controllers.predicates.ActionsProvider
-import forms.{AmountForm, RadioButtonAmountForm}
-import models.{AuthorisationRequest, User}
+import forms.RadioButtonAmountForm
+import models.User
 import models.mongo.{PensionsCYAModel, PensionsUserData}
 import models.requests.UserSessionDataRequest
 import play.api.data.Form
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, ActionBuilder, AnyContent, MessagesControllerComponents, Request}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
-import views.html.pensions.transferIntoOverseasPension.OverseasTransferChargeView
+import views.html.pensions.overseasTransferCharges.OverseasTransferChargeView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -86,7 +85,7 @@ class OverseasTransferChargeController @Inject()(actionsProvider: ActionsProvide
 
     pensionSessionService.createOrUpdateSessionData(request.user,
       updatedCyaModel, taxYear, pensionUserData.isPriorSubmission)(errorHandler.internalServerError()) {
-      Redirect(controllers.pensions.transferIntoOverseasPension.routes.OverseasTransferChargeController.show(taxYear))
+      Redirect(controllers.pensions.overseasTransferCharges.routes.OverseasTransferChargeController.show(taxYear))
     }
   }
 }
