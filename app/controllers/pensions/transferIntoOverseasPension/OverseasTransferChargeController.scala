@@ -38,49 +38,41 @@ class OverseasTransferChargeController @Inject()(actionsProvider: ActionsProvide
                                                 (implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport with SessionHelper {
 
-  def amountForm(implicit user:User): Form[(Boolean, Option[BigDecimal])] = {
+  def amountForm(implicit user: User): Form[(Boolean, Option[BigDecimal])] = {
     val agentOrIndividual = if (user.isAgent) "agent" else "individual"
     RadioButtonAmountForm.radioButtonAndAmountForm(
-    missingInputError = "transferIntoOverseasPension.overseasTransferCharge.error.noEntry",
-    emptyFieldKey = s"transferIntoOverseasPension.overseasTransferCharge.error.noAmountEntry.$agentOrIndividual",
-    wrongFormatKey = s"transferIntoOverseasPension.overseasTransferCharge.error.incorrectFormat.$agentOrIndividual",
-    minAmountKey = "common.error.amountNotZero",
-    exceedsMaxAmountKey = s"transferIntoOverseasPension.overseasTransferCharge.error.tooBig.$agentOrIndividual"
-  )}
+      missingInputError = "transferIntoOverseasPension.overseasTransferCharge.error.noEntry",
+      emptyFieldKey = s"transferIntoOverseasPension.overseasTransferCharge.error.noAmountEntry.$agentOrIndividual",
+      wrongFormatKey = s"transferIntoOverseasPension.overseasTransferCharge.error.incorrectFormat.$agentOrIndividual",
+      minAmountKey = "common.error.amountNotZero",
+      exceedsMaxAmountKey = s"transferIntoOverseasPension.overseasTransferCharge.error.tooBig.$agentOrIndividual"
+    )
+  }
 
 
   def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit sessionData =>
-      sessionData.optPensionsUserData match {
-        case Some(pensionData) =>
-          val transferChargeAmount: Option[BigDecimal] = pensionData.pensions.transfersIntoOverseasPensions.overseasTransferChargeAmount
-          val transferCharge: Option[Boolean] = pensionData.pensions.transfersIntoOverseasPensions.overseasTransferCharge
-
-          (transferCharge, transferChargeAmount) match {
-            case (Some(a), amount) => Future.successful(Ok(view(amountForm(sessionData.user).fill((a, amount)), taxYear)))
-            case _ =>  Future.successful(Ok(view(amountForm(sessionData.user), taxYear)))
-          }
-
-        case None => Future.successful(Redirect(OverseasPensionsSummaryController.show(taxYear)))
+      val transferChargeAmount: Option[BigDecimal] = sessionData.pensionsUserData.pensions.transfersIntoOverseasPensions.overseasTransferChargeAmount
+      val transferCharge: Option[Boolean] = sessionData.pensionsUserData.pensions.transfersIntoOverseasPensions.overseasTransferCharge
+      (transferCharge, transferChargeAmount) match {
+        case (Some(a), amount) => Future.successful(Ok(view(amountForm(sessionData.user).fill((a, amount)), taxYear)))
+        case _ => Future.successful(Ok(view(amountForm(sessionData.user), taxYear)))
       }
   }
 
+
   def submit(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit sessionUserData =>
-      sessionUserData.optPensionsUserData match {
-        case Some(pensionsUserData) =>
-          amountForm(sessionUserData.user).bindFromRequest.fold(
-            formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
-            yesNoAmount => {
+      amountForm(sessionUserData.user).bindFromRequest.fold(
+        formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
+        yesNoAmount => {
 
-              (yesNoAmount._1, yesNoAmount._2) match {
-                case (true, amount) => updateSessionData(pensionsUserData, yesNo = true, amount, taxYear)
-                case (false, _) => updateSessionData(pensionsUserData, yesNo = false, None, taxYear)
-              }
-            }
-          )
-        case _ => Future.successful(Redirect(OverseasPensionsSummaryController.show(taxYear)))
-      }
+          (yesNoAmount._1, yesNoAmount._2) match {
+            case (true, amount) => updateSessionData(sessionUserData.pensionsUserData, yesNo = true, amount, taxYear)
+            case (false, _) => updateSessionData(sessionUserData.pensionsUserData, yesNo = false, None, taxYear)
+          }
+        }
+      )
   }
 
   private def updateSessionData[T](pensionUserData: PensionsUserData,
