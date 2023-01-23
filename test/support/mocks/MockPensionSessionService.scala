@@ -18,7 +18,7 @@ package support.mocks
 
 import connectors.httpParsers.IncomeTaxUserDataHttpParser.IncomeTaxUserDataResponse
 import models._
-import models.mongo.PensionsUserData
+import models.mongo.{DatabaseError, PensionsUserData}
 import org.scalamock.handlers._
 import org.scalamock.scalatest.MockFactory
 import play.api.mvc.{Request, Result}
@@ -52,6 +52,14 @@ trait MockPensionSessionService extends MockFactory {
   CallHandler2[Int, User, Future[Either[Unit, Option[PensionsUserData]]]] = {
     (mockPensionSessionService.getPensionSessionData(_: Int, _: User))
       .expects(taxYear, *)
+      .returns(Future.successful(result))
+      .anyNumberOfTimes()
+  }
+
+
+  def mockCreateOrUpdateSessionData(userData: PensionsUserData, result: Either[DatabaseError, Unit] = Right(())): Unit = {
+    (mockPensionSessionService.createOrUpdateSessionData(_: PensionsUserData))
+      .expects(userData)
       .returns(Future.successful(result))
       .anyNumberOfTimes()
   }

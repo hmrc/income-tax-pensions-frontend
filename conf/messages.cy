@@ -40,7 +40,7 @@ common.uKPensionIncome.caption = UK pension income for 6 April {0} to 5 April {1
 common.lifetimeAllowance.caption = Annual and lifetime allowances for 6 April {0} to 5 April {1}
 common.overseasPensions.caption = Overseas pensions for 6 April {0} to 5 April {1}
 common.incomeFromOverseasPensions.caption = Income from overseas pensions for 6 April {0} to 5 April {1}
-common.transferIntoOverseasPension.caption = Transfers into overseas pensions for 6 April {0} to 5 April {1}
+common.overseasTransferCharges.caption = Transfers into overseas pensions for 6 April {0} to 5 April {1}
 common.return.overview.buttonText = Return to overview
 common.currencyAmount = £{0}
 common.total = Total
@@ -906,6 +906,10 @@ overseasPensionIncomeSummary.hidden = Change Overseas pension income
 
 ############################################## TRANSFER INTO OVERSEAS PENSION ##############################################
 
+#Overseas Transfer Charges Paid Status
+overseasTransferCharges.overseasTransferChargesPaid.title = Did a UK pension scheme pay the transfer charge to HMRC?
+overseasTransferCharges.overseasTransferChargesPaid.error.noEntry = Select yes if a UK pension scheme paid the transfer charge to HMRC
+
 #Overseas Transfer Charge
 transferIntoOverseasPension.overseasTransferCharge.title = Did the amount result in an overseas transfer charge?
 transferIntoOverseasPension.overseasTransferCharge.amount.text = Amount that resulted in a transfer charge, in pounds
@@ -916,3 +920,4 @@ transferIntoOverseasPension.overseasTransferCharge.error.incorrectFormat.individ
 transferIntoOverseasPension.overseasTransferCharge.error.incorrectFormat.agent = Enter the amount that resulted in a transfer charge in the correct format
 transferIntoOverseasPension.overseasTransferCharge.error.tooBig.individual = The amount on which you paid an overseas transfer charge must be less than £100,000,000,000
 transferIntoOverseasPension.overseasTransferCharge.error.tooBig.agent = The amount that resulted in a transfer charge must be less than £100,000,000,000
+

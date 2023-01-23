@@ -14,13 +14,16 @@
  * limitations under the License.
  */
 
-package models.requests
+package controllers.pensions.overseasTransferCharges
 
-import models.User
-import models.mongo.PensionsUserData
-import play.api.mvc.{Request, WrappedRequest}
+import forms.YesNoForm
+import play.api.data.Form
 
-case class UserSessionDataRequest[T](pensionsUserData: PensionsUserData,
-                                     user: User,
-                                     request: Request[T]) extends WrappedRequest[T](request)
+import javax.inject.Singleton
 
+@Singleton
+class FormsProvider() {
+  def overseasTransferChargePaidForm: Form[Boolean] = YesNoForm.yesNoForm(
+    missingInputError = "overseasTransferCharges.overseasTransferChargesPaid.error.noEntry"
+  )
+}

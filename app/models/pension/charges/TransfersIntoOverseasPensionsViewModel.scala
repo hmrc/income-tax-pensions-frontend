@@ -25,6 +25,7 @@ import utils.EncryptorInstances.{bigDecimalEncryptor, booleanEncryptor, stringEn
 import utils.{EncryptedValue, SecureGCMCipher}
 
 case class TransfersIntoOverseasPensionsViewModel(
+                                                   transfersIntoOverseas: Option[Boolean] = None,
                                                    transferPensionSavings: Option[Boolean] = None,
                                                    overseasTransferCharge: Option[Boolean] = None,
                                                    overseasTransferChargeAmount: Option[BigDecimal] = None,
@@ -32,15 +33,17 @@ case class TransfersIntoOverseasPensionsViewModel(
                                                    pensionSchemeTransferChargeAmount: Option[BigDecimal] = None,
                                                    transferPensionScheme: Seq[TransferPensionScheme] = Nil) {
 
+
   def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedTransfersIntoOverseasPensionsViewModel =
     EncryptedTransfersIntoOverseasPensionsViewModel(
+      transfersIntoOverseas = transfersIntoOverseas.map(_.encrypted),
       transferPensionSavings = transferPensionSavings.map(_.encrypted),
       overseasTransferCharge = overseasTransferCharge.map(_.encrypted),
       overseasTransferChargeAmount = overseasTransferChargeAmount.map(_.encrypted),
       pensionSchemeTransferCharge = pensionSchemeTransferCharge.map(_.encrypted),
       pensionSchemeTransferChargeAmount = pensionSchemeTransferChargeAmount.map(_.encrypted),
       transferPensionScheme = transferPensionScheme.map(_.encrypted())
-  )
+    )
 }
 
 object TransfersIntoOverseasPensionsViewModel {
@@ -48,6 +51,7 @@ object TransfersIntoOverseasPensionsViewModel {
 }
 
 case class EncryptedTransfersIntoOverseasPensionsViewModel(
+                                                            transfersIntoOverseas: Option[EncryptedValue] = None,
                                                             transferPensionSavings: Option[EncryptedValue] = None,
                                                             overseasTransferCharge: Option[EncryptedValue] = None,
                                                             overseasTransferChargeAmount: Option[EncryptedValue] = None,
@@ -57,6 +61,7 @@ case class EncryptedTransfersIntoOverseasPensionsViewModel(
 
   def decrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): TransfersIntoOverseasPensionsViewModel =
     TransfersIntoOverseasPensionsViewModel(
+      transfersIntoOverseas = transfersIntoOverseas.map(_.decrypted[Boolean]),
       transferPensionSavings = transferPensionSavings.map(_.decrypted[Boolean]),
       overseasTransferCharge = overseasTransferCharge.map(_.decrypted[Boolean]),
       overseasTransferChargeAmount = overseasTransferChargeAmount.map(_.decrypted[BigDecimal]),
@@ -76,7 +81,7 @@ case class TransferPensionScheme(
                                   pensionSchemeTaxReference: Option[String],
                                   qualifyingRecognisedOverseasPensionScheme: Option[String],
                                   providerAddress: Option[String],
-                                  countryCode: Option[String]){
+                                  countryCode: Option[String]) {
 
   def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedTransferPensionScheme = {
     EncryptedTransferPensionScheme(
@@ -96,7 +101,7 @@ case class EncryptedTransferPensionScheme(
                                            pensionSchemeTaxReference: Option[EncryptedValue],
                                            qualifyingRecognisedOverseasPensionScheme: Option[EncryptedValue],
                                            providerAddress: Option[EncryptedValue],
-                                           countryCode: Option[EncryptedValue]){
+                                           countryCode: Option[EncryptedValue]) {
 
   def decrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): TransferPensionScheme =
     TransferPensionScheme(

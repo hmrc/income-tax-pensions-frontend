@@ -55,7 +55,7 @@ class UserSessionDataRequestRefinerActionSpec extends UnitTest
       mockGetPensionSessionData(taxYear, Right(Some(aPensionsUserData)))
 
       await(underTest.refine(anAuthorisationRequest)) shouldBe
-        Right(UserSessionDataRequest(Some(aPensionsUserData), anAuthorisationRequest.user, anAuthorisationRequest.request))
+        Right(UserSessionDataRequest(aPensionsUserData, anAuthorisationRequest.user, anAuthorisationRequest.request))
     }
   }
 }

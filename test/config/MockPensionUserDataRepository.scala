@@ -17,10 +17,11 @@
 package config
 
 import models.mongo.{DatabaseError, PensionsUserData}
-import org.scalamock.handlers.{CallHandler2}
+import org.scalamock.handlers.{CallHandler1, CallHandler2}
 import org.scalamock.scalatest.MockFactory
 import repositories.PensionsUserDataRepository
 import models.User
+
 import scala.concurrent.Future
 
 trait MockPensionUserDataRepository extends MockFactory {
@@ -36,10 +37,10 @@ trait MockPensionUserDataRepository extends MockFactory {
       .anyNumberOfTimes()
   }
 
-  def mockCreateOrUpdate(PensionUserData: PensionsUserData, user: User,
-                         response: Either[DatabaseError, Unit]): CallHandler2[PensionsUserData, User, Future[Either[DatabaseError, Unit]]] = {
-    (mockPensionUserDataRepository.createOrUpdate(_: PensionsUserData, _: User))
-      .expects(PensionUserData, user)
+  def mockCreateOrUpdate(PensionUserData: PensionsUserData,
+                         response: Either[DatabaseError, Unit]): CallHandler1[PensionsUserData, Future[Either[DatabaseError, Unit]]] = {
+    (mockPensionUserDataRepository.createOrUpdate(_: PensionsUserData))
+      .expects(PensionUserData)
       .returns(Future.successful(response))
       .anyNumberOfTimes()
   }

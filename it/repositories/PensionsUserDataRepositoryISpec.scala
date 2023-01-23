@@ -112,7 +112,7 @@ class PensionsUserDataRepositoryISpec extends IntegrationTest with FutureAwaits 
   "update with invalid encryption" should {
     "fail to add data" in new EmptyDatabase {
       countFromOtherDatabase mustBe 0
-      val res: Either[DatabaseError, Unit] = await(repoWithInvalidEncryption.createOrUpdate(userDataOne, userOne))
+      val res: Either[DatabaseError, Unit] = await(repoWithInvalidEncryption.createOrUpdate(userDataOne))
       res mustBe Left(EncryptionDecryptionError(
         "Key being used is not valid. It could be due to invalid encoding, wrong length or uninitialized for encrypt Invalid AES key length: 2 bytes"))
     }
@@ -139,7 +139,7 @@ class PensionsUserDataRepositoryISpec extends IntegrationTest with FutureAwaits 
   "clear" should {
     "remove a record" in new EmptyDatabase {
       count mustBe 0
-      await(repo.createOrUpdate(userDataOne, userOne)) mustBe Right()
+      await(repo.createOrUpdate(userDataOne)) mustBe Right()
       count mustBe 1
 
       await(repo.clear(taxYear, userOne)) mustBe true
@@ -158,42 +158,42 @@ class PensionsUserDataRepositoryISpec extends IntegrationTest with FutureAwaits 
       await(ensureIndexes)
       count mustBe 0
 
-      private val res = await(repo.createOrUpdate(userDataOne, userOne))
+      private val res = await(repo.createOrUpdate(userDataOne))
       res mustBe Right()
       count mustBe 1
 
-      private val res2 = await(repo.createOrUpdate(userDataOne.copy(sessionId = "1234567890"), userOne))
+      private val res2 = await(repo.createOrUpdate(userDataOne.copy(sessionId = "1234567890")))
       res2.left.get.message must include("Command failed with error 11000 (DuplicateKey)")
       count mustBe 1
     }
 
     "create a document in collection when one does not exist" in new EmptyDatabase {
-      await(repo.createOrUpdate(userDataOne, userOne)) mustBe Right()
+      await(repo.createOrUpdate(userDataOne)) mustBe Right()
       count mustBe 1
     }
 
     "create a document in collection with all fields present" in new EmptyDatabase {
-      await(repo.createOrUpdate(userDataFull, userOne)) mustBe Right()
+      await(repo.createOrUpdate(userDataFull)) mustBe Right()
       count mustBe 1
     }
 
     "update a document in collection when one already exists" in new EmptyDatabase {
-      await(repo.createOrUpdate(userDataOne, userOne)) mustBe Right()
+      await(repo.createOrUpdate(userDataOne)) mustBe Right()
       count mustBe 1
 
       private val updatedPensionsUserData = userDataOne.copy(pensions = pensionCYAModel)
 
-      await(repo.createOrUpdate(updatedPensionsUserData, userOne)) mustBe Right()
+      await(repo.createOrUpdate(updatedPensionsUserData)) mustBe Right()
       count mustBe 1
     }
 
     "create a new document when the same documents exists but the sessionId is different" in new EmptyDatabase {
-      await(repo.createOrUpdate(userDataOne, userOne)) mustBe Right()
+      await(repo.createOrUpdate(userDataOne)) mustBe Right()
       count mustBe 1
 
       private val newUserData = userDataOne.copy(sessionId = UUID.randomUUID)
 
-      await(repo.createOrUpdate(newUserData, userOne)) mustBe Right()
+      await(repo.createOrUpdate(newUserData)) mustBe Right()
       count mustBe 2
     }
   }
@@ -203,7 +203,7 @@ class PensionsUserDataRepositoryISpec extends IntegrationTest with FutureAwaits 
       private val now = DateTime.now(DateTimeZone.UTC)
       private val data = userDataOne.copy(lastUpdated = now)
 
-      await(repo.createOrUpdate(data, userOne)) mustBe Right()
+      await(repo.createOrUpdate(data)) mustBe Right()
       count mustBe 1
 
       private val findResult = await(repo.find(data.taxYear, userOne))
@@ -213,7 +213,7 @@ class PensionsUserDataRepositoryISpec extends IntegrationTest with FutureAwaits 
     }
 
     "find a document in collection with all fields present" in new EmptyDatabase {
-      await(repo.createOrUpdate(userDataFull, userOne)) mustBe Right()
+      await(repo.createOrUpdate(userDataFull)) mustBe Right()
       count mustBe 1
 
       val findResult: Either[DatabaseError, Option[PensionsUserData]] = {
@@ -230,7 +230,7 @@ class PensionsUserDataRepositoryISpec extends IntegrationTest with FutureAwaits 
 
   "the set indexes" should {
     "enforce uniqueness" in new EmptyDatabase {
-      await(repo.createOrUpdate(userDataOne, userOne)) mustBe Right()
+      await(repo.createOrUpdate(userDataOne)) mustBe Right()
       count mustBe 1
 
       private val encryptedPensionsUserData: EncryptedPensionsUserData = encryptionService.encryptUserData(userDataOne)

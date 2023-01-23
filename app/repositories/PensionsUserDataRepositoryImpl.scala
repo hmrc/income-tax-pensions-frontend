@@ -76,7 +76,34 @@ class PensionsUserDataRepositoryImpl @Inject()(mongo: MongoComponent, appConfig:
     }
   }
 
-  def createOrUpdate[T](userData: PensionsUserData, user: User): Future[Either[DatabaseError, Unit]] = {
+
+  def findNoOpt[T](taxYear: Int, user: User): Future[Either[DatabaseError, PensionsUserData]] = {
+
+    lazy val start = "[PensionsUserDataRepositoryImpl][find]"
+
+    val queryFilter = filter(user.sessionId, user.mtditid, user.nino, taxYear)
+    val update = set("lastUpdated", toBson(DateTime.now(DateTimeZone.UTC))(MongoJodaFormats.dateTimeWrites))
+    val options = FindOneAndUpdateOptions().returnDocument(ReturnDocument.AFTER)
+
+    val findResult = collection.findOneAndUpdate(queryFilter, update, options).toFuture().map(Right(_)).recover {
+      case exception: Exception =>
+        pagerDutyLog(FAILED_TO_FIND_PENSIONS_DATA, s"$start Failed to find user data. Exception: ${exception.getMessage}")
+        Left(MongoError(exception.getMessage))
+    }
+
+    findResult.map {
+      case Left(error) => Left(error)
+      case Right(encryptedData) =>
+        Try {
+          encryptionService.decryptUserData(encryptedData)
+        }.toEither match {
+          case Left(exception: Exception) => handleEncryptionDecryptionException(exception, start)
+          case Right(decryptedData) => Right(decryptedData)
+        }
+    }
+  }
+
+  def createOrUpdate[T](userData: PensionsUserData): Future[Either[DatabaseError, Unit]] = {
 
     lazy val start = "[PensionsUserDataRepositoryImpl][update]"
 
@@ -110,7 +137,7 @@ class PensionsUserDataRepositoryImpl @Inject()(mongo: MongoComponent, appConfig:
       .map(_.exists(_.wasAcknowledged()))
 
   def mongoRecover[T](operation: String, pagerDutyKey:
-    PagerDutyKeys.Value, user: User): PartialFunction[Throwable, Option[T]] = new PartialFunction[Throwable, Option[T]] {
+  PagerDutyKeys.Value, user: User): PartialFunction[Throwable, Option[T]] = new PartialFunction[Throwable, Option[T]] {
 
     override def isDefinedAt(x: Throwable): Boolean = x.isInstanceOf[MongoException]
 
@@ -125,7 +152,7 @@ class PensionsUserDataRepositoryImpl @Inject()(mongo: MongoComponent, appConfig:
 }
 
 trait PensionsUserDataRepository {
-  def createOrUpdate[T](userData: PensionsUserData, user: User): Future[Either[DatabaseError, Unit]]
+  def createOrUpdate[T](userData: PensionsUserData): Future[Either[DatabaseError, Unit]]
 
   def find[T](taxYear: Int, user: User): Future[Either[DatabaseError, Option[PensionsUserData]]]
 

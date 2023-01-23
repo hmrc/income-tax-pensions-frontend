@@ -28,9 +28,10 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.SessionHelper
 import views.html.pensions.incomeFromOverseasPensions.PensionsSchemeSummary
 
-import javax.inject.Inject
-import scala.concurrent.ExecutionContext
+import javax.inject.{Inject, Singleton}
+import scala.concurrent.{ExecutionContext, Future}
 
+@Singleton
 class PensionSchemeSummaryController @Inject()(actionsProvider: ActionsProvider,
                                                pageView:  PensionsSchemeSummary,
                                                pensionSessionService: PensionSessionService
@@ -39,16 +40,10 @@ class PensionSchemeSummaryController @Inject()(actionsProvider: ActionsProvider,
   extends FrontendController(mcc) with I18nSupport with SessionHelper {
 
   def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) { implicit sessionUserData =>
-    sessionUserData.optPensionsUserData match {
-      case Some(pensionsUserData) => Ok(pageView(OverseasPensionSchemeSummaryPage.apply (taxYear, pensionsUserData, index)))
-      case _ => Redirect(PensionsSummaryController.show(taxYear)) //todo redirect overseas summary page
-    }
+    Ok(pageView(OverseasPensionSchemeSummaryPage.apply (taxYear, sessionUserData.pensionsUserData, index)))
   }
 
   def submit(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear)  { implicit sessionUserData =>
-    sessionUserData.optPensionsUserData match {
-      case Some(pensionsUserData) => Redirect(CountrySummaryListController.show(taxYear))
-      case _ => Redirect(PensionsSummaryController.show(taxYear)) //todo redirect overseas summary page
-    }
+      Redirect(CountrySummaryListController.show(taxYear))
   }
 }
