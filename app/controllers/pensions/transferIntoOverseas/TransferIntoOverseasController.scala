@@ -69,6 +69,7 @@ class TransferIntoOverseasController @Inject()(actionsProvider: ActionsProvider,
               updateSessionData(pensionsUserData, transferPensionSavings, taxYear)
             }
           )
+        case _ => Future.successful(Redirect(OverseasPensionsSummaryController.show(taxYear)))
       }
   }
 
