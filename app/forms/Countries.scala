@@ -32,8 +32,8 @@ object Countries {
       .toList
 
   val countriesThreeDigitMap : Map[String, String] = {
-    val filename = "conf/three-digit-country-code-to-country-name.csv"
-    val lines = Source.fromFile(filename).getLines.toList
+    val filename = "/three-digit-country-code-to-country-name.csv"
+    val lines = Source.fromInputStream(getClass.getResourceAsStream(filename)).mkString.split("\\n").toList
     lines.foldLeft(List[(String, String)]()) {
       (acc, item) =>
         val lineArray = item.split("=")
