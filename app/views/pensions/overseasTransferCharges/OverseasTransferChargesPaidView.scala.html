@@ -49,7 +49,7 @@
 
     @errorSummary(pageModel.form.errors.distinct)
 
-    @heading(titleForUse, Some(messages("common.overseasTransferCharges.caption", (pageModel.taxYear - 1).toString, pageModel.taxYear.toString)), "govuk-!-margin-bottom-2")
+    @heading(titleForUse, Some(messages("common.transferIntoOverseasPensions.caption", (pageModel.taxYear - 1).toString, pageModel.taxYear.toString)), "govuk-!-margin-bottom-2")
 
     @formWithCsrf(action = controllers.pensions.overseasTransferCharges.routes.OverseasTransferChargePaidController.submit(pageModel.taxYear)) {
         @inputRadio(

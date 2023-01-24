@@ -46,7 +46,7 @@ object RedirectService extends Logging {
   Either[Result, PensionsUserData] = {
     optUserData match {
       case Some(userData) => Right(userData)
-      case None => Left(Redirect(PensionsSummaryController.show(taxYear))) //No session data atm redirect to overseas transfer summary page
+      case None => Left(Redirect(OverseasPensionsSummaryController.show(taxYear))) //No session data atm redirect to overseas pensions summary page
     }
   }
 

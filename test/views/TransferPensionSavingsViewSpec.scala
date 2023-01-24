@@ -17,7 +17,7 @@
 package views
 
 import builders.TransfersIntoOverseasPensionsViewModelBuilder.aTransfersIntoOverseasPensionsViewModel
-import forms.TransferIntoOverseasForm.yesNoForm
+import forms.TransferPensionSavingsForm.yesNoForm
 import forms.YesNoForm
 import models.requests.UserSessionDataRequest
 import org.jsoup.Jsoup
@@ -26,7 +26,7 @@ import play.api.i18n.Messages
 import play.api.mvc.AnyContent
 import support.ViewUnitTest
 import views.TransferPensionSavingsViewSpec.Selectors.{captionSelector, continueButtonSelector}
-import views.html.pensions.transferIntoOverseasPensions.TransferIntoOverseasView
+import views.html.pensions.transferIntoOverseasPensions.TransferPensionSavingsView
 
 object TransferPensionSavingsViewSpec extends ViewUnitTest {
 
@@ -88,7 +88,7 @@ object TransferPensionSavingsViewSpec extends ViewUnitTest {
     UserScenario(isWelsh = true, isAgent = false, ExpectedContentsIndividualCY),
     UserScenario(isWelsh = true, isAgent = true, ExpectedContentsAgentCY))
 
-  private lazy val underTest = inject[TransferIntoOverseasView]
+  private lazy val underTest = inject[TransferPensionSavingsView]
 
   userScenarios.foreach { userScenario =>
     s"language is ${welshTest(userScenario.isWelsh)} and request is from an ${agentTest(userScenario.isAgent)}" should {

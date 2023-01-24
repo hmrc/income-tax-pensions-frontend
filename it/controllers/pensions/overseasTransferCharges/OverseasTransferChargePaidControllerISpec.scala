@@ -39,7 +39,7 @@ class OverseasTransferChargePaidControllerISpec
           val response = getPage(None)
 
           response must haveStatus(SEE_OTHER)
-          response must haveALocationHeaderValue(PageRelativeURLs.summaryPage)
+          response must haveALocationHeaderValue(PageRelativeURLs.overseasPensionsSummary)
 
         }
 

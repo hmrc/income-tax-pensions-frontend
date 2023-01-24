@@ -19,7 +19,7 @@ package controllers.pensions.transferIntoOverseasPensions
 import config.{AppConfig, ErrorHandler}
 import controllers.predicates.ActionsProvider
 import controllers.pensions.routes.OverseasPensionsSummaryController
-import forms.TransferIntoOverseasForm.yesNoForm
+import forms.TransferPensionSavingsForm.yesNoForm
 import forms.YesNoForm
 import models.User
 import models.mongo.PensionsUserData
@@ -30,7 +30,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
-import views.html.pensions.transferIntoOverseasPensions.TransferIntoOverseasView
+import views.html.pensions.transferIntoOverseasPensions.TransferPensionSavingsView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -38,7 +38,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class TransferPensionSavingsController @Inject()(actionsProvider: ActionsProvider,
                                                  pensionSessionService: PensionSessionService,
-                                                 view: TransferIntoOverseasView,
+                                                 view: TransferPensionSavingsView,
                                                  errorHandler: ErrorHandler
                                               )(implicit cc: MessagesControllerComponents,
                                                 appConfig: AppConfig,
@@ -48,29 +48,22 @@ class TransferPensionSavingsController @Inject()(actionsProvider: ActionsProvide
 
   def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit sessionData =>
-      sessionData.optPensionsUserData match {
-        case Some(pensionData) =>
-          val transferPensionSavings = pensionData.pensions.transfersIntoOverseasPensions.transferPensionSavings
-          transferPensionSavings match {
-            case Some(x) => Future.successful(Ok(view(yesNoForm(sessionData.user).fill(x), taxYear)))
-            case None => Future.successful(Ok(view(yesNoForm(sessionData.user), taxYear)))
-          }
-        case None => Future.successful(Redirect(OverseasPensionsSummaryController.show(taxYear)))
+      val transferPensionSavings = sessionData.pensionsUserData.pensions.transfersIntoOverseasPensions.transferPensionSavings
+
+      transferPensionSavings match {
+        case Some(x) => Future.successful(Ok(view(yesNoForm(sessionData.user).fill(x), taxYear)))
+        case None => Future.successful(Ok(view(yesNoForm(sessionData.user), taxYear)))
       }
   }
 
   def submit(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit sessionUserData =>
-      sessionUserData.optPensionsUserData match {
-        case Some(pensionsUserData) =>
           yesNoForm(sessionUserData.user).bindFromRequest.fold(
             formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
             transferPensionSavings => {
-              updateSessionData(pensionsUserData, transferPensionSavings, taxYear)
+              updateSessionData(sessionUserData.pensionsUserData, transferPensionSavings, taxYear)
             }
           )
-        case _ => Future.successful(Redirect(OverseasPensionsSummaryController.show(taxYear)))
-      }
   }
 
   private def updateSessionData[T](pensionUserData: PensionsUserData,
@@ -84,7 +77,7 @@ class TransferPensionSavingsController @Inject()(actionsProvider: ActionsProvide
     pensionSessionService.createOrUpdateSessionData(request.user,
       updatedCyaModel, taxYear, pensionUserData.isPriorSubmission)(errorHandler.internalServerError()) {
       if(transferPensionSavings) {
-        Redirect(controllers.pensions.transferIntoOverseasPension.routes.OverseasTransferChargeController.show(taxYear))
+        Redirect(controllers.pensions.overseasTransferCharges.routes.OverseasTransferChargeController.show(taxYear))
       } else {
         // TODO: Update once `/transfer-charge-summary` Transfer Charge Summary page is available. Redirecting to itself
         Redirect(controllers.pensions.transferIntoOverseasPensions.routes.TransferPensionSavingsController.show(taxYear))
