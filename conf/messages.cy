@@ -905,6 +905,10 @@ overseasPensionIncomeSummary.hidden = Change Overseas pension income
 
 ############################################## TRANSFER INTO OVERSEAS PENSION ##############################################
 
+#Overseas Transfer Charges Paid Status
+overseasTransferCharges.overseasTransferChargesPaid.title = Did a UK pension scheme pay the transfer charge to HMRC?
+overseasTransferCharges.overseasTransferChargesPaid.error.noEntry = Select yes if a UK pension scheme paid the transfer charge to HMRC
+
 #Overseas Transfer Charge
 transferIntoOverseasPension.overseasTransferCharge.title = Did the amount result in an overseas transfer charge?
 transferIntoOverseasPension.overseasTransferCharge.amount.text = Amount that resulted in a transfer charge, in pounds

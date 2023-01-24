@@ -20,8 +20,9 @@ import config.ErrorHandler
 import play.api.http.Status.INTERNAL_SERVER_ERROR
 import play.api.mvc.{ActionRefiner, Result}
 import models.AuthorisationRequest
+import models.mongo.PensionsUserData
 import models.requests.UserSessionDataRequest
-import services.PensionSessionService
+import services.{PensionSessionService, RedirectService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendHeaderCarrierProvider
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -37,7 +38,12 @@ case class UserSessionDataRequestRefinerAction(taxYear: Int,
   override protected[predicates] def refine[A](input: AuthorisationRequest[A]): Future[Either[Result, UserSessionDataRequest[A]]] = {
     pensionSessionService.getPensionSessionData(taxYear, input.user).map {
       case Left(_) => Left(errorHandler.handleError(INTERNAL_SERVER_ERROR)(input.request))
-      case Right(optPensionsUserData) => Right(UserSessionDataRequest(optPensionsUserData, input.user, input.request))
+      case Right(optPensionsUserData) =>
+        RedirectService.redirectBasedOnRequest(input.request, optPensionsUserData, taxYear) match {
+          case Left(value) => Left(value)
+          case Right(pensionsUserData) =>
+            Right(UserSessionDataRequest(pensionsUserData, input.user, input.request))
+        }
     }
   }
 }

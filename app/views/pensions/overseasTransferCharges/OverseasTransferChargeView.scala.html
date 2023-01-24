@@ -62,7 +62,7 @@
     @heading(titleForUse, Some(messages("common.transferIntoOverseasPensions.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-2")
 
 
-    @formWithCsrf(action = controllers.pensions.transferIntoOverseasPension.routes.OverseasTransferChargeController.submit(taxYear)) {
+    @formWithCsrf(action = controllers.pensions.overseasTransferCharges.routes.OverseasTransferChargeController.submit(taxYear)) {
         @inputRadio(
             form = form,
             legendHeading = Some(Html(titleForUse)),

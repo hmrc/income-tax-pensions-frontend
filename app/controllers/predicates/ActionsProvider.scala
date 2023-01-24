@@ -39,6 +39,7 @@ class ActionsProvider @Inject()(authAction: AuthorisedAction,
       .andThen(EndOfYearFilterAction(taxYear, appConfig))
       .andThen(UserPriorDataRequestRefinerAction(taxYear, pensionSessionService, errorHandler))
 
+  //Should we have tax year
   def userSessionDataFor(taxYear: Int): ActionBuilder[UserSessionDataRequest, AnyContent] =
     authAction
       .andThen(TaxYearAction(taxYear)(appConfig, messagesApi))

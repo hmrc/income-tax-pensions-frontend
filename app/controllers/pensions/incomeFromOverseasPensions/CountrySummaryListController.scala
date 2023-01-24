@@ -26,16 +26,14 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.SessionHelper
 import views.html.pensions.incomeFromOverseasPensions.CountrySummaryList
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 
+@Singleton
 class CountrySummaryListController @Inject()(actionsProvider: ActionsProvider, countrySummary: CountrySummaryList)
                                             (implicit mcc: MessagesControllerComponents, appConfig: AppConfig)
   extends FrontendController(mcc) with I18nSupport with SessionHelper {
 
   def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) { implicit sessionUserData =>
-    sessionUserData.optPensionsUserData match {
-      case Some(pensionsUserData) => Ok(countrySummary(taxYear, pensionsUserData.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes))
-      case _ => Redirect(PensionsSummaryController.show(taxYear))
-    }
+    Ok(countrySummary(taxYear, sessionUserData.pensionsUserData.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes))
   }
 }

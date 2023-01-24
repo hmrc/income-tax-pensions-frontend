@@ -19,16 +19,36 @@ package services
 import models.mongo.{PensionsCYAModel, PensionsUserData}
 import models.redirects.ConditionalRedirect
 import controllers.pensions.paymentsIntoPension.routes._
+import models.pension.charges.TransfersIntoOverseasPensionsViewModel
 import models.pension.reliefs.PaymentsIntoPensionViewModel
 import play.api.Logging
-import play.api.mvc.{Call, Result}
+import play.api.mvc.{Call, Request, Result}
 import play.api.mvc.Results.Redirect
 import utils.PaymentsIntoPensionPages
 import utils.PaymentsIntoPensionPages._
+import controllers.pensions.routes._
+import models.requests.UserSessionDataRequest
 
 import scala.concurrent.Future
 
+
+case class ConditionalRedirect2(cond: Boolean, condFalse: Result)
+
+case class RedirectsForPath(foo: Map[String, Seq[ConditionalRedirect2]])
+
 object RedirectService extends Logging {
+
+
+  //1. Current Redirects
+  //2. Next Page Redirects
+
+  def redirectBasedOnRequest[T](request: Request[T], optUserData: Option[PensionsUserData], taxYear: Int):
+  Either[Result, PensionsUserData] = {
+    optUserData match {
+      case Some(userData) => Right(userData)
+      case None => Left(Redirect(PensionsSummaryController.show(taxYear))) //No session data atm redirect to overseas transfer summary page
+    }
+  }
 
   object PaymentsIntoPensionsRedirects {
     def journeyCheck(currentPage: PaymentsIntoPensionPages, cya: PensionsCYAModel, taxYear: Int): Seq[ConditionalRedirect] = {
@@ -124,7 +144,6 @@ object RedirectService extends Logging {
   }
 
 
-
   def redirectBasedOnCurrentAnswers(taxYear: Int, data: Option[PensionsUserData])
                                    (conditions: PensionsCYAModel => Seq[ConditionalRedirect])
                                    (block: PensionsUserData => Future[Result]): Future[Result] = {
@@ -150,7 +169,9 @@ object RedirectService extends Logging {
         optRedirect match {
           case Some(redirect) =>
             logger.info(s"[RedirectService][calculateRedirect]" +
-              s" Some data is missing / in the wrong state for the requested page. Routing to ${redirect.header.headers.getOrElse("Location", "")}")
+              s" Some data is missing / in the wrong state for the requested page. Routing to ${
+                redirect.header.headers.getOrElse("Location", "")
+              }")
             Left(redirect)
           case None => Right(cya)
         }
@@ -161,7 +182,7 @@ object RedirectService extends Logging {
   }
 
   def isFinishedCheck(cya: PensionsCYAModel, taxYear: Int, redirect: Call): Result = {
-    if(cya.paymentsIntoPension.isFinished) {
+    if (cya.paymentsIntoPension.isFinished) {
       Redirect(controllers.pensions.paymentsIntoPension.routes.PaymentsIntoPensionsCYAController.show(taxYear))
     } else {
       Redirect(redirect)

@@ -31,7 +31,7 @@ trait PensionsDatabaseHelper {
   }
 
   def insertCyaData(cya: PensionsUserData, user: User): Unit = {
-    await(pensionsDatabase.createOrUpdate(cya, user))
+    await(pensionsDatabase.createOrUpdate(cya))
   }
 
   def findCyaData(taxYear: Int, user: User): Option[PensionsUserData] = {
