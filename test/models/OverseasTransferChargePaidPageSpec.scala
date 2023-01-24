@@ -17,7 +17,7 @@
 package models
 
 import builders.TransfersIntoOverseasPensionsViewModelBuilder.aTransfersIntoOverseasPensionsViewModel
-import controllers.pensions.overseasTransferCharges.FormsProvider
+import forms.FormsProvider
 import models.pension.pages.OverseasTransferChargePaidPage
 import utils.UnitTest
 

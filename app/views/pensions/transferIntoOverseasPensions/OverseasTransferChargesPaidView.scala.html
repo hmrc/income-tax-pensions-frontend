@@ -39,7 +39,7 @@
 @(pageModel: OverseasTransferChargePaidPage)(implicit request: UserSessionDataRequest[_], messages: Messages, appConfig: AppConfig)
 
 @titleForUse = @{
-    messages(s"overseasTransferCharges.overseasTransferChargesPaid.title")
+    messages(s"transferIntoOverseasPensions.overseasTransferChargesPaid.title")
 }
 
 @hasFormErrors = @{pageModel.form.hasErrors}
@@ -51,7 +51,7 @@
 
     @heading(titleForUse, Some(messages("common.transferIntoOverseasPensions.caption", (pageModel.taxYear - 1).toString, pageModel.taxYear.toString)), "govuk-!-margin-bottom-2")
 
-    @formWithCsrf(action = controllers.pensions.overseasTransferCharges.routes.OverseasTransferChargePaidController.submit(pageModel.taxYear)) {
+    @formWithCsrf(action = controllers.pensions.transferIntoOverseasPensions.routes.OverseasTransferChargePaidController.submit(pageModel.taxYear)) {
         @inputRadio(
             form = pageModel.form,
             legendHeading = Some(Html(titleForUse)),

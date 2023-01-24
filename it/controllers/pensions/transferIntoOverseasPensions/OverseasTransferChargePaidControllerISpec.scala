@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.pensions.overseasTransferCharges
+package controllers.pensions.transferIntoOverseasPensions
 
 import builders.PensionsCYAModelBuilder.aPensionsCYAEmptyModel
 import controllers.ControllerSpec.PreferredLanguages.{English, Welsh}
@@ -22,7 +22,7 @@ import controllers.ControllerSpec.UserTypes.{Agent, Individual}
 import controllers.ControllerSpec._
 import controllers.YesNoControllerSpec
 import models.mongo.PensionsCYAModel
-import models.pension.charges.{IncomeFromOverseasPensionsViewModel, TransfersIntoOverseasPensionsViewModel}
+import models.pension.charges.TransfersIntoOverseasPensionsViewModel
 import org.jsoup.Jsoup.parse
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 

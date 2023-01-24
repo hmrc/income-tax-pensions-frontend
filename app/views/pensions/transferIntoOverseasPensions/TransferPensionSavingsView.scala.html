@@ -33,7 +33,7 @@
 @(form: Form[Boolean], taxYear: Int)(implicit request: UserSessionDataRequest[_], messages: Messages, appConfig: AppConfig)
 
     @titleForUse = @{
-        messages(s"overseasPension.transferIntoOverseas.title.${if(request.user.isAgent) "agent" else "individual"}")
+        messages(s"transferIntoOverseasPensions.transferPensionsSavings.title.${if(request.user.isAgent) "agent" else "individual"}")
     }
 
     @hasFormErrors = @{form.hasErrors}

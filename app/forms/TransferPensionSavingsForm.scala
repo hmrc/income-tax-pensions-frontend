@@ -21,6 +21,6 @@ import play.api.data.Form
 
 object TransferPensionSavingsForm {
   def yesNoForm(user: User): Form[Boolean] = YesNoForm.yesNoForm(
-    missingInputError = s"overseasPension.transferIntoOverseas.error.noEntry.${if (user.isAgent) "agent" else "individual"}"
+    missingInputError = s"transferIntoOverseasPensions.transferPensionsSavings.error.noEntry.${if (user.isAgent) "agent" else "individual"}"
   )
 }

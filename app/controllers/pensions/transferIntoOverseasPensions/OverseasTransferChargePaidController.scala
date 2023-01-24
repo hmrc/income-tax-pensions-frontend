@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-package controllers.pensions.overseasTransferCharges
+package controllers.pensions.transferIntoOverseasPensions
 
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.overseasTransferCharges.routes._
 import controllers.predicates.ActionsProvider
+import forms.FormsProvider
 import models.mongo.PensionsUserData
 import models.pension.pages.OverseasTransferChargePaidPage
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents, Result}
-import services.{OverseasTransferChargesService, PensionSessionService}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
+import services.OverseasTransferChargesService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.SessionHelper
-import views.html.pensions.overseasTransferCharges.OverseasTransferChargesPaidView
+import views.html.pensions.transferIntoOverseasPensions.OverseasTransferChargesPaidView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -67,9 +67,9 @@ class OverseasTransferChargePaidController @Inject()(actionsProvider: ActionsPro
                               yesNoValue: Boolean,
                               userData: PensionsUserData): Call = {
     if (yesNoValue) {
-      controllers.pensions.overseasTransferCharges.routes.OverseasTransferChargePaidController.show(taxYear) //Redirect to
+      controllers.pensions.transferIntoOverseasPensions.routes.OverseasTransferChargePaidController.show(taxYear) //Redirect to
     } else {
-      controllers.pensions.overseasTransferCharges.routes.OverseasTransferChargePaidController.show(taxYear) //Redirect to
+      controllers.pensions.transferIntoOverseasPensions.routes.OverseasTransferChargePaidController.show(taxYear) //Redirect to
     }
   }
 }

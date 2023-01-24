@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.pensions.overseasTransferCharges
+package controllers.pensions.transferIntoOverseasPensions
 
 import config.{AppConfig, ErrorHandler}
 import controllers.predicates.ActionsProvider
@@ -28,7 +28,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
-import views.html.pensions.overseasTransferCharges.OverseasTransferChargeView
+import views.html.pensions.transferIntoOverseasPensions.OverseasTransferChargeView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -36,18 +36,6 @@ import scala.concurrent.{ExecutionContext, Future}
 class OverseasTransferChargeController @Inject()(actionsProvider: ActionsProvider, pensionSessionService: PensionSessionService, view: OverseasTransferChargeView, errorHandler: ErrorHandler)
                                                 (implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport with SessionHelper {
-
-  def amountForm(implicit user: User): Form[(Boolean, Option[BigDecimal])] = {
-    val agentOrIndividual = if (user.isAgent) "agent" else "individual"
-    RadioButtonAmountForm.radioButtonAndAmountForm(
-      missingInputError = "transferIntoOverseasPension.overseasTransferCharge.error.noEntry",
-      emptyFieldKey = s"transferIntoOverseasPension.overseasTransferCharge.error.noAmountEntry.$agentOrIndividual",
-      wrongFormatKey = s"transferIntoOverseasPension.overseasTransferCharge.error.incorrectFormat.$agentOrIndividual",
-      minAmountKey = "common.error.amountNotZero",
-      exceedsMaxAmountKey = s"transferIntoOverseasPension.overseasTransferCharge.error.tooBig.$agentOrIndividual"
-    )
-  }
-
 
   def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit sessionData =>
@@ -58,7 +46,6 @@ class OverseasTransferChargeController @Inject()(actionsProvider: ActionsProvide
         case _ => Future.successful(Ok(view(amountForm(sessionData.user), taxYear)))
       }
   }
-
 
   def submit(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit sessionUserData =>
@@ -74,6 +61,17 @@ class OverseasTransferChargeController @Inject()(actionsProvider: ActionsProvide
       )
   }
 
+  def amountForm(implicit user: User): Form[(Boolean, Option[BigDecimal])] = {
+    val agentOrIndividual = if (user.isAgent) "agent" else "individual"
+    RadioButtonAmountForm.radioButtonAndAmountForm(
+      missingInputError = "transferIntoOverseasPensions.overseasTransferCharge.error.noEntry",
+      emptyFieldKey = s"transferIntoOverseasPensions.overseasTransferCharge.error.noAmountEntry.$agentOrIndividual",
+      wrongFormatKey = s"transferIntoOverseasPensions.overseasTransferCharge.error.incorrectFormat.$agentOrIndividual",
+      minAmountKey = "common.error.amountNotZero",
+      exceedsMaxAmountKey = s"transferIntoOverseasPensions.overseasTransferCharge.error.tooBig.$agentOrIndividual"
+    )
+  }
+
   private def updateSessionData[T](pensionUserData: PensionsUserData,
                                    yesNo: Boolean,
                                    amount: Option[BigDecimal] = None,
@@ -85,7 +83,7 @@ class OverseasTransferChargeController @Inject()(actionsProvider: ActionsProvide
 
     pensionSessionService.createOrUpdateSessionData(request.user,
       updatedCyaModel, taxYear, pensionUserData.isPriorSubmission)(errorHandler.internalServerError()) {
-      Redirect(controllers.pensions.overseasTransferCharges.routes.OverseasTransferChargeController.show(taxYear))
+      Redirect(controllers.pensions.transferIntoOverseasPensions.routes.OverseasTransferChargeController.show(taxYear))
     }
   }
 }

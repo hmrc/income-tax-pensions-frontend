@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.pensions.overseasTransferCharges
+package controllers.pensions.transferIntoOverseasPensions
 
 import builders.PensionsCYAModelBuilder.{aPensionsCYAEmptyModel, aPensionsCYAModel}
 import controllers.ControllerSpec.PreferredLanguages.{English, Welsh}
