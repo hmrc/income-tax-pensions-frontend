@@ -45,14 +45,14 @@ object IncomeFromOverseasPensionsCYAViewHelper extends CYABaseHelper {
 
   private def summaryRowForPensionSchemeCodes(incomeFromOverseasPensionsViewModel: IncomeFromOverseasPensionsViewModel, taxYear: Int)
                                              (implicit messages: Messages) : Option[SummaryListRow] = {
-    if (
-      incomeFromOverseasPensionsViewModel.paymentsFromOverseasPensionsQuestion.contains(true)
-        && incomeFromOverseasPensionsViewModel.overseasIncomePensionSchemes.length > 0
-    ) {
+
+    if ( incomeFromOverseasPensionsViewModel.hasPriorData ) {
       val countryNames = for {
         pensionScheme <- incomeFromOverseasPensionsViewModel.overseasIncomePensionSchemes
+        countryCode = pensionScheme.countryCode.getOrElse("N/A")
       } yield {
-        Countries.getCountryFromCodeWithDefault(pensionScheme.alphaTwoCode)
+         Countries.getCountryFromCodeWithDefault(Some(countryCode))
+            //TODO: Add 3 digit country code parsing as well.
       }
 
       Some(summaryListRowWithStrings(

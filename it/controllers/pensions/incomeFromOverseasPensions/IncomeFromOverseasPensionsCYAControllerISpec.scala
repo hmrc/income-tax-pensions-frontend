@@ -47,16 +47,12 @@ import builders.PensionLifetimeAllowanceViewModelBuilder.aPensionLifetimeAllowan
 import builders.UnauthorisedPaymentsViewModelBuilder.anUnauthorisedPaymentsViewModel
 import builders.IncomeFromPensionsViewModelBuilder.anIncomeFromPensionsViewModel
 import builders.PaymentsIntoOverseasPensionsViewModelBuilder.aPaymentsIntoOverseasPensionsViewModel
-import org.mongodb.scala
-import org.mongodb.scala.result
-import utils.CommonUtils
 
 class IncomeFromOverseasPensionsCYAControllerISpec extends
   IntegrationTest with
   ViewHelpers with
   BeforeAndAfterEach with
-  PensionsDatabaseHelper with
-  CommonUtils with Logging{
+  PensionsDatabaseHelper with Logging{
   val cyaDataIncomplete: PaymentsIntoPensionViewModel = PaymentsIntoPensionViewModel(
     rasPensionPaymentQuestion = Some(true)
   )
@@ -165,7 +161,7 @@ class IncomeFromOverseasPensionsCYAControllerISpec extends
           val anUpdatedAllPensionsData = anAllPensionsData.copy(
             pensionIncome = Some(anAllPensionsData.pensionIncome.get.copy(
               foreignPension = anAllPensionsData.pensionIncome.get.foreignPension.updated(0, ForeignPension (
-                countryCode = "FRA",
+                countryCode = "FR",
                 taxableAmount = BigDecimal(100),
                 amountBeforeTax = Some(BigDecimal(100)),
                 taxTakenOff = Some(BigDecimal(100)),
@@ -192,7 +188,7 @@ class IncomeFromOverseasPensionsCYAControllerISpec extends
           titleCheck(user.specificExpectedResults.get.expectedTitle)
           cyaRowCheck(paymentsFromOverseasPensions, stringToBoolean(anUpdatedAllPensionsData.pensionIncome.map(_.foreignPension).isDefined),
             ChangeLinksIncomeFromOverseasPensions.paymentsFromOverseasPensions, paymentsFromOverseasPensionsHidden, 1)
-          cyaRowCheck(overseasPensionsScheme, s"FRANCE",
+          cyaRowCheck(overseasPensionsScheme, s"${Countries.getCountryFromCode(anUpdatedAllPensionsData.pensionIncome.map(x => x.foreignPension.head.countryCode)).get.countryName.map(_.toUpper)}",
             ChangeLinksIncomeFromOverseasPensions.countrySummaryListController, overseasPensionsSchemeHidden, 2)
           buttonCheck(saveAndContinue)
           welshToggleCheck(user.isWelsh)

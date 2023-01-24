@@ -20,14 +20,9 @@ import config.{AppConfig, ErrorHandler}
 import controllers.pensions.routes._
 import controllers.predicates.AuthorisedAction
 import controllers.predicates.TaxYearAction.taxYearAction
-import forms.Countries
 import javax.inject.Inject
-import models.mongo.PensionsCYAModel
-import models.pension.AllPensionsData
 import models.pension.AllPensionsData.generateCyaFromPrior
 import models.pension.charges.IncomeFromOverseasPensionsViewModel
-import play.api
-import play.api.data
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import routes._
@@ -66,20 +61,12 @@ class IncomeFromOverseasPensionsCYAController @Inject()(authAction: AuthorisedAc
   }
 
   def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
-    pensionSessionService.getAndHandle(taxYear, request.user) { (cya, prior) =>
+    pensionSessionService.getAndHandle(taxYear, request.user) { (cya, _) =>
       cya.fold(
         Future.successful(Redirect(appConfig.incomeTaxSubmissionOverviewUrl(taxYear)))
-      ) { model =>
-        val updatedCyaModel = model.pensions.copy(
-          incomeFromOverseasPensions = model.pensions.incomeFromOverseasPensions.copy(overseasIncomePensionSchemes =
-            model.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes.map { case pensionScheme =>
-              val threeDigitCountryCode = Countries.get3dCountryCodeFrom2d(pensionScheme.alphaTwoCode)
-              pensionScheme.copy(alphaThreeCode = threeDigitCountryCode)
-            }))
-        pensionSessionService.createOrUpdateSessionData(request.user,
-          updatedCyaModel, taxYear, model.isPriorSubmission)(errorHandler.internalServerError()) {
-          Redirect(OverseasPensionsSummaryController.show(taxYear))
-        }
+      ) { _ =>
+        //TODO - build submission model from cya data and submit to DES if cya data doesn't match prior data
+        Future.successful(Redirect(OverseasPensionsSummaryController.show(taxYear)))
       }
     }
   }

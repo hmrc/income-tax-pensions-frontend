@@ -93,6 +93,7 @@ class PensionSessionService @Inject()(pensionUserDataRepository: PensionsUserDat
           logger.info(s"[PensionSessionService][getAndHandle] No pension CYA data found for user. SessionId: ${user.sessionId}")
         }
       }
+
       val pensionDataResponse = priorDataResponse.map(_.pensions)
       (optionalCya, pensionDataResponse) match {
         case (Right(None), Right(None)) if redirectWhenNoPrior => logger.info(s"[PensionSessionService][getAndHandle] No pension data found for user." +

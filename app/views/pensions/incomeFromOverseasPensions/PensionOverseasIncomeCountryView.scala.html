@@ -84,7 +84,7 @@
             errorMessage = form("countryId").error.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*)))),
             items = Seq(SelectItem(text="", attributes=Map("label" -> messages("country.select")))) ++ countries.map{ c =>
                 SelectItem(
-                    value = Some(c.alphaTwoCode),
+                    value = Some(c.countryCode),
                     text = c.countryName,
                     selected = false
                 )

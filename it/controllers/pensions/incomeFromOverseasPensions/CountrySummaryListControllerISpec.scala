@@ -19,7 +19,6 @@ package controllers.pensions.incomeFromOverseasPensions
 import builders.IncomeFromOverseasPensionsViewModelBuilder.{anIncomeFromOverseasPensionsEmptyViewModel, anIncomeFromOverseasPensionsViewModel}
 import builders.PensionsUserDataBuilder.pensionUserDataWithIncomeOverseasPension
 import builders.UserBuilder.aUserRequest
-import forms.Countries
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterEach
@@ -85,17 +84,16 @@ class CountrySummaryListControllerISpec extends IntegrationTest with BeforeAndAf
     UserScenario(isWelsh = true, isAgent = true, CommonExpectedCY)
   )
 
-  val countries = Countries
   ".show" should {
     userScenarios.foreach { user =>
       s"language is ${welshTest(user.isWelsh)} and request is from an ${agentTest(user.isAgent)}" should {
         import Selectors._
         import user.commonExpectedResults._
 
-        val pensionName1 = countries.getCountryFromCodeWithDefault(anIncomeFromOverseasPensionsViewModel.overseasIncomePensionSchemes.head.alphaTwoCode)
+        val pensionName1 = anIncomeFromOverseasPensionsViewModel.overseasIncomePensionSchemes.head.countryCode.get
         val pensionAmount1 = anIncomeFromOverseasPensionsViewModel.overseasIncomePensionSchemes.head.pensionPaymentAmount
           .fold("")(am => bigDecimalCurrency(am.toString()))
-        val pensionName2 = countries.getCountryFromCodeWithDefault(anIncomeFromOverseasPensionsViewModel.overseasIncomePensionSchemes(1).alphaTwoCode)
+        val pensionName2 = anIncomeFromOverseasPensionsViewModel.overseasIncomePensionSchemes(1).countryCode.get
         val pensionAmount2 = anIncomeFromOverseasPensionsViewModel.overseasIncomePensionSchemes(1).pensionPaymentAmount
           .fold("")(am => bigDecimalCurrency(am.toString()))
 
