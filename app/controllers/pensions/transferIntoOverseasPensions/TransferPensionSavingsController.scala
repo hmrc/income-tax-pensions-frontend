@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.pensions.transferIntoOverseas
+package controllers.pensions.transferIntoOverseasPensions
 
 import config.{AppConfig, ErrorHandler}
 import controllers.predicates.ActionsProvider
@@ -30,16 +30,16 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
-import views.html.pensions.transferIntoOverseas.TransferIntoOverseasView
+import views.html.pensions.transferIntoOverseasPensions.TransferIntoOverseasView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class TransferIntoOverseasController @Inject()(actionsProvider: ActionsProvider,
-                                               pensionSessionService: PensionSessionService,
-                                               view: TransferIntoOverseasView,
-                                               errorHandler: ErrorHandler
+class TransferPensionSavingsController @Inject()(actionsProvider: ActionsProvider,
+                                                 pensionSessionService: PensionSessionService,
+                                                 view: TransferIntoOverseasView,
+                                                 errorHandler: ErrorHandler
                                               )(implicit cc: MessagesControllerComponents,
                                                 appConfig: AppConfig,
                                                 clock: Clock,
@@ -87,7 +87,7 @@ class TransferIntoOverseasController @Inject()(actionsProvider: ActionsProvider,
         Redirect(controllers.pensions.transferIntoOverseasPension.routes.OverseasTransferChargeController.show(taxYear))
       } else {
         // TODO: Update once `/transfer-charge-summary` Transfer Charge Summary page is available. Redirecting to itself
-        Redirect(controllers.pensions.transferIntoOverseas.routes.TransferIntoOverseasController.show(taxYear))
+        Redirect(controllers.pensions.transferIntoOverseasPensions.routes.TransferPensionSavingsController.show(taxYear))
       }
     }
   }

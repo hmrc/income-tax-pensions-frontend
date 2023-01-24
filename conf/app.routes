@@ -252,8 +252,8 @@ GET         /:taxYear/overseas-pensions/income-from-overseas-pensions/pension-ov
 
 ###########################     Transfer into overseas pensions pages     ####################################
 
-GET         /:taxYear/overseas-pensions/overseas-transfer-charges/transfer-pension-savings                                         controllers.pensions.transferIntoOverseas.TransferIntoOverseasController.show(taxYear: Int)
-POST        /:taxYear/overseas-pensions/overseas-transfer-charges/transfer-pension-savings                                         controllers.pensions.transferIntoOverseas.TransferIntoOverseasController.submit(taxYear: Int)
+GET         /:taxYear/overseas-pensions/overseas-transfer-charges/transfer-pension-savings                                         controllers.pensions.transferIntoOverseasPensions.TransferPensionSavingsController.show(taxYear: Int)
+POST        /:taxYear/overseas-pensions/overseas-transfer-charges/transfer-pension-savings                                         controllers.pensions.transferIntoOverseasPensions.TransferPensionSavingsController.submit(taxYear: Int)
 
 GET         /:taxYear/overseas-pensions/overseas-transfer-charges/transfer-charge                                                  controllers.pensions.transferIntoOverseasPension.OverseasTransferChargeController.show(taxYear: Int)
 POST        /:taxYear/overseas-pensions/overseas-transfer-charges/transfer-charge                                                  controllers.pensions.transferIntoOverseasPension.OverseasTransferChargeController.submit(taxYear: Int)

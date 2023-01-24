@@ -25,9 +25,10 @@ import org.jsoup.nodes.Document
 import play.api.i18n.Messages
 import play.api.mvc.AnyContent
 import support.ViewUnitTest
-import views.html.pensions.transferIntoOverseas.TransferIntoOverseasView
+import views.TransferPensionSavingsViewSpec.Selectors.{captionSelector, continueButtonSelector}
+import views.html.pensions.transferIntoOverseasPensions.TransferIntoOverseasView
 
-class TransferIntoOverseasViewSpec extends ViewUnitTest {
+object TransferPensionSavingsViewSpec extends ViewUnitTest {
 
   object Selectors {
     val captionSelector: String = "#main-content > div > div > header > p"
@@ -120,8 +121,13 @@ class TransferIntoOverseasViewSpec extends ViewUnitTest {
 
         import userScenario.commonExpectedResults._
 
+        titleCheck(userScenario.commonExpectedResults.expectedTitle, userScenario.isWelsh)
+        h1Check(userScenario.commonExpectedResults.expectedTitle)
+        captionCheck(expectedCaption(taxYearEOY), captionSelector)
         radioButtonCheck(yesText, 1, checked = true)
         radioButtonCheck(noText, 2, checked = false)
+        buttonCheck(buttonText, continueButtonSelector)
+        welshToggleCheck(userScenario.isWelsh)
       }
 
       "show the transfers into overseas page when no is selected" which {
@@ -134,8 +140,13 @@ class TransferIntoOverseasViewSpec extends ViewUnitTest {
 
         import userScenario.commonExpectedResults._
 
+        titleCheck(userScenario.commonExpectedResults.expectedTitle, userScenario.isWelsh)
+        h1Check(userScenario.commonExpectedResults.expectedTitle)
+        captionCheck(expectedCaption(taxYearEOY), captionSelector)
         radioButtonCheck(yesText, 1, checked = false)
         radioButtonCheck(noText, 2, checked = true)
+        buttonCheck(buttonText, continueButtonSelector)
+        welshToggleCheck(userScenario.isWelsh)
       }
 
       "return an error when form is submitted with no entry" which {
@@ -148,8 +159,13 @@ class TransferIntoOverseasViewSpec extends ViewUnitTest {
 
         import userScenario.commonExpectedResults._
 
+        titleCheck(userScenario.commonExpectedResults.expectedTitle, userScenario.isWelsh)
+        h1Check(userScenario.commonExpectedResults.expectedTitle)
+        captionCheck(expectedCaption(taxYearEOY), captionSelector)
         errorSummaryCheck(errorMessage, Selectors.yesSelector)
         errorAboveElementCheck(errorMessage, Some("value"))
+        buttonCheck(buttonText, continueButtonSelector)
+        welshToggleCheck(userScenario.isWelsh)
       }
     }
   }

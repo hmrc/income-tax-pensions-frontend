@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.pensions.transferIntoOverseas
+package controllers.pensions.transferIntoOverseasPensions
 
 import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import controllers.ControllerSpec.UserConfig
@@ -23,7 +23,7 @@ import models.pension.charges.TransfersIntoOverseasPensionsViewModel
 import play.api.http.Status.BAD_REQUEST
 import play.api.libs.ws.WSResponse
 
-class TransferIntoOverseasControllerISpec
+class TransferPensionSavingsControllerISpec
   extends YesNoControllerSpec("/overseas-pensions/overseas-transfer-charges/transfer-pension-savings") {
 
   "This page" when {
