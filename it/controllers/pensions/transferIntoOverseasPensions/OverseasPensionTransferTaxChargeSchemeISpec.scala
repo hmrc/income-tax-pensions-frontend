@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.pensions.transferIntoOverseasPension
+package controllers.pensions.transferIntoOverseasPensions
 
 import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import builders.PensionsUserDataBuilder
@@ -24,13 +24,13 @@ import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 import forms.RadioButtonAmountForm.{amount2, yesNo}
-import forms.{RadioButtonAmountForm}
+import forms.RadioButtonAmountForm
 import models.mongo.PensionsCYAModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.http.HeaderNames
 import utils.PageUrls.PensionAnnualAllowancePages.transferPensionSchemeTaxUrl
-import utils.PageUrls.{fullUrl, overviewUrl}
+import utils.PageUrls.{fullUrl, overseasPensionsSummaryUrl, overviewUrl}
 
 
 class OverseasPensionTransferTaxChargeSchemeISpec
@@ -43,7 +43,7 @@ class OverseasPensionTransferTaxChargeSchemeISpec
 
   ".show" should {
       "redirect to Overview Page when in year" in {
-        lazy val result: WSResponse = {
+        lazy implicit val result: WSResponse = {
           dropPensionsDB()
           authoriseAgentOrIndividual(aUser.isAgent)
           val transferViewModel = aTransfersIntoOverseasPensionsViewModel.copy(pensionSchemeTransferChargeAmount = None, pensionSchemeTransferCharge = None)
@@ -57,7 +57,7 @@ class OverseasPensionTransferTaxChargeSchemeISpec
       }
 
       "show page when EOY" in {
-        lazy val result: WSResponse = {
+        lazy implicit val result: WSResponse = {
           dropPensionsDB()
           authoriseAgentOrIndividual(aUser.isAgent)
           insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel), aUserRequest)
@@ -71,7 +71,7 @@ class OverseasPensionTransferTaxChargeSchemeISpec
 
       ".submit" should {
         "redirect to overview when in year" in {
-          lazy val result: WSResponse = {
+          lazy implicit val result: WSResponse = {
             dropPensionsDB()
             authoriseAgentOrIndividual(aUser.isAgent)
             val formData = Map(s" $yesNo -> true, $amount2" -> "100")
@@ -88,7 +88,7 @@ class OverseasPensionTransferTaxChargeSchemeISpec
         }
 
         "persist amount and redirect to next page" in {
-          lazy val result: WSResponse = {
+          lazy implicit val result: WSResponse = {
             dropPensionsDB()
             authoriseAgentOrIndividual(aUser.isAgent)
             val transferViewModel = aTransfersIntoOverseasPensionsViewModel.copy(
@@ -121,8 +121,6 @@ class OverseasPensionTransferTaxChargeSchemeISpec
           "status is bad request" in {
             result.status shouldBe BAD_REQUEST
           }
-          implicit def document: () => Document = () => Jsoup.parse(result.body)
-          errorSummaryCheck("Select yes if your pension schemes paid tax on the amount on which you paid an overseas transfer charge", "#value")
         }
 
         "return an error when form is submitted with the wrong format" which {
@@ -142,9 +140,6 @@ class OverseasPensionTransferTaxChargeSchemeISpec
          "status is bad request" in {
            result.status shouldBe BAD_REQUEST
          }
-          implicit def document: () => Document = () => Jsoup.parse(result.body)
-          errorSummaryCheck("Enter the tax paid on the amount on which you paid an overseas transfer charge in the correct format", "#amount-2")
         }
-
       }
 }

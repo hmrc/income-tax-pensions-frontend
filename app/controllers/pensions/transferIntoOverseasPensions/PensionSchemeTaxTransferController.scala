@@ -17,15 +17,12 @@
 package controllers.pensions.transferIntoOverseasPensions
 
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.routes.OverseasPensionsSummaryController
 import controllers.predicates.ActionsProvider
-import forms.RadioButtonAmountForm
-import models.User
+import forms.FormsProvider
 import models.mongo.{PensionsCYAModel, PensionsUserData}
 import models.requests.UserSessionDataRequest
-import play.api.data.Form
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, ActionBuilder, AnyContent, MessagesControllerComponents, Request}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
@@ -34,18 +31,15 @@ import views.html.pensions.transferIntoOverseasPensions.pensionSchemeTaxTransfer
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class PensionSchemeTaxTransferController @Inject()(actionsProvider: ActionsProvider, pensionSessionService: PensionSessionService, view: pensionSchemeTaxTransferChargeVeiw, errorHandler: ErrorHandler)
+class PensionSchemeTaxTransferController @Inject()(
+                                                    actionsProvider: ActionsProvider,
+                                                    pensionSessionService: PensionSessionService,
+                                                    view: pensionSchemeTaxTransferChargeVeiw,
+                                                    formsProvider: FormsProvider,
+                                                    errorHandler: ErrorHandler)
                                                   (implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport with SessionHelper {
 
-  def amountForm(implicit user:User): Form[(Boolean, Option[BigDecimal])] = {
-    val agentOrIndividual = if (user.isAgent) "agent" else "individual"
-    RadioButtonAmountForm.radioButtonAndAmountForm(
-      missingInputError = s"transferIntoOverseasPensions.overseasPensionSchemeTaxTransferCharge.error.noEntry.$agentOrIndividual",
-      emptyFieldKey = s"transferIntoOverseasPensions.overseasPensionSchemeTaxTransferCharge.error.noAmountEntry.$agentOrIndividual",
-      wrongFormatKey = s"transferIntoOverseasPensions.overseasPensionSchemeTaxTransferCharge.error.incorrectFormat.$agentOrIndividual",
-      exceedsMaxAmountKey = s"transferIntoOverseasPensions.overseasPensionSchemeTaxTransferCharge.error.tooBig.$agentOrIndividual"
-    )}
 
 
   def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
@@ -53,14 +47,14 @@ class PensionSchemeTaxTransferController @Inject()(actionsProvider: ActionsProvi
           val transferSchemeChargeAmount: Option[BigDecimal] = sessionData.pensionsUserData.pensions.transfersIntoOverseasPensions.pensionSchemeTransferChargeAmount
           val transferSchemeCharge: Option[Boolean] = sessionData.pensionsUserData.pensions.transfersIntoOverseasPensions.pensionSchemeTransferCharge
           (transferSchemeCharge, transferSchemeChargeAmount) match {
-            case (Some(a), amount) => Future.successful(Ok(view(amountForm(sessionData.user).fill((a, amount)), taxYear)))
-            case _ =>  Future.successful(Ok(view(amountForm(sessionData.user), taxYear)))
+            case (Some(a), amount) => Future.successful(Ok(view(formsProvider.pensionSchemeTaxTransferForm(sessionData.user).fill((a, amount)), taxYear)))
+            case _ =>  Future.successful(Ok(view(formsProvider.pensionSchemeTaxTransferForm(sessionData.user), taxYear)))
           }
    }
 
   def submit(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit sessionData =>
-          amountForm(sessionData.user).bindFromRequest.fold(
+          formsProvider.pensionSchemeTaxTransferForm(sessionData.user).bindFromRequest.fold(
             formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
             yesNoAmount => {
               (yesNoAmount._1, yesNoAmount._2) match {

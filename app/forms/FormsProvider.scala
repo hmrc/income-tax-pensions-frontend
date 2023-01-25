@@ -16,6 +16,7 @@
 
 package forms
 
+import models.User
 import play.api.data.Form
 
 import javax.inject.Singleton
@@ -25,4 +26,13 @@ class FormsProvider() {
   def overseasTransferChargePaidForm: Form[Boolean] = YesNoForm.yesNoForm(
     missingInputError = "transferIntoOverseasPensions.overseasTransferChargesPaid.error.noEntry"
   )
+
+  def pensionSchemeTaxTransferForm(user:User): Form[(Boolean, Option[BigDecimal])] = {
+    val agentOrIndividual = if (user.isAgent) "agent" else "individual"
+    RadioButtonAmountForm.radioButtonAndAmountForm(
+      missingInputError = s"transferIntoOverseasPensions.overseasPensionSchemeTaxTransferCharge.error.noEntry.$agentOrIndividual",
+      emptyFieldKey = s"transferIntoOverseasPensions.overseasPensionSchemeTaxTransferCharge.error.noAmountEntry.$agentOrIndividual",
+      wrongFormatKey = s"transferIntoOverseasPensions.overseasPensionSchemeTaxTransferCharge.error.incorrectFormat.$agentOrIndividual",
+      exceedsMaxAmountKey = s"transferIntoOverseasPensions.overseasPensionSchemeTaxTransferCharge.error.tooBig.$agentOrIndividual"
+    )}
 }
