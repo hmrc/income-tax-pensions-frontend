@@ -250,11 +250,13 @@ POST        /:taxYear/overseas-pensions/income-from-overseas-pensions/pension-sc
 
 GET         /:taxYear/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-country-summary                      controllers.pensions.incomeFromOverseasPensions.CountrySummaryListController.show(taxYear: Int)
 
-###########################     Income from overseas transfer charges pages     ####################################
+###########################     Transfer into overseas pensions pages     ####################################
 
-GET         /:taxYear/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-paid                                    controllers.pensions.overseasTransferCharges.OverseasTransferChargePaidController.show(taxYear: Int)
-POST        /:taxYear/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-paid                                    controllers.pensions.overseasTransferCharges.OverseasTransferChargePaidController.submit(taxYear: Int)
+GET         /:taxYear/overseas-pensions/overseas-transfer-charges/transfer-pension-savings                                         controllers.pensions.transferIntoOverseasPensions.TransferPensionSavingsController.show(taxYear: Int)
+POST        /:taxYear/overseas-pensions/overseas-transfer-charges/transfer-pension-savings                                         controllers.pensions.transferIntoOverseasPensions.TransferPensionSavingsController.submit(taxYear: Int)
 
-GET         /:taxYear/overseas-pensions/overseas-transfer-charges/transfer-charge                                                  controllers.pensions.overseasTransferCharges.OverseasTransferChargeController.show(taxYear: Int)
-POST        /:taxYear/overseas-pensions/overseas-transfer-charges/transfer-charge                                                  controllers.pensions.overseasTransferCharges.OverseasTransferChargeController.submit(taxYear: Int)
+GET         /:taxYear/overseas-pensions/overseas-transfer-charges/transfer-charge                                                  controllers.pensions.transferIntoOverseasPensions.OverseasTransferChargeController.show(taxYear: Int)
+POST        /:taxYear/overseas-pensions/overseas-transfer-charges/transfer-charge                                                  controllers.pensions.transferIntoOverseasPensions.OverseasTransferChargeController.submit(taxYear: Int)
 
+GET         /:taxYear/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-paid                                    controllers.pensions.transferIntoOverseasPensions.OverseasTransferChargePaidController.show(taxYear: Int)
+POST        /:taxYear/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-paid                                    controllers.pensions.transferIntoOverseasPensions.OverseasTransferChargePaidController.submit(taxYear: Int)

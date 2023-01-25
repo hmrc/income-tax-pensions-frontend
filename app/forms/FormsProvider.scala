@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package controllers.pensions.overseasTransferCharges
+package forms
 
-import forms.YesNoForm
 import play.api.data.Form
 
 import javax.inject.Singleton
@@ -24,6 +23,6 @@ import javax.inject.Singleton
 @Singleton
 class FormsProvider() {
   def overseasTransferChargePaidForm: Form[Boolean] = YesNoForm.yesNoForm(
-    missingInputError = "overseasTransferCharges.overseasTransferChargesPaid.error.noEntry"
+    missingInputError = "transferIntoOverseasPensions.overseasTransferChargesPaid.error.noEntry"
   )
 }

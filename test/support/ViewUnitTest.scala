@@ -58,5 +58,5 @@ trait ViewUnitTest extends UnitTest
     if (isAgent) agentUserRequest else individualUserRequest
 
   protected def getUserSession(isAgent: Boolean): UserSessionDataRequest[AnyContent] =
-    if (isAgent) individualUserDataRequest else agentUserDataRequest
+    if (isAgent) agentUserDataRequest else individualUserDataRequest
 }

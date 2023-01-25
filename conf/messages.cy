@@ -36,11 +36,10 @@ common.pensionAnnualAllowance.caption = Pension annual allowance for 6 April {0}
 common.incomeFromPensions.caption = Income from pensions for 6 April {0} to 5 April {1}
 common.incomeFromOverseasPensions.caption = Income from overseas pensions for 6 April {0} to 5 April {1}
 common.paymentsIntoOverseasPensions.caption = Payments into overseas pensions for 6 April {0} to 5 April {1}
+common.transferIntoOverseasPensions.caption = Transfers into overseas pensions for 6 April {0} to 5 April {1}
 common.uKPensionIncome.caption = UK pension income for 6 April {0} to 5 April {1}
 common.lifetimeAllowance.caption = Annual and lifetime allowances for 6 April {0} to 5 April {1}
 common.overseasPensions.caption = Overseas pensions for 6 April {0} to 5 April {1}
-common.incomeFromOverseasPensions.caption = Income from overseas pensions for 6 April {0} to 5 April {1}
-common.overseasTransferCharges.caption = Transfers into overseas pensions for 6 April {0} to 5 April {1}
 common.return.overview.buttonText = Return to overview
 common.currencyAmount = £{0}
 common.total = Total
@@ -906,18 +905,24 @@ overseasPensionIncomeSummary.hidden = Change Overseas pension income
 
 ############################################## TRANSFER INTO OVERSEAS PENSION ##############################################
 
-#Overseas Transfer Charges Paid Status
-overseasTransferCharges.overseasTransferChargesPaid.title = Did a UK pension scheme pay the transfer charge to HMRC?
-overseasTransferCharges.overseasTransferChargesPaid.error.noEntry = Select yes if a UK pension scheme paid the transfer charge to HMRC
+
+#Transfer Pension Savings
+transferIntoOverseasPensions.transferPensionsSavings.title.individual = Did you transfer pension savings into an overseas pension scheme?
+transferIntoOverseasPensions.transferPensionsSavings.title.agent = Did your client transfer pension savings into an overseas pension scheme?
+transferIntoOverseasPensions.transferPensionsSavings.error.noEntry.individual = Select yes if you transferred savings into an overseas pension scheme
+transferIntoOverseasPensions.transferPensionsSavings.error.noEntry.agent = Select yes if your client transferred savings into an overseas pension scheme
 
 #Overseas Transfer Charge
-transferIntoOverseasPension.overseasTransferCharge.title = Did the amount result in an overseas transfer charge?
-transferIntoOverseasPension.overseasTransferCharge.amount.text = Amount that resulted in a transfer charge, in pounds
-transferIntoOverseasPension.overseasTransferCharge.error.noEntry = Select yes if the amount resulted in an overseas transfer charge
-transferIntoOverseasPension.overseasTransferCharge.error.noAmountEntry.individual = Enter the amount on which you paid an overseas transfer charge
-transferIntoOverseasPension.overseasTransferCharge.error.noAmountEntry.agent = Enter the amount that resulted in a transfer charge
-transferIntoOverseasPension.overseasTransferCharge.error.incorrectFormat.individual = Enter the amount on which you paid an overseas transfer charge in the correct format
-transferIntoOverseasPension.overseasTransferCharge.error.incorrectFormat.agent = Enter the amount that resulted in a transfer charge in the correct format
-transferIntoOverseasPension.overseasTransferCharge.error.tooBig.individual = The amount on which you paid an overseas transfer charge must be less than £100,000,000,000
-transferIntoOverseasPension.overseasTransferCharge.error.tooBig.agent = The amount that resulted in a transfer charge must be less than £100,000,000,000
+transferIntoOverseasPensions.overseasTransferCharge.title = Did the amount result in an overseas transfer charge?
+transferIntoOverseasPensions.overseasTransferCharge.amount.text = Amount that resulted in a transfer charge, in pounds
+transferIntoOverseasPensions.overseasTransferCharge.error.noEntry = Select yes if the amount resulted in an overseas transfer charge
+transferIntoOverseasPensions.overseasTransferCharge.error.noAmountEntry.individual = Enter the amount on which you paid an overseas transfer charge
+transferIntoOverseasPensions.overseasTransferCharge.error.noAmountEntry.agent = Enter the amount that resulted in a transfer charge
+transferIntoOverseasPensions.overseasTransferCharge.error.incorrectFormat.individual = Enter the amount on which you paid an overseas transfer charge in the correct format
+transferIntoOverseasPensions.overseasTransferCharge.error.incorrectFormat.agent = Enter the amount that resulted in a transfer charge in the correct format
+transferIntoOverseasPensions.overseasTransferCharge.error.tooBig.individual = The amount on which you paid an overseas transfer charge must be less than £100,000,000,000
+transferIntoOverseasPensions.overseasTransferCharge.error.tooBig.agent = The amount that resulted in a transfer charge must be less than £100,000,000,000
 
+#Overseas Transfer Charges Paid Status
+transferIntoOverseasPensions.overseasTransferChargesPaid.title = Did a UK pension scheme pay the transfer charge to HMRC?
+transferIntoOverseasPensions.overseasTransferChargesPaid.error.noEntry = Select yes if a UK pension scheme paid the transfer charge to HMRC
