@@ -132,6 +132,17 @@ class IncomeFromOverseasPensionsCYAViewHelperTest extends AnyWordSpec with Match
         assertRowForPaymentsFromOverseasPensions(summaryListRows.head, "No")
       }
 
+      "we selected 'No' for paymentsFromOverseasPensionsQuestion and there is no pension income " in {
+
+        val model = IncomeFromOverseasPensionsViewModel(
+          paymentsFromOverseasPensionsQuestion = Some(false)
+        )
+        val summaryListRows = IncomeFromOverseasPensionsCYAViewHelper.summaryListRows(model, taxYear)
+
+        summaryListRows.length shouldBe 1
+        assertRowForPaymentsFromOverseasPensions(summaryListRows.head, "No")
+      }
+
       "we received a wrong country code from backend service " in {
 
         val wrongOverseasIncomePensionSchemes = Seq(
