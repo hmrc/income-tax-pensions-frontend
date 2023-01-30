@@ -21,17 +21,23 @@ import play.api.data.Form
 
 
 case class OverseasTransferChargePaidPage(taxYear: Int,
+                                          pensionSchemeIndex: Option[Int],
                                           form: Form[Boolean])
 
 object OverseasTransferChargePaidPage {
 
   def apply(taxYear: Int,
+            pensionSchemeIndex: Option[Int],
             dataModel: TransfersIntoOverseasPensionsViewModel,
             form: Form[Boolean]): OverseasTransferChargePaidPage = {
-    val optQuestionValue: Option[Boolean] = dataModel.transfersIntoOverseas
+    val optQuestionValue: Option[Boolean] = pensionSchemeIndex match {
+      case Some(value) => dataModel.transferPensionScheme(value).ukTransferCharge
+      case None => None
+    }
 
     OverseasTransferChargePaidPage(
       taxYear = taxYear,
+      pensionSchemeIndex = pensionSchemeIndex,
       form = optQuestionValue.fold(form)(questionValue => if (form.hasErrors) form else form.fill(questionValue))
     )
   }

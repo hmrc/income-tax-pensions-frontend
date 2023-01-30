@@ -258,8 +258,8 @@ POST        /:taxYear/overseas-pensions/overseas-transfer-charges/transfer-pensi
 GET         /:taxYear/overseas-pensions/overseas-transfer-charges/transfer-charge                                                  controllers.pensions.transferIntoOverseasPensions.OverseasTransferChargeController.show(taxYear: Int)
 POST        /:taxYear/overseas-pensions/overseas-transfer-charges/transfer-charge                                                  controllers.pensions.transferIntoOverseasPensions.OverseasTransferChargeController.submit(taxYear: Int)
 
-GET         /:taxYear/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-paid                                    controllers.pensions.transferIntoOverseasPensions.OverseasTransferChargePaidController.show(taxYear: Int)
-POST        /:taxYear/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-paid                                    controllers.pensions.transferIntoOverseasPensions.OverseasTransferChargePaidController.submit(taxYear: Int)
+GET         /:taxYear/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-paid                                    controllers.pensions.transferIntoOverseasPensions.OverseasTransferChargePaidController.show(taxYear: Int, pensionSchemeIndex: Option[Int])
+POST        /:taxYear/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-paid                                    controllers.pensions.transferIntoOverseasPensions.OverseasTransferChargePaidController.submit(taxYear: Int, pensionSchemeIndex: Option[Int])
 
 GET         /:taxYear/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-tax                                     controllers.pensions.transferIntoOverseasPensions.PensionSchemeTaxTransferController.show(taxYear: Int)
 POST        /:taxYear/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-tax                                     controllers.pensions.transferIntoOverseasPensions.PensionSchemeTaxTransferController.submit(taxYear: Int)
