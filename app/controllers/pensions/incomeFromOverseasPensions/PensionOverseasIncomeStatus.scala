@@ -30,7 +30,6 @@ import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.incomeFromOverseasPensions.IncomeFromOverseasPensionsView
-
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -69,13 +68,20 @@ class PensionOverseasIncomeStatus @Inject()(authAction: AuthorisedAction,
       yesNo => {
         pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
           case Right(optPensionsUserData) =>
-            val updatedCyaModel: PensionsCYAModel = optPensionsUserData.fold(PensionsCYAModel.emptyModels)( data => data.pensions.copy(
-              incomeFromOverseasPensions = data.pensions.incomeFromOverseasPensions.copy(
-                paymentsFromOverseasPensionsQuestion = Some(yesNo))
-            ))
-            
+            val updatedCyaModel = optPensionsUserData match {
+              case Some(data) => data.pensions.copy(
+                incomeFromOverseasPensions = data.pensions.incomeFromOverseasPensions.copy(
+                  paymentsFromOverseasPensionsQuestion = Some(yesNo))
+              )
+              case None =>  PensionsCYAModel.emptyModels.copy(
+                incomeFromOverseasPensions = PensionsCYAModel.emptyModels.incomeFromOverseasPensions.copy(
+                  paymentsFromOverseasPensionsQuestion = Some(yesNo)
+                )
+              )
+            }
+
             val isPriorSubmission = optPensionsUserData.fold(false)(_.isPriorSubmission)
-              
+
             pensionSessionService.createOrUpdateSessionData(request.user,
               updatedCyaModel, taxYear, isPriorSubmission)(errorHandler.internalServerError()) {
               if (yesNo) {
