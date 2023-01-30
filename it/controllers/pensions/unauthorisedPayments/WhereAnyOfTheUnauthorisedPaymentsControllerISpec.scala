@@ -143,7 +143,7 @@ class WhereAnyOfTheUnauthorisedPaymentsControllerISpec extends IntegrationTest w
           welshToggleCheck(user.isWelsh)
         }
 
-        "render the 'where any of the unauthorised payments controller page' page with correct content and with pre-filled" which {
+        "render the 'where any of the unauthorised payments controller page' page with correct content and with pre-filled data" which {
 
           implicit lazy val result: WSResponse = {
             dropPensionsDB()
