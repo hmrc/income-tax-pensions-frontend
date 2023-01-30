@@ -37,4 +37,11 @@ object UserBuilder {
     nino = aPensionsUserData.nino,
     sessionId = aPensionsUserData.sessionId,
     affinityGroup = AffinityGroup.Individual.toString)
+
+  val anAgentUser: User = User(
+    mtditid = aPensionsUserData.mtdItId,
+    arn = Some(""),
+    nino = aPensionsUserData.nino,
+    sessionId = aPensionsUserData.sessionId,
+    affinityGroup = AffinityGroup.Agent.toString)
 }
