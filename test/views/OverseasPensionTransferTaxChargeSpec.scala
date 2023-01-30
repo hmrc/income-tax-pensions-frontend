@@ -27,7 +27,7 @@ import play.api.i18n.Messages
 import play.api.mvc.AnyContent
 import support.ViewUnitTest
 import utils.FakeRequestProvider
-import views.html.pensions.transferIntoOverseasPensions.pensionSchemeTaxTransferChargeVeiw
+import views.html.pensions.transferIntoOverseasPensions.pensionSchemeTaxTransferChargeView
 
 class OverseasPensionTransferTaxChargeSpec extends ViewUnitTest with FakeRequestProvider{
   
@@ -114,7 +114,7 @@ class OverseasPensionTransferTaxChargeSpec extends ViewUnitTest with FakeRequest
     exceedsMaxAmountKey = s"transferIntoOverseasPensions.overseasPensionSchemeTaxTransferCharge.error.tooBig"
   )
 
-  private lazy val underTest = inject[pensionSchemeTaxTransferChargeVeiw]
+  private lazy val underTest = inject[pensionSchemeTaxTransferChargeView]
   userScenarios.foreach { userScenario =>
 
     s"language is ${welshTest(userScenario.isWelsh)} and request is from an ${agentTest(userScenario.isAgent)}" should {
@@ -162,6 +162,7 @@ class OverseasPensionTransferTaxChargeSpec extends ViewUnitTest with FakeRequest
         implicit val htmlFormat = underTest(form(agentOrIndividual).bind(Map(RadioButtonAmountForm.yesNo -> "")), taxYearEOY)
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
+        errorAboveElementCheck(userScenario.specificExpectedResults.get.expectedNoEntryErrorText, Some("value"))
         errorSummaryCheck(userScenario.specificExpectedResults.get.expectedNoEntryErrorText, "#value")
       }
 
@@ -172,6 +173,8 @@ class OverseasPensionTransferTaxChargeSpec extends ViewUnitTest with FakeRequest
         implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = new UserSessionDataRequest(aPensionsUserData, aUser, if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest)
         implicit val htmlFormat = underTest(form(agentOrIndividual).bind(Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "")), taxYearEOY)
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
+
+        errorAboveElementCheck(userScenario.specificExpectedResults.get.expectedNoAmountEntryErrorText, Some("amount-2"))
         errorSummaryCheck(userScenario.specificExpectedResults.get.expectedNoAmountEntryErrorText, "#amount-2")
       }
 
@@ -181,6 +184,8 @@ class OverseasPensionTransferTaxChargeSpec extends ViewUnitTest with FakeRequest
         implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = new UserSessionDataRequest(aPensionsUserData, aUser, if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest)
         implicit val htmlFormat = underTest(form(agentOrIndividual).bind(Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "bfsbrfg")), taxYearEOY)
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
+
+        errorAboveElementCheck(userScenario.specificExpectedResults.get.expectedIncorrectFormatErrorText, Some("amount-2"))
         errorSummaryCheck(userScenario.specificExpectedResults.get.expectedIncorrectFormatErrorText, "#amount-2")
       }
       "render the page with an error when the user selects yes but amount exceeds max" which {
@@ -189,6 +194,8 @@ class OverseasPensionTransferTaxChargeSpec extends ViewUnitTest with FakeRequest
         implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = new UserSessionDataRequest(aPensionsUserData, aUser, if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest)
         implicit val htmlFormat = underTest(form(agentOrIndividual).bind(Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "1000000000000000000000.00")), taxYearEOY)
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
+
+        errorAboveElementCheck(userScenario.commonExpectedResults.expectedTooBigErrorText, Some("amount-2"))
         errorSummaryCheck(userScenario.commonExpectedResults.expectedTooBigErrorText, "#amount-2")
       }
     }}

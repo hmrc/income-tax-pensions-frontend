@@ -26,15 +26,16 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
-import views.html.pensions.transferIntoOverseasPensions.pensionSchemeTaxTransferChargeVeiw
+import views.html.pensions.transferIntoOverseasPensions.pensionSchemeTaxTransferChargeView
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
+@Singleton
 class PensionSchemeTaxTransferController @Inject()(
                                                     actionsProvider: ActionsProvider,
                                                     pensionSessionService: PensionSessionService,
-                                                    view: pensionSchemeTaxTransferChargeVeiw,
+                                                    view: pensionSchemeTaxTransferChargeView,
                                                     formsProvider: FormsProvider,
                                                     errorHandler: ErrorHandler)
                                                   (implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
