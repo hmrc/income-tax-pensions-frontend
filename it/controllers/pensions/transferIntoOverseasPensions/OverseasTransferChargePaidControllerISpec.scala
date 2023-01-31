@@ -22,9 +22,10 @@ import controllers.ControllerSpec.UserTypes.{Agent, Individual}
 import controllers.ControllerSpec._
 import controllers.YesNoControllerSpec
 import models.mongo.PensionsCYAModel
-import models.pension.charges.TransfersIntoOverseasPensionsViewModel
+import models.pension.charges.{TransferPensionScheme, TransfersIntoOverseasPensionsViewModel}
 import org.jsoup.Jsoup.parse
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
+import play.api.libs.ws.{WSClient, WSResponse}
 
 class OverseasTransferChargePaidControllerISpec
   extends YesNoControllerSpec("/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-paid") {
@@ -134,15 +135,15 @@ class OverseasTransferChargePaidControllerISpec
             val sessionData = pensionsUserData(
               minimalSessionDataToAccessThisPage.copy(
                 transfersIntoOverseasPensions = minimalSessionDataToAccessThisPage.transfersIntoOverseasPensions.copy(
-                  transfersIntoOverseas = Some(true)
-                )
+                  transferPensionScheme = Seq(TransferPensionScheme(ukTransferCharge = Some(true))
+                ))
               )
             )
 
             scenarioNameForIndividualAndEnglish in {
 
               implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
-              val response = getPage
+              val response = getPageWithIndex()
 
               response must haveStatus(OK)
               assertPageAsExpected(
@@ -155,14 +156,15 @@ class OverseasTransferChargePaidControllerISpec
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
                   links = Set.empty,
-                  text = Set.empty
+                  text = Set.empty,
+                  formUrl = formUrl()
                 ))
 
             }
             scenarioNameForIndividualAndWelsh in {
 
               implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
-              val response = getPage
+              val response = getPageWithIndex()
 
               response must haveStatus(OK)
               assertPageAsExpected(
@@ -175,14 +177,15 @@ class OverseasTransferChargePaidControllerISpec
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
                   links = Set.empty,
-                  text = Set.empty
+                  text = Set.empty,
+                  formUrl = formUrl()
                 ))
 
             }
             scenarioNameForAgentAndEnglish in {
 
               implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
-              val response = getPage
+              val response = getPageWithIndex()
 
               response must haveStatus(OK)
               assertPageAsExpected(
@@ -195,14 +198,16 @@ class OverseasTransferChargePaidControllerISpec
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
                   links = Set.empty,
-                  text = Set.empty
+                  text = Set.empty,
+                  formUrl = formUrl()
+
                 ))
 
             }
             scenarioNameForAgentAndWelsh in {
 
               implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
-              val response = getPage
+              val response = getPageWithIndex()
 
               response must haveStatus(OK)
               assertPageAsExpected(
@@ -215,26 +220,26 @@ class OverseasTransferChargePaidControllerISpec
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
                   links = Set.empty,
-                  text = Set.empty
+                  text = Set.empty,
+                  formUrl = formUrl()
                 ))
 
             }
           }
-
           "the user had previously answered 'No', and" when {
 
             val sessionData = pensionsUserData(
               minimalSessionDataToAccessThisPage.copy(
                 transfersIntoOverseasPensions = minimalSessionDataToAccessThisPage.transfersIntoOverseasPensions.copy(
-                  transfersIntoOverseas = Some(false)
-                )
+                  transferPensionScheme = Seq(TransferPensionScheme(ukTransferCharge = Some(false))
+                  ))
               )
             )
 
             scenarioNameForIndividualAndEnglish in {
 
               implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
-              val response = getPage
+              val response = getPageWithIndex()
 
               response must haveStatus(OK)
               assertPageAsExpected(
@@ -247,14 +252,15 @@ class OverseasTransferChargePaidControllerISpec
                   radioButtonForNo = checkedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
                   links = Set.empty,
-                  text = Set.empty
+                  text = Set.empty,
+                  formUrl = formUrl()
                 ))
 
             }
             scenarioNameForIndividualAndWelsh in {
 
               implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
-              val response = getPage
+              val response = getPageWithIndex()
 
               response must haveStatus(OK)
               assertPageAsExpected(
@@ -267,7 +273,8 @@ class OverseasTransferChargePaidControllerISpec
                   radioButtonForNo = checkedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
                   links = Set.empty,
-                  text = Set.empty
+                  text = Set.empty,
+                  formUrl = formUrl()
                 ))
 
 
@@ -275,7 +282,7 @@ class OverseasTransferChargePaidControllerISpec
             scenarioNameForAgentAndEnglish in {
 
               implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
-              val response = getPage
+              val response = getPageWithIndex()
 
               response must haveStatus(OK)
               assertPageAsExpected(
@@ -288,14 +295,16 @@ class OverseasTransferChargePaidControllerISpec
                   radioButtonForNo = checkedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
                   links = Set.empty,
-                  text = Set.empty
+                  text = Set.empty,
+                  formUrl = formUrl()
+
                 ))
 
             }
             scenarioNameForAgentAndWelsh in {
 
               implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
-              val response = getPage
+              val response = getPageWithIndex()
 
               response must haveStatus(OK)
               assertPageAsExpected(
@@ -308,7 +317,8 @@ class OverseasTransferChargePaidControllerISpec
                   radioButtonForNo = checkedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
                   links = Set.empty,
-                  text = Set.empty
+                  text = Set.empty,
+                  formUrl = formUrl()
                 ))
 
             }
@@ -322,10 +332,9 @@ class OverseasTransferChargePaidControllerISpec
 
             val sessionData = pensionsUserData(minimalSessionDataToAccessThisPage)
 
+            val expectedScheme = TransferPensionScheme(ukTransferCharge = Some(false))
             val expectedViewModel =
-              sessionData.pensions.transfersIntoOverseasPensions.copy(
-                transfersIntoOverseas = Some(false)
-              )
+              sessionData.pensions.transfersIntoOverseasPensions.copy(transferPensionScheme = Seq(expectedScheme))
 
             scenarioNameForIndividualAndEnglish in {
 
@@ -333,7 +342,7 @@ class OverseasTransferChargePaidControllerISpec
               val response = submitForm(SubmittedFormDataForYesNoPage(Some(false)))
 
               response must haveStatus(SEE_OTHER)
-              response must haveALocationHeaderValue(PageRelativeURLs.overseasTransferChargePaid)
+              response must haveALocationHeaderValue(formUrl(0).get)
               getViewModel mustBe Some(expectedViewModel)
 
             }
@@ -343,7 +352,7 @@ class OverseasTransferChargePaidControllerISpec
               val response = submitForm(SubmittedFormDataForYesNoPage(Some(false)))
 
               response must haveStatus(SEE_OTHER)
-              response must haveALocationHeaderValue(PageRelativeURLs.overseasTransferChargePaid)
+              response must haveALocationHeaderValue(formUrl(0).get)
               getViewModel mustBe Some(expectedViewModel)
 
             }
@@ -353,7 +362,7 @@ class OverseasTransferChargePaidControllerISpec
               val response = submitForm(SubmittedFormDataForYesNoPage(Some(false)))
 
               response must haveStatus(SEE_OTHER)
-              response must haveALocationHeaderValue(PageRelativeURLs.overseasTransferChargePaid)
+              response must haveALocationHeaderValue(formUrl(0).get)
               getViewModel mustBe Some(expectedViewModel)
 
             }
@@ -363,7 +372,7 @@ class OverseasTransferChargePaidControllerISpec
               val response = submitForm(SubmittedFormDataForYesNoPage(Some(false)))
 
               response must haveStatus(SEE_OTHER)
-              response must haveALocationHeaderValue(PageRelativeURLs.overseasTransferChargePaid)
+              response must haveALocationHeaderValue(formUrl(0).get)
               getViewModel mustBe Some(expectedViewModel)
 
             }
@@ -372,10 +381,10 @@ class OverseasTransferChargePaidControllerISpec
 
             val sessionData = pensionsUserData(minimalSessionDataToAccessThisPage)
 
+            val expectedScheme = TransferPensionScheme(ukTransferCharge = Some(true))
             val expectedViewModel =
-              sessionData.pensions.transfersIntoOverseasPensions.copy(
-                transfersIntoOverseas = Some(true)
-              )
+              sessionData.pensions.transfersIntoOverseasPensions.copy(transferPensionScheme = Seq(expectedScheme))
+
 
             scenarioNameForIndividualAndEnglish in {
 
@@ -383,7 +392,7 @@ class OverseasTransferChargePaidControllerISpec
               val response = submitForm(SubmittedFormDataForYesNoPage(Some(true)))
 
               response must haveStatus(SEE_OTHER)
-              response must haveALocationHeaderValue(PageRelativeURLs.overseasTransferChargePaid)
+              response must haveALocationHeaderValue(formUrl(0).get)
               getViewModel mustBe Some(expectedViewModel)
 
             }
@@ -393,7 +402,7 @@ class OverseasTransferChargePaidControllerISpec
               val response = submitForm(SubmittedFormDataForYesNoPage(Some(true)))
 
               response must haveStatus(SEE_OTHER)
-              response must haveALocationHeaderValue(PageRelativeURLs.overseasTransferChargePaid)
+              response must haveALocationHeaderValue(formUrl(0).get)
               getViewModel mustBe Some(expectedViewModel)
 
             }
@@ -403,7 +412,7 @@ class OverseasTransferChargePaidControllerISpec
               val response = submitForm(SubmittedFormDataForYesNoPage(Some(true)))
 
               response must haveStatus(SEE_OTHER)
-              response must haveALocationHeaderValue(PageRelativeURLs.overseasTransferChargePaid)
+              response must haveALocationHeaderValue(formUrl(0).get)
               getViewModel mustBe Some(expectedViewModel)
 
             }
@@ -413,7 +422,7 @@ class OverseasTransferChargePaidControllerISpec
               val response = submitForm(SubmittedFormDataForYesNoPage(Some(true)))
 
               response must haveStatus(SEE_OTHER)
-              response must haveALocationHeaderValue(PageRelativeURLs.overseasTransferChargePaid)
+              response must haveALocationHeaderValue(formUrl(0).get)
               getViewModel mustBe Some(expectedViewModel)
 
             }
@@ -563,6 +572,19 @@ class OverseasTransferChargePaidControllerISpec
   private def getViewModel(implicit userConfig: UserConfig): Option[TransfersIntoOverseasPensionsViewModel] =
     loadPensionUserData.map(_.pensions.transfersIntoOverseasPensions)
 
+  private def getPageWithIndex(index: Int = 0)(implicit userConfig: UserConfig, wsClient: WSClient): WSResponse = {
+    getPage(getMap(index))
+  }
+
+  private def submitFormWithIndex(submittedFormData: SubmittedFormData, index: Int = 0)(implicit userConfig: UserConfig, wsClient: WSClient): WSResponse = {
+    submitForm(submittedFormData, getMap(index))
+  }
+  private def formUrl(index: Int = 0): Option[String] =
+    Some(relativeUrlForThisPage + "?pensionSchemeIndex=" + index)
+
+  private def getMap(index: Int): Map[String, String] = {
+    Map("pensionSchemeIndex" -> index.toString)
+  }
 }
 
 

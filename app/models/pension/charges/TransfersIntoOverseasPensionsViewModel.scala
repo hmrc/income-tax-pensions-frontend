@@ -25,7 +25,6 @@ import utils.EncryptorInstances.{bigDecimalEncryptor, booleanEncryptor, stringEn
 import utils.{EncryptedValue, SecureGCMCipher}
 
 case class TransfersIntoOverseasPensionsViewModel(
-                                                   transfersIntoOverseas: Option[Boolean] = None,
                                                    transferPensionSavings: Option[Boolean] = None,
                                                    overseasTransferCharge: Option[Boolean] = None,
                                                    overseasTransferChargeAmount: Option[BigDecimal] = None,
@@ -36,7 +35,6 @@ case class TransfersIntoOverseasPensionsViewModel(
 
   def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedTransfersIntoOverseasPensionsViewModel =
     EncryptedTransfersIntoOverseasPensionsViewModel(
-      transfersIntoOverseas = transfersIntoOverseas.map(_.encrypted),
       transferPensionSavings = transferPensionSavings.map(_.encrypted),
       overseasTransferCharge = overseasTransferCharge.map(_.encrypted),
       overseasTransferChargeAmount = overseasTransferChargeAmount.map(_.encrypted),
@@ -51,7 +49,6 @@ object TransfersIntoOverseasPensionsViewModel {
 }
 
 case class EncryptedTransfersIntoOverseasPensionsViewModel(
-                                                            transfersIntoOverseas: Option[EncryptedValue] = None,
                                                             transferPensionSavings: Option[EncryptedValue] = None,
                                                             overseasTransferCharge: Option[EncryptedValue] = None,
                                                             overseasTransferChargeAmount: Option[EncryptedValue] = None,
@@ -61,7 +58,6 @@ case class EncryptedTransfersIntoOverseasPensionsViewModel(
 
   def decrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): TransfersIntoOverseasPensionsViewModel =
     TransfersIntoOverseasPensionsViewModel(
-      transfersIntoOverseas = transfersIntoOverseas.map(_.decrypted[Boolean]),
       transferPensionSavings = transferPensionSavings.map(_.decrypted[Boolean]),
       overseasTransferCharge = overseasTransferCharge.map(_.decrypted[Boolean]),
       overseasTransferChargeAmount = overseasTransferChargeAmount.map(_.decrypted[BigDecimal]),
@@ -76,12 +72,12 @@ object EncryptedTransfersIntoOverseasPensionsViewModel {
 }
 
 case class TransferPensionScheme(
-                                  ukTransferCharge: Option[Boolean],
-                                  name: Option[String],
-                                  pensionSchemeTaxReference: Option[String],
-                                  qualifyingRecognisedOverseasPensionScheme: Option[String],
-                                  providerAddress: Option[String],
-                                  countryCode: Option[String]) {
+                                  ukTransferCharge: Option[Boolean] = None,
+                                  name: Option[String] = None,
+                                  pensionSchemeTaxReference: Option[String] = None,
+                                  qualifyingRecognisedOverseasPensionScheme: Option[String] = None,
+                                  providerAddress: Option[String] = None,
+                                  countryCode: Option[String] = None) {
 
   def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedTransferPensionScheme = {
     EncryptedTransferPensionScheme(
