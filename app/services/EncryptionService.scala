@@ -83,7 +83,8 @@ class EncryptionService @Inject()(secureGCMCipher: SecureGCMCipher, appConfig: A
       unauthorisedPayments = pension.unauthorisedPayments.encrypted(),
       paymentsIntoOverseasPensions = pension.paymentsIntoOverseasPensions.encrypted(),
       incomeFromOverseasPensions = pension.incomeFromOverseasPensions.encrypted(),
-      transfersIntoOverseasPensions = pension.transfersIntoOverseasPensions.encrypted()
+      transfersIntoOverseasPensions = pension.transfersIntoOverseasPensions.encrypted(),
+      shortServiceRefunds = pension.shortServiceRefunds.encrypted()
     )
   }
 
@@ -130,7 +131,8 @@ class EncryptionService @Inject()(secureGCMCipher: SecureGCMCipher, appConfig: A
       unauthorisedPayments = pension.unauthorisedPayments.decrypted(),
       paymentsIntoOverseasPensions = pension.paymentsIntoOverseasPensions.decrypted(),
       incomeFromOverseasPensions = pension.incomeFromOverseasPensions.decrypted(),
-      transfersIntoOverseasPensions = pension.transfersIntoOverseasPensions.decrypted()
+      transfersIntoOverseasPensions = pension.transfersIntoOverseasPensions.decrypted(),
+      shortServiceRefunds = pension.shortServiceRefunds.decrypted()
     )
   }
 

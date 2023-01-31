@@ -16,22 +16,18 @@
 
 package builders
 
-import models.pension.charges.{TransferPensionScheme, TransfersIntoOverseasPensionsViewModel}
+import models.pension.charges.{OverseasRefundPensionScheme, ShortServiceRefundsViewModel}
 
-object TransfersIntoOverseasPensionsViewModelBuilder {
-
-  val aTransfersIntoOverseasPensionsViewModel = TransfersIntoOverseasPensionsViewModel(
-    //TODO: Remove `transfersIntoOverseas` field and its references from tests
-    transfersIntoOverseas = Some(true),
-    transferPensionSavings = Some(true),
-    overseasTransferCharge = Some(true),
-    overseasTransferChargeAmount = Some(1999.99),
-    pensionSchemeTransferCharge = Some(true),
-    pensionSchemeTransferChargeAmount = Some(1000.00),
-    transferPensionScheme = Seq(
-      TransferPensionScheme(
-        ukTransferCharge = Some(false),
-        name = Some("Foreign Scheme Name"),
+object ShortServiceRefundsViewModelBuilder {
+  val aShortServiceRefundsViewModel = ShortServiceRefundsViewModel(
+    shortServiceRefund = Some(true),
+    shortServiceRefundCharge = Some(1999.99),
+    shortServiceRefundTaxPaid = Some(true),
+    shortServiceRefundTaxPaidCharge = Some(1000.00),
+    refundPensionScheme = Seq(
+      OverseasRefundPensionScheme(
+        ukRefundCharge = Some(true),
+        name = Some("Overseas Refund Scheme Name"),
         pensionSchemeTaxReference = None,
         qualifyingRecognisedOverseasPensionScheme = Some("QOPS123456"),
         providerAddress = Some("Scheme Address"),
@@ -39,6 +35,5 @@ object TransfersIntoOverseasPensionsViewModelBuilder {
       )
     )
   )
-  val emptyTransfersIntoOverseasPensionsViewModel = TransfersIntoOverseasPensionsViewModel()
-
+  val emptyShortServiceRefundsViewModel = ShortServiceRefundsViewModel()
 }

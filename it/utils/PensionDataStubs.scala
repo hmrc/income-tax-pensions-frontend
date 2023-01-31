@@ -22,6 +22,7 @@ import builders.IncomeFromPensionsViewModelBuilder.anIncomeFromPensionsViewModel
 import builders.PaymentsIntoOverseasPensionsViewModelBuilder.aPaymentsIntoOverseasPensionsViewModel
 import builders.PensionIncomeViewModelBuilder.aPensionIncome
 import builders.PensionLifetimeAllowanceViewModelBuilder.aPensionLifetimeAllowanceViewModel
+import builders.ShortServiceRefundsViewModelBuilder.aShortServiceRefundsViewModel
 import builders.TransfersIntoOverseasPensionsViewModelBuilder.aTransfersIntoOverseasPensionsViewModel
 import builders.UnauthorisedPaymentsViewModelBuilder.anUnauthorisedPaymentsViewModel
 import models.mongo.{PensionsCYAModel, PensionsUserData}
@@ -263,7 +264,8 @@ object PensionUserDataStub extends IntegrationTest {
                        cya: PensionsCYAModel = PensionsCYAModel(paymentsIntoPensionViewModel, pensionsAnnualAllowancesViewModel,
                          aPensionLifetimeAllowanceViewModel, anIncomeFromPensionsViewModel,
                          anUnauthorisedPaymentsViewModel, aPaymentsIntoOverseasPensionsViewModel,
-                         anIncomeFromOverseasPensionsViewModel, aTransfersIntoOverseasPensionsViewModel)
+                         anIncomeFromOverseasPensionsViewModel, aTransfersIntoOverseasPensionsViewModel,
+                         aShortServiceRefundsViewModel)
                      ): PensionsUserData = {
     PensionsUserData(
       sessionId = sessionId,
