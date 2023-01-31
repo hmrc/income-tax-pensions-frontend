@@ -29,30 +29,37 @@ class OverseasTransferChargePaidPageSpec extends UnitTest {
   private val pageForm = new FormsProvider().overseasTransferChargePaidForm
 
   "OverseasTransferChargePaid.apply" should {
-    "return page with pre-filled form when transfersIntoOverseas has value" in {
+    "return page with pre-filled form when scheme has value existing value" in {
 
-      val cya = aTransfersIntoOverseasPensionsViewModel.copy(transfersIntoOverseas = Some(anyQuestionValue))
+      val index = Some(0)
+      val schemes = aTransfersIntoOverseasPensionsViewModel.transferPensionScheme(index.get).copy(ukTransferCharge = Some(anyQuestionValue))
+      val cya = aTransfersIntoOverseasPensionsViewModel.copy(transferPensionScheme = Seq(schemes))
 
-      OverseasTransferChargePaidPage.apply(taxYear, cya, pageForm) shouldBe OverseasTransferChargePaidPage(
+      OverseasTransferChargePaidPage.apply(taxYear, index, cya, pageForm) shouldBe OverseasTransferChargePaidPage(
         taxYear = taxYear,
+        pensionSchemeIndex = index,
         form = pageForm.fill(value = anyQuestionValue)
       )
     }
 
-    "return page without pre-filled form when endDateQuestion is None" in {
-      val cya = aTransfersIntoOverseasPensionsViewModel.copy(transfersIntoOverseas = None)
+    "return page without pre-filled form when no scheme exists" in {
+      val index = None
+      val cya = aTransfersIntoOverseasPensionsViewModel
 
-      OverseasTransferChargePaidPage.apply(taxYear, cya, pageForm) shouldBe OverseasTransferChargePaidPage(
+      OverseasTransferChargePaidPage.apply(taxYear, index, cya, pageForm) shouldBe OverseasTransferChargePaidPage(
         taxYear = taxYear,
-        form = pageForm,
+        pensionSchemeIndex = index,
+        form = pageForm
       )
     }
 
     "return page with pre-filled form with errors when form has errors" in {
+      val index = Some(0)
       val formWithErrors = pageForm.bind(Map("wrong-key" -> "wrong-value"))
 
-      OverseasTransferChargePaidPage.apply(taxYear, aTransfersIntoOverseasPensionsViewModel, formWithErrors) shouldBe OverseasTransferChargePaidPage(
+      OverseasTransferChargePaidPage.apply(taxYear, index, aTransfersIntoOverseasPensionsViewModel, formWithErrors) shouldBe OverseasTransferChargePaidPage(
         taxYear = taxYear,
+        pensionSchemeIndex = index,
         form = formWithErrors
       )
     }

@@ -21,8 +21,6 @@ import models.pension.charges.{TransferPensionScheme, TransfersIntoOverseasPensi
 object TransfersIntoOverseasPensionsViewModelBuilder {
 
   val aTransfersIntoOverseasPensionsViewModel = TransfersIntoOverseasPensionsViewModel(
-    //TODO: Remove `transfersIntoOverseas` field and its references from tests
-    transfersIntoOverseas = Some(true),
     transferPensionSavings = Some(true),
     overseasTransferCharge = Some(true),
     overseasTransferChargeAmount = Some(1999.99),

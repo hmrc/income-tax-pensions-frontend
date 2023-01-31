@@ -18,7 +18,7 @@ package services
 
 import models.User
 import models.mongo.PensionsUserData
-import models.pension.charges.TransfersIntoOverseasPensionsViewModel
+import models.pension.charges.{TransferPensionScheme, TransfersIntoOverseasPensionsViewModel}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
@@ -29,9 +29,18 @@ class OverseasTransferChargesService @Inject()(pensionSessionService: PensionSes
                                               (implicit ec: ExecutionContext) {
 
 
-  def updateOverseasTransferChargeQuestion(userData: PensionsUserData, question: Boolean): Future[Either[Unit, PensionsUserData]] = {
-    val model = if (question) userData.pensions.transfersIntoOverseasPensions else TransfersIntoOverseasPensionsViewModel()
-    val updatedModel = model.copy(transfersIntoOverseas = Some(question))
+  def updateOverseasTransferChargeQuestion(userData: PensionsUserData, question: Boolean, pensionIndex: Option[Int]): Future[Either[Unit, PensionsUserData]] = {
+    val pensionScheme = pensionIndex match {
+      case Some(index) => userData.pensions.transfersIntoOverseasPensions.transferPensionScheme(index)
+      case None => TransferPensionScheme()
+    }
+    val model = userData.pensions.transfersIntoOverseasPensions
+    val updatedModel: TransfersIntoOverseasPensionsViewModel =
+      pensionIndex match {
+        case Some(index) =>
+          model.copy(transferPensionScheme = model.transferPensionScheme.updated(index, pensionScheme.copy(ukTransferCharge = Some(question))))
+        case None => model.copy(transferPensionScheme = model.transferPensionScheme ++ Seq(pensionScheme.copy(ukTransferCharge = Some(question))))
+      }
     createOrUpdateModel(userData, updatedModel)
   }
 
