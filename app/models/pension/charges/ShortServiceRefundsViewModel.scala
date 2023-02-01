@@ -73,7 +73,8 @@ case class OverseasRefundPensionScheme(
                                         pensionSchemeTaxReference: Option[String],
                                         qualifyingRecognisedOverseasPensionScheme: Option[String],
                                         providerAddress: Option[String],
-                                        countryCode: Option[String]
+                                        alphaTwoCountryCode: Option[String],
+                                        alphaThreeCountryCode: Option[String]
                                       ) {
   def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedOverseasRefundPensionScheme =
     EncryptedOverseasRefundPensionScheme(
@@ -82,7 +83,8 @@ case class OverseasRefundPensionScheme(
       pensionSchemeTaxReference = pensionSchemeTaxReference.map(_.encrypted),
       qualifyingRecognisedOverseasPensionScheme = qualifyingRecognisedOverseasPensionScheme.map(_.encrypted),
       providerAddress = providerAddress.map(_.encrypted),
-      countryCode = countryCode.map(_.encrypted)
+      alphaTwoCountryCode = alphaTwoCountryCode.map(_.encrypted),
+      alphaThreeCountryCode = alphaThreeCountryCode.map(_.encrypted)
     )
 }
 
@@ -91,12 +93,13 @@ object OverseasRefundPensionScheme {
 }
 
 case class EncryptedOverseasRefundPensionScheme(
-                                        ukRefundCharge: Option[EncryptedValue] = None,
-                                        name: Option[EncryptedValue] = None,
-                                        pensionSchemeTaxReference: Option[EncryptedValue] = None,
-                                        qualifyingRecognisedOverseasPensionScheme: Option[EncryptedValue] = None,
-                                        providerAddress: Option[EncryptedValue] = None,
-                                        countryCode: Option[EncryptedValue] = None
+                                                 ukRefundCharge: Option[EncryptedValue] = None,
+                                                 name: Option[EncryptedValue] = None,
+                                                 pensionSchemeTaxReference: Option[EncryptedValue] = None,
+                                                 qualifyingRecognisedOverseasPensionScheme: Option[EncryptedValue] = None,
+                                                 providerAddress: Option[EncryptedValue] = None,
+                                                 alphaTwoCountryCode: Option[EncryptedValue] = None,
+                                                 alphaThreeCountryCode: Option[EncryptedValue] = None
                                       ) {
   def decrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): OverseasRefundPensionScheme =
     OverseasRefundPensionScheme(
@@ -105,7 +108,8 @@ case class EncryptedOverseasRefundPensionScheme(
       pensionSchemeTaxReference = pensionSchemeTaxReference.map(_.decrypted[String]),
       qualifyingRecognisedOverseasPensionScheme = qualifyingRecognisedOverseasPensionScheme.map(_.decrypted[String]),
       providerAddress = providerAddress.map(_.decrypted[String]),
-      countryCode = countryCode.map(_.decrypted[String])
+      alphaTwoCountryCode = alphaTwoCountryCode.map(_.decrypted[String]),
+      alphaThreeCountryCode = alphaThreeCountryCode.map(_.decrypted[String])
     )
 }
 

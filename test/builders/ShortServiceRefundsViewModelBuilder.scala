@@ -31,7 +31,8 @@ object ShortServiceRefundsViewModelBuilder {
         pensionSchemeTaxReference = None,
         qualifyingRecognisedOverseasPensionScheme = Some("QOPS123456"),
         providerAddress = Some("Scheme Address"),
-        countryCode = Some("FRA")
+        alphaTwoCountryCode = Some("FR"),
+        alphaThreeCountryCode = Some("FRA")
       )
     )
   )
