@@ -165,7 +165,8 @@ object AllPensionsData {
         pstr = x.pensionSchemeTaxReference.map(_.head),
         qops = x.qualifyingRecognisedOverseasPensionScheme.map(_.head),
         providerAddress = Some(x.providerAddress),
-        countryCode = Some(x.providerCountryCode)
+        alphaTwoCountryCode = Countries.get2AlphaCodeFrom3AlphaCode(x.providerCountryCode),
+        alphaThreeCountryCode = Some(x.providerCountryCode)
       )
     )
   }

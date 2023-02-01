@@ -21,6 +21,8 @@ import controllers.pensions.routes._
 import controllers.pensions.transferIntoOverseasPensions.routes._
 import controllers.predicates.ActionsProvider
 import controllers.validateIndex
+import forms.Countries
+import forms.overseas.PensionSchemeForm.{TransferPensionsSchemeFormModel, transferPensionSchemeForm}
 import forms.overseas.PensionSchemeForm.{TcSsrPensionsSchemeFormModel, tcSsrPensionSchemeForm}
 import models.User
 import models.mongo.PensionsUserData
@@ -92,7 +94,7 @@ class TransferPensionsSchemeController @Inject()(actionsProvider: ActionsProvide
       schemeReference = (if (scheme.ukTransferCharge.contains(true)) scheme.pstr else scheme.qops)
         .getOrElse(""),
       providerAddress = scheme.providerAddress.getOrElse(""),
-      countryId = scheme.countryCode
+      countryId =  scheme.alphaTwoCountryCode
     )
   
   private def updateViewModel(pensionsUserdata: PensionsUserData, scheme: TcSsrPensionsSchemeFormModel, index: Int) = {
@@ -104,7 +106,7 @@ class TransferPensionsSchemeController @Inject()(actionsProvider: ActionsProvide
       if (commonUpdatedScheme.ukTransferCharge.contains(true)) {
         commonUpdatedScheme.copy(pstr = Some(scheme.schemeReference))
       } else {
-        commonUpdatedScheme.copy(qops = Some(scheme.schemeReference), countryCode = scheme.countryId)
+        commonUpdatedScheme.copy(qops = Some(scheme.schemeReference), alphaThreeCountryCode = Countries.get3AlphaCodeFrom2AlphaCode(scheme.countryId))
       }
     }
     pensionsUserdata.pensions.copy(

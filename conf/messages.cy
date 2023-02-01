@@ -957,6 +957,24 @@ transferIntoOverseasPensions.overseasPensionSchemeTaxTransferCharge.error.tooBig
 transferIntoOverseasPensions.overseasTransferChargesPaid.title = Did a UK pension scheme pay the transfer charge to HMRC?
 transferIntoOverseasPensions.overseasTransferChargesPaid.error.noEntry = Select yes if a UK pension scheme paid the transfer charge to HMRC
 
+#Transfer Into Overseas Pensions CYA
+transferIntoOverseasPensions.cya.heading = Check transfers into overseas pensions
+transferIntoOverseasPensions.cya.transferIntoOverseasPensions = Transfers into overseas pensions
+transferIntoOverseasPensions.cya.amountCharged = Amount charged
+transferIntoOverseasPensions.cya.noAmountCharged = charge
+transferIntoOverseasPensions.cya.taxOnAmountCharged = Tax on amount charged
+transferIntoOverseasPensions.cya.noTaxOnAmountCharged = tax paid
+transferIntoOverseasPensions.cya.schemesPayingTax = Schemes paying tax
+transferIntoOverseasPensions.cya.transferIntoOverseasPensions.hidden = Change transfers into overseas pensions
+transferIntoOverseasPensions.cya.amountCharged.hidden = Change amount charged
+transferIntoOverseasPensions.cya.taxOnAmountCharged.hidden = Change tax on amount charged
+transferIntoOverseasPensions.cya.schemesPayingTax.hidden = Change schemes paying tax
+
+transferIntoOverseasPensions.cya.transferIntoOverseasPensions.hidden = Change transfers into overseas pensions
+transferIntoOverseasPensions.cya.amountCharged.hidden = Change amount charged
+transferIntoOverseasPensions.cya.taxOnAmountCharged.hidden = Change tax on amount charged
+transferIntoOverseasPensions.cya.schemesPayingTax.hidden = Change schemes paying tax
+
 #Transfer Pension Scheme
 transferIntoOverseasPensions.transferPensionScheme.title = Pension scheme paying the transfer charge
 

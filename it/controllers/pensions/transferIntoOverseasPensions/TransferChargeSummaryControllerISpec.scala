@@ -16,7 +16,6 @@
 
 package controllers.pensions.transferIntoOverseasPensions
 
-
 import builders.PensionsUserDataBuilder.pensionUserDataWithTransferIntoOverseasPension
 import builders.TransfersIntoOverseasPensionsViewModelBuilder.{aTransfersIntoOverseasPensionsViewModel, emptyTransfersIntoOverseasPensionsViewModel}
 import builders.UserBuilder.aUserRequest
@@ -27,8 +26,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.TransferIntoOverseasPensions.{overseasTransferChargePaidUrl, overseasTransferChargePaidUrlNoIndex, removeTransferChargeScheme, transferChargeSummaryUrl}
-import utils.PageUrls.TransferIntoOverseasPensionsPages.transferPensionSavingsUrl
+import utils.PageUrls.TransferIntoOverseasPensions.{checkYourDetailsPensionUrl, overseasTransferChargePaidUrl, removeTransferChargeScheme, transferChargeSummaryUrl}
 import utils.PageUrls.{fullUrl, overseasPensionsSummaryUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
@@ -144,8 +142,7 @@ class TransferChargeSummaryControllerISpec extends IntegrationTest with BeforeAn
           linkCheck(s"$remove $remove ${pensionScheme2.name.get}", removeLinkSelector(2), removeTransferChargeScheme(taxYearEOY, 1))
           linkCheck(expectedAddAnotherText, addAnotherLinkSelector, overseasTransferChargePaidUrl(taxYearEOY))
 
-          //todo update redirect to to transfer journey CYA page when navigation is linked up
-          buttonCheck(expectedButtonText, continueButtonSelector, Some(transferChargeSummaryUrl(taxYearEOY)))
+          buttonCheck(expectedButtonText, continueButtonSelector, Some(checkYourDetailsPensionUrl(taxYearEOY)))
           welshToggleCheck(user.isWelsh)
         }
 
@@ -180,8 +177,7 @@ class TransferChargeSummaryControllerISpec extends IntegrationTest with BeforeAn
           linkCheck(s"$remove $remove ${pensionScheme.name.get}", removeLinkSelector(1), removeTransferChargeScheme(taxYearEOY, 0))
           linkCheck(expectedAddAnotherText, addAnotherLinkSelector, overseasTransferChargePaidUrl(taxYearEOY))
 
-          //todo update redirect to to transfer journey CYA page when navigation is linked up
-          buttonCheck(expectedButtonText, continueButtonSelector, Some(transferChargeSummaryUrl(taxYearEOY)))
+          buttonCheck(expectedButtonText, continueButtonSelector, Some(checkYourDetailsPensionUrl(taxYearEOY)))
           welshToggleCheck(user.isWelsh)
         }
 

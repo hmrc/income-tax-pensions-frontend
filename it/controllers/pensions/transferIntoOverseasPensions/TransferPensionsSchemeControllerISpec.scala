@@ -96,28 +96,28 @@ class TransferPensionsSchemeControllerISpec extends ControllerSpec ("/overseas-p
       val transferPenScheme =
         if (isUKCountry) {
           TransferPensionScheme(ukTransferCharge = Some(true), Some("Scheme Name"),
-            pstr = Some("12345678RF"), qops = None, Some("Scheme Address"), countryCode = None)
+            pstr = Some("12345678RF"), qops = None, Some("Scheme Address"), alphaTwoCountryCode = None, alphaThreeCountryCode = None)
         } else {
           TransferPensionScheme(ukTransferCharge = Some(false), Some("Scheme Name"),
-            pstr = None, qops = Some("654321"), Some("Scheme Address"), countryCode = Some("CY"))
+            pstr = None, qops = Some("654321"), Some("Scheme Address"), if (hasPriorPensionsSchemeData) Some("CY") else  None, alphaThreeCountryCode = Some("CYP"))
         }
       val formData =
         if (isUKCountry) {
           setFormData("Scheme Name", "12345678RF", "Scheme Address", None)
         } else {
-          setFormData("Scheme Name", "654321", "Scheme Address", Some("CY"))
+          setFormData("Scheme Name", "654321", "Scheme Address",Some("CY"))
         }
       
       val ukOrOverseasAlignedSessionData = {
         val alignedTCPensionSchemes = tcPensionSchemes.map { tcps =>
           if (hasPriorPensionsSchemeData) {
             if (isUKCountry) {
-              tcps.copy(ukTransferCharge = Some(isUKCountry), qops = None, countryCode = None)
+              tcps.copy(ukTransferCharge = Some(isUKCountry), qops = None, alphaTwoCountryCode = None, alphaThreeCountryCode = None)
             } else {
-              tcps.copy(ukTransferCharge = Some(isUKCountry), pstr = None)
+              tcps.copy(ukTransferCharge = Some(isUKCountry), pstr = None, alphaTwoCountryCode = Some("CY"))
             }
           } else {
-            tcps.copy(ukTransferCharge = Some(isUKCountry), pstr = None, qops = None, countryCode = None)
+            tcps.copy(ukTransferCharge = Some(isUKCountry), pstr = None, qops = None, alphaTwoCountryCode = None, alphaThreeCountryCode = None)
           }
         }
         
