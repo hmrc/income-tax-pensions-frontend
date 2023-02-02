@@ -28,7 +28,8 @@ case class PensionsCYAModel(paymentsIntoPension: PaymentsIntoPensionViewModel,
                             unauthorisedPayments: UnauthorisedPaymentsViewModel,
                             paymentsIntoOverseasPensions: PaymentsIntoOverseasPensionsViewModel,
                             incomeFromOverseasPensions: IncomeFromOverseasPensionsViewModel,
-                            transfersIntoOverseasPensions: TransfersIntoOverseasPensionsViewModel) {
+                            transfersIntoOverseasPensions: TransfersIntoOverseasPensionsViewModel,
+                            shortServiceRefunds: ShortServiceRefundsViewModel) {
 }
 
 object PensionsCYAModel {
@@ -41,7 +42,8 @@ object PensionsCYAModel {
     UnauthorisedPaymentsViewModel(),
     PaymentsIntoOverseasPensionsViewModel(),
     IncomeFromOverseasPensionsViewModel(),
-    TransfersIntoOverseasPensionsViewModel()
+    TransfersIntoOverseasPensionsViewModel(),
+    ShortServiceRefundsViewModel()
   )
 }
 
@@ -52,7 +54,8 @@ case class EncryptedPensionCYAModel(encryptedPaymentsIntoPension: EncryptedPayme
                                     unauthorisedPayments: EncryptedUnauthorisedPaymentsViewModel,
                                     paymentsIntoOverseasPensions: EncryptedPaymentsIntoOverseasPensionsViewModel,
                                     incomeFromOverseasPensions: EncryptedIncomeFromOverseasPensionsViewModel,
-                                    transfersIntoOverseasPensions: EncryptedTransfersIntoOverseasPensionsViewModel
+                                    transfersIntoOverseasPensions: EncryptedTransfersIntoOverseasPensionsViewModel,
+                                    shortServiceRefunds: EncryptedShortServiceRefundsViewModel
                                    )
 
 object EncryptedPensionCYAModel {

@@ -130,6 +130,29 @@ object AllPensionsData {
         transferPensionScheme = prior.pensionCharges.flatMap(_.pensionSchemeOverseasTransfers.map(
           x => fromOverseasSchemeProvider(x.overseasSchemeProvider))
         ).getOrElse(Nil)
+      ),
+      shortServiceRefunds = ShortServiceRefundsViewModel(
+        shortServiceRefund = prior.pensionCharges.map(_.overseasPensionContributions.map(_.shortServiceRefund).isDefined),
+        shortServiceRefundCharge = prior.pensionCharges.flatMap(_.overseasPensionContributions.map(_.shortServiceRefund)),
+        shortServiceRefundTaxPaid = prior.pensionCharges.map(_.overseasPensionContributions.map(_.shortServiceRefundTaxPaid).isDefined),
+        shortServiceRefundTaxPaidCharge = prior.pensionCharges.flatMap(_.overseasPensionContributions.map(_.shortServiceRefundTaxPaid)),
+        refundPensionScheme = prior.pensionCharges.flatMap(_.overseasPensionContributions.map(
+          x => fromRefundSchemeProvider(x.overseasSchemeProvider))
+        ).getOrElse(Nil)
+      )
+    )
+  }
+
+  private def fromRefundSchemeProvider(osp: Seq[OverseasSchemeProvider]): Seq[OverseasRefundPensionScheme] = {
+    osp.map( x =>
+      OverseasRefundPensionScheme(
+        ukRefundCharge = Some(x.providerCountryCode == "GBR"),
+        name = Some(x.providerName),
+        pensionSchemeTaxReference = x.pensionSchemeTaxReference.map(_.head),
+        qualifyingRecognisedOverseasPensionScheme = x.qualifyingRecognisedOverseasPensionScheme.map(_.head),
+        providerAddress = Some(x.providerAddress),
+        alphaTwoCountryCode = Countries.get2dCountryCodeFrom3d(x.providerCountryCode),
+        alphaThreeCountryCode = Some(x.providerCountryCode)
       )
     )
   }
