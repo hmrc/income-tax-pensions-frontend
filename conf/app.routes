@@ -264,4 +264,4 @@ POST        /:taxYear/overseas-pensions/overseas-transfer-charges/overseas-trans
 GET         /:taxYear/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-tax                                     controllers.pensions.transferIntoOverseasPensions.PensionSchemeTaxTransferController.show(taxYear: Int)
 POST        /:taxYear/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-tax                                     controllers.pensions.transferIntoOverseasPensions.PensionSchemeTaxTransferController.submit(taxYear: Int)
 
-
+GET         /:taxYear/overseas-pensions/overseas-transfer-charges/transfer-charges-summary                                         controllers.pensions.transferIntoOverseasPensions.TransferChargeSummaryController.show(taxYear: Int)

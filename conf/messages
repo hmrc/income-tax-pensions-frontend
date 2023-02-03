@@ -931,3 +931,6 @@ transferIntoOverseasPensions.overseasPensionSchemeTaxTransferCharge.error.tooBig
 #Overseas Transfer Charges Paid Status
 transferIntoOverseasPensions.overseasTransferChargesPaid.title = Did a UK pension scheme pay the transfer charge to HMRC?
 transferIntoOverseasPensions.overseasTransferChargesPaid.error.noEntry = Select yes if a UK pension scheme paid the transfer charge to HMRC
+
+#Transfer Charge Summmary List
+transferIntoOverseasPensions.summaryList.title = Pension schemes paying transfer charges - summary
