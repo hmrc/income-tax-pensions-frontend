@@ -16,7 +16,7 @@
 
 package controllers.pensions.incomeFromOverseasPensions
 
-import builders.IncomeFromOverseasPensionsViewModelBuilder.{anIncomeFromOverseasPensionsViewModel, anIncomeFromOverseasPensionsWithFtcrViewModel}
+import builders.IncomeFromOverseasPensionsViewModelBuilder.{anIncomeFromOverseasPensionsViewModel, anIncomeFromOverseasPensionsWithFalseFtcrValueViewModel}
 import builders.PensionsUserDataBuilder.{aPensionsUserData, anPensionsUserDataEmptyCya, pensionUserDataWithIncomeOverseasPension}
 import models.pension.charges.PensionScheme
 import org.jsoup.Jsoup
@@ -178,7 +178,7 @@ class TaxableAmountControllerISpec extends
 
         "Redirects to the pension summary page if pension payment amount is missing" which {
           implicit val taxableAmountUrl: Int => String = IncomeFromOverseasPensionsPages.taxableAmountUrl(0)
-          val pensionUserData = pensionUserDataWithIncomeOverseasPension(anIncomeFromOverseasPensionsWithFtcrViewModel
+          val pensionUserData = pensionUserDataWithIncomeOverseasPension(anIncomeFromOverseasPensionsWithFalseFtcrValueViewModel
             .copy(overseasIncomePensionSchemes = Seq(PensionScheme(pensionPaymentAmount = None))))
 
           implicit lazy val result: WSResponse = showPage(user, pensionUserData)
@@ -191,7 +191,7 @@ class TaxableAmountControllerISpec extends
 
         "Redirects to the pension summary page if pension payment tax paid amount is missing" should {
           implicit val taxableAmountUrl: Int => String = IncomeFromOverseasPensionsPages.taxableAmountUrl(0)
-          val pensionUserData = pensionUserDataWithIncomeOverseasPension(anIncomeFromOverseasPensionsWithFtcrViewModel
+          val pensionUserData = pensionUserDataWithIncomeOverseasPension(anIncomeFromOverseasPensionsWithFalseFtcrValueViewModel
             .copy(overseasIncomePensionSchemes = Seq(PensionScheme(pensionPaymentTaxPaid = None))))
 
           implicit lazy val result: WSResponse = showPage(user, pensionUserData)
@@ -259,9 +259,9 @@ class TaxableAmountControllerISpec extends
           textOnPageCheck(formattedTaxableAmount, tableSelector(2, 1))
         }
 
-        "renders correctly when FTCR value is true" should {
+        "renders correctly when FTCR value is false" should {
           implicit val taxableAmountUrl: Int => String = IncomeFromOverseasPensionsPages.taxableAmountUrl(0)
-          val pensionUserData = pensionUserDataWithIncomeOverseasPension(anIncomeFromOverseasPensionsWithFtcrViewModel)
+          val pensionUserData = pensionUserDataWithIncomeOverseasPension(anIncomeFromOverseasPensionsWithFalseFtcrValueViewModel)
           implicit lazy val result: WSResponse = showPage(user, pensionUserData)
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
@@ -288,9 +288,9 @@ class TaxableAmountControllerISpec extends
           welshToggleCheck(user.isWelsh)
         }
 
-        "shows correctly calculated amounts from user data when FTCR is true" should {
+        "shows correctly calculated amounts from user data when FTCR is false" should {
           implicit val taxableAmountUrl: Int => String = IncomeFromOverseasPensionsPages.taxableAmountUrl(0)
-          val pensionUserData = pensionUserDataWithIncomeOverseasPension(anIncomeFromOverseasPensionsWithFtcrViewModel)
+          val pensionUserData = pensionUserDataWithIncomeOverseasPension(anIncomeFromOverseasPensionsWithFalseFtcrValueViewModel)
           implicit lazy val result: WSResponse = showPage(user, pensionUserData)
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
@@ -322,7 +322,7 @@ class TaxableAmountControllerISpec extends
         "save calculated taxable amount " which {
           implicit val taxableAmountUrl: Int => String = IncomeFromOverseasPensionsPages.taxableAmountUrl(0)
           val incomeViewModel = anIncomeFromOverseasPensionsViewModel.copy(overseasIncomePensionSchemes = Seq(
-            anIncomeFromOverseasPensionsWithFtcrViewModel.overseasIncomePensionSchemes.head
+            anIncomeFromOverseasPensionsWithFalseFtcrValueViewModel.overseasIncomePensionSchemes.head
               .copy(taxableAmount = None)))
           val pensionUserData = pensionUserDataWithIncomeOverseasPension(incomeViewModel)
 

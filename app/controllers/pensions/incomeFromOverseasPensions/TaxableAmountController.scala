@@ -131,9 +131,9 @@ class TaxableAmountController @Inject()(val authAction: AuthorisedAction,
       nonUkTaxPaid <- nonUkTaxPaidOpt
       isFtcr <- data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes(index).foreignTaxCreditReliefQuestion
       taxableAmount = if (isFtcr) {
-        amountBeforeTax - nonUkTaxPaid
-      } else {
         amountBeforeTax
+      } else {
+        amountBeforeTax - nonUkTaxPaid
       }
     } yield taxableAmount
   }
