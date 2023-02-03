@@ -20,7 +20,7 @@ import forms.{Countries, Country}
 import org.checkerframework.checker.units.qual.A
 import utils.UnitTest
 
-class CountryServiceTest extends UnitTest {
+class CountryServiceSpec extends UnitTest {
 
   "Countries" must {
 

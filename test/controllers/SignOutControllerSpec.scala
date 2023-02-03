@@ -22,7 +22,7 @@ import play.api.test.Helpers.header
 import play.api.test.{DefaultAwaitTimeout, FakeRequest}
 import utils.UnitTestWithApp
 
-class SignOutControllerTest extends UnitTestWithApp with DefaultAwaitTimeout {
+class SignOutControllerSpec extends UnitTestWithApp with DefaultAwaitTimeout {
 
   val controller = new SignOutController(mockMessagesControllerComponents, mockAppConfig)
 

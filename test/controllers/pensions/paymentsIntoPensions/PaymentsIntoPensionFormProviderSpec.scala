@@ -20,7 +20,7 @@ import forms.{AmountForm, YesNoForm}
 import play.api.data.FormError
 import utils.UnitTest
 
-class PaymentsIntoPensionFormProviderTest extends UnitTest {
+class PaymentsIntoPensionFormProviderSpec extends UnitTest {
 
   private val anyBoolean = true
   private val amount: String = 123.0.toString

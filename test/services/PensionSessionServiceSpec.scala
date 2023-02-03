@@ -40,7 +40,7 @@ import play.api.mvc.Result
 
 import scala.concurrent.Future
 
-class PensionSessionServiceTest extends UnitTest
+class PensionSessionServiceSpec extends UnitTest
   with MockPensionUserDataRepository
   with MockIncomeTaxUserDataConnector
   with ScalaFutures {

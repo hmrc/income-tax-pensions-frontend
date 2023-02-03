@@ -28,7 +28,7 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{ActionItem, Key, 
 import builders.IncomeFromOverseasPensionsViewModelBuilder.anIncomeFromOverseasPensionsViewModel
 import views.pensions.incomeFromOverseasPensions.IncomeFromOverseasPensionsCYAViewHelper
 
-class IncomeFromOverseasPensionsCYAViewHelperTest extends AnyWordSpec with Matchers {
+class IncomeFromOverseasPensionsCYAViewHelperSpec extends AnyWordSpec with Matchers {
 
   val taxYear = 2022
 

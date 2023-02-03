@@ -26,7 +26,7 @@ import play.test.Helpers.stubMessagesApi
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{ActionItem, Key, SummaryListRow, Value}
 
-class UnauthorisedPaymentsCYAViewHelperTest extends AnyWordSpec with Matchers {
+class UnauthorisedPaymentsCYAViewSpec extends AnyWordSpec with Matchers {
 
   val taxYear = 2022
 
