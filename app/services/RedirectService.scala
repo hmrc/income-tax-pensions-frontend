@@ -18,7 +18,7 @@ package services
 
 import models.mongo.{PensionsCYAModel, PensionsUserData}
 import models.redirects.ConditionalRedirect
-import controllers.pensions.paymentsIntoPension.routes._
+import controllers.pensions.paymentsIntoPensions.routes._
 import models.pension.charges.TransfersIntoOverseasPensionsViewModel
 import models.pension.reliefs.PaymentsIntoPensionViewModel
 import play.api.Logging
@@ -177,13 +177,13 @@ object RedirectService extends Logging {
         }
 
       case None =>
-        Left(Redirect(controllers.pensions.paymentsIntoPension.routes.PaymentsIntoPensionsCYAController.show(taxYear)))
+        Left(Redirect(controllers.pensions.paymentsIntoPensions.routes.PaymentsIntoPensionsCYAController.show(taxYear)))
     }
   }
 
   def isFinishedCheck(cya: PensionsCYAModel, taxYear: Int, redirect: Call): Result = {
     if (cya.paymentsIntoPension.isFinished) {
-      Redirect(controllers.pensions.paymentsIntoPension.routes.PaymentsIntoPensionsCYAController.show(taxYear))
+      Redirect(controllers.pensions.paymentsIntoPensions.routes.PaymentsIntoPensionsCYAController.show(taxYear))
     } else {
       Redirect(redirect)
     }
