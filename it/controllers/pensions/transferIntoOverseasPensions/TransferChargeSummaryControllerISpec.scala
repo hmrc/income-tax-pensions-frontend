@@ -55,6 +55,7 @@ class TransferChargeSummaryControllerISpec extends IntegrationTest with BeforeAn
     val expectedTitle: String
     val expectedHeading: String
     val change: String
+    val remove: String
     val expectedButtonText: String
     val expectedAddAnotherText: String
     val expectedAddPensionSchemeText: String
@@ -66,6 +67,7 @@ class TransferChargeSummaryControllerISpec extends IntegrationTest with BeforeAn
     val expectedTitle = "Pension schemes paying transfer charges - summary"
     val expectedHeading = "Pension schemes paying transfer charges - summary"
     val change = "Change"
+    val remove = "Remove"
     val expectedAddAnotherText = "Add another pension scheme"
     val expectedAddPensionSchemeText = "Add a pension scheme"
   }
@@ -77,6 +79,7 @@ class TransferChargeSummaryControllerISpec extends IntegrationTest with BeforeAn
     val expectedTitle = "Pension schemes paying transfer charges - summary"
     val expectedHeading = "Pension schemes paying transfer charges - summary"
     val change = "Change"
+    val remove = "Remove"
     val expectedAddAnotherText = "Add another pension scheme"
     val expectedAddPensionSchemeText = "Add a pension scheme"
   }
@@ -124,9 +127,17 @@ class TransferChargeSummaryControllerISpec extends IntegrationTest with BeforeAn
           textOnPageCheck(s"${pensionScheme2.name.get}", pensionNameSelector(2))
 
           linkCheck(s"$change $change ${pensionScheme.name.get}", changeLinkSelector(1), overseasTransferChargePaidUrl(taxYearEOY, 0))
+
+          //todo update link below when remove is implemented
+          linkCheck(s"$remove $remove ${pensionScheme.name.get}", removeLinkSelector(1), transferChargeSummaryUrl(taxYearEOY))
+
           linkCheck(s"$change $change ${pensionScheme2.name.get}", changeLinkSelector(2), overseasTransferChargePaidUrl(taxYearEOY, 1))
-          
+
+          //todo update link below when remove is implemented
+          linkCheck(s"$remove $remove ${pensionScheme2.name.get}", removeLinkSelector(2), transferChargeSummaryUrl(taxYearEOY))
+
           linkCheck(expectedAddAnotherText, addAnotherLinkSelector, overseasTransferChargePaidUrl(taxYearEOY))
+
           //todo update redirect to to transfer journey CYA page when navigation is linked up
           buttonCheck(expectedButtonText, continueButtonSelector, Some(transferChargeSummaryUrl(taxYearEOY)))
           welshToggleCheck(user.isWelsh)
@@ -161,7 +172,11 @@ class TransferChargeSummaryControllerISpec extends IntegrationTest with BeforeAn
 
           linkCheck(s"$change $change ${pensionScheme.name.get}", changeLinkSelector(1), overseasTransferChargePaidUrl(taxYearEOY, 0))
 
+          //todo update link below when remove is implemented
+          linkCheck(s"$remove $remove ${pensionScheme.name.get}", removeLinkSelector(1), transferChargeSummaryUrl(taxYearEOY))
+
           linkCheck(expectedAddAnotherText, addAnotherLinkSelector, overseasTransferChargePaidUrl(taxYearEOY))
+
           //todo update redirect to to transfer journey CYA page when navigation is linked up
           buttonCheck(expectedButtonText, continueButtonSelector, Some(transferChargeSummaryUrl(taxYearEOY)))
           welshToggleCheck(user.isWelsh)

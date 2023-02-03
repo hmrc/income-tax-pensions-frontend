@@ -59,6 +59,12 @@
                                 <span class="govuk-visually-hidden">@{s"${messages("common.change")}"} @transferScheme.name</span>
                             </a>
                         </dd>
+                        <dd class="hmrc-add-to-a-list__remove">
+                            <a class="govuk-link" href=@TransferChargeSummaryController.show(taxYear).url>
+                                <span aria-hidden="true">@messages("common.remove")</span>
+                                <span class="govuk-visually-hidden">@{s"${messages("common.remove")}"} @transferScheme.name</span>
+                            </a>
+                        </dd>
                     </div>
                 }
             </dl>

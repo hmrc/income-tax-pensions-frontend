@@ -52,6 +52,7 @@ class CountrySummaryListControllerISpec extends IntegrationTest with BeforeAndAf
     val expectedTitle: String
     val expectedHeading: String
     val change: String
+    val remove: String
     val expectedButtonText: String
     val expectedAddAnotherText: String
     val expectedAddPensionSchemeText: String
@@ -63,6 +64,7 @@ class CountrySummaryListControllerISpec extends IntegrationTest with BeforeAndAf
     val expectedTitle = "Overseas pension income"
     val expectedHeading = "Overseas pension income"
     val change = "Change"
+    val remove = "Remove"
     val expectedAddAnotherText = "Add another pension scheme"
     val expectedAddPensionSchemeText = "Add a pension scheme"
   }
@@ -74,6 +76,7 @@ class CountrySummaryListControllerISpec extends IntegrationTest with BeforeAndAf
     val expectedTitle = "Overseas pension income"
     val expectedHeading = "Overseas pension income"
     val change = "Change"
+    val remove = "Remove"
     val expectedAddAnotherText = "Add another pension scheme"
     val expectedAddPensionSchemeText = "Add a pension scheme"
   }
@@ -123,8 +126,15 @@ class CountrySummaryListControllerISpec extends IntegrationTest with BeforeAndAf
           
           //TODO: replace hrefs "#" below with link to first details page when available .e.g. PensionSchemeSummaryController.show(taxYear, Some(0))).url
           linkCheck(s"$change $change $pensionName1", changeLinkSelector(1), overseasPensionsSchemeSummaryUrl(taxYearEOY, 0))
+
+          //todo update remove link below when remove functionality is implemented
+          linkCheck(s"$remove $remove $pensionName1", removeLinkSelector(1), countrySummaryListControllerUrl(taxYearEOY))
+
           linkCheck(s"$change $change $pensionName2", changeLinkSelector(2), overseasPensionsSchemeSummaryUrl(taxYearEOY, 1))
-          
+
+          //todo update remove link below when remove functionality is implemented
+          linkCheck(s"$remove $remove $pensionName2", removeLinkSelector(2), countrySummaryListControllerUrl(taxYearEOY))
+
           linkCheck(expectedAddAnotherText, addAnotherLinkSelector, pensionOverseasIncomeCountryUrl(taxYearEOY))
           buttonCheck(expectedButtonText, continueButtonSelector, Some(checkIncomeFromOverseasPensionsCyaUrl(taxYearEOY)))
           welshToggleCheck(user.isWelsh)
