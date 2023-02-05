@@ -49,6 +49,7 @@ common.moreThanOnePensionScheme.individual = If more than one of your pension sc
 common.moreThanOnePensionScheme.agent = If more than one of your client’s pension schemes paid the tax, you can add these details later.
 common.sectionsToFill.individual = You only need to fill in the sections that apply to you.
 common.sectionsToFill.agent = You only need to fill in the sections that apply to your client.
+common.country.select = select a country
 
 common.error.amountMaxLimit = The total amount must be less than £100,000,000,000
 common.pensions.error.amountMaxLimit.individual = The amount of tax your pension provider paid or agreed to pay must be less than £100,000,000,000
@@ -73,6 +74,7 @@ unauthorisedPayments.common.title = Unauthorised payments
 unauthorisedPayments.common.title.hidden = Change unauthorised payments
 unauthorisedPayments.common.ukPensionSchemes = UK pension schemes
 unauthorisedPayments.common.ukPensionSchemes.hidden = Change UK pension schemes
+
 common.unauthorisedPaymentsFromPension.caption = Unauthorised payments from pensions for 6 April {0} to 5 April {1}
 common.unauthorisedPayments.Amount.Text = Total non-UK tax in pounds
 common.unauthorisedPayments.error.Amount.incorrectFormat = Enter the amount of non-UK tax in the correct format
@@ -86,7 +88,6 @@ common.yourP60.agent = your client’s P60
 common.aboutGeneralIncreases.agent = the ’About general increases in benefits’ letter the Pension Service sent your client
 
 common.employerFinancedRetirementScheme.caption = Employer-financed retirement benefits schemes for 6 April {0} to 5 April {1}
-
 
 ################# Common lifetime allowance #################
 
@@ -111,6 +112,8 @@ common.overseasPensions.findOut.individual = To find out you can:
 common.overseasPensions.findOut.agent = To find out you can ask your client to:
 common.overseasPensions.checkPensionStatement.individual = check your pension statement
 common.overseasPensions.checkPensionStatement.agent = check their pension statement
+
+common.incomeFromPensions.title = UK pension income
 
 #################       Error messages        ########################################
 
@@ -468,7 +471,8 @@ incomeFromPensionsGateway.paragraph = This includes:
 incomeFromPensionsGateway.paragraph.1 = State Pension
 incomeFromPensionsGateway.paragraph.2 = workplace and private pensions
 
-common.incomeFromPensions.title = UK pension income
+pensions.incomeFromPensionsDetails.bullet.aboutGeneralIncreases.individual = the ‘About general increases in benefits’ letter the Pension Service sent you
+pensions.incomeFromPensionsDetails.bullet.aboutGeneralIncreases.agent = the ‘About general increases in benefits’ letter the Pension Service sent your client
 
 #state pension lump sum question
 incomeFromPensions.statePensionLumpSum.title.individual = Did you get a State Pension lump sum?
@@ -742,7 +746,6 @@ unauthorisedPayments.didYouGetAnUnauthorisedPayment = Did you get an unauthorise
 unauthorisedPayments.checkbox.text1 = Yes, unauthorised payments that resulted in a surcharge
 unauthorisedPayments.checkbox.text2 = Yes, unauthorised payments that did not result in a surcharge
 
-
 #Do you have an employer-financed retirement scheme?
 employerFinancedRetirementScheme.benefitsFromScheme.title = Employer-financed retirement benefits schemes
 employerFinancedRetirementScheme.benefitsFromScheme.paragraph.1 = If a pension scheme is not a registered it might be an employer-financed retirement benefit scheme (EFRBS).
@@ -751,7 +754,6 @@ employerFinancedRetirementScheme.benefitsFromScheme.question.individual = Do you
 employerFinancedRetirementScheme.benefitsFromScheme.question.agent = Does your client have an employer-financed retirement scheme?
 employerFinancedRetirementScheme.benefitsFromScheme.error.individual = Select yes if you have an employer-financed retirement benefits scheme
 employerFinancedRetirementScheme.benefitsFromScheme.error.agent = Select yes if your client has an employer-financed retirement benefits scheme
-
 
 #Unauthorised payments from UK pensions schemes
 unauthorisedPayments.pensionSchemeDetails.title = Unauthorised payments from UK pensions schemes
@@ -807,7 +809,6 @@ overseasPension.QOPSReference.title = Qualifying overseas pension scheme (QOPS) 
 overseasPension.QOPSReference.paragraph1.individual = You can find this on your pension statement.
 overseasPension.QOPSReference.paragraph1.agent = You can find this on your client’s pension statement.
 overseasPension.QOPSReference.hint = For example, QOPS123456
-overseasPension.QOPSReference.error.incorrectFormat = Enter a six digit number
 overseasPension.QOPSReference.prefix=QOPS
 
 #Pensions Payments page
@@ -931,3 +932,21 @@ transferIntoOverseasPensions.overseasPensionSchemeTaxTransferCharge.error.tooBig
 #Overseas Transfer Charges Paid Status
 transferIntoOverseasPensions.overseasTransferChargesPaid.title = Did a UK pension scheme pay the transfer charge to HMRC?
 transferIntoOverseasPensions.overseasTransferChargesPaid.error.noEntry = Select yes if a UK pension scheme paid the transfer charge to HMRC
+
+#Transfer Pension Scheme
+transferIntoOverseasPensions.transferPensionScheme.title = Pension scheme paying the transfer charge
+transferIntoOverseasPensions.pensionScheme.providerName.subheading = Name of pension scheme
+transferIntoOverseasPensions.pensionScheme.qopsr.subheading = Qualifying Overseas Pension Scheme reference
+transferIntoOverseasPensions.pensionScheme.providerAddress.subheading = Pension provider address
+
+transferIntoOverseasPensions.paragraph1 = If more than one pension scheme paid a transfer charge, you can add them later.
+
+common.overseasPensions.providerName.error.noEntry = Enter the name of the pension scheme
+common.overseasPensions.providerName.error.overCharLimit = Name of pension scheme must be 105 characters or less
+common.overseasPensions.providerName.error.incorrectFormat = The pension scheme name must only include numbers 0-9, letters a to z, hyphens, spaces, apostrophes, commas, full stops, round brackets and the special characters, &, /, @, £, *.
+common.overseasPensions.providerAddress.error.noEntry = Enter the pension provider's address
+common.overseasPensions.providerAddress.error.overCharLimit = Pension provider's address must be 250 characters or less
+common.overseasPensions.schemeTaxRef.error.noEntry = Enter the Pension Scheme Tax Reference
+common.overseasPensions.pstr.error.incorrectFormat = Enter a Pension Scheme Tax Reference number that is 8 numbers, then R, then a letter a to z or A to Z, like 00123456RA
+common.overseasPensions.qops.error.incorrectFormat = Enter a six digit number
+common.overseasPensions.country.error.noEntry = Enter the country

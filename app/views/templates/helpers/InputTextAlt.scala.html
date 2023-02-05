@@ -30,8 +30,15 @@
     classes: Option[String] = None,
     autocomplete: Option[String] = None,
     inputType: String = "text",
-    currency: Boolean = false
+    currency: Boolean = false,
+    prefix: String = ""
 )(implicit messages: Messages)
+
+@inputPrefix = @{
+  if(currency) Some(PrefixOrSuffix(content = Text("£")))
+  else if (prefix.nonEmpty) Some(PrefixOrSuffix(content = Text(prefix)))
+  else None
+}
 
 @govukInput(Input(
     id,
@@ -49,7 +56,7 @@
     autocomplete = autocomplete.map(value => value),
     inputType = inputType,
     errorMessage = form(name).error.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*)))),
-    prefix = if(currency) Some(PrefixOrSuffix(content = Text("£"))) else None,
+    prefix = inputPrefix,
     attributes = Map("maxlength" -> "500")
 ))
 

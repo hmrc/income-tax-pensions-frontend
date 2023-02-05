@@ -1,0 +1,138 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import controllers.pensions.transferIntoOverseasPensions.routes.TransferPensionsSchemeController
+@import forms.Countries
+@import forms.overseas.PensionSchemeForm.TransferPensionsSchemeFormModel
+@import models.requests.UserSessionDataRequest
+@import views.html.helper.CSPNonce
+@import views.html.templates.Layout
+@import views.html.templates.helpers.{Button, Details, ErrorSummary, Heading, InputTextAlt, InputTextareaAlt}
+@import views.html.templates.partials.CountryPartial
+
+@this(
+        layout: Layout,
+        countryPartial: CountryPartial,
+        heading: Heading,
+        button: Button,
+        formWithCsrf: FormWithCSRF,
+        inputText: InputTextAlt,
+        inputTextarea: InputTextareaAlt,
+        govukInput : GovukInput,
+        details: Details,
+        govukSelect : GovukSelect,
+        autocompleteCss : HmrcAccessibleAutocompleteCss,
+        autocompleteJavascript : HmrcAccessibleAutocompleteJavascript,
+        errorSummary: ErrorSummary
+)
+
+@(form: Form[TransferPensionsSchemeFormModel], taxYear: Int, isUKScheme:Boolean, index: Int)(implicit request: UserSessionDataRequest[_], messages: Messages, appConfig: AppConfig)
+
+@titleText = @{
+    messages("transferIntoOverseasPensions.transferPensionScheme.title")
+}
+
+@schemeRefHint = @{
+   if (isUKScheme) messages("common.pensionSchemeTaxReference.forExample")
+   else messages("overseasPension.QOPSReference.hint")
+}
+
+@schemeRefLabel = @{
+   if (isUKScheme) messages("common.pensionSchemeTaxReference")
+   else messages("transferIntoOverseasPensions.pensionScheme.qopsr.subheading")
+}
+
+@countries = @{Countries.getOverseasCountries()}
+
+@hasFormErrors = @{form.hasErrors}
+
+@scriptElems = {
+@autocompleteJavascript(CSPNonce.get)
+    <script src='@controllers.routes.Assets.versioned("javascripts/autocompletePolyfill.js")'></script>
+}
+
+
+@layout(pageTitle = titleText,
+        taxYear = Some(taxYear),
+        hasErrors = hasFormErrors,
+        isAgent = request.user.isAgent,
+        stylesheetsBlock= Some(autocompleteCss(CSPNonce.get)),
+        scriptsBlock = Some(scriptElems)
+) {
+
+    @errorSummary(form.errors.distinct)
+
+    @heading(titleText, Some(messages("common.transferIntoOverseasPensions.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-2")
+
+    <p class="govuk-body">@messages("transferIntoOverseasPensions.paragraph1")</p>
+
+    @formWithCsrf(action = TransferPensionsSchemeController.submit(taxYear, Some(index))) {
+        @inputText(
+            form,
+            id = "providerName",
+            name = "providerName",
+            label = messages("transferIntoOverseasPensions.pensionScheme.providerName.subheading"),
+            isSubheading = true,
+            labelHidden = false,
+            classes = Some("govuk-input--width-20")
+        )
+
+        @if(isUKScheme) {
+          @inputText(
+              form,
+              id = "schemeReference",
+              name = "schemeReference",
+              hint = Some(schemeRefHint),
+              label = schemeRefLabel,
+              isSubheading = true,
+              labelHidden = false,
+              classes = Some("govuk-input--width-10")
+          )
+        } else {
+          @inputText(
+              form,
+              id = "schemeReference",
+              name = "schemeReference",
+              hint = Some(schemeRefHint),
+              label = schemeRefLabel,
+              isSubheading = true,
+              labelHidden = true,
+              classes = Some("govuk-input--width-5"),
+              prefix = "QOPS"
+          )
+        }
+
+        @inputTextarea(
+            form,
+            id = "providerAddress",
+            name = "providerAddress",
+            label = messages("transferIntoOverseasPensions.pensionScheme.providerAddress.subheading"),
+            isSubheading = true,
+            classes = Some("govuk-textarea")
+        )
+
+        @if(!isUKScheme) {
+        <div style="width: 300px;">
+          @countryPartial(form)
+        </div>    
+        }
+        @button()
+    }
+}
+
+@{
+    // $COVERAGE-OFF$
+}

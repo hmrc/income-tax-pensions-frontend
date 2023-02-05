@@ -151,7 +151,7 @@ object AllPensionsData {
         pensionSchemeTaxReference = x.pensionSchemeTaxReference.map(_.head),
         qualifyingRecognisedOverseasPensionScheme = x.qualifyingRecognisedOverseasPensionScheme.map(_.head),
         providerAddress = Some(x.providerAddress),
-        alphaTwoCountryCode = Countries.get2dCountryCodeFrom3d(x.providerCountryCode),
+        alphaTwoCountryCode = Countries.get2AlphaCodeFrom3AlphaCode(x.providerCountryCode),
         alphaThreeCountryCode = Some(x.providerCountryCode)
       )
     )
@@ -162,8 +162,8 @@ object AllPensionsData {
       TransferPensionScheme(
         ukTransferCharge = Some(x.providerCountryCode == "GBR"),
         name = Some(x.providerName),
-        pensionSchemeTaxReference = x.pensionSchemeTaxReference.map(_.head),
-        qualifyingRecognisedOverseasPensionScheme = x.qualifyingRecognisedOverseasPensionScheme.map(_.head),
+        pstr = x.pensionSchemeTaxReference.map(_.head),
+        qops = x.qualifyingRecognisedOverseasPensionScheme.map(_.head),
         providerAddress = Some(x.providerAddress),
         countryCode = Some(x.providerCountryCode)
       )
@@ -174,7 +174,7 @@ object AllPensionsData {
     foreignPension.map(fP =>
       PensionScheme(
         alphaThreeCode = Some(fP.countryCode),
-        alphaTwoCode = Countries.get2dCountryCodeFrom3d(fP.countryCode),
+        alphaTwoCode = Countries.get2AlphaCodeFrom3AlphaCode(fP.countryCode),
         pensionPaymentAmount = fP.amountBeforeTax,
         pensionPaymentTaxPaid = fP.taxTakenOff,
         specialWithholdingTaxQuestion = Some(fP.specialWithholdingTax.isDefined),

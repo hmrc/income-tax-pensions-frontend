@@ -30,8 +30,8 @@ object TransfersIntoOverseasPensionsViewModelBuilder {
       TransferPensionScheme(
         ukTransferCharge = Some(false),
         name = Some("Foreign Scheme Name"),
-        pensionSchemeTaxReference = None,
-        qualifyingRecognisedOverseasPensionScheme = Some("QOPS123456"),
+        pstr = None,
+        qops = Some("QOPS123456"),
         providerAddress = Some("Scheme Address"),
         countryCode = Some("FRA")
       )

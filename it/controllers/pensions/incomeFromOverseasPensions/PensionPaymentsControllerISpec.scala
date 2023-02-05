@@ -668,11 +668,6 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
   private def getViewModel(implicit userConfig: UserConfig): Option[IncomeFromOverseasPensionsViewModel] =
     loadPensionUserData.map(_.pensions.incomeFromOverseasPensions)
 
-
-  private def getPageWithIndex(index: Int = 0)(implicit userConfig: UserConfig, wsClient: WSClient): WSResponse = {
-    getPage(getMap(index))
-  }
-
   private def formUrl(index: Int = 0): Option[String] =
     Some(relativeUrlForThisPage + "?index=" + index)
 

@@ -24,6 +24,7 @@ import controllers.ControllerSpec._
 import helpers.{PlaySessionCookieBaker, WireMockHelper, WiremockStubHelpers}
 import models.User
 import models.mongo.{PensionsCYAModel, PensionsUserData}
+import models.pension.charges.TransfersIntoOverseasPensionsViewModel
 import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.matchers.{MatchResult, Matcher}
@@ -41,7 +42,7 @@ import uk.gov.hmrc.http.SessionKeys
 import java.util.UUID
 import scala.concurrent.ExecutionContext.Implicits.global
 
-// scalastyle:off magic.number number.of.methods
+// scalastyle:off magic.number number.of.methods line.size.limit method.length
 
 class ControllerSpec(val pathForThisPage: String) extends PlaySpec
   with GuiceOneServerPerSuite
@@ -96,7 +97,9 @@ class ControllerSpec(val pathForThisPage: String) extends PlaySpec
     val incomeFromOverseasPensionsScheme: String = relativeUrl("/overseas-pensions/income-from-overseas-pensions/pension-scheme-summary")
     val incomeFromOverseasPensionsCountrySummary: String = relativeUrl("/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-sountry-summary")
     val incomeFromOverseasPensionsCya: String = relativeUrl("/overseas-pensions/income-from-overseas-pensions/check-overseas-pension-income-cya")
+    
     val overseasTransferChargePaid: String = relativeUrl("/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-paid")
+    val transferIntoOverseasPensionsScheme: String = relativeUrl("/overseas-pensions/overseas-transfer-charges/pension-scheme")
 
   }
 
@@ -163,8 +166,14 @@ class ControllerSpec(val pathForThisPage: String) extends PlaySpec
       case UserTypes.Individual => authoriseIndividual()
     }
   }
-
-  protected def submitForm(submittedFormData: SubmittedFormData, queryParams: Map[String, String] = Map.empty)(implicit userConfig: UserConfig, wsClient: WSClient): WSResponse = {
+ 
+  protected def submitForm(submittedFormData: SubmittedFormData, queryParams: Map[String, String] = Map.empty)
+                          (implicit userConfig: UserConfig, wsClient: WSClient): WSResponse = {
+    submitForm(submittedFormData.asMap, queryParams)
+  }
+   
+  protected def submitForm(dataMap: Map[String, String] , queryParams: Map[String, String])
+                          (implicit userConfig: UserConfig, wsClient: WSClient): WSResponse = {
     givenAuthorised(userConfig)
     givenStoredSessionData(userConfig)
     await(
@@ -172,10 +181,10 @@ class ControllerSpec(val pathForThisPage: String) extends PlaySpec
         .withFollowRedirects(false)
         .withQueryStringParameters(queryParams.toList: _*)
         .withHttpHeaders(Seq(cookieHeader(userConfig), languageHeader(userConfig)) ++ Seq("Csrf-Token" -> "nocheck"): _*)
-        .post(submittedFormData.asMap)
+        .post(dataMap)
     )
   }
-
+  
   protected def checkedExpectedRadioButton(label: String): ExpectedRadioButton = ExpectedRadioButton(label, isChecked = true)
 
   protected def uncheckedExpectedRadioButton(label: String): ExpectedRadioButton = ExpectedRadioButton(label, isChecked = false)
@@ -205,6 +214,10 @@ class ControllerSpec(val pathForThisPage: String) extends PlaySpec
   protected def getPage(sessionDataOpt: Option[PensionsUserData])(implicit wsClient: WSClient): WSResponse = {
     implicit val userConfig: UserConfig = UserConfig(Individual, English, sessionDataOpt)
     getPage(pathForThisPage)
+  }
+
+  def getPageWithIndex(index: Int = 0)(implicit userConfig: UserConfig, wsClient: WSClient): WSResponse = {
+    getPage(Map("index" -> index.toString))
   }
 
   protected def userConfigWhenIrrelevant(sessionDataOpt: Option[PensionsUserData]): UserConfig =
@@ -274,6 +287,9 @@ class ControllerSpec(val pathForThisPage: String) extends PlaySpec
       .withHttpHeaders(Seq(cookieHeader(userConfig), languageHeader(userConfig)): _*).get()
     )
   }
+  
+  def getTransferPensionsViewModel(implicit userConfig: UserConfig): Option[TransfersIntoOverseasPensionsViewModel] =
+    loadPensionUserData.map(_.pensions.transfersIntoOverseasPensions)
 
   private def loadPensionUserData(pensionsUserData: PensionsUserData, userType: UserTypes.UserType): Option[PensionsUserData]
   = await(

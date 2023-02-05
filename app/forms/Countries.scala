@@ -53,7 +53,7 @@ object Countries {
     countriesThreeDigitMap.map(_.swap)
   }
 
-  private val countries: List[Country] = {
+  private val countriesFromFile: List[Country] = {
     def fromJsonFile: List[Country] =
       Json.parse(getClass.getResourceAsStream("/location-autocomplete-canonical-list.json")) match {
         case JsArray(cs) =>
@@ -92,17 +92,17 @@ object Countries {
 
   private def alphaTwoCode: String => String = cc => cc.split(":")(1).trim
 
-  val all: List[Country] = countries filter (c => mdgCountryCodes("/mdg-country-codes.csv") contains c.alphaTwoCode)
+  val allCountries: List[Country] = countriesFromFile filter (c => mdgCountryCodes("/mdg-country-codes.csv") contains c.alphaTwoCode)
 
-  val eu: List[Country] = countries filter (c => mdgCountryCodes("/mdg-country-codes-eu.csv") contains c.alphaTwoCode)
+  val euCountries: List[Country] = countriesFromFile filter (c => mdgCountryCodes("/mdg-country-codes-eu.csv") contains c.alphaTwoCode)
 
 
-  def getCountryParametersForAllCountries(): List[Country] = all
-  def getOverseasCountries(): List[Country] = all.filter(_.alphaTwoCode != "GB")
+  def getCountryParametersForAllCountries(): List[Country] = allCountries
+  def getOverseasCountries(): List[Country] = allCountries.filter(_.alphaTwoCode != "GB")
 
   def getCountryFromCode(alphaTwoCode: Option[String]): Option[Country] = {
     alphaTwoCode.flatMap(
-      x => all.find(_.alphaTwoCode == x)
+      x => allCountries.find(_.alphaTwoCode == x)
     )
   }
   
@@ -110,11 +110,11 @@ object Countries {
     getCountryFromCode(countryCode).fold(countryCode.getOrElse(defaultStr))(_.countryName)
   }
 
-  def get2dCountryCodeFrom3d(alphaThreeCode : String) : Option[String] = {
-    countries.filter(country => country.alphaThreeCode == alphaThreeCode).headOption.map(_.alphaTwoCode)
+  def get2AlphaCodeFrom3AlphaCode(alphaThreeCode : String) : Option[String] = {
+    countriesFromFile.find(country => country.alphaThreeCode == alphaThreeCode).map(_.alphaTwoCode)
   }
 
-  def get3dCountryCodeFrom2d(alphaTwoCode : Option[String]) : Option[String] = {
-    alphaTwoCode.map(cc => countries.filter(countryNamesWithCodes => cc == countryNamesWithCodes.alphaTwoCode).head).map(_.alphaThreeCode)
+  def get3AlphaCodeFrom2AlphaCode(alphaTwoCode : Option[String]) : Option[String] = {
+    alphaTwoCode.map(cc => countriesFromFile.filter(countryNamesWithCodes => cc == countryNamesWithCodes.alphaTwoCode).head).map(_.alphaThreeCode)
   }
 }

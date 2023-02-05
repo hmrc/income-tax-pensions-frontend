@@ -183,6 +183,24 @@ trait ViewHelper {
       document.select(selector).attr("value") shouldBe value
     }
   }
+  
+  def selectFieldValueCheck(name: String, selector: String, value: String)(implicit document: Document): Unit = {
+    s"'$selector' has a name of '$name'" in {
+      document.select(selector).attr("name") shouldBe name
+    }
+     s"'$selector' has a value of '$value'" in {
+       document.select(selector).select("option").first().attr("value") shouldBe value
+     }
+  }
+  
+  def textareaFieldValueCheck(name: String, selector: String, value: String)(implicit document: Document): Unit = {
+    s"'$selector' has a name of '$name'" in {
+      document.select(selector).attr("name") shouldBe name
+    }
+    s"'$selector' has a value of '$value'" in {
+      document.select(selector).text() shouldBe value
+    }
+  }
 
   def checkBoxCheck(name: String, selector: String, value: String, checked: Boolean)(implicit document: Document): Unit = {
     s"'$selector' has a name of '$name'" in {
