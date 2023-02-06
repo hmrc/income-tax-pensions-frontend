@@ -24,7 +24,7 @@ import models.pension.charges.TransferPensionScheme
 import play.api.http.Status.BAD_REQUEST
 import play.api.libs.ws.WSResponse
 
-class TransferPensionsSchemeControllerISpec extends ControllerSpec ("/overseas-pensions/overseas-transfer-charges/pension-scheme") {
+class TransferPensionsSchemeControllerISpec extends ControllerSpec ("/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-pension-scheme") {
   
   val providerNameIF = "providerName"
   val schemeRefIF = "schemeReference"
@@ -54,7 +54,7 @@ class TransferPensionsSchemeControllerISpec extends ControllerSpec ("/overseas-p
                implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(ukOrOverseasAlignedSessionData))
                implicit val response: WSResponse = submitForm(formData, Map("index" -> "0"))
 
-               val redirectPage = relativeUrl("/overseas-pensions/overseas-transfer-charges/pension-scheme?index=0") // TODO: change to transfers pension scheme summary list
+               val redirectPage = relativeUrl("/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-pension-scheme?index=0") // TODO: change to transfers pension scheme summary list
                assertRedirectionAsExpected(redirectPage)
                
                val expectedViewModel = ukOrOverseasAlignedSessionData.pensions.transfersIntoOverseasPensions.copy(transferPensionScheme = Seq(testTransferPensionScheme))
@@ -67,7 +67,7 @@ class TransferPensionsSchemeControllerISpec extends ControllerSpec ("/overseas-p
                implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(ukOrOverseasAlignedSessionData))
                implicit val response: WSResponse = submitForm(formData, Map("index" -> "0"))
 
-               val redirectPage = relativeUrl("/overseas-pensions/overseas-transfer-charges/pension-scheme?index=0") // TODO: change to transfers pension scheme summary list
+               val redirectPage = relativeUrl("/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-pension-scheme?index=0") // TODO: change to transfers pension scheme summary list
                assertRedirectionAsExpected(redirectPage)
 
                val expectedViewModel = ukOrOverseasAlignedSessionData.pensions.transfersIntoOverseasPensions.copy(transferPensionScheme = Seq(testTransferPensionScheme))

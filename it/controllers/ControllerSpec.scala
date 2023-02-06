@@ -99,7 +99,7 @@ class ControllerSpec(val pathForThisPage: String) extends PlaySpec
     val incomeFromOverseasPensionsCya: String = relativeUrl("/overseas-pensions/income-from-overseas-pensions/check-overseas-pension-income-cya")
     
     val overseasTransferChargePaid: String = relativeUrl("/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-paid")
-    val transferIntoOverseasPensionsScheme: String = relativeUrl("/overseas-pensions/overseas-transfer-charges/pension-scheme")
+    val transferIntoOverseasPensionsScheme: String = relativeUrl("/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-pension-scheme")
 
   }
 
