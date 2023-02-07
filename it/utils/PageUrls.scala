@@ -240,5 +240,15 @@ object PageUrls extends IntegrationTest {
       s"$appUrl/$taxYear/overseas-pensions/income-from-overseas-pensions/pension-scheme-summary?index=$index"
       
   }
+
+  object TransferIntoOverseasPensions {
+
+    def overseasTransferChargePaidUrl(taxYear: Int): String =
+      s"$appUrl/$taxYear/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-paid"
+    def overseasTransferChargePaidUrl(taxYear: Int, index:Int): String =
+      s"$appUrl/$taxYear/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-paid?pensionSchemeIndex=$index"
+    def transferChargeSummaryUrl(taxYear: Int) : String =
+      s"$appUrl/$taxYear/overseas-pensions/overseas-transfer-charges/transfer-charges-summary"
+  }
 }
 //scalastyle:on number.of.methods

@@ -950,3 +950,6 @@ common.overseasPensions.schemeTaxRef.error.noEntry = Enter the Pension Scheme Ta
 common.overseasPensions.pstr.error.incorrectFormat = Enter a Pension Scheme Tax Reference number that is 8 numbers, then R, then a letter a to z or A to Z, like 00123456RA
 common.overseasPensions.qops.error.incorrectFormat = Enter a six digit number
 common.overseasPensions.country.error.noEntry = Enter the country
+
+#Transfer Charge Summmary List
+transferIntoOverseasPensions.summaryList.title = Pension schemes paying transfer charges - summary

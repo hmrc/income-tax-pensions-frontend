@@ -89,6 +89,7 @@ common.aboutGeneralIncreases.agent = the ’About general increases in benefits�
 
 common.employerFinancedRetirementScheme.caption = Employer-financed retirement benefits schemes for 6 April {0} to 5 April {1}
 
+
 ################# Common lifetime allowance #################
 
 common.lifetimeAllowance.Pension.checkWithProvider.Paragraph.individual = Check with your pension providers if you’re unsure.
@@ -950,3 +951,6 @@ common.overseasPensions.schemeTaxRef.error.noEntry = Enter the Pension Scheme Ta
 common.overseasPensions.pstr.error.incorrectFormat = Enter a Pension Scheme Tax Reference number that is 8 numbers, then R, then a letter a to z or A to Z, like 00123456RA
 common.overseasPensions.qops.error.incorrectFormat = Enter a six digit number
 common.overseasPensions.country.error.noEntry = Enter the country
+
+#Transfer Charge Summmary List
+transferIntoOverseasPensions.summaryList.title = Pension schemes paying transfer charges - summary
