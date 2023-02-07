@@ -39,7 +39,16 @@ class OverseasTransferChargesService @Inject()(pensionSessionService: PensionSes
       pensionIndex match {
         case Some(index) =>
           model.copy(transferPensionScheme = model.transferPensionScheme.updated(index, pensionScheme.copy(ukTransferCharge = Some(question))))
-        case None => model.copy(transferPensionScheme = model.transferPensionScheme ++ Seq(pensionScheme.copy(ukTransferCharge = Some(question))))
+        case None =>
+         if(model.transferPensionScheme.isEmpty) {
+          model.copy(transferPensionScheme = Seq(pensionScheme.copy(ukTransferCharge = Some(question))))
+         }else{
+           model.transferPensionScheme.last.name match{
+             case Some(_) => model.copy(transferPensionScheme = model.transferPensionScheme ++ Seq(pensionScheme.copy(ukTransferCharge = Some(question))))
+             case None => model.copy(transferPensionScheme = model.transferPensionScheme.updated(model.transferPensionScheme.size - 1, pensionScheme.copy(ukTransferCharge = Some(question))))
+           }
+
+         }
       }
     createOrUpdateModel(userData, updatedModel)
   }
