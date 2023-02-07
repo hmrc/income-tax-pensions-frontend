@@ -43,7 +43,7 @@ class QOPSReferenceController @Inject()(authAction: AuthorisedAction,
                                          clock: Clock,
                                          ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
   def referenceForm(): Form[String] = QOPSReferenceNumberForm.qopsReferenceNumberForm(
-    incorrectFormatMsg = "overseasPension.QOPSReference.error.incorrectFormat"
+    incorrectFormatMsg = "common.overseasPensions.qops.error.incorrectFormat"
   )
 
   def show(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>

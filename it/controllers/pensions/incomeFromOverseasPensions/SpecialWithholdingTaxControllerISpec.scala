@@ -957,10 +957,6 @@ class SpecialWithholdingTaxControllerISpec   extends YesNoAmountControllerSpec("
   private def getViewModel(implicit userConfig: UserConfig, index : Int): Option[PensionScheme] =
     loadPensionUserData.map(_.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes(index))
 
-  private def getPageWithIndex(index: Int = 0)(implicit userConfig: UserConfig, wsClient: WSClient): WSResponse = {
-    getPage(getMap(index))
-  }
-
   private def formUrl(index: Int = 0): Option[String] =
     Some(relativeUrlForThisPage + "?index=" + index)
 

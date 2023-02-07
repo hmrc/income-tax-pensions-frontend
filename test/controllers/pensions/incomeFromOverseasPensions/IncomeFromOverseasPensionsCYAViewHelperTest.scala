@@ -175,7 +175,7 @@ class IncomeFromOverseasPensionsCYAViewHelperTest extends AnyWordSpec with Match
 
         summaryListRows.length shouldBe 2
         assertRowForPaymentsFromOverseasPensions(summaryListRows.head, "Yes")
-        assertRowForOverseasPensionSchemes(summaryListRows(1), "N/A, N/A")
+        assertRowForOverseasPensionSchemes(summaryListRows(1), "NO COUNTRY CODE, NO COUNTRY CODE")
       }
 
       "we selected 'Yes' for paymentsFromOverseasPensionsQuestion and yet somehow did not pass a pension income " in {

@@ -74,8 +74,8 @@ object EncryptedTransfersIntoOverseasPensionsViewModel {
 case class TransferPensionScheme(
                                   ukTransferCharge: Option[Boolean] = None,
                                   name: Option[String] = None,
-                                  pensionSchemeTaxReference: Option[String] = None,
-                                  qualifyingRecognisedOverseasPensionScheme: Option[String] = None,
+                                  pstr: Option[String] = None,
+                                  qops: Option[String] = None,
                                   providerAddress: Option[String] = None,
                                   countryCode: Option[String] = None) {
 
@@ -83,8 +83,8 @@ case class TransferPensionScheme(
     EncryptedTransferPensionScheme(
       ukTransferCharge = ukTransferCharge.map(_.encrypted),
       name = name.map(_.encrypted),
-      pensionSchemeTaxReference = pensionSchemeTaxReference.map(_.encrypted),
-      qualifyingRecognisedOverseasPensionScheme = qualifyingRecognisedOverseasPensionScheme.map(_.encrypted),
+      pensionSchemeTaxReference = pstr.map(_.encrypted),
+      qualifyingRecognisedOverseasPensionScheme = qops.map(_.encrypted),
       providerAddress = providerAddress.map(_.encrypted),
       countryCode = countryCode.map(_.encrypted)
     )
@@ -103,8 +103,8 @@ case class EncryptedTransferPensionScheme(
     TransferPensionScheme(
       ukTransferCharge = ukTransferCharge.map(_.decrypted[Boolean]),
       name = name.map(_.decrypted[String]),
-      pensionSchemeTaxReference = pensionSchemeTaxReference.map(_.decrypted[String]),
-      qualifyingRecognisedOverseasPensionScheme = qualifyingRecognisedOverseasPensionScheme.map(_.decrypted[String]),
+      pstr = pensionSchemeTaxReference.map(_.decrypted[String]),
+      qops = qualifyingRecognisedOverseasPensionScheme.map(_.decrypted[String]),
       providerAddress = providerAddress.map(_.decrypted[String]),
       countryCode = countryCode.map(_.decrypted[String])
     )

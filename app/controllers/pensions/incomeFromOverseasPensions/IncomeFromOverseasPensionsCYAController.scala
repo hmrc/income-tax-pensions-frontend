@@ -73,7 +73,7 @@ class IncomeFromOverseasPensionsCYAController @Inject()(authAction: AuthorisedAc
         val updatedCyaModel = model.pensions.copy(
           incomeFromOverseasPensions = model.pensions.incomeFromOverseasPensions.copy(overseasIncomePensionSchemes =
             model.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes.map { case pensionScheme =>
-              val threeDigitCountryCode = Countries.get3dCountryCodeFrom2d(pensionScheme.alphaTwoCode)
+              val threeDigitCountryCode = Countries.get3AlphaCodeFrom2AlphaCode(pensionScheme.alphaTwoCode)
               pensionScheme.copy(alphaThreeCode = threeDigitCountryCode)
             }))
         pensionSessionService.createOrUpdateSessionData(request.user,

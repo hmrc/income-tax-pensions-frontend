@@ -31,12 +31,12 @@ common.status.updated = Updated
 common.status.notStarted = Not Started
 common.pensions.caption = Pensions for 6 April {0} to 5 April {1}
 common.paymentsIntoPensions.caption = Payments into pensions for 6 April {0} to 5 April {1}
+common.paymentsIntoOverseasPensions.caption = Payments into overseas pensions for 6 April {0} to 5 April {1}
+common.incomeFromOverseasPensions.caption = Income from overseas pensions for 6 April {0} to 5 April {1}
+common.transferIntoOverseasPensions.caption = Transfers into overseas pensions for 6 April {0} to 5 April {1}
 common.dividends.incomeFromPensions.caption = Dividends for 6 April {0} to 5 April {1}
 common.pensionAnnualAllowance.caption = Pension annual allowance for 6 April {0} to 5 April {1}
 common.incomeFromPensions.caption = Income from pensions for 6 April {0} to 5 April {1}
-common.incomeFromOverseasPensions.caption = Income from overseas pensions for 6 April {0} to 5 April {1}
-common.paymentsIntoOverseasPensions.caption = Payments into overseas pensions for 6 April {0} to 5 April {1}
-common.transferIntoOverseasPensions.caption = Transfers into overseas pensions for 6 April {0} to 5 April {1}
 common.uKPensionIncome.caption = UK pension income for 6 April {0} to 5 April {1}
 common.lifetimeAllowance.caption = Annual and lifetime allowances for 6 April {0} to 5 April {1}
 common.overseasPensions.caption = Overseas pensions for 6 April {0} to 5 April {1}
@@ -49,6 +49,7 @@ common.moreThanOnePensionScheme.individual = If more than one of your pension sc
 common.moreThanOnePensionScheme.agent = If more than one of your client’s pension schemes paid the tax, you can add these details later.
 common.sectionsToFill.individual = You only need to fill in the sections that apply to you.
 common.sectionsToFill.agent = You only need to fill in the sections that apply to your client.
+common.country.select = select a country
 
 common.error.amountMaxLimit = The total amount must be less than £100,000,000,000
 common.pensions.error.amountMaxLimit.individual = The amount of tax your pension provider paid or agreed to pay must be less than £100,000,000,000
@@ -73,11 +74,11 @@ unauthorisedPayments.common.title = Unauthorised payments
 unauthorisedPayments.common.title.hidden = Change unauthorised payments
 unauthorisedPayments.common.ukPensionSchemes = UK pension schemes
 unauthorisedPayments.common.ukPensionSchemes.hidden = Change UK pension schemes
+
 common.unauthorisedPaymentsFromPension.caption = Taliadau heb awdurdod o bensiynau ar gyfer 6 Ebrill {0} i 5 Ebrill {1}
 common.unauthorisedPayments.Amount.Text = Total non-UK tax in pounds
 common.unauthorisedPayments.error.Amount.incorrectFormat = Enter the amount of non-UK tax in the correct format
 common.unauthorisedPayments.error.checkbox.or.radioButton.noEntry = Select yes if you got an unauthorised payment from a pension scheme
-
 
 common.whereToFindInformation = Ble i ddod o hyd i’r wybodaeth hon
 common.FindInformation = Gallwch ddod o hyd i’r wybodaeth hon yn:
@@ -111,6 +112,8 @@ common.overseasPensions.findOut.individual = To find out you can:
 common.overseasPensions.findOut.agent = To find out you can ask your client to:
 common.overseasPensions.checkPensionStatement.individual = check your pension statement
 common.overseasPensions.checkPensionStatement.agent = check their pension statement
+
+common.incomeFromPensions.title = UK pension income
 
 #################       Error messages        ########################################
 
@@ -167,7 +170,6 @@ pensions.pensionSummary.pensionLifetimeAllowance = Pension lifetime allowance
 pensions.pensionSummary.unauthorisedPaymentsFromPensions = Unauthorised payments from pensions
 pensions.pensionSummary.overseasPensionsSummary = Overseas pensions
 pensions.pensionSummary.paymentsToOverseasPensions = Taliadau i bensiynau tramor
-
 
 # overseas pensions summary
 pensions.overseasPensionsSummary.paymentsIntoOverseasPensions = Payments into overseas pensions
@@ -417,6 +419,7 @@ pensions.reducedAnnualAllowanceAmount.nonReduced.error.incorrectFormat = Enter t
 pensions.reducedAnnualAllowanceAmount.nonReduced.error.overMaximum = The amount above the annual allowance must be less than £100,000,000,000
 
 #above Reduced Annual Allowance
+
 pensions.aboveReducedAnnualAllowance.reduced.title.individual = Have you gone above your reduced annual allowance?
 pensions.aboveReducedAnnualAllowance.reduced.title.agent = Has your client gone above their reduced annual allowance?
 pensions.aboveReducedAnnualAllowance.nonReduced.title.individual = Have you gone above the annual allowance?
@@ -451,33 +454,6 @@ unauthorisedPayments.pension.pensionSchemeTaxReference.whatIsPSTR = What is the 
 unauthorisedPayments.pension.pensionSchemeTaxReference.error.incorrectFormat.individual = Enter your Pension Scheme Tax Reference in the correct format
 unauthorisedPayments.pension.pensionSchemeTaxReference.error.incorrectFormat.agent = Enter your client’s Pension Scheme Tax Reference in the correct format
 
-
-#Annual Allowance and Lifetime Allowance CYA
-
-lifetimeAllowance.cya.heading.individual = Check your annual and lifetime allowances
-lifetimeAllowance.cya.heading.agent = Check your client’s annual and lifetime allowances
-lifetimeAllowance.cya.aboveAnnualOrLifetimeAllowance = Above annual or lifetime allowance
-lifetimeAllowance.cya.reducedAnnualAllowance = Reduced annual allowance
-lifetimeAllowance.cya.typeOfReducedAnnualAllowance = Type of reduced annual allowance
-lifetimeAllowance.cya.aboveAnnualAllowance = Above annual allowance
-lifetimeAllowance.cya.annualAllowanceTax = Annual allowance tax
-lifetimeAllowance.cya.annualPensionSchemeTaxReferences = Schemes paying annual allowance tax
-lifetimeAllowance.cya.aboveLifetimeAllowance = Above lifetime allowance
-lifetimeAllowance.cya.lumpSum = Lump sum
-lifetimeAllowance.cya.otherPayments = Other payments
-lifetimeAllowance.cya.lifetimePensionSchemeTaxReferences = Schemes paying lifetime allowance tax
-
-lifetimeAllowance.cya.aboveAnnualOrLifetimeAllowance.hidden = Change above annual or lifetime allowance
-lifetimeAllowance.cya.reducedAnnualAllowance.hidden = Change reduced annual allowance
-lifetimeAllowance.cya.typeOfReducedAnnualAllowance.hidden = Change type of reduced annual allowance
-lifetimeAllowance.cya.aboveAnnualAllowance.hidden = Change above annual allowance
-lifetimeAllowance.cya.annualAllowanceTax.hidden = Change annual allowance tax
-lifetimeAllowance.cya.annualPensionSchemeTaxReferences.hidden = Change schemes paying annual allowance tax
-lifetimeAllowance.cya.aboveLifetimeAllowance.hidden = Change above lifetime allowance
-lifetimeAllowance.cya.lumpSum.hidden = Change lump sum
-lifetimeAllowance.cya.otherPayments.hidden = Change other payments
-lifetimeAllowance.cya.lifetimePensionSchemeTaxReferences.hidden = Change schemes paying lifetime allowance tax
-
 #Pension Scheme Tax Reference Summary Page
 
 annualAllowance.pstrSummary.title = Pension Scheme Tax Reference (PSTR) summary
@@ -495,13 +471,7 @@ incomeFromPensionsGateway.paragraph = Mae’r rhain yn cynnwys:
 incomeFromPensionsGateway.paragraph.1 = Pensiwn y Wladwriaeth
 incomeFromPensionsGateway.paragraph.2 = pensiynau gweithle a phreifat
 
-common.incomeFromPensions.title = UK pension income
-
-pensions.incomeFromPensionsDetails.whereToFindInformation.title = Where to find this information
-pensions.incomeFromPensionsDetails.FindInformation = You can find this information in:
-pensions.incomeFromPensionsDetails.bullet.yourP60.individual = your P60
 pensions.incomeFromPensionsDetails.bullet.aboutGeneralIncreases.individual = the ‘About general increases in benefits’ letter the Pension Service sent you
-pensions.incomeFromPensionsDetails.bullet.yourP60.agent = your client’s P60
 pensions.incomeFromPensionsDetails.bullet.aboutGeneralIncreases.agent = the ‘About general increases in benefits’ letter the Pension Service sent your client
 
 #state pension lump sum question
@@ -692,6 +662,33 @@ lifetimeAllowance.pensionTakenAnotherWay.beforeTax.error.incorrectFormat.agent =
 lifetimeAllowance.pensionTakenAnotherWay.taxPaid.error.noEntry.individual = Enter the amount of lifetime allowance tax your pension provider paid or agreed to pay on the amount taken in another way
 lifetimeAllowance.pensionTakenAnotherWay.taxPaid.error.noEntry.agent = Enter the amount of lifetime allowance tax your client’s pension provider paid or agreed to pay on the amount taken in another way
 
+
+#Annual Allowance and Lifetime Allowance CYA
+
+lifetimeAllowance.cya.heading.individual = Check your annual and lifetime allowances
+lifetimeAllowance.cya.heading.agent = Check your client’s annual and lifetime allowances
+lifetimeAllowance.cya.aboveAnnualOrLifetimeAllowance = Above annual or lifetime allowance
+lifetimeAllowance.cya.reducedAnnualAllowance = Reduced annual allowance
+lifetimeAllowance.cya.typeOfReducedAnnualAllowance = Type of reduced annual allowance
+lifetimeAllowance.cya.aboveAnnualAllowance = Above annual allowance
+lifetimeAllowance.cya.annualAllowanceTax = Annual allowance tax
+lifetimeAllowance.cya.annualPensionSchemeTaxReferences = Schemes paying annual allowance tax
+lifetimeAllowance.cya.aboveLifetimeAllowance = Above lifetime allowance
+lifetimeAllowance.cya.lumpSum = Lump sum
+lifetimeAllowance.cya.otherPayments = Other payments
+lifetimeAllowance.cya.lifetimePensionSchemeTaxReferences = Schemes paying lifetime allowance tax
+
+lifetimeAllowance.cya.aboveAnnualOrLifetimeAllowance.hidden = Change above annual or lifetime allowance
+lifetimeAllowance.cya.reducedAnnualAllowance.hidden = Change reduced annual allowance
+lifetimeAllowance.cya.typeOfReducedAnnualAllowance.hidden = Change type of reduced annual allowance
+lifetimeAllowance.cya.aboveAnnualAllowance.hidden = Change above annual allowance
+lifetimeAllowance.cya.annualAllowanceTax.hidden = Change annual allowance tax
+lifetimeAllowance.cya.annualPensionSchemeTaxReferences.hidden = Change schemes paying annual allowance tax
+lifetimeAllowance.cya.aboveLifetimeAllowance.hidden = Change above lifetime allowance
+lifetimeAllowance.cya.lumpSum.hidden = Change lump sum
+lifetimeAllowance.cya.otherPayments.hidden = Change other payments
+lifetimeAllowance.cya.lifetimePensionSchemeTaxReferences.hidden = Change schemes paying lifetime allowance tax
+
 #Pension scheme tax reference lifetime allowance
 lifetimeAllowance.pensionSchemeTaxReference.title = Tell us the pension scheme that paid or agreed to pay the tax
 lifetimeAllowance.pensionSchemeTaxReference.p1 = If more than one pension scheme paid or agreed to pay the tax, you can add them later.
@@ -812,7 +809,6 @@ overseasPension.QOPSReference.title = Qualifying overseas pension scheme (QOPS) 
 overseasPension.QOPSReference.paragraph1.individual = You can find this on your pension statement.
 overseasPension.QOPSReference.paragraph1.agent = You can find this on your client’s pension statement.
 overseasPension.QOPSReference.hint = For example, QOPS123456
-overseasPension.QOPSReference.error.incorrectFormat = Enter a six digit number
 overseasPension.QOPSReference.prefix=QOPS
 
 #Pensions Payments page
@@ -834,7 +830,6 @@ overseasPension.specialWithHoldingTax.amount.agent.noEntry = Select yes or no if
 overseasPension.specialWithHoldingTax.amount.noAmountEntry = Enter an amount in pounds for the amount of Special Withholding Tax deducted
 overseasPension.specialWithHoldingTax.amount.incorrectFormat = Enter the amount of Special Withholding Tax deducted in the correct format
 overseasPension.specialWithHoldingTax.amount.tooBig = Amount of Special Withholding Tax deducted must be less than £100,000,000,000
-
 
 #Pension Customer Reference Number
 overseasPension.pensionsCustomerReferenceNumber.title.individual = What’s your customer reference number?
@@ -905,7 +900,6 @@ overseasPensionIncomeSummary.hidden = Change Overseas pension income
 
 ############################################## TRANSFER INTO OVERSEAS PENSION ##############################################
 
-
 #Transfer Pension Savings
 transferIntoOverseasPensions.transferPensionsSavings.title.individual = Did you transfer pension savings into an overseas pension scheme?
 transferIntoOverseasPensions.transferPensionsSavings.title.agent = Did your client transfer pension savings into an overseas pension scheme?
@@ -938,6 +932,24 @@ transferIntoOverseasPensions.overseasPensionSchemeTaxTransferCharge.error.tooBig
 #Overseas Transfer Charges Paid Status
 transferIntoOverseasPensions.overseasTransferChargesPaid.title = Did a UK pension scheme pay the transfer charge to HMRC?
 transferIntoOverseasPensions.overseasTransferChargesPaid.error.noEntry = Select yes if a UK pension scheme paid the transfer charge to HMRC
+
+#Transfer Pension Scheme
+transferIntoOverseasPensions.transferPensionScheme.title = Pension scheme paying the transfer charge
+transferIntoOverseasPensions.pensionScheme.providerName.subheading = Name of pension scheme
+transferIntoOverseasPensions.pensionScheme.qopsr.subheading = Qualifying Overseas Pension Scheme reference
+transferIntoOverseasPensions.pensionScheme.providerAddress.subheading = Pension provider address
+
+transferIntoOverseasPensions.paragraph1 = If more than one pension scheme paid a transfer charge, you can add them later.
+
+common.overseasPensions.providerName.error.noEntry = Enter the name of the pension scheme
+common.overseasPensions.providerName.error.overCharLimit = Name of pension scheme must be 105 characters or less
+common.overseasPensions.providerName.error.incorrectFormat = The pension scheme name must only include numbers 0-9, letters a to z, hyphens, spaces, apostrophes, commas, full stops, round brackets and the special characters, &, /, @, £, *.
+common.overseasPensions.providerAddress.error.noEntry = Enter the pension provider's address
+common.overseasPensions.providerAddress.error.overCharLimit = Pension provider's address must be 250 characters or less
+common.overseasPensions.schemeTaxRef.error.noEntry = Enter the Pension Scheme Tax Reference
+common.overseasPensions.pstr.error.incorrectFormat = Enter a Pension Scheme Tax Reference number that is 8 numbers, then R, then a letter a to z or A to Z, like 00123456RA
+common.overseasPensions.qops.error.incorrectFormat = Enter a six digit number
+common.overseasPensions.country.error.noEntry = Enter the country
 
 #Transfer Charge Summmary List
 transferIntoOverseasPensions.summaryList.title = Pension schemes paying transfer charges - summary

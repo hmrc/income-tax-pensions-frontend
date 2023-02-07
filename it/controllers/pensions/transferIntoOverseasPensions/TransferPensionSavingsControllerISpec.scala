@@ -46,7 +46,7 @@ class TransferPensionSavingsControllerISpec
           implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoPage(Some(false)))
 
           assertRedirectionAsExpected(PageRelativeURLs.overseasPensionsSummary)
-          getViewModel mustBe None
+          getTransferPensionsViewModel mustBe None
         }
       }
       "succeed" when {
@@ -64,7 +64,7 @@ class TransferPensionSavingsControllerISpec
             implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoPage(Some(true)))
 
             assertRedirectionAsExpected(redirectPage)
-            getViewModel mustBe Some(expectedViewModel)
+            getTransferPensionsViewModel mustBe Some(expectedViewModel)
           }
 
           "the user has selected 'No'" in {
@@ -77,13 +77,10 @@ class TransferPensionSavingsControllerISpec
 
             //TODO: Update test to `/transfer-charge-summary` (Transfer Charge Summary) page when available. Redirecting to itself
             assertRedirectionAsExpected(relativeUrlForThisPage)
-            getViewModel mustBe Some(expectedViewModel)
+            getTransferPensionsViewModel mustBe Some(expectedViewModel)
           }
 
           "the user has not selected any option" in {
-            val expectedViewModel = sessionData.pensions.transfersIntoOverseasPensions.copy(
-              transferPensionSavings = None
-            )
 
             implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
             implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoPage(None))
@@ -94,7 +91,4 @@ class TransferPensionSavingsControllerISpec
       }
     }
   }
-
-  private def getViewModel(implicit userConfig: UserConfig): Option[TransfersIntoOverseasPensionsViewModel] =
-    loadPensionUserData.map(_.pensions.transfersIntoOverseasPensions)
 }

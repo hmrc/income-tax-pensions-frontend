@@ -25,20 +25,20 @@ class CountryServiceTest extends UnitTest {
   "Countries" must {
 
     "give all countries with codes in alphabetical order of country name with filtering according to permitted MDG values" in {
-      Countries.all should contain(Country("Afghanistan", "AF", "AFG"))
-      Countries.all should contain(Country("Curaçao", "CW", "CUW"))
-      Countries.all should contain(Country("Réunion", "RE", "REU"))
-      Countries.all should contain(Country("Zimbabwe", "ZW", "ZWE"))
-      Countries.all should contain(Country("Åland Islands", "AX", "AXA"))
-      Countries.all should contain(Country("United Kingdom", "GB", "GBR"))
-      Countries.all should contain(Country("Czechoslovakia", "CS", "N/A"))
-      Countries.all.size shouldBe(247)
+      Countries.allCountries should contain(Country("Afghanistan", "AF", "AFG"))
+      Countries.allCountries should contain(Country("Curaçao", "CW", "CUW"))
+      Countries.allCountries should contain(Country("Réunion", "RE", "REU"))
+      Countries.allCountries should contain(Country("Zimbabwe", "ZW", "ZWE"))
+      Countries.allCountries should contain(Country("Åland Islands", "AX", "AXA"))
+      Countries.allCountries should contain(Country("United Kingdom", "GB", "GBR"))
+      Countries.allCountries should contain(Country("Czechoslovakia", "CS", "N/A"))
+      Countries.allCountries.size shouldBe(247)
     }
 
     "give all eu countries with codes in alphabetical order of country name with filtering according to permitted MDG EU values" in {
-      Countries.eu should contain(Country("France", "FR", "FRA"))
-      Countries.eu should contain(Country("Germany", "DE", "DEU"))
-      Countries.eu.size should be(27)
+      Countries.euCountries should contain(Country("France", "FR", "FRA"))
+      Countries.euCountries should contain(Country("Germany", "DE", "DEU"))
+      Countries.euCountries.size should be(27)
     }
 
     "give all overseas countries with codes in alphabetical order of country name with filtering according to permitted MDG values" in {
@@ -51,12 +51,15 @@ class CountryServiceTest extends UnitTest {
       Countries.getOverseasCountries.size shouldBe(246)
     }
 
-    "since the link between the twoDigitCountryCode map and the threeDigitCountryCode map is country name there should be no country name missing between both " in {
+    "since the link between the twoAlphaCountryCode map and the threeAlphaCountryCode map is country name " +
+                                                        "there should be no country name missing between both " in {
       val countries = Countries
-      val threeDigitCountriesNotInTwoDigitMap = countries.countriesThreeDigitMapFromCountryName.keySet -- countries.countriesTwoDigitMapFromCountryName.keySet
+      val threeDigitCountriesNotInTwoDigitMap =
+        countries.countriesThreeAlphaMapFromCountryName.keySet -- countries.countriesTwoAlphaMapFromCountryName.keySet
       threeDigitCountriesNotInTwoDigitMap.size should be(0)
 
-      val twoDigitCountriesNotInThreeDigitMap = countries.countriesTwoDigitMapFromCountryName.keySet -- countries.countriesThreeDigitMapFromCountryName.keySet
+      val twoDigitCountriesNotInThreeDigitMap =
+        countries.countriesTwoAlphaMapFromCountryName.keySet -- countries.countriesThreeAlphaMapFromCountryName.keySet
       twoDigitCountriesNotInThreeDigitMap.size should be(1)
       //Czechoslovakia does not have three digit country code
     }

@@ -31,9 +31,10 @@ import views.html.pensions.incomeFromOverseasPensions.PensionOverseasIncomeCount
 import controllers.pensions.routes.OverseasPensionsSummaryController
 import models.pension.charges.PensionScheme
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
+@Singleton
 class PensionOverseasIncomeCountryController @Inject()(authAction: AuthorisedAction,
                                                        pensionOverseasIncomeCountryView: PensionOverseasIncomeCountryView,
                                                        pensionSessionService: PensionSessionService,
@@ -44,7 +45,7 @@ class PensionOverseasIncomeCountryController @Inject()(authAction: AuthorisedAct
                                                         ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
 
   def countryForm(user: User): Form[String] = CountryForm.countryForm(
-    noEntryMsg = s"incomeFromOverseasPensions.pensionOverseasIncomeCountry.error.noEntry.${if (user.isAgent) "agent" else "individual"}"
+    agentOrIndividual = if (user.isAgent) "agent" else "individual"
   )
 
   def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = authAction.async { implicit request =>

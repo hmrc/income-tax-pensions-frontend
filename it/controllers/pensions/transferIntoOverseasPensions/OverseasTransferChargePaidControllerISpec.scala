@@ -572,7 +572,7 @@ class OverseasTransferChargePaidControllerISpec
   private def getViewModel(implicit userConfig: UserConfig): Option[TransfersIntoOverseasPensionsViewModel] =
     loadPensionUserData.map(_.pensions.transfersIntoOverseasPensions)
 
-  private def getPageWithIndex(index: Int = 0)(implicit userConfig: UserConfig, wsClient: WSClient): WSResponse = {
+  override def getPageWithIndex(index: Int = 0)(implicit userConfig: UserConfig, wsClient: WSClient): WSResponse = {
     getPage(getMap(index))
   }
 

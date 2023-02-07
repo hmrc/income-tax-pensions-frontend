@@ -1,0 +1,57 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import forms.Countries
+@import models.requests.UserSessionDataRequest
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
+@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.{HmrcAccessibleAutocompleteCss, HmrcAccessibleAutocompleteJavascript}
+@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.accessibleautocomplete.AccessibleAutocomplete
+@import views.html.helper.CSPNonce
+@import views.html.templates.Layout
+@import views.html.templates.helpers.{Button, Details, ErrorSummary, Heading, InputRadioAlt, InputTextAlt, Link}
+
+
+@this(govukSelect : GovukSelect)
+
+@(form: Form[_])(implicit messages: Messages)
+
+@countries = @{Countries.getOverseasCountries()}
+
+        @govukSelect(Select(
+            id = "countryId",
+            name = "countryId",
+            errorMessage = form("countryId").error.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*)))),
+            items = {
+                val formCountryCode = form("countryId").value
+                val formCountry = Countries.getCountryFromCodeWithDefault(formCountryCode)
+                Seq(SelectItem(text=formCountry, value=formCountryCode, attributes=Map("label" -> messages("")))) ++ countries.map{ c =>                
+                  SelectItem(
+                    value = Some(c.alphaTwoCode),
+                    text = c.countryName,
+                    selected = if (c.alphaTwoCode == formCountryCode.getOrElse("")) true else false
+                  )
+                }
+            },
+            label = Label(
+                content = Text(messages("incomeFromOverseasPensions.pensionOverseasIncomeCountry.subheading")),
+                classes = "govuk-label govuk-label--m"
+            )
+            //TODO: County Code is not to prefilled on returning to the page due to GDS autocomplete bug which forces a change to the defaulted prefill value
+        ).asAccessibleAutocomplete(Some(
+            AccessibleAutocomplete(
+                showAllValues = false,
+                autoSelect = true)
+        )))
