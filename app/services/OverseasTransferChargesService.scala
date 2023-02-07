@@ -41,7 +41,7 @@ class OverseasTransferChargesService @Inject()(pensionSessionService: PensionSes
           model.copy(transferPensionScheme = model.transferPensionScheme.updated(index, pensionScheme.copy(ukTransferCharge = Some(question))))
         case None =>
          if(model.transferPensionScheme.isEmpty) {
-          model.copy(transferPensionScheme = model.transferPensionScheme ++ Seq(pensionScheme.copy(ukTransferCharge = Some(question))))
+          model.copy(transferPensionScheme = Seq(pensionScheme.copy(ukTransferCharge = Some(question))))
          }else{
            model.transferPensionScheme.last.name match{
              case Some(_) => model.copy(transferPensionScheme = model.transferPensionScheme ++ Seq(pensionScheme.copy(ukTransferCharge = Some(question))))
