@@ -24,7 +24,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import views.html.pensions.annualAllowance.PstrSummaryView
+import views.html.pensions.annualAllowances.PstrSummaryView
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext.Implicits.global

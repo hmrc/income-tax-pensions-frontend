@@ -65,7 +65,7 @@
 
     @errorSummary(form.errors, Some("reducedAnnualAllowanceType"))
 
-    @formWithCsrf(action = controllers.pensions.annualAllowance.routes.ReducedAnnualAllowanceTypeController.submit(taxYear)) {
+    @formWithCsrf(action = controllers.pensions.annualAllowances.routes.ReducedAnnualAllowanceTypeController.submit(taxYear)) {
 
         @govukCheckboxes(Checkboxes(
             fieldset = Some(Fieldset(

@@ -26,7 +26,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
-import views.html.pensions.annualAllowance.PensionSchemeTaxReferenceView
+import views.html.pensions.annualAllowances.PensionSchemeTaxReferenceView
 import controllers.pensions.routes.PensionsSummaryController
 import controllers.pensions.annualAllowances.routes.PstrSummaryController
 import controllers.predicates.TaxYearAction.taxYearAction

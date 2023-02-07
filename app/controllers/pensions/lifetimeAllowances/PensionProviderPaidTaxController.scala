@@ -29,7 +29,7 @@ import play.api.mvc._
 import play.twirl.api.Html
 import services.PensionSessionService
 import utils.Clock
-import views.html.pensions.lifetimeAllowance.PensionProviderPaidTaxView
+import views.html.pensions.lifetimeAllowances.PensionProviderPaidTaxView
 
 import javax.inject.Inject
 

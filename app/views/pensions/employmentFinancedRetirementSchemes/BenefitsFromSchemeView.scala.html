@@ -54,7 +54,7 @@
 
     @heading(question, None, "", "m")
 
-    @formWithCsrf(action = controllers.pensions.employmentFinancedRetirementScheme.routes.BenefitsFromSchemeController.submit(taxYear)) {
+    @formWithCsrf(action = controllers.pensions.employmentFinancedRetirementSchemes.routes.BenefitsFromSchemeController.submit(taxYear)) {
         @inputRadio(
             form = form,
             legendHeading = Some(Html(headingForUse)),

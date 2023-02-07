@@ -16,7 +16,7 @@
 
 package views
 
-import controllers.pensions.employmentFinancedRetirementScheme.routes.BenefitsFromSchemeController
+import controllers.pensions.employmentFinancedRetirementSchemes.routes.BenefitsFromSchemeController
 import forms.YesNoForm
 import models.AuthorisationRequest
 import org.jsoup.Jsoup
@@ -24,7 +24,7 @@ import org.jsoup.nodes.Document
 import play.api.i18n.Messages
 import play.api.mvc.AnyContent
 import support.ViewUnitTest
-import views.html.pensions.employmentFinancedRetirementScheme.BenefitsFromSchemeView
+import views.html.pensions.employmentFinancedRetirementSchemes.BenefitsFromSchemeView
 
 class BenefitsFromSchemeTestSupport extends ViewUnitTest {
 

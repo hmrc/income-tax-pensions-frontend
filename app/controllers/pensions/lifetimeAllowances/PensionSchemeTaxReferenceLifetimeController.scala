@@ -30,7 +30,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
-import views.html.pensions.lifetimeAllowance.PensionSchemeTaxReferenceLifetimeView
+import views.html.pensions.lifetimeAllowances.PensionSchemeTaxReferenceLifetimeView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}

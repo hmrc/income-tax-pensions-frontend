@@ -47,7 +47,7 @@
     @heading(titleText, Some(messages("common.pensionAnnualAllowance.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-2")
     @contentHtml
 
-    @formWithCsrf(action = controllers.pensions.annualAllowance.routes.AboveReducedAnnualAllowanceAmountController.submit(taxYear)) {
+    @formWithCsrf(action = controllers.pensions.annualAllowances.routes.AboveReducedAnnualAllowanceAmountController.submit(taxYear)) {
         @inputText(
             form,
             id = "amount",

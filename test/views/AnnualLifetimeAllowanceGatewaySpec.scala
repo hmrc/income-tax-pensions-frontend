@@ -24,7 +24,7 @@ import org.jsoup.nodes.Document
 import play.api.i18n.Messages
 import play.api.mvc.AnyContent
 import support.ViewUnitTest
-import views.html.pensions.lifetimeAllowance.AnnualLifetimeAllowanceGatewayView
+import views.html.pensions.lifetimeAllowances.AnnualLifetimeAllowanceGatewayView
 
 class AnnualLifetimeAllowanceGatewayTestSupport extends ViewUnitTest {
 

@@ -150,8 +150,8 @@ POST        /:taxYear/unauthorised-payments-from-pensions/remove-pension-scheme-
 
 ###########################    Employer-financed Retirement Benefits Schemes Pages     ####################################
 
-GET         /:taxYear/employment-financed-retirement-benefits-scheme/benefits-from-scheme                                          controllers.pensions.employmentFinancedRetirementScheme.BenefitsFromSchemeController.show(taxYear: Int)
-POST        /:taxYear/employment-financed-retirement-benefits-scheme/benefits-from-scheme                                          controllers.pensions.employmentFinancedRetirementScheme.BenefitsFromSchemeController.submit(taxYear: Int)
+GET         /:taxYear/employment-financed-retirement-benefits-scheme/benefits-from-scheme                                          controllers.pensions.employmentFinancedRetirementSchemes.BenefitsFromSchemeController.show(taxYear: Int)
+POST        /:taxYear/employment-financed-retirement-benefits-scheme/benefits-from-scheme                                          controllers.pensions.employmentFinancedRetirementSchemes.BenefitsFromSchemeController.submit(taxYear: Int)
 
 
 ###########################    Annual and Lifetime Allowance Pages     ####################################

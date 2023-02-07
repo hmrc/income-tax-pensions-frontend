@@ -26,7 +26,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
-import views.html.pensions.annualAllowance.ReducedAnnualAllowanceTypeView
+import views.html.pensions.annualAllowances.ReducedAnnualAllowanceTypeView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future

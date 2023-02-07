@@ -42,7 +42,7 @@
 
     @heading(titleForUse, Some(messages("common.lifetimeAllowance.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-3")
 
-    @formWithCsrf(action = controllers.pensions.lifetimeAllowance.routes.PensionLumpSumController.submit(taxYear)) {
+    @formWithCsrf(action = controllers.pensions.lifetimeAllowances.routes.PensionLumpSumController.submit(taxYear)) {
         @inputRadio(
             form = form,
             legendHeading = Some(Html(titleForUse)),

@@ -17,7 +17,7 @@
 @import models.pension.charges.{PensionAnnualAllowancesViewModel, PensionLifetimeAllowancesViewModel}
 @import views.html.templates.Layout
 @import views.html.templates.helpers.{Button, Heading, SummaryList}
-@import controllers.pensions.lifetimeAllowance.AnnualAndLifetimeAllowanceCYAViewHelper
+@import controllers.pensions.lifetimeAllowances.AnnualAndLifetimeAllowanceCYAViewHelper
 @this(layout: Layout, summaryList: SummaryList, heading: Heading, button: Button, csrfForm: FormWithCSRF)
 @(taxYear: Int, annualCya: PensionAnnualAllowancesViewModel, lifetimeCya: PensionLifetimeAllowancesViewModel)(implicit messages: Messages, appConfig: AppConfig, request: AuthorisationRequest[_])
 
@@ -31,7 +31,7 @@
 
     @summaryList(AnnualAndLifetimeAllowanceCYAViewHelper.summaryListRows(annualCya, lifetimeCya, taxYear)(messages))
 
-    @csrfForm(controllers.pensions.lifetimeAllowance.routes.AnnualLifetimeAllowanceCYAController.submit(taxYear)) {
+    @csrfForm(controllers.pensions.lifetimeAllowances.routes.AnnualLifetimeAllowanceCYAController.submit(taxYear)) {
         @button("common.saveAndContinue")
     }
 }

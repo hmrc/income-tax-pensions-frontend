@@ -65,7 +65,7 @@
     @heading(titleForUse, Some(messages("common.lifetimeAllowance.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-2")
 
 
-    @formWithCsrf(action = controllers.pensions.lifetimeAllowance.routes.PensionProviderPaidTaxController.submit(taxYear)) {
+    @formWithCsrf(action = controllers.pensions.lifetimeAllowances.routes.PensionProviderPaidTaxController.submit(taxYear)) {
 
         @inputRadio(
             form = form,

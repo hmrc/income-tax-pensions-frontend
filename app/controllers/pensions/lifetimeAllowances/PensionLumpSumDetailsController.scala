@@ -28,7 +28,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
-import views.html.pensions.lifetimeAllowance.PensionLumpSumDetailsView
+import views.html.pensions.lifetimeAllowances.PensionLumpSumDetailsView
 import controllers.pensions.routes.PensionsSummaryController
 import controllers.pensions.lifetimeAllowances.routes.PensionLumpSumController
 

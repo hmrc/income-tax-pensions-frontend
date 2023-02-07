@@ -55,7 +55,7 @@
 
     @heading(titleForUse, Some(messages("common.pensionAnnualAllowance.caption", (taxYear - 1).toString, taxYear.toString)),  "govuk-!-margin-bottom-2")
     @contentHtml
-    @formWithCsrf(action = controllers.pensions.annualAllowance.routes.AboveReducedAnnualAllowanceController.submit(taxYear)) {
+    @formWithCsrf(action = controllers.pensions.annualAllowances.routes.AboveReducedAnnualAllowanceController.submit(taxYear)) {
         @inputRadio(
             form = form,
             legendHeading = Some(Html(titleForUse)),

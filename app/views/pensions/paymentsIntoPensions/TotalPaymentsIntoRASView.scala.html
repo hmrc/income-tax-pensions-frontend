@@ -72,7 +72,7 @@
     @heading(headingForUse, Some(messages("common.paymentsIntoPensions.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-2")
     @contentHtml
 
-    @csrfForm(action = controllers.pensions.paymentsIntoPension.routes.TotalPaymentsIntoRASController.submit(taxYear)) {
+    @csrfForm(action = controllers.pensions.paymentsIntoPensions.routes.TotalPaymentsIntoRASController.submit(taxYear)) {
         @inputRadio(
             form = form,
             legendHeading = Some(Html(messages("paymentsIntoPensions.totalRASPayments.isThisCorrect"))),

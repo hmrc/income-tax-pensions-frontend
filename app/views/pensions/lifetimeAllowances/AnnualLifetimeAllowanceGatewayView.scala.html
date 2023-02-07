@@ -45,7 +45,7 @@
 
 @heading(headingForUse, Some(messages("common.lifetimeAllowance.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-2")
 
-@formWithCsrf(action = controllers.pensions.lifetimeAllowance.routes.AnnualLifetimeAllowanceGatewayController.submit(taxYear)) {
+@formWithCsrf(action = controllers.pensions.lifetimeAllowances.routes.AnnualLifetimeAllowanceGatewayController.submit(taxYear)) {
 
     <p class="govuk-body" id="line1">
         @messages(s"annualAndLifetimeAllowance.gateway.line1.${if(request.user.isAgent) "agent" else "individual"}")

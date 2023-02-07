@@ -32,7 +32,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
-import views.html.pensions.annualAllowance.AboveReducedAnnualAllowanceAmountView
+import views.html.pensions.annualAllowances.AboveReducedAnnualAllowanceAmountView
 
 import javax.inject.Inject
 import scala.concurrent.Future

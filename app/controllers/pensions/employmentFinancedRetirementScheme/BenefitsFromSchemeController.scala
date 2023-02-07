@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.pensions.employmentFinancedRetirementScheme
+package controllers.pensions.employmentFinancedRetirementSchemes
 
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.routes.PensionsSummaryController
@@ -27,7 +27,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.SessionHelper
-import views.html.pensions.employmentFinancedRetirementScheme.BenefitsFromSchemeView
+import views.html.pensions.employmentFinancedRetirementSchemes.BenefitsFromSchemeView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}

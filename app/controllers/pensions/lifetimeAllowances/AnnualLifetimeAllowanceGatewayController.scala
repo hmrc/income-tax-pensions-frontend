@@ -28,7 +28,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.SessionHelper
-import views.html.pensions.lifetimeAllowance.AnnualLifetimeAllowanceGatewayView
+import views.html.pensions.lifetimeAllowances.AnnualLifetimeAllowanceGatewayView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
