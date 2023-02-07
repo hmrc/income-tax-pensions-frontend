@@ -873,6 +873,20 @@ incomeFromOverseasPensions.pensionOverseasIncomeCountry.error.noEntry.agent = En
 
 overseasPension.foreignTaxCreditRelief.title.individual = Are you claiming Foreign Tax Credit Relief (FTCR)?
 overseasPension.foreignTaxCreditRelief.title.agent = Is your client claiming Foreign Tax Credit Relief (FTCR)?
+overseasPension.foreignTaxCreditRelief.details.title = Understanding Foreign Tax Credit Relief (FTCR)
+overseasPension.foreignTaxCreditRelief.details.para1 = You can claim Foreign Tax Credit Relief if you’ve already paid foreign tax on income that’s normally taxed in the UK.
+overseasPension.foreignTaxCreditRelief.details.para2 = You may also be taxed on this income by the UK.
+overseasPension.foreignTaxCreditRelief.details.para3 = However, you may not have to pay twice if the country you live in has a ‘double-taxation agreement’ with the UK.
+overseasPension.foreignTaxCreditRelief.details.para4 = Depending on the agreement, you can apply for either:
+overseasPension.foreignTaxCreditRelief.details.para4.bullet1 = partial or full relief before you’ve been taxed
+overseasPension.foreignTaxCreditRelief.details.para4.bullet2 = a refund after you’ve been taxed
+overseasPension.foreignTaxCreditRelief.details.para5 = Each double-taxation agreement sets out:
+overseasPension.foreignTaxCreditRelief.details.para5.bullet1 = the country you pay tax in
+overseasPension.foreignTaxCreditRelief.details.para5.bullet2 = the country you apply for relief in
+overseasPension.foreignTaxCreditRelief.details.para5.bullet3 = how much tax relief you get
+overseasPension.foreignTaxCreditRelief.details.para6 = If the tax rates in the two countries are different, you’ll pay the higher rate of tax.
+overseasPension.foreignTaxCreditRelief.details.para7 = You can read more about
+overseasPension.foreignTaxCreditRelief.details.para7.link = Foreign Tax Credit Relief at GOV.uk
 overseasPension.foreignTaxCreditRelief.error.noEntry.individual = Enter yes or no if you are claiming Foreign Tax Credit Relief (FTCR)
 overseasPension.foreignTaxCreditRelief.error.noEntry.agent = Enter yes or no if your client is claiming Foreign Tax Credit Relief (FTCR)
 

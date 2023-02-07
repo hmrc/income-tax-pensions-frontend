@@ -41,12 +41,35 @@
 
 @hasFormErrors = @{form.hasErrors}
 
+@detailsHtml = {
+    <p class="govuk-body">@messages("overseasPension.foreignTaxCreditRelief.details.para1")</p>
+    <p class="govuk-body">@messages("overseasPension.foreignTaxCreditRelief.details.para2")</p>
+    <p class="govuk-body">@messages("overseasPension.foreignTaxCreditRelief.details.para3")</p>
+    <p class="govuk-body">@messages("overseasPension.foreignTaxCreditRelief.details.para4")</p>
+    <ul class="govuk-list govuk-list--bullet" id="para4bullets">
+        <li>@messages("overseasPension.foreignTaxCreditRelief.details.para4.bullet1")</li>
+        <li>@messages("overseasPension.foreignTaxCreditRelief.details.para4.bullet2")</li>
+    </ul>
+    <p class="govuk-body" id="para5">@messages("overseasPension.foreignTaxCreditRelief.details.para5")</p>
+    <ul class="govuk-list govuk-list--bullet" id="para5bullets">
+        <li>@messages("overseasPension.foreignTaxCreditRelief.details.para5.bullet1")</li>
+        <li>@messages("overseasPension.foreignTaxCreditRelief.details.para5.bullet2")</li>
+        <li>@messages("overseasPension.foreignTaxCreditRelief.details.para5.bullet3")</li>
+    </ul>
+    <p class="govuk-body" id="para6">@messages("overseasPension.foreignTaxCreditRelief.details.para6")</p>
+    <p class="govuk-body" id="para7">
+        @messages("overseasPension.foreignTaxCreditRelief.details.para7")
+        @link("https://www.gov.uk/tax-foreign-income/taxed-twice", "overseasPension.foreignTaxCreditRelief.details.para7.link", Some("tax-foreign-income-taxed-twice-link"), true, fullStop = true)
+    </p>
+}
 
 @layout(pageTitle = titleForUse, taxYear = Some(taxYear), hasErrors = hasFormErrors, isAgent = request.user.isAgent) {
 
     @errorSummary(form.errors.distinct)
 
     @heading(titleForUse, Some(messages("common.incomeFromOverseasPensions.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-2")
+
+    @details("overseasPension.foreignTaxCreditRelief.details.title", detailsHtml)
 
     @formWithCsrf(action = controllers.pensions.incomeFromOverseasPensions.routes.ForeignTaxCreditReliefController.submit(taxYear, Some(index))) {
         @inputRadio(
