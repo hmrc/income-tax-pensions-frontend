@@ -31,7 +31,7 @@ object Countries {
       .map(_.replace("\"", ""))
       .toList
 
-  val countriesThreeDigitMap : Map[String, String] = {
+  val countriesThreeAlphaMap : Map[String, String] = {
     val filename = "/three-digit-country-code-to-country-name.csv"
     val lines = Source.fromInputStream(getClass.getResourceAsStream(filename)).mkString.split("\\n").toList
     lines.foldLeft(List[(String, String)]()) {
@@ -42,15 +42,15 @@ object Countries {
             (lineArray.head, lineArray.last)
           }
           catch {
-            case e => throw new RuntimeException("Could not read country data from : location-autocomplete-canonical-list.json ")
+            case e: Throwable => throw new RuntimeException("Could not read country data from : location-autocomplete-canonical-list.json ")
           }
         }
         (countryCode -> countryName) :: acc
     }.toMap
   }
 
-  val countriesThreeDigitMapFromCountryName : Map[String, String] = {
-    countriesThreeDigitMap.map(_.swap)
+  val countriesThreeAlphaMapFromCountryName : Map[String, String] = {
+    countriesThreeAlphaMap.map(_.swap)
   }
 
   private val countriesFromFile: List[Country] = {
@@ -59,7 +59,7 @@ object Countries {
         case JsArray(cs) =>
           cs.toList.collect {
             case JsArray(Seq(c: JsString, cc: JsString)) =>
-              Country(c.value, alphaTwoCode(cc.value), countriesThreeDigitMapFromCountryName.getOrElse(c.value, "N/A"))
+              Country(c.value, alphaTwoCode(cc.value), countriesThreeAlphaMapFromCountryName.getOrElse(c.value, "N/A"))
           }
         case _ =>
           throw new IllegalArgumentException(
@@ -72,7 +72,7 @@ object Countries {
 
 
 
-  val countriesTwoDigitMap : Map[String, String] = {
+  val countriesTwoAlphaMap : Map[String, String] = {
     Json.parse(getClass.getResourceAsStream("/location-autocomplete-canonical-list.json")) match {
       case JsArray(cs) =>
         cs.toList.collect {
@@ -86,8 +86,8 @@ object Countries {
     }
   }
 
-  val countriesTwoDigitMapFromCountryName : Map[String, String] = {
-    countriesTwoDigitMap.filter{ case (k,_) => mdgCountryCodes("/mdg-country-codes.csv") contains(k)}.map(_.swap)
+  val countriesTwoAlphaMapFromCountryName : Map[String, String] = {
+    countriesTwoAlphaMap.filter{ case (k,_) => mdgCountryCodes("/mdg-country-codes.csv") contains(k)}.map(_.swap)
   }
 
   private def alphaTwoCode: String => String = cc => cc.split(":")(1).trim
@@ -106,7 +106,7 @@ object Countries {
     )
   }
   
-  def getCountryFromCodeWithDefault(countryCode: Option[String], defaultStr: String = "N/A"): String = {
+  def getCountryFromCodeWithDefault(countryCode: Option[String], defaultStr: String = "no country code"): String = {
     getCountryFromCode(countryCode).fold(countryCode.getOrElse(defaultStr))(_.countryName)
   }
 

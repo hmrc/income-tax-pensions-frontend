@@ -36,7 +36,7 @@
             errorMessage = form("countryId").error.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*)))),
             items = {
                 val formCountryCode = form("countryId").value
-                val formCountry = formCountryCode.map(cc => if (cc.nonEmpty) Countries.countriesTwoDigitMap(cc) else "").getOrElse("")
+                val formCountry = Countries.getCountryFromCodeWithDefault(formCountryCode)
                 Seq(SelectItem(text=formCountry, value=formCountryCode, attributes=Map("label" -> messages("")))) ++ countries.map{ c =>                
                   SelectItem(
                     value = Some(c.alphaTwoCode),
