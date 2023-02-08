@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.pensions.employmentFinancedRetirementScheme
+package controllers.pensions.employmentFinancedRetirementSchemes
 
 import forms.YesNoForm
 import org.scalatest.BeforeAndAfterEach
