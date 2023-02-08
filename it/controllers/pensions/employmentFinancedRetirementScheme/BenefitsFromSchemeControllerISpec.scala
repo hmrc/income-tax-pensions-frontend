@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package controllers.pensions.employmentFinancedRetirementSchemes
+package controllers.pensions.employmentFinancedRetirementScheme
 
 import forms.YesNoForm
 import org.scalatest.BeforeAndAfterEach
-import play.api.{Application, Environment, Mode}
 import play.api.http.HeaderNames
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.Result
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{route, writeableOf_AnyContentAsFormUrlEncoded}
+import play.api.{Application, Environment, Mode}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 import scala.concurrent.Future
