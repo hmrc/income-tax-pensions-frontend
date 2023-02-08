@@ -41,7 +41,7 @@ object IncomeFromOverseasPensionsViewModelBuilder {
         specialWithholdingTaxQuestion = Some(true),
         specialWithholdingTaxAmount = Some(400.00),
         foreignTaxCreditReliefQuestion = Some(true),
-        taxableAmount = Some(1600.00)
+        taxableAmount = Some(2000.00)
       )
     )
   )
