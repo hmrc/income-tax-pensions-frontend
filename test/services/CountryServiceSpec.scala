@@ -17,53 +17,52 @@
 package services
 
 import forms.{Countries, Country}
-import org.checkerframework.checker.units.qual.A
 import utils.UnitTest
 
-class CountryServiceSpec extends UnitTest {
+class CountryServiceSpec extends UnitTest { //scalatest:off magic.number
 
   "Countries" must {
-
+    
     "give all countries with codes in alphabetical order of country name with filtering according to permitted MDG values" in {
+      Countries.overseasCountries should contain(Country("Afghanistan", "AF", "AFG"))
+      
       Countries.allCountries should contain(Country("Afghanistan", "AF", "AFG"))
+      
       Countries.allCountries should contain(Country("Curaçao", "CW", "CUW"))
       Countries.allCountries should contain(Country("Réunion", "RE", "REU"))
       Countries.allCountries should contain(Country("Zimbabwe", "ZW", "ZWE"))
       Countries.allCountries should contain(Country("Åland Islands", "AX", "AXA"))
       Countries.allCountries should contain(Country("United Kingdom", "GB", "GBR"))
       Countries.allCountries should contain(Country("Czechoslovakia", "CS", "N/A"))
-      Countries.allCountries.size shouldBe(247)
+      Countries.allCountries.size shouldBe 247
     }
 
     "give all eu countries with codes in alphabetical order of country name with filtering according to permitted MDG EU values" in {
       Countries.euCountries should contain(Country("France", "FR", "FRA"))
       Countries.euCountries should contain(Country("Germany", "DE", "DEU"))
-      Countries.euCountries.size should be(27)
+      Countries.euCountries.size shouldBe 27
     }
 
     "give all overseas countries with codes in alphabetical order of country name with filtering according to permitted MDG values" in {
-      Countries.getOverseasCountries() should contain(Country("Afghanistan", "AF", "AFG"))
-      Countries.getOverseasCountries should contain(Country("Curaçao", "CW", "CUW"))
-      Countries.getOverseasCountries should contain(Country("Réunion", "RE", "REU"))
-      Countries.getOverseasCountries should contain(Country("Zimbabwe", "ZW", "ZWE"))
-      Countries.getOverseasCountries should contain(Country("Åland Islands", "AX", "AXA"))
-      Countries.getOverseasCountries should not contain(Country("United Kingdom", "GB", "GBR"))
-      Countries.getOverseasCountries.size shouldBe(246)
+      Countries.overseasCountries should contain(Country("Afghanistan", "AF", "AFG"))
+      Countries.overseasCountries should contain(Country("Curaçao", "CW", "CUW"))
+      Countries.overseasCountries should contain(Country("Réunion", "RE", "REU"))
+      Countries.overseasCountries should contain(Country("Zimbabwe", "ZW", "ZWE"))
+      Countries.overseasCountries should contain(Country("Åland Islands", "AX", "AXA"))
+      Countries.overseasCountries should not contain Country("United Kingdom", "GB", "GBR")
+      Countries.overseasCountries.size shouldBe 246
     }
 
     "since the link between the twoAlphaCountryCode map and the threeAlphaCountryCode map is country name " +
                                                         "there should be no country name missing between both " in {
-      val countries = Countries
-      val threeDigitCountriesNotInTwoDigitMap =
-        countries.countriesThreeAlphaMapFromCountryName.keySet -- countries.countriesTwoAlphaMapFromCountryName.keySet
-      threeDigitCountriesNotInTwoDigitMap.size should be(0)
+      val threeAlphaCountriesNotInTwoAlphaMap =
+        Countries.countriesThreeAlphaMapFromCountryName.keySet -- Countries.countriesTwoAlphaMapFromCountryName.keySet
+      threeAlphaCountriesNotInTwoAlphaMap.size shouldBe 0
 
       val twoDigitCountriesNotInThreeDigitMap =
-        countries.countriesTwoAlphaMapFromCountryName.keySet -- countries.countriesThreeAlphaMapFromCountryName.keySet
-      twoDigitCountriesNotInThreeDigitMap.size should be(1)
+        Countries.countriesTwoAlphaMapFromCountryName.keySet -- Countries.countriesThreeAlphaMapFromCountryName.keySet
+      twoDigitCountriesNotInThreeDigitMap.size shouldBe 1
       //Czechoslovakia does not have three digit country code
     }
-
-
   }
 }

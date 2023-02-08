@@ -15,20 +15,15 @@
  *@
 
 @import forms.Countries
-@import models.requests.UserSessionDataRequest
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
-@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.{HmrcAccessibleAutocompleteCss, HmrcAccessibleAutocompleteJavascript}
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.accessibleautocomplete.AccessibleAutocomplete
-@import views.html.helper.CSPNonce
-@import views.html.templates.Layout
-@import views.html.templates.helpers.{Button, Details, ErrorSummary, Heading, InputRadioAlt, InputTextAlt, Link}
 
 
 @this(govukSelect : GovukSelect)
 
 @(form: Form[_])(implicit messages: Messages)
 
-@countries = @{Countries.getOverseasCountries()}
+@countries = @{Countries.overseasCountries}
 
         @govukSelect(Select(
             id = "countryId",
