@@ -31,9 +31,9 @@
 
 @paymentsIntoPensionUrlRedirect() = @{
     if(paymentIntoPensionHasPriorData(prior)) {
-      s"${controllers.pensions.paymentsIntoPension.routes.PaymentsIntoPensionsCYAController.show(taxYear)}"
+      s"${controllers.pensions.paymentsIntoPensions.routes.PaymentsIntoPensionsCYAController.show(taxYear)}"
     } else {
-      s"${controllers.pensions.paymentsIntoPension.routes.PaymentsIntoPensionsStatusController.show(taxYear)}"
+      s"${controllers.pensions.paymentsIntoPensions.routes.PaymentsIntoPensionsStatusController.show(taxYear)}"
     }
 }
 

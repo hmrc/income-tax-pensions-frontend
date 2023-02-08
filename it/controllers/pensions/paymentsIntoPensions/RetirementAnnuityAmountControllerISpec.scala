@@ -31,10 +31,10 @@ import play.api.libs.ws.WSResponse
 import utils.PageUrls.PaymentIntoPensions.{checkPaymentsIntoPensionCyaUrl, retirementAnnuityAmountUrl, retirementAnnuityUrl, workplacePensionUrl}
 import utils.PageUrls.fullUrl
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
-import views.RetirementAnnuityAmountTestSupport.Selectors._
-import views.RetirementAnnuityAmountTestSupport._
-import views.RetirementAnnuityAmountTestSupport.CommonExpectedEN._
-import views.RetirementAnnuityAmountTestSupport.ExpectedIndividualEN._
+import views.RetirementAnnuityAmountSpec.Selectors._
+import views.RetirementAnnuityAmountSpec._
+import views.RetirementAnnuityAmountSpec.CommonExpectedEN._
+import views.RetirementAnnuityAmountSpec.ExpectedIndividualEN._
 
 
 class RetirementAnnuityAmountControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {

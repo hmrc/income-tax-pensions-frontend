@@ -19,7 +19,7 @@ package controllers.pensions.paymentsIntoPensions
 import builders.PaymentsIntoPensionVewModelBuilder.aPaymentsIntoPensionViewModel
 import builders.PensionsUserDataBuilder.{anPensionsUserDataEmptyCya, pensionsUserDataWithPaymentsIntoPensions}
 import builders.UserBuilder.aUserRequest
-import controllers.pensions.paymentsIntoPension.routes.{PaymentsIntoPensionsCYAController, PensionsTaxReliefNotClaimedController, ReliefAtSourcePaymentsAndTaxReliefAmountController}
+import controllers.pensions.paymentsIntoPensions.routes.{PaymentsIntoPensionsCYAController, PensionsTaxReliefNotClaimedController, ReliefAtSourcePaymentsAndTaxReliefAmountController}
 import forms.YesNoForm
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -30,9 +30,9 @@ import play.api.libs.ws.WSResponse
 import utils.PageUrls.PaymentIntoPensions.reliefAtSourcePensionsUrl
 import utils.PageUrls.fullUrl
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
-import views.ReliefAtSourcePensionsTestSupport.Selectors._
-import views.ReliefAtSourcePensionsTestSupport.CommonExpectedEN._
-import views.ReliefAtSourcePensionsTestSupport.ExpectedIndividualEN._
+import views.ReliefAtSourcePensionsSpec.Selectors._
+import views.ReliefAtSourcePensionsSpec.CommonExpectedEN._
+import views.ReliefAtSourcePensionsSpec.ExpectedIndividualEN._
 
 // scalastyle:off magic.number
 class ReliefAtSourcePensionsControllerISpec extends IntegrationTest with BeforeAndAfterEach with ViewHelpers with PensionsDatabaseHelper {

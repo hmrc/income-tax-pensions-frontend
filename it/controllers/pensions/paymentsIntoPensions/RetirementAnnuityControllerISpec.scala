@@ -33,10 +33,10 @@ import play.api.libs.ws.WSResponse
 import utils.PageUrls.PaymentIntoPensions.{checkPaymentsIntoPensionCyaUrl, retirementAnnuityUrl, workplacePensionUrl}
 import utils.PageUrls._
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
-import views.RetirementAnnuityTestSupport.Selectors._
-import views.RetirementAnnuityTestSupport._
-import views.RetirementAnnuityTestSupport.CommonExpectedEN._
-import views.RetirementAnnuityTestSupport.ExpectedIndividualEN._
+import views.RetirementAnnuitySpec.Selectors._
+import views.RetirementAnnuitySpec._
+import views.RetirementAnnuitySpec.CommonExpectedEN._
+import views.RetirementAnnuitySpec.ExpectedIndividualEN._
 
 class RetirementAnnuityControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
 
@@ -210,7 +210,7 @@ class RetirementAnnuityControllerISpec extends IntegrationTest with ViewHelpers 
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(controllers.pensions.paymentsIntoPension.routes.RetirementAnnuityAmountController.show(taxYearEOY).url)
+        result.header("location") shouldBe Some(controllers.pensions.paymentsIntoPensions.routes.RetirementAnnuityAmountController.show(taxYearEOY).url)
       }
 
       "updates retirement annuity contract payments question to Some(true)" in {

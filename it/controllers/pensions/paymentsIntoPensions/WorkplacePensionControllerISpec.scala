@@ -20,7 +20,7 @@ import builders.PaymentsIntoPensionVewModelBuilder.aPaymentsIntoPensionViewModel
 import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import builders.PensionsUserDataBuilder.{aPensionsUserData, pensionsUserDataWithPaymentsIntoPensions}
 import builders.UserBuilder._
-import controllers.pensions.paymentsIntoPension.routes._
+import controllers.pensions.paymentsIntoPensions.routes._
 import forms.YesNoForm
 import models.mongo.PensionsUserData
 import org.jsoup.Jsoup
@@ -32,10 +32,10 @@ import play.api.libs.ws.WSResponse
 import utils.PageUrls.PaymentIntoPensions.workplacePensionUrl
 import utils.PageUrls.fullUrl
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
-import views.WorkplacePensionControllerTestSupport.Selectors._
-import views.WorkplacePensionControllerTestSupport._
-import views.WorkplacePensionControllerTestSupport.CommonExpectedEN._
-import views.WorkplacePensionControllerTestSupport.ExpectedIndividualEN._
+import views.WorkplacePensionControllerSpec.Selectors._
+import views.WorkplacePensionControllerSpec._
+import views.WorkplacePensionControllerSpec.CommonExpectedEN._
+import views.WorkplacePensionControllerSpec.ExpectedIndividualEN._
 
 // scalastyle:off magic.number
 class WorkplacePensionControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
