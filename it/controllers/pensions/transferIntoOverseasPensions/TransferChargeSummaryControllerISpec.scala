@@ -47,6 +47,8 @@ class TransferChargeSummaryControllerISpec extends IntegrationTest with BeforeAn
     def changeLinkSelector(index: Int): String = s"#pensionTransferSummaryList > dl > div:nth-child($index) > dd.hmrc-add-to-a-list__change > a"
     def removeLinkSelector(index: Int): String = s"#pensionTransferSummaryList > dl > div:nth-child($index) > dd.hmrc-add-to-a-list__remove > a"
     def pensionNameSelector(index: Int): String = s"#pensionTransferSummaryList > dl > div:nth-child($index) > dt"
+    val insetSpanText1: String = "#youNeedToAddOneOrMorePensionScheme1"
+    val insetSpanText2: String = "#youNeedToAddOneOrMorePensionScheme2"
 
   }
 
@@ -59,6 +61,10 @@ class TransferChargeSummaryControllerISpec extends IntegrationTest with BeforeAn
     val expectedButtonText: String
     val expectedAddAnotherText: String
     val expectedAddPensionSchemeText: String
+    val addASchemeButton: String
+    val returnToOverviewButton: String
+    val text1: String
+    val text2: String
   }
 
   object CommonExpectedEN extends CommonExpectedResults {
@@ -70,6 +76,10 @@ class TransferChargeSummaryControllerISpec extends IntegrationTest with BeforeAn
     val remove = "Remove"
     val expectedAddAnotherText = "Add another pension scheme"
     val expectedAddPensionSchemeText = "Add a pension scheme"
+    val addASchemeButton = "Add a scheme"
+    val returnToOverviewButton = "Return to overview"
+    val text1 = "You need to add one or more pension scheme."
+    val text2 = "If you don’t have a pensions scheme to add you can return to the overview page and come back later."
   }
   
   
@@ -82,6 +92,10 @@ class TransferChargeSummaryControllerISpec extends IntegrationTest with BeforeAn
     val remove = "Remove"
     val expectedAddAnotherText = "Add another pension scheme"
     val expectedAddPensionSchemeText = "Add a pension scheme"
+    val addASchemeButton = "Add a scheme"
+    val returnToOverviewButton = "Return to overview"
+    val text1 = "You need to add one or more pension scheme."
+    val text2 = "If you don’t have a pensions scheme to add you can return to the overview page and come back later."
   }
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, Nothing]] = Seq(
@@ -203,9 +217,11 @@ class TransferChargeSummaryControllerISpec extends IntegrationTest with BeforeAn
           h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY))
           elementNotOnPageCheck(summaryListTableSelector)
-          linkCheck(expectedAddPensionSchemeText, addLinkSelector, overseasTransferChargePaidUrl(taxYearEOY))
           //todo update redirect to to transfer journey CYA page when navigation is linked up
-          buttonCheck(expectedButtonText, continueButtonSelector, Some(transferChargeSummaryUrl(taxYearEOY)))
+          buttonCheck(addASchemeButton, "#AddAScheme")
+          textOnPageCheck(text1, insetSpanText1)
+          buttonCheck(returnToOverviewButton, "#ReturnToOverview")
+          textOnPageCheck(text2, insetSpanText2)
           welshToggleCheck(user.isWelsh)
         }
       }
