@@ -30,7 +30,7 @@ object IncomeFromOverseasPensionsViewModelBuilder {
         pensionPaymentTaxPaid = Some(1999.99),
         specialWithholdingTaxQuestion = Some(true),
         specialWithholdingTaxAmount = Some(1999.99),
-        foreignTaxCreditReliefQuestion = Some(false),
+        foreignTaxCreditReliefQuestion = Some(true),
         taxableAmount = Some(1999.99)
       ),
       PensionScheme(
@@ -40,13 +40,13 @@ object IncomeFromOverseasPensionsViewModelBuilder {
         pensionPaymentTaxPaid = Some(400.00),
         specialWithholdingTaxQuestion = Some(true),
         specialWithholdingTaxAmount = Some(400.00),
-        foreignTaxCreditReliefQuestion = Some(false),
-        taxableAmount = Some(1600.00)
+        foreignTaxCreditReliefQuestion = Some(true),
+        taxableAmount = Some(2000.00)
       )
     )
   )
   
-  val anIncomeFromOverseasPensionsWithFtcrViewModel: IncomeFromOverseasPensionsViewModel = IncomeFromOverseasPensionsViewModel(
+  val anIncomeFromOverseasPensionsWithFalseFtcrValueViewModel: IncomeFromOverseasPensionsViewModel = IncomeFromOverseasPensionsViewModel(
     paymentsFromOverseasPensionsQuestion = Some(true),
     overseasIncomePensionSchemes = Seq(
       PensionScheme(
@@ -56,7 +56,7 @@ object IncomeFromOverseasPensionsViewModelBuilder {
         pensionPaymentTaxPaid = Some(999.99),
         specialWithholdingTaxQuestion = Some(true),
         specialWithholdingTaxAmount = Some(1999.99),
-        foreignTaxCreditReliefQuestion = Some(true),
+        foreignTaxCreditReliefQuestion = Some(false),
         taxableAmount = Some(2000.00)
       )
     )

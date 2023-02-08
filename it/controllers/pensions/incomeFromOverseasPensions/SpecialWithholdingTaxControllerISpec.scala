@@ -506,7 +506,7 @@ class SpecialWithholdingTaxControllerISpec   extends YesNoAmountControllerSpec("
                       pensionPaymentTaxPaid = Some(1999.99),
                       specialWithholdingTaxQuestion =  Some(false),
                       specialWithholdingTaxAmount = None,
-                      foreignTaxCreditReliefQuestion = Some(false),
+                      foreignTaxCreditReliefQuestion = Some(true),
                       taxableAmount = Some(1999.99)
                     )))
               ))
@@ -532,7 +532,7 @@ class SpecialWithholdingTaxControllerISpec   extends YesNoAmountControllerSpec("
                 pensionPaymentTaxPaid = Some(1999.99),
                 specialWithholdingTaxQuestion =  Some(true),
                 specialWithholdingTaxAmount =  Some(BigDecimal(42.64)),
-                foreignTaxCreditReliefQuestion = Some(false),
+                foreignTaxCreditReliefQuestion = Some(true),
                 taxableAmount = Some(1999.99)
               ))
 
@@ -563,7 +563,7 @@ class SpecialWithholdingTaxControllerISpec   extends YesNoAmountControllerSpec("
                 pensionPaymentTaxPaid = Some(1999.99),
                 specialWithholdingTaxQuestion =  Some(true),
                 specialWithholdingTaxAmount =  Some(BigDecimal(1042.64)),
-                foreignTaxCreditReliefQuestion = Some(false),
+                foreignTaxCreditReliefQuestion = Some(true),
                 taxableAmount = Some(1999.99)
               ))
 

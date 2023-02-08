@@ -27,6 +27,20 @@ import play.api.http.Status.{BAD_REQUEST, OK}
 import play.api.libs.ws.{WSClient, WSResponse}
 
 class ForeignTaxCreditReliefControllerISpec extends YesNoControllerSpec("/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-ftcr") {
+  private val selectorForSummaryText = "#main-content > div > div > details > summary"
+  private val selectorForSummaryPara1 = "#main-content > div > div > details > div > p:nth-child(1)"
+  private val selectorForSummaryPara2 = "#main-content > div > div > details > div > p:nth-child(2)"
+  private val selectorForSummaryPara3 = "#main-content > div > div > details > div > p:nth-child(3)"
+  private val selectorForSummaryPara4 = "#main-content > div > div > details > div > p:nth-child(4)"
+  private val selectorForSummaryPara4Bullet1 = "#main-content > div > div > details > div > #para4bullets > li:nth-child(1)"
+  private val selectorForSummaryPara4Bullet2 = "#main-content > div > div > details > div > #para4bullets > li:nth-child(2)"
+  private val selectorForSummaryPara5 = "#main-content > div > div > details > div > #para5"
+  private val selectorForSummaryPara5Bullet1 = "#main-content > div > div > details > div > #para5bullets > li:nth-child(1)"
+  private val selectorForSummaryPara5Bullet2 = "#main-content > div > div > details > div > #para5bullets > li:nth-child(2)"
+  private val selectorForSummaryPara5Bullet3 = "#main-content > div > div > details > div > #para5bullets > li:nth-child(3)"
+  private val selectorForSummaryPara6 = "#main-content > div > div > details > div > #para6"
+  private val selectorForSummaryPara7 = "#main-content > div > div > details > div > #para7"
+
   "This page" when {
     "show" should {
       "redirect to the summary page" when {
@@ -68,8 +82,27 @@ class ForeignTaxCreditReliefControllerISpec extends YesNoControllerSpec("/overse
           radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
           radioButtonForNo = uncheckedExpectedRadioButton("No"),
           buttonForContinue = ExpectedButton("Continue", ""),
-          links = Set.empty,
-          text = Set.empty,
+          links = Set(
+            ExpectedLink(
+              "tax-foreign-income-taxed-twice-link",
+              "Foreign Tax Credit Relief at GOV.uk (opens in new tab)",
+              "https://www.gov.uk/tax-foreign-income/taxed-twice"),
+          ),
+          text = Set(
+            ExpectedText(selectorForSummaryText, "Understanding Foreign Tax Credit Relief (FTCR)"),
+            ExpectedText(selectorForSummaryPara1, "You can claim Foreign Tax Credit Relief if you’ve already paid foreign tax on income that’s normally taxed in the UK."),
+            ExpectedText(selectorForSummaryPara2, "You may also be taxed on this income by the UK."),
+            ExpectedText(selectorForSummaryPara3, "However, you may not have to pay twice if the country you live in has a ‘double-taxation agreement’ with the UK."),
+            ExpectedText(selectorForSummaryPara4, "Depending on the agreement, you can apply for either:"),
+            ExpectedText(selectorForSummaryPara4Bullet1, "partial or full relief before you’ve been taxed"),
+            ExpectedText(selectorForSummaryPara4Bullet2, "a refund after you’ve been taxed"),
+            ExpectedText(selectorForSummaryPara5, "Each double-taxation agreement sets out:"),
+            ExpectedText(selectorForSummaryPara5Bullet1, "the country you pay tax in"),
+            ExpectedText(selectorForSummaryPara5Bullet2, "the country you apply for relief in"),
+            ExpectedText(selectorForSummaryPara5Bullet3, "how much tax relief you get"),
+            ExpectedText(selectorForSummaryPara6, "If the tax rates in the two countries are different, you’ll pay the higher rate of tax."),
+            ExpectedText(selectorForSummaryPara7, "You can read more about Foreign Tax Credit Relief at GOV.uk (opens in new tab).")
+          ),
           formUrl = formUrl()
         )
         val expectedYesNoPageContentsAgent = expectedYesNoPageContentsIndividual

@@ -31,7 +31,7 @@ object PensionIncomeViewModelBuilder {
           amountBeforeTax = Some(1999.99),
           taxTakenOff = Some(1999.99),
           specialWithholdingTax = Some(1999.99),
-          foreignTaxCreditRelief = Some(false)
+          foreignTaxCreditRelief = Some(true)
         )
       ),
       overseasPensionContribution = Seq(
