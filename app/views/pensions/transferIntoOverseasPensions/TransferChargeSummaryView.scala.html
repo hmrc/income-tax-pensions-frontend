@@ -74,7 +74,7 @@
         @addAnotherLink(OverseasTransferChargePaidController.show(taxYear, None).url)
         @button(Button(
             attributes = Map("id" -> "continue"),
-            preventDoubleClick = true,
+            preventDoubleClick = Some(true),
             content = Text(messages("common.continue")),
             classes = "govuk-button govuk-!-margin-top-2",
             href = Some(TransferChargeSummaryController.show(taxYear).url)
@@ -87,7 +87,7 @@
         @formWithCsrf(controllers.pensions.transferIntoOverseasPensions.routes.OverseasTransferChargePaidController.show(taxYear, Some(transferSchemeList.length + 1))) {
         @button(Button(
             attributes = Map("id" -> "AddAScheme"),
-            preventDoubleClick = true,
+            preventDoubleClick = Some(true),
             classes = "govuk-button govuk-!-margin-top-2",
             content = Text(messages("transferIntoOverseasPensions.transferChargesSummary.addAScheme"))))
         }
@@ -98,7 +98,7 @@
 
         @button(Button(
             attributes = Map("id" -> "ReturnToOverview"),
-            preventDoubleClick = true,
+            preventDoubleClick = Some(true),
             classes = "govuk-button--secondary",
             content = Text(messages("common.return.overview.buttonText")),
             href = Some(OverseasPensionsSummaryController.show(taxYear).url)
