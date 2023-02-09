@@ -43,7 +43,7 @@ class TaxYearActionSpec extends UnitTest with TestTaxYearHelper {
         )
 
         lazy val result = {
-          mockedConfig.taxYearErrorFeature _ expects() returning true
+          (() => mockedConfig.taxYearErrorFeature).expects() returning true
 
           await(taxYearAction(taxYear).refine(userRequest))
         }
@@ -59,7 +59,7 @@ class TaxYearActionSpec extends UnitTest with TestTaxYearHelper {
         )
 
         lazy val result = {
-          mockedConfig.taxYearErrorFeature _ expects() returning false
+          (() => mockedConfig.taxYearErrorFeature).expects() returning false
 
           await(taxYearAction(taxYearEOY).refine(userRequest))
         }
@@ -75,7 +75,7 @@ class TaxYearActionSpec extends UnitTest with TestTaxYearHelper {
         )
 
         lazy val result = {
-          mockedConfig.taxYearErrorFeature _ expects() returning false
+          (() => mockedConfig.taxYearErrorFeature).expects() returning false
 
           await(taxYearAction(taxYearEOY, reset = false).refine(userRequest))
         }
@@ -120,7 +120,7 @@ class TaxYearActionSpec extends UnitTest with TestTaxYearHelper {
         )
 
         lazy val result = {
-          mockedConfig.taxYearErrorFeature _ expects() returning true
+          (() => mockedConfig.taxYearErrorFeature).expects() returning true
 
           taxYearAction(invalidTaxYear).refine(userRequest)
         }
@@ -142,7 +142,7 @@ class TaxYearActionSpec extends UnitTest with TestTaxYearHelper {
         )
 
         lazy val result = {
-          mockedConfig.taxYearErrorFeature _ expects() returning true
+          (() => mockedConfig.taxYearErrorFeature).expects() returning true
           mockedConfig.incomeTaxSubmissionOverviewUrl _ expects (taxYearEOY) returning
             "controllers.routes.OverviewPageController.show(taxYearEOY).url"
 

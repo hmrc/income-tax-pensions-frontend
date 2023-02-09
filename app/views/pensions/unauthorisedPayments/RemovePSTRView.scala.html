@@ -47,7 +47,7 @@
         <div class="govuk-button-group">
             @govUkButton(Button(
                 attributes = Map("data-module" -> "govuk-button", "id" -> "remove-pension-button-id"),
-                preventDoubleClick = true,
+                preventDoubleClick = Some(true),
                 content = Text(messages("unauthorisedPayments.removePensionSchemeTaxReference.removeButton")),
                 classes = "govuk-button--warning"
             ))
