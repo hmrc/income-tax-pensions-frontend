@@ -15,6 +15,7 @@
  *@
 
 @import controllers.pensions.transferIntoOverseasPensions.routes._
+@import controllers.pensions.routes._
 @import forms.Countries.getCountryFromCodeWithDefault
 @import models.pension.charges.TransferPensionScheme
 @import models.requests.UserSessionDataRequest
@@ -29,6 +30,7 @@
     summaryList: SummaryList,
     heading: Heading,
     button: GovukButton,
+    formWithCsrf: FormWithCSRF,
     link: Link)
 
 
@@ -50,7 +52,7 @@
             <dl class="hmrc-add-to-a-list hmrc-add-to-a-list--short">
                 @for((transferScheme, index) <- transferSchemeList.zipWithIndex if (transferScheme.name.isDefined)){
                     <div class="hmrc-add-to-a-list__contents">
-                        <dt class="hmrc-add-to-a-list__identifier hmrc-add-to-a-list__identifier--light">
+                        <dt class="hmrc-add-to-a-list__identifier hmrc-add-to-a-list__identifier--light govuk-!-width-one-half">
                             @transferScheme.name
                         </dt>
                         <dd class="hmrc-add-to-a-list__change">
@@ -69,6 +71,38 @@
                 }
             </dl>
         </div>
+        @addAnotherLink(OverseasTransferChargePaidController.show(taxYear, None).url)
+        @button(Button(
+            attributes = Map("id" -> "continue"),
+            preventDoubleClick = true,
+            content = Text(messages("common.continue")),
+            classes = "govuk-button govuk-!-margin-top-2",
+            href = Some(TransferChargeSummaryController.show(taxYear).url)
+        ))
+    } else {
+        <p class="govuk-body" id="youNeedToAddOneOrMorePensionScheme1">
+            @messages("transferIntoOverseasPensions.transferChargesSummary.text1")
+        </p>
+
+        @formWithCsrf(controllers.pensions.transferIntoOverseasPensions.routes.OverseasTransferChargePaidController.show(taxYear, Some(transferSchemeList.length + 1))) {
+        @button(Button(
+            attributes = Map("id" -> "AddAScheme"),
+            preventDoubleClick = true,
+            classes = "govuk-button govuk-!-margin-top-2",
+            content = Text(messages("transferIntoOverseasPensions.transferChargesSummary.addAScheme"))))
+        }
+
+        <p class="govuk-body" id="youNeedToAddOneOrMorePensionScheme2">
+            @messages("transferIntoOverseasPensions.transferChargesSummary.text2")
+        </p>
+
+        @button(Button(
+            attributes = Map("id" -> "ReturnToOverview"),
+            preventDoubleClick = true,
+            classes = "govuk-button--secondary",
+            content = Text(messages("common.return.overview.buttonText")),
+            href = Some(OverseasPensionsSummaryController.show(taxYear).url)
+        ))
     }
 }
 
@@ -76,14 +110,6 @@
 @layout(pageTitle = headingForUse, taxYear = Some(taxYear)) {
     @heading(headingForUse, Some(messages("common.transferIntoOverseasPensions.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-2")
     @pensionTransferSummaryList
-    @addAnotherLink(OverseasTransferChargePaidController.show(taxYear, None).url)
-    @button(Button(
-        attributes = Map("id" -> "continue"),
-        preventDoubleClick = true,
-        content = Text(messages("common.continue")),
-        classes = "govuk-button govuk-!-margin-top-2",
-        href = Some(TransferChargeSummaryController.show(taxYear).url)
-    ))
 }
 @{
 // $COVERAGE-OFF$

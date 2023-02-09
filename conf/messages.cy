@@ -967,3 +967,6 @@ common.overseasPensions.country.error.noEntry = Enter the country
 
 #Transfer Charge Summmary List
 transferIntoOverseasPensions.summaryList.title = Pension schemes paying transfer charges - summary
+transferIntoOverseasPensions.transferChargesSummary.text1 = You need to add one or more pension scheme.
+transferIntoOverseasPensions.transferChargesSummary.text2 = If you don’t have a pensions scheme to add you can return to the overview page and come back later.
+transferIntoOverseasPensions.transferChargesSummary.addAScheme = Add a scheme
