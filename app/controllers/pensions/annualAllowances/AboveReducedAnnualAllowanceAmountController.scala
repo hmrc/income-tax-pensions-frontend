@@ -97,7 +97,7 @@ class AboveReducedAnnualAllowanceAmountController @Inject()(implicit val mcc: Me
         val pensionsCYAModel: PensionsCYAModel = data.map(_.pensions).getOrElse(PensionsCYAModel.emptyModels)
         pensionsCYAModel.pensionsAnnualAllowances.reducedAnnualAllowanceQuestion match {
           case Some(reducedAnnualAllowanceQuestion) =>
-            amountForm(reducedAnnualAllowanceQuestion, request.user).bindFromRequest.fold(
+            amountForm(reducedAnnualAllowanceQuestion, request.user).bindFromRequest().fold(
               formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear, reducedAnnualAllowanceQuestion))),
               amount => {
                 val viewModel: PensionAnnualAllowancesViewModel = pensionsCYAModel.pensionsAnnualAllowances

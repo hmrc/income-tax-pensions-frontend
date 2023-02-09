@@ -80,7 +80,7 @@ class PensionTakenAnotherWayAmountController @Inject()(implicit val mcc: Message
 
 
   def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
-    amountForm(request.user.isAgent).bindFromRequest.fold(
+    amountForm(request.user.isAgent).bindFromRequest().fold(
       formWithErrors => Future.successful(BadRequest(pensionTakenAnotherWayAmountView(formWithErrors, taxYear))),
       amounts => {
         pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {

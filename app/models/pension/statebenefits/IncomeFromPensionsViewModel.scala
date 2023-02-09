@@ -32,10 +32,10 @@ case class IncomeFromPensionsViewModel(
 
   def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedIncomeFromPensionsViewModel =
     EncryptedIncomeFromPensionsViewModel(
-      statePension = statePension.map(_.encrypted),
-      statePensionLumpSum = statePensionLumpSum.map(_.encrypted),
+      statePension = statePension.map(_.encrypted()),
+      statePensionLumpSum = statePensionLumpSum.map(_.encrypted()),
       uKPensionIncomesQuestion = uKPensionIncomesQuestion.map(_.encrypted),
-      uKPensionIncomes = uKPensionIncomes.map(_.encrypted)
+      uKPensionIncomes = uKPensionIncomes.map(_.encrypted())
     )
 }
 
@@ -51,10 +51,10 @@ case class EncryptedIncomeFromPensionsViewModel(
 
   def decrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): IncomeFromPensionsViewModel =
     IncomeFromPensionsViewModel(
-      statePension = statePension.map(_.decrypted),
-      statePensionLumpSum = statePensionLumpSum.map(_.decrypted),
+      statePension = statePension.map(_.decrypted()),
+      statePensionLumpSum = statePensionLumpSum.map(_.decrypted()),
       uKPensionIncomesQuestion = uKPensionIncomesQuestion.map(_.decrypted[Boolean]),
-      uKPensionIncomes.map(_.decrypted)
+      uKPensionIncomes.map(_.decrypted())
     )
 }
 

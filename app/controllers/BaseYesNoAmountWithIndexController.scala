@@ -98,7 +98,7 @@ abstract class BaseYesNoAmountWithIndexController(messagesControllerComponents: 
 
   private def submit(pensionsUserData: PensionsUserData, taxYear: Int, index : Int)
                              (implicit request: AuthorisationRequest[AnyContent]): Future[Result] =
-    form(request.user.isAgent).bindFromRequest.fold(
+    form(request.user.isAgent).bindFromRequest().fold(
       formWithErrors => Future.successful(BadRequest(whenFormIsInvalid(formWithErrors, taxYear, index))),
       validForm => onValidForm(pensionsUserData, taxYear, validForm, index))
 

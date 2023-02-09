@@ -77,7 +77,7 @@ class StatePensionAmountController @Inject()(implicit val mcc: MessagesControlle
     inYearAction.notInYear(taxYear) {
       pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
         case Some(data) =>
-          amountForm(request.user.isAgent).bindFromRequest.fold(
+          amountForm(request.user.isAgent).bindFromRequest().fold(
             formWithErrors => {
               val prevAmount = data.pensions.incomeFromPensions.statePension.flatMap(_.amount)
               Future.successful(BadRequest(statePensionAmountView(formWithErrors, taxYear, prevAmount)))

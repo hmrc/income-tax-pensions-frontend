@@ -121,7 +121,7 @@ class ControllerSpec(val pathForThisPage: String) extends PlaySpec
         "taxYearErrorFeatureSwitch" -> "false",
         "useEncryption" -> "true"
       )
-    ).build
+    ).build()
 
   override def beforeAll(): Unit = {
     super.beforeAll()
@@ -163,7 +163,7 @@ class ControllerSpec(val pathForThisPage: String) extends PlaySpec
   protected def givenAuthorised(userConfig: UserConfig): Unit = {
     userConfig.userType match {
       case UserTypes.Agent => authoriseAgent()
-      case UserTypes.Individual => authoriseIndividual()
+      case _ => authoriseIndividual()
     }
   }
  

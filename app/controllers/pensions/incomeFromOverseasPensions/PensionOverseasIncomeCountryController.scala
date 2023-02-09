@@ -80,7 +80,7 @@ class PensionOverseasIncomeCountryController @Inject()(authAction: AuthorisedAct
   def submit(taxYear: Int, index: Option[Int]): Action[AnyContent] = authAction.async { implicit request =>
     val countriesToInclude = Countries.overseasCountries
 
-    countryForm(request.user).bindFromRequest.fold(
+    countryForm(request.user).bindFromRequest().fold(
       formWithErrors =>
         Future.successful(BadRequest(pensionOverseasIncomeCountryView(formWithErrors, countriesToInclude, taxYear, index))),
       country => {

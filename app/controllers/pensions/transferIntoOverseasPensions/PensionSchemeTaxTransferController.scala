@@ -55,7 +55,7 @@ class PensionSchemeTaxTransferController @Inject()(
 
   def submit(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit sessionData =>
-          formsProvider.pensionSchemeTaxTransferForm(sessionData.user).bindFromRequest.fold(
+          formsProvider.pensionSchemeTaxTransferForm(sessionData.user).bindFromRequest().fold(
             formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
             yesNoAmount => {
               (yesNoAmount._1, yesNoAmount._2) match {

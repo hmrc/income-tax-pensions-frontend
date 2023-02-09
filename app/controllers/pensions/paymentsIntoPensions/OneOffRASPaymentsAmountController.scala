@@ -70,7 +70,7 @@ class OneOffRASPaymentsAmountController @Inject()(authAction: AuthorisedAction,
     pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
       optData =>
         redirectBasedOnCurrentAnswers(taxYear, optData)(redirects(_, taxYear)) { data =>
-          formProvider.oneOffRASPaymentsAmountForm.bindFromRequest.fold(
+          formProvider.oneOffRASPaymentsAmountForm.bindFromRequest().fold(
             formWithErrors => {
               data.pensions.paymentsIntoPension.totalRASPaymentsAndTaxRelief.fold(
                 Future.successful(Redirect(ReliefAtSourcePaymentsAndTaxReliefAmountController.show(taxYear)))

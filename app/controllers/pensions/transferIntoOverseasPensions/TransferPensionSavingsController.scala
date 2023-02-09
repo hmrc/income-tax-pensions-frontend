@@ -58,7 +58,7 @@ class TransferPensionSavingsController @Inject()(actionsProvider: ActionsProvide
 
   def submit(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit sessionUserData =>
-          yesNoForm(sessionUserData.user).bindFromRequest.fold(
+          yesNoForm(sessionUserData.user).bindFromRequest().fold(
             formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
             transferPensionSavings => {
               updateSessionData(sessionUserData.pensionsUserData, transferPensionSavings, taxYear)

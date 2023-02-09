@@ -62,7 +62,7 @@ class ReliefAtSourcePaymentsAndTaxReliefAmountController @Inject()(authAction: A
 
 
   def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
-    formProvider.reliefAtSourcePaymentsAndTaxReliefAmountForm.bindFromRequest.fold(
+    formProvider.reliefAtSourcePaymentsAndTaxReliefAmountForm.bindFromRequest().fold(
       formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
       amount => {
         pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) { optData =>

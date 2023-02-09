@@ -90,7 +90,7 @@ class PensionAmountController @Inject()(implicit val mcc: MessagesControllerComp
       case Some(data) =>
         validateIndex(pensionSchemeIndex, data.pensions.incomeFromPensions.uKPensionIncomes) match {
           case Some(index) =>
-            amountForm.bindFromRequest.fold(
+            amountForm.bindFromRequest().fold(
               formWithErrors => Future.successful(BadRequest(pensionAmountView(formWithErrors, taxYear, index))),
               amounts => {
                 val pensionsCYAModel: PensionsCYAModel = data.pensions

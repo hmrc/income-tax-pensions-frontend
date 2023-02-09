@@ -75,7 +75,7 @@ class TaxPaidOnLumpSumAmountController @Inject()(implicit val mcc: MessagesContr
     inYearAction.notInYear(taxYear) {
       pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
         case Some(data) =>
-          amountForm.bindFromRequest.fold(
+          amountForm.bindFromRequest().fold(
             formWithErrors => {
               val taxPaid = data.pensions.incomeFromPensions.statePensionLumpSum.flatMap(_.taxPaid)
               Future.successful(BadRequest(taxPaidOnLumpSumAmountView(formWithErrors, taxYear, taxPaid)))

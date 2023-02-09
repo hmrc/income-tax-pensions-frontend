@@ -89,7 +89,7 @@ class PensionSessionService @Inject()(pensionUserDataRepository: PensionsUserDat
       priorDataResponse <- getPriorData(taxYear, user)
     } yield {
       if (optionalCya.isRight) {
-        if (optionalCya.right.get.isEmpty) {
+        if (optionalCya.toOption.get.isEmpty) {
           logger.info(s"[PensionSessionService][getAndHandle] No pension CYA data found for user. SessionId: ${user.sessionId}")
         }
       }

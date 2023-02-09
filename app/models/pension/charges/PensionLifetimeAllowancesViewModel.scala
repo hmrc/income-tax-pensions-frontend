@@ -36,9 +36,9 @@ case class PensionLifetimeAllowancesViewModel(
     EncryptedPensionLifetimeAllowancesViewModel(
       aboveLifetimeAllowanceQuestion = aboveLifetimeAllowanceQuestion.map(_.encrypted),
       pensionAsLumpSumQuestion = pensionAsLumpSumQuestion.map(_.encrypted),
-      pensionAsLumpSum = pensionAsLumpSum.map(_.encrypted),
+      pensionAsLumpSum = pensionAsLumpSum.map(_.encrypted()),
       pensionPaidAnotherWayQuestion = pensionPaidAnotherWayQuestion.map(_.encrypted),
-      pensionPaidAnotherWay = pensionPaidAnotherWay.encrypted,
+      pensionPaidAnotherWay = pensionPaidAnotherWay.encrypted(),
       pensionSchemeTaxReferences = pensionSchemeTaxReferences.map(_.map(pstr => secureGCMCipher.encrypt(pstr)))
 
     )
@@ -62,9 +62,9 @@ case class EncryptedPensionLifetimeAllowancesViewModel(
     PensionLifetimeAllowancesViewModel(
       aboveLifetimeAllowanceQuestion = aboveLifetimeAllowanceQuestion.map(_.decrypted[Boolean]),
       pensionAsLumpSumQuestion = pensionAsLumpSumQuestion.map(_.decrypted[Boolean]),
-      pensionAsLumpSum = pensionAsLumpSum.map(_.decrypted),
+      pensionAsLumpSum = pensionAsLumpSum.map(_.decrypted()),
       pensionPaidAnotherWayQuestion = pensionPaidAnotherWayQuestion.map(_.decrypted[Boolean]),
-      pensionPaidAnotherWay = pensionPaidAnotherWay.decrypted,
+      pensionPaidAnotherWay = pensionPaidAnotherWay.decrypted(),
       pensionSchemeTaxReferences = pensionSchemeTaxReferences.map(_.map(x => secureGCMCipher.decrypt[String](x.value, x.nonce)))
     )
 }
