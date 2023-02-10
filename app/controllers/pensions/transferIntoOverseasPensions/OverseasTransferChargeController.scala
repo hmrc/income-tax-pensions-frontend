@@ -49,7 +49,7 @@ class OverseasTransferChargeController @Inject()(actionsProvider: ActionsProvide
 
   def submit(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit sessionUserData =>
-      amountForm(sessionUserData.user).bindFromRequest.fold(
+      amountForm(sessionUserData.user).bindFromRequest().fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
         yesNoAmount => {
 

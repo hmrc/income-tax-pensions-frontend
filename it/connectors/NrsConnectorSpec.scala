@@ -42,7 +42,7 @@ class NrsConnectorSpec extends IntegrationTest {
       stubPost(url, ACCEPTED, "{}")
       val result = await(connector.postNrsConnector(nino, "pensions"))
 
-      result shouldBe Right()
+      result shouldBe Right(())
     }
 
     "return an InternalServerError" in {

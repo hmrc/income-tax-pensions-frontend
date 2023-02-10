@@ -60,7 +60,7 @@ class NoSurchargeAmountController @Inject()(authAction: AuthorisedAction,
   }
 
   def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
-    amountForm.bindFromRequest.fold(
+    amountForm.bindFromRequest().fold(
       formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
       amount => {
         pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {

@@ -122,12 +122,12 @@ trait IntegrationTest extends AnyWordSpec with Matchers with GuiceOneServerPerSu
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
     .in(Environment.simple(mode = Mode.Dev))
     .configure(config)
-    .build
+    .build()
 
   lazy val appWithFakeExternalCall: Application = new GuiceApplicationBuilder()
     .in(Environment.simple(mode = Mode.Dev))
     .configure(externalConfig)
-    .build
+    .build()
 
   lazy val appWithInvalidEncryptionKey: Application = GuiceApplicationBuilder()
     .configure(configWithInvalidEncryptionKey)

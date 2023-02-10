@@ -102,8 +102,8 @@ abstract class BaseYesNoAmountController(
     Future.successful(Ok(prepareView(pensionsUserData, taxYear)))
 
 
-  private def ensureThatSessionDataIsSufficient(pensionsUserData: PensionsUserData, taxYear: Int)(f: (PensionsUserData, Int) => Future[Result])
-                                               (implicit request: AuthorisationRequest[AnyContent]): Future[Result] =
+  private def ensureThatSessionDataIsSufficient(pensionsUserData: PensionsUserData, taxYear: Int)
+                                               (f: (PensionsUserData, Int) => Future[Result]): Future[Result] =
     if (sessionDataIsSufficient(pensionsUserData)) f(pensionsUserData, taxYear) else Future.successful(whenSessionDataIsInsufficient(pensionsUserData, taxYear))
 
 
@@ -120,7 +120,7 @@ abstract class BaseYesNoAmountController(
 
   private def submit(pensionsUserData: PensionsUserData, taxYear: Int)
                     (implicit request: AuthorisationRequest[AnyContent]): Future[Result] =
-    form(request.user.isAgent).bindFromRequest.fold(
+    form(request.user.isAgent).bindFromRequest().fold(
       formWithErrors => Future.successful(BadRequest(whenFormIsInvalid(formWithErrors, taxYear))),
       validForm => onValidForm(pensionsUserData, taxYear, validForm))
 

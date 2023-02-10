@@ -65,7 +65,7 @@ class RetirementAnnuityAmountController @Inject()(authAction: AuthorisedAction,
 
 
   def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
-    formProvider.retirementAnnuityAmountForm.bindFromRequest.fold(
+    formProvider.retirementAnnuityAmountForm.bindFromRequest().fold(
       formWithErrors => Future.successful(BadRequest(retirementAnnuityAmountView(formWithErrors, taxYear))),
       amount => {
         pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) { optData =>

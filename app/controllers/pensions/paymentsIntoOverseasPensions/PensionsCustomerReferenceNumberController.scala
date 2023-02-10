@@ -80,7 +80,7 @@ class PensionsCustomerReferenceNumberController @Inject()(authAction: Authorised
       .getOrElse(referenceForm(user))
 
   def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
-    referenceForm(request.user).bindFromRequest.fold(
+    referenceForm(request.user).bindFromRequest().fold(
       formWithErrors => Future.successful(BadRequest(pensionsCustomerReferenceNumberView(formWithErrors, taxYear))),
       pensionCustomerReferenceNumber => {
         pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {

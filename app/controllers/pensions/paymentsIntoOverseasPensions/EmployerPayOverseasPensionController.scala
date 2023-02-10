@@ -65,7 +65,7 @@ class EmployerPayOverseasPensionController @Inject()(authAction: AuthorisedActio
   }
 
   def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
-    yesNoForm(request.user).bindFromRequest.fold(
+    yesNoForm(request.user).bindFromRequest().fold(
       formWithErrors => Future.successful(BadRequest(employerPayOverseasPensionView(formWithErrors, taxYear))),
       yesNo => {
         pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {

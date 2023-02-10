@@ -43,7 +43,7 @@ class TaxYearActionSpec extends UnitTest with TestTaxYearHelper {
         )
 
         lazy val result = {
-          mockedConfig.taxYearErrorFeature _ expects() returning true
+          (() => mockedConfig.taxYearErrorFeature).expects() returning true
 
           await(taxYearAction(taxYear).refine(userRequest))
         }
@@ -59,7 +59,7 @@ class TaxYearActionSpec extends UnitTest with TestTaxYearHelper {
         )
 
         lazy val result = {
-          mockedConfig.taxYearErrorFeature _ expects() returning false
+          (() => mockedConfig.taxYearErrorFeature).expects() returning false
 
           await(taxYearAction(taxYearEOY).refine(userRequest))
         }
@@ -75,7 +75,7 @@ class TaxYearActionSpec extends UnitTest with TestTaxYearHelper {
         )
 
         lazy val result = {
-          mockedConfig.taxYearErrorFeature _ expects() returning false
+          (() => mockedConfig.taxYearErrorFeature).expects() returning false
 
           await(taxYearAction(taxYearEOY, reset = false).refine(userRequest))
         }
@@ -103,11 +103,11 @@ class TaxYearActionSpec extends UnitTest with TestTaxYearHelper {
         }
 
         "has a status of SEE_OTHER (303)" in {
-          status(result.map(_.left.get)) shouldBe SEE_OTHER
+          status(result.map(_.left.toOption.get)) shouldBe SEE_OTHER
         }
 
         "has the start page redirect url" in {
-          redirectUrl(result.map(_.left.get)) shouldBe "controllers.routes.StartPageController.show(taxYear).url"
+          redirectUrl(result.map(_.left.toOption.get)) shouldBe "controllers.routes.StartPageController.show(taxYear).url"
         }
 
       }
@@ -120,17 +120,17 @@ class TaxYearActionSpec extends UnitTest with TestTaxYearHelper {
         )
 
         lazy val result = {
-          mockedConfig.taxYearErrorFeature _ expects() returning true
+          (() => mockedConfig.taxYearErrorFeature).expects() returning true
 
           taxYearAction(invalidTaxYear).refine(userRequest)
         }
 
         "has a status of SEE_OTHER (303)" in {
-          status(result.map(_.left.get)) shouldBe SEE_OTHER
+          status(result.map(_.left.toOption.get)) shouldBe SEE_OTHER
         }
 
         "has the TaxYearError redirect url" in {
-          redirectUrl(result.map(_.left.get)) shouldBe controllers.errors.routes.TaxYearErrorController.show.url
+          redirectUrl(result.map(_.left.toOption.get)) shouldBe controllers.errors.routes.TaxYearErrorController.show.url
         }
       }
 
@@ -142,7 +142,7 @@ class TaxYearActionSpec extends UnitTest with TestTaxYearHelper {
         )
 
         lazy val result = {
-          mockedConfig.taxYearErrorFeature _ expects() returning true
+          (() => mockedConfig.taxYearErrorFeature).expects() returning true
           mockedConfig.incomeTaxSubmissionOverviewUrl _ expects (taxYearEOY) returning
             "controllers.routes.OverviewPageController.show(taxYearEOY).url"
 
@@ -150,15 +150,15 @@ class TaxYearActionSpec extends UnitTest with TestTaxYearHelper {
         }
 
         "has a status of SEE_OTHER (303)" in {
-          status(result.map(_.left.get)) shouldBe SEE_OTHER
+          status(result.map(_.left.toOption.get)) shouldBe SEE_OTHER
         }
 
         "has the Overview page redirect url" in {
-          redirectUrl(result.map(_.left.get)) shouldBe "controllers.routes.OverviewPageController.show(taxYearEOY).url"
+          redirectUrl(result.map(_.left.toOption.get)) shouldBe "controllers.routes.OverviewPageController.show(taxYearEOY).url"
         }
 
         "has the updated TAX_YEAR session value" in {
-          await(result.map(_.left.get)).session.get(SessionValues.TAX_YEAR).get shouldBe (taxYearEOY).toString
+          await(result.map(_.left.toOption.get)).session.get(SessionValues.TAX_YEAR).get shouldBe (taxYearEOY).toString
         }
       }
     }

@@ -62,7 +62,7 @@ class WorkplaceAmountController @Inject()(authAction: AuthorisedAction,
   }
 
   def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
-    formProvider.workplacePensionAmountForm.bindFromRequest.fold(
+    formProvider.workplacePensionAmountForm.bindFromRequest().fold(
       formWithErrors => Future.successful(BadRequest(workplaceAmountView(formWithErrors, taxYear))),
       amount => {
         pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) { optData =>

@@ -69,7 +69,7 @@ class PensionPaymentsController @Inject()(authAction: AuthorisedAction,
     pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
       case Right(Some(data)) =>
         validateIndex(index, data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes) match {
-          case Some(i) => amountForm(request.user).bindFromRequest.fold(
+          case Some(i) => amountForm(request.user).bindFromRequest().fold(
             formWithErrors => Future.successful(BadRequest(pensionPaymentsView(formWithErrors, taxYear, Some(i)))),
             amounts =>
               updatePensionScheme(data, amounts._1, amounts._2, taxYear, i)(

@@ -75,7 +75,7 @@ class StatePensionLumpSumAmountController @Inject()(implicit val mcc: MessagesCo
 
   def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
     inYearAction.notInYear(taxYear) {
-      amountForm(request.user.isAgent).bindFromRequest.fold(
+      amountForm(request.user.isAgent).bindFromRequest().fold(
         formWithErrors => Future.successful(BadRequest(statePensionLumpSumAmountView(formWithErrors, taxYear))),
         amount => {
           pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {

@@ -62,7 +62,7 @@ class QOPSReferenceController @Inject()(authAction: AuthorisedAction,
       .getOrElse(referenceForm())
 
   def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
-    referenceForm().bindFromRequest.fold(
+    referenceForm().bindFromRequest().fold(
       formWithErrors => Future.successful(BadRequest(qopsReferenceView(formWithErrors, taxYear))),
       referenceNumber => {
         pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {

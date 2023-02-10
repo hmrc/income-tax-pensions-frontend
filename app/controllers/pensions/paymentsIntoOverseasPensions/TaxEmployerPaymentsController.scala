@@ -66,7 +66,7 @@ class TaxEmployerPaymentsController @Inject()(authAction: AuthorisedAction,
   }
 
   def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
-    yesNoForm(request.user).bindFromRequest.fold(
+    yesNoForm(request.user).bindFromRequest().fold(
       formWithErrors => Future.successful(BadRequest(taxEmployerPaymentsView(formWithErrors, taxYear))),
       yesNo => {
         pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {

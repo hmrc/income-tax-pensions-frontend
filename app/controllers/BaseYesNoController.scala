@@ -114,7 +114,7 @@ abstract class BaseYesNoController(
 
   private def submit(pensionsUserData: PensionsUserData, taxYear: Int)
                     (implicit request: AuthorisationRequest[AnyContent]): Future[Result] =
-    form(request.user.isAgent).bindFromRequest.fold(
+    form(request.user.isAgent).bindFromRequest().fold(
       formWithErrors => Future.successful(BadRequest(whenFormIsInvalid(formWithErrors, taxYear))),
       validForm => onValidForm(pensionsUserData, taxYear, validForm))
 

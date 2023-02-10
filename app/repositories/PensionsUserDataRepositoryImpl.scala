@@ -118,7 +118,7 @@ class PensionsUserDataRepositoryImpl @Inject()(mongo: MongoComponent, appConfig:
         val options = FindOneAndReplaceOptions().upsert(true).returnDocument(ReturnDocument.AFTER)
 
         collection.findOneAndReplace(queryFilter, replacement, options).toFutureOption().map {
-          case Some(_) => Right()
+          case Some(_) => Right(())
           case None =>
             pagerDutyLog(FAILED_TO_CREATE_UPDATE_PENSIONS_DATA, s"$start Failed to update user data.")
             Left(DataNotUpdated)
