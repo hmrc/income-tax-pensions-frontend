@@ -40,4 +40,5 @@ object AppDependencies {
     "com.github.tomakehurst"  %  "wiremock-jre8"              % "2.35.0"                % "test, it",
     "org.scalamock"           %% "scalamock"                  % "5.2.0"                 % Test
   )
+  // note com.vladsch.flexmark"    %  "flexmark-all" cannot be upgraded above 0.62.2 until we use Java 11 and above
 }

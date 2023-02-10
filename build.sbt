@@ -68,6 +68,7 @@ lazy val microservice = Project(appName, file("."))
     scalaVersion := "2.13.10",
     libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test,
     TwirlKeys.templateImports ++= twirlImports,
+    libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always,
     scalacOptions += "-Wconf:cat=unused-imports&src=html/.*:s",  //suppress warnings
     scalacOptions += "-Wconf:src=routes/.*:s"
   )
