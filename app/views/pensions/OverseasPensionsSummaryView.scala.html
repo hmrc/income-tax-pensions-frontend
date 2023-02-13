@@ -31,6 +31,10 @@
    controllers.pensions.incomeFromOverseasPensions.routes.PensionOverseasIncomeStatus.show(taxYear).url
 }
 
+@transferIntoOverseasPensionUrl() = @{
+   controllers.pensions.transferIntoOverseasPensions.routes.TransferPensionSavingsController.show(taxYear).url
+}
+
 @paymentsOverseasPensionsUrl() = @{
   controllers.pensions.paymentsIntoOverseasPensions.routes.PaymentIntoPensionSchemeController.show(taxYear).url
 }
@@ -84,7 +88,7 @@
 
             <div class="govuk-summary-list__row" id="overseas-transfer-charges-row">
                 <dt class="govuk-summary-list__key govuk-!-width-two-third">
-                @link("#", "pensions.overseasPensionsSummary.overseasTransferCharges",Some("overseas-transfer-charges-link"))
+                @link(transferIntoOverseasPensionUrl(), "pensions.overseasPensionsSummary.overseasTransferCharges",Some("overseas-transfer-charges-link"))
                 </dt>
                 <dd class="govuk-summary-list__actions govuk-!-two-third">
                 @if(overseasPensionsTransferChargesIsUpdated(cya)) {
