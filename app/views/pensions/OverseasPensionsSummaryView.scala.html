@@ -35,6 +35,10 @@
   controllers.pensions.paymentsIntoOverseasPensions.routes.PaymentIntoPensionSchemeController.show(taxYear).url
 }
 
+@shortServiceRefundsUrl() = @{
+    controllers.pensions.shortServiceRefunds.routes.TaxableRefundAmountController.show(taxYear).url
+}
+
 @headingForUse = @{
     messages(s"pensions.pensionSummary.overseasPensionsSummary")
 }
@@ -93,7 +97,7 @@
 
             <div class="govuk-summary-list__row" id="short-service-refunds-row">
                 <dt class="govuk-summary-list__key govuk-!-width-two-third">
-                @link("#", "pensions.overseasPensionsSummary.shortServiceRefunds",Some("short-service-refunds-link"))
+                @link(shortServiceRefundsUrl(), "pensions.overseasPensionsSummary.shortServiceRefunds",Some("short-service-refunds-link"))
                 </dt>
                 <dd class="govuk-summary-list__actions govuk-!-two-third">
                 @if(shortServiceRefundsIsUpdated(cya)) {

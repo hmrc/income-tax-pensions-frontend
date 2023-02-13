@@ -29,8 +29,9 @@ import play.api.http.Status.UNAUTHORIZED
 import play.api.libs.ws.WSResponse
 import utils.CommonUtils
 import utils.PageUrls.IncomeFromOverseasPensionsPages.{checkIncomeFromOverseasPensionsCyaUrl, incomeFromOverseasPensionsStatus}
-import utils.PageUrls.OverseasPensionPages.paymentsIntoPensionSchemeUrl
 import utils.PageUrls._
+import utils.PageUrls.OverseasPensionPages.paymentsIntoPensionSchemeUrl
+import utils.PageUrls.PensionAnnualAllowancePages.shortServiceTaxableRefundUrl
 
 class OverseasPensionsSummaryControllerISpec extends  CommonUtils with BeforeAndAfterEach  { // scalastyle:off magic.number
 
@@ -156,7 +157,7 @@ class OverseasPensionsSummaryControllerISpec extends  CommonUtils with BeforeAnd
           }
 
           "has a short service refunds section" which {
-            linkCheck(common.shortServiceRefundsText, shortServiceRefundsLink, "#")
+            linkCheck(common.shortServiceRefundsText, shortServiceRefundsLink, shortServiceTaxableRefundUrl(taxYearEOY))
             textOnPageCheck(userScenario.commonExpectedResults.notStarted, summaryListStatusTagSelector(4))
           }
 
@@ -198,7 +199,7 @@ class OverseasPensionsSummaryControllerISpec extends  CommonUtils with BeforeAnd
           }
 
           "has a short service refunds section" which {
-            linkCheck(common.shortServiceRefundsText, shortServiceRefundsLink, "#")
+            linkCheck(common.shortServiceRefundsText, shortServiceRefundsLink, shortServiceTaxableRefundUrl(taxYearEOY))
             textOnPageCheck(userScenario.commonExpectedResults.notStarted, summaryListStatusTagSelector(4))
           }
 
