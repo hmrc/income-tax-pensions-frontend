@@ -269,4 +269,6 @@ GET         /:taxYear/overseas-pensions/overseas-transfer-charges/transfer-charg
 GET         /:taxYear/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-pension-scheme                          controllers.pensions.transferIntoOverseasPensions.TransferPensionsSchemeController.show(taxYear: Int, index: Option[Int])
 POST        /:taxYear/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-pension-scheme                          controllers.pensions.transferIntoOverseasPensions.TransferPensionsSchemeController.submit(taxYear: Int, index: Option[Int])
 
+GET         /:taxYear/overseas-pensions/payments-into-overseas-pensions/remove-overseas-pension-scheme                             controllers.pensions.transferIntoOverseasPensions.RemoveTransferChargeSchemeController.show(taxYear: Int, index: Option[Int])
+POST        /:taxYear/overseas-pensions/payments-into-overseas-pensions/remove-overseas-pension-scheme                             controllers.pensions.transferIntoOverseasPensions.RemoveTransferChargeSchemeController.submit(taxYear: Int, index: Option[Int])
 

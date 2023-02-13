@@ -53,7 +53,6 @@ class OverseasTransferChargeController @Inject()(actionsProvider: ActionsProvide
       amountForm(sessionUserData.user).bindFromRequest().fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
         yesNoAmount => {
-
           (yesNoAmount._1, yesNoAmount._2) match {
             case (true, amount) => updateSessionData(sessionUserData.pensionsUserData, yesNo = true, amount, taxYear)
             case (false, _) => updateSessionData(sessionUserData.pensionsUserData, yesNo = false, None, taxYear)

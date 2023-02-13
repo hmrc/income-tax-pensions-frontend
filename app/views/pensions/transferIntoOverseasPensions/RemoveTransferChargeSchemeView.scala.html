@@ -14,6 +14,8 @@
  * limitations under the License.
  *@
 
+@import controllers.pensions.transferIntoOverseasPensions.routes._
+@import models.requests.UserSessionDataRequest
 @import views.html.templates.Layout
 @import views.html.templates.helpers.Heading
 @import views.html.templates.helpers.Button
@@ -30,24 +32,33 @@
         govUkButton: GovukButton
 )
 
-@(taxYear: Int, pensionSchemeName: String, pensionSchemeIndex: Option[Int])(implicit request: AuthorisationRequest[_], messages: Messages, appConfig: AppConfig)
+@(taxYear: Int, pensionSchemeName: String, pensionSchemeIndex: Option[Int])(implicit messages: Messages, appConfig: AppConfig, request: UserSessionDataRequest[_])
 
 @titleText = @{messages("common.removePensionScheme.title", pensionSchemeName)}
 
+@contentHtml = {
+    <p class="govuk-body">
+        @{messages(s"transferIntoOverseasPensions.removeTransferChargeScheme.p1")}
+        <ul class="govuk-list govuk-list--bullet">
+            <li>@{messages(s"transferIntoOverseasPensions.removeTransferChargeScheme.p1.bullet1")}</li>
+            <li>@{messages(s"transferIntoOverseasPensions.removeTransferChargeScheme.p1.bullet2")}</li>
+            <li>@{messages(s"transferIntoOverseasPensions.removeTransferChargeScheme.p1.bullet3")}</li>
+        </ul>
+    </p>
+}
 @layout(pageTitle = titleText, taxYear = Some(taxYear), isAgent = request.user.isAgent) {
 
-
-    @formWithCsrf(action = controllers.pensions.incomeFromPensions.routes.RemovePensionSchemeController.submit(taxYear, pensionSchemeIndex)) {
-        @heading(titleText, Some(messages("common.incomeFromPensions.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-2")
-
+    @formWithCsrf(action = controllers.pensions.transferIntoOverseasPensions.routes.RemoveTransferChargeSchemeController.submit(taxYear, pensionSchemeIndex)) {
+        @heading(titleText, Some(messages("common.transferIntoOverseasPensions.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-2")
+        @contentHtml
         <div class="govuk-button-group">
             @govUkButton(Button(
                 attributes = Map("data-module" -> "govuk-button", "id" -> "remove-pension-button-id"),
                 preventDoubleClick = Some(true),
-                content = Text(messages("incomeFromPensions.removePensionScheme.buttonText")),
+                content = Text(messages("common.remove")),
                 classes = "govuk-button--warning"
             ))
-            @link(controllers.pensions.incomeFromPensions.routes.UkPensionIncomeSummaryController.show(taxYear).url, messages("common.cancel"), id = Some("cancel-link-id"))
+            @link(controllers.pensions.transferIntoOverseasPensions.routes.TransferChargeSummaryController.show(taxYear).url, messages("common.cancel"), id = Some("cancel-link-id"))
         </div>
     }
 }
