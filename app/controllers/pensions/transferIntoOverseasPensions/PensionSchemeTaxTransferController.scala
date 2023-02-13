@@ -27,10 +27,9 @@ import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.transferIntoOverseasPensions.pensionSchemeTaxTransferChargeView
-
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
-
+import models.pension.charges.TransfersIntoOverseasPensionsViewModel
 @Singleton
 class PensionSchemeTaxTransferController @Inject()(
                                                     actionsProvider: ActionsProvider,
@@ -70,6 +69,9 @@ class PensionSchemeTaxTransferController @Inject()(
                                    yesNo: Boolean,
                                    amount: Option[BigDecimal],
                                    taxYear: Int)(implicit request: UserSessionDataRequest[T]) = {
+    val transfersIntoOverseasPensions = pensionUserData.pensions.transfersIntoOverseasPensions.copy(
+      pensionSchemeTransferCharge = Some(yesNo),
+      pensionSchemeTransferChargeAmount = amount)
     val updatedCyaModel: PensionsCYAModel = pensionUserData.pensions.copy(
       transfersIntoOverseasPensions = pensionUserData.pensions.transfersIntoOverseasPensions.copy(
         pensionSchemeTransferCharge = Some(yesNo),
@@ -77,7 +79,16 @@ class PensionSchemeTaxTransferController @Inject()(
 
     pensionSessionService.createOrUpdateSessionData(request.user,
       updatedCyaModel, taxYear, pensionUserData.isPriorSubmission)(errorHandler.internalServerError()) {
-      Redirect(controllers.pensions.transferIntoOverseasPensions.routes.PensionSchemeTaxTransferController.show(taxYear))
+      if (yesNo) {
+        if (transfersIntoOverseasPensions.transferPensionScheme.isEmpty) {
+          Redirect(controllers.pensions.transferIntoOverseasPensions.routes.OverseasTransferChargePaidController.show(taxYear,None))
+        } else {
+          Redirect(controllers.pensions.transferIntoOverseasPensions.routes.TransferChargeSummaryController.show(taxYear))
+        }
+    } else {
+        // TODO: Update once `transfer info overseas income cya` is available. Redirecting to itself
+        Redirect(controllers.pensions.transferIntoOverseasPensions.routes.TransferPensionSavingsController.show(taxYear))
+      }
     }
   }
 }

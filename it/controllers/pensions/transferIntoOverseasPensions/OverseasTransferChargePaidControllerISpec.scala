@@ -339,40 +339,44 @@ class OverseasTransferChargePaidControllerISpec
             scenarioNameForIndividualAndEnglish in {
 
               implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
-              val response = submitForm(SubmittedFormDataForYesNoPage(Some(false)))
+              implicit val response = submitForm(SubmittedFormDataForYesNoPage(Some(false)))
+              val redirectPage = relativeUrl("/overseas-pensions/overseas-transfer-charges/transfer-pension-savings")
 
               response must haveStatus(SEE_OTHER)
-              response must haveALocationHeaderValue(formUrl(0).get)
+              assertRedirectionAsExpected(redirectPage)
               getViewModel mustBe Some(expectedViewModel)
 
             }
             scenarioNameForIndividualAndWelsh in {
 
               implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
-              val response = submitForm(SubmittedFormDataForYesNoPage(Some(false)))
+              implicit val response = submitForm(SubmittedFormDataForYesNoPage(Some(false)))
+              val redirectPage = relativeUrl("/overseas-pensions/overseas-transfer-charges/transfer-pension-savings")
 
               response must haveStatus(SEE_OTHER)
-              response must haveALocationHeaderValue(formUrl(0).get)
+              assertRedirectionAsExpected(redirectPage)
               getViewModel mustBe Some(expectedViewModel)
 
             }
             scenarioNameForAgentAndEnglish in {
 
               implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
-              val response = submitForm(SubmittedFormDataForYesNoPage(Some(false)))
+              implicit val response = submitForm(SubmittedFormDataForYesNoPage(Some(false)))
+              val redirectPage = relativeUrl("/overseas-pensions/overseas-transfer-charges/transfer-pension-savings")
 
               response must haveStatus(SEE_OTHER)
-              response must haveALocationHeaderValue(formUrl(0).get)
+              assertRedirectionAsExpected(redirectPage)
               getViewModel mustBe Some(expectedViewModel)
 
             }
             scenarioNameForAgentAndWelsh in {
 
               implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
-              val response = submitForm(SubmittedFormDataForYesNoPage(Some(false)))
+              implicit val response = submitForm(SubmittedFormDataForYesNoPage(Some(false)))
+              val redirectPage = relativeUrl("/overseas-pensions/overseas-transfer-charges/transfer-pension-savings")
 
               response must haveStatus(SEE_OTHER)
-              response must haveALocationHeaderValue(formUrl(0).get)
+              assertRedirectionAsExpected(redirectPage)
               getViewModel mustBe Some(expectedViewModel)
 
             }
@@ -389,40 +393,44 @@ class OverseasTransferChargePaidControllerISpec
             scenarioNameForIndividualAndEnglish in {
 
               implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
-              val response = submitForm(SubmittedFormDataForYesNoPage(Some(true)))
+              implicit val response = submitForm(SubmittedFormDataForYesNoPage(Some(true)))
+              val redirectPage = relativeUrl("/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-pension-scheme?index=0")
 
               response must haveStatus(SEE_OTHER)
-              response must haveALocationHeaderValue(formUrl(0).get)
+              assertRedirectionAsExpected(redirectPage)
               getViewModel mustBe Some(expectedViewModel)
 
             }
             scenarioNameForIndividualAndWelsh in {
 
               implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
-              val response = submitForm(SubmittedFormDataForYesNoPage(Some(true)))
+              implicit val response = submitForm(SubmittedFormDataForYesNoPage(Some(true)))
+              val redirectPage = relativeUrl("/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-pension-scheme?index=0")
 
               response must haveStatus(SEE_OTHER)
-              response must haveALocationHeaderValue(formUrl(0).get)
+              assertRedirectionAsExpected(redirectPage)
               getViewModel mustBe Some(expectedViewModel)
 
             }
             scenarioNameForAgentAndEnglish in {
 
               implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
-              val response = submitForm(SubmittedFormDataForYesNoPage(Some(true)))
+              implicit val response = submitForm(SubmittedFormDataForYesNoPage(Some(true)))
+              val redirectPage = relativeUrl("/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-pension-scheme?index=0")
 
               response must haveStatus(SEE_OTHER)
-              response must haveALocationHeaderValue(formUrl(0).get)
+              assertRedirectionAsExpected(redirectPage)
               getViewModel mustBe Some(expectedViewModel)
 
             }
             scenarioNameForAgentAndWelsh in {
 
               implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
-              val response = submitForm(SubmittedFormDataForYesNoPage(Some(true)))
+              implicit val response = submitForm(SubmittedFormDataForYesNoPage(Some(true)))
+              val redirectPage = relativeUrl("/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-pension-scheme?index=0")
 
               response must haveStatus(SEE_OTHER)
-              response must haveALocationHeaderValue(formUrl(0).get)
+              assertRedirectionAsExpected(redirectPage)
               getViewModel mustBe Some(expectedViewModel)
 
             }
@@ -578,6 +586,10 @@ class OverseasTransferChargePaidControllerISpec
   
   private def formUrl(index: Int = 0): Option[String] =
     Some(relativeUrlForThisPage + "?pensionSchemeIndex=" + index)
+
+  private def submitFormWithIndex(submittedFormData: SubmittedFormData, index: Int = 0)(implicit userConfig: UserConfig, wsClient: WSClient): WSResponse = {
+    submitForm(submittedFormData, getMap(index))
+  }
 
   private def getMap(index: Int): Map[String, String] = {
     Map("pensionSchemeIndex" -> index.toString)

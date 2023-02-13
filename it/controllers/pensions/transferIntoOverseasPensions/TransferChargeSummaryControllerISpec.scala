@@ -30,6 +30,7 @@ import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import utils.PageUrls.IncomeFromOverseasPensionsPages._
 import utils.PageUrls.TransferIntoOverseasPensions.{overseasTransferChargePaidUrl, removeTransferChargeScheme, transferChargeSummaryUrl}
+import utils.PageUrls.TransferIntoOverseasPensionsPages.transferPensionSavingsUrl
 import utils.PageUrls.{fullUrl, overseasPensionsSummaryUrl}
 import utils.ViewUtils.bigDecimalCurrency
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
@@ -147,7 +148,7 @@ class TransferChargeSummaryControllerISpec extends IntegrationTest with BeforeAn
           linkCheck(expectedAddAnotherText, addAnotherLinkSelector, overseasTransferChargePaidUrl(taxYearEOY))
 
           //todo update redirect to to transfer journey CYA page when navigation is linked up
-          buttonCheck(expectedButtonText, continueButtonSelector, Some(transferChargeSummaryUrl(taxYearEOY)))
+          buttonCheck(expectedButtonText, continueButtonSelector, Some(transferPensionSavingsUrl(taxYearEOY)))
           welshToggleCheck(user.isWelsh)
         }
 
@@ -183,7 +184,7 @@ class TransferChargeSummaryControllerISpec extends IntegrationTest with BeforeAn
           linkCheck(expectedAddAnotherText, addAnotherLinkSelector, overseasTransferChargePaidUrl(taxYearEOY))
 
           //todo update redirect to to transfer journey CYA page when navigation is linked up
-          buttonCheck(expectedButtonText, continueButtonSelector, Some(transferChargeSummaryUrl(taxYearEOY)))
+          buttonCheck(expectedButtonText, continueButtonSelector, Some(transferPensionSavingsUrl(taxYearEOY)))
           welshToggleCheck(user.isWelsh)
         }
 
