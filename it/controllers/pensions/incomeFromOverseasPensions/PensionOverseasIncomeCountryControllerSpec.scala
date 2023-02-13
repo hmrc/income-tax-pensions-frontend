@@ -17,9 +17,8 @@
 package controllers.pensions.incomeFromOverseasPensions
 
 import builders.IncomeFromOverseasPensionsViewModelBuilder.{anIncomeFromOverseasPensionsEmptyViewModel, anIncomeFromOverseasPensionsViewModel}
-import builders.PaymentsIntoOverseasPensionsViewModelBuilder.aPaymentsIntoOverseasPensionsViewModel
-import builders.PensionsUserDataBuilder.{aPensionsUserData, anPensionsUserDataEmptyCya, pensionUserDataWithIncomeOverseasPension, pensionUserDataWithOverseasPensions, pensionsUserDataWithUnauthorisedPayments}
-import builders.UnauthorisedPaymentsViewModelBuilder.anUnauthorisedPaymentsViewModel
+import builders.PensionsUserDataBuilder.{aPensionsUserData, anPensionsUserDataEmptyCya, pensionUserDataWithIncomeOverseasPension}
+import builders.UserBuilder.aUserRequest
 import forms.CountryForm
 import models.pension.charges.PensionScheme
 import org.jsoup.Jsoup
@@ -28,12 +27,8 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import utils.CommonUtils
-import utils.PageUrls.{IncomeFromOverseasPensionsPages, fullUrl, overseasPensionsSummaryUrl, pensionSummaryUrl}
-import utils.PageUrls.IncomeFromOverseasPensionsPages.{incomeFromOverseasPensionsAmounts, pensionOverseasIncomeCountryUrl, pensionOverseasIncomeCountryUrlIndex, pensionOverseasIncomeCountryUrlIndex2}
-import utils.PageUrls.PensionLifetimeAllowance.pensionTaxReferenceNumberLifetimeAllowanceUrl
-import builders.UserBuilder.{aUser, aUserRequest}
-import play.api.http.HeaderNames
-import utils.PageUrls.UnAuthorisedPayments.surchargeAmountUrl
+import utils.PageUrls.IncomeFromOverseasPensionsPages._
+import utils.PageUrls.{IncomeFromOverseasPensionsPages, overseasPensionsSummaryUrl}
 
 
 class PensionOverseasIncomeCountryControllerSpec extends CommonUtils with BeforeAndAfterEach {
@@ -308,7 +303,7 @@ class PensionOverseasIncomeCountryControllerSpec extends CommonUtils with Before
 
       "updates pension scheme tax reference to contain both tax reference" in {
         lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
-        cyaModel.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes.map(_.alphaTwoCode.get) should not contain ("GB")
+        cyaModel.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes.map(_.alphaTwoCode.get) should not contain "GB"
       }
     }
 

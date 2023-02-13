@@ -93,8 +93,8 @@ class PensionPaymentsController @Inject()(authAction: AuthorisedAction,
     val nonUkTaxPaidOpt = data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes(index).pensionPaymentTaxPaid
 
     val form = (amountBeforeTaxOpt, nonUkTaxPaidOpt) match {
-      case (Some(amountBeforeTax), None) => amountForm(request.user).fill(Some(amountBeforeTax), None)
-      case (None, Some(nonUkTaxPaid)) => amountForm(request.user).fill((None, Some(nonUkTaxPaid)))
+      case (Some(amountBeforeTax), None) => amountForm(request.user).fill((Some(amountBeforeTax), None): (Option[BigDecimal], Option[BigDecimal]))
+      case (None, Some(nonUkTaxPaid)) => amountForm(request.user).fill((None, Some(nonUkTaxPaid)): (Option[BigDecimal], Option[BigDecimal]))
       case (Some(amountBeforeTax), Some(nonUkTaxPaid)) => amountForm(request.user).fill((Some(amountBeforeTax), Some(nonUkTaxPaid)))
       case (_, _) => amountForm(request.user)
     }

@@ -17,18 +17,15 @@
 package controllers.pensions.paymentsIntoOverseasPensions
 
 import builders.PaymentsIntoOverseasPensionsViewModelBuilder.aPaymentsIntoOverseasPensionsViewModel
-import org.jsoup.nodes.Document
-import org.scalatest.BeforeAndAfterEach
-import utils.CommonUtils
 import builders.PensionsUserDataBuilder.{aPensionsUserData, anPensionsUserDataEmptyCya, pensionUserDataWithOverseasPensions}
 import builders.UserBuilder.aUserRequest
 import forms.QOPSReferenceNumberForm
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterEach
-import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
+import utils.CommonUtils
 import utils.PageUrls.{OverseasPensionPages, pensionSummaryUrl}
 
 class QOPSReferenceControllerISpec extends CommonUtils with BeforeAndAfterEach {

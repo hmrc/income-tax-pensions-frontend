@@ -17,7 +17,6 @@
 package views
 
 import builders.PaymentsIntoPensionVewModelBuilder.aPaymentsIntoPensionViewModel
-import config.{AppConfig, MockAppConfig}
 import models.AuthorisationRequest
 import models.pension.reliefs.PaymentsIntoPensionViewModel
 import org.jsoup.Jsoup
@@ -25,8 +24,8 @@ import org.jsoup.nodes.Document
 import play.api.i18n.Messages
 import play.api.mvc.AnyContent
 import support.ViewUnitTest
-import views.html.pensions.paymentsIntoPensions.PaymentsIntoPensionsCYAView
 import views.PaymentsIntoPensionsCYATestSupport._
+import views.html.pensions.paymentsIntoPensions.PaymentsIntoPensionsCYAView
 
 import java.time.LocalDate
 
@@ -240,8 +239,7 @@ class PaymentsIntoPensionsCYATestSupport extends ViewUnitTest {
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
 
-        import userScenario.commonExpectedResults.{no => answerNo}
-        import userScenario.commonExpectedResults.{yes => anseryes}
+        import userScenario.commonExpectedResults.{no => answerNo, yes => anseryes}
 
         //noinspection ScalaStyle
         cyaRowCheck(paymentsIntoUKPensions, anseryes, ChangeLinks.paymentsIntoUKPensions, paymentsIntoUKPensionsHidden, 1)

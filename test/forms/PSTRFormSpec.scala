@@ -16,7 +16,6 @@
 
 package forms
 
-import play.api.data.validation.{Invalid, Valid}
 import utils.UnitTest
 
 class PSTRFormSpec extends UnitTest {

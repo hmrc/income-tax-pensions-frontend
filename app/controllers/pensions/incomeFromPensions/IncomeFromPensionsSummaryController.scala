@@ -24,11 +24,10 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.Clock
 import views.html.pensions.incomeFromPensions.IncomeFromPensionsSummaryView
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import javax.inject.Inject
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class IncomeFromPensionsSummaryController @Inject()(implicit val mcc: MessagesControllerComponents,
@@ -36,8 +35,8 @@ class IncomeFromPensionsSummaryController @Inject()(implicit val mcc: MessagesCo
                                                     authAction: AuthorisedAction,
                                                     pensionSessionService: PensionSessionService,
                                                     errorHandler: ErrorHandler,
-                                                    view: IncomeFromPensionsSummaryView,
-                                                    clock: Clock) extends FrontendController(mcc) with I18nSupport{
+                                                    view: IncomeFromPensionsSummaryView
+                                                    ) extends FrontendController(mcc) with I18nSupport{
 
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {

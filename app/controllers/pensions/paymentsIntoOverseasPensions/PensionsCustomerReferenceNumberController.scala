@@ -37,8 +37,8 @@ import controllers.pensions.paymentsIntoOverseasPensions.routes.PensionsCustomer
 import controllers.pensions.routes.PensionsSummaryController
 import controllers.predicates.AuthorisedAction
 import forms.PensionCustomerReferenceNumberForm
+import models.User
 import models.mongo.{PensionsCYAModel, PensionsUserData}
-import models.{AuthorisationRequest, User}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -74,7 +74,7 @@ class PensionsCustomerReferenceNumberController @Inject()(authAction: Authorised
   }
 
 
-  private def fillCustomerReferenceNumber(user : User, pensionUserData: PensionsUserData)(implicit request: AuthorisationRequest[AnyContent]): Form[String] =
+  private def fillCustomerReferenceNumber(user : User, pensionUserData: PensionsUserData): Form[String] =
     pensionUserData.pensions.paymentsIntoOverseasPensions.customerReferenceNumberQuestion
       .map(referenceForm(user).fill)
       .getOrElse(referenceForm(user))

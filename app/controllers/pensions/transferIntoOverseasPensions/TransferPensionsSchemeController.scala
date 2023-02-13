@@ -18,6 +18,7 @@ package controllers.pensions.transferIntoOverseasPensions
 
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.routes._
+import controllers.pensions.transferIntoOverseasPensions.routes._
 import controllers.predicates.ActionsProvider
 import controllers.validateIndex
 import forms.overseas.PensionSchemeForm.{TransferPensionsSchemeFormModel, transferPensionSchemeForm}
@@ -27,21 +28,20 @@ import models.pension.charges.TransferPensionScheme
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import routes._
 import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.transferIntoOverseasPensions.TransferPensionsSchemeView
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 @Singleton
 class TransferPensionsSchemeController @Inject()(actionsProvider: ActionsProvider,
                                                  pensionSessionService: PensionSessionService,
                                                  view: TransferPensionsSchemeView,
                                                  errorHandler: ErrorHandler)
-                                                (implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
+                                                (implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock)
   extends FrontendController(mcc) with I18nSupport with SessionHelper {
 
   def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) {

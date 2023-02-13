@@ -26,12 +26,9 @@ import com.github.tomakehurst.wiremock.http.HttpHeader
 import com.github.tomakehurst.wiremock.http.HttpHeader.httpHeader
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import common.{EnrolmentIdentifiers, EnrolmentKeys}
-import models.IncomeTaxUserData
 import models.mongo.PensionsCYAModel
-import models.requests.UserSessionDataRequest
 import play.api.http.Status._
 import play.api.libs.json.{JsObject, Json}
-import play.api.mvc.AnyContent
 import uk.gov.hmrc.auth.core.{AffinityGroup, ConfidenceLevel}
 
 trait WireMockHelper {

@@ -17,11 +17,10 @@
 package controllers.predicates
 
 import config.ErrorHandler
+import models.AuthorisationRequest
+import models.requests.UserSessionDataRequest
 import play.api.http.Status.INTERNAL_SERVER_ERROR
 import play.api.mvc.{ActionRefiner, Result}
-import models.AuthorisationRequest
-import models.mongo.PensionsUserData
-import models.requests.UserSessionDataRequest
 import services.{PensionSessionService, RedirectService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendHeaderCarrierProvider
 

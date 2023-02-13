@@ -18,8 +18,7 @@ package services
 
 import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import builders.PensionsUserDataBuilder.aPensionsUserData
-import builders.TransfersIntoOverseasPensionsViewModelBuilder.{aTransfersIntoOverseasPensionsViewModel, emptyTransfersIntoOverseasPensionsViewModel}
-import models.mongo.DataNotUpdated
+import builders.TransfersIntoOverseasPensionsViewModelBuilder.aTransfersIntoOverseasPensionsViewModel
 import models.pension.charges.TransferPensionScheme
 import support.mocks.MockPensionSessionService
 import support.{ControllerUnitTest, UnitTest}

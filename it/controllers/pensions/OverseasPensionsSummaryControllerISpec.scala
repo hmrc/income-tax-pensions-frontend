@@ -27,14 +27,12 @@ import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status.UNAUTHORIZED
 import play.api.libs.ws.WSResponse
+import utils.CommonUtils
 import utils.PageUrls.IncomeFromOverseasPensionsPages.{checkIncomeFromOverseasPensionsCyaUrl, incomeFromOverseasPensionsStatus}
-import utils.PageUrls._
 import utils.PageUrls.OverseasPensionPages.paymentsIntoPensionSchemeUrl
-import utils.{CommonUtils, PensionsDatabaseHelper, ViewHelpers}
+import utils.PageUrls._
 
-class OverseasPensionsSummaryControllerISpec extends  CommonUtils with BeforeAndAfterEach  {
-
-  // scalastyle:off magic.number
+class OverseasPensionsSummaryControllerISpec extends  CommonUtils with BeforeAndAfterEach  { // scalastyle:off magic.number
 
   implicit val overseasPensionSummaryUrl: Int => String = overseasPensionsSummaryUrl
 

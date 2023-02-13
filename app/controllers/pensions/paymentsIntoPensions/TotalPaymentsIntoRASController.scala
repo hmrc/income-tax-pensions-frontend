@@ -16,12 +16,9 @@
 
 package controllers.pensions.paymentsIntoPensions
 
-import java.text.NumberFormat
-import java.util.Locale
 import config.{AppConfig, ErrorHandler}
 import controllers.predicates.AuthorisedAction
 import controllers.predicates.TaxYearAction.taxYearAction
-import javax.inject.{Inject, Singleton}
 import models.mongo.PensionsCYAModel
 import models.redirects.ConditionalRedirect
 import play.api.i18n.I18nSupport
@@ -33,7 +30,10 @@ import utils.Clock
 import utils.PaymentsIntoPensionPages.TotalRasPage
 import views.html.pensions.paymentsIntoPensions.TotalPaymentsIntoRASView
 
-import scala.concurrent.{ExecutionContext, Future}
+import java.text.NumberFormat
+import java.util.Locale
+import javax.inject.{Inject, Singleton}
+import scala.concurrent.Future
 
 @Singleton
 class TotalPaymentsIntoRASController @Inject()(authAction: AuthorisedAction,
@@ -42,8 +42,7 @@ class TotalPaymentsIntoRASController @Inject()(authAction: AuthorisedAction,
                                                view: TotalPaymentsIntoRASView,
                                                formProvider: PaymentsIntoPensionFormProvider)(implicit val mcc: MessagesControllerComponents,
                                                                                               appConfig: AppConfig,
-                                                                                              clock: Clock,
-                                                                                              ec: ExecutionContext)
+                                                                                              clock: Clock)
   extends FrontendController(mcc) with I18nSupport {
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) { optData =>

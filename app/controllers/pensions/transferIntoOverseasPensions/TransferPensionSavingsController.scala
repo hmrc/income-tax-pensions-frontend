@@ -18,13 +18,9 @@ package controllers.pensions.transferIntoOverseasPensions
 
 import config.{AppConfig, ErrorHandler}
 import controllers.predicates.ActionsProvider
-import controllers.pensions.routes.OverseasPensionsSummaryController
 import forms.TransferPensionSavingsForm.yesNoForm
-import forms.YesNoForm
-import models.User
 import models.mongo.PensionsUserData
 import models.requests.UserSessionDataRequest
-import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
@@ -33,7 +29,7 @@ import utils.{Clock, SessionHelper}
 import views.html.pensions.transferIntoOverseasPensions.TransferPensionSavingsView
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 @Singleton
 class TransferPensionSavingsController @Inject()(actionsProvider: ActionsProvider,
@@ -42,8 +38,7 @@ class TransferPensionSavingsController @Inject()(actionsProvider: ActionsProvide
                                                  errorHandler: ErrorHandler
                                               )(implicit cc: MessagesControllerComponents,
                                                 appConfig: AppConfig,
-                                                clock: Clock,
-                                                ec: ExecutionContext)
+                                                clock: Clock)
   extends FrontendController(cc) with I18nSupport with SessionHelper {
 
   def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {

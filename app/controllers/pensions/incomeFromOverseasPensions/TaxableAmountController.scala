@@ -17,17 +17,16 @@
 package controllers.pensions.incomeFromOverseasPensions
 
 import config.{AppConfig, ErrorHandler}
+import controllers.pensions.incomeFromOverseasPensions.routes.PensionSchemeSummaryController
+import controllers.pensions.routes.OverseasPensionsSummaryController
 import controllers.predicates.AuthorisedAction
 import controllers.predicates.TaxYearAction.taxYearAction
 import forms.FormUtils
-import models.AuthorisationRequest
 import models.mongo.PensionsUserData
 import models.pension.charges.PensionScheme
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
-import controllers.pensions.routes.OverseasPensionsSummaryController
-import controllers.pensions.incomeFromOverseasPensions.routes.{CountrySummaryListController, PensionSchemeSummaryController}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.incomeFromOverseasPensions.TaxableAmountView
@@ -93,8 +92,7 @@ class TaxableAmountController @Inject()(val authAction: AuthorisedAction,
     if (amountBeforeTax.isEmpty || nonUkTaxPaidOpt.isEmpty) false else true
   }
 
-  private def populateView(data: PensionsUserData, index: Int)
-                          (implicit request: AuthorisationRequest[AnyContent]): (Option[String], Option[String], Option[String], Option[Boolean]) = {
+  private def populateView(data: PensionsUserData, index: Int): (Option[String], Option[String], Option[String], Option[Boolean]) = {
     val amountBeforeTax = data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes(index).pensionPaymentAmount
     val nonUkTaxPaidOpt = data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes(index).pensionPaymentTaxPaid
     val signedNonUkTaxPaid = nonUkTaxPaidOpt.map(v => if (v > 0) -v else v)

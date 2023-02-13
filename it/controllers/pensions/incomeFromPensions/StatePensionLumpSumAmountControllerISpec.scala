@@ -247,8 +247,6 @@ class StatePensionLumpSumAmountControllerISpec extends IntegrationTest with View
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
-      implicit def document: () => Document = () => Jsoup.parse(result.body)
-
       "has an SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER
         result.header("location").contains(statePensionLumpSumUrl(taxYearEOY)) shouldBe true
@@ -265,8 +263,6 @@ class StatePensionLumpSumAmountControllerISpec extends IntegrationTest with View
         urlGet(fullUrl(statePensionLumpSumAmountUrl(taxYearEOY)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
-
-      implicit def document: () => Document = () => Jsoup.parse(result.body)
 
       "has an SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER
@@ -441,8 +437,6 @@ class StatePensionLumpSumAmountControllerISpec extends IntegrationTest with View
           body = form, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
-
-      implicit def document: () => Document = () => Jsoup.parse(result.body)
 
       "has an SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER

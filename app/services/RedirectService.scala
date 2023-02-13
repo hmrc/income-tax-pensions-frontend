@@ -19,7 +19,6 @@ package services
 import models.mongo.{PensionsCYAModel, PensionsUserData}
 import models.redirects.ConditionalRedirect
 import controllers.pensions.paymentsIntoPensions.routes._
-import models.pension.charges.TransfersIntoOverseasPensionsViewModel
 import models.pension.reliefs.PaymentsIntoPensionViewModel
 import play.api.Logging
 import play.api.mvc.{Call, Request, Result}
@@ -27,7 +26,6 @@ import play.api.mvc.Results.Redirect
 import utils.PaymentsIntoPensionPages
 import utils.PaymentsIntoPensionPages._
 import controllers.pensions.routes._
-import models.requests.UserSessionDataRequest
 
 import scala.concurrent.Future
 

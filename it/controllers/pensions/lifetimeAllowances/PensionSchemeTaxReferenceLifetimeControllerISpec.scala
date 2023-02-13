@@ -23,13 +23,11 @@ import forms.PensionSchemeTaxReferenceForm
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterEach
-import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.PensionAnnualAllowancePages.{pensionSchemeTaxReferenceUrl, pstrSummaryUrl}
+import utils.CommonUtils
 import utils.PageUrls.PensionLifetimeAllowance.{pensionTaxReferenceNumberLifetimeAllowanceUrl, pensionTaxReferenceNumberLifetimeAllowanceUrlIndex}
-import utils.PageUrls.{fullUrl, pensionSummaryUrl}
-import utils.{CommonUtils, IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
+import utils.PageUrls.pensionSummaryUrl
 
 // scalastyle:off magic.number
 class PensionSchemeTaxReferenceLifetimeControllerISpec extends CommonUtils with BeforeAndAfterEach{

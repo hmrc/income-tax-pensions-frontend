@@ -20,8 +20,7 @@ import config.{AppConfig, ErrorHandler}
 import controllers.pensions.routes.PensionsSummaryController
 import controllers.predicates.AuthorisedAction
 import controllers.predicates.TaxYearAction.taxYearAction
-import forms.{IncomeFromPensionFormProvider, YesNoForm}
-import play.api.data.Form
+import forms.IncomeFromPensionFormProvider
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService

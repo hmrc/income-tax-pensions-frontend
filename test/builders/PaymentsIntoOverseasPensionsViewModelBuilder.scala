@@ -16,7 +16,7 @@
 
 package builders
 
-import models.pension.charges.{PaymentsIntoOverseasPensionsViewModel, TaxReliefQuestion, UnauthorisedPaymentsViewModel}
+import models.pension.charges.{PaymentsIntoOverseasPensionsViewModel, TaxReliefQuestion}
 
 object PaymentsIntoOverseasPensionsViewModelBuilder {
 

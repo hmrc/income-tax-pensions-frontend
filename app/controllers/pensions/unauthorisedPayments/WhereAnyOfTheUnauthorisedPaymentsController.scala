@@ -22,7 +22,6 @@ import controllers.predicates.AuthorisedAction
 import forms.YesNoForm
 import models.mongo.PensionsCYAModel
 import models.pension.charges.UnauthorisedPaymentsViewModel
-import controllers.pensions.routes.PensionsSummaryController
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}

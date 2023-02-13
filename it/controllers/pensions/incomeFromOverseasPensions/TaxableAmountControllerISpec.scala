@@ -24,7 +24,7 @@ import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.IncomeFromOverseasPensionsPages.{countrySummaryListControllerUrl, overseasPensionsSchemeSummaryUrl}
+import utils.PageUrls.IncomeFromOverseasPensionsPages.overseasPensionsSchemeSummaryUrl
 import utils.PageUrls.{IncomeFromOverseasPensionsPages, overseasPensionsSummaryUrl}
 import utils.{CommonUtils, PensionsDatabaseHelper}
 

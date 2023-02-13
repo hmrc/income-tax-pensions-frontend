@@ -31,7 +31,7 @@ import utils.Clock
 import views.html.pensions.unauthorisedPayments.UnauthorisedPaymentsCYAView
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 class UnauthorisedPaymentsCYAController @Inject()(authAction: AuthorisedAction,
                                                   view: UnauthorisedPaymentsCYAView,

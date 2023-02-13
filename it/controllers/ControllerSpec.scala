@@ -479,7 +479,7 @@ object ControllerSpec {
         val errorMessageIfExpected = s"The page doesn't have a radio button at index ($index) which is checked'; the label is '$label'."
         val errorMessageIfNotExpected = s"The page does indeed have a radio button at index ($index) which is checked, which was not expected; the label is '$label'."
         MatchResult(
-          isChecked.equals(true),
+          isChecked,
           errorMessageIfExpected,
           errorMessageIfNotExpected
         )

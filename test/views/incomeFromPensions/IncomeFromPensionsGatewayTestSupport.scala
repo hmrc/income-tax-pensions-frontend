@@ -21,7 +21,6 @@ import forms.{IncomeFromPensionFormProvider, YesNoForm}
 import models.AuthorisationRequest
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import play.api.data.Form
 import play.api.i18n.Messages
 import play.api.mvc.AnyContent
 import support.ViewUnitTest

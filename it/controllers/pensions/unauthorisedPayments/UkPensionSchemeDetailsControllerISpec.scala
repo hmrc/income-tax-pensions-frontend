@@ -16,9 +16,7 @@
 
 package controllers.pensions.unauthorisedPayments
 
-import builders.IncomeFromPensionsViewModelBuilder.anIncomeFromPensionsViewModel
-import builders.PensionsUserDataBuilder.{pensionsUserDataWithIncomeFromPensions, pensionsUserDataWithUnauthorisedPayments}
-import builders.UkPensionIncomeViewModelBuilder.{anUkPensionIncomeViewModelOne, anUkPensionIncomeViewModelTwo}
+import builders.PensionsUserDataBuilder.pensionsUserDataWithUnauthorisedPayments
 import builders.UnauthorisedPaymentsViewModelBuilder.anUnauthorisedPaymentsViewModel
 import builders.UserBuilder.aUserRequest
 import org.jsoup.Jsoup
@@ -27,9 +25,8 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.IncomeFromPensionsPages._
-import utils.PageUrls.unauthorisedPaymentsPages.{checkUnauthorisedPaymentsCyaUrl, pensionSchemeTaxReferenceUrl, pensionSchemeTaxReferenceUrlWithIndex, removePensionSchemeReferenceUrl, ukPensionSchemeDetailsUrl}
-import utils.PageUrls.{fullUrl, pensionSummaryUrl}
+import utils.PageUrls.fullUrl
+import utils.PageUrls.unauthorisedPaymentsPages._
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 // scalastyle:off magic.number

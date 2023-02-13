@@ -17,18 +17,17 @@
 package controllers.pensions.paymentsIntoOverseasPensions
 
 import builders.PaymentsIntoOverseasPensionsViewModelBuilder.aPaymentsIntoOverseasPensionsViewModel
-import builders.PensionsUserDataBuilder.{aPensionsUserData, anPensionsUserDataEmptyCya, pensionUserDataWithOverseasPensions, pensionsUserDataWithUnauthorisedPayments}
+import builders.PensionsUserDataBuilder.{aPensionsUserData, anPensionsUserDataEmptyCya, pensionUserDataWithOverseasPensions}
 import builders.UserBuilder.aUserRequest
 import forms.YesNoForm
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterEach
-import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.OverseasPensionPages.{employerPayOverseasPensionUrl, taxEmployerPaymentsUrl}
-import utils.PageUrls.{fullUrl, pensionSummaryUrl}
 import utils.CommonUtils
+import utils.PageUrls.OverseasPensionPages.{employerPayOverseasPensionUrl, taxEmployerPaymentsUrl}
+import utils.PageUrls.pensionSummaryUrl
 
 class EmployerPayOverseasPensionControllerISpec extends CommonUtils with BeforeAndAfterEach {
 

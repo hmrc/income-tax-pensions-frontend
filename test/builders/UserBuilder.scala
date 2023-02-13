@@ -16,10 +16,8 @@
 
 package builders
 
-import models.User
-import play.api.mvc.AnyContentAsEmpty
-import play.api.test.FakeRequest
 import builders.PensionsUserDataBuilder.aPensionsUserData
+import models.User
 import uk.gov.hmrc.auth.core.AffinityGroup
 
 

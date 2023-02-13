@@ -16,10 +16,8 @@
 
 package services
 
-import models.User
 import models.mongo.PensionsUserData
 import models.pension.charges.{TransferPensionScheme, TransfersIntoOverseasPensionsViewModel}
-import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}

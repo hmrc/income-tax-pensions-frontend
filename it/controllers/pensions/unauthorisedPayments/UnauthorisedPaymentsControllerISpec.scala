@@ -21,8 +21,8 @@ import builders.IncomeTaxUserDataBuilder.anIncomeTaxUserData
 import builders.PensionsUserDataBuilder.pensionsUserDataWithUnauthorisedPayments
 import builders.UnauthorisedPaymentsViewModelBuilder.{anUnauthorisedPaymentsEmptyViewModel, anUnauthorisedPaymentsViewModel}
 import builders.UserBuilder.aUserRequest
-import forms.UnAuthorisedPaymentsForm.{noValue, yesNotSurchargeValue, yesSurchargeValue}
 import forms.UnAuthorisedPaymentsForm
+import forms.UnAuthorisedPaymentsForm.{noValue, yesNotSurchargeValue, yesSurchargeValue}
 import models.pension.charges.UnauthorisedPaymentsViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -31,8 +31,8 @@ import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import utils.PageUrls.UnAuthorisedPayments.{noSurchargeAmountUrl, surchargeAmountUrl}
-import utils.PageUrls.unauthorisedPaymentsPages.{checkUnauthorisedPaymentsCyaUrl, nonUKTaxOnAmountSurcharge, unauthorisedPaymentsUrl}
-import utils.PageUrls.{fullUrl, pensionSummaryUrl}
+import utils.PageUrls.fullUrl
+import utils.PageUrls.unauthorisedPaymentsPages.{checkUnauthorisedPaymentsCyaUrl, unauthorisedPaymentsUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAndAfterEach with ViewHelpers with PensionsDatabaseHelper {

@@ -24,7 +24,7 @@ import models.requests.UserSessionDataRequest
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.i18n.{Lang, Messages, MessagesApi}
 import play.api.mvc.AnyContent
-import play.api.test.{FakeRequest, Injecting}
+import play.api.test.Injecting
 import uk.gov.hmrc.auth.core.AffinityGroup
 import utils.{FakeRequestProvider, TestTaxYearHelper}
 

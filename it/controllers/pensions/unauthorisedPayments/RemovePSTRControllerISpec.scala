@@ -17,7 +17,6 @@
 package controllers.pensions.unauthorisedPayments
 
 import builders.PensionsUserDataBuilder.aPensionsUserData
-import builders.UkPensionIncomeViewModelBuilder.anUkPensionIncomeViewModelTwo
 import builders.UserBuilder.aUserRequest
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -25,7 +24,6 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.IncomeFromPensionsPages.{removePensionSchemeUrl, ukPensionIncomeCyaUrl, ukPensionSchemeSummaryListUrl}
 import utils.PageUrls.fullUrl
 import utils.PageUrls.unauthorisedPaymentsPages.{checkUnauthorisedPaymentsCyaUrl, removePensionSchemeReferenceUrl, ukPensionSchemeDetailsUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}

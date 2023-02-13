@@ -367,7 +367,7 @@ class AnnualAndLifetimeAllowanceCYAViewHelperSpec extends AnyWordSpec with Match
   }
 
   private def stubbedMessages() = {
-    import collection.JavaConverters._
+    import scala.jdk.CollectionConverters._
 
     val messagesApi = stubMessagesApi(
       Map(

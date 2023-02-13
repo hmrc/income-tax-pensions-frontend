@@ -20,17 +20,15 @@ import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import builders.PensionsUserDataBuilder
 import builders.TransfersIntoOverseasPensionsViewModelBuilder.aTransfersIntoOverseasPensionsViewModel
 import builders.UserBuilder.{aUser, aUserRequest}
+import forms.RadioButtonAmountForm
+import forms.RadioButtonAmountForm.{amount2, yesNo}
+import models.mongo.PensionsCYAModel
+import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
-import forms.RadioButtonAmountForm.{amount2, yesNo}
-import forms.RadioButtonAmountForm
-import models.mongo.PensionsCYAModel
-import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
-import play.api.http.HeaderNames
 import utils.PageUrls.PensionAnnualAllowancePages.transferPensionSchemeTaxUrl
-import utils.PageUrls.{fullUrl, overseasPensionsSummaryUrl, overviewUrl}
+import utils.PageUrls.{fullUrl, overviewUrl}
+import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 
 class OverseasPensionTransferTaxChargeSchemeISpec
