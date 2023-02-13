@@ -19,7 +19,6 @@ package controllers.pensions.transferIntoOverseasPensions
 import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import controllers.ControllerSpec.UserConfig
 import controllers.YesNoControllerSpec
-import models.pension.charges.TransfersIntoOverseasPensionsViewModel
 import play.api.http.Status.BAD_REQUEST
 import play.api.libs.ws.WSResponse
 

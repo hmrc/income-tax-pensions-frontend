@@ -575,10 +575,7 @@ class OverseasTransferChargePaidControllerISpec
   override def getPageWithIndex(index: Int = 0)(implicit userConfig: UserConfig, wsClient: WSClient): WSResponse = {
     getPage(getMap(index))
   }
-
-  private def submitFormWithIndex(submittedFormData: SubmittedFormData, index: Int = 0)(implicit userConfig: UserConfig, wsClient: WSClient): WSResponse = {
-    submitForm(submittedFormData, getMap(index))
-  }
+  
   private def formUrl(index: Int = 0): Option[String] =
     Some(relativeUrlForThisPage + "?pensionSchemeIndex=" + index)
 

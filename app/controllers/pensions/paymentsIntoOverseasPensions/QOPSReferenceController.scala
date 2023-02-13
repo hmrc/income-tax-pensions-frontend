@@ -17,9 +17,12 @@
 package controllers.pensions.paymentsIntoOverseasPensions
 
 import config.{AppConfig, ErrorHandler}
+import controllers.pensions.paymentsIntoOverseasPensions.routes.QOPSReferenceController
+import controllers.pensions.routes.PensionsSummaryController
 import controllers.predicates.AuthorisedAction
 import forms.QOPSReferenceNumberForm
-import models.{AuthorisationRequest, User}
+import models.User
+import models.mongo.{PensionsCYAModel, PensionsUserData}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -27,9 +30,6 @@ import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.paymentsIntoOverseasPensions.QOPSReferenceView
-import controllers.pensions.routes.PensionsSummaryController
-import controllers.pensions.paymentsIntoOverseasPensions.routes.QOPSReferenceController
-import models.mongo.{PensionsCYAModel, PensionsUserData}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -56,7 +56,7 @@ class QOPSReferenceController @Inject()(authAction: AuthorisedAction,
     }
   }
 
-  private def referenceForm(user: User, pensionUserData: PensionsUserData)(implicit request: AuthorisationRequest[AnyContent]): Form[String] =
+  private def referenceForm(user: User, pensionUserData: PensionsUserData): Form[String] =
     pensionUserData.pensions.paymentsIntoOverseasPensions.qualifyingOverseasPensionSchemeReferenceNumber
       .map(value => referenceForm().fill(removePrefix(value)))
       .getOrElse(referenceForm())

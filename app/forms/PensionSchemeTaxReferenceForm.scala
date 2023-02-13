@@ -17,7 +17,7 @@
 package forms
 
 import filters.InputFilters
-import forms.validation.StringConstraints.{validateChar, validateSize}
+import forms.validation.StringConstraints.validateChar
 import forms.validation.mappings.MappingUtil.trimmedText
 import forms.validation.utils.ConstraintUtil.ConstraintUtil
 import play.api.data.Form

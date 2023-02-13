@@ -17,24 +17,19 @@
 package controllers.pensions.incomeFromPensions
 
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.incomeFromPensions.routes.{PensionSchemeStartDateController, UkPensionIncomeSummaryController}
-import controllers.pensions.routes.PensionsSummaryController
+import controllers.pensions.incomeFromPensions.routes.UkPensionSchemePaymentsController
 import controllers.predicates.AuthorisedAction
 import controllers.predicates.TaxYearAction.taxYearAction
-import forms.{FormUtils, TupleAmountForm}
+import forms.FormUtils
 import models.mongo.PensionsCYAModel
 import models.pension.AllPensionsData
-import models.pension.statebenefits.{IncomeFromPensionsViewModel, UkPensionIncomeViewModel}
-import play.api.data.Form
+import models.pension.AllPensionsData.generateCyaFromPrior
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
-import services.RedirectService.redirectBasedOnCurrentAnswers
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.incomeFromPensions.UkPensionIncomeCYAView
-import controllers.pensions.incomeFromPensions.routes.UkPensionSchemePaymentsController
-import models.pension.AllPensionsData.generateCyaFromPrior
 
 import javax.inject.Inject
 import scala.concurrent.Future

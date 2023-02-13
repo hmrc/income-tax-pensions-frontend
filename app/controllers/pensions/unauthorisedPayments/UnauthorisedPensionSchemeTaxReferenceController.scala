@@ -18,6 +18,7 @@ package controllers.pensions.unauthorisedPayments
 
 import config.{AppConfig, ErrorHandler}
 import controllers.predicates.AuthorisedAction
+import controllers.predicates.TaxYearAction.taxYearAction
 import forms.PensionSchemeTaxReferenceForm
 import models.mongo.PensionsCYAModel
 import play.api.data.Form
@@ -27,9 +28,6 @@ import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.unauthorisedPayments.PensionSchemeTaxReferenceView
-import controllers.pensions.routes.PensionsSummaryController
-import controllers.predicates.TaxYearAction.taxYearAction
-import models.User
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -79,7 +77,7 @@ class UnauthorisedPensionSchemeTaxReferenceController @Inject()(implicit val cc:
         pstr => {
           pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
             case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
-            case Right(Some(optData)) => {
+            case Right(Some(optData)) =>
               val pensionsCYAModel: PensionsCYAModel = optData.pensions
               val viewModel = pensionsCYAModel.unauthorisedPayments
               val pstrList: Seq[String] = optData.pensions.unauthorisedPayments.pensionSchemeTaxReference.getOrElse(Seq.empty)
@@ -91,7 +89,7 @@ class UnauthorisedPensionSchemeTaxReferenceController @Inject()(implicit val cc:
                       pstrList.updated(pensionSchemeIndex, pstr)
                     case (Some(pstrList), None) =>
                       pstrList ++ Seq(pstr)
-                    case (None, None) =>
+                    case (None, _) =>
                       Seq(pstr)
                   }
 
@@ -106,7 +104,6 @@ class UnauthorisedPensionSchemeTaxReferenceController @Inject()(implicit val cc:
               } else {
                 Future.successful(Redirect(controllers.pensions.unauthorisedPayments.routes.UkPensionSchemeDetailsController.show(taxYear)))
               }
-            }
             case _ => Future.successful(Redirect(controllers.pensions.unauthorisedPayments.routes.UnauthorisedPaymentsCYAController.show(taxYear)))
           }
         }

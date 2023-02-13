@@ -21,21 +21,16 @@ import controllers.pensions.routes._
 import controllers.predicates.AuthorisedAction
 import controllers.predicates.TaxYearAction.taxYearAction
 import forms.Countries
-import javax.inject.Inject
-import models.mongo.PensionsCYAModel
-import models.pension.AllPensionsData
 import models.pension.AllPensionsData.generateCyaFromPrior
 import models.pension.charges.IncomeFromOverseasPensionsViewModel
-import play.api
-import play.api.data
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import routes._
 import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.incomeFromOverseasPensions.IncomeFromOverseasPensionsCYAView
 
+import javax.inject.Inject
 import scala.concurrent.Future
 
 class IncomeFromOverseasPensionsCYAController @Inject()(authAction: AuthorisedAction,

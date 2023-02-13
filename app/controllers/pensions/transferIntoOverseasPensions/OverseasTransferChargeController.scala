@@ -31,10 +31,11 @@ import utils.{Clock, SessionHelper}
 import views.html.pensions.transferIntoOverseasPensions.OverseasTransferChargeView
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
-class OverseasTransferChargeController @Inject()(actionsProvider: ActionsProvider, pensionSessionService: PensionSessionService, view: OverseasTransferChargeView, errorHandler: ErrorHandler)
-                                                (implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
+class OverseasTransferChargeController @Inject()(actionsProvider: ActionsProvider, pensionSessionService: PensionSessionService,
+                                                 view: OverseasTransferChargeView, errorHandler: ErrorHandler)
+                                                (implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock)
   extends FrontendController(mcc) with I18nSupport with SessionHelper {
 
   def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
@@ -74,7 +75,7 @@ class OverseasTransferChargeController @Inject()(actionsProvider: ActionsProvide
 
   private def updateSessionData[T](pensionUserData: PensionsUserData,
                                    yesNo: Boolean,
-                                   amount: Option[BigDecimal] = None,
+                                   amount: Option[BigDecimal],
                                    taxYear: Int)(implicit request: UserSessionDataRequest[T]) = {
     val updatedCyaModel: PensionsCYAModel = pensionUserData.pensions.copy(
       transfersIntoOverseasPensions = pensionUserData.pensions.transfersIntoOverseasPensions.copy(

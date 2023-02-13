@@ -82,8 +82,8 @@ trait Formatters {
                           minAmountkey: String,
                           maxAmountKey: String,
                           args: Seq[String]): Either[Seq[FormError], Option[BigDecimal]] = x match {
-    case bigDecimal if (bigDecimal == BigDecimal("0")) => Left(Seq(FormError(key, minAmountkey, args)))
-    case bigDecimal if (bigDecimal >= BigDecimal(maxAmount)) => Left(Seq(FormError(key, maxAmountKey, args)))
+    case bigDecimal if bigDecimal == BigDecimal("0") => Left(Seq(FormError(key, minAmountkey, args)))
+    case bigDecimal if bigDecimal >= BigDecimal(maxAmount) => Left(Seq(FormError(key, maxAmountKey, args)))
     case bigDecimal => Right(Some(bigDecimal))
   }
 
@@ -91,7 +91,7 @@ trait Formatters {
                              key: String,
                              maxAmountKey: String,
                              args: Seq[String]): Either[Seq[FormError], Option[BigDecimal]] = x match {
-    case bigDecimal if (bigDecimal >= BigDecimal(maxAmount)) => Left(Seq(FormError(key, maxAmountKey, args)))
+    case bigDecimal if bigDecimal >= BigDecimal(maxAmount) => Left(Seq(FormError(key, maxAmountKey, args)))
     case bigDecimal => Right(Some(bigDecimal))
   }
 
@@ -128,12 +128,12 @@ trait Formatters {
           .map(_.replace(",", ""))
           .map(_.replace("£", ""))
           .map(_.replaceAll("""\s""", ""))
-          .flatMap {
-            case s => checkIfValidString(s, key, requiredKey, invalidNumericKey, args)
-          }.flatMap {
-          case bigDecimal if minAmountkey != "" => checksWithMinAmount(bigDecimal, key, minAmountkey, maxAmountKey, args)
-          case bigDecimal if minAmountkey == "" => checksWithOutMinAmount(bigDecimal, key, maxAmountKey, args)
-        }
+          .flatMap(s => checkIfValidString(s, key, requiredKey, invalidNumericKey, args))
+          .flatMap( bd =>
+            if (minAmountkey != "") {
+              checksWithMinAmount(bd, key, minAmountkey, maxAmountKey, args)
+            } else { checksWithOutMinAmount(bd, key, maxAmountKey, args) }
+          )
       }
 
       override def unbind(key: String, value: Option[BigDecimal]): Map[String, String] =

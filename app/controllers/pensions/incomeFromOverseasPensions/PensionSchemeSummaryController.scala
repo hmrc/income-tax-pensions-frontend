@@ -18,32 +18,27 @@ package controllers.pensions.incomeFromOverseasPensions
 
 import config.AppConfig
 import controllers.pensions.incomeFromOverseasPensions.routes.CountrySummaryListController
-import controllers.pensions.routes.PensionsSummaryController
 import controllers.predicates.ActionsProvider
 import models.pension.pages.OverseasPensionSchemeSummaryPage
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.SessionHelper
 import views.html.pensions.incomeFromOverseasPensions.PensionsSchemeSummary
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class PensionSchemeSummaryController @Inject()(actionsProvider: ActionsProvider,
-                                               pageView:  PensionsSchemeSummary,
-                                               pensionSessionService: PensionSessionService
-                                              )
-                                              (implicit mcc: MessagesControllerComponents, appConfig: AppConfig, ec: ExecutionContext)
+                                               pageView:  PensionsSchemeSummary)
+                                              (implicit mcc: MessagesControllerComponents, appConfig: AppConfig)
   extends FrontendController(mcc) with I18nSupport with SessionHelper {
 
   def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) { implicit sessionUserData =>
     Ok(pageView(OverseasPensionSchemeSummaryPage.apply (taxYear, sessionUserData.pensionsUserData, index)))
   }
 
-  def submit(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear)  { implicit sessionUserData =>
+  def submit(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear)  { _ =>
       Redirect(CountrySummaryListController.show(taxYear))
   }
 }

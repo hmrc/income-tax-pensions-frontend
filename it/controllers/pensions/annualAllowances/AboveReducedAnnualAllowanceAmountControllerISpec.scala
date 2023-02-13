@@ -286,8 +286,6 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
-      implicit def document: () => Document = () => Jsoup.parse(result.body)
-
       "has an SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER
         result.header("location").contains(aboveAnnualAllowanceUrl(taxYearEOY)) shouldBe true
@@ -304,8 +302,6 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
         urlGet(fullUrl(amountAboveAnnualAllowanceUrl(taxYearEOY)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
-
-      implicit def document: () => Document = () => Jsoup.parse(result.body)
 
       "has an SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER

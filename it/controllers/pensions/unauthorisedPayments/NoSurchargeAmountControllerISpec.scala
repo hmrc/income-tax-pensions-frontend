@@ -27,7 +27,6 @@ import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import utils.CommonUtils
 import utils.PageUrls.UnAuthorisedPayments.noSurchargeAmountUrl
-import utils.PageUrls.{fullUrl, pensionSummaryUrl}
 import utils.PageUrls.unauthorisedPaymentsPages.{checkUnauthorisedPaymentsCyaUrl, nonUKTaxOnAmountSurcharge, whereAnyOfTheUnauthorisedPaymentsUrl}
 
 
@@ -181,7 +180,6 @@ class NoSurchargeAmountControllerISpec extends CommonUtils with BeforeAndAfterEa
     }
 
     "redirect to the non uk tax not surcharge page if user tries to access link directly" which {
-      val validAmount = "100.22"
       val viewModel = anUnauthorisedPaymentsViewModel.copy(noSurchargeQuestion = Some(false))
       val pensionUserData = pensionsUserDataWithUnauthorisedPayments(viewModel, isPriorSubmission = false)
 

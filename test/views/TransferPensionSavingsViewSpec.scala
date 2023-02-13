@@ -16,7 +16,6 @@
 
 package views
 
-import builders.TransfersIntoOverseasPensionsViewModelBuilder.aTransfersIntoOverseasPensionsViewModel
 import forms.TransferPensionSavingsForm.yesNoForm
 import forms.YesNoForm
 import models.requests.UserSessionDataRequest

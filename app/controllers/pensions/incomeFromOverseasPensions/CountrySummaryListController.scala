@@ -19,7 +19,6 @@ package controllers.pensions.incomeFromOverseasPensions
 
 import config.AppConfig
 import controllers.predicates.ActionsProvider
-import controllers.pensions.routes.PensionsSummaryController
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController

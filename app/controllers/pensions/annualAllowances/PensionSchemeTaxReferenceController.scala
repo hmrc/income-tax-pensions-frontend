@@ -100,7 +100,7 @@ class PensionSchemeTaxReferenceController @Inject()(implicit val cc: MessagesCon
                     pstrList.updated(pstrIndex, newPensionSchemeTaxRef.head)
                   case (Some(pstrList), None) =>
                     pstrList ++ newPensionSchemeTaxRef
-                  case (None, None) =>
+                  case (None, _) =>
                     newPensionSchemeTaxRef
                 }
 

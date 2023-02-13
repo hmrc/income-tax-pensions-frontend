@@ -101,7 +101,7 @@ class PensionSchemeTaxReferenceLifetimeController @Inject()(authAction: Authoris
                     pstrList.updated(pstrIndex, newPensionSchemeTaxRef.head)
                   case (Some(pstrList), None) =>
                     pstrList ++ newPensionSchemeTaxRef
-                  case (None, None) =>
+                  case (None, _) =>
                     newPensionSchemeTaxRef
                 }
 

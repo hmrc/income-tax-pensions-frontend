@@ -16,8 +16,6 @@
 
 package views
 
-import controllers.pensions.paymentsIntoPensions.PaymentsIntoPensionFormProvider
-import controllers.pensions.paymentsIntoPensions.routes.PaymentsIntoPensionsStatusController
 import forms.{PaymentsIntoOverseasPensionsFormProvider, YesNoForm}
 import models.AuthorisationRequest
 import org.jsoup.Jsoup
@@ -27,7 +25,7 @@ import play.api.mvc.AnyContent
 import support.ViewUnitTest
 import views.html.pensions.paymentsIntoPensions.PaymentsIntoOverseasPensionsView
 
-class PaymentsIntoOverseasPensionsGatewayTestSupport extends ViewUnitTest {
+class PaymentsIntoOverseasPensionsGatewaySpec extends ViewUnitTest {
 
   object Selectors {
     val continueButtonFormSelector = "#main-content > div > div > form"

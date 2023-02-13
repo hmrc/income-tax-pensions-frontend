@@ -17,26 +17,24 @@
 package services
 
 import builders.AllPensionsDataBuilder.anAllPensionDataEmpty
+import builders.EmploymentPensionsBuilder.anEmploymentPensions
+import builders.PensionIncomeViewModelBuilder.aPensionIncome
+import builders.PensionsCYAModelBuilder._
 import config._
-import models.mongo.{DataNotFound, DataNotUpdated, DatabaseError, PensionsCYAModel, PensionsUserData}
+import connectors.IncomeSourceConnector
+import models.mongo._
 import models.pension.AllPensionsData
+import models.pension.AllPensionsData.generateCyaFromPrior
 import models.pension.charges._
 import models.pension.reliefs.{PensionReliefs, Reliefs}
 import models.pension.statebenefits.{StateBenefit, StateBenefits, StateBenefitsModel}
+import org.scalatest.concurrent.ScalaFutures
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, SEE_OTHER}
 import play.api.i18n.MessagesApi
+import play.api.mvc.Result
 import play.api.mvc.Results.{Ok, Redirect}
 import utils.UnitTest
 import views.html.templates.{InternalServerErrorTemplate, NotFoundTemplate, ServiceUnavailableTemplate}
-import builders.PensionsCYAModelBuilder._
-import builders.EmploymentPensionsBuilder.anEmploymentPensions
-import builders.IncomeTaxUserDataBuilder.anIncomeTaxUserData
-import connectors.IncomeSourceConnector
-import models.pension.AllPensionsData.generateCyaFromPrior
-import builders.PensionIncomeViewModelBuilder.aPensionIncome
-import builders.PensionsUserDataBuilder.aPensionsUserData
-import org.scalatest.concurrent.ScalaFutures
-import play.api.mvc.Result
 
 import scala.concurrent.Future
 
@@ -306,7 +304,7 @@ class PensionSessionServiceSpec extends UnitTest
 
   ".createOrUpdateSessionData" should {
     "return SEE_OTHER(303) status when createOrUpdate succeeds" in {
-      mockCreateOrUpdate(pensionDataFull, Right())
+      mockCreateOrUpdate(pensionDataFull, Right(()))
 
       val response = service.createOrUpdateSessionData(user,
         pensionCYA, taxYear, isPriorSubmission = true,
@@ -330,7 +328,7 @@ class PensionSessionServiceSpec extends UnitTest
 
   "generateCyaFromPrior" should {
     "generate a PensionsCYAModel from prior AllPensionsData" in {
-      mockCreateOrUpdate(pensionDataFull, Right())
+      mockCreateOrUpdate(pensionDataFull, Right(()))
       val response = generateCyaFromPrior(anAllPensionDataEmpty)
 
       response shouldBe aPensionsCYAGeneratedFromPriorEmpty
@@ -341,7 +339,7 @@ class PensionSessionServiceSpec extends UnitTest
 
   ".createOrUpdateSessionData" should {
     "return Right(unit) when createOrUpdate succeeds" in {
-      mockCreateOrUpdate(pensionDataFull, Right())
+      mockCreateOrUpdate(pensionDataFull, Right(()))
 
 
       val response = await(service.createOrUpdateSessionData(pensionDataFull))

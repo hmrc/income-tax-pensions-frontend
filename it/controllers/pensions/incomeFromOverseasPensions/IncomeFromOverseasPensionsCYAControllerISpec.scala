@@ -17,14 +17,21 @@
 package controllers.pensions.incomeFromOverseasPensions
 
 import builders.AllPensionsDataBuilder.anAllPensionsData
-import builders.IncomeTaxUserDataBuilder.anIncomeTaxUserData
-import builders.PensionsUserDataBuilder.pensionUserDataWithIncomeOverseasPension
 import builders.IncomeFromOverseasPensionsViewModelBuilder._
+import builders.IncomeFromPensionsViewModelBuilder.anIncomeFromPensionsViewModel
+import builders.IncomeTaxUserDataBuilder.anIncomeTaxUserData
+import builders.PaymentsIntoOverseasPensionsViewModelBuilder.aPaymentsIntoOverseasPensionsViewModel
+import builders.PensionContributionsBuilder.anPensionContributions
+import builders.PensionLifetimeAllowanceViewModelBuilder.aPensionLifetimeAllowanceViewModel
+import builders.PensionSavingTaxChargesBuilder.anPensionSavngTaxCharges
+import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import builders.PensionsUserDataBuilder
+import builders.PensionsUserDataBuilder.{aPensionsUserData, pensionUserDataWithIncomeOverseasPension}
+import builders.ReliefsBuilder.anReliefs
+import builders.UnauthorisedPaymentsViewModelBuilder.anUnauthorisedPaymentsViewModel
 import builders.UserBuilder.aUserRequest
 import controllers.pensions.routes.OverseasPensionsSummaryController
-import forms.Countries
-import models.mongo.PensionsCYAModel
+import models.mongo.{PensionsCYAModel, PensionsUserData}
 import models.pension.charges.PensionAnnualAllowancesViewModel
 import models.pension.income.ForeignPension
 import models.pension.reliefs.PaymentsIntoPensionViewModel
@@ -34,33 +41,19 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.Logging
 import play.api.http.HeaderNames
 import play.api.http.Status.{OK, SEE_OTHER}
-import builders.ReliefsBuilder.anReliefs
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.fullUrl
 import utils.PageUrls.IncomeFromOverseasPensionsPages.checkIncomeFromOverseasPensionsCyaUrl
-import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
-import builders.PensionsUserDataBuilder.aPensionsUserData
-import builders.PensionsCYAModelBuilder.aPensionsCYAModel
-import builders.PensionSavingTaxChargesBuilder.anPensionSavngTaxCharges
-import builders.PensionContributionsBuilder.anPensionContributions
-import builders.PensionLifetimeAllowanceViewModelBuilder.aPensionLifetimeAllowanceViewModel
-import builders.UnauthorisedPaymentsViewModelBuilder.anUnauthorisedPaymentsViewModel
-import builders.IncomeFromPensionsViewModelBuilder.anIncomeFromPensionsViewModel
-import builders.PaymentsIntoOverseasPensionsViewModelBuilder.aPaymentsIntoOverseasPensionsViewModel
-import org.mongodb.scala
-import org.mongodb.scala.result
-import utils.CommonUtils
+import utils.PageUrls.fullUrl
+import utils.{CommonUtils, IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 class IncomeFromOverseasPensionsCYAControllerISpec extends
   IntegrationTest with
   ViewHelpers with
   BeforeAndAfterEach with
   PensionsDatabaseHelper with
-  CommonUtils with Logging{
-  val cyaDataIncomplete: PaymentsIntoPensionViewModel = PaymentsIntoPensionViewModel(
-    rasPensionPaymentQuestion = Some(true)
-  )
-
+  CommonUtils with Logging {   //scalastyle:off magic.number
+  
+  val cyaDataIncomplete: PaymentsIntoPensionViewModel = PaymentsIntoPensionViewModel( rasPensionPaymentQuestion = Some(true))
 
   object ChangeLinksIncomeFromOverseasPensions {
     val paymentsFromOverseasPensions: String = controllers.pensions.incomeFromOverseasPensions.routes.PensionOverseasIncomeStatus.show(taxYear).url
@@ -148,12 +141,12 @@ class IncomeFromOverseasPensionsCYAControllerISpec extends
     UserScenario(isWelsh = true, isAgent = true, CommonExpectedCY, Some(ExpectedAgentCY))
   )
 
-  def pensionsUsersData(isPrior: Boolean = false, pensionsCyaModel: PensionsCYAModel) = {
+  def pensionsUsersData(isPrior: Boolean = false, pensionsCyaModel: PensionsCYAModel): PensionsUserData = {
     PensionsUserDataBuilder.aPensionsUserData.copy(
       isPriorSubmission = isPrior, pensions = pensionsCyaModel)
   }
 
-  def stringToBoolean(yesNo: Boolean) = if (yesNo) "Yes" else "No"
+  def stringToBoolean(yesNo: Boolean): String = if (yesNo) "Yes" else "No"
 
   ".show" should {
     userScenarios.foreach { user =>
@@ -180,7 +173,8 @@ class IncomeFromOverseasPensionsCYAControllerISpec extends
             dropPensionsDB()
             insertCyaData(pensionUserDataWithIncomeOverseasPension(anIncomeFromOverseasPensionsViewModel, isPriorSubmission = false), aUserRequest)
             userDataStub(anIncomeTaxUserData.copy(pensions = Some(anUpdatedAllPensionsData)), nino, taxYear)
-            urlGet(fullUrl(checkIncomeFromOverseasPensionsCyaUrl(taxYear)), welsh = user.isWelsh, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
+            urlGet(fullUrl(checkIncomeFromOverseasPensionsCyaUrl(taxYear)), welsh = user.isWelsh,
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
           }
 
           "has an OK status" in {
@@ -210,7 +204,8 @@ class IncomeFromOverseasPensionsCYAControllerISpec extends
             dropPensionsDB()
             insertCyaData(pensionUserDataWithIncomeOverseasPension(anIncomeFromOverseasPensionsViewModel, isPriorSubmission = false), aUserRequest)
             userDataStub(anIncomeTaxUserData.copy(pensions = Some(anUpdatedAllPensionsData)), nino, taxYear)
-            urlGet(fullUrl(checkIncomeFromOverseasPensionsCyaUrl(taxYear)), welsh = user.isWelsh, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
+            urlGet(fullUrl(checkIncomeFromOverseasPensionsCyaUrl(taxYear)), welsh = user.isWelsh,
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
           }
 
           "has an OK status" in {
@@ -241,7 +236,8 @@ class IncomeFromOverseasPensionsCYAControllerISpec extends
           lazy val result: WSResponse = {
             dropPensionsDB()
             authoriseAgentOrIndividual(isAgent = false)
-            urlPost(fullUrl(checkIncomeFromOverseasPensionsCyaUrl(taxYear)), form, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
+            urlPost(fullUrl(checkIncomeFromOverseasPensionsCyaUrl(taxYear)), form, follow = false,
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
           }
 
           "have the status SEE OTHER" in {
@@ -265,7 +261,8 @@ class IncomeFromOverseasPensionsCYAControllerISpec extends
             userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYear)
             insertCyaData(aPensionsUserData.copy(pensions = aPensionsCYAModel.copy(paymentsIntoPension = cyaDataIncomplete), taxYear = taxYear), aUserRequest)
             authoriseAgentOrIndividual(isAgent = false)
-            urlPost(fullUrl(checkIncomeFromOverseasPensionsCyaUrl(taxYear)), form, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
+            urlPost(fullUrl(checkIncomeFromOverseasPensionsCyaUrl(taxYear)), form, follow = false,
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
           }
 
           "the status is SEE OTHER" in {
@@ -305,7 +302,8 @@ class IncomeFromOverseasPensionsCYAControllerISpec extends
               paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel
             ), taxYear = taxYear), aUserRequest)
             authoriseAgentOrIndividual(isAgent = false)
-            urlPost(fullUrl(checkIncomeFromOverseasPensionsCyaUrl(taxYear)), form, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
+            urlPost(fullUrl(checkIncomeFromOverseasPensionsCyaUrl(taxYear)), form, follow = false,
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
           }
 
           "the status is SEE OTHER" in {

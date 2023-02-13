@@ -17,9 +17,8 @@
 package models.pension.pages
 
 
-import forms.Countries.{getCountryFromCode, getCountryFromCodeWithDefault}
+import forms.Countries.getCountryFromCodeWithDefault
 import models.mongo.PensionsUserData
-import models.pension.charges.PensionScheme
 import play.api.i18n.Messages
 import play.api.mvc.Call
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
@@ -33,14 +32,15 @@ object OverseasPensionSchemeSummaryPage {
   def apply(taxYear: Int, pensionsUserData: PensionsUserData, index: Option[Int])(implicit messages: Messages): OverseasPensionSchemeSummaryPage = {
     val overSeasPensions = pensionsUserData.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes(index.getOrElse(0))
 
-    OverseasPensionSchemeSummaryPage(taxYear, Seq(
+    OverseasPensionSchemeSummaryPage(taxYear, Seq(   //scalastyle:off line.size.limit
       Some(summaryListRow(
         HtmlContent(Messages("incomeFromOverseasPensions.summary.country")),
         HtmlContent(getCountryFromCodeWithDefault(overSeasPensions.alphaTwoCode)),
         actions = Seq((Call("GET", controllers.pensions.incomeFromOverseasPensions.routes.PensionOverseasIncomeCountryController.show(taxYear, index).url), Messages("common.change"), None)))),
       Some(summaryListRow(
         HtmlContent(Messages("incomeFromOverseasPensions.summary.pension.payments")),
-        HtmlContent(s"${Messages("incomeFromOverseasPensions.summary.amount", bigDecimalCurrency(overSeasPensions.pensionPaymentAmount.getOrElse(0).toString))} ${overSeasPensions.pensionPaymentTaxPaid.map(taxPaid =>  s"<br> ${Messages("incomeFromOverseasPensions.summary.nonUk.amount",bigDecimalCurrency(taxPaid.toString))}").getOrElse("")}"),
+        HtmlContent(s"${Messages("incomeFromOverseasPensions.summary.amount", bigDecimalCurrency(overSeasPensions.pensionPaymentAmount.getOrElse(BigDecimal(0)).toString))} " +
+          s"${overSeasPensions.pensionPaymentTaxPaid.map(taxPaid =>  s"<br> ${Messages("incomeFromOverseasPensions.summary.nonUk.amount",bigDecimalCurrency(taxPaid.toString))}").getOrElse("")}"),
         actions = Seq((Call("GET", controllers.pensions.incomeFromOverseasPensions.routes.PensionPaymentsController.show(taxYear, index).url), Messages("common.change"), None)))),
       Some(summaryListRow(
         HtmlContent(Messages("incomeFromOverseasPensions.summary.swt")),

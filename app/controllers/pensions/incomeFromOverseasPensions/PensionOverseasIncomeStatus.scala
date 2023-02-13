@@ -17,7 +17,8 @@
 package controllers.pensions.incomeFromOverseasPensions
 
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.routes.{OverseasPensionsSummaryController, PensionsSummaryController}
+import controllers.pensions.incomeFromOverseasPensions.routes._
+import controllers.pensions.routes.OverseasPensionsSummaryController
 import controllers.predicates.AuthorisedAction
 import forms.YesNoForm
 import models.User
@@ -25,11 +26,11 @@ import models.mongo.PensionsCYAModel
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import routes._
 import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.incomeFromOverseasPensions.IncomeFromOverseasPensionsView
+
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 

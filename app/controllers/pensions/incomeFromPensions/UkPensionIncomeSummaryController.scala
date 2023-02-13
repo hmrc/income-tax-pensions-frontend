@@ -19,6 +19,7 @@ package controllers.pensions.incomeFromPensions
 import config.AppConfig
 import controllers.pensions.incomeFromPensions.routes.UkPensionIncomeCYAController
 import controllers.predicates.AuthorisedAction
+import controllers.predicates.TaxYearAction.taxYearAction
 import models.pension.statebenefits.UkPensionIncomeViewModel
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -29,8 +30,6 @@ import views.html.pensions.incomeFromPensions.UkPensionIncomeSummary
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import controllers.pensions.routes.PensionsSummaryController
-import controllers.predicates.TaxYearAction.taxYearAction
 
 class UkPensionIncomeSummaryController @Inject()(implicit val cc: MessagesControllerComponents,
                                                  authAction: AuthorisedAction,

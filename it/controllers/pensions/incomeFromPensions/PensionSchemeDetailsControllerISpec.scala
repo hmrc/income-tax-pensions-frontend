@@ -28,8 +28,8 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.IncomeFromPensionsPages.{pensionAmountUrl, pensionSchemeDetailsUrl, ukPensionIncomeCyaUrl, ukPensionSchemePayments, ukPensionSchemeSummaryListUrl}
-import utils.PageUrls.{fullUrl, pensionSummaryUrl}
+import utils.PageUrls.IncomeFromPensionsPages._
+import utils.PageUrls.fullUrl
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {

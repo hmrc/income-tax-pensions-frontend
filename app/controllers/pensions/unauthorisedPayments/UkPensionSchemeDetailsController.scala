@@ -17,21 +17,17 @@
 package controllers.pensions.unauthorisedPayments
 
 import config.AppConfig
-import controllers.pensions.incomeFromPensions.routes.UkPensionIncomeCYAController
 import controllers.predicates.AuthorisedAction
-import models.pension.statebenefits.UkPensionIncomeViewModel
+import controllers.predicates.TaxYearAction.taxYearAction
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import views.html.pensions.incomeFromPensions.UkPensionIncomeSummary
+import views.html.pensions.unauthorisedPayments.UkPensionSchemeDetails
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import controllers.pensions.routes.PensionsSummaryController
-import controllers.predicates.TaxYearAction.taxYearAction
-import views.html.pensions.unauthorisedPayments.UkPensionSchemeDetails
 
 class UkPensionSchemeDetailsController @Inject()(implicit val cc: MessagesControllerComponents,
                                                  authAction: AuthorisedAction,

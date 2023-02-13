@@ -29,11 +29,7 @@
 
 @headingForUse = @{messages(s"paymentsIntoPensions.cya.heading.${if(request.user.isAgent) "agent" else "individual"}")}
 
-@agentOrIndividual = @{
-    if(request.user.isAgent) "agent" else "individual"
-}
-
-@rowWithContent(textKey: String, value: Any, condition: Boolean = true, changeLink: Call = Call("GET", "#"), args: Seq[String] = Seq()) = @{
+@rowWithContent(textKey: String, value: Any, condition: Boolean = true, changeLink: Call, args: Seq[String] = Seq()) = @{
     if(condition) {
         val realValue: String = value match {
             case boolean: Boolean => if(boolean) messages("common.yes") else messages("common.no")
@@ -52,7 +48,7 @@
         None
     }
 }
-@amountRow(key: String, value: Option[BigDecimal], condition: Boolean, changeLink: Call = Call("GET", "#"), args: Seq[String] = Seq()) = @{
+@amountRow(key: String, value: Option[BigDecimal], condition: Boolean, changeLink: Call, args: Seq[String] = Seq()) = @{
     if(condition) value.flatMap(amount => rowWithContent(key, amount, args = args, changeLink = changeLink)) else None
 }
 

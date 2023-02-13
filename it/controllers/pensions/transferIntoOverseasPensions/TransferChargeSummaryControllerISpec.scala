@@ -16,11 +16,9 @@
 
 package controllers.pensions.transferIntoOverseasPensions
 
-import builders.IncomeFromOverseasPensionsViewModelBuilder.{anIncomeFromOverseasPensionsEmptyViewModel, anIncomeFromOverseasPensionsViewModel}
-import builders.PensionsUserDataBuilder.{pensionUserDataWithIncomeOverseasPension, pensionUserDataWithTransferIntoOverseasPension}
+import builders.PensionsUserDataBuilder.pensionUserDataWithTransferIntoOverseasPension
 import builders.TransfersIntoOverseasPensionsViewModelBuilder.{aTransfersIntoOverseasPensionsViewModel, emptyTransfersIntoOverseasPensionsViewModel}
 import builders.UserBuilder.aUserRequest
-import forms.Countries
 import models.pension.charges.TransferPensionScheme
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -28,10 +26,8 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.IncomeFromOverseasPensionsPages._
 import utils.PageUrls.TransferIntoOverseasPensions.{overseasTransferChargePaidUrl, transferChargeSummaryUrl}
 import utils.PageUrls.{fullUrl, overseasPensionsSummaryUrl}
-import utils.ViewUtils.bigDecimalCurrency
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 // scalastyle:off magic.number

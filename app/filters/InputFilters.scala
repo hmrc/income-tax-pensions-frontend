@@ -24,8 +24,8 @@ import scala.annotation.tailrec
 trait InputFilters {
   val filters: Seq[Pattern] = Seq(
     compile("<script>(.*?)</script>", CASE_INSENSITIVE),
-    compile("src[\r\n]*=[\r\n]*\\\'(.*?)\\\'", CASE_INSENSITIVE | MULTILINE | DOTALL),
-    compile("src[\r\n]*=[\r\n]*\\\"(.*?)\\\"", CASE_INSENSITIVE | MULTILINE | DOTALL),
+    compile("src[\r\n]*=[\r\n]*\'(.*?)\'", CASE_INSENSITIVE | MULTILINE | DOTALL),
+    compile("src[\r\n]*=[\r\n]*\"(.*?)\"", CASE_INSENSITIVE | MULTILINE | DOTALL),
     compile("<script(.*?)>", CASE_INSENSITIVE | MULTILINE | DOTALL),
     compile("</script>", CASE_INSENSITIVE),
     compile("eval\\((.*?)\\)", CASE_INSENSITIVE | MULTILINE | DOTALL),
@@ -38,8 +38,8 @@ trait InputFilters {
   def filter(input: String): String = {
     @tailrec
     def applyFilters(filters: Seq[Pattern], sanitizedOuput: String): String = filters match {
-      case Nil => sanitizedOuput.filterNot(_ == '|')
       case filter :: tail => applyFilters(tail, filter.matcher(sanitizedOuput).replaceAll(""))
+      case _ => sanitizedOuput.filterNot(_ == '|')
     }
     applyFilters(filters, input)
   }

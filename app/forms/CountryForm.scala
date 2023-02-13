@@ -19,10 +19,9 @@ package forms
 import filters.InputFilters
 import forms.validation.mappings.MappingUtil.trimmedText
 import forms.validation.utils.ConstraintUtil.{ConstraintUtil, constraint}
-import play.api.data.Forms.ignored
-import play.api.data.{Form, Mapping}
-import play.api.data.validation.{Constraint, Invalid, Valid}
 import play.api.data.validation.Constraints.nonEmpty
+import play.api.data.validation.{Constraint, Invalid, Valid}
+import play.api.data.{Form, Mapping}
 
 object CountryForm extends InputFilters {
 

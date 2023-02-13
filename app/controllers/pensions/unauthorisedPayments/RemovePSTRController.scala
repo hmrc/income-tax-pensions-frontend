@@ -17,18 +17,15 @@
 package controllers.pensions.unauthorisedPayments
 
 import config.{AppConfig, ErrorHandler}
+import controllers.pensions.unauthorisedPayments.routes.{UkPensionSchemeDetailsController, UnauthorisedPaymentsCYAController}
 import controllers.predicates.AuthorisedAction
 import controllers.predicates.TaxYearAction.taxYearAction
-import models.pension.statebenefits.UkPensionIncomeViewModel
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.unauthorisedPayments.RemovePSTRView
-import controllers.pensions.unauthorisedPayments.routes.{UnauthorisedPaymentsCYAController, UkPensionSchemeDetailsController}
-import controllers.pensions.routes.PensionsSummaryController
-
 
 import javax.inject.Inject
 import scala.concurrent.Future

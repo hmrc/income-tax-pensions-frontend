@@ -17,7 +17,7 @@
 package builders
 
 import builders.OverseasSchemeProviderBuilder.anOverseasSchemeProvider
-import models.pension.charges.{OverseasSchemeProvider, PensionSavingsTaxCharges, PensionSchemeOverseasTransfers}
+import models.pension.charges.PensionSchemeOverseasTransfers
 
 object PensionSchemeOverseasTransfersBuilder {
 

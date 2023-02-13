@@ -17,22 +17,18 @@
 package controllers.pensions.unauthorisedPayments
 
 import config.{AppConfig, ErrorHandler}
-import connectors.httpParsers.IncomeTaxUserDataHttpParser.IncomeTaxUserDataResponse
-import controllers.pensions.routes._
 import controllers.predicates.AuthorisedAction
 import controllers.predicates.TaxYearAction.taxYearAction
 import forms.UnAuthorisedPaymentsForm
-import models.APIErrorModel
-import models.mongo.{PensionsCYAModel, PensionsUserData}
-import models.pension.AllPensionsData
+import models.mongo.PensionsCYAModel
+import models.pension.AllPensionsData.generateCyaFromPrior
+import models.pension.reliefs.PaymentsIntoPensionViewModel
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.unauthorisedPayments.UnauthorisedPaymentsView
-import models.pension.AllPensionsData.generateCyaFromPrior
-import models.pension.reliefs.PaymentsIntoPensionViewModel
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext.Implicits.global

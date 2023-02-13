@@ -252,8 +252,7 @@ class StatePensionAmountControllerISpec extends IntegrationTest with ViewHelpers
         urlGet(fullUrl(statePensionAmountUrl(taxYearEOY)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
-
-      implicit def document: () => Document = () => Jsoup.parse(result.body)
+      
 
       "has an SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER
@@ -271,8 +270,7 @@ class StatePensionAmountControllerISpec extends IntegrationTest with ViewHelpers
         urlGet(fullUrl(statePensionAmountUrl(taxYearEOY)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
-
-      implicit def document: () => Document = () => Jsoup.parse(result.body)
+      
 
       "has an SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER
@@ -449,8 +447,6 @@ class StatePensionAmountControllerISpec extends IntegrationTest with ViewHelpers
           body = form, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
-
-      implicit def document: () => Document = () => Jsoup.parse(result.body)
 
       "has an SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER

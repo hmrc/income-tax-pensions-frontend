@@ -16,11 +16,11 @@
 
 package controllers
 
-import common.MessageKeys.{YesNoAmountForm, YesNoForm}
+import common.MessageKeys.YesNoForm
 import config.{AppConfig, ErrorHandler}
 import controllers.predicates.AuthorisedAction
 import controllers.predicates.TaxYearAction.taxYearAction
-import forms.{RadioButtonAmountForm, YesNoForm}
+import forms.YesNoForm
 import models.AuthorisationRequest
 import models.mongo.{PensionsCYAModel, PensionsUserData}
 import play.api.data.Form
@@ -100,8 +100,8 @@ abstract class BaseYesNoController(
     Future.successful(Ok(prepareView(pensionsUserData, taxYear)))
 
 
-  private def ensureThatSessionDataIsSufficient(pensionsUserData: PensionsUserData, taxYear: Int)(f: (PensionsUserData, Int) => Future[Result])
-                                               (implicit request: AuthorisationRequest[AnyContent]): Future[Result] =
+  private def ensureThatSessionDataIsSufficient(pensionsUserData: PensionsUserData, taxYear: Int)
+                                               (f: (PensionsUserData, Int) => Future[Result]): Future[Result] =
     if (sessionDataIsSufficient(pensionsUserData)) f(pensionsUserData, taxYear) else Future.successful(whenSessionDataIsInsufficient(taxYear))
 
 

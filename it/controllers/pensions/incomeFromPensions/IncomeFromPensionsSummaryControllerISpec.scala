@@ -24,14 +24,11 @@ import builders.UserBuilder.aUserRequest
 import models.pension.statebenefits.StateBenefitViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import utils.PageUrls.IncomeFromPensionsPages.ukPensionincomeSummaryUrl
 import org.scalatest.BeforeAndAfterEach
-import play.api.http.HeaderNames
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.UnAuthorisedPayments.noSurchargeAmountUrl
-import utils.PageUrls.{fullUrl, pensionSummaryUrl}
-import utils.{CommonUtils, IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
+import utils.CommonUtils
+import utils.PageUrls.IncomeFromPensionsPages.ukPensionincomeSummaryUrl
 
 class IncomeFromPensionsSummaryControllerISpec extends CommonUtils with BeforeAndAfterEach{
 

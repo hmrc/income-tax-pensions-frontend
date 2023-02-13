@@ -80,8 +80,7 @@ abstract class BaseYesNoAmountWithIndexController(messagesControllerComponents: 
 
 
   private def ensureThatSessionDataIsSufficient(pensionsUserData: PensionsUserData, taxYear: Int, index : Int)
-                                               (f: (PensionsUserData, Int, Int) => Future[Result])
-                                                        (implicit request: AuthorisationRequest[AnyContent]): Future[Result] =
+                                               (f: (PensionsUserData, Int, Int) => Future[Result]): Future[Result] =
     if (sessionDataIsSufficient(pensionsUserData, index)) f(pensionsUserData, taxYear, index)else Future.successful(whenSessionDataIsInsufficient(taxYear))
 
 

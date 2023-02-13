@@ -16,14 +16,13 @@
 
 package controllers.pensions.incomeFromOverseasPensions
 
-import builders.PensionsCYAModelBuilder.{aPensionsCYAEmptyModel, aPensionsCYAModel, paymentsIntoPensionOnlyCYAModel}
+import builders.PensionsCYAModelBuilder.aPensionsCYAEmptyModel
 import controllers.ControllerSpec.PreferredLanguages.{English, Welsh}
 import controllers.ControllerSpec.UserTypes.{Agent, Individual}
 import controllers.ControllerSpec._
 import controllers.YesNoControllerSpec
 import models.mongo.PensionsCYAModel
 import models.pension.charges.IncomeFromOverseasPensionsViewModel
-import models.pension.reliefs.PaymentsIntoPensionViewModel
 import org.jsoup.Jsoup.parse
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 
