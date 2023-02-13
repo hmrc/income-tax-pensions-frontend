@@ -16,9 +16,11 @@
 
 package controllers.pensions.transferIntoOverseasPensions
 
-import builders.PensionsUserDataBuilder.pensionUserDataWithTransferIntoOverseasPension
+import builders.IncomeFromOverseasPensionsViewModelBuilder.{anIncomeFromOverseasPensionsEmptyViewModel, anIncomeFromOverseasPensionsViewModel}
+import builders.PensionsUserDataBuilder.{pensionUserDataWithIncomeOverseasPension, pensionUserDataWithTransferIntoOverseasPension}
 import builders.TransfersIntoOverseasPensionsViewModelBuilder.{aTransfersIntoOverseasPensionsViewModel, emptyTransfersIntoOverseasPensionsViewModel}
 import builders.UserBuilder.aUserRequest
+import forms.Countries
 import models.pension.charges.TransferPensionScheme
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -26,8 +28,10 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.TransferIntoOverseasPensions.{overseasTransferChargePaidUrl, transferChargeSummaryUrl}
+import utils.PageUrls.IncomeFromOverseasPensionsPages._
+import utils.PageUrls.TransferIntoOverseasPensions.{overseasTransferChargePaidUrl, removeTransferChargeScheme, transferChargeSummaryUrl}
 import utils.PageUrls.{fullUrl, overseasPensionsSummaryUrl}
+import utils.ViewUtils.bigDecimalCurrency
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 // scalastyle:off magic.number
@@ -137,15 +141,9 @@ class TransferChargeSummaryControllerISpec extends IntegrationTest with BeforeAn
           textOnPageCheck(s"${pensionScheme2.name.get}", pensionNameSelector(2))
 
           linkCheck(s"$change $change ${pensionScheme.name.get}", changeLinkSelector(1), overseasTransferChargePaidUrl(taxYearEOY, 0))
-
-          //todo update link below when remove is implemented
-          linkCheck(s"$remove $remove ${pensionScheme.name.get}", removeLinkSelector(1), transferChargeSummaryUrl(taxYearEOY))
-
+          linkCheck(s"$remove $remove ${pensionScheme.name.get}", removeLinkSelector(1), removeTransferChargeScheme(taxYearEOY, 0))
           linkCheck(s"$change $change ${pensionScheme2.name.get}", changeLinkSelector(2), overseasTransferChargePaidUrl(taxYearEOY, 1))
-
-          //todo update link below when remove is implemented
-          linkCheck(s"$remove $remove ${pensionScheme2.name.get}", removeLinkSelector(2), transferChargeSummaryUrl(taxYearEOY))
-
+          linkCheck(s"$remove $remove ${pensionScheme2.name.get}", removeLinkSelector(2), removeTransferChargeScheme(taxYearEOY, 1))
           linkCheck(expectedAddAnotherText, addAnotherLinkSelector, overseasTransferChargePaidUrl(taxYearEOY))
 
           //todo update redirect to to transfer journey CYA page when navigation is linked up
@@ -181,10 +179,7 @@ class TransferChargeSummaryControllerISpec extends IntegrationTest with BeforeAn
           elementNotOnPageCheck(pensionNameSelector(2))
 
           linkCheck(s"$change $change ${pensionScheme.name.get}", changeLinkSelector(1), overseasTransferChargePaidUrl(taxYearEOY, 0))
-
-          //todo update link below when remove is implemented
-          linkCheck(s"$remove $remove ${pensionScheme.name.get}", removeLinkSelector(1), transferChargeSummaryUrl(taxYearEOY))
-
+          linkCheck(s"$remove $remove ${pensionScheme.name.get}", removeLinkSelector(1), removeTransferChargeScheme(taxYearEOY, 0))
           linkCheck(expectedAddAnotherText, addAnotherLinkSelector, overseasTransferChargePaidUrl(taxYearEOY))
 
           //todo update redirect to to transfer journey CYA page when navigation is linked up

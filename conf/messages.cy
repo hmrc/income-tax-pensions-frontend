@@ -115,6 +115,10 @@ common.overseasPensions.checkPensionStatement.agent = check their pension statem
 
 common.incomeFromPensions.title = UK pension income
 
+#################       Common Remove Pension Scheme    ###########################################
+common.removePensionScheme.title = Are you sure you want to remove {0}?
+
+
 #################       Error messages        ########################################
 
 error.agent.title = There’s a problem
@@ -590,7 +594,6 @@ incomeFromPensions.pensionStartDate.error.dateInFuture = The pension start date 
 incomeFromPensions.pensionStartDate.error.tooLongAgo = The pension start date must be after 1 January 1900
 
 #Remove pension scheme page
-incomeFromPensions.removePensionScheme.title = Are you sure you want to remove {0}?
 incomeFromPensions.removePensionScheme.buttonText = Remove pension
 
 #Uk Pension Income CYA page
@@ -970,3 +973,9 @@ transferIntoOverseasPensions.summaryList.title = Pension schemes paying transfer
 transferIntoOverseasPensions.transferChargesSummary.text1 = You need to add one or more pension scheme.
 transferIntoOverseasPensions.transferChargesSummary.text2 = If you don’t have a pensions scheme to add you can return to the overview page and come back later.
 transferIntoOverseasPensions.transferChargesSummary.addAScheme = Add a scheme
+
+#Remove transfer charge pension scheme
+transferIntoOverseasPensions.removeTransferChargeScheme.p1 = This will remove:
+transferIntoOverseasPensions.removeTransferChargeScheme.p1.bullet1 = The name of the pension scheme
+transferIntoOverseasPensions.removeTransferChargeScheme.p1.bullet2 = Pensions scheme tax reference
+transferIntoOverseasPensions.removeTransferChargeScheme.p1.bullet3 = Pensions provider address
