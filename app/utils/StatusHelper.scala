@@ -68,7 +68,8 @@ object StatusHelper {
     cya.flatMap((_.incomeFromOverseasPensions.paymentsFromOverseasPensionsQuestion)).isDefined
 
   // TODO: implement when we add the page
-  def overseasPensionsTransferChargesIsUpdated(cya: Option[PensionsCYAModel]): Boolean = false
+  def overseasPensionsTransferChargesIsUpdated(cya: Option[PensionsCYAModel]): Boolean =
+    cya.flatMap((_.transfersIntoOverseasPensions.transferPensionSavings)).isDefined
 
   // TODO: implement when we add the page
   def shortServiceRefundsIsUpdated(cya: Option[PensionsCYAModel]): Boolean = false

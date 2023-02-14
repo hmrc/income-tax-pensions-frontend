@@ -29,6 +29,9 @@ import play.api.libs.ws.WSResponse
 import utils.PageUrls.PensionAnnualAllowancePages.transferPensionSchemeTaxUrl
 import utils.PageUrls.{fullUrl, overviewUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
+import utils.PageUrls.TransferIntoOverseasPensions.{transferChargeSummaryUrl, overseasTransferChargePaidUrl}
+import utils.PageUrls.TransferIntoOverseasPensionsPages.{transferPensionSavingsUrl}
+import utils.PageUrls.{fullUrl, overseasPensionsSummaryUrl, overviewUrl}
 
 
 class OverseasPensionTransferTaxChargeSchemeISpec
@@ -85,7 +88,7 @@ class OverseasPensionTransferTaxChargeSchemeISpec
           result.headers("location").head shouldBe overviewUrl(taxYear)
         }
 
-        "persist amount and redirect to next page" in {
+        "persist amount and redirect to transfer charge summary page when user selects 'yes' and there is a transferPensionScheme " in {
           lazy implicit val result: WSResponse = {
             dropPensionsDB()
             authoriseAgentOrIndividual(aUser.isAgent)
@@ -100,7 +103,49 @@ class OverseasPensionTransferTaxChargeSchemeISpec
               body = formData)
           }
           result.status shouldBe SEE_OTHER
-          result.headers("location").head shouldBe transferPensionSchemeTaxUrl(taxYearEOY)
+          result.header("location").contains(transferChargeSummaryUrl(taxYearEOY)) shouldBe true
+        }
+
+        "persist amount and redirect to overseas transfer charge paid page when user selects 'yes' and there is no transferPensionScheme" in {
+          lazy implicit val result: WSResponse = {
+            dropPensionsDB()
+            authoriseAgentOrIndividual(aUser.isAgent)
+            val transferViewModel = aTransfersIntoOverseasPensionsViewModel.copy(
+              pensionSchemeTransferChargeAmount = Some(100),
+              pensionSchemeTransferCharge = Some(true),
+              transferPensionScheme = Nil
+            )
+            val formData = Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "100")
+            insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(transfersIntoOverseasPensions = transferViewModel)), aUserRequest)
+            urlPost(
+              fullUrl(transferPensionSchemeTaxUrl(taxYearEOY)),
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
+              follow = false,
+              body = formData)
+          }
+          result.status shouldBe SEE_OTHER
+          result.header("location").contains(overseasTransferChargePaidUrl(taxYearEOY)) shouldBe true
+        }
+
+        "persist amount and redirect to  page when user selects 'no'" in {
+          lazy implicit val result: WSResponse = {
+            dropPensionsDB()
+            authoriseAgentOrIndividual(aUser.isAgent)
+            val transferViewModel = aTransfersIntoOverseasPensionsViewModel.copy(
+              pensionSchemeTransferChargeAmount = Some(100),
+              pensionSchemeTransferCharge = Some(true),
+              transferPensionScheme = Nil
+            )
+            val formData = Map(RadioButtonAmountForm.yesNo -> "false")
+            insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(transfersIntoOverseasPensions = transferViewModel)), aUserRequest)
+            urlPost(
+              fullUrl(transferPensionSchemeTaxUrl(taxYearEOY)),
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
+              follow = false,
+              body = formData)
+          }
+          result.status shouldBe SEE_OTHER
+          result.header("location").contains(overseasTransferChargePaidUrl(taxYearEOY)) shouldBe true
         }
 
         "return an error when form is submitted with no entry" which {

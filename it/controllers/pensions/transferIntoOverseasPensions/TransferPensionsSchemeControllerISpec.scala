@@ -54,7 +54,7 @@ class TransferPensionsSchemeControllerISpec extends ControllerSpec ("/overseas-p
                implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(ukOrOverseasAlignedSessionData))
                implicit val response: WSResponse = submitForm(formData, Map("index" -> "0"))
 
-               val redirectPage = relativeUrl("/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-pension-scheme?index=0") // TODO: change to transfers pension scheme summary list
+               val redirectPage = relativeUrl("/overseas-pensions/overseas-transfer-charges/transfer-charges-summary")
                assertRedirectionAsExpected(redirectPage)
                
                val expectedViewModel = ukOrOverseasAlignedSessionData.pensions.transfersIntoOverseasPensions.copy(transferPensionScheme = Seq(testTransferPensionScheme))
@@ -67,7 +67,7 @@ class TransferPensionsSchemeControllerISpec extends ControllerSpec ("/overseas-p
                implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(ukOrOverseasAlignedSessionData))
                implicit val response: WSResponse = submitForm(formData, Map("index" -> "0"))
 
-               val redirectPage = relativeUrl("/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-pension-scheme?index=0") // TODO: change to transfers pension scheme summary list
+               val redirectPage = relativeUrl("/overseas-pensions/overseas-transfer-charges/transfer-charges-summary")
                assertRedirectionAsExpected(redirectPage)
 
                val expectedViewModel = ukOrOverseasAlignedSessionData.pensions.transfersIntoOverseasPensions.copy(transferPensionScheme = Seq(testTransferPensionScheme))

@@ -376,8 +376,9 @@ class OverseasTransferChargeControllerISpec
 
             implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
             implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(false), None))
+            val redirectPage = relativeUrl("/overseas-pensions/overseas-transfer-charges/transfer-pension-savings")
 
-            assertRedirectionAsExpected(relativeUrlForThisPage)
+            assertRedirectionAsExpected(redirectPage)
             getViewModel mustBe Some(expectedViewModel)
           }
           "the user has selected 'Yes' as well as a valid amount (unformatted)" in {
@@ -389,8 +390,9 @@ class OverseasTransferChargeControllerISpec
 
             implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
             implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("42.64")))
+            val redirectPage = relativeUrl("/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-tax")
 
-            assertRedirectionAsExpected(relativeUrlForThisPage)
+            assertRedirectionAsExpected(redirectPage)
             getViewModel mustBe Some(expectedViewModel)
           }
           "the user has selected 'Yes' as well as a valid amount (formatted)" in {
@@ -402,8 +404,9 @@ class OverseasTransferChargeControllerISpec
 
             implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
             implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("£1,042.64")))
+            val redirectPage = relativeUrl("/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-tax")
 
-            assertRedirectionAsExpected(relativeUrlForThisPage)
+            assertRedirectionAsExpected(redirectPage)
             getViewModel mustBe Some(expectedViewModel)
           }
         }
@@ -420,8 +423,9 @@ class OverseasTransferChargeControllerISpec
 
             implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
             implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(false), None))
+            val redirectPage = relativeUrl("/overseas-pensions/overseas-transfer-charges/transfer-pension-savings")
 
-            assertRedirectionAsExpected(relativeUrlForThisPage)
+            assertRedirectionAsExpected(redirectPage)
             getViewModel mustBe Some(expectedViewModel)
 
           }
@@ -434,8 +438,9 @@ class OverseasTransferChargeControllerISpec
 
             implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
             implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("42.64")))
+            val redirectPage = relativeUrl("/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-tax")
 
-            assertRedirectionAsExpected(relativeUrlForThisPage)
+            assertRedirectionAsExpected(redirectPage)
             getViewModel mustBe Some(expectedViewModel)
 
           }
@@ -448,8 +453,9 @@ class OverseasTransferChargeControllerISpec
 
             implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
             implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("£1,042.64")))
+            val redirectPage = relativeUrl("/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-tax")
 
-            assertRedirectionAsExpected(relativeUrlForThisPage)
+            assertRedirectionAsExpected(redirectPage)
             getViewModel mustBe Some(expectedViewModel)
 
           }

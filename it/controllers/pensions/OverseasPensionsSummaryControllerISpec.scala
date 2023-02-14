@@ -30,6 +30,7 @@ import play.api.libs.ws.WSResponse
 import utils.CommonUtils
 import utils.PageUrls.IncomeFromOverseasPensionsPages.{checkIncomeFromOverseasPensionsCyaUrl, incomeFromOverseasPensionsStatus}
 import utils.PageUrls._
+import utils.PageUrls.TransferIntoOverseasPensionsPages._
 import utils.PageUrls.OverseasPensionPages.paymentsIntoPensionSchemeUrl
 import utils.PageUrls.PensionAnnualAllowancePages.shortServiceTaxableRefundUrl
 
@@ -152,7 +153,7 @@ class OverseasPensionsSummaryControllerISpec extends  CommonUtils with BeforeAnd
           }
 
           "has an overseas transfer charges section" which {
-            linkCheck(common.overseasTransferChargesText, overseasTransferChargesLink, "#")
+            linkCheck(common.overseasTransferChargesText, overseasTransferChargesLink, transferPensionSavingsUrl(taxYearEOY))
             textOnPageCheck(userScenario.commonExpectedResults.notStarted, summaryListStatusTagSelector(3))
           }
 
@@ -194,8 +195,8 @@ class OverseasPensionsSummaryControllerISpec extends  CommonUtils with BeforeAnd
           }
 
           "has an overseas transfer charges section" which {
-            linkCheck(common.overseasTransferChargesText, overseasTransferChargesLink, "#")
-            textOnPageCheck(userScenario.commonExpectedResults.notStarted, summaryListStatusTagSelector(3))
+            linkCheck(common.overseasTransferChargesText, overseasTransferChargesLink, transferPensionSavingsUrl(taxYearEOY))
+            textOnPageCheck(userScenario.commonExpectedResults.updated, summaryListStatusTagSelector(3))
           }
 
           "has a short service refunds section" which {

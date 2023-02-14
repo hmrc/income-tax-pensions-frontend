@@ -263,6 +263,9 @@ object PageUrls extends IntegrationTest {
   object TransferIntoOverseasPensionsPages {
     def pensionSchemespayingTrransferCharges(taxYear: Int): String =
       s"$appUrl/$taxYear/overseas-pensions/overseas-transfer-charges/transfer-charges-summary"
+
+    def transferPensionSavingsUrl(taxYear: Int): String =
+      s"$appUrl/$taxYear/overseas-pensions/overseas-transfer-charges/transfer-pension-savings"
   }
 
 }

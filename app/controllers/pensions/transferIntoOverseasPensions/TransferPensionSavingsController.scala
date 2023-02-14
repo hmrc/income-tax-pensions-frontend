@@ -74,7 +74,7 @@ class TransferPensionSavingsController @Inject()(actionsProvider: ActionsProvide
       if(transferPensionSavings) {
         Redirect(controllers.pensions.transferIntoOverseasPensions.routes.OverseasTransferChargeController.show(taxYear))
       } else {
-        // TODO: Update once `/transfer-charge-summary` Transfer Charge Summary page is available. Redirecting to itself
+        // TODO: Update once `transfer info overseas income cya` is available. Redirecting to itself
         Redirect(controllers.pensions.transferIntoOverseasPensions.routes.TransferPensionSavingsController.show(taxYear))
       }
     }
