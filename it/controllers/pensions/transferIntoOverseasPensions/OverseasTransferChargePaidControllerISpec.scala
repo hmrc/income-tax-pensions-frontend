@@ -340,7 +340,7 @@ class OverseasTransferChargePaidControllerISpec
 
               implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
               implicit val response = submitForm(SubmittedFormDataForYesNoPage(Some(false)))
-              val redirectPage = relativeUrl("/overseas-pensions/overseas-transfer-charges/transfer-pension-savings")
+              val redirectPage = relativeUrl("/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-pension-scheme?index=0")
 
               response must haveStatus(SEE_OTHER)
               assertRedirectionAsExpected(redirectPage)
@@ -351,7 +351,7 @@ class OverseasTransferChargePaidControllerISpec
 
               implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
               implicit val response = submitForm(SubmittedFormDataForYesNoPage(Some(false)))
-              val redirectPage = relativeUrl("/overseas-pensions/overseas-transfer-charges/transfer-pension-savings")
+              val redirectPage = relativeUrl("/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-pension-scheme?index=0")
 
               response must haveStatus(SEE_OTHER)
               assertRedirectionAsExpected(redirectPage)
@@ -362,7 +362,7 @@ class OverseasTransferChargePaidControllerISpec
 
               implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
               implicit val response = submitForm(SubmittedFormDataForYesNoPage(Some(false)))
-              val redirectPage = relativeUrl("/overseas-pensions/overseas-transfer-charges/transfer-pension-savings")
+              val redirectPage = relativeUrl("/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-pension-scheme?index=0")
 
               response must haveStatus(SEE_OTHER)
               assertRedirectionAsExpected(redirectPage)
@@ -373,7 +373,7 @@ class OverseasTransferChargePaidControllerISpec
 
               implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
               implicit val response = submitForm(SubmittedFormDataForYesNoPage(Some(false)))
-              val redirectPage = relativeUrl("/overseas-pensions/overseas-transfer-charges/transfer-pension-savings")
+              val redirectPage = relativeUrl("/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-pension-scheme?index=0")
 
               response must haveStatus(SEE_OTHER)
               assertRedirectionAsExpected(redirectPage)

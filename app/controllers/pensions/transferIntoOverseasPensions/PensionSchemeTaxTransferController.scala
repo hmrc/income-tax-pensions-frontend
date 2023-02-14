@@ -87,7 +87,13 @@ class PensionSchemeTaxTransferController @Inject()(
         }
     } else {
         // TODO: Update once `transfer info overseas income cya` is available. Redirecting to itself
-        Redirect(controllers.pensions.transferIntoOverseasPensions.routes.TransferPensionSavingsController.show(taxYear))
+
+        if (transfersIntoOverseasPensions.transferPensionScheme.isEmpty) {
+          Redirect(controllers.pensions.transferIntoOverseasPensions.routes.OverseasTransferChargePaidController.show(taxYear,None))
+        } else {
+          Redirect(controllers.pensions.transferIntoOverseasPensions.routes.TransferChargeSummaryController.show(taxYear))
+        }
+
       }
     }
   }

@@ -90,10 +90,6 @@ class OverseasTransferChargePaidController @Inject()(actionsProvider: ActionsPro
                               pensionSchemeIndex: Option[Int],
                               yesNoValue: Boolean,
                               userData: PensionsUserData): Call = {
-    if (yesNoValue) {
       controllers.pensions.transferIntoOverseasPensions.routes.TransferPensionsSchemeController.show(taxYear, pensionSchemeIndex)
-    } else {
-      controllers.pensions.transferIntoOverseasPensions.routes.TransferPensionSavingsController.show(taxYear)
-    }
   }
 }
