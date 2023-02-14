@@ -84,7 +84,6 @@ class OverseasTransferChargeController @Inject()(actionsProvider: ActionsProvide
     pensionSessionService.createOrUpdateSessionData(request.user,
       updatedCyaModel, taxYear, pensionUserData.isPriorSubmission)(errorHandler.internalServerError()) {
       if (yesNo) {
-        //PensionSchemeTaxTransferController
         Redirect(controllers.pensions.transferIntoOverseasPensions.routes.PensionSchemeTaxTransferController.show(taxYear))
       } else {
         // TODO: Update once `transfer info overseas income cya` is available. Redirecting to itself
