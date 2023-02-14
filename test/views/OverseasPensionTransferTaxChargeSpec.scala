@@ -18,7 +18,7 @@ package views
 
 import builders.PensionsUserDataBuilder.aPensionsUserData
 import builders.UserBuilder.{aUser, anAgentUser}
-import forms.RadioButtonAmountForm
+import forms.{FormsProvider, RadioButtonAmountForm}
 import models.requests.UserSessionDataRequest
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -107,24 +107,19 @@ class OverseasPensionTransferTaxChargeSpec extends ViewUnitTest with FakeRequest
     UserScenario(isWelsh = true, isAgent = true, ExpectedCommonCY, Some(ExpectedAgentCY))
   )
 
-  def form(agentOrIndividual: String): Form[(Boolean, Option[BigDecimal])] = RadioButtonAmountForm.radioButtonAndAmountForm(
-    missingInputError = s"transferIntoOverseasPensions.overseasPensionSchemeTaxTransferCharge.error.noEntry.$agentOrIndividual",
-    emptyFieldKey = s"transferIntoOverseasPensions.overseasPensionSchemeTaxTransferCharge.error.noAmountEntry.$agentOrIndividual",
-    wrongFormatKey = s"transferIntoOverseasPensions.overseasPensionSchemeTaxTransferCharge.error.incorrectFormat.$agentOrIndividual",
-    exceedsMaxAmountKey = s"transferIntoOverseasPensions.overseasPensionSchemeTaxTransferCharge.error.tooBig"
-  )
+
 
   private lazy val underTest = inject[pensionSchemeTaxTransferChargeView]
   userScenarios.foreach { userScenario =>
 
     s"language is ${welshTest(userScenario.isWelsh)} and request is from an ${agentTest(userScenario.isAgent)}" should {
       "render page without pre filled date" which {
-        val agentOrIndividual = if (userScenario.isAgent) "agent" else "individual"
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
         implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = new UserSessionDataRequest(aPensionsUserData,
           if (userScenario.isAgent) anAgentUser else aUser,
           if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest)
-        implicit val htmlFormat = underTest(form(agentOrIndividual), taxYearEOY)
+        def form: Form[(Boolean, Option[BigDecimal])] = new FormsProvider().pensionSchemeTaxTransferForm(if(userScenario.isAgent) anAgentUser else aUser)
+        implicit val htmlFormat = underTest(form, taxYearEOY)
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
         titleCheck(userScenario.specificExpectedResults.get.expectedTitle, userScenario.isWelsh)
@@ -134,15 +129,12 @@ class OverseasPensionTransferTaxChargeSpec extends ViewUnitTest with FakeRequest
         buttonCheck(userScenario.commonExpectedResults.continue)
       }
       "render the page with pre filled data" which {
-
-        val agentOrIndividual = if (userScenario.isAgent) "agent" else "individual"
-
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
-
         implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = new UserSessionDataRequest(aPensionsUserData,
           if (userScenario.isAgent) anAgentUser else aUser,
           if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest)
-        implicit val htmlFormat = underTest(form(agentOrIndividual).bind(Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "100.00")), taxYearEOY)
+        def form: Form[(Boolean, Option[BigDecimal])] = new FormsProvider().pensionSchemeTaxTransferForm(if(userScenario.isAgent) anAgentUser else aUser)
+        implicit val htmlFormat = underTest(form.bind(Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "100.00")), taxYearEOY)
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
 
@@ -156,10 +148,10 @@ class OverseasPensionTransferTaxChargeSpec extends ViewUnitTest with FakeRequest
       }
 
       "render the page with an error when the user doesn’t select a radio button" which {
-        val agentOrIndividual = if (userScenario.isAgent) "agent" else "individual"
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
         implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = new UserSessionDataRequest(aPensionsUserData, aUser, if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest)
-        implicit val htmlFormat = underTest(form(agentOrIndividual).bind(Map(RadioButtonAmountForm.yesNo -> "")), taxYearEOY)
+        def form: Form[(Boolean, Option[BigDecimal])] = new FormsProvider().pensionSchemeTaxTransferForm(if(userScenario.isAgent) anAgentUser else aUser)
+        implicit val htmlFormat = underTest(form.bind(Map(RadioButtonAmountForm.yesNo -> "")), taxYearEOY)
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
         errorAboveElementCheck(userScenario.specificExpectedResults.get.expectedNoEntryErrorText, Some("value"))
@@ -167,11 +159,11 @@ class OverseasPensionTransferTaxChargeSpec extends ViewUnitTest with FakeRequest
       }
 
       "render the page with an error when the user selects yes but doesn’t enter the amount" which {
-        val agentOrIndividual = if (userScenario.isAgent) "agent" else "individual"
 
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
         implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = new UserSessionDataRequest(aPensionsUserData, aUser, if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest)
-        implicit val htmlFormat = underTest(form(agentOrIndividual).bind(Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "")), taxYearEOY)
+        def form: Form[(Boolean, Option[BigDecimal])] = new FormsProvider().pensionSchemeTaxTransferForm(if(userScenario.isAgent) anAgentUser else aUser)
+        implicit val htmlFormat = underTest(form.bind(Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "")), taxYearEOY)
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
         errorAboveElementCheck(userScenario.specificExpectedResults.get.expectedNoAmountEntryErrorText, Some("amount-2"))
@@ -179,20 +171,20 @@ class OverseasPensionTransferTaxChargeSpec extends ViewUnitTest with FakeRequest
       }
 
       "render the page with an error when the user selects yes but amount is in wrong format" which {
-        val agentOrIndividual = if (userScenario.isAgent) "agent" else "individual"
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
         implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = new UserSessionDataRequest(aPensionsUserData, aUser, if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest)
-        implicit val htmlFormat = underTest(form(agentOrIndividual).bind(Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "bfsbrfg")), taxYearEOY)
+        def form: Form[(Boolean, Option[BigDecimal])] = new FormsProvider().pensionSchemeTaxTransferForm(if(userScenario.isAgent) anAgentUser else aUser)
+        implicit val htmlFormat = underTest(form.bind(Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "bfsbrfg")), taxYearEOY)
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
         errorAboveElementCheck(userScenario.specificExpectedResults.get.expectedIncorrectFormatErrorText, Some("amount-2"))
         errorSummaryCheck(userScenario.specificExpectedResults.get.expectedIncorrectFormatErrorText, "#amount-2")
       }
       "render the page with an error when the user selects yes but amount exceeds max" which {
-        val agentOrIndividual = if (userScenario.isAgent) "agent" else "individual"
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
         implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = new UserSessionDataRequest(aPensionsUserData, aUser, if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest)
-        implicit val htmlFormat = underTest(form(agentOrIndividual).bind(Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "1000000000000000000000.00")), taxYearEOY)
+        def form: Form[(Boolean, Option[BigDecimal])] = new FormsProvider().pensionSchemeTaxTransferForm(if(userScenario.isAgent) anAgentUser else aUser)
+        implicit val htmlFormat = underTest(form.bind(Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "1000000000000000000000.00")), taxYearEOY)
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
         errorAboveElementCheck(userScenario.commonExpectedResults.expectedTooBigErrorText, Some("amount-2"))

@@ -40,6 +40,7 @@ common.incomeFromPensions.caption = Income from pensions for 6 April {0} to 5 Ap
 common.uKPensionIncome.caption = UK pension income for 6 April {0} to 5 April {1}
 common.lifetimeAllowance.caption = Annual and lifetime allowances for 6 April {0} to 5 April {1}
 common.overseasPensions.caption = Overseas pensions for 6 April {0} to 5 April {1}
+common.shortServiceRefunds.caption = Short service refunds for 6 April {0} to 5 April {1}
 common.return.overview.buttonText = Return to overview
 common.currencyAmount = £{0}
 common.total = Total
@@ -979,3 +980,24 @@ transferIntoOverseasPensions.removeTransferChargeScheme.p1 = This will remove:
 transferIntoOverseasPensions.removeTransferChargeScheme.p1.bullet1 = The name of the pension scheme
 transferIntoOverseasPensions.removeTransferChargeScheme.p1.bullet2 = Pensions scheme tax reference
 transferIntoOverseasPensions.removeTransferChargeScheme.p1.bullet3 = Pensions provider address
+
+
+#Short service refund - Taxable
+shortServiceRefunds.taxableRefundAmount.title = Taxable short service refunds
+shortServiceRefunds.taxableRefundAmount.p1.individual = The short service refund is taxable if you got UK tax relief on the money you paid into the scheme.
+shortServiceRefunds.taxableRefundAmount.p1.agent = The short service refund is taxable if your client got UK tax relief on the money they paid into the scheme.
+shortServiceRefunds.taxableRefundAmount.p2.individual = Tell us the total amount of short service refund you got from overseas pension schemes.
+shortServiceRefunds.taxableRefundAmount.p2.agent = Tell us the total amount of short service refund your client got from overseas pension schemes.
+shortServiceRefunds.taxableRefundAmount.details.title = What is a short service refund?
+shortServiceRefunds.taxableRefundAmount.details.p1.individual = A short service refund is a refund of money you paid into a workplace pension.
+shortServiceRefunds.taxableRefundAmount.details.p1.agent = A short service refund is a refund of money your client paid into a workplace pension.
+shortServiceRefunds.taxableRefundAmount.details.p2.individual = You might have got a short service refund if you paid into a scheme for less than 2 years. This depends on the type of pension scheme you have.
+shortServiceRefunds.taxableRefundAmount.details.p2.agent = Your client might have got a short service refund if they paid into a scheme for less than 2 years. This depends on the type of pension scheme they have.
+shortServiceRefunds.taxableRefundAmount.h2.individual = Did you get a short service refund?
+shortServiceRefunds.taxableRefundAmount.h2.agent = Did your client get a short service refund?
+shortServiceRefunds.taxableRefundAmount.amount.text = Total amount of short service refunds, in pounds
+shortServiceRefunds.taxableRefundAmount.error.noEntry.individual = Select yes if you got a taxable short service refund from an overseas pension scheme
+shortServiceRefunds.taxableRefundAmount.error.noEntry.agent = Select yes if your client got a taxable short service refund from an overseas pension scheme
+shortServiceRefunds.taxableRefundAmount.error.noAmountEntry = Enter the taxable short service refund amount
+shortServiceRefunds.taxableRefundAmount.error.incorrectFormat = Enter the taxable short service refund amount in the correct format
+shortServiceRefunds.taxableRefundAmount.error.tooBig = The taxable short service refund amount must be less than £100,000,000,000

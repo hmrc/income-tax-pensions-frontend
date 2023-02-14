@@ -35,4 +35,14 @@ class FormsProvider() {
       wrongFormatKey = s"transferIntoOverseasPensions.overseasPensionSchemeTaxTransferCharge.error.incorrectFormat.$agentOrIndividual",
       exceedsMaxAmountKey = s"transferIntoOverseasPensions.overseasPensionSchemeTaxTransferCharge.error.tooBig"
     )}
+
+  def shortServiceTaxableRefundForm(implicit user: User): Form[(Boolean, Option[BigDecimal])] = {
+    val agentOrIndividual = if (user.isAgent) "agent" else "individual"
+    RadioButtonAmountForm.radioButtonAndAmountForm(
+      missingInputError = s"shortServiceRefunds.taxableRefundAmount.error.noEntry.$agentOrIndividual",
+      emptyFieldKey = s"shortServiceRefunds.taxableRefundAmount.error.noAmountEntry",
+      wrongFormatKey = s"shortServiceRefunds.taxableRefundAmount.error.incorrectFormat",
+      exceedsMaxAmountKey = s"shortServiceRefunds.taxableRefundAmount.error.tooBig"
+    )
+  }
 }
