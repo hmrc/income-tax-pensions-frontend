@@ -24,10 +24,9 @@ import org.jsoup.nodes.Document
 import play.api.i18n.Messages
 import play.api.mvc.AnyContent
 import support.ViewUnitTest
-import views.TransferPensionSavingsViewSpec.Selectors.{captionSelector, continueButtonSelector}
 import views.html.pensions.transferIntoOverseasPensions.TransferPensionSavingsView
 
-object TransferPensionSavingsViewSpec extends ViewUnitTest {
+class TransferPensionSavingsViewSpec extends ViewUnitTest {
 
   object Selectors {
     val captionSelector: String = "#main-content > div > div > header > p"
@@ -118,6 +117,7 @@ object TransferPensionSavingsViewSpec extends ViewUnitTest {
 
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
+        import Selectors._
         import userScenario.commonExpectedResults._
 
         titleCheck(userScenario.commonExpectedResults.expectedTitle, userScenario.isWelsh)
@@ -137,6 +137,7 @@ object TransferPensionSavingsViewSpec extends ViewUnitTest {
 
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
+        import Selectors._
         import userScenario.commonExpectedResults._
 
         titleCheck(userScenario.commonExpectedResults.expectedTitle, userScenario.isWelsh)
@@ -156,9 +157,10 @@ object TransferPensionSavingsViewSpec extends ViewUnitTest {
 
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
+        import Selectors._
         import userScenario.commonExpectedResults._
 
-        titleCheck(userScenario.commonExpectedResults.expectedTitle, userScenario.isWelsh)
+        titleCheck("Error: " + userScenario.commonExpectedResults.expectedTitle, userScenario.isWelsh)
         h1Check(userScenario.commonExpectedResults.expectedTitle)
         captionCheck(expectedCaption(taxYearEOY), captionSelector)
         errorSummaryCheck(errorMessage, Selectors.yesSelector)
