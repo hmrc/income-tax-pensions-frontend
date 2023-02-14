@@ -87,9 +87,9 @@ class NonUkTaxRefundsViewSpec extends ViewUnitTest {
     override val no: String = "No"
     override val continue: String = "Continue"
     override val errorMessage: String = "Select yes if your client paid non-UK tax on this short service refund"
-    override val expectedNoAmountEntryErrorText: String = "Enter the amount of non-UK tax you paid on this short service refund"
-    override val expectedIncorrectFormatErrorText: String = "Enter the amount of non-UK tax you paid on this short service refund in the correct format"
-    override val expectedTooBigErrorText: String = "The amount of non-UK tax you paid on this short service refund must be less than £100,000,000,000"
+    override val expectedNoAmountEntryErrorText: String = "Enter the amount of non-UK tax your client paid on this short service refund"
+    override val expectedIncorrectFormatErrorText: String = "Enter the amount of non-UK tax your client paid on this short service refund in the correct format"
+    override val expectedTooBigErrorText: String = "The amount of non-UK tax your client paid on this short service refund must be less than £100,000,000,000"
   }
 
   object ExpectedContentsAgentCY extends ExpectedContents {
@@ -104,9 +104,9 @@ class NonUkTaxRefundsViewSpec extends ViewUnitTest {
     override val no: String = "No"
     override val continue: String = "Continue"
     override val errorMessage: String = "Select yes if your client paid non-UK tax on this short service refund"
-    override val expectedNoAmountEntryErrorText: String = "Enter the amount of non-UK tax you paid on this short service refund"
-    override val expectedIncorrectFormatErrorText: String = "Enter the amount of non-UK tax you paid on this short service refund in the correct format"
-    override val expectedTooBigErrorText: String = "The amount of non-UK tax you paid on this short service refund must be less than £100,000,000,000"
+    override val expectedNoAmountEntryErrorText: String = "Enter the amount of non-UK tax your client paid on this short service refund"
+    override val expectedIncorrectFormatErrorText: String = "Enter the amount of non-UK tax your client paid on this short service refund in the correct format"
+    override val expectedTooBigErrorText: String = "The amount of non-UK tax your client paid on this short service refund must be less than £100,000,000,000"
   }
 
   object ExpectedContentsIndividualCY extends ExpectedContents {
@@ -141,7 +141,28 @@ class NonUkTaxRefundsViewSpec extends ViewUnitTest {
         implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = getUserSession(userScenario.isAgent)
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
 
-        def form: Form[(Boolean, Option[BigDecimal])] = new FormsProvider().shortServiceTaxableRefundForm(if (userScenario.isAgent) anAgentUser else aUser)
+        def form: Form[(Boolean, Option[BigDecimal])] = new FormsProvider().nonUkTaxRefundsForm(if (userScenario.isAgent) anAgentUser else aUser)
+
+        val htmlFormat = underTest(form, taxYearEOY)
+        implicit val document: Document = Jsoup.parse(htmlFormat.body)
+
+        titleCheck(userScenario.commonExpectedResults.expectedTitle, userScenario.isWelsh)
+        captionCheck(userScenario.commonExpectedResults.expectedCaption(taxYearEOY), Selectors.captionSelector)
+        h1Check(userScenario.commonExpectedResults.expectedTitle)
+        textOnPageCheck(userScenario.commonExpectedResults.expectedPara1, Selectors.p1Selector)
+        textOnPageCheck(userScenario.commonExpectedResults.expectedPara2, Selectors.p2Selector)
+        textOnPageCheck(userScenario.commonExpectedResults.expectedQuestion, Selectors.questionSelector)
+        radioButtonCheck(userScenario.commonExpectedResults.yes, 1, checked = false)
+        radioButtonCheck(userScenario.commonExpectedResults.no, 2, checked = false)
+        textOnPageCheck(userScenario.commonExpectedResults.expectedAmountText, Selectors.amountLabelSelector)
+        buttonCheck(userScenario.commonExpectedResults.continue)
+        welshToggleCheck(userScenario.isWelsh)
+      }
+      "show the Non UK tax on short service refund page when yes is selected" which {
+        implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = getUserSession(userScenario.isAgent)
+        implicit val messages: Messages = getMessages(userScenario.isWelsh)
+
+        def form: Form[(Boolean, Option[BigDecimal])] = new FormsProvider().nonUkTaxRefundsForm(if (userScenario.isAgent) anAgentUser else aUser)
 
         val htmlFormat = underTest(form.bind(Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "200.00")), taxYearEOY)
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
@@ -158,6 +179,85 @@ class NonUkTaxRefundsViewSpec extends ViewUnitTest {
         inputFieldValueCheck("amount-2", Selectors.amountTextSelector, "200")
         buttonCheck(userScenario.commonExpectedResults.continue)
         welshToggleCheck(userScenario.isWelsh)
+      }
+      "show the Non UK tax on short service refund page when no is selected" which {
+        implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = getUserSession(userScenario.isAgent)
+        implicit val messages: Messages = getMessages(userScenario.isWelsh)
+
+        def form: Form[(Boolean, Option[BigDecimal])] = new FormsProvider().nonUkTaxRefundsForm(if (userScenario.isAgent) anAgentUser else aUser)
+
+        val htmlFormat = underTest(form.bind(Map(RadioButtonAmountForm.yesNo -> "false")), taxYearEOY)
+        implicit val document: Document = Jsoup.parse(htmlFormat.body)
+
+        titleCheck(userScenario.commonExpectedResults.expectedTitle, userScenario.isWelsh)
+        captionCheck(userScenario.commonExpectedResults.expectedCaption(taxYearEOY), Selectors.captionSelector)
+        h1Check(userScenario.commonExpectedResults.expectedTitle)
+        textOnPageCheck(userScenario.commonExpectedResults.expectedPara1, Selectors.p1Selector)
+        textOnPageCheck(userScenario.commonExpectedResults.expectedPara2, Selectors.p2Selector)
+        textOnPageCheck(userScenario.commonExpectedResults.expectedQuestion, Selectors.questionSelector)
+        radioButtonCheck(userScenario.commonExpectedResults.yes, 1, checked = false)
+        radioButtonCheck(userScenario.commonExpectedResults.no, 2, checked = true)
+        textOnPageCheck(userScenario.commonExpectedResults.expectedAmountText, Selectors.amountLabelSelector)
+        inputFieldValueCheck("amount-2", Selectors.amountTextSelector, "")
+        buttonCheck(userScenario.commonExpectedResults.continue)
+        welshToggleCheck(userScenario.isWelsh)
+      }
+      "show an error message when page is submitted without any input" which {
+        implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = getUserSession(userScenario.isAgent)
+        implicit val messages: Messages = getMessages(userScenario.isWelsh)
+
+        def form: Form[(Boolean, Option[BigDecimal])] = new FormsProvider().nonUkTaxRefundsForm(if (userScenario.isAgent) anAgentUser else aUser)
+
+        val htmlFormat = underTest(form.bind(Map(RadioButtonAmountForm.yesNo -> "")), taxYearEOY)
+        implicit val document: Document = Jsoup.parse(htmlFormat.body)
+
+        titleCheck("Error: " + userScenario.commonExpectedResults.expectedTitle, userScenario.isWelsh)
+        errorAboveElementCheck(userScenario.commonExpectedResults.errorMessage, Some("value"))
+        errorSummaryCheck(userScenario.commonExpectedResults.errorMessage, "#value")
+        radioButtonCheck(userScenario.commonExpectedResults.yes, 1, checked = false)
+        radioButtonCheck(userScenario.commonExpectedResults.no, 2, checked = false)
+      }
+      "show an error message when page is submitted without amount input" which {
+        implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = getUserSession(userScenario.isAgent)
+        implicit val messages: Messages = getMessages(userScenario.isWelsh)
+
+        def form: Form[(Boolean, Option[BigDecimal])] = new FormsProvider().nonUkTaxRefundsForm(if (userScenario.isAgent) anAgentUser else aUser)
+
+        val htmlFormat = underTest(form.bind(Map(RadioButtonAmountForm.yesNo -> "true")), taxYearEOY)
+        implicit val document: Document = Jsoup.parse(htmlFormat.body)
+
+        titleCheck("Error: " + userScenario.commonExpectedResults.expectedTitle, userScenario.isWelsh)
+        errorAboveElementCheck(userScenario.commonExpectedResults.expectedNoAmountEntryErrorText, Some("amount-2"))
+        errorSummaryCheck(userScenario.commonExpectedResults.expectedNoAmountEntryErrorText, "#amount-2")
+        radioButtonCheck(userScenario.commonExpectedResults.yes, 1, checked = true)
+        radioButtonCheck(userScenario.commonExpectedResults.no, 2, checked = false)
+        inputFieldValueCheck("amount-2", Selectors.amountTextSelector, "")
+      }
+      "show an error message when page is submitted with amount in wrong format" which {
+        implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = getUserSession(userScenario.isAgent)
+        implicit val messages: Messages = getMessages(userScenario.isWelsh)
+
+        def form: Form[(Boolean, Option[BigDecimal])] = new FormsProvider().nonUkTaxRefundsForm(if (userScenario.isAgent) anAgentUser else aUser)
+
+        val htmlFormat = underTest(form.bind(Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "123xyz")), taxYearEOY)
+        implicit val document: Document = Jsoup.parse(htmlFormat.body)
+
+        titleCheck("Error: " + userScenario.commonExpectedResults.expectedTitle, userScenario.isWelsh)
+        errorAboveElementCheck(userScenario.commonExpectedResults.expectedIncorrectFormatErrorText, Some("amount-2"))
+        errorSummaryCheck(userScenario.commonExpectedResults.expectedIncorrectFormatErrorText, "#amount-2")
+      }
+      "show an error message when page is submitted that exceeds maximum amount allowed" which {
+        implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = getUserSession(userScenario.isAgent)
+        implicit val messages: Messages = getMessages(userScenario.isWelsh)
+
+        def form: Form[(Boolean, Option[BigDecimal])] = new FormsProvider().nonUkTaxRefundsForm(if (userScenario.isAgent) anAgentUser else aUser)
+
+        val htmlFormat = underTest(form.bind(Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "999999999999999999999.99")), taxYearEOY)
+        implicit val document: Document = Jsoup.parse(htmlFormat.body)
+
+        titleCheck("Error: " + userScenario.commonExpectedResults.expectedTitle, userScenario.isWelsh)
+        errorAboveElementCheck(userScenario.commonExpectedResults.expectedTooBigErrorText, Some("amount-2"))
+        errorSummaryCheck(userScenario.commonExpectedResults.expectedTooBigErrorText, "#amount-2")
       }
     }
   }
