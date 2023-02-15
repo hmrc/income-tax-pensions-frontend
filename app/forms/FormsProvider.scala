@@ -34,7 +34,8 @@ class FormsProvider() {
       emptyFieldKey = s"transferIntoOverseasPensions.overseasPensionSchemeTaxTransferCharge.error.noAmountEntry.$agentOrIndividual",
       wrongFormatKey = s"transferIntoOverseasPensions.overseasPensionSchemeTaxTransferCharge.error.incorrectFormat.$agentOrIndividual",
       exceedsMaxAmountKey = s"transferIntoOverseasPensions.overseasPensionSchemeTaxTransferCharge.error.tooBig"
-    )}
+    )
+  }
 
   def shortServiceTaxableRefundForm(implicit user: User): Form[(Boolean, Option[BigDecimal])] = {
     val agentOrIndividual = if (user.isAgent) "agent" else "individual"
@@ -43,6 +44,16 @@ class FormsProvider() {
       emptyFieldKey = s"shortServiceRefunds.taxableRefundAmount.error.noAmountEntry",
       wrongFormatKey = s"shortServiceRefunds.taxableRefundAmount.error.incorrectFormat",
       exceedsMaxAmountKey = s"shortServiceRefunds.taxableRefundAmount.error.tooBig"
+    )
+  }
+
+  def nonUkTaxRefundsForm(implicit user: User): Form[(Boolean, Option[BigDecimal])] = {
+    val agentOrIndividual = if (user.isAgent) "agent" else "individual"
+    RadioButtonAmountForm.radioButtonAndAmountForm(
+      missingInputError = s"shortServiceRefunds.nonUkTaxRefunds.error.noEntry.$agentOrIndividual",
+      emptyFieldKey = s"shortServiceRefunds.nonUkTaxRefunds.error.noAmountEntry.$agentOrIndividual",
+      wrongFormatKey = s"shortServiceRefunds.nonUkTaxRefunds.error.incorrectFormat.$agentOrIndividual",
+      exceedsMaxAmountKey = s"shortServiceRefunds.nonUkTaxRefunds.error.tooBig.$agentOrIndividual"
     )
   }
 }
