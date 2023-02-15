@@ -74,7 +74,7 @@ class TaxableRefundAmountController@Inject()(actionsProvider: ActionsProvider,
 
     pensionSessionService.createOrUpdateSessionData(request.user,
       updatedCyaModel, taxYear, pensionUserData.isPriorSubmission)(errorHandler.internalServerError()) {
-      Redirect(controllers.pensions.shortServiceRefunds.routes.TaxableRefundAmountController.show(taxYear)) //todo change to next page in journey
+      Redirect(controllers.pensions.shortServiceRefunds.routes.NonUkTaxRefundsController.show(taxYear))
     }
   }
 }
