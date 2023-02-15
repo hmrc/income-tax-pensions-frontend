@@ -29,6 +29,7 @@ import org.scalatest.BeforeAndAfterAll
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
+import play.api.http.Status.NO_CONTENT
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import play.api.libs.ws.WSClient
@@ -100,6 +101,7 @@ trait IntegrationTest extends AnyWordSpec with Matchers with GuiceOneServerPerSu
     "microservice.services.auth.host" -> wiremockHost,
     "microservice.services.auth.port" -> wiremockPort.toString,
     "microservice.services.income-tax-employment.url" -> s"http://$wiremockHost:$wiremockPort",
+    "microservice.services.income-tax-pensions.url" -> s"http://$wiremockHost:$wiremockPort",
     "microservice.services.income-tax-expenses.url" -> s"http://$wiremockHost:$wiremockPort",
     "microservice.services.income-tax-submission.url" -> s"http://$wiremockHost:$wiremockPort",
     "microservice.services.view-and-change.url" -> s"http://$wiremockHost:$wiremockPort",
@@ -214,6 +216,14 @@ trait IntegrationTest extends AnyWordSpec with Matchers with GuiceOneServerPerSu
     stubGetWithHeadersCheck(
       url = s"/income-tax-submission-service/income-tax/nino/$nino/sources/session\\?taxYear=$taxYear", status = OK,
       body = Json.toJson(userData).toString(),
+      sessionHeader = "X-Session-ID" -> defaultUser.sessionId,
+      mtdidHeader = "mtditid" -> defaultUser.mtdItId
+    )}
+
+  def pensionChargesSessionStub(jsonBody: String, nino: String, taxYear: Int): StubMapping = {
+    stubPutWithHeadersCheck(
+      url = s"/income-tax-pensions/pension-charges/session-data/nino/$nino/taxYear/$taxYear", status = NO_CONTENT,
+      body = jsonBody,
       sessionHeader = "X-Session-ID" -> defaultUser.sessionId,
       mtdidHeader = "mtditid" -> defaultUser.mtdItId
     )
