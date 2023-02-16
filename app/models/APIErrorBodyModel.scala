@@ -16,17 +16,20 @@
 
 package models
 
+import models.mongo.ServiceError
 import play.api.libs.json.{JsValue, Json, OFormat}
 
 sealed trait APIErrorBody
 
-case class APIErrorModel(status: Int, body: APIErrorBody){
+case class APIErrorModel(status: Int, body: APIErrorBody) extends ServiceError{
   def toJson: JsValue = {
     body match {
       case error: APIErrorBodyModel => Json.toJson(error)
       case errors: APIErrorsBodyModel => Json.toJson(errors)
     }
   }
+
+  override val message: String = toJson.toString()
 }
 
 /** Single API Error **/

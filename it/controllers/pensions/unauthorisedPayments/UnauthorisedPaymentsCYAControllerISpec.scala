@@ -356,6 +356,7 @@ class UnauthorisedPaymentsCYAControllerISpec extends
         lazy val result: WSResponse = {
           dropPensionsDB()
           authoriseAgentOrIndividual(isAgent = false)
+          pensionChargesSessionStub("", nino, taxYear)
           urlPost(fullUrl(checkUnauthorisedPaymentsCyaUrl(taxYear)), form, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
         }
 
@@ -364,20 +365,22 @@ class UnauthorisedPaymentsCYAControllerISpec extends
         }
 
         "redirects to the overview page" in {
-          result.headers("Location").head shouldBe appConfig.incomeTaxSubmissionOverviewUrl(taxYear)
+          result.headers("Location").head shouldBe controllers.pensions.routes.PensionsSummaryController.show(taxYear).url
         }
       }
     }
 
     "redirect to the summary page" when {
 
-      "the CYA data differs from the prior data" should {
+      "the cya data is persisted to pensions backend" should {
 
         val form = Map[String, String]()
+        val userData = anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData))
 
         lazy val result: WSResponse = {
           dropPensionsDB()
-          userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYear)
+          userDataStub(userData, nino, taxYear)
+          pensionChargesSessionStub("", nino, taxYear)
           insertCyaData(aPensionsUserData.copy(pensions = aPensionsCYAModel.copy(paymentsIntoPension = cyaDataIncomplete), taxYear = taxYear), aUserRequest)
           authoriseAgentOrIndividual(isAgent = false)
           urlPost(fullUrl(checkUnauthorisedPaymentsCyaUrl(taxYear)), form, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
@@ -392,45 +395,6 @@ class UnauthorisedPaymentsCYAControllerISpec extends
         }
       }
 
-      "the user makes no changes and no submission to DES is made" should {
-
-        val unchangedModel =
-          PaymentsIntoPensionViewModel(
-            None, Some(true), anReliefs.regularPensionContributions,
-            Some(true), anReliefs.oneOffPensionContributionsPaid, Some(true), Some(true), Some(true),
-            anReliefs.retirementAnnuityPayments, Some(true), anReliefs.paymentToEmployersSchemeNoTaxRelief)
-
-        val unchangedAllowances = PensionAnnualAllowancesViewModel(
-          Some(anPensionSavngTaxCharges.isAnnualAllowanceReduced),
-          anPensionSavngTaxCharges.moneyPurchasedAllowance, anPensionSavngTaxCharges.taperedAnnualAllowance,
-          Some(true), Some(anPensionContributions.inExcessOfTheAnnualAllowance), Some(true),
-          Some(anPensionContributions.annualAllowanceTaxPaid),
-          Some(anPensionContributions.pensionSchemeTaxReference))
-
-        val form = Map[String, String]()
-
-        lazy val result: WSResponse = {
-          dropPensionsDB()
-          userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYear)
-          insertCyaData(aPensionsUserData.copy(pensions = aPensionsCYAModel.copy
-          (paymentsIntoPension = unchangedModel, pensionsAnnualAllowances = unchangedAllowances,
-            pensionLifetimeAllowances = aPensionLifetimeAllowanceViewModel,
-            incomeFromPensions = anIncomeFromPensionsViewModel,
-            unauthorisedPayments = anUnauthorisedPaymentsViewModel,
-            paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel
-          ), taxYear = taxYear), aUserRequest)
-          authoriseAgentOrIndividual(isAgent = false)
-          urlPost(fullUrl(checkUnauthorisedPaymentsCyaUrl(taxYear)), form, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
-        }
-
-        "the status is SEE OTHER" in {
-          result.status shouldBe SEE_OTHER
-        }
-
-        "redirects to the summary page" in {
-          result.headers("Location").head shouldBe controllers.pensions.routes.PensionsSummaryController.show(taxYear).url
-        }
-      }
     }
   }
 }

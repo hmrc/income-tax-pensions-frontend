@@ -19,6 +19,7 @@ package config
 object ConfigKeys {
 
   val incomeTaxSubmissionUrl = "microservice.services.income-tax-submission.url"
+  val incomeTaxPensionsUrl = "microservice.services.income-tax-pensions.url"
 
   val contactFrontendUrl = "microservice.services.contact-frontend.url"
   val incomeTaxSubmissionFrontendUrl = "microservice.services.income-tax-submission-frontend.url"

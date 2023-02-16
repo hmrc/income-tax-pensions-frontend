@@ -35,6 +35,24 @@ case class UnauthorisedPaymentsViewModel(surchargeQuestion: Option[Boolean] = No
                                          ukPensionSchemesQuestion: Option[Boolean] = None,
                                          pensionSchemeTaxReference: Option[Seq[String]] = None) {
 
+  def toCreatePensionChargeRequest: CreateUpdatePensionChargesRequestModel = {
+    CreateUpdatePensionChargesRequestModel(
+      pensionSavingsTaxCharges = None,
+      pensionSchemeOverseasTransfers = None,
+      pensionContributions = None,
+      overseasPensionContributions = None,
+      pensionSchemeUnauthorisedPayments = if (this.isEmpty()) None else Some(
+        PensionSchemeUnauthorisedPayments(
+          pensionSchemeTaxReference = scala.collection.immutable.Seq(pensionSchemeTaxReference.getOrElse(scala.collection.immutable.Nil)).flatten,
+          surcharge =
+            if (surchargeQuestion.getOrElse(false)) Some(Charge(this.surchargeAmount.getOrElse(0.00), this.surchargeTaxAmount.getOrElse(0.00))) else None,
+          noSurcharge =
+            if (noSurchargeQuestion.getOrElse(false)) Some(Charge(this.surchargeAmount.getOrElse(0.00), this.surchargeTaxAmount.getOrElse(0.00))) else None
+        )
+      )
+    )
+  }
+
   def isEmpty(): Boolean = this.productIterator.forall(_ == None)
 
   def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedUnauthorisedPaymentsViewModel =
@@ -65,7 +83,7 @@ case class UnauthorisedPaymentsViewModel(surchargeQuestion: Option[Boolean] = No
                                noSurchargeQuestion: Option[Boolean]): UnauthorisedPaymentsViewModel = {
     val questionsSet = copy(surchargeQuestion = surchargeQuestion, noSurchargeQuestion = noSurchargeQuestion)
     val surchargeQuestionsApplied = {
-      if(!surchargeQuestion.getOrElse(false)) {
+      if (!surchargeQuestion.getOrElse(false)) {
         questionsSet.copy(surchargeAmount = None, surchargeTaxAmountQuestion = None, surchargeTaxAmount = None)
       }
       else {
@@ -73,7 +91,7 @@ case class UnauthorisedPaymentsViewModel(surchargeQuestion: Option[Boolean] = No
       }
     }
     val noSurchargeQuestionsApplied = {
-      if(!noSurchargeQuestion.getOrElse(false)) {
+      if (!noSurchargeQuestion.getOrElse(false)) {
         surchargeQuestionsApplied.copy(noSurchargeAmount = None, noSurchargeTaxAmountQuestion = None, noSurchargeTaxAmount = None)
       }
       else {
