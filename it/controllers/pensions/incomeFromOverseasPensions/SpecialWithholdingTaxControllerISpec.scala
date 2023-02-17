@@ -27,6 +27,21 @@ import play.api.http.Status.{BAD_REQUEST, OK}
 import play.api.libs.ws.{WSClient, WSResponse}
 
 class SpecialWithholdingTaxControllerISpec   extends YesNoAmountControllerSpec("/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-swt") {
+  private val selectorForSummaryText = "#main-content > div > div > details > summary"
+  private val selectorForSummaryPara1 = "#main-content > div > div > details > div > p:nth-child(1)"
+  private val selectorForSummaryBullet1 = "#main-content > div > div > details > div > ul > li:nth-child(1)"
+  private val selectorForSummaryBullet2 = "#main-content > div > div > details > div > ul > li:nth-child(2)"
+  private val selectorForSummaryBullet3 = "#main-content > div > div > details > div > ul > li:nth-child(3)"
+  private val selectorForSummaryBullet4 = "#main-content > div > div > details > div > ul > li:nth-child(4)"
+  private val selectorForSummaryBullet5 = "#main-content > div > div > details > div > ul > li:nth-child(5)"
+  private val selectorForSummaryBullet6 = "#main-content > div > div > details > div > ul > li:nth-child(6)"
+  private val selectorForSummaryBullet7 = "#main-content > div > div > details > div > ul > li:nth-child(7)"
+  private val selectorForSummaryBullet8 = "#main-content > div > div > details > div > ul > li:nth-child(8)"
+  private val selectorForSummaryBullet9 = "#main-content > div > div > details > div > ul > li:nth-child(9)"
+  private val selectorForSummaryBullet10 = "#main-content > div > div > details > div > ul > li:nth-child(10)"
+  private val selectorForSummaryBullet11 = "#main-content > div > div > details > div > ul > li:nth-child(11)"
+  private val selectorForSummaryPara2 = "#main-content > div > div > details > div > #para2"
+  private val selectorForSummaryPara3 = "#main-content > div > div > details > div > #para3"
 
   "This page" when {
     "requested to be shown" should {
@@ -73,7 +88,30 @@ class SpecialWithholdingTaxControllerISpec   extends YesNoAmountControllerSpec("
           radioButtonForNo = uncheckedExpectedRadioButton("No"),
           buttonForContinue = ExpectedButton("Continue", ""),
           amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "", Some("For example, £193.54")),
-          formUrl = formUrl()
+          links = Set(
+            ExpectedLink(
+            "special-withholding-tax-link",
+            "Special Withholding Tax at Gov.uk (opens in new tab)",
+            "https://www.gov.uk/government/publications/remittance-basis-hs264-self-assessment-helpsheet/remittance-basis-2022-hs264")
+          ),
+          text = Set(
+            ExpectedText(selectorForSummaryText, "Understanding Special Withholding Tax (SWT)"),
+            ExpectedText(selectorForSummaryPara1, "Special Withholding Tax (SWT) is an amount of tax taken off certain foreign payments to UK residents. SWT will be paid along with any foreign tax deducted by the country where the payment came from. The countries that may deduct SWT are:"),
+            ExpectedText(selectorForSummaryBullet1, "Andorra"),
+            ExpectedText(selectorForSummaryBullet2, "Austria"),
+            ExpectedText(selectorForSummaryBullet3, "Curaçao"),
+            ExpectedText(selectorForSummaryBullet4, "Gibraltar"),
+            ExpectedText(selectorForSummaryBullet5, "Jersey"),
+            ExpectedText(selectorForSummaryBullet6, "Liechtenstein"),
+            ExpectedText(selectorForSummaryBullet7, "Luxembourg"),
+            ExpectedText(selectorForSummaryBullet8, "Monaco"),
+            ExpectedText(selectorForSummaryBullet9, "San Marino"),
+            ExpectedText(selectorForSummaryBullet10, "Saint Maarten"),
+            ExpectedText(selectorForSummaryBullet11, "Switzerland"),
+            ExpectedText(selectorForSummaryPara2, "Where SWT has been deducted you’re treated as having paid the same amount of income tax in the UK in the same year. This can be set against your UK tax liability of that year, or repaid to you if the amount is more than the tax you must pay."),
+            ExpectedText(selectorForSummaryPara3, "Read more about Special Withholding Tax at Gov.uk (opens in new tab).")
+            ),
+        formUrl = formUrl()
         )
         
         val expectedContentAgent = expectedContentIndividual.copy(
