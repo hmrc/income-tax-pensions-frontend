@@ -70,8 +70,8 @@ object EncryptedShortServiceRefundsViewModel {
 case class OverseasRefundPensionScheme(
                                         ukRefundCharge: Option[Boolean] = None,
                                         name: Option[String] = None,
-                                        pstr: Option[String] = None,
-                                        qops: Option[String] = None,
+                                        pensionSchemeTaxReference: Option[String] = None,
+                                        qualifyingRecognisedOverseasPensionScheme: Option[String] = None,
                                         providerAddress: Option[String] = None,
                                         alphaTwoCountryCode: Option[String] = None,
                                         alphaThreeCountryCode: Option[String] = None
@@ -80,8 +80,8 @@ case class OverseasRefundPensionScheme(
     EncryptedOverseasRefundPensionScheme(
       ukRefundCharge = ukRefundCharge.map(_.encrypted),
       name = name.map(_.encrypted),
-      pensionSchemeTaxReference = pstr.map(_.encrypted),
-      qualifyingRecognisedOverseasPensionScheme = qops.map(_.encrypted),
+      pensionSchemeTaxReference = pensionSchemeTaxReference.map(_.encrypted),
+      qualifyingRecognisedOverseasPensionScheme = qualifyingRecognisedOverseasPensionScheme.map(_.encrypted),
       providerAddress = providerAddress.map(_.encrypted),
       alphaTwoCountryCode = alphaTwoCountryCode.map(_.encrypted),
       alphaThreeCountryCode = alphaThreeCountryCode.map(_.encrypted)
@@ -105,8 +105,8 @@ case class EncryptedOverseasRefundPensionScheme(
     OverseasRefundPensionScheme(
       ukRefundCharge = ukRefundCharge.map(_.decrypted[Boolean]),
       name = name.map(_.decrypted[String]),
-      pstr = pensionSchemeTaxReference.map(_.decrypted[String]),
-      qops = qualifyingRecognisedOverseasPensionScheme.map(_.decrypted[String]),
+      pensionSchemeTaxReference = pensionSchemeTaxReference.map(_.decrypted[String]),
+      qualifyingRecognisedOverseasPensionScheme = qualifyingRecognisedOverseasPensionScheme.map(_.decrypted[String]),
       providerAddress = providerAddress.map(_.decrypted[String]),
       alphaTwoCountryCode = alphaTwoCountryCode.map(_.decrypted[String]),
       alphaThreeCountryCode = alphaThreeCountryCode.map(_.decrypted[String])

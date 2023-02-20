@@ -90,7 +90,7 @@ class ShortServicePensionsSchemeController @Inject()(actionsProvider: ActionsPro
   private def updateFormModel(scheme: OverseasRefundPensionScheme) =
     TcSsrPensionsSchemeFormModel(
       providerName = scheme.name.getOrElse(""),
-      schemeReference = (if (scheme.ukRefundCharge.contains(true)) scheme.pstr else scheme.qops)
+      schemeReference = (if (scheme.ukRefundCharge.contains(true)) scheme.pensionSchemeTaxReference else scheme.qualifyingRecognisedOverseasPensionScheme)
         .getOrElse(""),
       providerAddress = scheme.providerAddress.getOrElse(""),
       countryId = scheme.alphaTwoCountryCode
@@ -103,9 +103,9 @@ class ShortServicePensionsSchemeController @Inject()(actionsProvider: ActionsPro
         .copy(name = Some(scheme.providerName), providerAddress = Some(scheme.providerAddress))
       
       if (commonUpdatedScheme.ukRefundCharge.contains(true)) {
-        commonUpdatedScheme.copy(pstr = Some(scheme.schemeReference))
+        commonUpdatedScheme.copy(pensionSchemeTaxReference = Some(scheme.schemeReference))
       } else {
-        commonUpdatedScheme.copy(qops = Some(scheme.schemeReference), alphaTwoCountryCode = scheme.countryId,
+        commonUpdatedScheme.copy(qualifyingRecognisedOverseasPensionScheme = Some(scheme.schemeReference), alphaTwoCountryCode = scheme.countryId,
           alphaThreeCountryCode = Countries.get3AlphaCodeFrom2AlphaCode(scheme.countryId))
       }
     }
