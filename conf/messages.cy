@@ -1021,3 +1021,7 @@ shortServiceRefunds.nonUkTaxRefunds.error.tooBig.agent = The amount of non-UK ta
 
 #Short service refund Pension Scheme
 shortServiceRefunds.PensionScheme.title = Pension scheme paying tax on the short service refund
+
+#short service refund - UK pension scheme pay tax
+shortServiceRefunds.taxOnShortServiceRefund.title = Did a UK pension scheme pay tax on the short service refunds?
+shortServiceRefunds.taxOnShortServiceRefund.error.noEntry = Select yes if a UK pension scheme paid tax on the short service refund

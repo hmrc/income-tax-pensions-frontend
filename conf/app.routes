@@ -282,3 +282,7 @@ POST        /:taxYear/overseas-pensions/short-service-refunds/short-service-refu
 
 GET         /:taxYear/overseas-pensions/short-service-refunds/short-service-refunds-pension-scheme                                 controllers.pensions.shortServiceRefunds.ShortServicePensionsSchemeController.show(taxYear: Int, index: Option[Int])
 POST        /:taxYear/overseas-pensions/short-service-refunds/short-service-refunds-pension-scheme                                 controllers.pensions.shortServiceRefunds.ShortServicePensionsSchemeController.submit(taxYear: Int, index: Option[Int])
+
+GET         /:taxYear/overseas-pensions/short-service-refunds/short-service-refunds-uk-tax                                          controllers.pensions.shortServiceRefunds.TaxOnShortServiceRefundController.show(taxYear: Int, refundPensionSchemeIndex: Option[Int])
+POST         /:taxYear/overseas-pensions/short-service-refunds/short-service-refunds-uk-tax                                         controllers.pensions.shortServiceRefunds.TaxOnShortServiceRefundController.submit(taxYear: Int, refundPensionSchemeIndex: Option[Int])
+

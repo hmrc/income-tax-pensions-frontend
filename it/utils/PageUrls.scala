@@ -270,5 +270,10 @@ object PageUrls extends IntegrationTest {
       s"$appUrl/$taxYear/overseas-pensions/overseas-transfer-charges/transfer-pension-savings"
   }
 
+  object ShortServiceRefunds {
+    def taxOnShortServiceRefund(taxYear: Int): String =
+      s"$appUrl/$taxYear/overseas-pensions/short-service-refunds/short-service-refunds-uk-tax"
+  }
+
 }
 //scalastyle:on number.of.methods
