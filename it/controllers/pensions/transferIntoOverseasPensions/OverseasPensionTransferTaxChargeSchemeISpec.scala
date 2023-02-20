@@ -27,11 +27,9 @@ import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import utils.PageUrls.PensionAnnualAllowancePages.transferPensionSchemeTaxUrl
+import utils.PageUrls.TransferIntoOverseasPensions.{overseasTransferChargePaidUrl, transferChargeSummaryUrl}
 import utils.PageUrls.{fullUrl, overviewUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
-import utils.PageUrls.TransferIntoOverseasPensions.{transferChargeSummaryUrl, overseasTransferChargePaidUrl}
-import utils.PageUrls.TransferIntoOverseasPensionsPages.{transferPensionSavingsUrl}
-import utils.PageUrls.{fullUrl, overseasPensionsSummaryUrl, overviewUrl}
 
 
 class OverseasPensionTransferTaxChargeSchemeISpec

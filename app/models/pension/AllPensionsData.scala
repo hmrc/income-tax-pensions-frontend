@@ -148,8 +148,8 @@ object AllPensionsData {
       OverseasRefundPensionScheme(
         ukRefundCharge = Some(x.providerCountryCode == "GBR"),
         name = Some(x.providerName),
-        pensionSchemeTaxReference = x.pensionSchemeTaxReference.map(_.head),
-        qualifyingRecognisedOverseasPensionScheme = x.qualifyingRecognisedOverseasPensionScheme.map(_.head),
+        pstr = x.pensionSchemeTaxReference.map(_.head),
+        qops = x.qualifyingRecognisedOverseasPensionScheme.map(_.head),
         providerAddress = Some(x.providerAddress),
         alphaTwoCountryCode = Countries.get2AlphaCodeFrom3AlphaCode(x.providerCountryCode),
         alphaThreeCountryCode = Some(x.providerCountryCode)

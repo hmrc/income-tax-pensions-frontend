@@ -27,9 +27,9 @@ import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.transferIntoOverseasPensions.pensionSchemeTaxTransferChargeView
+
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
-import models.pension.charges.TransfersIntoOverseasPensionsViewModel
 @Singleton
 class PensionSchemeTaxTransferController @Inject()(
                                                     actionsProvider: ActionsProvider,
@@ -44,7 +44,8 @@ class PensionSchemeTaxTransferController @Inject()(
 
   def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit sessionData =>
-          val transferSchemeChargeAmount: Option[BigDecimal] = sessionData.pensionsUserData.pensions.transfersIntoOverseasPensions.pensionSchemeTransferChargeAmount
+          val transferSchemeChargeAmount: Option[BigDecimal] =
+            sessionData.pensionsUserData.pensions.transfersIntoOverseasPensions.pensionSchemeTransferChargeAmount
           val transferSchemeCharge: Option[Boolean] = sessionData.pensionsUserData.pensions.transfersIntoOverseasPensions.pensionSchemeTransferCharge
           (transferSchemeCharge, transferSchemeChargeAmount) match {
             case (Some(a), amount) => Future.successful(Ok(view(formsProvider.pensionSchemeTaxTransferForm(sessionData.user).fill((a, amount)), taxYear)))

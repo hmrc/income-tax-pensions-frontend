@@ -954,12 +954,11 @@ transferIntoOverseasPensions.overseasTransferChargesPaid.error.noEntry = Select 
 
 #Transfer Pension Scheme
 transferIntoOverseasPensions.transferPensionScheme.title = Pension scheme paying the transfer charge
-transferIntoOverseasPensions.pensionScheme.providerName.subheading = Name of pension scheme
-transferIntoOverseasPensions.pensionScheme.qopsr.subheading = Qualifying Overseas Pension Scheme reference
-transferIntoOverseasPensions.pensionScheme.providerAddress.subheading = Pension provider address
 
-transferIntoOverseasPensions.paragraph1 = If more than one pension scheme paid a transfer charge, you can add them later.
-
+common.overseasPensions.paragraph1 = If more than one pension scheme paid a transfer charge, you can add them later.
+common.overseasPensions.pensionScheme.providerName.subheading = Name of pension scheme
+common.overseasPensions.pensionScheme.qopsr.subheading = Qualifying Overseas Pension Scheme reference
+common.overseasPensions.pensionScheme.providerAddress.subheading = Pension provider address
 common.overseasPensions.providerName.error.noEntry = Enter the name of the pension scheme
 common.overseasPensions.providerName.error.overCharLimit = Name of pension scheme must be 105 characters or less
 common.overseasPensions.providerName.error.incorrectFormat = The pension scheme name must only include numbers 0-9, letters a to z, hyphens, spaces, apostrophes, commas, full stops, round brackets and the special characters, &, /, @, £, *.
@@ -1019,3 +1018,6 @@ shortServiceRefunds.nonUkTaxRefunds.error.incorrectFormat.individual = Enter the
 shortServiceRefunds.nonUkTaxRefunds.error.incorrectFormat.agent = Enter the amount of non-UK tax your client paid on this short service refund in the correct format
 shortServiceRefunds.nonUkTaxRefunds.error.tooBig.individual = The amount of non-UK tax you paid on this short service refund must be less than £100,000,000,000
 shortServiceRefunds.nonUkTaxRefunds.error.tooBig.agent = The amount of non-UK tax your client paid on this short service refund must be less than £100,000,000,000
+
+#Short service refund Pension Scheme
+shortServiceRefunds.PensionScheme.title = Pension scheme paying tax on the short service refund

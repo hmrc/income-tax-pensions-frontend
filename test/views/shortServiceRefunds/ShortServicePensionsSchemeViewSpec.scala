@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package views.transferIntoOverseasPensions
+package views.shortServiceRefunds
 
 import forms.overseas.PensionSchemeForm.{TcSsrPensionsSchemeFormModel, tcSsrPensionSchemeForm}
 import models.requests.UserSessionDataRequest
@@ -24,9 +24,9 @@ import play.api.i18n.Messages
 import play.api.mvc.AnyContent
 import support.ViewUnitTest
 import utils.createLongString
-import views.html.pensions.transferIntoOverseasPensions.TransferPensionsSchemeView
+import views.html.pensions.shortServiceRefunds.ShortServicePensionsSchemeView
 
-class TransferPensionsSchemeViewSpec extends ViewUnitTest {
+class ShortServicePensionsSchemeViewSpec extends ViewUnitTest {
 
   object Selectors {
     val captionSelector: String = "#main-content > div > div > header > p"
@@ -49,10 +49,10 @@ class TransferPensionsSchemeViewSpec extends ViewUnitTest {
   }
   
   trait CommonExpectedResults {
-    val expectedTitle: String = "Pension scheme paying the transfer charge"
-    val expectedHeading: String = "Pension scheme paying the transfer charge"
+    val expectedTitle: String = "Pension scheme paying tax on the short service refund"
+    val expectedHeading: String = "Pension scheme paying tax on the short service refund"
     val expectedErrorTitle: String = s"Error: $expectedTitle"
-    val expectedCaption: Int => String = (taxYear: Int) => s"Transfers into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Short service refunds for 6 April ${taxYear - 1} to 5 April $taxYear"
     val expectedIfYouGetParagraph: String = "If more than one pension scheme paid a transfer charge, you can add them later."
     val buttonText: String = "Continue"
     val providerNameLabel: String = "Name of pension scheme"
@@ -93,7 +93,7 @@ class TransferPensionsSchemeViewSpec extends ViewUnitTest {
     UserScenario(isWelsh = true, isAgent = true, CommonExpectedCY, Some(ExpectedAgentCY))
   )
   
-  private lazy val underTest = inject[TransferPensionsSchemeView]
+  private lazy val underTest = inject[ShortServicePensionsSchemeView]
 
   for (isUKCountry <- Seq(true, false)) { //scalastyle:off magic.number line.size.limit
     

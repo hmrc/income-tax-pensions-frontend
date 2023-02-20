@@ -28,8 +28,8 @@ object ShortServiceRefundsViewModelBuilder {
       OverseasRefundPensionScheme(
         ukRefundCharge = Some(true),
         name = Some("Overseas Refund Scheme Name"),
-        pensionSchemeTaxReference = None,
-        qualifyingRecognisedOverseasPensionScheme = Some("QOPS123456"),
+        pstr = None,
+        qops = Some("QOPS123456"),
         providerAddress = Some("Scheme Address"),
         alphaTwoCountryCode = Some("FR"),
         alphaThreeCountryCode = Some("FRA")

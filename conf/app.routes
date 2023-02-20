@@ -279,3 +279,6 @@ POST        /:taxYear/overseas-pensions/short-service-refunds/taxable-short-serv
 
 GET         /:taxYear/overseas-pensions/short-service-refunds/short-service-refund-non-uk-tax                                      controllers.pensions.shortServiceRefunds.NonUkTaxRefundsController.show(taxYear: Int)
 POST        /:taxYear/overseas-pensions/short-service-refunds/short-service-refund-non-uk-tax                                      controllers.pensions.shortServiceRefunds.NonUkTaxRefundsController.submit(taxYear: Int)
+
+GET         /:taxYear/overseas-pensions/short-service-refunds/short-service-refunds-pension-scheme                                 controllers.pensions.shortServiceRefunds.ShortServicePensionsSchemeController.show(taxYear: Int, index: Option[Int])
+POST        /:taxYear/overseas-pensions/short-service-refunds/short-service-refunds-pension-scheme                                 controllers.pensions.shortServiceRefunds.ShortServicePensionsSchemeController.submit(taxYear: Int, index: Option[Int])
