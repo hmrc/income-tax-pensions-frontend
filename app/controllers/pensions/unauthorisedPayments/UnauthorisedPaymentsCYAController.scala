@@ -19,7 +19,6 @@ package controllers.pensions.unauthorisedPayments
 import config.{AppConfig, ErrorHandler}
 import controllers.predicates.AuthorisedAction
 import controllers.predicates.TaxYearAction.taxYearAction
-import models.mongo.PensionsCYAModel
 import models.pension.AllPensionsData
 import models.pension.AllPensionsData.generateCyaFromPrior
 import models.pension.charges.UnauthorisedPaymentsViewModel
@@ -60,18 +59,15 @@ class UnauthorisedPaymentsCYAController @Inject()(authAction: AuthorisedAction,
 
     pensionSessionService.getAndHandle(taxYear, request.user) { (cya, prior) =>
       (cya, prior) match {
-        case (Some(data), Some(priorData: AllPensionsData)) if data.pensions.unauthorisedPayments.isEmpty() => {
+        case (Some(data), Some(priorData: AllPensionsData)) if data.pensions.unauthorisedPayments.isEmpty() =>
           cyaDataIsEmpty(priorData)
-        }
-        case (Some(data), None) => {
+        case (Some(data), _) =>
           unauthorisedPaymentsCYAExists(data.pensions.unauthorisedPayments)
-        }
         case (None, Some(priorData)) =>
           cyaDataIsEmpty(priorData)
-        case (None, None) => {
+        case (None, None) =>
           val emptyUnauthorisedPaymentsViewModel = UnauthorisedPaymentsViewModel(surchargeQuestion = None, noSurchargeQuestion = None)
           Future.successful(Ok(view(taxYear, emptyUnauthorisedPaymentsViewModel)))
-        }
         case _ => Future.successful(Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear)))
       }
     }
