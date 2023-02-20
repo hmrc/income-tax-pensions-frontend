@@ -61,12 +61,12 @@ class TaxOnShortServiceRefundController @Inject()(actionsProvider: ActionsProvid
             Future.successful(
               BadRequest(view(TaxOnShortServiceRefundPage(taxYear, refundPensionSchemeIndex, sessionUserData.pensionsUserData.pensions.shortServiceRefunds, formWithErrors)))),
           yesNoValue => {
-            shortServiceRefundsService.updateOverseasTransferChargeQuestion(sessionUserData.pensionsUserData, yesNoValue, refundPensionSchemeIndex).map {
+            shortServiceRefundsService.createOrUpdateShortServiceRefundQuestion(sessionUserData.pensionsUserData, yesNoValue, refundPensionSchemeIndex).map {
               case Left(_) => errorHandler.internalServerError()
               case Right(userData) =>
                 Redirect(getRedirectCall(
                   taxYear,
-                  Some(refundPensionSchemeIndex.getOrElse(userData.pensions.transfersIntoOverseasPensions.transferPensionScheme.size-1)),
+                  Some(refundPensionSchemeIndex.getOrElse(userData.pensions.shortServiceRefunds.refundPensionScheme.size-1)), //The collection will always have 1 value
                   yesNoValue,
                   userData))
             }

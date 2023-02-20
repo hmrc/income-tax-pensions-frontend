@@ -27,7 +27,7 @@ class ShortServiceRefundsService @Inject()(pensionSessionService: PensionSession
                                           (implicit ec: ExecutionContext) {
 
 
-  def updateOverseasTransferChargeQuestion(userData: PensionsUserData, question: Boolean, pensionIndex: Option[Int]): Future[Either[Unit, PensionsUserData]] = {
+  def createOrUpdateShortServiceRefundQuestion(userData: PensionsUserData, question: Boolean, pensionIndex: Option[Int]): Future[Either[Unit, PensionsUserData]] = {
     val refundPensionScheme = pensionIndex match {
       case Some(index) => userData.pensions.shortServiceRefunds.refundPensionScheme(index)
       case None => OverseasRefundPensionScheme()
