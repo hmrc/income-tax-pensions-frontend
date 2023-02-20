@@ -53,12 +53,10 @@ class TaxOnShortServiceRefundControllerISpec extends YesNoControllerSpec("/overs
           val sessionData = pensionsUserData(aPensionsCYAModel)
 
           "the user has selected 'Yes'" in {
-            val expectedViewModel : ShortServiceRefundsViewModel = sessionData.pensions.shortServiceRefunds.copy(
-              refundPensionScheme = sessionData.pensions.shortServiceRefunds.refundPensionScheme ++ Seq(OverseasRefundPensionScheme(
-                ukRefundCharge = Some(true))))
+            val expectedViewModel : ShortServiceRefundsViewModel = sessionData.pensions.shortServiceRefunds
 
             implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
-            implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoPage(Some(true)))
+            implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoPage(Some(true)), queryParams = Map("refundPensionSchemeIndex" -> "0"))
 
             val redirectPage = relativeUrl("/overseas-pensions/short-service-refunds/short-service-refunds-uk-tax?refundPensionSchemeIndex=0")
 
@@ -68,11 +66,20 @@ class TaxOnShortServiceRefundControllerISpec extends YesNoControllerSpec("/overs
 
           "the user has selected 'No'" in {
             val expectedViewModel : ShortServiceRefundsViewModel = sessionData.pensions.shortServiceRefunds.copy(
-              refundPensionScheme = sessionData.pensions.shortServiceRefunds.refundPensionScheme ++ Seq(OverseasRefundPensionScheme(
-                ukRefundCharge = Some(false))))
+              refundPensionScheme = sessionData.pensions.shortServiceRefunds.refundPensionScheme.updated(0,
+                OverseasRefundPensionScheme(
+                  ukRefundCharge = Some(false),
+                  name = Some("Overseas Refund Scheme Name"),
+                  pensionSchemeTaxReference = None,
+                  qualifyingRecognisedOverseasPensionScheme = Some("QOPS123456"),
+                  providerAddress = Some("Scheme Address"),
+                  alphaTwoCountryCode = Some("FR"),
+                  alphaThreeCountryCode = Some("FRA")
+                )
+              ))
 
             implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
-            implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoPage(Some(false)))
+            implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoPage(Some(false)), queryParams = Map("refundPensionSchemeIndex" -> "0"))
 
             val redirectPage = relativeUrl("/overseas-pensions/short-service-refunds/short-service-refunds-uk-tax?refundPensionSchemeIndex=0")
 
