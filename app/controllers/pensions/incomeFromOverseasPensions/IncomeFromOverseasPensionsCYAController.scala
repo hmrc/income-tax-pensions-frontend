@@ -61,13 +61,13 @@ class IncomeFromOverseasPensionsCYAController @Inject()(authAction: AuthorisedAc
   }
 
   def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
-    pensionSessionService.getAndHandle(taxYear, request.user) { (cya, prior) =>
+    pensionSessionService.getAndHandle(taxYear, request.user) { (cya, _) =>
       cya.fold(
         Future.successful(Redirect(appConfig.incomeTaxSubmissionOverviewUrl(taxYear)))
       ) { model =>
         val updatedCyaModel = model.pensions.copy(
           incomeFromOverseasPensions = model.pensions.incomeFromOverseasPensions.copy(overseasIncomePensionSchemes =
-            model.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes.map { case pensionScheme =>
+            model.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes.map { pensionScheme =>
               val threeDigitCountryCode = Countries.get3AlphaCodeFrom2AlphaCode(pensionScheme.alphaTwoCode)
               pensionScheme.copy(alphaThreeCode = threeDigitCountryCode)
             }))

@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import controllers.pensions.transferIntoOverseasPensions.routes.TransferPensionsSchemeController
+@import controllers.pensions.shortServiceRefunds.routes.ShortServicePensionsSchemeController
 @import forms.Countries
 @import forms.overseas.PensionSchemeForm.TcSsrPensionsSchemeFormModel
 @import models.requests.UserSessionDataRequest
@@ -42,7 +42,7 @@
 @(form: Form[TcSsrPensionsSchemeFormModel], taxYear: Int, isUKScheme:Boolean, index: Int)(implicit request: UserSessionDataRequest[_], messages: Messages, appConfig: AppConfig)
 
 @titleText = @{
-    messages("transferIntoOverseasPensions.transferPensionScheme.title")
+    messages("shortServiceRefunds.PensionScheme.title")
 }
 
 @schemeRefHint = @{
@@ -73,11 +73,11 @@
 
     @errorSummary(form.errors.distinct)
 
-    @heading(titleText, Some(messages("common.transferIntoOverseasPensions.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-2")
+    @heading(titleText, Some(messages("common.shortServiceRefunds.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-2")
 
     <p class="govuk-body">@messages("common.overseasPensions.paragraph1")</p>
 
-    @formWithCsrf(action = TransferPensionsSchemeController.submit(taxYear, Some(index))) {
+    @formWithCsrf(action = ShortServicePensionsSchemeController.submit(taxYear, Some(index))) {
         @inputText(
             form,
             id = "providerName",

@@ -586,11 +586,7 @@ class OverseasTransferChargePaidControllerISpec
   
   private def formUrl(index: Int = 0): Option[String] =
     Some(relativeUrlForThisPage + "?pensionSchemeIndex=" + index)
-
-  private def submitFormWithIndex(submittedFormData: SubmittedFormData, index: Int = 0)(implicit userConfig: UserConfig, wsClient: WSClient): WSResponse = {
-    submitForm(submittedFormData, getMap(index))
-  }
-
+  
   private def getMap(index: Int): Map[String, String] = {
     Map("pensionSchemeIndex" -> index.toString)
   }

@@ -68,20 +68,20 @@ object EncryptedShortServiceRefundsViewModel {
 }
 
 case class OverseasRefundPensionScheme(
-                                        ukRefundCharge: Option[Boolean],
-                                        name: Option[String],
-                                        pensionSchemeTaxReference: Option[String],
-                                        qualifyingRecognisedOverseasPensionScheme: Option[String],
-                                        providerAddress: Option[String],
-                                        alphaTwoCountryCode: Option[String],
-                                        alphaThreeCountryCode: Option[String]
+  ukRefundCharge: Option[Boolean],
+  name: Option[String],
+  pstr: Option[String],
+  qops: Option[String],
+  providerAddress: Option[String],
+  alphaTwoCountryCode: Option[String],
+  alphaThreeCountryCode: Option[String] = None
                                       ) {
   def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedOverseasRefundPensionScheme =
     EncryptedOverseasRefundPensionScheme(
       ukRefundCharge = ukRefundCharge.map(_.encrypted),
       name = name.map(_.encrypted),
-      pensionSchemeTaxReference = pensionSchemeTaxReference.map(_.encrypted),
-      qualifyingRecognisedOverseasPensionScheme = qualifyingRecognisedOverseasPensionScheme.map(_.encrypted),
+      pensionSchemeTaxReference = pstr.map(_.encrypted),
+      qualifyingRecognisedOverseasPensionScheme = qops.map(_.encrypted),
       providerAddress = providerAddress.map(_.encrypted),
       alphaTwoCountryCode = alphaTwoCountryCode.map(_.encrypted),
       alphaThreeCountryCode = alphaThreeCountryCode.map(_.encrypted)
@@ -105,8 +105,8 @@ case class EncryptedOverseasRefundPensionScheme(
     OverseasRefundPensionScheme(
       ukRefundCharge = ukRefundCharge.map(_.decrypted[Boolean]),
       name = name.map(_.decrypted[String]),
-      pensionSchemeTaxReference = pensionSchemeTaxReference.map(_.decrypted[String]),
-      qualifyingRecognisedOverseasPensionScheme = qualifyingRecognisedOverseasPensionScheme.map(_.decrypted[String]),
+      pstr = pensionSchemeTaxReference.map(_.decrypted[String]),
+      qops = qualifyingRecognisedOverseasPensionScheme.map(_.decrypted[String]),
       providerAddress = providerAddress.map(_.decrypted[String]),
       alphaTwoCountryCode = alphaTwoCountryCode.map(_.decrypted[String]),
       alphaThreeCountryCode = alphaThreeCountryCode.map(_.decrypted[String])

@@ -90,6 +90,7 @@ common.aboutGeneralIncreases.agent = y llythyr ’Ynglŷn â’r cynnydd cyffred
 
 common.employerFinancedRetirementScheme.caption = Cynlluniau buddiannau ymddeol a ariannwyd gan gyflogwyr ar gyfer 6 Ebrill {0} i 5 Ebrill {1}
 
+
 ################# Common lifetime allowance #################
 
 common.lifetimeAllowance.Pension.checkWithProvider.Paragraph.individual = Check with your pension providers if you’re unsure.
@@ -116,9 +117,9 @@ common.overseasPensions.checkPensionStatement.agent = check their pension statem
 
 common.incomeFromPensions.title = UK pension income
 
+
 #################       Common Remove Pension Scheme    ###########################################
 common.removePensionScheme.title = Are you sure you want to remove {0}?
-
 
 #################       Error messages        ########################################
 
@@ -489,7 +490,7 @@ incomeFromPensions.statePensionLumpSum.error.noEntry.individual = Select yes if 
 incomeFromPensions.statePensionLumpSum.error.noEntry.agent = Select yes if your client got a State Pension lump sum
 
 #state pension lump sum
-pensions.statePensionLumpSum.title.individual =How much was your State Pension lump sum?
+pensions.statePensionLumpSum.title.individual = How much was your State Pension lump sum?
 pensions.statePensionLumpSum.title.agent = How much was your client’s State Pension lump sum?
 pensions.statePensionLumpSum.error.noEntry.individual = Enter your State Pension lump sum amount
 pensions.statePensionLumpSum.error.incorrectFormat.individual = Enter your State Pension lump sum amount in the correct format
@@ -953,12 +954,11 @@ transferIntoOverseasPensions.overseasTransferChargesPaid.error.noEntry = Select 
 
 #Transfer Pension Scheme
 transferIntoOverseasPensions.transferPensionScheme.title = Pension scheme paying the transfer charge
-transferIntoOverseasPensions.pensionScheme.providerName.subheading = Name of pension scheme
-transferIntoOverseasPensions.pensionScheme.qopsr.subheading = Qualifying Overseas Pension Scheme reference
-transferIntoOverseasPensions.pensionScheme.providerAddress.subheading = Pension provider address
 
-transferIntoOverseasPensions.paragraph1 = If more than one pension scheme paid a transfer charge, you can add them later.
-
+common.overseasPensions.paragraph1 = If more than one pension scheme paid a transfer charge, you can add them later.
+common.overseasPensions.pensionScheme.providerName.subheading = Name of pension scheme
+common.overseasPensions.pensionScheme.qopsr.subheading = Qualifying Overseas Pension Scheme reference
+common.overseasPensions.pensionScheme.providerAddress.subheading = Pension provider address
 common.overseasPensions.providerName.error.noEntry = Enter the name of the pension scheme
 common.overseasPensions.providerName.error.overCharLimit = Name of pension scheme must be 105 characters or less
 common.overseasPensions.providerName.error.incorrectFormat = The pension scheme name must only include numbers 0-9, letters a to z, hyphens, spaces, apostrophes, commas, full stops, round brackets and the special characters, &, /, @, £, *.
@@ -1018,3 +1018,6 @@ shortServiceRefunds.nonUkTaxRefunds.error.incorrectFormat.individual = Enter the
 shortServiceRefunds.nonUkTaxRefunds.error.incorrectFormat.agent = Enter the amount of non-UK tax your client paid on this short service refund in the correct format
 shortServiceRefunds.nonUkTaxRefunds.error.tooBig.individual = The amount of non-UK tax you paid on this short service refund must be less than £100,000,000,000
 shortServiceRefunds.nonUkTaxRefunds.error.tooBig.agent = The amount of non-UK tax your client paid on this short service refund must be less than £100,000,000,000
+
+#Short service refund Pension Scheme
+shortServiceRefunds.PensionScheme.title = Pension scheme paying tax on the short service refund

@@ -19,10 +19,7 @@ package controllers.pensions.transferIntoOverseasPensions
 import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import controllers.ControllerSpec
 import controllers.ControllerSpec.UserConfig
-import models.pension.charges.TransfersIntoOverseasPensionsViewModel
-import org.scalatest.BeforeAndAfterEach
 import play.api.libs.ws.WSResponse
-import utils.{CommonUtils, IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 class RemoveTransferChargeSchemeControllerISpec extends ControllerSpec("/overseas-pensions/payments-into-overseas-pensions/remove-overseas-pension-scheme") {
 
