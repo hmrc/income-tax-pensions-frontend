@@ -22,7 +22,6 @@ import controllers.pensions.transferIntoOverseasPensions.routes._
 import controllers.predicates.ActionsProvider
 import controllers.validateIndex
 import forms.Countries
-import forms.overseas.PensionSchemeForm.{TransferPensionsSchemeFormModel, transferPensionSchemeForm}
 import forms.overseas.PensionSchemeForm.{TcSsrPensionsSchemeFormModel, tcSsrPensionSchemeForm}
 import models.User
 import models.mongo.PensionsUserData

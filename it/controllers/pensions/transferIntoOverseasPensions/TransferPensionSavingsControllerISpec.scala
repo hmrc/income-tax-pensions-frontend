@@ -17,10 +17,12 @@
 package controllers.pensions.transferIntoOverseasPensions
 
 import builders.PensionsCYAModelBuilder.aPensionsCYAModel
+import builders.PensionsUserDataBuilder.taxYearEOY
 import controllers.ControllerSpec.UserConfig
 import controllers.YesNoControllerSpec
 import play.api.http.Status.BAD_REQUEST
 import play.api.libs.ws.WSResponse
+import utils.PageUrls.TransferIntoOverseasPensions.checkYourDetailsPensionUrl
 
 class TransferPensionSavingsControllerISpec
   extends YesNoControllerSpec("/overseas-pensions/overseas-transfer-charges/transfer-pension-savings") {
@@ -74,8 +76,7 @@ class TransferPensionSavingsControllerISpec
             implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
             implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoPage(Some(false)))
 
-            //TODO: Update test to `/transfer-charge-summary` (Transfer Charge Summary) page when available. Redirecting to itself
-            assertRedirectionAsExpected(relativeUrlForThisPage)
+            assertRedirectionAsExpected(checkYourDetailsPensionUrl(taxYearEOY))
             getTransferPensionsViewModel mustBe Some(expectedViewModel)
           }
 
