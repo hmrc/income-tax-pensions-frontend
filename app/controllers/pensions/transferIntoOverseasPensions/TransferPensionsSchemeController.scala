@@ -93,7 +93,11 @@ class TransferPensionsSchemeController @Inject()(actionsProvider: ActionsProvide
       schemeReference = (if (scheme.ukTransferCharge.contains(true)) scheme.pstr else scheme.qops)
         .getOrElse(""),
       providerAddress = scheme.providerAddress.getOrElse(""),
-      countryId =  scheme.alphaTwoCountryCode
+      countryId = scheme.alphaTwoCountryCode.fold{
+        Countries.get2AlphaCodeFrom3AlphaCode(scheme.alphaThreeCountryCode.getOrElse(""))
+      } {
+        alpha2 => Some(alpha2)
+      }
     )
   
   private def updateViewModel(pensionsUserdata: PensionsUserData, scheme: TcSsrPensionsSchemeFormModel, index: Int) = {

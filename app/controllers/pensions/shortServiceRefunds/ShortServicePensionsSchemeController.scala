@@ -93,7 +93,11 @@ class ShortServicePensionsSchemeController @Inject()(actionsProvider: ActionsPro
       schemeReference = (if (scheme.ukRefundCharge.contains(true)) scheme.pensionSchemeTaxReference else scheme.qualifyingRecognisedOverseasPensionScheme)
         .getOrElse(""),
       providerAddress = scheme.providerAddress.getOrElse(""),
-      countryId = scheme.alphaTwoCountryCode
+      countryId = scheme.alphaTwoCountryCode.fold{
+        Countries.get2AlphaCodeFrom3AlphaCode(scheme.alphaThreeCountryCode.getOrElse(""))
+      } {
+        alpha2 => Some(alpha2)
+      }
     )
   
   private def updateViewModel(pensionsUserdata: PensionsUserData, scheme: TcSsrPensionsSchemeFormModel, index: Int) = {
