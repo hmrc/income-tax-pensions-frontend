@@ -19,23 +19,20 @@ package controllers.pensions.transferIntoOverseasPensions
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.routes.OverseasPensionsSummaryController
 import controllers.predicates.TaxYearAction.taxYearAction
-import controllers.predicates.{ActionsProvider, AuthorisedAction}
-import forms.FormsProvider
-import models.mongo.{PensionsCYAModel, PensionsUserData}
+import controllers.predicates.AuthorisedAction
+import models.mongo.PensionsCYAModel
 import models.pension.AllPensionsData
 import models.pension.AllPensionsData.generateCyaFromPrior
-import models.pension.charges.{TransferPensionScheme, TransfersIntoOverseasPensionsViewModel}
-import models.pension.pages.OverseasTransferChargePaidPage
+import models.pension.charges.TransfersIntoOverseasPensionsViewModel
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.{OverseasTransferChargesService, PensionSessionService}
+import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
-import views.html.pensions.lifetimeAllowances.AnnualAllowanceAndLifetimeAllownaceCYAView
-import views.html.pensions.transferIntoOverseasPensions.{OverseasTransferChargesPaidView, TransferIntoOverseasPensionsCYAView}
+import views.html.pensions.transferIntoOverseasPensions.TransferIntoOverseasPensionsCYAView
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 @Singleton
 class TransferIntoOverseasPensionsCYAController @Inject()(authAction: AuthorisedAction,
