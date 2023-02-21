@@ -27,7 +27,9 @@ class ShortServiceRefundsService @Inject()(pensionSessionService: PensionSession
                                           (implicit ec: ExecutionContext) {
 
 
-  def createOrUpdateShortServiceRefundQuestion(userData: PensionsUserData, question: Boolean, pensionIndex: Option[Int]): Future[Either[Unit, PensionsUserData]] = {
+  def createOrUpdateShortServiceRefundQuestion(userData: PensionsUserData,
+                                               question: Boolean,
+                                               pensionIndex: Option[Int]): Future[Either[Unit, PensionsUserData]] = {
     val refundPensionScheme = pensionIndex match {
       case Some(index) => userData.pensions.shortServiceRefunds.refundPensionScheme(index)
       case None => OverseasRefundPensionScheme()
@@ -40,15 +42,15 @@ class ShortServiceRefundsService @Inject()(pensionSessionService: PensionSession
         case None =>
           if(model.refundPensionScheme.isEmpty) {
             model.copy(refundPensionScheme = Seq(refundPensionScheme.copy(ukRefundCharge = Some(question))))
-          }else{
-
+          }
+          else {
             model.refundPensionScheme.last.name match{
               case Some(_) => model.copy(
                 refundPensionScheme = model.refundPensionScheme ++ Seq(refundPensionScheme.copy(ukRefundCharge = Some(question))))
               case None => model.copy(
-                refundPensionScheme = model.refundPensionScheme.updated(model.refundPensionScheme.size - 1, refundPensionScheme.copy(ukRefundCharge = Some(question))))
+                refundPensionScheme = model.refundPensionScheme.updated(
+                  model.refundPensionScheme.size - 1, refundPensionScheme.copy(ukRefundCharge = Some(question))))
             }
-
           }
       }
     createOrUpdateModel(userData, updatedModel)

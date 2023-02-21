@@ -40,8 +40,6 @@ import repositories.PensionsUserDataRepositoryImpl
 import uk.gov.hmrc.http.SessionKeys
 import java.util.UUID
 
-import services.ShortServiceRefundsService
-
 import scala.concurrent.ExecutionContext.Implicits.global
 
 // scalastyle:off magic.number number.of.methods line.size.limit method.length

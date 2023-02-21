@@ -21,14 +21,14 @@ import controllers.predicates.ActionsProvider
 import controllers.validateScheme
 import forms.FormsProvider
 import javax.inject.{Inject, Singleton}
-import models.mongo.PensionsUserData
 import models.pension.pages.shortServiceRefunds.TaxOnShortServiceRefundPage
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.ShortServiceRefundsService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.SessionHelper
 import views.html.pensions.shortServiceRefunds.TaxPaidOnShortServiceRefundView
+import routes._
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -59,16 +59,16 @@ class TaxOnShortServiceRefundController @Inject()(actionsProvider: ActionsProvid
         case Right(_) => formsProvider.shortServiceTaxOnShortServiceRefundForm.bindFromRequest().fold(
           formWithErrors =>
             Future.successful(
-              BadRequest(view(TaxOnShortServiceRefundPage(taxYear, refundPensionSchemeIndex, sessionUserData.pensionsUserData.pensions.shortServiceRefunds, formWithErrors)))),
+              BadRequest(view(
+                TaxOnShortServiceRefundPage(taxYear, refundPensionSchemeIndex, sessionUserData.pensionsUserData.pensions.shortServiceRefunds, formWithErrors)
+              ))),
           yesNoValue => {
             shortServiceRefundsService.createOrUpdateShortServiceRefundQuestion(sessionUserData.pensionsUserData, yesNoValue, refundPensionSchemeIndex).map {
               case Left(_) => errorHandler.internalServerError()
               case Right(userData) =>
-                Redirect(getRedirectCall(
-                  taxYear,
-                  Some(refundPensionSchemeIndex.getOrElse(userData.pensions.shortServiceRefunds.refundPensionScheme.size-1)), //The collection will always have 1 value
-                  yesNoValue,
-                  userData))
+                //The collection will always have a value
+                val index = Some(refundPensionSchemeIndex.getOrElse(userData.pensions.shortServiceRefunds.refundPensionScheme.size-1))
+                Redirect(TaxOnShortServiceRefundController.show(taxYear, index))
             }
           }
         )
@@ -76,11 +76,5 @@ class TaxOnShortServiceRefundController @Inject()(actionsProvider: ActionsProvid
     }
   }
 
-  private def getRedirectCall(taxYear: Int,
-                              pensionSchemeIndex: Option[Int],
-                              yesNoValue: Boolean,
-                              userData: PensionsUserData): Call = {
-    controllers.pensions.shortServiceRefunds.routes.TaxOnShortServiceRefundController.show(taxYear, pensionSchemeIndex)
-  }
 
 }
