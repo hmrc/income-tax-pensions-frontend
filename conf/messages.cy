@@ -117,6 +117,11 @@ common.overseasPensions.checkPensionStatement.agent = check their pension statem
 
 common.incomeFromPensions.title = UK pension income
 
+#################       Common Summary/Remove Pension Scheme    ###########################################
+common.summary.addAScheme = Add a scheme
+common.summary.needToAddScheme = You need to add one or more pension scheme.
+common.summary.returnToOverviewMsg = If you don’t have a pensions scheme to add you can return to the overview page and come back later.
+
 
 #################       Common Remove Pension Scheme    ###########################################
 common.removePensionScheme.title = Are you sure you want to remove {0}?
@@ -971,9 +976,6 @@ common.overseasPensions.country.error.noEntry = Enter the country
 
 #Transfer Charge Summary List
 transferIntoOverseasPensions.summaryList.title = Pension schemes paying transfer charges - summary
-transferIntoOverseasPensions.transferChargesSummary.text1 = You need to add one or more pension scheme.
-transferIntoOverseasPensions.transferChargesSummary.text2 = If you don’t have a pensions scheme to add you can return to the overview page and come back later.
-transferIntoOverseasPensions.transferChargesSummary.addAScheme = Add a scheme
 
 #Remove transfer charge pension scheme
 transferIntoOverseasPensions.removeTransferChargeScheme.p1 = This will remove:
@@ -1025,3 +1027,7 @@ shortServiceRefunds.PensionScheme.title = Pension scheme paying tax on the short
 #short service refund - UK pension scheme pay tax
 shortServiceRefunds.taxOnShortServiceRefund.title = Did a UK pension scheme pay tax on the short service refunds?
 shortServiceRefunds.taxOnShortServiceRefund.error.noEntry = Select yes if a UK pension scheme paid tax on the short service refund
+
+
+#Short service refund - Summary
+shortServiceRefunds.refundSummary.title = Short service refund summary
