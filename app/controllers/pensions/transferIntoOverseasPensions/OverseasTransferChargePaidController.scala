@@ -20,7 +20,6 @@ import config.{AppConfig, ErrorHandler}
 import controllers.predicates.ActionsProvider
 import forms.FormsProvider
 import models.mongo.PensionsUserData
-import models.pension.charges.TransferPensionScheme
 import models.pension.pages.OverseasTransferChargePaidPage
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents, Result}
@@ -28,6 +27,7 @@ import services.OverseasTransferChargesService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.SessionHelper
 import views.html.pensions.transferIntoOverseasPensions.OverseasTransferChargesPaidView
+import controllers._
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -78,13 +78,6 @@ class OverseasTransferChargePaidController @Inject()(actionsProvider: ActionsPro
     }
   }
 
-  def validateScheme(index: Option[Int], pensionSchemeLists: Seq[TransferPensionScheme]): Either[Unit, Option[TransferPensionScheme]] = {
-    index match {
-      case Some(value) if pensionSchemeLists.indices contains value => Right(Some(pensionSchemeLists(value)))
-      case None => Right(None)
-      case _ => Left(())
-    }
-  }
 
   private def getRedirectCall(taxYear: Int,
                               pensionSchemeIndex: Option[Int],

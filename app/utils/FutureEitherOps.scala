@@ -16,7 +16,6 @@
 
 package utils
 
-import models.APIErrorModel
 import models.mongo.ServiceError
 import uk.gov.hmrc.http.HeaderCarrier
 

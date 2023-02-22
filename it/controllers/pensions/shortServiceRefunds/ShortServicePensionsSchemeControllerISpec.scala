@@ -98,10 +98,10 @@ class ShortServicePensionsSchemeControllerISpec extends ControllerSpec ("/overse
       val ssrPenScheme =
         if (isUKCountry) {
           OverseasRefundPensionScheme(ukRefundCharge = Some(true), Some("Scheme Name"),
-            pstr = Some("12345678RF"), qops = None, Some("Scheme Address"), alphaTwoCountryCode = None, alphaThreeCountryCode = None)
+            pensionSchemeTaxReference = Some("12345678RF"), qualifyingRecognisedOverseasPensionScheme = None, Some("Scheme Address"), alphaTwoCountryCode = None, alphaThreeCountryCode = None)
         } else {
           OverseasRefundPensionScheme(ukRefundCharge = Some(false), Some("Scheme Name"),
-            pstr = None, qops = Some("654321"), Some("Scheme Address"), alphaTwoCountryCode = Some("CY"), alphaThreeCountryCode = Some("CYP"))
+            pensionSchemeTaxReference = None, qualifyingRecognisedOverseasPensionScheme = Some("654321"), Some("Scheme Address"), alphaTwoCountryCode = Some("CY"), alphaThreeCountryCode = Some("CYP"))
         }
       val formData =
         if (isUKCountry) {
@@ -114,12 +114,12 @@ class ShortServicePensionsSchemeControllerISpec extends ControllerSpec ("/overse
         val alignedSsrPensionSchemes = ssrPensionSchemes.map { tcps =>
           if (hasPriorPensionsSchemeData) {
             if (isUKCountry) {
-              tcps.copy(ukRefundCharge = Some(isUKCountry), qops = None, alphaTwoCountryCode = None, alphaThreeCountryCode = None)
+              tcps.copy(ukRefundCharge = Some(isUKCountry), qualifyingRecognisedOverseasPensionScheme = None, alphaTwoCountryCode = None, alphaThreeCountryCode = None)
             } else {
-              tcps.copy(ukRefundCharge = Some(isUKCountry), pstr = None)
+              tcps.copy(ukRefundCharge = Some(isUKCountry), pensionSchemeTaxReference = None)
             }
           } else {
-            tcps.copy(ukRefundCharge = Some(isUKCountry), pstr = None, qops = None, alphaTwoCountryCode = None, alphaThreeCountryCode = None)
+            tcps.copy(ukRefundCharge = Some(isUKCountry), pensionSchemeTaxReference = None, qualifyingRecognisedOverseasPensionScheme = None, alphaTwoCountryCode = None, alphaThreeCountryCode = None)
           }
         }
         

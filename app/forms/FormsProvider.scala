@@ -27,6 +27,10 @@ class FormsProvider() {
     missingInputError = "transferIntoOverseasPensions.overseasTransferChargesPaid.error.noEntry"
   )
 
+  def shortServiceTaxOnShortServiceRefundForm: Form[Boolean] = YesNoForm.yesNoForm(
+    missingInputError = "shortServiceRefunds.taxOnShortServiceRefund.error.noEntry"
+  )
+
   def pensionSchemeTaxTransferForm(user:User): Form[(Boolean, Option[BigDecimal])] = {
     val agentOrIndividual = if (user.isAgent) "agent" else "individual"
     RadioButtonAmountForm.radioButtonAndAmountForm(

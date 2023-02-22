@@ -17,10 +17,8 @@
 package connectors
 
 import builders.PensionChargesBuilder.anPensionCharges
-import connectors.httpParsers.IncomeTaxUserDataHttpParser.IncomeTaxUserDataResponse
-import connectors.httpParsers.PensionChargesSessionHttpParser.PensionChargesSessionResponse
 import models.pension.charges.CreateUpdatePensionChargesRequestModel
-import models.{APIErrorBodyModel, APIErrorModel, IncomeTaxUserData}
+import models.{APIErrorBodyModel, APIErrorModel}
 import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.test.Helpers.OK

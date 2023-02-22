@@ -38,8 +38,8 @@ import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import play.api.{Application, Environment, Mode}
 import repositories.PensionsUserDataRepositoryImpl
 import uk.gov.hmrc.http.SessionKeys
-
 import java.util.UUID
+
 import scala.concurrent.ExecutionContext.Implicits.global
 
 // scalastyle:off magic.number number.of.methods line.size.limit method.length
@@ -101,7 +101,7 @@ class ControllerSpec(val pathForThisPage: String) extends PlaySpec
     val overseasTransferChargePaid: String = relativeUrl("/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-paid")
     val transferIntoOverseasPensionsScheme: String = relativeUrl("/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-pension-scheme")
     val transferChargeSchemeSummary: String = relativeUrl("/overseas-pensions/overseas-transfer-charges/transfer-charges-summary")
-
+    val taxOnShortServiceRefundController: String = relativeUrl("/overseas-pensions/short-service-refunds/short-service-refunds-uk-tax")
   }
 
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
@@ -293,6 +293,9 @@ class ControllerSpec(val pathForThisPage: String) extends PlaySpec
     loadPensionUserData.map(_.pensions.transfersIntoOverseasPensions)
     
   def getShortServicePensionsViewModel(implicit userConfig: UserConfig): Option[ShortServiceRefundsViewModel] =
+    loadPensionUserData.map(_.pensions.shortServiceRefunds)
+
+  def getShortServiceViewModel(implicit userConfig: UserConfig): Option[ShortServiceRefundsViewModel] =
     loadPensionUserData.map(_.pensions.shortServiceRefunds)
 
   private def loadPensionUserData(pensionsUserData: PensionsUserData, userType: UserTypes.UserType): Option[PensionsUserData]
