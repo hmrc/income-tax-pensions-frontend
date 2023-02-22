@@ -54,11 +54,10 @@ object TransferIntoOverseasPensionCYAViewHelper extends CYABaseHelper {
               transfersIntoOverseasPensionsViewModel.overseasTransferChargeAmount,
               routes.OverseasTransferChargeController.show(taxYear))(messages)
           case _ =>
-            summaryListRowWithBooleanValue(
+            summaryListRowWithString(
               "transferIntoOverseasPensions.cya.amountCharged",
-              transfersIntoOverseasPensionsViewModel.overseasTransferCharge,
+              Some(messages("transferIntoOverseasPensions.cya.noAmountCharged")).map(Seq(_)),
               routes.OverseasTransferChargeController.show(taxYear),
-              Some("transferIntoOverseasPensions.cya.noAmountCharged")
             )(messages)
         }
       )
@@ -75,11 +74,10 @@ object TransferIntoOverseasPensionCYAViewHelper extends CYABaseHelper {
               transfersIntoOverseasPensionsViewModel.pensionSchemeTransferChargeAmount,
               routes.PensionSchemeTaxTransferController.show(taxYear))(messages)
           case _ =>
-            summaryListRowWithBooleanValue(
+            summaryListRowWithString(
               "transferIntoOverseasPensions.cya.taxOnAmountCharged",
-              transfersIntoOverseasPensionsViewModel.pensionSchemeTransferCharge,
+              Some(messages("transferIntoOverseasPensions.cya.noTaxOnAmountCharged")).map(Seq(_)),
               routes.PensionSchemeTaxTransferController.show(taxYear),
-              Some("transferIntoOverseasPensions.cya.noTaxOnAmountCharged")
             )(messages)
         }
       )

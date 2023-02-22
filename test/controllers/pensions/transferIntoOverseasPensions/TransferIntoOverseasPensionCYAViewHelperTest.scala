@@ -54,7 +54,7 @@ class TransferIntoOverseasPensionCYAViewHelperTest extends AnyWordSpec with Matc
 
         summaryListRows.length shouldBe 2
         assertRowForTransfersIntoOverseasPensions(summaryListRows.head, "Yes")
-        assertRowAmountCharged(summaryListRows(1), "")
+        assertRowAmountCharged(summaryListRows(1), "No charge")
       }
       "we have answered no to the  overseasTransferCharge question " in {
 
@@ -115,7 +115,7 @@ class TransferIntoOverseasPensionCYAViewHelperTest extends AnyWordSpec with Matc
         summaryListRows.length shouldBe 3
         assertRowForTransfersIntoOverseasPensions(summaryListRows.head, "Yes")
         assertRowAmountCharged(summaryListRows(1), "£1000")
-        assertRowTaxOnAmountCharged(summaryListRows(2), "No charge")
+        assertRowTaxOnAmountCharged(summaryListRows(2), "No tax paid")
       }
       "our data for the 'surcharged' section has got into an unrealistic state, somehow" in {
 
@@ -254,8 +254,8 @@ class TransferIntoOverseasPensionCYAViewHelperTest extends AnyWordSpec with Matc
             "unauthorisedPayments.cya.nonUkTaxAmountNotSurcharged" -> "Non UK-tax on amount not surcharged",
             "unauthorisedPayments.common.ukPensionSchemes" -> "UK pension schemes",
             "unauthorisedPayments.cya.pensionSchemeTaxReferences" -> "Pension Scheme Tax References",
-            "transferIntoOverseasPensions.cya.noTaxOnAmountCharged" -> "charge",
-            "transferIntoOverseasPensions.cya.noAmountCharged" -> "charge"
+            "transferIntoOverseasPensions.cya.noTaxOnAmountCharged" -> "No tax paid",
+            "transferIntoOverseasPensions.cya.noAmountCharged" -> "No charge"
           )
             .asJava
       ).asJava,
