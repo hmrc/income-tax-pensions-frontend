@@ -252,6 +252,9 @@ object PageUrls extends IntegrationTest {
     def overseasTransferChargePaidUrl(taxYear: Int): String =
       s"$appUrl/$taxYear/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-paid"
 
+    def overseasTransferChargePaidUrlNoIndex(taxYear: Int): String =
+      s"$appUrl/$taxYear/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-paid"
+
     def overseasTransferChargePaidUrl(taxYear: Int, index: Int): String =
       s"$appUrl/$taxYear/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-paid?pensionSchemeIndex=$index"
 
@@ -273,6 +276,9 @@ object PageUrls extends IntegrationTest {
   object ShortServiceRefunds {
     def taxOnShortServiceRefund(taxYear: Int): String =
       s"$appUrl/$taxYear/overseas-pensions/short-service-refunds/short-service-refunds-uk-tax"
+
+    def refundSummaryUrl(taxYear: Int): String =
+      s"$appUrl/$taxYear/overseas-pensions/short-service-refunds/short-service-refund-summary"
   }
 
 }

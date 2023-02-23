@@ -14,10 +14,9 @@
  * limitations under the License.
  *@
 
-@import controllers.pensions.transferIntoOverseasPensions.routes._
+@import controllers.pensions.shortServiceRefunds.routes._
 @import controllers.pensions.routes._
-@import forms.Countries.getCountryFromCodeWithDefault
-@import models.pension.charges.TransferPensionScheme
+@import models.pension.charges.OverseasRefundPensionScheme
 @import models.requests.UserSessionDataRequest
 @import utils.ViewUtils.bigDecimalCurrency
 @import views.html.templates.helpers.Heading
@@ -34,12 +33,12 @@
     link: Link)
 
 
-@(taxYear: Int, transferSchemeList: Seq[TransferPensionScheme])(implicit messages: Messages, appConfig: AppConfig, request: UserSessionDataRequest[_])
+@(taxYear: Int, refundSchemeList: Seq[OverseasRefundPensionScheme])(implicit messages: Messages, appConfig: AppConfig, request: UserSessionDataRequest[_])
 
-@headingForUse = @{messages("transferIntoOverseasPensions.summaryList.title")}
+@headingForUse = @{messages("shortServiceRefunds.refundSummary.title")}
 
 @addAnotherLink(countryPageUrl: String) = {
-    @if(transferSchemeList.isEmpty){
+    @if(refundSchemeList.isEmpty){
         <p class="govuk-body">@link(countryPageUrl, "pensions.ukPensionIncomeSummary.addPensionIncomeLink", Some("add-pension-income-link"), fullStop = false)</p>
     } else {
         <p class="govuk-body">@link(countryPageUrl, "pensions.ukPensionIncomeSummary.addAnotherPensionIncomeLink", Some("add-another-pension-link"), fullStop = false)</p>
@@ -47,37 +46,37 @@
 }
 
 @pensionTransferSummaryList = {
-    @if(transferSchemeList.filter(scheme => scheme.name.isDefined).nonEmpty){
+    @if(refundSchemeList.filter(scheme => scheme.name.isDefined).nonEmpty){
         <div class="govuk-form-group" id="pensionTransferSummaryList">
             <dl class="hmrc-add-to-a-list hmrc-add-to-a-list--short">
-                @for((transferScheme, index) <- transferSchemeList.zipWithIndex if (transferScheme.name.isDefined)){
+                @for((refundScheme, index) <- refundSchemeList.zipWithIndex if (refundScheme.name.isDefined)){
                     <div class="hmrc-add-to-a-list__contents">
                         <dt class="hmrc-add-to-a-list__identifier hmrc-add-to-a-list__identifier--light govuk-!-width-one-half">
-                            @transferScheme.name
+                            @refundScheme.name
                         </dt>
                         <dd class="hmrc-add-to-a-list__change">
-                            <a class="govuk-link" href=@OverseasTransferChargePaidController.show(taxYear, Some(index)).url>
+                            <a class="govuk-link" href=@RefundSummaryController.show(taxYear).url>
                                 <span aria-hidden="true">@messages("common.change")</span>
-                                <span class="govuk-visually-hidden">@{s"${messages("common.change")}"} @transferScheme.name</span>
+                                <span class="govuk-visually-hidden">@{s"${messages("common.change")}"} @refundScheme.name</span>
                             </a>
                         </dd>
                         <dd class="hmrc-add-to-a-list__remove">
-                            <a class="govuk-link" href=@RemoveTransferChargeSchemeController.show(taxYear, Some(index)).url>
+                            <a class="govuk-link" href=@RefundSummaryController.show(taxYear).url>
                                 <span aria-hidden="true">@messages("common.remove")</span>
-                                <span class="govuk-visually-hidden">@{s"${messages("common.remove")}"} @transferScheme.name</span>
+                                <span class="govuk-visually-hidden">@{s"${messages("common.remove")}"} @refundScheme.name</span>
                             </a>
                         </dd>
                     </div>
                 }
             </dl>
         </div>
-        @addAnotherLink(OverseasTransferChargePaidController.show(taxYear, None).url)
+        @addAnotherLink(RefundSummaryController.show(taxYear).url)
         @button(Button(
             attributes = Map("id" -> "continue"),
             preventDoubleClick = Some(true),
             content = Text(messages("common.continue")),
             classes = "govuk-button govuk-!-margin-top-2",
-            href = Some(TransferChargeSummaryController.show(taxYear).url)
+            href = Some(RefundSummaryController.show(taxYear).url)
         ))
     } else {
         <p class="govuk-body" id="youNeedToAddOneOrMorePensionScheme1">
@@ -89,10 +88,9 @@
             preventDoubleClick = Some(true),
             classes = "govuk-button govuk-!-margin-top-2",
             content = Text(messages("common.summary.addAScheme")),
-            href = Some(OverseasTransferChargePaidController.show(taxYear, None).url)
+            href = Some(RefundSummaryController.show(taxYear).url)
+
         ))
-
-
 
         <p class="govuk-body" id="youNeedToAddOneOrMorePensionScheme2">
             @messages("common.summary.returnToOverviewMsg")
@@ -110,7 +108,7 @@
 
  
 @layout(pageTitle = headingForUse, taxYear = Some(taxYear)) {
-    @heading(headingForUse, Some(messages("common.transferIntoOverseasPensions.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-2")
+    @heading(headingForUse, Some(messages("common.shortServiceRefunds.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-2")
     @pensionTransferSummaryList
 }
 @{
