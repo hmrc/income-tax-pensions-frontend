@@ -86,8 +86,7 @@ class OverseasTransferChargeController @Inject()(actionsProvider: ActionsProvide
       if (yesNo) {
         Redirect(controllers.pensions.transferIntoOverseasPensions.routes.PensionSchemeTaxTransferController.show(taxYear))
       } else {
-        // TODO: Update once `transfer info overseas income cya` is available. Redirecting to itself
-        Redirect(controllers.pensions.transferIntoOverseasPensions.routes.TransferPensionSavingsController.show(taxYear))
+        Redirect(controllers.pensions.transferIntoOverseasPensions.routes.TransferIntoOverseasPensionsCYAController.show(taxYear))
       }
     }
   }

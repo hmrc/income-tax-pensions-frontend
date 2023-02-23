@@ -263,14 +263,12 @@ object PageUrls extends IntegrationTest {
 
     def removeTransferChargeScheme(taxYear: Int, index: Int):String =
       s"$appUrl/$taxYear/overseas-pensions/payments-into-overseas-pensions/remove-overseas-pension-scheme?index=$index"
-  }
-
-  object TransferIntoOverseasPensionsPages {
-    def pensionSchemespayingTrransferCharges(taxYear: Int): String =
-      s"$appUrl/$taxYear/overseas-pensions/overseas-transfer-charges/transfer-charges-summary"
 
     def transferPensionSavingsUrl(taxYear: Int): String =
       s"$appUrl/$taxYear/overseas-pensions/overseas-transfer-charges/transfer-pension-savings"
+
+    def checkYourDetailsPensionUrl(taxYear: Int) : String =
+      s"$appUrl/$taxYear/overseas-pensions/overseas-transfer-charges/transfer-charges/check-transfer-charges-details"
   }
 
   object ShortServiceRefunds {

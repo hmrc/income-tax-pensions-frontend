@@ -66,7 +66,6 @@ class AnnualLifetimeAllowanceCYAController @Inject()(authAction: AuthorisedActio
       cya.fold(
         Future.successful(Redirect(appConfig.incomeTaxSubmissionOverviewUrl(taxYear)))
       ) { model =>
-
         if (sessionDataDifferentThanPriorData(model.pensions, prior)) {
           //        TODO - build submission model from cya data and submit to DES if cya data doesn't match prior data (SASS-3444)
           Future.successful(Redirect(controllers.pensions.lifetimeAllowances.routes.AnnualLifetimeAllowanceCYAController.show(taxYear)))
@@ -83,5 +82,4 @@ class AnnualLifetimeAllowanceCYAController @Inject()(authAction: AuthorisedActio
       case Some(prior) => !cyaData.equals(generateCyaFromPrior(prior))
     }
   }
-
 }

@@ -32,7 +32,10 @@
 }
 
 @transferIntoOverseasPensionUrl() = @{
-   controllers.pensions.transferIntoOverseasPensions.routes.TransferPensionSavingsController.show(taxYear).url
+ if( hasPriorData )
+  controllers.pensions.transferIntoOverseasPensions.routes.TransferIntoOverseasPensionsCYAController.show(taxYear).url
+ else
+  controllers.pensions.transferIntoOverseasPensions.routes.TransferPensionSavingsController.show(taxYear).url
 }
 
 @paymentsOverseasPensionsUrl() = @{

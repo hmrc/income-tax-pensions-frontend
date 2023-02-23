@@ -80,7 +80,10 @@ class PensionSchemeTaxTransferController @Inject()(
 
     pensionSessionService.createOrUpdateSessionData(request.user,
       updatedCyaModel, taxYear, pensionUserData.isPriorSubmission)(errorHandler.internalServerError()) {
-      if (transfersIntoOverseasPensions.transferPensionScheme.isEmpty) {
+      if (!yesNo) {
+        Redirect(controllers.pensions.transferIntoOverseasPensions.routes.TransferIntoOverseasPensionsCYAController.show(taxYear))
+      }
+      else if (transfersIntoOverseasPensions.transferPensionScheme.isEmpty) {
         Redirect(controllers.pensions.transferIntoOverseasPensions.routes.OverseasTransferChargePaidController.show(taxYear,None))
       } else {
         Redirect(controllers.pensions.transferIntoOverseasPensions.routes.TransferChargeSummaryController.show(taxYear))
