@@ -58,7 +58,7 @@ object TransferIntoOverseasPensionCYAViewHelper extends CYABaseHelper {
             summaryListRowWithString(
               "transferIntoOverseasPensions.cya.amountCharged",
               Some(messages("transferIntoOverseasPensions.cya.noAmountCharged")).map(Seq(_)),
-              routes.OverseasTransferChargeController.show(taxYear),
+              routes.OverseasTransferChargeController.show(taxYear)
             )(messages)
         }
       )
@@ -78,7 +78,7 @@ object TransferIntoOverseasPensionCYAViewHelper extends CYABaseHelper {
             summaryListRowWithString(
               "transferIntoOverseasPensions.cya.taxOnAmountCharged",
               Some(messages("transferIntoOverseasPensions.cya.noTaxOnAmountCharged")).map(Seq(_)),
-              routes.PensionSchemeTaxTransferController.show(taxYear),
+              routes.PensionSchemeTaxTransferController.show(taxYear)
             )(messages)
         }
       )
