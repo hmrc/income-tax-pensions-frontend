@@ -1017,9 +1017,12 @@ shortServiceRefunds.taxableRefundAmount.h2.agent = Did your client get a short s
 shortServiceRefunds.taxableRefundAmount.amount.text = Total amount of short service refunds, in pounds
 shortServiceRefunds.taxableRefundAmount.error.noEntry.individual = Select yes if you got a taxable short service refund from an overseas pension scheme
 shortServiceRefunds.taxableRefundAmount.error.noEntry.agent = Select yes if your client got a taxable short service refund from an overseas pension scheme
-shortServiceRefunds.taxableRefundAmount.error.noAmountEntry = Enter the taxable short service refund amount
-shortServiceRefunds.taxableRefundAmount.error.incorrectFormat = Enter the taxable short service refund amount in the correct format
-shortServiceRefunds.taxableRefundAmount.error.tooBig = The taxable short service refund amount must be less than £100,000,000,000
+shortServiceRefunds.taxableRefundAmount.error.noAmountEntry.individual = Enter the taxable short service refund amount
+shortServiceRefunds.taxableRefundAmount.error.noAmountEntry.agent = Enter your client’s taxable short service refund amount
+shortServiceRefunds.taxableRefundAmount.error.incorrectFormat.individual = Enter the taxable short service refund amount in the correct format
+shortServiceRefunds.taxableRefundAmount.error.incorrectFormat.agent = Enter your client’s taxable short service refund amount in the correct format
+shortServiceRefunds.taxableRefundAmount.error.tooBig.individual = The taxable short service refund amount must be less than £100,000,000,000
+shortServiceRefunds.taxableRefundAmount.error.tooBig.agent = Your client’s taxable short service refund amount must be less than £100,000,000,000
 
 #Non UK Tax Refunds
 shortServiceRefunds.nonUkTaxRefunds.title = Non-UK tax on short service refunds

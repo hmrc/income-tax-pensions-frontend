@@ -45,9 +45,9 @@ class FormsProvider() {
     val agentOrIndividual = if (user.isAgent) "agent" else "individual"
     RadioButtonAmountForm.radioButtonAndAmountForm(
       missingInputError = s"shortServiceRefunds.taxableRefundAmount.error.noEntry.$agentOrIndividual",
-      emptyFieldKey = s"shortServiceRefunds.taxableRefundAmount.error.noAmountEntry",
-      wrongFormatKey = s"shortServiceRefunds.taxableRefundAmount.error.incorrectFormat",
-      exceedsMaxAmountKey = s"shortServiceRefunds.taxableRefundAmount.error.tooBig"
+      emptyFieldKey = s"shortServiceRefunds.taxableRefundAmount.error.noAmountEntry.$agentOrIndividual",
+      wrongFormatKey = s"shortServiceRefunds.taxableRefundAmount.error.incorrectFormat.$agentOrIndividual",
+      exceedsMaxAmountKey = s"shortServiceRefunds.taxableRefundAmount.error.tooBig.$agentOrIndividual"
     )
   }
 
