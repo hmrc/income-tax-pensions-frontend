@@ -30,7 +30,7 @@ import org.jsoup.Jsoup
 import views.html.pensions.incomeFromOverseasPensions.PensionsSchemeSummary
 
 
-class OverseasPensionSchemeSummaryTestSupport extends ViewUnitTest {
+class OverseasPensionSchemeSummarySpec extends ViewUnitTest {
 
   object selectors {
     def getRowKey(index: Int) = s"#main-content > div > div > dl > div:nth-child($index) > dt"
@@ -71,7 +71,7 @@ class OverseasPensionSchemeSummaryTestSupport extends ViewUnitTest {
     val taxableAmount: String = "Taxable amount"
     val taxableAmountValue: String = "£1,999.99"
     val change: String = "Change"
-    val buttonText = "Save and continue"
+    val buttonText = "Continue"
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
@@ -89,7 +89,7 @@ class OverseasPensionSchemeSummaryTestSupport extends ViewUnitTest {
     val taxableAmount: String = "Taxable amount"
     val taxableAmountValue: String = "£1,999.99"
     val change: String = "Change"
-    val buttonText = "Save and continue"
+    val buttonText = "Continue"
   }
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, Unit]] = Seq(
