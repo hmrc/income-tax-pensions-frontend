@@ -100,3 +100,10 @@ case class EncryptedPensionIncome (
 object EncryptedPensionIncome {
   implicit val format: OFormat[EncryptedPensionIncome] = Json.format[EncryptedPensionIncome]
 }
+
+case class CreateUpdatePensionIncomeModel(foreignPension: Option[Seq[ForeignPension]],
+                                          overseasPensionContribution: Option[Seq[OverseasPensionContribution]]
+                                         )
+object CreateUpdatePensionIncomeModel {
+  implicit val format: OFormat[CreateUpdatePensionIncomeModel] = Json.format[CreateUpdatePensionIncomeModel]
+}

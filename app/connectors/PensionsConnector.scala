@@ -18,7 +18,9 @@ package connectors
 
 import config.AppConfig
 import connectors.httpParsers.PensionChargesSessionHttpParser.{PensionChargesSessionHttpReads, PensionChargesSessionResponse}
+import connectors.httpParsers.PensionIncomeSessionHttpParser.{PensionIncomeSessionHttpReads, PensionIncomeSessionResponse}
 import models.pension.charges.CreateUpdatePensionChargesRequestModel
+import models.pension.income.CreateUpdatePensionIncomeModel
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
 import javax.inject.Inject
@@ -33,5 +35,12 @@ class PensionsConnector @Inject()(val http: HttpClient,
     val url = appConfig.pensionBEBaseUrl + s"/pension-charges/session-data/nino/$nino/taxYear/$taxYear"
     http.PUT[CreateUpdatePensionChargesRequestModel, PensionChargesSessionResponse](url,
       model)(CreateUpdatePensionChargesRequestModel.format.writes,  PensionChargesSessionHttpReads, hc, ec)
+  }
+
+  def savePensionIncomeSessionData(nino: String, taxYear: Int, model: CreateUpdatePensionIncomeModel)
+                                   (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[PensionIncomeSessionResponse] = {
+    val url = appConfig.pensionBEBaseUrl + s"/pension-income/session-data/nino/$nino/taxYear/$taxYear"
+    http.PUT[CreateUpdatePensionIncomeModel, PensionIncomeSessionResponse](url,
+      model)(CreateUpdatePensionIncomeModel.format.writes,  PensionIncomeSessionHttpReads, hc, ec)
   }
 }

@@ -21,61 +21,64 @@ import controllers.pensions.routes._
 import controllers.predicates.AuthorisedAction
 import controllers.predicates.TaxYearAction.taxYearAction
 import forms.Countries
+import models.pension.AllPensionsData
 import models.pension.AllPensionsData.generateCyaFromPrior
 import models.pension.charges.IncomeFromOverseasPensionsViewModel
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.PensionSessionService
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import services.{PensionIncomeService, PensionSessionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.incomeFromOverseasPensions.IncomeFromOverseasPensionsCYAView
 
 import javax.inject.Inject
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class IncomeFromOverseasPensionsCYAController @Inject()(authAction: AuthorisedAction,
                                                         view: IncomeFromOverseasPensionsCYAView,
                                                         pensionSessionService: PensionSessionService,
+                                                        pensionIncomeService: PensionIncomeService,
                                                         errorHandler: ErrorHandler)
-                                                       (implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock)
+                                                       (implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport {
 
+
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
+
+    def cyaDataIsEmpty(priorData: AllPensionsData): Future[Result] = {
+      val cyaModel = generateCyaFromPrior(priorData)
+      pensionSessionService.createOrUpdateSessionData(request.user,
+        cyaModel, taxYear, isPriorSubmission = false)(
+        errorHandler.internalServerError())(
+        Ok(view(taxYear, cyaModel.incomeFromOverseasPensions)))
+    }
+
+    def incomeFromOverseasPensionsViewModelExists(cya: IncomeFromOverseasPensionsViewModel): Future[Result] = {
+      Future.successful(Ok(view(taxYear, cya)))
+    }
+
     pensionSessionService.getAndHandle(taxYear, request.user) { (cya, prior) =>
       (cya, prior) match {
-        case (Some(data), _) => Future.successful(Ok(view(taxYear, data.pensions.incomeFromOverseasPensions)))
+        case (Some(data), Some(priorData: AllPensionsData)) if data.pensions.incomeFromOverseasPensions.isEmpty() =>
+          cyaDataIsEmpty(priorData)
+        case (Some(data), _) =>
+          incomeFromOverseasPensionsViewModelExists(data.pensions.incomeFromOverseasPensions)
         case (None, Some(priorData)) =>
-          val cyaModel = generateCyaFromPrior(priorData)
-          pensionSessionService.createOrUpdateSessionData(request.user,
-            cyaModel, taxYear, isPriorSubmission = false)(
-            errorHandler.internalServerError())(
-            Ok(view(taxYear, cyaModel.incomeFromOverseasPensions))
-          )
+          cyaDataIsEmpty(priorData)
         case (None, None) =>
-          val emptyIncomeFromOverseasPensionsViewModel = IncomeFromOverseasPensionsViewModel(paymentsFromOverseasPensionsQuestion= None,
-          overseasIncomePensionSchemes = Nil)
+          val emptyIncomeFromOverseasPensionsViewModel = IncomeFromOverseasPensionsViewModel(paymentsFromOverseasPensionsQuestion = None,
+            overseasIncomePensionSchemes = Nil)
           Future.successful(Ok(view(taxYear, emptyIncomeFromOverseasPensionsViewModel)))
-        case _ => Future.successful(Redirect(OverseasPensionsSummaryController.show(taxYear)))
+        case _ => Future.successful(Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear)))
       }
     }
   }
 
   def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
-    pensionSessionService.getAndHandle(taxYear, request.user) { (cya, _) =>
-      cya.fold(
-        Future.successful(Redirect(appConfig.incomeTaxSubmissionOverviewUrl(taxYear)))
-      ) { model =>
-        val updatedCyaModel = model.pensions.copy(
-          incomeFromOverseasPensions = model.pensions.incomeFromOverseasPensions.copy(overseasIncomePensionSchemes =
-            model.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes.map { pensionScheme =>
-              val threeDigitCountryCode = Countries.get3AlphaCodeFrom2AlphaCode(pensionScheme.alphaTwoCode)
-              pensionScheme.copy(alphaThreeCode = threeDigitCountryCode)
-            }))
-        pensionSessionService.createOrUpdateSessionData(request.user,
-          updatedCyaModel, taxYear, model.isPriorSubmission)(errorHandler.internalServerError()) {
-          Redirect(OverseasPensionsSummaryController.show(taxYear))
-        }
-      }
+    pensionIncomeService.saveIncomeFromOverseasPensionsViewModel(request.user, taxYear).map {
+      case Left(_) =>
+        errorHandler.internalServerError()
+      case Right(_) => Redirect(controllers.pensions.routes.OverseasPensionsSummaryController.show(taxYear))
     }
   }
 }
