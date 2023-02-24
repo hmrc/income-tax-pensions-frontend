@@ -52,9 +52,9 @@ trait CYABaseHelper {
   def summaryListRowWithAmountAndTaxValue(labelMessageKey: String, amount: Option[BigDecimal], taxPaid: Option[BigDecimal], changeLink: Call)(implicit messages: Messages): SummaryListRow =
     summaryListRow(labelMessageKey, displayedValueForAmountAndTax(amount, taxPaid), changeLink)
 
-  def displayedValueForOptionalAmount(valueOpt: Option[BigDecimal]): String = valueOpt.map(displayedValue).getOrElse("")
+  def displayedValueForOptionalAmount(valueOpt: Option[BigDecimal]): String = valueOpt.map(displayedValue).getOrElse("£0")
 
-  def displayedValue(value: BigDecimal): String = if (value == 0) "" else s"£$value"
+  def displayedValue(value: BigDecimal): String = s"£$value"
 
   def displayedValue(valueOpt: Option[Boolean], suffix: Option[String] = None)(implicit messages: Messages): String =
     valueOpt.map(value => if (value) {
