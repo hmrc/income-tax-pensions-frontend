@@ -125,6 +125,10 @@ common.summary.returnToOverviewMsg = If you don’t have a pensions scheme to ad
 
 #################       Common Remove Pension Scheme    ###########################################
 common.removePensionScheme.title = Are you sure you want to remove {0}?
+common.removePensionScheme.p1 = This will remove:
+common.removePensionScheme.p1.bullet1 = The name of the pension scheme
+common.removePensionScheme.p1.bullet2 = Pensions scheme tax reference
+common.removePensionScheme.p1.bullet3 = Pensions provider address
 
 #################       Error messages        ########################################
 
@@ -994,12 +998,6 @@ common.overseasPensions.country.error.noEntry = Enter the country
 
 #Transfer Charge Summary List
 transferIntoOverseasPensions.summaryList.title = Pension schemes paying transfer charges - summary
-
-#Remove transfer charge pension scheme
-transferIntoOverseasPensions.removeTransferChargeScheme.p1 = This will remove:
-transferIntoOverseasPensions.removeTransferChargeScheme.p1.bullet1 = The name of the pension scheme
-transferIntoOverseasPensions.removeTransferChargeScheme.p1.bullet2 = Pensions scheme tax reference
-transferIntoOverseasPensions.removeTransferChargeScheme.p1.bullet3 = Pensions provider address
 
 #Short service refund - Taxable
 shortServiceRefunds.taxableRefundAmount.title = Taxable short service refunds
