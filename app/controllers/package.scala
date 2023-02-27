@@ -18,4 +18,12 @@ package object controllers {
 
   def validateIndex(index: Option[Int], collectionSize: Int): Option[Int] =
     index.filter(i => i >= 0 && i <  collectionSize)
+
+  def validateScheme[T](index: Option[Int], listItem: Seq[T]): Either[Unit, Option[T]] = {
+    index match {
+      case Some(value) if listItem.indices contains value => Right(Some(listItem(value)))
+      case None => Right(None)
+      case _ => Left(())
+    }
+  }
 }

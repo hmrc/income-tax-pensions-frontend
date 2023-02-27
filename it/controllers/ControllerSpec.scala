@@ -24,7 +24,7 @@ import controllers.ControllerSpec._
 import helpers.{PlaySessionCookieBaker, WireMockHelper, WiremockStubHelpers}
 import models.User
 import models.mongo.{PensionsCYAModel, PensionsUserData}
-import models.pension.charges.TransfersIntoOverseasPensionsViewModel
+import models.pension.charges.{ShortServiceRefundsViewModel, TransfersIntoOverseasPensionsViewModel}
 import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.matchers.{MatchResult, Matcher}
@@ -38,8 +38,8 @@ import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import play.api.{Application, Environment, Mode}
 import repositories.PensionsUserDataRepositoryImpl
 import uk.gov.hmrc.http.SessionKeys
-
 import java.util.UUID
+
 import scala.concurrent.ExecutionContext.Implicits.global
 
 // scalastyle:off magic.number number.of.methods line.size.limit method.length
@@ -101,6 +101,9 @@ class ControllerSpec(val pathForThisPage: String) extends PlaySpec
     val overseasTransferChargePaid: String = relativeUrl("/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-paid")
     val transferIntoOverseasPensionsScheme: String = relativeUrl("/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-pension-scheme")
     val transferChargeSchemeSummary: String = relativeUrl("/overseas-pensions/overseas-transfer-charges/transfer-charges-summary")
+    val taxOnShortServiceRefundController: String = relativeUrl("/overseas-pensions/short-service-refunds/short-service-refunds-uk-tax")
+
+    val shortServiceRefundSummary: String = relativeUrl("/overseas-pensions/short-service-refunds/short-service-refund-summary")
 
   }
 
@@ -291,6 +294,12 @@ class ControllerSpec(val pathForThisPage: String) extends PlaySpec
   
   def getTransferPensionsViewModel(implicit userConfig: UserConfig): Option[TransfersIntoOverseasPensionsViewModel] =
     loadPensionUserData.map(_.pensions.transfersIntoOverseasPensions)
+    
+  def getShortServicePensionsViewModel(implicit userConfig: UserConfig): Option[ShortServiceRefundsViewModel] =
+    loadPensionUserData.map(_.pensions.shortServiceRefunds)
+
+  def getShortServiceViewModel(implicit userConfig: UserConfig): Option[ShortServiceRefundsViewModel] =
+    loadPensionUserData.map(_.pensions.shortServiceRefunds)
 
   private def loadPensionUserData(pensionsUserData: PensionsUserData, userType: UserTypes.UserType): Option[PensionsUserData]
   = await(

@@ -68,13 +68,13 @@ object EncryptedShortServiceRefundsViewModel {
 }
 
 case class OverseasRefundPensionScheme(
-                                        ukRefundCharge: Option[Boolean],
-                                        name: Option[String],
-                                        pensionSchemeTaxReference: Option[String],
-                                        qualifyingRecognisedOverseasPensionScheme: Option[String],
-                                        providerAddress: Option[String],
-                                        alphaTwoCountryCode: Option[String],
-                                        alphaThreeCountryCode: Option[String]
+                                        ukRefundCharge: Option[Boolean] = None,
+                                        name: Option[String] = None,
+                                        pensionSchemeTaxReference: Option[String] = None,
+                                        qualifyingRecognisedOverseasPensionScheme: Option[String] = None,
+                                        providerAddress: Option[String] = None,
+                                        alphaTwoCountryCode: Option[String] = None,
+                                        alphaThreeCountryCode: Option[String] = None
                                       ) {
   def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedOverseasRefundPensionScheme =
     EncryptedOverseasRefundPensionScheme(

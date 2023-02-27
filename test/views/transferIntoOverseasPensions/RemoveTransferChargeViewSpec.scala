@@ -16,14 +16,12 @@
 
 package views.transferIntoOverseasPensions
 
-import builders.PensionsUserDataBuilder.authorisationRequest
 import models.requests.UserSessionDataRequest
+import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import play.api.i18n.Messages
 import play.api.mvc.AnyContent
 import support.ViewUnitTest
-import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
-import views.html.pensions.incomeFromPensions.RemovePensionSchemeView
 import views.html.pensions.transferIntoOverseasPensions.RemoveTransferChargeSchemeView
 
 class RemoveTransferChargeViewSpec extends ViewUnitTest {

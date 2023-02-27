@@ -252,6 +252,9 @@ object PageUrls extends IntegrationTest {
     def overseasTransferChargePaidUrl(taxYear: Int): String =
       s"$appUrl/$taxYear/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-paid"
 
+    def overseasTransferChargePaidUrlNoIndex(taxYear: Int): String =
+      s"$appUrl/$taxYear/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-paid"
+
     def overseasTransferChargePaidUrl(taxYear: Int, index: Int): String =
       s"$appUrl/$taxYear/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-paid?pensionSchemeIndex=$index"
 
@@ -260,14 +263,20 @@ object PageUrls extends IntegrationTest {
 
     def removeTransferChargeScheme(taxYear: Int, index: Int):String =
       s"$appUrl/$taxYear/overseas-pensions/payments-into-overseas-pensions/remove-overseas-pension-scheme?index=$index"
-  }
-
-  object TransferIntoOverseasPensionsPages {
-    def pensionSchemespayingTrransferCharges(taxYear: Int): String =
-      s"$appUrl/$taxYear/overseas-pensions/overseas-transfer-charges/transfer-charges-summary"
 
     def transferPensionSavingsUrl(taxYear: Int): String =
       s"$appUrl/$taxYear/overseas-pensions/overseas-transfer-charges/transfer-pension-savings"
+
+    def checkYourDetailsPensionUrl(taxYear: Int) : String =
+      s"$appUrl/$taxYear/overseas-pensions/overseas-transfer-charges/transfer-charges/check-transfer-charges-details"
+  }
+
+  object ShortServiceRefunds {
+    def taxOnShortServiceRefund(taxYear: Int): String =
+      s"$appUrl/$taxYear/overseas-pensions/short-service-refunds/short-service-refunds-uk-tax"
+
+    def refundSummaryUrl(taxYear: Int): String =
+      s"$appUrl/$taxYear/overseas-pensions/short-service-refunds/short-service-refund-summary"
   }
 
 }

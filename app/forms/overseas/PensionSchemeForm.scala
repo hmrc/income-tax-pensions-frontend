@@ -28,7 +28,7 @@ import play.api.data.validation.Constraint
 
 object PensionSchemeForm extends InputFilters {
   
-  case class TransferPensionsSchemeFormModel(providerName: String, schemeReference: String, providerAddress: String, countryId: Option[String] = None)
+  case class TcSsrPensionsSchemeFormModel(providerName: String, schemeReference: String, providerAddress: String, countryId: Option[String] = None)
 
   val providerName = "providerName"
   val schemeReference = "schemeReference"
@@ -56,19 +56,18 @@ object PensionSchemeForm extends InputFilters {
   val addressNotEmpty: Constraint[String] = nonEmpty("common.overseasPensions.providerAddress.error.noEntry")
   val addressNotTooLong: Constraint[String] = validateSize(addressCharLimit)("common.overseasPensions.providerAddress.error.overCharLimit")
   
-
   //country
   val countryNotEmptyMsg: String = "common.overseasPensions.country.error.noEntry"
   
-  def countryMapping(agentOrIndividual: String, isCountryUK: Boolean): (String, Mapping[Option[String]]) = {
+  val countryMapping: (String, Boolean) => (String, Mapping[Option[String]]) = (agentOrIndividual: String, isCountryUK: Boolean) => {
     if (isCountryUK)  countryId -> ignored(Option.empty[String]) else {
       val (str, constraint) = CountryForm.countryMapping(agentOrIndividual, countryNotEmptyMsg)
       str -> constraint.transform[Option[String]](str1 => Some(str1), optStr => optStr.getOrElse(""))
     }
   }
   
-  def transferPensionSchemeForm(agentOrIndividual: String, isCountryUK: Boolean): Form[TransferPensionsSchemeFormModel] =
-    Form[TransferPensionsSchemeFormModel](
+  def tcSsrPensionSchemeForm(agentOrIndividual: String, isCountryUK: Boolean): Form[TcSsrPensionsSchemeFormModel] =
+    Form[TcSsrPensionsSchemeFormModel](
       mapping(
         providerName -> trimmedText.verifying(
           nameNotEmpty andThen nameNotTooLong andThen validateNameFormat),
@@ -76,6 +75,6 @@ object PensionSchemeForm extends InputFilters {
           refNotEmpty andThen validateSchemeTaxRef(isCountryUK)),
         providerAddress -> trimmedText.verifying(addressNotEmpty andThen addressNotTooLong),
         countryMapping(agentOrIndividual, isCountryUK)
-      )(TransferPensionsSchemeFormModel.apply)(TransferPensionsSchemeFormModel.unapply)
+      )(TcSsrPensionsSchemeFormModel.apply)(TcSsrPensionsSchemeFormModel.unapply)
     )
 }

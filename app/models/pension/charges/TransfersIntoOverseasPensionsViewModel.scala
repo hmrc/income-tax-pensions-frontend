@@ -77,7 +77,8 @@ case class TransferPensionScheme(
                                   pstr: Option[String] = None,
                                   qops: Option[String] = None,
                                   providerAddress: Option[String] = None,
-                                  countryCode: Option[String] = None) {
+                                  alphaTwoCountryCode: Option[String] = None,
+                                  alphaThreeCountryCode: Option[String] = None) {
 
   def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedTransferPensionScheme = {
     EncryptedTransferPensionScheme(
@@ -86,7 +87,8 @@ case class TransferPensionScheme(
       pensionSchemeTaxReference = pstr.map(_.encrypted),
       qualifyingRecognisedOverseasPensionScheme = qops.map(_.encrypted),
       providerAddress = providerAddress.map(_.encrypted),
-      countryCode = countryCode.map(_.encrypted)
+      alphaTwoCountryCode = alphaTwoCountryCode.map(_.encrypted),
+      alphaThreeCountryCode = alphaThreeCountryCode.map(_.encrypted)
     )
   }
 }
@@ -97,7 +99,8 @@ case class EncryptedTransferPensionScheme(
                                            pensionSchemeTaxReference: Option[EncryptedValue],
                                            qualifyingRecognisedOverseasPensionScheme: Option[EncryptedValue],
                                            providerAddress: Option[EncryptedValue],
-                                           countryCode: Option[EncryptedValue]) {
+                                           alphaTwoCountryCode: Option[EncryptedValue],
+                                           alphaThreeCountryCode: Option[EncryptedValue]) {
 
   def decrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): TransferPensionScheme =
     TransferPensionScheme(
@@ -106,7 +109,8 @@ case class EncryptedTransferPensionScheme(
       pstr = pensionSchemeTaxReference.map(_.decrypted[String]),
       qops = qualifyingRecognisedOverseasPensionScheme.map(_.decrypted[String]),
       providerAddress = providerAddress.map(_.decrypted[String]),
-      countryCode = countryCode.map(_.decrypted[String])
+      alphaTwoCountryCode = alphaTwoCountryCode.map(_.decrypted[String]),
+      alphaThreeCountryCode = alphaThreeCountryCode.map(_.decrypted[String])
     )
 }
 

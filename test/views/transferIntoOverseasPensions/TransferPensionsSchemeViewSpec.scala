@@ -16,7 +16,7 @@
 
 package views.transferIntoOverseasPensions
 
-import forms.overseas.PensionSchemeForm.{TransferPensionsSchemeFormModel, transferPensionSchemeForm}
+import forms.overseas.PensionSchemeForm.{TcSsrPensionsSchemeFormModel, tcSsrPensionSchemeForm}
 import models.requests.UserSessionDataRequest
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -116,7 +116,7 @@ class TransferPensionsSchemeViewSpec extends ViewUnitTest {
         s"${if (isUKCountry) "UK" else "Overseas"} Pensions Scheme, language is ${welshTest(userScenario.isWelsh)} and request is from an $agentOrIndividual" should {
 
           "render Pension scheme page with no prefilling" which {
-            val htmlFormat = underTest(transferPensionSchemeForm(agentOrIndividual, isUKCountry), taxYearEOY, isUKCountry, 0)
+            val htmlFormat = underTest(tcSsrPensionSchemeForm(agentOrIndividual, isUKCountry), taxYearEOY, isUKCountry, 0)
             implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
             titleCheck(expectedTitle, userScenario.isWelsh)
@@ -127,8 +127,8 @@ class TransferPensionsSchemeViewSpec extends ViewUnitTest {
           "render Pension scheme page with prefilling" which {
             val (country, ref) = if (isUKCountry) (None, "12345678RF") else (Some("FR"), "654321")
             val formWithData = {
-              transferPensionSchemeForm(agentOrIndividual, isUKCountry)
-                .fill(TransferPensionsSchemeFormModel(
+              tcSsrPensionSchemeForm(agentOrIndividual, isUKCountry)
+                .fill(TcSsrPensionsSchemeFormModel(
                   providerName = "Scheme Name", schemeReference = ref, providerAddress = "Scheme Address", countryId = country))
             }
             val htmlFormat = underTest(formWithData, taxYearEOY, isUKCountry, 0)
@@ -149,7 +149,7 @@ class TransferPensionsSchemeViewSpec extends ViewUnitTest {
           "form is correctly submitted with correct fields values" which {
             val schemeRef = if(isUKCountry) "12345678RT" else "654321"
             val formMap = setFormData("Scheme Name",  schemeRef, "Scheme Address", "FR")
-            val htmlFormat = underTest(transferPensionSchemeForm(agentOrIndividual, isUKCountry).bind(formMap), taxYearEOY, isUKCountry, 0)
+            val htmlFormat = underTest(tcSsrPensionSchemeForm(agentOrIndividual, isUKCountry).bind(formMap), taxYearEOY, isUKCountry, 0)
             implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
             titleCheck(expectedTitle, userScenario.isWelsh)
@@ -159,7 +159,7 @@ class TransferPensionsSchemeViewSpec extends ViewUnitTest {
 
           "page is returned with errors when form is submitted with all fields empty" which {
             val formMap = setFormData("", "", "", "")
-            val htmlFormat = underTest(transferPensionSchemeForm(agentOrIndividual, isUKCountry).bind(formMap), taxYearEOY, isUKCountry, 0)
+            val htmlFormat = underTest(tcSsrPensionSchemeForm(agentOrIndividual, isUKCountry).bind(formMap), taxYearEOY, isUKCountry, 0)
             implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
             titleCheck(s"Error: $expectedTitle", userScenario.isWelsh)
@@ -182,7 +182,7 @@ class TransferPensionsSchemeViewSpec extends ViewUnitTest {
           
           "page is returned with errors when form is submitted with fields with incorrect format" which {
             val formMap = setFormData("d#", "#d", "some-address", "FR")
-            val htmlFormat = underTest(transferPensionSchemeForm(agentOrIndividual, isUKCountry).bind(formMap), taxYearEOY, isUKCountry, 0)
+            val htmlFormat = underTest(tcSsrPensionSchemeForm(agentOrIndividual, isUKCountry).bind(formMap), taxYearEOY, isUKCountry, 0)
             implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
             titleCheck(s"Error: $expectedTitle", userScenario.isWelsh)
@@ -203,7 +203,7 @@ class TransferPensionsSchemeViewSpec extends ViewUnitTest {
             val schemeRef = if(isUKCountry) "12345678RT" else "654321"
             val formMap = setFormData(pName, schemeRef, pAddress, "FR")
             
-            val htmlFormat = underTest(transferPensionSchemeForm(agentOrIndividual, isUKCountry).bind(formMap), taxYearEOY, isUKCountry, 0)
+            val htmlFormat = underTest(tcSsrPensionSchemeForm(agentOrIndividual, isUKCountry).bind(formMap), taxYearEOY, isUKCountry, 0)
             implicit val document: Document = Jsoup.parse(htmlFormat.body)
             
             titleCheck(s"Error: $expectedTitle", userScenario.isWelsh)

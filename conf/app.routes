@@ -272,10 +272,24 @@ POST        /:taxYear/overseas-pensions/overseas-transfer-charges/overseas-trans
 GET         /:taxYear/overseas-pensions/payments-into-overseas-pensions/remove-overseas-pension-scheme                             controllers.pensions.transferIntoOverseasPensions.RemoveTransferChargeSchemeController.show(taxYear: Int, index: Option[Int])
 POST        /:taxYear/overseas-pensions/payments-into-overseas-pensions/remove-overseas-pension-scheme                             controllers.pensions.transferIntoOverseasPensions.RemoveTransferChargeSchemeController.submit(taxYear: Int, index: Option[Int])
 
+GET         /:taxYear/overseas-pensions/overseas-transfer-charges/transfer-charges/check-transfer-charges-details                  controllers.pensions.transferIntoOverseasPensions.TransferIntoOverseasPensionsCYAController.show(taxYear: Int)
+POST        /:taxYear/overseas-pensions/overseas-transfer-charges/transfer-charges/check-transfer-charges-details                  controllers.pensions.transferIntoOverseasPensions.TransferIntoOverseasPensionsCYAController.submit(taxYear: Int)
+
 ###########################     Short service refunds pages     ####################################
 
-GET         /:taxYear/overseas-pensions/short-service-refunds/taxable-short-service-refunds                                         controllers.pensions.shortServiceRefunds.TaxableRefundAmountController.show(taxYear: Int)
-POST        /:taxYear/overseas-pensions/short-service-refunds/taxable-short-service-refunds                                         controllers.pensions.shortServiceRefunds.TaxableRefundAmountController.submit(taxYear: Int)
+GET         /:taxYear/overseas-pensions/short-service-refunds/taxable-short-service-refunds                                        controllers.pensions.shortServiceRefunds.TaxableRefundAmountController.show(taxYear: Int)
+POST        /:taxYear/overseas-pensions/short-service-refunds/taxable-short-service-refunds                                        controllers.pensions.shortServiceRefunds.TaxableRefundAmountController.submit(taxYear: Int)
 
 GET         /:taxYear/overseas-pensions/short-service-refunds/short-service-refund-non-uk-tax                                      controllers.pensions.shortServiceRefunds.NonUkTaxRefundsController.show(taxYear: Int)
 POST        /:taxYear/overseas-pensions/short-service-refunds/short-service-refund-non-uk-tax                                      controllers.pensions.shortServiceRefunds.NonUkTaxRefundsController.submit(taxYear: Int)
+
+GET         /:taxYear/overseas-pensions/short-service-refunds/short-service-refunds-pension-scheme                                 controllers.pensions.shortServiceRefunds.ShortServicePensionsSchemeController.show(taxYear: Int, index: Option[Int])
+POST        /:taxYear/overseas-pensions/short-service-refunds/short-service-refunds-pension-scheme                                 controllers.pensions.shortServiceRefunds.ShortServicePensionsSchemeController.submit(taxYear: Int, index: Option[Int])
+
+GET         /:taxYear/overseas-pensions/short-service-refunds/short-service-refunds-uk-tax                                         controllers.pensions.shortServiceRefunds.TaxOnShortServiceRefundController.show(taxYear: Int, refundPensionSchemeIndex: Option[Int])
+POST         /:taxYear/overseas-pensions/short-service-refunds/short-service-refunds-uk-tax                                        controllers.pensions.shortServiceRefunds.TaxOnShortServiceRefundController.submit(taxYear: Int, refundPensionSchemeIndex: Option[Int])
+
+GET         /:taxYear/overseas-pensions/short-service-refunds/remove-pension-scheme                                                controllers.pensions.shortServiceRefunds.RemoveRefundSchemeController.show(taxYear: Int, index: Option[Int])
+POST        /:taxYear/overseas-pensions/short-service-refunds/remove-pension-scheme                                                controllers.pensions.shortServiceRefunds.RemoveRefundSchemeController.submit(taxYear: Int, index: Option[Int])
+
+GET         /:taxYear/overseas-pensions/short-service-refunds/short-service-refund-summary                                         controllers.pensions.shortServiceRefunds.RefundSummaryController.show(taxYear: Int)

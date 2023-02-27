@@ -27,10 +27,10 @@ import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import utils.PageUrls.PensionAnnualAllowancePages.transferPensionSchemeTaxUrl
+import utils.PageUrls.TransferIntoOverseasPensions.{overseasTransferChargePaidUrl, transferChargeSummaryUrl}
 import utils.PageUrls.{fullUrl, overviewUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
-import utils.PageUrls.TransferIntoOverseasPensions.{transferChargeSummaryUrl, overseasTransferChargePaidUrl}
-import utils.PageUrls.TransferIntoOverseasPensionsPages.{transferPensionSavingsUrl}
+import utils.PageUrls.TransferIntoOverseasPensions.{checkYourDetailsPensionUrl, overseasTransferChargePaidUrl, transferChargeSummaryUrl}
 import utils.PageUrls.{fullUrl, overseasPensionsSummaryUrl, overviewUrl}
 
 
@@ -145,7 +145,7 @@ class OverseasPensionTransferTaxChargeSchemeISpec
               body = formData)
           }
           result.status shouldBe SEE_OTHER
-          result.header("location").contains(overseasTransferChargePaidUrl(taxYearEOY)) shouldBe true
+          result.header("location").contains(checkYourDetailsPensionUrl(taxYearEOY)) shouldBe true
         }
 
         "return an error when form is submitted with no entry" which {

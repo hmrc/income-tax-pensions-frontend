@@ -29,7 +29,7 @@ import utils.{Clock, SessionHelper}
 import views.html.pensions.shortServiceRefunds.TaxableRefundAmountView
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 @Singleton
 class TaxableRefundAmountController@Inject()(actionsProvider: ActionsProvider,
@@ -37,7 +37,7 @@ class TaxableRefundAmountController@Inject()(actionsProvider: ActionsProvider,
                                              view: TaxableRefundAmountView,
                                              formsProvider: FormsProvider,
                                              errorHandler: ErrorHandler)
-                                            (implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
+                                            (implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock)
   extends FrontendController(mcc) with I18nSupport with SessionHelper {
 
   def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
@@ -52,7 +52,7 @@ class TaxableRefundAmountController@Inject()(actionsProvider: ActionsProvider,
 
   def submit(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit sessionUserData =>
-      formsProvider.shortServiceTaxableRefundForm(sessionUserData.user).bindFromRequest.fold(
+      formsProvider.shortServiceTaxableRefundForm(sessionUserData.user).bindFromRequest().fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
         yesNoAmount => {
           (yesNoAmount._1, yesNoAmount._2) match {
@@ -65,7 +65,7 @@ class TaxableRefundAmountController@Inject()(actionsProvider: ActionsProvider,
 
   private def updateSessionData[T](pensionUserData: PensionsUserData,
                                    yesNo: Boolean,
-                                   amount: Option[BigDecimal] = None,
+                                   amount: Option[BigDecimal],
                                    taxYear: Int)(implicit request: UserSessionDataRequest[T]) = {
     val updatedCyaModel: PensionsCYAModel = pensionUserData.pensions.copy(
       shortServiceRefunds = pensionUserData.pensions.shortServiceRefunds.copy(

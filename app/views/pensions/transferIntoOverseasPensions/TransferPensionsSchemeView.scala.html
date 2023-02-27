@@ -16,7 +16,7 @@
 
 @import controllers.pensions.transferIntoOverseasPensions.routes.TransferPensionsSchemeController
 @import forms.Countries
-@import forms.overseas.PensionSchemeForm.TransferPensionsSchemeFormModel
+@import forms.overseas.PensionSchemeForm.TcSsrPensionsSchemeFormModel
 @import models.requests.UserSessionDataRequest
 @import views.html.helper.CSPNonce
 @import views.html.templates.Layout
@@ -39,7 +39,7 @@
         errorSummary: ErrorSummary
 )
 
-@(form: Form[TransferPensionsSchemeFormModel], taxYear: Int, isUKScheme:Boolean, index: Int)(implicit request: UserSessionDataRequest[_], messages: Messages, appConfig: AppConfig)
+@(form: Form[TcSsrPensionsSchemeFormModel], taxYear: Int, isUKScheme:Boolean, index: Int)(implicit request: UserSessionDataRequest[_], messages: Messages, appConfig: AppConfig)
 
 @titleText = @{
     messages("transferIntoOverseasPensions.transferPensionScheme.title")
@@ -52,7 +52,7 @@
 
 @schemeRefLabel = @{
    if (isUKScheme) messages("common.pensionSchemeTaxReference")
-   else messages("transferIntoOverseasPensions.pensionScheme.qopsr.subheading")
+   else messages("common.overseasPensions.pensionScheme.qopsr.subheading")
 }
 
 @hasFormErrors = @{form.hasErrors}
@@ -75,14 +75,14 @@
 
     @heading(titleText, Some(messages("common.transferIntoOverseasPensions.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-2")
 
-    <p class="govuk-body">@messages("transferIntoOverseasPensions.paragraph1")</p>
+    <p class="govuk-body">@messages("common.overseasPensions.paragraph1")</p>
 
     @formWithCsrf(action = TransferPensionsSchemeController.submit(taxYear, Some(index))) {
         @inputText(
             form,
             id = "providerName",
             name = "providerName",
-            label = messages("transferIntoOverseasPensions.pensionScheme.providerName.subheading"),
+            label = messages("common.overseasPensions.pensionScheme.providerName.subheading"),
             isSubheading = true,
             labelHidden = false,
             classes = Some("govuk-input--width-20")
@@ -117,7 +117,7 @@
             form,
             id = "providerAddress",
             name = "providerAddress",
-            label = messages("transferIntoOverseasPensions.pensionScheme.providerAddress.subheading"),
+            label = messages("common.overseasPensions.pensionScheme.providerAddress.subheading"),
             isSubheading = true,
             classes = Some("govuk-textarea")
         )

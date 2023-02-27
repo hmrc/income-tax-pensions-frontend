@@ -23,7 +23,7 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 
 
-trait CYABaseHelper{
+trait CYABaseHelper {
   def summaryListRow(labelMessageKey: String, displayedValue: String, changeLink: Call)(implicit messages: Messages): SummaryListRow = {
     ViewUtils.summaryListRow(
       HtmlContent(messages(labelMessageKey)),
@@ -34,35 +34,41 @@ trait CYABaseHelper{
     )
   }
 
-  def summaryListRowWithBooleanValue(labelMessageKey: String, valueOpt: Option[Boolean], changeLink: Call)(implicit messages: Messages): SummaryListRow =
-    summaryListRow(labelMessageKey, displayedValue(valueOpt), changeLink)
+  def summaryListRowWithBooleanValue(labelMessageKey: String, valueOpt: Option[Boolean], changeLink: Call, suffixOpt: Option[String] = None)(implicit messages: Messages): SummaryListRow =
+    summaryListRow(labelMessageKey, displayedValue(valueOpt, suffixOpt), changeLink)
 
-   def summaryListRowWithOptionalAmountValue(labelMessageKey: String, value: Option[BigDecimal], changeLink: Call)(implicit messages: Messages): SummaryListRow =
+  def summaryListRowWithOptionalAmountValue(labelMessageKey: String, value: Option[BigDecimal], changeLink: Call)(implicit messages: Messages): SummaryListRow =
     summaryListRow(labelMessageKey, displayedValueForOptionalAmount(value), changeLink)
 
-   def summaryListRowWithAmountValue(labelMessageKey: String, value: BigDecimal, changeLink: Call)(implicit messages: Messages): SummaryListRow =
+  def summaryListRowWithAmountValue(labelMessageKey: String, value: BigDecimal, changeLink: Call)(implicit messages: Messages): SummaryListRow =
     summaryListRow(labelMessageKey, displayedValue(value), changeLink)
 
-   def summaryListRowWithString(labelMessageKey: String, valueOpt: Option[Seq[String]], changeLink: Call)(implicit messages: Messages): SummaryListRow =
+  def summaryListRowWithString(labelMessageKey: String, valueOpt: Option[Seq[String]], changeLink: Call)(implicit messages: Messages): SummaryListRow =
     summaryListRow(labelMessageKey, displayedValueForOptionalStrings(valueOpt), changeLink)
 
   def summaryListRowWithStrings(labelMessageKey: String, valueOpt: Option[String], changeLink: Call)(implicit messages: Messages): SummaryListRow =
     summaryListRow(labelMessageKey, valueOpt.getOrElse(""), changeLink)
 
-   def summaryListRowWithAmountAndTaxValue(labelMessageKey: String, amount: Option[BigDecimal], taxPaid: Option[BigDecimal], changeLink: Call)(implicit messages: Messages): SummaryListRow =
+  def summaryListRowWithAmountAndTaxValue(labelMessageKey: String, amount: Option[BigDecimal], taxPaid: Option[BigDecimal], changeLink: Call)(implicit messages: Messages): SummaryListRow =
     summaryListRow(labelMessageKey, displayedValueForAmountAndTax(amount, taxPaid), changeLink)
 
   def displayedValueForOptionalAmount(valueOpt: Option[BigDecimal]): String = valueOpt.map(displayedValue).getOrElse("")
 
-   def displayedValue(value: BigDecimal): String = if (value == 0) "" else s"£$value"
+  def displayedValue(value: BigDecimal): String = if (value == 0) "" else s"£$value"
 
-   def displayedValue(valueOpt: Option[Boolean])(implicit messages: Messages): String =
-    valueOpt.map(value => if (value) messages("common.yes") else messages("common.no")).getOrElse("")
+  def displayedValue(valueOpt: Option[Boolean], suffix: Option[String] = None)(implicit messages: Messages): String =
+    valueOpt.map(value => if (value) {
+      messages("common.yes")
+    }
+    else if (suffix.isDefined) {
+      s"${messages("common.no")} ${messages(suffix.getOrElse(""))}"
+    }
+    else messages("common.no")).getOrElse("")
 
-   def displayedValueForAmountAndTax(amount: Option[BigDecimal], taxPaid: Option[BigDecimal]): String =
+  def displayedValueForAmountAndTax(amount: Option[BigDecimal], taxPaid: Option[BigDecimal]): String =
     s"""Amount: ${displayedValueForOptionalAmount(amount)} <br> Tax paid: ${displayedValueForOptionalAmount(taxPaid)}"""
 
 
   def displayedValueForOptionalStrings(valueOpt: Option[Seq[String]]): String = valueOpt.map(_.mkString(", ")).getOrElse("")
-  
+
 }
