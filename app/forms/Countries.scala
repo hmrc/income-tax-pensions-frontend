@@ -43,8 +43,8 @@ object Countries {
   def getCountryFromCodeWithDefault(countryCode: Option[String], defaultStr: String = "no country code"): String =
     getCountryFromCode(countryCode).fold(countryCode.getOrElse(defaultStr))(_.countryName)
 
-  def get2AlphaCodeFrom3AlphaCode(alphaThreeCode : String) : Option[String] =
-    countriesFromFile.find(country => country.alphaThreeCode == alphaThreeCode).map(_.alphaTwoCode)
+  def get2AlphaCodeFrom3AlphaCode(alphaThreeCode : Option[String]) : Option[String] =
+    countriesFromFile.find(country => alphaThreeCode.contains(country.alphaThreeCode)).map(_.alphaTwoCode)
 
   def get3AlphaCodeFrom2AlphaCode(alphaTwoCode : Option[String]) : Option[String] =
     alphaTwoCode.map(cc => countriesFromFile.filter(countryNamesWithCodes => cc == countryNamesWithCodes.alphaTwoCode).head).map(_.alphaThreeCode)

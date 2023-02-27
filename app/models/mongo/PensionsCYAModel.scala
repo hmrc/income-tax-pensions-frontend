@@ -35,7 +35,8 @@ case class PensionsCYAModel(paymentsIntoPension: PaymentsIntoPensionViewModel,
 object PensionsCYAModel {
   implicit val format: OFormat[PensionsCYAModel] = Json.format[PensionsCYAModel]
 
-  def emptyModels: PensionsCYAModel = PensionsCYAModel(PaymentsIntoPensionViewModel(),
+  def emptyModels: PensionsCYAModel = PensionsCYAModel(
+    PaymentsIntoPensionViewModel(),
     PensionAnnualAllowancesViewModel(),
     PensionLifetimeAllowancesViewModel(),
     IncomeFromPensionsViewModel(),
