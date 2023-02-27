@@ -37,4 +37,6 @@ object ShortServiceRefundsViewModelBuilder {
     )
   )
   val emptyShortServiceRefundsViewModel = ShortServiceRefundsViewModel()
+
+  val minimalShortServiceRefundsViewModel = ShortServiceRefundsViewModel(shortServiceRefund = Option(false), shortServiceRefundTaxPaid = Option(false))
 }

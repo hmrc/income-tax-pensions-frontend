@@ -115,7 +115,7 @@ class RefundSummaryViewSpec extends ViewUnitTest {
             val htmlFormat = underTest(taxYearEOY, schemes)
             implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
-            val refundSummaryUrl = RefundSummaryController.show(taxYearEOY).url
+            val cyaUrl = ShortServiceRefundsCYAController.show(taxYearEOY).url
             val taxOnShortServiceRefundUrl = (refundPensionSchemeIndex : Option[Int]) =>
               TaxOnShortServiceRefundController.show(taxYearEOY, refundPensionSchemeIndex = refundPensionSchemeIndex).url
 
@@ -133,8 +133,7 @@ class RefundSummaryViewSpec extends ViewUnitTest {
             linkCheck(s"$remove $remove ${schemes.last.name.get}", removeLinkSelector(2), removeLink(1))
             linkCheck(expectedAddAnotherText, addAnotherLinkSelector, taxOnShortServiceRefundUrl(None))
 
-            //todo update redirect to to transfer journey CYA page when navigation is linked up
-            buttonCheck(expectedButtonText, continueButtonSelector, Some(refundSummaryUrl))
+            buttonCheck(expectedButtonText, continueButtonSelector, Some(cyaUrl))
             welshToggleCheck(userScenario.isWelsh)
           }
 
@@ -144,9 +143,9 @@ class RefundSummaryViewSpec extends ViewUnitTest {
             val htmlFormat = underTest(taxYearEOY, schemes)
             implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
-            val refundSummaryUrl = RefundSummaryController.show(taxYearEOY).url
             val taxOnShortServiceRefundUrl = (refundPensionSchemeIndex : Option[Int]) =>
               TaxOnShortServiceRefundController.show(taxYearEOY, refundPensionSchemeIndex = refundPensionSchemeIndex).url
+            val cyaUrl = ShortServiceRefundsCYAController.show(taxYearEOY).url
 
             titleCheck(expectedTitle, userScenario.isWelsh)
             h1Check(expectedHeading)
@@ -158,8 +157,7 @@ class RefundSummaryViewSpec extends ViewUnitTest {
             linkCheck(s"$remove $remove ${schemes.head.name.get}", removeLinkSelector(1), removeLink(0))
             linkCheck(expectedAddAnotherText, addAnotherLinkSelector, taxOnShortServiceRefundUrl(None))
 
-            //todo update redirect to to transfer journey CYA page when navigation is linked up
-            buttonCheck(expectedButtonText, continueButtonSelector, Some(refundSummaryUrl))
+            buttonCheck(expectedButtonText, continueButtonSelector, Some(cyaUrl))
             welshToggleCheck(userScenario.isWelsh)
           }
 

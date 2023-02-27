@@ -51,6 +51,7 @@ common.moreThanOnePensionScheme.agent = If more than one of your client’s pens
 common.sectionsToFill.individual = You only need to fill in the sections that apply to you.
 common.sectionsToFill.agent = You only need to fill in the sections that apply to your client.
 common.country.select = select a country
+common.noTaxPaid = No tax paid
 
 common.error.amountMaxLimit = The total amount must be less than £100,000,000,000
 common.pensions.error.amountMaxLimit.individual = The amount of tax your pension provider paid or agreed to pay must be less than £100,000,000,000
@@ -984,7 +985,6 @@ transferIntoOverseasPensions.cya.transferIntoOverseasPensions = Transfers into o
 transferIntoOverseasPensions.cya.amountCharged = Amount charged
 transferIntoOverseasPensions.cya.noAmountCharged = No charge
 transferIntoOverseasPensions.cya.taxOnAmountCharged = Tax on amount charged
-transferIntoOverseasPensions.cya.noTaxOnAmountCharged = No tax paid
 transferIntoOverseasPensions.cya.schemesPayingTax = Schemes paying tax
 transferIntoOverseasPensions.cya.transferIntoOverseasPensions.hidden = Change transfers into overseas pensions
 transferIntoOverseasPensions.cya.amountCharged.hidden = Change amount charged
@@ -1067,3 +1067,16 @@ shortServiceRefunds.taxOnShortServiceRefund.error.noEntry = Select yes if a UK p
 
 #Short service refund - Summary
 shortServiceRefunds.refundSummary.title = Short service refund summary
+
+#Short Service refund - CYA
+shortServiceRefunds.cya.heading = Check short service refunds
+shortServiceRefunds.cya.refund = Short service refunds
+shortServiceRefunds.cya.refundAmount = Refund amount
+shortServiceRefunds.cya.nonUk = Paid non-UK tax
+shortServiceRefunds.cya.nonUkAmount = Amount of non-UK tax
+shortServiceRefunds.cya.schemesPayingTax = Pension schemes paying tax
+shortServiceRefunds.cya.refund.hidden = Change short service refunds
+shortServiceRefunds.cya.refundAmount.hidden = Change refund amount
+shortServiceRefunds.cya.nonUk.hidden = Change paid non-UK tax
+shortServiceRefunds.cya.nonUkAmount.hidden = Change amount of non-UK tax
+shortServiceRefunds.cya.schemesPayingTax.hidden = Change pension schemes paying tax

@@ -31,7 +31,7 @@ import utils.CommonUtils
 import utils.PageUrls.IncomeFromOverseasPensionsPages.{checkIncomeFromOverseasPensionsCyaUrl, incomeFromOverseasPensionsStatus}
 import utils.PageUrls._
 import utils.PageUrls.OverseasPensionPages.paymentsIntoPensionSchemeUrl
-import utils.PageUrls.PensionAnnualAllowancePages.shortServiceTaxableRefundUrl
+import utils.PageUrls.ShortServiceRefunds.shortServiceTaxableRefundUrl
 import utils.PageUrls.TransferIntoOverseasPensions.{checkYourDetailsPensionUrl, transferPensionSavingsUrl}
 
 class OverseasPensionsSummaryControllerISpec extends  CommonUtils with BeforeAndAfterEach  { // scalastyle:off magic.number

@@ -81,8 +81,8 @@ class TransferIntoOverseasPensionCYAViewHelperSpec extends AnyWordSpec with Matc
 
         summaryListRows.length shouldBe 3
         assertRowForTransfersIntoOverseasPensions(summaryListRows.head, "Yes")
-        assertRowAmountCharged(summaryListRows(1), "£1000")
-        assertRowAmountCharged(summaryListRows(1), "£1000")
+        assertRowAmountCharged(summaryListRows(1), "£1,000")
+        assertRowAmountCharged(summaryListRows(1), "£1,000")
       }
       "we have answered no to the pensionSchemeTransferCharge question" in {
 
@@ -97,8 +97,8 @@ class TransferIntoOverseasPensionCYAViewHelperSpec extends AnyWordSpec with Matc
 
         summaryListRows.length shouldBe 3
         assertRowForTransfersIntoOverseasPensions(summaryListRows.head, "Yes")
-        assertRowAmountCharged(summaryListRows(1), "£1000")
-        assertRowAmountCharged(summaryListRows(1), "£1000")
+        assertRowAmountCharged(summaryListRows(1), "£1,000")
+        assertRowAmountCharged(summaryListRows(1), "£1,000")
       }
       "we have answered yes to the pensionSchemeTransferCharge question" in {
 
@@ -114,7 +114,7 @@ class TransferIntoOverseasPensionCYAViewHelperSpec extends AnyWordSpec with Matc
 
         summaryListRows.length shouldBe 3
         assertRowForTransfersIntoOverseasPensions(summaryListRows.head, "Yes")
-        assertRowAmountCharged(summaryListRows(1), "£1000")
+        assertRowAmountCharged(summaryListRows(1), "£1,000")
         assertRowTaxOnAmountCharged(summaryListRows(2), "No tax paid")
       }
       "our data for the 'surcharged' section has got into an unrealistic state, somehow" in {
@@ -160,8 +160,8 @@ class TransferIntoOverseasPensionCYAViewHelperSpec extends AnyWordSpec with Matc
         summaryListRows.length shouldBe 4
 
         assertRowForTransfersIntoOverseasPensions(summaryListRows.head, "Yes")
-        assertRowAmountCharged(summaryListRows(1), "£1000")
-        assertRowTaxOnAmountCharged(summaryListRows(2), "£1000")
+        assertRowAmountCharged(summaryListRows(1), "£1,000")
+        assertRowTaxOnAmountCharged(summaryListRows(2), "£1,000")
         assertRowForSchemesPayingTax(summaryListRows(3), "Random Name")
       }
     }
@@ -254,7 +254,7 @@ class TransferIntoOverseasPensionCYAViewHelperSpec extends AnyWordSpec with Matc
             "unauthorisedPayments.cya.nonUkTaxAmountNotSurcharged" -> "Non UK-tax on amount not surcharged",
             "unauthorisedPayments.common.ukPensionSchemes" -> "UK pension schemes",
             "unauthorisedPayments.cya.pensionSchemeTaxReferences" -> "Pension Scheme Tax References",
-            "transferIntoOverseasPensions.cya.noTaxOnAmountCharged" -> "No tax paid",
+            "common.noTaxPaid" -> "No tax paid",
             "transferIntoOverseasPensions.cya.noAmountCharged" -> "No charge"
           )
             .asJava
