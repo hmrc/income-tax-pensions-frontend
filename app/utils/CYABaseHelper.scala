@@ -34,7 +34,11 @@ trait CYABaseHelper {
     )
   }
 
-  def summaryListRowWithBooleanValue(labelMessageKey: String, valueOpt: Option[Boolean], changeLink: Call, suffixOpt: Option[String] = None)(implicit messages: Messages): SummaryListRow =
+  def summaryListRowWithBooleanValue(
+                                      labelMessageKey: String,
+                                      valueOpt: Option[Boolean],
+                                      changeLink: Call,
+                                      suffixOpt: Option[String] = None)(implicit messages: Messages): SummaryListRow =
     summaryListRow(labelMessageKey, displayedValue(valueOpt, suffixOpt), changeLink)
 
   def summaryListRowWithOptionalAmountValue(labelMessageKey: String, value: Option[BigDecimal], changeLink: Call)(implicit messages: Messages): SummaryListRow =
@@ -49,12 +53,16 @@ trait CYABaseHelper {
   def summaryListRowWithStrings(labelMessageKey: String, valueOpt: Option[String], changeLink: Call)(implicit messages: Messages): SummaryListRow =
     summaryListRow(labelMessageKey, valueOpt.getOrElse(""), changeLink)
 
-  def summaryListRowWithAmountAndTaxValue(labelMessageKey: String, amount: Option[BigDecimal], taxPaid: Option[BigDecimal], changeLink: Call)(implicit messages: Messages): SummaryListRow =
+  def summaryListRowWithAmountAndTaxValue(
+                                           labelMessageKey: String,
+                                           amount: Option[BigDecimal],
+                                           taxPaid: Option[BigDecimal],
+                                           changeLink: Call)(implicit messages: Messages): SummaryListRow =
     summaryListRow(labelMessageKey, displayedValueForAmountAndTax(amount, taxPaid), changeLink)
 
   def displayedValueForOptionalAmount(valueOpt: Option[BigDecimal]): String = valueOpt.map(displayedValue).getOrElse("")
 
-  def displayedValue(value: BigDecimal): String = if (value == 0) "" else s"£$value"
+  def displayedValue(value: BigDecimal): String = s"£$value"
 
   def displayedValue(valueOpt: Option[Boolean], suffix: Option[String] = None)(implicit messages: Messages): String =
     valueOpt.map(value => if (value) {
@@ -63,7 +71,9 @@ trait CYABaseHelper {
     else if (suffix.isDefined) {
       s"${messages("common.no")} ${messages(suffix.getOrElse(""))}"
     }
-    else messages("common.no")).getOrElse("")
+    else {
+      messages("common.no")
+    }).getOrElse("")
 
   def displayedValueForAmountAndTax(amount: Option[BigDecimal], taxPaid: Option[BigDecimal]): String =
     s"""Amount: ${displayedValueForOptionalAmount(amount)} <br> Tax paid: ${displayedValueForOptionalAmount(taxPaid)}"""

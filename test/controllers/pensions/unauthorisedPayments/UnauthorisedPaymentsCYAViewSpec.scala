@@ -80,8 +80,8 @@ class UnauthorisedPaymentsCYAViewSpec extends AnyWordSpec with Matchers {
 
         summaryListRows.length shouldBe 4
         assertRowForUnauthorisedPayments(summaryListRows.head, "Yes")
-        assertRowAmountSurcharged(summaryListRows(1), "")
-        assertRowTaxOnAmountSurcharged(summaryListRows(2), "")
+        assertRowAmountSurcharged(summaryListRows(1), "£0")
+        assertRowTaxOnAmountSurcharged(summaryListRows(2), "£0")
         assertRowForUKPensionSchemes(summaryListRows(3), "")
 
       }
@@ -138,12 +138,35 @@ class UnauthorisedPaymentsCYAViewSpec extends AnyWordSpec with Matchers {
 
         summaryListRows.length shouldBe 4
         assertRowForUnauthorisedPayments(summaryListRows.head, "Yes")
-        assertRowAmountNotSurcharged(summaryListRows(1), "")
-        assertRowTaxOnAmountNotSurcharged(summaryListRows(2), "")
+        assertRowAmountNotSurcharged(summaryListRows(1), "£0")
+        assertRowTaxOnAmountNotSurcharged(summaryListRows(2), "£0")
         assertRowForUKPensionSchemes(summaryListRows(3), "")
 
 
       }
+
+      "we have only partially completed the 'not surcharged' section (only the initial question) and pass 0 for amounts" in {
+
+        val model = UnauthorisedPaymentsViewModel(
+          noSurchargeQuestion = Some(true),
+          noSurchargeAmount = Some(0),
+          noSurchargeTaxAmountQuestion = None,
+          noSurchargeTaxAmount = Some(0),
+          ukPensionSchemesQuestion = None,
+          pensionSchemeTaxReference = None
+        )
+
+        val summaryListRows = UnauthorisedPaymentsCYAViewHelper.summaryListRows(model, taxYear)
+
+        summaryListRows.length shouldBe 4
+        assertRowForUnauthorisedPayments(summaryListRows.head, "Yes")
+        assertRowAmountNotSurcharged(summaryListRows(1), "£0")
+        assertRowTaxOnAmountNotSurcharged(summaryListRows(2), "£0")
+        assertRowForUKPensionSchemes(summaryListRows(3), "")
+
+
+      }
+
       "our data for the 'not surcharged' section has got into an unrealistic state, somehow" in {
 
         val model = UnauthorisedPaymentsViewModel(
