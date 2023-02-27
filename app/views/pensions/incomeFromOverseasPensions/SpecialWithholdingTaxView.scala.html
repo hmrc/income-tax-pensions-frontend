@@ -20,6 +20,8 @@
 @import views.html.templates.helpers.InputRadioAlt
 @import views.html.templates.helpers.Button
 @import views.html.templates.helpers.ErrorSummary
+@import views.html.templates.helpers.Details
+@import views.html.templates.helpers.Link
 @import utils.ViewUtils._
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 
@@ -27,6 +29,8 @@
         layout: Layout,
         heading: Heading,
         button: Button,
+        details: Details,
+        link: Link,
         inputText: InputTextAlt,
         formWithCsrf: FormWithCSRF,
         inputRadio: InputRadioAlt,
@@ -40,6 +44,28 @@
 @titleForUse = @{messages(s"overseasPension.specialWithHoldingTax.title.${if(request.user.isAgent) "agent" else "individual"}")}
 
 @hasFormErrors = @{form.hasErrors}
+
+@detailsHtml = {
+    <p class="govuk-body">@messages("overseasPension.specialWithHoldingTax.details.para1")</p>
+    <ul class="govuk-list govuk-list--bullet">
+        <li>@messages("overseasPension.specialWithHoldingTax.details.bullet1")</li>
+        <li>@messages("overseasPension.specialWithHoldingTax.details.bullet2")</li>
+        <li>@messages("overseasPension.specialWithHoldingTax.details.bullet3")</li>
+        <li>@messages("overseasPension.specialWithHoldingTax.details.bullet4")</li>
+        <li>@messages("overseasPension.specialWithHoldingTax.details.bullet5")</li>
+        <li>@messages("overseasPension.specialWithHoldingTax.details.bullet6")</li>
+        <li>@messages("overseasPension.specialWithHoldingTax.details.bullet7")</li>
+        <li>@messages("overseasPension.specialWithHoldingTax.details.bullet8")</li>
+        <li>@messages("overseasPension.specialWithHoldingTax.details.bullet9")</li>
+        <li>@messages("overseasPension.specialWithHoldingTax.details.bullet10")</li>
+        <li>@messages("overseasPension.specialWithHoldingTax.details.bullet11")</li>
+    </ul>
+    <p class="govuk-body" id="para2">@messages("overseasPension.specialWithHoldingTax.details.para2")</p>
+    <p class="govuk-body" id="para3">
+        @messages("overseasPension.specialWithHoldingTax.details.para3")
+        @link("https://www.gov.uk/government/publications/remittance-basis-hs264-self-assessment-helpsheet/remittance-basis-2022-hs264", "overseasPension.specialWithHoldingTax.details.link", Some("special-withholding-tax-link"), true, fullStop = true)
+    </p>
+}
 
 @AmountInput=@{inputText(
                     form,
@@ -60,6 +86,7 @@
 
     @heading(titleForUse, Some(messages("common.incomeFromOverseasPensions.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-2")
 
+    @details("overseasPension.specialWithHoldingTax.details.title", detailsHtml)
 
     @formWithCsrf(action = controllers.pensions.incomeFromOverseasPensions.routes.SpecialWithholdingTaxController.submit(taxYear, index)) {
         @inputRadio(
