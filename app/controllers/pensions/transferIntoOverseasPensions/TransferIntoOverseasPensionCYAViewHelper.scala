@@ -19,13 +19,14 @@ package controllers.pensions.transferIntoOverseasPensions
 import models.pension.charges.TransfersIntoOverseasPensionsViewModel
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
-import uk.gov.hmrc.hmrcfrontend.controllers.routes._
 import utils.CYABaseHelper
 
 object TransferIntoOverseasPensionCYAViewHelper extends CYABaseHelper {
 
 
-  def summaryListRows(transfersIntoOverseasPensionsViewModel: TransfersIntoOverseasPensionsViewModel, taxYear: Int)(implicit messages: Messages): Seq[SummaryListRow] =
+  def summaryListRows(
+                       transfersIntoOverseasPensionsViewModel: TransfersIntoOverseasPensionsViewModel,
+                       taxYear: Int)(implicit messages: Messages): Seq[SummaryListRow] =
     Seq(
       summaryRowForTransferIntoOverseasPensions(transfersIntoOverseasPensionsViewModel, taxYear),
       summaryRowForAmountCharged(transfersIntoOverseasPensionsViewModel, taxYear),
