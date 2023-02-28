@@ -172,7 +172,7 @@ class OverseasPensionTransferTaxChargeSpec extends ViewUnitTest with FakeRequest
 
       "render the page with an error when the user selects yes but amount is in wrong format" which {
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
-        implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = new UserSessionDataRequest(aPensionsUserData, aUser, if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest)
+        implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = UserSessionDataRequest(aPensionsUserData, aUser, if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest)
         def form: Form[(Boolean, Option[BigDecimal])] = new FormsProvider().pensionSchemeTaxTransferForm(if(userScenario.isAgent) anAgentUser else aUser)
         implicit val htmlFormat = underTest(form.bind(Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "bfsbrfg")), taxYearEOY)
         implicit val document: Document = Jsoup.parse(htmlFormat.body)

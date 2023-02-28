@@ -18,7 +18,7 @@ package views.shortServiceRefunds
 
 import builders.PensionsUserDataBuilder.aPensionsUserData
 import builders.UserBuilder.{aUser, anAgentUser}
-import forms.{FormsProvider, RadioButtonAmountForm, YesNoForm}
+import forms.{FormsProvider, YesNoForm}
 import models.pension.charges.OverseasRefundPensionScheme
 import models.pension.pages.shortServiceRefunds.TaxOnShortServiceRefundPage
 import models.requests.UserSessionDataRequest
@@ -27,6 +27,7 @@ import org.jsoup.nodes.Document
 import play.api.data.Form
 import play.api.i18n.Messages
 import play.api.mvc.AnyContent
+import play.twirl.api.HtmlFormat
 import support.ViewUnitTest
 import utils.FakeRequestProvider
 import views.html.pensions.shortServiceRefunds.TaxPaidOnShortServiceRefundView
@@ -108,12 +109,12 @@ class TaxOnShortServiceRefundSpec extends ViewUnitTest with FakeRequestProvider 
     s"language is ${welshTest(userScenario.isWelsh)} and request is from an ${agentTest(userScenario.isAgent)}" should {
       "render page with 'Yes' pre filled " which {
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
-        implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = new UserSessionDataRequest(aPensionsUserData,
+        implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = UserSessionDataRequest(aPensionsUserData,
           if (userScenario.isAgent) anAgentUser else aUser,
           if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest)
         def form: Form[Boolean] = new FormsProvider().shortServiceTaxOnShortServiceRefundForm
         val taxOnShortServiceRefundPage = TaxOnShortServiceRefundPage(taxYear - 1, Some(0), aPensionsUserData.pensions.shortServiceRefunds, form)
-        implicit val htmlFormat = underTest(taxOnShortServiceRefundPage)
+        implicit val htmlFormat: HtmlFormat.Appendable = underTest(taxOnShortServiceRefundPage)
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
         captionCheck(userScenario.commonExpectedResults.expectedCaption(taxYearEOY), Selectors.captionSelector)
@@ -124,7 +125,7 @@ class TaxOnShortServiceRefundSpec extends ViewUnitTest with FakeRequestProvider 
       }
       "render page with 'No' pre filled " which {
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
-        implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = new UserSessionDataRequest(aPensionsUserData,
+        implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = UserSessionDataRequest(aPensionsUserData,
           if (userScenario.isAgent) anAgentUser else aUser,
           if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest)
         def form: Form[Boolean] = new FormsProvider().shortServiceTaxOnShortServiceRefundForm
@@ -135,7 +136,7 @@ class TaxOnShortServiceRefundSpec extends ViewUnitTest with FakeRequestProvider 
         )))
 
         val taxOnShortServiceRefundPage = TaxOnShortServiceRefundPage(taxYear - 1, Some(0), updatedShortServiceRefunds, form)
-        implicit val htmlFormat = underTest(taxOnShortServiceRefundPage)
+        implicit val htmlFormat: HtmlFormat.Appendable = underTest(taxOnShortServiceRefundPage)
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
         captionCheck(userScenario.commonExpectedResults.expectedCaption(taxYearEOY), Selectors.captionSelector)
@@ -146,7 +147,7 @@ class TaxOnShortServiceRefundSpec extends ViewUnitTest with FakeRequestProvider 
       }
       "render page with no value pre filled " which {
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
-        implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = new UserSessionDataRequest(aPensionsUserData,
+        implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = UserSessionDataRequest(aPensionsUserData,
           if (userScenario.isAgent) anAgentUser else aUser,
           if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest)
         def form: Form[Boolean] = new FormsProvider().shortServiceTaxOnShortServiceRefundForm
@@ -158,7 +159,7 @@ class TaxOnShortServiceRefundSpec extends ViewUnitTest with FakeRequestProvider 
 
         val taxOnShortServiceRefundPage = TaxOnShortServiceRefundPage(taxYear - 1, Some(0),
           updatedShortServiceRefunds, form.bind(Map(YesNoForm.yesNo -> "")))
-        implicit val htmlFormat = underTest(taxOnShortServiceRefundPage)
+        implicit val htmlFormat: HtmlFormat.Appendable = underTest(taxOnShortServiceRefundPage)
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
         errorAboveElementCheck(userScenario.specificExpectedResults.get.expectedNoEntryErrorText, Some("value"))

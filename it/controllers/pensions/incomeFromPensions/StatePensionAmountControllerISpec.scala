@@ -23,7 +23,7 @@ import builders.PensionsUserDataBuilder
 import builders.StateBenefitViewModelBuilder.anStateBenefitViewModelOne
 import builders.UserBuilder.aUserRequest
 import forms.AmountForm
-import models.mongo.PensionsCYAModel
+import models.mongo.{PensionsCYAModel, PensionsUserData}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterEach
@@ -41,8 +41,8 @@ class StatePensionAmountControllerISpec extends IntegrationTest with ViewHelpers
   private val poundPrefixText = "£"
   private val amountInputName = "amount"
 
-  private def pensionsUsersData(isPrior: Boolean = false, pensionsCyaModel: PensionsCYAModel) = {
-    PensionsUserDataBuilder.aPensionsUserData.copy(isPriorSubmission = isPrior, pensions = pensionsCyaModel)
+  private def pensionsUsersData(pensionsCyaModel: PensionsCYAModel): PensionsUserData = {
+    PensionsUserDataBuilder.aPensionsUserData.copy(isPriorSubmission = false, pensions = pensionsCyaModel)
   }
 
   object Selectors {
@@ -163,7 +163,7 @@ class StatePensionAmountControllerISpec extends IntegrationTest with ViewHelpers
             authoriseAgentOrIndividual(user.isAgent)
             val pensionsViewModel = anIncomeFromPensionsViewModel.copy(
               statePension= Some(anStateBenefitViewModelOne.copy(amountPaidQuestion = Some(true), amount = None)))
-            insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(incomeFromPensions = pensionsViewModel)), aUserRequest)
+            insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(incomeFromPensions = pensionsViewModel)), aUserRequest)
             urlGet(fullUrl(statePensionAmountUrl(taxYearEOY)), user.isWelsh, follow = false,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
@@ -196,7 +196,7 @@ class StatePensionAmountControllerISpec extends IntegrationTest with ViewHelpers
             authoriseAgentOrIndividual(user.isAgent)
             val pensionsViewModel = anIncomeFromPensionsViewModel.copy(
               statePension = Some(anStateBenefitViewModelOne.copy(amountPaidQuestion = Some(true), amount = Some(BigDecimal(existingAmount)))))
-            insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(incomeFromPensions = pensionsViewModel)), aUserRequest)
+            insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(incomeFromPensions = pensionsViewModel)), aUserRequest)
             urlGet(fullUrl(statePensionAmountUrl(taxYearEOY)), user.isWelsh, follow = false,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
@@ -232,7 +232,7 @@ class StatePensionAmountControllerISpec extends IntegrationTest with ViewHelpers
         userDataStub(anIncomeTaxUserData, nino, taxYear)
         val pensionsViewModel = anIncomeFromPensionsViewModel.copy(
           statePension = Some(anStateBenefitViewModelOne.copy(amountPaidQuestion = Some(true), amount = None)))
-        insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(incomeFromPensions = pensionsViewModel)), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(incomeFromPensions = pensionsViewModel)), aUserRequest)
         urlGet(fullUrl(statePensionAmountUrl(taxYear)), follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
       }
 
@@ -248,7 +248,7 @@ class StatePensionAmountControllerISpec extends IntegrationTest with ViewHelpers
         authoriseAgentOrIndividual(isAgent = false)
         val pensionsViewModel = anIncomeFromPensionsViewModel.copy(
           statePension= Some(anStateBenefitViewModelOne.copy(amountPaidQuestion = None, amount = None)))
-        insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(incomeFromPensions = pensionsViewModel)), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(incomeFromPensions = pensionsViewModel)), aUserRequest)
         urlGet(fullUrl(statePensionAmountUrl(taxYearEOY)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -266,7 +266,7 @@ class StatePensionAmountControllerISpec extends IntegrationTest with ViewHelpers
         authoriseAgentOrIndividual(isAgent = false)
         val pensionsViewModel = anIncomeFromPensionsViewModel.copy(
           statePension = Some(anStateBenefitViewModelOne.copy(amountPaidQuestion = Some(false), amount = None)))
-        insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(incomeFromPensions = pensionsViewModel)), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(incomeFromPensions = pensionsViewModel)), aUserRequest)
         urlGet(fullUrl(statePensionAmountUrl(taxYearEOY)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -306,7 +306,7 @@ class StatePensionAmountControllerISpec extends IntegrationTest with ViewHelpers
             dropPensionsDB()
              val pensionsViewModel = anIncomeFromPensionsViewModel.copy(
                statePension = Some(anStateBenefitViewModelOne.copy(amountPaidQuestion= Some(true), amount = None)))
-            insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(incomeFromPensions = pensionsViewModel)), aUserRequest)
+            insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(incomeFromPensions = pensionsViewModel)), aUserRequest)
             authoriseAgentOrIndividual(user.isAgent)
             urlPost(fullUrl(statePensionAmountUrl(taxYearEOY)), body = emptyForm, welsh = user.isWelsh,
               follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
@@ -344,7 +344,7 @@ class StatePensionAmountControllerISpec extends IntegrationTest with ViewHelpers
             dropPensionsDB()
             val pensionsViewModel = anIncomeFromPensionsViewModel.copy(
               statePension = Some(anStateBenefitViewModelOne.copy(amountPaidQuestion= Some(true), amount = None)))
-            insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(incomeFromPensions = pensionsViewModel)), aUserRequest)
+            insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(incomeFromPensions = pensionsViewModel)), aUserRequest)
             authoriseAgentOrIndividual(user.isAgent)
             urlPost(fullUrl(statePensionAmountUrl(taxYearEOY)), body = invalidFormatForm, welsh = user.isWelsh,
               follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
@@ -384,7 +384,7 @@ class StatePensionAmountControllerISpec extends IntegrationTest with ViewHelpers
             dropPensionsDB()
             val pensionsViewModel = anIncomeFromPensionsViewModel.copy(
               statePension = Some(anStateBenefitViewModelOne.copy(amountPaidQuestion= Some(true), amount = None)))
-            insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(incomeFromPensions = pensionsViewModel)), aUserRequest)
+            insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(incomeFromPensions = pensionsViewModel)), aUserRequest)
             authoriseAgentOrIndividual(user.isAgent)
             urlPost(fullUrl(statePensionAmountUrl(taxYearEOY)),
               body = overMaximumForm, welsh = user.isWelsh, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
@@ -423,7 +423,7 @@ class StatePensionAmountControllerISpec extends IntegrationTest with ViewHelpers
         userDataStub(anIncomeTaxUserData, nino, taxYear)
         val pensionsViewModel = anIncomeFromPensionsViewModel.copy(
           statePension = Some(anStateBenefitViewModelOne.copy(amountPaidQuestion = Some(true), amount = None)))
-        insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(incomeFromPensions = pensionsViewModel)), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(incomeFromPensions = pensionsViewModel)), aUserRequest)
         urlPost(fullUrl(statePensionAmountUrl(taxYear)),
           body = form, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
       }
@@ -442,7 +442,7 @@ class StatePensionAmountControllerISpec extends IntegrationTest with ViewHelpers
         authoriseAgentOrIndividual(isAgent = false)
         val pensionsViewModel = anIncomeFromPensionsViewModel.copy(
           statePension = Some(anStateBenefitViewModelOne.copy(amountPaidQuestion = None, amount = None)))
-        insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(incomeFromPensions = pensionsViewModel)), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(incomeFromPensions = pensionsViewModel)), aUserRequest)
         urlPost(fullUrl(statePensionAmountUrl(taxYearEOY)),
           body = form, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
@@ -466,7 +466,7 @@ class StatePensionAmountControllerISpec extends IntegrationTest with ViewHelpers
         dropPensionsDB()
         val pensionsViewModel = anIncomeFromPensionsViewModel.copy(
           statePension = Some(anStateBenefitViewModelOne.copy(amountPaidQuestion= Some(true), amount = None)))
-            insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(incomeFromPensions = pensionsViewModel)), aUserRequest)
+            insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(incomeFromPensions = pensionsViewModel)), aUserRequest)
         authoriseAgentOrIndividual(isAgent = false)
         urlPost(fullUrl(statePensionAmountUrl(taxYearEOY)),
           body = form, follow = false,
