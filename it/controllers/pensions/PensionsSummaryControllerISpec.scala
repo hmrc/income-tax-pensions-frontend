@@ -20,6 +20,8 @@ import builders.AllPensionsDataBuilder.anAllPensionsData
 import builders.IncomeTaxUserDataBuilder.anIncomeTaxUserData
 import builders.PensionChargesBuilder.anPensionCharges
 import builders.StateBenefitsModelBuilder.aStateBenefitsModel
+import builders.UserBuilder
+import models.User
 import models.pension.AllPensionsData
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -27,12 +29,14 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.UNAUTHORIZED
 import play.api.libs.ws.WSResponse
+import play.api.test.Injecting
+import services.PensionSessionService
 import utils.PageUrls.PaymentIntoPensions.{checkPaymentsIntoPensionCyaUrl, checkPaymentsIntoPensionStatusUrl}
 import utils.PageUrls._
 import utils.PageUrls.unauthorisedPaymentsPages.{checkUnauthorisedPaymentsCyaUrl, unauthorisedPaymentsUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
-class PensionsSummaryControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
+class PensionsSummaryControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper with Injecting {
 
   // scalastyle:off magic.number
 
@@ -112,14 +116,16 @@ class PensionsSummaryControllerISpec extends IntegrationTest with ViewHelpers wi
     UserScenario(isWelsh = true, isAgent = false, CommonExpectedCY, Some(ExpectedIndividualCY)),
     UserScenario(isWelsh = true, isAgent = true, CommonExpectedCY, Some(ExpectedAgentCY))
   )
-
+  
+  lazy val pensionSessionService: PensionSessionService = inject[PensionSessionService]
+  
   ".show" when {
     import Selectors._
-    userScenarios.foreach { user =>
-      s"language is ${welshTest(user.isWelsh)} and request is from an ${agentTest(user.isAgent)}" should {
+    userScenarios.foreach { userScenario =>
+      s"language is ${welshTest(userScenario.isWelsh)} and request is from an ${agentTest(userScenario.isAgent)}" should {
         "render the page where minimal prior data exists for all statuses to be all 'Updated'" which {
           implicit lazy val result: WSResponse = {
-            authoriseAgentOrIndividual(user.isAgent)
+            authoriseAgentOrIndividual(userScenario.isAgent)
 
             // if customerAddedStateBenefits and pensionSchemeOverseasTransfers empty still 'updated' if
             // stateBenefits and overseasPensionContributions present
@@ -128,61 +134,62 @@ class PensionsSummaryControllerISpec extends IntegrationTest with ViewHelpers wi
               pensionCharges = Some(anPensionCharges.copy(pensionSchemeOverseasTransfers = None)))
 
             userDataStub(anIncomeTaxUserData.copy(pensions = Some(allUpdatedNoOverseasTransfersOrCustomerStateBenefits)), nino, taxYear)
-            urlGet(fullUrl(pensionSummaryUrl(taxYear)), welsh = user.isWelsh, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
+            urlGet(fullUrl(pensionSummaryUrl(taxYear)), welsh = userScenario.isWelsh,
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
           }
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(user.specificExpectedResults.get.expectedTitle)
-          h1Check(user.specificExpectedResults.get.expectedH1)
-          captionCheck(user.commonExpectedResults.expectedCaption(taxYear))
+          titleCheck(userScenario.specificExpectedResults.get.expectedTitle)
+          h1Check(userScenario.specificExpectedResults.get.expectedH1)
+          captionCheck(userScenario.commonExpectedResults.expectedCaption(taxYear))
 
           "has an payment into pensions section" which {
             linkCheck("Payments into pensions", paymentsIntoPensionsLink, checkPaymentsIntoPensionCyaUrl(taxYear))
-            textOnPageCheck(user.commonExpectedResults.updated, summaryListStatusTagSelector(1))
+            textOnPageCheck(userScenario.commonExpectedResults.updated, summaryListStatusTagSelector(1))
           }
 
           "has an income from pensions section" which {
             //TODO: Change to use the href below when income From Pensions cya page available
             //linkCheck("Income from pensions", incomeFromPensionsLink, checkIncomeFromPensionCyaUrl(taxYear))
             linkCheck("Income from pensions", incomeFromPensionsLink, "#")
-            textOnPageCheck(user.commonExpectedResults.updated, summaryListStatusTagSelector(2))
+            textOnPageCheck(userScenario.commonExpectedResults.updated, summaryListStatusTagSelector(2))
           }
 
           "has an pension annual allowance section" which {
             //TODO: Change to use the href below when pension annual allowance cya page available
             //linkCheck("Pension annual allowance", pensionAnnualAllowanceLink, checkPensionAnnualAllowanceCyaUrl(taxYear))
             linkCheck("Pension annual allowance", pensionAnnualAllowanceLink, "#")
-            textOnPageCheck(user.commonExpectedResults.updated, summaryListStatusTagSelector(3))
+            textOnPageCheck(userScenario.commonExpectedResults.updated, summaryListStatusTagSelector(3))
           }
 
           "has an pension lifetime allowance section" which {
             //TODO: Change to use the href below when pension lifetime allowance cya page available
             //linkCheck("Pension lifetime allowance", pensionAnnualAllowanceLink, checkPensionLifetimeAllowanceCyaUrl(taxYear))
             linkCheck("Pension lifetime allowance", pensionLifetimeAllowanceLink, "#")
-            textOnPageCheck(user.commonExpectedResults.updated, summaryListStatusTagSelector(4))
+            textOnPageCheck(userScenario.commonExpectedResults.updated, summaryListStatusTagSelector(4))
           }
 
           "has an unauthorised payments from pensions section" which {
             linkCheck("Unauthorised payments from pensions", unauthorisedPaymentsFromPensionsLink, checkUnauthorisedPaymentsCyaUrl(taxYear))
-            textOnPageCheck(user.commonExpectedResults.updated, summaryListStatusTagSelector(5))
+            textOnPageCheck(userScenario.commonExpectedResults.updated, summaryListStatusTagSelector(5))
           }
 
           "has a payments into overseas pensions section" which {
             //TODO: Change to use the href below when pension lifetime allowance cya page available
             //linkCheck("Payments into overseas pensions", unauthorisedPaymentsFromPensionsLink, checkUnauthorisedPaymentsFromPensionsLinkCyaUrl(taxYear))
-            linkCheck(user.commonExpectedResults.paymentsToOverseasPensionsText, paymentsToOverseasPensionsLink, "#")
-            textOnPageCheck(user.commonExpectedResults.updated, summaryListStatusTagSelector(6))
+            linkCheck(userScenario.commonExpectedResults.paymentsToOverseasPensionsText, paymentsToOverseasPensionsLink, "#")
+            textOnPageCheck(userScenario.commonExpectedResults.updated, summaryListStatusTagSelector(6))
           }
 
-          buttonCheck(user.commonExpectedResults.buttonText, buttonSelector)
+          buttonCheck(userScenario.commonExpectedResults.buttonText, buttonSelector)
 
-          welshToggleCheck(user.isWelsh)
+          welshToggleCheck(userScenario.isWelsh)
         }
 
         "render the page where alternate minimal prior data exists for all statuses to be all 'Updated'" which {
           implicit lazy val result: WSResponse = {
-            authoriseAgentOrIndividual(user.isAgent)
+            authoriseAgentOrIndividual(userScenario.isAgent)
 
             // if stateBenefits and overseasPensionContributions empty still 'updated' if
             // customerAddedStateBenefits and pensionSchemeOverseasTransfers present
@@ -191,241 +198,256 @@ class PensionsSummaryControllerISpec extends IntegrationTest with ViewHelpers wi
               pensionCharges = Some(anPensionCharges.copy(overseasPensionContributions = None)))
 
             userDataStub(anIncomeTaxUserData.copy(pensions = Some(allUpdatedNoOverseasContributionsOrStateBenefits)), nino, taxYear)
-            urlGet(fullUrl(pensionSummaryUrl(taxYear)), welsh = user.isWelsh, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
+            urlGet(fullUrl(pensionSummaryUrl(taxYear)), welsh = userScenario.isWelsh,
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
 
           }
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(user.specificExpectedResults.get.expectedTitle)
-          h1Check(user.specificExpectedResults.get.expectedH1)
-          captionCheck(user.commonExpectedResults.expectedCaption(taxYear))
+          titleCheck(userScenario.specificExpectedResults.get.expectedTitle)
+          h1Check(userScenario.specificExpectedResults.get.expectedH1)
+          captionCheck(userScenario.commonExpectedResults.expectedCaption(taxYear))
 
           "has an payment into pensions section" which {
             linkCheck("Payments into pensions", paymentsIntoPensionsLink, checkPaymentsIntoPensionCyaUrl(taxYear))
-            textOnPageCheck(user.commonExpectedResults.updated, summaryListStatusTagSelector(1))
+            textOnPageCheck(userScenario.commonExpectedResults.updated, summaryListStatusTagSelector(1))
           }
 
           "has an income from pensions section" which {
             //TODO: Change to use the href below when income From Pensions cya page available
             //linkCheck("Income from pensions", incomeFromPensionsLink, checkIncomeFromPensionCyaUrl(taxYear))
             linkCheck("Income from pensions", incomeFromPensionsLink, "#")
-            textOnPageCheck(user.commonExpectedResults.updated, summaryListStatusTagSelector(2))
+            textOnPageCheck(userScenario.commonExpectedResults.updated, summaryListStatusTagSelector(2))
           }
 
           "has an pension annual allowance section" which {
             //TODO: Change to use the href below when pension annual allowance cya page available
             //linkCheck("Pension annual allowance", pensionAnnualAllowanceLink, checkPensionAnnualAllowanceCyaUrl(taxYear))
             linkCheck("Pension annual allowance", pensionAnnualAllowanceLink, "#")
-            textOnPageCheck(user.commonExpectedResults.updated, summaryListStatusTagSelector(3))
+            textOnPageCheck(userScenario.commonExpectedResults.updated, summaryListStatusTagSelector(3))
           }
 
           "has an pension lifetime allowance section" which {
             //TODO: Change to use the href below when pension lifetime allowance cya page available
             //linkCheck("Pension lifetime allowance", pensionAnnualAllowanceLink, checkPensionLifetimeAllowanceCyaUrl(taxYear))
             linkCheck("Pension lifetime allowance", pensionLifetimeAllowanceLink, "#")
-            textOnPageCheck(user.commonExpectedResults.updated, summaryListStatusTagSelector(4))
+            textOnPageCheck(userScenario.commonExpectedResults.updated, summaryListStatusTagSelector(4))
           }
 
           "has an unauthorised payments from pensions section" which {
             linkCheck("Unauthorised payments from pensions", unauthorisedPaymentsFromPensionsLink, checkUnauthorisedPaymentsCyaUrl(taxYear))
-            textOnPageCheck(user.commonExpectedResults.updated, summaryListStatusTagSelector(5))
+            textOnPageCheck(userScenario.commonExpectedResults.updated, summaryListStatusTagSelector(5))
           }
 
           "has a payments into overseas pensions section" which {
             //TODO: Change to use the href below when pension lifetime allowance cya page available
             //linkCheck("Payments into overseas pensions", unauthorisedPaymentsFromPensionsLink, checkUnauthorisedPaymentsFromPensionsLinkCyaUrl(taxYear))
-            linkCheck(user.commonExpectedResults.paymentsToOverseasPensionsText, paymentsToOverseasPensionsLink, "#")
-            textOnPageCheck(user.commonExpectedResults.updated, summaryListStatusTagSelector(6))
+            linkCheck(userScenario.commonExpectedResults.paymentsToOverseasPensionsText, paymentsToOverseasPensionsLink, "#")
+            textOnPageCheck(userScenario.commonExpectedResults.updated, summaryListStatusTagSelector(6))
           }
 
-          buttonCheck(user.commonExpectedResults.buttonText, buttonSelector)
+          buttonCheck(userScenario.commonExpectedResults.buttonText, buttonSelector)
 
-          welshToggleCheck(user.isWelsh)
+          welshToggleCheck(userScenario.isWelsh)
         }
 
         "render the page where no prior data exists for all pension data so the statuses are all 'To do'" which {
+          
+          def checkPensionsUserDataIsInitialised(isAgent:  Boolean): Unit =
+            s"have pensions user data initialised" in {
+              val user: User = if (isAgent) UserBuilder.anAgentUser else UserBuilder.aUser
+              await(pensionSessionService.getPensionSessionData(taxYear, user)) match {
+                case Right(optPensionsUserData) =>
+                  optPensionsUserData.nonEmpty shouldBe true
+                case Left(_) => fail("An unexpected failure to retrieve  user session data")
+              }
+            }
+
           implicit lazy val result: WSResponse = {
-            authoriseAgentOrIndividual(user.isAgent)
-            userDataStub(anIncomeTaxUserData.copy(pensions = None), nino, taxYear)
-            urlGet(fullUrl(pensionSummaryUrl(taxYear)), welsh = user.isWelsh, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
+            authoriseAgentOrIndividual(userScenario.isAgent)
+            emptyUserDataStub(nino, taxYear)
+            dropPensionsDB()
+            urlGet(fullUrl(pensionSummaryUrl(taxYear)), welsh = userScenario.isWelsh,
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
           }
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(user.specificExpectedResults.get.expectedTitle)
-          h1Check(user.specificExpectedResults.get.expectedH1)
-          captionCheck(user.commonExpectedResults.expectedCaption(taxYear))
+          titleCheck(userScenario.specificExpectedResults.get.expectedTitle)
+          h1Check(userScenario.specificExpectedResults.get.expectedH1)
+          captionCheck(userScenario.commonExpectedResults.expectedCaption(taxYear))
+          checkPensionsUserDataIsInitialised(userScenario.isAgent)
 
           "has an payment into pensions section" which {
             linkCheck("Payments into pensions", paymentsIntoPensionsLink, checkPaymentsIntoPensionStatusUrl(taxYear))
-            textOnPageCheck(user.commonExpectedResults.toDo, summaryListStatusTagSelector(1))
+            textOnPageCheck(userScenario.commonExpectedResults.toDo, summaryListStatusTagSelector(1))
           }
 
           "has an income from pensions section" which {
             //TODO: Change to use the href below when income From Pensions cya page available
             //linkCheck("Income from pensions", incomeFromPensionsLink, checkIncomeFromPensionCyaUrl(taxYear))
             linkCheck("Income from pensions", incomeFromPensionsLink, "#")
-            textOnPageCheck(user.commonExpectedResults.toDo, summaryListStatusTagSelector(2))
+            textOnPageCheck(userScenario.commonExpectedResults.toDo, summaryListStatusTagSelector(2))
           }
 
           "has an pension annual allowance section" which {
             //TODO: Change to use the href below when pension annual allowance cya page available
             //linkCheck("Pension annual allowance", pensionAnnualAllowanceLink, checkPensionAnnualAllowanceCyaUrl(taxYear))
             linkCheck("Pension annual allowance", pensionAnnualAllowanceLink, "#")
-            textOnPageCheck(user.commonExpectedResults.toDo, summaryListStatusTagSelector(3))
+            textOnPageCheck(userScenario.commonExpectedResults.toDo, summaryListStatusTagSelector(3))
           }
 
           "has an pension lifetime allowance section" which {
             //TODO: Change to use the href below when pension lifetime allowance cya page available
             //linkCheck("Pension lifetime allowance", pensionAnnualAllowanceLink, checkPensionLifetimeAllowanceCyaUrl(taxYear))
             linkCheck("Pension lifetime allowance", pensionLifetimeAllowanceLink, "#")
-            textOnPageCheck(user.commonExpectedResults.toDo, summaryListStatusTagSelector(4))
+            textOnPageCheck(userScenario.commonExpectedResults.toDo, summaryListStatusTagSelector(4))
           }
 
           "has an unauthorised payments from pensions section" which {
             linkCheck("Unauthorised payments from pensions", unauthorisedPaymentsFromPensionsLink, unauthorisedPaymentsUrl(taxYear))
-            textOnPageCheck(user.commonExpectedResults.toDo, summaryListStatusTagSelector(5))
+            textOnPageCheck(userScenario.commonExpectedResults.toDo, summaryListStatusTagSelector(5))
           }
 
           "has a payments into overseas pensions section" which {
             //TODO: Change to use the href below when pension lifetime allowance cya page available
             //linkCheck("Payments into overseas pensions", unauthorisedPaymentsFromPensionsLink, checkUnauthorisedPaymentsFromPensionsLinkCyaUrl(taxYear))
-            linkCheck(user.commonExpectedResults.paymentsToOverseasPensionsText, paymentsToOverseasPensionsLink, "#")
-            textOnPageCheck(user.commonExpectedResults.toDo, summaryListStatusTagSelector(6))
+            linkCheck(userScenario.commonExpectedResults.paymentsToOverseasPensionsText, paymentsToOverseasPensionsLink, "#")
+            textOnPageCheck(userScenario.commonExpectedResults.toDo, summaryListStatusTagSelector(6))
           }
 
-          buttonCheck(user.commonExpectedResults.buttonText, buttonSelector)
+          buttonCheck(userScenario.commonExpectedResults.buttonText, buttonSelector)
 
-          welshToggleCheck(user.isWelsh)
+          welshToggleCheck(userScenario.isWelsh)
         }
 
         "render the page with prior data but only a subset of the underlying pension charges are present leading to a mix of 'updated' and To do'" which {
           implicit lazy val result: WSResponse = {
-            authoriseAgentOrIndividual(user.isAgent)
+            authoriseAgentOrIndividual(userScenario.isAgent)
 
             val halfPensionChargesData: AllPensionsData = anAllPensionsData.copy(pensionCharges =
               Some(anPensionCharges.copy(pensionSavingsTaxCharges = None, pensionContributions = None)))
 
             userDataStub(anIncomeTaxUserData.copy(pensions = Some(halfPensionChargesData)), nino, taxYear)
 
-            urlGet(fullUrl(pensionSummaryUrl(taxYear)), welsh = user.isWelsh, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
+            urlGet(fullUrl(pensionSummaryUrl(taxYear)), welsh = userScenario.isWelsh, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
           }
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(user.specificExpectedResults.get.expectedTitle)
-          h1Check(user.specificExpectedResults.get.expectedH1)
-          captionCheck(user.commonExpectedResults.expectedCaption(taxYear))
+          titleCheck(userScenario.specificExpectedResults.get.expectedTitle)
+          h1Check(userScenario.specificExpectedResults.get.expectedH1)
+          captionCheck(userScenario.commonExpectedResults.expectedCaption(taxYear))
 
           "has an payment into pensions section" which {
             linkCheck("Payments into pensions", paymentsIntoPensionsLink, checkPaymentsIntoPensionCyaUrl(taxYear))
-            textOnPageCheck(user.commonExpectedResults.updated, summaryListStatusTagSelector(1))
+            textOnPageCheck(userScenario.commonExpectedResults.updated, summaryListStatusTagSelector(1))
           }
 
           "has an income from pensions section" which {
             //TODO: Change to use the href below when income From Pensions cya page available
             //linkCheck("Income from pensions", incomeFromPensionsLink, checkIncomeFromPensionCyaUrl(taxYear))
             linkCheck("Income from pensions", incomeFromPensionsLink, "#")
-            textOnPageCheck(user.commonExpectedResults.updated, summaryListStatusTagSelector(2))
+            textOnPageCheck(userScenario.commonExpectedResults.updated, summaryListStatusTagSelector(2))
           }
 
           "has an pension annual allowance section" which {
             //TODO: Change to use the href below when pension annual allowance cya page available
             //linkCheck("Pension annual allowance", pensionAnnualAllowanceLink, checkPensionAnnualAllowanceCyaUrl(taxYear))
             linkCheck("Pension annual allowance", pensionAnnualAllowanceLink, "#")
-            textOnPageCheck(user.commonExpectedResults.toDo, summaryListStatusTagSelector(3))
+            textOnPageCheck(userScenario.commonExpectedResults.toDo, summaryListStatusTagSelector(3))
           }
 
           "has an pension lifetime allowance section" which {
             //TODO: Change to use the href below when pension lifetime allowance cya page available
             //linkCheck("Pension lifetime allowance", pensionAnnualAllowanceLink, checkPensionLifetimeAllowanceCyaUrl(taxYear))
             linkCheck("Pension lifetime allowance", pensionLifetimeAllowanceLink, "#")
-            textOnPageCheck(user.commonExpectedResults.toDo, summaryListStatusTagSelector(4))
+            textOnPageCheck(userScenario.commonExpectedResults.toDo, summaryListStatusTagSelector(4))
           }
 
           "has an unauthorised payments from pensions section" which {
             linkCheck("Unauthorised payments from pensions", unauthorisedPaymentsFromPensionsLink, checkUnauthorisedPaymentsCyaUrl(taxYear))
-            textOnPageCheck(user.commonExpectedResults.updated, summaryListStatusTagSelector(5))
+            textOnPageCheck(userScenario.commonExpectedResults.updated, summaryListStatusTagSelector(5))
           }
 
           "has a payments into overseas pensions section" which {
             //TODO: Change to use the href below when pension lifetime allowance cya page available
             //linkCheck("Payments into overseas pensions", unauthorisedPaymentsFromPensionsLink, checkUnauthorisedPaymentsFromPensionsLinkCyaUrl(taxYear))
-            linkCheck(user.commonExpectedResults.paymentsToOverseasPensionsText, paymentsToOverseasPensionsLink, "#")
-            textOnPageCheck(user.commonExpectedResults.updated, summaryListStatusTagSelector(6))
+            linkCheck(userScenario.commonExpectedResults.paymentsToOverseasPensionsText, paymentsToOverseasPensionsLink, "#")
+            textOnPageCheck(userScenario.commonExpectedResults.updated, summaryListStatusTagSelector(6))
           }
 
-          buttonCheck(user.commonExpectedResults.buttonText, buttonSelector)
+          buttonCheck(userScenario.commonExpectedResults.buttonText, buttonSelector)
 
-          welshToggleCheck(user.isWelsh)
+          welshToggleCheck(userScenario.isWelsh)
         }
 
         "render the page with prior data but an opposite subset of the underlying pension charges are leading to a mix of 'updated' and To do'" which {
           implicit lazy val result: WSResponse = {
-            authoriseAgentOrIndividual(user.isAgent)
+            authoriseAgentOrIndividual(userScenario.isAgent)
 
             val otherHalfPensionChargesData: AllPensionsData = anAllPensionsData.copy(pensionCharges =
               Some(anPensionCharges.copy(pensionSchemeUnauthorisedPayments = None, pensionSchemeOverseasTransfers = None, overseasPensionContributions = None)))
 
             userDataStub(anIncomeTaxUserData.copy(pensions = Some(otherHalfPensionChargesData)), nino, taxYear)
 
-            urlGet(fullUrl(pensionSummaryUrl(taxYear)), welsh = user.isWelsh, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
+            urlGet(fullUrl(pensionSummaryUrl(taxYear)), welsh = userScenario.isWelsh, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
           }
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(user.specificExpectedResults.get.expectedTitle)
-          h1Check(user.specificExpectedResults.get.expectedH1)
-          captionCheck(user.commonExpectedResults.expectedCaption(taxYear))
+          titleCheck(userScenario.specificExpectedResults.get.expectedTitle)
+          h1Check(userScenario.specificExpectedResults.get.expectedH1)
+          captionCheck(userScenario.commonExpectedResults.expectedCaption(taxYear))
 
           "has an payment into pensions section" which {
             linkCheck("Payments into pensions", paymentsIntoPensionsLink, checkPaymentsIntoPensionCyaUrl(taxYear))
-            textOnPageCheck(user.commonExpectedResults.updated, summaryListStatusTagSelector(1))
+            textOnPageCheck(userScenario.commonExpectedResults.updated, summaryListStatusTagSelector(1))
           }
 
           "has an income from pensions section" which {
             //TODO: Change to use the href below when income From Pensions cya page available
             //linkCheck("Income from pensions", incomeFromPensionsLink, checkIncomeFromPensionCyaUrl(taxYear))
             linkCheck("Income from pensions", incomeFromPensionsLink, "#")
-            textOnPageCheck(user.commonExpectedResults.updated, summaryListStatusTagSelector(2))
+            textOnPageCheck(userScenario.commonExpectedResults.updated, summaryListStatusTagSelector(2))
           }
 
           "has an pension annual allowance section" which {
             //TODO: Change to use the href below when pension annual allowance cya page available
             //linkCheck("Pension annual allowance", pensionAnnualAllowanceLink, checkPensionAnnualAllowanceCyaUrl(taxYear))
             linkCheck("Pension annual allowance", pensionAnnualAllowanceLink, "#")
-            textOnPageCheck(user.commonExpectedResults.updated, summaryListStatusTagSelector(3))
+            textOnPageCheck(userScenario.commonExpectedResults.updated, summaryListStatusTagSelector(3))
           }
 
           "has an pension lifetime allowance section" which {
             //TODO: Change to use the href below when pension lifetime allowance cya page available
             //linkCheck("Pension lifetime allowance", pensionAnnualAllowanceLink, checkPensionLifetimeAllowanceCyaUrl(taxYear))
             linkCheck("Pension lifetime allowance", pensionLifetimeAllowanceLink, "#")
-            textOnPageCheck(user.commonExpectedResults.updated, summaryListStatusTagSelector(4))
+            textOnPageCheck(userScenario.commonExpectedResults.updated, summaryListStatusTagSelector(4))
           }
 
           "has an unauthorised payments from pensions section" which {
             linkCheck("Unauthorised payments from pensions", unauthorisedPaymentsFromPensionsLink, unauthorisedPaymentsUrl(taxYear))
-            textOnPageCheck(user.commonExpectedResults.toDo, summaryListStatusTagSelector(5))
+            textOnPageCheck(userScenario.commonExpectedResults.toDo, summaryListStatusTagSelector(5))
           }
 
           "has a payments into overseas pensions section" which {
             //TODO: Change to use the href below when pension lifetime allowance cya page available
             //linkCheck("Payments into overseas pensions", unauthorisedPaymentsFromPensionsLink, checkUnauthorisedPaymentsFromPensionsLinkCyaUrl(taxYear))
-            linkCheck(user.commonExpectedResults.paymentsToOverseasPensionsText, paymentsToOverseasPensionsLink, "#")
-            textOnPageCheck(user.commonExpectedResults.toDo, summaryListStatusTagSelector(6))
+            linkCheck(userScenario.commonExpectedResults.paymentsToOverseasPensionsText, paymentsToOverseasPensionsLink, "#")
+            textOnPageCheck(userScenario.commonExpectedResults.toDo, summaryListStatusTagSelector(6))
           }
 
-          buttonCheck(user.commonExpectedResults.buttonText, buttonSelector)
+          buttonCheck(userScenario.commonExpectedResults.buttonText, buttonSelector)
 
-          welshToggleCheck(user.isWelsh)
+          welshToggleCheck(userScenario.isWelsh)
         }
 
         "render Unauthorised user error page" which {
           lazy val result: WSResponse = {
-            unauthorisedAgentOrIndividual(user.isAgent)
-            urlGet(fullUrl(pensionSummaryUrl(taxYear)), welsh = user.isWelsh,
+            unauthorisedAgentOrIndividual(userScenario.isAgent)
+            urlGet(fullUrl(pensionSummaryUrl(taxYear)), welsh = userScenario.isWelsh,
               headers = Seq(Predef.ArrowAssoc(HeaderNames.COOKIE) -> playSessionCookies(taxYear, validTaxYearList)))
           }
           "has an UNAUTHORIZED(401) status" in {

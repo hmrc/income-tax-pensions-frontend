@@ -16,30 +16,45 @@
 
 package controllers.pensions
 
-import config.AppConfig
+import config.{AppConfig, ErrorHandler}
 import controllers.predicates.TaxYearAction.taxYearAction
 import controllers.predicates.AuthorisedAction
+import models.mongo.PensionsCYAModel
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import utils.Clock
 import views.html.pensions.PensionsSummaryView
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
+
 
 @Singleton
 class PensionsSummaryController @Inject()(implicit val mcc: MessagesControllerComponents,
                                            appConfig: AppConfig,
                                            authAction: AuthorisedAction,
                                            pensionSessionService: PensionSessionService,
+                                           errorHandler: ErrorHandler,
+                                           clock: Clock,
+                                           ec: ExecutionContext,
                                            pensionSummaryView: PensionsSummaryView) extends FrontendController(mcc) with I18nSupport {
 
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
-
     pensionSessionService.getAndHandle(taxYear, request.user) { (_, prior) =>
-      Future.successful(Ok(pensionSummaryView(taxYear, prior)
-      ))
+      pensionSessionService.getPensionSessionData(taxYear, request.user) flatMap {
+        case Right(optPensionsUserData) => optPensionsUserData match {
+          case Some(_) =>
+            Future.successful(Ok(pensionSummaryView(taxYear, prior)))
+          case _ =>
+            pensionSessionService.createOrUpdateSessionData(request.user, PensionsCYAModel.emptyModels, taxYear,
+                          isPriorSubmission = false)(errorHandler.handleError(INTERNAL_SERVER_ERROR)) {
+              Ok(pensionSummaryView(taxYear, prior))
+            }
+        }
+        case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
+      }
     }
   }
 }

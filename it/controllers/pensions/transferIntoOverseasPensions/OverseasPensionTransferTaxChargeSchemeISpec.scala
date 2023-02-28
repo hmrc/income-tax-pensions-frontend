@@ -22,23 +22,21 @@ import builders.TransfersIntoOverseasPensionsViewModelBuilder.aTransfersIntoOver
 import builders.UserBuilder.{aUser, aUserRequest}
 import forms.RadioButtonAmountForm
 import forms.RadioButtonAmountForm.{amount2, yesNo}
-import models.mongo.PensionsCYAModel
+import models.mongo.{PensionsCYAModel, PensionsUserData}
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import utils.PageUrls.PensionAnnualAllowancePages.transferPensionSchemeTaxUrl
-import utils.PageUrls.TransferIntoOverseasPensions.{overseasTransferChargePaidUrl, transferChargeSummaryUrl}
+import utils.PageUrls.TransferIntoOverseasPensions.{checkYourDetailsPensionUrl, overseasTransferChargePaidUrl, transferChargeSummaryUrl}
 import utils.PageUrls.{fullUrl, overviewUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
-import utils.PageUrls.TransferIntoOverseasPensions.{checkYourDetailsPensionUrl, overseasTransferChargePaidUrl, transferChargeSummaryUrl}
-import utils.PageUrls.{fullUrl, overseasPensionsSummaryUrl, overviewUrl}
 
 
 class OverseasPensionTransferTaxChargeSchemeISpec
-  extends IntegrationTest with ViewHelpers with PensionsDatabaseHelper{
+  extends IntegrationTest with ViewHelpers with PensionsDatabaseHelper { //scalastyle:off magic.number
 
-  private def pensionsUsersData(isPrior: Boolean, pensionsCyaModel: PensionsCYAModel) = {
-    PensionsUserDataBuilder.aPensionsUserData.copy(isPriorSubmission = isPrior, pensions = pensionsCyaModel)
+  private def pensionsUsersData(pensionsCyaModel: PensionsCYAModel): PensionsUserData = {
+    PensionsUserDataBuilder.aPensionsUserData.copy(isPriorSubmission = false, pensions = pensionsCyaModel)
   }
   override val userScenarios: Seq[UserScenario[_, _]] = Seq.empty
 
@@ -48,7 +46,7 @@ class OverseasPensionTransferTaxChargeSchemeISpec
           dropPensionsDB()
           authoriseAgentOrIndividual(aUser.isAgent)
           val transferViewModel = aTransfersIntoOverseasPensionsViewModel.copy(pensionSchemeTransferChargeAmount = None, pensionSchemeTransferCharge = None)
-          insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(transfersIntoOverseasPensions = transferViewModel)), aUserRequest)
+          insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(transfersIntoOverseasPensions = transferViewModel)), aUserRequest)
           urlGet(fullUrl(transferPensionSchemeTaxUrl(taxYear)), !aUser.isAgent, follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
         }
@@ -61,7 +59,7 @@ class OverseasPensionTransferTaxChargeSchemeISpec
         lazy implicit val result: WSResponse = {
           dropPensionsDB()
           authoriseAgentOrIndividual(aUser.isAgent)
-          insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel), aUserRequest)
+          insertCyaData(pensionsUsersData(aPensionsCYAModel), aUserRequest)
           urlGet(fullUrl(transferPensionSchemeTaxUrl(taxYearEOY)), !aUser.isAgent, follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
         }
@@ -77,7 +75,7 @@ class OverseasPensionTransferTaxChargeSchemeISpec
             authoriseAgentOrIndividual(aUser.isAgent)
             val formData = Map(s" $yesNo -> true, $amount2" -> "100")
             val transferViewModel = aTransfersIntoOverseasPensionsViewModel.copy(pensionSchemeTransferChargeAmount = None, pensionSchemeTransferCharge = None)
-            insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(transfersIntoOverseasPensions = transferViewModel)), aUserRequest)
+            insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(transfersIntoOverseasPensions = transferViewModel)), aUserRequest)
             urlPost(
               fullUrl(transferPensionSchemeTaxUrl(taxYear)),
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)),
@@ -95,7 +93,7 @@ class OverseasPensionTransferTaxChargeSchemeISpec
             val transferViewModel = aTransfersIntoOverseasPensionsViewModel.copy(
               pensionSchemeTransferChargeAmount = Some(100), pensionSchemeTransferCharge = Some(true))
             val formData = Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "100")
-            insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(transfersIntoOverseasPensions = transferViewModel)), aUserRequest)
+            insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(transfersIntoOverseasPensions = transferViewModel)), aUserRequest)
             urlPost(
               fullUrl(transferPensionSchemeTaxUrl(taxYearEOY)),
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
@@ -116,7 +114,7 @@ class OverseasPensionTransferTaxChargeSchemeISpec
               transferPensionScheme = Nil
             )
             val formData = Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "100")
-            insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(transfersIntoOverseasPensions = transferViewModel)), aUserRequest)
+            insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(transfersIntoOverseasPensions = transferViewModel)), aUserRequest)
             urlPost(
               fullUrl(transferPensionSchemeTaxUrl(taxYearEOY)),
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
@@ -137,7 +135,7 @@ class OverseasPensionTransferTaxChargeSchemeISpec
               transferPensionScheme = Nil
             )
             val formData = Map(RadioButtonAmountForm.yesNo -> "false")
-            insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(transfersIntoOverseasPensions = transferViewModel)), aUserRequest)
+            insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(transfersIntoOverseasPensions = transferViewModel)), aUserRequest)
             urlPost(
               fullUrl(transferPensionSchemeTaxUrl(taxYearEOY)),
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
@@ -155,7 +153,7 @@ class OverseasPensionTransferTaxChargeSchemeISpec
             val transferViewModel = aTransfersIntoOverseasPensionsViewModel.copy(
               pensionSchemeTransferChargeAmount = Some(100), pensionSchemeTransferCharge = Some(true))
             lazy val form: Map[String, String] = Map(RadioButtonAmountForm.yesNo -> "")
-            insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(transfersIntoOverseasPensions = transferViewModel)), aUserRequest)
+            insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(transfersIntoOverseasPensions = transferViewModel)), aUserRequest)
             urlPost(
               fullUrl(transferPensionSchemeTaxUrl(taxYearEOY)),
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
@@ -174,7 +172,7 @@ class OverseasPensionTransferTaxChargeSchemeISpec
             val transferViewModel = aTransfersIntoOverseasPensionsViewModel.copy(
               pensionSchemeTransferChargeAmount = Some(100), pensionSchemeTransferCharge = Some(true))
             lazy val form: Map[String, String] = Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "dhjsvjdsg")
-            insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(transfersIntoOverseasPensions = transferViewModel)), aUserRequest)
+            insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(transfersIntoOverseasPensions = transferViewModel)), aUserRequest)
             urlPost(
               fullUrl(transferPensionSchemeTaxUrl(taxYearEOY)),
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),

@@ -94,7 +94,7 @@ class ShortServicePensionsSchemeController @Inject()(actionsProvider: ActionsPro
         .getOrElse(""),
       providerAddress = scheme.providerAddress.getOrElse(""),
       countryId = scheme.alphaTwoCountryCode.fold{
-        Countries.get2AlphaCodeFrom3AlphaCode(scheme.alphaThreeCountryCode.getOrElse(""))
+        Countries.get2AlphaCodeFrom3AlphaCode(scheme.alphaThreeCountryCode)
       } {
         alpha2 => Some(alpha2)
       }

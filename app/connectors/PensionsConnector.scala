@@ -25,7 +25,7 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class PensionsConnector @Inject()(val http: HttpClient,
-                                  val appConfig: AppConfig)(implicit ec: ExecutionContext) {
+                                  val appConfig: AppConfig) {
 
 
   def savePensionChargesSessionData(nino: String, taxYear: Int, model: CreateUpdatePensionChargesRequestModel)

@@ -17,12 +17,12 @@
 package services
 
 import builders.PensionsCYAModelBuilder.aPensionsCYAModel
-import builders.PensionsUserDataBuilder.{aPensionsUserData, anPensionsUserDataEmptyCya}
+import builders.PensionsUserDataBuilder.aPensionsUserData
 import builders.UserBuilder.aUser
 import config.{MockPensionUserDataRepository, MockPensionsConnector}
-import models.{APIErrorBodyModel, APIErrorModel}
 import models.mongo.{DataNotFound, DataNotUpdated}
 import models.pension.charges.UnauthorisedPaymentsViewModel
+import models.{APIErrorBodyModel, APIErrorModel}
 import org.scalatest.concurrent.ScalaFutures
 import play.api.http.Status.BAD_REQUEST
 import utils.UnitTest

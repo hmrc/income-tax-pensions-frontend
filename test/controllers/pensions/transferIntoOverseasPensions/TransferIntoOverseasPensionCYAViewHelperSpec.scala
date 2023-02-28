@@ -26,7 +26,7 @@ import play.test.Helpers.stubMessagesApi
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{ActionItem, SummaryListRow, Value}
 
-class TransferIntoOverseasPensionCYAViewHelperSpec extends AnyWordSpec with Matchers {
+class TransferIntoOverseasPensionCYAViewHelperSpec extends AnyWordSpec with Matchers { //scalastyle:off magic.number
 
   val taxYear = 2022
 
@@ -238,7 +238,7 @@ class TransferIntoOverseasPensionCYAViewHelperSpec extends AnyWordSpec with Matc
   }
 
   private def stubbedMessages() = {
-    import collection.JavaConverters._
+    import scala.jdk.CollectionConverters._
 
     val messagesApi = stubMessagesApi(
       Map(
