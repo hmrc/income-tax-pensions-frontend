@@ -31,7 +31,7 @@ import utils.PageUrls.{fullUrl, overviewUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 
-class TaxableRefundAmountISpec
+class TaxableRefundAmountControllerISpec
   extends IntegrationTest with ViewHelpers with PensionsDatabaseHelper {
 
   private def pensionsUsersData(isPrior: Boolean, pensionsCyaModel: PensionsCYAModel) = {

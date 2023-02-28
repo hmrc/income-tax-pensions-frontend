@@ -42,9 +42,9 @@ class TaxableRefundAmountController@Inject()(actionsProvider: ActionsProvider,
 
   def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit sessionData =>
-      val shortServiceRefundTaxPaidCharge: Option[BigDecimal] = sessionData.pensionsUserData.pensions.shortServiceRefunds.shortServiceRefundTaxPaidCharge
+      val shortServiceRefundCharge: Option[BigDecimal] = sessionData.pensionsUserData.pensions.shortServiceRefunds.shortServiceRefundCharge
       val refundOpt: Option[Boolean] = sessionData.pensionsUserData.pensions.shortServiceRefunds.shortServiceRefund
-      (refundOpt, shortServiceRefundTaxPaidCharge) match {
+      (refundOpt, shortServiceRefundCharge) match {
         case (Some(a), amount) => Future.successful(Ok(view(formsProvider.shortServiceTaxableRefundForm(sessionData.user).fill((a, amount)), taxYear)))
         case _ => Future.successful(Ok(view(formsProvider.shortServiceTaxableRefundForm(sessionData.user), taxYear)))
       }
@@ -70,7 +70,7 @@ class TaxableRefundAmountController@Inject()(actionsProvider: ActionsProvider,
     val updatedCyaModel: PensionsCYAModel = pensionUserData.pensions.copy(
       shortServiceRefunds = pensionUserData.pensions.shortServiceRefunds.copy(
         shortServiceRefund = Some(yesNo),
-        shortServiceRefundTaxPaidCharge = amount))
+        shortServiceRefundCharge = amount))
 
     pensionSessionService.createOrUpdateSessionData(request.user,
       updatedCyaModel, taxYear, pensionUserData.isPriorSubmission)(errorHandler.internalServerError()) {
