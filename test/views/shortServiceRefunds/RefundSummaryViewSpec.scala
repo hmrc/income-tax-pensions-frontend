@@ -116,6 +116,8 @@ class RefundSummaryViewSpec extends ViewUnitTest {
             implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
             val refundSummaryUrl = RefundSummaryController.show(taxYearEOY).url
+            val taxOnShortServiceRefundUrl = (refundPensionSchemeIndex : Option[Int]) =>
+              TaxOnShortServiceRefundController.show(taxYearEOY, refundPensionSchemeIndex = refundPensionSchemeIndex).url
 
             titleCheck(expectedTitle, userScenario.isWelsh)
             h1Check(expectedHeading)
@@ -124,12 +126,12 @@ class RefundSummaryViewSpec extends ViewUnitTest {
             textOnPageCheck(s"${schemes.last.name.get}", pensionNameSelector(2))
 
             //links need to be updated
-            linkCheck(s"$change $change ${schemes.head.name.get}", changeLinkSelector(1), refundSummaryUrl)
+            linkCheck(s"$change $change ${schemes.head.name.get}", changeLinkSelector(1), taxOnShortServiceRefundUrl(Some(0)))
             linkCheck(s"$remove $remove ${schemes.head.name.get}", removeLinkSelector(1), removeLink(0))
 
-            linkCheck(s"$change $change ${schemes.last.name.get}", changeLinkSelector(2), refundSummaryUrl)
+            linkCheck(s"$change $change ${schemes.last.name.get}", changeLinkSelector(2), taxOnShortServiceRefundUrl(Some(1)))
             linkCheck(s"$remove $remove ${schemes.last.name.get}", removeLinkSelector(2), removeLink(1))
-            linkCheck(expectedAddAnotherText, addAnotherLinkSelector, refundSummaryUrl)
+            linkCheck(expectedAddAnotherText, addAnotherLinkSelector, taxOnShortServiceRefundUrl(None))
 
             //todo update redirect to to transfer journey CYA page when navigation is linked up
             buttonCheck(expectedButtonText, continueButtonSelector, Some(refundSummaryUrl))
@@ -143,6 +145,8 @@ class RefundSummaryViewSpec extends ViewUnitTest {
             implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
             val refundSummaryUrl = RefundSummaryController.show(taxYearEOY).url
+            val taxOnShortServiceRefundUrl = (refundPensionSchemeIndex : Option[Int]) =>
+              TaxOnShortServiceRefundController.show(taxYearEOY, refundPensionSchemeIndex = refundPensionSchemeIndex).url
 
             titleCheck(expectedTitle, userScenario.isWelsh)
             h1Check(expectedHeading)
@@ -150,9 +154,9 @@ class RefundSummaryViewSpec extends ViewUnitTest {
             textOnPageCheck(s"${schemes.head.name.get}", pensionNameSelector(1))
             elementNotOnPageCheck(pensionNameSelector(2))
 
-            linkCheck(s"$change $change ${schemes.head.name.get}", changeLinkSelector(1), refundSummaryUrl)
+            linkCheck(s"$change $change ${schemes.head.name.get}", changeLinkSelector(1), taxOnShortServiceRefundUrl(Some(0)))
             linkCheck(s"$remove $remove ${schemes.head.name.get}", removeLinkSelector(1), removeLink(0))
-            linkCheck(expectedAddAnotherText, addAnotherLinkSelector, refundSummaryUrl)
+            linkCheck(expectedAddAnotherText, addAnotherLinkSelector, taxOnShortServiceRefundUrl(None))
 
             //todo update redirect to to transfer journey CYA page when navigation is linked up
             buttonCheck(expectedButtonText, continueButtonSelector, Some(refundSummaryUrl))
