@@ -218,11 +218,21 @@ trait IntegrationTest extends AnyWordSpec with Matchers with GuiceOneServerPerSu
       body = Json.toJson(userData).toString(),
       sessionHeader = "X-Session-ID" -> defaultUser.sessionId,
       mtdidHeader = "mtditid" -> defaultUser.mtdItId
-    )}
+    )
+  }
 
   def pensionChargesSessionStub(jsonBody: String, nino: String, taxYear: Int): StubMapping = {
     stubPutWithHeadersCheck(
       url = s"/income-tax-pensions/pension-charges/session-data/nino/$nino/taxYear/$taxYear", status = NO_CONTENT,
+      body = jsonBody,
+      sessionHeader = "X-Session-ID" -> defaultUser.sessionId,
+      mtdidHeader = "mtditid" -> defaultUser.mtdItId
+    )
+  }
+
+  def pensionIncomeSessionStub(jsonBody: String, nino: String, taxYear: Int): StubMapping = {
+    stubPutWithHeadersCheck(
+      url = s"/income-tax-pensions/pension-income/session-data/nino/$nino/taxYear/$taxYear", status = NO_CONTENT,
       body = jsonBody,
       sessionHeader = "X-Session-ID" -> defaultUser.sessionId,
       mtdidHeader = "mtditid" -> defaultUser.mtdItId

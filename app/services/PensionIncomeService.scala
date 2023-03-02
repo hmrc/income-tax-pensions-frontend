@@ -16,7 +16,7 @@
 
 package services
 
-import connectors.PensionsConnector
+import connectors.{IncomeTaxUserDataConnector, PensionsConnector}
 import models.{IncomeTaxUserData, User}
 import models.mongo.{PensionsCYAModel, PensionsUserData, ServiceError}
 import models.pension.charges.IncomeFromOverseasPensionsViewModel
@@ -31,7 +31,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 
 class PensionIncomeService @Inject()(pensionUserDataRepository: PensionsUserDataRepository, pensionsConnector: PensionsConnector,
-                                     sessionService: PensionSessionService) {
+                                     incomeTaxUserDataConnector: IncomeTaxUserDataConnector) {
 
   def saveIncomeFromOverseasPensionsViewModel(user: User, taxYear: Int)
                                              (implicit hc: HeaderCarrier, ec: ExecutionContext, clock: Clock): Future[Either[ServiceError, Unit]] = {
@@ -58,7 +58,8 @@ class PensionIncomeService @Inject()(pensionUserDataRepository: PensionsUserData
     (
       for {
         sessionData <- FutureEitherOps[ServiceError, Option[PensionsUserData]](pensionUserDataRepository.find(taxYear, user))
-        priorData <- FutureEitherOps[ServiceError, IncomeTaxUserData](sessionService.getPriorData(taxYear, user))
+        priorData <- FutureEitherOps[ServiceError, IncomeTaxUserData](incomeTaxUserDataConnector.
+          getUserData(user.nino, taxYear)(hc.withExtraHeaders("mtditid" -> user.mtditid)))
         viewModel = sessionData.map(_.pensions.incomeFromOverseasPensions)
         updatedFp = viewModel.map(_.toForeignPension)
         updatedIncomeData = CreateUpdatePensionIncomeModel(
