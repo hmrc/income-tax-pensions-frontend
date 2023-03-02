@@ -54,7 +54,7 @@ class ShortServicePensionsSchemeControllerISpec extends ControllerSpec ("/overse
                implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(ukOrOverseasAlignedSessionData))
                implicit val response: WSResponse = submitForm(formData, Map("index" -> "0"))
 
-               val redirectPage = relativeUrl("/overseas-pensions/short-service-refunds/short-service-refunds-pension-scheme?index=0") //TODO: redirect to SSR summary page
+               val redirectPage = relativeUrl("/overseas-pensions/short-service-refunds/short-service-refund-summary")
                assertRedirectionAsExpected(redirectPage)
                
                val expectedViewModel = ukOrOverseasAlignedSessionData.pensions.shortServiceRefunds
@@ -68,7 +68,7 @@ class ShortServicePensionsSchemeControllerISpec extends ControllerSpec ("/overse
                implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(ukOrOverseasAlignedSessionData))
                implicit val response: WSResponse = submitForm(formData, Map("index" -> "0"))
 
-               val redirectPage = relativeUrl("/overseas-pensions/short-service-refunds/short-service-refunds-pension-scheme?index=0") //TODO: redirect to SSR summary page
+               val redirectPage = relativeUrl("/overseas-pensions/short-service-refunds/short-service-refund-summary")
                assertRedirectionAsExpected(redirectPage)
 
                val expectedViewModel = ukOrOverseasAlignedSessionData.pensions.shortServiceRefunds

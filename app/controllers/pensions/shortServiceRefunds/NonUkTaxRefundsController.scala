@@ -76,7 +76,11 @@ class NonUkTaxRefundsController @Inject()(
 
     pensionSessionService.createOrUpdateSessionData(request.user,
       updatedCyaModel, taxYear, pensionUserData.isPriorSubmission)(errorHandler.internalServerError()) {
-      Redirect(controllers.pensions.shortServiceRefunds.routes.NonUkTaxRefundsController.show(taxYear)) //todo change to next page in journey
+     if (pensionUserData.pensions.shortServiceRefunds.refundPensionScheme.isEmpty) {
+        Redirect(controllers.pensions.shortServiceRefunds.routes.TaxOnShortServiceRefundController.show(taxYear,None))
+      } else {
+        Redirect(controllers.pensions.shortServiceRefunds.routes.RefundSummaryController.show(taxYear))
+      }
     }
   }
 }

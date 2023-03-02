@@ -18,7 +18,7 @@ package controllers.pensions.shortServiceRefunds
 
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.routes._
-import controllers.pensions.shortServiceRefunds.routes.ShortServicePensionsSchemeController
+import controllers.pensions.shortServiceRefunds.routes.RefundSummaryController
 import controllers.predicates.ActionsProvider
 import controllers.validateIndex
 import forms.Countries
@@ -72,7 +72,7 @@ class ShortServicePensionsSchemeController @Inject()(actionsProvider: ActionsPro
               val updatedCYAModel = updateViewModel(userSessionDataRequest.pensionsUserData, ssrPensionScheme, idx)
               pensionSessionService.createOrUpdateSessionData(userSessionDataRequest.user, updatedCYAModel, taxYear,
                                userSessionDataRequest.pensionsUserData.isPriorSubmission)(errorHandler.internalServerError()) {
-                Redirect(ShortServicePensionsSchemeController.show(taxYear, index)) //TODO: redirect to Overseas Short Service Refunds Pensions list
+                Redirect(RefundSummaryController.show(taxYear))
               }
             }
           )

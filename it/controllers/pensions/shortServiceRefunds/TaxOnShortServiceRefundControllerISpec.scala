@@ -58,7 +58,7 @@ class TaxOnShortServiceRefundControllerISpec extends YesNoControllerSpec("/overs
             implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
             implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoPage(Some(true)), queryParams = Map("refundPensionSchemeIndex" -> "0"))
 
-            val redirectPage = relativeUrl("/overseas-pensions/short-service-refunds/short-service-refunds-uk-tax?refundPensionSchemeIndex=0")
+            val redirectPage = relativeUrl("/overseas-pensions/short-service-refunds/short-service-refunds-pension-scheme?index=0")
 
             assertRedirectionAsExpected(redirectPage)
             getShortServiceViewModel mustBe Some(expectedViewModel)
@@ -81,7 +81,8 @@ class TaxOnShortServiceRefundControllerISpec extends YesNoControllerSpec("/overs
             implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
             implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoPage(Some(false)), queryParams = Map("refundPensionSchemeIndex" -> "0"))
 
-            val redirectPage = relativeUrl("/overseas-pensions/short-service-refunds/short-service-refunds-uk-tax?refundPensionSchemeIndex=0")
+            val redirectPage = relativeUrl(
+              "/overseas-pensions/short-service-refunds/short-service-refunds-pension-scheme?index=0")
 
             //TODO: Update test to `/transfer-charge-summary` (Transfer Charge Summary) page when available. Redirecting to itself
             assertRedirectionAsExpected(redirectPage)
