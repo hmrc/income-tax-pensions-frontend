@@ -53,9 +53,6 @@ class ShortServiceTaxableRefundAmountSpec extends ViewUnitTest with FakeRequestP
     val no: String
     val continue: String
     val expectedDetailsTitle: String
-    val expectedNoAmountEntryErrorText: String
-    val expectedIncorrectFormatErrorText: String
-    val expectedTooBigErrorText: String
   }
 
   trait SpecificExpectedResults {
@@ -65,6 +62,9 @@ class ShortServiceTaxableRefundAmountSpec extends ViewUnitTest with FakeRequestP
     val expectedDetailsP1: String
     val expectedDetailsP2: String
     val expectedNoEntryErrorText: String
+    val expectedNoAmountEntryErrorText: String
+    val expectedIncorrectFormatErrorText: String
+    val expectedTooBigErrorText: String
   }
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
@@ -74,6 +74,9 @@ class ShortServiceTaxableRefundAmountSpec extends ViewUnitTest with FakeRequestP
     override val expectedDetailsP2: String = "You might have got a short service refund if you paid into a scheme for less than 2 years. This depends on the type of pension scheme you have."
     override val h2: String = "Did you get a short service refund?"
     override val expectedNoEntryErrorText: String = "Select yes if you got a taxable short service refund from an overseas pension scheme"
+    override val expectedNoAmountEntryErrorText: String = "Enter the taxable short service refund amount"
+    override val expectedIncorrectFormatErrorText: String = "Enter the taxable short service refund amount in the correct format"
+    override val expectedTooBigErrorText: String = "The taxable short service refund amount must be less than £100,000,000,000"
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
@@ -83,6 +86,9 @@ class ShortServiceTaxableRefundAmountSpec extends ViewUnitTest with FakeRequestP
     override val expectedDetailsP2: String = "You might have got a short service refund if you paid into a scheme for less than 2 years. This depends on the type of pension scheme you have."
     override val h2: String = "Did you get a short service refund?"
     override val expectedNoEntryErrorText: String = "Select yes if you got a taxable short service refund from an overseas pension scheme"
+    override val expectedNoAmountEntryErrorText: String = "Enter the taxable short service refund amount"
+    override val expectedIncorrectFormatErrorText: String = "Enter the taxable short service refund amount in the correct format"
+    override val expectedTooBigErrorText: String = "The taxable short service refund amount must be less than £100,000,000,000"
   }
 
     object ExpectedAgentEN extends SpecificExpectedResults {
@@ -92,6 +98,9 @@ class ShortServiceTaxableRefundAmountSpec extends ViewUnitTest with FakeRequestP
       override val expectedDetailsP2: String = "Your client might have got a short service refund if they paid into a scheme for less than 2 years. This depends on the type of pension scheme they have."
       override val h2: String = "Did your client get a short service refund?"
       override val expectedNoEntryErrorText: String = "Select yes if your client got a taxable short service refund from an overseas pension scheme"
+      override val expectedNoAmountEntryErrorText: String = "Enter your client’s taxable short service refund amount"
+      override val expectedIncorrectFormatErrorText: String = "Enter your client’s taxable short service refund amount in the correct format"
+      override val expectedTooBigErrorText: String = "Your client’s taxable short service refund amount must be less than £100,000,000,000"
     }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
@@ -101,6 +110,9 @@ class ShortServiceTaxableRefundAmountSpec extends ViewUnitTest with FakeRequestP
     override val expectedDetailsP2: String = "Your client might have got a short service refund if they paid into a scheme for less than 2 years. This depends on the type of pension scheme they have."
     override val h2: String = "Did your client get a short service refund?"
     override val expectedNoEntryErrorText: String = "Select yes if your client got a taxable short service refund from an overseas pension scheme"
+    override val expectedNoAmountEntryErrorText: String = "Enter your client’s taxable short service refund amount"
+    override val expectedIncorrectFormatErrorText: String = "Enter your client’s taxable short service refund amount in the correct format"
+    override val expectedTooBigErrorText: String = "Your client’s taxable short service refund amount must be less than £100,000,000,000"
   }
   
   object ExpectedCommonEN extends CommonExpectedResults {
@@ -112,9 +124,6 @@ class ShortServiceTaxableRefundAmountSpec extends ViewUnitTest with FakeRequestP
     override val no: String = "No"
     override val continue: String = "Continue"
     override val expectedDetailsTitle: String = "What is a short service refund?"
-    override val expectedNoAmountEntryErrorText: String = "Enter the taxable short service refund amount"
-    override val expectedIncorrectFormatErrorText: String = "Enter the taxable short service refund amount in the correct format"
-    override val expectedTooBigErrorText: String = "The taxable short service refund amount must be less than £100,000,000,000"
   }
 
   object ExpectedCommonCY extends CommonExpectedResults {
@@ -126,9 +135,6 @@ class ShortServiceTaxableRefundAmountSpec extends ViewUnitTest with FakeRequestP
     override val no: String = "No"
     override val continue: String = "Continue"
     override val expectedDetailsTitle: String = "What is a short service refund?"
-    override val expectedNoAmountEntryErrorText: String = "Enter the taxable short service refund amount"
-    override val expectedIncorrectFormatErrorText: String = "Enter the taxable short service refund amount in the correct format"
-    override val expectedTooBigErrorText: String = "The taxable short service refund amount must be less than £100,000,000,000"
   }
   
   
@@ -210,8 +216,8 @@ class ShortServiceTaxableRefundAmountSpec extends ViewUnitTest with FakeRequestP
         implicit val htmlFormat = underTest(form.bind(Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "")), taxYearEOY)
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
-        errorAboveElementCheck(userScenario.commonExpectedResults.expectedNoAmountEntryErrorText, Some("amount-2"))
-        errorSummaryCheck(userScenario.commonExpectedResults.expectedNoAmountEntryErrorText, "#amount-2")
+        errorAboveElementCheck(userScenario.specificExpectedResults.get.expectedNoAmountEntryErrorText, Some("amount-2"))
+        errorSummaryCheck(userScenario.specificExpectedResults.get.expectedNoAmountEntryErrorText, "#amount-2")
       }
 
       "render the page with an error when the user selects yes but amount is in wrong format" which {
@@ -221,8 +227,8 @@ class ShortServiceTaxableRefundAmountSpec extends ViewUnitTest with FakeRequestP
         implicit val htmlFormat = underTest(form.bind(Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "bfsbrfg")), taxYearEOY)
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
-        errorAboveElementCheck(userScenario.commonExpectedResults.expectedIncorrectFormatErrorText, Some("amount-2"))
-        errorSummaryCheck(userScenario.commonExpectedResults.expectedIncorrectFormatErrorText, "#amount-2")
+        errorAboveElementCheck(userScenario.specificExpectedResults.get.expectedIncorrectFormatErrorText, Some("amount-2"))
+        errorSummaryCheck(userScenario.specificExpectedResults.get.expectedIncorrectFormatErrorText, "#amount-2")
       }
       "render the page with an error when the user selects yes but amount exceeds max" which {
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
@@ -231,8 +237,8 @@ class ShortServiceTaxableRefundAmountSpec extends ViewUnitTest with FakeRequestP
         implicit val htmlFormat: HtmlFormat.Appendable = underTest(form.bind(Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "1000000000000000000000.00")), taxYearEOY)
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
-        errorAboveElementCheck(userScenario.commonExpectedResults.expectedTooBigErrorText, Some("amount-2"))
-        errorSummaryCheck(userScenario.commonExpectedResults.expectedTooBigErrorText, "#amount-2")
+        errorAboveElementCheck(userScenario.specificExpectedResults.get.expectedTooBigErrorText, Some("amount-2"))
+        errorSummaryCheck(userScenario.specificExpectedResults.get.expectedTooBigErrorText, "#amount-2")
       }
     }}
 

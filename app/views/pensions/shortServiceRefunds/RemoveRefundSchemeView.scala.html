@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import controllers.pensions.transferIntoOverseasPensions.routes._
+@import controllers.pensions.shortServiceRefunds.routes._
 @import models.requests.UserSessionDataRequest
 @import views.html.templates.Layout
 @import views.html.templates.helpers.Heading
@@ -48,8 +48,8 @@
 }
 @layout(pageTitle = titleText, taxYear = Some(taxYear), isAgent = request.user.isAgent) {
 
-    @formWithCsrf(action = controllers.pensions.transferIntoOverseasPensions.routes.RemoveTransferChargeSchemeController.submit(taxYear, pensionSchemeIndex)) {
-        @heading(titleText, Some(messages("common.transferIntoOverseasPensions.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-2")
+    @formWithCsrf(action = controllers.pensions.shortServiceRefunds.routes.RemoveRefundSchemeController.submit(taxYear, pensionSchemeIndex)) {
+        @heading(titleText, Some(messages("common.shortServiceRefunds.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-2")
         @contentHtml
         <div class="govuk-button-group">
             @govUkButton(Button(
@@ -58,7 +58,7 @@
                 content = Text(messages("common.remove")),
                 classes = "govuk-button--warning"
             ))
-            @link(controllers.pensions.transferIntoOverseasPensions.routes.TransferChargeSummaryController.show(taxYear).url, messages("common.cancel"), id = Some("cancel-link-id"))
+            @link(RefundSummaryController.show(taxYear).url, messages("common.cancel"), id = Some("cancel-link-id"))
         </div>
     }
 }

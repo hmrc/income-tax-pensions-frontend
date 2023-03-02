@@ -102,6 +102,9 @@ class ControllerSpec(val pathForThisPage: String) extends PlaySpec
     val transferIntoOverseasPensionsScheme: String = relativeUrl("/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-pension-scheme")
     val transferChargeSchemeSummary: String = relativeUrl("/overseas-pensions/overseas-transfer-charges/transfer-charges-summary")
     val taxOnShortServiceRefundController: String = relativeUrl("/overseas-pensions/short-service-refunds/short-service-refunds-uk-tax")
+
+    val shortServiceRefundSummary: String = relativeUrl("/overseas-pensions/short-service-refunds/short-service-refund-summary")
+
   }
 
   override implicit lazy val app: Application = new GuiceApplicationBuilder()

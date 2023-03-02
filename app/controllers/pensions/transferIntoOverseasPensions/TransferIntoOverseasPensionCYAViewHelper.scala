@@ -24,7 +24,9 @@ import utils.CYABaseHelper
 object TransferIntoOverseasPensionCYAViewHelper extends CYABaseHelper {
 
 
-  def summaryListRows(transfersIntoOverseasPensionsViewModel: TransfersIntoOverseasPensionsViewModel, taxYear: Int)(implicit messages: Messages): Seq[SummaryListRow] =
+  def summaryListRows(
+                       transfersIntoOverseasPensionsViewModel: TransfersIntoOverseasPensionsViewModel,
+                       taxYear: Int)(implicit messages: Messages): Seq[SummaryListRow] =
     Seq(
       summaryRowForTransferIntoOverseasPensions(transfersIntoOverseasPensionsViewModel, taxYear),
       summaryRowForAmountCharged(transfersIntoOverseasPensionsViewModel, taxYear),

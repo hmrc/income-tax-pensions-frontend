@@ -125,6 +125,10 @@ common.summary.returnToOverviewMsg = If you don’t have a pensions scheme to ad
 
 #################       Common Remove Pension Scheme    ###########################################
 common.removePensionScheme.title = Are you sure you want to remove {0}?
+common.removePensionScheme.p1 = This will remove:
+common.removePensionScheme.p1.bullet1 = The name of the pension scheme
+common.removePensionScheme.p1.bullet2 = Pensions scheme tax reference
+common.removePensionScheme.p1.bullet3 = Pensions provider address
 
 #################       Error messages        ########################################
 
@@ -834,6 +838,22 @@ overseasPension.pensionPayments.nonUkTaxPaid.incorrectFormat = Enter the amount 
 #Special Withholding Tax
 overseasPension.specialWithHoldingTax.title.individual = Did you have Special Withholding Tax (SWT) deducted from your pension?
 overseasPension.specialWithHoldingTax.title.agent = Did your client have Special Withholding Tax (SWT) deducted from their pension?
+overseasPension.specialWithHoldingTax.details.title = Understanding Special Withholding Tax (SWT)
+overseasPension.specialWithHoldingTax.details.para1 = Special Withholding Tax (SWT) is an amount of tax taken off certain foreign payments to UK residents. SWT will be paid along with any foreign tax deducted by the country where the payment came from. The countries that may deduct SWT are:
+overseasPension.specialWithHoldingTax.details.bullet1 = Andorra
+overseasPension.specialWithHoldingTax.details.bullet2 = Austria
+overseasPension.specialWithHoldingTax.details.bullet3 = Curaçao
+overseasPension.specialWithHoldingTax.details.bullet4 = Gibraltar
+overseasPension.specialWithHoldingTax.details.bullet5 = Jersey
+overseasPension.specialWithHoldingTax.details.bullet6 = Liechtenstein
+overseasPension.specialWithHoldingTax.details.bullet7 = Luxembourg
+overseasPension.specialWithHoldingTax.details.bullet8 = Monaco
+overseasPension.specialWithHoldingTax.details.bullet9 = San Marino
+overseasPension.specialWithHoldingTax.details.bullet10 = Saint Maarten
+overseasPension.specialWithHoldingTax.details.bullet11 = Switzerland
+overseasPension.specialWithHoldingTax.details.para2 = Where SWT has been deducted you’re treated as having paid the same amount of income tax in the UK in the same year. This can be set against your UK tax liability of that year, or repaid to you if the amount is more than the tax you must pay.
+overseasPension.specialWithHoldingTax.details.para3 = Read more about
+overseasPension.specialWithHoldingTax.details.link = Special Withholding Tax at Gov.uk
 overseasPension.specialWithHoldingTax.amount.Text = Amount of SWT, in pounds
 overseasPension.specialWithHoldingTax.amount.individual.noEntry = Select yes or no if you had Special Withholding Tax deducted from your pension.
 overseasPension.specialWithHoldingTax.amount.agent.noEntry = Select yes or no if your client had Special Withholding Tax deducted from their pension.
@@ -995,12 +1015,6 @@ common.overseasPensions.country.error.noEntry = Enter the country
 #Transfer Charge Summary List
 transferIntoOverseasPensions.summaryList.title = Pension schemes paying transfer charges - summary
 
-#Remove transfer charge pension scheme
-transferIntoOverseasPensions.removeTransferChargeScheme.p1 = This will remove:
-transferIntoOverseasPensions.removeTransferChargeScheme.p1.bullet1 = The name of the pension scheme
-transferIntoOverseasPensions.removeTransferChargeScheme.p1.bullet2 = Pensions scheme tax reference
-transferIntoOverseasPensions.removeTransferChargeScheme.p1.bullet3 = Pensions provider address
-
 #Short service refund - Taxable
 shortServiceRefunds.taxableRefundAmount.title = Taxable short service refunds
 shortServiceRefunds.taxableRefundAmount.p1.individual = The short service refund is taxable if you got UK tax relief on the money you paid into the scheme.
@@ -1017,9 +1031,12 @@ shortServiceRefunds.taxableRefundAmount.h2.agent = Did your client get a short s
 shortServiceRefunds.taxableRefundAmount.amount.text = Total amount of short service refunds, in pounds
 shortServiceRefunds.taxableRefundAmount.error.noEntry.individual = Select yes if you got a taxable short service refund from an overseas pension scheme
 shortServiceRefunds.taxableRefundAmount.error.noEntry.agent = Select yes if your client got a taxable short service refund from an overseas pension scheme
-shortServiceRefunds.taxableRefundAmount.error.noAmountEntry = Enter the taxable short service refund amount
-shortServiceRefunds.taxableRefundAmount.error.incorrectFormat = Enter the taxable short service refund amount in the correct format
-shortServiceRefunds.taxableRefundAmount.error.tooBig = The taxable short service refund amount must be less than £100,000,000,000
+shortServiceRefunds.taxableRefundAmount.error.noAmountEntry.individual = Enter the taxable short service refund amount
+shortServiceRefunds.taxableRefundAmount.error.noAmountEntry.agent = Enter your client’s taxable short service refund amount
+shortServiceRefunds.taxableRefundAmount.error.incorrectFormat.individual = Enter the taxable short service refund amount in the correct format
+shortServiceRefunds.taxableRefundAmount.error.incorrectFormat.agent = Enter your client’s taxable short service refund amount in the correct format
+shortServiceRefunds.taxableRefundAmount.error.tooBig.individual = The taxable short service refund amount must be less than £100,000,000,000
+shortServiceRefunds.taxableRefundAmount.error.tooBig.agent = Your client’s taxable short service refund amount must be less than £100,000,000,000
 
 #Non UK Tax Refunds
 shortServiceRefunds.nonUkTaxRefunds.title = Non-UK tax on short service refunds

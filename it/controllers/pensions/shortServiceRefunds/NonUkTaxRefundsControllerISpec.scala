@@ -30,7 +30,7 @@ import utils.PageUrls.PensionAnnualAllowancePages.nonUkTaxRefundsUrl
 import utils.PageUrls.{fullUrl, overviewUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
-class NonUkTaxRefundsISpec extends IntegrationTest with ViewHelpers
+class NonUkTaxRefundsControllerISpec extends IntegrationTest with ViewHelpers
   with PensionsDatabaseHelper {
 
   private def pensionsUsersData(isPrior: Boolean, pensionsCyaModel: PensionsCYAModel) = {

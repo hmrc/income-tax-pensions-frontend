@@ -24,7 +24,7 @@ import play.api.i18n.Messages
 import play.api.mvc.AnyContent
 import support.ViewUnitTest
 import views.html.pensions.shortServiceRefunds.RefundSummaryView
-
+import controllers.pensions.shortServiceRefunds.routes._
 class RefundSummaryViewSpec extends ViewUnitTest {
 
 
@@ -115,7 +115,7 @@ class RefundSummaryViewSpec extends ViewUnitTest {
             val htmlFormat = underTest(taxYearEOY, schemes)
             implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
-            val refundSummaryUrl = controllers.pensions.shortServiceRefunds.routes.RefundSummaryController.show(taxYearEOY).url
+            val refundSummaryUrl = RefundSummaryController.show(taxYearEOY).url
 
             titleCheck(expectedTitle, userScenario.isWelsh)
             h1Check(expectedHeading)
@@ -125,10 +125,10 @@ class RefundSummaryViewSpec extends ViewUnitTest {
 
             //links need to be updated
             linkCheck(s"$change $change ${schemes.head.name.get}", changeLinkSelector(1), refundSummaryUrl)
-            linkCheck(s"$remove $remove ${schemes.head.name.get}", removeLinkSelector(1), refundSummaryUrl)
+            linkCheck(s"$remove $remove ${schemes.head.name.get}", removeLinkSelector(1), removeLink(0))
 
             linkCheck(s"$change $change ${schemes.last.name.get}", changeLinkSelector(2), refundSummaryUrl)
-            linkCheck(s"$remove $remove ${schemes.last.name.get}", removeLinkSelector(2), refundSummaryUrl)
+            linkCheck(s"$remove $remove ${schemes.last.name.get}", removeLinkSelector(2), removeLink(1))
             linkCheck(expectedAddAnotherText, addAnotherLinkSelector, refundSummaryUrl)
 
             //todo update redirect to to transfer journey CYA page when navigation is linked up
@@ -142,7 +142,7 @@ class RefundSummaryViewSpec extends ViewUnitTest {
             val htmlFormat = underTest(taxYearEOY, schemes)
             implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
-            val refundSummaryUrl = controllers.pensions.shortServiceRefunds.routes.RefundSummaryController.show(taxYearEOY).url
+            val refundSummaryUrl = RefundSummaryController.show(taxYearEOY).url
 
             titleCheck(expectedTitle, userScenario.isWelsh)
             h1Check(expectedHeading)
@@ -151,7 +151,7 @@ class RefundSummaryViewSpec extends ViewUnitTest {
             elementNotOnPageCheck(pensionNameSelector(2))
 
             linkCheck(s"$change $change ${schemes.head.name.get}", changeLinkSelector(1), refundSummaryUrl)
-            linkCheck(s"$remove $remove ${schemes.head.name.get}", removeLinkSelector(1), refundSummaryUrl)
+            linkCheck(s"$remove $remove ${schemes.head.name.get}", removeLinkSelector(1), removeLink(0))
             linkCheck(expectedAddAnotherText, addAnotherLinkSelector, refundSummaryUrl)
 
             //todo update redirect to to transfer journey CYA page when navigation is linked up
@@ -202,5 +202,6 @@ class RefundSummaryViewSpec extends ViewUnitTest {
 
     Seq(scheme1, scheme2)
   }
+  private def removeLink(index:Int) = RemoveRefundSchemeController.show(taxYearEOY, Some(index)).url
 }
 
