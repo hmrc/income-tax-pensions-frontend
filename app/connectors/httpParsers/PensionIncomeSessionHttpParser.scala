@@ -22,15 +22,15 @@ import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 import utils.PagerDutyHelper.PagerDutyKeys._
 import utils.PagerDutyHelper.pagerDutyLog
 
-object PensionChargesSessionHttpParser extends APIParser {
-  type PensionChargesSessionResponse = Either[APIErrorModel, Unit]
+object PensionIncomeSessionHttpParser extends APIParser {
+  type PensionIncomeSessionResponse = Either[APIErrorModel, Unit]
 
-  override val parserName: String = "PensionChargesSessionResponse"
+  override val parserName: String = "PensionIncomeSessionResponse"
   override val service: String = "income-tax-pensions"
 
-  implicit object PensionChargesSessionHttpReads extends HttpReads[PensionChargesSessionResponse] {
+  implicit object PensionIncomeSessionHttpReads extends HttpReads[PensionIncomeSessionResponse] {
 
-    override def read(method: String, url: String, response: HttpResponse): PensionChargesSessionResponse = {
+    override def read(method: String, url: String, response: HttpResponse): PensionIncomeSessionResponse = {
       response.status match {
         case NO_CONTENT => Right(())
         case BAD_REQUEST =>

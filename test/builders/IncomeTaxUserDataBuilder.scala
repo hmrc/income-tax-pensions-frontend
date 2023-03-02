@@ -16,12 +16,16 @@
 
 package builders
 
-import builders.AllPensionsDataBuilder.anAllPensionsData
+import builders.AllPensionsDataBuilder.{anAllPensionDataEmpty, anAllPensionsData}
 import models.IncomeTaxUserData
 
 object IncomeTaxUserDataBuilder {
 
   val anIncomeTaxUserData: IncomeTaxUserData = IncomeTaxUserData(
     pensions = Some(anAllPensionsData)
+  )
+
+  val anIncomeTaxUserDataEmpty: IncomeTaxUserData = IncomeTaxUserData(
+    pensions = Some(anAllPensionDataEmpty)
   )
 }

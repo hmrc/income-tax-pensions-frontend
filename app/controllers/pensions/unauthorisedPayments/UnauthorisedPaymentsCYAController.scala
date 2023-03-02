@@ -37,9 +37,8 @@ class UnauthorisedPaymentsCYAController @Inject()(authAction: AuthorisedAction,
                                                   pensionSessionService: PensionSessionService,
                                                   pensionChargesService: PensionChargesService,
                                                   errorHandler: ErrorHandler)
-                                                 (implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock)
+                                                 (implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport {
-  implicit val executionContext: ExecutionContext = mcc.executionContext
 
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
 

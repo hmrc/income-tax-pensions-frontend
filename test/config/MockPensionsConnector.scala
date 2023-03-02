@@ -18,8 +18,10 @@ package config
 
 import connectors.PensionsConnector
 import connectors.httpParsers.PensionChargesSessionHttpParser.PensionChargesSessionResponse
+import connectors.httpParsers.PensionIncomeSessionHttpParser.PensionIncomeSessionResponse
 import models.APIErrorModel
 import models.pension.charges.CreateUpdatePensionChargesRequestModel
+import models.pension.income.CreateUpdatePensionIncomeModel
 import org.scalamock.handlers.CallHandler5
 import org.scalamock.scalatest.MockFactory
 import uk.gov.hmrc.http.HeaderCarrier
@@ -30,9 +32,19 @@ trait MockPensionsConnector extends MockFactory {
 
   val mockPensionsConnector: PensionsConnector = mock[PensionsConnector]
 
+
   def mockSavePensionChargesSessionData(nino: String, taxYear: Int, model: CreateUpdatePensionChargesRequestModel, response: Either[APIErrorModel, Unit]):
   CallHandler5[String, Int, CreateUpdatePensionChargesRequestModel, HeaderCarrier, ExecutionContext, Future[PensionChargesSessionResponse]] = {
     (mockPensionsConnector.savePensionChargesSessionData(_: String, _: Int, _: CreateUpdatePensionChargesRequestModel)(_: HeaderCarrier, _: ExecutionContext))
+      .expects(nino, taxYear, model, *, *)
+      .returns(Future.successful(response))
+      .anyNumberOfTimes()
+  }
+
+  def mockSavePensionIncomeSessionData(nino: String, taxYear: Int, model: CreateUpdatePensionIncomeModel, response: Either[APIErrorModel, Unit]):
+  CallHandler5[String, Int, CreateUpdatePensionIncomeModel, HeaderCarrier, ExecutionContext, Future[PensionIncomeSessionResponse]]
+  = {
+    (mockPensionsConnector.savePensionIncomeSessionData(_: String, _: Int, _: CreateUpdatePensionIncomeModel)(_: HeaderCarrier, _: ExecutionContext))
       .expects(nino, taxYear, model, *, *)
       .returns(Future.successful(response))
       .anyNumberOfTimes()
