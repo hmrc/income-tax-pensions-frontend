@@ -27,6 +27,7 @@ import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import utils.PageUrls.PensionAnnualAllowancePages.nonUkTaxRefundsUrl
+import utils.PageUrls.ShortServiceRefunds.{refundSummaryUrl, taxOnShortServiceRefund}
 import utils.PageUrls.{fullUrl, overviewUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
@@ -82,7 +83,7 @@ class NonUkTaxRefundsControllerISpec extends IntegrationTest with ViewHelpers
       result.headers("location").head shouldBe overviewUrl(taxYear)
     }
 
-    "persist amount and redirect to next page" in {
+    "persist amount and redirect to summary page when there is a short service scheme " in {
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
@@ -98,7 +99,27 @@ class NonUkTaxRefundsControllerISpec extends IntegrationTest with ViewHelpers
           follow = false,
           body = formData)
       }
-      result.status shouldBe SEE_OTHER //TODO: update to new page when navigation is done
+      result.status shouldBe SEE_OTHER
+      result.headers("location").head shouldBe refundSummaryUrl(taxYearEOY)
+    }
+
+    "persist amount and redirect to summary page when there is no short service scheme " in {
+      lazy implicit val result: WSResponse = {
+        dropPensionsDB()
+        authoriseAgentOrIndividual(aUser.isAgent)
+        val shortServiceRefundViewModel = aShortServiceRefundsViewModel.copy(
+          refundPensionScheme = Nil
+        )
+        val formData = Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "500")
+        insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(shortServiceRefunds = shortServiceRefundViewModel)), aUserRequest)
+        urlPost(
+          fullUrl(nonUkTaxRefundsUrl(taxYearEOY)),
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
+          follow = false,
+          body = formData)
+      }
+      result.status shouldBe SEE_OTHER
+      result.headers("location").head shouldBe taxOnShortServiceRefund(taxYearEOY)
     }
 
     "return an error when form is submitted with no entry" in {

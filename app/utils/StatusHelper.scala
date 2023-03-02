@@ -72,7 +72,8 @@ object StatusHelper {
     cya.flatMap((_.transfersIntoOverseasPensions.transferPensionSavings)).isDefined
 
   // TODO: implement when we add the page
-  def shortServiceRefundsIsUpdated(cya: Option[PensionsCYAModel]): Boolean = false
+  def shortServiceRefundsIsUpdated(cya: Option[PensionsCYAModel]): Boolean =
+    cya.flatMap((_.shortServiceRefunds.shortServiceRefund)).isDefined
 
   def statePensionIsUpdated(pensionsUserData: Option[PensionsUserData]): Boolean = {
     pensionsUserData.map(_.pensions).map(_.incomeFromPensions).flatMap(_.statePension).flatMap(_.amountPaidQuestion).isDefined

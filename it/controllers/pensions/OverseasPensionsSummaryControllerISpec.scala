@@ -201,7 +201,7 @@ class OverseasPensionsSummaryControllerISpec extends  CommonUtils with BeforeAnd
 
           "has a short service refunds section" which {
             linkCheck(common.shortServiceRefundsText, shortServiceRefundsLink, shortServiceTaxableRefundUrl(taxYearEOY))
-            textOnPageCheck(userScenario.commonExpectedResults.notStarted, summaryListStatusTagSelector(4))
+            textOnPageCheck(userScenario.commonExpectedResults.updated, summaryListStatusTagSelector(4))
           }
 
           buttonCheck(userScenario.commonExpectedResults.buttonText, buttonSelector)

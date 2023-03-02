@@ -28,7 +28,7 @@ import services.ShortServiceRefundsService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.SessionHelper
 import views.html.pensions.shortServiceRefunds.TaxPaidOnShortServiceRefundView
-import routes._
+import routes.ShortServicePensionsSchemeController
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -68,7 +68,7 @@ class TaxOnShortServiceRefundController @Inject()(actionsProvider: ActionsProvid
               case Right(userData) =>
                 //The collection will always have a value
                 val index = Some(refundPensionSchemeIndex.getOrElse(userData.pensions.shortServiceRefunds.refundPensionScheme.size-1))
-                Redirect(TaxOnShortServiceRefundController.show(taxYear, index))
+                Redirect(ShortServicePensionsSchemeController.show(taxYear, index))
             }
           }
         )
