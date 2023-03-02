@@ -43,18 +43,7 @@ class PensionsSummaryController @Inject()(implicit val mcc: MessagesControllerCo
 
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     pensionSessionService.getAndHandle(taxYear, request.user) { (_, prior) =>
-      pensionSessionService.getPensionSessionData(taxYear, request.user) flatMap {
-        case Right(optPensionsUserData) => optPensionsUserData match {
-          case Some(_) =>
-            Future.successful(Ok(pensionSummaryView(taxYear, prior)))
-          case _ =>
-            pensionSessionService.createOrUpdateSessionData(request.user, PensionsCYAModel.emptyModels, taxYear,
-                          isPriorSubmission = false)(errorHandler.handleError(INTERNAL_SERVER_ERROR)) {
-              Ok(pensionSummaryView(taxYear, prior))
-            }
-        }
-        case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
-      }
+      Future.successful(Ok(pensionSummaryView(taxYear, prior)))
     }
   }
 }
