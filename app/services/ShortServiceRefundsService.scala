@@ -16,7 +16,7 @@
 
 package services
 
-import models.mongo.PensionsUserData
+import models.mongo.{PensionsCYAModel, PensionsUserData}
 import models.pension.charges.{OverseasRefundPensionScheme, ShortServiceRefundsViewModel}
 
 import javax.inject.{Inject, Singleton}
@@ -55,6 +55,24 @@ class ShortServiceRefundsService @Inject()(pensionSessionService: PensionSession
       }
     createOrUpdateModel(userData, updatedModel)
   }
+
+  def updateCyaWithShortServiceRefundGatewayQuestion(pensionUserData: PensionsUserData,
+                                      yesNo: Boolean,
+                                      amount: Option[BigDecimal]): PensionsCYAModel = {
+    if(yesNo) {
+      pensionUserData.pensions.copy(
+        shortServiceRefunds = pensionUserData.pensions.shortServiceRefunds.copy(
+          shortServiceRefund = Some(yesNo),
+          shortServiceRefundCharge = amount))
+    } else {
+      clearShortServiceRefunds(pensionUserData)
+    }
+  }
+
+  private def clearShortServiceRefunds(pensionsUserData: PensionsUserData): PensionsCYAModel =
+    pensionsUserData.pensions.copy(
+      shortServiceRefunds = ShortServiceRefundsViewModel(shortServiceRefund = Option(false))
+    )
 
   private def createOrUpdateModel(originalUserData: PensionsUserData, updatedModel: ShortServiceRefundsViewModel)
   : Future[Either[Unit, PensionsUserData]] = {
