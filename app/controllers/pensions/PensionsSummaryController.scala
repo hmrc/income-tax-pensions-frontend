@@ -20,6 +20,7 @@ import config.{AppConfig, ErrorHandler}
 import controllers.predicates.TaxYearAction.taxYearAction
 import controllers.predicates.AuthorisedAction
 import models.mongo.PensionsCYAModel
+import models.pension.AllPensionsData
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.PensionSessionService
@@ -43,7 +44,19 @@ class PensionsSummaryController @Inject()(implicit val mcc: MessagesControllerCo
 
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     pensionSessionService.getAndHandle(taxYear, request.user) { (_, prior) =>
-      Future.successful(Ok(pensionSummaryView(taxYear, prior)))
+      pensionSessionService.getPensionSessionData(taxYear, request.user) flatMap {
+        case Right(optPensionsUserData) => optPensionsUserData match {
+          case Some(_) =>
+            Future.successful(Ok(pensionSummaryView(taxYear, prior)))
+          case _ =>
+            val penCYAModel = prior.fold(PensionsCYAModel.emptyModels)(pr => AllPensionsData.generateCyaFromPrior(pr))
+            pensionSessionService.createOrUpdateSessionData(request.user, penCYAModel, taxYear,
+                          isPriorSubmission = prior.isDefined)(errorHandler.handleError(INTERNAL_SERVER_ERROR)) {
+              Ok(pensionSummaryView(taxYear, prior))
+            }
+        }
+        case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
+      }
     }
   }
 }

@@ -92,5 +92,5 @@ object StatusHelper {
     
   def incomeFromOverseasPensionsHasPriorData(prior: Option[AllPensionsData]): Boolean =
     prior.exists(_.pensionIncome.exists(_.foreignPension.nonEmpty))
-
+  
 }

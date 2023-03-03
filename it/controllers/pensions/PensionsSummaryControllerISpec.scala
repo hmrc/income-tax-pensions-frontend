@@ -254,6 +254,16 @@ class PensionsSummaryControllerISpec extends IntegrationTest with ViewHelpers wi
 
         "render the page where no prior data exists for all pension data so the statuses are all 'To do'" which {
           
+          def checkPensionsUserDataIsInitialised(isAgent:  Boolean): Unit =
+            s"have pensions user data initialised" in {
+              val user: User = if (isAgent) UserBuilder.anAgentUser else UserBuilder.aUser
+              await(pensionSessionService.getPensionSessionData(taxYear, user)) match {
+                case Right(optPensionsUserData) =>
+                  optPensionsUserData.nonEmpty shouldBe true
+                case Left(_) => fail("An unexpected failure to retrieve  user session data")
+              }
+            }
+
           implicit lazy val result: WSResponse = {
             authoriseAgentOrIndividual(userScenario.isAgent)
             emptyUserDataStub(nino, taxYear)
@@ -267,6 +277,7 @@ class PensionsSummaryControllerISpec extends IntegrationTest with ViewHelpers wi
           titleCheck(userScenario.specificExpectedResults.get.expectedTitle)
           h1Check(userScenario.specificExpectedResults.get.expectedH1)
           captionCheck(userScenario.commonExpectedResults.expectedCaption(taxYear))
+          checkPensionsUserDataIsInitialised(userScenario.isAgent)
 
           "has an payment into pensions section" which {
             linkCheck("Payments into pensions", paymentsIntoPensionsLink, checkPaymentsIntoPensionStatusUrl(taxYear))
