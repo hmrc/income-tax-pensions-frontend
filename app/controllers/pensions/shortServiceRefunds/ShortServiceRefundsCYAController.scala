@@ -54,7 +54,7 @@ def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(
           case (None, Some(priorData)) =>
             val cyaModel = generateCyaFromPrior(priorData)
             pensionSessionService.createOrUpdateSessionData(request.user,
-              cyaModel, taxYear, isPriorSubmission = false)(
+              cyaModel, taxYear, isPriorSubmission = true)(
               errorHandler.internalServerError())(
               Ok(view(taxYear, cyaModel.shortServiceRefunds)))
           case (None, None) =>

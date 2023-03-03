@@ -50,7 +50,6 @@ class ShortServiceRefundsCYAISpec extends IntegrationTest with ViewHelpers
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
       }
 
-      println(">>>>>>>" + result)
       result.status shouldBe SEE_OTHER
       result.headers("Location").head shouldBe overviewUrl(taxYear)
     }
