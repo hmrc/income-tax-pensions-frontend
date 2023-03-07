@@ -34,24 +34,29 @@ object OptionalTupleAmountForm {
                   emptyFieldKey2: String,
                   wrongFormatKey2: String = "common.error.invalid_currency_format",
                   exceedsMaxAmountKey2: String = "common.error.amountMaxLimit",
-                  emptyFieldArguments2: Seq[String] = Seq.empty[String]
-                ): Form[(Option[BigDecimal], Option[BigDecimal])] =
-    Form(
-      tuple(
-        amount -> optionCurrency(
-          requiredKey = emptyFieldKey1,
-          wrongFormatKey = wrongFormatKey1,
-          maxAmountKey = exceedsMaxAmountKey1,
-          args = emptyFieldArguments1
+                  emptyFieldArguments2: Seq[String] = Seq.empty[String],
+                  taxPaidLessThanAmountBeforeTax : String = ""
+                ): Form[(Option[BigDecimal], Option[BigDecimal])] = {
 
-        ),
-        amount2 -> optionCurrency(
-          requiredKey = emptyFieldKey2,
-          wrongFormatKey = wrongFormatKey2,
-          maxAmountKey = exceedsMaxAmountKey2,
-          args = emptyFieldArguments2
-        )
+    val amountMappingTuple = tuple(
+      amount -> optionCurrency(
+        requiredKey = emptyFieldKey1,
+        wrongFormatKey = wrongFormatKey1,
+        maxAmountKey = exceedsMaxAmountKey1,
+        args = emptyFieldArguments1
+
+      ),
+      amount2 -> optionCurrency(
+        requiredKey = emptyFieldKey2,
+        wrongFormatKey = wrongFormatKey2,
+        maxAmountKey = exceedsMaxAmountKey2,
+        args = emptyFieldArguments2
       )
     )
+
+    Form(if (taxPaidLessThanAmountBeforeTax == "") amountMappingTuple else amountMappingTuple.verifying(
+      taxPaidLessThanAmountBeforeTax, amountsTuple => amountsTuple._1.getOrElse(BigDecimal(0)) > amountsTuple._2.getOrElse(BigDecimal(0))
+    ))
+  }
 
 }

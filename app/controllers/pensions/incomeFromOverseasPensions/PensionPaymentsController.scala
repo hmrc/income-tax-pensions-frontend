@@ -32,8 +32,8 @@ import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.incomeFromOverseasPensions.PensionPaymentsView
-
 import javax.inject.Inject
+
 import scala.concurrent.{ExecutionContext, Future}
 
 class PensionPaymentsController @Inject()(authAction: AuthorisedAction,
@@ -49,7 +49,8 @@ class PensionPaymentsController @Inject()(authAction: AuthorisedAction,
     exceedsMaxAmountKey1 = "overseasPension.pensionPayments.amountBeforeTax.tooBig",
     emptyFieldKey2 = "common.pensions.error.amount.noEntry",
     wrongFormatKey2 = "overseasPension.pensionPayments.nonUkTaxPaid.incorrectFormat",
-    exceedsMaxAmountKey2 = "common.pensions.error.amount.overMaximum"
+    exceedsMaxAmountKey2 = "common.pensions.error.amount.overMaximum",
+    taxPaidLessThanAmountBeforeTax = "overseasPension.pensionPayments.nonUkTaxPaidLessThanAmountBeforeTax"
   )
 
   def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
