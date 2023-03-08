@@ -22,7 +22,7 @@ import controllers.pensions.lifetimeAllowances.routes.PensionTakenAnotherWayAmou
 import controllers.predicates.AuthorisedAction
 import controllers.predicates.TaxYearAction.taxYearAction
 import forms.OptionalTupleAmountForm.OptionalTupleAmountFormErrorMessage
-import forms.{FormUtils, OptionalTupleAmountForm}
+import forms.{FormUtils, FormsProvider, OptionalTupleAmountForm}
 import models.mongo.PensionsCYAModel
 import models.pension.charges.{LifetimeAllowance, PensionLifetimeAllowancesViewModel}
 import play.api.data.Form
@@ -43,19 +43,8 @@ class PensionTakenAnotherWayAmountController @Inject()(implicit val mcc: Message
                                                        appConfig: AppConfig,
                                                        pensionSessionService: PensionSessionService,
                                                        errorHandler: ErrorHandler,
+                                                       formsProvider: FormsProvider,
                                                        clock: Clock) extends FrontendController(mcc) with I18nSupport with SessionHelper with FormUtils {
-
-  def amountForm(isAgent: Boolean): Form[(Option[BigDecimal], Option[BigDecimal])] = {
-    val optionalTupleAmountFormErrorMessages = OptionalTupleAmountFormErrorMessage(
-      emptyFieldKey1 = s"lifetimeAllowance.pensionTakenAnotherWay.beforeTax.error.noEntry.${if (isAgent) "agent" else "individual"}",
-      wrongFormatKey1 = s"lifetimeAllowance.pensionTakenAnotherWay.beforeTax.error.incorrectFormat.${if (isAgent) "agent" else "individual"}",
-      exceedsMaxAmountKey1 = s"common.beforeTax.error.overMaximum",
-      emptyFieldKey2 = s"lifetimeAllowance.pensionTakenAnotherWay.taxPaid.error.noEntry.${if (isAgent) "agent" else "individual"}",
-      wrongFormatKey2 = s"common.taxPaid.error.incorrectFormat",
-      exceedsMaxAmountKey2 = s"common.taxPaid.error.overMaximum"
-    )
-    OptionalTupleAmountForm.amountForm(optionalTupleAmountFormErrorMessages)
-  }
 
 
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
@@ -66,13 +55,13 @@ class PensionTakenAnotherWayAmountController @Inject()(implicit val mcc: Message
         val taxPaidOpt = data.pensions.pensionLifetimeAllowances.pensionPaidAnotherWay.taxPaid
         (totalTaxOpt, taxPaidOpt) match {
           case (Some(totalTax), Some(taxPaid)) =>
-            Future.successful(Ok(pensionTakenAnotherWayAmountView(amountForm(request.user.isAgent).fill((Some(totalTax), Some(taxPaid))), taxYear)))
+            Future.successful(Ok(pensionTakenAnotherWayAmountView(formsProvider.pensionTakenAnotherWayAmountForm(request.user.isAgent).fill((Some(totalTax), Some(taxPaid))), taxYear)))
           case (Some(totalTax), None) =>
-            Future.successful(Ok(pensionTakenAnotherWayAmountView(amountForm(request.user.isAgent).fill((Some(totalTax), None)), taxYear)))
+            Future.successful(Ok(pensionTakenAnotherWayAmountView(formsProvider.pensionTakenAnotherWayAmountForm(request.user.isAgent).fill((Some(totalTax), None)), taxYear)))
           case (None, Some(taxPaid)) =>
-            Future.successful(Ok(pensionTakenAnotherWayAmountView(amountForm(request.user.isAgent).fill((None, Some(taxPaid))), taxYear)))
+            Future.successful(Ok(pensionTakenAnotherWayAmountView(formsProvider.pensionTakenAnotherWayAmountForm(request.user.isAgent).fill((None, Some(taxPaid))), taxYear)))
           case (_, _) =>
-            Future.successful(Ok(pensionTakenAnotherWayAmountView(amountForm(request.user.isAgent), taxYear)))
+            Future.successful(Ok(pensionTakenAnotherWayAmountView(formsProvider.pensionTakenAnotherWayAmountForm(request.user.isAgent), taxYear)))
         }
       case _ =>
         //TODO: - Redirect to Annual Lifetime allowances cya page
@@ -84,7 +73,7 @@ class PensionTakenAnotherWayAmountController @Inject()(implicit val mcc: Message
 
 
   def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
-    amountForm(request.user.isAgent).bindFromRequest().fold(
+    formsProvider.pensionTakenAnotherWayAmountForm(request.user.isAgent).bindFromRequest().fold(
       formWithErrors => Future.successful(BadRequest(pensionTakenAnotherWayAmountView(formWithErrors, taxYear))),
       amounts => {
         pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {

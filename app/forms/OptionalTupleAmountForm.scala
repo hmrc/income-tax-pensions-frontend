@@ -36,7 +36,9 @@ object OptionalTupleAmountForm {
                                                    exceedsMaxAmountKey2: String = "common.error.amountMaxLimit",
                                                    emptyFieldArguments2: Seq[String] = Seq.empty[String],
                                                    taxPaidLessThanAmountBeforeTaxErrorMessage : String = ""
-                                                 )
+                                                 ) {
+    val taxPaidCheck : Boolean = taxPaidLessThanAmountBeforeTaxErrorMessage.nonEmpty
+  }
 
   def amountForm(
                   optionalTupleAmountFormErrorMessage: OptionalTupleAmountFormErrorMessage
@@ -58,9 +60,15 @@ object OptionalTupleAmountForm {
       )
     )
 
-    Form(if (optionalTupleAmountFormErrorMessage.taxPaidLessThanAmountBeforeTaxErrorMessage == "") amountMappingTuple else amountMappingTuple.verifying(
-      optionalTupleAmountFormErrorMessage.taxPaidLessThanAmountBeforeTaxErrorMessage,
-      amountsTuple => amountsTuple._2.getOrElse(BigDecimal(0)) <= amountsTuple._1.getOrElse(BigDecimal(0)))
+    Form(
+      if (optionalTupleAmountFormErrorMessage.taxPaidCheck) {
+        amountMappingTuple.verifying(
+          optionalTupleAmountFormErrorMessage.taxPaidLessThanAmountBeforeTaxErrorMessage,
+          amountsTuple => amountsTuple._2.getOrElse(BigDecimal(0)) <= amountsTuple._1.getOrElse(BigDecimal(0))
+        )
+      } else {
+        amountMappingTuple
+      }
     )
   }
 

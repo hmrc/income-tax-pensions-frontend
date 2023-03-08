@@ -20,11 +20,9 @@ import config.{AppConfig, ErrorHandler}
 import controllers.pensions.incomeFromPensions.routes.{PensionSchemeStartDateController, UkPensionIncomeCYAController, UkPensionIncomeSummaryController}
 import controllers.predicates.AuthorisedAction
 import controllers.predicates.TaxYearAction.taxYearAction
-import forms.OptionalTupleAmountForm.OptionalTupleAmountFormErrorMessage
-import forms.{FormUtils, OptionalTupleAmountForm}
+import forms.{FormUtils, FormsProvider}
 import models.mongo.PensionsCYAModel
 import models.pension.statebenefits.{IncomeFromPensionsViewModel, UkPensionIncomeViewModel}
-import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
@@ -41,19 +39,8 @@ class PensionAmountController @Inject()(implicit val mcc: MessagesControllerComp
                                         appConfig: AppConfig,
                                         pensionSessionService: PensionSessionService,
                                         errorHandler: ErrorHandler,
+                                        formsProvider: FormsProvider,
                                         clock: Clock) extends FrontendController(mcc) with I18nSupport with SessionHelper with FormUtils {
-
-  def amountForm: Form[(Option[BigDecimal], Option[BigDecimal])] = {
-    val optionalTupleAmountFormErrorMessages = OptionalTupleAmountFormErrorMessage(
-      emptyFieldKey1 = "pensions.pensionAmount.totalTax.error.noEntry",
-      wrongFormatKey1 = s"pensions.pensionAmount.totalTax.error.incorrectFormat",
-      exceedsMaxAmountKey1 = s"pensions.pensionAmount.totalTax.error.overMaximum",
-      emptyFieldKey2 = s"pensions.pensionAmount.taxPaid.error.noEntry",
-      wrongFormatKey2 = s"pensions.pensionAmount.taxPaid.error.incorrectFormat",
-      exceedsMaxAmountKey2 = s"pensions.pensionAmount.taxPaid.error.overMaximum"
-    )
-    OptionalTupleAmountForm.amountForm(optionalTupleAmountFormErrorMessages)
-  }
 
   private def validateIndex(optIndex: Option[Int], pensionSchemesList: Seq[UkPensionIncomeViewModel]): Option[Int] = {
     optIndex match {
@@ -74,11 +61,11 @@ class PensionAmountController @Inject()(implicit val mcc: MessagesControllerComp
 
             (totalTaxOpt, taxPaidOpt) match {
               case (Some(totalTax), Some(taxPaid)) =>
-                Future.successful(Ok(pensionAmountView(amountForm.fill((Some(totalTax), Some(taxPaid))), taxYear, index)))
+                Future.successful(Ok(pensionAmountView(formsProvider.pensionAmountForm.fill((Some(totalTax), Some(taxPaid))), taxYear, index)))
               case (Some(totalTax), None) =>
-                Future.successful(Ok(pensionAmountView(amountForm.fill((Some(totalTax), None)), taxYear, index)))
+                Future.successful(Ok(pensionAmountView(formsProvider.pensionAmountForm.fill((Some(totalTax), None)), taxYear, index)))
               case (_, _) =>
-                Future.successful(Ok(pensionAmountView(amountForm, taxYear, index)))
+                Future.successful(Ok(pensionAmountView(formsProvider.pensionAmountForm, taxYear, index)))
             }
           case None => Future.successful(Redirect(UkPensionIncomeSummaryController.show(taxYear)))
         }
@@ -93,7 +80,7 @@ class PensionAmountController @Inject()(implicit val mcc: MessagesControllerComp
       case Some(data) =>
         validateIndex(pensionSchemeIndex, data.pensions.incomeFromPensions.uKPensionIncomes) match {
           case Some(index) =>
-            amountForm.bindFromRequest().fold(
+            formsProvider.pensionAmountForm.bindFromRequest().fold(
               formWithErrors => Future.successful(BadRequest(pensionAmountView(formWithErrors, taxYear, index))),
               amounts => {
                 val pensionsCYAModel: PensionsCYAModel = data.pensions
