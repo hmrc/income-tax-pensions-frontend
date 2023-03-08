@@ -20,6 +20,7 @@ import config.{AppConfig, ErrorHandler}
 import controllers.pensions.incomeFromPensions.routes.{PensionSchemeStartDateController, UkPensionIncomeCYAController, UkPensionIncomeSummaryController}
 import controllers.predicates.AuthorisedAction
 import controllers.predicates.TaxYearAction.taxYearAction
+import forms.OptionalTupleAmountForm.OptionalTupleAmountFormErrorMessage
 import forms.{FormUtils, OptionalTupleAmountForm}
 import models.mongo.PensionsCYAModel
 import models.pension.statebenefits.{IncomeFromPensionsViewModel, UkPensionIncomeViewModel}
@@ -30,8 +31,8 @@ import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.incomeFromPensions.PensionAmountView
-
 import javax.inject.Inject
+
 import scala.concurrent.Future
 
 class PensionAmountController @Inject()(implicit val mcc: MessagesControllerComponents,
@@ -42,14 +43,17 @@ class PensionAmountController @Inject()(implicit val mcc: MessagesControllerComp
                                         errorHandler: ErrorHandler,
                                         clock: Clock) extends FrontendController(mcc) with I18nSupport with SessionHelper with FormUtils {
 
-  def amountForm: Form[(Option[BigDecimal], Option[BigDecimal])] = OptionalTupleAmountForm.amountForm(
-    emptyFieldKey1 = "pensions.pensionAmount.totalTax.error.noEntry",
-    wrongFormatKey1 = s"pensions.pensionAmount.totalTax.error.incorrectFormat",
-    exceedsMaxAmountKey1 = s"pensions.pensionAmount.totalTax.error.overMaximum",
-    emptyFieldKey2 = s"pensions.pensionAmount.taxPaid.error.noEntry",
-    wrongFormatKey2 = s"pensions.pensionAmount.taxPaid.error.incorrectFormat",
-    exceedsMaxAmountKey2 = s"pensions.pensionAmount.taxPaid.error.overMaximum"
-  )
+  def amountForm: Form[(Option[BigDecimal], Option[BigDecimal])] = {
+    val optionalTupleAmountFormErrorMessages = OptionalTupleAmountFormErrorMessage(
+      emptyFieldKey1 = "pensions.pensionAmount.totalTax.error.noEntry",
+      wrongFormatKey1 = s"pensions.pensionAmount.totalTax.error.incorrectFormat",
+      exceedsMaxAmountKey1 = s"pensions.pensionAmount.totalTax.error.overMaximum",
+      emptyFieldKey2 = s"pensions.pensionAmount.taxPaid.error.noEntry",
+      wrongFormatKey2 = s"pensions.pensionAmount.taxPaid.error.incorrectFormat",
+      exceedsMaxAmountKey2 = s"pensions.pensionAmount.taxPaid.error.overMaximum"
+    )
+    OptionalTupleAmountForm.amountForm(optionalTupleAmountFormErrorMessages)
+  }
 
   private def validateIndex(optIndex: Option[Int], pensionSchemesList: Seq[UkPensionIncomeViewModel]): Option[Int] = {
     optIndex match {

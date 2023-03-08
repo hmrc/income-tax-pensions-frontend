@@ -21,6 +21,7 @@ import controllers.pensions.routes.PensionsSummaryController
 import controllers.pensions.lifetimeAllowances.routes.PensionTakenAnotherWayAmountController
 import controllers.predicates.AuthorisedAction
 import controllers.predicates.TaxYearAction.taxYearAction
+import forms.OptionalTupleAmountForm.OptionalTupleAmountFormErrorMessage
 import forms.{FormUtils, OptionalTupleAmountForm}
 import models.mongo.PensionsCYAModel
 import models.pension.charges.{LifetimeAllowance, PensionLifetimeAllowancesViewModel}
@@ -44,14 +45,17 @@ class PensionTakenAnotherWayAmountController @Inject()(implicit val mcc: Message
                                                        errorHandler: ErrorHandler,
                                                        clock: Clock) extends FrontendController(mcc) with I18nSupport with SessionHelper with FormUtils {
 
-  def amountForm(isAgent: Boolean): Form[(Option[BigDecimal], Option[BigDecimal])] = OptionalTupleAmountForm.amountForm(
-    emptyFieldKey1 = s"lifetimeAllowance.pensionTakenAnotherWay.beforeTax.error.noEntry.${if (isAgent) "agent" else "individual"}",
-    wrongFormatKey1 = s"lifetimeAllowance.pensionTakenAnotherWay.beforeTax.error.incorrectFormat.${if (isAgent) "agent" else "individual"}",
-    exceedsMaxAmountKey1 = s"common.beforeTax.error.overMaximum",
-    emptyFieldKey2 = s"lifetimeAllowance.pensionTakenAnotherWay.taxPaid.error.noEntry.${if (isAgent) "agent" else "individual"}",
-    wrongFormatKey2 = s"common.taxPaid.error.incorrectFormat",
-    exceedsMaxAmountKey2 = s"common.taxPaid.error.overMaximum"
-  )
+  def amountForm(isAgent: Boolean): Form[(Option[BigDecimal], Option[BigDecimal])] = {
+    val optionalTupleAmountFormErrorMessages = OptionalTupleAmountFormErrorMessage(
+      emptyFieldKey1 = s"lifetimeAllowance.pensionTakenAnotherWay.beforeTax.error.noEntry.${if (isAgent) "agent" else "individual"}",
+      wrongFormatKey1 = s"lifetimeAllowance.pensionTakenAnotherWay.beforeTax.error.incorrectFormat.${if (isAgent) "agent" else "individual"}",
+      exceedsMaxAmountKey1 = s"common.beforeTax.error.overMaximum",
+      emptyFieldKey2 = s"lifetimeAllowance.pensionTakenAnotherWay.taxPaid.error.noEntry.${if (isAgent) "agent" else "individual"}",
+      wrongFormatKey2 = s"common.taxPaid.error.incorrectFormat",
+      exceedsMaxAmountKey2 = s"common.taxPaid.error.overMaximum"
+    )
+    OptionalTupleAmountForm.amountForm(optionalTupleAmountFormErrorMessages)
+  }
 
 
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>

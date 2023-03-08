@@ -245,26 +245,26 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
           getViewModel mustBe None
         }
       }
-//      "succeed" when {
-//        "the user has relevant session data and" when {
-//          val sessionData = pensionsUserData(aPensionsCYAModel)
-//          "with payments" in {
-//            implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
-//            implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(Some("1234.56"), Some("78.90")))
-//
-//            val modifiedPensionScheme =  anIncomeFromOverseasPensionsViewModel.overseasIncomePensionSchemes.head
-//                .copy(pensionPaymentAmount = Some(BigDecimal(1234.56)), pensionPaymentTaxPaid = Some(BigDecimal(78.90)))
-//
-//            val remainderPensionScheme = anIncomeFromOverseasPensionsViewModel.overseasIncomePensionSchemes.tail
-//
-//            val incomeViewModel = anIncomeFromOverseasPensionsViewModel.copy(
-//              overseasIncomePensionSchemes = modifiedPensionScheme +: remainderPensionScheme
-//            )
-//            assertRedirectionAsExpected(PageRelativeURLs.incomeFromOverseasPensionsSwt + "?index=0")
-//            getViewModel mustBe Some(incomeViewModel)
-//          }
-//        }
-//      }
+      "succeed" when {
+        "the user has relevant session data and" when {
+          val sessionData = pensionsUserData(aPensionsCYAModel)
+          "with payments" in {
+            implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
+            implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(Some("1234.56"), Some("78.90")))
+
+            val modifiedPensionScheme =  anIncomeFromOverseasPensionsViewModel.overseasIncomePensionSchemes.head
+                .copy(pensionPaymentAmount = Some(BigDecimal(1234.56)), pensionPaymentTaxPaid = Some(BigDecimal(78.90)))
+
+            val remainderPensionScheme = anIncomeFromOverseasPensionsViewModel.overseasIncomePensionSchemes.tail
+
+            val incomeViewModel = anIncomeFromOverseasPensionsViewModel.copy(
+              overseasIncomePensionSchemes = modifiedPensionScheme +: remainderPensionScheme
+            )
+            assertRedirectionAsExpected(PageRelativeURLs.incomeFromOverseasPensionsSwt + "?index=0")
+            getViewModel mustBe Some(incomeViewModel)
+          }
+        }
+      }
       "fail" when {
         
         val expectedPageContents = ExpectedOptionTupleAmountPageContents(

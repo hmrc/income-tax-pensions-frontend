@@ -20,6 +20,7 @@ import config.{AppConfig, ErrorHandler}
 import controllers.pensions.routes._
 import controllers.predicates.AuthorisedAction
 import controllers.predicates.TaxYearAction.taxYearAction
+import forms.OptionalTupleAmountForm.OptionalTupleAmountFormErrorMessage
 import forms.{FormUtils, OptionalTupleAmountForm}
 import models.mongo.{PensionsCYAModel, PensionsUserData}
 import models.pension.charges.PensionScheme
@@ -43,15 +44,21 @@ class PensionPaymentsController @Inject()(authAction: AuthorisedAction,
                                          (implicit mcc: MessagesControllerComponents, appConfig: AppConfig, ec: ExecutionContext, clock: Clock)
   extends FrontendController(mcc) with I18nSupport with SessionHelper with FormUtils {
 
-  def amountForm(user: User): Form[(Option[BigDecimal], Option[BigDecimal])] = OptionalTupleAmountForm.amountForm(
-    emptyFieldKey1 = "overseasPension.pensionPayments.amountBeforeTax.noEntry",
-    wrongFormatKey1 = s"overseasPension.pensionPayments.amountBeforeTax.incorrectFormat.${if (user.isAgent) "agent" else "individual"}",
-    exceedsMaxAmountKey1 = "overseasPension.pensionPayments.amountBeforeTax.tooBig",
-    emptyFieldKey2 = "common.pensions.error.amount.noEntry",
-    wrongFormatKey2 = "overseasPension.pensionPayments.nonUkTaxPaid.incorrectFormat",
-    exceedsMaxAmountKey2 = "common.pensions.error.amount.overMaximum",
-    taxPaidLessThanAmountBeforeTax = "overseasPension.pensionPayments.nonUkTaxPaidLessThanAmountBeforeTax"
-  )
+
+
+  def amountForm(user: User): Form[(Option[BigDecimal], Option[BigDecimal])] = {
+    val optionalTupleAmountFormErrorMessages = OptionalTupleAmountFormErrorMessage(
+      emptyFieldKey1 = "overseasPension.pensionPayments.amountBeforeTax.noEntry",
+      wrongFormatKey1 = s"overseasPension.pensionPayments.amountBeforeTax.incorrectFormat.${if (user.isAgent) "agent" else "individual"}",
+      exceedsMaxAmountKey1 = "overseasPension.pensionPayments.amountBeforeTax.tooBig",
+      emptyFieldKey2 = "common.pensions.error.amount.noEntry",
+      wrongFormatKey2 = "overseasPension.pensionPayments.nonUkTaxPaid.incorrectFormat",
+      exceedsMaxAmountKey2 = "common.pensions.error.amount.overMaximum",
+      taxPaidLessThanAmountBeforeTaxErrorMessage = "overseasPension.pensionPayments.nonUkTaxPaidLessThanAmountBeforeTax"
+    )
+    OptionalTupleAmountForm.amountForm(optionalTupleAmountFormErrorMessages)
+  }
+
 
   def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     pensionSessionService.getPensionSessionData(taxYear, request.user).map {
