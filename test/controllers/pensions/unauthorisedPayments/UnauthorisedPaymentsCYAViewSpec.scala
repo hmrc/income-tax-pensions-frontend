@@ -59,8 +59,8 @@ class UnauthorisedPaymentsCYAViewSpec extends AnyWordSpec with Matchers {
 
         summaryListRows.length shouldBe 5
         assertRowForUnauthorisedPayments(summaryListRows.head, "Yes")
-        assertRowAmountSurcharged(summaryListRows(1), "£1000.00")
-        assertRowTaxOnAmountSurcharged(summaryListRows(2), "£120.00")
+        assertRowAmountSurcharged(summaryListRows(1), "£1,000")
+        assertRowTaxOnAmountSurcharged(summaryListRows(2), "£120")
         assertRowForUKPensionSchemes(summaryListRows(3), "Yes")
         assertRowForUKPensionSchemeTaxReferences(summaryListRows(4), "12345678RX, 12345678RY")
 
@@ -117,7 +117,7 @@ class UnauthorisedPaymentsCYAViewSpec extends AnyWordSpec with Matchers {
 
         summaryListRows.length shouldBe 5
         assertRowForUnauthorisedPayments(summaryListRows.head, "Yes")
-        assertRowAmountNotSurcharged(summaryListRows(1), "£800.00")
+        assertRowAmountNotSurcharged(summaryListRows(1), "£800")
         assertRowTaxOnAmountNotSurcharged(summaryListRows(2), "£8.80")
         assertRowForUKPensionSchemes(summaryListRows(3), "Yes")
         assertRowForUKPensionSchemeTaxReferences(summaryListRows(4), "12345678RX, 12345678RY")
@@ -171,7 +171,7 @@ class UnauthorisedPaymentsCYAViewSpec extends AnyWordSpec with Matchers {
 
         val model = UnauthorisedPaymentsViewModel(
           noSurchargeQuestion = Some(false),
-          noSurchargeAmount = Option(BigDecimal("800.00")),
+          noSurchargeAmount = Option(BigDecimal("800")),
           noSurchargeTaxAmountQuestion = Option(true),
           noSurchargeTaxAmount = Option(BigDecimal("8.80")),
           ukPensionSchemesQuestion = Some(true),
@@ -217,9 +217,9 @@ class UnauthorisedPaymentsCYAViewSpec extends AnyWordSpec with Matchers {
         summaryListRows.length shouldBe 7
 
         assertRowForUnauthorisedPayments(summaryListRows.head, "Yes")
-        assertRowAmountSurcharged(summaryListRows(1), "£2000.00")
-        assertRowTaxOnAmountSurcharged(summaryListRows(2), "£240.00")
-        assertRowAmountNotSurcharged(summaryListRows(3), "£1600.00")
+        assertRowAmountSurcharged(summaryListRows(1), "£2,000")
+        assertRowTaxOnAmountSurcharged(summaryListRows(2), "£240")
+        assertRowAmountNotSurcharged(summaryListRows(3), "£1,600")
         assertRowTaxOnAmountNotSurcharged(summaryListRows(4), "£17.60")
         assertRowForUKPensionSchemes(summaryListRows(5), "Yes")
         assertRowForUKPensionSchemeTaxReferences(summaryListRows(6), "12345678RX, 12345678RY")

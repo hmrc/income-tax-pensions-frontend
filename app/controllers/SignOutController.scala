@@ -17,12 +17,13 @@
 package controllers
 
 import config.AppConfig
-import javax.inject.Inject
+
+import javax.inject.{Inject, Singleton}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-
+@Singleton
 class SignOutController @Inject()(val mcc: MessagesControllerComponents,
                                   appConfig: AppConfig) extends FrontendController(mcc) with I18nSupport {
 

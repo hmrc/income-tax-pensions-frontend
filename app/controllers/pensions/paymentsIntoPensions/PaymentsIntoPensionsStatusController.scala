@@ -30,9 +30,10 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.SessionHelper
 import views.html.pensions.paymentsIntoPensions.PaymentsIntoPensionsStatusView
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
+@Singleton
 class PaymentsIntoPensionsStatusController @Inject()(authAction: AuthorisedAction,
                                                      formProvider: PaymentsIntoPensionFormProvider,
                                                      view: PaymentsIntoPensionsStatusView,

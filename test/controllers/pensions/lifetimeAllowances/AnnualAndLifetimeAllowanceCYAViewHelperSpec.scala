@@ -89,7 +89,7 @@ class AnnualAndLifetimeAllowanceCYAViewHelperSpec extends AnyWordSpec with Match
           moneyPurchaseAnnualAllowance = None,
           taperedAnnualAllowance = None,
           aboveAnnualAllowanceQuestion = Some(true),
-          aboveAnnualAllowance = Some(BigDecimal("1000.00")),
+          aboveAnnualAllowance = Some(BigDecimal("1000")),
           pensionProvidePaidAnnualAllowanceQuestion = None,
           taxPaidByPensionProvider = None,
           pensionSchemeTaxReferences = None
@@ -104,7 +104,7 @@ class AnnualAndLifetimeAllowanceCYAViewHelperSpec extends AnyWordSpec with Match
         assertRowForAboveAnnualOrLifeTimeAllowance(summaryListRows.head, "Yes")
         assertRowReducedAnnualAllowance(summaryListRows(1), "Yes")
         assertRowTypeOfReducedAnnualAllowance(summaryListRows(2), "")
-        assertRowAboveAnnualAllowance(summaryListRows(3), "£1000.00")
+        assertRowAboveAnnualAllowance(summaryListRows(3), "£1,000")
         assertRowAnnualAllowanceTax(summaryListRows(4), "")
         assertRowAboveLifetimeAllowance(summaryListRows(5), "")
         assertRowLumpSum(summaryListRows(6), "")
@@ -157,8 +157,8 @@ class AnnualAndLifetimeAllowanceCYAViewHelperSpec extends AnyWordSpec with Match
         assertRowForAboveAnnualOrLifeTimeAllowance(summaryListRows.head, "Yes")
         assertRowReducedAnnualAllowance(summaryListRows(1), "Yes")
         assertRowTypeOfReducedAnnualAllowance(summaryListRows(2), "")
-        assertRowAboveAnnualAllowance(summaryListRows(3), "£1000.00")
-        assertRowAnnualAllowanceTax(summaryListRows(4), "£500.00")
+        assertRowAboveAnnualAllowance(summaryListRows(3), "£1,000")
+        assertRowAnnualAllowanceTax(summaryListRows(4), "£500")
         assertRowAnnualAllowanceSchemes(summaryListRows(5), "")
         assertRowAboveLifetimeAllowance(summaryListRows(6), "")
         assertRowLumpSum(summaryListRows(7), "")
@@ -185,7 +185,7 @@ class AnnualAndLifetimeAllowanceCYAViewHelperSpec extends AnyWordSpec with Match
         assertRowForAboveAnnualOrLifeTimeAllowance(summaryListRows.head, "Yes")
         assertRowReducedAnnualAllowance(summaryListRows(1), "Yes")
         assertRowTypeOfReducedAnnualAllowance(summaryListRows(2), "")
-        assertRowAboveAnnualAllowance(summaryListRows(3), "£1000.00")
+        assertRowAboveAnnualAllowance(summaryListRows(3), "£1,000")
         assertRowAnnualAllowanceTax(summaryListRows(4), "No")
         assertRowAboveLifetimeAllowance(summaryListRows(5), "")
         assertRowLumpSum(summaryListRows(6), "")
@@ -221,8 +221,8 @@ class AnnualAndLifetimeAllowanceCYAViewHelperSpec extends AnyWordSpec with Match
         assertRowForAboveAnnualOrLifeTimeAllowance(summaryListRows.head, "Yes")
         assertRowReducedAnnualAllowance(summaryListRows(1), "Yes")
         assertRowTypeOfReducedAnnualAllowance(summaryListRows(2), "Money purchase")
-        assertRowAboveAnnualAllowance(summaryListRows(3), "£1000.00")
-        assertRowAnnualAllowanceTax(summaryListRows(4), "£120.00")
+        assertRowAboveAnnualAllowance(summaryListRows(3), "£1,000")
+        assertRowAnnualAllowanceTax(summaryListRows(4), "£120")
         assertRowAnnualAllowanceSchemes(summaryListRows(5), "12345678RX, 12345678RY")
         assertRowAboveLifetimeAllowance(summaryListRows(6), "")
         assertRowLumpSum(summaryListRows(7), "")

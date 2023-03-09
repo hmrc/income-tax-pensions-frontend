@@ -22,6 +22,9 @@ import play.api.mvc.Call
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 
+import java.text.NumberFormat
+import java.util.Locale
+
 
 trait CYABaseHelper {
   def summaryListRow(labelMessageKey: String, displayedValue: String, changeLink: Call)(implicit messages: Messages): SummaryListRow = {
@@ -62,7 +65,12 @@ trait CYABaseHelper {
 
   def displayedValueForOptionalAmount(valueOpt: Option[BigDecimal]): String = valueOpt.map(displayedValue).getOrElse("")
 
-  def displayedValue(value: BigDecimal): String = s"£$value"
+  def displayedValue(value: BigDecimal): String =  formatNoZeros(value)
+
+  def formatNoZeros(amount: BigDecimal): String = {
+    NumberFormat.getCurrencyInstance(Locale.UK).format(amount)
+      .replaceAll("\\.00", "")
+  }
 
   def displayedValue(valueOpt: Option[Boolean], suffix: Option[String] = None)(implicit messages: Messages): String =
     valueOpt.map(value => if (value) {

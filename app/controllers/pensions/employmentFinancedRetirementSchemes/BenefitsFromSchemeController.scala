@@ -29,9 +29,10 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.SessionHelper
 import views.html.pensions.employmentFinancedRetirementSchemes.BenefitsFromSchemeView
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
+@Singleton
 class BenefitsFromSchemeController @Inject()(authAction: AuthorisedAction,
                                               view: BenefitsFromSchemeView,
                                               pensionSessionService: PensionSessionService,

@@ -33,9 +33,10 @@ import views.html.pensions.incomeFromPensions.StatePensionView
 import controllers.pensions.incomeFromPensions.routes._
 import controllers.predicates.TaxYearAction.taxYearAction
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
+@Singleton
 class StatePensionController @Inject()(implicit val cc: MessagesControllerComponents,
                                        authAction: AuthorisedAction,
                                        statePensionView: StatePensionView,

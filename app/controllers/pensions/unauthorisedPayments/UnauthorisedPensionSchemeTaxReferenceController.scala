@@ -29,9 +29,10 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.unauthorisedPayments.PensionSchemeTaxReferenceView
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
+@Singleton
 class UnauthorisedPensionSchemeTaxReferenceController @Inject()(implicit val cc: MessagesControllerComponents,
                                                                 authAction: AuthorisedAction,
                                                                 pensionSchemeTaxReferenceView: PensionSchemeTaxReferenceView,

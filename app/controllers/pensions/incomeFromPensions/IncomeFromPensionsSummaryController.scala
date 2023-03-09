@@ -26,10 +26,11 @@ import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.pensions.incomeFromPensions.IncomeFromPensionsSummaryView
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
+@Singleton
 class IncomeFromPensionsSummaryController @Inject()(implicit val mcc: MessagesControllerComponents,
                                                     appConfig: AppConfig,
                                                     authAction: AuthorisedAction,

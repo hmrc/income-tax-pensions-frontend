@@ -26,7 +26,7 @@ import models.mongo.PensionsCYAModel
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.PensionAnnualAllowancePages.{nonUkTaxRefundsUrl, shortServiceTaxableRefundUrl}
+import utils.PageUrls.ShortServiceRefunds.{nonUkTaxRefundsUrl, shortServiceRefundsCYAUrl, shortServiceTaxableRefundUrl}
 import utils.PageUrls.{fullUrl, overviewUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
@@ -84,7 +84,7 @@ class TaxableRefundAmountControllerISpec
       result.headers("location").head shouldBe overviewUrl(taxYear)
     }
 
-    "persist amount and redirect to next page" in {
+    "persist amount and redirect to next page when user selects yes" in {
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
@@ -100,6 +100,24 @@ class TaxableRefundAmountControllerISpec
       }
       result.status shouldBe SEE_OTHER
       result.headers("location").head shouldBe nonUkTaxRefundsUrl(taxYearEOY)
+    }
+
+    "persist amount and redirect to next page when user selects no" in {
+      lazy implicit val result: WSResponse = {
+        dropPensionsDB()
+        authoriseAgentOrIndividual(aUser.isAgent)
+        val shortServiceRefundViewModel = aShortServiceRefundsViewModel.copy(
+          shortServiceRefundCharge = None, shortServiceRefund = Some(false))
+        val formData = Map(RadioButtonAmountForm.yesNo -> "false")
+        insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(shortServiceRefunds = shortServiceRefundViewModel)), aUserRequest)
+        urlPost(
+          fullUrl(shortServiceTaxableRefundUrl(taxYearEOY)),
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
+          follow = false,
+          body = formData)
+      }
+      result.status shouldBe SEE_OTHER
+      result.headers("location").head shouldBe shortServiceRefundsCYAUrl(taxYearEOY)
     }
 
     "return an error when form is submitted with no entry" which {

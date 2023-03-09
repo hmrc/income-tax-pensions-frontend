@@ -28,11 +28,12 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.paymentsIntoPensions.ReliefAtSourcePensionsView
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import services.RedirectService.isFinishedCheck
 
 import scala.concurrent.{ExecutionContext, Future}
 
+@Singleton
 class ReliefAtSourcePensionsController @Inject()(authAction: AuthorisedAction,
                                                  pageView: ReliefAtSourcePensionsView,
                                                  pensionSessionService: PensionSessionService,

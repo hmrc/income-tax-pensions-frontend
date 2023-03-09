@@ -28,9 +28,10 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.incomeFromPensions.RemovePensionSchemeView
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
+@Singleton
 class RemovePensionSchemeController @Inject()(implicit val mcc: MessagesControllerComponents,
                                               authAction: AuthorisedAction,
                                               removePensionSchemeView: RemovePensionSchemeView,

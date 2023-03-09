@@ -32,10 +32,10 @@ import views.html.pensions.lifetimeAllowances.PensionLumpSumDetailsView
 import controllers.pensions.routes.PensionsSummaryController
 import controllers.pensions.lifetimeAllowances.routes.PensionLumpSumController
 
-
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
+@Singleton
 class PensionLumpSumDetailsController @Inject()(implicit val mcc: MessagesControllerComponents,
                                                 authAction: AuthorisedAction,
                                                 pensionLumpSumDetailsView: PensionLumpSumDetailsView,

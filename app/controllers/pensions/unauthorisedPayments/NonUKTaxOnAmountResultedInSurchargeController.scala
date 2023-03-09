@@ -31,8 +31,9 @@ import services.PensionSessionService
 import utils.Clock
 import views.html.pensions.unauthorisedPayments.NonUKTaxOnAmountResultedInSurchargeView
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 
+@Singleton
 class NonUKTaxOnAmountResultedInSurchargeController @Inject()(messagesControllerComponents: MessagesControllerComponents,
                                                               authAction: AuthorisedAction,
                                                               view: NonUKTaxOnAmountResultedInSurchargeView,

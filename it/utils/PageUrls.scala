@@ -88,10 +88,6 @@ object PageUrls extends IntegrationTest {
     def pstrSummaryUrl(taxYear: Int): String = s"$appUrl/$taxYear/annual-allowance/pension-scheme-tax-reference-summary"
 
     def transferPensionSchemeTaxUrl(taxYear: Int): String = s"$appUrl/${taxYear.toString}/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-tax"
-
-    def shortServiceTaxableRefundUrl(taxYear: Int): String = s"$appUrl/${taxYear.toString}/overseas-pensions/short-service-refunds/taxable-short-service-refunds"
-
-    def nonUkTaxRefundsUrl(taxYear: Int): String = s"$appUrl/${taxYear.toString}/overseas-pensions/short-service-refunds/short-service-refund-non-uk-tax"
   }
 
   //  *****************     Income from pensions pages      ******************************
@@ -272,11 +268,16 @@ object PageUrls extends IntegrationTest {
   }
 
   object ShortServiceRefunds {
-    def taxOnShortServiceRefund(taxYear: Int): String =
-      s"$appUrl/$taxYear/overseas-pensions/short-service-refunds/short-service-refunds-uk-tax"
+    def taxOnShortServiceRefund(taxYear: Int): String = s"$appUrl/$taxYear/overseas-pensions/short-service-refunds/short-service-refunds-uk-tax"
 
-    def refundSummaryUrl(taxYear: Int): String =
-      s"$appUrl/$taxYear/overseas-pensions/short-service-refunds/short-service-refund-summary"
+    def refundSummaryUrl(taxYear: Int): String = s"$appUrl/$taxYear/overseas-pensions/short-service-refunds/short-service-refund-summary"
+
+    def shortServiceTaxableRefundUrl(taxYear: Int): String = s"$appUrl/${taxYear.toString}/overseas-pensions/short-service-refunds/taxable-short-service-refunds"
+
+    def nonUkTaxRefundsUrl(taxYear: Int): String = s"$appUrl/${taxYear.toString}/overseas-pensions/short-service-refunds/short-service-refund-non-uk-tax"
+
+    def shortServiceRefundsCYAUrl(taxYear: Int) = s"$appUrl/${taxYear.toString}/overseas-pensions/short-service-refunds/check-short-service-refund-details"
+
   }
 
 }

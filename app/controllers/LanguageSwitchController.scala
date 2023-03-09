@@ -24,6 +24,9 @@ import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.{RedirectUtils, SessionHelper}
 
+import javax.inject.Singleton
+
+@Singleton
 class LanguageSwitchController @Inject()(appConfig: AppConfig,
                                          override implicit val messagesApi: MessagesApi,
                                          val controllerComponents: MessagesControllerComponents

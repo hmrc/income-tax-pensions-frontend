@@ -32,9 +32,10 @@ import controllers.pensions.annualAllowances.routes.PstrSummaryController
 import controllers.predicates.TaxYearAction.taxYearAction
 import models.User
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
+@Singleton
 class PensionSchemeTaxReferenceController @Inject()(implicit val cc: MessagesControllerComponents,
                                                     authAction: AuthorisedAction,
                                                     pensionSchemeTaxReferenceView: PensionSchemeTaxReferenceView,
