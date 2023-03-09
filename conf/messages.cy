@@ -834,6 +834,7 @@ overseasPension.pensionPayments.amountBeforeTax.incorrectFormat.agent = Enter th
 overseasPension.pensionPayments.amountBeforeTax.tooBig = The amount before tax must be less than £100,000,000,000
 overseasPension.pensionPayments.nonUkTaxPaid.text = Non-UK tax paid
 overseasPension.pensionPayments.nonUkTaxPaid.incorrectFormat = Enter the amount of non-UK tax paid in the correct format
+overseasPension.pensionPayments.nonUkTaxPaidLessThanAmountBeforeTax = The Non-UK tax paid can’t be larger than Amount before tax
 
 #Special Withholding Tax
 overseasPension.specialWithHoldingTax.title.individual = Did you have Special Withholding Tax (SWT) deducted from your pension?
