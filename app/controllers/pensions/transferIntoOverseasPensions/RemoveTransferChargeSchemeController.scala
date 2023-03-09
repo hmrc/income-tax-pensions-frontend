@@ -29,9 +29,11 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.transferIntoOverseasPensions.RemoveTransferChargeSchemeView
 import routes._
-import javax.inject.Inject
+
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
+@Singleton
 class RemoveTransferChargeSchemeController @Inject()(actionsProvider: ActionsProvider,
                                                      pensionSessionService: PensionSessionService,
                                                      view: RemoveTransferChargeSchemeView, errorHandler: ErrorHandler)

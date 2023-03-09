@@ -35,9 +35,10 @@ import utils.Clock
 import utils.PaymentsIntoPensionPages.CheckYourAnswersPage
 import views.html.pensions.paymentsIntoPensions.PaymentsIntoPensionsCYAView
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
+@Singleton
 class PaymentsIntoPensionsCYAController @Inject()(authAction: AuthorisedAction,
                                                   view: PaymentsIntoPensionsCYAView,
                                                   pensionSessionService: PensionSessionService,

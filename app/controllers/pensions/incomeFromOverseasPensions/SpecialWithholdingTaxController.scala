@@ -31,8 +31,9 @@ import services.PensionSessionService
 import utils.Clock
 import views.html.pensions.incomeFromOverseasPensions.SpecialWithholdingTaxView
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 
+@Singleton
 class SpecialWithholdingTaxController @Inject()(messagesControllerComponents: MessagesControllerComponents,
                                                 authAction: AuthorisedAction,
                                                 view: SpecialWithholdingTaxView,

@@ -31,10 +31,10 @@ import views.html.pensions.paymentsIntoOverseasPensions.TaxEmployerPaymentsView
 import controllers.pensions.paymentsIntoOverseasPensions.routes.TaxEmployerPaymentsController
 import controllers.pensions.routes.PensionsSummaryController
 
-
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
+@Singleton
 class TaxEmployerPaymentsController @Inject()(authAction: AuthorisedAction,
                                               taxEmployerPaymentsView: TaxEmployerPaymentsView,
                                               pensionSessionService: PensionSessionService,

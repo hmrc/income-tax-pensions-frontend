@@ -31,8 +31,9 @@ import services.PensionSessionService
 import utils.Clock
 import views.html.pensions.paymentsIntoOverseasPensions.PaymentIntoPensionSchemeView
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 
+@Singleton
 class PaymentIntoPensionSchemeController @Inject()(messagesControllerComponents: MessagesControllerComponents,
                                                    authAction: AuthorisedAction,
                                                    paymentIntoPensionSchemeView: PaymentIntoPensionSchemeView,

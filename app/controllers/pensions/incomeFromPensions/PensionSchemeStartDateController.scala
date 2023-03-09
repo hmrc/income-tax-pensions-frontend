@@ -33,9 +33,10 @@ import utils.DateTimeUtil.localDateTimeFormat
 import views.html.pensions.incomeFromPensions.PensionSchemeStartDateView
 
 import java.time.LocalDate
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
+@Singleton
 class PensionSchemeStartDateController @Inject()(implicit val mcc: MessagesControllerComponents,
                                                  appConfig: AppConfig,
                                                  authAction: AuthorisedAction,

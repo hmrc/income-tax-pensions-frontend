@@ -41,7 +41,7 @@ class ShortServiceRefundsCYAViewHelperSpec extends AnyWordSpec with Matchers {
 
         val summaryListRows = ShortSummaryCYAViewHelper.summaryListRows(model, taxYear)
 
-        summaryListRows.length shouldBe 2
+        summaryListRows.length shouldBe 1
         assertRowForRefundBoolean(summaryListRows.head, "")
 
       }

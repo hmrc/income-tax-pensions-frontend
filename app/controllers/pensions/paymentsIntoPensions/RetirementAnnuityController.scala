@@ -31,9 +31,10 @@ import utils.Clock
 import utils.PaymentsIntoPensionPages.RetirementAnnuityPage
 import views.html.pensions.paymentsIntoPensions.PayIntoRetirementAnnuityContractView
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
+@Singleton
 class RetirementAnnuityController @Inject()(authAction: AuthorisedAction,
                                             payIntoRetirementAnnuityContractView: PayIntoRetirementAnnuityContractView,
                                             pensionSessionService: PensionSessionService,

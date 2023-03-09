@@ -31,9 +31,10 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.incomeFromPensions.PensionSchemeDetailsView
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
+@Singleton
 class PensionSchemeDetailsController @Inject()(implicit val mcc: MessagesControllerComponents,
                                                authAction: AuthorisedAction,
                                                pensionSchemeDetailsView: PensionSchemeDetailsView,

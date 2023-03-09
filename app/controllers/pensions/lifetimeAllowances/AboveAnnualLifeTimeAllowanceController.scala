@@ -30,10 +30,11 @@ import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.lifetimeAllowances.AboveAnnualLifeTimeAllowanceView
-import javax.inject.Inject
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
+@Singleton
 class AboveAnnualLifeTimeAllowanceController @Inject()(implicit val cc: MessagesControllerComponents,
                                                        authAction: AuthorisedAction,
                                                        view: AboveAnnualLifeTimeAllowanceView,

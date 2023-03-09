@@ -32,8 +32,9 @@ import utils.Clock
 import views.html.pensions.lifetimeAllowances.PensionProviderPaidTaxView
 
 import javax.inject.Inject
+import javax.inject.Singleton
 
-
+@Singleton
 class PensionProviderPaidTaxController @Inject()(messagesControllerComponents: MessagesControllerComponents,
                                                  authAction: AuthorisedAction,
                                                  pensionProviderPaidTaxView: PensionProviderPaidTaxView,

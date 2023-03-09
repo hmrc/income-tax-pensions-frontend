@@ -31,10 +31,11 @@ import controllers.pensions.routes.PensionsSummaryController
 import controllers.pensions.incomeFromPensions.routes.{StatePensionController, StatePensionLumpSumController}
 import controllers.predicates.TaxYearAction.taxYearAction
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 import views.html.pensions.incomeFromPensions.StatePensionAmountView
 
+@Singleton
 class StatePensionAmountController @Inject()(implicit val mcc: MessagesControllerComponents,
                                              authAction: AuthorisedAction,
                                              statePensionAmountView: StatePensionAmountView,

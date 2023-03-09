@@ -66,10 +66,11 @@ object ShortSummaryCYAViewHelper extends CYABaseHelper {
         "shortServiceRefunds.cya.nonUk",
         shortServiceRefundsViewModel.shortServiceRefundTaxPaid,
         routes.NonUkTaxRefundsController.show(taxYear))(messages))
-      case _ => Some(summaryListRowWithString(
+      case Some(false) => Some(summaryListRowWithString(
         "shortServiceRefunds.cya.nonUk",
         Some(messages("common.noTaxPaid")).map(Seq(_)),
         routes.NonUkTaxRefundsController.show(taxYear))(messages))
+      case None => None
     }
   }
 
