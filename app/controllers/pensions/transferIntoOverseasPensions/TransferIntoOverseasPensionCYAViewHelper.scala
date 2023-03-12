@@ -78,7 +78,7 @@ object TransferIntoOverseasPensionCYAViewHelper extends CYABaseHelper {
           case _ =>
             summaryListRowWithString(
               "transferIntoOverseasPensions.cya.taxOnAmountCharged",
-              Some(messages("transferIntoOverseasPensions.cya.noTaxOnAmountCharged")).map(Seq(_)),
+              Some(messages("common.noTaxPaid")).map(Seq(_)),
               routes.PensionSchemeTaxTransferController.show(taxYear)
             )(messages)
         }

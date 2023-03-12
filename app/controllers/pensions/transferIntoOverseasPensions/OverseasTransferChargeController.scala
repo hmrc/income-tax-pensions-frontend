@@ -30,9 +30,10 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.transferIntoOverseasPensions.OverseasTransferChargeView
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
+@Singleton
 class OverseasTransferChargeController @Inject()(actionsProvider: ActionsProvider, pensionSessionService: PensionSessionService,
                                                  view: OverseasTransferChargeView, errorHandler: ErrorHandler)
                                                 (implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock)

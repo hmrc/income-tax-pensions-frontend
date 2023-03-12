@@ -84,7 +84,6 @@ class TaxOnShortServiceRefundControllerISpec extends YesNoControllerSpec("/overs
             val redirectPage = relativeUrl(
               "/overseas-pensions/short-service-refunds/short-service-refunds-pension-scheme?index=0")
 
-            //TODO: Update test to `/transfer-charge-summary` (Transfer Charge Summary) page when available. Redirecting to itself
             assertRedirectionAsExpected(redirectPage)
             getShortServiceViewModel mustBe Some(expectedViewModel)
           }

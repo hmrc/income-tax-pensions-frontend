@@ -32,9 +32,10 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.paymentsIntoOverseasPensions.EmployerPayOverseasPensionView
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
+@Singleton
 class EmployerPayOverseasPensionController @Inject()(authAction: AuthorisedAction,
                                                      employerPayOverseasPensionView: EmployerPayOverseasPensionView,
                                                      pensionSessionService: PensionSessionService,

@@ -30,9 +30,10 @@ import routes._
 import views.html.pensions.shortServiceRefunds.RemoveRefundSchemeView
 import utils.{Clock, SessionHelper}
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
+@Singleton
 class RemoveRefundSchemeController @Inject()(actionsProvider: ActionsProvider,
                                              pensionSessionService: PensionSessionService,
                                              view: RemoveRefundSchemeView,

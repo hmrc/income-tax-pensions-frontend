@@ -254,9 +254,9 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
 
             val modifiedPensionScheme =  anIncomeFromOverseasPensionsViewModel.overseasIncomePensionSchemes.head
                 .copy(pensionPaymentAmount = Some(BigDecimal(1234.56)), pensionPaymentTaxPaid = Some(BigDecimal(78.90)))
-            
+
             val remainderPensionScheme = anIncomeFromOverseasPensionsViewModel.overseasIncomePensionSchemes.tail
-            
+
             val incomeViewModel = anIncomeFromOverseasPensionsViewModel.copy(
               overseasIncomePensionSchemes = modifiedPensionScheme +: remainderPensionScheme
             )
@@ -657,6 +657,38 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
               implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(Some("1233.41"), Some("1000000000001")))
 
               assertPageAsExpected(BAD_REQUEST, expPageContents.copy(errorSummarySectionOpt = welshTitle(expPageContents)))
+              getViewModel mustBe Some(expectedViewModel)
+            }
+          }
+
+          "amount before tax is greater than non uk tax" when {
+
+            scenarioNameForIndividualAndEnglish in {
+              implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
+              implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(Some("1233.41"), Some("10000")))
+
+              response.status mustBe BAD_REQUEST
+              getViewModel mustBe Some(expectedViewModel)
+            }
+            scenarioNameForIndividualAndWelsh in {
+              implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
+              implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(Some("1233.41"), Some("10000")))
+
+              response.status mustBe BAD_REQUEST
+              getViewModel mustBe Some(expectedViewModel)
+            }
+            scenarioNameForAgentAndEnglish in {
+              implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
+              implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(Some("1233.41"), Some("10000")))
+
+              response.status mustBe BAD_REQUEST
+              getViewModel mustBe Some(expectedViewModel)
+            }
+            scenarioNameForAgentAndWelsh in {
+              implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
+              implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(Some("1233.41"), Some("10000")))
+
+              response.status mustBe BAD_REQUEST
               getViewModel mustBe Some(expectedViewModel)
             }
           }

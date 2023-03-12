@@ -26,32 +26,50 @@ object OptionalTupleAmountForm {
   val amount = "amount-1"
   val amount2 = "amount-2"
 
-  def amountForm(
-                  emptyFieldKey1: String,
-                  wrongFormatKey1: String = "common.error.invalid_currency_format",
-                  exceedsMaxAmountKey1: String = "common.error.amountMaxLimit",
-                  emptyFieldArguments1: Seq[String] = Seq.empty[String],
-                  emptyFieldKey2: String,
-                  wrongFormatKey2: String = "common.error.invalid_currency_format",
-                  exceedsMaxAmountKey2: String = "common.error.amountMaxLimit",
-                  emptyFieldArguments2: Seq[String] = Seq.empty[String]
-                ): Form[(Option[BigDecimal], Option[BigDecimal])] =
-    Form(
-      tuple(
-        amount -> optionCurrency(
-          requiredKey = emptyFieldKey1,
-          wrongFormatKey = wrongFormatKey1,
-          maxAmountKey = exceedsMaxAmountKey1,
-          args = emptyFieldArguments1
+  case class OptionalTupleAmountFormErrorMessage(
+                                                   emptyFieldKey1: String,
+                                                   wrongFormatKey1: String = "common.error.invalid_currency_format",
+                                                   exceedsMaxAmountKey1: String = "common.error.amountMaxLimit",
+                                                   emptyFieldArguments1: Seq[String] = Seq.empty[String],
+                                                   emptyFieldKey2: String,
+                                                   wrongFormatKey2: String = "common.error.invalid_currency_format",
+                                                   exceedsMaxAmountKey2: String = "common.error.amountMaxLimit",
+                                                   emptyFieldArguments2: Seq[String] = Seq.empty[String],
+                                                   taxPaidLessThanAmountBeforeTaxErrorMessage : String = ""
+                                                 ) {
+    val taxPaidCheck : Boolean = taxPaidLessThanAmountBeforeTaxErrorMessage.nonEmpty
+  }
 
-        ),
-        amount2 -> optionCurrency(
-          requiredKey = emptyFieldKey2,
-          wrongFormatKey = wrongFormatKey2,
-          maxAmountKey = exceedsMaxAmountKey2,
-          args = emptyFieldArguments2
-        )
+  def amountForm(
+                  optionalTupleAmountFormErrorMessage: OptionalTupleAmountFormErrorMessage
+                ): Form[(Option[BigDecimal], Option[BigDecimal])] = {
+
+    val amountMappingTuple = tuple(
+      amount -> optionCurrency(
+        requiredKey = optionalTupleAmountFormErrorMessage.emptyFieldKey1,
+        wrongFormatKey = optionalTupleAmountFormErrorMessage.wrongFormatKey1,
+        maxAmountKey = optionalTupleAmountFormErrorMessage.exceedsMaxAmountKey1,
+        args = optionalTupleAmountFormErrorMessage.emptyFieldArguments1
+
+      ),
+      amount2 -> optionCurrency(
+        requiredKey = optionalTupleAmountFormErrorMessage.emptyFieldKey2,
+        wrongFormatKey = optionalTupleAmountFormErrorMessage.wrongFormatKey2,
+        maxAmountKey = optionalTupleAmountFormErrorMessage.exceedsMaxAmountKey2,
+        args = optionalTupleAmountFormErrorMessage.emptyFieldArguments2
       )
     )
+
+    Form(
+      if (optionalTupleAmountFormErrorMessage.taxPaidCheck) {
+        amountMappingTuple.verifying(
+          optionalTupleAmountFormErrorMessage.taxPaidLessThanAmountBeforeTaxErrorMessage,
+          amountsTuple => amountsTuple._2.getOrElse(BigDecimal(0)) <= amountsTuple._1.getOrElse(BigDecimal(0))
+        )
+      } else {
+        amountMappingTuple
+      }
+    )
+  }
 
 }

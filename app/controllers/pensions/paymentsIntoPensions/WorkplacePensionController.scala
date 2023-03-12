@@ -30,12 +30,13 @@ import utils.Clock
 import utils.PaymentsIntoPensionPages.WorkplacePensionPage
 import views.html.pensions.paymentsIntoPensions.WorkplacePensionView
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import models.redirects.ConditionalRedirect
 import services.RedirectService.{PaymentsIntoPensionsRedirects, isFinishedCheck, redirectBasedOnCurrentAnswers}
 
 import scala.concurrent.Future
 
+@Singleton
 class WorkplacePensionController @Inject()(authAction: AuthorisedAction,
                                            pensionSessionService: PensionSessionService,
                                            errorHandler: ErrorHandler,

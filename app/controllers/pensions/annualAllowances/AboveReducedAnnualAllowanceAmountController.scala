@@ -34,9 +34,10 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.annualAllowances.AboveReducedAnnualAllowanceAmountView
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
+@Singleton
 class AboveReducedAnnualAllowanceAmountController @Inject()(implicit val mcc: MessagesControllerComponents,
                                                             authAction: AuthorisedAction,
                                                             view: AboveReducedAnnualAllowanceAmountView,

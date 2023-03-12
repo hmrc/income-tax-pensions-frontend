@@ -32,9 +32,10 @@ import utils.Clock
 import utils.PaymentsIntoPensionPages.WorkplacePensionAmountPage
 import views.html.pensions.paymentsIntoPensions.WorkplaceAmountView
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
+@Singleton
 class WorkplaceAmountController @Inject()(authAction: AuthorisedAction,
                                           workplaceAmountView: WorkplaceAmountView,
                                           pensionSessionService: PensionSessionService,

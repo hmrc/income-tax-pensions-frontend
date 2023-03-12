@@ -26,8 +26,7 @@ import models.mongo.PensionsCYAModel
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.PensionAnnualAllowancePages.nonUkTaxRefundsUrl
-import utils.PageUrls.ShortServiceRefunds.{refundSummaryUrl, taxOnShortServiceRefund}
+import utils.PageUrls.ShortServiceRefunds.{nonUkTaxRefundsUrl, refundSummaryUrl, shortServiceRefundsCYAUrl, taxOnShortServiceRefund}
 import utils.PageUrls.{fullUrl, overviewUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 

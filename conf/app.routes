@@ -293,3 +293,6 @@ GET         /:taxYear/overseas-pensions/short-service-refunds/remove-pension-sch
 POST        /:taxYear/overseas-pensions/short-service-refunds/remove-pension-scheme                                                controllers.pensions.shortServiceRefunds.RemoveRefundSchemeController.submit(taxYear: Int, index: Option[Int])
 
 GET         /:taxYear/overseas-pensions/short-service-refunds/short-service-refund-summary                                         controllers.pensions.shortServiceRefunds.RefundSummaryController.show(taxYear: Int)
+
+GET         /:taxYear/overseas-pensions/short-service-refunds/check-short-service-refund-details                                   controllers.pensions.shortServiceRefunds.ShortServiceRefundsCYAController.show(taxYear: Int)
+POST        /:taxYear/overseas-pensions/short-service-refunds/check-short-service-refund-details                                   controllers.pensions.shortServiceRefunds.ShortServiceRefundsCYAController.submit(taxYear: Int)

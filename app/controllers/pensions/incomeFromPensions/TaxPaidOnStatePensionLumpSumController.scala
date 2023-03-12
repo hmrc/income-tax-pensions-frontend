@@ -32,9 +32,10 @@ import controllers.pensions.incomeFromPensions.routes.TaxPaidOnLumpSumAmountCont
 import controllers.predicates.TaxYearAction.taxYearAction
 import models.pension.statebenefits.{IncomeFromPensionsViewModel, StateBenefitViewModel}
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
+@Singleton
 class TaxPaidOnStatePensionLumpSumController @Inject()(implicit val cc: MessagesControllerComponents,
                                                        authAction: AuthorisedAction,
                                                        inYearAction: InYearAction,

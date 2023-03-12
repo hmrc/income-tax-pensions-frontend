@@ -29,9 +29,10 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.unauthorisedPayments.SurchargeAmountView
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
+@Singleton
 class SurchargeAmountController @Inject()(authAction: AuthorisedAction,
                                           view: SurchargeAmountView,
                                           pensionSessionService: PensionSessionService,

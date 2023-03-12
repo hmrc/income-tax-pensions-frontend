@@ -26,10 +26,11 @@ import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.pensions.annualAllowances.PstrSummaryView
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
+@Singleton
 class PstrSummaryController @Inject()(implicit val cc: MessagesControllerComponents,
                                       authAction: AuthorisedAction,
                                       pstrSummaryView: PstrSummaryView,

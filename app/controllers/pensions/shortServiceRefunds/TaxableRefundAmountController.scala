@@ -77,8 +77,7 @@ class TaxableRefundAmountController@Inject()(actionsProvider: ActionsProvider,
       if (yesNo) {
         Redirect(controllers.pensions.shortServiceRefunds.routes.NonUkTaxRefundsController.show(taxYear))
       } else {
-        //TODO: Redirect to Short Service CYA page
-        Redirect(controllers.pensions.shortServiceRefunds.routes.TaxableRefundAmountController.show(taxYear))
+        Redirect(controllers.pensions.shortServiceRefunds.routes.ShortServiceRefundsCYAController.show(taxYear))
       }
     }
   }

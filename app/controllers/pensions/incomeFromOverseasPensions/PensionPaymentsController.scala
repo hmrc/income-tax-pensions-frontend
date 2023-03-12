@@ -20,11 +20,10 @@ import config.{AppConfig, ErrorHandler}
 import controllers.pensions.routes._
 import controllers.predicates.AuthorisedAction
 import controllers.predicates.TaxYearAction.taxYearAction
-import forms.{FormUtils, OptionalTupleAmountForm}
+import forms.{FormUtils, FormsProvider}
 import models.mongo.{PensionsCYAModel, PensionsUserData}
 import models.pension.charges.PensionScheme
-import models.{AuthorisationRequest, User}
-import play.api.data.Form
+import models.AuthorisationRequest
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import routes._
@@ -32,25 +31,22 @@ import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.incomeFromOverseasPensions.PensionPaymentsView
-
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
+@Singleton
 class PensionPaymentsController @Inject()(authAction: AuthorisedAction,
                                           pensionPaymentsView: PensionPaymentsView,
                                           pensionSessionService: PensionSessionService,
+                                          formsProvider: FormsProvider,
                                           errorHandler: ErrorHandler)
                                          (implicit mcc: MessagesControllerComponents, appConfig: AppConfig, ec: ExecutionContext, clock: Clock)
   extends FrontendController(mcc) with I18nSupport with SessionHelper with FormUtils {
 
-  def amountForm(user: User): Form[(Option[BigDecimal], Option[BigDecimal])] = OptionalTupleAmountForm.amountForm(
-    emptyFieldKey1 = "overseasPension.pensionPayments.amountBeforeTax.noEntry",
-    wrongFormatKey1 = s"overseasPension.pensionPayments.amountBeforeTax.incorrectFormat.${if (user.isAgent) "agent" else "individual"}",
-    exceedsMaxAmountKey1 = "overseasPension.pensionPayments.amountBeforeTax.tooBig",
-    emptyFieldKey2 = "common.pensions.error.amount.noEntry",
-    wrongFormatKey2 = "overseasPension.pensionPayments.nonUkTaxPaid.incorrectFormat",
-    exceedsMaxAmountKey2 = "common.pensions.error.amount.overMaximum"
-  )
+
+
+
+
 
   def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     pensionSessionService.getPensionSessionData(taxYear, request.user).map {
@@ -69,7 +65,7 @@ class PensionPaymentsController @Inject()(authAction: AuthorisedAction,
     pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
       case Right(Some(data)) =>
         validateIndex(index, data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes) match {
-          case Some(i) => amountForm(request.user).bindFromRequest().fold(
+          case Some(i) => formsProvider.pensionPaymentsForm(request.user).bindFromRequest().fold(
             formWithErrors => Future.successful(BadRequest(pensionPaymentsView(formWithErrors, taxYear, Some(i)))),
             amounts =>
               updatePensionScheme(data, amounts._1, amounts._2, taxYear, i)(
@@ -93,10 +89,13 @@ class PensionPaymentsController @Inject()(authAction: AuthorisedAction,
     val nonUkTaxPaidOpt = data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes(index).pensionPaymentTaxPaid
 
     val form = (amountBeforeTaxOpt, nonUkTaxPaidOpt) match {
-      case (Some(amountBeforeTax), None) => amountForm(request.user).fill((Some(amountBeforeTax), None): (Option[BigDecimal], Option[BigDecimal]))
-      case (None, Some(nonUkTaxPaid)) => amountForm(request.user).fill((None, Some(nonUkTaxPaid)): (Option[BigDecimal], Option[BigDecimal]))
-      case (Some(amountBeforeTax), Some(nonUkTaxPaid)) => amountForm(request.user).fill((Some(amountBeforeTax), Some(nonUkTaxPaid)))
-      case (_, _) => amountForm(request.user)
+      case (Some(amountBeforeTax), None) => formsProvider.pensionPaymentsForm(request.user)
+        .fill((Some(amountBeforeTax), None): (Option[BigDecimal], Option[BigDecimal]))
+      case (None, Some(nonUkTaxPaid)) => formsProvider.pensionPaymentsForm(request.user)
+        .fill((None, Some(nonUkTaxPaid)): (Option[BigDecimal], Option[BigDecimal]))
+      case (Some(amountBeforeTax), Some(nonUkTaxPaid)) => formsProvider.pensionPaymentsForm(request.user)
+        .fill((Some(amountBeforeTax), Some(nonUkTaxPaid)))
+      case _ => formsProvider.pensionPaymentsForm(request.user)
     }
     Ok(pensionPaymentsView(form, taxYear, Some(index)))
   }

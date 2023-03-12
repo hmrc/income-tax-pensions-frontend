@@ -34,7 +34,9 @@ import views.html.pensions.lifetimeAllowances.PensionSchemeTaxReferenceLifetimeV
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import javax.inject.Singleton
 
+@Singleton
 class PensionSchemeTaxReferenceLifetimeController @Inject()(authAction: AuthorisedAction,
                                                             pensionSchemeTaxReferenceView: PensionSchemeTaxReferenceLifetimeView,
                                                             pensionSessionService: PensionSessionService,
