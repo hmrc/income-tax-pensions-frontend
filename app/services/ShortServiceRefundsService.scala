@@ -38,7 +38,7 @@ class ShortServiceRefundsService @Inject()(pensionSessionService: PensionSession
     val updatedModel: ShortServiceRefundsViewModel =
       pensionIndex match {
         case Some(index) =>
-          model.copy(refundPensionScheme = model.refundPensionScheme.updated(index, refundPensionScheme.copy(ukRefundCharge = Some(question))))
+          updateOverseasRefundPensionScheme(index, userData, model, refundPensionScheme, question)
         case None =>
           if(model.refundPensionScheme.isEmpty) {
             model.copy(refundPensionScheme = Seq(refundPensionScheme.copy(ukRefundCharge = Some(question))))
@@ -86,7 +86,17 @@ class ShortServiceRefundsService @Inject()(pensionSessionService: PensionSession
     }
   }
 
-
+  private def updateOverseasRefundPensionScheme(
+                                         index: Int,
+                                         userData: PensionsUserData,
+                                         model: ShortServiceRefundsViewModel,
+                                         refundPensionScheme: OverseasRefundPensionScheme,
+                                         question: Boolean) = {
+    val previousUkRefundCharge = userData.pensions.shortServiceRefunds.refundPensionScheme(index).ukRefundCharge.getOrElse(false)
+    if(previousUkRefundCharge == question) {
+      model.copy(refundPensionScheme = model.refundPensionScheme.updated(index, refundPensionScheme.copy(ukRefundCharge = Some(question))))
+    } else {
+      model.copy(refundPensionScheme = model.refundPensionScheme.updated(index, OverseasRefundPensionScheme(ukRefundCharge = Some(question))))
+    }
+  }
 }
-
-
