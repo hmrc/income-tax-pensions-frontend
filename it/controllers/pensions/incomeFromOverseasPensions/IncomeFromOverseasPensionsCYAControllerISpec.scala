@@ -17,30 +17,18 @@
 package controllers.pensions.incomeFromOverseasPensions
 
 import builders.AllPensionsDataBuilder.anAllPensionsData
-import builders.IncomeFromOverseasPensionsViewModelBuilder._
-import builders.IncomeFromPensionsViewModelBuilder.anIncomeFromPensionsViewModel
 import builders.IncomeTaxUserDataBuilder.anIncomeTaxUserData
-import builders.PaymentsIntoOverseasPensionsViewModelBuilder.aPaymentsIntoOverseasPensionsViewModel
-import builders.PensionContributionsBuilder.anPensionContributions
-import builders.PensionLifetimeAllowanceViewModelBuilder.aPensionLifetimeAllowanceViewModel
-import builders.PensionSavingTaxChargesBuilder.anPensionSavngTaxCharges
 import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import builders.PensionsUserDataBuilder
-import builders.PensionsUserDataBuilder.{aPensionsUserData, pensionUserDataWithIncomeOverseasPension}
-import builders.ReliefsBuilder.anReliefs
-import builders.UnauthorisedPaymentsViewModelBuilder.anUnauthorisedPaymentsViewModel
+import builders.PensionsUserDataBuilder.aPensionsUserData
 import builders.UserBuilder.aUserRequest
 import controllers.pensions.routes.OverseasPensionsSummaryController
 import models.mongo.{PensionsCYAModel, PensionsUserData}
-import models.pension.charges.PensionAnnualAllowancesViewModel
-import models.pension.income.ForeignPension
 import models.pension.reliefs.PaymentsIntoPensionViewModel
-import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterEach
 import play.api.Logging
 import play.api.http.HeaderNames
-import play.api.http.Status.{OK, SEE_OTHER}
+import play.api.http.Status.SEE_OTHER
 import play.api.libs.ws.WSResponse
 import utils.PageUrls.IncomeFromOverseasPensionsPages.checkIncomeFromOverseasPensionsCyaUrl
 import utils.PageUrls.fullUrl

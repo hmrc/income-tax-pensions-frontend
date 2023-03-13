@@ -17,10 +17,8 @@
 package controllers.pensions.incomeFromOverseasPensions
 
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.routes._
 import controllers.predicates.AuthorisedAction
 import controllers.predicates.TaxYearAction.taxYearAction
-import forms.Countries
 import models.pension.AllPensionsData
 import models.pension.AllPensionsData.generateCyaFromPrior
 import models.pension.charges.IncomeFromOverseasPensionsViewModel

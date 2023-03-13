@@ -23,7 +23,6 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.StatusHelper.incomeFromOverseasPensionsHasPriorData
 import views.html.pensions.OverseasPensionsSummaryView
 
 import javax.inject.{Inject, Singleton}
@@ -38,9 +37,8 @@ class OverseasPensionsSummaryController @Inject()(implicit val mcc: MessagesCont
                                                   ) extends FrontendController(mcc) with I18nSupport {
 
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
-    pensionSessionService.getAndHandle(taxYear, request.user) { (pensionsUserData, prior) =>
-      val hasPriorData = incomeFromOverseasPensionsHasPriorData(prior)
-      Future.successful(Ok(overseasPensionsSummaryView(taxYear, pensionsUserData.map(_.pensions), hasPriorData)))
+    pensionSessionService.getAndHandle(taxYear, request.user) { (pensionsUserData, priorData) =>
+      Future.successful(Ok(overseasPensionsSummaryView(taxYear, pensionsUserData.map(_.pensions), priorData)))
     }
   }
 }

@@ -17,7 +17,7 @@
 package services
 
 import builders.AllPensionsDataBuilder.anAllPensionsData
-import builders.PensionsCYAModelBuilder.{aPensionsCYAEmptyModel, aPensionsCYAModel}
+import builders.PensionsCYAModelBuilder.aPensionsCYAEmptyModel
 import builders.PensionsUserDataBuilder.aPensionsUserData
 import builders.UserBuilder.aUser
 import config.{MockIncomeTaxUserDataConnector, MockPensionUserDataRepository, MockPensionsConnector}

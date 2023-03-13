@@ -17,15 +17,13 @@
 package controllers.pensions.lifetimeAllowances
 
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.routes.PensionsSummaryController
 import controllers.pensions.lifetimeAllowances.routes.PensionTakenAnotherWayAmountController
+import controllers.pensions.routes.PensionsSummaryController
 import controllers.predicates.AuthorisedAction
 import controllers.predicates.TaxYearAction.taxYearAction
-import forms.OptionalTupleAmountForm.OptionalTupleAmountFormErrorMessage
-import forms.{FormUtils, FormsProvider, OptionalTupleAmountForm}
+import forms.{FormUtils, FormsProvider}
 import models.mongo.PensionsCYAModel
 import models.pension.charges.{LifetimeAllowance, PensionLifetimeAllowancesViewModel}
-import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService

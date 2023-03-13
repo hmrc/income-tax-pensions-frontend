@@ -128,21 +128,6 @@
                 </dd>
 
             </div>
-
-            <div class="govuk-summary-list__row" id="payments-to-overseas-pensions-row">
-                <dt  id="rightHolder-row-1" class="govuk-summary-list__key govuk-!-width-two-third">
-                @link("#", "pensions.pensionSummary.paymentsToOverseasPensions",Some("payments-to-overseas-pensions-link"))
-                </dt>
-                <dd class="govuk-summary-list__actions govuk-!-two-third">
-
-                @if(overseasPensionsIsUpdated(prior)) {
-                    <strong class="govuk-tag">@messages("common.status.updated")</strong>
-                } else {
-                    <strong class="govuk-tag govuk-tag--grey">@messages("common.status.toDo")</strong>
-                }
-                </dd>
-
-            </div>
             
             <div class="govuk-summary-list__row" id="overseas-pensions-summary-row">
                 <dt  class="govuk-summary-list__key govuk-!-width-two-third">
