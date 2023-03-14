@@ -31,7 +31,7 @@ import utils.CommonUtils
 import utils.PageUrls.IncomeFromOverseasPensionsPages.{checkIncomeFromOverseasPensionsCyaUrl, incomeFromOverseasPensionsStatus}
 import utils.PageUrls._
 import utils.PageUrls.OverseasPensionPages.paymentsIntoPensionSchemeUrl
-import utils.PageUrls.ShortServiceRefunds.shortServiceTaxableRefundUrl
+import utils.PageUrls.ShortServiceRefunds.{shortServiceRefundsCYAUrl, shortServiceTaxableRefundUrl}
 import utils.PageUrls.TransferIntoOverseasPensions.{checkYourDetailsPensionUrl, transferPensionSavingsUrl}
 
 class OverseasPensionsSummaryControllerISpec extends  CommonUtils with BeforeAndAfterEach  { // scalastyle:off magic.number
@@ -200,7 +200,7 @@ class OverseasPensionsSummaryControllerISpec extends  CommonUtils with BeforeAnd
           }
 
           "has a short service refunds section" which {
-            linkCheck(common.shortServiceRefundsText, shortServiceRefundsLink, shortServiceTaxableRefundUrl(taxYearEOY))
+            linkCheck(common.shortServiceRefundsText, shortServiceRefundsLink, shortServiceRefundsCYAUrl(taxYearEOY))
             textOnPageCheck(userScenario.commonExpectedResults.updated, summaryListStatusTagSelector(4))
           }
 

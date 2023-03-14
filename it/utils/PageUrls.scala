@@ -272,11 +272,13 @@ object PageUrls extends IntegrationTest {
 
     def refundSummaryUrl(taxYear: Int): String = s"$appUrl/$taxYear/overseas-pensions/short-service-refunds/short-service-refund-summary"
 
-    def shortServiceTaxableRefundUrl(taxYear: Int): String = s"$appUrl/${taxYear.toString}/overseas-pensions/short-service-refunds/taxable-short-service-refunds"
+    def shortServiceTaxableRefundUrl(taxYear: Int): String =
+      s"$appUrl/${taxYear.toString}/overseas-pensions/short-service-refunds/taxable-short-service-refunds"
 
     def nonUkTaxRefundsUrl(taxYear: Int): String = s"$appUrl/${taxYear.toString}/overseas-pensions/short-service-refunds/short-service-refund-non-uk-tax"
 
-    def shortServiceRefundsCYAUrl(taxYear: Int) = s"$appUrl/${taxYear.toString}/overseas-pensions/short-service-refunds/check-short-service-refund-details"
+    def shortServiceRefundsCYAUrl(taxYear: Int): String =
+      s"$appUrl/${taxYear.toString}/overseas-pensions/short-service-refunds/check-short-service-refund-details"
 
   }
 
