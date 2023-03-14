@@ -94,4 +94,9 @@ class FormsProvider() {
       exceedsMaxAmountKey2 = s"common.taxPaid.error.overMaximum"
     ))
   }
+
+  def sf74ReferenceIdForm: Form[String] = SF74ReferenceForm.sf74ReferenceIdForm(
+    noEntryMsg = "pensions.paymentsIntoOverseasPensions.sf74Reference.noEntry",
+    incorrectFormatMsg = "pensions.paymentsIntoOverseasPensions.sf74Reference.incorrectFormat"
+  )
 }
