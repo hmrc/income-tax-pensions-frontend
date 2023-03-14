@@ -96,21 +96,25 @@ class SF74ReferenceViewSpec extends ViewUnitTest{
   private lazy val underTest = inject[SF74ReferenceView]
   userScenarios.foreach { userScenario =>
     s"language is ${welshTest(userScenario.isWelsh)} and request is from an ${agentTest(userScenario.isAgent)}" should {
+
+       def standardPageElementChecks(outputValue: String = "", errorSummary: String = "")(implicit document : Document) : Unit = {
+        titleCheck(errorSummary + userScenario.commonExpectedResults.expectedTitle, userScenario.isWelsh)
+        captionCheck(userScenario.commonExpectedResults.expectedCaption(taxYearEOY), Selectors.captionSelector)
+        textOnPageCheck(userScenario.commonExpectedResults.expectedPara1, Selectors.paragraphSelector)
+        textOnPageCheck(userScenario.commonExpectedResults.hintText, Selectors.hintTextSelector)
+        inputFieldValueCheck("sf74ReferenceId", Selectors.sf74ReferenceIdValueSelector, outputValue)
+        buttonCheck(userScenario.commonExpectedResults.continue)
+        welshToggleCheck(userScenario.isWelsh)
+      }
+
       "show the SF74 reference page" which {
         implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = getUserSession(userScenario.isAgent)
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
 
         def form: Form[String] = new FormsProvider().sf74ReferenceIdForm
-
         val htmlFormat = underTest(form, taxYearEOY)
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
-        titleCheck(userScenario.commonExpectedResults.expectedTitle, userScenario.isWelsh)
-        captionCheck(userScenario.commonExpectedResults.expectedCaption(taxYearEOY), Selectors.captionSelector)
-        textOnPageCheck(userScenario.commonExpectedResults.expectedPara1, Selectors.paragraphSelector)
-        textOnPageCheck(userScenario.commonExpectedResults.hintText, Selectors.hintTextSelector)
-        inputFieldValueCheck("sf74ReferenceId", Selectors.sf74ReferenceIdValueSelector, "")
-        buttonCheck(userScenario.commonExpectedResults.continue)
-        welshToggleCheck(userScenario.isWelsh)
+        standardPageElementChecks()
       }
 
       "show the SF74 reference value " which {
@@ -120,13 +124,7 @@ class SF74ReferenceViewSpec extends ViewUnitTest{
         def form: Form[String] = new FormsProvider().sf74ReferenceIdForm
         val htmlFormat = underTest(form.bind(Map(SF74ReferenceForm.sf74ReferenceId -> "1234567")), taxYearEOY)
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
-        titleCheck(userScenario.commonExpectedResults.expectedTitle, userScenario.isWelsh)
-        captionCheck(userScenario.commonExpectedResults.expectedCaption(taxYearEOY), Selectors.captionSelector)
-        textOnPageCheck(userScenario.commonExpectedResults.expectedPara1, Selectors.paragraphSelector)
-        textOnPageCheck(userScenario.commonExpectedResults.hintText, Selectors.hintTextSelector)
-        inputFieldValueCheck("sf74ReferenceId", Selectors.sf74ReferenceIdValueSelector, "1234567")
-        buttonCheck(userScenario.commonExpectedResults.continue)
-        welshToggleCheck(userScenario.isWelsh)
+        standardPageElementChecks(outputValue = "1234567")
       }
 
       "show an error message when user passes empty value " which {
@@ -136,69 +134,33 @@ class SF74ReferenceViewSpec extends ViewUnitTest{
         def form: Form[String] = new FormsProvider().sf74ReferenceIdForm
         val htmlFormat = underTest(form.bind(Map(SF74ReferenceForm.sf74ReferenceId -> "")), taxYearEOY)
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
-        titleCheck("Error: " + userScenario.commonExpectedResults.expectedTitle, userScenario.isWelsh)
         errorAboveElementCheck(userScenario.commonExpectedResults.emptyErrorMessage, Some("sf74ReferenceId"))
         errorSummaryCheck(userScenario.commonExpectedResults.emptyErrorMessage, "#sf74ReferenceId")
-        captionCheck(userScenario.commonExpectedResults.expectedCaption(taxYearEOY), Selectors.captionSelector)
-        textOnPageCheck(userScenario.commonExpectedResults.expectedPara1, Selectors.paragraphSelector)
-        textOnPageCheck(userScenario.commonExpectedResults.hintText, Selectors.hintTextSelector)
-        inputFieldValueCheck("sf74ReferenceId", Selectors.sf74ReferenceIdValueSelector, "")
-        buttonCheck(userScenario.commonExpectedResults.continue)
-        welshToggleCheck(userScenario.isWelsh)
+        standardPageElementChecks(errorSummary = "Error: ")
       }
 
-      "show an error message when user passes more than 10 numbers " which {
+      "show an error message when user passes more than 10 digits " which {
         implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = getUserSession(userScenario.isAgent)
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
 
         def form: Form[String] = new FormsProvider().sf74ReferenceIdForm
         val htmlFormat = underTest(form.bind(Map(SF74ReferenceForm.sf74ReferenceId -> "123456789012")), taxYearEOY)
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
-        titleCheck("Error: " + userScenario.commonExpectedResults.expectedTitle, userScenario.isWelsh)
         errorAboveElementCheck(userScenario.commonExpectedResults.invalidErrorMessage, Some("sf74ReferenceId"))
         errorSummaryCheck(userScenario.commonExpectedResults.invalidErrorMessage, "#sf74ReferenceId")
-        captionCheck(userScenario.commonExpectedResults.expectedCaption(taxYearEOY), Selectors.captionSelector)
-        textOnPageCheck(userScenario.commonExpectedResults.expectedPara1, Selectors.paragraphSelector)
-        textOnPageCheck(userScenario.commonExpectedResults.hintText, Selectors.hintTextSelector)
-        inputFieldValueCheck("sf74ReferenceId", Selectors.sf74ReferenceIdValueSelector, "123456789012")
-        buttonCheck(userScenario.commonExpectedResults.continue)
-        welshToggleCheck(userScenario.isWelsh)
+        standardPageElementChecks(outputValue = "123456789012", errorSummary = "Error: ")
       }
 
-      "show an error message when user passes alphabets " which {
+      "show an error message when user passes digits other than numbers " which {
         implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = getUserSession(userScenario.isAgent)
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
 
         def form: Form[String] = new FormsProvider().sf74ReferenceIdForm
-        val htmlFormat = underTest(form.bind(Map(SF74ReferenceForm.sf74ReferenceId -> "SF74123456")), taxYearEOY)
+        val htmlFormat = underTest(form.bind(Map(SF74ReferenceForm.sf74ReferenceId -> "SF74/123456")), taxYearEOY)
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
-        titleCheck("Error: " + userScenario.commonExpectedResults.expectedTitle, userScenario.isWelsh)
         errorAboveElementCheck(userScenario.commonExpectedResults.invalidErrorMessage, Some("sf74ReferenceId"))
         errorSummaryCheck(userScenario.commonExpectedResults.invalidErrorMessage, "#sf74ReferenceId")
-        captionCheck(userScenario.commonExpectedResults.expectedCaption(taxYearEOY), Selectors.captionSelector)
-        textOnPageCheck(userScenario.commonExpectedResults.expectedPara1, Selectors.paragraphSelector)
-        textOnPageCheck(userScenario.commonExpectedResults.hintText, Selectors.hintTextSelector)
-        inputFieldValueCheck("sf74ReferenceId", Selectors.sf74ReferenceIdValueSelector, "SF74123456")
-        buttonCheck(userScenario.commonExpectedResults.continue)
-        welshToggleCheck(userScenario.isWelsh)
-      }
-
-      "show an error message when user passes special characters " which {
-        implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = getUserSession(userScenario.isAgent)
-        implicit val messages: Messages = getMessages(userScenario.isWelsh)
-
-        def form: Form[String] = new FormsProvider().sf74ReferenceIdForm
-        val htmlFormat = underTest(form.bind(Map(SF74ReferenceForm.sf74ReferenceId -> "123/123456")), taxYearEOY)
-        implicit val document: Document = Jsoup.parse(htmlFormat.body)
-        titleCheck("Error: " + userScenario.commonExpectedResults.expectedTitle, userScenario.isWelsh)
-        errorAboveElementCheck(userScenario.commonExpectedResults.invalidErrorMessage, Some("sf74ReferenceId"))
-        errorSummaryCheck(userScenario.commonExpectedResults.invalidErrorMessage, "#sf74ReferenceId")
-        captionCheck(userScenario.commonExpectedResults.expectedCaption(taxYearEOY), Selectors.captionSelector)
-        textOnPageCheck(userScenario.commonExpectedResults.expectedPara1, Selectors.paragraphSelector)
-        textOnPageCheck(userScenario.commonExpectedResults.hintText, Selectors.hintTextSelector)
-        inputFieldValueCheck("sf74ReferenceId", Selectors.sf74ReferenceIdValueSelector, "123/123456")
-        buttonCheck(userScenario.commonExpectedResults.continue)
-        welshToggleCheck(userScenario.isWelsh)
+        standardPageElementChecks(outputValue = "SF74/123456", errorSummary = "Error: ")
       }
 
     }
