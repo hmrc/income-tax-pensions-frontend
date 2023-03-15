@@ -23,7 +23,7 @@ import models.mongo.{PensionsCYAModel, PensionsUserData}
 import models.requests.UserSessionDataRequest
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.PensionSessionService
+import services.{PensionSessionService, ShortServiceRefundsService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.shortServiceRefunds.TaxableRefundAmountView
@@ -34,6 +34,7 @@ import scala.concurrent.Future
 @Singleton
 class TaxableRefundAmountController@Inject()(actionsProvider: ActionsProvider,
                                              pensionSessionService: PensionSessionService,
+                                             shortServiceRefundsService: ShortServiceRefundsService,
                                              view: TaxableRefundAmountView,
                                              formsProvider: FormsProvider,
                                              errorHandler: ErrorHandler)
@@ -67,10 +68,9 @@ class TaxableRefundAmountController@Inject()(actionsProvider: ActionsProvider,
                                    yesNo: Boolean,
                                    amount: Option[BigDecimal],
                                    taxYear: Int)(implicit request: UserSessionDataRequest[T]) = {
-    val updatedCyaModel: PensionsCYAModel = pensionUserData.pensions.copy(
-      shortServiceRefunds = pensionUserData.pensions.shortServiceRefunds.copy(
-        shortServiceRefund = Some(yesNo),
-        shortServiceRefundCharge = amount))
+
+    val updatedCyaModel: PensionsCYAModel = shortServiceRefundsService.updateCyaWithShortServiceRefundGatewayQuestion(
+       pensionUserData, yesNo, amount)
 
     pensionSessionService.createOrUpdateSessionData(request.user,
       updatedCyaModel, taxYear, pensionUserData.isPriorSubmission)(errorHandler.internalServerError()) {

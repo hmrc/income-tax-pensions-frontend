@@ -120,6 +120,28 @@ class TaxableRefundAmountControllerISpec
       result.headers("location").head shouldBe shortServiceRefundsCYAUrl(taxYearEOY)
     }
 
+    //TODO: A bit confusing what these IT tests are doing. tests are saving values directly in DB using `insertCyaData`
+    //That shouldn't be the case or if its saved directly then IT tests should assert values what urlPost has done,
+    //because insertCyaData is unvalidated data saved that has not gone through service logic
+    "clears shortServiceRefunds and redirect to next page when user selects no" in {
+      lazy implicit val result: WSResponse = {
+        dropPensionsDB()
+        authoriseAgentOrIndividual(aUser.isAgent)
+        val shortServiceRefundViewModel = aShortServiceRefundsViewModel
+        val formData = Map(RadioButtonAmountForm.yesNo -> "false")
+        insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(shortServiceRefunds = shortServiceRefundViewModel)), aUserRequest)
+        urlPost(
+          fullUrl(shortServiceTaxableRefundUrl(taxYearEOY)),
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
+          follow = false,
+          body = formData)
+      }
+      result.status shouldBe SEE_OTHER
+      result.headers("location").head shouldBe shortServiceRefundsCYAUrl(taxYearEOY)
+      //TODO: We should verify that data saved is what we expect in this case Line:130 `aShortServiceRefundsViewModel`
+      //should be become empty as we submitted with false
+    }
+
     "return an error when form is submitted with no entry" which {
       lazy val result: WSResponse = {
         dropPensionsDB()
