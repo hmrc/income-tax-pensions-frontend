@@ -43,12 +43,10 @@ object StatusHelper {
   }
 
   def pensionLifetimeAllowanceIsUpdated(prior: Option[AllPensionsData]): Boolean = {
-
     val taxCharges: Option[PensionSavingsTaxCharges] = prior.flatMap(_.pensionCharges.flatMap(_.pensionSavingsTaxCharges))
 
     taxCharges.map(_.lumpSumBenefitTakenInExcessOfLifetimeAllowance).isDefined ||
       taxCharges.map(_.benefitInExcessOfLifetimeAllowance).isDefined
-
   }
 
   def unauthorisedPaymentsFromPensionsIsUpdated(prior: Option[AllPensionsData]): Boolean = {
@@ -66,12 +64,10 @@ object StatusHelper {
   
   def incomeFromOverseasPensionsIsUpdated(cya: Option[PensionsCYAModel]): Boolean =
     cya.flatMap((_.incomeFromOverseasPensions.paymentsFromOverseasPensionsQuestion)).isDefined
-
-  // TODO: implement when we add the page
+  
   def overseasPensionsTransferChargesIsUpdated(cya: Option[PensionsCYAModel]): Boolean =
     cya.flatMap((_.transfersIntoOverseasPensions.transferPensionSavings)).isDefined
-
-  // TODO: implement when we add the page
+  
   def shortServiceRefundsIsUpdated(cya: Option[PensionsCYAModel]): Boolean =
     cya.flatMap((_.shortServiceRefunds.shortServiceRefund)).isDefined
 
@@ -89,8 +85,13 @@ object StatusHelper {
     
   def unauthorisedPaymentsHasPriorData(prior: Option[AllPensionsData]): Boolean =
     prior.exists(_.pensionCharges.exists(_.pensionSchemeUnauthorisedPayments.nonEmpty))
-    
+  
   def incomeFromOverseasPensionsHasPriorData(prior: Option[AllPensionsData]): Boolean =
     prior.exists(_.pensionIncome.exists(_.foreignPension.nonEmpty))
   
+  def transferIntoOverseasPensionHasPriorData(prior: Option[AllPensionsData]): Boolean =
+    prior.exists(_.pensionCharges.exists(_.pensionSchemeOverseasTransfers.nonEmpty))
+    
+  def shortServiceRefundsHasPriorData(prior: Option[AllPensionsData]): Boolean =
+    prior.exists(_.pensionCharges.exists(_.overseasPensionContributions.nonEmpty))
 }

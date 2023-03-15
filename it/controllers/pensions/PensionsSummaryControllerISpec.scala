@@ -67,7 +67,6 @@ class PensionsSummaryControllerISpec extends IntegrationTest with ViewHelpers wi
     val updated: String
     val cannotUpdate: String
     val toDo: String
-    val paymentsToOverseasPensionsText: String
   }
 
   object CommonExpectedEN extends CommonExpectedResults {
@@ -77,7 +76,6 @@ class PensionsSummaryControllerISpec extends IntegrationTest with ViewHelpers wi
     val updated = "Updated"
     val cannotUpdate = "Cannot update"
     val toDo = "To do"
-    val paymentsToOverseasPensionsText = "Payments into overseas pensions"
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
@@ -175,13 +173,6 @@ class PensionsSummaryControllerISpec extends IntegrationTest with ViewHelpers wi
             textOnPageCheck(userScenario.commonExpectedResults.updated, summaryListStatusTagSelector(5))
           }
 
-          "has a payments into overseas pensions section" which {
-            //TODO: Change to use the href below when pension lifetime allowance cya page available
-            //linkCheck("Payments into overseas pensions", unauthorisedPaymentsFromPensionsLink, checkUnauthorisedPaymentsFromPensionsLinkCyaUrl(taxYear))
-            linkCheck(userScenario.commonExpectedResults.paymentsToOverseasPensionsText, paymentsToOverseasPensionsLink, "#")
-            textOnPageCheck(userScenario.commonExpectedResults.updated, summaryListStatusTagSelector(6))
-          }
-
           buttonCheck(userScenario.commonExpectedResults.buttonText, buttonSelector)
 
           welshToggleCheck(userScenario.isWelsh)
@@ -238,13 +229,6 @@ class PensionsSummaryControllerISpec extends IntegrationTest with ViewHelpers wi
           "has an unauthorised payments from pensions section" which {
             linkCheck("Unauthorised payments from pensions", unauthorisedPaymentsFromPensionsLink, checkUnauthorisedPaymentsCyaUrl(taxYear))
             textOnPageCheck(userScenario.commonExpectedResults.updated, summaryListStatusTagSelector(5))
-          }
-
-          "has a payments into overseas pensions section" which {
-            //TODO: Change to use the href below when pension lifetime allowance cya page available
-            //linkCheck("Payments into overseas pensions", unauthorisedPaymentsFromPensionsLink, checkUnauthorisedPaymentsFromPensionsLinkCyaUrl(taxYear))
-            linkCheck(userScenario.commonExpectedResults.paymentsToOverseasPensionsText, paymentsToOverseasPensionsLink, "#")
-            textOnPageCheck(userScenario.commonExpectedResults.updated, summaryListStatusTagSelector(6))
           }
 
           buttonCheck(userScenario.commonExpectedResults.buttonText, buttonSelector)
@@ -310,13 +294,6 @@ class PensionsSummaryControllerISpec extends IntegrationTest with ViewHelpers wi
             textOnPageCheck(userScenario.commonExpectedResults.toDo, summaryListStatusTagSelector(5))
           }
 
-          "has a payments into overseas pensions section" which {
-            //TODO: Change to use the href below when pension lifetime allowance cya page available
-            //linkCheck("Payments into overseas pensions", unauthorisedPaymentsFromPensionsLink, checkUnauthorisedPaymentsFromPensionsLinkCyaUrl(taxYear))
-            linkCheck(userScenario.commonExpectedResults.paymentsToOverseasPensionsText, paymentsToOverseasPensionsLink, "#")
-            textOnPageCheck(userScenario.commonExpectedResults.toDo, summaryListStatusTagSelector(6))
-          }
-
           buttonCheck(userScenario.commonExpectedResults.buttonText, buttonSelector)
 
           welshToggleCheck(userScenario.isWelsh)
@@ -371,13 +348,6 @@ class PensionsSummaryControllerISpec extends IntegrationTest with ViewHelpers wi
             textOnPageCheck(userScenario.commonExpectedResults.updated, summaryListStatusTagSelector(5))
           }
 
-          "has a payments into overseas pensions section" which {
-            //TODO: Change to use the href below when pension lifetime allowance cya page available
-            //linkCheck("Payments into overseas pensions", unauthorisedPaymentsFromPensionsLink, checkUnauthorisedPaymentsFromPensionsLinkCyaUrl(taxYear))
-            linkCheck(userScenario.commonExpectedResults.paymentsToOverseasPensionsText, paymentsToOverseasPensionsLink, "#")
-            textOnPageCheck(userScenario.commonExpectedResults.updated, summaryListStatusTagSelector(6))
-          }
-
           buttonCheck(userScenario.commonExpectedResults.buttonText, buttonSelector)
 
           welshToggleCheck(userScenario.isWelsh)
@@ -430,13 +400,6 @@ class PensionsSummaryControllerISpec extends IntegrationTest with ViewHelpers wi
           "has an unauthorised payments from pensions section" which {
             linkCheck("Unauthorised payments from pensions", unauthorisedPaymentsFromPensionsLink, unauthorisedPaymentsUrl(taxYear))
             textOnPageCheck(userScenario.commonExpectedResults.toDo, summaryListStatusTagSelector(5))
-          }
-
-          "has a payments into overseas pensions section" which {
-            //TODO: Change to use the href below when pension lifetime allowance cya page available
-            //linkCheck("Payments into overseas pensions", unauthorisedPaymentsFromPensionsLink, checkUnauthorisedPaymentsFromPensionsLinkCyaUrl(taxYear))
-            linkCheck(userScenario.commonExpectedResults.paymentsToOverseasPensionsText, paymentsToOverseasPensionsLink, "#")
-            textOnPageCheck(userScenario.commonExpectedResults.toDo, summaryListStatusTagSelector(6))
           }
 
           buttonCheck(userScenario.commonExpectedResults.buttonText, buttonSelector)

@@ -17,7 +17,6 @@
 package views.shortServiceRefunds
 
 import builders.ShortServiceRefundsViewModelBuilder.{aShortServiceRefundsViewModel, minimalShortServiceRefundsViewModel}
-import models.AuthorisationRequest
 import models.requests.UserSessionDataRequest
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document

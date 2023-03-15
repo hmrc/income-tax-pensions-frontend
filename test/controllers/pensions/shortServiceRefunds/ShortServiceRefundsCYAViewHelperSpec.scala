@@ -176,7 +176,7 @@ class ShortServiceRefundsCYAViewHelperSpec extends AnyWordSpec with Matchers {
   }
 
   private def stubbedMessages() = {
-    import collection.JavaConverters._
+    import scala.jdk.CollectionConverters._
 
     val messagesApi = stubMessagesApi(
       Map(

@@ -18,31 +18,36 @@
 @import views.html.templates.helpers.Heading
 @import views.html.templates.helpers.Link
 @import models.mongo.PensionsCYAModel
+@import models.pension.AllPensionsData
 @import utils.StatusHelper._
 
 @this(layout: Layout, heading: Heading, govUkButton: GovukButton, formWithCSRF: FormWithCSRF, link:Link)
 
-@(taxYear: Int, cya: Option[PensionsCYAModel], hasPriorData: Boolean)(implicit request: AuthorisationRequest[_], messages: Messages, appConfig: AppConfig)
+@(taxYear: Int, cya: Option[PensionsCYAModel],prior: Option[AllPensionsData])(implicit request: AuthorisationRequest[_], messages: Messages, appConfig: AppConfig)
+
+
+@paymentsOverseasPensionsUrl() = @{
+  controllers.pensions.paymentsIntoOverseasPensions.routes.PaymentIntoPensionSchemeController.show(taxYear).url
+}
 
 @incomeOverseasPensionsUrl() = @{
- if( hasPriorData )
+ if( incomeFromOverseasPensionsHasPriorData(prior) )
    controllers.pensions.incomeFromOverseasPensions.routes.IncomeFromOverseasPensionsCYAController.show(taxYear).url
  else
    controllers.pensions.incomeFromOverseasPensions.routes.PensionOverseasIncomeStatus.show(taxYear).url
 }
 
 @transferIntoOverseasPensionUrl() = @{
- if( hasPriorData )
+ if( transferIntoOverseasPensionHasPriorData(prior))
   controllers.pensions.transferIntoOverseasPensions.routes.TransferIntoOverseasPensionsCYAController.show(taxYear).url
  else
   controllers.pensions.transferIntoOverseasPensions.routes.TransferPensionSavingsController.show(taxYear).url
 }
 
-@paymentsOverseasPensionsUrl() = @{
-  controllers.pensions.paymentsIntoOverseasPensions.routes.PaymentIntoPensionSchemeController.show(taxYear).url
-}
-
 @shortServiceRefundsUrl() = @{
+  if(shortServiceRefundsHasPriorData(prior))
+    controllers.pensions.shortServiceRefunds.routes.ShortServiceRefundsCYAController.show(taxYear).url
+  else
     controllers.pensions.shortServiceRefunds.routes.TaxableRefundAmountController.show(taxYear).url
 }
 
