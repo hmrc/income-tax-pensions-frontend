@@ -200,6 +200,22 @@ object AllPensionsData {
     )
   }
 
+  private def fromOverseasPensionContribution(overseasPensionContribution: Seq[OverseasPensionContribution]) = {
+    overseasPensionContribution.map(oPC =>
+      Relief(
+        customerReferenceNumberQuestion = oPC.customerReference,
+        employerPaymentsAmount = Some(oPC.exemptEmployersPensionContribs),
+        reliefType = Some(getTaxReliefQuestion(oPC)),
+        qualifyingOverseasPensionSchemeReferenceNumber = oPC.migrantMemReliefQopsRefNo,
+        doubleTaxationCountryCode = oPC.dblTaxationCountry,
+        doubleTaxationCountryArticle = oPC.dblTaxationArticle,
+        doubleTaxationCountryTreaty = oPC.dblTaxationTreaty,
+        doubleTaxationReliefAmount = oPC.dblTaxationRelief,
+        sf74Reference = oPC.sf74Reference
+      )
+    )
+  }
+
   private def getTaxReliefQuestion(overseasPensionContribution: OverseasPensionContribution): String = {
     if (overseasPensionContribution.sf74Reference.isDefined) {
       TaxReliefQuestion.TransitionalCorrespondingRelief

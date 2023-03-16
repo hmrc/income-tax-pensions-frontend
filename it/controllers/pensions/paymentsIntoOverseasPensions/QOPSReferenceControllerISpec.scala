@@ -20,14 +20,13 @@ import builders.PaymentsIntoOverseasPensionsViewModelBuilder.aPaymentsIntoOverse
 import builders.PensionsUserDataBuilder.{aPensionsUserData, anPensionsUserDataEmptyCya, pensionUserDataWithOverseasPensions}
 import builders.UserBuilder.aUserRequest
 import forms.QOPSReferenceNumberForm
-import models.pension.charges.PaymentsIntoOverseasPensionsViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import utils.CommonUtils
-import utils.PageUrls.{OverseasPensionPages, pensionSummaryUrl}
+import utils.PageUrls.{PaymentIntoOverseasPensions, pensionSummaryUrl}
 
 class QOPSReferenceControllerISpec extends CommonUtils with BeforeAndAfterEach {
   object Selectors {
@@ -57,7 +56,7 @@ class QOPSReferenceControllerISpec extends CommonUtils with BeforeAndAfterEach {
   }
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
-    val expectedParagraph1: String = "You can find this on your pension statement."
+     val expectedParagraph1: String = "You can find this on your pension statement."
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
@@ -73,13 +72,13 @@ class QOPSReferenceControllerISpec extends CommonUtils with BeforeAndAfterEach {
   }
 
   object CommonExpectedEN extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear:Int) => s"Payments into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val expectedTitle: String = "Qualifying overseas pension scheme (QOPS) reference number (optional)"
-    val expectedHeading: String = "Qualifying overseas pension scheme (QOPS) reference number (optional)"
-    val expectedErrorTitle: String = s"Error: $expectedTitle"
-    val hintText: String = "For example, QOPS123456"
-    val expectedButtonText: String = "Continue"
-    val expectedIncorrectFormatError: String = "Enter a six digit number"
+     val expectedCaption: Int => String = (taxYear:Int) => s"Payments into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
+     val expectedTitle: String = "Qualifying overseas pension scheme (QOPS) reference number (optional)"
+     val expectedHeading: String = "Qualifying overseas pension scheme (QOPS) reference number (optional)"
+     val expectedErrorTitle: String = s"Error: $expectedTitle"
+     val hintText: String = "For example, QOPS123456"
+     val expectedButtonText: String = "Continue"
+     val expectedIncorrectFormatError: String = "Enter a six digit number"
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
@@ -93,7 +92,7 @@ class QOPSReferenceControllerISpec extends CommonUtils with BeforeAndAfterEach {
   }
 
   val inputName: String = "qopsReferenceId"
-  implicit val qopsReferenceUrl: Int => String = (taxYear: Int) => OverseasPensionPages.qopsReferenceUrl(taxYear)
+  implicit val qopsReferenceUrl: Int => String = (taxYear: Int) => PaymentIntoOverseasPensions.qopsReferenceUrl(taxYear)
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(
     UserScenario(isWelsh = false, isAgent = false, CommonExpectedEN, Some(ExpectedIndividualEN)),
@@ -110,12 +109,7 @@ class QOPSReferenceControllerISpec extends CommonUtils with BeforeAndAfterEach {
         import user.commonExpectedResults._
 
         "render the 'QOPS' page with correct content and no pre-filling" which {
-          val relief = aPensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs.head.copy(qualifyingOverseasPensionSchemeReferenceNumber = None)
-          val viewModel: PaymentsIntoOverseasPensionsViewModel = aPensionsUserData.pensions.paymentsIntoOverseasPensions.copy(reliefs = Seq(relief))
-          val cya = aPensionsUserData.pensions.copy(paymentsIntoOverseasPensions = viewModel)
-          val userData = aPensionsUserData.copy(pensions = cya)
-          implicit lazy val result: WSResponse = showPage(user, userData)
-
+          implicit lazy val result: WSResponse = showPage(user, anPensionsUserDataEmptyCya)
 
 
           "has an OK status" in {

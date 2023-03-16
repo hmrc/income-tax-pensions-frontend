@@ -25,8 +25,10 @@ import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.paymentsIntoOverseasPensions.SF74ReferenceView
+
 import javax.inject.{Inject, Singleton}
 import models.mongo.PensionsUserData
+import models.pension.charges.Relief
 import models.requests.UserSessionDataRequest
 
 import scala.concurrent.Future
@@ -60,12 +62,12 @@ class SF74ReferenceController @Inject()(
   private def updateSessionData[T](pensionUserData: PensionsUserData,
                                    sf74Reference : Option[String],
                                    taxYear: Int)(implicit request: UserSessionDataRequest[T]) = {
-    val reliefs = pensionUserData.pensions.paymentsIntoOverseasPensions.reliefs.head.copy(
-      sf74Reference = (sf74Reference))
-
-    val updatedCyaModel =
-      pensionUserData.pensions.copy(
-        paymentsIntoOverseasPensions = pensionUserData.pensions.paymentsIntoOverseasPensions.copy(reliefs = Seq(reliefs)))
+    val updatedCyaModel = pensionUserData.pensions.copy(
+      paymentsIntoOverseasPensions = pensionUserData.pensions.paymentsIntoOverseasPensions.copy(
+        reliefs = Seq(pensionUserData.pensions.paymentsIntoOverseasPensions.reliefs.head.copy(
+        sf74Reference = sf74Reference
+      )))
+    )
 
     pensionSessionService.createOrUpdateSessionData(request.user,
       updatedCyaModel, taxYear, pensionUserData.isPriorSubmission)(errorHandler.internalServerError()) {

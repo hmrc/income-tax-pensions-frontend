@@ -1,0 +1,126 @@
+/*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package controllers.pensions.paymentsIntoOverseasPensions
+
+import config.{AppConfig, ErrorHandler}
+import controllers.predicates.ActionsProvider
+import forms.FormsProvider
+import play.api.i18n.I18nSupport
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import services.PensionSessionService
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import utils.{Clock, SessionHelper}
+import views.html.pensions.paymentsIntoOverseasPensions.PensionReliefTypeView
+import controllers.pensions.routes.OverseasPensionsSummaryController
+import controllers.pensions.paymentsIntoOverseasPensions.routes.{PensionsCustomerReferenceNumberController, QOPSReferenceController}
+import controllers.validateScheme
+import models.pension.charges.{Relief, TaxReliefQuestion}
+import models.requests.UserSessionDataRequest
+
+import javax.inject.{Inject, Singleton}
+import scala.concurrent.{ExecutionContext, Future}
+
+@Singleton
+class PensionReliefTypeController@Inject()(actionsProvider: ActionsProvider,
+                                           pensionSessionService: PensionSessionService,
+                                           view: PensionReliefTypeView,
+                                           formsProvider: FormsProvider,
+                                           errorHandler: ErrorHandler,
+                                           ec: ExecutionContext)
+                                          (implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock)
+  extends FrontendController(mcc) with I18nSupport with SessionHelper {
+
+  def show(taxYear: Int, reliefIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
+    implicit sessionData =>
+
+      validateScheme(reliefIndex, `sessionData`.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs) match {
+        case Right(Some(relief)) =>
+          relief.reliefType.fold {
+            Future.successful(Ok(view(formsProvider.overseasPensionsReliefTypeForm, taxYear, reliefIndex)))
+          } {
+            reliefType =>
+              Future.successful(Ok(view(formsProvider.overseasPensionsReliefTypeForm.fill(reliefType), taxYear, reliefIndex)))
+          }
+        case Right(None) =>
+          Future.successful(Redirect(PensionsCustomerReferenceNumberController.show(taxYear)))
+        case _ =>
+          Future.successful(Redirect(OverseasPensionsSummaryController.show(taxYear)))
+      }
+  }
+
+  def submit(taxYear: Int, reliefIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
+    implicit sessionData =>
+      formsProvider.overseasPensionsReliefTypeForm.bindFromRequest().fold(
+        formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear, reliefIndex))),
+        newTaxReliefQuestion => updateViewModel(newTaxReliefQuestion, reliefIndex, taxYear, sessionData)(request = sessionData)
+      )
+  }
+
+  private def updateViewModel(
+                               taxReliefQuestion: String,
+                               indexOpt: Option[Int],
+                               taxYear: Int,
+                               sessionData: UserSessionDataRequest[AnyContent])(implicit request: UserSessionDataRequest[_]): Future[Result] = {
+
+    validateScheme(indexOpt, `sessionData`.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs) match {
+      case Right(Some(relief)) =>
+        if (!sessionData.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs(indexOpt.get).reliefType.contains(taxReliefQuestion)) {
+          val updatedReliefs: Relief = relief.copy(
+            reliefType = Some(taxReliefQuestion),
+            doubleTaxationCountryCode = None,
+            doubleTaxationCountryArticle = None,
+            doubleTaxationCountryTreaty = None,
+            doubleTaxationReliefAmount = None,
+            sf74Reference = None,
+            qualifyingOverseasPensionSchemeReferenceNumber = None
+          )
+          pensionSessionService.createOrUpdateSessionData(
+            sessionData.user,
+            sessionData.pensionsUserData.pensions.copy(paymentsIntoOverseasPensions =
+              sessionData.pensionsUserData.pensions.paymentsIntoOverseasPensions.copy(
+                reliefs = sessionData.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs.updated(
+                  indexOpt.get, updatedReliefs))),
+            taxYear,
+            sessionData.pensionsUserData.isPriorSubmission
+          )(errorHandler.internalServerError()) {
+            redirectBaseOnTaxReliefQuestion(taxReliefQuestion, taxYear, indexOpt)(mcc, request)
+          }
+        } else {
+          Future.successful(redirectBaseOnTaxReliefQuestion(taxReliefQuestion, taxYear, indexOpt)(mcc, request))
+        }
+      case _ =>
+        Future.successful(Redirect(PensionsCustomerReferenceNumberController.show(taxYear)))
+    }
+  }
+
+  private def redirectBaseOnTaxReliefQuestion(taxReliefQuestion: String,
+                                              taxYear: Int,
+                                              reliefIndex: Option[Int]
+                                             )(implicit mcc: MessagesControllerComponents, request: UserSessionDataRequest[_]): Result =
+    taxReliefQuestion match {
+    case TaxReliefQuestion.DoubleTaxationRelief =>
+      Ok(view(formsProvider.overseasPensionsReliefTypeForm, taxYear, reliefIndex)) //todo redirect to "Double taxation agreement details" Page when built
+    case TaxReliefQuestion.MigrantMemberRelief =>
+     Redirect(QOPSReferenceController.show(taxYear))
+    case TaxReliefQuestion.TransitionalCorrespondingRelief =>
+      Ok(view(formsProvider.overseasPensionsReliefTypeForm, taxYear, reliefIndex)) //todo redirect to "SF74 reference" Page when built
+    case TaxReliefQuestion.NoTaxRelief =>
+      Ok(view(formsProvider.overseasPensionsReliefTypeForm, taxYear, reliefIndex)) //todo redirect to "CYA" Page when built
+    case _ =>
+      BadRequest(view(formsProvider.overseasPensionsReliefTypeForm, taxYear, reliefIndex))
+  }
+}

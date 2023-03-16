@@ -20,13 +20,12 @@ import builders.PaymentsIntoOverseasPensionsViewModelBuilder.aPaymentsIntoOverse
 import builders.PensionsUserDataBuilder.{aPensionsUserData, anPensionsUserDataEmptyCya, pensionUserDataWithOverseasPensions}
 import builders.UserBuilder.aUserRequest
 import forms.PensionCustomerReferenceNumberForm
-import models.pension.charges.PaymentsIntoOverseasPensionsViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterEach
 import play.api.libs.ws.WSResponse
 import utils.CommonUtils
-import utils.PageUrls.{OverseasPensionPages, pensionSummaryUrl}
+import utils.PageUrls.{PaymentIntoOverseasPensions, pensionSummaryUrl}
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 
 
@@ -104,7 +103,7 @@ class PensionsCustomerReferenceNumberControllerISpec extends CommonUtils with Be
   }
 
   val inputName: String = "pensionsCustomerReferenceNumberId"
-  implicit val pensionCustomerReferenceNumberUrl: Int => String = (taxYear: Int) => OverseasPensionPages.pensionCustomerReferenceNumberUrl(taxYear)
+  implicit val pensionCustomerReferenceNumberUrl: Int => String = (taxYear: Int) => PaymentIntoOverseasPensions.pensionCustomerReferenceNumberUrl(taxYear)
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(
     UserScenario(isWelsh = false, isAgent = false, CommonExpectedEN, Some(ExpectedIndividualEN)),
@@ -121,12 +120,7 @@ class PensionsCustomerReferenceNumberControllerISpec extends CommonUtils with Be
         import user.commonExpectedResults._
 
         "render the customer reference number page with correct content and no pre-filling" which {
-
-          val relief = aPensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs.head.copy(customerReferenceNumberQuestion = None)
-          val viewModel: PaymentsIntoOverseasPensionsViewModel = aPensionsUserData.pensions.paymentsIntoOverseasPensions.copy(reliefs = Seq(relief))
-          val cya = aPensionsUserData.pensions.copy(paymentsIntoOverseasPensions = viewModel)
-          val userData = aPensionsUserData.copy(pensions = cya)
-          implicit lazy val result: WSResponse = showPage(user, userData)
+          implicit lazy val result: WSResponse = showPage(user, anPensionsUserDataEmptyCya)
 
 
           "has an OK status" in {
@@ -241,8 +235,6 @@ class PensionsCustomerReferenceNumberControllerISpec extends CommonUtils with Be
       val pensionsViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(
         reliefs = Seq(aPaymentsIntoOverseasPensionsViewModel.reliefs.head.copy(
           customerReferenceNumberQuestion = Some("PENSIONAINCOME245"))))
-
-
       val pensionUserData = pensionUserDataWithOverseasPensions(pensionsViewModel)
 
       lazy val result: WSResponse = submitPage(pensionUserData, form)
