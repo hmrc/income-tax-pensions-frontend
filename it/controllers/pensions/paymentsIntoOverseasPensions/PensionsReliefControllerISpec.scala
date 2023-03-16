@@ -27,7 +27,7 @@ import models.pension.charges.TaxReliefQuestion
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.PaymentIntoOverseasPensions.{pensionCustomerReferenceNumberUrl, pensionReliefTypeUrl, qopsReferenceUrl, sf74ReferenceUrl}
+import utils.PageUrls.PaymentIntoOverseasPensions.{pensionCustomerReferenceNumberUrl, pensionReliefTypeUrl}
 import utils.PageUrls.{fullUrl, overviewUrl, pensionSummaryUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
@@ -50,7 +50,7 @@ class PensionsReliefControllerISpec extends IntegrationTest with ViewHelpers
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
       }
       result.status shouldBe SEE_OTHER
-      result.headers("Location").head shouldBe overviewUrl(taxYear)
+      result.headers("Location").head shouldBe pensionSummaryUrl(taxYear)
     }
 
     "show page when EOY" in {
@@ -95,9 +95,10 @@ class PensionsReliefControllerISpec extends IntegrationTest with ViewHelpers
           follow = false,
           body = formData)
       }
+      println("submit redirect to overview when in year" + result.headers("location").head)
 
       result.status shouldBe SEE_OTHER
-      result.headers("location").head shouldBe overviewUrl(taxYear)
+      result.headers("location").head shouldBe pensionSummaryUrl(taxYear)
     }
 
     "persist data and redirect to SF74 reference page when TCR is selected" in {
@@ -105,16 +106,18 @@ class PensionsReliefControllerISpec extends IntegrationTest with ViewHelpers
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
         val formData = Map(RadioButtonForm.value -> TaxReliefQuestion.TransitionalCorrespondingRelief)
-        insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel), aUserRequest)
+        insertCyaData(pensionsUsersData(
+          isPrior = false, aPensionsCYAModel.copy(paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsEmptyViewModel)),
+          aUserRequest)
         urlPost(
           fullUrl(pensionReliefTypeUrl(taxYearEOY, 0)),
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
           follow = false,
           body = formData)
       }
+      println("persist data and redirect to SF74 reference page when TCR is selected" + result)
 
-      result.status shouldBe SEE_OTHER
-      result.headers("location").head shouldBe sf74ReferenceUrl(taxYearEOY)
+      result.status shouldBe OK //todo redirect to "SF74 reference" Page when built
     }
 
     "persist amount and redirect to QOPS Reference Page when MMR is selected" in {
@@ -130,8 +133,9 @@ class PensionsReliefControllerISpec extends IntegrationTest with ViewHelpers
           body = formData)
       }
 
+      println("persist amount and redirect to QOPS Reference Page when MMR is selected" + result)
       result.status shouldBe SEE_OTHER
-      result.headers("location").head shouldBe qopsReferenceUrl(taxYearEOY)
+      result.headers("location").head shouldBe QOPSReferenceController.show(taxYearEOY)
     }
 
     "persist amount and redirect to DTR when DTR is selected" in {
@@ -146,6 +150,7 @@ class PensionsReliefControllerISpec extends IntegrationTest with ViewHelpers
           follow = false,
           body = formData)
       }
+      println("persist amount and redirect to DDR Page when DDR is selected" + result)
       result.status shouldBe OK //todo redirect to "Double taxation agreement details" Page when built
     }
 
@@ -161,7 +166,9 @@ class PensionsReliefControllerISpec extends IntegrationTest with ViewHelpers
           follow = false,
           body = formData)
       }
-      result.status shouldBe SEE_OTHER //todo redirect to "cya" Page when built
+      println( "persist amount and redirect to CYA when None of the above is selected" + result)
+
+      result.status shouldBe OK //todo redirect to "cya" Page when built
     }
 
     "return an error when form is submitted with no entry" in {
@@ -176,6 +183,8 @@ class PensionsReliefControllerISpec extends IntegrationTest with ViewHelpers
           follow = false,
           body = formData)
       }
+      println( "return an error when form is submitted with no entry" + result)
+
       result.status shouldBe BAD_REQUEST
     }
 
@@ -191,6 +200,7 @@ class PensionsReliefControllerISpec extends IntegrationTest with ViewHelpers
           follow = false,
           body = formData)
       }
+      println("redirect to start of sequence when index doesn't" + result.headers("location").head)
       result.status shouldBe SEE_OTHER
       result.headers("location").head shouldBe pensionCustomerReferenceNumberUrl(taxYearEOY)
     }

@@ -76,7 +76,7 @@ class PensionsCustomerReferenceNumberController @Inject()(authAction: Authorised
 
 
   private def fillCustomerReferenceNumber(user : User, pensionUserData: PensionsUserData): Form[String] =
-    pensionUserData.pensions.paymentsIntoOverseasPensions.reliefs.head.customerReferenceNumberQuestion
+    pensionUserData.pensions.paymentsIntoOverseasPensions.reliefs(1).customerReferenceNumberQuestion
       .map(referenceForm(user).fill)
       .getOrElse(referenceForm(user))
 
@@ -86,19 +86,14 @@ class PensionsCustomerReferenceNumberController @Inject()(authAction: Authorised
       pensionCustomerReferenceNumber => {
         pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
           case Right(Some(data)) =>
-            data.pensions.paymentsIntoOverseasPensions.reliefs.headOption match {
-              case Some(relief) =>
-            val reliefs = data.pensions.paymentsIntoOverseasPensions.reliefs.head.copy(
-              customerReferenceNumberQuestion = Some(pensionCustomerReferenceNumber))
-            val updatedCyaModel: PensionsCYAModel =
-              data.pensions.copy(
-                paymentsIntoOverseasPensions = data.pensions.paymentsIntoOverseasPensions.copy(reliefs = Seq(reliefs)))
+            val updatedCyaModel: PensionsCYAModel = data.pensions.copy(
+              paymentsIntoOverseasPensions = data.pensions.paymentsIntoOverseasPensions.copy(
+                reliefs = data.pensions.paymentsIntoOverseasPensions.reliefs.updated(
+                  1, data.pensions.paymentsIntoOverseasPensions.reliefs(1).copy(customerReferenceNumberQuestion = Some(pensionCustomerReferenceNumber))
+              )))
             pensionSessionService.createOrUpdateSessionData(request.user,
               updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
               Redirect(PensionsCustomerReferenceNumberController.show(taxYear)) //TODO - redirect to untaxed-employer-payments SASS-3099
-            }
-              case _ =>
-                Future.successful(Redirect(PensionsCustomerReferenceNumberController.show(taxYear)))
             }
           case _ =>
             Future.successful(Redirect(PensionsSummaryController.show(taxYear)))

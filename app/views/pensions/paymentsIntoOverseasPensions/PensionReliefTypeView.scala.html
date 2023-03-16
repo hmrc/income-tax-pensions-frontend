@@ -55,19 +55,16 @@
                 RadioItem(
                     id = Some("value"),
                     value = Some("Migrant member relief"),
-                    checked = form("value").value.contains("Migrant member relief"),
                     content = Text(messages("overseasPension.pensionReliefType.MMR"))
                 ),
                 RadioItem(
                     id = Some("value"),
                     value = Some("Double taxation relief"),
-                    checked = form("value").value.contains("Double taxation relief"),
                     content = Text(messages("overseasPension.pensionReliefType.DTR"))
                 ),
                 RadioItem(
                     id = Some("value"),
                     value = Some("Transitional corresponding relief"),
-                    checked = form("value").value.contains("Transitional corresponding relief"),
                     content = Text(messages("overseasPension.pensionReliefType.TCR"))
                 ),
                 RadioItem(
@@ -78,13 +75,12 @@
                 RadioItem(
                     id = Some("value"),
                     value = Some("No tax relief"),
-                    checked = form("value").value.contains("No tax relief"),
                     content = Text(messages("overseasPension.pensionReliefType.NoneOfThese")))
             )
         )
 
 
-        <p class="govuk-body">@link("https://www.gov.uk/guidance/overseas-pensions-tax-relief-on-your-contributions", "overseasPension.pensionReliefType.link", Some("find-out-more-link"), isExternal = true)</p>
+        <p class="govuk-body">@link("#", "overseasPension.pensionReliefType.link", Some("find-out-more-link"))</p>
 
         @button()
 
