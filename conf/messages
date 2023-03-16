@@ -1075,3 +1075,11 @@ shortServiceRefunds.cya.refundAmount.hidden = Change refund amount
 shortServiceRefunds.cya.nonUk.hidden = Change paid non-UK tax
 shortServiceRefunds.cya.nonUkAmount.hidden = Change amount of non-UK tax
 shortServiceRefunds.cya.schemesPayingTax.hidden = Change pension schemes paying tax
+
+#SF74 reference
+pensions.paymentsIntoOverseasPensions.sf74Reference.title = SF74 reference
+pensions.paymentsIntoOverseasPensions.sf74Reference.paragraph1.individual = Enter your SF74 reference. You can find this out from your overseas scheme manager.
+pensions.paymentsIntoOverseasPensions.sf74Reference.paragraph1.agent = Enter your client’s SF74 reference. You can find this out from your client’s overseas scheme manager.
+pensions.paymentsIntoOverseasPensions.sf74Reference.hint = For example, ''SF74/1234'', ''SF74/45865'' or ''SF74/123456''
+pensions.paymentsIntoOverseasPensions.sf74Reference.noEntry = Enter your SF74 reference
+pensions.paymentsIntoOverseasPensions.sf74Reference.incorrectFormat = The SF74 reference must be between 1 and 10 digits long, contain only numbers and no special characters

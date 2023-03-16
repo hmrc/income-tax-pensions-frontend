@@ -205,6 +205,9 @@ object PageUrls extends IntegrationTest {
     def qopsReferenceUrl(taxYear: Int): String =
       s"$appUrl/$taxYear/overseas-pensions/payments-into-overseas-pensions/qualifying-overseas-pension-scheme-reference-number"
 
+    def sf74ReferenceUrl(taxYear: Int): String =
+      s"$appUrl/$taxYear/overseas-pensions/payments-into-overseas-pensions/pensions-overseas-sf74"
+
     def pensionCustomerReferenceNumberUrl(taxYear: Int): String =
       s"$appUrl/$taxYear/overseas-pensions/payments-into-overseas-pensions/pensions-customer-reference-number"
   }

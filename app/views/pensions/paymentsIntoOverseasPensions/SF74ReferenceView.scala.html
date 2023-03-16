@@ -1,0 +1,70 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import controllers.pensions.paymentsIntoOverseasPensions.routes._
+@import models.requests.UserSessionDataRequest
+@import views.html.templates.Layout
+@import views.html.templates.helpers.ErrorSummary
+@import views.html.templates.helpers.{Button, ErrorSummary, Heading, InputTextAlt}
+
+@this(
+        layout: Layout,
+        heading: Heading,
+        button: Button,
+        formWithCsrf: FormWithCSRF,
+        inputText: InputTextAlt,
+        errorSummary: ErrorSummary
+)
+
+@(form: Form[String], taxYear: Int)(implicit request: UserSessionDataRequest[_], messages: Messages, appConfig: AppConfig)
+
+@titleText = @{
+    messages("pensions.paymentsIntoOverseasPensions.sf74Reference.title")
+}
+
+@hasFormErrors = @{form.hasErrors}
+
+@layout(pageTitle = titleText,
+    taxYear = Some(taxYear),
+    hasErrors = hasFormErrors,
+    isAgent = request.user.isAgent
+) {
+
+    @errorSummary(form.errors.distinct)
+
+    @heading(titleText, Some(messages("common.paymentsIntoOverseasPensions.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-2")
+
+    <p class="govuk-body">@messages(s"pensions.paymentsIntoOverseasPensions.sf74Reference.paragraph1.${if(request.user.isAgent) "agent" else "individual"}")</p>
+
+    @formWithCsrf(action = SF74ReferenceController.submit(taxYear)) {
+        @inputText(
+            form,
+            id = "sf74ReferenceId",
+            name = "sf74ReferenceId",
+            hint = Some(messages("pensions.paymentsIntoOverseasPensions.sf74Reference.hint")),
+            label = titleText,
+            labelHidden = true,
+            currency = false,
+            classes = Some("govuk-input--width-5"),
+            prefix = "SF74/"
+          )
+        @button()
+    }
+}
+
+@{
+    // $COVERAGE-OFF$
+}
