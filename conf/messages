@@ -124,8 +124,9 @@ common.summary.addAScheme = Add a scheme
 common.summary.needToAddScheme = You need to add one or more pension scheme.
 common.summary.returnToOverviewMsg = If you don’t have a pensions scheme to add you can return to the overview page and come back later.
 
-common.removePensionScheme.title = Are you sure you want to remove {0}?
 
+#################       Common Remove Pension Scheme    ###########################################
+common.removePensionScheme.title = Are you sure you want to remove {0}?
 common.removePensionScheme.p1 = This will remove:
 common.removePensionScheme.p1.bullet1 = The name of the pension scheme
 common.removePensionScheme.p1.bullet2 = Pensions scheme tax reference
