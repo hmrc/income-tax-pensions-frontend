@@ -118,6 +118,7 @@ common.overseasPensions.checkPensionStatement.agent = check their pension statem
 
 common.incomeFromPensions.title = UK pension income
 
+
 #################       Common Summary/Remove Pension Scheme    ###########################################
 common.summary.addAScheme = Add a scheme
 common.summary.needToAddScheme = You need to add one or more pension scheme.
@@ -986,11 +987,6 @@ transferIntoOverseasPensions.cya.amountCharged = Amount charged
 transferIntoOverseasPensions.cya.noAmountCharged = No charge
 transferIntoOverseasPensions.cya.taxOnAmountCharged = Tax on amount charged
 transferIntoOverseasPensions.cya.schemesPayingTax = Schemes paying tax
-transferIntoOverseasPensions.cya.transferIntoOverseasPensions.hidden = Change transfers into overseas pensions
-transferIntoOverseasPensions.cya.amountCharged.hidden = Change amount charged
-transferIntoOverseasPensions.cya.taxOnAmountCharged.hidden = Change tax on amount charged
-transferIntoOverseasPensions.cya.schemesPayingTax.hidden = Change schemes paying tax
-
 transferIntoOverseasPensions.cya.transferIntoOverseasPensions.hidden = Change transfers into overseas pensions
 transferIntoOverseasPensions.cya.amountCharged.hidden = Change amount charged
 transferIntoOverseasPensions.cya.taxOnAmountCharged.hidden = Change tax on amount charged
