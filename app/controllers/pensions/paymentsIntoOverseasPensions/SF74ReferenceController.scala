@@ -25,8 +25,10 @@ import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.paymentsIntoOverseasPensions.SF74ReferenceView
+
 import javax.inject.{Inject, Singleton}
 import models.mongo.PensionsUserData
+import models.pension.charges.Relief
 import models.requests.UserSessionDataRequest
 
 import scala.concurrent.Future
@@ -42,7 +44,7 @@ class SF74ReferenceController @Inject()(
   extends FrontendController(mcc) with I18nSupport with SessionHelper{
 
   def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit userSessionDataRequest =>
-    val sf74Reference = userSessionDataRequest.pensionsUserData.pensions.paymentsIntoOverseasPensions.sf74Reference
+    val sf74Reference = userSessionDataRequest.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs.head.sf74Reference
     sf74Reference match {
       case Some(value) => Future.successful(Ok(view(formsProvider.sf74ReferenceIdForm.fill(value), taxYear)))
       case None => Future.successful(Ok(view(formsProvider.sf74ReferenceIdForm, taxYear)))
@@ -62,8 +64,9 @@ class SF74ReferenceController @Inject()(
                                    taxYear: Int)(implicit request: UserSessionDataRequest[T]) = {
     val updatedCyaModel = pensionUserData.pensions.copy(
       paymentsIntoOverseasPensions = pensionUserData.pensions.paymentsIntoOverseasPensions.copy(
+        reliefs = Seq(pensionUserData.pensions.paymentsIntoOverseasPensions.reliefs.head.copy(
         sf74Reference = sf74Reference
-      )
+      )))
     )
 
     pensionSessionService.createOrUpdateSessionData(request.user,

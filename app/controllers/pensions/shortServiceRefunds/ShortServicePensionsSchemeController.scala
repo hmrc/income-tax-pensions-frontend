@@ -24,7 +24,7 @@ import controllers.validateIndex
 import forms.Countries
 import forms.overseas.PensionSchemeForm.{TcSsrPensionsSchemeFormModel, tcSsrPensionSchemeForm}
 import models.User
-import models.mongo.PensionsUserData
+import models.mongo.{PensionsCYAModel, PensionsUserData}
 import models.pension.charges.OverseasRefundPensionScheme
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -100,7 +100,7 @@ class ShortServicePensionsSchemeController @Inject()(actionsProvider: ActionsPro
       }
     )
   
-  private def updateViewModel(pensionsUserdata: PensionsUserData, scheme: TcSsrPensionsSchemeFormModel, index: Int) = {
+  private def updateViewModel(pensionsUserdata: PensionsUserData, scheme: TcSsrPensionsSchemeFormModel, index: Int): PensionsCYAModel = {
     val viewModel = pensionsUserdata.pensions.shortServiceRefunds
     val updatedScheme = {
       val commonUpdatedScheme = viewModel.refundPensionScheme(index)

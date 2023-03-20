@@ -130,30 +130,30 @@ object PaymentsIntoPensionsCYATestSupport {
     val yes = "Yes"
     val no = "No"
 
-    val paymentsIntoUKPensions = "Payments into UK pensions"
-    val reliefAtSource = "Relief at source (RAS) pension payments"
-    val reliefAtSourceAmount = "Total RAS payments plus tax relief"
-    val oneOff = "One-off RAS payments"
-    val oneOffAmount = "Total one-off RAS payments plus tax relief"
-    val pensionsTaxReliefNotClaimed = "Pensions where tax relief is not claimed"
-    val retirementAnnuity = "Retirement annuity contract payments"
-    val retirementAnnuityAmount = "Total retirement annuity contract payments"
-    val workplacePayments = "Workplace pension payments"
-    val workplacePaymentsAmount = "Total workplace pension payments"
+    val paymentsIntoUKPensions = "Taliadau i bensiynau’r DU"
+    val reliefAtSource = "Taliadau pensiwn rhyddhad wrth y ffynhonnell (RAS)"
+    val reliefAtSourceAmount = "Cyfanswm taliadau RAS ynghyd â rhyddhad treth"
+    val oneOff = "Taliadau untro RAS"
+    val oneOffAmount = "Cyfanswm taliadau untro RAS ynghyd â rhyddhad treth"
+    val pensionsTaxReliefNotClaimed = "Pensiynau lle na chaiff rhyddhad treth ei hawlio"
+    val retirementAnnuity = "Taliadau contract blwydd-dal ymddeol"
+    val retirementAnnuityAmount = "Cyfanswm taliadau contract blwydd-dal ymddeol"
+    val workplacePayments = "Taliadau pensiwn gweithle"
+    val workplacePaymentsAmount = "Cyfanswm y taliadau pensiwn gweithle"
 
     val saveAndContinue = "Save and continue"
     val error = "Sorry, there is a problem with the service"
 
-    val paymentsIntoUKPensionsHidden = "Change payments into UK pensions"
-    val reliefAtSourceHidden = "Change whether relief at source pensions payments were made"
-    val reliefAtSourceAmountHidden = "Change total relief at source pensions payments, plus tax relief"
-    val oneOffHidden = "Change whether one-off relief at source pensions payments were made"
-    val oneOffAmountHidden = "Change total one-off relief at source pensions payments, plus tax relief"
-    val pensionsTaxReliefNotClaimedHidden = "Change whether payments were made into a pension where tax relief was not claimed"
-    val retirementAnnuityHidden = "Change whether retirement annuity contract payments were made"
-    val retirementAnnuityAmountHidden = "Change total retirement annuity contract payments"
-    val workplacePaymentsHidden = "Change whether workplace pension payments were made"
-    val workplacePaymentsAmountHidden = "Change total workplace pension payments"
+    val paymentsIntoUKPensionsHidden = "Newid taliadau i bensiynau’r DU"
+    val reliefAtSourceHidden = "Newid p’un a wnaed taliadau pensiwn rhyddhad wrth y ffynhonnell"
+    val reliefAtSourceAmountHidden = "Newid cyfanswm y taliadau pensiwn rhyddhad wrth y ffynhonnell, ynghyd â rhyddhad treth"
+    val oneOffHidden = "Newid p’un a wnaed taliadau untro i bensiwn rhyddhad wrth y ffynhonnell"
+    val oneOffAmountHidden = "Newid cyfanswm y taliadau untro i bensiwn rhyddhad wrth y ffynhonnell, ynghyd â rhyddhad treth"
+    val pensionsTaxReliefNotClaimedHidden = "Newid p’un a wnaed taliadau i bensiwn lle na hawliwyd rhyddhad treth"
+    val retirementAnnuityHidden = "Newid p’un a wnaed taliadau contract blwydd-dal ymddeol"
+    val retirementAnnuityAmountHidden = "Newid cyfanswm y taliadau contract blwydd-dal ymddeol"
+    val workplacePaymentsHidden = "Newid p’un a wnaed taliadau pensiwn gweithle"
+    val workplacePaymentsAmountHidden = "Newid cyfanswm y taliadau pensiwn gweithle"
   }
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
@@ -167,13 +167,13 @@ object PaymentsIntoPensionsCYATestSupport {
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
-    val expectedH1 = "Check your payments into pensions"
-    val expectedTitle = "Check your payments into pensions"
+    val expectedH1 = "Gwirio eich taliadau i mewn i bensiynau"
+    val expectedTitle = "Gwirio eich taliadau i mewn i bensiynau"
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
-    val expectedH1 = "Check your client’s payments into pensions"
-    val expectedTitle = "Check your client’s payments into pensions"
+    val expectedH1 = "Gwirio taliadau eich cleient i mewn i bensiynau"
+    val expectedTitle = "Gwirio taliadau eich cleient i mewn i bensiynau"
   }
 }
 
@@ -208,20 +208,19 @@ class PaymentsIntoPensionsCYATestSupport extends ViewUnitTest {
         captionCheck(userScenario.commonExpectedResults.expectedCaption(taxYear))
 
         //noinspection ScalaStyle
-        cyaRowCheck(paymentsIntoUKPensions, yes, ChangeLinks.paymentsIntoUKPensions, paymentsIntoUKPensionsHidden, 1)
-        cyaRowCheck(reliefAtSource, yes, ChangeLinks.reliefAtSource, reliefAtSourceHidden, 2)
+        cyaRowCheck(reliefAtSource, yes, ChangeLinks.reliefAtSource, reliefAtSourceHidden, 1)
         cyaRowCheck(reliefAtSourceAmount, s"${moneyContent(aPaymentsIntoPensionViewModel.totalRASPaymentsAndTaxRelief.get)}",
-          ChangeLinks.reliefAtSourceAmount, reliefAtSourceAmountHidden, 3)
-        cyaRowCheck(oneOff, yes, ChangeLinks.oneOff, oneOffHidden, 4)
+          ChangeLinks.reliefAtSourceAmount, reliefAtSourceAmountHidden, 2)
+        cyaRowCheck(oneOff, yes, ChangeLinks.oneOff, oneOffHidden, 3)
         cyaRowCheck(oneOffAmount, s"${moneyContent(aPaymentsIntoPensionViewModel.totalOneOffRasPaymentPlusTaxRelief.get)}",
-          ChangeLinks.oneOffAmount, oneOffAmountHidden, 5)
-        cyaRowCheck(pensionsTaxReliefNotClaimed, yes, ChangeLinks.pensionsTaxReliefNotClaimed, pensionsTaxReliefNotClaimedHidden, 6)
-        cyaRowCheck(retirementAnnuity, yes, ChangeLinks.retirementAnnuity, retirementAnnuityHidden, 7)
+          ChangeLinks.oneOffAmount, oneOffAmountHidden, 4)
+        cyaRowCheck(pensionsTaxReliefNotClaimed, yes, ChangeLinks.pensionsTaxReliefNotClaimed, pensionsTaxReliefNotClaimedHidden, 5)
+        cyaRowCheck(retirementAnnuity, yes, ChangeLinks.retirementAnnuity, retirementAnnuityHidden, 6)
         cyaRowCheck(retirementAnnuityAmount, s"${moneyContent(aPaymentsIntoPensionViewModel.totalRetirementAnnuityContractPayments.get)}",
-          ChangeLinks.retirementAnnuityAmount, retirementAnnuityAmountHidden, 8)
-        cyaRowCheck(workplacePayments, yes, ChangeLinks.workplacePayments, workplacePaymentsHidden, 9)
+          ChangeLinks.retirementAnnuityAmount, retirementAnnuityAmountHidden, 7)
+        cyaRowCheck(workplacePayments, yes, ChangeLinks.workplacePayments, workplacePaymentsHidden, 8)
         cyaRowCheck(workplacePaymentsAmount, s"${moneyContent(aPaymentsIntoPensionViewModel.totalWorkplacePensionPayments.get)}",
-          ChangeLinks.workplacePaymentsAmount, workplacePaymentsAmountHidden, 10)
+          ChangeLinks.workplacePaymentsAmount, workplacePaymentsAmountHidden, 9)
 
         buttonCheck(saveAndContinue)
 
@@ -242,9 +241,8 @@ class PaymentsIntoPensionsCYATestSupport extends ViewUnitTest {
         import userScenario.commonExpectedResults.{no => answerNo, yes => anseryes}
 
         //noinspection ScalaStyle
-        cyaRowCheck(paymentsIntoUKPensions, anseryes, ChangeLinks.paymentsIntoUKPensions, paymentsIntoUKPensionsHidden, 1)
-        cyaRowCheck(reliefAtSource, answerNo, ChangeLinks.reliefAtSource, reliefAtSourceHidden, 2)
-        cyaRowCheck(pensionsTaxReliefNotClaimed, answerNo, ChangeLinks.pensionsTaxReliefNotClaimed, pensionsTaxReliefNotClaimedHidden, 3)
+        cyaRowCheck(reliefAtSource, answerNo, ChangeLinks.reliefAtSource, reliefAtSourceHidden, 1)
+        cyaRowCheck(pensionsTaxReliefNotClaimed, answerNo, ChangeLinks.pensionsTaxReliefNotClaimed, pensionsTaxReliefNotClaimedHidden, 2)
 
         buttonCheck(saveAndContinue)
 

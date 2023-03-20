@@ -24,7 +24,7 @@ import controllers.ControllerSpec._
 import helpers.{PlaySessionCookieBaker, WireMockHelper, WiremockStubHelpers}
 import models.User
 import models.mongo.{PensionsCYAModel, PensionsUserData}
-import models.pension.charges.{ShortServiceRefundsViewModel, TransfersIntoOverseasPensionsViewModel}
+import models.pension.charges.{PaymentsIntoOverseasPensionsViewModel, ShortServiceRefundsViewModel, TransfersIntoOverseasPensionsViewModel}
 import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.matchers.{MatchResult, Matcher}
@@ -104,6 +104,8 @@ class ControllerSpec(val pathForThisPage: String) extends PlaySpec
     val taxOnShortServiceRefundController: String = relativeUrl("/overseas-pensions/short-service-refunds/short-service-refunds-uk-tax")
 
     val shortServiceRefundSummary: String = relativeUrl("/overseas-pensions/short-service-refunds/short-service-refund-summary")
+
+    val untaxedEmployerPayments: String = relativeUrl("/overseas-pensions/payments-into-overseas-pensions/untaxed-employer-payments")
 
   }
 
@@ -300,6 +302,10 @@ class ControllerSpec(val pathForThisPage: String) extends PlaySpec
 
   def getShortServiceViewModel(implicit userConfig: UserConfig): Option[ShortServiceRefundsViewModel] =
     loadPensionUserData.map(_.pensions.shortServiceRefunds)
+
+  def getPaymentsIntoOverseasPensionsViewModel(implicit userConfig: UserConfig): Option[PaymentsIntoOverseasPensionsViewModel] = {
+    loadPensionUserData.map(_.pensions.paymentsIntoOverseasPensions)
+  }
 
   private def loadPensionUserData(pensionsUserData: PensionsUserData, userType: UserTypes.UserType): Option[PensionsUserData]
   = await(

@@ -33,7 +33,7 @@
     if(paymentIntoPensionHasPriorData(prior)) {
       s"${controllers.pensions.paymentsIntoPensions.routes.PaymentsIntoPensionsCYAController.show(taxYear)}"
     } else {
-      s"${controllers.pensions.paymentsIntoPensions.routes.PaymentsIntoPensionsStatusController.show(taxYear)}"
+      s"${controllers.pensions.paymentsIntoPensions.routes.ReliefAtSourcePensionsController.show(taxYear)}"
     }
 }
 

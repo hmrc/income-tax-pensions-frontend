@@ -74,13 +74,13 @@ object ReliefAtSourcePensionsSpec {
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
-    val expectedH2 = "Did you pay into a RAS pension?"
-    val expectedError = "Select yes if you paid into a RAS pension"
-    val expectedParagraph = "These are pensions you pay into from:"
-    val expectedExample1 = "your net income (after tax has been deducted), if you’re employed"
-    val expectedExample2 = "your taxable income, if you’re self-employed"
-    val expectedPensionProviderText = "Your pension provider then claims tax relief for you."
-    val expectedCheckProviderText = "You can check with your pension provider whether this applies to you."
+    val expectedH2 = "A wnaethoch chi dalu i mewn i bensiwn RAS?"
+    val expectedError = "Dewiswch ‘Iawn’ os gwnaethoch dalu i mewn i bensiwn RAS"
+    val expectedParagraph = "Dyma bensiynau rydych yn talu i mewn iddynt o:"
+    val expectedExample1 = "eich incwm net (ar ol i dreth cael ei didynnu), os ydych yn gyflogedig"
+    val expectedExample2 = "eich incwm trethadwy, os ydych yn hunangyflogedig"
+    val expectedPensionProviderText = "Yna, bydd eich darparwr pensiwn yn hawlio rhyddhad treth ar eich cyfer."
+    val expectedCheckProviderText = "Gallwch wirio gyda’ch darparwr pensiwn a yw hyn yn berthnasol i chi."
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
@@ -89,18 +89,18 @@ object ReliefAtSourcePensionsSpec {
     val expectedParagraph = "These are pensions your client pays into from:"
     val expectedExample1 = "your client’s net income (after tax has been deducted), if they’re employed"
     val expectedExample2 = "your client’s taxable income, if they’re self-employed"
-    val expectedPensionProviderText = "Your pension provider then claims tax relief for your client."
-    val expectedCheckProviderText = "You can check with your pension provider whether this applies to your client."
+    val expectedPensionProviderText = "Your client’s pension provider then claims tax relief for your client."
+    val expectedCheckProviderText = "You can check with your client’s pension provider whether this applies to your client."
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
-    val expectedH2 = "Did your client pay into a RAS pension?"
-    val expectedError = "Select yes if your client paid into a RAS pension"
-    val expectedParagraph = "These are pensions your client pays into from:"
-    val expectedExample1 = "your client’s net income (after tax has been deducted), if they’re employed"
-    val expectedExample2 = "your client’s taxable income, if they’re self-employed"
-    val expectedPensionProviderText = "Your pension provider then claims tax relief for your client."
-    val expectedCheckProviderText = "You can check with your pension provider whether this applies to your client."
+    val expectedH2 = "A wnaeth eich cleient dalu i mewn i bensiwn RAS?"
+    val expectedError = "Dewiswch ‘Iawn’ os talodd eich cleient i mewn i bensiwn RAS"
+    val expectedParagraph = "Dyma bensiynau y mae eich cleient yn talu i mewn iddynt o’i:"
+    val expectedExample1 = "incwm net eich cleient (ar ôl didynnu treth), os yw’n gyflogedig"
+    val expectedExample2 = "incwm trethadwy eich cleient, os yw’n hunangyflogedig"
+    val expectedPensionProviderText = "Yna, bydd y darparwr pensiwn yn hawlio rhyddhad treth ar gyfer eich cleient."
+    val expectedCheckProviderText = "Gallwch wirio gyda’r darparwr pensiwn a yw hyn yn berthnasol i’ch cleient."
   }
 
   object CommonExpectedEN extends CommonExpectedResults {
@@ -115,9 +115,9 @@ object ReliefAtSourcePensionsSpec {
 
   object CommonExpectedCY extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Payments into pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val expectedTitle = "Relief at source (RAS) pensions"
+    val expectedTitle = "Pensiynau rhyddhad wrth y ffynhonnell (RAS)"
     val expectedErrorTitle = s"Error: $expectedTitle"
-    val expectedHeading = "Relief at source (RAS) pensions"
+    val expectedHeading = "Pensiynau rhyddhad wrth y ffynhonnell (RAS)"
     val expectedButtonText = "Continue"
     val yesText = "Yes"
     val noText = "No"
