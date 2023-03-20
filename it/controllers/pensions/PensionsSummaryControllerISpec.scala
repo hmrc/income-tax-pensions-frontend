@@ -31,7 +31,7 @@ import play.api.http.Status.UNAUTHORIZED
 import play.api.libs.ws.WSResponse
 import play.api.test.Injecting
 import services.PensionSessionService
-import utils.PageUrls.PaymentIntoPensions.{checkPaymentsIntoPensionCyaUrl, checkPaymentsIntoPensionStatusUrl}
+import utils.PageUrls.PaymentIntoPensions.{checkPaymentsIntoPensionCyaUrl, reliefAtSourcePensionsUrl}
 import utils.PageUrls._
 import utils.PageUrls.unauthorisedPaymentsPages.{checkUnauthorisedPaymentsCyaUrl, unauthorisedPaymentsUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
@@ -237,7 +237,7 @@ class PensionsSummaryControllerISpec extends IntegrationTest with ViewHelpers wi
         }
 
         "render the page where no prior data exists for all pension data so the statuses are all 'To do'" which {
-          
+
           def checkPensionsUserDataIsInitialised(isAgent:  Boolean): Unit =
             s"have pensions user data initialised" in {
               val user: User = if (isAgent) UserBuilder.anAgentUser else UserBuilder.aUser
@@ -264,7 +264,7 @@ class PensionsSummaryControllerISpec extends IntegrationTest with ViewHelpers wi
           checkPensionsUserDataIsInitialised(userScenario.isAgent)
 
           "has an payment into pensions section" which {
-            linkCheck("Payments into pensions", paymentsIntoPensionsLink, checkPaymentsIntoPensionStatusUrl(taxYear))
+            linkCheck("Payments into pensions", paymentsIntoPensionsLink, reliefAtSourcePensionsUrl(taxYear))
             textOnPageCheck(userScenario.commonExpectedResults.toDo, summaryListStatusTagSelector(1))
           }
 
