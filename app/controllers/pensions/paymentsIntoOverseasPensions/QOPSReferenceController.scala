@@ -58,7 +58,7 @@ class QOPSReferenceController @Inject()(authAction: AuthorisedAction,
   }
 
   private def referenceForm(user: User, pensionUserData: PensionsUserData): Form[String] =
-    pensionUserData.pensions.paymentsIntoOverseasPensions.qualifyingOverseasPensionSchemeReferenceNumber
+    pensionUserData.pensions.paymentsIntoOverseasPensions.reliefs.head.qualifyingOverseasPensionSchemeReferenceNumber
       .map(value => referenceForm().fill(removePrefix(value)))
       .getOrElse(referenceForm())
 
@@ -68,9 +68,13 @@ class QOPSReferenceController @Inject()(authAction: AuthorisedAction,
       referenceNumber => {
         pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
           case Right(Some(data)) =>
-            val updatedCyaModel: PensionsCYAModel = data.pensions.copy(
-              paymentsIntoOverseasPensions = data.pensions.paymentsIntoOverseasPensions.copy(
-                qualifyingOverseasPensionSchemeReferenceNumber = Some(referenceNumber)))
+            val reliefs = data.pensions.paymentsIntoOverseasPensions.reliefs.head.copy(
+              qualifyingOverseasPensionSchemeReferenceNumber = Some(referenceNumber))
+
+            val updatedCyaModel: PensionsCYAModel =
+              data.pensions.copy(
+                paymentsIntoOverseasPensions = data.pensions.paymentsIntoOverseasPensions.copy(reliefs = Seq(reliefs)))
+
             pensionSessionService.createOrUpdateSessionData(request.user,
               updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
               Redirect(QOPSReferenceController.show(taxYear)) //TODO - redirect to pensions-overseas-details-summary
