@@ -47,8 +47,8 @@ case class Relief(
                  ) {
   def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedRelief =
     EncryptedRelief(
-      customerReferenceNumberQuestion = reliefType.map(_.encrypted),
-      employerPaymentsAmount = sf74Reference.map(_.encrypted),
+      customerReferenceNumberQuestion = customerReferenceNumberQuestion.map(_.encrypted),
+      employerPaymentsAmount = employerPaymentsAmount.map(_.encrypted),
       reliefType = reliefType.map(_.encrypted),
       sf74Reference = sf74Reference.map(_.encrypted),
       doubleTaxationCountryCode = doubleTaxationCountryCode.map(_.encrypted),
@@ -77,7 +77,7 @@ case class EncryptedRelief(
   def decrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): Relief =
     Relief(
       customerReferenceNumberQuestion = reliefType.map(_.decrypted[String]),
-      employerPaymentsAmount = sf74Reference.map(_.decrypted[BigDecimal]),
+      employerPaymentsAmount = employerPaymentsAmount.map(_.decrypted[BigDecimal]),
       reliefType = reliefType.map(_.decrypted[String]),
       sf74Reference = sf74Reference.map(_.decrypted[String]),
       doubleTaxationCountryCode = doubleTaxationCountryCode.map(_.decrypted[String]),

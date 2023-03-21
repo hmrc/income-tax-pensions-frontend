@@ -84,6 +84,6 @@ class UntaxedEmployerPaymentsController @Inject()(authAction: AuthorisedAction,
 
   private def getRedirectCall(taxYear: Int,
                               pensionSchemeIndex: Option[Int]): Call = {
-    controllers.pensions.transferIntoOverseasPensions.routes.TransferPensionsSchemeController.show(taxYear, pensionSchemeIndex)
+    controllers.pensions.paymentsIntoOverseasPensions.routes.UntaxedEmployerPaymentsController.show(taxYear, pensionSchemeIndex)
   }
 }
