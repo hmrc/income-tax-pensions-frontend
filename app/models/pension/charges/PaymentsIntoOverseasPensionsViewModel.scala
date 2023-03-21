@@ -36,7 +36,8 @@ object TaxReliefQuestion{
 
 case class Relief(
                    customerReferenceNumberQuestion: Option[String] = None,
-                   employerPaymentsAmount: Option[BigDecimal] = None,reliefType: Option[String],
+                   employerPaymentsAmount: Option[BigDecimal] = None,
+                   reliefType: Option[String] = None,
                    doubleTaxationCountryCode: Option[String] = None,
                    doubleTaxationCountryArticle: Option[String] = None,
                    doubleTaxationCountryTreaty: Option[String] = None,

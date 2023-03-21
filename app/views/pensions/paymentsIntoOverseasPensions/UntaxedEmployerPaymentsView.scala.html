@@ -88,7 +88,7 @@
     @heading(headingForUse, Some(messages("common.paymentsIntoPensions.caption", (pageModel.taxYear - 1).toString, pageModel.taxYear.toString)), "govuk-!-margin-bottom-2")
     @contentHtml
 
-    @formWithCsrf(action = controllers.pensions.paymentsIntoPensions.routes.RetirementAnnuityController.submit(pageModel.taxYear)) {
+    @formWithCsrf(action = controllers.pensions.paymentsIntoOverseasPensions.routes.UntaxedEmployerPaymentsController.submit(pageModel.taxYear, pageModel.pensionSchemeIndex)) {
         @inputText(
             form = pageModel.form,
             id = "amount",
