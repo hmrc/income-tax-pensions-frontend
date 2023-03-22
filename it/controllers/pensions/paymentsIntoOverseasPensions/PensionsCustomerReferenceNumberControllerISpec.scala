@@ -20,6 +20,7 @@ import builders.PaymentsIntoOverseasPensionsViewModelBuilder.aPaymentsIntoOverse
 import builders.PensionsUserDataBuilder.{aPensionsUserData, anPensionsUserDataEmptyCya, pensionUserDataWithOverseasPensions}
 import builders.UserBuilder.aUserRequest
 import forms.PensionCustomerReferenceNumberForm
+import models.pension.charges.Relief
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterEach
@@ -143,9 +144,10 @@ class PensionsCustomerReferenceNumberControllerISpec extends CommonUtils with Be
         "render the page with correct content with pre-filling" which {
           val pensionsCustomerReferenceNumber = "PENSIONSINCOME245"
 
+          val relief = Relief(customerReferenceNumberQuestion = Some(pensionsCustomerReferenceNumber))
+
           val pensionsViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(
-            reliefs = Seq(aPaymentsIntoOverseasPensionsViewModel.reliefs.head.copy(
-              customerReferenceNumberQuestion = Some(pensionsCustomerReferenceNumber))))
+            reliefs = Seq(relief))
 
           val pensionUserData = pensionUserDataWithOverseasPensions(pensionsViewModel)
           implicit lazy val result: WSResponse = showPage(user, pensionUserData)
@@ -212,9 +214,12 @@ class PensionsCustomerReferenceNumberControllerISpec extends CommonUtils with Be
 
     "redirect and update question to contain customer reference number when no cya data exists" which {
       lazy val form: Map[String, String] = Map(PensionCustomerReferenceNumberForm.pensionsCustomerReferenceNumberId -> "PENSIONAINCOME245")
+
+      val relief = Relief()
+
       val pensionsViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(
-        reliefs = Seq(aPaymentsIntoOverseasPensionsViewModel.reliefs.head.copy(
-          customerReferenceNumberQuestion = None)))
+        reliefs = Seq(relief))
+
       val pensionUserData = pensionUserDataWithOverseasPensions(pensionsViewModel)
 
       lazy val result: WSResponse = submitPage(pensionUserData, form)
@@ -232,9 +237,10 @@ class PensionsCustomerReferenceNumberControllerISpec extends CommonUtils with Be
 
     "redirect and update contain customer reference number when cya data exists" which {
       lazy val form: Map[String, String] = Map(PensionCustomerReferenceNumberForm.pensionsCustomerReferenceNumberId -> "PENSIONAINCOME245")
+      val relief = Relief(customerReferenceNumberQuestion = Some("PENSIONAINCOME480"))
+
       val pensionsViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(
-        reliefs = Seq(aPaymentsIntoOverseasPensionsViewModel.reliefs.head.copy(
-          customerReferenceNumberQuestion = Some("PENSIONAINCOME245"))))
+        reliefs = Seq(relief))
       val pensionUserData = pensionUserDataWithOverseasPensions(pensionsViewModel)
 
       lazy val result: WSResponse = submitPage(pensionUserData, form)

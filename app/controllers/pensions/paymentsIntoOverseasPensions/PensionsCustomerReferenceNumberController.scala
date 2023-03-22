@@ -76,9 +76,11 @@ class PensionsCustomerReferenceNumberController @Inject()(authAction: Authorised
 
 
   private def fillCustomerReferenceNumber(user : User, pensionUserData: PensionsUserData): Form[String] =
-    pensionUserData.pensions.paymentsIntoOverseasPensions.reliefs(1).customerReferenceNumberQuestion
-      .map(referenceForm(user).fill)
-      .getOrElse(referenceForm(user))
+    pensionUserData.pensions.paymentsIntoOverseasPensions.reliefs.headOption.fold{referenceForm(user)} { relief =>
+      relief.customerReferenceNumberQuestion
+        .map(referenceForm(user).fill)
+        .getOrElse(referenceForm(user))
+    }
 
   def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
     referenceForm(request.user).bindFromRequest().fold(
@@ -86,14 +88,19 @@ class PensionsCustomerReferenceNumberController @Inject()(authAction: Authorised
       pensionCustomerReferenceNumber => {
         pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
           case Right(Some(data)) =>
-            val updatedCyaModel: PensionsCYAModel = data.pensions.copy(
-              paymentsIntoOverseasPensions = data.pensions.paymentsIntoOverseasPensions.copy(
-                reliefs = data.pensions.paymentsIntoOverseasPensions.reliefs.updated(
-                  1, data.pensions.paymentsIntoOverseasPensions.reliefs(1).copy(customerReferenceNumberQuestion = Some(pensionCustomerReferenceNumber))
-              )))
-            pensionSessionService.createOrUpdateSessionData(request.user,
-              updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
-              Redirect(PensionsCustomerReferenceNumberController.show(taxYear)) //TODO - redirect to untaxed-employer-payments SASS-3099
+            data.pensions.paymentsIntoOverseasPensions.reliefs.headOption match {
+              case Some(relief) =>
+                val updatedCyaModel: PensionsCYAModel = data.pensions.copy(
+                  paymentsIntoOverseasPensions = data.pensions.paymentsIntoOverseasPensions.copy( // todo currently only updates first in list - upgrade ticket
+                    reliefs = data.pensions.paymentsIntoOverseasPensions.reliefs.updated(
+                      0, relief.copy(customerReferenceNumberQuestion = Some(pensionCustomerReferenceNumber)
+                    ))))
+                pensionSessionService.createOrUpdateSessionData(request.user,
+                  updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
+                  Redirect(PensionsCustomerReferenceNumberController.show(taxYear)) //TODO - redirect to untaxed-employer-payments SASS-3099
+                }
+              case _ =>
+                Future.successful(Redirect(PensionsCustomerReferenceNumberController.show(taxYear)))
             }
           case _ =>
             Future.successful(Redirect(PensionsSummaryController.show(taxYear)))

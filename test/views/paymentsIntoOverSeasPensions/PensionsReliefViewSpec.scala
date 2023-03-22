@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package views.paymentsIntoOverSeasPensions
+package views.paymentsIntoOverseasPensions
 
 import builders.PaymentsIntoOverseasPensionsViewModelBuilder.aPaymentsIntoOverseasPensionsViewModel
 import builders.PensionsCYAModelBuilder.aPensionsCYAEmptyModel
@@ -39,10 +39,7 @@ class PensionsReliefViewSpec extends ViewUnitTest with FakeRequestProvider {
     val titleSelector = "#main-content > div > div > header > h1"
     val buttonSelector = "#continue"
     val orSelector = "#main-content > div > div > form > div > fieldset > div > div.govuk-radios__divider"
-<<<<<<< HEAD
     val linkSelector = "#find-out-more-link"
-=======
->>>>>>> 5df98bc (paymentsIntoOveseasViewModel)
   }
 
   trait CommonExpectedResults {
@@ -70,11 +67,7 @@ class PensionsReliefViewSpec extends ViewUnitTest with FakeRequestProvider {
     override val expectedTCR: String = "Transitional corresponding relief"
     override val noneOfTheAbove: String = "None of these"
     override val or: String = "or"
-<<<<<<< HEAD
     override val expectedLinkText: String = "Find out about the types of tax relief for overseas pension scheme payments (opens in new tab)"
-=======
-    override val expectedLinkText: String = "Find out about the types of tax relief for overseas pension scheme payments (opens in new tab)."
->>>>>>> 5df98bc (paymentsIntoOveseasViewModel)
     override val expectedErrorText: String = "Select the type of tax relief or select none"
     override val continue: String = "Continue"
 
@@ -87,11 +80,7 @@ class PensionsReliefViewSpec extends ViewUnitTest with FakeRequestProvider {
     override val expectedTCR: String = "Transitional corresponding relief"
     override val noneOfTheAbove: String = "None of these"
     override val or: String = "neu"
-<<<<<<< HEAD
     override val expectedLinkText: String = "Find out about the types of tax relief for overseas pension scheme payments (opens in new tab)"
-=======
-    override val expectedLinkText: String = "Find out about the types of tax relief for overseas pension scheme payments (opens in new tab)."
->>>>>>> 5df98bc (paymentsIntoOveseasViewModel)
     override val expectedErrorText: String = "Select the type of tax relief or select none"
     override val continue: String = "Continue"
   }
@@ -149,15 +138,11 @@ class PensionsReliefViewSpec extends ViewUnitTest with FakeRequestProvider {
         radioButtonCheck(userScenario.commonExpectedResults.expectedTCR, 3, checked = false)
         textOnPageCheck(userScenario.commonExpectedResults.or, Selectors.orSelector)
         radioButtonCheck(userScenario.commonExpectedResults.noneOfTheAbove, 4, checked = false)
-
-<<<<<<< HEAD
         linkCheck(userScenario.commonExpectedResults.expectedLinkText, Selectors.linkSelector,
           href = "https://www.gov.uk/guidance/overseas-pensions-tax-relief-on-your-contributions",
           isExactUrlMatch = false)
-
-=======
->>>>>>> 5df98bc (paymentsIntoOveseasViewModel)
       }
+
       "render page with pre filled data" which {
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
         implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = UserSessionDataRequest(aPensionsUserData,
@@ -180,14 +165,12 @@ class PensionsReliefViewSpec extends ViewUnitTest with FakeRequestProvider {
         radioButtonCheck(userScenario.commonExpectedResults.expectedTCR, 3, checked = true)
         textOnPageCheck(userScenario.commonExpectedResults.or, Selectors.orSelector)
         radioButtonCheck(userScenario.commonExpectedResults.noneOfTheAbove, 4, checked = false)
-<<<<<<< HEAD
 
         linkCheck(userScenario.commonExpectedResults.expectedLinkText, Selectors.linkSelector,
           href = "https://www.gov.uk/guidance/overseas-pensions-tax-relief-on-your-contributions",
           isExactUrlMatch = false)
-=======
->>>>>>> 5df98bc (paymentsIntoOveseasViewModel)
       }
+
       "render page with error text when no option was selected" which {
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
         implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = UserSessionDataRequest(aPensionsUserData,

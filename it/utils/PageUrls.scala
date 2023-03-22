@@ -214,6 +214,9 @@ object PageUrls extends IntegrationTest {
 
     def pensionReliefTypeUrl(taxYear: Int, index: Int): String =
       s"$appUrl/$taxYear/overseas-pensions/payments-into-overseas-pensions/pensions-overseas-emp-relief-status?reliefIndex=$index"
+
+    def pensionReliefSchemeDetailsUrl(taxYear: Int, index: Int): String =
+      s"$appUrl/$taxYear/overseas-pensions/payments-into-overseas-pensions/pensions-overseas-details-summary?reliefIndex=$index"
   }
 
   //  *****************     Income from overseas pensions pages      ******************************
