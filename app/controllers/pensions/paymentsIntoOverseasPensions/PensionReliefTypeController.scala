@@ -25,9 +25,8 @@ import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.paymentsIntoOverseasPensions.PensionReliefTypeView
-import controllers.pensions.routes.OverseasPensionsSummaryController
-import controllers.pensions.paymentsIntoOverseasPensions.routes.{PensionsCustomerReferenceNumberController, QOPSReferenceController}
-import controllers.validateScheme
+import controllers.pensions.paymentsIntoOverseasPensions.routes.{PensionsCustomerReferenceNumberController, QOPSReferenceController, SF74ReferenceController}
+import controllers.{validateIndex, validateScheme}
 import models.pension.charges.{Relief, TaxReliefQuestion}
 import models.requests.UserSessionDataRequest
 
@@ -46,19 +45,16 @@ class PensionReliefTypeController@Inject()(actionsProvider: ActionsProvider,
 
   def show(taxYear: Int, reliefIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit sessionData =>
-
-      validateScheme(reliefIndex, `sessionData`.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs) match {
-        case Right(Some(relief)) =>
-          relief.reliefType.fold {
+      validateIndex(reliefIndex, sessionData.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs.size) match {
+        case Some(idx) =>
+          sessionData.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs(idx).reliefType.fold {
             Future.successful(Ok(view(formsProvider.overseasPensionsReliefTypeForm, taxYear, reliefIndex)))
           } {
             reliefType =>
               Future.successful(Ok(view(formsProvider.overseasPensionsReliefTypeForm.fill(reliefType), taxYear, reliefIndex)))
           }
-        case Right(None) =>
-          Future.successful(Redirect(PensionsCustomerReferenceNumberController.show(taxYear)))
         case _ =>
-          Future.successful(Redirect(OverseasPensionsSummaryController.show(taxYear)))
+          Future.successful(Redirect(PensionsCustomerReferenceNumberController.show(taxYear)))
       }
   }
 
@@ -66,20 +62,18 @@ class PensionReliefTypeController@Inject()(actionsProvider: ActionsProvider,
     implicit sessionData =>
       formsProvider.overseasPensionsReliefTypeForm.bindFromRequest().fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear, reliefIndex))),
-        newTaxReliefQuestion => updateViewModel(newTaxReliefQuestion, reliefIndex, taxYear, sessionData)(request = sessionData)
+        newTaxReliefQuestion => updateViewModel(newTaxReliefQuestion, reliefIndex, taxYear)(request = sessionData)
       )
   }
 
   private def updateViewModel(
                                taxReliefQuestion: String,
                                indexOpt: Option[Int],
-                               taxYear: Int,
-                               sessionData: UserSessionDataRequest[AnyContent])(implicit request: UserSessionDataRequest[_]): Future[Result] = {
-
-    validateScheme(indexOpt, `sessionData`.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs) match {
-      case Right(Some(relief)) =>
-        if (!sessionData.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs(indexOpt.get).reliefType.contains(taxReliefQuestion)) {
-          val updatedReliefs: Relief = relief.copy(
+                               taxYear: Int)(implicit request: UserSessionDataRequest[_]): Future[Result] = {
+    validateIndex(indexOpt, request.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs.size) match {
+      case Some(idx) =>
+        if (!request.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs(idx).reliefType.contains(taxReliefQuestion)) {
+          val updatedReliefs: Relief = request.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs(idx).copy(
             reliefType = Some(taxReliefQuestion),
             doubleTaxationCountryCode = None,
             doubleTaxationCountryArticle = None,
@@ -89,13 +83,12 @@ class PensionReliefTypeController@Inject()(actionsProvider: ActionsProvider,
             qualifyingOverseasPensionSchemeReferenceNumber = None
           )
           pensionSessionService.createOrUpdateSessionData(
-            sessionData.user,
-            sessionData.pensionsUserData.pensions.copy(paymentsIntoOverseasPensions =
-              sessionData.pensionsUserData.pensions.paymentsIntoOverseasPensions.copy(
-                reliefs = sessionData.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs.updated(
-                  indexOpt.get, updatedReliefs))),
+            request.user,
+            request.pensionsUserData.pensions.copy(
+              paymentsIntoOverseasPensions = request.pensionsUserData.pensions.paymentsIntoOverseasPensions.copy(
+                reliefs = request.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs.updated(idx, updatedReliefs))),
             taxYear,
-            sessionData.pensionsUserData.isPriorSubmission
+            request.pensionsUserData.isPriorSubmission
           )(errorHandler.internalServerError()) {
             redirectBaseOnTaxReliefQuestion(taxReliefQuestion, taxYear, indexOpt)(mcc, request)
           }
@@ -117,7 +110,7 @@ class PensionReliefTypeController@Inject()(actionsProvider: ActionsProvider,
     case TaxReliefQuestion.MigrantMemberRelief =>
      Redirect(QOPSReferenceController.show(taxYear))
     case TaxReliefQuestion.TransitionalCorrespondingRelief =>
-      Ok(view(formsProvider.overseasPensionsReliefTypeForm, taxYear, reliefIndex)) //todo redirect to "SF74 reference" Page when built
+      Redirect(SF74ReferenceController.show(taxYear))
     case TaxReliefQuestion.NoTaxRelief =>
       Ok(view(formsProvider.overseasPensionsReliefTypeForm, taxYear, reliefIndex)) //todo redirect to "CYA" Page when built
     case _ =>
