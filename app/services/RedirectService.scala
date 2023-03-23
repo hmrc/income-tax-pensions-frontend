@@ -54,7 +54,7 @@ object RedirectService extends Logging {
       val pIP = cya.paymentsIntoPension
 
       val startPageCheck = Seq(
-        ConditionalRedirect(
+        ConditionalRedirect( //TODO: This condition may not be needed
           pIP.rasPensionPaymentQuestion.isEmpty,
           ReliefAtSourcePensionsController.show(taxYear),
           Some(RasPage.journeyNo))
