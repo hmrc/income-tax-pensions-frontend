@@ -17,8 +17,7 @@
 package services
 
 import models.mongo.PensionsUserData
-import models.pension.charges.{PaymentsIntoOverseasPensionsViewModel, Relief, TransferPensionScheme, TransfersIntoOverseasPensionsViewModel}
-import models.pension.reliefs.Reliefs
+import models.pension.charges.PaymentsIntoOverseasPensionsViewModel
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}

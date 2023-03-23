@@ -30,7 +30,7 @@ object TaxReliefQuestion{
   val DoubleTaxationRelief = "Double taxation relief"
   val MigrantMemberRelief = "Migrant member relief"
 
-  def validTaxList = Seq(MigrantMemberRelief, DoubleTaxationRelief, TransitionalCorrespondingRelief, NoTaxRelief)
+  def validTaxList: Seq[String] = Seq(MigrantMemberRelief, DoubleTaxationRelief, TransitionalCorrespondingRelief, NoTaxRelief)
 }
 
 
@@ -76,7 +76,7 @@ case class EncryptedRelief(
                           ) {
   def decrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): Relief =
     Relief(
-      customerReferenceNumberQuestion = reliefType.map(_.decrypted[String]),
+      customerReferenceNumberQuestion = customerReferenceNumberQuestion.map(_.decrypted[String]),
       employerPaymentsAmount = employerPaymentsAmount.map(_.decrypted[BigDecimal]),
       reliefType = reliefType.map(_.decrypted[String]),
       sf74Reference = sf74Reference.map(_.decrypted[String]),
@@ -121,7 +121,7 @@ case class EncryptedPaymentsIntoOverseasPensionsViewModel(paymentsIntoOverseasPe
                                                           taxPaidOnEmployerPaymentsQuestion: Option[EncryptedValue] = None,
                                                           customerReferenceNumberQuestion: Option[EncryptedValue] = None,
                                                           employerPaymentsAmount: Option[EncryptedValue] = None,
-                                                          reliefs: Seq[EncryptedRelief] = Seq.empty[EncryptedRelief],
+                                                          reliefs: Seq[EncryptedRelief] = Seq.empty[EncryptedRelief]
                                                          ) {
 
   def decrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): PaymentsIntoOverseasPensionsViewModel =

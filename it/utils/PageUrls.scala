@@ -260,13 +260,13 @@ object PageUrls extends IntegrationTest {
     def transferChargeSummaryUrl(taxYear: Int): String =
       s"$appUrl/$taxYear/overseas-pensions/overseas-transfer-charges/transfer-charges-summary"
 
-    def removeTransferChargeScheme(taxYear: Int, index: Int):String =
+    def removeTransferChargeScheme(taxYear: Int, index: Int): String =
       s"$appUrl/$taxYear/overseas-pensions/payments-into-overseas-pensions/remove-overseas-pension-scheme?index=$index"
 
     def transferPensionSavingsUrl(taxYear: Int): String =
       s"$appUrl/$taxYear/overseas-pensions/overseas-transfer-charges/transfer-pension-savings"
 
-    def checkYourDetailsPensionUrl(taxYear: Int) : String =
+    def checkYourDetailsPensionUrl(taxYear: Int): String =
       s"$appUrl/$taxYear/overseas-pensions/overseas-transfer-charges/transfer-charges/check-transfer-charges-details"
   }
 
