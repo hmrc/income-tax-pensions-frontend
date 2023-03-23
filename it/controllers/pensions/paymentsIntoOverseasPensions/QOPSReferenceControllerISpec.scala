@@ -19,9 +19,10 @@ package controllers.pensions.paymentsIntoOverseasPensions
 import builders.PaymentsIntoOverseasPensionsViewModelBuilder.aPaymentsIntoOverseasPensionsViewModel
 import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import builders.PensionsUserDataBuilder.{aPensionsUserData, pensionUserDataWithOverseasPensions}
+import builders.UserBuilder.aUserRequest
 import forms.QOPSReferenceNumberForm
 import models.pension.charges.Relief
-import models.pension.charges.TaxReliefQuestion.TransitionalCorrespondingRelief
+import models.pension.charges.TaxReliefQuestion.{MigrantMemberRelief, TransitionalCorrespondingRelief}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterEach
@@ -285,7 +286,7 @@ class QOPSReferenceControllerISpec extends CommonUtils with BeforeAndAfterEach {
       lazy val form: Map[String, String] = Map(QOPSReferenceNumberForm.qopsReferenceId -> "123456")
 
       val relief = Relief(
-        reliefType = Some(TransitionalCorrespondingRelief),
+        reliefType = Some(MigrantMemberRelief),
         customerReferenceNumberQuestion = Some("PENSIONINCOME245"),
         employerPaymentsAmount = Some(1999.99),
         qualifyingOverseasPensionSchemeReferenceNumber = None,
@@ -303,10 +304,10 @@ class QOPSReferenceControllerISpec extends CommonUtils with BeforeAndAfterEach {
         result.header("location") shouldBe Some(qopsReferenceUrl(taxYearEOY))
       }
 
-//      "updates pension scheme QOPS reference to contain tax reference" in {
-//        lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
-//        cyaModel.pensions.paymentsIntoOverseasPensions.reliefs.head.qualifyingOverseasPensionSchemeReferenceNumber shouldBe Some("123456")
-//      }
+      "updates pension scheme QOPS reference to contain tax reference" in {
+        lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
+        cyaModel.pensions.paymentsIntoOverseasPensions.reliefs.head.qualifyingOverseasPensionSchemeReferenceNumber shouldBe Some("123456")
+      }
     }
 
     "redirect and update QOPS when cya data exists" which {
@@ -314,7 +315,7 @@ class QOPSReferenceControllerISpec extends CommonUtils with BeforeAndAfterEach {
       val qopsRef = "123456"
 
       val relief = Relief(
-        reliefType = Some(TransitionalCorrespondingRelief),
+        reliefType = Some(MigrantMemberRelief),
         customerReferenceNumberQuestion = Some("PENSIONINCOME245"),
         employerPaymentsAmount = Some(1999.99),
         qualifyingOverseasPensionSchemeReferenceNumber = Some(qopsRef),
@@ -332,10 +333,10 @@ class QOPSReferenceControllerISpec extends CommonUtils with BeforeAndAfterEach {
         result.header("location") shouldBe Some(qopsReferenceUrl(taxYearEOY)) //todo redirect to correct page
       }
 
-//      "updates pension scheme QOPS reference to contain tax reference" in {
-//        lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
-//        cyaModel.pensions.paymentsIntoOverseasPensions.reliefs.head.qualifyingOverseasPensionSchemeReferenceNumber.get shouldBe "654321"
-//      }
+      "updates pension scheme QOPS reference to contain tax reference" in {
+        lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
+        cyaModel.pensions.paymentsIntoOverseasPensions.reliefs.head.qualifyingOverseasPensionSchemeReferenceNumber.get shouldBe "654321"
+      }
 
     }
     "redirect to pension summary page if there is no session data" should {

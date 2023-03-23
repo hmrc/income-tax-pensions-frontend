@@ -76,16 +76,18 @@ class QOPSReferenceController @Inject()(authAction: AuthorisedAction,
               pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
                 case Right(Some(data)) =>
                   data.pensions.paymentsIntoOverseasPensions.reliefs.headOption match { // todo currently only updates first in list - upgrade ticket
-                    case Some(relief) => val updatedCyaModel: PensionsCYAModel = data.pensions.copy(
+                    case Some(relief) =>
+                      val updatedCyaModel: PensionsCYAModel = data.pensions.copy(
                       paymentsIntoOverseasPensions = data.pensions.paymentsIntoOverseasPensions.copy(
                         reliefs = data.pensions.paymentsIntoOverseasPensions.reliefs.updated(
-                          0, relief.copy(customerReferenceNumberQuestion = Some(referenceNumber))
+                          0, relief.copy(qualifyingOverseasPensionSchemeReferenceNumber = Some(referenceNumber))
                         )))
                       pensionSessionService.createOrUpdateSessionData(request.user,
                         updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
                         Redirect(QOPSReferenceController.show(taxYear)) //TODO - redirect to pensions-overseas-details-summary
                       }
-                    case _ => Future.successful(Redirect(PensionsCustomerReferenceNumberController.show(taxYear)))
+                    case _ =>
+                      Future.successful(Redirect(PensionsCustomerReferenceNumberController.show(taxYear)))
                   }
 
                 case _ =>
