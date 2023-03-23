@@ -218,9 +218,9 @@ pensions.reliefAtSource.paragraph.example1.agent = your client’s net income (a
 pensions.reliefAtSource.paragraph.example2.individual = your taxable income, if you’re self-employed
 pensions.reliefAtSource.paragraph.example2.agent = your client’s taxable income, if they’re self-employed
 pensions.reliefAtSource.pensionProvider.individual = Your pension provider then claims tax relief for you.
-pensions.reliefAtSource.pensionProvider.agent = Your pension provider then claims tax relief for your client.
+pensions.reliefAtSource.pensionProvider.agent = Your client’s pension provider then claims tax relief for your client.
 pensions.reliefAtSource.checkProvider.individual = You can check with your pension provider whether this applies to you.
-pensions.reliefAtSource.checkProvider.agent = You can check with your pension provider whether this applies to your client.
+pensions.reliefAtSource.checkProvider.agent = You can check with your client’s pension provider whether this applies to your client.
 pensions.reliefAtSource.error.noEntry.individual = Select yes if you paid into a RAS pension
 pensions.reliefAtSource.error.noEntry.agent = Select yes if your client paid into a RAS pension
 

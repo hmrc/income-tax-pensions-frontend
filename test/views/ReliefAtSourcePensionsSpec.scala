@@ -89,8 +89,8 @@ object ReliefAtSourcePensionsSpec {
     val expectedParagraph = "These are pensions your client pays into from:"
     val expectedExample1 = "your client’s net income (after tax has been deducted), if they’re employed"
     val expectedExample2 = "your client’s taxable income, if they’re self-employed"
-    val expectedPensionProviderText = "Your pension provider then claims tax relief for your client."
-    val expectedCheckProviderText = "You can check with your pension provider whether this applies to your client."
+    val expectedPensionProviderText = "Your client’s pension provider then claims tax relief for your client."
+    val expectedCheckProviderText = "You can check with your client’s pension provider whether this applies to your client."
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
@@ -99,8 +99,8 @@ object ReliefAtSourcePensionsSpec {
     val expectedParagraph = "These are pensions your client pays into from:"
     val expectedExample1 = "your client’s net income (after tax has been deducted), if they’re employed"
     val expectedExample2 = "your client’s taxable income, if they’re self-employed"
-    val expectedPensionProviderText = "Your pension provider then claims tax relief for your client."
-    val expectedCheckProviderText = "You can check with your pension provider whether this applies to your client."
+    val expectedPensionProviderText = "Your client’s pension provider then claims tax relief for your client."
+    val expectedCheckProviderText = "You can check with your client’s pension provider whether this applies to your client."
   }
 
   object CommonExpectedEN extends CommonExpectedResults {
