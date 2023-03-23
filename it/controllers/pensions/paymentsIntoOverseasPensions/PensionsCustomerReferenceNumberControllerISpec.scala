@@ -276,5 +276,4 @@ class PensionsCustomerReferenceNumberControllerISpec extends CommonUtils with Be
     }
   }
 
-
 }
