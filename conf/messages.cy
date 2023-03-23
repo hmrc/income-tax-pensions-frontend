@@ -908,7 +908,7 @@ overseasPension.pensionReliefType.DTR = Double taxation relief
 overseasPension.pensionReliefType.TCR = Transitional corresponding relief
 overseasPension.pensionReliefType.NoneOfThese = None of these
 overseasPension.pensionReliefType.error.noEntry = Select the type of tax relief or select none
-overseasPension.pensionReliefType.link = Find out about the types of tax relief for overseas pension scheme payments (opens in new tab).
+overseasPension.pensionReliefType.link = Find out about the types of tax relief for overseas pension scheme payments
 
 #Your Taxable Amount
 overseasPension.yourTaxableAmount.title.individual = Your taxable amount

@@ -66,7 +66,7 @@ class PensionsReliefViewSpec extends ViewUnitTest with FakeRequestProvider {
     override val expectedTCR: String = "Transitional corresponding relief"
     override val noneOfTheAbove: String = "None of these"
     override val or: String = "or"
-    override val expectedLinkText: String = "Find out about the types of tax relief for overseas pension scheme payments (opens in new tab)."
+    override val expectedLinkText: String = "Find out about the types of tax relief for overseas pension scheme payments (opens in new tab)"
     override val expectedErrorText: String = "Select the type of tax relief or select none"
     override val continue: String = "Continue"
 
@@ -79,7 +79,7 @@ class PensionsReliefViewSpec extends ViewUnitTest with FakeRequestProvider {
     override val expectedTCR: String = "Transitional corresponding relief"
     override val noneOfTheAbove: String = "None of these"
     override val or: String = "neu"
-    override val expectedLinkText: String = "Find out about the types of tax relief for overseas pension scheme payments (opens in new tab)."
+    override val expectedLinkText: String = "Find out about the types of tax relief for overseas pension scheme payments (opens in new tab)"
     override val expectedErrorText: String = "Select the type of tax relief or select none"
     override val continue: String = "Continue"
   }
