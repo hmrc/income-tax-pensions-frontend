@@ -42,7 +42,7 @@ class SF74ReferenceController @Inject()(
   extends FrontendController(mcc) with I18nSupport with SessionHelper{
 
   def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit userSessionDataRequest =>
-    val sf74Reference = userSessionDataRequest.pensionsUserData.pensions.paymentsIntoOverseasPensions.sf74Reference
+    val sf74Reference = userSessionDataRequest.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs.head.sf74Reference
     sf74Reference match {
       case Some(value) => Future.successful(Ok(view(formsProvider.sf74ReferenceIdForm.fill(value), taxYear)))
       case None => Future.successful(Ok(view(formsProvider.sf74ReferenceIdForm, taxYear)))
@@ -60,11 +60,12 @@ class SF74ReferenceController @Inject()(
   private def updateSessionData[T](pensionUserData: PensionsUserData,
                                    sf74Reference : Option[String],
                                    taxYear: Int)(implicit request: UserSessionDataRequest[T]) = {
-    val updatedCyaModel = pensionUserData.pensions.copy(
-      paymentsIntoOverseasPensions = pensionUserData.pensions.paymentsIntoOverseasPensions.copy(
-        sf74Reference = sf74Reference
-      )
-    )
+    val reliefs = pensionUserData.pensions.paymentsIntoOverseasPensions.reliefs.head.copy(
+      sf74Reference = (sf74Reference))
+
+    val updatedCyaModel =
+      pensionUserData.pensions.copy(
+        paymentsIntoOverseasPensions = pensionUserData.pensions.paymentsIntoOverseasPensions.copy(reliefs = Seq(reliefs)))
 
     pensionSessionService.createOrUpdateSessionData(request.user,
       updatedCyaModel, taxYear, pensionUserData.isPriorSubmission)(errorHandler.internalServerError()) {

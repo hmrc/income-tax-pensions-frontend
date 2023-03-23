@@ -50,8 +50,8 @@ class SF74ReferenceControllerISpec extends IntegrationTest with BeforeAndAfterEa
 
         "render the 'sf74 reference' page " which {
 
-          val updatedPaymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel.copy(sf74Reference = Some("1234567"))
-
+          val relief = aPaymentsIntoOverseasPensionsViewModel.reliefs.head.copy(sf74Reference = Some("1234567"))
+          val updatedPaymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel.copy(reliefs = Seq(relief))
           implicit lazy val result: WSResponse = {
             authoriseAgentOrIndividual(user.isAgent)
             dropPensionsDB()

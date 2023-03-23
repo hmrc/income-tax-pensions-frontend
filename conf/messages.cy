@@ -864,6 +864,33 @@ overseasPension.specialWithHoldingTax.amount.noAmountEntry = Enter an amount in 
 overseasPension.specialWithHoldingTax.amount.incorrectFormat = Enter the amount of Special Withholding Tax deducted in the correct format
 overseasPension.specialWithHoldingTax.amount.tooBig = Amount of Special Withholding Tax deducted must be less than £100,000,000,000
 
+#Untaxed Employer Payments
+overseasPension.untaxedEmployerPayments.title = Untaxed employer payments
+overseasPension.untaxedEmployerPayments.para1 = This is also known as exempt employers’ contributions.
+overseasPension.untaxedEmployerPayments.para2.individual = You need to know which type of scheme your employer paid into.
+overseasPension.untaxedEmployerPayments.para2.agent = You need to know which type of scheme your client’s employer paid into.
+overseasPension.untaxedEmployerPayments.sub1 = Contribution schemes (money purchase schemes)
+overseasPension.untaxedEmployerPayments.sub1.para1.individual = If you have this type of scheme, tell us the total amount your employers paid in.
+overseasPension.untaxedEmployerPayments.sub1.para1.agent = If your client has this type of scheme, tell us the total amount their employers paid in.
+overseasPension.untaxedEmployerPayments.sub2 = Benefits schemes (average or final salary schemes)
+overseasPension.untaxedEmployerPayments.sub2.para1.individual = If you have this type of scheme, tell us the value of the amount your employers paid in.
+overseasPension.untaxedEmployerPayments.sub2.para1.agent = If your client has this type of scheme, tell us the value of the amount their employers paid in.
+overseasPension.untaxedEmployerPayments.sub2.details.title = Work out the value of payments into a benefits scheme
+overseasPension.untaxedEmployerPayments.sub2.details.info.list1.individual = how much your lump sum went up by
+overseasPension.untaxedEmployerPayments.sub2.details.info.list1.agent = how much your client’s lump sum went up by
+overseasPension.untaxedEmployerPayments.sub2.details.info.list2.individual = plus 16 times how much your annual pension went up by
+overseasPension.untaxedEmployerPayments.sub2.details.info.list2.agent = plus 16 times how much your client’s annual pension went up by
+overseasPension.untaxedEmployerPayments.sub2.details.info.list3.individual = minus any payments you made into the scheme
+overseasPension.untaxedEmployerPayments.sub2.details.info.list3.agent = minus any payments your client made into the scheme
+overseasPension.untaxedEmployerPayments.question.individual = How much did your employers pay into your overseas pension scheme?
+overseasPension.untaxedEmployerPayments.question.agent = How much did your client’s employers pay into the overseas pension scheme?
+overseasPension.untaxedEmployerPayments.error.noEntry.individual = Enter the amount your employers paid into your overseas pension schemes
+overseasPension.untaxedEmployerPayments.error.noEntry.agent = Enter the amount that your client’s employer paid into their overseas pension scheme
+overseasPension.untaxedEmployerPayments.error.tooBig.individual = The amount your employers paid into overseas pension schemes must be less than £100,000,000,000
+overseasPension.untaxedEmployerPayments.error.tooBig.agent = The total amount that your client’s employers paid into their overseas pension scheme must be less than £100,000,000,000
+overseasPension.untaxedEmployerPayments.error.incorrectFormat.individual = Enter the amount your employers paid into overseas pension schemes in the correct format
+overseasPension.untaxedEmployerPayments.error.incorrectFormat.agent = Enter the total amount that your client’s employers paid into their overseas pension scheme in the correct format
+
 #Pension Customer Reference Number
 overseasPension.pensionsCustomerReferenceNumber.title.individual = What’s your customer reference number?
 overseasPension.pensionsCustomerReferenceNumber.title.agent = What’s your client’s customer reference number?
