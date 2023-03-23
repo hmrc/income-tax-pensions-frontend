@@ -39,6 +39,7 @@ class PensionsReliefViewSpec extends ViewUnitTest with FakeRequestProvider {
     val titleSelector = "#main-content > div > div > header > h1"
     val buttonSelector = "#continue"
     val orSelector = "#main-content > div > div > form > div > fieldset > div > div.govuk-radios__divider"
+    val linkSelector = "#find-out-more-link"
   }
 
   trait CommonExpectedResults {
@@ -138,6 +139,10 @@ class PensionsReliefViewSpec extends ViewUnitTest with FakeRequestProvider {
         textOnPageCheck(userScenario.commonExpectedResults.or, Selectors.orSelector)
         radioButtonCheck(userScenario.commonExpectedResults.noneOfTheAbove, 4, checked = false)
 
+        linkCheck(userScenario.commonExpectedResults.expectedLinkText, Selectors.linkSelector,
+          href = "https://www.gov.uk/guidance/overseas-pensions-tax-relief-on-your-contributions",
+          isExactUrlMatch = false)
+
       }
       "render page with pre filled data" which {
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
@@ -161,6 +166,10 @@ class PensionsReliefViewSpec extends ViewUnitTest with FakeRequestProvider {
         radioButtonCheck(userScenario.commonExpectedResults.expectedTCR, 3, checked = true)
         textOnPageCheck(userScenario.commonExpectedResults.or, Selectors.orSelector)
         radioButtonCheck(userScenario.commonExpectedResults.noneOfTheAbove, 4, checked = false)
+
+        linkCheck(userScenario.commonExpectedResults.expectedLinkText, Selectors.linkSelector,
+          href = "https://www.gov.uk/guidance/overseas-pensions-tax-relief-on-your-contributions",
+          isExactUrlMatch = false)
       }
       "render page with error text when no option was selected" which {
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
