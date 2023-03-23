@@ -127,9 +127,9 @@ class UntaxedEmployerControllerSpec extends ViewUnitTest with FakeRequestProvide
     val expectedSub2Details2: String = "plus 16 times how much your client’s annual pension went up by"
     val expectedSub2Details3: String = "minus any payments your client made into the scheme"
     val expectedQuestion: String = "How much did your client’s employers pay into the overseas pension scheme?"
-    val expectedErrorNoEntry: String = "Enter the amount your client paid into overseas pension schemes"
-    val expectedErrorTooBig: String = "The amount your client paid into overseas pension schemes must be less than £100,000,000,000"
-    val expectedErrorInvalidFormat: String = "Enter the amount your client paid into overseas pension schemes in the correct format"
+    val expectedErrorNoEntry: String = "Enter the amount that your client’s employer paid into their overseas pension scheme"
+    val expectedErrorTooBig: String = "The total amount that your client’s employers paid into their overseas pension scheme must be less than £100,000,000,000"
+    val expectedErrorInvalidFormat: String = "Enter the total amount that your client’s employers paid into their overseas pension scheme in the correct format"
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
@@ -140,9 +140,9 @@ class UntaxedEmployerControllerSpec extends ViewUnitTest with FakeRequestProvide
     val expectedSub2Details2: String = "plus 16 times how much your client’s annual pension went up by"
     val expectedSub2Details3: String = "minus any payments your client made into the scheme"
     val expectedQuestion: String = "How much did your client’s employers pay into the overseas pension scheme?"
-    val expectedErrorNoEntry: String = "Enter the amount your client paid into overseas pension schemes"
-    val expectedErrorTooBig: String = "The amount your client paid into overseas pension schemes must be less than £100,000,000,000"
-    val expectedErrorInvalidFormat: String = "Enter the amount your client paid into overseas pension schemes in the correct format"
+    val expectedErrorNoEntry: String = "Enter the amount that your client’s employer paid into their overseas pension scheme"
+    val expectedErrorTooBig: String = "The total amount that your client’s employers paid into their overseas pension scheme must be less than £100,000,000,000"
+    val expectedErrorInvalidFormat: String = "Enter the total amount that your client’s employers paid into their overseas pension scheme in the correct format"
   }
 
   object CommonExpectedEN extends CommonExpectedResults {

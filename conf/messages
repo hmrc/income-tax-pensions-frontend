@@ -186,7 +186,7 @@ pensions.pensionSummary.pensionAnnualAllowance = Pension annual allowance
 pensions.pensionSummary.pensionLifetimeAllowance = Pension lifetime allowance
 pensions.pensionSummary.unauthorisedPaymentsFromPensions = Unauthorised payments from pensions
 pensions.pensionSummary.overseasPensionsSummary = Overseas pensions
-pensions.pensionSummary.paymentsToOverseasPensions = Payments into overPayments into overseas pensions
+pensions.pensionSummary.paymentsToOverseasPensions = Payments into overseas pensions
 
 # overseas pensions summary
 pensions.overseasPensionsSummary.paymentsIntoOverseasPensions = Payments into overseas pensions
@@ -859,11 +859,11 @@ overseasPension.untaxedEmployerPayments.sub2.details.info.list3.agent = minus an
 overseasPension.untaxedEmployerPayments.question.individual = How much did your employers pay into your overseas pension scheme?
 overseasPension.untaxedEmployerPayments.question.agent = How much did your client’s employers pay into the overseas pension scheme?
 overseasPension.untaxedEmployerPayments.error.noEntry.individual = Enter the amount your employers paid into your overseas pension schemes
-overseasPension.untaxedEmployerPayments.error.noEntry.agent = Enter the amount your client paid into overseas pension schemes
+overseasPension.untaxedEmployerPayments.error.noEntry.agent = Enter the amount that your client’s employer paid into their overseas pension scheme
 overseasPension.untaxedEmployerPayments.error.tooBig.individual = The amount your employers paid into overseas pension schemes must be less than £100,000,000,000
-overseasPension.untaxedEmployerPayments.error.tooBig.agent = The amount your client paid into overseas pension schemes must be less than £100,000,000,000
+overseasPension.untaxedEmployerPayments.error.tooBig.agent = The total amount that your client’s employers paid into their overseas pension scheme must be less than £100,000,000,000
 overseasPension.untaxedEmployerPayments.error.incorrectFormat.individual = Enter the amount your employers paid into overseas pension schemes in the correct format
-overseasPension.untaxedEmployerPayments.error.incorrectFormat.agent = Enter the amount your client paid into overseas pension schemes in the correct format
+overseasPension.untaxedEmployerPayments.error.incorrectFormat.agent = Enter the total amount that your client’s employers paid into their overseas pension scheme in the correct format
 
 
 #Special Withholding Tax
