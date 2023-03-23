@@ -45,20 +45,17 @@ class PensionReliefTypeController@Inject()(actionsProvider: ActionsProvider,
 
   def show(taxYear: Int, reliefIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit sessionData =>
-
-      Future.successful(Ok(view(formsProvider.overseasPensionsReliefTypeForm, taxYear, reliefIndex)))
-
-//      validateIndex(reliefIndex, sessionData.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs.size) match {
-//        case Some(idx) =>
-//          sessionData.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs(idx).reliefType.fold {
-//            Future.successful(Ok(view(formsProvider.overseasPensionsReliefTypeForm, taxYear, reliefIndex)))
-//          } {
-//            reliefType =>
-//              Future.successful(Ok(view(formsProvider.overseasPensionsReliefTypeForm.fill(reliefType), taxYear, reliefIndex)))
-//          }
-//        case _ =>
-//          Future.successful(Redirect(PensionsCustomerReferenceNumberController.show(taxYear)))
-//      }
+      validateIndex(reliefIndex, sessionData.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs.size) match {
+        case Some(idx) =>
+          sessionData.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs(idx).reliefType.fold {
+            Future.successful(Ok(view(formsProvider.overseasPensionsReliefTypeForm, taxYear, reliefIndex)))
+          } {
+            reliefType =>
+              Future.successful(Ok(view(formsProvider.overseasPensionsReliefTypeForm.fill(reliefType), taxYear, reliefIndex)))
+          }
+        case _ =>
+          Future.successful(Redirect(PensionsCustomerReferenceNumberController.show(taxYear)))
+      }
   }
 
   def submit(taxYear: Int, reliefIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
