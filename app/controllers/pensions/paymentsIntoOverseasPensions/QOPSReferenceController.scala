@@ -75,7 +75,7 @@ class QOPSReferenceController @Inject()(authAction: AuthorisedAction,
             referenceNumber => {
               pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
                 case Right(Some(data)) =>
-                  data.pensions.paymentsIntoOverseasPensions.reliefs.headOption match {
+                  data.pensions.paymentsIntoOverseasPensions.reliefs.headOption match { // todo currently only updates first in list - upgrade ticket
                     case Some(relief) => val updatedCyaModel: PensionsCYAModel = data.pensions.copy(
                       paymentsIntoOverseasPensions = data.pensions.paymentsIntoOverseasPensions.copy(
                         reliefs = data.pensions.paymentsIntoOverseasPensions.reliefs.updated(

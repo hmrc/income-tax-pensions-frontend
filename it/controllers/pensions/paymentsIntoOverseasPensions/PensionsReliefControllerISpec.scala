@@ -113,7 +113,7 @@ class PensionsReliefControllerISpec extends IntegrationTest with ViewHelpers
           body = formData)
       }
 
-      result.status shouldBe SEE_OTHER //todo redirect to "SF74 reference" Page when built
+      result.status shouldBe SEE_OTHER
       result.headers("location").head shouldBe sf74ReferenceUrl(taxYearEOY)
     }
 
@@ -176,8 +176,6 @@ class PensionsReliefControllerISpec extends IntegrationTest with ViewHelpers
           follow = false,
           body = formData)
       }
-      println( "return an error when form is submitted with no entry" + result)
-
       result.status shouldBe BAD_REQUEST
     }
 
@@ -193,7 +191,6 @@ class PensionsReliefControllerISpec extends IntegrationTest with ViewHelpers
           follow = false,
           body = formData)
       }
-      println("redirect to start of sequence when index doesn't" + result.headers("location").head)
       result.status shouldBe SEE_OTHER
       result.headers("location").head shouldBe pensionCustomerReferenceNumberUrl(taxYearEOY)
     }
