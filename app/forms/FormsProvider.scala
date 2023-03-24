@@ -17,8 +17,11 @@
 package forms
 
 import forms.OptionalTupleAmountForm.OptionalTupleAmountFormErrorMessage
+import forms.RadioButtonForm
 import models.User
+import models.pension.charges.TaxReliefQuestion
 import play.api.data.Form
+
 import javax.inject.Singleton
 
 @Singleton
@@ -95,8 +98,20 @@ class FormsProvider() {
     ))
   }
 
+  def untaxedEmployerPayments(isAgent: Boolean): Form[BigDecimal] = AmountForm.amountForm(
+    emptyFieldKey = s"overseasPension.untaxedEmployerPayments.error.noEntry.${if (isAgent) "agent" else "individual"}",
+    wrongFormatKey = s"overseasPension.untaxedEmployerPayments.error.incorrectFormat.${if (isAgent) "agent" else "individual"}",
+    exceedsMaxAmountKey = s"overseasPension.untaxedEmployerPayments.error.tooBig.${if (isAgent) "agent" else "individual"}"
+  )
+
+
+
   def sf74ReferenceIdForm: Form[String] = SF74ReferenceForm.sf74ReferenceIdForm(
     noEntryMsg = "pensions.paymentsIntoOverseasPensions.sf74Reference.noEntry",
     incorrectFormatMsg = "pensions.paymentsIntoOverseasPensions.sf74Reference.incorrectFormat"
   )
+
+  def overseasPensionsReliefTypeForm: Form[String] = {
+    RadioButtonForm.radioButtonForm("overseasPension.pensionReliefType.error.noEntry", TaxReliefQuestion.validTaxList)
+  }
 }

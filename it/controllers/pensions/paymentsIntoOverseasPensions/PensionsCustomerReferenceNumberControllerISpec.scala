@@ -20,12 +20,13 @@ import builders.PaymentsIntoOverseasPensionsViewModelBuilder.aPaymentsIntoOverse
 import builders.PensionsUserDataBuilder.{aPensionsUserData, anPensionsUserDataEmptyCya, pensionUserDataWithOverseasPensions}
 import builders.UserBuilder.aUserRequest
 import forms.PensionCustomerReferenceNumberForm
+import models.pension.charges.{PaymentsIntoOverseasPensionsViewModel, Relief}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterEach
 import play.api.libs.ws.WSResponse
 import utils.CommonUtils
-import utils.PageUrls.{OverseasPensionPages, pensionSummaryUrl}
+import utils.PageUrls.{PaymentIntoOverseasPensions, pensionSummaryUrl}
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 
 
@@ -103,7 +104,7 @@ class PensionsCustomerReferenceNumberControllerISpec extends CommonUtils with Be
   }
 
   val inputName: String = "pensionsCustomerReferenceNumberId"
-  implicit val pensionCustomerReferenceNumberUrl: Int => String = OverseasPensionPages.pensionCustomerReferenceNumberUrl
+  implicit val pensionCustomerReferenceNumberUrl: Int => String = (taxYear: Int) => PaymentIntoOverseasPensions.pensionCustomerReferenceNumberUrl(taxYear)
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(
     UserScenario(isWelsh = false, isAgent = false, CommonExpectedEN, Some(ExpectedIndividualEN)),
@@ -120,7 +121,12 @@ class PensionsCustomerReferenceNumberControllerISpec extends CommonUtils with Be
         import user.commonExpectedResults._
 
         "render the customer reference number page with correct content and no pre-filling" which {
-          implicit lazy val result: WSResponse = showPage(user, anPensionsUserDataEmptyCya)
+
+          val relief = aPensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs.head.copy(customerReferenceNumberQuestion = None)
+          val viewModel: PaymentsIntoOverseasPensionsViewModel = aPensionsUserData.pensions.paymentsIntoOverseasPensions.copy(reliefs = Seq(relief))
+          val cya = aPensionsUserData.pensions.copy(paymentsIntoOverseasPensions = viewModel)
+          val userData = aPensionsUserData.copy(pensions = cya)
+          implicit lazy val result: WSResponse = showPage(user, userData)
 
 
           "has an OK status" in {
@@ -144,8 +150,9 @@ class PensionsCustomerReferenceNumberControllerISpec extends CommonUtils with Be
           val pensionsCustomerReferenceNumber = "PENSIONSINCOME245"
 
           val pensionsViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(
-            customerReferenceNumberQuestion = Some(pensionsCustomerReferenceNumber)
-          )
+            reliefs = Seq(aPaymentsIntoOverseasPensionsViewModel.reliefs.head.copy(
+              customerReferenceNumberQuestion = Some(pensionsCustomerReferenceNumber))))
+
           val pensionUserData = pensionUserDataWithOverseasPensions(pensionsViewModel)
           implicit lazy val result: WSResponse = showPage(user, pensionUserData)
 
@@ -211,7 +218,12 @@ class PensionsCustomerReferenceNumberControllerISpec extends CommonUtils with Be
 
     "redirect and update question to contain customer reference number when no cya data exists" which {
       lazy val form: Map[String, String] = Map(PensionCustomerReferenceNumberForm.pensionsCustomerReferenceNumberId -> "PENSIONAINCOME245")
-      val pensionsViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(customerReferenceNumberQuestion = None)
+
+      val relief = Relief()
+
+      val pensionsViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(
+        reliefs = Seq(relief))
+
       val pensionUserData = pensionUserDataWithOverseasPensions(pensionsViewModel)
 
       lazy val result: WSResponse = submitPage(pensionUserData, form)
@@ -223,13 +235,17 @@ class PensionsCustomerReferenceNumberControllerISpec extends CommonUtils with Be
 
       "updates pension scheme customer reference number  reference to contain tax reference" in {
         lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
-        cyaModel.pensions.paymentsIntoOverseasPensions.customerReferenceNumberQuestion.get shouldBe "PENSIONAINCOME245"
+        cyaModel.pensions.paymentsIntoOverseasPensions.reliefs.head.customerReferenceNumberQuestion.get shouldBe "PENSIONAINCOME245"
       }
     }
 
     "redirect and update contain customer reference number when cya data exists" which {
       lazy val form: Map[String, String] = Map(PensionCustomerReferenceNumberForm.pensionsCustomerReferenceNumberId -> "PENSIONAINCOME245")
-      val pensionsViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(customerReferenceNumberQuestion = Some("PENSIONAINCOME"))
+      val pensionsViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(
+        reliefs = Seq(aPaymentsIntoOverseasPensionsViewModel.reliefs.head.copy(
+          customerReferenceNumberQuestion = Some("PENSIONAINCOME245"))))
+
+
       val pensionUserData = pensionUserDataWithOverseasPensions(pensionsViewModel)
 
       lazy val result: WSResponse = submitPage(pensionUserData, form)
@@ -242,7 +258,7 @@ class PensionsCustomerReferenceNumberControllerISpec extends CommonUtils with Be
 
       "updates pension scheme customer reference number reference " in {
         lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
-        cyaModel.pensions.paymentsIntoOverseasPensions.customerReferenceNumberQuestion.get shouldBe "PENSIONAINCOME245"
+        cyaModel.pensions.paymentsIntoOverseasPensions.reliefs.head.customerReferenceNumberQuestion.get shouldBe "PENSIONAINCOME245"
       }
 
     }
@@ -259,6 +275,5 @@ class PensionsCustomerReferenceNumberControllerISpec extends CommonUtils with Be
       }
     }
   }
-
 
 }

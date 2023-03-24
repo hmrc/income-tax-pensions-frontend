@@ -218,9 +218,9 @@ pensions.reliefAtSource.paragraph.example1.agent = your client’s net income (a
 pensions.reliefAtSource.paragraph.example2.individual = your taxable income, if you’re self-employed
 pensions.reliefAtSource.paragraph.example2.agent = your client’s taxable income, if they’re self-employed
 pensions.reliefAtSource.pensionProvider.individual = Your pension provider then claims tax relief for you.
-pensions.reliefAtSource.pensionProvider.agent = Your pension provider then claims tax relief for your client.
+pensions.reliefAtSource.pensionProvider.agent = Your client’s pension provider then claims tax relief for your client.
 pensions.reliefAtSource.checkProvider.individual = You can check with your pension provider whether this applies to you.
-pensions.reliefAtSource.checkProvider.agent = You can check with your pension provider whether this applies to your client.
+pensions.reliefAtSource.checkProvider.agent = You can check with your client’s pension provider whether this applies to your client.
 pensions.reliefAtSource.error.noEntry.individual = Select yes if you paid into a RAS pension
 pensions.reliefAtSource.error.noEntry.agent = Select yes if your client paid into a RAS pension
 
@@ -838,6 +838,34 @@ overseasPension.pensionPayments.nonUkTaxPaid.text = Non-UK tax paid
 overseasPension.pensionPayments.nonUkTaxPaid.incorrectFormat = Enter the amount of non-UK tax paid in the correct format
 overseasPension.pensionPayments.nonUkTaxPaidLessThanAmountBeforeTax = The Non-UK tax paid can’t be larger than Amount before tax
 
+#Untaxed Employer Payments
+overseasPension.untaxedEmployerPayments.title = Untaxed employer payments
+overseasPension.untaxedEmployerPayments.para1 = This is also known as exempt employers’ contributions.
+overseasPension.untaxedEmployerPayments.para2.individual = You need to know which type of scheme your employer paid into.
+overseasPension.untaxedEmployerPayments.para2.agent = You need to know which type of scheme your client’s employer paid into.
+overseasPension.untaxedEmployerPayments.sub1 = Contribution schemes (money purchase schemes)
+overseasPension.untaxedEmployerPayments.sub1.para1.individual = If you have this type of scheme, tell us the total amount your employers paid in.
+overseasPension.untaxedEmployerPayments.sub1.para1.agent = If your client has this type of scheme, tell us the total amount their employers paid in.
+overseasPension.untaxedEmployerPayments.sub2 = Benefits schemes (average or final salary schemes)
+overseasPension.untaxedEmployerPayments.sub2.para1.individual = If you have this type of scheme, tell us the value of the amount your employers paid in.
+overseasPension.untaxedEmployerPayments.sub2.para1.agent = If your client has this type of scheme, tell us the value of the amount their employers paid in.
+overseasPension.untaxedEmployerPayments.sub2.details.title = Work out the value of payments into a benefits scheme
+overseasPension.untaxedEmployerPayments.sub2.details.info.list1.individual = how much your lump sum went up by
+overseasPension.untaxedEmployerPayments.sub2.details.info.list1.agent = how much your client’s lump sum went up by
+overseasPension.untaxedEmployerPayments.sub2.details.info.list2.individual = plus 16 times how much your annual pension went up by
+overseasPension.untaxedEmployerPayments.sub2.details.info.list2.agent = plus 16 times how much your client’s annual pension went up by
+overseasPension.untaxedEmployerPayments.sub2.details.info.list3.individual = minus any payments you made into the scheme
+overseasPension.untaxedEmployerPayments.sub2.details.info.list3.agent = minus any payments your client made into the scheme
+overseasPension.untaxedEmployerPayments.question.individual = How much did your employers pay into your overseas pension scheme?
+overseasPension.untaxedEmployerPayments.question.agent = How much did your client’s employers pay into the overseas pension scheme?
+overseasPension.untaxedEmployerPayments.error.noEntry.individual = Enter the amount your employers paid into your overseas pension schemes
+overseasPension.untaxedEmployerPayments.error.noEntry.agent = Enter the amount that your client’s employer paid into their overseas pension scheme
+overseasPension.untaxedEmployerPayments.error.tooBig.individual = The amount your employers paid into overseas pension schemes must be less than £100,000,000,000
+overseasPension.untaxedEmployerPayments.error.tooBig.agent = The total amount that your client’s employers paid into their overseas pension scheme must be less than £100,000,000,000
+overseasPension.untaxedEmployerPayments.error.incorrectFormat.individual = Enter the amount your employers paid into overseas pension schemes in the correct format
+overseasPension.untaxedEmployerPayments.error.incorrectFormat.agent = Enter the total amount that your client’s employers paid into their overseas pension scheme in the correct format
+
+
 #Special Withholding Tax
 overseasPension.specialWithHoldingTax.title.individual = Did you have Special Withholding Tax (SWT) deducted from your pension?
 overseasPension.specialWithHoldingTax.title.agent = Did your client have Special Withholding Tax (SWT) deducted from their pension?
@@ -872,6 +900,17 @@ overseasPension.pensionsCustomerReferenceNumber.paragraph1.agent = Your client�
 overseasPension.pensionsCustomerReferenceNumber.hint = For example, ''PENSIONINCOME245''
 overseasPension.pensionsCustomerReferenceNumber.error.noEntry.individual = Enter your customer reference number
 overseasPension.pensionsCustomerReferenceNumber.error.noEntry.agent = Enter your client’s customer reference number
+
+#Pension Tax Relief Type
+overseasPension.pensionReliefType.title.individual = What tax relief did you get on payments into overseas pensions?
+overseasPension.pensionReliefType.title.agent = What tax relief did your client get on payments into overseas pensions?
+overseasPension.pensionReliefType.MMR = Migrant member relief
+overseasPension.pensionReliefType.DTR = Double taxation relief
+overseasPension.pensionReliefType.TCR = Transitional corresponding relief
+overseasPension.pensionReliefType.NoneOfThese = None of these
+overseasPension.pensionReliefType.error.noEntry = Select the type of tax relief or select none
+overseasPension.pensionReliefType.link = Find out about the types of tax relief for overseas pension scheme payments
+
 
 #Your Taxable Amount
 overseasPension.yourTaxableAmount.title.individual = Your taxable amount

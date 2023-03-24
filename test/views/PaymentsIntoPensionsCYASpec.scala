@@ -208,20 +208,19 @@ class PaymentsIntoPensionsCYATestSupport extends ViewUnitTest {
         captionCheck(userScenario.commonExpectedResults.expectedCaption(taxYear))
 
         //noinspection ScalaStyle
-        cyaRowCheck(paymentsIntoUKPensions, yes, ChangeLinks.paymentsIntoUKPensions, paymentsIntoUKPensionsHidden, 1)
-        cyaRowCheck(reliefAtSource, yes, ChangeLinks.reliefAtSource, reliefAtSourceHidden, 2)
+        cyaRowCheck(reliefAtSource, yes, ChangeLinks.reliefAtSource, reliefAtSourceHidden, 1)
         cyaRowCheck(reliefAtSourceAmount, s"${moneyContent(aPaymentsIntoPensionViewModel.totalRASPaymentsAndTaxRelief.get)}",
-          ChangeLinks.reliefAtSourceAmount, reliefAtSourceAmountHidden, 3)
-        cyaRowCheck(oneOff, yes, ChangeLinks.oneOff, oneOffHidden, 4)
+          ChangeLinks.reliefAtSourceAmount, reliefAtSourceAmountHidden, 2)
+        cyaRowCheck(oneOff, yes, ChangeLinks.oneOff, oneOffHidden, 3)
         cyaRowCheck(oneOffAmount, s"${moneyContent(aPaymentsIntoPensionViewModel.totalOneOffRasPaymentPlusTaxRelief.get)}",
-          ChangeLinks.oneOffAmount, oneOffAmountHidden, 5)
-        cyaRowCheck(pensionsTaxReliefNotClaimed, yes, ChangeLinks.pensionsTaxReliefNotClaimed, pensionsTaxReliefNotClaimedHidden, 6)
-        cyaRowCheck(retirementAnnuity, yes, ChangeLinks.retirementAnnuity, retirementAnnuityHidden, 7)
+          ChangeLinks.oneOffAmount, oneOffAmountHidden, 4)
+        cyaRowCheck(pensionsTaxReliefNotClaimed, yes, ChangeLinks.pensionsTaxReliefNotClaimed, pensionsTaxReliefNotClaimedHidden, 5)
+        cyaRowCheck(retirementAnnuity, yes, ChangeLinks.retirementAnnuity, retirementAnnuityHidden, 6)
         cyaRowCheck(retirementAnnuityAmount, s"${moneyContent(aPaymentsIntoPensionViewModel.totalRetirementAnnuityContractPayments.get)}",
-          ChangeLinks.retirementAnnuityAmount, retirementAnnuityAmountHidden, 8)
-        cyaRowCheck(workplacePayments, yes, ChangeLinks.workplacePayments, workplacePaymentsHidden, 9)
+          ChangeLinks.retirementAnnuityAmount, retirementAnnuityAmountHidden, 7)
+        cyaRowCheck(workplacePayments, yes, ChangeLinks.workplacePayments, workplacePaymentsHidden, 8)
         cyaRowCheck(workplacePaymentsAmount, s"${moneyContent(aPaymentsIntoPensionViewModel.totalWorkplacePensionPayments.get)}",
-          ChangeLinks.workplacePaymentsAmount, workplacePaymentsAmountHidden, 10)
+          ChangeLinks.workplacePaymentsAmount, workplacePaymentsAmountHidden, 9)
 
         buttonCheck(saveAndContinue)
 
@@ -242,9 +241,8 @@ class PaymentsIntoPensionsCYATestSupport extends ViewUnitTest {
         import userScenario.commonExpectedResults.{no => answerNo, yes => anseryes}
 
         //noinspection ScalaStyle
-        cyaRowCheck(paymentsIntoUKPensions, anseryes, ChangeLinks.paymentsIntoUKPensions, paymentsIntoUKPensionsHidden, 1)
-        cyaRowCheck(reliefAtSource, answerNo, ChangeLinks.reliefAtSource, reliefAtSourceHidden, 2)
-        cyaRowCheck(pensionsTaxReliefNotClaimed, answerNo, ChangeLinks.pensionsTaxReliefNotClaimed, pensionsTaxReliefNotClaimedHidden, 3)
+        cyaRowCheck(reliefAtSource, answerNo, ChangeLinks.reliefAtSource, reliefAtSourceHidden, 1)
+        cyaRowCheck(pensionsTaxReliefNotClaimed, answerNo, ChangeLinks.pensionsTaxReliefNotClaimed, pensionsTaxReliefNotClaimedHidden, 2)
 
         buttonCheck(saveAndContinue)
 
