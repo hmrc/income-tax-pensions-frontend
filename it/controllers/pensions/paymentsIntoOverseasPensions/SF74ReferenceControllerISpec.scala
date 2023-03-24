@@ -21,16 +21,16 @@ import builders.PaymentsIntoOverseasPensionsViewModelBuilder.aPaymentsIntoOverse
 import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import builders.PensionsUserDataBuilder
 import builders.UserBuilder.aUserRequest
-import forms.{SF74ReferenceForm}
+import forms.SF74ReferenceForm
 import models.mongo.{PensionsCYAModel, PensionsUserData}
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.OverseasPensionPages.sf74ReferenceUrl
 import utils.PageUrls.overseasPensionsSummaryUrl
 import utils.PageUrls.fullUrl
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 import play.api.http.Status.{OK, SEE_OTHER}
+import utils.PageUrls.PaymentIntoOverseasPensions.sf74ReferenceUrl
 
 
 class SF74ReferenceControllerISpec extends IntegrationTest with BeforeAndAfterEach with ViewHelpers with PensionsDatabaseHelper{
@@ -50,12 +50,14 @@ class SF74ReferenceControllerISpec extends IntegrationTest with BeforeAndAfterEa
 
         "render the 'sf74 reference' page " which {
 
-          val relief = aPaymentsIntoOverseasPensionsViewModel.reliefs.head.copy(sf74Reference = Some("1234567"))
-          val updatedPaymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel.copy(reliefs = Seq(relief))
+          val pensionsViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(
+            reliefs = Seq(aPaymentsIntoOverseasPensionsViewModel.reliefs.head.copy(
+              sf74Reference = Some("1234567"))))
+
           implicit lazy val result: WSResponse = {
             authoriseAgentOrIndividual(user.isAgent)
             dropPensionsDB()
-            val viewModel = updatedPaymentsIntoOverseasPensions
+            val viewModel = pensionsViewModel
             insertCyaData(pensionUserDataWithOverseasPensions(viewModel), aUserRequest)
             urlGet(fullUrl(sf74ReferenceUrl(taxYearEOY)), user.isWelsh, follow = false,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))

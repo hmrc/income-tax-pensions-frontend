@@ -901,6 +901,17 @@ overseasPension.pensionsCustomerReferenceNumber.hint = For example, ''PENSIONINC
 overseasPension.pensionsCustomerReferenceNumber.error.noEntry.individual = Enter your customer reference number
 overseasPension.pensionsCustomerReferenceNumber.error.noEntry.agent = Enter your client’s customer reference number
 
+#Pension Tax Relief Type
+overseasPension.pensionReliefType.title.individual = What tax relief did you get on payments into overseas pensions?
+overseasPension.pensionReliefType.title.agent = What tax relief did your client get on payments into overseas pensions?
+overseasPension.pensionReliefType.MMR = Migrant member relief
+overseasPension.pensionReliefType.DTR = Double taxation relief
+overseasPension.pensionReliefType.TCR = Transitional corresponding relief
+overseasPension.pensionReliefType.NoneOfThese = None of these
+overseasPension.pensionReliefType.error.noEntry = Select the type of tax relief or select none
+overseasPension.pensionReliefType.link = Find out about the types of tax relief for overseas pension scheme payments
+
+
 #Your Taxable Amount
 overseasPension.yourTaxableAmount.title.individual = Your taxable amount
 overseasPension.yourTaxableAmount.title.agent = Your client’s taxable amount

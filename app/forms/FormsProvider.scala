@@ -17,8 +17,11 @@
 package forms
 
 import forms.OptionalTupleAmountForm.OptionalTupleAmountFormErrorMessage
+import forms.RadioButtonForm
 import models.User
+import models.pension.charges.TaxReliefQuestion
 import play.api.data.Form
+
 import javax.inject.Singleton
 
 @Singleton
@@ -107,4 +110,8 @@ class FormsProvider() {
     noEntryMsg = "pensions.paymentsIntoOverseasPensions.sf74Reference.noEntry",
     incorrectFormatMsg = "pensions.paymentsIntoOverseasPensions.sf74Reference.incorrectFormat"
   )
+
+  def overseasPensionsReliefTypeForm: Form[String] = {
+    RadioButtonForm.radioButtonForm("overseasPension.pensionReliefType.error.noEntry", TaxReliefQuestion.validTaxList)
+  }
 }

@@ -86,6 +86,8 @@ class PensionsCustomerReferenceNumberController @Inject()(authAction: Authorised
       pensionCustomerReferenceNumber => {
         pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
           case Right(Some(data)) =>
+            data.pensions.paymentsIntoOverseasPensions.reliefs.headOption match {
+              case Some(relief) =>
             val reliefs = data.pensions.paymentsIntoOverseasPensions.reliefs.head.copy(
               customerReferenceNumberQuestion = Some(pensionCustomerReferenceNumber))
             val updatedCyaModel: PensionsCYAModel =
@@ -94,6 +96,9 @@ class PensionsCustomerReferenceNumberController @Inject()(authAction: Authorised
             pensionSessionService.createOrUpdateSessionData(request.user,
               updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
               Redirect(PensionsCustomerReferenceNumberController.show(taxYear)) //TODO - redirect to untaxed-employer-payments SASS-3099
+            }
+              case _ =>
+                Future.successful(Redirect(PensionsCustomerReferenceNumberController.show(taxYear)))
             }
           case _ =>
             Future.successful(Redirect(PensionsSummaryController.show(taxYear)))

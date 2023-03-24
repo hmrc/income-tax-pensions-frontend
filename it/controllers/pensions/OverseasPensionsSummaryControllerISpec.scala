@@ -29,8 +29,8 @@ import play.api.http.Status.UNAUTHORIZED
 import play.api.libs.ws.WSResponse
 import utils.CommonUtils
 import utils.PageUrls.IncomeFromOverseasPensionsPages.{checkIncomeFromOverseasPensionsCyaUrl, incomeFromOverseasPensionsStatus}
+import utils.PageUrls.PaymentIntoOverseasPensions.paymentsIntoPensionSchemeUrl
 import utils.PageUrls._
-import utils.PageUrls.OverseasPensionPages.paymentsIntoPensionSchemeUrl
 import utils.PageUrls.ShortServiceRefunds.{shortServiceRefundsCYAUrl, shortServiceTaxableRefundUrl}
 import utils.PageUrls.TransferIntoOverseasPensions.{checkYourDetailsPensionUrl, transferPensionSavingsUrl}
 

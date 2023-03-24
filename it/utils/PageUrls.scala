@@ -194,7 +194,8 @@ object PageUrls extends IntegrationTest {
 
   }
 
-  object OverseasPensionPages {
+  object PaymentIntoOverseasPensions {
+
     def paymentsIntoPensionSchemeUrl(taxYear: Int): String = s"$appUrl/$taxYear/overseas-pensions/payments-into-overseas-pensions/payments-into-schemes"
 
     def employerPayOverseasPensionUrl(taxYear: Int): String =
@@ -210,6 +211,9 @@ object PageUrls extends IntegrationTest {
 
     def pensionCustomerReferenceNumberUrl(taxYear: Int): String =
       s"$appUrl/$taxYear/overseas-pensions/payments-into-overseas-pensions/pensions-customer-reference-number"
+
+    def pensionReliefTypeUrl(taxYear: Int, index: Int): String =
+      s"$appUrl/$taxYear/overseas-pensions/payments-into-overseas-pensions/pensions-overseas-emp-relief-status?reliefIndex=$index"
   }
 
   //  *****************     Income from overseas pensions pages      ******************************

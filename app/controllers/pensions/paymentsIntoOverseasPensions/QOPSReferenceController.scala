@@ -17,7 +17,7 @@
 package controllers.pensions.paymentsIntoOverseasPensions
 
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.paymentsIntoOverseasPensions.routes.QOPSReferenceController
+import controllers.pensions.paymentsIntoOverseasPensions.routes.{PensionsCustomerReferenceNumberController, QOPSReferenceController}
 import controllers.pensions.routes.PensionsSummaryController
 import controllers.predicates.AuthorisedAction
 import forms.QOPSReferenceNumberForm
@@ -58,34 +58,44 @@ class QOPSReferenceController @Inject()(authAction: AuthorisedAction,
   }
 
   private def referenceForm(user: User, pensionUserData: PensionsUserData): Form[String] =
-    pensionUserData.pensions.paymentsIntoOverseasPensions.reliefs.head.qualifyingOverseasPensionSchemeReferenceNumber
-      .map(value => referenceForm().fill(removePrefix(value)))
-      .getOrElse(referenceForm())
-
-  def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
-    referenceForm().bindFromRequest().fold(
-      formWithErrors => Future.successful(BadRequest(qopsReferenceView(formWithErrors, taxYear))),
-      referenceNumber => {
-        pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
-          case Right(Some(data)) =>
-            val reliefs = data.pensions.paymentsIntoOverseasPensions.reliefs.head.copy(
-              qualifyingOverseasPensionSchemeReferenceNumber = Some(referenceNumber))
-
-            val updatedCyaModel: PensionsCYAModel =
-              data.pensions.copy(
-                paymentsIntoOverseasPensions = data.pensions.paymentsIntoOverseasPensions.copy(reliefs = Seq(reliefs)))
-
-            pensionSessionService.createOrUpdateSessionData(request.user,
-              updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
-              Redirect(QOPSReferenceController.show(taxYear)) //TODO - redirect to pensions-overseas-details-summary
-            }
-          case _ =>
-            Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
+    pensionUserData.pensions.paymentsIntoOverseasPensions.reliefs.headOption.fold {
+      referenceForm()
+    } {
+      relief =>
+        relief.qualifyingOverseasPensionSchemeReferenceNumber.fold {
+          referenceForm()
+        } {
+          value => referenceForm().fill(removePrefix(value))
         }
-      }
-    )
-  }
+    }
 
-  def removePrefix(qopsReference: String): String =
-    if (qopsReference.length == 10) qopsReference.substring(4, 10) else qopsReference
+    def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
+          referenceForm().bindFromRequest().fold(
+            formWithErrors => Future.successful(BadRequest(qopsReferenceView(formWithErrors, taxYear))),
+            referenceNumber => {
+              pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
+                case Right(Some(data)) =>
+                  data.pensions.paymentsIntoOverseasPensions.reliefs.headOption match { // todo currently only updates first in list - upgrade ticket
+                    case Some(relief) =>
+                      val updatedCyaModel: PensionsCYAModel = data.pensions.copy(
+                      paymentsIntoOverseasPensions = data.pensions.paymentsIntoOverseasPensions.copy(
+                        reliefs = data.pensions.paymentsIntoOverseasPensions.reliefs.updated(
+                          0, relief.copy(qualifyingOverseasPensionSchemeReferenceNumber = Some(referenceNumber))
+                        )))
+                      pensionSessionService.createOrUpdateSessionData(request.user,
+                        updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
+                        Redirect(QOPSReferenceController.show(taxYear)) //TODO - redirect to pensions-overseas-details-summary
+                      }
+                    case _ =>
+                      Future.successful(Redirect(PensionsCustomerReferenceNumberController.show(taxYear)))
+                  }
+
+                case _ =>
+                  Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
+              }
+            }
+          )
+        }
+
+        def removePrefix(qopsReference: String): String = if (qopsReference.length == 10) qopsReference.substring(4, 10) else qopsReference
 }

@@ -140,22 +140,6 @@ object AllPensionsData {
     )
   }
 
-  private def fromOverseasPensionContribution(overseasPensionContribution: Seq[OverseasPensionContribution]) = {
-    overseasPensionContribution.map(oPC =>
-      Relief(
-        customerReferenceNumberQuestion = oPC.customerReference,
-        employerPaymentsAmount = Some(oPC.exemptEmployersPensionContribs),
-        reliefType = Some(getTaxReliefQuestion(oPC)),
-        qualifyingOverseasPensionSchemeReferenceNumber = oPC.migrantMemReliefQopsRefNo,
-        doubleTaxationCountryCode = oPC.dblTaxationCountry,
-        doubleTaxationCountryArticle = oPC.dblTaxationArticle,
-        doubleTaxationCountryTreaty = oPC.dblTaxationTreaty,
-        doubleTaxationReliefAmount = oPC.dblTaxationRelief,
-        sf74Reference = oPC.sf74Reference
-      )
-    )
-  }
-
 
   private def fromRefundSchemeProvider(osp: Seq[OverseasSchemeProvider]): Seq[OverseasRefundPensionScheme] = {
     osp.map( x =>
@@ -196,6 +180,22 @@ object AllPensionsData {
         specialWithholdingTaxAmount = fP.specialWithholdingTax,
         foreignTaxCreditReliefQuestion = fP.foreignTaxCreditRelief,
         taxableAmount = Some(fP.taxableAmount)
+      )
+    )
+  }
+
+  private def fromOverseasPensionContribution(overseasPensionContribution: Seq[OverseasPensionContribution]) = {
+    overseasPensionContribution.map(oPC =>
+      Relief(
+        customerReferenceNumberQuestion = oPC.customerReference,
+        employerPaymentsAmount = Some(oPC.exemptEmployersPensionContribs),
+        reliefType = Some(getTaxReliefQuestion(oPC)),
+        qualifyingOverseasPensionSchemeReferenceNumber = oPC.migrantMemReliefQopsRefNo,
+        doubleTaxationCountryCode = oPC.dblTaxationCountry,
+        doubleTaxationCountryArticle = oPC.dblTaxationArticle,
+        doubleTaxationCountryTreaty = oPC.dblTaxationTreaty,
+        doubleTaxationReliefAmount = oPC.dblTaxationRelief,
+        sf74Reference = oPC.sf74Reference
       )
     )
   }

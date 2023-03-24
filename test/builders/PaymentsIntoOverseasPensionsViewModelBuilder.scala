@@ -18,6 +18,8 @@ package builders
 
 import models.pension.charges.TaxReliefQuestion.TransitionalCorrespondingRelief
 import models.pension.charges.{PaymentsIntoOverseasPensionsViewModel, Relief}
+import models.pension.charges.{PaymentsIntoOverseasPensionsViewModel, Relief}
+import models.pension.charges.TaxReliefQuestion.{MigrantMemberRelief, TransitionalCorrespondingRelief}
 
 object PaymentsIntoOverseasPensionsViewModelBuilder {
 
@@ -27,15 +29,25 @@ object PaymentsIntoOverseasPensionsViewModelBuilder {
     employerPaymentsQuestion = Some(true),
     taxPaidOnEmployerPaymentsQuestion = Some(false),
     reliefs = Seq(Relief(
-      customerReferenceNumberQuestion = Some("PENSIONINCOME245"),
       reliefType = Some(TransitionalCorrespondingRelief),
-      employerPaymentsAmount = Some(1999.99),
-      qualifyingOverseasPensionSchemeReferenceNumber = None,
-      doubleTaxationCountryCode = None,
-      doubleTaxationCountryArticle = None,
-      doubleTaxationCountryTreaty = None,
-      doubleTaxationReliefAmount = None,
-      sf74Reference = Some("SF74-123456")
+      customerReferenceNumberQuestion = Some("PENSIONINCOME245"),
+    employerPaymentsAmount = Some(1999.99),
+    qualifyingOverseasPensionSchemeReferenceNumber = None,
+    doubleTaxationCountryCode = None,
+    doubleTaxationCountryArticle = None,
+    doubleTaxationCountryTreaty = None,
+    doubleTaxationReliefAmount = None,
+    sf74Reference = Some("SF74-123456")),
+      Relief(
+        reliefType = Some(MigrantMemberRelief),
+        customerReferenceNumberQuestion = None,
+        employerPaymentsAmount = Some(100.00),
+        qualifyingOverseasPensionSchemeReferenceNumber = Some("123456"),
+        doubleTaxationCountryCode = None,
+        doubleTaxationCountryArticle = None,
+        doubleTaxationCountryTreaty = None,
+        doubleTaxationReliefAmount = None,
+        sf74Reference = None
     ))
   )
 
