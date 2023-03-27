@@ -83,10 +83,10 @@ object RetirementAnnuitySpec {
     val yesText = "Yes"
     val noText = "No"
     val buttonText = "Continue"
-    val expectedDetailsTitle = "What is a retirement annuity contract?"
+    val expectedDetailsTitle = "Beth yw contract blwydd-dal ymddeol?"
     val expectedDetails: String =
-      "Retirement annuity contracts are a type of pension scheme. " +
-        "They were available before 1988 to the self-employed and to workers not offered a workplace pension."
+      "Math o gynllun pensiwn yw contractau blwydd-dal ymddeol. " +
+        "Roeddent ar gael cyn 1988 i’r hunangyflogedig ac i weithwyr na chynigiwyd pensiwn gweithle iddynt."
   }
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
@@ -99,11 +99,11 @@ object RetirementAnnuitySpec {
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
-    val expectedTitle = "Did you pay into a retirement annuity contract?"
-    val expectedHeading = "Did you pay into a retirement annuity contract?"
-    val expectedParagraphText = "We only need to know about payments if your pension provider will not claim tax relief (opens in new tab)."
+    val expectedTitle = "A wnaethoch chi dalu i mewn i gontract blwydd-dal ymddeol?"
+    val expectedHeading = "A wnaethoch chi dalu i mewn i gontract blwydd-dal ymddeol?"
+    val expectedParagraphText = "Rydym ond angen gwybod am daliadau os na fydd darparwr eich pensiwn yn hawlio rhyddhad treth (opens in new tab)."
     val expectedErrorTitle = s"Error: $expectedTitle"
-    val expectedErrorMessage = "Select yes if you paid into a retirement annuity contract"
+    val expectedErrorMessage = "Dewiswch ‘Iawn’ os gwnaethoch dalu i mewn i gontract blwydd-dal ymddeol"
     val expectedYouCanFindThisOut = "You can find this out from your pension provider."
   }
 
@@ -117,11 +117,11 @@ object RetirementAnnuitySpec {
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
-    val expectedTitle = "Did your client pay into a retirement annuity contract?"
-    val expectedHeading = "Did your client pay into a retirement annuity contract?"
-    val expectedParagraphText = "We only need to know about payments if your client’s pension provider will not claim tax relief (opens in new tab)."
+    val expectedTitle = "A wnaeth eich cleient dalu i mewn i gontract blwydd-dal ymddeol?"
+    val expectedHeading = "A wnaeth eich cleient dalu i mewn i gontract blwydd-dal ymddeol?"
+    val expectedParagraphText = "Rydym ond angen gwybod am daliadau os na fydd darparwr pensiwn eich cleient yn hawlio rhyddhad treth (opens in new tab)."
     val expectedErrorTitle = s"Error: $expectedTitle"
-    val expectedErrorMessage = "Select yes if your client paid into a retirement annuity contract"
+    val expectedErrorMessage = "Dewiswch ‘Iawn’ os gwnaeth eich cleient dalu i mewn i gontract blwydd-dal ymddeol"
     val expectedYouCanFindThisOut = "You can find this out from your client’s pension provider."
   }
 }

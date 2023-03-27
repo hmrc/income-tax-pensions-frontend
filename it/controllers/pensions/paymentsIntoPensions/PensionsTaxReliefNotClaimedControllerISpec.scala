@@ -166,17 +166,17 @@ class PensionsTaxReliefNotClaimedControllerISpec
             assertPageAsExpected(
               OK,
               ExpectedYesNoPageContents(
-                title = "Pensions where tax relief is not claimed",
-                header = "Pensions where tax relief is not claimed",
+                title = "Pensiynau lle na chaiff rhyddhad treth ei hawlio",
+                header = "Pensiynau lle na chaiff rhyddhad treth ei hawlio",
                 caption = "Payments into pensions for 6 April 2021 to 5 April 2022",
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
                 links = Set.empty,
                 text = Set(
-                  ExpectedText(selectorForFirstParagraph, "These questions are about pensions you pay into where tax relief is not claimed for you."),
-                  ExpectedText(selectorForSecondParagraph, "You can check your pension statements or contact your pension provider to find the information you need."),
-                  ExpectedText(selectorForSubHeading, "Did you pay into a pension where tax relief was not claimed for you?")
+                  ExpectedText(selectorForFirstParagraph, "Mae’r cwestiynau hyn yn ymwneud â phensiynau y byddwch yn talu i mewn iddynt, lle na chaiff rhyddhad treth ei hawlio ar eich cyfer."),
+                  ExpectedText(selectorForSecondParagraph, "Gallwch wirio eich datganiadau pensiwn neu gysylltu â darparwr eich pensiwn i ddod o hyd i’r wybodaeth sydd ei hangen arnoch."),
+                  ExpectedText(selectorForSubHeading, "A wnaethoch dalu i mewn i bensiwn lle na hawliwyd rhyddhad treth ar eich cyfer?")
                 )
               ))
 
@@ -212,17 +212,17 @@ class PensionsTaxReliefNotClaimedControllerISpec
             assertPageAsExpected(
               OK,
               ExpectedYesNoPageContents(
-                title = "Pensions where tax relief is not claimed",
-                header = "Pensions where tax relief is not claimed",
+                title = "Pensiynau lle na chaiff rhyddhad treth ei hawlio",
+                header = "Pensiynau lle na chaiff rhyddhad treth ei hawlio",
                 caption = "Payments into pensions for 6 April 2021 to 5 April 2022",
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
                 links = Set.empty,
                 text = Set(
-                  ExpectedText(selectorForFirstParagraph, "These questions are about pensions your client pays into where tax relief is not claimed for them."),
-                  ExpectedText(selectorForSecondParagraph, "You can check your client’s pension statements or contact your client’s pension provider to find the information you need."),
-                  ExpectedText(selectorForSubHeading, "Did your client pay into a pension where tax relief was not claimed for them?")
+                  ExpectedText(selectorForFirstParagraph, "Mae’r cwestiynau hyn yn ymwneud â phensiynau y bydd eich cleient yn talu i mewn iddynt, lle na chaiff rhyddhad treth ei hawlio ar ei gyfer."),
+                  ExpectedText(selectorForSecondParagraph, "Gallwch wirio datganiadau pensiwn eich cleient neu gysylltu â darparwr pensiwn eich cleient i ddod o hyd i’r wybodaeth sydd ei hangen arnoch."),
+                  ExpectedText(selectorForSubHeading, "A wnaeth eich cleient dalu i mewn i bensiwn lle na hawliwyd rhyddhad treth ar ei gyfer?")
                 )
               ))
 
@@ -269,17 +269,17 @@ class PensionsTaxReliefNotClaimedControllerISpec
             assertPageAsExpected(
               OK,
               ExpectedYesNoPageContents(
-                title = "Pensions where tax relief is not claimed",
-                header = "Pensions where tax relief is not claimed",
+                title = "Pensiynau lle na chaiff rhyddhad treth ei hawlio",
+                header = "Pensiynau lle na chaiff rhyddhad treth ei hawlio",
                 caption = "Payments into pensions for 6 April 2021 to 5 April 2022",
                 radioButtonForYes = checkedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
                 links = Set.empty,
                 text = Set(
-                  ExpectedText(selectorForFirstParagraph, "These questions are about pensions you pay into where tax relief is not claimed for you."),
-                  ExpectedText(selectorForSecondParagraph, "You can check your pension statements or contact your pension provider to find the information you need."),
-                  ExpectedText(selectorForSubHeading, "Did you pay into a pension where tax relief was not claimed for you?")
+                  ExpectedText(selectorForFirstParagraph, "Mae’r cwestiynau hyn yn ymwneud â phensiynau y byddwch yn talu i mewn iddynt, lle na chaiff rhyddhad treth ei hawlio ar eich cyfer."),
+                  ExpectedText(selectorForSecondParagraph, "Gallwch wirio eich datganiadau pensiwn neu gysylltu â darparwr eich pensiwn i ddod o hyd i’r wybodaeth sydd ei hangen arnoch."),
+                  ExpectedText(selectorForSubHeading, "A wnaethoch dalu i mewn i bensiwn lle na hawliwyd rhyddhad treth ar eich cyfer?")
                 )
               ))
 
@@ -315,17 +315,17 @@ class PensionsTaxReliefNotClaimedControllerISpec
             assertPageAsExpected(
               OK,
               ExpectedYesNoPageContents(
-                title = "Pensions where tax relief is not claimed",
-                header = "Pensions where tax relief is not claimed",
+                title = "Pensiynau lle na chaiff rhyddhad treth ei hawlio",
+                header = "Pensiynau lle na chaiff rhyddhad treth ei hawlio",
                 caption = "Payments into pensions for 6 April 2021 to 5 April 2022",
                 radioButtonForYes = checkedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
                 links = Set.empty,
                 text = Set(
-                  ExpectedText(selectorForFirstParagraph, "These questions are about pensions your client pays into where tax relief is not claimed for them."),
-                  ExpectedText(selectorForSecondParagraph, "You can check your client’s pension statements or contact your client’s pension provider to find the information you need."),
-                  ExpectedText(selectorForSubHeading, "Did your client pay into a pension where tax relief was not claimed for them?")
+                  ExpectedText(selectorForFirstParagraph, "Mae’r cwestiynau hyn yn ymwneud â phensiynau y bydd eich cleient yn talu i mewn iddynt, lle na chaiff rhyddhad treth ei hawlio ar ei gyfer."),
+                  ExpectedText(selectorForSecondParagraph, "Gallwch wirio datganiadau pensiwn eich cleient neu gysylltu â darparwr pensiwn eich cleient i ddod o hyd i’r wybodaeth sydd ei hangen arnoch."),
+                  ExpectedText(selectorForSubHeading, "A wnaeth eich cleient dalu i mewn i bensiwn lle na hawliwyd rhyddhad treth ar ei gyfer?")
                 )
               ))
 
@@ -373,17 +373,17 @@ class PensionsTaxReliefNotClaimedControllerISpec
             assertPageAsExpected(
               OK,
               ExpectedYesNoPageContents(
-                title = "Pensions where tax relief is not claimed",
-                header = "Pensions where tax relief is not claimed",
+                title = "Pensiynau lle na chaiff rhyddhad treth ei hawlio",
+                header = "Pensiynau lle na chaiff rhyddhad treth ei hawlio",
                 caption = "Payments into pensions for 6 April 2021 to 5 April 2022",
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = checkedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
                 links = Set.empty,
                 text = Set(
-                  ExpectedText(selectorForFirstParagraph, "These questions are about pensions you pay into where tax relief is not claimed for you."),
-                  ExpectedText(selectorForSecondParagraph, "You can check your pension statements or contact your pension provider to find the information you need."),
-                  ExpectedText(selectorForSubHeading, "Did you pay into a pension where tax relief was not claimed for you?")
+                  ExpectedText(selectorForFirstParagraph, "Mae’r cwestiynau hyn yn ymwneud â phensiynau y byddwch yn talu i mewn iddynt, lle na chaiff rhyddhad treth ei hawlio ar eich cyfer."),
+                  ExpectedText(selectorForSecondParagraph, "Gallwch wirio eich datganiadau pensiwn neu gysylltu â darparwr eich pensiwn i ddod o hyd i’r wybodaeth sydd ei hangen arnoch."),
+                  ExpectedText(selectorForSubHeading, "A wnaethoch dalu i mewn i bensiwn lle na hawliwyd rhyddhad treth ar eich cyfer?")
                 )
               ))
 
@@ -420,17 +420,17 @@ class PensionsTaxReliefNotClaimedControllerISpec
             assertPageAsExpected(
               OK,
               ExpectedYesNoPageContents(
-                title = "Pensions where tax relief is not claimed",
-                header = "Pensions where tax relief is not claimed",
+                title = "Pensiynau lle na chaiff rhyddhad treth ei hawlio",
+                header = "Pensiynau lle na chaiff rhyddhad treth ei hawlio",
                 caption = "Payments into pensions for 6 April 2021 to 5 April 2022",
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = checkedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
                 links = Set.empty,
                 text = Set(
-                  ExpectedText(selectorForFirstParagraph, "These questions are about pensions your client pays into where tax relief is not claimed for them."),
-                  ExpectedText(selectorForSecondParagraph, "You can check your client’s pension statements or contact your client’s pension provider to find the information you need."),
-                  ExpectedText(selectorForSubHeading, "Did your client pay into a pension where tax relief was not claimed for them?")
+                  ExpectedText(selectorForFirstParagraph, "Mae’r cwestiynau hyn yn ymwneud â phensiynau y bydd eich cleient yn talu i mewn iddynt, lle na chaiff rhyddhad treth ei hawlio ar ei gyfer."),
+                  ExpectedText(selectorForSecondParagraph, "Gallwch wirio datganiadau pensiwn eich cleient neu gysylltu â darparwr pensiwn eich cleient i ddod o hyd i’r wybodaeth sydd ei hangen arnoch."),
+                  ExpectedText(selectorForSubHeading, "A wnaeth eich cleient dalu i mewn i bensiwn lle na hawliwyd rhyddhad treth ar ei gyfer?")
                 )
               ))
 
@@ -566,27 +566,27 @@ class PensionsTaxReliefNotClaimedControllerISpec
             assertPageAsExpected(
               BAD_REQUEST,
               ExpectedYesNoPageContents(
-                title = "Error: Pensions where tax relief is not claimed",
-                header = "Pensions where tax relief is not claimed",
+                title = "Error: Pensiynau lle na chaiff rhyddhad treth ei hawlio",
+                header = "Pensiynau lle na chaiff rhyddhad treth ei hawlio",
                 caption = "Payments into pensions for 6 April 2021 to 5 April 2022",
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
                 links = Set.empty,
                 text = Set(
-                  ExpectedText(selectorForFirstParagraph, "These questions are about pensions you pay into where tax relief is not claimed for you."),
-                  ExpectedText(selectorForSecondParagraph, "You can check your pension statements or contact your pension provider to find the information you need."),
-                  ExpectedText(selectorForSubHeading, "Did you pay into a pension where tax relief was not claimed for you?")
+                  ExpectedText(selectorForFirstParagraph, "Mae’r cwestiynau hyn yn ymwneud â phensiynau y byddwch yn talu i mewn iddynt, lle na chaiff rhyddhad treth ei hawlio ar eich cyfer."),
+                  ExpectedText(selectorForSecondParagraph, "Gallwch wirio eich datganiadau pensiwn neu gysylltu â darparwr eich pensiwn i ddod o hyd i’r wybodaeth sydd ei hangen arnoch."),
+                  ExpectedText(selectorForSubHeading, "A wnaethoch dalu i mewn i bensiwn lle na hawliwyd rhyddhad treth ar eich cyfer?")
                 ),
                 errorSummarySectionOpt = Some(
                   ErrorSummarySection(
                     title = "Mae problem wedi codi",
-                    body = "Select yes if you paid into a pension where tax relief was not claimed for you",
+                    body = "Dewiswch ‘Iawn’ os gwnaethoch dalu i mewn i bensiwn lle na hawliwyd rhyddhad treth ar eich cyfer",
                     link = "#value")
                 ),
                 errorAboveElementCheckSectionOpt = Some(
                   ErrorAboveElementCheckSection(
-                    title = "Error: Select yes if you paid into a pension where tax relief was not claimed for you",
+                    title = "Error: Dewiswch ‘Iawn’ os gwnaethoch dalu i mewn i bensiwn lle na hawliwyd rhyddhad treth ar eich cyfer",
                     idOpt = Some("value")
                   )
                 )
@@ -638,27 +638,27 @@ class PensionsTaxReliefNotClaimedControllerISpec
             assertPageAsExpected(
               BAD_REQUEST,
               ExpectedYesNoPageContents(
-                title = "Error: Pensions where tax relief is not claimed",
-                header = "Pensions where tax relief is not claimed",
+                title = "Error: Pensiynau lle na chaiff rhyddhad treth ei hawlio",
+                header = "Pensiynau lle na chaiff rhyddhad treth ei hawlio",
                 caption = "Payments into pensions for 6 April 2021 to 5 April 2022",
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
                 links = Set.empty,
                 text = Set(
-                  ExpectedText(selectorForFirstParagraph, "These questions are about pensions your client pays into where tax relief is not claimed for them."),
-                  ExpectedText(selectorForSecondParagraph, "You can check your client’s pension statements or contact your client’s pension provider to find the information you need."),
-                  ExpectedText(selectorForSubHeading, "Did your client pay into a pension where tax relief was not claimed for them?")
+                  ExpectedText(selectorForFirstParagraph, "Mae’r cwestiynau hyn yn ymwneud â phensiynau y bydd eich cleient yn talu i mewn iddynt, lle na chaiff rhyddhad treth ei hawlio ar ei gyfer."),
+                  ExpectedText(selectorForSecondParagraph, "Gallwch wirio datganiadau pensiwn eich cleient neu gysylltu â darparwr pensiwn eich cleient i ddod o hyd i’r wybodaeth sydd ei hangen arnoch."),
+                  ExpectedText(selectorForSubHeading, "A wnaeth eich cleient dalu i mewn i bensiwn lle na hawliwyd rhyddhad treth ar ei gyfer?")
                 ),
                 errorSummarySectionOpt = Some(
                   ErrorSummarySection(
                     title = "Mae problem wedi codi",
-                    body = "Select yes if your client paid into a pension where tax relief was not claimed for them",
+                    body = "Dewiswch ‘Iawn’ os gwnaeth eich cleient dalu i mewn i bensiwn lle na hawliwyd rhyddhad treth ar ei gyfer",
                     link = "#value")
                 ),
                 errorAboveElementCheckSectionOpt = Some(
                   ErrorAboveElementCheckSection(
-                    title = "Error: Select yes if your client paid into a pension where tax relief was not claimed for them",
+                    title = "Error: Dewiswch ‘Iawn’ os gwnaeth eich cleient dalu i mewn i bensiwn lle na hawliwyd rhyddhad treth ar ei gyfer",
                     idOpt = Some("value")
                   )
                 )

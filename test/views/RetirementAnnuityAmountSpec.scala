@@ -72,9 +72,9 @@ object RetirementAnnuityAmountSpec {
   object CommonExpectedCY extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Payments into pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
     val hintText = "For example, £193.52"
-    val emptyErrorText = "Enter the amount paid into retirement annuity contracts"
-    val invalidFormatErrorText = "Enter the amount paid into retirement annuity contracts in the correct format"
-    val maxAmountErrorText = "The amount paid into retirement annuity contracts must be less than £100,000,000,000"
+    val emptyErrorText = "Nodwch y swm a dalwyd i mewn i gontractau blwydd-dal ymddeol"
+    val invalidFormatErrorText = "Nodwch y swm a dalwyd i mewn i gontractau blwydd-dal ymddeol yn y fformat cywir"
+    val maxAmountErrorText = "Mae’n rhaid i’r swm a dalwyd i mewn i gontractau blwydd-dal ymddeol fod yn llai na £100,000,000,000"
     val buttonText = "Continue"
   }
 
@@ -86,9 +86,9 @@ object RetirementAnnuityAmountSpec {
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
-    val onlyIncludePayment = "Only include payments your pension provider will not claim tax relief for. You can find this out from your pension provider."
-    val expectedTitle = "How much did you pay into your retirement annuity contracts?"
-    val expectedHeading = "How much did you pay into your retirement annuity contracts?"
+    val onlyIncludePayment = "Dim ond taliadau na fydd darparwr eich pensiwn yn hawlio rhyddhad treth ar eu cyfer y dylech eu cynnwys. Gallwch ddysgu beth yw hyn oddi wrth ddarparwr eich pensiwn."
+    val expectedTitle = "Faint y gwnaethoch ei dalu i mewn i’ch contractau blwydd-dal ymddeol?"
+    val expectedHeading = "Faint y gwnaethoch ei dalu i mewn i’ch contractau blwydd-dal ymddeol?"
     val expectedErrorTitle = s"Error: $expectedTitle"
   }
 
@@ -102,9 +102,9 @@ object RetirementAnnuityAmountSpec {
 
   object ExpectedAgentCY extends SpecificExpectedResults {
     val onlyIncludePayment =
-      "Only include payments your client’s pension provider will not claim tax relief for. You can find this out from your client’s pension provider."
-    val expectedTitle = "How much did your client pay into their retirement annuity contracts?"
-    val expectedHeading = "How much did your client pay into their retirement annuity contracts?"
+      "Dim ond taliadau na fydd darparwr pensiwn eich cleient yn hawlio rhyddhad treth ar eu cyfer y dylech eu cynnwys. Gallwch ddysgu beth yw hyn oddi wrth ddarparwr pensiwn eich cleient."
+    val expectedTitle = "Faint y gwnaeth eich cleient ei dalu i mewn i’w gontractau blwydd-dal ymddeol?"
+    val expectedHeading = "Faint y gwnaeth eich cleient ei dalu i mewn i’w gontractau blwydd-dal ymddeol?"
     val expectedErrorTitle = s"Error: $expectedTitle"
   }
 }

@@ -82,11 +82,11 @@ object WorkplaceAmountSpec {
   object CommonExpectedCY extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Payments into pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
     val hintText = "For example, £193.52"
-    val emptyErrorText = "Enter the amount paid into workplace pensions"
-    val invalidFormatErrorText = "Enter the amount paid into workplace pensions in the correct format"
-    val maxAmountErrorText = "The amount paid into workplace pensions must be less than £100,000,000,000"
+    val emptyErrorText = "Nodwch y swm a dalwyd i mewn i bensiynau gweithle"
+    val invalidFormatErrorText = "Nodwch y swm a dalwyd i mewn i bensiynau gweithle yn y fformat cywir"
+    val maxAmountErrorText = "Mae’n rhaid i’r swm a dalwyd i mewn i bensiynau gweithle fod yn llai na £100,000,000,000"
     val buttonText = "Continue"
-    val expectedParagraph = "Only include payments:"
+    val expectedParagraph = "Dylech gynnwys taliadau yn unig:"
   }
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
@@ -99,12 +99,12 @@ object WorkplaceAmountSpec {
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
-    val expectedHeading = "How much did you pay into your workplace pensions?"
-    val expectedTitle = "How much did you pay into your workplace pensions?"
+    val expectedHeading = "Faint y gwnaethoch ei dalu i mewn i bensiynau gweithle?"
+    val expectedTitle = "Faint y gwnaethoch ei dalu i mewn i bensiynau gweithle?"
     val expectedErrorTitle = s"Error: $expectedTitle"
-    val expectedBullet1 = "made after your pay was taxed"
-    val expectedBullet2 = "your pension provider will not claim tax relief for"
-    val expectedYouCanFindThisOut = "You can find this out from your employer or your pension provider."
+    val expectedBullet1 = "wedi ei dalu ar ôl i’ch cyflog gael ei drethu"
+    val expectedBullet2 = "ni fydd darparwr eich pensiwn yn hawlio rhyddhad treth ar ei gyfer"
+    val expectedYouCanFindThisOut = "Gallwch gael gwybod hyn gan eich cyflogwr neu ddarparwr eich pensiwn."
 
   }
 
@@ -118,12 +118,12 @@ object WorkplaceAmountSpec {
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
-    val expectedHeading = "How much did your client pay into their workplace pensions?"
-    val expectedTitle = "How much did your client pay into their workplace pensions?"
+    val expectedHeading = "Faint y gwnaeth eich cleient ei dalu i mewn i bensiynau gweithle?"
+    val expectedTitle = "Faint y gwnaeth eich cleient ei dalu i mewn i bensiynau gweithle?"
     val expectedErrorTitle = s"Error: $expectedTitle"
-    val expectedBullet1 = "made after your client’s pay was taxed"
-    val expectedBullet2 = "your client’s pension provider will not claim tax relief for"
-    val expectedYouCanFindThisOut = "Your client can find this out from their employer or pension provider."
+    val expectedBullet1 = "wedi ei dalu ar ôl i gyflog eich cleient gael ei drethu"
+    val expectedBullet2 = "ni fydd darparwr pensiwn eich cleient yn hawlio rhyddhad treth ar ei gyfer"
+    val expectedYouCanFindThisOut = "Gall eich cleient gael gwybod am hyn gan ei gyflogwr neu ddarparwr pensiwn."
   }
 }
 

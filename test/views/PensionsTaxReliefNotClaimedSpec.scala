@@ -68,8 +68,8 @@ object PensionsTaxReliefNotClaimedTestSupport {
 
   object CommonExpectedCY extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Payments into pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val expectedHeading = "Pensions where tax relief is not claimed"
-    val expectedTitle = "Pensions where tax relief is not claimed"
+    val expectedHeading = "Pensiynau lle na chaiff rhyddhad treth ei hawlio"
+    val expectedTitle = "Pensiynau lle na chaiff rhyddhad treth ei hawlio"
     val expectedErrorTitle = s"Error: $expectedTitle"
     val yesText = "Yes"
     val noText = "No"
@@ -84,10 +84,10 @@ object PensionsTaxReliefNotClaimedTestSupport {
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
-    val expectedQuestionsInfoText = "These questions are about pensions you pay into where tax relief is not claimed for you."
-    val expectedWhereToCheck = "You can check your pension statements or contact your pension provider to find the information you need."
-    val expectedSubHeading = "Did you pay into a pension where tax relief was not claimed for you?"
-    val expectedErrorMessage = "Select yes if you paid into a pension where tax relief was not claimed for you"
+    val expectedQuestionsInfoText = "Mae’r cwestiynau hyn yn ymwneud â phensiynau y byddwch yn talu i mewn iddynt, lle na chaiff rhyddhad treth ei hawlio ar eich cyfer."
+    val expectedWhereToCheck = "Gallwch wirio eich datganiadau pensiwn neu gysylltu â darparwr eich pensiwn i ddod o hyd i’r wybodaeth sydd ei hangen arnoch."
+    val expectedSubHeading = "A wnaethoch dalu i mewn i bensiwn lle na hawliwyd rhyddhad treth ar eich cyfer?"
+    val expectedErrorMessage = "Dewiswch ‘Iawn’ os gwnaethoch dalu i mewn i bensiwn lle na hawliwyd rhyddhad treth ar eich cyfer"
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
@@ -98,10 +98,10 @@ object PensionsTaxReliefNotClaimedTestSupport {
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
-    val expectedQuestionsInfoText = "These questions are about pensions your client pays into where tax relief is not claimed for them."
-    val expectedWhereToCheck = "You can check your client’s pension statements or contact your client’s pension provider to find the information you need."
-    val expectedSubHeading = "Did your client pay into a pension where tax relief was not claimed for them?"
-    val expectedErrorMessage = "Select yes if your client paid into a pension where tax relief was not claimed for them"
+    val expectedQuestionsInfoText = "Mae’r cwestiynau hyn yn ymwneud â phensiynau y bydd eich cleient yn talu i mewn iddynt, lle na chaiff rhyddhad treth ei hawlio ar ei gyfer."
+    val expectedWhereToCheck = "Gallwch wirio datganiadau pensiwn eich cleient neu gysylltu â darparwr pensiwn eich cleient i ddod o hyd i’r wybodaeth sydd ei hangen arnoch."
+    val expectedSubHeading = "A wnaeth eich cleient dalu i mewn i bensiwn lle na hawliwyd rhyddhad treth ar ei gyfer?"
+    val expectedErrorMessage = "Dewiswch ‘Iawn’ os gwnaeth eich cleient dalu i mewn i bensiwn lle na hawliwyd rhyddhad treth ar ei gyfer"
   }
 }
 

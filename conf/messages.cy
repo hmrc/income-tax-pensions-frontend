@@ -195,180 +195,180 @@ pensions.overseasPensionsSummary.overseasTransferCharges = Overseas transfer cha
 pensions.overseasPensionsSummary.shortServiceRefunds = Short service refunds
 
 ########    PAYMENTS INTO PENSIONS    ########
-pensions.paymentsIntoOverseasPensions.error.agent = Dewiswch ‘Iawn’ os gwnaeth eich cleient neu ei gyflogwr dalu i mewn i gynllun pensiwn tramor
-pensions.paymentsIntoOverseasPensions.error.individual = Dewiswch ‘Iawn’ os gwnaethoch chi neu''ch cyflogwr dalu i mewn i gynllun pensiwn tramor
+pensions.paymentsIntoOverseasPensions.error.agent = Dewiswch ‘Iawn’ os talodd eich cleient neu ei gyflogwr i mewn i gynllun pensiwn tramor
+pensions.paymentsIntoOverseasPensions.error.individual = Dewiswch ‘Iawn’ os gwnaethoch chi neu’ch cyflogwr dalu i mewn i gynllun pensiwn tramor
 pensions.paymentsIntoOverseasPensions.paragraph.individual = Rhowch wybod i ni os ydych chi neu’ch cyflogwr wedi gwneud y canlynol:
 pensions.paymentsIntoOverseasPensions.paragraph.agent = Rhowch wybod i ni os yw’ch cleient neu ei gyflogwr wedi gwneud y canlynol:
 pensions.paymentsIntoOverseasPensions.listItem.first = talu i mewn i gynllun pensiwn tramor
-pensions.paymentsIntoOverseasPensions.listItem.last = drosglwyddo cynilion pensiwn y DU i gynllun pensiwn tramor
-pensions.paymentsIntoOverseasPensions.question.individual = A ydych chi neu’ch cyflogwr wedi’ch talu i mewn i bensiynau tramor?
+pensions.paymentsIntoOverseasPensions.listItem.last = trosglwyddo cynilion pensiwn y DU i gynllun pensiwn tramor
+pensions.paymentsIntoOverseasPensions.question.individual = A ydych chi neu’ch cyflogwr wedi talu i mewn i bensiynau tramor?
 pensions.paymentsIntoOverseasPensions.question.agent = A yw’ch cleient neu ei gyflogwr wedi talu i mewn i bensiynau tramor?
 
-paymentsIntoPensions.reliefAtSource.calculationHeading = Example calculation
+paymentsIntoPensions.reliefAtSource.calculationHeading = Cyfrifiad enghreifftiol
 
 #pensions relief at source
 
-pensions.reliefAtSourcePensions.title = Relief at source (RAS) pensions
-pensions.reliefAtSource.h2QuestionHeader.individual = Did you pay into a RAS pension?
-pensions.reliefAtSource.h2QuestionHeader.agent = Did your client pay into a RAS pension?
-pensions.reliefAtSource.paragraph.individual = These are pensions you pay into from:
-pensions.reliefAtSource.paragraph.agent = These are pensions your client pays into from:
-pensions.reliefAtSource.paragraph.example1.individual = your net income (after tax has been deducted), if you’re employed
-pensions.reliefAtSource.paragraph.example1.agent = your client’s net income (after tax has been deducted), if they’re employed
-pensions.reliefAtSource.paragraph.example2.individual = your taxable income, if you’re self-employed
-pensions.reliefAtSource.paragraph.example2.agent = your client’s taxable income, if they’re self-employed
-pensions.reliefAtSource.pensionProvider.individual = Your pension provider then claims tax relief for you.
-pensions.reliefAtSource.pensionProvider.agent = Your client’s pension provider then claims tax relief for your client.
-pensions.reliefAtSource.checkProvider.individual = You can check with your pension provider whether this applies to you.
-pensions.reliefAtSource.checkProvider.agent = You can check with your client’s pension provider whether this applies to your client.
-pensions.reliefAtSource.error.noEntry.individual = Select yes if you paid into a RAS pension
-pensions.reliefAtSource.error.noEntry.agent = Select yes if your client paid into a RAS pension
+pensions.reliefAtSourcePensions.title = Pensiynau rhyddhad wrth y ffynhonnell (RAS)
+pensions.reliefAtSource.h2QuestionHeader.individual = A wnaethoch chi dalu i mewn i bensiwn RAS?
+pensions.reliefAtSource.h2QuestionHeader.agent = A wnaeth eich cleient dalu i mewn i bensiwn RAS?
+pensions.reliefAtSource.paragraph.individual = Dyma bensiynau rydych yn talu i mewn iddynt o:
+pensions.reliefAtSource.paragraph.agent = Dyma bensiynau y mae eich cleient yn talu i mewn iddynt o’i:
+pensions.reliefAtSource.paragraph.example1.individual = eich incwm net (ar ol i dreth cael ei didynnu), os ydych yn gyflogedig
+pensions.reliefAtSource.paragraph.example1.agent = incwm net eich cleient (ar ôl didynnu treth), os yw’n gyflogedig
+pensions.reliefAtSource.paragraph.example2.individual = eich incwm trethadwy, os ydych yn hunangyflogedig
+pensions.reliefAtSource.paragraph.example2.agent = incwm trethadwy eich cleient, os yw’n hunangyflogedig
+pensions.reliefAtSource.pensionProvider.individual = Yna, bydd eich darparwr pensiwn yn hawlio rhyddhad treth ar eich cyfer.
+pensions.reliefAtSource.pensionProvider.agent = Yna, bydd y darparwr pensiwn yn hawlio rhyddhad treth ar gyfer eich cleient.
+pensions.reliefAtSource.checkProvider.individual = Gallwch wirio gyda’ch darparwr pensiwn a yw hyn yn berthnasol i chi.
+pensions.reliefAtSource.checkProvider.agent = Gallwch wirio gyda’r darparwr pensiwn a yw hyn yn berthnasol i’ch cleient.
+pensions.reliefAtSource.error.noEntry.individual = Dewiswch ‘Iawn’ os gwnaethoch dalu i mewn i bensiwn RAS
+pensions.reliefAtSource.error.noEntry.agent = Dewiswch ‘Iawn’ os talodd eich cleient i mewn i bensiwn RAS
 
 
 #relief at source total payment amount
 
-pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.title = Total payments into relief at source (RAS) pensions, plus basic rate tax relief
-pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.error.noEntry = Enter the total paid into RAS pensions, plus basic rate tax relief
-pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.error.invalidFormat = Enter the total paid into RAS pensions, plus basic rate tax relief, in the correct format
-pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.error.overMaximum = The total paid into RAS pensions, plus basic rate tax relief, must be less than £100,000,000,000
+pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.title = Cyfanswm y taliadau i mewn i bensiynau rhyddhad wrth y ffynhonnell (RAS), ynghyd â rhyddhad treth ar y gyfradd sylfaenol
+pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.error.noEntry = Nodwch y cyfanswm a dalwyd i mewn i bensiynau RAS, ynghyd â rhyddhad treth ar y gyfradd sylfaenol
+pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.error.invalidFormat = Nodwch y cyfanswm a dalwyd i mewn i bensiynau RAS, ynghyd â rhyddhad treth ar y gyfradd sylfaenol, yn y fformat cywir
+pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.error.overMaximum = Mae’n rhaid i’r cyfanswm a dalwyd i mewn i bensiynau RAS, ynghyd â rhyddhad treth ar y gyfradd sylfaenol, fod yn llai na £100,000,000,000
 
-pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.whereToFind.individual = You can find the total amount you paid into RAS pensions, plus tax relief, on the pension certificate or receipt from your administrator.
-pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.whereToFind.agent = You can find the total amount your client paid into RAS pensions, plus tax relief, on the pension certificate or receipt from your administrator.
-pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.howToWorkOut.individual = To work it out yourself, divide the amount you actually paid by 80 and multiply the result by 100.
-pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.howToWorkOut.agent = To work it out yourself, divide the amount your client actually paid by 80 and multiply the result by 100.
-pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.exampleCalculation = Emma paid £500 into her pension scheme. £500 divided by 80 and multiplied by 100 is £625. Her answer is £625.
+pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.whereToFind.individual = Gallwch ddod o hyd i’r cyfanswm a daloch i mewn i bensiynau RAS, ynghyd â rhyddhad treth, ar y dystysgrif pensiwn neu’r dderbynneb gan eich gweinyddwr.
+pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.whereToFind.agent = Gallwch ddod o hyd i’r cyfanswm a dalwyd gan eich cleient i mewn i bensiynau RAS, ynghyd â rhyddhad treth, ar y dystysgrif pensiwn neu’r dderbynneb gan y gweinyddwr.
+pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.howToWorkOut.individual = Er mwyn cyfrifo hyn eich hun, rhannwch y swm y gwnaethoch ei dalu mewn gwirionedd â 80, a lluoswch y canlyniad â 100.
+pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.howToWorkOut.agent = Er mwyn cyfrifo hyn eich hun, rhannwch y swm a dalwyd gan eich cleient mewn gwirionedd â 80, a lluoswch y canlyniad â 100.
+pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.exampleCalculation = Talodd Elin £500 i mewn i’w chynllun pensiwn. £500 wedi’i rhannu â 80, ac yna’i luosi â 100 yw £625 Ei hateb yw £625.
 
 
 #pensions tax at source one off payments
 
-pensions.reliefAtSourceOneOffPayments.title.individual = Did you make any one-off payments into relief at source (RAS) pensions?
-pensions.reliefAtSourceOneOffPayments.title.agent = Did your client make any one-off payments into relief at source (RAS) pensions?
-pensions.reliefAtSourceOneOffPayments.thisIncludes.individual = You told us the total amount you paid plus tax relief was {0}. Tell us if this includes any one-off payments. A one-off payment is a single payment, made once.
-pensions.reliefAtSourceOneOffPayments.thisIncludes.agent = You told us the total amount your client paid plus tax relief was {0}. Tell us if this includes any one-off payments. A one-off payment is a single payment, made once.
-pensions.reliefAtSourceOneOffPayments.error.noEntry.individual = Select yes if you made one-off payments into RAS pensions
-pensions.reliefAtSourceOneOffPayments.error.noEntry.agent = Select yes if your client made one-off payments into RAS pensions
+pensions.reliefAtSourceOneOffPayments.title.individual = A wnaethoch unrhyw daliadau untro i mewn i bensiynau rhyddhad wrth y ffynhonnell (RAS)?
+pensions.reliefAtSourceOneOffPayments.title.agent = A wnaeth eich cleient unrhyw daliadau untro i mewn i bensiynau rhyddhad wrth y ffynhonnell (RAS)?
+pensions.reliefAtSourceOneOffPayments.thisIncludes.individual = Rydych wedi rhoi gwybod i ni mai’r cyfanswm a dalwyd gennych, ynghyd â rhyddhad treth, oedd {0}. Rhowch wybod i ni os yw hwn yn cynnwys unrhyw daliadau untro. Un taliad yw taliad untro, a wneir unwaith.
+pensions.reliefAtSourceOneOffPayments.thisIncludes.agent = Rydych wedi rhoi gwybod i ni mai’r cyfanswm a dalwyd gan eich cleient, ynghyd â rhyddhad treth, oedd {0}. Rhowch wybod i ni os yw hwn yn cynnwys unrhyw daliadau untro. Un taliad yw taliad untro, a wneir unwaith.
+pensions.reliefAtSourceOneOffPayments.error.noEntry.individual = Dewiswch ‘Iawn’ os gwnaethoch daliadau untro i mewn i bensiynau RAS
+pensions.reliefAtSourceOneOffPayments.error.noEntry.agent = Dewiswch ‘Iawn’ os gwnaeth eich cleient daliadau untro i mewn i bensiynau RAS
 
 
 #one off RAS payments amount
 
-paymentsIntoPensions.oneOffRasAmount.heading = Total one-off payments into relief at source (RAS) pensions, plus basic rate tax relief
-paymentsIntoPensions.oneOffRasAmount.youToldUs.individual = You told us the total amount you paid plus tax relief was £{0}. Tell us how much of this was a one-off payment. Include tax relief.
-paymentsIntoPensions.oneOffRasAmount.youToldUs.agent = You told us the total amount your client paid plus tax relief was £{0}. Tell us how much of this was a one-off payment. Include tax relief.
-paymentsIntoPensions.oneOffRasAmount.workItOut = To work it out, divide your one-off payment amount by 80 and multiply the result by 100.
-paymentsIntoPensions.oneOffRasAmount.exampleCalculation = Emma made a one-off payment of £500. £500 divided by 80 and multiplied by 100 is £625. Her answer is £625.
-paymentsIntoPensions.oneOffRasAmount.error.noEntry = Enter the total amount of one-off payments paid into RAS pensions, plus basic rate tax relief
-paymentsIntoPensions.oneOffRasAmount.error.invalidFormat = Enter the total amount of one-off payments paid into RAS pensions, plus basic rate tax relief, in the correct format
-paymentsIntoPensions.oneOffRasAmount.error.overMaximum = The total amount of one-off payments paid into RAS pensions, plus basic rate tax relief, must be less than £100,000,000,000
+paymentsIntoPensions.oneOffRasAmount.heading = Cyfanswm y taliadau untro i mewn i bensiynau rhyddhad wrth y ffynhonnell (RAS), ynghyd â rhyddhad treth ar y gyfradd sylfaenol
+paymentsIntoPensions.oneOffRasAmount.youToldUs.individual = Rydych wedi rhoi gwybod i ni mai’r cyfanswm a dalwyd gennych, ynghyd â rhyddhad treth, oedd £{0}. Rhowch wybod i ni faint o hwn oedd yn daliad untro. Rhaid cynnwys rhyddhad treth.
+paymentsIntoPensions.oneOffRasAmount.youToldUs.agent = Rydych wedi rhoi gwybod i ni mai’r cyfanswm a dalwyd gan eich cleient, ynghyd â rhyddhad treth, oedd £{0}. Rhowch wybod i ni faint o hwn oedd yn daliad untro. Rhaid cynnwys rhyddhad treth.
+paymentsIntoPensions.oneOffRasAmount.workItOut = Er mwyn ei gyfrifo, rhannwch swm eich taliad untro â 80, a lluoswch y canlyniad â 100.
+paymentsIntoPensions.oneOffRasAmount.exampleCalculation = Gwnaeth Elin daliad untro o £500. £500 wedi’i rannu â 80, a’i luosi â 100 yw £625. Ei hateb yw £625.
+paymentsIntoPensions.oneOffRasAmount.error.noEntry = Nodwch gyfanswm y taliadau untro a dalwyd i mewn i bensiynau RAS, ynghyd â rhyddhad treth ar y gyfradd sylfaenol
+paymentsIntoPensions.oneOffRasAmount.error.invalidFormat = Nodwch gyfanswm y taliadau untro a dalwyd i mewn i bensiynau RAS, ynghyd â rhyddhad treth ar y gyfradd sylfaenol, yn y fformat cywir
+paymentsIntoPensions.oneOffRasAmount.error.overMaximum = Mae’n rhaid i gyfanswm y taliadau untro a dalwyd i mewn i bensiynau RAS, ynghyd â rhyddhad treth ar y gyfradd sylfaenol, fod yn llai na £100,000,000,000
 
 
 #total payments into RAS pensions
 
-paymentsIntoPensions.totalRASPayments.title.individual = Your total payments into relief at source (RAS) pensions
-paymentsIntoPensions.totalRASPayments.title.agent = Your client’s total payments into relief at source (RAS) pensions
-paymentsIntoPensions.totalRASPayments.error = Select yes if the figures are correct
-paymentsIntoPensions.totalRASPayments.youPaid.individual = The total amount you paid, plus basic rate tax relief, is
-paymentsIntoPensions.totalRASPayments.youPaid.agent = The total amount your client paid, plus basic rate tax relief, is
-paymentsIntoPensions.totalRASPayments.youCanFind.individual = You can find this figure on the pension certificate or receipt from your administrator.
-paymentsIntoPensions.totalRASPayments.youCanFind.agent = You can find this figure on the pension certificate or receipt from your client’s administrator.
-paymentsIntoPensions.totalRASPayments.totalPayments = Total pension payments
-paymentsIntoPensions.totalRASPayments.includingOneOff = (Including {0} one-off payments)
-paymentsIntoPensions.totalRASPayments.taxReliefClaimed = Tax relief claimed by scheme
-paymentsIntoPensions.totalRASPayments.isThisCorrect = Is this correct?
+paymentsIntoPensions.totalRASPayments.title.individual = Cyfanswm eich taliadau i mewn i bensiynau rhyddhad wrth y ffynhonnell (RAS)
+paymentsIntoPensions.totalRASPayments.title.agent = Cyfanswm taliadau eich cleient i mewn i bensiynau rhyddhad wrth y ffynhonnell (RAS)
+paymentsIntoPensions.totalRASPayments.error = Dewiswch ‘Iawn’ os yw’r ffigurau’n gywir
+paymentsIntoPensions.totalRASPayments.youPaid.individual = Y cyfanswm a dalwyd gennych, ynghyd â rhyddhad treth ar y gyfradd sylfaenol, yw
+paymentsIntoPensions.totalRASPayments.youPaid.agent = Y cyfanswm a dalwyd gan eich cleient, ynghyd â rhyddhad treth ar y gyfradd sylfaenol, yw
+paymentsIntoPensions.totalRASPayments.youCanFind.individual = Gallwch ddod o hyd i’r ffigur hwn ar y dystysgrif pensiwn neu’r dderbynneb gan eich gweinyddwr.
+paymentsIntoPensions.totalRASPayments.youCanFind.agent = Gallwch ddod o hyd i’r ffigur hwn ar y dystysgrif pensiwn neu’r dderbynneb gan weinyddwr eich cleient.
+paymentsIntoPensions.totalRASPayments.totalPayments = Cyfanswm y taliadau pensiwn
+paymentsIntoPensions.totalRASPayments.includingOneOff = (Gan gynnwys {0} o daliadau untro)
+paymentsIntoPensions.totalRASPayments.taxReliefClaimed = Rhyddhad treth a hawliwyd gan y cynllun
+paymentsIntoPensions.totalRASPayments.isThisCorrect = A yw hyn yn gywir?
 
 
 #pensions tax relief not claimed
 
-pensions.pensionsTaxReliefNotClaimed.title = Pensions where tax relief is not claimed
-pensions.pensionsTaxReliefNotClaimed.questionsInfo.individual = These questions are about pensions you pay into where tax relief is not claimed for you.
-pensions.pensionsTaxReliefNotClaimed.questionsInfo.agent = These questions are about pensions your client pays into where tax relief is not claimed for them.
-pensions.pensionsTaxReliefNotClaimed.whereToCheck.individual = You can check your pension statements or contact your pension provider to find the information you need.
-pensions.pensionsTaxReliefNotClaimed.whereToCheck.agent = You can check your client’s pension statements or contact your client’s pension provider to find the information you need.
-pensions.pensionsTaxReliefNotClaimed.subHeading.individual = Did you pay into a pension where tax relief was not claimed for you?
-pensions.pensionsTaxReliefNotClaimed.subHeading.agent = Did your client pay into a pension where tax relief was not claimed for them?
-pensions.pensionsTaxReliefNotClaimed.error.noEntry.individual = Select yes if you paid into a pension where tax relief was not claimed for you
-pensions.pensionsTaxReliefNotClaimed.error.noEntry.agent = Select yes if your client paid into a pension where tax relief was not claimed for them
+pensions.pensionsTaxReliefNotClaimed.title = Pensiynau lle na chaiff rhyddhad treth ei hawlio
+pensions.pensionsTaxReliefNotClaimed.questionsInfo.individual = Mae’r cwestiynau hyn yn ymwneud â phensiynau y byddwch yn talu i mewn iddynt, lle na chaiff rhyddhad treth ei hawlio ar eich cyfer.
+pensions.pensionsTaxReliefNotClaimed.questionsInfo.agent = Mae’r cwestiynau hyn yn ymwneud â phensiynau y bydd eich cleient yn talu i mewn iddynt, lle na chaiff rhyddhad treth ei hawlio ar ei gyfer.
+pensions.pensionsTaxReliefNotClaimed.whereToCheck.individual = Gallwch wirio eich datganiadau pensiwn neu gysylltu â darparwr eich pensiwn i ddod o hyd i’r wybodaeth sydd ei hangen arnoch.
+pensions.pensionsTaxReliefNotClaimed.whereToCheck.agent = Gallwch wirio datganiadau pensiwn eich cleient neu gysylltu â darparwr pensiwn eich cleient i ddod o hyd i’r wybodaeth sydd ei hangen arnoch.
+pensions.pensionsTaxReliefNotClaimed.subHeading.individual = A wnaethoch dalu i mewn i bensiwn lle na hawliwyd rhyddhad treth ar eich cyfer?
+pensions.pensionsTaxReliefNotClaimed.subHeading.agent = A wnaeth eich cleient dalu i mewn i bensiwn lle na hawliwyd rhyddhad treth ar ei gyfer?
+pensions.pensionsTaxReliefNotClaimed.error.noEntry.individual = Dewiswch ‘Iawn’ os gwnaethoch dalu i mewn i bensiwn lle na hawliwyd rhyddhad treth ar eich cyfer
+pensions.pensionsTaxReliefNotClaimed.error.noEntry.agent = Dewiswch ‘Iawn’ os gwnaeth eich cleient dalu i mewn i bensiwn lle na hawliwyd rhyddhad treth ar ei gyfer
 
 
 #pensions retirement annuity Contract
 
-pensions.retirementAnnuityContract.error.noEntry.individual = Select yes if you paid into a retirement annuity contract
-pensions.retirementAnnuityContract.title.individual = Did you pay into a retirement annuity contract?
-pensions.retirementAnnuityContract.paragraph.individual = We only need to know about payments if your pension provider will not claim
-pensions.retirementAnnuityContract.error.noEntry.agent = Select yes if your client paid into a retirement annuity contract
-pensions.retirementAnnuityContract.title.agent = Did your client pay into a retirement annuity contract?
-pensions.retirementAnnuityContract.paragraph.agent = We only need to know about payments if your client’s pension provider will not claim
-pensions.retirementAnnuityContract.details.title = What is a retirement annuity contract?
-pensions.retirementAnnuityContract.paragraph.link = tax relief
-pensions.retirementAnnuityContract.details.info = Retirement annuity contracts are a type of pension scheme. They were available before 1988 to the self-employed and to workers not offered a workplace pension.
+pensions.retirementAnnuityContract.error.noEntry.individual = Dewiswch ‘Iawn’ os gwnaethoch dalu i mewn i gontract blwydd-dal ymddeol
+pensions.retirementAnnuityContract.title.individual = A wnaethoch chi dalu i mewn i gontract blwydd-dal ymddeol?
+pensions.retirementAnnuityContract.paragraph.individual = Rydym ond angen gwybod am daliadau os na fydd darparwr eich pensiwn yn hawlio
+pensions.retirementAnnuityContract.error.noEntry.agent = Dewiswch ‘Iawn’ os gwnaeth eich cleient dalu i mewn i gontract blwydd-dal ymddeol
+pensions.retirementAnnuityContract.title.agent = A wnaeth eich cleient dalu i mewn i gontract blwydd-dal ymddeol?
+pensions.retirementAnnuityContract.paragraph.agent = Rydym ond angen gwybod am daliadau os na fydd darparwr pensiwn eich cleient yn hawlio
+pensions.retirementAnnuityContract.details.title = Beth yw contract blwydd-dal ymddeol?
+pensions.retirementAnnuityContract.paragraph.link = rhyddhad treth
+pensions.retirementAnnuityContract.details.info = Math o gynllun pensiwn yw contractau blwydd-dal ymddeol. Roeddent ar gael cyn 1988 i’r hunangyflogedig ac i weithwyr na chynigiwyd pensiwn gweithle iddynt.
 
 
 #retirement annuity contract amount
 
-pensions.retirementAnnuityAmount.title.individual = How much did you pay into your retirement annuity contracts?
-pensions.retirementAnnuityAmount.title.agent = How much did your client pay into their retirement annuity contracts?
-pensions.retirementAnnuityAmount.includes.individual = Only include payments your pension provider will not claim tax relief for. You can find this out from your pension provider.
-pensions.retirementAnnuityAmount.includes.agent = Only include payments your client’s pension provider will not claim tax relief for. You can find this out from your client’s pension provider.
-pensions.retirementAnnuityAmount.error.noEntry = Enter the amount paid into retirement annuity contracts
-pensions.retirementAnnuityAmount.error.incorrectFormat = Enter the amount paid into retirement annuity contracts in the correct format
-pensions.retirementAnnuityAmount.error.overMaximum = The amount paid into retirement annuity contracts must be less than £100,000,000,000
+pensions.retirementAnnuityAmount.title.individual = Faint y gwnaethoch ei dalu i mewn i’ch contractau blwydd-dal ymddeol?
+pensions.retirementAnnuityAmount.title.agent = Faint y gwnaeth eich cleient ei dalu i mewn i’w gontractau blwydd-dal ymddeol?
+pensions.retirementAnnuityAmount.includes.individual = Dim ond taliadau na fydd darparwr eich pensiwn yn hawlio rhyddhad treth ar eu cyfer y dylech eu cynnwys. Gallwch ddysgu beth yw hyn oddi wrth ddarparwr eich pensiwn.
+pensions.retirementAnnuityAmount.includes.agent = Dim ond taliadau na fydd darparwr pensiwn eich cleient yn hawlio rhyddhad treth ar eu cyfer y dylech eu cynnwys. Gallwch ddysgu beth yw hyn oddi wrth ddarparwr pensiwn eich cleient.
+pensions.retirementAnnuityAmount.error.noEntry = Nodwch y swm a dalwyd i mewn i gontractau blwydd-dal ymddeol
+pensions.retirementAnnuityAmount.error.incorrectFormat = Nodwch y swm a dalwyd i mewn i gontractau blwydd-dal ymddeol yn y fformat cywir
+pensions.retirementAnnuityAmount.error.overMaximum = Mae’n rhaid i’r swm a dalwyd i mewn i gontractau blwydd-dal ymddeol fod yn llai na £100,000,000,000
 
 
 #workplace pension
 
-pensions.workplacePension.title.individual = Did you pay into a workplace pension and not receive tax relief?
-pensions.workplacePension.title.agent = Did your client pay into a workplace pension and not receive tax relief?
-pensions.workplacePension.info.individual = You would have made your payments after your pay was taxed.
-pensions.workplacePension.info.agent = Your client would have made their payments after their pay was taxed.
-pensions.workplacePension.theseCases.individual = These cases are unusual as most workplace pensions are set up to give you tax relief at the time of your payment.
-pensions.workplacePension.theseCases.agent = These cases are unusual as most workplace pensions are set up to give your client tax relief at the time of their payment.
-pensions.workplacePension.whereToCheck.individual = Check with your employer or pension provider which arrangement you have.
-pensions.workplacePension.whereToCheck.agent = Check with your client’s employer or pension provider which arrangement they have.
-pensions.workplacePension.findOutMore = Find out more about tax relief
-pensions.workplacePension.error.noEntry.individual = Select yes if you paid into a workplace pension and did not receive tax relief
-pensions.workplacePension.error.noEntry.agent = Select yes if your client paid into a workplace pension and did not receive tax relief
+pensions.workplacePension.title.individual = A wnaethoch dalu i mewn i bensiwn gweithle a heb dderbyn rhyddhad treth?
+pensions.workplacePension.title.agent = A wnaeth eich cleient dalu i mewn i bensiwn gweithle a heb dderbyn rhyddhad treth?
+pensions.workplacePension.info.individual = Byddech wedi gwneud eich taliadau ar ôl i’ch cyflog gael ei drethu.
+pensions.workplacePension.info.agent = Bydd eich cleient wedi gwneud ei daliadau ar ôl i’w gyflog gael ei drethu.
+pensions.workplacePension.theseCases.individual = Mae’r achosion hyn yn anarferol gan fod y rhan fwyaf o bensiynau gweithle wedi’u sefydlu i roi rhyddhad treth i chi ar adeg eich taliad.
+pensions.workplacePension.theseCases.agent = Mae’r achosion hyn yn anarferol gan fod y rhan fwyaf o bensiynau gweithle wedi’u sefydlu i roi rhyddhad treth i’ch cleient ar adeg ei daliad.
+pensions.workplacePension.whereToCheck.individual = Gwiriwch gyda’ch cyflogwr neu ddarparwr pensiwn pa drefniant sydd gennych.
+pensions.workplacePension.whereToCheck.agent = Gwiriwch gyda chyflogwr neu ddarparwr pensiwn eich cleient pa drefniant sydd ganddo.
+pensions.workplacePension.findOutMore = Dysgwch ragor am ryddhad treth.
+pensions.workplacePension.error.noEntry.individual = Dewiswch ‘Iawn’ os gwnaethoch dalu i mewn i bensiwn gweithle ac na chawsoch ryddhad treth
+pensions.workplacePension.error.noEntry.agent = Dewiswch ‘Iawn’ os talodd eich cleient i mewn i bensiwn gweithle ac na chafodd ryddhad treth
 
 
 #workplace amount
 
-pensions.workplaceAmount.title.individual = How much did you pay into your workplace pensions?
-pensions.workplaceAmount.bullet1.individual = made after your pay was taxed
-pensions.workplaceAmount.bullet2.individual = your pension provider will not claim tax relief for
-pensions.workplaceAmount.youCanFindThisOut.individual = You can find this out from your employer or your pension provider.
-pensions.workplaceAmount.title.agent = How much did your client pay into their workplace pensions?
-pensions.workplaceAmount.bullet1.agent = made after your client’s pay was taxed
-pensions.workplaceAmount.bullet2.agent = your client’s pension provider will not claim tax relief for
-pensions.workplaceAmount.youCanFindThisOut.agent = Your client can find this out from their employer or pension provider.
-pensions.workplaceAmount.paragraph = Only include payments:
-pensions.workplaceAmount.error.noEntry = Enter the amount paid into workplace pensions
-pensions.workplaceAmount.error.incorrectFormat = Enter the amount paid into workplace pensions in the correct format
-pensions.workplaceAmount.error.maxAmount = The amount paid into workplace pensions must be less than £100,000,000,000
+pensions.workplaceAmount.title.individual = Faint y gwnaethoch ei dalu i mewn i bensiynau gweithle?
+pensions.workplaceAmount.bullet1.individual = wedi ei dalu ar ôl i’ch cyflog gael ei drethu
+pensions.workplaceAmount.bullet2.individual = ni fydd darparwr eich pensiwn yn hawlio rhyddhad treth ar ei gyfer
+pensions.workplaceAmount.youCanFindThisOut.individual = Gallwch gael gwybod hyn gan eich cyflogwr neu ddarparwr eich pensiwn.
+pensions.workplaceAmount.title.agent = Faint y gwnaeth eich cleient ei dalu i mewn i bensiynau gweithle?
+pensions.workplaceAmount.bullet1.agent = wedi ei dalu ar ôl i gyflog eich cleient gael ei drethu
+pensions.workplaceAmount.bullet2.agent = ni fydd darparwr pensiwn eich cleient yn hawlio rhyddhad treth ar ei gyfer
+pensions.workplaceAmount.youCanFindThisOut.agent = Gall eich cleient gael gwybod am hyn gan ei gyflogwr neu ddarparwr pensiwn.
+pensions.workplaceAmount.paragraph = Dylech gynnwys taliadau yn unig:
+pensions.workplaceAmount.error.noEntry = Nodwch y swm a dalwyd i mewn i bensiynau gweithle
+pensions.workplaceAmount.error.incorrectFormat = Nodwch y swm a dalwyd i mewn i bensiynau gweithle yn y fformat cywir
+pensions.workplaceAmount.error.maxAmount = Mae’n rhaid i’r swm a dalwyd i mewn i bensiynau gweithle fod yn llai na £100,000,000,000
 
 
 #payments into pensions CYA
 
-paymentsIntoPensions.cya.heading.individual = Check your payments into pensions
-paymentsIntoPensions.cya.heading.agent = Check your client’s payments into pensions
-paymentsIntoPensions.cya.paymentsIntoUKPensions = Payments into UK pensions
-paymentsIntoPensions.cya.reliefAtSource = Relief at source (RAS) pension payments
-paymentsIntoPensions.cya.reliefAtSourceTotal = Total RAS payments plus tax relief
-paymentsIntoPensions.cya.oneOff = One-off RAS payments
-paymentsIntoPensions.cya.oneOffTotal = Total one-off RAS payments plus tax relief
-paymentsIntoPensions.cya.pensionsTaxReliefNotClaimed = Pensions where tax relief is not claimed
-paymentsIntoPensions.cya.retirementAnnuity = Retirement annuity contract payments
-paymentsIntoPensions.cya.retirementAnnuityTotal = Total retirement annuity contract payments
-paymentsIntoPensions.cya.workplacePayments = Workplace pension payments
-paymentsIntoPensions.cya.workplacePaymentsTotal = Total workplace pension payments
+paymentsIntoPensions.cya.heading.individual = Gwirio eich taliadau i mewn i bensiynau
+paymentsIntoPensions.cya.heading.agent = Gwirio taliadau eich cleient i mewn i bensiynau
+paymentsIntoPensions.cya.paymentsIntoUKPensions = Taliadau i bensiynau’r DU
+paymentsIntoPensions.cya.reliefAtSource = Taliadau pensiwn rhyddhad wrth y ffynhonnell (RAS)
+paymentsIntoPensions.cya.reliefAtSourceTotal = Cyfanswm taliadau RAS ynghyd â rhyddhad treth
+paymentsIntoPensions.cya.oneOff = Taliadau untro RAS
+paymentsIntoPensions.cya.oneOffTotal = Cyfanswm taliadau untro RAS ynghyd â rhyddhad treth
+paymentsIntoPensions.cya.pensionsTaxReliefNotClaimed = Pensiynau lle na chaiff rhyddhad treth ei hawlio
+paymentsIntoPensions.cya.retirementAnnuity = Taliadau contract blwydd-dal ymddeol
+paymentsIntoPensions.cya.retirementAnnuityTotal = Cyfanswm taliadau contract blwydd-dal ymddeol
+paymentsIntoPensions.cya.workplacePayments = Taliadau pensiwn gweithle
+paymentsIntoPensions.cya.workplacePaymentsTotal = Cyfanswm y taliadau pensiwn gweithle
 
-paymentsIntoPensions.cya.paymentsIntoUKPensions.hidden = Change payments into UK pensions
-paymentsIntoPensions.cya.reliefAtSource.hidden = Change whether relief at source pensions payments were made
-paymentsIntoPensions.cya.reliefAtSourceTotal.hidden = Change total relief at source pensions payments, plus tax relief
-paymentsIntoPensions.cya.oneOff.hidden = Change whether one-off relief at source pensions payments were made
-paymentsIntoPensions.cya.oneOffTotal.hidden = Change total one-off relief at source pensions payments, plus tax relief
-paymentsIntoPensions.cya.pensionsTaxReliefNotClaimed.hidden = Change whether payments were made into a pension where tax relief was not claimed
-paymentsIntoPensions.cya.retirementAnnuity.hidden = Change whether retirement annuity contract payments were made
-paymentsIntoPensions.cya.retirementAnnuityTotal.hidden = Change total retirement annuity contract payments
-paymentsIntoPensions.cya.workplacePayments.hidden = Change whether workplace pension payments were made
-paymentsIntoPensions.cya.workplacePaymentsTotal.hidden = Change total workplace pension payments
+paymentsIntoPensions.cya.paymentsIntoUKPensions.hidden = Newid taliadau i bensiynau’r DU
+paymentsIntoPensions.cya.reliefAtSource.hidden = Newid p’un a wnaed taliadau pensiwn rhyddhad wrth y ffynhonnell
+paymentsIntoPensions.cya.reliefAtSourceTotal.hidden = Newid cyfanswm y taliadau pensiwn rhyddhad wrth y ffynhonnell, ynghyd â rhyddhad treth
+paymentsIntoPensions.cya.oneOff.hidden = Newid p’un a wnaed taliadau untro i bensiwn rhyddhad wrth y ffynhonnell
+paymentsIntoPensions.cya.oneOffTotal.hidden = Newid cyfanswm y taliadau untro i bensiwn rhyddhad wrth y ffynhonnell, ynghyd â rhyddhad treth
+paymentsIntoPensions.cya.pensionsTaxReliefNotClaimed.hidden = Newid p’un a wnaed taliadau i bensiwn lle na hawliwyd rhyddhad treth
+paymentsIntoPensions.cya.retirementAnnuity.hidden = Newid p’un a wnaed taliadau contract blwydd-dal ymddeol
+paymentsIntoPensions.cya.retirementAnnuityTotal.hidden = Newid cyfanswm y taliadau contract blwydd-dal ymddeol
+paymentsIntoPensions.cya.workplacePayments.hidden = Newid p’un a wnaed taliadau pensiwn gweithle
+paymentsIntoPensions.cya.workplacePaymentsTotal.hidden = Newid cyfanswm y taliadau pensiwn gweithle
 
 
 #payments into pensions status

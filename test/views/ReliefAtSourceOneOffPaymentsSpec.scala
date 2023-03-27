@@ -81,13 +81,13 @@ object ReliefAtSourceOneOffPaymentsTestSupport {
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
-    val expectedHeading = "Did you make any one-off payments into relief at source (RAS) pensions?"
-    val expectedTitle = "Did you make any one-off payments into relief at source (RAS) pensions?"
+    val expectedHeading = "A wnaethoch unrhyw daliadau untro i mewn i bensiynau rhyddhad wrth y ffynhonnell (RAS)?"
+    val expectedTitle = "A wnaethoch unrhyw daliadau untro i mewn i bensiynau rhyddhad wrth y ffynhonnell (RAS)?"
     val expectedErrorTitle = s"Error: $expectedTitle"
     val thisIncludes: String =
-      s"You told us the total amount you paid plus tax relief was £$someRasAmount. " +
-        "Tell us if this includes any one-off payments. A one-off payment is a single payment, made once."
-    val expectedErrorMessage = "Select yes if you made one-off payments into RAS pensions"
+      s"Rydych wedi rhoi gwybod i ni mai’r cyfanswm a dalwyd gennych, ynghyd â rhyddhad treth, oedd £$someRasAmount. " +
+        "Rhowch wybod i ni os yw hwn yn cynnwys unrhyw daliadau untro. Un taliad yw taliad untro, a wneir unwaith."
+    val expectedErrorMessage = "Dewiswch ‘Iawn’ os gwnaethoch daliadau untro i mewn i bensiynau RAS"
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
@@ -101,13 +101,13 @@ object ReliefAtSourceOneOffPaymentsTestSupport {
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
-    val expectedHeading = "Did your client make any one-off payments into relief at source (RAS) pensions?"
-    val expectedTitle = "Did your client make any one-off payments into relief at source (RAS) pensions?"
+    val expectedHeading = "A wnaeth eich cleient unrhyw daliadau untro i mewn i bensiynau rhyddhad wrth y ffynhonnell (RAS)?"
+    val expectedTitle = "A wnaeth eich cleient unrhyw daliadau untro i mewn i bensiynau rhyddhad wrth y ffynhonnell (RAS)?"
     val expectedErrorTitle = s"Error: $expectedTitle"
     val thisIncludes: String =
-      s"You told us the total amount your client paid plus tax relief was £$someRasAmount. " +
-        "Tell us if this includes any one-off payments. A one-off payment is a single payment, made once."
-    val expectedErrorMessage = "Select yes if your client made one-off payments into RAS pensions"
+      s"Rydych wedi rhoi gwybod i ni mai’r cyfanswm a dalwyd gan eich cleient, ynghyd â rhyddhad treth, oedd £$someRasAmount. " +
+        "Rhowch wybod i ni os yw hwn yn cynnwys unrhyw daliadau untro. Un taliad yw taliad untro, a wneir unwaith."
+    val expectedErrorMessage = "Dewiswch ‘Iawn’ os gwnaeth eich cleient daliadau untro i mewn i bensiynau RAS"
   }
 }
 
