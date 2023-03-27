@@ -27,7 +27,7 @@ object ReliefsSchemeDetailsHelper extends CYABaseHelper {
   def summaryListRows(relief :Relief, taxYear: Int, index: Option[Int])(implicit messages: Messages): Seq[SummaryListRow] =
     Seq(
       pensionSchemeName(relief, taxYear),
-      unTaxedPayerEmployments(relief, taxYear),
+      unTaxedPayerEmployments(relief, taxYear, index),
       typeOfRelief(relief, taxYear, index),
       schemeDetails(relief, taxYear, index)
     ).flatten
@@ -46,17 +46,17 @@ object ReliefsSchemeDetailsHelper extends CYABaseHelper {
     })
   }
 
-  def unTaxedPayerEmployments(relief : Relief, taxYear: Int)(implicit messages: Messages): Option[SummaryListRow] = {
+  def unTaxedPayerEmployments(relief : Relief, taxYear: Int, index: Option[Int])(implicit messages: Messages): Option[SummaryListRow] = {
     Some(relief.employerPaymentsAmount.fold{
       summaryListRowWithString(
         "overseasPension.reliefDetails.amount",
         Some(messages("common.no")).map(Seq(_)),
-        routes.PaymentIntoPensionSchemeController.show(taxYear))
+        routes.UntaxedEmployerPaymentsController.show(taxYear, index))
     }{ePA =>
       summaryListRowWithAmountValue(
         "overseasPension.reliefDetails.amount",
         ePA,
-        routes.PaymentIntoPensionSchemeController.show(taxYear))
+        routes.UntaxedEmployerPaymentsController.show(taxYear, index))
     })
   }
 

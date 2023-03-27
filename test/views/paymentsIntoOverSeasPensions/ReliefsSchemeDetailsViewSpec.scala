@@ -40,7 +40,7 @@ class ReliefsSchemeDetailsViewSpec extends ViewUnitTest with FakeRequestProvider
 
   object ChangeLinks {
     val schemeNamesLink = controllers.pensions.paymentsIntoOverseasPensions.routes.PensionsCustomerReferenceNumberController.show(taxYearEOY).url
-    val untaxedEmployerPensionsLink = controllers.pensions.paymentsIntoOverseasPensions.routes.PaymentIntoPensionSchemeController.show(taxYearEOY).url
+    val untaxedEmployerPensionsLink = controllers.pensions.paymentsIntoOverseasPensions.routes.UntaxedEmployerPaymentsController.show(taxYearEOY, Some(0)).url
     val reliefTypeLink = controllers.pensions.paymentsIntoOverseasPensions.routes.PensionReliefTypeController.show(taxYearEOY, Some(0)).url
     val schemeDetailsSF74Link = controllers.pensions.paymentsIntoOverseasPensions.routes.SF74ReferenceController.show(taxYearEOY).url
     val schemeDetailsQOPSLink = controllers.pensions.paymentsIntoOverseasPensions.routes.QOPSReferenceController.show(taxYearEOY).url
