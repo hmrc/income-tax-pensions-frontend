@@ -92,9 +92,9 @@ object ReliefsSchemeDetailsHelper extends CYABaseHelper {
         Some(summaryListRowWithStrings(
           "overseasPension.reliefDetails.schemeDetail",
           Some(
-            messages("overseasPension.reliefDetails.countryCode") + s" ${relief.doubleTaxationCountryCode.getOrElse("")}\n" +
-            messages("overseasPension.reliefDetails.article") + s"  ${relief.doubleTaxationCountryArticle.getOrElse("")}\n" +
-            messages("overseasPension.reliefDetails.treaty") + s" ${relief.doubleTaxationCountryTreaty.getOrElse("")}\n" +
+            messages("overseasPension.reliefDetails.countryCode") + s" ${relief.doubleTaxationCountryCode.getOrElse("")}<br>" +
+            messages("overseasPension.reliefDetails.article") + s"  ${relief.doubleTaxationCountryArticle.getOrElse("")}<br>" +
+            messages("overseasPension.reliefDetails.treaty") + s" ${relief.doubleTaxationCountryTreaty.getOrElse("")}<br>" +
             messages("overseasPension.reliefDetails.relief") + s" ${displayedValueForOptionalAmount(relief.doubleTaxationReliefAmount)}"
           ),
           routes.ReliefsSchemeDetailsController.show(taxYear, index))) //todo change when new page is added
