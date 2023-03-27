@@ -65,7 +65,7 @@ object ReliefsSchemeDetailsHelper extends CYABaseHelper {
     Some(relief.reliefType.fold{
       summaryListRowWithString(
         "overseasPension.reliefDetails.typeOfRelief",
-        Some(messages("overseasPension.noTaxRelief")).map(Seq(_)),
+        Some(messages("overseasPension.reliefDetails.noTaxRelief")).map(Seq(_)),
         routes.PensionReliefTypeController.show(taxYear, index))
     }{rT =>
       summaryListRowWithString(

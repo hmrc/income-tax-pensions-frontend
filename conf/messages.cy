@@ -911,6 +911,7 @@ overseasPension.pensionReliefType.error.noEntry = Select the type of tax relief 
 overseasPension.pensionReliefType.link = Find out about the types of tax relief for overseas pension scheme payments
 
 #Pension Tax Relief Details
+#Pension Tax Relief Details
 overseasPension.reliefDetails.title = Pension scheme details
 overseasPension.reliefDetails.pensionSchemeName = Pension scheme name
 overseasPension.reliefDetails.amount = Untaxed employer payments
@@ -920,7 +921,11 @@ overseasPension.reliefDetails.pensionSchemeName.hidden = Change pension scheme n
 overseasPension.reliefDetails.amount.hidden = Change untaxed employer payments
 overseasPension.reliefDetails.typeOfRelief.hidden = Change type of relief
 overseasPension.reliefDetails.schemeDetail.hidden = Change scheme details
-overseasPension.noTaxRelief = No tax relief
+overseasPension.reliefDetails.noTaxRelief = No tax relief
+overseasPension.reliefDetails.countryCode = Country code:
+overseasPension.reliefDetails.article = Article:
+overseasPension.reliefDetails.treaty = Treaty:
+overseasPension.reliefDetails.relief = Relief:
 
 #Your Taxable Amount
 overseasPension.yourTaxableAmount.title.individual = Your taxable amount
