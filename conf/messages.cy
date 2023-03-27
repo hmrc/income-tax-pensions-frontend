@@ -1034,6 +1034,18 @@ transferIntoOverseasPensions.overseasPensionSchemeTaxTransferCharge.error.tooBig
 transferIntoOverseasPensions.overseasTransferChargesPaid.title = Did a UK pension scheme pay the transfer charge to HMRC?
 transferIntoOverseasPensions.overseasTransferChargesPaid.error.noEntry = Select yes if a UK pension scheme paid the transfer charge to HMRC
 
+#Double Taxation Agreement Details
+transferIntoOverseasPensions.doubleTaxation.title = Double taxation agreement details
+transferIntoOverseasPensions.doubleTaxation.country = Country
+transferIntoOverseasPensions.doubleTaxation.country.error.noEntry = Enter the tax treaty country
+transferIntoOverseasPensions.doubleTaxation.article = Article (optional)
+transferIntoOverseasPensions.doubleTaxation.article.hint = For example, ‘AB3211-1'
+transferIntoOverseasPensions.doubleTaxation.treaty = Treaty (optional)
+transferIntoOverseasPensions.doubleTaxation.treaty.hint = For example, 'Munich'
+transferIntoOverseasPensions.doubleTaxation.amount.error.noEntry = Enter the amount of double taxation relief
+transferIntoOverseasPensions.doubleTaxation.amount.error.incorrectFormat = Enter the amount of double taxation relief in the correct format
+transferIntoOverseasPensions.doubleTaxation.amount.error.tooBig = The amount of double taxation relief must be less than £100,000,000,000
+
 #Transfer Into Overseas Pensions CYA
 transferIntoOverseasPensions.cya.heading = Check transfers into overseas pensions
 transferIntoOverseasPensions.cya.transferIntoOverseasPensions = Transfers into overseas pensions
