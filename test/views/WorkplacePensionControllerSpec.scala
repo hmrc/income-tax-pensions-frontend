@@ -83,7 +83,7 @@ object WorkplacePensionControllerSpec {
     val yesText = "Yes"
     val noText = "No"
     val buttonText = "Continue"
-    val expectedFindOutMoreText = "Find out more about tax relief (opens in new tab)"
+    val expectedFindOutMoreText = "Dysgwch ragor am ryddhad treth. (opens in new tab)"
   }
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
@@ -98,12 +98,12 @@ object WorkplacePensionControllerSpec {
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
-    val expectedHeading = "Did you pay into a workplace pension and not receive tax relief?"
-    val expectedTitle = "Did you pay into a workplace pension and not receive tax relief?"
-    val expectedInfoText = "You would have made your payments after your pay was taxed."
-    val expectedTheseCases = "These cases are unusual as most workplace pensions are set up to give you tax relief at the time of your payment."
-    val expectedWhereToCheck = "Check with your employer or pension provider which arrangement you have."
-    val expectedErrorMessage = "Select yes if you paid into a workplace pension and did not receive tax relief"
+    val expectedHeading = "A wnaethoch dalu i mewn i bensiwn gweithle a heb dderbyn rhyddhad treth?"
+    val expectedTitle = "A wnaethoch dalu i mewn i bensiwn gweithle a heb dderbyn rhyddhad treth?"
+    val expectedInfoText = "Byddech wedi gwneud eich taliadau ar ôl i’ch cyflog gael ei drethu."
+    val expectedTheseCases = "Mae’r achosion hyn yn anarferol gan fod y rhan fwyaf o bensiynau gweithle wedi’u sefydlu i roi rhyddhad treth i chi ar adeg eich taliad."
+    val expectedWhereToCheck = "Gwiriwch gyda’ch cyflogwr neu ddarparwr pensiwn pa drefniant sydd gennych."
+    val expectedErrorMessage = "Dewiswch ‘Iawn’ os gwnaethoch dalu i mewn i bensiwn gweithle ac na chawsoch ryddhad treth"
     val expectedErrorTitle = s"Error: $expectedTitle"
   }
 
@@ -119,13 +119,13 @@ object WorkplacePensionControllerSpec {
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
-    val expectedHeading = "Did your client pay into a workplace pension and not receive tax relief?"
-    val expectedTitle = "Did your client pay into a workplace pension and not receive tax relief?"
-    val expectedInfoText = "Your client would have made their payments after their pay was taxed."
-    val expectedTheseCases = "These cases are unusual as most workplace pensions are set up to give your client tax relief at the time of their payment."
+    val expectedHeading = "A wnaeth eich cleient dalu i mewn i bensiwn gweithle a heb dderbyn rhyddhad treth?"
+    val expectedTitle = "A wnaeth eich cleient dalu i mewn i bensiwn gweithle a heb dderbyn rhyddhad treth?"
+    val expectedInfoText = "Bydd eich cleient wedi gwneud ei daliadau ar ôl i’w gyflog gael ei drethu."
+    val expectedTheseCases = "Mae’r achosion hyn yn anarferol gan fod y rhan fwyaf o bensiynau gweithle wedi’u sefydlu i roi rhyddhad treth i’ch cleient ar adeg ei daliad."
 
-    val expectedWhereToCheck = "Check with your client’s employer or pension provider which arrangement they have."
-    val expectedErrorMessage = "Select yes if your client paid into a workplace pension and did not receive tax relief"
+    val expectedWhereToCheck = "Gwiriwch gyda chyflogwr neu ddarparwr pensiwn eich cleient pa drefniant sydd ganddo."
+    val expectedErrorMessage = "Dewiswch ‘Iawn’ os talodd eich cleient i mewn i bensiwn gweithle ac na chafodd ryddhad treth"
     val expectedErrorTitle = s"Error: $expectedTitle"
   }
 }

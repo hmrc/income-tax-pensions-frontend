@@ -81,15 +81,15 @@ object ReliefAtSourcePaymentsAndTaxReliefAmountTestSupport {
 
   object CommonExpectedCY extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Payments into pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val expectedHeading = "Total payments into relief at source (RAS) pensions, plus basic rate tax relief"
-    val expectedTitle = "Total payments into relief at source (RAS) pensions, plus basic rate tax relief"
+    val expectedHeading = "Cyfanswm y taliadau i mewn i bensiynau rhyddhad wrth y ffynhonnell (RAS), ynghyd â rhyddhad treth ar y gyfradd sylfaenol"
+    val expectedTitle = "Cyfanswm y taliadau i mewn i bensiynau rhyddhad wrth y ffynhonnell (RAS), ynghyd â rhyddhad treth ar y gyfradd sylfaenol"
     val expectedErrorTitle = s"Error: $expectedTitle"
-    val expectedCalculationHeading = "Example calculation"
-    val expectedExampleCalculation = "Emma paid £500 into her pension scheme. £500 divided by 80 and multiplied by 100 is £625. Her answer is £625."
+    val expectedCalculationHeading = "Cyfrifiad enghreifftiol"
+    val expectedExampleCalculation = "Talodd Elin £500 i mewn i’w chynllun pensiwn. £500 wedi’i rhannu â 80, ac yna’i luosi â 100 yw £625 Ei hateb yw £625."
     val hintText = "For example, £193.52"
-    val emptyErrorText = "Enter the total paid into RAS pensions, plus basic rate tax relief"
-    val invalidFormatErrorText = "Enter the total paid into RAS pensions, plus basic rate tax relief, in the correct format"
-    val maxAmountErrorText = "The total paid into RAS pensions, plus basic rate tax relief, must be less than £100,000,000,000"
+    val emptyErrorText = "Nodwch y cyfanswm a dalwyd i mewn i bensiynau RAS, ynghyd â rhyddhad treth ar y gyfradd sylfaenol"
+    val invalidFormatErrorText = "Nodwch y cyfanswm a dalwyd i mewn i bensiynau RAS, ynghyd â rhyddhad treth ar y gyfradd sylfaenol, yn y fformat cywir"
+    val maxAmountErrorText = "Mae’n rhaid i’r cyfanswm a dalwyd i mewn i bensiynau RAS, ynghyd â rhyddhad treth ar y gyfradd sylfaenol, fod yn llai na £100,000,000,000"
     val buttonText = "Continue"
   }
 
@@ -102,9 +102,9 @@ object ReliefAtSourcePaymentsAndTaxReliefAmountTestSupport {
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
     val expectedWhereToFind =
-      "You can find the total amount you paid into RAS pensions, plus tax relief, on the pension certificate or receipt from your administrator."
+      "Gallwch ddod o hyd i’r cyfanswm a daloch i mewn i bensiynau RAS, ynghyd â rhyddhad treth, ar y dystysgrif pensiwn neu’r dderbynneb gan eich gweinyddwr."
     val expectedHowToWorkOut =
-      "To work it out yourself, divide the amount you actually paid by 80 and multiply the result by 100."
+      "Er mwyn cyfrifo hyn eich hun, rhannwch y swm y gwnaethoch ei dalu mewn gwirionedd â 80, a lluoswch y canlyniad â 100."
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
@@ -116,9 +116,9 @@ object ReliefAtSourcePaymentsAndTaxReliefAmountTestSupport {
 
   object ExpectedAgentCY extends SpecificExpectedResults {
     val expectedWhereToFind =
-      "You can find the total amount your client paid into RAS pensions, plus tax relief, on the pension certificate or receipt from your administrator."
+      "Gallwch ddod o hyd i’r cyfanswm a dalwyd gan eich cleient i mewn i bensiynau RAS, ynghyd â rhyddhad treth, ar y dystysgrif pensiwn neu’r dderbynneb gan y gweinyddwr."
     val expectedHowToWorkOut =
-      "To work it out yourself, divide the amount your client actually paid by 80 and multiply the result by 100."
+      "Er mwyn cyfrifo hyn eich hun, rhannwch y swm a dalwyd gan eich cleient mewn gwirionedd â 80, a lluoswch y canlyniad â 100."
   }
 }
 
