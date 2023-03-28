@@ -217,6 +217,10 @@ object PageUrls extends IntegrationTest {
 
     def pensionReliefSchemeDetailsUrl(taxYear: Int, index: Int): String =
       s"$appUrl/$taxYear/overseas-pensions/payments-into-overseas-pensions/pensions-overseas-details-summary?reliefIndex=$index"
+
+    def doubleTaxationAgreementUrl: Int => Int => String =
+      (index: Int) => (taxYear: Int) => s"$appUrl/$taxYear/overseas-pensions/payments-into-overseas-pensions/double-taxation-agreement-details?index=$index"
+
   }
 
   //  *****************     Income from overseas pensions pages      ******************************
