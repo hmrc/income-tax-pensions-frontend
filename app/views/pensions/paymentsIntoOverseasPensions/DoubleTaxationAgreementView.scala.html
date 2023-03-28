@@ -61,7 +61,7 @@
 
         @errorSummary(form.errors.distinct)
 
-        @heading(titleText, Some(messages("common.transferIntoOverseasPensions.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-2")
+        @heading(titleText, Some(messages("common.paymentsIntoOverseasPensions.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-2")
 
         @formWithCsrf(action = DoubleTaxationAgreementController.submit(taxYear, index)) {
             <div style="width: 300px;">
@@ -96,7 +96,7 @@
                 name="amount-2",
                 label = messages("overseasPension.pensionReliefType.DTR"),
                 hint = Some(messages("common.currency.hint1")),
-                isSubheading=false,
+                isSubheading=true,
                 labelHidden=false,
                 currency=true
             )
