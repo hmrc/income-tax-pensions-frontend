@@ -27,7 +27,7 @@ import models.pension.charges.TaxReliefQuestion
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.PaymentIntoOverseasPensions.{pensionCustomerReferenceNumberUrl, pensionReliefTypeUrl, qopsReferenceUrl, sf74ReferenceUrl}
+import utils.PageUrls.PaymentIntoOverseasPensions.{pensionCustomerReferenceNumberUrl, pensionReliefSchemeDetailsUrl, pensionReliefTypeUrl, qopsReferenceUrl, sf74ReferenceUrl}
 import utils.PageUrls.{fullUrl, overviewUrl, pensionSummaryUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
@@ -153,15 +153,16 @@ class PensionsReliefControllerISpec extends IntegrationTest with ViewHelpers
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
-        val formData = Map(RadioButtonForm.value -> TaxReliefQuestion.TransitionalCorrespondingRelief)
+        val formData = Map(RadioButtonForm.value -> TaxReliefQuestion.NoTaxRelief)
         insertCyaData(pensionsUsersData(isPrior = true, aPensionsCYAModel), aUserRequest)
         urlPost(
-          fullUrl(pensionReliefTypeUrl(taxYearEOY, 100)),
+          fullUrl(pensionReliefTypeUrl(taxYearEOY, 0)),
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
           follow = false,
           body = formData)
       }
-      result.status shouldBe SEE_OTHER //todo redirect to "cya" Page when built
+      result.status shouldBe SEE_OTHER
+      result.headers("location").head shouldBe pensionReliefSchemeDetailsUrl(taxYearEOY, 0)
     }
 
     "return an error when form is submitted with no entry" in {

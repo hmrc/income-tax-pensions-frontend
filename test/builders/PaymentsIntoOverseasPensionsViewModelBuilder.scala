@@ -16,8 +16,6 @@
 
 package builders
 
-import models.pension.charges.TaxReliefQuestion.TransitionalCorrespondingRelief
-import models.pension.charges.{PaymentsIntoOverseasPensionsViewModel, Relief}
 import models.pension.charges.{PaymentsIntoOverseasPensionsViewModel, Relief}
 import models.pension.charges.TaxReliefQuestion.{MigrantMemberRelief, TransitionalCorrespondingRelief}
 
@@ -53,4 +51,5 @@ object PaymentsIntoOverseasPensionsViewModelBuilder {
 
 
   val aPaymentsIntoOverseasPensionsEmptyViewModel: PaymentsIntoOverseasPensionsViewModel = PaymentsIntoOverseasPensionsViewModel()
+
 }

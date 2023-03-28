@@ -25,7 +25,7 @@ import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.paymentsIntoOverseasPensions.PensionReliefTypeView
-import controllers.pensions.paymentsIntoOverseasPensions.routes.{PensionsCustomerReferenceNumberController, QOPSReferenceController, SF74ReferenceController}
+import controllers.pensions.paymentsIntoOverseasPensions.routes._
 import controllers.validateIndex
 import models.pension.charges.{Relief, TaxReliefQuestion}
 import models.requests.UserSessionDataRequest
@@ -112,7 +112,7 @@ class PensionReliefTypeController@Inject()(actionsProvider: ActionsProvider,
     case TaxReliefQuestion.TransitionalCorrespondingRelief =>
       Redirect(SF74ReferenceController.show(taxYear))
     case TaxReliefQuestion.NoTaxRelief =>
-      Ok(view(formsProvider.overseasPensionsReliefTypeForm, taxYear, reliefIndex)) //todo redirect to "CYA" Page when built
+      Redirect(ReliefsSchemeDetailsController.show(taxYear, reliefIndex))
     case _ =>
       BadRequest(view(formsProvider.overseasPensionsReliefTypeForm, taxYear, reliefIndex))
   }

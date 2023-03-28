@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package views.paymentsIntoOverSeasPensions
+package views.paymentsIntoOverseasPensions
 
 import builders.PaymentsIntoOverseasPensionsViewModelBuilder.aPaymentsIntoOverseasPensionsViewModel
 import builders.PensionsCYAModelBuilder.aPensionsCYAEmptyModel
@@ -138,12 +138,11 @@ class PensionsReliefViewSpec extends ViewUnitTest with FakeRequestProvider {
         radioButtonCheck(userScenario.commonExpectedResults.expectedTCR, 3, checked = false)
         textOnPageCheck(userScenario.commonExpectedResults.or, Selectors.orSelector)
         radioButtonCheck(userScenario.commonExpectedResults.noneOfTheAbove, 4, checked = false)
-
         linkCheck(userScenario.commonExpectedResults.expectedLinkText, Selectors.linkSelector,
           href = "https://www.gov.uk/guidance/overseas-pensions-tax-relief-on-your-contributions",
           isExactUrlMatch = false)
-
       }
+
       "render page with pre filled data" which {
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
         implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = UserSessionDataRequest(aPensionsUserData,
@@ -171,6 +170,7 @@ class PensionsReliefViewSpec extends ViewUnitTest with FakeRequestProvider {
           href = "https://www.gov.uk/guidance/overseas-pensions-tax-relief-on-your-contributions",
           isExactUrlMatch = false)
       }
+
       "render page with error text when no option was selected" which {
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
         implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = UserSessionDataRequest(aPensionsUserData,

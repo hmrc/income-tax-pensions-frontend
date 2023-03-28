@@ -110,6 +110,8 @@ case class PaymentsIntoOverseasPensionsViewModel(paymentsIntoOverseasPensionsQue
     )
 }
 
+
+
 object PaymentsIntoOverseasPensionsViewModel {
   implicit val format: OFormat[PaymentsIntoOverseasPensionsViewModel] = Json.format[PaymentsIntoOverseasPensionsViewModel]
 }
@@ -137,3 +139,4 @@ case class EncryptedPaymentsIntoOverseasPensionsViewModel(paymentsIntoOverseasPe
 object EncryptedPaymentsIntoOverseasPensionsViewModel {
   implicit val format: OFormat[EncryptedPaymentsIntoOverseasPensionsViewModel] = Json.format[EncryptedPaymentsIntoOverseasPensionsViewModel]
 }
+
