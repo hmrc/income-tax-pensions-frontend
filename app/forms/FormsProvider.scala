@@ -87,6 +87,16 @@ class FormsProvider() {
     ))
   }
 
+  def statePensionForm(user: User): Form[(Boolean, Option[BigDecimal])] = {
+    val agentOrIndividual = if (user.isAgent) "agent" else "individual"
+    RadioButtonAmountForm.radioButtonAndAmountForm(
+      missingInputError = s"pensions.statePension.error.noEntry.$agentOrIndividual",
+      emptyFieldKey = s"pensions.statePension.amount.error.noEntry.$agentOrIndividual",
+      wrongFormatKey = s"pensions.statePension.amount.error.incorrectFormat.$agentOrIndividual",
+      exceedsMaxAmountKey = s"pensions.statePension.amount.error.overMaximum.$agentOrIndividual"
+    )
+  }
+
   def pensionTakenAnotherWayAmountForm(isAgent: Boolean): Form[(Option[BigDecimal], Option[BigDecimal])] = {
     OptionalTupleAmountForm.amountForm(OptionalTupleAmountFormErrorMessage(
       emptyFieldKey1 = s"lifetimeAllowance.pensionTakenAnotherWay.beforeTax.error.noEntry.${if (isAgent) "agent" else "individual"}",
@@ -103,8 +113,6 @@ class FormsProvider() {
     wrongFormatKey = s"overseasPension.untaxedEmployerPayments.error.incorrectFormat.${if (isAgent) "agent" else "individual"}",
     exceedsMaxAmountKey = s"overseasPension.untaxedEmployerPayments.error.tooBig.${if (isAgent) "agent" else "individual"}"
   )
-
-
 
   def sf74ReferenceIdForm: Form[String] = SF74ReferenceForm.sf74ReferenceIdForm(
     noEntryMsg = "pensions.paymentsIntoOverseasPensions.sf74Reference.noEntry",

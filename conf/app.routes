@@ -80,9 +80,6 @@ POST        /:taxYear/pension-income/income-from-pensions                       
 GET         /:taxYear/pension-income/state-pension                                                                                 controllers.pensions.incomeFromPensions.StatePensionController.show(taxYear:Int)
 POST        /:taxYear/pension-income/state-pension                                                                                 controllers.pensions.incomeFromPensions.StatePensionController.submit(taxYear: Int)
 
-GET         /:taxYear/pension-income/state-pension-amount                                                                          controllers.pensions.incomeFromPensions.StatePensionAmountController.show(taxYear: Int)
-POST        /:taxYear/pension-income/state-pension-amount                                                                          controllers.pensions.incomeFromPensions.StatePensionAmountController.submit(taxYear: Int)
-
 GET         /:taxYear/pension-income/state-pension-lump-sum                                                                        controllers.pensions.incomeFromPensions.StatePensionLumpSumController.show(taxYear: Int)
 POST        /:taxYear/pension-income/state-pension-lump-sum                                                                        controllers.pensions.incomeFromPensions.StatePensionLumpSumController.submit(taxYear: Int)
 
