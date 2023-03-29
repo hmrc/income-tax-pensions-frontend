@@ -44,7 +44,7 @@ object StateBenefitViewModelBuilder {
     startDate = Some(LocalDate.parse("2019-11-14")),
     startDateQuestion = Some(true),
     dateIgnoredQuestion = Some(true),
-    dateIgnored = Some(Instant.parse("2019-12-18")),
+    dateIgnored = Some(Instant.parse("2019-12-18T17:23:00Z")),
     submittedOnQuestion = Some(true),
     submittedOn = Some(Instant.parse("2020-09-10T17:23:00Z")),
     endDateQuestion = Some(true),
