@@ -92,7 +92,7 @@ object ReliefsSchemeDetailsHelper extends CYABaseHelper {
         Some(summaryListRowWithStrings(
           "overseasPension.reliefDetails.schemeDetail",
           Some(
-            messages("overseasPension.reliefDetails.countryCode") + s" ${relief.doubleTaxationCountryCode.getOrElse("")}<br>" +
+            messages("overseasPension.reliefDetails.countryCode") + s" ${relief.alphaTwoCountryCode.getOrElse("")}<br>" +
             messages("overseasPension.reliefDetails.article") + s"  ${relief.doubleTaxationCountryArticle.getOrElse("")}<br>" +
             messages("overseasPension.reliefDetails.treaty") + s" ${relief.doubleTaxationCountryTreaty.getOrElse("")}<br>" +
             messages("overseasPension.reliefDetails.relief") + s" ${displayedValueForOptionalAmount(relief.doubleTaxationReliefAmount)}"
