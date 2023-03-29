@@ -18,7 +18,8 @@ package utils
 
 import models.mongo.TextAndKey
 
-import java.time.Month
+import java.time.{Instant, LocalDate, Month}
+import java.util.UUID
 
 trait Encryptable[A] {
   def encrypt(value: A)(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedValue
@@ -40,6 +41,21 @@ object EncryptorInstances {
 
   implicit val monthEncryptor: Encryptable[Month] = new Encryptable[Month] {
     override def encrypt(value: Month)(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedValue =
+      secureGCMCipher.encrypt(value)
+  }
+
+  implicit val instantEncryptor: Encryptable[Instant] = new Encryptable[Instant] {
+    override def encrypt(value: Instant)(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedValue =
+      secureGCMCipher.encrypt(value)
+  }
+
+  implicit val localDateEncryptor: Encryptable[LocalDate] = new Encryptable[LocalDate] {
+    override def encrypt(value: LocalDate)(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedValue =
+      secureGCMCipher.encrypt(value)
+  }
+
+  implicit val uuidEncryptor: Encryptable[UUID] = new Encryptable[UUID] {
+    override def encrypt(value: UUID)(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedValue =
       secureGCMCipher.encrypt(value)
   }
 }

@@ -18,18 +18,21 @@ package builders
 
 import models.pension.statebenefits.StateBenefitViewModel
 
+import java.time.{Instant, LocalDate}
+import java.util.UUID
+
 object StateBenefitViewModelBuilder {
 
   val anStateBenefitViewModelOne: StateBenefitViewModel = StateBenefitViewModel(
-    benefitId = Some("a9e8057e-fbbc-47a8-a8b4-78d9f015c934"),
+    benefitId = Some(UUID.fromString("a9e8057e-fbbc-47a8-a8b4-78d9f015c934")),
     startDateQuestion = Some(true),
-    startDate = Some("2019-11-13"),
+    startDate = Some(LocalDate.parse("2019-11-13")),
     dateIgnoredQuestion = None,
     dateIgnored = None,
     submittedOnQuestion = Some(true),
-    submittedOn = Some("2020-09-11T17:23:00Z"),
+    submittedOn = Some(Instant.parse("2020-09-11T17:23:00Z")),
     endDateQuestion = Some(true),
-    endDate = Some("2045-08-28"),
+    endDate = Some(LocalDate.parse("2045-08-28")),
     amountPaidQuestion = Some(true),
     amount = Some(155.88),
     taxPaidQuestion = Some(true),
@@ -37,15 +40,15 @@ object StateBenefitViewModelBuilder {
   )
 
   val anStateBenefitViewModelTwo: StateBenefitViewModel = StateBenefitViewModel(
-    benefitId = Some("a9e8057e-fbbc-47a8-a8b4-78d9f015c935"),
-    startDate = Some("2019-11-14"),
+    benefitId = Some(UUID.fromString("a9e8057e-fbbc-47a8-a8b4-78d9f015c935")),
+    startDate = Some(LocalDate.parse("2019-11-14")),
     startDateQuestion = Some(true),
     dateIgnoredQuestion = Some(true),
-    dateIgnored = Some("2019-12-18"),
+    dateIgnored = Some(Instant.parse("2019-12-18")),
     submittedOnQuestion = Some(true),
-    submittedOn = Some("2020-09-10T17:23:00Z"),
+    submittedOn = Some(Instant.parse("2020-09-10T17:23:00Z")),
     endDateQuestion = Some(true),
-    endDate = Some("2045-09-28"),
+    endDate = Some(LocalDate.parse("2045-09-28")),
     amountPaidQuestion = Some(true),
     amount = Some(166.88),
     taxPaidQuestion = Some(true),

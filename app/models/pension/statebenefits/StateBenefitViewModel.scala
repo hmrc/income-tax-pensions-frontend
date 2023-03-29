@@ -20,20 +20,23 @@ import models.mongo.TextAndKey
 import play.api.libs.json.{Json, OFormat}
 import utils.DecryptableSyntax.DecryptableOps
 import utils.EncryptableSyntax.EncryptableOps
-import utils.EncryptorInstances.{bigDecimalEncryptor, booleanEncryptor, stringEncryptor}
-import utils.DecryptorInstances.{bigDecimalDecryptor, booleanDecryptor, stringDecryptor}
+import utils.EncryptorInstances.{bigDecimalEncryptor, booleanEncryptor, instantEncryptor, localDateEncryptor, uuidEncryptor}
+import utils.DecryptorInstances.{bigDecimalDecryptor, booleanDecryptor, localDateDecryptor, uuidDecryptor, instantDecryptor}
 import utils.{EncryptedValue, SecureGCMCipher}
 
+import java.time.{Instant, LocalDate}
+import java.util.UUID
+
 case class StateBenefitViewModel(
-                                  benefitId: Option[String] = None,
+                                  benefitId: Option[UUID] = None,
                                   startDateQuestion: Option[Boolean] = None,
-                                  startDate: Option[String] = None,
+                                  startDate: Option[LocalDate] = None,
                                   endDateQuestion: Option[Boolean] = None,
-                                  endDate: Option[String] = None,
+                                  endDate: Option[LocalDate] = None,
                                   submittedOnQuestion: Option[Boolean] = None,
-                                  submittedOn: Option[String] = None,
+                                  submittedOn: Option[Instant] = None,
                                   dateIgnoredQuestion: Option[Boolean] = None,
-                                  dateIgnored: Option[String] = None,
+                                  dateIgnored: Option[Instant] = None,
                                   amountPaidQuestion: Option[Boolean] = None,
                                   amount: Option[BigDecimal] = None,
                                   taxPaidQuestion: Option[Boolean] = None,
@@ -80,15 +83,15 @@ case class EncryptedStateBenefitViewModel(
 
   def decrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): StateBenefitViewModel =
     StateBenefitViewModel(
-      benefitId = benefitId.map(_.decrypted[String]),
+      benefitId = benefitId.map(_.decrypted[UUID]),
       startDateQuestion = startDateQuestion.map(_.decrypted[Boolean]),
-      startDate = startDate.map(_.decrypted[String]),
+      startDate = startDate.map(_.decrypted[LocalDate]),
       endDateQuestion = endDateQuestion.map(_.decrypted[Boolean]),
-      endDate = endDate.map(_.decrypted[String]),
+      endDate = endDate.map(_.decrypted[LocalDate]),
       submittedOnQuestion = submittedOnQuestion.map(_.decrypted[Boolean]),
-      submittedOn = submittedOn.map(_.decrypted[String]),
+      submittedOn = submittedOn.map(_.decrypted[Instant]),
       dateIgnoredQuestion = dateIgnoredQuestion.map(_.decrypted[Boolean]),
-      dateIgnored = dateIgnored.map(_.decrypted[String]),
+      dateIgnored = dateIgnored.map(_.decrypted[Instant]),
       amountPaidQuestion = amountPaidQuestion.map(_.decrypted[Boolean]),
       amount = amount.map(_.decrypted[BigDecimal]),
       taxPaidQuestion = taxPaidQuestion.map(_.decrypted[Boolean]),
