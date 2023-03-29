@@ -76,7 +76,7 @@ class DoubleTaxationAgreementControllerISpec extends
       result.status shouldBe OK
     }
 
-    "show page when wrong tax page is added " in {
+    "show page when wrong tax year is added added " in {
       implicit val doubleTaxAgrtUrl : Int => String = doubleTaxationAgreementUrl(0)
       lazy val result: WSResponse = {
         dropPensionsDB()
