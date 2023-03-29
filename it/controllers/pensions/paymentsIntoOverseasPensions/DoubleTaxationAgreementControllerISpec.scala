@@ -76,6 +76,20 @@ class DoubleTaxationAgreementControllerISpec extends
       result.status shouldBe OK
     }
 
+    "show page when wrong tax page is added " in {
+      implicit val doubleTaxAgrtUrl : Int => String = doubleTaxationAgreementUrl(0)
+      lazy val result: WSResponse = {
+        dropPensionsDB()
+        authoriseAgentOrIndividual(isAgent = false)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel), aUserRequest)
+        userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYearEOY)
+        urlGet(fullUrl(doubleTaxAgrtUrl(taxYear)), follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+      }
+
+      result.status shouldBe SEE_OTHER
+    }
+
     "redirect to pensions summary page when an out of bounds index is added " in {
       implicit val doubleTaxAgrtUrl : Int => String = doubleTaxationAgreementUrl(2)
       lazy val result: WSResponse = {
@@ -105,6 +119,19 @@ class DoubleTaxationAgreementControllerISpec extends
       }
       result.status shouldBe SEE_OTHER
       result.header("location") shouldBe Some(doubleTaxAgrtUrl(taxYearEOY)) //TODO: update once the next page is developed
+    }
+
+    "redirect when wrong tax year is used in the url " in {
+      implicit val doubleTaxAgrtUrl : Int => String = doubleTaxationAgreementUrl(0)
+      val form: Map[String, String] = setFormData("AB3211-10", "Test Treaty", "100",Some("FR"))
+      lazy val result: WSResponse = {
+        dropPensionsDB()
+        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel)), aUserRequest)
+        authoriseAgentOrIndividual(isAgent = false)
+        urlPost(fullUrl(doubleTaxAgrtUrl(taxYear)), body = form,
+          follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+      }
+      result.status shouldBe SEE_OTHER
     }
 
     "throw bad request when user does not complete mandatory fields " in {

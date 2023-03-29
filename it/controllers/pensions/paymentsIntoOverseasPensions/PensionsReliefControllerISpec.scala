@@ -20,15 +20,14 @@ import builders.PaymentsIntoOverseasPensionsViewModelBuilder.aPaymentsIntoOverse
 import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import builders.PensionsUserDataBuilder
 import builders.UserBuilder.{aUser, aUserRequest}
-import controllers.pensions.paymentsIntoOverseasPensions.routes.QOPSReferenceController
 import forms.RadioButtonForm
 import models.mongo.PensionsCYAModel
 import models.pension.charges.TaxReliefQuestion
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.PaymentIntoOverseasPensions.{pensionCustomerReferenceNumberUrl, pensionReliefSchemeDetailsUrl, pensionReliefTypeUrl, qopsReferenceUrl, sf74ReferenceUrl}
-import utils.PageUrls.{fullUrl, overviewUrl, pensionSummaryUrl}
+import utils.PageUrls.PaymentIntoOverseasPensions.{pensionCustomerReferenceNumberUrl, pensionReliefSchemeDetailsUrl, pensionReliefTypeUrl, qopsReferenceUrl, sf74ReferenceUrl, doubleTaxationAgreementUrl}
+import utils.PageUrls.{fullUrl, overviewUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 class PensionsReliefControllerISpec extends IntegrationTest with ViewHelpers
@@ -146,7 +145,8 @@ class PensionsReliefControllerISpec extends IntegrationTest with ViewHelpers
           follow = false,
           body = formData)
       }
-      result.status shouldBe OK //todo redirect to "Double taxation agreement details" Page when built
+      result.status shouldBe SEE_OTHER
+      result.headers("location").head shouldBe doubleTaxationAgreementUrl(0)(taxYearEOY)
     }
 
     "persist amount and redirect to CYA when None of the above is selected" in {

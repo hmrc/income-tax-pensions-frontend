@@ -134,12 +134,15 @@ class DoubleTaxationAgreementViewSpec extends ViewUnitTest with FakeRequestProvi
         titleCheck(userScenario.commonExpectedResults.expectedTitle, userScenario.isWelsh)
         textOnPageCheck(userScenario.commonExpectedResults.expectedCountyLabel, Selectors.countryLabelSelector)
         selectFieldValueCheck("countryId", Selectors.countryValueSelector, "")
+
         textOnPageCheck(userScenario.commonExpectedResults.expectedArticleLabel, Selectors.articleLabelSelector)
         textOnPageCheck(userScenario.commonExpectedResults.expectedArticleExample, Selectors.articleExampleSelector)
         inputFieldValueCheck("article", Selectors.articleValueSelector, "")
+
         textOnPageCheck(userScenario.commonExpectedResults.expectedTreatyLabel, Selectors.treatyLabelSelector)
         textOnPageCheck(userScenario.commonExpectedResults.expectedTreatyExample, Selectors.treatyExampleSelector)
         inputFieldValueCheck("treaty", Selectors.treatyValueSelector, "")
+
         textOnPageCheck(userScenario.commonExpectedResults.expectedReliefLabel, Selectors.reliefLabelSelector)
         textOnPageCheck(userScenario.commonExpectedResults.expectedReliefExample, Selectors.reliefExampleSelector)
         inputFieldValueCheck("amount-2", Selectors.reliefValueSelector, "")
@@ -178,15 +181,19 @@ class DoubleTaxationAgreementViewSpec extends ViewUnitTest with FakeRequestProvi
         titleCheck(userScenario.commonExpectedResults.expectedTitle, userScenario.isWelsh)
         textOnPageCheck(userScenario.commonExpectedResults.expectedCountyLabel, Selectors.countryLabelSelector)
         selectFieldValueCheck("countryId", Selectors.countryValueSelector, "AD")
+
         textOnPageCheck(userScenario.commonExpectedResults.expectedArticleLabel, Selectors.articleLabelSelector)
         textOnPageCheck(userScenario.commonExpectedResults.expectedArticleExample, Selectors.articleExampleSelector)
         inputFieldValueCheck("article", Selectors.articleValueSelector, "exampleArticle")
+
         textOnPageCheck(userScenario.commonExpectedResults.expectedTreatyLabel, Selectors.treatyLabelSelector)
         textOnPageCheck(userScenario.commonExpectedResults.expectedTreatyExample, Selectors.treatyExampleSelector)
         inputFieldValueCheck("treaty", Selectors.treatyValueSelector, "exampleTreaty")
+
         textOnPageCheck(userScenario.commonExpectedResults.expectedReliefLabel, Selectors.reliefLabelSelector)
         textOnPageCheck(userScenario.commonExpectedResults.expectedReliefExample, Selectors.reliefExampleSelector)
         inputFieldValueCheck("amount-2", Selectors.reliefValueSelector, "99.99")
+
         buttonCheck(userScenario.commonExpectedResults.expectedContinue)
       }
 
