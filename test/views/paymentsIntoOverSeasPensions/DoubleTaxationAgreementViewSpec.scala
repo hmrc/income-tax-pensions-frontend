@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package views.paymentsIntoOverSeasPensions
+package views.paymentsIntoOverseasPensions
 
 import builders.PaymentsIntoOverseasPensionsViewModelBuilder.aPaymentsIntoOverseasPensionsViewModel
 import builders.PensionsCYAModelBuilder.aPensionsCYAEmptyModel
 import builders.PensionsUserDataBuilder.aPensionsUserData
 import builders.UserBuilder.{aUser, anAgentUser}
+import forms.{Countries, RadioButtonForm}
 import forms.overseas.DoubleTaxationAgreementForm
 import forms.overseas.DoubleTaxationAgreementForm.{DoubleTaxationAgreementFormModel, doubleTaxationAgreementForm, reliefNonEmpty}
 import models.pension.charges.Relief
@@ -64,7 +65,7 @@ class DoubleTaxationAgreementViewSpec extends ViewUnitTest with FakeRequestProvi
     override val expectedContinue: String = "Continue"
     override val errorTitle: String = s"Error: $expectedTitle"
     override val noCountryErrorText: String = "Enter the tax treaty country"
-    override val noReliefErrorText: String = "Enter the double taxation relief"
+    override val noReliefErrorText: String = "Enter the amount of double taxation relief"
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
@@ -78,7 +79,7 @@ class DoubleTaxationAgreementViewSpec extends ViewUnitTest with FakeRequestProvi
     override val expectedReliefLabel: String = "Double taxation relief"
     override val expectedReliefExample: String = "For example, £193.54"
     override val expectedContinue: String = "Continue"
-    override val errorTitle: String = s"$expectedTitle"
+    override val errorTitle: String = s"Error: $expectedTitle"
     override val noCountryErrorText: String = "Enter the tax treaty country"
     override val noReliefErrorText: String = "Enter the amount of double taxation relief"
   }
@@ -195,14 +196,9 @@ class DoubleTaxationAgreementViewSpec extends ViewUnitTest with FakeRequestProvi
             if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest)
 
         val form: Form[DoubleTaxationAgreementFormModel] =
-          DoubleTaxationAgreementForm.doubleTaxationAgreementForm("individual").fill(
-            DoubleTaxationAgreementFormModel(
-              countryId = None,
-              article = Some("exampleArticle"),
-              treaty = Some("exampleTreaty"),
-              reliefAmount = Some(99.99)
-            )
-          )
+          DoubleTaxationAgreementForm.doubleTaxationAgreementForm("individual")
+            .bind(Map("article" -> "exampleArticle", "treaty" -> "exampleTreaty", "amount-2" -> "99.99"))
+
 
         implicit val document: Document = Jsoup.parse(underTest(form, taxYearEOY, Some(0)).body)
 
@@ -224,14 +220,8 @@ class DoubleTaxationAgreementViewSpec extends ViewUnitTest with FakeRequestProvi
             if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest)
 
         val form: Form[DoubleTaxationAgreementFormModel] =
-          DoubleTaxationAgreementForm.doubleTaxationAgreementForm("individual").fill(
-            DoubleTaxationAgreementFormModel(
-              countryId = Some("AD"),
-              article = Some("exampleArticle"),
-              treaty = Some("exampleTreaty"),
-              reliefAmount = None
-            )
-          )
+          DoubleTaxationAgreementForm.doubleTaxationAgreementForm("individual")
+            .bind(Map("countryId" -> "AD", "article" -> "exampleArticle", "treaty" -> "exampleTreaty"))
 
         implicit val document: Document = Jsoup.parse(underTest(form, taxYearEOY, Some(0)).body)
 
