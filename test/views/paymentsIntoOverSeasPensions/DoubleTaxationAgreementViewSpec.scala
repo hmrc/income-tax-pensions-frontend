@@ -20,9 +20,8 @@ import builders.PaymentsIntoOverseasPensionsViewModelBuilder.aPaymentsIntoOverse
 import builders.PensionsCYAModelBuilder.aPensionsCYAEmptyModel
 import builders.PensionsUserDataBuilder.aPensionsUserData
 import builders.UserBuilder.{aUser, anAgentUser}
-import forms.{Countries, RadioButtonForm}
 import forms.overseas.DoubleTaxationAgreementForm
-import forms.overseas.DoubleTaxationAgreementForm.{DoubleTaxationAgreementFormModel, doubleTaxationAgreementForm, reliefNonEmpty}
+import forms.overseas.DoubleTaxationAgreementForm.DoubleTaxationAgreementFormModel
 import models.pension.charges.Relief
 import models.requests.UserSessionDataRequest
 import org.jsoup.Jsoup
@@ -50,6 +49,8 @@ class DoubleTaxationAgreementViewSpec extends ViewUnitTest with FakeRequestProvi
     val errorTitle: String
     val noCountryErrorText: String
     val noReliefErrorText: String
+    val reliefWrongFormatErrorText: String
+    val reliefTooBigErrorText: String
   }
 
   object CommonExpectedEN extends CommonExpectedResults {
@@ -66,6 +67,8 @@ class DoubleTaxationAgreementViewSpec extends ViewUnitTest with FakeRequestProvi
     override val errorTitle: String = s"Error: $expectedTitle"
     override val noCountryErrorText: String = "Enter the tax treaty country"
     override val noReliefErrorText: String = "Enter the amount of double taxation relief"
+    override val reliefWrongFormatErrorText: String = "Enter the amount of double taxation relief in the correct format"
+    override val reliefTooBigErrorText: String = "The amount of double taxation relief must be less than £100,000,000,000"
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
@@ -82,6 +85,8 @@ class DoubleTaxationAgreementViewSpec extends ViewUnitTest with FakeRequestProvi
     override val errorTitle: String = s"Error: $expectedTitle"
     override val noCountryErrorText: String = "Enter the tax treaty country"
     override val noReliefErrorText: String = "Enter the amount of double taxation relief"
+    override val reliefWrongFormatErrorText: String = "Enter the amount of double taxation relief in the correct format"
+    override val reliefTooBigErrorText: String = "The amount of double taxation relief must be less than £100,000,000,000"
   }
 
   object Selectors {
@@ -197,7 +202,7 @@ class DoubleTaxationAgreementViewSpec extends ViewUnitTest with FakeRequestProvi
 
         val form: Form[DoubleTaxationAgreementFormModel] =
           DoubleTaxationAgreementForm.doubleTaxationAgreementForm("individual")
-            .bind(Map("article" -> "exampleArticle", "treaty" -> "exampleTreaty", "amount-2" -> "99.99"))
+            .bind(Map("countryId" -> "noCountry", "article" -> "exampleArticle", "treaty" -> "exampleTreaty", "amount-2" -> "99.99"))
 
 
         implicit val document: Document = Jsoup.parse(underTest(form, taxYearEOY, Some(0)).body)
@@ -207,7 +212,27 @@ class DoubleTaxationAgreementViewSpec extends ViewUnitTest with FakeRequestProvi
         errorSummaryCheck(userScenario.commonExpectedResults.noCountryErrorText, "#countryId")
       }
 
-//      "no results found error when country input doesn't match any countries" which {}
+      "render page with no results found error when country input doesn't match any countries" which {
+        implicit val messages: Messages = getMessages(userScenario.isWelsh)
+        val relief = Relief(Some(""))
+        implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] =
+          UserSessionDataRequest(aPensionsUserData.copy(
+            pensions = aPensionsCYAEmptyModel.copy(paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel
+              .copy(reliefs = Seq(relief)))),
+            if (userScenario.isAgent) anAgentUser else aUser,
+            if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest)
+
+        val form: Form[DoubleTaxationAgreementFormModel] =
+          DoubleTaxationAgreementForm.doubleTaxationAgreementForm("individual")
+            .bind(Map("article" -> "exampleArticle", "treaty" -> "exampleTreaty", "amount-2" -> "99.99"))
+
+
+        implicit val document: Document = Jsoup.parse(underTest(form, taxYearEOY, Some(0)).body)
+
+        titleCheck(userScenario.commonExpectedResults.errorTitle, userScenario.isWelsh)
+        errorAboveElementCheck(userScenario.commonExpectedResults.noCountryErrorText, Some("countryId"))
+        errorSummaryCheck(userScenario.commonExpectedResults.noCountryErrorText, "#countryId")
+      }
 
       "render page with error text when no double taxation relief is inputted" which {
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
@@ -230,9 +255,53 @@ class DoubleTaxationAgreementViewSpec extends ViewUnitTest with FakeRequestProvi
         errorSummaryCheck(userScenario.commonExpectedResults.noReliefErrorText, "#amount-2")
       }
 
-//      "incorrect format error when taxation relief input is in the wrong format" which {}
+      "render page with incorrect format error when taxation relief input is in the wrong format" which {
+        implicit val messages: Messages = getMessages(userScenario.isWelsh)
+        val relief = Relief(Some(""))
+        implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] =
+          UserSessionDataRequest(aPensionsUserData.copy(
+            pensions = aPensionsCYAEmptyModel.copy(paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel
+              .copy(reliefs = Seq(relief)))),
+            if (userScenario.isAgent) anAgentUser else aUser,
+            if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest)
 
-//      "value too big error when taxation relief input is greater than £100,000,000,000" which {}
+        val form: Form[DoubleTaxationAgreementFormModel] =
+          DoubleTaxationAgreementForm.doubleTaxationAgreementForm("individual")
+            .bind(Map("countryId" -> "AD",
+              "article" -> "exampleArticle",
+              "treaty" -> "exampleTreaty",
+              "amount-2" -> "wrongFormat"))
+
+        implicit val document: Document = Jsoup.parse(underTest(form, taxYearEOY, Some(0)).body)
+
+        titleCheck(userScenario.commonExpectedResults.errorTitle, userScenario.isWelsh)
+        errorAboveElementCheck(userScenario.commonExpectedResults.reliefWrongFormatErrorText, Some("amount-2"))
+        errorSummaryCheck(userScenario.commonExpectedResults.reliefWrongFormatErrorText, "#amount-2")
+      }
+
+      "render page with value too big error when taxation relief input is greater than £100,000,000,000" which {
+        implicit val messages: Messages = getMessages(userScenario.isWelsh)
+        val relief = Relief(Some(""))
+        implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] =
+          UserSessionDataRequest(aPensionsUserData.copy(
+            pensions = aPensionsCYAEmptyModel.copy(paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel
+              .copy(reliefs = Seq(relief)))),
+            if (userScenario.isAgent) anAgentUser else aUser,
+            if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest)
+
+        val form: Form[DoubleTaxationAgreementFormModel] =
+          DoubleTaxationAgreementForm.doubleTaxationAgreementForm("individual")
+            .bind(Map("countryId" -> "AD",
+              "article" -> "exampleArticle",
+              "treaty" -> "exampleTreaty",
+              "amount-2" -> "100,000,000,099.99"))
+
+        implicit val document: Document = Jsoup.parse(underTest(form, taxYearEOY, Some(0)).body)
+
+        titleCheck(userScenario.commonExpectedResults.errorTitle, userScenario.isWelsh)
+        errorAboveElementCheck(userScenario.commonExpectedResults.reliefTooBigErrorText, Some("amount-2"))
+        errorSummaryCheck(userScenario.commonExpectedResults.reliefTooBigErrorText, "#amount-2")
+      }
     }
   }
 }
