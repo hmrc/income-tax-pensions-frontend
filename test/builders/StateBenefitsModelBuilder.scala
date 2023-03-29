@@ -16,13 +16,14 @@
 
 package builders
 
+import builders.CustomerAddedStateBenefitsDataBuilder.aCustomerAddedStateBenefits
 import builders.StateBenefitsBuilder.anStateBenefts
-import models.pension.statebenefits.StateBenefitsModel
+import models.pension.statebenefits.AllStateBenefitsData
 
 object StateBenefitsModelBuilder {
 
-  val aStateBenefitsModel: StateBenefitsModel = StateBenefitsModel(
-    stateBenefits = Some(anStateBenefts),
-    customerAddedStateBenefits = Some(anStateBenefts)
+  val aStateBenefitsModel: AllStateBenefitsData = AllStateBenefitsData(
+    stateBenefitsData = Some(anStateBenefts),
+    customerAddedStateBenefitsData = Some(aCustomerAddedStateBenefits)
   )
 }

@@ -16,106 +16,97 @@
 
 package builders
 
-import models.pension.statebenefits.StateBenefit
+import models.pension.statebenefits.CustomerAddedStateBenefit
+
+import java.time.{Instant, LocalDate}
 import java.util.UUID
-import java.time.{LocalDate, Instant}
 
-object StateBenefitBuilder {
+object CustomerAddedStateBenefitBuilder {
 
-  val anStateBenefitOne: StateBenefit = StateBenefit(
+  val aCustomerAddedStateBenefitOne: CustomerAddedStateBenefit = CustomerAddedStateBenefit(
     benefitId = UUID.fromString("a9e8057e-fbbc-47a8-a8b4-78d9f015c934"),
     startDate = LocalDate.parse("2019-11-13"),
-    dateIgnored = None,
     submittedOn = Some(Instant.parse("2020-09-11T17:23:00Z")),
     endDate = Some(LocalDate.parse("2020-08-23")),
     amount = Some(55.11),
     taxPaid = Some(14.53)
   )
 
-  val anStateBenefitTwo: StateBenefit = StateBenefit(
+  val aCustomerAddedStateBenefitTwo: CustomerAddedStateBenefit = CustomerAddedStateBenefit(
     benefitId = UUID.fromString("a8e8057e-fbbc-47a8-a8b4-78d9f015c934"),
     startDate = LocalDate.parse("2019-11-12"),
-    dateIgnored = None,
     submittedOn = Some(Instant.parse("2020-09-11T17:22:00Z")),
     endDate = Some(LocalDate.parse("2020-08-22")),
     amount = Some(44.11),
     taxPaid = Some(13.53)
   )
 
-  val anStateBenefitThree: StateBenefit = StateBenefit(
+  val aCustomerAddedStateBenefitThree: CustomerAddedStateBenefit = CustomerAddedStateBenefit(
     benefitId = UUID.fromString("a7e8057e-fbbc-47a8-a8b4-78d9f015c934"),
     startDate = LocalDate.parse("2019-11-11"),
-    dateIgnored = None,
     submittedOn = Some(Instant.parse("2020-09-11T17:21:00Z")),
     endDate = Some(LocalDate.parse("2020-08-21")),
     amount = Some(33.11),
     taxPaid = Some(12.53)
   )
 
-  val anStateBenefitFour: StateBenefit = StateBenefit(
+  val aCustomerAddedStateBenefitFour: CustomerAddedStateBenefit = CustomerAddedStateBenefit(
     benefitId = UUID.fromString("a6e8057e-fbbc-47a8-a8b4-78d9f015c934"),
     startDate = LocalDate.parse("2019-11-10"),
-    dateIgnored = None,
     submittedOn = Some(Instant.parse("2020-09-11T17:20:00Z")),
     endDate = Some(LocalDate.parse("2020-08-22")),
     amount = Some(22.11),
     taxPaid = Some(11.53)
   )
 
-  val anStateBenefitFive: StateBenefit = StateBenefit(
+  val aCustomerAddedStateBenefitFive: CustomerAddedStateBenefit = CustomerAddedStateBenefit(
     benefitId = UUID.fromString("a5e8057e-fbbc-47a8-a8b4-78d9f015c934"),
     startDate = LocalDate.parse("2019-11-09"),
-    dateIgnored = None,
     submittedOn = Some(Instant.parse("2020-09-11T17:19:00Z")),
     endDate = Some(LocalDate.parse("2020-08-21")),
     amount = Some(11.11),
     taxPaid = Some(9.53)
   )
 
-  val anStateBenefitSix: StateBenefit = StateBenefit(
+  val aCustomerAddedStateBenefitSix: CustomerAddedStateBenefit = CustomerAddedStateBenefit(
     benefitId = UUID.fromString("a4e8057e-fbbc-47a8-a8b4-78d9f015c934"),
     startDate = LocalDate.parse("2019-11-08"),
-    dateIgnored = None,
     submittedOn = Some(Instant.parse("2020-09-11T17:18:00Z")),
     endDate = Some(LocalDate.parse("2020-08-20")),
     amount = Some(10.11),
     taxPaid = Some(8.53)
   )
 
-  val anStateBenefitSeven: StateBenefit = StateBenefit(
+  val aCustomerAddedStateBenefitSeven: CustomerAddedStateBenefit = CustomerAddedStateBenefit(
     benefitId = UUID.fromString("a3e8057e-fbbc-47a8-a8b4-78d9f015c934"),
     startDate = LocalDate.parse("2019-11-07"),
-    dateIgnored = None,
     submittedOn = Some(Instant.parse("2020-09-11T17:17:00Z")),
     endDate = Some(LocalDate.parse("2020-08-19")),
     amount = Some(9.11),
     taxPaid = Some(7.53)
   )
 
-  val anStateBenefitEight: StateBenefit = StateBenefit(
+  val aCustomerAddedStateBenefitEight: CustomerAddedStateBenefit = CustomerAddedStateBenefit(
     benefitId = UUID.fromString("a2e8057e-fbbc-47a8-a8b4-78d9f015c934"),
     startDate = LocalDate.parse("2019-11-06"),
-    dateIgnored = None,
     submittedOn = Some(Instant.parse("2020-09-11T17:16:00Z")),
     endDate = Some(LocalDate.parse("2020-08-18")),
     amount = Some(9.11),
     taxPaid = Some(7.53)
   )
 
-  val anStateBenefitNine: StateBenefit = StateBenefit(
+  val aCustomerAddedStateBenefitNine: CustomerAddedStateBenefit = CustomerAddedStateBenefit(
     benefitId = UUID.fromString("a1e8057e-fbbc-47a8-a8b4-78d9f015c934"),
     startDate = LocalDate.parse("2019-11-05"),
-    dateIgnored = None,
     submittedOn = Some(Instant.parse("2020-09-11T17:15:00Z")),
     endDate = Some(LocalDate.parse("2020-08-17")),
     amount = Some(8.11),
     taxPaid = Some(6.53)
   )
 
-  val anStateBenefitTen: StateBenefit = StateBenefit(
+  val aCustomerAddedStateBenefitTen: CustomerAddedStateBenefit = CustomerAddedStateBenefit(
     benefitId = UUID.fromString("a1e7057e-fbbc-47a8-a8b4-78d9f015c934"),
     startDate = LocalDate.parse("2019-11-04"),
-    dateIgnored = None,
     submittedOn = Some(Instant.parse("2020-09-11T17:14:00Z")),
     endDate = Some(LocalDate.parse("2020-08-16")),
     amount = Some(7.11),
