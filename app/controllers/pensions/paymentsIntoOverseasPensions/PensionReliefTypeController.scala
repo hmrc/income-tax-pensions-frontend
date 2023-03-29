@@ -25,7 +25,8 @@ import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.paymentsIntoOverseasPensions.PensionReliefTypeView
-import controllers.pensions.paymentsIntoOverseasPensions.routes._
+import controllers.pensions.paymentsIntoOverseasPensions.routes.{PensionsCustomerReferenceNumberController, QOPSReferenceController,
+  SF74ReferenceController, DoubleTaxationAgreementController, ReliefsSchemeDetailsController}
 import controllers.validateIndex
 import models.pension.charges.{Relief, TaxReliefQuestion}
 import models.requests.UserSessionDataRequest
@@ -75,7 +76,8 @@ class PensionReliefTypeController@Inject()(actionsProvider: ActionsProvider,
         if (!request.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs(idx).reliefType.contains(taxReliefQuestion)) {
           val updatedReliefs: Relief = request.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs(idx).copy(
             reliefType = Some(taxReliefQuestion),
-            doubleTaxationCountryCode = None,
+            alphaTwoCountryCode = None,
+            alphaThreeCountryCode = None,
             doubleTaxationCountryArticle = None,
             doubleTaxationCountryTreaty = None,
             doubleTaxationReliefAmount = None,
@@ -106,9 +108,9 @@ class PensionReliefTypeController@Inject()(actionsProvider: ActionsProvider,
                                              )(implicit mcc: MessagesControllerComponents, request: UserSessionDataRequest[_]): Result =
     taxReliefQuestion match {
     case TaxReliefQuestion.DoubleTaxationRelief =>
-      Ok(view(formsProvider.overseasPensionsReliefTypeForm, taxYear, reliefIndex)) //todo redirect to "Double taxation agreement details" Page when built
+      Redirect(DoubleTaxationAgreementController.show(taxYear, reliefIndex))
     case TaxReliefQuestion.MigrantMemberRelief =>
-     Redirect(QOPSReferenceController.show(taxYear))
+      Redirect(QOPSReferenceController.show(taxYear))
     case TaxReliefQuestion.TransitionalCorrespondingRelief =>
       Redirect(SF74ReferenceController.show(taxYear))
     case TaxReliefQuestion.NoTaxRelief =>

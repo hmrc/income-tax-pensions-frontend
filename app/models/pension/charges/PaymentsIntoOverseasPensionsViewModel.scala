@@ -38,7 +38,8 @@ case class Relief(
                    customerReferenceNumberQuestion: Option[String] = None,
                    employerPaymentsAmount: Option[BigDecimal] = None,
                    reliefType: Option[String] = None,
-                   doubleTaxationCountryCode: Option[String] = None,
+                   alphaTwoCountryCode: Option[String] = None,
+                   alphaThreeCountryCode: Option[String] = None,
                    doubleTaxationCountryArticle: Option[String] = None,
                    doubleTaxationCountryTreaty: Option[String] = None,
                    doubleTaxationReliefAmount: Option[BigDecimal] = None,
@@ -51,7 +52,8 @@ case class Relief(
       employerPaymentsAmount = employerPaymentsAmount.map(_.encrypted),
       reliefType = reliefType.map(_.encrypted),
       sf74Reference = sf74Reference.map(_.encrypted),
-      doubleTaxationCountryCode = doubleTaxationCountryCode.map(_.encrypted),
+      alphaTwoCountryCode = alphaTwoCountryCode.map(_.encrypted),
+      alphaThreeCountryCode = alphaThreeCountryCode.map(_.encrypted),
       doubleTaxationCountryArticle = doubleTaxationCountryArticle.map(_.encrypted),
       doubleTaxationCountryTreaty = doubleTaxationCountryTreaty.map(_.encrypted),
       doubleTaxationReliefAmount = doubleTaxationReliefAmount.map(_.encrypted),
@@ -67,7 +69,8 @@ case class EncryptedRelief(
                             customerReferenceNumberQuestion: Option[EncryptedValue] = None,
                             employerPaymentsAmount: Option[EncryptedValue] = None,
                             reliefType: Option[EncryptedValue] = None,
-                            doubleTaxationCountryCode: Option[EncryptedValue] = None,
+                            alphaTwoCountryCode: Option[EncryptedValue] = None,
+                            alphaThreeCountryCode: Option[EncryptedValue] = None,
                             doubleTaxationCountryArticle: Option[EncryptedValue] = None,
                             doubleTaxationCountryTreaty: Option[EncryptedValue] = None,
                             doubleTaxationReliefAmount: Option[EncryptedValue] = None,
@@ -80,7 +83,8 @@ case class EncryptedRelief(
       employerPaymentsAmount = employerPaymentsAmount.map(_.decrypted[BigDecimal]),
       reliefType = reliefType.map(_.decrypted[String]),
       sf74Reference = sf74Reference.map(_.decrypted[String]),
-      doubleTaxationCountryCode = doubleTaxationCountryCode.map(_.decrypted[String]),
+      alphaTwoCountryCode = alphaTwoCountryCode.map(_.decrypted[String]),
+      alphaThreeCountryCode = alphaThreeCountryCode.map(_.decrypted[String]),
       doubleTaxationCountryArticle = doubleTaxationCountryArticle.map(_.decrypted[String]),
       doubleTaxationCountryTreaty = doubleTaxationCountryTreaty.map(_.decrypted[String]),
       doubleTaxationReliefAmount = doubleTaxationReliefAmount.map(_.decrypted[BigDecimal]),
@@ -106,7 +110,7 @@ case class PaymentsIntoOverseasPensionsViewModel(paymentsIntoOverseasPensionsQue
       paymentsIntoOverseasPensionsAmount = paymentsIntoOverseasPensionsAmount.map(_.encrypted),
       employerPaymentsQuestion = employerPaymentsQuestion.map(_.encrypted),
       taxPaidOnEmployerPaymentsQuestion = taxPaidOnEmployerPaymentsQuestion.map(_.encrypted),
-      reliefs = reliefs.map(_.encrypted)
+      reliefs = reliefs.map(_.encrypted())
     )
 }
 
@@ -132,7 +136,7 @@ case class EncryptedPaymentsIntoOverseasPensionsViewModel(paymentsIntoOverseasPe
       paymentsIntoOverseasPensionsAmount = paymentsIntoOverseasPensionsAmount.map(_.decrypted[BigDecimal]),
       employerPaymentsQuestion = employerPaymentsQuestion.map(_.decrypted[Boolean]),
       taxPaidOnEmployerPaymentsQuestion = taxPaidOnEmployerPaymentsQuestion.map(_.decrypted[Boolean]),
-      reliefs = reliefs.map(_.decrypted)
+      reliefs = reliefs.map(_.decrypted())
     )
 }
 

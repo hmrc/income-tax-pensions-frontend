@@ -177,7 +177,7 @@ class ReliefsSchemeDetailsViewSpec extends ViewUnitTest with FakeRequestProvider
           Some("PENSIONINCOME245"),
           Some(193.54),
           Some(TaxReliefQuestion.DoubleTaxationRelief),
-          doubleTaxationCountryCode = Some("Germany"),
+          alphaTwoCountryCode = Some("Germany"),
           doubleTaxationCountryArticle = Some("AB3211-1"),
           doubleTaxationCountryTreaty = Some("Munich"),
           doubleTaxationReliefAmount = Some(123.45)
