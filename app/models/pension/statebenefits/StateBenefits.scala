@@ -32,16 +32,6 @@ object StateBenefits {
   implicit val format: OFormat[StateBenefits] = Json.format[StateBenefits]
 }
 
-case class EncryptedStateBenefits(
-                                   incapacityBenefit: Option[Seq[EncryptedStateBenefit]],
-                                   statePension: Option[EncryptedStateBenefit],
-                                   statePensionLumpSum: Option[EncryptedStateBenefit],
-                                   employmentSupportAllowance: Option[Seq[EncryptedStateBenefit]],
-                                   jobSeekersAllowance: Option[Seq[EncryptedStateBenefit]],
-                                   bereavementAllowance: Option[EncryptedStateBenefit],
-                                   otherStateBenefits: Option[EncryptedStateBenefit]
-                                 )
 
-object EncryptedStateBenefits {
-  implicit val format: OFormat[EncryptedStateBenefits] = Json.format[EncryptedStateBenefits]
-}
+
+

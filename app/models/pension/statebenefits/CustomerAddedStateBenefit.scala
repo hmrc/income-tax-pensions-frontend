@@ -17,17 +17,19 @@
 package models.pension.statebenefits
 
 import play.api.libs.json.{Json, OFormat}
+import utils.EncryptedValue
 
-case class StateBenefitsModel(stateBenefits: Option[StateBenefits],
-                              customerAddedStateBenefits: Option[StateBenefits])
+import java.time.{Instant, LocalDate}
+import java.util.UUID
 
-object StateBenefitsModel {
-  implicit val format: OFormat[StateBenefitsModel] = Json.format[StateBenefitsModel]
+case class CustomerAddedStateBenefit(benefitId: UUID,
+                                     startDate: LocalDate,
+                                     endDate: Option[LocalDate] = None,
+                                     submittedOn: Option[Instant] = None,
+                                     amount: Option[BigDecimal] = None,
+                                     taxPaid: Option[BigDecimal] = None)
+
+object CustomerAddedStateBenefit {
+  implicit val format: OFormat[CustomerAddedStateBenefit] = Json.format[CustomerAddedStateBenefit]
 }
 
-case class EncryptedStateBenefitsModel(stateBenefits: Option[EncryptedStateBenefits],
-                              customerAddedStateBenefits: Option[EncryptedStateBenefits])
-
-object EncryptedStateBenefitsModel {
-  implicit val format: OFormat[EncryptedStateBenefitsModel] = Json.format[EncryptedStateBenefitsModel]
-}

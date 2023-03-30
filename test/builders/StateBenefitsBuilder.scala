@@ -17,17 +17,17 @@
 package builders
 
 import builders.StateBenefitBuilder._
-import models.pension.statebenefits.StateBenefits
+import models.pension.statebenefits.{CustomerAddedStateBenefitsData, StateBenefits, StateBenefitsData}
 
 object StateBenefitsBuilder {
 
-  val anStateBenefts: StateBenefits = StateBenefits(
-    incapacityBenefit = Some(Seq(anStateBenefitOne, anStateBenefitTwo)),
+  val anStateBenefts: StateBenefitsData = StateBenefitsData(
+    incapacityBenefits = Some(Set(anStateBenefitOne, anStateBenefitTwo)),
     statePension = Some(anStateBenefitThree),
     statePensionLumpSum = Some(anStateBenefitFour),
-    employmentSupportAllowance = Some(Seq(anStateBenefitFive, anStateBenefitSix)),
-    jobSeekersAllowance = Some(Seq(anStateBenefitSeven, anStateBenefitEight)),
+    employmentSupportAllowances = Some(Set(anStateBenefitFive, anStateBenefitSix)),
+    jobSeekersAllowances = Some(Set(anStateBenefitSeven, anStateBenefitEight)),
     bereavementAllowance = Some(anStateBenefitNine),
-    otherStateBenefits = Some(anStateBenefitTen)
+    other = Some(anStateBenefitTen)
   )
 }

@@ -14,16 +14,12 @@
  * limitations under the License.
  */
 
-package builders
+package utils
 
-import builders.CustomerAddedStateBenefitsDataBuilder.aCustomerAddedStateBenefits
-import builders.StateBenefitsBuilder.anStateBenefts
-import models.pension.statebenefits.AllStateBenefitsData
+import play.api.libs.json.{JsNull, JsObject, Json}
 
-object StateBenefitsModelBuilder {
+object JsonUtils {
 
-  val aStateBenefitsModel: AllStateBenefitsData = AllStateBenefitsData(
-    stateBenefitsData = Some(anStateBenefts),
-    customerAddedStateBenefitsData = Some(aCustomerAddedStateBenefits)
-  )
+  def jsonObjNoNulls(fields: (String, Json.JsValueWrapper)*): JsObject =
+    JsObject(Json.obj(fields: _*).fields.filterNot(_._2 == JsNull).filterNot(_._2 == Json.obj()))
 }

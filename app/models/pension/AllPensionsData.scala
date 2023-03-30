@@ -27,7 +27,7 @@ import play.api.libs.json.{Json, OFormat}
 
 case class AllPensionsData(pensionReliefs: Option[PensionReliefs],
                            pensionCharges: Option[PensionCharges],
-                           stateBenefits: Option[StateBenefitsModel],
+                           stateBenefits: Option[AllStateBenefitsData],
                            employmentPensions: Option[EmploymentPensions],
                            pensionIncome: Option[PensionIncome]
                           )
@@ -37,8 +37,8 @@ object AllPensionsData {
 
   def generateCyaFromPrior(prior: AllPensionsData): PensionsCYAModel = {  //scalastyle:off method.length
 
-    val statePension: Option[StateBenefit] = prior.stateBenefits.flatMap(_.stateBenefits.flatMap(_.statePension))
-    val statePensionLumpSum: Option[StateBenefit] = prior.stateBenefits.flatMap(_.stateBenefits.flatMap(_.statePensionLumpSum))
+    val statePension: Option[StateBenefit] = prior.stateBenefits.flatMap(_.stateBenefitsData.flatMap(_.statePension))
+    val statePensionLumpSum: Option[StateBenefit] = prior.stateBenefits.flatMap(_.stateBenefitsData.flatMap(_.statePensionLumpSum))
 
     PensionsCYAModel(
       PaymentsIntoPensionViewModel(

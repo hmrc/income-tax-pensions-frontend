@@ -128,7 +128,7 @@ class PensionsSummaryControllerISpec extends IntegrationTest with ViewHelpers wi
             // if customerAddedStateBenefits and pensionSchemeOverseasTransfers empty still 'updated' if
             // stateBenefits and overseasPensionContributions present
             val allUpdatedNoOverseasTransfersOrCustomerStateBenefits: AllPensionsData = anAllPensionsData.copy(
-              stateBenefits = Some(aStateBenefitsModel.copy(customerAddedStateBenefits = None)),
+              stateBenefits = Some(aStateBenefitsModel.copy(customerAddedStateBenefitsData = None)),
               pensionCharges = Some(anPensionCharges.copy(pensionSchemeOverseasTransfers = None)))
 
             userDataStub(anIncomeTaxUserData.copy(pensions = Some(allUpdatedNoOverseasTransfersOrCustomerStateBenefits)), nino, taxYear)
@@ -185,7 +185,7 @@ class PensionsSummaryControllerISpec extends IntegrationTest with ViewHelpers wi
             // if stateBenefits and overseasPensionContributions empty still 'updated' if
             // customerAddedStateBenefits and pensionSchemeOverseasTransfers present
             val allUpdatedNoOverseasContributionsOrStateBenefits: AllPensionsData = anAllPensionsData.copy(
-              stateBenefits = Some(aStateBenefitsModel.copy(stateBenefits = None)),
+              stateBenefits = Some(aStateBenefitsModel.copy(stateBenefitsData = None)),
               pensionCharges = Some(anPensionCharges.copy(overseasPensionContributions = None)))
 
             userDataStub(anIncomeTaxUserData.copy(pensions = Some(allUpdatedNoOverseasContributionsOrStateBenefits)), nino, taxYear)
