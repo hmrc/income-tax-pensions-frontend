@@ -552,7 +552,6 @@ pensions.ukPensionSchemePayments.title.individual = Do you get UK pension scheme
 pensions.ukPensionSchemePayments.title.agent = Does your client get UK pension scheme payments?
 pensions.ukPensionSchemePayments.error.noEntry.individual = Select Yes if you got payments from UK pension schemes
 pensions.ukPensionSchemePayments.error.noEntry.agent = Select Yes if your client got payments from UK pension schemes
-pensions.ukPensionSchemePayments.doesNot.Include = This does not include State Pension.
 
 #pension scheme income details
 incomeFromPensions.pensionSchemeDetails.title = Pension scheme details
