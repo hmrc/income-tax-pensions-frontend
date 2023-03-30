@@ -54,35 +54,6 @@ object CustomerAddedStateBenefitsData {
     ) (CustomerAddedStateBenefitsData.apply _)
 }
 
-case class EncryptedCustomerAddedStateBenefitsData(incapacityBenefits: Option[Set[EncryptedCustomerAddedStateBenefit]] = None,
-                                                   statePensions: Option[Set[EncryptedCustomerAddedStateBenefit]] = None,
-                                                   statePensionLumpSums: Option[Set[EncryptedCustomerAddedStateBenefit]] = None,
-                                                   employmentSupportAllowances: Option[Set[EncryptedCustomerAddedStateBenefit]] = None,
-                                                   jobSeekersAllowances: Option[Set[EncryptedCustomerAddedStateBenefit]] = None,
-                                                   bereavementAllowances: Option[Set[EncryptedCustomerAddedStateBenefit]] = None,
-                                                   otherStateBenefits: Option[Set[EncryptedCustomerAddedStateBenefit]] = None)
 
-object EncryptedCustomerAddedStateBenefitsData {
 
-  implicit val encryptedCustomerAddedStateBenefitsDataWrites: OWrites[EncryptedCustomerAddedStateBenefitsData] = (data: EncryptedCustomerAddedStateBenefitsData) => {
-    jsonObjNoNulls(
-      "incapacityBenefit" -> data.incapacityBenefits,
-      "statePension" -> data.statePensions,
-      "statePensionLumpSum" -> data.statePensionLumpSums,
-      "employmentSupportAllowance" -> data.employmentSupportAllowances,
-      "jobSeekersAllowance" -> data.jobSeekersAllowances,
-      "bereavementAllowance" -> data.bereavementAllowances,
-      "otherStateBenefits" -> data.otherStateBenefits
-    )
-  }
 
-  implicit val encryptedCustomerAddedStateBenefitsDataReads: Reads[EncryptedCustomerAddedStateBenefitsData] = (
-    (JsPath \ "incapacityBenefit").readNullable[Set[EncryptedCustomerAddedStateBenefit]] and
-      (JsPath \ "statePension").readNullable[Set[EncryptedCustomerAddedStateBenefit]] and
-      (JsPath \ "statePensionLumpSum").readNullable[Set[EncryptedCustomerAddedStateBenefit]] and
-      (JsPath \ "employmentSupportAllowance").readNullable[Set[EncryptedCustomerAddedStateBenefit]] and
-      (JsPath \ "jobSeekersAllowance").readNullable[Set[EncryptedCustomerAddedStateBenefit]] and
-      (JsPath \ "bereavementAllowance").readNullable[Set[EncryptedCustomerAddedStateBenefit]] and
-      (JsPath \ "otherStateBenefits").readNullable[Set[EncryptedCustomerAddedStateBenefit]]
-    ) (EncryptedCustomerAddedStateBenefitsData.apply _)
-}

@@ -33,14 +33,3 @@ object CustomerAddedStateBenefit {
   implicit val format: OFormat[CustomerAddedStateBenefit] = Json.format[CustomerAddedStateBenefit]
 }
 
-case class EncryptedCustomerAddedStateBenefit(benefitId: EncryptedValue,
-                                              startDate: EncryptedValue,
-                                              endDate: Option[EncryptedValue],
-                                              submittedOn: Option[EncryptedValue],
-                                              amount: Option[EncryptedValue],
-                                              taxPaid: Option[EncryptedValue]
-                                             )
-
-object EncryptedCustomerAddedStateBenefit {
-  implicit val format: OFormat[EncryptedCustomerAddedStateBenefit] = Json.format[EncryptedCustomerAddedStateBenefit]
-}

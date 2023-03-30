@@ -53,36 +53,4 @@ object StateBenefitsData {
     ) (StateBenefitsData.apply _)
 }
 
-case class EncryptedStateBenefitsData(incapacityBenefits: Option[Set[EncryptedStateBenefit]] = None,
-                                 statePension: Option[EncryptedStateBenefit] = None,
-                                 statePensionLumpSum: Option[EncryptedStateBenefit] = None,
-                                 employmentSupportAllowances: Option[Set[EncryptedStateBenefit]] = None,
-                                 jobSeekersAllowances: Option[Set[EncryptedStateBenefit]] = None,
-                                 bereavementAllowance: Option[EncryptedStateBenefit] = None,
-                                 other: Option[EncryptedStateBenefit] = None)
-
-object EncryptedStateBenefitsData {
-
-  implicit val encryptedStateBenefitsDataWrites: OWrites[EncryptedStateBenefitsData] = (stateBenefitsData: EncryptedStateBenefitsData) => {
-    jsonObjNoNulls(
-      "incapacityBenefit" -> stateBenefitsData.incapacityBenefits,
-      "statePension" -> stateBenefitsData.statePension,
-      "statePensionLumpSum" -> stateBenefitsData.statePensionLumpSum,
-      "employmentSupportAllowance" -> stateBenefitsData.employmentSupportAllowances,
-      "jobSeekersAllowance" -> stateBenefitsData.jobSeekersAllowances,
-      "bereavementAllowance" -> stateBenefitsData.bereavementAllowance,
-      "otherStateBenefits" -> stateBenefitsData.other
-    )
-  }
-
-  implicit val encryptedStateBenefitsDataReads: Reads[EncryptedStateBenefitsData] = (
-    (JsPath \ "incapacityBenefit").readNullable[Set[EncryptedStateBenefit]] and
-      (JsPath \ "statePension").readNullable[EncryptedStateBenefit] and
-      (JsPath \ "statePensionLumpSum").readNullable[EncryptedStateBenefit] and
-      (JsPath \ "employmentSupportAllowance").readNullable[Set[EncryptedStateBenefit]] and
-      (JsPath \ "jobSeekersAllowance").readNullable[Set[EncryptedStateBenefit]] and
-      (JsPath \ "bereavementAllowance").readNullable[EncryptedStateBenefit] and
-      (JsPath \ "otherStateBenefits").readNullable[EncryptedStateBenefit]
-    ) (EncryptedStateBenefitsData.apply _)
-}
 

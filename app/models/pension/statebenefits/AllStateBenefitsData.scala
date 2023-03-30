@@ -38,20 +38,6 @@ object AllStateBenefitsData {
     ) (AllStateBenefitsData.apply _)
 }
 
-case class EncryptedAllStateBenefitsData(stateBenefitsData: Option[EncryptedStateBenefitsData],
-                                         customerAddedStateBenefitsData: Option[EncryptedCustomerAddedStateBenefitsData] = None)
 
-object EncryptedAllStateBenefitsData {
 
-  implicit val encryptedAllStateBenefitsDataWrites: OWrites[EncryptedAllStateBenefitsData] = (data: EncryptedAllStateBenefitsData) => {
-    jsonObjNoNulls(
-      "stateBenefits" -> data.stateBenefitsData,
-      "customerAddedStateBenefits" -> data.customerAddedStateBenefitsData
-    )
-  }
 
-  implicit val encryptedAllStateBenefitsDataReads: Reads[EncryptedAllStateBenefitsData] = (
-    (JsPath \ "stateBenefits").readNullable[EncryptedStateBenefitsData] and
-      (JsPath \ "customerAddedStateBenefits").readNullable[EncryptedCustomerAddedStateBenefitsData]
-    ) (EncryptedAllStateBenefitsData.apply _)
-}
