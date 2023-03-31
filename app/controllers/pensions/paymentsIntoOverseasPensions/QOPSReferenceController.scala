@@ -30,8 +30,9 @@ import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.paymentsIntoOverseasPensions.QOPSReferenceView
-
 import javax.inject.{Inject, Singleton}
+import controllers._
+
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -47,53 +48,56 @@ class QOPSReferenceController @Inject()(authAction: AuthorisedAction,
     incorrectFormatMsg = "common.overseasPensions.qops.error.incorrectFormat"
   )
 
-  def show(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
+  def show(taxYear: Int, index : Option[Int]): Action[AnyContent] = authAction.async { implicit request =>
     pensionSessionService.getPensionSessionData(taxYear, request.user).map {
       case Left(_) => errorHandler.handleError(INTERNAL_SERVER_ERROR)
       case Right(optPensionUserData) =>
-        optPensionUserData
-          .map(pensionUserData => Ok(qopsReferenceView(referenceForm(request.user, pensionUserData), taxYear)))
-          .getOrElse(Redirect(PensionsSummaryController.show(taxYear)))
+        optPensionUserData match {
+          case Some(pensionsUserData) =>
+            validateIndex(index, pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs.size) match {
+              case Some(index) => Ok(qopsReferenceView(referenceForm(request.user, pensionsUserData, index), taxYear, Some(index)))
+              case None => Redirect(PensionsSummaryController.show(taxYear))
+            }
+          case None => Redirect(PensionsSummaryController.show(taxYear))
+        }
     }
   }
 
-  private def referenceForm(user: User, pensionUserData: PensionsUserData): Form[String] =
-    pensionUserData.pensions.paymentsIntoOverseasPensions.reliefs.headOption.fold {
-      referenceForm()
-    } {
-      relief =>
-        relief.qualifyingOverseasPensionSchemeReferenceNumber.fold {
-          referenceForm()
-        } {
-          value => referenceForm().fill(removePrefix(value))
-        }
+  private def referenceForm(user: User, pensionUserData: PensionsUserData, index: Int): Form[String] = {
+    val qopsNumber = pensionUserData.pensions.paymentsIntoOverseasPensions.reliefs(index).qualifyingOverseasPensionSchemeReferenceNumber
+    qopsNumber match {
+      case Some(qopsNumber) => referenceForm().fill(removePrefix(qopsNumber))
+      case None => referenceForm()
     }
+  }
 
-    def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
-          referenceForm().bindFromRequest().fold(
-            formWithErrors => Future.successful(BadRequest(qopsReferenceView(formWithErrors, taxYear))),
-            referenceNumber => {
-              pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
-                case Right(Some(data)) =>
-                  data.pensions.paymentsIntoOverseasPensions.reliefs.headOption match { // todo currently only updates first in list - upgrade ticket
-                    case Some(relief) => val updatedCyaModel: PensionsCYAModel = data.pensions.copy(
-                      paymentsIntoOverseasPensions = data.pensions.paymentsIntoOverseasPensions.copy(
-                        reliefs = data.pensions.paymentsIntoOverseasPensions.reliefs.updated(
-                          0, relief.copy(qualifyingOverseasPensionSchemeReferenceNumber = Some(referenceNumber))
-                        )))
-                      pensionSessionService.createOrUpdateSessionData(request.user,
-                        updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
-                        Redirect(QOPSReferenceController.show(taxYear)) //TODO - redirect to pensions-overseas-details-summary
-                      }
-                    case _ => Future.successful(Redirect(PensionsCustomerReferenceNumberController.show(taxYear)))
-                  }
 
-                case _ =>
-                  Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
+  def submit(taxYear: Int, index : Option[Int]): Action[AnyContent] = authAction.async { implicit request =>
+    referenceForm().bindFromRequest().fold(
+      formWithErrors => Future.successful(BadRequest(qopsReferenceView(formWithErrors, taxYear, index))),
+      referenceNumber => {
+        pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
+          case Right(Some(data)) =>
+            validateIndex(index, data.pensions.paymentsIntoOverseasPensions.reliefs.size) match {
+              case Some(index) => {
+                val relief = data.pensions.paymentsIntoOverseasPensions.reliefs(index)
+                val updatedCyaModel: PensionsCYAModel = data.pensions.copy(
+                  paymentsIntoOverseasPensions = data.pensions.paymentsIntoOverseasPensions.copy(
+                    reliefs = data.pensions.paymentsIntoOverseasPensions.reliefs.updated(
+                      index, relief.copy(qualifyingOverseasPensionSchemeReferenceNumber = Some(referenceNumber))
+                    )))
+                pensionSessionService.createOrUpdateSessionData(request.user,
+                  updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
+                  Redirect(QOPSReferenceController.show(taxYear, Some(index))) //TODO - redirect to pensions-overseas-details-summary
+                }
               }
+              case None => Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
             }
-          )
+          case _ => Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
         }
+      }
+    )
+  }
 
-        def removePrefix(qopsReference: String): String = if (qopsReference.length == 10) qopsReference.substring(4, 10) else qopsReference
+  def removePrefix(qopsReference: String): String = if (qopsReference.length == 10) qopsReference.substring(4, 10) else qopsReference
 }

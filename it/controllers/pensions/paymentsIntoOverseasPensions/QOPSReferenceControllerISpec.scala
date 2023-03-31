@@ -26,12 +26,13 @@ import models.pension.charges.TaxReliefQuestion.{MigrantMemberRelief, Transition
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterEach
+import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.CommonUtils
-import utils.PageUrls.{PaymentIntoOverseasPensions, pensionSummaryUrl}
+import utils.{CommonUtils, PensionsDatabaseHelper}
+import utils.PageUrls.{PaymentIntoOverseasPensions, fullUrl, pensionSummaryUrl}
 
-class QOPSReferenceControllerISpec extends CommonUtils with BeforeAndAfterEach {
+class QOPSReferenceControllerISpec extends CommonUtils with BeforeAndAfterEach with PensionsDatabaseHelper{
   object Selectors {
     val captionSelector: String = "#main-content > div > div > header > p"
     val continueButtonSelector: String = "#continue"
@@ -93,7 +94,8 @@ class QOPSReferenceControllerISpec extends CommonUtils with BeforeAndAfterEach {
   }
 
   val inputName: String = "qopsReferenceId"
-  implicit val qopsReferenceUrl: Int => String = (taxYear: Int) => PaymentIntoOverseasPensions.qopsReferenceUrl(taxYear)
+//  implicit val qopsReferenceUrl: Int => String = (taxYear: Int) => PaymentIntoOverseasPensions.qopsReferenceUrl(taxYear)
+implicit val qopsReferenceUrl = PaymentIntoOverseasPensions.qopsReferenceUrl(0)
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(
     UserScenario(isWelsh = false, isAgent = false, CommonExpectedEN, Some(ExpectedIndividualEN)),
@@ -236,6 +238,30 @@ class QOPSReferenceControllerISpec extends CommonUtils with BeforeAndAfterEach {
           formPostLinkCheck(qopsReferenceUrl(taxYearEOY), formSelector)
           welshToggleCheck(user.isWelsh)
         }
+
+
+        "Redirect to the pension summary page if an out of bounds index is provided " should {
+          val qopsRef = "123456"
+
+          val relief = Relief(
+            reliefType = Some(TransitionalCorrespondingRelief),
+            customerReferenceNumberQuestion = Some("PENSIONINCOME245"),
+            employerPaymentsAmount = Some(1999.99),
+            qualifyingOverseasPensionSchemeReferenceNumber = Some(qopsRef),
+          )
+          implicit val qopsReferenceUrl = PaymentIntoOverseasPensions.qopsReferenceUrl(2)
+
+          val pensionsViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(
+            reliefs = Seq(relief))
+
+          val pensionUserData = pensionUserDataWithOverseasPensions(pensionsViewModel)
+          implicit lazy val result: WSResponse = showPage(user, pensionUserData)
+
+          "has an SEE_OTHER status" in {
+            result.status shouldBe SEE_OTHER
+            result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
+          }
+        }
       }
     }
 
@@ -305,6 +331,30 @@ class QOPSReferenceControllerISpec extends CommonUtils with BeforeAndAfterEach {
       "updates pension scheme QOPS reference to contain tax reference" in {
         lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
         cyaModel.pensions.paymentsIntoOverseasPensions.reliefs.head.qualifyingOverseasPensionSchemeReferenceNumber shouldBe Some("123456")
+      }
+    }
+
+    "redirect when user passes an out of bounds index" which {
+      lazy val form: Map[String, String] = Map(QOPSReferenceNumberForm.qopsReferenceId -> "123456")
+
+      val relief = Relief(
+        reliefType = Some(MigrantMemberRelief),
+        customerReferenceNumberQuestion = Some("PENSIONINCOME245"),
+        employerPaymentsAmount = Some(1999.99),
+        qualifyingOverseasPensionSchemeReferenceNumber = Some("111111"),
+      )
+      implicit val qopsReferenceUrl = PaymentIntoOverseasPensions.qopsReferenceUrl(2)
+
+      val pensionsViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(
+        reliefs = Seq(relief))
+
+      val pensionUserData = pensionUserDataWithOverseasPensions(pensionsViewModel)
+
+      lazy val result: WSResponse = submitPage(pensionUserData, form)
+
+      "has a SEE_OTHER(303) status" in {
+        result.status shouldBe SEE_OTHER
+        result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
       }
     }
 

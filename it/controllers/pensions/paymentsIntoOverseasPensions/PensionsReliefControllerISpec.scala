@@ -130,7 +130,7 @@ class PensionsReliefControllerISpec extends IntegrationTest with ViewHelpers
       }
 
       result.status shouldBe SEE_OTHER
-      result.headers("location").head shouldBe qopsReferenceUrl(taxYearEOY)
+      result.headers("location").head shouldBe qopsReferenceUrl(0)(taxYearEOY)
     }
 
     "persist amount and redirect to DTR when DTR is selected" in {
