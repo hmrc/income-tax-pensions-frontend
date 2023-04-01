@@ -910,6 +910,23 @@ overseasPension.pensionReliefType.NoneOfThese = None of these
 overseasPension.pensionReliefType.error.noEntry = Select the type of tax relief or select none
 overseasPension.pensionReliefType.link = Find out about the types of tax relief for overseas pension scheme payments
 
+#Pension Tax Relief Details
+#Pension Tax Relief Details
+overseasPension.reliefDetails.title = Pension scheme details
+overseasPension.reliefDetails.pensionSchemeName = Pension scheme name
+overseasPension.reliefDetails.amount = Untaxed employer payments
+overseasPension.reliefDetails.typeOfRelief = Type of relief
+overseasPension.reliefDetails.schemeDetail = Scheme details
+overseasPension.reliefDetails.pensionSchemeName.hidden = Change pension scheme name
+overseasPension.reliefDetails.amount.hidden = Change untaxed employer payments
+overseasPension.reliefDetails.typeOfRelief.hidden = Change type of relief
+overseasPension.reliefDetails.schemeDetail.hidden = Change scheme details
+overseasPension.reliefDetails.noTaxRelief = No tax relief
+overseasPension.reliefDetails.countryCode = Country code:
+overseasPension.reliefDetails.article = Article:
+overseasPension.reliefDetails.treaty = Treaty:
+overseasPension.reliefDetails.relief = Relief:
+
 #Your Taxable Amount
 overseasPension.yourTaxableAmount.title.individual = Your taxable amount
 overseasPension.yourTaxableAmount.title.agent = Your client’s taxable amount
@@ -1016,6 +1033,18 @@ transferIntoOverseasPensions.overseasPensionSchemeTaxTransferCharge.error.tooBig
 #Overseas Transfer Charges Paid Status
 transferIntoOverseasPensions.overseasTransferChargesPaid.title = Did a UK pension scheme pay the transfer charge to HMRC?
 transferIntoOverseasPensions.overseasTransferChargesPaid.error.noEntry = Select yes if a UK pension scheme paid the transfer charge to HMRC
+
+#Double Taxation Agreement Details
+transferIntoOverseasPensions.doubleTaxation.title = Double taxation agreement details
+transferIntoOverseasPensions.doubleTaxation.country = Country
+transferIntoOverseasPensions.doubleTaxation.country.error.noEntry = Enter the tax treaty country
+transferIntoOverseasPensions.doubleTaxation.article = Article (optional)
+transferIntoOverseasPensions.doubleTaxation.article.hint = For example, ‘AB3211-1’
+transferIntoOverseasPensions.doubleTaxation.treaty = Treaty (optional)
+transferIntoOverseasPensions.doubleTaxation.treaty.hint = For example, ’Munich’
+transferIntoOverseasPensions.doubleTaxation.amount.error.noEntry = Enter the amount of double taxation relief
+transferIntoOverseasPensions.doubleTaxation.amount.error.incorrectFormat = Enter the amount of double taxation relief in the correct format
+transferIntoOverseasPensions.doubleTaxation.amount.error.tooBig = The amount of double taxation relief must be less than £100,000,000,000
 
 #Transfer Into Overseas Pensions CYA
 transferIntoOverseasPensions.cya.heading = Check transfers into overseas pensions

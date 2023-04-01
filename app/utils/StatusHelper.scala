@@ -33,8 +33,8 @@ object StatusHelper {
 
   def incomeFromPensionsIsUpdated(prior: Option[AllPensionsData]): Boolean = {
     //TODO: confirm any one of these is sufficient to be 'updated'
-    prior.flatMap(_.stateBenefits.flatMap(_.customerAddedStateBenefits)).isDefined ||
-      prior.flatMap(_.stateBenefits.flatMap(_.stateBenefits)).isDefined
+    prior.flatMap(_.stateBenefits.flatMap(_.customerAddedStateBenefitsData)).isDefined ||
+      prior.flatMap(_.stateBenefits.flatMap(_.stateBenefitsData)).isDefined
   }
 
   def pensionFromAnnualAllowanceIsUpdated(prior: Option[AllPensionsData]): Boolean = {
