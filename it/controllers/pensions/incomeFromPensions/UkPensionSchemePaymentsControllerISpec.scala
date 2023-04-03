@@ -57,7 +57,6 @@ class UkPensionSchemePaymentsControllerISpec extends IntegrationTest with ViewHe
     val yesText: String
     val noText: String
     val buttonText: String
-    val expectedDoesNotIncludeText: String
   }
 
   trait SpecificExpectedResults {
@@ -68,21 +67,17 @@ class UkPensionSchemePaymentsControllerISpec extends IntegrationTest with ViewHe
   }
 
   object CommonExpectedEN extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Dividends for 6 April ${taxYear - 1} to 5 April $taxYear"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Income from pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
     val yesText = "Yes"
     val noText = "No"
     val buttonText = "Continue"
-    val expectedDoesNotIncludeText = "This does not include State Pension."
-
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Difidendau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Incwm o bensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
     val yesText = "Iawn"
     val noText = "Na"
     val buttonText = "Yn eich blaen"
-    val expectedDoesNotIncludeText = "This does not include State Pension."
-
   }
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
@@ -150,7 +145,6 @@ class UkPensionSchemePaymentsControllerISpec extends IntegrationTest with ViewHe
           radioButtonCheck(yesText, 1, checked = Some(false))
           radioButtonCheck(noText, 2, checked = Some(false))
           buttonCheck(buttonText, continueButtonSelector)
-          textOnPageCheck(expectedDoesNotIncludeText, expectedDoesNotIncludeSelector)
           formPostLinkCheck(ukPensionSchemePayments(taxYearEOY), formSelector)
           welshToggleCheck(user.isWelsh)
         }
@@ -175,7 +169,6 @@ class UkPensionSchemePaymentsControllerISpec extends IntegrationTest with ViewHe
           radioButtonCheck(yesText, 1, checked = Some(true))
           radioButtonCheck(noText, 2, checked = Some(false))
           buttonCheck(buttonText, continueButtonSelector)
-          textOnPageCheck(expectedDoesNotIncludeText, expectedDoesNotIncludeSelector)
           formPostLinkCheck(ukPensionSchemePayments(taxYearEOY), formSelector)
           welshToggleCheck(user.isWelsh)
         }
@@ -202,7 +195,6 @@ class UkPensionSchemePaymentsControllerISpec extends IntegrationTest with ViewHe
           radioButtonCheck(yesText, 1, checked = Some(false))
           radioButtonCheck(noText, 2, checked = Some(true))
           buttonCheck(buttonText, continueButtonSelector)
-          textOnPageCheck(expectedDoesNotIncludeText, expectedDoesNotIncludeSelector)
           formPostLinkCheck(ukPensionSchemePayments(taxYearEOY), formSelector)
           welshToggleCheck(user.isWelsh)
         }
@@ -274,7 +266,6 @@ class UkPensionSchemePaymentsControllerISpec extends IntegrationTest with ViewHe
           radioButtonCheck(yesText, 1, checked = Some(false))
           radioButtonCheck(noText, 2, checked = Some(false))
           buttonCheck(buttonText, continueButtonSelector)
-          textOnPageCheck(expectedDoesNotIncludeText, expectedDoesNotIncludeSelector)
           formPostLinkCheck(ukPensionSchemePayments(taxYearEOY), formSelector)
           welshToggleCheck(user.isWelsh)
           errorSummaryCheck(user.specificExpectedResults.get.expectedErrorMessage, Selectors.yesSelector)

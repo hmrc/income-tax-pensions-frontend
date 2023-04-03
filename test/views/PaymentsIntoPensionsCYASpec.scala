@@ -238,7 +238,7 @@ class PaymentsIntoPensionsCYASpec extends ViewUnitTest {
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
 
-        import userScenario.commonExpectedResults.{no => answerNo, yes => anseryes}
+        import userScenario.commonExpectedResults.{no => answerNo}
 
         //noinspection ScalaStyle
         cyaRowCheck(reliefAtSource, answerNo, ChangeLinks.reliefAtSource, reliefAtSourceHidden, 1)

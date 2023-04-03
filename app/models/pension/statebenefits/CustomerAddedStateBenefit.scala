@@ -17,7 +17,6 @@
 package models.pension.statebenefits
 
 import play.api.libs.json.{Json, OFormat}
-import utils.EncryptedValue
 
 import java.time.{Instant, LocalDate}
 import java.util.UUID
