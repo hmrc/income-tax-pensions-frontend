@@ -111,7 +111,7 @@ class TaxableAmountControllerISpec extends
   }
 
   object CommonExpectedIndividualCY extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Income from overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Incwm o bensiynau tramor ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
     val expectedTitle: String = "Your taxable amount"
     val expectedHeading: String = "Your taxable amount"
     val expectedParagraph: String = "Your taxable amount is the amount you got in foreign pension payments."
@@ -124,11 +124,11 @@ class TaxableAmountControllerISpec extends
     val expectedRowHeading1: String = "Foreign pension payments"
     val expectedRowHeading2: String = "Non-UK tax deducted"
     val expectedRowHeading3: String = "Taxable amount"
-    val expectedButtonText: String = "Continue"
+    val expectedButtonText: String = "Yn eich blaen"
   }
 
   object CommonExpectedAgentCY extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Income from overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Incwm o bensiynau tramor ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
     val expectedTitle: String = "Your client’s taxable amount"
     val expectedHeading: String = "Your client’s taxable amount"
     val expectedParagraph: String = "Your client’s taxable amount is the amount they got in foreign pension payments."
@@ -141,7 +141,7 @@ class TaxableAmountControllerISpec extends
     val expectedRowHeading1: String = "Foreign pension payments"
     val expectedRowHeading3: String = "Taxable amount"
     val expectedRowHeading2: String = "Non-UK tax deducted"
-    val expectedButtonText: String = "Continue"
+    val expectedButtonText: String = "Yn eich blaen"
   }
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(
@@ -223,7 +223,7 @@ class TaxableAmountControllerISpec extends
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(expectedTitle)
+          titleCheck(expectedTitle, user.isWelsh)
           h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY))
           textOnPageCheck(expectedParagraph, paragraphSelector(1))
@@ -269,7 +269,7 @@ class TaxableAmountControllerISpec extends
             result.status shouldBe OK
           }
 
-          titleCheck(expectedTitle)
+          titleCheck(expectedTitle, user.isWelsh)
           h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY))
           textOnPageCheck(expectedFtcrParagraph, paragraphSelector(1))

@@ -57,6 +57,7 @@ class IncomeFromPensionsSummaryControllerISpec extends CommonUtils with BeforeAn
 
   def statePensionsLink(taxYear: Int = taxYear) : String = s"/update-and-submit-income-tax-return/pensions/${taxYear}/pension-income/state-pension"
   def otherUkPensionsLink(taxYear: Int = taxYear) : String = s"/update-and-submit-income-tax-return/pensions/${taxYear}/pension-income/state-pension"
+  
   object Selectors {
     val captionSelector: String = "#main-content > div > div > header > p"
     val continueButtonSelector: String = "#continue"
@@ -84,14 +85,14 @@ class IncomeFromPensionsSummaryControllerISpec extends CommonUtils with BeforeAn
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val expectedTitle = "Income from pensions"
-    val notStartedText = "Not Started"
-    val updatedText = "Updated"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Pensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
+    val expectedTitle = "Incwm o bensiynau"
+    val notStartedText = "Heb ddechrau"
+    val updatedText = "Wedi diweddaru"
     val statePensionLinkText = "State pension"
     val otherUKPensionsLinktext = "Other UK pensions"
-    val expectedHeading = "Income from pensions"
-    val buttonText = "Return to overview"
+    val expectedHeading = expectedTitle
+    val buttonText = "Yn ôl i’r trosolwg"
   }
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
@@ -99,7 +100,7 @@ class IncomeFromPensionsSummaryControllerISpec extends CommonUtils with BeforeAn
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
-    val expectedParagraph = "You only need to fill in the sections that apply to you."
+    val expectedParagraph = "Dim ond yr adrannau sy’n berthnasol i chi y mae angen i chi eu llenwi."
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
@@ -107,7 +108,7 @@ class IncomeFromPensionsSummaryControllerISpec extends CommonUtils with BeforeAn
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
-    val expectedParagraph = "You only need to fill in the sections that apply to your client."
+    val expectedParagraph = "Dim ond yr adrannau sy’n berthnasol i’ch cleient y mae angen i chi eu llenwi."
   }
 
   ".show" should {
@@ -127,7 +128,7 @@ class IncomeFromPensionsSummaryControllerISpec extends CommonUtils with BeforeAn
             result.status shouldBe OK
           }
 
-          titleCheck(expectedTitle)
+          titleCheck(expectedTitle, user.isWelsh)
           h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           textOnPageCheck(user.specificExpectedResults.get.expectedParagraph, paragraphSelector(1))
@@ -155,7 +156,7 @@ class IncomeFromPensionsSummaryControllerISpec extends CommonUtils with BeforeAn
             result.status shouldBe OK
           }
 
-          titleCheck(expectedTitle)
+          titleCheck(expectedTitle, user.isWelsh)
           h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           textOnPageCheck(user.specificExpectedResults.get.expectedParagraph, paragraphSelector(1))
@@ -184,7 +185,7 @@ class IncomeFromPensionsSummaryControllerISpec extends CommonUtils with BeforeAn
             result.status shouldBe OK
           }
 
-          titleCheck(expectedTitle)
+          titleCheck(expectedTitle, user.isWelsh)
           h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           textOnPageCheck(user.specificExpectedResults.get.expectedParagraph, paragraphSelector(1))
@@ -215,7 +216,7 @@ class IncomeFromPensionsSummaryControllerISpec extends CommonUtils with BeforeAn
             result.status shouldBe OK
           }
 
-          titleCheck(expectedTitle)
+          titleCheck(expectedTitle, user.isWelsh)
           h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           textOnPageCheck(user.specificExpectedResults.get.expectedParagraph, paragraphSelector(1))
@@ -244,7 +245,7 @@ class IncomeFromPensionsSummaryControllerISpec extends CommonUtils with BeforeAn
             result.status shouldBe OK
           }
 
-          titleCheck(expectedTitle)
+          titleCheck(expectedTitle, user.isWelsh)
           h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           textOnPageCheck(user.specificExpectedResults.get.expectedParagraph, paragraphSelector(1))

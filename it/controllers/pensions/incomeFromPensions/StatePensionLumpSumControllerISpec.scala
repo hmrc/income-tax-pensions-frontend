@@ -48,7 +48,7 @@ class StatePensionLumpSumControllerISpec extends IntegrationTest with BeforeAndA
 
   trait SpecificExpectedResults {
     val expectedTitle: String
-    val expectedHeading: String
+    lazy val expectedHeading = expectedTitle
     val expectedErrorTitle: String
     val expectedError: String
     val expectedP1: String
@@ -68,7 +68,6 @@ class StatePensionLumpSumControllerISpec extends IntegrationTest with BeforeAndA
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
     val expectedTitle = "Did you get a State Pension lump sum?"
-    val expectedHeading = "Did you get a State Pension lump sum?"
     val expectedErrorTitle = s"Error: $expectedTitle"
     val expectedError = "Select yes if you got a State Pension lump sum"
     val expectedP1 = "You might have got a one-off lump sum payment if you delayed claiming your State Pension for 12 months in a row."
@@ -78,8 +77,7 @@ class StatePensionLumpSumControllerISpec extends IntegrationTest with BeforeAndA
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
     val expectedTitle = "Did you get a State Pension lump sum?"
-    val expectedHeading = "Did you get a State Pension lump sum?"
-    val expectedErrorTitle = s"Error: $expectedTitle"
+    val expectedErrorTitle = s"Gwall: $expectedTitle"
     val expectedError = "Select yes if you got a State Pension lump sum"
     val expectedP1 = "You might have got a one-off lump sum payment if you delayed claiming your State Pension for 12 months in a row."
     val expectedBullet1 = "eich P60"
@@ -88,7 +86,6 @@ class StatePensionLumpSumControllerISpec extends IntegrationTest with BeforeAndA
 
   object ExpectedAgentEN extends SpecificExpectedResults {
     val expectedTitle = "Did your client get a State Pension lump sum?"
-    val expectedHeading = "Did your client get a State Pension lump sum?"
     val expectedErrorTitle = s"Error: $expectedTitle"
     val expectedError = "Select yes if your client got a State Pension lump sum"
     val expectedP1 = "Your client might have got a one-off lump sum payment if they delayed claiming their State Pension for 12 months in a row."
@@ -98,8 +95,7 @@ class StatePensionLumpSumControllerISpec extends IntegrationTest with BeforeAndA
 
   object ExpectedAgentCY extends SpecificExpectedResults {
     val expectedTitle = "Did your client get a State Pension lump sum?"
-    val expectedHeading = "Did your client get a State Pension lump sum?"
-    val expectedErrorTitle = s"Error: $expectedTitle"
+    val expectedErrorTitle = s"Gwall: $expectedTitle"
     val expectedError = "Select yes if your client got a State Pension lump sum"
     val expectedP1 = "Your client might have got a one-off lump sum payment if they delayed claiming their State Pension for 12 months in a row."
     val expectedBullet1 = "P60 eich cleient"
@@ -117,13 +113,13 @@ class StatePensionLumpSumControllerISpec extends IntegrationTest with BeforeAndA
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Income from pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Incwm o bensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
     val expectedWhereToFind = "Ble i ddod o hyd i’r wybodaeth hon"
     val expectedYouCanFind = "Gallwch ddod o hyd i’r wybodaeth hon yn:"
     val expectedP2 = "This only applies to people who reach State Pension age before 6 April 2016."
-    val expectedButtonText = "Continue"
-    val yesText = "Yes"
-    val noText = "No"
+    val expectedButtonText = "Yn eich blaen"
+    val yesText = "Iawn"
+    val noText = "Na"
   }
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(
@@ -155,7 +151,7 @@ class StatePensionLumpSumControllerISpec extends IntegrationTest with BeforeAndA
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(user.specificExpectedResults.get.expectedTitle)
+          titleCheck(user.specificExpectedResults.get.expectedTitle, user.isWelsh)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           textOnPageCheck(user.specificExpectedResults.get.expectedP1, paragraphSelector(1))
@@ -187,7 +183,7 @@ class StatePensionLumpSumControllerISpec extends IntegrationTest with BeforeAndA
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(user.specificExpectedResults.get.expectedTitle)
+          titleCheck(user.specificExpectedResults.get.expectedTitle, user.isWelsh)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           textOnPageCheck(user.specificExpectedResults.get.expectedP1, paragraphSelector(1))
@@ -224,7 +220,7 @@ class StatePensionLumpSumControllerISpec extends IntegrationTest with BeforeAndA
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(user.specificExpectedResults.get.expectedTitle)
+          titleCheck(user.specificExpectedResults.get.expectedTitle, user.isWelsh)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           textOnPageCheck(user.specificExpectedResults.get.expectedP1, paragraphSelector(1))
@@ -300,7 +296,7 @@ class StatePensionLumpSumControllerISpec extends IntegrationTest with BeforeAndA
           implicit def document: () => Document = () => Jsoup.parse(result.body)
           import Selectors._
           import user.commonExpectedResults._
-          titleCheck(user.specificExpectedResults.get.expectedErrorTitle)
+          titleCheck(user.specificExpectedResults.get.expectedErrorTitle, user.isWelsh)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           textOnPageCheck(user.specificExpectedResults.get.expectedP1, paragraphSelector(1, withError = true))

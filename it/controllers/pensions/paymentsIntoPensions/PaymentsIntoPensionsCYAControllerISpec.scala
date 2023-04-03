@@ -42,10 +42,10 @@ import play.api.libs.ws.WSResponse
 import utils.PageUrls.PaymentIntoPensions.checkPaymentsIntoPensionCyaUrl
 import utils.PageUrls.fullUrl
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
-import views.PaymentsIntoPensionsCYATestSupport._
-import views.PaymentsIntoPensionsCYATestSupport.CommonExpectedEN._
-import views.PaymentsIntoPensionsCYATestSupport.ExpectedIndividualEN._
-import views.PaymentsIntoPensionsCYATestSupport.CommonExpectedEN.{no => answerNo}
+import views.PaymentsIntoPensionsCYASpec._
+import views.PaymentsIntoPensionsCYASpec.CommonExpectedEN._
+import views.PaymentsIntoPensionsCYASpec.ExpectedIndividualEN._
+import views.PaymentsIntoPensionsCYASpec.CommonExpectedEN.{no => answerNo}
 
 
 // scalastyle:off magic.number

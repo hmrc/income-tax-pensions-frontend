@@ -31,7 +31,7 @@ import builders.PensionsUserDataBuilder
 import builders.PensionsUserDataBuilder.{aPensionsUserData, pensionsUserDataWithAnnualAndLifetimeAllowance}
 import builders.UnauthorisedPaymentsViewModelBuilder.anUnauthorisedPaymentsViewModel
 import builders.UserBuilder.aUserRequest
-import models.mongo.PensionsCYAModel
+import models.mongo.{PensionsCYAModel, PensionsUserData}
 import models.pension.charges.PensionAnnualAllowancesViewModel
 import models.pension.reliefs.PaymentsIntoPensionViewModel
 import org.jsoup.Jsoup
@@ -41,6 +41,7 @@ import play.api.Logging
 import play.api.http.HeaderNames
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
+import routes._
 import utils.PageUrls.PensionLifetimeAllowance.checkAnnualLifetimeAllowanceCYA
 import utils.PageUrls.fullUrl
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
@@ -58,41 +59,42 @@ class AnnualLifetimeAllowanceCYAControllerISpec extends
 
   // TODO: Duplicates UnauthorisedPaymentsCYAControllerISpec. Should we have a single Links object?
   object ChangeLinksUnauthorisedPayments {
-    val unauthorisedPayments: String = controllers.pensions.unauthorisedPayments.routes.UnauthorisedPaymentsController.show(taxYear).url
-    val amountSurcharged: String = controllers.pensions.unauthorisedPayments.routes.SurchargeAmountController.show(taxYear).url
-    val nonUKTaxOnAmountResultedInSurcharge: String =
-      controllers.pensions.unauthorisedPayments.routes.NonUKTaxOnAmountResultedInSurchargeController.show(taxYear).url
-    val amountNotSurcharged: String = controllers.pensions.unauthorisedPayments.routes.NoSurchargeAmountController.show(taxYear).url
-    val nonUKTaxOnAmountNotResultedInSurcharge: String =
-      controllers.pensions.unauthorisedPayments.routes.NonUKTaxOnAmountNotResultedInSurchargeController.show(taxYear).url
-    val ukPensionSchemes: String = controllers.pensions.unauthorisedPayments.routes.WhereAnyOfTheUnauthorisedPaymentsController.show(taxYear).url
-    val pensionSchemeTaxReferences: String = controllers.pensions.unauthorisedPayments.routes.UnauthorisedPensionSchemeTaxReferenceController.show(taxYear, None).url
+    import controllers.pensions.unauthorisedPayments.routes._
+    import controllers.pensions.annualAllowances.routes._
+    
+    val unauthorisedPayments: String = UnauthorisedPaymentsController.show(taxYear).url
+    val amountSurcharged: String = SurchargeAmountController.show(taxYear).url
+    val nonUKTaxOnAmountResultedInSurcharge: String = NonUKTaxOnAmountResultedInSurchargeController.show(taxYear).url
+    val amountNotSurcharged: String = NoSurchargeAmountController.show(taxYear).url
+    val nonUKTaxOnAmountNotResultedInSurcharge: String = NonUKTaxOnAmountNotResultedInSurchargeController.show(taxYear).url
+    val ukPensionSchemes: String = WhereAnyOfTheUnauthorisedPaymentsController.show(taxYear).url
+    val pensionSchemeTaxReferences: String = UnauthorisedPensionSchemeTaxReferenceController.show(taxYear, None).url
 
 
-    val aboveAnnualOrLifetimeAllowance: String = controllers.pensions.lifetimeAllowances.routes.AboveAnnualLifeTimeAllowanceController.show(taxYear).url
-    val reducedAnnualAllowance: String = controllers.pensions.annualAllowances.routes.ReducedAnnualAllowanceController.show(taxYear).url
-    val typeOfReducedAnnualAllowance: String = controllers.pensions.annualAllowances.routes.ReducedAnnualAllowanceTypeController.show(taxYear).url
-    val aboveAnnualAllowance: String = controllers.pensions.annualAllowances.routes.AboveReducedAnnualAllowanceController.show(taxYear).url
-    val annualAllowanceTax: String = controllers.pensions.lifetimeAllowances.routes.PensionProviderPaidTaxController.show(taxYear).url
-    val annualAllowanceSchemes: String = controllers.pensions.annualAllowances.routes.PstrSummaryController.show(taxYear).url
-    val aboveLifetimeAllowance: String = controllers.pensions.lifetimeAllowances.routes.AnnualLifetimeAllowanceCYAController.show(taxYear).url
-    val lumpSum: String = controllers.pensions.lifetimeAllowances.routes.PensionLumpSumController.show(taxYear).url
-    val otherPayments: String = controllers.pensions.lifetimeAllowances.routes.LifeTimeAllowanceAnotherWayController.show(taxYear).url
-    val lifetimeAllowanceSchemes: String = controllers.pensions.lifetimeAllowances.routes.AnnualLifetimeAllowanceCYAController.show(taxYear).url
+    val aboveAnnualOrLifetimeAllowance: String = AboveAnnualLifeTimeAllowanceController.show(taxYear).url
+    val reducedAnnualAllowance: String = ReducedAnnualAllowanceController.show(taxYear).url
+    val typeOfReducedAnnualAllowance: String = ReducedAnnualAllowanceTypeController.show(taxYear).url
+    val aboveAnnualAllowance: String = AboveReducedAnnualAllowanceController.show(taxYear).url
+    val annualAllowanceTax: String = PensionProviderPaidTaxController.show(taxYear).url
+    val annualAllowanceSchemes: String = PstrSummaryController.show(taxYear).url
+    val aboveLifetimeAllowance: String = AnnualLifetimeAllowanceCYAController.show(taxYear).url
+    val lumpSum: String = PensionLumpSumController.show(taxYear).url
+    val otherPayments: String = LifeTimeAllowanceAnotherWayController.show(taxYear).url
+    val lifetimeAllowanceSchemes: String = AnnualLifetimeAllowanceCYAController.show(taxYear).url
 
   }
 
   trait SpecificExpectedResults {
-    val expectedH1: String
     val expectedTitle: String
+    lazy val expectedH1 = expectedTitle
   }
 
   trait CommonExpectedResults {
-    def expectedCaption(taxYear: Int): String
-
+    val expectedCaption: Int => String
+    
     val yes: String
     val no: String
-
+    
     val aboveAnnualOrLifetimeAllowance: String
     val reducedAnnualAllowance: String
     val typeOfReducedAnnualAllowance: String
@@ -103,7 +105,7 @@ class AnnualLifetimeAllowanceCYAControllerISpec extends
     val lumpSum: String
     val otherPayments: String
     val lifetimeAllowanceSchemes: String
-
+    
 
     val aboveAnnualOrLifetimeAllowanceHidden: String
     val reducedAnnualAllowanceHidden: String
@@ -115,7 +117,7 @@ class AnnualLifetimeAllowanceCYAControllerISpec extends
     val lumpSumHidden: String
     val otherPaymentsHidden: String
     val lifetimeAllowanceSchemesHidden: String
-
+    
 
     val unauthorisedPayments: String
     val amountSurcharged: String
@@ -138,7 +140,7 @@ class AnnualLifetimeAllowanceCYAControllerISpec extends
   }
 
   object CommonExpectedEN extends CommonExpectedResults {
-    def expectedCaption(taxYear: Int): String = s"Annual and lifetime allowances for 6 April ${taxYear - 1} to 5 April $taxYear"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Annual and lifetime allowances for 6 April ${taxYear - 1} to 5 April $taxYear"
 
     val yes = "Yes"
     val no = "No"
@@ -189,10 +191,10 @@ class AnnualLifetimeAllowanceCYAControllerISpec extends
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    def expectedCaption(taxYear: Int): String = s"Annual and lifetime allowances for 6 April ${taxYear - 1} to 5 April $taxYear"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Annual and lifetime allowances for 6 April ${taxYear - 1} to 5 April $taxYear"
 
-    val yes = "Yes"
-    val no = "No"
+    val yes = "Iawn"
+    val no = "Na"
 
     val unauthorisedPayments = "Unauthorised payments"
     val amountSurcharged = "Amount surcharged"
@@ -203,7 +205,7 @@ class AnnualLifetimeAllowanceCYAControllerISpec extends
     val pensionSchemeTaxReferences = "Pension Scheme Tax References"
 
 
-    val saveAndContinue = "Save and continue"
+    val saveAndContinue = "Cadw ac yn eich blaen"
     val error = "Sorry, there is a problem with the service"
 
     val unauthorisedPaymentsHidden = "Change unauthorised payments"
@@ -240,22 +242,18 @@ class AnnualLifetimeAllowanceCYAControllerISpec extends
   }
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
-    val expectedH1 = "Check your annual and lifetime allowances"
     val expectedTitle = "Check your annual and lifetime allowances"
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
-    val expectedH1 = "Check your client’s annual and lifetime allowances"
     val expectedTitle = "Check your client’s annual and lifetime allowances"
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
-    val expectedH1 = "Check your annual and lifetime allowances"
     val expectedTitle = "Check your annual and lifetime allowances"
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
-    val expectedH1 = "Check your client’s annual and lifetime allowances"
     val expectedTitle = "Check your client’s annual and lifetime allowances"
   }
 
@@ -266,25 +264,28 @@ class AnnualLifetimeAllowanceCYAControllerISpec extends
     UserScenario(isWelsh = true, isAgent = true, CommonExpectedCY, Some(ExpectedAgentCY))
   )
 
-  def pensionsUsersData(isPrior: Boolean = false, pensionsCyaModel: PensionsCYAModel) = {
+  def pensionsUsersData(isPrior: Boolean = false, pensionsCyaModel: PensionsCYAModel): PensionsUserData = {
     PensionsUserDataBuilder.aPensionsUserData.copy(
       isPriorSubmission = isPrior, pensions = pensionsCyaModel)
   }
 
-  def stringToBoolean(yesNo: Boolean) = if (yesNo) "Yes" else "No"
-
-  ".show" should {
+  ".show" should { //scalastyle:off magic.number
     userScenarios.foreach { user =>
       s"language is ${welshTest(user.isWelsh)} and request is from an ${agentTest(user.isAgent)}" should {
         import user.commonExpectedResults._
+        
+        val booleanToYesOrNo: Boolean => String = (bool: Boolean) =>
+          if (bool) user.commonExpectedResults.yes else user.commonExpectedResults.no
 
         "there is no CYA data and a CYA model is generated" which {
           implicit lazy val result: WSResponse = {
             authoriseAgentOrIndividual(user.isAgent)
             dropPensionsDB()
-            insertCyaData(pensionsUserDataWithAnnualAndLifetimeAllowance(aPensionAnnualAllowanceViewModel, aPensionLifetimeAllowanceViewModel, isPriorSubmission = false), aUserRequest)
+            insertCyaData(pensionsUserDataWithAnnualAndLifetimeAllowance(
+              aPensionAnnualAllowanceViewModel, aPensionLifetimeAllowanceViewModel, isPriorSubmission = false), aUserRequest)
             userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYear)
-            urlGet(fullUrl(checkAnnualLifetimeAllowanceCYA(taxYear)), welsh = user.isWelsh, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
+            urlGet(fullUrl(checkAnnualLifetimeAllowanceCYA(taxYear)), welsh = user.isWelsh,
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
           }
 
           "has an OK status" in {
@@ -309,17 +310,40 @@ class AnnualLifetimeAllowanceCYAControllerISpec extends
               ""
             }
 
-          titleCheck(user.specificExpectedResults.get.expectedTitle)
-          cyaRowCheck(aboveAnnualOrLifetimeAllowance, stringToBoolean(annualLifeTimeQuestion), ChangeLinksUnauthorisedPayments.aboveAnnualOrLifetimeAllowance, aboveAnnualOrLifetimeAllowanceHidden, 1)
-          cyaRowCheck(reducedAnnualAllowance, stringToBoolean(savingsTaxCharges.map(_.isAnnualAllowanceReduced).get), ChangeLinksUnauthorisedPayments.reducedAnnualAllowance, reducedAnnualAllowanceHidden, 2)
-          cyaRowCheck(typeOfReducedAnnualAllowance, typeOfAnnualCharge, ChangeLinksUnauthorisedPayments.typeOfReducedAnnualAllowance, typeOfReducedAnnualAllowanceHidden, 3)
-          cyaRowCheck(aboveAnnualAllowance, moneyContent(pensionContributions.map(_.inExcessOfTheAnnualAllowance).get), ChangeLinksUnauthorisedPayments.aboveAnnualAllowance, aboveAnnualAllowanceHidden, 4)
-          cyaRowCheck(annualAllowanceTax, moneyContent(pensionContributions.map(_.annualAllowanceTaxPaid).get), ChangeLinksUnauthorisedPayments.annualAllowanceTax, annualAllowanceTaxHidden, 5)
-          cyaRowCheck(annualAllowanceSchemes, s"${pensionContributions.get.pensionSchemeTaxReference.mkString(", ")}", ChangeLinksUnauthorisedPayments.annualAllowanceSchemes, annualAllowanceSchemesHidden, 6)
-          cyaRowCheck(aboveLifetimeAllowance, "", ChangeLinksUnauthorisedPayments.aboveLifetimeAllowance, aboveLifetimeAllowanceHidden, 7)
-          cyaRowCheck(lumpSum, amountAndTaxPaidContent(savingsTaxCharges.get.lumpSumBenefitTakenInExcessOfLifetimeAllowance.flatMap(_.amount).get, savingsTaxCharges.get.lumpSumBenefitTakenInExcessOfLifetimeAllowance.flatMap(_.taxPaid).get), ChangeLinksUnauthorisedPayments.lumpSum, lumpSumHidden, 8)
-          cyaRowCheck(otherPayments, amountAndTaxPaidContent(savingsTaxCharges.get.benefitInExcessOfLifetimeAllowance.flatMap(_.amount).get, savingsTaxCharges.get.benefitInExcessOfLifetimeAllowance.flatMap(_.taxPaid).get), ChangeLinksUnauthorisedPayments.otherPayments, otherPaymentsHidden, 9)
-          cyaRowCheck(lifetimeAllowanceSchemes, s"${savingsTaxCharges.get.pensionSchemeTaxReference.mkString(", ")}", ChangeLinksUnauthorisedPayments.lifetimeAllowanceSchemes, lifetimeAllowanceSchemesHidden, 10)
+          titleCheck(user.specificExpectedResults.get.expectedTitle, user.isWelsh)
+          
+          cyaRowCheck(aboveAnnualOrLifetimeAllowance, booleanToYesOrNo(annualLifeTimeQuestion),
+            ChangeLinksUnauthorisedPayments.aboveAnnualOrLifetimeAllowance, aboveAnnualOrLifetimeAllowanceHidden, 1)
+          
+          cyaRowCheck(reducedAnnualAllowance, booleanToYesOrNo(savingsTaxCharges.map(_.isAnnualAllowanceReduced).get),
+            ChangeLinksUnauthorisedPayments.reducedAnnualAllowance, reducedAnnualAllowanceHidden, 2)
+          
+          cyaRowCheck(typeOfReducedAnnualAllowance, typeOfAnnualCharge, ChangeLinksUnauthorisedPayments.typeOfReducedAnnualAllowance,
+            typeOfReducedAnnualAllowanceHidden, 3)
+          
+          cyaRowCheck(aboveAnnualAllowance, moneyContent(pensionContributions.map(_.inExcessOfTheAnnualAllowance).get),
+            ChangeLinksUnauthorisedPayments.aboveAnnualAllowance, aboveAnnualAllowanceHidden, 4)
+          
+          cyaRowCheck(annualAllowanceTax, moneyContent(pensionContributions.map(_.annualAllowanceTaxPaid).get),
+            ChangeLinksUnauthorisedPayments.annualAllowanceTax, annualAllowanceTaxHidden, 5)
+          
+          cyaRowCheck(annualAllowanceSchemes, s"${pensionContributions.get.pensionSchemeTaxReference.mkString(", ")}",
+            ChangeLinksUnauthorisedPayments.annualAllowanceSchemes, annualAllowanceSchemesHidden, 6)
+          
+          cyaRowCheck(aboveLifetimeAllowance, "", ChangeLinksUnauthorisedPayments.aboveLifetimeAllowance,
+            aboveLifetimeAllowanceHidden, 7)
+          
+          cyaRowCheck(lumpSum, amountAndTaxPaidContent(savingsTaxCharges.get.lumpSumBenefitTakenInExcessOfLifetimeAllowance.flatMap(_.amount).get,
+            savingsTaxCharges.get.lumpSumBenefitTakenInExcessOfLifetimeAllowance.flatMap(_.taxPaid).get),
+            ChangeLinksUnauthorisedPayments.lumpSum, lumpSumHidden, 8)
+          
+          cyaRowCheck(otherPayments, amountAndTaxPaidContent(savingsTaxCharges.get.benefitInExcessOfLifetimeAllowance.flatMap(_.amount).get,
+            savingsTaxCharges.get.benefitInExcessOfLifetimeAllowance.flatMap(_.taxPaid).get), ChangeLinksUnauthorisedPayments.otherPayments,
+            otherPaymentsHidden, 9)
+          
+          cyaRowCheck(lifetimeAllowanceSchemes, s"${savingsTaxCharges.get.pensionSchemeTaxReference.mkString(", ")}",
+            ChangeLinksUnauthorisedPayments.lifetimeAllowanceSchemes, lifetimeAllowanceSchemesHidden, 10)
+          
           buttonCheck(saveAndContinue)
           welshToggleCheck(user.isWelsh)
         }
@@ -336,9 +360,11 @@ class AnnualLifetimeAllowanceCYAControllerISpec extends
           implicit lazy val result: WSResponse = {
             authoriseAgentOrIndividual(user.isAgent)
             dropPensionsDB()
-            insertCyaData(pensionsUserDataWithAnnualAndLifetimeAllowance(aPensionAnnualAllowanceViewModel, aPensionLifetimeAllowanceViewModel, isPriorSubmission = false), aUserRequest)
+            insertCyaData(pensionsUserDataWithAnnualAndLifetimeAllowance(aPensionAnnualAllowanceViewModel, aPensionLifetimeAllowanceViewModel,
+              isPriorSubmission = false), aUserRequest)
             userDataStub(anIncomeTaxUserData.copy(pensions = Some(updatedAllPensionsData)), nino, taxYear)
-            urlGet(fullUrl(checkAnnualLifetimeAllowanceCYA(taxYear)), welsh = user.isWelsh, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
+            urlGet(fullUrl(checkAnnualLifetimeAllowanceCYA(taxYear)), welsh = user.isWelsh,
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
           }
 
           "has an OK status" in {
@@ -353,12 +379,25 @@ class AnnualLifetimeAllowanceCYAControllerISpec extends
           val annualLifeTimeQuestion = savingsTaxCharges.map(_.benefitInExcessOfLifetimeAllowance).isDefined ||
             pensionCharge.pensionSavingsTaxCharges.map(_.lumpSumBenefitTakenInExcessOfLifetimeAllowance).isDefined
 
-          titleCheck(user.specificExpectedResults.get.expectedTitle)
-          cyaRowCheck(aboveAnnualOrLifetimeAllowance, stringToBoolean(annualLifeTimeQuestion), ChangeLinksUnauthorisedPayments.aboveAnnualOrLifetimeAllowance, aboveAnnualOrLifetimeAllowanceHidden, 1)
-          cyaRowCheck(reducedAnnualAllowance, "No", ChangeLinksUnauthorisedPayments.reducedAnnualAllowance, reducedAnnualAllowanceHidden, 2)
-          cyaRowCheck(aboveLifetimeAllowance, "", ChangeLinksUnauthorisedPayments.aboveLifetimeAllowance, aboveLifetimeAllowanceHidden, 3)
-          cyaRowCheck(lumpSum, amountAndTaxPaidContent(savingsTaxCharges.get.lumpSumBenefitTakenInExcessOfLifetimeAllowance.flatMap(_.amount).get, savingsTaxCharges.get.lumpSumBenefitTakenInExcessOfLifetimeAllowance.flatMap(_.taxPaid).get), ChangeLinksUnauthorisedPayments.lumpSum, lumpSumHidden, 4)
-          cyaRowCheck(otherPayments, amountAndTaxPaidContent(savingsTaxCharges.get.benefitInExcessOfLifetimeAllowance.flatMap(_.amount).get, savingsTaxCharges.get.benefitInExcessOfLifetimeAllowance.flatMap(_.taxPaid).get), ChangeLinksUnauthorisedPayments.otherPayments, otherPaymentsHidden, 5)
+          titleCheck(user.specificExpectedResults.get.expectedTitle, user.isWelsh)
+          
+          cyaRowCheck(aboveAnnualOrLifetimeAllowance, booleanToYesOrNo(annualLifeTimeQuestion),
+            ChangeLinksUnauthorisedPayments.aboveAnnualOrLifetimeAllowance, aboveAnnualOrLifetimeAllowanceHidden, 1)
+          
+          cyaRowCheck(reducedAnnualAllowance, user.commonExpectedResults.no, ChangeLinksUnauthorisedPayments.reducedAnnualAllowance,
+            reducedAnnualAllowanceHidden, 2)
+          
+          cyaRowCheck(aboveLifetimeAllowance, "", ChangeLinksUnauthorisedPayments.aboveLifetimeAllowance,
+            aboveLifetimeAllowanceHidden, 3)
+          
+          cyaRowCheck(lumpSum, amountAndTaxPaidContent(savingsTaxCharges.get.lumpSumBenefitTakenInExcessOfLifetimeAllowance.flatMap(_.amount).get,
+            savingsTaxCharges.get.lumpSumBenefitTakenInExcessOfLifetimeAllowance.flatMap(_.taxPaid).get),
+            ChangeLinksUnauthorisedPayments.lumpSum, lumpSumHidden, 4)
+          
+          cyaRowCheck(otherPayments, amountAndTaxPaidContent(savingsTaxCharges.get.benefitInExcessOfLifetimeAllowance.flatMap(_.amount).get,
+            savingsTaxCharges.get.benefitInExcessOfLifetimeAllowance.flatMap(_.taxPaid).get),
+            ChangeLinksUnauthorisedPayments.otherPayments, otherPaymentsHidden, 5)
+          
           buttonCheck(saveAndContinue)
           welshToggleCheck(user.isWelsh)
         }
@@ -377,7 +416,8 @@ class AnnualLifetimeAllowanceCYAControllerISpec extends
         lazy val result: WSResponse = {
           dropPensionsDB()
           authoriseAgentOrIndividual(isAgent = false)
-          urlPost(fullUrl(checkAnnualLifetimeAllowanceCYA(taxYear)), form, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
+          urlPost(fullUrl(checkAnnualLifetimeAllowanceCYA(taxYear)), form, follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
         }
 
         "have the status SEE OTHER" in {
@@ -399,9 +439,11 @@ class AnnualLifetimeAllowanceCYAControllerISpec extends
         lazy val result: WSResponse = {
           dropPensionsDB()
           userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYear)
-          insertCyaData(aPensionsUserData.copy(pensions = aPensionsCYAModel.copy(paymentsIntoPension = cyaDataIncomplete), taxYear = taxYear), aUserRequest)
+          insertCyaData(aPensionsUserData.copy(pensions = aPensionsCYAModel.copy(paymentsIntoPension = cyaDataIncomplete),
+            taxYear = taxYear), aUserRequest)
           authoriseAgentOrIndividual(isAgent = false)
-          urlPost(fullUrl(checkAnnualLifetimeAllowanceCYA(taxYear)), form, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
+          urlPost(fullUrl(checkAnnualLifetimeAllowanceCYA(taxYear)), form, follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
         }
 
         "the status is SEE OTHER" in {
@@ -409,7 +451,7 @@ class AnnualLifetimeAllowanceCYAControllerISpec extends
         }
 
         "redirects to the summary page" in {
-          result.headers("Location").head shouldBe controllers.pensions.lifetimeAllowances.routes.AnnualLifetimeAllowanceCYAController.show(taxYear).url
+          result.headers("Location").head shouldBe AnnualLifetimeAllowanceCYAController.show(taxYear).url
         }
       }
 
@@ -436,7 +478,8 @@ class AnnualLifetimeAllowanceCYAControllerISpec extends
             paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel
           ), taxYear = taxYear), aUserRequest)
           authoriseAgentOrIndividual(isAgent = false)
-          urlPost(fullUrl(checkAnnualLifetimeAllowanceCYA(taxYear)), form, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
+          urlPost(fullUrl(checkAnnualLifetimeAllowanceCYA(taxYear)), form, follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
         }
 
         "the status is SEE OTHER" in {
@@ -444,7 +487,7 @@ class AnnualLifetimeAllowanceCYAControllerISpec extends
         }
 
         "redirects to the summary page" in {
-          result.headers("Location").head shouldBe controllers.pensions.lifetimeAllowances.routes.AnnualLifetimeAllowanceCYAController.show(taxYear).url
+          result.headers("Location").head shouldBe AnnualLifetimeAllowanceCYAController.show(taxYear).url
         }
       }
     }

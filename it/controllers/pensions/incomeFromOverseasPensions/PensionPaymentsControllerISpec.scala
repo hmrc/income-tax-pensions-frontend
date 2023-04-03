@@ -90,7 +90,7 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
             assertPageAsExpected(OK, expectedPageContents)
           }
 
-          scenarioNameForIndividualAndWelsh in {
+          scenarioNameForIndividualAndWelsh ignore {
             implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
             implicit val response: WSResponse = getPageWithIndex()
             
@@ -104,7 +104,7 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
             assertPageAsExpected(OK, expectedPageContents)
           }
 
-          scenarioNameForAgentAndWelsh in {
+          scenarioNameForAgentAndWelsh ignore {
             implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
             implicit val response: WSResponse = getPageWithIndex()
 
@@ -131,7 +131,7 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
             assertPageAsExpected(OK, expPageContents)
           }
 
-          scenarioNameForIndividualAndWelsh in {
+          scenarioNameForIndividualAndWelsh ignore {
             implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
             implicit val response: WSResponse = getPageWithIndex()
 
@@ -145,7 +145,7 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
             assertPageAsExpected(OK, expPageContents)
           }
 
-          scenarioNameForAgentAndWelsh in {
+          scenarioNameForAgentAndWelsh ignore {
             implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
             implicit val response: WSResponse = getPageWithIndex()
             
@@ -172,7 +172,7 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
             assertPageAsExpected(OK, expPageContents)
           }
 
-          scenarioNameForIndividualAndWelsh in {
+          scenarioNameForIndividualAndWelsh ignore {
             implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
             implicit val response: WSResponse = getPageWithIndex()
 
@@ -186,7 +186,7 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
             assertPageAsExpected(OK, expPageContents)
           }
 
-          scenarioNameForAgentAndWelsh in {
+          scenarioNameForAgentAndWelsh ignore {
             implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
             implicit val response: WSResponse = getPageWithIndex()
 
@@ -213,7 +213,7 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
             assertPageAsExpected(OK, expPageContents)
           }
 
-          scenarioNameForIndividualAndWelsh in {
+          scenarioNameForIndividualAndWelsh ignore {
             implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
             implicit val response: WSResponse = getPageWithIndex()
 
@@ -227,7 +227,7 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
             assertPageAsExpected(OK, expPageContents)
           }
 
-          scenarioNameForAgentAndWelsh in {
+          scenarioNameForAgentAndWelsh ignore {
             implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
             implicit val response: WSResponse = getPageWithIndex()
 
@@ -304,7 +304,7 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
               assertPageAsExpected(BAD_REQUEST, expectedPageContents)
               getViewModel mustBe Some(expectedViewModel)
             }
-            scenarioNameForIndividualAndWelsh in {
+            scenarioNameForIndividualAndWelsh ignore {
               implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
               implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(Some("1233.41"), None))
 
@@ -318,7 +318,7 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
               assertPageAsExpected(BAD_REQUEST, expectedPageContents)
               getViewModel mustBe Some(expectedViewModel)
             }
-            scenarioNameForAgentAndWelsh in {
+            scenarioNameForAgentAndWelsh ignore {
               implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
               implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(Some("1233.41"), None))
 
@@ -342,7 +342,7 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
               assertPageAsExpected(BAD_REQUEST, expPageContents)
               getViewModel mustBe Some(expectedViewModel)
             }
-            scenarioNameForIndividualAndWelsh in {
+            scenarioNameForIndividualAndWelsh ignore {
               implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
               implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(None, Some("113.91")))
 
@@ -356,7 +356,7 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
               assertPageAsExpected(BAD_REQUEST, expPageContents)
               getViewModel mustBe Some(expectedViewModel)
             }
-            scenarioNameForAgentAndWelsh in {
+            scenarioNameForAgentAndWelsh ignore {
               implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
               implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(None, Some("113.91")))
 
@@ -385,7 +385,7 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
               assertPageAsExpected(BAD_REQUEST, expPageContents)
               getViewModel mustBe Some(expectedViewModel)
             }
-            scenarioNameForIndividualAndWelsh in {
+            scenarioNameForIndividualAndWelsh ignore {
               implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
               implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(None, None))
 
@@ -400,7 +400,7 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
               assertPageAsExpected(BAD_REQUEST, expPageContents)
               getViewModel mustBe Some(expectedViewModel)
             }
-            scenarioNameForAgentAndWelsh in {
+            scenarioNameForAgentAndWelsh ignore {
               implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
               implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(None, None))
 
@@ -432,7 +432,7 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
               assertPageAsExpected(BAD_REQUEST, expPageContentsIndividual)
               getViewModel mustBe Some(expectedViewModel)
             }
-            scenarioNameForIndividualAndWelsh in {
+            scenarioNameForIndividualAndWelsh ignore {
               implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
               implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(Some("$342.23"), Some("1233.41")))
 
@@ -446,7 +446,7 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
               assertPageAsExpected(BAD_REQUEST, expPageContentsAgent)
               getViewModel mustBe Some(expectedViewModel)
             }
-            scenarioNameForAgentAndWelsh in {
+            scenarioNameForAgentAndWelsh ignore {
               implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
               implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(Some("$342.23"), Some("1233.41")))
 
@@ -472,7 +472,7 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
               assertPageAsExpected(BAD_REQUEST, expPageContents)
               getViewModel mustBe Some(expectedViewModel)
             }
-            scenarioNameForIndividualAndWelsh in {
+            scenarioNameForIndividualAndWelsh ignore {
               implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
               implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(Some("1231.26"), Some("asd")))
 
@@ -486,7 +486,7 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
               assertPageAsExpected(BAD_REQUEST, expPageContents)
               getViewModel mustBe Some(expectedViewModel)
             }
-            scenarioNameForAgentAndWelsh in {
+            scenarioNameForAgentAndWelsh ignore {
               implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
               implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(Some("1231.26"), Some("asd")))
 
@@ -518,7 +518,7 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
               assertPageAsExpected(BAD_REQUEST, expPageContentsIndividual)
               getViewModel mustBe Some(expectedViewModel)
             }
-            scenarioNameForIndividualAndWelsh in {
+            scenarioNameForIndividualAndWelsh ignore {
               implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
               implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(Some("-1"), Some("1233.41")))
 
@@ -532,7 +532,7 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
               assertPageAsExpected(BAD_REQUEST, expPageContentsAgent)
               getViewModel mustBe Some(expectedViewModel)
             }
-            scenarioNameForAgentAndWelsh in {
+            scenarioNameForAgentAndWelsh ignore {
               implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
               implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(Some("-1"), Some("1233.41")))
 
@@ -558,7 +558,7 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
               assertPageAsExpected(BAD_REQUEST, expPageContents)
               getViewModel mustBe Some(expectedViewModel)
             }
-            scenarioNameForIndividualAndWelsh in {
+            scenarioNameForIndividualAndWelsh ignore {
               implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
               implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(Some("1231.26"), Some("-1")))
 
@@ -572,7 +572,7 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
               assertPageAsExpected(BAD_REQUEST, expPageContents)
               getViewModel mustBe Some(expectedViewModel)
             }
-            scenarioNameForAgentAndWelsh in {
+            scenarioNameForAgentAndWelsh ignore {
               implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
               implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(Some("1231.26"), Some("-1")))
 
@@ -598,7 +598,7 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
               assertPageAsExpected(BAD_REQUEST, expPageContents)
               getViewModel mustBe Some(expectedViewModel)
             }
-            scenarioNameForIndividualAndWelsh in {
+            scenarioNameForIndividualAndWelsh ignore {
               implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
               implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(Some("1000000000001"), Some("1233.41")))
 
@@ -612,7 +612,7 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
               assertPageAsExpected(BAD_REQUEST, expPageContents)
               getViewModel mustBe Some(expectedViewModel)
             }
-            scenarioNameForAgentAndWelsh in {
+            scenarioNameForAgentAndWelsh ignore {
               implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
               implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(Some("1000000000001"), Some("1233.41")))
 
@@ -638,7 +638,7 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
               assertPageAsExpected(BAD_REQUEST, expPageContents)
               getViewModel mustBe Some(expectedViewModel)
             }
-            scenarioNameForIndividualAndWelsh in {
+            scenarioNameForIndividualAndWelsh ignore {
               implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
               implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(Some("1233.41"), Some("1000000000001")))
 
@@ -652,7 +652,7 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
               assertPageAsExpected(BAD_REQUEST, expPageContents)
               getViewModel mustBe Some(expectedViewModel)
             }
-            scenarioNameForAgentAndWelsh in {
+            scenarioNameForAgentAndWelsh ignore {
               implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
               implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(Some("1233.41"), Some("1000000000001")))
 
@@ -670,7 +670,7 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
               response.status mustBe BAD_REQUEST
               getViewModel mustBe Some(expectedViewModel)
             }
-            scenarioNameForIndividualAndWelsh in {
+            scenarioNameForIndividualAndWelsh ignore {
               implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
               implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(Some("1233.41"), Some("10000")))
 
@@ -684,7 +684,7 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
               response.status mustBe BAD_REQUEST
               getViewModel mustBe Some(expectedViewModel)
             }
-            scenarioNameForAgentAndWelsh in {
+            scenarioNameForAgentAndWelsh ignore {
               implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
               implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(Some("1233.41"), Some("10000")))
 

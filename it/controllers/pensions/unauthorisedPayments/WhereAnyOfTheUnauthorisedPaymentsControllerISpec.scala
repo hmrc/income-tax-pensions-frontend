@@ -65,22 +65,22 @@ class WhereAnyOfTheUnauthorisedPaymentsControllerISpec extends IntegrationTest w
   object ExpectedIndividualCY extends SpecificExpectedResults {
     val expectedTitle = "Were any of the unauthorised payments from a UK pension scheme?"
     val expectedHeading = "Were any of the unauthorised payments from a UK pension scheme?"
-    val expectedErrorTitle = s"Error: $expectedTitle"
-    val noEntryErrorMessage = "Select yes if you got an unauthorised payment from a pension scheme"
+    val expectedErrorTitle = s"Gwall: $expectedTitle"
+    val noEntryErrorMessage = "Dewiswch ‘Iawn’ os cawsoch daliad heb awdurdod o gynllun pensiwn"
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
     val expectedTitle = "Were any of the unauthorised payments from a UK pension scheme?"
     val expectedHeading = "Were any of the unauthorised payments from a UK pension scheme?"
     val expectedErrorTitle = s"Error: $expectedTitle"
-    val noEntryErrorMessage = "Select yes if you got an unauthorised payment from a pension scheme"
+    val noEntryErrorMessage = "Select yes if you got an unauthorised payment from a pension scheme" //TODO need an agent equiv of this
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
     val expectedTitle = "Were any of the unauthorised payments from a UK pension scheme?"
     val expectedHeading = "Were any of the unauthorised payments from a UK pension scheme?"
-    val expectedErrorTitle = s"Error: $expectedTitle"
-    val noEntryErrorMessage = "Select yes if you got an unauthorised payment from a pension scheme"
+    val expectedErrorTitle = s"Gwall: $expectedTitle"
+    val noEntryErrorMessage = "Dewiswch ‘Iawn’ os cawsoch daliad heb awdurdod o gynllun pensiwn" //TODO need an agent equiv of this
   }
 
   object CommonExpectedEN extends CommonExpectedResults {
@@ -95,11 +95,11 @@ class WhereAnyOfTheUnauthorisedPaymentsControllerISpec extends IntegrationTest w
 
   object CommonExpectedCY extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Taliadau heb awdurdod o bensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
-    val expectedButtonText = "Continue"
+    val expectedButtonText = "Yn eich blaen"
     val expectedTitle = "Were any of the unauthorised payments from a UK pension scheme?"
     val expectedHeading = "Were any of the unauthorised payments from a UK pension scheme?"
-    val yesText = "Yes"
-    val noText = "No"
+    val yesText = "Iawn"
+    val noText = "Na"
     val noEntryErrorMessage = "Select yes if you got an unauthorised payment from a pension scheme"
   }
 
@@ -132,7 +132,7 @@ class WhereAnyOfTheUnauthorisedPaymentsControllerISpec extends IntegrationTest w
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(user.specificExpectedResults.get.expectedTitle)
+          titleCheck(user.specificExpectedResults.get.expectedTitle, user.isWelsh)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           radioButtonCheck(yesText, 1, checked = Some(false))
@@ -160,7 +160,7 @@ class WhereAnyOfTheUnauthorisedPaymentsControllerISpec extends IntegrationTest w
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(user.specificExpectedResults.get.expectedTitle)
+          titleCheck(user.specificExpectedResults.get.expectedTitle, user.isWelsh)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           radioButtonCheck(yesText, 1, checked = Some(true))
@@ -209,7 +209,7 @@ class WhereAnyOfTheUnauthorisedPaymentsControllerISpec extends IntegrationTest w
           implicit def document: () => Document = () => Jsoup.parse(result.body)
           import Selectors._
           import user.commonExpectedResults._
-          titleCheck(user.specificExpectedResults.get.expectedErrorTitle)
+          titleCheck(user.specificExpectedResults.get.expectedErrorTitle, user.isWelsh)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           radioButtonCheck(yesText, 1, checked = Some(false))

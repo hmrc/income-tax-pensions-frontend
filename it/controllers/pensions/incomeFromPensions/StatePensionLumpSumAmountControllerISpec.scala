@@ -69,7 +69,7 @@ class StatePensionLumpSumAmountControllerISpec extends IntegrationTest with View
 
   trait SpecificExpectedResults {
     val expectedTitle: String
-    val expectedHeading: String
+    lazy val expectedHeading = expectedTitle
     val expectedErrorTitle: String
     val emptyErrorText: String
     val invalidFormatErrorText: String
@@ -88,16 +88,15 @@ class StatePensionLumpSumAmountControllerISpec extends IntegrationTest with View
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Income from pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val hintText = "For example, £193.52"
-    val buttonText = "Continue"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Incwm o bensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
+    val hintText = "Er enghraifft, £193.52"
+    val buttonText = "Yn eich blaen"
     val expectedWhereToFindThisInformation = "Ble i ddod o hyd i’r wybodaeth hon"
     val expectedYouCanFindThisInformationIn = "Gallwch ddod o hyd i’r wybodaeth hon yn:"
   }
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
     val expectedTitle = "How much was your State Pension lump sum?"
-    val expectedHeading = "How much was your State Pension lump sum?"
     val expectedErrorTitle = s"Error: $expectedTitle"
     val emptyErrorText = "Enter your State Pension lump sum amount"
     val invalidFormatErrorText = "Enter your State Pension lump sum amount in the correct format"
@@ -108,8 +107,7 @@ class StatePensionLumpSumAmountControllerISpec extends IntegrationTest with View
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
     val expectedTitle = "How much was your State Pension lump sum?"
-    val expectedHeading = "How much was your State Pension lump sum?"
-    val expectedErrorTitle = s"Error: $expectedTitle"
+    val expectedErrorTitle = s"Gwall: $expectedTitle"
     val emptyErrorText = "Enter your State Pension lump sum amount"
     val invalidFormatErrorText = "Enter your State Pension lump sum amount in the correct format"
     val maxAmountErrorText = "Your State Pension lump sum amount must be less than £100,000,000,000"
@@ -119,7 +117,6 @@ class StatePensionLumpSumAmountControllerISpec extends IntegrationTest with View
 
   object ExpectedAgentEN extends SpecificExpectedResults {
     val expectedTitle = "How much was your client’s State Pension lump sum?"
-    val expectedHeading = "How much was your client’s State Pension lump sum?"
     val expectedErrorTitle = s"Error: $expectedTitle"
     val emptyErrorText = "Enter your client’s State Pension lump sum amount"
     val invalidFormatErrorText = "Enter your client’s State Pension lump sum amount in the correct format"
@@ -130,8 +127,7 @@ class StatePensionLumpSumAmountControllerISpec extends IntegrationTest with View
 
   object ExpectedAgentCY extends SpecificExpectedResults {
     val expectedTitle = "How much was your client’s State Pension lump sum?"
-    val expectedHeading = "How much was your client’s State Pension lump sum?"
-    val expectedErrorTitle = s"Error: $expectedTitle"
+    val expectedErrorTitle = s"Gwall: $expectedTitle"
     val emptyErrorText = "Enter your client’s State Pension lump sum amount"
     val invalidFormatErrorText = "Enter your client’s State Pension lump sum amount in the correct format"
     val maxAmountErrorText = "Your client’s State Pension lump sum amount must be less than £100,000,000,000"
@@ -168,7 +164,7 @@ class StatePensionLumpSumAmountControllerISpec extends IntegrationTest with View
           "has an OK status" in {
             result.status shouldBe OK
           }
-          titleCheck(user.specificExpectedResults.get.expectedTitle)
+          titleCheck(user.specificExpectedResults.get.expectedTitle, user.isWelsh)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           textOnPageCheck(hintText, hintTextSelector)
@@ -201,7 +197,7 @@ class StatePensionLumpSumAmountControllerISpec extends IntegrationTest with View
           "has an OK status" in {
             result.status shouldBe OK
           }
-          titleCheck(user.specificExpectedResults.get.expectedTitle)
+          titleCheck(user.specificExpectedResults.get.expectedTitle, user.isWelsh)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           textOnPageCheck(poundPrefixText, poundPrefixSelector)
@@ -309,7 +305,7 @@ class StatePensionLumpSumAmountControllerISpec extends IntegrationTest with View
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(user.specificExpectedResults.get.expectedErrorTitle)
+          titleCheck(user.specificExpectedResults.get.expectedErrorTitle, user.isWelsh)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           textOnPageCheck(poundPrefixText, poundPrefixSelector)
@@ -347,7 +343,7 @@ class StatePensionLumpSumAmountControllerISpec extends IntegrationTest with View
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(user.specificExpectedResults.get.expectedErrorTitle)
+          titleCheck(user.specificExpectedResults.get.expectedErrorTitle, user.isWelsh)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           textOnPageCheck(poundPrefixText, poundPrefixSelector)
@@ -385,7 +381,7 @@ class StatePensionLumpSumAmountControllerISpec extends IntegrationTest with View
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(user.specificExpectedResults.get.expectedErrorTitle)
+          titleCheck(user.specificExpectedResults.get.expectedErrorTitle, user.isWelsh)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           textOnPageCheck(poundPrefixText, poundPrefixSelector)

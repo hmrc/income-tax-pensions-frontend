@@ -25,7 +25,7 @@ trait ViewHelper {
   self: AnyWordSpec with Matchers =>
 
   private val serviceName = "Update and submit an Income Tax Return"
-  private val serviceNameWelsh = "Update and submit an Income Tax Return"
+  private val serviceNameWelsh = "Diweddaru a chyflwyno Ffurflen Dreth Incwm"
   private val govUkExtension = "GOV.UK"
   private val ENGLISH = "English"
   private val WELSH = "Welsh"

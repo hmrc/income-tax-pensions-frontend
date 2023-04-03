@@ -48,10 +48,10 @@ class YouNeedAgentServicesControllerISpec extends IntegrationTest with ViewHelpe
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val h1Expected = "You cannot view this page"
-    val youNeedText = "You need to"
-    val createAnAgentText = "create an agent services account"
-    val beforeYouCanText = "before you can view this page."
+    val h1Expected = "Ni allwch fwrw golwg dros y dudalen hon"
+    val youNeedText = "Mae angen"
+    val createAnAgentText = "creu cyfrif gwasanaethau asiant"
+    val beforeYouCanText = "cyn i chi allu bwrw golwg dros y dudalen hon."
     val createAnAgentLink = "https://www.gov.uk/guidance/get-an-hmrc-agent-services-account"
   }
 
@@ -81,7 +81,7 @@ class YouNeedAgentServicesControllerISpec extends IntegrationTest with ViewHelpe
 
           import user.commonExpectedResults._
 
-          titleCheck(h1Expected)
+          titleCheck(h1Expected, user.isWelsh)
           welshToggleCheck(user.isWelsh)
           h1Check(h1Expected, "xl")
           textOnPageCheck(s"$youNeedText $createAnAgentText $beforeYouCanText", p1Selector)

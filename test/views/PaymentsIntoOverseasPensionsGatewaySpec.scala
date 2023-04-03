@@ -67,11 +67,11 @@ class PaymentsIntoOverseasPensionsGatewaySpec extends ViewUnitTest {
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    override val expectedCaption: Int => String = (taxYear: Int) => s"Payments into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
+    override val expectedCaption: Int => String = (taxYear: Int) => s"Taliadau i bensiynau tramor ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
     override val expectedTitleText: String = "Taliadau i bensiynau tramor"
-    override val expectedYesText: String = "Yes"
-    override val expectedNoText: String = "No"
-    override val expectedButtonText: String = "Continue"
+    override val expectedYesText: String = "Iawn"
+    override val expectedNoText: String = "Na"
+    override val expectedButtonText: String = "Yn eich blaen"
     override val expectedOrText: String = "neu"
     override val listItemFirstText: String = "talu i mewn i gynllun pensiwn tramor"
     override val listItemLastText: String = "trosglwyddo cynilion pensiwn y DU i gynllun pensiwn tramor"
@@ -88,7 +88,7 @@ class PaymentsIntoOverseasPensionsGatewaySpec extends ViewUnitTest {
     override val expectedErrorText: String = "Dewiswch ‘Iawn’ os gwnaethoch chi neu’ch cyflogwr dalu i mewn i gynllun pensiwn tramor"
     override val paragraphText: String = "Rhowch wybod i ni os ydych chi neu’ch cyflogwr wedi gwneud y canlynol:"
     override val questionText: String = "A ydych chi neu’ch cyflogwr wedi talu i mewn i bensiynau tramor?"
-    override val expectedErrorTitleText: String = s"Error: Taliadau i bensiynau tramor"
+    override val expectedErrorTitleText: String = s"Gwall: Taliadau i bensiynau tramor"
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
@@ -102,7 +102,7 @@ class PaymentsIntoOverseasPensionsGatewaySpec extends ViewUnitTest {
     override val expectedErrorText: String = "Dewiswch ‘Iawn’ os talodd eich cleient neu ei gyflogwr i mewn i gynllun pensiwn tramor"
     override val paragraphText: String = "Rhowch wybod i ni os yw’ch cleient neu ei gyflogwr wedi gwneud y canlynol:"
     override val questionText: String = "A yw’ch cleient neu ei gyflogwr wedi talu i mewn i bensiynau tramor?"
-    override val expectedErrorTitleText: String = s"Error: Taliadau i bensiynau tramor"
+    override val expectedErrorTitleText: String = s"Gwall: Taliadau i bensiynau tramor"
   }
 
   override protected val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(

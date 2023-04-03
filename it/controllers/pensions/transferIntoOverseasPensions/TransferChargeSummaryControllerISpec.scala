@@ -80,16 +80,16 @@ class TransferChargeSummaryControllerISpec extends IntegrationTest with BeforeAn
   
   
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Transfers into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val expectedButtonText = "Continue"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Trosglwyddiadau i bensiynau tramor ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
+    val expectedButtonText = "Yn eich blaen"
     val expectedTitle = "Pension schemes paying transfer charges - summary"
     val expectedHeading = "Pension schemes paying transfer charges - summary"
-    val change = "Change"
-    val remove = "Remove"
+    val change = "Newid"
+    val remove = "Tynnu"
     val expectedAddAnotherText = "Add another pension scheme"
     val expectedAddPensionSchemeText = "Add a pension scheme"
     val addASchemeButton = "Add a scheme"
-    val returnToOverviewButton = "Return to overview"
+    val returnToOverviewButton = "Yn ôl i’r trosolwg"
     val text1 = "You need to add one or more pension scheme."
     val text2 = "If you don’t have a pensions scheme to add you can return to the overview page and come back later."
   }
@@ -130,7 +130,7 @@ class TransferChargeSummaryControllerISpec extends IntegrationTest with BeforeAn
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(expectedTitle)
+          titleCheck(expectedTitle, user.isWelsh)
           h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY))
           textOnPageCheck(s"${pensionScheme.name.get}", pensionNameSelector(1))
@@ -167,7 +167,7 @@ class TransferChargeSummaryControllerISpec extends IntegrationTest with BeforeAn
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(expectedTitle)
+          titleCheck(expectedTitle, user.isWelsh)
           h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY))
           textOnPageCheck(s"${pensionScheme.name.get}", pensionNameSelector(1))
@@ -198,7 +198,7 @@ class TransferChargeSummaryControllerISpec extends IntegrationTest with BeforeAn
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(expectedTitle)
+          titleCheck(expectedTitle, user.isWelsh)
           h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY))
           elementNotOnPageCheck(summaryListTableSelector)

@@ -32,8 +32,8 @@ import controllers.pensions.paymentsIntoOverseasPensions.routes.UntaxedEmployerP
 
 class UntaxedEmployerControllerSpec extends ViewUnitTest with FakeRequestProvider{
 
-  private val poundPrefixText = "£"
-  private val amountInputName = "amount"
+  val poundPrefixText = "£"
+  val amountInputName = "amount"
 
   object Selectors{
 
@@ -80,7 +80,7 @@ class UntaxedEmployerControllerSpec extends ViewUnitTest with FakeRequestProvide
 
   trait CommonExpectedResults {
     val expectedTitle: String
-    val expectedHeading: String
+    lazy val expectedHeading = expectedTitle
     val expectedErrorTitle: String
     val expectedPara1: String
     val expectedSubHeading1: String
@@ -150,7 +150,6 @@ class UntaxedEmployerControllerSpec extends ViewUnitTest with FakeRequestProvide
     val expectedButtonText = "Continue"
     val hintText: String = "For example, £193.52"
     val expectedTitle: String = "Untaxed employer payments"
-    val expectedHeading: String = "Untaxed employer payments"
     val expectedErrorTitle: String = s"Error: $expectedTitle"
     val expectedPara1: String = "This is also known as exempt employers’ contributions."
     val expectedSubHeading1: String = "Contribution schemes (money purchase schemes)"
@@ -159,12 +158,11 @@ class UntaxedEmployerControllerSpec extends ViewUnitTest with FakeRequestProvide
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Payments into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val expectedButtonText = "Continue"
-    val hintText: String = "For example, £193.52"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Taliadau i bensiynau tramor ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
+    val expectedButtonText = "Yn eich blaen"
+    val hintText: String = "Er enghraifft, £193.52"
     val expectedTitle: String = "Untaxed employer payments"
-    val expectedHeading: String = "Untaxed employer payments"
-    val expectedErrorTitle: String = s"Error: $expectedTitle"
+    val expectedErrorTitle: String = s"Gwall: $expectedTitle"
     val expectedPara1: String = "This is also known as exempt employers’ contributions."
     val expectedSubHeading1: String = "Contribution schemes (money purchase schemes)"
     val expectedSubHeading2: String = "Benefits schemes (average or final salary schemes)"

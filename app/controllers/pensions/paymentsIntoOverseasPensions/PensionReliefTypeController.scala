@@ -17,30 +17,29 @@
 package controllers.pensions.paymentsIntoOverseasPensions
 
 import config.{AppConfig, ErrorHandler}
+import controllers.pensions.paymentsIntoOverseasPensions.routes.{PensionsCustomerReferenceNumberController, QOPSReferenceController, SF74ReferenceController}
 import controllers.predicates.ActionsProvider
+import controllers.validateIndex
 import forms.FormsProvider
+import models.pension.charges.{Relief, TaxReliefQuestion}
+import models.requests.UserSessionDataRequest
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import routes._
 import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.paymentsIntoOverseasPensions.PensionReliefTypeView
-import controllers.pensions.paymentsIntoOverseasPensions.routes.{PensionsCustomerReferenceNumberController, QOPSReferenceController,
-  SF74ReferenceController, DoubleTaxationAgreementController, ReliefsSchemeDetailsController}
-import controllers.validateIndex
-import models.pension.charges.{Relief, TaxReliefQuestion}
-import models.requests.UserSessionDataRequest
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 @Singleton
 class PensionReliefTypeController@Inject()(actionsProvider: ActionsProvider,
                                            pensionSessionService: PensionSessionService,
                                            view: PensionReliefTypeView,
                                            formsProvider: FormsProvider,
-                                           errorHandler: ErrorHandler,
-                                           ec: ExecutionContext)
+                                           errorHandler: ErrorHandler)
                                           (implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock)
   extends FrontendController(mcc) with I18nSupport with SessionHelper {
 
@@ -92,10 +91,10 @@ class PensionReliefTypeController@Inject()(actionsProvider: ActionsProvider,
             taxYear,
             request.pensionsUserData.isPriorSubmission
           )(errorHandler.internalServerError()) {
-            redirectBaseOnTaxReliefQuestion(taxReliefQuestion, taxYear, indexOpt)(mcc, request)
+            redirectBaseOnTaxReliefQuestion(taxReliefQuestion, taxYear, indexOpt)(request)
           }
         } else {
-          Future.successful(redirectBaseOnTaxReliefQuestion(taxReliefQuestion, taxYear, indexOpt)(mcc, request))
+          Future.successful(redirectBaseOnTaxReliefQuestion(taxReliefQuestion, taxYear, indexOpt)(request))
         }
       case _ =>
         Future.successful(Redirect(PensionsCustomerReferenceNumberController.show(taxYear)))
@@ -105,7 +104,7 @@ class PensionReliefTypeController@Inject()(actionsProvider: ActionsProvider,
   private def redirectBaseOnTaxReliefQuestion(taxReliefQuestion: String,
                                               taxYear: Int,
                                               reliefIndex: Option[Int]
-                                             )(implicit mcc: MessagesControllerComponents, request: UserSessionDataRequest[_]): Result =
+                                             )(implicit request: UserSessionDataRequest[_]): Result =
     taxReliefQuestion match {
     case TaxReliefQuestion.DoubleTaxationRelief =>
       Redirect(DoubleTaxationAgreementController.show(taxYear, reliefIndex))

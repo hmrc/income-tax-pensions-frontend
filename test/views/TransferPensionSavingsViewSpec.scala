@@ -38,6 +38,7 @@ class TransferPensionSavingsViewSpec extends ViewUnitTest {
   trait ExpectedContents {
     val expectedCaption: Int => String
     val expectedTitle: String
+    val expectedErrorTitle: String
     val errorMessage: String
     val yesText: String
     val noText: String
@@ -47,6 +48,7 @@ class TransferPensionSavingsViewSpec extends ViewUnitTest {
   object ExpectedContentsIndividualEN extends ExpectedContents {
     val expectedCaption: Int => String = (taxYear: Int) => s"Transfers into overseas pensions for 6 April ${taxYear - 1} to 5 April ${taxYear}"
     val expectedTitle = "Did you transfer pension savings into an overseas pension scheme?"
+    val expectedErrorTitle = s"Error: $expectedTitle"
     val errorMessage = "Select yes if you transferred savings into an overseas pension scheme"
     val yesText = "Yes"
     val noText = "No"
@@ -56,6 +58,7 @@ class TransferPensionSavingsViewSpec extends ViewUnitTest {
   object ExpectedContentsAgentEN extends ExpectedContents {
     val expectedCaption: Int => String = (taxYear: Int) => s"Transfers into overseas pensions for 6 April ${taxYear - 1} to 5 April ${taxYear}"
     val expectedTitle = "Did your client transfer pension savings into an overseas pension scheme?"
+    val expectedErrorTitle = s"Error: $expectedTitle"
     val errorMessage = "Select yes if your client transferred savings into an overseas pension scheme"
     val yesText = "Yes"
     val noText = "No"
@@ -63,21 +66,23 @@ class TransferPensionSavingsViewSpec extends ViewUnitTest {
   }
 
   object ExpectedContentsIndividualCY extends ExpectedContents {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Transfers into overseas pensions for 6 April ${taxYear - 1} to 5 April ${taxYear}"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Trosglwyddiadau i bensiynau tramor ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill ${taxYear}"
     val expectedTitle = "Did you transfer pension savings into an overseas pension scheme?"
+    val expectedErrorTitle = s"Gwall: $expectedTitle"
     val errorMessage = "Select yes if you transferred savings into an overseas pension scheme"
-    val yesText = "Yes"
-    val noText = "No"
-    val buttonText = "Continue"
+    val yesText = "Iawn"
+    val noText = "Na"
+    val buttonText = "Yn eich blaen"
   }
 
   object ExpectedContentsAgentCY extends ExpectedContents {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Transfers into overseas pensions for 6 April ${taxYear - 1} to 5 April ${taxYear}"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Trosglwyddiadau i bensiynau tramor ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill ${taxYear}"
     val expectedTitle = "Did your client transfer pension savings into an overseas pension scheme?"
+    val expectedErrorTitle = s"Gwall: $expectedTitle"
     val errorMessage = "Select yes if your client transferred savings into an overseas pension scheme"
-    val yesText = "Yes"
-    val noText = "No"
-    val buttonText = "Continue"
+    val yesText = "Iawn"
+    val noText = "Na"
+    val buttonText = "Yn eich blaen"
   }
 
   val userScenarios: Seq[UserScenario[ExpectedContents, Unit]] = Seq(
@@ -160,7 +165,7 @@ class TransferPensionSavingsViewSpec extends ViewUnitTest {
         import Selectors._
         import userScenario.commonExpectedResults._
 
-        titleCheck("Error: " + userScenario.commonExpectedResults.expectedTitle, userScenario.isWelsh)
+        titleCheck(userScenario.commonExpectedResults.expectedErrorTitle, userScenario.isWelsh)
         h1Check(userScenario.commonExpectedResults.expectedTitle)
         captionCheck(expectedCaption(taxYearEOY), captionSelector)
         errorSummaryCheck(errorMessage, Selectors.yesSelector)

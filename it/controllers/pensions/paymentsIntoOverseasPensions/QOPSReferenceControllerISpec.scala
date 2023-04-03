@@ -51,7 +51,7 @@ class QOPSReferenceControllerISpec extends CommonUtils with BeforeAndAfterEach {
   trait CommonExpectedResults {
     val expectedCaption: Int => String
     val expectedTitle: String
-    val expectedHeading: String
+    lazy val expectedHeading = expectedTitle
     val expectedErrorTitle: String
     val hintText: String
     val expectedButtonText: String
@@ -77,7 +77,6 @@ class QOPSReferenceControllerISpec extends CommonUtils with BeforeAndAfterEach {
   object CommonExpectedEN extends CommonExpectedResults {
      val expectedCaption: Int => String = (taxYear:Int) => s"Payments into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
      val expectedTitle: String = "Qualifying overseas pension scheme (QOPS) reference number (optional)"
-     val expectedHeading: String = "Qualifying overseas pension scheme (QOPS) reference number (optional)"
      val expectedErrorTitle: String = s"Error: $expectedTitle"
      val hintText: String = "For example, QOPS123456"
      val expectedButtonText: String = "Continue"
@@ -85,12 +84,11 @@ class QOPSReferenceControllerISpec extends CommonUtils with BeforeAndAfterEach {
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Payments into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Taliadau i bensiynau tramor ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
     val expectedTitle: String = "Qualifying overseas pension scheme (QOPS) reference number (optional)"
-    val expectedHeading: String = "Qualifying overseas pension scheme (QOPS) reference number (optional)"
-    val expectedErrorTitle: String = s"Error: $expectedTitle"
+    val expectedErrorTitle: String = s"Gwall: $expectedTitle"
     val hintText: String = "For example, QOPS123456"
-    val expectedButtonText: String = "Continue"
+    val expectedButtonText: String = "Yn eich blaen"
     val expectedIncorrectFormatError: String = "Enter a six digit number"
   }
 
@@ -129,7 +127,7 @@ class QOPSReferenceControllerISpec extends CommonUtils with BeforeAndAfterEach {
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(expectedTitle)
+          titleCheck(expectedTitle, user.isWelsh)
           h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY))
           textOnPageCheck(user.specificExpectedResults.get.expectedParagraph1, paragraphSelector(1))
@@ -162,7 +160,7 @@ class QOPSReferenceControllerISpec extends CommonUtils with BeforeAndAfterEach {
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(expectedTitle)
+          titleCheck(expectedTitle, user.isWelsh)
           h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY))
           textOnPageCheck(user.specificExpectedResults.get.expectedParagraph1, paragraphSelector(1))
@@ -195,7 +193,7 @@ class QOPSReferenceControllerISpec extends CommonUtils with BeforeAndAfterEach {
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(expectedTitle)
+          titleCheck(expectedTitle, user.isWelsh)
           h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY))
           textOnPageCheck(user.specificExpectedResults.get.expectedParagraph1, paragraphSelector(1))
@@ -228,7 +226,7 @@ class QOPSReferenceControllerISpec extends CommonUtils with BeforeAndAfterEach {
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(expectedTitle)
+          titleCheck(expectedTitle, user.isWelsh)
           h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY))
           textOnPageCheck(user.specificExpectedResults.get.expectedParagraph1, paragraphSelector(1))
@@ -267,7 +265,7 @@ class QOPSReferenceControllerISpec extends CommonUtils with BeforeAndAfterEach {
           implicit def document: () => Document = () => Jsoup.parse(result.body)
           import Selectors._
           import user.commonExpectedResults._
-          titleCheck(expectedErrorTitle)
+          titleCheck(expectedErrorTitle, user.isWelsh)
           h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY))
           textOnPageCheck(user.specificExpectedResults.get.expectedParagraph1, paragraphSelector(1))

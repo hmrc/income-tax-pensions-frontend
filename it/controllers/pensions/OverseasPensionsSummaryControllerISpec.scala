@@ -53,14 +53,13 @@ class OverseasPensionsSummaryControllerISpec extends  CommonUtils with BeforeAnd
   }
 
   trait SpecificExpectedResults {
-    val expectedH1: String
     val expectedTitle: String
+    lazy val expectedH1 = expectedTitle
     val expectedSectionsToFill: String
   }
 
   trait CommonExpectedResults {
-    def expectedCaption(taxYear: Int): String
-
+    val expectedCaption: Int => String
     val buttonText: String
     val updated: String
     val notStarted: String
@@ -71,8 +70,7 @@ class OverseasPensionsSummaryControllerISpec extends  CommonUtils with BeforeAnd
   }
 
   object CommonExpectedEN extends CommonExpectedResults {
-    def expectedCaption(taxYear: Int): String = s"Overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-
+    val expectedCaption: Int => String = (taxYear: Int) => s"Overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
     val buttonText = "Return to overview"
     val updated = "Updated"
     val notStarted = "Not Started"
@@ -83,39 +81,34 @@ class OverseasPensionsSummaryControllerISpec extends  CommonUtils with BeforeAnd
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    def expectedCaption(taxYear: Int): String = s"Overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-
-    val buttonText = "Return to overview"
-    val updated = "Updated"
-    val notStarted = "Not Started"
-    val paymentsToOverseasPensionsText = "Payments into overseas pensions"
-    val incomeFromOverseasPensionsText = "Income from overseas pensions"
-    val overseasTransferChargesText = "Overseas transfer charges"
-    val shortServiceRefundsText = "Short service refunds"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Pensiynau tramor ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
+    val buttonText = "Yn ôl i’r trosolwg"
+    val updated = "Wedi diweddaru"
+    val notStarted = "Heb ddechrau"
+    val paymentsToOverseasPensionsText = "Taliadau i bensiynau tramor"
+    val incomeFromOverseasPensionsText = "Incwm o bensiynau tramor"
+    val overseasTransferChargesText = "Ffioedd ar drosglwyddiadau tramor"
+    val shortServiceRefundsText = "Ad-daliadau am wasanaeth byr"
   }
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
-    val expectedH1 = "Overseas pensions"
     val expectedTitle = "Overseas pensions"
     val expectedSectionsToFill = "You only need to fill in the sections that apply to you."
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
-    val expectedH1 = "Overseas pensions"
     val expectedTitle = "Overseas pensions"
     val expectedSectionsToFill = "You only need to fill in the sections that apply to your client."
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
-    val expectedH1: String = "Overseas pensions"
-    val expectedTitle: String = "Overseas pensions"
-    val expectedSectionsToFill = "You only need to fill in the sections that apply to you."
+    val expectedTitle: String = "Pensiynau tramor"
+    val expectedSectionsToFill = "Dim ond yr adrannau sy’n berthnasol i chi y mae angen i chi eu llenwi."
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
-    val expectedH1: String = "Overseas pensions"
-    val expectedTitle: String = "Overseas pensions"
-    val expectedSectionsToFill = "You only need to fill in the sections that apply to your client."
+    val expectedTitle: String = "Pensiynau tramor"
+    val expectedSectionsToFill = "Dim ond yr adrannau sy’n berthnasol i’ch cleient y mae angen i chi eu llenwi."
   }
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(
@@ -137,7 +130,7 @@ class OverseasPensionsSummaryControllerISpec extends  CommonUtils with BeforeAnd
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(specific.expectedTitle)
+          titleCheck(specific.expectedTitle, userScenario.isWelsh)
           h1Check(specific.expectedH1)
           captionCheck(common.expectedCaption(taxYearEOY))
           textOnPageCheck(specific.expectedSectionsToFill, paragraphSelector(1))
@@ -179,7 +172,7 @@ class OverseasPensionsSummaryControllerISpec extends  CommonUtils with BeforeAnd
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(specific.expectedTitle)
+          titleCheck(specific.expectedTitle, userScenario.isWelsh)
           h1Check(specific.expectedH1)
           captionCheck(common.expectedCaption(taxYearEOY))
           textOnPageCheck(specific.expectedSectionsToFill, paragraphSelector(1))

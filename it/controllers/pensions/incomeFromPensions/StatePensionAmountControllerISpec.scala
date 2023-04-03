@@ -70,7 +70,7 @@ class StatePensionAmountControllerISpec extends IntegrationTest with ViewHelpers
 
   trait SpecificExpectedResults {
     val expectedTitle: String
-    val expectedHeading: String
+    lazy val expectedHeading = expectedTitle
     val expectedErrorTitle: String
     val emptyErrorText: String
     val invalidFormatErrorText: String
@@ -89,16 +89,15 @@ class StatePensionAmountControllerISpec extends IntegrationTest with ViewHelpers
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Income from pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val hintText = "For example, £193.52"
-    val buttonText = "Continue"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Incwm o bensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
+    val hintText = "Er enghraifft, £193.52"
+    val buttonText = "Yn eich blaen"
     val expectedWhereToFindThisInformation = "Ble i ddod o hyd i’r wybodaeth hon"
     val expectedYouCanFindThisInformationIn = "Gallwch ddod o hyd i’r wybodaeth hon yn:"
   }
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
     val expectedTitle = "How much was your State Pension?"
-    val expectedHeading = "How much was your State Pension?"
     val expectedErrorTitle = s"Error: $expectedTitle"
     val emptyErrorText = "Enter your State Pension amount"
     val invalidFormatErrorText = "Enter your State Pension amount in the correct format"
@@ -110,8 +109,7 @@ class StatePensionAmountControllerISpec extends IntegrationTest with ViewHelpers
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
     val expectedTitle = "How much was your State Pension?"
-    val expectedHeading = "How much was your State Pension?"
-    val expectedErrorTitle = s"Error: $expectedTitle"
+    val expectedErrorTitle = s"Gwall: $expectedTitle"
     val emptyErrorText = "Enter your State Pension amount"
     val invalidFormatErrorText = "Enter your State Pension amount in the correct format"
     val maxAmountErrorText = "Your State Pension amount must be less than £100,000,000,000"
@@ -122,7 +120,6 @@ class StatePensionAmountControllerISpec extends IntegrationTest with ViewHelpers
 
   object ExpectedAgentEN extends SpecificExpectedResults {
     val expectedTitle = "How much was your client’s State Pension?"
-    val expectedHeading = "How much was your client’s State Pension?"
     val expectedErrorTitle = s"Error: $expectedTitle"
     val emptyErrorText = "Enter your client’s State Pension amount"
     val invalidFormatErrorText = "Enter your client’s State Pension amount in the correct format"
@@ -134,8 +131,7 @@ class StatePensionAmountControllerISpec extends IntegrationTest with ViewHelpers
 
   object ExpectedAgentCY extends SpecificExpectedResults {
     val expectedTitle = "How much was your client’s State Pension?"
-    val expectedHeading = "How much was your client’s State Pension?"
-    val expectedErrorTitle = s"Error: $expectedTitle"
+    val expectedErrorTitle = s"Gwall: $expectedTitle"
     val emptyErrorText = "Enter your client’s State Pension amount"
     val invalidFormatErrorText = "Enter your client’s State Pension amount in the correct format"
     val maxAmountErrorText = "Your client’s State Pension amount must be less than £100,000,000,000"
@@ -173,7 +169,7 @@ class StatePensionAmountControllerISpec extends IntegrationTest with ViewHelpers
           "has an OK status" in {
             result.status shouldBe OK
           }
-          titleCheck(user.specificExpectedResults.get.expectedTitle)
+          titleCheck(user.specificExpectedResults.get.expectedTitle, user.isWelsh)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           textOnPageCheck(hintText, hintTextSelector)
@@ -206,7 +202,7 @@ class StatePensionAmountControllerISpec extends IntegrationTest with ViewHelpers
           "has an OK status" in {
             result.status shouldBe OK
           }
-          titleCheck(user.specificExpectedResults.get.expectedTitle)
+          titleCheck(user.specificExpectedResults.get.expectedTitle, user.isWelsh)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           textOnPageCheck(poundPrefixText, poundPrefixSelector)
@@ -317,7 +313,7 @@ class StatePensionAmountControllerISpec extends IntegrationTest with ViewHelpers
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(user.specificExpectedResults.get.expectedErrorTitle)
+          titleCheck(user.specificExpectedResults.get.expectedErrorTitle, user.isWelsh)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           textOnPageCheck(poundPrefixText, poundPrefixSelector)
@@ -356,7 +352,7 @@ class StatePensionAmountControllerISpec extends IntegrationTest with ViewHelpers
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(user.specificExpectedResults.get.expectedErrorTitle)
+          titleCheck(user.specificExpectedResults.get.expectedErrorTitle, user.isWelsh)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           textOnPageCheck(poundPrefixText, poundPrefixSelector)
@@ -395,7 +391,7 @@ class StatePensionAmountControllerISpec extends IntegrationTest with ViewHelpers
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(user.specificExpectedResults.get.expectedErrorTitle)
+          titleCheck(user.specificExpectedResults.get.expectedErrorTitle, user.isWelsh)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           textOnPageCheck(poundPrefixText, poundPrefixSelector)

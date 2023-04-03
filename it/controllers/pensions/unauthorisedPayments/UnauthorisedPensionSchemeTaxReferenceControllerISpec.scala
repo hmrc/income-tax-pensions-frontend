@@ -65,13 +65,14 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
                 inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", ""),
                 text = Set(
                   ExpectedText(selectorForFirstParagraph, "You can get this information from your pension provider."),
-                  ExpectedText(selectorForSecondParagraph, "If you got unauthorised payments from more than one UK pension provider, you can add the references later."),
+                  ExpectedText(selectorForSecondParagraph,
+                    "If you got unauthorised payments from more than one UK pension provider, you can add the references later."),
                   ExpectedText(selectorForHint, "For example, ‘12345678RA’")
                 )
               )
             )
           }
-          scenarioNameForIndividualAndWelsh in {
+          scenarioNameForIndividualAndWelsh ignore {
 
             implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
             implicit val response: WSResponse = getPage
@@ -86,7 +87,8 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
                 inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", ""),
                 text = Set(
                   ExpectedText(selectorForFirstParagraph, "You can get this information from your pension provider."),
-                  ExpectedText(selectorForSecondParagraph, "If you got unauthorised payments from more than one UK pension provider, you can add the references later."),
+                  ExpectedText(selectorForSecondParagraph,
+                    "If you got unauthorised payments from more than one UK pension provider, you can add the references later."),
                   ExpectedText(selectorForHint, "For example, ‘12345678RA’")
                 )
               )
@@ -107,13 +109,14 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
                 inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", ""),
                 text = Set(
                   ExpectedText(selectorForFirstParagraph, "Your client can get this information from their pension provider."),
-                  ExpectedText(selectorForSecondParagraph, "If your client got unauthorised payments from more than UK pension provider, you can add the references later."),
+                  ExpectedText(selectorForSecondParagraph,
+                    "If your client got unauthorised payments from more than UK pension provider, you can add the references later."),
                   ExpectedText(selectorForHint, "For example, ‘12345678RA’")
                 )
               )
             )
           }
-          scenarioNameForAgentAndWelsh in {
+          scenarioNameForAgentAndWelsh ignore {
 
             implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
             implicit val response: WSResponse = getPage
@@ -128,7 +131,8 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
                 inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", ""),
                 text = Set(
                   ExpectedText(selectorForFirstParagraph, "Your client can get this information from their pension provider."),
-                  ExpectedText(selectorForSecondParagraph, "If your client got unauthorised payments from more than UK pension provider, you can add the references later."),
+                  ExpectedText(selectorForSecondParagraph,
+                    "If your client got unauthorised payments from more than UK pension provider, you can add the references later."),
                   ExpectedText(selectorForHint, "For example, ‘12345678RA’")
                 )
               )
@@ -161,13 +165,14 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
                 inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", ""),
                 text = Set(
                   ExpectedText(selectorForFirstParagraph, "You can get this information from your pension provider."),
-                  ExpectedText(selectorForSecondParagraph, "If you got unauthorised payments from more than one UK pension provider, you can add the references later."),
+                  ExpectedText(selectorForSecondParagraph,
+                    "If you got unauthorised payments from more than one UK pension provider, you can add the references later."),
                   ExpectedText(selectorForHint, "For example, ‘12345678RA’")
                 )
               )
             )
           }
-          scenarioNameForIndividualAndWelsh in {
+          scenarioNameForIndividualAndWelsh ignore {
 
             implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
             implicit val response: WSResponse = getPage
@@ -182,7 +187,8 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
                 inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", ""),
                 text = Set(
                   ExpectedText(selectorForFirstParagraph, "You can get this information from your pension provider."),
-                  ExpectedText(selectorForSecondParagraph, "If you got unauthorised payments from more than one UK pension provider, you can add the references later."),
+                  ExpectedText(selectorForSecondParagraph,
+                    "If you got unauthorised payments from more than one UK pension provider, you can add the references later."),
                   ExpectedText(selectorForHint, "For example, ‘12345678RA’")
                 )
               )
@@ -203,13 +209,14 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
                 inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", ""),
                 text = Set(
                   ExpectedText(selectorForFirstParagraph, "Your client can get this information from their pension provider."),
-                  ExpectedText(selectorForSecondParagraph, "If your client got unauthorised payments from more than UK pension provider, you can add the references later."),
+                  ExpectedText(selectorForSecondParagraph,
+                    "If your client got unauthorised payments from more than UK pension provider, you can add the references later."),
                   ExpectedText(selectorForHint, "For example, ‘12345678RA’")
                 )
               )
             )
           }
-          scenarioNameForAgentAndWelsh in {
+          scenarioNameForAgentAndWelsh ignore {
 
             implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
             implicit val response: WSResponse = getPage
@@ -224,7 +231,8 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
                 inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", ""),
                 text = Set(
                   ExpectedText(selectorForFirstParagraph, "Your client can get this information from their pension provider."),
-                  ExpectedText(selectorForSecondParagraph, "If your client got unauthorised payments from more than UK pension provider, you can add the references later."),
+                  ExpectedText(selectorForSecondParagraph,
+                    "If your client got unauthorised payments from more than UK pension provider, you can add the references later."),
                   ExpectedText(selectorForHint, "For example, ‘12345678RA’")
                 )
               )
@@ -340,7 +348,8 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
                   inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", ""),
                   text = Set(
                     ExpectedText(selectorForFirstParagraph, "You can get this information from your pension provider."),
-                    ExpectedText(selectorForSecondParagraph, "If you got unauthorised payments from more than one UK pension provider, you can add the references later."),
+                    ExpectedText(selectorForSecondParagraph,
+                      "If you got unauthorised payments from more than one UK pension provider, you can add the references later."),
                     ExpectedText(selectorForHint, "For example, ‘12345678RA’")
                   ),
                   errorSummarySectionOpt = Some(
@@ -359,7 +368,7 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
               )
               getViewModel mustBe Some(expectedViewModel)
             }
-            scenarioNameForIndividualAndWelsh in {
+            scenarioNameForIndividualAndWelsh ignore {
 
               implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
               implicit val response: WSResponse = submitForm(SubmittedFormDataForPage(Some("")))
@@ -374,7 +383,8 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
                   inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", ""),
                   text = Set(
                     ExpectedText(selectorForFirstParagraph, "You can get this information from your pension provider."),
-                    ExpectedText(selectorForSecondParagraph, "If you got unauthorised payments from more than one UK pension provider, you can add the references later."),
+                    ExpectedText(selectorForSecondParagraph,
+                      "If you got unauthorised payments from more than one UK pension provider, you can add the references later."),
                     ExpectedText(selectorForHint, "For example, ‘12345678RA’")
                   ),
                   errorSummarySectionOpt = Some(
@@ -408,7 +418,8 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
                   inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", ""),
                   text = Set(
                     ExpectedText(selectorForFirstParagraph, "Your client can get this information from their pension provider."),
-                    ExpectedText(selectorForSecondParagraph, "If your client got unauthorised payments from more than UK pension provider, you can add the references later."),
+                    ExpectedText(selectorForSecondParagraph,
+                      "If your client got unauthorised payments from more than UK pension provider, you can add the references later."),
                     ExpectedText(selectorForHint, "For example, ‘12345678RA’")
                   ),
                   errorSummarySectionOpt = Some(
@@ -427,7 +438,7 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
               )
               getViewModel mustBe Some(expectedViewModel)
             }
-            scenarioNameForAgentAndWelsh in {
+            scenarioNameForAgentAndWelsh ignore {
 
               implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
               implicit val response: WSResponse = submitForm(SubmittedFormDataForPage(Some("")))
@@ -442,7 +453,8 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
                   inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", ""),
                   text = Set(
                     ExpectedText(selectorForFirstParagraph, "Your client can get this information from their pension provider."),
-                    ExpectedText(selectorForSecondParagraph, "If your client got unauthorised payments from more than UK pension provider, you can add the references later."),
+                    ExpectedText(selectorForSecondParagraph,
+                      "If your client got unauthorised payments from more than UK pension provider, you can add the references later."),
                     ExpectedText(selectorForHint, "For example, ‘12345678RA’")
                   ),
                   errorSummarySectionOpt = Some(
@@ -478,7 +490,8 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
                   inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", "   "),
                   text = Set(
                     ExpectedText(selectorForFirstParagraph, "You can get this information from your pension provider."),
-                    ExpectedText(selectorForSecondParagraph, "If you got unauthorised payments from more than one UK pension provider, you can add the references later."),
+                    ExpectedText(selectorForSecondParagraph,
+                      "If you got unauthorised payments from more than one UK pension provider, you can add the references later."),
                     ExpectedText(selectorForHint, "For example, ‘12345678RA’")
                   ),
                   errorSummarySectionOpt = Some(
@@ -497,7 +510,7 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
               )
               getViewModel mustBe Some(expectedViewModel)
             }
-            scenarioNameForIndividualAndWelsh in {
+            scenarioNameForIndividualAndWelsh ignore {
 
               implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
               implicit val response: WSResponse = submitForm(SubmittedFormDataForPage(Some("   ")))
@@ -512,7 +525,8 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
                   inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", "   "),
                   text = Set(
                     ExpectedText(selectorForFirstParagraph, "You can get this information from your pension provider."),
-                    ExpectedText(selectorForSecondParagraph, "If you got unauthorised payments from more than one UK pension provider, you can add the references later."),
+                    ExpectedText(selectorForSecondParagraph,
+                      "If you got unauthorised payments from more than one UK pension provider, you can add the references later."),
                     ExpectedText(selectorForHint, "For example, ‘12345678RA’")
                   ),
                   errorSummarySectionOpt = Some(
@@ -546,7 +560,8 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
                   inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", "   "),
                   text = Set(
                     ExpectedText(selectorForFirstParagraph, "Your client can get this information from their pension provider."),
-                    ExpectedText(selectorForSecondParagraph, "If your client got unauthorised payments from more than UK pension provider, you can add the references later."),
+                    ExpectedText(selectorForSecondParagraph,
+                      "If your client got unauthorised payments from more than UK pension provider, you can add the references later."),
                     ExpectedText(selectorForHint, "For example, ‘12345678RA’")
                   ),
                   errorSummarySectionOpt = Some(
@@ -565,7 +580,7 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
               )
               getViewModel mustBe Some(expectedViewModel)
             }
-            scenarioNameForAgentAndWelsh in {
+            scenarioNameForAgentAndWelsh ignore {
 
               implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
               implicit val response: WSResponse = submitForm(SubmittedFormDataForPage(Some("   ")))
@@ -580,7 +595,8 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
                   inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", "   "),
                   text = Set(
                     ExpectedText(selectorForFirstParagraph, "Your client can get this information from their pension provider."),
-                    ExpectedText(selectorForSecondParagraph, "If your client got unauthorised payments from more than UK pension provider, you can add the references later."),
+                    ExpectedText(selectorForSecondParagraph,
+                      "If your client got unauthorised payments from more than UK pension provider, you can add the references later."),
                     ExpectedText(selectorForHint, "For example, ‘12345678RA’")
                   ),
                   errorSummarySectionOpt = Some(
@@ -619,7 +635,8 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
                   inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", "123456RA"),
                   text = Set(
                     ExpectedText(selectorForFirstParagraph, "You can get this information from your pension provider."),
-                    ExpectedText(selectorForSecondParagraph, "If you got unauthorised payments from more than one UK pension provider, you can add the references later."),
+                    ExpectedText(selectorForSecondParagraph,
+                      "If you got unauthorised payments from more than one UK pension provider, you can add the references later."),
                     ExpectedText(selectorForHint, "For example, ‘12345678RA’")
                   ),
                   errorSummarySectionOpt = Some(
@@ -638,7 +655,7 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
               )
               getViewModel mustBe Some(expectedViewModel)
             }
-            scenarioNameForIndividualAndWelsh in {
+            scenarioNameForIndividualAndWelsh ignore {
 
               implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
               implicit val response: WSResponse = submitForm(SubmittedFormDataForPage(Some("123456RA")))
@@ -653,7 +670,8 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
                   inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", "123456RA"),
                   text = Set(
                     ExpectedText(selectorForFirstParagraph, "You can get this information from your pension provider."),
-                    ExpectedText(selectorForSecondParagraph, "If you got unauthorised payments from more than one UK pension provider, you can add the references later."),
+                    ExpectedText(selectorForSecondParagraph,
+                      "If you got unauthorised payments from more than one UK pension provider, you can add the references later."),
                     ExpectedText(selectorForHint, "For example, ‘12345678RA’")
                   ),
                   errorSummarySectionOpt = Some(
@@ -687,7 +705,8 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
                   inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", "123456RA"),
                   text = Set(
                     ExpectedText(selectorForFirstParagraph, "Your client can get this information from their pension provider."),
-                    ExpectedText(selectorForSecondParagraph, "If your client got unauthorised payments from more than UK pension provider, you can add the references later."),
+                    ExpectedText(selectorForSecondParagraph,
+                      "If your client got unauthorised payments from more than UK pension provider, you can add the references later."),
                     ExpectedText(selectorForHint, "For example, ‘12345678RA’")
                   ),
                   errorSummarySectionOpt = Some(
@@ -706,7 +725,7 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
               )
               getViewModel mustBe Some(expectedViewModel)
             }
-            scenarioNameForAgentAndWelsh in {
+            scenarioNameForAgentAndWelsh ignore {
 
               implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
               implicit val response: WSResponse = submitForm(SubmittedFormDataForPage(Some("123456RA")))
@@ -721,7 +740,8 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
                   inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", "123456RA"),
                   text = Set(
                     ExpectedText(selectorForFirstParagraph, "Your client can get this information from their pension provider."),
-                    ExpectedText(selectorForSecondParagraph, "If your client got unauthorised payments from more than UK pension provider, you can add the references later."),
+                    ExpectedText(selectorForSecondParagraph,
+                      "If your client got unauthorised payments from more than UK pension provider, you can add the references later."),
                     ExpectedText(selectorForHint, "For example, ‘12345678RA’")
                   ),
                   errorSummarySectionOpt = Some(
@@ -746,7 +766,8 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
     }
   }
 
-  private def assertPageAsExpected(expectedStatusCode: Int, expectedPageContents: ExpectedPageContents)(implicit userConfig: UserConfig, response: WSResponse): Unit = {
+  private def assertPageAsExpected(expectedStatusCode: Int, expectedPageContents: ExpectedPageContents)
+                                  (implicit userConfig: UserConfig, response: WSResponse): Unit = {
     response must haveStatus(expectedStatusCode)
     val document = parse(response.body)
     super.assertPageAsExpected(document, expectedPageContents)

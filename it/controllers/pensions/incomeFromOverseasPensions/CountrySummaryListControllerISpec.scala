@@ -71,12 +71,12 @@ class CountrySummaryListControllerISpec extends IntegrationTest with BeforeAndAf
   
   
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Income from overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val expectedButtonText = "Continue"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Incwm o bensiynau tramor ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
+    val expectedButtonText = "Yn eich blaen"
     val expectedTitle = "Overseas pension income"
     val expectedHeading = "Overseas pension income"
-    val change = "Change"
-    val remove = "Remove"
+    val change = "Newid"
+    val remove = "Tynnu"
     val expectedAddAnotherText = "Add another pension scheme"
     val expectedAddPensionSchemeText = "Add a pension scheme"
   }
@@ -118,7 +118,7 @@ class CountrySummaryListControllerISpec extends IntegrationTest with BeforeAndAf
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(expectedTitle)
+          titleCheck(expectedTitle, user.isWelsh)
           h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY))
           textOnPageCheck(s"$pensionName1 $pensionAmount1", pensionNameSelector(1))
@@ -157,7 +157,7 @@ class CountrySummaryListControllerISpec extends IntegrationTest with BeforeAndAf
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(expectedTitle)
+          titleCheck(expectedTitle, user.isWelsh)
           h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY))
           elementNotOnPageCheck(summaryListTableSelector)

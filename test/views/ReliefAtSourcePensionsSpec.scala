@@ -114,13 +114,13 @@ object ReliefAtSourcePensionsSpec {
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Payments into pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Taliadau i bensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
     val expectedTitle = "Pensiynau rhyddhad wrth y ffynhonnell (RAS)"
-    val expectedErrorTitle = s"Error: $expectedTitle"
-    val expectedHeading = "Pensiynau rhyddhad wrth y ffynhonnell (RAS)"
-    val expectedButtonText = "Continue"
-    val yesText = "Yes"
-    val noText = "No"
+    val expectedErrorTitle = s"Gwall: $expectedTitle"
+    val expectedHeading = "Pensiynau rhyddhad wrth y ffynhonnell (RAS)"    
+    val expectedButtonText = "Yn eich blaen"
+    val yesText = "Iawn"
+    val noText = "Na"
   }
 }
 

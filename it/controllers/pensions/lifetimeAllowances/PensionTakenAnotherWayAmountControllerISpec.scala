@@ -32,14 +32,14 @@ import utils.PageUrls.{fullUrl, pensionSummaryUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with BeforeAndAfterEach with ViewHelpers with PensionsDatabaseHelper{
-  private val newAmount = 25
-  private val newAmount2 = 30
-  private val poundPrefixText = "£"
-  private val amount1InputName = "amount-1"
-  private val amount2InputName = "amount-2"
-  private val amountInvalidFormat = "invalid"
-  private val amountEmpty = ""
-  private val amountOverMaximum = "100,000,000,000"
+  val newAmount = 25
+  val newAmount2 = 30
+  val poundPrefixText = "£"
+  val amount1InputName = "amount-1"
+  val amount2InputName = "amount-2"
+  val amountInvalidFormat = "invalid"
+  val amountEmpty = ""
+  val amountOverMaximum = "100,000,000,000"
 
 
   def amountForm(totalAmount: String, taxPaid: String): Map[String, String] = Map(
@@ -90,8 +90,7 @@ class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with B
     val beforeTaxErrorIncorrectFormat: String
 
   }
-
-
+  
   object CommonExpectedEN extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Annual and lifetime allowances for 6 April ${taxYear - 1} to 5 April $taxYear"
     val hintText = "For example, £193.52"
@@ -105,14 +104,14 @@ class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with B
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Annual and lifetime allowances for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val hintText = "For example, £193.52"
-    val buttonText = "Continue"
-    val beforeTax: String = "Total amount before tax"
-    val taxPaid: String = "Total tax paid"
-    val beforeTaxErrorOverMaximum: String = "The amount of lifetime allowance must be less than 100,000,000,000"
-    val taxPaidErrorIncorrectFormat: String = "Enter the amount of lifetime allowance tax in the correct format"
-    val taxPaidErrorOverMaximum: String = "The amount of lifetime allowance tax must be less than 100,000,000,000"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Lwfans blynyddol a lwfans oes ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
+    val hintText = "Er enghraifft, £193.52"
+    val buttonText = "Yn eich blaen"
+    val beforeTax: String = "Cyfanswm cyn treth"
+    val taxPaid: String = "Cyfanswm y dreth a dalwyd"
+    val beforeTaxErrorOverMaximum: String = "Mae’n rhaid i swm y lwfans oes fod yn llai na 100,000,000,000"
+    val taxPaidErrorIncorrectFormat: String = "Nodwch swm y dreth lwfans oes yn y fformat cywir"
+    val taxPaidErrorOverMaximum: String = "Mae’n rhaid i swm y dreth lwfans oes fod yn llai na 100,000,000,000"
     val taxPaidParagraph: String = "If more than one pension scheme paid the lifetime allowance tax, give the total."
 
   }
@@ -124,7 +123,8 @@ class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with B
     val beforeTaxErrorNoEntry = "Enter the amount you took above your lifetime allowance in another way"
     val taxPaidErrorNoEntry = "Enter the amount of lifetime allowance tax your pension provider paid or agreed to pay on the amount taken in another way"
     val checkThisWithProviderParagraph = "Check with your pension providers if you’re unsure."
-    val amountAboveAllowanceParagraph = "Tell us the amount above your lifetime allowance you’ve taken in other ways. This could be regular payments or a cash withdrawal."
+    val amountAboveAllowanceParagraph =
+      "Tell us the amount above your lifetime allowance you’ve taken in other ways. This could be regular payments or a cash withdrawal."
     val beforeTaxParagraph = "If you got payments from more than one pension scheme, give the total."
     val beforeTaxErrorIncorrectFormat: String = "Enter the amount you took above your lifetime allowance in the correct format"
   }
@@ -132,11 +132,12 @@ class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with B
   object ExpectedIndividualCY extends SpecificExpectedResults {
    val expectedTitle = "Your pension taken in another way"
     val expectedHeading = "Your pension taken in another way"
-    val expectedErrorTitle = s"Error: $expectedTitle"
+    val expectedErrorTitle = s"Gwall: $expectedTitle"
     val beforeTaxErrorNoEntry = "Enter the amount you took above your lifetime allowance in another way"
     val taxPaidErrorNoEntry = "Enter the amount of lifetime allowance tax your pension provider paid or agreed to pay on the amount taken in another way"
-    val checkThisWithProviderParagraph = "Check with your pension providers if you’re unsure."
-    val amountAboveAllowanceParagraph = "Tell us the amount above your lifetime allowance you’ve taken in other ways. This could be regular payments or a cash withdrawal."
+    val checkThisWithProviderParagraph = "Gwiriwch â’ch darparwyr pensiwn os nad ydych yn siŵr."
+    val amountAboveAllowanceParagraph =
+      "Tell us the amount above your lifetime allowance you’ve taken in other ways. This could be regular payments or a cash withdrawal."
     val beforeTaxParagraph = "If you got payments from more than one pension scheme, give the total."
     val beforeTaxErrorIncorrectFormat: String = "Enter the amount you took above your lifetime allowance in the correct format"
   }
@@ -146,8 +147,10 @@ class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with B
     val expectedHeading = "Your client’s pension taken in another way"
     val expectedErrorTitle = s"Error: $expectedTitle"
     val beforeTaxErrorNoEntry = "Enter the amount your client took above their lifetime allowance in another way"
-    val taxPaidErrorNoEntry = "Enter the amount of lifetime allowance tax your client’s pension provider paid or agreed to pay on the amount taken in another way"
-    val amountAboveAllowanceParagraph = "Tell us the amount above your client’s lifetime allowance they’ve taken in other ways. This could be regular payments or a cash withdrawal."
+    val taxPaidErrorNoEntry =
+      "Enter the amount of lifetime allowance tax your client’s pension provider paid or agreed to pay on the amount taken in another way"
+    val amountAboveAllowanceParagraph =
+      "Tell us the amount above your client’s lifetime allowance they’ve taken in other ways. This could be regular payments or a cash withdrawal."
     val checkThisWithProviderParagraph = "Your client can check with their pension provider if you’re unsure."
     val beforeTaxParagraph = "If your client got payments from more than one pension scheme, give the total."
     val beforeTaxErrorIncorrectFormat: String = "Enter the amount your client took above their lifetime allowance in the correct format"
@@ -156,11 +159,13 @@ class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with B
   object ExpectedAgentCY extends SpecificExpectedResults {
     val expectedTitle = "Your client’s pension taken in another way"
     val expectedHeading = "Your client’s pension taken in another way"
-    val expectedErrorTitle = s"Error: $expectedTitle"
+    val expectedErrorTitle = s"Gwall: $expectedTitle"
     val beforeTaxErrorNoEntry = "Enter the amount your client took above their lifetime allowance in another way"
-    val taxPaidErrorNoEntry = "Enter the amount of lifetime allowance tax your client’s pension provider paid or agreed to pay on the amount taken in another way"
-    val amountAboveAllowanceParagraph = "Tell us the amount above your client’s lifetime allowance they’ve taken in other ways. This could be regular payments or a cash withdrawal."
-    val checkThisWithProviderParagraph = "Your client can check with their pension provider if you’re unsure."
+    val taxPaidErrorNoEntry =
+      "Enter the amount of lifetime allowance tax your client’s pension provider paid or agreed to pay on the amount taken in another way"
+    val amountAboveAllowanceParagraph =
+      "Tell us the amount above your client’s lifetime allowance they’ve taken in other ways. This could be regular payments or a cash withdrawal."
+    val checkThisWithProviderParagraph = "Gall eich cleient wirio â’i ddarparwr pensiwn os nad ydych yn siŵr."
     val beforeTaxParagraph = "If your client got payments from more than one pension scheme, give the total."
     val beforeTaxErrorIncorrectFormat: String = "Enter the amount your client took above their lifetime allowance in the correct format"
   }
@@ -172,7 +177,7 @@ class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with B
     UserScenario(isWelsh = true, isAgent = true, CommonExpectedCY, Some(ExpectedAgentCY))
   )
 
-  ".show" should {
+  ".show" should {  //scalastyle:off magic.number
     userScenarios.foreach { user =>
       import Selectors._
       import user.commonExpectedResults._
@@ -201,7 +206,7 @@ class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with B
             result.status shouldBe OK
           }
 
-          titleCheck(user.specificExpectedResults.get.expectedTitle)
+          titleCheck(user.specificExpectedResults.get.expectedTitle, user.isWelsh)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           textOnPageCheck(user.specificExpectedResults.get.amountAboveAllowanceParagraph, mainParagraph(2))
@@ -240,7 +245,7 @@ class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with B
           "has an OK status" in {
             result.status shouldBe OK
           }
-          titleCheck(user.specificExpectedResults.get.expectedTitle)
+          titleCheck(user.specificExpectedResults.get.expectedTitle, user.isWelsh)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           textOnPageCheck(user.specificExpectedResults.get.amountAboveAllowanceParagraph, mainParagraph(2))
@@ -279,7 +284,7 @@ class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with B
           "has an OK status" in {
             result.status shouldBe OK
           }
-          titleCheck(user.specificExpectedResults.get.expectedTitle)
+          titleCheck(user.specificExpectedResults.get.expectedTitle, user.isWelsh)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           textOnPageCheck(user.specificExpectedResults.get.amountAboveAllowanceParagraph, mainParagraph(2))
@@ -318,7 +323,7 @@ class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with B
           "has an OK status" in {
             result.status shouldBe OK
           }
-          titleCheck(user.specificExpectedResults.get.expectedTitle)
+          titleCheck(user.specificExpectedResults.get.expectedTitle, user.isWelsh)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           textOnPageCheck(user.specificExpectedResults.get.amountAboveAllowanceParagraph, mainParagraph(2))
@@ -381,7 +386,7 @@ class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with B
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(user.specificExpectedResults.get.expectedErrorTitle)
+          titleCheck(user.specificExpectedResults.get.expectedErrorTitle, user.isWelsh)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           textOnPageCheck(user.specificExpectedResults.get.amountAboveAllowanceParagraph, mainParagraph(3))
@@ -423,7 +428,7 @@ class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with B
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(user.specificExpectedResults.get.expectedErrorTitle)
+          titleCheck(user.specificExpectedResults.get.expectedErrorTitle, user.isWelsh)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           textOnPageCheck(user.specificExpectedResults.get.amountAboveAllowanceParagraph, mainParagraph(3))
@@ -464,7 +469,7 @@ class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with B
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(user.specificExpectedResults.get.expectedErrorTitle)
+          titleCheck(user.specificExpectedResults.get.expectedErrorTitle, user.isWelsh)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           textOnPageCheck(user.specificExpectedResults.get.amountAboveAllowanceParagraph, mainParagraph(3))

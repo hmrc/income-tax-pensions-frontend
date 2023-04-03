@@ -74,15 +74,15 @@ class PensionsReliefViewSpec extends ViewUnitTest with FakeRequestProvider {
   }
 
   object ExpectedCommonCY extends CommonExpectedResults {
-    override val expectedCaption: Int => String = (taxYear: Int) => s"Payments into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
+    override val expectedCaption: Int => String = (taxYear: Int) => s"Taliadau i bensiynau tramor ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
     override val expectedMMR: String = "Migrant member relief"
     override val expectedDTR: String = "Double taxation relief"
     override val expectedTCR: String = "Transitional corresponding relief"
     override val noneOfTheAbove: String = "None of these"
     override val or: String = "neu"
-    override val expectedLinkText: String = "Find out about the types of tax relief for overseas pension scheme payments (opens in new tab)"
+    override val expectedLinkText: String = "Find out about the types of tax relief for overseas pension scheme payments (yn agor tab newydd)"
     override val expectedErrorText: String = "Select the type of tax relief or select none"
-    override val continue: String = "Continue"
+    override val continue: String = "Yn eich blaen"
   }
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
@@ -93,7 +93,7 @@ class PensionsReliefViewSpec extends ViewUnitTest with FakeRequestProvider {
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
     override val expectedTitle: String = "What tax relief did you get on payments into overseas pensions?"
-    override val expectedErrorTitle = s"Error: $expectedTitle"
+    override val expectedErrorTitle = s"Gwall: $expectedTitle"
 
   }
 
@@ -104,7 +104,7 @@ class PensionsReliefViewSpec extends ViewUnitTest with FakeRequestProvider {
 
   object ExpectedAgentCY extends SpecificExpectedResults {
     override val expectedTitle: String = "What tax relief did your client get on payments into overseas pensions?"
-    override val expectedErrorTitle = s"Error: $expectedTitle"
+    override val expectedErrorTitle = s"Gwall: $expectedTitle"
   }
 
 

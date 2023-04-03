@@ -71,13 +71,13 @@ class PstrSummaryControllerISpec extends IntegrationTest with BeforeAndAfterEach
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Pension annual allowance for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val expectedButtonText = "Continue"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Lwfans blynyddol pensiwn ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
+    val expectedButtonText = "Yn eich blaen"
     val expectedTitle = "Pension Scheme Tax Reference (PSTR) summary"
     val expectedHeading = "Pension Scheme Tax Reference (PSTR) summary"
-    val change = "Change"
-    val remove = "Remove"
-    val pensionSchemeTaxReference = "Pension Scheme Tax Reference"
+    val change = "Newid"
+    val remove = "Tynnu"
+    val pensionSchemeTaxReference = "Cyfeirnod Treth y Cynllun Pensiwn"
     val expectedAddAnotherText = "Add another PSTR"
     val expectedAddPstrText = "Add a PSTR"
   }
@@ -111,7 +111,7 @@ class PstrSummaryControllerISpec extends IntegrationTest with BeforeAndAfterEach
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(expectedTitle)
+          titleCheck(expectedTitle, user.isWelsh)
           h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY))
           textOnPageCheck(pstr1, pstrSelector(1))
@@ -144,7 +144,7 @@ class PstrSummaryControllerISpec extends IntegrationTest with BeforeAndAfterEach
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(expectedTitle)
+          titleCheck(expectedTitle, user.isWelsh)
           h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY))
           elementNotOnPageCheck(pstrSelector(1))

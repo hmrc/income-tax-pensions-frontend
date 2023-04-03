@@ -31,10 +31,10 @@ import play.api.libs.ws.WSResponse
 import utils.PageUrls.PaymentIntoPensions._
 import utils.PageUrls._
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
-import views.ReliefAtSourcePaymentsAndTaxReliefAmountTestSupport.Selectors._
-import views.ReliefAtSourcePaymentsAndTaxReliefAmountTestSupport._
-import views.ReliefAtSourcePaymentsAndTaxReliefAmountTestSupport.CommonExpectedEN._
-import views.ReliefAtSourcePaymentsAndTaxReliefAmountTestSupport.ExpectedIndividualEN._
+import views.ReliefAtSourcePaymentsAndTaxReliefAmountSpec.Selectors._
+import views.ReliefAtSourcePaymentsAndTaxReliefAmountSpec._
+import views.ReliefAtSourcePaymentsAndTaxReliefAmountSpec.CommonExpectedEN._
+import views.ReliefAtSourcePaymentsAndTaxReliefAmountSpec.ExpectedIndividualEN._
 class ReliefAtSourcePaymentsAndTaxReliefAmountControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
 
   private def pensionsUsersData(pensionsCyaModel: PensionsCYAModel): PensionsUserData = {

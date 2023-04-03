@@ -27,7 +27,7 @@ import play.api.mvc.AnyContent
 import support.ViewUnitTest
 import views.html.pensions.paymentsIntoPensions.PaymentsIntoPensionsStatusView
 
-class PaymentsIntoPensionsStatusTestSupport extends ViewUnitTest {
+class PaymentsIntoPensionsStatusSpec extends ViewUnitTest {
 
   object Selectors {
     val continueButtonFormSelector = "#main-content > div > div > form"
@@ -58,11 +58,11 @@ class PaymentsIntoPensionsStatusTestSupport extends ViewUnitTest {
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    override val expectedCaption: Int => String = (taxYear: Int) => s"Payments into pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
+    override val expectedCaption: Int => String = (taxYear: Int) => s"Taliadau i bensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
     override val expectedTitleText: String = "A wnaethoch unrhyw daliadau i bensiynau’r DU?"
-    override val expectedYesText: String = "Yes"
-    override val expectedNoText: String = "No"
-    override val expectedButtonText: String = "Continue"
+    override val expectedYesText: String = "Iawn"
+    override val expectedNoText: String = "Na"
+    override val expectedButtonText: String = "Yn eich blaen"
   }
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
@@ -79,13 +79,13 @@ class PaymentsIntoPensionsStatusTestSupport extends ViewUnitTest {
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
     override val expectedTitleText: String = "A wnaethoch unrhyw daliadau i bensiynau’r DU?"
-    override val expectedErrorTitleText: String = s"Error: $expectedTitleText"
+    override val expectedErrorTitleText: String = s"Gwall: $expectedTitleText"
     override val expectedErrorText: String = "Dewiswch ‘Iawn’ os gwnaethoch daliadau i bensiynau’r DU"
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
     override val expectedTitleText: String = "A wnaeth eich cleient unrhyw daliadau i bensiynau’r DU?"
-    override val expectedErrorTitleText: String = s"Error: $expectedTitleText"
+    override val expectedErrorTitleText: String = s"Gwall: $expectedTitleText"
     override val expectedErrorText: String = "Dewiswch ‘Iawn’ os gwnaeth eich cleient daliadau i bensiynau’r DU"
   }
 

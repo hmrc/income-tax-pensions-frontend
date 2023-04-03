@@ -22,7 +22,7 @@ import org.jsoup.nodes.Document
 import play.api.i18n.Messages
 import play.api.mvc.AnyContent
 import support.ViewUnitTest
-import views.WorkplacePensionControllerSpec._
+import views.WorkplacePensionViewSpec._
 import controllers.pensions.incomeFromOverseasPensions.routes
 import models.pension.charges.{IncomeFromOverseasPensionsViewModel, PensionScheme}
 import models.pension.pages.OverseasPensionSchemeSummaryPage
@@ -75,7 +75,7 @@ class OverseasPensionSchemeSummarySpec extends ViewUnitTest {
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Income from overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Incwm o bensiynau tramor ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
     val expectedTitle: String = "Pension scheme summary"
     val alphaTwoCode: String = "Country"
     val countryCodeValue: String = "France"
@@ -84,12 +84,12 @@ class OverseasPensionSchemeSummarySpec extends ViewUnitTest {
     val specialWithholdingTax: String = "Special Withholding Tax"
     val specialWithholdingTaxValue: String = "£1,999.99"
     val foreignTaxCredit: String = "Foreign Tax Credit"
-    val yes: String = "Yes"
-    val no: String = "No"
+    val yes: String = "Iawn"
+    val no: String = "Na"
     val taxableAmount: String = "Taxable amount"
     val taxableAmountValue: String = "£1,999.99"
-    val change: String = "Change"
-    val buttonText = "Continue"
+    val change: String = "Newid"
+    val buttonText = "Yn eich blaen"
   }
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, Unit]] = Seq(

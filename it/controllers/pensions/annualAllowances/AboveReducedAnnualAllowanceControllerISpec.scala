@@ -88,17 +88,18 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
     val yesText = "Yes"
     val noText = "No"
     val buttonText = "Continue"
-    val expectedUseACalculator: String = "Use a calculator if you need to work this out (opens in new tab)."
     val expectedLinkText = "if you need to work this out (opens in new tab)"
+    val expectedUseACalculator: String = s"Use a calculator $expectedLinkText."
+    
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Pension annual allowance for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val yesText = "Yes"
-    val noText = "No"
-    val buttonText = "Continue"
-    val expectedUseACalculator: String = "Use a calculator if you need to work this out (opens in new tab)."
-    val expectedLinkText = "if you need to work this out (opens in new tab)"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Lwfans blynyddol pensiwn ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
+    val yesText = "Iawn"
+    val noText = "Na"
+    val buttonText = "Yn eich blaen"
+    val expectedLinkText = "os bydd angen i chi gyfrifo hyn (yn agor tab newydd)"
+    val expectedUseACalculator: String = s"Defnyddiwch gyfrifiannell $expectedLinkText."
   }
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
@@ -116,12 +117,12 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
   object ExpectedIndividualCY extends SpecificExpectedResults {
     val expectedReducedTitle = "Have you gone above your reduced annual allowance?"
     val expectedReducedHeading = "Have you gone above your reduced annual allowance?"
-    val expectedReducedErrorTitle = s"Error: $expectedReducedTitle"
+    val expectedReducedErrorTitle = s"Gwall: $expectedReducedTitle"
     val expectedReducedErrorMessage = "Select yes if you have gone above your reduced annual allowance"
 
     val expectedNonReducedTitle = "Have you gone above the annual allowance?"
     val expectedNonReducedHeading = "Have you gone above the annual allowance?"
-    val expectedNonReducedErrorTitle = s"Error: $expectedNonReducedTitle"
+    val expectedNonReducedErrorTitle = s"Gwall: $expectedNonReducedTitle"
     val expectedNonReducedErrorMessage = "Select yes if you have gone above the annual allowance"
   }
 
@@ -141,12 +142,12 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
   object ExpectedAgentCY extends SpecificExpectedResults {
     val expectedReducedTitle = "Has your client gone above their reduced annual allowance?"
     val expectedReducedHeading = "Has your client gone above their reduced annual allowance?"
-    val expectedReducedErrorTitle = s"Error: $expectedReducedTitle"
+    val expectedReducedErrorTitle = s"Gwall: $expectedReducedTitle"
     val expectedReducedErrorMessage = "Select yes if your client has gone above their reduced annual allowance"
 
     val expectedNonReducedTitle = "Has your client gone above the annual allowance?"
     val expectedNonReducedHeading = "Has your client gone above the annual allowance?"
-    val expectedNonReducedErrorTitle = s"Error: $expectedNonReducedTitle"
+    val expectedNonReducedErrorTitle = s"Gwall: $expectedNonReducedTitle"
     val expectedNonReducedErrorMessage = "Select yes if your client has gone above the annual allowance"
   }
 
@@ -184,7 +185,7 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
               result.status shouldBe OK
             }
 
-            titleCheck(user.specificExpectedResults.get.expectedReducedTitle)
+            titleCheck(user.specificExpectedResults.get.expectedReducedTitle, user.isWelsh)
             h1Check(user.specificExpectedResults.get.expectedReducedHeading)
             captionCheck(expectedCaption(taxYearEOY), captionSelector)
             radioButtonCheck(yesText, 1, checked = Some(false))
@@ -213,7 +214,7 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
               result.status shouldBe OK
             }
 
-            titleCheck(user.specificExpectedResults.get.expectedReducedTitle)
+            titleCheck(user.specificExpectedResults.get.expectedReducedTitle, user.isWelsh)
             h1Check(user.specificExpectedResults.get.expectedReducedHeading)
             captionCheck(expectedCaption(taxYearEOY), captionSelector)
             radioButtonCheck(yesText, 1, checked = Some(true))
@@ -242,7 +243,7 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
               result.status shouldBe OK
             }
 
-            titleCheck(user.specificExpectedResults.get.expectedReducedTitle)
+            titleCheck(user.specificExpectedResults.get.expectedReducedTitle, user.isWelsh)
             h1Check(user.specificExpectedResults.get.expectedReducedHeading)
             captionCheck(expectedCaption(taxYearEOY), captionSelector)
             radioButtonCheck(yesText, 1, checked = Some(false))
@@ -273,7 +274,7 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
               result.status shouldBe OK
             }
 
-            titleCheck(user.specificExpectedResults.get.expectedNonReducedTitle)
+            titleCheck(user.specificExpectedResults.get.expectedNonReducedTitle, user.isWelsh)
             h1Check(user.specificExpectedResults.get.expectedNonReducedHeading)
             captionCheck(expectedCaption(taxYearEOY), captionSelector)
             radioButtonCheck(yesText, 1, checked = Some(false))
@@ -302,7 +303,7 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
               result.status shouldBe OK
             }
 
-            titleCheck(user.specificExpectedResults.get.expectedNonReducedTitle)
+            titleCheck(user.specificExpectedResults.get.expectedNonReducedTitle, user.isWelsh)
             h1Check(user.specificExpectedResults.get.expectedNonReducedHeading)
             captionCheck(expectedCaption(taxYearEOY), captionSelector)
             radioButtonCheck(yesText, 1, checked = Some(true))
@@ -331,7 +332,7 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
               result.status shouldBe OK
             }
 
-            titleCheck(user.specificExpectedResults.get.expectedNonReducedTitle)
+            titleCheck(user.specificExpectedResults.get.expectedNonReducedTitle, user.isWelsh)
             h1Check(user.specificExpectedResults.get.expectedNonReducedHeading)
             captionCheck(expectedCaption(taxYearEOY), captionSelector)
             radioButtonCheck(yesText, 1, checked = Some(false))
@@ -410,7 +411,7 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(user.specificExpectedResults.get.expectedReducedErrorTitle)
+          titleCheck(user.specificExpectedResults.get.expectedReducedErrorTitle, user.isWelsh)
           h1Check(user.specificExpectedResults.get.expectedReducedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           radioButtonCheck(yesText, 1, checked = Some(false))
@@ -442,7 +443,7 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(user.specificExpectedResults.get.expectedNonReducedErrorTitle)
+          titleCheck(user.specificExpectedResults.get.expectedNonReducedErrorTitle, user.isWelsh)
           h1Check(user.specificExpectedResults.get.expectedNonReducedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           radioButtonCheck(yesText, 1, checked = Some(false))

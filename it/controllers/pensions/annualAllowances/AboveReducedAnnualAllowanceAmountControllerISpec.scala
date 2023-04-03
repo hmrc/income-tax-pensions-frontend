@@ -86,12 +86,12 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Pension annual allowance for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val hintText = "For example, £193.52"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Lwfans blynyddol pensiwn ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
+    val hintText = "Er enghraifft, £193.52"
     val emptyNonReducedErrorText = "Enter the amount above the annual allowance"
     val invalidFormatNonReducedErrorText = "Enter the amount above the annual allowance in the correct format"
     val maxAmountNonReducedErrorText = "The amount above the annual allowance must be less than £100,000,000,000"
-    val buttonText = "Continue"
+    val buttonText = "Yn eich blaen"
     val expectedParagraph = "This is the amount on which tax is due."
   }
 
@@ -110,10 +110,10 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
   object ExpectedIndividualCY extends SpecificExpectedResults {
     val expectedNonReducedTitle = "How much above your annual allowance are you?"
     val expectedNonReducedHeading = "How much above your annual allowance are you?"
-    val expectedNonReducedErrorTitle = s"Error: $expectedNonReducedTitle"
+    val expectedNonReducedErrorTitle = s"Gwall: $expectedNonReducedTitle"
     val expectedReducedTitle = "How much above your reduced annual allowance are you?"
     val expectedReducedHeading = "How much above your reduced annual allowance are you?"
-    val expectedReducedErrorTitle = s"Error: $expectedReducedTitle"
+    val expectedReducedErrorTitle = s"Gwall: $expectedReducedTitle"
     val emptyReducedErrorText = "Enter the amount above your reduced annual allowance"
     val invalidFormatReducedErrorText = "Enter the amount above your reduced annual allowance in the correct format"
     val maxAmountReducedErrorText = "The amount above your reduced annual allowance must be less than £100,000,000,000"
@@ -134,10 +134,10 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
   object ExpectedAgentCY extends SpecificExpectedResults {
     val expectedNonReducedTitle = "How much above your client’s annual allowance are they?"
     val expectedNonReducedHeading = "How much above your client’s annual allowance are they?"
-    val expectedNonReducedErrorTitle = s"Error: $expectedNonReducedTitle"
+    val expectedNonReducedErrorTitle = s"Gwall: $expectedNonReducedTitle"
     val expectedReducedTitle = "How much above your client’s reduced annual allowance are they?"
     val expectedReducedHeading = "How much above your client’s reduced annual allowance are they?"
-    val expectedReducedErrorTitle = s"Error: $expectedReducedTitle"
+    val expectedReducedErrorTitle = s"Gwall: $expectedReducedTitle"
     val emptyReducedErrorText = "Enter the amount above your client’s reduced annual allowance"
     val invalidFormatReducedErrorText = "Enter the amount above your client’s reduced annual allowance in the correct format"
     val maxAmountReducedErrorText = "The amount above your client’s reduced annual allowance must be less than £100,000,000,000"
@@ -173,7 +173,7 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
             "has an OK status" in {
               result.status shouldBe OK
             }
-            titleCheck(user.specificExpectedResults.get.expectedReducedTitle)
+            titleCheck(user.specificExpectedResults.get.expectedReducedTitle, user.isWelsh)
             h1Check(user.specificExpectedResults.get.expectedReducedHeading)
             captionCheck(expectedCaption(taxYearEOY), captionSelector)
             textOnPageCheck(expectedParagraph, paragraphSelector)
@@ -202,7 +202,7 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
             "has an OK status" in {
               result.status shouldBe OK
             }
-            titleCheck(user.specificExpectedResults.get.expectedReducedTitle)
+            titleCheck(user.specificExpectedResults.get.expectedReducedTitle, user.isWelsh)
             h1Check(user.specificExpectedResults.get.expectedReducedHeading)
             captionCheck(expectedCaption(taxYearEOY), captionSelector)
             textOnPageCheck(expectedParagraph, paragraphSelector)
@@ -231,7 +231,7 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
             "has an OK status" in {
               result.status shouldBe OK
             }
-            titleCheck(user.specificExpectedResults.get.expectedNonReducedTitle)
+            titleCheck(user.specificExpectedResults.get.expectedNonReducedTitle, user.isWelsh)
             h1Check(user.specificExpectedResults.get.expectedNonReducedHeading)
             captionCheck(expectedCaption(taxYearEOY), captionSelector)
             textOnPageCheck(expectedParagraph, paragraphSelector)
@@ -260,7 +260,7 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
             "has an OK status" in {
               result.status shouldBe OK
             }
-            titleCheck(user.specificExpectedResults.get.expectedNonReducedTitle)
+            titleCheck(user.specificExpectedResults.get.expectedNonReducedTitle, user.isWelsh)
             h1Check(user.specificExpectedResults.get.expectedNonReducedHeading)
             captionCheck(expectedCaption(taxYearEOY), captionSelector)
             textOnPageCheck(expectedParagraph, paragraphSelector)
@@ -371,7 +371,7 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
 
             implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-            titleCheck(user.specificExpectedResults.get.expectedReducedErrorTitle)
+            titleCheck(user.specificExpectedResults.get.expectedReducedErrorTitle, user.isWelsh)
             h1Check(user.specificExpectedResults.get.expectedReducedHeading)
             captionCheck(expectedCaption(taxYearEOY), captionSelector)
             textOnPageCheck(expectedParagraph, paragraphSelector)
@@ -406,7 +406,7 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
 
             implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-            titleCheck(user.specificExpectedResults.get.expectedReducedErrorTitle)
+            titleCheck(user.specificExpectedResults.get.expectedReducedErrorTitle, user.isWelsh)
             h1Check(user.specificExpectedResults.get.expectedReducedHeading)
             captionCheck(expectedCaption(taxYearEOY), captionSelector)
             textOnPageCheck(expectedParagraph, paragraphSelector)
@@ -440,7 +440,7 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
 
             implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-            titleCheck(user.specificExpectedResults.get.expectedReducedErrorTitle)
+            titleCheck(user.specificExpectedResults.get.expectedReducedErrorTitle, user.isWelsh)
             h1Check(user.specificExpectedResults.get.expectedReducedHeading)
             captionCheck(expectedCaption(taxYearEOY), captionSelector)
             textOnPageCheck(expectedParagraph, paragraphSelector)
@@ -474,7 +474,7 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
 
             implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-            titleCheck(user.specificExpectedResults.get.expectedNonReducedErrorTitle)
+            titleCheck(user.specificExpectedResults.get.expectedNonReducedErrorTitle, user.isWelsh)
             h1Check(user.specificExpectedResults.get.expectedNonReducedHeading)
             captionCheck(expectedCaption(taxYearEOY), captionSelector)
             textOnPageCheck(expectedParagraph, paragraphSelector)
@@ -509,7 +509,7 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
 
             implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-            titleCheck(user.specificExpectedResults.get.expectedNonReducedErrorTitle)
+            titleCheck(user.specificExpectedResults.get.expectedNonReducedErrorTitle, user.isWelsh)
             h1Check(user.specificExpectedResults.get.expectedNonReducedHeading)
             captionCheck(expectedCaption(taxYearEOY), captionSelector)
             textOnPageCheck(expectedParagraph, paragraphSelector)
@@ -543,7 +543,7 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
 
             implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-            titleCheck(user.specificExpectedResults.get.expectedNonReducedErrorTitle)
+            titleCheck(user.specificExpectedResults.get.expectedNonReducedErrorTitle, user.isWelsh)
             h1Check(user.specificExpectedResults.get.expectedNonReducedHeading)
             captionCheck(expectedCaption(taxYearEOY), captionSelector)
             textOnPageCheck(expectedParagraph, paragraphSelector)

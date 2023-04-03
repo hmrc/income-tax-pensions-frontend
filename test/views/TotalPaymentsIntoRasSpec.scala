@@ -77,7 +77,7 @@ object TotalPaymentsIntoRasSpec {
     val expectedTitle: String = "Cyfanswm eich taliadau i mewn i bensiynau rhyddhad wrth y ffynhonnell (RAS)"
     val expectedParagraph: String = s"Y cyfanswm a dalwyd gennych, ynghyd â rhyddhad treth ar y gyfradd sylfaenol, yw $rasTotal. " +
       "Gallwch ddod o hyd i’r ffigur hwn ar y dystysgrif pensiwn neu’r dderbynneb gan eich gweinyddwr."
-    val expectedErrorTitle: String = s"Error: $expectedTitle"
+    val expectedErrorTitle: String = s"Gwall: $expectedTitle"
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
@@ -91,7 +91,7 @@ object TotalPaymentsIntoRasSpec {
     val expectedTitle: String = "Cyfanswm taliadau eich cleient i mewn i bensiynau rhyddhad wrth y ffynhonnell (RAS)"
     val expectedParagraph: String = s"Y cyfanswm a dalwyd gan eich cleient, ynghyd â rhyddhad treth ar y gyfradd sylfaenol, yw $rasTotal. " +
       "Gallwch ddod o hyd i’r ffigur hwn ar y dystysgrif pensiwn neu’r dderbynneb gan weinyddwr eich cleient."
-    val expectedErrorTitle: String = s"Error: $expectedTitle"
+    val expectedErrorTitle: String = s"Gwall: $expectedTitle"
   }
 
   object CommonExpectedEN extends CommonExpectedResults {
@@ -108,16 +108,16 @@ object TotalPaymentsIntoRasSpec {
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Payments into pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Taliadau i bensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
     val totalPayments: String = "Cyfanswm y taliadau pensiwn"
     val oneOff: String = s"(Gan gynnwys $oneOffAmount o daliadau untro)"
     val claimed: String = "Rhyddhad treth a hawliwyd gan y cynllun"
-    val total: String = "Total"
+    val total: String = "Cyfanswm"
     val isCorrect: String = "A yw hyn yn gywir?"
     val expectedError: String = "Dewiswch ‘Iawn’ os yw’r ffigurau’n gywir"
-    val expectedButtonText: String = "Continue"
-    val yesText = "Yes"
-    val noText = "No"
+    val expectedButtonText: String = "Yn eich blaen"
+    val yesText = "Iawn"
+    val noText = "Na"
   }
 }
 
@@ -137,17 +137,16 @@ class TotalPaymentsIntoRasSpec extends ViewUnitTest {
   userScenarios.foreach { userScenario =>
     s"language is ${welshTest(userScenario.isWelsh)} and request is from an ${agentTest(userScenario.isAgent)}" should {
 
+      import Selectors._
+      import userScenario.commonExpectedResults._
+      
       "render 'Total payments into RAS pensions' page with correct content and no pre-filling" which {
         implicit val authRequest: AuthorisationRequest[AnyContent] = getAuthRequest(userScenario.isAgent)
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
         val htmlFormat = underTest(form, taxYearEOY, rasTotal, Some(oneOffAmount), calculatedRAS, calculatedRelief)
 
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
-
-        import Selectors._
-        import userScenario.commonExpectedResults._
-
-
+        
         titleCheck(userScenario.specificExpectedResults.get.expectedTitle, userScenario.isWelsh)
         h1Check(userScenario.specificExpectedResults.get.expectedTitle)
         textOnPageCheck(userScenario.specificExpectedResults.get.expectedParagraph, pSelector)
@@ -186,8 +185,8 @@ class TotalPaymentsIntoRasSpec extends ViewUnitTest {
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
         "have the yes button pre-filled" when {
-          radioButtonCheck(CommonExpectedEN.yesText, 1, checked = true)
-          radioButtonCheck(CommonExpectedEN.noText, 2, checked = false)
+          radioButtonCheck(yesText, 1, checked = true)
+          radioButtonCheck(noText, 2, checked = false)
         }
       }
 

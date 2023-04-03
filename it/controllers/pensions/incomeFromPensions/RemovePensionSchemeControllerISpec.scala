@@ -40,7 +40,7 @@ class RemovePensionSchemeControllerISpec extends IntegrationTest with ViewHelper
 
   trait CommonExpectedResults {
     val expectedTitle: String
-    val expectedHeading: String
+    lazy  val expectedHeading = expectedTitle
     val expectedCaption: Int => String
     val buttonText: String
     val cancelText: String
@@ -48,18 +48,16 @@ class RemovePensionSchemeControllerISpec extends IntegrationTest with ViewHelper
 
   object CommonExpectedEN extends CommonExpectedResults {
     val expectedTitle = s"Are you sure you want to remove $pensionName?"
-    val expectedHeading = s"Are you sure you want to remove $pensionName?"
     val expectedCaption: Int => String = (taxYear: Int) => s"Income from pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
     val buttonText = "Remove pension"
     val cancelText = "Cancel"
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedTitle = s"Are you sure you want to remove $pensionName?"
-    val expectedHeading = s"Are you sure you want to remove $pensionName?"
-    val expectedCaption: Int => String = (taxYear: Int) => s"Income from pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
+    val expectedTitle = s"A ydych yn siŵr eich bod am dynnu $pensionName?"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Incwm o bensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
     val buttonText = "Remove pension"
-    val cancelText = "Cancel"
+    val cancelText = "Canslo"
   }
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, String]] = Seq(
@@ -90,7 +88,7 @@ class RemovePensionSchemeControllerISpec extends IntegrationTest with ViewHelper
             result.status shouldBe OK
           }
 
-          titleCheck(expectedTitle)
+          titleCheck(expectedTitle, user.isWelsh)
           h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           buttonCheck(buttonText)

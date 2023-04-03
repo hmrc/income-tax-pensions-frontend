@@ -38,7 +38,7 @@ class RemovePSTRControllerISpec extends IntegrationTest with ViewHelpers with Be
 
   trait CommonExpectedResults {
     val expectedTitle: String
-    val expectedHeading: String
+    lazy val expectedHeading = expectedTitle
     val expectedCaption: Int => String
     val buttonText: String
     val cancelText: String
@@ -46,7 +46,6 @@ class RemovePSTRControllerISpec extends IntegrationTest with ViewHelpers with Be
 
   object CommonExpectedEN extends CommonExpectedResults {
     val expectedTitle = s"Do you want to remove this Pension Scheme Tax Reference?"
-    val expectedHeading = s"Do you want to remove this Pension Scheme Tax Reference?"
     val expectedCaption: Int => String = (taxYear: Int) => s"Unauthorised payments from pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
     val buttonText = "Remove reference"
     val cancelText = "Don’t remove"
@@ -54,7 +53,6 @@ class RemovePSTRControllerISpec extends IntegrationTest with ViewHelpers with Be
 
   object CommonExpectedCY extends CommonExpectedResults {
     val expectedTitle = s"Do you want to remove this Pension Scheme Tax Reference?"
-    val expectedHeading = s"Do you want to remove this Pension Scheme Tax Reference?"
     val expectedCaption: Int => String = (taxYear: Int) => s"Taliadau heb awdurdod o bensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
     val buttonText = "Remove reference"
     val cancelText = "Don’t remove"
@@ -88,7 +86,7 @@ class RemovePSTRControllerISpec extends IntegrationTest with ViewHelpers with Be
             result.status shouldBe OK
           }
 
-          titleCheck(expectedTitle)
+          titleCheck(expectedTitle, user.isWelsh)
           h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           buttonCheck(buttonText)

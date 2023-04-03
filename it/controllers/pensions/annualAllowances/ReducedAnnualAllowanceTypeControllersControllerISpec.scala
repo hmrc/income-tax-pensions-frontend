@@ -51,8 +51,8 @@ class ReducedAnnualAllowanceTypeControllersControllerISpec extends IntegrationTe
   }
 
   trait SpecificExpectedResults {
-    val expectedHeading: String
     val expectedTitle: String
+    lazy val expectedHeading = expectedTitle
     val expectedError: String
     val expectedErrorTitle: String
     val expectedDetailsMoneyParagraphText: String
@@ -75,7 +75,6 @@ class ReducedAnnualAllowanceTypeControllersControllerISpec extends IntegrationTe
   }
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
-    val expectedHeading = "What type of reduced annual allowance do you have?"
     val expectedTitle = "What type of reduced annual allowance do you have?"
     val expectedError = "Select the type of reduced annual allowance you have"
     val expectedErrorTitle = s"Error: $expectedTitle"
@@ -85,17 +84,15 @@ class ReducedAnnualAllowanceTypeControllersControllerISpec extends IntegrationTe
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
-    val expectedHeading = "What type of reduced annual allowance do you have?"
     val expectedTitle = "What type of reduced annual allowance do you have?"
     val expectedError = "Select the type of reduced annual allowance you have"
-    val expectedErrorTitle = s"Error: $expectedTitle"
+    val expectedErrorTitle = s"Gwall: $expectedTitle"
     val expectedDetailsMoneyParagraphText = "You’ll have this type of allowance if you flexibly access your pension. For example, this could include taking:"
     val expectedDetailsTaperedParagraphText: String = "You’ll have this type of annual allowance if both your ‘threshold income’ " +
-      "and ‘adjusted income’ are over the limit (opens in new tab)."
+      "and ‘adjusted income’ are over the limit (yn agor tab newydd)."
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
-    val expectedHeading = "What type of reduced annual allowance does your client have?"
     val expectedTitle = "What type of reduced annual allowance does your client have?"
     val expectedError = "Select the type of reduced annual allowance your client has"
     val expectedErrorTitle = s"Error: $expectedTitle"
@@ -106,14 +103,13 @@ class ReducedAnnualAllowanceTypeControllersControllerISpec extends IntegrationTe
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
-    val expectedHeading = "What type of reduced annual allowance does your client have?"
     val expectedTitle = "What type of reduced annual allowance does your client have?"
     val expectedError = "Select the type of reduced annual allowance your client has"
-    val expectedErrorTitle = s"Error: $expectedTitle"
+    val expectedErrorTitle = s"Gwall: $expectedTitle"
     val expectedDetailsMoneyParagraphText: String = "Your client will have this type of allowance if they flexibly access their pension. " +
       "For example, this could include taking:"
     val expectedDetailsTaperedParagraphText: String = "Your client will have this type of annual allowance if both their ‘threshold income’ " +
-      "and ‘adjusted income’ are over the limit (opens in new tab)."
+      "and ‘adjusted income’ are over the limit (yn agor tab newydd)."
   }
 
   object CommonExpectedEN extends CommonExpectedResults {
@@ -131,7 +127,7 @@ class ReducedAnnualAllowanceTypeControllersControllerISpec extends IntegrationTe
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Pension annual allowance for 6 April ${taxYear - 1} to 5 April $taxYear"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Lwfans blynyddol pensiwn ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
     val checkboxHint = "Select all that apply."
     val checkboxMoneyPurchaseText = "Money purchase annual allowance"
     val checkboxTaperedText = "Tapered annual allowance"
@@ -140,8 +136,8 @@ class ReducedAnnualAllowanceTypeControllersControllerISpec extends IntegrationTe
     val expectedDetailsBullet1 = "income from a flexi-access drawdown fund"
     val expectedDetailsBullet2 = "cash directly from a pension pot (‘uncrystallised funds pension lump sums’)"
     val expectedDetailsTaperedText = "Tapered annual allowance"
-    val expectedDetailsExternalLinkText = "over the limit (opens in new tab)"
-    val expectedButtonText = "Continue"
+    val expectedDetailsExternalLinkText = "over the limit (yn agor tab newydd)"
+    val expectedButtonText = "Yn eich blaen"
   }
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(
@@ -179,7 +175,7 @@ class ReducedAnnualAllowanceTypeControllersControllerISpec extends IntegrationTe
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(user.specificExpectedResults.get.expectedTitle)
+          titleCheck(user.specificExpectedResults.get.expectedTitle, user.isWelsh)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           hintTextCheck(checkboxHint, Selectors.checkboxHintSelector)
@@ -226,7 +222,7 @@ class ReducedAnnualAllowanceTypeControllersControllerISpec extends IntegrationTe
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(user.specificExpectedResults.get.expectedTitle)
+          titleCheck(user.specificExpectedResults.get.expectedTitle, user.isWelsh)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           hintTextCheck(checkboxHint, Selectors.checkboxHintSelector)
@@ -272,7 +268,7 @@ class ReducedAnnualAllowanceTypeControllersControllerISpec extends IntegrationTe
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(user.specificExpectedResults.get.expectedTitle)
+          titleCheck(user.specificExpectedResults.get.expectedTitle, user.isWelsh)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           hintTextCheck(checkboxHint, Selectors.checkboxHintSelector)
@@ -318,7 +314,7 @@ class ReducedAnnualAllowanceTypeControllersControllerISpec extends IntegrationTe
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(user.specificExpectedResults.get.expectedTitle)
+          titleCheck(user.specificExpectedResults.get.expectedTitle, user.isWelsh)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           hintTextCheck(checkboxHint, Selectors.checkboxHintSelector)
@@ -445,7 +441,7 @@ class ReducedAnnualAllowanceTypeControllersControllerISpec extends IntegrationTe
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(user.specificExpectedResults.get.expectedErrorTitle)
+          titleCheck(user.specificExpectedResults.get.expectedErrorTitle, user.isWelsh)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           hintTextCheck(checkboxHint, Selectors.checkboxHintSelector)
