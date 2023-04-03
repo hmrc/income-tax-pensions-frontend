@@ -47,6 +47,7 @@ class StatePensionViewSpec extends ViewUnitTest with FakeRequestProvider {
     val expectedHeading: String
     val expectedErrorTitle: String
     val expectedNoEntryErrorMessage: String
+    val expectedNoAmountErrorMessage: String
     val expectedIncorrectFormatErrorMessage: String
     val expectedOverMaximumErrorMessage: String
   }
@@ -73,6 +74,7 @@ class StatePensionViewSpec extends ViewUnitTest with FakeRequestProvider {
     val expectedHeading = "Do you get regular State Pension payments?"
     val expectedErrorTitle = s"Error: $expectedTitle"
     val expectedNoEntryErrorMessage = "Select yes if you got State Pension this year"
+    val expectedNoAmountErrorMessage = "Enter your State Pension amount"
     val expectedIncorrectFormatErrorMessage = "Enter your State Pension amount in the correct format"
     val expectedOverMaximumErrorMessage = "Your State Pension amount must be less than £100,000,000,000"
   }
@@ -81,6 +83,7 @@ class StatePensionViewSpec extends ViewUnitTest with FakeRequestProvider {
     val expectedHeading = "Do you get regular State Pension payments?"
     val expectedErrorTitle = s"Error: $expectedTitle"
     val expectedNoEntryErrorMessage = "Select yes if you got State Pension this year"
+    val expectedNoAmountErrorMessage = "Enter your State Pension amount"
     val expectedIncorrectFormatErrorMessage = "Enter your State Pension amount in the correct format"
     val expectedOverMaximumErrorMessage = "Your State Pension amount must be less than £100,000,000,000"
   }
@@ -90,6 +93,7 @@ class StatePensionViewSpec extends ViewUnitTest with FakeRequestProvider {
     val expectedHeading = "Does your client get regular State Pension payments?"
     val expectedErrorTitle = s"Error: $expectedTitle"
     val expectedNoEntryErrorMessage = "Select yes if your client got State Pension this year"
+    val expectedNoAmountErrorMessage = "Enter your client’s State Pension amount"
     val expectedIncorrectFormatErrorMessage = "Enter your client’s State Pension amount in the correct format"
     val expectedOverMaximumErrorMessage = "Your client’s State Pension amount must be less than £100,000,000,000"
   }
@@ -98,6 +102,7 @@ class StatePensionViewSpec extends ViewUnitTest with FakeRequestProvider {
     val expectedHeading = "Does your client get regular State Pension payments?"
     val expectedErrorTitle = s"Error: $expectedTitle"
     val expectedNoEntryErrorMessage = "Select yes if your client got State Pension this year"
+    val expectedNoAmountErrorMessage = "Enter your client’s State Pension amount"
     val expectedIncorrectFormatErrorMessage = "Enter your client’s State Pension amount in the correct format"
     val expectedOverMaximumErrorMessage = "Your client’s State Pension amount must be less than £100,000,000,000"
   }
@@ -190,6 +195,25 @@ class StatePensionViewSpec extends ViewUnitTest with FakeRequestProvider {
 
         titleCheck(userScenario.specificExpectedResults.get.expectedErrorTitle, userScenario.isWelsh)
         errorSummaryCheck(userScenario.specificExpectedResults.get.expectedNoEntryErrorMessage, "#value")
+      }
+
+      "render page with no-entry error when no pension amount is submitted" which {
+
+        implicit val messages: Messages = getMessages(userScenario.isWelsh)
+        implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] =
+          UserSessionDataRequest(aPensionsUserData.copy(
+            pensions = aPensionsCYAEmptyModel.copy(incomeFromPensions = anIncomeFromPensionsViewModel)),
+            if (userScenario.isAgent) anAgentUser else aUser,
+            if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest)
+
+        def form: Form[(Boolean, Option[BigDecimal])] = new FormsProvider().statePensionForm(if (userScenario.isAgent) anAgentUser else aUser)
+
+        val htmlFormat = underTest(form.bind(Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "")), taxYearEOY)
+        implicit val document: Document = Jsoup.parse(htmlFormat.body)
+
+        titleCheck(userScenario.specificExpectedResults.get.expectedErrorTitle, userScenario.isWelsh)
+        errorAboveElementCheck(userScenario.specificExpectedResults.get.expectedNoAmountErrorMessage, Some("amount-2"))
+        errorSummaryCheck(userScenario.specificExpectedResults.get.expectedNoAmountErrorMessage, "#amount-2")
       }
 
       "render page with incorrect-format error when pension amount has wrong format" which {
