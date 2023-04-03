@@ -946,6 +946,11 @@ overseasPension.yourTaxableAmount.table.foreignPayments=Foreign pension payments
 overseasPension.yourTaxableAmount.table.nonUkTax=Non-UK tax deducted
 overseasPension.yourTaxableAmount.table.taxableAmount=Taxable amount
 
+#relief scheme summary view
+pensions.paymentsIntoOverseasPensions.reliefSchemeSummary.title = Schemes with untaxed employer payments
+pensions.paymentsIntoOverseasPensions.reliefSchemeSummary.addAnotherReliefLink = Add another overseas pension scheme
+pensions.paymentsIntoOverseasPensions.reliefSchemeSummary.addReliefLink = Add an overseas pension scheme
+
 ############################################## INCOME FROM OVERSEAS PENSIONS ##############################################
 
 incomeFromOverseasPensions.incomeFromOverseasPension.title.individual = Did you get payments from an overseas pension scheme?

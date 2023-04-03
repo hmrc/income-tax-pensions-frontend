@@ -910,7 +910,6 @@ overseasPension.pensionReliefType.error.noEntry = Select the type of tax relief 
 overseasPension.pensionReliefType.link = Find out about the types of tax relief for overseas pension scheme payments
 
 #Pension Tax Relief Details
-#Pension Tax Relief Details
 overseasPension.reliefDetails.title = Pension scheme details
 overseasPension.reliefDetails.pensionSchemeName = Pension scheme name
 overseasPension.reliefDetails.amount = Untaxed employer payments
@@ -944,6 +943,11 @@ overseasPension.yourTaxableAmount.table.header2=Amount
 overseasPension.yourTaxableAmount.table.foreignPayments=Foreign pension payments
 overseasPension.yourTaxableAmount.table.nonUkTax=Non-UK tax deducted
 overseasPension.yourTaxableAmount.table.taxableAmount=Taxable amount
+
+#relief scheme summary view
+pensions.paymentsIntoOverseasPensions.reliefSchemeSummary.title = Schemes with untaxed employer payments
+pensions.paymentsIntoOverseasPensions.reliefSchemeSummary.addAnotherReliefLink = Add another overseas pension scheme
+pensions.paymentsIntoOverseasPensions.reliefSchemeSummary.addReliefLink = Add an overseas pension scheme
 
 ############################################## INCOME FROM OVERSEAS PENSIONS ##############################################
 
@@ -995,8 +999,6 @@ incomeFromOverseasPensions.summary.tax.amount = Taxable amount
 #Overseas Pension Income Summary Page
 overseasPensionIncomeSummary.heading = Overseas pension income
 overseasPensionIncomeSummary.hidden = Change Overseas pension income
-#TODO: overseasPensionIncomeSummary.addAnotherPensionIncomeLink = Add another overseas pension scheme
-#TODO:overseasPensionIncomeSummary.addPensionIncomeLink = Add an overseas pension scheme
 
 ############################################## TRANSFER INTO OVERSEAS PENSION ##############################################
 

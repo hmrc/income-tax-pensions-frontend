@@ -221,6 +221,9 @@ object PageUrls extends IntegrationTest {
     val doubleTaxationAgreementUrl: Int => Int => String =
       (index: Int) => (taxYear: Int) => s"$appUrl/$taxYear/overseas-pensions/payments-into-overseas-pensions/double-taxation-agreement-details?index=$index"
 
+    def pensionReliefSchemeSummaryUrl(taxYear: Int): String =
+      s"$appUrl/$taxYear/overseas-pensions/payments-into-overseas-pensions/untaxed-schemes-summary"
+
   }
 
   //  *****************     Income from overseas pensions pages      ******************************
