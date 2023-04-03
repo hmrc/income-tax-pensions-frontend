@@ -45,16 +45,11 @@
     form.hasErrors
 }
 
-@contentHtml = {
-    <p class="govuk-body">@{messages("pensions.ukPensionSchemePayments.doesNot.Include")}</p>
-}
-
 @layout(pageTitle = titleForUse, taxYear = Some(taxYear), hasErrors = hasFormErrors, isAgent = request.user.isAgent) {
 
     @errorSummary(form.errors.distinct)
 
-    @heading(headingForUse, Some(messages("common.dividends.incomeFromPensions.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-3")
-    @contentHtml
+    @heading(headingForUse, Some(messages("common.incomeFromPensions.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-3")
 
     @formWithCsrf(action = controllers.pensions.incomeFromPensions.routes.UkPensionSchemePaymentsController.submit(taxYear)) {
         @inputRadio(
