@@ -31,6 +31,8 @@ import utils.PageUrls.IncomeFromPensionsPages.statePension
 import utils.PageUrls._
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
+import java.time.LocalDate
+
 class StatePensionControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
 
   private def pensionsUsersData(pensionsCyaModel: PensionsCYAModel): PensionsUserData = {
@@ -117,6 +119,22 @@ class StatePensionControllerISpec extends IntegrationTest with ViewHelpers with 
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
       result.status shouldBe BAD_REQUEST
+    }
+
+    "redirect if not within Tax Year" in {
+      lazy implicit val result: WSResponse = {
+        dropPensionsDB()
+        authoriseAgentOrIndividual(aUser.isAgent)
+        val form: Map[String, String] = Map(RadioButtonAmountForm.yesNo -> "false")
+        insertCyaData(pensionsUsersData(aPensionsCYAModel), aUserRequest)
+        urlPost(
+          fullUrl(statePension(taxYear)),
+          body = form,
+          follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
+      }
+      result.status shouldBe SEE_OTHER
+      result.header("location").contains(overviewUrl(taxYear)) shouldBe true
     }
   }
 }
