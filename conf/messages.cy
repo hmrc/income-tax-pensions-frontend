@@ -517,22 +517,16 @@ pensions.taxPaidOnStatePensionLumpSum.title.agent = Did your client pay tax on t
 pensions.taxPaidOnStatePensionLumpSum.error.noEntry.agent = Select yes if your client paid tax on the State Pension lump sum
 
 #state pension
-pensions.statePension.title.individual = Did you get State Pension this year?
-pensions.statePension.title.agent = Did your client get State Pension this year?
+pensions.statePension.title.individual = Do you get regular State Pension payments?
+pensions.statePension.title.agent = Does your client get regular State Pension payments?
 pensions.statePension.error.noEntry.individual = Select yes if you got State Pension this year
 pensions.statePension.error.noEntry.agent = Select yes if your client got State Pension this year
-
-#How Much Was Your State Pension Amount Messages
-pensions.statePensionAmount.title.individual = How much was your State Pension?
-pensions.statePensionAmount.title.agent = How much was your client’s State Pension?
-pensions.statePensionAmount.paragraph.individual = You told us you did not get State Pension of {0} this year. Tell us how much you got.
-pensions.statePensionAmount.paragraph.agent = You told us your client did not get State Pension of {0} this year. Tell us how much they got.
-pensions.statePensionAmount.error.noEntry.individual = Enter your State Pension amount
-pensions.statePensionAmount.error.incorrectFormat.individual = Enter your State Pension amount in the correct format
-pensions.statePensionAmount.error.overMaximum.individual = Your State Pension amount must be less than £100,000,000,000
-pensions.statePensionAmount.error.noEntry.agent = Enter your client’s State Pension amount
-pensions.statePensionAmount.error.incorrectFormat.agent = Enter your client’s State Pension amount in the correct format
-pensions.statePensionAmount.error.overMaximum.agent = Your client’s State Pension amount must be less than £100,000,000,000
+pensions.statePension.amount.error.noEntry.individual = Enter your State Pension amount
+pensions.statePension.amount.error.incorrectFormat.individual = Enter your State Pension amount in the correct format
+pensions.statePension.amount.error.overMaximum.individual = Your State Pension amount must be less than £100,000,000,000
+pensions.statePension.amount.error.noEntry.agent = Enter your client’s State Pension amount
+pensions.statePension.amount.error.incorrectFormat.agent = Enter your client’s State Pension amount in the correct format
+pensions.statePension.amount.error.overMaximum.agent = Your client’s State Pension amount must be less than £100,000,000,000
 
 #tax paid on lump sum amount
 incomeFromPensions.taxPaidOnLumpSumAmount.title.individual = How much tax did you pay on the State Pension lump sum?
@@ -910,7 +904,6 @@ overseasPension.pensionReliefType.error.noEntry = Select the type of tax relief 
 overseasPension.pensionReliefType.link = Find out about the types of tax relief for overseas pension scheme payments
 
 #Pension Tax Relief Details
-#Pension Tax Relief Details
 overseasPension.reliefDetails.title = Pension scheme details
 overseasPension.reliefDetails.pensionSchemeName = Pension scheme name
 overseasPension.reliefDetails.amount = Untaxed employer payments
@@ -944,6 +937,11 @@ overseasPension.yourTaxableAmount.table.header2=Amount
 overseasPension.yourTaxableAmount.table.foreignPayments=Foreign pension payments
 overseasPension.yourTaxableAmount.table.nonUkTax=Non-UK tax deducted
 overseasPension.yourTaxableAmount.table.taxableAmount=Taxable amount
+
+#relief scheme summary view
+pensions.paymentsIntoOverseasPensions.reliefSchemeSummary.title = Schemes with untaxed employer payments
+pensions.paymentsIntoOverseasPensions.reliefSchemeSummary.addAnotherReliefLink = Add another overseas pension scheme
+pensions.paymentsIntoOverseasPensions.reliefSchemeSummary.addReliefLink = Add an overseas pension scheme
 
 ############################################## INCOME FROM OVERSEAS PENSIONS ##############################################
 
@@ -995,8 +993,6 @@ incomeFromOverseasPensions.summary.tax.amount = Taxable amount
 #Overseas Pension Income Summary Page
 overseasPensionIncomeSummary.heading = Overseas pension income
 overseasPensionIncomeSummary.hidden = Change Overseas pension income
-#TODO: overseasPensionIncomeSummary.addAnotherPensionIncomeLink = Add another overseas pension scheme
-#TODO:overseasPensionIncomeSummary.addPensionIncomeLink = Add an overseas pension scheme
 
 ############################################## TRANSFER INTO OVERSEAS PENSION ##############################################
 

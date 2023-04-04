@@ -99,8 +99,6 @@ object PageUrls extends IntegrationTest {
 
     def statePensionLumpSumAmountUrl(taxYear: Int): String = s"$appUrl/$taxYear/pension-income/state-pension-lump-sum-amount"
 
-    def statePensionAmountUrl(taxYear: Int): String = s"$appUrl/$taxYear/pension-income/state-pension-amount"
-
     def statePensionLumpSumUrl(taxYear: Int): String = s"$appUrl/$taxYear/pension-income/state-pension-lump-sum"
 
     def statePension(taxYear: Int): String = s"$appUrl/$taxYear/pension-income/state-pension"
@@ -220,6 +218,9 @@ object PageUrls extends IntegrationTest {
 
     val doubleTaxationAgreementUrl: Int => Int => String =
       (index: Int) => (taxYear: Int) => s"$appUrl/$taxYear/overseas-pensions/payments-into-overseas-pensions/double-taxation-agreement-details?index=$index"
+
+    def pensionReliefSchemeSummaryUrl(taxYear: Int): String =
+      s"$appUrl/$taxYear/overseas-pensions/payments-into-overseas-pensions/untaxed-schemes-summary"
 
   }
 
