@@ -219,8 +219,8 @@ POST        /:taxYear/overseas-pensions/payments-into-overseas-pensions/qualifyi
 GET         /:taxYear/overseas-pensions/payments-into-overseas-pensions/pensions-customer-reference-number                         controllers.pensions.paymentsIntoOverseasPensions.PensionsCustomerReferenceNumberController.show(taxYear: Int)
 POST        /:taxYear/overseas-pensions/payments-into-overseas-pensions/pensions-customer-reference-number                         controllers.pensions.paymentsIntoOverseasPensions.PensionsCustomerReferenceNumberController.submit(taxYear: Int)
 
-GET         /:taxYear/overseas-pensions/payments-into-overseas-pensions/pensions-overseas-sf74                                     controllers.pensions.paymentsIntoOverseasPensions.SF74ReferenceController.show(taxYear: Int)
-POST        /:taxYear/overseas-pensions/payments-into-overseas-pensions/pensions-overseas-sf74                                     controllers.pensions.paymentsIntoOverseasPensions.SF74ReferenceController.submit(taxYear: Int)
+GET         /:taxYear/overseas-pensions/payments-into-overseas-pensions/pensions-overseas-sf74                                     controllers.pensions.paymentsIntoOverseasPensions.SF74ReferenceController.show(taxYear: Int, reliefIndex: Option[Int])
+POST        /:taxYear/overseas-pensions/payments-into-overseas-pensions/pensions-overseas-sf74                                     controllers.pensions.paymentsIntoOverseasPensions.SF74ReferenceController.submit(taxYear: Int, reliefIndex: Option[Int])
 
 GET         /:taxYear/overseas-pensions/payments-into-overseas-pensions/untaxed-employer-payments                                  controllers.pensions.paymentsIntoOverseasPensions.UntaxedEmployerPaymentsController.show(taxYear: Int, index: Option[Int])
 POST        /:taxYear/overseas-pensions/payments-into-overseas-pensions/untaxed-employer-payments                                  controllers.pensions.paymentsIntoOverseasPensions.UntaxedEmployerPaymentsController.submit(taxYear: Int, index: Option[Int])

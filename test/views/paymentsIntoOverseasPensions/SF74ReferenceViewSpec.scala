@@ -112,7 +112,7 @@ class SF74ReferenceViewSpec extends ViewUnitTest{
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
 
         def form: Form[String] = new FormsProvider().sf74ReferenceIdForm
-        val htmlFormat = underTest(form, taxYearEOY)
+        val htmlFormat = underTest(form, taxYearEOY, Some(0))
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
         standardPageElementChecks()
       }
@@ -122,7 +122,7 @@ class SF74ReferenceViewSpec extends ViewUnitTest{
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
 
         def form: Form[String] = new FormsProvider().sf74ReferenceIdForm
-        val htmlFormat = underTest(form.bind(Map(SF74ReferenceForm.sf74ReferenceId -> "1234567")), taxYearEOY)
+        val htmlFormat = underTest(form.bind(Map(SF74ReferenceForm.sf74ReferenceId -> "1234567")), taxYearEOY, Some(0))
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
         standardPageElementChecks(outputValue = "1234567")
       }
@@ -132,7 +132,7 @@ class SF74ReferenceViewSpec extends ViewUnitTest{
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
 
         def form: Form[String] = new FormsProvider().sf74ReferenceIdForm
-        val htmlFormat = underTest(form.bind(Map(SF74ReferenceForm.sf74ReferenceId -> "")), taxYearEOY)
+        val htmlFormat = underTest(form.bind(Map(SF74ReferenceForm.sf74ReferenceId -> "")), taxYearEOY, Some(0))
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
         errorAboveElementCheck(userScenario.commonExpectedResults.emptyErrorMessage, Some("sf74ReferenceId"))
         errorSummaryCheck(userScenario.commonExpectedResults.emptyErrorMessage, "#sf74ReferenceId")
@@ -144,7 +144,7 @@ class SF74ReferenceViewSpec extends ViewUnitTest{
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
 
         def form: Form[String] = new FormsProvider().sf74ReferenceIdForm
-        val htmlFormat = underTest(form.bind(Map(SF74ReferenceForm.sf74ReferenceId -> "123456789012")), taxYearEOY)
+        val htmlFormat = underTest(form.bind(Map(SF74ReferenceForm.sf74ReferenceId -> "123456789012")), taxYearEOY, Some(0))
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
         errorAboveElementCheck(userScenario.commonExpectedResults.invalidErrorMessage, Some("sf74ReferenceId"))
         errorSummaryCheck(userScenario.commonExpectedResults.invalidErrorMessage, "#sf74ReferenceId")
@@ -156,7 +156,7 @@ class SF74ReferenceViewSpec extends ViewUnitTest{
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
 
         def form: Form[String] = new FormsProvider().sf74ReferenceIdForm
-        val htmlFormat = underTest(form.bind(Map(SF74ReferenceForm.sf74ReferenceId -> "SF74/123456")), taxYearEOY)
+        val htmlFormat = underTest(form.bind(Map(SF74ReferenceForm.sf74ReferenceId -> "SF74/123456")), taxYearEOY, Some(0))
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
         errorAboveElementCheck(userScenario.commonExpectedResults.invalidErrorMessage, Some("sf74ReferenceId"))
         errorSummaryCheck(userScenario.commonExpectedResults.invalidErrorMessage, "#sf74ReferenceId")

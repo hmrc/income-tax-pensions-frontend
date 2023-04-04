@@ -87,7 +87,7 @@ object ReliefsSchemeDetailsHelper extends CYABaseHelper {
         Some(summaryListRowWithStrings(
           "overseasPension.reliefDetails.schemeDetail",
           relief.sf74Reference,
-          routes.SF74ReferenceController.show(taxYear)))
+          routes.SF74ReferenceController.show(taxYear, index)))
       case TaxReliefQuestion.DoubleTaxationRelief =>
         Some(summaryListRowWithStrings(
           "overseasPension.reliefDetails.schemeDetail",
