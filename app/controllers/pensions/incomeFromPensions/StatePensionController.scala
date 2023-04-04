@@ -23,7 +23,7 @@ import models.mongo.{PensionsCYAModel, PensionsUserData}
 import models.pension.statebenefits.{IncomeFromPensionsViewModel, StateBenefitViewModel}
 import models.requests.UserSessionDataRequest
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
@@ -75,7 +75,7 @@ class StatePensionController @Inject()(actionsProvider: ActionsProvider,
   private def updateSessionData[T](pensionUserData: PensionsUserData,
                                    yesNo: Boolean,
                                    amount: Option[BigDecimal],
-                                   taxYear: Int)(implicit request: UserSessionDataRequest[T]) = {
+                                   taxYear: Int)(implicit request: UserSessionDataRequest[T]): Future[Result] = {
     val viewModel: IncomeFromPensionsViewModel = pensionUserData.pensions.incomeFromPensions
     val updateStatePension: StateBenefitViewModel = viewModel.statePension match {
       case Some(value) => value.copy(amountPaidQuestion = Some(yesNo), amount = if (yesNo) amount else None)
