@@ -40,7 +40,7 @@ object PaymentsIntoOverseasPensionsViewModelBuilder {
         sf74Reference = Some("SF74-123456")),
       Relief(
         reliefType = Some(MigrantMemberRelief),
-        customerReferenceNumberQuestion = None,
+        customerReferenceNumberQuestion = Some("PENSIONINCOME356"),
         employerPaymentsAmount = Some(100.00),
         qualifyingOverseasPensionSchemeReferenceNumber = Some("123456"),
         alphaTwoCountryCode = None,
