@@ -109,10 +109,10 @@ trait CommonUtils extends IntegrationTest with ViewHelpers with PensionsDatabase
     result
   }
 
-  def getResponseNoSessionData(implicit url: Int => String): WSResponse = {
+  def getResponseNoSessionData(maybeAgent: Option[Boolean] = Some(false))(implicit url: Int => String): WSResponse = {
     val result: WSResponse = {
       dropPensionsDB()
-      authoriseAgentOrIndividual(isAgent = false)
+      authoriseAgentOrIndividual(maybeAgent.getOrElse(false))
       urlGet(fullUrl(url(taxYearEOY)), follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
     }
     result

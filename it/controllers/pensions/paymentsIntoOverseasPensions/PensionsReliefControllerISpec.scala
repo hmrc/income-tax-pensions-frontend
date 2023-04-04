@@ -26,7 +26,7 @@ import models.pension.charges.TaxReliefQuestion
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.PaymentIntoOverseasPensions.{pensionCustomerReferenceNumberUrl, pensionReliefSchemeDetailsUrl, pensionReliefTypeUrl, qopsReferenceUrl, sf74ReferenceUrl, doubleTaxationAgreementUrl}
+import utils.PageUrls.PaymentIntoOverseasPensions.{doubleTaxationAgreementUrl, pensionCustomerReferenceNumberUrl, pensionReliefSchemeDetailsUrl, pensionReliefTypeUrl, qopsReferenceUrl, qopsReferenceUrlWithIndex, sf74ReferenceUrl}
 import utils.PageUrls.{fullUrl, overviewUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
@@ -130,7 +130,7 @@ class PensionsReliefControllerISpec extends IntegrationTest with ViewHelpers
       }
 
       result.status shouldBe SEE_OTHER
-      result.headers("location").head shouldBe qopsReferenceUrl(0)(taxYearEOY)
+      result.headers("location").head shouldBe qopsReferenceUrlWithIndex(taxYearEOY, 0)
     }
 
     "persist amount and redirect to DTR when DTR is selected" in {

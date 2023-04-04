@@ -208,7 +208,7 @@ class PensionSchemeTaxReferenceLifetimeControllerISpec extends CommonUtils with 
 
     "Redirect to the lifetime allowance CYA page if there is no session data" should {
       implicit val url: Int=> String = pensionTaxReferenceNumberLifetimeAllowanceUrl
-      lazy val result: WSResponse = getResponseNoSessionData
+      lazy val result: WSResponse = getResponseNoSessionData()
 
 
       "has an SEE_OTHER status" in {
