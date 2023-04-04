@@ -81,16 +81,16 @@ class ReliefSchemeSummaryViewSpec extends ViewUnitTest with FakeRequestProvider 
 
 
   object CommonExpectedCY extends CommonExpectedResults {
-    override val expectedCaption: Int => String = (taxYear: Int) => s"Payments into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val expectedButtonText = "Continue"
+    override val expectedCaption: Int => String = (taxYear: Int) => s"Taliadau i bensiynau tramor ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
+    val expectedButtonText = "Yn eich blaen"
     val expectedTitle = "Schemes with untaxed employer payments"
     val expectedHeading = "Schemes with untaxed employer payments"
-    val change = "Change"
-    val remove = "Remove"
+    val change = "Newid"
+    val remove = "Tynnu"
     val expectedAddAnotherText = "Add another overseas pension scheme"
     val expectedAddPensionSchemeText = "Add an overseas pension scheme"
     val addASchemeButton = "Add a scheme"
-    val returnToOverviewButton = "Return to overview"
+    val returnToOverviewButton = "Yn ôl i’r trosolwg"
     val text1 = "You need to add one or more pension scheme."
     val text2 = "If you don’t have a pensions scheme to add you can return to the overview page and come back later."
   }

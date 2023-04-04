@@ -44,7 +44,7 @@ class StatePensionViewSpec extends ViewUnitTest with FakeRequestProvider {
 
   trait SpecificExpectedResults {
     val expectedTitle: String
-    val expectedHeading: String
+    lazy val expectedHeading = expectedTitle
     val expectedErrorTitle: String
     val expectedNoEntryErrorMessage: String
     val expectedNoAmountErrorMessage: String
@@ -61,17 +61,16 @@ class StatePensionViewSpec extends ViewUnitTest with FakeRequestProvider {
     val amountExample = "For example, £193.54"
   }
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Income from pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val yesText = "Yes"
-    val noText = "No"
-    val buttonText = "Continue"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Incwm o bensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
+    val yesText = "Iawn"
+    val noText = "Na"
+    val buttonText = "Yn eich blaen"
     val amountSubheading = "Total amount this tax year"
-    val amountExample = "For example, £193.54"
+    val amountExample = "Er enghraifft, £193.54"
   }
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
     val expectedTitle = "Do you get regular State Pension payments?"
-    val expectedHeading = "Do you get regular State Pension payments?"
     val expectedErrorTitle = s"Error: $expectedTitle"
     val expectedNoEntryErrorMessage = "Select yes if you got State Pension this year"
     val expectedNoAmountErrorMessage = "Enter your State Pension amount"
@@ -80,8 +79,7 @@ class StatePensionViewSpec extends ViewUnitTest with FakeRequestProvider {
   }
   object ExpectedIndividualCY extends SpecificExpectedResults {
     val expectedTitle = "Do you get regular State Pension payments?"
-    val expectedHeading = "Do you get regular State Pension payments?"
-    val expectedErrorTitle = s"Error: $expectedTitle"
+    val expectedErrorTitle = s"Gwall: $expectedTitle"
     val expectedNoEntryErrorMessage = "Select yes if you got State Pension this year"
     val expectedNoAmountErrorMessage = "Enter your State Pension amount"
     val expectedIncorrectFormatErrorMessage = "Enter your State Pension amount in the correct format"
@@ -90,7 +88,6 @@ class StatePensionViewSpec extends ViewUnitTest with FakeRequestProvider {
 
   object ExpectedAgentEN extends SpecificExpectedResults {
     val expectedTitle = "Does your client get regular State Pension payments?"
-    val expectedHeading = "Does your client get regular State Pension payments?"
     val expectedErrorTitle = s"Error: $expectedTitle"
     val expectedNoEntryErrorMessage = "Select yes if your client got State Pension this year"
     val expectedNoAmountErrorMessage = "Enter your client’s State Pension amount"
@@ -99,8 +96,7 @@ class StatePensionViewSpec extends ViewUnitTest with FakeRequestProvider {
   }
   object ExpectedAgentCY extends SpecificExpectedResults {
     val expectedTitle = "Does your client get regular State Pension payments?"
-    val expectedHeading = "Does your client get regular State Pension payments?"
-    val expectedErrorTitle = s"Error: $expectedTitle"
+    val expectedErrorTitle = s"Gwall: $expectedTitle"
     val expectedNoEntryErrorMessage = "Select yes if your client got State Pension this year"
     val expectedNoAmountErrorMessage = "Enter your client’s State Pension amount"
     val expectedIncorrectFormatErrorMessage = "Enter your client’s State Pension amount in the correct format"
