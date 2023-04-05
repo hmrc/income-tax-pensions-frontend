@@ -126,7 +126,7 @@ class ReliefsSchemeDetailsHelperSpec extends AnyWordSpec with Matchers {
       "Scheme details",
       expectedValue,
       "Change",
-      "/2022/overseas-pensions/payments-into-overseas-pensions/qualifying-overseas-pension-scheme-reference-number",
+      "/2022/overseas-pensions/payments-into-overseas-pensions/qualifying-overseas-pension-scheme-reference-number?index=1",
       messages("overseasPension.reliefDetails.schemeDetail.hidden")))
   }
 

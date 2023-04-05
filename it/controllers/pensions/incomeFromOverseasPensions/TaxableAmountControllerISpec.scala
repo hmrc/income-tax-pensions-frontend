@@ -168,7 +168,7 @@ class TaxableAmountControllerISpec extends
 
         "Redirect to the pension summary page if there is no session data" which {
           implicit val overseasIncomeCountryUrl: Int => String = IncomeFromOverseasPensionsPages.taxableAmountUrl(0)
-          lazy val result: WSResponse = getResponseNoSessionData
+          lazy val result: WSResponse = getResponseNoSessionData()
 
           "has SEE_OTHER status" in {
             result.status shouldBe SEE_OTHER

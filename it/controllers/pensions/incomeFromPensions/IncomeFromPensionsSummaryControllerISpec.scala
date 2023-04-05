@@ -263,7 +263,7 @@ class IncomeFromPensionsSummaryControllerISpec extends CommonUtils with BeforeAn
         }
 
         "render pensions summary page when there is no data " which {
-          lazy val result: WSResponse = getResponseNoSessionData
+          lazy val result: WSResponse = getResponseNoSessionData()
 
           "has an SEE_OTHER status" in {
             result.status shouldBe SEE_OTHER
