@@ -201,8 +201,11 @@ object PageUrls extends IntegrationTest {
 
     def taxEmployerPaymentsUrl(taxYear: Int): String = s"$appUrl/$taxYear/overseas-pensions/payments-into-overseas-pensions/tax-employer-payments"
 
-    def qopsReferenceUrl(taxYear: Int): String =
-      s"$appUrl/$taxYear/overseas-pensions/payments-into-overseas-pensions/qualifying-overseas-pension-scheme-reference-number"
+    val qopsReferenceUrl: Int => String = (taxYear : Int) =>
+      s"$appUrl/$taxYear/overseas-pensions/payments-into-overseas-pensions/qualifying-overseas-pension-scheme-reference-number?index=0"
+
+    def qopsReferenceUrlWithIndex(taxYear: Int, index: Int): String =
+      s"$appUrl/$taxYear/overseas-pensions/payments-into-overseas-pensions/qualifying-overseas-pension-scheme-reference-number?index=$index"
 
     def sf74ReferenceUrl(taxYear: Int): String =
       s"$appUrl/$taxYear/overseas-pensions/payments-into-overseas-pensions/pensions-overseas-sf74"

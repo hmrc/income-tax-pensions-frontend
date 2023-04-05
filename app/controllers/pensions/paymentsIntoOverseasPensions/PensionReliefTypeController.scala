@@ -109,7 +109,7 @@ class PensionReliefTypeController@Inject()(actionsProvider: ActionsProvider,
     case TaxReliefQuestion.DoubleTaxationRelief =>
       Redirect(DoubleTaxationAgreementController.show(taxYear, reliefIndex))
     case TaxReliefQuestion.MigrantMemberRelief =>
-      Redirect(QOPSReferenceController.show(taxYear))
+     Redirect(QOPSReferenceController.show(taxYear, reliefIndex))
     case TaxReliefQuestion.TransitionalCorrespondingRelief =>
       Redirect(SF74ReferenceController.show(taxYear))
     case TaxReliefQuestion.NoTaxRelief =>

@@ -166,7 +166,7 @@ class NoSurchargeAmountControllerISpec extends CommonUtils with BeforeAndAfterEa
     }
 
     "redirect to the CYA page if there is no session data" which {
-      lazy val result: WSResponse = getResponseNoSessionData
+      lazy val result: WSResponse = getResponseNoSessionData()
 
       "has an SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER //TODO - redirect to CYA page once implemented

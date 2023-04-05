@@ -168,7 +168,7 @@ class PensionsCustomerReferenceNumberControllerISpec extends CommonUtils with Be
     }
 
     "Redirect to the pension summary page if there is no session data" should {
-      lazy val result: WSResponse = getResponseNoSessionData
+      lazy val result: WSResponse = getResponseNoSessionData()
 
       "has an SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER

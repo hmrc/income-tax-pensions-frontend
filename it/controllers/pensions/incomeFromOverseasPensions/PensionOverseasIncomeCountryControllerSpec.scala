@@ -167,7 +167,7 @@ class PensionOverseasIncomeCountryControllerSpec extends CommonUtils with Before
 
     "Redirect to the pension summary page if there is no session data" should {
       implicit val overseasIncomeCountryUrl: Int => String = IncomeFromOverseasPensionsPages.pensionOverseasIncomeCountryUrl
-      lazy val result: WSResponse = getResponseNoSessionData
+      lazy val result: WSResponse = getResponseNoSessionData()
 
       "has an SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER

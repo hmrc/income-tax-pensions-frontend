@@ -19,19 +19,22 @@ package controllers.pensions.paymentsIntoOverseasPensions
 import builders.PaymentsIntoOverseasPensionsViewModelBuilder.aPaymentsIntoOverseasPensionsViewModel
 import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import builders.PensionsUserDataBuilder.{aPensionsUserData, pensionUserDataWithOverseasPensions}
-import builders.UserBuilder.aUserRequest
+import builders.UserBuilder.{aUser, aUserRequest, anAgentUser}
 import forms.QOPSReferenceNumberForm
 import models.pension.charges.Relief
 import models.pension.charges.TaxReliefQuestion.{MigrantMemberRelief, TransitionalCorrespondingRelief}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterEach
+import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.CommonUtils
-import utils.PageUrls.{PaymentIntoOverseasPensions, pensionSummaryUrl}
+import utils.PageUrls.IncomeFromPensionsPages.ukPensionincomeSummaryUrl
+import utils.PageUrls.PaymentIntoOverseasPensions.{qopsReferenceUrl, qopsReferenceUrlWithIndex}
+import utils.{CommonUtils, PensionsDatabaseHelper}
+import utils.PageUrls.{PaymentIntoOverseasPensions, fullUrl, overseasPensionsSummaryUrl, pensionSummaryUrl}
 
-class QOPSReferenceControllerISpec extends CommonUtils with BeforeAndAfterEach {
+class QOPSReferenceControllerISpec extends CommonUtils with BeforeAndAfterEach with PensionsDatabaseHelper{
   object Selectors {
     val captionSelector: String = "#main-content > div > div > header > p"
     val continueButtonSelector: String = "#continue"
@@ -93,7 +96,6 @@ class QOPSReferenceControllerISpec extends CommonUtils with BeforeAndAfterEach {
   }
 
   val inputName: String = "qopsReferenceId"
-  implicit val qopsReferenceUrl: Int => String = (taxYear: Int) => PaymentIntoOverseasPensions.qopsReferenceUrl(taxYear)
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(
     UserScenario(isWelsh = false, isAgent = false, CommonExpectedEN, Some(ExpectedIndividualEN)),
@@ -116,6 +118,7 @@ class QOPSReferenceControllerISpec extends CommonUtils with BeforeAndAfterEach {
             employerPaymentsAmount = Some(1999.99),
             qualifyingOverseasPensionSchemeReferenceNumber = None)
 
+          implicit val url: Int => String = (taxYear: Int) => qopsReferenceUrl(taxYear)
           implicit lazy val result: WSResponse = showPage(user,
             aPensionsUserData.copy(pensions = aPensionsCYAModel.copy(
               paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel.copy(
@@ -146,11 +149,12 @@ class QOPSReferenceControllerISpec extends CommonUtils with BeforeAndAfterEach {
             customerReferenceNumberQuestion = Some("PENSIONINCOME245"),
             employerPaymentsAmount = Some(1999.99),
             qualifyingOverseasPensionSchemeReferenceNumber = Some(qopsRef),
-            )
+          )
 
           val pensionsViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(
             reliefs = Seq(relief))
 
+          implicit val url: Int => String = (taxYear: Int) => qopsReferenceUrl(taxYear)
           val pensionUserData = pensionUserDataWithOverseasPensions(pensionsViewModel)
           implicit lazy val result: WSResponse = showPage(user, pensionUserData)
 
@@ -184,6 +188,7 @@ class QOPSReferenceControllerISpec extends CommonUtils with BeforeAndAfterEach {
 
           val pensionsViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(
             reliefs = Seq(relief))
+          implicit val url: Int => String = (taxYear: Int) => qopsReferenceUrl(taxYear)
           val pensionUserData = pensionUserDataWithOverseasPensions(pensionsViewModel)
           implicit lazy val result: WSResponse = showPage(user, pensionUserData)
 
@@ -200,7 +205,7 @@ class QOPSReferenceControllerISpec extends CommonUtils with BeforeAndAfterEach {
           textOnPageCheck(hintText, hintTextSelector)
           inputFieldValueCheck(inputName, inputSelector, expectedQopsRef)
           buttonCheck(expectedButtonText, continueButtonSelector)
-          formPostLinkCheck(qopsReferenceUrl(taxYearEOY), formSelector)
+          formPostLinkCheck(qopsReferenceUrlWithIndex(taxYearEOY, 0), formSelector)
           welshToggleCheck(user.isWelsh)
         }
 
@@ -217,6 +222,7 @@ class QOPSReferenceControllerISpec extends CommonUtils with BeforeAndAfterEach {
 
           val pensionsViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(
             reliefs = Seq(relief))
+          implicit val url: Int => String = (taxYear: Int) => qopsReferenceUrl(taxYear)
           val pensionUserData = pensionUserDataWithOverseasPensions(pensionsViewModel)
           implicit lazy val result: WSResponse = showPage(user, pensionUserData)
 
@@ -233,19 +239,61 @@ class QOPSReferenceControllerISpec extends CommonUtils with BeforeAndAfterEach {
           textOnPageCheck(hintText, hintTextSelector)
           inputFieldValueCheck(inputName, inputSelector, expectedQopsRef)
           buttonCheck(expectedButtonText, continueButtonSelector)
-          formPostLinkCheck(qopsReferenceUrl(taxYearEOY), formSelector)
+          formPostLinkCheck(qopsReferenceUrlWithIndex(taxYearEOY, 0), formSelector)
           welshToggleCheck(user.isWelsh)
         }
-      }
-    }
 
-    "Redirect to the pension summary page if there is no session data" should {
-      lazy val result: WSResponse = getResponseNoSessionData
 
-      "has an SEE_OTHER status" in {
-        result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
+        "Redirect to the pension summary page if an out of bounds index is provided " should {
+          val qopsRef = "123456"
+
+          val relief = Relief(
+            reliefType = Some(TransitionalCorrespondingRelief),
+            customerReferenceNumberQuestion = Some("PENSIONINCOME245"),
+            employerPaymentsAmount = Some(1999.99),
+            qualifyingOverseasPensionSchemeReferenceNumber = Some(qopsRef),
+          )
+          implicit val qopsReferenceUrl = PaymentIntoOverseasPensions.qopsReferenceUrl(2)
+
+          val pensionsViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(
+            reliefs = Seq(relief))
+
+          implicit val url: Int => String = (taxYear: Int) => qopsReferenceUrlWithIndex(taxYear, 100)
+          val pensionUserData = pensionUserDataWithOverseasPensions(pensionsViewModel)
+          implicit lazy val result: WSResponse = showPage(user, pensionUserData)
+
+          "has an SEE_OTHER status" in {
+            result.status shouldBe SEE_OTHER
+            result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
+          }
+        }
       }
+
+      s"Redirect to the pension summary page if there is no session data when Welsh: ${user.isWelsh} and isAgent: ${user.isAgent}" should {
+        implicit val url: Int => String = (taxYear: Int) => qopsReferenceUrl(taxYearEOY)
+        lazy val result: WSResponse = getResponseNoSessionData(Some(user.isAgent))
+
+        s"has a SEE_OTHER status when Welsh: ${user.isWelsh} and isAgent: ${user.isAgent}" in {
+          result.status shouldBe SEE_OTHER
+          result.header("location") shouldBe Some(overseasPensionsSummaryUrl(taxYearEOY))
+        }
+      }
+
+      s"Redirect to the pension summary page when index doesn't match when Welsh: ${user.isWelsh} and isAgent: ${user.isAgent}" should {
+        lazy implicit val result: WSResponse = {
+          dropPensionsDB()
+          authoriseAgentOrIndividual(user.isAgent)
+          insertCyaData(aPensionsUserData, if (user.isAgent) anAgentUser else aUserRequest)
+          urlGet(fullUrl(qopsReferenceUrlWithIndex(taxYearEOY, 100)), !user.isAgent, follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        }
+
+        s"has an SEE_OTHER status when Welsh: ${user.isWelsh} and isAgent: ${user.isAgent}" in {
+          result.status shouldBe SEE_OTHER
+          result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
+        }
+      }
+
     }
   }
 
@@ -255,6 +303,7 @@ class QOPSReferenceControllerISpec extends CommonUtils with BeforeAndAfterEach {
 
         s"return $BAD_REQUEST error when incorrect format is submitted" which {
           lazy val form: Map[String, String] = Map(QOPSReferenceNumberForm.qopsReferenceId -> "1234567")
+          implicit val url: Int => String = (taxYear: Int) => qopsReferenceUrl(taxYear)
           lazy val result: WSResponse = submitPage(user, aPensionsUserData, form)
 
 
@@ -295,6 +344,7 @@ class QOPSReferenceControllerISpec extends CommonUtils with BeforeAndAfterEach {
 
       val pensionUserData = pensionUserDataWithOverseasPensions(pensionsViewModel)
 
+      implicit val url: Int => String = (taxYear: Int) => qopsReferenceUrl(taxYear)
       lazy val result: WSResponse = submitPage(pensionUserData, form)
 
       "has a SEE_OTHER(303) status" in {
@@ -305,6 +355,31 @@ class QOPSReferenceControllerISpec extends CommonUtils with BeforeAndAfterEach {
       "updates pension scheme QOPS reference to contain tax reference" in {
         lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
         cyaModel.pensions.paymentsIntoOverseasPensions.reliefs.head.qualifyingOverseasPensionSchemeReferenceNumber shouldBe Some("123456")
+      }
+    }
+
+    "redirect when user passes an out of bounds index" which {
+      lazy val form: Map[String, String] = Map(QOPSReferenceNumberForm.qopsReferenceId -> "123456")
+
+      val relief = Relief(
+        reliefType = Some(MigrantMemberRelief),
+        customerReferenceNumberQuestion = Some("PENSIONINCOME245"),
+        employerPaymentsAmount = Some(1999.99),
+        qualifyingOverseasPensionSchemeReferenceNumber = Some("111111"),
+      )
+      implicit val qopsReferenceUrl = PaymentIntoOverseasPensions.qopsReferenceUrl(2)
+
+      val pensionsViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(
+        reliefs = Seq(relief))
+
+      val pensionUserData = pensionUserDataWithOverseasPensions(pensionsViewModel)
+
+      implicit val url: Int => String = (taxYear: Int) => qopsReferenceUrlWithIndex(taxYear, 100)
+      lazy val result: WSResponse = submitPage(pensionUserData, form)
+
+      "has a SEE_OTHER(303) status" in {
+        result.status shouldBe SEE_OTHER
+        result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
       }
     }
 
@@ -323,6 +398,7 @@ class QOPSReferenceControllerISpec extends CommonUtils with BeforeAndAfterEach {
 
       val pensionUserData = pensionUserDataWithOverseasPensions(pensionsViewModel)
 
+      implicit val url: Int => String = (taxYear: Int) => qopsReferenceUrl(taxYear)
       lazy val result: WSResponse = submitPage(pensionUserData, form)
 
 
@@ -340,12 +416,13 @@ class QOPSReferenceControllerISpec extends CommonUtils with BeforeAndAfterEach {
     "redirect to pension summary page if there is no session data" should {
       lazy val form: Map[String, String] = Map(QOPSReferenceNumberForm.qopsReferenceId -> "123456")
 
+      implicit val url: Int => String = (taxYear: Int) => qopsReferenceUrl(taxYear)
       lazy val result: WSResponse = submitPageNoSessionData(form)
 
       "has an SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER
 
-        result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
+        result.header("location") shouldBe Some(overseasPensionsSummaryUrl(taxYearEOY))
       }
     }
   }
