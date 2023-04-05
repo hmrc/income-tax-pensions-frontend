@@ -17,7 +17,9 @@
 package controllers.pensions.paymentsIntoOverseasPensions
 
 import config.{AppConfig, ErrorHandler}
+import controllers.pensions.paymentsIntoOverseasPensions.routes.PensionsCustomerReferenceNumberController
 import controllers.predicates.ActionsProvider
+import controllers.validateIndex
 import forms.FormsProvider
 import models.mongo.PensionsUserData
 import models.requests.UserSessionDataRequest
@@ -41,28 +43,38 @@ class SF74ReferenceController @Inject()(
                                        ) (implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock)
   extends FrontendController(mcc) with I18nSupport with SessionHelper{
 
-  def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit userSessionDataRequest =>
-    val sf74Reference = userSessionDataRequest.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs.head.sf74Reference
-    sf74Reference match {
-      case Some(value) => Future.successful(Ok(view(formsProvider.sf74ReferenceIdForm.fill(value), taxYear)))
-      case None => Future.successful(Ok(view(formsProvider.sf74ReferenceIdForm, taxYear)))
+  def show(taxYear: Int, reliefIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit userSessionDataRequest =>
+    validateIndex(reliefIndex, userSessionDataRequest.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs.size) match {
+      case Some(idx) =>
+        val sf74Reference = userSessionDataRequest.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs(idx).sf74Reference
+        sf74Reference match {
+          case Some(value) => Future.successful(Ok(view(formsProvider.sf74ReferenceIdForm.fill(value), taxYear, reliefIndex)))
+          case None => Future.successful(Ok(view(formsProvider.sf74ReferenceIdForm, taxYear, reliefIndex)))
+        }
+      case _ =>
+        Future.successful(Redirect(PensionsCustomerReferenceNumberController.show(taxYear)))
     }
   }
 
-  def submit(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
+  def submit(taxYear: Int, reliefIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit userSessionDataRequest =>
-      formsProvider.sf74ReferenceIdForm.bindFromRequest().fold(
-        formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
-        sf74Reference =>  updateSessionData(userSessionDataRequest.pensionsUserData, Some(sf74Reference), taxYear)
-      )
+      validateIndex(reliefIndex, userSessionDataRequest.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs.size) match {
+        case Some(idx) =>
+          formsProvider.sf74ReferenceIdForm.bindFromRequest().fold(
+            formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear, reliefIndex))),
+            sf74Reference =>  updateSessionData(userSessionDataRequest.pensionsUserData, Some(sf74Reference), taxYear, idx))
+      case _ =>
+        Future.successful(Redirect(PensionsCustomerReferenceNumberController.show(taxYear)))
+    }
   }
 
   private def updateSessionData[T](pensionUserData: PensionsUserData,
                                    sf74Reference : Option[String],
-                                   taxYear: Int)(implicit request: UserSessionDataRequest[T]) = {
+                                   taxYear: Int,
+                                   index: Int)(implicit request: UserSessionDataRequest[T]) = {
     val updatedCyaModel = pensionUserData.pensions.copy(
       paymentsIntoOverseasPensions = pensionUserData.pensions.paymentsIntoOverseasPensions.copy(
-        reliefs = Seq(pensionUserData.pensions.paymentsIntoOverseasPensions.reliefs.head.copy(
+        reliefs = Seq(pensionUserData.pensions.paymentsIntoOverseasPensions.reliefs(index).copy(
         sf74Reference = sf74Reference
       )))
     )
@@ -70,7 +82,7 @@ class SF74ReferenceController @Inject()(
     pensionSessionService.createOrUpdateSessionData(request.user,
       updatedCyaModel, taxYear, pensionUserData.isPriorSubmission)(errorHandler.internalServerError()) {
       //TODO: Redirect to the pension scheme details page
-        Redirect(controllers.pensions.paymentsIntoOverseasPensions.routes.SF74ReferenceController.show(taxYear))
+        Redirect(controllers.pensions.paymentsIntoOverseasPensions.routes.SF74ReferenceController.show(taxYear, Some(index)))
     }
   }
 }
