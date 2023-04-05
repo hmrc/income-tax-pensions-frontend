@@ -77,16 +77,16 @@ class RefundSummaryViewSpec extends ViewUnitTest {
 
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Short service refunds for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val expectedButtonText = "Continue"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Ad-daliadau am wasanaeth byr ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
+    val expectedButtonText = "Yn eich blaen"
     val expectedTitle = "Short service refund summary"
     val expectedHeading = "Short service refund summary"
-    val change = "Change"
-    val remove = "Remove"
+    val change = "Newid"
+    val remove = "Tynnu"
     val expectedAddAnotherText = "Add another pension scheme"
     val expectedAddPensionSchemeText = "Add a pension scheme"
     val addASchemeButton = "Add a scheme"
-    val returnToOverviewButton = "Return to overview"
+    val returnToOverviewButton = "Yn ôl i’r trosolwg"
     val text1 = "You need to add one or more pension scheme."
     val text2 = "If you don’t have a pensions scheme to add you can return to the overview page and come back later."
   }

@@ -70,7 +70,7 @@ class PensionSchemeTaxReferenceControllerISpec extends IntegrationTest with Befo
   object ExpectedIndividualCY extends SpecificExpectedResults {
     val expectedNoEntryError: String = "Enter your PSTR"
     val expectedIncorrectFormatError: String = "Enter your PSTR in the correct format"
-    val expectedParagraph2: String = "If more than one of your pension schemes paid the tax, you can add these details later."
+    val expectedParagraph2: String = "Os gwnaeth mwy nag un o’ch cynlluniau pensiwn dalu’r dreth, gallwch ychwanegu’r manylion hyn yn nes ymlaen."
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
@@ -82,7 +82,8 @@ class PensionSchemeTaxReferenceControllerISpec extends IntegrationTest with Befo
   object ExpectedAgentCY extends SpecificExpectedResults {
     val expectedNoEntryError: String = "Enter your client’s PSTR"
     val expectedIncorrectFormatError: String = "Enter your client’s PSTR in the correct format"
-    val expectedParagraph2: String = "If more than one of your client’s pension schemes paid the tax, you can add these details later."
+    val expectedParagraph2: String =
+      "Os gwnaeth mwy nag un o gynlluniau pensiwn eich cleient dalu’r dreth, gallwch ychwanegu’r manylion hyn yn nes ymlaen."
   }
 
   object CommonExpectedEN extends CommonExpectedResults {
@@ -98,14 +99,14 @@ class PensionSchemeTaxReferenceControllerISpec extends IntegrationTest with Befo
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Pension annual allowance for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val expectedButtonText = "Continue"
-    val yesText = "Yes"
-    val noText = "No"
-    val expectedTitle = "Pension Scheme Tax Reference"
-    val expectedHeading = "Pension Scheme Tax Reference"
-    val expectedErrorTitle = s"Error: $expectedTitle"
-    val hintText = "For example, ‘12345678RA’"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Lwfans blynyddol pensiwn ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
+    val expectedButtonText = "Yn eich blaen"
+    val yesText = "Iawn"
+    val noText = "Na"
+    val expectedTitle = "Cyfeirnod Treth y Cynllun Pensiwn"
+    val expectedHeading = expectedTitle
+    val expectedErrorTitle = s"Gwall: $expectedTitle"
+    val hintText = "Er enghraifft, ‘12345678RA’"
     val expectedParagraph1 = "Enter the reference for the pension scheme that paid the tax."
   }
 
@@ -141,7 +142,7 @@ class PensionSchemeTaxReferenceControllerISpec extends IntegrationTest with Befo
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(expectedTitle)
+          titleCheck(expectedTitle, user.isWelsh)
           h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY))
           textOnPageCheck(expectedParagraph1, paragraphSelector(1))
@@ -171,7 +172,7 @@ class PensionSchemeTaxReferenceControllerISpec extends IntegrationTest with Befo
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(expectedTitle)
+          titleCheck(expectedTitle, user.isWelsh)
           h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY))
           textOnPageCheck(expectedParagraph1, paragraphSelector(1))
@@ -201,7 +202,7 @@ class PensionSchemeTaxReferenceControllerISpec extends IntegrationTest with Befo
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(expectedTitle)
+          titleCheck(expectedTitle, user.isWelsh)
           h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY))
           textOnPageCheck(expectedParagraph1, paragraphSelector(1))
@@ -271,7 +272,7 @@ class PensionSchemeTaxReferenceControllerISpec extends IntegrationTest with Befo
           implicit def document: () => Document = () => Jsoup.parse(result.body)
           import Selectors._
           import user.commonExpectedResults._
-          titleCheck(expectedErrorTitle)
+          titleCheck(expectedErrorTitle, user.isWelsh)
           h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY))
           textOnPageCheck(expectedParagraph1, paragraphSelector(1))
@@ -302,7 +303,7 @@ class PensionSchemeTaxReferenceControllerISpec extends IntegrationTest with Befo
           implicit def document: () => Document = () => Jsoup.parse(result.body)
           import Selectors._
           import user.commonExpectedResults._
-          titleCheck(expectedErrorTitle)
+          titleCheck(expectedErrorTitle, user.isWelsh)
           h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY))
           textOnPageCheck(expectedParagraph1, paragraphSelector(1))

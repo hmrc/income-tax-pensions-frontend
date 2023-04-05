@@ -53,11 +53,9 @@ class UkPensionIncomeCYAControllerISpec extends IntegrationTest with ViewHelpers
   }
 
   trait CommonExpectedResults {
-    val expectedH1: String
     val expectedTitle: String
-
-    def expectedCaption(taxYear: Int): String
-
+    lazy val expectedH1 = expectedTitle
+    val expectedCaption: Int => String
     val buttonText: String
     val yesText: String
     val noText: String
@@ -72,11 +70,8 @@ class UkPensionIncomeCYAControllerISpec extends IntegrationTest with ViewHelpers
   }
 
   object CommonExpectedEN extends CommonExpectedResults {
-    val expectedH1 = "Check income from pensions"
     val expectedTitle = "Check income from pensions"
-
-    def expectedCaption(taxYear: Int): String = s"UK pension income for 6 April ${taxYear - 1} to 5 April $taxYear"
-
+    val expectedCaption: Int => String = (taxYear: Int) =>  s"UK pension income for 6 April ${taxYear - 1} to 5 April $taxYear"
     val buttonText = "Continue"
     val yesText = "Yes"
     val noText = "No"
@@ -86,16 +81,13 @@ class UkPensionIncomeCYAControllerISpec extends IntegrationTest with ViewHelpers
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedH1 = "Check income from pensions"
     val expectedTitle = "Check income from pensions"
-
-    def expectedCaption(taxYear: Int): String = s"UK pension income for 6 April ${taxYear - 1} to 5 April $taxYear"
-
-    val buttonText = "Continue"
-    val yesText = "Yes"
-    val noText = "No"
-    val ukPensionIncome = "UK pension income"
-    val ukPensionSchemes = "UK pension schemes"
+    val expectedCaption: Int => String = (taxYear: Int) =>  s"Incwm o bensiynau’r DU ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
+    val buttonText = "Yn eich blaen"
+    val yesText = "Iawn"
+    val noText = "Na"
+    val ukPensionIncome = "Incwm o bensiynau’r DU"
+    val ukPensionSchemes = "Cynlluniau pensiwn y DU"
     val ukPensionSchemesHidden = "Change UK pension scheme details"
   }
 
@@ -147,7 +139,7 @@ class UkPensionIncomeCYAControllerISpec extends IntegrationTest with ViewHelpers
 
             implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-            titleCheck(expectedTitle)
+            titleCheck(expectedTitle, user.isWelsh)
             h1Check(expectedH1)
             captionCheck(user.commonExpectedResults.expectedCaption(taxYear))
             textOnPageCheck(user.specificExpectedResults.get.expectedParagraph, paragraphSelector)
@@ -169,7 +161,7 @@ class UkPensionIncomeCYAControllerISpec extends IntegrationTest with ViewHelpers
 
             implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-            titleCheck(expectedTitle)
+            titleCheck(expectedTitle, user.isWelsh)
             h1Check(expectedH1)
             captionCheck(user.commonExpectedResults.expectedCaption(taxYearEOY))
             textOnPageCheck(user.specificExpectedResults.get.expectedParagraph, paragraphSelector)
@@ -192,7 +184,7 @@ class UkPensionIncomeCYAControllerISpec extends IntegrationTest with ViewHelpers
 
             implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-            titleCheck(expectedTitle)
+            titleCheck(expectedTitle, user.isWelsh)
             h1Check(expectedH1)
             captionCheck(user.commonExpectedResults.expectedCaption(taxYear))
             textOnPageCheck(user.specificExpectedResults.get.expectedParagraph, paragraphSelector)

@@ -26,7 +26,7 @@ class YesNoAmountControllerSpec(override val pathForThisPage: String) extends Co
   private val fieldNameForAmountInput = "amount-2"
 
   def assertPageAsExpected(expectedStatusCode: Int, expectedPageContents: ExpectedYesNoAmountPageContents)
-                          (implicit userConfig: UserConfig, response: WSResponse): Unit = {
+                          (implicit userConfig: UserConfig, response: WSResponse, isWelsh: Boolean): Unit = {
     val document = parse(response.body)
     response must haveStatus(expectedStatusCode)
     super.assertPageAsExpected(document, expectedPageContents)

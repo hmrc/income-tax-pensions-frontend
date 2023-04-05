@@ -44,49 +44,54 @@ class SF74ReferenceViewSpec extends ViewUnitTest{
     val continue: String
     val emptyErrorMessage: String
     val invalidErrorMessage: String
+    val errorText: String
   }
 
   object ExpectedContentsIndividualEN extends ExpectedContents {
-    override val expectedTitle: String = "SF74 reference"
-    override val expectedCaption: Int => String = (taxYear: Int) => s"Payments into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-    override val expectedPara1: String = "Enter your SF74 reference. You can find this out from your overseas scheme manager."
-    override val hintText: String = "For example, 'SF74/1234', 'SF74/45865' or 'SF74/123456'"
-    override val continue: String = "Continue"
-    override val emptyErrorMessage: String = "Enter your SF74 reference"
-    override val invalidErrorMessage: String = "The SF74 reference must be between 1 and 10 digits long, contain only numbers and no special characters"
+    val expectedTitle: String = "SF74 reference"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Payments into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
+    val expectedPara1: String = "Enter your SF74 reference. You can find this out from your overseas scheme manager."
+    val hintText: String = "For example, 'SF74/1234', 'SF74/45865' or 'SF74/123456'"
+    val continue: String = "Continue"
+    val emptyErrorMessage: String = "Enter your SF74 reference"
+    val invalidErrorMessage: String = "The SF74 reference must be between 1 and 10 digits long, contain only numbers and no special characters"
+    val errorText: String = "Error: "
   }
 
   object ExpectedContentsIndividualCY extends ExpectedContents {
-    override val expectedTitle: String = "SF74 reference"
-    override val expectedCaption: Int => String = (taxYear: Int) => s"Payments into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-    override val expectedPara1: String = "Enter your SF74 reference. You can find this out from your overseas scheme manager."
-    override val hintText: String = "For example, 'SF74/1234', 'SF74/45865' or 'SF74/123456'"
-    override val continue: String = "Continue"
-    override val emptyErrorMessage: String = "Enter your SF74 reference"
-    override val invalidErrorMessage: String = "The SF74 reference must be between 1 and 10 digits long, contain only numbers and no special characters"
+    val expectedTitle: String = "SF74 reference"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Taliadau i bensiynau tramor ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
+    val expectedPara1: String = "Enter your SF74 reference. You can find this out from your overseas scheme manager."
+    val hintText: String = "For example, 'SF74/1234', 'SF74/45865' or 'SF74/123456'"
+    val continue: String = "Yn eich blaen"
+    val emptyErrorMessage: String = "Enter your SF74 reference"
+    val invalidErrorMessage: String = "The SF74 reference must be between 1 and 10 digits long, contain only numbers and no special characters"
+    val errorText: String = "Gwall: "
   }
 
   object ExpectedContentsAgentEN extends ExpectedContents {
-    override val expectedTitle: String = "SF74 reference"
-    override val expectedCaption: Int => String = (taxYear: Int) => s"Payments into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-    override val expectedPara1: String = "Enter your client’s SF74 reference. You can find this out from your client’s overseas scheme manager."
-    override val hintText: String = "For example, 'SF74/1234', 'SF74/45865' or 'SF74/123456'"
-    override val continue: String = "Continue"
-    override val emptyErrorMessage: String = "Enter your SF74 reference"
-    override val invalidErrorMessage: String = "The SF74 reference must be between 1 and 10 digits long, contain only numbers and no special characters"
+    val expectedTitle: String = "SF74 reference"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Payments into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
+    val expectedPara1: String = "Enter your client’s SF74 reference. You can find this out from your client’s overseas scheme manager."
+    val hintText: String = "For example, 'SF74/1234', 'SF74/45865' or 'SF74/123456'"
+    val continue: String = "Continue"
+    val emptyErrorMessage: String = "Enter your SF74 reference"
+    val invalidErrorMessage: String = "The SF74 reference must be between 1 and 10 digits long, contain only numbers and no special characters"
+    val errorText: String = "Error: "
   }
 
   object ExpectedContentsAgentCY extends ExpectedContents {
-    override val expectedTitle: String = "SF74 reference"
-    override val expectedCaption: Int => String = (taxYear: Int) => s"Payments into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-    override val expectedPara1: String = "Enter your client’s SF74 reference. You can find this out from your client’s overseas scheme manager."
-    override val hintText: String = "For example, 'SF74/1234', 'SF74/45865' or 'SF74/123456'"
-    override val continue: String = "Continue"
-    override val emptyErrorMessage: String = "Enter your SF74 reference"
-    override val invalidErrorMessage: String = "The SF74 reference must be between 1 and 10 digits long, contain only numbers and no special characters"
+    val expectedTitle: String = "SF74 reference"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Taliadau i bensiynau tramor ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
+    val expectedPara1: String = "Enter your client’s SF74 reference. You can find this out from your client’s overseas scheme manager."
+    val hintText: String = "For example, 'SF74/1234', 'SF74/45865' or 'SF74/123456'"
+    val continue: String = "Yn eich blaen"
+    val emptyErrorMessage: String = "Enter your SF74 reference"
+    val invalidErrorMessage: String = "The SF74 reference must be between 1 and 10 digits long, contain only numbers and no special characters"
+    val errorText: String = "Gwall: "
   }
 
-  override protected val userScenarios: Seq[UserScenario[ExpectedContents, Unit]] = Seq(
+  protected val userScenarios: Seq[UserScenario[ExpectedContents, Unit]] = Seq(
     UserScenario(isWelsh = false, isAgent = false, ExpectedContentsIndividualEN),
     UserScenario(isWelsh = false, isAgent = true, ExpectedContentsAgentEN),
     UserScenario(isWelsh = true, isAgent = false, ExpectedContentsIndividualCY),
@@ -136,7 +141,7 @@ class SF74ReferenceViewSpec extends ViewUnitTest{
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
         errorAboveElementCheck(userScenario.commonExpectedResults.emptyErrorMessage, Some("sf74ReferenceId"))
         errorSummaryCheck(userScenario.commonExpectedResults.emptyErrorMessage, "#sf74ReferenceId")
-        standardPageElementChecks(errorSummary = "Error: ")
+        standardPageElementChecks(errorSummary = userScenario.commonExpectedResults.errorText)
       }
 
       "show an error message when user passes more than 10 digits " which {
@@ -148,7 +153,7 @@ class SF74ReferenceViewSpec extends ViewUnitTest{
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
         errorAboveElementCheck(userScenario.commonExpectedResults.invalidErrorMessage, Some("sf74ReferenceId"))
         errorSummaryCheck(userScenario.commonExpectedResults.invalidErrorMessage, "#sf74ReferenceId")
-        standardPageElementChecks(outputValue = "123456789012", errorSummary = "Error: ")
+        standardPageElementChecks(outputValue = "123456789012", errorSummary = userScenario.commonExpectedResults.errorText)
       }
 
       "show an error message when user passes digits other than numbers " which {
@@ -160,9 +165,8 @@ class SF74ReferenceViewSpec extends ViewUnitTest{
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
         errorAboveElementCheck(userScenario.commonExpectedResults.invalidErrorMessage, Some("sf74ReferenceId"))
         errorSummaryCheck(userScenario.commonExpectedResults.invalidErrorMessage, "#sf74ReferenceId")
-        standardPageElementChecks(outputValue = "SF74/123456", errorSummary = "Error: ")
+        standardPageElementChecks(outputValue = "SF74/123456", errorSummary = userScenario.commonExpectedResults.errorText)
       }
-
     }
   }
 

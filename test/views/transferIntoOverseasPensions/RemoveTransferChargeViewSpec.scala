@@ -49,7 +49,7 @@ class RemoveTransferChargeViewSpec extends ViewUnitTest {
 
   object CommonExpectedEN extends CommonExpectedResults {
     val expectedTitle = s"Are you sure you want to remove $pensionName?"
-    val expectedHeading = s"Are you sure you want to remove $pensionName?"
+    val expectedHeading = expectedTitle
     val expectedCaption: Int => String = (taxYear: Int) => s"Transfers into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
     val expectedParagraph1 = "This will remove:"
     val expectedBullet1 = "The name of the pension scheme"
@@ -60,15 +60,15 @@ class RemoveTransferChargeViewSpec extends ViewUnitTest {
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedTitle = s"Are you sure you want to remove $pensionName?"
-    val expectedHeading = s"Are you sure you want to remove $pensionName?"
-    val expectedCaption: Int => String = (taxYear: Int) => s"Transfers into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
+    val expectedTitle = s"A ydych yn siŵr eich bod am dynnu $pensionName?"
+    val expectedHeading = expectedTitle
+    val expectedCaption: Int => String = (taxYear: Int) => s"Trosglwyddiadau i bensiynau tramor ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
     val expectedParagraph1 = "This will remove:"
     val expectedBullet1 = "The name of the pension scheme"
     val expectedBullet2 = "Pensions scheme tax reference"
     val expectedBullet3 = "Pensions provider address"
-    val buttonText = "Remove"
-    val cancelText = "Cancel"
+    val buttonText = "Tynnu"
+    val cancelText = "Canslo"
   }
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, String]] = Seq(

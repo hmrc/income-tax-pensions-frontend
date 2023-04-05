@@ -31,10 +31,10 @@ import play.api.libs.ws.WSResponse
 import utils.PageUrls.PaymentIntoPensions._
 import utils.PageUrls.fullUrl
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
-import views.OneOffRASPaymentsAmountTestSupport._
-import views.OneOffRASPaymentsAmountTestSupport.Selectors._
-import views.OneOffRASPaymentsAmountTestSupport.CommonExpectedEN._
-import views.OneOffRASPaymentsAmountTestSupport.ExpectedIndividualEN._
+import views.OneOffRASPaymentsAmountSpec._
+import views.OneOffRASPaymentsAmountSpec.Selectors._
+import views.OneOffRASPaymentsAmountSpec.CommonExpectedEN._
+import views.OneOffRASPaymentsAmountSpec.ExpectedIndividualEN._
 
 class OneOffRASPaymentsAmountControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
   private def pensionsUsersData(pensionsCyaModel: PensionsCYAModel): PensionsUserData = {

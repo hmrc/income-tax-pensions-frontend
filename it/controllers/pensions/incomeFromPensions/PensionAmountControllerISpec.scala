@@ -34,15 +34,15 @@ import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 class PensionAmountControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
 
-  private val newAmount = 25
-  private val newAmount2 = 30
-  private val poundPrefixText = "£"
-  private val amount1InputName = "amount-1"
-  private val amount2InputName = "amount-2"
-  private val index = 0
-  private val amountInvalidFormat = "invalid"
-  private val amountEmpty = ""
-  private val amountOverMaximum = "100,000,000,000"
+  val newAmount = 25
+  val newAmount2 = 30
+  val poundPrefixText = "£"
+  val amount1InputName = "amount-1"
+  val amount2InputName = "amount-2"
+  val index = 0
+  val amountInvalidFormat = "invalid"
+  val amountEmpty = ""
+  val amountOverMaximum = "100,000,000,000"
 
 
   def pensionAmountForm(totalAmount: String, taxPaid: String): Map[String, String] = Map(
@@ -102,9 +102,9 @@ class PensionAmountControllerISpec extends IntegrationTest with ViewHelpers with
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Income from pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val hintText = "For example, £193.52"
-    val buttonText = "Continue"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Incwm o bensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
+    val hintText = "Er enghraifft, £193.52"
+    val buttonText = "Yn eich blaen"
     val totalTax: String = "Total amount this tax year"
     val taxPaid: String = "Tax paid"
     val totalTaxErrorNoEntry: String = "Enter the amount of pension paid"
@@ -124,7 +124,7 @@ class PensionAmountControllerISpec extends IntegrationTest with ViewHelpers with
   object ExpectedIndividualCY extends SpecificExpectedResults {
     val expectedTitle = "How much pension did you get paid?"
     val expectedHeading = "How much pension did you get paid?"
-    val expectedErrorTitle = s"Error: $expectedTitle"
+    val expectedErrorTitle = s"Gwall: $expectedTitle"
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
@@ -136,7 +136,7 @@ class PensionAmountControllerISpec extends IntegrationTest with ViewHelpers with
   object ExpectedAgentCY extends SpecificExpectedResults {
     val expectedTitle = "How much pension did your client get paid?"
     val expectedHeading = "How much pension did your client get paid?"
-    val expectedErrorTitle = s"Error: $expectedTitle"
+    val expectedErrorTitle = s"Gwall: $expectedTitle"
   }
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(
@@ -150,7 +150,6 @@ class PensionAmountControllerISpec extends IntegrationTest with ViewHelpers with
     userScenarios.foreach { user =>
       import Selectors._
       import user.commonExpectedResults._
-
 
       s"language is ${welshTest(user.isWelsh)} and request is from an ${agentTest(user.isAgent)}" should {
 
@@ -172,7 +171,7 @@ class PensionAmountControllerISpec extends IntegrationTest with ViewHelpers with
           "has an OK status" in {
             result.status shouldBe OK
           }
-          titleCheck(user.specificExpectedResults.get.expectedTitle)
+          titleCheck(user.specificExpectedResults.get.expectedTitle, user.isWelsh)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           textOnPageCheck(totalTax, labelIndex(2))
@@ -205,7 +204,7 @@ class PensionAmountControllerISpec extends IntegrationTest with ViewHelpers with
           "has an OK status" in {
             result.status shouldBe OK
           }
-          titleCheck(user.specificExpectedResults.get.expectedTitle)
+          titleCheck(user.specificExpectedResults.get.expectedTitle, user.isWelsh)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           textOnPageCheck(totalTax, labelIndex(2))
@@ -239,7 +238,7 @@ class PensionAmountControllerISpec extends IntegrationTest with ViewHelpers with
           "has an OK status" in {
             result.status shouldBe OK
           }
-          titleCheck(user.specificExpectedResults.get.expectedTitle)
+          titleCheck(user.specificExpectedResults.get.expectedTitle, user.isWelsh)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           textOnPageCheck(totalTax, labelIndex(2))
@@ -273,7 +272,7 @@ class PensionAmountControllerISpec extends IntegrationTest with ViewHelpers with
           "has an OK status" in {
             result.status shouldBe OK
           }
-          titleCheck(user.specificExpectedResults.get.expectedTitle)
+          titleCheck(user.specificExpectedResults.get.expectedTitle, user.isWelsh)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           textOnPageCheck(totalTax, labelIndex(2))
@@ -362,7 +361,7 @@ class PensionAmountControllerISpec extends IntegrationTest with ViewHelpers with
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(user.specificExpectedResults.get.expectedErrorTitle)
+          titleCheck(user.specificExpectedResults.get.expectedErrorTitle, user.isWelsh)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           textOnPageCheck(totalTax, labelIndex(1))
@@ -400,7 +399,7 @@ class PensionAmountControllerISpec extends IntegrationTest with ViewHelpers with
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(user.specificExpectedResults.get.expectedErrorTitle)
+          titleCheck(user.specificExpectedResults.get.expectedErrorTitle, user.isWelsh)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           textOnPageCheck(totalTax, labelIndex(1))
@@ -437,7 +436,7 @@ class PensionAmountControllerISpec extends IntegrationTest with ViewHelpers with
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(user.specificExpectedResults.get.expectedErrorTitle)
+          titleCheck(user.specificExpectedResults.get.expectedErrorTitle, user.isWelsh)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           textOnPageCheck(totalTax, labelIndex(1))

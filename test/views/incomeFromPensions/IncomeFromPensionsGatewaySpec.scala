@@ -26,7 +26,7 @@ import play.api.mvc.AnyContent
 import support.ViewUnitTest
 import views.html.pensions.incomeFromPensions.IncomeFromPensionsGatewayView
 
-class IncomeFromPensionsGatewayTestSupport extends ViewUnitTest {
+class IncomeFromPensionsGatewaySpec extends ViewUnitTest {
 
   object Selectors {
     val continueButtonFormSelector = "#main-content > div > div > form"
@@ -75,10 +75,10 @@ class IncomeFromPensionsGatewayTestSupport extends ViewUnitTest {
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    override val expectedCaption: Int => String = (taxYear: Int) => s"Income from pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-    override val expectedYesText: String = "Yes"
-    override val expectedNoText: String = "No"
-    override val expectedButtonText: String = "Continue"
+    override val expectedCaption: Int => String = (taxYear: Int) => s"Incwm o bensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
+    override val expectedYesText: String = "Iawn"
+    override val expectedNoText: String = "Na"
+    override val expectedButtonText: String = "Yn eich blaen"
     override val expectedParagraphTitle: String = "Mae’r rhain yn cynnwys:"
     override val expectedParagraph1: String = "Pensiwn y Wladwriaeth"
     override val expectedParagraph2: String = "pensiynau gweithle a phreifat"
@@ -104,7 +104,7 @@ class IncomeFromPensionsGatewayTestSupport extends ViewUnitTest {
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
     override val expectedTitleText: String = "A gawsoch incwm o gynlluniau pensiwn?"
-    override val expectedErrorTitleText: String = s"Error: $expectedTitleText"
+    override val expectedErrorTitleText: String = s"Gwall: $expectedTitleText"
     override val expectedErrorText: String = "Dewiswch ’Iawn’ os cawsoch daliadau o gynlluniau pensiwn"
     override val expectedDetails1: String = "eich P60"
     override val expectedDetails2: String = "y llythyr ’Ynglŷn â’r cynnydd cyffredinol mewn budd-daliadau’ a anfonwyd atoch gan y Gwasanaeth Pensiwn"
@@ -112,7 +112,7 @@ class IncomeFromPensionsGatewayTestSupport extends ViewUnitTest {
 
   object ExpectedAgentCY extends SpecificExpectedResults {
     override val expectedTitleText: String = "A gafodd eich cleient incwm o gynlluniau pensiwn?"
-    override val expectedErrorTitleText: String = s"Error: $expectedTitleText"
+    override val expectedErrorTitleText: String = s"Gwall: $expectedTitleText"
     override val expectedErrorText: String = "Dewiswch ’Iawn’ os cafodd eich cleient daliadau o gynlluniau pensiwn"
     override val expectedDetails1: String = "P60 eich cleient"
     override val expectedDetails2: String = "y llythyr ’Ynglŷn â’r cynnydd cyffredinol mewn budd-daliadau’ a anfonwyd at eich cleient gan y Gwasanaeth Pensiwn"

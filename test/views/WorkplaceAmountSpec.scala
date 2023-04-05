@@ -80,12 +80,12 @@ object WorkplaceAmountSpec {
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Payments into pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val hintText = "For example, £193.52"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Taliadau i bensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
+    val hintText = "Er enghraifft, £193.52"
     val emptyErrorText = "Nodwch y swm a dalwyd i mewn i bensiynau gweithle"
     val invalidFormatErrorText = "Nodwch y swm a dalwyd i mewn i bensiynau gweithle yn y fformat cywir"
     val maxAmountErrorText = "Mae’n rhaid i’r swm a dalwyd i mewn i bensiynau gweithle fod yn llai na £100,000,000,000"
-    val buttonText = "Continue"
+    val buttonText = "Yn eich blaen"
     val expectedParagraph = "Dylech gynnwys taliadau yn unig:"
   }
 
@@ -101,7 +101,7 @@ object WorkplaceAmountSpec {
   object ExpectedIndividualCY extends SpecificExpectedResults {
     val expectedHeading = "Faint y gwnaethoch ei dalu i mewn i bensiynau gweithle?"
     val expectedTitle = "Faint y gwnaethoch ei dalu i mewn i bensiynau gweithle?"
-    val expectedErrorTitle = s"Error: $expectedTitle"
+    val expectedErrorTitle = s"Gwall: $expectedTitle"
     val expectedBullet1 = "wedi ei dalu ar ôl i’ch cyflog gael ei drethu"
     val expectedBullet2 = "ni fydd darparwr eich pensiwn yn hawlio rhyddhad treth ar ei gyfer"
     val expectedYouCanFindThisOut = "Gallwch gael gwybod hyn gan eich cyflogwr neu ddarparwr eich pensiwn."
@@ -120,7 +120,7 @@ object WorkplaceAmountSpec {
   object ExpectedAgentCY extends SpecificExpectedResults {
     val expectedHeading = "Faint y gwnaeth eich cleient ei dalu i mewn i bensiynau gweithle?"
     val expectedTitle = "Faint y gwnaeth eich cleient ei dalu i mewn i bensiynau gweithle?"
-    val expectedErrorTitle = s"Error: $expectedTitle"
+    val expectedErrorTitle = s"Gwall: $expectedTitle"
     val expectedBullet1 = "wedi ei dalu ar ôl i gyflog eich cleient gael ei drethu"
     val expectedBullet2 = "ni fydd darparwr pensiwn eich cleient yn hawlio rhyddhad treth ar ei gyfer"
     val expectedYouCanFindThisOut = "Gall eich cleient gael gwybod am hyn gan ei gyflogwr neu ddarparwr pensiwn."

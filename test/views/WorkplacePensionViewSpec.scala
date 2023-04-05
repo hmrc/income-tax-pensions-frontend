@@ -29,10 +29,10 @@ import play.api.i18n.Messages
 import play.api.mvc.AnyContent
 import support.ViewUnitTest
 import views.html.pensions.paymentsIntoPensions.WorkplacePensionView
-import views.WorkplacePensionControllerSpec._
+import views.WorkplacePensionViewSpec._
 
 // scalastyle:off magic.number
-object WorkplacePensionControllerSpec {
+object WorkplacePensionViewSpec {
 
   val noWorkplaceCYAModel: PensionsUserData = aPensionsUserData.copy(
     pensions = aPensionsCYAModel.copy(
@@ -79,11 +79,11 @@ object WorkplacePensionControllerSpec {
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Payments into pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val yesText = "Yes"
-    val noText = "No"
-    val buttonText = "Continue"
-    val expectedFindOutMoreText = "Dysgwch ragor am ryddhad treth. (opens in new tab)"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Taliadau i bensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
+    val yesText = "Iawn"
+    val noText = "Na"
+    val buttonText = "Yn eich blaen"
+    val expectedFindOutMoreText = "Dysgwch ragor am ryddhad treth. (yn agor tab newydd)"
   }
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
@@ -104,7 +104,7 @@ object WorkplacePensionControllerSpec {
     val expectedTheseCases = "Mae’r achosion hyn yn anarferol gan fod y rhan fwyaf o bensiynau gweithle wedi’u sefydlu i roi rhyddhad treth i chi ar adeg eich taliad."
     val expectedWhereToCheck = "Gwiriwch gyda’ch cyflogwr neu ddarparwr pensiwn pa drefniant sydd gennych."
     val expectedErrorMessage = "Dewiswch ‘Iawn’ os gwnaethoch dalu i mewn i bensiwn gweithle ac na chawsoch ryddhad treth"
-    val expectedErrorTitle = s"Error: $expectedTitle"
+    val expectedErrorTitle = s"Gwall: $expectedTitle"
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
@@ -126,10 +126,10 @@ object WorkplacePensionControllerSpec {
 
     val expectedWhereToCheck = "Gwiriwch gyda chyflogwr neu ddarparwr pensiwn eich cleient pa drefniant sydd ganddo."
     val expectedErrorMessage = "Dewiswch ‘Iawn’ os talodd eich cleient i mewn i bensiwn gweithle ac na chafodd ryddhad treth"
-    val expectedErrorTitle = s"Error: $expectedTitle"
+    val expectedErrorTitle = s"Gwall: $expectedTitle"
   }
 }
-class WorkplacePensionControllerSpec extends ViewUnitTest {
+class WorkplacePensionViewSpec extends ViewUnitTest {
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(
     UserScenario(isWelsh = false, isAgent = false, CommonExpectedEN, Some(ExpectedIndividualEN)),

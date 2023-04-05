@@ -63,8 +63,8 @@ class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAnd
   trait CommonExpectedResults {
     val expectedCaption: Int => String
     val expectedButtonText: String
-    val expectedHeading: String
     val expectedTitle: String
+    lazy val expectedHeading = expectedTitle
     val expectedError: String
     val expectedErrorTitle: String
     val expectedSubHeading: String
@@ -81,7 +81,6 @@ class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAnd
   object CommonExpectedEN extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Unauthorised payments from pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
     val expectedButtonText = "Continue"
-    val expectedHeading = "Unauthorised payments"
     val expectedTitle = "Unauthorised payments"
     val expectedError = "Select yes if you got an unauthorised payment from a pension scheme"
     val expectedErrorTitle = s"Error: $expectedTitle"
@@ -100,11 +99,10 @@ class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAnd
 
   object CommonExpectedCY extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Taliadau heb awdurdod o bensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
-    val expectedButtonText = "Continue"
-    val expectedHeading = "Unauthorised payments"
-    val expectedTitle = "Unauthorised payments"
-    val expectedError = "Select yes if you got an unauthorised payment from a pension scheme"
-    val expectedErrorTitle = s"Error: $expectedTitle"
+    val expectedButtonText = "Yn eich blaen"
+    val expectedTitle = "Taliadau heb awdurdod"
+    val expectedError = "Dewiswch ‘Iawn’ os cawsoch daliad heb awdurdod o gynllun pensiwn"
+    val expectedErrorTitle = s"Gwall: $expectedTitle"
     val expectedSubHeading = "Did you get an unauthorised payment from a pension scheme?"
     val expectedParagraphText = "Unauthorised payments are made outside the tax rules"
     val expectedParagraphText1: String = "If you got more than one unauthorised payment, you might " +
@@ -113,7 +111,7 @@ class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAnd
     val expectedYesSurchargeCheckboxText = "Yes, unauthorised payments that resulted in a surcharge"
     val expectedYesNotSurchargeCheckboxText = "Yes, unauthorised payments that did not result in a surcharge"
     val expectedNoSurchargeCheckboxText = "No"
-    val noEntryErrorMessage = "Select yes if you got an unauthorised payment from a pension scheme"
+    val noEntryErrorMessage = "Dewiswch ‘Iawn’ os cawsoch daliad heb awdurdod o gynllun pensiwn"
     val checkboxHint = "Select all that apply."
     val expectedDetailsExternalLinkText = "Find out more about unauthorised payments (opens in new tab)"
   }
@@ -150,7 +148,7 @@ class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAnd
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(user.commonExpectedResults.expectedTitle)
+          titleCheck(expectedTitle, user.isWelsh)
           h1Check(user.commonExpectedResults.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           hintTextCheck(checkboxHint, Selectors.checkboxHintSelector)
@@ -195,7 +193,7 @@ class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAnd
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(user.commonExpectedResults.expectedTitle)
+          titleCheck(expectedTitle, user.isWelsh)
           h1Check(user.commonExpectedResults.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           hintTextCheck(checkboxHint, Selectors.checkboxHintSelector)
@@ -240,7 +238,7 @@ class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAnd
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(user.commonExpectedResults.expectedTitle)
+          titleCheck(expectedTitle, user.isWelsh)
           h1Check(user.commonExpectedResults.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           hintTextCheck(checkboxHint, Selectors.checkboxHintSelector)
@@ -284,7 +282,7 @@ class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAnd
           }
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(user.commonExpectedResults.expectedTitle)
+          titleCheck(expectedTitle, user.isWelsh)
           h1Check(user.commonExpectedResults.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           hintTextCheck(checkboxHint, Selectors.checkboxHintSelector)
@@ -331,7 +329,7 @@ class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAnd
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(user.commonExpectedResults.expectedTitle)
+          titleCheck(expectedTitle, user.isWelsh)
           h1Check(user.commonExpectedResults.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           hintTextCheck(checkboxHint, Selectors.checkboxHintSelector)
@@ -378,7 +376,7 @@ class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAnd
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(user.commonExpectedResults.expectedTitle)
+          titleCheck(expectedTitle, user.isWelsh)
           h1Check(user.commonExpectedResults.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           hintTextCheck(checkboxHint, Selectors.checkboxHintSelector)
@@ -432,7 +430,7 @@ class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAnd
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(user.commonExpectedResults.expectedErrorTitle)
+          titleCheck(expectedErrorTitle, user.isWelsh)
           h1Check(user.commonExpectedResults.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           hintTextCheck(checkboxHint, Selectors.checkboxHintSelector)

@@ -139,7 +139,8 @@ class ControllerSpec(val pathForThisPage: String) extends PlaySpec
     super.afterAll()
   }
 
-  def assertPageAsExpected(document: Document, expectedPageContents: BaseExpectedPageContents)(implicit userConfig: UserConfig): Unit =
+  def assertPageAsExpected(document: Document, expectedPageContents: BaseExpectedPageContents)
+                          (implicit userConfig: UserConfig, isWelsh: Boolean = false): Unit =
     assertPageAsExpected(document, expectedPageContents, userConfig.preferredLanguage)
 
   def assertRedirectionAsExpected(expectedLocation: String)(implicit response: WSResponse): Unit = {
@@ -229,7 +230,8 @@ class ControllerSpec(val pathForThisPage: String) extends PlaySpec
   protected def userConfigWhenIrrelevant(sessionDataOpt: Option[PensionsUserData]): UserConfig =
     UserConfig(Individual, English, sessionDataOpt)
 
-  private def assertPageAsExpected(document: Document, expectedPageContents: BaseExpectedPageContents, preferredLanguage: PreferredLanguage): Unit = {
+  private def assertPageAsExpected(document: Document, expectedPageContents: BaseExpectedPageContents, preferredLanguage: PreferredLanguage)
+                                  (implicit isWelsh: Boolean): Unit = {
 
     document must haveTitle(expectedPageContents.title)
     document must haveHeader(expectedPageContents.header)
@@ -372,16 +374,21 @@ object ControllerSpec {
 
   trait DocumentMatchers {
 
-    class HasTitle(partialTitle: String) extends Matcher[Document] {
+    class HasTitle(partialTitle: String)(implicit isWelsh: Boolean = false) extends Matcher[Document] {
 
       override def apply(document: Document): MatchResult = {
         val fullTitle = s"$partialTitle - Update and submit an Income Tax Return - GOV.UK"
         val errorMessageIfExpected = s"The page didn't have the expected title '$fullTitle'. The actual title was '${document.title()}'"
         val errorMessageIfNotExpected = s"The page did indeed have the title '$fullTitle', which was not expected."
+
+        val fullTitleCy = s"$partialTitle - Diweddaru a chyflwyno Ffurflen Dreth Incwm - GOV.UK"
+        val errorMessageIfExpectedCy = s"The page didn't have the expected title '$fullTitleCy'. The actual title was '${document.title()}'"
+        val errorMessageIfNotExpectedCy = s"The page did indeed have the title '$fullTitleCy', which was not expected."
+
         MatchResult(
-          document.title().equals(fullTitle),
-          errorMessageIfExpected,
-          errorMessageIfNotExpected
+          document.title().equals(if (isWelsh) fullTitleCy else fullTitle),
+          if (isWelsh) errorMessageIfExpectedCy else errorMessageIfExpected,
+          if (isWelsh) errorMessageIfNotExpectedCy else errorMessageIfNotExpected
         )
       }
     }
@@ -799,7 +806,7 @@ object ControllerSpec {
       }
     }
 
-    def haveTitle(partialTitle: String) = new HasTitle(partialTitle)
+    def haveTitle(partialTitle: String)(implicit isWelsh: Boolean) = new HasTitle(partialTitle)
 
     def haveHeader(header: String) = new HasHeader(header)
 

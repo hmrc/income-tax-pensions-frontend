@@ -87,10 +87,10 @@ class EmployerPayOverseasPensionControllerISpec extends CommonUtils with BeforeA
   object ExpectedIndividualCY extends SpecificExpectedResults {
     val expectedTitle: String = "Did your employers pay into your overseas pension schemes?"
     val expectedHeading: String = "Did your employers pay into your overseas pension schemes?"
-    val expectedErrorTitle: String = s"Error: $expectedTitle"
+    val expectedErrorTitle: String = s"Gwall: $expectedTitle"
     val expectedError: String = "Select yes if your employer paid into your overseas pension schemes"
-    val expectedFindOut: String = "To find out you can:"
-    val expectedBullet1: String = "check your pension statement"
+    val expectedFindOut: String = "Er mwyn dysgu beth yw hyn, gallwch wneud y canlynol:"
+    val expectedBullet1: String = "gwirio’ch datganiad pensiwn"
     val expectedBullet2: String = "ask your employer"
   }
 
@@ -107,10 +107,10 @@ class EmployerPayOverseasPensionControllerISpec extends CommonUtils with BeforeA
   object ExpectedAgentCY extends SpecificExpectedResults {
     val expectedTitle: String = "Did your client’s employers pay into the overseas pension schemes?"
     val expectedHeading: String = "Did your client’s employers pay into the overseas pension schemes?"
-    val expectedErrorTitle: String = s"Error: $expectedTitle"
+    val expectedErrorTitle: String = s"Gwall: $expectedTitle"
     val expectedError: String = "Select yes if your client’s employer paid into their overseas pension schemes"
-    val expectedFindOut: String = "To find out you can ask your client to:"
-    val expectedBullet1: String = "check their pension statement"
+    val expectedFindOut: String = "Er mwyn dysgu beth yw hyn, gallwch ofyn i’ch cleient wneud y canlynol:"
+    val expectedBullet1: String = "gwirio’i ddatganiad pensiwn"
     val expectedBullet2: String = "ask their employer"
   }
 
@@ -122,10 +122,10 @@ class EmployerPayOverseasPensionControllerISpec extends CommonUtils with BeforeA
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Payments into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val expectedButtonText = "Continue"
-    val yesText = "Yes"
-    val noText = "No"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Taliadau i bensiynau tramor ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
+    val expectedButtonText = "Yn eich blaen"
+    val yesText = "Iawn"
+    val noText = "Na"
   }
 
   ".show" should {
@@ -145,7 +145,7 @@ class EmployerPayOverseasPensionControllerISpec extends CommonUtils with BeforeA
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(user.specificExpectedResults.get.expectedTitle)
+          titleCheck(user.specificExpectedResults.get.expectedTitle, user.isWelsh)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           textOnPageCheck(user.specificExpectedResults.get.expectedFindOut, paragraphSelector(1))
@@ -170,7 +170,7 @@ class EmployerPayOverseasPensionControllerISpec extends CommonUtils with BeforeA
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(user.specificExpectedResults.get.expectedTitle)
+          titleCheck(user.specificExpectedResults.get.expectedTitle, user.isWelsh)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           textOnPageCheck(user.specificExpectedResults.get.expectedFindOut, paragraphSelector(1))
@@ -194,7 +194,7 @@ class EmployerPayOverseasPensionControllerISpec extends CommonUtils with BeforeA
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(user.specificExpectedResults.get.expectedTitle)
+          titleCheck(user.specificExpectedResults.get.expectedTitle, user.isWelsh)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           textOnPageCheck(user.specificExpectedResults.get.expectedFindOut, paragraphSelector(1))
@@ -236,7 +236,7 @@ class EmployerPayOverseasPensionControllerISpec extends CommonUtils with BeforeA
           import Selectors._
           import user.commonExpectedResults._
 
-          titleCheck(user.specificExpectedResults.get.expectedErrorTitle)
+          titleCheck(user.specificExpectedResults.get.expectedErrorTitle, user.isWelsh)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           textOnPageCheck(user.specificExpectedResults.get.expectedFindOut, paragraphSelector(1))

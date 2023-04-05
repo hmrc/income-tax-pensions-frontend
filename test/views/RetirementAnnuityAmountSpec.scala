@@ -70,12 +70,12 @@ object RetirementAnnuityAmountSpec {
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Payments into pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val hintText = "For example, £193.52"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Taliadau i bensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
+    val hintText = "Er enghraifft, £193.52"
     val emptyErrorText = "Nodwch y swm a dalwyd i mewn i gontractau blwydd-dal ymddeol"
     val invalidFormatErrorText = "Nodwch y swm a dalwyd i mewn i gontractau blwydd-dal ymddeol yn y fformat cywir"
     val maxAmountErrorText = "Mae’n rhaid i’r swm a dalwyd i mewn i gontractau blwydd-dal ymddeol fod yn llai na £100,000,000,000"
-    val buttonText = "Continue"
+    val buttonText = "Yn eich blaen"
   }
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
@@ -89,7 +89,7 @@ object RetirementAnnuityAmountSpec {
     val onlyIncludePayment = "Dim ond taliadau na fydd darparwr eich pensiwn yn hawlio rhyddhad treth ar eu cyfer y dylech eu cynnwys. Gallwch ddysgu beth yw hyn oddi wrth ddarparwr eich pensiwn."
     val expectedTitle = "Faint y gwnaethoch ei dalu i mewn i’ch contractau blwydd-dal ymddeol?"
     val expectedHeading = "Faint y gwnaethoch ei dalu i mewn i’ch contractau blwydd-dal ymddeol?"
-    val expectedErrorTitle = s"Error: $expectedTitle"
+    val expectedErrorTitle = s"Gwall: $expectedTitle"
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
@@ -105,7 +105,7 @@ object RetirementAnnuityAmountSpec {
       "Dim ond taliadau na fydd darparwr pensiwn eich cleient yn hawlio rhyddhad treth ar eu cyfer y dylech eu cynnwys. Gallwch ddysgu beth yw hyn oddi wrth ddarparwr pensiwn eich cleient."
     val expectedTitle = "Faint y gwnaeth eich cleient ei dalu i mewn i’w gontractau blwydd-dal ymddeol?"
     val expectedHeading = "Faint y gwnaeth eich cleient ei dalu i mewn i’w gontractau blwydd-dal ymddeol?"
-    val expectedErrorTitle = s"Error: $expectedTitle"
+    val expectedErrorTitle = s"Gwall: $expectedTitle"
   }
 }
 

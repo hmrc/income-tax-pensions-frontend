@@ -1,86 +1,86 @@
 #################       Service messages       ########################################
 
-betaBar.banner.message.1 = This is a new service – your
-betaBar.banner.message.2 = feedback
-betaBar.banner.message.3 = will help us to improve it.
+betaBar.banner.message.1 = Gwasanaeth newydd yw hwn – bydd eich
+betaBar.banner.message.2 = adborth
+betaBar.banner.message.3 = yn ein helpu i’w wella.
 betaBar.beta = beta
 service.govUkExtension = GOV.UK
-service.name = Update and submit an Income Tax Return
+service.name = Diweddaru a chyflwyno Ffurflen Dreth Incwm
 
 #################       Common messages        ########################################
 
 common.fullStop = .
-common.back = Back
-common.yes = Yes
-common.no = No
+common.back = Yn ôl
+common.yes = Iawn
+common.no = Na
 common.or = neu
-common.continue = Continue
-common.saveAndContinue = Save and continue
-common.change = Change
-common.update = Update
-common.remove = Remove
-common.cancel = Cancel
-common.use = use
-common.error.errorKey = Error:
-common.opensInNewTab = (opens in new tab)
-common.currency.hint = For example, £193.52
-common.currency.hint1 = For example, £193.54
-common.help.getHelpWithThisPage = Get help with this page
-common.status.toDo = To do
-common.status.updated = Updated
-common.status.notStarted = Not Started
-common.pensions.caption = Pensions for 6 April {0} to 5 April {1}
-common.paymentsIntoPensions.caption = Payments into pensions for 6 April {0} to 5 April {1}
-common.paymentsIntoOverseasPensions.caption = Payments into overseas pensions for 6 April {0} to 5 April {1}
-common.incomeFromOverseasPensions.caption = Income from overseas pensions for 6 April {0} to 5 April {1}
-common.transferIntoOverseasPensions.caption = Transfers into overseas pensions for 6 April {0} to 5 April {1}
-common.shortServiceRefunds.caption = Short service refunds for 6 April {0} to 5 April {1}
-common.dividends.incomeFromPensions.caption = Dividends for 6 April {0} to 5 April {1}
-common.pensionAnnualAllowance.caption = Pension annual allowance for 6 April {0} to 5 April {1}
-common.incomeFromPensions.caption = Income from pensions for 6 April {0} to 5 April {1}
-common.uKPensionIncome.caption = UK pension income for 6 April {0} to 5 April {1}
-common.lifetimeAllowance.caption = Annual and lifetime allowances for 6 April {0} to 5 April {1}
-common.overseasPensions.caption = Overseas pensions for 6 April {0} to 5 April {1}
-common.return.overview.buttonText = Return to overview
+common.continue = Yn eich blaen
+common.saveAndContinue = Cadw ac yn eich blaen
+common.change = Newid
+common.update = Diweddaru
+common.remove = Tynnu
+common.cancel = Canslo
+common.use = defnyddio
+common.error.errorKey = Gwall:
+common.opensInNewTab = (yn agor tab newydd)
+common.currency.hint = Er enghraifft, £193.52
+common.currency.hint1 = Er enghraifft, £193.54
+common.help.getHelpWithThisPage = Help gyda’r dudalen hon
+common.status.toDo = I’w gwneud
+common.status.updated = Wedi diweddaru
+common.status.notStarted = Heb ddechrau
+common.pensions.caption = Pensiynau ar gyfer 6 Ebrill {0} i 5 Ebrill {1}
+common.paymentsIntoPensions.caption = Taliadau i bensiynau ar gyfer 6 Ebrill {0} i 5 Ebrill {1}
+common.paymentsIntoOverseasPensions.caption = Taliadau i bensiynau tramor ar gyfer 6 Ebrill {0} i 5 Ebrill {1}
+common.incomeFromOverseasPensions.caption = Incwm o bensiynau tramor ar gyfer 6 Ebrill {0} i 5 Ebrill {1}
+common.transferIntoOverseasPensions.caption = Trosglwyddiadau i bensiynau tramor ar gyfer 6 Ebrill {0} i 5 Ebrill {1}
+common.shortServiceRefunds.caption = Ad-daliadau am wasanaeth byr ar gyfer 6 Ebrill {0} i 5 Ebrill {1}
+common.dividends.incomeFromPensions.caption = Difidendau ar gyfer 6 Ebrill {0} i 5 Ebrill {1}
+common.pensionAnnualAllowance.caption = Lwfans blynyddol pensiwn ar gyfer 6 Ebrill {0} i 5 Ebrill {1}
+common.incomeFromPensions.caption = Incwm o bensiynau ar gyfer 6 Ebrill {0} i 5 Ebrill {1}
+common.uKPensionIncome.caption = Incwm o bensiynau’r DU ar gyfer 6 Ebrill {0} i 5 Ebrill {1}
+common.lifetimeAllowance.caption = Lwfans blynyddol a lwfans oes ar gyfer 6 Ebrill {0} i 5 Ebrill {1}
+common.overseasPensions.caption = Pensiynau tramor ar gyfer 6 Ebrill {0} i 5 Ebrill {1}
+common.return.overview.buttonText = Yn ôl i’r trosolwg
 common.currencyAmount = £{0}
-common.total = Total
-common.youCanFindThisOut.individual = You can find this out from your pension provider.
-common.youCanFindThisOut.agent = You can find this out from your client’s pension provider.
-common.moreThanOnePensionScheme.individual = If more than one of your pension schemes paid the tax, you can add these details later.
-common.moreThanOnePensionScheme.agent = If more than one of your client’s pension schemes paid the tax, you can add these details later.
-common.sectionsToFill.individual = You only need to fill in the sections that apply to you.
-common.sectionsToFill.agent = You only need to fill in the sections that apply to your client.
-common.country.select = select a country
+common.total = Cyfanswm
+common.youCanFindThisOut.individual = Gallwch ddysgu beth yw hyn oddi wrth eich darparwr pensiwn.
+common.youCanFindThisOut.agent = Gallwch ddysgu beth yw hyn oddi wrth ddarparwr pensiwn eich cleient.
+common.moreThanOnePensionScheme.individual = Os gwnaeth mwy nag un o’ch cynlluniau pensiwn dalu’r dreth, gallwch ychwanegu’r manylion hyn yn nes ymlaen.
+common.moreThanOnePensionScheme.agent = Os gwnaeth mwy nag un o gynlluniau pensiwn eich cleient dalu’r dreth, gallwch ychwanegu’r manylion hyn yn nes ymlaen.
+common.sectionsToFill.individual = Dim ond yr adrannau sy’n berthnasol i chi y mae angen i chi eu llenwi.
+common.sectionsToFill.agent = Dim ond yr adrannau sy’n berthnasol i’ch cleient y mae angen i chi eu llenwi.
+common.country.select = dewiswch wlad
 common.noTaxPaid = No tax paid
 
-common.error.amountMaxLimit = The total amount must be less than £100,000,000,000
-common.pensions.error.amountMaxLimit.individual = The amount of tax your pension provider paid or agreed to pay must be less than £100,000,000,000
-common.pensions.error.amountMaxLimit.agent = The amount of tax your client’s pension provider paid or agreed to pay must be less than £100,000,000,000
-common.pensions.error.amount.overMaximum = The amount of non-UK tax paid must be less than £100,000,000,000
-common.pensions.error.amount.noEntry = Enter the amount of non-UK tax paid
-common.pensions.amountTheyAgreedToPay.text = Amount they paid or agreed to pay, in pounds
-common.pensions.didYourPensionSchemesAgreeToPayTheTax.title.individual = Did your pension schemes pay or agree to pay the tax?
-common.pensions.didYourPensionSchemesAgreeToPayTheTax.title.agent = Did your client’s pension schemes pay or agree to pay the tax?
-common.pensions.selectYesifYourPensionProvider.noEntry.individual = Select yes if your pension provider paid or agreed to pay your annual allowance tax
-common.pensions.selectYesifYourPensionProvider.noEntry.agent = Select yes if your client’s pension provider paid or agreed to pay the annual allowance tax
-common.error.amountNotZero = Enter an amount greater than zero
-common.error.self-assessment.paragraph.1.1 = If the web address is correct or you selected a link or button, you can use
-common.error.self-assessment.paragraph.1.2 = Self Assessment: general enquiries (opens in new tab)
-common.error.self-assessment.paragraph.1.3 = to speak to someone about your income tax
-common.error.self-assessment.paragraph.1.3a = to speak to someone about your income tax.
-common.error.incorrectFormat = Enter the total amount in the correct format
-common.useCalculator.paragraph.link = if you need to work this out
-common.useCalculator.paragraph = Use a calculator
+common.error.amountMaxLimit = Mae’n rhaid i’r cyfanswm fod yn llai na £100,000,000,000
+common.pensions.error.amountMaxLimit.individual = Mae’n rhaid i swm y dreth a dalwyd gan eich darparwr pensiwn, neu’r swm a gytunodd i’w dalu, fod yn llai na £100,000,000,000
+common.pensions.error.amountMaxLimit.agent = Mae’n rhaid i swm y dreth a dalwyd gan ddarparwr pensiwn eich cleient, neu’r swm a gytunodd i’w dalu, fod yn llai na £100,000,000,000
+common.pensions.error.amount.overMaximum = Mae’n rhaid i swm y dreth a dalwyd y tu allan i’r DU fod yn llai na £100,000,000,000
+common.pensions.error.amount.noEntry = Nodwch swm y dreth a dalwyd y tu allan i’r DU
+common.pensions.amountTheyAgreedToPay.text = Y swm a dalwyd ganddo, neu’r swm a gytunodd i’w dalu, mewn punnoedd
+common.pensions.didYourPensionSchemesAgreeToPayTheTax.title.individual = A wnaeth eich cynlluniau pensiwn dalu’r dreth neu gytuno i dalu’r dreth?
+common.pensions.didYourPensionSchemesAgreeToPayTheTax.title.agent = A wnaeth cynlluniau pensiwn eich cleient dalu’r dreth neu gytuno i wneud hynny?
+common.pensions.selectYesifYourPensionProvider.noEntry.individual = Dewiswch ‘Iawn’ os gwnaeth eich darparwr pensiwn dalu’ch treth lwfans blynyddol neu gytuno i wneud hynny
+common.pensions.selectYesifYourPensionProvider.noEntry.agent = Dewiswch ‘Iawn’ os gwnaeth darparwr pensiwn eich cleient dalu’r dreth lwfans blynyddol neu gytuno i wneud hynny
+common.error.amountNotZero = Nodwch swm sy’n fwy na sero
+common.error.self-assessment.paragraph.1.1 = Os yw’r cyfeiriad gwe yn gywir neu os ydych wedi dewis cysylltiad neu fotwm, gallwch ddefnyddio
+common.error.self-assessment.paragraph.1.2 = Treth Incwm, Hunanasesiad a mwy (yn agor tab newydd)
+common.error.self-assessment.paragraph.1.3 = i siarad â rhywun am eich treth incwm
+common.error.self-assessment.paragraph.1.3a = i siarad â rhywun am eich treth incwm.
+common.error.incorrectFormat = Nodwch y cyfanswm yn y fformat cywir
+common.useCalculator.paragraph.link = os bydd angen i chi gyfrifo hyn
+common.useCalculator.paragraph = Defnyddiwch gyfrifiannell
 
-unauthorisedPayments.common.title = Unauthorised payments
-unauthorisedPayments.common.title.hidden = Change unauthorised payments
-unauthorisedPayments.common.ukPensionSchemes = UK pension schemes
-unauthorisedPayments.common.ukPensionSchemes.hidden = Change UK pension schemes
+unauthorisedPayments.common.title = Taliadau heb awdurdod
+unauthorisedPayments.common.title.hidden = Newid taliadau heb awdurdod
+unauthorisedPayments.common.ukPensionSchemes = Cynlluniau pensiwn y DU
+unauthorisedPayments.common.ukPensionSchemes.hidden = Newid cynlluniau pensiwn y DU
 
 common.unauthorisedPaymentsFromPension.caption = Taliadau heb awdurdod o bensiynau ar gyfer 6 Ebrill {0} i 5 Ebrill {1}
-common.unauthorisedPayments.Amount.Text = Total non-UK tax in pounds
-common.unauthorisedPayments.error.Amount.incorrectFormat = Enter the amount of non-UK tax in the correct format
-common.unauthorisedPayments.error.checkbox.or.radioButton.noEntry = Select yes if you got an unauthorised payment from a pension scheme
+common.unauthorisedPayments.Amount.Text = Cyfanswm y dreth a dalwyd y tu allan i’r DU mewn punnoedd
+common.unauthorisedPayments.error.Amount.incorrectFormat = Nodwch swm y dreth a dalwyd y tu allan i’r DU yn y fformat cywir
+common.unauthorisedPayments.error.checkbox.or.radioButton.noEntry = Dewiswch ‘Iawn’ os cawsoch daliad heb awdurdod o gynllun pensiwn
 
 common.whereToFindInformation = Ble i ddod o hyd i’r wybodaeth hon
 common.FindInformation = Gallwch ddod o hyd i’r wybodaeth hon yn:
@@ -94,29 +94,29 @@ common.employerFinancedRetirementScheme.caption = Cynlluniau buddiannau ymddeol 
 
 ################# Common lifetime allowance #################
 
-common.lifetimeAllowance.Pension.checkWithProvider.Paragraph.individual = Check with your pension providers if you’re unsure.
-common.lifetimeAllowance.Pension.checkWithProvider.Paragraph.agent = Your client can check with their pension provider if you’re unsure.
-common.total.taxPaid.title = Total tax paid
-common.totalAmount.beforeTax.title = Total amount before tax
-common.beforeTax.error.overMaximum = The amount of lifetime allowance must be less than 100,000,000,000
-common.taxPaid.error.incorrectFormat = Enter the amount of lifetime allowance tax in the correct format
-common.taxPaid.error.overMaximum = The amount of lifetime allowance tax must be less than 100,000,000,000
+common.lifetimeAllowance.Pension.checkWithProvider.Paragraph.individual = Gwiriwch â’ch darparwyr pensiwn os nad ydych yn siŵr.
+common.lifetimeAllowance.Pension.checkWithProvider.Paragraph.agent = Gall eich cleient wirio â’i ddarparwr pensiwn os nad ydych yn siŵr.
+common.total.taxPaid.title = Cyfanswm y dreth a dalwyd
+common.totalAmount.beforeTax.title = Cyfanswm cyn treth
+common.beforeTax.error.overMaximum = Mae’n rhaid i swm y lwfans oes fod yn llai na 100,000,000,000
+common.taxPaid.error.incorrectFormat = Nodwch swm y dreth lwfans oes yn y fformat cywir
+common.taxPaid.error.overMaximum = Mae’n rhaid i swm y dreth lwfans oes fod yn llai na 100,000,000,000
 
 #################       Common PSTR        ########################################
 
-common.pensionSchemeTaxReference = Pension Scheme Tax Reference
-common.pensionSchemeTaxReference.forExample = For example, ‘12345678RA’
-common.pensionSchemeTaxReference.error.noEntry.individual = Enter your Pension Scheme Tax Reference
-common.pensionSchemeTaxReference.error.noEntry.agent = Enter your client’s Pension Scheme Tax Reference
+common.pensionSchemeTaxReference = Cyfeirnod Treth y Cynllun Pensiwn
+common.pensionSchemeTaxReference.forExample = Er enghraifft, ‘12345678RA’
+common.pensionSchemeTaxReference.error.noEntry.individual = Nodwch Gyfeirnod Treth eich Cynllun Pensiwn
+common.pensionSchemeTaxReference.error.noEntry.agent = Nodwch Gyfeirnod Treth Cynllun Pensiwn eich cleient
 
 #################       Common overseas pensions        ########################################
 
-common.overseasPensions.findOut.individual = To find out you can:
-common.overseasPensions.findOut.agent = To find out you can ask your client to:
-common.overseasPensions.checkPensionStatement.individual = check your pension statement
-common.overseasPensions.checkPensionStatement.agent = check their pension statement
+common.overseasPensions.findOut.individual = Er mwyn dysgu beth yw hyn, gallwch wneud y canlynol:
+common.overseasPensions.findOut.agent = Er mwyn dysgu beth yw hyn, gallwch ofyn i’ch cleient wneud y canlynol:
+common.overseasPensions.checkPensionStatement.individual = gwirio’ch datganiad pensiwn
+common.overseasPensions.checkPensionStatement.agent = gwirio’i ddatganiad pensiwn
 
-common.incomeFromPensions.title = UK pension income
+common.incomeFromPensions.title = Incwm o bensiynau’r DU
 
 
 #################       Common Summary/Remove Pension Scheme    ###########################################
@@ -126,7 +126,7 @@ common.summary.returnToOverviewMsg = If you don’t have a pensions scheme to ad
 
 
 #################       Common Remove Pension Scheme    ###########################################
-common.removePensionScheme.title = Are you sure you want to remove {0}?
+common.removePensionScheme.title = A ydych yn siŵr eich bod am dynnu {0}?
 common.removePensionScheme.p1 = This will remove:
 common.removePensionScheme.p1.bullet1 = The name of the pension scheme
 common.removePensionScheme.p1.bullet2 = Pensions scheme tax reference
@@ -134,65 +134,65 @@ common.removePensionScheme.p1.bullet3 = Pensions provider address
 
 #################       Error messages        ########################################
 
-error.agent.title = There’s a problem
-error.agent.paragraph1 = You cannot view this client’s information. Your client needs to
-error.agent.paragraph2 = authorise you as their agent (opens in new tab)
-error.agent.paragraph3 = before you can sign in to this service.
-error.agent.paragraph4 = Try another client’s details
+error.agent.title = Mae problem wedi codi.
+error.agent.paragraph1 = Ni allwch fwrw golwg dros wybodaeth y cleient hwn. Mae angen i’ch cleient
+error.agent.paragraph2 = eich awdurdodi fel ei asiant (yn agor tab newydd)
+error.agent.paragraph3 = cyn y gallwch fewngofnodi i’r gwasanaeth hwn.
+error.agent.paragraph4 = Rhowch gynnig ar fanylion cleient arall
 
-error.unauthorised-user.heading = You are not authorised to use this service
+error.unauthorised-user.heading = Nid ydych wedi’ch awdurdodi i ddefnyddio’r gwasanaeth hwn
 
-error-template.paragraph.1.1 = You can also:
-error-template.paragraph.1.1a = You can:
-error-template.paragraph.1.2 = go to the
-error-template.paragraph.1.3 = Income Tax home page (opens in new tab)
-error-template.paragraph.1.4 = for more information
+error-template.paragraph.1.1 = Gallwch hefyd wneud y canlynol:
+error-template.paragraph.1.1a = Gallwch wneud y canlynol:
+error-template.paragraph.1.2 = mynd i’r
+error-template.paragraph.1.3 = hafan ar gyfer Treth Incwm (yn agor tab newydd)
+error-template.paragraph.1.4 = am ragor o wybodaeth
 
-error.unauthorised.title = You cannot view this page
-error.unauthorised.1 = You need to
-error.unauthorised.2 = create an agent services account
-error.unauthorised.2a = sign up for Making Tax Digital for Income Tax
-error.unauthorised.3 = before you can view this page.
+error.unauthorised.title = Ni allwch fwrw golwg dros y dudalen hon
+error.unauthorised.1 = Mae angen
+error.unauthorised.2 = creu cyfrif gwasanaethau asiant
+error.unauthorised.2a = cofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm
+error.unauthorised.3 = cyn i chi allu bwrw golwg dros y dudalen hon.
 
-taxYear-error-template.paragraph.1 = Dim ond gwybodaeth ar gyfer y blynyddoedd treth {0} i {1} y gallwch ei nodi.
-taxYear-error-template.paragraph.1.single = Dim ond gwybodaeth ar gyfer blwyddyn dreth ddilys y gallwch ei nodi.
-taxYear-error-template.paragraph.2 = Check that you’ve entered the correct web address.
+taxYear-error-template.paragraph.1 = Gallwch nodi gwybodaeth ar gyfer blynyddoedd treth {0} i {1} yn unig.
+taxYear-error-template.paragraph.1.single = Gallwch nodi gwybodaeth ar gyfer blwyddyn dreth ddilys yn unig.
+taxYear-error-template.paragraph.2 = Gwiriwch eich bod wedi nodi’r cyfeiriad gwe cywir.
 
-not-found-template.heading = Page not found
-not-found-template.paragraph.1 = If you typed the web address, check it is correct.
-not-found-template.paragraph.2 = If you used ‘copy and paste’ to enter the web address, check you copied the full address.
+not-found-template.heading = Heb ddod o hyd i’r dudalen
+not-found-template.paragraph.1 = Os gwnaethoch deipio’r cyfeiriad gwe, gwiriwch ei fod yn gywir.
+not-found-template.paragraph.2 = Os gwnaethoch ddefnyddio ‘copïo a gludo’ er mwyn nodi’r cyfeiriad gwe, gwiriwch eich bod wedi copïo’r cyfeiriad llawn.
 
-service-unavailable-error-template.heading = Sorry, the service is unavailable
-service-unavailable-error-template.paragraph.1 = You will be able to use this service later.
+service-unavailable-error-template.heading = Mae’n ddrwg gennym – nid yw’r gwasanaeth ar gael
+service-unavailable-error-template.paragraph.1 = Byddwch yn gallu defnyddio’r gwasanaeth hwn yn nes ymlaen.
 
-internal-server-error-template.heading = Sorry, there is a problem with the service
-internal-server-error-template.paragraph.1 = Try again later.
+internal-server-error-template.heading = Mae’n ddrwg gennym – mae problem gyda’r gwasanaeth
+internal-server-error-template.paragraph.1 = Rhowch gynnig arall arni yn nes ymlaen.
 
 #################       Timeout messages        ########################################
 
-timeout.heading = For your security, we signed you out
-timeout.p1 = We did not save your answers.
-timeout.button = Sign in
+timeout.heading = Er eich diogelwch, gwnaethom eich allgofnodi
+timeout.p1 = Ni wnaethom gadw’ch atebion.
+timeout.button = Mewngofnodi
 
 
 #################       Service pages messages       ########################################
 
 #pension summary
 
-pensions.pensionSummary.heading = Pensions
-pensions.pensionSummary.paymentsToPensions = Payments into pensions
-pensions.pensionSummary.incomeFromPensions = Income from pensions
-pensions.pensionSummary.pensionAnnualAllowance = Pension annual allowance
-pensions.pensionSummary.pensionLifetimeAllowance = Pension lifetime allowance
-pensions.pensionSummary.unauthorisedPaymentsFromPensions = Unauthorised payments from pensions
-pensions.pensionSummary.overseasPensionsSummary = Overseas pensions
+pensions.pensionSummary.heading = Pensiynau
+pensions.pensionSummary.paymentsToPensions = Taliadau i bensiynau
+pensions.pensionSummary.incomeFromPensions = Incwm o bensiynau
+pensions.pensionSummary.pensionAnnualAllowance = Lwfans blynyddol pensiwn
+pensions.pensionSummary.pensionLifetimeAllowance = Lwfans oes pensiwn
+pensions.pensionSummary.unauthorisedPaymentsFromPensions = Taliadau heb awdurdod o bensiynau
+pensions.pensionSummary.overseasPensionsSummary = Pensiynau tramor
 pensions.pensionSummary.paymentsToOverseasPensions = Taliadau i bensiynau tramor
 
 # overseas pensions summary
-pensions.overseasPensionsSummary.paymentsIntoOverseasPensions = Payments into overseas pensions
-pensions.overseasPensionsSummary.incomeFromOverseasPensions = Income from overseas pensions
-pensions.overseasPensionsSummary.overseasTransferCharges = Overseas transfer charges
-pensions.overseasPensionsSummary.shortServiceRefunds = Short service refunds
+pensions.overseasPensionsSummary.paymentsIntoOverseasPensions = Taliadau i bensiynau tramor
+pensions.overseasPensionsSummary.incomeFromOverseasPensions = Incwm o bensiynau tramor
+pensions.overseasPensionsSummary.overseasTransferCharges = Ffioedd ar drosglwyddiadau tramor
+pensions.overseasPensionsSummary.shortServiceRefunds = Ad-daliadau am wasanaeth byr
 
 ########    PAYMENTS INTO PENSIONS    ########
 pensions.paymentsIntoOverseasPensions.error.agent = Dewiswch ‘Iawn’ os talodd eich cleient neu ei gyflogwr i mewn i gynllun pensiwn tramor

@@ -45,7 +45,7 @@ class AboveAnnualLifeTimeAllowanceControllerISpec extends IntegrationTest with B
 
   trait SpecificExpectedResults {
     val expectedTitle: String
-    val expectedHeading: String
+    lazy val expectedHeading = expectedTitle
     val expectedErrorTitle: String
     val expectedError: String
   }
@@ -61,29 +61,25 @@ class AboveAnnualLifeTimeAllowanceControllerISpec extends IntegrationTest with B
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
     val expectedTitle = "Have you gone above your annual or lifetime allowance?"
-    val expectedHeading = "Have you gone above your annual or lifetime allowance?"
     val expectedErrorTitle = s"Error: $expectedTitle"
     val expectedError = "Select yes if you have gone above your lifetime allowance"
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
     val expectedTitle = "Have you gone above your annual or lifetime allowance?"
-    val expectedHeading = "Have you gone above your annual or lifetime allowance?"
-    val expectedErrorTitle = s"Error: $expectedTitle"
+    val expectedErrorTitle = s"Gwall: $expectedTitle"
     val expectedError = "Select yes if you have gone above your lifetime allowance"
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
     val expectedTitle = "Has your client gone above their annual or lifetime allowance?"
-    val expectedHeading = "Has your client gone above their annual or lifetime allowance?"
     val expectedErrorTitle = s"Error: $expectedTitle"
     val expectedError = "Select yes if your client has gone above their lifetime allowance"
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
     val expectedTitle = "Has your client gone above their annual or lifetime allowance?"
-    val expectedHeading = "Has your client gone above their annual or lifetime allowance?"
-    val expectedErrorTitle = s"Error: $expectedTitle"
+    val expectedErrorTitle = s"Gwall: $expectedTitle"
     val expectedError = "Select yes if your client has gone above their lifetime allowance"
   }
 
@@ -97,12 +93,12 @@ class AboveAnnualLifeTimeAllowanceControllerISpec extends IntegrationTest with B
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Annual and lifetime allowances for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val expectedButtonText = "Continue"
-    val yesText = "Yes"
-    val noText = "No"
-    val calculateExpectedParagraphText = "Use a calculator if you need to work this out (opens in new tab)."
-    val expectedLinkText = "if you need to work this out (opens in new tab)"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Lwfans blynyddol a lwfans oes ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
+    val expectedButtonText = "Yn eich blaen"
+    val yesText = "Iawn"
+    val noText = "Na"
+    val calculateExpectedParagraphText = "Defnyddiwch gyfrifiannell os bydd angen i chi gyfrifo hyn (yn agor tab newydd)."
+    val expectedLinkText = "os bydd angen i chi gyfrifo hyn (yn agor tab newydd)"
   }
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(
@@ -136,7 +132,7 @@ class AboveAnnualLifeTimeAllowanceControllerISpec extends IntegrationTest with B
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(user.specificExpectedResults.get.expectedTitle)
+          titleCheck(user.specificExpectedResults.get.expectedTitle, user.isWelsh)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           textOnPageCheck(calculateExpectedParagraphText, calculatorParagraphSelector)
           linkCheck(expectedLinkText, taxReliefLinkSelector, linkHref)
@@ -167,7 +163,7 @@ class AboveAnnualLifeTimeAllowanceControllerISpec extends IntegrationTest with B
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(user.specificExpectedResults.get.expectedTitle)
+          titleCheck(user.specificExpectedResults.get.expectedTitle, user.isWelsh)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           textOnPageCheck(calculateExpectedParagraphText, calculatorParagraphSelector)
           linkCheck(expectedLinkText, taxReliefLinkSelector, linkHref)
@@ -199,7 +195,7 @@ class AboveAnnualLifeTimeAllowanceControllerISpec extends IntegrationTest with B
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(user.specificExpectedResults.get.expectedTitle)
+          titleCheck(user.specificExpectedResults.get.expectedTitle, user.isWelsh)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           textOnPageCheck(calculateExpectedParagraphText, calculatorParagraphSelector)
           linkCheck(expectedLinkText, taxReliefLinkSelector, linkHref)
@@ -251,7 +247,7 @@ class AboveAnnualLifeTimeAllowanceControllerISpec extends IntegrationTest with B
           implicit def document: () => Document = () => Jsoup.parse(result.body)
           import Selectors._
           import user.commonExpectedResults._
-          titleCheck(user.specificExpectedResults.get.expectedErrorTitle)
+          titleCheck(user.specificExpectedResults.get.expectedErrorTitle, user.isWelsh)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           textOnPageCheck(calculateExpectedParagraphText, calculatorParagraphSelector)
           linkCheck(expectedLinkText, taxReliefLinkSelector, linkHref)

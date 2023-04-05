@@ -24,12 +24,12 @@ import org.jsoup.nodes.Document
 import play.api.i18n.Messages
 import play.api.mvc.AnyContent
 import support.ViewUnitTest
-import views.OneOffRASPaymentsAmountTestSupport.{CommonExpectedCY, CommonExpectedEN, CommonExpectedResults, ExpectedAgentCY, ExpectedAgentEN, ExpectedIndividualCY, ExpectedIndividualEN, SpecificExpectedResults}
+import views.OneOffRASPaymentsAmountSpec.{CommonExpectedCY, CommonExpectedEN, CommonExpectedResults, ExpectedAgentCY, ExpectedAgentEN, ExpectedIndividualCY, ExpectedIndividualEN, SpecificExpectedResults}
 import views.html.pensions.paymentsIntoPensions.OneOffRASPaymentsAmountView
 
 // scalastyle:off magic.number
 
-object OneOffRASPaymentsAmountTestSupport {
+object OneOffRASPaymentsAmountSpec {
 
   val poundPrefixText = "£"
   val amountInputName = "amount"
@@ -83,42 +83,50 @@ object OneOffRASPaymentsAmountTestSupport {
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Payments into pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Taliadau i bensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
     val expectedHeading = "Cyfanswm y taliadau untro i mewn i bensiynau rhyddhad wrth y ffynhonnell (RAS), ynghyd â rhyddhad treth ar y gyfradd sylfaenol"
     val expectedTitle = "Cyfanswm y taliadau untro i mewn i bensiynau rhyddhad wrth y ffynhonnell (RAS), ynghyd â rhyddhad treth ar y gyfradd sylfaenol"
-    val expectedErrorTitle = s"Error: $expectedTitle"
+    val expectedErrorTitle = s"Gwall: $expectedTitle"
     val expectedHowToWorkOut = "Er mwyn ei gyfrifo, rhannwch swm eich taliad untro â 80, a lluoswch y canlyniad â 100."
     val expectedCalculationHeading = "Cyfrifiad enghreifftiol"
     val expectedExampleCalculation = "Gwnaeth Elin daliad untro o £500. £500 wedi’i rannu â 80, a’i luosi â 100 yw £625. Ei hateb yw £625."
-    val hintText = "For example, £193.52"
+    val hintText = "Er enghraifft, £193.52"
     val emptyErrorText = "Nodwch gyfanswm y taliadau untro a dalwyd i mewn i bensiynau RAS, ynghyd â rhyddhad treth ar y gyfradd sylfaenol"
-    val invalidFormatErrorText = "Nodwch gyfanswm y taliadau untro a dalwyd i mewn i bensiynau RAS, ynghyd â rhyddhad treth ar y gyfradd sylfaenol, yn y fformat cywir"
-    val maxAmountErrorText = "Mae’n rhaid i gyfanswm y taliadau untro a dalwyd i mewn i bensiynau RAS, ynghyd â rhyddhad treth ar y gyfradd sylfaenol, fod yn llai na £100,000,000,000"
-    val buttonText = "Continue"
+    
+    val invalidFormatErrorText = "Nodwch gyfanswm y taliadau untro a dalwyd i mewn i bensiynau RAS, " +
+      "ynghyd â rhyddhad treth ar y gyfradd sylfaenol, yn y fformat cywir"
+    
+    val maxAmountErrorText = "Mae’n rhaid i gyfanswm y taliadau untro a dalwyd i mewn i bensiynau RAS, " +
+      "ynghyd â rhyddhad treth ar y gyfradd sylfaenol, fod yn llai na £100,000,000,000"
+    val buttonText = "Yn eich blaen"
   }
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
     val expectedYouToldUs =
-      "You told us the total amount you paid plus tax relief was £189.01. Tell us how much of this was a one-off payment. Include tax relief."
+      "You told us the total amount you paid plus tax relief was £189.01. " +
+        "Tell us how much of this was a one-off payment. Include tax relief."
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
     val expectedYouToldUs =
-      "Rydych wedi rhoi gwybod i ni mai’r cyfanswm a dalwyd gennych, ynghyd â rhyddhad treth, oedd £189.01. Rhowch wybod i ni faint o hwn oedd yn daliad untro. Rhaid cynnwys rhyddhad treth."
+      "Rydych wedi rhoi gwybod i ni mai’r cyfanswm a dalwyd gennych, ynghyd â rhyddhad treth, oedd £189.01. " +
+        "Rhowch wybod i ni faint o hwn oedd yn daliad untro. Rhaid cynnwys rhyddhad treth."
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
     val expectedYouToldUs =
-      "You told us the total amount your client paid plus tax relief was £189.01. Tell us how much of this was a one-off payment. Include tax relief."
+      "You told us the total amount your client paid plus tax relief was £189.01. " +
+        "Tell us how much of this was a one-off payment. Include tax relief."
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
     val expectedYouToldUs =
-      "Rydych wedi rhoi gwybod i ni mai’r cyfanswm a dalwyd gan eich cleient, ynghyd â rhyddhad treth, oedd £189.01. Rhowch wybod i ni faint o hwn oedd yn daliad untro. Rhaid cynnwys rhyddhad treth."
+      "Rydych wedi rhoi gwybod i ni mai’r cyfanswm a dalwyd gan eich cleient, ynghyd â rhyddhad treth, oedd £189.01. " +
+        "Rhowch wybod i ni faint o hwn oedd yn daliad untro. Rhaid cynnwys rhyddhad treth."
   }
 }
 
-class OneOffRASPaymentsAmountTestSupport extends ViewUnitTest {
+class OneOffRASPaymentsAmountSpec extends ViewUnitTest {
   val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(
     UserScenario(isWelsh = false, isAgent = false, CommonExpectedEN, Some(ExpectedIndividualEN)),
     UserScenario(isWelsh = false, isAgent = true, CommonExpectedEN, Some(ExpectedAgentEN)),
@@ -141,8 +149,8 @@ class OneOffRASPaymentsAmountTestSupport extends ViewUnitTest {
 
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
-        import OneOffRASPaymentsAmountTestSupport.Selectors._
-        import OneOffRASPaymentsAmountTestSupport._
+        import OneOffRASPaymentsAmountSpec.Selectors._
+        import OneOffRASPaymentsAmountSpec._
         import userScenario.commonExpectedResults._
 
         titleCheck(expectedTitle, userScenario.isWelsh)
@@ -171,8 +179,8 @@ class OneOffRASPaymentsAmountTestSupport extends ViewUnitTest {
 
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
-        import OneOffRASPaymentsAmountTestSupport.Selectors._
-        import OneOffRASPaymentsAmountTestSupport._
+        import OneOffRASPaymentsAmountSpec.Selectors._
+        import OneOffRASPaymentsAmountSpec._
         import userScenario.commonExpectedResults._
 
         titleCheck(expectedTitle, userScenario.isWelsh)
@@ -200,8 +208,8 @@ class OneOffRASPaymentsAmountTestSupport extends ViewUnitTest {
 
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
-        import OneOffRASPaymentsAmountTestSupport.Selectors._
-        import OneOffRASPaymentsAmountTestSupport._
+        import OneOffRASPaymentsAmountSpec.Selectors._
+        import OneOffRASPaymentsAmountSpec._
         import userScenario.commonExpectedResults._
 
         titleCheck(expectedErrorTitle, userScenario.isWelsh)
@@ -232,8 +240,8 @@ class OneOffRASPaymentsAmountTestSupport extends ViewUnitTest {
 
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
-        import OneOffRASPaymentsAmountTestSupport.Selectors._
-        import OneOffRASPaymentsAmountTestSupport._
+        import OneOffRASPaymentsAmountSpec.Selectors._
+        import OneOffRASPaymentsAmountSpec._
         import userScenario.commonExpectedResults._
 
 
@@ -264,8 +272,8 @@ class OneOffRASPaymentsAmountTestSupport extends ViewUnitTest {
 
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
-        import OneOffRASPaymentsAmountTestSupport.Selectors._
-        import OneOffRASPaymentsAmountTestSupport._
+        import OneOffRASPaymentsAmountSpec.Selectors._
+        import OneOffRASPaymentsAmountSpec._
         import userScenario.commonExpectedResults._
 
 

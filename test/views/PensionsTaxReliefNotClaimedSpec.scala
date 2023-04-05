@@ -26,7 +26,7 @@ import play.api.mvc.AnyContent
 import support.ViewUnitTest
 import views.html.pensions.paymentsIntoPensions.PensionsTaxReliefNotClaimedView
 
-object PensionsTaxReliefNotClaimedTestSupport {
+object PensionsTaxReliefNotClaimedSpec {
   object Selectors {
     val captionSelector: String = "#main-content > div > div > header > p"
     val continueButtonSelector: String = "#continue"
@@ -67,13 +67,13 @@ object PensionsTaxReliefNotClaimedTestSupport {
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Payments into pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Taliadau i bensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
     val expectedHeading = "Pensiynau lle na chaiff rhyddhad treth ei hawlio"
     val expectedTitle = "Pensiynau lle na chaiff rhyddhad treth ei hawlio"
-    val expectedErrorTitle = s"Error: $expectedTitle"
-    val yesText = "Yes"
-    val noText = "No"
-    val buttonText = "Continue"
+    val expectedErrorTitle = s"Gwall: $expectedTitle"
+    val yesText = "Iawn"
+    val noText = "Na"
+    val buttonText = "Yn eich blaen"
   }
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
@@ -105,9 +105,9 @@ object PensionsTaxReliefNotClaimedTestSupport {
   }
 }
 
-class PensionsTaxReliefNotClaimedTestSupport extends ViewUnitTest {
+class PensionsTaxReliefNotClaimedSpec extends ViewUnitTest {
 
-  import PensionsTaxReliefNotClaimedTestSupport._
+  import PensionsTaxReliefNotClaimedSpec._
 
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(

@@ -33,14 +33,14 @@ import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 class PensionLumpSumDetailsControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
 
-  private val newAmount = 25
-  private val newAmount2 = 30
-  private val poundPrefixText = "£"
-  private val amount1InputName = "amount-1"
-  private val amount2InputName = "amount-2"
-  private val amountInvalidFormat = "invalid"
-  private val amountEmpty = ""
-  private val amountOverMaximum = "100,000,000,000"
+  val newAmount = 25
+  val newAmount2 = 30
+  val poundPrefixText = "£"
+  val amount1InputName = "amount-1"
+  val amount2InputName = "amount-2"
+  val amountInvalidFormat = "invalid"
+  val amountEmpty = ""
+  val amountOverMaximum = "100,000,000,000"
 
 
   def amountForm(totalAmount: String, taxPaid: String): Map[String, String] = Map(
@@ -110,15 +110,15 @@ class PensionLumpSumDetailsControllerISpec extends IntegrationTest with ViewHelp
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Annual and lifetime allowances for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val hintText = "For example, £193.52"
-    val buttonText = "Continue"
-    val beforeTax: String = "Total amount before tax"
-    val taxPaid: String = "Total tax paid"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Lwfans blynyddol a lwfans oes ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
+    val hintText = "Er enghraifft, £193.52"
+    val buttonText = "Yn eich blaen"
+    val beforeTax: String = "Cyfanswm cyn treth"
+    val taxPaid: String = "Cyfanswm y dreth a dalwyd"
     val beforeTaxErrorIncorrectFormat: String = "Enter the amount of lump sum in the correct format"
-    val beforeTaxErrorOverMaximum: String = "The amount of lifetime allowance must be less than 100,000,000,000"
-    val taxPaidErrorIncorrectFormat: String = "Enter the amount of lifetime allowance tax in the correct format"
-    val taxPaidErrorOverMaximum: String = "The amount of lifetime allowance tax must be less than 100,000,000,000"
+    val beforeTaxErrorOverMaximum: String = "Mae’n rhaid i swm y lwfans oes fod yn llai na 100,000,000,000"
+    val taxPaidErrorIncorrectFormat: String = "Nodwch swm y dreth lwfans oes yn y fformat cywir"
+    val taxPaidErrorOverMaximum: String = "Mae’n rhaid i swm y dreth lwfans oes fod yn llai na 100,000,000,000"
   }
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
@@ -135,10 +135,10 @@ class PensionLumpSumDetailsControllerISpec extends IntegrationTest with ViewHelp
   object ExpectedIndividualCY extends SpecificExpectedResults {
     val expectedTitle = "Your pension lump sum"
     val expectedHeading = "Your pension lump sum"
-    val expectedErrorTitle = s"Error: $expectedTitle"
+    val expectedErrorTitle = s"Gwall: $expectedTitle"
     val beforeTaxErrorNoEntry = "Enter the amount you took above your lifetime allowance as a lump sum"
     val taxPaidErrorNoEntry = "Enter the amount of lifetime allowance tax your pension provider paid or agreed to pay on the lump sum"
-    val checkThisWithProviderParagraph = "Check with your pension providers if you’re unsure."
+    val checkThisWithProviderParagraph = "Gwiriwch â’ch darparwyr pensiwn os nad ydych yn siŵr."
     val beforeTaxParagraph = "If you got a lump sum payment from more than one pension scheme, give the total."
     val taxPaidParagraph = "If more than one of your pension schemes paid lifetime allowance tax, give the total."
   }
@@ -157,10 +157,10 @@ class PensionLumpSumDetailsControllerISpec extends IntegrationTest with ViewHelp
   object ExpectedAgentCY extends SpecificExpectedResults {
     val expectedTitle = "Your client’s pensions lump sum"
     val expectedHeading = "Your client’s pensions lump sum"
-    val expectedErrorTitle = s"Error: $expectedTitle"
+    val expectedErrorTitle = s"Gwall: $expectedTitle"
     val beforeTaxErrorNoEntry = "Enter the amount your client took above their lifetime allowance as a lump sum"
     val taxPaidErrorNoEntry = "Enter the amount of lifetime allowance tax your client’s pension provider paid or agreed to pay on the lump sum"
-    val checkThisWithProviderParagraph = "Your client can check with their pension provider if you’re unsure."
+    val checkThisWithProviderParagraph = "Gall eich cleient wirio â’i ddarparwr pensiwn os nad ydych yn siŵr."
     val beforeTaxParagraph = "If your client got a lump sum payment from more than one pension scheme, give the total."
     val taxPaidParagraph = "If more than one of your client’s pension schemes paid lifetime allowance tax, give the total."
   }
@@ -171,14 +171,12 @@ class PensionLumpSumDetailsControllerISpec extends IntegrationTest with ViewHelp
     UserScenario(isWelsh = true, isAgent = false, CommonExpectedCY, Some(ExpectedIndividualCY)),
     UserScenario(isWelsh = true, isAgent = true, CommonExpectedCY, Some(ExpectedAgentCY))
   )
-
-
+  
   ".show" should {
     userScenarios.foreach { user =>
       import Selectors._
       import user.commonExpectedResults._
-
-
+      
       s"language is ${welshTest(user.isWelsh)} and request is from an ${agentTest(user.isAgent)}" should {
 
         "render Your pension lump sum details page with no prefilled value for tax paid and before tax" which {
@@ -202,7 +200,7 @@ class PensionLumpSumDetailsControllerISpec extends IntegrationTest with ViewHelp
             result.status shouldBe OK
           }
 
-          titleCheck(user.specificExpectedResults.get.expectedTitle)
+          titleCheck(user.specificExpectedResults.get.expectedTitle, user.isWelsh)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           textOnPageCheck(user.specificExpectedResults.get.checkThisWithProviderParagraph, mainParagraph(2))
@@ -240,7 +238,7 @@ class PensionLumpSumDetailsControllerISpec extends IntegrationTest with ViewHelp
           "has an OK status" in {
             result.status shouldBe OK
           }
-          titleCheck(user.specificExpectedResults.get.expectedTitle)
+          titleCheck(user.specificExpectedResults.get.expectedTitle, user.isWelsh)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           textOnPageCheck(user.specificExpectedResults.get.checkThisWithProviderParagraph, mainParagraph(2))
@@ -303,7 +301,7 @@ class PensionLumpSumDetailsControllerISpec extends IntegrationTest with ViewHelp
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(user.specificExpectedResults.get.expectedErrorTitle)
+          titleCheck(user.specificExpectedResults.get.expectedErrorTitle, user.isWelsh)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           textOnPageCheck(user.specificExpectedResults.get.checkThisWithProviderParagraph, mainParagraph(3))
@@ -344,7 +342,7 @@ class PensionLumpSumDetailsControllerISpec extends IntegrationTest with ViewHelp
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(user.specificExpectedResults.get.expectedErrorTitle)
+          titleCheck(user.specificExpectedResults.get.expectedErrorTitle, user.isWelsh)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           textOnPageCheck(user.specificExpectedResults.get.checkThisWithProviderParagraph, mainParagraph(3))
@@ -384,7 +382,7 @@ class PensionLumpSumDetailsControllerISpec extends IntegrationTest with ViewHelp
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(user.specificExpectedResults.get.expectedErrorTitle)
+          titleCheck(user.specificExpectedResults.get.expectedErrorTitle, user.isWelsh)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           textOnPageCheck(user.specificExpectedResults.get.checkThisWithProviderParagraph, mainParagraph(3))

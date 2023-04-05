@@ -17,7 +17,7 @@
 package builders
 
 import builders.StateBenefitBuilder._
-import models.pension.statebenefits.{CustomerAddedStateBenefitsData, StateBenefits, StateBenefitsData}
+import models.pension.statebenefits.StateBenefitsData
 
 object StateBenefitsBuilder {
 

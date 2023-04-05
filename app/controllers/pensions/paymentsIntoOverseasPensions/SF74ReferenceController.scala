@@ -21,6 +21,8 @@ import controllers.pensions.paymentsIntoOverseasPensions.routes.PensionsCustomer
 import controllers.predicates.ActionsProvider
 import controllers.validateIndex
 import forms.FormsProvider
+import models.mongo.PensionsUserData
+import models.requests.UserSessionDataRequest
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
@@ -29,10 +31,6 @@ import utils.{Clock, SessionHelper}
 import views.html.pensions.paymentsIntoOverseasPensions.SF74ReferenceView
 
 import javax.inject.{Inject, Singleton}
-import models.mongo.PensionsUserData
-import models.pension.charges.Relief
-import models.requests.UserSessionDataRequest
-
 import scala.concurrent.Future
 
 @Singleton

@@ -25,7 +25,7 @@ import builders.PensionsUserDataBuilder
 import builders.PensionsUserDataBuilder.{aPensionsUserData, pensionsUserDataWithUnauthorisedPayments}
 import builders.UnauthorisedPaymentsViewModelBuilder.anUnauthorisedPaymentsViewModel
 import builders.UserBuilder.aUserRequest
-import models.mongo.PensionsCYAModel
+import models.mongo.{PensionsCYAModel, PensionsUserData}
 import models.pension.reliefs.PaymentsIntoPensionViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -34,6 +34,7 @@ import play.api.Logging
 import play.api.http.HeaderNames
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
+import routes._
 import utils.PageUrls.fullUrl
 import utils.PageUrls.unauthorisedPaymentsPages.checkUnauthorisedPaymentsCyaUrl
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
@@ -51,16 +52,14 @@ class UnauthorisedPaymentsCYAControllerISpec extends
 
 
   object ChangeLinksUnauthorisedPayments {
-    val unauthorisedPayments: String = controllers.pensions.unauthorisedPayments.routes.UnauthorisedPaymentsController.show(taxYear).url
-    val amountSurcharged: String = controllers.pensions.unauthorisedPayments.routes.SurchargeAmountController.show(taxYear).url
-    val nonUKTaxOnAmountResultedInSurcharge: String =
-      controllers.pensions.unauthorisedPayments.routes.NonUKTaxOnAmountResultedInSurchargeController.show(taxYear).url
-    val amountNotSurcharged: String = controllers.pensions.unauthorisedPayments.routes.NoSurchargeAmountController.show(taxYear).url
-    val nonUKTaxOnAmountNotResultedInSurcharge: String =
-      controllers.pensions.unauthorisedPayments.routes.NonUKTaxOnAmountNotResultedInSurchargeController.show(taxYear).url
-    val ukPensionSchemes: String = controllers.pensions.unauthorisedPayments.routes.WhereAnyOfTheUnauthorisedPaymentsController.show(taxYear).url
-    val pensionSchemeTaxReferences: String = controllers.pensions.unauthorisedPayments.routes.UnauthorisedPensionSchemeTaxReferenceController.show(taxYear, None).url
-    val pensionSchemeTaxDetails: String = controllers.pensions.unauthorisedPayments.routes.UkPensionSchemeDetailsController.show(taxYear).url
+    val unauthorisedPayments: String = UnauthorisedPaymentsController.show(taxYear).url
+    val amountSurcharged: String = SurchargeAmountController.show(taxYear).url
+    val nonUKTaxOnAmountResultedInSurcharge: String = NonUKTaxOnAmountResultedInSurchargeController.show(taxYear).url
+    val amountNotSurcharged: String = NoSurchargeAmountController.show(taxYear).url
+    val nonUKTaxOnAmountNotResultedInSurcharge: String = NonUKTaxOnAmountNotResultedInSurchargeController.show(taxYear).url
+    val ukPensionSchemes: String = WhereAnyOfTheUnauthorisedPaymentsController.show(taxYear).url
+    val pensionSchemeTaxReferences: String = UnauthorisedPensionSchemeTaxReferenceController.show(taxYear, None).url
+    val pensionSchemeTaxDetails: String = UkPensionSchemeDetailsController.show(taxYear).url
   }
 
   trait SpecificExpectedResults {
@@ -69,8 +68,7 @@ class UnauthorisedPaymentsCYAControllerISpec extends
   }
 
   trait CommonExpectedResults {
-    def expectedCaption(taxYear: Int): String
-
+    val expectedCaption: Int => String
     val yes: String
     val no: String
 
@@ -95,11 +93,9 @@ class UnauthorisedPaymentsCYAControllerISpec extends
   }
 
   object CommonExpectedEN extends CommonExpectedResults {
-    def expectedCaption(taxYear: Int): String = s"Unauthorised payments from pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-
+    val expectedCaption: Int => String = (taxYear: Int) => s"Unauthorised payments from pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
     val yes = "Yes"
     val no = "No"
-
     val unauthorisedPayments = "Unauthorised payments"
     val amountSurcharged = "Amount surcharged"
     val nonUkTaxAmountSurcharged = "Non UK-tax on amount surcharged"
@@ -107,7 +103,6 @@ class UnauthorisedPaymentsCYAControllerISpec extends
     val nonUkTaxAmountNotSurcharged = "Non UK-tax on amount not surcharged"
     val ukPensionSchemes = "UK pension schemes"
     val pensionSchemeTaxReferences = "Pension Scheme Tax References"
-
 
     val saveAndContinue = "Save and continue"
     val error = "Sorry, there is a problem with the service"
@@ -122,28 +117,26 @@ class UnauthorisedPaymentsCYAControllerISpec extends
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    def expectedCaption(taxYear: Int): String = s"Payments into pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-
-    val yes = "Yes"
-    val no = "No"
-
-    val unauthorisedPayments = "Unauthorised payments"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Payments into pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
+    val yes = "Iawn"
+    val no = "Na"
+    val unauthorisedPayments = "Taliadau heb awdurdod"
     val amountSurcharged = "Amount surcharged"
     val nonUkTaxAmountSurcharged = "Non UK-tax on amount surcharged"
     val amountNotSurcharged = "Amount not surcharged"
     val nonUkTaxAmountNotSurcharged = "Non UK-tax on amount not surcharged"
-    val ukPensionSchemes = "UK pension schemes"
+    val ukPensionSchemes = "Cynlluniau pensiwn y DU"
     val pensionSchemeTaxReferences = "Pension Scheme Tax References"
 
-    val saveAndContinue = "Save and continue"
+    val saveAndContinue = "Cadw ac yn eich blaen"
     val error = "Sorry, there is a problem with the service"
 
-    val unauthorisedPaymentsHidden = "Change unauthorised payments"
+    val unauthorisedPaymentsHidden = "Newid taliadau heb awdurdod"
     val amountSurchargedHidden = "Change amount surcharged"
     val nonUkTaxAmountSurchargedHidden = "Change non UK-tax on amount surcharged"
     val amountNotSurchargedHidden = "Change amount not surcharged"
     val nonUkTaxAmountNotSurchargedHidden = "Change non UK-tax on amount not surcharged"
-    val ukPensionSchemesHidden = "Change UK pension schemes"
+    val ukPensionSchemesHidden = "Newid cynlluniau pensiwn y DU"
     val pensionSchemeTaxReferencesHidden = "Change Pension Scheme Tax References"
   }
 
@@ -174,17 +167,18 @@ class UnauthorisedPaymentsCYAControllerISpec extends
     UserScenario(isWelsh = true, isAgent = true, CommonExpectedCY, Some(ExpectedAgentCY))
   )
 
-  def pensionsUsersData(isPrior: Boolean = false, pensionsCyaModel: PensionsCYAModel) = {
+  def pensionsUsersData(isPrior: Boolean = false, pensionsCyaModel: PensionsCYAModel): PensionsUserData = {
     PensionsUserDataBuilder.aPensionsUserData.copy(
       isPriorSubmission = isPrior, pensions = pensionsCyaModel)
   }
-
-  def stringToBoolean(yesNo: Boolean) = if (yesNo) "Yes" else "No"
+ 
 
   ".show" should {
     userScenarios.foreach { user =>
       s"language is ${welshTest(user.isWelsh)} and request is from an ${agentTest(user.isAgent)}" should {
         import user.commonExpectedResults._
+
+        val stringToBoolean: Boolean => String = (yesNo: Boolean) => if (yesNo) user.commonExpectedResults.yes else  user.commonExpectedResults.no
 
         "there is no CYA data and a CYA model is generated and both surchargeQuestion and noSurchargeQuestion is set to true " which {
           implicit lazy val result: WSResponse = {
@@ -192,7 +186,8 @@ class UnauthorisedPaymentsCYAControllerISpec extends
             dropPensionsDB()
             insertCyaData(pensionsUserDataWithUnauthorisedPayments(anUnauthorisedPaymentsViewModel, isPriorSubmission = false), aUserRequest)
             userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYear)
-            urlGet(fullUrl(checkUnauthorisedPaymentsCyaUrl(taxYear)), welsh = user.isWelsh, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
+            urlGet(fullUrl(checkUnauthorisedPaymentsCyaUrl(taxYear)), welsh = user.isWelsh,
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
           }
 
           "has an OK status" in {
@@ -203,18 +198,27 @@ class UnauthorisedPaymentsCYAControllerISpec extends
 
           val unauthorisedPaymentsFromIncomeTaxSubmission = anAllPensionsData.pensionCharges.get.pensionSchemeUnauthorisedPayments
 
-          titleCheck(user.specificExpectedResults.get.expectedTitle)
-          cyaRowCheck(unauthorisedPayments, stringToBoolean(unauthorisedPaymentsFromIncomeTaxSubmission.get.surcharge.isDefined), ChangeLinksUnauthorisedPayments.unauthorisedPayments, unauthorisedPaymentsHidden, 1)
+          titleCheck(user.specificExpectedResults.get.expectedTitle, user.isWelsh)
+          cyaRowCheck(unauthorisedPayments, stringToBoolean(unauthorisedPaymentsFromIncomeTaxSubmission.get.surcharge.isDefined),
+            ChangeLinksUnauthorisedPayments.unauthorisedPayments, unauthorisedPaymentsHidden, 1)
+          
           cyaRowCheck(amountSurcharged, s"${moneyContent(unauthorisedPaymentsFromIncomeTaxSubmission.get.surcharge.map(_.amount).get)}",
             ChangeLinksUnauthorisedPayments.amountSurcharged, amountSurchargedHidden, 2)
+          
           cyaRowCheck(nonUkTaxAmountSurcharged, s"${moneyContent(unauthorisedPaymentsFromIncomeTaxSubmission.get.surcharge.map(_.foreignTaxPaid).get)}",
             ChangeLinksUnauthorisedPayments.nonUKTaxOnAmountResultedInSurcharge, nonUkTaxAmountSurchargedHidden, 3)
+          
           cyaRowCheck(amountNotSurcharged, s"${moneyContent(unauthorisedPaymentsFromIncomeTaxSubmission.get.noSurcharge.map(_.amount).get)}",
             ChangeLinksUnauthorisedPayments.amountNotSurcharged, amountNotSurchargedHidden, 4)
+          
           cyaRowCheck(nonUkTaxAmountNotSurcharged, s"${moneyContent(unauthorisedPaymentsFromIncomeTaxSubmission.get.noSurcharge.map(_.foreignTaxPaid).get)}",
             ChangeLinksUnauthorisedPayments.nonUKTaxOnAmountNotResultedInSurcharge, nonUkTaxAmountNotSurchargedHidden, 5)
-          cyaRowCheck(ukPensionSchemes, stringToBoolean(unauthorisedPaymentsFromIncomeTaxSubmission.map(_.pensionSchemeTaxReference).isDefined), ChangeLinksUnauthorisedPayments.ukPensionSchemes, ukPensionSchemesHidden, 6)
-          cyaRowCheck(pensionSchemeTaxReferences, s"${unauthorisedPaymentsFromIncomeTaxSubmission.get.pensionSchemeTaxReference.mkString(", ")}", ChangeLinksUnauthorisedPayments.pensionSchemeTaxDetails, pensionSchemeTaxReferencesHidden, 7)
+          
+          cyaRowCheck(ukPensionSchemes, stringToBoolean(unauthorisedPaymentsFromIncomeTaxSubmission.map(_.pensionSchemeTaxReference).isDefined),
+            ChangeLinksUnauthorisedPayments.ukPensionSchemes, ukPensionSchemesHidden, 6)
+          
+          cyaRowCheck(pensionSchemeTaxReferences, s"${unauthorisedPaymentsFromIncomeTaxSubmission.get.pensionSchemeTaxReference.mkString(", ")}",
+            ChangeLinksUnauthorisedPayments.pensionSchemeTaxDetails, pensionSchemeTaxReferencesHidden, 7)
 
           buttonCheck(saveAndContinue)
           welshToggleCheck(user.isWelsh)
@@ -235,7 +239,8 @@ class UnauthorisedPaymentsCYAControllerISpec extends
             )
             insertCyaData(pensionsUserDataWithUnauthorisedPayments(updatedAnUnauthorisedPaymentsViewModel, isPriorSubmission = false), aUserRequest)
             userDataStub(anIncomeTaxUserData.copy(pensions = Some(updatedanAllPensionsData)), nino, taxYear)
-            urlGet(fullUrl(checkUnauthorisedPaymentsCyaUrl(taxYear)), welsh = user.isWelsh, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
+            urlGet(fullUrl(checkUnauthorisedPaymentsCyaUrl(taxYear)), welsh = user.isWelsh,
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
           }
 
           "has an OK status" in {
@@ -246,14 +251,20 @@ class UnauthorisedPaymentsCYAControllerISpec extends
 
           val unauthorisedPaymentsFromIncomeTaxSubmission = updatedanAllPensionsData.pensionCharges.get.pensionSchemeUnauthorisedPayments
 
-          titleCheck(user.specificExpectedResults.get.expectedTitle)
+          titleCheck(user.specificExpectedResults.get.expectedTitle, user.isWelsh)
           cyaRowCheck(unauthorisedPayments, yes, ChangeLinksUnauthorisedPayments.unauthorisedPayments, unauthorisedPaymentsHidden, 1)
+          
           cyaRowCheck(amountNotSurcharged, s"${moneyContent(unauthorisedPaymentsFromIncomeTaxSubmission.get.noSurcharge.map(_.amount).get)}",
             ChangeLinksUnauthorisedPayments.amountNotSurcharged, amountNotSurchargedHidden, 2)
+          
           cyaRowCheck(nonUkTaxAmountNotSurcharged, s"${moneyContent(unauthorisedPaymentsFromIncomeTaxSubmission.get.noSurcharge.map(_.foreignTaxPaid).get)}",
             ChangeLinksUnauthorisedPayments.nonUKTaxOnAmountNotResultedInSurcharge, nonUkTaxAmountNotSurchargedHidden, 3)
-          cyaRowCheck(ukPensionSchemes, stringToBoolean(unauthorisedPaymentsFromIncomeTaxSubmission.map(_.pensionSchemeTaxReference).isDefined), ChangeLinksUnauthorisedPayments.ukPensionSchemes, ukPensionSchemesHidden, 4)
-          cyaRowCheck(pensionSchemeTaxReferences, s"${unauthorisedPaymentsFromIncomeTaxSubmission.get.pensionSchemeTaxReference.mkString(", ")}", ChangeLinksUnauthorisedPayments.pensionSchemeTaxDetails, pensionSchemeTaxReferencesHidden, 5)
+          
+          cyaRowCheck(ukPensionSchemes, stringToBoolean(unauthorisedPaymentsFromIncomeTaxSubmission.map(_.pensionSchemeTaxReference).isDefined),
+            ChangeLinksUnauthorisedPayments.ukPensionSchemes, ukPensionSchemesHidden, 4)
+          
+          cyaRowCheck(pensionSchemeTaxReferences, s"${unauthorisedPaymentsFromIncomeTaxSubmission.get.pensionSchemeTaxReference.mkString(", ")}",
+            ChangeLinksUnauthorisedPayments.pensionSchemeTaxDetails, pensionSchemeTaxReferencesHidden, 5)
 
           buttonCheck(saveAndContinue)
           welshToggleCheck(user.isWelsh)
@@ -274,7 +285,8 @@ class UnauthorisedPaymentsCYAControllerISpec extends
             )
             insertCyaData(pensionsUserDataWithUnauthorisedPayments(updatedAnUnauthorisedPaymentsViewModel, isPriorSubmission = false), aUserRequest)
             userDataStub(anIncomeTaxUserData.copy(pensions = Some(updatedanAllPensionsData)), nino, taxYear)
-            urlGet(fullUrl(checkUnauthorisedPaymentsCyaUrl(taxYear)), welsh = user.isWelsh, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
+            urlGet(fullUrl(checkUnauthorisedPaymentsCyaUrl(taxYear)), welsh = user.isWelsh,
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
           }
 
           "has an OK status" in {
@@ -285,14 +297,21 @@ class UnauthorisedPaymentsCYAControllerISpec extends
 
           val unauthorisedPaymentsFromIncomeTaxSubmission = updatedanAllPensionsData.pensionCharges.get.pensionSchemeUnauthorisedPayments
 
-          titleCheck(user.specificExpectedResults.get.expectedTitle)
-          cyaRowCheck(unauthorisedPayments, stringToBoolean(unauthorisedPaymentsFromIncomeTaxSubmission.get.surcharge.isDefined), ChangeLinksUnauthorisedPayments.unauthorisedPayments, unauthorisedPaymentsHidden, 1)
+          titleCheck(user.specificExpectedResults.get.expectedTitle, user.isWelsh)
+          cyaRowCheck(unauthorisedPayments, stringToBoolean(unauthorisedPaymentsFromIncomeTaxSubmission.get.surcharge.isDefined),
+            ChangeLinksUnauthorisedPayments.unauthorisedPayments, unauthorisedPaymentsHidden, 1)
+          
           cyaRowCheck(amountSurcharged, s"${moneyContent(unauthorisedPaymentsFromIncomeTaxSubmission.get.surcharge.map(_.amount).get)}",
             ChangeLinksUnauthorisedPayments.amountSurcharged, amountSurchargedHidden, 2)
+          
           cyaRowCheck(nonUkTaxAmountSurcharged, s"${moneyContent(unauthorisedPaymentsFromIncomeTaxSubmission.get.surcharge.map(_.foreignTaxPaid).get)}",
             ChangeLinksUnauthorisedPayments.nonUKTaxOnAmountResultedInSurcharge, nonUkTaxAmountSurchargedHidden, 3)
-          cyaRowCheck(ukPensionSchemes, stringToBoolean(unauthorisedPaymentsFromIncomeTaxSubmission.map(_.pensionSchemeTaxReference).isDefined), ChangeLinksUnauthorisedPayments.ukPensionSchemes, ukPensionSchemesHidden, 4)
-          cyaRowCheck(pensionSchemeTaxReferences, s"${unauthorisedPaymentsFromIncomeTaxSubmission.get.pensionSchemeTaxReference.mkString(", ")}", ChangeLinksUnauthorisedPayments.pensionSchemeTaxDetails, pensionSchemeTaxReferencesHidden, 5)
+          
+          cyaRowCheck(ukPensionSchemes, stringToBoolean(unauthorisedPaymentsFromIncomeTaxSubmission.map(_.pensionSchemeTaxReference).isDefined),
+            ChangeLinksUnauthorisedPayments.ukPensionSchemes, ukPensionSchemesHidden, 4)
+          
+          cyaRowCheck(pensionSchemeTaxReferences, s"${unauthorisedPaymentsFromIncomeTaxSubmission.get.pensionSchemeTaxReference.mkString(", ")}",
+            ChangeLinksUnauthorisedPayments.pensionSchemeTaxDetails, pensionSchemeTaxReferencesHidden, 5)
 
           buttonCheck(saveAndContinue)
           welshToggleCheck(user.isWelsh)
@@ -316,7 +335,8 @@ class UnauthorisedPaymentsCYAControllerISpec extends
             )
             insertCyaData(pensionsUserDataWithUnauthorisedPayments(updatedAnUnauthorisedPaymentsViewModel, isPriorSubmission = false), aUserRequest)
             userDataStub(anIncomeTaxUserData.copy(pensions = Some(updatedanAllPensionsData)), nino, taxYear)
-            urlGet(fullUrl(checkUnauthorisedPaymentsCyaUrl(taxYear)), welsh = user.isWelsh, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
+            urlGet(fullUrl(checkUnauthorisedPaymentsCyaUrl(taxYear)), welsh = user.isWelsh,
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
           }
 
           "has an OK status" in {
@@ -327,8 +347,9 @@ class UnauthorisedPaymentsCYAControllerISpec extends
 
           val unauthorisedPaymentsFromIncomeTaxSubmission = updatedanAllPensionsData.pensionCharges.get.pensionSchemeUnauthorisedPayments
 
-          titleCheck(user.specificExpectedResults.get.expectedTitle)
-          cyaRowCheck(unauthorisedPayments, stringToBoolean(unauthorisedPaymentsFromIncomeTaxSubmission.get.surcharge.isDefined), ChangeLinksUnauthorisedPayments.unauthorisedPayments, unauthorisedPaymentsHidden, 1)
+          titleCheck(user.specificExpectedResults.get.expectedTitle, user.isWelsh)
+          cyaRowCheck(unauthorisedPayments, stringToBoolean(unauthorisedPaymentsFromIncomeTaxSubmission.get.surcharge.isDefined),
+            ChangeLinksUnauthorisedPayments.unauthorisedPayments, unauthorisedPaymentsHidden, 1)
 
           buttonCheck(saveAndContinue)
           welshToggleCheck(user.isWelsh)
@@ -376,7 +397,8 @@ class UnauthorisedPaymentsCYAControllerISpec extends
           pensionChargesSessionStub("", nino, taxYear)
           insertCyaData(aPensionsUserData.copy(pensions = aPensionsCYAModel.copy(paymentsIntoPension = cyaDataIncomplete), taxYear = taxYear), aUserRequest)
           authoriseAgentOrIndividual(isAgent = false)
-          urlPost(fullUrl(checkUnauthorisedPaymentsCyaUrl(taxYear)), form, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
+          urlPost(fullUrl(checkUnauthorisedPaymentsCyaUrl(taxYear)), form, follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
         }
 
         "the status is SEE OTHER" in {

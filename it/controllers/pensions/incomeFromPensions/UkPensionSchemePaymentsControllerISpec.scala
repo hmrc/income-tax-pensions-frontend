@@ -48,6 +48,7 @@ class UkPensionSchemePaymentsControllerISpec extends IntegrationTest with ViewHe
     val formSelector: String = "#main-content > div > div > form"
     val yesSelector = "#value"
     val noSelector = "#value-no"
+    val expectedDoesNotIncludeSelector: String = s"#main-content > div > div > p"
   }
 
 
@@ -70,15 +71,13 @@ class UkPensionSchemePaymentsControllerISpec extends IntegrationTest with ViewHe
     val yesText = "Yes"
     val noText = "No"
     val buttonText = "Continue"
-
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Income from pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val yesText = "Yes"
-    val noText = "No"
-    val buttonText = "Continue"
-
+    val expectedCaption: Int => String = (taxYear: Int) => s"Incwm o bensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
+    val yesText = "Iawn"
+    val noText = "Na"
+    val buttonText = "Yn eich blaen"
   }
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
@@ -92,7 +91,7 @@ class UkPensionSchemePaymentsControllerISpec extends IntegrationTest with ViewHe
   object ExpectedIndividualCY extends SpecificExpectedResults {
     val expectedTitle = "Do you get UK pension scheme payments?"
     val expectedHeading = "Do you get UK pension scheme payments?"
-    val expectedErrorTitle = s"Error: $expectedTitle"
+    val expectedErrorTitle = s"Gwall: $expectedTitle"
     val expectedErrorMessage = "Select Yes if you got payments from UK pension schemes"
   }
 
@@ -106,7 +105,7 @@ class UkPensionSchemePaymentsControllerISpec extends IntegrationTest with ViewHe
   object ExpectedAgentCY extends SpecificExpectedResults {
     val expectedTitle = "Does your client get UK pension scheme payments?"
     val expectedHeading = "Does your client get UK pension scheme payments?"
-    val expectedErrorTitle = s"Error: $expectedTitle"
+    val expectedErrorTitle = s"Gwall: $expectedTitle"
     val expectedErrorMessage = "Select Yes if your client got payments from UK pension schemes"
   }
 
@@ -140,7 +139,7 @@ class UkPensionSchemePaymentsControllerISpec extends IntegrationTest with ViewHe
             result.status shouldBe OK
           }
 
-          titleCheck(user.specificExpectedResults.get.expectedTitle)
+          titleCheck(user.specificExpectedResults.get.expectedTitle, user.isWelsh)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           radioButtonCheck(yesText, 1, checked = Some(false))
@@ -164,7 +163,7 @@ class UkPensionSchemePaymentsControllerISpec extends IntegrationTest with ViewHe
             result.status shouldBe OK
           }
 
-          titleCheck(user.specificExpectedResults.get.expectedTitle)
+          titleCheck(user.specificExpectedResults.get.expectedTitle, user.isWelsh)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           radioButtonCheck(yesText, 1, checked = Some(true))
@@ -190,7 +189,7 @@ class UkPensionSchemePaymentsControllerISpec extends IntegrationTest with ViewHe
             result.status shouldBe OK
           }
 
-          titleCheck(user.specificExpectedResults.get.expectedTitle)
+          titleCheck(user.specificExpectedResults.get.expectedTitle, user.isWelsh)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           radioButtonCheck(yesText, 1, checked = Some(false))
@@ -261,7 +260,7 @@ class UkPensionSchemePaymentsControllerISpec extends IntegrationTest with ViewHe
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(user.specificExpectedResults.get.expectedErrorTitle)
+          titleCheck(user.specificExpectedResults.get.expectedErrorTitle, user.isWelsh)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           radioButtonCheck(yesText, 1, checked = Some(false))

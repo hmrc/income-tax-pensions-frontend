@@ -25,7 +25,7 @@ import play.api.mvc.AnyContent
 import support.ViewUnitTest
 import views.html.pensions.shortServiceRefunds.ShortServiceRefundsCYAView
 
-class ShortServiceCYAViewSpec extends ViewUnitTest {
+class ShortServiceCYAViewSpec extends ViewUnitTest { //scalastyle:off magic.number
 
   object ChangeLinks {
     val changeRefund = controllers.pensions.shortServiceRefunds.routes.TaxableRefundAmountController.show(taxYearEOY).url
@@ -48,44 +48,49 @@ class ShortServiceCYAViewSpec extends ViewUnitTest {
     val hiddenNonUKAmount: String
     val hiddenSchemes: String
     val buttonText: String
+    val noText: String
+    val yesText: String
   }
 
   object CommonExpectedEN extends CommonExpectedResults {
-    override val expectedTitle: String = "Check short service refunds"
-    override val expectedHeading: String = "Check short service refunds"
-    override val expectedCaption: Int => String = (taxYear: Int) => s"Short service refunds for 6 April ${taxYear - 1} to 5 April $taxYear"
-    override val refundBoolean: String = "Short service refunds"
-    override val refundAmount: String = "Refund amount"
-    override val nonUKBoolean: String = "Paid non-UK tax"
-    override val nonUKAmount: String = "Amount of non-UK tax"
-    override val schemes: String = "Pension schemes paying tax"
-    override val hiddenRefundBoolean: String = "Change short service refunds"
-    override val hiddenRefundAmount: String = "Change refund amount"
-    override val hiddenNonUKBoolean: String = "Change paid non-UK tax"
-    override val hiddenNonUKAmount: String = "Change amount of non-UK tax"
-    override val hiddenSchemes: String = "Change pension schemes paying tax"
-    override val buttonText: String = "Save and continue"
-
+    val expectedTitle: String = "Check short service refunds"
+    val expectedHeading: String = "Check short service refunds"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Short service refunds for 6 April ${taxYear - 1} to 5 April $taxYear"
+    val refundBoolean: String = "Short service refunds"
+    val refundAmount: String = "Refund amount"
+    val nonUKBoolean: String = "Paid non-UK tax"
+    val nonUKAmount: String = "Amount of non-UK tax"
+    val schemes: String = "Pension schemes paying tax"
+    val hiddenRefundBoolean: String = "Change short service refunds"
+    val hiddenRefundAmount: String = "Change refund amount"
+    val hiddenNonUKBoolean: String = "Change paid non-UK tax"
+    val hiddenNonUKAmount: String = "Change amount of non-UK tax"
+    val hiddenSchemes: String = "Change pension schemes paying tax"
+    val buttonText: String = "Save and continue"
+    val noText: String = "No"
+    val yesText: String = "Yes"
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    override val expectedTitle: String = "Check short service refunds"
-    override val expectedHeading: String = "Check short service refunds"
-    override val expectedCaption: Int => String = (taxYear: Int) => s"Short service refunds for 6 April ${taxYear - 1} to 5 April $taxYear"
-    override val refundBoolean: String = "Short service refunds"
-    override val refundAmount: String = "Refund amount"
-    override val nonUKBoolean: String = "Paid non-UK tax"
-    override val nonUKAmount: String = "Amount of non-UK tax"
-    override val schemes: String = "Pension schemes paying tax"
-    override val hiddenRefundBoolean: String = "Change short service refunds"
-    override val hiddenRefundAmount: String = "Change refund amount"
-    override val hiddenNonUKBoolean: String = "Change paid non-UK tax"
-    override val hiddenNonUKAmount: String = "Change amount of non-UK tax"
-    override val hiddenSchemes: String = "Change pension schemes paying tax"
-    override val buttonText: String = "Save and continue"
+    val expectedTitle: String = "Check short service refunds"
+    val expectedHeading: String = "Check short service refunds"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Ad-daliadau am wasanaeth byr ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
+    val refundBoolean: String = "Short service refunds"
+    val refundAmount: String = "Refund amount"
+    val nonUKBoolean: String = "Paid non-UK tax"
+    val nonUKAmount: String = "Amount of non-UK tax"
+    val schemes: String = "Pension schemes paying tax"
+    val hiddenRefundBoolean: String = "Change short service refunds"
+    val hiddenRefundAmount: String = "Change refund amount"
+    val hiddenNonUKBoolean: String = "Change paid non-UK tax"
+    val hiddenNonUKAmount: String = "Change amount of non-UK tax"
+    val hiddenSchemes: String = "Change pension schemes paying tax"
+    val buttonText: String = "Cadw ac yn eich blaen"
+    val noText: String = "Na"
+    val yesText: String = "Iawn"
   }
 
-  override val userScenarios: Seq[UserScenario[CommonExpectedResults, String]] = Seq(
+  val userScenarios: Seq[UserScenario[CommonExpectedResults, String]] = Seq(
     UserScenario(isWelsh = false, isAgent = false, CommonExpectedEN, None),
     UserScenario(isWelsh = true, isAgent = true, CommonExpectedCY, None),
     UserScenario(isWelsh = false, isAgent = true, CommonExpectedEN, None),
@@ -110,11 +115,10 @@ class ShortServiceCYAViewSpec extends ViewUnitTest {
         titleCheck(expectedTitle, userScenario.isWelsh)
         h1Check(expectedHeading)
         captionCheck(expectedCaption(taxYearEOY))
-
-        //noinspection ScalaStyle
-        cyaRowCheck(refundBoolean, "Yes", ChangeLinks.changeRefund, hiddenRefundBoolean, 1)
+        
+        cyaRowCheck(refundBoolean, yesText, ChangeLinks.changeRefund, hiddenRefundBoolean, 1)
         cyaRowCheck(refundAmount, "£1,999.99", ChangeLinks.changeRefund, hiddenRefundAmount, 2)
-        cyaRowCheck(nonUKBoolean, "Yes", ChangeLinks.changeNonUkRefund, hiddenNonUKBoolean, 3)
+        cyaRowCheck(nonUKBoolean, yesText, ChangeLinks.changeNonUkRefund, hiddenNonUKBoolean, 3)
         cyaRowCheck(nonUKAmount, "£1,000", ChangeLinks.changeNonUkRefund, hiddenNonUKAmount, 4)
         cyaRowCheck(schemes, "Overseas Refund Scheme Name", ChangeLinks.changeScheme, hiddenSchemes, 5)
         buttonCheck(buttonText)
@@ -132,9 +136,8 @@ class ShortServiceCYAViewSpec extends ViewUnitTest {
         titleCheck(expectedTitle, userScenario.isWelsh)
         h1Check(expectedHeading)
         captionCheck(expectedCaption(taxYearEOY))
-
-        //noinspection ScalaStyle
-        cyaRowCheck(refundBoolean, "No", ChangeLinks.changeRefund, hiddenRefundBoolean, 1)
+        
+        cyaRowCheck(refundBoolean, noText, ChangeLinks.changeRefund, hiddenRefundBoolean, 1)
         cyaRowCheck(nonUKBoolean, "No tax paid", ChangeLinks.changeNonUkRefund, hiddenNonUKBoolean, 2)
         buttonCheck(buttonText)
       }

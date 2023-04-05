@@ -16,9 +16,9 @@
 
 package forms
 
-import play.api.data.{Form, FormError}
-import play.api.data.Forms.{of, tuple}
+import play.api.data.Forms.of
 import play.api.data.format.Formatter
+import play.api.data.{Form, FormError}
 
 object RadioButtonForm {
 

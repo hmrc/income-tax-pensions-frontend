@@ -85,7 +85,7 @@ class PensionSchemeStartDateControllerISpec extends IntegrationTest with ViewHel
 
   trait SpecificExpectedResults {
     val expectedTitle: String
-    val expectedHeading: String
+    lazy val expectedHeading = expectedTitle
     val expectedErrorTitle: String
 
   }
@@ -110,8 +110,8 @@ class PensionSchemeStartDateControllerISpec extends IntegrationTest with ViewHel
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Income from pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val buttonText = "Continue"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Incwm o bensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
+    val buttonText = "Yn eich blaen"
     val expectedHintText = "For example, 12 11 2007"
     val expectedDayLabel = "Diwrnod"
     val expectedMonthLabel = "Mis"
@@ -130,26 +130,22 @@ class PensionSchemeStartDateControllerISpec extends IntegrationTest with ViewHel
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
     val expectedTitle = "When did you start getting payments from this scheme?"
-    val expectedHeading = "When did you start getting payments from this scheme?"
     val expectedErrorTitle = s"Error: $expectedTitle"
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
     val expectedTitle = "When did you start getting payments from this scheme?"
-    val expectedHeading = "When did you start getting payments from this scheme?"
-    val expectedErrorTitle = s"Error: $expectedTitle"
+    val expectedErrorTitle = s"Gwall: $expectedTitle"
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
     val expectedTitle = "When did your client start getting payments from this scheme?"
-    val expectedHeading = "When did your client start getting payments from this scheme?"
     val expectedErrorTitle = s"Error: $expectedTitle"
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
     val expectedTitle = "When did your client start getting payments from this scheme?"
-    val expectedHeading = "When did your client start getting payments from this scheme?"
-    val expectedErrorTitle = s"Error: $expectedTitle"
+    val expectedErrorTitle = s"Gwall: $expectedTitle"
   }
 
 
@@ -182,7 +178,7 @@ class PensionSchemeStartDateControllerISpec extends IntegrationTest with ViewHel
             result.status shouldBe OK
           }
 
-          titleCheck(user.specificExpectedResults.get.expectedTitle)
+          titleCheck(user.specificExpectedResults.get.expectedTitle, user.isWelsh)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           inputFieldValueCheck(dayInputName, dayInputSelector, "")
@@ -214,7 +210,7 @@ class PensionSchemeStartDateControllerISpec extends IntegrationTest with ViewHel
             result.status shouldBe OK
           }
 
-          titleCheck(user.specificExpectedResults.get.expectedTitle)
+          titleCheck(user.specificExpectedResults.get.expectedTitle, user.isWelsh)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           inputFieldValueCheck(dayInputName, dayInputSelector, validDay)
@@ -303,7 +299,7 @@ class PensionSchemeStartDateControllerISpec extends IntegrationTest with ViewHel
 
             implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-            titleCheck(user.specificExpectedResults.get.expectedErrorTitle)
+            titleCheck(user.specificExpectedResults.get.expectedErrorTitle, user.isWelsh)
             h1Check(user.specificExpectedResults.get.expectedHeading)
             inputFieldValueCheck(dayInputName, dayInputSelector, "")
             inputFieldValueCheck(monthInputName, monthInputSelector, "")
@@ -333,7 +329,7 @@ class PensionSchemeStartDateControllerISpec extends IntegrationTest with ViewHel
 
             implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-            titleCheck(user.specificExpectedResults.get.expectedErrorTitle)
+            titleCheck(user.specificExpectedResults.get.expectedErrorTitle, user.isWelsh)
             h1Check(user.specificExpectedResults.get.expectedHeading)
             inputFieldValueCheck(dayInputName, dayInputSelector, "")
             inputFieldValueCheck(monthInputName, monthInputSelector, validMonth)
@@ -363,7 +359,7 @@ class PensionSchemeStartDateControllerISpec extends IntegrationTest with ViewHel
 
             implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-            titleCheck(user.specificExpectedResults.get.expectedErrorTitle)
+            titleCheck(user.specificExpectedResults.get.expectedErrorTitle, user.isWelsh)
             h1Check(user.specificExpectedResults.get.expectedHeading)
             inputFieldValueCheck(dayInputName, dayInputSelector, "")
             inputFieldValueCheck(monthInputName, monthInputSelector, "")
@@ -393,7 +389,7 @@ class PensionSchemeStartDateControllerISpec extends IntegrationTest with ViewHel
 
             implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-            titleCheck(user.specificExpectedResults.get.expectedErrorTitle)
+            titleCheck(user.specificExpectedResults.get.expectedErrorTitle, user.isWelsh)
             h1Check(user.specificExpectedResults.get.expectedHeading)
             inputFieldValueCheck(dayInputName, dayInputSelector, "")
             inputFieldValueCheck(monthInputName, monthInputSelector, validMonth)
@@ -423,7 +419,7 @@ class PensionSchemeStartDateControllerISpec extends IntegrationTest with ViewHel
 
             implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-            titleCheck(user.specificExpectedResults.get.expectedErrorTitle)
+            titleCheck(user.specificExpectedResults.get.expectedErrorTitle, user.isWelsh)
             h1Check(user.specificExpectedResults.get.expectedHeading)
             inputFieldValueCheck(dayInputName, dayInputSelector, validDay)
             inputFieldValueCheck(monthInputName, monthInputSelector, "")
@@ -453,7 +449,7 @@ class PensionSchemeStartDateControllerISpec extends IntegrationTest with ViewHel
 
             implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-            titleCheck(user.specificExpectedResults.get.expectedErrorTitle)
+            titleCheck(user.specificExpectedResults.get.expectedErrorTitle, user.isWelsh)
             h1Check(user.specificExpectedResults.get.expectedHeading)
             inputFieldValueCheck(dayInputName, dayInputSelector, validDay)
             inputFieldValueCheck(monthInputName, monthInputSelector, "")
@@ -483,7 +479,7 @@ class PensionSchemeStartDateControllerISpec extends IntegrationTest with ViewHel
 
             implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-            titleCheck(user.specificExpectedResults.get.expectedErrorTitle)
+            titleCheck(user.specificExpectedResults.get.expectedErrorTitle, user.isWelsh)
             h1Check(user.specificExpectedResults.get.expectedHeading)
             inputFieldValueCheck(dayInputName, dayInputSelector, validDay)
             inputFieldValueCheck(monthInputName, monthInputSelector, validMonth)
@@ -514,7 +510,7 @@ class PensionSchemeStartDateControllerISpec extends IntegrationTest with ViewHel
 
             implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-            titleCheck(user.specificExpectedResults.get.expectedErrorTitle)
+            titleCheck(user.specificExpectedResults.get.expectedErrorTitle, user.isWelsh)
             h1Check(user.specificExpectedResults.get.expectedHeading)
             inputFieldValueCheck(dayInputName, dayInputSelector, validDay)
             inputFieldValueCheck(monthInputName, monthInputSelector, validMonth)
@@ -544,7 +540,7 @@ class PensionSchemeStartDateControllerISpec extends IntegrationTest with ViewHel
 
             implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-            titleCheck(user.specificExpectedResults.get.expectedErrorTitle)
+            titleCheck(user.specificExpectedResults.get.expectedErrorTitle, user.isWelsh)
             h1Check(user.specificExpectedResults.get.expectedHeading)
             inputFieldValueCheck(dayInputName, dayInputSelector, validDay)
             inputFieldValueCheck(monthInputName, monthInputSelector, "13")
@@ -574,7 +570,7 @@ class PensionSchemeStartDateControllerISpec extends IntegrationTest with ViewHel
 
             implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-            titleCheck(user.specificExpectedResults.get.expectedErrorTitle)
+            titleCheck(user.specificExpectedResults.get.expectedErrorTitle, user.isWelsh)
             h1Check(user.specificExpectedResults.get.expectedHeading)
             inputFieldValueCheck(dayInputName, dayInputSelector, "01")
             inputFieldValueCheck(monthInputName, monthInputSelector, "01")

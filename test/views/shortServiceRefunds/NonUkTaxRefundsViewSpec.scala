@@ -43,6 +43,7 @@ class NonUkTaxRefundsViewSpec extends ViewUnitTest {
 
   trait ExpectedContents {
     val expectedTitle: String
+    val expectedErrorTitle: String
     val expectedCaption: Int => String
     val expectedPara1: String
     val expectedPara2: String
@@ -59,74 +60,78 @@ class NonUkTaxRefundsViewSpec extends ViewUnitTest {
   }
 
   object ExpectedContentsIndividualEN extends ExpectedContents {
-    override val expectedTitle: String = "Non-UK tax on short service refunds"
-    override val expectedCaption: Int => String = (taxYear: Int) => s"Short service refunds for 6 April ${taxYear - 1} to 5 April $taxYear"
-    override val expectedPara1: String = "If you paid non-UK tax on more than one refund, add the amounts together."
-    override val expectedPara2: String = "If you do not know this information, you can check with the employer or pension scheme provider."
-    override val expectedQuestion: String = "Did you pay non-UK tax on short service refunds?"
-    override val expectedAmountText: String = "Total non-UK tax on short service refunds, in pounds"
-    override val expectedAmountHint: String = "For example, £193.54"
-    override val yes: String = "Yes"
-    override val no: String = "No"
-    override val continue: String = "Continue"
-    override val errorMessage: String = "Select yes if you paid non-UK tax on this short service refund"
-    override val expectedNoAmountEntryErrorText: String = "Enter the amount of non-UK tax you paid on this short service refund"
-    override val expectedIncorrectFormatErrorText: String = "Enter the amount of non-UK tax you paid on this short service refund in the correct format"
-    override val expectedTooBigErrorText: String = "The amount of non-UK tax you paid on this short service refund must be less than £100,000,000,000"
+    val expectedTitle: String = "Non-UK tax on short service refunds"
+    val expectedErrorTitle = s"Error: $expectedTitle"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Short service refunds for 6 April ${taxYear - 1} to 5 April $taxYear"
+    val expectedPara1: String = "If you paid non-UK tax on more than one refund, add the amounts together."
+    val expectedPara2: String = "If you do not know this information, you can check with the employer or pension scheme provider."
+    val expectedQuestion: String = "Did you pay non-UK tax on short service refunds?"
+    val expectedAmountText: String = "Total non-UK tax on short service refunds, in pounds"
+    val expectedAmountHint: String = "For example, £193.54"
+    val yes: String = "Yes"
+    val no: String = "No"
+    val continue: String = "Continue"
+    val errorMessage: String = "Select yes if you paid non-UK tax on this short service refund"
+    val expectedNoAmountEntryErrorText: String = "Enter the amount of non-UK tax you paid on this short service refund"
+    val expectedIncorrectFormatErrorText: String = "Enter the amount of non-UK tax you paid on this short service refund in the correct format"
+    val expectedTooBigErrorText: String = "The amount of non-UK tax you paid on this short service refund must be less than £100,000,000,000"
   }
 
   object ExpectedContentsAgentEN extends ExpectedContents {
-    override val expectedTitle: String = "Non-UK tax on short service refunds"
-    override val expectedCaption: Int => String = (taxYear: Int) => s"Short service refunds for 6 April ${taxYear - 1} to 5 April $taxYear"
-    override val expectedPara1: String = "If your client paid non-UK tax on more than one refund, add the amounts together."
-    override val expectedPara2: String = "If you do not know this information, you can ask your client to check with the employer or pension scheme provider."
-    override val expectedQuestion: String = "Did your client pay non-UK tax on short service refunds?"
-    override val expectedAmountText: String = "Total non-UK tax on short service refunds, in pounds"
-    override val expectedAmountHint: String = "For example, £193.54"
-    override val yes: String = "Yes"
-    override val no: String = "No"
-    override val continue: String = "Continue"
-    override val errorMessage: String = "Select yes if your client paid non-UK tax on this short service refund"
-    override val expectedNoAmountEntryErrorText: String = "Enter the amount of non-UK tax your client paid on this short service refund"
-    override val expectedIncorrectFormatErrorText: String = "Enter the amount of non-UK tax your client paid on this short service refund in the correct format"
-    override val expectedTooBigErrorText: String = "The amount of non-UK tax your client paid on this short service refund must be less than £100,000,000,000"
+    val expectedTitle: String = "Non-UK tax on short service refunds"
+    val expectedErrorTitle = s"Error: $expectedTitle"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Short service refunds for 6 April ${taxYear - 1} to 5 April $taxYear"
+    val expectedPara1: String = "If your client paid non-UK tax on more than one refund, add the amounts together."
+    val expectedPara2: String = "If you do not know this information, you can ask your client to check with the employer or pension scheme provider."
+    val expectedQuestion: String = "Did your client pay non-UK tax on short service refunds?"
+    val expectedAmountText: String = "Total non-UK tax on short service refunds, in pounds"
+    val expectedAmountHint: String = "For example, £193.54"
+    val yes: String = "Yes"
+    val no: String = "No"
+    val continue: String = "Continue"
+    val errorMessage: String = "Select yes if your client paid non-UK tax on this short service refund"
+    val expectedNoAmountEntryErrorText: String = "Enter the amount of non-UK tax your client paid on this short service refund"
+    val expectedIncorrectFormatErrorText: String = "Enter the amount of non-UK tax your client paid on this short service refund in the correct format"
+    val expectedTooBigErrorText: String = "The amount of non-UK tax your client paid on this short service refund must be less than £100,000,000,000"
   }
 
   object ExpectedContentsAgentCY extends ExpectedContents {
-    override val expectedTitle: String = "Non-UK tax on short service refunds"
-    override val expectedCaption: Int => String = (taxYear: Int) => s"Short service refunds for 6 April ${taxYear - 1} to 5 April $taxYear"
-    override val expectedPara1: String = "If your client paid non-UK tax on more than one refund, add the amounts together."
-    override val expectedPara2: String = "If you do not know this information, you can ask your client to check with the employer or pension scheme provider."
-    override val expectedQuestion: String = "Did your client pay non-UK tax on short service refunds?"
-    override val expectedAmountText: String = "Total non-UK tax on short service refunds, in pounds"
-    override val expectedAmountHint: String = "For example, £193.54"
-    override val yes: String = "Yes"
-    override val no: String = "No"
-    override val continue: String = "Continue"
-    override val errorMessage: String = "Select yes if your client paid non-UK tax on this short service refund"
-    override val expectedNoAmountEntryErrorText: String = "Enter the amount of non-UK tax your client paid on this short service refund"
-    override val expectedIncorrectFormatErrorText: String = "Enter the amount of non-UK tax your client paid on this short service refund in the correct format"
-    override val expectedTooBigErrorText: String = "The amount of non-UK tax your client paid on this short service refund must be less than £100,000,000,000"
+    val expectedTitle: String = "Non-UK tax on short service refunds"
+    val expectedErrorTitle = s"Gwall: $expectedTitle"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Ad-daliadau am wasanaeth byr ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
+    val expectedPara1: String = "If your client paid non-UK tax on more than one refund, add the amounts together."
+    val expectedPara2: String = "If you do not know this information, you can ask your client to check with the employer or pension scheme provider."
+    val expectedQuestion: String = "Did your client pay non-UK tax on short service refunds?"
+    val expectedAmountText: String = "Total non-UK tax on short service refunds, in pounds"
+    val expectedAmountHint: String = "For example, £193.54"
+    val yes: String = "Iawn"
+    val no: String = "Na"
+    val continue: String = "Yn eich blaen"
+    val errorMessage: String = "Select yes if your client paid non-UK tax on this short service refund"
+    val expectedNoAmountEntryErrorText: String = "Enter the amount of non-UK tax your client paid on this short service refund"
+    val expectedIncorrectFormatErrorText: String = "Enter the amount of non-UK tax your client paid on this short service refund in the correct format"
+    val expectedTooBigErrorText: String = "The amount of non-UK tax your client paid on this short service refund must be less than £100,000,000,000"
   }
 
   object ExpectedContentsIndividualCY extends ExpectedContents {
-    override val expectedTitle: String = "Non-UK tax on short service refunds"
-    override val expectedCaption: Int => String = (taxYear: Int) => s"Short service refunds for 6 April ${taxYear - 1} to 5 April $taxYear"
-    override val expectedPara1: String = "If you paid non-UK tax on more than one refund, add the amounts together."
-    override val expectedPara2: String = "If you do not know this information, you can check with the employer or pension scheme provider."
-    override val expectedQuestion: String = "Did you pay non-UK tax on short service refunds?"
-    override val expectedAmountText: String = "Total non-UK tax on short service refunds, in pounds"
-    override val expectedAmountHint: String = "For example, £193.54"
-    override val yes: String = "Yes"
-    override val no: String = "No"
-    override val continue: String = "Continue"
-    override val errorMessage: String = "Select yes if you paid non-UK tax on this short service refund"
-    override val expectedNoAmountEntryErrorText: String = "Enter the amount of non-UK tax you paid on this short service refund"
-    override val expectedIncorrectFormatErrorText: String = "Enter the amount of non-UK tax you paid on this short service refund in the correct format"
-    override val expectedTooBigErrorText: String = "The amount of non-UK tax you paid on this short service refund must be less than £100,000,000,000"
+    val expectedTitle: String = "Non-UK tax on short service refunds"
+    val expectedErrorTitle = s"Gwall: $expectedTitle"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Ad-daliadau am wasanaeth byr ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
+    val expectedPara1: String = "If you paid non-UK tax on more than one refund, add the amounts together."
+    val expectedPara2: String = "If you do not know this information, you can check with the employer or pension scheme provider."
+    val expectedQuestion: String = "Did you pay non-UK tax on short service refunds?"
+    val expectedAmountText: String = "Total non-UK tax on short service refunds, in pounds"
+    val expectedAmountHint: String = "For example, £193.54"
+    val yes: String = "Iawn"
+    val no: String = "Na"
+    val continue: String = "Yn eich blaen"
+    val errorMessage: String = "Select yes if you paid non-UK tax on this short service refund"
+    val expectedNoAmountEntryErrorText: String = "Enter the amount of non-UK tax you paid on this short service refund"
+    val expectedIncorrectFormatErrorText: String = "Enter the amount of non-UK tax you paid on this short service refund in the correct format"
+    val expectedTooBigErrorText: String = "The amount of non-UK tax you paid on this short service refund must be less than £100,000,000,000"
   }
 
-  override protected val userScenarios: Seq[UserScenario[ExpectedContents, Unit]] = Seq(
+  protected val userScenarios: Seq[UserScenario[ExpectedContents, Unit]] = Seq(
       UserScenario(isWelsh = false, isAgent = false, ExpectedContentsIndividualEN),
       UserScenario(isWelsh = false, isAgent = true, ExpectedContentsAgentEN),
       UserScenario(isWelsh = true, isAgent = false, ExpectedContentsIndividualCY),
@@ -211,7 +216,7 @@ class NonUkTaxRefundsViewSpec extends ViewUnitTest {
         val htmlFormat = underTest(form.bind(Map(RadioButtonAmountForm.yesNo -> "")), taxYearEOY)
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
-        titleCheck("Error: " + userScenario.commonExpectedResults.expectedTitle, userScenario.isWelsh)
+        titleCheck(userScenario.commonExpectedResults.expectedErrorTitle, userScenario.isWelsh)
         errorAboveElementCheck(userScenario.commonExpectedResults.errorMessage, Some("value"))
         errorSummaryCheck(userScenario.commonExpectedResults.errorMessage, "#value")
         radioButtonCheck(userScenario.commonExpectedResults.yes, 1, checked = false)
@@ -226,7 +231,7 @@ class NonUkTaxRefundsViewSpec extends ViewUnitTest {
         val htmlFormat = underTest(form.bind(Map(RadioButtonAmountForm.yesNo -> "true")), taxYearEOY)
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
-        titleCheck("Error: " + userScenario.commonExpectedResults.expectedTitle, userScenario.isWelsh)
+        titleCheck(userScenario.commonExpectedResults.expectedErrorTitle, userScenario.isWelsh)
         errorAboveElementCheck(userScenario.commonExpectedResults.expectedNoAmountEntryErrorText, Some("amount-2"))
         errorSummaryCheck(userScenario.commonExpectedResults.expectedNoAmountEntryErrorText, "#amount-2")
         radioButtonCheck(userScenario.commonExpectedResults.yes, 1, checked = true)
@@ -242,7 +247,7 @@ class NonUkTaxRefundsViewSpec extends ViewUnitTest {
         val htmlFormat = underTest(form.bind(Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "123xyz")), taxYearEOY)
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
-        titleCheck("Error: " + userScenario.commonExpectedResults.expectedTitle, userScenario.isWelsh)
+        titleCheck(userScenario.commonExpectedResults.expectedErrorTitle, userScenario.isWelsh)
         errorAboveElementCheck(userScenario.commonExpectedResults.expectedIncorrectFormatErrorText, Some("amount-2"))
         errorSummaryCheck(userScenario.commonExpectedResults.expectedIncorrectFormatErrorText, "#amount-2")
       }
@@ -255,7 +260,7 @@ class NonUkTaxRefundsViewSpec extends ViewUnitTest {
         val htmlFormat = underTest(form.bind(Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "999999999999999999999.99")), taxYearEOY)
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
-        titleCheck("Error: " + userScenario.commonExpectedResults.expectedTitle, userScenario.isWelsh)
+        titleCheck(userScenario.commonExpectedResults.expectedErrorTitle, userScenario.isWelsh)
         errorAboveElementCheck(userScenario.commonExpectedResults.expectedTooBigErrorText, Some("amount-2"))
         errorSummaryCheck(userScenario.commonExpectedResults.expectedTooBigErrorText, "#amount-2")
       }

@@ -34,12 +34,12 @@ import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
 
-  private val providerNameInputName = "providerName"
-  private val refInputName = "schemeReference"
-  private val pIdInputName = "pensionId"
-  private val validRef = "123/ABCab"
-  private val validProviderName = "Valid Provider Name -&"
-  private val validPensionId = "Valid Pension Id +-/"
+  val providerNameInputName = "providerName"
+  val refInputName = "schemeReference"
+  val pIdInputName = "pensionId"
+  val validRef = "123/ABCab"
+  val validProviderName = "Valid Provider Name -&"
+  val validPensionId = "Valid Pension Id +-/"
 
   def pensionDetailsForm(providerName: String, ref: String, id: String): Map[String, String] = Map(
     PensionSchemeDetailsForm.providerName -> providerName,
@@ -66,7 +66,7 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
 
   trait CommonExpectedResults {
     val expectedTitle: String
-    val expectedHeading: String
+    lazy val expectedHeading = expectedTitle
     val expectedErrorTitle: String
     val expectedCaption: Int => String
     val buttonText: String
@@ -92,7 +92,6 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
 
   object CommonExpectedEN extends CommonExpectedResults {
     val expectedTitle = "Pension scheme details"
-    val expectedHeading = "Pension scheme details"
     val expectedErrorTitle = s"Error: $expectedTitle"
     val expectedCaption: Int => String = (taxYear: Int) => s"Income from pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
     val buttonText = "Continue"
@@ -114,10 +113,9 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
 
   object CommonExpectedCY extends CommonExpectedResults {
     val expectedTitle = "Pension scheme details"
-    val expectedHeading = "Pension scheme details"
-    val expectedErrorTitle = s"Error: $expectedTitle"
-    val expectedCaption: Int => String = (taxYear: Int) => s"Income from pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val buttonText = "Continue"
+    val expectedErrorTitle = s"Gwall: $expectedTitle"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Incwm o bensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
+    val buttonText = "Yn eich blaen"
     val providerNameLabel = "Pension provider name"
     val referenceLabel = "Pension scheme PAYE reference number"
     val pIdLabel = "Pension Identification (PID)"
@@ -190,7 +188,7 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
             result.status shouldBe OK
           }
 
-          titleCheck(expectedTitle)
+          titleCheck(expectedTitle, user.isWelsh)
           h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           textOnPageCheck(user.specificExpectedResults.get.expectedYouCanFindThisParagraph, paragraphSelector(1))
@@ -227,7 +225,7 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
             result.status shouldBe OK
           }
 
-          titleCheck(expectedTitle)
+          titleCheck(expectedTitle, user.isWelsh)
           h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           textOnPageCheck(user.specificExpectedResults.get.expectedYouCanFindThisParagraph, paragraphSelector(1))
@@ -317,7 +315,7 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(expectedErrorTitle)
+          titleCheck(expectedErrorTitle, user.isWelsh)
           h1Check(expectedHeading)
           inputFieldValueCheck(providerNameInputName, providerNameInputSelector, "")
           inputFieldValueCheck(refInputName, refInputSelector, "")
@@ -348,7 +346,7 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(expectedErrorTitle)
+          titleCheck(expectedErrorTitle, user.isWelsh)
           h1Check(expectedHeading)
           inputFieldValueCheck(providerNameInputName, providerNameInputSelector, "<>")
           inputFieldValueCheck(refInputName, refInputSelector, "<>")
@@ -381,7 +379,7 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(expectedErrorTitle)
+          titleCheck(expectedErrorTitle, user.isWelsh)
           h1Check(expectedHeading)
           inputFieldValueCheck(providerNameInputName, providerNameInputSelector, providerNameTooLong)
           inputFieldValueCheck(refInputName, refInputSelector, validRef)
