@@ -27,7 +27,7 @@ import controllers.pensions.incomeFromPensions.routes.IncomeFromPensionsGatewayC
 import utils.FakeRequestProvider
 import views.html.pensions.incomeFromPensions.IncomeFromPensionsGatewayView
 
-class IncomeFromPensionsGatewaySpec extends ViewUnitTest {
+class IncomeFromPensionsGatewayTestSupport extends ViewUnitTest {
 
   object Selectors {
     val continueButtonFormSelector = "#main-content > div > div > form"
