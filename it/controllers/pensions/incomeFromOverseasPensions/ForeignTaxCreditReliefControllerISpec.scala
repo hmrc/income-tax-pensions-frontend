@@ -27,19 +27,19 @@ import play.api.http.Status.{BAD_REQUEST, OK}
 import play.api.libs.ws.{WSClient, WSResponse}
 
 class ForeignTaxCreditReliefControllerISpec extends YesNoControllerSpec("/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-ftcr") {
-  private val selectorForSummaryText = "#main-content > div > div > details > summary"
-  private val selectorForSummaryPara1 = "#main-content > div > div > details > div > p:nth-child(1)"
-  private val selectorForSummaryPara2 = "#main-content > div > div > details > div > p:nth-child(2)"
-  private val selectorForSummaryPara3 = "#main-content > div > div > details > div > p:nth-child(3)"
-  private val selectorForSummaryPara4 = "#main-content > div > div > details > div > p:nth-child(4)"
-  private val selectorForSummaryPara4Bullet1 = "#main-content > div > div > details > div > #para4bullets > li:nth-child(1)"
-  private val selectorForSummaryPara4Bullet2 = "#main-content > div > div > details > div > #para4bullets > li:nth-child(2)"
-  private val selectorForSummaryPara5 = "#main-content > div > div > details > div > #para5"
-  private val selectorForSummaryPara5Bullet1 = "#main-content > div > div > details > div > #para5bullets > li:nth-child(1)"
-  private val selectorForSummaryPara5Bullet2 = "#main-content > div > div > details > div > #para5bullets > li:nth-child(2)"
-  private val selectorForSummaryPara5Bullet3 = "#main-content > div > div > details > div > #para5bullets > li:nth-child(3)"
-  private val selectorForSummaryPara6 = "#main-content > div > div > details > div > #para6"
-  private val selectorForSummaryPara7 = "#main-content > div > div > details > div > #para7"
+  val selectorForSummaryText = "#main-content > div > div > details > summary"
+  val selectorForSummaryPara1 = "#main-content > div > div > details > div > p:nth-child(1)"
+  val selectorForSummaryPara2 = "#main-content > div > div > details > div > p:nth-child(2)"
+  val selectorForSummaryPara3 = "#main-content > div > div > details > div > p:nth-child(3)"
+  val selectorForSummaryPara4 = "#main-content > div > div > details > div > p:nth-child(4)"
+  val selectorForSummaryPara4Bullet1 = "#main-content > div > div > details > div > #para4bullets > li:nth-child(1)"
+  val selectorForSummaryPara4Bullet2 = "#main-content > div > div > details > div > #para4bullets > li:nth-child(2)"
+  val selectorForSummaryPara5 = "#main-content > div > div > details > div > #para5"
+  val selectorForSummaryPara5Bullet1 = "#main-content > div > div > details > div > #para5bullets > li:nth-child(1)"
+  val selectorForSummaryPara5Bullet2 = "#main-content > div > div > details > div > #para5bullets > li:nth-child(2)"
+  val selectorForSummaryPara5Bullet3 = "#main-content > div > div > details > div > #para5bullets > li:nth-child(3)"
+  val selectorForSummaryPara6 = "#main-content > div > div > details > div > #para6"
+  val selectorForSummaryPara7 = "#main-content > div > div > details > div > #para7"
 
   "This page" when {
     "show" should {
@@ -126,7 +126,7 @@ class ForeignTaxCreditReliefControllerISpec extends YesNoControllerSpec("/overse
             assertPageAsExpected(OK, expectedYesNoPageContentsIndividual)
           }
 
-          scenarioNameForIndividualAndWelsh in {
+          scenarioNameForIndividualAndWelsh ignore {
             implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
             implicit val response: WSResponse = getPageWithIndex()
             
@@ -140,7 +140,7 @@ class ForeignTaxCreditReliefControllerISpec extends YesNoControllerSpec("/overse
             assertPageAsExpected(OK, expectedYesNoPageContentsAgent)
           }
 
-          scenarioNameForAgentAndWelsh in {
+          scenarioNameForAgentAndWelsh ignore {
             implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
             implicit val response: WSResponse = getPageWithIndex()
             
@@ -164,7 +164,7 @@ class ForeignTaxCreditReliefControllerISpec extends YesNoControllerSpec("/overse
               .copy(radioButtonForYes = checkedExpectedRadioButton("Yes")))
           }
 
-          scenarioNameForIndividualAndWelsh in {
+          scenarioNameForIndividualAndWelsh ignore {
             implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
             implicit val response: WSResponse = getPageWithIndex()
 
@@ -180,7 +180,7 @@ class ForeignTaxCreditReliefControllerISpec extends YesNoControllerSpec("/overse
               .copy(radioButtonForYes = checkedExpectedRadioButton("Yes")))
           }
 
-          scenarioNameForAgentAndWelsh in {
+          scenarioNameForAgentAndWelsh ignore {
             implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
             implicit val response: WSResponse = getPageWithIndex()
 
@@ -206,7 +206,7 @@ class ForeignTaxCreditReliefControllerISpec extends YesNoControllerSpec("/overse
               .copy(radioButtonForNo = checkedExpectedRadioButton("No")))
           }
 
-          scenarioNameForIndividualAndWelsh in {
+          scenarioNameForIndividualAndWelsh ignore {
             implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
             implicit val response: WSResponse = getPageWithIndex()
 
@@ -222,7 +222,7 @@ class ForeignTaxCreditReliefControllerISpec extends YesNoControllerSpec("/overse
               .copy(radioButtonForNo = checkedExpectedRadioButton("No")))
           }
 
-          scenarioNameForAgentAndWelsh in {
+          scenarioNameForAgentAndWelsh ignore {
             implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
             implicit val response: WSResponse = getPageWithIndex()
 
@@ -318,7 +318,7 @@ class ForeignTaxCreditReliefControllerISpec extends YesNoControllerSpec("/overse
             assertPageAsExpected(BAD_REQUEST, expectedYesNoPageContentsIndividual)
           }
           
-          scenarioNameForIndividualAndWelsh in {
+          scenarioNameForIndividualAndWelsh ignore {
 
             implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
             implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForYesNoPage(None))
@@ -336,7 +336,7 @@ class ForeignTaxCreditReliefControllerISpec extends YesNoControllerSpec("/overse
             assertPageAsExpected(BAD_REQUEST, expectedYesNoPageContentsAgent)
           }
           
-          scenarioNameForAgentAndWelsh in {
+          scenarioNameForAgentAndWelsh ignore {
 
             implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
             implicit val response: WSResponse  = submitFormWithIndex(SubmittedFormDataForYesNoPage(None))

@@ -68,11 +68,11 @@ class UkPensionSchemeDetailsControllerISpec extends IntegrationTest with BeforeA
 
   object CommonExpectedCY extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Taliadau heb awdurdod o bensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
-    val expectedButtonText = "Continue"
+    val expectedButtonText = "Yn eich blaen"
     val expectedTitle = "Unauthorised payments from UK pensions schemes"
     val expectedHeading = "Unauthorised payments from UK pensions schemes"
-    val change = "Change"
-    val remove = "Remove"
+    val change = "Newid"
+    val remove = "Tynnu"
     val expectedAddAnotherText = "Add another Pensions Scheme Tax Reference"
     val expectedAddPensionSchemeText = "Add a Pensions Scheme Tax Reference"
   }
@@ -111,7 +111,7 @@ class UkPensionSchemeDetailsControllerISpec extends IntegrationTest with BeforeA
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(expectedTitle)
+          titleCheck(expectedTitle, user.isWelsh)
           h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY))
           textOnPageCheck(pensionScheme1, pensionNameSelector(1))
@@ -145,7 +145,7 @@ class UkPensionSchemeDetailsControllerISpec extends IntegrationTest with BeforeA
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(expectedTitle)
+          titleCheck(expectedTitle, user.isWelsh)
           h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY))
           elementNotOnPageCheck(summaryListTableSelector)

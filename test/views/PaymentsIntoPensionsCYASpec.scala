@@ -24,13 +24,13 @@ import org.jsoup.nodes.Document
 import play.api.i18n.Messages
 import play.api.mvc.AnyContent
 import support.ViewUnitTest
-import views.PaymentsIntoPensionsCYATestSupport._
+import views.PaymentsIntoPensionsCYASpec._
 import views.html.pensions.paymentsIntoPensions.PaymentsIntoPensionsCYAView
 
 import java.time.LocalDate
 
 // scalastyle:off magic.number
-object PaymentsIntoPensionsCYATestSupport {
+object PaymentsIntoPensionsCYASpec {
 
   private val dateNow: LocalDate = LocalDate.now()
   private val taxYearCutoffDate: LocalDate = LocalDate.parse(s"${dateNow.getYear}-04-05")
@@ -125,10 +125,10 @@ object PaymentsIntoPensionsCYATestSupport {
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    def expectedCaption(taxYear: Int): String = s"Payments into pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
+    def expectedCaption(taxYear: Int): String = s"Taliadau i bensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
 
-    val yes = "Yes"
-    val no = "No"
+    val yes = "Iawn"
+    val no = "Na"
 
     val paymentsIntoUKPensions = "Taliadau i bensiynau’r DU"
     val reliefAtSource = "Taliadau pensiwn rhyddhad wrth y ffynhonnell (RAS)"
@@ -141,8 +141,8 @@ object PaymentsIntoPensionsCYATestSupport {
     val workplacePayments = "Taliadau pensiwn gweithle"
     val workplacePaymentsAmount = "Cyfanswm y taliadau pensiwn gweithle"
 
-    val saveAndContinue = "Save and continue"
-    val error = "Sorry, there is a problem with the service"
+    val saveAndContinue = "Cadw ac yn eich blaen"
+    val error = "Mae’n ddrwg gennym – mae problem gyda’r gwasanaeth"
 
     val paymentsIntoUKPensionsHidden = "Newid taliadau i bensiynau’r DU"
     val reliefAtSourceHidden = "Newid p’un a wnaed taliadau pensiwn rhyddhad wrth y ffynhonnell"
@@ -177,7 +177,7 @@ object PaymentsIntoPensionsCYATestSupport {
   }
 }
 
-class PaymentsIntoPensionsCYATestSupport extends ViewUnitTest {
+class PaymentsIntoPensionsCYASpec extends ViewUnitTest {
   val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(
     UserScenario(isWelsh = false, isAgent = false, CommonExpectedEN, Some(ExpectedIndividualEN)),
     UserScenario(isWelsh = false, isAgent = true, CommonExpectedEN, Some(ExpectedAgentEN)),
@@ -238,7 +238,7 @@ class PaymentsIntoPensionsCYATestSupport extends ViewUnitTest {
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
 
-        import userScenario.commonExpectedResults.{no => answerNo, yes => anseryes}
+        import userScenario.commonExpectedResults.{no => answerNo}
 
         //noinspection ScalaStyle
         cyaRowCheck(reliefAtSource, answerNo, ChangeLinks.reliefAtSource, reliefAtSourceHidden, 1)

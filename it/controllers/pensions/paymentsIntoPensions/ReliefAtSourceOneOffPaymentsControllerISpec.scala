@@ -31,10 +31,10 @@ import play.api.libs.ws.WSResponse
 import utils.PageUrls.PaymentIntoPensions._
 import utils.PageUrls.fullUrl
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
-import views.ReliefAtSourceOneOffPaymentsTestSupport.Selectors._
-import views.ReliefAtSourceOneOffPaymentsTestSupport.CommonExpectedEN._
-import views.ReliefAtSourceOneOffPaymentsTestSupport.ExpectedIndividualEN._
-import views.ReliefAtSourceOneOffPaymentsTestSupport.Selectors
+import views.ReliefAtSourceOneOffPaymentsSpec.Selectors._
+import views.ReliefAtSourceOneOffPaymentsSpec.CommonExpectedEN._
+import views.ReliefAtSourceOneOffPaymentsSpec.ExpectedIndividualEN._
+import views.ReliefAtSourceOneOffPaymentsSpec.Selectors
 
 class ReliefAtSourceOneOffPaymentsControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
   private val someRasAmount: BigDecimal = 33.33

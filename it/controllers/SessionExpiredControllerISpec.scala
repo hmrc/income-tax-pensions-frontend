@@ -51,9 +51,9 @@ class SessionExpiredControllerISpec extends IntegrationTest with ViewHelpers {
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val h1Expected = "For your security, we signed you out"
-    val p1Expected = "We did not save your answers."
-    val buttonExpectedText = "Sign in"
+    val h1Expected = "Er eich diogelwch, gwnaethom eich allgofnodi"
+    val p1Expected = "Ni wnaethom gadw’ch atebion."
+    val buttonExpectedText = "Mewngofnodi"
     val buttonExpectedUrl: String = s"http://localhost:11111/update-and-submit-income-tax-return/$taxYear/start"
     val buttonExpectedUrl2030: String = "http://localhost:11111/update-and-submit-income-tax-return/2030/start"
   }
@@ -84,7 +84,7 @@ class SessionExpiredControllerISpec extends IntegrationTest with ViewHelpers {
 
           import user.commonExpectedResults._
 
-          titleCheck(h1Expected)
+          titleCheck(h1Expected, user.isWelsh)
           welshToggleCheck(user.isWelsh)
           h1Check(h1Expected, "xl")
 
@@ -114,7 +114,7 @@ class SessionExpiredControllerISpec extends IntegrationTest with ViewHelpers {
 
           import user.commonExpectedResults._
 
-          titleCheck(h1Expected)
+          titleCheck(h1Expected, user.isWelsh)
           welshToggleCheck(user.isWelsh)
           h1Check(h1Expected, "xl")
 

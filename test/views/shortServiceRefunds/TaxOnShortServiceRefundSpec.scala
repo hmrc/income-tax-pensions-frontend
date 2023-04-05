@@ -58,11 +58,11 @@ class TaxOnShortServiceRefundSpec extends ViewUnitTest with FakeRequestProvider 
   }
 
   object ExpectedCommonCY extends CommonExpectedResults {
-    override val expectedCaption: Int => String = (taxYear: Int) => s"Short service refunds for 6 April ${taxYear - 1} to 5 April $taxYear"
+    override val expectedCaption: Int => String = (taxYear: Int) => s"Ad-daliadau am wasanaeth byr ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
     override val expectedTitle: String = "Did a UK pension scheme pay tax on the short service refunds?"
-    override val continue: String = "Continue"
-    override val yes: String = "Yes"
-    override val no: String = "No"
+    override val continue: String = "Yn eich blaen"
+    override val yes: String = "Iawn"
+    override val no: String = "Na"
   }
 
   trait SpecificExpectedResults {
@@ -77,7 +77,7 @@ class TaxOnShortServiceRefundSpec extends ViewUnitTest with FakeRequestProvider 
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults{
-    val expectedCaption: Int => String = (taxYear: Int) => s"Short service refunds for 6 April ${taxYear - 1} to 5 April $taxYear"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Ad-daliadau am wasanaeth byr ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
     val expectedTitle: String = "Did a UK pension scheme pay tax on the short service refunds?"
     val continue: String = "Continue"
     val expectedNoEntryErrorText : String = "Select yes if a UK pension scheme paid tax on the short service refund"
@@ -91,7 +91,7 @@ class TaxOnShortServiceRefundSpec extends ViewUnitTest with FakeRequestProvider 
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) =>  s"Short service refunds for 6 April ${taxYear - 1} to 5 April $taxYear"
+    val expectedCaption: Int => String = (taxYear: Int) =>  s"Ad-daliadau am wasanaeth byr ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
     val expectedTitle: String = "Did a UK pension scheme pay tax on the short service refunds?"
     val continue: String = "Continue"
     val expectedNoEntryErrorText : String = "Select yes if a UK pension scheme paid tax on the short service refund"

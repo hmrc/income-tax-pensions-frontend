@@ -50,7 +50,7 @@ class RemoveRefundSchemeViewSpec extends ViewUnitTest {
 
   object CommonExpectedEN extends CommonExpectedResults {
     val expectedTitle = s"Are you sure you want to remove $pensionName?"
-    val expectedHeading = s"Are you sure you want to remove $pensionName?"
+    val expectedHeading = expectedTitle
     val expectedCaption: Int => String = (taxYear: Int) => s"Short service refunds for 6 April ${taxYear - 1} to 5 April $taxYear"
     val expectedParagraph1 = "This will remove:"
     val expectedBullet1 = "The name of the pension scheme"
@@ -61,15 +61,15 @@ class RemoveRefundSchemeViewSpec extends ViewUnitTest {
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedTitle = s"Are you sure you want to remove $pensionName?"
-    val expectedHeading = s"Are you sure you want to remove $pensionName?"
-    val expectedCaption: Int => String = (taxYear: Int) => s"Short service refunds for 6 April ${taxYear - 1} to 5 April $taxYear"
+    val expectedTitle = s"A ydych yn siŵr eich bod am dynnu $pensionName?"
+    val expectedHeading = expectedTitle
+    val expectedCaption: Int => String = (taxYear: Int) => s"Ad-daliadau am wasanaeth byr ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
     val expectedParagraph1 = "This will remove:"
     val expectedBullet1 = "The name of the pension scheme"
     val expectedBullet2 = "Pensions scheme tax reference"
     val expectedBullet3 = "Pensions provider address"
-    val buttonText = "Remove"
-    val cancelText = "Cancel"
+    val buttonText = "Tynnu"
+    val cancelText = "Canslo"
   }
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, String]] = Seq(
@@ -92,13 +92,12 @@ class RemoveRefundSchemeViewSpec extends ViewUnitTest {
         s"language is ${welshTest(userScenario.isWelsh)} and request is from an ${agentTest(userScenario.isAgent)}" which {
           "render the remove short service refund pension scheme page" which {
 
-
             val htmlFormat = underTest(taxYearEOY, pensionName, Some(1))
             implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
             val url = RefundSummaryController.show(taxYearEOY).url
 
-            titleCheck(userScenario.commonExpectedResults.expectedTitle, userScenario.isWelsh)
+            titleCheck(expectedTitle, userScenario.isWelsh)
             h1Check(expectedHeading)
             captionCheck(expectedCaption(taxYearEOY), captionSelector)
             textOnPageCheck(expectedParagraph1, paragraphSelector(1))

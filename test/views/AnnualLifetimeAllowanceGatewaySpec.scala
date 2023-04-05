@@ -26,7 +26,7 @@ import play.api.mvc.AnyContent
 import support.ViewUnitTest
 import views.html.pensions.lifetimeAllowances.AnnualLifetimeAllowanceGatewayView
 
-class AnnualLifetimeAllowanceGatewayTestSupport extends ViewUnitTest {
+class AnnualLifetimeAllowanceGatewaySpec extends ViewUnitTest {
 
   object Selectors {
     val continueButtonFormSelector = "#main-content > div > div > form"
@@ -63,12 +63,12 @@ class AnnualLifetimeAllowanceGatewayTestSupport extends ViewUnitTest {
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    override val expectedCaption: Int => String = (taxYear: Int) => s"Annual and lifetime allowances for 6 April ${taxYear - 1} to 5 April $taxYear"
-    override val expectedYesText: String = "Yes"
-    override val expectedNoText: String = "No"
-    override val expectedButtonText: String = "Continue"
-    override val expectedCalculatorText = "os oes angen i chi gyfrifo’ch lwfans blynyddol (opens in new tab)"
-    override val expectedFindOutMoreText = "Dysgwch ragor am lwfans oes (opens in new tab)"
+    override val expectedCaption: Int => String = (taxYear: Int) => s"Lwfans blynyddol a lwfans oes ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
+    override val expectedYesText: String = "Iawn"
+    override val expectedNoText: String = "Na"
+    override val expectedButtonText: String = "Yn eich blaen"
+    override val expectedCalculatorText = "os oes angen i chi gyfrifo’ch lwfans blynyddol (yn agor tab newydd)"
+    override val expectedFindOutMoreText = "Dysgwch ragor am lwfans oes (yn agor tab newydd)"
   }
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
@@ -88,7 +88,7 @@ class AnnualLifetimeAllowanceGatewayTestSupport extends ViewUnitTest {
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
     override val expectedTitleText: String = "A ydych wedi mynd yn uwch na’ch lwfans blynyddol neu lwfans oes?"
-    override val expectedErrorTitleText: String = s"Error: $expectedTitleText"
+    override val expectedErrorTitleText: String = s"Gwall: $expectedTitleText"
     override val expectedErrorText = "Dewiswch ‘Iawn’ os ydych wedi mynd yn uwch na’ch lwfans blynyddol neu lwfans oes"
     override val expectedText = "Byddai’ch darparwyr pensiwn wedi rhoi gwybod i chi pe baech yn mynd dros eich lwfans oes."
 
@@ -96,7 +96,7 @@ class AnnualLifetimeAllowanceGatewayTestSupport extends ViewUnitTest {
 
   object ExpectedAgentCY extends SpecificExpectedResults {
     override val expectedTitleText: String = "A yw’ch cleient wedi mynd dros ei lwfans blynyddol neu lwfans oes?"
-    override val expectedErrorTitleText: String = s"Error: $expectedTitleText"
+    override val expectedErrorTitleText: String = s"Gwall: $expectedTitleText"
     override val expectedErrorText = "Dewiswch ‘Iawn’ os yw’ch cleient wedi mynd dros ei lwfans blynyddol neu lwfans oes"
     override val expectedText = "Byddai darparwyr pensiwn eich cleient wedi rhoi gwybod iddo os oedd wedi mynd dros ei lwfans oes."
   }

@@ -49,6 +49,23 @@ class TransferPensionsSchemeViewSpec extends ViewUnitTest {
   }
   
   trait CommonExpectedResults {
+    val expectedTitle: String
+    val expectedHeading: String
+    val expectedErrorTitle: String
+    val expectedCaption: Int => String
+    val expectedIfYouGetParagraph: String
+    val buttonText: String
+    val providerNameLabel: String
+    val providerAddressLabel: String
+    val providerNameEmptyErrorText: String
+    val refEmptyErrorText: String
+    val providerAddressEmptyErrorText: String
+    val providerNameInvalidFormatErrorText: String
+    val providerNameOverCharLimitErrorText: String
+    val providerAddressOverCharLimitErrorText: String
+  }
+  
+  object CommonExpectedEN extends CommonExpectedResults {
     val expectedTitle: String = "Pension scheme paying the transfer charge"
     val expectedHeading: String = "Pension scheme paying the transfer charge"
     val expectedErrorTitle: String = s"Error: $expectedTitle"
@@ -65,11 +82,36 @@ class TransferPensionsSchemeViewSpec extends ViewUnitTest {
     val providerNameOverCharLimitErrorText: String = "Name of pension scheme must be 105 characters or less"
     val providerAddressOverCharLimitErrorText: String = "Pension providers address must be 250 characters or less"
   }
-  
-  object CommonExpectedEN extends CommonExpectedResults
-  object CommonExpectedCY extends CommonExpectedResults
+  object CommonExpectedCY extends CommonExpectedResults {
+    val expectedTitle: String = "Pension scheme paying the transfer charge"
+    val expectedHeading: String = "Pension scheme paying the transfer charge"
+    val expectedErrorTitle: String = s"Gwall: $expectedTitle"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Trosglwyddiadau i bensiynau tramor ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
+    val expectedIfYouGetParagraph: String = "If more than one pension scheme paid a transfer charge, you can add them later."
+    val buttonText: String = "Yn eich blaen"
+    val providerNameLabel: String = "Name of pension scheme"
+    val providerAddressLabel: String = "Pension provider address"
+    val providerNameEmptyErrorText: String = "Enter the name of the pension scheme"
+    val refEmptyErrorText: String  = "Enter the Pension Scheme Tax Reference"
+    val providerAddressEmptyErrorText: String = "Enter the pension providers address"
+    val providerNameInvalidFormatErrorText: String = "The pension scheme name must only include numbers 0-9, " +
+      "letters a to z, hyphens, spaces, apostrophes, commas, full stops, round brackets and the special characters, &, /, @, £, *."
+    val providerNameOverCharLimitErrorText: String = "Name of pension scheme must be 105 characters or less"
+    val providerAddressOverCharLimitErrorText: String = "Pension providers address must be 250 characters or less"
+  }
   
   trait SpecificExpectedResults {
+    val countryIdLabel: String
+    val countryIdEmptyErrorText: String
+    val ukReferenceLabel: String
+    val nonUkReferenceLabel: String
+    val uKRefHintText: String
+    val nonUKRefHintText: String
+    val ukRefInvalidFormatErrorText: String
+    val nonUKRefInvalidFormatErrorText: String
+  }
+  
+  object ExpectedIndividualEN extends SpecificExpectedResults {
     val countryIdLabel: String = "Country"
     val countryIdEmptyErrorText: String = "Enter the country"
     val ukReferenceLabel: String = "Pension Scheme Tax Reference"
@@ -80,11 +122,19 @@ class TransferPensionsSchemeViewSpec extends ViewUnitTest {
       "Enter a Pension Scheme Tax Reference number that is 8 numbers, then R, then a letter a to z or A to Z, like 00123456RA"
     val nonUKRefInvalidFormatErrorText: String = "Enter a six digit number"
   }
-  
-  object ExpectedIndividualEN extends SpecificExpectedResults
-  object ExpectedIndividualCY extends SpecificExpectedResults
-  object ExpectedAgentEN extends SpecificExpectedResults
-  object ExpectedAgentCY extends SpecificExpectedResults
+  object ExpectedIndividualCY extends SpecificExpectedResults {
+    val countryIdLabel: String = "Country"
+    val countryIdEmptyErrorText: String = "Enter the country"
+    val ukReferenceLabel: String = "Cyfeirnod Treth y Cynllun Pensiwn"
+    val nonUkReferenceLabel: String = "Qualifying Overseas Pension Scheme reference"
+    val uKRefHintText: String = "Er enghraifft, ‘12345678RA’"
+    val nonUKRefHintText: String = "For example, QOPS123456"
+    val ukRefInvalidFormatErrorText: String =
+      "Enter a Pension Scheme Tax Reference number that is 8 numbers, then R, then a letter a to z or A to Z, like 00123456RA"
+    val nonUKRefInvalidFormatErrorText: String = "Enter a six digit number"
+  }
+  val ExpectedAgentEN = ExpectedIndividualEN
+  val ExpectedAgentCY = ExpectedIndividualCY
   
   val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(
     UserScenario(isWelsh = false, isAgent = false, CommonExpectedEN, Some(ExpectedIndividualEN)),
@@ -162,7 +212,7 @@ class TransferPensionsSchemeViewSpec extends ViewUnitTest {
             val htmlFormat = underTest(tcSsrPensionSchemeForm(agentOrIndividual, isUKCountry).bind(formMap), taxYearEOY, isUKCountry, 0)
             implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
-            titleCheck(s"Error: $expectedTitle", userScenario.isWelsh)
+            titleCheck(expectedErrorTitle, userScenario.isWelsh)
             checkCommonElements
             checkInputElements("", "", "", "")
 
@@ -185,7 +235,7 @@ class TransferPensionsSchemeViewSpec extends ViewUnitTest {
             val htmlFormat = underTest(tcSsrPensionSchemeForm(agentOrIndividual, isUKCountry).bind(formMap), taxYearEOY, isUKCountry, 0)
             implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
-            titleCheck(s"Error: $expectedTitle", userScenario.isWelsh)
+            titleCheck(expectedErrorTitle, userScenario.isWelsh)
             checkCommonElements
             checkInputElements("d#", "#d", "some-address", "FR")
 
@@ -206,7 +256,7 @@ class TransferPensionsSchemeViewSpec extends ViewUnitTest {
             val htmlFormat = underTest(tcSsrPensionSchemeForm(agentOrIndividual, isUKCountry).bind(formMap), taxYearEOY, isUKCountry, 0)
             implicit val document: Document = Jsoup.parse(htmlFormat.body)
             
-            titleCheck(s"Error: $expectedTitle", userScenario.isWelsh)
+            titleCheck(expectedErrorTitle, userScenario.isWelsh)
             checkCommonElements
             checkInputElements(pName, schemeRef, pAddress, "FR")
             

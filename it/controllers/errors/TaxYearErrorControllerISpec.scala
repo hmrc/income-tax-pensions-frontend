@@ -57,14 +57,14 @@ class TaxYearErrorControllerISpec extends IntegrationTest with ViewHelpers {
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val h1Expected = "Page not found"
-    val p1Expected = s"Dim ond gwybodaeth ar gyfer y blynyddoedd treth $taxYearEndOfYearMinusOne i $taxYear y gallwch ei nodi."
-    val p1ExpectedSingle = "Dim ond gwybodaeth ar gyfer blwyddyn dreth ddilys y gallwch ei nodi."
-    val p2Expected = "Check that you’ve entered the correct web address."
-    val p3Expected: String = "If the web address is correct or you selected a link or button, you can use Self Assessment: " +
-      "general enquiries (opens in new tab) to speak to someone about your income tax."
+    val h1Expected = "Heb ddod o hyd i’r dudalen"
+    val p1Expected = s"Gallwch nodi gwybodaeth ar gyfer blynyddoedd treth $taxYearEndOfYearMinusOne i $taxYear yn unig."
+    val p1ExpectedSingle = "Gallwch nodi gwybodaeth ar gyfer blwyddyn dreth ddilys yn unig."
+    val p2Expected = "Gwiriwch eich bod wedi nodi’r cyfeiriad gwe cywir."
+    val p3Expected: String = "Os yw’r cyfeiriad gwe yn gywir neu os ydych wedi dewis cysylltiad neu fotwm, gallwch ddefnyddio Treth Incwm, " +
+      "Hunanasesiad a mwy (yn agor tab newydd) i siarad â rhywun am eich treth incwm."
     val p3ExpectedLink = "https://www.gov.uk/government/organisations/hm-revenue-customs/contact/self-assessment"
-    val p3ExpectedLinkText = "Self Assessment: general enquiries (opens in new tab)"
+    val p3ExpectedLinkText = "Treth Incwm, Hunanasesiad a mwy (yn agor tab newydd)"
   }
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, CommonExpectedResults]] = {
@@ -99,7 +99,7 @@ class TaxYearErrorControllerISpec extends IntegrationTest with ViewHelpers {
 
           import user.commonExpectedResults._
 
-          titleCheck(h1Expected)
+          titleCheck(h1Expected, user.isWelsh)
           welshToggleCheck(user.isWelsh)
           h1Check(h1Expected, "xl")
           textOnPageCheck(p1Expected, p1Selector)
@@ -127,7 +127,7 @@ class TaxYearErrorControllerISpec extends IntegrationTest with ViewHelpers {
 
           import user.commonExpectedResults._
 
-          titleCheck(h1Expected)
+          titleCheck(h1Expected, user.isWelsh)
           welshToggleCheck(user.isWelsh)
           h1Check(h1Expected, "xl")
           textOnPageCheck(p1ExpectedSingle, p1Selector)

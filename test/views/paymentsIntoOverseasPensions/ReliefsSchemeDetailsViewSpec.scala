@@ -16,11 +16,10 @@
 
 package views.paymentsIntoOverseasPensions
 
-import builders.PaymentsIntoOverseasPensionsViewModelBuilder.{aPaymentsIntoOverseasPensionsEmptyViewModel, aPaymentsIntoOverseasPensionsViewModel}
+import builders.PaymentsIntoOverseasPensionsViewModelBuilder.aPaymentsIntoOverseasPensionsViewModel
 import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import builders.PensionsUserDataBuilder.aPensionsUserData
 import builders.UserBuilder.aUser
-import controllers.pensions.paymentsIntoOverseasPensions.ReliefsSchemeDetailsHelper.displayedValueForOptionalAmount
 import models.pension.charges.{Relief, TaxReliefQuestion}
 import models.requests.UserSessionDataRequest
 import org.jsoup.Jsoup
@@ -78,7 +77,7 @@ class ReliefsSchemeDetailsViewSpec extends ViewUnitTest with FakeRequestProvider
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    override val expectedCaption: Int => String = (taxYear: Int) => s"Payments into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
+    override val expectedCaption: Int => String = (taxYear: Int) => s"Taliadau i bensiynau tramor ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
     override val expectedTitle: String = "Pension scheme details"
     override val schemeName: String = "Pension scheme name"
     override val untaxedEmployerPayments: String = "Untaxed employer payments"
@@ -88,8 +87,8 @@ class ReliefsSchemeDetailsViewSpec extends ViewUnitTest with FakeRequestProvider
     override val untaxedEmployerPaymentsHidden: String = "Change untaxed employer payments"
     override val reliefTypeHidden: String = "Change type of relief"
     override val schemeDetailsHidden: String = "Change scheme details"
-    override val no: String = "No"
-    override val button: String = "Continue"
+    override val no: String = "Na"
+    override val button: String = "Yn eich blaen"
   }
 
   override protected val userScenarios: Seq[UserScenario[CommonExpectedResults, Unit]] = Seq(

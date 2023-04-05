@@ -28,7 +28,7 @@ import support.ViewUnitTest
 import views.html.pensions.paymentsIntoPensions.ReliefAtSourceOneOffPaymentsView
 
 
-object ReliefAtSourceOneOffPaymentsTestSupport {
+object ReliefAtSourceOneOffPaymentsSpec {
 
   private val someRasAmount: BigDecimal = 33.33
 
@@ -64,10 +64,10 @@ object ReliefAtSourceOneOffPaymentsTestSupport {
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Payments into pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val yesText = "Yes"
-    val noText = "No"
-    val buttonText = "Continue"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Taliadau i bensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
+    val yesText = "Iawn"
+    val noText = "Na"
+    val buttonText = "Yn eich blaen"
   }
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
@@ -83,7 +83,7 @@ object ReliefAtSourceOneOffPaymentsTestSupport {
   object ExpectedIndividualCY extends SpecificExpectedResults {
     val expectedHeading = "A wnaethoch unrhyw daliadau untro i mewn i bensiynau rhyddhad wrth y ffynhonnell (RAS)?"
     val expectedTitle = "A wnaethoch unrhyw daliadau untro i mewn i bensiynau rhyddhad wrth y ffynhonnell (RAS)?"
-    val expectedErrorTitle = s"Error: $expectedTitle"
+    val expectedErrorTitle = s"Gwall: $expectedTitle"
     val thisIncludes: String =
       s"Rydych wedi rhoi gwybod i ni mai’r cyfanswm a dalwyd gennych, ynghyd â rhyddhad treth, oedd £$someRasAmount. " +
         "Rhowch wybod i ni os yw hwn yn cynnwys unrhyw daliadau untro. Un taliad yw taliad untro, a wneir unwaith."
@@ -103,7 +103,7 @@ object ReliefAtSourceOneOffPaymentsTestSupport {
   object ExpectedAgentCY extends SpecificExpectedResults {
     val expectedHeading = "A wnaeth eich cleient unrhyw daliadau untro i mewn i bensiynau rhyddhad wrth y ffynhonnell (RAS)?"
     val expectedTitle = "A wnaeth eich cleient unrhyw daliadau untro i mewn i bensiynau rhyddhad wrth y ffynhonnell (RAS)?"
-    val expectedErrorTitle = s"Error: $expectedTitle"
+    val expectedErrorTitle = s"Gwall: $expectedTitle"
     val thisIncludes: String =
       s"Rydych wedi rhoi gwybod i ni mai’r cyfanswm a dalwyd gan eich cleient, ynghyd â rhyddhad treth, oedd £$someRasAmount. " +
         "Rhowch wybod i ni os yw hwn yn cynnwys unrhyw daliadau untro. Un taliad yw taliad untro, a wneir unwaith."
@@ -111,9 +111,9 @@ object ReliefAtSourceOneOffPaymentsTestSupport {
   }
 }
 
-class ReliefAtSourceOneOffPaymentsTestSupport extends ViewUnitTest {
+class ReliefAtSourceOneOffPaymentsSpec extends ViewUnitTest {
 
-  import ReliefAtSourceOneOffPaymentsTestSupport._
+  import ReliefAtSourceOneOffPaymentsSpec._
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(
     UserScenario(isWelsh = false, isAgent = false, CommonExpectedEN, Some(ExpectedIndividualEN)),

@@ -52,7 +52,7 @@ class PensionOverseasIncomeCountryControllerSpec extends CommonUtils with Before
   trait CommonExpectedResults {
     val expectedCaption: Int => String
     val expectedTitle: String
-    val expectedHeading: String
+    lazy val expectedHeading = expectedTitle
     val expectedErrorTitle: String
     val expectedSubHeading: String
     val expectedParagraph: String
@@ -79,7 +79,6 @@ class PensionOverseasIncomeCountryControllerSpec extends CommonUtils with Before
   object CommonExpectedEN extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Income from overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
     val expectedTitle: String = "What country is the pension scheme registered in?"
-    val expectedHeading: String = "What country is the pension scheme registered in?"
     val expectedErrorTitle: String = s"Error: $expectedTitle"
     val expectedButtonText: String = "Continue"
     val expectedParagraph: String = "You can add pension schemes from other countries later."
@@ -87,11 +86,10 @@ class PensionOverseasIncomeCountryControllerSpec extends CommonUtils with Before
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Income from overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Incwm o bensiynau tramor ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
     val expectedTitle: String = "What country is the pension scheme registered in?"
-    val expectedHeading: String = "What country is the pension scheme registered in?"
-    val expectedErrorTitle: String = s"Error: $expectedTitle"
-    val expectedButtonText: String = "Continue"
+    val expectedErrorTitle: String = s"Gwall: $expectedTitle"
+    val expectedButtonText: String = "Yn eich blaen"
     val expectedParagraph: String = "You can add pension schemes from other countries later."
     val expectedSubHeading: String = "Country"
   }
@@ -125,7 +123,7 @@ class PensionOverseasIncomeCountryControllerSpec extends CommonUtils with Before
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(expectedTitle)
+          titleCheck(expectedTitle, user.isWelsh)
           h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY))
           textOnPageCheck(expectedParagraph, paragraphSelector(1))
@@ -155,7 +153,7 @@ class PensionOverseasIncomeCountryControllerSpec extends CommonUtils with Before
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(expectedTitle)
+          titleCheck(expectedTitle, user.isWelsh)
           h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY))
           textOnPageCheck(expectedParagraph, paragraphSelector(1))
@@ -196,7 +194,7 @@ class PensionOverseasIncomeCountryControllerSpec extends CommonUtils with Before
           implicit def document: () => Document = () => Jsoup.parse(result.body)
           import Selectors._
           import user.commonExpectedResults._
-          titleCheck(expectedErrorTitle)
+          titleCheck(expectedErrorTitle, user.isWelsh)
           h1Check(expectedTitle)
           captionCheck(expectedCaption(taxYearEOY))
           textOnPageCheck(expectedParagraph, paragraphSelector(1))

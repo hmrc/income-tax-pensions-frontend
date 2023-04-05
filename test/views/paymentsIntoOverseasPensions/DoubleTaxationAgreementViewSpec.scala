@@ -54,39 +54,39 @@ class DoubleTaxationAgreementViewSpec extends ViewUnitTest with FakeRequestProvi
   }
 
   object CommonExpectedEN extends CommonExpectedResults {
-    override val expectedCaption:  Int => String = (taxYear: Int) => s"Payments into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-    override val expectedTitle: String = "Double taxation agreement details"
-    override val expectedCountyLabel: String = "Country"
-    override val expectedArticleLabel: String = "Article (optional)"
-    override val expectedArticleExample: String = "For example, ‘AB3211-1’"
-    override val expectedTreatyLabel: String = "Treaty (optional)"
-    override val expectedTreatyExample: String = "For example, ’Munich’"
-    override val expectedReliefLabel: String = "Double taxation relief"
-    override val expectedReliefExample: String = "For example, £193.54"
-    override val expectedContinue: String = "Continue"
-    override val errorTitle: String = s"Error: $expectedTitle"
-    override val noCountryErrorText: String = "Enter the tax treaty country"
-    override val noReliefErrorText: String = "Enter the amount of double taxation relief"
-    override val reliefWrongFormatErrorText: String = "Enter the amount of double taxation relief in the correct format"
-    override val reliefTooBigErrorText: String = "The amount of double taxation relief must be less than £100,000,000,000"
+    val expectedCaption:  Int => String = (taxYear: Int) => s"Payments into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
+    val expectedTitle: String = "Double taxation agreement details"
+    val expectedCountyLabel: String = "Country"
+    val expectedArticleLabel: String = "Article (optional)"
+    val expectedArticleExample: String = "For example, ‘AB3211-1’"
+    val expectedTreatyLabel: String = "Treaty (optional)"
+    val expectedTreatyExample: String = "For example, ’Munich’"
+    val expectedReliefLabel: String = "Double taxation relief"
+    val expectedReliefExample: String = "For example, £193.54"
+    val expectedContinue: String = "Continue"
+    val errorTitle: String = s"Error: $expectedTitle"
+    val noCountryErrorText: String = "Enter the tax treaty country"
+    val noReliefErrorText: String = "Enter the amount of double taxation relief"
+    val reliefWrongFormatErrorText: String = "Enter the amount of double taxation relief in the correct format"
+    val reliefTooBigErrorText: String = "The amount of double taxation relief must be less than £100,000,000,000"
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    override val expectedCaption:  Int => String = (taxYear: Int) => s"Payments into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-    override val expectedTitle: String = "Double taxation agreement details"
-    override val expectedCountyLabel: String = "Country"
-    override val expectedArticleLabel: String = "Article (optional)"
-    override val expectedArticleExample: String = "For example, ‘AB3211-1’"
-    override val expectedTreatyLabel: String = "Treaty (optional)"
-    override val expectedTreatyExample: String = "For example, ’Munich’"
-    override val expectedReliefLabel: String = "Double taxation relief"
-    override val expectedReliefExample: String = "For example, £193.54"
-    override val expectedContinue: String = "Continue"
-    override val errorTitle: String = s"Error: $expectedTitle"
-    override val noCountryErrorText: String = "Enter the tax treaty country"
-    override val noReliefErrorText: String = "Enter the amount of double taxation relief"
-    override val reliefWrongFormatErrorText: String = "Enter the amount of double taxation relief in the correct format"
-    override val reliefTooBigErrorText: String = "The amount of double taxation relief must be less than £100,000,000,000"
+    val expectedCaption:  Int => String = (taxYear: Int) => s"Taliadau i bensiynau tramor ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
+    val expectedTitle: String = "Double taxation agreement details"
+    val expectedCountyLabel: String = "Country"
+    val expectedArticleLabel: String = "Article (optional)"
+    val expectedArticleExample: String = "For example, ‘AB3211-1’"
+    val expectedTreatyLabel: String = "Treaty (optional)"
+    val expectedTreatyExample: String = "For example, ’Munich’"
+    val expectedReliefLabel: String = "Double taxation relief"
+    val expectedReliefExample: String = "Er enghraifft, £193.54"
+    val expectedContinue: String = "Yn eich blaen"
+    val errorTitle: String = s"Gwall: $expectedTitle"
+    val noCountryErrorText: String = "Enter the tax treaty country"
+    val noReliefErrorText: String = "Enter the amount of double taxation relief"
+    val reliefWrongFormatErrorText: String = "Enter the amount of double taxation relief in the correct format"
+    val reliefTooBigErrorText: String = "The amount of double taxation relief must be less than £100,000,000,000"
   }
 
   object Selectors {
@@ -106,7 +106,7 @@ class DoubleTaxationAgreementViewSpec extends ViewUnitTest with FakeRequestProvi
     val reliefValueSelector = "#amount-2"
   }
 
-  override protected val userScenarios: Seq[UserScenario[CommonExpectedResults, Unit]] = Seq(
+  protected val userScenarios: Seq[UserScenario[CommonExpectedResults, Unit]] = Seq(
     UserScenario(isWelsh = false, isAgent = false, CommonExpectedEN),
     UserScenario(isWelsh = true, isAgent = false, CommonExpectedCY)
   )

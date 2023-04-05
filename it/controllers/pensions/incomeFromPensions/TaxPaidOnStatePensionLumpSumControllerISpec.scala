@@ -79,7 +79,7 @@ class TaxPaidOnStatePensionLumpSumControllerISpec extends IntegrationTest with B
   object ExpectedIndividualCY extends SpecificExpectedResults {
     val expectedTitle = "Did you pay tax on the State Pension lump sum?"
     val expectedHeading = "Did you pay tax on the State Pension lump sum?"
-    val expectedErrorTitle = s"Error: $expectedTitle"
+    val expectedErrorTitle = s"Gwall: $expectedTitle"
     val expectedError = "Select yes if you paid tax on the State Pension lump sum"
     val expectedDetailsBullet1 = "eich P60"
     val expectedDetailsBullet2 = "y llythyr ’Ynglŷn â’r cynnydd cyffredinol mewn budd-daliadau’ a anfonwyd atoch gan y Gwasanaeth Pensiwn"
@@ -97,7 +97,7 @@ class TaxPaidOnStatePensionLumpSumControllerISpec extends IntegrationTest with B
   object ExpectedAgentCY extends SpecificExpectedResults {
     val expectedTitle = "Did your client pay tax on the State Pension lump sum?"
     val expectedHeading = "Did your client pay tax on the State Pension lump sum?"
-    val expectedErrorTitle = s"Error: $expectedTitle"
+    val expectedErrorTitle = s"Gwall: $expectedTitle"
     val expectedError = "Select yes if your client paid tax on the State Pension lump sum"
     val expectedDetailsBullet1 = "P60 eich cleient"
     val expectedDetailsBullet2 = "y llythyr ’Ynglŷn â’r cynnydd cyffredinol mewn budd-daliadau’ a anfonwyd at eich cleient gan y Gwasanaeth Pensiwn"
@@ -113,12 +113,12 @@ class TaxPaidOnStatePensionLumpSumControllerISpec extends IntegrationTest with B
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Income from pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Incwm o bensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
     val expectedDetailsTitle = "Ble i ddod o hyd i’r wybodaeth hon"
     val expectedDetailsWhereToFind = "Gallwch ddod o hyd i’r wybodaeth hon yn:"
-    val expectedButtonText = "Continue"
-    val yesText = "Yes"
-    val noText = "No"
+    val expectedButtonText = "Yn eich blaen"
+    val yesText = "Iawn"
+    val noText = "Na"
   }
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(
@@ -153,7 +153,7 @@ class TaxPaidOnStatePensionLumpSumControllerISpec extends IntegrationTest with B
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
           formPostLinkCheck(taxOnLumpSumUrl(taxYearEOY), formSelector)
-          titleCheck(user.specificExpectedResults.get.expectedTitle)
+          titleCheck(user.specificExpectedResults.get.expectedTitle, user.isWelsh)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           radioButtonCheck(yesText, 1, checked = Some(false))
@@ -184,7 +184,7 @@ class TaxPaidOnStatePensionLumpSumControllerISpec extends IntegrationTest with B
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
           formPostLinkCheck(taxOnLumpSumUrl(taxYearEOY), formSelector)
-          titleCheck(user.specificExpectedResults.get.expectedTitle)
+          titleCheck(user.specificExpectedResults.get.expectedTitle, user.isWelsh)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           radioButtonCheck(yesText, 1, checked = Some(true))
@@ -215,7 +215,7 @@ class TaxPaidOnStatePensionLumpSumControllerISpec extends IntegrationTest with B
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
           formPostLinkCheck(taxOnLumpSumUrl(taxYearEOY), formSelector)
-          titleCheck(user.specificExpectedResults.get.expectedTitle)
+          titleCheck(user.specificExpectedResults.get.expectedTitle, user.isWelsh)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           radioButtonCheck(yesText, 1, checked = Some(false))
@@ -294,7 +294,7 @@ class TaxPaidOnStatePensionLumpSumControllerISpec extends IntegrationTest with B
 
 
           formPostLinkCheck(taxOnLumpSumUrl(taxYearEOY), formSelector)
-          titleCheck(user.specificExpectedResults.get.expectedErrorTitle)
+          titleCheck(user.specificExpectedResults.get.expectedErrorTitle, user.isWelsh)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           radioButtonCheck(yesText, 1, checked = Some(false))

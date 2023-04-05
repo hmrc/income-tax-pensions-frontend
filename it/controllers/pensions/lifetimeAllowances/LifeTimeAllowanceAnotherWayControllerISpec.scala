@@ -44,7 +44,7 @@ class LifeTimeAllowanceAnotherWayControllerISpec extends IntegrationTest with Be
 
   trait SpecificExpectedResults {
     val expectedTitle: String
-    val expectedHeading: String
+    lazy val expectedHeading = expectedTitle
     val expectedParagraphText: String
     val expectedErrorTitle: String
     val expectedError: String
@@ -60,7 +60,6 @@ class LifeTimeAllowanceAnotherWayControllerISpec extends IntegrationTest with Be
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
     val expectedTitle = "Did you take the amount above your lifetime allowance another way?"
-    val expectedHeading = "Did you take the amount above your lifetime allowance another way?"
     val expectedParagraphText = "Tell us about any amount you’ve taken above your lifetime allowance in other " +
       "ways. This could be regular payments or a cash withdrawal"
     val expectedErrorTitle = s"Error: $expectedTitle"
@@ -69,16 +68,14 @@ class LifeTimeAllowanceAnotherWayControllerISpec extends IntegrationTest with Be
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
     val expectedTitle = "Did you take the amount above your lifetime allowance another way?"
-    val expectedHeading = "Did you take the amount above your lifetime allowance another way?"
     val expectedParagraphText = "Tell us about any amount you’ve taken above your lifetime allowance in other " +
       "ways. This could be regular payments or a cash withdrawal"
-    val expectedErrorTitle = s"Error: $expectedTitle"
+    val expectedErrorTitle = s"Gwall: $expectedTitle"
     val expectedError = "Select yes if you took the amount above your lifetime allowance in another way"
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
     val expectedTitle = "Did your client take the amount above their lifetime allowance another way?"
-    val expectedHeading = "Did your client take the amount above their lifetime allowance another way?"
     val expectedParagraphText = "Tell us about any amount your client has taken above their lifetime allowance in " +
       "other ways. This could be regular payments or a cash withdrawal"
     val expectedErrorTitle = s"Error: $expectedTitle"
@@ -87,10 +84,9 @@ class LifeTimeAllowanceAnotherWayControllerISpec extends IntegrationTest with Be
 
   object ExpectedAgentCY extends SpecificExpectedResults {
     val expectedTitle = "Did your client take the amount above their lifetime allowance another way?"
-    val expectedHeading = "Did your client take the amount above their lifetime allowance another way?"
     val expectedParagraphText = "Tell us about any amount your client has taken above their lifetime allowance in " +
       "other ways. This could be regular payments or a cash withdrawal"
-    val expectedErrorTitle = s"Error: $expectedTitle"
+    val expectedErrorTitle = s"Gwall: $expectedTitle"
     val expectedError = "Select yes if your client took the amount above their lifetime allowance in another way"
   }
 
@@ -103,10 +99,10 @@ class LifeTimeAllowanceAnotherWayControllerISpec extends IntegrationTest with Be
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Annual and lifetime allowances for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val expectedButtonText = "Continue"
-    val yesText = "Yes"
-    val noText = "No"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Lwfans blynyddol a lwfans oes ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
+    val expectedButtonText = "Yn eich blaen"
+    val yesText = "Iawn"
+    val noText = "Na"
     val expectedLumpSumText: String = "Do not tell us about lump sums."
   }
 
@@ -117,7 +113,7 @@ class LifeTimeAllowanceAnotherWayControllerISpec extends IntegrationTest with Be
     UserScenario(isWelsh = true, isAgent = true, CommonExpectedCY, Some(ExpectedAgentCY))
   )
 
-  ".show" should {
+  ".show" should { //scalastyle:off magic.number
     userScenarios.foreach { user =>
       s"language is ${welshTest(user.isWelsh)} and request is from an ${agentTest(user.isAgent)}" should {
 
@@ -139,7 +135,7 @@ class LifeTimeAllowanceAnotherWayControllerISpec extends IntegrationTest with Be
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(user.specificExpectedResults.get.expectedTitle)
+          titleCheck(user.specificExpectedResults.get.expectedTitle, user.isWelsh)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           textOnPageCheck(expectedLumpSumText, paragraphSelector(2))
@@ -170,7 +166,7 @@ class LifeTimeAllowanceAnotherWayControllerISpec extends IntegrationTest with Be
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(user.specificExpectedResults.get.expectedTitle)
+          titleCheck(user.specificExpectedResults.get.expectedTitle, user.isWelsh)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           textOnPageCheck(expectedLumpSumText, paragraphSelector(2))
@@ -202,7 +198,7 @@ class LifeTimeAllowanceAnotherWayControllerISpec extends IntegrationTest with Be
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(user.specificExpectedResults.get.expectedTitle)
+          titleCheck(user.specificExpectedResults.get.expectedTitle, user.isWelsh)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           textOnPageCheck(expectedLumpSumText, paragraphSelector(2))
@@ -254,7 +250,7 @@ class LifeTimeAllowanceAnotherWayControllerISpec extends IntegrationTest with Be
           implicit def document: () => Document = () => Jsoup.parse(result.body)
           import Selectors._
           import user.commonExpectedResults._
-          titleCheck(user.specificExpectedResults.get.expectedErrorTitle)
+          titleCheck(user.specificExpectedResults.get.expectedErrorTitle, user.isWelsh)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           textOnPageCheck(expectedLumpSumText, paragraphSelector(3))
           textOnPageCheck(user.specificExpectedResults.get.expectedParagraphText, paragraphSelector(4))

@@ -43,7 +43,7 @@ class PensionLumpSumControllerISpec extends IntegrationTest with BeforeAndAfterE
 
   trait SpecificExpectedResults {
     val expectedTitle: String
-    val expectedHeading: String
+    lazy val expectedHeading = expectedTitle
     val expectedErrorTitle: String
     val expectedError: String
   }
@@ -57,29 +57,25 @@ class PensionLumpSumControllerISpec extends IntegrationTest with BeforeAndAfterE
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
     val expectedTitle = "Did you take the amount above your lifetime allowance as a lump sum?"
-    val expectedHeading = "Did you take the amount above your lifetime allowance as a lump sum?"
     val expectedErrorTitle = s"Error: $expectedTitle"
     val expectedError = "Select yes if you took the amount above your lifetime allowance as a lump sum"
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
     val expectedTitle = "Did you take the amount above your lifetime allowance as a lump sum?"
-    val expectedHeading = "Did you take the amount above your lifetime allowance as a lump sum?"
-    val expectedErrorTitle = s"Error: $expectedTitle"
+    val expectedErrorTitle = s"Gwall: $expectedTitle"
     val expectedError = "Select yes if you took the amount above your lifetime allowance as a lump sum"
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
     val expectedTitle = "Did your client take the amount above their lifetime allowance as a lump sum?"
-    val expectedHeading = "Did your client take the amount above their lifetime allowance as a lump sum?"
     val expectedErrorTitle = s"Error: $expectedTitle"
     val expectedError = "Select yes if your client took the amount above their lifetime allowance as a lump sum"
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
     val expectedTitle = "Did your client take the amount above their lifetime allowance as a lump sum?"
-    val expectedHeading = "Did your client take the amount above their lifetime allowance as a lump sum?"
-    val expectedErrorTitle = s"Error: $expectedTitle"
+    val expectedErrorTitle = s"Gwall: $expectedTitle"
     val expectedError = "Select yes if your client took the amount above their lifetime allowance as a lump sum"
   }
 
@@ -91,10 +87,10 @@ class PensionLumpSumControllerISpec extends IntegrationTest with BeforeAndAfterE
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Annual and lifetime allowances for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val expectedButtonText = "Continue"
-    val yesText = "Yes"
-    val noText = "No"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Lwfans blynyddol a lwfans oes ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
+    val expectedButtonText = "Yn eich blaen"
+    val yesText = "Iawn"
+    val noText = "Na"
   }
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(
@@ -126,7 +122,7 @@ class PensionLumpSumControllerISpec extends IntegrationTest with BeforeAndAfterE
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(user.specificExpectedResults.get.expectedTitle)
+          titleCheck(user.specificExpectedResults.get.expectedTitle, user.isWelsh)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           radioButtonCheck(yesText, 1, checked = Some(false))
@@ -152,7 +148,7 @@ class PensionLumpSumControllerISpec extends IntegrationTest with BeforeAndAfterE
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(user.specificExpectedResults.get.expectedTitle)
+          titleCheck(user.specificExpectedResults.get.expectedTitle, user.isWelsh)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           radioButtonCheck(yesText, 1, checked = Some(true))
@@ -181,7 +177,7 @@ class PensionLumpSumControllerISpec extends IntegrationTest with BeforeAndAfterE
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(user.specificExpectedResults.get.expectedTitle)
+          titleCheck(user.specificExpectedResults.get.expectedTitle, user.isWelsh)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           radioButtonCheck(yesText, 1, checked = Some(false))
@@ -232,7 +228,7 @@ class PensionLumpSumControllerISpec extends IntegrationTest with BeforeAndAfterE
           implicit def document: () => Document = () => Jsoup.parse(result.body)
           import Selectors._
           import user.commonExpectedResults._
-          titleCheck(user.specificExpectedResults.get.expectedErrorTitle)
+          titleCheck(user.specificExpectedResults.get.expectedErrorTitle, user.isWelsh)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           radioButtonCheck(yesText, 1, checked = Some(false))

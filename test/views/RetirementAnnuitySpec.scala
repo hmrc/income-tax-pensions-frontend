@@ -79,10 +79,10 @@ object RetirementAnnuitySpec {
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Payments into pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val yesText = "Yes"
-    val noText = "No"
-    val buttonText = "Continue"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Taliadau i bensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
+    val yesText = "Iawn"
+    val noText = "Na"
+    val buttonText = "Yn eich blaen"
     val expectedDetailsTitle = "Beth yw contract blwydd-dal ymddeol?"
     val expectedDetails: String =
       "Math o gynllun pensiwn yw contractau blwydd-dal ymddeol. " +
@@ -101,11 +101,11 @@ object RetirementAnnuitySpec {
   object ExpectedIndividualCY extends SpecificExpectedResults {
     val expectedTitle = "A wnaethoch chi dalu i mewn i gontract blwydd-dal ymddeol?"
     val expectedHeading = "A wnaethoch chi dalu i mewn i gontract blwydd-dal ymddeol?"
-    val expectedParagraphText = "Rydym ond angen gwybod am daliadau os na fydd darparwr eich pensiwn yn hawlio rhyddhad treth (opens in new tab)."
-    val expectedErrorTitle = s"Error: $expectedTitle"
+    val expectedParagraphText = "Rydym ond angen gwybod am daliadau os na fydd darparwr eich pensiwn yn hawlio rhyddhad treth (yn agor tab newydd)."
+    val expectedErrorTitle = s"Gwall: $expectedTitle"
     val expectedErrorMessage = "Dewiswch ‘Iawn’ os gwnaethoch dalu i mewn i gontract blwydd-dal ymddeol"
-    val expectedYouCanFindThisOut = "You can find this out from your pension provider."
-  }
+    val expectedYouCanFindThisOut = "Gallwch ddysgu beth yw hyn oddi wrth eich darparwr pensiwn."
+}
 
   object ExpectedAgentEN extends SpecificExpectedResults {
     val expectedTitle = "Did your client pay into a retirement annuity contract?"
@@ -119,10 +119,10 @@ object RetirementAnnuitySpec {
   object ExpectedAgentCY extends SpecificExpectedResults {
     val expectedTitle = "A wnaeth eich cleient dalu i mewn i gontract blwydd-dal ymddeol?"
     val expectedHeading = "A wnaeth eich cleient dalu i mewn i gontract blwydd-dal ymddeol?"
-    val expectedParagraphText = "Rydym ond angen gwybod am daliadau os na fydd darparwr pensiwn eich cleient yn hawlio rhyddhad treth (opens in new tab)."
-    val expectedErrorTitle = s"Error: $expectedTitle"
+    val expectedParagraphText = "Rydym ond angen gwybod am daliadau os na fydd darparwr pensiwn eich cleient yn hawlio rhyddhad treth (yn agor tab newydd)."
+    val expectedErrorTitle = s"Gwall: $expectedTitle"
     val expectedErrorMessage = "Dewiswch ‘Iawn’ os gwnaeth eich cleient dalu i mewn i gontract blwydd-dal ymddeol"
-    val expectedYouCanFindThisOut = "You can find this out from your client’s pension provider."
+    val expectedYouCanFindThisOut = "Gallwch ddysgu beth yw hyn oddi wrth ddarparwr pensiwn eich cleient."
   }
 }
 class RetirementAnnuitySpec extends ViewUnitTest {

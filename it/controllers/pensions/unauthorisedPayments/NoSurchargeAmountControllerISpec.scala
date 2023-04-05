@@ -47,7 +47,7 @@ class NoSurchargeAmountControllerISpec extends CommonUtils with BeforeAndAfterEa
   trait CommonExpectedResults {
     val expectedCaption: Int => String
     val expectedTitle: String
-    val expectedHeading: String
+    lazy val expectedHeading = expectedTitle
     val expectedErrorTitle: String
     val noEntryErrorMessage: String
     val invalidFormatErrorText: String
@@ -75,7 +75,6 @@ class NoSurchargeAmountControllerISpec extends CommonUtils with BeforeAndAfterEa
   object CommonExpectedEN extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Unauthorised payments from pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
     val expectedTitle = "Amount that did not result in a surcharge"
-    val expectedHeading = "Amount that did not result in a surcharge"
     val expectedErrorTitle = s"Error: $expectedTitle"
     val hintText = "For example, £193.52"
     val noEntryErrorMessage = "Enter the total amount of unauthorised payment that did not result in a surcharge"
@@ -87,13 +86,12 @@ class NoSurchargeAmountControllerISpec extends CommonUtils with BeforeAndAfterEa
   object CommonExpectedCY extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Taliadau heb awdurdod o bensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
     val expectedTitle = "Amount that did not result in a surcharge"
-    val expectedHeading = "Amount that did not result in a surcharge"
-    val expectedErrorTitle = s"Error: $expectedTitle"
-    val hintText = "For example, £193.52"
+    val expectedErrorTitle = s"Gwall: $expectedTitle"
+    val hintText = "Er enghraifft, £193.52"
     val noEntryErrorMessage = "Enter the total amount of unauthorised payment that did not result in a surcharge"
-    val invalidFormatErrorText = "Enter the total amount in the correct format"
-    val maxAmountErrorText = "The total amount must be less than £100,000,000,000"
-    val buttonText = "Continue"
+    val invalidFormatErrorText = "Nodwch y cyfanswm yn y fformat cywir"
+    val maxAmountErrorText = "Mae’n rhaid i’r cyfanswm fod yn llai na £100,000,000,000"
+    val buttonText = "Yn eich blaen"
   }
 
 
@@ -115,7 +113,7 @@ class NoSurchargeAmountControllerISpec extends CommonUtils with BeforeAndAfterEa
             result.status shouldBe OK
           }
 
-          titleCheck(expectedTitle)
+          titleCheck(expectedTitle, user.isWelsh)
           h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           textOnPageCheck(hintText, hintTextSelector)
@@ -139,7 +137,7 @@ class NoSurchargeAmountControllerISpec extends CommonUtils with BeforeAndAfterEa
             result.status shouldBe OK
           }
 
-          titleCheck(user.commonExpectedResults.expectedTitle)
+          titleCheck(expectedTitle, user.isWelsh)
           h1Check(user.commonExpectedResults.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           textOnPageCheck(hintText, hintTextSelector)
@@ -229,7 +227,7 @@ class NoSurchargeAmountControllerISpec extends CommonUtils with BeforeAndAfterEa
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(expectedErrorTitle)
+          titleCheck(expectedErrorTitle, user.isWelsh)
           h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           textOnPageCheck(hintText, hintTextSelector)
@@ -256,7 +254,7 @@ class NoSurchargeAmountControllerISpec extends CommonUtils with BeforeAndAfterEa
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(expectedErrorTitle)
+          titleCheck(expectedErrorTitle, user.isWelsh)
           h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           textOnPageCheck(hintText, hintTextSelector)
@@ -283,7 +281,7 @@ class NoSurchargeAmountControllerISpec extends CommonUtils with BeforeAndAfterEa
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(expectedErrorTitle)
+          titleCheck(expectedErrorTitle, user.isWelsh)
           h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           textOnPageCheck(hintText, hintTextSelector)

@@ -89,12 +89,12 @@ class SurchargeAmountControllerISpec extends IntegrationTest with ViewHelpers wi
     val expectedCaption: Int => String = (taxYear: Int) => s"Taliadau heb awdurdod o bensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
     val expectedTitle = "Amount that resulted in a surcharge"
     val expectedHeading = "Amount that resulted in a surcharge"
-    val expectedErrorTitle = s"Error: $expectedTitle"
-    val hintText = "For example, £193.52"
+    val expectedErrorTitle = s"Gwall: $expectedTitle"
+    val hintText = "Er enghraifft, £193.52"
     val noEntryErrorMessage = "Enter the total amount of unauthorised payment that resulted in a surcharge"
-    val invalidFormatErrorText = "Enter the total amount in the correct format"
-    val maxAmountErrorText = "The total amount must be less than £100,000,000,000"
-    val buttonText = "Continue"
+    val invalidFormatErrorText = "Nodwch y cyfanswm yn y fformat cywir"
+    val maxAmountErrorText = "Mae’n rhaid i’r cyfanswm fod yn llai na £100,000,000,000"
+    val buttonText = "Yn eich blaen"
     val expectedParagraph = "Give a total of unauthorised payments that resulted in surcharges from all your client’s pension schemes."
     val expectedParagraphTwo = "You can tell us about unauthorised payments that did not result in a surcharge later."
   }
@@ -136,7 +136,7 @@ class SurchargeAmountControllerISpec extends IntegrationTest with ViewHelpers wi
             result.status shouldBe OK
           }
 
-          titleCheck(expectedTitle)
+          titleCheck(expectedTitle, user.isWelsh)
           h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           textOnPageCheck(user.specificExpectedResults.get.expectedParagraph, paragraphSelector(1))
@@ -165,7 +165,7 @@ class SurchargeAmountControllerISpec extends IntegrationTest with ViewHelpers wi
           "has an OK status" in {
             result.status shouldBe OK
           }
-          titleCheck(user.commonExpectedResults.expectedTitle)
+          titleCheck(expectedTitle, user.isWelsh)
           h1Check(user.commonExpectedResults.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           textOnPageCheck(user.specificExpectedResults.get.expectedParagraph, paragraphSelector(1))
@@ -233,7 +233,7 @@ class SurchargeAmountControllerISpec extends IntegrationTest with ViewHelpers wi
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(expectedErrorTitle)
+          titleCheck(expectedErrorTitle, user.isWelsh)
           h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           textOnPageCheck(user.specificExpectedResults.get.expectedParagraph, paragraphSelector(1))
@@ -267,7 +267,7 @@ class SurchargeAmountControllerISpec extends IntegrationTest with ViewHelpers wi
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(expectedErrorTitle)
+          titleCheck(expectedErrorTitle, user.isWelsh)
           h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           textOnPageCheck(user.specificExpectedResults.get.expectedParagraph, paragraphSelector(1))
@@ -301,7 +301,7 @@ class SurchargeAmountControllerISpec extends IntegrationTest with ViewHelpers wi
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(expectedErrorTitle)
+          titleCheck(expectedErrorTitle, user.isWelsh)
           h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           textOnPageCheck(user.specificExpectedResults.get.expectedParagraph, paragraphSelector(1))

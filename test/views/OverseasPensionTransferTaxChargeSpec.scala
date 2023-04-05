@@ -91,11 +91,11 @@ class OverseasPensionTransferTaxChargeSpec extends ViewUnitTest with FakeRequest
   }
 
   object ExpectedCommonCY extends CommonExpectedResults {
-    override val expectedCaption: Int => String = (taxYear: Int) => s"Transfers into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
+    override val expectedCaption: Int => String = (taxYear: Int) => s"Trosglwyddiadau i bensiynau tramor ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
     override val expectedAmountText: String = "Total tax, in pounds"
-    override val yes: String = "Yes"
-    override val no: String = "No"
-    override val continue: String = "Continue"
+    override val yes: String = "Iawn"
+    override val no: String = "Na"
+    override val continue: String = "Yn eich blaen"
     override val expectedTooBigErrorText: String = "The amount of tax paid on the transfer charge amount must be less than £100,000,000,000"
   }
   

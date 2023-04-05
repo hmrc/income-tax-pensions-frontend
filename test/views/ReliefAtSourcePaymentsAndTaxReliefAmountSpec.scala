@@ -25,9 +25,9 @@ import play.api.i18n.Messages
 import play.api.mvc.AnyContent
 import support.ViewUnitTest
 import views.html.pensions.paymentsIntoPensions.ReliefAtSourcePaymentsAndTaxReliefAmountView
-import views.ReliefAtSourcePaymentsAndTaxReliefAmountTestSupport._
+import views.ReliefAtSourcePaymentsAndTaxReliefAmountSpec._
 
-object ReliefAtSourcePaymentsAndTaxReliefAmountTestSupport {
+object ReliefAtSourcePaymentsAndTaxReliefAmountSpec {
 
   val poundPrefixText = "£"
   val amountInputName = "amount"
@@ -80,17 +80,17 @@ object ReliefAtSourcePaymentsAndTaxReliefAmountTestSupport {
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Payments into pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Taliadau i bensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
     val expectedHeading = "Cyfanswm y taliadau i mewn i bensiynau rhyddhad wrth y ffynhonnell (RAS), ynghyd â rhyddhad treth ar y gyfradd sylfaenol"
     val expectedTitle = "Cyfanswm y taliadau i mewn i bensiynau rhyddhad wrth y ffynhonnell (RAS), ynghyd â rhyddhad treth ar y gyfradd sylfaenol"
-    val expectedErrorTitle = s"Error: $expectedTitle"
+    val expectedErrorTitle = s"Gwall: $expectedTitle"
     val expectedCalculationHeading = "Cyfrifiad enghreifftiol"
     val expectedExampleCalculation = "Talodd Elin £500 i mewn i’w chynllun pensiwn. £500 wedi’i rhannu â 80, ac yna’i luosi â 100 yw £625 Ei hateb yw £625."
-    val hintText = "For example, £193.52"
+    val hintText = "Er enghraifft, £193.52"
     val emptyErrorText = "Nodwch y cyfanswm a dalwyd i mewn i bensiynau RAS, ynghyd â rhyddhad treth ar y gyfradd sylfaenol"
     val invalidFormatErrorText = "Nodwch y cyfanswm a dalwyd i mewn i bensiynau RAS, ynghyd â rhyddhad treth ar y gyfradd sylfaenol, yn y fformat cywir"
     val maxAmountErrorText = "Mae’n rhaid i’r cyfanswm a dalwyd i mewn i bensiynau RAS, ynghyd â rhyddhad treth ar y gyfradd sylfaenol, fod yn llai na £100,000,000,000"
-    val buttonText = "Continue"
+    val buttonText = "Yn eich blaen"
   }
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
@@ -122,7 +122,7 @@ object ReliefAtSourcePaymentsAndTaxReliefAmountTestSupport {
   }
 }
 
-class ReliefAtSourcePaymentsAndTaxReliefAmountTestSupport extends ViewUnitTest {
+class ReliefAtSourcePaymentsAndTaxReliefAmountSpec extends ViewUnitTest {
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(
     UserScenario(isWelsh = false, isAgent = false, CommonExpectedEN, Some(ExpectedIndividualEN)),

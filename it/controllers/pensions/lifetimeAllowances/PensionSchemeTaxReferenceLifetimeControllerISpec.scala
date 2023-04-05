@@ -63,7 +63,7 @@ class PensionSchemeTaxReferenceLifetimeControllerISpec extends CommonUtils with 
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
-    val expectedNoEntryError: String = "Enter your Pension Scheme Tax Reference"
+    val expectedNoEntryError: String = "Nodwch Gyfeirnod Treth eich Cynllun Pensiwn"
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
@@ -71,14 +71,14 @@ class PensionSchemeTaxReferenceLifetimeControllerISpec extends CommonUtils with 
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
-    val expectedNoEntryError: String = "Enter your client’s Pension Scheme Tax Reference"
+    val expectedNoEntryError: String = "Nodwch Gyfeirnod Treth Cynllun Pensiwn eich cleient"
   }
 
   object CommonExpectedEN extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Annual and lifetime allowances for 6 April ${taxYear - 1} to 5 April $taxYear"
     val expectedButtonText = "Continue"
     val expectedTitle = "Tell us the pension scheme that paid or agreed to pay the tax"
-    val expectedHeading = "Tell us the pension scheme that paid or agreed to pay the tax"
+    val expectedHeading = expectedTitle
     val expectedErrorTitle = s"Error: $expectedTitle"
     val hintText = "For example, ‘12345678RA’"
     val expectedParagraph1 = "If more than one pension scheme paid or agreed to pay the tax, you can add them later."
@@ -87,14 +87,14 @@ class PensionSchemeTaxReferenceLifetimeControllerISpec extends CommonUtils with 
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Annual and lifetime allowances for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val expectedButtonText = "Continue"
-    val yesText = "Yes"
-    val noText = "No"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Lwfans blynyddol a lwfans oes ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
+    val expectedButtonText = "Yn eich blaen"
+    val yesText = "Iawn"
+    val noText = "Na"
     val expectedTitle = "Tell us the pension scheme that paid or agreed to pay the tax"
-    val expectedHeading = "Tell us the pension scheme that paid or agreed to pay the tax"
-    val expectedErrorTitle = s"Error: $expectedTitle"
-    val hintText = "For example, ‘12345678RA’"
+    val expectedHeading = expectedTitle
+    val expectedErrorTitle = s"Gwall: $expectedTitle"
+    val hintText = "Er enghraifft, ‘12345678RA’"
     val expectedParagraph1 = "If more than one pension scheme paid or agreed to pay the tax, you can add them later."
     val expectedIncorrectFormatError = "Enter a reference with 8 numbers and 2 letters, such as ‘12345678AB’"
     val expectedSubtitle: String = "Pension Scheme Tax Reference"
@@ -128,7 +128,7 @@ class PensionSchemeTaxReferenceLifetimeControllerISpec extends CommonUtils with 
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(expectedTitle)
+          titleCheck(expectedTitle, user.isWelsh)
           h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY))
           textOnPageCheck(expectedParagraph1, paragraphSelector(1))
@@ -152,7 +152,7 @@ class PensionSchemeTaxReferenceLifetimeControllerISpec extends CommonUtils with 
           }
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
-          titleCheck(expectedTitle)
+          titleCheck(expectedTitle, user.isWelsh)
           h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY))
           textOnPageCheck(expectedParagraph1, paragraphSelector(1))
@@ -177,7 +177,7 @@ class PensionSchemeTaxReferenceLifetimeControllerISpec extends CommonUtils with 
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(expectedTitle)
+          titleCheck(expectedTitle, user.isWelsh)
           h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY))
           textOnPageCheck(expectedParagraph1, paragraphSelector(1))
@@ -237,7 +237,7 @@ class PensionSchemeTaxReferenceLifetimeControllerISpec extends CommonUtils with 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
           import Selectors._
           import user.commonExpectedResults._
-          titleCheck(expectedErrorTitle)
+          titleCheck(expectedErrorTitle, user.isWelsh)
           h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY))
           textOnPageCheck(expectedParagraph1, paragraphSelector(1))
@@ -262,7 +262,7 @@ class PensionSchemeTaxReferenceLifetimeControllerISpec extends CommonUtils with 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
           import Selectors._
           import user.commonExpectedResults._
-          titleCheck(expectedErrorTitle)
+          titleCheck(expectedErrorTitle, user.isWelsh)
           h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY))
           textOnPageCheck(expectedParagraph1, paragraphSelector(1))

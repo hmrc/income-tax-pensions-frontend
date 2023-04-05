@@ -68,12 +68,12 @@ class UkPensionIncomeSummaryControllerISpec extends IntegrationTest with BeforeA
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Income from pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val expectedButtonText = "Continue"
-    val expectedTitle = "UK pension income"
-    val expectedHeading = "UK pension income"
-    val change = "Change"
-    val remove = "Remove"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Incwm o bensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
+    val expectedButtonText = "Yn eich blaen"
+    val expectedTitle = "Incwm o bensiynau’r DU"
+    val expectedHeading = expectedTitle
+    val change = "Newid"
+    val remove = "Tynnu"
     val expectedAddAnotherText = "Add another pension scheme"
     val expectedAddPensionSchemeText = "Add a pension scheme"
   }
@@ -110,7 +110,7 @@ class UkPensionIncomeSummaryControllerISpec extends IntegrationTest with BeforeA
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(expectedTitle)
+          titleCheck(expectedTitle, user.isWelsh)
           h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY))
           textOnPageCheck(pensionName1, pensionNameSelector(1))
@@ -144,7 +144,7 @@ class UkPensionIncomeSummaryControllerISpec extends IntegrationTest with BeforeA
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(expectedTitle)
+          titleCheck(expectedTitle, user.isWelsh)
           h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY))
           elementNotOnPageCheck(summaryListTableSelector)
