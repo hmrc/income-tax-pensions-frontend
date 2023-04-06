@@ -270,7 +270,7 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
         val expectedPageContents = ExpectedOptionTupleAmountPageContents(
           title = "Error: Pension payments",
           header = "Pension payments",
-          caption = "Income from overseas pensions for 6 April 2021 to 5 April 2022",
+          caption = s"Income from overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
           buttonForContinue = ExpectedButton("Continue", ""),
           amountSection1 = ExpectedAmountSection("Amount before tax", "1,233.41", Some("For example, £193.54")),
           amountSection2 = ExpectedAmountSection("Non-UK tax paid", "", Some("For example, £193.54")),

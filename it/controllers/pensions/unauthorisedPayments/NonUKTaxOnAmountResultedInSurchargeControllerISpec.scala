@@ -76,7 +76,7 @@ class NonUKTaxOnAmountResultedInSurchargeControllerISpec
               ExpectedYesNoAmountPageContents(
                 title = "Did you pay non-UK tax on the amount that resulted in a surcharge?",
                 header = "Did you pay non-UK tax on the amount that resulted in a surcharge?",
-                caption = "Unauthorised payments from pensions for 6 April 2021 to 5 April 2022",
+                caption = s"Unauthorised payments from pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
@@ -112,7 +112,7 @@ class NonUKTaxOnAmountResultedInSurchargeControllerISpec
               ExpectedYesNoAmountPageContents(
                 title = "Did your client pay non-UK tax on the amount that resulted in a surcharge?",
                 header = "Did your client pay non-UK tax on the amount that resulted in a surcharge?",
-                caption = "Unauthorised payments from pensions for 6 April 2021 to 5 April 2022",
+                caption = s"Unauthorised payments from pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
@@ -159,7 +159,7 @@ class NonUKTaxOnAmountResultedInSurchargeControllerISpec
               ExpectedYesNoAmountPageContents(
                 title = "Did you pay non-UK tax on the amount that resulted in a surcharge?",
                 header = "Did you pay non-UK tax on the amount that resulted in a surcharge?",
-                caption = "Unauthorised payments from pensions for 6 April 2021 to 5 April 2022",
+                caption = s"Unauthorised payments from pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                 radioButtonForYes = checkedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
@@ -195,7 +195,7 @@ class NonUKTaxOnAmountResultedInSurchargeControllerISpec
               ExpectedYesNoAmountPageContents(
                 title = "Did your client pay non-UK tax on the amount that resulted in a surcharge?",
                 header = "Did your client pay non-UK tax on the amount that resulted in a surcharge?",
-                caption = "Unauthorised payments from pensions for 6 April 2021 to 5 April 2022",
+                caption = s"Unauthorised payments from pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                 radioButtonForYes = checkedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
@@ -243,7 +243,7 @@ class NonUKTaxOnAmountResultedInSurchargeControllerISpec
               ExpectedYesNoAmountPageContents(
                 title = "Did you pay non-UK tax on the amount that resulted in a surcharge?",
                 header = "Did you pay non-UK tax on the amount that resulted in a surcharge?",
-                caption = "Unauthorised payments from pensions for 6 April 2021 to 5 April 2022",
+                caption = s"Unauthorised payments from pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = checkedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
@@ -279,7 +279,7 @@ class NonUKTaxOnAmountResultedInSurchargeControllerISpec
               ExpectedYesNoAmountPageContents(
                 title = "Did your client pay non-UK tax on the amount that resulted in a surcharge?",
                 header = "Did your client pay non-UK tax on the amount that resulted in a surcharge?",
-                caption = "Unauthorised payments from pensions for 6 April 2021 to 5 April 2022",
+                caption = s"Unauthorised payments from pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = checkedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
@@ -325,7 +325,7 @@ class NonUKTaxOnAmountResultedInSurchargeControllerISpec
               ExpectedYesNoAmountPageContents(
                 title = "Did you pay non-UK tax on the amount that resulted in a surcharge?",
                 header = "Did you pay non-UK tax on the amount that resulted in a surcharge?",
-                caption = "Unauthorised payments from pensions for 6 April 2021 to 5 April 2022",
+                caption = s"Unauthorised payments from pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = checkedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
@@ -361,7 +361,7 @@ class NonUKTaxOnAmountResultedInSurchargeControllerISpec
               ExpectedYesNoAmountPageContents(
                 title = "Did your client pay non-UK tax on the amount that resulted in a surcharge?",
                 header = "Did your client pay non-UK tax on the amount that resulted in a surcharge?",
-                caption = "Unauthorised payments from pensions for 6 April 2021 to 5 April 2022",
+                caption = s"Unauthorised payments from pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = checkedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
@@ -407,7 +407,7 @@ class NonUKTaxOnAmountResultedInSurchargeControllerISpec
               ExpectedYesNoAmountPageContents(
                 title = "Did you pay non-UK tax on the amount that resulted in a surcharge?",
                 header = "Did you pay non-UK tax on the amount that resulted in a surcharge?",
-                caption = "Unauthorised payments from pensions for 6 April 2021 to 5 April 2022",
+                caption = s"Unauthorised payments from pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = checkedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
@@ -443,7 +443,7 @@ class NonUKTaxOnAmountResultedInSurchargeControllerISpec
               ExpectedYesNoAmountPageContents(
                 title = "Did your client pay non-UK tax on the amount that resulted in a surcharge?",
                 header = "Did your client pay non-UK tax on the amount that resulted in a surcharge?",
-                caption = "Unauthorised payments from pensions for 6 April 2021 to 5 April 2022",
+                caption = s"Unauthorised payments from pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = checkedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
@@ -590,7 +590,7 @@ class NonUKTaxOnAmountResultedInSurchargeControllerISpec
                 ExpectedYesNoAmountPageContents(
                   title = "Error: Did you pay non-UK tax on the amount that resulted in a surcharge?",
                   header = "Did you pay non-UK tax on the amount that resulted in a surcharge?",
-                  caption = "Unauthorised payments from pensions for 6 April 2021 to 5 April 2022",
+                  caption = s"Unauthorised payments from pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                   radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
@@ -652,7 +652,7 @@ class NonUKTaxOnAmountResultedInSurchargeControllerISpec
                 ExpectedYesNoAmountPageContents(
                   title = "Error: Did your client pay non-UK tax on the amount that resulted in a surcharge?",
                   header = "Did your client pay non-UK tax on the amount that resulted in a surcharge?",
-                  caption = "Unauthorised payments from pensions for 6 April 2021 to 5 April 2022",
+                  caption = s"Unauthorised payments from pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                   radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
@@ -717,7 +717,7 @@ class NonUKTaxOnAmountResultedInSurchargeControllerISpec
                 ExpectedYesNoAmountPageContents(
                   title = "Error: Did you pay non-UK tax on the amount that resulted in a surcharge?",
                   header = "Did you pay non-UK tax on the amount that resulted in a surcharge?",
-                  caption = "Unauthorised payments from pensions for 6 April 2021 to 5 April 2022",
+                  caption = s"Unauthorised payments from pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
@@ -779,7 +779,7 @@ class NonUKTaxOnAmountResultedInSurchargeControllerISpec
                 ExpectedYesNoAmountPageContents(
                   title = "Error: Did your client pay non-UK tax on the amount that resulted in a surcharge?",
                   header = "Did your client pay non-UK tax on the amount that resulted in a surcharge?",
-                  caption = "Unauthorised payments from pensions for 6 April 2021 to 5 April 2022",
+                  caption = s"Unauthorised payments from pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
@@ -844,7 +844,7 @@ class NonUKTaxOnAmountResultedInSurchargeControllerISpec
                 ExpectedYesNoAmountPageContents(
                   title = "Error: Did you pay non-UK tax on the amount that resulted in a surcharge?",
                   header = "Did you pay non-UK tax on the amount that resulted in a surcharge?",
-                  caption = "Unauthorised payments from pensions for 6 April 2021 to 5 April 2022",
+                  caption = s"Unauthorised payments from pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
@@ -906,7 +906,7 @@ class NonUKTaxOnAmountResultedInSurchargeControllerISpec
                 ExpectedYesNoAmountPageContents(
                   title = "Error: Did your client pay non-UK tax on the amount that resulted in a surcharge?",
                   header = "Did your client pay non-UK tax on the amount that resulted in a surcharge?",
-                  caption = "Unauthorised payments from pensions for 6 April 2021 to 5 April 2022",
+                  caption = s"Unauthorised payments from pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
@@ -971,7 +971,7 @@ class NonUKTaxOnAmountResultedInSurchargeControllerISpec
                 ExpectedYesNoAmountPageContents(
                   title = "Error: Did you pay non-UK tax on the amount that resulted in a surcharge?",
                   header = "Did you pay non-UK tax on the amount that resulted in a surcharge?",
-                  caption = "Unauthorised payments from pensions for 6 April 2021 to 5 April 2022",
+                  caption = s"Unauthorised payments from pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
@@ -1033,7 +1033,7 @@ class NonUKTaxOnAmountResultedInSurchargeControllerISpec
                 ExpectedYesNoAmountPageContents(
                   title = "Error: Did your client pay non-UK tax on the amount that resulted in a surcharge?",
                   header = "Did your client pay non-UK tax on the amount that resulted in a surcharge?",
-                  caption = "Unauthorised payments from pensions for 6 April 2021 to 5 April 2022",
+                  caption = s"Unauthorised payments from pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
