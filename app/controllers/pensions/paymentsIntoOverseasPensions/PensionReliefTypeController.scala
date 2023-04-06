@@ -54,7 +54,7 @@ class PensionReliefTypeController@Inject()(actionsProvider: ActionsProvider,
               Future.successful(Ok(view(formsProvider.overseasPensionsReliefTypeForm.fill(reliefType), taxYear, reliefIndex)))
           }
         case _ =>
-          Future.successful(Redirect(PensionsCustomerReferenceNumberController.show(taxYear)))
+          Future.successful(Redirect(PensionsCustomerReferenceNumberController.show(taxYear, reliefIndex)))
       }
   }
 
@@ -97,7 +97,7 @@ class PensionReliefTypeController@Inject()(actionsProvider: ActionsProvider,
           Future.successful(redirectBaseOnTaxReliefQuestion(taxReliefQuestion, taxYear, indexOpt)(request))
         }
       case _ =>
-        Future.successful(Redirect(PensionsCustomerReferenceNumberController.show(taxYear)))
+        Future.successful(Redirect(PensionsCustomerReferenceNumberController.show(taxYear, indexOpt)))
     }
   }
 

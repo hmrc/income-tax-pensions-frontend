@@ -68,7 +68,7 @@ class ReliefSchemeDetailsControllerISpec extends IntegrationTest with ViewHelper
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
       result.status shouldBe SEE_OTHER
-      result.headers("Location").head shouldBe pensionCustomerReferenceNumberUrl(taxYearEOY)
+      result.headers("Location").head shouldBe pensionCustomerReferenceNumberUrl(taxYearEOY, 100)
     }
   }
 
@@ -106,7 +106,7 @@ class ReliefSchemeDetailsControllerISpec extends IntegrationTest with ViewHelper
       }
 
       result.status shouldBe SEE_OTHER
-      result.headers("Location").head shouldBe pensionCustomerReferenceNumberUrl(taxYearEOY)
+      result.headers("Location").head shouldBe pensionCustomerReferenceNumberUrl(taxYearEOY, 100)
     }
 
     "redirect to CYA user submits with valid tax year and index" in {

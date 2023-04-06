@@ -72,7 +72,7 @@ class PensionsReliefControllerISpec extends IntegrationTest with ViewHelpers
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
       result.status shouldBe SEE_OTHER
-      result.headers("Location").head shouldBe pensionCustomerReferenceNumberUrl(taxYearEOY)
+      result.headers("Location").head shouldBe pensionCustomerReferenceNumberUrl(taxYearEOY, 100)
     }
     }
 
@@ -193,7 +193,7 @@ class PensionsReliefControllerISpec extends IntegrationTest with ViewHelpers
           body = formData)
       }
       result.status shouldBe SEE_OTHER
-      result.headers("location").head shouldBe pensionCustomerReferenceNumberUrl(taxYearEOY)
+      result.headers("location").head shouldBe pensionCustomerReferenceNumberUrl(taxYearEOY, 100)
     }
   }
 }
