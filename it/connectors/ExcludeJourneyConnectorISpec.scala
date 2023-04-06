@@ -25,7 +25,7 @@ class ExcludeJourneyConnectorISpec extends IntegrationTest {
 
   val connector: ExcludeJourneyConnector = app.injector.instanceOf[ExcludeJourneyConnector]
 
-  val url = "/income-tax-submission-service/income-tax/nino/AA123456A/sources/exclude-journey/2024"
+  val url = s"/income-tax-submission-service/income-tax/nino/AA123456A/sources/exclude-journey/$taxYear"
 
   ".excludeJourney" should {
 
