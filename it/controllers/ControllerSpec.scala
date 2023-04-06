@@ -55,7 +55,7 @@ class ControllerSpec(val pathForThisPage: String) extends PlaySpec
   private val validMtdItId = "1234567890"
   private val validNino = "AA123456A"
   private val languageCodes = Map(PreferredLanguages.English -> "en", PreferredLanguages.Welsh -> "cy")
-  protected val taxYear = 2022
+  protected val taxYear = 2023
   private val database: PensionsUserDataRepositoryImpl = app.injector.instanceOf[PensionsUserDataRepositoryImpl]
   private lazy val wiremockBaseUrl = s"http://$wiremockHost:$wiremockPort"
   private val validTaxYearsHeaderValue = Seq(taxYear).mkString(",")

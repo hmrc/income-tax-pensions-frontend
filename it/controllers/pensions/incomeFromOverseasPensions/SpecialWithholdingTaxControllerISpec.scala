@@ -46,7 +46,7 @@ class SpecialWithholdingTaxControllerISpec   extends YesNoAmountControllerSpec("
   val expectedContentEN = ExpectedYesNoAmountPageContents(
     title = "Did you have Special Withholding Tax (SWT) deducted from your pension?",
     header = "Did you have Special Withholding Tax (SWT) deducted from your pension?",
-    caption = "Income from overseas pensions for 6 April 2021 to 5 April 2022",
+    caption = s"Income from overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
     radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
     radioButtonForNo = uncheckedExpectedRadioButton("No"),
     buttonForContinue = ExpectedButton("Continue", ""),
@@ -83,7 +83,7 @@ class SpecialWithholdingTaxControllerISpec   extends YesNoAmountControllerSpec("
   val expectedContentCY = ExpectedYesNoAmountPageContents(
     title = "Did you have Special Withholding Tax (SWT) deducted from your pension?",
     header = "Did you have Special Withholding Tax (SWT) deducted from your pension?",
-    caption = "Income from overseas pensions for 6 April 2021 to 5 April 2022",
+    caption = s"Income from overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
     radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
     radioButtonForNo = uncheckedExpectedRadioButton("No"),
     buttonForContinue = ExpectedButton("Continue", ""),
@@ -703,7 +703,7 @@ class SpecialWithholdingTaxControllerISpec   extends YesNoAmountControllerSpec("
         val expectedContentsIndividualEN = ExpectedYesNoAmountPageContents(
           title = "Error: Did you have Special Withholding Tax (SWT) deducted from your pension?",
           header = "Did you have Special Withholding Tax (SWT) deducted from your pension?",
-          caption = "Income from overseas pensions for 6 April 2021 to 5 April 2022",
+          caption = s"Income from overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
           radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
           radioButtonForNo = uncheckedExpectedRadioButton("No"),
           buttonForContinue = ExpectedButton("Continue", ""),
@@ -736,7 +736,7 @@ class SpecialWithholdingTaxControllerISpec   extends YesNoAmountControllerSpec("
         val expectedContentsIndividualCY = ExpectedYesNoAmountPageContents(
           title = "Error: Did you have Special Withholding Tax (SWT) deducted from your pension?",
           header = "Did you have Special Withholding Tax (SWT) deducted from your pension?",
-          caption = "Income from overseas pensions for 6 April 2021 to 5 April 2022",
+          caption = s"Income from overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
           radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
           radioButtonForNo = uncheckedExpectedRadioButton("No"),
           buttonForContinue = ExpectedButton("Continue", ""),

@@ -60,7 +60,7 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
               ExpectedPageContents(
                 title = "Pension Scheme Tax Reference (PSTR)",
                 header = "Pension Scheme Tax Reference (PSTR)",
-                caption = "Unauthorised payments from pensions for 6 April 2021 to 5 April 2022",
+                caption = s"Unauthorised payments from pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                 buttonForContinue = ExpectedButton("Continue", ""),
                 inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", ""),
                 text = Set(
@@ -104,7 +104,7 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
               ExpectedPageContents(
                 title = "Pension Scheme Tax Reference (PSTR)",
                 header = "Pension Scheme Tax Reference (PSTR)",
-                caption = "Unauthorised payments from pensions for 6 April 2021 to 5 April 2022",
+                caption = s"Unauthorised payments from pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                 buttonForContinue = ExpectedButton("Continue", ""),
                 inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", ""),
                 text = Set(
@@ -160,7 +160,7 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
               ExpectedPageContents(
                 title = "Pension Scheme Tax Reference (PSTR)",
                 header = "Pension Scheme Tax Reference (PSTR)",
-                caption = "Unauthorised payments from pensions for 6 April 2021 to 5 April 2022",
+                caption = s"Unauthorised payments from pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                 buttonForContinue = ExpectedButton("Continue", ""),
                 inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", ""),
                 text = Set(
@@ -204,7 +204,7 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
               ExpectedPageContents(
                 title = "Pension Scheme Tax Reference (PSTR)",
                 header = "Pension Scheme Tax Reference (PSTR)",
-                caption = "Unauthorised payments from pensions for 6 April 2021 to 5 April 2022",
+                caption = s"Unauthorised payments from pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                 buttonForContinue = ExpectedButton("Continue", ""),
                 inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", ""),
                 text = Set(
@@ -343,7 +343,7 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
                 ExpectedPageContents(
                   title = "Error: Pension Scheme Tax Reference (PSTR)",
                   header = "Pension Scheme Tax Reference (PSTR)",
-                  caption = "Unauthorised payments from pensions for 6 April 2021 to 5 April 2022",
+                  caption = s"Unauthorised payments from pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                   buttonForContinue = ExpectedButton("Continue", ""),
                   inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", ""),
                   text = Set(
@@ -413,7 +413,7 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
                 ExpectedPageContents(
                   title = "Error: Pension Scheme Tax Reference (PSTR)",
                   header = "Pension Scheme Tax Reference (PSTR)",
-                  caption = "Unauthorised payments from pensions for 6 April 2021 to 5 April 2022",
+                  caption = s"Unauthorised payments from pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                   buttonForContinue = ExpectedButton("Continue", ""),
                   inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", ""),
                   text = Set(
@@ -485,7 +485,7 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
                 ExpectedPageContents(
                   title = "Error: Pension Scheme Tax Reference (PSTR)",
                   header = "Pension Scheme Tax Reference (PSTR)",
-                  caption = "Unauthorised payments from pensions for 6 April 2021 to 5 April 2022",
+                  caption = s"Unauthorised payments from pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                   buttonForContinue = ExpectedButton("Continue", ""),
                   inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", "   "),
                   text = Set(
@@ -555,7 +555,7 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
                 ExpectedPageContents(
                   title = "Error: Pension Scheme Tax Reference (PSTR)",
                   header = "Pension Scheme Tax Reference (PSTR)",
-                  caption = "Unauthorised payments from pensions for 6 April 2021 to 5 April 2022",
+                  caption = s"Unauthorised payments from pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                   buttonForContinue = ExpectedButton("Continue", ""),
                   inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", "   "),
                   text = Set(
@@ -630,7 +630,7 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
                 ExpectedPageContents(
                   title = "Error: Pension Scheme Tax Reference (PSTR)",
                   header = "Pension Scheme Tax Reference (PSTR)",
-                  caption = "Unauthorised payments from pensions for 6 April 2021 to 5 April 2022",
+                  caption = s"Unauthorised payments from pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                   buttonForContinue = ExpectedButton("Continue", ""),
                   inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", "123456RA"),
                   text = Set(
@@ -700,7 +700,7 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
                 ExpectedPageContents(
                   title = "Error: Pension Scheme Tax Reference (PSTR)",
                   header = "Pension Scheme Tax Reference (PSTR)",
-                  caption = "Unauthorised payments from pensions for 6 April 2021 to 5 April 2022",
+                  caption = s"Unauthorised payments from pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                   buttonForContinue = ExpectedButton("Continue", ""),
                   inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", "123456RA"),
                   text = Set(

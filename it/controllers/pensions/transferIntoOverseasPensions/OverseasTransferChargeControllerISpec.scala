@@ -54,7 +54,7 @@ class OverseasTransferChargeControllerISpec
               ExpectedYesNoAmountPageContents(
                 title = "Did the amount result in an overseas transfer charge?",
                 header = "Did the amount result in an overseas transfer charge?",
-                caption = "Transfers into overseas pensions for 6 April 2021 to 5 April 2022",
+                caption = s"Transfers into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
@@ -71,7 +71,7 @@ class OverseasTransferChargeControllerISpec
               ExpectedYesNoAmountPageContents(
                 title = "Did the amount result in an overseas transfer charge?",
                 header = "Did the amount result in an overseas transfer charge?",
-                caption = "Transfers into overseas pensions for 6 April 2021 to 5 April 2022",
+                caption = s"Transfers into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
@@ -88,7 +88,7 @@ class OverseasTransferChargeControllerISpec
               ExpectedYesNoAmountPageContents(
                 title = "Did the amount result in an overseas transfer charge?",
                 header = "Did the amount result in an overseas transfer charge?",
-                caption = "Transfers into overseas pensions for 6 April 2021 to 5 April 2022",
+                caption = s"Transfers into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
@@ -106,7 +106,7 @@ class OverseasTransferChargeControllerISpec
               ExpectedYesNoAmountPageContents(
                 title = "Did the amount result in an overseas transfer charge?",
                 header = "Did the amount result in an overseas transfer charge?",
-                caption = "Transfers into overseas pensions for 6 April 2021 to 5 April 2022",
+                caption = s"Transfers into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
@@ -133,7 +133,7 @@ class OverseasTransferChargeControllerISpec
               ExpectedYesNoAmountPageContents(
                 title = "Did the amount result in an overseas transfer charge?",
                 header = "Did the amount result in an overseas transfer charge?",
-                caption = "Transfers into overseas pensions for 6 April 2021 to 5 April 2022",
+                caption = s"Transfers into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                 radioButtonForYes = checkedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
@@ -150,7 +150,7 @@ class OverseasTransferChargeControllerISpec
               ExpectedYesNoAmountPageContents(
                 title = "Did the amount result in an overseas transfer charge?",
                 header = "Did the amount result in an overseas transfer charge?",
-                caption = "Transfers into overseas pensions for 6 April 2021 to 5 April 2022",
+                caption = s"Transfers into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                 radioButtonForYes = checkedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
@@ -167,7 +167,7 @@ class OverseasTransferChargeControllerISpec
               ExpectedYesNoAmountPageContents(
                 title = "Did the amount result in an overseas transfer charge?",
                 header = "Did the amount result in an overseas transfer charge?",
-                caption = "Transfers into overseas pensions for 6 April 2021 to 5 April 2022",
+                caption = s"Transfers into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                 radioButtonForYes = checkedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
@@ -184,7 +184,7 @@ class OverseasTransferChargeControllerISpec
               ExpectedYesNoAmountPageContents(
                 title = "Did the amount result in an overseas transfer charge?",
                 header = "Did the amount result in an overseas transfer charge?",
-                caption = "Transfers into overseas pensions for 6 April 2021 to 5 April 2022",
+                caption = s"Transfers into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                 radioButtonForYes = checkedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
@@ -211,7 +211,7 @@ class OverseasTransferChargeControllerISpec
               ExpectedYesNoAmountPageContents(
                 title = "Did the amount result in an overseas transfer charge?",
                 header = "Did the amount result in an overseas transfer charge?",
-                caption = "Transfers into overseas pensions for 6 April 2021 to 5 April 2022",
+                caption = s"Transfers into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = checkedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
@@ -228,7 +228,7 @@ class OverseasTransferChargeControllerISpec
               ExpectedYesNoAmountPageContents(
                 title = "Did the amount result in an overseas transfer charge?",
                 header = "Did the amount result in an overseas transfer charge?",
-                caption = "Transfers into overseas pensions for 6 April 2021 to 5 April 2022",
+                caption = s"Transfers into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = checkedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
@@ -245,7 +245,7 @@ class OverseasTransferChargeControllerISpec
               ExpectedYesNoAmountPageContents(
                 title = "Did the amount result in an overseas transfer charge?",
                 header = "Did the amount result in an overseas transfer charge?",
-                caption = "Transfers into overseas pensions for 6 April 2021 to 5 April 2022",
+                caption = s"Transfers into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = checkedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
@@ -262,7 +262,7 @@ class OverseasTransferChargeControllerISpec
               ExpectedYesNoAmountPageContents(
                 title = "Did the amount result in an overseas transfer charge?",
                 header = "Did the amount result in an overseas transfer charge?",
-                caption = "Transfers into overseas pensions for 6 April 2021 to 5 April 2022",
+                caption = s"Transfers into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = checkedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
@@ -289,7 +289,7 @@ class OverseasTransferChargeControllerISpec
               ExpectedYesNoAmountPageContents(
                 title = "Did the amount result in an overseas transfer charge?",
                 header = "Did the amount result in an overseas transfer charge?",
-                caption = "Transfers into overseas pensions for 6 April 2021 to 5 April 2022",
+                caption = s"Transfers into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = checkedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
@@ -306,7 +306,7 @@ class OverseasTransferChargeControllerISpec
               ExpectedYesNoAmountPageContents(
                 title = "Did the amount result in an overseas transfer charge?",
                 header = "Did the amount result in an overseas transfer charge?",
-                caption = "Transfers into overseas pensions for 6 April 2021 to 5 April 2022",
+                caption = s"Transfers into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = checkedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
@@ -323,7 +323,7 @@ class OverseasTransferChargeControllerISpec
               ExpectedYesNoAmountPageContents(
                 title = "Did the amount result in an overseas transfer charge?",
                 header = "Did the amount result in an overseas transfer charge?",
-                caption = "Transfers into overseas pensions for 6 April 2021 to 5 April 2022",
+                caption = s"Transfers into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = checkedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
@@ -340,7 +340,7 @@ class OverseasTransferChargeControllerISpec
               ExpectedYesNoAmountPageContents(
                 title = "Did the amount result in an overseas transfer charge?",
                 header = "Did the amount result in an overseas transfer charge?",
-                caption = "Transfers into overseas pensions for 6 April 2021 to 5 April 2022",
+                caption = s"Transfers into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = checkedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
@@ -479,7 +479,7 @@ class OverseasTransferChargeControllerISpec
                 ExpectedYesNoAmountPageContents(
                   title = "Error: Did the amount result in an overseas transfer charge?",
                   header = "Did the amount result in an overseas transfer charge?",
-                  caption = "Transfers into overseas pensions for 6 April 2021 to 5 April 2022",
+                  caption = s"Transfers into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                   radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
@@ -510,7 +510,7 @@ class OverseasTransferChargeControllerISpec
                 ExpectedYesNoAmountPageContents(
                   title = "Error: Did the amount result in an overseas transfer charge?",
                   header = "Did the amount result in an overseas transfer charge?",
-                  caption = "Transfers into overseas pensions for 6 April 2021 to 5 April 2022",
+                  caption = s"Transfers into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                   radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
@@ -541,7 +541,7 @@ class OverseasTransferChargeControllerISpec
                 ExpectedYesNoAmountPageContents(
                   title = "Error: Did the amount result in an overseas transfer charge?",
                   header = "Did the amount result in an overseas transfer charge?",
-                  caption = "Transfers into overseas pensions for 6 April 2021 to 5 April 2022",
+                  caption = s"Transfers into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                   radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
@@ -572,7 +572,7 @@ class OverseasTransferChargeControllerISpec
                 ExpectedYesNoAmountPageContents(
                   title = "Error: Did the amount result in an overseas transfer charge?",
                   header = "Did the amount result in an overseas transfer charge?",
-                  caption = "Transfers into overseas pensions for 6 April 2021 to 5 April 2022",
+                  caption = s"Transfers into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                   radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
@@ -605,7 +605,7 @@ class OverseasTransferChargeControllerISpec
                 ExpectedYesNoAmountPageContents(
                   title = "Error: Did the amount result in an overseas transfer charge?",
                   header = "Did the amount result in an overseas transfer charge?",
-                  caption = "Transfers into overseas pensions for 6 April 2021 to 5 April 2022",
+                  caption = s"Transfers into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
@@ -636,7 +636,7 @@ class OverseasTransferChargeControllerISpec
                 ExpectedYesNoAmountPageContents(
                   title = "Error: Did the amount result in an overseas transfer charge?",
                   header = "Did the amount result in an overseas transfer charge?",
-                  caption = "Transfers into overseas pensions for 6 April 2021 to 5 April 2022",
+                  caption = s"Transfers into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
@@ -667,7 +667,7 @@ class OverseasTransferChargeControllerISpec
                 ExpectedYesNoAmountPageContents(
                   title = "Error: Did the amount result in an overseas transfer charge?",
                   header = "Did the amount result in an overseas transfer charge?",
-                  caption = "Transfers into overseas pensions for 6 April 2021 to 5 April 2022",
+                  caption = s"Transfers into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
@@ -698,7 +698,7 @@ class OverseasTransferChargeControllerISpec
                 ExpectedYesNoAmountPageContents(
                   title = "Error: Did the amount result in an overseas transfer charge?",
                   header = "Did the amount result in an overseas transfer charge?",
-                  caption = "Transfers into overseas pensions for 6 April 2021 to 5 April 2022",
+                  caption = s"Transfers into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
@@ -731,7 +731,7 @@ class OverseasTransferChargeControllerISpec
                 ExpectedYesNoAmountPageContents(
                   title = "Error: Did the amount result in an overseas transfer charge?",
                   header = "Did the amount result in an overseas transfer charge?",
-                  caption = "Transfers into overseas pensions for 6 April 2021 to 5 April 2022",
+                  caption = s"Transfers into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
@@ -762,7 +762,7 @@ class OverseasTransferChargeControllerISpec
                 ExpectedYesNoAmountPageContents(
                   title = "Error: Did the amount result in an overseas transfer charge?",
                   header = "Did the amount result in an overseas transfer charge?",
-                  caption = "Transfers into overseas pensions for 6 April 2021 to 5 April 2022",
+                  caption = s"Transfers into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
@@ -793,7 +793,7 @@ class OverseasTransferChargeControllerISpec
                 ExpectedYesNoAmountPageContents(
                   title = "Error: Did the amount result in an overseas transfer charge?",
                   header = "Did the amount result in an overseas transfer charge?",
-                  caption = "Transfers into overseas pensions for 6 April 2021 to 5 April 2022",
+                  caption = s"Transfers into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
@@ -824,7 +824,7 @@ class OverseasTransferChargeControllerISpec
                 ExpectedYesNoAmountPageContents(
                   title = "Error: Did the amount result in an overseas transfer charge?",
                   header = "Did the amount result in an overseas transfer charge?",
-                  caption = "Transfers into overseas pensions for 6 April 2021 to 5 April 2022",
+                  caption = s"Transfers into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
@@ -857,7 +857,7 @@ class OverseasTransferChargeControllerISpec
                 ExpectedYesNoAmountPageContents(
                   title = "Error: Did the amount result in an overseas transfer charge?",
                   header = "Did the amount result in an overseas transfer charge?",
-                  caption = "Transfers into overseas pensions for 6 April 2021 to 5 April 2022",
+                  caption = s"Transfers into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
@@ -888,7 +888,7 @@ class OverseasTransferChargeControllerISpec
                 ExpectedYesNoAmountPageContents(
                   title = "Error: Did the amount result in an overseas transfer charge?",
                   header = "Did the amount result in an overseas transfer charge?",
-                  caption = "Transfers into overseas pensions for 6 April 2021 to 5 April 2022",
+                  caption = s"Transfers into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
@@ -919,7 +919,7 @@ class OverseasTransferChargeControllerISpec
                 ExpectedYesNoAmountPageContents(
                   title = "Error: Did the amount result in an overseas transfer charge?",
                   header = "Did the amount result in an overseas transfer charge?",
-                  caption = "Transfers into overseas pensions for 6 April 2021 to 5 April 2022",
+                  caption = s"Transfers into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
@@ -950,7 +950,7 @@ class OverseasTransferChargeControllerISpec
                 ExpectedYesNoAmountPageContents(
                   title = "Error: Did the amount result in an overseas transfer charge?",
                   header = "Did the amount result in an overseas transfer charge?",
-                  caption = "Transfers into overseas pensions for 6 April 2021 to 5 April 2022",
+                  caption = s"Transfers into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
@@ -983,7 +983,7 @@ class OverseasTransferChargeControllerISpec
                 ExpectedYesNoAmountPageContents(
                   title = "Error: Did the amount result in an overseas transfer charge?",
                   header = "Did the amount result in an overseas transfer charge?",
-                  caption = "Transfers into overseas pensions for 6 April 2021 to 5 April 2022",
+                  caption = s"Transfers into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
@@ -1014,7 +1014,7 @@ class OverseasTransferChargeControllerISpec
                 ExpectedYesNoAmountPageContents(
                   title = "Error: Did the amount result in an overseas transfer charge?",
                   header = "Did the amount result in an overseas transfer charge?",
-                  caption = "Transfers into overseas pensions for 6 April 2021 to 5 April 2022",
+                  caption = s"Transfers into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
@@ -1045,7 +1045,7 @@ class OverseasTransferChargeControllerISpec
                 ExpectedYesNoAmountPageContents(
                   title = "Error: Did the amount result in an overseas transfer charge?",
                   header = "Did the amount result in an overseas transfer charge?",
-                  caption = "Transfers into overseas pensions for 6 April 2021 to 5 April 2022",
+                  caption = s"Transfers into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
@@ -1076,7 +1076,7 @@ class OverseasTransferChargeControllerISpec
                 ExpectedYesNoAmountPageContents(
                   title = "Error: Did the amount result in an overseas transfer charge?",
                   header = "Did the amount result in an overseas transfer charge?",
-                  caption = "Transfers into overseas pensions for 6 April 2021 to 5 April 2022",
+                  caption = s"Transfers into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
