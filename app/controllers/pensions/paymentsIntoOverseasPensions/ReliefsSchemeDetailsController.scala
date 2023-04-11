@@ -39,7 +39,7 @@ class ReliefsSchemeDetailsController @Inject()(view: ReliefSchemeDetailsView,
         case Some(idx) =>
           Ok(view(taxYear, userSessionDataRequest.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs(idx), reliefIndex))
         case _ =>
-          Redirect(routes.PensionsCustomerReferenceNumberController.show(taxYear))
+          Redirect(routes.PensionsCustomerReferenceNumberController.show(taxYear, reliefIndex))
       }
   }
 
@@ -50,7 +50,7 @@ class ReliefsSchemeDetailsController @Inject()(view: ReliefSchemeDetailsView,
           Ok(view(taxYear, userSessionDataRequest.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs(idx), reliefIndex))
           //todo redirect to CYA page when complete
         case _ =>
-          Redirect(routes.PensionsCustomerReferenceNumberController.show(taxYear))
+          Redirect(routes.PensionsCustomerReferenceNumberController.show(taxYear, reliefIndex))
       }
     }
 }

@@ -31,6 +31,7 @@ class ReliefsSchemeDetailsHelperSpec extends AnyWordSpec with Matchers {
   implicit val messages: Messages = stubbedMessages()
 
   val taxYear = 2022
+  val index = Some(1)
 
   val reliefTransactional: Relief = Relief(
     Some("PENSIONINCOME245"), Some(193.54), Some(TaxReliefQuestion.TransitionalCorrespondingRelief), sf74Reference = Some("123456"))
@@ -56,7 +57,7 @@ class ReliefsSchemeDetailsHelperSpec extends AnyWordSpec with Matchers {
   "Getting the summary rows" should {
     "return the expected" when {
       "we have provided all answers for transitional corresponding relief" in {
-        val summaryListRows = ReliefsSchemeDetailsHelper.summaryListRows(reliefTransactional, taxYear, Some(1))
+        val summaryListRows = ReliefsSchemeDetailsHelper.summaryListRows(reliefTransactional, taxYear, index)
 
         summaryListRows.length shouldBe 4
         assertRowForSchemeName(summaryListRows.head, "PENSIONINCOME245")
@@ -66,7 +67,7 @@ class ReliefsSchemeDetailsHelperSpec extends AnyWordSpec with Matchers {
       }
     }
     "we have provided all answers for migration relief" in {
-      val summaryListRows = ReliefsSchemeDetailsHelper.summaryListRows(reliefMigrant, taxYear, Some(1))
+      val summaryListRows = ReliefsSchemeDetailsHelper.summaryListRows(reliefMigrant, taxYear, index)
 
       summaryListRows.length shouldBe 4
       assertRowForSchemeName(summaryListRows.head, "PENSIONINCOME245")
@@ -75,7 +76,7 @@ class ReliefsSchemeDetailsHelperSpec extends AnyWordSpec with Matchers {
       assertRowForQOPSSchemeDetails(summaryListRows(3), "123456")
     }
     "we have provided all answers for double taxation relief" in {
-      val summaryListRows = ReliefsSchemeDetailsHelper.summaryListRows(reliefDouble, taxYear, Some(1))
+      val summaryListRows = ReliefsSchemeDetailsHelper.summaryListRows(reliefDouble, taxYear, index)
 
       summaryListRows.length shouldBe 4
       assertRowForSchemeName(summaryListRows.head, "PENSIONINCOME245")
@@ -85,7 +86,7 @@ class ReliefsSchemeDetailsHelperSpec extends AnyWordSpec with Matchers {
     }
 
     "we have provided none of the above" in {
-      val summaryListRows = ReliefsSchemeDetailsHelper.summaryListRows(reliefNone, taxYear, Some(1))
+      val summaryListRows = ReliefsSchemeDetailsHelper.summaryListRows(reliefNone, taxYear, index)
 
       summaryListRows.length shouldBe 3
       assertRowForSchemeName(summaryListRows.head, "No")
@@ -95,11 +96,12 @@ class ReliefsSchemeDetailsHelperSpec extends AnyWordSpec with Matchers {
   }
 
   private def assertRowForSchemeName(summaryListRow: SummaryListRow, expectedValue: String): Unit = {
+    val addOn = if (index.isDefined) s"?index=${index.get}" else ""
     assertSummaryListRow(summaryListRow, ExpectedSummaryRowContents(
       "Pension scheme name",
       expectedValue,
       "Change",
-      "/2022/overseas-pensions/payments-into-overseas-pensions/pensions-customer-reference-number",
+      s"/2022/overseas-pensions/payments-into-overseas-pensions/pensions-customer-reference-number$addOn",
       messages("overseasPension.reliefDetails.pensionSchemeName.hidden")))
   }
 

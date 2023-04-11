@@ -210,8 +210,10 @@ object PageUrls extends IntegrationTest {
     def sf74ReferenceUrl(taxYear: Int, index: Int): String =
       s"$appUrl/$taxYear/overseas-pensions/payments-into-overseas-pensions/pensions-overseas-sf74?reliefIndex=$index"
 
-    def pensionCustomerReferenceNumberUrl(taxYear: Int): String =
-      s"$appUrl/$taxYear/overseas-pensions/payments-into-overseas-pensions/pensions-customer-reference-number"
+    def pensionCustomerReferenceNumberUrl(taxYear: Int, index: Option[Int]): String = {
+      val addOn = if (index.isDefined) s"?index=${index.get}" else ""
+      s"$appUrl/$taxYear/overseas-pensions/payments-into-overseas-pensions/pensions-customer-reference-number$addOn"
+    }
 
     def pensionReliefTypeUrl(taxYear: Int, index: Int): String =
       s"$appUrl/$taxYear/overseas-pensions/payments-into-overseas-pensions/pensions-overseas-emp-relief-status?reliefIndex=$index"

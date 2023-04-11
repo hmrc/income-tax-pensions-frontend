@@ -33,15 +33,17 @@
 package controllers.pensions.paymentsIntoOverseasPensions
 
 import config.{AppConfig, ErrorHandler}
+import controllers._
 import controllers.pensions.paymentsIntoOverseasPensions.routes.PensionsCustomerReferenceNumberController
 import controllers.pensions.routes.PensionsSummaryController
-import controllers.predicates.AuthorisedAction
+import controllers.predicates.ActionsProvider
 import forms.PensionCustomerReferenceNumberForm
 import models.User
-import models.mongo.{PensionsCYAModel, PensionsUserData}
+import models.mongo.PensionsCYAModel
+import models.pension.charges.Relief
 import play.api.data.Form
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
@@ -51,7 +53,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class PensionsCustomerReferenceNumberController @Inject()(authAction: AuthorisedAction,
+class PensionsCustomerReferenceNumberController @Inject()(actionsProvider: ActionsProvider,
                                                           pensionsCustomerReferenceNumberView: PensionsCustomerReferenceNumberView,
                                                           pensionSessionService: PensionSessionService,
                                                           errorHandler: ErrorHandler
@@ -60,52 +62,77 @@ class PensionsCustomerReferenceNumberController @Inject()(authAction: Authorised
                                                            clock: Clock,
                                                            ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
 
-  def referenceForm(user : User): Form[String] = PensionCustomerReferenceNumberForm.pensionCustomerReferenceNumberForm(
-    incorrectFormatMsg = s"overseasPension.pensionsCustomerReferenceNumber.error.noEntry.${if (user.isAgent) "agent" else "individual" }"
+  def referenceForm(user: User): Form[String] = PensionCustomerReferenceNumberForm.pensionCustomerReferenceNumberForm(
+    incorrectFormatMsg = s"overseasPension.pensionsCustomerReferenceNumber.error.noEntry.${if (user.isAgent) "agent" else "individual"}"
   )
 
-  def show(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
-    pensionSessionService.getPensionSessionData(taxYear, request.user).map {
-      case Left(_) => errorHandler.handleError(INTERNAL_SERVER_ERROR)
-      case Right(optPensionUserData) =>
-        optPensionUserData
-          .map(pensionUserData => Ok(pensionsCustomerReferenceNumberView(fillCustomerReferenceNumber(request.user, pensionUserData), taxYear)))
-          .getOrElse(Redirect(PensionsSummaryController.show(taxYear)))
+  def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
+    implicit sessionDataRequest => {
+      index match {
+        case Some(_) => validateIndex(index, sessionDataRequest.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs.size) match {
+          case Some(idx) => sessionDataRequest.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs(idx).customerReferenceNumberQuestion match {
+            case None => Future.successful(Ok(pensionsCustomerReferenceNumberView(referenceForm(sessionDataRequest.user), taxYear, index)))
+            case Some(customerReferenceNumber) =>
+              Future.successful(Ok(pensionsCustomerReferenceNumberView(referenceForm(sessionDataRequest.user)
+                .fill(customerReferenceNumber),
+                taxYear, index)))
+          }
+          case None => Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
+        }
+        case None => Future.successful(Ok(pensionsCustomerReferenceNumberView(referenceForm(sessionDataRequest.user), taxYear, index)))
+      }
     }
   }
 
+  def submit(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
+    implicit sessionDataRequest =>
 
-  private def fillCustomerReferenceNumber(user : User, pensionUserData: PensionsUserData): Form[String] =
-    pensionUserData.pensions.paymentsIntoOverseasPensions.reliefs.headOption.fold{referenceForm(user)} { relief =>
-      relief.customerReferenceNumberQuestion
-        .map(referenceForm(user).fill)
-        .getOrElse(referenceForm(user))
-    }
-
-  def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
-    referenceForm(request.user).bindFromRequest().fold(
-      formWithErrors => Future.successful(BadRequest(pensionsCustomerReferenceNumberView(formWithErrors, taxYear))),
-      pensionCustomerReferenceNumber => {
-        pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
-          case Right(Some(data)) =>
-            data.pensions.paymentsIntoOverseasPensions.reliefs.headOption match {
-              case Some(relief) =>
-                val updatedCyaModel: PensionsCYAModel = data.pensions.copy(
-                  paymentsIntoOverseasPensions = data.pensions.paymentsIntoOverseasPensions.copy( // todo currently only updates first in list - upgrade ticket
-                    reliefs = data.pensions.paymentsIntoOverseasPensions.reliefs.updated(
-                      0, relief.copy(customerReferenceNumberQuestion = Some(pensionCustomerReferenceNumber)
-                    ))))
-                pensionSessionService.createOrUpdateSessionData(request.user,
-                  updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
-                  Redirect(PensionsCustomerReferenceNumberController.show(taxYear)) //TODO - redirect to untaxed-employer-payments SASS-3099
-                }
-              case _ =>
-                Future.successful(Redirect(PensionsCustomerReferenceNumberController.show(taxYear)))
-            }
-          case _ =>
-            Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
-        }
+      def createOrUpdateSessionData(updatedCyaModel: PensionsCYAModel, newIndex: Some[Int]): Future[Result] = pensionSessionService.createOrUpdateSessionData(
+        sessionDataRequest.user,
+        updatedCyaModel,
+        taxYear,
+        sessionDataRequest.pensionsUserData.isPriorSubmission
+      )(errorHandler.internalServerError()) {
+        Redirect(PensionsCustomerReferenceNumberController.show(taxYear, newIndex)) //TODO - redirect to untaxed-employer-payments SASS-3099
       }
-    )
+
+      index match {
+        case None => referenceForm(sessionDataRequest.user).bindFromRequest().fold(
+          formWithErrors =>
+            Future.successful(BadRequest(pensionsCustomerReferenceNumberView(formWithErrors, taxYear, index))),
+          pensionCustomerReferenceNumber => {
+            val updatedCyaModel: PensionsCYAModel = sessionDataRequest.pensionsUserData.pensions.copy(
+              paymentsIntoOverseasPensions = sessionDataRequest.pensionsUserData.pensions.paymentsIntoOverseasPensions.copy(
+                reliefs = sessionDataRequest.pensionsUserData.pensions.paymentsIntoOverseasPensions
+                  .reliefs :+ Relief(customerReferenceNumberQuestion = Some(pensionCustomerReferenceNumber))
+              )
+            )
+            createOrUpdateSessionData(updatedCyaModel, Some(updatedCyaModel.paymentsIntoOverseasPensions.reliefs.size))
+          }
+        )
+        case Some(_) =>
+          validateIndex(index, sessionDataRequest.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs.size) match {
+            case Some(validIndex: Int) =>
+              referenceForm(sessionDataRequest.user).bindFromRequest().fold(
+                formWithErrors =>
+                  Future.successful(BadRequest(pensionsCustomerReferenceNumberView(formWithErrors, taxYear, Some(validIndex)))),
+                pensionCustomerReferenceNumber => {
+                  val updatedCyaModel: PensionsCYAModel = sessionDataRequest.pensionsUserData.pensions.copy(
+                    paymentsIntoOverseasPensions = sessionDataRequest.pensionsUserData.pensions.paymentsIntoOverseasPensions.copy(
+                      reliefs = sessionDataRequest.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs.updated(
+                        validIndex,
+                        sessionDataRequest.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs(validIndex).copy(customerReferenceNumberQuestion = Some(pensionCustomerReferenceNumber))
+                      )
+                    )
+                  )
+                  val currentIndex = index.fold(
+                    Some(updatedCyaModel.paymentsIntoOverseasPensions.reliefs.size - 1))(index => Some(index))
+                  createOrUpdateSessionData(updatedCyaModel, currentIndex)
+                }
+              )
+            case _ =>
+              Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
+          }
+      }
   }
 }
