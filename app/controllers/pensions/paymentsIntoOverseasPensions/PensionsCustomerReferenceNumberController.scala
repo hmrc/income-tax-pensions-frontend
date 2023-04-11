@@ -66,23 +66,20 @@ class PensionsCustomerReferenceNumberController @Inject()(actionsProvider: Actio
     incorrectFormatMsg = s"overseasPension.pensionsCustomerReferenceNumber.error.noEntry.${if (user.isAgent) "agent" else "individual"}"
   )
 
-  private def fillCustomerReferenceNumber(user: User, pensionUserData: PensionsUserData): Form[String] =
-    pensionUserData.pensions.paymentsIntoOverseasPensions.reliefs.headOption.fold {
-      referenceForm(user)
-    } { relief =>
-      relief.customerReferenceNumberQuestion
-        .map(referenceForm(user).fill)
-        .getOrElse(referenceForm(user))
-    }
-
   def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit sessionDataRequest => {
-      if (validateOptionalIndex(index, sessionDataRequest.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs)) {
-        Future.successful(Ok(pensionsCustomerReferenceNumberView(
-          fillCustomerReferenceNumber(sessionDataRequest.user, sessionDataRequest.pensionsUserData), taxYear, index
-        )))
-      } else {
-        Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
+      index match {
+        case Some(_) => validateIndex(index, sessionDataRequest.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs.size) match {
+          case Some(idx) => sessionDataRequest.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs(idx).customerReferenceNumberQuestion match {
+            case None => Future.successful(Ok(pensionsCustomerReferenceNumberView(referenceForm(sessionDataRequest.user), taxYear, index)))
+            case Some(customerReferenceNumber) =>
+              Future.successful(Ok(pensionsCustomerReferenceNumberView(referenceForm(sessionDataRequest.user)
+                .fill(customerReferenceNumber),
+                taxYear, index)))
+          }
+          case None => Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
+        }
+        case None => Future.successful(Ok(pensionsCustomerReferenceNumberView(referenceForm(sessionDataRequest.user), taxYear, index)))
       }
     }
   }
@@ -113,7 +110,7 @@ class PensionsCustomerReferenceNumberController @Inject()(actionsProvider: Actio
             createOrUpdateSessionData(updatedCyaModel, Some(updatedCyaModel.paymentsIntoOverseasPensions.reliefs.size))
           }
         )
-        case Some(idx) =>
+        case Some(_) =>
           validateIndex(index, sessionDataRequest.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs.size) match {
             case Some(validIndex: Int) =>
               referenceForm(sessionDataRequest.user).bindFromRequest().fold(
@@ -134,16 +131,9 @@ class PensionsCustomerReferenceNumberController @Inject()(actionsProvider: Actio
                 }
               )
             case _ =>
-              Future.successful(Redirect(PensionsCustomerReferenceNumberController.show(taxYear, index)))
+              Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
           }
       }
   }
 
-  private def validateOptionalIndex(index: Option[Int], reliefs: Seq[Relief]): Boolean = {
-    index match {
-      case Some(index) if index < 0 => false
-      case Some(index) => reliefs.size > index
-      case _ => true
-    }
-  }
 }

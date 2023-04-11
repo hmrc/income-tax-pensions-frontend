@@ -94,7 +94,7 @@ class SF74ReferenceControllerISpec extends IntegrationTest with BeforeAndAfterEa
       }
       "have a SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(pensionCustomerReferenceNumberUrl(taxYearEOY, 100))
+        result.header("location") shouldBe Some(pensionCustomerReferenceNumberUrl(taxYearEOY, Some(100)))
       }
 
   }
@@ -129,7 +129,7 @@ class SF74ReferenceControllerISpec extends IntegrationTest with BeforeAndAfterEa
 
       "have a SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(pensionCustomerReferenceNumberUrl(taxYearEOY, 100))
+        result.header("location") shouldBe Some(pensionCustomerReferenceNumberUrl(taxYearEOY, Some(100)))
       }
     }
   }
