@@ -41,7 +41,7 @@ class ReliefsSchemeDetailsViewSpec extends ViewUnitTest with FakeRequestProvider
     val schemeNamesLink = controllers.pensions.paymentsIntoOverseasPensions.routes.PensionsCustomerReferenceNumberController.show(taxYearEOY).url
     val untaxedEmployerPensionsLink = controllers.pensions.paymentsIntoOverseasPensions.routes.UntaxedEmployerPaymentsController.show(taxYearEOY, Some(0)).url
     val reliefTypeLink = controllers.pensions.paymentsIntoOverseasPensions.routes.PensionReliefTypeController.show(taxYearEOY, Some(0)).url
-    val schemeDetailsSF74Link = controllers.pensions.paymentsIntoOverseasPensions.routes.SF74ReferenceController.show(taxYearEOY).url
+    val schemeDetailsSF74Link = controllers.pensions.paymentsIntoOverseasPensions.routes.SF74ReferenceController.show(taxYearEOY, Some(0)).url
     val schemeDetailsQOPSLink = controllers.pensions.paymentsIntoOverseasPensions.routes.QOPSReferenceController.show(taxYearEOY, Some(0)).url
     val schemeDetailsMigrationLink = controllers.pensions.paymentsIntoOverseasPensions.routes.ReliefsSchemeDetailsController.show(taxYearEOY, Some(0)).url //todo: redirect to migration page when added
   }

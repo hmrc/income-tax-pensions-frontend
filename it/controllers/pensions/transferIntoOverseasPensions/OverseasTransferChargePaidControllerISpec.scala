@@ -60,7 +60,7 @@ class OverseasTransferChargePaidControllerISpec
                 ExpectedYesNoPageContents(
                   title = "Did a UK pension scheme pay the transfer charge to HMRC?",
                   header = "Did a UK pension scheme pay the transfer charge to HMRC?",
-                  caption = "Transfers into overseas pensions for 6 April 2021 to 5 April 2022",
+                  caption = s"Transfers into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                   radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
@@ -80,7 +80,7 @@ class OverseasTransferChargePaidControllerISpec
                 ExpectedYesNoPageContents(
                   title = "Did a UK pension scheme pay the transfer charge to HMRC?",
                   header = "Did a UK pension scheme pay the transfer charge to HMRC?",
-                  caption = "Transfers into overseas pensions for 6 April 2021 to 5 April 2022",
+                  caption = s"Transfers into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                   radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
@@ -100,7 +100,7 @@ class OverseasTransferChargePaidControllerISpec
                 ExpectedYesNoPageContents(
                   title = "Did a UK pension scheme pay the transfer charge to HMRC?",
                   header = "Did a UK pension scheme pay the transfer charge to HMRC?",
-                  caption = "Transfers into overseas pensions for 6 April 2021 to 5 April 2022",
+                  caption = s"Transfers into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                   radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
@@ -120,7 +120,7 @@ class OverseasTransferChargePaidControllerISpec
                 ExpectedYesNoPageContents(
                   title = "Did a UK pension scheme pay the transfer charge to HMRC?",
                   header = "Did a UK pension scheme pay the transfer charge to HMRC?",
-                  caption = "Transfers into overseas pensions for 6 April 2021 to 5 April 2022",
+                  caption = s"Transfers into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                   radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
@@ -151,7 +151,7 @@ class OverseasTransferChargePaidControllerISpec
                 ExpectedYesNoPageContents(
                   title = "Did a UK pension scheme pay the transfer charge to HMRC?",
                   header = "Did a UK pension scheme pay the transfer charge to HMRC?",
-                  caption = "Transfers into overseas pensions for 6 April 2021 to 5 April 2022",
+                  caption = s"Transfers into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
@@ -172,7 +172,7 @@ class OverseasTransferChargePaidControllerISpec
                 ExpectedYesNoPageContents(
                   title = "Did a UK pension scheme pay the transfer charge to HMRC?",
                   header = "Did a UK pension scheme pay the transfer charge to HMRC?",
-                  caption = "Transfers into overseas pensions for 6 April 2021 to 5 April 2022",
+                  caption = s"Transfers into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
@@ -193,7 +193,7 @@ class OverseasTransferChargePaidControllerISpec
                 ExpectedYesNoPageContents(
                   title = "Did a UK pension scheme pay the transfer charge to HMRC?",
                   header = "Did a UK pension scheme pay the transfer charge to HMRC?",
-                  caption = "Transfers into overseas pensions for 6 April 2021 to 5 April 2022",
+                  caption = s"Transfers into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
@@ -215,7 +215,7 @@ class OverseasTransferChargePaidControllerISpec
                 ExpectedYesNoPageContents(
                   title = "Did a UK pension scheme pay the transfer charge to HMRC?",
                   header = "Did a UK pension scheme pay the transfer charge to HMRC?",
-                  caption = "Transfers into overseas pensions for 6 April 2021 to 5 April 2022",
+                  caption = s"Transfers into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
@@ -247,7 +247,7 @@ class OverseasTransferChargePaidControllerISpec
                 ExpectedYesNoPageContents(
                   title = "Did a UK pension scheme pay the transfer charge to HMRC?",
                   header = "Did a UK pension scheme pay the transfer charge to HMRC?",
-                  caption = "Transfers into overseas pensions for 6 April 2021 to 5 April 2022",
+                  caption = s"Transfers into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                   radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                   radioButtonForNo = checkedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
@@ -268,7 +268,7 @@ class OverseasTransferChargePaidControllerISpec
                 ExpectedYesNoPageContents(
                   title = "Did a UK pension scheme pay the transfer charge to HMRC?",
                   header = "Did a UK pension scheme pay the transfer charge to HMRC?",
-                  caption = "Transfers into overseas pensions for 6 April 2021 to 5 April 2022",
+                  caption = s"Transfers into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                   radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                   radioButtonForNo = checkedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
@@ -290,7 +290,7 @@ class OverseasTransferChargePaidControllerISpec
                 ExpectedYesNoPageContents(
                   title = "Did a UK pension scheme pay the transfer charge to HMRC?",
                   header = "Did a UK pension scheme pay the transfer charge to HMRC?",
-                  caption = "Transfers into overseas pensions for 6 April 2021 to 5 April 2022",
+                  caption = s"Transfers into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                   radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                   radioButtonForNo = checkedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
@@ -312,7 +312,7 @@ class OverseasTransferChargePaidControllerISpec
                 ExpectedYesNoPageContents(
                   title = "Did a UK pension scheme pay the transfer charge to HMRC?",
                   header = "Did a UK pension scheme pay the transfer charge to HMRC?",
-                  caption = "Transfers into overseas pensions for 6 April 2021 to 5 April 2022",
+                  caption = s"Transfers into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                   radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                   radioButtonForNo = checkedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
@@ -453,7 +453,7 @@ class OverseasTransferChargePaidControllerISpec
                 ExpectedYesNoPageContents(
                   title = "Error: Did a UK pension scheme pay the transfer charge to HMRC?",
                   header = "Did a UK pension scheme pay the transfer charge to HMRC?",
-                  caption = "Transfers into overseas pensions for 6 April 2021 to 5 April 2022",
+                  caption = s"Transfers into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                   radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
@@ -485,7 +485,7 @@ class OverseasTransferChargePaidControllerISpec
                 ExpectedYesNoPageContents(
                   title = "Error: Did a UK pension scheme pay the transfer charge to HMRC?",
                   header = "Did a UK pension scheme pay the transfer charge to HMRC?",
-                  caption = "Transfers into overseas pensions for 6 April 2021 to 5 April 2022",
+                  caption = s"Transfers into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                   radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
@@ -517,7 +517,7 @@ class OverseasTransferChargePaidControllerISpec
                 ExpectedYesNoPageContents(
                   title = "Error: Did a UK pension scheme pay the transfer charge to HMRC?",
                   header = "Did a UK pension scheme pay the transfer charge to HMRC?",
-                  caption = "Transfers into overseas pensions for 6 April 2021 to 5 April 2022",
+                  caption = s"Transfers into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                   radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
@@ -549,7 +549,7 @@ class OverseasTransferChargePaidControllerISpec
                 ExpectedYesNoPageContents(
                   title = "Error: Did a UK pension scheme pay the transfer charge to HMRC?",
                   header = "Did a UK pension scheme pay the transfer charge to HMRC?",
-                  caption = "Transfers into overseas pensions for 6 April 2021 to 5 April 2022",
+                  caption = s"Transfers into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                   radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),

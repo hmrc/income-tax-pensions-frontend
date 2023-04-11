@@ -145,7 +145,7 @@ class PensionsTaxReliefNotClaimedControllerISpec
               ExpectedYesNoPageContents(
                 title = "Pensions where tax relief is not claimed",
                 header = "Pensions where tax relief is not claimed",
-                caption = "Payments into pensions for 6 April 2021 to 5 April 2022",
+                caption = s"Payments into pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
@@ -168,7 +168,7 @@ class PensionsTaxReliefNotClaimedControllerISpec
               ExpectedYesNoPageContents(
                 title = "Pensiynau lle na chaiff rhyddhad treth ei hawlio",
                 header = "Pensiynau lle na chaiff rhyddhad treth ei hawlio",
-                caption = "Payments into pensions for 6 April 2021 to 5 April 2022",
+                caption = s"Payments into pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
@@ -191,7 +191,7 @@ class PensionsTaxReliefNotClaimedControllerISpec
               ExpectedYesNoPageContents(
                 title = "Pensions where tax relief is not claimed",
                 header = "Pensions where tax relief is not claimed",
-                caption = "Payments into pensions for 6 April 2021 to 5 April 2022",
+                caption = s"Payments into pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
@@ -214,7 +214,7 @@ class PensionsTaxReliefNotClaimedControllerISpec
               ExpectedYesNoPageContents(
                 title = "Pensiynau lle na chaiff rhyddhad treth ei hawlio",
                 header = "Pensiynau lle na chaiff rhyddhad treth ei hawlio",
-                caption = "Payments into pensions for 6 April 2021 to 5 April 2022",
+                caption = s"Payments into pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
@@ -248,7 +248,7 @@ class PensionsTaxReliefNotClaimedControllerISpec
               ExpectedYesNoPageContents(
                 title = "Pensions where tax relief is not claimed",
                 header = "Pensions where tax relief is not claimed",
-                caption = "Payments into pensions for 6 April 2021 to 5 April 2022",
+                caption = s"Payments into pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                 radioButtonForYes = checkedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
@@ -271,7 +271,7 @@ class PensionsTaxReliefNotClaimedControllerISpec
               ExpectedYesNoPageContents(
                 title = "Pensiynau lle na chaiff rhyddhad treth ei hawlio",
                 header = "Pensiynau lle na chaiff rhyddhad treth ei hawlio",
-                caption = "Payments into pensions for 6 April 2021 to 5 April 2022",
+                caption = s"Payments into pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                 radioButtonForYes = checkedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
@@ -294,7 +294,7 @@ class PensionsTaxReliefNotClaimedControllerISpec
               ExpectedYesNoPageContents(
                 title = "Pensions where tax relief is not claimed",
                 header = "Pensions where tax relief is not claimed",
-                caption = "Payments into pensions for 6 April 2021 to 5 April 2022",
+                caption = s"Payments into pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                 radioButtonForYes = checkedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
@@ -317,7 +317,7 @@ class PensionsTaxReliefNotClaimedControllerISpec
               ExpectedYesNoPageContents(
                 title = "Pensiynau lle na chaiff rhyddhad treth ei hawlio",
                 header = "Pensiynau lle na chaiff rhyddhad treth ei hawlio",
-                caption = "Payments into pensions for 6 April 2021 to 5 April 2022",
+                caption = s"Payments into pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                 radioButtonForYes = checkedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
@@ -352,7 +352,7 @@ class PensionsTaxReliefNotClaimedControllerISpec
               ExpectedYesNoPageContents(
                 title = "Pensions where tax relief is not claimed",
                 header = "Pensions where tax relief is not claimed",
-                caption = "Payments into pensions for 6 April 2021 to 5 April 2022",
+                caption = s"Payments into pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = checkedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
@@ -375,7 +375,7 @@ class PensionsTaxReliefNotClaimedControllerISpec
               ExpectedYesNoPageContents(
                 title = "Pensiynau lle na chaiff rhyddhad treth ei hawlio",
                 header = "Pensiynau lle na chaiff rhyddhad treth ei hawlio",
-                caption = "Payments into pensions for 6 April 2021 to 5 April 2022",
+                caption = s"Payments into pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = checkedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
@@ -399,7 +399,7 @@ class PensionsTaxReliefNotClaimedControllerISpec
               ExpectedYesNoPageContents(
                 title = "Pensions where tax relief is not claimed",
                 header = "Pensions where tax relief is not claimed",
-                caption = "Payments into pensions for 6 April 2021 to 5 April 2022",
+                caption = s"Payments into pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = checkedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
@@ -422,7 +422,7 @@ class PensionsTaxReliefNotClaimedControllerISpec
               ExpectedYesNoPageContents(
                 title = "Pensiynau lle na chaiff rhyddhad treth ei hawlio",
                 header = "Pensiynau lle na chaiff rhyddhad treth ei hawlio",
-                caption = "Payments into pensions for 6 April 2021 to 5 April 2022",
+                caption = s"Payments into pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = checkedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
@@ -532,7 +532,7 @@ class PensionsTaxReliefNotClaimedControllerISpec
               ExpectedYesNoPageContents(
                 title = "Error: Pensions where tax relief is not claimed",
                 header = "Pensions where tax relief is not claimed",
-                caption = "Payments into pensions for 6 April 2021 to 5 April 2022",
+                caption = s"Payments into pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
@@ -568,7 +568,7 @@ class PensionsTaxReliefNotClaimedControllerISpec
               ExpectedYesNoPageContents(
                 title = "Error: Pensiynau lle na chaiff rhyddhad treth ei hawlio",
                 header = "Pensiynau lle na chaiff rhyddhad treth ei hawlio",
-                caption = "Payments into pensions for 6 April 2021 to 5 April 2022",
+                caption = s"Payments into pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
@@ -604,7 +604,7 @@ class PensionsTaxReliefNotClaimedControllerISpec
               ExpectedYesNoPageContents(
                 title = "Error: Pensions where tax relief is not claimed",
                 header = "Pensions where tax relief is not claimed",
-                caption = "Payments into pensions for 6 April 2021 to 5 April 2022",
+                caption = s"Payments into pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
@@ -640,7 +640,7 @@ class PensionsTaxReliefNotClaimedControllerISpec
               ExpectedYesNoPageContents(
                 title = "Error: Pensiynau lle na chaiff rhyddhad treth ei hawlio",
                 header = "Pensiynau lle na chaiff rhyddhad treth ei hawlio",
-                caption = "Payments into pensions for 6 April 2021 to 5 April 2022",
+                caption = s"Payments into pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),

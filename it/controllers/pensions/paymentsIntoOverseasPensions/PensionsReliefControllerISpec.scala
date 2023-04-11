@@ -113,7 +113,7 @@ class PensionsReliefControllerISpec extends IntegrationTest with ViewHelpers
       }
 
       result.status shouldBe SEE_OTHER
-      result.headers("location").head shouldBe sf74ReferenceUrl(taxYearEOY)
+      result.headers("location").head shouldBe sf74ReferenceUrl(taxYearEOY, 0)
     }
 
     "persist amount and redirect to QOPS Reference Page when MMR is selected" in {

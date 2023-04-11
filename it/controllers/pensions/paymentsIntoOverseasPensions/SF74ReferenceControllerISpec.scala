@@ -16,7 +16,7 @@
 
 package controllers.pensions.paymentsIntoOverseasPensions
 
-import builders.PensionsUserDataBuilder.pensionUserDataWithOverseasPensions
+import builders.PensionsUserDataBuilder.{aPensionsUserData, pensionUserDataWithOverseasPensions}
 import builders.PaymentsIntoOverseasPensionsViewModelBuilder.aPaymentsIntoOverseasPensionsViewModel
 import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import builders.PensionsUserDataBuilder
@@ -30,7 +30,7 @@ import utils.PageUrls.overseasPensionsSummaryUrl
 import utils.PageUrls.fullUrl
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 import play.api.http.Status.{OK, SEE_OTHER}
-import utils.PageUrls.PaymentIntoOverseasPensions.sf74ReferenceUrl
+import utils.PageUrls.PaymentIntoOverseasPensions.{pensionCustomerReferenceNumberUrl, sf74ReferenceUrl}
 
 
 class SF74ReferenceControllerISpec extends IntegrationTest with BeforeAndAfterEach with ViewHelpers with PensionsDatabaseHelper{
@@ -59,7 +59,7 @@ class SF74ReferenceControllerISpec extends IntegrationTest with BeforeAndAfterEa
             dropPensionsDB()
             val viewModel = pensionsViewModel
             insertCyaData(pensionUserDataWithOverseasPensions(viewModel), aUserRequest)
-            urlGet(fullUrl(sf74ReferenceUrl(taxYearEOY)), user.isWelsh, follow = false,
+            urlGet(fullUrl(sf74ReferenceUrl(taxYearEOY, 0)), user.isWelsh, follow = false,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
 
@@ -74,7 +74,7 @@ class SF74ReferenceControllerISpec extends IntegrationTest with BeforeAndAfterEa
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(isAgent = false)
-        urlGet(fullUrl(sf74ReferenceUrl(taxYearEOY)), follow = false,
+        urlGet(fullUrl(sf74ReferenceUrl(taxYearEOY, 0)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
@@ -84,19 +84,52 @@ class SF74ReferenceControllerISpec extends IntegrationTest with BeforeAndAfterEa
       }
     }
 
+    "redirect to the customer reference number page if the index doesn't match" should {
+      lazy val result: WSResponse = {
+        dropPensionsDB()
+        insertCyaData(aPensionsUserData, aUserRequest)
+        authoriseAgentOrIndividual(isAgent = false)
+        urlGet(fullUrl(sf74ReferenceUrl(taxYearEOY, 100)), follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+      }
+      "have a SEE_OTHER status" in {
+        result.status shouldBe SEE_OTHER
+        result.header("location") shouldBe Some(pensionCustomerReferenceNumberUrl(taxYearEOY))
+      }
+
+  }
+}
+
+  ".submit" should {
     "redirect to the pensions scheme details page " should {
       val form: Map[String, String] = Map(SF74ReferenceForm.sf74ReferenceId -> "1234567")
       lazy val result: WSResponse = {
         dropPensionsDB()
         insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel)), aUserRequest)
         authoriseAgentOrIndividual(isAgent = false)
-        urlPost(fullUrl(sf74ReferenceUrl(taxYearEOY)), body = form,
+        urlPost(fullUrl(sf74ReferenceUrl(taxYearEOY, 0)), body = form,
           follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
       "have a SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(sf74ReferenceUrl(taxYearEOY))
+        result.header("location") shouldBe Some(sf74ReferenceUrl(taxYearEOY, 0))
+      }
+    }
+
+    "redirect to the pensions scheme details page if the index doesn't match" should {
+      val form: Map[String, String] = Map(SF74ReferenceForm.sf74ReferenceId -> "1234567")
+      lazy val result: WSResponse = {
+        dropPensionsDB()
+        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel)), aUserRequest)
+        authoriseAgentOrIndividual(isAgent = false)
+        urlPost(fullUrl(sf74ReferenceUrl(taxYearEOY, 100)), body = form,
+          follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+      }
+
+      "have a SEE_OTHER status" in {
+        result.status shouldBe SEE_OTHER
+        result.header("location") shouldBe Some(pensionCustomerReferenceNumberUrl(taxYearEOY))
       }
     }
   }

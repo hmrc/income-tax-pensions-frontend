@@ -308,7 +308,7 @@ class PensionOverseasIncomeStatusISpec
           val expectedYesNoPageContentsIndividual = ExpectedYesNoPageContents(
             title = "Error: Did you get payments from an overseas pension scheme?",
             header = "Did you get payments from an overseas pension scheme?",
-            caption = "Income from overseas pensions for 6 April 2021 to 5 April 2022",
+            caption = s"Income from overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
             radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
             radioButtonForNo = uncheckedExpectedRadioButton("No"),
             buttonForContinue = ExpectedButton("Continue", ""),

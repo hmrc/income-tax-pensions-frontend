@@ -29,7 +29,7 @@
         errorSummary: ErrorSummary
 )
 
-@(form: Form[String], taxYear: Int)(implicit request: UserSessionDataRequest[_], messages: Messages, appConfig: AppConfig)
+@(form: Form[String], taxYear: Int, index: Option[Int])(implicit request: UserSessionDataRequest[_], messages: Messages, appConfig: AppConfig)
 
 @titleText = @{
     messages("pensions.paymentsIntoOverseasPensions.sf74Reference.title")
@@ -49,7 +49,7 @@
 
     <p class="govuk-body">@messages(s"pensions.paymentsIntoOverseasPensions.sf74Reference.paragraph1.${if(request.user.isAgent) "agent" else "individual"}")</p>
 
-    @formWithCsrf(action = SF74ReferenceController.submit(taxYear)) {
+    @formWithCsrf(action = SF74ReferenceController.submit(taxYear, index)) {
         @inputText(
             form,
             id = "sf74ReferenceId",
