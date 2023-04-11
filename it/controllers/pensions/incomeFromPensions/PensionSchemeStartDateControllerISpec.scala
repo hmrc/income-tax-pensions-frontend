@@ -20,7 +20,7 @@ import builders.IncomeFromPensionsViewModelBuilder.anIncomeFromPensionsViewModel
 import builders.PensionsUserDataBuilder.{aPensionsUserData, pensionsUserDataWithIncomeFromPensions}
 import builders.UkPensionIncomeViewModelBuilder.{anUkPensionIncomeViewModelOne, anUkPensionIncomeViewModelTwo}
 import builders.UserBuilder.aUserRequest
-import forms.PensionSchemeDateForm
+import forms.{DateForm}
 import models.pension.statebenefits.IncomeFromPensionsViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -33,6 +33,7 @@ import utils.PageUrls.fullUrl
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 import java.time.LocalDate
+import scala.Predef.->
 
 class PensionSchemeStartDateControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
 
@@ -44,9 +45,9 @@ class PensionSchemeStartDateControllerISpec extends IntegrationTest with ViewHel
   private val validYear = "2021"
 
   def startDateForm(day: String, month: String, year: String): Map[String, String] = Map(
-    PensionSchemeDateForm.day -> day,
-    PensionSchemeDateForm.month -> month,
-    PensionSchemeDateForm.year -> year
+    dayInputName -> day,
+    monthInputName -> month,
+    yearInputName -> year
   )
 
   object Selectors {
@@ -87,7 +88,6 @@ class PensionSchemeStartDateControllerISpec extends IntegrationTest with ViewHel
     val expectedTitle: String
     lazy val expectedHeading = expectedTitle
     val expectedErrorTitle: String
-
   }
 
   object CommonExpectedEN extends CommonExpectedResults {

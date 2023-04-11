@@ -92,6 +92,12 @@ POST        /:taxYear/pension-income/state-pension-lump-sum-tax                 
 GET         /:taxYear/pension-income/pension-income-details                                                                        controllers.pensions.incomeFromPensions.PensionSchemeDetailsController.show(taxYear: Int, pensionSchemeIndex: Option[Int])
 POST        /:taxYear/pension-income/pension-income-details                                                                        controllers.pensions.incomeFromPensions.PensionSchemeDetailsController.submit(taxYear: Int, pensionSchemeIndex: Option[Int])
 
+GET         /:taxYear/pension-income/state-pension-lump-sum-tax-amount                                                             controllers.pensions.incomeFromPensions.TaxPaidOnLumpSumAmountController.show(taxYear: Int)
+POST        /:taxYear/pension-income/state-pension-lump-sum-tax-amount                                                             controllers.pensions.incomeFromPensions.TaxPaidOnLumpSumAmountController.submit(taxYear: Int)
+
+GET         /:taxYear/pension-income/state-pension-start-date                                                                       controllers.pensions.incomeFromPensions.StateBenefitStartDateController.show(taxYear: Int)
+POST        /:taxYear/pension-income/state-pension-start-date                                                                       controllers.pensions.incomeFromPensions.StateBenefitStartDateController.submit(taxYear: Int)
+
 GET         /:taxYear/pension-income/uk-pension-schemes                                                                            controllers.pensions.incomeFromPensions.UkPensionSchemePaymentsController.show(taxYear: Int)
 POST        /:taxYear/pension-income/uk-pension-schemes                                                                            controllers.pensions.incomeFromPensions.UkPensionSchemePaymentsController.submit(taxYear: Int)
 
