@@ -52,7 +52,7 @@ class SF74ReferenceController @Inject()(
           case None => Future.successful(Ok(view(formsProvider.sf74ReferenceIdForm, taxYear, reliefIndex)))
         }
       case _ =>
-        Future.successful(Redirect(PensionsCustomerReferenceNumberController.show(taxYear)))
+        Future.successful(Redirect(PensionsCustomerReferenceNumberController.show(taxYear, reliefIndex)))
     }
   }
 
@@ -64,7 +64,7 @@ class SF74ReferenceController @Inject()(
             formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear, reliefIndex))),
             sf74Reference =>  updateSessionData(userSessionDataRequest.pensionsUserData, Some(sf74Reference), taxYear, idx))
       case _ =>
-        Future.successful(Redirect(PensionsCustomerReferenceNumberController.show(taxYear)))
+        Future.successful(Redirect(PensionsCustomerReferenceNumberController.show(taxYear, reliefIndex)))
     }
   }
 
