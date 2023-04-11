@@ -86,16 +86,6 @@ class TaxPaidOnStatePensionLumpSumController @Inject()(
       )
     )
 
-
-    //    val updatedCyaModel = pensionUserData.pensions.copy(
-//      incomeFromPensions = pensionUserData.pensions.incomeFromPensions.copy(
-//        statePensionLumpSum = Some(pensionUserData.pensions.incomeFromPensions.statePensionLumpSum match {
-//          case Some(lumpSum) => lumpSum.copy(taxPaidQuestion = Some(yesNo), taxPaid = if (yesNo) lumpSum.taxPaid else None)
-//          case _ => StateBenefitViewModel(taxPaidQuestion = Some(yesNo))
-//        })
-//      )
-//    )
-
     pensionSessionService.createOrUpdateSessionData(request.user,
       updatedCyaModel, taxYear, pensionUserData.isPriorSubmission)(errorHandler.internalServerError()) {
       //TODO: redirect to the next page - income from pensions Check your state pensions summary (page not build yet)
