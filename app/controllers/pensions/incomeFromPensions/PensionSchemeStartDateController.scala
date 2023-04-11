@@ -55,11 +55,11 @@ class PensionSchemeStartDateController @Inject()(
             data.pensions.incomeFromPensions.uKPensionIncomes(index).startDate match {
               case Some(startDate) =>
                 val parsedDate: LocalDate = LocalDate.parse(startDate, localDateTimeFormat)
-                val filledForm: Form[DateModel] = DateForm.dateFormMapping("pensionStartDate").fill(DateModel(
+                val filledForm: Form[DateModel] = formProvider.pensionSchemeDateForm.fill(DateModel(
                   parsedDate.getDayOfMonth.toString, parsedDate.getMonthValue.toString, parsedDate.getYear.toString)
                 )
                 Future.successful(Ok(view(filledForm, taxYear, index)))
-              case None => Future.successful(Ok(view(DateForm.dateFormMapping("pensionStartDate"), taxYear, index)))
+              case None => Future.successful(Ok(view(formProvider.pensionSchemeDateForm, taxYear, index)))
             }
           case None => Future.successful(Redirect(UkPensionIncomeSummaryController.show(taxYear)))
         }

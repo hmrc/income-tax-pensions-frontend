@@ -51,9 +51,9 @@ class StateBenefitStartDateController @Inject()(actionsProvider: ActionsProvider
         Redirect(PensionsSummaryController.show(taxYear))
       } { sP =>
         sP.startDate.fold {
-          Ok(view(DateForm.dateFormMapping("stateBenefitStartDate"), taxYear))
+          Ok(view(formProvider.stateBenefitDateForm, taxYear))
         } { startDate =>
-          val filledForm: Form[DateModel] = DateForm.dateFormMapping("stateBenefitStartDate").fill(DateModel(
+          val filledForm: Form[DateModel] = formProvider.stateBenefitDateForm.fill(DateModel(
             startDate.getDayOfMonth.toString, startDate.getMonthValue.toString, startDate.getYear.toString)
           )
           Ok(view(filledForm, taxYear))

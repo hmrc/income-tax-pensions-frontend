@@ -18,10 +18,13 @@ package forms
 
 import filters.InputFilters
 import forms.validation.mappings.MappingUtil.trimmedText
-import play.api.data.Forms.mapping
+import forms.validation.utils.ConstraintUtil.constraint
+import play.api.data.Forms.{date, mapping}
+import play.api.data.validation.{Constraint, Invalid, Valid}
 import play.api.data.{Form, FormError}
 
 import java.time.LocalDate
+import scala.:+
 import scala.util.Try
 
 object DateForm extends InputFilters {
@@ -34,22 +37,23 @@ object DateForm extends InputFilters {
   val tooLongAgoDate = LocalDate.of(tooLongAgoYear, 1, 1)
 
   def day(id: String): String = s"$id-day"
+
   def month(id: String): String = s"$id-month"
+
   def year(id: String): String = s"$id-year"
 
-  def dateFormMapping(id: String): Form[DateModel] = {
-   Form[DateModel](
+  def dateFormMapping(id: String, messageStart: String): Form[DateModel] = {
+    Form[DateModel](
       mapping(
         day(id) -> trimmedText,
         month(id) -> trimmedText,
-        year(id) -> trimmedText
-      )(DateModel.apply)(DateModel.unapply)
+        year(id) -> trimmedText,
+      )(DateModel.apply)(DateModel.unapply).verifying(validateDate(messageStart)(date))
     )
   }
 
   def dateForm(id: String, messageStart: String): Form[DateModel] = {
-    val form = dateFormMapping(id)
-    form.copy(errors = verifyDate(form.get, messageStart))
+    dateFormMapping(id, messageStart)
   }
 
 
@@ -87,4 +91,27 @@ object DateForm extends InputFilters {
       emptyInputsErrors
     }
   }
+
+  def validateDate(messageKey: String): DateModel => Constraint[DateModel] = _ => constraint[DateModel](
+    date =>
+      (date.day.isEmpty, date.month.isEmpty, date.year.isEmpty) match {
+        case (true, true, true) => Invalid(s"$messageKey.error.empty.all")
+        case (true, false, false) => Invalid("emptyDay", s"$messageKey.error.empty.day")
+        case (true, true, false) => Invalid("emptyDayMonth", s"$messageKey.error.empty.dayMonth")
+        case (true, false, true) => Invalid("emptyDayYear", s"$messageKey.error.empty.dayYear")
+        case (false, true, false) => Invalid("emptyMonth", s"$messageKey.error.empty.month")
+        case (false, true, true) => Invalid("emptyMonthYear", s"$messageKey.error.empty.monthYear")
+        case (false, false, true) => Invalid("emptyYear", s"$messageKey.error.empty.year")
+        case (_, _, _) =>
+          val newDate: Either[Throwable, LocalDate] = Try(LocalDate.of(date.year.toInt, date.month.toInt, date.day.toInt)).toEither
+          newDate match {
+            case Left(_) => Invalid("invalidFormat", s"$messageKey.error.invalidFormat")
+            case Right(date) => (date.isAfter(LocalDate.now()), date.isBefore(tooLongAgoDate)) match {
+              case (true, _) => Invalid("invalidFormat", s"$messageKey.error.dateInFuture")
+              case (_, true) => Invalid("invalidFormat", s"$messageKey.error.tooLongAgo")
+              case _ => Valid
+            }
+          }
+      }
+  )
 }

@@ -221,7 +221,7 @@ class stateBenefitStartDateViewSpec extends ViewUnitTest with FakeRequestProvide
             if (userScenario.isAgent) anAgentUser else aUser,
             if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest)
 
-        def form: Form[DateForm.DateModel] = DateForm.dateFormMapping("stateBenefitStartDate")
+        def form: Form[DateForm.DateModel] = new FormsProvider().stateBenefitDateForm
         implicit val document: Document = Jsoup.parse(underTest(form.bind(
           Map("stateBenefitStartDate-day" -> "",
             "stateBenefitStartDate-month" -> "",
@@ -229,7 +229,7 @@ class stateBenefitStartDateViewSpec extends ViewUnitTest with FakeRequestProvide
           taxYearEOY).body)
 
         titleCheck(userScenario.specificExpectedResults.get.expectedErrorTitle, userScenario.isWelsh)
-        h1Check(userScenario.specificExpectedResults.get.expectedHeading)
+        h1Check(userScenario.specificExpectedResults.get.expectedErrorTitle)
         inputFieldValueCheck(dayInputName, Selectors.dayInputSelector, "")
         inputFieldValueCheck(monthInputName, Selectors.monthInputSelector, "")
         inputFieldValueCheck(yearInputName, Selectors.yearInputSelector, "")
