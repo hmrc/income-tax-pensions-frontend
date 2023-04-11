@@ -49,6 +49,10 @@
   controllers.pensions.routes.OverseasPensionsSummaryController.show(taxYear).url
 }
 
+@incomeFromPensionUrlRedirect() = @{
+controllers.pensions.incomeFromPensions.routes.IncomeFromPensionsSummaryController.show(taxYear).url
+}
+
 @layout(pageTitle = headingForUse, taxYear = Some(taxYear), isAgent = request.user.isAgent) {
 
     @heading(
@@ -76,7 +80,7 @@
 
             <div class="govuk-summary-list__row" id="income-from-Pensions-row">
                 <dt class="govuk-summary-list__key govuk-!-width-two-third">
-                @link("#", "pensions.pensionSummary.incomeFromPensions",Some("income-from-pensions-link"))
+                @link(incomeFromPensionUrlRedirect(), "pensions.pensionSummary.incomeFromPensions",Some("income-from-pensions-link"))
                 </dt>
                 <dd class="govuk-summary-list__actions govuk-!-two-third">
                 @if(incomeFromPensionsIsUpdated(prior)) {
