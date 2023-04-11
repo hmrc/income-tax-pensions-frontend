@@ -39,7 +39,7 @@ import controllers.pensions.routes.PensionsSummaryController
 import controllers.predicates.ActionsProvider
 import forms.PensionCustomerReferenceNumberForm
 import models.User
-import models.mongo.{PensionsCYAModel, PensionsUserData}
+import models.mongo.PensionsCYAModel
 import models.pension.charges.Relief
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -135,5 +135,4 @@ class PensionsCustomerReferenceNumberController @Inject()(actionsProvider: Actio
           }
       }
   }
-
 }
