@@ -53,9 +53,6 @@ class stateBenefitStartDateViewSpec extends ViewUnitTest with FakeRequestProvide
     val dayInputSelector = "#day"
     val monthInputSelector = "#month"
     val yearInputSelector = "#year"
-    val dayInputHref = "#day"
-    val monthInputHref = "#month"
-    val yearInputHref = "#year"
 
     def labelSelector(index: Int): String = s"#stateBenefitStartDate > div:nth-child($index) > div > label"
   }
@@ -67,22 +64,11 @@ class stateBenefitStartDateViewSpec extends ViewUnitTest with FakeRequestProvide
     val expectedDayLabel: String
     val expectedMonthLabel: String
     val expectedYearLabel: String
-    val dateInFutureErrorText: String
-    val realDateErrorText: String
-    val tooLongAgoErrorText: String
-    val emptyAllErrorText: String
-    val emptyDayErrorText: String
-    val emptyDayMonthErrorText: String
-    val emptyDayYearErrorText: String
-    val emptyMonthErrorText: String
-    val emptyMonthYearErrorText: String
-    val emptyYearErrorText: String
   }
 
   trait SpecificExpectedResults {
     val expectedTitle: String
     val expectedHeading: String
-    val expectedErrorTitle: String
   }
 
   object CommonExpectedEN extends CommonExpectedResults {
@@ -92,16 +78,6 @@ class stateBenefitStartDateViewSpec extends ViewUnitTest with FakeRequestProvide
     val expectedDayLabel = "Day"
     val expectedMonthLabel = "Month"
     val expectedYearLabel = "Year"
-    val dateInFutureErrorText = "The pension start date must be in the past"
-    val realDateErrorText = "The pension start date must be a real date"
-    val tooLongAgoErrorText = "The pension start date must be after 1 January 1900"
-    val emptyAllErrorText = "Enter the pension start date"
-    val emptyDayErrorText = "The pension start date must include a day"
-    val emptyDayMonthErrorText = "The pension start date must include a day and month"
-    val emptyDayYearErrorText = "The pension start date must include a day and year"
-    val emptyMonthErrorText = "The pension start date must include a month"
-    val emptyMonthYearErrorText = "The pension start date must include a month and year"
-    val emptyYearErrorText = "The pension start date must include a year"
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
@@ -111,40 +87,26 @@ class stateBenefitStartDateViewSpec extends ViewUnitTest with FakeRequestProvide
     val expectedDayLabel = "Diwrnod"
     val expectedMonthLabel = "Mis"
     val expectedYearLabel = "Blwyddyn"
-    val dateInFutureErrorText = "The pension start date must be in the past"
-    val realDateErrorText = "The pension start date must be a real date"
-    val tooLongAgoErrorText = "The pension start date must be after 1 January 1900"
-    val emptyAllErrorText = "Enter the pension start date"
-    val emptyDayErrorText = "The pension start date must include a day"
-    val emptyDayMonthErrorText = "The pension start date must include a day and month"
-    val emptyDayYearErrorText = "The pension start date must include a day and year"
-    val emptyMonthErrorText = "The pension start date must include a month"
-    val emptyMonthYearErrorText = "The pension start date must include a month and year"
-    val emptyYearErrorText = "The pension start date must include a year"
   }
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
     val expectedTitle = "When did you start getting State Pension payments?"
     val expectedHeading = "When did you start getting State Pension payments?"
-    val expectedErrorTitle = s"Error: $expectedTitle"
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
     val expectedTitle = "When did you start getting State Pension payments?"
     val expectedHeading = "When did you start getting State Pension payments?"
-    val expectedErrorTitle = s"Error: $expectedTitle"
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
     val expectedTitle = "When did your client start getting State Pension payments?"
     val expectedHeading = "When did your client start getting State Pension payments?"
-    val expectedErrorTitle = s"Error: $expectedTitle"
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
     val expectedTitle = "When did your client start getting State Pension payments?"
     val expectedHeading = "When did your client start getting State Pension payments?"
-    val expectedErrorTitle = s"Error: $expectedTitle"
   }
 
 
@@ -195,7 +157,7 @@ class stateBenefitStartDateViewSpec extends ViewUnitTest with FakeRequestProvide
             if (userScenario.isAgent) anAgentUser else aUser,
             if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest)
 
-        def form: Form[DateForm.DateModel] =  new FormsProvider().stateBenefitDateForm
+        def form: Form[DateForm.DateModel] = new FormsProvider().stateBenefitDateForm
 
         implicit val document: Document = Jsoup.parse(underTest(form.fill(DateModel(validDay, validMonth, validYear)), taxYearEOY).body)
 
@@ -213,29 +175,6 @@ class stateBenefitStartDateViewSpec extends ViewUnitTest with FakeRequestProvide
         formPostLinkCheck(stateBenefitStartDateUrl(taxYearEOY), Selectors.formSelector)
         welshToggleCheck(userScenario.isWelsh)
       }
-
-      "return error when all fields are empty" which {
-        implicit val messages: Messages = getMessages(userScenario.isWelsh)
-        implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] =
-          UserSessionDataRequest(aPensionsUserData,
-            if (userScenario.isAgent) anAgentUser else aUser,
-            if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest)
-
-        def form: Form[DateForm.DateModel] = new FormsProvider().stateBenefitDateForm
-        implicit val document: Document = Jsoup.parse(underTest(form.bind(
-          Map("stateBenefitStartDate-day" -> "",
-            "stateBenefitStartDate-month" -> "",
-            "stateBenefitStartDate-year" -> "")),
-          taxYearEOY).body)
-
-        titleCheck(userScenario.specificExpectedResults.get.expectedErrorTitle, userScenario.isWelsh)
-        h1Check(userScenario.specificExpectedResults.get.expectedErrorTitle)
-        inputFieldValueCheck(dayInputName, Selectors.dayInputSelector, "")
-        inputFieldValueCheck(monthInputName, Selectors.monthInputSelector, "")
-        inputFieldValueCheck(yearInputName, Selectors.yearInputSelector, "")
-        errorSummaryCheck(userScenario.commonExpectedResults.emptyAllErrorText, Selectors.dayInputHref)
-        errorAboveElementCheck(userScenario.commonExpectedResults.emptyAllErrorText)
-      }
-      }
+    }
     }
 }

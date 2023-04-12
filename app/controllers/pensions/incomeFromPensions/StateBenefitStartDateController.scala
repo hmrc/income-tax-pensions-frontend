@@ -63,7 +63,8 @@ class StateBenefitStartDateController @Inject()(actionsProvider: ActionsProvider
 
   def submit(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit userSessionDataRequest =>
-      formProvider.stateBenefitDateForm.bindFromRequest().fold(
+      val verifiedForm = formProvider.stateBenefitDateForm.bindFromRequest()
+      verifiedForm.copy(errors = DateForm.verifyDate(verifiedForm.get, "pensionStartDate")).fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
         newStartDate =>
           userSessionDataRequest.pensionsUserData.pensions.incomeFromPensions.statePension.fold {

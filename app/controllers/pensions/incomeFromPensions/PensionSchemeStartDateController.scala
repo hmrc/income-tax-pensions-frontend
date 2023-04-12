@@ -73,7 +73,8 @@ class PensionSchemeStartDateController @Inject()(
         validateIndex(pensionSchemeIndex, data.pensions.incomeFromPensions.uKPensionIncomes) match {
           case Some(index) =>
             val verifiedForm = formProvider.pensionSchemeDateForm.bindFromRequest()
-            verifiedForm.fold(
+            verifiedForm.copy(errors = DateForm.verifyDate(verifiedForm.get, "pensionStartDate")).fold(
+
               formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear, index))),
               startDate => {
                 val pensionsCYAModel: PensionsCYAModel = data.pensions

@@ -48,7 +48,7 @@ object DateForm extends InputFilters {
         day(id) -> trimmedText,
         month(id) -> trimmedText,
         year(id) -> trimmedText,
-      )(DateModel.apply)(DateModel.unapply).verifying(validateDate(messageStart)(date))
+      )(DateModel.apply)(DateModel.unapply)
     )
   }
 
@@ -91,27 +91,4 @@ object DateForm extends InputFilters {
       emptyInputsErrors
     }
   }
-
-  def validateDate(messageKey: String): DateModel => Constraint[DateModel] = _ => constraint[DateModel](
-    date =>
-      (date.day.isEmpty, date.month.isEmpty, date.year.isEmpty) match {
-        case (true, true, true) => Invalid(s"$messageKey.error.empty.all")
-        case (true, false, false) => Invalid("emptyDay", s"$messageKey.error.empty.day")
-        case (true, true, false) => Invalid("emptyDayMonth", s"$messageKey.error.empty.dayMonth")
-        case (true, false, true) => Invalid("emptyDayYear", s"$messageKey.error.empty.dayYear")
-        case (false, true, false) => Invalid("emptyMonth", s"$messageKey.error.empty.month")
-        case (false, true, true) => Invalid("emptyMonthYear", s"$messageKey.error.empty.monthYear")
-        case (false, false, true) => Invalid("emptyYear", s"$messageKey.error.empty.year")
-        case (_, _, _) =>
-          val newDate: Either[Throwable, LocalDate] = Try(LocalDate.of(date.year.toInt, date.month.toInt, date.day.toInt)).toEither
-          newDate match {
-            case Left(_) => Invalid("invalidFormat", s"$messageKey.error.invalidFormat")
-            case Right(date) => (date.isAfter(LocalDate.now()), date.isBefore(tooLongAgoDate)) match {
-              case (true, _) => Invalid("invalidFormat", s"$messageKey.error.dateInFuture")
-              case (_, true) => Invalid("invalidFormat", s"$messageKey.error.tooLongAgo")
-              case _ => Valid
-            }
-          }
-      }
-  )
 }
