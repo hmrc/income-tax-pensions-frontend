@@ -488,58 +488,58 @@ incomeFromPensionsGateway.paragraph = Mae’r rhain yn cynnwys:
 incomeFromPensionsGateway.paragraph.1 = Pensiwn y Wladwriaeth
 incomeFromPensionsGateway.paragraph.2 = pensiynau gweithle a phreifat
 
-pensions.incomeFromPensionsDetails.bullet.aboutGeneralIncreases.individual = the ‘About general increases in benefits’ letter the Pension Service sent you
-pensions.incomeFromPensionsDetails.bullet.aboutGeneralIncreases.agent = the ‘About general increases in benefits’ letter the Pension Service sent your client
+pensions.incomeFromPensionsDetails.bullet.aboutGeneralIncreases.individual = y llythyr ‘Ynglŷn â’r cynnydd cyffredinol mewn budd-daliadau’ a anfonwyd atoch gan y Gwasanaeth Pensiwn
+pensions.incomeFromPensionsDetails.bullet.aboutGeneralIncreases.agent = y llythyr ‘Ynglŷn â’r cynnydd cyffredinol mewn budd-daliadau’ a anfonwyd at eich cleient gan y Gwasanaeth Pensiwn
 
 #state pension lump sum question
-incomeFromPensions.statePensionLumpSum.title.individual = Did you get a State Pension lump sum?
-incomeFromPensions.statePensionLumpSum.title.agent = Did your client get a State Pension lump sum?
-incomeFromPensions.statePensionLumpSum.para.individual = You might have got a one-off lump sum payment if you delayed claiming your State Pension for 12 months in a row.
-incomeFromPensions.statePensionLumpSum.para.agent = Your client might have got a one-off lump sum payment if they delayed claiming their State Pension for 12 months in a row.
-incomeFromPensions.statePensionLumpSum.onlyApplies = This only applies to people who reach State Pension age before 6 April 2016.
-incomeFromPensions.statePensionLumpSum.error.noEntry.individual = Select yes if you got a State Pension lump sum
-incomeFromPensions.statePensionLumpSum.error.noEntry.agent = Select yes if your client got a State Pension lump sum
+incomeFromPensions.statePensionLumpSum.title.individual = A gawsoch gyfandaliad Pensiwn y Wladwriaeth?
+incomeFromPensions.statePensionLumpSum.title.agent = A gafodd eich cleient gyfandaliad Pensiwn y Wladwriaeth?
+incomeFromPensions.statePensionLumpSum.para.individual = Mae’n bosibl y byddwch wedi cael cyfandaliad unigol os oeddech wedi oedi cyn hawlio’ch Pensiwn y Wladwriaeth am 12 mis yn olynol.
+incomeFromPensions.statePensionLumpSum.para.agent = Mae’n bosibl y byddai’ch cleient wedi cael cyfandaliad unigol os oedden nhw wedi oedi cyn hawlio ei Bensiwn y Wladwriaeth am 12 mis yn olynol.
+incomeFromPensions.statePensionLumpSum.onlyApplies = Mae hyn ond yn berthnasol i bobl sy’n cyrraedd oedran Pensiwn y Wladwriaeth cyn 6 Ebrill 2016.
+incomeFromPensions.statePensionLumpSum.error.noEntry.individual = Dewiswch ‘Iawn’ os cawsoch gyfandaliad Pensiwn y Wladwriaeth
+incomeFromPensions.statePensionLumpSum.error.noEntry.agent = Dewiswch ‘Iawn’ os cafodd eich cleient gyfandaliad Pensiwn y Wladwriaeth
 
 #state pension lump sum
-pensions.statePensionLumpSum.title.individual = How much was your State Pension lump sum?
-pensions.statePensionLumpSum.title.agent = How much was your client’s State Pension lump sum?
-pensions.statePensionLumpSum.error.noEntry.individual = Enter your State Pension lump sum amount
-pensions.statePensionLumpSum.error.incorrectFormat.individual = Enter your State Pension lump sum amount in the correct format
-pensions.statePensionLumpSum.error.overMaximum.individual = Your State Pension lump sum amount must be less than £100,000,000,000
-pensions.statePensionLumpSum.error.noEntry.agent = Enter your client’s State Pension lump sum amount
-pensions.statePensionLumpSum.error.incorrectFormat.agent = Enter your client’s State Pension lump sum amount in the correct format
-pensions.statePensionLumpSum.error.overMaximum.agent = Your client’s State Pension lump sum amount must be less than £100,000,000,000
+pensions.statePensionLumpSum.title.individual = Faint oedd eich cyfandaliad Pensiwn y Wladwriaeth?
+pensions.statePensionLumpSum.title.agent = Faint oedd cyfandaliad Pensiwn y Wladwriaeth eich cleient?
+pensions.statePensionLumpSum.error.noEntry.individual = Nodwch swm eich cyfandaliad Pensiwn y Wladwriaeth
+pensions.statePensionLumpSum.error.incorrectFormat.individual = Nodwch swm eich cyfandaliad Pensiwn y Wladwriaeth yn y fformat cywir
+pensions.statePensionLumpSum.error.overMaximum.individual = Mae’n rhaid i swm eich cyfandaliad Pensiwn y Wladwriaeth fod yn llai na £100,000,000,000
+pensions.statePensionLumpSum.error.noEntry.agent = Nodwch swm cyfandaliad Pensiwn y Wladwriaeth eich cleient
+pensions.statePensionLumpSum.error.incorrectFormat.agent = Nodwch swm cyfandaliad Pensiwn y Wladwriaeth eich cleient yn y fformat cywir
+pensions.statePensionLumpSum.error.overMaximum.agent = Mae’n rhaid i swm cyfandaliad Pensiwn y Wladwriaeth eich cleient fod yn llai na £100,000,000,000
 
 #tax paid on state pension lump sum
-pensions.taxPaidOnStatePensionLumpSum.title.individual = Did you pay tax on the State Pension lump sum?
-pensions.taxPaidOnStatePensionLumpSum.error.noEntry.individual = Select yes if you paid tax on the State Pension lump sum
-pensions.taxPaidOnStatePensionLumpSum.title.agent = Did your client pay tax on the State Pension lump sum?
-pensions.taxPaidOnStatePensionLumpSum.error.noEntry.agent = Select yes if your client paid tax on the State Pension lump sum
+pensions.taxPaidOnStatePensionLumpSum.title.individual = A wnaethoch dalu treth ar gyfandaliad Pensiwn y Wladwriaeth?
+pensions.taxPaidOnStatePensionLumpSum.error.noEntry.individual = Dewiswch ‘Iawn’ os gwnaethoch dalu treth ar gyfandaliad Pensiwn y Wladwriaeth
+pensions.taxPaidOnStatePensionLumpSum.title.agent = A wnaeth eich cleient dalu treth ar gyfandaliad Pensiwn y Wladwriaeth?
+pensions.taxPaidOnStatePensionLumpSum.error.noEntry.agent = Dewiswch ‘Iawn’ os gwnaeth eich cleient dalu treth ar gyfandaliad Pensiwn y Wladwriaeth
 
 #state pension
 pensions.statePension.title.individual = Do you get regular State Pension payments?
 pensions.statePension.title.agent = Does your client get regular State Pension payments?
-pensions.statePension.error.noEntry.individual = Select yes if you got State Pension this year
-pensions.statePension.error.noEntry.agent = Select yes if your client got State Pension this year
-pensions.statePension.amount.error.noEntry.individual = Enter your State Pension amount
-pensions.statePension.amount.error.incorrectFormat.individual = Enter your State Pension amount in the correct format
-pensions.statePension.amount.error.overMaximum.individual = Your State Pension amount must be less than £100,000,000,000
-pensions.statePension.amount.error.noEntry.agent = Enter your client’s State Pension amount
-pensions.statePension.amount.error.incorrectFormat.agent = Enter your client’s State Pension amount in the correct format
-pensions.statePension.amount.error.overMaximum.agent = Your client’s State Pension amount must be less than £100,000,000,000
+pensions.statePension.error.noEntry.individual = Dewiswch ‘Iawn’ os cawsoch Bensiwn y Wladwriaeth y flwyddyn hon
+pensions.statePension.error.noEntry.agent = Dewiswch ‘Iawn’ os cafodd eich cleient Pensiwn y Wladwriaeth y flwyddyn hon
+pensions.statePension.amount.error.noEntry.individual = Nodwch swm eich Pensiwn y Wladwriaeth
+pensions.statePension.amount.error.incorrectFormat.individual = Nodwch swm eich Pensiwn y Wladwriaeth yn y fformat cywir
+pensions.statePension.amount.error.overMaximum.individual = Mae’n rhaid i swm eich Pensiwn y Wladwriaeth fod yn llai na £100,000,000,000
+pensions.statePension.amount.error.noEntry.agent = Nodwch swm Pensiwn y Wladwriaeth eich cleient
+pensions.statePension.amount.error.incorrectFormat.agent = Nodwch swm Pensiwn y Wladwriaeth eich cleient yn y fformat cywir
+pensions.statePension.amount.error.overMaximum.agent = Mae’n rhaid i swm Pensiwn y Wladwriaeth eich cleient fod yn llai na £100,000,000,000
 
 #tax paid on lump sum amount
-incomeFromPensions.taxPaidOnLumpSumAmount.title.individual = How much tax did you pay on the State Pension lump sum?
-incomeFromPensions.taxPaidOnLumpSumAmount.title.agent = How much tax did your client pay on the State Pension lump sum?
-incomeFromPensions.taxPaidOnLumpSumAmount.paragraph.individual = You told us you did not pay {0} tax on your State Pension lump sum this year. Tell us how much you paid.
-incomeFromPensions.taxPaidOnLumpSumAmount.paragraph.agent = You told us your client did not pay {0} tax on their State Pension lump sum this year. Tell us how much your client paid.
-incomeFromPensions.taxPaidOnLumpSumAmount.error.error.noEntry = Enter the amount of tax paid on the State Pension lump sum
-incomeFromPensions.taxPaidOnLumpSumAmount.error.error.incorrectFormat = Enter the amount of tax paid on the State Pension lump sum in the correct format
-incomeFromPensions.taxPaidOnLumpSumAmount.error.error.overMaximum = The amount of tax paid on the State Pension lump sum must be less than £100,000,000,000
+incomeFromPensions.taxPaidOnLumpSumAmount.title.individual = Faint o dreth a daloch ar gyfandaliad Pensiwn y Wladwriaeth?
+incomeFromPensions.taxPaidOnLumpSumAmount.title.agent = Faint o dreth a dalodd eich cleient ar gyfandaliad Pensiwn y Wladwriaeth?
+incomeFromPensions.taxPaidOnLumpSumAmount.paragraph.individual = Gwnaethoch roi gwybod i ni nad oeddech yn talu {0} o dreth ar eich cyfandaliad Pensiwn y Wladwriaeth y flwyddyn hon. Rhowch wybod i ni faint wnaethoch ei dalu.
+incomeFromPensions.taxPaidOnLumpSumAmount.paragraph.agent = Gwnaethoch roi gwybod i ni nad oedd eich cleient yn talu {0} o dreth ar ei gyfandaliad Pensiwn y Wladwriaeth y flwyddyn hon. Rhowch wybod i ni faint y talodd eich cleient.
+incomeFromPensions.taxPaidOnLumpSumAmount.error.error.noEntry = Nodwch swm y dreth a dalwyd ar gyfandaliad Pensiwn y Wladwriaeth
+incomeFromPensions.taxPaidOnLumpSumAmount.error.error.incorrectFormat = Nodwch gyfanswm y dreth a dalwyd ar gyfandaliad Pensiwn y Wladwriaeth yn y fformat cywir
+incomeFromPensions.taxPaidOnLumpSumAmount.error.error.overMaximum = Mae’n rhaid i swm y dreth a dalwyd ar gyfandaliad Pensiwn y Wladwriaeth fod yn llai na £100,000,000,000
 
 #Income From Pensions Summary
-incomeFromPensions.incomeFromPensionsSummary.statePensions = State pension
-incomeFromPensions.incomeFromPensionsSummary.otherUkPensions = Other UK Pensions
+incomeFromPensions.incomeFromPensionsSummary.statePensions = Pensiwn y Wladwriaeth
+incomeFromPensions.incomeFromPensionsSummary.otherUkPensions = Pensiynau eraill y DU
 
 #Do You Get UK Pension Scheme Payments Messages
 pensions.ukPensionSchemePayments.title.individual = Do you get UK pension scheme payments?
