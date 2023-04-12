@@ -81,8 +81,8 @@ class stateBenefitStartDateViewSpec extends ViewUnitTest with FakeRequestProvide
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Income from pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val buttonText = "Continue"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Incwm o bensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
+    val buttonText = "Yn eich blaen"
     val expectedHintText = "For example, 12 11 2007"
     val expectedDayLabel = "Diwrnod"
     val expectedMonthLabel = "Mis"

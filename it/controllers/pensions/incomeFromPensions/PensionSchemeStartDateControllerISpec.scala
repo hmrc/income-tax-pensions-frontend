@@ -20,7 +20,6 @@ import builders.IncomeFromPensionsViewModelBuilder.anIncomeFromPensionsViewModel
 import builders.PensionsUserDataBuilder.{aPensionsUserData, pensionsUserDataWithIncomeFromPensions}
 import builders.UkPensionIncomeViewModelBuilder.{anUkPensionIncomeViewModelOne, anUkPensionIncomeViewModelTwo}
 import builders.UserBuilder.aUserRequest
-import forms.{DateForm}
 import models.pension.statebenefits.IncomeFromPensionsViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -33,7 +32,6 @@ import utils.PageUrls.fullUrl
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 import java.time.LocalDate
-import scala.Predef.->
 
 class PensionSchemeStartDateControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
 
@@ -45,10 +43,10 @@ class PensionSchemeStartDateControllerISpec extends IntegrationTest with ViewHel
   private val validYear = "2021"
 
   def startDateForm(day: String, month: String, year: String): Map[String, String] = Map(
-    dayInputName -> day,
-    monthInputName -> month,
-    yearInputName -> year
-  )
+      dayInputName -> day,
+      monthInputName -> month,
+      yearInputName -> year
+    )
 
   object Selectors {
     val captionSelector: String = "#main-content > div > div > header > p"
@@ -283,7 +281,7 @@ class PensionSchemeStartDateControllerISpec extends IntegrationTest with ViewHel
         s"return a BAD_REQUEST($BAD_REQUEST) status" when {
 
           "all fields are empty" which {
-            lazy val form: Map[String, String] = startDateForm("", "", "")
+            lazy val form = startDateForm("", "", "")
 
             lazy val result: WSResponse = {
               dropPensionsDB()
@@ -313,7 +311,7 @@ class PensionSchemeStartDateControllerISpec extends IntegrationTest with ViewHel
           }
 
           "the day field is empty" which {
-            lazy val form: Map[String, String] = startDateForm("", validMonth, validYear)
+            lazy val form = startDateForm("", validMonth, validYear)
 
             lazy val result: WSResponse = {
               dropPensionsDB()
@@ -343,7 +341,7 @@ class PensionSchemeStartDateControllerISpec extends IntegrationTest with ViewHel
           }
 
           "the day and month fields are empty" which {
-            lazy val form: Map[String, String] = startDateForm("", "", validYear)
+            lazy val form = startDateForm("", "", validYear)
 
             lazy val result: WSResponse = {
               dropPensionsDB()
@@ -373,7 +371,7 @@ class PensionSchemeStartDateControllerISpec extends IntegrationTest with ViewHel
           }
 
           "the day and year fields are empty" which {
-            lazy val form: Map[String, String] = startDateForm("", validMonth, "")
+            lazy val form = startDateForm("", validMonth, "")
 
             lazy val result: WSResponse = {
               dropPensionsDB()
@@ -403,7 +401,7 @@ class PensionSchemeStartDateControllerISpec extends IntegrationTest with ViewHel
           }
 
           "the month field is empty" which {
-            lazy val form: Map[String, String] = startDateForm(validDay, "", validYear)
+            lazy val form = startDateForm(validDay, "", validYear)
 
             lazy val result: WSResponse = {
               dropPensionsDB()
@@ -433,7 +431,7 @@ class PensionSchemeStartDateControllerISpec extends IntegrationTest with ViewHel
           }
 
           "the month and year fields are empty" which {
-            lazy val form: Map[String, String] = startDateForm(validDay, "", "")
+            lazy val form = startDateForm(validDay, "", "")
 
             lazy val result: WSResponse = {
               dropPensionsDB()
@@ -463,7 +461,7 @@ class PensionSchemeStartDateControllerISpec extends IntegrationTest with ViewHel
           }
 
           "the year field is empty" which {
-            lazy val form: Map[String, String] = startDateForm(validDay, validMonth, "")
+            lazy val form = startDateForm(validDay, validMonth, "")
 
             lazy val result: WSResponse = {
               dropPensionsDB()
@@ -494,7 +492,7 @@ class PensionSchemeStartDateControllerISpec extends IntegrationTest with ViewHel
 
           "the date submitted is in the future" which {
             val futureYear: Int = LocalDate.now().getYear + 1
-            lazy val form: Map[String, String] = startDateForm(validDay, validMonth, s"$futureYear")
+            lazy val form = startDateForm(validDay, validMonth, s"$futureYear")
 
             lazy val result: WSResponse = {
               dropPensionsDB()
@@ -524,7 +522,7 @@ class PensionSchemeStartDateControllerISpec extends IntegrationTest with ViewHel
           }
 
           "the date submitted is invalid and not a real date" which {
-            lazy val form: Map[String, String] = startDateForm(validDay, "13", validYear)
+            lazy val form = startDateForm(validDay, "13", validYear)
 
             lazy val result: WSResponse = {
               dropPensionsDB()
@@ -554,7 +552,7 @@ class PensionSchemeStartDateControllerISpec extends IntegrationTest with ViewHel
           }
 
           "the date submitted is too long ago before 1 Jan 1900" which {
-            lazy val form: Map[String, String] = startDateForm("01", "01", "1898")
+            lazy val form = startDateForm("01", "01", "1898")
 
             lazy val result: WSResponse = {
               dropPensionsDB()

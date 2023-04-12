@@ -133,11 +133,10 @@ class FormsProvider() {
   }
 
   def stateBenefitDateForm: Form[DateForm.DateModel] = {
-    DateForm.dateForm("stateBenefitStartDate", "incomeFromPensions.stateBenefitStartDate")
+    DateForm.dateForm("stateBenefitStartDate")
   }
 
   def pensionSchemeDateForm: Form[DateForm.DateModel] = {
-    DateForm.dateForm("pensionStartDate", "incomeFromPensions.pensionStartDate")
+    DateForm.dateForm("pensionStartDate")
   }
-
 }

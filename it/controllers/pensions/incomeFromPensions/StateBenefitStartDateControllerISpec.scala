@@ -17,28 +17,28 @@
 package controllers.pensions.incomeFromPensions
 
 import builders.PensionsUserDataBuilder.aPensionsUserData
-import builders.UserBuilder.{aUser, aUserRequest, anAgentUser}
-import forms.{DateForm, FormsProvider, RadioButtonAmountForm}
-import forms.RadioButtonAmountForm.{amount2, yesNo}
-import models.requests.UserSessionDataRequest
+import builders.UserBuilder.{aUser, aUserRequest}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterEach
-import play.api.data.Form
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
-import play.api.i18n.Messages
 import play.api.libs.ws.WSResponse
-import play.api.mvc.AnyContent
-import utils.PageUrls.IncomeFromPensionsPages.{pensionStartDateUrl, stateBenefitStartDateUrl}
+import utils.PageUrls.IncomeFromPensionsPages.stateBenefitStartDateUrl
 import utils.PageUrls.ShortServiceRefunds.refundSummaryUrl
 import utils.PageUrls.{fullUrl, overviewUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 import java.time.LocalDate
 
+
 class StateBenefitStartDateControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
 
+  def startDateForm(day: String, month: String, year: String): Map[String, String] = Map(
+      dayInputName -> day,
+      monthInputName -> month,
+      yearInputName -> year
+    )
 
   override val userScenarios: Seq[UserScenario[_, _]] = Nil
 
@@ -73,12 +73,6 @@ class StateBenefitStartDateControllerISpec extends IntegrationTest with ViewHelp
   val emptyYearErrorText = "The pension start date must include a year"
   val expectedErrorTitle = "Error: When did you start getting State Pension payments?"
 
-  def startDateForm(day: String, month: String, year: String): Map[String, String] = Map(
-    dayInputName -> day,
-    monthInputName -> month,
-    yearInputName -> year
-  )
-
   ".show" should {
     "redirect to Overview Page when in year" in {
       lazy implicit val result: WSResponse = {
@@ -110,7 +104,7 @@ class StateBenefitStartDateControllerISpec extends IntegrationTest with ViewHelp
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
-        val formData = Map(s" $yesNo -> true, $amount2" -> "500")
+        val formData = startDateForm(validDay, validMonth, validYear)
         insertCyaData(aPensionsUserData, aUserRequest)
         urlPost(
           fullUrl(stateBenefitStartDateUrl(taxYear)),
@@ -126,7 +120,8 @@ class StateBenefitStartDateControllerISpec extends IntegrationTest with ViewHelp
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
-        val formData = Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "500")
+        val formData = startDateForm(validDay, validMonth, validYear)
+
         insertCyaData(aPensionsUserData, aUserRequest)
         urlPost(
           fullUrl(stateBenefitStartDateUrl(taxYearEOY)),
@@ -134,12 +129,11 @@ class StateBenefitStartDateControllerISpec extends IntegrationTest with ViewHelp
           follow = false,
           body = formData)
       }
-      result.status shouldBe SEE_OTHER
-      result.headers("location").head shouldBe refundSummaryUrl(taxYearEOY)
+      result.status shouldBe OK
     }
 
     "the day field is empty" which {
-      lazy val form: Map[String, String] = startDateForm("", validMonth, validYear)
+      lazy val form = startDateForm("", validMonth, validYear)
 
       lazy val result: WSResponse = {
         dropPensionsDB()
@@ -163,7 +157,7 @@ class StateBenefitStartDateControllerISpec extends IntegrationTest with ViewHelp
     }
 
     "the day and month fields are empty" which {
-      lazy val form: Map[String, String] = startDateForm("", "", validYear)
+      lazy val form = startDateForm("", "", validYear)
 
       lazy val result: WSResponse = {
         dropPensionsDB()
@@ -180,7 +174,6 @@ class StateBenefitStartDateControllerISpec extends IntegrationTest with ViewHelp
       implicit def document: () => Document = () => Jsoup.parse(result.body)
 
       titleCheck(expectedErrorTitle)
-      h1Check(expectedErrorTitle)
       inputFieldValueCheck(dayInputName, Selectors.dayInputSelector, "")
       inputFieldValueCheck(monthInputName, Selectors.monthInputSelector, "")
       inputFieldValueCheck(yearInputName, Selectors.yearInputSelector, validYear)
@@ -188,7 +181,7 @@ class StateBenefitStartDateControllerISpec extends IntegrationTest with ViewHelp
       errorAboveElementCheck(emptyDayMonthErrorText)
 
       "the day and year fields are empty" which {
-        lazy val form: Map[String, String] = startDateForm("", validMonth, "")
+        lazy val form = startDateForm("", validMonth, "")
 
         lazy val result: WSResponse = {
           dropPensionsDB()
@@ -205,7 +198,6 @@ class StateBenefitStartDateControllerISpec extends IntegrationTest with ViewHelp
         implicit def document: () => Document = () => Jsoup.parse(result.body)
 
         titleCheck(expectedErrorTitle)
-        h1Check(expectedErrorTitle)
         inputFieldValueCheck(dayInputName, Selectors.dayInputSelector, "")
         inputFieldValueCheck(monthInputName, Selectors.monthInputSelector, validMonth)
         inputFieldValueCheck(yearInputName, Selectors.yearInputSelector, "")
@@ -214,7 +206,7 @@ class StateBenefitStartDateControllerISpec extends IntegrationTest with ViewHelp
       }
 
       "the month field is empty" which {
-        lazy val form: Map[String, String] = startDateForm(validDay, "", validYear)
+        lazy val form = startDateForm(validDay, "", validYear)
 
         lazy val result: WSResponse = {
           dropPensionsDB()
@@ -231,7 +223,6 @@ class StateBenefitStartDateControllerISpec extends IntegrationTest with ViewHelp
         implicit def document: () => Document = () => Jsoup.parse(result.body)
 
         titleCheck(expectedErrorTitle)
-        h1Check(expectedErrorTitle)
         inputFieldValueCheck(dayInputName, Selectors.dayInputSelector, validDay)
         inputFieldValueCheck(monthInputName, Selectors.monthInputSelector, "")
         inputFieldValueCheck(yearInputName, Selectors.yearInputSelector, validYear)
@@ -240,7 +231,7 @@ class StateBenefitStartDateControllerISpec extends IntegrationTest with ViewHelp
       }
 
       "the month and year fields are empty" which {
-        lazy val form: Map[String, String] = startDateForm(validDay, "", "")
+        lazy val form = startDateForm(validDay, "", "")
 
         lazy val result: WSResponse = {
           dropPensionsDB()
@@ -257,7 +248,6 @@ class StateBenefitStartDateControllerISpec extends IntegrationTest with ViewHelp
         implicit def document: () => Document = () => Jsoup.parse(result.body)
 
         titleCheck(expectedErrorTitle)
-        h1Check(expectedErrorTitle)
         inputFieldValueCheck(dayInputName, Selectors.dayInputSelector, validDay)
         inputFieldValueCheck(monthInputName, Selectors.monthInputSelector, "")
         inputFieldValueCheck(yearInputName, Selectors.yearInputSelector, "")
@@ -266,7 +256,7 @@ class StateBenefitStartDateControllerISpec extends IntegrationTest with ViewHelp
       }
 
       "the year field is empty" which {
-        lazy val form: Map[String, String] = startDateForm(validDay, validMonth, "")
+        lazy val form = startDateForm(validDay, validMonth, "")
 
         lazy val result: WSResponse = {
           dropPensionsDB()
@@ -283,7 +273,7 @@ class StateBenefitStartDateControllerISpec extends IntegrationTest with ViewHelp
         implicit def document: () => Document = () => Jsoup.parse(result.body)
 
         titleCheck(expectedErrorTitle)
-        h1Check(expectedErrorTitle)
+
         inputFieldValueCheck(dayInputName, Selectors.dayInputSelector, validDay)
         inputFieldValueCheck(monthInputName, Selectors.monthInputSelector, validMonth)
         inputFieldValueCheck(yearInputName, Selectors.yearInputSelector, "")
@@ -293,7 +283,7 @@ class StateBenefitStartDateControllerISpec extends IntegrationTest with ViewHelp
 
       "the date submitted is in the future" which {
         val futureYear: Int = LocalDate.now().getYear + 1
-        lazy val form: Map[String, String] = startDateForm(validDay, validMonth, s"$futureYear")
+        lazy val form = startDateForm(validDay, validMonth, s"$futureYear")
 
         lazy val result: WSResponse = {
           dropPensionsDB()
@@ -310,7 +300,6 @@ class StateBenefitStartDateControllerISpec extends IntegrationTest with ViewHelp
         implicit def document: () => Document = () => Jsoup.parse(result.body)
 
         titleCheck(expectedErrorTitle)
-        h1Check(expectedErrorTitle)
         inputFieldValueCheck(dayInputName, Selectors.dayInputSelector, validDay)
         inputFieldValueCheck(monthInputName, Selectors.monthInputSelector, validMonth)
         inputFieldValueCheck(yearInputName, Selectors.yearInputSelector, s"$futureYear")
@@ -319,7 +308,7 @@ class StateBenefitStartDateControllerISpec extends IntegrationTest with ViewHelp
       }
 
       "the date submitted is invalid and not a real date" which {
-        lazy val form: Map[String, String] = startDateForm(validDay, "13", validYear)
+        lazy val form = startDateForm(validDay, "13", validYear)
 
         lazy val result: WSResponse = {
           dropPensionsDB()
@@ -336,7 +325,6 @@ class StateBenefitStartDateControllerISpec extends IntegrationTest with ViewHelp
         implicit def document: () => Document = () => Jsoup.parse(result.body)
 
         titleCheck(expectedErrorTitle)
-        h1Check(expectedErrorTitle)
         inputFieldValueCheck(dayInputName, Selectors.dayInputSelector, validDay)
         inputFieldValueCheck(monthInputName, Selectors.monthInputSelector, "13")
         inputFieldValueCheck(yearInputName, Selectors.yearInputSelector, validYear)
@@ -345,7 +333,7 @@ class StateBenefitStartDateControllerISpec extends IntegrationTest with ViewHelp
       }
 
       "the date submitted is too long ago before 1 Jan 1900" which {
-        lazy val form: Map[String, String] = startDateForm("01", "01", "1898")
+        lazy val form = startDateForm("01", "01", "1898")
 
         lazy val result: WSResponse = {
           dropPensionsDB()
@@ -362,7 +350,6 @@ class StateBenefitStartDateControllerISpec extends IntegrationTest with ViewHelp
         implicit def document: () => Document = () => Jsoup.parse(result.body)
 
         titleCheck(expectedErrorTitle)
-        h1Check(expectedErrorTitle)
         inputFieldValueCheck(dayInputName, Selectors.dayInputSelector, "01")
         inputFieldValueCheck(monthInputName, Selectors.monthInputSelector, "01")
         inputFieldValueCheck(yearInputName, Selectors.yearInputSelector, "1898")

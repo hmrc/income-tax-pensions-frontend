@@ -18,13 +18,11 @@ package forms
 
 import filters.InputFilters
 import forms.validation.mappings.MappingUtil.trimmedText
-import forms.validation.utils.ConstraintUtil.constraint
-import play.api.data.Forms.{date, mapping}
-import play.api.data.validation.{Constraint, Invalid, Valid}
+import play.api.data.Forms.mapping
 import play.api.data.{Form, FormError}
+import play.api.i18n.Messages
 
 import java.time.LocalDate
-import scala.:+
 import scala.util.Try
 
 object DateForm extends InputFilters {
@@ -42,50 +40,45 @@ object DateForm extends InputFilters {
 
   def year(id: String): String = s"$id-year"
 
-  def dateFormMapping(id: String, messageStart: String): Form[DateModel] = {
+  def dateForm(id: String): Form[DateModel] =
     Form[DateModel](
       mapping(
         day(id) -> trimmedText,
         month(id) -> trimmedText,
-        year(id) -> trimmedText,
+        year(id) -> trimmedText
       )(DateModel.apply)(DateModel.unapply)
     )
-  }
-
-  def dateForm(id: String, messageStart: String): Form[DateModel] = {
-    dateFormMapping(id, messageStart)
-  }
 
 
-  def areInputsEmpty(date: DateModel, messageStart: String): Seq[FormError] = {
+  def areInputsEmpty(date: DateModel, messageStart: String)(implicit messages: Messages): Seq[FormError] = {
     (date.day.isEmpty, date.month.isEmpty, date.year.isEmpty) match {
-      case (true, true, true) => Seq(FormError("emptyAll", s"$messageStart.error.empty.all"))
-      case (true, false, false) => Seq(FormError("emptyDay", s"$messageStart.error.empty.day"))
-      case (true, true, false) => Seq(FormError("emptyDayMonth", s"$messageStart.error.empty.dayMonth"))
-      case (true, false, true) => Seq(FormError("emptyDayYear", s"$messageStart.error.empty.dayYear"))
-      case (false, true, false) => Seq(FormError("emptyMonth", s"$messageStart.error.empty.month"))
-      case (false, true, true) => Seq(FormError("emptyMonthYear", s"$messageStart.error.empty.monthYear"))
-      case (false, false, true) => Seq(FormError("emptyYear", s"$messageStart.error.empty.year"))
+      case (true, true, true) => Seq(FormError("emptyAll", Messages(s"$messageStart.error.empty.all")))
+      case (true, false, false) => Seq(FormError("emptyDay", Messages(s"$messageStart.error.empty.day")))
+      case (true, true, false) => Seq(FormError("emptyDayMonth", Messages(s"$messageStart.error.empty.dayMonth")))
+      case (true, false, true) => Seq(FormError("emptyDayYear", Messages(s"$messageStart.error.empty.dayYear")))
+      case (false, true, false) => Seq(FormError("emptyMonth", Messages(s"$messageStart.error.empty.month")))
+      case (false, true, true) => Seq(FormError("emptyMonthYear", Messages(s"$messageStart.error.empty.monthYear")))
+      case (false, false, true) => Seq(FormError("emptyYear", Messages(s"$messageStart.error.empty.year")))
       case (_, _, _) => Seq()
     }
   }
 
-  def dateValidation(date: LocalDate, messageStart: String): Seq[FormError] = {
-    (date.isAfter(LocalDate.now()), date.isBefore(tooLongAgoDate)) match {
-      case (true, _) => Seq(FormError("invalidFormat", s"$messageStart.error.dateInFuture"))
-      case (_, true) => Seq(FormError("invalidFormat", s"$messageStart.error.tooLongAgo"))
+  def dateValidation(date: LocalDate, messageStart: String)(implicit messages: Messages): Seq[FormError] = {
+    (date.isAfter(LocalDate.now().minusDays(1)), date.isBefore(tooLongAgoDate)) match {
+      case (true, _) => Seq(FormError("invalidFormat", Messages(s"$messageStart.error.dateInFuture")))
+      case (_, true) => Seq(FormError("invalidFormat", Messages(s"$messageStart.error.tooLongAgo")))
       case _ => Seq()
     }
   }
 
-  def verifyDate(date: DateModel, messageStart: String): Seq[FormError] = {
+  def verifyDate(date: DateModel, messageStart: String)(implicit messages: Messages): Seq[FormError] = {
     val emptyInputsErrors: Seq[FormError] = areInputsEmpty(date, messageStart)
 
     if (emptyInputsErrors.isEmpty) {
       val newDate: Either[Throwable, LocalDate] = Try(LocalDate.of(date.year.toInt, date.month.toInt, date.day.toInt)).toEither
       newDate match {
         case Right(date) => dateValidation(date, messageStart)
-        case Left(_) => Seq(FormError("invalidFormat", s"$messageStart.error.invalidFormat"))
+        case Left(_) => Seq(FormError("invalidFormat", Messages(s"$messageStart.error.invalidFormat")))
       }
     } else {
       emptyInputsErrors
