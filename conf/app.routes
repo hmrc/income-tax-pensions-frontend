@@ -236,6 +236,9 @@ POST        /:taxYear/overseas-pensions/payments-into-overseas-pensions/double-t
 
 GET         /:taxYear/overseas-pensions/payments-into-overseas-pensions/untaxed-schemes-summary                                    controllers.pensions.paymentsIntoOverseasPensions.ReliefsSchemeSummaryController.show(taxYear: Int)
 
+GET        /:taxYear/overseas-pensions/payments-into-overseas-pensions/check-overseas-pension-details                              controllers.pensions.paymentsIntoOverseasPensions.PaymentsIntoOverseasPensionsCYAController.show(taxYear: Int)
+POST       /:taxYear/overseas-pensions/payments-into-overseas-pensions/check-overseas-pension-details                              controllers.pensions.paymentsIntoOverseasPensions.PaymentsIntoOverseasPensionsCYAController.submit(taxYear: Int)
+
 ###########################     Income from overseas pensions pages     ####################################
 
 GET         /:taxYear/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-status                               controllers.pensions.incomeFromOverseasPensions.PensionOverseasIncomeStatus.show(taxYear: Int)

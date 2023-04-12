@@ -120,14 +120,14 @@ class ReliefSchemeSummaryViewSpec extends ViewUnitTest with FakeRequestProvider 
             titleCheck(expectedTitle, userScenario.isWelsh)
             h1Check(expectedHeading)
             captionCheck(expectedCaption(taxYearEOY))
-            textOnPageCheck(s"${schemes.head.customerReferenceNumberQuestion.getOrElse("")}", pensionNameSelector(1))
-            textOnPageCheck(s"${schemes.last.customerReferenceNumberQuestion.getOrElse("")}", pensionNameSelector(2))
+            textOnPageCheck(s"${schemes.head.customerReference.getOrElse("")}", pensionNameSelector(1))
+            textOnPageCheck(s"${schemes.last.customerReference.getOrElse("")}", pensionNameSelector(2))
 
-            linkCheck(s"$change $change ${schemes.head.customerReferenceNumberQuestion.getOrElse("")}", changeLinkSelector(1), changeUrl(0))
-            //linkCheck(s"$remove $remove ${schemes.head.customerReferenceNumberQuestion.getOrElse("")}", removeLinkSelector(1), )
+            linkCheck(s"$change $change ${schemes.head.customerReference.getOrElse("")}", changeLinkSelector(1), changeUrl(0))
+            //linkCheck(s"$remove $remove ${schemes.head.customerReference.getOrElse("")}", removeLinkSelector(1), )
 
-            linkCheck(s"$change $change ${schemes.last.customerReferenceNumberQuestion.getOrElse("")}", changeLinkSelector(2), changeUrl(1))
-            //linkCheck(s"$remove $remove ${schemes.last.customerReferenceNumberQuestion.getOrElse("")}", removeLinkSelector(2), )
+            linkCheck(s"$change $change ${schemes.last.customerReference.getOrElse("")}", changeLinkSelector(2), changeUrl(1))
+            //linkCheck(s"$remove $remove ${schemes.last.customerReference.getOrElse("")}", removeLinkSelector(2), )
             linkCheck(expectedAddAnotherText, addAnotherLinkSelector, addSchemeUrl)
 
             buttonCheck(expectedButtonText, continueButtonSelector, Some(cyaUrl))
@@ -135,13 +135,13 @@ class ReliefSchemeSummaryViewSpec extends ViewUnitTest with FakeRequestProvider 
           }
 
 
-        "Render the refund scheme summary list page with pre-filled content containing refund pension scheme but no customerReferenceNumberQuestion" which {
+        "Render the refund scheme summary list page with pre-filled content containing refund pension scheme but no customerReference" which {
             import Selectors._
             import userScenario.commonExpectedResults._
             implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = UserSessionDataRequest(aPensionsUserData, aUser, fakeIndividualRequest)
             implicit val messages: Messages = getMessages(userScenario.isWelsh)
 
-            val schemes = aPaymentsIntoOverseasPensionsViewModel.reliefs.updated(1, aPaymentsIntoOverseasPensionsViewModel.reliefs.last.copy(customerReferenceNumberQuestion = None))
+            val schemes = aPaymentsIntoOverseasPensionsViewModel.reliefs.updated(1, aPaymentsIntoOverseasPensionsViewModel.reliefs.last.copy(customerReference = None))
             val htmlFormat = underTest(taxYearEOY, schemes)
             implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
@@ -153,11 +153,11 @@ class ReliefSchemeSummaryViewSpec extends ViewUnitTest with FakeRequestProvider 
           titleCheck(expectedTitle, userScenario.isWelsh)
             h1Check(expectedHeading)
             captionCheck(expectedCaption(taxYearEOY))
-            textOnPageCheck(s"${schemes.head.customerReferenceNumberQuestion.getOrElse("")}", pensionNameSelector(1))
+            textOnPageCheck(s"${schemes.head.customerReference.getOrElse("")}", pensionNameSelector(1))
             elementNotOnPageCheck(pensionNameSelector(2))
 
-            linkCheck(s"$change $change ${schemes.head.customerReferenceNumberQuestion.getOrElse("")}", changeLinkSelector(1), changeUrl(0))
-            //linkCheck(s"$remove $remove ${schemes.head.customerReferenceNumberQuestion.getOrElse("")}", removeLinkSelector(1), removeLink(0))
+            linkCheck(s"$change $change ${schemes.head.customerReference.getOrElse("")}", changeLinkSelector(1), changeUrl(0))
+            //linkCheck(s"$remove $remove ${schemes.head.customerReference.getOrElse("")}", removeLinkSelector(1), removeLink(0))
             linkCheck(expectedAddAnotherText, addAnotherLinkSelector, addSchemeUrl)
 
             buttonCheck(expectedButtonText, continueButtonSelector, Some(cyaUrl))

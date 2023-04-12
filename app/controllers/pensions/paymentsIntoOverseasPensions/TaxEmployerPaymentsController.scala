@@ -17,6 +17,8 @@
 package controllers.pensions.paymentsIntoOverseasPensions
 
 import config.{AppConfig, ErrorHandler}
+import controllers.pensions.paymentsIntoOverseasPensions.routes.PaymentsIntoOverseasPensionsCYAController
+import controllers.pensions.routes.OverseasPensionsSummaryController
 import controllers.predicates.AuthorisedAction
 import forms.YesNoForm
 import models.User
@@ -28,8 +30,6 @@ import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.paymentsIntoOverseasPensions.TaxEmployerPaymentsView
-import controllers.pensions.paymentsIntoOverseasPensions.routes.TaxEmployerPaymentsController
-import controllers.pensions.routes.PensionsSummaryController
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -59,8 +59,7 @@ class TaxEmployerPaymentsController @Inject()(authAction: AuthorisedAction,
             case None => Future.successful(Ok(taxEmployerPaymentsView(yesNoForm(request.user), taxYear)))
           }
         case None =>
-          //TODO - redirect to CYA page once implemented
-          Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
+          Future.successful(Redirect(OverseasPensionsSummaryController.show(taxYear)))
       }
     }
   }
@@ -77,14 +76,14 @@ class TaxEmployerPaymentsController @Inject()(authAction: AuthorisedAction,
             pensionSessionService.createOrUpdateSessionData(request.user,
               updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
               if(yesNo) {
-                Redirect(TaxEmployerPaymentsController.show(taxYear))  //TODO - redirect to SASS-2587
-              }else {
-                Redirect(TaxEmployerPaymentsController.show(taxYear))  //TODO - redirect to SASS-2588
+                val reliefSize = data.pensions.paymentsIntoOverseasPensions.reliefs.size
+                Redirect(customerRefPageOrSchemeSummaryPage(reliefSize, taxYear))
+              } else {
+                Redirect(PaymentsIntoOverseasPensionsCYAController.show(taxYear))
               }
             }
           case _ =>
-            //TODO - redirect to CYA page once implemented
-            Future.successful(Redirect(TaxEmployerPaymentsController.show(taxYear)))
+            Future.successful(Redirect(OverseasPensionsSummaryController.show(taxYear)))
         }
       }
     )

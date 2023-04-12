@@ -137,7 +137,7 @@ class ReliefsSchemeDetailsViewSpec extends ViewUnitTest with FakeRequestProvider
       "Render the page with prefilled data for Migrant member relief" which {
       implicit val messages: Messages = getMessages(userScenario.isWelsh)
         val updatedRelief: Relief = Relief(
-          Some("PENSIONINCOME245"), Some(193.54), Some(TaxReliefQuestion.MigrantMemberRelief), qualifyingOverseasPensionSchemeReferenceNumber = Some("123456")
+          Some("PENSIONINCOME245"), Some(193.54), Some(TaxReliefQuestion.MigrantMemberRelief), qopsReferenceNumber = Some("123456")
         )
         implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = UserSessionDataRequest(aPensionsUserData.copy(
           pensions = aPensionsCYAModel.copy(

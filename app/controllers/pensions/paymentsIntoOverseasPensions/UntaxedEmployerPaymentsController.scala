@@ -18,7 +18,7 @@ package controllers.pensions.paymentsIntoOverseasPensions
 
 import config.{AppConfig, ErrorHandler}
 import controllers.predicates.ActionsProvider
-import controllers.validateScheme
+import controllers.validatedSchemes
 import forms.FormsProvider
 import models.pension.pages.UntaxedEmployerPayments
 import play.api.i18n.I18nSupport
@@ -35,47 +35,45 @@ class UntaxedEmployerPaymentsController @Inject()(actionsProvider: ActionsProvid
                                                   pageView: UntaxedEmployerPaymentsView,
                                                   paymentsIntoOverseasService: PaymentsIntoOverseasPensionsService,
                                                   formsProvider: FormsProvider,
-                                                  errorHandler: ErrorHandler)(implicit val cc: MessagesControllerComponents,
+                                                  errorHandler: ErrorHandler)
+                                                 (implicit val cc: MessagesControllerComponents,
                                                                               appConfig: AppConfig,
-                                                                              ec: ExecutionContext) extends FrontendController(cc) with I18nSupport {
+                                                                              ec: ExecutionContext)
+                                                         extends FrontendController(cc) with I18nSupport {
 
-
-  val outOfBoundsRedirect: Int => Result = (taxYear: Int) => Redirect(controllers.pensions.routes.OverseasPensionsSummaryController.show(taxYear))
+  val outOfBoundsRedirect: Int => Result = (taxYear: Int) =>
+    Redirect(routes.PensionsCustomerReferenceNumberController.show(taxYear, None))
 
   def show(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) { implicit sessionUserData =>
-    validateScheme(pensionSchemeIndex, sessionUserData.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs.map(_.customerReferenceNumberQuestion)) match {
+    val piopSessionData = sessionUserData.pensionsUserData.pensions.paymentsIntoOverseasPensions
+    
+    validatedSchemes(pensionSchemeIndex, piopSessionData.reliefs.map(_.customerReference)) match {
       case Left(_) => outOfBoundsRedirect(taxYear)
-      case Right(_) => Ok(
-        pageView(UntaxedEmployerPayments(taxYear, pensionSchemeIndex, sessionUserData.pensionsUserData.pensions.paymentsIntoOverseasPensions, formsProvider.untaxedEmployerPayments(sessionUserData.user.isAgent))))
+      case Right(_) => Ok(pageView(UntaxedEmployerPayments(taxYear, pensionSchemeIndex, piopSessionData,
+        formsProvider.untaxedEmployerPayments(sessionUserData.user.isAgent))))
     }
   }
 
   def submit(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = {
     actionsProvider.userSessionDataFor(taxYear).async { implicit sessionUserData =>
-      validateScheme(pensionSchemeIndex, sessionUserData.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs.map(_.customerReferenceNumberQuestion)) match {
+      val piopSessionData = sessionUserData.pensionsUserData.pensions.paymentsIntoOverseasPensions
+      
+      validatedSchemes(pensionSchemeIndex, piopSessionData.reliefs.map(_.customerReference)) match {
         case Left(_) => Future.successful(outOfBoundsRedirect(taxYear))
         case Right(_) => formsProvider.untaxedEmployerPayments(sessionUserData.user.isAgent).bindFromRequest().fold(
           formWithErrors => {
             Future.successful(
-              BadRequest(pageView(UntaxedEmployerPayments(taxYear, pensionSchemeIndex, sessionUserData.pensionsUserData.pensions.paymentsIntoOverseasPensions, formWithErrors))))
+              BadRequest(pageView(UntaxedEmployerPayments(taxYear, pensionSchemeIndex, piopSessionData, formWithErrors))))
           },
           amount => {
             paymentsIntoOverseasService.updateUntaxedEmployerPayments(sessionUserData.pensionsUserData, amount, pensionSchemeIndex).map {
               case Left(_) => errorHandler.internalServerError()
               case Right(userData) =>
-                Redirect(getRedirectCall(
-                  taxYear,
-                  Some(pensionSchemeIndex.getOrElse(userData.pensions.paymentsIntoOverseasPensions.reliefs.size - 1))))
+                Redirect(routes.PensionReliefTypeController.show(taxYear, pensionSchemeIndex))
             }
           }
         )
       }
     }
-  }
-
-
-  private def getRedirectCall(taxYear: Int,
-                              pensionSchemeIndex: Option[Int]): Call = {
-    controllers.pensions.paymentsIntoOverseasPensions.routes.UntaxedEmployerPaymentsController.show(taxYear, pensionSchemeIndex)
   }
 }

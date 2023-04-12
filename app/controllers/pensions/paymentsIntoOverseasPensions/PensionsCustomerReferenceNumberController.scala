@@ -14,29 +14,13 @@
  * limitations under the License.
  */
 
-/*
- * Copyright 2022 HM Revenue & Customs
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
-
- *     http:www.apache.org/licenses/LICENSE-2.0
-
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package controllers.pensions.paymentsIntoOverseasPensions
 
 import config.{AppConfig, ErrorHandler}
-import controllers._
-import controllers.pensions.paymentsIntoOverseasPensions.routes.PensionsCustomerReferenceNumberController
-import controllers.pensions.routes.PensionsSummaryController
+import controllers.pensions.paymentsIntoOverseasPensions.routes.UntaxedEmployerPaymentsController
+import controllers.pensions.routes.OverseasPensionsSummaryController
 import controllers.predicates.ActionsProvider
+import controllers.validatedIndex
 import forms.PensionCustomerReferenceNumberForm
 import models.User
 import models.mongo.PensionsCYAModel
@@ -50,7 +34,7 @@ import utils.Clock
 import views.html.pensions.paymentsIntoOverseasPensions.PensionsCustomerReferenceNumberView
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 @Singleton
 class PensionsCustomerReferenceNumberController @Inject()(actionsProvider: ActionsProvider,
@@ -59,33 +43,35 @@ class PensionsCustomerReferenceNumberController @Inject()(actionsProvider: Actio
                                                           errorHandler: ErrorHandler
                                                          )(implicit val mcc: MessagesControllerComponents,
                                                            appConfig: AppConfig,
-                                                           clock: Clock,
-                                                           ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
+                                                           clock: Clock) extends FrontendController(mcc) with I18nSupport {
 
   def referenceForm(user: User): Form[String] = PensionCustomerReferenceNumberForm.pensionCustomerReferenceNumberForm(
     incorrectFormatMsg = s"overseasPension.pensionsCustomerReferenceNumber.error.noEntry.${if (user.isAgent) "agent" else "individual"}"
   )
 
   def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
-    implicit sessionDataRequest => {
+    implicit sessionDataRequest =>
+      val piopReliefs = sessionDataRequest.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs
+      
       index match {
-        case Some(_) => validateIndex(index, sessionDataRequest.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs.size) match {
-          case Some(idx) => sessionDataRequest.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs(idx).customerReferenceNumberQuestion match {
+        case Some(_) => validatedIndex(index, piopReliefs.size) match {
+          case Some(idx) => piopReliefs(idx).customerReference match {
             case None => Future.successful(Ok(pensionsCustomerReferenceNumberView(referenceForm(sessionDataRequest.user), taxYear, index)))
             case Some(customerReferenceNumber) =>
               Future.successful(Ok(pensionsCustomerReferenceNumberView(referenceForm(sessionDataRequest.user)
                 .fill(customerReferenceNumber),
                 taxYear, index)))
           }
-          case None => Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
+          case None => Future.successful(Redirect(OverseasPensionsSummaryController.show(taxYear)))
         }
         case None => Future.successful(Ok(pensionsCustomerReferenceNumberView(referenceForm(sessionDataRequest.user), taxYear, index)))
       }
-    }
   }
 
   def submit(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit sessionDataRequest =>
+      
+      val piops = sessionDataRequest.pensionsUserData.pensions.paymentsIntoOverseasPensions
 
       def createOrUpdateSessionData(updatedCyaModel: PensionsCYAModel, newIndex: Some[Int]): Future[Result] = pensionSessionService.createOrUpdateSessionData(
         sessionDataRequest.user,
@@ -93,7 +79,7 @@ class PensionsCustomerReferenceNumberController @Inject()(actionsProvider: Actio
         taxYear,
         sessionDataRequest.pensionsUserData.isPriorSubmission
       )(errorHandler.internalServerError()) {
-        Redirect(PensionsCustomerReferenceNumberController.show(taxYear, newIndex)) //TODO - redirect to untaxed-employer-payments SASS-3099
+        Redirect(UntaxedEmployerPaymentsController.show(taxYear, newIndex))
       }
 
       index match {
@@ -102,36 +88,35 @@ class PensionsCustomerReferenceNumberController @Inject()(actionsProvider: Actio
             Future.successful(BadRequest(pensionsCustomerReferenceNumberView(formWithErrors, taxYear, index))),
           pensionCustomerReferenceNumber => {
             val updatedCyaModel: PensionsCYAModel = sessionDataRequest.pensionsUserData.pensions.copy(
-              paymentsIntoOverseasPensions = sessionDataRequest.pensionsUserData.pensions.paymentsIntoOverseasPensions.copy(
-                reliefs = sessionDataRequest.pensionsUserData.pensions.paymentsIntoOverseasPensions
-                  .reliefs :+ Relief(customerReferenceNumberQuestion = Some(pensionCustomerReferenceNumber))
+              paymentsIntoOverseasPensions = piops.copy(
+                reliefs = piops.reliefs :+ Relief(customerReference = Some(pensionCustomerReferenceNumber))
               )
             )
-            createOrUpdateSessionData(updatedCyaModel, Some(updatedCyaModel.paymentsIntoOverseasPensions.reliefs.size))
+            createOrUpdateSessionData(updatedCyaModel, Some(updatedCyaModel.paymentsIntoOverseasPensions.reliefs.size - 1))
           }
         )
         case Some(_) =>
-          validateIndex(index, sessionDataRequest.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs.size) match {
-            case Some(validIndex: Int) =>
+          validatedIndex(index, piops.reliefs.size) match {
+            case Some(validIndex) =>
               referenceForm(sessionDataRequest.user).bindFromRequest().fold(
                 formWithErrors =>
                   Future.successful(BadRequest(pensionsCustomerReferenceNumberView(formWithErrors, taxYear, Some(validIndex)))),
                 pensionCustomerReferenceNumber => {
                   val updatedCyaModel: PensionsCYAModel = sessionDataRequest.pensionsUserData.pensions.copy(
-                    paymentsIntoOverseasPensions = sessionDataRequest.pensionsUserData.pensions.paymentsIntoOverseasPensions.copy(
-                      reliefs = sessionDataRequest.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs.updated(
+                    paymentsIntoOverseasPensions = piops.copy(
+                      reliefs = piops.reliefs.updated(
                         validIndex,
-                        sessionDataRequest.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs(validIndex).copy(customerReferenceNumberQuestion = Some(pensionCustomerReferenceNumber))
+                        piops.reliefs(validIndex).copy(customerReference = Some(pensionCustomerReferenceNumber))
                       )
                     )
                   )
                   val currentIndex = index.fold(
-                    Some(updatedCyaModel.paymentsIntoOverseasPensions.reliefs.size - 1))(index => Some(index))
+                    Some(updatedCyaModel.paymentsIntoOverseasPensions.reliefs.size - 1))(Some(_))
                   createOrUpdateSessionData(updatedCyaModel, currentIndex)
                 }
               )
             case _ =>
-              Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
+              Future.successful(Redirect(OverseasPensionsSummaryController.show(taxYear)))
           }
       }
   }

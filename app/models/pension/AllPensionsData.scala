@@ -187,10 +187,10 @@ object AllPensionsData {
   private def fromOverseasPensionContribution(overseasPensionContribution: Seq[OverseasPensionContribution]) = {
     overseasPensionContribution.map(oPC =>
       Relief(
-        customerReferenceNumberQuestion = oPC.customerReference,
+        customerReference = oPC.customerReference,
         employerPaymentsAmount = Some(oPC.exemptEmployersPensionContribs),
         reliefType = Some(getTaxReliefQuestion(oPC)),
-        qualifyingOverseasPensionSchemeReferenceNumber = oPC.migrantMemReliefQopsRefNo,
+        qopsReferenceNumber = oPC.migrantMemReliefQopsRefNo,
         alphaTwoCountryCode = Countries.get2AlphaCodeFrom3AlphaCode(oPC.dblTaxationCountry),
         alphaThreeCountryCode = oPC.dblTaxationCountry,
         doubleTaxationCountryArticle = oPC.dblTaxationArticle,

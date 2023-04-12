@@ -17,9 +17,8 @@
 package controllers.pensions.paymentsIntoOverseasPensions
 
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.routes.PensionsSummaryController
-import controllers.pensions.paymentsIntoOverseasPensions.routes.EmployerPayOverseasPensionController
-import controllers.pensions.paymentsIntoOverseasPensions.routes.TaxEmployerPaymentsController
+import controllers.pensions.paymentsIntoOverseasPensions.routes.{PaymentsIntoOverseasPensionsCYAController, TaxEmployerPaymentsController}
+import controllers.pensions.routes.OverseasPensionsSummaryController
 import controllers.predicates.AuthorisedAction
 import forms.YesNoForm
 import models.User
@@ -60,7 +59,7 @@ class EmployerPayOverseasPensionController @Inject()(authAction: AuthorisedActio
           }
         case None =>
           //TODO - redirect to CYA page once implemented
-          Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
+          Future.successful(Redirect(OverseasPensionsSummaryController.show(taxYear)))
       }
     }
   }
@@ -81,14 +80,11 @@ class EmployerPayOverseasPensionController @Inject()(authAction: AuthorisedActio
               if (yesNo) {
                 Redirect(TaxEmployerPaymentsController.show(taxYear))
               } else {
-                //TODO - redirect to SASS-2587
-                Redirect(EmployerPayOverseasPensionController.show(taxYear))
+                Redirect(PaymentsIntoOverseasPensionsCYAController.show(taxYear))
               }
-
             }
           case _ =>
-            //TODO - redirect to CYA page once implemented#
-            Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
+            Future.successful(Redirect(OverseasPensionsSummaryController.show(taxYear)))
         }
       }
     )

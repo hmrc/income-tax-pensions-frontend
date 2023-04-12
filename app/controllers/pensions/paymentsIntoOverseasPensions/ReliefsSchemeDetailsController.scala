@@ -18,7 +18,7 @@ package controllers.pensions.paymentsIntoOverseasPensions
 
 import config.AppConfig
 import controllers.predicates.ActionsProvider
-import controllers.validateIndex
+import controllers.validatedIndex
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -35,22 +35,24 @@ class ReliefsSchemeDetailsController @Inject()(view: ReliefSchemeDetailsView,
 
   def show(taxYear: Int, reliefIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) {
     implicit userSessionDataRequest =>
-      validateIndex(reliefIndex, userSessionDataRequest.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs.size) match {
+      val piopReliefs = userSessionDataRequest.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs
+      
+      validatedIndex(reliefIndex, piopReliefs.size) match {
         case Some(idx) =>
-          Ok(view(taxYear, userSessionDataRequest.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs(idx), reliefIndex))
+          Ok(view(taxYear, piopReliefs(idx), reliefIndex))
         case _ =>
-          Redirect(routes.PensionsCustomerReferenceNumberController.show(taxYear, reliefIndex))
+          Redirect(customerRefPageOrCYAPage(piopReliefs.size, taxYear))
       }
   }
 
   def submit(taxYear: Int, reliefIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) {
     implicit userSessionDataRequest =>
-      validateIndex(reliefIndex, userSessionDataRequest.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs.size) match {
-        case Some(idx) =>
-          Ok(view(taxYear, userSessionDataRequest.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs(idx), reliefIndex))
-          //todo redirect to CYA page when complete
+      val reliefSize = userSessionDataRequest.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs.size
+      validatedIndex(reliefIndex, reliefSize) match {
+        case Some(_) =>
+          Redirect(routes.ReliefsSchemeSummaryController.show(taxYear))
         case _ =>
-          Redirect(routes.PensionsCustomerReferenceNumberController.show(taxYear, reliefIndex))
+          Redirect(customerRefPageOrCYAPage(reliefSize, taxYear))
       }
     }
 }

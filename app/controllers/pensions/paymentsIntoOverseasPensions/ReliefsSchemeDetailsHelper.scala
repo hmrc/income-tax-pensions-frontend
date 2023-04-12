@@ -33,7 +33,7 @@ object ReliefsSchemeDetailsHelper extends CYABaseHelper {
     ).flatten
 
   def pensionSchemeName(relief : Relief, taxYear: Int, index: Option[Int])(implicit messages: Messages): Option[SummaryListRow] = {
-   Some(relief.customerReferenceNumberQuestion.fold{
+   Some(relief.customerReference.fold{
       summaryListRowWithString(
         "overseasPension.reliefDetails.pensionSchemeName",
         Some(messages("common.no")).map(Seq(_)),
@@ -81,7 +81,7 @@ object ReliefsSchemeDetailsHelper extends CYABaseHelper {
       case TaxReliefQuestion.MigrantMemberRelief =>
         Some(summaryListRowWithStrings(
           "overseasPension.reliefDetails.schemeDetail",
-          relief.qualifyingOverseasPensionSchemeReferenceNumber,
+          relief.qopsReferenceNumber,
           routes.QOPSReferenceController.show(taxYear, index)))
       case TaxReliefQuestion.TransitionalCorrespondingRelief =>
         Some(summaryListRowWithStrings(
@@ -97,7 +97,7 @@ object ReliefsSchemeDetailsHelper extends CYABaseHelper {
             messages("overseasPension.reliefDetails.treaty") + s" ${relief.doubleTaxationCountryTreaty.getOrElse("")}<br>" +
             messages("overseasPension.reliefDetails.relief") + s" ${displayedValueForOptionalAmount(relief.doubleTaxationReliefAmount)}"
           ),
-          routes.ReliefsSchemeDetailsController.show(taxYear, index))) //todo change when new page is added
+          routes.DoubleTaxationAgreementController.show(taxYear, index)))
 
       case TaxReliefQuestion.NoTaxRelief => Option.empty[SummaryListRow]
     }
