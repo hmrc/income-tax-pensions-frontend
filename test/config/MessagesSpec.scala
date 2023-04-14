@@ -67,7 +67,6 @@ class MessagesSpec extends ViewTest with GuiceOneAppPerSuite {
     "incomeFromPensions.stateBenefitStartDate.error.empty.invalidFormat",
     "incomeFromPensions.stateBenefitStartDate.error.empty.dateInFuture",
     "incomeFromPensions.stateBenefitStartDate.error.empty.tooLongAgo",
-    "incomeFromPensions.stateBenefitStartDate.date.hint",
     "incomeFromPensions.pensionStartDate.error.tooLongAgo",
     "incomeFromPensions.stateBenefitStartDate.error.tooLongAgo",
     "incomeFromPensions.pensionStartDate.error.invalidFormat",
