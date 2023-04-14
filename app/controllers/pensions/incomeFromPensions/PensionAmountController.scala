@@ -65,6 +65,8 @@ class PensionAmountController @Inject()(implicit val mcc: MessagesControllerComp
                 Future.successful(Ok(pensionAmountView(formsProvider.pensionAmountForm.fill((Some(totalTax), Some(taxPaid))), taxYear, index)))
               case (Some(totalTax), None) =>
                 Future.successful(Ok(pensionAmountView(formsProvider.pensionAmountForm.fill((Some(totalTax), None)), taxYear, index)))
+              case (None, Some(taxPaid)) =>
+                Future.successful(Ok(pensionAmountView(formsProvider.pensionAmountForm.fill((None, Some(taxPaid))), taxYear, index)))
               case (_, _) =>
                 Future.successful(Ok(pensionAmountView(formsProvider.pensionAmountForm, taxYear, index)))
             }
