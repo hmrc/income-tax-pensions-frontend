@@ -19,8 +19,8 @@ package controllers.pensions.incomeFromPensions
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.incomeFromPensions.routes.{UkPensionIncomeCYAController, UkPensionIncomeSummaryController}
 import controllers.predicates.AuthorisedAction
-import forms.PensionSchemeDateForm
-import forms.PensionSchemeDateForm.PensionSchemeDateModel
+import forms.DateForm.DateModel
+import forms.{DateForm, FormsProvider}
 import models.mongo.PensionsCYAModel
 import models.pension.statebenefits.UkPensionIncomeViewModel
 import play.api.data.Form
@@ -37,15 +37,15 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
 @Singleton
-class PensionSchemeStartDateController @Inject()(implicit val mcc: MessagesControllerComponents,
-                                                 appConfig: AppConfig,
-                                                 authAction: AuthorisedAction,
-                                                 pensionSessionService: PensionSessionService,
-                                                 errorHandler: ErrorHandler,
-                                                 view: PensionSchemeStartDateView,
-                                                 clock: Clock) extends FrontendController(mcc) with I18nSupport {
-
-  private val form: Form[PensionSchemeDateModel] = PensionSchemeDateForm.pensionSchemeDateForm
+class PensionSchemeStartDateController @Inject()(
+                                                  pensionSessionService: PensionSessionService,
+                                                  errorHandler: ErrorHandler,
+                                                  view: PensionSchemeStartDateView,
+                                                  formProvider: FormsProvider
+                                                )(implicit val mcc: MessagesControllerComponents,
+                                                  appConfig: AppConfig,
+                                                  authAction: AuthorisedAction,
+                                                  clock: Clock) extends FrontendController(mcc) with I18nSupport {
 
   def show(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = authAction.async { implicit request =>
     pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
@@ -55,11 +55,11 @@ class PensionSchemeStartDateController @Inject()(implicit val mcc: MessagesContr
             data.pensions.incomeFromPensions.uKPensionIncomes(index).startDate match {
               case Some(startDate) =>
                 val parsedDate: LocalDate = LocalDate.parse(startDate, localDateTimeFormat)
-                val filledForm: Form[PensionSchemeDateModel] = form.fill(PensionSchemeDateModel(
+                val filledForm: Form[DateModel] = formProvider.pensionSchemeDateForm.fill(DateModel(
                   parsedDate.getDayOfMonth.toString, parsedDate.getMonthValue.toString, parsedDate.getYear.toString)
                 )
                 Future.successful(Ok(view(filledForm, taxYear, index)))
-              case None => Future.successful(Ok(view(form, taxYear, index)))
+              case None => Future.successful(Ok(view(formProvider.pensionSchemeDateForm, taxYear, index)))
             }
           case None => Future.successful(Redirect(UkPensionIncomeSummaryController.show(taxYear)))
         }
@@ -72,8 +72,8 @@ class PensionSchemeStartDateController @Inject()(implicit val mcc: MessagesContr
       case Some(data) =>
         validateIndex(pensionSchemeIndex, data.pensions.incomeFromPensions.uKPensionIncomes) match {
           case Some(index) =>
-            val verifiedForm = form.bindFromRequest()
-            verifiedForm.copy(errors = PensionSchemeDateForm.verifyDate(verifiedForm.get)).fold(
+            val verifiedForm = formProvider.pensionSchemeDateForm.bindFromRequest()
+            verifiedForm.copy(errors = DateForm.verifyDate(verifiedForm.get, "incomeFromPensions.pensionStartDate")).fold(
 
               formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear, index))),
               startDate => {

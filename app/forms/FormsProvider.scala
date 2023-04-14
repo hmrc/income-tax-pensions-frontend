@@ -17,7 +17,6 @@
 package forms
 
 import forms.OptionalTupleAmountForm.OptionalTupleAmountFormErrorMessage
-import forms.RadioButtonForm
 import models.User
 import models.pension.charges.TaxReliefQuestion
 import play.api.data.Form
@@ -131,5 +130,13 @@ class FormsProvider() {
       wrongFormatKey = s"pensions.taxPaidOnStatePensionLumpSum.amount.error.incorrectFormat.$agentOrIndividual",
       exceedsMaxAmountKey = s"pensions.taxPaidOnStatePensionLumpSum.amount.error.overMaximum.$agentOrIndividual"
     )
+  }
+
+  def stateBenefitDateForm: Form[DateForm.DateModel] = {
+    DateForm.dateForm("stateBenefitStartDate")
+  }
+
+  def pensionSchemeDateForm: Form[DateForm.DateModel] = {
+    DateForm.dateForm("pensionStartDate")
   }
 }

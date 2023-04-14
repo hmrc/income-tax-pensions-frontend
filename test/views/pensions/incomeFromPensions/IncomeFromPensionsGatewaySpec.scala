@@ -24,9 +24,10 @@ import play.api.i18n.Messages
 import play.api.mvc.AnyContent
 import support.ViewUnitTest
 import controllers.pensions.incomeFromPensions.routes.IncomeFromPensionsGatewayController
+import utils.FakeRequestProvider
 import views.html.pensions.incomeFromPensions.IncomeFromPensionsGatewayView
 
-class IncomeFromPensionsGatewaySpec extends ViewUnitTest {
+class IncomeFromPensionsGatewayTestSupport extends ViewUnitTest {
 
   object Selectors {
     val continueButtonFormSelector = "#main-content > div > div > form"

@@ -500,6 +500,21 @@ incomeFromPensions.statePensionLumpSum.onlyApplies = This only applies to people
 incomeFromPensions.statePensionLumpSum.error.noEntry.individual = Select yes if you got a State Pension lump sum
 incomeFromPensions.statePensionLumpSum.error.noEntry.agent = Select yes if your client got a State Pension lump sum
 
+#state pension start date
+incomeFromPensions.stateBenefitStartDate.title.individual = When did you start getting State Pension payments?
+incomeFromPensions.stateBenefitStartDate.title.agent = When did your client start getting State Pension payments?
+incomeFromPensions.stateBenefitStartDate.date.hint = For example, 27 3 2007
+incomeFromPensions.stateBenefitStartDate.error.empty.all = Enter the pension start date
+incomeFromPensions.stateBenefitStartDate.error.empty.day = The pension start date must include a day
+incomeFromPensions.stateBenefitStartDate.error.empty.dayMonth = The pension start date must include a day and month
+incomeFromPensions.stateBenefitStartDate.error.empty.dayYear = The pension start date must include a day and year
+incomeFromPensions.stateBenefitStartDate.error.empty.month = The pension start date must include a month
+incomeFromPensions.stateBenefitStartDate.error.empty.monthYear = The pension start date must include a month and year
+incomeFromPensions.stateBenefitStartDate.error.empty.year = The pension start date must include a year
+incomeFromPensions.stateBenefitStartDate.error.invalidFormat = The pension start date must be a real date
+incomeFromPensions.stateBenefitStartDate.error.dateInFuture = The pension start date must be in the past
+incomeFromPensions.stateBenefitStartDate.error.tooLongAgo = The pension start date must be after 1 January 1900
+
 #state pension lump sum
 pensions.statePensionLumpSum.title.individual = How much was your State Pension lump sum?
 pensions.statePensionLumpSum.title.agent = How much was your client’s State Pension lump sum?
