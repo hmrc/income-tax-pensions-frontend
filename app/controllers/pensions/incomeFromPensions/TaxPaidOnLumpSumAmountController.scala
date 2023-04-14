@@ -18,7 +18,7 @@ package controllers.pensions.incomeFromPensions
 
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.routes.PensionsSummaryController
-import controllers.pensions.incomeFromPensions.routes.TaxPaidOnStatePensionLumpSumController
+import controllers.pensions.incomeFromPensions.routes.{StatePensionLumpSumStartDateController, TaxPaidOnStatePensionLumpSumController}
 import controllers.predicates.TaxYearAction.taxYearAction
 import controllers.predicates.{AuthorisedAction, InYearAction}
 import forms.{AmountForm, FormUtils}
@@ -92,8 +92,7 @@ class TaxPaidOnLumpSumAmountController @Inject()(implicit val mcc: MessagesContr
 
                 pensionSessionService.createOrUpdateSessionData(request.user,
                   updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
-                  //TODO: redirect to the next page - income from pensions CYA page or other UK income? (not sure of journey flow)
-                  Redirect(PensionsSummaryController.show(taxYear))
+                  Redirect(StatePensionLumpSumStartDateController.show(taxYear))
                 }
               } else {
                 Future.successful(Redirect(TaxPaidOnStatePensionLumpSumController.show(taxYear)))

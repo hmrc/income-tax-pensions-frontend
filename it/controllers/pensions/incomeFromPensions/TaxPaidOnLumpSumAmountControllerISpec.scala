@@ -27,7 +27,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.IncomeFromPensionsPages.{taxOnLumpSumAmountUrl, taxOnLumpSumUrl}
+import utils.PageUrls.IncomeFromPensionsPages.{statePensionLumpSumStartDateUrl, taxOnLumpSumAmountUrl, taxOnLumpSumUrl}
 import utils.PageUrls.{fullUrl, overviewUrl, pensionSummaryUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
@@ -414,7 +414,7 @@ class TaxPaidOnLumpSumAmountControllerISpec extends IntegrationTest with ViewHel
       }
     }
 
-    "redirect to the Annual Allowance CYA page when a valid amount is submitted and update session data" which {
+    "redirect to the State Pension Lump Sum start date page when a valid amount is submitted and update session data" which {
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(isAgent = false)
@@ -426,8 +426,7 @@ class TaxPaidOnLumpSumAmountControllerISpec extends IntegrationTest with ViewHel
       }
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        //TODO redirect to CYA page or next page
-        result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
+        result.header("location") shouldBe Some(statePensionLumpSumStartDateUrl(taxYearEOY))
       }
       "update state lump sum amount to Some(validAmount)" in {
         lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get

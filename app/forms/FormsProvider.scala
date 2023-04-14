@@ -17,7 +17,6 @@
 package forms
 
 import forms.OptionalTupleAmountForm.OptionalTupleAmountFormErrorMessage
-import forms.RadioButtonForm
 import models.User
 import models.pension.charges.TaxReliefQuestion
 import play.api.data.Form
@@ -34,7 +33,7 @@ class FormsProvider() {
     missingInputError = "shortServiceRefunds.taxOnShortServiceRefund.error.noEntry"
   )
 
-  def pensionSchemeTaxTransferForm(user:User): Form[(Boolean, Option[BigDecimal])] = {
+  def pensionSchemeTaxTransferForm(user: User): Form[(Boolean, Option[BigDecimal])] = {
     val agentOrIndividual = if (user.isAgent) "agent" else "individual"
     RadioButtonAmountForm.radioButtonAndAmountForm(
       missingInputError = s"transferIntoOverseasPensions.overseasPensionSchemeTaxTransferCharge.error.noEntry.$agentOrIndividual",
@@ -121,5 +120,17 @@ class FormsProvider() {
 
   def overseasPensionsReliefTypeForm: Form[String] = {
     RadioButtonForm.radioButtonForm("overseasPension.pensionReliefType.error.noEntry", TaxReliefQuestion.validTaxList)
+  }
+
+  def stateBenefitDateForm: Form[DateForm.DateModel] = {
+    DateForm.dateForm("stateBenefitStartDate")
+  }
+
+  def statePensionLumpSumStartDateForm: Form[DateForm.DateModel] = {
+    DateForm.dateForm("statePensionLumpSumStartDate")
+  }
+
+  def pensionSchemeDateForm: Form[DateForm.DateModel] = {
+    DateForm.dateForm("pensionStartDate")
   }
 }
