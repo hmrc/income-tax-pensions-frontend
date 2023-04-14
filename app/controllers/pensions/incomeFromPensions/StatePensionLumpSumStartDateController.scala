@@ -17,6 +17,7 @@
 package controllers.pensions.incomeFromPensions
 
 import config.{AppConfig, ErrorHandler}
+import controllers.pensions.incomeFromPensions.routes.StatePensionLumpSumStartDateController
 import controllers.pensions.routes.PensionsSummaryController
 import controllers.predicates.ActionsProvider
 import forms.DateForm.DateModel
@@ -80,7 +81,8 @@ class StatePensionLumpSumStartDateController @Inject()(actionsProvider: ActionsP
                   Some(sP.copy(startDateQuestion = Some(true), startDate = Some(formWithStartDate.toLocalDate)))
                 )))
             pensionSessionService.createOrUpdateSessionData(updatedModel).map {
-              case Right(_) => Ok(view(formsProvider.statePensionLumpSumStartDateForm, taxYear))
+                  //todo redirect to 'Do you want to add state pension to your income tax calculation' page when created
+              case Right(_) => Redirect(StatePensionLumpSumStartDateController.show(taxYear))
               case _ => errorHandler.internalServerError()
             }
           }

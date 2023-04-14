@@ -511,7 +511,7 @@ incomeFromPensions.stateBenefitStartDate.error.empty.dayYear = The pension start
 incomeFromPensions.stateBenefitStartDate.error.empty.month = The pension start date must include a month
 incomeFromPensions.stateBenefitStartDate.error.empty.monthYear = The pension start date must include a month and year
 incomeFromPensions.stateBenefitStartDate.error.empty.year = The pension start date must include a year
-incomeFromPensions.stateBenefitStartDate.error.invalidFormat = The pension start date must be a real date
+incomeFromPensions.stateBenefitStartDate.error.invalidFormat = The day, month and year must be valid
 incomeFromPensions.stateBenefitStartDate.error.dateInFuture = The pension start date must be in the past
 incomeFromPensions.stateBenefitStartDate.error.tooLongAgo = The pension start date must be after 1 January 1900
 

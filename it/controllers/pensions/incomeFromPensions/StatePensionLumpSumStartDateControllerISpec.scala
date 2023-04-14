@@ -129,7 +129,9 @@ class StatePensionLumpSumStartDateControllerISpec extends IntegrationTest with V
           body = formData)
       }
 
-      result.status shouldBe OK
+      result.status shouldBe SEE_OTHER
+      result.headers("location").head shouldBe statePensionLumpSumStartDateUrl(taxYearEOY)
+      //todo redirect to 'Do you want to add state pension to your income tax calculation' page when created
     }
 
     "the day field is empty" which {
