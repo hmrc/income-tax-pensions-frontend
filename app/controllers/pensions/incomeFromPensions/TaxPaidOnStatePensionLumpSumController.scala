@@ -17,91 +17,79 @@
 package controllers.pensions.incomeFromPensions
 
 import config.{AppConfig, ErrorHandler}
-import controllers.predicates.{AuthorisedAction, InYearAction}
-import forms.YesNoForm
-import models.User
-import models.mongo.PensionsCYAModel
-import play.api.data.Form
+import controllers.predicates.ActionsProvider
+import forms.FormsProvider
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.Clock
+import utils.{Clock, SessionHelper}
 import views.html.pensions.incomeFromPensions.TaxPaidOnStatePensionLumpSumView
-import controllers.pensions.incomeFromPensions.routes.TaxPaidOnLumpSumAmountController
-import controllers.predicates.TaxYearAction.taxYearAction
+import controllers.pensions.routes.PensionsSummaryController
+import models.mongo.PensionsUserData
 import models.pension.statebenefits.{IncomeFromPensionsViewModel, StateBenefitViewModel}
+import models.requests.UserSessionDataRequest
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
 @Singleton
-class TaxPaidOnStatePensionLumpSumController @Inject()(implicit val cc: MessagesControllerComponents,
-                                                       authAction: AuthorisedAction,
-                                                       inYearAction: InYearAction,
-                                                       view: TaxPaidOnStatePensionLumpSumView,
+class TaxPaidOnStatePensionLumpSumController @Inject()(
+                                                        actionsProvider: ActionsProvider,
+                                                        pensionSessionService: PensionSessionService,
+                                                        view: TaxPaidOnStatePensionLumpSumView,
+                                                        errorHandler: ErrorHandler,
+                                                        formsProvider: FormsProvider
+                                                      )
+                                                      (implicit val mcc: MessagesControllerComponents,
                                                        appConfig: AppConfig,
-                                                       pensionSessionService: PensionSessionService,
-                                                       errorHandler: ErrorHandler,
-                                                       clock: Clock) extends FrontendController(cc) with I18nSupport {
+                                                       clock: Clock)
+  extends FrontendController(mcc) with SessionHelper with I18nSupport {
 
+  def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
+    implicit sessionData =>
+      val taxPaidQuestion = sessionData.pensionsUserData.pensions.incomeFromPensions.statePensionLumpSum.flatMap(_.taxPaidQuestion)
+      val taxPaid = sessionData.pensionsUserData.pensions.incomeFromPensions.statePensionLumpSum.flatMap(_.taxPaid)
 
-  def yesNoForm(user: User): Form[Boolean] = YesNoForm.yesNoForm(
-    missingInputError = s"pensions.taxPaidOnStatePensionLumpSum.error.noEntry.${if (user.isAgent) "agent" else "individual"}"
-  )
-
-  def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
-    inYearAction.notInYear(taxYear) {
-      pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
-        case Some(data) =>
-
-          data.pensions.incomeFromPensions.statePensionLumpSum.flatMap(_.taxPaidQuestion) match {
-            case Some(taxPaidQuestion) => Future.successful(Ok(view(yesNoForm(request.user).fill(taxPaidQuestion), taxYear)))
-            case _ => Future.successful(Ok(view(yesNoForm(request.user), taxYear)))
-          }
-
-        //TODO: redirect to the state pension CYA page
-        case _ => Future.successful(Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear)))
+      (taxPaidQuestion, taxPaid) match {
+        case (Some(yesNo), taxPaid) => Future.successful(Ok(view(formsProvider.taxPaidOnStatePensionLumpSum(sessionData.user).fill(yesNo, taxPaid), taxYear)))
+        case _ => Future.successful(Ok(view(formsProvider.taxPaidOnStatePensionLumpSum(sessionData.user), taxYear)))
       }
     }
-  }
 
-  def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
-    inYearAction.notInYear(taxYear) {
-      yesNoForm(request.user).bindFromRequest().fold(
+  def submit(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
+    implicit sessionData =>
+      formsProvider.taxPaidOnStatePensionLumpSum(sessionData.user).bindFromRequest().fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
-        yesNo => {
-          pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
-            case Some(data) =>
-
-              val pensionsCYAModel: PensionsCYAModel = data.pensions
-              val viewModel: IncomeFromPensionsViewModel = pensionsCYAModel.incomeFromPensions
-
-              val updatedStatePensionLumpSum: StateBenefitViewModel = viewModel.statePensionLumpSum match {
-                case Some(lumpSum) => lumpSum.copy(taxPaidQuestion = Some(yesNo), taxPaid = if (yesNo) lumpSum.taxPaid else None)
-                case _ => StateBenefitViewModel(taxPaidQuestion = Some(yesNo))
-              }
-
-              val updatedCyaModel: PensionsCYAModel = {
-                pensionsCYAModel.copy(incomeFromPensions = viewModel.copy(statePensionLumpSum = Some(updatedStatePensionLumpSum)))
-              }
-              pensionSessionService.createOrUpdateSessionData(request.user,
-                updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
-                if (yesNo) {
-                  Redirect(TaxPaidOnLumpSumAmountController.show(taxYear))
-                } else {
-                  //TODO: redirect to the next page - income from pensions CYA page or other UK income?
-                  // not sure from prototype but next section is not ready yet
-                  Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear))
-                }
-              }
-
-            //TODO: redirect to the state pension CYA page
-            case _ => Future.successful(Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear)))
-
+        yesNoAmount => {
+          (yesNoAmount._1, yesNoAmount._2) match {
+            case (true, amount) => updateSessionData(sessionData.pensionsUserData, yesNo = true, amount, taxYear)
+            case (false, _) => updateSessionData(sessionData.pensionsUserData, yesNo = false, None, taxYear)
           }
         }
       )
+  }
+
+  private def updateSessionData[T](pensionUserData: PensionsUserData,
+                                   yesNo: Boolean,
+                                   taxPaid: Option[BigDecimal],
+                                   taxYear: Int)(implicit request: UserSessionDataRequest[T]) = {
+    val viewModel: IncomeFromPensionsViewModel = pensionUserData.pensions.incomeFromPensions
+    val updateStatePensionLumpSum: StateBenefitViewModel = viewModel.statePensionLumpSum match {
+      case Some(value) => value.copy(taxPaidQuestion = Some(yesNo), taxPaid = if (yesNo) taxPaid else None)
+      case _ => StateBenefitViewModel(taxPaidQuestion = Some(yesNo), taxPaid = if (yesNo) taxPaid else None)
+    }
+
+    val updatedCyaModel = pensionUserData.pensions.copy(
+      incomeFromPensions = viewModel.copy(
+        statePensionLumpSum = Some(updateStatePensionLumpSum)
+      )
+    )
+
+    pensionSessionService.createOrUpdateSessionData(request.user,
+      updatedCyaModel, taxYear, pensionUserData.isPriorSubmission)(errorHandler.internalServerError()) {
+      //TODO: redirect to the next page - income from pensions Check your state pensions summary (page not build yet)
+      Redirect(PensionsSummaryController.show(taxYear))
     }
   }
 }

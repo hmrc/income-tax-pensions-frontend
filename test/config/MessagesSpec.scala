@@ -56,7 +56,23 @@ class MessagesSpec extends ViewTest with GuiceOneAppPerSuite {
     "incomeFromPensions.pensionSchemeDetails.title",
     "overseasPension.untaxedEmployerPayments.title",
     "overseasPension.reliefDetails.amount",
-    "overseasPension.reliefDetails.title"
+    "overseasPension.reliefDetails.title",
+    "incomeFromPensions.stateBenefitStartDate.error.empty.all",
+    "incomeFromPensions.stateBenefitStartDate.error.empty.day",
+    "incomeFromPensions.stateBenefitStartDate.error.empty.month",
+    "incomeFromPensions.stateBenefitStartDate.error.empty.year",
+    "incomeFromPensions.stateBenefitStartDate.error.empty.dayMonth",
+    "incomeFromPensions.stateBenefitStartDate.error.empty.dayYear",
+    "incomeFromPensions.stateBenefitStartDate.error.empty.monthYear",
+    "incomeFromPensions.stateBenefitStartDate.error.empty.invalidFormat",
+    "incomeFromPensions.stateBenefitStartDate.error.empty.dateInFuture",
+    "incomeFromPensions.stateBenefitStartDate.error.empty.tooLongAgo",
+    "incomeFromPensions.pensionStartDate.error.tooLongAgo",
+    "incomeFromPensions.stateBenefitStartDate.error.tooLongAgo",
+    "incomeFromPensions.pensionStartDate.error.invalidFormat",
+    "incomeFromPensions.stateBenefitStartDate.error.dateInFuture",
+    "incomeFromPensions.pensionStartDate.error.dateInFuture",
+    "incomeFromPensions.stateBenefitStartDate.error.invalidFormat"
   )
 
   lazy val allLanguages: Map[String, Map[String, String]] = app.injector.instanceOf[MessagesApi].messages
