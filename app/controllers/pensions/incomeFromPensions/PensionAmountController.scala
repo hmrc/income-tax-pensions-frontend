@@ -57,17 +57,10 @@ class PensionAmountController @Inject()(implicit val mcc: MessagesControllerComp
         val pensionIncomesList: Seq[UkPensionIncomeViewModel] = data.pensions.incomeFromPensions.uKPensionIncomes
         validateIndex(pensionSchemeIndex, pensionIncomesList) match {
           case Some(index) =>
-            val totalTaxOpt = pensionIncomesList(index).amount
-            val taxPaidOpt = pensionIncomesList(index).taxPaid
-
-            (totalTaxOpt, taxPaidOpt) match {
-              case (Some(totalTax), Some(taxPaid)) =>
-                Future.successful(Ok(pensionAmountView(formsProvider.pensionAmountForm.fill((Some(totalTax), Some(taxPaid))), taxYear, index)))
-              case (Some(totalTax), None) =>
-                Future.successful(Ok(pensionAmountView(formsProvider.pensionAmountForm.fill((Some(totalTax), None)), taxYear, index)))
-              case (_, _) =>
-                Future.successful(Ok(pensionAmountView(formsProvider.pensionAmountForm, taxYear, index)))
-            }
+            Future.successful(Ok(pensionAmountView(formsProvider.pensionAmountForm.fill((
+              pensionIncomesList(index).amount,
+              pensionIncomesList(index).taxPaid)),
+              taxYear, index)))
           case None => Future.successful(Redirect(UkPensionIncomeSummaryController.show(taxYear)))
         }
       case _ =>
