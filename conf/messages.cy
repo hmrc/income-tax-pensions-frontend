@@ -503,7 +503,7 @@ incomeFromPensions.statePensionLumpSum.error.noEntry.agent = Select yes if your 
 #state pension start date
 incomeFromPensions.stateBenefitStartDate.title.individual = When did you start getting State Pension payments?
 incomeFromPensions.stateBenefitStartDate.title.agent = When did your client start getting State Pension payments?
-incomeFromPensions.stateBenefitStartDate.date.hint = For example, 12 11 2007
+incomeFromPensions.stateBenefitStartDate.date.hint = For example, 27 3 2007
 incomeFromPensions.stateBenefitStartDate.error.empty.all = Enter the pension start date
 incomeFromPensions.stateBenefitStartDate.error.empty.day = The pension start date must include a day
 incomeFromPensions.stateBenefitStartDate.error.empty.dayMonth = The pension start date must include a day and month
@@ -600,7 +600,7 @@ pensions.pensionAmount.taxPaid.error.overMaximum = The amount of tax paid must b
 #pension scheme start date
 incomeFromPensions.pensionStartDate.title.individual = When did you start getting payments from this scheme?
 incomeFromPensions.pensionStartDate.title.agent = When did your client start getting payments from this scheme?
-incomeFromPensions.pensionStartDate.date.hint = For example, 27 3 2007
+incomeFromPensions.pensionStartDate.date.hint = For example, 12 11 2007
 incomeFromPensions.pensionStartDate.error.empty.all = Enter the pension start date
 incomeFromPensions.pensionStartDate.error.empty.day = The pension start date must include a day
 incomeFromPensions.pensionStartDate.error.empty.dayMonth = The pension start date must include a day and month
