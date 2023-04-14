@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package views.incomeFromPensions
+package views.pensions.incomeFromPensions
 
 import builders.IncomeFromPensionsViewModelBuilder.anIncomeFromPensionsViewModel
 import builders.PensionsCYAModelBuilder.aPensionsCYAModel
@@ -61,7 +61,7 @@ class StatePensionLumpSumStartDateViewSpec extends ViewUnitTest with FakeRequest
 
   trait SpecificExpectedResults {
     val expectedTitle: String
-    lazy val expectedHeading = expectedTitle
+    lazy val expectedHeading: String = expectedTitle
     val expectedHint: String
     val expectedErrorTitle: String
   }

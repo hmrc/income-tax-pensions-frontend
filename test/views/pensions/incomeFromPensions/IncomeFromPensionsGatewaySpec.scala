@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package views.incomeFromPensions
+package views.pensions.incomeFromPensions
 
-import controllers.pensions.incomeFromPensions.routes.IncomeFromPensionsGatewayController
 import forms.{IncomeFromPensionFormProvider, YesNoForm}
 import models.AuthorisationRequest
 import org.jsoup.Jsoup
@@ -24,9 +23,11 @@ import org.jsoup.nodes.Document
 import play.api.i18n.Messages
 import play.api.mvc.AnyContent
 import support.ViewUnitTest
+import controllers.pensions.incomeFromPensions.routes.IncomeFromPensionsGatewayController
+import utils.FakeRequestProvider
 import views.html.pensions.incomeFromPensions.IncomeFromPensionsGatewayView
 
-class IncomeFromPensionsGatewaySpec extends ViewUnitTest {
+class IncomeFromPensionsGatewayTestSupport extends ViewUnitTest {
 
   object Selectors {
     val continueButtonFormSelector = "#main-content > div > div > form"

@@ -122,6 +122,16 @@ class FormsProvider() {
     RadioButtonForm.radioButtonForm("overseasPension.pensionReliefType.error.noEntry", TaxReliefQuestion.validTaxList)
   }
 
+  def taxPaidOnStatePensionLumpSum(implicit user: User): Form[(Boolean, Option[BigDecimal])] = {
+    val agentOrIndividual = if (user.isAgent) "agent" else "individual"
+    RadioButtonAmountForm.radioButtonAndAmountForm(
+      missingInputError = s"pensions.taxPaidOnStatePensionLumpSum.error.noEntry.$agentOrIndividual",
+      emptyFieldKey = s"pensions.taxPaidOnStatePensionLumpSum.amount.error.noEntry.$agentOrIndividual",
+      wrongFormatKey = s"pensions.taxPaidOnStatePensionLumpSum.amount.error.incorrectFormat.$agentOrIndividual",
+      exceedsMaxAmountKey = s"pensions.taxPaidOnStatePensionLumpSum.amount.error.overMaximum.$agentOrIndividual"
+    )
+  }
+
   def stateBenefitDateForm: Form[DateForm.DateModel] = {
     DateForm.dateForm("stateBenefitStartDate")
   }
