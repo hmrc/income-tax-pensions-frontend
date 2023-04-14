@@ -190,7 +190,7 @@ object AllPensionsData {
         customerReference = oPC.customerReference,
         employerPaymentsAmount = Some(oPC.exemptEmployersPensionContribs),
         reliefType = Some(getTaxReliefQuestion(oPC)),
-        qopsReferenceNumber = oPC.migrantMemReliefQopsRefNo,
+        qopsReference = oPC.migrantMemReliefQopsRefNo,
         alphaTwoCountryCode = Countries.get2AlphaCodeFrom3AlphaCode(oPC.dblTaxationCountry),
         alphaThreeCountryCode = oPC.dblTaxationCountry,
         doubleTaxationCountryArticle = oPC.dblTaxationArticle,

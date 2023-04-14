@@ -41,14 +41,14 @@ class UntaxedEmployerPaymentsController @Inject()(actionsProvider: ActionsProvid
                                                                               ec: ExecutionContext)
                                                          extends FrontendController(cc) with I18nSupport {
 
-  val outOfBoundsRedirect: Int => Result = (taxYear: Int) =>
-    Redirect(routes.PensionsCustomerReferenceNumberController.show(taxYear, None))
+  val outOfBoundsRedirect: (Int,Int) => Result = (schemeSize, taxYear: Int) =>
+    Redirect(customerRefPageOrSchemeSummaryPage(schemeSize, taxYear))
 
   def show(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) { implicit sessionUserData =>
     val piopSessionData = sessionUserData.pensionsUserData.pensions.paymentsIntoOverseasPensions
     
     validatedSchemes(pensionSchemeIndex, piopSessionData.reliefs.map(_.customerReference)) match {
-      case Left(_) => outOfBoundsRedirect(taxYear)
+      case Left(_) => outOfBoundsRedirect(piopSessionData.reliefs.size, taxYear)
       case Right(_) => Ok(pageView(UntaxedEmployerPayments(taxYear, pensionSchemeIndex, piopSessionData,
         formsProvider.untaxedEmployerPayments(sessionUserData.user.isAgent))))
     }
@@ -59,7 +59,7 @@ class UntaxedEmployerPaymentsController @Inject()(actionsProvider: ActionsProvid
       val piopSessionData = sessionUserData.pensionsUserData.pensions.paymentsIntoOverseasPensions
       
       validatedSchemes(pensionSchemeIndex, piopSessionData.reliefs.map(_.customerReference)) match {
-        case Left(_) => Future.successful(outOfBoundsRedirect(taxYear))
+        case Left(_) => Future.successful(outOfBoundsRedirect(piopSessionData.reliefs.size, taxYear))
         case Right(_) => formsProvider.untaxedEmployerPayments(sessionUserData.user.isAgent).bindFromRequest().fold(
           formWithErrors => {
             Future.successful(

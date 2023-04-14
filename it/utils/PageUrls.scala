@@ -204,28 +204,33 @@ object PageUrls extends IntegrationTest {
     val qopsReferenceUrl: Int => String = (taxYear : Int) =>
       s"$appUrl/$taxYear/overseas-pensions/payments-into-overseas-pensions/qualifying-overseas-pension-scheme-reference-number?index=0"
 
-    def qopsReferenceUrlWithIndex(taxYear: Int, index: Int): String =
+    val qopsReferenceUrlWithIndex: (Int, Int) => String = (taxYear: Int, index: Int) =>
       s"$appUrl/$taxYear/overseas-pensions/payments-into-overseas-pensions/qualifying-overseas-pension-scheme-reference-number?index=$index"
 
-    def sf74ReferenceUrl(taxYear: Int, index: Int): String =
+    val sf74ReferenceUrl: (Int, Int) => String = (taxYear, index) =>
       s"$appUrl/$taxYear/overseas-pensions/payments-into-overseas-pensions/pensions-overseas-sf74?reliefIndex=$index"
 
-    def pensionCustomerReferenceNumberUrl(taxYear: Int, index: Option[Int]): String = {
+    val pensionCustomerReferenceNumberUrl: (Int, Option[Int]) => String = (taxYear, index) => {
       val addOn = if (index.isDefined) s"?index=${index.get}" else ""
-      s"$appUrl/$taxYear/overseas-pensions/payments-into-overseas-pensions/pensions-customer-reference-number$addOn"
-    }
+      s"$appUrl/$taxYear/overseas-pensions/payments-into-overseas-pensions/pensions-customer-reference-number$addOn"}
+    
+    val untaxedEmployerPaymentsUrl: (Int, Int) => String = (taxYear: Int, index: Int) =>
+      s"$appUrl/$taxYear/overseas-pensions/payments-into-overseas-pensions/untaxed-employer-payments?index=$index"
 
-    def pensionReliefTypeUrl(taxYear: Int, index: Int): String =
+    val pensionReliefTypeUrl: (Int, Int) => String = (taxYear: Int, index: Int) =>
       s"$appUrl/$taxYear/overseas-pensions/payments-into-overseas-pensions/pensions-overseas-emp-relief-status?reliefIndex=$index"
 
-    def pensionReliefSchemeDetailsUrl(taxYear: Int, index: Int): String =
+    val pensionReliefSchemeDetailsUrl: (Int, Int) => String = (taxYear: Int, index: Int) =>
       s"$appUrl/$taxYear/overseas-pensions/payments-into-overseas-pensions/pensions-overseas-details-summary?reliefIndex=$index"
 
     val doubleTaxationAgreementUrl: Int => Int => String =
       (index: Int) => (taxYear: Int) => s"$appUrl/$taxYear/overseas-pensions/payments-into-overseas-pensions/double-taxation-agreement-details?index=$index"
 
-    def pensionReliefSchemeSummaryUrl(taxYear: Int): String =
+    val pensionReliefSchemeSummaryUrl: Int => String = (taxYear: Int) =>
       s"$appUrl/$taxYear/overseas-pensions/payments-into-overseas-pensions/untaxed-schemes-summary"
+
+    val checkPaymentsIntoOverseasPensionsCyaUrl: Int => String = (taxYear: Int) =>
+      s"$appUrl/$taxYear/overseas-pensions/payments-into-overseas-pensions/check-overseas-pension-details"
 
   }
 

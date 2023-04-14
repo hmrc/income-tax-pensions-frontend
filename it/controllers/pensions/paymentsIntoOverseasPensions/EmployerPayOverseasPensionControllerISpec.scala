@@ -26,8 +26,8 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import utils.CommonUtils
-import utils.PageUrls.PaymentIntoOverseasPensions.{employerPayOverseasPensionUrl, taxEmployerPaymentsUrl}
-import utils.PageUrls.pensionSummaryUrl
+import utils.PageUrls.PaymentIntoOverseasPensions.{checkPaymentsIntoOverseasPensionsCyaUrl, employerPayOverseasPensionUrl, taxEmployerPaymentsUrl}
+import utils.PageUrls.overseasPensionsSummaryUrl
 
 class EmployerPayOverseasPensionControllerISpec extends CommonUtils with BeforeAndAfterEach {
 
@@ -209,12 +209,12 @@ class EmployerPayOverseasPensionControllerISpec extends CommonUtils with BeforeA
       }
     }
 
-    "redirect to Pensions Summary page if there is no session data" should {
+    "redirect to Overseas Pensions Summary page if there is no session data" should {
       lazy val result: WSResponse = getResponseNoSessionData()
 
       "has an SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY)) //todo
+        result.header("location") shouldBe Some(overseasPensionsSummaryUrl(taxYearEOY))
       }
     }
   }
@@ -279,7 +279,7 @@ class EmployerPayOverseasPensionControllerISpec extends CommonUtils with BeforeA
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(taxEmployerPaymentsUrl(taxYearEOY)) //Todo redirect to SASS-2586
+        result.header("location") shouldBe Some(taxEmployerPaymentsUrl(taxYearEOY))
       }
 
       "updates employerPaymentsQuestion to Some(true)" in {
@@ -297,7 +297,7 @@ class EmployerPayOverseasPensionControllerISpec extends CommonUtils with BeforeA
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(employerPayOverseasPensionUrl(taxYearEOY)) //TODO - redirect to SASS-2587
+        result.header("location") shouldBe Some(checkPaymentsIntoOverseasPensionsCyaUrl(taxYearEOY))
       }
 
       "updates employerPaymentsQuestion to Some(false)" in {

@@ -43,7 +43,7 @@ class ReliefsSchemeDetailsViewSpec extends ViewUnitTest with FakeRequestProvider
     val reliefTypeLink = controllers.pensions.paymentsIntoOverseasPensions.routes.PensionReliefTypeController.show(taxYearEOY, Some(0)).url
     val schemeDetailsSF74Link = controllers.pensions.paymentsIntoOverseasPensions.routes.SF74ReferenceController.show(taxYearEOY, Some(0)).url
     val schemeDetailsQOPSLink = controllers.pensions.paymentsIntoOverseasPensions.routes.QOPSReferenceController.show(taxYearEOY, Some(0)).url
-    val schemeDetailsMigrationLink = controllers.pensions.paymentsIntoOverseasPensions.routes.ReliefsSchemeDetailsController.show(taxYearEOY, Some(0)).url //todo: redirect to migration page when added
+    val schemeDetailsDblTaxLink = controllers.pensions.paymentsIntoOverseasPensions.routes.DoubleTaxationAgreementController.show(taxYearEOY, Some(0)).url
   }
 
   trait CommonExpectedResults {
@@ -137,7 +137,7 @@ class ReliefsSchemeDetailsViewSpec extends ViewUnitTest with FakeRequestProvider
       "Render the page with prefilled data for Migrant member relief" which {
       implicit val messages: Messages = getMessages(userScenario.isWelsh)
         val updatedRelief: Relief = Relief(
-          Some("PENSIONINCOME245"), Some(193.54), Some(TaxReliefQuestion.MigrantMemberRelief), qopsReferenceNumber = Some("123456")
+          Some("PENSIONINCOME245"), Some(193.54), Some(TaxReliefQuestion.MigrantMemberRelief), qopsReference = Some("123456")
         )
         implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = UserSessionDataRequest(aPensionsUserData.copy(
           pensions = aPensionsCYAModel.copy(
@@ -206,7 +206,7 @@ class ReliefsSchemeDetailsViewSpec extends ViewUnitTest with FakeRequestProvider
           3)
         cyaRowCheck(userScenario.commonExpectedResults.schemeDetails,
           s"Country code: Germany Article: AB3211-1 Treaty: Munich Relief: £123.45",
-          ChangeLinks.schemeDetailsMigrationLink,
+          ChangeLinks.schemeDetailsDblTaxLink,
           userScenario.commonExpectedResults.schemeDetailsHidden,
           4)
         buttonCheck(userScenario.commonExpectedResults.button)

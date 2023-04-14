@@ -81,7 +81,7 @@ object ReliefsSchemeDetailsHelper extends CYABaseHelper {
       case TaxReliefQuestion.MigrantMemberRelief =>
         Some(summaryListRowWithStrings(
           "overseasPension.reliefDetails.schemeDetail",
-          relief.qopsReferenceNumber,
+          relief.qopsReference,
           routes.QOPSReferenceController.show(taxYear, index)))
       case TaxReliefQuestion.TransitionalCorrespondingRelief =>
         Some(summaryListRowWithStrings(

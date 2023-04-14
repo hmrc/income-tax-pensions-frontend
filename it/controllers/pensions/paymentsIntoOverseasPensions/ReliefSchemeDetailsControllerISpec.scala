@@ -16,14 +16,16 @@
 
 package controllers.pensions.paymentsIntoOverseasPensions
 
+import builders.PaymentsIntoOverseasPensionsViewModelBuilder.aPaymentsIntoOverseasPensionsViewModel
 import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import builders.PensionsUserDataBuilder
+import builders.PensionsUserDataBuilder.pensionUserDataWithOnlyOverseasPensions
 import builders.UserBuilder.{aUser, aUserRequest}
 import models.mongo.PensionsCYAModel
 import play.api.http.HeaderNames
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.PaymentIntoOverseasPensions.{pensionCustomerReferenceNumberUrl, pensionReliefSchemeDetailsUrl}
+import utils.PageUrls.PaymentIntoOverseasPensions._
 import utils.PageUrls.{fullUrl, overviewUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
@@ -35,7 +37,7 @@ class ReliefSchemeDetailsControllerISpec extends IntegrationTest with ViewHelper
 
   override val userScenarios: Seq[UserScenario[_, _]] = Nil
 
-  ".show" should {
+  ".show" should {  //scalastyle:off magic.number
     "redirect to Overview Page when in year" in {
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
@@ -58,8 +60,22 @@ class ReliefSchemeDetailsControllerISpec extends IntegrationTest with ViewHelper
       }
       result.status shouldBe OK
     }
-
-    "redirect to start of sequence when index doesn't match" in {
+    
+    "redirect to customer reference page when index doesn't match and there are No pensions schemes" in {
+      val pensionsNoSchemesViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(reliefs = Seq())
+      
+      lazy implicit val result: WSResponse = {
+        dropPensionsDB()
+        authoriseAgentOrIndividual(aUser.isAgent)
+        insertCyaData(pensionUserDataWithOnlyOverseasPensions(pensionsNoSchemesViewModel), aUserRequest)
+        urlGet(fullUrl(pensionReliefSchemeDetailsUrl(taxYearEOY, 100)), !aUser.isAgent, follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+      }
+      result.status shouldBe SEE_OTHER
+      result.headers("Location").head shouldBe pensionCustomerReferenceNumberUrl(taxYearEOY, None)
+    }
+    
+    "redirect to pension relief scheme summary page when index doesn't match and there are pensions schemes" in {
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
@@ -68,7 +84,7 @@ class ReliefSchemeDetailsControllerISpec extends IntegrationTest with ViewHelper
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
       result.status shouldBe SEE_OTHER
-      result.headers("Location").head shouldBe pensionCustomerReferenceNumberUrl(taxYearEOY, Some(100))
+      result.headers("Location").head shouldBe pensionReliefSchemeSummaryUrl(taxYearEOY)
     }
   }
 
@@ -92,7 +108,26 @@ class ReliefSchemeDetailsControllerISpec extends IntegrationTest with ViewHelper
       result.status shouldBe SEE_OTHER
       result.headers("location").head shouldBe overviewUrl(taxYear)
     }
-    "redirect to start of sequence when index doesn't match" in {
+    
+    "redirect to customer reference Page when index doesn't match and there are No pensions schemes" in {
+      val pensionsNoSchemesViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(reliefs = Seq())
+      lazy implicit val result: WSResponse = {
+        dropPensionsDB()
+        authoriseAgentOrIndividual(aUser.isAgent)
+        insertCyaData(pensionUserDataWithOnlyOverseasPensions(pensionsNoSchemesViewModel), aUserRequest)
+
+        urlPost(
+          fullUrl(pensionReliefSchemeDetailsUrl(taxYearEOY, 100)),
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
+          follow = false,
+          body = "")
+      }
+      
+      result.status shouldBe SEE_OTHER
+      result.headers("Location").head shouldBe pensionCustomerReferenceNumberUrl(taxYearEOY, None)
+    }
+    
+    "redirect to pension Relief Scheme Summary when index doesn't match and there are pensions schemes" in {
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
@@ -106,10 +141,10 @@ class ReliefSchemeDetailsControllerISpec extends IntegrationTest with ViewHelper
       }
 
       result.status shouldBe SEE_OTHER
-      result.headers("Location").head shouldBe pensionCustomerReferenceNumberUrl(taxYearEOY, Some(100))
+      result.headers("Location").head shouldBe pensionReliefSchemeSummaryUrl(taxYearEOY)
     }
 
-    "redirect to CYA user submits with valid tax year and index" in {
+    "redirect to pension relief Scheme Summary when user submits with valid tax year and index" in {
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
@@ -120,7 +155,8 @@ class ReliefSchemeDetailsControllerISpec extends IntegrationTest with ViewHelper
           follow = false,
           body = "")
       }
-      result.status shouldBe OK //todo redirect to "cya" Page when built
+      result.status shouldBe SEE_OTHER
+      result.headers("Location").head shouldBe pensionReliefSchemeSummaryUrl(taxYearEOY)
     }
   }
 

@@ -37,7 +37,7 @@ class ReliefsSchemeDetailsHelperSpec extends AnyWordSpec with Matchers {
     Some("PENSIONINCOME245"), Some(193.54), Some(TaxReliefQuestion.TransitionalCorrespondingRelief), sf74Reference = Some("123456"))
 
   val reliefMigrant: Relief = Relief(
-    Some("PENSIONINCOME245"), Some(193.54), Some(TaxReliefQuestion.MigrantMemberRelief), qopsReferenceNumber = Some("123456")
+    Some("PENSIONINCOME245"), Some(193.54), Some(TaxReliefQuestion.MigrantMemberRelief), qopsReference = Some("123456")
   )
 
   val reliefDouble: Relief = Relief(
@@ -146,7 +146,7 @@ class ReliefsSchemeDetailsHelperSpec extends AnyWordSpec with Matchers {
       "Scheme details",
       expectedValue,
       "Change",
-      "/2022/overseas-pensions/payments-into-overseas-pensions/pensions-overseas-details-summary?reliefIndex=1",
+      "/2022/overseas-pensions/payments-into-overseas-pensions/double-taxation-agreement-details?index=1",
       messages("overseasPension.reliefDetails.schemeDetail.hidden")))
   }
 

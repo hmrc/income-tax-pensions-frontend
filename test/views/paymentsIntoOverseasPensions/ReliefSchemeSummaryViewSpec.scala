@@ -113,9 +113,9 @@ class ReliefSchemeSummaryViewSpec extends ViewUnitTest with FakeRequestProvider 
             val htmlFormat = underTest(taxYearEOY, schemes)
             implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
-            val cyaUrl = ReliefsSchemeSummaryController.show(taxYearEOY).url //todo update when CYA is added
-            def changeUrl(index: Int) =  ReliefsSchemeDetailsController.show(taxYearEOY, Some(index)).url
-            val addSchemeUrl = ReliefsSchemeSummaryController.show(taxYearEOY).url //todo update when PensionsCustomerReferenceNumberController is updated
+            val cyaUrl = PaymentsIntoOverseasPensionsCYAController.show(taxYearEOY).url //todo update when CYA is added
+            val changeUrl = (index: Int) =>  ReliefsSchemeDetailsController.show(taxYearEOY, Some(index)).url
+            val addSchemeUrl =  PensionsCustomerReferenceNumberController.show(taxYearEOY, None).url
 
             titleCheck(expectedTitle, userScenario.isWelsh)
             h1Check(expectedHeading)
@@ -141,14 +141,14 @@ class ReliefSchemeSummaryViewSpec extends ViewUnitTest with FakeRequestProvider 
             implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = UserSessionDataRequest(aPensionsUserData, aUser, fakeIndividualRequest)
             implicit val messages: Messages = getMessages(userScenario.isWelsh)
 
-            val schemes = aPaymentsIntoOverseasPensionsViewModel.reliefs.updated(1, aPaymentsIntoOverseasPensionsViewModel.reliefs.last.copy(customerReference = None))
+            val schemes = aPaymentsIntoOverseasPensionsViewModel.reliefs
+              .updated(1, aPaymentsIntoOverseasPensionsViewModel.reliefs.last.copy(customerReference = None))
             val htmlFormat = underTest(taxYearEOY, schemes)
             implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
-            val cyaUrl: String = ReliefsSchemeSummaryController.show(taxYearEOY).url //todo update when CYA is added
-            def changeUrl(index: Int): String = ReliefsSchemeDetailsController.show(taxYearEOY, Some(index)).url
-            val addSchemeUrl: String = ReliefsSchemeSummaryController.show(taxYearEOY).url //todo update when PensionsCustomerReferenceNumberController is updated
-
+            val cyaUrl: String = PaymentsIntoOverseasPensionsCYAController.show(taxYearEOY).url
+            val changeUrl = (index: Int) => ReliefsSchemeDetailsController.show(taxYearEOY, Some(index)).url
+            val addSchemeUrl: String = PensionsCustomerReferenceNumberController.show(taxYearEOY, None).url
 
           titleCheck(expectedTitle, userScenario.isWelsh)
             h1Check(expectedHeading)

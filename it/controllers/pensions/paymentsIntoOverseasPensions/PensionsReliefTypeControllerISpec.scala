@@ -16,9 +16,10 @@
 
 package controllers.pensions.paymentsIntoOverseasPensions
 
-import builders.PaymentsIntoOverseasPensionsViewModelBuilder.aPaymentsIntoOverseasPensionsEmptyViewModel
+import builders.PaymentsIntoOverseasPensionsViewModelBuilder.{aPaymentsIntoOverseasPensionsEmptyViewModel, aPaymentsIntoOverseasPensionsViewModel}
 import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import builders.PensionsUserDataBuilder
+import builders.PensionsUserDataBuilder.pensionUserDataWithOnlyOverseasPensions
 import builders.UserBuilder.{aUser, aUserRequest}
 import forms.RadioButtonForm
 import models.mongo.PensionsCYAModel
@@ -26,11 +27,11 @@ import models.pension.charges.TaxReliefQuestion
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.PaymentIntoOverseasPensions.{doubleTaxationAgreementUrl, pensionCustomerReferenceNumberUrl, pensionReliefSchemeDetailsUrl, pensionReliefTypeUrl, qopsReferenceUrl, qopsReferenceUrlWithIndex, sf74ReferenceUrl}
+import utils.PageUrls.PaymentIntoOverseasPensions._
 import utils.PageUrls.{fullUrl, overviewUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
-class PensionsReliefControllerISpec extends IntegrationTest with ViewHelpers
+class PensionsReliefTypeControllerISpec extends IntegrationTest with ViewHelpers
   with PensionsDatabaseHelper {
 
   private def pensionsUsersData(isPrior: Boolean, pensionsCyaModel: PensionsCYAModel) = {
@@ -38,6 +39,8 @@ class PensionsReliefControllerISpec extends IntegrationTest with ViewHelpers
   }
 
   override val userScenarios: Seq[UserScenario[_, _]] = Nil
+  val schemeIndex01 = 1
+  val schemeIndex100 = 100
 
   ".show" should {
     "redirect to Overview Page when in year" in {
@@ -45,7 +48,7 @@ class PensionsReliefControllerISpec extends IntegrationTest with ViewHelpers
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
         insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel), aUserRequest)
-        urlGet(fullUrl(pensionReliefTypeUrl(taxYear, 1)), !aUser.isAgent, follow = false,
+        urlGet(fullUrl(pensionReliefTypeUrl(taxYear, schemeIndex01)), !aUser.isAgent, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
       }
       result.status shouldBe SEE_OTHER
@@ -57,24 +60,37 @@ class PensionsReliefControllerISpec extends IntegrationTest with ViewHelpers
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
         insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel), aUserRequest)
-        urlGet(fullUrl(pensionReliefTypeUrl(taxYearEOY, 1)), !aUser.isAgent, follow = false,
+        urlGet(fullUrl(pensionReliefTypeUrl(taxYearEOY, schemeIndex01)), !aUser.isAgent, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
       result.status shouldBe OK
     }
 
-    "redirect to start of sequence when index doesn't match" in {
+    "redirect to customer reference page when index doesn't match and there are No pensions schemes" in {
+      val pensionsNoSchemesViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(reliefs = Seq())
+      lazy implicit val result: WSResponse = {
+        dropPensionsDB()
+        authoriseAgentOrIndividual(aUser.isAgent)
+        insertCyaData(pensionUserDataWithOnlyOverseasPensions(pensionsNoSchemesViewModel), aUserRequest)
+        urlGet(fullUrl(pensionReliefTypeUrl(taxYearEOY, schemeIndex100)), !aUser.isAgent, follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+      }
+      result.status shouldBe SEE_OTHER
+      result.headers("Location").head shouldBe pensionCustomerReferenceNumberUrl(taxYearEOY, None)
+    }
+
+    "redirect to pension schemes summary when index doesn't match and there are pensions schemes" in {
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
         insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel), aUserRequest)
-        urlGet(fullUrl(pensionReliefTypeUrl(taxYearEOY, 100)), !aUser.isAgent, follow = false,
+        urlGet(fullUrl(pensionReliefTypeUrl(taxYearEOY, schemeIndex100)), !aUser.isAgent, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
       result.status shouldBe SEE_OTHER
-      result.headers("Location").head shouldBe pensionCustomerReferenceNumberUrl(taxYearEOY, Some(100))
+      result.headers("Location").head shouldBe pensionReliefSchemeSummaryUrl(taxYearEOY)
     }
-    }
+  }
 
   ".submit" should {
     "redirect to overview when in year" in {
@@ -180,20 +196,37 @@ class PensionsReliefControllerISpec extends IntegrationTest with ViewHelpers
       result.status shouldBe BAD_REQUEST
     }
 
-    "redirect to start of sequence when index doesn't match" in {
+    "redirect to customer reference page when index doesn't match and there are No pension schemes" in {
+      val pensionsNoSchemesViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(reliefs = Seq())
+      lazy implicit val result: WSResponse = {
+        dropPensionsDB()
+        authoriseAgentOrIndividual(aUser.isAgent)
+        val formData = Map(RadioButtonForm.value -> TaxReliefQuestion.TransitionalCorrespondingRelief)
+        insertCyaData(pensionUserDataWithOnlyOverseasPensions(pensionsNoSchemesViewModel), aUserRequest)
+        urlPost(
+          fullUrl(pensionReliefTypeUrl(taxYearEOY, schemeIndex100)),
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
+          follow = false,
+          body = formData)
+      }
+      result.status shouldBe SEE_OTHER
+      result.headers("location").head shouldBe pensionCustomerReferenceNumberUrl(taxYearEOY, None)
+    }
+
+    "redirect to Pensions scheme summary when index doesn't match and there are pension schemes" in {
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
         val formData = Map(RadioButtonForm.value -> TaxReliefQuestion.TransitionalCorrespondingRelief)
         insertCyaData(pensionsUsersData(isPrior = true, aPensionsCYAModel), aUserRequest)
         urlPost(
-          fullUrl(pensionReliefTypeUrl(taxYearEOY, 100)),
+          fullUrl(pensionReliefTypeUrl(taxYearEOY, schemeIndex100)),
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
           follow = false,
           body = formData)
       }
       result.status shouldBe SEE_OTHER
-      result.headers("location").head shouldBe pensionCustomerReferenceNumberUrl(taxYearEOY, Some(100))
+      result.headers("location").head shouldBe pensionReliefSchemeSummaryUrl(taxYearEOY)
     }
   }
 }

@@ -50,12 +50,12 @@ class QOPSReferenceController @Inject()(actionsProvider: ActionsProvider,
       val reliefSize = sessionData.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs.size
       validatedIndex(index, reliefSize) match {
         case Some(idx) => Future.successful(Ok(qopsReferenceView(referenceForm(sessionData.pensionsUserData, idx), taxYear, Some(idx))))
-        case _ => Future.successful(Redirect(customerRefPageOrCYAPage(reliefSize, taxYear)))
+        case _ => Future.successful(Redirect(customerRefPageOrSchemeSummaryPage(reliefSize, taxYear)))
       }
   }
 
   private def referenceForm(pensionUserData: PensionsUserData, index: Int): Form[String] = {
-    val qopsNumber = pensionUserData.pensions.paymentsIntoOverseasPensions.reliefs(index).qopsReferenceNumber
+    val qopsNumber = pensionUserData.pensions.paymentsIntoOverseasPensions.reliefs(index).qopsReference
     qopsNumber match {
       case Some(qopsNumber) => referenceForm().fill(removePrefix(qopsNumber))
       case None => referenceForm()
@@ -75,7 +75,7 @@ class QOPSReferenceController @Inject()(actionsProvider: ActionsProvider,
               val relief = piops.reliefs(idx)
               val updatedCyaModel: PensionsCYAModel = request.pensionsUserData.pensions.copy(
                 paymentsIntoOverseasPensions = piops.copy(
-                  reliefs = piops.reliefs.updated(idx, relief.copy(qopsReferenceNumber = Some(referenceNumber))))
+                  reliefs = piops.reliefs.updated(idx, relief.copy(qopsReference = Some(referenceNumber))))
               )
               pensionSessionService.createOrUpdateSessionData(request.user,
                 updatedCyaModel, taxYear, request.pensionsUserData.isPriorSubmission)(errorHandler.internalServerError()) {
@@ -83,7 +83,7 @@ class QOPSReferenceController @Inject()(actionsProvider: ActionsProvider,
               }
             }
           )
-        case _ => Future.successful(Redirect(customerRefPageOrCYAPage(reliefSize, taxYear)))
+        case _ => Future.successful(Redirect(customerRefPageOrSchemeSummaryPage(reliefSize, taxYear)))
       }
   }
 

@@ -41,7 +41,7 @@ class ReliefsSchemeDetailsController @Inject()(view: ReliefSchemeDetailsView,
         case Some(idx) =>
           Ok(view(taxYear, piopReliefs(idx), reliefIndex))
         case _ =>
-          Redirect(customerRefPageOrCYAPage(piopReliefs.size, taxYear))
+          Redirect(customerRefPageOrSchemeSummaryPage(piopReliefs.size, taxYear))
       }
   }
 
@@ -52,7 +52,7 @@ class ReliefsSchemeDetailsController @Inject()(view: ReliefSchemeDetailsView,
         case Some(_) =>
           Redirect(routes.ReliefsSchemeSummaryController.show(taxYear))
         case _ =>
-          Redirect(customerRefPageOrCYAPage(reliefSize, taxYear))
+          Redirect(customerRefPageOrSchemeSummaryPage(reliefSize, taxYear))
       }
     }
 }

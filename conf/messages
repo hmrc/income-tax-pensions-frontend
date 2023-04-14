@@ -775,6 +775,8 @@ unauthorisedPayments.removePensionSchemeTaxReference.removeButton = Remove refer
 unauthorisedPayments.removePensionSchemeTaxReference.dontRemove = Don’t remove
 
 #################       Overseas Pension        ########################################
+common.overseas.pension.schemes = Overseas pension schemes
+common.overseas.pension.schemes.hidden = Change Overseas pension schemes
 
 #Payments into overseas pension schemes page
 overseasPension.paymentIntoOverseasPensionScheme.title = Payments into overseas pension schemes
@@ -958,7 +960,6 @@ paymentsIntoOverseasPensions.cya.heading = Check payments into overseas pensions
 paymentsIntoOverseasPensions.cya.totalPayments = Total payments
 paymentsIntoOverseasPensions.cya.employerPayments = Employer payments
 paymentsIntoOverseasPensions.cya.employerPaymentsTax = Tax paid on employer payments
-paymentsIntoOverseasPensions.cya.pensionsSchemes = Overseas pension schemes
 
 
 ############################################## INCOME FROM OVERSEAS PENSIONS ##############################################
@@ -996,8 +997,6 @@ overseasPension.foreignTaxCreditRelief.error.noEntry.agent = Enter yes or no if 
 incomeFromOverseasPensions.cya.heading = Check income from overseas pensions
 incomeFromOverseasPensions.cya.paymentsFromOverseasPensions = Payments from overseas pensions
 incomeFromOverseasPensions.cya.paymentsFromOverseasPensions.hidden = Change Payments from overseas pensions
-incomeFromOverseasPensions.cya.overseasPensionSchemes = Overseas pension schemes
-incomeFromOverseasPensions.cya.overseasPensionSchemes.hidden = Change Overseas pension schemes
 
 incomeFromOverseasPensions.summary.title = Pension scheme summary
 incomeFromOverseasPensions.summary.country = Country

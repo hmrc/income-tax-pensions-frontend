@@ -775,6 +775,8 @@ unauthorisedPayments.removePensionSchemeTaxReference.removeButton = Remove refer
 unauthorisedPayments.removePensionSchemeTaxReference.dontRemove = Don’t remove
 
 #################       Overseas Pension        ########################################
+common.overseas.pension.schemes = Overseas pension schemes
+common.overseas.pension.schemes.hidden = Change Overseas pension schemes
 
 #Payments into overseas pension schemes page
 overseasPension.paymentIntoOverseasPensionScheme.title = Payments into overseas pension schemes
@@ -831,32 +833,6 @@ overseasPension.pensionPayments.nonUkTaxPaid.text = Non-UK tax paid
 overseasPension.pensionPayments.nonUkTaxPaid.incorrectFormat = Enter the amount of non-UK tax paid in the correct format
 overseasPension.pensionPayments.nonUkTaxPaidLessThanAmountBeforeTax = The Non-UK tax paid can’t be larger than Amount before tax
 
-#Special Withholding Tax
-overseasPension.specialWithHoldingTax.title.individual = Did you have Special Withholding Tax (SWT) deducted from your pension?
-overseasPension.specialWithHoldingTax.title.agent = Did your client have Special Withholding Tax (SWT) deducted from their pension?
-overseasPension.specialWithHoldingTax.details.title = Understanding Special Withholding Tax (SWT)
-overseasPension.specialWithHoldingTax.details.para1 = Special Withholding Tax (SWT) is an amount of tax taken off certain foreign payments to UK residents. SWT will be paid along with any foreign tax deducted by the country where the payment came from. The countries that may deduct SWT are:
-overseasPension.specialWithHoldingTax.details.bullet1 = Andorra
-overseasPension.specialWithHoldingTax.details.bullet2 = Austria
-overseasPension.specialWithHoldingTax.details.bullet3 = Curaçao
-overseasPension.specialWithHoldingTax.details.bullet4 = Gibraltar
-overseasPension.specialWithHoldingTax.details.bullet5 = Jersey
-overseasPension.specialWithHoldingTax.details.bullet6 = Liechtenstein
-overseasPension.specialWithHoldingTax.details.bullet7 = Luxembourg
-overseasPension.specialWithHoldingTax.details.bullet8 = Monaco
-overseasPension.specialWithHoldingTax.details.bullet9 = San Marino
-overseasPension.specialWithHoldingTax.details.bullet10 = Saint Maarten
-overseasPension.specialWithHoldingTax.details.bullet11 = Switzerland
-overseasPension.specialWithHoldingTax.details.para2 = Where SWT has been deducted you’re treated as having paid the same amount of income tax in the UK in the same year. This can be set against your UK tax liability of that year, or repaid to you if the amount is more than the tax you must pay.
-overseasPension.specialWithHoldingTax.details.para3 = Read more about
-overseasPension.specialWithHoldingTax.details.link = Special Withholding Tax at Gov.uk
-overseasPension.specialWithHoldingTax.amount.Text = Amount of SWT, in pounds
-overseasPension.specialWithHoldingTax.amount.individual.noEntry = Select yes or no if you had Special Withholding Tax deducted from your pension.
-overseasPension.specialWithHoldingTax.amount.agent.noEntry = Select yes or no if your client had Special Withholding Tax deducted from their pension.
-overseasPension.specialWithHoldingTax.amount.noAmountEntry = Enter an amount in pounds for the amount of Special Withholding Tax deducted
-overseasPension.specialWithHoldingTax.amount.incorrectFormat = Enter the amount of Special Withholding Tax deducted in the correct format
-overseasPension.specialWithHoldingTax.amount.tooBig = Amount of Special Withholding Tax deducted must be less than £100,000,000,000
-
 #Untaxed Employer Payments
 overseasPension.untaxedEmployerPayments.title = Untaxed employer payments
 overseasPension.untaxedEmployerPayments.para1 = This is also known as exempt employers’ contributions.
@@ -883,6 +859,33 @@ overseasPension.untaxedEmployerPayments.error.tooBig.individual = The amount you
 overseasPension.untaxedEmployerPayments.error.tooBig.agent = The total amount that your client’s employers paid into their overseas pension scheme must be less than £100,000,000,000
 overseasPension.untaxedEmployerPayments.error.incorrectFormat.individual = Enter the amount your employers paid into overseas pension schemes in the correct format
 overseasPension.untaxedEmployerPayments.error.incorrectFormat.agent = Enter the total amount that your client’s employers paid into their overseas pension scheme in the correct format
+
+
+#Special Withholding Tax
+overseasPension.specialWithHoldingTax.title.individual = Did you have Special Withholding Tax (SWT) deducted from your pension?
+overseasPension.specialWithHoldingTax.title.agent = Did your client have Special Withholding Tax (SWT) deducted from their pension?
+overseasPension.specialWithHoldingTax.details.title = Understanding Special Withholding Tax (SWT)
+overseasPension.specialWithHoldingTax.details.para1 = Special Withholding Tax (SWT) is an amount of tax taken off certain foreign payments to UK residents. SWT will be paid along with any foreign tax deducted by the country where the payment came from. The countries that may deduct SWT are:
+overseasPension.specialWithHoldingTax.details.bullet1 = Andorra
+overseasPension.specialWithHoldingTax.details.bullet2 = Austria
+overseasPension.specialWithHoldingTax.details.bullet3 = Curaçao
+overseasPension.specialWithHoldingTax.details.bullet4 = Gibraltar
+overseasPension.specialWithHoldingTax.details.bullet5 = Jersey
+overseasPension.specialWithHoldingTax.details.bullet6 = Liechtenstein
+overseasPension.specialWithHoldingTax.details.bullet7 = Luxembourg
+overseasPension.specialWithHoldingTax.details.bullet8 = Monaco
+overseasPension.specialWithHoldingTax.details.bullet9 = San Marino
+overseasPension.specialWithHoldingTax.details.bullet10 = Saint Maarten
+overseasPension.specialWithHoldingTax.details.bullet11 = Switzerland
+overseasPension.specialWithHoldingTax.details.para2 = Where SWT has been deducted you’re treated as having paid the same amount of income tax in the UK in the same year. This can be set against your UK tax liability of that year, or repaid to you if the amount is more than the tax you must pay.
+overseasPension.specialWithHoldingTax.details.para3 = Read more about
+overseasPension.specialWithHoldingTax.details.link = Special Withholding Tax at Gov.uk
+overseasPension.specialWithHoldingTax.amount.Text = Amount of SWT, in pounds
+overseasPension.specialWithHoldingTax.amount.individual.noEntry = Select yes or no if you had Special Withholding Tax deducted from your pension.
+overseasPension.specialWithHoldingTax.amount.agent.noEntry = Select yes or no if your client had Special Withholding Tax deducted from their pension.
+overseasPension.specialWithHoldingTax.amount.noAmountEntry = Enter an amount in pounds for the amount of Special Withholding Tax deducted
+overseasPension.specialWithHoldingTax.amount.incorrectFormat = Enter the amount of Special Withholding Tax deducted in the correct format
+overseasPension.specialWithHoldingTax.amount.tooBig = Amount of Special Withholding Tax deducted must be less than £100,000,000,000
 
 #Pension Customer Reference Number
 overseasPension.pensionsCustomerReferenceNumber.title.individual = What’s your customer reference number?
@@ -919,6 +922,7 @@ overseasPension.reliefDetails.article = Article:
 overseasPension.reliefDetails.treaty = Treaty:
 overseasPension.reliefDetails.relief = Relief:
 
+
 #Your Taxable Amount
 overseasPension.yourTaxableAmount.title.individual = Your taxable amount
 overseasPension.yourTaxableAmount.title.agent = Your client’s taxable amount
@@ -942,6 +946,21 @@ overseasPension.yourTaxableAmount.table.taxableAmount=Taxable amount
 pensions.paymentsIntoOverseasPensions.reliefSchemeSummary.title = Schemes with untaxed employer payments
 pensions.paymentsIntoOverseasPensions.reliefSchemeSummary.addAnotherReliefLink = Add another overseas pension scheme
 pensions.paymentsIntoOverseasPensions.reliefSchemeSummary.addReliefLink = Add an overseas pension scheme
+
+#SF74 reference
+pensions.paymentsIntoOverseasPensions.sf74Reference.title = SF74 reference
+pensions.paymentsIntoOverseasPensions.sf74Reference.paragraph1.individual = Enter your SF74 reference. You can find this out from your overseas scheme manager.
+pensions.paymentsIntoOverseasPensions.sf74Reference.paragraph1.agent = Enter your client’s SF74 reference. You can find this out from your client’s overseas scheme manager.
+pensions.paymentsIntoOverseasPensions.sf74Reference.hint = For example, ''SF74/1234'', ''SF74/45865'' or ''SF74/123456''
+pensions.paymentsIntoOverseasPensions.sf74Reference.noEntry = Enter your SF74 reference
+pensions.paymentsIntoOverseasPensions.sf74Reference.incorrectFormat = The SF74 reference must be between 1 and 10 digits long, contain only numbers and no special characters
+
+#Payment into overseas pensions CYA
+paymentsIntoOverseasPensions.cya.heading = Check payments into overseas pensions
+paymentsIntoOverseasPensions.cya.totalPayments = Total payments
+paymentsIntoOverseasPensions.cya.employerPayments = Employer payments
+paymentsIntoOverseasPensions.cya.employerPaymentsTax = Tax paid on employer payments
+
 
 ############################################## INCOME FROM OVERSEAS PENSIONS ##############################################
 
@@ -978,8 +997,6 @@ overseasPension.foreignTaxCreditRelief.error.noEntry.agent = Enter yes or no if 
 incomeFromOverseasPensions.cya.heading = Check income from overseas pensions
 incomeFromOverseasPensions.cya.paymentsFromOverseasPensions = Payments from overseas pensions
 incomeFromOverseasPensions.cya.paymentsFromOverseasPensions.hidden = Change Payments from overseas pensions
-incomeFromOverseasPensions.cya.overseasPensionSchemes = Overseas pension schemes
-incomeFromOverseasPensions.cya.overseasPensionSchemes.hidden = Change Overseas pension schemes
 
 incomeFromOverseasPensions.summary.title = Pension scheme summary
 incomeFromOverseasPensions.summary.country = Country
@@ -993,6 +1010,8 @@ incomeFromOverseasPensions.summary.tax.amount = Taxable amount
 #Overseas Pension Income Summary Page
 overseasPensionIncomeSummary.heading = Overseas pension income
 overseasPensionIncomeSummary.hidden = Change Overseas pension income
+#TODO: overseasPensionIncomeSummary.addAnotherPensionIncomeLink = Add another overseas pension scheme
+#TODO:overseasPensionIncomeSummary.addPensionIncomeLink = Add an overseas pension scheme
 
 ############################################## TRANSFER INTO OVERSEAS PENSION ##############################################
 
@@ -1137,11 +1156,3 @@ shortServiceRefunds.cya.refundAmount.hidden = Change refund amount
 shortServiceRefunds.cya.nonUk.hidden = Change paid non-UK tax
 shortServiceRefunds.cya.nonUkAmount.hidden = Change amount of non-UK tax
 shortServiceRefunds.cya.schemesPayingTax.hidden = Change pension schemes paying tax
-
-#SF74 reference
-pensions.paymentsIntoOverseasPensions.sf74Reference.title = SF74 reference
-pensions.paymentsIntoOverseasPensions.sf74Reference.paragraph1.individual = Enter your SF74 reference. You can find this out from your overseas scheme manager.
-pensions.paymentsIntoOverseasPensions.sf74Reference.paragraph1.agent = Enter your client’s SF74 reference. You can find this out from your client’s overseas scheme manager.
-pensions.paymentsIntoOverseasPensions.sf74Reference.hint = For example, ''SF74/1234'', ''SF74/45865'' or ''SF74/123456''
-pensions.paymentsIntoOverseasPensions.sf74Reference.noEntry = Enter your SF74 reference
-pensions.paymentsIntoOverseasPensions.sf74Reference.incorrectFormat = The SF74 reference must be between 1 and 10 digits long, contain only numbers and no special characters

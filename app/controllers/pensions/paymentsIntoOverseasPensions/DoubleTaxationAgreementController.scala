@@ -17,7 +17,6 @@
 package controllers.pensions.paymentsIntoOverseasPensions
 
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.paymentsIntoOverseasPensions.routes.PensionsCustomerReferenceNumberController
 import controllers.predicates.ActionsProvider
 import controllers.validatedIndex
 import forms.Countries
@@ -50,13 +49,13 @@ class DoubleTaxationAgreementController @Inject() (actionsProvider: ActionsProvi
       pensionSessionService.getPensionSessionData(taxYear, request.user).map {
         case Left(_) => errorHandler.handleError(INTERNAL_SERVER_ERROR)
         case Right(_) =>
-          val relief = request.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs
-          validatedIndex(index, relief.size) match {
+          val piopReliefs = request.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs
+          validatedIndex(index, piopReliefs.size) match {
             case Some(idx) =>
-              val form = dblTaxationAgreementForm(request.user).fill(updateViewModel(relief(idx)))
+              val form = dblTaxationAgreementForm(request.user).fill(updateViewModel(piopReliefs(idx)))
               Ok(view(form, taxYear, index))
             case _ =>
-              Redirect(PensionsCustomerReferenceNumberController.show(taxYear, None))
+              Redirect(customerRefPageOrSchemeSummaryPage(piopReliefs.size, taxYear))
           }
       }
   }
@@ -71,7 +70,7 @@ class DoubleTaxationAgreementController @Inject() (actionsProvider: ActionsProvi
             formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear, index))),
             doubleTaxationAgreement => updateSessionData(request.pensionsUserData, doubleTaxationAgreement, taxYear, idx)
           )
-        case _ =>  Future.successful(Redirect(customerRefPageOrCYAPage(reliefSize, taxYear)))
+        case _ =>  Future.successful(Redirect(customerRefPageOrSchemeSummaryPage(reliefSize, taxYear)))
       }
   }
 
