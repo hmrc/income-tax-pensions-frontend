@@ -48,7 +48,6 @@ class StatePensionLumpSumStartDateController @Inject()(actionsProvider: ActionsP
     implicit sessionData =>
       sessionData.pensionsUserData.pensions.incomeFromPensions.statePensionLumpSum.fold {
         Redirect(PensionsSummaryController.show(taxYear))
-        //        Ok(view(formsProvider.statePensionLumpSumStartDateForm, taxYear))
       } { sP: StateBenefitViewModel =>
         sP.startDate.fold {
           Ok(view(formsProvider.statePensionLumpSumStartDateForm, taxYear))

@@ -531,9 +531,9 @@ pensions.statePensionLumpSumStartDate.error.empty.dayYear = The pension lump sum
 pensions.statePensionLumpSumStartDate.error.empty.month = The pension lump sum start date must include a month
 pensions.statePensionLumpSumStartDate.error.empty.monthYear = The pension lump sum start date must include a month and year
 pensions.statePensionLumpSumStartDate.error.empty.year = The pension lump sum start date must include a year
-pensions.statePensionLumpSumStartDate.error.invalidFormat = The pension lump sum start date must be a real date
-pensions.statePensionLumpSumStartDate.error.dateInFuture = The pension lump sum start date must be in the past
-pensions.statePensionLumpSumStartDate.error.tooLongAgo = The pension lump sum start date must be after 1 January 1900
+pensions.statePensionLumpSumStartDate.error.invalidFormat = The day, month and year must be valid
+pensions.statePensionLumpSumStartDate.error.dateInFuture = The date you entered must be in the past
+pensions.statePensionLumpSumStartDate.error.tooLongAgo = The date must be after 1 January 1900
 
 #state pension
 pensions.statePension.title.individual = Do you get regular State Pension payments?
