@@ -61,7 +61,6 @@ class PensionProviderPaidTaxControllerISpec
     val expectedNoText = "Na"
     val expectedButtonText = "Yn eich blaen"
     val expectedErrorTitle = "Mae problem wedi codi"
-    val amountTaxPaid = "amount of tax your pension provider paid or agreed to pay"
     val expectedErrorValueIdOpt = "value"
     val expectedErrorAmountIdOpt = "amount-2"
   }
@@ -89,10 +88,9 @@ class PensionProviderPaidTaxControllerISpec
   object ExpectedIndividualCY extends SpecificExpectedResults {
     val expectedTitle = "A wnaeth eich cynlluniau pensiwn dalu’r dreth neu gytuno i dalu’r dreth?"
     val expectedErrorSelectText = "Dewiswch ‘Iawn’ os gwnaeth eich darparwr pensiwn dalu’ch treth lwfans blynyddol neu gytuno i wneud hynny"
-    val amountTaxPaid = "amount of tax your pension provider paid or agreed to pay"
-    val expectedErrorAmountText = s"Enter the $amountTaxPaid"
-    val expectedAmountFormatText = s"$expectedErrorAmountText in the correct format"
-//    val expectedAmountLessThan = s"The $amountTaxPaid must be less than £100,000,000,000"
+    val amountTaxPaid = "swm y dreth a dalwyd gan eich darparwr pensiwn, neu’r swm a gytunodd i’w dalu"
+    val expectedErrorAmountText = s"Nodwch $amountTaxPaid"
+    val expectedAmountFormatText = s"$expectedErrorAmountText, yn y fformat cywir"
     val expectedAmountLessThan = "Mae’n rhaid i swm y dreth a dalwyd gan eich darparwr pensiwn, " +
       "neu’r swm a gytunodd i’w dalu, fod yn llai na £100,000,000,000"
     val errorFromTitle = s"Gwall: $expectedTitle"
@@ -111,9 +109,9 @@ class PensionProviderPaidTaxControllerISpec
   object ExpectedAgentCY extends SpecificExpectedResults {
     val expectedTitle = "A wnaeth cynlluniau pensiwn eich cleient dalu’r dreth neu gytuno i wneud hynny?"
     val expectedErrorSelectText = "Dewiswch ‘Iawn’ os gwnaeth darparwr pensiwn eich cleient dalu’r dreth lwfans blynyddol neu gytuno i wneud hynny"
-    val amountTaxPaid = "amount of tax your client’s pension provider paid or agreed to pay"
-    val expectedErrorAmountText = s"Enter the $amountTaxPaid"
-    val expectedAmountFormatText = s"$expectedErrorAmountText in the correct format"
+    val amountTaxPaid = "swm y dreth a dalwyd gan ddarparwr pensiwn eich cleient, neu’r swm a gytunodd i’w dalu"
+    val expectedErrorAmountText = s"Nodwch $amountTaxPaid"
+    val expectedAmountFormatText = s"$expectedErrorAmountText, yn y fformat cywir"
     val expectedAmountLessThan = "Mae’n rhaid i swm y dreth a dalwyd gan ddarparwr pensiwn eich cleient, " +
       "neu’r swm a gytunodd i’w dalu, fod yn llai na £100,000,000,000"
     val errorFromTitle = s"Gwall: $expectedTitle"

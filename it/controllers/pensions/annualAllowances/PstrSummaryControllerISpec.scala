@@ -73,13 +73,13 @@ class PstrSummaryControllerISpec extends IntegrationTest with BeforeAndAfterEach
   object CommonExpectedCY extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Lwfans blynyddol pensiwn ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
     val expectedButtonText = "Yn eich blaen"
-    val expectedTitle = "Pension Scheme Tax Reference (PSTR) summary"
-    val expectedHeading = "Pension Scheme Tax Reference (PSTR) summary"
+    val expectedTitle = "Crynodeb Cyfeirnod Treth y Cynllun Pensiwn (PSTR)"
+    val expectedHeading = "Crynodeb Cyfeirnod Treth y Cynllun Pensiwn (PSTR)"
     val change = "Newid"
     val remove = "Tynnu"
     val pensionSchemeTaxReference = "Cyfeirnod Treth y Cynllun Pensiwn"
-    val expectedAddAnotherText = "Add another PSTR"
-    val expectedAddPstrText = "Add a PSTR"
+    val expectedAddAnotherText = "Ychwanegu PSTR arall"
+    val expectedAddPstrText = "Ychwanegu PSTR"
   }
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, Nothing]] = Seq(

@@ -68,8 +68,8 @@ class PensionSchemeTaxReferenceControllerISpec extends IntegrationTest with Befo
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
-    val expectedNoEntryError: String = "Enter your PSTR"
-    val expectedIncorrectFormatError: String = "Enter your PSTR in the correct format"
+    val expectedNoEntryError: String = "Nodwch eich PSTR"
+    val expectedIncorrectFormatError: String = "Nodwch eich PSTR yn y fformat cywir"
     val expectedParagraph2: String = "Os gwnaeth mwy nag un o’ch cynlluniau pensiwn dalu’r dreth, gallwch ychwanegu’r manylion hyn yn nes ymlaen."
   }
 
@@ -80,8 +80,8 @@ class PensionSchemeTaxReferenceControllerISpec extends IntegrationTest with Befo
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
-    val expectedNoEntryError: String = "Enter your client’s PSTR"
-    val expectedIncorrectFormatError: String = "Enter your client’s PSTR in the correct format"
+    val expectedNoEntryError: String = "Nodwch PSTR eich cleient"
+    val expectedIncorrectFormatError: String = "Nodwch PSTR eich cleient yn y fformat cywir"
     val expectedParagraph2: String =
       "Os gwnaeth mwy nag un o gynlluniau pensiwn eich cleient dalu’r dreth, gallwch ychwanegu’r manylion hyn yn nes ymlaen."
   }
@@ -107,7 +107,7 @@ class PensionSchemeTaxReferenceControllerISpec extends IntegrationTest with Befo
     val expectedHeading = expectedTitle
     val expectedErrorTitle = s"Gwall: $expectedTitle"
     val hintText = "Er enghraifft, ‘12345678RA’"
-    val expectedParagraph1 = "Enter the reference for the pension scheme that paid the tax."
+    val expectedParagraph1 = "Nodwch y cyfeirnod ar gyfer y cynllun pensiwn a dalodd y dreth."
   }
 
   val inputName: String = "taxReferenceId"
