@@ -17,18 +17,18 @@
 package controllers.pensions.incomeFromPensions
 
 import config.{AppConfig, ErrorHandler}
+import controllers.pensions.incomeFromPensions.routes.StatePensionLumpSumStartDateController
 import controllers.predicates.ActionsProvider
 import forms.FormsProvider
+import models.mongo.PensionsUserData
+import models.pension.statebenefits.{IncomeFromPensionsViewModel, StateBenefitViewModel}
+import models.requests.UserSessionDataRequest
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.incomeFromPensions.TaxPaidOnStatePensionLumpSumView
-import controllers.pensions.routes.PensionsSummaryController
-import models.mongo.PensionsUserData
-import models.pension.statebenefits.{IncomeFromPensionsViewModel, StateBenefitViewModel}
-import models.requests.UserSessionDataRequest
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
@@ -88,8 +88,7 @@ class TaxPaidOnStatePensionLumpSumController @Inject()(
 
     pensionSessionService.createOrUpdateSessionData(request.user,
       updatedCyaModel, taxYear, pensionUserData.isPriorSubmission)(errorHandler.internalServerError()) {
-      //TODO: redirect to the next page - income from pensions Check your state pensions summary (page not build yet)
-      Redirect(PensionsSummaryController.show(taxYear))
+      Redirect(StatePensionLumpSumStartDateController.show(taxYear))
     }
   }
 }

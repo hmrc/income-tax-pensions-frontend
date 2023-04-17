@@ -33,7 +33,7 @@ class FormsProvider() {
     missingInputError = "shortServiceRefunds.taxOnShortServiceRefund.error.noEntry"
   )
 
-  def pensionSchemeTaxTransferForm(user:User): Form[(Boolean, Option[BigDecimal])] = {
+  def pensionSchemeTaxTransferForm(user: User): Form[(Boolean, Option[BigDecimal])] = {
     val agentOrIndividual = if (user.isAgent) "agent" else "individual"
     RadioButtonAmountForm.radioButtonAndAmountForm(
       missingInputError = s"transferIntoOverseasPensions.overseasPensionSchemeTaxTransferCharge.error.noEntry.$agentOrIndividual",
@@ -134,6 +134,10 @@ class FormsProvider() {
 
   def stateBenefitDateForm: Form[DateForm.DateModel] = {
     DateForm.dateForm("stateBenefitStartDate")
+  }
+
+  def statePensionLumpSumStartDateForm: Form[DateForm.DateModel] = {
+    DateForm.dateForm("statePensionLumpSumStartDate")
   }
 
   def pensionSchemeDateForm: Form[DateForm.DateModel] = {

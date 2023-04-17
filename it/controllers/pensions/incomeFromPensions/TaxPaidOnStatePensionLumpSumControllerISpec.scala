@@ -25,8 +25,8 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.IncomeFromPensionsPages.taxOnLumpSumUrl
-import utils.PageUrls.{fullUrl, overviewUrl, pensionSummaryUrl}
+import utils.PageUrls.IncomeFromPensionsPages.{statePensionLumpSumStartDateUrl, taxOnLumpSumUrl}
+import utils.PageUrls.{fullUrl, overviewUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 // scalastyle:off magic.number
@@ -118,7 +118,7 @@ class TaxPaidOnStatePensionLumpSumControllerISpec extends IntegrationTest with B
       result.header("location") shouldBe Some(overviewUrl(taxYear))
     }
 
-    "redirect and update question to 'Yes' with correct taxPaid amount" in {
+    "redirect to the State Pension Lump Sum start date page and update question to 'Yes' with correct taxPaid amount" in {
       lazy val form: Map[String, String] = Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "42.24")
 
       lazy val result: WSResponse = {
@@ -138,14 +138,14 @@ class TaxPaidOnStatePensionLumpSumControllerISpec extends IntegrationTest with B
       }
 
       result.status shouldBe SEE_OTHER
-      result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
+      result.header("location") shouldBe Some(statePensionLumpSumStartDateUrl(taxYearEOY))
 
       lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
       cyaModel.pensions.incomeFromPensions.statePensionLumpSum.get.taxPaidQuestion shouldBe Some(true)
       cyaModel.pensions.incomeFromPensions.statePensionLumpSum.get.taxPaid shouldBe Some(BigDecimal("42.24"))
     }
 
-    "redirect and update question to No and delete the tax paid amount when user selects no" in {
+    "redirect to the State Pension Lump Sum start date page and update question to No and delete the tax paid amount when user selects no" in {
       lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.no)
 
       lazy val result: WSResponse = {
@@ -161,8 +161,7 @@ class TaxPaidOnStatePensionLumpSumControllerISpec extends IntegrationTest with B
       }
 
         result.status shouldBe SEE_OTHER
-        //TODO: navigate to the correct next page
-        result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
+        result.header("location") shouldBe Some(statePensionLumpSumStartDateUrl(taxYearEOY))
 
         lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
         cyaModel.pensions.incomeFromPensions.statePensionLumpSum.get.taxPaidQuestion shouldBe Some(false)

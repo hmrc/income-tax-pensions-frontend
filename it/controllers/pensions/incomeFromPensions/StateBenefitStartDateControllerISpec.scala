@@ -62,7 +62,7 @@ class StateBenefitStartDateControllerISpec extends IntegrationTest with ViewHelp
   }
 
   val dateInFutureErrorText = "The pension start date must be in the past"
-  val realDateErrorText = "The pension start date must be a real date"
+  val realDateErrorText = "The day, month and year must be valid"
   val tooLongAgoErrorText = "The pension start date must be after 1 January 1900"
   val emptyAllErrorText = "Enter the pension start date"
   val emptyDayErrorText = "The pension start date must include a day"
