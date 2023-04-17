@@ -161,14 +161,13 @@ class TaxPaidOnStatePensionLumpSumControllerISpec extends IntegrationTest with B
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
-        result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(statePensionLumpSumStartDateUrl(taxYearEOY))
-
+      result.status shouldBe SEE_OTHER
+      result.header("location") shouldBe Some(statePensionLumpSumStartDateUrl(taxYearEOY))
+    }
       "updates taxPaidQuestion to Some(false) and wipe the taxPaid value to None" in {
         lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
         cyaModel.pensions.incomeFromPensions.statePensionLumpSum.get.taxPaidQuestion shouldBe Some(false)
         cyaModel.pensions.incomeFromPensions.statePensionLumpSum.get.taxPaid shouldBe None
     }
-  }
 }
 // scalastyle:on magic.number
