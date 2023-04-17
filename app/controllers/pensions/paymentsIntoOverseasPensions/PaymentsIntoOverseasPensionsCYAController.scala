@@ -18,8 +18,7 @@ package controllers.pensions.paymentsIntoOverseasPensions
 
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.routes.OverseasPensionsSummaryController
-import controllers.predicates.AuthorisedAction
-import controllers.predicates.TaxYearAction.taxYearAction
+import controllers.predicates.{ActionsProvider, AuthorisedAction}
 import models.mongo.PensionsCYAModel
 import models.pension.AllPensionsData
 import models.pension.AllPensionsData.generateCyaFromPrior
@@ -38,12 +37,13 @@ import scala.concurrent.Future
 class PaymentsIntoOverseasPensionsCYAController @Inject()(authAction: AuthorisedAction,
                                                           view: PaymentsIntoOverseasPensionsCYAView,
                                                           pensionSessionService: PensionSessionService,
-                                                          errorHandler: ErrorHandler)
+                                                          errorHandler: ErrorHandler,
+                                                          actionsProvider: ActionsProvider)
                                                          (implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock)
   extends FrontendController(mcc) with I18nSupport with SessionHelper {
 
 
-  def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
+  def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit request =>
     pensionSessionService.getAndHandle(taxYear, request.user) { (cya, prior) =>
       (cya, prior) match {
         case (Some(data), _) =>
@@ -58,7 +58,7 @@ class PaymentsIntoOverseasPensionsCYAController @Inject()(authAction: Authorised
         case (None, None) =>
           val emptyPaymentsIntoOverseasPensions = PaymentsIntoOverseasPensionsViewModel()
           Future.successful(Ok(view(taxYear, emptyPaymentsIntoOverseasPensions)))
-        case _ => Future.successful(Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear)))
+        case _ => Future.successful(Redirect(controllers.pensions.routes.OverseasPensionsSummaryController.show(taxYear)))
       }
     }
   }

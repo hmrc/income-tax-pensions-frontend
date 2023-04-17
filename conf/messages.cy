@@ -187,6 +187,7 @@ pensions.pensionSummary.pensionLifetimeAllowance = Lwfans oes pensiwn
 pensions.pensionSummary.unauthorisedPaymentsFromPensions = Taliadau heb awdurdod o bensiynau
 pensions.pensionSummary.overseasPensionsSummary = Pensiynau tramor
 pensions.pensionSummary.paymentsToOverseasPensions = Taliadau i bensiynau tramor
+pensions.pensionSummary.paymentsToOverseasPensions.hidden = Newid taliadau i bensiynau tramor
 
 # overseas pensions summary
 pensions.overseasPensionsSummary.paymentsIntoOverseasPensions = Taliadau i bensiynau tramor
@@ -789,7 +790,7 @@ unauthorisedPayments.removePensionSchemeTaxReference.dontRemove = Don’t remove
 
 #################       Overseas Pension        ########################################
 common.overseas.pension.schemes = Overseas pension schemes
-common.overseas.pension.schemes.hidden = Change Overseas pension schemes
+common.overseas.pension.schemes.hidden = Change overseas pension schemes
 
 #Payments into overseas pension schemes page
 overseasPension.paymentIntoOverseasPensionScheme.title = Payments into overseas pension schemes
@@ -971,8 +972,11 @@ pensions.paymentsIntoOverseasPensions.sf74Reference.incorrectFormat = The SF74 r
 #Payment into overseas pensions CYA
 paymentsIntoOverseasPensions.cya.heading = Check payments into overseas pensions
 paymentsIntoOverseasPensions.cya.totalPayments = Total payments
+paymentsIntoOverseasPensions.cya.totalPayments.hidden = Change total payments
 paymentsIntoOverseasPensions.cya.employerPayments = Employer payments
+paymentsIntoOverseasPensions.cya.employerPayments.hidden = Change employer payments
 paymentsIntoOverseasPensions.cya.employerPaymentsTax = Tax paid on employer payments
+paymentsIntoOverseasPensions.cya.employerPaymentsTax.hidden = Change tax paid on employer payments
 
 
 ############################################## INCOME FROM OVERSEAS PENSIONS ##############################################

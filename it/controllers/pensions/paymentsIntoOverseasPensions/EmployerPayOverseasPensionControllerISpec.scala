@@ -26,7 +26,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import utils.CommonUtils
-import utils.PageUrls.PaymentIntoOverseasPensions.{checkPaymentsIntoOverseasPensionsCyaUrl, employerPayOverseasPensionUrl, taxEmployerPaymentsUrl}
+import utils.PageUrls.PaymentIntoOverseasPensions.{paymentsIntoOverseasPensionsCyaUrl, employerPayOverseasPensionUrl, taxEmployerPaymentsUrl}
 import utils.PageUrls.overseasPensionsSummaryUrl
 
 class EmployerPayOverseasPensionControllerISpec extends CommonUtils with BeforeAndAfterEach {
@@ -297,7 +297,7 @@ class EmployerPayOverseasPensionControllerISpec extends CommonUtils with BeforeA
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(checkPaymentsIntoOverseasPensionsCyaUrl(taxYearEOY))
+        result.header("location") shouldBe Some(paymentsIntoOverseasPensionsCyaUrl(taxYearEOY))
       }
 
       "updates employerPaymentsQuestion to Some(false)" in {
