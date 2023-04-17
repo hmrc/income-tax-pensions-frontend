@@ -19,18 +19,18 @@ package controllers.pensions.lifetimeAllowances
 import config.{AppConfig, ErrorHandler}
 import controllers.predicates.TaxYearAction.taxYearAction
 import controllers.predicates.AuthorisedAction
-import forms.{FormUtils, TupleAmountForm}
-import models.mongo.PensionsCYAModel
+import forms.{FormUtils, FormsProvider}
+import models.mongo.{PensionsCYAModel, PensionsUserData}
 import models.pension.charges.{LifetimeAllowance, PensionLifetimeAllowancesViewModel}
-import play.api.data.Form
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.lifetimeAllowances.PensionLumpSumDetailsView
 import controllers.pensions.routes.PensionsSummaryController
 import controllers.pensions.lifetimeAllowances.routes.PensionLumpSumController
+import models.AuthorisationRequest
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
@@ -42,40 +42,41 @@ class PensionLumpSumDetailsController @Inject()(implicit val mcc: MessagesContro
                                                 appConfig: AppConfig,
                                                 pensionSessionService: PensionSessionService,
                                                 errorHandler: ErrorHandler,
+                                                formsProvider: FormsProvider,
                                                 clock: Clock) extends FrontendController(mcc) with I18nSupport with SessionHelper with FormUtils {
 
-  def amountForm(isAgent: Boolean): Form[(BigDecimal, BigDecimal)] = TupleAmountForm.amountForm(
-    emptyFieldKey1 = s"lifetimeAllowance.pensionLumpSumDetails.beforeTax.error.noEntry.${if (isAgent) "agent" else "individual"}",
-    wrongFormatKey1 = s"lifetimeAllowance.pensionLumpSumDetails.beforeTax.error.incorrectFormat",
-    exceedsMaxAmountKey1 = s"common.beforeTax.error.overMaximum",
-    emptyFieldKey2 = s"lifetimeAllowance.pensionLumpSumDetails.taxPaid.error.noEntry.${if (isAgent) "agent" else "individual"}",
-    wrongFormatKey2 = s"common.taxPaid.error.incorrectFormat",
-    exceedsMaxAmountKey2 = s"common.taxPaid.error.overMaximum"
-  )
+
 
 
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
       case Some(data) =>
-
-        val totalTaxOpt = data.pensions.pensionLifetimeAllowances.pensionAsLumpSum.flatMap(_.amount)
-        val taxPaidOpt = data.pensions.pensionLifetimeAllowances.pensionAsLumpSum.flatMap(_.taxPaid)
-
-        (totalTaxOpt, taxPaidOpt) match {
-          case (Some(totalTax), Some(taxPaid)) =>
-            Future.successful(Ok(pensionLumpSumDetailsView(amountForm(request.user.isAgent).fill((totalTax, taxPaid)), taxYear)))
-          case (_, _) =>
-            Future.successful(Ok(pensionLumpSumDetailsView(amountForm(request.user.isAgent), taxYear)))
-        }
+        Future.successful(populateForm(data, taxYear))
       case _ =>
         //TODO: - Redirect to Annual Lifetime allowances cya page
         Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
     }
   }
 
+  private def populateForm(data: PensionsUserData, taxYear: Int)(implicit request: AuthorisationRequest[AnyContent]): Result = {
+    val totalTaxOpt = data.pensions.pensionLifetimeAllowances.pensionAsLumpSum.flatMap(_.amount)
+    val taxPaidOpt = data.pensions.pensionLifetimeAllowances.pensionAsLumpSum.flatMap(_.taxPaid)
+
+    val form = (totalTaxOpt, taxPaidOpt) match {
+      case (Some(amountBeforeTax), None) => formsProvider.pensionLumpSumAmountForm(request.user.isAgent)
+        .fill((Some(amountBeforeTax), None): (Option[BigDecimal], Option[BigDecimal]))
+      case (None, Some(nonUkTaxPaid)) => formsProvider.pensionLumpSumAmountForm(request.user.isAgent)
+        .fill((None, Some(nonUkTaxPaid)): (Option[BigDecimal], Option[BigDecimal]))
+      case (Some(amountBeforeTax), Some(nonUkTaxPaid)) => formsProvider.pensionLumpSumAmountForm(request.user.isAgent)
+        .fill((Some(amountBeforeTax), Some(nonUkTaxPaid)))
+      case _ => formsProvider.pensionPaymentsForm(request.user)
+    }
+    Ok(pensionLumpSumDetailsView(form, taxYear))
+  }
+
 
   def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
-    amountForm(request.user.isAgent).bindFromRequest().fold(
+    formsProvider.pensionLumpSumAmountForm(request.user.isAgent).bindFromRequest().fold(
       formWithErrors => Future.successful(BadRequest(pensionLumpSumDetailsView(formWithErrors, taxYear))),
       amounts => {
         pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
@@ -86,7 +87,7 @@ class PensionLumpSumDetailsController @Inject()(implicit val mcc: MessagesContro
               val updatedCyaModel: PensionsCYAModel = {
                 pensionsCYAModel.copy(
                   pensionLifetimeAllowances = viewModel.copy(
-                    pensionAsLumpSum = Some(LifetimeAllowance(Some(amounts._1), Some(amounts._2))))
+                    pensionAsLumpSum = Some(LifetimeAllowance(amounts._1, amounts._2)))
                 )
               }
               pensionSessionService.createOrUpdateSessionData(request.user,
