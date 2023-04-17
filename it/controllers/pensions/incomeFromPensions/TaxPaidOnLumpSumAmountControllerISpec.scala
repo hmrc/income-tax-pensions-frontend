@@ -90,9 +90,9 @@ class TaxPaidOnLumpSumAmountControllerISpec extends IntegrationTest with ViewHel
     val buttonText = "Yn eich blaen"
     val expectedWhereToFindThisInformation = "Ble i ddod o hyd i’r wybodaeth hon"
     val expectedYouCanFindThisInformationIn = "Gallwch ddod o hyd i’r wybodaeth hon yn:"
-    val emptyErrorText = "Enter the amount of tax paid on the State Pension lump sum"
-    val invalidFormatErrorText = "Enter the amount of tax paid on the State Pension lump sum in the correct format"
-    val maxAmountErrorText = "The amount of tax paid on the State Pension lump sum must be less than £100,000,000,000"
+    val emptyErrorText = "Nodwch swm y dreth a dalwyd ar gyfandaliad Pensiwn y Wladwriaeth"
+    val invalidFormatErrorText = "Nodwch gyfanswm y dreth a dalwyd ar gyfandaliad Pensiwn y Wladwriaeth yn y fformat cywir"
+    val maxAmountErrorText = "Mae’n rhaid i swm y dreth a dalwyd ar gyfandaliad Pensiwn y Wladwriaeth fod yn llai na £100,000,000,000"
   }
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
@@ -104,11 +104,11 @@ class TaxPaidOnLumpSumAmountControllerISpec extends IntegrationTest with ViewHel
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
-    val expectedTitle = "How much tax did you pay on the State Pension lump sum?"
+    val expectedTitle = "Faint o dreth a daloch ar gyfandaliad Pensiwn y Wladwriaeth?"
     val expectedErrorTitle = s"Gwall: $expectedTitle"
     val expectedDetailsExample1 = "eich P60"
     val expectedDetailsExample2 = "y llythyr ’Ynglŷn â’r cynnydd cyffredinol mewn budd-daliadau’ a anfonwyd atoch gan y Gwasanaeth Pensiwn"
-    val expectedParagraphText = s"You told us you did not pay £$newAmount tax on your State Pension lump sum this year. Tell us how much you paid."
+    val expectedParagraphText = s"Gwnaethoch roi gwybod i ni nad oeddech yn talu £$newAmount o dreth ar eich cyfandaliad Pensiwn y Wladwriaeth y flwyddyn hon. Rhowch wybod i ni faint wnaethoch ei dalu."
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
@@ -121,12 +121,12 @@ class TaxPaidOnLumpSumAmountControllerISpec extends IntegrationTest with ViewHel
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
-    val expectedTitle = "How much tax did your client pay on the State Pension lump sum?"
+    val expectedTitle = "Faint o dreth a dalodd eich cleient ar gyfandaliad Pensiwn y Wladwriaeth?"
     val expectedErrorTitle = s"Gwall: $expectedTitle"
     val expectedDetailsExample1 = "P60 eich cleient"
     val expectedDetailsExample2 = "y llythyr ’Ynglŷn â’r cynnydd cyffredinol mewn budd-daliadau’ a anfonwyd at eich cleient gan y Gwasanaeth Pensiwn"
-    val expectedParagraphText: String = s"You told us your client did not pay £$newAmount tax on their State Pension lump sum this year. " +
-      s"Tell us how much your client paid."
+    val expectedParagraphText: String = s"Gwnaethoch roi gwybod i ni nad oedd eich cleient yn talu £$newAmount o dreth ar ei gyfandaliad Pensiwn y Wladwriaeth y flwyddyn hon. " +
+      s"Rhowch wybod i ni faint y talodd eich cleient."
   }
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(

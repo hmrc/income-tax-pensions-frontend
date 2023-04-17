@@ -83,7 +83,7 @@ class RefundSummaryViewSpec extends ViewUnitTest {
     val expectedHeading = "Short service refund summary"
     val change = "Newid"
     val remove = "Tynnu"
-    val expectedAddAnotherText = "Add another pension scheme"
+    val expectedAddAnotherText = "Ychwanegu cynllun pensiwn arall"
     val expectedAddPensionSchemeText = "Add a pension scheme"
     val addASchemeButton = "Add a scheme"
     val returnToOverviewButton = "Yn ôl i’r trosolwg"

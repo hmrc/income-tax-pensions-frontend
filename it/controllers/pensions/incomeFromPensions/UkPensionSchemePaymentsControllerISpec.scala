@@ -92,7 +92,7 @@ class UkPensionSchemePaymentsControllerISpec extends IntegrationTest with ViewHe
     val expectedTitle = "Do you get UK pension scheme payments?"
     val expectedHeading = "Do you get UK pension scheme payments?"
     val expectedErrorTitle = s"Gwall: $expectedTitle"
-    val expectedErrorMessage = "Select Yes if you got payments from UK pension schemes"
+    val expectedErrorMessage = "Dewiswch Iawn os cawsoch daliadau o gynlluniau pensiwn y DU"
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
@@ -103,10 +103,10 @@ class UkPensionSchemePaymentsControllerISpec extends IntegrationTest with ViewHe
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
-    val expectedTitle = "Does your client get UK pension scheme payments?"
-    val expectedHeading = "Does your client get UK pension scheme payments?"
+    val expectedTitle = "A yw eich cleient yn cael taliadau o gynlluniau pensiwn y DU?"
+    val expectedHeading = "A yw eich cleient yn cael taliadau o gynlluniau pensiwn y DU?"
     val expectedErrorTitle = s"Gwall: $expectedTitle"
-    val expectedErrorMessage = "Select Yes if your client got payments from UK pension schemes"
+    val expectedErrorMessage = "Dewiswch Iawn os cafodd eich cleient daliadau o gynlluniau pensiwn y DU"
   }
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(

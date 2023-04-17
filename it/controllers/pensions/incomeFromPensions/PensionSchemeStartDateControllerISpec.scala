@@ -112,20 +112,20 @@ class PensionSchemeStartDateControllerISpec extends IntegrationTest with ViewHel
   object CommonExpectedCY extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Incwm o bensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
     val buttonText = "Yn eich blaen"
-    val expectedHintText = "For example, 12 11 2007"
+    val expectedHintText = "Er enghraifft, 12 11 2007"
     val expectedDayLabel = "Diwrnod"
     val expectedMonthLabel = "Mis"
     val expectedYearLabel = "Blwyddyn"
-    val dateInFutureErrorText = "The pension start date must be in the past"
-    val realDateErrorText = "The pension start date must be a real date"
-    val tooLongAgoErrorText = "The pension start date must be after 1 January 1900"
-    val emptyAllErrorText = "Enter the pension start date"
-    val emptyDayErrorText = "The pension start date must include a day"
-    val emptyDayMonthErrorText = "The pension start date must include a day and month"
-    val emptyDayYearErrorText = "The pension start date must include a day and year"
-    val emptyMonthErrorText = "The pension start date must include a month"
-    val emptyMonthYearErrorText = "The pension start date must include a month and year"
-    val emptyYearErrorText = "The pension start date must include a year"
+    val dateInFutureErrorText = "Mae’n rhaid i ddyddiad dechrau’r pensiwn fod yn y gorffennol"
+    val realDateErrorText = "Mae’n rhaid i ddyddiad dechrau’r pensiwn fod yn ddyddiad go iawn"
+    val tooLongAgoErrorText = "Mae’n rhaid i ddyddiad dechrau’r pensiwn fod ar ol 1 Ionawr 1900"
+    val emptyAllErrorText = "Nodwch ddyddiad dechrau’r pensiwn"
+    val emptyDayErrorText = "Mae’n rhaid i ddyddiad dechrau’r pensiwn gynnwys diwrnod"
+    val emptyDayMonthErrorText = "Mae’n rhaid i ddyddiad dechrau’r pensiwn gynnwys diwrnod a mis"
+    val emptyDayYearErrorText = "Mae’n rhaid i ddyddiad dechrau’r pensiwn gynnwys diwrnod a blwyddyn"
+    val emptyMonthErrorText = "Mae’n rhaid i ddyddiad dechrau’r pensiwn gynnwys mis"
+    val emptyMonthYearErrorText = "Mae’n rhaid i ddyddiad dechrau’r pensiwn gynnwys mis a blwyddyn"
+    val emptyYearErrorText = "Mae’n rhaid i ddyddiad dechrau’r pensiwn gynnwys blwyddyn"
   }
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
@@ -134,7 +134,7 @@ class PensionSchemeStartDateControllerISpec extends IntegrationTest with ViewHel
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
-    val expectedTitle = "When did you start getting payments from this scheme?"
+    val expectedTitle = "Pryd y gwnaethoch ddechrau cael taliadau o’r cynllun hwn?"
     val expectedErrorTitle = s"Gwall: $expectedTitle"
   }
 
@@ -144,7 +144,7 @@ class PensionSchemeStartDateControllerISpec extends IntegrationTest with ViewHel
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
-    val expectedTitle = "When did your client start getting payments from this scheme?"
+    val expectedTitle = "Pryd y gwnaeth eich cleient ddechrau cael taliadau o’r cynllun hwn?"
     val expectedErrorTitle = s"Gwall: $expectedTitle"
   }
 

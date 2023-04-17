@@ -76,10 +76,10 @@ class StatePensionLumpSumControllerISpec extends IntegrationTest with BeforeAndA
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
-    val expectedTitle = "Did you get a State Pension lump sum?"
+    val expectedTitle = "A gawsoch gyfandaliad Pensiwn y Wladwriaeth?"
     val expectedErrorTitle = s"Gwall: $expectedTitle"
-    val expectedError = "Select yes if you got a State Pension lump sum"
-    val expectedP1 = "You might have got a one-off lump sum payment if you delayed claiming your State Pension for 12 months in a row."
+    val expectedError = "Dewiswch ‘Iawn’ os cawsoch gyfandaliad Pensiwn y Wladwriaeth"
+    val expectedP1 = "Mae’n bosibl y byddwch wedi cael cyfandaliad unigol os oeddech wedi oedi cyn hawlio’ch Pensiwn y Wladwriaeth am 12 mis yn olynol."
     val expectedBullet1 = "eich P60"
     val expectedBullet2 = "y llythyr ’Ynglŷn â’r cynnydd cyffredinol mewn budd-daliadau’ a anfonwyd atoch gan y Gwasanaeth Pensiwn"
   }
@@ -94,10 +94,10 @@ class StatePensionLumpSumControllerISpec extends IntegrationTest with BeforeAndA
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
-    val expectedTitle = "Did your client get a State Pension lump sum?"
+    val expectedTitle = "A gafodd eich cleient gyfandaliad Pensiwn y Wladwriaeth?"
     val expectedErrorTitle = s"Gwall: $expectedTitle"
-    val expectedError = "Select yes if your client got a State Pension lump sum"
-    val expectedP1 = "Your client might have got a one-off lump sum payment if they delayed claiming their State Pension for 12 months in a row."
+    val expectedError = "Dewiswch ‘Iawn’ os cafodd eich cleient gyfandaliad Pensiwn y Wladwriaeth"
+    val expectedP1 = "Mae’n bosibl y byddai’ch cleient wedi cael cyfandaliad unigol os oedden nhw wedi oedi cyn hawlio ei Bensiwn y Wladwriaeth am 12 mis yn olynol."
     val expectedBullet1 = "P60 eich cleient"
     val expectedBullet2 = "y llythyr ’Ynglŷn â’r cynnydd cyffredinol mewn budd-daliadau’ a anfonwyd at eich cleient gan y Gwasanaeth Pensiwn"
   }
@@ -116,7 +116,7 @@ class StatePensionLumpSumControllerISpec extends IntegrationTest with BeforeAndA
     val expectedCaption: Int => String = (taxYear: Int) => s"Incwm o bensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
     val expectedWhereToFind = "Ble i ddod o hyd i’r wybodaeth hon"
     val expectedYouCanFind = "Gallwch ddod o hyd i’r wybodaeth hon yn:"
-    val expectedP2 = "This only applies to people who reach State Pension age before 6 April 2016."
+    val expectedP2 = "Mae hyn ond yn berthnasol i bobl sy’n cyrraedd oedran Pensiwn y Wladwriaeth cyn 6 Ebrill 2016."
     val expectedButtonText = "Yn eich blaen"
     val yesText = "Iawn"
     val noText = "Na"

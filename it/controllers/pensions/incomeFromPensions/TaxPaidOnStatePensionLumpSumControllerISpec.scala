@@ -77,10 +77,10 @@ class TaxPaidOnStatePensionLumpSumControllerISpec extends IntegrationTest with B
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
-    val expectedTitle = "Did you pay tax on the State Pension lump sum?"
-    val expectedHeading = "Did you pay tax on the State Pension lump sum?"
+    val expectedTitle = "A wnaethoch dalu treth ar gyfandaliad Pensiwn y Wladwriaeth?"
+    val expectedHeading = "A wnaethoch dalu treth ar gyfandaliad Pensiwn y Wladwriaeth?"
     val expectedErrorTitle = s"Gwall: $expectedTitle"
-    val expectedError = "Select yes if you paid tax on the State Pension lump sum"
+    val expectedError = "Dewiswch ‘Iawn’ os gwnaethoch dalu treth ar gyfandaliad Pensiwn y Wladwriaeth"
     val expectedDetailsBullet1 = "eich P60"
     val expectedDetailsBullet2 = "y llythyr ’Ynglŷn â’r cynnydd cyffredinol mewn budd-daliadau’ a anfonwyd atoch gan y Gwasanaeth Pensiwn"
   }
@@ -95,10 +95,10 @@ class TaxPaidOnStatePensionLumpSumControllerISpec extends IntegrationTest with B
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
-    val expectedTitle = "Did your client pay tax on the State Pension lump sum?"
-    val expectedHeading = "Did your client pay tax on the State Pension lump sum?"
+    val expectedTitle = "A wnaeth eich cleient dalu treth ar gyfandaliad Pensiwn y Wladwriaeth?"
+    val expectedHeading = "A wnaeth eich cleient dalu treth ar gyfandaliad Pensiwn y Wladwriaeth?"
     val expectedErrorTitle = s"Gwall: $expectedTitle"
-    val expectedError = "Select yes if your client paid tax on the State Pension lump sum"
+    val expectedError = "Dewiswch ‘Iawn’ os gwnaeth eich cleient dalu treth ar gyfandaliad Pensiwn y Wladwriaeth"
     val expectedDetailsBullet1 = "P60 eich cleient"
     val expectedDetailsBullet2 = "y llythyr ’Ynglŷn â’r cynnydd cyffredinol mewn budd-daliadau’ a anfonwyd at eich cleient gan y Gwasanaeth Pensiwn"
   }

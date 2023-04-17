@@ -543,72 +543,72 @@ incomeFromPensions.incomeFromPensionsSummary.otherUkPensions = Pensiynau eraill 
 
 #Do You Get UK Pension Scheme Payments Messages
 pensions.ukPensionSchemePayments.title.individual = Do you get UK pension scheme payments?
-pensions.ukPensionSchemePayments.title.agent = Does your client get UK pension scheme payments?
-pensions.ukPensionSchemePayments.error.noEntry.individual = Select Yes if you got payments from UK pension schemes
-pensions.ukPensionSchemePayments.error.noEntry.agent = Select Yes if your client got payments from UK pension schemes
+pensions.ukPensionSchemePayments.title.agent = A yw eich cleient yn cael taliadau o gynlluniau pensiwn y DU?
+pensions.ukPensionSchemePayments.error.noEntry.individual = Dewiswch Iawn os cawsoch daliadau o gynlluniau pensiwn y DU
+pensions.ukPensionSchemePayments.error.noEntry.agent = Dewiswch Iawn os cafodd eich cleient daliadau o gynlluniau pensiwn y DU
 
 #pension scheme income details
-incomeFromPensions.pensionSchemeDetails.title = Pension scheme details
-incomeFromPensions.pensionSchemeDetails.youCanFind.individual = You can find this information on your pension statement. If you do not have a pension statement, you can ask your pension provider.
-incomeFromPensions.pensionSchemeDetails.youCanFind.agent = Your client can find this information on their pension statement. If they do not have a pension statement, they can ask their pension provider.
-incomeFromPensions.pensionSchemeDetails.ifYouGet.individual = If you get pension income from more than one UK pension scheme, you can add them later.
-incomeFromPensions.pensionSchemeDetails.ifYouGet.agent = If your client gets pension income from more than one UK pension scheme, you can add them later.
-incomeFromPensions.pensionSchemeDetails.providerName.subheading = Pension provider name
-incomeFromPensions.pensionSchemeDetails.schemeRef.subheading = Pension scheme PAYE reference number
-incomeFromPensions.pensionSchemeDetails.schemeRef.hint = For example 123/AB456
-incomeFromPensions.pensionSchemeDetails.pid.subheading = Pension Identification (PID)
-incomeFromPensions.pensionSchemeDetails.pid.hint.individual = Check your pension statement or P60
-incomeFromPensions.pensionSchemeDetails.pid.hint.agent = Check your client’s pension statement or P60
-incomeFromPensions.pensionSchemeDetails.providerName.error.noEntry = Enter the pension provider name
-incomeFromPensions.pensionSchemeDetails.providerName.error.overCharLimit = The pension provider name must be 74 characters or fewer
-incomeFromPensions.pensionSchemeDetails.providerName.error.incorrectFormat = The pension provider name must only include numbers 0 to 9, letters a to z, hyphens, spaces, apostrophes, commas, full stops, round brackets, and the special characters &\:
-incomeFromPensions.pensionSchemeDetails.schemeRef.error.noEntry = Enter the pension scheme PAYE reference number
-incomeFromPensions.pensionSchemeDetails.schemeRef.error.incorrectFormat = Enter the pension scheme PAYE reference number in the correct format
-incomeFromPensions.pensionSchemeDetails.pid.error.noEntry = Enter the pension identification (PID)
-incomeFromPensions.pensionSchemeDetails.pid.error.overCharLimit = The pension identification (PID) must be 38 characters or fewer
-incomeFromPensions.pensionSchemeDetails.pid.error.incorrectFormat = The pension identification (PID) must only include numbers 0 to 9, letters a to z, hyphens, spaces, apostrophes, commas, full stops, round brackets, and the special characters /=!"%&*;<>+:\?
+incomeFromPensions.pensionSchemeDetails.title = Manylion y cynllun pensiwn
+incomeFromPensions.pensionSchemeDetails.youCanFind.individual = Gallwch ddod o hyd i’r wybodaeth hon ar eich datganiad pensiwn. Os nad oes gennych ddatganiad pensiwn, gallwch ofyn i’ch darparwr pensiwn.
+incomeFromPensions.pensionSchemeDetails.youCanFind.agent = Gall eich cleient ddod o hyd i’r wybodaeth hon ar ei ddatganiad pensiwn. Os nad oes ganddo ddatganiad pensiwn, gall ofyn i’w ddarparwr pensiwn.
+incomeFromPensions.pensionSchemeDetails.ifYouGet.individual = Os cawsoch incwm o bensiwn o fwy nag un cynllun pensiwn y DU, gallwch eu hychwanegu nes ymlaen.
+incomeFromPensions.pensionSchemeDetails.ifYouGet.agent = Os cafodd eich cleient incwm o bensiwn o fwy nag un cynllun pensiwn y DU, gallwch eu hychwanegu nes ymlaen.
+incomeFromPensions.pensionSchemeDetails.providerName.subheading = Enw’r darparwr pensiwn
+incomeFromPensions.pensionSchemeDetails.schemeRef.subheading = Cyfeirnod TWE y cynllun pensiwn
+incomeFromPensions.pensionSchemeDetails.schemeRef.hint = Er enghraifft, 123/AB456
+incomeFromPensions.pensionSchemeDetails.pid.subheading = Rhif dynodydd pensiwn (PID)
+incomeFromPensions.pensionSchemeDetails.pid.hint.individual = Gwirio’ch datganiad pensiwn neu P60
+incomeFromPensions.pensionSchemeDetails.pid.hint.agent = Gwirio datganiad pensiwn neu P60 eich cleient
+incomeFromPensions.pensionSchemeDetails.providerName.error.noEntry = Nodwch enw’r darparwr pensiwn
+incomeFromPensions.pensionSchemeDetails.providerName.error.overCharLimit = Mae’n rhaid i enw’r darparwr pensiwn fod yn 74 o gymeriadau neu lai
+incomeFromPensions.pensionSchemeDetails.providerName.error.incorrectFormat = Mae’n rhaid i enw’r darparwr pensiwn gynnwys y rhifau 0 i 9, llythrennau a-z, cysylltnodau, bylchau, collnodau, comas, atalnodau llawn, cromfachau crwn a’r cymeriadau arbennig &\: yn unig
+incomeFromPensions.pensionSchemeDetails.schemeRef.error.noEntry = Nodwch gyfeirnod TWE y cynllun pensiwn
+incomeFromPensions.pensionSchemeDetails.schemeRef.error.incorrectFormat = Nodwch gyfeirnod TWE y cynllun pensiwn yn y fformat cywir
+incomeFromPensions.pensionSchemeDetails.pid.error.noEntry = Nodwch rif dynodydd y pensiwn (PID)
+incomeFromPensions.pensionSchemeDetails.pid.error.overCharLimit = Mae’n rhaid i rif dynodydd y pensiwn (PID) fod yn 38 o gymeriadau neu lai
+incomeFromPensions.pensionSchemeDetails.pid.error.incorrectFormat = Mae’n rhaid i rif dynodydd y pensiwn gynnwys y rhifau 0 i 9, llythrennau a-z, cysylltnodau, bylchau, collnodau, comas, atalnodau llawn, cromfachau crwn a’r cymeriadau arbennig /=!"%&*;<>+:\? yn unig
 
 #Uk Pension Income Summary Page
-pensions.ukPensionIncomeSummary.addAnotherPensionIncomeLink = Add another pension scheme
-pensions.ukPensionIncomeSummary.addPensionIncomeLink = Add a pension scheme
+pensions.ukPensionIncomeSummary.addAnotherPensionIncomeLink = Ychwanegu cynllun pensiwn arall
+pensions.ukPensionIncomeSummary.addPensionIncomeLink = Ychwanegu cynllun pensiwn
 
 #How Much Pension Did You Get Paid
-pensions.pensionAmount.title.individual = How much pension did you get paid?
-pensions.pensionAmount.title.agent = How much pension did your client get paid?
-pensions.pensionAmount.totalTax = Total amount this tax year
-pensions.pensionAmount.totalTax.error.noEntry = Enter the amount of pension paid
-pensions.pensionAmount.totalTax.error.incorrectFormat = Enter the amount of pension paid in the correct format
-pensions.pensionAmount.totalTax.error.overMaximum = The amount of pension paid must be less than £100,000,000,000
-pensions.pensionAmount.taxPaid = Tax paid
-pensions.pensionAmount.taxPaid.error.noEntry = Enter the amount of tax paid
-pensions.pensionAmount.taxPaid.error.incorrectFormat = Enter the amount of tax paid in the correct format
-pensions.pensionAmount.taxPaid.error.overMaximum = The amount of tax paid must be less than £100,000,000,000
+pensions.pensionAmount.title.individual = Faint o bensiwn a gawsoch chi?
+pensions.pensionAmount.title.agent = Faint o bensiwn a gafodd eich cleient?
+pensions.pensionAmount.totalTax = Cyfanswm ar gyfer y flwyddyn dreth hon
+pensions.pensionAmount.totalTax.error.noEntry = Nodwch swm y pensiwn a dalwyd
+pensions.pensionAmount.totalTax.error.incorrectFormat = Nodwch swm y pensiwn a dalwyd, yn y fformat cywir
+pensions.pensionAmount.totalTax.error.overMaximum = Mae’n rhaid i swm y pensiwn a dalwyd fod yn llai na £100,000,000,000
+pensions.pensionAmount.taxPaid = Treth a dalwyd
+pensions.pensionAmount.taxPaid.error.noEntry = Nodwch swm y dreth a dalwyd
+pensions.pensionAmount.taxPaid.error.incorrectFormat = Nodwch swm y dreth a dalwyd yn y fformat cywir
+pensions.pensionAmount.taxPaid.error.overMaximum = Mae’n rhaid i swm y dreth a dalwyd fod yn llai na £100,000,000,000
 
 #pension scheme start date
-incomeFromPensions.pensionStartDate.title.individual = When did you start getting payments from this scheme?
-incomeFromPensions.pensionStartDate.title.agent = When did your client start getting payments from this scheme?
-incomeFromPensions.pensionStartDate.date.hint = For example, 12 11 2007
-incomeFromPensions.pensionStartDate.error.empty.all = Enter the pension start date
-incomeFromPensions.pensionStartDate.error.empty.day = The pension start date must include a day
-incomeFromPensions.pensionStartDate.error.empty.dayMonth = The pension start date must include a day and month
-incomeFromPensions.pensionStartDate.error.empty.dayYear = The pension start date must include a day and year
-incomeFromPensions.pensionStartDate.error.empty.month = The pension start date must include a month
-incomeFromPensions.pensionStartDate.error.empty.monthYear = The pension start date must include a month and year
-incomeFromPensions.pensionStartDate.error.empty.year = The pension start date must include a year
-incomeFromPensions.pensionStartDate.error.invalidFormat = The pension start date must be a real date
-incomeFromPensions.pensionStartDate.error.dateInFuture = The pension start date must be in the past
-incomeFromPensions.pensionStartDate.error.tooLongAgo = The pension start date must be after 1 January 1900
+incomeFromPensions.pensionStartDate.title.individual = Pryd y gwnaethoch ddechrau cael taliadau o’r cynllun hwn?
+incomeFromPensions.pensionStartDate.title.agent = Pryd y gwnaeth eich cleient ddechrau cael taliadau o’r cynllun hwn?
+incomeFromPensions.pensionStartDate.date.hint = Er enghraifft, 12 11 2007
+incomeFromPensions.pensionStartDate.error.empty.all = Nodwch ddyddiad dechrau’r pensiwn
+incomeFromPensions.pensionStartDate.error.empty.day = Mae’n rhaid i ddyddiad dechrau’r pensiwn gynnwys diwrnod
+incomeFromPensions.pensionStartDate.error.empty.dayMonth = Mae’n rhaid i ddyddiad dechrau’r pensiwn gynnwys diwrnod a mis
+incomeFromPensions.pensionStartDate.error.empty.dayYear = Mae’n rhaid i ddyddiad dechrau’r pensiwn gynnwys diwrnod a blwyddyn
+incomeFromPensions.pensionStartDate.error.empty.month = Mae’n rhaid i ddyddiad dechrau’r pensiwn gynnwys mis
+incomeFromPensions.pensionStartDate.error.empty.monthYear = Mae’n rhaid i ddyddiad dechrau’r pensiwn gynnwys mis a blwyddyn
+incomeFromPensions.pensionStartDate.error.empty.year = Mae’n rhaid i ddyddiad dechrau’r pensiwn gynnwys blwyddyn
+incomeFromPensions.pensionStartDate.error.invalidFormat = Mae’n rhaid i ddyddiad dechrau’r pensiwn fod yn ddyddiad go iawn
+incomeFromPensions.pensionStartDate.error.dateInFuture = Mae’n rhaid i ddyddiad dechrau’r pensiwn fod yn y gorffennol
+incomeFromPensions.pensionStartDate.error.tooLongAgo = Mae’n rhaid i ddyddiad dechrau’r pensiwn fod ar ol 1 Ionawr 1900
 
 #Remove pension scheme page
-incomeFromPensions.removePensionScheme.buttonText = Remove pension
+incomeFromPensions.removePensionScheme.buttonText = Dileu’r pensiwn
 
 #Uk Pension Income CYA page
-incomeFromPensions.title = Check income from pensions
-incomeFromPensions.paragraph.individual = Your income from pensions is based on the information we already hold about you.
-incomeFromPensions.paragraph.agent = Your client’s income from pensions is based on the information we already hold about them.
-incomeFromPensions.pensionIncome.hidden.individual = Change whether you got income from UK pensions
-incomeFromPensions.pensionIncome.hidden.agent = Change whether your client got income from UK pensions
-incomeFromPensions.pensionSchemes.hidden = Change UK pension scheme details
+incomeFromPensions.title = Gwirio incwm o bensiynau
+incomeFromPensions.paragraph.individual = Mae’ch incwm o bensiynau yn seiliedig ar yr wybodaeth sydd eisoes gennym amdanoch.
+incomeFromPensions.paragraph.agent = Mae incwm o bensiynau eich cleient yn seiliedig ar yr wybodaeth sydd eisoes gennym amdano.
+incomeFromPensions.pensionIncome.hidden.individual = Newid p’un a gawsoch incwm o bensiynau’r DU
+incomeFromPensions.pensionIncome.hidden.agent = Newid p’un a gafodd eich cleient incwm o bensiynau’r DU
+incomeFromPensions.pensionSchemes.hidden = Newid manylion cynllun pensiwn y DU
 
 #################       Lifetime Allowance       ########################################
 
