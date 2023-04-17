@@ -497,8 +497,15 @@ incomeFromPensions.statePensionLumpSum.title.agent = Did your client get a State
 incomeFromPensions.statePensionLumpSum.para.individual = You might have got a one-off lump sum payment if you delayed claiming your State Pension for 12 months in a row.
 incomeFromPensions.statePensionLumpSum.para.agent = Your client might have got a one-off lump sum payment if they delayed claiming their State Pension for 12 months in a row.
 incomeFromPensions.statePensionLumpSum.onlyApplies = This only applies to people who reach State Pension age before 6 April 2016.
+incomeFromPensions.statePensionLumpSum.amount = Amount of lump sum
 incomeFromPensions.statePensionLumpSum.error.noEntry.individual = Select yes if you got a State Pension lump sum
 incomeFromPensions.statePensionLumpSum.error.noEntry.agent = Select yes if your client got a State Pension lump sum
+incomeFromPensions.statePensionLumpSum.amount.error.noEntry.individual = Enter the amount of your State Pension lump sum
+incomeFromPensions.statePensionLumpSum.amount.error.incorrectFormat.individual = Enter your State Pension lump sum amount in the correct format
+incomeFromPensions.statePensionLumpSum.amount.error.overMaximum.individual = Your State Pension lump sum amount must be less than £100,000,000,000
+incomeFromPensions.statePensionLumpSum.amount.error.noEntry.agent = Enter the amount of your client’s State Pension lump sum
+incomeFromPensions.statePensionLumpSum.amount.error.incorrectFormat.agent = Enter your client’s State Pension lump sum amount in the correct format
+incomeFromPensions.statePensionLumpSum.amount.error.overMaximum.agent = Your client’s State Pension lump sum amount must be less than £100,000,000,000
 
 #state pension start date
 incomeFromPensions.stateBenefitStartDate.title.individual = When did you start getting State Pension payments?
@@ -516,14 +523,14 @@ incomeFromPensions.stateBenefitStartDate.error.dateInFuture = The pension start 
 incomeFromPensions.stateBenefitStartDate.error.tooLongAgo = The pension start date must be after 1 January 1900
 
 #state pension lump sum
-pensions.statePensionLumpSum.title.individual = How much was your State Pension lump sum?
-pensions.statePensionLumpSum.title.agent = How much was your client’s State Pension lump sum?
-pensions.statePensionLumpSum.error.noEntry.individual = Enter your State Pension lump sum amount
-pensions.statePensionLumpSum.error.incorrectFormat.individual = Enter your State Pension lump sum amount in the correct format
-pensions.statePensionLumpSum.error.overMaximum.individual = Your State Pension lump sum amount must be less than £100,000,000,000
-pensions.statePensionLumpSum.error.noEntry.agent = Enter your client’s State Pension lump sum amount
-pensions.statePensionLumpSum.error.incorrectFormat.agent = Enter your client’s State Pension lump sum amount in the correct format
-pensions.statePensionLumpSum.error.overMaximum.agent = Your client’s State Pension lump sum amount must be less than £100,000,000,000
+#pensions.statePensionLumpSum.title.individual = How much was your State Pension lump sum?
+#pensions.statePensionLumpSum.title.agent = How much was your client’s State Pension lump sum?
+#pensions.statePensionLumpSum.error.noEntry.individual = Enter your State Pension lump sum amount
+#pensions.statePensionLumpSum.error.incorrectFormat.individual = Enter your State Pension lump sum amount in the correct format
+#pensions.statePensionLumpSum.error.overMaximum.individual = Your State Pension lump sum amount must be less than £100,000,000,000
+#pensions.statePensionLumpSum.error.noEntry.agent = Enter your client’s State Pension lump sum amount
+#pensions.statePensionLumpSum.error.incorrectFormat.agent = Enter your client’s State Pension lump sum amount in the correct format
+#pensions.statePensionLumpSum.error.overMaximum.agent = Your client’s State Pension lump sum amount must be less than £100,000,000,000
 
 #tax paid on state pension lump sum
 pensions.taxPaidOnStatePensionLumpSum.amount = Amount of tax paid

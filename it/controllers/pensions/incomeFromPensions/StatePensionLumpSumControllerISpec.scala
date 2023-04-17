@@ -40,7 +40,6 @@ class StatePensionLumpSumControllerISpec extends IntegrationTest with BeforeAndA
     val yesSelector = "#value"
     val noSelector = "#value-no"
     val whereToFindSelector = "#main-content > div > div > form > details > summary > span"
-    val youCanFindSelector = "#main-content > div > div > form > details > div > p"
     val detailsSelector = "#main-content > div > div > form > details > summary > span"
     def paragraphSelector(index: Int, withError: Boolean = false): String = s"#main-content > div > div > p:nth-child(${index + (if(withError) 2 else 1)})"
     def bulletSelector(index: Int): String = s"#main-content > div > div > form > details > div > ul > li:nth-child($index)"
@@ -59,7 +58,6 @@ class StatePensionLumpSumControllerISpec extends IntegrationTest with BeforeAndA
   trait CommonExpectedResults {
     val expectedCaption: Int => String
     val expectedWhereToFind: String
-    val expectedYouCanFind: String
     val expectedP2: String
     val expectedButtonText: String
     val yesText: String
@@ -105,7 +103,6 @@ class StatePensionLumpSumControllerISpec extends IntegrationTest with BeforeAndA
   object CommonExpectedEN extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Income from pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
     val expectedWhereToFind = "Where to find this information"
-    val expectedYouCanFind = "You can find this information in:"
     val expectedP2 = "This only applies to people who reach State Pension age before 6 April 2016."
     val expectedButtonText = "Continue"
     val yesText = "Yes"
@@ -115,7 +112,6 @@ class StatePensionLumpSumControllerISpec extends IntegrationTest with BeforeAndA
   object CommonExpectedCY extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Incwm o bensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
     val expectedWhereToFind = "Ble i ddod o hyd i’r wybodaeth hon"
-    val expectedYouCanFind = "Gallwch ddod o hyd i’r wybodaeth hon yn:"
     val expectedP2 = "This only applies to people who reach State Pension age before 6 April 2016."
     val expectedButtonText = "Yn eich blaen"
     val yesText = "Iawn"
@@ -157,7 +153,6 @@ class StatePensionLumpSumControllerISpec extends IntegrationTest with BeforeAndA
           textOnPageCheck(user.specificExpectedResults.get.expectedP1, paragraphSelector(1))
           textOnPageCheck(expectedP2, paragraphSelector(2))
           textOnPageCheck(expectedWhereToFind, whereToFindSelector)
-          textOnPageCheck(expectedYouCanFind, youCanFindSelector)
           textOnPageCheck(user.specificExpectedResults.get.expectedBullet1, bulletSelector(1))
           textOnPageCheck(user.specificExpectedResults.get.expectedBullet2, bulletSelector(2))
           radioButtonCheck(yesText, 1, checked = Some(false))
@@ -189,7 +184,6 @@ class StatePensionLumpSumControllerISpec extends IntegrationTest with BeforeAndA
           textOnPageCheck(user.specificExpectedResults.get.expectedP1, paragraphSelector(1))
           textOnPageCheck(expectedP2, paragraphSelector(2))
           textOnPageCheck(expectedWhereToFind, whereToFindSelector)
-          textOnPageCheck(expectedYouCanFind, youCanFindSelector)
           textOnPageCheck(user.specificExpectedResults.get.expectedBullet1, bulletSelector(1))
           textOnPageCheck(user.specificExpectedResults.get.expectedBullet2, bulletSelector(2))
           radioButtonCheck(yesText, 1, checked = Some(true))
@@ -226,7 +220,6 @@ class StatePensionLumpSumControllerISpec extends IntegrationTest with BeforeAndA
           textOnPageCheck(user.specificExpectedResults.get.expectedP1, paragraphSelector(1))
           textOnPageCheck(expectedP2, paragraphSelector(2))
           textOnPageCheck(expectedWhereToFind, whereToFindSelector)
-          textOnPageCheck(expectedYouCanFind, youCanFindSelector)
           textOnPageCheck(user.specificExpectedResults.get.expectedBullet1, bulletSelector(1))
           textOnPageCheck(user.specificExpectedResults.get.expectedBullet2, bulletSelector(2))
           radioButtonCheck(yesText, 1, checked = Some(false))
@@ -302,7 +295,6 @@ class StatePensionLumpSumControllerISpec extends IntegrationTest with BeforeAndA
           textOnPageCheck(user.specificExpectedResults.get.expectedP1, paragraphSelector(1, withError = true))
           textOnPageCheck(expectedP2, paragraphSelector(2, withError = true))
           textOnPageCheck(expectedWhereToFind, whereToFindSelector)
-          textOnPageCheck(expectedYouCanFind, youCanFindSelector)
           textOnPageCheck(user.specificExpectedResults.get.expectedBullet1, bulletSelector(1))
           textOnPageCheck(user.specificExpectedResults.get.expectedBullet2, bulletSelector(2))
           radioButtonCheck(yesText, 1, checked = Some(false))
@@ -412,5 +404,4 @@ class StatePensionLumpSumControllerISpec extends IntegrationTest with BeforeAndA
       }
     }
   }
-
 }
