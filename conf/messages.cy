@@ -500,6 +500,21 @@ incomeFromPensions.statePensionLumpSum.onlyApplies = Mae hyn ond yn berthnasol i
 incomeFromPensions.statePensionLumpSum.error.noEntry.individual = Dewiswch ‘Iawn’ os cawsoch gyfandaliad Pensiwn y Wladwriaeth
 incomeFromPensions.statePensionLumpSum.error.noEntry.agent = Dewiswch ‘Iawn’ os cafodd eich cleient gyfandaliad Pensiwn y Wladwriaeth
 
+#state pension start date
+incomeFromPensions.stateBenefitStartDate.title.individual = When did you start getting State Pension payments?
+incomeFromPensions.stateBenefitStartDate.title.agent = When did your client start getting State Pension payments?
+incomeFromPensions.stateBenefitStartDate.date.hint = For example, 27 3 2007
+incomeFromPensions.stateBenefitStartDate.error.empty.all = Enter the pension start date
+incomeFromPensions.stateBenefitStartDate.error.empty.day = The pension start date must include a day
+incomeFromPensions.stateBenefitStartDate.error.empty.dayMonth = The pension start date must include a day and month
+incomeFromPensions.stateBenefitStartDate.error.empty.dayYear = The pension start date must include a day and year
+incomeFromPensions.stateBenefitStartDate.error.empty.month = The pension start date must include a month
+incomeFromPensions.stateBenefitStartDate.error.empty.monthYear = The pension start date must include a month and year
+incomeFromPensions.stateBenefitStartDate.error.empty.year = The pension start date must include a year
+incomeFromPensions.stateBenefitStartDate.error.invalidFormat = The day, month and year must be valid
+incomeFromPensions.stateBenefitStartDate.error.dateInFuture = The pension start date must be in the past
+incomeFromPensions.stateBenefitStartDate.error.tooLongAgo = The pension start date must be after 1 January 1900
+
 #state pension lump sum
 pensions.statePensionLumpSum.title.individual = Faint oedd eich cyfandaliad Pensiwn y Wladwriaeth?
 pensions.statePensionLumpSum.title.agent = Faint oedd cyfandaliad Pensiwn y Wladwriaeth eich cleient?
@@ -515,6 +530,36 @@ pensions.taxPaidOnStatePensionLumpSum.title.individual = A wnaethoch dalu treth 
 pensions.taxPaidOnStatePensionLumpSum.error.noEntry.individual = Dewiswch ‘Iawn’ os gwnaethoch dalu treth ar gyfandaliad Pensiwn y Wladwriaeth
 pensions.taxPaidOnStatePensionLumpSum.title.agent = A wnaeth eich cleient dalu treth ar gyfandaliad Pensiwn y Wladwriaeth?
 pensions.taxPaidOnStatePensionLumpSum.error.noEntry.agent = Dewiswch ‘Iawn’ os gwnaeth eich cleient dalu treth ar gyfandaliad Pensiwn y Wladwriaeth
+pensions.taxPaidOnStatePensionLumpSum.amount = Amount of tax paid
+pensions.taxPaidOnStatePensionLumpSum.title.individual = Did you pay tax on the State Pension lump sum?
+pensions.taxPaidOnStatePensionLumpSum.error.noEntry.individual = Select yes if you paid tax on the State Pension lump sum
+pensions.taxPaidOnStatePensionLumpSum.title.agent = Did your client pay tax on the State Pension lump sum?
+pensions.taxPaidOnStatePensionLumpSum.error.noEntry.agent = Select yes if your client paid tax on the State Pension lump sum
+pensions.taxPaidOnStatePensionLumpSum.amount.error.noEntry.individual = Enter the total amount of tax paid on the State Pension lump sum
+pensions.taxPaidOnStatePensionLumpSum.amount.error.noEntry.agent = Enter the amount of tax your client paid on the State Pension lump sum
+pensions.taxPaidOnStatePensionLumpSum.amount.error.incorrectFormat.individual = Enter the total amount of tax paid on the State Pension lump sum in the correct format
+pensions.taxPaidOnStatePensionLumpSum.amount.error.incorrectFormat.agent = Enter the amount of tax your client paid on the State Pension lump sum in the correct format
+pensions.taxPaidOnStatePensionLumpSum.amount.error.overMaximum.individual = The amount of tax paid on the State Pension lump sum must be less than £100,000,000,000
+pensions.taxPaidOnStatePensionLumpSum.amount.error.overMaximum.agent = The amount of tax your client paid on the State Pension lump sum must be less than £100,000,000,000
+
+#start date of state pension lump sum
+pensions.statePensionLumpSumStartDate.title.individual = When did you get your State Pension lump sum?
+pensions.statePensionLumpSumStartDate.title.agent = When did your client get their State Pension lump sum?
+pensions.statePensionLumpSumStartDate.hint.individual = You can find this in your P60.
+pensions.statePensionLumpSumStartDate.hint.agent = They can find this on their P60.
+pensions.statePensionLumpSumStartDate.error.empty.day = The pension lump sum start date must include a day
+pensions.statePensionLumpSumStartDate.error.empty.month = The pension lump sum start date must include a month
+pensions.statePensionLumpSumStartDate.error.empty.year = The pension lump sum start date must include a year
+pensions.statePensionLumpSumStartDate.error.empty.all = Enter the pension lump sum start date
+pensions.statePensionLumpSumStartDate.error.empty.day = The pension lump sum start date must include a day
+pensions.statePensionLumpSumStartDate.error.empty.dayMonth = The pension lump sum start date must include a day and month
+pensions.statePensionLumpSumStartDate.error.empty.dayYear = The pension lump sum start date must include a day and year
+pensions.statePensionLumpSumStartDate.error.empty.month = The pension lump sum start date must include a month
+pensions.statePensionLumpSumStartDate.error.empty.monthYear = The pension lump sum start date must include a month and year
+pensions.statePensionLumpSumStartDate.error.empty.year = The pension lump sum start date must include a year
+pensions.statePensionLumpSumStartDate.error.invalidFormat = The day, month and year must be valid
+pensions.statePensionLumpSumStartDate.error.dateInFuture = The date you entered must be in the past
+pensions.statePensionLumpSumStartDate.error.tooLongAgo = The date must be after 1 January 1900
 
 #state pension
 pensions.statePension.title.individual = Do you get regular State Pension payments?

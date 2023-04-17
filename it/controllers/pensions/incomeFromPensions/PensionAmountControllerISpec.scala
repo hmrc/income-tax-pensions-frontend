@@ -220,7 +220,7 @@ class PensionAmountControllerISpec extends IntegrationTest with ViewHelpers with
           welshToggleCheck(user.isWelsh)
         }
 
-        "render How much pension did you get paid with no prefilled value for total tax when total tax is none" which {
+        "render How much pension did you get paid with total tax when total tax is none" which {
           lazy val pensionIncomeModel = UkPensionIncomeViewModel(
             amount = None, taxPaid = Some(newAmount))
 
@@ -248,7 +248,7 @@ class PensionAmountControllerISpec extends IntegrationTest with ViewHelpers with
           textOnPageCheck(hintText, amount2hintTextSelector, "for amount 2")
           textOnPageCheck(poundPrefixText, poundPrefixSelector(3), "for amount 2")
           inputFieldValueCheck(amount1InputName, amount1inputSelector, "")
-          inputFieldValueCheck(amount2InputName, amount2inputSelector, "")
+          inputFieldValueCheck(amount2InputName, amount2inputSelector, newAmount.toString)
           buttonCheck(buttonText, continueButtonSelector)
           formPostLinkCheck(pensionAmountUrl(taxYearEOY, index), formSelector)
           welshToggleCheck(user.isWelsh)

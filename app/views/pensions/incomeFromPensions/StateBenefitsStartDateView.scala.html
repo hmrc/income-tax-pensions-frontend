@@ -18,9 +18,11 @@
 @import views.html.templates.helpers.Heading
 @import views.html.templates.helpers.DateInput
 @import views.html.templates.helpers.Button
+@import models.requests.UserSessionDataRequest
 @import views.html.templates.helpers.ErrorSummary
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import forms.DateForm.DateModel
+
 
 @this(
     layout: Layout,
@@ -31,9 +33,9 @@
     dateInput : DateInput,
 )
 
-@(form: Form[DateModel], taxYear: Int, pensionSchemeIndex: Int)(implicit request: AuthorisationRequest[_], messages: Messages, appConfig: AppConfig)
+@(form: Form[DateModel], taxYear: Int)(implicit request: UserSessionDataRequest[_], messages: Messages, appConfig: AppConfig)
 
-@titleForUse = @{messages(s"incomeFromPensions.pensionStartDate.title.${if(request.user.isAgent) "agent" else "individual"}")}
+@titleForUse = @{messages(s"incomeFromPensions.stateBenefitStartDate.title.${if(request.user.isAgent) "agent" else "individual"}")}
 
 @layout(pageTitle = titleForUse, taxYear = Some(taxYear), hasErrors = form.hasErrors, isAgent = request.user.isAgent) {
 
@@ -48,12 +50,12 @@
 
     @heading(titleForUse, Some(messages("common.incomeFromPensions.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-3")
 
-    @formWithCsrf(action = controllers.pensions.incomeFromPensions.routes.PensionSchemeStartDateController.submit(taxYear, Some(pensionSchemeIndex))) {
+    @formWithCsrf(action = controllers.pensions.incomeFromPensions.routes.StateBenefitStartDateController.submit(taxYear)) {
         @dateInput(
             form,
-            name = "pensionStartDate",
-            id = "pensionStartDate",
-            hint = Some(messages("incomeFromPensions.pensionStartDate.date.hint")),
+            name = "stateBenefitStartDate",
+            id = "stateBenefitStartDate",
+            hint = Some(messages("incomeFromPensions.stateBenefitStartDate.date.hint")),
             legendHeading = Some(Html(titleForUse)),
             legendHidden = true
         )

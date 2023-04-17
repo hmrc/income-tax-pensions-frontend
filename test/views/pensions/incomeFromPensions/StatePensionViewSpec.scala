@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package views.incomeFromPensions
+package views.pensions.incomeFromPensions
 
 import builders.IncomeFromPensionsViewModelBuilder.anIncomeFromPensionsViewModel
 import builders.PensionsCYAModelBuilder.aPensionsCYAEmptyModel
@@ -121,7 +121,6 @@ class StatePensionViewSpec extends ViewUnitTest with FakeRequestProvider {
   private lazy val underTest = inject[StatePensionView]
 
   userScenarios.foreach { userScenario =>
-
     s"language is ${welshTest(userScenario.isWelsh)} and request is from an ${agentTest(userScenario.isAgent)}" should {
       "render page with no pre-filled data" which {
 
