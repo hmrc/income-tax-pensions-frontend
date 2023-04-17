@@ -40,12 +40,12 @@ class StatePensionLumpSumStartDateControllerISpec extends IntegrationTest with V
 
   override val userScenarios: Seq[UserScenario[_, _]] = Nil
 
-  private val dayInputName = "statePensionLumpSumStartDate-day"
-  private val monthInputName = "statePensionLumpSumStartDate-month"
-  private val yearInputName = "statePensionLumpSumStartDate-year"
-  private val validDay = "27"
-  private val validMonth = "10"
-  private val validYear = "2021"
+  val dayInputName = "statePensionLumpSumStartDate-day"
+  val monthInputName = "statePensionLumpSumStartDate-month"
+  val yearInputName = "statePensionLumpSumStartDate-year"
+  val validDay = "27"
+  val validMonth = "10"
+  val validYear = "2021"
 
   object Selectors {
     val dayInputSelector = "#day"

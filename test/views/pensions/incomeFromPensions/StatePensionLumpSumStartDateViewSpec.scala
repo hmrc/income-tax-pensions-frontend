@@ -47,23 +47,12 @@ class StatePensionLumpSumStartDateViewSpec extends ViewUnitTest with FakeRequest
     val expectedDayLabel: String
     val expectedMonthLabel: String
     val expectedYearLabel: String
-    val dateInFutureErrorText: String
-    val realDateErrorText: String
-    val tooLongAgoErrorText: String
-    val emptyAllErrorText: String
-    val emptyDayErrorText: String
-    val emptyDayMonthErrorText: String
-    val emptyDayYearErrorText: String
-    val emptyMonthErrorText: String
-    val emptyMonthYearErrorText: String
-    val emptyYearErrorText: String
   }
 
   trait SpecificExpectedResults {
     val expectedTitle: String
     lazy val expectedHeading: String = expectedTitle
     val expectedHint: String
-    val expectedErrorTitle: String
   }
 
   object CommonExpectedEN extends CommonExpectedResults {
@@ -72,16 +61,6 @@ class StatePensionLumpSumStartDateViewSpec extends ViewUnitTest with FakeRequest
     val expectedDayLabel = "Day"
     val expectedMonthLabel = "Month"
     val expectedYearLabel = "Year"
-    val dateInFutureErrorText = "The pension start date must be in the past"
-    val realDateErrorText = "The pension start date must be a real date"
-    val tooLongAgoErrorText = "The pension start date must be after 1 January 1900"
-    val emptyAllErrorText = "Enter the pension start date"
-    val emptyDayErrorText = "The pension start date must include a day"
-    val emptyDayMonthErrorText = "The pension start date must include a day and month"
-    val emptyDayYearErrorText = "The pension start date must include a day and year"
-    val emptyMonthErrorText = "The pension start date must include a month"
-    val emptyMonthYearErrorText = "The pension start date must include a month and year"
-    val emptyYearErrorText = "The pension start date must include a year"
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
@@ -90,38 +69,24 @@ class StatePensionLumpSumStartDateViewSpec extends ViewUnitTest with FakeRequest
     val expectedDayLabel = "Diwrnod"
     val expectedMonthLabel = "Mis"
     val expectedYearLabel = "Blwyddyn"
-    val dateInFutureErrorText = "The pension start date must be in the past"
-    val realDateErrorText = "The pension start date must be a real date"
-    val tooLongAgoErrorText = "The pension start date must be after 1 January 1900"
-    val emptyAllErrorText = "Enter the pension start date"
-    val emptyDayErrorText = "The pension start date must include a day"
-    val emptyDayMonthErrorText = "The pension start date must include a day and month"
-    val emptyDayYearErrorText = "The pension start date must include a day and year"
-    val emptyMonthErrorText = "The pension start date must include a month"
-    val emptyMonthYearErrorText = "The pension start date must include a month and year"
-    val emptyYearErrorText = "The pension start date must include a year"
   }
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
     val expectedTitle = "When did you get your State Pension lump sum?"
     val expectedHint = "You can find this in your P60."
-    val expectedErrorTitle = s"Error: $expectedTitle"
   }
   object ExpectedIndividualCY extends SpecificExpectedResults {
     val expectedTitle = "When did you get your State Pension lump sum?"
     val expectedHint = "You can find this in your P60."
-    val expectedErrorTitle = s"Gwall: $expectedTitle"
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
     val expectedTitle = "When did your client get their State Pension lump sum?"
     val expectedHint = "They can find this on their P60."
-    val expectedErrorTitle = s"Error: $expectedTitle"
   }
   object ExpectedAgentCY extends SpecificExpectedResults {
     val expectedTitle = "When did your client get their State Pension lump sum?"
     val expectedHint = "They can find this on their P60."
-    val expectedErrorTitle = s"Gwall: $expectedTitle"
   }
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(
