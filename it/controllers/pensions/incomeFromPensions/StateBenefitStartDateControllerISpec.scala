@@ -129,7 +129,7 @@ class StateBenefitStartDateControllerISpec extends IntegrationTest with ViewHelp
           follow = false,
           body = formData)
       }
-      result.status shouldBe OK
+      result.status shouldBe SEE_OTHER
     }
 
     "the day field is empty" which {
