@@ -86,7 +86,7 @@ class TransferChargeSummaryControllerISpec extends IntegrationTest with BeforeAn
     val expectedHeading = "Pension schemes paying transfer charges - summary"
     val change = "Newid"
     val remove = "Tynnu"
-    val expectedAddAnotherText = "Add another pension scheme"
+    val expectedAddAnotherText = "Ychwanegu cynllun pensiwn arall"
     val expectedAddPensionSchemeText = "Add a pension scheme"
     val addASchemeButton = "Add a scheme"
     val returnToOverviewButton = "Yn ôl i’r trosolwg"

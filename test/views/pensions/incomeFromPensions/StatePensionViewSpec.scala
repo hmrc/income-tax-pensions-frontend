@@ -65,7 +65,7 @@ class StatePensionViewSpec extends ViewUnitTest with FakeRequestProvider {
     val yesText = "Iawn"
     val noText = "Na"
     val buttonText = "Yn eich blaen"
-    val amountSubheading = "Total amount this tax year"
+    val amountSubheading = "Cyfanswm ar gyfer y flwyddyn dreth hon"
     val amountExample = "Er enghraifft, £193.54"
   }
 
@@ -80,10 +80,10 @@ class StatePensionViewSpec extends ViewUnitTest with FakeRequestProvider {
   object ExpectedIndividualCY extends SpecificExpectedResults {
     val expectedTitle = "Do you get regular State Pension payments?"
     val expectedErrorTitle = s"Gwall: $expectedTitle"
-    val expectedNoEntryErrorMessage = "Select yes if you got State Pension this year"
-    val expectedNoAmountErrorMessage = "Enter your State Pension amount"
-    val expectedIncorrectFormatErrorMessage = "Enter your State Pension amount in the correct format"
-    val expectedOverMaximumErrorMessage = "Your State Pension amount must be less than £100,000,000,000"
+    val expectedNoEntryErrorMessage = "Dewiswch ‘Iawn’ os cawsoch Bensiwn y Wladwriaeth y flwyddyn hon"
+    val expectedNoAmountErrorMessage = "Nodwch swm eich Pensiwn y Wladwriaeth"
+    val expectedIncorrectFormatErrorMessage = "Nodwch swm eich Pensiwn y Wladwriaeth yn y fformat cywir"
+    val expectedOverMaximumErrorMessage = "Mae’n rhaid i swm eich Pensiwn y Wladwriaeth fod yn llai na £100,000,000,000"
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
@@ -97,10 +97,10 @@ class StatePensionViewSpec extends ViewUnitTest with FakeRequestProvider {
   object ExpectedAgentCY extends SpecificExpectedResults {
     val expectedTitle = "Does your client get regular State Pension payments?"
     val expectedErrorTitle = s"Gwall: $expectedTitle"
-    val expectedNoEntryErrorMessage = "Select yes if your client got State Pension this year"
-    val expectedNoAmountErrorMessage = "Enter your client’s State Pension amount"
-    val expectedIncorrectFormatErrorMessage = "Enter your client’s State Pension amount in the correct format"
-    val expectedOverMaximumErrorMessage = "Your client’s State Pension amount must be less than £100,000,000,000"
+    val expectedNoEntryErrorMessage = "Dewiswch ‘Iawn’ os cafodd eich cleient Pensiwn y Wladwriaeth y flwyddyn hon"
+    val expectedNoAmountErrorMessage = "Nodwch swm Pensiwn y Wladwriaeth eich cleient"
+    val expectedIncorrectFormatErrorMessage = "Nodwch swm Pensiwn y Wladwriaeth eich cleient yn y fformat cywir"
+    val expectedOverMaximumErrorMessage = "Mae’n rhaid i swm Pensiwn y Wladwriaeth eich cleient fod yn llai na £100,000,000,000"
   }
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(

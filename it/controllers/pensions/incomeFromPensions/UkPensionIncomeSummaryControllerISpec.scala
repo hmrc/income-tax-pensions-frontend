@@ -74,8 +74,8 @@ class UkPensionIncomeSummaryControllerISpec extends IntegrationTest with BeforeA
     val expectedHeading = expectedTitle
     val change = "Newid"
     val remove = "Tynnu"
-    val expectedAddAnotherText = "Add another pension scheme"
-    val expectedAddPensionSchemeText = "Add a pension scheme"
+    val expectedAddAnotherText = "Ychwanegu cynllun pensiwn arall"
+    val expectedAddPensionSchemeText = "Ychwanegu cynllun pensiwn"
   }
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, Nothing]] = Seq(
