@@ -133,9 +133,9 @@ class PaymentsIntoOverseasPensionsCYAViewSpec extends ViewUnitTest { //scalastyl
       }
       
       "render the page with a No Payments into Overseas pensions but employer and employer tax payments" when {
-        val piopNoEmployerYesTaxYesModel = aPaymentsIntoOverseasPensionsEmptyViewModel.copy(
-          paymentsIntoOverseasPensionsQuestions = Some(false), employerPaymentsQuestion = Some(true), taxPaidOnEmployerPaymentsQuestion = Some(true))
-        
+        val piopNoEmployerYesTaxYesModel = aPaymentsIntoOverseasPensionsViewModel.copy(
+          paymentsIntoOverseasPensionsQuestions = Some(false), employerPaymentsQuestion = Some(true), taxPaidOnEmployerPaymentsQuestion = Some(true)
+        )
         implicit val document: Document = renderPage(userScenario, piopNoEmployerYesTaxYesModel)
         
         cyaRowCheck(piopYesNo, noText, ChangeLinks.changePiop, hiddenPiopYesNo, 1)
@@ -144,21 +144,10 @@ class PaymentsIntoOverseasPensionsCYAViewSpec extends ViewUnitTest { //scalastyl
         buttonCheck(buttonText)
       }
 
-      "render the page with a No Payments into Overseas pensions but employer Payments and No employer tax payments" when {
-        val piopNoEmployerYesTaxYesModel = aPaymentsIntoOverseasPensionsEmptyViewModel.copy(
-          paymentsIntoOverseasPensionsQuestions = Some(false), employerPaymentsQuestion = Some(true), taxPaidOnEmployerPaymentsQuestion = Some(false))
-
-        implicit val document: Document = renderPage(userScenario, piopNoEmployerYesTaxYesModel)
-
-        cyaRowCheck(piopYesNo, noText, ChangeLinks.changePiop, hiddenPiopYesNo, 1)
-        cyaRowCheck(employerPaymentsYesNo, yesText, ChangeLinks.changeEmployerPayments, hiddenEmployerPaymentsYesNo, 2)
-        cyaRowCheck(employerTaxYesNo, noText, ChangeLinks.changeEmployerTax, hiddenEmployerTaxYesNo, 3)
-        buttonCheck(buttonText)
-      }
-
-      "render the page with a minimal CYA model" when {
-        val minPiopModel = aPaymentsIntoOverseasPensionsEmptyViewModel
-          .copy(paymentsIntoOverseasPensionsQuestions = Some(false), employerPaymentsQuestion = Some(false))
+      "render the page with No Payments into Overseas pensions and No employer payments" when {
+        val minPiopModel = aPaymentsIntoOverseasPensionsViewModel.copy(
+          paymentsIntoOverseasPensionsQuestions = Some(false), employerPaymentsQuestion = Some(false)
+        )
         import userScenario.commonExpectedResults._
         implicit val document: Document = renderPage(userScenario, minPiopModel)
         

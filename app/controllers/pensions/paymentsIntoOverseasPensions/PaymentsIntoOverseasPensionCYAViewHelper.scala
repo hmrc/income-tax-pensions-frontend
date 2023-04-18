@@ -77,13 +77,16 @@ object PaymentsIntoOverseasPensionCYAViewHelper extends CYABaseHelper {
         )
 
   private def summaryRowForOverseasSchemes(piopViewModel: PaymentsIntoOverseasPensionsViewModel, taxYear: Int)
-                                           (implicit messages: Messages): Option[SummaryListRow] =
-    piopViewModel.employerPaymentsQuestion
-      .filter(x => x)
-      .map(_ =>
-        summaryListRowWithString(
-          "common.overseas.pension.schemes",
-          Some(piopViewModel.reliefs.flatMap(_.customerReference)),
-          routes.ReliefsSchemeSummaryController.show(taxYear))(messages)
-      )
+                                           (implicit messages: Messages): Option[SummaryListRow] = {
+    piopViewModel.employerPaymentsQuestion.filter(x => x).flatMap(_ => {
+      piopViewModel.taxPaidOnEmployerPaymentsQuestion
+        .filterNot(x =>x)
+        .map(_ =>
+          summaryListRowWithString(
+            "common.overseas.pension.schemes",
+            Some(piopViewModel.reliefs.flatMap(_.customerReference)),
+            routes.ReliefsSchemeSummaryController.show(taxYear))(messages)
+        )
+    })
+  }
 }

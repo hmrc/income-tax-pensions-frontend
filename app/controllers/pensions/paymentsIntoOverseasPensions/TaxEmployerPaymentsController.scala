@@ -76,10 +76,10 @@ class TaxEmployerPaymentsController @Inject()(authAction: AuthorisedAction,
             pensionSessionService.createOrUpdateSessionData(request.user,
               updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
               if(yesNo) {
+                Redirect(PaymentsIntoOverseasPensionsCYAController.show(taxYear))
+              } else {
                 val reliefSize = data.pensions.paymentsIntoOverseasPensions.reliefs.size
                 Redirect(customerRefPageOrSchemeSummaryPage(reliefSize, taxYear))
-              } else {
-                Redirect(PaymentsIntoOverseasPensionsCYAController.show(taxYear))
               }
             }
           case _ =>
