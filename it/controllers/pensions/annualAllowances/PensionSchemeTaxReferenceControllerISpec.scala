@@ -92,7 +92,7 @@ class PensionSchemeTaxReferenceControllerISpec extends IntegrationTest with Befo
     val yesText = "Yes"
     val noText = "No"
     val expectedTitle = "Pension Scheme Tax Reference"
-    val expectedHeading = "Pension Scheme Tax Reference"
+    val expectedHeading = expectedTitle
     val expectedErrorTitle = s"Error: $expectedTitle"
     val hintText = "For example, ‘12345678RA’"
     val expectedParagraph1 = "Enter the reference for the pension scheme that paid the tax."
