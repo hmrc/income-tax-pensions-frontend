@@ -64,10 +64,10 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
 
   trait SpecificExpectedResults {
     val expectedNonReducedTitle: String
-    val expectedNonReducedHeading: String
+    lazy val expectedNonReducedHeading: String = expectedNonReducedTitle
     val expectedNonReducedErrorTitle: String
     val expectedReducedTitle: String
-    val expectedReducedHeading: String
+    lazy val expectedReducedHeading: String = expectedReducedTitle
     val expectedReducedErrorTitle: String
 
     val emptyReducedErrorText: String
@@ -88,19 +88,17 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
   object CommonExpectedCY extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Lwfans blynyddol pensiwn ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
     val hintText = "Er enghraifft, £193.52"
-    val emptyNonReducedErrorText = "Enter the amount above the annual allowance"
-    val invalidFormatNonReducedErrorText = "Enter the amount above the annual allowance in the correct format"
-    val maxAmountNonReducedErrorText = "The amount above the annual allowance must be less than £100,000,000,000"
+    val emptyNonReducedErrorText = "Nodwch y swm sydd uwchlaw’r lwfans blynyddol"
+    val invalidFormatNonReducedErrorText = "Nodwch y swm sydd uwchlaw’r lwfans blynyddol yn y fformat cywir"
+    val maxAmountNonReducedErrorText = "Mae’n rhaid i’r swm sydd uwchlaw’r lwfans blynyddol fod yn llai na £100,000,000,000"
     val buttonText = "Yn eich blaen"
-    val expectedParagraph = "This is the amount on which tax is due."
+    val expectedParagraph = "Dyma’r swm y mae treth yn ddyledus arno."
   }
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
     val expectedNonReducedTitle = "How much above your annual allowance are you?"
-    val expectedNonReducedHeading = "How much above your annual allowance are you?"
     val expectedNonReducedErrorTitle = s"Error: $expectedNonReducedTitle"
     val expectedReducedTitle = "How much above your reduced annual allowance are you?"
-    val expectedReducedHeading = "How much above your reduced annual allowance are you?"
     val expectedReducedErrorTitle = s"Error: $expectedReducedTitle"
     val emptyReducedErrorText = "Enter the amount above your reduced annual allowance"
     val invalidFormatReducedErrorText = "Enter the amount above your reduced annual allowance in the correct format"
@@ -108,23 +106,19 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
-    val expectedNonReducedTitle = "How much above your annual allowance are you?"
-    val expectedNonReducedHeading = "How much above your annual allowance are you?"
+    val expectedNonReducedTitle = "Faint yn uwch na’ch lwfans blynyddol ydych chi?"
     val expectedNonReducedErrorTitle = s"Gwall: $expectedNonReducedTitle"
-    val expectedReducedTitle = "How much above your reduced annual allowance are you?"
-    val expectedReducedHeading = "How much above your reduced annual allowance are you?"
+    val expectedReducedTitle = "Faint yn uwch na’ch lwfans blynyddol wedi’i ostwng ydych chi?"
     val expectedReducedErrorTitle = s"Gwall: $expectedReducedTitle"
-    val emptyReducedErrorText = "Enter the amount above your reduced annual allowance"
-    val invalidFormatReducedErrorText = "Enter the amount above your reduced annual allowance in the correct format"
-    val maxAmountReducedErrorText = "The amount above your reduced annual allowance must be less than £100,000,000,000"
+    val emptyReducedErrorText = "Nodwch y swm sydd uwchlaw’ch lwfans blynyddol wedi’i ostwng"
+    val invalidFormatReducedErrorText = "Nodwch y swm sydd uwchlaw’ch lwfans blynyddol wedi’i ostwng yn y fformat cywir"
+    val maxAmountReducedErrorText = "Mae’n rhaid i’r swm sydd uwchlaw’ch lwfans blynyddol wedi’i ostwng fod yn llai na £100,000,000,000"
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
     val expectedNonReducedTitle = "How much above your client’s annual allowance are they?"
-    val expectedNonReducedHeading = "How much above your client’s annual allowance are they?"
     val expectedNonReducedErrorTitle = s"Error: $expectedNonReducedTitle"
     val expectedReducedTitle = "How much above your client’s reduced annual allowance are they?"
-    val expectedReducedHeading = "How much above your client’s reduced annual allowance are they?"
     val expectedReducedErrorTitle = s"Error: $expectedReducedTitle"
     val emptyReducedErrorText = "Enter the amount above your client’s reduced annual allowance"
     val invalidFormatReducedErrorText = "Enter the amount above your client’s reduced annual allowance in the correct format"
@@ -132,15 +126,13 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
-    val expectedNonReducedTitle = "How much above your client’s annual allowance are they?"
-    val expectedNonReducedHeading = "How much above your client’s annual allowance are they?"
+    val expectedNonReducedTitle = "Faint yn uwch na’i lwfans blynyddol yw eich cleient?"
     val expectedNonReducedErrorTitle = s"Gwall: $expectedNonReducedTitle"
-    val expectedReducedTitle = "How much above your client’s reduced annual allowance are they?"
-    val expectedReducedHeading = "How much above your client’s reduced annual allowance are they?"
+    val expectedReducedTitle = "Faint yn uwch na’i lwfans blynyddol wedi’i ostwng yw eich cleient?"
     val expectedReducedErrorTitle = s"Gwall: $expectedReducedTitle"
-    val emptyReducedErrorText = "Enter the amount above your client’s reduced annual allowance"
-    val invalidFormatReducedErrorText = "Enter the amount above your client’s reduced annual allowance in the correct format"
-    val maxAmountReducedErrorText = "The amount above your client’s reduced annual allowance must be less than £100,000,000,000"
+    val emptyReducedErrorText = "Nodwch y swm sydd uwchlaw lwfans blynyddol wedi’i ostwng eich cleient"
+    val invalidFormatReducedErrorText = "Nodwch y swm sydd uwchlaw lwfans blynyddol wedi’i ostwng eich cleient yn y fformat cywir"
+    val maxAmountReducedErrorText = "Mae’n rhaid i’r swm sydd uwchlaw lwfans blynyddol wedi’i ostwng eich cleient fod yn llai na £100,000,000,000"
   }
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(
