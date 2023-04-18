@@ -74,6 +74,16 @@ class FormsProvider() {
     ))
   }
 
+  def pensionLumpSumAmountForm(isAgent: Boolean): Form[(Option[BigDecimal], Option[BigDecimal])] =
+    OptionalTupleAmountForm.amountForm(OptionalTupleAmountFormErrorMessage(
+    emptyFieldKey1 = s"lifetimeAllowance.pensionLumpSumDetails.beforeTax.error.noEntry.${if (isAgent) "agent" else "individual"}",
+    wrongFormatKey1 = s"lifetimeAllowance.pensionLumpSumDetails.beforeTax.error.incorrectFormat",
+    exceedsMaxAmountKey1 = s"common.beforeTax.error.overMaximum",
+    emptyFieldKey2 = s"lifetimeAllowance.pensionLumpSumDetails.taxPaid.error.noEntry.${if (isAgent) "agent" else "individual"}",
+    wrongFormatKey2 = s"common.taxPaid.error.incorrectFormat",
+    exceedsMaxAmountKey2 = s"common.taxPaid.error.overMaximum"
+  ))
+
   def pensionPaymentsForm(user: User): Form[(Option[BigDecimal], Option[BigDecimal])] = {
     OptionalTupleAmountForm.amountForm(OptionalTupleAmountFormErrorMessage(
       emptyFieldKey1 = "overseasPension.pensionPayments.amountBeforeTax.noEntry",
