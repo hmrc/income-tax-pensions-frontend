@@ -33,7 +33,7 @@ import controllers.pensions.lifetimeAllowances.routes.PensionLumpSumController
 import models.AuthorisationRequest
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class PensionLumpSumDetailsController @Inject()(implicit val mcc: MessagesControllerComponents,
@@ -43,18 +43,22 @@ class PensionLumpSumDetailsController @Inject()(implicit val mcc: MessagesContro
                                                 pensionSessionService: PensionSessionService,
                                                 errorHandler: ErrorHandler,
                                                 formsProvider: FormsProvider,
-                                                clock: Clock) extends FrontendController(mcc) with I18nSupport with SessionHelper with FormUtils {
+                                                clock: Clock,
+                                                ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport with SessionHelper with FormUtils {
 
 
 
 
-  def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
-    pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
-      case Some(data) =>
-        Future.successful(populateForm(data, taxYear))
-      case _ =>
-        //TODO: - Redirect to Annual Lifetime allowances cya page
-        Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
+  def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)) async { implicit request =>
+    pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
+      case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
+      case Right(optPensionUserData) => optPensionUserData match {
+        case Some(data) =>
+          Future.successful(populateForm(data, taxYear))
+        case _ =>
+          //TODO: - Redirect to Annual Lifetime allowances cya page
+          Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
+      }
     }
   }
 
@@ -79,28 +83,31 @@ class PensionLumpSumDetailsController @Inject()(implicit val mcc: MessagesContro
     formsProvider.pensionLumpSumAmountForm(request.user.isAgent).bindFromRequest().fold(
       formWithErrors => Future.successful(BadRequest(pensionLumpSumDetailsView(formWithErrors, taxYear))),
       amounts => {
-        pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
-          case Some(data) =>
-            if (data.pensions.pensionLifetimeAllowances.pensionAsLumpSumQuestion.contains(true)) {
-              val pensionsCYAModel: PensionsCYAModel = data.pensions
-              val viewModel: PensionLifetimeAllowancesViewModel = pensionsCYAModel.pensionLifetimeAllowances
-              val updatedCyaModel: PensionsCYAModel = {
-                pensionsCYAModel.copy(
-                  pensionLifetimeAllowances = viewModel.copy(
-                    pensionAsLumpSum = Some(LifetimeAllowance(amounts._1, amounts._2)))
-                )
+        pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
+          case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
+          case Right(optPensionUserData) => optPensionUserData match {
+            case Some(data) =>
+              if (data.pensions.pensionLifetimeAllowances.pensionAsLumpSumQuestion.contains(true)) {
+                val pensionsCYAModel: PensionsCYAModel = data.pensions
+                val viewModel: PensionLifetimeAllowancesViewModel = pensionsCYAModel.pensionLifetimeAllowances
+                val updatedCyaModel: PensionsCYAModel = {
+                  pensionsCYAModel.copy(
+                    pensionLifetimeAllowances = viewModel.copy(
+                      pensionAsLumpSum = Some(LifetimeAllowance(amounts._1, amounts._2)))
+                  )
+                }
+                pensionSessionService.createOrUpdateSessionData(request.user,
+                  updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
+                  //TODO: Redirect to lifetime-other-status
+                  Redirect(PensionsSummaryController.show(taxYear))
+                }
+              } else {
+                Future.successful(Redirect(PensionLumpSumController.show(taxYear)))
               }
-              pensionSessionService.createOrUpdateSessionData(request.user,
-                updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
-                //TODO: Redirect to lifetime-other-status
-                Redirect(PensionsSummaryController.show(taxYear))
-              }
-            } else {
-              Future.successful(Redirect(PensionLumpSumController.show(taxYear)))
-            }
-          case _ =>
-            //TODO: redirect to the lifetime allowance CYA page
-            Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
+            case _ =>
+              //TODO: redirect to the lifetime allowance CYA page
+              Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
+          }
         }
       }
     )
