@@ -52,7 +52,7 @@ class PensionSchemeTaxReferenceControllerISpec extends IntegrationTest with Befo
   trait CommonExpectedResults {
     val expectedCaption: Int => String
     val expectedTitle: String
-    val expectedHeading: String
+    lazy val expectedHeading: String = expectedTitle
     val expectedErrorTitle: String
     val hintText: String
     val expectedParagraph1: String
@@ -92,7 +92,6 @@ class PensionSchemeTaxReferenceControllerISpec extends IntegrationTest with Befo
     val yesText = "Yes"
     val noText = "No"
     val expectedTitle = "Pension Scheme Tax Reference"
-    val expectedHeading = expectedTitle
     val expectedErrorTitle = s"Error: $expectedTitle"
     val hintText = "For example, ‘12345678RA’"
     val expectedParagraph1 = "Enter the reference for the pension scheme that paid the tax."
@@ -104,7 +103,6 @@ class PensionSchemeTaxReferenceControllerISpec extends IntegrationTest with Befo
     val yesText = "Iawn"
     val noText = "Na"
     val expectedTitle = "Cyfeirnod Treth y Cynllun Pensiwn"
-    val expectedHeading = expectedTitle
     val expectedErrorTitle = s"Gwall: $expectedTitle"
     val hintText = "Er enghraifft, ‘12345678RA’"
     val expectedParagraph1 = "Nodwch y cyfeirnod ar gyfer y cynllun pensiwn a dalodd y dreth."

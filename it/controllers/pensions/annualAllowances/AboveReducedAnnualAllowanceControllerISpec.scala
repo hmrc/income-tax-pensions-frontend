@@ -73,11 +73,11 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
 
   trait SpecificExpectedResults {
     val expectedReducedTitle: String
-    val expectedReducedHeading: String
+    lazy val expectedReducedHeading: String = expectedReducedTitle
     val expectedReducedErrorTitle: String
     val expectedReducedErrorMessage: String
     val expectedNonReducedTitle: String
-    val expectedNonReducedHeading: String
+    lazy val expectedNonReducedHeading: String = expectedNonReducedTitle
     val expectedNonReducedErrorTitle: String
     val expectedNonReducedErrorMessage: String
 
@@ -104,36 +104,30 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
     val expectedReducedTitle = "Have you gone above your reduced annual allowance?"
-    val expectedReducedHeading = expectedReducedTitle
     val expectedReducedErrorTitle = s"Error: $expectedReducedTitle"
     val expectedReducedErrorMessage = "Select yes if you have gone above your reduced annual allowance"
 
     val expectedNonReducedTitle = "Have you gone above the annual allowance?"
-    val expectedNonReducedHeading = expectedNonReducedTitle
     val expectedNonReducedErrorTitle = s"Error: $expectedNonReducedTitle"
     val expectedNonReducedErrorMessage = "Select yes if you have gone above the annual allowance"
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
     val expectedReducedTitle = "A ydych wedi mynd yn uwch na’ch lwfans blynyddol wedi’i ostwng?"
-    val expectedReducedHeading = expectedReducedTitle
     val expectedReducedErrorTitle = s"Gwall: $expectedReducedTitle"
     val expectedReducedErrorMessage = "Dewiswch ‘Iawn’ os ydych wedi mynd yn uwch na’ch lwfans blynyddol wedi’i ostwng"
 
     val expectedNonReducedTitle = "A ydych wedi mynd yn uwch na’r lwfans blynyddol?"
-    val expectedNonReducedHeading = expectedNonReducedTitle
     val expectedNonReducedErrorTitle = s"Gwall: $expectedNonReducedTitle"
     val expectedNonReducedErrorMessage = "Dewiswch ‘Iawn’ os ydych wedi mynd yn uwch na’r lwfans blynyddol"
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
     val expectedReducedTitle = "Has your client gone above their reduced annual allowance?"
-    val expectedReducedHeading = expectedReducedTitle
     val expectedReducedErrorTitle = s"Error: $expectedReducedTitle"
     val expectedReducedErrorMessage = "Select yes if your client has gone above their reduced annual allowance"
 
     val expectedNonReducedTitle = "Has your client gone above the annual allowance?"
-    val expectedNonReducedHeading = expectedNonReducedTitle
     val expectedNonReducedErrorTitle = s"Error: $expectedNonReducedTitle"
     val expectedNonReducedErrorMessage = "Select yes if your client has gone above the annual allowance"
 
@@ -141,12 +135,10 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
 
   object ExpectedAgentCY extends SpecificExpectedResults {
     val expectedReducedTitle = "A yw’ch cleient wedi mynd yn uwch na’i lwfans blynyddol wedi’i ostwng?"
-    val expectedReducedHeading = expectedReducedTitle
     val expectedReducedErrorTitle = s"Gwall: $expectedReducedTitle"
     val expectedReducedErrorMessage = "Dewiswch ‘Iawn’ os yw’ch cleient wedi mynd yn uwch na’i lwfans blynyddol wedi’i ostwng"
 
     val expectedNonReducedTitle = "A yw’ch cleient wedi mynd yn uwch na’r lwfans blynyddol?"
-    val expectedNonReducedHeading = expectedNonReducedTitle
     val expectedNonReducedErrorTitle = s"Gwall: $expectedNonReducedTitle"
     val expectedNonReducedErrorMessage = "Dewiswch ‘Iawn’ os yw’ch cleient wedi mynd yn uwch na’i lwfans blynyddol"
   }

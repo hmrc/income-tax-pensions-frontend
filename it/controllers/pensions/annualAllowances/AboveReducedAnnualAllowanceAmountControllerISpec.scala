@@ -64,10 +64,10 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
 
   trait SpecificExpectedResults {
     val expectedNonReducedTitle: String
-    val expectedNonReducedHeading: String
+    lazy val expectedNonReducedHeading: String = expectedNonReducedTitle
     val expectedNonReducedErrorTitle: String
     val expectedReducedTitle: String
-    val expectedReducedHeading: String
+    lazy val expectedReducedHeading: String = expectedReducedTitle
     val expectedReducedErrorTitle: String
 
     val emptyReducedErrorText: String
@@ -97,10 +97,8 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
     val expectedNonReducedTitle = "How much above your annual allowance are you?"
-    val expectedNonReducedHeading = expectedNonReducedTitle
     val expectedNonReducedErrorTitle = s"Error: $expectedNonReducedTitle"
     val expectedReducedTitle = "How much above your reduced annual allowance are you?"
-    val expectedReducedHeading = expectedReducedTitle
     val expectedReducedErrorTitle = s"Error: $expectedReducedTitle"
     val emptyReducedErrorText = "Enter the amount above your reduced annual allowance"
     val invalidFormatReducedErrorText = "Enter the amount above your reduced annual allowance in the correct format"
@@ -109,10 +107,8 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
     val expectedNonReducedTitle = "Faint yn uwch na’ch lwfans blynyddol ydych chi?"
-    val expectedNonReducedHeading = expectedNonReducedTitle
     val expectedNonReducedErrorTitle = s"Gwall: $expectedNonReducedTitle"
     val expectedReducedTitle = "Faint yn uwch na’ch lwfans blynyddol wedi’i ostwng ydych chi?"
-    val expectedReducedHeading = expectedReducedTitle
     val expectedReducedErrorTitle = s"Gwall: $expectedReducedTitle"
     val emptyReducedErrorText = "Nodwch y swm sydd uwchlaw’ch lwfans blynyddol wedi’i ostwng"
     val invalidFormatReducedErrorText = "Nodwch y swm sydd uwchlaw’ch lwfans blynyddol wedi’i ostwng yn y fformat cywir"
@@ -121,10 +117,8 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
 
   object ExpectedAgentEN extends SpecificExpectedResults {
     val expectedNonReducedTitle = "How much above your client’s annual allowance are they?"
-    val expectedNonReducedHeading = expectedNonReducedTitle
     val expectedNonReducedErrorTitle = s"Error: $expectedNonReducedTitle"
     val expectedReducedTitle = "How much above your client’s reduced annual allowance are they?"
-    val expectedReducedHeading = expectedReducedTitle
     val expectedReducedErrorTitle = s"Error: $expectedReducedTitle"
     val emptyReducedErrorText = "Enter the amount above your client’s reduced annual allowance"
     val invalidFormatReducedErrorText = "Enter the amount above your client’s reduced annual allowance in the correct format"
@@ -133,10 +127,8 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
 
   object ExpectedAgentCY extends SpecificExpectedResults {
     val expectedNonReducedTitle = "Faint yn uwch na’i lwfans blynyddol yw eich cleient?"
-    val expectedNonReducedHeading = expectedNonReducedTitle
     val expectedNonReducedErrorTitle = s"Gwall: $expectedNonReducedTitle"
     val expectedReducedTitle = "Faint yn uwch na’i lwfans blynyddol wedi’i ostwng yw eich cleient?"
-    val expectedReducedHeading = expectedReducedTitle
     val expectedReducedErrorTitle = s"Gwall: $expectedReducedTitle"
     val emptyReducedErrorText = "Nodwch y swm sydd uwchlaw lwfans blynyddol wedi’i ostwng eich cleient"
     val invalidFormatReducedErrorText = "Nodwch y swm sydd uwchlaw lwfans blynyddol wedi’i ostwng eich cleient yn y fformat cywir"

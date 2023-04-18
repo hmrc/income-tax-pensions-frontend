@@ -49,7 +49,7 @@ class PstrSummaryControllerISpec extends IntegrationTest with BeforeAndAfterEach
   trait CommonExpectedResults {
     val expectedCaption: Int => String
     val expectedTitle: String
-    val expectedHeading: String
+    lazy val expectedHeading: String = expectedTitle
     val change: String
     val remove: String
     val pensionSchemeTaxReference: String
@@ -62,7 +62,6 @@ class PstrSummaryControllerISpec extends IntegrationTest with BeforeAndAfterEach
     val expectedCaption: Int => String = (taxYear: Int) => s"Pension annual allowance for 6 April ${taxYear - 1} to 5 April $taxYear"
     val expectedButtonText = "Continue"
     val expectedTitle = "Pension Scheme Tax Reference (PSTR) summary"
-    val expectedHeading = expectedTitle
     val change = "Change"
     val remove = "Remove"
     val pensionSchemeTaxReference = "Pension Scheme Tax Reference"
@@ -74,7 +73,6 @@ class PstrSummaryControllerISpec extends IntegrationTest with BeforeAndAfterEach
     val expectedCaption: Int => String = (taxYear: Int) => s"Lwfans blynyddol pensiwn ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
     val expectedButtonText = "Yn eich blaen"
     val expectedTitle = "Crynodeb Cyfeirnod Treth y Cynllun Pensiwn (PSTR)"
-    val expectedHeading = expectedTitle
     val change = "Newid"
     val remove = "Tynnu"
     val pensionSchemeTaxReference = "Cyfeirnod Treth y Cynllun Pensiwn"
