@@ -106,11 +106,11 @@ class StatePensionLumpSumAmountControllerISpec extends IntegrationTest with View
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
-    val expectedTitle = "How much was your State Pension lump sum?"
+    val expectedTitle = "Faint oedd eich cyfandaliad Pensiwn y Wladwriaeth?"
     val expectedErrorTitle = s"Gwall: $expectedTitle"
-    val emptyErrorText = "Enter your State Pension lump sum amount"
-    val invalidFormatErrorText = "Enter your State Pension lump sum amount in the correct format"
-    val maxAmountErrorText = "Your State Pension lump sum amount must be less than £100,000,000,000"
+    val emptyErrorText = "Nodwch swm eich cyfandaliad Pensiwn y Wladwriaeth"
+    val invalidFormatErrorText = "Nodwch swm eich cyfandaliad Pensiwn y Wladwriaeth yn y fformat cywir"
+    val maxAmountErrorText = "Mae’n rhaid i swm eich cyfandaliad Pensiwn y Wladwriaeth fod yn llai na £100,000,000,000"
     val expectedDetailsExample1 = "eich P60"
     val expectedDetailsExample2 = "y llythyr ’Ynglŷn â’r cynnydd cyffredinol mewn budd-daliadau’ a anfonwyd atoch gan y Gwasanaeth Pensiwn"
   }
@@ -126,11 +126,11 @@ class StatePensionLumpSumAmountControllerISpec extends IntegrationTest with View
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
-    val expectedTitle = "How much was your client’s State Pension lump sum?"
+    val expectedTitle = "Faint oedd cyfandaliad Pensiwn y Wladwriaeth eich cleient?"
     val expectedErrorTitle = s"Gwall: $expectedTitle"
-    val emptyErrorText = "Enter your client’s State Pension lump sum amount"
-    val invalidFormatErrorText = "Enter your client’s State Pension lump sum amount in the correct format"
-    val maxAmountErrorText = "Your client’s State Pension lump sum amount must be less than £100,000,000,000"
+    val emptyErrorText = "Nodwch swm cyfandaliad Pensiwn y Wladwriaeth eich cleient"
+    val invalidFormatErrorText = "Nodwch swm cyfandaliad Pensiwn y Wladwriaeth eich cleient yn y fformat cywir"
+    val maxAmountErrorText = "Mae’n rhaid i swm cyfandaliad Pensiwn y Wladwriaeth eich cleient fod yn llai na £100,000,000,000"
     val expectedDetailsExample1 = "P60 eich cleient"
     val expectedDetailsExample2 = "y llythyr ’Ynglŷn â’r cynnydd cyffredinol mewn budd-daliadau’ a anfonwyd at eich cleient gan y Gwasanaeth Pensiwn"
   }

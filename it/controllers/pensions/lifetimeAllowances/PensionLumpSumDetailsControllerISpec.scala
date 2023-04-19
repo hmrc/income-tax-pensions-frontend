@@ -73,6 +73,25 @@ class PensionLumpSumDetailsControllerISpec extends IntegrationTest with ViewHelp
 
   }
 
+
+  def commonPageCheck(user : UserScenario[CommonExpectedResults, SpecificExpectedResults])(implicit document: () => Document): Unit = {
+    titleCheck(user.specificExpectedResults.get.expectedTitle, user.isWelsh)
+    h1Check(user.specificExpectedResults.get.expectedHeading)
+    captionCheck(user.commonExpectedResults.expectedCaption(taxYearEOY), Selectors.captionSelector)
+    textOnPageCheck(user.specificExpectedResults.get.checkThisWithProviderParagraph, Selectors.mainParagraph(2))
+    textOnPageCheck(user.commonExpectedResults.beforeTax, Selectors.beforeTaxLabel)
+    textOnPageCheck(user.specificExpectedResults.get.beforeTaxParagraph, Selectors.beforeTaxParagraph(4))
+    textOnPageCheck(poundPrefixText, Selectors.poundPrefixSelector(2), "for amount 1")
+    textOnPageCheck(poundPrefixText, Selectors.poundPrefixSelector(5), "for amount 2")
+    textOnPageCheck(user.commonExpectedResults.hintText, Selectors.amount1hintTextSelector, "for amount 1")
+    textOnPageCheck(user.commonExpectedResults.taxPaid, Selectors.taxPaidLabel)
+    textOnPageCheck(user.specificExpectedResults.get.taxPaidParagraph, Selectors.taxPaidParagraph)
+    textOnPageCheck(user.commonExpectedResults.hintText, Selectors.amount2hintTextSelector, "for amount 2")
+    buttonCheck(user.commonExpectedResults.buttonText, Selectors.continueButtonSelector)
+    formPostLinkCheck(pensionLumpSumDetails(taxYearEOY), Selectors.formSelector)
+    welshToggleCheck(user.isWelsh)
+  }
+
   trait CommonExpectedResults {
     val expectedCaption: Int => String
     val hintText: String
@@ -200,23 +219,9 @@ class PensionLumpSumDetailsControllerISpec extends IntegrationTest with ViewHelp
             result.status shouldBe OK
           }
 
-          titleCheck(user.specificExpectedResults.get.expectedTitle, user.isWelsh)
-          h1Check(user.specificExpectedResults.get.expectedHeading)
-          captionCheck(expectedCaption(taxYearEOY), captionSelector)
-          textOnPageCheck(user.specificExpectedResults.get.checkThisWithProviderParagraph, mainParagraph(2))
-          textOnPageCheck(beforeTax, beforeTaxLabel)
-          textOnPageCheck(user.specificExpectedResults.get.beforeTaxParagraph, beforeTaxParagraph(4))
-          textOnPageCheck(poundPrefixText, poundPrefixSelector(2), "for amount 1")
-          textOnPageCheck(poundPrefixText, poundPrefixSelector(5), "for amount 2")
-          textOnPageCheck(hintText, amount1hintTextSelector, "for amount 1")
-          textOnPageCheck(taxPaid, taxPaidLabel)
-          textOnPageCheck(user.specificExpectedResults.get.taxPaidParagraph, taxPaidParagraph)
-          textOnPageCheck(hintText, amount2hintTextSelector, "for amount 2")
+          commonPageCheck(user)
           inputFieldValueCheck(amount1InputName, amount1inputSelector, "")
           inputFieldValueCheck(amount2InputName, amount2inputSelector, "")
-          buttonCheck(buttonText, continueButtonSelector)
-          formPostLinkCheck(pensionLumpSumDetails(taxYearEOY), formSelector)
-          welshToggleCheck(user.isWelsh)
         }
 
         "render render Your pension lump sum details page with prefilled value for before tax and tax paid" which {
@@ -238,23 +243,57 @@ class PensionLumpSumDetailsControllerISpec extends IntegrationTest with ViewHelp
           "has an OK status" in {
             result.status shouldBe OK
           }
-          titleCheck(user.specificExpectedResults.get.expectedTitle, user.isWelsh)
-          h1Check(user.specificExpectedResults.get.expectedHeading)
-          captionCheck(expectedCaption(taxYearEOY), captionSelector)
-          textOnPageCheck(user.specificExpectedResults.get.checkThisWithProviderParagraph, mainParagraph(2))
-          textOnPageCheck(beforeTax, beforeTaxLabel)
-          textOnPageCheck(user.specificExpectedResults.get.beforeTaxParagraph, beforeTaxParagraph(4))
-          textOnPageCheck(poundPrefixText, poundPrefixSelector(2), "for amount 1")
-          textOnPageCheck(poundPrefixText, poundPrefixSelector(5), "for amount 2")
-          textOnPageCheck(hintText, amount1hintTextSelector, "for amount 1")
-          textOnPageCheck(taxPaid, taxPaidLabel)
-          textOnPageCheck(user.specificExpectedResults.get.taxPaidParagraph, taxPaidParagraph)
-          textOnPageCheck(hintText, amount2hintTextSelector, "for amount 2")
+          commonPageCheck(user)
           inputFieldValueCheck(amount1InputName, amount1inputSelector, newAmount.toString)
           inputFieldValueCheck(amount2InputName, amount2inputSelector, newAmount2.toString)
-          buttonCheck(buttonText, continueButtonSelector)
-          formPostLinkCheck(pensionLumpSumDetails(taxYearEOY), formSelector)
-          welshToggleCheck(user.isWelsh)
+        }
+
+        "render render Your pension lump sum details page with prefilled value for before tax but not tax paid" which {
+          implicit lazy val result: WSResponse = {
+            dropPensionsDB()
+            val pensionsViewModel = aPensionLifetimeAllowanceViewModel.copy(
+              pensionAsLumpSum = Some(LifetimeAllowance(None, Some(newAmount2)))
+            )
+            insertCyaData(pensionsUserDataWithLifetimeAllowance(pensionsViewModel), aUserRequest)
+            authoriseAgentOrIndividual(user.isAgent)
+            urlGet(
+              fullUrl(pensionLumpSumDetails(taxYearEOY)),
+              user.isWelsh,
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+          }
+
+          implicit def document: () => Document = () => Jsoup.parse(result.body)
+
+          "has an OK status" in {
+            result.status shouldBe OK
+          }
+          commonPageCheck(user)
+          inputFieldValueCheck(amount1InputName, amount1inputSelector, "")
+          inputFieldValueCheck(amount2InputName, amount2inputSelector, newAmount2.toString)
+        }
+
+        "render render Your pension lump sum details page with prefilled value for tax paid but not before tax" which {
+          implicit lazy val result: WSResponse = {
+            dropPensionsDB()
+            val pensionsViewModel = aPensionLifetimeAllowanceViewModel.copy(
+              pensionAsLumpSum = Some(LifetimeAllowance(Some(newAmount), None))
+            )
+            insertCyaData(pensionsUserDataWithLifetimeAllowance(pensionsViewModel), aUserRequest)
+            authoriseAgentOrIndividual(user.isAgent)
+            urlGet(
+              fullUrl(pensionLumpSumDetails(taxYearEOY)),
+              user.isWelsh,
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+          }
+
+          implicit def document: () => Document = () => Jsoup.parse(result.body)
+
+          "has an OK status" in {
+            result.status shouldBe OK
+          }
+          commonPageCheck(user)
+          inputFieldValueCheck(amount1InputName, amount1inputSelector, newAmount.toString)
+          inputFieldValueCheck(amount2InputName, amount2inputSelector, "")
         }
       }
     }

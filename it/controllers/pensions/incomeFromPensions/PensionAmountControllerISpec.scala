@@ -105,14 +105,14 @@ class PensionAmountControllerISpec extends IntegrationTest with ViewHelpers with
     val expectedCaption: Int => String = (taxYear: Int) => s"Incwm o bensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
     val hintText = "Er enghraifft, £193.52"
     val buttonText = "Yn eich blaen"
-    val totalTax: String = "Total amount this tax year"
-    val taxPaid: String = "Tax paid"
-    val totalTaxErrorNoEntry: String = "Enter the amount of pension paid"
-    val totalTaxErrorIncorrectFormat: String = "Enter the amount of pension paid in the correct format"
-    val totalTaxErrorOverMaximum: String = "The amount of pension paid must be less than £100,000,000,000"
-    val taxPaidErrorNoEntry: String = "Enter the amount of tax paid"
-    val taxPaidErrorIncorrectFormat: String = "Enter the amount of tax paid in the correct format"
-    val taxPaidErrorOverMaximum: String = "The amount of tax paid must be less than £100,000,000,000"
+    val totalTax: String = "Cyfanswm ar gyfer y flwyddyn dreth hon"
+    val taxPaid: String = "Treth a dalwyd"
+    val totalTaxErrorNoEntry: String = "Nodwch swm y pensiwn a dalwyd"
+    val totalTaxErrorIncorrectFormat: String = "Nodwch swm y pensiwn a dalwyd, yn y fformat cywir"
+    val totalTaxErrorOverMaximum: String = "Mae’n rhaid i swm y pensiwn a dalwyd fod yn llai na £100,000,000,000"
+    val taxPaidErrorNoEntry: String = "Nodwch swm y dreth a dalwyd"
+    val taxPaidErrorIncorrectFormat: String = "Nodwch swm y dreth a dalwyd yn y fformat cywir"
+    val taxPaidErrorOverMaximum: String = "Mae’n rhaid i swm y dreth a dalwyd fod yn llai na £100,000,000,000"
   }
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
@@ -122,8 +122,8 @@ class PensionAmountControllerISpec extends IntegrationTest with ViewHelpers with
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
-    val expectedTitle = "How much pension did you get paid?"
-    val expectedHeading = "How much pension did you get paid?"
+    val expectedTitle = "Faint o bensiwn a gawsoch chi?"
+    val expectedHeading = "Faint o bensiwn a gawsoch chi?"
     val expectedErrorTitle = s"Gwall: $expectedTitle"
   }
 
@@ -134,8 +134,8 @@ class PensionAmountControllerISpec extends IntegrationTest with ViewHelpers with
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
-    val expectedTitle = "How much pension did your client get paid?"
-    val expectedHeading = "How much pension did your client get paid?"
+    val expectedTitle = "Faint o bensiwn a gafodd eich cleient?"
+    val expectedHeading = "Faint o bensiwn a gafodd eich cleient?"
     val expectedErrorTitle = s"Gwall: $expectedTitle"
   }
 

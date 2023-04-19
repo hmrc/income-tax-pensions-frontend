@@ -380,102 +380,102 @@ paymentsIntoPensions.statusPage.error.individual = Dewiswch ‘Iawn’ os gwnaet
 
 #################       ANNUAL ALLOWANCE        ########################################
 
-annualAllowance.incomeFromFlexiAccess = income from a flexi-access drawdown fund
-annualAllowance.cashDirectlyFromPensionPot = cash directly from a pension pot (‘uncrystallised funds pension lump sums’)
-annualAllowance.overTheLimit.link = over the limit
+annualAllowance.incomeFromFlexiAccess = incwm a gyrchir yn hyblyg o gronfa
+annualAllowance.cashDirectlyFromPensionPot = arian parod yn uniongyrchol o gronfa bensiwn (‘arian heb ei ddefnyddio ar ffurf cyfandaliad pensiwn’)
+annualAllowance.overTheLimit.link = dros y terfyn
 
 #reduced annual allowance
 
-annualAllowance.reducedAnnualAllowance.title.individual = Do you have a reduced annual allowance?
-annualAllowance.reducedAnnualAllowance.title.agent = Does your client have a reduced annual allowance?
-annualAllowance.reducedAnnualAllowance.info.individual = Annual allowance is the most you can save in your pension pots each year, before you have to pay tax.
-annualAllowance.reducedAnnualAllowance.info.agent = Annual allowance is the most your client can save in their pension pots each year, before they have to pay tax.
-annualAllowance.reducedAnnualAllowance.findOut = Find out what the
-annualAllowance.reducedAnnualAllowance.findOut.link = annual allowance limit is for this tax year
-annualAllowance.reducedAnnualAllowance.willBeReducedIf.individual = Your annual allowance will be reduced if:
-annualAllowance.reducedAnnualAllowance.willBeReducedIf.agent = Your client’s annual allowance will be reduced if:
-annualAllowance.reducedAnnualAllowance.bullet1.individual = you flexibly access your pension
-annualAllowance.reducedAnnualAllowance.bullet1.agent = they flexibly access their pension
-annualAllowance.reducedAnnualAllowance.bullet2.individual = both your ‘threshold income’ and ‘adjusted income’ are
-annualAllowance.reducedAnnualAllowance.bullet2.agent = both their ‘threshold income’ and ‘adjusted income’ are
-annualAllowance.reducedAnnualAllowance.details.title = What does it mean to flexibly access a pension?
-annualAllowance.reducedAnnualAllowance.details.thisIncludes = This could include taking:
-annualAllowance.reducedAnnualAllowance.error.noEntry.individual = Select yes if you have a reduced annual allowance
-annualAllowance.reducedAnnualAllowance.error.noEntry.agent = Select yes if your client has a reduced annual allowance
+annualAllowance.reducedAnnualAllowance.title.individual = A oes gennych lwfans blynyddol wedi’i ostwng?
+annualAllowance.reducedAnnualAllowance.title.agent = A oes gan eich cleient lwfans blynyddol wedi’i ostwng?
+annualAllowance.reducedAnnualAllowance.info.individual = Lwfans blynyddol yw’r uchafswm y gallwch ei gynilo yn eich cronfeydd pensiwn bob blwyddyn, cyn i chi orfod talu treth.
+annualAllowance.reducedAnnualAllowance.info.agent = Lwfans blynyddol yw’r uchafswm y gall eich cleient ei gynilo yn ei gronfeydd pensiwn bob blwyddyn, cyn iddo orfod talu treth.
+annualAllowance.reducedAnnualAllowance.findOut = Dysgwch beth yw
+annualAllowance.reducedAnnualAllowance.findOut.link = terfyn y lwfans blynyddol ar gyfer y flwyddyn dreth hon
+annualAllowance.reducedAnnualAllowance.willBeReducedIf.individual = Bydd eich lwfans blynyddol yn cael ei ostwng os:
+annualAllowance.reducedAnnualAllowance.willBeReducedIf.agent = Bydd lwfans blynyddol eich cleient yn cael ei ostwng os:
+annualAllowance.reducedAnnualAllowance.bullet1.individual = rydych yn cyrchu eich pensiwn yn hyblyg
+annualAllowance.reducedAnnualAllowance.bullet1.agent = mae’n cyrchu ei bensiwn yn hyblyg
+annualAllowance.reducedAnnualAllowance.bullet2.individual = mae eich ‘incwm trothwy’ yn ogystal â’ch ‘incwm wedi’i addasu’ yn
+annualAllowance.reducedAnnualAllowance.bullet2.agent = mae ei ‘incwm trothwy’ yn ogystal â’i ‘incwm wedi’i addasu’ yn
+annualAllowance.reducedAnnualAllowance.details.title = Beth y mae’n ei olygu i gyrchu eich pensiwn yn hyblyg?
+annualAllowance.reducedAnnualAllowance.details.thisIncludes = Gallai hyn gynnwys cymryd:
+annualAllowance.reducedAnnualAllowance.error.noEntry.individual = Dewiswch ‘Iawn’ os oes gennych lwfans blynyddol wedi’i ostwng
+annualAllowance.reducedAnnualAllowance.error.noEntry.agent = Dewiswch ‘Iawn’ os oes gan eich cleient lwfans blynyddol wedi’i ostwng
 
 #Reduced Annual Allowance Type
 
-pensions.ReducedAnnualAllowanceType.title.individual = What type of reduced annual allowance do you have?
-pensions.ReducedAnnualAllowanceType.title.agent = What type of reduced annual allowance does your client have?
-pensions.ReducedAnnualAllowanceType.checkbox.hint = Select all that apply.
-pensions.ReducedAnnualAllowanceType.moneyPurchaseCheckbox.text = Money purchase annual allowance
-pensions.ReducedAnnualAllowanceType.taperedCheckbox.text = Tapered annual allowance
-pensions.ReducedAnnualAllowanceType.checkbox.error.individual = Select the type of reduced annual allowance you have
-pensions.ReducedAnnualAllowanceType.checkbox.error.agent = Select the type of reduced annual allowance your client has
-pensions.ReducedAnnualAllowanceType.details.heading = More information about the types of reduced annual allowance
-pensions.ReducedAnnualAllowanceType.details.moneyPurchaseInfo.individual = You’ll have this type of allowance if you flexibly access your pension. For example, this could include taking:
-pensions.ReducedAnnualAllowanceType.details.moneyPurchaseInfo.agent = Your client will have this type of allowance if they flexibly access their pension. For example, this could include taking:
-pensions.ReducedAnnualAllowanceType.details.taperedInfo.individual = You’ll have this type of annual allowance if both your ‘threshold income’ and ‘adjusted income’ are
-pensions.ReducedAnnualAllowanceType.details.taperedInfo.agent = Your client will have this type of annual allowance if both their ‘threshold income’ and ‘adjusted income’ are
+pensions.ReducedAnnualAllowanceType.title.individual = Pa fath o lwfans blynyddol wedi’i ostwng sydd gennych?
+pensions.ReducedAnnualAllowanceType.title.agent = Pa fath o lwfans blynyddol wedi’i ostwng sydd gan eich cleient?
+pensions.ReducedAnnualAllowanceType.checkbox.hint = Dewiswch bob un sy’n berthnasol.
+pensions.ReducedAnnualAllowanceType.moneyPurchaseCheckbox.text = Lwfans blynyddol pryniannau arian
+pensions.ReducedAnnualAllowanceType.taperedCheckbox.text = Lwfans blynyddol wedi’i feinhau
+pensions.ReducedAnnualAllowanceType.checkbox.error.individual = Dewiswch y math o lwfans blynyddol wedi’i ostwng sydd gennych
+pensions.ReducedAnnualAllowanceType.checkbox.error.agent = Dewiswch y math o lwfans blynyddol wedi’i ostwng sydd gan eich cleient
+pensions.ReducedAnnualAllowanceType.details.heading = Rhagor o wybodaeth am y mathau o lwfans blynyddol wedi’u gostwng
+pensions.ReducedAnnualAllowanceType.details.moneyPurchaseInfo.individual = Bydd gennych y math hwn o lwfans os ydych yn cyrchu eich pensiwn yn hyblyg. Er enghraifft, gallai hyn gynnwys cymryd:
+pensions.ReducedAnnualAllowanceType.details.moneyPurchaseInfo.agent = Bydd gan eich cleient y math hwn o lwfans os bydd yn cyrchu ei bensiwn yn hyblyg. Er enghraifft, gallai hyn gynnwys cymryd:
+pensions.ReducedAnnualAllowanceType.details.taperedInfo.individual = Bydd gennych y math hwn o lwfans blynyddol os yw eich ‘incwm trothwy’ yn ogystal â’ch ‘incwm wedi’i addasu’ yn
+pensions.ReducedAnnualAllowanceType.details.taperedInfo.agent = Bydd gan eich cleient y math hwn o lwfans blynyddol os yw ei ‘incwm trothwy’ yn ogystal â’i ‘incwm wedi’i addasu’ yn
 
 #Reduced Annual Allowance amount
 
-pensions.reducedAnnualAllowanceAmount.reduced.title.individual = How much above your reduced annual allowance are you?
-pensions.reducedAnnualAllowanceAmount.reduced.title.agent = How much above your client’s reduced annual allowance are they?
-pensions.reducedAnnualAllowanceAmount.nonReduced.title.individual = How much above your annual allowance are you?
-pensions.reducedAnnualAllowanceAmount.nonReduced.title.agent = How much above your client’s annual allowance are they?
-pensions.reducedAnnualAllowanceAmount.paragraph = This is the amount on which tax is due.
-pensions.reducedAnnualAllowanceAmount.reduced.error.noEntry.individual = Enter the amount above your reduced annual allowance
-pensions.reducedAnnualAllowanceAmount.reduced.error.incorrectFormat.individual = Enter the amount above your reduced annual allowance in the correct format
-pensions.reducedAnnualAllowanceAmount.reduced.error.overMaximum.individual = The amount above your reduced annual allowance must be less than £100,000,000,000
-pensions.reducedAnnualAllowanceAmount.reduced.error.noEntry.agent = Enter the amount above your client’s reduced annual allowance
-pensions.reducedAnnualAllowanceAmount.reduced.error.incorrectFormat.agent = Enter the amount above your client’s reduced annual allowance in the correct format
-pensions.reducedAnnualAllowanceAmount.reduced.error.overMaximum.agent = The amount above your client’s reduced annual allowance must be less than £100,000,000,000
-pensions.reducedAnnualAllowanceAmount.nonReduced.error.noEntry = Enter the amount above the annual allowance
-pensions.reducedAnnualAllowanceAmount.nonReduced.error.incorrectFormat = Enter the amount above the annual allowance in the correct format
-pensions.reducedAnnualAllowanceAmount.nonReduced.error.overMaximum = The amount above the annual allowance must be less than £100,000,000,000
+pensions.reducedAnnualAllowanceAmount.reduced.title.individual = Faint yn uwch na’ch lwfans blynyddol wedi’i ostwng ydych chi?
+pensions.reducedAnnualAllowanceAmount.reduced.title.agent = Faint yn uwch na’i lwfans blynyddol wedi’i ostwng yw eich cleient?
+pensions.reducedAnnualAllowanceAmount.nonReduced.title.individual = Faint yn uwch na’ch lwfans blynyddol ydych chi?
+pensions.reducedAnnualAllowanceAmount.nonReduced.title.agent = Faint yn uwch na’i lwfans blynyddol yw eich cleient?
+pensions.reducedAnnualAllowanceAmount.paragraph = Dyma’r swm y mae treth yn ddyledus arno.
+pensions.reducedAnnualAllowanceAmount.reduced.error.noEntry.individual = Nodwch y swm sydd uwchlaw’ch lwfans blynyddol wedi’i ostwng
+pensions.reducedAnnualAllowanceAmount.reduced.error.incorrectFormat.individual = Nodwch y swm sydd uwchlaw’ch lwfans blynyddol wedi’i ostwng yn y fformat cywir
+pensions.reducedAnnualAllowanceAmount.reduced.error.overMaximum.individual = Mae’n rhaid i’r swm sydd uwchlaw’ch lwfans blynyddol wedi’i ostwng fod yn llai na £100,000,000,000
+pensions.reducedAnnualAllowanceAmount.reduced.error.noEntry.agent = Nodwch y swm sydd uwchlaw lwfans blynyddol wedi’i ostwng eich cleient
+pensions.reducedAnnualAllowanceAmount.reduced.error.incorrectFormat.agent = Nodwch y swm sydd uwchlaw lwfans blynyddol wedi’i ostwng eich cleient yn y fformat cywir
+pensions.reducedAnnualAllowanceAmount.reduced.error.overMaximum.agent = Mae’n rhaid i’r swm sydd uwchlaw lwfans blynyddol wedi’i ostwng eich cleient fod yn llai na £100,000,000,000
+pensions.reducedAnnualAllowanceAmount.nonReduced.error.noEntry = Nodwch y swm sydd uwchlaw’r lwfans blynyddol
+pensions.reducedAnnualAllowanceAmount.nonReduced.error.incorrectFormat = Nodwch y swm sydd uwchlaw’r lwfans blynyddol yn y fformat cywir
+pensions.reducedAnnualAllowanceAmount.nonReduced.error.overMaximum = Mae’n rhaid i’r swm sydd uwchlaw’r lwfans blynyddol fod yn llai na £100,000,000,000
 
 #above Reduced Annual Allowance
 
-pensions.aboveReducedAnnualAllowance.reduced.title.individual = Have you gone above your reduced annual allowance?
-pensions.aboveReducedAnnualAllowance.reduced.title.agent = Has your client gone above their reduced annual allowance?
-pensions.aboveReducedAnnualAllowance.nonReduced.title.individual = Have you gone above the annual allowance?
-pensions.aboveReducedAnnualAllowance.nonReduced.title.agent = Has your client gone above the annual allowance?
-pensions.aboveReducedAnnualAllowance.reduced.error.noEntry.individual = Select yes if you have gone above your reduced annual allowance
-pensions.aboveReducedAnnualAllowance.reduced.error.noEntry.agent = Select yes if your client has gone above their reduced annual allowance
-pensions.aboveReducedAnnualAllowance.nonReduced.error.noEntry.individual = Select yes if you have gone above the annual allowance
-pensions.aboveReducedAnnualAllowance.nonReduced.error.noEntry.agent = Select yes if your client has gone above the annual allowance
+pensions.aboveReducedAnnualAllowance.reduced.title.individual = A ydych wedi mynd yn uwch na’ch lwfans blynyddol wedi’i ostwng?
+pensions.aboveReducedAnnualAllowance.reduced.title.agent = A yw’ch cleient wedi mynd yn uwch na’i lwfans blynyddol wedi’i ostwng?
+pensions.aboveReducedAnnualAllowance.nonReduced.title.individual = A ydych wedi mynd yn uwch na’r lwfans blynyddol?
+pensions.aboveReducedAnnualAllowance.nonReduced.title.agent = A yw’ch cleient wedi mynd yn uwch na’r lwfans blynyddol?
+pensions.aboveReducedAnnualAllowance.reduced.error.noEntry.individual = Dewiswch ‘Iawn’ os ydych wedi mynd yn uwch na’ch lwfans blynyddol wedi’i ostwng
+pensions.aboveReducedAnnualAllowance.reduced.error.noEntry.agent = Dewiswch ‘Iawn’ os yw’ch cleient wedi mynd yn uwch na’i lwfans blynyddol wedi’i ostwng
+pensions.aboveReducedAnnualAllowance.nonReduced.error.noEntry.individual = Dewiswch ‘Iawn’ os ydych wedi mynd yn uwch na’r lwfans blynyddol
+pensions.aboveReducedAnnualAllowance.nonReduced.error.noEntry.agent = Dewiswch ‘Iawn’ os yw’ch cleient wedi mynd yn uwch na’i lwfans blynyddol
 
 #Pension Provider Paid Tax Messages
 
-pensions.pensionsProviderPaidTax.error.noAmount.individual = Enter the amount of tax your pension provider paid or agreed to pay
-pensions.pensionsProviderPaidTax.error.noAmount.agent = Enter the amount of tax your client’s pension provider paid or agreed to pay
-pensions.pensionProviderPaidTax.error.incorrectFormat.individual = Enter the amount of tax your pension provider paid or agreed to pay in the correct format
-pensions.pensionProviderPaidTax.error.incorrectFormat.agent = Enter the amount of tax your client’s pension provider paid or agreed to pay in the correct format
+pensions.pensionsProviderPaidTax.error.noAmount.individual = Nodwch swm y dreth a dalwyd gan eich darparwr pensiwn, neu’r swm a gytunodd i’w dalu
+pensions.pensionsProviderPaidTax.error.noAmount.agent = Nodwch swm y dreth a dalwyd gan ddarparwr pensiwn eich cleient, neu’r swm a gytunodd i’w dalu
+pensions.pensionProviderPaidTax.error.incorrectFormat.individual = Nodwch swm y dreth a dalwyd gan eich darparwr pensiwn, neu’r swm a gytunodd i’w dalu, yn y fformat cywir
+pensions.pensionProviderPaidTax.error.incorrectFormat.agent = Nodwch swm y dreth a dalwyd gan ddarparwr pensiwn eich cleient, neu’r swm a gytunodd i’w dalu, yn y fformat cywir
 
 #Pension Scheme Tax Reference Messages
-pension.pensionSchemeTaxReference.paragraph1 = Enter the reference for the pension scheme that paid the tax.
-pension.pensionSchemeTaxReference.error.noEntry.individual = Enter your PSTR
-pension.pensionSchemeTaxReference.error.incorrectFormat.individual = Enter your PSTR in the correct format
-pension.pensionSchemeTaxReference.error.noEntry.agent = Enter your client’s PSTR
-pension.pensionSchemeTaxReference.error.incorrectFormat.agent = Enter your client’s PSTR in the correct format
+pension.pensionSchemeTaxReference.paragraph1 = Nodwch y cyfeirnod ar gyfer y cynllun pensiwn a dalodd y dreth.
+pension.pensionSchemeTaxReference.error.noEntry.individual = Nodwch eich PSTR
+pension.pensionSchemeTaxReference.error.incorrectFormat.individual = Nodwch eich PSTR yn y fformat cywir
+pension.pensionSchemeTaxReference.error.noEntry.agent = Nodwch PSTR eich cleient
+pension.pensionSchemeTaxReference.error.incorrectFormat.agent = Nodwch PSTR eich cleient yn y fformat cywir
 
 
 #Pension Scheme Tax Reference Messages
-unauthorisedPayments.pension.pensionSchemeTaxReference = Pension Scheme Tax Reference (PSTR)
-unauthorisedPayments.pension.pensionSchemeTaxReference.paragraph1.individual = You can get this information from your pension provider.
-unauthorisedPayments.pension.pensionSchemeTaxReference.paragraph1.agent = Your client can get this information from their pension provider.
-unauthorisedPayments.pension.pensionSchemeTaxReference.paragraph2.individual = If you got unauthorised payments from more than one UK pension provider, you can add the references later.
-unauthorisedPayments.pension.pensionSchemeTaxReference.paragraph2.agent = If your client got unauthorised payments from more than UK pension provider, you can add the references later.
-unauthorisedPayments.pension.pensionSchemeTaxReference.whatIsPSTR = What is the PSTR?
-unauthorisedPayments.pension.pensionSchemeTaxReference.error.incorrectFormat.individual = Enter your Pension Scheme Tax Reference in the correct format
-unauthorisedPayments.pension.pensionSchemeTaxReference.error.incorrectFormat.agent = Enter your client’s Pension Scheme Tax Reference in the correct format
+unauthorisedPayments.pension.pensionSchemeTaxReference = Cyfeirnod Treth y Cynllun Pensiwn (PSTR)
+unauthorisedPayments.pension.pensionSchemeTaxReference.paragraph1.individual = Gallwch gael yr wybodaeth hon oddi wrth ddarparwr eich pensiwn.
+unauthorisedPayments.pension.pensionSchemeTaxReference.paragraph1.agent = Gall eich cleient gael yr wybodaeth hon oddi wrth ei ddarparwr pensiwn.
+unauthorisedPayments.pension.pensionSchemeTaxReference.paragraph2.individual = Os cawsoch daliadau heb awdurdod gan fwy nag un darparwr pensiwn yn y DU, gallwch ychwanegu’r cyfeirnodau yn nes ymlaen.
+unauthorisedPayments.pension.pensionSchemeTaxReference.paragraph2.agent = Os cafodd eich cleient daliadau heb awdurdod gan fwy nag un darparwr pensiwn yn y DU, gallwch ychwanegu’r cyfeirnodau yn nes ymlaen.
+unauthorisedPayments.pension.pensionSchemeTaxReference.whatIsPSTR = Beth yw’r PSTR?
+unauthorisedPayments.pension.pensionSchemeTaxReference.error.incorrectFormat.individual = Nodwch Gyfeirnod Treth eich Cynllun Pensiwn yn y fformat cywir
+unauthorisedPayments.pension.pensionSchemeTaxReference.error.incorrectFormat.agent = Nodwch Gyfeirnod Treth Cynllun Pensiwn eich cleient yn y fformat cywir
 
 #Pension Scheme Tax Reference Summary Page
 
-annualAllowance.pstrSummary.title = Pension Scheme Tax Reference (PSTR) summary
-annualAllowance.addAnotherPstrLink = Add another PSTR
-annualAllowance.addPstrLink = Add a PSTR
+annualAllowance.pstrSummary.title = Crynodeb Cyfeirnod Treth y Cynllun Pensiwn (PSTR)
+annualAllowance.addAnotherPstrLink = Ychwanegu PSTR arall
+annualAllowance.addPstrLink = Ychwanegu PSTR
 
 #################       INCOME FROM PENSIONS        ########################################
 
@@ -488,24 +488,24 @@ incomeFromPensionsGateway.paragraph = Mae’r rhain yn cynnwys:
 incomeFromPensionsGateway.paragraph.1 = Pensiwn y Wladwriaeth
 incomeFromPensionsGateway.paragraph.2 = pensiynau gweithle a phreifat
 
-pensions.incomeFromPensionsDetails.bullet.aboutGeneralIncreases.individual = the ‘About general increases in benefits’ letter the Pension Service sent you
-pensions.incomeFromPensionsDetails.bullet.aboutGeneralIncreases.agent = the ‘About general increases in benefits’ letter the Pension Service sent your client
+pensions.incomeFromPensionsDetails.bullet.aboutGeneralIncreases.individual = y llythyr ‘Ynglŷn â’r cynnydd cyffredinol mewn budd-daliadau’ a anfonwyd atoch gan y Gwasanaeth Pensiwn
+pensions.incomeFromPensionsDetails.bullet.aboutGeneralIncreases.agent = y llythyr ‘Ynglŷn â’r cynnydd cyffredinol mewn budd-daliadau’ a anfonwyd at eich cleient gan y Gwasanaeth Pensiwn
 
 #state pension lump sum question
-incomeFromPensions.statePensionLumpSum.title.individual = Did you get a State Pension lump sum?
-incomeFromPensions.statePensionLumpSum.title.agent = Did your client get a State Pension lump sum?
-incomeFromPensions.statePensionLumpSum.para.individual = You might have got a one-off lump sum payment if you delayed claiming your State Pension for 12 months in a row.
-incomeFromPensions.statePensionLumpSum.para.agent = Your client might have got a one-off lump sum payment if they delayed claiming their State Pension for 12 months in a row.
-incomeFromPensions.statePensionLumpSum.onlyApplies = This only applies to people who reach State Pension age before 6 April 2016.
+incomeFromPensions.statePensionLumpSum.title.individual = A gawsoch gyfandaliad Pensiwn y Wladwriaeth?
+incomeFromPensions.statePensionLumpSum.title.agent = A gafodd eich cleient gyfandaliad Pensiwn y Wladwriaeth?
+incomeFromPensions.statePensionLumpSum.para.individual = Mae’n bosibl y byddwch wedi cael cyfandaliad unigol os oeddech wedi oedi cyn hawlio’ch Pensiwn y Wladwriaeth am 12 mis yn olynol.
+incomeFromPensions.statePensionLumpSum.para.agent = Mae’n bosibl y byddai’ch cleient wedi cael cyfandaliad unigol os oedden nhw wedi oedi cyn hawlio ei Bensiwn y Wladwriaeth am 12 mis yn olynol.
+incomeFromPensions.statePensionLumpSum.onlyApplies = Mae hyn ond yn berthnasol i bobl sy’n cyrraedd oedran Pensiwn y Wladwriaeth cyn 6 Ebrill 2016.
+incomeFromPensions.statePensionLumpSum.error.noEntry.individual = Dewiswch ‘Iawn’ os cawsoch gyfandaliad Pensiwn y Wladwriaeth
+incomeFromPensions.statePensionLumpSum.error.noEntry.agent = Dewiswch ‘Iawn’ os cafodd eich cleient gyfandaliad Pensiwn y Wladwriaeth
 incomeFromPensions.statePensionLumpSum.amount = Amount of lump sum
-incomeFromPensions.statePensionLumpSum.error.noEntry.individual = Select yes if you got a State Pension lump sum
-incomeFromPensions.statePensionLumpSum.error.noEntry.agent = Select yes if your client got a State Pension lump sum
-incomeFromPensions.statePensionLumpSum.amount.error.noEntry.individual = Enter the amount of your State Pension lump sum
-incomeFromPensions.statePensionLumpSum.amount.error.incorrectFormat.individual = Enter your State Pension lump sum amount in the correct format
-incomeFromPensions.statePensionLumpSum.amount.error.overMaximum.individual = Your State Pension lump sum amount must be less than £100,000,000,000
-incomeFromPensions.statePensionLumpSum.amount.error.noEntry.agent = Enter the amount of your client’s State Pension lump sum
-incomeFromPensions.statePensionLumpSum.amount.error.incorrectFormat.agent = Enter your client’s State Pension lump sum amount in the correct format
-incomeFromPensions.statePensionLumpSum.amount.error.overMaximum.agent = Your client’s State Pension lump sum amount must be less than £100,000,000,000
+incomeFromPensions.statePensionLumpSum.amount.error.noEntry.individual = Nodwch swm eich cyfandaliad Pensiwn y Wladwriaeth
+incomeFromPensions.statePensionLumpSum.amount.error.incorrectFormat.individual = Nodwch swm eich cyfandaliad Pensiwn y Wladwriaeth yn y fformat cywir
+incomeFromPensions.statePensionLumpSum.amount.error.overMaximum.individual = Mae’n rhaid i swm eich cyfandaliad Pensiwn y Wladwriaeth fod yn llai na £100,000,000,000
+incomeFromPensions.statePensionLumpSum.amount.error.noEntry.agent = Nodwch swm cyfandaliad Pensiwn y Wladwriaeth eich cleient
+incomeFromPensions.statePensionLumpSum.amount.error.incorrectFormat.agent = Nodwch swm cyfandaliad Pensiwn y Wladwriaeth eich cleient yn y fformat cywir
+incomeFromPensions.statePensionLumpSum.amount.error.overMaximum.agent = Mae’n rhaid i swm cyfandaliad Pensiwn y Wladwriaeth eich cleient fod yn llai na £100,000,000,000
 
 #state pension start date
 incomeFromPensions.stateBenefitStartDate.title.individual = When did you start getting State Pension payments?
@@ -522,17 +522,11 @@ incomeFromPensions.stateBenefitStartDate.error.invalidFormat = The day, month an
 incomeFromPensions.stateBenefitStartDate.error.dateInFuture = The pension start date must be in the past
 incomeFromPensions.stateBenefitStartDate.error.tooLongAgo = The pension start date must be after 1 January 1900
 
-#state pension lump sum
-#pensions.statePensionLumpSum.title.individual = How much was your State Pension lump sum?
-#pensions.statePensionLumpSum.title.agent = How much was your client’s State Pension lump sum?
-#pensions.statePensionLumpSum.error.noEntry.individual = Enter your State Pension lump sum amount
-#pensions.statePensionLumpSum.error.incorrectFormat.individual = Enter your State Pension lump sum amount in the correct format
-#pensions.statePensionLumpSum.error.overMaximum.individual = Your State Pension lump sum amount must be less than £100,000,000,000
-#pensions.statePensionLumpSum.error.noEntry.agent = Enter your client’s State Pension lump sum amount
-#pensions.statePensionLumpSum.error.incorrectFormat.agent = Enter your client’s State Pension lump sum amount in the correct format
-#pensions.statePensionLumpSum.error.overMaximum.agent = Your client’s State Pension lump sum amount must be less than £100,000,000,000
-
 #tax paid on state pension lump sum
+pensions.taxPaidOnStatePensionLumpSum.title.individual = A wnaethoch dalu treth ar gyfandaliad Pensiwn y Wladwriaeth?
+pensions.taxPaidOnStatePensionLumpSum.error.noEntry.individual = Dewiswch ‘Iawn’ os gwnaethoch dalu treth ar gyfandaliad Pensiwn y Wladwriaeth
+pensions.taxPaidOnStatePensionLumpSum.title.agent = A wnaeth eich cleient dalu treth ar gyfandaliad Pensiwn y Wladwriaeth?
+pensions.taxPaidOnStatePensionLumpSum.error.noEntry.agent = Dewiswch ‘Iawn’ os gwnaeth eich cleient dalu treth ar gyfandaliad Pensiwn y Wladwriaeth
 pensions.taxPaidOnStatePensionLumpSum.amount = Amount of tax paid
 pensions.taxPaidOnStatePensionLumpSum.title.individual = Did you pay tax on the State Pension lump sum?
 pensions.taxPaidOnStatePensionLumpSum.error.noEntry.individual = Select yes if you paid tax on the State Pension lump sum
@@ -567,87 +561,96 @@ pensions.statePensionLumpSumStartDate.error.tooLongAgo = The date must be after 
 #state pension
 pensions.statePension.title.individual = Do you get regular State Pension payments?
 pensions.statePension.title.agent = Does your client get regular State Pension payments?
-pensions.statePension.error.noEntry.individual = Select yes if you got State Pension this year
-pensions.statePension.error.noEntry.agent = Select yes if your client got State Pension this year
-pensions.statePension.amount.error.noEntry.individual = Enter your State Pension amount
-pensions.statePension.amount.error.incorrectFormat.individual = Enter your State Pension amount in the correct format
-pensions.statePension.amount.error.overMaximum.individual = Your State Pension amount must be less than £100,000,000,000
-pensions.statePension.amount.error.noEntry.agent = Enter your client’s State Pension amount
-pensions.statePension.amount.error.incorrectFormat.agent = Enter your client’s State Pension amount in the correct format
-pensions.statePension.amount.error.overMaximum.agent = Your client’s State Pension amount must be less than £100,000,000,000
+pensions.statePension.error.noEntry.individual = Dewiswch ‘Iawn’ os cawsoch Bensiwn y Wladwriaeth y flwyddyn hon
+pensions.statePension.error.noEntry.agent = Dewiswch ‘Iawn’ os cafodd eich cleient Pensiwn y Wladwriaeth y flwyddyn hon
+pensions.statePension.amount.error.noEntry.individual = Nodwch swm eich Pensiwn y Wladwriaeth
+pensions.statePension.amount.error.incorrectFormat.individual = Nodwch swm eich Pensiwn y Wladwriaeth yn y fformat cywir
+pensions.statePension.amount.error.overMaximum.individual = Mae’n rhaid i swm eich Pensiwn y Wladwriaeth fod yn llai na £100,000,000,000
+pensions.statePension.amount.error.noEntry.agent = Nodwch swm Pensiwn y Wladwriaeth eich cleient
+pensions.statePension.amount.error.incorrectFormat.agent = Nodwch swm Pensiwn y Wladwriaeth eich cleient yn y fformat cywir
+pensions.statePension.amount.error.overMaximum.agent = Mae’n rhaid i swm Pensiwn y Wladwriaeth eich cleient fod yn llai na £100,000,000,000
+
+#tax paid on lump sum amount
+incomeFromPensions.taxPaidOnLumpSumAmount.title.individual = Faint o dreth a daloch ar gyfandaliad Pensiwn y Wladwriaeth?
+incomeFromPensions.taxPaidOnLumpSumAmount.title.agent = Faint o dreth a dalodd eich cleient ar gyfandaliad Pensiwn y Wladwriaeth?
+incomeFromPensions.taxPaidOnLumpSumAmount.paragraph.individual = Gwnaethoch roi gwybod i ni nad oeddech yn talu {0} o dreth ar eich cyfandaliad Pensiwn y Wladwriaeth y flwyddyn hon. Rhowch wybod i ni faint wnaethoch ei dalu.
+incomeFromPensions.taxPaidOnLumpSumAmount.paragraph.agent = Gwnaethoch roi gwybod i ni nad oedd eich cleient yn talu {0} o dreth ar ei gyfandaliad Pensiwn y Wladwriaeth y flwyddyn hon. Rhowch wybod i ni faint y talodd eich cleient.
+incomeFromPensions.taxPaidOnLumpSumAmount.error.error.noEntry = Nodwch swm y dreth a dalwyd ar gyfandaliad Pensiwn y Wladwriaeth
+incomeFromPensions.taxPaidOnLumpSumAmount.error.error.incorrectFormat = Nodwch gyfanswm y dreth a dalwyd ar gyfandaliad Pensiwn y Wladwriaeth yn y fformat cywir
+incomeFromPensions.taxPaidOnLumpSumAmount.error.error.overMaximum = Mae’n rhaid i swm y dreth a dalwyd ar gyfandaliad Pensiwn y Wladwriaeth fod yn llai na £100,000,000,000
 
 #Income From Pensions Summary
-incomeFromPensions.incomeFromPensionsSummary.statePensions = State pension
-incomeFromPensions.incomeFromPensionsSummary.otherUkPensions = Other UK Pensions
+incomeFromPensions.incomeFromPensionsSummary.statePensions = Pensiwn y Wladwriaeth
+incomeFromPensions.incomeFromPensionsSummary.otherUkPensions = Pensiynau eraill y DU
 
 #Do You Get UK Pension Scheme Payments Messages
 pensions.ukPensionSchemePayments.title.individual = Do you get UK pension scheme payments?
-pensions.ukPensionSchemePayments.title.agent = Does your client get UK pension scheme payments?
-pensions.ukPensionSchemePayments.error.noEntry.individual = Select Yes if you got payments from UK pension schemes
-pensions.ukPensionSchemePayments.error.noEntry.agent = Select Yes if your client got payments from UK pension schemes
+pensions.ukPensionSchemePayments.title.agent = A yw eich cleient yn cael taliadau o gynlluniau pensiwn y DU?
+pensions.ukPensionSchemePayments.error.noEntry.individual = Dewiswch Iawn os cawsoch daliadau o gynlluniau pensiwn y DU
+pensions.ukPensionSchemePayments.error.noEntry.agent = Dewiswch Iawn os cafodd eich cleient daliadau o gynlluniau pensiwn y DU
 
 #pension scheme income details
-incomeFromPensions.pensionSchemeDetails.title = Pension scheme details
-incomeFromPensions.pensionSchemeDetails.youCanFind.individual = You can find this information on your pension statement. If you do not have a pension statement, you can ask your pension provider.
-incomeFromPensions.pensionSchemeDetails.youCanFind.agent = Your client can find this information on their pension statement. If they do not have a pension statement, they can ask their pension provider.
-incomeFromPensions.pensionSchemeDetails.ifYouGet.individual = If you get pension income from more than one UK pension scheme, you can add them later.
-incomeFromPensions.pensionSchemeDetails.ifYouGet.agent = If your client gets pension income from more than one UK pension scheme, you can add them later.
-incomeFromPensions.pensionSchemeDetails.providerName.subheading = Pension provider name
-incomeFromPensions.pensionSchemeDetails.schemeRef.subheading = Pension scheme PAYE reference number
-incomeFromPensions.pensionSchemeDetails.schemeRef.hint = For example 123/AB456
-incomeFromPensions.pensionSchemeDetails.pid.subheading = Pension Identification (PID)
-incomeFromPensions.pensionSchemeDetails.pid.hint.individual = Check your pension statement or P60
-incomeFromPensions.pensionSchemeDetails.pid.hint.agent = Check your client’s pension statement or P60
-incomeFromPensions.pensionSchemeDetails.providerName.error.noEntry = Enter the pension provider name
-incomeFromPensions.pensionSchemeDetails.providerName.error.overCharLimit = The pension provider name must be 74 characters or fewer
-incomeFromPensions.pensionSchemeDetails.providerName.error.incorrectFormat = The pension provider name must only include numbers 0 to 9, letters a to z, hyphens, spaces, apostrophes, commas, full stops, round brackets, and the special characters &\:
-incomeFromPensions.pensionSchemeDetails.schemeRef.error.noEntry = Enter the pension scheme PAYE reference number
-incomeFromPensions.pensionSchemeDetails.schemeRef.error.incorrectFormat = Enter the pension scheme PAYE reference number in the correct format
-incomeFromPensions.pensionSchemeDetails.pid.error.noEntry = Enter the pension identification (PID)
-incomeFromPensions.pensionSchemeDetails.pid.error.overCharLimit = The pension identification (PID) must be 38 characters or fewer
-incomeFromPensions.pensionSchemeDetails.pid.error.incorrectFormat = The pension identification (PID) must only include numbers 0 to 9, letters a to z, hyphens, spaces, apostrophes, commas, full stops, round brackets, and the special characters /=!"%&*;<>+:\?
+incomeFromPensions.pensionSchemeDetails.title = Manylion y cynllun pensiwn
+incomeFromPensions.pensionSchemeDetails.youCanFind.individual = Gallwch ddod o hyd i’r wybodaeth hon ar eich datganiad pensiwn. Os nad oes gennych ddatganiad pensiwn, gallwch ofyn i’ch darparwr pensiwn.
+incomeFromPensions.pensionSchemeDetails.youCanFind.agent = Gall eich cleient ddod o hyd i’r wybodaeth hon ar ei ddatganiad pensiwn. Os nad oes ganddo ddatganiad pensiwn, gall ofyn i’w ddarparwr pensiwn.
+incomeFromPensions.pensionSchemeDetails.ifYouGet.individual = Os cawsoch incwm o bensiwn o fwy nag un cynllun pensiwn y DU, gallwch eu hychwanegu nes ymlaen.
+incomeFromPensions.pensionSchemeDetails.ifYouGet.agent = Os cafodd eich cleient incwm o bensiwn o fwy nag un cynllun pensiwn y DU, gallwch eu hychwanegu nes ymlaen.
+incomeFromPensions.pensionSchemeDetails.providerName.subheading = Enw’r darparwr pensiwn
+incomeFromPensions.pensionSchemeDetails.schemeRef.subheading = Cyfeirnod TWE y cynllun pensiwn
+incomeFromPensions.pensionSchemeDetails.schemeRef.hint = Er enghraifft, 123/AB456
+incomeFromPensions.pensionSchemeDetails.pid.subheading = Rhif dynodydd pensiwn (PID)
+incomeFromPensions.pensionSchemeDetails.pid.hint.individual = Gwirio’ch datganiad pensiwn neu P60
+incomeFromPensions.pensionSchemeDetails.pid.hint.agent = Gwirio datganiad pensiwn neu P60 eich cleient
+incomeFromPensions.pensionSchemeDetails.providerName.error.noEntry = Nodwch enw’r darparwr pensiwn
+incomeFromPensions.pensionSchemeDetails.providerName.error.overCharLimit = Mae’n rhaid i enw’r darparwr pensiwn fod yn 74 o gymeriadau neu lai
+incomeFromPensions.pensionSchemeDetails.providerName.error.incorrectFormat = Mae’n rhaid i enw’r darparwr pensiwn gynnwys y rhifau 0 i 9, llythrennau a-z, cysylltnodau, bylchau, collnodau, comas, atalnodau llawn, cromfachau crwn a’r cymeriadau arbennig &\: yn unig
+incomeFromPensions.pensionSchemeDetails.schemeRef.error.noEntry = Nodwch gyfeirnod TWE y cynllun pensiwn
+incomeFromPensions.pensionSchemeDetails.schemeRef.error.incorrectFormat = Nodwch gyfeirnod TWE y cynllun pensiwn yn y fformat cywir
+incomeFromPensions.pensionSchemeDetails.pid.error.noEntry = Nodwch rif dynodydd y pensiwn (PID)
+incomeFromPensions.pensionSchemeDetails.pid.error.overCharLimit = Mae’n rhaid i rif dynodydd y pensiwn (PID) fod yn 38 o gymeriadau neu lai
+incomeFromPensions.pensionSchemeDetails.pid.error.incorrectFormat = Mae’n rhaid i rif dynodydd y pensiwn gynnwys y rhifau 0 i 9, llythrennau a-z, cysylltnodau, bylchau, collnodau, comas, atalnodau llawn, cromfachau crwn a’r cymeriadau arbennig /=!"%&*;<>+:\? yn unig
 
 #Uk Pension Income Summary Page
-pensions.ukPensionIncomeSummary.addAnotherPensionIncomeLink = Add another pension scheme
-pensions.ukPensionIncomeSummary.addPensionIncomeLink = Add a pension scheme
+pensions.ukPensionIncomeSummary.addAnotherPensionIncomeLink = Ychwanegu cynllun pensiwn arall
+pensions.ukPensionIncomeSummary.addPensionIncomeLink = Ychwanegu cynllun pensiwn
 
 #How Much Pension Did You Get Paid
-pensions.pensionAmount.title.individual = How much pension did you get paid?
-pensions.pensionAmount.title.agent = How much pension did your client get paid?
-pensions.pensionAmount.totalTax = Total amount this tax year
-pensions.pensionAmount.totalTax.error.noEntry = Enter the amount of pension paid
-pensions.pensionAmount.totalTax.error.incorrectFormat = Enter the amount of pension paid in the correct format
-pensions.pensionAmount.totalTax.error.overMaximum = The amount of pension paid must be less than £100,000,000,000
-pensions.pensionAmount.taxPaid = Tax paid
-pensions.pensionAmount.taxPaid.error.noEntry = Enter the amount of tax paid
-pensions.pensionAmount.taxPaid.error.incorrectFormat = Enter the amount of tax paid in the correct format
-pensions.pensionAmount.taxPaid.error.overMaximum = The amount of tax paid must be less than £100,000,000,000
+pensions.pensionAmount.title.individual = Faint o bensiwn a gawsoch chi?
+pensions.pensionAmount.title.agent = Faint o bensiwn a gafodd eich cleient?
+pensions.pensionAmount.totalTax = Cyfanswm ar gyfer y flwyddyn dreth hon
+pensions.pensionAmount.totalTax.error.noEntry = Nodwch swm y pensiwn a dalwyd
+pensions.pensionAmount.totalTax.error.incorrectFormat = Nodwch swm y pensiwn a dalwyd, yn y fformat cywir
+pensions.pensionAmount.totalTax.error.overMaximum = Mae’n rhaid i swm y pensiwn a dalwyd fod yn llai na £100,000,000,000
+pensions.pensionAmount.taxPaid = Treth a dalwyd
+pensions.pensionAmount.taxPaid.error.noEntry = Nodwch swm y dreth a dalwyd
+pensions.pensionAmount.taxPaid.error.incorrectFormat = Nodwch swm y dreth a dalwyd yn y fformat cywir
+pensions.pensionAmount.taxPaid.error.overMaximum = Mae’n rhaid i swm y dreth a dalwyd fod yn llai na £100,000,000,000
 
 #pension scheme start date
-incomeFromPensions.pensionStartDate.title.individual = When did you start getting payments from this scheme?
-incomeFromPensions.pensionStartDate.title.agent = When did your client start getting payments from this scheme?
-incomeFromPensions.pensionStartDate.date.hint = For example, 12 11 2007
-incomeFromPensions.pensionStartDate.error.empty.all = Enter the pension start date
-incomeFromPensions.pensionStartDate.error.empty.day = The pension start date must include a day
-incomeFromPensions.pensionStartDate.error.empty.dayMonth = The pension start date must include a day and month
-incomeFromPensions.pensionStartDate.error.empty.dayYear = The pension start date must include a day and year
-incomeFromPensions.pensionStartDate.error.empty.month = The pension start date must include a month
-incomeFromPensions.pensionStartDate.error.empty.monthYear = The pension start date must include a month and year
-incomeFromPensions.pensionStartDate.error.empty.year = The pension start date must include a year
-incomeFromPensions.pensionStartDate.error.invalidFormat = The pension start date must be a real date
-incomeFromPensions.pensionStartDate.error.dateInFuture = The pension start date must be in the past
-incomeFromPensions.pensionStartDate.error.tooLongAgo = The pension start date must be after 1 January 1900
+incomeFromPensions.pensionStartDate.title.individual = Pryd y gwnaethoch ddechrau cael taliadau o’r cynllun hwn?
+incomeFromPensions.pensionStartDate.title.agent = Pryd y gwnaeth eich cleient ddechrau cael taliadau o’r cynllun hwn?
+incomeFromPensions.pensionStartDate.date.hint = Er enghraifft, 12 11 2007
+incomeFromPensions.pensionStartDate.error.empty.all = Nodwch ddyddiad dechrau’r pensiwn
+incomeFromPensions.pensionStartDate.error.empty.day = Mae’n rhaid i ddyddiad dechrau’r pensiwn gynnwys diwrnod
+incomeFromPensions.pensionStartDate.error.empty.dayMonth = Mae’n rhaid i ddyddiad dechrau’r pensiwn gynnwys diwrnod a mis
+incomeFromPensions.pensionStartDate.error.empty.dayYear = Mae’n rhaid i ddyddiad dechrau’r pensiwn gynnwys diwrnod a blwyddyn
+incomeFromPensions.pensionStartDate.error.empty.month = Mae’n rhaid i ddyddiad dechrau’r pensiwn gynnwys mis
+incomeFromPensions.pensionStartDate.error.empty.monthYear = Mae’n rhaid i ddyddiad dechrau’r pensiwn gynnwys mis a blwyddyn
+incomeFromPensions.pensionStartDate.error.empty.year = Mae’n rhaid i ddyddiad dechrau’r pensiwn gynnwys blwyddyn
+incomeFromPensions.pensionStartDate.error.invalidFormat = Mae’n rhaid i ddyddiad dechrau’r pensiwn fod yn ddyddiad go iawn
+incomeFromPensions.pensionStartDate.error.dateInFuture = Mae’n rhaid i ddyddiad dechrau’r pensiwn fod yn y gorffennol
+incomeFromPensions.pensionStartDate.error.tooLongAgo = Mae’n rhaid i ddyddiad dechrau’r pensiwn fod ar ol 1 Ionawr 1900
 
 #Remove pension scheme page
-incomeFromPensions.removePensionScheme.buttonText = Remove pension
+incomeFromPensions.removePensionScheme.buttonText = Dileu’r pensiwn
 
 #Uk Pension Income CYA page
-incomeFromPensions.title = Check income from pensions
-incomeFromPensions.paragraph.individual = Your income from pensions is based on the information we already hold about you.
-incomeFromPensions.paragraph.agent = Your client’s income from pensions is based on the information we already hold about them.
-incomeFromPensions.pensionIncome.hidden.individual = Change whether you got income from UK pensions
-incomeFromPensions.pensionIncome.hidden.agent = Change whether your client got income from UK pensions
-incomeFromPensions.pensionSchemes.hidden = Change UK pension scheme details
+incomeFromPensions.title = Gwirio incwm o bensiynau
+incomeFromPensions.paragraph.individual = Mae’ch incwm o bensiynau yn seiliedig ar yr wybodaeth sydd eisoes gennym amdanoch.
+incomeFromPensions.paragraph.agent = Mae incwm o bensiynau eich cleient yn seiliedig ar yr wybodaeth sydd eisoes gennym amdano.
+incomeFromPensions.pensionIncome.hidden.individual = Newid p’un a gawsoch incwm o bensiynau’r DU
+incomeFromPensions.pensionIncome.hidden.agent = Newid p’un a gafodd eich cleient incwm o bensiynau’r DU
+incomeFromPensions.pensionSchemes.hidden = Newid manylion cynllun pensiwn y DU
 
 #################       Lifetime Allowance       ########################################
 

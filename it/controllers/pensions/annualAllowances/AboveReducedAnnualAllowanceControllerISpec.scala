@@ -73,11 +73,11 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
 
   trait SpecificExpectedResults {
     val expectedReducedTitle: String
-    val expectedReducedHeading: String
+    lazy val expectedReducedHeading: String = expectedReducedTitle
     val expectedReducedErrorTitle: String
     val expectedReducedErrorMessage: String
     val expectedNonReducedTitle: String
-    val expectedNonReducedHeading: String
+    lazy val expectedNonReducedHeading: String = expectedNonReducedTitle
     val expectedNonReducedErrorTitle: String
     val expectedNonReducedErrorMessage: String
 
@@ -104,51 +104,43 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
     val expectedReducedTitle = "Have you gone above your reduced annual allowance?"
-    val expectedReducedHeading = "Have you gone above your reduced annual allowance?"
     val expectedReducedErrorTitle = s"Error: $expectedReducedTitle"
     val expectedReducedErrorMessage = "Select yes if you have gone above your reduced annual allowance"
 
     val expectedNonReducedTitle = "Have you gone above the annual allowance?"
-    val expectedNonReducedHeading = "Have you gone above the annual allowance?"
     val expectedNonReducedErrorTitle = s"Error: $expectedNonReducedTitle"
     val expectedNonReducedErrorMessage = "Select yes if you have gone above the annual allowance"
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
-    val expectedReducedTitle = "Have you gone above your reduced annual allowance?"
-    val expectedReducedHeading = "Have you gone above your reduced annual allowance?"
+    val expectedReducedTitle = "A ydych wedi mynd yn uwch na’ch lwfans blynyddol wedi’i ostwng?"
     val expectedReducedErrorTitle = s"Gwall: $expectedReducedTitle"
-    val expectedReducedErrorMessage = "Select yes if you have gone above your reduced annual allowance"
+    val expectedReducedErrorMessage = "Dewiswch ‘Iawn’ os ydych wedi mynd yn uwch na’ch lwfans blynyddol wedi’i ostwng"
 
-    val expectedNonReducedTitle = "Have you gone above the annual allowance?"
-    val expectedNonReducedHeading = "Have you gone above the annual allowance?"
+    val expectedNonReducedTitle = "A ydych wedi mynd yn uwch na’r lwfans blynyddol?"
     val expectedNonReducedErrorTitle = s"Gwall: $expectedNonReducedTitle"
-    val expectedNonReducedErrorMessage = "Select yes if you have gone above the annual allowance"
+    val expectedNonReducedErrorMessage = "Dewiswch ‘Iawn’ os ydych wedi mynd yn uwch na’r lwfans blynyddol"
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
     val expectedReducedTitle = "Has your client gone above their reduced annual allowance?"
-    val expectedReducedHeading = "Has your client gone above their reduced annual allowance?"
     val expectedReducedErrorTitle = s"Error: $expectedReducedTitle"
     val expectedReducedErrorMessage = "Select yes if your client has gone above their reduced annual allowance"
 
     val expectedNonReducedTitle = "Has your client gone above the annual allowance?"
-    val expectedNonReducedHeading = "Has your client gone above the annual allowance?"
     val expectedNonReducedErrorTitle = s"Error: $expectedNonReducedTitle"
     val expectedNonReducedErrorMessage = "Select yes if your client has gone above the annual allowance"
 
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
-    val expectedReducedTitle = "Has your client gone above their reduced annual allowance?"
-    val expectedReducedHeading = "Has your client gone above their reduced annual allowance?"
+    val expectedReducedTitle = "A yw’ch cleient wedi mynd yn uwch na’i lwfans blynyddol wedi’i ostwng?"
     val expectedReducedErrorTitle = s"Gwall: $expectedReducedTitle"
-    val expectedReducedErrorMessage = "Select yes if your client has gone above their reduced annual allowance"
+    val expectedReducedErrorMessage = "Dewiswch ‘Iawn’ os yw’ch cleient wedi mynd yn uwch na’i lwfans blynyddol wedi’i ostwng"
 
-    val expectedNonReducedTitle = "Has your client gone above the annual allowance?"
-    val expectedNonReducedHeading = "Has your client gone above the annual allowance?"
+    val expectedNonReducedTitle = "A yw’ch cleient wedi mynd yn uwch na’r lwfans blynyddol?"
     val expectedNonReducedErrorTitle = s"Gwall: $expectedNonReducedTitle"
-    val expectedNonReducedErrorMessage = "Select yes if your client has gone above the annual allowance"
+    val expectedNonReducedErrorMessage = "Dewiswch ‘Iawn’ os yw’ch cleient wedi mynd yn uwch na’i lwfans blynyddol"
   }
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(

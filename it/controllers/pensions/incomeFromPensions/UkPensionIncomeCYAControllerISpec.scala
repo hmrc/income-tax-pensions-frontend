@@ -81,14 +81,14 @@ class UkPensionIncomeCYAControllerISpec extends IntegrationTest with ViewHelpers
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedTitle = "Check income from pensions"
+    val expectedTitle = "Gwirio incwm o bensiynau"
     val expectedCaption: Int => String = (taxYear: Int) =>  s"Incwm o bensiynau’r DU ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
     val buttonText = "Yn eich blaen"
     val yesText = "Iawn"
     val noText = "Na"
     val ukPensionIncome = "Incwm o bensiynau’r DU"
     val ukPensionSchemes = "Cynlluniau pensiwn y DU"
-    val ukPensionSchemesHidden = "Change UK pension scheme details"
+    val ukPensionSchemesHidden = "Newid manylion cynllun pensiwn y DU"
   }
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
@@ -102,13 +102,13 @@ class UkPensionIncomeCYAControllerISpec extends IntegrationTest with ViewHelpers
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
-    val expectedParagraph = "Your income from pensions is based on the information we already hold about you."
-    val ukPensionIncomesHidden = "Change whether you got income from UK pensions"
+    val expectedParagraph = "Mae’ch incwm o bensiynau yn seiliedig ar yr wybodaeth sydd eisoes gennym amdanoch."
+    val ukPensionIncomesHidden = "Newid p’un a gawsoch incwm o bensiynau’r DU"
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
-    val expectedParagraph = "Your client’s income from pensions is based on the information we already hold about them."
-    val ukPensionIncomesHidden = "Change whether your client got income from UK pensions"
+    val expectedParagraph = "Mae incwm o bensiynau eich cleient yn seiliedig ar yr wybodaeth sydd eisoes gennym amdano."
+    val ukPensionIncomesHidden = "Newid p’un a gafodd eich cleient incwm o bensiynau’r DU"
   }
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(

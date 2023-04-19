@@ -56,7 +56,7 @@ class RemovePensionSchemeControllerISpec extends IntegrationTest with ViewHelper
   object CommonExpectedCY extends CommonExpectedResults {
     val expectedTitle = s"A ydych yn siŵr eich bod am dynnu $pensionName?"
     val expectedCaption: Int => String = (taxYear: Int) => s"Incwm o bensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
-    val buttonText = "Remove pension"
+    val buttonText = "Dileu’r pensiwn"
     val cancelText = "Canslo"
   }
 

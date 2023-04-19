@@ -81,23 +81,23 @@ class ReducedAnnualAllowanceControllerISpec extends IntegrationTest with BeforeA
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
-    val expectedTitle = "Do you have a reduced annual allowance?"
+    val expectedTitle = "A oes gennych lwfans blynyddol wedi’i ostwng?"
     val expectedErrorTitle = s"Gwall: $expectedTitle"
-    val expectedError = "Select yes if you have a reduced annual allowance"
-    val expectedInfo = "Annual allowance is the most you can save in your pension pots each year, before you have to pay tax."
-    val expectedWillBeReducedIf = "Your annual allowance will be reduced if:"
-    val expectedExample1 = "you flexibly access your pension"
-    val expectedExample2 = "both your ‘threshold income’ and ‘adjusted income’ are over the limit (yn agor tab newydd)"
+    val expectedError = "Dewiswch ‘Iawn’ os oes gennych lwfans blynyddol wedi’i ostwng"
+    val expectedInfo = "Lwfans blynyddol yw’r uchafswm y gallwch ei gynilo yn eich cronfeydd pensiwn bob blwyddyn, cyn i chi orfod talu treth."
+    val expectedWillBeReducedIf = "Bydd eich lwfans blynyddol yn cael ei ostwng os:"
+    val expectedExample1 = "rydych yn cyrchu eich pensiwn yn hyblyg"
+    val expectedExample2 = "mae eich ‘incwm trothwy’ yn ogystal â’ch ‘incwm wedi’i addasu’ yn dros y terfyn (yn agor tab newydd)"
   }
   
   object ExpectedAgentCY extends SpecificExpectedResults {
-    val expectedTitle = "Does your client have a reduced annual allowance?"
+    val expectedTitle = "A oes gan eich cleient lwfans blynyddol wedi’i ostwng?"
     val expectedErrorTitle = s"Gwall: $expectedTitle"
-    val expectedError = "Select yes if your client has a reduced annual allowance"
-    val expectedInfo = "Annual allowance is the most your client can save in their pension pots each year, before they have to pay tax."
-    val expectedWillBeReducedIf = "Your client’s annual allowance will be reduced if:"
-    val expectedExample1 = "they flexibly access their pension"
-    val expectedExample2 = "both their ‘threshold income’ and ‘adjusted income’ are over the limit (yn agor tab newydd)"
+    val expectedError = "Dewiswch ‘Iawn’ os oes gan eich cleient lwfans blynyddol wedi’i ostwng"
+    val expectedInfo = "Lwfans blynyddol yw’r uchafswm y gall eich cleient ei gynilo yn ei gronfeydd pensiwn bob blwyddyn, cyn iddo orfod talu treth."
+    val expectedWillBeReducedIf = "Bydd lwfans blynyddol eich cleient yn cael ei ostwng os:"
+    val expectedExample1 = "mae’n cyrchu ei bensiwn yn hyblyg"
+    val expectedExample2 = "mae ei ‘incwm trothwy’ yn ogystal â’i ‘incwm wedi’i addasu’ yn dros y terfyn (yn agor tab newydd)"
   }
 
   trait CommonExpectedResults {
@@ -130,13 +130,13 @@ class ReducedAnnualAllowanceControllerISpec extends IntegrationTest with BeforeA
 
   object CommonExpectedCY extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Lwfans blynyddol pensiwn ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
-    val expectedFindOut = "Find out what the annual allowance limit is for this tax year (yn agor tab newydd)."
-    val expectedFindOutLinkText = "annual allowance limit is for this tax year (yn agor tab newydd)"
-    val expectedOverLimitLinkText = "over the limit (yn agor tab newydd)"
-    val expectedDetailsTitle = "What does it mean to flexibly access a pension?"
-    val expectedDetailsThisIncludes = "This could include taking:"
-    val expectedDetailsExample1 = "income from a flexi-access drawdown fund"
-    val expectedDetailsExample2 = "cash directly from a pension pot (‘uncrystallised funds pension lump sums’)"
+    val expectedFindOut = "Dysgwch beth yw terfyn y lwfans blynyddol ar gyfer y flwyddyn dreth hon (yn agor tab newydd)."
+    val expectedFindOutLinkText = "terfyn y lwfans blynyddol ar gyfer y flwyddyn dreth hon (yn agor tab newydd)"
+    val expectedOverLimitLinkText = "dros y terfyn (yn agor tab newydd)"
+    val expectedDetailsTitle = "Beth y mae’n ei olygu i gyrchu eich pensiwn yn hyblyg?"
+    val expectedDetailsThisIncludes = "Gallai hyn gynnwys cymryd:"
+    val expectedDetailsExample1 = "incwm a gyrchir yn hyblyg o gronfa"
+    val expectedDetailsExample2 = "arian parod yn uniongyrchol o gronfa bensiwn (‘arian heb ei ddefnyddio ar ffurf cyfandaliad pensiwn’)"
     val expectedButtonText = "Yn eich blaen"
     val yesText = "Iawn"
     val noText = "Na"
