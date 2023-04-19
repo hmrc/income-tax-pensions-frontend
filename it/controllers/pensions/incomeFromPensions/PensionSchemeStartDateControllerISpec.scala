@@ -123,6 +123,7 @@ class PensionSchemeStartDateControllerISpec extends IntegrationTest with ViewHel
         result.status shouldBe SEE_OTHER
         result.header("location") shouldBe Some(ukPensionSchemeSummaryListUrl(taxYearEOY))
       }
+      
       "no index is given" in {
         lazy val result: WSResponse = {
           dropPensionsDB()
