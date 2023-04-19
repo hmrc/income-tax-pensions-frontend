@@ -263,7 +263,7 @@ class TaxEmployerPaymentsControllerISpec extends CommonUtils with BeforeAndAfter
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(pensionReliefSchemeSummaryUrl(taxYearEOY))
+        result.header("location") shouldBe Some(paymentsIntoOverseasPensionsCyaUrl(taxYearEOY))
       }
 
       "updates taxPaidOnEmployerPaymentsQuestion to Some(true)" in {
@@ -281,7 +281,7 @@ class TaxEmployerPaymentsControllerISpec extends CommonUtils with BeforeAndAfter
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(pensionReliefSchemeSummaryUrl(taxYearEOY))
+        result.header("location") shouldBe Some(paymentsIntoOverseasPensionsCyaUrl(taxYearEOY))
       }
 
       "updates taxPaidOnEmployerPaymentsQuestion to Some(true)" in {
@@ -299,7 +299,7 @@ class TaxEmployerPaymentsControllerISpec extends CommonUtils with BeforeAndAfter
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(paymentsIntoOverseasPensionsCyaUrl(taxYearEOY))
+        result.header("location") shouldBe Some(pensionReliefSchemeSummaryUrl(taxYearEOY))
       }
 
       "updates taxPaidOnEmployerPaymentsQuestion to Some(false)" in {
