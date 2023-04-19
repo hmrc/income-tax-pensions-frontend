@@ -45,10 +45,10 @@ class PaymentIntoPensionSchemeController @Inject()(messagesControllerComponents:
   override val errorMessageSet: YesNoAmountForm = PaymentIntoScheme
 
   // TODO: Once we've creating the CYA page (in SASS-3268), we can redirect to it.
-  override def redirectWhenNoSessionData(taxYear: Int): Result = redirectToSummaryPage(taxYear)
+  override def redirectWhenNoSessionData(taxYear: Int): Result = Redirect(controllers.pensions.routes.OverseasPensionsSummaryController.show(taxYear))
 
   override def redirectAfterUpdatingSessionData(pensionsUserData: PensionsUserData, taxYear: Int): Result =
-    Redirect(controllers.pensions.paymentsIntoOverseasPensions.routes.PaymentIntoPensionSchemeController.show(taxYear))
+    Redirect(controllers.pensions.paymentsIntoOverseasPensions.routes.EmployerPayOverseasPensionController.show(taxYear))
 
   override def prepareView(pensionsUserData: PensionsUserData, taxYear: Int)
                           (implicit request: AuthorisationRequest[AnyContent]): Html = paymentIntoPensionSchemeView(populateForm(pensionsUserData), taxYear)

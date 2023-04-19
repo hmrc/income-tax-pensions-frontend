@@ -46,37 +46,37 @@
 }
 
 @reliefSchemeSummaryList = {
-    @if(reliefSchemeList.filter(scheme => scheme.customerReferenceNumberQuestion.isDefined).nonEmpty){
+    @if(reliefSchemeList.filter(scheme => scheme.customerReference.isDefined).nonEmpty){
         <div class="govuk-form-group" id="reliefSchemeSummaryList">
             <dl class="hmrc-add-to-a-list hmrc-add-to-a-list--short">
-                @for((refundScheme, index) <- reliefSchemeList.zipWithIndex if (refundScheme.customerReferenceNumberQuestion.isDefined)){
+                @for((refundScheme, index) <- reliefSchemeList.zipWithIndex if (refundScheme.customerReference.isDefined)){
                     <div class="hmrc-add-to-a-list__contents">
                         <dt class="hmrc-add-to-a-list__identifier hmrc-add-to-a-list__identifier--light govuk-!-width-one-half">
-                            @refundScheme.customerReferenceNumberQuestion
+                            @refundScheme.customerReference
                         </dt>
                         <dd class="hmrc-add-to-a-list__change">
                             <a class="govuk-link" href=@ReliefsSchemeDetailsController.show(taxYear, Some(index.toInt)).url>
                                 <span aria-hidden="true">@messages("common.change")</span>
-                                <span class="govuk-visually-hidden">@{s"${messages("common.change")}"} @refundScheme.customerReferenceNumberQuestion</span>
+                                <span class="govuk-visually-hidden">@{s"${messages("common.change")}"} @refundScheme.customerReference</span>
                             </a>
                         </dd>
                         <dd class="hmrc-add-to-a-list__remove">
                             <a class="govuk-link" href=#>
                                 <span aria-hidden="true">@messages("common.remove")</span>
-                                <span class="govuk-visually-hidden">@{s"${messages("common.remove")}"} @refundScheme.customerReferenceNumberQuestion</span>
+                                <span class="govuk-visually-hidden">@{s"${messages("common.remove")}"} @refundScheme.customerReference</span>
                             </a>
                         </dd>
                     </div>
                 }
             </dl>
         </div>
-        @addAnotherLink(ReliefsSchemeSummaryController.show(taxYear).url)
+        @addAnotherLink(PensionsCustomerReferenceNumberController.show(taxYear, None).url)
         @button(Button(
             attributes = Map("id" -> "continue"),
             preventDoubleClick = Some(true),
             content = Text(messages("common.continue")),
             classes = "govuk-button govuk-!-margin-top-2",
-            href = Some(ReliefsSchemeSummaryController.show(taxYear).url)
+            href = Some(PaymentsIntoOverseasPensionsCYAController.show(taxYear).url)
         ))
     } else {
         <p class="govuk-body" id="youNeedToAddOneOrMoreReliefScheme1">

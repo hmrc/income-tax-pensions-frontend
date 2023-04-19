@@ -24,18 +24,22 @@ import play.api.libs.ws.WSResponse
 import utils.PageUrls.fullUrl
 
 trait CommonUtils extends IntegrationTest with ViewHelpers with PensionsDatabaseHelper {
-
+  
   def showPage[A, B](user: UserScenario[A, B],
-                     pensionsUserData: PensionsUserData)
+                     optPensionsUserData: Option[PensionsUserData])
                     (implicit url: Int => String): WSResponse = {
     lazy val result: WSResponse = {
       dropPensionsDB()
       authoriseAgentOrIndividual(user.isAgent)
-      insertCyaData(pensionsUserData, aUserRequest)
+      optPensionsUserData.fold(())(insertCyaData(_, aUserRequest))
       urlGet(fullUrl(url(taxYearEOY)), user.isWelsh, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
     }
     result
   }
+  
+  def showPage[A, B](user: UserScenario[A, B],
+                     pensionsUserData: PensionsUserData)
+                    (implicit url: Int => String): WSResponse = showPage(user, Some(pensionsUserData))
 
   def showPage[A, B](user: UserScenario[A, B],
                      pensionsUserData: PensionsUserData,
@@ -50,17 +54,21 @@ trait CommonUtils extends IntegrationTest with ViewHelpers with PensionsDatabase
     }
     result
   }
-
-  def showPage(pensionsUserData: PensionsUserData)
+  
+  def showPage(optPensionsUserData: Option[PensionsUserData] = None)
               (implicit url: Int => String): WSResponse = {
+    
     lazy val result: WSResponse = {
       dropPensionsDB()
       authoriseAgentOrIndividual(isAgent = false)
-      insertCyaData(pensionsUserData, aUserRequest)
+      optPensionsUserData.fold(())(insertCyaData(_, aUserRequest))
       urlGet(fullUrl(url(taxYearEOY)), follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
     }
     result
   }
+  
+  def showPage(pensionsUserData: PensionsUserData)(implicit url: Int => String): WSResponse =
+    showPage(Some(pensionsUserData))
 
   def showUnauthorisedPage[A, B](userScenario: UserScenario[A, B])
                                 (implicit url: Int => String): WSResponse = {

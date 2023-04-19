@@ -21,14 +21,15 @@ import builders.IncomeTaxUserDataBuilder.anIncomeTaxUserData
 import builders.PaymentsIntoOverseasPensionsViewModelBuilder.aPaymentsIntoOverseasPensionsViewModel
 import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import builders.PensionsUserDataBuilder
+import builders.PensionsUserDataBuilder.pensionUserDataWithOnlyOverseasPensions
 import builders.UserBuilder.aUserRequest
 import models.mongo.{PensionsCYAModel, PensionsUserData}
 import play.api.http.HeaderNames
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.PaymentIntoOverseasPensions.doubleTaxationAgreementUrl
+import utils.PageUrls.PaymentIntoOverseasPensions._
 import utils.PageUrls.{fullUrl, overseasPensionsSummaryUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
-import play.api.http.Status.{OK, SEE_OTHER, BAD_REQUEST}
+import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 
 class DoubleTaxationAgreementControllerISpec extends
   IntegrationTest with ViewHelpers with PensionsDatabaseHelper {
@@ -90,7 +91,25 @@ class DoubleTaxationAgreementControllerISpec extends
       result.status shouldBe SEE_OTHER
     }
 
-    "redirect to pensions summary page when an out of bounds index is added " in {
+    "redirect to customer reference page when using an out of bounds index and there are No pensions schemes" in {
+      val schemeIndex100 = 100
+      val pensionsNoSchemesViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(reliefs = Seq())
+      implicit val doubleTaxAgrtUrl : Int => String = doubleTaxationAgreementUrl(schemeIndex100)
+      
+      lazy val result: WSResponse = {
+        dropPensionsDB()
+        authoriseAgentOrIndividual(isAgent = false)
+        insertCyaData(pensionUserDataWithOnlyOverseasPensions(pensionsNoSchemesViewModel), aUserRequest)
+        userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYearEOY)
+        urlGet(fullUrl(doubleTaxAgrtUrl(taxYearEOY)), follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+      }
+
+      result.status shouldBe SEE_OTHER
+      result.header("location") shouldBe Some(pensionCustomerReferenceNumberUrl(taxYearEOY, None))
+    }
+
+    "redirect to pension schemes summary page when using an out of bounds index and there are pensions schemes" in {
       implicit val doubleTaxAgrtUrl : Int => String = doubleTaxationAgreementUrl(2)
       lazy val result: WSResponse = {
         dropPensionsDB()
@@ -102,13 +121,15 @@ class DoubleTaxationAgreementControllerISpec extends
       }
 
       result.status shouldBe SEE_OTHER
-      result.header("location") shouldBe Some(overseasPensionsSummaryUrl(taxYearEOY))
+      result.header("location") shouldBe Some(pensionReliefSchemeSummaryUrl(taxYearEOY))
     }
   }
 
   "submit " should {
+    val schemeIndex0 = 0
+    
     "redirect to the next page " in {
-      implicit val doubleTaxAgrtUrl : Int => String = doubleTaxationAgreementUrl(0)
+      implicit val doubleTaxAgrtUrl : Int => String = doubleTaxationAgreementUrl(schemeIndex0)
       val form: Map[String, String] = setFormData("AB3211-10", "Test Treaty", "100",Some("FR"))
       lazy val result: WSResponse = {
         dropPensionsDB()
@@ -118,11 +139,11 @@ class DoubleTaxationAgreementControllerISpec extends
           follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
       result.status shouldBe SEE_OTHER
-      result.header("location") shouldBe Some(doubleTaxAgrtUrl(taxYearEOY)) //TODO: update once the next page is developed
+      result.header("location") shouldBe Some(pensionReliefSchemeDetailsUrl(taxYearEOY, schemeIndex0))
     }
 
     "redirect when wrong tax year is used in the url " in {
-      implicit val doubleTaxAgrtUrl : Int => String = doubleTaxationAgreementUrl(0)
+      implicit val doubleTaxAgrtUrl : Int => String = doubleTaxationAgreementUrl(schemeIndex0)
       val form: Map[String, String] = setFormData("AB3211-10", "Test Treaty", "100",Some("FR"))
       lazy val result: WSResponse = {
         dropPensionsDB()
@@ -135,7 +156,7 @@ class DoubleTaxationAgreementControllerISpec extends
     }
 
     "throw bad request when user does not complete mandatory fields " in {
-      implicit val doubleTaxAgrtUrl : Int => String = doubleTaxationAgreementUrl(0)
+      implicit val doubleTaxAgrtUrl : Int => String = doubleTaxationAgreementUrl(schemeIndex0)
       val form: Map[String, String] = setFormData("", "", "", None)
       lazy val result: WSResponse = {
         dropPensionsDB()
@@ -147,18 +168,37 @@ class DoubleTaxationAgreementControllerISpec extends
       result.status shouldBe BAD_REQUEST
     }
 
-    "redirect to pensions summary page when an out of bounds index is added " in {
-      implicit val doubleTaxAgrtUrl : Int => String = doubleTaxationAgreementUrl(2)
+    "redirect to customer reference page when using an out of bounds index and there are No pension schemes" in {
+      val schemeIndex100 = 100
+      val pensionsNoSchemesViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(reliefs = Seq())
+      implicit val doubleTaxAgrtUrl : Int => String = doubleTaxationAgreementUrl(schemeIndex100)
+      
       val form: Map[String, String] = setFormData("AB3211-10", "Test Treaty", "100",Some("FR"))
       lazy val result: WSResponse = {
         dropPensionsDB()
-        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel)), aUserRequest)
+        insertCyaData(pensionUserDataWithOnlyOverseasPensions(pensionsNoSchemesViewModel), aUserRequest)
         authoriseAgentOrIndividual(isAgent = false)
         urlPost(fullUrl(doubleTaxAgrtUrl(taxYearEOY)), body = form,
           follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
       result.status shouldBe SEE_OTHER
-      result.header("location") shouldBe Some(overseasPensionsSummaryUrl(taxYearEOY))
+      result.header("location") shouldBe Some(pensionCustomerReferenceNumberUrl(taxYearEOY, None))
+    }
+    
+    "redirect to pension schemes summary page when using an out of bounds index and there are pension schemes" in {
+      val schemeIndex100 = 100
+      implicit val doubleTaxAgrtUrl : Int => String = doubleTaxationAgreementUrl(schemeIndex100)
+      val form: Map[String, String] = setFormData("AB3211-10", "Test Treaty", "100",Some("FR"))
+      lazy val result: WSResponse = {
+        dropPensionsDB()
+        insertCyaData(pensionsUsersData(aPensionsCYAModel
+          .copy(paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel)), aUserRequest)
+        authoriseAgentOrIndividual(isAgent = false)
+        urlPost(fullUrl(doubleTaxAgrtUrl(taxYearEOY)), body = form,
+          follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+      }
+      result.status shouldBe SEE_OTHER
+      result.header("location") shouldBe Some(pensionReliefSchemeSummaryUrl(taxYearEOY))
     }
   }
 

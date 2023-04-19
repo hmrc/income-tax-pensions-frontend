@@ -26,8 +26,8 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import utils.CommonUtils
-import utils.PageUrls.PaymentIntoOverseasPensions.taxEmployerPaymentsUrl
-import utils.PageUrls.pensionSummaryUrl
+import utils.PageUrls.PaymentIntoOverseasPensions.{paymentsIntoOverseasPensionsCyaUrl, pensionReliefSchemeSummaryUrl, taxEmployerPaymentsUrl}
+import utils.PageUrls.overseasPensionsSummaryUrl
 
 class TaxEmployerPaymentsControllerISpec extends CommonUtils with BeforeAndAfterEach {
 
@@ -216,7 +216,7 @@ class TaxEmployerPaymentsControllerISpec extends CommonUtils with BeforeAndAfter
       lazy val result: WSResponse = getResponseNoSessionData()
       "has an SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
+        result.header("location") shouldBe Some(overseasPensionsSummaryUrl(taxYearEOY))
       }
     }
   }
@@ -263,7 +263,7 @@ class TaxEmployerPaymentsControllerISpec extends CommonUtils with BeforeAndAfter
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(taxEmployerPaymentsUrl(taxYearEOY)) // Todo redirect to SASS-2587
+        result.header("location") shouldBe Some(paymentsIntoOverseasPensionsCyaUrl(taxYearEOY))
       }
 
       "updates taxPaidOnEmployerPaymentsQuestion to Some(true)" in {
@@ -281,7 +281,7 @@ class TaxEmployerPaymentsControllerISpec extends CommonUtils with BeforeAndAfter
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(taxEmployerPaymentsUrl(taxYearEOY)) //Todo redirect to SASS-2587
+        result.header("location") shouldBe Some(paymentsIntoOverseasPensionsCyaUrl(taxYearEOY))
       }
 
       "updates taxPaidOnEmployerPaymentsQuestion to Some(true)" in {
@@ -299,7 +299,7 @@ class TaxEmployerPaymentsControllerISpec extends CommonUtils with BeforeAndAfter
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(taxEmployerPaymentsUrl(taxYearEOY)) //TODO - redirect to SASS-2588
+        result.header("location") shouldBe Some(pensionReliefSchemeSummaryUrl(taxYearEOY))
       }
 
       "updates taxPaidOnEmployerPaymentsQuestion to Some(false)" in {

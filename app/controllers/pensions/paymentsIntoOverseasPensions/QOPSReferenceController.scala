@@ -17,11 +17,10 @@
 package controllers.pensions.paymentsIntoOverseasPensions
 
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.paymentsIntoOverseasPensions.routes.{PensionsCustomerReferenceNumberController, QOPSReferenceController}
-import controllers.pensions.routes.PensionsSummaryController
-import controllers.predicates.{ActionsProvider, AuthorisedAction}
+import controllers._
+import controllers.pensions.paymentsIntoOverseasPensions.routes._
+import controllers.predicates.ActionsProvider
 import forms.QOPSReferenceNumberForm
-import models.User
 import models.mongo.{PensionsCYAModel, PensionsUserData}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -32,33 +31,31 @@ import utils.{Clock, SessionHelper}
 import views.html.pensions.paymentsIntoOverseasPensions.QOPSReferenceView
 
 import javax.inject.{Inject, Singleton}
-import controllers._
-
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 @Singleton
 class QOPSReferenceController @Inject()(actionsProvider: ActionsProvider,
                                         qopsReferenceView: QOPSReferenceView,
                                         pensionSessionService: PensionSessionService,
-                                        errorHandler: ErrorHandler,
-                                        ec: ExecutionContext
-                                       )(implicit val mcc: MessagesControllerComponents,
-                                         appConfig: AppConfig,
-                                         clock: Clock) extends FrontendController(mcc) with I18nSupport with SessionHelper {
+                                        errorHandler: ErrorHandler)
+                                       (implicit val mcc: MessagesControllerComponents,  appConfig: AppConfig, clock: Clock)
+  extends FrontendController(mcc) with I18nSupport with SessionHelper {
+  
   def referenceForm(): Form[String] = QOPSReferenceNumberForm.qopsReferenceNumberForm(
     incorrectFormatMsg = "common.overseasPensions.qops.error.incorrectFormat"
   )
 
   def show(taxYear: Int, index : Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit sessionData =>
-      validateIndex(index, sessionData.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs.size) match {
-        case Some(idx) => Future.successful(Ok(qopsReferenceView(referenceForm(sessionData.user, sessionData.pensionsUserData, idx), taxYear, Some(idx))))
-        case _ => Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
+      val reliefSize = sessionData.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs.size
+      validatedIndex(index, reliefSize) match {
+        case Some(idx) => Future.successful(Ok(qopsReferenceView(referenceForm(sessionData.pensionsUserData, idx), taxYear, Some(idx))))
+        case _ => Future.successful(Redirect(customerRefPageOrSchemeSummaryPage(reliefSize, taxYear)))
       }
   }
 
-  private def referenceForm(user: User, pensionUserData: PensionsUserData, index: Int): Form[String] = {
-    val qopsNumber = pensionUserData.pensions.paymentsIntoOverseasPensions.reliefs(index).qualifyingOverseasPensionSchemeReferenceNumber
+  private def referenceForm(pensionUserData: PensionsUserData, index: Int): Form[String] = {
+    val qopsNumber = pensionUserData.pensions.paymentsIntoOverseasPensions.reliefs(index).qopsReference
     qopsNumber match {
       case Some(qopsNumber) => referenceForm().fill(removePrefix(qopsNumber))
       case None => referenceForm()
@@ -67,26 +64,29 @@ class QOPSReferenceController @Inject()(actionsProvider: ActionsProvider,
 
   def submit(taxYear: Int, index : Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit request =>
-      validateIndex(index, request.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs.size) match {
+      val piops = request.pensionsUserData.pensions.paymentsIntoOverseasPensions
+      val reliefSize = piops.reliefs.size
+      
+      validatedIndex(index, reliefSize) match {
         case Some(idx) =>
           referenceForm().bindFromRequest().fold(
             formWithErrors => Future.successful(BadRequest(qopsReferenceView(formWithErrors, taxYear, index))),
             referenceNumber => {
-              val relief = request.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs(idx)
+              val relief = piops.reliefs(idx)
               val updatedCyaModel: PensionsCYAModel = request.pensionsUserData.pensions.copy(
-                paymentsIntoOverseasPensions = request.pensionsUserData.pensions.paymentsIntoOverseasPensions.copy(
-                  reliefs = request.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs.updated(
-                    idx, relief.copy(qualifyingOverseasPensionSchemeReferenceNumber = Some(referenceNumber))
-                  )))
+                paymentsIntoOverseasPensions = piops.copy(
+                  reliefs = piops.reliefs.updated(idx, relief.copy(qopsReference = Some(referenceNumber))))
+              )
               pensionSessionService.createOrUpdateSessionData(request.user,
                 updatedCyaModel, taxYear, request.pensionsUserData.isPriorSubmission)(errorHandler.internalServerError()) {
-                Redirect(QOPSReferenceController.show(taxYear, Some(idx))) //TODO - redirect to pensions-overseas-details-summary
+                Redirect(ReliefsSchemeDetailsController.show(taxYear, index))
               }
             }
           )
-        case _ => Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
+        case _ => Future.successful(Redirect(customerRefPageOrSchemeSummaryPage(reliefSize, taxYear)))
       }
   }
 
-  def removePrefix(qopsReference: String): String = if (qopsReference.length == 10) qopsReference.substring(4, 10) else qopsReference
+  def removePrefix(qopsReference: String): String =  //TODO: check qops ref length
+    if (qopsReference.length == 10) qopsReference.substring(4, 10) else qopsReference
 }

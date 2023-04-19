@@ -29,9 +29,9 @@ object PaymentsIntoOverseasPensionsViewModelBuilder {
     reliefs = Seq(
       Relief(
         reliefType = Some(TransitionalCorrespondingRelief),
-        customerReferenceNumberQuestion = Some("PENSIONINCOME245"),
+        customerReference = Some("PENSIONINCOME245"),
         employerPaymentsAmount = Some(1999.99),
-        qualifyingOverseasPensionSchemeReferenceNumber = None,
+        qopsReference = None,
         alphaTwoCountryCode = None,
         alphaThreeCountryCode = None,
         doubleTaxationCountryArticle = None,
@@ -40,9 +40,9 @@ object PaymentsIntoOverseasPensionsViewModelBuilder {
         sf74Reference = Some("SF74-123456")),
       Relief(
         reliefType = Some(MigrantMemberRelief),
-        customerReferenceNumberQuestion = Some("PENSIONINCOME356"),
+        customerReference = Some("PENSIONINCOME356"),
         employerPaymentsAmount = Some(100.00),
-        qualifyingOverseasPensionSchemeReferenceNumber = Some("123456"),
+        qopsReference = Some("123456"),
         alphaTwoCountryCode = None,
         alphaThreeCountryCode = None,
         doubleTaxationCountryArticle = None,

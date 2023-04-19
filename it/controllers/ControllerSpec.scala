@@ -86,7 +86,13 @@ class ControllerSpec(val pathForThisPage: String) extends PlaySpec
 
     val overseasSummaryPage: String = relativeUrl("/overseas-pensions")
 
-    val paymentsIntoOverseasPensions: String = relativeUrl("/overseas-pensions/payments-into-overseas-pensions/payments-into-schemes")
+    val piopPaymentsIntoSchemePage: String = relativeUrl("/overseas-pensions/payments-into-overseas-pensions/payments-into-schemes")
+    val piopUntaxedEmployerPaymentsPage: String = relativeUrl("/overseas-pensions/payments-into-overseas-pensions/untaxed-employer-payments")
+    val piopSchemeEmployerPaymentsPage: String = relativeUrl("/overseas-pensions/payments-into-overseas-pensions/employer-payments-into-schemes")
+    val piopCustomerReferencePage: String = relativeUrl("/overseas-pensions/payments-into-overseas-pensions/pensions-customer-reference-number")
+    val piopSchemeSummaryPage: String = relativeUrl("/overseas-pensions/payments-into-overseas-pensions/untaxed-schemes-summary")
+    val piopPensionsReliefTypePage: String = relativeUrl("/overseas-pensions/payments-into-overseas-pensions/pensions-overseas-emp-relief-status")
+    
 
     val incomeFromOverseasPensionsStatus: String = relativeUrl("/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-status")
     val incomeFromOverseasPensionsCountry: String = relativeUrl("/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-country")
@@ -104,9 +110,6 @@ class ControllerSpec(val pathForThisPage: String) extends PlaySpec
     val taxOnShortServiceRefundController: String = relativeUrl("/overseas-pensions/short-service-refunds/short-service-refunds-uk-tax")
 
     val shortServiceRefundSummary: String = relativeUrl("/overseas-pensions/short-service-refunds/short-service-refund-summary")
-
-    val untaxedEmployerPayments: String = relativeUrl("/overseas-pensions/payments-into-overseas-pensions/untaxed-employer-payments")
-
   }
 
   override implicit lazy val app: Application = new GuiceApplicationBuilder()

@@ -20,7 +20,7 @@ import config.{AppConfig, ErrorHandler}
 import controllers.pensions.routes._
 import controllers.pensions.transferIntoOverseasPensions.routes._
 import controllers.predicates.ActionsProvider
-import controllers.validateIndex
+import controllers.validatedIndex
 import forms.Countries
 import forms.overseas.PensionSchemeForm.{TcSsrPensionsSchemeFormModel, tcSsrPensionSchemeForm}
 import models.User
@@ -48,7 +48,7 @@ class TransferPensionsSchemeController @Inject()(actionsProvider: ActionsProvide
   def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) {
     implicit userSessionDataRequest =>
       val tcPensionSchemes = userSessionDataRequest.pensionsUserData.pensions.transfersIntoOverseasPensions.transferPensionScheme
-      validateIndex(index, tcPensionSchemes.size) match {
+      validatedIndex(index, tcPensionSchemes.size) match {
         case Some(idx) =>
           val isUKScheme = tcPensionSchemes(idx).ukTransferCharge.contains(true)
           val form = tcPensionSchemeForm(userSessionDataRequest.user, isUKScheme).fill(updateFormModel(tcPensionSchemes(idx)))
@@ -61,7 +61,7 @@ class TransferPensionsSchemeController @Inject()(actionsProvider: ActionsProvide
   def submit(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit userSessionDataRequest =>
       val tcPensionSchemes = userSessionDataRequest.pensionsUserData.pensions.transfersIntoOverseasPensions.transferPensionScheme
-      validateIndex(index, tcPensionSchemes.size) match {
+      validatedIndex(index, tcPensionSchemes.size) match {
         case Some(idx) =>
           val isUKScheme = tcPensionSchemes(idx).ukTransferCharge.contains(true)
           tcPensionSchemeForm(userSessionDataRequest.user, isUKScheme).bindFromRequest().fold(

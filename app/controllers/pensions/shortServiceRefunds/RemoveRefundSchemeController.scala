@@ -18,7 +18,7 @@ package controllers.pensions.shortServiceRefunds
 
 import config.{AppConfig, ErrorHandler}
 import controllers.predicates.ActionsProvider
-import controllers.validateIndex
+import controllers.validatedIndex
 import models.mongo.{PensionsCYAModel, PensionsUserData}
 import models.pension.charges.OverseasRefundPensionScheme
 import models.requests.UserSessionDataRequest
@@ -44,7 +44,7 @@ class RemoveRefundSchemeController @Inject()(actionsProvider: ActionsProvider,
 
   def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionUserData =>
     val refundChargeScheme = sessionUserData.pensionsUserData.pensions.shortServiceRefunds.refundPensionScheme
-    validateIndex(index, refundChargeScheme.size).fold(Future.successful(Redirect(RefundSummaryController.show(taxYear)))) {
+    validatedIndex(index, refundChargeScheme.size).fold(Future.successful(Redirect(RefundSummaryController.show(taxYear)))) {
       i =>
         refundChargeScheme(i).name.fold(Future.successful(Redirect(RefundSummaryController.show(taxYear)))){
           name => Future.successful(Ok(view(taxYear, name, index)))
@@ -54,7 +54,7 @@ class RemoveRefundSchemeController @Inject()(actionsProvider: ActionsProvider,
 
   def submit(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionUserData =>
     val refundChargeScheme = sessionUserData.pensionsUserData.pensions.shortServiceRefunds.refundPensionScheme
-    validateIndex(index, refundChargeScheme.size)
+    validatedIndex(index, refundChargeScheme.size)
       .fold(Future.successful(Redirect(RefundSummaryController.show(taxYear)))) {
         i =>
           val updatedRefundScheme = refundChargeScheme.patch(i, Nil, 1)

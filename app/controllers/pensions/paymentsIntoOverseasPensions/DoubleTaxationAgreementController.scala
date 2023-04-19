@@ -17,9 +17,8 @@
 package controllers.pensions.paymentsIntoOverseasPensions
 
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.routes.OverseasPensionsSummaryController
 import controllers.predicates.ActionsProvider
-import controllers.validateIndex
+import controllers.validatedIndex
 import forms.Countries
 import forms.overseas.DoubleTaxationAgreementForm.{DoubleTaxationAgreementFormModel, doubleTaxationAgreementForm}
 import models.User
@@ -49,38 +48,38 @@ class DoubleTaxationAgreementController @Inject() (actionsProvider: ActionsProvi
     implicit request =>
       pensionSessionService.getPensionSessionData(taxYear, request.user).map {
         case Left(_) => errorHandler.handleError(INTERNAL_SERVER_ERROR)
-        case Right(optPensionUserData) =>
-          val relief = request.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs
-          validateIndex(index, relief.size) match {
+        case Right(_) =>
+          val piopReliefs = request.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs
+          validatedIndex(index, piopReliefs.size) match {
             case Some(idx) =>
-              val form = dblTaxationAgreementForm(request.user, false).fill(updateViewModel(relief(idx)))
+              val form = dblTaxationAgreementForm(request.user).fill(updateViewModel(piopReliefs(idx)))
               Ok(view(form, taxYear, index))
             case _ =>
-              Redirect(OverseasPensionsSummaryController.show(taxYear))
+              Redirect(customerRefPageOrSchemeSummaryPage(piopReliefs.size, taxYear))
           }
       }
   }
 
   def submit(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit request  =>
-      dblTaxationAgreementForm(request.user, false).bindFromRequest().fold(
-        formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear, index))),
-        doubleTaxationAgreement => updateSessionData(request.pensionsUserData, doubleTaxationAgreement, taxYear, index)
-      )
+
+      val reliefSize = request.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs.size
+      validatedIndex(index, reliefSize) match {
+        case  Some(idx) =>
+          dblTaxationAgreementForm(request.user).bindFromRequest().fold(
+            formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear, index))),
+            doubleTaxationAgreement => updateSessionData(request.pensionsUserData, doubleTaxationAgreement, taxYear, idx)
+          )
+        case _ =>  Future.successful(Redirect(customerRefPageOrSchemeSummaryPage(reliefSize, taxYear)))
+      }
   }
 
-  private def dblTaxationAgreementForm(user: User, isUKScheme: Boolean): Form[DoubleTaxationAgreementFormModel] =
-    doubleTaxationAgreementForm(
-      agentOrIndividual = if (user.isAgent) "agent" else "individual", isUKScheme
-    )
+  private def dblTaxationAgreementForm(user: User): Form[DoubleTaxationAgreementFormModel] =
+    doubleTaxationAgreementForm( agentOrIndividual = if (user.isAgent) "agent" else "individual")
 
   private def updateViewModel(relief: Relief): DoubleTaxationAgreementFormModel =
     DoubleTaxationAgreementFormModel(
-      countryId = relief.alphaTwoCountryCode.fold {
-        Countries.get2AlphaCodeFrom3AlphaCode(relief.alphaThreeCountryCode)
-      } {
-        alpha2 => Some(alpha2)
-      },
+      countryId = relief.alphaTwoCountryCode.fold(Countries.get2AlphaCodeFrom3AlphaCode(relief.alphaThreeCountryCode))(Some(_)),
       article = relief.doubleTaxationCountryArticle,
       treaty = relief.doubleTaxationCountryTreaty,
       reliefAmount = relief.doubleTaxationReliefAmount
@@ -89,29 +88,26 @@ class DoubleTaxationAgreementController @Inject() (actionsProvider: ActionsProvi
   private def updateSessionData[T](pensionsUserData: PensionsUserData,
                                    doubleTaxationAgreementFormModel: DoubleTaxationAgreementFormModel,
                                    taxYear: Int,
-                                   index: Option[Int])(implicit request: UserSessionDataRequest[T]): Future[Result] = {
-    val reliefs = pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs
-    validateIndex(index, reliefs.size) match {
-      case Some(idx) =>
-        val updatedCyaModel = pensionsUserData.pensions.copy(
-          paymentsIntoOverseasPensions = pensionsUserData.pensions.paymentsIntoOverseasPensions.copy(
-            reliefs = Seq(pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs(idx).copy(
-              alphaTwoCountryCode = doubleTaxationAgreementFormModel.countryId,
-              alphaThreeCountryCode = Countries.get3AlphaCodeFrom2AlphaCode(doubleTaxationAgreementFormModel.countryId),
-              doubleTaxationCountryArticle = doubleTaxationAgreementFormModel.article,
-              doubleTaxationCountryTreaty = doubleTaxationAgreementFormModel.treaty,
-              doubleTaxationReliefAmount = doubleTaxationAgreementFormModel.reliefAmount
-            ))
-          )
-        )
+                                   idx: Int)
+                                  (implicit request: UserSessionDataRequest[T]): Future[Result] = {
 
-        pensionSessionService.createOrUpdateSessionData(request.user,
-          updatedCyaModel, taxYear, pensionsUserData.isPriorSubmission)(errorHandler.internalServerError()) {
-          //TODO: Redirect to the pension scheme details page
-          Redirect(controllers.pensions.paymentsIntoOverseasPensions.routes.DoubleTaxationAgreementController.show(taxYear, index))
-        }
-      case _ =>
-        Future.successful(Redirect(OverseasPensionsSummaryController.show(taxYear)))
+    val piopUserData = pensionsUserData.pensions.paymentsIntoOverseasPensions
+    
+    val updatedCyaModel = pensionsUserData.pensions.copy(
+      paymentsIntoOverseasPensions = piopUserData.copy(
+        reliefs = piopUserData.reliefs.updated(idx, piopUserData.reliefs(idx).copy(
+          alphaTwoCountryCode = doubleTaxationAgreementFormModel.countryId,
+          alphaThreeCountryCode = Countries.get3AlphaCodeFrom2AlphaCode(doubleTaxationAgreementFormModel.countryId),
+          doubleTaxationCountryArticle = doubleTaxationAgreementFormModel.article,
+          doubleTaxationCountryTreaty = doubleTaxationAgreementFormModel.treaty,
+          doubleTaxationReliefAmount = doubleTaxationAgreementFormModel.reliefAmount
+        ))
+      )
+    )
+
+    pensionSessionService.createOrUpdateSessionData(request.user,
+      updatedCyaModel, taxYear, pensionsUserData.isPriorSubmission)(errorHandler.internalServerError()) {
+      Redirect(routes.ReliefsSchemeDetailsController.show(taxYear, Some(idx)))
     }
   }
 }
