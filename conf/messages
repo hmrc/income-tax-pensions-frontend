@@ -642,6 +642,9 @@ incomeFromPensions.pensionIncome.hidden.individual = Change whether you got inco
 incomeFromPensions.pensionIncome.hidden.agent = Change whether your client got income from UK pensions
 incomeFromPensions.pensionSchemes.hidden = Change UK pension scheme details
 
+#Uk Pension Income CYA page
+incomeFromPensions.schemeDetails.cya.title = Check pension scheme details
+
 #################       Lifetime Allowance       ########################################
 
 #Did you get paid your pension as a lump sum

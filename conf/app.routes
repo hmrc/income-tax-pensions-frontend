@@ -123,6 +123,10 @@ POST        /:taxYear/pension-income/uk-pension-income/check-pension-income     
 
 GET         /:taxYear/pension-income/pensions-income-summary                                                                       controllers.pensions.incomeFromPensions.IncomeFromPensionsSummaryController.show(taxYear: Int)
 
+GET         /:taxYear/pension-income/uk-pension-income/pension-scheme-summary                                                       controllers.pensions.incomeFromPensions.PensionSchemeSummaryController.show(taxYear: Int, reliefIndex: Option[Int])
+POST        /:taxYear/pension-income/uk-pension-income/pension-scheme-summary                                                       controllers.pensions.incomeFromPensions.PensionSchemeSummaryController.submit(taxYear: Int, reliefIndex: Option[Int])
+
+
 ###########################     Unauthorised Payments Pages     ####################################
 
 GET         /:taxYear/unauthorised-payments-from-pensions/amount-surcharged                                                        controllers.pensions.unauthorisedPayments.SurchargeAmountController.show(taxYear: Int)
