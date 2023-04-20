@@ -56,7 +56,7 @@
 @detailsHtml = {
     <ul class="govuk-list govuk-list--bullet">
         <li>@messages(s"common.yourP60.${if(request.user.isAgent) "agent" else "individual"}")</li>
-        <li>@messages(s"common.aboutGeneralIncreases.${if(request.user.isAgent) "agent" else "individual"}")</li>
+        <li>@messages(s"incomeFromPensions.statePensionLumpSum.aboutGeneralIncreases.${if(request.user.isAgent) "agent" else "individual"}")</li>
     </ul>
 }
 
