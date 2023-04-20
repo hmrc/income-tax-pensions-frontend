@@ -19,7 +19,7 @@ package controllers.pensions.incomeFromPensions
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.incomeFromPensions.routes.{UkPensionIncomeCYAController, UkPensionIncomeSummaryController}
 import controllers.predicates.ActionsProvider
-import controllers.validateIndex
+import controllers.validatedIndex
 import forms.DateForm.DateModel
 import forms.{DateForm, FormsProvider}
 import models.mongo.PensionsCYAModel
@@ -50,7 +50,7 @@ class PensionSchemeStartDateController @Inject()(pensionSessionService: PensionS
   def show(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] =
     actionsProvider.userSessionDataFor(taxYear) { implicit sessionDataRequest =>
       val data = sessionDataRequest.pensionsUserData.pensions.incomeFromPensions.uKPensionIncomes
-      validateIndex(pensionSchemeIndex, data.size) match {
+      validatedIndex(pensionSchemeIndex, data.size) match {
         case Some(validIndex) =>
           data(pensionSchemeIndex.get).startDate.fold {
             Ok(view(formProvider.pensionSchemeDateForm, taxYear, validIndex))
@@ -68,7 +68,7 @@ class PensionSchemeStartDateController @Inject()(pensionSessionService: PensionS
 
   def submit(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] =
     actionsProvider.userSessionDataFor(taxYear) async { implicit sessionDataRequest =>
-      validateIndex(pensionSchemeIndex, sessionDataRequest.pensionsUserData.pensions.incomeFromPensions.uKPensionIncomes.size) match {
+      validatedIndex(pensionSchemeIndex, sessionDataRequest.pensionsUserData.pensions.incomeFromPensions.uKPensionIncomes.size) match {
         case Some(validIndex) =>
           val verifiedForm = formProvider.pensionSchemeDateForm.bindFromRequest()
           verifiedForm.copy(errors = DateForm.verifyDate(verifiedForm.get, "incomeFromPensions.pensionStartDate")).fold(
