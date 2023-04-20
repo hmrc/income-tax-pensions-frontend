@@ -24,9 +24,8 @@ import play.api.http.HeaderNames
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import utils.PageUrls.PaymentIntoOverseasPensions.pensionReliefSchemeSummaryUrl
-import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
-import utils.PageUrls.ShortServiceRefunds.nonUkTaxRefundsUrl
 import utils.PageUrls.{fullUrl, overviewUrl}
+import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 class ReliefSchemeSummaryControllerISpec extends IntegrationTest with ViewHelpers with PensionsDatabaseHelper {
 

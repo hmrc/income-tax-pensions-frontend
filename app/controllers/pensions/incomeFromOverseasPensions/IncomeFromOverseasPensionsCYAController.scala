@@ -38,7 +38,8 @@ class IncomeFromOverseasPensionsCYAController @Inject()(authAction: AuthorisedAc
                                                         pensionSessionService: PensionSessionService,
                                                         pensionIncomeService: PensionIncomeService,
                                                         errorHandler: ErrorHandler)
-                                                       (implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
+                                                       (implicit val mcc: MessagesControllerComponents,
+                                                        appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport {
 
 
@@ -74,7 +75,8 @@ class IncomeFromOverseasPensionsCYAController @Inject()(authAction: AuthorisedAc
   }
 
   def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
-    pensionIncomeService.saveIncomeFromOverseasPensionsViewModel(request.user, taxYear).map {
+    val p1 = pensionIncomeService.saveIncomeFromOverseasPensionsViewModel(request.user, taxYear)
+      p1.map {
       case Left(_) =>
         errorHandler.internalServerError()
       case Right(_) => Redirect(controllers.pensions.routes.OverseasPensionsSummaryController.show(taxYear))

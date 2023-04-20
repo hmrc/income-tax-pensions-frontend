@@ -26,9 +26,8 @@ import play.test.Helpers.stubMessagesApi
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{ActionItem, Key, SummaryListRow, Value}
 import builders.IncomeFromOverseasPensionsViewModelBuilder.anIncomeFromOverseasPensionsViewModel
-import views.pensions.incomeFromOverseasPensions.IncomeFromOverseasPensionsCYAViewHelper
 
-class IncomeFromOverseasPensionsCYAViewHelperSpec extends AnyWordSpec with Matchers {
+class IncomeFromOverseasPensionsCYAViewHelperSpec extends AnyWordSpec with Matchers {  //scalastyle:off magic.number
 
   val taxYear = 2022
 
@@ -207,13 +206,13 @@ class IncomeFromOverseasPensionsCYAViewHelperSpec extends AnyWordSpec with Match
     assertAction(summaryListRow, expectedSummaryRowContents.linkLabel, expectedSummaryRowContents.linkPathEnding, expectedSummaryRowContents.hiddenText)
   }
 
-  private def assertRowForOverseasPensionSchemes(summaryListRow: SummaryListRow, expectedValue: String, index : Int = 0): Unit =
+  private def assertRowForOverseasPensionSchemes(summaryListRow: SummaryListRow, expectedValue: String): Unit =
     assertSummaryListRow(summaryListRow, ExpectedSummaryRowContents(
       "Overseas pension schemes",
       expectedValue,
       "Change",
       s"/2022/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-country-summary",
-      "incomeFromOverseasPensions.cya.overseasPensionSchemes.hidden"))
+      "common.overseas.pension.schemes.hidden"))
 
   private def assertAction(summaryListRow: SummaryListRow, expectedLabel: String, expectedPath: String, expectedHiddenText: String): Unit = {
 
@@ -252,7 +251,7 @@ class IncomeFromOverseasPensionsCYAViewHelperSpec extends AnyWordSpec with Match
             "common.yes" -> "Yes",
             "common.no" -> "No",
             "common.change" -> "Change",
-            "incomeFromOverseasPensions.cya.overseasPensionSchemes" -> "Overseas pension schemes"
+            "common.overseas.pension.schemes" -> "Overseas pension schemes"
           )
             .asJava
       ).asJava,

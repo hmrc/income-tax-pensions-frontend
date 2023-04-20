@@ -18,7 +18,7 @@ package controllers.pensions.shortServiceRefunds
 
 import config.{AppConfig, ErrorHandler}
 import controllers.predicates.ActionsProvider
-import controllers.validateScheme
+import controllers.validatedSchemes
 import forms.FormsProvider
 import javax.inject.{Inject, Singleton}
 import models.pension.pages.shortServiceRefunds.TaxOnShortServiceRefundPage
@@ -44,7 +44,7 @@ class TaxOnShortServiceRefundController @Inject()(actionsProvider: ActionsProvid
   val outOfBoundsRedirect: Int => Result = (taxYear: Int) => Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear))
 
   def show(taxYear: Int, refundPensionSchemeIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) { implicit sessionUserData =>
-    validateScheme(refundPensionSchemeIndex, sessionUserData.pensionsUserData.pensions.shortServiceRefunds.refundPensionScheme) match {
+    validatedSchemes(refundPensionSchemeIndex, sessionUserData.pensionsUserData.pensions.shortServiceRefunds.refundPensionScheme) match {
       case Left(_) => outOfBoundsRedirect(taxYear)
       case Right(_) => Ok(
         view(TaxOnShortServiceRefundPage(taxYear, refundPensionSchemeIndex, sessionUserData.pensionsUserData.pensions.shortServiceRefunds, formsProvider.shortServiceTaxOnShortServiceRefundForm)))
@@ -54,7 +54,7 @@ class TaxOnShortServiceRefundController @Inject()(actionsProvider: ActionsProvid
   def submit(taxYear: Int, refundPensionSchemeIndex: Option[Int]): Action[AnyContent] = {
     actionsProvider.userSessionDataFor(taxYear).async { implicit sessionUserData =>
 
-      validateScheme(refundPensionSchemeIndex, sessionUserData.pensionsUserData.pensions.shortServiceRefunds.refundPensionScheme) match {
+      validatedSchemes(refundPensionSchemeIndex, sessionUserData.pensionsUserData.pensions.shortServiceRefunds.refundPensionScheme) match {
         case Left(_) => Future.successful(outOfBoundsRedirect(taxYear))
         case Right(_) => formsProvider.shortServiceTaxOnShortServiceRefundForm.bindFromRequest().fold(
           formWithErrors =>

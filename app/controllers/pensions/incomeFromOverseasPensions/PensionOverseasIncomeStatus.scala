@@ -87,9 +87,12 @@ class PensionOverseasIncomeStatus @Inject()(authAction: AuthorisedAction,
             pensionSessionService.createOrUpdateSessionData(request.user,
               updatedCyaModel, taxYear, isPriorSubmission)(errorHandler.internalServerError()) {
               if (yesNo) {
-                Redirect(PensionOverseasIncomeCountryController.show(taxYear, None)) //TODO - redirect to SASS-2587 <- incorrect, should be country page
+                val schemes = updatedCyaModel.incomeFromOverseasPensions.overseasIncomePensionSchemes
+                Redirect(
+                  if (schemes.isEmpty) PensionOverseasIncomeCountryController.show(taxYear, None) else CountrySummaryListController.show(taxYear)
+                )
               } else {
-                Redirect(IncomeFromOverseasPensionsCYAController.show(taxYear)) //TODO - redirect to SASS-2588 <- incorrect, should be CYA page
+                Redirect(IncomeFromOverseasPensionsCYAController.show(taxYear))
               }
             }
           case _ =>

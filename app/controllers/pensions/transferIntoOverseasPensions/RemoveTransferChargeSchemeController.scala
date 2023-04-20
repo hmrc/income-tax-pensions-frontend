@@ -18,7 +18,7 @@ package controllers.pensions.transferIntoOverseasPensions
 
 import config.{AppConfig, ErrorHandler}
 import controllers.predicates.ActionsProvider
-import controllers.validateIndex
+import controllers.validatedIndex
 import models.mongo.{PensionsCYAModel, PensionsUserData}
 import models.pension.charges.TransferPensionScheme
 import models.requests.UserSessionDataRequest
@@ -43,7 +43,7 @@ class RemoveTransferChargeSchemeController @Inject()(actionsProvider: ActionsPro
 
   def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionUserData =>
     val transferChargeScheme = sessionUserData.pensionsUserData.pensions.transfersIntoOverseasPensions.transferPensionScheme
-    validateIndex(index, transferChargeScheme.size).fold(Future.successful(Redirect(TransferChargeSummaryController.show(taxYear)))) {
+    validatedIndex(index, transferChargeScheme.size).fold(Future.successful(Redirect(TransferChargeSummaryController.show(taxYear)))) {
       i =>
         transferChargeScheme(i).name.fold(Future.successful(Redirect(TransferChargeSummaryController.show(taxYear)))){
           name => Future.successful(Ok(view(taxYear, name, index)))
@@ -53,7 +53,7 @@ class RemoveTransferChargeSchemeController @Inject()(actionsProvider: ActionsPro
 
   def submit(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionUserData =>
     val transferChargeScheme = sessionUserData.pensionsUserData.pensions.transfersIntoOverseasPensions.transferPensionScheme
-    validateIndex(index, transferChargeScheme.size)
+    validatedIndex(index, transferChargeScheme.size)
       .fold(Future.successful(Redirect(TransferChargeSummaryController.show(taxYear)))) {
         i =>
           val updatedTransferScheme = transferChargeScheme.patch(i, Nil, 1)

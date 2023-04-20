@@ -14,24 +14,27 @@
  * limitations under the License.
  *@
 
-@import models.pension.charges.IncomeFromOverseasPensionsViewModel
+@import models.pension.charges.PaymentsIntoOverseasPensionsViewModel
 @import views.html.templates.Layout
 @import views.html.templates.helpers.{Button, Heading, SummaryList}
-@import controllers.pensions.incomeFromOverseasPensions.IncomeFromOverseasPensionsCYAViewHelper
+@import controllers.pensions.paymentsIntoOverseasPensions.PaymentsIntoOverseasPensionCYAViewHelper
+@import models.requests.UserSessionDataRequest
+
 @this(layout: Layout, summaryList: SummaryList, heading: Heading, button: Button, csrfForm: FormWithCSRF)
-@(taxYear: Int, cya: IncomeFromOverseasPensionsViewModel)(implicit messages: Messages, appConfig: AppConfig, request: AuthorisationRequest[_])
+
+@(taxYear: Int, paymentsIntoOverseasPensionsViewModel: PaymentsIntoOverseasPensionsViewModel)(implicit request: UserSessionDataRequest[_], messages: Messages, appConfig: AppConfig)
 
 @headingForUse = @{
-    messages("incomeFromOverseasPensions.cya.heading")
+    messages(s"paymentsIntoOverseasPensions.cya.heading")
 }
 
 @layout(pageTitle = headingForUse, taxYear = Some(taxYear)) {
 
-    @heading(headingForUse, Some(messages("common.incomeFromOverseasPensions.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-5")
+    @heading(headingForUse, Some(messages("common.paymentsIntoOverseasPensions.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-5")
 
-    @summaryList(IncomeFromOverseasPensionsCYAViewHelper.summaryListRows(cya, taxYear)(messages))
+    @summaryList(PaymentsIntoOverseasPensionCYAViewHelper.summaryListRows(paymentsIntoOverseasPensionsViewModel, taxYear)(messages))
 
-    @csrfForm(controllers.pensions.incomeFromOverseasPensions.routes.IncomeFromOverseasPensionsCYAController.submit(taxYear)) {
+    @csrfForm(controllers.pensions.paymentsIntoOverseasPensions.routes.PaymentsIntoOverseasPensionsCYAController.submit(taxYear)) {
         @button("common.saveAndContinue")
     }
 }

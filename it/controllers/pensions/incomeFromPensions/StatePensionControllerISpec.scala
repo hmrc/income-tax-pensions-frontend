@@ -31,8 +31,6 @@ import utils.PageUrls.IncomeFromPensionsPages.statePension
 import utils.PageUrls._
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
-import java.time.LocalDate
-
 class StatePensionControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
 
   private def pensionsUsersData(pensionsCyaModel: PensionsCYAModel): PensionsUserData = {

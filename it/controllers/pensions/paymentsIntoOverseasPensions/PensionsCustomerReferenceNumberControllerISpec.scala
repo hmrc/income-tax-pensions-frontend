@@ -21,6 +21,7 @@ import builders.IncomeTaxUserDataBuilder.anIncomeTaxUserData
 import builders.PaymentsIntoOverseasPensionsViewModelBuilder.aPaymentsIntoOverseasPensionsViewModel
 import builders.PensionsCYAModelBuilder._
 import builders.PensionsUserDataBuilder
+import builders.PensionsUserDataBuilder.pensionUserDataWithOnlyOverseasPensions
 import builders.UserBuilder.{aUser, aUserRequest}
 import forms.PensionCustomerReferenceNumberForm
 import models.mongo.{PensionsCYAModel, PensionsUserData}
@@ -30,7 +31,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.PaymentIntoOverseasPensions.pensionCustomerReferenceNumberUrl
+import utils.PageUrls.PaymentIntoOverseasPensions._
 import utils.PageUrls._
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
@@ -38,17 +39,17 @@ class PensionsCustomerReferenceNumberControllerISpec extends IntegrationTest wit
 
   override val userScenarios: Seq[UserScenario[_,_]] = Seq.empty
   val inputName: String = "pensionsCustomerReferenceNumberId"
-  private def pensionsUsersData(pensionsCyaModel: PensionsCYAModel): PensionsUserData = {
+  private def pensionsUsersData(pensionsCyaModel: PensionsCYAModel, isPrior: Boolean = false): PensionsUserData = {
     PensionsUserDataBuilder.aPensionsUserData.copy(
-      isPriorSubmission = false,
+      isPriorSubmission = isPrior,
       pensions = pensionsCyaModel
     )
   }
 
   val noCrnRelief = Relief(reliefType = Some(TransitionalCorrespondingRelief),
-    customerReferenceNumberQuestion = None,
+    customerReference = None,
     employerPaymentsAmount = Some(1999.99),
-    qualifyingOverseasPensionSchemeReferenceNumber = None,
+    qopsReference = None,
     alphaTwoCountryCode = None,
     alphaThreeCountryCode = None,
     doubleTaxationCountryArticle = None,
@@ -57,9 +58,9 @@ class PensionsCustomerReferenceNumberControllerISpec extends IntegrationTest wit
     sf74Reference = Some("SF74-123456")
   )
   val someCrnRelief = Relief(reliefType = Some(TransitionalCorrespondingRelief),
-    customerReferenceNumberQuestion = Some("PENSIONSINCOME480"),
+    customerReference = Some("PENSIONSINCOME480"),
     employerPaymentsAmount = Some(1999.99),
-    qualifyingOverseasPensionSchemeReferenceNumber = None,
+    qopsReference = None,
     alphaTwoCountryCode = None,
     alphaThreeCountryCode = None,
     doubleTaxationCountryArticle = None,
@@ -118,26 +119,38 @@ class PensionsCustomerReferenceNumberControllerISpec extends IntegrationTest wit
       result.body.contains("""value="PENSIONINCOME245""")
       result.body.contains("/pensions-customer-reference-number?index=1")
     }
-
-    "Redirect to the pension summary page if index is invalid" in {
+    
+    "Redirect to the Customer Reference page if index is invalid and there are No pension schemes" in {
+      val pensionsNoSchemesViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(reliefs = Seq())
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
-        userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYearEOY)
+        insertCyaData(pensionUserDataWithOnlyOverseasPensions(pensionsNoSchemesViewModel),  aUserRequest)
+        urlGet(fullUrl(pensionCustomerReferenceNumberUrl(taxYearEOY, Some(3))), follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+        )
+      }
+      result.status shouldBe SEE_OTHER
+      result.header("location").head shouldBe pensionCustomerReferenceNumberUrl(taxYearEOY, None)
+    }
+
+    "Redirect to the pension scheme summary page if index is invalid and there are pension schemes" in {
+      lazy implicit val result: WSResponse = {
+        dropPensionsDB()
+        authoriseAgentOrIndividual(aUser.isAgent)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel, isPrior = true), aUserRequest)
         urlGet(fullUrl(pensionCustomerReferenceNumberUrl(taxYearEOY, Some(-1))), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
         )
       }
-
-        result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(overseasPensionsSummaryUrl(taxYearEOY))
+      result.status shouldBe SEE_OTHER
+      result.header("location") shouldBe Some(pensionReliefSchemeSummaryUrl(taxYearEOY))
     }
   }
 
   ".submit" should {
 
     "Redirect to CRN page and add to user relief data when user submits a valid CRN with no prior data" in {
-      //todo - redirect to untaxed-employer-payments SASS-3099
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
@@ -148,14 +161,13 @@ class PensionsCustomerReferenceNumberControllerISpec extends IntegrationTest wit
       }
 
       result.status shouldBe SEE_OTHER
-      result.header("location").contains(pensionCustomerReferenceNumberUrl(taxYearEOY, Some(1))) shouldBe true
+      result.header("location").head shouldBe untaxedEmployerPaymentsUrl(taxYearEOY, 0)
 
       lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
-      cyaModel.pensions.paymentsIntoOverseasPensions.reliefs.head.customerReferenceNumberQuestion.get shouldBe "PENSIONSINCOME25"
+      cyaModel.pensions.paymentsIntoOverseasPensions.reliefs.head.customerReference.get shouldBe "PENSIONSINCOME25"
     }
 
     "Redirect to CRN page and update user data reliefs when user submits a valid CRN with prior data" in {
-      //todo - redirect to untaxed-employer-payments SASS-3099
       implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
@@ -167,10 +179,10 @@ class PensionsCustomerReferenceNumberControllerISpec extends IntegrationTest wit
       }
 
       result.status shouldBe SEE_OTHER
-      result.header("location").contains(pensionCustomerReferenceNumberUrl(taxYearEOY, Some(1))) shouldBe true
+      result.header("location").head shouldBe untaxedEmployerPaymentsUrl(taxYearEOY, 1)
 
       lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
-      cyaModel.pensions.paymentsIntoOverseasPensions.reliefs(1).customerReferenceNumberQuestion.get shouldBe "PENSIONSINCOME24"
+      cyaModel.pensions.paymentsIntoOverseasPensions.reliefs(1).customerReference.get shouldBe "PENSIONSINCOME24"
     }
 
     "return BadRequest error when an empty CRN value is submitted" in {
@@ -190,7 +202,25 @@ class PensionsCustomerReferenceNumberControllerISpec extends IntegrationTest wit
       result.status shouldBe BAD_REQUEST
     }
 
-    "Redirect to the pension summary page if index is invalid" in {
+    "redirect to the Customer Reference page if index is invalid and there are No pension schemes" in {
+      val pensionsNoSchemesViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(reliefs = Seq())
+      lazy implicit val result: WSResponse = {
+        dropPensionsDB()
+        authoriseAgentOrIndividual(aUser.isAgent)
+        lazy val form: Map[String, String] = Map(PensionCustomerReferenceNumberForm.pensionsCustomerReferenceNumberId -> "")
+        insertCyaData(pensionUserDataWithOnlyOverseasPensions(pensionsNoSchemesViewModel),  aUserRequest)
+        urlPost(
+          fullUrl(pensionCustomerReferenceNumberUrl(taxYearEOY, Some(-1))),
+          body = form,
+          follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+        )
+      }
+      result.status shouldBe SEE_OTHER
+      result.header("location") .head shouldBe pensionCustomerReferenceNumberUrl(taxYearEOY, None)
+    }
+    
+    "Redirect to the pension scheme summary page if index is invalid and there are pension schemes" in {
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
@@ -203,9 +233,8 @@ class PensionsCustomerReferenceNumberControllerISpec extends IntegrationTest wit
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
         )
       }
-
       result.status shouldBe SEE_OTHER
-      result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
+      result.header("location") .head shouldBe pensionReliefSchemeSummaryUrl(taxYearEOY)
     }
   }
 }

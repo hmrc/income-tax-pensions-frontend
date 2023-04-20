@@ -35,20 +35,20 @@ object TaxReliefQuestion{
 
 
 case class Relief(
-                   customerReferenceNumberQuestion: Option[String] = None,
-                   employerPaymentsAmount: Option[BigDecimal] = None,
-                   reliefType: Option[String] = None,
-                   alphaTwoCountryCode: Option[String] = None,
-                   alphaThreeCountryCode: Option[String] = None,
-                   doubleTaxationCountryArticle: Option[String] = None,
-                   doubleTaxationCountryTreaty: Option[String] = None,
-                   doubleTaxationReliefAmount: Option[BigDecimal] = None,
-                   qualifyingOverseasPensionSchemeReferenceNumber: Option[String] = None,
-                   sf74Reference: Option[String] = None
+  customerReference: Option[String] = None,
+  employerPaymentsAmount: Option[BigDecimal] = None,
+  reliefType: Option[String] = None,
+  alphaTwoCountryCode: Option[String] = None,
+  alphaThreeCountryCode: Option[String] = None,
+  doubleTaxationCountryArticle: Option[String] = None,
+  doubleTaxationCountryTreaty: Option[String] = None,
+  doubleTaxationReliefAmount: Option[BigDecimal] = None,
+  qopsReference: Option[String] = None,
+  sf74Reference: Option[String] = None
                  ) {
   def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedRelief =
     EncryptedRelief(
-      customerReferenceNumberQuestion = customerReferenceNumberQuestion.map(_.encrypted),
+      customerReference = customerReference.map(_.encrypted),
       employerPaymentsAmount = employerPaymentsAmount.map(_.encrypted),
       reliefType = reliefType.map(_.encrypted),
       sf74Reference = sf74Reference.map(_.encrypted),
@@ -57,7 +57,7 @@ case class Relief(
       doubleTaxationCountryArticle = doubleTaxationCountryArticle.map(_.encrypted),
       doubleTaxationCountryTreaty = doubleTaxationCountryTreaty.map(_.encrypted),
       doubleTaxationReliefAmount = doubleTaxationReliefAmount.map(_.encrypted),
-      qualifyingOverseasPensionSchemeReferenceNumber = qualifyingOverseasPensionSchemeReferenceNumber.map(_.encrypted)
+      qualifyingOverseasPensionSchemeReferenceNumber = qopsReference.map(_.encrypted)
     )
 }
 
@@ -66,20 +66,20 @@ object Relief {
 }
 
 case class EncryptedRelief(
-                            customerReferenceNumberQuestion: Option[EncryptedValue] = None,
-                            employerPaymentsAmount: Option[EncryptedValue] = None,
-                            reliefType: Option[EncryptedValue] = None,
-                            alphaTwoCountryCode: Option[EncryptedValue] = None,
-                            alphaThreeCountryCode: Option[EncryptedValue] = None,
-                            doubleTaxationCountryArticle: Option[EncryptedValue] = None,
-                            doubleTaxationCountryTreaty: Option[EncryptedValue] = None,
-                            doubleTaxationReliefAmount: Option[EncryptedValue] = None,
-                            sf74Reference: Option[EncryptedValue] = None,
-                            qualifyingOverseasPensionSchemeReferenceNumber: Option[EncryptedValue] = None
+  customerReference: Option[EncryptedValue] = None,
+  employerPaymentsAmount: Option[EncryptedValue] = None,
+  reliefType: Option[EncryptedValue] = None,
+  alphaTwoCountryCode: Option[EncryptedValue] = None,
+  alphaThreeCountryCode: Option[EncryptedValue] = None,
+  doubleTaxationCountryArticle: Option[EncryptedValue] = None,
+  doubleTaxationCountryTreaty: Option[EncryptedValue] = None,
+  doubleTaxationReliefAmount: Option[EncryptedValue] = None,
+  sf74Reference: Option[EncryptedValue] = None,
+  qualifyingOverseasPensionSchemeReferenceNumber: Option[EncryptedValue] = None
                           ) {
   def decrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): Relief =
     Relief(
-      customerReferenceNumberQuestion = customerReferenceNumberQuestion.map(_.decrypted[String]),
+      customerReference = customerReference.map(_.decrypted[String]),
       employerPaymentsAmount = employerPaymentsAmount.map(_.decrypted[BigDecimal]),
       reliefType = reliefType.map(_.decrypted[String]),
       sf74Reference = sf74Reference.map(_.decrypted[String]),
@@ -88,7 +88,7 @@ case class EncryptedRelief(
       doubleTaxationCountryArticle = doubleTaxationCountryArticle.map(_.decrypted[String]),
       doubleTaxationCountryTreaty = doubleTaxationCountryTreaty.map(_.decrypted[String]),
       doubleTaxationReliefAmount = doubleTaxationReliefAmount.map(_.decrypted[BigDecimal]),
-      qualifyingOverseasPensionSchemeReferenceNumber = qualifyingOverseasPensionSchemeReferenceNumber.map(_.decrypted[String])
+      qopsReference = qualifyingOverseasPensionSchemeReferenceNumber.map(_.decrypted[String])
     )
 }
 
@@ -125,7 +125,7 @@ case class EncryptedPaymentsIntoOverseasPensionsViewModel(paymentsIntoOverseasPe
                                                           paymentsIntoOverseasPensionsAmount: Option[EncryptedValue] = None,
                                                           employerPaymentsQuestion: Option[EncryptedValue] = None,
                                                           taxPaidOnEmployerPaymentsQuestion: Option[EncryptedValue] = None,
-                                                          customerReferenceNumberQuestion: Option[EncryptedValue] = None,
+                                                          customerReference: Option[EncryptedValue] = None,
                                                           employerPaymentsAmount: Option[EncryptedValue] = None,
                                                           reliefs: Seq[EncryptedRelief] = Seq.empty[EncryptedRelief]
                                                          ) {

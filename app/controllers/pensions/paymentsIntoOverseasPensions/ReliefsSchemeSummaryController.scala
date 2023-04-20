@@ -17,20 +17,19 @@
 package controllers.pensions.paymentsIntoOverseasPensions
 
 import config.AppConfig
-import controllers.predicates.{ActionsProvider, AuthorisedAction}
+import controllers.predicates.ActionsProvider
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.{Clock, SessionHelper}
+import utils.SessionHelper
 import views.html.pensions.paymentsIntoOverseasPensions.ReliefSchemeSummaryView
 
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class ReliefsSchemeSummaryController @Inject()(authAction: AuthorisedAction,
-                                               view: ReliefSchemeSummaryView,
+class ReliefsSchemeSummaryController @Inject()(view: ReliefSchemeSummaryView,
                                                actionsProvider: ActionsProvider)
-                                              (implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock)
+                                              (implicit val mcc: MessagesControllerComponents, appConfig: AppConfig)
   extends FrontendController(mcc) with I18nSupport with SessionHelper {
 
   def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) {

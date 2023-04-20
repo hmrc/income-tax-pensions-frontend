@@ -46,7 +46,7 @@ class OverseasTransferChargePaidController @Inject()(actionsProvider: ActionsPro
 
   def show(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) { implicit sessionUserData =>
 
-    validateScheme(pensionSchemeIndex, sessionUserData.pensionsUserData.pensions.transfersIntoOverseasPensions.transferPensionScheme) match {
+    validatedSchemes(pensionSchemeIndex, sessionUserData.pensionsUserData.pensions.transfersIntoOverseasPensions.transferPensionScheme) match {
       case Left(_) => outOfBoundsRedirect(taxYear)
       case Right(_) => Ok(
         pageView(OverseasTransferChargePaidPage(taxYear, pensionSchemeIndex, sessionUserData.pensionsUserData.pensions.transfersIntoOverseasPensions, formsProvider.overseasTransferChargePaidForm)))
@@ -56,7 +56,7 @@ class OverseasTransferChargePaidController @Inject()(actionsProvider: ActionsPro
   def submit(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = {
     actionsProvider.userSessionDataFor(taxYear).async { implicit sessionUserData =>
 
-      validateScheme(pensionSchemeIndex, sessionUserData.pensionsUserData.pensions.transfersIntoOverseasPensions.transferPensionScheme) match {
+      validatedSchemes(pensionSchemeIndex, sessionUserData.pensionsUserData.pensions.transfersIntoOverseasPensions.transferPensionScheme) match {
         case Left(_) => Future.successful(outOfBoundsRedirect(taxYear))
         case Right(_) => formsProvider.overseasTransferChargePaidForm.bindFromRequest().fold(
           formWithErrors =>
