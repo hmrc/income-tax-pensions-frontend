@@ -498,8 +498,17 @@ incomeFromPensions.statePensionLumpSum.title.agent = A gafodd eich cleient gyfan
 incomeFromPensions.statePensionLumpSum.para.individual = Mae’n bosibl y byddwch wedi cael cyfandaliad unigol os oeddech wedi oedi cyn hawlio’ch Pensiwn y Wladwriaeth am 12 mis yn olynol.
 incomeFromPensions.statePensionLumpSum.para.agent = Mae’n bosibl y byddai’ch cleient wedi cael cyfandaliad unigol os oedden nhw wedi oedi cyn hawlio ei Bensiwn y Wladwriaeth am 12 mis yn olynol.
 incomeFromPensions.statePensionLumpSum.onlyApplies = Mae hyn ond yn berthnasol i bobl sy’n cyrraedd oedran Pensiwn y Wladwriaeth cyn 6 Ebrill 2016.
+incomeFromPensions.statePensionLumpSum.amount = Amount of lump sum
+incomeFromPensions.statePensionLumpSum.aboutGeneralIncreases.individual = the ‘About general increases in benefits‘ letter, the Pension Service sent you
+incomeFromPensions.statePensionLumpSum.aboutGeneralIncreases.agent = the ‘About general increases in benefits‘ letter, the Pension Service sent your client
 incomeFromPensions.statePensionLumpSum.error.noEntry.individual = Dewiswch ‘Iawn’ os cawsoch gyfandaliad Pensiwn y Wladwriaeth
 incomeFromPensions.statePensionLumpSum.error.noEntry.agent = Dewiswch ‘Iawn’ os cafodd eich cleient gyfandaliad Pensiwn y Wladwriaeth
+incomeFromPensions.statePensionLumpSum.amount.error.noEntry.individual = Nodwch swm eich cyfandaliad Pensiwn y Wladwriaeth
+incomeFromPensions.statePensionLumpSum.amount.error.incorrectFormat.individual = Nodwch swm eich cyfandaliad Pensiwn y Wladwriaeth yn y fformat cywir
+incomeFromPensions.statePensionLumpSum.amount.error.overMaximum.individual = Mae’n rhaid i swm eich cyfandaliad Pensiwn y Wladwriaeth fod yn llai na £100,000,000,000
+incomeFromPensions.statePensionLumpSum.amount.error.noEntry.agent = Nodwch swm cyfandaliad Pensiwn y Wladwriaeth eich cleient
+incomeFromPensions.statePensionLumpSum.amount.error.incorrectFormat.agent = Nodwch swm cyfandaliad Pensiwn y Wladwriaeth eich cleient yn y fformat cywir
+incomeFromPensions.statePensionLumpSum.amount.error.overMaximum.agent = Mae’n rhaid i swm cyfandaliad Pensiwn y Wladwriaeth eich cleient fod yn llai na £100,000,000,000
 
 #state pension start date
 incomeFromPensions.stateBenefitStartDate.title.individual = When did you start getting State Pension payments?
@@ -516,21 +525,7 @@ incomeFromPensions.stateBenefitStartDate.error.invalidFormat = The day, month an
 incomeFromPensions.stateBenefitStartDate.error.dateInFuture = The pension start date must be in the past
 incomeFromPensions.stateBenefitStartDate.error.tooLongAgo = The pension start date must be after 1 January 1900
 
-#state pension lump sum
-pensions.statePensionLumpSum.title.individual = Faint oedd eich cyfandaliad Pensiwn y Wladwriaeth?
-pensions.statePensionLumpSum.title.agent = Faint oedd cyfandaliad Pensiwn y Wladwriaeth eich cleient?
-pensions.statePensionLumpSum.error.noEntry.individual = Nodwch swm eich cyfandaliad Pensiwn y Wladwriaeth
-pensions.statePensionLumpSum.error.incorrectFormat.individual = Nodwch swm eich cyfandaliad Pensiwn y Wladwriaeth yn y fformat cywir
-pensions.statePensionLumpSum.error.overMaximum.individual = Mae’n rhaid i swm eich cyfandaliad Pensiwn y Wladwriaeth fod yn llai na £100,000,000,000
-pensions.statePensionLumpSum.error.noEntry.agent = Nodwch swm cyfandaliad Pensiwn y Wladwriaeth eich cleient
-pensions.statePensionLumpSum.error.incorrectFormat.agent = Nodwch swm cyfandaliad Pensiwn y Wladwriaeth eich cleient yn y fformat cywir
-pensions.statePensionLumpSum.error.overMaximum.agent = Mae’n rhaid i swm cyfandaliad Pensiwn y Wladwriaeth eich cleient fod yn llai na £100,000,000,000
-
 #tax paid on state pension lump sum
-pensions.taxPaidOnStatePensionLumpSum.title.individual = A wnaethoch dalu treth ar gyfandaliad Pensiwn y Wladwriaeth?
-pensions.taxPaidOnStatePensionLumpSum.error.noEntry.individual = Dewiswch ‘Iawn’ os gwnaethoch dalu treth ar gyfandaliad Pensiwn y Wladwriaeth
-pensions.taxPaidOnStatePensionLumpSum.title.agent = A wnaeth eich cleient dalu treth ar gyfandaliad Pensiwn y Wladwriaeth?
-pensions.taxPaidOnStatePensionLumpSum.error.noEntry.agent = Dewiswch ‘Iawn’ os gwnaeth eich cleient dalu treth ar gyfandaliad Pensiwn y Wladwriaeth
 pensions.taxPaidOnStatePensionLumpSum.amount = Amount of tax paid
 pensions.taxPaidOnStatePensionLumpSum.title.individual = Did you pay tax on the State Pension lump sum?
 pensions.taxPaidOnStatePensionLumpSum.error.noEntry.individual = Select yes if you paid tax on the State Pension lump sum
@@ -573,15 +568,6 @@ pensions.statePension.amount.error.overMaximum.individual = Mae’n rhaid i swm 
 pensions.statePension.amount.error.noEntry.agent = Nodwch swm Pensiwn y Wladwriaeth eich cleient
 pensions.statePension.amount.error.incorrectFormat.agent = Nodwch swm Pensiwn y Wladwriaeth eich cleient yn y fformat cywir
 pensions.statePension.amount.error.overMaximum.agent = Mae’n rhaid i swm Pensiwn y Wladwriaeth eich cleient fod yn llai na £100,000,000,000
-
-#tax paid on lump sum amount
-incomeFromPensions.taxPaidOnLumpSumAmount.title.individual = Faint o dreth a daloch ar gyfandaliad Pensiwn y Wladwriaeth?
-incomeFromPensions.taxPaidOnLumpSumAmount.title.agent = Faint o dreth a dalodd eich cleient ar gyfandaliad Pensiwn y Wladwriaeth?
-incomeFromPensions.taxPaidOnLumpSumAmount.paragraph.individual = Gwnaethoch roi gwybod i ni nad oeddech yn talu {0} o dreth ar eich cyfandaliad Pensiwn y Wladwriaeth y flwyddyn hon. Rhowch wybod i ni faint wnaethoch ei dalu.
-incomeFromPensions.taxPaidOnLumpSumAmount.paragraph.agent = Gwnaethoch roi gwybod i ni nad oedd eich cleient yn talu {0} o dreth ar ei gyfandaliad Pensiwn y Wladwriaeth y flwyddyn hon. Rhowch wybod i ni faint y talodd eich cleient.
-incomeFromPensions.taxPaidOnLumpSumAmount.error.error.noEntry = Nodwch swm y dreth a dalwyd ar gyfandaliad Pensiwn y Wladwriaeth
-incomeFromPensions.taxPaidOnLumpSumAmount.error.error.incorrectFormat = Nodwch gyfanswm y dreth a dalwyd ar gyfandaliad Pensiwn y Wladwriaeth yn y fformat cywir
-incomeFromPensions.taxPaidOnLumpSumAmount.error.error.overMaximum = Mae’n rhaid i swm y dreth a dalwyd ar gyfandaliad Pensiwn y Wladwriaeth fod yn llai na £100,000,000,000
 
 #Income From Pensions Summary
 incomeFromPensions.incomeFromPensionsSummary.statePensions = Pensiwn y Wladwriaeth

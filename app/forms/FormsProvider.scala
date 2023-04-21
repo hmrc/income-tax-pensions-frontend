@@ -142,6 +142,16 @@ class FormsProvider() {
     )
   }
 
+  def statePensionLumpSum(implicit user: User): Form[(Boolean, Option[BigDecimal])] = {
+    val agentOrIndividual = if (user.isAgent) "agent" else "individual"
+    RadioButtonAmountForm.radioButtonAndAmountForm(
+      missingInputError = s"incomeFromPensions.statePensionLumpSum.error.noEntry.$agentOrIndividual",
+      emptyFieldKey = s"incomeFromPensions.statePensionLumpSum.amount.error.noEntry.$agentOrIndividual",
+      wrongFormatKey = s"incomeFromPensions.statePensionLumpSum.amount.error.incorrectFormat.$agentOrIndividual",
+      exceedsMaxAmountKey = s"incomeFromPensions.statePensionLumpSum.amount.error.overMaximum.$agentOrIndividual"
+    )
+  }
+
   def stateBenefitDateForm: Form[DateForm.DateModel] = {
     DateForm.dateForm("stateBenefitStartDate")
   }
