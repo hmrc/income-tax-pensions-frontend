@@ -35,6 +35,14 @@ case class UnauthorisedPaymentsViewModel(surchargeQuestion: Option[Boolean] = No
                                          ukPensionSchemesQuestion: Option[Boolean] = None,
                                          pensionSchemeTaxReference: Option[Seq[String]] = None) {
 
+
+  def toUnauth: PensionSchemeUnauthorisedPayments = PensionSchemeUnauthorisedPayments(
+    pensionSchemeTaxReference = scala.collection.immutable.Seq(pensionSchemeTaxReference.getOrElse(scala.collection.immutable.Nil)).flatten,
+    surcharge =
+      if (surchargeQuestion.getOrElse(false)) Some(Charge(this.surchargeAmount.getOrElse(0.00), this.surchargeTaxAmount.getOrElse(0.00))) else None,
+    noSurcharge =
+      if (noSurchargeQuestion.getOrElse(false)) Some(Charge(this.surchargeAmount.getOrElse(0.00), this.surchargeTaxAmount.getOrElse(0.00))) else None
+  )
   def toCreatePensionChargeRequest: CreateUpdatePensionChargesRequestModel = {
     CreateUpdatePensionChargesRequestModel(
       pensionSavingsTaxCharges = None,
