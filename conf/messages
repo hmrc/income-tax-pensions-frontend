@@ -525,16 +525,6 @@ incomeFromPensions.stateBenefitStartDate.error.invalidFormat = The day, month an
 incomeFromPensions.stateBenefitStartDate.error.dateInFuture = The pension start date must be in the past
 incomeFromPensions.stateBenefitStartDate.error.tooLongAgo = The pension start date must be after 1 January 1900
 
-#state pension lump sum
-#pensions.statePensionLumpSum.title.individual = How much was your State Pension lump sum?
-#pensions.statePensionLumpSum.title.agent = How much was your client’s State Pension lump sum?
-#pensions.statePensionLumpSum.error.noEntry.individual = Enter your State Pension lump sum amount
-#pensions.statePensionLumpSum.error.incorrectFormat.individual = Enter your State Pension lump sum amount in the correct format
-#pensions.statePensionLumpSum.error.overMaximum.individual = Your State Pension lump sum amount must be less than £100,000,000,000
-#pensions.statePensionLumpSum.error.noEntry.agent = Enter your client’s State Pension lump sum amount
-#pensions.statePensionLumpSum.error.incorrectFormat.agent = Enter your client’s State Pension lump sum amount in the correct format
-#pensions.statePensionLumpSum.error.overMaximum.agent = Your client’s State Pension lump sum amount must be less than £100,000,000,000
-
 #tax paid on state pension lump sum
 pensions.taxPaidOnStatePensionLumpSum.amount = Amount of tax paid
 pensions.taxPaidOnStatePensionLumpSum.title.individual = Did you pay tax on the State Pension lump sum?
