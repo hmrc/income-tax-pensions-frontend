@@ -17,40 +17,44 @@
 package controllers.pensions.incomeFromPensions
 
 import config.AppConfig
-import controllers.pensions.paymentsIntoOverseasPensions.routes
 import controllers.predicates.ActionsProvider
 import controllers.validateIndex
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.SessionHelper
-import views.html.pensions.paymentsIntoOverseasPensions.ReliefSchemeDetailsView
+import views.html.pensions.incomeFromPensions.PensionSchemeSummaryView
+import controllers.pensions.routes.PensionsSummaryController
+import models.pension.charges.Relief
+import models.pension.statebenefits.UkPensionIncomeViewModel
 
 import javax.inject.Inject
 
-class PensionSchemeSummaryController @Inject()(view: ReliefSchemeDetailsView,
+class PensionSchemeSummaryController @Inject()(view: PensionSchemeSummaryView,
                                                actionsProvider: ActionsProvider)
                                               (implicit val mcc: MessagesControllerComponents, appConfig: AppConfig)
   extends FrontendController(mcc) with I18nSupport with SessionHelper {
 
-  def show(taxYear: Int, reliefIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) {
+  def show(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) {
     implicit userSessionDataRequest =>
-      validateIndex(reliefIndex, userSessionDataRequest.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs.size) match {
+      val pensionIncomesList: Seq[UkPensionIncomeViewModel] = userSessionDataRequest.pensionsUserData.pensions.incomeFromPensions.uKPensionIncomes
+//      val pensionIncomesList: Seq[Relief] = userSessionDataRequest.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs
+      validateIndex(pensionSchemeIndex, pensionIncomesList.size) match {
         case Some(idx) =>
-          Ok(view(taxYear, userSessionDataRequest.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs(idx), reliefIndex))
-        case _ =>
-          Redirect(routes.PensionsCustomerReferenceNumberController.show(taxYear, reliefIndex))
+          Ok(view(taxYear, pensionIncomesList(idx), pensionSchemeIndex))
+        case _ => Redirect(PensionsSummaryController.show(taxYear))
       }
   }
 
-  def submit(taxYear: Int, reliefIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) {
+  def submit(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) {
     implicit userSessionDataRequest =>
-      validateIndex(reliefIndex, userSessionDataRequest.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs.size) match {
+      val pensionIncomesList: Seq[UkPensionIncomeViewModel] = userSessionDataRequest.pensionsUserData.pensions.incomeFromPensions.uKPensionIncomes
+      validateIndex(pensionSchemeIndex,pensionIncomesList.size) match {
         case Some(idx) =>
-          Ok(view(taxYear, userSessionDataRequest.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs(idx), reliefIndex))
+          Ok(view(taxYear, pensionIncomesList(idx), pensionSchemeIndex))
         //todo redirect to CYA page when complete
         case _ =>
-          Redirect(routes.PensionsCustomerReferenceNumberController.show(taxYear, reliefIndex))
+          Redirect(PensionsSummaryController.show(taxYear))
       }
   }
 }
