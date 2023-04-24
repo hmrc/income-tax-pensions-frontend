@@ -18,6 +18,7 @@ package controllers.pensions.incomeFromPensions
 
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.routes.PensionsSummaryController
+import controllers.pensions.incomeFromPensions.routes.StatePensionLumpSumController
 import controllers.predicates.ActionsProvider
 import forms.DateForm.DateModel
 import forms.{DateForm, FormsProvider}
@@ -76,7 +77,7 @@ class StateBenefitStartDateController @Inject()(actionsProvider: ActionsProvider
                     Some(sP.copy(startDateQuestion = Some(true), startDate = Some(newStartDate.toLocalDate)))
                   )))
             pensionSessionService.createOrUpdateSessionData(updatedModel).map {
-              case Right(_) => Ok(view(formProvider.stateBenefitDateForm, taxYear))
+              case Right(_) => Redirect(StatePensionLumpSumController.show(taxYear))
               case _ => errorHandler.internalServerError()
             }
           }

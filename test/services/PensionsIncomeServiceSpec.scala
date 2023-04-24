@@ -38,7 +38,7 @@ class PensionsIncomeServiceSpec extends UnitTest
 
   ".saveIncomeFromOverseasPensionsViewModel" should {
     "return Right(Unit) when model is saved successfully and income income from overseas pensions cya is cleared from DB" in {
-      val allPensionsData = anAllPensionsData.copy(pensionIncome = None)
+      val allPensionsData = anAllPensionsData
       val sessionCya = aPensionsCYAEmptyModel.copy(incomeFromOverseasPensions = aPensionsUserData.pensions.incomeFromOverseasPensions)
       val sessionUserData = aPensionsUserData.copy(pensions = sessionCya)
 
@@ -66,7 +66,7 @@ class PensionsIncomeServiceSpec extends UnitTest
     }
 
     "return Left(APIErrorModel) when pension connector could not be connected" in {
-      val allPensionsData = anAllPensionsData.copy(pensionIncome = None)
+      val allPensionsData = anAllPensionsData
       val sessionCya = aPensionsCYAEmptyModel.copy(incomeFromOverseasPensions = aPensionsUserData.pensions.incomeFromOverseasPensions)
       val sessionUserData = aPensionsUserData.copy(pensions = sessionCya)
 
@@ -88,7 +88,7 @@ class PensionsIncomeServiceSpec extends UnitTest
 
 
     "return Left(DataNotUpdated) when data could not be updated" in {
-      val allPensionsData = anAllPensionsData.copy(pensionIncome = None)
+      val allPensionsData = anAllPensionsData
       val sessionCya = aPensionsCYAEmptyModel.copy(incomeFromOverseasPensions = aPensionsUserData.pensions.incomeFromOverseasPensions)
       val sessionUserData = aPensionsUserData.copy(pensions = sessionCya)
 
