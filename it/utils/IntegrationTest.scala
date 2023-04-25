@@ -241,7 +241,7 @@ trait IntegrationTest extends AnyWordSpec with Matchers with GuiceOneServerPerSu
 
   def pensionReliefsSessionStub(jsonBody: String, nino: String, taxYear: Int): StubMapping = {
     stubPutWithHeadersCheck(
-      url = s"/income-tax-pensions/pension-reliefs/session-data/nino/$nino/taxYear/$taxYear", status = NO_CONTENT,
+      url = s"/income-tax-pensions/pension-reliefs/nino/$nino/taxYear/$taxYear", status = NO_CONTENT,
       body = jsonBody,
       sessionHeader = "X-Session-ID" -> defaultUser.sessionId,
       mtdidHeader = "mtditid" -> defaultUser.mtdItId
