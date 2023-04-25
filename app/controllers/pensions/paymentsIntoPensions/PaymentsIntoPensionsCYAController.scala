@@ -99,7 +99,7 @@ class PaymentsIntoPensionsCYAController @Inject()(authAction: AuthorisedAction,
     }
   }
 
-  private def performSubmission(taxYear: Int, cya: Option[PensionsUserData],
+  private def performSubmission(taxYear: Int, cya: Option[PensionsUserData]
                                )(implicit user: User,
                                  hc: HeaderCarrier,
                                  request: AuthorisationRequest[AnyContent],
