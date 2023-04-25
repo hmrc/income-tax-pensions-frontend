@@ -86,9 +86,6 @@ POST        /:taxYear/pension-income/state-pension-start-date                   
 GET         /:taxYear/pension-income/state-pension-lump-sum                                                                        controllers.pensions.incomeFromPensions.StatePensionLumpSumController.show(taxYear: Int)
 POST        /:taxYear/pension-income/state-pension-lump-sum                                                                        controllers.pensions.incomeFromPensions.StatePensionLumpSumController.submit(taxYear: Int)
 
-GET         /:taxYear/pension-income/state-pension-lump-sum-amount                                                                 controllers.pensions.incomeFromPensions.StatePensionLumpSumAmountController.show(taxYear: Int)
-POST        /:taxYear/pension-income/state-pension-lump-sum-amount                                                                 controllers.pensions.incomeFromPensions.StatePensionLumpSumAmountController.submit(taxYear: Int)
-
 GET         /:taxYear/pension-income/state-pension-lump-sum-tax                                                                    controllers.pensions.incomeFromPensions.TaxPaidOnStatePensionLumpSumController.show(taxYear: Int)
 POST        /:taxYear/pension-income/state-pension-lump-sum-tax                                                                    controllers.pensions.incomeFromPensions.TaxPaidOnStatePensionLumpSumController.submit(taxYear: Int)
 
@@ -247,6 +244,9 @@ GET         /:taxYear/overseas-pensions/payments-into-overseas-pensions/double-t
 POST        /:taxYear/overseas-pensions/payments-into-overseas-pensions/double-taxation-agreement-details                          controllers.pensions.paymentsIntoOverseasPensions.DoubleTaxationAgreementController.submit(taxYear: Int, index: Option[Int])
 
 GET         /:taxYear/overseas-pensions/payments-into-overseas-pensions/untaxed-schemes-summary                                    controllers.pensions.paymentsIntoOverseasPensions.ReliefsSchemeSummaryController.show(taxYear: Int)
+
+GET        /:taxYear/overseas-pensions/payments-into-overseas-pensions/check-overseas-pension-details                              controllers.pensions.paymentsIntoOverseasPensions.PaymentsIntoOverseasPensionsCYAController.show(taxYear: Int)
+POST       /:taxYear/overseas-pensions/payments-into-overseas-pensions/check-overseas-pension-details                              controllers.pensions.paymentsIntoOverseasPensions.PaymentsIntoOverseasPensionsCYAController.submit(taxYear: Int)
 
 ###########################     Income from overseas pensions pages     ####################################
 

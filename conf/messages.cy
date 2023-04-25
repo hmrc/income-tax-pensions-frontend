@@ -187,6 +187,7 @@ pensions.pensionSummary.pensionLifetimeAllowance = Lwfans oes pensiwn
 pensions.pensionSummary.unauthorisedPaymentsFromPensions = Taliadau heb awdurdod o bensiynau
 pensions.pensionSummary.overseasPensionsSummary = Pensiynau tramor
 pensions.pensionSummary.paymentsToOverseasPensions = Taliadau i bensiynau tramor
+pensions.pensionSummary.paymentsToOverseasPensions.hidden = Newid taliadau i bensiynau tramor
 
 # overseas pensions summary
 pensions.overseasPensionsSummary.paymentsIntoOverseasPensions = Taliadau i bensiynau tramor
@@ -497,8 +498,17 @@ incomeFromPensions.statePensionLumpSum.title.agent = A gafodd eich cleient gyfan
 incomeFromPensions.statePensionLumpSum.para.individual = Mae’n bosibl y byddwch wedi cael cyfandaliad unigol os oeddech wedi oedi cyn hawlio’ch Pensiwn y Wladwriaeth am 12 mis yn olynol.
 incomeFromPensions.statePensionLumpSum.para.agent = Mae’n bosibl y byddai’ch cleient wedi cael cyfandaliad unigol os oedden nhw wedi oedi cyn hawlio ei Bensiwn y Wladwriaeth am 12 mis yn olynol.
 incomeFromPensions.statePensionLumpSum.onlyApplies = Mae hyn ond yn berthnasol i bobl sy’n cyrraedd oedran Pensiwn y Wladwriaeth cyn 6 Ebrill 2016.
+incomeFromPensions.statePensionLumpSum.amount = Amount of lump sum
+incomeFromPensions.statePensionLumpSum.aboutGeneralIncreases.individual = the ‘About general increases in benefits‘ letter, the Pension Service sent you
+incomeFromPensions.statePensionLumpSum.aboutGeneralIncreases.agent = the ‘About general increases in benefits‘ letter, the Pension Service sent your client
 incomeFromPensions.statePensionLumpSum.error.noEntry.individual = Dewiswch ‘Iawn’ os cawsoch gyfandaliad Pensiwn y Wladwriaeth
 incomeFromPensions.statePensionLumpSum.error.noEntry.agent = Dewiswch ‘Iawn’ os cafodd eich cleient gyfandaliad Pensiwn y Wladwriaeth
+incomeFromPensions.statePensionLumpSum.amount.error.noEntry.individual = Nodwch swm eich cyfandaliad Pensiwn y Wladwriaeth
+incomeFromPensions.statePensionLumpSum.amount.error.incorrectFormat.individual = Nodwch swm eich cyfandaliad Pensiwn y Wladwriaeth yn y fformat cywir
+incomeFromPensions.statePensionLumpSum.amount.error.overMaximum.individual = Mae’n rhaid i swm eich cyfandaliad Pensiwn y Wladwriaeth fod yn llai na £100,000,000,000
+incomeFromPensions.statePensionLumpSum.amount.error.noEntry.agent = Nodwch swm cyfandaliad Pensiwn y Wladwriaeth eich cleient
+incomeFromPensions.statePensionLumpSum.amount.error.incorrectFormat.agent = Nodwch swm cyfandaliad Pensiwn y Wladwriaeth eich cleient yn y fformat cywir
+incomeFromPensions.statePensionLumpSum.amount.error.overMaximum.agent = Mae’n rhaid i swm cyfandaliad Pensiwn y Wladwriaeth eich cleient fod yn llai na £100,000,000,000
 
 #state pension start date
 incomeFromPensions.stateBenefitStartDate.title.individual = When did you start getting State Pension payments?
@@ -515,21 +525,7 @@ incomeFromPensions.stateBenefitStartDate.error.invalidFormat = The day, month an
 incomeFromPensions.stateBenefitStartDate.error.dateInFuture = The pension start date must be in the past
 incomeFromPensions.stateBenefitStartDate.error.tooLongAgo = The pension start date must be after 1 January 1900
 
-#state pension lump sum
-pensions.statePensionLumpSum.title.individual = Faint oedd eich cyfandaliad Pensiwn y Wladwriaeth?
-pensions.statePensionLumpSum.title.agent = Faint oedd cyfandaliad Pensiwn y Wladwriaeth eich cleient?
-pensions.statePensionLumpSum.error.noEntry.individual = Nodwch swm eich cyfandaliad Pensiwn y Wladwriaeth
-pensions.statePensionLumpSum.error.incorrectFormat.individual = Nodwch swm eich cyfandaliad Pensiwn y Wladwriaeth yn y fformat cywir
-pensions.statePensionLumpSum.error.overMaximum.individual = Mae’n rhaid i swm eich cyfandaliad Pensiwn y Wladwriaeth fod yn llai na £100,000,000,000
-pensions.statePensionLumpSum.error.noEntry.agent = Nodwch swm cyfandaliad Pensiwn y Wladwriaeth eich cleient
-pensions.statePensionLumpSum.error.incorrectFormat.agent = Nodwch swm cyfandaliad Pensiwn y Wladwriaeth eich cleient yn y fformat cywir
-pensions.statePensionLumpSum.error.overMaximum.agent = Mae’n rhaid i swm cyfandaliad Pensiwn y Wladwriaeth eich cleient fod yn llai na £100,000,000,000
-
 #tax paid on state pension lump sum
-pensions.taxPaidOnStatePensionLumpSum.title.individual = A wnaethoch dalu treth ar gyfandaliad Pensiwn y Wladwriaeth?
-pensions.taxPaidOnStatePensionLumpSum.error.noEntry.individual = Dewiswch ‘Iawn’ os gwnaethoch dalu treth ar gyfandaliad Pensiwn y Wladwriaeth
-pensions.taxPaidOnStatePensionLumpSum.title.agent = A wnaeth eich cleient dalu treth ar gyfandaliad Pensiwn y Wladwriaeth?
-pensions.taxPaidOnStatePensionLumpSum.error.noEntry.agent = Dewiswch ‘Iawn’ os gwnaeth eich cleient dalu treth ar gyfandaliad Pensiwn y Wladwriaeth
 pensions.taxPaidOnStatePensionLumpSum.amount = Amount of tax paid
 pensions.taxPaidOnStatePensionLumpSum.title.individual = Did you pay tax on the State Pension lump sum?
 pensions.taxPaidOnStatePensionLumpSum.error.noEntry.individual = Select yes if you paid tax on the State Pension lump sum
@@ -572,15 +568,6 @@ pensions.statePension.amount.error.overMaximum.individual = Mae’n rhaid i swm 
 pensions.statePension.amount.error.noEntry.agent = Nodwch swm Pensiwn y Wladwriaeth eich cleient
 pensions.statePension.amount.error.incorrectFormat.agent = Nodwch swm Pensiwn y Wladwriaeth eich cleient yn y fformat cywir
 pensions.statePension.amount.error.overMaximum.agent = Mae’n rhaid i swm Pensiwn y Wladwriaeth eich cleient fod yn llai na £100,000,000,000
-
-#tax paid on lump sum amount
-incomeFromPensions.taxPaidOnLumpSumAmount.title.individual = Faint o dreth a daloch ar gyfandaliad Pensiwn y Wladwriaeth?
-incomeFromPensions.taxPaidOnLumpSumAmount.title.agent = Faint o dreth a dalodd eich cleient ar gyfandaliad Pensiwn y Wladwriaeth?
-incomeFromPensions.taxPaidOnLumpSumAmount.paragraph.individual = Gwnaethoch roi gwybod i ni nad oeddech yn talu {0} o dreth ar eich cyfandaliad Pensiwn y Wladwriaeth y flwyddyn hon. Rhowch wybod i ni faint wnaethoch ei dalu.
-incomeFromPensions.taxPaidOnLumpSumAmount.paragraph.agent = Gwnaethoch roi gwybod i ni nad oedd eich cleient yn talu {0} o dreth ar ei gyfandaliad Pensiwn y Wladwriaeth y flwyddyn hon. Rhowch wybod i ni faint y talodd eich cleient.
-incomeFromPensions.taxPaidOnLumpSumAmount.error.error.noEntry = Nodwch swm y dreth a dalwyd ar gyfandaliad Pensiwn y Wladwriaeth
-incomeFromPensions.taxPaidOnLumpSumAmount.error.error.incorrectFormat = Nodwch gyfanswm y dreth a dalwyd ar gyfandaliad Pensiwn y Wladwriaeth yn y fformat cywir
-incomeFromPensions.taxPaidOnLumpSumAmount.error.error.overMaximum = Mae’n rhaid i swm y dreth a dalwyd ar gyfandaliad Pensiwn y Wladwriaeth fod yn llai na £100,000,000,000
 
 #Income From Pensions Summary
 incomeFromPensions.incomeFromPensionsSummary.statePensions = Pensiwn y Wladwriaeth
@@ -820,6 +807,8 @@ unauthorisedPayments.removePensionSchemeTaxReference.removeButton = Remove refer
 unauthorisedPayments.removePensionSchemeTaxReference.dontRemove = Don’t remove
 
 #################       Overseas Pension        ########################################
+common.overseas.pension.schemes = Overseas pension schemes
+common.overseas.pension.schemes.hidden = Change overseas pension schemes
 
 #Payments into overseas pension schemes page
 overseasPension.paymentIntoOverseasPensionScheme.title = Payments into overseas pension schemes
@@ -876,32 +865,6 @@ overseasPension.pensionPayments.nonUkTaxPaid.text = Non-UK tax paid
 overseasPension.pensionPayments.nonUkTaxPaid.incorrectFormat = Enter the amount of non-UK tax paid in the correct format
 overseasPension.pensionPayments.nonUkTaxPaidLessThanAmountBeforeTax = The Non-UK tax paid can’t be larger than Amount before tax
 
-#Special Withholding Tax
-overseasPension.specialWithHoldingTax.title.individual = Did you have Special Withholding Tax (SWT) deducted from your pension?
-overseasPension.specialWithHoldingTax.title.agent = Did your client have Special Withholding Tax (SWT) deducted from their pension?
-overseasPension.specialWithHoldingTax.details.title = Understanding Special Withholding Tax (SWT)
-overseasPension.specialWithHoldingTax.details.para1 = Special Withholding Tax (SWT) is an amount of tax taken off certain foreign payments to UK residents. SWT will be paid along with any foreign tax deducted by the country where the payment came from. The countries that may deduct SWT are:
-overseasPension.specialWithHoldingTax.details.bullet1 = Andorra
-overseasPension.specialWithHoldingTax.details.bullet2 = Austria
-overseasPension.specialWithHoldingTax.details.bullet3 = Curaçao
-overseasPension.specialWithHoldingTax.details.bullet4 = Gibraltar
-overseasPension.specialWithHoldingTax.details.bullet5 = Jersey
-overseasPension.specialWithHoldingTax.details.bullet6 = Liechtenstein
-overseasPension.specialWithHoldingTax.details.bullet7 = Luxembourg
-overseasPension.specialWithHoldingTax.details.bullet8 = Monaco
-overseasPension.specialWithHoldingTax.details.bullet9 = San Marino
-overseasPension.specialWithHoldingTax.details.bullet10 = Saint Maarten
-overseasPension.specialWithHoldingTax.details.bullet11 = Switzerland
-overseasPension.specialWithHoldingTax.details.para2 = Where SWT has been deducted you’re treated as having paid the same amount of income tax in the UK in the same year. This can be set against your UK tax liability of that year, or repaid to you if the amount is more than the tax you must pay.
-overseasPension.specialWithHoldingTax.details.para3 = Read more about
-overseasPension.specialWithHoldingTax.details.link = Special Withholding Tax at Gov.uk
-overseasPension.specialWithHoldingTax.amount.Text = Amount of SWT, in pounds
-overseasPension.specialWithHoldingTax.amount.individual.noEntry = Select yes or no if you had Special Withholding Tax deducted from your pension.
-overseasPension.specialWithHoldingTax.amount.agent.noEntry = Select yes or no if your client had Special Withholding Tax deducted from their pension.
-overseasPension.specialWithHoldingTax.amount.noAmountEntry = Enter an amount in pounds for the amount of Special Withholding Tax deducted
-overseasPension.specialWithHoldingTax.amount.incorrectFormat = Enter the amount of Special Withholding Tax deducted in the correct format
-overseasPension.specialWithHoldingTax.amount.tooBig = Amount of Special Withholding Tax deducted must be less than £100,000,000,000
-
 #Untaxed Employer Payments
 overseasPension.untaxedEmployerPayments.title = Untaxed employer payments
 overseasPension.untaxedEmployerPayments.para1 = This is also known as exempt employers’ contributions.
@@ -928,6 +891,33 @@ overseasPension.untaxedEmployerPayments.error.tooBig.individual = The amount you
 overseasPension.untaxedEmployerPayments.error.tooBig.agent = The total amount that your client’s employers paid into their overseas pension scheme must be less than £100,000,000,000
 overseasPension.untaxedEmployerPayments.error.incorrectFormat.individual = Enter the amount your employers paid into overseas pension schemes in the correct format
 overseasPension.untaxedEmployerPayments.error.incorrectFormat.agent = Enter the total amount that your client’s employers paid into their overseas pension scheme in the correct format
+
+
+#Special Withholding Tax
+overseasPension.specialWithHoldingTax.title.individual = Did you have Special Withholding Tax (SWT) deducted from your pension?
+overseasPension.specialWithHoldingTax.title.agent = Did your client have Special Withholding Tax (SWT) deducted from their pension?
+overseasPension.specialWithHoldingTax.details.title = Understanding Special Withholding Tax (SWT)
+overseasPension.specialWithHoldingTax.details.para1 = Special Withholding Tax (SWT) is an amount of tax taken off certain foreign payments to UK residents. SWT will be paid along with any foreign tax deducted by the country where the payment came from. The countries that may deduct SWT are:
+overseasPension.specialWithHoldingTax.details.bullet1 = Andorra
+overseasPension.specialWithHoldingTax.details.bullet2 = Austria
+overseasPension.specialWithHoldingTax.details.bullet3 = Curaçao
+overseasPension.specialWithHoldingTax.details.bullet4 = Gibraltar
+overseasPension.specialWithHoldingTax.details.bullet5 = Jersey
+overseasPension.specialWithHoldingTax.details.bullet6 = Liechtenstein
+overseasPension.specialWithHoldingTax.details.bullet7 = Luxembourg
+overseasPension.specialWithHoldingTax.details.bullet8 = Monaco
+overseasPension.specialWithHoldingTax.details.bullet9 = San Marino
+overseasPension.specialWithHoldingTax.details.bullet10 = Saint Maarten
+overseasPension.specialWithHoldingTax.details.bullet11 = Switzerland
+overseasPension.specialWithHoldingTax.details.para2 = Where SWT has been deducted you’re treated as having paid the same amount of income tax in the UK in the same year. This can be set against your UK tax liability of that year, or repaid to you if the amount is more than the tax you must pay.
+overseasPension.specialWithHoldingTax.details.para3 = Read more about
+overseasPension.specialWithHoldingTax.details.link = Special Withholding Tax at Gov.uk
+overseasPension.specialWithHoldingTax.amount.Text = Amount of SWT, in pounds
+overseasPension.specialWithHoldingTax.amount.individual.noEntry = Select yes or no if you had Special Withholding Tax deducted from your pension.
+overseasPension.specialWithHoldingTax.amount.agent.noEntry = Select yes or no if your client had Special Withholding Tax deducted from their pension.
+overseasPension.specialWithHoldingTax.amount.noAmountEntry = Enter an amount in pounds for the amount of Special Withholding Tax deducted
+overseasPension.specialWithHoldingTax.amount.incorrectFormat = Enter the amount of Special Withholding Tax deducted in the correct format
+overseasPension.specialWithHoldingTax.amount.tooBig = Amount of Special Withholding Tax deducted must be less than £100,000,000,000
 
 #Pension Customer Reference Number
 overseasPension.pensionsCustomerReferenceNumber.title.individual = What’s your customer reference number?
@@ -964,6 +954,7 @@ overseasPension.reliefDetails.article = Article:
 overseasPension.reliefDetails.treaty = Treaty:
 overseasPension.reliefDetails.relief = Relief:
 
+
 #Your Taxable Amount
 overseasPension.yourTaxableAmount.title.individual = Your taxable amount
 overseasPension.yourTaxableAmount.title.agent = Your client’s taxable amount
@@ -987,6 +978,24 @@ overseasPension.yourTaxableAmount.table.taxableAmount=Taxable amount
 pensions.paymentsIntoOverseasPensions.reliefSchemeSummary.title = Schemes with untaxed employer payments
 pensions.paymentsIntoOverseasPensions.reliefSchemeSummary.addAnotherReliefLink = Add another overseas pension scheme
 pensions.paymentsIntoOverseasPensions.reliefSchemeSummary.addReliefLink = Add an overseas pension scheme
+
+#SF74 reference
+pensions.paymentsIntoOverseasPensions.sf74Reference.title = SF74 reference
+pensions.paymentsIntoOverseasPensions.sf74Reference.paragraph1.individual = Enter your SF74 reference. You can find this out from your overseas scheme manager.
+pensions.paymentsIntoOverseasPensions.sf74Reference.paragraph1.agent = Enter your client’s SF74 reference. You can find this out from your client’s overseas scheme manager.
+pensions.paymentsIntoOverseasPensions.sf74Reference.hint = For example, ''SF74/1234'', ''SF74/45865'' or ''SF74/123456''
+pensions.paymentsIntoOverseasPensions.sf74Reference.noEntry = Enter your SF74 reference
+pensions.paymentsIntoOverseasPensions.sf74Reference.incorrectFormat = The SF74 reference must be between 1 and 10 digits long, contain only numbers and no special characters
+
+#Payment into overseas pensions CYA
+paymentsIntoOverseasPensions.cya.heading = Check payments into overseas pensions
+paymentsIntoOverseasPensions.cya.totalPayments = Total payments
+paymentsIntoOverseasPensions.cya.totalPayments.hidden = Change total payments
+paymentsIntoOverseasPensions.cya.employerPayments = Employer payments
+paymentsIntoOverseasPensions.cya.employerPayments.hidden = Change employer payments
+paymentsIntoOverseasPensions.cya.employerPaymentsTax = Tax paid on employer payments
+paymentsIntoOverseasPensions.cya.employerPaymentsTax.hidden = Change tax paid on employer payments
+
 
 ############################################## INCOME FROM OVERSEAS PENSIONS ##############################################
 
@@ -1023,8 +1032,6 @@ overseasPension.foreignTaxCreditRelief.error.noEntry.agent = Enter yes or no if 
 incomeFromOverseasPensions.cya.heading = Check income from overseas pensions
 incomeFromOverseasPensions.cya.paymentsFromOverseasPensions = Payments from overseas pensions
 incomeFromOverseasPensions.cya.paymentsFromOverseasPensions.hidden = Change Payments from overseas pensions
-incomeFromOverseasPensions.cya.overseasPensionSchemes = Overseas pension schemes
-incomeFromOverseasPensions.cya.overseasPensionSchemes.hidden = Change Overseas pension schemes
 
 incomeFromOverseasPensions.summary.title = Pension scheme summary
 incomeFromOverseasPensions.summary.country = Country
@@ -1038,6 +1045,8 @@ incomeFromOverseasPensions.summary.tax.amount = Taxable amount
 #Overseas Pension Income Summary Page
 overseasPensionIncomeSummary.heading = Overseas pension income
 overseasPensionIncomeSummary.hidden = Change Overseas pension income
+#TODO: overseasPensionIncomeSummary.addAnotherPensionIncomeLink = Add another overseas pension scheme
+#TODO:overseasPensionIncomeSummary.addPensionIncomeLink = Add an overseas pension scheme
 
 ############################################## TRANSFER INTO OVERSEAS PENSION ##############################################
 
@@ -1182,11 +1191,3 @@ shortServiceRefunds.cya.refundAmount.hidden = Change refund amount
 shortServiceRefunds.cya.nonUk.hidden = Change paid non-UK tax
 shortServiceRefunds.cya.nonUkAmount.hidden = Change amount of non-UK tax
 shortServiceRefunds.cya.schemesPayingTax.hidden = Change pension schemes paying tax
-
-#SF74 reference
-pensions.paymentsIntoOverseasPensions.sf74Reference.title = SF74 reference
-pensions.paymentsIntoOverseasPensions.sf74Reference.paragraph1.individual = Enter your SF74 reference. You can find this out from your overseas scheme manager.
-pensions.paymentsIntoOverseasPensions.sf74Reference.paragraph1.agent = Enter your client’s SF74 reference. You can find this out from your client’s overseas scheme manager.
-pensions.paymentsIntoOverseasPensions.sf74Reference.hint = For example, ''SF74/1234'', ''SF74/45865'' or ''SF74/123456''
-pensions.paymentsIntoOverseasPensions.sf74Reference.noEntry = Enter your SF74 reference
-pensions.paymentsIntoOverseasPensions.sf74Reference.incorrectFormat = The SF74 reference must be between 1 and 10 digits long, contain only numbers and no special characters

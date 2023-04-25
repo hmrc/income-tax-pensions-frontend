@@ -18,7 +18,7 @@ package builders
 
 import builders.PensionsCYAModelBuilder.{aPensionsCYAEmptyModel, aPensionsCYAModel}
 import models.mongo.PensionsUserData
-import models.pension.charges.{IncomeFromOverseasPensionsViewModel, PaymentsIntoOverseasPensionsViewModel, PensionAnnualAllowancesViewModel, PensionLifetimeAllowancesViewModel, ShortServiceRefundsViewModel, TransfersIntoOverseasPensionsViewModel, UnauthorisedPaymentsViewModel}
+import models.pension.charges._
 import models.pension.reliefs.PaymentsIntoPensionViewModel
 import models.pension.statebenefits.IncomeFromPensionsViewModel
 import utils.UnitTest
@@ -76,6 +76,14 @@ object PensionsUserDataBuilder extends UnitTest {
     aPensionsUserData.copy(isPriorSubmission = isPriorSubmission,
       pensions = aPensionsCYAModel.copy(paymentsIntoOverseasPensions = overseasPensionViewModel))
   }
+
+  def pensionUserDataWithOnlyOverseasPensions(overseasPensionViewModel: PaymentsIntoOverseasPensionsViewModel,
+                                          isPriorSubmission: Boolean = true): PensionsUserData = {
+    anPensionsUserDataEmptyCya.copy(isPriorSubmission = isPriorSubmission,
+      pensions = anPensionsUserDataEmptyCya.pensions.copy(paymentsIntoOverseasPensions = overseasPensionViewModel))
+  }
+  
+  
 
   def pensionsUserDataWithAnnualAndLifetimeAllowance(pensionsAnnualAllowances: PensionAnnualAllowancesViewModel,
                                                      pensionLifetimeAllowancesViewModel: PensionLifetimeAllowancesViewModel,

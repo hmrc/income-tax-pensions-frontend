@@ -19,8 +19,10 @@ package connectors
 import config.AppConfig
 import connectors.httpParsers.PensionChargesSessionHttpParser.{PensionChargesSessionHttpReads, PensionChargesSessionResponse}
 import connectors.httpParsers.PensionIncomeSessionHttpParser.{PensionIncomeSessionHttpReads, PensionIncomeSessionResponse}
+import connectors.httpParsers.PensionReliefsSessionHttpParser.PensionReliefsSessionResponse
 import models.pension.charges.CreateUpdatePensionChargesRequestModel
 import models.pension.income.CreateUpdatePensionIncomeModel
+import models.pension.reliefs.CreateOrUpdatePensionReliefsModel
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
 import javax.inject.Inject
@@ -42,5 +44,12 @@ class PensionsConnector @Inject()(val http: HttpClient,
     val url = appConfig.pensionBEBaseUrl + s"/pension-income/session-data/nino/$nino/taxYear/$taxYear"
     http.PUT[CreateUpdatePensionIncomeModel, PensionIncomeSessionResponse](url,
       model)(CreateUpdatePensionIncomeModel.format.writes,  PensionIncomeSessionHttpReads, hc, ec)
+  }
+
+  def savePensionReliefSessionData(nino: String, taxYear: Int, model: CreateOrUpdatePensionReliefsModel)
+                                  (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[PensionReliefsSessionResponse] = {
+    val url = appConfig.pensionBEBaseUrl + s"/pension-reliefs/nino/$nino/taxYear/$taxYear"
+    http.PUT[CreateOrUpdatePensionReliefsModel, PensionReliefsSessionResponse](url,
+      model)(CreateOrUpdatePensionReliefsModel.format.writes, PensionIncomeSessionHttpReads, hc, ec)
   }
 }

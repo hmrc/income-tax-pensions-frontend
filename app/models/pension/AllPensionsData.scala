@@ -44,17 +44,17 @@ object AllPensionsData {
       PaymentsIntoPensionViewModel(
         Some(true),
         rasPensionPaymentQuestion = prior.pensionReliefs.map(a => a.pensionReliefs.regularPensionContributions.isDefined),
-        prior.pensionReliefs.flatMap(a => a.pensionReliefs.regularPensionContributions),
-        prior.pensionReliefs.map(a => a.pensionReliefs.oneOffPensionContributionsPaid.isDefined),
-        prior.pensionReliefs.flatMap(a => a.pensionReliefs.oneOffPensionContributionsPaid),
+        totalRASPaymentsAndTaxRelief = prior.pensionReliefs.flatMap(a => a.pensionReliefs.regularPensionContributions),
+        oneOffRasPaymentPlusTaxReliefQuestion = prior.pensionReliefs.map(a => a.pensionReliefs.oneOffPensionContributionsPaid.isDefined),
+        totalOneOffRasPaymentPlusTaxRelief = prior.pensionReliefs.flatMap(a => a.pensionReliefs.oneOffPensionContributionsPaid),
         Some(true),
         pensionTaxReliefNotClaimedQuestion = prior.pensionReliefs.map(a =>
           a.pensionReliefs.retirementAnnuityPayments.isDefined || a.pensionReliefs.paymentToEmployersSchemeNoTaxRelief.isDefined
         ),
-        prior.pensionReliefs.map(a => a.pensionReliefs.retirementAnnuityPayments.isDefined),
-        prior.pensionReliefs.flatMap(a => a.pensionReliefs.retirementAnnuityPayments),
-        prior.pensionReliefs.map(a => a.pensionReliefs.paymentToEmployersSchemeNoTaxRelief.isDefined),
-        prior.pensionReliefs.flatMap(a => a.pensionReliefs.paymentToEmployersSchemeNoTaxRelief)
+        retirementAnnuityContractPaymentsQuestion = prior.pensionReliefs.map(a => a.pensionReliefs.retirementAnnuityPayments.isDefined),
+        totalRetirementAnnuityContractPayments = prior.pensionReliefs.flatMap(a => a.pensionReliefs.retirementAnnuityPayments),
+        workplacePensionPaymentsQuestion = prior.pensionReliefs.map(a => a.pensionReliefs.paymentToEmployersSchemeNoTaxRelief.isDefined),
+        totalWorkplacePensionPayments = prior.pensionReliefs.flatMap(a => a.pensionReliefs.paymentToEmployersSchemeNoTaxRelief)
       ),
 
       PensionAnnualAllowancesViewModel(
@@ -187,10 +187,10 @@ object AllPensionsData {
   private def fromOverseasPensionContribution(overseasPensionContribution: Seq[OverseasPensionContribution]) = {
     overseasPensionContribution.map(oPC =>
       Relief(
-        customerReferenceNumberQuestion = oPC.customerReference,
+        customerReference = oPC.customerReference,
         employerPaymentsAmount = Some(oPC.exemptEmployersPensionContribs),
         reliefType = Some(getTaxReliefQuestion(oPC)),
-        qualifyingOverseasPensionSchemeReferenceNumber = oPC.migrantMemReliefQopsRefNo,
+        qopsReference = oPC.migrantMemReliefQopsRefNo,
         alphaTwoCountryCode = Countries.get2AlphaCodeFrom3AlphaCode(oPC.dblTaxationCountry),
         alphaThreeCountryCode = oPC.dblTaxationCountry,
         doubleTaxationCountryArticle = oPC.dblTaxationArticle,

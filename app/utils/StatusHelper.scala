@@ -63,7 +63,7 @@ object StatusHelper {
   }
   
   def incomeFromOverseasPensionsIsUpdated(cya: Option[PensionsCYAModel]): Boolean =
-    cya.flatMap((_.incomeFromOverseasPensions.paymentsFromOverseasPensionsQuestion)).isDefined
+    cya.flatMap(_.incomeFromOverseasPensions.paymentsFromOverseasPensionsQuestion).isDefined
   
   def overseasPensionsTransferChargesIsUpdated(cya: Option[PensionsCYAModel]): Boolean =
     cya.flatMap((_.transfersIntoOverseasPensions.transferPensionSavings)).isDefined

@@ -187,6 +187,7 @@ pensions.pensionSummary.pensionLifetimeAllowance = Pension lifetime allowance
 pensions.pensionSummary.unauthorisedPaymentsFromPensions = Unauthorised payments from pensions
 pensions.pensionSummary.overseasPensionsSummary = Overseas pensions
 pensions.pensionSummary.paymentsToOverseasPensions = Payments into overseas pensions
+pensions.pensionSummary.paymentsToOverseasPensions.hidden = Change payments into overseas pensions
 
 # overseas pensions summary
 pensions.overseasPensionsSummary.paymentsIntoOverseasPensions = Payments into overseas pensions
@@ -494,11 +495,20 @@ pensions.incomeFromPensionsDetails.bullet.aboutGeneralIncreases.agent = the ‘A
 #state pension lump sum question
 incomeFromPensions.statePensionLumpSum.title.individual = Did you get a State Pension lump sum?
 incomeFromPensions.statePensionLumpSum.title.agent = Did your client get a State Pension lump sum?
-incomeFromPensions.statePensionLumpSum.para.individual = You might have got a one-off lump sum payment if you delayed claiming your State Pension for 12 months in a row.
-incomeFromPensions.statePensionLumpSum.para.agent = Your client might have got a one-off lump sum payment if they delayed claiming their State Pension for 12 months in a row.
+incomeFromPensions.statePensionLumpSum.para.individual = You might have received a one-off lump sum payment if you delayed claiming your State Pension for 12 months in a row.
+incomeFromPensions.statePensionLumpSum.para.agent = Your client might have received a one-off lump sum payment if they delayed claiming their State Pension for 12 months in a row.
 incomeFromPensions.statePensionLumpSum.onlyApplies = This only applies to people who reach State Pension age before 6 April 2016.
+incomeFromPensions.statePensionLumpSum.amount = Amount of lump sum
+incomeFromPensions.statePensionLumpSum.aboutGeneralIncreases.individual = the ‘About general increases in benefits‘ letter, the Pension Service sent you
+incomeFromPensions.statePensionLumpSum.aboutGeneralIncreases.agent = the ‘About general increases in benefits‘ letter, the Pension Service sent your client
 incomeFromPensions.statePensionLumpSum.error.noEntry.individual = Select yes if you got a State Pension lump sum
 incomeFromPensions.statePensionLumpSum.error.noEntry.agent = Select yes if your client got a State Pension lump sum
+incomeFromPensions.statePensionLumpSum.amount.error.noEntry.individual = Enter the amount of your State Pension lump sum
+incomeFromPensions.statePensionLumpSum.amount.error.incorrectFormat.individual = Enter your State Pension lump sum amount in the correct format
+incomeFromPensions.statePensionLumpSum.amount.error.overMaximum.individual = Your State Pension lump sum amount must be less than £100,000,000,000
+incomeFromPensions.statePensionLumpSum.amount.error.noEntry.agent = Enter the amount of your client’s State Pension lump sum
+incomeFromPensions.statePensionLumpSum.amount.error.incorrectFormat.agent = Enter your client’s State Pension lump sum amount in the correct format
+incomeFromPensions.statePensionLumpSum.amount.error.overMaximum.agent = Your client’s State Pension lump sum amount must be less than £100,000,000,000
 
 #state pension start date
 incomeFromPensions.stateBenefitStartDate.title.individual = When did you start getting State Pension payments?
@@ -514,16 +524,6 @@ incomeFromPensions.stateBenefitStartDate.error.empty.year = The pension start da
 incomeFromPensions.stateBenefitStartDate.error.invalidFormat = The day, month and year must be valid
 incomeFromPensions.stateBenefitStartDate.error.dateInFuture = The pension start date must be in the past
 incomeFromPensions.stateBenefitStartDate.error.tooLongAgo = The pension start date must be after 1 January 1900
-
-#state pension lump sum
-pensions.statePensionLumpSum.title.individual = How much was your State Pension lump sum?
-pensions.statePensionLumpSum.title.agent = How much was your client’s State Pension lump sum?
-pensions.statePensionLumpSum.error.noEntry.individual = Enter your State Pension lump sum amount
-pensions.statePensionLumpSum.error.incorrectFormat.individual = Enter your State Pension lump sum amount in the correct format
-pensions.statePensionLumpSum.error.overMaximum.individual = Your State Pension lump sum amount must be less than £100,000,000,000
-pensions.statePensionLumpSum.error.noEntry.agent = Enter your client’s State Pension lump sum amount
-pensions.statePensionLumpSum.error.incorrectFormat.agent = Enter your client’s State Pension lump sum amount in the correct format
-pensions.statePensionLumpSum.error.overMaximum.agent = Your client’s State Pension lump sum amount must be less than £100,000,000,000
 
 #tax paid on state pension lump sum
 pensions.taxPaidOnStatePensionLumpSum.amount = Amount of tax paid
@@ -817,6 +817,8 @@ unauthorisedPayments.removePensionSchemeTaxReference.removeButton = Remove refer
 unauthorisedPayments.removePensionSchemeTaxReference.dontRemove = Don’t remove
 
 #################       Overseas Pension        ########################################
+common.overseas.pension.schemes = Overseas pension schemes
+common.overseas.pension.schemes.hidden = Change overseas pension schemes
 
 #Payments into overseas pension schemes page
 overseasPension.paymentIntoOverseasPensionScheme.title = Payments into overseas pension schemes
@@ -987,6 +989,24 @@ pensions.paymentsIntoOverseasPensions.reliefSchemeSummary.title = Schemes with u
 pensions.paymentsIntoOverseasPensions.reliefSchemeSummary.addAnotherReliefLink = Add another overseas pension scheme
 pensions.paymentsIntoOverseasPensions.reliefSchemeSummary.addReliefLink = Add an overseas pension scheme
 
+#SF74 reference
+pensions.paymentsIntoOverseasPensions.sf74Reference.title = SF74 reference
+pensions.paymentsIntoOverseasPensions.sf74Reference.paragraph1.individual = Enter your SF74 reference. You can find this out from your overseas scheme manager.
+pensions.paymentsIntoOverseasPensions.sf74Reference.paragraph1.agent = Enter your client’s SF74 reference. You can find this out from your client’s overseas scheme manager.
+pensions.paymentsIntoOverseasPensions.sf74Reference.hint = For example, ''SF74/1234'', ''SF74/45865'' or ''SF74/123456''
+pensions.paymentsIntoOverseasPensions.sf74Reference.noEntry = Enter your SF74 reference
+pensions.paymentsIntoOverseasPensions.sf74Reference.incorrectFormat = The SF74 reference must be between 1 and 10 digits long, contain only numbers and no special characters
+
+#Payment into overseas pensions CYA
+paymentsIntoOverseasPensions.cya.heading = Check payments into overseas pensions
+paymentsIntoOverseasPensions.cya.totalPayments = Total payments
+paymentsIntoOverseasPensions.cya.totalPayments.hidden = Change total payments
+paymentsIntoOverseasPensions.cya.employerPayments = Employer payments
+paymentsIntoOverseasPensions.cya.employerPayments.hidden = Change employer payments
+paymentsIntoOverseasPensions.cya.employerPaymentsTax = Tax paid on employer payments
+paymentsIntoOverseasPensions.cya.employerPaymentsTax.hidden = Change tax paid on employer payments
+
+
 ############################################## INCOME FROM OVERSEAS PENSIONS ##############################################
 
 incomeFromOverseasPensions.incomeFromOverseasPension.title.individual = Did you get payments from an overseas pension scheme?
@@ -1022,8 +1042,6 @@ overseasPension.foreignTaxCreditRelief.error.noEntry.agent = Enter yes or no if 
 incomeFromOverseasPensions.cya.heading = Check income from overseas pensions
 incomeFromOverseasPensions.cya.paymentsFromOverseasPensions = Payments from overseas pensions
 incomeFromOverseasPensions.cya.paymentsFromOverseasPensions.hidden = Change Payments from overseas pensions
-incomeFromOverseasPensions.cya.overseasPensionSchemes = Overseas pension schemes
-incomeFromOverseasPensions.cya.overseasPensionSchemes.hidden = Change Overseas pension schemes
 
 incomeFromOverseasPensions.summary.title = Pension scheme summary
 incomeFromOverseasPensions.summary.country = Country
@@ -1183,11 +1201,3 @@ shortServiceRefunds.cya.refundAmount.hidden = Change refund amount
 shortServiceRefunds.cya.nonUk.hidden = Change paid non-UK tax
 shortServiceRefunds.cya.nonUkAmount.hidden = Change amount of non-UK tax
 shortServiceRefunds.cya.schemesPayingTax.hidden = Change pension schemes paying tax
-
-#SF74 reference
-pensions.paymentsIntoOverseasPensions.sf74Reference.title = SF74 reference
-pensions.paymentsIntoOverseasPensions.sf74Reference.paragraph1.individual = Enter your SF74 reference. You can find this out from your overseas scheme manager.
-pensions.paymentsIntoOverseasPensions.sf74Reference.paragraph1.agent = Enter your client’s SF74 reference. You can find this out from your client’s overseas scheme manager.
-pensions.paymentsIntoOverseasPensions.sf74Reference.hint = For example, ''SF74/1234'', ''SF74/45865'' or ''SF74/123456''
-pensions.paymentsIntoOverseasPensions.sf74Reference.noEntry = Enter your SF74 reference
-pensions.paymentsIntoOverseasPensions.sf74Reference.incorrectFormat = The SF74 reference must be between 1 and 10 digits long, contain only numbers and no special characters

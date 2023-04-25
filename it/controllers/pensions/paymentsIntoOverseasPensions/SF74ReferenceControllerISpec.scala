@@ -16,7 +16,7 @@
 
 package controllers.pensions.paymentsIntoOverseasPensions
 
-import builders.PensionsUserDataBuilder.{aPensionsUserData, pensionUserDataWithOverseasPensions}
+import builders.PensionsUserDataBuilder.{aPensionsUserData, pensionUserDataWithOnlyOverseasPensions, pensionUserDataWithOverseasPensions}
 import builders.PaymentsIntoOverseasPensionsViewModelBuilder.aPaymentsIntoOverseasPensionsViewModel
 import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import builders.PensionsUserDataBuilder
@@ -30,10 +30,12 @@ import utils.PageUrls.overseasPensionsSummaryUrl
 import utils.PageUrls.fullUrl
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 import play.api.http.Status.{OK, SEE_OTHER}
-import utils.PageUrls.PaymentIntoOverseasPensions.{pensionCustomerReferenceNumberUrl, sf74ReferenceUrl}
+import utils.PageUrls.PaymentIntoOverseasPensions.{pensionCustomerReferenceNumberUrl, pensionReliefSchemeDetailsUrl, pensionReliefSchemeSummaryUrl, sf74ReferenceUrl}
 
 
-class SF74ReferenceControllerISpec extends IntegrationTest with BeforeAndAfterEach with ViewHelpers with PensionsDatabaseHelper{
+class SF74ReferenceControllerISpec extends IntegrationTest
+  with BeforeAndAfterEach with ViewHelpers with PensionsDatabaseHelper { //scalastyle:off magic.number
+  
   override val userScenarios: Seq[UserScenario[_, _]] = Seq.empty
 
   private def pensionsUsersData(pensionsCyaModel: PensionsCYAModel): PensionsUserData = {
@@ -42,6 +44,9 @@ class SF74ReferenceControllerISpec extends IntegrationTest with BeforeAndAfterEa
       pensions = pensionsCyaModel
     )
   }
+  
+  val schemeIndex0 = 0
+  val schemeIndex100 = 100
 
 
   ".show" should {
@@ -49,7 +54,6 @@ class SF74ReferenceControllerISpec extends IntegrationTest with BeforeAndAfterEa
       s"language is ${welshTest(user.isWelsh)} and request is from an ${agentTest(user.isAgent)}" should {
 
         "render the 'sf74 reference' page " which {
-
           val pensionsViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(
             reliefs = Seq(aPaymentsIntoOverseasPensionsViewModel.reliefs.head.copy(
               sf74Reference = Some("1234567"))))
@@ -59,10 +63,9 @@ class SF74ReferenceControllerISpec extends IntegrationTest with BeforeAndAfterEa
             dropPensionsDB()
             val viewModel = pensionsViewModel
             insertCyaData(pensionUserDataWithOverseasPensions(viewModel), aUserRequest)
-            urlGet(fullUrl(sf74ReferenceUrl(taxYearEOY, 0)), user.isWelsh, follow = false,
+            urlGet(fullUrl(sf74ReferenceUrl(taxYearEOY, schemeIndex0)), user.isWelsh, follow = false,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
-
           "has an OK status" in {
             result.status shouldBe OK
           }
@@ -70,21 +73,37 @@ class SF74ReferenceControllerISpec extends IntegrationTest with BeforeAndAfterEa
       }
     }
 
-    "redirect to the pensions summary page if there is no session data" should {
+    "redirect to the overseas pensions summary page if there is no session data" should {
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(isAgent = false)
-        urlGet(fullUrl(sf74ReferenceUrl(taxYearEOY, 0)), follow = false,
+        urlGet(fullUrl(sf74ReferenceUrl(taxYearEOY, schemeIndex0)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
-
       "have a SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER
         result.header("location") shouldBe Some(overseasPensionsSummaryUrl(taxYearEOY))
       }
     }
 
-    "redirect to the customer reference number page if the index doesn't match" should {
+    "redirect to the customer reference page if the index doesn't match and there are NO pension schemes" should {
+      val pensionsNoSchemesViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(reliefs = Seq())
+      
+      lazy val result: WSResponse = {
+        dropPensionsDB()
+        insertCyaData(pensionUserDataWithOnlyOverseasPensions(pensionsNoSchemesViewModel), aUserRequest)
+        authoriseAgentOrIndividual(isAgent = false)
+        urlGet(fullUrl(sf74ReferenceUrl(taxYearEOY, 100)), follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+      }
+      "have a SEE_OTHER status" in {
+        result.status shouldBe SEE_OTHER
+        result.header("location") shouldBe Some(pensionCustomerReferenceNumberUrl(taxYearEOY, None))
+      }
+
+    }
+    
+    "redirect to the pension relief scheme summary page if the index doesn't match and there are pension schemes" should {
       lazy val result: WSResponse = {
         dropPensionsDB()
         insertCyaData(aPensionsUserData, aUserRequest)
@@ -94,7 +113,7 @@ class SF74ReferenceControllerISpec extends IntegrationTest with BeforeAndAfterEa
       }
       "have a SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(pensionCustomerReferenceNumberUrl(taxYearEOY, Some(100)))
+        result.header("location") shouldBe Some(pensionReliefSchemeSummaryUrl(taxYearEOY))
       }
 
   }
@@ -110,14 +129,30 @@ class SF74ReferenceControllerISpec extends IntegrationTest with BeforeAndAfterEa
         urlPost(fullUrl(sf74ReferenceUrl(taxYearEOY, 0)), body = form,
           follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
-
       "have a SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(sf74ReferenceUrl(taxYearEOY, 0))
+        result.header("location") shouldBe Some(pensionReliefSchemeDetailsUrl(taxYearEOY, 0))
+      }
+    }
+    
+    "redirect to the customer reference page if the index doesn't match and there are No pension schemes" should {
+      val pensionsNoSchemesViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(reliefs = Seq())
+      val form: Map[String, String] = Map(SF74ReferenceForm.sf74ReferenceId -> "1234567")
+
+      lazy val result: WSResponse = {
+        dropPensionsDB()
+        insertCyaData(pensionUserDataWithOnlyOverseasPensions(pensionsNoSchemesViewModel), aUserRequest)
+        authoriseAgentOrIndividual(isAgent = false)
+        urlPost(fullUrl(sf74ReferenceUrl(taxYearEOY, 100)), body = form,
+          follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+      }
+      "have a SEE_OTHER status" in {
+        result.status shouldBe SEE_OTHER
+        result.header("location") shouldBe Some(pensionCustomerReferenceNumberUrl(taxYearEOY, None))
       }
     }
 
-    "redirect to the pensions scheme details page if the index doesn't match" should {
+    "redirect to the pensions scheme summary page if the index doesn't match and there are pension schemes" should {
       val form: Map[String, String] = Map(SF74ReferenceForm.sf74ReferenceId -> "1234567")
       lazy val result: WSResponse = {
         dropPensionsDB()
@@ -126,10 +161,9 @@ class SF74ReferenceControllerISpec extends IntegrationTest with BeforeAndAfterEa
         urlPost(fullUrl(sf74ReferenceUrl(taxYearEOY, 100)), body = form,
           follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
-
       "have a SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(pensionCustomerReferenceNumberUrl(taxYearEOY, Some(100)))
+        result.header("location") shouldBe Some(pensionReliefSchemeSummaryUrl(taxYearEOY))
       }
     }
   }

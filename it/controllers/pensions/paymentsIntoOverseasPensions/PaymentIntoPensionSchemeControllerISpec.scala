@@ -41,7 +41,7 @@ class PaymentIntoPensionSchemeControllerISpec
           implicit val userConfig: UserConfig = userConfigWhenIrrelevant(None)
           implicit val response: WSResponse = getPage
 
-          assertRedirectionAsExpected(PageRelativeURLs.summaryPage)
+          assertRedirectionAsExpected(PageRelativeURLs.overseasPensionsSummary)
         }
       }
       "appear as expected" when {
@@ -416,7 +416,7 @@ class PaymentIntoPensionSchemeControllerISpec
           implicit val userConfig: UserConfig = userConfigWhenIrrelevant(None)
           implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(false), None))
 
-          assertRedirectionAsExpected(PageRelativeURLs.summaryPage)
+          assertRedirectionAsExpected(PageRelativeURLs.overseasPensionsSummary)
           getViewModel mustBe None
         }
       }
@@ -435,7 +435,7 @@ class PaymentIntoPensionSchemeControllerISpec
             implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
             implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(false), None))
 
-            assertRedirectionAsExpected(relativeUrlForThisPage)
+            assertRedirectionAsExpected(PageRelativeURLs.piopSchemeEmployerPaymentsPage)
             getViewModel mustBe Some(expectedViewModel)
           }
           "the user has selected 'Yes' as well as a valid amount (unformatted)" in {
@@ -448,7 +448,7 @@ class PaymentIntoPensionSchemeControllerISpec
             implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
             implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("42.64")))
 
-            assertRedirectionAsExpected(relativeUrlForThisPage)
+            assertRedirectionAsExpected(PageRelativeURLs.piopSchemeEmployerPaymentsPage)
             getViewModel mustBe Some(expectedViewModel)
           }
           "the user has selected 'Yes' as well as a valid amount (formatted)" in {
@@ -461,7 +461,7 @@ class PaymentIntoPensionSchemeControllerISpec
             implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
             implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("£1,042.64")))
 
-            assertRedirectionAsExpected(relativeUrlForThisPage)
+            assertRedirectionAsExpected(PageRelativeURLs.piopSchemeEmployerPaymentsPage)
             getViewModel mustBe Some(expectedViewModel)
           }
         }
@@ -479,7 +479,7 @@ class PaymentIntoPensionSchemeControllerISpec
             implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
             implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(false), None))
 
-            assertRedirectionAsExpected(relativeUrlForThisPage)
+            assertRedirectionAsExpected(PageRelativeURLs.piopSchemeEmployerPaymentsPage)
             getViewModel mustBe Some(expectedViewModel)
 
           }
@@ -493,7 +493,7 @@ class PaymentIntoPensionSchemeControllerISpec
             implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
             implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("42.64")))
 
-            assertRedirectionAsExpected(relativeUrlForThisPage)
+            assertRedirectionAsExpected(PageRelativeURLs.piopSchemeEmployerPaymentsPage)
             getViewModel mustBe Some(expectedViewModel)
 
           }
@@ -507,7 +507,7 @@ class PaymentIntoPensionSchemeControllerISpec
             implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
             implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("£1,042.64")))
 
-            assertRedirectionAsExpected(relativeUrlForThisPage)
+            assertRedirectionAsExpected(PageRelativeURLs.piopSchemeEmployerPaymentsPage)
             getViewModel mustBe Some(expectedViewModel)
 
           }

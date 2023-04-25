@@ -14,28 +14,30 @@
  * limitations under the License.
  *@
 
-@import models.pension.charges.{PensionAnnualAllowancesViewModel, PensionLifetimeAllowancesViewModel}
+@import models.pension.charges.PaymentsIntoOverseasPensionsViewModel
 @import views.html.templates.Layout
 @import views.html.templates.helpers.{Button, Heading, SummaryList}
-@import controllers.pensions.lifetimeAllowances.AnnualAndLifetimeAllowanceCYAViewHelper
+@import controllers.pensions.paymentsIntoOverseasPensions.PaymentsIntoOverseasPensionCYAViewHelper
+@import models.requests.UserSessionDataRequest
+
 @this(layout: Layout, summaryList: SummaryList, heading: Heading, button: Button, csrfForm: FormWithCSRF)
-@(taxYear: Int, annualCya: PensionAnnualAllowancesViewModel, lifetimeCya: PensionLifetimeAllowancesViewModel)(implicit messages: Messages, appConfig: AppConfig, request: AuthorisationRequest[_])
+
+@(taxYear: Int, paymentsIntoOverseasPensionsViewModel: PaymentsIntoOverseasPensionsViewModel)(implicit request: UserSessionDataRequest[_], messages: Messages, appConfig: AppConfig)
 
 @headingForUse = @{
-    messages(s"lifetimeAllowance.cya.heading.${if(request.user.isAgent) "agent" else "individual"}")
+    messages(s"paymentsIntoOverseasPensions.cya.heading")
 }
 
 @layout(pageTitle = headingForUse, taxYear = Some(taxYear)) {
 
-    @heading(headingForUse, Some(messages("common.lifetimeAllowance.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-5")
+    @heading(headingForUse, Some(messages("common.paymentsIntoOverseasPensions.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-5")
 
-    @summaryList(AnnualAndLifetimeAllowanceCYAViewHelper.summaryListRows(annualCya, lifetimeCya, taxYear)(messages))
+    @summaryList(PaymentsIntoOverseasPensionCYAViewHelper.summaryListRows(paymentsIntoOverseasPensionsViewModel, taxYear)(messages))
 
-    @csrfForm(controllers.pensions.lifetimeAllowances.routes.AnnualLifetimeAllowanceCYAController.submit(taxYear)) {
+    @csrfForm(controllers.pensions.paymentsIntoOverseasPensions.routes.PaymentsIntoOverseasPensionsCYAController.submit(taxYear)) {
         @button("common.saveAndContinue")
     }
 }
 @{
     // $COVERAGE-OFF$
 }
-

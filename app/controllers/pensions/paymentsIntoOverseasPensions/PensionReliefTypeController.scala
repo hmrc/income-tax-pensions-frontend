@@ -17,15 +17,14 @@
 package controllers.pensions.paymentsIntoOverseasPensions
 
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.paymentsIntoOverseasPensions.routes.{PensionsCustomerReferenceNumberController, QOPSReferenceController, SF74ReferenceController}
+import controllers.pensions.paymentsIntoOverseasPensions.routes._
 import controllers.predicates.ActionsProvider
-import controllers.validateIndex
+import controllers.validatedIndex
 import forms.FormsProvider
 import models.pension.charges.{Relief, TaxReliefQuestion}
 import models.requests.UserSessionDataRequest
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import routes._
 import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
@@ -45,16 +44,17 @@ class PensionReliefTypeController@Inject()(actionsProvider: ActionsProvider,
 
   def show(taxYear: Int, reliefIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit sessionData =>
-      validateIndex(reliefIndex, sessionData.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs.size) match {
+      val piopReliefs = sessionData.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs
+      validatedIndex(reliefIndex, piopReliefs.size) match {
         case Some(idx) =>
-          sessionData.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs(idx).reliefType.fold {
+          piopReliefs(idx).reliefType.fold {
             Future.successful(Ok(view(formsProvider.overseasPensionsReliefTypeForm, taxYear, reliefIndex)))
           } {
             reliefType =>
               Future.successful(Ok(view(formsProvider.overseasPensionsReliefTypeForm.fill(reliefType), taxYear, reliefIndex)))
           }
         case _ =>
-          Future.successful(Redirect(PensionsCustomerReferenceNumberController.show(taxYear, reliefIndex)))
+          Future.successful(Redirect(customerRefPageOrSchemeSummaryPage(piopReliefs.size, taxYear)))
       }
   }
 
@@ -70,10 +70,12 @@ class PensionReliefTypeController@Inject()(actionsProvider: ActionsProvider,
                                taxReliefQuestion: String,
                                indexOpt: Option[Int],
                                taxYear: Int)(implicit request: UserSessionDataRequest[_]): Future[Result] = {
-    validateIndex(indexOpt, request.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs.size) match {
+    
+    val piopReliefs = request.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs
+    validatedIndex(indexOpt, piopReliefs.size) match {
       case Some(idx) =>
-        if (!request.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs(idx).reliefType.contains(taxReliefQuestion)) {
-          val updatedReliefs: Relief = request.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs(idx).copy(
+        if (!piopReliefs(idx).reliefType.contains(taxReliefQuestion)) {
+          val updatedReliefs: Relief = piopReliefs(idx).copy(
             reliefType = Some(taxReliefQuestion),
             alphaTwoCountryCode = None,
             alphaThreeCountryCode = None,
@@ -81,13 +83,13 @@ class PensionReliefTypeController@Inject()(actionsProvider: ActionsProvider,
             doubleTaxationCountryTreaty = None,
             doubleTaxationReliefAmount = None,
             sf74Reference = None,
-            qualifyingOverseasPensionSchemeReferenceNumber = None
+            qopsReference = None
           )
           pensionSessionService.createOrUpdateSessionData(
             request.user,
             request.pensionsUserData.pensions.copy(
               paymentsIntoOverseasPensions = request.pensionsUserData.pensions.paymentsIntoOverseasPensions.copy(
-                reliefs = request.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs.updated(idx, updatedReliefs))),
+                reliefs = piopReliefs.updated(idx, updatedReliefs))),
             taxYear,
             request.pensionsUserData.isPriorSubmission
           )(errorHandler.internalServerError()) {
@@ -97,7 +99,7 @@ class PensionReliefTypeController@Inject()(actionsProvider: ActionsProvider,
           Future.successful(redirectBaseOnTaxReliefQuestion(taxReliefQuestion, taxYear, indexOpt)(request))
         }
       case _ =>
-        Future.successful(Redirect(PensionsCustomerReferenceNumberController.show(taxYear, indexOpt)))
+        Future.successful(Redirect(customerRefPageOrSchemeSummaryPage(piopReliefs.size, taxYear)))
     }
   }
 

@@ -17,8 +17,9 @@
 package controllers.pensions.incomeFromPensions
 
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.incomeFromPensions.routes.{UkPensionIncomeCYAController, UkPensionIncomeSummaryController}
-import controllers.predicates.AuthorisedAction
+import controllers.pensions.incomeFromPensions.routes.UkPensionIncomeSummaryController
+import controllers.predicates.ActionsProvider
+import controllers.validatedIndex
 import forms.DateForm.DateModel
 import forms.{DateForm, FormsProvider}
 import models.mongo.PensionsCYAModel
@@ -37,73 +38,60 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
 @Singleton
-class PensionSchemeStartDateController @Inject()(
-                                                  pensionSessionService: PensionSessionService,
-                                                  errorHandler: ErrorHandler,
-                                                  view: PensionSchemeStartDateView,
-                                                  formProvider: FormsProvider
+class PensionSchemeStartDateController @Inject()(pensionSessionService: PensionSessionService,
+                                                 errorHandler: ErrorHandler,
+                                                 view: PensionSchemeStartDateView,
+                                                 formProvider: FormsProvider
                                                 )(implicit val mcc: MessagesControllerComponents,
                                                   appConfig: AppConfig,
-                                                  authAction: AuthorisedAction,
+                                                  actionsProvider: ActionsProvider,
                                                   clock: Clock) extends FrontendController(mcc) with I18nSupport {
 
-  def show(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = authAction.async { implicit request =>
-    pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
-      case Some(data) =>
-        validateIndex(pensionSchemeIndex, data.pensions.incomeFromPensions.uKPensionIncomes) match {
-          case Some(index) =>
-            data.pensions.incomeFromPensions.uKPensionIncomes(index).startDate match {
-              case Some(startDate) =>
-                val parsedDate: LocalDate = LocalDate.parse(startDate, localDateTimeFormat)
-                val filledForm: Form[DateModel] = formProvider.pensionSchemeDateForm.fill(DateModel(
-                  parsedDate.getDayOfMonth.toString, parsedDate.getMonthValue.toString, parsedDate.getYear.toString)
-                )
-                Future.successful(Ok(view(filledForm, taxYear, index)))
-              case None => Future.successful(Ok(view(formProvider.pensionSchemeDateForm, taxYear, index)))
-            }
-          case None => Future.successful(Redirect(UkPensionIncomeSummaryController.show(taxYear)))
-        }
-      case _ => Future.successful(Redirect(UkPensionIncomeCYAController.show(taxYear)))
+  def show(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] =
+    actionsProvider.userSessionDataFor(taxYear) { implicit sessionDataRequest =>
+      val data = sessionDataRequest.pensionsUserData.pensions.incomeFromPensions.uKPensionIncomes
+      validatedIndex(pensionSchemeIndex, data.size) match {
+        case Some(validIndex) =>
+          data(pensionSchemeIndex.get).startDate.fold {
+            Ok(view(formProvider.pensionSchemeDateForm, taxYear, validIndex))
+          } { startDate =>
+            val parsedDate: LocalDate = LocalDate.parse(startDate, localDateTimeFormat)
+            val filledForm: Form[DateModel] = formProvider.pensionSchemeDateForm.fill(DateModel(
+              parsedDate.getDayOfMonth.toString, parsedDate.getMonthValue.toString, parsedDate.getYear.toString
+            ))
+            Ok(view(filledForm, taxYear, validIndex))
+          }
+        case None =>
+          Redirect(UkPensionIncomeSummaryController.show(taxYear))
+      }
     }
-  }
 
-  def submit(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = authAction.async { implicit request =>
-    pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
-      case Some(data) =>
-        validateIndex(pensionSchemeIndex, data.pensions.incomeFromPensions.uKPensionIncomes) match {
-          case Some(index) =>
-            val verifiedForm = formProvider.pensionSchemeDateForm.bindFromRequest()
-            verifiedForm.copy(errors = DateForm.verifyDate(verifiedForm.get, "incomeFromPensions.pensionStartDate")).fold(
+  def submit(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] =
+    actionsProvider.userSessionDataFor(taxYear) async { implicit sessionDataRequest =>
+      validatedIndex(pensionSchemeIndex, sessionDataRequest.pensionsUserData.pensions.incomeFromPensions.uKPensionIncomes.size) match {
+        case Some(validIndex) =>
+          val verifiedForm = formProvider.pensionSchemeDateForm.bindFromRequest()
+          verifiedForm.copy(errors = DateForm.verifyDate(verifiedForm.get, "incomeFromPensions.pensionStartDate")).fold(
+            formWithErrors =>
+              Future.successful(BadRequest(view(formWithErrors, taxYear, validIndex))),
+            startDate => {
+              val pensionsCYAModel: PensionsCYAModel = sessionDataRequest.pensionsUserData.pensions
+              val viewModel = pensionsCYAModel.incomeFromPensions
+              val pensionScheme: UkPensionIncomeViewModel = viewModel.uKPensionIncomes(validIndex)
+              val newStartDate = startDate.toLocalDate.toString
 
-              formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear, index))),
-              startDate => {
-                val pensionsCYAModel: PensionsCYAModel = data.pensions
-                val viewModel = pensionsCYAModel.incomeFromPensions
-                val pensionScheme: UkPensionIncomeViewModel = viewModel.uKPensionIncomes(index)
-                val newStartDate = startDate.toLocalDate.toString
-
-                val updatedPensionIncomesList: Seq[UkPensionIncomeViewModel] = {
-                  viewModel.uKPensionIncomes.updated(index, pensionScheme.copy(startDate = Some(newStartDate)))
-                }
-
-                val updatedCyaModel = pensionsCYAModel.copy(incomeFromPensions = viewModel.copy(uKPensionIncomes = updatedPensionIncomesList))
-
-                pensionSessionService.createOrUpdateSessionData(request.user,
-                  updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
-                  Redirect(UkPensionIncomeSummaryController.show(taxYear))
-                }
+              val updatedPensionIncomesList: Seq[UkPensionIncomeViewModel] = {
+                viewModel.uKPensionIncomes.updated(validIndex, pensionScheme.copy(startDate = Some(newStartDate)))
               }
-            )
-          case None => Future.successful(Redirect(UkPensionIncomeSummaryController.show(taxYear)))
-        }
-      case _ => Future.successful(Redirect(UkPensionIncomeCYAController.show(taxYear)))
-    }
-  }
+              val updatedCyaModel = pensionsCYAModel.copy(incomeFromPensions = viewModel.copy(uKPensionIncomes = updatedPensionIncomesList))
 
-  private def validateIndex(optIndex: Option[Int], pensionSchemesList: Seq[UkPensionIncomeViewModel]): Option[Int] = {
-    optIndex match {
-      case Some(index) if pensionSchemesList.size > index => Some(index)
-      case _ => None
+              pensionSessionService.createOrUpdateSessionData(sessionDataRequest.user,
+                updatedCyaModel, taxYear, sessionDataRequest.pensionsUserData.isPriorSubmission)(errorHandler.internalServerError()) {
+                Redirect(UkPensionIncomeSummaryController.show(taxYear)) // todo redirect to Check Scheme Details page when created
+              }
+            }
+          )
+        case _ => Future.successful(Redirect(UkPensionIncomeSummaryController.show(taxYear)))
+      }
     }
-  }
 }

@@ -20,7 +20,7 @@ import config.{AppConfig, ErrorHandler}
 import controllers.pensions.routes._
 import controllers.pensions.shortServiceRefunds.routes.RefundSummaryController
 import controllers.predicates.ActionsProvider
-import controllers.validateIndex
+import controllers.validatedIndex
 import forms.Countries
 import forms.overseas.PensionSchemeForm.{TcSsrPensionsSchemeFormModel, tcSsrPensionSchemeForm}
 import models.User
@@ -48,7 +48,7 @@ class ShortServicePensionsSchemeController @Inject()(actionsProvider: ActionsPro
   def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) {
     implicit userSessionDataRequest =>
       val ssrPensionSchemes = userSessionDataRequest.pensionsUserData.pensions.shortServiceRefunds.refundPensionScheme
-      validateIndex(index, ssrPensionSchemes.size) match {
+      validatedIndex(index, ssrPensionSchemes.size) match {
         case Some(idx) =>
           val isUKScheme = ssrPensionSchemes(idx).ukRefundCharge.contains(true)
           val form = rfPensionSchemeForm(userSessionDataRequest.user, isUKScheme).fill(updateFormModel(ssrPensionSchemes(idx)))
@@ -61,7 +61,7 @@ class ShortServicePensionsSchemeController @Inject()(actionsProvider: ActionsPro
   def submit(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit userSessionDataRequest =>
       val rfPensionSchemes = userSessionDataRequest.pensionsUserData.pensions.shortServiceRefunds.refundPensionScheme
-      validateIndex(index, rfPensionSchemes.size) match {
+      validatedIndex(index, rfPensionSchemes.size) match {
         case Some(idx) =>
           val isUKScheme = rfPensionSchemes(idx).ukRefundCharge.contains(true)
           rfPensionSchemeForm(userSessionDataRequest.user, isUKScheme).bindFromRequest().fold(

@@ -22,6 +22,7 @@ import connectors.httpParsers.PensionIncomeSessionHttpParser.PensionIncomeSessio
 import models.APIErrorModel
 import models.pension.charges.CreateUpdatePensionChargesRequestModel
 import models.pension.income.CreateUpdatePensionIncomeModel
+import models.pension.reliefs.CreateOrUpdatePensionReliefsModel
 import org.scalamock.handlers.CallHandler5
 import org.scalamock.scalatest.MockFactory
 import uk.gov.hmrc.http.HeaderCarrier
@@ -45,6 +46,15 @@ trait MockPensionsConnector extends MockFactory {
   CallHandler5[String, Int, CreateUpdatePensionIncomeModel, HeaderCarrier, ExecutionContext, Future[PensionIncomeSessionResponse]]
   = {
     (mockPensionsConnector.savePensionIncomeSessionData(_: String, _: Int, _: CreateUpdatePensionIncomeModel)(_: HeaderCarrier, _: ExecutionContext))
+      .expects(nino, taxYear, model, *, *)
+      .returns(Future.successful(response))
+      .anyNumberOfTimes()
+  }
+
+  def mockSavePensionReliefSessionData(nino: String, taxYear: Int, model: CreateOrUpdatePensionReliefsModel, response: Either[APIErrorModel, Unit]):
+  CallHandler5[String, Int, CreateOrUpdatePensionReliefsModel, HeaderCarrier, ExecutionContext, Future[PensionIncomeSessionResponse]]
+  = {
+    (mockPensionsConnector.savePensionReliefSessionData(_: String, _: Int, _: CreateOrUpdatePensionReliefsModel)(_: HeaderCarrier, _: ExecutionContext))
       .expects(nino, taxYear, model, *, *)
       .returns(Future.successful(response))
       .anyNumberOfTimes()

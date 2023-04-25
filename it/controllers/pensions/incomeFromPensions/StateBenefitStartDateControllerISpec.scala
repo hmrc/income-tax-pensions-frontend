@@ -25,7 +25,6 @@ import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import utils.PageUrls.IncomeFromPensionsPages.stateBenefitStartDateUrl
-import utils.PageUrls.ShortServiceRefunds.refundSummaryUrl
 import utils.PageUrls.{fullUrl, overviewUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
@@ -129,7 +128,7 @@ class StateBenefitStartDateControllerISpec extends IntegrationTest with ViewHelp
           follow = false,
           body = formData)
       }
-      result.status shouldBe OK
+      result.status shouldBe SEE_OTHER
     }
 
     "the day field is empty" which {

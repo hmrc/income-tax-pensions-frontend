@@ -52,7 +52,7 @@ class TaxPaidOnStatePensionLumpSumController @Inject()(
       val taxPaid = sessionData.pensionsUserData.pensions.incomeFromPensions.statePensionLumpSum.flatMap(_.taxPaid)
 
       (taxPaidQuestion, taxPaid) match {
-        case (Some(yesNo), taxPaid) => Future.successful(Ok(view(formsProvider.taxPaidOnStatePensionLumpSum(sessionData.user).fill(yesNo, taxPaid), taxYear)))
+        case (Some(yesNo), taxPaid) => Future.successful(Ok(view(formsProvider.taxPaidOnStatePensionLumpSum(sessionData.user).fill((yesNo, taxPaid)), taxYear)))
         case _ => Future.successful(Ok(view(formsProvider.taxPaidOnStatePensionLumpSum(sessionData.user), taxYear)))
       }
     }

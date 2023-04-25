@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package views.pensions.incomeFromOverseasPensions
+package controllers.pensions.incomeFromOverseasPensions
 
-import controllers.pensions.incomeFromOverseasPensions.routes._
+import controllers.pensions.incomeFromOverseasPensions.routes.{CountrySummaryListController, PensionOverseasIncomeStatus}
 import forms.Countries
 import models.pension.charges.IncomeFromOverseasPensionsViewModel
 import play.api.i18n.Messages
@@ -44,10 +44,10 @@ object IncomeFromOverseasPensionsCYAViewHelper extends CYABaseHelper {
   }
 
   private def summaryRowForPensionSchemeCodes(incomeFromOverseasPensionsViewModel: IncomeFromOverseasPensionsViewModel, taxYear: Int)
-                                             (implicit messages: Messages) : Option[SummaryListRow] = {
+                                             (implicit messages: Messages): Option[SummaryListRow] = {
     if (
-      incomeFromOverseasPensionsViewModel.paymentsFromOverseasPensionsQuestion.contains(true)
-        && incomeFromOverseasPensionsViewModel.overseasIncomePensionSchemes.length > 0
+      incomeFromOverseasPensionsViewModel.paymentsFromOverseasPensionsQuestion
+        .exists(_ && incomeFromOverseasPensionsViewModel.overseasIncomePensionSchemes.nonEmpty)
     ) {
       val countryNames = for {
         pensionScheme <- incomeFromOverseasPensionsViewModel.overseasIncomePensionSchemes
@@ -56,11 +56,13 @@ object IncomeFromOverseasPensionsCYAViewHelper extends CYABaseHelper {
       }
 
       Some(summaryListRowWithStrings(
-        "incomeFromOverseasPensions.cya.overseasPensionSchemes",
+        "common.overseas.pension.schemes",
         Some(countryNames.map(_.toUpperCase).mkString(", ")),
         CountrySummaryListController.show(taxYear))(messages)
       )
-    } else { None }
+    } else {
+      None
+    }
   }
 
 }
