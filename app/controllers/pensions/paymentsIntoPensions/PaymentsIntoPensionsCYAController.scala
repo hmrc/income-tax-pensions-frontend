@@ -83,12 +83,12 @@ class PaymentsIntoPensionsCYAController @Inject()(authAction: AuthorisedAction,
       cya.fold(
         Future.successful(Redirect(appConfig.incomeTaxSubmissionOverviewUrl(taxYear)))
       ) { model =>
+        //todo Edem remove gateway question
         if (model.pensions.paymentsIntoPension.gateway.contains(false)) {
           excludeJourneyService.excludeJourney("pensions", taxYear, request.user.nino)(request.user, hc)
         }.flatMap {
           case Right(_) => performSubmission(taxYear, cya)(request.user, hc, request, clock)
-          case Left(_) =>
-            errorHandler.futureInternalServerError()
+          case Left(_) => errorHandler.futureInternalServerError()
         }
         if (!comparePriorData(model.pensions, prior)) {
           Future.successful(Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear)))
@@ -107,7 +107,7 @@ class PaymentsIntoPensionsCYAController @Inject()(authAction: AuthorisedAction,
 
     (cya match {
       case Some(cyaData) =>
-        pensionReliefsService.savePaymentIntoPensionViewModel(user, taxYear) map {
+        pensionReliefsService.persistPaymentIntoPensionViewModel(user, taxYear) map {
           case Left(_) =>
             logger.info("[PaymentIntoPensionsCYAController][submit] Failed to create or update session")
             Left(APIErrorModel(BAD_REQUEST, APIErrorBodyModel(BAD_REQUEST.toString, "Unable to createOrUpdate pension service")))

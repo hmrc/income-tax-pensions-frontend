@@ -20,6 +20,7 @@ import play.api.libs.json.{Json, OFormat}
 import utils.EncryptedValue
 
 case class PaymentsIntoPensionViewModel(gateway: Option[Boolean] = None,
+                                       //todo Edem remove gateway
                                         rasPensionPaymentQuestion: Option[Boolean] = None,
                                         totalRASPaymentsAndTaxRelief: Option[BigDecimal] = None,
                                         oneOffRasPaymentPlusTaxReliefQuestion: Option[Boolean] = None,

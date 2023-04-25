@@ -32,8 +32,8 @@ import scala.concurrent.{ExecutionContext, Future}
 class PensionReliefsService @Inject()(pensionUserDataRepository: PensionsUserDataRepository,
                                       pensionsConnector: PensionsConnector) {
 
-  def savePaymentIntoPensionViewModel(user: User, taxYear: Int)
-                                     (implicit hc: HeaderCarrier,
+  def persistPaymentIntoPensionViewModel(user: User, taxYear: Int)
+                                        (implicit hc: HeaderCarrier,
                                       ec: ExecutionContext, clock: Clock): Future[Either[ServiceError, Unit]] = {
 
     val hcWithExtras = hc.withExtraHeaders("mtditid" -> user.mtditid)
