@@ -25,7 +25,6 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.SessionHelper
 import views.html.pensions.incomeFromPensions.PensionSchemeSummaryView
 import controllers.pensions.routes.PensionsSummaryController
-import models.pension.charges.Relief
 import models.pension.statebenefits.UkPensionIncomeViewModel
 
 import javax.inject.Inject
@@ -38,7 +37,6 @@ class PensionSchemeSummaryController @Inject()(view: PensionSchemeSummaryView,
   def show(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) {
     implicit userSessionDataRequest =>
       val pensionIncomesList: Seq[UkPensionIncomeViewModel] = userSessionDataRequest.pensionsUserData.pensions.incomeFromPensions.uKPensionIncomes
-      //      val pensionIncomesList: Seq[Relief] = userSessionDataRequest.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs
       validatedIndex(pensionSchemeIndex, pensionIncomesList.size) match {
         case Some(idx) =>
           Ok(view(taxYear, pensionIncomesList(idx), pensionSchemeIndex))

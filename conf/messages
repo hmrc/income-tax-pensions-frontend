@@ -645,8 +645,11 @@ incomeFromPensions.pensionSchemes.hidden = Change UK pension scheme details
 #Uk Pension Income Summary page
 incomeFromPensions.schemeDetails.summary.title = Check pension scheme details
 incomeFromPensions.schemeDetails.summary.details = Scheme details
+incomeFromPensions.schemeDetails.summary.details.hidden = Change scheme details
 incomeFromPensions.schemeDetails.summary.income = Pension income
+incomeFromPensions.schemeDetails.summary.income.hidden = Change pension income
 incomeFromPensions.schemeDetails.summary.date = Pension start date
+incomeFromPensions.schemeDetails.summary.date.hidden = Change pension start date
 incomeFromPensions.schemeDetails.summary.paye = PAYE:
 incomeFromPensions.schemeDetails.summary.pid = PID:
 incomeFromPensions.schemeDetails.summary.pay = Pay:

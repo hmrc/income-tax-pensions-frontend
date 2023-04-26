@@ -21,7 +21,7 @@ import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import utils.CYABaseHelper
 import models.pension.statebenefits.UkPensionIncomeViewModel
-import utils.DateTimeUtil.dateToStringFormat
+import utils.DateTimeUtil.{dateToStringFormat, localDateTimeFormat}
 
 import java.time.LocalDate
 
@@ -42,7 +42,7 @@ object PensionSchemeSummaryHelper extends CYABaseHelper {
     Some(summaryListRowWithString(
       "incomeFromPensions.schemeDetails.summary.details",
       Some(Seq(provider + paye + pid)),
-      routes.PensionAmountController.show(taxYear, index)
+      routes.PensionSchemeDetailsController.show(taxYear, index)
     ))
   }
 
@@ -58,8 +58,8 @@ object PensionSchemeSummaryHelper extends CYABaseHelper {
 
 
   def pensionStartDate(pensionIncomes : UkPensionIncomeViewModel, taxYear: Int, index: Option[Int])(implicit messages: Messages): Option[SummaryListRow] = {
-    val startDate = s"${pensionIncomes.startDate.getOrElse("")}"
-    val parsedDate: String = LocalDate.parse(startDate).format(dateToStringFormat)
+    val startDate = pensionIncomes.startDate
+    val parsedDate: String = startDate.fold("")(st => LocalDate.parse(st, localDateTimeFormat).format(dateToStringFormat))
     Some(summaryListRowWithString(
       "incomeFromPensions.schemeDetails.summary.date",
       Some(Seq(parsedDate)),

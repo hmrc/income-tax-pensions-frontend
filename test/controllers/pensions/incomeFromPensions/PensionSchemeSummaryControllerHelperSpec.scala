@@ -31,53 +31,63 @@ class PensionSchemeSummaryControllerHelperSpec extends AnyWordSpec with Matchers
   implicit val messages: Messages = stubbedMessages()
 
   val taxYear = 2022
-  val index = Some(1)
+  val index: Option[Int] = Some(0)
 
   val incomeModel: UkPensionIncomeViewModel = UkPensionIncomeViewModel(
-    Some("123/AB456"), Some("1234"), Some("12 12 2008"))
+    Some("123/AB456"), Some("1234"), Some("01 01 2008"), None, None, Some("pro"), Some(200), Some(80))
 
   val incomeModelNone: UkPensionIncomeViewModel = UkPensionIncomeViewModel(
-    None, None, None)
+    None, None, None, None, None, None)
 
   "Getting the summary rows" should {
     "return the expected" when {
-      "we have provided all answers for transitional corresponding relief" in {
+      "we have provided all answers for income from pensions" in {
         val summaryListRows = PensionSchemeSummaryHelper.summaryListRows(incomeModel, taxYear, index)
 
         summaryListRows.length shouldBe 3
-        assertRowForSchemeDetails(summaryListRows.head, "P")
-        assertRowForPensionsIncome(summaryListRows(1), "£193.54")
-        assertRowForPensionStartDate(summaryListRows(2), "December 12 2008")
+        assertRowForSchemeDetails(summaryListRows.head, "pro<br>PAYE: 123/AB456<br>PID: 1234")
+        assertRowForPensionsIncome(summaryListRows(1), "Pay: 200<br>Tax: 80")
+        assertRowForPensionStartDate(summaryListRows(2), "January 1 2008")
+      }
+      "we have provided none of the above" in {
+        val summaryListRows = PensionSchemeSummaryHelper.summaryListRows(incomeModelNone, taxYear, index)
+
+        summaryListRows.length shouldBe 3
+        assertRowForSchemeDetails(summaryListRows.head, "<br>PAYE: <br>PID: ")
+        assertRowForPensionsIncome(summaryListRows(1), "Pay: <br>Tax: ")
+        assertRowForPensionStartDate(summaryListRows(2), "")
       }
     }
   }
 
   private def assertRowForSchemeDetails(summaryListRow: SummaryListRow, expectedValue: String): Unit = {
-    val addOn = if (index.isDefined) s"?index=${index.get}" else ""
+    val addOn = if (index.isDefined) s"?pensionSchemeIndex=${index.get}" else ""
     assertSummaryListRow(summaryListRow, ExpectedSummaryRowContents(
       "Scheme details",
       expectedValue,
-      "Change",
-      s"/2022/pension-income/pension-income-details?pensionSchemeIndex=0",
-      messages("overseasPension.reliefDetails.pensionSchemeName.hidden")))
+      "common.change",
+      s"/2022/pension-income/pension-income-details$addOn",
+      messages("incomeFromPensions.schemeDetails.summary.details.hidden")))
   }
 
   private def assertRowForPensionsIncome(summaryListRow: SummaryListRow, expectedValue: String): Unit = {
+    val addOn = if (index.isDefined) s"?pensionSchemeIndex=${index.get}" else ""
     assertSummaryListRow(summaryListRow, ExpectedSummaryRowContents(
-      "Untaxed employer payments",
+      "Pension income",
       expectedValue,
-      "Change",
-      "/2022/overseas-pensions/payments-into-overseas-pensions/untaxed-employer-payments?index=1",
-      messages("overseasPension.reliefDetails.amount.hidden")))
+      "common.change",
+      s"/2022/pension-income/pension-amount$addOn",
+      messages("incomeFromPensions.schemeDetails.summary.income.hidden")))
   }
 
   private def assertRowForPensionStartDate(summaryListRow: SummaryListRow, expectedValue: String): Unit = {
+    val addOn = if (index.isDefined) s"?pensionSchemeIndex=${index.get}" else ""
     assertSummaryListRow(summaryListRow, ExpectedSummaryRowContents(
-      "Type of relief",
+      "Pension start date",
       expectedValue,
-      "Change",
-      "/2022/overseas-pensions/payments-into-overseas-pensions/pensions-overseas-emp-relief-status?reliefIndex=1",
-      messages("overseasPension.reliefDetails.typeOfRelief.hidden")))
+      "common.change",
+      s"/2022/pension-income/pension-start-date$addOn",
+      messages("incomeFromPensions.schemeDetails.summary.date.hidden")))
   }
 
   private def assertSummaryListRow(summaryListRow: SummaryListRow, expectedSummaryRowContents: ExpectedSummaryRowContents): Unit = {
