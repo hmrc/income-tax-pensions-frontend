@@ -45,7 +45,7 @@ object AnnualAndLifetimeAllowanceCYAViewHelper extends CYABaseHelper {
       summaryListRowWithBooleanValue(
         "lifetimeAllowance.cya.aboveAnnualOrLifetimeAllowance",
         lifetimeAllowancesViewModel.aboveLifetimeAllowanceQuestion,
-        routes.AboveAnnualLifeTimeAllowanceController.show(taxYear))(messages)
+        routes.AboveAnnualLifetimeAllowanceController.show(taxYear))(messages)
     )
   }
 
