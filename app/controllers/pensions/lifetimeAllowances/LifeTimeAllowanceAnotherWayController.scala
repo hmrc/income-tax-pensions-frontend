@@ -48,7 +48,7 @@ class LifeTimeAllowanceAnotherWayController @Inject()(implicit val cc: MessagesC
 
 
   def yesNoForm(user: User): Form[Boolean] = YesNoForm.yesNoForm(
-    missingInputError = s"lifetimeAllowance.lifeTimeAllowanceAnotherWay.error.noEntry.${if (user.isAgent) "agent" else "individual"}"
+    missingInputError = s"lifetimeAllowance.lifetimeAllowanceAnotherWay.error.noEntry.${if (user.isAgent) "agent" else "individual"}"
   )
 
   def show(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>

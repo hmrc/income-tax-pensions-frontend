@@ -668,8 +668,8 @@ annualAndLifetimeAllowance.gateway.error.agent = Dewiswch ‘Iawn’ os yw’ch 
 annualAndLifetimeAllowance.gateway.error.individual = Dewiswch ‘Iawn’ os ydych wedi mynd yn uwch na’ch lwfans blynyddol neu lwfans oes
 
 #Did you take the amount above your lifetime allowance another way
-lifetimeAllowance.lifetimeAllowanceAnotherWay.tittle.individual = Did you take the amount above your lifetime allowance another way?
-lifetimeAllowance.lifetimeAllowanceAnotherWay.tittle.agent = Did your client take the amount above their lifetime allowance another way?
+lifetimeAllowance.lifetimeAllowanceAnotherWay.title.individual = Did you take the amount above your lifetime allowance another way?
+lifetimeAllowance.lifetimeAllowanceAnotherWay.title.agent = Did your client take the amount above their lifetime allowance another way?
 lifetimeAllowance.lifetimeAllowanceAnotherWay.paragraph.line1 = Do not tell us about lump sums.
 lifetimeAllowance.lifetimeAllowanceAnotherWay.paragraph.line2.individual = Tell us about any amount you’ve taken above your lifetime allowance in other ways. This could be regular payments or a cash withdrawal
 lifetimeAllowance.lifetimeAllowanceAnotherWay.paragraph.line2.agent = Tell us about any amount your client has taken above their lifetime allowance in other ways. This could be regular payments or a cash withdrawal
