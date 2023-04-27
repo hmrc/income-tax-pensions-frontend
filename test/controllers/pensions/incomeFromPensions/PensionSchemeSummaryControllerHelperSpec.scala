@@ -34,7 +34,15 @@ class PensionSchemeSummaryControllerHelperSpec extends AnyWordSpec with Matchers
   val index: Option[Int] = Some(0)
 
   val incomeModel: UkPensionIncomeViewModel = UkPensionIncomeViewModel(
-    Some("123/AB456"), Some("1234"), Some("01 01 2008"), None, None, Some("pro"), Some(200), Some(80))
+    employmentId = Some("1243454"),
+    pensionSchemeName = Some("pro"),
+    pensionId = Some("1234"),
+    startDate = Some("2019-07-23"),
+    endDate = Some("2020-07-24"),
+    pensionSchemeRef = Some("123/AB456"),
+    amount = Some(211.33),
+    taxPaid = Some(14.77),
+    isCustomerEmploymentData = Some(true))
 
   val incomeModelNone: UkPensionIncomeViewModel = UkPensionIncomeViewModel(
     None, None, None, None, None, None)
@@ -46,8 +54,8 @@ class PensionSchemeSummaryControllerHelperSpec extends AnyWordSpec with Matchers
 
         summaryListRows.length shouldBe 3
         assertRowForSchemeDetails(summaryListRows.head, "pro<br>PAYE: 123/AB456<br>PID: 1234")
-        assertRowForPensionsIncome(summaryListRows(1), "Pay: 200<br>Tax: 80")
-        assertRowForPensionStartDate(summaryListRows(2), "January 1 2008")
+        assertRowForPensionsIncome(summaryListRows(1), "Pay: 211.33<br>Tax: 14.77")
+        assertRowForPensionStartDate(summaryListRows(2), "23 July 2019")
       }
       "we have provided none of the above" in {
         val summaryListRows = PensionSchemeSummaryHelper.summaryListRows(incomeModelNone, taxYear, index)
