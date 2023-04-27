@@ -21,7 +21,7 @@ import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import utils.CYABaseHelper
 import models.pension.statebenefits.UkPensionIncomeViewModel
-import utils.DateTimeUtil.dateToStringFormat
+import utils.DateTimeUtil.{dateToStringFormat, localDateTimeFormat}
 
 import java.time.LocalDate
 
@@ -42,7 +42,7 @@ object PensionSchemeSummaryHelper extends CYABaseHelper {
     Some(summaryListRowWithString(
       "incomeFromPensions.schemeDetails.summary.details",
       Some(Seq(provider + paye + pid)),
-      routes.PensionAmountController.show(taxYear, index)
+      routes.PensionSchemeDetailsController.show(taxYear, index)
     ))
   }
 
@@ -50,19 +50,19 @@ object PensionSchemeSummaryHelper extends CYABaseHelper {
     val pay = s"${messages("incomeFromPensions.schemeDetails.summary.pay")} ${pensionIncomes.amount.getOrElse("")}<br>"
     val tax = s"${messages("incomeFromPensions.schemeDetails.summary.tax")} ${pensionIncomes.taxPaid.getOrElse("")}"
     Some(summaryListRowWithString(
-        "incomeFromPensions.schemeDetails.summary.income",
-        Some(Seq(pay + tax)),
+      "incomeFromPensions.schemeDetails.summary.income",
+      Some(Seq(pay + tax)),
       routes.PensionAmountController.show(taxYear, index))
     )
-    }
+  }
 
 
   def pensionStartDate(pensionIncomes : UkPensionIncomeViewModel, taxYear: Int, index: Option[Int])(implicit messages: Messages): Option[SummaryListRow] = {
-    val startDate = s"${pensionIncomes.startDate.getOrElse("")}"
-    val parsedDate: String = LocalDate.parse(startDate).format(dateToStringFormat)
+    val startDate = pensionIncomes.startDate
+    val parsedDate: String = startDate.fold("")(st => LocalDate.parse(st, localDateTimeFormat).format(dateToStringFormat))
     Some(summaryListRowWithString(
-        "incomeFromPensions.schemeDetails.summary.date",
-        Some(Seq(parsedDate)),
+      "incomeFromPensions.schemeDetails.summary.date",
+      Some(Seq(parsedDate)),
       routes.PensionSchemeStartDateController.show(taxYear, index))
     )
   }

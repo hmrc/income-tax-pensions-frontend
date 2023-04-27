@@ -18,14 +18,13 @@ package controllers.pensions.incomeFromPensions
 
 import config.AppConfig
 import controllers.predicates.ActionsProvider
-import controllers.validateIndex
+import controllers.validatedIndex
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.SessionHelper
 import views.html.pensions.incomeFromPensions.PensionSchemeSummaryView
 import controllers.pensions.routes.PensionsSummaryController
-import models.pension.charges.Relief
 import models.pension.statebenefits.UkPensionIncomeViewModel
 
 import javax.inject.Inject
@@ -38,8 +37,7 @@ class PensionSchemeSummaryController @Inject()(view: PensionSchemeSummaryView,
   def show(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) {
     implicit userSessionDataRequest =>
       val pensionIncomesList: Seq[UkPensionIncomeViewModel] = userSessionDataRequest.pensionsUserData.pensions.incomeFromPensions.uKPensionIncomes
-//      val pensionIncomesList: Seq[Relief] = userSessionDataRequest.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs
-      validateIndex(pensionSchemeIndex, pensionIncomesList.size) match {
+      validatedIndex(pensionSchemeIndex, pensionIncomesList.size) match {
         case Some(idx) =>
           Ok(view(taxYear, pensionIncomesList(idx), pensionSchemeIndex))
         case _ => Redirect(PensionsSummaryController.show(taxYear))
@@ -49,7 +47,7 @@ class PensionSchemeSummaryController @Inject()(view: PensionSchemeSummaryView,
   def submit(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) {
     implicit userSessionDataRequest =>
       val pensionIncomesList: Seq[UkPensionIncomeViewModel] = userSessionDataRequest.pensionsUserData.pensions.incomeFromPensions.uKPensionIncomes
-      validateIndex(pensionSchemeIndex,pensionIncomesList.size) match {
+      validatedIndex(pensionSchemeIndex,pensionIncomesList.size) match {
         case Some(idx) =>
           Ok(view(taxYear, pensionIncomesList(idx), pensionSchemeIndex))
         //todo redirect to CYA page when complete
