@@ -35,6 +35,7 @@ import utils.PageUrls.PaymentIntoPensions.{checkPaymentsIntoPensionCyaUrl, relie
 import utils.PageUrls._
 import utils.PageUrls.unauthorisedPaymentsPages.{checkUnauthorisedPaymentsCyaUrl, unauthorisedPaymentsUrl}
 import utils.PageUrls.IncomeFromPensionsPages.ukPensionincomeSummaryUrl
+import utils.PageUrls.PensionLifetimeAllowance.pensionAboveAnnualLifetimeAllowanceUrl
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 class PensionsSummaryControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper with Injecting {
@@ -164,9 +165,7 @@ class PensionsSummaryControllerISpec extends IntegrationTest with ViewHelpers wi
           }
 
           "has an pension lifetime allowance section" which {
-            //TODO: Change to use the href below when pension lifetime allowance cya page available
-            //linkCheck(lifetimeAllowance, pensionAnnualAllowanceLink, checkPensionLifetimeAllowanceCyaUrl(taxYear))
-            linkCheck(lifetimeAllowance, pensionLifetimeAllowanceLink, "#")
+            linkCheck(lifetimeAllowance, pensionLifetimeAllowanceLink, pensionAboveAnnualLifetimeAllowanceUrl(taxYear))
             textOnPageCheck(updated, summaryListStatusTagSelector(4))
           }
 
@@ -221,9 +220,7 @@ class PensionsSummaryControllerISpec extends IntegrationTest with ViewHelpers wi
           }
 
           "has an pension lifetime allowance section" which {
-            //TODO: Change to use the href below when pension lifetime allowance cya page available
-            //linkCheck(lifetimeAllowance, pensionAnnualAllowanceLink, checkPensionLifetimeAllowanceCyaUrl(taxYear))
-            linkCheck(lifetimeAllowance, pensionLifetimeAllowanceLink, "#")
+            linkCheck(lifetimeAllowance, pensionLifetimeAllowanceLink, pensionAboveAnnualLifetimeAllowanceUrl(taxYear))
             textOnPageCheck(updated, summaryListStatusTagSelector(4))
           }
 
@@ -283,9 +280,7 @@ class PensionsSummaryControllerISpec extends IntegrationTest with ViewHelpers wi
           }
 
           "has an pension lifetime allowance section" which {
-            //TODO: Change to use the href below when pension lifetime allowance cya page available
-            //linkCheck(lifetimeAllowance, pensionAnnualAllowanceLink, checkPensionLifetimeAllowanceCyaUrl(taxYear))
-            linkCheck(lifetimeAllowance, pensionLifetimeAllowanceLink, "#")
+            linkCheck(lifetimeAllowance, pensionLifetimeAllowanceLink, pensionAboveAnnualLifetimeAllowanceUrl(taxYear))
             textOnPageCheck(toDo, summaryListStatusTagSelector(4))
           }
 
@@ -338,9 +333,7 @@ class PensionsSummaryControllerISpec extends IntegrationTest with ViewHelpers wi
           }
 
           "has an pension lifetime allowance section" which {
-            //TODO: Change to use the href below when pension lifetime allowance cya page available
-            //linkCheck(lifetimeAllowance, pensionAnnualAllowanceLink, checkPensionLifetimeAllowanceCyaUrl(taxYear))
-            linkCheck(lifetimeAllowance, pensionLifetimeAllowanceLink, "#")
+            linkCheck(lifetimeAllowance, pensionLifetimeAllowanceLink, pensionAboveAnnualLifetimeAllowanceUrl(taxYear))
             textOnPageCheck(toDo, summaryListStatusTagSelector(4))
           }
 
@@ -393,9 +386,7 @@ class PensionsSummaryControllerISpec extends IntegrationTest with ViewHelpers wi
           }
 
           "has an pension lifetime allowance section" which {
-            //TODO: Change to use the href below when pension lifetime allowance cya page available
-            //linkCheck(lifetimeAllowance, pensionAnnualAllowanceLink, checkPensionLifetimeAllowanceCyaUrl(taxYear))
-            linkCheck(lifetimeAllowance, pensionLifetimeAllowanceLink, "#")
+            linkCheck(lifetimeAllowance, pensionLifetimeAllowanceLink, pensionAboveAnnualLifetimeAllowanceUrl(taxYear))
             textOnPageCheck(updated, summaryListStatusTagSelector(4))
           }
 
