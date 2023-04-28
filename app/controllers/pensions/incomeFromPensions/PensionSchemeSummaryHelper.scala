@@ -32,7 +32,7 @@ object PensionSchemeSummaryHelper extends CYABaseHelper {
     Seq(
       pensionSchemeDetails(pensionIncomes, taxYear, index),
       pensionIncome(pensionIncomes, taxYear, index),
-      pensionStartDate(pensionIncomes, taxYear, index),
+      pensionStartDate(pensionIncomes, taxYear, index)
     ).flatten
 
   def pensionSchemeDetails(pensionIncomes : UkPensionIncomeViewModel, taxYear: Int, index: Option[Int])(implicit messages: Messages): Option[SummaryListRow] = {
