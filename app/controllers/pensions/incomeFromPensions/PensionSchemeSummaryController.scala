@@ -17,15 +17,15 @@
 package controllers.pensions.incomeFromPensions
 
 import config.AppConfig
+import controllers.pensions.routes.PensionsSummaryController
 import controllers.predicates.ActionsProvider
 import controllers.validatedIndex
+import models.pension.statebenefits.UkPensionIncomeViewModel
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.SessionHelper
 import views.html.pensions.incomeFromPensions.PensionSchemeSummaryView
-import controllers.pensions.routes.PensionsSummaryController
-import models.pension.statebenefits.UkPensionIncomeViewModel
 
 import javax.inject.Inject
 
@@ -48,9 +48,8 @@ class PensionSchemeSummaryController @Inject()(view: PensionSchemeSummaryView,
     implicit userSessionDataRequest =>
       val pensionIncomesList: Seq[UkPensionIncomeViewModel] = userSessionDataRequest.pensionsUserData.pensions.incomeFromPensions.uKPensionIncomes
       validatedIndex(pensionSchemeIndex,pensionIncomesList.size) match {
-        case Some(idx) =>
-          Ok(view(taxYear, pensionIncomesList(idx), pensionSchemeIndex))
-        //todo redirect to CYA page when complete
+        case Some(_) =>
+          Redirect(routes.PensionSchemeSummaryController.show(taxYear, pensionSchemeIndex))  //TODO: Redirect to the Pensions schemes List page
         case _ =>
           Redirect(PensionsSummaryController.show(taxYear))
       }

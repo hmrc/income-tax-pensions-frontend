@@ -54,6 +54,8 @@ class MessagesSpec extends ViewTest with GuiceOneAppPerSuite {
     "shortServiceRefunds.cya.refund",
     "overseasPension.pensionReliefType.NoneOfThese",
     "incomeFromPensions.pensionSchemeDetails.title",
+    "incomeFromPensions.schemeDetails.summary.details",
+    "incomeFromPensions.schemeDetails.summary.details.hidden",
     "overseasPension.untaxedEmployerPayments.title",
     "overseasPension.reliefDetails.amount",
     "overseasPension.reliefDetails.title",

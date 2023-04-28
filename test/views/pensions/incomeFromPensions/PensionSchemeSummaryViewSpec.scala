@@ -44,47 +44,50 @@ class PensionSchemeSummaryViewSpec extends ViewUnitTest { //scalastyle:off magic
     val schemeName: String
     val schemePAYE: String
     val schemePID: String
-    lazy val schemeDetailsValue = s"$schemeName\n$schemePAYE\n$schemePID"
+    lazy val schemeDetailsValue = s"$schemeName $schemePAYE $schemePID"
     val schemeIncome: String
     val hiddenSchemeIncome: String
     val paymentsAmount: String
     val paymentsTax: String
-    lazy val schemeIncomeValue = s"$paymentsAmount\n$paymentsTax"
+    lazy val schemeIncomeValue = s"$paymentsAmount $paymentsTax"
     val schemeStartDate: String
-    val schemeStartDateValue: String = "01 March 2020"
+    val hiddenSchemeStartDate: String
+    val schemeStartDateValue: String = "23 July 2019"
     val buttonText: String
   }
 
   object CommonExpectedEN extends CommonExpectedResults {
-    val expectedTitle: String = "Check pensions scheme details"
+    val expectedTitle: String = "Check pension scheme details"
     val expectedCaption: Int => String = (taxYear: Int) => s"Income from pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
     val schemeDetails: String = "Scheme details"
     val hiddenSchemeDetails = "Change scheme details"
-    val schemeName: String = "Simple-Scheme"
-    val schemePAYE: String = "PAYE: 123/AB456"
-    val schemePID: String = "PID:  11223344"
-    val schemeIncome = "Pensions income"
-    val hiddenSchemeIncome = "Change pensions income"
-    val paymentsAmount: String = "Pay: £2,000"
-    val paymentsTax: String = "Tax: £200"
+    val schemeName: String = "pension name 1"
+    val schemePAYE: String = "PAYE: 666/66666"
+    val schemePID: String = "PID: Some customer ref 1"
+    val schemeIncome = "Pension income"
+    val hiddenSchemeIncome = "Change pension income"
+    val paymentsAmount: String = "Pay: 211.33"
+    val paymentsTax: String = "Tax: 14.77"
     val schemeStartDate: String = "Pension start date"
+    val hiddenSchemeStartDate: String = "Change pension start date"
     val buttonText: String = "Continue"
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedTitle: String = "Check payments into overseas pensions"
-    val expectedCaption: Int => String = (taxYear: Int) => s"Taliadau i bensiynau tramor ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
+    val expectedTitle: String = "Check pension scheme details"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Incwm o bensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
     val schemeDetails: String = "Scheme details"
     val hiddenSchemeDetails = "Change scheme details"
-    val schemeName: String = "Simple-Scheme"
-    val schemePAYE: String = "PAYE: 123/AB456"
-    val schemePID: String = "PID:  11223344"
-    val schemeIncome = "Pensions income"
-    val hiddenSchemeIncome = "Change pensions income"
-    val paymentsAmount: String = "Pay: £2,000"
-    val paymentsTax: String = "Tax: £200"
+    val schemeName: String = "pension name 1"
+    val schemePAYE: String = "PAYE: 666/66666"
+    val schemePID: String = "PID: Some customer ref 1"
+    val schemeIncome = "Pension income"
+    val hiddenSchemeIncome = "Change pension income"
+    val paymentsAmount: String = "Pay: 211.33"
+    val paymentsTax: String = "Tax: 14.77"
     val schemeStartDate: String = "Pension start date"
-    val buttonText: String = "Continue"
+    val hiddenSchemeStartDate: String = "Change pension start date"
+    val buttonText: String = "Yn eich blaen"
   }
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, String]] = Seq(
@@ -122,8 +125,8 @@ class PensionSchemeSummaryViewSpec extends ViewUnitTest { //scalastyle:off magic
         implicit val document: Document = renderPage(userScenario, anUkPensionIncomeViewModelSeq, schemeIndex0)
 
         cyaRowCheck(schemeDetails, schemeDetailsValue, ChangeLinks.changeDetails(schemeIndex0),hiddenSchemeDetails,1)
-        cyaRowCheck(schemeIncome, schemeIncomeValue, ChangeLinks.changeAmount(schemeIndex0),hiddenSchemeDetails,2)
-        cyaRowCheck(schemeStartDate, schemeStartDateValue, ChangeLinks.changeStartDate(schemeIndex0),hiddenSchemeDetails,3)
+        cyaRowCheck(schemeIncome, schemeIncomeValue, ChangeLinks.changeAmount(schemeIndex0),hiddenSchemeIncome,2)
+        cyaRowCheck(schemeStartDate, schemeStartDateValue, ChangeLinks.changeStartDate(schemeIndex0),hiddenSchemeStartDate,3)
         buttonCheck(buttonText)
       }
     }
