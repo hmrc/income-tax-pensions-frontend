@@ -46,7 +46,7 @@ class AboveAnnualLifetimeAllowanceControllerISpec extends IntegrationTest with B
 
   trait SpecificExpectedResults {
     val expectedTitle: String
-    lazy val expectedHeading = expectedTitle
+    lazy val expectedHeading: String = expectedTitle
     val expectedParagraph: String
     val expectedErrorTitle: String
     val expectedError: String
@@ -120,6 +120,18 @@ class AboveAnnualLifetimeAllowanceControllerISpec extends IntegrationTest with B
         import Selectors._
         import user.commonExpectedResults._
 
+        def commonContent(implicit document: () => Document): Unit = {
+          titleCheck(user.specificExpectedResults.get.expectedTitle, user.isWelsh)
+          h1Check(user.specificExpectedResults.get.expectedHeading)
+          textOnPageCheck(user.specificExpectedResults.get.expectedParagraph, paragraphSelector)
+          textOnPageCheck(infoLinkText, taxReliefLinkSelector)
+          linkCheck(infoLinkText, taxReliefLinkSelector, linkHref)
+          captionCheck(expectedCaption(taxYearEOY), captionSelector)
+          buttonCheck(expectedButtonText, continueButtonSelector)
+          formPostLinkCheck(pensionAboveAnnualLifetimeAllowanceUrl(taxYearEOY), formSelector)
+          welshToggleCheck(user.isWelsh)
+        }
+
         "render the 'Have you gone above your lifetime allowance?' page with correct content and no pre-filling" which {
           implicit lazy val result: WSResponse = {
             authoriseAgentOrIndividual(user.isAgent)
@@ -135,17 +147,9 @@ class AboveAnnualLifetimeAllowanceControllerISpec extends IntegrationTest with B
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(user.specificExpectedResults.get.expectedTitle, user.isWelsh)
-          h1Check(user.specificExpectedResults.get.expectedHeading)
-          textOnPageCheck(user.specificExpectedResults.get.expectedParagraph, paragraphSelector)
-          textOnPageCheck(infoLinkText, taxReliefLinkSelector)
-          linkCheck(infoLinkText, taxReliefLinkSelector, linkHref)
-          captionCheck(expectedCaption(taxYearEOY), captionSelector)
+          commonContent
           radioButtonCheck(yesText, 1, checked = Some(false))
           radioButtonCheck(noText, 2, checked = Some(false))
-          buttonCheck(expectedButtonText, continueButtonSelector)
-          formPostLinkCheck(pensionAboveAnnualLifetimeAllowanceUrl(taxYearEOY), formSelector)
-          welshToggleCheck(user.isWelsh)
         }
 
         "render the 'Have you gone above your lifetime allowance?' page with correct content and yes pre-filled" which {
@@ -167,17 +171,9 @@ class AboveAnnualLifetimeAllowanceControllerISpec extends IntegrationTest with B
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(user.specificExpectedResults.get.expectedTitle, user.isWelsh)
-          h1Check(user.specificExpectedResults.get.expectedHeading)
-          textOnPageCheck(user.specificExpectedResults.get.expectedParagraph, paragraphSelector)
-          textOnPageCheck(infoLinkText, taxReliefLinkSelector)
-          linkCheck(infoLinkText, taxReliefLinkSelector, linkHref)
-          captionCheck(expectedCaption(taxYearEOY), captionSelector)
+          commonContent
           radioButtonCheck(yesText, 1, checked = Some(true))
           radioButtonCheck(noText, 2, checked = Some(false))
-          buttonCheck(expectedButtonText, continueButtonSelector)
-          formPostLinkCheck(pensionAboveAnnualLifetimeAllowanceUrl(taxYearEOY), formSelector)
-          welshToggleCheck(user.isWelsh)
         }
 
         "render the 'Have you gone above your lifetime allowance?' page with correct content and no pre-filled" which {
@@ -200,17 +196,9 @@ class AboveAnnualLifetimeAllowanceControllerISpec extends IntegrationTest with B
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(user.specificExpectedResults.get.expectedTitle, user.isWelsh)
-          h1Check(user.specificExpectedResults.get.expectedHeading)
-          textOnPageCheck(user.specificExpectedResults.get.expectedParagraph, paragraphSelector)
-          textOnPageCheck(infoLinkText, taxReliefLinkSelector)
-          linkCheck(infoLinkText, taxReliefLinkSelector, linkHref)
-          captionCheck(expectedCaption(taxYearEOY), captionSelector)
+          commonContent
           radioButtonCheck(yesText, 1, checked = Some(false))
           radioButtonCheck(noText, 2, checked = Some(true))
-          buttonCheck(expectedButtonText, continueButtonSelector)
-          formPostLinkCheck(pensionAboveAnnualLifetimeAllowanceUrl(taxYearEOY), formSelector)
-          welshToggleCheck(user.isWelsh)
         }
       }
     }
@@ -250,8 +238,10 @@ class AboveAnnualLifetimeAllowanceControllerISpec extends IntegrationTest with B
           }
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
+
           import Selectors._
           import user.commonExpectedResults._
+
           titleCheck(user.specificExpectedResults.get.expectedErrorTitle, user.isWelsh)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           textOnPageCheck(user.specificExpectedResults.get.expectedParagraph, paragraphSelector)
