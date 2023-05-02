@@ -21,18 +21,22 @@ import controllers.pensions.incomeFromPensions.routes.UkPensionSchemePaymentsCon
 import controllers.predicates.AuthorisedAction
 import controllers.predicates.TaxYearAction.taxYearAction
 import forms.FormUtils
-import models.mongo.PensionsCYAModel
+import models.mongo.{PensionsCYAModel, PensionsUserData}
+import models.{APIErrorBodyModel, APIErrorModel, AuthorisationRequest, User}
 import models.pension.AllPensionsData
 import models.pension.AllPensionsData.generateCyaFromPrior
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.PensionSessionService
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import services.{PensionIncomeService, PensionSessionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import play.api.Logger
 import utils.{Clock, SessionHelper}
 import views.html.pensions.incomeFromPensions.UkPensionIncomeCYAView
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class UkPensionIncomeCYAController @Inject()(implicit val mcc: MessagesControllerComponents,
@@ -40,8 +44,13 @@ class UkPensionIncomeCYAController @Inject()(implicit val mcc: MessagesControlle
                                              view: UkPensionIncomeCYAView,
                                              appConfig: AppConfig,
                                              pensionSessionService: PensionSessionService,
+                                             pensionIncomeService: PensionIncomeService,
                                              errorHandler: ErrorHandler,
                                              clock: Clock) extends FrontendController(mcc) with I18nSupport with SessionHelper with FormUtils {
+
+
+  lazy val logger: Logger = Logger(this.getClass.getName)
+  implicit val executionContext: ExecutionContext = mcc.executionContext
 
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     pensionSessionService.getAndHandle(taxYear, request.user) { (cya, prior) =>
@@ -66,12 +75,39 @@ class UkPensionIncomeCYAController @Inject()(implicit val mcc: MessagesControlle
         Future.successful(Redirect(appConfig.incomeTaxSubmissionOverviewUrl(taxYear)))
       ) { model =>
         if (comparePriorData(model.pensions, prior)) {
-          //TODO - build submission model from cya data and submit to DES if cya data doesn't match prior data
-          Future.successful(Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear)))
+          performSubmission(taxYear, cya)(request.user, hc, request, clock)
         } else {
           Future.successful(Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear)))
         }
       }
+    }
+  }
+
+  private def performSubmission(taxYear: Int, cya: Option[PensionsUserData]
+                               )(implicit user: User,
+                                 hc: HeaderCarrier,
+                                 request: AuthorisationRequest[AnyContent],
+                                 clock: Clock): Future[Result] = {
+
+    (cya match {
+      case Some(cyaData) =>
+        pensionIncomeService.saveIncomeFromOverseasPensionsViewModel(user, taxYear) map {
+          case Left(_) =>
+            logger.info("[UkPensionIncomeCYAController][submit] Failed to create or update session")
+            Left(APIErrorModel(BAD_REQUEST, APIErrorBodyModel(BAD_REQUEST.toString, "Unable to createOrUpdate pension service")))
+          case Right(_) =>
+            Right(Ok)
+        }
+      case _ =>
+        logger.info("[UkPensionIncomeCYAController][submit] CYA data or NINO missing from session.")
+        Future.successful(Left(APIErrorModel(BAD_REQUEST, APIErrorBodyModel("MISSING_DATA", "CYA data or NINO missing from session."))))
+    }).flatMap {
+      case Right(_) =>
+        pensionSessionService.clear(taxYear)(errorHandler.internalServerError())(
+          //todo right red?
+          Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear))
+        )
+      case Left(error) => Future.successful(errorHandler.handleError(error.status))
     }
   }
 

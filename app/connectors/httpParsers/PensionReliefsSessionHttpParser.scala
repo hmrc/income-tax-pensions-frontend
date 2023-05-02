@@ -28,7 +28,7 @@ object PensionReliefsSessionHttpParser extends APIParser {
   override val parserName: String = "PensionReliefsSessionResponse"
   override val service: String = "income-tax-pensions"
 
-  implicit object PensionIncomeSessionHttpReads extends HttpReads[PensionReliefsSessionResponse] {
+  implicit object PensionReliefsSessionHttpReads extends HttpReads[PensionReliefsSessionResponse] {
 
     override def read(method: String, url: String, response: HttpResponse): PensionReliefsSessionResponse = {
       response.status match {
