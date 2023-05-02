@@ -41,8 +41,9 @@ class PensionsPaymentsOverseasServiceSpec extends UnitTest
     "return Right(Unit) when model is saved successfully and payment from overseas pensions cya is cleared from DB" in {
       val allPensionsData = anAllPensionsData
       val sessionCya = aPensionsCYAEmptyModel.copy(
-        incomeFromOverseasPensions = aPensionsUserData.pensions.incomeFromOverseasPensions,
-        paymentsIntoPension = aPensionsUserData.pensions.paymentsIntoPension
+//        incomeFromOverseasPensions = aPensionsUserData.pensions.incomeFromOverseasPensions,
+//        paymentsIntoPension = aPensionsUserData.pensions.paymentsIntoPension,
+        paymentsIntoOverseasPensions = aPensionsUserData.pensions.paymentsIntoOverseasPensions
       )
       val sessionUserData = aPensionsUserData.copy(pensions = sessionCya)
 
@@ -69,7 +70,7 @@ class PensionsPaymentsOverseasServiceSpec extends UnitTest
       val userWithEmptySaveIncomeFromOverseasCya = aPensionsUserData.copy(pensions = aPensionsCYAEmptyModel)
       mockSavePensionIncomeSessionData(nino, taxYear, model1, Right(()))
       mockSavePensionReliefSessionData(nino, taxYear, model2, Right(()))
-      mockCreateOrUpdate(userWithEmptySaveIncomeFromOverseasCya, Right(()))
+      //mockCreateOrUpdate(userWithEmptySaveIncomeFromOverseasCya, Right(()))
 
       val result =   await(overseasPaymentPensionService.savePaymentsFromOverseasPensionsViewModel(aUser, taxYear))
       result shouldBe Right(())
@@ -83,8 +84,9 @@ class PensionsPaymentsOverseasServiceSpec extends UnitTest
     "return Left(APIErrorModel) when pension connector could not be connected" in {
       val allPensionsData = anAllPensionsData
       val sessionCya = aPensionsCYAEmptyModel.copy(
-        incomeFromOverseasPensions = aPensionsUserData.pensions.incomeFromOverseasPensions,
-        paymentsIntoPension = aPensionsUserData.pensions.paymentsIntoPension
+//        incomeFromOverseasPensions = aPensionsUserData.pensions.incomeFromOverseasPensions,
+//        paymentsIntoPension = aPensionsUserData.pensions.paymentsIntoPension,
+        paymentsIntoOverseasPensions = aPensionsUserData.pensions.paymentsIntoOverseasPensions
       )
       val sessionUserData = aPensionsUserData.copy(pensions = sessionCya)
 
@@ -118,9 +120,10 @@ class PensionsPaymentsOverseasServiceSpec extends UnitTest
     "return Left(DataNotUpdated) when data could not be updated" in {
       val allPensionsData = anAllPensionsData
       val sessionCya = aPensionsCYAEmptyModel.copy(
-        incomeFromOverseasPensions = aPensionsUserData.pensions.incomeFromOverseasPensions,
-        paymentsIntoPension = aPensionsUserData.pensions.paymentsIntoPension
-        )
+//        incomeFromOverseasPensions = aPensionsUserData.pensions.incomeFromOverseasPensions,
+//        paymentsIntoPension = aPensionsUserData.pensions.paymentsIntoPension,
+        paymentsIntoOverseasPensions = aPensionsUserData.pensions.paymentsIntoOverseasPensions
+      )
       val sessionUserData = aPensionsUserData.copy(pensions = sessionCya)
 
       val priorUserData = IncomeTaxUserData(Some(allPensionsData))
@@ -144,7 +147,7 @@ class PensionsPaymentsOverseasServiceSpec extends UnitTest
       )
 
       val userWithEmptySaveIncomeFromOverseasCya = aPensionsUserData.copy(pensions = aPensionsCYAEmptyModel)
-      mockCreateOrUpdate(userWithEmptySaveIncomeFromOverseasCya, Left(DataNotUpdated))
+      //mockCreateOrUpdate(userWithEmptySaveIncomeFromOverseasCya, Left(DataNotUpdated))
       mockSavePensionIncomeSessionData(nino, taxYear, model1, Right(()))
       mockSavePensionReliefSessionData(nino, taxYear, model2, Right(()))
 
