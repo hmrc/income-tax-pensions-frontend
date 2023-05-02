@@ -116,11 +116,6 @@ case class PaymentsIntoOverseasPensionsViewModel(paymentsIntoOverseasPensionsQue
       taxPaidOnEmployerPaymentsQuestion = taxPaidOnEmployerPaymentsQuestion.map(_.encrypted),
       reliefs = reliefs.map(_.encrypted())
     )
-
-  def toPensionIncome: PensionIncome = ???
-
-  def toPensionReliefs: PensionReliefs = ???
-
 }
 
 
