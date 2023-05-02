@@ -19,16 +19,13 @@ package controllers.pensions.incomeFromOverseasPensions
 import config.{AppConfig, ErrorHandler}
 import controllers.predicates.AuthorisedAction
 import controllers.predicates.TaxYearAction.taxYearAction
-import models.{APIErrorBodyModel, APIErrorModel, AuthorisationRequest, User}
-import models.mongo.PensionsUserData
 import models.pension.AllPensionsData
 import models.pension.AllPensionsData.generateCyaFromPrior
 import models.pension.charges.IncomeFromOverseasPensionsViewModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.{PensionIncomeService, PensionOverseasPaymentService, PensionSessionService}
-import uk.gov.hmrc.http.HeaderCarrier
+import services.{PensionIncomeService, PensionSessionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.incomeFromOverseasPensions.IncomeFromOverseasPensionsCYAView

@@ -76,6 +76,8 @@ class PaymentIntoOverseasPensionsCYAControllerISpec extends IntegrationTest with
         authoriseAgentOrIndividual(aUser.isAgent)
         insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(shortServiceRefunds = emptyShortServiceRefundsViewModel)), aUserRequest)
         userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYear)
+        pensionReliefsSessionStub("", nino, taxYear)
+        pensionIncomeSessionStub("", nino, taxYear)
         urlPost(
           fullUrl(paymentsIntoOverseasPensionsCyaUrl(taxYear)),
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)),
@@ -92,6 +94,8 @@ class PaymentIntoOverseasPensionsCYAControllerISpec extends IntegrationTest with
         authoriseAgentOrIndividual(aUser.isAgent)
         insertCyaData(pensionsUsersData(aPensionsCYAModel), aUserRequest)
         userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYearEOY)
+        pensionReliefsSessionStub("", nino, taxYear)
+        pensionIncomeSessionStub("", nino, taxYear)
         urlPost(
           fullUrl(paymentsIntoOverseasPensionsCyaUrl(taxYearEOY)),
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
