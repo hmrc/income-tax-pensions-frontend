@@ -33,37 +33,37 @@ object PensionSchemeSummaryHelper extends CYABaseHelper {
       pensionSchemeDetails(pensionIncomes, taxYear, index),
       pensionIncome(pensionIncomes, taxYear, index),
       pensionStartDate(pensionIncomes, taxYear, index)
-    ).flatten
+    )
 
-  def pensionSchemeDetails(pensionIncomes : UkPensionIncomeViewModel, taxYear: Int, index: Option[Int])(implicit messages: Messages): Option[SummaryListRow] = {
+  def pensionSchemeDetails(pensionIncomes : UkPensionIncomeViewModel, taxYear: Int, index: Option[Int])(implicit messages: Messages): SummaryListRow = {
     val provider = s"${pensionIncomes.pensionSchemeName.getOrElse("")}<br>"
     val paye = s"${messages("incomeFromPensions.schemeDetails.summary.paye")} ${pensionIncomes.pensionSchemeRef.getOrElse("")}<br>"
     val pid = s"${messages("incomeFromPensions.schemeDetails.summary.pid")} ${pensionIncomes.pensionId.getOrElse("")}"
-    Some(summaryListRowWithString(
+    summaryListRowWithString(
       "incomeFromPensions.schemeDetails.summary.details",
       Some(Seq(provider + paye + pid)),
       routes.PensionSchemeDetailsController.show(taxYear, index)
-    ))
+    )
   }
 
-  def pensionIncome(pensionIncomes : UkPensionIncomeViewModel, taxYear: Int, index: Option[Int])(implicit messages: Messages): Option[SummaryListRow] = {
+  def pensionIncome(pensionIncomes : UkPensionIncomeViewModel, taxYear: Int, index: Option[Int])(implicit messages: Messages): SummaryListRow = {
     val pay = s"${messages("incomeFromPensions.schemeDetails.summary.pay")} ${pensionIncomes.amount.getOrElse("")}<br>"
     val tax = s"${messages("incomeFromPensions.schemeDetails.summary.tax")} ${pensionIncomes.taxPaid.getOrElse("")}"
-    Some(summaryListRowWithString(
+    summaryListRowWithString(
       "incomeFromPensions.schemeDetails.summary.income",
       Some(Seq(pay + tax)),
-      routes.PensionAmountController.show(taxYear, index))
+      routes.PensionAmountController.show(taxYear, index)
     )
   }
 
 
-  def pensionStartDate(pensionIncomes : UkPensionIncomeViewModel, taxYear: Int, index: Option[Int])(implicit messages: Messages): Option[SummaryListRow] = {
+  def pensionStartDate(pensionIncomes : UkPensionIncomeViewModel, taxYear: Int, index: Option[Int])(implicit messages: Messages): SummaryListRow = {
     val startDate = pensionIncomes.startDate
     val parsedDate: String = startDate.fold("")(st => LocalDate.parse(st, localDateTimeFormat).format(dateToStringFormat))
-    Some(summaryListRowWithString(
+    summaryListRowWithString(
       "incomeFromPensions.schemeDetails.summary.date",
       Some(Seq(parsedDate)),
-      routes.PensionSchemeStartDateController.show(taxYear, index))
+      routes.PensionSchemeStartDateController.show(taxYear, index)
     )
   }
 }
