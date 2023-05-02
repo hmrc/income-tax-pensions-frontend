@@ -40,7 +40,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class IncomeFromOverseasPensionsCYAController @Inject()(authAction: AuthorisedAction,
                                                         view: IncomeFromOverseasPensionsCYAView,
                                                         pensionSessionService: PensionSessionService,
-                                                        pensionOverseasPaymentService: PensionOverseasPaymentService,
+                                                        pensionIncomeService: PensionIncomeService,
                                                         errorHandler: ErrorHandler)
                                                        (implicit val mcc: MessagesControllerComponents,
                                                         appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
@@ -80,7 +80,7 @@ class IncomeFromOverseasPensionsCYAController @Inject()(authAction: AuthorisedAc
   }
 
   def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
-    val p1 = pensionOverseasPaymentService.savePaymentsFromOverseasPensionsViewModel(request.user, taxYear)
+    val p1 = pensionIncomeService.saveIncomeFromOverseasPensionsViewModel(request.user, taxYear)
       p1.map {
       case Left(_) =>
         errorHandler.internalServerError()

@@ -20,7 +20,6 @@ import connectors.{IncomeTaxUserDataConnector, PensionsConnector}
 import models.mongo.{PensionsCYAModel, PensionsUserData, ServiceError}
 import models.pension.charges.PaymentsIntoOverseasPensionsViewModel
 import models.pension.income.CreateUpdatePensionIncomeModel
-import models.pension.paymentsIntoOverseasPesions.CreateUpdatePensionsPaymentsIntoOverseasPensions
 import models.pension.reliefs.{CreateOrUpdatePensionReliefsModel, Reliefs}
 import models.{IncomeTaxUserData, User}
 import org.joda.time.DateTimeZone
