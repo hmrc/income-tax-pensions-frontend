@@ -18,9 +18,9 @@ package services
 
 import connectors.{IncomeTaxUserDataConnector, PensionsConnector}
 import models.mongo.{PensionsCYAModel, PensionsUserData, ServiceError}
-import models.pension.charges.PaymentsIntoOverseasPensionsViewModel
+import models.pension.charges.{IncomeFromOverseasPensionsViewModel, PaymentsIntoOverseasPensionsViewModel}
 import models.pension.income.CreateUpdatePensionIncomeModel
-import models.pension.reliefs.{CreateOrUpdatePensionReliefsModel, Reliefs}
+import models.pension.reliefs.{CreateOrUpdatePensionReliefsModel, PaymentsIntoPensionViewModel, Reliefs}
 import models.{IncomeTaxUserData, User}
 import org.joda.time.DateTimeZone
 import repositories.PensionsUserDataRepository
@@ -35,27 +35,30 @@ class PensionOverseasPaymentService @Inject()(pensionUserDataRepository: Pension
                                               incomeTaxUserDataConnector: IncomeTaxUserDataConnector) {
 
 
+  def getPensionsUserData(userData: Option[PensionsUserData], user: User, taxYear: Int)(implicit clock: Clock): PensionsUserData = {
+    userData match {
+      case Some(value) => value.copy(
+        pensions = value.pensions.copy(
+//          paymentsIntoPension = PaymentsIntoPensionViewModel(),
+//          incomeFromOverseasPensions = IncomeFromOverseasPensionsViewModel(),
+          paymentsIntoOverseasPensions = PaymentsIntoOverseasPensionsViewModel()))
+      case None => PensionsUserData(
+        user.sessionId,
+        user.mtditid,
+        user.nino,
+        taxYear,
+        isPriorSubmission = false,
+        PensionsCYAModel.emptyModels,
+        clock.now(DateTimeZone.UTC)
+      )
+    }
+  }
+
   def savePaymentsFromOverseasPensionsViewModel(user: User, taxYear: Int)
                                                (implicit hc: HeaderCarrier, ec: ExecutionContext, clock: Clock): Future[Either[ServiceError, Unit]] = {
 
 
     val hcWithExtras = hc.withExtraHeaders("mtditid" -> user.mtditid)
-
-
-    def getPensionsUserData(userData: Option[PensionsUserData], user: User): PensionsUserData = {
-      userData match {
-        case Some(value) => value.copy(pensions = value.pensions.copy(paymentsIntoOverseasPensions = PaymentsIntoOverseasPensionsViewModel()))
-        case None => PensionsUserData(
-          user.sessionId,
-          user.mtditid,
-          user.nino,
-          taxYear,
-          isPriorSubmission = false,
-          PensionsCYAModel.emptyModels,
-          clock.now(DateTimeZone.UTC)
-        )
-      }
-    }
 
     (for {
       sessionData <- FutureEitherOps[ServiceError, Option[PensionsUserData]](pensionUserDataRepository.find(taxYear, user))
@@ -80,7 +83,7 @@ class PensionOverseasPaymentService @Inject()(pensionUserDataRepository: Pension
       )
       _ <- FutureEitherOps[ServiceError, Unit](pensionsConnector.savePensionIncomeSessionData(user.nino, taxYear, updatedIncomeData)(hcWithExtras, ec))
       _ <- FutureEitherOps[ServiceError, Unit](pensionsConnector.savePensionReliefSessionData(user.nino, taxYear, updatedReliefsData)(hcWithExtras, ec))
-      updatedCYA = getPensionsUserData(sessionData, user)
+      updatedCYA = getPensionsUserData(sessionData, user, taxYear)
       result <- FutureEitherOps[ServiceError, Unit](pensionUserDataRepository.createOrUpdate(updatedCYA))
     } yield {
       result
