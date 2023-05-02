@@ -642,6 +642,19 @@ incomeFromPensions.pensionIncome.hidden.individual = Newid p’un a gawsoch incw
 incomeFromPensions.pensionIncome.hidden.agent = Newid p’un a gafodd eich cleient incwm o bensiynau’r DU
 incomeFromPensions.pensionSchemes.hidden = Newid manylion cynllun pensiwn y DU
 
+#Uk Pension Income Summary page
+incomeFromPensions.schemeDetails.summary.title = Check pension scheme details
+incomeFromPensions.schemeDetails.summary.details = Scheme details
+incomeFromPensions.schemeDetails.summary.details.hidden = Change scheme details
+incomeFromPensions.schemeDetails.summary.income = Pension income
+incomeFromPensions.schemeDetails.summary.income.hidden = Change pension income
+incomeFromPensions.schemeDetails.summary.date = Pension start date
+incomeFromPensions.schemeDetails.summary.date.hidden = Change pension start date
+incomeFromPensions.schemeDetails.summary.paye = PAYE:
+incomeFromPensions.schemeDetails.summary.pid = PID:
+incomeFromPensions.schemeDetails.summary.pay = Pay:
+incomeFromPensions.schemeDetails.summary.tax = Tax:
+
 #################       Lifetime Allowance       ########################################
 
 #Did you get paid your pension as a lump sum

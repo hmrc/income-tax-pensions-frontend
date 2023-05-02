@@ -44,4 +44,6 @@ object UkPensionIncomeViewModelBuilder {
     isCustomerEmploymentData = Some(false)
   )
 
+  val anUkPensionIncomeViewModelSeq = Seq(anUkPensionIncomeViewModelOne, anUkPensionIncomeViewModelTwo)
+
 }
