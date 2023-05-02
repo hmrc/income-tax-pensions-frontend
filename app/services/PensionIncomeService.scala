@@ -19,7 +19,7 @@ package services
 import connectors.{IncomeTaxUserDataConnector, PensionsConnector}
 import models.{IncomeTaxUserData, User}
 import models.mongo.{PensionsCYAModel, PensionsUserData, ServiceError}
-import models.pension.charges.IncomeFromOverseasPensionsViewModel
+import models.pension.charges.{IncomeFromOverseasPensionsViewModel, PaymentsIntoOverseasPensionsViewModel}
 import org.joda.time.DateTimeZone
 import repositories.PensionsUserDataRepository
 import uk.gov.hmrc.http.HeaderCarrier
@@ -73,7 +73,6 @@ class PensionIncomeService @Inject()(pensionUserDataRepository: PensionsUserData
         result
       }).value
   }
-
 }
 
 

@@ -19,10 +19,17 @@ package connectors
 import config.AppConfig
 import connectors.httpParsers.PensionChargesSessionHttpParser.{PensionChargesSessionHttpReads, PensionChargesSessionResponse}
 import connectors.httpParsers.PensionIncomeSessionHttpParser.{PensionIncomeSessionHttpReads, PensionIncomeSessionResponse}
+<<<<<<< Updated upstream
 import connectors.httpParsers.PensionReliefsSessionHttpParser.PensionReliefsSessionResponse
 import models.pension.charges.CreateUpdatePensionChargesRequestModel
 import models.pension.income.CreateUpdatePensionIncomeModel
 import models.pension.reliefs.CreateOrUpdatePensionReliefsModel
+=======
+import connectors.httpParsers.PensionOverseasPaymentsSessionHttpParser.{PensionOverseasPaymentsResponse, PensionOverseasPaymentsSessionHttpReads}
+import models.pension.charges.CreateUpdatePensionChargesRequestModel
+import models.pension.income.CreateUpdatePensionIncomeModel
+import models.pension.paymentsIntoOverseasPesions.CreateUpdatePensionsPaymentsIntoOverseasPensions
+>>>>>>> Stashed changes
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
 import javax.inject.Inject
@@ -46,10 +53,18 @@ class PensionsConnector @Inject()(val http: HttpClient,
       model)(CreateUpdatePensionIncomeModel.format.writes,  PensionIncomeSessionHttpReads, hc, ec)
   }
 
+<<<<<<< Updated upstream
   def savePensionReliefSessionData(nino: String, taxYear: Int, model: CreateOrUpdatePensionReliefsModel)
                                   (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[PensionReliefsSessionResponse] = {
     val url = appConfig.pensionBEBaseUrl + s"/pension-reliefs/nino/$nino/taxYear/$taxYear"
     http.PUT[CreateOrUpdatePensionReliefsModel, PensionReliefsSessionResponse](url,
       model)(CreateOrUpdatePensionReliefsModel.format.writes, PensionIncomeSessionHttpReads, hc, ec)
+=======
+  def savePensionOverseasPaymentsSessionData(nino: String, taxYear: Int, model: CreateUpdatePensionsPaymentsIntoOverseasPensions)
+                                  (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[PensionOverseasPaymentsResponse] = {
+    val url = appConfig.pensionBEBaseUrl + s"/pension-income/session-data/nino/$nino/taxYear/$taxYear"
+    http.PUT[CreateUpdatePensionsPaymentsIntoOverseasPensions, PensionOverseasPaymentsResponse](url,
+      model)(CreateUpdatePensionsPaymentsIntoOverseasPensions.format.writes,  PensionOverseasPaymentsSessionHttpReads, hc, ec)
+>>>>>>> Stashed changes
   }
 }

@@ -17,6 +17,8 @@
 package models.pension.charges
 
 import models.mongo.TextAndKey
+import models.pension.income.PensionIncome
+import models.pension.reliefs.PensionReliefs
 import play.api.libs.json.{Json, OFormat}
 import utils.DecryptableSyntax.DecryptableOps
 import utils.DecryptorInstances.{bigDecimalDecryptor, booleanDecryptor, stringDecryptor}
@@ -112,6 +114,11 @@ case class PaymentsIntoOverseasPensionsViewModel(paymentsIntoOverseasPensionsQue
       taxPaidOnEmployerPaymentsQuestion = taxPaidOnEmployerPaymentsQuestion.map(_.encrypted),
       reliefs = reliefs.map(_.encrypted())
     )
+
+  def toPensionIncome: PensionIncome = ???
+
+  def toPensionReliefs: PensionReliefs = ???
+
 }
 
 

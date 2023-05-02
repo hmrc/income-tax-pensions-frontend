@@ -19,12 +19,16 @@ package controllers.pensions.incomeFromOverseasPensions
 import config.{AppConfig, ErrorHandler}
 import controllers.predicates.AuthorisedAction
 import controllers.predicates.TaxYearAction.taxYearAction
+import models.{APIErrorBodyModel, APIErrorModel, AuthorisationRequest, User}
+import models.mongo.PensionsUserData
 import models.pension.AllPensionsData
 import models.pension.AllPensionsData.generateCyaFromPrior
 import models.pension.charges.IncomeFromOverseasPensionsViewModel
+import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.{PensionIncomeService, PensionSessionService}
+import services.{PensionIncomeService, PensionOverseasPaymentService, PensionSessionService}
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.incomeFromOverseasPensions.IncomeFromOverseasPensionsCYAView
@@ -36,12 +40,13 @@ import scala.concurrent.{ExecutionContext, Future}
 class IncomeFromOverseasPensionsCYAController @Inject()(authAction: AuthorisedAction,
                                                         view: IncomeFromOverseasPensionsCYAView,
                                                         pensionSessionService: PensionSessionService,
-                                                        pensionIncomeService: PensionIncomeService,
+                                                        pensionOverseasPaymentService: PensionOverseasPaymentService,
                                                         errorHandler: ErrorHandler)
                                                        (implicit val mcc: MessagesControllerComponents,
                                                         appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport {
 
+  lazy val logger: Logger = Logger(this.getClass.getName)
 
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
 
@@ -75,7 +80,7 @@ class IncomeFromOverseasPensionsCYAController @Inject()(authAction: AuthorisedAc
   }
 
   def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
-    val p1 = pensionIncomeService.saveIncomeFromOverseasPensionsViewModel(request.user, taxYear)
+    val p1 = pensionOverseasPaymentService.savePaymentsFromOverseasPensionsViewModel(request.user, taxYear)
       p1.map {
       case Left(_) =>
         errorHandler.internalServerError()
