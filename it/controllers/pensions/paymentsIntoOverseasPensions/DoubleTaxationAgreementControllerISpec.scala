@@ -25,11 +25,11 @@ import builders.PensionsUserDataBuilder.pensionUserDataWithOnlyOverseasPensions
 import builders.UserBuilder.aUserRequest
 import models.mongo.{PensionsCYAModel, PensionsUserData}
 import play.api.http.HeaderNames
+import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import utils.PageUrls.PaymentIntoOverseasPensions._
 import utils.PageUrls.{fullUrl, overseasPensionsSummaryUrl, pensionSummaryUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
-import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 
 class DoubleTaxationAgreementControllerISpec extends
   IntegrationTest with ViewHelpers with PensionsDatabaseHelper {
