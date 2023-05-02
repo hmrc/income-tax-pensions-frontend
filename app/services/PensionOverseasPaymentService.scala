@@ -37,11 +37,7 @@ class PensionOverseasPaymentService @Inject()(pensionUserDataRepository: Pension
 
   def getPensionsUserData(userData: Option[PensionsUserData], user: User, taxYear: Int)(implicit clock: Clock): PensionsUserData = {
     userData match {
-      case Some(value) => value.copy(
-        pensions = value.pensions.copy(
-//          paymentsIntoPension = PaymentsIntoPensionViewModel(),
-//          incomeFromOverseasPensions = IncomeFromOverseasPensionsViewModel(),
-          paymentsIntoOverseasPensions = PaymentsIntoOverseasPensionsViewModel()))
+      case Some(value) => value.copy(pensions = value.pensions.copy(paymentsIntoOverseasPensions = PaymentsIntoOverseasPensionsViewModel()))
       case None => PensionsUserData(
         user.sessionId,
         user.mtditid,
