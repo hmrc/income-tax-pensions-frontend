@@ -101,7 +101,7 @@ class AboveAnnualLifetimeAllowanceControllerISpec extends IntegrationTest with B
     val expectedButtonText = "Yn eich blaen"
     val yesText = "Iawn"
     val noText = "Na"
-    val infoLinkText = "Find out more about lifetime allowance (opens in new tab)"
+    val infoLinkText = "Dysgwch ragor am lwfans oes (yn agor tab newydd)"
   }
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(

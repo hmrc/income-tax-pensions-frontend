@@ -666,7 +666,7 @@ lifetimeAllowance.pensionLumpSum.error.noEntry.agent = Dewiswch ‘Iawn’ wnaet
 #Have you gone above your annual or lifetime allowance?
 lifetimeAllowance.aboveAnnualLifetimeAllowance.title.individual = Ydych chi wedi mynd dros eich lwfans oes?
 lifetimeAllowance.aboveAnnualLifetimeAllowance.title.agent = A yw eich cleient wedi mynd dros ei lwfans oes?
-lifetimeAllowance.aboveAnnualLifetimeAllowance.link = Find out more about lifetime allowance (opens in new tab)
+lifetimeAllowance.aboveAnnualLifetimeAllowance.link = Dysgwch ragor am lwfans oes (yn agor tab newydd)
 lifetimeAllowance.aboveAnnualLifetimeAllowance.error.noEntry.individual = Dewiswch ‘Iawn’ os ydych wedi mynd yn uwch na’ch lwfans oes
 lifetimeAllowance.aboveAnnualLifetimeAllowance.error.noEntry.agent = Dewiswch ‘Iawn’ os yw’ch cleient wedi mynd yn uwch na’i lwfans oes
 
