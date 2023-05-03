@@ -231,7 +231,7 @@ class AnnualLifetimeAllowanceCYAControllerISpec extends
 
     val aboveAnnualOrLifetimeAllowanceHidden: String = "Newidiwch uwch na lwfans blynyddol neu lwfans oes"
     val reducedAnnualAllowanceHidden: String = "Newidiwch lwfans blynyddol wedi’i ostwng"
-    val typeOfReducedAnnualAllowanceHidden: String = "Newidiwch fath o lwfans blynyddol wedi’i ostwnge"
+    val typeOfReducedAnnualAllowanceHidden: String = "Newidiwch fath o lwfans blynyddol wedi’i ostwng"
     val aboveAnnualAllowanceHidden: String = "Newidiwch uwch na’r lwfans blynyddol"
     val annualAllowanceTaxHidden: String = "Newidiwch dreth lwfans blynyddol"
     val annualAllowanceSchemesHidden: String = "Newidiwch gynlluniau sy’n talu treth lwfans blynyddol"
