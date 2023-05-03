@@ -85,10 +85,10 @@ class NoSurchargeAmountControllerISpec extends CommonUtils with BeforeAndAfterEa
 
   object CommonExpectedCY extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Taliadau heb awdurdod o bensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
-    val expectedTitle = "Amount that did not result in a surcharge"
+    val expectedTitle = "Y swm na wnaeth arwain at ordal"
     val expectedErrorTitle = s"Gwall: $expectedTitle"
     val hintText = "Er enghraifft, £193.52"
-    val noEntryErrorMessage = "Enter the total amount of unauthorised payment that did not result in a surcharge"
+    val noEntryErrorMessage = "Nodwch gyfanswm y taliadau heb awdurdod na wnaethant arwain at ordal"
     val invalidFormatErrorText = "Nodwch y cyfanswm yn y fformat cywir"
     val maxAmountErrorText = "Mae’n rhaid i’r cyfanswm fod yn llai na £100,000,000,000"
     val buttonText = "Yn eich blaen"
