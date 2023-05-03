@@ -68,10 +68,10 @@ class AboveAnnualLifetimeAllowanceControllerISpec extends IntegrationTest with B
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
-    val expectedTitle = "Have you gone above your lifetime allowance?"
+    val expectedTitle = "Ydych chi wedi mynd dros eich lwfans oes?"
     val expectedParagraph = "Byddai’ch darparwyr pensiwn wedi rhoi gwybod i chi pe baech yn mynd dros eich lwfans oes."
     val expectedErrorTitle = s"Gwall: $expectedTitle"
-    val expectedError = "Select yes if you have gone above your lifetime allowance"
+    val expectedError = "Dewiswch ‘Iawn’ os ydych wedi mynd yn uwch na’ch lwfans oes"
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
@@ -82,10 +82,10 @@ class AboveAnnualLifetimeAllowanceControllerISpec extends IntegrationTest with B
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
-    val expectedTitle = "Has your client gone above their lifetime allowance?"
+    val expectedTitle = "A yw eich cleient wedi mynd dros ei lwfans oes?"
     val expectedParagraph = "Byddai darparwyr pensiwn eich cleient wedi rhoi gwybod iddo os oedd wedi mynd dros ei lwfans oes."
     val expectedErrorTitle = s"Gwall: $expectedTitle"
-    val expectedError = "Select yes if your client has gone above their lifetime allowance"
+    val expectedError = "Dewiswch ‘Iawn’ os yw’ch cleient wedi mynd yn uwch na’i lwfans oes"
   }
 
   object CommonExpectedEN extends CommonExpectedResults {
