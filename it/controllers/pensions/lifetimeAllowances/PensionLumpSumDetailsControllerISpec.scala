@@ -174,10 +174,10 @@ class PensionLumpSumDetailsControllerISpec extends IntegrationTest with ViewHelp
     val expectedTitle = "Cyfandaliad pensiwn eich cleient"
     val expectedErrorTitle = s"Gwall: $expectedTitle"
     val beforeTaxErrorNoEntry = "Nodwch y swm a gymerodd eich cleient sy’n uwch na’u lwfans oes fel cyfandaliad"
-    val taxPaidErrorNoEntry = "Nodwch swm y dreth lwfans oes a dalodd eich darparwr pensiwn neu a gytunwyd i dalu ar y cyfandaliad"
+    val taxPaidErrorNoEntry = "Nodwch swm y dreth lwfans oes a dalwyd gan ddarparwr pensiwn eich cleient, neu’r swm a gytunodd i’w dalu ar y cyfandaliad"
     val checkThisWithProviderParagraph = "Gall eich cleient wirio â’i ddarparwr pensiwn os nad ydych yn siŵr."
     val beforeTaxParagraph = "Os cafodd eich cleient gyfandaliad gan fwy nag un cynllun pensiwn, rhowch y cyfanswm."
-    val taxPaidParagraph = "Os cafodd eich cleient gyfandaliad gan fwy nag un cynllun pensiwn, rhowch y cyfanswm."
+    val taxPaidParagraph = "Os oedd mwy nag un o gynlluniau pensiwn eich cleient yn talu treth lwfans oes, rhowch y cyfanswm."
   }
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(
@@ -220,7 +220,7 @@ class PensionLumpSumDetailsControllerISpec extends IntegrationTest with ViewHelp
           inputFieldValueCheck(amount2InputName, amount2inputSelector, "")
         }
 
-        "render render Your pension lump sum details page with prefilled value for before tax and tax paid" which {
+        "render Your pension lump sum details page with prefilled value for before tax and tax paid" which {
           implicit lazy val result: WSResponse = {
             dropPensionsDB()
             val pensionsViewModel = aPensionLifetimeAllowanceViewModel.copy(
@@ -244,7 +244,7 @@ class PensionLumpSumDetailsControllerISpec extends IntegrationTest with ViewHelp
           inputFieldValueCheck(amount2InputName, amount2inputSelector, newAmount2.toString)
         }
 
-        "render render Your pension lump sum details page with prefilled value for before tax but not tax paid" which {
+        "render Your pension lump sum details page with prefilled value for before tax but not tax paid" which {
           implicit lazy val result: WSResponse = {
             dropPensionsDB()
             val pensionsViewModel = aPensionLifetimeAllowanceViewModel.copy(
@@ -268,7 +268,7 @@ class PensionLumpSumDetailsControllerISpec extends IntegrationTest with ViewHelp
           inputFieldValueCheck(amount2InputName, amount2inputSelector, newAmount2.toString)
         }
 
-        "render render Your pension lump sum details page with prefilled value for tax paid but not before tax" which {
+        "render Your pension lump sum details page with prefilled value for tax paid but not before tax" which {
           implicit lazy val result: WSResponse = {
             dropPensionsDB()
             val pensionsViewModel = aPensionLifetimeAllowanceViewModel.copy(
