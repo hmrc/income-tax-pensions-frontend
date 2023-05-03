@@ -54,6 +54,10 @@
   controllers.pensions.incomeFromPensions.routes.IncomeFromPensionsSummaryController.show(taxYear).url
 }
 
+@lifetimeAllowanceUrlRedirect() = @{
+    controllers.pensions.lifetimeAllowances.routes.AboveAnnualLifetimeAllowanceController.show(taxYear).url
+}
+
 @layout(pageTitle = headingForUse, taxYear = Some(taxYear), isAgent = request.user.isAgent) {
 
     @heading(
@@ -109,7 +113,7 @@
 
             <div class="govuk-summary-list__row" id="pension-lifetime-allowance-row">
                 <dt class="govuk-summary-list__key govuk-!-width-two-third">
-                @link("#", "pensions.pensionSummary.pensionLifetimeAllowance",Some("pension-lifetime-allowance-link"))
+                @link(lifetimeAllowanceUrlRedirect(), "pensions.pensionSummary.pensionLifetimeAllowance", Some("pension-lifetime-allowance-link"))
                 </dt>
                 <dd class="govuk-summary-list__actions govuk-!-two-third">
                 @if(pensionLifetimeAllowanceIsUpdated(cya)) {

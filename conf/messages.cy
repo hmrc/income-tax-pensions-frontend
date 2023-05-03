@@ -655,6 +655,19 @@ incomeFromPensions.schemeDetails.summary.pid = PID:
 incomeFromPensions.schemeDetails.summary.pay = Pay:
 incomeFromPensions.schemeDetails.summary.tax = Tax:
 
+#Uk Pension Income Summary page
+incomeFromPensions.schemeDetails.summary.title = Check pension scheme details
+incomeFromPensions.schemeDetails.summary.details = Scheme details
+incomeFromPensions.schemeDetails.summary.details.hidden = Change scheme details
+incomeFromPensions.schemeDetails.summary.income = Pension income
+incomeFromPensions.schemeDetails.summary.income.hidden = Change pension income
+incomeFromPensions.schemeDetails.summary.date = Pension start date
+incomeFromPensions.schemeDetails.summary.date.hidden = Change pension start date
+incomeFromPensions.schemeDetails.summary.paye = PAYE:
+incomeFromPensions.schemeDetails.summary.pid = PID:
+incomeFromPensions.schemeDetails.summary.pay = Pay:
+incomeFromPensions.schemeDetails.summary.tax = Tax:
+
 #################       Lifetime Allowance       ########################################
 
 #Did you get paid your pension as a lump sum
@@ -664,10 +677,11 @@ lifetimeAllowance.pensionLumpSum.error.noEntry.individual = Select yes if you to
 lifetimeAllowance.pensionLumpSum.error.noEntry.agent = Select yes if your client took the amount above their lifetime allowance as a lump sum
 
 #Have you gone above your annual or lifetime allowance?
-lifetimeAllowance.aboveAnnualLifeTimeAllowance.title.individual = Have you gone above your annual or lifetime allowance?
-lifetimeAllowance.aboveAnnualLifeTimeAllowance.title.agent = Has your client gone above their annual or lifetime allowance?
-lifetimeAllowance.aboveAnnualLifeTimeAllowance.error.noEntry.individual = Select yes if you have gone above your lifetime allowance
-lifetimeAllowance.aboveAnnualLifeTimeAllowance.error.noEntry.agent = Select yes if your client has gone above their lifetime allowance
+lifetimeAllowance.aboveAnnualLifetimeAllowance.title.individual = Have you gone above your lifetime allowance?
+lifetimeAllowance.aboveAnnualLifetimeAllowance.title.agent = Has your client gone above their lifetime allowance?
+lifetimeAllowance.aboveAnnualLifetimeAllowance.link = Find out more about lifetime allowance (opens in new tab)
+lifetimeAllowance.aboveAnnualLifetimeAllowance.error.noEntry.individual = Select yes if you have gone above your lifetime allowance
+lifetimeAllowance.aboveAnnualLifetimeAllowance.error.noEntry.agent = Select yes if your client has gone above their lifetime allowance
 
 #Annual Lifetime Allowance Gateway
 annualAndLifetimeAllowance.gateway.title.individual = A ydych wedi mynd yn uwch na’ch lwfans blynyddol neu lwfans oes?
@@ -676,17 +690,17 @@ annualAndLifetimeAllowance.gateway.line1.individual = Byddai’ch darparwyr pens
 annualAndLifetimeAllowance.gateway.line1.agent = Byddai darparwyr pensiwn eich cleient wedi rhoi gwybod iddo os oedd wedi mynd dros ei lwfans oes.
 annualAndLifetimeAllowance.gateway.line2 = Dysgwch ragor am lwfans oes
 annualAndLifetimeAllowance.gateway.line3.end = os oes angen i chi gyfrifo’ch lwfans blynyddol
-AnnualAndLifetimeAllowance.gateway.error.agent = Dewiswch ‘Iawn’ os yw’ch cleient wedi mynd dros ei lwfans blynyddol neu lwfans oes
-AnnualAndLifetimeAllowance.gateway.error.individual = Dewiswch ‘Iawn’ os ydych wedi mynd yn uwch na’ch lwfans blynyddol neu lwfans oes
+annualAndLifetimeAllowance.gateway.error.agent = Dewiswch ‘Iawn’ os yw’ch cleient wedi mynd dros ei lwfans blynyddol neu lwfans oes
+annualAndLifetimeAllowance.gateway.error.individual = Dewiswch ‘Iawn’ os ydych wedi mynd yn uwch na’ch lwfans blynyddol neu lwfans oes
 
 #Did you take the amount above your lifetime allowance another way
-lifetimeAllowance.lifeTimeAllowanceAnotherWay.tittle.individual = Did you take the amount above your lifetime allowance another way?
-lifetimeAllowance.lifeTimeAllowanceAnotherWay.tittle.agent = Did your client take the amount above their lifetime allowance another way?
-lifetimeAllowance.lifeTimeAllowanceAnotherWay.paragraph.line1 = Do not tell us about lump sums.
-lifetimeAllowance.lifeTimeAllowanceAnotherWay.paragraph.line2.individual = Tell us about any amount you’ve taken above your lifetime allowance in other ways. This could be regular payments or a cash withdrawal
-lifetimeAllowance.lifeTimeAllowanceAnotherWay.paragraph.line2.agent = Tell us about any amount your client has taken above their lifetime allowance in other ways. This could be regular payments or a cash withdrawal
-lifetimeAllowance.lifeTimeAllowanceAnotherWay.error.noEntry.individual = Select yes if you took the amount above your lifetime allowance in another way
-lifetimeAllowance.lifeTimeAllowanceAnotherWay.error.noEntry.agent = Select yes if your client took the amount above their lifetime allowance in another way
+lifetimeAllowance.lifetimeAllowanceAnotherWay.title.individual = Did you take the amount above your lifetime allowance another way?
+lifetimeAllowance.lifetimeAllowanceAnotherWay.title.agent = Did your client take the amount above their lifetime allowance another way?
+lifetimeAllowance.lifetimeAllowanceAnotherWay.paragraph.line1 = Do not tell us about lump sums.
+lifetimeAllowance.lifetimeAllowanceAnotherWay.paragraph.line2.individual = Tell us about any amount you’ve taken above your lifetime allowance in other ways. This could be regular payments or a cash withdrawal
+lifetimeAllowance.lifetimeAllowanceAnotherWay.paragraph.line2.agent = Tell us about any amount your client has taken above their lifetime allowance in other ways. This could be regular payments or a cash withdrawal
+lifetimeAllowance.lifetimeAllowanceAnotherWay.error.noEntry.individual = Select yes if you took the amount above your lifetime allowance in another way
+lifetimeAllowance.lifetimeAllowanceAnotherWay.error.noEntry.agent = Select yes if your client took the amount above their lifetime allowance in another way
 
 #Pension Lump Sum Details
 lifetimeAllowance.pensionLumpSumDetails.title.individual = Your pension lump sum

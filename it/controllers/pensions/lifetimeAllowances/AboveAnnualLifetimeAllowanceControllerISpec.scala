@@ -27,11 +27,12 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.PensionLifetimeAllowance.pensionAboveAnnualLifetimeAllowanceUrl
-import utils.PageUrls.{fullUrl, pensionSummaryUrl}
+import utils.PageUrls.PensionAnnualAllowancePages.reducedAnnualAllowanceUrl
+import utils.PageUrls.PensionLifetimeAllowance.{checkAnnualLifetimeAllowanceCYA, pensionAboveAnnualLifetimeAllowanceUrl}
+import utils.PageUrls.fullUrl
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
-class AboveAnnualLifeTimeAllowanceControllerISpec extends IntegrationTest with BeforeAndAfterEach with ViewHelpers with PensionsDatabaseHelper {
+class AboveAnnualLifetimeAllowanceControllerISpec extends IntegrationTest with BeforeAndAfterEach with ViewHelpers with PensionsDatabaseHelper {
 
   object Selectors {
     val captionSelector: String = "#main-content > div > div > header > p"
@@ -39,13 +40,14 @@ class AboveAnnualLifeTimeAllowanceControllerISpec extends IntegrationTest with B
     val formSelector: String = "#main-content > div > div > form"
     val yesSelector = "#value"
     val noSelector = "#value-no"
-    val taxReliefLinkSelector = "#aboveAnnualLifeTimeAllowance-link"
-    val calculatorParagraphSelector = "#main-content > div > div > p"
+    val taxReliefLinkSelector = "#aboveAnnualLifetimeAllowance-link"
+    val paragraphSelector = "#main-content > div > div > p"
   }
 
   trait SpecificExpectedResults {
     val expectedTitle: String
-    lazy val expectedHeading = expectedTitle
+    lazy val expectedHeading: String = expectedTitle
+    val expectedParagraph: String
     val expectedErrorTitle: String
     val expectedError: String
   }
@@ -55,30 +57,33 @@ class AboveAnnualLifeTimeAllowanceControllerISpec extends IntegrationTest with B
     val expectedButtonText: String
     val yesText: String
     val noText: String
-    val calculateExpectedParagraphText: String
-    val expectedLinkText: String
+    val infoLinkText: String
   }
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
-    val expectedTitle = "Have you gone above your annual or lifetime allowance?"
+    val expectedTitle = "Have you gone above your lifetime allowance?"
+    val expectedParagraph = "Your pension providers would have told you if you went above your lifetime allowance."
     val expectedErrorTitle = s"Error: $expectedTitle"
     val expectedError = "Select yes if you have gone above your lifetime allowance"
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
-    val expectedTitle = "Have you gone above your annual or lifetime allowance?"
+    val expectedTitle = "Have you gone above your lifetime allowance?"
+    val expectedParagraph = "Byddai’ch darparwyr pensiwn wedi rhoi gwybod i chi pe baech yn mynd dros eich lwfans oes."
     val expectedErrorTitle = s"Gwall: $expectedTitle"
     val expectedError = "Select yes if you have gone above your lifetime allowance"
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
-    val expectedTitle = "Has your client gone above their annual or lifetime allowance?"
+    val expectedTitle = "Has your client gone above their lifetime allowance?"
+    val expectedParagraph = "Your client’s pension providers would have told them if they went above their lifetime allowance."
     val expectedErrorTitle = s"Error: $expectedTitle"
     val expectedError = "Select yes if your client has gone above their lifetime allowance"
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
-    val expectedTitle = "Has your client gone above their annual or lifetime allowance?"
+    val expectedTitle = "Has your client gone above their lifetime allowance?"
+    val expectedParagraph = "Byddai darparwyr pensiwn eich cleient wedi rhoi gwybod iddo os oedd wedi mynd dros ei lwfans oes."
     val expectedErrorTitle = s"Gwall: $expectedTitle"
     val expectedError = "Select yes if your client has gone above their lifetime allowance"
   }
@@ -88,8 +93,7 @@ class AboveAnnualLifeTimeAllowanceControllerISpec extends IntegrationTest with B
     val expectedButtonText = "Continue"
     val yesText = "Yes"
     val noText = "No"
-    val calculateExpectedParagraphText = "Use a calculator if you need to work this out (opens in new tab)."
-    val expectedLinkText = "if you need to work this out (opens in new tab)"
+    val infoLinkText = "Find out more about lifetime allowance (opens in new tab)"
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
@@ -97,8 +101,7 @@ class AboveAnnualLifeTimeAllowanceControllerISpec extends IntegrationTest with B
     val expectedButtonText = "Yn eich blaen"
     val yesText = "Iawn"
     val noText = "Na"
-    val calculateExpectedParagraphText = "Defnyddiwch gyfrifiannell os bydd angen i chi gyfrifo hyn (yn agor tab newydd)."
-    val expectedLinkText = "os bydd angen i chi gyfrifo hyn (yn agor tab newydd)"
+    val infoLinkText = "Find out more about lifetime allowance (opens in new tab)"
   }
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(
@@ -108,7 +111,7 @@ class AboveAnnualLifeTimeAllowanceControllerISpec extends IntegrationTest with B
     UserScenario(isWelsh = true, isAgent = true, CommonExpectedCY, Some(ExpectedAgentCY))
   )
 
-  val linkHref = "https://www.tax.service.gov.uk/pension-annual-allowance-calculator"
+  val linkHref = "https://www.gov.uk/tax-on-your-private-pension/lifetime-allowance"
 
   ".show" should {
     userScenarios.foreach { user =>
@@ -117,7 +120,19 @@ class AboveAnnualLifeTimeAllowanceControllerISpec extends IntegrationTest with B
         import Selectors._
         import user.commonExpectedResults._
 
-        "render the 'Have you gone above your annual or lifetime allowance?' page with correct content and no pre-filling" which {
+        def commonContent(implicit document: () => Document): Unit = {
+          titleCheck(user.specificExpectedResults.get.expectedTitle, user.isWelsh)
+          h1Check(user.specificExpectedResults.get.expectedHeading)
+          textOnPageCheck(user.specificExpectedResults.get.expectedParagraph, paragraphSelector)
+          textOnPageCheck(infoLinkText, taxReliefLinkSelector)
+          linkCheck(infoLinkText, taxReliefLinkSelector, linkHref)
+          captionCheck(expectedCaption(taxYearEOY), captionSelector)
+          buttonCheck(expectedButtonText, continueButtonSelector)
+          formPostLinkCheck(pensionAboveAnnualLifetimeAllowanceUrl(taxYearEOY), formSelector)
+          welshToggleCheck(user.isWelsh)
+        }
+
+        "render the 'Have you gone above your lifetime allowance?' page with correct content and no pre-filling" which {
           implicit lazy val result: WSResponse = {
             authoriseAgentOrIndividual(user.isAgent)
             dropPensionsDB()
@@ -132,19 +147,12 @@ class AboveAnnualLifeTimeAllowanceControllerISpec extends IntegrationTest with B
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(user.specificExpectedResults.get.expectedTitle, user.isWelsh)
-          h1Check(user.specificExpectedResults.get.expectedHeading)
-          textOnPageCheck(calculateExpectedParagraphText, calculatorParagraphSelector)
-          linkCheck(expectedLinkText, taxReliefLinkSelector, linkHref)
-          captionCheck(expectedCaption(taxYearEOY), captionSelector)
+          commonContent
           radioButtonCheck(yesText, 1, checked = Some(false))
           radioButtonCheck(noText, 2, checked = Some(false))
-          buttonCheck(expectedButtonText, continueButtonSelector)
-          formPostLinkCheck(pensionAboveAnnualLifetimeAllowanceUrl(taxYearEOY), formSelector)
-          welshToggleCheck(user.isWelsh)
         }
 
-        "render the 'Have you gone above your annual or lifetime allowance?' page with correct content and yes pre-filled" which {
+        "render the 'Have you gone above your lifetime allowance?' page with correct content and yes pre-filled" which {
 
           implicit lazy val result: WSResponse = {
             dropPensionsDB()
@@ -163,19 +171,12 @@ class AboveAnnualLifeTimeAllowanceControllerISpec extends IntegrationTest with B
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(user.specificExpectedResults.get.expectedTitle, user.isWelsh)
-          h1Check(user.specificExpectedResults.get.expectedHeading)
-          textOnPageCheck(calculateExpectedParagraphText, calculatorParagraphSelector)
-          linkCheck(expectedLinkText, taxReliefLinkSelector, linkHref)
-          captionCheck(expectedCaption(taxYearEOY), captionSelector)
+          commonContent
           radioButtonCheck(yesText, 1, checked = Some(true))
           radioButtonCheck(noText, 2, checked = Some(false))
-          buttonCheck(expectedButtonText, continueButtonSelector)
-          formPostLinkCheck(pensionAboveAnnualLifetimeAllowanceUrl(taxYearEOY), formSelector)
-          welshToggleCheck(user.isWelsh)
         }
 
-        "render the 'Have you gone above your annual or lifetime allowance?' page with correct content and no pre-filled" which {
+        "render the 'Have you gone above your lifetime allowance?' page with correct content and no pre-filled" which {
 
           implicit lazy val result: WSResponse = {
             dropPensionsDB()
@@ -195,21 +196,14 @@ class AboveAnnualLifeTimeAllowanceControllerISpec extends IntegrationTest with B
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(user.specificExpectedResults.get.expectedTitle, user.isWelsh)
-          h1Check(user.specificExpectedResults.get.expectedHeading)
-          textOnPageCheck(calculateExpectedParagraphText, calculatorParagraphSelector)
-          linkCheck(expectedLinkText, taxReliefLinkSelector, linkHref)
-          captionCheck(expectedCaption(taxYearEOY), captionSelector)
+          commonContent
           radioButtonCheck(yesText, 1, checked = Some(false))
           radioButtonCheck(noText, 2, checked = Some(true))
-          buttonCheck(expectedButtonText, continueButtonSelector)
-          formPostLinkCheck(pensionAboveAnnualLifetimeAllowanceUrl(taxYearEOY), formSelector)
-          welshToggleCheck(user.isWelsh)
         }
       }
     }
 
-    "redirect to Pensions Summary page if there is no session data" should {
+    "redirect to CYA page if there is no session data" should {
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(isAgent = false)
@@ -219,8 +213,7 @@ class AboveAnnualLifeTimeAllowanceControllerISpec extends IntegrationTest with B
 
       "has an SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER
-        //TODO - redirect to CYA page once implemented
-        result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
+        result.header("location") shouldBe Some(checkAnnualLifetimeAllowanceCYA(taxYearEOY))
       }
     }
   }
@@ -245,12 +238,15 @@ class AboveAnnualLifeTimeAllowanceControllerISpec extends IntegrationTest with B
           }
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
+
           import Selectors._
           import user.commonExpectedResults._
+
           titleCheck(user.specificExpectedResults.get.expectedErrorTitle, user.isWelsh)
           h1Check(user.specificExpectedResults.get.expectedHeading)
-          textOnPageCheck(calculateExpectedParagraphText, calculatorParagraphSelector)
-          linkCheck(expectedLinkText, taxReliefLinkSelector, linkHref)
+          textOnPageCheck(user.specificExpectedResults.get.expectedParagraph, paragraphSelector)
+          textOnPageCheck(infoLinkText, taxReliefLinkSelector)
+          linkCheck(infoLinkText, taxReliefLinkSelector, linkHref)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           radioButtonCheck(yesText, 1, checked = Some(false))
           radioButtonCheck(noText, 2, checked = Some(false))
@@ -264,7 +260,7 @@ class AboveAnnualLifeTimeAllowanceControllerISpec extends IntegrationTest with B
       }
     }
 
-    "redirect and update question to 'Yes' when there is currently no radio button value selected and the user selects 'Yes'" which {
+    "redirect to Reduced Annual Allowance page and update question to 'Yes' when there is currently no radio button value selected and the user selects 'Yes'" which {
       lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.yes)
 
       lazy val result: WSResponse = {
@@ -282,8 +278,7 @@ class AboveAnnualLifeTimeAllowanceControllerISpec extends IntegrationTest with B
 
       "has a SEE_OTHER(303) status and redirect Do you have a reduced annual allowance page" in {
         result.status shouldBe SEE_OTHER
-        //TODO redirect page to "Do you have a reduced annual allowance?" Page
-        result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
+        result.header("location") shouldBe Some(reducedAnnualAllowanceUrl(taxYearEOY))
       }
 
       "updates aboveLifetimeAllowanceQuestion to Some(true)" in {
@@ -297,7 +292,7 @@ class AboveAnnualLifeTimeAllowanceControllerISpec extends IntegrationTest with B
       }
     }
 
-    "redirect and update question to 'No' when there is currently no radio button value selected and the user selects 'No'" which {
+    "redirect to CYA page and update question to 'No' when there is currently no radio button value selected and the user selects 'No'" which {
       lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.no)
 
       lazy val result: WSResponse = {
@@ -315,8 +310,7 @@ class AboveAnnualLifeTimeAllowanceControllerISpec extends IntegrationTest with B
 
       "has a SEE_OTHER(303) status and redirect to the lifetime allowances CYA Page" in {
         result.status shouldBe SEE_OTHER
-        //TODO redirect page to the Annual and lifetime allowances CYA Page
-        result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
+        result.header("location") shouldBe Some(checkAnnualLifetimeAllowanceCYA(taxYearEOY))
       }
 
       "updates aboveLifetimeAllowanceQuestion to Some(false) and clear the rest of the annual lifetime allowance data" in {
@@ -325,12 +319,12 @@ class AboveAnnualLifeTimeAllowanceControllerISpec extends IntegrationTest with B
         cyaModel.pensions.pensionLifetimeAllowances.pensionAsLumpSumQuestion shouldBe None
         cyaModel.pensions.pensionLifetimeAllowances.pensionAsLumpSum shouldBe None
         cyaModel.pensions.pensionLifetimeAllowances.pensionPaidAnotherWayQuestion shouldBe None
-        cyaModel.pensions.pensionLifetimeAllowances.pensionPaidAnotherWay shouldBe LifetimeAllowance(None,None)
+        cyaModel.pensions.pensionLifetimeAllowances.pensionPaidAnotherWay shouldBe LifetimeAllowance(None, None)
 
       }
     }
 
-    "redirect to Pensions Summary page if there is no session data" should {
+    "redirect to CYA page if there is no session data" should {
       lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.no)
       lazy val result: WSResponse = {
         dropPensionsDB()
@@ -342,11 +336,9 @@ class AboveAnnualLifeTimeAllowanceControllerISpec extends IntegrationTest with B
 
       "has an SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER
-        //TODO - redirect to CYA page once implemented
-        result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
+        result.header("location") shouldBe Some(checkAnnualLifetimeAllowanceCYA(taxYearEOY))
       }
     }
-
 
   }
 

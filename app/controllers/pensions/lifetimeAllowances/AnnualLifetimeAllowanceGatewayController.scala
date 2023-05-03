@@ -42,7 +42,7 @@ class AnnualLifetimeAllowanceGatewayController @Inject()(authAction: AuthorisedA
   extends FrontendController(cc) with I18nSupport with SessionHelper {
 
   def annualLifetimeAllowanceForm(isAgent: Boolean): Form[Boolean] = YesNoForm.yesNoForm(
-    missingInputError = s"AnnualAndLifetimeAllowance.gateway.error.${if (isAgent) "agent" else "individual"}"
+    missingInputError = s"annualAndLifetimeAllowance.gateway.error.${if (isAgent) "agent" else "individual"}"
   )
 
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async {

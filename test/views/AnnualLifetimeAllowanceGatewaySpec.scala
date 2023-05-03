@@ -114,7 +114,7 @@ class AnnualLifetimeAllowanceGatewaySpec extends ViewUnitTest {
   userScenarios.foreach { userScenario =>
 
     val form = YesNoForm.yesNoForm(
-      missingInputError = s"AnnualAndLifetimeAllowance.gateway.error.${if (userScenario.isAgent) "agent" else "individual"}"
+      missingInputError = s"annualAndLifetimeAllowance.gateway.error.${if (userScenario.isAgent) "agent" else "individual"}"
     )
 
     s"language is ${welshTest(userScenario.isWelsh)} and request is from an ${agentTest(userScenario.isAgent)}" should {
