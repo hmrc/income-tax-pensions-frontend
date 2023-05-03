@@ -38,10 +38,8 @@ class OverseasTransferChargePaidControllerISpec
         "the user has no stored session data at all" in {
 
           val response = getPage(None)
-
           response must haveStatus(SEE_OTHER)
-          response must haveALocationHeaderValue(PageRelativeURLs.overseasPensionsSummary)
-
+          response must haveALocationHeaderValue(PageRelativeURLs.pensionsSummaryPage)
         }
 
         "appear as expected" when {

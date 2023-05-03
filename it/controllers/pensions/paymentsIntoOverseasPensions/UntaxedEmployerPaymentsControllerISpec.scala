@@ -34,7 +34,7 @@ class UntaxedEmployerPaymentsControllerISpec extends ControllerSpec("/overseas-p
         "the user has no stored session data at all" in {
           implicit val userConfig: UserConfig = userConfigWhenIrrelevant(None)
           implicit val response: WSResponse = getPageWithIndex()
-          assertRedirectionAsExpected(PageRelativeURLs.overseasPensionsSummary)
+          assertRedirectionAsExpected(PageRelativeURLs.pensionsSummaryPage)
         }
       }
 

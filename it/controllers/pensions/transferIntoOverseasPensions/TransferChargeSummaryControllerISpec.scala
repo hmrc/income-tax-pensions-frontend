@@ -27,13 +27,12 @@ import play.api.http.HeaderNames
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import utils.PageUrls.TransferIntoOverseasPensions.{checkYourDetailsPensionUrl, overseasTransferChargePaidUrl, overseasTransferChargePaidUrlNoIndex, removeTransferChargeScheme, transferChargeSummaryUrl}
-import utils.PageUrls.{fullUrl, overseasPensionsSummaryUrl}
+import utils.PageUrls.{fullUrl, overseasPensionsSummaryUrl, pensionSummaryUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 // scalastyle:off magic.number
 class TransferChargeSummaryControllerISpec extends IntegrationTest with BeforeAndAfterEach with ViewHelpers with PensionsDatabaseHelper {
-
-  val urlPrefix = s"/update-and-submit-income-tax-return/pensions/$taxYearEOY/"
+  
   object Selectors {
     val captionSelector: String = "#main-content > div > div > header > p"
     val addAnotherLinkSelector = "#add-another-pension-link"
@@ -106,9 +105,7 @@ class TransferChargeSummaryControllerISpec extends IntegrationTest with BeforeAn
       s"language is ${welshTest(user.isWelsh)} and request is from an ${agentTest(user.isAgent)}" should {
         import Selectors._
         import user.commonExpectedResults._
-
-
-
+        
         "render the 'overseas transfer charge' summary list page with pre-filled content" which {
           val pensionScheme = TransferPensionScheme(ukTransferCharge = Some(true), name = Some("Pension Scheme 1"))
           val pensionScheme2 = TransferPensionScheme(ukTransferCharge = Some(true), name = Some("Pension Scheme 2"))
@@ -222,7 +219,7 @@ class TransferChargeSummaryControllerISpec extends IntegrationTest with BeforeAn
 
       "have a SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(overseasPensionsSummaryUrl(taxYearEOY))
+        result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
       }
     }
   }

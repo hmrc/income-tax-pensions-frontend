@@ -37,13 +37,11 @@ object PaymentsIntoPensionsCYASpec {
   private val taxYear: Int = if (dateNow.isAfter(taxYearCutoffDate)) LocalDate.now().getYear + 1 else LocalDate.now().getYear
 
   val cyaDataMinimal: PaymentsIntoPensionViewModel = PaymentsIntoPensionViewModel(
-    gateway = Some(true),
     rasPensionPaymentQuestion = Some(false),
     pensionTaxReliefNotClaimedQuestion = Some(false)
   )
 
   object ChangeLinks {
-    val paymentsIntoUKPensions: String = controllers.pensions.paymentsIntoPensions.routes.PaymentsIntoPensionsStatusController.show(taxYear).url
     val reliefAtSource: String = controllers.pensions.paymentsIntoPensions.routes.ReliefAtSourcePensionsController.show(taxYear).url
     val reliefAtSourceAmount: String = controllers.pensions.paymentsIntoPensions.routes.ReliefAtSourcePaymentsAndTaxReliefAmountController.show(taxYear).url
     val oneOff: String = controllers.pensions.paymentsIntoPensions.routes.ReliefAtSourceOneOffPaymentsController.show(taxYear).url

@@ -43,15 +43,4 @@ class PensionSchemeSummaryController @Inject()(view: PensionSchemeSummaryView,
         case _ => Redirect(PensionsSummaryController.show(taxYear))
       }
   }
-
-  def submit(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) {
-    implicit userSessionDataRequest =>
-      val pensionIncomesList: Seq[UkPensionIncomeViewModel] = userSessionDataRequest.pensionsUserData.pensions.incomeFromPensions.uKPensionIncomes
-      validatedIndex(pensionSchemeIndex,pensionIncomesList.size) match {
-        case Some(_) =>
-          Redirect(routes.PensionSchemeSummaryController.show(taxYear, pensionSchemeIndex))  //TODO: Redirect to the Pensions schemes List page
-        case _ =>
-          Redirect(PensionsSummaryController.show(taxYear))
-      }
-  }
 }

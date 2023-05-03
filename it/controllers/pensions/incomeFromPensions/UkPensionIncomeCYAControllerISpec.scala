@@ -70,7 +70,7 @@ class UkPensionIncomeCYAControllerISpec extends IntegrationTest with ViewHelpers
   }
 
   object CommonExpectedEN extends CommonExpectedResults {
-    val expectedTitle = "Check income from pensions"
+    val expectedTitle = "Check UK Pension Income"
     val expectedCaption: Int => String = (taxYear: Int) =>  s"UK pension income for 6 April ${taxYear - 1} to 5 April $taxYear"
     val buttonText = "Continue"
     val yesText = "Yes"

@@ -23,7 +23,7 @@
 
 @this(layout: Layout, heading: Heading, govUkButton: GovukButton, formWithCSRF: FormWithCSRF, link:Link)
 
-@(taxYear: Int, cya: Option[PensionsCYAModel],prior: Option[AllPensionsData])(implicit request: AuthorisationRequest[_], messages: Messages, appConfig: AppConfig)
+@(taxYear: Int, cya: Option[PensionsCYAModel], prior: Option[AllPensionsData])(implicit request: AuthorisationRequest[_], messages: Messages, appConfig: AppConfig)
 
 
 @paymentsOverseasPensionsUrl() = @{

@@ -34,7 +34,7 @@ import services.PensionSessionService
 import utils.PageUrls.PaymentIntoPensions.{checkPaymentsIntoPensionCyaUrl, reliefAtSourcePensionsUrl}
 import utils.PageUrls._
 import utils.PageUrls.unauthorisedPaymentsPages.{checkUnauthorisedPaymentsCyaUrl, unauthorisedPaymentsUrl}
-import utils.PageUrls.IncomeFromPensionsPages.ukPensionincomeSummaryUrl
+import utils.PageUrls.IncomeFromPensionsPages.pensionIncomeSummaryUrl
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 class PensionsSummaryControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper with Injecting {
@@ -152,7 +152,7 @@ class PensionsSummaryControllerISpec extends IntegrationTest with ViewHelpers wi
           "has an income from pensions section" which {
             //TODO: Change to use the href below when income From Pensions cya page available
             //linkCheck("Income from pensions", incomeFromPensionsLink, checkIncomeFromPensionCyaUrl(taxYear))
-            linkCheck(incomeLinkText, incomeFromPensionsLink, ukPensionincomeSummaryUrl(taxYear))
+            linkCheck(incomeLinkText, incomeFromPensionsLink, pensionIncomeSummaryUrl(taxYear))
             textOnPageCheck(updated, summaryListStatusTagSelector(2))
           }
 
@@ -209,7 +209,7 @@ class PensionsSummaryControllerISpec extends IntegrationTest with ViewHelpers wi
           "has an income from pensions section" which {
             //TODO: Change to use the href below when income From Pensions cya page available
             //linkCheck(incomeLinkText, incomeFromPensionsLink, checkIncomeFromPensionCyaUrl(taxYear))
-            linkCheck(incomeLinkText, incomeFromPensionsLink, ukPensionincomeSummaryUrl(taxYear))
+            linkCheck(incomeLinkText, incomeFromPensionsLink, pensionIncomeSummaryUrl(taxYear))
             textOnPageCheck(updated, summaryListStatusTagSelector(2))
           }
 
@@ -271,7 +271,7 @@ class PensionsSummaryControllerISpec extends IntegrationTest with ViewHelpers wi
           "has an income from pensions section" which {
             //TODO: Change to use the href below when income From Pensions cya page available
             //linkCheck(incomeLinkText, incomeFromPensionsLink, checkIncomeFromPensionCyaUrl(taxYear))
-            linkCheck(incomeLinkText, incomeFromPensionsLink, ukPensionincomeSummaryUrl(taxYear))
+            linkCheck(incomeLinkText, incomeFromPensionsLink, pensionIncomeSummaryUrl(taxYear))
             textOnPageCheck(toDo, summaryListStatusTagSelector(2))
           }
 
@@ -324,9 +324,7 @@ class PensionsSummaryControllerISpec extends IntegrationTest with ViewHelpers wi
           }
 
           "has an income from pensions section" which {
-            //TODO: Change to use the href below when income From Pensions cya page available
-            //linkCheck(incomeLinkText, incomeFromPensionsLink, checkIncomeFromPensionCyaUrl(taxYear))
-            linkCheck(incomeLinkText, incomeFromPensionsLink, ukPensionincomeSummaryUrl(taxYear))
+            linkCheck(incomeLinkText, incomeFromPensionsLink, pensionIncomeSummaryUrl(taxYear))
             textOnPageCheck(updated, summaryListStatusTagSelector(2))
           }
 
@@ -381,7 +379,7 @@ class PensionsSummaryControllerISpec extends IntegrationTest with ViewHelpers wi
           "has an income from pensions section" which {
             //TODO: Change to use the href below when income From Pensions cya page available
             //linkCheck(incomelinkText, incomeFromPensionsLink, checkIncomeFromPensionCyaUrl(taxYear))
-            linkCheck(incomeLinkText, incomeFromPensionsLink, ukPensionincomeSummaryUrl(taxYear))
+            linkCheck(incomeLinkText, incomeFromPensionsLink, pensionIncomeSummaryUrl(taxYear))
             textOnPageCheck(updated, summaryListStatusTagSelector(2))
           }
 

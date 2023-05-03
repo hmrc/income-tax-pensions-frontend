@@ -17,13 +17,14 @@
 @import views.html.templates.Layout
 @import views.html.templates.helpers.Heading
 @import views.html.templates.helpers.Link
+@import models.mongo.PensionsCYAModel
 @import models.pension.AllPensionsData
 @import utils.StatusHelper._
 
 
 @this(layout: Layout, heading: Heading, govUkButton: GovukButton, formWithCSRF: FormWithCSRF, link:Link)
 
-@(taxYear: Int, prior: Option[AllPensionsData])(implicit request: AuthorisationRequest[_], messages: Messages, appConfig: AppConfig)
+@(taxYear: Int, cya: Option[PensionsCYAModel], prior: Option[AllPensionsData])(implicit request: AuthorisationRequest[_], messages: Messages, appConfig: AppConfig)
 
 @headingForUse = @{
     messages(s"pensions.pensionSummary.heading")
@@ -50,7 +51,7 @@
 }
 
 @incomeFromPensionUrlRedirect() = @{
-controllers.pensions.incomeFromPensions.routes.IncomeFromPensionsSummaryController.show(taxYear).url
+  controllers.pensions.incomeFromPensions.routes.IncomeFromPensionsSummaryController.show(taxYear).url
 }
 
 @layout(pageTitle = headingForUse, taxYear = Some(taxYear), isAgent = request.user.isAgent) {
@@ -66,28 +67,28 @@ controllers.pensions.incomeFromPensions.routes.IncomeFromPensionsSummaryControll
 
             <div class="govuk-summary-list__row" id="payments-into-Pensions-row">
                 <dt class="govuk-summary-list__key govuk-!-width-two-third">
-                @link(paymentsIntoPensionUrlRedirect(), "pensions.pensionSummary.paymentsToPensions",Some("payments-into-pensions-link"))
+              @link(paymentsIntoPensionUrlRedirect(), "pensions.pensionSummary.paymentsToPensions",Some("payments-into-pensions-link"))
                 </dt>
                 <dd class="govuk-summary-list__actions govuk-!-two-third">
-                @if(paymentsIntoPensionsIsUpdated(prior)) {
+              @if(paymentsIntoPensionsIsUpdated(cya)) {
                     <strong class="govuk-tag">@messages("common.status.updated")</strong>
-                } else {
+              } else {
                     <strong class="govuk-tag govuk-tag--grey">@messages("common.status.toDo")</strong>
-                }
+              }
                 </dd>
 
             </div>
 
             <div class="govuk-summary-list__row" id="income-from-Pensions-row">
                 <dt class="govuk-summary-list__key govuk-!-width-two-third">
-                @link(incomeFromPensionUrlRedirect(), "pensions.pensionSummary.incomeFromPensions",Some("income-from-pensions-link"))
+              @link(incomeFromPensionUrlRedirect(), "pensions.pensionSummary.incomeFromPensions",Some("income-from-pensions-link"))
                 </dt>
                 <dd class="govuk-summary-list__actions govuk-!-two-third">
-                @if(incomeFromPensionsIsUpdated(prior)) {
+              @if(incomeFromPensionsIsUpdated(cya)) {
                     <strong class="govuk-tag">@messages("common.status.updated")</strong>
-                } else {
+              } else {
                     <strong class="govuk-tag govuk-tag--grey">@messages("common.status.toDo")</strong>
-                }
+              }
                 </dd>
 
             </div>
@@ -97,7 +98,7 @@ controllers.pensions.incomeFromPensions.routes.IncomeFromPensionsSummaryControll
                 @link("#", "pensions.pensionSummary.pensionAnnualAllowance",Some("pension-annual-allowance-link"))
                 </dt>
                 <dd class="govuk-summary-list__actions govuk-!-two-third">
-                @if(pensionFromAnnualAllowanceIsUpdated(prior)) {
+                @if(pensionFromAnnualAllowanceIsUpdated(cya)) {
                     <strong class="govuk-tag">@messages("common.status.updated")</strong>
                 } else {
                     <strong class="govuk-tag govuk-tag--grey">@messages("common.status.toDo")</strong>
@@ -111,7 +112,7 @@ controllers.pensions.incomeFromPensions.routes.IncomeFromPensionsSummaryControll
                 @link("#", "pensions.pensionSummary.pensionLifetimeAllowance",Some("pension-lifetime-allowance-link"))
                 </dt>
                 <dd class="govuk-summary-list__actions govuk-!-two-third">
-                @if(pensionLifetimeAllowanceIsUpdated(prior)) {
+                @if(pensionLifetimeAllowanceIsUpdated(cya)) {
                     <strong class="govuk-tag">@messages("common.status.updated")</strong>
                 } else {
                     <strong class="govuk-tag govuk-tag--grey">@messages("common.status.toDo")</strong>
@@ -124,7 +125,7 @@ controllers.pensions.incomeFromPensions.routes.IncomeFromPensionsSummaryControll
                 @link(unauthorisedPaymentsFromPensionsUrlRedirect(), "pensions.pensionSummary.unauthorisedPaymentsFromPensions",Some("unauthorised-payments-from-pensions-link"))
                 </dt>
                 <dd class="govuk-summary-list__actions govuk-!-two-third">
-                @if(unauthorisedPaymentsFromPensionsIsUpdated(prior)) {
+                @if(unauthorisedPaymentsFromPensionsIsUpdated(cya)) {
                     <strong class="govuk-tag">@messages("common.status.updated")</strong>
                 } else {
                     <strong class="govuk-tag govuk-tag--grey">@messages("common.status.toDo")</strong>
@@ -138,7 +139,7 @@ controllers.pensions.incomeFromPensions.routes.IncomeFromPensionsSummaryControll
                     @link(overseasPensionsSummaryUrlRedirect(), "pensions.pensionSummary.overseasPensionsSummary",Some("overseas-pensions-summary-link"))
                 </dt>
                 <dd class="govuk-summary-list__actions govuk-!-two-third">
-                  @if(overseasPensionsIsUpdated(prior)) {
+                  @if(overseasPensionsIsUpdated(cya)) {
                     <strong class="govuk-tag">@messages("common.status.updated")</strong>
                 } else {
                     <strong class="govuk-tag govuk-tag--grey">@messages("common.status.toDo")</strong>

@@ -40,19 +40,20 @@ class PensionsSummaryController @Inject()(implicit val mcc: MessagesControllerCo
                                            errorHandler: ErrorHandler,
                                            clock: Clock,
                                            ec: ExecutionContext,
-                                           pensionSummaryView: PensionsSummaryView) extends FrontendController(mcc) with I18nSupport {
+                                           pensionsSummaryView: PensionsSummaryView) extends FrontendController(mcc) with I18nSupport {
 
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
-    pensionSessionService.getAndHandle(taxYear, request.user) { (_, prior) =>
+    pensionSessionService.getAndHandle(taxYear, request.user) { (pensionsUserData, prior) =>
       pensionSessionService.getPensionSessionData(taxYear, request.user) flatMap {
         case Right(optPensionsUserData) => optPensionsUserData match {
-          case Some(_) =>
-            Future.successful(Ok(pensionSummaryView(taxYear, prior)))
+          case Some(pensionsUserData) =>
+            val cya = pensionsUserData.pensions
+            Future.successful(Ok(pensionsSummaryView(taxYear, Some(cya), prior)))
           case _ =>
-            val penCYAModel = prior.fold(PensionsCYAModel.emptyModels)(pr => AllPensionsData.generateCyaFromPrior(pr))
-            pensionSessionService.createOrUpdateSessionData(request.user, penCYAModel, taxYear,
+            val cya = prior.fold(PensionsCYAModel.emptyModels)(pr => AllPensionsData.generateCyaFromPrior(pr))
+            pensionSessionService.createOrUpdateSessionData(request.user, cya, taxYear,
                           isPriorSubmission = prior.isDefined)(errorHandler.handleError(INTERNAL_SERVER_ERROR)) {
-              Ok(pensionSummaryView(taxYear, prior))
+              Ok(pensionsSummaryView(taxYear, Some(cya), prior))
             }
         }
         case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))

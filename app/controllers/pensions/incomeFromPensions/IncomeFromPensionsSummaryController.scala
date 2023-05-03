@@ -16,8 +16,8 @@
 
 package controllers.pensions.incomeFromPensions
 
-import config.{AppConfig, ErrorHandler}
-import controllers.pensions.incomeFromPensions.routes.IncomeFromPensionsSummaryController
+import config.AppConfig
+import controllers.pensions.routes.PensionsSummaryController
 import controllers.predicates.AuthorisedAction
 import controllers.predicates.TaxYearAction.taxYearAction
 import play.api.i18n.I18nSupport
@@ -27,7 +27,6 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.pensions.incomeFromPensions.IncomeFromPensionsSummaryView
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
@@ -35,20 +34,13 @@ class IncomeFromPensionsSummaryController @Inject()(implicit val mcc: MessagesCo
                                                     appConfig: AppConfig,
                                                     authAction: AuthorisedAction,
                                                     pensionSessionService: PensionSessionService,
-                                                    errorHandler: ErrorHandler,
                                                     view: IncomeFromPensionsSummaryView
                                                     ) extends FrontendController(mcc) with I18nSupport{
 
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
-    pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
-      case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
-      case Right(optPensionUserData) => optPensionUserData match {
-        case Some(data) =>
-          Future.successful(Ok(view(taxYear, Some(data))))
-        case None =>
-          //TODO - redirect to CYA page once implemented
-          Future.successful(Redirect(IncomeFromPensionsSummaryController.show(taxYear)))
-      }
+    pensionSessionService.getAndHandle(taxYear, request.user) {
+      case (None,_) => Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
+      case (pensionsUserData, priorData) => Future.successful(Ok(view(taxYear, pensionsUserData.map(_.pensions), priorData)))
     }
   }
 }

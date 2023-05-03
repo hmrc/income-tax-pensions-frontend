@@ -42,33 +42,32 @@ object AllPensionsData {
 
     PensionsCYAModel(
       PaymentsIntoPensionViewModel(
-        Some(true),
-        rasPensionPaymentQuestion = prior.pensionReliefs.map(a => a.pensionReliefs.regularPensionContributions.isDefined),
-        totalRASPaymentsAndTaxRelief = prior.pensionReliefs.flatMap(a => a.pensionReliefs.regularPensionContributions),
-        oneOffRasPaymentPlusTaxReliefQuestion = prior.pensionReliefs.map(a => a.pensionReliefs.oneOffPensionContributionsPaid.isDefined),
-        totalOneOffRasPaymentPlusTaxRelief = prior.pensionReliefs.flatMap(a => a.pensionReliefs.oneOffPensionContributionsPaid),
+        rasPensionPaymentQuestion = prior.pensionReliefs.map(_.pensionReliefs.regularPensionContributions.isDefined),
+        totalRASPaymentsAndTaxRelief = prior.pensionReliefs.flatMap(_.pensionReliefs.regularPensionContributions),
+        oneOffRasPaymentPlusTaxReliefQuestion = prior.pensionReliefs.map(_.pensionReliefs.oneOffPensionContributionsPaid.isDefined),
+        totalOneOffRasPaymentPlusTaxRelief = prior.pensionReliefs.flatMap(_.pensionReliefs.oneOffPensionContributionsPaid),
         Some(true),
         pensionTaxReliefNotClaimedQuestion = prior.pensionReliefs.map(a =>
           a.pensionReliefs.retirementAnnuityPayments.isDefined || a.pensionReliefs.paymentToEmployersSchemeNoTaxRelief.isDefined
         ),
-        retirementAnnuityContractPaymentsQuestion = prior.pensionReliefs.map(a => a.pensionReliefs.retirementAnnuityPayments.isDefined),
-        totalRetirementAnnuityContractPayments = prior.pensionReliefs.flatMap(a => a.pensionReliefs.retirementAnnuityPayments),
-        workplacePensionPaymentsQuestion = prior.pensionReliefs.map(a => a.pensionReliefs.paymentToEmployersSchemeNoTaxRelief.isDefined),
-        totalWorkplacePensionPayments = prior.pensionReliefs.flatMap(a => a.pensionReliefs.paymentToEmployersSchemeNoTaxRelief)
+        retirementAnnuityContractPaymentsQuestion = prior.pensionReliefs.map(_.pensionReliefs.retirementAnnuityPayments.isDefined),
+        totalRetirementAnnuityContractPayments = prior.pensionReliefs.flatMap(_.pensionReliefs.retirementAnnuityPayments),
+        workplacePensionPaymentsQuestion = prior.pensionReliefs.map(_.pensionReliefs.paymentToEmployersSchemeNoTaxRelief.isDefined),
+        totalWorkplacePensionPayments = prior.pensionReliefs.flatMap(_.pensionReliefs.paymentToEmployersSchemeNoTaxRelief)
       ),
 
       PensionAnnualAllowancesViewModel(
-        reducedAnnualAllowanceQuestion = prior.pensionCharges.flatMap(a => a.pensionSavingsTaxCharges).map(_.isAnnualAllowanceReduced),
-        moneyPurchaseAnnualAllowance = prior.pensionCharges.flatMap(a => a.pensionSavingsTaxCharges).flatMap(_.moneyPurchasedAllowance),
-        taperedAnnualAllowance = prior.pensionCharges.flatMap(a => a.pensionSavingsTaxCharges).flatMap(_.taperedAnnualAllowance),
-        aboveAnnualAllowanceQuestion = prior.pensionCharges.map(a => a.pensionContributions.isDefined),
-        aboveAnnualAllowance = prior.pensionCharges.flatMap(a => a.pensionContributions).map(_.inExcessOfTheAnnualAllowance),
-        pensionProvidePaidAnnualAllowanceQuestion = prior.pensionCharges.flatMap(a => a.pensionContributions.map(x => x.annualAllowanceTaxPaid)) match {
+        reducedAnnualAllowanceQuestion = prior.pensionCharges.flatMap(_.pensionSavingsTaxCharges).map(_.isAnnualAllowanceReduced),
+        moneyPurchaseAnnualAllowance = prior.pensionCharges.flatMap(_.pensionSavingsTaxCharges).flatMap(_.moneyPurchasedAllowance),
+        taperedAnnualAllowance = prior.pensionCharges.flatMap(_.pensionSavingsTaxCharges).flatMap(_.taperedAnnualAllowance),
+        aboveAnnualAllowanceQuestion = prior.pensionCharges.map(_.pensionContributions.isDefined),
+        aboveAnnualAllowance = prior.pensionCharges.flatMap(_.pensionContributions).map(_.inExcessOfTheAnnualAllowance),
+        pensionProvidePaidAnnualAllowanceQuestion = prior.pensionCharges.flatMap(_.pensionContributions.map(x => x.annualAllowanceTaxPaid)) match {
           case Some(taxVal) if taxVal > 0 => Some(true)
           case _ => Some(false)
         },
-        taxPaidByPensionProvider = prior.pensionCharges.flatMap(a => a.pensionContributions).map(_.annualAllowanceTaxPaid),
-        pensionSchemeTaxReferences = prior.pensionCharges.flatMap(a => a.pensionContributions).map(_.pensionSchemeTaxReference)
+        taxPaidByPensionProvider = prior.pensionCharges.flatMap(_.pensionContributions).map(_.annualAllowanceTaxPaid),
+        pensionSchemeTaxReferences = prior.pensionCharges.flatMap(_.pensionContributions).map(_.pensionSchemeTaxReference)
       ),
 
       pensionLifetimeAllowances = PensionLifetimeAllowancesViewModel(
@@ -236,7 +235,7 @@ object AllPensionsData {
   private def getAboveLifetimeAllowanceQuestion(prior: AllPensionsData): Option[Boolean] = {
     if (prior.pensionCharges.flatMap(_.pensionSavingsTaxCharges).map(
       _.benefitInExcessOfLifetimeAllowance).isDefined || prior.pensionCharges.flatMap(
-      a => a.pensionSavingsTaxCharges).map(_.lumpSumBenefitTakenInExcessOfLifetimeAllowance).isDefined) {
+      _.pensionSavingsTaxCharges).map(_.lumpSumBenefitTakenInExcessOfLifetimeAllowance).isDefined) {
       Some(true)
     } else {
       None

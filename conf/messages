@@ -635,7 +635,7 @@ incomeFromPensions.pensionStartDate.error.tooLongAgo = The pension start date mu
 incomeFromPensions.removePensionScheme.buttonText = Remove pension
 
 #Uk Pension Income CYA page
-incomeFromPensions.title = Check income from pensions
+incomeFromPensions.title = Check UK Pension Income
 incomeFromPensions.paragraph.individual = Your income from pensions is based on the information we already hold about you.
 incomeFromPensions.paragraph.agent = Your client’s income from pensions is based on the information we already hold about them.
 incomeFromPensions.pensionIncome.hidden.individual = Change whether you got income from UK pensions

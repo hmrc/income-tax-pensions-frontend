@@ -18,6 +18,7 @@ package controllers.pensions.incomeFromPensions
 
 
 import builders.IncomeFromPensionsViewModelBuilder.anIncomeFromPensionsViewModel
+import builders.IncomeTaxUserDataBuilder.anIncomeTaxUserData
 import builders.PensionsUserDataBuilder.pensionsUserDataWithIncomeFromPensions
 import builders.StateBenefitViewModelBuilder.anStateBenefitViewModelOne
 import builders.UserBuilder.aUserRequest
@@ -28,7 +29,8 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import utils.CommonUtils
-import utils.PageUrls.IncomeFromPensionsPages.ukPensionincomeSummaryUrl
+import utils.PageUrls.IncomeFromPensionsPages.pensionIncomeSummaryUrl
+import utils.PageUrls.pensionSummaryUrl
 
 class IncomeFromPensionsSummaryControllerISpec extends CommonUtils with BeforeAndAfterEach{
 
@@ -38,7 +40,7 @@ class IncomeFromPensionsSummaryControllerISpec extends CommonUtils with BeforeAn
       UserScenario(isWelsh = true, isAgent = false, CommonExpectedCY, Some(ExpectedIndividualCY)),
       UserScenario(isWelsh = true, isAgent = true, CommonExpectedCY, Some(ExpectedAgentCY)))
 
-  private implicit val url: Int => String = ukPensionincomeSummaryUrl
+  private implicit val url: Int => String = pensionIncomeSummaryUrl
 
   trait CommonExpectedResults {
     val expectedCaption: Int => String
@@ -115,13 +117,12 @@ class IncomeFromPensionsSummaryControllerISpec extends CommonUtils with BeforeAn
     userScenarios.foreach { user =>
       import Selectors._
       import user.commonExpectedResults._
+      
       s"language is ${welshTest(user.isWelsh)} and request is from an ${agentTest(user.isAgent)}" should {
         "render page when both values are updated " which {
 
           val viewModel = anIncomeFromPensionsViewModel
-          lazy val result: WSResponse = showPage(user, pensionsUserDataWithIncomeFromPensions(viewModel, isPriorSubmission = false))
-
-
+          lazy val result: WSResponse = showPage(user, pensionsUserDataWithIncomeFromPensions(viewModel, isPriorSubmission = false), anIncomeTaxUserData)
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
           "has an OK status" in {
@@ -148,7 +149,7 @@ class IncomeFromPensionsSummaryControllerISpec extends CommonUtils with BeforeAn
         "render page when statePension are not started " which {
           val anUpdatedStatePensionModel = anStateBenefitViewModelOne.copy(amountPaidQuestion = None)
           val viewModel = anIncomeFromPensionsViewModel.copy(statePension = Some(anUpdatedStatePensionModel))
-          lazy val result: WSResponse = showPage(user, pensionsUserDataWithIncomeFromPensions(viewModel, isPriorSubmission = false))
+          lazy val result: WSResponse = showPage(user, pensionsUserDataWithIncomeFromPensions(viewModel, isPriorSubmission = false), anIncomeTaxUserData)
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
@@ -177,7 +178,7 @@ class IncomeFromPensionsSummaryControllerISpec extends CommonUtils with BeforeAn
 
           val viewModel = anIncomeFromPensionsViewModel.copy(uKPensionIncomesQuestion = None)
           insertCyaData(pensionsUserDataWithIncomeFromPensions(viewModel, isPriorSubmission = false), aUserRequest)
-          lazy val result: WSResponse = showPage(user, pensionsUserDataWithIncomeFromPensions(viewModel, isPriorSubmission = false))
+          lazy val result: WSResponse = showPage(user, pensionsUserDataWithIncomeFromPensions(viewModel, isPriorSubmission = false), anIncomeTaxUserData)
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
@@ -208,7 +209,7 @@ class IncomeFromPensionsSummaryControllerISpec extends CommonUtils with BeforeAn
           val viewModel = anIncomeFromPensionsViewModel.copy(
             statePension = Some(anUpdatedStatePensionModel),
             uKPensionIncomesQuestion = Some(false))
-          lazy val result: WSResponse = showPage(user, pensionsUserDataWithIncomeFromPensions(viewModel, isPriorSubmission = false))
+          lazy val result: WSResponse = showPage(user, pensionsUserDataWithIncomeFromPensions(viewModel, isPriorSubmission = false), anIncomeTaxUserData)
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
@@ -237,7 +238,7 @@ class IncomeFromPensionsSummaryControllerISpec extends CommonUtils with BeforeAn
 
           val anUpdatedStatePensionModel = StateBenefitViewModel()
           val viewModel = anIncomeFromPensionsViewModel.copy(statePension = Some(anUpdatedStatePensionModel))
-          lazy val result: WSResponse = showPage(user, pensionsUserDataWithIncomeFromPensions(viewModel, isPriorSubmission = false))
+          lazy val result: WSResponse = showPage(user, pensionsUserDataWithIncomeFromPensions(viewModel, isPriorSubmission = false), anIncomeTaxUserData)
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
@@ -267,8 +268,7 @@ class IncomeFromPensionsSummaryControllerISpec extends CommonUtils with BeforeAn
 
           "has an SEE_OTHER status" in {
             result.status shouldBe SEE_OTHER
-            //        TODO redirect to annual allowance CYA
-            result.header("location") shouldBe Some(ukPensionincomeSummaryUrl(taxYearEOY))
+            result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
           }
         }
       }

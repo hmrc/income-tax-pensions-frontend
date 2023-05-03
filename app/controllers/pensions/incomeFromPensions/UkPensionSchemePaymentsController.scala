@@ -17,7 +17,7 @@
 package controllers.pensions.incomeFromPensions
 
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.incomeFromPensions.routes.PensionSchemeDetailsController
+import controllers.pensions.incomeFromPensions.routes._
 import controllers.predicates.TaxYearAction.taxYearAction
 import controllers.predicates.{AuthorisedAction, InYearAction}
 import forms.YesNoForm
@@ -31,7 +31,6 @@ import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.incomeFromPensions.UkPensionSchemePaymentsView
-import controllers.pensions.incomeFromPensions.routes.UkPensionIncomeCYAController
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
@@ -81,7 +80,10 @@ class UkPensionSchemePaymentsController @Inject()(implicit val mcc: MessagesCont
               pensionSessionService.createOrUpdateSessionData(request.user,
                 updatedCyaModel, taxYear, optData.exists(_.isPriorSubmission))(errorHandler.internalServerError()) {
                 if (yesNo) {
-                  Redirect(PensionSchemeDetailsController.show(taxYear, None))
+                  Redirect( //scalastyle:off if.brace
+                    if (viewModel.uKPensionIncomes.nonEmpty) UkPensionIncomeSummaryController.show(taxYear) else
+                      PensionSchemeDetailsController.show(taxYear, None)
+                  )
                 } else {
                   Redirect(UkPensionIncomeCYAController.show(taxYear))
                 }

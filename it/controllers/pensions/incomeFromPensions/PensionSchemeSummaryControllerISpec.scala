@@ -23,7 +23,7 @@ import models.mongo.PensionsCYAModel
 import play.api.http.HeaderNames
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.IncomeFromPensionsPages.{pensionSchemeSummaryUrl, ukPensionSchemeSummaryListUrl, ukPensionincomeSummaryUrl}
+import utils.PageUrls.IncomeFromPensionsPages.pensionSchemeSummaryUrl
 import utils.PageUrls.{fullUrl, overviewUrl, pensionSummaryUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
@@ -76,18 +76,4 @@ class PensionSchemeSummaryControllerISpec extends IntegrationTest with ViewHelpe
       }
     }
   }
-  ".submit" should {
-    "redirect to the next page" which {
-      lazy val result: WSResponse = {
-        authoriseAgentOrIndividual(isAgent = false)
-        urlPost(fullUrl(pensionSchemeSummaryUrl(taxYearEOY, Some(schemeIndex0))), body = Map[String, String](), follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
-      }
-      s"has a SEE_OTHER ($SEE_OTHER) status" in {
-        result.status shouldBe SEE_OTHER
-        result.header("location").contains(pensionSchemeSummaryUrl(taxYearEOY, Some(schemeIndex0))) shouldBe true
-      }
-    }
-  }
-  
 }

@@ -57,7 +57,7 @@ object PensionsCYAModelBuilder {
   )
 
   val aPensionsCYAGeneratedFromPriorEmpty:PensionsCYAModel = PensionsCYAModel(
-    paymentsIntoPension = aPaymentsIntoPensionsEmptyViewModel.copy(gateway = Some(true), totalPaymentsIntoRASQuestion = Some(true)),
+    paymentsIntoPension = aPaymentsIntoPensionsEmptyViewModel.copy(totalPaymentsIntoRASQuestion = Some(true)),
     pensionsAnnualAllowances = aPensionAnnualAllowanceEmptyViewModel.copy(pensionProvidePaidAnnualAllowanceQuestion = Some(false)),
     pensionLifetimeAllowances = aPensionLifetimeAllowancesEmptyViewModel,
     incomeFromPensions = anIncomeFromPensionEmptyViewModel.copy(uKPensionIncomesQuestion = Some(false)),
