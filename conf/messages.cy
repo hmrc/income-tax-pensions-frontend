@@ -636,11 +636,11 @@ incomeFromPensions.removePensionScheme.buttonText = Dileu’r pensiwn
 
 #Uk Pension Income CYA page
 incomeFromPensions.title = Check UK Pension Income
-incomeFromPensions.paragraph.individual = Your income from pensions is based on the information we already hold about you.
-incomeFromPensions.paragraph.agent = Your client’s income from pensions is based on the information we already hold about them.
-incomeFromPensions.pensionIncome.hidden.individual = Change whether you got income from UK pensions
-incomeFromPensions.pensionIncome.hidden.agent = Change whether your client got income from UK pensions
-incomeFromPensions.pensionSchemes.hidden = Change UK pension scheme details
+incomeFromPensions.paragraph.individual = Mae’ch incwm o bensiynau yn seiliedig ar yr wybodaeth sydd eisoes gennym amdanoch.
+incomeFromPensions.paragraph.agent = Mae incwm o bensiynau eich cleient yn seiliedig ar yr wybodaeth sydd eisoes gennym amdano.
+incomeFromPensions.pensionIncome.hidden.individual = Newid p’un a gawsoch incwm o bensiynau’r DU
+incomeFromPensions.pensionIncome.hidden.agent = Newid p’un a gafodd eich cleient incwm o bensiynau’r DU
+incomeFromPensions.pensionSchemes.hidden = Newid manylion cynllun pensiwn y DU
 
 #Uk Pension Income Summary page
 incomeFromPensions.schemeDetails.summary.title = Check pension scheme details

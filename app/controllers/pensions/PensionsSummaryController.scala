@@ -16,20 +16,18 @@
 
 package controllers.pensions
 
-import config.{AppConfig, ErrorHandler}
-import controllers.predicates.TaxYearAction.taxYearAction
+import config.AppConfig
 import controllers.predicates.AuthorisedAction
-import models.mongo.PensionsCYAModel
+import controllers.predicates.TaxYearAction.taxYearAction
 import models.pension.AllPensionsData
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.Clock
 import views.html.pensions.PensionsSummaryView
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 
 @Singleton
@@ -37,27 +35,12 @@ class PensionsSummaryController @Inject()(implicit val mcc: MessagesControllerCo
                                            appConfig: AppConfig,
                                            authAction: AuthorisedAction,
                                            pensionSessionService: PensionSessionService,
-                                           errorHandler: ErrorHandler,
-                                           clock: Clock,
-                                           ec: ExecutionContext,
                                            pensionsSummaryView: PensionsSummaryView) extends FrontendController(mcc) with I18nSupport {
-
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     pensionSessionService.getAndHandle(taxYear, request.user) { (pensionsUserData, prior) =>
-      pensionSessionService.getPensionSessionData(taxYear, request.user) flatMap {
-        case Right(optPensionsUserData) => optPensionsUserData match {
-          case Some(pensionsUserData) =>
-            val cya = pensionsUserData.pensions
-            Future.successful(Ok(pensionsSummaryView(taxYear, Some(cya), prior)))
-          case _ =>
-            val cya = prior.fold(PensionsCYAModel.emptyModels)(pr => AllPensionsData.generateCyaFromPrior(pr))
-            pensionSessionService.createOrUpdateSessionData(request.user, cya, taxYear,
-                          isPriorSubmission = prior.isDefined)(errorHandler.handleError(INTERNAL_SERVER_ERROR)) {
-              Ok(pensionsSummaryView(taxYear, Some(cya), prior))
-            }
-        }
-        case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
-      }
+      val cya = prior.fold(pensionsUserData.map(_.pensions)){pr =>
+        if(pensionsUserData.exists(! _.pensions.isEmpty)) pensionsUserData.map(_.pensions) else Some(AllPensionsData.generateCyaFromPrior(pr))}
+      Future.successful(Ok(pensionsSummaryView(taxYear, cya, prior)))
     }
   }
 }

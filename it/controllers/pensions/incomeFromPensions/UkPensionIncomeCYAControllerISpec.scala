@@ -81,7 +81,7 @@ class UkPensionIncomeCYAControllerISpec extends IntegrationTest with ViewHelpers
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedTitle = "Gwirio incwm o bensiynau"
+    val expectedTitle = "Check UK Pension Income"
     val expectedCaption: Int => String = (taxYear: Int) =>  s"Incwm o bensiynau’r DU ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
     val buttonText = "Yn eich blaen"
     val yesText = "Iawn"

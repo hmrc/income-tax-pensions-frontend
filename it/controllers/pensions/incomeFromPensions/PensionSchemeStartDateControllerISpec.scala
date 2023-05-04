@@ -28,7 +28,7 @@ import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import utils.PageUrls.IncomeFromPensionsPages.{pensionStartDateUrl, ukPensionSchemeSummaryListUrl}
-import utils.PageUrls.{fullUrl, overseasPensionsSummaryUrl, pensionSummaryUrl}
+import utils.PageUrls.{fullUrl, pensionSummaryUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 import java.time.LocalDate

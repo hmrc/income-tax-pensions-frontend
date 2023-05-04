@@ -103,7 +103,9 @@ case class PaymentsIntoOverseasPensionsViewModel(paymentsIntoOverseasPensionsQue
                                                  taxPaidOnEmployerPaymentsQuestion: Option[Boolean] = None,
                                                  reliefs: Seq[Relief] = Seq.empty[Relief]
                                                 ) {
-
+  def isEmpty: Boolean = paymentsIntoOverseasPensionsQuestions.isEmpty && paymentsIntoOverseasPensionsAmount.isEmpty &&
+    employerPaymentsQuestion.isEmpty && taxPaidOnEmployerPaymentsQuestion.isEmpty && reliefs.isEmpty
+  
   def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedPaymentsIntoOverseasPensionsViewModel =
     EncryptedPaymentsIntoOverseasPensionsViewModel(
       paymentsIntoOverseasPensionsQuestions = paymentsIntoOverseasPensionsQuestions.map(_.encrypted),

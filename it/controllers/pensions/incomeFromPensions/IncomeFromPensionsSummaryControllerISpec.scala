@@ -20,7 +20,7 @@ package controllers.pensions.incomeFromPensions
 import builders.IncomeFromPensionsViewModelBuilder.anIncomeFromPensionsViewModel
 import builders.IncomeTaxUserDataBuilder.anIncomeTaxUserData
 import builders.PensionsUserDataBuilder.pensionsUserDataWithIncomeFromPensions
-import builders.StateBenefitViewModelBuilder.anStateBenefitViewModelOne
+import builders.StateBenefitViewModelBuilder.{anEmptyStateBenefitViewModel, anStateBenefitViewModelOne}
 import builders.UserBuilder.aUserRequest
 import models.pension.statebenefits.StateBenefitViewModel
 import org.jsoup.Jsoup
@@ -33,14 +33,6 @@ import utils.PageUrls.IncomeFromPensionsPages.pensionIncomeSummaryUrl
 import utils.PageUrls.pensionSummaryUrl
 
 class IncomeFromPensionsSummaryControllerISpec extends CommonUtils with BeforeAndAfterEach{
-
-  val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] =
-    Seq(UserScenario(isWelsh = false, isAgent = false, CommonExpectedEN, Some(ExpectedIndividualEN)),
-      UserScenario(isWelsh = false, isAgent = true, CommonExpectedEN, Some(ExpectedAgentEN)),
-      UserScenario(isWelsh = true, isAgent = false, CommonExpectedCY, Some(ExpectedIndividualCY)),
-      UserScenario(isWelsh = true, isAgent = true, CommonExpectedCY, Some(ExpectedAgentCY)))
-
-  private implicit val url: Int => String = pensionIncomeSummaryUrl
 
   trait CommonExpectedResults {
     val expectedCaption: Int => String
@@ -113,6 +105,14 @@ class IncomeFromPensionsSummaryControllerISpec extends CommonUtils with BeforeAn
     val expectedParagraph = "Dim ond yr adrannau sy’n berthnasol i’ch cleient y mae angen i chi eu llenwi."
   }
 
+  val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] =
+    Seq(UserScenario(isWelsh = false, isAgent = false, CommonExpectedEN, Some(ExpectedIndividualEN)),
+      UserScenario(isWelsh = false, isAgent = true, CommonExpectedEN, Some(ExpectedAgentEN)),
+      UserScenario(isWelsh = true, isAgent = false, CommonExpectedCY, Some(ExpectedIndividualCY)),
+      UserScenario(isWelsh = true, isAgent = true, CommonExpectedCY, Some(ExpectedAgentCY)))
+
+  private implicit val url: Int => String = pensionIncomeSummaryUrl
+
   ".show" should {
     userScenarios.foreach { user =>
       import Selectors._
@@ -147,8 +147,7 @@ class IncomeFromPensionsSummaryControllerISpec extends CommonUtils with BeforeAn
         }
 
         "render page when statePension are not started " which {
-          val anUpdatedStatePensionModel = anStateBenefitViewModelOne.copy(amountPaidQuestion = None)
-          val viewModel = anIncomeFromPensionsViewModel.copy(statePension = Some(anUpdatedStatePensionModel))
+          val viewModel = anIncomeFromPensionsViewModel.copy(statePension = Some(anEmptyStateBenefitViewModel))
           lazy val result: WSResponse = showPage(user, pensionsUserDataWithIncomeFromPensions(viewModel, isPriorSubmission = false), anIncomeTaxUserData)
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)

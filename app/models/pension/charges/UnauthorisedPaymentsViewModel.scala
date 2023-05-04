@@ -49,7 +49,7 @@ case class UnauthorisedPaymentsViewModel(surchargeQuestion: Option[Boolean] = No
       pensionSchemeOverseasTransfers = None,
       pensionContributions = None,
       overseasPensionContributions = None,
-      pensionSchemeUnauthorisedPayments = if (this.isEmpty()) None else Some(
+      pensionSchemeUnauthorisedPayments = if (this.isEmpty) None else Some(
         PensionSchemeUnauthorisedPayments(
           pensionSchemeTaxReference = scala.collection.immutable.Seq(pensionSchemeTaxReference.getOrElse(scala.collection.immutable.Nil)).flatten,
           surcharge =
@@ -61,7 +61,7 @@ case class UnauthorisedPaymentsViewModel(surchargeQuestion: Option[Boolean] = No
     )
   }
 
-  def isEmpty(): Boolean = this.productIterator.forall(_ == None)
+  def isEmpty: Boolean = this.productIterator.forall(_ == None)
 
   def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedUnauthorisedPaymentsViewModel =
     EncryptedUnauthorisedPaymentsViewModel(

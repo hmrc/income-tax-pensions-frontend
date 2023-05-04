@@ -22,42 +22,39 @@ import models.pension.AllPensionsData
 object StatusHelper {
 
   def paymentsIntoPensionsIsUpdated(cya: Option[PensionsCYAModel]): Boolean =
-    cya.flatMap(_.paymentsIntoPension.rasPensionPaymentQuestion).isDefined
+    cya.exists(! _.paymentsIntoPension.isEmpty)
 
   def incomeFromPensionsIsUpdated(cya: Option[PensionsCYAModel]): Boolean =
     statePensionIsUpdated(cya) || ukPensionsSchemeIsUpdated(cya)
 
   def pensionFromAnnualAllowanceIsUpdated(cya: Option[PensionsCYAModel]): Boolean =
-    cya.flatMap(_.pensionsAnnualAllowances.aboveAnnualAllowanceQuestion).isDefined
+    cya.exists(! _.pensionsAnnualAllowances.isEmpty)
 
   def pensionLifetimeAllowanceIsUpdated(cya: Option[PensionsCYAModel]): Boolean =
-    cya.flatMap(_.pensionLifetimeAllowances.aboveLifetimeAllowanceQuestion).isDefined
+    cya.exists(! _.pensionLifetimeAllowances.isEmpty)
 
-  def unauthorisedPaymentsFromPensionsIsUpdated(cya: Option[PensionsCYAModel]): Boolean = {
-    cya.flatMap(_.unauthorisedPayments.unauthorisedPaymentQuestion).isDefined
-  }
+  def unauthorisedPaymentsFromPensionsIsUpdated(cya: Option[PensionsCYAModel]): Boolean =
+    cya.exists(! _.unauthorisedPayments.isEmpty)
 
   def overseasPensionsIsUpdated(cya: Option[PensionsCYAModel]): Boolean = {
-    cya.flatMap(_.paymentsIntoOverseasPensions.paymentsIntoOverseasPensionsQuestions).isDefined ||
-    cya.flatMap(_.incomeFromOverseasPensions.paymentsFromOverseasPensionsQuestion).isDefined ||
-    cya.flatMap(_.transfersIntoOverseasPensions.transferPensionSavings).isDefined ||
-    cya.flatMap(_.shortServiceRefunds.shortServiceRefund).isDefined
+    paymentsIntoOverseasPensionsIsUpdated(cya) ||   incomeFromOverseasPensionsIsUpdated(cya) ||
+    overseasPensionsTransferChargesIsUpdated(cya) ||  shortServiceRefundsIsUpdated(cya)
   }
 
   def paymentsIntoOverseasPensionsIsUpdated(cya: Option[PensionsCYAModel]): Boolean =
-    cya.flatMap(_.paymentsIntoOverseasPensions.paymentsIntoOverseasPensionsQuestions).isDefined
+    cya.exists(! _.paymentsIntoOverseasPensions.isEmpty)
   
   def incomeFromOverseasPensionsIsUpdated(cya: Option[PensionsCYAModel]): Boolean =
-    cya.flatMap(_.incomeFromOverseasPensions.paymentsFromOverseasPensionsQuestion).isDefined
+    cya.exists(! _.incomeFromOverseasPensions.isEmpty)
   
   def overseasPensionsTransferChargesIsUpdated(cya: Option[PensionsCYAModel]): Boolean =
-    cya.flatMap(_.transfersIntoOverseasPensions.transferPensionSavings).isDefined
+    cya.exists(! _.transfersIntoOverseasPensions.isEmpty)
   
   def shortServiceRefundsIsUpdated(cya: Option[PensionsCYAModel]): Boolean =
-    cya.flatMap(_.shortServiceRefunds.shortServiceRefund).isDefined
+    cya.exists(!_.shortServiceRefunds.isEmpty)
 
   def statePensionIsUpdated(cya: Option[PensionsCYAModel]): Boolean =
-    cya.exists(_.incomeFromPensions.statePension.exists(_.amountPaidQuestion.isDefined))
+    cya.exists(_.incomeFromPensions.statePension.exists(! _.isEmpty))
 
   def ukPensionsSchemeIsUpdated(cya: Option[PensionsCYAModel]): Boolean =
     cya.exists(_.incomeFromPensions.uKPensionIncomesQuestion.isDefined)

@@ -31,7 +31,8 @@ case class TransfersIntoOverseasPensionsViewModel(
                                                    pensionSchemeTransferCharge: Option[Boolean] = None,
                                                    pensionSchemeTransferChargeAmount: Option[BigDecimal] = None,
                                                    transferPensionScheme: Seq[TransferPensionScheme] = Nil) {
-
+  def isEmpty: Boolean = transferPensionSavings.isEmpty && overseasTransferCharge.isEmpty && overseasTransferChargeAmount.isEmpty &&
+    pensionSchemeTransferCharge.isEmpty && pensionSchemeTransferChargeAmount.isEmpty && transferPensionScheme.isEmpty
 
   def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedTransfersIntoOverseasPensionsViewModel =
     EncryptedTransfersIntoOverseasPensionsViewModel(
