@@ -57,6 +57,9 @@ class ReliefsSchemeDetailsViewSpec extends ViewUnitTest with FakeRequestProvider
     val untaxedEmployerPaymentsHidden: String
     val reliefTypeHidden: String
     val schemeDetailsHidden: String
+    val doubleTaxationRelief: String
+    val migrantMemberRelief: String
+    val transitionalCorrespondingRelief: String
     val noTaxRelief: String
     val details: String
     val no: String
@@ -74,7 +77,10 @@ class ReliefsSchemeDetailsViewSpec extends ViewUnitTest with FakeRequestProvider
     override val untaxedEmployerPaymentsHidden: String = "Change untaxed employer payments"
     override val reliefTypeHidden: String = "Change type of relief"
     override val schemeDetailsHidden: String = "Change scheme details"
-    override val  noTaxRelief = "No tax relief"
+    override val doubleTaxationRelief: String = "Double taxation relief"
+    override val migrantMemberRelief: String = "Migrant member relief"
+    override val transitionalCorrespondingRelief: String = "Transitional corresponding relief"
+    override val noTaxRelief = "No tax relief"
     override val details = "Country code: Germany Article: AB3211-1 Treaty: Munich Relief: £123.45"
     override val no: String = "No"
     override val button: String = "Continue"
@@ -91,6 +97,9 @@ class ReliefsSchemeDetailsViewSpec extends ViewUnitTest with FakeRequestProvider
     override val untaxedEmployerPaymentsHidden: String = "Newid taliadau cyflogwr sydd heb eu trethu"
     override val reliefTypeHidden: String = "Newid y math o ryddhad"
     override val schemeDetailsHidden: String = "Newid manylion y cynllun"
+    override val doubleTaxationRelief: String = "Rhyddhad trethiant dwbl"
+    override val migrantMemberRelief: String = "Rhyddhad aelod mudol"
+    override val transitionalCorrespondingRelief: String = "Rhyddhad cyfatebol trosiannol"
     override val noTaxRelief = "Dim rhyddhad treth"
     override val details = "Cod y wlad: Germany Erthygl: AB3211-1 Cytuniad: Munich Rhyddhad: £123.45"
     override val no: String = "Na"
@@ -128,7 +137,7 @@ class ReliefsSchemeDetailsViewSpec extends ViewUnitTest with FakeRequestProvider
         userScenario.commonExpectedResults.untaxedEmployerPaymentsHidden,
         2)
       cyaRowCheck(userScenario.commonExpectedResults.reliefType,
-        TaxReliefQuestion.TransitionalCorrespondingRelief,
+        userScenario.commonExpectedResults.transitionalCorrespondingRelief,
         ChangeLinks.reliefTypeLink,
         userScenario.commonExpectedResults.reliefTypeHidden,
         3)
@@ -164,7 +173,7 @@ class ReliefsSchemeDetailsViewSpec extends ViewUnitTest with FakeRequestProvider
           userScenario.commonExpectedResults.untaxedEmployerPaymentsHidden,
           2)
         cyaRowCheck(userScenario.commonExpectedResults.reliefType,
-          TaxReliefQuestion.MigrantMemberRelief,
+          userScenario.commonExpectedResults.migrantMemberRelief,
           ChangeLinks.reliefTypeLink,
           userScenario.commonExpectedResults.reliefTypeHidden,
           3)
@@ -206,7 +215,7 @@ class ReliefsSchemeDetailsViewSpec extends ViewUnitTest with FakeRequestProvider
           userScenario.commonExpectedResults.untaxedEmployerPaymentsHidden,
           2)
         cyaRowCheck(userScenario.commonExpectedResults.reliefType,
-          TaxReliefQuestion.DoubleTaxationRelief,
+          userScenario.commonExpectedResults.doubleTaxationRelief,
           ChangeLinks.reliefTypeLink,
           userScenario.commonExpectedResults.reliefTypeHidden,
           3)
@@ -278,7 +287,6 @@ class ReliefsSchemeDetailsViewSpec extends ViewUnitTest with FakeRequestProvider
           3)
         buttonCheck(userScenario.commonExpectedResults.button)
       }
-
     }
     }
 }

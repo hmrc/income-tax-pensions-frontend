@@ -70,9 +70,18 @@ object ReliefsSchemeDetailsHelper extends CYABaseHelper {
     }{rT =>
       summaryListRowWithString(
         "overseasPension.reliefDetails.typeOfRelief",
-        Some(Seq(rT)),
+        Some(typeOfReliefToMessage(rT)).map(Seq(_)),
         routes.PensionReliefTypeController.show(taxYear, index))
     })
+  }
+
+  def typeOfReliefToMessage(reliefType: String)(implicit messages: Messages): String = {
+    reliefType match {
+      case TaxReliefQuestion.DoubleTaxationRelief => messages("overseasPension.pensionReliefType.DTR")
+      case TaxReliefQuestion.MigrantMemberRelief => messages("overseasPension.pensionReliefType.MMR")
+      case TaxReliefQuestion.TransitionalCorrespondingRelief => messages("overseasPension.pensionReliefType.TCR")
+      case _ => messages("overseasPension.reliefDetails.noTaxRelief")
+    }
   }
 
   def schemeDetails(relief : Relief, taxYear: Int, index: Option[Int])(implicit messages: Messages): Option[SummaryListRow] = {
