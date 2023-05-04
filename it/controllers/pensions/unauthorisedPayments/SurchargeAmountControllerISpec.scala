@@ -87,16 +87,16 @@ class SurchargeAmountControllerISpec extends IntegrationTest with ViewHelpers wi
 
   object CommonExpectedCY extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Taliadau heb awdurdod o bensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
-    val expectedTitle = "Amount that resulted in a surcharge"
-    val expectedHeading = "Amount that resulted in a surcharge"
+    val expectedTitle = "Y swm a wnaeth arwain at ordal"
+    val expectedHeading = "Y swm a wnaeth arwain at ordal"
     val expectedErrorTitle = s"Gwall: $expectedTitle"
     val hintText = "Er enghraifft, £193.52"
-    val noEntryErrorMessage = "Enter the total amount of unauthorised payment that resulted in a surcharge"
+    val noEntryErrorMessage = "Nodwch gyfanswm y taliadau heb awdurdod a wnaeth arwain at ordal"
     val invalidFormatErrorText = "Nodwch y cyfanswm yn y fformat cywir"
     val maxAmountErrorText = "Mae’n rhaid i’r cyfanswm fod yn llai na £100,000,000,000"
     val buttonText = "Yn eich blaen"
-    val expectedParagraph = "Give a total of unauthorised payments that resulted in surcharges from all your client’s pension schemes."
-    val expectedParagraphTwo = "You can tell us about unauthorised payments that did not result in a surcharge later."
+    val expectedParagraph = "Rhowch gyfanswm y taliadau heb awdurdod o bob un o gynlluniau pensiwn eich cleient a wnaeth arwain at ordaliadau."
+    val expectedParagraphTwo = "Gallwch roi gwybod i ni am daliadau heb awdurdod na wnaethant arwain at ordal yn nes ymlaen."
   }
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
@@ -104,7 +104,7 @@ class SurchargeAmountControllerISpec extends IntegrationTest with ViewHelpers wi
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
-    val expectedParagraph = "Give a total of unauthorised payments that resulted in surcharges from all your pension schemes."
+    val expectedParagraph = "Rhowch gyfanswm y taliadau heb awdurdod o bob un o’ch cynlluniau pensiwn a wnaeth arwain at ordaliadau."
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
@@ -112,7 +112,7 @@ class SurchargeAmountControllerISpec extends IntegrationTest with ViewHelpers wi
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
-    val expectedParagraph = "Give a total of unauthorised payments that resulted in surcharges from all your client’s pension schemes."
+    val expectedParagraph = "Rhowch gyfanswm y taliadau heb awdurdod o bob un o gynlluniau pensiwn eich cleient a wnaeth arwain at ordaliadau."
   }
 
   ".show" should {

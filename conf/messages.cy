@@ -750,75 +750,75 @@ lifetimeAllowance.pensionSchemeTaxReference.p1 = Os bydd mwy nag un cynllun pens
 lifetimeAllowance.pensionSchemeTaxReference.error.incorrectFormat = Nodwch gyfeirnod sydd ag 8 rhif a 2 lythyren, megis ‘12345678AB’
 
 #Surcharge Amount
-unauthorisedPayments.surchargeAmount.title = Amount that resulted in a surcharge
-unauthorisedPayments.surchargeAmount.giveTotal.individual = Give a total of unauthorised payments that resulted in surcharges from all your pension schemes.
-unauthorisedPayments.surchargeAmount.giveTotal.agent = Give a total of unauthorised payments that resulted in surcharges from all your client’s pension schemes.
-unauthorisedPayments.surchargeAmount.tellUsAbout = You can tell us about unauthorised payments that did not result in a surcharge later.
-unauthorisedPayments.surchargeAmount.error.noEntry = Enter the total amount of unauthorised payment that resulted in a surcharge
+unauthorisedPayments.surchargeAmount.title = Y swm a wnaeth arwain at ordal
+unauthorisedPayments.surchargeAmount.giveTotal.individual = Rhowch gyfanswm y taliadau heb awdurdod o bob un o’ch cynlluniau pensiwn a wnaeth arwain at ordaliadau.
+unauthorisedPayments.surchargeAmount.giveTotal.agent = Rhowch gyfanswm y taliadau heb awdurdod o bob un o gynlluniau pensiwn eich cleient a wnaeth arwain at ordaliadau.
+unauthorisedPayments.surchargeAmount.tellUsAbout = Gallwch roi gwybod i ni am daliadau heb awdurdod na wnaethant arwain at ordal yn nes ymlaen.
+unauthorisedPayments.surchargeAmount.error.noEntry = Nodwch gyfanswm y taliadau heb awdurdod a wnaeth arwain at ordal
 
 #No Surcharge Amount
-unauthorisedPayments.noSurchargeAmount.title = Amount that did not result in a surcharge
-unauthorisedPayments.noSurchargeAmount.error.noEntry = Enter the total amount of unauthorised payment that did not result in a surcharge
+unauthorisedPayments.noSurchargeAmount.title = Y swm na wnaeth arwain at ordal
+unauthorisedPayments.noSurchargeAmount.error.noEntry = Nodwch gyfanswm y taliadau heb awdurdod na wnaethant arwain at ordal
 
 #Did you pay non-UK tax that resulted in a surcharge
-unauthorisedPayments.didYouPayNonUkTax.title.individual = Did you pay non-UK tax on the amount that resulted in a surcharge?
-unauthorisedPayments.didYouPayNonUkTax.title.agent = Did your client pay non-UK tax on the amount that resulted in a surcharge?
-unauthorisedPayments.didYouPayNonUkTax.error.noEntry = Select yes if you paid non-UK tax on the amount surcharged
+unauthorisedPayments.didYouPayNonUkTax.title.individual = A wnaethoch dalu treth y tu allan i’r DU ar y swm a wnaeth arwain at ordal?
+unauthorisedPayments.didYouPayNonUkTax.title.agent = A wnaeth eich cleient dalu treth y tu allan i’r DU ar y swm a wnaeth arwain at ordal?
+unauthorisedPayments.didYouPayNonUkTax.error.noEntry = Dewiswch ‘Iawn’ os gwnaethoch dalu treth y tu allan i’r DU ar y swm y codwyd gordal arno
 
 #Where any of the unauthorised payments from a UK pension scheme?
-unauthorisedPayments.whereAnyOfTheUnauthorisedPayments.title = Were any of the unauthorised payments from a UK pension scheme?
+unauthorisedPayments.whereAnyOfTheUnauthorisedPayments.title = A ddaeth unrhyw rai o’r taliadau heb awdurdod o gynllun pensiwn yn y DU?
 
 #payments into pensions CYA
 
-unauthorisedPayments.cya.heading.individual = Check your unauthorised payments
-unauthorisedPayments.cya.heading.agent = Check your client’s unauthorised payments
-unauthorisedPayments.cya.amountSurcharged = Amount surcharged
-unauthorisedPayments.cya.nonUkTaxAmountSurcharged = Non UK-tax on amount surcharged
-unauthorisedPayments.cya.amountNotSurcharged = Amount not surcharged
-unauthorisedPayments.cya.nonUkTaxAmountNotSurcharged = Non UK-tax on amount not surcharged
-unauthorisedPayments.cya.pensionSchemeTaxReferences = Pension Scheme Tax References
+unauthorisedPayments.cya.heading.individual = Gwirio’ch taliadau heb awdurdod
+unauthorisedPayments.cya.heading.agent = Gwirio taliadau’ch cleient a oedd heb awdurdod
+unauthorisedPayments.cya.amountSurcharged = Y swm y codwyd gordal arno
+unauthorisedPayments.cya.nonUkTaxAmountSurcharged = Treth y tu allan i’r DU ar y swm y codwyd gordal arno
+unauthorisedPayments.cya.amountNotSurcharged = Y swm na chodwyd gordal arno
+unauthorisedPayments.cya.nonUkTaxAmountNotSurcharged = Treth y tu allan i’r DU ar y swm na chodwyd gordal arno
+unauthorisedPayments.cya.pensionSchemeTaxReferences = Cyfeirnodau Treth y Cynlluniau Pensiwn
 
 
-unauthorisedPayments.cya.amountSurcharged.hidden = Change amount surcharged
-unauthorisedPayments.cya.nonUkTaxAmountSurcharged.hidden = Change non UK-tax on amount surcharged
-unauthorisedPayments.cya.amountNotSurcharged.hidden = Change amount not surcharged
-unauthorisedPayments.cya.nonUkTaxAmountNotSurcharged.hidden = Change non UK-tax on amount not surcharged
-unauthorisedPayments.cya.pensionSchemeTaxReferences.hidden = Change Pension Scheme Tax References
+unauthorisedPayments.cya.amountSurcharged.hidden = Newid y swm y codwyd gordal arno
+unauthorisedPayments.cya.nonUkTaxAmountSurcharged.hidden = Newid swm y dreth y tu allan i’r DU ar y swm y codwyd gordal arno
+unauthorisedPayments.cya.amountNotSurcharged.hidden = Newid y swm na chodwyd gordal arno
+unauthorisedPayments.cya.nonUkTaxAmountNotSurcharged.hidden = Newid swm y dreth y tu allan i’r DU ar y swm na chodwyd gordal arno
+unauthorisedPayments.cya.pensionSchemeTaxReferences.hidden = Newid Cyfeirnodau Treth y Cynlluniau Pensiwn
 
 #Did you pay non-UK tax that did not result in a surcharge
-unauthorisedPayments.nonUkTaxOnAmountNotSurcharge.title.individual = Did you pay non-UK tax on the amount that did not result in a surcharge?
-unauthorisedPayments.nonUkTaxOnAmountNotSurcharge.title.agent = Did your client pay non-UK tax on the amount that did not result in a surcharge?
-unauthorisedPayments.nonUkTaxOnAmountNotSurcharge.error.noEntry = Select yes if you paid non-UK tax on the amount not surcharged
+unauthorisedPayments.nonUkTaxOnAmountNotSurcharge.title.individual = A wnaethoch dalu treth y tu allan i’r DU ar y swm na wnaeth arwain at ordal?
+unauthorisedPayments.nonUkTaxOnAmountNotSurcharge.title.agent = A wnaeth eich cleient dalu treth y tu allan i’r DU ar y swm na wnaeth arwain at ordal?
+unauthorisedPayments.nonUkTaxOnAmountNotSurcharge.error.noEntry = Dewiswch ‘Iawn’ os gwnaethoch dalu treth y tu allan i’r DU ar y swm na chodwyd gordal arno
 
 
 #Unauthorised Payments
-unauthorisedPayments.paymentOutside = Unauthorised payments are made outside the tax rules
-unauthorisedPayments.moreThanOneUnauthorisedPayment.line1 = If you got more than one unauthorised payment, you might
-unauthorisedPayments.moreThanOneUnauthorisedPayment.line2 = have paid a surcharge (an extra fee) on some of them. It all
-unauthorisedPayments.moreThanOneUnauthorisedPayment.line3 = depends on if you’ve taken 25% or more of your pension pots.
-unauthorisedPayments.findOutMoreAboutUnauthorisedPayment = Find out more about unauthorised payments (opens in new tab)
-unauthorisedPayments.didYouGetAnUnauthorisedPayment = Did you get an unauthorised payment from a pension scheme?
-unauthorisedPayments.checkbox.text1 = Yes, unauthorised payments that resulted in a surcharge
-unauthorisedPayments.checkbox.text2 = Yes, unauthorised payments that did not result in a surcharge
+unauthorisedPayments.paymentOutside = Gwneir taliadau heb awdurdod y tu allan i’r rheolau treth
+unauthorisedPayments.moreThanOneUnauthorisedPayment.line1 = Os cawsoch fwy nag un taliad heb awdurdod, mae’n bosibl
+unauthorisedPayments.moreThanOneUnauthorisedPayment.line2 = eich bod wedi talu gordal (ffi ychwanegol) ar rai ohonynt. Mae’n
+unauthorisedPayments.moreThanOneUnauthorisedPayment.line3 = dibynnu p’un a ydych wedi cymryd 25% neu fwy o’ch cronfeydd pensiwn.
+unauthorisedPayments.findOutMoreAboutUnauthorisedPayment = Dysgwch ragor am daliadau heb awdurdod (yn agor tab newydd)
+unauthorisedPayments.didYouGetAnUnauthorisedPayment = A gawsoch daliad heb awdurdod o gynllun pensiwn?
+unauthorisedPayments.checkbox.text1 = Iawn, taliadau heb awdurdod a wnaeth arwain at ordal
+unauthorisedPayments.checkbox.text2 = Iawn, taliadau heb awdurdod na wnaethant arwain at ordal
 
 #Do you have an employer-financed retirement scheme?
 employerFinancedRetirementScheme.benefitsFromScheme.title = Cynlluniau buddiannau ymddeol a ariannwyd gan gyflogwyr
-employerFinancedRetirementScheme.benefitsFromScheme.paragraph.1 = Os nad yw cynllun pensiwn yn gofrestredig, gallai fod yn gynllun buddiant ymddeol a ariannwyd gan gyflogwyr (EFRBS).
-employerFinancedRetirementScheme.benefitsFromScheme.paragraph.2 = Cynllun yw EFRBS sy’n talu rhai buddiannau ymddeoliad neu farwolaeth ar gyfer gweithwyr neu gyn-weithwyr, a elwir yn ‘fuddiannau perthnasol’.
+employerFinancedRetirementScheme.benefitsFromScheme.paragraph.1 = Os nad yw cynllun pensiwn yn gofrestredig, gallai fod yn gynllun buddiannau ymddeol a ariannwyd gan gyflogwyr (EFRBS).
+employerFinancedRetirementScheme.benefitsFromScheme.paragraph.2 = Cynllun yw EFRBS sy’n talu rhai buddiannau ymddeoliad neu farwolaeth ar gyfer gweithwyr neu gyn-weithwyr. Yr enw ar y rhain yw “buddiannau perthnasol”.
 employerFinancedRetirementScheme.benefitsFromScheme.question.individual = A oes gennych gynllun ymddeol a ariannwyd gan gyflogwr?
 employerFinancedRetirementScheme.benefitsFromScheme.question.agent = A oes gan eich cleient gynllun ymddeol a ariannwyd gan gyflogwr?
-employerFinancedRetirementScheme.benefitsFromScheme.error.individual = Dewiswch ‘Iawn’ os oes gennych gynllun buddiannau ymddeol a ariannwyd gan gyflogwyr
-employerFinancedRetirementScheme.benefitsFromScheme.error.agent = Dewiswch ‘Iawn’ os oes gan eich cleient gynllun buddiannau ymddeol a ariannwyd gan gyflogwyr
+employerFinancedRetirementScheme.benefitsFromScheme.error.individual = Dewiswch ‘Iawn’ os oes gennych gynllun buddiannau ymddeol a ariannwyd gan gyflogwr
+employerFinancedRetirementScheme.benefitsFromScheme.error.agent = Dewiswch ‘Iawn’ os oes gan eich cleient gynllun buddiannau ymddeol a ariannwyd gan gyflogwr
 
 #Unauthorised payments from UK pensions schemes
-unauthorisedPayments.pensionSchemeDetails.title = Unauthorised payments from UK pensions schemes
-unauthorisedPayments.pensionSchemeDetails.addAnotherPensionSchemeTaxReference = Add another Pensions Scheme Tax Reference
-unauthorisedPayments.pensionSchemeDetails.addPensionSchemeTaxReference = Add a Pensions Scheme Tax Reference
+unauthorisedPayments.pensionSchemeDetails.title = Taliadau heb awdurdod o gynlluniau pensiwn yn y DU
+unauthorisedPayments.pensionSchemeDetails.addAnotherPensionSchemeTaxReference = Ychwanegu Cyfeirnod Treth ar gyfer Cynllun Pensiwn arall
+unauthorisedPayments.pensionSchemeDetails.addPensionSchemeTaxReference = Ychwanegu Cyfeirnod Treth ar gyfer Cynllun Pensiwn
 
 #Remove unauthorised payments from UK pensions schemes
-unauthorisedPayments.removePensionSchemeTaxReference.title = Do you want to remove this Pension Scheme Tax Reference?
-unauthorisedPayments.removePensionSchemeTaxReference.removeButton = Remove reference
-unauthorisedPayments.removePensionSchemeTaxReference.dontRemove = Don’t remove
+unauthorisedPayments.removePensionSchemeTaxReference.title = A hoffech ddileu’r Cyfeirnod Treth ar gyfer y Cynllun Pensiwn hwn?
+unauthorisedPayments.removePensionSchemeTaxReference.removeButton = Dileu cyfeirnod
+unauthorisedPayments.removePensionSchemeTaxReference.dontRemove = Peidiwch â dileu
 
 #################       Overseas Pension        ########################################
 common.overseas.pension.schemes = Overseas pension schemes

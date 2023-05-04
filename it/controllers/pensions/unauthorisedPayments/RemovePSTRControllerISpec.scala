@@ -52,10 +52,10 @@ class RemovePSTRControllerISpec extends IntegrationTest with ViewHelpers with Be
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedTitle = s"Do you want to remove this Pension Scheme Tax Reference?"
+    val expectedTitle = s"A hoffech ddileu’r Cyfeirnod Treth ar gyfer y Cynllun Pensiwn hwn?"
     val expectedCaption: Int => String = (taxYear: Int) => s"Taliadau heb awdurdod o bensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
-    val buttonText = "Remove reference"
-    val cancelText = "Don’t remove"
+    val buttonText = "Dileu cyfeirnod"
+    val cancelText = "Peidiwch â dileu"
   }
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, String]] = Seq(
