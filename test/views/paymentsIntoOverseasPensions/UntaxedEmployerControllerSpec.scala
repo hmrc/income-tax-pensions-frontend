@@ -106,16 +106,16 @@ class UntaxedEmployerControllerSpec extends ViewUnitTest with FakeRequestProvide
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
-    override val expectedPara2: String = "You need to know which type of scheme your employer paid into."
-    override val expectedSub1Para1: String = "If you have this type of scheme, tell us the total amount your employers paid in."
-    override val expectedSub2Para1: String = "If you have this type of scheme, tell us the value of the amount your employers paid in."
-    override val expectedSub2Details1: String = "how much your lump sum went up by"
-    override val expectedSub2Details2: String = "plus 16 times how much your annual pension went up by"
-    override val expectedSub2Details3: String = "minus any payments you made into the scheme"
-    override val expectedQuestion: String = "How much did your employers pay into your overseas pension scheme?"
-    override val expectedErrorNoEntry: String = "Enter the amount your employers paid into your overseas pension schemes"
-    override val expectedErrorTooBig: String = "The amount your employers paid into overseas pension schemes must be less than £100,000,000,000"
-    override val expectedErrorInvalidFormat: String = "Enter the amount your employers paid into overseas pension schemes in the correct format"
+    override val expectedPara2: String = "Mae angen i chi wybod pa fath o gynllun y talodd eich cyflogwr i mewn iddo."
+    override val expectedSub1Para1: String = "Os oes gennych y math hwn o gynllun, rhowch wybod i ni’r cyfanswm a dalwyd i mewn gan eich cyflogwyr."
+    override val expectedSub2Para1: String = "Os oes gennych y math hwn o gynllun, rhowch wybod i ni gwerth y swm a dalwyd i mewn gan eich cyflogwyr."
+    override val expectedSub2Details1: String = "faint aeth eich cyfandaliad i fyny"
+    override val expectedSub2Details2: String = "ynghyd ag 16 gwaith faint yr aeth eich pensiwn blynyddol i fyny"
+    override val expectedSub2Details3: String = "llai unrhyw daliadau a wnaethoch i mewn i’r cynllun"
+    override val expectedQuestion: String = "Faint dalodd eich cyflogwyr i mewn i’ch cynllun pensiwn tramor?"
+    override val expectedErrorNoEntry: String = "Nodwch y swm y dalodd eich cyflogwyr i mewn i’ch cynlluniau pensiwn tramor"
+    override val expectedErrorTooBig: String = "Mae’n rhaid i’r swm a dalodd eich cyflogwyr i mewn i gynlluniau pensiwn tramor fod yn llai na £100,000,000,000"
+    override val expectedErrorInvalidFormat: String = "Nodwch y swm a dalodd eich cyflogwyr i mewn i gynlluniau pensiwn tramor yn y fformat cywir"
 
   }
 
@@ -133,16 +133,16 @@ class UntaxedEmployerControllerSpec extends ViewUnitTest with FakeRequestProvide
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
-    val expectedPara2: String = "You need to know which type of scheme your client’s employer paid into."
-    val expectedSub1Para1: String = "If your client has this type of scheme, tell us the total amount their employers paid in."
-    val expectedSub2Para1: String = "If your client has this type of scheme, tell us the value of the amount their employers paid in."
-    val expectedSub2Details1: String = "how much your client’s lump sum went up by"
-    val expectedSub2Details2: String = "plus 16 times how much your client’s annual pension went up by"
-    val expectedSub2Details3: String = "minus any payments your client made into the scheme"
-    val expectedQuestion: String = "How much did your client’s employers pay into the overseas pension scheme?"
-    val expectedErrorNoEntry: String = "Enter the amount that your client’s employer paid into their overseas pension scheme"
-    val expectedErrorTooBig: String = "The total amount that your client’s employers paid into their overseas pension scheme must be less than £100,000,000,000"
-    val expectedErrorInvalidFormat: String = "Enter the total amount that your client’s employers paid into their overseas pension scheme in the correct format"
+    val expectedPara2: String = "Mae angen i chi wybod pa fath o gynllun y talodd cyflogwr eich cleient i mewn iddo."
+    val expectedSub1Para1: String = "Os oes gan eich cleient y math hwn o gynllun, rhowch wybod i ni’r cyfanswm a dalwyd i mewn gan gyflogwyr eich cleient."
+    val expectedSub2Para1: String = "Os oes gan eich cleient y math hwn o gynllun, rhowch wybod i ni gwerth y swm a dalwyd i mewn gan gyflogwyr eich cleient."
+    val expectedSub2Details1: String = "faint aeth cyfandaliad eich cleient i fyny"
+    val expectedSub2Details2: String = "ynghyd ag 16 gwaith faint yr aeth pensiwn blynyddol eich cleient i fyny"
+    val expectedSub2Details3: String = "llai unrhyw daliadau a wnaeth eich cleient i mewn i’r cynllun"
+    val expectedQuestion: String = "Faint dalodd cyflogwyr eich cleient i mewn i’r cynlluniau pensiwn tramor?"
+    val expectedErrorNoEntry: String = "Nodwch y swm y dalodd cyflogwr eich cleient i mewn i’w gynllun pensiwn tramor"
+    val expectedErrorTooBig: String = "Mae’n rhaid i’r swm a dalodd cyflogwyr eich cleient i mewn i gynllun pensiwn tramor eich cleient fod yn llai na £100,000,000,000"
+    val expectedErrorInvalidFormat: String = "Nodwch y cyfanswm a dalodd cyflogwyr eich cleient i mewn i gynllun pensiwn tramor eich cleient yn y fformat cywir"
   }
 
   object CommonExpectedEN extends CommonExpectedResults {
@@ -161,12 +161,12 @@ class UntaxedEmployerControllerSpec extends ViewUnitTest with FakeRequestProvide
     val expectedCaption: Int => String = (taxYear: Int) => s"Taliadau i bensiynau tramor ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
     val expectedButtonText = "Yn eich blaen"
     val hintText: String = "Er enghraifft, £193.52"
-    val expectedTitle: String = "Untaxed employer payments"
+    val expectedTitle: String = "Taliadau cyflogwr sydd heb eu trethu"
     val expectedErrorTitle: String = s"Gwall: $expectedTitle"
-    val expectedPara1: String = "This is also known as exempt employers’ contributions."
-    val expectedSubHeading1: String = "Contribution schemes (money purchase schemes)"
-    val expectedSubHeading2: String = "Benefits schemes (average or final salary schemes)"
-    val expectedDetailsHeading: String = "Work out the value of payments into a benefits scheme"
+    val expectedPara1: String = "Enw arall ar hyn yw cyfraniadau cyflogwr sydd wedi eu heithrio."
+    val expectedSubHeading1: String = "Cynlluniau cyfraniadau (cynlluniau prynu arian)"
+    val expectedSubHeading2: String = "Cynlluniau buddiannau (cynlluniau cyfartaledd cyflog neu gyflog terfynol)"
+    val expectedDetailsHeading: String = "Cyfrifwch werth y taliadau i mewn i gynllun buddiannau"
   }
 
 
