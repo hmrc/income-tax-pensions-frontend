@@ -64,7 +64,7 @@ class QOPSReferenceControllerISpec extends CommonUtils with BeforeAndAfterEach w
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
-    val expectedParagraph1: String = "You can find this on your pension statement."
+    val expectedParagraph1: String = "Mae hwn i’w weld ar eich datganiad pensiwn."
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
@@ -72,7 +72,7 @@ class QOPSReferenceControllerISpec extends CommonUtils with BeforeAndAfterEach w
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
-    val expectedParagraph1: String = "You can find this on your client’s pension statement."
+    val expectedParagraph1: String = "Mae hwn i’w weld ar ddatganiad pensiwn eich cleient."
   }
 
   object CommonExpectedEN extends CommonExpectedResults {
@@ -86,9 +86,9 @@ class QOPSReferenceControllerISpec extends CommonUtils with BeforeAndAfterEach w
 
   object CommonExpectedCY extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Taliadau i bensiynau tramor ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
-    val expectedTitle: String = "Qualifying overseas pension scheme (QOPS) reference number (optional)"
+    val expectedTitle: String = "Cyfeirnod y cynllun pensiwn tramor cymwys (QOPS) (dewisol)"
     val expectedErrorTitle: String = s"Gwall: $expectedTitle"
-    val hintText: String = "For example, QOPS123456"
+    val hintText: String = "Er enghraifft, QOPS123456"
     val expectedButtonText: String = "Yn eich blaen"
     val expectedIncorrectFormatError: String = "Enter a six digit number"
   }

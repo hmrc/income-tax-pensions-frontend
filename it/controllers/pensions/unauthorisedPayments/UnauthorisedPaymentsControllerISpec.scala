@@ -103,17 +103,17 @@ class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAnd
     val expectedTitle = "Taliadau heb awdurdod"
     val expectedError = "Dewiswch ‘Iawn’ os cawsoch daliad heb awdurdod o gynllun pensiwn"
     val expectedErrorTitle = s"Gwall: $expectedTitle"
-    val expectedSubHeading = "Did you get an unauthorised payment from a pension scheme?"
-    val expectedParagraphText = "Unauthorised payments are made outside the tax rules"
-    val expectedParagraphText1: String = "If you got more than one unauthorised payment, you might " +
-      "have paid a surcharge (an extra fee) on some of them. It all " +
-      "depends on if you’ve taken 25% or more of your pension pots."
-    val expectedYesSurchargeCheckboxText = "Yes, unauthorised payments that resulted in a surcharge"
-    val expectedYesNotSurchargeCheckboxText = "Yes, unauthorised payments that did not result in a surcharge"
+    val expectedSubHeading = "A gawsoch daliad heb awdurdod o gynllun pensiwn?"
+    val expectedParagraphText = "Gwneir taliadau heb awdurdod y tu allan i’r rheolau treth"
+    val expectedParagraphText1: String = "Os cawsoch fwy nag un taliad heb awdurdod, mae’n bosibl " +
+      "eich bod wedi talu gordal (ffi ychwanegol) ar rai ohonynt. Mae’n " +
+      "dibynnu p’un a ydych wedi cymryd 25% neu fwy o’ch cronfeydd pensiwn."
+    val expectedYesSurchargeCheckboxText = "Iawn, taliadau heb awdurdod a wnaeth arwain at ordal"
+    val expectedYesNotSurchargeCheckboxText = "Iawn, taliadau heb awdurdod na wnaethant arwain at ordal"
     val expectedNoSurchargeCheckboxText = "No"
     val noEntryErrorMessage = "Dewiswch ‘Iawn’ os cawsoch daliad heb awdurdod o gynllun pensiwn"
     val checkboxHint = "Select all that apply."
-    val expectedDetailsExternalLinkText = "Find out more about unauthorised payments (opens in new tab)"
+    val expectedDetailsExternalLinkText = "Dysgwch ragor am daliadau heb awdurdod (yn agor tab newydd)"
   }
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, _]] = Seq(

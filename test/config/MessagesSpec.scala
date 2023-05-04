@@ -76,7 +76,9 @@ class MessagesSpec extends ViewTest with GuiceOneAppPerSuite {
     "incomeFromPensions.pensionStartDate.error.invalidFormat",
     "incomeFromPensions.stateBenefitStartDate.error.dateInFuture",
     "incomeFromPensions.pensionStartDate.error.dateInFuture",
-    "incomeFromPensions.stateBenefitStartDate.error.invalidFormat"
+    "incomeFromPensions.stateBenefitStartDate.error.invalidFormat",
+    "overseasPension.pensionPayments.nonUkTaxPaid.incorrectFormat",
+    "common.unauthorisedPayments.error.Amount.incorrectFormat"
   )
 
   lazy val allLanguages: Map[String, Map[String, String]] = app.injector.instanceOf[MessagesApi].messages

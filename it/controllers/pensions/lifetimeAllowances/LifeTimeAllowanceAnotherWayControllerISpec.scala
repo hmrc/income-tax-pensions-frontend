@@ -67,11 +67,11 @@ class LifeTimeAllowanceAnotherWayControllerISpec extends IntegrationTest with Be
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
-    val expectedTitle = "Did you take the amount above your lifetime allowance another way?"
-    val expectedParagraphText = "Tell us about any amount you’ve taken above your lifetime allowance in other " +
-      "ways. This could be regular payments or a cash withdrawal"
+    val expectedTitle = "A wnaethoch gymryd y swm sy’n uwch na’ch lwfans oes ffordd arall?"
+    val expectedParagraphText = "Rhowch wybod i ni am unrhyw swm rydych wedi’i gymryd sy’n uwch na’ch lwfans oes " +
+      "mewn ffyrdd eraill. Gallai hyn fod yn daliadau rheolaidd neu’n tynnu’n ôl arian"
     val expectedErrorTitle = s"Gwall: $expectedTitle"
-    val expectedError = "Select yes if you took the amount above your lifetime allowance in another way"
+    val expectedError = "Dewiswch ‘Iawn’ os wnaethoch gymryd y swm sy’n uwch na’ch lwfans oes mewn ffordd arall"
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
@@ -83,11 +83,11 @@ class LifeTimeAllowanceAnotherWayControllerISpec extends IntegrationTest with Be
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
-    val expectedTitle = "Did your client take the amount above their lifetime allowance another way?"
-    val expectedParagraphText = "Tell us about any amount your client has taken above their lifetime allowance in " +
-      "other ways. This could be regular payments or a cash withdrawal"
+    val expectedTitle = "A wnaeth eich cleient gymryd y swm sy’n uwch na’ch lwfans oes ffordd arall?"
+    val expectedParagraphText = "Rhowch wybod i ni am unrhyw swm y mae’ch cleient wedi’i gymryd sy’n uwch na’u " +
+      "lwfans oes mewn ffyrdd eraill. Gallai hyn fod yn daliadau rheolaidd neu’n tynnu’n ôl arian"
     val expectedErrorTitle = s"Gwall: $expectedTitle"
-    val expectedError = "Select yes if your client took the amount above their lifetime allowance in another way"
+    val expectedError = "Dewiswch ‘Iawn’ os wnaeth eich cleient gymryd y swm sy’n uwch na’ch lwfans oes mewn ffordd arall"
   }
 
   object CommonExpectedEN extends CommonExpectedResults {
@@ -103,7 +103,7 @@ class LifeTimeAllowanceAnotherWayControllerISpec extends IntegrationTest with Be
     val expectedButtonText = "Yn eich blaen"
     val yesText = "Iawn"
     val noText = "Na"
-    val expectedLumpSumText: String = "Do not tell us about lump sums."
+    val expectedLumpSumText: String = "Peidiwch â rhoi gwybod i ni am gyfandaliadau."
   }
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(
