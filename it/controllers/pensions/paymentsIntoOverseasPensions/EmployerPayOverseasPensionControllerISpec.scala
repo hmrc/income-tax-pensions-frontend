@@ -85,13 +85,13 @@ class EmployerPayOverseasPensionControllerISpec extends CommonUtils with BeforeA
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
-    val expectedTitle: String = "Did your employers pay into your overseas pension schemes?"
-    val expectedHeading: String = "Did your employers pay into your overseas pension schemes?"
+    val expectedTitle: String = "A wnaeth eich cyflogwr dalu i mewn i’ch cynlluniau pensiwn tramor?"
+    val expectedHeading: String = "A wnaeth eich cyflogwr dalu i mewn i’ch cynlluniau pensiwn tramor?"
     val expectedErrorTitle: String = s"Gwall: $expectedTitle"
-    val expectedError: String = "Select yes if your employer paid into your overseas pension schemes"
+    val expectedError: String = "Dewiswch ‘Iawn’ os gwnaeth eich cyflogwr dalu i mewn i’ch cynlluniau pensiwn tramor"
     val expectedFindOut: String = "Er mwyn dysgu beth yw hyn, gallwch wneud y canlynol:"
     val expectedBullet1: String = "gwirio’ch datganiad pensiwn"
-    val expectedBullet2: String = "ask your employer"
+    val expectedBullet2: String = "gofyn i’ch cyflogwr"
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
@@ -105,13 +105,13 @@ class EmployerPayOverseasPensionControllerISpec extends CommonUtils with BeforeA
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
-    val expectedTitle: String = "Did your client’s employers pay into the overseas pension schemes?"
-    val expectedHeading: String = "Did your client’s employers pay into the overseas pension schemes?"
+    val expectedTitle: String = "A wnaeth cyflogwr eich cleient dalu i mewn i’r cynlluniau pensiwn tramor?"
+    val expectedHeading: String = "A wnaeth cyflogwr eich cleient dalu i mewn i’r cynlluniau pensiwn tramor?"
     val expectedErrorTitle: String = s"Gwall: $expectedTitle"
-    val expectedError: String = "Select yes if your client’s employer paid into their overseas pension schemes"
+    val expectedError: String = "Dewiswch ‘Iawn’ os gwnaeth cyflogwr eich cleient dalu i mewn i’w gynlluniau pensiwn tramor"
     val expectedFindOut: String = "Er mwyn dysgu beth yw hyn, gallwch ofyn i’ch cleient wneud y canlynol:"
     val expectedBullet1: String = "gwirio’i ddatganiad pensiwn"
-    val expectedBullet2: String = "ask their employer"
+    val expectedBullet2: String = "gofyn i’w gyflogwr"
   }
 
   object CommonExpectedEN extends CommonExpectedResults {

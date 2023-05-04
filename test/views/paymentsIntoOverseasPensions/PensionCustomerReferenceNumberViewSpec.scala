@@ -55,10 +55,10 @@ class PensionCustomerReferenceNumberViewSpec extends ViewUnitTest with FakeReque
     val expectedNoValueError: String = "Enter your customer reference number"
   }
   object ExpectedIndividualCY extends SpecificExpectedResults {
-    val expectedTitle: String = "What’s your customer reference number?"
+    val expectedTitle: String = "Beth yw’ch cyfeirnod cwsmer?"
     val expectedErrorTitle: String = s"Gwall: $expectedTitle"
-    val expectedParagraph1: String = "Your pension provider should have given you a customer reference number."
-    val expectedNoValueError: String = "Enter your customer reference number"
+    val expectedParagraph1: String = "Dylai’ch darparwr pensiwn fod wedi rhoi cyfeirnod cwsmer i chi."
+    val expectedNoValueError: String = "Nodwch eich cyfeirnod cwsmer"
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
@@ -69,10 +69,10 @@ class PensionCustomerReferenceNumberViewSpec extends ViewUnitTest with FakeReque
 
   }
   object ExpectedAgentCY extends SpecificExpectedResults {
-    val expectedTitle: String = "What’s your client’s customer reference number?"
+    val expectedTitle: String = "Beth yw cyfeirnod cwsmer eich cleient?"
     val expectedErrorTitle: String = s"Gwall: $expectedTitle"
-    val expectedParagraph1: String = "Your client’s pension provider should have given them a customer reference number."
-    val expectedNoValueError: String = "Enter your client’s customer reference number"
+    val expectedParagraph1: String = "Dylai darparwr pensiwn eich cleient fod wedi rhoi cyfeirnod cwsmer i’ch cleient."
+    val expectedNoValueError: String = "Nodwch gyfeirnod cwsmer eich cleient"
   }
 
   object CommonExpectedEN extends CommonExpectedResults {
@@ -83,7 +83,7 @@ class PensionCustomerReferenceNumberViewSpec extends ViewUnitTest with FakeReque
   }
   object CommonExpectedCY extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Taliadau i bensiynau tramor ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
-    val hintText: String = "For example, 'PENSIONINCOME245'"
+    val hintText: String = "Er enghraifft, 'INCWMPENSIWN245'"
     val expectedButtonText: String = "Yn eich blaen"
   }
 

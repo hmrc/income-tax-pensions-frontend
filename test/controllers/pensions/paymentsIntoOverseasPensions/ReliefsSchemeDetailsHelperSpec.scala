@@ -201,7 +201,11 @@ class ReliefsSchemeDetailsHelperSpec extends AnyWordSpec with Matchers {
             "overseasPension.reliefDetails.pensionSchemeName.hidden" -> "Change pension scheme name",
             "overseasPension.reliefDetails.amount.hidden" -> "Change untaxed employer payments",
             "overseasPension.reliefDetails.typeOfRelief.hidden" -> "Change type of relief",
-            "overseasPension.reliefDetails.schemeDetail.hidden" -> "Change scheme details"
+            "overseasPension.reliefDetails.schemeDetail.hidden" -> "Change scheme details",
+            "overseasPension.pensionReliefType.TCR" -> "Transitional corresponding relief",
+            "overseasPension.pensionReliefType.MMR" -> "Migrant member relief",
+            "overseasPension.pensionReliefType.DTR" -> "Double taxation relief",
+            "overseasPension.reliefDetails.noTaxRelief" -> "No tax relief"
           ).asJava
       ).asJava,
       new Langs(new play.api.i18n.DefaultLangs()))
