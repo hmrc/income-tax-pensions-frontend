@@ -106,7 +106,7 @@ class PensionLumpSumDetailsControllerISpec extends IntegrationTest with ViewHelp
 
   trait SpecificExpectedResults {
     val expectedTitle: String
-    val expectedHeading: String
+    lazy val expectedHeading: String = expectedTitle
     val expectedErrorTitle: String
     val beforeTaxErrorNoEntry: String
     val taxPaidErrorNoEntry: String
@@ -134,7 +134,7 @@ class PensionLumpSumDetailsControllerISpec extends IntegrationTest with ViewHelp
     val buttonText = "Yn eich blaen"
     val beforeTax: String = "Cyfanswm cyn treth"
     val taxPaid: String = "Cyfanswm y dreth a dalwyd"
-    val beforeTaxErrorIncorrectFormat: String = "Enter the amount of lump sum in the correct format"
+    val beforeTaxErrorIncorrectFormat: String = "Nodwch swm y cyfandaliad yn y fformat cywir"
     val beforeTaxErrorOverMaximum: String = "Mae’n rhaid i swm y lwfans oes fod yn llai na 100,000,000,000"
     val taxPaidErrorIncorrectFormat: String = "Nodwch swm y dreth lwfans oes yn y fformat cywir"
     val taxPaidErrorOverMaximum: String = "Mae’n rhaid i swm y dreth lwfans oes fod yn llai na 100,000,000,000"
@@ -142,7 +142,6 @@ class PensionLumpSumDetailsControllerISpec extends IntegrationTest with ViewHelp
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
     val expectedTitle = "Your pension lump sum"
-    val expectedHeading = "Your pension lump sum"
     val expectedErrorTitle = s"Error: $expectedTitle"
     val beforeTaxErrorNoEntry = "Enter the amount you took above your lifetime allowance as a lump sum"
     val taxPaidErrorNoEntry = "Enter the amount of lifetime allowance tax your pension provider paid or agreed to pay on the lump sum"
@@ -152,19 +151,17 @@ class PensionLumpSumDetailsControllerISpec extends IntegrationTest with ViewHelp
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
-    val expectedTitle = "Your pension lump sum"
-    val expectedHeading = "Your pension lump sum"
+    val expectedTitle = "Eich cyfandaliad pensiwn"
     val expectedErrorTitle = s"Gwall: $expectedTitle"
-    val beforeTaxErrorNoEntry = "Enter the amount you took above your lifetime allowance as a lump sum"
-    val taxPaidErrorNoEntry = "Enter the amount of lifetime allowance tax your pension provider paid or agreed to pay on the lump sum"
+    val beforeTaxErrorNoEntry = "Nodwch y swm a gymeroch sy’n uwch na’ch lwfans oes fel cyfandaliad"
+    val taxPaidErrorNoEntry = "Nodwch swm y dreth lwfans oes a dalodd eich darparwr pensiwn neu a gytunwyd i dalu ar y cyfandaliad"
     val checkThisWithProviderParagraph = "Gwiriwch â’ch darparwyr pensiwn os nad ydych yn siŵr."
-    val beforeTaxParagraph = "If you got a lump sum payment from more than one pension scheme, give the total."
-    val taxPaidParagraph = "If more than one of your pension schemes paid lifetime allowance tax, give the total."
+    val beforeTaxParagraph = "Os cawsoch gyfandaliad pensiwn gan fwy nag un cynllun pensiwn, rhowch y cyfanswm."
+    val taxPaidParagraph = "Os oedd mwy nag un o’ch cynlluniau pensiwn yn talu treth lwfans oes, rhowch y cyfanswm."
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
     val expectedTitle = "Your client’s pensions lump sum"
-    val expectedHeading = "Your client’s pensions lump sum"
     val expectedErrorTitle = s"Error: $expectedTitle"
     val beforeTaxErrorNoEntry = "Enter the amount your client took above their lifetime allowance as a lump sum"
     val taxPaidErrorNoEntry = "Enter the amount of lifetime allowance tax your client’s pension provider paid or agreed to pay on the lump sum"
@@ -174,14 +171,13 @@ class PensionLumpSumDetailsControllerISpec extends IntegrationTest with ViewHelp
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
-    val expectedTitle = "Your client’s pensions lump sum"
-    val expectedHeading = "Your client’s pensions lump sum"
+    val expectedTitle = "Cyfandaliad pensiwn eich cleient"
     val expectedErrorTitle = s"Gwall: $expectedTitle"
-    val beforeTaxErrorNoEntry = "Enter the amount your client took above their lifetime allowance as a lump sum"
-    val taxPaidErrorNoEntry = "Enter the amount of lifetime allowance tax your client’s pension provider paid or agreed to pay on the lump sum"
+    val beforeTaxErrorNoEntry = "Nodwch y swm a gymerodd eich cleient sy’n uwch na’u lwfans oes fel cyfandaliad"
+    val taxPaidErrorNoEntry = "Nodwch swm y dreth lwfans oes a dalwyd gan ddarparwr pensiwn eich cleient, neu’r swm a gytunodd i’w dalu ar y cyfandaliad"
     val checkThisWithProviderParagraph = "Gall eich cleient wirio â’i ddarparwr pensiwn os nad ydych yn siŵr."
-    val beforeTaxParagraph = "If your client got a lump sum payment from more than one pension scheme, give the total."
-    val taxPaidParagraph = "If more than one of your client’s pension schemes paid lifetime allowance tax, give the total."
+    val beforeTaxParagraph = "Os cafodd eich cleient gyfandaliad gan fwy nag un cynllun pensiwn, rhowch y cyfanswm."
+    val taxPaidParagraph = "Os oedd mwy nag un o gynlluniau pensiwn eich cleient yn talu treth lwfans oes, rhowch y cyfanswm."
   }
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(
@@ -224,7 +220,7 @@ class PensionLumpSumDetailsControllerISpec extends IntegrationTest with ViewHelp
           inputFieldValueCheck(amount2InputName, amount2inputSelector, "")
         }
 
-        "render render Your pension lump sum details page with prefilled value for before tax and tax paid" which {
+        "render Your pension lump sum details page with prefilled value for before tax and tax paid" which {
           implicit lazy val result: WSResponse = {
             dropPensionsDB()
             val pensionsViewModel = aPensionLifetimeAllowanceViewModel.copy(
@@ -248,7 +244,7 @@ class PensionLumpSumDetailsControllerISpec extends IntegrationTest with ViewHelp
           inputFieldValueCheck(amount2InputName, amount2inputSelector, newAmount2.toString)
         }
 
-        "render render Your pension lump sum details page with prefilled value for before tax but not tax paid" which {
+        "render Your pension lump sum details page with prefilled value for before tax but not tax paid" which {
           implicit lazy val result: WSResponse = {
             dropPensionsDB()
             val pensionsViewModel = aPensionLifetimeAllowanceViewModel.copy(
@@ -272,7 +268,7 @@ class PensionLumpSumDetailsControllerISpec extends IntegrationTest with ViewHelp
           inputFieldValueCheck(amount2InputName, amount2inputSelector, newAmount2.toString)
         }
 
-        "render render Your pension lump sum details page with prefilled value for tax paid but not before tax" which {
+        "render Your pension lump sum details page with prefilled value for tax paid but not before tax" which {
           implicit lazy val result: WSResponse = {
             dropPensionsDB()
             val pensionsViewModel = aPensionLifetimeAllowanceViewModel.copy(

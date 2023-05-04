@@ -658,17 +658,17 @@ incomeFromPensions.schemeDetails.summary.tax = Tax:
 #################       Lifetime Allowance       ########################################
 
 #Did you get paid your pension as a lump sum
-lifetimeAllowance.pensionLumpSum.title.individual = Did you take the amount above your lifetime allowance as a lump sum?
-lifetimeAllowance.pensionLumpSum.title.agent = Did your client take the amount above their lifetime allowance as a lump sum?
-lifetimeAllowance.pensionLumpSum.error.noEntry.individual = Select yes if you took the amount above your lifetime allowance as a lump sum
-lifetimeAllowance.pensionLumpSum.error.noEntry.agent = Select yes if your client took the amount above their lifetime allowance as a lump sum
+lifetimeAllowance.pensionLumpSum.title.individual = A wnaethoch gymryd y swm sy’n uwch na’ch lwfans oes fel cyfandaliad?
+lifetimeAllowance.pensionLumpSum.title.agent = A wnaeth eich cleient gymryd y swm sy’n uwch na’u lwfans oes fel cyfandaliad?
+lifetimeAllowance.pensionLumpSum.error.noEntry.individual = Dewiswch ‘Iawn’ os wnaethoch gymryd y swm sy’n uwch na’ch lwfans oes fel cyfandaliad
+lifetimeAllowance.pensionLumpSum.error.noEntry.agent = Dewiswch ‘Iawn’ wnaeth eich cleient gymryd y swm sy’n uwch na’u lwfans oes fel cyfandaliad
 
 #Have you gone above your annual or lifetime allowance?
-lifetimeAllowance.aboveAnnualLifetimeAllowance.title.individual = Have you gone above your lifetime allowance?
-lifetimeAllowance.aboveAnnualLifetimeAllowance.title.agent = Has your client gone above their lifetime allowance?
-lifetimeAllowance.aboveAnnualLifetimeAllowance.link = Find out more about lifetime allowance (opens in new tab)
-lifetimeAllowance.aboveAnnualLifetimeAllowance.error.noEntry.individual = Select yes if you have gone above your lifetime allowance
-lifetimeAllowance.aboveAnnualLifetimeAllowance.error.noEntry.agent = Select yes if your client has gone above their lifetime allowance
+lifetimeAllowance.aboveAnnualLifetimeAllowance.title.individual = Ydych chi wedi mynd dros eich lwfans oes?
+lifetimeAllowance.aboveAnnualLifetimeAllowance.title.agent = A yw eich cleient wedi mynd dros ei lwfans oes?
+lifetimeAllowance.aboveAnnualLifetimeAllowance.link = Dysgwch ragor am lwfans oes (yn agor tab newydd)
+lifetimeAllowance.aboveAnnualLifetimeAllowance.error.noEntry.individual = Dewiswch ‘Iawn’ os ydych wedi mynd yn uwch na’ch lwfans oes
+lifetimeAllowance.aboveAnnualLifetimeAllowance.error.noEntry.agent = Dewiswch ‘Iawn’ os yw’ch cleient wedi mynd yn uwch na’i lwfans oes
 
 #Annual Lifetime Allowance Gateway
 annualAndLifetimeAllowance.gateway.title.individual = A ydych wedi mynd yn uwch na’ch lwfans blynyddol neu lwfans oes?
@@ -681,73 +681,73 @@ annualAndLifetimeAllowance.gateway.error.agent = Dewiswch ‘Iawn’ os yw’ch 
 annualAndLifetimeAllowance.gateway.error.individual = Dewiswch ‘Iawn’ os ydych wedi mynd yn uwch na’ch lwfans blynyddol neu lwfans oes
 
 #Did you take the amount above your lifetime allowance another way
-lifetimeAllowance.lifetimeAllowanceAnotherWay.title.individual = Did you take the amount above your lifetime allowance another way?
-lifetimeAllowance.lifetimeAllowanceAnotherWay.title.agent = Did your client take the amount above their lifetime allowance another way?
-lifetimeAllowance.lifetimeAllowanceAnotherWay.paragraph.line1 = Do not tell us about lump sums.
-lifetimeAllowance.lifetimeAllowanceAnotherWay.paragraph.line2.individual = Tell us about any amount you’ve taken above your lifetime allowance in other ways. This could be regular payments or a cash withdrawal
-lifetimeAllowance.lifetimeAllowanceAnotherWay.paragraph.line2.agent = Tell us about any amount your client has taken above their lifetime allowance in other ways. This could be regular payments or a cash withdrawal
-lifetimeAllowance.lifetimeAllowanceAnotherWay.error.noEntry.individual = Select yes if you took the amount above your lifetime allowance in another way
-lifetimeAllowance.lifetimeAllowanceAnotherWay.error.noEntry.agent = Select yes if your client took the amount above their lifetime allowance in another way
+lifetimeAllowance.lifetimeAllowanceAnotherWay.title.individual = A wnaethoch gymryd y swm sy’n uwch na’ch lwfans oes ffordd arall?
+lifetimeAllowance.lifetimeAllowanceAnotherWay.title.agent = A wnaeth eich cleient gymryd y swm sy’n uwch na’ch lwfans oes ffordd arall?
+lifetimeAllowance.lifetimeAllowanceAnotherWay.paragraph.line1 = Peidiwch â rhoi gwybod i ni am gyfandaliadau.
+lifetimeAllowance.lifetimeAllowanceAnotherWay.paragraph.line2.individual = Rhowch wybod i ni am unrhyw swm rydych wedi’i gymryd sy’n uwch na’ch lwfans oes mewn ffyrdd eraill. Gallai hyn fod yn daliadau rheolaidd neu’n tynnu’n ôl arian
+lifetimeAllowance.lifetimeAllowanceAnotherWay.paragraph.line2.agent = Rhowch wybod i ni am unrhyw swm y mae’ch cleient wedi’i gymryd sy’n uwch na’u lwfans oes mewn ffyrdd eraill. Gallai hyn fod yn daliadau rheolaidd neu’n tynnu’n ôl arian
+lifetimeAllowance.lifetimeAllowanceAnotherWay.error.noEntry.individual = Dewiswch ‘Iawn’ os wnaethoch gymryd y swm sy’n uwch na’ch lwfans oes mewn ffordd arall
+lifetimeAllowance.lifetimeAllowanceAnotherWay.error.noEntry.agent = Dewiswch ‘Iawn’ os wnaeth eich cleient gymryd y swm sy’n uwch na’ch lwfans oes mewn ffordd arall
 
 #Pension Lump Sum Details
-lifetimeAllowance.pensionLumpSumDetails.title.individual = Your pension lump sum
-lifetimeAllowance.pensionLumpSumDetails.beforeTax.paragraph.individual = If you got a lump sum payment from more than one pension scheme, give the total.
-lifetimeAllowance.pensionLumpSumDetails.taxPaid.paragraph.individual = If more than one of your pension schemes paid lifetime allowance tax, give the total.
-lifetimeAllowance.pensionLumpSumDetails.title.agent = Your client’s pensions lump sum
-lifetimeAllowance.pensionLumpSumDetails.beforeTax.paragraph.agent = If your client got a lump sum payment from more than one pension scheme, give the total.
-lifetimeAllowance.pensionLumpSumDetails.taxPaid.paragraph.agent = If more than one of your client’s pension schemes paid lifetime allowance tax, give the total.
-lifetimeAllowance.pensionLumpSumDetails.beforeTax.error.noEntry.individual = Enter the amount you took above your lifetime allowance as a lump sum
-lifetimeAllowance.pensionLumpSumDetails.beforeTax.error.noEntry.agent = Enter the amount your client took above their lifetime allowance as a lump sum
-lifetimeAllowance.pensionLumpSumDetails.beforeTax.error.incorrectFormat = Enter the amount of lump sum in the correct format
-lifetimeAllowance.pensionLumpSumDetails.taxPaid.error.noEntry.individual = Enter the amount of lifetime allowance tax your pension provider paid or agreed to pay on the lump sum
-lifetimeAllowance.pensionLumpSumDetails.taxPaid.error.noEntry.agent = Enter the amount of lifetime allowance tax your client’s pension provider paid or agreed to pay on the lump sum
+lifetimeAllowance.pensionLumpSumDetails.title.individual = Eich cyfandaliad pensiwn
+lifetimeAllowance.pensionLumpSumDetails.beforeTax.paragraph.individual = Os cawsoch gyfandaliad pensiwn gan fwy nag un cynllun pensiwn, rhowch y cyfanswm.
+lifetimeAllowance.pensionLumpSumDetails.taxPaid.paragraph.individual = Os oedd mwy nag un o’ch cynlluniau pensiwn yn talu treth lwfans oes, rhowch y cyfanswm.
+lifetimeAllowance.pensionLumpSumDetails.title.agent = Cyfandaliad pensiwn eich cleient
+lifetimeAllowance.pensionLumpSumDetails.beforeTax.paragraph.agent = Os cafodd eich cleient gyfandaliad gan fwy nag un cynllun pensiwn, rhowch y cyfanswm.
+lifetimeAllowance.pensionLumpSumDetails.taxPaid.paragraph.agent = Os oedd mwy nag un o gynlluniau pensiwn eich cleient yn talu treth lwfans oes, rhowch y cyfanswm.
+lifetimeAllowance.pensionLumpSumDetails.beforeTax.error.noEntry.individual = Nodwch y swm a gymeroch sy’n uwch na’ch lwfans oes fel cyfandaliad
+lifetimeAllowance.pensionLumpSumDetails.beforeTax.error.noEntry.agent = Nodwch y swm a gymerodd eich cleient sy’n uwch na’u lwfans oes fel cyfandaliad
+lifetimeAllowance.pensionLumpSumDetails.beforeTax.error.incorrectFormat = Nodwch swm y cyfandaliad yn y fformat cywir
+lifetimeAllowance.pensionLumpSumDetails.taxPaid.error.noEntry.individual = Nodwch swm y dreth lwfans oes a dalodd eich darparwr pensiwn neu a gytunwyd i dalu ar y cyfandaliad
+lifetimeAllowance.pensionLumpSumDetails.taxPaid.error.noEntry.agent = Nodwch swm y dreth lwfans oes a dalwyd gan ddarparwr pensiwn eich cleient, neu’r swm a gytunodd i’w dalu ar y cyfandaliad
 
 #Pension Taken In Another Way
-lifetimeAllowance.pensionTakenAnotherWay.title.individual = Your pension taken in another way
-lifetimeAllowance.pensionTakenAnotherWay.title.agent = Your client’s pension taken in another way
-lifetimeAllowance.pensionTakenAnotherWay.paragraph.one.individual = Tell us the amount above your lifetime allowance you’ve taken in other ways. This could be regular payments or a cash withdrawal.
-lifetimeAllowance.pensionTakenAnotherWay.paragraph.one.agent = Tell us the amount above your client’s lifetime allowance they’ve taken in other ways. This could be regular payments or a cash withdrawal.
-lifetimeAllowance.pensionTakenAnotherWay.beforeTax.paragraph.individual = If you got payments from more than one pension scheme, give the total.
-lifetimeAllowance.pensionTakenAnotherWay.beforeTax.paragraph.agent = If your client got payments from more than one pension scheme, give the total.
-lifetimeAllowance.pensionTakenAnotherWay.taxPaid.paragraph = If more than one pension scheme paid the lifetime allowance tax, give the total.
-lifetimeAllowance.pensionTakenAnotherWay.beforeTax.error.noEntry.individual = Enter the amount you took above your lifetime allowance in another way
-lifetimeAllowance.pensionTakenAnotherWay.beforeTax.error.noEntry.agent = Enter the amount your client took above their lifetime allowance in another way
-lifetimeAllowance.pensionTakenAnotherWay.beforeTax.error.incorrectFormat.individual = Enter the amount you took above your lifetime allowance in the correct format
-lifetimeAllowance.pensionTakenAnotherWay.beforeTax.error.incorrectFormat.agent = Enter the amount your client took above their lifetime allowance in the correct format
-lifetimeAllowance.pensionTakenAnotherWay.taxPaid.error.noEntry.individual = Enter the amount of lifetime allowance tax your pension provider paid or agreed to pay on the amount taken in another way
-lifetimeAllowance.pensionTakenAnotherWay.taxPaid.error.noEntry.agent = Enter the amount of lifetime allowance tax your client’s pension provider paid or agreed to pay on the amount taken in another way
+lifetimeAllowance.pensionTakenAnotherWay.title.individual = Eich pensiwn wedi’i gymryd mewn ffordd arall
+lifetimeAllowance.pensionTakenAnotherWay.title.agent = Pensiwn eich cleient wedi’i gymryd mewn ffordd arall
+lifetimeAllowance.pensionTakenAnotherWay.paragraph.one.individual = Rhowch wybod i ni’r swm sy’n uwch na’ch lwfans oes rydych wedi’i gymryd mewn ffyrdd eraill. Gallai hyn fod yn daliadau rheolaidd neu’n tynnu’n ôl arian.
+lifetimeAllowance.pensionTakenAnotherWay.paragraph.one.agent = Rhowch wybod i ni’r swm sy’n uwch na lwfans oes eich cleient maen nhw wedi’i gymryd mewn ffyrdd eraill. Gallai hyn fod yn daliadau rheolaidd neu’n tynnu’n ôl arian.
+lifetimeAllowance.pensionTakenAnotherWay.beforeTax.paragraph.individual = Os oeddech yn cael taliadau o fwy nag un cynllun pensiwn, rhowch y cyfanswm.
+lifetimeAllowance.pensionTakenAnotherWay.beforeTax.paragraph.agent = Os oedd eich cleient yn cael taliadau o fwy nag un cynllun pensiwn, rhowch y cyfanswm.
+lifetimeAllowance.pensionTakenAnotherWay.taxPaid.paragraph = Os oedd mwy nag un cynllun pensiwn yn talu’r dreth lwfans oes, rhowch y cyfanswm.
+lifetimeAllowance.pensionTakenAnotherWay.beforeTax.error.noEntry.individual = Nodwch y swm a gymeroch sy’n uwch na’ch lwfans oes mewn ffordd arall
+lifetimeAllowance.pensionTakenAnotherWay.beforeTax.error.noEntry.agent = Nodwch y swm a gymerodd eich cleient sy’n uwch na’u lwfans oes mewn ffordd arall
+lifetimeAllowance.pensionTakenAnotherWay.beforeTax.error.incorrectFormat.individual = Nodwch y swm a gymeroch sy’n uwch na’ch lwfans oes yn y fformat cywir
+lifetimeAllowance.pensionTakenAnotherWay.beforeTax.error.incorrectFormat.agent = Nodwch y swm a gymerodd eich cleient sy’n uwch na’u lwfans oes yn y fformat cywir
+lifetimeAllowance.pensionTakenAnotherWay.taxPaid.error.noEntry.individual = Nodwch swm y dreth lwfans oes a dalodd eich darparwr pensiwn neu a gytunwyd i dalu ar y swm a gymerir mewn ffordd arall
+lifetimeAllowance.pensionTakenAnotherWay.taxPaid.error.noEntry.agent = Rhowch swm y dreth lwfans oes a dalodd darparwr pensiwn eich cleient neu a gytunwyd i dalu ar y swm a gymerwyd mewn ffordd arall
 
 
 #Annual Allowance and Lifetime Allowance CYA
 
-lifetimeAllowance.cya.heading.individual = Check your annual and lifetime allowances
-lifetimeAllowance.cya.heading.agent = Check your client’s annual and lifetime allowances
-lifetimeAllowance.cya.aboveAnnualOrLifetimeAllowance = Above annual or lifetime allowance
-lifetimeAllowance.cya.reducedAnnualAllowance = Reduced annual allowance
-lifetimeAllowance.cya.typeOfReducedAnnualAllowance = Type of reduced annual allowance
-lifetimeAllowance.cya.aboveAnnualAllowance = Above annual allowance
-lifetimeAllowance.cya.annualAllowanceTax = Annual allowance tax
-lifetimeAllowance.cya.annualPensionSchemeTaxReferences = Schemes paying annual allowance tax
-lifetimeAllowance.cya.aboveLifetimeAllowance = Above lifetime allowance
-lifetimeAllowance.cya.lumpSum = Lump sum
-lifetimeAllowance.cya.otherPayments = Other payments
-lifetimeAllowance.cya.lifetimePensionSchemeTaxReferences = Schemes paying lifetime allowance tax
+lifetimeAllowance.cya.heading.individual = Gwiriwch eich lwfansau blynyddol ac oes
+lifetimeAllowance.cya.heading.agent = Gwiriwch lwfansau blynyddol ac oes eich cleient
+lifetimeAllowance.cya.aboveAnnualOrLifetimeAllowance = Uwch na’r lwfans blynyddol neu lwfans oes
+lifetimeAllowance.cya.reducedAnnualAllowance = Lwfans blynyddol wedi’i ostwng
+lifetimeAllowance.cya.typeOfReducedAnnualAllowance = Math o lwfans blynyddol wedi’i ostwng
+lifetimeAllowance.cya.aboveAnnualAllowance = Uwch na’r lwfans blynyddol
+lifetimeAllowance.cya.annualAllowanceTax = Treth lwfans blynyddol
+lifetimeAllowance.cya.annualPensionSchemeTaxReferences = Cynlluniau sy’n talu treth lwfans blynyddol
+lifetimeAllowance.cya.aboveLifetimeAllowance = Uwch na’r lwfans oes pensiwn
+lifetimeAllowance.cya.lumpSum = Cyfandaliad
+lifetimeAllowance.cya.otherPayments = Taliadau eraill
+lifetimeAllowance.cya.lifetimePensionSchemeTaxReferences = Cynlluniau sy’n talu treth lwfans oes
 
-lifetimeAllowance.cya.aboveAnnualOrLifetimeAllowance.hidden = Change above annual or lifetime allowance
-lifetimeAllowance.cya.reducedAnnualAllowance.hidden = Change reduced annual allowance
-lifetimeAllowance.cya.typeOfReducedAnnualAllowance.hidden = Change type of reduced annual allowance
-lifetimeAllowance.cya.aboveAnnualAllowance.hidden = Change above annual allowance
-lifetimeAllowance.cya.annualAllowanceTax.hidden = Change annual allowance tax
-lifetimeAllowance.cya.annualPensionSchemeTaxReferences.hidden = Change schemes paying annual allowance tax
-lifetimeAllowance.cya.aboveLifetimeAllowance.hidden = Change above lifetime allowance
-lifetimeAllowance.cya.lumpSum.hidden = Change lump sum
-lifetimeAllowance.cya.otherPayments.hidden = Change other payments
-lifetimeAllowance.cya.lifetimePensionSchemeTaxReferences.hidden = Change schemes paying lifetime allowance tax
+lifetimeAllowance.cya.aboveAnnualOrLifetimeAllowance.hidden = Newidiwch uwch na lwfans blynyddol neu lwfans oes
+lifetimeAllowance.cya.reducedAnnualAllowance.hidden = Newidiwch lwfans blynyddol wedi’i ostwng
+lifetimeAllowance.cya.typeOfReducedAnnualAllowance.hidden = Newidiwch fath o lwfans blynyddol wedi’i ostwng
+lifetimeAllowance.cya.aboveAnnualAllowance.hidden = Newidiwch uwch na’r lwfans blynyddol
+lifetimeAllowance.cya.annualAllowanceTax.hidden = Newidiwch dreth lwfans blynyddol
+lifetimeAllowance.cya.annualPensionSchemeTaxReferences.hidden = Newidiwch gynlluniau sy’n talu treth lwfans blynyddol
+lifetimeAllowance.cya.aboveLifetimeAllowance.hidden = Newidiwch uwch na’r lwfans oes pensiwn
+lifetimeAllowance.cya.lumpSum.hidden = Newidiwch gyfandaliad
+lifetimeAllowance.cya.otherPayments.hidden = Newidiwch daliadau eraill
+lifetimeAllowance.cya.lifetimePensionSchemeTaxReferences.hidden = Newidiwch gynlluniau sy’n talu treth lwfans oes
 
 #Pension scheme tax reference lifetime allowance
-lifetimeAllowance.pensionSchemeTaxReference.title = Tell us the pension scheme that paid or agreed to pay the tax
-lifetimeAllowance.pensionSchemeTaxReference.p1 = If more than one pension scheme paid or agreed to pay the tax, you can add them later.
-lifetimeAllowance.pensionSchemeTaxReference.error.incorrectFormat = Enter a reference with 8 numbers and 2 letters, such as ‘12345678AB’
+lifetimeAllowance.pensionSchemeTaxReference.title = Rhowch wybod i ni’r cynllun pensiwn a dalodd neu a gytunwyd i dalu’r dreth
+lifetimeAllowance.pensionSchemeTaxReference.p1 = Os bydd mwy nag un cynllun pensiwn yn talu neu wedi cytuno i dalu’r dreth, gallwch eu hychwanegu nes ymlaen.
+lifetimeAllowance.pensionSchemeTaxReference.error.incorrectFormat = Nodwch gyfeirnod sydd ag 8 rhif a 2 lythyren, megis ‘12345678AB’
 
 #Surcharge Amount
 unauthorisedPayments.surchargeAmount.title = Amount that resulted in a surcharge
