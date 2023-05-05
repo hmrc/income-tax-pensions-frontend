@@ -17,11 +17,17 @@
 package services
 
 import builders.AllPensionsDataBuilder.anAllPensionDataEmpty
+import builders.EmploymentPensionsBuilder.anEmploymentPensions
+import builders.PensionIncomeViewModelBuilder.aPensionIncome
 import builders.PensionsCYAModelBuilder._
 import config._
 import connectors.IncomeSourceConnector
 import models.mongo._
+import models.pension.AllPensionsData
 import models.pension.AllPensionsData.generateCyaFromPrior
+import models.pension.charges._
+import models.pension.reliefs.{PensionReliefs, Reliefs}
+import models.pension.statebenefits._
 import org.scalatest.concurrent.ScalaFutures
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, SEE_OTHER}
 import play.api.i18n.MessagesApi
@@ -30,6 +36,8 @@ import play.api.mvc.Results.{Ok, Redirect}
 import utils.UnitTest
 import views.html.templates.{InternalServerErrorTemplate, NotFoundTemplate, ServiceUnavailableTemplate}
 
+import java.time.{Instant, LocalDate}
+import java.util.UUID
 import scala.concurrent.Future
 
 class PensionSessionServiceSpec extends UnitTest
@@ -120,132 +128,132 @@ class PensionSessionServiceSpec extends UnitTest
 //        shortServiceRefundTaxPaid = 2.22
 //      )))
 //    ),
-//    stateBenefits = Some(StateBenefitsModel(
-//      Some(StateBenefits(
+//    stateBenefits = Some(AllStateBenefitsData(
+//      Some(StateBenefitsData(
 //        incapacityBenefit = Some(List(StateBenefit(
-//          benefitId = "a1e8057e-fbbc-47a8-a8b4-78d9f015c934",
-//          startDate = "2019-11-13",
-//          dateIgnored = Some("2019-04-11T16:22:00Z"),
-//          submittedOn = Some("2020-09-11T17:23:00Z"),
-//          endDate = Some("2020-08-23"),
+//          benefitId = UUID.fromString("a1e8057e-fbbc-47a8-a8b4-78d9f015c934"),
+//          startDate = LocalDate.parse("2019-11-13"),
+//          dateIgnored = Some(Instant.parse("2019-04-11T16:22:00Z")),
+//          submittedOn = Some(Instant.parse("2020-09-11T17:23:00Z")),
+//          endDate = Some(LocalDate.parse("2020-08-23")),
 //          amount = Some(1212.34),
 //          taxPaid = Some(22323.23)
 //        ))),
 //        statePension = Some(StateBenefit(
-//          benefitId = "a1e8057e-fbbc-47a8-a8b4-78d9f015c935",
-//          startDate = "2018-06-03",
-//          dateIgnored = Some("2018-09-09T19:23:00Z"),
-//          submittedOn = Some("2020-08-07T12:23:00Z"),
-//          endDate = Some("2020-09-13"),
+//          benefitId = UUID.fromString("a1e8057e-fbbc-47a8-a8b4-78d9f015c935"),
+//          startDate = LocalDate.parse("2018-06-03"),
+//          dateIgnored = Some(Instant.parse("2018-09-09T19:23:00Z")),
+//          submittedOn = Some(Instant.parse("2020-08-07T12:23:00Z")),
+//          endDate = Some(LocalDate.parse("2020-09-13")),
 //          amount = Some(42323.23),
 //          taxPaid = Some(2323.44)
 //        )),
 //        statePensionLumpSum = Some(StateBenefit(
-//          benefitId = "a1e8057e-fbbc-47a8-a8b4-78d9f015c936",
-//          startDate = "2019-04-23",
-//          dateIgnored = Some("2019-07-08T05:23:00Z"),
-//          submittedOn = Some("2020-03-13T19:23:00Z"),
-//          endDate = Some("2020-08-13"),
+//          benefitId = UUID.fromString("a1e8057e-fbbc-47a8-a8b4-78d9f015c936"),
+//          startDate = LocalDate.parse("2019-04-23"),
+//          dateIgnored = Some(Instant.parse("2019-07-08T05:23:00Z")),
+//          submittedOn = Some(Instant.parse("2020-03-13T19:23:00Z")),
+//          endDate = Some(LocalDate.parse("2020-08-13")),
 //          amount = Some(45454.23),
 //          taxPaid = Some(45432.56)
 //        )),
 //        employmentSupportAllowance = Some(List(StateBenefit(
-//          benefitId = "a1e8057e-fbbc-47a8-a8b4-78d9f015c937",
-//          startDate = "2019-09-23",
-//          dateIgnored = Some("2019-09-28T10:23:00Z"),
-//          submittedOn = Some("2020-11-13T19:23:00Z"),
-//          endDate = Some("2020-08-23"),
+//          benefitId = UUID.fromString("a1e8057e-fbbc-47a8-a8b4-78d9f015c937"),
+//          startDate = LocalDate.parse("2019-09-23"),
+//          dateIgnored = Some(Instant.parse("2019-09-28T10:23:00Z")),
+//          submittedOn = Some(Instant.parse("2020-11-13T19:23:00Z")),
+//          endDate = Some(LocalDate.parse("2020-08-23")),
 //          amount = Some(44545.43),
 //          taxPaid = Some(35343.23)
 //        ))),
 //        jobSeekersAllowance = Some(List(StateBenefit(
-//          benefitId = "a1e8057e-fbbc-47a8-a8b4-78d9f015c938",
-//          startDate = "2019-09-19",
-//          dateIgnored = Some("2019-08-18T13:23:00Z"),
-//          submittedOn = Some("2020-07-10T18:23:00Z"),
-//          endDate = Some("2020-09-23"),
+//          benefitId = UUID.fromString("a1e8057e-fbbc-47a8-a8b4-78d9f015c938"),
+//          startDate = LocalDate.parse("2019-09-19"),
+//          dateIgnored = Some(Instant.parse("2019-08-18T13:23:00Z")),
+//          submittedOn = Some(Instant.parse("2020-07-10T18:23:00Z")),
+//          endDate = Some(LocalDate.parse("2020-09-23")),
 //          amount = Some(33223.12),
 //          taxPaid = Some(44224.56)
 //        ))),
 //        bereavementAllowance = Some(StateBenefit(
-//          benefitId = "a1e8057e-fbbc-47a8-a8b4-78d9f015c939",
-//          startDate = "2019-05-22",
-//          dateIgnored = Some("2020-08-10T12:23:00Z"),
-//          submittedOn = Some("2020-09-19T19:23:00Z"),
-//          endDate = Some("2020-09-26"),
+//          benefitId = UUID.fromString("a1e8057e-fbbc-47a8-a8b4-78d9f015c939"),
+//          startDate = LocalDate.parse("2019-05-22"),
+//          dateIgnored = Some(Instant.parse("2020-08-10T12:23:00Z")),
+//          submittedOn = Some(Instant.parse("2020-09-19T19:23:00Z")),
+//          endDate = Some(LocalDate.parse("2020-09-26")),
 //          amount = Some(56534.23),
 //          taxPaid = Some(34343.57)
 //        )),
 //        otherStateBenefits = Some(StateBenefit(
-//          benefitId = "a1e8057e-fbbc-47a8-a8b4-78d9f015c940",
-//          startDate = "2018-09-03",
-//          dateIgnored = Some("2020-01-11T15:23:00Z"),
-//          submittedOn = Some("2020-09-13T15:23:00Z"),
-//          endDate = Some("2020-06-03"),
+//          benefitId = UUID.fromString("a1e8057e-fbbc-47a8-a8b4-78d9f015c940"),
+//          startDate = LocalDate.parse("2018-09-03"),
+//          dateIgnored = Some(Instant.parse("2020-01-11T15:23:00Z")),
+//          submittedOn = Some(Instant.parse("2020-09-13T15:23:00Z")),
+//          endDate = Some(LocalDate.parse("2020-06-03")),
 //          amount = Some(56532.45),
 //          taxPaid = Some(5656.89)
-//        )),
+//        ))
 //      )),
 //      Some(StateBenefits(
 //        incapacityBenefit = Some(List(StateBenefit(
-//          benefitId = "a1e8057e-fbbc-47a8-a8b4-78d9f015c941",
-//          startDate = "2018-07-17",
-//          submittedOn = Some("2020-11-17T19:23:00Z"),
-//          endDate = Some("2020-09-23"),
+//          benefitId = UUID.fromString("a1e8057e-fbbc-47a8-a8b4-78d9f015c941"),
+//          startDate = LocalDate.parse("2018-07-17"),
+//          submittedOn = Some(Instant.parse("2020-11-17T19:23:00Z")),
+//          endDate = Some(LocalDate.parse("2020-09-23")),
 //          amount = Some(45646.78),
 //          taxPaid = Some(4544.34),
 //          dateIgnored = None
 //        ))),
 //        statePension = Some(StateBenefit(
-//          benefitId = "a1e8057e-fbbc-47a8-a8b4-78d9f015c943",
-//          startDate = "2018-04-03",
-//          submittedOn = Some("2020-06-11T10:23:00Z"),
-//          endDate = Some("2020-09-13"),
+//          benefitId = UUID.fromString("a1e8057e-fbbc-47a8-a8b4-78d9f015c943"),
+//          startDate = LocalDate.parse("2018-04-03"),
+//          submittedOn = Some(Instant.parse("2020-06-11T10:23:00Z")),
+//          endDate = Some(LocalDate.parse("2020-09-13")),
 //          amount = Some(45642.45),
 //          taxPaid = Some(6764.34),
 //          dateIgnored = None
 //        )),
 //        statePensionLumpSum = Some(StateBenefit(
-//          benefitId = "a1e8057e-fbbc-47a8-a8b4-78d9f015c956",
-//          startDate = "2019-09-23",
-//          submittedOn = Some("2020-06-13T05:29:00Z"),
-//          endDate = Some("2020-09-26"),
+//          benefitId = UUID.fromString("a1e8057e-fbbc-47a8-a8b4-78d9f015c956"),
+//          startDate = LocalDate.parse("2019-09-23"),
+//          submittedOn = Some(Instant.parse("2020-06-13T05:29:00Z")),
+//          endDate = Some(LocalDate.parse("2020-09-26")),
 //          amount = Some(34322.34),
 //          taxPaid = Some(4564.45),
 //          dateIgnored = None
 //        )),
 //        employmentSupportAllowance = Some(List(StateBenefit(
-//          benefitId = "a1e8057e-fbbc-47a8-a8b4-78d9f015c988",
-//          startDate = "2019-09-11",
-//          submittedOn = Some("2020-02-10T11:20:00Z"),
-//          endDate = Some("2020-06-13"),
+//          benefitId = UUID.fromString("a1e8057e-fbbc-47a8-a8b4-78d9f015c988"),
+//          startDate = LocalDate.parse("2019-09-11"),
+//          submittedOn = Some(Instant.parse("2020-02-10T11:20:00Z")),
+//          endDate = Some(LocalDate.parse("2020-06-13")),
 //          amount = Some(45424.23),
 //          taxPaid = Some(23232.34),
 //          dateIgnored = None
 //        ))),
 //        jobSeekersAllowance = Some(List(StateBenefit(
-//          benefitId = "a1e8057e-fbbc-47a8-a8b4-78d9f015c990",
-//          startDate = "2019-07-10",
-//          submittedOn = Some("2020-05-13T14:23:00Z"),
-//          endDate = Some("2020-05-11"),
+//          benefitId = UUID.fromString("a1e8057e-fbbc-47a8-a8b4-78d9f015c990"),
+//          startDate = LocalDate.parse("2019-07-10"),
+//          submittedOn = Some(Instant.parse("2020-05-13T14:23:00Z")),
+//          endDate = Some(LocalDate.parse("2020-05-11")),
 //          amount = Some(34343.78),
 //          taxPaid = Some(3433.56),
 //          dateIgnored = None
 //        ))),
 //        bereavementAllowance = Some(StateBenefit(
-//          benefitId = "a1e8057e-fbbc-47a8-a8b4-78d9f015c997",
-//          startDate = "2018-08-12",
-//          submittedOn = Some("2020-02-13T11:23:00Z"),
-//          endDate = Some("2020-07-13"),
+//          benefitId = UUID.fromString("a1e8057e-fbbc-47a8-a8b4-78d9f015c997"),
+//          startDate = LocalDate.parse("2018-08-12"),
+//          submittedOn = Some(Instant.parse("2020-02-13T11:23:00Z")),
+//          endDate = Some(LocalDate.parse("2020-07-13")),
 //          amount = Some(45423.45),
 //          taxPaid = Some(4543.64),
 //          dateIgnored = None
 //        )),
 //        otherStateBenefits = Some(StateBenefit(
-//          benefitId = "a1e8057e-fbbc-47a8-a8b4-78d9f015c957",
-//          startDate = "2018-01-13",
-//          submittedOn = Some("2020-09-12T12:23:00Z"),
-//          endDate = Some("2020-08-13"),
+//          benefitId = UUID.fromString("a1e8057e-fbbc-47a8-a8b4-78d9f015c957"),
+//          startDate = LocalDate.parse("2018-01-13"),
+//          submittedOn = Some(Instant.parse("2020-09-12T12:23:00Z")),
+//          endDate = Some(LocalDate.parse("2020-08-13")),
 //          amount = Some(63333.33),
 //          taxPaid = Some(4644.45),
 //          dateIgnored = None

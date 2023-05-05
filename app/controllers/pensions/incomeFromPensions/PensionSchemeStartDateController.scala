@@ -17,7 +17,7 @@
 package controllers.pensions.incomeFromPensions
 
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.incomeFromPensions.routes.UkPensionIncomeSummaryController
+import controllers.pensions.incomeFromPensions.routes.{PensionSchemeSummaryController, UkPensionIncomeSummaryController}
 import controllers.predicates.ActionsProvider
 import controllers.validatedIndex
 import forms.DateForm.DateModel
@@ -87,7 +87,7 @@ class PensionSchemeStartDateController @Inject()(pensionSessionService: PensionS
 
               pensionSessionService.createOrUpdateSessionData(sessionDataRequest.user,
                 updatedCyaModel, taxYear, sessionDataRequest.pensionsUserData.isPriorSubmission)(errorHandler.internalServerError()) {
-                Redirect(UkPensionIncomeSummaryController.show(taxYear)) // todo redirect to Check Scheme Details page when created
+                Redirect(PensionSchemeSummaryController.show(taxYear, pensionSchemeIndex))
               }
             }
           )
