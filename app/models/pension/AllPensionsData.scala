@@ -76,7 +76,7 @@ object AllPensionsData {
         pensionPaidAnotherWayQuestion = prior.pensionCharges.flatMap(_.pensionSavingsTaxCharges)
           .flatMap(_.benefitInExcessOfLifetimeAllowance).flatMap(_.amount).map(_ > 0),
         pensionPaidAnotherWay = prior.pensionCharges.flatMap(_.pensionSavingsTaxCharges).flatMap(_.benefitInExcessOfLifetimeAllowance),
-        pensionSchemeTaxReferences = prior.pensionCharges.flatMap(_.pensionSavingsTaxCharges.map(_.pensionSchemeTaxReference))
+        pensionSchemeTaxReferences = prior.pensionCharges.flatMap(_.pensionSavingsTaxCharges.flatMap(_.pensionSchemeTaxReference))
       ),
 
       //TODO: validate as necessary on building CYA page
@@ -98,20 +98,19 @@ object AllPensionsData {
         noSurchargeTaxAmountQuestion = prior.pensionCharges.flatMap(_.pensionSchemeUnauthorisedPayments.flatMap(_.noSurcharge).map(_ => true)),
         noSurchargeTaxAmount = prior.pensionCharges.flatMap(_.pensionSchemeUnauthorisedPayments.flatMap(_.noSurcharge.map(_.foreignTaxPaid))),
         ukPensionSchemesQuestion = prior.pensionCharges.flatMap(_.pensionSchemeUnauthorisedPayments).map(_.pensionSchemeTaxReference).map(_.nonEmpty),
-        pensionSchemeTaxReference = prior.pensionCharges.flatMap(_.pensionSchemeUnauthorisedPayments.map(_.pensionSchemeTaxReference))
+        pensionSchemeTaxReference = prior.pensionCharges.flatMap(_.pensionSchemeUnauthorisedPayments.flatMap(_.pensionSchemeTaxReference))
       ),
 
       paymentsIntoOverseasPensions = PaymentsIntoOverseasPensionsViewModel(
         paymentsIntoOverseasPensionsQuestions = prior.pensionReliefs.map(_.pensionReliefs.overseasPensionSchemeContributions.isDefined),
         paymentsIntoOverseasPensionsAmount = prior.pensionReliefs.flatMap(_.pensionReliefs.overseasPensionSchemeContributions),
-        employerPaymentsQuestion = prior.pensionIncome.map(_.overseasPensionContribution.headOption.flatMap(_.customerReference).isDefined),
-        taxPaidOnEmployerPaymentsQuestion = prior.pensionIncome.map(_.overseasPensionContribution.headOption.flatMap(_.customerReference).isEmpty),
-        reliefs = prior.pensionIncome.map(x => fromOverseasPensionContribution(x.overseasPensionContribution)
-        ).getOrElse(Nil)
+        employerPaymentsQuestion = prior.pensionIncome.flatMap(_.overseasPensionContribution).flatMap(_.headOption.map(_.customerReference.isDefined)),
+        taxPaidOnEmployerPaymentsQuestion = prior.pensionIncome.flatMap(_.overseasPensionContribution).flatMap(_.headOption.map(_.customerReference.isEmpty)),
+        reliefs = prior.pensionIncome.flatMap(_.overseasPensionContribution.map(fromOverseasPensionContribution)).getOrElse(Nil)
       ),
       incomeFromOverseasPensions = IncomeFromOverseasPensionsViewModel(
-        paymentsFromOverseasPensionsQuestion = prior.pensionIncome.map(_.foreignPension.nonEmpty),
-        overseasIncomePensionSchemes = prior.pensionIncome.map(x => fromForeignPensionToPensionScheme(x.foreignPension)).getOrElse(Nil)
+        paymentsFromOverseasPensionsQuestion = prior.pensionIncome.flatMap(_.foreignPension.map(_.nonEmpty)),
+        overseasIncomePensionSchemes = prior.pensionIncome.flatMap(_.foreignPension.map(fromForeignPensionToPensionScheme)).getOrElse(Nil)
       ),
       transfersIntoOverseasPensions = TransfersIntoOverseasPensionsViewModel(
         transferPensionSavings = prior.pensionCharges.map(_.pensionSchemeOverseasTransfers.map(_.transferCharge).isDefined),

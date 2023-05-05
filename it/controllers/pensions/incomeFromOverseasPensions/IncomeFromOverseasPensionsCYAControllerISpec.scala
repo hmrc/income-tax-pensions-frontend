@@ -151,14 +151,14 @@ class IncomeFromOverseasPensionsCYAControllerISpec extends
 
           val anUpdatedAllPensionsData = anAllPensionsData.copy(
             pensionIncome = Some(anAllPensionsData.pensionIncome.get.copy(
-              foreignPension = anAllPensionsData.pensionIncome.get.foreignPension.updated(0, ForeignPension (
+              foreignPension = anAllPensionsData.pensionIncome.get.foreignPension.map(_.updated(0, ForeignPension (
                 countryCode = "FRA",
                 taxableAmount = BigDecimal(100),
                 amountBeforeTax = Some(BigDecimal(100)),
                 taxTakenOff = Some(BigDecimal(100)),
                 specialWithholdingTax = Some(BigDecimal(100)),
                 foreignTaxCreditRelief = Some(true)
-              ))
+              )))
             ))
           )
 
@@ -189,9 +189,7 @@ class IncomeFromOverseasPensionsCYAControllerISpec extends
         "there is no CYA data and a CYA model is generated and there is no foreign pensions " which {
 
           val anUpdatedAllPensionsData = anAllPensionsData.copy(
-            pensionIncome = Some(anAllPensionsData.pensionIncome.get.copy(
-              foreignPension = Seq[ForeignPension]()
-            ))
+            pensionIncome = Some(anAllPensionsData.pensionIncome.get.copy(foreignPension =Some(Seq[ForeignPension]())))
           )
           implicit lazy val result: WSResponse = {
             authoriseAgentOrIndividual(user.isAgent)
