@@ -24,12 +24,12 @@ import models.mongo.PensionsCYAModel
 import models.pension.reliefs.PaymentsIntoPensionViewModel
 import models.redirects.ConditionalRedirect
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.PensionSessionService
-import services.RedirectService.{PaymentsIntoPensionsRedirects, redirectBasedOnCurrentAnswers}
+import services.SimpleRedirectService.{PaymentsIntoPensionsRedirects, redirectBasedOnCurrentAnswers}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
-import utils.PaymentsIntoPensionPages.WorkplacePensionAmountPage
+import utils.PaymentsIntoPensionPages.{RasAmountPage, WorkplacePensionAmountPage}
 import views.html.pensions.paymentsIntoPensions.WorkplaceAmountView
 
 import javax.inject.{Inject, Singleton}
@@ -81,11 +81,12 @@ class WorkplaceAmountController @Inject()(authAction: AuthorisedAction,
     )
   }
 
-  private def redirects(cya: PensionsCYAModel, taxYear: Int): Seq[ConditionalRedirect] = {
-    PaymentsIntoPensionsRedirects.journeyCheck(WorkplacePensionAmountPage, cya, taxYear) ++
-      Seq(ConditionalRedirect(
-        cya.paymentsIntoPension.workplacePensionPaymentsQuestion.contains(false),
-        controllers.pensions.paymentsIntoPensions.routes.WorkplacePensionController.show(taxYear)
-      ))
+  private def redirects(cya: PensionsCYAModel, taxYear: Int): Either[Result, Unit] = {
+    PaymentsIntoPensionsRedirects.journeyCheck(WorkplacePensionAmountPage, cya, taxYear)
+//    ++
+//      Seq(ConditionalRedirect(
+//        cya.paymentsIntoPension.workplacePensionPaymentsQuestion.contains(false),
+//        controllers.pensions.paymentsIntoPensions.routes.WorkplacePensionController.show(taxYear)
+//      ))
   }
 }

@@ -27,12 +27,12 @@ import models.{APIErrorBodyModel, APIErrorModel, AuthorisationRequest, User}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.RedirectService.{PaymentsIntoPensionsRedirects, redirectBasedOnCurrentAnswers}
+import services.SimpleRedirectService.{PaymentsIntoPensionsRedirects, redirectBasedOnCurrentAnswers}
 import services.{ExcludeJourneyService, PensionReliefsService, PensionSessionService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
-import utils.PaymentsIntoPensionPages.CheckYourAnswersPage
+import utils.PaymentsIntoPensionPages.{CheckYourAnswersPage, RasAmountPage}
 import views.html.pensions.paymentsIntoPensions.PaymentsIntoPensionsCYAView
 
 import javax.inject.{Inject, Singleton}
@@ -133,7 +133,7 @@ class PaymentsIntoPensionsCYAController @Inject()(authAction: AuthorisedAction,
     }
   }
 
-  private def redirects(cya: PensionsCYAModel, taxYear: Int): Seq[ConditionalRedirect] = {
+  private def redirects(cya: PensionsCYAModel, taxYear: Int): Either[Result, Unit] = {
     PaymentsIntoPensionsRedirects.journeyCheck(CheckYourAnswersPage, cya, taxYear)
   }
 

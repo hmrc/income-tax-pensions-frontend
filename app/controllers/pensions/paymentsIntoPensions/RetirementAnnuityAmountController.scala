@@ -23,16 +23,16 @@ import controllers.predicates.TaxYearAction.taxYearAction
 import models.mongo.PensionsCYAModel
 import models.pension.reliefs.PaymentsIntoPensionViewModel
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
-import utils.PaymentsIntoPensionPages.RetirementAnnuityAmountPage
+import utils.PaymentsIntoPensionPages.{RasAmountPage, RetirementAnnuityAmountPage}
 import views.html.pensions.paymentsIntoPensions.RetirementAnnuityAmountView
 
 import javax.inject.{Inject, Singleton}
 import models.redirects.ConditionalRedirect
-import services.RedirectService.{PaymentsIntoPensionsRedirects, isFinishedCheck, redirectBasedOnCurrentAnswers}
+import services.SimpleRedirectService.{PaymentsIntoPensionsRedirects, isFinishedCheck, redirectBasedOnCurrentAnswers}
 
 import scala.concurrent.Future
 
@@ -87,12 +87,8 @@ class RetirementAnnuityAmountController @Inject()(authAction: AuthorisedAction,
     )
   }
 
-  private def redirects(cya: PensionsCYAModel, taxYear: Int): Seq[ConditionalRedirect] = {
-    PaymentsIntoPensionsRedirects.journeyCheck(RetirementAnnuityAmountPage, cya, taxYear) ++
-      Seq(ConditionalRedirect(
-        cya.paymentsIntoPension.retirementAnnuityContractPaymentsQuestion.contains(false),
-        controllers.pensions.paymentsIntoPensions.routes.RetirementAnnuityController.show(taxYear)
-      ))
+  private def redirects(cya: PensionsCYAModel, taxYear: Int): Either[Result, Unit] = {
+    PaymentsIntoPensionsRedirects.journeyCheck(RetirementAnnuityAmountPage, cya, taxYear)
   }
 
 }

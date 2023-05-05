@@ -22,12 +22,12 @@ import controllers.predicates.TaxYearAction.taxYearAction
 import models.mongo.PensionsCYAModel
 import models.redirects.ConditionalRedirect
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.PensionSessionService
-import services.RedirectService.{PaymentsIntoPensionsRedirects, isFinishedCheck, redirectBasedOnCurrentAnswers}
+import services.SimpleRedirectService.{PaymentsIntoPensionsRedirects, isFinishedCheck, redirectBasedOnCurrentAnswers}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
-import utils.PaymentsIntoPensionPages.TotalRasPage
+import utils.PaymentsIntoPensionPages.{RasAmountPage, TotalRasPage}
 import views.html.pensions.paymentsIntoPensions.TotalPaymentsIntoRASView
 
 import java.text.NumberFormat
@@ -112,7 +112,7 @@ class TotalPaymentsIntoRASController @Inject()(authAction: AuthorisedAction,
     )
   }
 
-  private def redirects(cya: PensionsCYAModel, taxYear: Int): Seq[ConditionalRedirect] = {
+  private def redirects(cya: PensionsCYAModel, taxYear: Int): Either[Result, Unit] = {
     PaymentsIntoPensionsRedirects.journeyCheck(TotalRasPage, cya, taxYear)
   }
 

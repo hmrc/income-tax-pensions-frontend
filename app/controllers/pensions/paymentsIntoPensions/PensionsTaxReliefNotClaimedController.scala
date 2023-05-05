@@ -22,12 +22,12 @@ import controllers.predicates.TaxYearAction.taxYearAction
 import models.mongo.PensionsCYAModel
 import models.pension.reliefs.PaymentsIntoPensionViewModel
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.PensionSessionService
 import services.RedirectService.{PaymentsIntoPensionsRedirects, isFinishedCheck, redirectBasedOnCurrentAnswers}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
-import utils.PaymentsIntoPensionPages.TaxReliefNotClaimedPage
+import utils.PaymentsIntoPensionPages.{RasAmountPage, TaxReliefNotClaimedPage}
 import views.html.pensions.paymentsIntoPensions.PensionsTaxReliefNotClaimedView
 
 import javax.inject.{Inject, Singleton}
@@ -99,8 +99,8 @@ class PensionsTaxReliefNotClaimedController @Inject()(authAction: AuthorisedActi
       )
   }
 
-  private def redirects(cya: PensionsCYAModel, taxYear: Int): Seq[ConditionalRedirect] = {
-    PaymentsIntoPensionsRedirects.journeyCheck(TaxReliefNotClaimedPage, cya, taxYear)
+  private def redirects(cya: PensionsCYAModel, taxYear: Int): Either[Result, Unit] = {
+    PaymentsIntoPensionsRedirects.journeyCheck(RasAmountPage, cya, taxYear)
   }
 
 }

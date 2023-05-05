@@ -22,16 +22,16 @@ import controllers.predicates.AuthorisedAction
 import controllers.predicates.TaxYearAction.taxYearAction
 import models.mongo.PensionsCYAModel
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
-import utils.PaymentsIntoPensionPages.OneOffRasPage
+import utils.PaymentsIntoPensionPages.{OneOffRasPage, RasAmountPage}
 import views.html.pensions.paymentsIntoPensions.ReliefAtSourceOneOffPaymentsView
 
 import javax.inject.{Inject, Singleton}
 import models.redirects.ConditionalRedirect
-import services.RedirectService.{PaymentsIntoPensionsRedirects, isFinishedCheck, redirectBasedOnCurrentAnswers}
+import services.SimpleRedirectService.{PaymentsIntoPensionsRedirects, isFinishedCheck, redirectBasedOnCurrentAnswers}
 
 import scala.concurrent.Future
 
@@ -99,7 +99,7 @@ class ReliefAtSourceOneOffPaymentsController @Inject()(authAction: AuthorisedAct
   }
 
 
-  private def redirects(cya: PensionsCYAModel, taxYear: Int): Seq[ConditionalRedirect] = {
+  private def redirects(cya: PensionsCYAModel, taxYear: Int): Either[Result, Unit] = {
     PaymentsIntoPensionsRedirects.journeyCheck(OneOffRasPage, cya, taxYear)
   }
 
