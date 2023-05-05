@@ -341,7 +341,7 @@ class AnnualLifetimeAllowanceCYAControllerISpec extends
             savingsTaxCharges.get.benefitInExcessOfLifetimeAllowance.flatMap(_.taxPaid).get), ChangeLinksUnauthorisedPayments.otherPayments,
             otherPaymentsHidden, 9)
           
-          cyaRowCheck(lifetimeAllowanceSchemes, s"${savingsTaxCharges.get.pensionSchemeTaxReference.mkString(", ")}",
+          cyaRowCheck(lifetimeAllowanceSchemes, s"${savingsTaxCharges.get.pensionSchemeTaxReference.get.mkString(", ")}",
             ChangeLinksUnauthorisedPayments.lifetimeAllowanceSchemes, lifetimeAllowanceSchemesHidden, 10)
           
           buttonCheck(saveAndContinue)
