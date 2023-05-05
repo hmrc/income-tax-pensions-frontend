@@ -29,7 +29,7 @@ import play.api.http.Status.UNAUTHORIZED
 import play.api.libs.ws.WSResponse
 import utils.CommonUtils
 import utils.PageUrls.IncomeFromOverseasPensionsPages.{checkIncomeFromOverseasPensionsCyaUrl, incomeFromOverseasPensionsStatus}
-import utils.PageUrls.PaymentIntoOverseasPensions.paymentsIntoPensionSchemeUrl
+import utils.PageUrls.PaymentIntoOverseasPensions.{paymentsIntoOverseasPensionsCyaUrl, paymentsIntoPensionSchemeUrl}
 import utils.PageUrls._
 import utils.PageUrls.ShortServiceRefunds.{shortServiceRefundsCYAUrl, shortServiceTaxableRefundUrl}
 import utils.PageUrls.TransferIntoOverseasPensions.{checkYourDetailsPensionUrl, transferPensionSavingsUrl}
@@ -178,7 +178,7 @@ class OverseasPensionsSummaryControllerISpec extends  CommonUtils with BeforeAnd
           textOnPageCheck(specific.expectedSectionsToFill, paragraphSelector(1))
 
           "has a payment into overseas pensions section" which {
-            linkCheck(common.paymentsToOverseasPensionsText, paymentsIntoOverseasPensionsLink, paymentsIntoPensionSchemeUrl(taxYearEOY))
+            linkCheck(common.paymentsToOverseasPensionsText, paymentsIntoOverseasPensionsLink, paymentsIntoOverseasPensionsCyaUrl(taxYearEOY))
             textOnPageCheck(userScenario.commonExpectedResults.updated, summaryListStatusTagSelector(1))
           }
 
