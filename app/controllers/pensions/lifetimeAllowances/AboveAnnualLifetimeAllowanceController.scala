@@ -23,7 +23,7 @@ import controllers.predicates.AuthorisedAction
 import forms.YesNoForm
 import models.User
 import models.mongo.PensionsCYAModel
-import models.pension.charges.{LifetimeAllowance, PensionLifetimeAllowancesViewModel}
+import models.pension.charges.PensionLifetimeAllowancesViewModel
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}

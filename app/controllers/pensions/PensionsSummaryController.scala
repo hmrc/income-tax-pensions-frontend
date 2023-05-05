@@ -16,14 +16,16 @@
 
 package controllers.pensions
 
-import config.AppConfig
+import config.{AppConfig, ErrorHandler}
 import controllers.predicates.AuthorisedAction
 import controllers.predicates.TaxYearAction.taxYearAction
+import models.mongo.PensionsCYAModel
 import models.pension.AllPensionsData
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import utils.Clock
 import views.html.pensions.PensionsSummaryView
 
 import javax.inject.{Inject, Singleton}
@@ -35,12 +37,19 @@ class PensionsSummaryController @Inject()(implicit val mcc: MessagesControllerCo
                                            appConfig: AppConfig,
                                            authAction: AuthorisedAction,
                                            pensionSessionService: PensionSessionService,
+                                           errorHandler: ErrorHandler,
+                                           clock: Clock,
                                            pensionsSummaryView: PensionsSummaryView) extends FrontendController(mcc) with I18nSupport {
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     pensionSessionService.getAndHandle(taxYear, request.user) { (pensionsUserData, prior) =>
-      val cya = prior.fold(pensionsUserData.map(_.pensions)){pr =>
-        if(pensionsUserData.exists(! _.pensions.isEmpty)) pensionsUserData.map(_.pensions) else Some(AllPensionsData.generateCyaFromPrior(pr))}
-      Future.successful(Ok(pensionsSummaryView(taxYear, cya, prior)))
+      if(pensionsUserData.exists(! _.pensions.isEmpty)) {
+        Future.successful(Ok(pensionsSummaryView(taxYear, pensionsUserData.map(_.pensions), prior)))
+      } else {
+        /* -- initialise pensions session date either with prior data or an empty model -- */
+        val cya = prior.fold(PensionsCYAModel.emptyModels)(pr => AllPensionsData.generateCyaFromPrior(pr))
+        pensionSessionService.createOrUpdateSessionData(request.user, cya, taxYear, isPriorSubmission = prior.isDefined)(
+          errorHandler.handleError(INTERNAL_SERVER_ERROR)) { Ok(pensionsSummaryView(taxYear, Some(cya), prior)) }
+      }
     }
   }
 }

@@ -14,6 +14,10 @@
  * limitations under the License.
  *@
 
+@import controllers.pensions.paymentsIntoOverseasPensions.{routes => piopRoutes}
+@import controllers.pensions.incomeFromOverseasPensions.{routes => ifopRoutes}
+@import controllers.pensions.transferIntoOverseasPensions.{routes => tiopRoutes}
+@import controllers.pensions.shortServiceRefunds.{routes => ssrRoutes}
 @import views.html.templates.Layout
 @import views.html.templates.helpers.Heading
 @import views.html.templates.helpers.Link
@@ -27,28 +31,31 @@
 
 
 @paymentsOverseasPensionsUrl() = @{
-  controllers.pensions.paymentsIntoOverseasPensions.routes.PaymentIntoPensionSchemeController.show(taxYear).url
+  if( paymentsIntoOverseasPensionsHasPriorData(prior))
+     piopRoutes.PaymentsIntoOverseasPensionsCYAController.show(taxYear).url
+  else
+     piopRoutes.PaymentIntoPensionSchemeController.show(taxYear).url
 }
 
 @incomeOverseasPensionsUrl() = @{
  if( incomeFromOverseasPensionsHasPriorData(prior) )
-   controllers.pensions.incomeFromOverseasPensions.routes.IncomeFromOverseasPensionsCYAController.show(taxYear).url
+   ifopRoutes.IncomeFromOverseasPensionsCYAController.show(taxYear).url
  else
-   controllers.pensions.incomeFromOverseasPensions.routes.PensionOverseasIncomeStatus.show(taxYear).url
+   ifopRoutes.PensionOverseasIncomeStatus.show(taxYear).url
 }
 
 @transferIntoOverseasPensionUrl() = @{
  if( transferIntoOverseasPensionHasPriorData(prior))
-  controllers.pensions.transferIntoOverseasPensions.routes.TransferIntoOverseasPensionsCYAController.show(taxYear).url
+  tiopRoutes.TransferIntoOverseasPensionsCYAController.show(taxYear).url
  else
-  controllers.pensions.transferIntoOverseasPensions.routes.TransferPensionSavingsController.show(taxYear).url
+  tiopRoutes.TransferPensionSavingsController.show(taxYear).url
 }
 
 @shortServiceRefundsUrl() = @{
   if(shortServiceRefundsHasPriorData(prior))
-    controllers.pensions.shortServiceRefunds.routes.ShortServiceRefundsCYAController.show(taxYear).url
+    ssrRoutes.ShortServiceRefundsCYAController.show(taxYear).url
   else
-    controllers.pensions.shortServiceRefunds.routes.TaxableRefundAmountController.show(taxYear).url
+    ssrRoutes.TaxableRefundAmountController.show(taxYear).url
 }
 
 @headingForUse = @{

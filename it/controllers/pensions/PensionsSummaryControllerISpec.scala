@@ -34,13 +34,12 @@ import services.PensionSessionService
 import utils.CommonUtils
 import utils.PageUrls.IncomeFromPensionsPages.pensionIncomeSummaryUrl
 import utils.PageUrls.PaymentIntoPensions.{checkPaymentsIntoPensionCyaUrl, reliefAtSourcePensionsUrl}
-import utils.PageUrls.PensionLifetimeAllowance.pensionAboveAnnualLifetimeAllowanceUrl
+import utils.PageUrls.PensionAnnualAllowancePages.reducedAnnualAllowanceUrl
+import utils.PageUrls.PensionLifetimeAllowance.{checkAnnualLifetimeAllowanceCYA, pensionAboveAnnualLifetimeAllowanceUrl}
 import utils.PageUrls._
 import utils.PageUrls.unauthorisedPaymentsPages.{checkUnauthorisedPaymentsCyaUrl, unauthorisedPaymentsUrl}
 
-class PensionsSummaryControllerISpec extends CommonUtils with BeforeAndAfterEach with Injecting {
-
-  // scalastyle:off magic.number
+class PensionsSummaryControllerISpec extends CommonUtils with BeforeAndAfterEach with Injecting { // scalastyle:off magic.number
 
   object Selectors {
     val paymentsIntoPensionsLink = "#payments-into-pensions-link"
@@ -56,16 +55,11 @@ class PensionsSummaryControllerISpec extends CommonUtils with BeforeAndAfterEach
       s"#pensions-Summary > dl > div:nth-child($index) > dd > strong"
     }
   }
-
-  trait SpecificExpectedResults {
-    val expectedH1: String
-    val expectedTitle: String
-  }
-
+  
   trait CommonExpectedResults {
     val expectedCaption: Int => String
     val expectedTitle: String
-    val expectedH1: String
+    lazy val expectedH1 = expectedTitle
     val paymentsLinkText: String
     val incomeLinkText: String
     val unauthLinkText: String
@@ -80,7 +74,6 @@ class PensionsSummaryControllerISpec extends CommonUtils with BeforeAndAfterEach
   object CommonExpectedEN extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
     val expectedTitle =  "Pensions"
-    val expectedH1 = expectedTitle
     val paymentsLinkText = "Payments into pensions"
     val incomeLinkText = "Income from pensions"
     val unauthLinkText = "Unauthorised payments from pensions"
@@ -95,7 +88,6 @@ class PensionsSummaryControllerISpec extends CommonUtils with BeforeAndAfterEach
   object CommonExpectedCY extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) =>  s"Pensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
     val expectedTitle: String = "Pensiynau"
-    val expectedH1: String = expectedTitle
     val paymentsLinkText = "Taliadau i bensiynau"
     val incomeLinkText = "Incwm o bensiynau"
     val unauthLinkText = "Taliadau heb awdurdod o bensiynau"
@@ -140,10 +132,7 @@ class PensionsSummaryControllerISpec extends CommonUtils with BeforeAndAfterEach
           }
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
-
-          titleCheck(expectedTitle, userScenario.isWelsh)
-          h1Check(expectedH1)
-          captionCheck(expectedCaption(taxYearEOY))
+          checkCommonBehaviour(userScenario)
 
           "has an payment into pensions section" which {
             linkCheck(paymentsLinkText, paymentsIntoPensionsLink, checkPaymentsIntoPensionCyaUrl(taxYearEOY))
@@ -151,8 +140,6 @@ class PensionsSummaryControllerISpec extends CommonUtils with BeforeAndAfterEach
           }
 
           "has an income from pensions section" which {
-            //TODO: Change to use the href below when income From Pensions cya page available
-            //linkCheck("Income from pensions", incomeFromPensionsLink, checkIncomeFromPensionCyaUrl(taxYearEOY))
             linkCheck(incomeLinkText, incomeFromPensionsLink, pensionIncomeSummaryUrl(taxYearEOY))
             textOnPageCheck(updated, summaryListStatusTagSelector(2))
           }
@@ -160,12 +147,12 @@ class PensionsSummaryControllerISpec extends CommonUtils with BeforeAndAfterEach
           "has an pension annual allowance section" which {
             //TODO: Change to use the href below when pension annual allowance cya page available
             //linkCheck("Pension annual allowance", pensionAnnualAllowanceLink, checkPensionAnnualAllowanceCyaUrl(taxYearEOY))
-            linkCheck(annualAllowance, pensionAnnualAllowanceLink, "#")
+            linkCheck(annualAllowance, pensionAnnualAllowanceLink, reducedAnnualAllowanceUrl(taxYearEOY))
             textOnPageCheck(updated, summaryListStatusTagSelector(3))
           }
 
           "has an pension lifetime allowance section" which {
-            linkCheck(lifetimeAllowance, pensionLifetimeAllowanceLink, pensionAboveAnnualLifetimeAllowanceUrl(taxYearEOY))
+            linkCheck(lifetimeAllowance, pensionLifetimeAllowanceLink, checkAnnualLifetimeAllowanceCYA(taxYearEOY))
             textOnPageCheck(updated, summaryListStatusTagSelector(4))
           }
 
@@ -192,10 +179,7 @@ class PensionsSummaryControllerISpec extends CommonUtils with BeforeAndAfterEach
           }
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
-
-          titleCheck(expectedTitle, userScenario.isWelsh)
-          h1Check(expectedH1)
-          captionCheck(expectedCaption(taxYearEOY))
+          checkCommonBehaviour(userScenario)
 
           "has an payment into pensions section" which {
             linkCheck(paymentsLinkText, paymentsIntoPensionsLink, checkPaymentsIntoPensionCyaUrl(taxYearEOY))
@@ -212,12 +196,12 @@ class PensionsSummaryControllerISpec extends CommonUtils with BeforeAndAfterEach
           "has an pension annual allowance section" which {
             //TODO: Change to use the href below when pension annual allowance cya page available
             //linkCheck(annualAllowance, pensionAnnualAllowanceLink, checkPensionAnnualAllowanceCyaUrl(taxYearEOY))
-            linkCheck(annualAllowance, pensionAnnualAllowanceLink, "#")
+            linkCheck(annualAllowance, pensionAnnualAllowanceLink, reducedAnnualAllowanceUrl(taxYearEOY) )
             textOnPageCheck(updated, summaryListStatusTagSelector(3))
           }
 
           "has an pension lifetime allowance section" which {
-            linkCheck(lifetimeAllowance, pensionLifetimeAllowanceLink, pensionAboveAnnualLifetimeAllowanceUrl(taxYearEOY))
+            linkCheck(lifetimeAllowance, pensionLifetimeAllowanceLink, checkAnnualLifetimeAllowanceCYA(taxYearEOY))
             textOnPageCheck(updated, summaryListStatusTagSelector(4))
           }
 
@@ -241,10 +225,7 @@ class PensionsSummaryControllerISpec extends CommonUtils with BeforeAndAfterEach
           }
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
-
-          titleCheck(expectedTitle, userScenario.isWelsh)
-          h1Check(expectedH1)
-          captionCheck(expectedCaption(taxYearEOY))
+          checkCommonBehaviour(userScenario)
 
           "has an payment into pensions section" which {
             linkCheck(paymentsLinkText, paymentsIntoPensionsLink, reliefAtSourcePensionsUrl(taxYearEOY))
@@ -252,8 +233,6 @@ class PensionsSummaryControllerISpec extends CommonUtils with BeforeAndAfterEach
           }
 
           "has an income from pensions section" which {
-            //TODO: Change to use the href below when income From Pensions cya page available
-            //linkCheck(incomeLinkText, incomeFromPensionsLink, checkIncomeFromPensionCyaUrl(taxYearEOY))
             linkCheck(incomeLinkText, incomeFromPensionsLink, pensionIncomeSummaryUrl(taxYearEOY))
             textOnPageCheck(toDo, summaryListStatusTagSelector(2))
           }
@@ -261,7 +240,7 @@ class PensionsSummaryControllerISpec extends CommonUtils with BeforeAndAfterEach
           "has an pension annual allowance section" which {
             //TODO: Change to use the href below when pension annual allowance cya page available
             //linkCheck(annualAllowance, pensionAnnualAllowanceLink, checkPensionAnnualAllowanceCyaUrl(taxYearEOY))
-            linkCheck(annualAllowance, pensionAnnualAllowanceLink, "#")
+            linkCheck(annualAllowance, pensionAnnualAllowanceLink, reducedAnnualAllowanceUrl(taxYearEOY))
             textOnPageCheck(toDo, summaryListStatusTagSelector(3))
           }
 
@@ -291,10 +270,7 @@ class PensionsSummaryControllerISpec extends CommonUtils with BeforeAndAfterEach
           }
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
-
-          titleCheck(expectedTitle, userScenario.isWelsh)
-          h1Check(expectedH1)
-          captionCheck(expectedCaption(taxYearEOY))
+          checkCommonBehaviour(userScenario)
 
           "has an payment into pensions section" which {
             linkCheck(paymentsLinkText, paymentsIntoPensionsLink, checkPaymentsIntoPensionCyaUrl(taxYearEOY))
@@ -309,7 +285,7 @@ class PensionsSummaryControllerISpec extends CommonUtils with BeforeAndAfterEach
           "has an pension annual allowance section" which {
             //TODO: Change to use the href below when pension annual allowance cya page available
             //linkCheck(annualAllowance, pensionAnnualAllowanceLink, checkPensionAnnualAllowanceCyaUrl(taxYearEOY))
-            linkCheck(annualAllowance, pensionAnnualAllowanceLink,"#")
+            linkCheck(annualAllowance, pensionAnnualAllowanceLink, reducedAnnualAllowanceUrl(taxYearEOY))
             textOnPageCheck(toDo, summaryListStatusTagSelector(3))
           }
 
@@ -340,10 +316,7 @@ class PensionsSummaryControllerISpec extends CommonUtils with BeforeAndAfterEach
           }
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
-
-          titleCheck(expectedTitle, userScenario.isWelsh)
-          h1Check(expectedH1)
-          captionCheck(expectedCaption(taxYearEOY))
+          checkCommonBehaviour(userScenario)
 
           "has an payment into pensions section" which {
             linkCheck(paymentsLinkText, paymentsIntoPensionsLink, checkPaymentsIntoPensionCyaUrl(taxYearEOY))
@@ -351,8 +324,6 @@ class PensionsSummaryControllerISpec extends CommonUtils with BeforeAndAfterEach
           }
 
           "has an income from pensions section" which {
-            //TODO: Change to use the href below when income From Pensions cya page available
-            //linkCheck(incomelinkText, incomeFromPensionsLink, checkIncomeFromPensionCyaUrl(taxYearEOY))
             linkCheck(incomeLinkText, incomeFromPensionsLink, pensionIncomeSummaryUrl(taxYearEOY))
             textOnPageCheck(updated, summaryListStatusTagSelector(2))
           }
@@ -360,12 +331,12 @@ class PensionsSummaryControllerISpec extends CommonUtils with BeforeAndAfterEach
           "has an pension annual allowance section" which {
             //TODO: Change to use the href below when pension annual allowance cya page available
             //linkCheck(annualAllowance, pensionAnnualAllowanceLink, checkPensionAnnualAllowanceCyaUrl(taxYearEOY))
-            linkCheck(annualAllowance, pensionAnnualAllowanceLink, "#")
+            linkCheck(annualAllowance, pensionAnnualAllowanceLink, reducedAnnualAllowanceUrl(taxYearEOY))
             textOnPageCheck(updated, summaryListStatusTagSelector(3))
           }
 
           "has an pension lifetime allowance section" which {
-            linkCheck(lifetimeAllowance, pensionLifetimeAllowanceLink, pensionAboveAnnualLifetimeAllowanceUrl(taxYearEOY))
+            linkCheck(lifetimeAllowance, pensionLifetimeAllowanceLink, checkAnnualLifetimeAllowanceCYA(taxYearEOY))
             textOnPageCheck(updated, summaryListStatusTagSelector(4))
           }
 
@@ -392,6 +363,25 @@ class PensionsSummaryControllerISpec extends CommonUtils with BeforeAndAfterEach
       }
     }
   }
+  
+  private def checkCommonBehaviour(userScenario: UserScenario[CommonExpectedResults, Nothing])(implicit document: () => Document ): Unit = {
+    import userScenario.commonExpectedResults._
+    titleCheck(expectedTitle, userScenario.isWelsh)
+    h1Check(expectedH1)
+    captionCheck(expectedCaption(taxYearEOY))
+    checkPensionsUserDataIsInitialised(userScenario.isAgent)
+  }
+
+  private def checkPensionsUserDataIsInitialised(isAgent: Boolean): Unit =
+    s"have pensions user data initialised" in {
+      val user: User = if (isAgent) UserBuilder.anAgentUser else UserBuilder.aUser
+      await(pensionSessionService.getPensionSessionData(taxYearEOY, user)) match {
+        case Right(optPensionsUserData) =>
+          optPensionsUserData.nonEmpty shouldBe true
+        case Left(_) => fail("An unexpected failure to retrieve  user session data")
+      }
+    }
+
 
   // scalastyle:on magic.number
 }

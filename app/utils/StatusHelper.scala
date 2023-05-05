@@ -27,10 +27,10 @@ object StatusHelper {
   def incomeFromPensionsIsUpdated(cya: Option[PensionsCYAModel]): Boolean =
     statePensionIsUpdated(cya) || ukPensionsSchemeIsUpdated(cya)
 
-  def pensionFromAnnualAllowanceIsUpdated(cya: Option[PensionsCYAModel]): Boolean =
+  def annualAllowanceIsUpdated(cya: Option[PensionsCYAModel]): Boolean =
     cya.exists(! _.pensionsAnnualAllowances.isEmpty)
 
-  def pensionLifetimeAllowanceIsUpdated(cya: Option[PensionsCYAModel]): Boolean =
+  def lifetimeAllowanceIsUpdated(cya: Option[PensionsCYAModel]): Boolean =
     cya.exists(! _.pensionLifetimeAllowances.isEmpty)
 
   def unauthorisedPaymentsFromPensionsIsUpdated(cya: Option[PensionsCYAModel]): Boolean =
@@ -40,7 +40,6 @@ object StatusHelper {
     paymentsIntoOverseasPensionsIsUpdated(cya) ||   incomeFromOverseasPensionsIsUpdated(cya) ||
     overseasPensionsTransferChargesIsUpdated(cya) ||  shortServiceRefundsIsUpdated(cya)
   }
-
   def paymentsIntoOverseasPensionsIsUpdated(cya: Option[PensionsCYAModel]): Boolean =
     cya.exists(! _.paymentsIntoOverseasPensions.isEmpty)
   
@@ -72,7 +71,14 @@ object StatusHelper {
     
   def ukPensionsSchemeHasPriorData(prior: Option[AllPensionsData]): Boolean =
     prior.exists(_.employmentPensions.exists(_.employmentData.nonEmpty))
-  
+
+  def annualAllowanceHasPriorData(prior: Option[AllPensionsData]): Boolean =
+    prior.exists(_.pensionCharges.exists(pstc => pstc.pensionSavingsTaxCharges.nonEmpty && pstc.pensionContributions.nonEmpty))
+    
+  def lifetimeAllowanceHasPriorData(prior: Option[AllPensionsData]): Boolean =
+     prior.exists(_.pensionCharges.flatMap(_.pensionSavingsTaxCharges).exists(pstc =>
+       pstc.benefitInExcessOfLifetimeAllowance.nonEmpty && pstc.lumpSumBenefitTakenInExcessOfLifetimeAllowance.nonEmpty))
+       
   def unauthorisedPaymentsHasPriorData(prior: Option[AllPensionsData]): Boolean =
     prior.exists(_.pensionCharges.exists(_.pensionSchemeUnauthorisedPayments.nonEmpty))
     

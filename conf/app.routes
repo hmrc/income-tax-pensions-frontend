@@ -70,9 +70,7 @@ GET         /:taxYear/payments-into-pensions/no-tax-relief/workplace-amount     
 POST        /:taxYear/payments-into-pensions/no-tax-relief/workplace-amount                                                        controllers.pensions.paymentsIntoPensions.WorkplaceAmountController.submit(taxYear: Int)
 
 ###########################     Income from Pension pages     ####################################
-
-GET         /:taxYear/pension-income/income-from-pensions                                                                          controllers.pensions.incomeFromPensions.IncomeFromPensionsGatewayController.show(taxYear:Int)
-POST        /:taxYear/pension-income/income-from-pensions                                                                          controllers.pensions.incomeFromPensions.IncomeFromPensionsGatewayController.submit(taxYear: Int)
+GET         /:taxYear/pension-income/pensions-income-summary                                                                       controllers.pensions.incomeFromPensions.IncomeFromPensionsSummaryController.show(taxYear: Int)
 
 GET         /:taxYear/pension-income/state-pension                                                                                 controllers.pensions.incomeFromPensions.StatePensionController.show(taxYear:Int)
 POST        /:taxYear/pension-income/state-pension                                                                                 controllers.pensions.incomeFromPensions.StatePensionController.submit(taxYear: Int)
@@ -113,8 +111,6 @@ GET         /:taxYear/pension-income/pension-scheme-summary                     
 
 GET         /:taxYear/pension-income/check-uk-pension-income                                                                          controllers.pensions.incomeFromPensions.UkPensionIncomeCYAController.show(taxYear: Int)
 POST        /:taxYear/pension-income/check-uk-pension-income                                                                          controllers.pensions.incomeFromPensions.UkPensionIncomeCYAController.submit(taxYear: Int)
-
-GET         /:taxYear/pension-income/pensions-income-summary                                                                       controllers.pensions.incomeFromPensions.IncomeFromPensionsSummaryController.show(taxYear: Int)
 
 ###########################     Unauthorised Payments Pages     ####################################
 

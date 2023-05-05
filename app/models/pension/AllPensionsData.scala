@@ -70,11 +70,11 @@ object AllPensionsData {
       pensionLifetimeAllowances = PensionLifetimeAllowancesViewModel(
         aboveLifetimeAllowanceQuestion = getAboveLifetimeAllowanceQuestion(prior),
         pensionAsLumpSumQuestion = prior.pensionCharges.flatMap(_.pensionSavingsTaxCharges)
-          .map(_.lumpSumBenefitTakenInExcessOfLifetimeAllowance.isDefined),
+          .flatMap(_.lumpSumBenefitTakenInExcessOfLifetimeAllowance).flatMap(_.amount).map(_ > 0),
         pensionAsLumpSum = prior.pensionCharges.flatMap(_.pensionSavingsTaxCharges)
           .flatMap(_.lumpSumBenefitTakenInExcessOfLifetimeAllowance),
         pensionPaidAnotherWayQuestion = prior.pensionCharges.flatMap(_.pensionSavingsTaxCharges)
-          .map(_.benefitInExcessOfLifetimeAllowance.isDefined),
+          .flatMap(_.benefitInExcessOfLifetimeAllowance).flatMap(_.amount).map(_ > 0),
         pensionPaidAnotherWay = prior.pensionCharges.flatMap(_.pensionSavingsTaxCharges).flatMap(_.benefitInExcessOfLifetimeAllowance),
         pensionSchemeTaxReferences = prior.pensionCharges.flatMap(_.pensionSavingsTaxCharges.map(_.pensionSchemeTaxReference))
       ),
@@ -84,7 +84,7 @@ object AllPensionsData {
         statePension = getStatePensionModel(statePension),
         statePensionLumpSum = getStatePensionModel(statePensionLumpSum),
         //TODO: set the question below based on the list from backend
-        uKPensionIncomesQuestion = Some(getUkPensionIncome(prior).nonEmpty),
+        uKPensionIncomesQuestion = getUkPensionQuestion(prior),
         uKPensionIncomes = getUkPensionIncome(prior)
       ),
 
@@ -227,7 +227,7 @@ object AllPensionsData {
       case _ => None
     }
   }
-
+  
   private def getAboveLifetimeAllowanceQuestion(prior: AllPensionsData): Option[Boolean] = {
     if (prior.pensionCharges.flatMap(_.pensionSavingsTaxCharges).map(
       _.benefitInExcessOfLifetimeAllowance).isDefined || prior.pensionCharges.flatMap(
@@ -252,10 +252,14 @@ object AllPensionsData {
             amount = data.amount,
             taxPaid = data.taxPaid,
             isCustomerEmploymentData = data.isCustomerEmploymentData
-          )
-        )
+          ))
       case _ => Seq()
     }
+  }
+
+  private def getUkPensionQuestion(prior: AllPensionsData) = {
+    val ukPi =  getUkPensionIncome(prior)
+    if (ukPi.nonEmpty) Some(true) else None
   }
 
 }

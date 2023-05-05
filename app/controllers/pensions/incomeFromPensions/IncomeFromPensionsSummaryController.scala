@@ -39,8 +39,10 @@ class IncomeFromPensionsSummaryController @Inject()(implicit val mcc: MessagesCo
 
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     pensionSessionService.getAndHandle(taxYear, request.user) {
-      case (None,_) => Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
-      case (pensionsUserData, priorData) => Future.successful(Ok(view(taxYear, pensionsUserData.map(_.pensions), priorData)))
+      case (None,_) =>
+        Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
+      case (pensionsUserData, priorData) =>
+        Future.successful(Ok(view(taxYear, pensionsUserData.map(_.pensions), priorData)))
     }
   }
 }

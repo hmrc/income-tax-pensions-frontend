@@ -14,6 +14,12 @@
  * limitations under the License.
  *@
 
+@import controllers.pensions.{routes => pRoutes}
+@import controllers.pensions.annualAllowances.{routes => aaRoutes}
+@import controllers.pensions.incomeFromPensions.{routes => ifpRoutes}
+@import controllers.pensions.lifetimeAllowances.{routes => laRoutes}
+@import controllers.pensions.paymentsIntoPensions.{routes => pipRoutes}
+@import controllers.pensions.unauthorisedPayments.{routes => upRoutes}
 @import views.html.templates.Layout
 @import views.html.templates.helpers.Heading
 @import views.html.templates.helpers.Link
@@ -31,31 +37,38 @@
 }
 
 @paymentsIntoPensionUrlRedirect() = @{
-    if(paymentIntoPensionHasPriorData(prior)) {
-      s"${controllers.pensions.paymentsIntoPensions.routes.PaymentsIntoPensionsCYAController.show(taxYear)}"
-    } else {
-      s"${controllers.pensions.paymentsIntoPensions.routes.ReliefAtSourcePensionsController.show(taxYear)}"
-    }
+  if(paymentIntoPensionHasPriorData(prior)) {
+    pipRoutes.PaymentsIntoPensionsCYAController.show(taxYear).url
+  } else {
+    pipRoutes.ReliefAtSourcePensionsController.show(taxYear).url
+  }
 }
 
 @unauthorisedPaymentsFromPensionsUrlRedirect() = @{
-    if(unauthorisedPaymentsHasPriorData(prior)) {
-      s"${controllers.pensions.unauthorisedPayments.routes.UnauthorisedPaymentsCYAController.show(taxYear)}"        
-    } else {
-      s"${controllers.pensions.unauthorisedPayments.routes.UnauthorisedPaymentsController.show(taxYear)}"
-    }
-}
-
-@overseasPensionsSummaryUrlRedirect() = @{   
-  controllers.pensions.routes.OverseasPensionsSummaryController.show(taxYear).url
+  if(unauthorisedPaymentsHasPriorData(prior)) {
+    upRoutes.UnauthorisedPaymentsCYAController.show(taxYear).url  
+  } else {
+    upRoutes.UnauthorisedPaymentsController.show(taxYear).url
+  }
 }
 
 @incomeFromPensionUrlRedirect() = @{
-  controllers.pensions.incomeFromPensions.routes.IncomeFromPensionsSummaryController.show(taxYear).url
+  ifpRoutes.IncomeFromPensionsSummaryController.show(taxYear).url
+}
+
+@annualAllowanceUrlRedirect() = @{
+  aaRoutes.ReducedAnnualAllowanceController.show(taxYear).url
 }
 
 @lifetimeAllowanceUrlRedirect() = @{
-    controllers.pensions.lifetimeAllowances.routes.AboveAnnualLifetimeAllowanceController.show(taxYear).url
+  if(lifetimeAllowanceHasPriorData(prior))
+   laRoutes.AnnualLifetimeAllowanceCYAController.show(taxYear).url
+  else
+    laRoutes.AboveAnnualLifetimeAllowanceController.show(taxYear).url
+}
+
+@overseasPensionsSummaryUrlRedirect() = @{
+  pRoutes.OverseasPensionsSummaryController.show(taxYear).url
 }
 
 @layout(pageTitle = headingForUse, taxYear = Some(taxYear), isAgent = request.user.isAgent) {
@@ -99,10 +112,10 @@
 
             <div class="govuk-summary-list__row" id="pension-annual-allowance-row">
                 <dt class="govuk-summary-list__key govuk-!-width-two-third">
-                @link("#", "pensions.pensionSummary.pensionAnnualAllowance",Some("pension-annual-allowance-link"))
+                @link(annualAllowanceUrlRedirect(), "pensions.pensionSummary.pensionAnnualAllowance",Some("pension-annual-allowance-link"))
                 </dt>
                 <dd class="govuk-summary-list__actions govuk-!-two-third">
-                @if(pensionFromAnnualAllowanceIsUpdated(cya)) {
+                @if(annualAllowanceIsUpdated(cya)) {
                     <strong class="govuk-tag">@messages("common.status.updated")</strong>
                 } else {
                     <strong class="govuk-tag govuk-tag--grey">@messages("common.status.toDo")</strong>
@@ -116,7 +129,7 @@
                 @link(lifetimeAllowanceUrlRedirect(), "pensions.pensionSummary.pensionLifetimeAllowance", Some("pension-lifetime-allowance-link"))
                 </dt>
                 <dd class="govuk-summary-list__actions govuk-!-two-third">
-                @if(pensionLifetimeAllowanceIsUpdated(cya)) {
+                @if(lifetimeAllowanceIsUpdated(cya)) {
                     <strong class="govuk-tag">@messages("common.status.updated")</strong>
                 } else {
                     <strong class="govuk-tag govuk-tag--grey">@messages("common.status.toDo")</strong>

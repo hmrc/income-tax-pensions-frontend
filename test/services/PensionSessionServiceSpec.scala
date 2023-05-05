@@ -280,7 +280,6 @@ class PensionSessionServiceSpec extends UnitTest
     "return an error if the call failed" in {
       mockFind(taxYear, user, Right(None))
       mockFindFail(nino, taxYear)
-
       val response = service.getAndHandle(taxYear, user)((_, _) => Future(Ok))
 
       status(response) shouldBe INTERNAL_SERVER_ERROR
@@ -289,7 +288,6 @@ class PensionSessionServiceSpec extends UnitTest
     "return an internal server error if the CYA find failed" in {
       mockFind(taxYear, user, Left(DataNotFound))
       mockFindNoContent(nino, taxYear)
-
       val response = service.getAndHandle(taxYear, user)((_, _) => Future(Ok))
 
       status(response) shouldBe INTERNAL_SERVER_ERROR
@@ -299,7 +297,6 @@ class PensionSessionServiceSpec extends UnitTest
   ".createOrUpdateSessionData" should {
     "return SEE_OTHER(303) status when createOrUpdate succeeds" in {
       mockCreateOrUpdate(pensionDataFull, Right(()))
-
       val response = service.createOrUpdateSessionData(user,
         pensionCYA, taxYear, isPriorSubmission = true,
       )(Redirect("400"))(Redirect("303"))
@@ -310,7 +307,6 @@ class PensionSessionServiceSpec extends UnitTest
 
     "return BAD_REQUEST(400) status when createOrUpdate fails" in {
       mockCreateOrUpdate(pensionDataFull, Left(DataNotUpdated))
-
       val response: Future[Result] = service.createOrUpdateSessionData(user,
         pensionCYA, taxYear, isPriorSubmission = true
       )(Redirect("400"))(Redirect("303"))
@@ -324,9 +320,7 @@ class PensionSessionServiceSpec extends UnitTest
     "generate a PensionsCYAModel from prior AllPensionsData" in {
       mockCreateOrUpdate(pensionDataFull, Right(()))
       val response = generateCyaFromPrior(anAllPensionDataEmpty)
-
       response shouldBe aPensionsCYAGeneratedFromPriorEmpty
-
     }
   }
 
@@ -334,16 +328,12 @@ class PensionSessionServiceSpec extends UnitTest
   ".createOrUpdateSessionData" should {
     "return Right(unit) when createOrUpdate succeeds" in {
       mockCreateOrUpdate(pensionDataFull, Right(()))
-
-
       val response = await(service.createOrUpdateSessionData(pensionDataFull))
-
       response shouldBe Right(())
     }
 
     "return Left DB Error(400) when createOrUpdate fails" in {
       mockCreateOrUpdate(pensionDataFull, Left(DataNotUpdated))
-
       val Left(response) = await(service.createOrUpdateSessionData(pensionDataFull))
       response shouldBe a[DatabaseError]
     }
