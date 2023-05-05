@@ -24,7 +24,7 @@ object PensionIncomeViewModelBuilder {
     PensionIncome(
       submittedOn = "2022-07-28T07:59:39.041Z",
       deletedOn = Some("2022-07-28T07:59:39.041Z"),
-      foreignPension = Seq(
+      foreignPension = Some(Seq(
         ForeignPension(
           countryCode = "FRA",
           taxableAmount = 1999.99,
@@ -33,8 +33,8 @@ object PensionIncomeViewModelBuilder {
           specialWithholdingTax = Some(1999.99),
           foreignTaxCreditRelief = Some(true)
         )
-      ),
-      overseasPensionContribution = Seq(
+      )),
+      overseasPensionContribution = Some(Seq(
         OverseasPensionContribution(
           customerReference = Some("PENSIONINCOME245"),
           exemptEmployersPensionContribs = 1999.99,
@@ -45,7 +45,7 @@ object PensionIncomeViewModelBuilder {
           dblTaxationTreaty = None,
           sf74Reference = Some("SF74-123456")
         )
-      )
+      ))
     )
 
 }

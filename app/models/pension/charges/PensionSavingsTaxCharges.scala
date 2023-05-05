@@ -19,7 +19,7 @@ package models.pension.charges
 import play.api.libs.json.{Json, OFormat}
 import utils.EncryptedValue
 
-case class PensionSavingsTaxCharges(pensionSchemeTaxReference: Seq[String],
+case class PensionSavingsTaxCharges(pensionSchemeTaxReference: Option[Seq[String]],
                                     lumpSumBenefitTakenInExcessOfLifetimeAllowance: Option[LifetimeAllowance],
                                     benefitInExcessOfLifetimeAllowance: Option[LifetimeAllowance],
                                     isAnnualAllowanceReduced: Boolean,
@@ -30,7 +30,7 @@ object PensionSavingsTaxCharges {
   implicit val format: OFormat[PensionSavingsTaxCharges] = Json.format[PensionSavingsTaxCharges]
 }
 
-case class EncryptedPensionSavingsTaxCharges(pensionSchemeTaxReference: Seq[EncryptedValue],
+case class EncryptedPensionSavingsTaxCharges(pensionSchemeTaxReference: Option[Seq[EncryptedValue]],
                                              lumpSumBenefitTakenInExcessOfLifetimeAllowance: Option[EncryptedLifetimeAllowance],
                                              benefitInExcessOfLifetimeAllowance: Option[EncryptedLifetimeAllowance],
                                              isAnnualAllowanceReduced: EncryptedValue,

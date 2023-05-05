@@ -217,7 +217,7 @@ class UnauthorisedPaymentsCYAControllerISpec extends
           cyaRowCheck(ukPensionSchemes, stringToBoolean(unauthorisedPaymentsFromIncomeTaxSubmission.map(_.pensionSchemeTaxReference).isDefined),
             ChangeLinksUnauthorisedPayments.ukPensionSchemes, ukPensionSchemesHidden, 6)
           
-          cyaRowCheck(pensionSchemeTaxReferences, s"${unauthorisedPaymentsFromIncomeTaxSubmission.get.pensionSchemeTaxReference.mkString(", ")}",
+          cyaRowCheck(pensionSchemeTaxReferences, s"${unauthorisedPaymentsFromIncomeTaxSubmission.get.pensionSchemeTaxReference.get.mkString(", ")}",
             ChangeLinksUnauthorisedPayments.pensionSchemeTaxDetails, pensionSchemeTaxReferencesHidden, 7)
 
           buttonCheck(saveAndContinue)
@@ -263,7 +263,7 @@ class UnauthorisedPaymentsCYAControllerISpec extends
           cyaRowCheck(ukPensionSchemes, stringToBoolean(unauthorisedPaymentsFromIncomeTaxSubmission.map(_.pensionSchemeTaxReference).isDefined),
             ChangeLinksUnauthorisedPayments.ukPensionSchemes, ukPensionSchemesHidden, 4)
           
-          cyaRowCheck(pensionSchemeTaxReferences, s"${unauthorisedPaymentsFromIncomeTaxSubmission.get.pensionSchemeTaxReference.mkString(", ")}",
+          cyaRowCheck(pensionSchemeTaxReferences, s"${unauthorisedPaymentsFromIncomeTaxSubmission.get.pensionSchemeTaxReference.get.mkString(", ")}",
             ChangeLinksUnauthorisedPayments.pensionSchemeTaxDetails, pensionSchemeTaxReferencesHidden, 5)
 
           buttonCheck(saveAndContinue)
@@ -310,7 +310,7 @@ class UnauthorisedPaymentsCYAControllerISpec extends
           cyaRowCheck(ukPensionSchemes, stringToBoolean(unauthorisedPaymentsFromIncomeTaxSubmission.map(_.pensionSchemeTaxReference).isDefined),
             ChangeLinksUnauthorisedPayments.ukPensionSchemes, ukPensionSchemesHidden, 4)
           
-          cyaRowCheck(pensionSchemeTaxReferences, s"${unauthorisedPaymentsFromIncomeTaxSubmission.get.pensionSchemeTaxReference.mkString(", ")}",
+          cyaRowCheck(pensionSchemeTaxReferences, s"${unauthorisedPaymentsFromIncomeTaxSubmission.get.pensionSchemeTaxReference.get.mkString(", ")}",
             ChangeLinksUnauthorisedPayments.pensionSchemeTaxDetails, pensionSchemeTaxReferencesHidden, 5)
 
           buttonCheck(saveAndContinue)
