@@ -31,6 +31,8 @@ case class ShortServiceRefundsViewModel(
                                          shortServiceRefundTaxPaidCharge: Option[BigDecimal] = None,
                                          refundPensionScheme: Seq[OverseasRefundPensionScheme] = Nil
                                        ) {
+  def isEmpty: Boolean = shortServiceRefund.isEmpty && shortServiceRefundCharge.isEmpty &&
+    shortServiceRefundTaxPaid.isEmpty && shortServiceRefundTaxPaidCharge.isEmpty && refundPensionScheme.isEmpty
   def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedShortServiceRefundsViewModel =
     EncryptedShortServiceRefundsViewModel(
       shortServiceRefund = shortServiceRefund.map(_.encrypted),

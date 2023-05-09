@@ -126,7 +126,7 @@ class PensionProviderPaidTaxControllerISpec
 
           implicit val userConfig: UserConfig = UserConfig(Individual, English, None)
           implicit val response: WSResponse = getPage
-          assertRedirectionAsExpected(PageRelativeURLs.summaryPage)
+          assertRedirectionAsExpected(PageRelativeURLs.pensionsSummaryPage)
         }
       }
       "appear as expected" when {
@@ -267,7 +267,7 @@ class PensionProviderPaidTaxControllerISpec
           implicit val userConfig: UserConfig = userConfigWhenIrrelevant(None)
           implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(false), None))
 
-          assertRedirectionAsExpected(PageRelativeURLs.summaryPage)
+          assertRedirectionAsExpected(PageRelativeURLs.pensionsSummaryPage)
           getViewModel mustBe None
 
         }

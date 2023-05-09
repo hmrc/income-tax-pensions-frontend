@@ -60,7 +60,7 @@ trait CommonUtils extends IntegrationTest with ViewHelpers with PensionsDatabase
     
     lazy val result: WSResponse = {
       dropPensionsDB()
-      authoriseAgentOrIndividual(isAgent = false)
+      authoriseAgentOrIndividual()
       optPensionsUserData.fold(())(insertCyaData(_, aUserRequest))
       urlGet(fullUrl(url(taxYearEOY)), follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
     }
@@ -88,7 +88,8 @@ trait CommonUtils extends IntegrationTest with ViewHelpers with PensionsDatabase
       dropPensionsDB()
       insertCyaData(pensionsUserData, aUserRequest)
       authoriseAgentOrIndividual(user.isAgent)
-      urlPost(fullUrl(url(taxYearEOY)), body = form, welsh = user.isWelsh, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+      urlPost(fullUrl(url(taxYearEOY)), body = form, welsh = user.isWelsh, follow = false,
+        headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
     }
 
     result
@@ -100,7 +101,7 @@ trait CommonUtils extends IntegrationTest with ViewHelpers with PensionsDatabase
     val result: WSResponse = {
       dropPensionsDB()
       insertCyaData(pensionsUserData, aUserRequest)
-      authoriseAgentOrIndividual(isAgent = false)
+      authoriseAgentOrIndividual()
       urlPost(fullUrl(url(taxYearEOY)), body = form, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
     }
 
@@ -110,7 +111,7 @@ trait CommonUtils extends IntegrationTest with ViewHelpers with PensionsDatabase
   def submitPageNoSessionData(form: Map[String, String])(implicit url: Int => String): WSResponse = {
     val result: WSResponse = {
       dropPensionsDB()
-      authoriseAgentOrIndividual(isAgent = false)
+      authoriseAgentOrIndividual()
       urlPost(fullUrl(url(taxYearEOY)), body = form, follow = false,
         headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
     }

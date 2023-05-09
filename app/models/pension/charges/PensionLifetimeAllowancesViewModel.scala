@@ -29,16 +29,17 @@ case class PensionLifetimeAllowancesViewModel(
                                                pensionAsLumpSumQuestion: Option[Boolean] = None,
                                                pensionAsLumpSum: Option[LifetimeAllowance] = None,
                                                pensionPaidAnotherWayQuestion: Option[Boolean] = None,
-                                               pensionPaidAnotherWay: LifetimeAllowance = LifetimeAllowance(),
+                                               pensionPaidAnotherWay: Option[LifetimeAllowance] = None,
                                                pensionSchemeTaxReferences: Option[Seq[String]] = None) {
-
+  def isEmpty: Boolean = this.productIterator.forall(_ == None)
+  
   def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedPensionLifetimeAllowancesViewModel = {
     EncryptedPensionLifetimeAllowancesViewModel(
       aboveLifetimeAllowanceQuestion = aboveLifetimeAllowanceQuestion.map(_.encrypted),
       pensionAsLumpSumQuestion = pensionAsLumpSumQuestion.map(_.encrypted),
       pensionAsLumpSum = pensionAsLumpSum.map(_.encrypted()),
       pensionPaidAnotherWayQuestion = pensionPaidAnotherWayQuestion.map(_.encrypted),
-      pensionPaidAnotherWay = pensionPaidAnotherWay.encrypted(),
+      pensionPaidAnotherWay = pensionPaidAnotherWay.map(_.encrypted),
       pensionSchemeTaxReferences = pensionSchemeTaxReferences.map(_.map(pstr => secureGCMCipher.encrypt(pstr)))
 
     )
@@ -55,7 +56,7 @@ case class EncryptedPensionLifetimeAllowancesViewModel(
                                                         pensionAsLumpSumQuestion: Option[EncryptedValue] = None,
                                                         pensionAsLumpSum: Option[EncryptedLifetimeAllowance] = None,
                                                         pensionPaidAnotherWayQuestion: Option[EncryptedValue] = None,
-                                                        pensionPaidAnotherWay: EncryptedLifetimeAllowance = EncryptedLifetimeAllowance(None, None),
+                                                        pensionPaidAnotherWay: Option[EncryptedLifetimeAllowance] = None,
                                                         pensionSchemeTaxReferences: Option[Seq[EncryptedValue]] = None) {
 
   def decrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): PensionLifetimeAllowancesViewModel =
@@ -64,7 +65,7 @@ case class EncryptedPensionLifetimeAllowancesViewModel(
       pensionAsLumpSumQuestion = pensionAsLumpSumQuestion.map(_.decrypted[Boolean]),
       pensionAsLumpSum = pensionAsLumpSum.map(_.decrypted()),
       pensionPaidAnotherWayQuestion = pensionPaidAnotherWayQuestion.map(_.decrypted[Boolean]),
-      pensionPaidAnotherWay = pensionPaidAnotherWay.decrypted(),
+      pensionPaidAnotherWay = pensionPaidAnotherWay.map(_.decrypted()),
       pensionSchemeTaxReferences = pensionSchemeTaxReferences.map(_.map(x => secureGCMCipher.decrypt[String](x.value, x.nonce)))
     )
 }

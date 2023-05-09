@@ -32,7 +32,7 @@ class TaxOnShortServiceRefundControllerISpec extends YesNoControllerSpec("/overs
         "the user has no stored session data at all" in {
           implicit val userConfig: UserConfig = userConfigWhenIrrelevant(None)
           implicit val response: WSResponse = getPageWithIndex()
-          assertRedirectionAsExpected(PageRelativeURLs.overseasPensionsSummary)
+          assertRedirectionAsExpected(PageRelativeURLs.pensionsSummaryPage)
         }
       }
     }
@@ -44,7 +44,7 @@ class TaxOnShortServiceRefundControllerISpec extends YesNoControllerSpec("/overs
           implicit val userConfig: UserConfig = userConfigWhenIrrelevant(None)
           implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoPage(Some(false)))
 
-          assertRedirectionAsExpected(PageRelativeURLs.overseasPensionsSummary)
+          assertRedirectionAsExpected(PageRelativeURLs.pensionsSummaryPage)
           getTransferPensionsViewModel mustBe None
         }
       }

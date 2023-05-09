@@ -190,7 +190,6 @@ class PensionLumpSumDetailsControllerISpec extends IntegrationTest with ViewHelp
   ".show" should {
     userScenarios.foreach { user =>
       import Selectors._
-      import user.commonExpectedResults._
       
       s"language is ${welshTest(user.isWelsh)} and request is from an ${agentTest(user.isAgent)}" should {
 

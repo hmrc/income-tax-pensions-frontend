@@ -214,7 +214,7 @@ class LifeTimeAllowanceAnotherWayControllerISpec extends IntegrationTest with Be
     "redirect to Pensions Summary page if there is no session data" should {
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         urlGet(fullUrl(pensionLifeTimeAllowanceAnotherWayUrl(taxYearEOY)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -278,7 +278,7 @@ class LifeTimeAllowanceAnotherWayControllerISpec extends IntegrationTest with Be
 
         insertCyaData(pensionsUserDataWithLifetimeAllowance(pensionsViewModel), aUserRequest)
 
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         urlPost(fullUrl(pensionLifeTimeAllowanceAnotherWayUrl(taxYearEOY)), body = form, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -306,12 +306,12 @@ class LifeTimeAllowanceAnotherWayControllerISpec extends IntegrationTest with Be
         dropPensionsDB()
         val pensionsViewModel = aPensionLifetimeAllowanceViewModel.copy(
           pensionPaidAnotherWayQuestion = Some(true),
-          pensionPaidAnotherWay = LifetimeAllowance(Some(999.99), Some(99.99))
+          pensionPaidAnotherWay = Some(LifetimeAllowance(Some(999.99), Some(99.99)))
         )
 
         insertCyaData(pensionsUserDataWithLifetimeAllowance(pensionsViewModel), aUserRequest)
 
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         urlPost(fullUrl(pensionLifeTimeAllowanceAnotherWayUrl(taxYearEOY)), body = form, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -325,7 +325,7 @@ class LifeTimeAllowanceAnotherWayControllerISpec extends IntegrationTest with Be
 
       "updates aboveLifetimeAllowanceQuestion to Some(false) and clear the rest of the annual lifetime allowance data" in {
         lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
-        cyaModel.pensions.pensionLifetimeAllowances.pensionPaidAnotherWay shouldBe LifetimeAllowance(None,None)
+        cyaModel.pensions.pensionLifetimeAllowances.pensionPaidAnotherWay shouldBe None
         cyaModel.pensions.pensionLifetimeAllowances.pensionPaidAnotherWayQuestion shouldBe Some(false)
         cyaModel.pensions.pensionLifetimeAllowances.pensionAsLumpSumQuestion shouldBe aPensionLifetimeAllowanceViewModel.pensionAsLumpSumQuestion
         cyaModel.pensions.pensionLifetimeAllowances.pensionAsLumpSum shouldBe aPensionLifetimeAllowanceViewModel.pensionAsLumpSum
@@ -337,7 +337,7 @@ class LifeTimeAllowanceAnotherWayControllerISpec extends IntegrationTest with Be
       lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.no)
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         urlPost(fullUrl(pensionLifeTimeAllowanceAnotherWayUrl(taxYearEOY)), body = form, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
 

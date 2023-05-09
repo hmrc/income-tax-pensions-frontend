@@ -29,7 +29,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import utils.PageUrls.PaymentIntoOverseasPensions._
-import utils.PageUrls.overseasPensionsSummaryUrl
+import utils.PageUrls.{overseasPensionsSummaryUrl, pensionSummaryUrl}
 import utils.{CommonUtils, PensionsDatabaseHelper}
 
 class QOPSReferenceControllerISpec extends CommonUtils with BeforeAndAfterEach with PensionsDatabaseHelper{ //scalastyle:off: magic.number
@@ -248,7 +248,7 @@ class QOPSReferenceControllerISpec extends CommonUtils with BeforeAndAfterEach w
 
           s"has a SEE_OTHER status" in {
             result.status shouldBe SEE_OTHER
-            result.header("location") shouldBe Some(overseasPensionsSummaryUrl(taxYearEOY))
+            result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
           }
         }
 
@@ -423,7 +423,7 @@ class QOPSReferenceControllerISpec extends CommonUtils with BeforeAndAfterEach w
       "has an SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER
 
-        result.header("location") shouldBe Some(overseasPensionsSummaryUrl(taxYearEOY))
+        result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
       }
     }
   }

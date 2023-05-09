@@ -44,7 +44,7 @@ class UnauthorisedPaymentsCYAControllerISpec extends
   IntegrationTest with
   ViewHelpers with
   BeforeAndAfterEach with
-  PensionsDatabaseHelper with Logging {
+  PensionsDatabaseHelper with Logging { //scalastyle:off magic.number
 
   val cyaDataIncomplete: PaymentsIntoPensionViewModel = PaymentsIntoPensionViewModel(
     rasPensionPaymentQuestion = Some(true)
@@ -345,10 +345,11 @@ class UnauthorisedPaymentsCYAControllerISpec extends
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          val unauthorisedPaymentsFromIncomeTaxSubmission = updatedanAllPensionsData.pensionCharges.get.pensionSchemeUnauthorisedPayments
+          val unauthorisedPaymentsSurcharge = updatedanAllPensionsData.pensionCharges
+            .flatMap(_.pensionSchemeUnauthorisedPayments).flatMap(_.surcharge).map(charge => stringToBoolean(charge.amount > 0))
 
           titleCheck(user.specificExpectedResults.get.expectedTitle, user.isWelsh)
-          cyaRowCheck(unauthorisedPayments, stringToBoolean(unauthorisedPaymentsFromIncomeTaxSubmission.get.surcharge.isDefined),
+          cyaRowCheck(unauthorisedPayments, unauthorisedPaymentsSurcharge.getOrElse(""),
             ChangeLinksUnauthorisedPayments.unauthorisedPayments, unauthorisedPaymentsHidden, 1)
 
           buttonCheck(saveAndContinue)
@@ -369,9 +370,10 @@ class UnauthorisedPaymentsCYAControllerISpec extends
 
         lazy val result: WSResponse = {
           dropPensionsDB()
-          authoriseAgentOrIndividual(isAgent = false)
+          authoriseAgentOrIndividual()
           pensionChargesSessionStub("", nino, taxYear)
-          urlPost(fullUrl(checkUnauthorisedPaymentsCyaUrl(taxYear)), form, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
+          urlPost(fullUrl(checkUnauthorisedPaymentsCyaUrl(taxYear)), form, follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
         }
 
         "have the status SEE OTHER" in {
@@ -396,7 +398,7 @@ class UnauthorisedPaymentsCYAControllerISpec extends
           userDataStub(userData, nino, taxYear)
           pensionChargesSessionStub("", nino, taxYear)
           insertCyaData(aPensionsUserData.copy(pensions = aPensionsCYAModel.copy(paymentsIntoPension = cyaDataIncomplete), taxYear = taxYear), aUserRequest)
-          authoriseAgentOrIndividual(isAgent = false)
+          authoriseAgentOrIndividual()
           urlPost(fullUrl(checkUnauthorisedPaymentsCyaUrl(taxYear)), form, follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
         }

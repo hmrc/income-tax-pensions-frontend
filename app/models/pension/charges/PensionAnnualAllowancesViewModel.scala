@@ -27,7 +27,9 @@ case class PensionAnnualAllowancesViewModel(
                                             aboveAnnualAllowance: Option[BigDecimal] = None,
                                             pensionProvidePaidAnnualAllowanceQuestion: Option[Boolean] = None,
                                             taxPaidByPensionProvider: Option[BigDecimal] = None,
-                                            pensionSchemeTaxReferences: Option[Seq[String]] = None)
+                                            pensionSchemeTaxReferences: Option[Seq[String]] = None) {
+  def isEmpty: Boolean = this.productIterator.forall(_ == None)
+}
 
 object PensionAnnualAllowancesViewModel {
   implicit val format: OFormat[PensionAnnualAllowancesViewModel] = Json.format[PensionAnnualAllowancesViewModel]

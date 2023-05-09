@@ -28,6 +28,7 @@ case class LifetimeAllowance(
                               amount: Option[BigDecimal] = None,
                               taxPaid: Option[BigDecimal] = None
                             ) {
+  def isEmpty: Boolean = this.productIterator.forall(_ == None)
 
   def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedLifetimeAllowance =
     EncryptedLifetimeAllowance(

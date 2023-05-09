@@ -14,6 +14,7 @@
  * limitations under the License.
  *@
 
+@import controllers.pensions.lifetimeAllowances.routes
 @import views.html.templates.Layout
 @import views.html.templates.helpers.Heading
 @import views.html.templates.helpers.InputRadioAlt
@@ -48,7 +49,7 @@
         @messages(s"annualAndLifetimeAllowance.gateway.line1.${if(request.user.isAgent) "agent" else "individual"}")
     </p>
 
-    @formWithCsrf(action = controllers.pensions.lifetimeAllowances.routes.AboveAnnualLifetimeAllowanceController.submit(taxYear)) {
+    @formWithCsrf(action = routes.AboveAnnualLifetimeAllowanceController.submit(taxYear)) {
         @inputRadio(
             form = form,
             legendHeading = Some(Html(titleForUse)),
