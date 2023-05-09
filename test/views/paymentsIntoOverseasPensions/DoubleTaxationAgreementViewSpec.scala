@@ -74,7 +74,7 @@ class DoubleTaxationAgreementViewSpec extends ViewUnitTest with FakeRequestProvi
   object CommonExpectedCY extends CommonExpectedResults {
     val expectedCaption:  Int => String = (taxYear: Int) => s"Taliadau i bensiynau tramor ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
     val expectedTitle: String = "Double taxation agreement details"
-    val expectedCountyLabel: String = "Country"
+    val expectedCountyLabel: String = "Gwlad"
     val expectedArticleLabel: String = "Article (optional)"
     val expectedArticleExample: String = "For example, ‘AB3211-1’"
     val expectedTreatyLabel: String = "Treaty (optional)"

@@ -1024,54 +1024,54 @@ paymentsIntoOverseasPensions.cya.employerPaymentsTax.hidden = Change tax paid on
 
 ############################################## INCOME FROM OVERSEAS PENSIONS ##############################################
 
-incomeFromOverseasPensions.incomeFromOverseasPension.title.individual = Did you get payments from an overseas pension scheme?
-incomeFromOverseasPensions.incomeFromOverseasPension.title.agent = Did your client get payments from an overseas pension scheme?
-incomeFromOverseasPensions.incomeFromOverseasPension.error.noEntry.individual = Select yes if you had income from an overseas pension scheme
-incomeFromOverseasPensions.incomeFromOverseasPension.error.noEntry.agent = Select yes if your client had income from an overseas pension scheme
+incomeFromOverseasPensions.incomeFromOverseasPension.title.individual = A gawsoch chi daliadau o gynllun pensiwn tramor?
+incomeFromOverseasPensions.incomeFromOverseasPension.title.agent = A gafodd eich cleient daliadau o gynllun pensiwn tramor?
+incomeFromOverseasPensions.incomeFromOverseasPension.error.noEntry.individual = Dewiswch ‘Iawn’ os cawsoch incwm o gynllun pensiwn tramor
+incomeFromOverseasPensions.incomeFromOverseasPension.error.noEntry.agent = Dewiswch ‘Iawn’ os cafodd eich cleient daliadau o gynllun pensiwn tramor
 
-incomeFromOverseasPensions.pensionOverseasIncomeCountry.title = What country is the pension scheme registered in?
-incomeFromOverseasPensions.pensionOverseasIncomeCountry.paragraph = You can add pension schemes from other countries later.
-incomeFromOverseasPensions.pensionOverseasIncomeCountry.subheading = Country
-incomeFromOverseasPensions.pensionOverseasIncomeCountry.error.noEntry.individual = Enter the name of the country the pension scheme is registered in
-incomeFromOverseasPensions.pensionOverseasIncomeCountry.error.noEntry.agent = Enter the name of the country that your client’s pension scheme is registered in
+incomeFromOverseasPensions.pensionOverseasIncomeCountry.title = Ym mha wlad y mae’r cynllun pensiwn wedi’i gofrestru?
+incomeFromOverseasPensions.pensionOverseasIncomeCountry.paragraph = Gallwch ychwanegu cynlluniau pensiwn o wledydd eraill yn nes ymlaen.
+incomeFromOverseasPensions.pensionOverseasIncomeCountry.subheading = Gwlad
+incomeFromOverseasPensions.pensionOverseasIncomeCountry.error.noEntry.individual = Nodwch enw’r wlad lle y mae’r cynllun pensiwn wedi’i gofrestru
+incomeFromOverseasPensions.pensionOverseasIncomeCountry.error.noEntry.agent = Nodwch enw’r wlad lle mae cynllun pensiwn eich cleient wedi’i gofrestru
 
-overseasPension.foreignTaxCreditRelief.title.individual = Are you claiming Foreign Tax Credit Relief (FTCR)?
-overseasPension.foreignTaxCreditRelief.title.agent = Is your client claiming Foreign Tax Credit Relief (FTCR)?
-overseasPension.foreignTaxCreditRelief.details.title = Understanding Foreign Tax Credit Relief (FTCR)
-overseasPension.foreignTaxCreditRelief.details.para1 = You can claim Foreign Tax Credit Relief if you’ve already paid foreign tax on income that’s normally taxed in the UK.
-overseasPension.foreignTaxCreditRelief.details.para2 = You may also be taxed on this income by the UK.
-overseasPension.foreignTaxCreditRelief.details.para3 = However, you may not have to pay twice if the country you live in has a ‘double-taxation agreement’ with the UK.
-overseasPension.foreignTaxCreditRelief.details.para4 = Depending on the agreement, you can apply for either:
-overseasPension.foreignTaxCreditRelief.details.para4.bullet1 = partial or full relief before you’ve been taxed
-overseasPension.foreignTaxCreditRelief.details.para4.bullet2 = a refund after you’ve been taxed
-overseasPension.foreignTaxCreditRelief.details.para5 = Each double-taxation agreement sets out:
-overseasPension.foreignTaxCreditRelief.details.para5.bullet1 = the country you pay tax in
-overseasPension.foreignTaxCreditRelief.details.para5.bullet2 = the country you apply for relief in
-overseasPension.foreignTaxCreditRelief.details.para5.bullet3 = how much tax relief you get
-overseasPension.foreignTaxCreditRelief.details.para6 = If the tax rates in the two countries are different, you’ll pay the higher rate of tax.
-overseasPension.foreignTaxCreditRelief.details.para7 = You can read more about
-overseasPension.foreignTaxCreditRelief.details.para7.link = Foreign Tax Credit Relief at GOV.uk
-overseasPension.foreignTaxCreditRelief.error.noEntry.individual = Enter yes or no if you are claiming Foreign Tax Credit Relief (FTCR)
-overseasPension.foreignTaxCreditRelief.error.noEntry.agent = Enter yes or no if your client is claiming Foreign Tax Credit Relief (FTCR)
+overseasPension.foreignTaxCreditRelief.title.individual = A ydych yn hawlio Rhyddhad Credyd Treth Tramor (FTCR)?
+overseasPension.foreignTaxCreditRelief.title.agent = A yw’ch cleient yn hawlio Rhyddhad Credyd Treth Tramor (FTCR)?
+overseasPension.foreignTaxCreditRelief.details.title = Deall Rhyddhad Credyd Treth Dramor (FCTR)
+overseasPension.foreignTaxCreditRelief.details.para1 = Gallwch hawlio Rhyddhad Credyd Treth Tramor os ydych eisoes wedi talu treth tramor ar incwm sydd fel arfer yn cael ei drethu yn y DU.
+overseasPension.foreignTaxCreditRelief.details.para2 = Mae’n bosib y bydd yr incwm hwn hefyd yn cael ei drethu gan y DU.
+overseasPension.foreignTaxCreditRelief.details.para3 = Fodd bynnag, efallai na fydd yn rhaid i chi dalu ddwywaith os oes gan y wlad rydych chi’n byw ynddi ‘Gytundeb Trethiant Dwbl’ gyda’r DU.
+overseasPension.foreignTaxCreditRelief.details.para4 = Yn dibynnu ar y cytundeb, gallwch wneud cais am y naill neu’r llall o’r canlynol:
+overseasPension.foreignTaxCreditRelief.details.para4.bullet1 = rhyddhad rhannol neu lawn cyn i chi gael eich trethu
+overseasPension.foreignTaxCreditRelief.details.para4.bullet2 = ad-daliad ar ôl i chi gael eich trethu
+overseasPension.foreignTaxCreditRelief.details.para5 = Mae pob Cytundeb Trethiant Dwbl yn nodi’r canlynol:
+overseasPension.foreignTaxCreditRelief.details.para5.bullet1 = y wlad lle rydych yn talu treth
+overseasPension.foreignTaxCreditRelief.details.para5.bullet2 = y wlad lle rydych yn hawlio i gael rhyddhad
+overseasPension.foreignTaxCreditRelief.details.para5.bullet3 = faint o ryddhad treth y gallwch ei gael
+overseasPension.foreignTaxCreditRelief.details.para6 = Os yw’r cyfraddau treth yn wahanol yn y ddwy wlad, byddwch yn talu’r gyfradd uwch o dreth.
+overseasPension.foreignTaxCreditRelief.details.para7 = Gallwch ddarllen rhagor am
+overseasPension.foreignTaxCreditRelief.details.para7.link = Rhyddhad Credyd Treth ar GOV.UK
+overseasPension.foreignTaxCreditRelief.error.noEntry.individual = Dewiswch ‘Iawn’ neu ‘Na’ os ydych yn hawlio Rhyddhad Credyd Treth Tramor (FTCR)
+overseasPension.foreignTaxCreditRelief.error.noEntry.agent = Dewiswch ‘Iawn’ neu ‘Na’ os yw’ch cleient yn hawlio Rhyddhad Credyd Treth Tramor (FTCR)
 
-incomeFromOverseasPensions.cya.heading = Check income from overseas pensions
-incomeFromOverseasPensions.cya.paymentsFromOverseasPensions = Payments from overseas pensions
-incomeFromOverseasPensions.cya.paymentsFromOverseasPensions.hidden = Change Payments from overseas pensions
+incomeFromOverseasPensions.cya.heading = Gwirio incwm o bensiynau tramor
+incomeFromOverseasPensions.cya.paymentsFromOverseasPensions = Taliadau o bensiynau tramor
+incomeFromOverseasPensions.cya.paymentsFromOverseasPensions.hidden = Newid taliadau o bensiynau tramor
 
-incomeFromOverseasPensions.summary.title = Pension scheme summary
-incomeFromOverseasPensions.summary.country = Country
-incomeFromOverseasPensions.summary.pension.payments = Pensions payments
-incomeFromOverseasPensions.summary.amount = Amount: {0}
-incomeFromOverseasPensions.summary.nonUk.amount = Non-uk tax: {0}
-incomeFromOverseasPensions.summary.swt = Special Withholding Tax
-incomeFromOverseasPensions.summary.ftc = Foreign Tax Credit
-incomeFromOverseasPensions.summary.tax.amount = Taxable amount
+incomeFromOverseasPensions.summary.title = Crynodeb o’r cynllun pensiwn
+incomeFromOverseasPensions.summary.country = Gwlad
+incomeFromOverseasPensions.summary.pension.payments = Taliadau pensiwn
+incomeFromOverseasPensions.summary.amount = Swm: {0}
+incomeFromOverseasPensions.summary.nonUk.amount = Treth y tu allan i’r DU: {0}
+incomeFromOverseasPensions.summary.swt = Treth Ataliedig Arbennig
+incomeFromOverseasPensions.summary.ftc = Credyd Treth Tramor
+incomeFromOverseasPensions.summary.tax.amount = Swm trethadwy
 
 #Overseas Pension Income Summary Page
-overseasPensionIncomeSummary.heading = Overseas pension income
-overseasPensionIncomeSummary.hidden = Change Overseas pension income
-#TODO: overseasPensionIncomeSummary.addAnotherPensionIncomeLink = Add another overseas pension scheme
-#TODO:overseasPensionIncomeSummary.addPensionIncomeLink = Add an overseas pension scheme
+overseasPensionIncomeSummary.heading = Incwm o bensiwn tramor
+overseasPensionIncomeSummary.hidden = Newid incwm o bensiwn tramor
+#TODO: overseasPensionIncomeSummary.addAnotherPensionIncomeLink = Ychwanegu cynllun pensiwn tramor arall
+#TODO:overseasPensionIncomeSummary.addPensionIncomeLink = Ychwanegu cynllun pensiwn tramor
 
 ############################################## TRANSFER INTO OVERSEAS PENSION ##############################################
 
