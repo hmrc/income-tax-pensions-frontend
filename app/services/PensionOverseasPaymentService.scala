@@ -64,7 +64,7 @@ class PensionOverseasPaymentService @Inject()(pensionUserDataRepository: Pension
       updatedFp = viewModelOverseas.map(_.toForeignPension)
       updatedIncomeData = CreateUpdatePensionIncomeModel(
         foreignPension = updatedFp,
-        overseasPensionContribution = priorData.pensions.flatMap(_.pensionIncome.map(y => y.overseasPensionContribution))
+        overseasPensionContribution = priorData.pensions.flatMap(_.pensionIncome.flatMap(y => y.overseasPensionContribution))
       )
       viewModelPayments = sessionData.map(_.pensions.paymentsIntoPension)
 
