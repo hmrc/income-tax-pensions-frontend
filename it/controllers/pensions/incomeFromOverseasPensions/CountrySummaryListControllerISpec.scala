@@ -73,8 +73,8 @@ class CountrySummaryListControllerISpec extends IntegrationTest with BeforeAndAf
   object CommonExpectedCY extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Incwm o bensiynau tramor ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
     val expectedButtonText = "Yn eich blaen"
-    val expectedTitle = "Overseas pension income"
-    val expectedHeading = "Overseas pension income"
+    val expectedTitle = "Incwm o bensiwn tramor"
+    val expectedHeading = "Incwm o bensiwn tramor"
     val change = "Newid"
     val remove = "Tynnu"
     val expectedAddAnotherText = "Ychwanegu cynllun pensiwn arall"

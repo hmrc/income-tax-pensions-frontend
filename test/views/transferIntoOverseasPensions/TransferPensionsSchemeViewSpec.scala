@@ -123,7 +123,7 @@ class TransferPensionsSchemeViewSpec extends ViewUnitTest {
     val nonUKRefInvalidFormatErrorText: String = "Enter a six digit number"
   }
   object ExpectedIndividualCY extends SpecificExpectedResults {
-    val countryIdLabel: String = "Country"
+    val countryIdLabel: String = "Gwlad"
     val countryIdEmptyErrorText: String = "Enter the country"
     val ukReferenceLabel: String = "Cyfeirnod Treth y Cynllun Pensiwn"
     val nonUkReferenceLabel: String = "Qualifying Overseas Pension Scheme reference"
