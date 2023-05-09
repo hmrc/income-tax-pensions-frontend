@@ -49,7 +49,7 @@ class PensionsIncomeServiceSpec extends UnitTest
 
       val model = CreateUpdatePensionIncomeModel(
         foreignPension = Some(sessionUserData.pensions.incomeFromOverseasPensions.toForeignPension),
-        overseasPensionContribution = priorUserData.pensions.flatMap(_.pensionIncome.map(_.overseasPensionContribution))
+        overseasPensionContribution = priorUserData.pensions.flatMap(_.pensionIncome.flatMap(_.overseasPensionContribution))
       )
 
       val userWithEmptySaveIncomeFromOverseasCya = aPensionsUserData.copy(pensions = aPensionsCYAEmptyModel)
@@ -77,7 +77,7 @@ class PensionsIncomeServiceSpec extends UnitTest
 
       val model = CreateUpdatePensionIncomeModel(
         foreignPension = Some(sessionUserData.pensions.incomeFromOverseasPensions.toForeignPension),
-        overseasPensionContribution = priorUserData.pensions.flatMap(_.pensionIncome.map(_.overseasPensionContribution))
+        overseasPensionContribution = priorUserData.pensions.flatMap(_.pensionIncome.flatMap(_.overseasPensionContribution))
       )
 
       mockSavePensionIncomeSessionData(nino, taxYear, model, Left(APIErrorModel(BAD_REQUEST, APIErrorBodyModel("FAILED", "failed"))))
@@ -99,7 +99,7 @@ class PensionsIncomeServiceSpec extends UnitTest
 
       val model = CreateUpdatePensionIncomeModel(
         foreignPension = Some(sessionUserData.pensions.incomeFromOverseasPensions.toForeignPension),
-        overseasPensionContribution = priorUserData.pensions.flatMap(_.pensionIncome.map(_.overseasPensionContribution))
+        overseasPensionContribution = priorUserData.pensions.flatMap(_.pensionIncome.flatMap(_.overseasPensionContribution))
       )
 
       val userWithEmptySaveIncomeFromOverseasCya = aPensionsUserData.copy(pensions = aPensionsCYAEmptyModel)

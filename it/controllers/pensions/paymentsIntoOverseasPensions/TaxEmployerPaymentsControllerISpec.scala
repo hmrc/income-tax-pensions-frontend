@@ -88,13 +88,13 @@ class TaxEmployerPaymentsControllerISpec extends CommonUtils with BeforeAndAfter
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
-    val expectedTitle: String = "Did you pay tax on the amount your employer paid?"
-    val expectedHeading: String = "Did you pay tax on the amount your employer paid?"
+    val expectedTitle: String = "A wnaethoch dalu treth ar y swm a dalodd eich cyflogwr?"
+    val expectedHeading: String = "A wnaethoch dalu treth ar y swm a dalodd eich cyflogwr?"
     val expectedErrorTitle: String = s"Gwall: $expectedTitle"
-    val expectedError: String = "Select yes if you paid tax on the amount your employer paid"
+    val expectedError: String = "Dewiswch ‘Iawn’ os gwnaethoch dalu treth ar y swm a dalodd eich cyflogwr"
     val expectedFindOut: String = "Er mwyn dysgu beth yw hyn, gallwch wneud y canlynol:"
     val expectedBullet1: String = "gwirio’ch datganiad pensiwn"
-    val expectedBullet2: String = "ask your pension provider"
+    val expectedBullet2: String = "gofyn i ddarparwr eich pensiwn"
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
@@ -108,13 +108,13 @@ class TaxEmployerPaymentsControllerISpec extends CommonUtils with BeforeAndAfter
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
-    val expectedTitle: String = "Did your client pay tax on the amount their employer paid?"
-    val expectedHeading: String = "Did your client pay tax on the amount their employer paid?"
+    val expectedTitle: String = "A wnaeth eich cleient dalu treth ar y swm a dalodd ei gyflogwr?"
+    val expectedHeading: String = "A wnaeth eich cleient dalu treth ar y swm a dalodd ei gyflogwr?"
     val expectedErrorTitle: String = s"Gwall: $expectedTitle"
-    val expectedError: String = "Select yes if your client paid tax on the amount their employer paid"
+    val expectedError: String = "Dewiswch ‘Iawn’ os gwnaeth eich cleient dalu treth ar y swm a dalodd ei gyflogwr"
     val expectedFindOut: String = "Er mwyn dysgu beth yw hyn, gallwch ofyn i’ch cleient wneud y canlynol:"
     val expectedBullet1: String = "gwirio’i ddatganiad pensiwn"
-    val expectedBullet2: String = "ask their pension providers"
+    val expectedBullet2: String = "gofyn i ddarparwr ei bensiwn"
   }
 
   object CommonExpectedEN extends CommonExpectedResults {

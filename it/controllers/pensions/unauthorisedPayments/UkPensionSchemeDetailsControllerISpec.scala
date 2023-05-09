@@ -69,12 +69,12 @@ class UkPensionSchemeDetailsControllerISpec extends IntegrationTest with BeforeA
   object CommonExpectedCY extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Taliadau heb awdurdod o bensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
     val expectedButtonText = "Yn eich blaen"
-    val expectedTitle = "Unauthorised payments from UK pensions schemes"
-    val expectedHeading = "Unauthorised payments from UK pensions schemes"
+    val expectedTitle = "Taliadau heb awdurdod o gynlluniau pensiwn yn y DU"
+    val expectedHeading = "Taliadau heb awdurdod o gynlluniau pensiwn yn y DU"
     val change = "Newid"
     val remove = "Tynnu"
-    val expectedAddAnotherText = "Add another Pensions Scheme Tax Reference"
-    val expectedAddPensionSchemeText = "Add a Pensions Scheme Tax Reference"
+    val expectedAddAnotherText = "Ychwanegu Cyfeirnod Treth ar gyfer Cynllun Pensiwn arall"
+    val expectedAddPensionSchemeText = "Ychwanegu Cyfeirnod Treth ar gyfer Cynllun Pensiwn"
   }
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, Nothing]] = Seq(

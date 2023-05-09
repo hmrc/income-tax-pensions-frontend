@@ -83,7 +83,7 @@ class PensionSchemeTaxReferenceLifetimeControllerISpec extends CommonUtils with 
     val hintText = "For example, ‘12345678RA’"
     val expectedParagraph1 = "If more than one pension scheme paid or agreed to pay the tax, you can add them later."
     val expectedIncorrectFormatError = "Enter a reference with 8 numbers and 2 letters, such as ‘12345678AB’"
-    val expectedSubtitle: String = "Pension Scheme Tax Reference"
+    val expectedSubtitle = "Pension Scheme Tax Reference"
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
@@ -91,13 +91,13 @@ class PensionSchemeTaxReferenceLifetimeControllerISpec extends CommonUtils with 
     val expectedButtonText = "Yn eich blaen"
     val yesText = "Iawn"
     val noText = "Na"
-    val expectedTitle = "Tell us the pension scheme that paid or agreed to pay the tax"
+    val expectedTitle = "Rhowch wybod i ni’r cynllun pensiwn a dalodd neu a gytunwyd i dalu’r dreth"
     val expectedHeading = expectedTitle
     val expectedErrorTitle = s"Gwall: $expectedTitle"
     val hintText = "Er enghraifft, ‘12345678RA’"
-    val expectedParagraph1 = "If more than one pension scheme paid or agreed to pay the tax, you can add them later."
-    val expectedIncorrectFormatError = "Enter a reference with 8 numbers and 2 letters, such as ‘12345678AB’"
-    val expectedSubtitle: String = "Pension Scheme Tax Reference"
+    val expectedParagraph1 = "Os bydd mwy nag un cynllun pensiwn yn talu neu wedi cytuno i dalu’r dreth, gallwch eu hychwanegu nes ymlaen."
+    val expectedIncorrectFormatError = "Nodwch gyfeirnod sydd ag 8 rhif a 2 lythyren, megis ‘12345678AB’"
+    val expectedSubtitle = "Pension Scheme Tax Reference"
   }
 
   val inputName: String = "taxReferenceId"

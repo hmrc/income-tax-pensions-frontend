@@ -642,19 +642,33 @@ incomeFromPensions.pensionIncome.hidden.individual = Newid p’un a gawsoch incw
 incomeFromPensions.pensionIncome.hidden.agent = Newid p’un a gafodd eich cleient incwm o bensiynau’r DU
 incomeFromPensions.pensionSchemes.hidden = Newid manylion cynllun pensiwn y DU
 
+#Uk Pension Income Summary page
+incomeFromPensions.schemeDetails.summary.title = Check pension scheme details
+incomeFromPensions.schemeDetails.summary.details = Scheme details
+incomeFromPensions.schemeDetails.summary.details.hidden = Change scheme details
+incomeFromPensions.schemeDetails.summary.income = Pension income
+incomeFromPensions.schemeDetails.summary.income.hidden = Change pension income
+incomeFromPensions.schemeDetails.summary.date = Pension start date
+incomeFromPensions.schemeDetails.summary.date.hidden = Change pension start date
+incomeFromPensions.schemeDetails.summary.paye = PAYE:
+incomeFromPensions.schemeDetails.summary.pid = PID:
+incomeFromPensions.schemeDetails.summary.pay = Pay:
+incomeFromPensions.schemeDetails.summary.tax = Tax:
+
 #################       Lifetime Allowance       ########################################
 
 #Did you get paid your pension as a lump sum
-lifetimeAllowance.pensionLumpSum.title.individual = Did you take the amount above your lifetime allowance as a lump sum?
-lifetimeAllowance.pensionLumpSum.title.agent = Did your client take the amount above their lifetime allowance as a lump sum?
-lifetimeAllowance.pensionLumpSum.error.noEntry.individual = Select yes if you took the amount above your lifetime allowance as a lump sum
-lifetimeAllowance.pensionLumpSum.error.noEntry.agent = Select yes if your client took the amount above their lifetime allowance as a lump sum
+lifetimeAllowance.pensionLumpSum.title.individual = A wnaethoch gymryd y swm sy’n uwch na’ch lwfans oes fel cyfandaliad?
+lifetimeAllowance.pensionLumpSum.title.agent = A wnaeth eich cleient gymryd y swm sy’n uwch na’u lwfans oes fel cyfandaliad?
+lifetimeAllowance.pensionLumpSum.error.noEntry.individual = Dewiswch ‘Iawn’ os wnaethoch gymryd y swm sy’n uwch na’ch lwfans oes fel cyfandaliad
+lifetimeAllowance.pensionLumpSum.error.noEntry.agent = Dewiswch ‘Iawn’ wnaeth eich cleient gymryd y swm sy’n uwch na’u lwfans oes fel cyfandaliad
 
 #Have you gone above your annual or lifetime allowance?
-lifetimeAllowance.aboveAnnualLifeTimeAllowance.title.individual = Have you gone above your annual or lifetime allowance?
-lifetimeAllowance.aboveAnnualLifeTimeAllowance.title.agent = Has your client gone above their annual or lifetime allowance?
-lifetimeAllowance.aboveAnnualLifeTimeAllowance.error.noEntry.individual = Select yes if you have gone above your lifetime allowance
-lifetimeAllowance.aboveAnnualLifeTimeAllowance.error.noEntry.agent = Select yes if your client has gone above their lifetime allowance
+lifetimeAllowance.aboveAnnualLifetimeAllowance.title.individual = Ydych chi wedi mynd dros eich lwfans oes?
+lifetimeAllowance.aboveAnnualLifetimeAllowance.title.agent = A yw eich cleient wedi mynd dros ei lwfans oes?
+lifetimeAllowance.aboveAnnualLifetimeAllowance.link = Dysgwch ragor am lwfans oes (yn agor tab newydd)
+lifetimeAllowance.aboveAnnualLifetimeAllowance.error.noEntry.individual = Dewiswch ‘Iawn’ os ydych wedi mynd yn uwch na’ch lwfans oes
+lifetimeAllowance.aboveAnnualLifetimeAllowance.error.noEntry.agent = Dewiswch ‘Iawn’ os yw’ch cleient wedi mynd yn uwch na’i lwfans oes
 
 #Annual Lifetime Allowance Gateway
 annualAndLifetimeAllowance.gateway.title.individual = A ydych wedi mynd yn uwch na’ch lwfans blynyddol neu lwfans oes?
@@ -663,316 +677,314 @@ annualAndLifetimeAllowance.gateway.line1.individual = Byddai’ch darparwyr pens
 annualAndLifetimeAllowance.gateway.line1.agent = Byddai darparwyr pensiwn eich cleient wedi rhoi gwybod iddo os oedd wedi mynd dros ei lwfans oes.
 annualAndLifetimeAllowance.gateway.line2 = Dysgwch ragor am lwfans oes
 annualAndLifetimeAllowance.gateway.line3.end = os oes angen i chi gyfrifo’ch lwfans blynyddol
-AnnualAndLifetimeAllowance.gateway.error.agent = Dewiswch ‘Iawn’ os yw’ch cleient wedi mynd dros ei lwfans blynyddol neu lwfans oes
-AnnualAndLifetimeAllowance.gateway.error.individual = Dewiswch ‘Iawn’ os ydych wedi mynd yn uwch na’ch lwfans blynyddol neu lwfans oes
+annualAndLifetimeAllowance.gateway.error.agent = Dewiswch ‘Iawn’ os yw’ch cleient wedi mynd dros ei lwfans blynyddol neu lwfans oes
+annualAndLifetimeAllowance.gateway.error.individual = Dewiswch ‘Iawn’ os ydych wedi mynd yn uwch na’ch lwfans blynyddol neu lwfans oes
 
 #Did you take the amount above your lifetime allowance another way
-lifetimeAllowance.lifeTimeAllowanceAnotherWay.tittle.individual = Did you take the amount above your lifetime allowance another way?
-lifetimeAllowance.lifeTimeAllowanceAnotherWay.tittle.agent = Did your client take the amount above their lifetime allowance another way?
-lifetimeAllowance.lifeTimeAllowanceAnotherWay.paragraph.line1 = Do not tell us about lump sums.
-lifetimeAllowance.lifeTimeAllowanceAnotherWay.paragraph.line2.individual = Tell us about any amount you’ve taken above your lifetime allowance in other ways. This could be regular payments or a cash withdrawal
-lifetimeAllowance.lifeTimeAllowanceAnotherWay.paragraph.line2.agent = Tell us about any amount your client has taken above their lifetime allowance in other ways. This could be regular payments or a cash withdrawal
-lifetimeAllowance.lifeTimeAllowanceAnotherWay.error.noEntry.individual = Select yes if you took the amount above your lifetime allowance in another way
-lifetimeAllowance.lifeTimeAllowanceAnotherWay.error.noEntry.agent = Select yes if your client took the amount above their lifetime allowance in another way
+lifetimeAllowance.lifetimeAllowanceAnotherWay.title.individual = A wnaethoch gymryd y swm sy’n uwch na’ch lwfans oes ffordd arall?
+lifetimeAllowance.lifetimeAllowanceAnotherWay.title.agent = A wnaeth eich cleient gymryd y swm sy’n uwch na’ch lwfans oes ffordd arall?
+lifetimeAllowance.lifetimeAllowanceAnotherWay.paragraph.line1 = Peidiwch â rhoi gwybod i ni am gyfandaliadau.
+lifetimeAllowance.lifetimeAllowanceAnotherWay.paragraph.line2.individual = Rhowch wybod i ni am unrhyw swm rydych wedi’i gymryd sy’n uwch na’ch lwfans oes mewn ffyrdd eraill. Gallai hyn fod yn daliadau rheolaidd neu’n tynnu’n ôl arian
+lifetimeAllowance.lifetimeAllowanceAnotherWay.paragraph.line2.agent = Rhowch wybod i ni am unrhyw swm y mae’ch cleient wedi’i gymryd sy’n uwch na’u lwfans oes mewn ffyrdd eraill. Gallai hyn fod yn daliadau rheolaidd neu’n tynnu’n ôl arian
+lifetimeAllowance.lifetimeAllowanceAnotherWay.error.noEntry.individual = Dewiswch ‘Iawn’ os wnaethoch gymryd y swm sy’n uwch na’ch lwfans oes mewn ffordd arall
+lifetimeAllowance.lifetimeAllowanceAnotherWay.error.noEntry.agent = Dewiswch ‘Iawn’ os wnaeth eich cleient gymryd y swm sy’n uwch na’ch lwfans oes mewn ffordd arall
 
 #Pension Lump Sum Details
-lifetimeAllowance.pensionLumpSumDetails.title.individual = Your pension lump sum
-lifetimeAllowance.pensionLumpSumDetails.beforeTax.paragraph.individual = If you got a lump sum payment from more than one pension scheme, give the total.
-lifetimeAllowance.pensionLumpSumDetails.taxPaid.paragraph.individual = If more than one of your pension schemes paid lifetime allowance tax, give the total.
-lifetimeAllowance.pensionLumpSumDetails.title.agent = Your client’s pensions lump sum
-lifetimeAllowance.pensionLumpSumDetails.beforeTax.paragraph.agent = If your client got a lump sum payment from more than one pension scheme, give the total.
-lifetimeAllowance.pensionLumpSumDetails.taxPaid.paragraph.agent = If more than one of your client’s pension schemes paid lifetime allowance tax, give the total.
-lifetimeAllowance.pensionLumpSumDetails.beforeTax.error.noEntry.individual = Enter the amount you took above your lifetime allowance as a lump sum
-lifetimeAllowance.pensionLumpSumDetails.beforeTax.error.noEntry.agent = Enter the amount your client took above their lifetime allowance as a lump sum
-lifetimeAllowance.pensionLumpSumDetails.beforeTax.error.incorrectFormat = Enter the amount of lump sum in the correct format
-lifetimeAllowance.pensionLumpSumDetails.taxPaid.error.noEntry.individual = Enter the amount of lifetime allowance tax your pension provider paid or agreed to pay on the lump sum
-lifetimeAllowance.pensionLumpSumDetails.taxPaid.error.noEntry.agent = Enter the amount of lifetime allowance tax your client’s pension provider paid or agreed to pay on the lump sum
+lifetimeAllowance.pensionLumpSumDetails.title.individual = Eich cyfandaliad pensiwn
+lifetimeAllowance.pensionLumpSumDetails.beforeTax.paragraph.individual = Os cawsoch gyfandaliad pensiwn gan fwy nag un cynllun pensiwn, rhowch y cyfanswm.
+lifetimeAllowance.pensionLumpSumDetails.taxPaid.paragraph.individual = Os oedd mwy nag un o’ch cynlluniau pensiwn yn talu treth lwfans oes, rhowch y cyfanswm.
+lifetimeAllowance.pensionLumpSumDetails.title.agent = Cyfandaliad pensiwn eich cleient
+lifetimeAllowance.pensionLumpSumDetails.beforeTax.paragraph.agent = Os cafodd eich cleient gyfandaliad gan fwy nag un cynllun pensiwn, rhowch y cyfanswm.
+lifetimeAllowance.pensionLumpSumDetails.taxPaid.paragraph.agent = Os oedd mwy nag un o gynlluniau pensiwn eich cleient yn talu treth lwfans oes, rhowch y cyfanswm.
+lifetimeAllowance.pensionLumpSumDetails.beforeTax.error.noEntry.individual = Nodwch y swm a gymeroch sy’n uwch na’ch lwfans oes fel cyfandaliad
+lifetimeAllowance.pensionLumpSumDetails.beforeTax.error.noEntry.agent = Nodwch y swm a gymerodd eich cleient sy’n uwch na’u lwfans oes fel cyfandaliad
+lifetimeAllowance.pensionLumpSumDetails.beforeTax.error.incorrectFormat = Nodwch swm y cyfandaliad yn y fformat cywir
+lifetimeAllowance.pensionLumpSumDetails.taxPaid.error.noEntry.individual = Nodwch swm y dreth lwfans oes a dalodd eich darparwr pensiwn neu a gytunwyd i dalu ar y cyfandaliad
+lifetimeAllowance.pensionLumpSumDetails.taxPaid.error.noEntry.agent = Nodwch swm y dreth lwfans oes a dalwyd gan ddarparwr pensiwn eich cleient, neu’r swm a gytunodd i’w dalu ar y cyfandaliad
 
 #Pension Taken In Another Way
-lifetimeAllowance.pensionTakenAnotherWay.title.individual = Your pension taken in another way
-lifetimeAllowance.pensionTakenAnotherWay.title.agent = Your client’s pension taken in another way
-lifetimeAllowance.pensionTakenAnotherWay.paragraph.one.individual = Tell us the amount above your lifetime allowance you’ve taken in other ways. This could be regular payments or a cash withdrawal.
-lifetimeAllowance.pensionTakenAnotherWay.paragraph.one.agent = Tell us the amount above your client’s lifetime allowance they’ve taken in other ways. This could be regular payments or a cash withdrawal.
-lifetimeAllowance.pensionTakenAnotherWay.beforeTax.paragraph.individual = If you got payments from more than one pension scheme, give the total.
-lifetimeAllowance.pensionTakenAnotherWay.beforeTax.paragraph.agent = If your client got payments from more than one pension scheme, give the total.
-lifetimeAllowance.pensionTakenAnotherWay.taxPaid.paragraph = If more than one pension scheme paid the lifetime allowance tax, give the total.
-lifetimeAllowance.pensionTakenAnotherWay.beforeTax.error.noEntry.individual = Enter the amount you took above your lifetime allowance in another way
-lifetimeAllowance.pensionTakenAnotherWay.beforeTax.error.noEntry.agent = Enter the amount your client took above their lifetime allowance in another way
-lifetimeAllowance.pensionTakenAnotherWay.beforeTax.error.incorrectFormat.individual = Enter the amount you took above your lifetime allowance in the correct format
-lifetimeAllowance.pensionTakenAnotherWay.beforeTax.error.incorrectFormat.agent = Enter the amount your client took above their lifetime allowance in the correct format
-lifetimeAllowance.pensionTakenAnotherWay.taxPaid.error.noEntry.individual = Enter the amount of lifetime allowance tax your pension provider paid or agreed to pay on the amount taken in another way
-lifetimeAllowance.pensionTakenAnotherWay.taxPaid.error.noEntry.agent = Enter the amount of lifetime allowance tax your client’s pension provider paid or agreed to pay on the amount taken in another way
+lifetimeAllowance.pensionTakenAnotherWay.title.individual = Eich pensiwn wedi’i gymryd mewn ffordd arall
+lifetimeAllowance.pensionTakenAnotherWay.title.agent = Pensiwn eich cleient wedi’i gymryd mewn ffordd arall
+lifetimeAllowance.pensionTakenAnotherWay.paragraph.one.individual = Rhowch wybod i ni’r swm sy’n uwch na’ch lwfans oes rydych wedi’i gymryd mewn ffyrdd eraill. Gallai hyn fod yn daliadau rheolaidd neu’n tynnu’n ôl arian.
+lifetimeAllowance.pensionTakenAnotherWay.paragraph.one.agent = Rhowch wybod i ni’r swm sy’n uwch na lwfans oes eich cleient maen nhw wedi’i gymryd mewn ffyrdd eraill. Gallai hyn fod yn daliadau rheolaidd neu’n tynnu’n ôl arian.
+lifetimeAllowance.pensionTakenAnotherWay.beforeTax.paragraph.individual = Os oeddech yn cael taliadau o fwy nag un cynllun pensiwn, rhowch y cyfanswm.
+lifetimeAllowance.pensionTakenAnotherWay.beforeTax.paragraph.agent = Os oedd eich cleient yn cael taliadau o fwy nag un cynllun pensiwn, rhowch y cyfanswm.
+lifetimeAllowance.pensionTakenAnotherWay.taxPaid.paragraph = Os oedd mwy nag un cynllun pensiwn yn talu’r dreth lwfans oes, rhowch y cyfanswm.
+lifetimeAllowance.pensionTakenAnotherWay.beforeTax.error.noEntry.individual = Nodwch y swm a gymeroch sy’n uwch na’ch lwfans oes mewn ffordd arall
+lifetimeAllowance.pensionTakenAnotherWay.beforeTax.error.noEntry.agent = Nodwch y swm a gymerodd eich cleient sy’n uwch na’u lwfans oes mewn ffordd arall
+lifetimeAllowance.pensionTakenAnotherWay.beforeTax.error.incorrectFormat.individual = Nodwch y swm a gymeroch sy’n uwch na’ch lwfans oes yn y fformat cywir
+lifetimeAllowance.pensionTakenAnotherWay.beforeTax.error.incorrectFormat.agent = Nodwch y swm a gymerodd eich cleient sy’n uwch na’u lwfans oes yn y fformat cywir
+lifetimeAllowance.pensionTakenAnotherWay.taxPaid.error.noEntry.individual = Nodwch swm y dreth lwfans oes a dalodd eich darparwr pensiwn neu a gytunwyd i dalu ar y swm a gymerir mewn ffordd arall
+lifetimeAllowance.pensionTakenAnotherWay.taxPaid.error.noEntry.agent = Rhowch swm y dreth lwfans oes a dalodd darparwr pensiwn eich cleient neu a gytunwyd i dalu ar y swm a gymerwyd mewn ffordd arall
 
 
 #Annual Allowance and Lifetime Allowance CYA
 
-lifetimeAllowance.cya.heading.individual = Check your annual and lifetime allowances
-lifetimeAllowance.cya.heading.agent = Check your client’s annual and lifetime allowances
-lifetimeAllowance.cya.aboveAnnualOrLifetimeAllowance = Above annual or lifetime allowance
-lifetimeAllowance.cya.reducedAnnualAllowance = Reduced annual allowance
-lifetimeAllowance.cya.typeOfReducedAnnualAllowance = Type of reduced annual allowance
-lifetimeAllowance.cya.aboveAnnualAllowance = Above annual allowance
-lifetimeAllowance.cya.annualAllowanceTax = Annual allowance tax
-lifetimeAllowance.cya.annualPensionSchemeTaxReferences = Schemes paying annual allowance tax
-lifetimeAllowance.cya.aboveLifetimeAllowance = Above lifetime allowance
-lifetimeAllowance.cya.lumpSum = Lump sum
-lifetimeAllowance.cya.otherPayments = Other payments
-lifetimeAllowance.cya.lifetimePensionSchemeTaxReferences = Schemes paying lifetime allowance tax
+lifetimeAllowance.cya.heading.individual = Gwiriwch eich lwfansau blynyddol ac oes
+lifetimeAllowance.cya.heading.agent = Gwiriwch lwfansau blynyddol ac oes eich cleient
+lifetimeAllowance.cya.aboveAnnualOrLifetimeAllowance = Uwch na’r lwfans blynyddol neu lwfans oes
+lifetimeAllowance.cya.reducedAnnualAllowance = Lwfans blynyddol wedi’i ostwng
+lifetimeAllowance.cya.typeOfReducedAnnualAllowance = Math o lwfans blynyddol wedi’i ostwng
+lifetimeAllowance.cya.aboveAnnualAllowance = Uwch na’r lwfans blynyddol
+lifetimeAllowance.cya.annualAllowanceTax = Treth lwfans blynyddol
+lifetimeAllowance.cya.annualPensionSchemeTaxReferences = Cynlluniau sy’n talu treth lwfans blynyddol
+lifetimeAllowance.cya.aboveLifetimeAllowance = Uwch na’r lwfans oes pensiwn
+lifetimeAllowance.cya.lumpSum = Cyfandaliad
+lifetimeAllowance.cya.otherPayments = Taliadau eraill
+lifetimeAllowance.cya.lifetimePensionSchemeTaxReferences = Cynlluniau sy’n talu treth lwfans oes
 
-lifetimeAllowance.cya.aboveAnnualOrLifetimeAllowance.hidden = Change above annual or lifetime allowance
-lifetimeAllowance.cya.reducedAnnualAllowance.hidden = Change reduced annual allowance
-lifetimeAllowance.cya.typeOfReducedAnnualAllowance.hidden = Change type of reduced annual allowance
-lifetimeAllowance.cya.aboveAnnualAllowance.hidden = Change above annual allowance
-lifetimeAllowance.cya.annualAllowanceTax.hidden = Change annual allowance tax
-lifetimeAllowance.cya.annualPensionSchemeTaxReferences.hidden = Change schemes paying annual allowance tax
-lifetimeAllowance.cya.aboveLifetimeAllowance.hidden = Change above lifetime allowance
-lifetimeAllowance.cya.lumpSum.hidden = Change lump sum
-lifetimeAllowance.cya.otherPayments.hidden = Change other payments
-lifetimeAllowance.cya.lifetimePensionSchemeTaxReferences.hidden = Change schemes paying lifetime allowance tax
+lifetimeAllowance.cya.aboveAnnualOrLifetimeAllowance.hidden = Newidiwch uwch na lwfans blynyddol neu lwfans oes
+lifetimeAllowance.cya.reducedAnnualAllowance.hidden = Newidiwch lwfans blynyddol wedi’i ostwng
+lifetimeAllowance.cya.typeOfReducedAnnualAllowance.hidden = Newidiwch fath o lwfans blynyddol wedi’i ostwng
+lifetimeAllowance.cya.aboveAnnualAllowance.hidden = Newidiwch uwch na’r lwfans blynyddol
+lifetimeAllowance.cya.annualAllowanceTax.hidden = Newidiwch dreth lwfans blynyddol
+lifetimeAllowance.cya.annualPensionSchemeTaxReferences.hidden = Newidiwch gynlluniau sy’n talu treth lwfans blynyddol
+lifetimeAllowance.cya.aboveLifetimeAllowance.hidden = Newidiwch uwch na’r lwfans oes pensiwn
+lifetimeAllowance.cya.lumpSum.hidden = Newidiwch gyfandaliad
+lifetimeAllowance.cya.otherPayments.hidden = Newidiwch daliadau eraill
+lifetimeAllowance.cya.lifetimePensionSchemeTaxReferences.hidden = Newidiwch gynlluniau sy’n talu treth lwfans oes
 
 #Pension scheme tax reference lifetime allowance
-lifetimeAllowance.pensionSchemeTaxReference.title = Tell us the pension scheme that paid or agreed to pay the tax
-lifetimeAllowance.pensionSchemeTaxReference.p1 = If more than one pension scheme paid or agreed to pay the tax, you can add them later.
-lifetimeAllowance.pensionSchemeTaxReference.error.incorrectFormat = Enter a reference with 8 numbers and 2 letters, such as ‘12345678AB’
+lifetimeAllowance.pensionSchemeTaxReference.title = Rhowch wybod i ni’r cynllun pensiwn a dalodd neu a gytunwyd i dalu’r dreth
+lifetimeAllowance.pensionSchemeTaxReference.p1 = Os bydd mwy nag un cynllun pensiwn yn talu neu wedi cytuno i dalu’r dreth, gallwch eu hychwanegu nes ymlaen.
+lifetimeAllowance.pensionSchemeTaxReference.error.incorrectFormat = Nodwch gyfeirnod sydd ag 8 rhif a 2 lythyren, megis ‘12345678AB’
 
 #Surcharge Amount
-unauthorisedPayments.surchargeAmount.title = Amount that resulted in a surcharge
-unauthorisedPayments.surchargeAmount.giveTotal.individual = Give a total of unauthorised payments that resulted in surcharges from all your pension schemes.
-unauthorisedPayments.surchargeAmount.giveTotal.agent = Give a total of unauthorised payments that resulted in surcharges from all your client’s pension schemes.
-unauthorisedPayments.surchargeAmount.tellUsAbout = You can tell us about unauthorised payments that did not result in a surcharge later.
-unauthorisedPayments.surchargeAmount.error.noEntry = Enter the total amount of unauthorised payment that resulted in a surcharge
+unauthorisedPayments.surchargeAmount.title = Y swm a wnaeth arwain at ordal
+unauthorisedPayments.surchargeAmount.giveTotal.individual = Rhowch gyfanswm y taliadau heb awdurdod o bob un o’ch cynlluniau pensiwn a wnaeth arwain at ordaliadau.
+unauthorisedPayments.surchargeAmount.giveTotal.agent = Rhowch gyfanswm y taliadau heb awdurdod o bob un o gynlluniau pensiwn eich cleient a wnaeth arwain at ordaliadau.
+unauthorisedPayments.surchargeAmount.tellUsAbout = Gallwch roi gwybod i ni am daliadau heb awdurdod na wnaethant arwain at ordal yn nes ymlaen.
+unauthorisedPayments.surchargeAmount.error.noEntry = Nodwch gyfanswm y taliadau heb awdurdod a wnaeth arwain at ordal
 
 #No Surcharge Amount
-unauthorisedPayments.noSurchargeAmount.title = Amount that did not result in a surcharge
-unauthorisedPayments.noSurchargeAmount.error.noEntry = Enter the total amount of unauthorised payment that did not result in a surcharge
+unauthorisedPayments.noSurchargeAmount.title = Y swm na wnaeth arwain at ordal
+unauthorisedPayments.noSurchargeAmount.error.noEntry = Nodwch gyfanswm y taliadau heb awdurdod na wnaethant arwain at ordal
 
 #Did you pay non-UK tax that resulted in a surcharge
-unauthorisedPayments.didYouPayNonUkTax.title.individual = Did you pay non-UK tax on the amount that resulted in a surcharge?
-unauthorisedPayments.didYouPayNonUkTax.title.agent = Did your client pay non-UK tax on the amount that resulted in a surcharge?
-unauthorisedPayments.didYouPayNonUkTax.error.noEntry = Select yes if you paid non-UK tax on the amount surcharged
+unauthorisedPayments.didYouPayNonUkTax.title.individual = A wnaethoch dalu treth y tu allan i’r DU ar y swm a wnaeth arwain at ordal?
+unauthorisedPayments.didYouPayNonUkTax.title.agent = A wnaeth eich cleient dalu treth y tu allan i’r DU ar y swm a wnaeth arwain at ordal?
+unauthorisedPayments.didYouPayNonUkTax.error.noEntry = Dewiswch ‘Iawn’ os gwnaethoch dalu treth y tu allan i’r DU ar y swm y codwyd gordal arno
 
 #Where any of the unauthorised payments from a UK pension scheme?
-unauthorisedPayments.whereAnyOfTheUnauthorisedPayments.title = Were any of the unauthorised payments from a UK pension scheme?
+unauthorisedPayments.whereAnyOfTheUnauthorisedPayments.title = A ddaeth unrhyw rai o’r taliadau heb awdurdod o gynllun pensiwn yn y DU?
 
 #payments into pensions CYA
 
-unauthorisedPayments.cya.heading.individual = Check your unauthorised payments
-unauthorisedPayments.cya.heading.agent = Check your client’s unauthorised payments
-unauthorisedPayments.cya.amountSurcharged = Amount surcharged
-unauthorisedPayments.cya.nonUkTaxAmountSurcharged = Non UK-tax on amount surcharged
-unauthorisedPayments.cya.amountNotSurcharged = Amount not surcharged
-unauthorisedPayments.cya.nonUkTaxAmountNotSurcharged = Non UK-tax on amount not surcharged
-unauthorisedPayments.cya.pensionSchemeTaxReferences = Pension Scheme Tax References
+unauthorisedPayments.cya.heading.individual = Gwirio’ch taliadau heb awdurdod
+unauthorisedPayments.cya.heading.agent = Gwirio taliadau’ch cleient a oedd heb awdurdod
+unauthorisedPayments.cya.amountSurcharged = Y swm y codwyd gordal arno
+unauthorisedPayments.cya.nonUkTaxAmountSurcharged = Treth y tu allan i’r DU ar y swm y codwyd gordal arno
+unauthorisedPayments.cya.amountNotSurcharged = Y swm na chodwyd gordal arno
+unauthorisedPayments.cya.nonUkTaxAmountNotSurcharged = Treth y tu allan i’r DU ar y swm na chodwyd gordal arno
+unauthorisedPayments.cya.pensionSchemeTaxReferences = Cyfeirnodau Treth y Cynlluniau Pensiwn
 
 
-unauthorisedPayments.cya.amountSurcharged.hidden = Change amount surcharged
-unauthorisedPayments.cya.nonUkTaxAmountSurcharged.hidden = Change non UK-tax on amount surcharged
-unauthorisedPayments.cya.amountNotSurcharged.hidden = Change amount not surcharged
-unauthorisedPayments.cya.nonUkTaxAmountNotSurcharged.hidden = Change non UK-tax on amount not surcharged
-unauthorisedPayments.cya.pensionSchemeTaxReferences.hidden = Change Pension Scheme Tax References
+unauthorisedPayments.cya.amountSurcharged.hidden = Newid y swm y codwyd gordal arno
+unauthorisedPayments.cya.nonUkTaxAmountSurcharged.hidden = Newid swm y dreth y tu allan i’r DU ar y swm y codwyd gordal arno
+unauthorisedPayments.cya.amountNotSurcharged.hidden = Newid y swm na chodwyd gordal arno
+unauthorisedPayments.cya.nonUkTaxAmountNotSurcharged.hidden = Newid swm y dreth y tu allan i’r DU ar y swm na chodwyd gordal arno
+unauthorisedPayments.cya.pensionSchemeTaxReferences.hidden = Newid Cyfeirnodau Treth y Cynlluniau Pensiwn
 
 #Did you pay non-UK tax that did not result in a surcharge
-unauthorisedPayments.nonUkTaxOnAmountNotSurcharge.title.individual = Did you pay non-UK tax on the amount that did not result in a surcharge?
-unauthorisedPayments.nonUkTaxOnAmountNotSurcharge.title.agent = Did your client pay non-UK tax on the amount that did not result in a surcharge?
-unauthorisedPayments.nonUkTaxOnAmountNotSurcharge.error.noEntry = Select yes if you paid non-UK tax on the amount not surcharged
+unauthorisedPayments.nonUkTaxOnAmountNotSurcharge.title.individual = A wnaethoch dalu treth y tu allan i’r DU ar y swm na wnaeth arwain at ordal?
+unauthorisedPayments.nonUkTaxOnAmountNotSurcharge.title.agent = A wnaeth eich cleient dalu treth y tu allan i’r DU ar y swm na wnaeth arwain at ordal?
+unauthorisedPayments.nonUkTaxOnAmountNotSurcharge.error.noEntry = Dewiswch ‘Iawn’ os gwnaethoch dalu treth y tu allan i’r DU ar y swm na chodwyd gordal arno
 
 
 #Unauthorised Payments
-unauthorisedPayments.paymentOutside = Unauthorised payments are made outside the tax rules
-unauthorisedPayments.moreThanOneUnauthorisedPayment.line1 = If you got more than one unauthorised payment, you might
-unauthorisedPayments.moreThanOneUnauthorisedPayment.line2 = have paid a surcharge (an extra fee) on some of them. It all
-unauthorisedPayments.moreThanOneUnauthorisedPayment.line3 = depends on if you’ve taken 25% or more of your pension pots.
-unauthorisedPayments.findOutMoreAboutUnauthorisedPayment = Find out more about unauthorised payments (opens in new tab)
-unauthorisedPayments.didYouGetAnUnauthorisedPayment = Did you get an unauthorised payment from a pension scheme?
-unauthorisedPayments.checkbox.text1 = Yes, unauthorised payments that resulted in a surcharge
-unauthorisedPayments.checkbox.text2 = Yes, unauthorised payments that did not result in a surcharge
+unauthorisedPayments.paymentOutside = Gwneir taliadau heb awdurdod y tu allan i’r rheolau treth
+unauthorisedPayments.moreThanOneUnauthorisedPayment.line1 = Os cawsoch fwy nag un taliad heb awdurdod, mae’n bosibl
+unauthorisedPayments.moreThanOneUnauthorisedPayment.line2 = eich bod wedi talu gordal (ffi ychwanegol) ar rai ohonynt. Mae’n
+unauthorisedPayments.moreThanOneUnauthorisedPayment.line3 = dibynnu p’un a ydych wedi cymryd 25% neu fwy o’ch cronfeydd pensiwn.
+unauthorisedPayments.findOutMoreAboutUnauthorisedPayment = Dysgwch ragor am daliadau heb awdurdod (yn agor tab newydd)
+unauthorisedPayments.didYouGetAnUnauthorisedPayment = A gawsoch daliad heb awdurdod o gynllun pensiwn?
+unauthorisedPayments.checkbox.text1 = Iawn, taliadau heb awdurdod a wnaeth arwain at ordal
+unauthorisedPayments.checkbox.text2 = Iawn, taliadau heb awdurdod na wnaethant arwain at ordal
 
 #Do you have an employer-financed retirement scheme?
 employerFinancedRetirementScheme.benefitsFromScheme.title = Cynlluniau buddiannau ymddeol a ariannwyd gan gyflogwyr
-employerFinancedRetirementScheme.benefitsFromScheme.paragraph.1 = Os nad yw cynllun pensiwn yn gofrestredig, gallai fod yn gynllun buddiant ymddeol a ariannwyd gan gyflogwyr (EFRBS).
-employerFinancedRetirementScheme.benefitsFromScheme.paragraph.2 = Cynllun yw EFRBS sy’n talu rhai buddiannau ymddeoliad neu farwolaeth ar gyfer gweithwyr neu gyn-weithwyr, a elwir yn ‘fuddiannau perthnasol’.
+employerFinancedRetirementScheme.benefitsFromScheme.paragraph.1 = Os nad yw cynllun pensiwn yn gofrestredig, gallai fod yn gynllun buddiannau ymddeol a ariannwyd gan gyflogwyr (EFRBS).
+employerFinancedRetirementScheme.benefitsFromScheme.paragraph.2 = Cynllun yw EFRBS sy’n talu rhai buddiannau ymddeoliad neu farwolaeth ar gyfer gweithwyr neu gyn-weithwyr. Yr enw ar y rhain yw “buddiannau perthnasol”.
 employerFinancedRetirementScheme.benefitsFromScheme.question.individual = A oes gennych gynllun ymddeol a ariannwyd gan gyflogwr?
 employerFinancedRetirementScheme.benefitsFromScheme.question.agent = A oes gan eich cleient gynllun ymddeol a ariannwyd gan gyflogwr?
-employerFinancedRetirementScheme.benefitsFromScheme.error.individual = Dewiswch ‘Iawn’ os oes gennych gynllun buddiannau ymddeol a ariannwyd gan gyflogwyr
-employerFinancedRetirementScheme.benefitsFromScheme.error.agent = Dewiswch ‘Iawn’ os oes gan eich cleient gynllun buddiannau ymddeol a ariannwyd gan gyflogwyr
+employerFinancedRetirementScheme.benefitsFromScheme.error.individual = Dewiswch ‘Iawn’ os oes gennych gynllun buddiannau ymddeol a ariannwyd gan gyflogwr
+employerFinancedRetirementScheme.benefitsFromScheme.error.agent = Dewiswch ‘Iawn’ os oes gan eich cleient gynllun buddiannau ymddeol a ariannwyd gan gyflogwr
 
 #Unauthorised payments from UK pensions schemes
-unauthorisedPayments.pensionSchemeDetails.title = Unauthorised payments from UK pensions schemes
-unauthorisedPayments.pensionSchemeDetails.addAnotherPensionSchemeTaxReference = Add another Pensions Scheme Tax Reference
-unauthorisedPayments.pensionSchemeDetails.addPensionSchemeTaxReference = Add a Pensions Scheme Tax Reference
+unauthorisedPayments.pensionSchemeDetails.title = Taliadau heb awdurdod o gynlluniau pensiwn yn y DU
+unauthorisedPayments.pensionSchemeDetails.addAnotherPensionSchemeTaxReference = Ychwanegu Cyfeirnod Treth ar gyfer Cynllun Pensiwn arall
+unauthorisedPayments.pensionSchemeDetails.addPensionSchemeTaxReference = Ychwanegu Cyfeirnod Treth ar gyfer Cynllun Pensiwn
 
 #Remove unauthorised payments from UK pensions schemes
-unauthorisedPayments.removePensionSchemeTaxReference.title = Do you want to remove this Pension Scheme Tax Reference?
-unauthorisedPayments.removePensionSchemeTaxReference.removeButton = Remove reference
-unauthorisedPayments.removePensionSchemeTaxReference.dontRemove = Don’t remove
+unauthorisedPayments.removePensionSchemeTaxReference.title = A hoffech ddileu’r Cyfeirnod Treth ar gyfer y Cynllun Pensiwn hwn?
+unauthorisedPayments.removePensionSchemeTaxReference.removeButton = Dileu cyfeirnod
+unauthorisedPayments.removePensionSchemeTaxReference.dontRemove = Peidiwch â dileu
 
 #################       Overseas Pension        ########################################
 common.overseas.pension.schemes = Overseas pension schemes
 common.overseas.pension.schemes.hidden = Change overseas pension schemes
 
 #Payments into overseas pension schemes page
-overseasPension.paymentIntoOverseasPensionScheme.title = Payments into overseas pension schemes
-overseasPension.paymentIntoOverseasPensionScheme.notRegistered.text.individual = Your overseas pension schemes must not be registered in the UK.
-overseasPension.paymentIntoOverseasPensionScheme.notRegistered.text.agent = Your client’s overseas pension schemes must not be registered in the UK.
-overseasPension.paymentIntoOverseasPensionScheme.they.must = They must also be:
-overseasPension.paymentIntoOverseasPensionScheme.bullet.one = eligible for tax relief
-overseasPension.paymentIntoOverseasPensionScheme.bullet.two = paid into after tax (net income)
-overseasPension.paymentIntoOverseasPensionScheme.pension.scheme.question.individual = Did you pay into overseas pension schemes?
-overseasPension.paymentIntoOverseasPensionScheme.pension.scheme.question.agent = Did your client pay into overseas pension schemes?
-overseasPension.paymentIntoOverseasPensionScheme.Amount.Text = Total amount, in pounds
-overseasPension.paymentIntoOverseasPensionScheme.hint.two.Text.individual = Do not include payments your employer made
-overseasPension.paymentIntoOverseasPensionScheme.hint.two.Text.agent = Do not include payments your client’s employer made
-overseasPension.paymentIntoOverseasPensionScheme.radio.error.individual = Select yes if you paid into an overseas pension scheme
-overseasPension.paymentIntoOverseasPensionScheme.radio.error.agent = Select yes if your client paid into an overseas pension scheme
-overseasPension.paymentIntoOverseasPensionScheme.no.entry.error.individual = Enter the amount you paid into overseas pension schemes
-overseasPension.paymentIntoOverseasPensionScheme.no.entry.error.agent = Enter the amount your client paid into overseas pension schemes
-overseasPension.paymentIntoOverseasPensionScheme.invalid.format.error.individual = Enter the amount you paid into overseas pension schemes in the correct format
-overseasPension.paymentIntoOverseasPensionScheme.invalid.format.error.agent = Enter the amount your client paid into overseas pension schemes in the correct format
-overseasPension.paymentIntoOverseasPensionScheme.maximum.error.individual = The amount you paid into overseas pension schemes must be less than £100,000,000,000
-overseasPension.paymentIntoOverseasPensionScheme.maximum.error.agent = The amount your client paid into overseas pension schemes must be less than £100,000,000,000
-
+overseasPension.paymentIntoOverseasPensionScheme.title = Taliadau i gynlluniau pensiwn tramor
+overseasPension.paymentIntoOverseasPensionScheme.notRegistered.text.individual = Ni all eich cynlluniau pensiwn tramor fod wedi’u cofrestru yn y DU.
+overseasPension.paymentIntoOverseasPensionScheme.notRegistered.text.agent = Ni all cynlluniau pensiwn tramor eich cleient fod wedi’u cofrestru yn y DU.
+overseasPension.paymentIntoOverseasPensionScheme.they.must = Mae’n rhaid i’r canlynol fod yn wir amdanynt hefyd:
+overseasPension.paymentIntoOverseasPensionScheme.bullet.one = maent yn gymwys ar gyfer rhyddhad treth
+overseasPension.paymentIntoOverseasPensionScheme.bullet.two = cafwyd taliadau i mewn i’r cynlluniau ar ôl tynnu treth (incwm net)
+overseasPension.paymentIntoOverseasPensionScheme.pension.scheme.question.individual = A wnaethoch dalu i mewn i gynlluniau pensiwn tramor?
+overseasPension.paymentIntoOverseasPensionScheme.pension.scheme.question.agent = A wnaeth eich cleient dalu i mewn i gynlluniau pensiwn tramor?
+overseasPension.paymentIntoOverseasPensionScheme.Amount.Text = Cyfanswm mewn punnoedd
+overseasPension.paymentIntoOverseasPensionScheme.hint.two.Text.individual = Peidiwch â chynnwys taliadau a wnaeth eich cyflogwr
+overseasPension.paymentIntoOverseasPensionScheme.hint.two.Text.agent = Peidiwch â chynnwys taliadau a wnaeth cyflogwr eich cleient
+overseasPension.paymentIntoOverseasPensionScheme.radio.error.individual = Dewiswch ‘Iawn’ os gwnaethoch dalu i mewn i gynllun pensiwn tramor
+overseasPension.paymentIntoOverseasPensionScheme.radio.error.agent = Dewiswch ‘Iawn’ os gwnaeth eich cleient dalu i mewn i gynllun pensiwn tramor
+overseasPension.paymentIntoOverseasPensionScheme.no.entry.error.individual =Nodwch y swm a daloch i mewn i gynlluniau pensiwn tramor
+overseasPension.paymentIntoOverseasPensionScheme.no.entry.error.agent = Nodwch y swm a dalodd eich cleient i mewn i gynlluniau pensiwn tramor
+overseasPension.paymentIntoOverseasPensionScheme.invalid.format.error.individual = Nodwch y swm a daloch i mewn i gynlluniau pensiwn tramor yn y fformat cywir
+overseasPension.paymentIntoOverseasPensionScheme.invalid.format.error.agent = Nodwch y swm a dalodd eich cleient i mewn i gynlluniau pensiwn tramor yn y fformat cywir
+overseasPension.paymentIntoOverseasPensionScheme.maximum.error.individual = Mae’n rhaid i’r swm a daloch i mewn i gynlluniau pensiwn tramor fod yn llai na £100,000,000,000
+overseasPension.paymentIntoOverseasPensionScheme.maximum.error.agent = Mae’n rhaid i’r swm a dalodd eich cleient i mewn i gynlluniau pensiwn tramor fod yn llai na £100,000,000,000
 #Employer payment into overseas pension scheme page
-overseasPension.employerPayOverseasPension.title.individual = Did your employers pay into your overseas pension schemes?
-overseasPension.employerPayOverseasPension.title.agent = Did your client’s employers pay into the overseas pension schemes?
-overseasPension.employerPayOverseasPension.bullet2.individual = ask your employer
-overseasPension.employerPayOverseasPension.bullet2.agent = ask their employer
-overseasPension.employerPayOverseasPension.error.noEntry.individual = Select yes if your employer paid into your overseas pension schemes
-overseasPension.employerPayOverseasPension.error.noEntry.agent = Select yes if your client’s employer paid into their overseas pension schemes
-
+overseasPension.employerPayOverseasPension.title.individual = A wnaeth eich cyflogwr dalu i mewn i’ch cynlluniau pensiwn tramor?
+overseasPension.employerPayOverseasPension.title.agent = A wnaeth cyflogwr eich cleient dalu i mewn i’r cynlluniau pensiwn tramor?
+overseasPension.employerPayOverseasPension.bullet2.individual = gofyn i’ch cyflogwr
+overseasPension.employerPayOverseasPension.bullet2.agent = gofyn i’w gyflogwr
+overseasPension.employerPayOverseasPension.error.noEntry.individual = Dewiswch ‘Iawn’ os gwnaeth eich cyflogwr dalu i mewn i’ch cynlluniau pensiwn tramor
+overseasPension.employerPayOverseasPension.error.noEntry.agent = Dewiswch ‘Iawn’ os gwnaeth cyflogwr eich cleient dalu i mewn i’w gynlluniau pensiwn tramor
 #Pensions Overseas Emp Tax status page
-overseasPension.taxEmployerPayments.title.individual = Did you pay tax on the amount your employer paid?
-overseasPension.taxEmployerPayments.bullet2.individual = ask your pension provider
-overseasPension.taxEmployerPayments.title.agent = Did your client pay tax on the amount their employer paid?
-overseasPension.taxEmployerPayments.bullet2.agent = ask their pension providers
-overseasPension.taxEmployerPayments.error.noEntry.individual = Select yes if you paid tax on the amount your employer paid
-overseasPension.taxEmployerPayments.error.noEntry.agent = Select yes if your client paid tax on the amount their employer paid
+overseasPension.taxEmployerPayments.title.individual = A wnaethoch dalu treth ar y swm a dalodd eich cyflogwr?
+overseasPension.taxEmployerPayments.bullet2.individual = gofyn i ddarparwr eich pensiwn
+overseasPension.taxEmployerPayments.title.agent = A wnaeth eich cleient dalu treth ar y swm a dalodd ei gyflogwr?
+overseasPension.taxEmployerPayments.bullet2.agent = gofyn i ddarparwr ei bensiwn
+overseasPension.taxEmployerPayments.error.noEntry.individual = Dewiswch ‘Iawn’ os gwnaethoch dalu treth ar y swm a dalodd eich cyflogwr
+overseasPension.taxEmployerPayments.error.noEntry.agent = Dewiswch ‘Iawn’ os gwnaeth eich cleient dalu treth ar y swm a dalodd ei gyflogwr
 
 #Qualifying overseas pension scheme page
-overseasPension.QOPSReference.title = Qualifying overseas pension scheme (QOPS) reference number (optional)
-overseasPension.QOPSReference.paragraph1.individual = You can find this on your pension statement.
-overseasPension.QOPSReference.paragraph1.agent = You can find this on your client’s pension statement.
-overseasPension.QOPSReference.hint = For example, QOPS123456
+overseasPension.QOPSReference.title = Cyfeirnod y cynllun pensiwn tramor cymwys (QOPS) (dewisol)
+overseasPension.QOPSReference.paragraph1.individual = Mae hwn i’w weld ar eich datganiad pensiwn.
+overseasPension.QOPSReference.paragraph1.agent = Mae hwn i’w weld ar ddatganiad pensiwn eich cleient.
+overseasPension.QOPSReference.hint = Er enghraifft, QOPS123456
 overseasPension.QOPSReference.prefix=QOPS
 
 #Pensions Payments page
-overseasPension.pensionPayments.title = Pension payments
-overseasPension.pensionPayments.amountBeforeTax.text = Amount before tax
-overseasPension.pensionPayments.amountBeforeTax.noEntry = Enter an amount before tax
-overseasPension.pensionPayments.amountBeforeTax.incorrectFormat.individual = Enter an amount before tax in the correct format
-overseasPension.pensionPayments.amountBeforeTax.incorrectFormat.agent = Enter the amount before tax in the correct format
-overseasPension.pensionPayments.amountBeforeTax.tooBig = The amount before tax must be less than £100,000,000,000
-overseasPension.pensionPayments.nonUkTaxPaid.text = Non-UK tax paid
-overseasPension.pensionPayments.nonUkTaxPaid.incorrectFormat = Enter the amount of non-UK tax paid in the correct format
-overseasPension.pensionPayments.nonUkTaxPaidLessThanAmountBeforeTax = The Non-UK tax paid can’t be larger than Amount before tax
+overseasPension.pensionPayments.title =Taliadau pensiwn
+overseasPension.pensionPayments.amountBeforeTax.text = Swm cyn treth
+overseasPension.pensionPayments.amountBeforeTax.noEntry = Nodwch swm cyn treth
+overseasPension.pensionPayments.amountBeforeTax.incorrectFormat.individual = Nodwch swm cyn treth yn y fformat cywir
+overseasPension.pensionPayments.amountBeforeTax.incorrectFormat.agent = Nodwch y swm cyn treth yn y fformat cywir
+overseasPension.pensionPayments.amountBeforeTax.tooBig = Mae’n rhaid i’r swm cyn treth fod yn llai na £100,000,000,000
+overseasPension.pensionPayments.nonUkTaxPaid.text = Treth a dalwyd y tu allan i’r DU
+overseasPension.pensionPayments.nonUkTaxPaid.incorrectFormat = Nodwch swm y dreth a dalwyd y tu allan i’r DU yn y fformat cywir
+overseasPension.pensionPayments.nonUkTaxPaidLessThanAmountBeforeTax = Ni all ‘Treth a dalwyd y tu allan i’r DU’ fod yn fwy na ‘Swm cyn treth’
 
 #Untaxed Employer Payments
-overseasPension.untaxedEmployerPayments.title = Untaxed employer payments
-overseasPension.untaxedEmployerPayments.para1 = This is also known as exempt employers’ contributions.
-overseasPension.untaxedEmployerPayments.para2.individual = You need to know which type of scheme your employer paid into.
-overseasPension.untaxedEmployerPayments.para2.agent = You need to know which type of scheme your client’s employer paid into.
-overseasPension.untaxedEmployerPayments.sub1 = Contribution schemes (money purchase schemes)
-overseasPension.untaxedEmployerPayments.sub1.para1.individual = If you have this type of scheme, tell us the total amount your employers paid in.
-overseasPension.untaxedEmployerPayments.sub1.para1.agent = If your client has this type of scheme, tell us the total amount their employers paid in.
-overseasPension.untaxedEmployerPayments.sub2 = Benefits schemes (average or final salary schemes)
-overseasPension.untaxedEmployerPayments.sub2.para1.individual = If you have this type of scheme, tell us the value of the amount your employers paid in.
-overseasPension.untaxedEmployerPayments.sub2.para1.agent = If your client has this type of scheme, tell us the value of the amount their employers paid in.
-overseasPension.untaxedEmployerPayments.sub2.details.title = Work out the value of payments into a benefits scheme
-overseasPension.untaxedEmployerPayments.sub2.details.info.list1.individual = how much your lump sum went up by
-overseasPension.untaxedEmployerPayments.sub2.details.info.list1.agent = how much your client’s lump sum went up by
-overseasPension.untaxedEmployerPayments.sub2.details.info.list2.individual = plus 16 times how much your annual pension went up by
-overseasPension.untaxedEmployerPayments.sub2.details.info.list2.agent = plus 16 times how much your client’s annual pension went up by
-overseasPension.untaxedEmployerPayments.sub2.details.info.list3.individual = minus any payments you made into the scheme
-overseasPension.untaxedEmployerPayments.sub2.details.info.list3.agent = minus any payments your client made into the scheme
-overseasPension.untaxedEmployerPayments.question.individual = How much did your employers pay into your overseas pension scheme?
-overseasPension.untaxedEmployerPayments.question.agent = How much did your client’s employers pay into the overseas pension scheme?
-overseasPension.untaxedEmployerPayments.error.noEntry.individual = Enter the amount your employers paid into your overseas pension schemes
-overseasPension.untaxedEmployerPayments.error.noEntry.agent = Enter the amount that your client’s employer paid into their overseas pension scheme
-overseasPension.untaxedEmployerPayments.error.tooBig.individual = The amount your employers paid into overseas pension schemes must be less than £100,000,000,000
-overseasPension.untaxedEmployerPayments.error.tooBig.agent = The total amount that your client’s employers paid into their overseas pension scheme must be less than £100,000,000,000
-overseasPension.untaxedEmployerPayments.error.incorrectFormat.individual = Enter the amount your employers paid into overseas pension schemes in the correct format
-overseasPension.untaxedEmployerPayments.error.incorrectFormat.agent = Enter the total amount that your client’s employers paid into their overseas pension scheme in the correct format
+overseasPension.untaxedEmployerPayments.title = Taliadau cyflogwr sydd heb eu trethu
+overseasPension.untaxedEmployerPayments.para1 = Enw arall ar hyn yw cyfraniadau cyflogwr sydd wedi eu heithrio.
+overseasPension.untaxedEmployerPayments.para2.individual = Mae angen i chi wybod pa fath o gynllun y talodd eich cyflogwr i mewn iddo.
+overseasPension.untaxedEmployerPayments.para2.agent = Mae angen i chi wybod pa fath o gynllun y talodd cyflogwr eich cleient i mewn iddo.
+overseasPension.untaxedEmployerPayments.sub1 = Cynlluniau cyfraniadau (cynlluniau prynu arian)
+overseasPension.untaxedEmployerPayments.sub1.para1.individual = Os oes gennych y math hwn o gynllun, rhowch wybod i ni’r cyfanswm a dalwyd i mewn gan eich cyflogwyr.
+overseasPension.untaxedEmployerPayments.sub1.para1.agent = Os oes gan eich cleient y math hwn o gynllun, rhowch wybod i ni’r cyfanswm a dalwyd i mewn gan gyflogwyr eich cleient.
+overseasPension.untaxedEmployerPayments.sub2 = Cynlluniau buddiannau (cynlluniau cyfartaledd cyflog neu gyflog terfynol)
+overseasPension.untaxedEmployerPayments.sub2.para1.individual = Os oes gennych y math hwn o gynllun, rhowch wybod i ni gwerth y swm a dalwyd i mewn gan eich cyflogwyr.
+overseasPension.untaxedEmployerPayments.sub2.para1.agent = Os oes gan eich cleient y math hwn o gynllun, rhowch wybod i ni gwerth y swm a dalwyd i mewn gan gyflogwyr eich cleient.
+overseasPension.untaxedEmployerPayments.sub2.details.title = Cyfrifwch werth y taliadau i mewn i gynllun buddiannau
+overseasPension.untaxedEmployerPayments.sub2.details.info.list1.individual = faint aeth eich cyfandaliad i fyny
+overseasPension.untaxedEmployerPayments.sub2.details.info.list1.agent = faint aeth cyfandaliad eich cleient i fyny
+overseasPension.untaxedEmployerPayments.sub2.details.info.list2.individual = ynghyd ag 16 gwaith faint yr aeth eich pensiwn blynyddol i fyny
+overseasPension.untaxedEmployerPayments.sub2.details.info.list2.agent = ynghyd ag 16 gwaith faint yr aeth pensiwn blynyddol eich cleient i fyny
+overseasPension.untaxedEmployerPayments.sub2.details.info.list3.individual = llai unrhyw daliadau a wnaethoch i mewn i’r cynllun
+overseasPension.untaxedEmployerPayments.sub2.details.info.list3.agent = llai unrhyw daliadau a wnaeth eich cleient i mewn i’r cynllun
+overseasPension.untaxedEmployerPayments.question.individual = Faint dalodd eich cyflogwyr i mewn i’ch cynllun pensiwn tramor?
+overseasPension.untaxedEmployerPayments.question.agent = Faint dalodd cyflogwyr eich cleient i mewn i’r cynlluniau pensiwn tramor?
+overseasPension.untaxedEmployerPayments.error.noEntry.individual = Nodwch y swm y dalodd eich cyflogwyr i mewn i’ch cynlluniau pensiwn tramor
+overseasPension.untaxedEmployerPayments.error.noEntry.agent = Nodwch y swm y dalodd cyflogwr eich cleient i mewn i’w gynllun pensiwn tramor
+overseasPension.untaxedEmployerPayments.error.tooBig.individual = Mae’n rhaid i’r swm a dalodd eich cyflogwyr i mewn i gynlluniau pensiwn tramor fod yn llai na £100,000,000,000
+overseasPension.untaxedEmployerPayments.error.tooBig.agent = Mae’n rhaid i’r swm a dalodd cyflogwyr eich cleient i mewn i gynllun pensiwn tramor eich cleient fod yn llai na £100,000,000,000
+overseasPension.untaxedEmployerPayments.error.incorrectFormat.individual = Nodwch y swm a dalodd eich cyflogwyr i mewn i gynlluniau pensiwn tramor yn y fformat cywir
+overseasPension.untaxedEmployerPayments.error.incorrectFormat.agent = Nodwch y cyfanswm a dalodd cyflogwyr eich cleient i mewn i gynllun pensiwn tramor eich cleient yn y fformat cywir
 
 
 #Special Withholding Tax
-overseasPension.specialWithHoldingTax.title.individual = Did you have Special Withholding Tax (SWT) deducted from your pension?
-overseasPension.specialWithHoldingTax.title.agent = Did your client have Special Withholding Tax (SWT) deducted from their pension?
-overseasPension.specialWithHoldingTax.details.title = Understanding Special Withholding Tax (SWT)
-overseasPension.specialWithHoldingTax.details.para1 = Special Withholding Tax (SWT) is an amount of tax taken off certain foreign payments to UK residents. SWT will be paid along with any foreign tax deducted by the country where the payment came from. The countries that may deduct SWT are:
+overseasPension.specialWithHoldingTax.title.individual = A ddidynnwyd Treth Ataliedig Arbennig (SWT) o’ch pensiwn?
+overseasPension.specialWithHoldingTax.title.agent = A ddidynnwyd Treth Ataliedig Arbennig (SWT) o bensiwn eich cleient?
+overseasPension.specialWithHoldingTax.details.title = Deall Treth Ataliedig Arbennig (SWT)
+overseasPension.specialWithHoldingTax.details.para1 = Mae Treth Ataliedig Arbennig (SWT) yn swm o dreth a ddidynnwyd oddi ar daliadau tramor penodol i breswylwyr yn y DU. Bydd SWT yn cael ei thalu ynghyd ag unrhyw dreth dramor a ddidynnodd y wlad o le daeth y taliad. Y gwledydd a allai ddidynnu’r Dreth Ataliedig Arbennig yw:
 overseasPension.specialWithHoldingTax.details.bullet1 = Andorra
-overseasPension.specialWithHoldingTax.details.bullet2 = Austria
+overseasPension.specialWithHoldingTax.details.bullet2 = Awstria
 overseasPension.specialWithHoldingTax.details.bullet3 = Curaçao
 overseasPension.specialWithHoldingTax.details.bullet4 = Gibraltar
 overseasPension.specialWithHoldingTax.details.bullet5 = Jersey
 overseasPension.specialWithHoldingTax.details.bullet6 = Liechtenstein
-overseasPension.specialWithHoldingTax.details.bullet7 = Luxembourg
+overseasPension.specialWithHoldingTax.details.bullet7 = Lwcsembwrg
 overseasPension.specialWithHoldingTax.details.bullet8 = Monaco
 overseasPension.specialWithHoldingTax.details.bullet9 = San Marino
 overseasPension.specialWithHoldingTax.details.bullet10 = Saint Maarten
-overseasPension.specialWithHoldingTax.details.bullet11 = Switzerland
-overseasPension.specialWithHoldingTax.details.para2 = Where SWT has been deducted you’re treated as having paid the same amount of income tax in the UK in the same year. This can be set against your UK tax liability of that year, or repaid to you if the amount is more than the tax you must pay.
-overseasPension.specialWithHoldingTax.details.para3 = Read more about
-overseasPension.specialWithHoldingTax.details.link = Special Withholding Tax at Gov.uk
-overseasPension.specialWithHoldingTax.amount.Text = Amount of SWT, in pounds
-overseasPension.specialWithHoldingTax.amount.individual.noEntry = Select yes or no if you had Special Withholding Tax deducted from your pension.
-overseasPension.specialWithHoldingTax.amount.agent.noEntry = Select yes or no if your client had Special Withholding Tax deducted from their pension.
-overseasPension.specialWithHoldingTax.amount.noAmountEntry = Enter an amount in pounds for the amount of Special Withholding Tax deducted
-overseasPension.specialWithHoldingTax.amount.incorrectFormat = Enter the amount of Special Withholding Tax deducted in the correct format
-overseasPension.specialWithHoldingTax.amount.tooBig = Amount of Special Withholding Tax deducted must be less than £100,000,000,000
+overseasPension.specialWithHoldingTax.details.bullet11 = Y Swistir
+overseasPension.specialWithHoldingTax.details.para2 = Lle bo SWT wedi’i didynnu, cewch eich trin fel pe baech wedi talu’r un swm o dreth incwm yn y DU yn yr un flwyddyn. Gall hon gael ei gosod yn erbyn eich rhwymedigaeth treth yn y DU ar gyfer y flwyddyn honno, neu gall hon gael ei had-dalu i chi os yw’r swm yn fwy na’r dreth y mae’n rhaid i chi ei thalu.
+overseasPension.specialWithHoldingTax.details.para3 = Darllenwch ragor am
+overseasPension.specialWithHoldingTax.details.link = Treth Ataliedig Arbennig yn GOV.UK
+overseasPension.specialWithHoldingTax.amount.Text = Swm yr SWT mewn punnoedd
+overseasPension.specialWithHoldingTax.amount.individual.noEntry = Dewiswch ‘Iawn’ neu ‘Na’ os didynnwyd Treth Ataliedig Arbennig o’ch pensiwn.
+overseasPension.specialWithHoldingTax.amount.agent.noEntry = Dewiswch ‘Iawn’ neu ‘Na’ os didynnwyd Treth Ataliedig Arbennig o’i bensiwn.
+overseasPension.specialWithHoldingTax.amount.noAmountEntry = Nodwch swm mewn punnoedd ar gyfer swm y Dreth Ataliedig Arbennig a ddidynnwyd
+overseasPension.specialWithHoldingTax.amount.incorrectFormat = Nodwch swm y Dreth Ataliedig Arbennig a ddidynnwyd yn y fformat cywir
+overseasPension.specialWithHoldingTax.amount.tooBig = Mae’n rhaid i swm y Dreth Ataliedig Arbennig a ddidynnwyd fod yn llai na £100,000,000,000
 
 #Pension Customer Reference Number
-overseasPension.pensionsCustomerReferenceNumber.title.individual = What’s your customer reference number?
-overseasPension.pensionsCustomerReferenceNumber.title.agent = What’s your client’s customer reference number?
-overseasPension.pensionsCustomerReferenceNumber.paragraph1.individual = Your pension provider should have given you a customer reference number.
-overseasPension.pensionsCustomerReferenceNumber.paragraph1.agent = Your client’s pension provider should have given them a customer reference number.
-overseasPension.pensionsCustomerReferenceNumber.hint = For example, ''PENSIONINCOME245''
-overseasPension.pensionsCustomerReferenceNumber.error.noEntry.individual = Enter your customer reference number
-overseasPension.pensionsCustomerReferenceNumber.error.noEntry.agent = Enter your client’s customer reference number
+overseasPension.pensionsCustomerReferenceNumber.title.individual = Beth yw’ch cyfeirnod cwsmer?
+overseasPension.pensionsCustomerReferenceNumber.title.agent = Beth yw cyfeirnod cwsmer eich cleient?
+overseasPension.pensionsCustomerReferenceNumber.paragraph1.individual = Dylai’ch darparwr pensiwn fod wedi rhoi cyfeirnod cwsmer i chi.
+overseasPension.pensionsCustomerReferenceNumber.paragraph1.agent = Dylai darparwr pensiwn eich cleient fod wedi rhoi cyfeirnod cwsmer i’ch cleient.
+overseasPension.pensionsCustomerReferenceNumber.hint = Er enghraifft, ''INCWMPENSIWN245''
+overseasPension.pensionsCustomerReferenceNumber.error.noEntry.individual = Nodwch eich cyfeirnod cwsmer
+overseasPension.pensionsCustomerReferenceNumber.error.noEntry.agent = Nodwch gyfeirnod cwsmer eich cleient
 
 #Pension Tax Relief Type
-overseasPension.pensionReliefType.title.individual = What tax relief did you get on payments into overseas pensions?
-overseasPension.pensionReliefType.title.agent = What tax relief did your client get on payments into overseas pensions?
-overseasPension.pensionReliefType.MMR = Migrant member relief
-overseasPension.pensionReliefType.DTR = Double taxation relief
-overseasPension.pensionReliefType.TCR = Transitional corresponding relief
-overseasPension.pensionReliefType.NoneOfThese = None of these
-overseasPension.pensionReliefType.error.noEntry = Select the type of tax relief or select none
-overseasPension.pensionReliefType.link = Find out about the types of tax relief for overseas pension scheme payments
+overseasPension.pensionReliefType.title.individual = Pa ryddhad treth a gawsoch ar daliadau i mewn i bensiynau tramor?
+overseasPension.pensionReliefType.title.agent = Pa ryddhad treth a gafodd eich cleient ar daliadau i mewn i bensiynau tramor?
+overseasPension.pensionReliefType.MMR = Rhyddhad aelod mudol
+overseasPension.pensionReliefType.DTR = Rhyddhad trethiant dwbl
+overseasPension.pensionReliefType.TCR = Rhyddhad cyfatebol trosiannol
+overseasPension.pensionReliefType.NoneOfThese = Dim un o’r rhain
+overseasPension.pensionReliefType.error.noEntry = Dewiswch y math o ryddhad treth, neu dewiswch ‘dim’
+overseasPension.pensionReliefType.link = Dysgwch am y mathau o ryddhad treth ar gyfer taliadau cynlluniau pensiwn tramor
 
 #Pension Tax Relief Details
-overseasPension.reliefDetails.title = Pension scheme details
-overseasPension.reliefDetails.pensionSchemeName = Pension scheme name
-overseasPension.reliefDetails.amount = Untaxed employer payments
-overseasPension.reliefDetails.typeOfRelief = Type of relief
-overseasPension.reliefDetails.schemeDetail = Scheme details
-overseasPension.reliefDetails.pensionSchemeName.hidden = Change pension scheme name
-overseasPension.reliefDetails.amount.hidden = Change untaxed employer payments
-overseasPension.reliefDetails.typeOfRelief.hidden = Change type of relief
-overseasPension.reliefDetails.schemeDetail.hidden = Change scheme details
-overseasPension.reliefDetails.noTaxRelief = No tax relief
-overseasPension.reliefDetails.countryCode = Country code:
-overseasPension.reliefDetails.article = Article:
-overseasPension.reliefDetails.treaty = Treaty:
-overseasPension.reliefDetails.relief = Relief:
+overseasPension.reliefDetails.title = Manylion y cynllun pensiwn
+overseasPension.reliefDetails.pensionSchemeName = Enw’r cynllun pensiwn
+overseasPension.reliefDetails.amount = Taliadau cyflogwr sydd heb eu trethu
+overseasPension.reliefDetails.typeOfRelief = Math o ryddhad
+overseasPension.reliefDetails.schemeDetail = Manylion y cynllun
+overseasPension.reliefDetails.pensionSchemeName.hidden = Newid enw’r cynllun pensiwn
+overseasPension.reliefDetails.amount.hidden = Newid taliadau cyflogwr sydd heb eu trethu
+overseasPension.reliefDetails.typeOfRelief.hidden = Newid y math o ryddhad
+overseasPension.reliefDetails.schemeDetail.hidden = Newid manylion y cynllun
+overseasPension.reliefDetails.noTaxRelief = Dim rhyddhad treth
+overseasPension.reliefDetails.countryCode = Cod y wlad:
+overseasPension.reliefDetails.article = Erthygl:
+overseasPension.reliefDetails.treaty = Cytuniad:
+overseasPension.reliefDetails.relief = Rhyddhad:
 
 
 #Your Taxable Amount
-overseasPension.yourTaxableAmount.title.individual = Your taxable amount
-overseasPension.yourTaxableAmount.title.agent = Your client’s taxable amount
-overseasPension.yourTaxableAmount.noFtrcClaim.para.individual = Your taxable amount is the amount you got in foreign pension payments.
-overseasPension.yourTaxableAmount.noFtrcClaim.para.agent = Your client’s taxable amount is the amount they got in foreign pension payments.
-overseasPension.yourTaxableAmount.ftrcClaim.para.individual = Your taxable amount is:
-overseasPension.yourTaxableAmount.ftrcClaim.para.item1.individual = the amount you got in foreign pension payments
-overseasPension.yourTaxableAmount.ftrcClaim.para.item2.individual = minus any non-UK tax you paid
-overseasPension.yourTaxableAmount.ftrcClaim.para.agent = Your client’s taxable amount is:
-overseasPension.yourTaxableAmount.ftrcClaim.para.item1.agent = the amount your client got in foreign pension payments
-overseasPension.yourTaxableAmount.ftrcClaim.para.item2.agent = minus any non-UK tax they paid
-overseasPension.yourTaxableAmount.table.title.individual=Your taxable amount calculation
-overseasPension.yourTaxableAmount.table.title.agent=Your client’s taxable amount calculation
-overseasPension.yourTaxableAmount.table.header1=Item
-overseasPension.yourTaxableAmount.table.header2=Amount
-overseasPension.yourTaxableAmount.table.foreignPayments=Foreign pension payments
-overseasPension.yourTaxableAmount.table.nonUkTax=Non-UK tax deducted
-overseasPension.yourTaxableAmount.table.taxableAmount=Taxable amount
+overseasPension.yourTaxableAmount.title.individual = Eich cyfanswm trethadwy
+overseasPension.yourTaxableAmount.title.agent = Swm trethadwy eich cleient
+overseasPension.yourTaxableAmount.noFtrcClaim.para.individual = Eich swm trethadwy yw’r swm a gawsoch mewn taliadau pensiwn tramor.
+overseasPension.yourTaxableAmount.noFtrcClaim.para.agent = Swm trethadwy eich cleient yw’r swm a gafodd eich cleient mewn taliadau pensiwn tramor.
+overseasPension.yourTaxableAmount.ftrcClaim.para.individual = Eich swm trethadwy yw:
+overseasPension.yourTaxableAmount.ftrcClaim.para.item1.individual = y swm a gawsoch mewn taliadau pensiwn tramor
+overseasPension.yourTaxableAmount.ftrcClaim.para.item2.individual = llai unrhyw dreth a dalwyd gennych y tu allan i’r DU
+overseasPension.yourTaxableAmount.ftrcClaim.para.agent = Swm trethadwy eich cleient yw:
+overseasPension.yourTaxableAmount.ftrcClaim.para.item1.agent = y swm a gafodd eich cleient mewn taliadau pensiwn tramor
+overseasPension.yourTaxableAmount.ftrcClaim.para.item2.agent = llai unrhyw dreth a dalwyd gan eich cleient y tu allan i’r DU
+overseasPension.yourTaxableAmount.table.title.individual = Cyfrifiad eich swm trethadwy
+overseasPension.yourTaxableAmount.table.title.agent = Cyfrifiad swm trethadwy eich cleient
+overseasPension.yourTaxableAmount.table.header1 = Eitem
+overseasPension.yourTaxableAmount.table.header2 = Swm
+overseasPension.yourTaxableAmount.table.foreignPayments = Taliadau pensiwn tramor
+overseasPension.yourTaxableAmount.table.nonUkTax = Treth a dalwyd y tu allan i’r DU y didynnwyd
+overseasPension.yourTaxableAmount.table.taxableAmount = Swm trethadwy
 
 #relief scheme summary view
 pensions.paymentsIntoOverseasPensions.reliefSchemeSummary.title = Schemes with untaxed employer payments

@@ -121,23 +121,23 @@ class UnauthorisedPaymentsCYAControllerISpec extends
     val yes = "Iawn"
     val no = "Na"
     val unauthorisedPayments = "Taliadau heb awdurdod"
-    val amountSurcharged = "Amount surcharged"
-    val nonUkTaxAmountSurcharged = "Non UK-tax on amount surcharged"
-    val amountNotSurcharged = "Amount not surcharged"
-    val nonUkTaxAmountNotSurcharged = "Non UK-tax on amount not surcharged"
+    val amountSurcharged = "Y swm y codwyd gordal arno"
+    val nonUkTaxAmountSurcharged = "Treth y tu allan i’r DU ar y swm y codwyd gordal arno"
+    val amountNotSurcharged = "Y swm na chodwyd gordal arno"
+    val nonUkTaxAmountNotSurcharged = "Treth y tu allan i’r DU ar y swm na chodwyd gordal arno"
     val ukPensionSchemes = "Cynlluniau pensiwn y DU"
-    val pensionSchemeTaxReferences = "Pension Scheme Tax References"
+    val pensionSchemeTaxReferences = "Cyfeirnodau Treth y Cynlluniau Pensiwn"
 
     val saveAndContinue = "Cadw ac yn eich blaen"
     val error = "Sorry, there is a problem with the service"
 
     val unauthorisedPaymentsHidden = "Newid taliadau heb awdurdod"
-    val amountSurchargedHidden = "Change amount surcharged"
-    val nonUkTaxAmountSurchargedHidden = "Change non UK-tax on amount surcharged"
-    val amountNotSurchargedHidden = "Change amount not surcharged"
-    val nonUkTaxAmountNotSurchargedHidden = "Change non UK-tax on amount not surcharged"
+    val amountSurchargedHidden = "Newid y swm y codwyd gordal arno"
+    val nonUkTaxAmountSurchargedHidden = "Newid swm y dreth y tu allan i’r DU ar y swm y codwyd gordal arno"
+    val amountNotSurchargedHidden = "Newid y swm na chodwyd gordal arno"
+    val nonUkTaxAmountNotSurchargedHidden = "Newid swm y dreth y tu allan i’r DU ar y swm na chodwyd gordal arno"
     val ukPensionSchemesHidden = "Newid cynlluniau pensiwn y DU"
-    val pensionSchemeTaxReferencesHidden = "Change Pension Scheme Tax References"
+    val pensionSchemeTaxReferencesHidden = "Newid Cyfeirnodau Treth y Cynlluniau Pensiwn"
   }
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
@@ -151,13 +151,13 @@ class UnauthorisedPaymentsCYAControllerISpec extends
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
-    val expectedH1 = "Check your unauthorised payments"
-    val expectedTitle = "Check your unauthorised payments"
+    val expectedH1 = "Gwirio’ch taliadau heb awdurdod"
+    val expectedTitle = "Gwirio’ch taliadau heb awdurdod"
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
-    val expectedH1 = "Check your client’s unauthorised payments"
-    val expectedTitle = "Check your client’s unauthorised payments"
+    val expectedH1 = "Gwirio taliadau’ch cleient a oedd heb awdurdod"
+    val expectedTitle = "Gwirio taliadau’ch cleient a oedd heb awdurdod"
   }
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(
@@ -217,7 +217,7 @@ class UnauthorisedPaymentsCYAControllerISpec extends
           cyaRowCheck(ukPensionSchemes, stringToBoolean(unauthorisedPaymentsFromIncomeTaxSubmission.map(_.pensionSchemeTaxReference).isDefined),
             ChangeLinksUnauthorisedPayments.ukPensionSchemes, ukPensionSchemesHidden, 6)
           
-          cyaRowCheck(pensionSchemeTaxReferences, s"${unauthorisedPaymentsFromIncomeTaxSubmission.get.pensionSchemeTaxReference.mkString(", ")}",
+          cyaRowCheck(pensionSchemeTaxReferences, s"${unauthorisedPaymentsFromIncomeTaxSubmission.get.pensionSchemeTaxReference.get.mkString(", ")}",
             ChangeLinksUnauthorisedPayments.pensionSchemeTaxDetails, pensionSchemeTaxReferencesHidden, 7)
 
           buttonCheck(saveAndContinue)
@@ -263,7 +263,7 @@ class UnauthorisedPaymentsCYAControllerISpec extends
           cyaRowCheck(ukPensionSchemes, stringToBoolean(unauthorisedPaymentsFromIncomeTaxSubmission.map(_.pensionSchemeTaxReference).isDefined),
             ChangeLinksUnauthorisedPayments.ukPensionSchemes, ukPensionSchemesHidden, 4)
           
-          cyaRowCheck(pensionSchemeTaxReferences, s"${unauthorisedPaymentsFromIncomeTaxSubmission.get.pensionSchemeTaxReference.mkString(", ")}",
+          cyaRowCheck(pensionSchemeTaxReferences, s"${unauthorisedPaymentsFromIncomeTaxSubmission.get.pensionSchemeTaxReference.get.mkString(", ")}",
             ChangeLinksUnauthorisedPayments.pensionSchemeTaxDetails, pensionSchemeTaxReferencesHidden, 5)
 
           buttonCheck(saveAndContinue)
@@ -310,7 +310,7 @@ class UnauthorisedPaymentsCYAControllerISpec extends
           cyaRowCheck(ukPensionSchemes, stringToBoolean(unauthorisedPaymentsFromIncomeTaxSubmission.map(_.pensionSchemeTaxReference).isDefined),
             ChangeLinksUnauthorisedPayments.ukPensionSchemes, ukPensionSchemesHidden, 4)
           
-          cyaRowCheck(pensionSchemeTaxReferences, s"${unauthorisedPaymentsFromIncomeTaxSubmission.get.pensionSchemeTaxReference.mkString(", ")}",
+          cyaRowCheck(pensionSchemeTaxReferences, s"${unauthorisedPaymentsFromIncomeTaxSubmission.get.pensionSchemeTaxReference.get.mkString(", ")}",
             ChangeLinksUnauthorisedPayments.pensionSchemeTaxDetails, pensionSchemeTaxReferencesHidden, 5)
 
           buttonCheck(saveAndContinue)

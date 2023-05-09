@@ -62,9 +62,9 @@ class PensionLumpSumControllerISpec extends IntegrationTest with BeforeAndAfterE
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
-    val expectedTitle = "Did you take the amount above your lifetime allowance as a lump sum?"
+    val expectedTitle = "A wnaethoch gymryd y swm sy’n uwch na’ch lwfans oes fel cyfandaliad?"
     val expectedErrorTitle = s"Gwall: $expectedTitle"
-    val expectedError = "Select yes if you took the amount above your lifetime allowance as a lump sum"
+    val expectedError = "Dewiswch ‘Iawn’ os wnaethoch gymryd y swm sy’n uwch na’ch lwfans oes fel cyfandaliad"
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
@@ -74,9 +74,9 @@ class PensionLumpSumControllerISpec extends IntegrationTest with BeforeAndAfterE
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
-    val expectedTitle = "Did your client take the amount above their lifetime allowance as a lump sum?"
+    val expectedTitle = "A wnaeth eich cleient gymryd y swm sy’n uwch na’u lwfans oes fel cyfandaliad?"
     val expectedErrorTitle = s"Gwall: $expectedTitle"
-    val expectedError = "Select yes if your client took the amount above their lifetime allowance as a lump sum"
+    val expectedError = "Dewiswch ‘Iawn’ wnaeth eich cleient gymryd y swm sy’n uwch na’u lwfans oes fel cyfandaliad"
   }
 
   object CommonExpectedEN extends CommonExpectedResults {

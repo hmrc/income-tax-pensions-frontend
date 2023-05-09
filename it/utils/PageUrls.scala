@@ -131,6 +131,11 @@ object PageUrls extends IntegrationTest {
       s"$appUrl/$taxYear/pension-income/remove-pension-scheme" + addOn
     }
 
+    def pensionSchemeSummaryUrl(taxYear: Int, pensionSchemeIndex: Option[Int]): String = {
+      val baseUrl = s"$appUrl/$taxYear/pension-income/uk-pension-income/pension-scheme-summary"
+      pensionSchemeIndex.fold(baseUrl)(idx =>s"$baseUrl?pensionSchemeIndex=$idx")
+    }
+
     def ukPensionIncomeCyaUrl(taxYear: Int): String = s"$appUrl/$taxYear/pension-income/uk-pension-income/check-pension-income"
 
     def ukPensionincomeSummaryUrl(taxYear: Int): String = s"$appUrl/$taxYear/pension-income/pensions-income-summary"

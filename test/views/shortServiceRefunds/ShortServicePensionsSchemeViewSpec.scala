@@ -128,7 +128,7 @@ class ShortServicePensionsSchemeViewSpec extends ViewUnitTest {
     val ukReferenceLabel: String = "Cyfeirnod Treth y Cynllun Pensiwn"
     val nonUkReferenceLabel: String = "Qualifying Overseas Pension Scheme reference"
     val uKRefHintText: String = "Er enghraifft, ‘12345678RA’"
-    val nonUKRefHintText: String = "For example, QOPS123456"
+    val nonUKRefHintText: String = "Er enghraifft, QOPS123456"
     val ukRefInvalidFormatErrorText: String =
       "Enter a Pension Scheme Tax Reference number that is 8 numbers, then R, then a letter a to z or A to Z, like 00123456RA"
     val nonUKRefInvalidFormatErrorText: String = "Enter a six digit number"

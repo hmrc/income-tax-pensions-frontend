@@ -79,7 +79,7 @@ class DoubleTaxationAgreementViewSpec extends ViewUnitTest with FakeRequestProvi
     val expectedArticleExample: String = "For example, ‘AB3211-1’"
     val expectedTreatyLabel: String = "Treaty (optional)"
     val expectedTreatyExample: String = "For example, ’Munich’"
-    val expectedReliefLabel: String = "Double taxation relief"
+    val expectedReliefLabel: String = "Rhyddhad trethiant dwbl"
     val expectedReliefExample: String = "Er enghraifft, £193.54"
     val expectedContinue: String = "Yn eich blaen"
     val errorTitle: String = s"Gwall: $expectedTitle"

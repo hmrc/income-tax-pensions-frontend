@@ -17,7 +17,8 @@
 package controllers.pensions.lifetimeAllowances
 
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.routes._
+import controllers.pensions.annualAllowances.routes._
+import controllers.pensions.lifetimeAllowances.routes._
 import controllers.predicates.AuthorisedAction
 import forms.YesNoForm
 import models.User
@@ -29,36 +30,33 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
-import views.html.pensions.lifetimeAllowances.AboveAnnualLifeTimeAllowanceView
+import views.html.pensions.lifetimeAllowances.AboveAnnualLifetimeAllowanceView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
 @Singleton
-class AboveAnnualLifeTimeAllowanceController @Inject()(implicit val cc: MessagesControllerComponents,
+class AboveAnnualLifetimeAllowanceController @Inject()(implicit val cc: MessagesControllerComponents,
                                                        authAction: AuthorisedAction,
-                                                       view: AboveAnnualLifeTimeAllowanceView,
+                                                       view: AboveAnnualLifetimeAllowanceView,
                                                        appConfig: AppConfig,
                                                        pensionSessionService: PensionSessionService,
                                                        errorHandler: ErrorHandler,
                                                        clock: Clock) extends FrontendController(cc) with I18nSupport {
 
-
   def yesNoForm(user: User): Form[Boolean] = YesNoForm.yesNoForm(
-    missingInputError = s"lifetimeAllowance.aboveAnnualLifeTimeAllowance.error.noEntry.${if (user.isAgent) "agent" else "individual"}"
+    missingInputError = s"lifetimeAllowance.aboveAnnualLifetimeAllowance.error.noEntry.${if (user.isAgent) "agent" else "individual"}"
   )
 
   def show(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
     pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
       case Some(data) =>
         data.pensions.pensionLifetimeAllowances.aboveLifetimeAllowanceQuestion match {
-          case Some(value) => Future.successful(Ok(view(
-            yesNoForm(request.user).fill(value), taxYear)))
+          case Some(value) => Future.successful(Ok(view(yesNoForm(request.user).fill(value), taxYear)))
           case None => Future.successful(Ok(view(yesNoForm(request.user), taxYear)))
         }
       case None =>
-        //TODO - redirect to CYA page once implemented
-        Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
+        Future.successful(Redirect(AnnualLifetimeAllowanceCYAController.show(taxYear)))
     }
   }
 
@@ -67,7 +65,7 @@ class AboveAnnualLifeTimeAllowanceController @Inject()(implicit val cc: Messages
       formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
       yesNo => {
         pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
-          case Some(data) => {
+          case Some(data) =>
             val pensionsCYAModel: PensionsCYAModel = data.pensions
             val viewModel: PensionLifetimeAllowancesViewModel = pensionsCYAModel.pensionLifetimeAllowances
             val updatedCyaModel: PensionsCYAModel = {
@@ -83,19 +81,13 @@ class AboveAnnualLifeTimeAllowanceController @Inject()(implicit val cc: Messages
             pensionSessionService.createOrUpdateSessionData(request.user,
               updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
               if (yesNo) {
-                //TODO redirect page to "Do you have a reduced annual allowance?" Page
-                Redirect(PensionsSummaryController.show(taxYear))
+                Redirect(ReducedAnnualAllowanceController.show(taxYear))
               } else {
-                //TODO - redirect to CYA page once implemented
-                Redirect(PensionsSummaryController.show(taxYear))
+                Redirect(AnnualLifetimeAllowanceCYAController.show(taxYear))
               }
             }
-          }
-          case _ => {
-            //TO DO - Redirect to Annual Life Time Allowance CYA Page
-            Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
-          }
-
+          case _ =>
+            Future.successful(Redirect(AnnualLifetimeAllowanceCYAController.show(taxYear)))
         }
       }
     )
