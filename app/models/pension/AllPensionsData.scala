@@ -187,8 +187,8 @@ object AllPensionsData {
         qopsReference = oPC.migrantMemReliefQopsRefNo,
         alphaTwoCountryCode = Countries.get2AlphaCodeFrom3AlphaCode(oPC.dblTaxationCountry),
         alphaThreeCountryCode = oPC.dblTaxationCountry,
-        doubleTaxationCountryArticle = oPC.dblTaxationArticle,
-        doubleTaxationCountryTreaty = oPC.dblTaxationTreaty,
+        doubleTaxationArticle = oPC.dblTaxationArticle,
+        doubleTaxationTreaty = oPC.dblTaxationTreaty,
         doubleTaxationReliefAmount = oPC.dblTaxationRelief,
         sf74Reference = oPC.sf74Reference
       )

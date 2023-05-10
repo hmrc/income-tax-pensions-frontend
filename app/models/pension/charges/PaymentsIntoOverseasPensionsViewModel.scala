@@ -16,8 +16,9 @@
 
 package models.pension.charges
 
+import forms.Countries
 import models.mongo.TextAndKey
-import models.pension.income.PensionIncome
+import models.pension.income.{ForeignPension, OverseasPensionContribution, PensionIncome}
 import models.pension.reliefs.PensionReliefs
 import play.api.libs.json.{Json, OFormat}
 import utils.DecryptableSyntax.DecryptableOps
@@ -42,8 +43,8 @@ case class Relief(
   reliefType: Option[String] = None,
   alphaTwoCountryCode: Option[String] = None,
   alphaThreeCountryCode: Option[String] = None,
-  doubleTaxationCountryArticle: Option[String] = None,
-  doubleTaxationCountryTreaty: Option[String] = None,
+  doubleTaxationArticle: Option[String] = None,
+  doubleTaxationTreaty: Option[String] = None,
   doubleTaxationReliefAmount: Option[BigDecimal] = None,
   qopsReference: Option[String] = None,
   sf74Reference: Option[String] = None
@@ -56,8 +57,8 @@ case class Relief(
       sf74Reference = sf74Reference.map(_.encrypted),
       alphaTwoCountryCode = alphaTwoCountryCode.map(_.encrypted),
       alphaThreeCountryCode = alphaThreeCountryCode.map(_.encrypted),
-      doubleTaxationCountryArticle = doubleTaxationCountryArticle.map(_.encrypted),
-      doubleTaxationCountryTreaty = doubleTaxationCountryTreaty.map(_.encrypted),
+      doubleTaxationArticle = doubleTaxationArticle.map(_.encrypted),
+      doubleTaxationTreaty = doubleTaxationTreaty.map(_.encrypted),
       doubleTaxationReliefAmount = doubleTaxationReliefAmount.map(_.encrypted),
       qualifyingOverseasPensionSchemeReferenceNumber = qopsReference.map(_.encrypted)
     )
@@ -73,8 +74,8 @@ case class EncryptedRelief(
   reliefType: Option[EncryptedValue] = None,
   alphaTwoCountryCode: Option[EncryptedValue] = None,
   alphaThreeCountryCode: Option[EncryptedValue] = None,
-  doubleTaxationCountryArticle: Option[EncryptedValue] = None,
-  doubleTaxationCountryTreaty: Option[EncryptedValue] = None,
+  doubleTaxationArticle: Option[EncryptedValue] = None,
+  doubleTaxationTreaty: Option[EncryptedValue] = None,
   doubleTaxationReliefAmount: Option[EncryptedValue] = None,
   sf74Reference: Option[EncryptedValue] = None,
   qualifyingOverseasPensionSchemeReferenceNumber: Option[EncryptedValue] = None
@@ -87,8 +88,8 @@ case class EncryptedRelief(
       sf74Reference = sf74Reference.map(_.decrypted[String]),
       alphaTwoCountryCode = alphaTwoCountryCode.map(_.decrypted[String]),
       alphaThreeCountryCode = alphaThreeCountryCode.map(_.decrypted[String]),
-      doubleTaxationCountryArticle = doubleTaxationCountryArticle.map(_.decrypted[String]),
-      doubleTaxationCountryTreaty = doubleTaxationCountryTreaty.map(_.decrypted[String]),
+      doubleTaxationArticle = doubleTaxationArticle.map(_.decrypted[String]),
+      doubleTaxationTreaty = doubleTaxationTreaty.map(_.decrypted[String]),
       doubleTaxationReliefAmount = doubleTaxationReliefAmount.map(_.decrypted[BigDecimal]),
       qopsReference = qualifyingOverseasPensionSchemeReferenceNumber.map(_.decrypted[String])
     )
@@ -116,6 +117,36 @@ case class PaymentsIntoOverseasPensionsViewModel(paymentsIntoOverseasPensionsQue
       taxPaidOnEmployerPaymentsQuestion = taxPaidOnEmployerPaymentsQuestion.map(_.encrypted),
       reliefs = reliefs.map(_.encrypted())
     )
+
+  def toForeignPension: Seq[ForeignPension] = {
+    reliefs.map {
+      relief =>
+        ForeignPension(
+          countryCode = Countries.get3AlphaCodeFrom2AlphaCode(relief.alphaTwoCountryCode).get,
+          taxableAmount = paymentsIntoOverseasPensionsAmount.getOrElse(0),
+          amountBeforeTax = paymentsIntoOverseasPensionsAmount,
+          taxTakenOff = paymentsIntoOverseasPensionsAmount,
+          specialWithholdingTax = None,
+          foreignTaxCreditRelief = None
+        )
+    }
+  }
+
+  def toPensionContributions: Seq[OverseasPensionContribution] = {
+    reliefs.map{
+      relief =>
+        OverseasPensionContribution(
+          customerReference = relief.customerReference,
+          exemptEmployersPensionContribs = relief.employerPaymentsAmount.getOrElse(0),
+          migrantMemReliefQopsRefNo = relief.qopsReference,
+          dblTaxationRelief = relief.doubleTaxationReliefAmount,
+          dblTaxationCountry = relief.alphaTwoCountryCode,
+          dblTaxationArticle = relief.doubleTaxationArticle,
+          dblTaxationTreaty = relief.doubleTaxationTreaty,
+          sf74Reference = relief.sf74Reference
+        )
+    }
+  }
 }
 
 
