@@ -1024,133 +1024,133 @@ paymentsIntoOverseasPensions.cya.employerPaymentsTax.hidden = Change tax paid on
 
 ############################################## INCOME FROM OVERSEAS PENSIONS ##############################################
 
-incomeFromOverseasPensions.incomeFromOverseasPension.title.individual = Did you get payments from an overseas pension scheme?
-incomeFromOverseasPensions.incomeFromOverseasPension.title.agent = Did your client get payments from an overseas pension scheme?
-incomeFromOverseasPensions.incomeFromOverseasPension.error.noEntry.individual = Select yes if you had income from an overseas pension scheme
-incomeFromOverseasPensions.incomeFromOverseasPension.error.noEntry.agent = Select yes if your client had income from an overseas pension scheme
+incomeFromOverseasPensions.incomeFromOverseasPension.title.individual = A gawsoch chi daliadau o gynllun pensiwn tramor?
+incomeFromOverseasPensions.incomeFromOverseasPension.title.agent = A gafodd eich cleient daliadau o gynllun pensiwn tramor?
+incomeFromOverseasPensions.incomeFromOverseasPension.error.noEntry.individual = Dewiswch ‘Iawn’ os cawsoch incwm o gynllun pensiwn tramor
+incomeFromOverseasPensions.incomeFromOverseasPension.error.noEntry.agent = Dewiswch ‘Iawn’ os cafodd eich cleient daliadau o gynllun pensiwn tramor
 
-incomeFromOverseasPensions.pensionOverseasIncomeCountry.title = What country is the pension scheme registered in?
-incomeFromOverseasPensions.pensionOverseasIncomeCountry.paragraph = You can add pension schemes from other countries later.
-incomeFromOverseasPensions.pensionOverseasIncomeCountry.subheading = Country
-incomeFromOverseasPensions.pensionOverseasIncomeCountry.error.noEntry.individual = Enter the name of the country the pension scheme is registered in
-incomeFromOverseasPensions.pensionOverseasIncomeCountry.error.noEntry.agent = Enter the name of the country that your client’s pension scheme is registered in
+incomeFromOverseasPensions.pensionOverseasIncomeCountry.title = Ym mha wlad y mae’r cynllun pensiwn wedi’i gofrestru?
+incomeFromOverseasPensions.pensionOverseasIncomeCountry.paragraph = Gallwch ychwanegu cynlluniau pensiwn o wledydd eraill yn nes ymlaen.
+incomeFromOverseasPensions.pensionOverseasIncomeCountry.subheading = Gwlad
+incomeFromOverseasPensions.pensionOverseasIncomeCountry.error.noEntry.individual = Nodwch enw’r wlad lle y mae’r cynllun pensiwn wedi’i gofrestru
+incomeFromOverseasPensions.pensionOverseasIncomeCountry.error.noEntry.agent = Nodwch enw’r wlad lle mae cynllun pensiwn eich cleient wedi’i gofrestru
 
-overseasPension.foreignTaxCreditRelief.title.individual = Are you claiming Foreign Tax Credit Relief (FTCR)?
-overseasPension.foreignTaxCreditRelief.title.agent = Is your client claiming Foreign Tax Credit Relief (FTCR)?
-overseasPension.foreignTaxCreditRelief.details.title = Understanding Foreign Tax Credit Relief (FTCR)
-overseasPension.foreignTaxCreditRelief.details.para1 = You can claim Foreign Tax Credit Relief if you’ve already paid foreign tax on income that’s normally taxed in the UK.
-overseasPension.foreignTaxCreditRelief.details.para2 = You may also be taxed on this income by the UK.
-overseasPension.foreignTaxCreditRelief.details.para3 = However, you may not have to pay twice if the country you live in has a ‘double-taxation agreement’ with the UK.
-overseasPension.foreignTaxCreditRelief.details.para4 = Depending on the agreement, you can apply for either:
-overseasPension.foreignTaxCreditRelief.details.para4.bullet1 = partial or full relief before you’ve been taxed
-overseasPension.foreignTaxCreditRelief.details.para4.bullet2 = a refund after you’ve been taxed
-overseasPension.foreignTaxCreditRelief.details.para5 = Each double-taxation agreement sets out:
-overseasPension.foreignTaxCreditRelief.details.para5.bullet1 = the country you pay tax in
-overseasPension.foreignTaxCreditRelief.details.para5.bullet2 = the country you apply for relief in
-overseasPension.foreignTaxCreditRelief.details.para5.bullet3 = how much tax relief you get
-overseasPension.foreignTaxCreditRelief.details.para6 = If the tax rates in the two countries are different, you’ll pay the higher rate of tax.
-overseasPension.foreignTaxCreditRelief.details.para7 = You can read more about
-overseasPension.foreignTaxCreditRelief.details.para7.link = Foreign Tax Credit Relief at GOV.uk
-overseasPension.foreignTaxCreditRelief.error.noEntry.individual = Enter yes or no if you are claiming Foreign Tax Credit Relief (FTCR)
-overseasPension.foreignTaxCreditRelief.error.noEntry.agent = Enter yes or no if your client is claiming Foreign Tax Credit Relief (FTCR)
+overseasPension.foreignTaxCreditRelief.title.individual = A ydych yn hawlio Rhyddhad Credyd Treth Tramor (FTCR)?
+overseasPension.foreignTaxCreditRelief.title.agent = A yw’ch cleient yn hawlio Rhyddhad Credyd Treth Tramor (FTCR)?
+overseasPension.foreignTaxCreditRelief.details.title = Deall Rhyddhad Credyd Treth Dramor (FCTR)
+overseasPension.foreignTaxCreditRelief.details.para1 = Gallwch hawlio Rhyddhad Credyd Treth Tramor os ydych eisoes wedi talu treth tramor ar incwm sydd fel arfer yn cael ei drethu yn y DU.
+overseasPension.foreignTaxCreditRelief.details.para2 = Mae’n bosib y bydd yr incwm hwn hefyd yn cael ei drethu gan y DU.
+overseasPension.foreignTaxCreditRelief.details.para3 = Fodd bynnag, efallai na fydd yn rhaid i chi dalu ddwywaith os oes gan y wlad rydych chi’n byw ynddi ‘Gytundeb Trethiant Dwbl’ gyda’r DU.
+overseasPension.foreignTaxCreditRelief.details.para4 = Yn dibynnu ar y cytundeb, gallwch wneud cais am y naill neu’r llall o’r canlynol:
+overseasPension.foreignTaxCreditRelief.details.para4.bullet1 = rhyddhad rhannol neu lawn cyn i chi gael eich trethu
+overseasPension.foreignTaxCreditRelief.details.para4.bullet2 = ad-daliad ar ôl i chi gael eich trethu
+overseasPension.foreignTaxCreditRelief.details.para5 = Mae pob Cytundeb Trethiant Dwbl yn nodi’r canlynol:
+overseasPension.foreignTaxCreditRelief.details.para5.bullet1 = y wlad lle rydych yn talu treth
+overseasPension.foreignTaxCreditRelief.details.para5.bullet2 = y wlad lle rydych yn hawlio i gael rhyddhad
+overseasPension.foreignTaxCreditRelief.details.para5.bullet3 = faint o ryddhad treth y gallwch ei gael
+overseasPension.foreignTaxCreditRelief.details.para6 = Os yw’r cyfraddau treth yn wahanol yn y ddwy wlad, byddwch yn talu’r gyfradd uwch o dreth.
+overseasPension.foreignTaxCreditRelief.details.para7 = Gallwch ddarllen rhagor am
+overseasPension.foreignTaxCreditRelief.details.para7.link = Rhyddhad Credyd Treth ar GOV.UK
+overseasPension.foreignTaxCreditRelief.error.noEntry.individual = Dewiswch ‘Iawn’ neu ‘Na’ os ydych yn hawlio Rhyddhad Credyd Treth Tramor (FTCR)
+overseasPension.foreignTaxCreditRelief.error.noEntry.agent = Dewiswch ‘Iawn’ neu ‘Na’ os yw’ch cleient yn hawlio Rhyddhad Credyd Treth Tramor (FTCR)
 
-incomeFromOverseasPensions.cya.heading = Check income from overseas pensions
-incomeFromOverseasPensions.cya.paymentsFromOverseasPensions = Payments from overseas pensions
-incomeFromOverseasPensions.cya.paymentsFromOverseasPensions.hidden = Change Payments from overseas pensions
+incomeFromOverseasPensions.cya.heading = Gwirio incwm o bensiynau tramor
+incomeFromOverseasPensions.cya.paymentsFromOverseasPensions = Taliadau o bensiynau tramor
+incomeFromOverseasPensions.cya.paymentsFromOverseasPensions.hidden = Newid taliadau o bensiynau tramor
 
-incomeFromOverseasPensions.summary.title = Pension scheme summary
-incomeFromOverseasPensions.summary.country = Country
-incomeFromOverseasPensions.summary.pension.payments = Pensions payments
-incomeFromOverseasPensions.summary.amount = Amount: {0}
-incomeFromOverseasPensions.summary.nonUk.amount = Non-uk tax: {0}
-incomeFromOverseasPensions.summary.swt = Special Withholding Tax
-incomeFromOverseasPensions.summary.ftc = Foreign Tax Credit
-incomeFromOverseasPensions.summary.tax.amount = Taxable amount
+incomeFromOverseasPensions.summary.title = Crynodeb o’r cynllun pensiwn
+incomeFromOverseasPensions.summary.country = Gwlad
+incomeFromOverseasPensions.summary.pension.payments = Taliadau pensiwn
+incomeFromOverseasPensions.summary.amount = Swm: {0}
+incomeFromOverseasPensions.summary.nonUk.amount = Treth y tu allan i’r DU: {0}
+incomeFromOverseasPensions.summary.swt = Treth Ataliedig Arbennig
+incomeFromOverseasPensions.summary.ftc = Credyd Treth Tramor
+incomeFromOverseasPensions.summary.tax.amount = Swm trethadwy
 
 #Overseas Pension Income Summary Page
-overseasPensionIncomeSummary.heading = Overseas pension income
-overseasPensionIncomeSummary.hidden = Change Overseas pension income
-#TODO: overseasPensionIncomeSummary.addAnotherPensionIncomeLink = Add another overseas pension scheme
-#TODO:overseasPensionIncomeSummary.addPensionIncomeLink = Add an overseas pension scheme
+overseasPensionIncomeSummary.heading = Incwm o bensiwn tramor
+overseasPensionIncomeSummary.hidden = Newid incwm o bensiwn tramor
+#TODO: overseasPensionIncomeSummary.addAnotherPensionIncomeLink = Ychwanegu cynllun pensiwn tramor arall
+#TODO:overseasPensionIncomeSummary.addPensionIncomeLink = Ychwanegu cynllun pensiwn tramor
 
 ############################################## TRANSFER INTO OVERSEAS PENSION ##############################################
 
 #Transfer Pension Savings
-transferIntoOverseasPensions.transferPensionsSavings.title.individual = Did you transfer pension savings into an overseas pension scheme?
-transferIntoOverseasPensions.transferPensionsSavings.title.agent = Did your client transfer pension savings into an overseas pension scheme?
-transferIntoOverseasPensions.transferPensionsSavings.error.noEntry.individual = Select yes if you transferred savings into an overseas pension scheme
-transferIntoOverseasPensions.transferPensionsSavings.error.noEntry.agent = Select yes if your client transferred savings into an overseas pension scheme
+transferIntoOverseasPensions.transferPensionsSavings.title.individual = A wnaethoch drosglwyddo cynilion pensiwn i gynllun pensiwn tramor?
+transferIntoOverseasPensions.transferPensionsSavings.title.agent = A wnaeth eich cleient drosglwyddo cynilion pensiwn i gynllun pensiwn tramor?
+transferIntoOverseasPensions.transferPensionsSavings.error.noEntry.individual = Dewiswch ‘Iawn’ os gwnaethoch drosglwyddo cynilion i gynllun pensiwn tramor
+transferIntoOverseasPensions.transferPensionsSavings.error.noEntry.agent = Dewiswch ‘Iawn’ os gwnaeth eich cleient drosglwyddo cynilion i gynllun pensiwn tramor
 
 #Overseas Transfer Charge
-transferIntoOverseasPensions.overseasTransferCharge.title = Did the amount result in an overseas transfer charge?
-transferIntoOverseasPensions.overseasTransferCharge.amount.text = Amount that resulted in a transfer charge, in pounds
-transferIntoOverseasPensions.overseasTransferCharge.error.noEntry = Select yes if the amount resulted in an overseas transfer charge
-transferIntoOverseasPensions.overseasTransferCharge.error.noAmountEntry.individual = Enter the amount on which you paid an overseas transfer charge
-transferIntoOverseasPensions.overseasTransferCharge.error.noAmountEntry.agent = Enter the amount that resulted in a transfer charge
-transferIntoOverseasPensions.overseasTransferCharge.error.incorrectFormat.individual = Enter the amount on which you paid an overseas transfer charge in the correct format
-transferIntoOverseasPensions.overseasTransferCharge.error.incorrectFormat.agent = Enter the amount that resulted in a transfer charge in the correct format
-transferIntoOverseasPensions.overseasTransferCharge.error.tooBig.individual = The amount on which you paid an overseas transfer charge must be less than £100,000,000,000
-transferIntoOverseasPensions.overseasTransferCharge.error.tooBig.agent = The amount that resulted in a transfer charge must be less than £100,000,000,000
+transferIntoOverseasPensions.overseasTransferCharge.title = A wnaeth y swm arwain at dâl trosglwyddiadau tramor?
+transferIntoOverseasPensions.overseasTransferCharge.amount.text = Y swm, mewn punnoedd, a wnaeth arwain at dâl trosglwyddiadau
+transferIntoOverseasPensions.overseasTransferCharge.error.noEntry = Dewiswch ‘Iawn’ os gwnaeth y swm arwain at dâl trosglwyddiadau tramor
+transferIntoOverseasPensions.overseasTransferCharge.error.noAmountEntry.individual = Nodwch y swm y gwnaethoch dalu tâl trosglwyddiadau tramor arno
+transferIntoOverseasPensions.overseasTransferCharge.error.noAmountEntry.agent = Nodwch y swm a wnaeth arwain at dâl trosglwyddiadau
+transferIntoOverseasPensions.overseasTransferCharge.error.incorrectFormat.individual = Nodwch y swm y gwnaethoch dalu tâl trosglwyddiadau tramor arno yn y fformat cywir
+transferIntoOverseasPensions.overseasTransferCharge.error.incorrectFormat.agent = Nodwch y swm a wnaeth arwain at dâl trosglwyddiadau yn y fformat cywir
+transferIntoOverseasPensions.overseasTransferCharge.error.tooBig.individual = Mae’n rhaid i’r swm y gwnaethoch dalu tâl trosglwyddiadau tramor arno fod yn llai na £100,000,000,000
+transferIntoOverseasPensions.overseasTransferCharge.error.tooBig.agent = Mae’n rhaid i’r swm a wnaeth arwain at dâl trosglwyddiadau fod yn llai na £100,000,000,000
 
 #Overseas Transfer scheme Charge
-transferIntoOverseasPensions.overseasPensionSchemeTaxTransferCharge.title.agent = Did your client’s pension schemes pay tax on the amount that resulted in a transfer charge?
-transferIntoOverseasPensions.overseasPensionSchemeTaxTransferCharge.title.individual = Did your pension schemes pay tax on the amount that resulted in a transfer charge?
-transferIntoOverseasPensions.overseasPensionSchemeTaxTransferCharge.amount.text = Total tax, in pounds
-transferIntoOverseasPensions.overseasPensionSchemeTaxTransferCharge.error.noEntry.individual = Select yes if your pension schemes paid tax on the amount on which you paid an overseas transfer charge
-transferIntoOverseasPensions.overseasPensionSchemeTaxTransferCharge.error.noEntry.agent = Select yes if your client’s pension schemes paid tax on the amount that resulted in a transfer charge
-transferIntoOverseasPensions.overseasPensionSchemeTaxTransferCharge.error.noAmountEntry.individual = Enter the tax paid on the amount on which you paid an overseas transfer charge
-transferIntoOverseasPensions.overseasPensionSchemeTaxTransferCharge.error.noAmountEntry.agent = Enter the amount of tax paid on the transfer charge amount
-transferIntoOverseasPensions.overseasPensionSchemeTaxTransferCharge.error.incorrectFormat.individual = Enter the tax paid on the amount on which you paid an overseas transfer charge in the correct format
-transferIntoOverseasPensions.overseasPensionSchemeTaxTransferCharge.error.incorrectFormat.agent = Enter the amount of tax paid on the transfer charge amount in the correct format
-transferIntoOverseasPensions.overseasPensionSchemeTaxTransferCharge.error.tooBig = The amount of tax paid on the transfer charge amount must be less than £100,000,000,000
+transferIntoOverseasPensions.overseasPensionSchemeTaxTransferCharge.title.agent = A wnaeth cynlluniau pensiwn eich cleient dalu treth ar y swm a wnaeth arwain at dâl trosglwyddiadau?
+transferIntoOverseasPensions.overseasPensionSchemeTaxTransferCharge.title.individual = A wnaeth eich cynlluniau pensiwn dalu treth ar y swm a wnaeth arwain at dâl trosglwyddiadau?
+transferIntoOverseasPensions.overseasPensionSchemeTaxTransferCharge.amount.text = Cyfanswm y dreth, mewn punnoedd
+transferIntoOverseasPensions.overseasPensionSchemeTaxTransferCharge.error.noEntry.individual = Dewiswch ‘Iawn’ os gwnaeth eich cynlluniau pensiwn dalu treth ar y swm y gwnaethoch chi dalu tâl trosglwyddiadau tramor arno
+transferIntoOverseasPensions.overseasPensionSchemeTaxTransferCharge.error.noEntry.agent = Dewiswch ‘Iawn’ os gwnaeth cynlluniau pensiwn eich cleient dalu treth ar y swm a wnaeth arwain at dâl trosglwyddiadau
+transferIntoOverseasPensions.overseasPensionSchemeTaxTransferCharge.error.noAmountEntry.individual = Nodwch y dreth a dalwyd ar y swm y gwnaethoch dalu tâl trosglwyddiadau tramor arno
+transferIntoOverseasPensions.overseasPensionSchemeTaxTransferCharge.error.noAmountEntry.agent = Nodwch swm y dreth a dalwyd ar y tâl trosglwyddiadau
+transferIntoOverseasPensions.overseasPensionSchemeTaxTransferCharge.error.incorrectFormat.individual = Nodwch y dreth a dalwyd ar y swm y gwnaethoch dalu tâl trosglwyddiadau tramor arno yn y fformat cywir
+transferIntoOverseasPensions.overseasPensionSchemeTaxTransferCharge.error.incorrectFormat.agent = Nodwch swm y dreth a dalwyd ar y tâl trosglwyddiadau yn y fformat cywir
+transferIntoOverseasPensions.overseasPensionSchemeTaxTransferCharge.error.tooBig = Mae’n rhaid i swm y dreth a dalwyd ar y tâl trosglwyddiadau fod yn llai na £100,000,000,000
 
 #Overseas Transfer Charges Paid Status
-transferIntoOverseasPensions.overseasTransferChargesPaid.title = Did a UK pension scheme pay the transfer charge to HMRC?
-transferIntoOverseasPensions.overseasTransferChargesPaid.error.noEntry = Select yes if a UK pension scheme paid the transfer charge to HMRC
+transferIntoOverseasPensions.overseasTransferChargesPaid.title = A wnaeth cynllun pensiwn y DU dalu’r tâl trosglwyddiadau i CThEF?
+transferIntoOverseasPensions.overseasTransferChargesPaid.error.noEntry = Dewiswch ‘Iawn’ os gwnaeth cynllun pensiwn y DU dalu’r tâl trosglwyddiadau i CThEF
 
 #Double Taxation Agreement Details
-transferIntoOverseasPensions.doubleTaxation.title = Double taxation agreement details
-transferIntoOverseasPensions.doubleTaxation.country = Country
-transferIntoOverseasPensions.doubleTaxation.country.error.noEntry = Enter the tax treaty country
-transferIntoOverseasPensions.doubleTaxation.article = Article (optional)
-transferIntoOverseasPensions.doubleTaxation.article.hint = For example, ‘AB3211-1’
-transferIntoOverseasPensions.doubleTaxation.treaty = Treaty (optional)
-transferIntoOverseasPensions.doubleTaxation.treaty.hint = For example, ’Munich’
-transferIntoOverseasPensions.doubleTaxation.amount.error.noEntry = Enter the amount of double taxation relief
-transferIntoOverseasPensions.doubleTaxation.amount.error.incorrectFormat = Enter the amount of double taxation relief in the correct format
-transferIntoOverseasPensions.doubleTaxation.amount.error.tooBig = The amount of double taxation relief must be less than £100,000,000,000
+transferIntoOverseasPensions.doubleTaxation.title = Manylion y cytundeb trethiant dwbl
+transferIntoOverseasPensions.doubleTaxation.country = Gwlad
+transferIntoOverseasPensions.doubleTaxation.country.error.noEntry = Nodwch wlad y cytuniad treth
+transferIntoOverseasPensions.doubleTaxation.article = Erthygl (dewisol)
+transferIntoOverseasPensions.doubleTaxation.article.hint = Er enghraifft, ‘AB3211-1’
+transferIntoOverseasPensions.doubleTaxation.treaty = Cytuniad (dewisol)
+transferIntoOverseasPensions.doubleTaxation.treaty.hint = Er enghraifft, ‘Munich’
+transferIntoOverseasPensions.doubleTaxation.amount.error.noEntry = Nodwch swm y rhyddhad trethiant dwbl
+transferIntoOverseasPensions.doubleTaxation.amount.error.incorrectFormat = Nodwch swm y rhyddhad trethiant dwbl yn y fformat cywir
+transferIntoOverseasPensions.doubleTaxation.amount.error.tooBig = Mae’n rhaid i swm y rhyddhad trethiant dwbl fod yn llai na £100,000,000,000
 
 #Transfer Into Overseas Pensions CYA
-transferIntoOverseasPensions.cya.heading = Check transfers into overseas pensions
-transferIntoOverseasPensions.cya.transferIntoOverseasPensions = Transfers into overseas pensions
-transferIntoOverseasPensions.cya.amountCharged = Amount charged
-transferIntoOverseasPensions.cya.noAmountCharged = No charge
-transferIntoOverseasPensions.cya.taxOnAmountCharged = Tax on amount charged
-transferIntoOverseasPensions.cya.schemesPayingTax = Schemes paying tax
-transferIntoOverseasPensions.cya.transferIntoOverseasPensions.hidden = Change transfers into overseas pensions
-transferIntoOverseasPensions.cya.amountCharged.hidden = Change amount charged
-transferIntoOverseasPensions.cya.taxOnAmountCharged.hidden = Change tax on amount charged
-transferIntoOverseasPensions.cya.schemesPayingTax.hidden = Change schemes paying tax
+transferIntoOverseasPensions.cya.heading = Gwirio trosglwyddiadau i bensiynau tramor
+transferIntoOverseasPensions.cya.transferIntoOverseasPensions = Trosglwyddiadau i bensiynau tramor
+transferIntoOverseasPensions.cya.amountCharged = Y swm a godir
+transferIntoOverseasPensions.cya.noAmountCharged = Dim tâl
+transferIntoOverseasPensions.cya.taxOnAmountCharged = Treth ar y swm a godir
+transferIntoOverseasPensions.cya.schemesPayingTax = Cynlluniau sy’n talu treth
+transferIntoOverseasPensions.cya.transferIntoOverseasPensions.hidden = Newid trosglwyddiadau i bensiynau tramor
+transferIntoOverseasPensions.cya.amountCharged.hidden = Newid y swm a godir
+transferIntoOverseasPensions.cya.taxOnAmountCharged.hidden = Newid y dreth ar y swm a godir
+transferIntoOverseasPensions.cya.schemesPayingTax.hidden = Newid y cynlluniau sy’n talu treth
 
 #Transfer Pension Scheme
-transferIntoOverseasPensions.transferPensionScheme.title = Pension scheme paying the transfer charge
+transferIntoOverseasPensions.transferPensionScheme.title = Cynllun pensiwn yn talu’r tâl trosglwyddiadau
 
-common.overseasPensions.paragraph1 = If more than one pension scheme paid a transfer charge, you can add them later.
-common.overseasPensions.pensionScheme.providerName.subheading = Name of pension scheme
-common.overseasPensions.pensionScheme.qopsr.subheading = Qualifying Overseas Pension Scheme reference
-common.overseasPensions.pensionScheme.providerAddress.subheading = Pension provider address
-common.overseasPensions.providerName.error.noEntry = Enter the name of the pension scheme
-common.overseasPensions.providerName.error.overCharLimit = Name of pension scheme must be 105 characters or less
-common.overseasPensions.providerName.error.incorrectFormat = The pension scheme name must only include numbers 0-9, letters a to z, hyphens, spaces, apostrophes, commas, full stops, round brackets and the special characters, &, /, @, £, *.
-common.overseasPensions.providerAddress.error.noEntry = Enter the pension provider's address
-common.overseasPensions.providerAddress.error.overCharLimit = Pension provider's address must be 250 characters or less
-common.overseasPensions.schemeTaxRef.error.noEntry = Enter the Pension Scheme Tax Reference
-common.overseasPensions.pstr.error.incorrectFormat = Enter a Pension Scheme Tax Reference number that is 8 numbers, then R, then a letter a to z or A to Z, like 00123456RA
-common.overseasPensions.qops.error.incorrectFormat = Enter a six digit number
-common.overseasPensions.country.error.noEntry = Enter the country
+common.overseasPensions.paragraph1 = Os gwnaeth mwy nag un cynllun pensiwn dalu tâl trosglwyddiadau, gallwch eu hychwanegu nes ymlaen.
+common.overseasPensions.pensionScheme.providerName.subheading = Enw’r cynllun pensiwn
+common.overseasPensions.pensionScheme.qopsr.subheading = Cyfeirnod Cynllun Pensiwn Tramor Cymwys
+common.overseasPensions.pensionScheme.providerAddress.subheading = Cyfeiriad y darparwr pensiwn
+common.overseasPensions.providerName.error.noEntry = Nodwch enw’r cynllun pensiwn
+common.overseasPensions.providerName.error.overCharLimit = Mae’n rhaid i enw’r cynllun pensiwn fod yn 105 o gymeriadau neu lai
+common.overseasPensions.providerName.error.incorrectFormat = Mae’n rhaid i enw’r cynllun pensiwn gynnwys y rhifau 0-9, llythrennau a-z, cysylltnodau, bylchau, collnodau, comas, atalnodau llawn, cromfachau crwn a’r cymeriadau arbennig &, /, @, £,* yn unig.
+common.overseasPensions.providerAddress.error.noEntry = Nodwch gyfeiriad y darparwr pensiwn
+common.overseasPensions.providerAddress.error.overCharLimit = Mae’n rhaid i gyfeiriad y darparwr pensiwn fod yn 250 o gymeriadau neu lai
+common.overseasPensions.schemeTaxRef.error.noEntry = Nodwch Gyfeirnod Treth y Cynllun Pensiwn
+common.overseasPensions.pstr.error.incorrectFormat = Nodwch Gyfeirnod Treth y Cynllun Pensiwn sy’n 8 rhif, wedyn y llythyren ‘R’, ac wedyn llythyren rhwng a-z (neu A-Z), megis 00123456RA
+common.overseasPensions.qops.error.incorrectFormat = Nodwch rif chwe digid
+common.overseasPensions.country.error.noEntry = Nodwch y wlad
 
 #Transfer Charge Summary List
-transferIntoOverseasPensions.summaryList.title = Pension schemes paying transfer charges - summary
+transferIntoOverseasPensions.summaryList.title = Cynlluniau pensiwn sy’n talu’r taliadau trosglwyddiadau – crynodeb
 
 #Short service refund - Taxable
 shortServiceRefunds.taxableRefundAmount.title = Taxable short service refunds

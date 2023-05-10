@@ -61,10 +61,10 @@ class OverseasPensionTransferTaxChargeSpec extends ViewUnitTest with FakeRequest
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
-    override val expectedTitle = "Did your pension schemes pay tax on the amount that resulted in a transfer charge?"
-    override val expectedNoEntryErrorText: String = "Select yes if your pension schemes paid tax on the amount on which you paid an overseas transfer charge"
-    override val expectedIncorrectFormatErrorText: String = "Enter the tax paid on the amount on which you paid an overseas transfer charge in the correct format"
-    override val expectedNoAmountEntryErrorText: String = "Enter the tax paid on the amount on which you paid an overseas transfer charge"
+    override val expectedTitle = "A wnaeth eich cynlluniau pensiwn dalu treth ar y swm a wnaeth arwain at dâl trosglwyddiadau?"
+    override val expectedNoEntryErrorText: String = "Dewiswch ‘Iawn’ os gwnaeth eich cynlluniau pensiwn dalu treth ar y swm y gwnaethoch chi dalu tâl trosglwyddiadau tramor arno"
+    override val expectedIncorrectFormatErrorText: String = "Nodwch y dreth a dalwyd ar y swm y gwnaethoch dalu tâl trosglwyddiadau tramor arno yn y fformat cywir"
+    override val expectedNoAmountEntryErrorText: String = "Nodwch y dreth a dalwyd ar y swm y gwnaethoch dalu tâl trosglwyddiadau tramor arno"
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
@@ -75,10 +75,10 @@ class OverseasPensionTransferTaxChargeSpec extends ViewUnitTest with FakeRequest
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
-    override val expectedTitle = "Did your client’s pension schemes pay tax on the amount that resulted in a transfer charge?"
-    override val expectedNoEntryErrorText: String = "Select yes if your client’s pension schemes paid tax on the amount that resulted in a transfer charge"
-    override val expectedIncorrectFormatErrorText: String = "Enter the amount of tax paid on the transfer charge amount in the correct format"
-    override val expectedNoAmountEntryErrorText: String = "Enter the amount of tax paid on the transfer charge amount"
+    override val expectedTitle = "A wnaeth cynlluniau pensiwn eich cleient dalu treth ar y swm a wnaeth arwain at dâl trosglwyddiadau?"
+    override val expectedNoEntryErrorText: String = "Dewiswch ‘Iawn’ os gwnaeth cynlluniau pensiwn eich cleient dalu treth ar y swm a wnaeth arwain at dâl trosglwyddiadau"
+    override val expectedIncorrectFormatErrorText: String = "Nodwch swm y dreth a dalwyd ar y tâl trosglwyddiadau yn y fformat cywir"
+    override val expectedNoAmountEntryErrorText: String = "Nodwch swm y dreth a dalwyd ar y tâl trosglwyddiadau"
   }
   
   object ExpectedCommonEN extends CommonExpectedResults {
@@ -92,11 +92,11 @@ class OverseasPensionTransferTaxChargeSpec extends ViewUnitTest with FakeRequest
 
   object ExpectedCommonCY extends CommonExpectedResults {
     override val expectedCaption: Int => String = (taxYear: Int) => s"Trosglwyddiadau i bensiynau tramor ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
-    override val expectedAmountText: String = "Total tax, in pounds"
+    override val expectedAmountText: String = "Cyfanswm y dreth, mewn punnoedd"
     override val yes: String = "Iawn"
     override val no: String = "Na"
     override val continue: String = "Yn eich blaen"
-    override val expectedTooBigErrorText: String = "The amount of tax paid on the transfer charge amount must be less than £100,000,000,000"
+    override val expectedTooBigErrorText: String = "Mae’n rhaid i swm y dreth a dalwyd ar y tâl trosglwyddiadau fod yn llai na £100,000,000,000"
   }
   
   
