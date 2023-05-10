@@ -24,13 +24,12 @@ import models.mongo.PensionsCYAModel
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
+import services.RedirectService.isFinishedCheck
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.paymentsIntoPensions.ReliefAtSourcePensionsView
 
 import javax.inject.{Inject, Singleton}
-import services.RedirectService.isFinishedCheck
-
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -39,7 +38,8 @@ class ReliefAtSourcePensionsController @Inject()(authAction: AuthorisedAction,
                                                  pensionSessionService: PensionSessionService,
                                                  errorHandler: ErrorHandler,
                                                  formsProvider: PaymentsIntoPensionFormProvider)
-                                                (implicit val cc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
+                                                (implicit val cc: MessagesControllerComponents,
+                                                 appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
   extends FrontendController(cc) with I18nSupport {
 
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
@@ -82,7 +82,6 @@ class ReliefAtSourcePensionsController @Inject()(authAction: AuthorisedAction,
           val redirectLocation = if (yesNo) {
             ReliefAtSourcePaymentsAndTaxReliefAmountController.show(taxYear)
           } else {
-            System.out.println("-------------- ANSWER WAS NO")
             PensionsTaxReliefNotClaimedController.show(taxYear)
           }
 
@@ -94,4 +93,5 @@ class ReliefAtSourcePensionsController @Inject()(authAction: AuthorisedAction,
       }
     )
   }
+
 }

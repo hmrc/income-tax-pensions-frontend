@@ -82,12 +82,4 @@ class WorkplaceAmountController @Inject()(authAction: AuthorisedAction,
     )
   }
 
-//  private def redirects(cya: PensionsCYAModel, taxYear: Int): Either[Result, Unit] = {
-//    PaymentsIntoPensionsRedirects.journeyCheck(WorkplacePensionAmountPage, cya, taxYear)
-//    ++
-//      Seq(ConditionalRedirect(
-//        cya.paymentsIntoPension.workplacePensionPaymentsQuestion.contains(false),
-//        controllers.pensions.paymentsIntoPensions.routes.WorkplacePensionController.show(taxYear)
-//      ))
-//  }
 }

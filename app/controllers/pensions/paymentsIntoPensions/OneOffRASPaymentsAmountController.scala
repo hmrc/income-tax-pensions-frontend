@@ -28,7 +28,7 @@ import services.PensionSessionService
 import services.SimpleRedirectService.{PaymentsIntoPensionsRedirects, redirectBasedOnCurrentAnswers}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
-import utils.PaymentsIntoPensionPages.{OneOffRasAmountPage, OneOffRasPage, RasAmountPage}
+import utils.PaymentsIntoPensionPages.OneOffRasAmountPage
 import views.html.pensions.paymentsIntoPensions.OneOffRASPaymentsAmountView
 
 import javax.inject.{Inject, Singleton}
@@ -93,16 +93,5 @@ class OneOffRASPaymentsAmountController @Inject()(authAction: AuthorisedAction,
         }
     }
   }
-
-//  private def redirects(cya: PensionsCYAModel, taxYear: Int): Either[Result, Unit] = {
-//    PaymentsIntoPensionsRedirects.journeyCheck(OneOffRasAmountPage, cya, taxYear)
-//  }
-//  private def redirects(cya: PensionsCYAModel, taxYear: Int): Seq[ConditionalRedirect] = {
-//    PaymentsIntoPensionsRedirects.journeyCheck(OneOffRasAmountPage, cya, taxYear) ++
-//      Seq(ConditionalRedirect(
-//        cya.paymentsIntoPension.oneOffRasPaymentPlusTaxReliefQuestion.contains(false),
-//        ReliefAtSourceOneOffPaymentsController.show(taxYear)
-//      ))
-//  }
 
 }

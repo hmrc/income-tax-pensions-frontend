@@ -42,8 +42,7 @@ class ReliefAtSourcePaymentsAndTaxReliefAmountController @Inject()(authAction: A
                                                                    view: ReliefAtSourcePaymentsAndTaxReliefAmountView,
                                                                    formProvider: PaymentsIntoPensionFormProvider)
                                                                   (implicit val mcc: MessagesControllerComponents,
-                                                                   appConfig: AppConfig,
-                                                                   clock: Clock,
+                                                                   appConfig: AppConfig, clock: Clock,
                                                                    ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
@@ -58,7 +57,6 @@ class ReliefAtSourcePaymentsAndTaxReliefAmountController @Inject()(authAction: A
         }
     }
   }
-
 
   def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
     formProvider.reliefAtSourcePaymentsAndTaxReliefAmountForm.bindFromRequest().fold(
@@ -85,9 +83,5 @@ class ReliefAtSourcePaymentsAndTaxReliefAmountController @Inject()(authAction: A
       }
     )
   }
-
-//  private def redirects(cya: PensionsCYAModel, taxYear: Int): Either[Result, Unit] = {
-//    PaymentsIntoPensionsRedirects.journeyCheck(RasAmountPage, cya, taxYear)
-//  }
 
 }

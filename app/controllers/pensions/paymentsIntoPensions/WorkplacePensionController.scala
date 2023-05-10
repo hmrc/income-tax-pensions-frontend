@@ -28,7 +28,7 @@ import services.PensionSessionService
 import services.SimpleRedirectService.{PaymentsIntoPensionsRedirects, isFinishedCheck, redirectBasedOnCurrentAnswers}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
-import utils.PaymentsIntoPensionPages.{RasAmountPage, WorkplacePensionPage}
+import utils.PaymentsIntoPensionPages.WorkplacePensionPage
 import views.html.pensions.paymentsIntoPensions.WorkplacePensionView
 
 import javax.inject.{Inject, Singleton}
@@ -86,7 +86,4 @@ class WorkplacePensionController @Inject()(authAction: AuthorisedAction,
     )
   }
 
-//  private def redirects(cya: PensionsCYAModel, taxYear: Int): Either[Result, Unit] = {
-//    PaymentsIntoPensionsRedirects.journeyCheck(RasAmountPage, cya, taxYear)
-//  }
 }

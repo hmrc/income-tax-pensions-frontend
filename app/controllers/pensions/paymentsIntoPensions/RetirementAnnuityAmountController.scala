@@ -27,7 +27,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
 import services.SimpleRedirectService.{PaymentsIntoPensionsRedirects, isFinishedCheck, redirectBasedOnCurrentAnswers}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.PaymentsIntoPensionPages.{RasAmountPage, RetirementAnnuityAmountPage}
+import utils.PaymentsIntoPensionPages.RetirementAnnuityAmountPage
 import utils.{Clock, SessionHelper}
 import views.html.pensions.paymentsIntoPensions.RetirementAnnuityAmountView
 
@@ -86,9 +86,5 @@ class RetirementAnnuityAmountController @Inject()(authAction: AuthorisedAction,
       }
     )
   }
-
-//  private def redirects(cya: PensionsCYAModel, taxYear: Int): Either[Result, Unit] = {
-//    PaymentsIntoPensionsRedirects.journeyCheck(RetirementAnnuityAmountPage, cya, taxYear)
-//  }
 
 }

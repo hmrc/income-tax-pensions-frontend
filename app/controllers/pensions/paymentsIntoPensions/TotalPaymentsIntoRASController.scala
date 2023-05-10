@@ -20,14 +20,13 @@ import config.{AppConfig, ErrorHandler}
 import controllers.predicates.AuthorisedAction
 import controllers.predicates.TaxYearAction.taxYearAction
 import models.mongo.PensionsCYAModel
-import models.redirects.ConditionalRedirect
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
 import services.SimpleRedirectService.{PaymentsIntoPensionsRedirects, isFinishedCheck, redirectBasedOnCurrentAnswers}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
-import utils.PaymentsIntoPensionPages.{RasAmountPage, TotalRasPage}
+import utils.PaymentsIntoPensionPages.TotalRasPage
 import views.html.pensions.paymentsIntoPensions.TotalPaymentsIntoRASView
 
 import java.text.NumberFormat
@@ -40,10 +39,11 @@ class TotalPaymentsIntoRASController @Inject()(authAction: AuthorisedAction,
                                                pensionSessionService: PensionSessionService,
                                                errorHandler: ErrorHandler,
                                                view: TotalPaymentsIntoRASView,
-                                               formProvider: PaymentsIntoPensionFormProvider)(implicit val mcc: MessagesControllerComponents,
-                                                                                              appConfig: AppConfig,
-                                                                                              clock: Clock)
-  extends FrontendController(mcc) with I18nSupport {
+                                               formProvider: PaymentsIntoPensionFormProvider
+                                              )(implicit val mcc: MessagesControllerComponents,
+                                                appConfig: AppConfig,
+                                                clock: Clock) extends FrontendController(mcc) with I18nSupport {
+
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) { optData =>
       val checkRedirect = PaymentsIntoPensionsRedirects.journeyCheck(TotalRasPage, _, taxYear)
@@ -113,9 +113,5 @@ class TotalPaymentsIntoRASController @Inject()(authAction: AuthorisedAction,
       formatNoZeros(total.*(0.2))
     )
   }
-
-//  private def redirects(cya: PensionsCYAModel, taxYear: Int): Either[Result, Unit] = {
-//    PaymentsIntoPensionsRedirects.journeyCheck(TotalRasPage, cya, taxYear)
-//  }
 
 }

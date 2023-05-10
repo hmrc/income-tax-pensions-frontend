@@ -27,7 +27,7 @@ import services.PensionSessionService
 import services.SimpleRedirectService.{PaymentsIntoPensionsRedirects, isFinishedCheck, redirectBasedOnCurrentAnswers}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
-import utils.PaymentsIntoPensionPages.{OneOffRasPage, RasAmountPage}
+import utils.PaymentsIntoPensionPages.OneOffRasPage
 import views.html.pensions.paymentsIntoPensions.ReliefAtSourceOneOffPaymentsView
 
 import javax.inject.{Inject, Singleton}
@@ -40,7 +40,8 @@ class ReliefAtSourceOneOffPaymentsController @Inject()(authAction: AuthorisedAct
                                                        errorHandler: ErrorHandler,
                                                        view: ReliefAtSourceOneOffPaymentsView,
                                                        formProvider: PaymentsIntoPensionFormProvider)
-                                                      (implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock)
+                                                      (implicit val mcc: MessagesControllerComponents,
+                                                       appConfig: AppConfig, clock: Clock)
   extends FrontendController(mcc) with I18nSupport {
 
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
@@ -97,10 +98,5 @@ class ReliefAtSourceOneOffPaymentsController @Inject()(authAction: AuthorisedAct
       }
     }
   }
-
-
-//  private def redirects(cya: PensionsCYAModel, taxYear: Int): Either[Result, Unit] = {
-//    PaymentsIntoPensionsRedirects.journeyCheck(OneOffRasPage, cya, taxYear)
-//  }
 
 }

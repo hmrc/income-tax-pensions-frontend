@@ -27,7 +27,7 @@ import services.PensionSessionService
 import services.SimpleRedirectService.{PaymentsIntoPensionsRedirects, isFinishedCheck, redirectBasedOnCurrentAnswers}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
-import utils.PaymentsIntoPensionPages.{RasAmountPage, RetirementAnnuityPage}
+import utils.PaymentsIntoPensionPages.RetirementAnnuityPage
 import views.html.pensions.paymentsIntoPensions.PayIntoRetirementAnnuityContractView
 
 import javax.inject.{Inject, Singleton}
@@ -39,8 +39,10 @@ class RetirementAnnuityController @Inject()(authAction: AuthorisedAction,
                                             pensionSessionService: PensionSessionService,
                                             errorHandler: ErrorHandler,
                                             formProvider: PaymentsIntoPensionFormProvider)
-                                           (implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock)
+                                           (implicit val mcc: MessagesControllerComponents,
+                                            appConfig: AppConfig, clock: Clock)
   extends FrontendController(mcc) with I18nSupport {
+
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) { optData =>
       val checkRedirect = PaymentsIntoPensionsRedirects.journeyCheck(RetirementAnnuityPage, _, taxYear)
@@ -86,7 +88,4 @@ class RetirementAnnuityController @Inject()(authAction: AuthorisedAction,
     )
   }
 
-//  private def redirects(cya: PensionsCYAModel, taxYear: Int): Either[Result, Unit] = {
-//    PaymentsIntoPensionsRedirects.journeyCheck(RasAmountPage, cya, taxYear)
-//  }
 }

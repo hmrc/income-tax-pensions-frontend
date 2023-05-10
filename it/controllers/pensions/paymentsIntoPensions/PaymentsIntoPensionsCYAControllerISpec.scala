@@ -167,7 +167,7 @@ class PaymentsIntoPensionsCYAControllerISpec extends IntegrationTest with ViewHe
       welshToggleCheck(isWelsh = false)
     }
 
-    "redirect to the first unanswered question when the CYA data is incomplete" should {
+    "redirect to the first question when the CYA data is incomplete" should {
 
       lazy val result: WSResponse = {
         dropPensionsDB()
@@ -184,7 +184,7 @@ class PaymentsIntoPensionsCYAControllerISpec extends IntegrationTest with ViewHe
 
       "redirects to the RAS Pensions page" in {
         result.headers("Location").head shouldBe
-          controllers.pensions.paymentsIntoPensions.routes.ReliefAtSourcePaymentsAndTaxReliefAmountController.show(taxYear).url
+          controllers.pensions.paymentsIntoPensions.routes.ReliefAtSourcePensionsController.show(taxYear).url
       }
     }
 

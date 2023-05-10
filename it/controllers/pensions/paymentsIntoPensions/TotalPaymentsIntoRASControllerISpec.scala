@@ -170,7 +170,7 @@ class TotalPaymentsIntoRASControllerISpec extends IntegrationTest with BeforeAnd
       }
     }
 
-    "redirect to the 'RAS Payments And Tax Relief Amount' page if does not have a RAS amount in CYA" when {
+    "redirect to the ReliefAtSourcePensions question page if previous question is unanswered" when {
 
       val userDataModel = aPensionsUserData.copy(
         pensions = aPensionsCYAEmptyModel.copy(
@@ -186,7 +186,7 @@ class TotalPaymentsIntoRASControllerISpec extends IntegrationTest with BeforeAnd
 
       "has a SEE_OTHER status and redirects correctly" in {
         result.status shouldBe SEE_OTHER
-        result.header("location").contains(reliefAtSourcePaymentsAndTaxReliefAmountUrl(taxYearEOY)) shouldBe true
+        result.header("location").contains(reliefAtSourcePensionsUrl(taxYearEOY)) shouldBe true
       }
     }
   }
@@ -280,7 +280,11 @@ class TotalPaymentsIntoRASControllerISpec extends IntegrationTest with BeforeAnd
         }
       }
 
-      "the user does not have a value for 'totalRASPaymentsAndTaxRelief' in session and does not select an answer" should {
+    }
+
+    "redirect to the ReliefAtSourcePensions question page" when {
+
+      "the user does not have a value for the previous question in session and does not select an answer" should {
         lazy val invalidForm: Map[String, String] = Map(YesNoForm.yesNo -> "")
 
         val userDataModel = aPensionsUserData.copy(
@@ -297,7 +301,7 @@ class TotalPaymentsIntoRASControllerISpec extends IntegrationTest with BeforeAnd
 
         "has a SEE_OTHER(303) status" in {
           result.status shouldBe SEE_OTHER
-          result.header("location") shouldBe Some(reliefAtSourcePaymentsAndTaxReliefAmountUrl(taxYearEOY))
+          result.header("location") shouldBe Some(reliefAtSourcePensionsUrl(taxYearEOY))
         }
 
         "keep totalPaymentsIntoRASQuestion as None" in {

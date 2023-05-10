@@ -31,10 +31,10 @@ import play.api.libs.ws.WSResponse
 import utils.PageUrls.PaymentIntoPensions._
 import utils.PageUrls.fullUrl
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
-import views.ReliefAtSourceOneOffPaymentsSpec.Selectors._
 import views.ReliefAtSourceOneOffPaymentsSpec.CommonExpectedEN._
 import views.ReliefAtSourceOneOffPaymentsSpec.ExpectedIndividualEN._
 import views.ReliefAtSourceOneOffPaymentsSpec.Selectors
+import views.ReliefAtSourceOneOffPaymentsSpec.Selectors._
 
 class ReliefAtSourceOneOffPaymentsControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
   private val someRasAmount: BigDecimal = 33.33
@@ -143,7 +143,7 @@ class ReliefAtSourceOneOffPaymentsControllerISpec extends IntegrationTest with V
       welshToggleCheck(isWelsh = false)
     }
 
-    "redirect to the RAS Amount page if the previous totalRASPaymentsAndTaxRelief Amount has not been populated" which {
+    "redirect to the ReliefAtSourcePensions question page if the previous totalRASPaymentsAndTaxRelief Amount has not been populated" which {
 
       lazy val result: WSResponse = {
         dropPensionsDB()
@@ -159,7 +159,7 @@ class ReliefAtSourceOneOffPaymentsControllerISpec extends IntegrationTest with V
 
       "has an SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location").contains(reliefAtSourcePaymentsAndTaxReliefAmountUrl(taxYearEOY)) shouldBe true
+        result.header("location").contains(reliefAtSourcePensionsUrl(taxYearEOY)) shouldBe true
       }
 
     }
@@ -295,7 +295,7 @@ class ReliefAtSourceOneOffPaymentsControllerISpec extends IntegrationTest with V
 
     }
 
-    "redirect to the RAS Amount page if the previous totalRASPaymentsAndTaxRelief amount has not been populated" which {
+    "redirect to the ReliefAtSourcePensions question page if the previous totalRASPaymentsAndTaxRelief amount has not been populated" which {
 
       lazy val result: WSResponse = {
         dropPensionsDB()
@@ -311,7 +311,7 @@ class ReliefAtSourceOneOffPaymentsControllerISpec extends IntegrationTest with V
 
       "has an SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location").contains(reliefAtSourcePaymentsAndTaxReliefAmountUrl(taxYearEOY)) shouldBe true
+        result.header("location").contains(reliefAtSourcePensionsUrl(taxYearEOY)) shouldBe true
       }
 
     }

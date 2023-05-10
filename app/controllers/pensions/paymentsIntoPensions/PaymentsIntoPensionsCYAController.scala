@@ -31,7 +31,7 @@ import services.{ExcludeJourneyService, PensionReliefsService, PensionSessionSer
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
-import utils.PaymentsIntoPensionPages.RasAmountPage
+import utils.PaymentsIntoPensionPages.CheckYourAnswersPage
 import views.html.pensions.paymentsIntoPensions.PaymentsIntoPensionsCYAView
 
 import javax.inject.{Inject, Singleton}
@@ -57,7 +57,7 @@ class PaymentsIntoPensionsCYAController @Inject()(authAction: AuthorisedAction,
 
       (cya, prior) match {
         case (Some(cyaData), optionalPriorData) if !cyaData.pensions.paymentsIntoPension.isFinished =>
-          val checkRedirect = PaymentsIntoPensionsRedirects.journeyCheck(RasAmountPage, _, taxYear)
+          val checkRedirect = PaymentsIntoPensionsRedirects.journeyCheck(CheckYourAnswersPage, _, taxYear)
           redirectBasedOnCurrentAnswers(taxYear, cya)(checkRedirect) { data =>
             Future.successful(Ok(view(taxYear, data.pensions.paymentsIntoPension)))
           }
@@ -132,9 +132,5 @@ class PaymentsIntoPensionsCYAController @Inject()(authAction: AuthorisedAction,
       case Some(prior) => !cyaData.equals(generateCyaFromPrior(prior))
     }
   }
-
-//  private def redirects(cya: PensionsCYAModel, taxYear: Int): Either[Result, Unit] = {
-//    PaymentsIntoPensionsRedirects.journeyCheck(CheckYourAnswersPage, cya, taxYear)
-//  }
 
 }

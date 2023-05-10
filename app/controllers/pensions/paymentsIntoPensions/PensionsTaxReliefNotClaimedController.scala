@@ -27,7 +27,7 @@ import services.PensionSessionService
 import services.RedirectService.{PaymentsIntoPensionsRedirects, isFinishedCheck, redirectBasedOnCurrentAnswers}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
-import utils.PaymentsIntoPensionPages.{RasAmountPage, TaxReliefNotClaimedPage}
+import utils.PaymentsIntoPensionPages.TaxReliefNotClaimedPage
 import views.html.pensions.paymentsIntoPensions.PensionsTaxReliefNotClaimedView
 
 import javax.inject.{Inject, Singleton}
@@ -40,18 +40,15 @@ class PensionsTaxReliefNotClaimedController @Inject()(authAction: AuthorisedActi
                                                       errorHandler: ErrorHandler,
                                                       pensionsTaxReliefNotClaimedView: PensionsTaxReliefNotClaimedView,
                                                       formProvider: PaymentsIntoPensionFormProvider)
-                                                     (implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock)
+                                                     (implicit val mcc: MessagesControllerComponents,
+                                                      appConfig: AppConfig, clock: Clock)
   extends FrontendController(mcc) with I18nSupport {
 
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async {
     implicit request =>
       pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
         optData =>
-          System.out.println("-------- in the show")
-          val checkRedirect = {
-            System.out.println("-------- checking")
-          PaymentsIntoPensionsRedirects.journeyCheck(TaxReliefNotClaimedPage, _, taxYear)
-          }
+          val checkRedirect = PaymentsIntoPensionsRedirects.journeyCheck(TaxReliefNotClaimedPage, _, taxYear)
           redirectBasedOnCurrentAnswers(taxYear, optData)(checkRedirect) {
             data =>
 
@@ -102,9 +99,5 @@ class PensionsTaxReliefNotClaimedController @Inject()(authAction: AuthorisedActi
         }
       )
   }
-
-//  private def redirects(cya: PensionsCYAModel, taxYear: Int): Either[Result, Unit] = {
-//    PaymentsIntoPensionsRedirects.journeyCheck(RasAmountPage, cya, taxYear)
-//  }
 
 }
