@@ -96,13 +96,13 @@ class IncomeFromOverseasPensionsCYAControllerISpec extends
     val yes = "Iawn"
     val no = "Na"
 
-    val paymentsFromOverseasPensions = "Payments from overseas pensions"
+    val paymentsFromOverseasPensions = "Taliadau o bensiynau tramor"
     val overseasPensionsScheme = "Overseas pension schemes"
 
     val saveAndContinue = "Cadw ac yn eich blaen"
     val error = "Sorry, there is a problem with the service"
 
-    val paymentsFromOverseasPensionsHidden = "Change Payments from overseas pensions"
+    val paymentsFromOverseasPensionsHidden = "Newid taliadau o bensiynau tramor"
     val overseasPensionsSchemeHidden = "Change overseas pension schemes"
   }
 
@@ -117,13 +117,13 @@ class IncomeFromOverseasPensionsCYAControllerISpec extends
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
-    val expectedH1 = "Check income from overseas pensions"
-    val expectedTitle = "Check income from overseas pensions"
+    val expectedH1 = "Gwirio incwm o bensiynau tramor"
+    val expectedTitle = "Gwirio incwm o bensiynau tramor"
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
-    val expectedH1 = "Check income from overseas pensions"
-    val expectedTitle = "Check income from overseas pensions"
+    val expectedH1 = "Gwirio incwm o bensiynau tramor"
+    val expectedTitle = "Gwirio incwm o bensiynau tramor"
   }
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(

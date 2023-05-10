@@ -81,8 +81,8 @@ class TransferChargeSummaryControllerISpec extends IntegrationTest with BeforeAn
   object CommonExpectedCY extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Trosglwyddiadau i bensiynau tramor ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
     val expectedButtonText = "Yn eich blaen"
-    val expectedTitle = "Pension schemes paying transfer charges - summary"
-    val expectedHeading = "Pension schemes paying transfer charges - summary"
+    val expectedTitle = "Cynlluniau pensiwn sy’n talu’r taliadau trosglwyddiadau – crynodeb"
+    val expectedHeading = "Cynlluniau pensiwn sy’n talu’r taliadau trosglwyddiadau – crynodeb"
     val change = "Newid"
     val remove = "Tynnu"
     val expectedAddAnotherText = "Ychwanegu cynllun pensiwn arall"

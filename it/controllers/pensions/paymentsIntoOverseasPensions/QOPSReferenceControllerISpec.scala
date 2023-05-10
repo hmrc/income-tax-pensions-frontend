@@ -90,7 +90,7 @@ class QOPSReferenceControllerISpec extends CommonUtils with BeforeAndAfterEach w
     val expectedErrorTitle: String = s"Gwall: $expectedTitle"
     val hintText: String = "Er enghraifft, QOPS123456"
     val expectedButtonText: String = "Yn eich blaen"
-    val expectedIncorrectFormatError: String = "Enter a six digit number"
+    val expectedIncorrectFormatError: String = "Nodwch rif chwe digid"
   }
 
   val inputName: String = "qopsReferenceId"

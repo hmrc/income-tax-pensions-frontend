@@ -80,7 +80,9 @@ class MessagesSpec extends ViewTest with GuiceOneAppPerSuite {
     "overseasPension.pensionPayments.nonUkTaxPaid.incorrectFormat",
     "common.unauthorisedPayments.error.Amount.incorrectFormat",
     "overseasPension.pensionPayments.title",
-    "incomeFromOverseasPensions.summary.pension.payments"
+    "incomeFromOverseasPensions.summary.pension.payments",
+    "overseasPension.reliefDetails.pensionSchemeName",
+    "common.overseasPensions.pensionScheme.providerName.subheading"
   )
 
   lazy val allLanguages: Map[String, Map[String, String]] = app.injector.instanceOf[MessagesApi].messages
