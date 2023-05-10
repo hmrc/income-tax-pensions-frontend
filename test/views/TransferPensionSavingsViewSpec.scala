@@ -67,9 +67,9 @@ class TransferPensionSavingsViewSpec extends ViewUnitTest {
 
   object ExpectedContentsIndividualCY extends ExpectedContents {
     val expectedCaption: Int => String = (taxYear: Int) => s"Trosglwyddiadau i bensiynau tramor ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill ${taxYear}"
-    val expectedTitle = "Did you transfer pension savings into an overseas pension scheme?"
+    val expectedTitle = "A wnaethoch drosglwyddo cynilion pensiwn i gynllun pensiwn tramor?"
     val expectedErrorTitle = s"Gwall: $expectedTitle"
-    val errorMessage = "Select yes if you transferred savings into an overseas pension scheme"
+    val errorMessage = "Dewiswch ‘Iawn’ os gwnaethoch drosglwyddo cynilion i gynllun pensiwn tramor"
     val yesText = "Iawn"
     val noText = "Na"
     val buttonText = "Yn eich blaen"
@@ -77,9 +77,9 @@ class TransferPensionSavingsViewSpec extends ViewUnitTest {
 
   object ExpectedContentsAgentCY extends ExpectedContents {
     val expectedCaption: Int => String = (taxYear: Int) => s"Trosglwyddiadau i bensiynau tramor ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill ${taxYear}"
-    val expectedTitle = "Did your client transfer pension savings into an overseas pension scheme?"
+    val expectedTitle = "A wnaeth eich cleient drosglwyddo cynilion pensiwn i gynllun pensiwn tramor?"
     val expectedErrorTitle = s"Gwall: $expectedTitle"
-    val errorMessage = "Select yes if your client transferred savings into an overseas pension scheme"
+    val errorMessage = "Dewiswch ‘Iawn’ os gwnaeth eich cleient drosglwyddo cynilion i gynllun pensiwn tramor"
     val yesText = "Iawn"
     val noText = "Na"
     val buttonText = "Yn eich blaen"
