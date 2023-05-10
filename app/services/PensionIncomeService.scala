@@ -17,14 +17,14 @@
 package services
 
 import connectors.{IncomeTaxUserDataConnector, PensionsConnector}
-import models.{IncomeTaxUserData, User}
 import models.mongo.{PensionsCYAModel, PensionsUserData, ServiceError}
 import models.pension.charges.IncomeFromOverseasPensionsViewModel
+import models.pension.income.CreateUpdatePensionIncomeModel
+import models.{IncomeTaxUserData, User}
 import org.joda.time.DateTimeZone
 import repositories.PensionsUserDataRepository
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.{Clock, FutureEitherOps}
-import models.pension.income.CreateUpdatePensionIncomeModel
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
