@@ -73,20 +73,20 @@ class DoubleTaxationAgreementViewSpec extends ViewUnitTest with FakeRequestProvi
 
   object CommonExpectedCY extends CommonExpectedResults {
     val expectedCaption:  Int => String = (taxYear: Int) => s"Taliadau i bensiynau tramor ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
-    val expectedTitle: String = "Double taxation agreement details"
-    val expectedCountyLabel: String = "Country"
-    val expectedArticleLabel: String = "Article (optional)"
-    val expectedArticleExample: String = "For example, ‘AB3211-1’"
-    val expectedTreatyLabel: String = "Treaty (optional)"
-    val expectedTreatyExample: String = "For example, ’Munich’"
+    val expectedTitle: String = "Manylion y cytundeb trethiant dwbl"
+    val expectedCountyLabel: String = "Gwlad"
+    val expectedArticleLabel: String = "Erthygl (dewisol)"
+    val expectedArticleExample: String = "Er enghraifft, ‘AB3211-1’"
+    val expectedTreatyLabel: String = "Cytuniad (dewisol)"
+    val expectedTreatyExample: String = "Er enghraifft, ‘Munich’"
     val expectedReliefLabel: String = "Rhyddhad trethiant dwbl"
     val expectedReliefExample: String = "Er enghraifft, £193.54"
     val expectedContinue: String = "Yn eich blaen"
     val errorTitle: String = s"Gwall: $expectedTitle"
-    val noCountryErrorText: String = "Enter the tax treaty country"
-    val noReliefErrorText: String = "Enter the amount of double taxation relief"
-    val reliefWrongFormatErrorText: String = "Enter the amount of double taxation relief in the correct format"
-    val reliefTooBigErrorText: String = "The amount of double taxation relief must be less than £100,000,000,000"
+    val noCountryErrorText: String = "Nodwch wlad y cytuniad treth"
+    val noReliefErrorText: String = "Nodwch swm y rhyddhad trethiant dwbl"
+    val reliefWrongFormatErrorText: String = "Nodwch swm y rhyddhad trethiant dwbl yn y fformat cywir"
+    val reliefTooBigErrorText: String = "Mae’n rhaid i swm y rhyddhad trethiant dwbl fod yn llai na £100,000,000,000"
   }
 
   object Selectors {

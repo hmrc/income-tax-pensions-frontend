@@ -17,18 +17,22 @@
 package controllers.pensions.incomeFromOverseasPensions
 
 import builders.AllPensionsDataBuilder.anAllPensionsData
+import builders.IncomeFromOverseasPensionsViewModelBuilder.anIncomeFromOverseasPensionsViewModel
 import builders.IncomeTaxUserDataBuilder.anIncomeTaxUserData
 import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import builders.PensionsUserDataBuilder
-import builders.PensionsUserDataBuilder.aPensionsUserData
+import builders.PensionsUserDataBuilder.{aPensionsUserData, pensionUserDataWithIncomeOverseasPension}
 import builders.UserBuilder.aUserRequest
 import controllers.pensions.routes.OverseasPensionsSummaryController
 import models.mongo.{PensionsCYAModel, PensionsUserData}
+import models.pension.income.ForeignPension
 import models.pension.reliefs.PaymentsIntoPensionViewModel
+import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterEach
 import play.api.Logging
 import play.api.http.HeaderNames
-import play.api.http.Status.SEE_OTHER
+import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import utils.PageUrls.IncomeFromOverseasPensionsPages.checkIncomeFromOverseasPensionsCyaUrl
 import utils.PageUrls.fullUrl
@@ -83,23 +87,23 @@ class IncomeFromOverseasPensionsCYAControllerISpec extends
     val error = "Sorry, there is a problem with the service"
 
     val paymentsFromOverseasPensionsHidden = "Change Payments from overseas pensions"
-    val overseasPensionsSchemeHidden = "Change Overseas pension schemes"
+    val overseasPensionsSchemeHidden = "Change overseas pension schemes"
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
     def expectedCaption(taxYear: Int): String = s"Payments into pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
 
-    val yes = "Yes"
-    val no = "No"
+    val yes = "Iawn"
+    val no = "Na"
 
-    val paymentsFromOverseasPensions = "Payments from overseas pensions"
+    val paymentsFromOverseasPensions = "Taliadau o bensiynau tramor"
     val overseasPensionsScheme = "Overseas pension schemes"
 
-    val saveAndContinue = "Save and continue"
+    val saveAndContinue = "Cadw ac yn eich blaen"
     val error = "Sorry, there is a problem with the service"
 
-    val paymentsFromOverseasPensionsHidden = "Change Payments from overseas pensions"
-    val overseasPensionsSchemeHidden = "Change Overseas pension schemes"
+    val paymentsFromOverseasPensionsHidden = "Newid taliadau o bensiynau tramor"
+    val overseasPensionsSchemeHidden = "Change overseas pension schemes"
   }
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
@@ -113,13 +117,13 @@ class IncomeFromOverseasPensionsCYAControllerISpec extends
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
-    val expectedH1 = "Check income from overseas pensions"
-    val expectedTitle = "Check income from overseas pensions"
+    val expectedH1 = "Gwirio incwm o bensiynau tramor"
+    val expectedTitle = "Gwirio incwm o bensiynau tramor"
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
-    val expectedH1 = "Check income from overseas pensions"
-    val expectedTitle = "Check income from overseas pensions"
+    val expectedH1 = "Gwirio incwm o bensiynau tramor"
+    val expectedTitle = "Gwirio incwm o bensiynau tramor"
   }
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(
@@ -134,85 +138,85 @@ class IncomeFromOverseasPensionsCYAControllerISpec extends
       isPriorSubmission = isPrior, pensions = pensionsCyaModel)
   }
 
-  def stringToBoolean(yesNo: Boolean): String = if (yesNo) "Yes" else "No"
+ 
 
-//  ".show" should {
-//    userScenarios.foreach { user =>
-//      s"language is ${welshTest(user.isWelsh)} and request is from an ${agentTest(user.isAgent)}" should {
-//        import user.commonExpectedResults._
-//
-//        "there is no CYA data and a CYA model is generated and  " which {
-//
-//          val anUpdatedAllPensionsData = anAllPensionsData.copy(
-//            pensionIncome = Some(anAllPensionsData.pensionIncome.get.copy(
-//              foreignPension = anAllPensionsData.pensionIncome.get.foreignPension.updated(0, ForeignPension (
-//                countryCode = "FRA",
-//                taxableAmount = BigDecimal(100),
-//                amountBeforeTax = Some(BigDecimal(100)),
-//                taxTakenOff = Some(BigDecimal(100)),
-//                specialWithholdingTax = Some(BigDecimal(100)),
-//                foreignTaxCreditRelief = Some(true)
-//              ))
-//            ))
-//          )
-//
-//          implicit lazy val result: WSResponse = {
-//            authoriseAgentOrIndividual(user.isAgent)
-//            dropPensionsDB()
-//            insertCyaData(pensionUserDataWithIncomeOverseasPension(anIncomeFromOverseasPensionsViewModel, isPriorSubmission = false), aUserRequest)
-//            userDataStub(anIncomeTaxUserData.copy(pensions = Some(anUpdatedAllPensionsData)), nino, taxYear)
-//            urlGet(fullUrl(checkIncomeFromOverseasPensionsCyaUrl(taxYear)), welsh = user.isWelsh,
-//              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
-//          }
-//
-//          "has an OK status" in {
-//            result.status shouldBe OK
-//          }
-//
-//          implicit def document: () => Document = () => Jsoup.parse(result.body)
-//
-//          titleCheck(user.specificExpectedResults.get.expectedTitle)
-//          cyaRowCheck(paymentsFromOverseasPensions, stringToBoolean(anUpdatedAllPensionsData.pensionIncome.map(_.foreignPension).isDefined),
-//            ChangeLinksIncomeFromOverseasPensions.paymentsFromOverseasPensions, paymentsFromOverseasPensionsHidden, 1)
-//          cyaRowCheck(overseasPensionsScheme, s"FRANCE",
-//            ChangeLinksIncomeFromOverseasPensions.countrySummaryListController, overseasPensionsSchemeHidden, 2)
-//          buttonCheck(saveAndContinue)
-//          welshToggleCheck(user.isWelsh)
-//        }
-//
-//        "there is no CYA data and a CYA model is generated and there is no foreign pensions " which {
-//
-//          val anUpdatedAllPensionsData = anAllPensionsData.copy(
-//            pensionIncome = Some(anAllPensionsData.pensionIncome.get.copy(
-//              foreignPension = Seq[ForeignPension]()
-//            ))
-//          )
-//          implicit lazy val result: WSResponse = {
-//            authoriseAgentOrIndividual(user.isAgent)
-//            dropPensionsDB()
-//            insertCyaData(pensionUserDataWithIncomeOverseasPension(anIncomeFromOverseasPensionsViewModel, isPriorSubmission = false), aUserRequest)
-//            userDataStub(anIncomeTaxUserData.copy(pensions = Some(anUpdatedAllPensionsData)), nino, taxYear)
-//            urlGet(fullUrl(checkIncomeFromOverseasPensionsCyaUrl(taxYear)), welsh = user.isWelsh,
-//              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
-//          }
-//
-//          "has an OK status" in {
-//            result.status shouldBe OK
-//          }
-//
-//          implicit def document: () => Document = () => Jsoup.parse(result.body)
-//
-//          titleCheck(user.specificExpectedResults.get.expectedTitle)
-//          cyaRowCheck(paymentsFromOverseasPensions, "No",
-//            ChangeLinksIncomeFromOverseasPensions.paymentsFromOverseasPensions, paymentsFromOverseasPensionsHidden, 1)
-//
-//          buttonCheck(saveAndContinue)
-//          welshToggleCheck(user.isWelsh)
-//        }
-//      }
-//
-//    }
-//  }
+  ".show" should {
+    userScenarios.foreach { user =>
+      s"language is ${welshTest(user.isWelsh)} and request is from an ${agentTest(user.isAgent)}" should {
+        import user.commonExpectedResults._
+
+        def stringToBoolean(yesNo: Boolean): String = if (yesNo) user.commonExpectedResults.yes else user.commonExpectedResults.no
+
+        "there is no CYA data and a CYA model is generated and  " which {
+
+          val anUpdatedAllPensionsData = anAllPensionsData.copy(
+            pensionIncome = Some(anAllPensionsData.pensionIncome.get.copy(
+              foreignPension = anAllPensionsData.pensionIncome.get.foreignPension.map(_.updated(0, ForeignPension (
+                countryCode = "FRA",
+                taxableAmount = BigDecimal(100),
+                amountBeforeTax = Some(BigDecimal(100)),
+                taxTakenOff = Some(BigDecimal(100)),
+                specialWithholdingTax = Some(BigDecimal(100)),
+                foreignTaxCreditRelief = Some(true)
+              )))
+            ))
+          )
+
+          implicit lazy val result: WSResponse = {
+            authoriseAgentOrIndividual(user.isAgent)
+            dropPensionsDB()
+            insertCyaData(pensionUserDataWithIncomeOverseasPension(anIncomeFromOverseasPensionsViewModel, isPriorSubmission = false), aUserRequest)
+            userDataStub(anIncomeTaxUserData.copy(pensions = Some(anUpdatedAllPensionsData)), nino, taxYear)
+            urlGet(fullUrl(checkIncomeFromOverseasPensionsCyaUrl(taxYear)), welsh = user.isWelsh,
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
+          }
+
+          "has an OK status" in {
+            result.status shouldBe OK
+          }
+
+          implicit def document: () => Document = () => Jsoup.parse(result.body)
+
+          titleCheck(user.specificExpectedResults.get.expectedTitle, user.isWelsh)
+          cyaRowCheck(paymentsFromOverseasPensions, stringToBoolean(anUpdatedAllPensionsData.pensionIncome.map(_.foreignPension).isDefined),
+            ChangeLinksIncomeFromOverseasPensions.paymentsFromOverseasPensions, paymentsFromOverseasPensionsHidden, 1)
+          cyaRowCheck(overseasPensionsScheme, s"FRANCE",
+            ChangeLinksIncomeFromOverseasPensions.countrySummaryListController, overseasPensionsSchemeHidden, 2)
+          buttonCheck(saveAndContinue)
+          welshToggleCheck(user.isWelsh)
+        }
+
+        "there is no CYA data and a CYA model is generated and there is no foreign pensions " which {
+
+          val anUpdatedAllPensionsData = anAllPensionsData.copy(
+            pensionIncome = Some(anAllPensionsData.pensionIncome.get.copy(foreignPension =Some(Seq[ForeignPension]())))
+          )
+          implicit lazy val result: WSResponse = {
+            authoriseAgentOrIndividual(user.isAgent)
+            dropPensionsDB()
+            insertCyaData(pensionUserDataWithIncomeOverseasPension(anIncomeFromOverseasPensionsViewModel, isPriorSubmission = false), aUserRequest)
+            userDataStub(anIncomeTaxUserData.copy(pensions = Some(anUpdatedAllPensionsData)), nino, taxYear)
+            urlGet(fullUrl(checkIncomeFromOverseasPensionsCyaUrl(taxYear)), welsh = user.isWelsh,
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
+          }
+
+          "has an OK status" in {
+            result.status shouldBe OK
+          }
+
+          implicit def document: () => Document = () => Jsoup.parse(result.body)
+
+          titleCheck(user.specificExpectedResults.get.expectedTitle, user.isWelsh)
+          cyaRowCheck(paymentsFromOverseasPensions, user.commonExpectedResults.no,
+            ChangeLinksIncomeFromOverseasPensions.paymentsFromOverseasPensions, paymentsFromOverseasPensionsHidden, 1)
+
+          buttonCheck(saveAndContinue)
+          welshToggleCheck(user.isWelsh)
+        }
+      }
+
+    }
+  }
 
   ".submit" should {
       "redirect to the overview page" when {
@@ -224,7 +228,7 @@ class IncomeFromOverseasPensionsCYAControllerISpec extends
 
           lazy val result: WSResponse = {
             dropPensionsDB()
-            authoriseAgentOrIndividual(isAgent = false)
+            authoriseAgentOrIndividual()
             userDataStub(userData, nino, taxYear)
             pensionIncomeSessionStub("", nino, taxYear)
             urlPost(fullUrl(checkIncomeFromOverseasPensionsCyaUrl(taxYear)), form, follow = false,
@@ -252,7 +256,7 @@ class IncomeFromOverseasPensionsCYAControllerISpec extends
             userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYear)
             pensionIncomeSessionStub("", nino, taxYear)
             insertCyaData(aPensionsUserData.copy(pensions = aPensionsCYAModel.copy(paymentsIntoPension = cyaDataIncomplete), taxYear = taxYear), aUserRequest)
-            authoriseAgentOrIndividual(isAgent = false)
+            authoriseAgentOrIndividual()
             urlPost(fullUrl(checkIncomeFromOverseasPensionsCyaUrl(taxYear)), form, follow = false,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
           }

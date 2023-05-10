@@ -17,13 +17,13 @@
 package controllers.pensions.lifetimeAllowances
 
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.annualAllowances.routes._
-import controllers.pensions.lifetimeAllowances.routes._
+import controllers.pensions.annualAllowances.{routes => annualRoutes}
+import controllers.pensions.lifetimeAllowances.{routes => lifetimeRoutes}
 import controllers.predicates.AuthorisedAction
 import forms.YesNoForm
 import models.User
 import models.mongo.PensionsCYAModel
-import models.pension.charges.{LifetimeAllowance, PensionLifetimeAllowancesViewModel}
+import models.pension.charges.PensionLifetimeAllowancesViewModel
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -56,7 +56,7 @@ class AboveAnnualLifetimeAllowanceController @Inject()(implicit val cc: Messages
           case None => Future.successful(Ok(view(yesNoForm(request.user), taxYear)))
         }
       case None =>
-        Future.successful(Redirect(AnnualLifetimeAllowanceCYAController.show(taxYear)))
+        Future.successful(Redirect(lifetimeRoutes.AnnualLifetimeAllowanceCYAController.show(taxYear)))
     }
   }
 
@@ -75,19 +75,19 @@ class AboveAnnualLifetimeAllowanceController @Inject()(implicit val cc: Messages
                   pensionAsLumpSumQuestion = if (yesNo) viewModel.pensionAsLumpSumQuestion else None,
                   pensionAsLumpSum = if (yesNo) viewModel.pensionAsLumpSum else None,
                   pensionPaidAnotherWayQuestion = if (yesNo) viewModel.pensionPaidAnotherWayQuestion else None,
-                  pensionPaidAnotherWay = if (yesNo) LifetimeAllowance(viewModel.pensionPaidAnotherWay.amount, viewModel.pensionPaidAnotherWay.taxPaid) else LifetimeAllowance())
+                  pensionPaidAnotherWay = if (yesNo) viewModel.pensionPaidAnotherWay else None)
               )
             }
             pensionSessionService.createOrUpdateSessionData(request.user,
               updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
               if (yesNo) {
-                Redirect(ReducedAnnualAllowanceController.show(taxYear))
+                Redirect(annualRoutes.ReducedAnnualAllowanceController.show(taxYear))
               } else {
-                Redirect(AnnualLifetimeAllowanceCYAController.show(taxYear))
+                Redirect(lifetimeRoutes.AnnualLifetimeAllowanceCYAController.show(taxYear))
               }
             }
           case _ =>
-            Future.successful(Redirect(AnnualLifetimeAllowanceCYAController.show(taxYear)))
+            Future.successful(Redirect(lifetimeRoutes.AnnualLifetimeAllowanceCYAController.show(taxYear)))
         }
       }
     )

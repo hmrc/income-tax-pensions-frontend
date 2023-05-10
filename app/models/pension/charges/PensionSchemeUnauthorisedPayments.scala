@@ -19,7 +19,7 @@ package models.pension.charges
 import play.api.libs.json.{Json, OFormat}
 import utils.EncryptedValue
 
-case class PensionSchemeUnauthorisedPayments(pensionSchemeTaxReference: Seq[String],
+case class PensionSchemeUnauthorisedPayments(pensionSchemeTaxReference: Option[Seq[String]],
                                              surcharge: Option[Charge],
                                              noSurcharge: Option[Charge])
 
@@ -27,7 +27,7 @@ object PensionSchemeUnauthorisedPayments {
   implicit val format: OFormat[PensionSchemeUnauthorisedPayments] = Json.format[PensionSchemeUnauthorisedPayments]
 }
 
-case class EncryptedPensionSchemeUnauthorisedPayments(pensionSchemeTaxReference: Seq[EncryptedValue],
+case class EncryptedPensionSchemeUnauthorisedPayments(pensionSchemeTaxReference: Option[Seq[EncryptedValue]],
                                                       surcharge: Option[EncryptedCharge],
                                                       noSurcharge: Option[EncryptedCharge])
 

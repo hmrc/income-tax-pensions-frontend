@@ -27,7 +27,7 @@ import models.mongo.{PensionsCYAModel, PensionsUserData}
 import play.api.http.HeaderNames
 import play.api.libs.ws.WSResponse
 import utils.PageUrls.PaymentIntoOverseasPensions._
-import utils.PageUrls.{fullUrl, overseasPensionsSummaryUrl}
+import utils.PageUrls.{fullUrl, overseasPensionsSummaryUrl, pensionSummaryUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 
@@ -60,7 +60,7 @@ class DoubleTaxationAgreementControllerISpec extends
       }
 
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(overseasPensionsSummaryUrl(taxYearEOY))
+        result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
     }
 
     "show page when there is data " in {

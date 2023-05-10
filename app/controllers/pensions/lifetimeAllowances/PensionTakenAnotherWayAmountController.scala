@@ -50,15 +50,18 @@ class PensionTakenAnotherWayAmountController @Inject()(implicit val mcc: Message
     pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
       case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
       case Right(Some(data)) =>
-        val totalTaxOpt = data.pensions.pensionLifetimeAllowances.pensionPaidAnotherWay.amount
-        val taxPaidOpt = data.pensions.pensionLifetimeAllowances.pensionPaidAnotherWay.taxPaid
+        val totalTaxOpt = data.pensions.pensionLifetimeAllowances.pensionPaidAnotherWay.flatMap(_.amount)
+        val taxPaidOpt = data.pensions.pensionLifetimeAllowances.pensionPaidAnotherWay.flatMap(_.taxPaid)
         (totalTaxOpt, taxPaidOpt) match {
           case (Some(totalTax), Some(taxPaid)) =>
-            Future.successful(Ok(pensionTakenAnotherWayAmountView(formsProvider.pensionTakenAnotherWayAmountForm(request.user.isAgent).fill((Some(totalTax), Some(taxPaid))), taxYear)))
+            Future.successful(Ok(pensionTakenAnotherWayAmountView(formsProvider.pensionTakenAnotherWayAmountForm(request.user.isAgent)
+              .fill((Some(totalTax), Some(taxPaid))), taxYear)))
           case (Some(totalTax), None) =>
-            Future.successful(Ok(pensionTakenAnotherWayAmountView(formsProvider.pensionTakenAnotherWayAmountForm(request.user.isAgent).fill((Some(totalTax), None)), taxYear)))
+            Future.successful(Ok(pensionTakenAnotherWayAmountView(formsProvider.pensionTakenAnotherWayAmountForm(request.user.isAgent)
+              .fill((Some(totalTax), None)), taxYear)))
           case (None, Some(taxPaid)) =>
-            Future.successful(Ok(pensionTakenAnotherWayAmountView(formsProvider.pensionTakenAnotherWayAmountForm(request.user.isAgent).fill((None, Some(taxPaid))), taxYear)))
+            Future.successful(Ok(pensionTakenAnotherWayAmountView(formsProvider.pensionTakenAnotherWayAmountForm(request.user.isAgent)
+              .fill((None, Some(taxPaid))), taxYear)))
           case (_, _) =>
             Future.successful(Ok(pensionTakenAnotherWayAmountView(formsProvider.pensionTakenAnotherWayAmountForm(request.user.isAgent), taxYear)))
         }
@@ -82,10 +85,9 @@ class PensionTakenAnotherWayAmountController @Inject()(implicit val mcc: Message
               val pensionsCYAModel: PensionsCYAModel = optData.pensions
               val viewModel: PensionLifetimeAllowancesViewModel = pensionsCYAModel.pensionLifetimeAllowances
               val updatedCyaModel: PensionsCYAModel = {
-                pensionsCYAModel.copy(
-                  pensionLifetimeAllowances = viewModel.copy(
-                    pensionPaidAnotherWay = LifetimeAllowance(amounts._1, amounts._2))
-                )
+                pensionsCYAModel.copy( pensionLifetimeAllowances = viewModel.copy(
+                    pensionPaidAnotherWay = if (amounts._1.isEmpty && amounts._2.isEmpty) None else Some(LifetimeAllowance(amounts._1, amounts._2))
+                ))
               }
               pensionSessionService.createOrUpdateSessionData(request.user,
                 updatedCyaModel, taxYear, optData.isPriorSubmission)(errorHandler.internalServerError()) {

@@ -37,7 +37,7 @@ case class UnauthorisedPaymentsViewModel(surchargeQuestion: Option[Boolean] = No
 
 
   def toUnauth: PensionSchemeUnauthorisedPayments = PensionSchemeUnauthorisedPayments(
-    pensionSchemeTaxReference = scala.collection.immutable.Seq(pensionSchemeTaxReference.getOrElse(scala.collection.immutable.Nil)).flatten,
+    pensionSchemeTaxReference = pensionSchemeTaxReference,
     surcharge =
       if (surchargeQuestion.getOrElse(false)) Some(Charge(this.surchargeAmount.getOrElse(0.00), this.surchargeTaxAmount.getOrElse(0.00))) else None,
     noSurcharge =
@@ -49,9 +49,9 @@ case class UnauthorisedPaymentsViewModel(surchargeQuestion: Option[Boolean] = No
       pensionSchemeOverseasTransfers = None,
       pensionContributions = None,
       overseasPensionContributions = None,
-      pensionSchemeUnauthorisedPayments = if (this.isEmpty()) None else Some(
+      pensionSchemeUnauthorisedPayments = if (this.isEmpty) None else Some(
         PensionSchemeUnauthorisedPayments(
-          pensionSchemeTaxReference = scala.collection.immutable.Seq(pensionSchemeTaxReference.getOrElse(scala.collection.immutable.Nil)).flatten,
+          pensionSchemeTaxReference = pensionSchemeTaxReference,
           surcharge =
             if (surchargeQuestion.getOrElse(false)) Some(Charge(this.surchargeAmount.getOrElse(0.00), this.surchargeTaxAmount.getOrElse(0.00))) else None,
           noSurcharge =
@@ -61,7 +61,7 @@ case class UnauthorisedPaymentsViewModel(surchargeQuestion: Option[Boolean] = No
     )
   }
 
-  def isEmpty(): Boolean = this.productIterator.forall(_ == None)
+  def isEmpty: Boolean = this.productIterator.forall(_ == None)
 
   def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedUnauthorisedPaymentsViewModel =
     EncryptedUnauthorisedPaymentsViewModel(

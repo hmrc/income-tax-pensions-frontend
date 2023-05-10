@@ -41,6 +41,7 @@ case class StateBenefitViewModel(
                                   amount: Option[BigDecimal] = None,
                                   taxPaidQuestion: Option[Boolean] = None,
                                   taxPaid: Option[BigDecimal] = None) {
+  def isEmpty: Boolean = this.productIterator.forall(_ == None)
 
   def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedStateBenefitViewModel =
     EncryptedStateBenefitViewModel(

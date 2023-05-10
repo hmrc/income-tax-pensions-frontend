@@ -64,7 +64,7 @@ class PensionIncomeService @Inject()(pensionUserDataRepository: PensionsUserData
         updatedFp = viewModel.map(_.toForeignPension)
         updatedIncomeData = CreateUpdatePensionIncomeModel(
           foreignPension = updatedFp,
-          overseasPensionContribution = priorData.pensions.flatMap(_.pensionIncome.map(y => y.overseasPensionContribution))
+          overseasPensionContribution = priorData.pensions.flatMap(_.pensionIncome.flatMap(_.overseasPensionContribution))
         )
         _ <- FutureEitherOps[ServiceError, Unit](pensionsConnector.savePensionIncomeSessionData(user.nino, taxYear, updatedIncomeData)(hcWithExtras, ec))
         updatedCYA = getPensionsUserData(sessionData, user)

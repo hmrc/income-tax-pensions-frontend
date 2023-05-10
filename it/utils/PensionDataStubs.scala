@@ -47,7 +47,7 @@ object PensionDataStubs {
     pensionCharges = Some(PensionCharges(
       submittedOn = "2020-07-27T17:00:19Z",
       pensionSavingsTaxCharges = Some(PensionSavingsTaxCharges(
-        pensionSchemeTaxReference = Seq("00123456RA", "00123456RB"),
+        pensionSchemeTaxReference = Some(Seq("00123456RA", "00123456RB")),
         lumpSumBenefitTakenInExcessOfLifetimeAllowance = Some(LifetimeAllowance(
           amount = Some(800.02),
           taxPaid = Some(200.02)
@@ -72,7 +72,7 @@ object PensionDataStubs {
         transferChargeTaxPaid = 33.88
       )),
       pensionSchemeUnauthorisedPayments = Some(PensionSchemeUnauthorisedPayments(
-        pensionSchemeTaxReference = Seq("00123456RA", "00123456RB"),
+        pensionSchemeTaxReference = Some(Seq("00123456RA", "00123456RB")),
         surcharge = Some(Charge(
           amount = 124.44,
           foreignTaxPaid = 123.33
@@ -109,8 +109,8 @@ object PensionDataStubs {
 object PensionUserDataStub extends IntegrationTest {
   implicit val testClock: Clock = UnitTestClock
 
-  val paymentsIntoPensionViewModel: PaymentsIntoPensionViewModel = PaymentsIntoPensionViewModel(None, Some(true),
-    Some(222.3), Some(true), Some(22.44), Some(true), Some(true), Some(true), Some(44.00), Some(true), Some(55.55))
+  val paymentsIntoPensionViewModel: PaymentsIntoPensionViewModel = PaymentsIntoPensionViewModel(
+    Some(true), Some(222.3), Some(true), Some(22.44), Some(true), Some(true), Some(true), Some(44.00), Some(true), Some(55.55))
 
   val pensionsAnnualAllowancesViewModel: PensionAnnualAllowancesViewModel = PensionAnnualAllowancesViewModel(
     reducedAnnualAllowanceQuestion = Some(true),

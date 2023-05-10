@@ -43,11 +43,11 @@ formWithCsrf: FormWithCSRF)
 
 @layout(pageTitle = headingForUse, taxYear = Some(taxYear)) {
 
-@heading(headingForUse, Some(messages("common.incomeFromPensions.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-5")
+  @heading(headingForUse, Some(messages("common.incomeFromPensions.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-5")
 
-@summaryList(PensionSchemeSummaryHelper.summaryListRows(pensionIncome, taxYear, index)(messages))
+  @summaryList(PensionSchemeSummaryHelper.summaryListRows(pensionIncome, taxYear, index)(messages))
 
-@formWithCsrf(IncomeFromPensionsSummaryController.show(taxYear)) {
-@button("common.continue")
-}
+  @formWithCsrf(UkPensionIncomeSummaryController.show(taxYear)) {
+    @button("common.continue")
+  }
 }

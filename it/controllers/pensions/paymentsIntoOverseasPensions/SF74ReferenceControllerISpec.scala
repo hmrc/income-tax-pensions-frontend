@@ -26,8 +26,7 @@ import models.mongo.{PensionsCYAModel, PensionsUserData}
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.overseasPensionsSummaryUrl
-import utils.PageUrls.fullUrl
+import utils.PageUrls.{fullUrl, overseasPensionsSummaryUrl, pensionSummaryUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 import play.api.http.Status.{OK, SEE_OTHER}
 import utils.PageUrls.PaymentIntoOverseasPensions.{pensionCustomerReferenceNumberUrl, pensionReliefSchemeDetailsUrl, pensionReliefSchemeSummaryUrl, sf74ReferenceUrl}
@@ -82,7 +81,7 @@ class SF74ReferenceControllerISpec extends IntegrationTest
       }
       "have a SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(overseasPensionsSummaryUrl(taxYearEOY))
+        result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
       }
     }
 

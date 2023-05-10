@@ -54,5 +54,7 @@ object StateBenefitViewModelBuilder {
     taxPaidQuestion = Some(true),
     taxPaid = Some(3.99)
   )
+  
+  val anEmptyStateBenefitViewModel: StateBenefitViewModel = StateBenefitViewModel()
 
 }

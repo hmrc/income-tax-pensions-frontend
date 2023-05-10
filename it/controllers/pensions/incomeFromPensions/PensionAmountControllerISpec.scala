@@ -162,7 +162,7 @@ class PensionAmountControllerISpec extends IntegrationTest with ViewHelpers with
             authoriseAgentOrIndividual(user.isAgent)
             insertCyaData(pensionsUserDataWithIncomeFromPensions(
               anIncomeFromPensionsViewModel.copy(uKPensionIncomesQuestion = Some(true), uKPensionIncomes = Seq(pensionIncomeModel))), aUserRequest)
-            urlGet(fullUrl(pensionAmountUrl(taxYearEOY, index)), user.isWelsh, follow = false,
+            urlGet(fullUrl(pensionAmountUrl(taxYearEOY, Some(index))), user.isWelsh, follow = false,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
 
@@ -183,7 +183,7 @@ class PensionAmountControllerISpec extends IntegrationTest with ViewHelpers with
           inputFieldValueCheck(amount1InputName, amount1inputSelector, "")
           inputFieldValueCheck(amount2InputName, amount2inputSelector, "")
           buttonCheck(buttonText, continueButtonSelector)
-          formPostLinkCheck(pensionAmountUrl(taxYearEOY, index), formSelector)
+          formPostLinkCheck(pensionAmountUrl(taxYearEOY, Some(index)), formSelector)
           welshToggleCheck(user.isWelsh)
         }
 
@@ -195,7 +195,7 @@ class PensionAmountControllerISpec extends IntegrationTest with ViewHelpers with
             authoriseAgentOrIndividual(user.isAgent)
             insertCyaData(pensionsUserDataWithIncomeFromPensions(
               anIncomeFromPensionsViewModel.copy(uKPensionIncomesQuestion = Some(true), uKPensionIncomes = Seq(pensionIncomeModel))), aUserRequest)
-            urlGet(fullUrl(pensionAmountUrl(taxYearEOY, index)), user.isWelsh, follow = false,
+            urlGet(fullUrl(pensionAmountUrl(taxYearEOY, Some(index))), user.isWelsh, follow = false,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
 
@@ -216,7 +216,7 @@ class PensionAmountControllerISpec extends IntegrationTest with ViewHelpers with
           inputFieldValueCheck(amount1InputName, amount1inputSelector, newAmount.toString)
           inputFieldValueCheck(amount2InputName, amount2inputSelector, "")
           buttonCheck(buttonText, continueButtonSelector)
-          formPostLinkCheck(pensionAmountUrl(taxYearEOY, index), formSelector)
+          formPostLinkCheck(pensionAmountUrl(taxYearEOY, Some(index)), formSelector)
           welshToggleCheck(user.isWelsh)
         }
 
@@ -229,7 +229,7 @@ class PensionAmountControllerISpec extends IntegrationTest with ViewHelpers with
             authoriseAgentOrIndividual(user.isAgent)
             insertCyaData(pensionsUserDataWithIncomeFromPensions(
               anIncomeFromPensionsViewModel.copy(uKPensionIncomesQuestion = Some(true), uKPensionIncomes = Seq(pensionIncomeModel))), aUserRequest)
-            urlGet(fullUrl(pensionAmountUrl(taxYearEOY, index)), user.isWelsh, follow = false,
+            urlGet(fullUrl(pensionAmountUrl(taxYearEOY, Some(index))), user.isWelsh, follow = false,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
 
@@ -250,7 +250,7 @@ class PensionAmountControllerISpec extends IntegrationTest with ViewHelpers with
           inputFieldValueCheck(amount1InputName, amount1inputSelector, "")
           inputFieldValueCheck(amount2InputName, amount2inputSelector, newAmount.toString)
           buttonCheck(buttonText, continueButtonSelector)
-          formPostLinkCheck(pensionAmountUrl(taxYearEOY, index), formSelector)
+          formPostLinkCheck(pensionAmountUrl(taxYearEOY, Some(index)), formSelector)
           welshToggleCheck(user.isWelsh)
         }
 
@@ -263,7 +263,7 @@ class PensionAmountControllerISpec extends IntegrationTest with ViewHelpers with
             authoriseAgentOrIndividual(user.isAgent)
             insertCyaData(pensionsUserDataWithIncomeFromPensions(
               anIncomeFromPensionsViewModel.copy(uKPensionIncomesQuestion = Some(true), uKPensionIncomes = Seq(pensionIncomeModel))), aUserRequest)
-            urlGet(fullUrl(pensionAmountUrl(taxYearEOY, index)), user.isWelsh, follow = false,
+            urlGet(fullUrl(pensionAmountUrl(taxYearEOY, Some(index))), user.isWelsh, follow = false,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
 
@@ -284,7 +284,7 @@ class PensionAmountControllerISpec extends IntegrationTest with ViewHelpers with
           inputFieldValueCheck(amount1InputName, amount1inputSelector, newAmount.toString)
           inputFieldValueCheck(amount2InputName, amount2inputSelector, newAmount2.toString)
           buttonCheck(buttonText, continueButtonSelector)
-          formPostLinkCheck(pensionAmountUrl(taxYearEOY, index), formSelector)
+          formPostLinkCheck(pensionAmountUrl(taxYearEOY, Some(index)), formSelector)
           welshToggleCheck(user.isWelsh)
         }
       }
@@ -296,7 +296,7 @@ class PensionAmountControllerISpec extends IntegrationTest with ViewHelpers with
         authoriseAgentOrIndividual(isAgent = false)
         val viewModel = anIncomeFromPensionEmptyViewModel.copy(uKPensionIncomesQuestion = Some(true), uKPensionIncomes = Seq(anUkPensionIncomeViewModelOne))
         insertCyaData(pensionsUserDataWithIncomeFromPensions(viewModel), aUserRequest)
-        urlGet(fullUrl(pensionAmountUrl(taxYearEOY, 2)), follow = false,
+        urlGet(fullUrl(pensionAmountUrl(taxYearEOY, Some(2))), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
@@ -310,7 +310,7 @@ class PensionAmountControllerISpec extends IntegrationTest with ViewHelpers with
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(isAgent = false)
-        urlGet(fullUrl(pensionAmountUrl(taxYearEOY, index)), follow = false,
+        urlGet(fullUrl(pensionAmountUrl(taxYearEOY, Some(index))), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
       "has an SEE_OTHER status" in {
@@ -324,7 +324,7 @@ class PensionAmountControllerISpec extends IntegrationTest with ViewHelpers with
         dropPensionsDB()
         authoriseAgentOrIndividual(isAgent = false)
         insertCyaData(aPensionsUserData, aUserRequest)
-        urlGet(fullUrl(pensionAmountUrl(taxYearEOY)), follow = false,
+        urlGet(fullUrl(pensionAmountUrl(taxYearEOY, None)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
@@ -352,7 +352,7 @@ class PensionAmountControllerISpec extends IntegrationTest with ViewHelpers with
             dropPensionsDB()
             authoriseAgentOrIndividual(user.isAgent)
             insertCyaData(aPensionsUserData, aUserRequest)
-            urlPost(fullUrl(pensionAmountUrl(taxYearEOY, index)), body = emptyForm, welsh = user.isWelsh,
+            urlPost(fullUrl(pensionAmountUrl(taxYearEOY, Some(index))), body = emptyForm, welsh = user.isWelsh,
               follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
           "has the correct status" in {
@@ -373,7 +373,7 @@ class PensionAmountControllerISpec extends IntegrationTest with ViewHelpers with
           inputFieldValueCheck(amount1InputName, amount1inputSelector, amountEmpty)
           inputFieldValueCheck(amount2InputName, amount2inputSelector, amountEmpty)
           buttonCheck(buttonText, continueButtonSelector)
-          formPostLinkCheck(pensionAmountUrl(taxYearEOY, index), formSelector)
+          formPostLinkCheck(pensionAmountUrl(taxYearEOY, Some(index)), formSelector)
           multipleSummaryErrorCheck(List(
             (totalTaxErrorNoEntry, expectedAmount1ErrorHref),
             (taxPaidErrorNoEntry, expectedAmount2ErrorHref)))
@@ -389,7 +389,7 @@ class PensionAmountControllerISpec extends IntegrationTest with ViewHelpers with
             dropPensionsDB()
             authoriseAgentOrIndividual(user.isAgent)
             insertCyaData(aPensionsUserData, aUserRequest)
-            urlPost(fullUrl(pensionAmountUrl(taxYearEOY, index)), body = invalidFormatForm, welsh = user.isWelsh,
+            urlPost(fullUrl(pensionAmountUrl(taxYearEOY, Some(index))), body = invalidFormatForm, welsh = user.isWelsh,
               follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
 
@@ -411,7 +411,7 @@ class PensionAmountControllerISpec extends IntegrationTest with ViewHelpers with
           inputFieldValueCheck(amount1InputName, amount1inputSelector, amountInvalidFormat)
           inputFieldValueCheck(amount2InputName, amount2inputSelector, amountInvalidFormat)
           buttonCheck(buttonText, continueButtonSelector)
-          formPostLinkCheck(pensionAmountUrl(taxYearEOY, index), formSelector)
+          formPostLinkCheck(pensionAmountUrl(taxYearEOY, Some(index)), formSelector)
           multipleSummaryErrorCheck(List(
             (totalTaxErrorIncorrectFormat, expectedAmount1ErrorHref),
             (taxPaidErrorIncorrectFormat, expectedAmount2ErrorHref)))
@@ -427,7 +427,7 @@ class PensionAmountControllerISpec extends IntegrationTest with ViewHelpers with
             dropPensionsDB()
             authoriseAgentOrIndividual(user.isAgent)
             insertCyaData(aPensionsUserData, aUserRequest)
-            urlPost(fullUrl(pensionAmountUrl(taxYearEOY, index)), body = overMaximumForm, welsh = user.isWelsh,
+            urlPost(fullUrl(pensionAmountUrl(taxYearEOY, Some(index))), body = overMaximumForm, welsh = user.isWelsh,
               follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
           "has the correct status" in {
@@ -448,7 +448,7 @@ class PensionAmountControllerISpec extends IntegrationTest with ViewHelpers with
           inputFieldValueCheck(amount1InputName, amount1inputSelector, amountOverMaximum)
           inputFieldValueCheck(amount2InputName, amount2inputSelector, amountOverMaximum)
           buttonCheck(buttonText, continueButtonSelector)
-          formPostLinkCheck(pensionAmountUrl(taxYearEOY, index), formSelector)
+          formPostLinkCheck(pensionAmountUrl(taxYearEOY, Some(index)), formSelector)
           multipleSummaryErrorCheck(List(
             (totalTaxErrorOverMaximum, expectedAmount1ErrorHref),
             (taxPaidErrorOverMaximum, expectedAmount2ErrorHref)))
@@ -470,13 +470,13 @@ class PensionAmountControllerISpec extends IntegrationTest with ViewHelpers with
         authoriseAgentOrIndividual(isAgent = false)
         val viewModel = anIncomeFromPensionsViewModel.copy(uKPensionIncomes = Seq(anUkPensionIncomeViewModelOne))
         insertCyaData(pensionsUserDataWithIncomeFromPensions(viewModel), aUserRequest)
-        urlPost(fullUrl(pensionAmountUrl(taxYearEOY, index)), body = form,
+        urlPost(fullUrl(pensionAmountUrl(taxYearEOY, Some(index))), body = form,
           follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(pensionStartDateUrl(taxYearEOY, index))
+        result.header("location") shouldBe Some(pensionStartDateUrl(taxYearEOY, Some(index)))
       }
 
       "update state pension amount to Some (new values)" in {
@@ -498,13 +498,13 @@ class PensionAmountControllerISpec extends IntegrationTest with ViewHelpers with
         (uKPensionIncomesQuestion = Some(true), uKPensionIncomes = Seq(UkPensionIncomeViewModel(amount =
           None, taxPaid = None)))), aUserRequest)
 
-        urlPost(fullUrl(pensionAmountUrl(taxYearEOY, index)), body = form,
+        urlPost(fullUrl(pensionAmountUrl(taxYearEOY, Some(index))), body = form,
           follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(pensionStartDateUrl(taxYearEOY, index))
+        result.header("location") shouldBe Some(pensionStartDateUrl(taxYearEOY, Some(index)))
       }
 
       "update state pension amount to Some (new values)" in {
@@ -523,7 +523,7 @@ class PensionAmountControllerISpec extends IntegrationTest with ViewHelpers with
         (uKPensionIncomesQuestion = Some(true), uKPensionIncomes = Seq(UkPensionIncomeViewModel(amount =
           None, taxPaid = None)))), aUserRequest)
 
-        urlPost(fullUrl(pensionAmountUrl(taxYearEOY, 2)), body = form,
+        urlPost(fullUrl(pensionAmountUrl(taxYearEOY, Some(2))), body = form,
           follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 

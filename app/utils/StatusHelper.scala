@@ -16,75 +16,74 @@
 
 package utils
 
-import models.mongo.{PensionsCYAModel, PensionsUserData}
+import models.mongo.PensionsCYAModel
 import models.pension.AllPensionsData
-import models.pension.charges.PensionSavingsTaxCharges
 
 object StatusHelper {
 
-  def paymentsIntoPensionsIsUpdated(prior: Option[AllPensionsData]): Boolean = {
+  def paymentsIntoPensionsIsUpdated(cya: Option[PensionsCYAModel]): Boolean =
+    cya.exists(! _.paymentsIntoPension.isEmpty)
 
-    // TODO: Do we care if it's deleted so might do as below instead?
-    // val reliefs = prior.flatMap(_.pensionReliefs)
-    // reliefs.isDefined && reliefs.get.deletedOn.isEmpty
+  def incomeFromPensionsIsUpdated(cya: Option[PensionsCYAModel]): Boolean =
+    statePensionIsUpdated(cya) || ukPensionsSchemeIsUpdated(cya)
 
-    prior.flatMap(_.pensionReliefs).isDefined
+  def annualAllowanceIsUpdated(cya: Option[PensionsCYAModel]): Boolean =
+    cya.exists(! _.pensionsAnnualAllowances.isEmpty)
+
+  def lifetimeAllowanceIsUpdated(cya: Option[PensionsCYAModel]): Boolean =
+    cya.exists(! _.pensionLifetimeAllowances.isEmpty)
+
+  def unauthorisedPaymentsFromPensionsIsUpdated(cya: Option[PensionsCYAModel]): Boolean =
+    cya.exists(! _.unauthorisedPayments.isEmpty)
+
+  def overseasPensionsIsUpdated(cya: Option[PensionsCYAModel]): Boolean = {
+    paymentsIntoOverseasPensionsIsUpdated(cya) ||   incomeFromOverseasPensionsIsUpdated(cya) ||
+    overseasPensionsTransferChargesIsUpdated(cya) ||  shortServiceRefundsIsUpdated(cya)
   }
-
-  def incomeFromPensionsIsUpdated(prior: Option[AllPensionsData]): Boolean = {
-    //TODO: confirm any one of these is sufficient to be 'updated'
-    prior.flatMap(_.stateBenefits.flatMap(_.customerAddedStateBenefitsData)).isDefined ||
-      prior.flatMap(_.stateBenefits.flatMap(_.stateBenefitsData)).isDefined
-  }
-
-  def pensionFromAnnualAllowanceIsUpdated(prior: Option[AllPensionsData]): Boolean = {
-    prior.flatMap(_.pensionCharges.flatMap(_.pensionSavingsTaxCharges)).isDefined ||
-      prior.flatMap(_.pensionCharges.flatMap(_.pensionContributions)).isDefined
-  }
-
-  def pensionLifetimeAllowanceIsUpdated(prior: Option[AllPensionsData]): Boolean = {
-    val taxCharges: Option[PensionSavingsTaxCharges] = prior.flatMap(_.pensionCharges.flatMap(_.pensionSavingsTaxCharges))
-
-    taxCharges.map(_.lumpSumBenefitTakenInExcessOfLifetimeAllowance).isDefined ||
-      taxCharges.map(_.benefitInExcessOfLifetimeAllowance).isDefined
-  }
-
-  def unauthorisedPaymentsFromPensionsIsUpdated(prior: Option[AllPensionsData]): Boolean = {
-    prior.flatMap(_.pensionCharges.flatMap(_.pensionSchemeUnauthorisedPayments)).isDefined
-  }
-
-  def overseasPensionsIsUpdated(prior: Option[AllPensionsData]): Boolean = {
-    prior.flatMap(_.pensionCharges.flatMap(_.pensionSchemeOverseasTransfers)).isDefined ||
-    prior.flatMap(_.pensionCharges.flatMap(_.overseasPensionContributions)).isDefined
-  }
-
-  def paymentsIntoOverseasPensionsIsUpdated(cya: Option[PensionsCYAModel]): Boolean = {
-    cya.flatMap(_.paymentsIntoOverseasPensions.paymentsIntoOverseasPensionsQuestions).isDefined
-  }
+  def paymentsIntoOverseasPensionsIsUpdated(cya: Option[PensionsCYAModel]): Boolean =
+    cya.exists(! _.paymentsIntoOverseasPensions.isEmpty)
   
   def incomeFromOverseasPensionsIsUpdated(cya: Option[PensionsCYAModel]): Boolean =
-    cya.flatMap(_.incomeFromOverseasPensions.paymentsFromOverseasPensionsQuestion).isDefined
+    cya.exists(! _.incomeFromOverseasPensions.isEmpty)
   
   def overseasPensionsTransferChargesIsUpdated(cya: Option[PensionsCYAModel]): Boolean =
-    cya.flatMap((_.transfersIntoOverseasPensions.transferPensionSavings)).isDefined
+    cya.exists(! _.transfersIntoOverseasPensions.isEmpty)
   
   def shortServiceRefundsIsUpdated(cya: Option[PensionsCYAModel]): Boolean =
-    cya.flatMap((_.shortServiceRefunds.shortServiceRefund)).isDefined
+    cya.exists(!_.shortServiceRefunds.isEmpty)
 
-  def statePensionIsUpdated(pensionsUserData: Option[PensionsUserData]): Boolean = {
-    pensionsUserData.map(_.pensions).map(_.incomeFromPensions).flatMap(_.statePension).flatMap(_.amountPaidQuestion).isDefined
-  }
+  def statePensionIsUpdated(cya: Option[PensionsCYAModel]): Boolean =
+    cya.exists(_.incomeFromPensions.statePension.exists(! _.isEmpty))
 
-  def ukPensionsSchemeIsUpdated(pensionsUserData: Option[PensionsUserData]): Boolean = {
-    pensionsUserData.map(_.pensions).map(_.incomeFromPensions).flatMap(_.uKPensionIncomesQuestion).isDefined
-  }
+  def ukPensionsSchemeIsUpdated(cya: Option[PensionsCYAModel]): Boolean =
+    cya.exists(_.incomeFromPensions.uKPensionIncomesQuestion.isDefined)
   
-  /* ------- hasPriorData  statuses------------------*/
+  /* ------- hasPriorData  statuses------------------
+    We will primarily use these to determine if when going to a journey you
+    first either navigate to the CYA page or the 1st page of the journey
+   */
+  
   def paymentIntoPensionHasPriorData(prior: Option[AllPensionsData]): Boolean =
-    prior.exists(_.pensionReliefs.nonEmpty)
+    prior.exists(_.pensionReliefs.exists(_.pensionReliefs.regularPensionContributions.isDefined))
+
+  def statePensionsHasPriorData(prior: Option[AllPensionsData]): Boolean =
+    prior.exists(_.stateBenefits.exists(_.stateBenefitsData.exists(_.statePension.nonEmpty)))
     
+  def ukPensionsSchemeHasPriorData(prior: Option[AllPensionsData]): Boolean =
+    prior.exists(_.employmentPensions.exists(_.employmentData.nonEmpty))
+
+  def annualAllowanceHasPriorData(prior: Option[AllPensionsData]): Boolean =
+    prior.exists(_.pensionCharges.exists(pstc => pstc.pensionSavingsTaxCharges.nonEmpty && pstc.pensionContributions.nonEmpty))
+    
+  def lifetimeAllowanceHasPriorData(prior: Option[AllPensionsData]): Boolean =
+     prior.exists(_.pensionCharges.flatMap(_.pensionSavingsTaxCharges).exists(pstc =>
+       pstc.benefitInExcessOfLifetimeAllowance.nonEmpty && pstc.lumpSumBenefitTakenInExcessOfLifetimeAllowance.nonEmpty))
+       
   def unauthorisedPaymentsHasPriorData(prior: Option[AllPensionsData]): Boolean =
     prior.exists(_.pensionCharges.exists(_.pensionSchemeUnauthorisedPayments.nonEmpty))
+    
+  def paymentsIntoOverseasPensionsHasPriorData(prior: Option[AllPensionsData]): Boolean =
+     prior.exists(_.pensionReliefs.exists(_.pensionReliefs.overseasPensionSchemeContributions.isDefined))
   
   def incomeFromOverseasPensionsHasPriorData(prior: Option[AllPensionsData]): Boolean =
     prior.exists(_.pensionIncome.exists(_.foreignPension.nonEmpty))

@@ -57,7 +57,6 @@ class PaymentsIntoPensionsCYAControllerISpec extends IntegrationTest with ViewHe
   )
 
   val cyaDataMinimal: PaymentsIntoPensionViewModel = PaymentsIntoPensionViewModel(
-    gateway = Some(true),
     rasPensionPaymentQuestion = Some(false),
     pensionTaxReliefNotClaimedQuestion = Some(false)
   )
@@ -261,7 +260,7 @@ class PaymentsIntoPensionsCYAControllerISpec extends IntegrationTest with ViewHe
 
         val unchangedModel =
           PaymentsIntoPensionViewModel(
-            None, Some(true), anReliefs.regularPensionContributions,
+            Some(true), anReliefs.regularPensionContributions,
             Some(true), anReliefs.oneOffPensionContributionsPaid, Some(true), Some(true), Some(true),
             anReliefs.retirementAnnuityPayments, Some(true), anReliefs.paymentToEmployersSchemeNoTaxRelief)
 

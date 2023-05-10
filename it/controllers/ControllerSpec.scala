@@ -69,7 +69,7 @@ class ControllerSpec(val pathForThisPage: String) extends PlaySpec
   protected implicit val wsClient: WSClient = app.injector.instanceOf[WSClient]
 
   object PageRelativeURLs {
-    val summaryPage: String = relativeUrl("/pensions-summary")
+    val pensionsSummaryPage: String = relativeUrl("/pensions-summary")
 
     val overseasPensionsSummary: String = relativeUrl("/overseas-pensions")
 
