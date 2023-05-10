@@ -46,7 +46,8 @@ class TotalPaymentsIntoRASController @Inject()(authAction: AuthorisedAction,
   extends FrontendController(mcc) with I18nSupport {
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) { optData =>
-      redirectBasedOnCurrentAnswers(taxYear, optData)(redirects(_, taxYear)) { data =>
+      val checkRedirect = PaymentsIntoPensionsRedirects.journeyCheck(TotalRasPage, _, taxYear)
+      redirectBasedOnCurrentAnswers(taxYear, optData)(checkRedirect) { data =>
 
         val model = data.pensions.paymentsIntoPension
         model.totalRASPaymentsAndTaxRelief match {
@@ -63,7 +64,8 @@ class TotalPaymentsIntoRASController @Inject()(authAction: AuthorisedAction,
 
   def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
     pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) { optData =>
-      redirectBasedOnCurrentAnswers(taxYear, optData)(redirects(_, taxYear)) { data =>
+      val checkRedirect = PaymentsIntoPensionsRedirects.journeyCheck(TotalRasPage, _, taxYear)
+      redirectBasedOnCurrentAnswers(taxYear, optData)(checkRedirect) { data =>
 
         val cya = data.pensions
         val model = cya.paymentsIntoPension
@@ -112,8 +114,8 @@ class TotalPaymentsIntoRASController @Inject()(authAction: AuthorisedAction,
     )
   }
 
-  private def redirects(cya: PensionsCYAModel, taxYear: Int): Either[Result, Unit] = {
-    PaymentsIntoPensionsRedirects.journeyCheck(TotalRasPage, cya, taxYear)
-  }
+//  private def redirects(cya: PensionsCYAModel, taxYear: Int): Either[Result, Unit] = {
+//    PaymentsIntoPensionsRedirects.journeyCheck(TotalRasPage, cya, taxYear)
+//  }
 
 }

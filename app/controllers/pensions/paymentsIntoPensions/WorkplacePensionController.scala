@@ -23,12 +23,12 @@ import controllers.predicates.TaxYearAction.taxYearAction
 import models.mongo.PensionsCYAModel
 import models.pension.reliefs.PaymentsIntoPensionViewModel
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
 import services.SimpleRedirectService.{PaymentsIntoPensionsRedirects, isFinishedCheck, redirectBasedOnCurrentAnswers}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
-import utils.PaymentsIntoPensionPages.RasAmountPage
+import utils.PaymentsIntoPensionPages.{RasAmountPage, WorkplacePensionPage}
 import views.html.pensions.paymentsIntoPensions.WorkplacePensionView
 
 import javax.inject.{Inject, Singleton}
@@ -45,7 +45,8 @@ class WorkplacePensionController @Inject()(authAction: AuthorisedAction,
 
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) { optData =>
-      redirectBasedOnCurrentAnswers(taxYear, optData)(redirects(_, taxYear)) { data =>
+      val checkRedirect = PaymentsIntoPensionsRedirects.journeyCheck(WorkplacePensionPage, _, taxYear)
+      redirectBasedOnCurrentAnswers(taxYear, optData)(checkRedirect) { data =>
 
         val form = formProvider.workplacePensionForm(request.user.isAgent)
 
@@ -62,7 +63,8 @@ class WorkplacePensionController @Inject()(authAction: AuthorisedAction,
       formWithErrors => Future.successful(BadRequest(workplacePensionView(formWithErrors, taxYear))),
       yesNo =>
         pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) { optData =>
-          redirectBasedOnCurrentAnswers(taxYear, optData)(redirects(_, taxYear)) { data =>
+          val checkRedirect = PaymentsIntoPensionsRedirects.journeyCheck(WorkplacePensionPage, _, taxYear)
+          redirectBasedOnCurrentAnswers(taxYear, optData)(checkRedirect) { data =>
 
             val pensionsCYAModel: PensionsCYAModel = data.pensions
             val viewModel: PaymentsIntoPensionViewModel = pensionsCYAModel.paymentsIntoPension
@@ -84,7 +86,7 @@ class WorkplacePensionController @Inject()(authAction: AuthorisedAction,
     )
   }
 
-  private def redirects(cya: PensionsCYAModel, taxYear: Int): Either[Result, Unit] = {
-    PaymentsIntoPensionsRedirects.journeyCheck(RasAmountPage, cya, taxYear)
-  }
+//  private def redirects(cya: PensionsCYAModel, taxYear: Int): Either[Result, Unit] = {
+//    PaymentsIntoPensionsRedirects.journeyCheck(RasAmountPage, cya, taxYear)
+//  }
 }

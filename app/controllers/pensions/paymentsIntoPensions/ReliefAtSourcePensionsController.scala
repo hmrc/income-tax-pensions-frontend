@@ -82,6 +82,7 @@ class ReliefAtSourcePensionsController @Inject()(authAction: AuthorisedAction,
           val redirectLocation = if (yesNo) {
             ReliefAtSourcePaymentsAndTaxReliefAmountController.show(taxYear)
           } else {
+            System.out.println("-------------- ANSWER WAS NO")
             PensionsTaxReliefNotClaimedController.show(taxYear)
           }
 

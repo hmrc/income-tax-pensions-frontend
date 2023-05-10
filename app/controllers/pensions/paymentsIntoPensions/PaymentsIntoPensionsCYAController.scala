@@ -22,7 +22,6 @@ import controllers.predicates.TaxYearAction.taxYearAction
 import models.mongo.{PensionsCYAModel, PensionsUserData}
 import models.pension.AllPensionsData
 import models.pension.AllPensionsData.generateCyaFromPrior
-import models.redirects.ConditionalRedirect
 import models.{APIErrorBodyModel, APIErrorModel, AuthorisationRequest, User}
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -32,7 +31,7 @@ import services.{ExcludeJourneyService, PensionReliefsService, PensionSessionSer
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
-import utils.PaymentsIntoPensionPages.{CheckYourAnswersPage, RasAmountPage}
+import utils.PaymentsIntoPensionPages.RasAmountPage
 import views.html.pensions.paymentsIntoPensions.PaymentsIntoPensionsCYAView
 
 import javax.inject.{Inject, Singleton}
@@ -58,7 +57,8 @@ class PaymentsIntoPensionsCYAController @Inject()(authAction: AuthorisedAction,
 
       (cya, prior) match {
         case (Some(cyaData), optionalPriorData) if !cyaData.pensions.paymentsIntoPension.isFinished =>
-          redirectBasedOnCurrentAnswers(taxYear, cya)(redirects(_, taxYear)) { data =>
+          val checkRedirect = PaymentsIntoPensionsRedirects.journeyCheck(RasAmountPage, _, taxYear)
+          redirectBasedOnCurrentAnswers(taxYear, cya)(checkRedirect) { data =>
             Future.successful(Ok(view(taxYear, data.pensions.paymentsIntoPension)))
           }
         case (Some(cyaData), optionalPriorData) => pensionSessionService.createOrUpdateSessionData(request.user,
@@ -133,8 +133,8 @@ class PaymentsIntoPensionsCYAController @Inject()(authAction: AuthorisedAction,
     }
   }
 
-  private def redirects(cya: PensionsCYAModel, taxYear: Int): Either[Result, Unit] = {
-    PaymentsIntoPensionsRedirects.journeyCheck(CheckYourAnswersPage, cya, taxYear)
-  }
+//  private def redirects(cya: PensionsCYAModel, taxYear: Int): Either[Result, Unit] = {
+//    PaymentsIntoPensionsRedirects.journeyCheck(CheckYourAnswersPage, cya, taxYear)
+//  }
 
 }
