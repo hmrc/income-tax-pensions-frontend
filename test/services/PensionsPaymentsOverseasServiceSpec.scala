@@ -49,8 +49,8 @@ class PensionsPaymentsOverseasServiceSpec extends UnitTest
 
 
       val model1 = CreateUpdatePensionIncomeModel(
-        foreignPension = Some(sessionUserData.pensions.incomeFromOverseasPensions.toForeignPension),
-        overseasPensionContribution = priorUserData.pensions.flatMap(_.pensionIncome.flatMap(_.overseasPensionContribution))
+        foreignPension = priorUserData.pensions.flatMap(_.pensionIncome.flatMap(_.foreignPension)),
+        overseasPensionContribution = Some(sessionUserData.pensions.paymentsIntoOverseasPensions.toPensionContributions)
       )
 
       val model2 = CreateOrUpdatePensionReliefsModel(
@@ -88,8 +88,8 @@ class PensionsPaymentsOverseasServiceSpec extends UnitTest
 
 
       val model1 = CreateUpdatePensionIncomeModel(
-        foreignPension = Some(sessionUserData.pensions.incomeFromOverseasPensions.toForeignPension),
-        overseasPensionContribution = priorUserData.pensions.flatMap(_.pensionIncome.flatMap(_.overseasPensionContribution))
+        foreignPension = priorUserData.pensions.flatMap(_.pensionIncome.flatMap(_.foreignPension)),
+        overseasPensionContribution = Some(sessionUserData.pensions.paymentsIntoOverseasPensions.toPensionContributions)
       )
 
       val model2 = CreateOrUpdatePensionReliefsModel(
@@ -120,8 +120,8 @@ class PensionsPaymentsOverseasServiceSpec extends UnitTest
 
 
       val model1 = CreateUpdatePensionIncomeModel(
-        foreignPension = Some(sessionUserData.pensions.incomeFromOverseasPensions.toForeignPension),
-        overseasPensionContribution = priorUserData.pensions.flatMap(_.pensionIncome.flatMap(_.overseasPensionContribution))
+        foreignPension = priorUserData.pensions.flatMap(_.pensionIncome.flatMap(_.foreignPension)),
+        overseasPensionContribution = Some(sessionUserData.pensions.paymentsIntoOverseasPensions.toPensionContributions)
       )
 
       val model2 = CreateOrUpdatePensionReliefsModel(
