@@ -32,17 +32,15 @@ object SimpleRedirectService extends Logging {
                                    (block: PensionsUserData => Future[Result]): Future[Result] = {
 
     val redirectOrData = data match {
-      case Some(cya) =>
-        shouldRedirect(cya.pensions) match {
-          case Right(_) =>
-            Right(cya)
-          case Left(redirect) =>
-            logger.info(s"[RedirectService][calculateRedirect]" +
-              s" Some data is missing / in the wrong state for the requested page. Routing to ${
-                redirect.header.headers.getOrElse("Location", "")
-              }")
-            Left(redirect)
-        }
+      case Some(cya) => shouldRedirect(cya.pensions) match {
+        case Right(_) => Right(cya)
+        case Left(redirect) =>
+          logger.info(s"[RedirectService][calculateRedirect]" +
+            s" Some data is missing / in the wrong state for the requested page. Routing to ${
+              redirect.header.headers.getOrElse("Location", "")
+            }")
+          Left(redirect)
+      }
       case None =>
         Left(Redirect(controllers.pensions.paymentsIntoPensions.routes.PaymentsIntoPensionsCYAController.show(taxYear)))
     }

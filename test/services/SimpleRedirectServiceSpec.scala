@@ -34,7 +34,6 @@ class SimpleRedirectServiceSpec extends UnitTest {
       "current page is empty and at end of journey so far" in {
         val pIPData = cyaData.copy(paymentsIntoPension =
           PaymentsIntoPensionViewModel(
-            gateway = Some(true),
             rasPensionPaymentQuestion = Some(true),
             totalRASPaymentsAndTaxRelief = Some(45.54),
             oneOffRasPaymentPlusTaxReliefQuestion = Some(true),
@@ -53,7 +52,6 @@ class SimpleRedirectServiceSpec extends UnitTest {
       "current page is pre-filled and mid-journey" in {
         val pIPData = cyaData.copy(paymentsIntoPension =
           PaymentsIntoPensionViewModel(
-            gateway = Some(true),
             rasPensionPaymentQuestion = Some(false),
             totalRASPaymentsAndTaxRelief = None,
             oneOffRasPaymentPlusTaxReliefQuestion = None,
@@ -72,7 +70,6 @@ class SimpleRedirectServiceSpec extends UnitTest {
       "previous page is invalid/unanswered but previous valid question has been answered" in {
         val pIPData = cyaData.copy(paymentsIntoPension =
           PaymentsIntoPensionViewModel(
-            gateway = Some(true),
             rasPensionPaymentQuestion = Some(true),
             totalRASPaymentsAndTaxRelief = Some(45.54),
             oneOffRasPaymentPlusTaxReliefQuestion = Some(false),
@@ -94,7 +91,6 @@ class SimpleRedirectServiceSpec extends UnitTest {
       "previous question is unanswered" in {
         val pIPData = cyaData.copy(paymentsIntoPension =
           PaymentsIntoPensionViewModel(
-            gateway = Some(true),
             rasPensionPaymentQuestion = Some(true),
             totalRASPaymentsAndTaxRelief = Some(45.54),
             oneOffRasPaymentPlusTaxReliefQuestion = Some(true),
@@ -113,7 +109,6 @@ class SimpleRedirectServiceSpec extends UnitTest {
       "current page is invalid in journey" in {
         val pIPData = cyaData.copy(paymentsIntoPension =
           PaymentsIntoPensionViewModel(
-            gateway = Some(true),
             rasPensionPaymentQuestion = Some(true),
             totalRASPaymentsAndTaxRelief = None,
             oneOffRasPaymentPlusTaxReliefQuestion = None,
