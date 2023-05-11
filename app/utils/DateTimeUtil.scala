@@ -24,7 +24,7 @@ import java.time.format.DateTimeFormatter
 object DateTimeUtil extends Logging {
 
   val localDateTimeFormat: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-  val dateToStringFormat: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
+  val dateToStringFormat: DateTimeFormatter = DateTimeFormatter.ofPattern("dd MMMM yyyy")
 
   def formatDate(date: LocalDate): String = {
     date.format(dateToStringFormat)

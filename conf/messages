@@ -569,6 +569,21 @@ pensions.statePension.amount.error.noEntry.agent = Enter your client’s State P
 pensions.statePension.amount.error.incorrectFormat.agent = Enter your client’s State Pension amount in the correct format
 pensions.statePension.amount.error.overMaximum.agent = Your client’s State Pension amount must be less than £100,000,000,000
 
+#State Pension CYA page
+statePension.cya.title.agent = Check your client's State Pension
+statePension.cya.title.individual = Check your State Pension
+statePension.cya.paragraph1.agent  = Your client's State Pension income is based on the information we already hold about them.
+statePension.cya.paragraph2.agent  = You cannot update your client's State Pension income until 6 April 2023.
+statePension.cya.paragraph1.individual  = Your State Pension income is based on information we already hold about you.
+statePension.cya.paragraph2.individual  = You can change the amounts if they''re not correct.
+statePension.cya.statePension.label = State Pension
+statePension.cya.startDate.label = State Pension start date
+statePension.cya.lumpSum.label = Lump sum
+statePension.cya.lumpSumTax.label = Lump sum tax
+statePension.cya.lumpSumDate.label = Lump sum date
+statePension.cya.taxCalc.label = State Pension added to tax calculation
+
+
 #Income From Pensions Summary
 incomeFromPensions.incomeFromPensionsSummary.statePensions = State pension
 incomeFromPensions.incomeFromPensionsSummary.otherUkPensions = Other UK Pensions

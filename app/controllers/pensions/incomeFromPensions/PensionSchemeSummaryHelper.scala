@@ -41,7 +41,7 @@ object PensionSchemeSummaryHelper extends CYABaseHelper {
     val pid = s"${messages("incomeFromPensions.schemeDetails.summary.pid")} ${pensionIncomes.pensionId.getOrElse("")}"
     summaryListRowWithString(
       "incomeFromPensions.schemeDetails.summary.details",
-      Some(Seq(provider + paye + pid)),
+      Some(provider + paye + pid),
       routes.PensionSchemeDetailsController.show(taxYear, index)
     )
   }
@@ -51,7 +51,7 @@ object PensionSchemeSummaryHelper extends CYABaseHelper {
     val tax = s"${messages("incomeFromPensions.schemeDetails.summary.tax")} ${pensionIncomes.taxPaid.getOrElse("")}"
     summaryListRowWithString(
       "incomeFromPensions.schemeDetails.summary.income",
-      Some(Seq(pay + tax)),
+      Some(pay + tax),
       routes.PensionAmountController.show(taxYear, index)
     )
   }
@@ -62,7 +62,7 @@ object PensionSchemeSummaryHelper extends CYABaseHelper {
     val parsedDate: String = startDate.fold("")(st => LocalDate.parse(st, localDateTimeFormat).format(dateToStringFormat))
     summaryListRowWithString(
       "incomeFromPensions.schemeDetails.summary.date",
-      Some(Seq(parsedDate)),
+      Some(parsedDate),
       routes.PensionSchemeStartDateController.show(taxYear, index)
     )
   }

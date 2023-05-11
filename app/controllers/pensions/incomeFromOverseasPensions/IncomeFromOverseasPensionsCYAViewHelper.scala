@@ -55,7 +55,7 @@ object IncomeFromOverseasPensionsCYAViewHelper extends CYABaseHelper {
         Countries.getCountryFromCodeWithDefault(pensionScheme.alphaTwoCode)
       }
 
-      Some(summaryListRowWithStrings(
+      Some(summaryListRowWithString(
         "common.overseas.pension.schemes",
         Some(countryNames.map(_.toUpperCase).mkString(", ")),
         CountrySummaryListController.show(taxYear))(messages)

@@ -31,7 +31,7 @@ import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 import java.time.LocalDate
 
 
-class StateBenefitStartDateControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
+class StatePensionStartDateControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
 
   def startDateForm(day: String, month: String, year: String): Map[String, String] = Map(
       dayInputName -> day,

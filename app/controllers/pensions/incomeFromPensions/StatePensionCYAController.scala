@@ -16,11 +16,9 @@
 
 package controllers.pensions.incomeFromPensions
 
-import config.{AppConfig, ErrorHandler}
-import controllers.pensions.incomeFromPensions.routes.{IncomeFromPensionsSummaryController, UkPensionSchemePaymentsController}
-import controllers.predicates.AuthorisedAction
-import controllers.predicates.TaxYearAction.taxYearAction
-import forms.FormUtils
+import config.AppConfig
+import controllers.pensions.incomeFromPensions.routes.IncomeFromPensionsSummaryController
+import controllers.predicates.{ActionsProvider, AuthorisedAction}
 import models.mongo.PensionsCYAModel
 import models.pension.AllPensionsData
 import models.pension.AllPensionsData.generateCyaFromPrior
@@ -28,40 +26,26 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.{Clock, SessionHelper}
-import views.html.pensions.incomeFromPensions.UkPensionIncomeCYAView
+import utils.SessionHelper
+import views.html.pensions.incomeFromPensions.StatePensionCYAView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
 @Singleton
-class UkPensionIncomeCYAController @Inject()(implicit val mcc: MessagesControllerComponents,
-                                             authAction: AuthorisedAction,
-                                             view: UkPensionIncomeCYAView,
-                                             appConfig: AppConfig,
-                                             pensionSessionService: PensionSessionService,
-                                             errorHandler: ErrorHandler,
-                                             clock: Clock) extends FrontendController(mcc) with I18nSupport with SessionHelper with FormUtils {
+class StatePensionCYAController @Inject()(authAction: AuthorisedAction,
+                                          actionsProvider: ActionsProvider,
+                                          pensionSessionService: PensionSessionService,
+                                          view: StatePensionCYAView)
+                                         (implicit val mcc: MessagesControllerComponents, appConfig: AppConfig)
+  extends FrontendController(mcc) with I18nSupport with SessionHelper {
 
-  def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
-    pensionSessionService.getAndHandle(taxYear, request.user) { (cya, prior) =>
-      (cya, prior) match {
-        case (Some(cyaData), _) =>
-          Future.successful(Ok(view(taxYear, cyaData.pensions.incomeFromPensions)))
-
-        case (None, Some(priorData)) =>
-          val cyaModel = generateCyaFromPrior(priorData)
-          pensionSessionService.createOrUpdateSessionData(request.user, cyaModel, taxYear, isPriorSubmission = false)(
-            errorHandler.internalServerError())(
-            Ok(view(taxYear, cyaModel.incomeFromPensions))
-          )
-        case _ => Future.successful(Redirect(UkPensionSchemePaymentsController.show(taxYear)))
-      }
-    }
+  def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) {implicit userSessionDataRequest =>
+     Ok(view(taxYear, userSessionDataRequest.pensionsUserData.pensions.incomeFromPensions))
   }
 
   def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
-    pensionSessionService.getAndHandle(taxYear, request.user) {(cya, prior) =>
+    pensionSessionService.getAndHandle(taxYear, request.user) { (cya, prior) =>
       cya.fold(
         Future.successful(Redirect(appConfig.incomeTaxSubmissionOverviewUrl(taxYear)))
       ) { model =>

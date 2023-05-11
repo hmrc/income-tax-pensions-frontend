@@ -569,6 +569,21 @@ pensions.statePension.amount.error.noEntry.agent = Nodwch swm Pensiwn y Wladwria
 pensions.statePension.amount.error.incorrectFormat.agent = Nodwch swm Pensiwn y Wladwriaeth eich cleient yn y fformat cywir
 pensions.statePension.amount.error.overMaximum.agent = Mae’n rhaid i swm Pensiwn y Wladwriaeth eich cleient fod yn llai na £100,000,000,000
 
+#State Pension CYA page
+statePension.cya.title.agent = Check your client's State Pension
+statePension.cya.title.individual = Check your State Pension
+statePension.cya.paragraph1.agent  = Your client's State Pension income is based on the information we already hold about them.
+statePension.cya.paragraph2.agent  = You cannot update your client's State Pension income until 6 April 2023.
+statePension.cya.paragraph1.individual  = Your State Pension income is based on information we already hold about you.
+statePension.cya.paragraph2.individual  = You can change the amounts if they're not correct.
+statePension.cya.statePension.label = State Pension
+statePension.cya.startDate.label = State Pension start date
+statePension.cya.lumpSum.label = Lump sum
+statePension.cya.lumpSumTax.label = Lump sum tax
+statePension.cya.lumpSumDate.label = Lump sum date
+statePension.cya.taxCalc.label = State Pension added to tax calculation
+
+
 #Income From Pensions Summary
 incomeFromPensions.incomeFromPensionsSummary.statePensions = Pensiwn y Wladwriaeth
 incomeFromPensions.incomeFromPensionsSummary.otherUkPensions = Pensiynau eraill y DU
@@ -641,19 +656,6 @@ incomeFromPensions.paragraph.agent = Mae incwm o bensiynau eich cleient yn seili
 incomeFromPensions.pensionIncome.hidden.individual = Newid p’un a gawsoch incwm o bensiynau’r DU
 incomeFromPensions.pensionIncome.hidden.agent = Newid p’un a gafodd eich cleient incwm o bensiynau’r DU
 incomeFromPensions.pensionSchemes.hidden = Newid manylion cynllun pensiwn y DU
-
-#Uk Pension Income Summary page
-incomeFromPensions.schemeDetails.summary.title = Check pension scheme details
-incomeFromPensions.schemeDetails.summary.details = Scheme details
-incomeFromPensions.schemeDetails.summary.details.hidden = Change scheme details
-incomeFromPensions.schemeDetails.summary.income = Pension income
-incomeFromPensions.schemeDetails.summary.income.hidden = Change pension income
-incomeFromPensions.schemeDetails.summary.date = Pension start date
-incomeFromPensions.schemeDetails.summary.date.hidden = Change pension start date
-incomeFromPensions.schemeDetails.summary.paye = PAYE:
-incomeFromPensions.schemeDetails.summary.pid = PID:
-incomeFromPensions.schemeDetails.summary.pay = Pay:
-incomeFromPensions.schemeDetails.summary.tax = Tax:
 
 #Uk Pension Income Summary page
 incomeFromPensions.schemeDetails.summary.title = Check pension scheme details
@@ -857,6 +859,7 @@ overseasPension.paymentIntoOverseasPensionScheme.invalid.format.error.individual
 overseasPension.paymentIntoOverseasPensionScheme.invalid.format.error.agent = Nodwch y swm a dalodd eich cleient i mewn i gynlluniau pensiwn tramor yn y fformat cywir
 overseasPension.paymentIntoOverseasPensionScheme.maximum.error.individual = Mae’n rhaid i’r swm a daloch i mewn i gynlluniau pensiwn tramor fod yn llai na £100,000,000,000
 overseasPension.paymentIntoOverseasPensionScheme.maximum.error.agent = Mae’n rhaid i’r swm a dalodd eich cleient i mewn i gynlluniau pensiwn tramor fod yn llai na £100,000,000,000
+
 #Employer payment into overseas pension scheme page
 overseasPension.employerPayOverseasPension.title.individual = A wnaeth eich cyflogwr dalu i mewn i’ch cynlluniau pensiwn tramor?
 overseasPension.employerPayOverseasPension.title.agent = A wnaeth cyflogwr eich cleient dalu i mewn i’r cynlluniau pensiwn tramor?
@@ -864,6 +867,7 @@ overseasPension.employerPayOverseasPension.bullet2.individual = gofyn i’ch cyf
 overseasPension.employerPayOverseasPension.bullet2.agent = gofyn i’w gyflogwr
 overseasPension.employerPayOverseasPension.error.noEntry.individual = Dewiswch ‘Iawn’ os gwnaeth eich cyflogwr dalu i mewn i’ch cynlluniau pensiwn tramor
 overseasPension.employerPayOverseasPension.error.noEntry.agent = Dewiswch ‘Iawn’ os gwnaeth cyflogwr eich cleient dalu i mewn i’w gynlluniau pensiwn tramor
+
 #Pensions Overseas Emp Tax status page
 overseasPension.taxEmployerPayments.title.individual = A wnaethoch dalu treth ar y swm a dalodd eich cyflogwr?
 overseasPension.taxEmployerPayments.bullet2.individual = gofyn i ddarparwr eich pensiwn
