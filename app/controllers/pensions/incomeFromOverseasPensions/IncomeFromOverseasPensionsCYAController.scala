@@ -61,7 +61,7 @@ class IncomeFromOverseasPensionsCYAController @Inject()(authAction: AuthorisedAc
 
     pensionSessionService.getAndHandle(taxYear, request.user) { (cya, prior) =>
       (cya, prior) match {
-        case (Some(data), Some(priorData: AllPensionsData)) if data.pensions.incomeFromOverseasPensions.isEmpty() =>
+        case (Some(data), Some(priorData: AllPensionsData)) if data.pensions.incomeFromOverseasPensions.isEmpty =>
           cyaDataIsEmpty(priorData)
         case (Some(data), _) =>
           incomeFromOverseasPensionsViewModelExists(data.pensions.incomeFromOverseasPensions)

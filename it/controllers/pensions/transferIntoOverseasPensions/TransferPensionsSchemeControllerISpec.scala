@@ -21,76 +21,92 @@ import controllers.ControllerSpec
 import controllers.ControllerSpec.UserConfig
 import models.mongo.PensionsUserData
 import models.pension.charges.TransferPensionScheme
-import play.api.http.Status.BAD_REQUEST
+import play.api.http.Status.{BAD_REQUEST, OK}
 import play.api.libs.ws.WSResponse
+//import utils.PageUrls.convertToAnyShouldWrapper
 
-class TransferPensionsSchemeControllerISpec extends ControllerSpec ("/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-pension-scheme") {
-  
+class TransferPensionsSchemeControllerISpec extends ControllerSpec("/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-pension-scheme") {
+
   val providerNameIF = "providerName"
   val schemeRefIF = "schemeReference"
   val providerAddressIF = "providerAddress"
   val countryIF = "countryId"
-  
+
   "This page" when { //scalastyle:off magic.number line.size.limit
-     
-     "requested to be shown" should {
-       
-       "not show the form page but redirect to the summary page" when {
-         "the user has no stored session data at all" in {
-           implicit val userConfig: UserConfig = userConfigWhenIrrelevant(None)
-           implicit val response: WSResponse = getPageWithIndex()
-           assertRedirectionAsExpected(PageRelativeURLs.overseasPensionsSummary)
-         }
-       }
-       "show the form page" when {
-         "the user has relevant session data and" when {
-           val sessionData = pensionsUserData(aPensionsCYAModel)
-           
-           for (isUKCountry <- Seq(true, false)) {
-             
-             s"the user submits a correct ${if (isUKCountry) "a UK" else "an Overseas"} pension scheme form with no prior pensions scheme data to update and redirects to the relevant page" in {
-               val (testTransferPensionScheme, formData, ukOrOverseasAlignedSessionData) = setupTestData(isUKCountry, sessionData, hasPriorPensionsSchemeData = false)
-               
-               implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(ukOrOverseasAlignedSessionData))
-               implicit val response: WSResponse = submitForm(formData, Map("index" -> "0"))
 
-               val redirectPage = relativeUrl("/overseas-pensions/overseas-transfer-charges/transfer-charges-summary")
-               assertRedirectionAsExpected(redirectPage)
-               
-               val expectedViewModel = ukOrOverseasAlignedSessionData.pensions.transfersIntoOverseasPensions.copy(transferPensionScheme = Seq(testTransferPensionScheme))
-               getTransferPensionsViewModel mustBe Some(expectedViewModel)
-             }
+    "requested to be shown" should {
 
-             s"the user submits a correct ${if (isUKCountry) "a UK" else "an Overseas"} pension scheme form with prior pensions scheme data to update and redirects to the relevant page" in {
-               val (testTransferPensionScheme, formData, ukOrOverseasAlignedSessionData) = setupTestData(isUKCountry, sessionData)
-               
-               implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(ukOrOverseasAlignedSessionData))
-               implicit val response: WSResponse = submitForm(formData, Map("index" -> "0"))
+      "redirect to the summary page" which {
+        "the user has no stored session data at all" in {
+          implicit val userConfig: UserConfig = userConfigWhenIrrelevant(None)
+          implicit val response: WSResponse = getPageWithIndex()
+          assertRedirectionAsExpected(PageRelativeURLs.pensionsSummaryPage)
+        }
+      }
 
-               val redirectPage = relativeUrl("/overseas-pensions/overseas-transfer-charges/transfer-charges-summary")
-               assertRedirectionAsExpected(redirectPage)
+      "show the form page when the user has relevant session data" which {
+        val sessionData = pensionsUserData(aPensionsCYAModel)
 
-               val expectedViewModel = ukOrOverseasAlignedSessionData.pensions.transfersIntoOverseasPensions.copy(transferPensionScheme = Seq(testTransferPensionScheme))
-               getTransferPensionsViewModel mustBe Some(expectedViewModel)
-             }
-           }
-           
-           "the user submits an incorrect form should  and stay on the form page and produce a Bad Request response" in {
-             implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
-             implicit val response: WSResponse = submitForm(setFormData("","","",Some("")), Map("index" -> "0"))
-             
-             response must haveStatus(BAD_REQUEST)
-           }
-         }
-       }
-     }
+        for (isUKCountry <- Seq(true, false)) {
+
+          val (testTransferPensionScheme, formData, ukOrOverseasAlignedSessionData) = setupTestData(isUKCountry, sessionData, hasPriorPensionsSchemeData = false)
+          implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(ukOrOverseasAlignedSessionData))
+
+          val ukOrOverseas = if (isUKCountry) "UK" else "Overseas"
+
+
+          s"the user shows a page with $ukOrOverseas pension scheme" which {
+            "has an OK status" in {
+              implicit val response: WSResponse = getPageWithIndex()
+              response.status mustBe OK
+            }
+          }
+
+          s"the user submits a correct $ukOrOverseas pension scheme form with NO prior pensions scheme data" which {
+            "gets updated and redirects to the relevant page" in {
+
+              implicit val response: WSResponse = submitForm(formData, Map("index" -> "0"))
+
+              val redirectPage = relativeUrl("/overseas-pensions/overseas-transfer-charges/transfer-charges-summary")
+              assertRedirectionAsExpected(redirectPage)
+
+              val expectedViewModel = ukOrOverseasAlignedSessionData.pensions.transfersIntoOverseasPensions.copy(transferPensionScheme = Seq(testTransferPensionScheme))
+              getTransferPensionsViewModel mustBe Some(expectedViewModel)
+            }
+          }
+
+          s"the user submits a correct $ukOrOverseas pension scheme form with prior pensions scheme data" which {
+            "gets updated and redirects to the relevant page" in {
+              val (testTransferPensionScheme, formData, ukOrOverseasAlignedSessionData) = setupTestData(isUKCountry, sessionData)
+
+              implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(ukOrOverseasAlignedSessionData))
+              implicit val response: WSResponse = submitForm(formData, Map("index" -> "0"))
+
+              val redirectPage = relativeUrl("/overseas-pensions/overseas-transfer-charges/transfer-charges-summary")
+              assertRedirectionAsExpected(redirectPage)
+
+              val expectedViewModel = ukOrOverseasAlignedSessionData.pensions.transfersIntoOverseasPensions.copy(transferPensionScheme = Seq(testTransferPensionScheme))
+              getTransferPensionsViewModel mustBe Some(expectedViewModel)
+            }
+          }
+        }
+
+        "the user submits an incorrect form" which {
+          "stays on the form page and produces a Bad Request response" in {
+            implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
+            implicit val response: WSResponse = submitForm(setFormData("", "", "", Some("")), Map("index" -> "0"))
+            response must haveStatus(BAD_REQUEST)
+          }
+        }
+      }
+    }
     
-     def setFormData(pName: String, tRef: String, pAddress: String, countryOpt: Option[String]): Map[String, String] =
-       Map(providerNameIF -> pName, schemeRefIF -> tRef, providerAddressIF -> pAddress) ++
-         countryOpt.fold(Map[String, String]())(cc => Map(countryIF -> cc))
+    def setFormData(pName: String, tRef: String, pAddress: String, countryOpt: Option[String]): Map[String, String] =
+      Map(providerNameIF -> pName, schemeRefIF -> tRef, providerAddressIF -> pAddress) ++
+        countryOpt.fold(Map[String, String]())(cc => Map(countryIF -> cc))
 
     def setupTestData(isUKCountry: Boolean, sessionData: PensionsUserData, hasPriorPensionsSchemeData: Boolean = true): (TransferPensionScheme, Map[String, String], PensionsUserData) = {
-      
+
       val tcPensionSchemes = sessionData.pensions.transfersIntoOverseasPensions.transferPensionScheme
 
       val transferPenScheme =
@@ -99,15 +115,15 @@ class TransferPensionsSchemeControllerISpec extends ControllerSpec ("/overseas-p
             pstr = Some("12345678RF"), qops = None, Some("Scheme Address"), alphaTwoCountryCode = None, alphaThreeCountryCode = None)
         } else {
           TransferPensionScheme(ukTransferCharge = Some(false), Some("Scheme Name"),
-            pstr = None, qops = Some("654321"), Some("Scheme Address"), if (hasPriorPensionsSchemeData) Some("CY") else  None, alphaThreeCountryCode = Some("CYP"))
+            pstr = None, qops = Some("654321"), Some("Scheme Address"), if (hasPriorPensionsSchemeData) Some("CY") else None, alphaThreeCountryCode = Some("CYP"))
         }
       val formData =
         if (isUKCountry) {
           setFormData("Scheme Name", "12345678RF", "Scheme Address", None)
         } else {
-          setFormData("Scheme Name", "654321", "Scheme Address",Some("CY"))
+          setFormData("Scheme Name", "654321", "Scheme Address", Some("CY"))
         }
-      
+
       val ukOrOverseasAlignedSessionData = {
         val alignedTCPensionSchemes = tcPensionSchemes.map { tcps =>
           if (hasPriorPensionsSchemeData) {
@@ -120,7 +136,7 @@ class TransferPensionsSchemeControllerISpec extends ControllerSpec ("/overseas-p
             tcps.copy(ukTransferCharge = Some(isUKCountry), pstr = None, qops = None, alphaTwoCountryCode = None, alphaThreeCountryCode = None)
           }
         }
-        
+
         sessionData.copy(pensions = sessionData.pensions
           .copy(transfersIntoOverseasPensions = sessionData.pensions.transfersIntoOverseasPensions
             .copy(transferPensionScheme = alignedTCPensionSchemes)))
@@ -128,6 +144,6 @@ class TransferPensionsSchemeControllerISpec extends ControllerSpec ("/overseas-p
 
       (transferPenScheme, formData, ukOrOverseasAlignedSessionData)
     }
-   }
+  }
 
 }

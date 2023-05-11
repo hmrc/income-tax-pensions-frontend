@@ -77,8 +77,8 @@ class UkPensionIncomeCYAController @Inject()(implicit val mcc: MessagesControlle
 
   private def comparePriorData(cyaData: PensionsCYAModel, priorData: Option[AllPensionsData]): Boolean = {
     priorData match {
-      case None => true
       case Some(prior) => !cyaData.equals(generateCyaFromPrior(prior))
+      case None => true
     }
   }
 

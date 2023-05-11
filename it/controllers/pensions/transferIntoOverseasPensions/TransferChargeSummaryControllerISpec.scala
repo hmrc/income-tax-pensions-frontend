@@ -26,14 +26,13 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.TransferIntoOverseasPensions.{checkYourDetailsPensionUrl, overseasTransferChargePaidUrl, overseasTransferChargePaidUrlNoIndex, removeTransferChargeScheme, transferChargeSummaryUrl}
-import utils.PageUrls.{fullUrl, overseasPensionsSummaryUrl}
+import utils.PageUrls.TransferIntoOverseasPensions._
+import utils.PageUrls.{fullUrl, pensionSummaryUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 // scalastyle:off magic.number
 class TransferChargeSummaryControllerISpec extends IntegrationTest with BeforeAndAfterEach with ViewHelpers with PensionsDatabaseHelper {
-
-  val urlPrefix = s"/update-and-submit-income-tax-return/pensions/$taxYearEOY/"
+  
   object Selectors {
     val captionSelector: String = "#main-content > div > div > header > p"
     val addAnotherLinkSelector = "#add-another-pension-link"
@@ -82,8 +81,8 @@ class TransferChargeSummaryControllerISpec extends IntegrationTest with BeforeAn
   object CommonExpectedCY extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Trosglwyddiadau i bensiynau tramor ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
     val expectedButtonText = "Yn eich blaen"
-    val expectedTitle = "Pension schemes paying transfer charges - summary"
-    val expectedHeading = "Pension schemes paying transfer charges - summary"
+    val expectedTitle = "Cynlluniau pensiwn sy’n talu’r taliadau trosglwyddiadau – crynodeb"
+    val expectedHeading = "Cynlluniau pensiwn sy’n talu’r taliadau trosglwyddiadau – crynodeb"
     val change = "Newid"
     val remove = "Tynnu"
     val expectedAddAnotherText = "Ychwanegu cynllun pensiwn arall"
@@ -106,9 +105,7 @@ class TransferChargeSummaryControllerISpec extends IntegrationTest with BeforeAn
       s"language is ${welshTest(user.isWelsh)} and request is from an ${agentTest(user.isAgent)}" should {
         import Selectors._
         import user.commonExpectedResults._
-
-
-
+        
         "render the 'overseas transfer charge' summary list page with pre-filled content" which {
           val pensionScheme = TransferPensionScheme(ukTransferCharge = Some(true), name = Some("Pension Scheme 1"))
           val pensionScheme2 = TransferPensionScheme(ukTransferCharge = Some(true), name = Some("Pension Scheme 2"))
@@ -215,14 +212,14 @@ class TransferChargeSummaryControllerISpec extends IntegrationTest with BeforeAn
     "redirect to the pensions summary page if there is no session data" should {
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         urlGet(fullUrl(transferChargeSummaryUrl(taxYearEOY)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
       "have a SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(overseasPensionsSummaryUrl(taxYearEOY))
+        result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
       }
     }
   }

@@ -49,8 +49,8 @@ class PensionsPaymentsOverseasServiceSpec extends UnitTest
 
 
       val model1 = CreateUpdatePensionIncomeModel(
-        foreignPension = Some(sessionUserData.pensions.incomeFromOverseasPensions.toForeignPension),
-        overseasPensionContribution = priorUserData.pensions.flatMap(_.pensionIncome.map(_.overseasPensionContribution))
+        foreignPension = priorUserData.pensions.flatMap(_.pensionIncome.flatMap(_.foreignPension)),
+        overseasPensionContribution = Some(sessionUserData.pensions.paymentsIntoOverseasPensions.toPensionContributions)
       )
 
       val model2 = CreateOrUpdatePensionReliefsModel(
@@ -68,7 +68,7 @@ class PensionsPaymentsOverseasServiceSpec extends UnitTest
       mockSavePensionReliefSessionData(nino, taxYear, model2, Right(()))
       mockCreateOrUpdate(userWithEmptySavePaymentsIntoOverseasCya, Right(()))
 
-      val result =   await(overseasPaymentPensionService.savePaymentsFromOverseasPensionsViewModel(aUser, taxYear))
+      val result = await(overseasPaymentPensionService.savePaymentsFromOverseasPensionsViewModel(aUser, taxYear))
       result shouldBe Right(())
     }
     "return Left(DataNotFound) when user can not be found in DB" in {
@@ -88,8 +88,8 @@ class PensionsPaymentsOverseasServiceSpec extends UnitTest
 
 
       val model1 = CreateUpdatePensionIncomeModel(
-        foreignPension = Some(sessionUserData.pensions.incomeFromOverseasPensions.toForeignPension),
-        overseasPensionContribution = priorUserData.pensions.flatMap(_.pensionIncome.map(_.overseasPensionContribution))
+        foreignPension = priorUserData.pensions.flatMap(_.pensionIncome.flatMap(_.foreignPension)),
+        overseasPensionContribution = Some(sessionUserData.pensions.paymentsIntoOverseasPensions.toPensionContributions)
       )
 
       val model2 = CreateOrUpdatePensionReliefsModel(
@@ -120,8 +120,8 @@ class PensionsPaymentsOverseasServiceSpec extends UnitTest
 
 
       val model1 = CreateUpdatePensionIncomeModel(
-        foreignPension = Some(sessionUserData.pensions.incomeFromOverseasPensions.toForeignPension),
-        overseasPensionContribution = priorUserData.pensions.flatMap(_.pensionIncome.map(_.overseasPensionContribution))
+        foreignPension = priorUserData.pensions.flatMap(_.pensionIncome.flatMap(_.foreignPension)),
+        overseasPensionContribution = Some(sessionUserData.pensions.paymentsIntoOverseasPensions.toPensionContributions)
       )
 
       val model2 = CreateOrUpdatePensionReliefsModel(

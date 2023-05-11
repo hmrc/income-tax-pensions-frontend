@@ -59,7 +59,7 @@ class UnauthorisedPaymentsCYAController @Inject()(authAction: AuthorisedAction,
 
     pensionSessionService.getAndHandle(taxYear, request.user) { (cya, prior) =>
       (cya, prior) match {
-        case (Some(data), Some(priorData: AllPensionsData)) if data.pensions.unauthorisedPayments.isEmpty() =>
+        case (Some(data), Some(priorData: AllPensionsData)) if data.pensions.unauthorisedPayments.isEmpty =>
           cyaDataIsEmpty(priorData)
         case (Some(data), _) =>
           unauthorisedPaymentsCYAExists(data.pensions.unauthorisedPayments)

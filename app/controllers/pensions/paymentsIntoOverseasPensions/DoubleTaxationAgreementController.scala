@@ -80,8 +80,8 @@ class DoubleTaxationAgreementController @Inject() (actionsProvider: ActionsProvi
   private def updateViewModel(relief: Relief): DoubleTaxationAgreementFormModel =
     DoubleTaxationAgreementFormModel(
       countryId = relief.alphaTwoCountryCode.fold(Countries.get2AlphaCodeFrom3AlphaCode(relief.alphaThreeCountryCode))(Some(_)),
-      article = relief.doubleTaxationCountryArticle,
-      treaty = relief.doubleTaxationCountryTreaty,
+      article = relief.doubleTaxationArticle,
+      treaty = relief.doubleTaxationTreaty,
       reliefAmount = relief.doubleTaxationReliefAmount
     )
 
@@ -98,8 +98,8 @@ class DoubleTaxationAgreementController @Inject() (actionsProvider: ActionsProvi
         reliefs = piopUserData.reliefs.updated(idx, piopUserData.reliefs(idx).copy(
           alphaTwoCountryCode = doubleTaxationAgreementFormModel.countryId,
           alphaThreeCountryCode = Countries.get3AlphaCodeFrom2AlphaCode(doubleTaxationAgreementFormModel.countryId),
-          doubleTaxationCountryArticle = doubleTaxationAgreementFormModel.article,
-          doubleTaxationCountryTreaty = doubleTaxationAgreementFormModel.treaty,
+          doubleTaxationArticle = doubleTaxationAgreementFormModel.article,
+          doubleTaxationTreaty = doubleTaxationAgreementFormModel.treaty,
           doubleTaxationReliefAmount = doubleTaxationAgreementFormModel.reliefAmount
         ))
       )

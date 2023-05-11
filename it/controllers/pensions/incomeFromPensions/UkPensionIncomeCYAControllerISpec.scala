@@ -70,9 +70,9 @@ class UkPensionIncomeCYAControllerISpec extends IntegrationTest with ViewHelpers
   }
 
   object CommonExpectedEN extends CommonExpectedResults {
-    val expectedTitle = "Check income from pensions"
-    val expectedCaption: Int => String = (taxYear: Int) =>  s"UK pension income for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val buttonText = "Continue"
+    val expectedTitle = "Check UK Pension Income"
+    val expectedCaption: Int => String = (taxYear: Int) =>  s"Income from pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
+    val buttonText = "Save and continue"
     val yesText = "Yes"
     val noText = "No"
     val ukPensionIncome = "UK pension income"
@@ -81,9 +81,9 @@ class UkPensionIncomeCYAControllerISpec extends IntegrationTest with ViewHelpers
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedTitle = "Gwirio incwm o bensiynau"
-    val expectedCaption: Int => String = (taxYear: Int) =>  s"Incwm o bensiynau’r DU ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
-    val buttonText = "Yn eich blaen"
+    val expectedTitle = "Check UK Pension Income"
+    val expectedCaption: Int => String = (taxYear: Int) =>  s"Incwm o bensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
+    val buttonText = "Cadw ac yn eich blaen"
     val yesText = "Iawn"
     val noText = "Na"
     val ukPensionIncome = "Incwm o bensiynau’r DU"
@@ -201,7 +201,7 @@ class UkPensionIncomeCYAControllerISpec extends IntegrationTest with ViewHelpers
     "redirect to the first page in the journey when there is no CYA or prior data" which {
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         userDataStub(IncomeTaxUserData(None), nino, taxYearEOY)
         urlGet(fullUrl(ukPensionIncomeCyaUrl(taxYearEOY)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
@@ -225,7 +225,7 @@ class UkPensionIncomeCYAControllerISpec extends IntegrationTest with ViewHelpers
 
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         urlPost(fullUrl(ukPensionIncomeCyaUrl(taxYear)), form, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
       }
@@ -246,7 +246,7 @@ class UkPensionIncomeCYAControllerISpec extends IntegrationTest with ViewHelpers
 
         lazy val result: WSResponse = {
           dropPensionsDB()
-          authoriseAgentOrIndividual(isAgent = false)
+          authoriseAgentOrIndividual()
           userDataStub(IncomeTaxUserData(None), nino, taxYear)
           insertCyaData(aPensionsUserData.copy(pensions = aPensionsCYAModel.copy(incomeFromPensions = newIncomeFromPensions), taxYear = taxYear), aUserRequest)
           urlPost(fullUrl(ukPensionIncomeCyaUrl(taxYear)), form, follow = false,
@@ -267,7 +267,7 @@ class UkPensionIncomeCYAControllerISpec extends IntegrationTest with ViewHelpers
 
         lazy val result: WSResponse = {
           dropPensionsDB()
-          authoriseAgentOrIndividual(isAgent = false)
+          authoriseAgentOrIndividual()
           userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYear)
           insertCyaData(aPensionsUserData.copy(pensions = aPensionsCYAModel.copy(incomeFromPensions = newIncomeFromPensions), taxYear = taxYear), aUserRequest)
           urlPost(fullUrl(ukPensionIncomeCyaUrl(taxYear)), form, follow = false,
@@ -308,7 +308,7 @@ class UkPensionIncomeCYAControllerISpec extends IntegrationTest with ViewHelpers
 
         lazy val result: WSResponse = {
           dropPensionsDB()
-          authoriseAgentOrIndividual(isAgent = false)
+          authoriseAgentOrIndividual()
           userDataStub(anIncomeTaxUserData.copy(pensions = Some(priorData)), nino, taxYear)
           insertCyaData(cyaData, aUserRequest)
           urlPost(fullUrl(ukPensionIncomeCyaUrl(taxYear)), form, follow = false,

@@ -72,13 +72,13 @@
 
 
 @layout(pageTitle = headingForUse, taxYear = Some(taxYear)) {
-    @heading(headingForUse, Some(messages("common.uKPensionIncome.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-2")
+    @heading(headingForUse, Some(messages("common.incomeFromPensions.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-2")
     @contentHtml
     @summaryList(summaryRows.flatten)
     @button(Button(
-        attributes = Map("id" -> "continue"),
+        attributes = Map("id" -> "save"),
         preventDoubleClick = Some(true),
-        content = Text(messages("common.continue")),
+        content = Text(messages("common.saveAndContinue")),
         classes = "govuk-button govuk-!-margin-top-2",
         href = Some(PensionsSummaryController.show(taxYear).url)
     ))

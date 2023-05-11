@@ -52,8 +52,8 @@ class PensionsCustomerReferenceNumberControllerISpec extends IntegrationTest wit
     qopsReference = None,
     alphaTwoCountryCode = None,
     alphaThreeCountryCode = None,
-    doubleTaxationCountryArticle = None,
-    doubleTaxationCountryTreaty = None,
+    doubleTaxationArticle = None,
+    doubleTaxationTreaty = None,
     doubleTaxationReliefAmount = None,
     sf74Reference = Some("SF74-123456")
   )
@@ -63,8 +63,8 @@ class PensionsCustomerReferenceNumberControllerISpec extends IntegrationTest wit
     qopsReference = None,
     alphaTwoCountryCode = None,
     alphaThreeCountryCode = None,
-    doubleTaxationCountryArticle = None,
-    doubleTaxationCountryTreaty = None,
+    doubleTaxationArticle = None,
+    doubleTaxationTreaty = None,
     doubleTaxationReliefAmount = None,
     sf74Reference = Some("SF74-123456")
   )

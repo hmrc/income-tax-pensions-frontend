@@ -51,7 +51,7 @@ class PensionOverseasPaymentService @Inject()(pensionUserDataRepository: Pension
   }
 
   def savePaymentsFromOverseasPensionsViewModel(user: User, taxYear: Int)(implicit hc: HeaderCarrier, ec: ExecutionContext,
-                                                clock: Clock): Future[Either[ServiceError, Unit]] = {
+                                                                          clock: Clock): Future[Either[ServiceError, Unit]] = {
 
 
     val hcWithExtras = hc.withExtraHeaders("mtditid" -> user.mtditid)
@@ -60,11 +60,11 @@ class PensionOverseasPaymentService @Inject()(pensionUserDataRepository: Pension
       sessionData <- FutureEitherOps[ServiceError, Option[PensionsUserData]](pensionUserDataRepository.find(taxYear, user))
       priorData <- FutureEitherOps[ServiceError, IncomeTaxUserData](incomeTaxUserDataConnector.
         getUserData(user.nino, taxYear)(hc.withExtraHeaders("mtditid" -> user.mtditid)))
-      viewModelOverseas = sessionData.map(_.pensions.incomeFromOverseasPensions)
-      updatedFp = viewModelOverseas.map(_.toForeignPension)
+
+      viewModelOverseas = sessionData.map(_.pensions.paymentsIntoOverseasPensions)
       updatedIncomeData = CreateUpdatePensionIncomeModel(
-        foreignPension = updatedFp,
-        overseasPensionContribution = priorData.pensions.flatMap(_.pensionIncome.flatMap(_.overseasPensionContribution))
+        foreignPension = priorData.pensions.flatMap(_.pensionIncome.flatMap(_.foreignPension)),
+        overseasPensionContribution = viewModelOverseas.map(_.toPensionContributions)
       )
       viewModelPayments = sessionData.map(_.pensions.paymentsIntoPension)
 

@@ -19,9 +19,7 @@ package models.pension.reliefs
 import play.api.libs.json.{Json, OFormat}
 import utils.EncryptedValue
 
-case class PaymentsIntoPensionViewModel(gateway: Option[Boolean] = None,
-                                       //todo Edem remove gateway
-                                        rasPensionPaymentQuestion: Option[Boolean] = None,
+case class PaymentsIntoPensionViewModel(rasPensionPaymentQuestion: Option[Boolean] = None,
                                         totalRASPaymentsAndTaxRelief: Option[BigDecimal] = None,
                                         oneOffRasPaymentPlusTaxReliefQuestion: Option[Boolean] = None,
                                         totalOneOffRasPaymentPlusTaxRelief: Option[BigDecimal] = None,
@@ -36,11 +34,9 @@ case class PaymentsIntoPensionViewModel(gateway: Option[Boolean] = None,
     boolField.exists(value => !value || (value && amountField.nonEmpty))
   }
 
-  def isEmpty(): Boolean = this.productIterator.forall(_ == None)
+  def isEmpty: Boolean = this.productIterator.forall(_ == None)
 
   def isFinished: Boolean = {
-    val isDone_gateway = gateway.contains(true)
-
     val isDone_rasPensionPaymentQuestion = yesNoAndAmountPopulated(rasPensionPaymentQuestion, totalRASPaymentsAndTaxRelief)
     val isDone_oneOffRASPaymentsQuestion =
       rasPensionPaymentQuestion.exists(q =>
@@ -57,25 +53,20 @@ case class PaymentsIntoPensionViewModel(gateway: Option[Boolean] = None,
         if(q) yesNoAndAmountPopulated(workplacePensionPaymentsQuestion, totalWorkplacePensionPayments) else true
       )
 
-    if (isDone_gateway) {
-      Seq(
-        isDone_gateway,
-        isDone_rasPensionPaymentQuestion,
-        isDone_oneOffRASPaymentsQuestion,
-        isDone_totalPaymentsIntoRASQuestion,
-        isDone_retirementAnnuityContractPaymentsQuestion,
-        isDone_workplacePensionPaymentsQuestion,
-        isDone_taxReliefNotClaimedCompleted
-      ).forall(_ == true)
-    } else {
-      gateway.contains(false)
-    }
+    Seq(
+      isDone_rasPensionPaymentQuestion,
+      isDone_oneOffRASPaymentsQuestion,
+      isDone_totalPaymentsIntoRASQuestion,
+      isDone_retirementAnnuityContractPaymentsQuestion,
+      isDone_workplacePensionPaymentsQuestion,
+      isDone_taxReliefNotClaimedCompleted
+    ).forall(x => x)
   }
 
   private def taxReliefNotClaimedQuestionCompleted: Boolean = {
     pensionTaxReliefNotClaimedQuestion match {
       case Some(true) =>
-        retirementAnnuityContractPaymentsQuestion.contains(true) || workplacePensionPaymentsQuestion.contains(true)
+        retirementAnnuityContractPaymentsQuestion.exists(x => x)|| workplacePensionPaymentsQuestion.exists(x => x)
       case Some(false) =>
         retirementAnnuityContractPaymentsQuestion.isEmpty && workplacePensionPaymentsQuestion.isEmpty
       case _ => false
@@ -87,8 +78,7 @@ object PaymentsIntoPensionViewModel {
   implicit val format: OFormat[PaymentsIntoPensionViewModel] = Json.format[PaymentsIntoPensionViewModel]
 }
 
-case class EncryptedPaymentsIntoPensionViewModel(gateway: Option[EncryptedValue] = None,
-                                                 rasPensionPaymentQuestion: Option[EncryptedValue] = None,
+case class EncryptedPaymentsIntoPensionViewModel(rasPensionPaymentQuestion: Option[EncryptedValue] = None,
                                                  totalRASPaymentsAndTaxRelief: Option[EncryptedValue] = None,
                                                  oneOffRasPaymentPlusTaxReliefQuestion: Option[EncryptedValue] = None,
                                                  totalOneOffRasPaymentPlusTaxRelief: Option[EncryptedValue] = None,

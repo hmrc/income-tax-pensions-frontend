@@ -43,7 +43,6 @@ class EncryptionService @Inject()(secureGCMCipher: SecureGCMCipher, appConfig: A
 
   private def encryptPaymentsIntoPension(p: PaymentsIntoPensionViewModel)(implicit textAndKey: TextAndKey): EncryptedPaymentsIntoPensionViewModel = {
     EncryptedPaymentsIntoPensionViewModel(
-      gateway = p.gateway.map(secureGCMCipher.encrypt),
       rasPensionPaymentQuestion = p.rasPensionPaymentQuestion.map(secureGCMCipher.encrypt),
       totalRASPaymentsAndTaxRelief = p.totalRASPaymentsAndTaxRelief.map(secureGCMCipher.encrypt),
       oneOffRasPaymentPlusTaxReliefQuestion = p.oneOffRasPaymentPlusTaxReliefQuestion.map(secureGCMCipher.encrypt),
@@ -90,7 +89,6 @@ class EncryptionService @Inject()(secureGCMCipher: SecureGCMCipher, appConfig: A
 
   private def decryptPaymentsIntoPensionViewModel(p: EncryptedPaymentsIntoPensionViewModel)(implicit textAndKey: TextAndKey): PaymentsIntoPensionViewModel = {
     PaymentsIntoPensionViewModel(
-      gateway = p.gateway.map(x => secureGCMCipher.decrypt[Boolean](x.value, x.nonce)),
       rasPensionPaymentQuestion = p.rasPensionPaymentQuestion.map(x => secureGCMCipher.decrypt[Boolean](x.value, x.nonce)),
       totalRASPaymentsAndTaxRelief = p.totalRASPaymentsAndTaxRelief.map(x => secureGCMCipher.decrypt[BigDecimal](x.value, x.nonce)),
       oneOffRasPaymentPlusTaxReliefQuestion = p.oneOffRasPaymentPlusTaxReliefQuestion.map(x => secureGCMCipher.decrypt[Boolean](x.value, x.nonce)),

@@ -45,8 +45,8 @@ class ReliefsSchemeDetailsHelperSpec extends AnyWordSpec with Matchers {
     Some(193.54),
     Some(TaxReliefQuestion.DoubleTaxationRelief),
     alphaTwoCountryCode = Some("Germany"),
-    doubleTaxationCountryArticle = Some("AB3211-1"),
-    doubleTaxationCountryTreaty = Some("Munich"),
+    doubleTaxationArticle = Some("AB3211-1"),
+    doubleTaxationTreaty = Some("Munich"),
     doubleTaxationReliefAmount = Some(123.45)
   )
 

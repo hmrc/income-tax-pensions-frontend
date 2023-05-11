@@ -17,8 +17,8 @@
 package controllers.pensions.incomeFromPensions
 
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.routes.PensionsSummaryController
 import controllers.pensions.incomeFromPensions.routes.StatePensionLumpSumController
+import controllers.pensions.routes.PensionsSummaryController
 import controllers.predicates.ActionsProvider
 import forms.DateForm.DateModel
 import forms.{DateForm, FormsProvider}
@@ -28,7 +28,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.{Clock, SessionHelper}
+import utils.SessionHelper
 import views.html.pensions.incomeFromPensions.StateBenefitsStartDateView
 
 import javax.inject.{Inject, Singleton}
@@ -42,7 +42,6 @@ class StateBenefitStartDateController @Inject()(actionsProvider: ActionsProvider
                                                 formProvider: FormsProvider)
                                                (implicit val mcc: MessagesControllerComponents,
                                                 appConfig: AppConfig,
-                                                clock: Clock,
                                                 ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport with SessionHelper {
 
   def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) {
