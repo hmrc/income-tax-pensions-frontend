@@ -121,8 +121,8 @@ object WorkplaceAmountSpec {
     val expectedHeading = "Faint y gwnaeth eich cleient ei dalu i mewn i bensiynau gweithle?"
     val expectedTitle = "Faint y gwnaeth eich cleient ei dalu i mewn i bensiynau gweithle?"
     val expectedErrorTitle = s"Gwall: $expectedTitle"
-    val expectedBullet1 = "wedi ei dalu ar ôl i gyflog eich cleient gael ei drethu"
-    val expectedBullet2 = "ni fydd darparwr pensiwn eich cleient yn hawlio rhyddhad treth ar ei gyfer"
+    val expectedBullet1 = "taliadau a wnaed ar ôl i gyflog eich cleient gael ei drethu"
+    val expectedBullet2 = "taliadau na fydd darparwr pensiwn eich cleient yn hawlio rhyddhad treth ar eu cyfer"
     val expectedYouCanFindThisOut = "Gall eich cleient gael gwybod am hyn gan ei gyflogwr neu ddarparwr pensiwn."
   }
 }
