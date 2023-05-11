@@ -76,7 +76,6 @@ class PensionOverseasPaymentService @Inject()(pensionUserDataRepository: Pension
           overseasPensionSchemeContributions = sessionData.flatMap(_.pensions.paymentsIntoOverseasPensions.paymentsIntoOverseasPensionsAmount)
         )
       )
-      _ = println("look here"+ updatedIncomeData.toString)
       _ <- FutureEitherOps[ServiceError, Unit](pensionsConnector.savePensionIncomeSessionData(user.nino, taxYear, updatedIncomeData)(hcWithExtras, ec))
       _ <- FutureEitherOps[ServiceError, Unit](pensionsConnector.savePensionReliefSessionData(user.nino, taxYear, updatedReliefsData)(hcWithExtras, ec))
       updatedCYA = getPensionsUserData(sessionData, user, taxYear)
