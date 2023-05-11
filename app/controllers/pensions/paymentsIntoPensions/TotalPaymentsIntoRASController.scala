@@ -23,10 +23,10 @@ import models.mongo.PensionsCYAModel
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
-import services.SimpleRedirectService.{PaymentsIntoPensionsRedirects, isFinishedCheck, redirectBasedOnCurrentAnswers}
+import services.SimpleRedirectService.{isFinishedCheck, redirectBasedOnCurrentAnswers}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.Clock
 import utils.PaymentsIntoPensionPages.TotalRasPage
+import utils.{Clock, PaymentsIntoPensionsRedirects}
 import views.html.pensions.paymentsIntoPensions.TotalPaymentsIntoRASView
 
 import java.text.NumberFormat

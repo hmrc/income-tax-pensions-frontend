@@ -26,12 +26,12 @@ import models.{APIErrorBodyModel, APIErrorModel, AuthorisationRequest, User}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.SimpleRedirectService.{PaymentsIntoPensionsRedirects, redirectBasedOnCurrentAnswers}
+import services.SimpleRedirectService.redirectBasedOnCurrentAnswers
 import services.{ExcludeJourneyService, PensionReliefsService, PensionSessionService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.Clock
 import utils.PaymentsIntoPensionPages.CheckYourAnswersPage
+import utils.{Clock, PaymentsIntoPensionsRedirects}
 import views.html.pensions.paymentsIntoPensions.PaymentsIntoPensionsCYAView
 
 import javax.inject.{Inject, Singleton}
@@ -120,7 +120,7 @@ class PaymentsIntoPensionsCYAController @Inject()(authAction: AuthorisedAction,
         Future.successful(Left(APIErrorModel(BAD_REQUEST, APIErrorBodyModel("MISSING_DATA", "CYA data or NINO missing from session."))))
     }).flatMap {
       case Right(_) => //TODO: investigate  the use of the previously used pensionSessionService.clear
-      Future.successful(Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear)))
+        Future.successful(Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear)))
       case Left(error) => Future.successful(errorHandler.handleError(error.status))
     }
   }

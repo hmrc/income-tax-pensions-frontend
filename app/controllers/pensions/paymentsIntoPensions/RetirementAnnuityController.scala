@@ -24,10 +24,10 @@ import models.pension.reliefs.PaymentsIntoPensionViewModel
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
-import services.SimpleRedirectService.{PaymentsIntoPensionsRedirects, isFinishedCheck, redirectBasedOnCurrentAnswers}
+import services.SimpleRedirectService.{isFinishedCheck, redirectBasedOnCurrentAnswers}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.Clock
 import utils.PaymentsIntoPensionPages.RetirementAnnuityPage
+import utils.{Clock, PaymentsIntoPensionsRedirects}
 import views.html.pensions.paymentsIntoPensions.PayIntoRetirementAnnuityContractView
 
 import javax.inject.{Inject, Singleton}
