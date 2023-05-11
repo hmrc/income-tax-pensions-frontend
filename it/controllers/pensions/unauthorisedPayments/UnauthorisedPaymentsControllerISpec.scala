@@ -110,9 +110,9 @@ class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAnd
       "dibynnu p’un a ydych wedi cymryd 25% neu fwy o’ch cronfeydd pensiwn."
     val expectedYesSurchargeCheckboxText = "Iawn, taliadau heb awdurdod a wnaeth arwain at ordal"
     val expectedYesNotSurchargeCheckboxText = "Iawn, taliadau heb awdurdod na wnaethant arwain at ordal"
-    val expectedNoSurchargeCheckboxText = "No"
+    val expectedNoSurchargeCheckboxText = "Na"
     val noEntryErrorMessage = "Dewiswch ‘Iawn’ os cawsoch daliad heb awdurdod o gynllun pensiwn"
-    val checkboxHint = "Select all that apply."
+    val checkboxHint = "Dewiswch bob un sy’n berthnasol."
     val expectedDetailsExternalLinkText = "Dysgwch ragor am daliadau heb awdurdod (yn agor tab newydd)"
   }
 
