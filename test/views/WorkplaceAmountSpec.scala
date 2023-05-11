@@ -86,7 +86,7 @@ object WorkplaceAmountSpec {
     val invalidFormatErrorText = "Nodwch y swm a dalwyd i mewn i bensiynau gweithle yn y fformat cywir"
     val maxAmountErrorText = "Mae’n rhaid i’r swm a dalwyd i mewn i bensiynau gweithle fod yn llai na £100,000,000,000"
     val buttonText = "Yn eich blaen"
-    val expectedParagraph = "Dylech gynnwys taliadau yn unig:"
+    val expectedParagraph = "Dylech gynnwys y taliadau canlynol yn unig:"
   }
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
@@ -102,8 +102,8 @@ object WorkplaceAmountSpec {
     val expectedHeading = "Faint y gwnaethoch ei dalu i mewn i bensiynau gweithle?"
     val expectedTitle = "Faint y gwnaethoch ei dalu i mewn i bensiynau gweithle?"
     val expectedErrorTitle = s"Gwall: $expectedTitle"
-    val expectedBullet1 = "wedi ei dalu ar ôl i’ch cyflog gael ei drethu"
-    val expectedBullet2 = "ni fydd darparwr eich pensiwn yn hawlio rhyddhad treth ar ei gyfer"
+    val expectedBullet1 = "taliadau a wnaed ar ôl i’ch cyflog gael ei drethu"
+    val expectedBullet2 = "taliadau na fydd darparwr eich pensiwn yn hawlio rhyddhad treth ar eu cyfer"
     val expectedYouCanFindThisOut = "Gallwch gael gwybod hyn gan eich cyflogwr neu ddarparwr eich pensiwn."
 
   }

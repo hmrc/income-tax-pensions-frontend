@@ -121,7 +121,7 @@ object WorkplacePensionViewSpec {
   object ExpectedAgentCY extends SpecificExpectedResults {
     val expectedHeading = "A wnaeth eich cleient dalu i mewn i bensiwn gweithle a heb dderbyn rhyddhad treth?"
     val expectedTitle = "A wnaeth eich cleient dalu i mewn i bensiwn gweithle a heb dderbyn rhyddhad treth?"
-    val expectedInfoText = "Bydd eich cleient wedi gwneud ei daliadau ar ôl i’w gyflog gael ei drethu."
+    val expectedInfoText = "Byddai eich cleient wedi gwneud ei daliadau ar ôl i’w gyflog gael ei drethu."
     val expectedTheseCases = "Mae’r achosion hyn yn anarferol gan fod y rhan fwyaf o bensiynau gweithle wedi’u sefydlu i roi rhyddhad treth i’ch cleient ar adeg ei daliad."
 
     val expectedWhereToCheck = "Gwiriwch gyda chyflogwr neu ddarparwr pensiwn eich cleient pa drefniant sydd ganddo."

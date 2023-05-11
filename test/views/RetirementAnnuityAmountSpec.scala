@@ -86,7 +86,7 @@ object RetirementAnnuityAmountSpec {
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
-    val onlyIncludePayment = "Dim ond taliadau na fydd darparwr eich pensiwn yn hawlio rhyddhad treth ar eu cyfer y dylech eu cynnwys. Gallwch ddysgu beth yw hyn oddi wrth ddarparwr eich pensiwn."
+    val onlyIncludePayment = "Dim ond taliadau na fydd darparwr eich pensiwn yn hawlio rhyddhad treth ar eu cyfer y dylech eu cynnwys. Gallwch ddysgu hyn oddi wrth ddarparwr eich pensiwn."
     val expectedTitle = "Faint y gwnaethoch ei dalu i mewn i’ch contractau blwydd-dal ymddeol?"
     val expectedHeading = "Faint y gwnaethoch ei dalu i mewn i’ch contractau blwydd-dal ymddeol?"
     val expectedErrorTitle = s"Gwall: $expectedTitle"
@@ -102,7 +102,7 @@ object RetirementAnnuityAmountSpec {
 
   object ExpectedAgentCY extends SpecificExpectedResults {
     val onlyIncludePayment =
-      "Dim ond taliadau na fydd darparwr pensiwn eich cleient yn hawlio rhyddhad treth ar eu cyfer y dylech eu cynnwys. Gallwch ddysgu beth yw hyn oddi wrth ddarparwr pensiwn eich cleient."
+      "Dim ond taliadau na fydd darparwr pensiwn eich cleient yn hawlio rhyddhad treth ar eu cyfer y dylech eu cynnwys. Gallwch ddysgu hyn oddi wrth ddarparwr pensiwn eich cleient."
     val expectedTitle = "Faint y gwnaeth eich cleient ei dalu i mewn i’w gontractau blwydd-dal ymddeol?"
     val expectedHeading = "Faint y gwnaeth eich cleient ei dalu i mewn i’w gontractau blwydd-dal ymddeol?"
     val expectedErrorTitle = s"Gwall: $expectedTitle"

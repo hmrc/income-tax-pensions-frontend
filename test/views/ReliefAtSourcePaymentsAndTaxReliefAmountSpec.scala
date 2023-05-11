@@ -85,7 +85,7 @@ object ReliefAtSourcePaymentsAndTaxReliefAmountSpec {
     val expectedTitle = "Cyfanswm y taliadau i mewn i bensiynau rhyddhad wrth y ffynhonnell (RAS), ynghyd â rhyddhad treth ar y gyfradd sylfaenol"
     val expectedErrorTitle = s"Gwall: $expectedTitle"
     val expectedCalculationHeading = "Cyfrifiad enghreifftiol"
-    val expectedExampleCalculation = "Talodd Elin £500 i mewn i’w chynllun pensiwn. £500 wedi’i rhannu â 80, ac yna’i luosi â 100 yw £625 Ei hateb yw £625."
+    val expectedExampleCalculation = "Talodd Elin £500 i mewn i’w chynllun pensiwn. £500 wedi’i rhannu ag 80, ac yna ei lluosi â 100 yw £625. Ei hateb yw £625."
     val hintText = "Er enghraifft, £193.52"
     val emptyErrorText = "Nodwch y cyfanswm a dalwyd i mewn i bensiynau RAS, ynghyd â rhyddhad treth ar y gyfradd sylfaenol"
     val invalidFormatErrorText = "Nodwch y cyfanswm a dalwyd i mewn i bensiynau RAS, ynghyd â rhyddhad treth ar y gyfradd sylfaenol, yn y fformat cywir"
@@ -104,7 +104,7 @@ object ReliefAtSourcePaymentsAndTaxReliefAmountSpec {
     val expectedWhereToFind =
       "Gallwch ddod o hyd i’r cyfanswm a daloch i mewn i bensiynau RAS, ynghyd â rhyddhad treth, ar y dystysgrif pensiwn neu’r dderbynneb gan eich gweinyddwr."
     val expectedHowToWorkOut =
-      "Er mwyn cyfrifo hyn eich hun, rhannwch y swm y gwnaethoch ei dalu mewn gwirionedd â 80, a lluoswch y canlyniad â 100."
+      "Er mwyn cyfrifo hyn eich hun, rhannwch y swm y gwnaethoch ei dalu mewn gwirionedd ag 80, a lluoswch y canlyniad â 100."
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
@@ -118,7 +118,7 @@ object ReliefAtSourcePaymentsAndTaxReliefAmountSpec {
     val expectedWhereToFind =
       "Gallwch ddod o hyd i’r cyfanswm a dalwyd gan eich cleient i mewn i bensiynau RAS, ynghyd â rhyddhad treth, ar y dystysgrif pensiwn neu’r dderbynneb gan y gweinyddwr."
     val expectedHowToWorkOut =
-      "Er mwyn cyfrifo hyn eich hun, rhannwch y swm a dalwyd gan eich cleient mewn gwirionedd â 80, a lluoswch y canlyniad â 100."
+      "Er mwyn cyfrifo hyn eich hun, rhannwch y swm a dalwyd gan eich cleient mewn gwirionedd ag 80, a lluoswch y canlyniad â 100."
   }
 }
 

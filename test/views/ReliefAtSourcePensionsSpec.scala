@@ -77,7 +77,7 @@ object ReliefAtSourcePensionsSpec {
     val expectedH2 = "A wnaethoch chi dalu i mewn i bensiwn RAS?"
     val expectedError = "Dewiswch ‘Iawn’ os gwnaethoch dalu i mewn i bensiwn RAS"
     val expectedParagraph = "Dyma bensiynau rydych yn talu i mewn iddynt o:"
-    val expectedExample1 = "eich incwm net (ar ol i dreth cael ei didynnu), os ydych yn gyflogedig"
+    val expectedExample1 = "eich incwm net (ar ôl i dreth gael ei didynnu), os ydych yn gyflogedig"
     val expectedExample2 = "eich incwm trethadwy, os ydych yn hunangyflogedig"
     val expectedPensionProviderText = "Yna, bydd eich darparwr pensiwn yn hawlio rhyddhad treth ar eich cyfer."
     val expectedCheckProviderText = "Gallwch wirio gyda’ch darparwr pensiwn a yw hyn yn berthnasol i chi."
