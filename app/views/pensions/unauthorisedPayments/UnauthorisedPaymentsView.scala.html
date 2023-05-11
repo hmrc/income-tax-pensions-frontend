@@ -80,7 +80,7 @@
                 ))
             )),
             hint = Some(Hint(
-                content = Text("Select all that apply.")
+                content = Text(messages("unauthorisedPayments.checkbox.hint"))
             )),
             errorMessage = form.errors.headOption.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*)))),
             idPrefix = Some("unauthorisedPayments"),
@@ -102,7 +102,7 @@
                     divider = Some("or")
                 ),
                 CheckboxItem(
-                    content = Text("No"),
+                    content = Text(messages("common.no")),
                     value = noValue,
                     hint = None,
                     checked = noQuestion.contains(true),

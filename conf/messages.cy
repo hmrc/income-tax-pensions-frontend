@@ -813,6 +813,7 @@ unauthorisedPayments.findOutMoreAboutUnauthorisedPayment = Dysgwch ragor am dali
 unauthorisedPayments.didYouGetAnUnauthorisedPayment = A gawsoch daliad heb awdurdod o gynllun pensiwn?
 unauthorisedPayments.checkbox.text1 = Iawn, taliadau heb awdurdod a wnaeth arwain at ordal
 unauthorisedPayments.checkbox.text2 = Iawn, taliadau heb awdurdod na wnaethant arwain at ordal
+unauthorisedPayments.checkbox.hint = Dewiswch bob un sy’n berthnasol.
 
 #Do you have an employer-financed retirement scheme?
 employerFinancedRetirementScheme.benefitsFromScheme.title = Cynlluniau buddiannau ymddeol a ariannwyd gan gyflogwyr
