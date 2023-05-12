@@ -50,7 +50,7 @@ class RetirementAnnuityAmountControllerISpec extends IntegrationTest with ViewHe
     "render How much did you pay into your retirement annuity contracts page with no value when no cya data" which {
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
           retirementAnnuityContractPaymentsQuestion = Some(true), totalRetirementAnnuityContractPayments = None)
         insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
@@ -81,7 +81,7 @@ class RetirementAnnuityAmountControllerISpec extends IntegrationTest with ViewHe
       val existingAmount: String = "999.88"
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
           retirementAnnuityContractPaymentsQuestion = Some(true), totalRetirementAnnuityContractPayments = Some(BigDecimal(existingAmount)))
         insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
@@ -110,7 +110,7 @@ class RetirementAnnuityAmountControllerISpec extends IntegrationTest with ViewHe
     "redirect to the retirementAnnuityContractQuestion page if the question has not been answered" which {
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
           retirementAnnuityContractPaymentsQuestion = None, totalRetirementAnnuityContractPayments = None)
         insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
@@ -127,7 +127,7 @@ class RetirementAnnuityAmountControllerISpec extends IntegrationTest with ViewHe
     "redirect to the retirementAnnuityContractQuestion page if the retirementAnnuityContract question has been answered as false" which {
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
           retirementAnnuityContractPaymentsQuestion = Some(false), totalRetirementAnnuityContractPayments = None)
         insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
@@ -144,7 +144,7 @@ class RetirementAnnuityAmountControllerISpec extends IntegrationTest with ViewHe
     "redirect to the CYA page if there is no session data" which {
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         urlGet(fullUrl(retirementAnnuityAmountUrl(taxYearEOY)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -165,7 +165,7 @@ class RetirementAnnuityAmountControllerISpec extends IntegrationTest with ViewHe
         val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
           retirementAnnuityContractPaymentsQuestion = Some(true), totalRetirementAnnuityContractPayments = None)
         insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         urlPost(fullUrl(retirementAnnuityAmountUrl(taxYearEOY)), body = emptyForm,
           follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -199,7 +199,7 @@ class RetirementAnnuityAmountControllerISpec extends IntegrationTest with ViewHe
         val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
           retirementAnnuityContractPaymentsQuestion = Some(true), totalRetirementAnnuityContractPayments = None)
         insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         urlPost(fullUrl(retirementAnnuityAmountUrl(taxYearEOY)), body = invalidFormatForm,
           follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -234,7 +234,7 @@ class RetirementAnnuityAmountControllerISpec extends IntegrationTest with ViewHe
         val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
           retirementAnnuityContractPaymentsQuestion = Some(true), totalRetirementAnnuityContractPayments = None)
         insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         urlPost(fullUrl(retirementAnnuityAmountUrl(taxYearEOY)),
           body = overMaximumForm, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -268,7 +268,7 @@ class RetirementAnnuityAmountControllerISpec extends IntegrationTest with ViewHe
         val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
           totalRetirementAnnuityContractPayments = None, workplacePensionPaymentsQuestion = None)
         insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         urlPost(fullUrl(retirementAnnuityAmountUrl(taxYearEOY)),
           body = validForm, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
@@ -295,7 +295,7 @@ class RetirementAnnuityAmountControllerISpec extends IntegrationTest with ViewHe
         val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
           retirementAnnuityContractPaymentsQuestion = Some(true), totalRetirementAnnuityContractPayments = None)
         insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         urlPost(fullUrl(retirementAnnuityAmountUrl(taxYearEOY)),
           body = validForm, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
