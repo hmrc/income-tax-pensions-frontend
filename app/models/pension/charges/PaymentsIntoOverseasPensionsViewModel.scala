@@ -17,7 +17,7 @@
 package models.pension.charges
 
 import models.mongo.TextAndKey
-import models.pension.income.{OverseasPensionContribution}
+import models.pension.income.OverseasPensionContribution
 import play.api.libs.json.{Json, OFormat}
 import utils.DecryptableSyntax.DecryptableOps
 import utils.DecryptorInstances.{bigDecimalDecryptor, booleanDecryptor, stringDecryptor}
@@ -124,7 +124,7 @@ case class PaymentsIntoOverseasPensionsViewModel(paymentsIntoOverseasPensionsQue
           exemptEmployersPensionContribs = relief.employerPaymentsAmount.getOrElse(0),
           migrantMemReliefQopsRefNo = relief.qopsReference,
           dblTaxationRelief = relief.doubleTaxationReliefAmount,
-          dblTaxationCountry = relief.alphaTwoCountryCode,
+          dblTaxationCountry = relief.alphaThreeCountryCode,
           dblTaxationArticle = relief.doubleTaxationArticle,
           dblTaxationTreaty = relief.doubleTaxationTreaty,
           sf74Reference = relief.sf74Reference
