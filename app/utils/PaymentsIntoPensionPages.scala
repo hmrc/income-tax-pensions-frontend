@@ -16,11 +16,6 @@
 
 package utils
 
-import controllers.pensions.paymentsIntoPensions.routes._
-import models.mongo.PensionsCYAModel
-import play.api.mvc.Result
-import play.api.mvc.Results.Redirect
-
 sealed trait PaymentsIntoPensionPages {
   val journeyNo: Int
 }
@@ -29,110 +24,35 @@ object PaymentsIntoPensionPages {
   case object RasPage extends PaymentsIntoPensionPages {
     override val journeyNo: Int = 1
   }
-
   case object RasAmountPage extends PaymentsIntoPensionPages {
     override val journeyNo: Int = 2
   }
-
   case object OneOffRasPage extends PaymentsIntoPensionPages {
     override val journeyNo: Int = 3
   }
-
   case object OneOffRasAmountPage extends PaymentsIntoPensionPages {
     override val journeyNo: Int = 4
   }
-
   case object TotalRasPage extends PaymentsIntoPensionPages {
     override val journeyNo: Int = 5
   }
-
   case object TaxReliefNotClaimedPage extends PaymentsIntoPensionPages {
     override val journeyNo: Int = 6
   }
-
   case object RetirementAnnuityPage extends PaymentsIntoPensionPages {
     override val journeyNo: Int = 7
   }
-
   case object RetirementAnnuityAmountPage extends PaymentsIntoPensionPages {
     override val journeyNo: Int = 8
   }
-
   case object WorkplacePensionPage extends PaymentsIntoPensionPages {
     override val journeyNo: Int = 9
   }
-
   case object WorkplacePensionAmountPage extends PaymentsIntoPensionPages {
     override val journeyNo: Int = 10
   }
-
   case object CheckYourAnswersPage extends PaymentsIntoPensionPages {
     override val journeyNo: Int = 11
-  }
-}
-
-object PaymentsIntoPensionsRedirects {
-  //noinspection ScalaStyle
-  def journeyCheck(currentPage: PaymentsIntoPensionPages, cya: PensionsCYAModel, taxYear: Int): Option[Result] = {
-
-    val pIP = cya.paymentsIntoPension
-
-    def isPageValidInJourney(pageNumber: Int): Boolean = {
-      // 1 skips to 6
-      // 3 skips to 5
-      // 6 skips to 11
-      // 7 skips to 9
-      // 9 skips to 11
-      pageNumber match {
-        case 2 | 3 | 5 => pIP.rasPensionPaymentQuestion.getOrElse(false)
-        // ^ 2,3,5 need Q1 ^
-        case 4 =>
-          pIP.oneOffRasPaymentPlusTaxReliefQuestion.getOrElse(false) &&
-            pIP.rasPensionPaymentQuestion.getOrElse(false)
-        // ^ 4 needs Q1+3
-        case 7 | 9 => pIP.pensionTaxReliefNotClaimedQuestion.getOrElse(false)
-        // ^ 7,9 need Q6 ^
-        case 8 =>
-          pIP.pensionTaxReliefNotClaimedQuestion.getOrElse(false) &&
-            pIP.retirementAnnuityContractPaymentsQuestion.getOrElse(false)
-        // ^ 8 needs Q6+7 ^
-        case 10 => pIP.workplacePensionPaymentsQuestion.getOrElse(false)
-        // ^ 10 needs Q9 ^
-        case _ => true
-      }
-    }
-
-    def previousQuestionIsAnswered(pageNumber: Int): Boolean = {
-      // check if previous Q answered if not skipped, else check relevant Q
-      pageNumber match {
-        case 1 => true
-        case 2 => pIP.rasPensionPaymentQuestion.isDefined
-        case 3 => pIP.totalRASPaymentsAndTaxRelief.isDefined
-        case 4 => pIP.oneOffRasPaymentPlusTaxReliefQuestion.isDefined
-        case 5 =>
-          if (isPageValidInJourney(4)) pIP.totalOneOffRasPaymentPlusTaxRelief.isDefined
-          else pIP.oneOffRasPaymentPlusTaxReliefQuestion.isDefined
-        case 6 =>
-          if (isPageValidInJourney(5)) pIP.totalPaymentsIntoRASQuestion.isDefined
-          else pIP.rasPensionPaymentQuestion.isDefined
-        case 7 => pIP.pensionTaxReliefNotClaimedQuestion.isDefined
-        case 8 => pIP.retirementAnnuityContractPaymentsQuestion.isDefined
-        case 9 =>
-          if (isPageValidInJourney(8)) pIP.totalRetirementAnnuityContractPayments.isDefined
-          else pIP.retirementAnnuityContractPaymentsQuestion.isDefined
-        case 10 => pIP.workplacePensionPaymentsQuestion.isDefined
-        case 11 =>
-          if (isPageValidInJourney(10)) pIP.totalWorkplacePensionPayments.isDefined
-          else if (isPageValidInJourney(7)) pIP.workplacePensionPaymentsQuestion.isDefined
-          else pIP.pensionTaxReliefNotClaimedQuestion.isDefined
-      }
-    }
-
-    if (isPageValidInJourney(currentPage.journeyNo) && previousQuestionIsAnswered(currentPage.journeyNo)) {
-      None
-    } else {
-      Some(Redirect(ReliefAtSourcePensionsController.show(taxYear)))
-    }
   }
 }
 
