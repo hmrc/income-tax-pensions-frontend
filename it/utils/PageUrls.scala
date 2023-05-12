@@ -112,6 +112,8 @@ object PageUrls extends IntegrationTest {
     }
 
     def ukPensionIncomeCyaUrl(taxYear: Int): String = s"$appUrl/$taxYear/pension-income/check-uk-pension-income"
+    
+    def statePensionCyaUrl(taxYear: Int): String = s"$appUrl/$taxYear/pension-income/check-state-pension"
   }
 
   //  *****************     Pension annual allowance pages      ******************************
