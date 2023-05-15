@@ -200,7 +200,8 @@ class ReducedAnnualAllowanceControllerISpec extends IntegrationTest with BeforeA
             val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(reducedAnnualAllowanceQuestion = Some(true))
             insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel), aUserRequest)
             authoriseAgentOrIndividual(user.isAgent)
-            urlGet(fullUrl(reducedAnnualAllowanceUrl(taxYearEOY)), user.isWelsh, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+            urlGet(fullUrl(reducedAnnualAllowanceUrl(taxYearEOY)), user.isWelsh,
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
 
           "has an OK status" in {
@@ -238,7 +239,8 @@ class ReducedAnnualAllowanceControllerISpec extends IntegrationTest with BeforeA
             authoriseAgentOrIndividual(user.isAgent)
             val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(reducedAnnualAllowanceQuestion = Some(false))
             insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel), aUserRequest)
-            urlGet(fullUrl(reducedAnnualAllowanceUrl(taxYearEOY)), user.isWelsh, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+            urlGet(fullUrl(reducedAnnualAllowanceUrl(taxYearEOY)), user.isWelsh,
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
 
           "has an OK status" in {
@@ -274,7 +276,7 @@ class ReducedAnnualAllowanceControllerISpec extends IntegrationTest with BeforeA
     "redirect to Pensions Summary page if there is no session data" should {
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         urlGet(fullUrl(reducedAnnualAllowanceUrl(taxYearEOY)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -339,7 +341,7 @@ class ReducedAnnualAllowanceControllerISpec extends IntegrationTest with BeforeA
 
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         urlPost(fullUrl(reducedAnnualAllowanceUrl(taxYearEOY)), body = form, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -360,7 +362,7 @@ class ReducedAnnualAllowanceControllerISpec extends IntegrationTest with BeforeA
 
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(
           reducedAnnualAllowanceQuestion = None, moneyPurchaseAnnualAllowance = None, taperedAnnualAllowance = None)
         insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel), aUserRequest)
@@ -384,7 +386,7 @@ class ReducedAnnualAllowanceControllerISpec extends IntegrationTest with BeforeA
 
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(
           reducedAnnualAllowanceQuestion = Some(true), moneyPurchaseAnnualAllowance = Some(true), taperedAnnualAllowance = Some(true))
         insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel), aUserRequest)

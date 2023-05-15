@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package utils
+package services.redirects
 
 import controllers.pensions.paymentsIntoPensions.routes.ReliefAtSourcePensionsController
 import models.mongo.PensionsCYAModel
 import models.pension.reliefs.PaymentsIntoPensionViewModel
 import play.api.mvc.Results.Redirect
-import utils.PaymentsIntoPensionPages._
+import services.redirects.PaymentsIntoPensionPages._
+import utils.UnitTest
 
 class PaymentsIntoPensionsRedirectsSpec extends UnitTest {
 

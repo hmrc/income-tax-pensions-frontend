@@ -139,7 +139,7 @@ class StatePensionLumpSumStartDateControllerISpec extends IntegrationTest with V
 
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(false)
+        authoriseAgentOrIndividual()
         insertCyaData(aPensionsUserData, aUserRequest)
         urlPost(fullUrl(statePensionLumpSumStartDateUrl(taxYearEOY)), body = form, welsh = false, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
@@ -163,7 +163,7 @@ class StatePensionLumpSumStartDateControllerISpec extends IntegrationTest with V
 
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(false)
+        authoriseAgentOrIndividual()
         insertCyaData(aPensionsUserData, aUserRequest)
         urlPost(fullUrl(statePensionLumpSumStartDateUrl(taxYearEOY)), body = form, welsh = false, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
@@ -188,7 +188,7 @@ class StatePensionLumpSumStartDateControllerISpec extends IntegrationTest with V
 
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(false)
+        authoriseAgentOrIndividual()
         insertCyaData(aPensionsUserData, aUserRequest)
         urlPost(fullUrl(statePensionLumpSumStartDateUrl(taxYearEOY)), body = form, welsh = false, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
@@ -213,7 +213,7 @@ class StatePensionLumpSumStartDateControllerISpec extends IntegrationTest with V
 
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(false)
+        authoriseAgentOrIndividual()
         insertCyaData(aPensionsUserData, aUserRequest)
         urlPost(fullUrl(statePensionLumpSumStartDateUrl(taxYearEOY)), body = form, welsh = false, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
@@ -237,7 +237,7 @@ class StatePensionLumpSumStartDateControllerISpec extends IntegrationTest with V
 
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(false)
+        authoriseAgentOrIndividual()
         insertCyaData(aPensionsUserData, aUserRequest)
         urlPost(fullUrl(statePensionLumpSumStartDateUrl(taxYearEOY)), body = form, welsh = false, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
@@ -261,7 +261,7 @@ class StatePensionLumpSumStartDateControllerISpec extends IntegrationTest with V
 
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(false)
+        authoriseAgentOrIndividual()
         insertCyaData(aPensionsUserData, aUserRequest)
         urlPost(fullUrl(statePensionLumpSumStartDateUrl(taxYearEOY)), body = form, welsh = false, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
@@ -288,7 +288,7 @@ class StatePensionLumpSumStartDateControllerISpec extends IntegrationTest with V
 
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(false)
+        authoriseAgentOrIndividual()
         insertCyaData(aPensionsUserData, aUserRequest)
         urlPost(fullUrl(statePensionLumpSumStartDateUrl(taxYearEOY)), body = form, welsh = false, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
@@ -313,7 +313,7 @@ class StatePensionLumpSumStartDateControllerISpec extends IntegrationTest with V
 
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(false)
+        authoriseAgentOrIndividual()
         insertCyaData(aPensionsUserData, aUserRequest)
         urlPost(fullUrl(statePensionLumpSumStartDateUrl(taxYearEOY)), body = form, welsh = false, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
@@ -338,7 +338,7 @@ class StatePensionLumpSumStartDateControllerISpec extends IntegrationTest with V
 
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(false)
+        authoriseAgentOrIndividual()
         insertCyaData(aPensionsUserData, aUserRequest)
         urlPost(fullUrl(statePensionLumpSumStartDateUrl(taxYearEOY)), body = form, welsh = false, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))

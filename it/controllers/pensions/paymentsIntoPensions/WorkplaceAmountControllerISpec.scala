@@ -51,7 +51,7 @@ class WorkplaceAmountControllerISpec extends IntegrationTest with ViewHelpers wi
     "render how much did you pay into your workplace pensions amount page with no pre filling" which {
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
           workplacePensionPaymentsQuestion = Some(true), totalWorkplacePensionPayments = None)
         insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
@@ -86,7 +86,7 @@ class WorkplaceAmountControllerISpec extends IntegrationTest with ViewHelpers wi
       val existingAmount: String = "999.88"
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
           workplacePensionPaymentsQuestion = Some(true), totalWorkplacePensionPayments = Some(BigDecimal(existingAmount)))
         insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
@@ -118,7 +118,7 @@ class WorkplaceAmountControllerISpec extends IntegrationTest with ViewHelpers wi
     "redirect to the ReliefAtSourcePensions question page if the previous question has not been answered" which {
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
           workplacePensionPaymentsQuestion = None, totalWorkplacePensionPayments = None)
         insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
@@ -136,7 +136,7 @@ class WorkplaceAmountControllerISpec extends IntegrationTest with ViewHelpers wi
     "redirect to the ReliefAtSourcePensions question page if the workplaceQuestion has been answered as false" which {
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
           workplacePensionPaymentsQuestion = Some(false), totalWorkplacePensionPayments = None)
         insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
@@ -154,7 +154,7 @@ class WorkplaceAmountControllerISpec extends IntegrationTest with ViewHelpers wi
     "redirect to the CYA page if there is no session data" which {
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         // no cya insert
         urlGet(fullUrl(workplacePensionAmount(taxYearEOY)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
@@ -179,7 +179,7 @@ class WorkplaceAmountControllerISpec extends IntegrationTest with ViewHelpers wi
         val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
           workplacePensionPaymentsQuestion = Some(true), totalWorkplacePensionPayments = None)
         insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         urlPost(fullUrl(workplacePensionAmount(taxYearEOY)), body = emptyForm,
           follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -217,7 +217,7 @@ class WorkplaceAmountControllerISpec extends IntegrationTest with ViewHelpers wi
         val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
           workplacePensionPaymentsQuestion = Some(true), totalWorkplacePensionPayments = None)
         insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         urlPost(fullUrl(workplacePensionAmount(taxYearEOY)), body = invalidFormatForm,
           follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -256,7 +256,7 @@ class WorkplaceAmountControllerISpec extends IntegrationTest with ViewHelpers wi
         val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
           workplacePensionPaymentsQuestion = Some(true), totalWorkplacePensionPayments = None)
         insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         urlPost(fullUrl(workplacePensionAmount(taxYearEOY)), body = overMaximumForm,
           follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -294,7 +294,7 @@ class WorkplaceAmountControllerISpec extends IntegrationTest with ViewHelpers wi
         val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
           workplacePensionPaymentsQuestion = Some(true), totalWorkplacePensionPayments = None)
         insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         urlPost(fullUrl(workplacePensionAmount(taxYearEOY)), body = validForm, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }

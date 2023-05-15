@@ -24,10 +24,11 @@ import models.pension.reliefs.PaymentsIntoPensionViewModel
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
-import services.SimpleRedirectService.{isFinishedCheck, redirectBasedOnCurrentAnswers}
+import services.redirects.PaymentsIntoPensionsRedirects
+import services.redirects.SimpleRedirectService.{isFinishedCheck, redirectBasedOnCurrentAnswers}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.PaymentsIntoPensionPages.TaxReliefNotClaimedPage
-import utils.{Clock, PaymentsIntoPensionsRedirects}
+import services.redirects.PaymentsIntoPensionPages.TaxReliefNotClaimedPage
+import utils.Clock
 import views.html.pensions.paymentsIntoPensions.PensionsTaxReliefNotClaimedView
 
 import javax.inject.{Inject, Singleton}

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package services
+package services.redirects
 
 import models.mongo.{PensionsCYAModel, PensionsUserData}
 import play.api.Logging

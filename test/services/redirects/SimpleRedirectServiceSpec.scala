@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package services
+package services.redirects
 
 import builders.PensionsUserDataBuilder.aPensionsUserData
 import controllers.pensions.paymentsIntoPensions.routes.{PaymentsIntoPensionsCYAController, ReliefAtSourcePensionsController, TotalPaymentsIntoRASController}
 import models.mongo.{PensionsCYAModel, PensionsUserData}
 import models.pension.reliefs.PaymentsIntoPensionViewModel
-import play.api.http.Status
 import play.api.http.Status.SEE_OTHER
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{Call, Result}
