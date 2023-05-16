@@ -52,7 +52,7 @@ object PaymentsIntoPensionsRedirects { //scalastyle:off magic.number
         pIPViewModel.pensionTaxReliefNotClaimedQuestion.getOrElse(false) &&
           pIPViewModel.retirementAnnuityContractPaymentsQuestion.getOrElse(false)
       },
-      10 -> { pIPViewModel: PaymentsIntoPensionViewModel => pIPViewModel.workplacePensionPaymentsQuestion.getOrElse(false) },
+      10 -> { pIPViewModel: PaymentsIntoPensionViewModel => pIPViewModel.workplacePensionPaymentsQuestion.getOrElse(false) }
     )
   }
 
