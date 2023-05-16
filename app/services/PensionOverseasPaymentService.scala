@@ -16,7 +16,6 @@
 
 package services
 
-import com.typesafe.sslconfig.util.PrintlnLogger
 import connectors.{IncomeTaxUserDataConnector, PensionsConnector}
 import models.mongo.{PensionsCYAModel, PensionsUserData, ServiceError}
 import models.pension.charges.PaymentsIntoOverseasPensionsViewModel
