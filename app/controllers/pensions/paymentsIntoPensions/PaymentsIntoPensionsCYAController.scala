@@ -22,17 +22,17 @@ import controllers.predicates.TaxYearAction.taxYearAction
 import models.mongo.{PensionsCYAModel, PensionsUserData}
 import models.pension.AllPensionsData
 import models.pension.AllPensionsData.generateCyaFromPrior
-import models.redirects.ConditionalRedirect
 import models.{APIErrorBodyModel, APIErrorModel, AuthorisationRequest, User}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.RedirectService.{PaymentsIntoPensionsRedirects, redirectBasedOnCurrentAnswers}
+import services.redirects.PaymentsIntoPensionsRedirects
+import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
 import services.{ExcludeJourneyService, PensionReliefsService, PensionSessionService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import services.redirects.PaymentsIntoPensionPages.CheckYourAnswersPage
 import utils.Clock
-import utils.PaymentsIntoPensionPages.CheckYourAnswersPage
 import views.html.pensions.paymentsIntoPensions.PaymentsIntoPensionsCYAView
 
 import javax.inject.{Inject, Singleton}
@@ -58,7 +58,8 @@ class PaymentsIntoPensionsCYAController @Inject()(authAction: AuthorisedAction,
 
       (cya, prior) match {
         case (Some(cyaData), _) if !cyaData.pensions.paymentsIntoPension.isFinished =>
-          redirectBasedOnCurrentAnswers(taxYear, cya)(redirects(_, taxYear)) { data =>
+          val checkRedirect = PaymentsIntoPensionsRedirects.journeyCheck(CheckYourAnswersPage, _, taxYear)
+          redirectBasedOnCurrentAnswers(taxYear, cya)(checkRedirect) { data =>
             Future.successful(Ok(view(taxYear, data.pensions.paymentsIntoPension)))
           }
         case (Some(cyaData), _) => pensionSessionService.createOrUpdateSessionData(request.user,
@@ -120,7 +121,7 @@ class PaymentsIntoPensionsCYAController @Inject()(authAction: AuthorisedAction,
         Future.successful(Left(APIErrorModel(BAD_REQUEST, APIErrorBodyModel("MISSING_DATA", "CYA data or NINO missing from session."))))
     }).flatMap {
       case Right(_) => //TODO: investigate  the use of the previously used pensionSessionService.clear
-      Future.successful(Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear)))
+        Future.successful(Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear)))
       case Left(error) => Future.successful(errorHandler.handleError(error.status))
     }
   }
@@ -130,10 +131,6 @@ class PaymentsIntoPensionsCYAController @Inject()(authAction: AuthorisedAction,
       case None => true
       case Some(prior) => !cyaData.equals(generateCyaFromPrior(prior))
     }
-  }
-
-  private def redirects(cya: PensionsCYAModel, taxYear: Int): Seq[ConditionalRedirect] = {
-    PaymentsIntoPensionsRedirects.journeyCheck(CheckYourAnswersPage, cya, taxYear)
   }
 
 }

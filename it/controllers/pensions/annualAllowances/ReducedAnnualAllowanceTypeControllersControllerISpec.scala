@@ -344,7 +344,7 @@ class ReducedAnnualAllowanceTypeControllersControllerISpec extends IntegrationTe
     "redirect to the reduced annual allowance question page if it has not been answered" which {
 
       implicit lazy val result: WSResponse = {
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         dropPensionsDB()
         val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(
           reducedAnnualAllowanceQuestion = None,
@@ -367,7 +367,7 @@ class ReducedAnnualAllowanceTypeControllersControllerISpec extends IntegrationTe
     "redirect to the reduced annual allowance question page if it has been answered as No" which {
 
       implicit lazy val result: WSResponse = {
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         dropPensionsDB()
         val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(
           reducedAnnualAllowanceQuestion = Some(false),
@@ -390,7 +390,7 @@ class ReducedAnnualAllowanceTypeControllersControllerISpec extends IntegrationTe
     "redirect to the CYA page if there is no session data" which {
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         // no cya insert
         urlGet(fullUrl(reducedAnnualAllowanceTypeUrl(taxYearEOY)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
@@ -473,7 +473,7 @@ class ReducedAnnualAllowanceTypeControllersControllerISpec extends IntegrationTe
     "redirects and updates Cya session when user submits a valid form with both checkboxes checked" which {
 
       implicit lazy val result: WSResponse = {
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         dropPensionsDB()
         val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(
           reducedAnnualAllowanceQuestion = Some(true),
@@ -504,7 +504,7 @@ class ReducedAnnualAllowanceTypeControllersControllerISpec extends IntegrationTe
         s"${ReducedAnnualAllowanceTypeQuestionForm.reducedAnnualAllowanceType}[]" -> Seq(taperedCheckboxValue))
 
       implicit lazy val result: WSResponse = {
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         dropPensionsDB()
         val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(
           reducedAnnualAllowanceQuestion = Some(true),
@@ -535,7 +535,7 @@ class ReducedAnnualAllowanceTypeControllersControllerISpec extends IntegrationTe
         s"${ReducedAnnualAllowanceTypeQuestionForm.reducedAnnualAllowanceType}[]" -> Seq(moneyPurchaseCheckboxValue))
 
       implicit lazy val result: WSResponse = {
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         dropPensionsDB()
         val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(
           reducedAnnualAllowanceQuestion = Some(true),
@@ -563,7 +563,7 @@ class ReducedAnnualAllowanceTypeControllersControllerISpec extends IntegrationTe
     "redirect to the reduced annual allowance question page if it has not been answered" which {
 
       implicit lazy val result: WSResponse = {
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         dropPensionsDB()
         val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(
           reducedAnnualAllowanceQuestion = None,
@@ -586,7 +586,7 @@ class ReducedAnnualAllowanceTypeControllersControllerISpec extends IntegrationTe
     "redirect to the reduced annual allowance question page if it has been answered as No" which {
 
       implicit lazy val result: WSResponse = {
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         dropPensionsDB()
         val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(
           reducedAnnualAllowanceQuestion = Some(false),
@@ -609,7 +609,7 @@ class ReducedAnnualAllowanceTypeControllersControllerISpec extends IntegrationTe
     "redirect to the CYA page if there is no session data" which {
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         // no cya insert
         urlPost(fullUrl(reducedAnnualAllowanceTypeUrl(taxYearEOY)), body = validFormAllChecked, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))

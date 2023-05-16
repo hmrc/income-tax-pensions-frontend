@@ -349,7 +349,7 @@ class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with B
     "redirect to the CYA page if there is no session data" which {
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         urlGet(fullUrl(pensionTakenAnotherWayAmountUrl(taxYearEOY)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -504,7 +504,7 @@ class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with B
 
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         insertCyaData(pensionsUserDataWithLifetimeAllowance(aPensionLifetimeAllowanceViewModel), aUserRequest)
 
         urlPost(fullUrl(pensionTakenAnotherWayAmountUrl(taxYearEOY)), body = form,
@@ -531,7 +531,7 @@ class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with B
 
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         insertCyaData(
           pensionsUserDataWithLifetimeAllowance(aPensionLifetimeAllowancesEmptyViewModel.copy(
             pensionPaidAnotherWayQuestion = Some(true),

@@ -24,8 +24,8 @@ import models.redirects.ConditionalRedirect
 import play.api.Logging
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{Call, Result}
-import utils.PaymentsIntoPensionPages
-import utils.PaymentsIntoPensionPages._
+import services.redirects.PaymentsIntoPensionPages
+import PaymentsIntoPensionPages._
 
 import scala.concurrent.Future
 

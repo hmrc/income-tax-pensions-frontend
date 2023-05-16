@@ -415,7 +415,7 @@ class AnnualLifetimeAllowanceCYAControllerISpec extends
 
         lazy val result: WSResponse = {
           dropPensionsDB()
-          authoriseAgentOrIndividual(isAgent = false)
+          authoriseAgentOrIndividual()
           urlPost(fullUrl(checkAnnualLifetimeAllowanceCYA(taxYear)), form, follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
         }
@@ -441,7 +441,7 @@ class AnnualLifetimeAllowanceCYAControllerISpec extends
           userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYear)
           insertCyaData(aPensionsUserData.copy(pensions = aPensionsCYAModel.copy(paymentsIntoPension = cyaDataIncomplete),
             taxYear = taxYear), aUserRequest)
-          authoriseAgentOrIndividual(isAgent = false)
+          authoriseAgentOrIndividual()
           urlPost(fullUrl(checkAnnualLifetimeAllowanceCYA(taxYear)), form, follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
         }
@@ -477,7 +477,7 @@ class AnnualLifetimeAllowanceCYAControllerISpec extends
             unauthorisedPayments = anUnauthorisedPaymentsViewModel,
             paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel
           ), taxYear = taxYear), aUserRequest)
-          authoriseAgentOrIndividual(isAgent = false)
+          authoriseAgentOrIndividual()
           urlPost(fullUrl(checkAnnualLifetimeAllowanceCYA(taxYear)), form, follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
         }

@@ -49,7 +49,7 @@ class ReliefAtSourcePaymentsAndTaxReliefAmountControllerISpec extends Integratio
     "render Total payments into relief at source (RAS) pensions, plus basic rate tax relief page with no value when no cya data" which {
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
           rasPensionPaymentQuestion = Some(true), totalRASPaymentsAndTaxRelief = None)
         insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
@@ -83,7 +83,7 @@ class ReliefAtSourcePaymentsAndTaxReliefAmountControllerISpec extends Integratio
       val existingAmount: String = "999.88"
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
           rasPensionPaymentQuestion = Some(true), totalRASPaymentsAndTaxRelief = Some(BigDecimal(existingAmount)))
         insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
@@ -114,7 +114,7 @@ class ReliefAtSourcePaymentsAndTaxReliefAmountControllerISpec extends Integratio
     "redirect to the rasPensionPaymentQuestion page if the question has not been answered" which {
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
           rasPensionPaymentQuestion = None, totalRASPaymentsAndTaxRelief = None)
         insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
@@ -132,7 +132,7 @@ class ReliefAtSourcePaymentsAndTaxReliefAmountControllerISpec extends Integratio
     "redirect to the rasPensionPaymentQuestion page if the rasPensionPaymentQuestion question has been answered as false" which {
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
           rasPensionPaymentQuestion = Some(false), totalRASPaymentsAndTaxRelief = None)
         insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
@@ -149,7 +149,7 @@ class ReliefAtSourcePaymentsAndTaxReliefAmountControllerISpec extends Integratio
     "redirect to the CYA page if there is no session data" which {
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         // no cya insert
         urlGet(fullUrl(reliefAtSourcePaymentsAndTaxReliefAmountUrl(taxYearEOY)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
@@ -173,7 +173,7 @@ class ReliefAtSourcePaymentsAndTaxReliefAmountControllerISpec extends Integratio
         val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
           rasPensionPaymentQuestion = Some(true), totalRASPaymentsAndTaxRelief = None)
         insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         urlPost(fullUrl(reliefAtSourcePaymentsAndTaxReliefAmountUrl(taxYearEOY)), body = emptyForm,
           follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -212,7 +212,7 @@ class ReliefAtSourcePaymentsAndTaxReliefAmountControllerISpec extends Integratio
         val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
           rasPensionPaymentQuestion = Some(true), totalRASPaymentsAndTaxRelief = None)
         insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         urlPost(fullUrl(reliefAtSourcePaymentsAndTaxReliefAmountUrl(taxYearEOY)), body = invalidFormatForm,
           follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -247,7 +247,7 @@ class ReliefAtSourcePaymentsAndTaxReliefAmountControllerISpec extends Integratio
         val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
           rasPensionPaymentQuestion = Some(true), totalRASPaymentsAndTaxRelief = None)
         insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         urlPost(fullUrl(reliefAtSourcePaymentsAndTaxReliefAmountUrl(taxYearEOY)), body = overMaximumForm,
           follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -284,7 +284,7 @@ class ReliefAtSourcePaymentsAndTaxReliefAmountControllerISpec extends Integratio
         val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
           rasPensionPaymentQuestion = Some(true), totalRASPaymentsAndTaxRelief = None, totalPaymentsIntoRASQuestion = Some(true))
         insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         urlPost(fullUrl(reliefAtSourcePaymentsAndTaxReliefAmountUrl(taxYearEOY)), body = validForm, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }

@@ -29,7 +29,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import utils.PageUrls.PaymentIntoOverseasPensions._
-import utils.PageUrls.{overseasPensionsSummaryUrl, pensionSummaryUrl}
+import utils.PageUrls.pensionSummaryUrl
 import utils.{CommonUtils, PensionsDatabaseHelper}
 
 class QOPSReferenceControllerISpec extends CommonUtils with BeforeAndAfterEach with PensionsDatabaseHelper{ //scalastyle:off: magic.number
