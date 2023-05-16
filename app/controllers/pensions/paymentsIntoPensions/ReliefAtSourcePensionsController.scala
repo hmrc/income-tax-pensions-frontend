@@ -24,13 +24,12 @@ import models.mongo.PensionsCYAModel
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
+import services.redirects.SimpleRedirectService.isFinishedCheck
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.paymentsIntoPensions.ReliefAtSourcePensionsView
 
 import javax.inject.{Inject, Singleton}
-import services.RedirectService.isFinishedCheck
-
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -39,7 +38,8 @@ class ReliefAtSourcePensionsController @Inject()(authAction: AuthorisedAction,
                                                  pensionSessionService: PensionSessionService,
                                                  errorHandler: ErrorHandler,
                                                  formsProvider: PaymentsIntoPensionFormProvider)
-                                                (implicit val cc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
+                                                (implicit val cc: MessagesControllerComponents,
+                                                 appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
   extends FrontendController(cc) with I18nSupport {
 
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
@@ -65,32 +65,33 @@ class ReliefAtSourcePensionsController @Inject()(authAction: AuthorisedAction,
         pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
           case Right(optData) =>
 
-          val pensionsCya = optData.map(_.pensions).getOrElse(PensionsCYAModel.emptyModels)
-          val viewModel = pensionsCya.paymentsIntoPension
+            val pensionsCya = optData.map(_.pensions).getOrElse(PensionsCYAModel.emptyModels)
+            val viewModel = pensionsCya.paymentsIntoPension
 
-          val updatedCyaModel = {
-            pensionsCya.copy(
-              paymentsIntoPension = viewModel.copy(
-                rasPensionPaymentQuestion = Some(yesNo),
-                totalRASPaymentsAndTaxRelief = if (yesNo) viewModel.totalRASPaymentsAndTaxRelief else None,
-                oneOffRasPaymentPlusTaxReliefQuestion = if (yesNo) viewModel.oneOffRasPaymentPlusTaxReliefQuestion else None,
-                totalOneOffRasPaymentPlusTaxRelief = if (yesNo) viewModel.totalOneOffRasPaymentPlusTaxRelief else None,
-                totalPaymentsIntoRASQuestion = if (yesNo) viewModel.totalPaymentsIntoRASQuestion else None
+            val updatedCyaModel = {
+              pensionsCya.copy(
+                paymentsIntoPension = viewModel.copy(
+                  rasPensionPaymentQuestion = Some(yesNo),
+                  totalRASPaymentsAndTaxRelief = if (yesNo) viewModel.totalRASPaymentsAndTaxRelief else None,
+                  oneOffRasPaymentPlusTaxReliefQuestion = if (yesNo) viewModel.oneOffRasPaymentPlusTaxReliefQuestion else None,
+                  totalOneOffRasPaymentPlusTaxRelief = if (yesNo) viewModel.totalOneOffRasPaymentPlusTaxRelief else None,
+                  totalPaymentsIntoRASQuestion = if (yesNo) viewModel.totalPaymentsIntoRASQuestion else None
+                )
               )
-            )
-          }
-          val redirectLocation = if (yesNo) {
-            ReliefAtSourcePaymentsAndTaxReliefAmountController.show(taxYear)
-          } else {
-            PensionsTaxReliefNotClaimedController.show(taxYear)
-          }
+            }
+            val redirectLocation = if (yesNo) {
+              ReliefAtSourcePaymentsAndTaxReliefAmountController.show(taxYear)
+            } else {
+              PensionsTaxReliefNotClaimedController.show(taxYear)
+            }
 
-          pensionSessionService.createOrUpdateSessionData(request.user,
-            updatedCyaModel, taxYear, optData.exists(_.isPriorSubmission))(errorHandler.internalServerError()) {
+            pensionSessionService.createOrUpdateSessionData(request.user,
+              updatedCyaModel, taxYear, optData.exists(_.isPriorSubmission))(errorHandler.internalServerError()) {
               isFinishedCheck(updatedCyaModel, taxYear, redirectLocation)
-          }
+            }
         }
       }
     )
   }
+
 }

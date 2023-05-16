@@ -32,7 +32,8 @@ import utils.PageUrls.{fullUrl, pensionSummaryUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 class PensionLumpSumDetailsControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
-
+  //scalastyle:off magic.number
+  
   val newAmount = 25
   val newAmount2 = 30
   val poundPrefixText = "£"
@@ -297,7 +298,7 @@ class PensionLumpSumDetailsControllerISpec extends IntegrationTest with ViewHelp
     "redirect to the CYA page if there is no session data" which {
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         urlGet(fullUrl(pensionLumpSumDetails(taxYearEOY)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -450,7 +451,7 @@ class PensionLumpSumDetailsControllerISpec extends IntegrationTest with ViewHelp
 
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         insertCyaData(pensionsUserDataWithLifetimeAllowance(aPensionLifetimeAllowanceViewModel), aUserRequest)
 
         urlPost(fullUrl(pensionLumpSumDetails(taxYearEOY)), body = form,
@@ -477,7 +478,7 @@ class PensionLumpSumDetailsControllerISpec extends IntegrationTest with ViewHelp
 
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         insertCyaData(
           pensionsUserDataWithLifetimeAllowance(aPensionLifetimeAllowancesEmptyViewModel.copy(
             pensionAsLumpSumQuestion = Some(true),

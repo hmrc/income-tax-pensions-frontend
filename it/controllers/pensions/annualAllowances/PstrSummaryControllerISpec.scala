@@ -158,7 +158,7 @@ class PstrSummaryControllerISpec extends IntegrationTest with BeforeAndAfterEach
     "redirect to the annual allowance CYA page if there is no session data" should {
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         urlGet(fullUrl(pensionSchemeTaxReferenceUrl(taxYearEOY)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
