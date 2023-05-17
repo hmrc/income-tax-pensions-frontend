@@ -28,13 +28,13 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.PaymentIntoPensions.{checkPaymentsIntoPensionCyaUrl, retirementAnnuityAmountUrl, retirementAnnuityUrl, workplacePensionUrl}
+import utils.PageUrls.PaymentIntoPensions._
 import utils.PageUrls.fullUrl
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
-import views.RetirementAnnuityAmountSpec.Selectors._
-import views.RetirementAnnuityAmountSpec._
 import views.RetirementAnnuityAmountSpec.CommonExpectedEN._
 import views.RetirementAnnuityAmountSpec.ExpectedIndividualEN._
+import views.RetirementAnnuityAmountSpec.Selectors._
+import views.RetirementAnnuityAmountSpec._
 
 
 class RetirementAnnuityAmountControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
@@ -107,7 +107,7 @@ class RetirementAnnuityAmountControllerISpec extends IntegrationTest with ViewHe
       welshToggleCheck(isWelsh = false)
     }
 
-    "redirect to the retirementAnnuityContractQuestion page if the question has not been answered" which {
+    "redirect to the ReliefAtSourcePensions question page if the previous question has not been answered" which {
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual()
@@ -120,11 +120,11 @@ class RetirementAnnuityAmountControllerISpec extends IntegrationTest with ViewHe
 
       "has an SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location").contains(retirementAnnuityUrl(taxYearEOY)) shouldBe true
+        result.header("location").contains(reliefAtSourcePensionsUrl(taxYearEOY)) shouldBe true
       }
     }
 
-    "redirect to the retirementAnnuityContractQuestion page if the retirementAnnuityContract question has been answered as false" which {
+    "redirect to the ReliefAtSourcePensions question page if the retirementAnnuityContract question has been answered as false" which {
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual()
@@ -137,7 +137,7 @@ class RetirementAnnuityAmountControllerISpec extends IntegrationTest with ViewHe
 
       "has an SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location").contains(retirementAnnuityUrl(taxYearEOY)) shouldBe true
+        result.header("location").contains(reliefAtSourcePensionsUrl(taxYearEOY)) shouldBe true
       }
     }
 

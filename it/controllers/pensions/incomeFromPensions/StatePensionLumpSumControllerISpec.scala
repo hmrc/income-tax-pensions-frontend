@@ -82,7 +82,7 @@ class StatePensionLumpSumControllerISpec extends IntegrationTest with BeforeAndA
 
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
 
         val pensionsViewModel = anIncomeFromPensionsViewModel.copy(statePensionLumpSum =
           Some(anStateBenefitViewModelOne.copy(amountPaidQuestion = None)))
@@ -105,7 +105,7 @@ class StatePensionLumpSumControllerISpec extends IntegrationTest with BeforeAndA
           Some(anStateBenefitViewModelOne.copy(amountPaidQuestion = None)))
         insertCyaData(pensionsUserDataWithIncomeFromPensions(pensionsViewModel), aUserRequest)
 
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
 
         urlPost(fullUrl(statePensionLumpSumUrl(taxYear)), body = form, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
@@ -120,7 +120,7 @@ class StatePensionLumpSumControllerISpec extends IntegrationTest with BeforeAndA
 
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
 
         val pensionsViewModel = anIncomeFromPensionsViewModel.copy(statePensionLumpSum =
           Some(anStateBenefitViewModelOne.copy(amountPaidQuestion = None)))
@@ -147,7 +147,7 @@ class StatePensionLumpSumControllerISpec extends IntegrationTest with BeforeAndA
 
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
 
         val pensionsViewModel = anIncomeFromPensionsViewModel.copy(statePensionLumpSum =
           Some(anStateBenefitViewModelOne.copy(amountPaidQuestion = Some(true), amount = Some(44.55))))

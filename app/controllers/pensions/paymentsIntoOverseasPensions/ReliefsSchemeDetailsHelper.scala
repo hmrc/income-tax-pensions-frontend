@@ -102,8 +102,8 @@ object ReliefsSchemeDetailsHelper extends CYABaseHelper {
           "overseasPension.reliefDetails.schemeDetail",
           Some(Seq(
             messages("overseasPension.reliefDetails.countryCode") + s" ${relief.alphaTwoCountryCode.getOrElse("")}<br>" +
-            messages("overseasPension.reliefDetails.article") + s"  ${relief.doubleTaxationCountryArticle.getOrElse("")}<br>" +
-            messages("overseasPension.reliefDetails.treaty") + s" ${relief.doubleTaxationCountryTreaty.getOrElse("")}<br>" +
+            messages("overseasPension.reliefDetails.article") + s"  ${relief.doubleTaxationArticle.getOrElse("")}<br>" +
+            messages("overseasPension.reliefDetails.treaty") + s" ${relief.doubleTaxationTreaty.getOrElse("")}<br>" +
             messages("overseasPension.reliefDetails.relief") + s" ${displayedValueForOptionalAmount(relief.doubleTaxationReliefAmount)}"
           )),
           routes.DoubleTaxationAgreementController.show(taxYear, index)))

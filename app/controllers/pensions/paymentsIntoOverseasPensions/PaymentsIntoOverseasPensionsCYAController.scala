@@ -25,21 +25,23 @@ import models.pension.AllPensionsData.generateCyaFromPrior
 import models.pension.charges.PaymentsIntoOverseasPensionsViewModel
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.PensionSessionService
+import services.{PensionOverseasPaymentService, PensionSessionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.paymentsIntoOverseasPensions.PaymentsIntoOverseasPensionsCYAView
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class PaymentsIntoOverseasPensionsCYAController @Inject()(authAction: AuthorisedAction,
                                                           view: PaymentsIntoOverseasPensionsCYAView,
                                                           pensionSessionService: PensionSessionService,
                                                           errorHandler: ErrorHandler,
+                                                          pensionOverseasPaymentService: PensionOverseasPaymentService,
                                                           actionsProvider: ActionsProvider)
-                                                         (implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock)
+                                                         (implicit val mcc: MessagesControllerComponents,
+                                                          appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport with SessionHelper {
 
 
@@ -70,9 +72,10 @@ class PaymentsIntoOverseasPensionsCYAController @Inject()(authAction: Authorised
         Future.successful(Redirect(appConfig.incomeTaxSubmissionOverviewUrl(taxYear)))
       ) { model =>
         if (sessionDataDifferentThanPriorData(model.pensions, prior)) {
-          //        TODO - build submission model from cya data and submit to DES if cya data doesn't match prior data (SASS-3444)
-          Future.successful(Redirect(OverseasPensionsSummaryController.show(taxYear)))
-        } else {
+          pensionOverseasPaymentService.savePaymentsFromOverseasPensionsViewModel(request.user, taxYear).map {
+            case Left(_) => errorHandler.internalServerError()
+            case Right(_) => Redirect(OverseasPensionsSummaryController.show(taxYear))
+          }} else {
           Future.successful(Redirect(OverseasPensionsSummaryController.show(taxYear)))
         }
       }

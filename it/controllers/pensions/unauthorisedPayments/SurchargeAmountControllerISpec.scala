@@ -26,9 +26,9 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.UnAuthorisedPayments.surchargeAmountUrl
-import utils.PageUrls.unauthorisedPaymentsPages.didYouPayNonUkTaxUrl
+import utils.PageUrls.UnAuthorisedPayments.{noSurchargeAmountUrl, surchargeAmountUrl}
 import utils.PageUrls.fullUrl
+import utils.PageUrls.unauthorisedPaymentsPages.{checkUnauthorisedPaymentsCyaUrl, didYouPayNonUkTaxUrl, whereAnyOfTheUnauthorisedPaymentsUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 class SurchargeAmountControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
@@ -180,30 +180,47 @@ class SurchargeAmountControllerISpec extends IntegrationTest with ViewHelpers wi
       }
     }
 
-    "redirect to the pension summary page if the surcharge question has not been answered" which {
+    "redirect to the NoSurchargeAmount page if the surcharge question has not been answered but the no surcharge question has been answered" which {
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
-        val pensionsViewModel = anUnauthorisedPaymentsViewModel.copy(surchargeAmount = None, surchargeQuestion = None)
+        authoriseAgentOrIndividual()
+        val pensionsViewModel = anUnauthorisedPaymentsViewModel.copy(surchargeAmount = None, surchargeQuestion = None, noSurchargeQuestion = Some(true))
         insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false), aUserRequest)
         urlGet(fullUrl(surchargeAmountUrl(taxYearEOY)), follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
       "has an SEE_OTHER status" in {
-        result.status shouldBe SEE_OTHER //TODO - redirect to unauthorised payments question page once implemented result.header("location").contains(pensionSummaryUrl(taxYearEOY)) shouldBe true
+        result.status shouldBe SEE_OTHER
+        result.header("location").contains(noSurchargeAmountUrl(taxYearEOY)) shouldBe true
+      }
+    }
+
+    "redirect to the Where Any Of TheUnauthorised Payments page if the surcharge question has not been answered and " +
+      "the no surcharge question has been answered" which {
+      lazy val result: WSResponse = {
+        dropPensionsDB()
+        authoriseAgentOrIndividual()
+        val pensionsViewModel = anUnauthorisedPaymentsViewModel.copy(surchargeAmount = None, surchargeQuestion = None, noSurchargeQuestion = None)
+        insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false), aUserRequest)
+        urlGet(fullUrl(surchargeAmountUrl(taxYearEOY)), follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
+      "has an SEE_OTHER status" in {
+        result.status shouldBe SEE_OTHER
+        result.header("location").contains(whereAnyOfTheUnauthorisedPaymentsUrl(taxYearEOY)) shouldBe true
+      }
     }
 
     "redirect to the CYA page if there is no session data" which {
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         urlGet(fullUrl(surchargeAmountUrl(taxYearEOY)), follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
       "has an SEE_OTHER status" in {
-        result.status shouldBe SEE_OTHER //TODO - redirect to CYA page once implemented result.header("location").contains(pensionSummaryUrl(taxYearEOY)) shouldBe true
+        result.status shouldBe SEE_OTHER
+        result.header("location").contains(checkUnauthorisedPaymentsCyaUrl(taxYearEOY)) shouldBe true
       }
 
     }
@@ -325,7 +342,7 @@ class SurchargeAmountControllerISpec extends IntegrationTest with ViewHelpers wi
         dropPensionsDB()
         val pensionsViewModel = anUnauthorisedPaymentsViewModel.copy(surchargeAmount = None)
         insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false), aUserRequest)
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         urlPost(fullUrl(surchargeAmountUrl(taxYearEOY)), body = validForm, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }

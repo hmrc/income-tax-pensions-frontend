@@ -161,7 +161,8 @@ class PensionSchemeTaxReferenceControllerISpec extends IntegrationTest with Befo
             val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(pensionSchemeTaxReferences = Some(Seq(taxSchemeRef)))
             insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel), aUserRequest)
             authoriseAgentOrIndividual(user.isAgent)
-            urlGet(fullUrl(pensionSchemeTaxReferenceUrl(taxYearEOY, index)), user.isWelsh, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+            urlGet(fullUrl(pensionSchemeTaxReferenceUrl(taxYearEOY, index)), user.isWelsh,
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
 
           "has an OK status" in {
@@ -191,7 +192,8 @@ class PensionSchemeTaxReferenceControllerISpec extends IntegrationTest with Befo
             val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(pensionSchemeTaxReferences = Some(Seq(taxSchemeRef)))
             insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel), aUserRequest)
             authoriseAgentOrIndividual(user.isAgent)
-            urlGet(fullUrl(pensionSchemeTaxReferenceUrl(taxYearEOY, index)), user.isWelsh, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+            urlGet(fullUrl(pensionSchemeTaxReferenceUrl(taxYearEOY, index)), user.isWelsh,
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
 
           "has an OK status" in {
@@ -217,7 +219,7 @@ class PensionSchemeTaxReferenceControllerISpec extends IntegrationTest with Befo
     "redirect to the PSTR summary page when the PSTR is out of bounds" should {
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(pensionSchemeTaxReferences = Some(Seq("12345678AB")))
         insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel), aUserRequest)
         urlGet(fullUrl(pensionSchemeTaxReferenceUrl(taxYearEOY, 2)), follow = false,
@@ -234,7 +236,7 @@ class PensionSchemeTaxReferenceControllerISpec extends IntegrationTest with Befo
     "Redirect to the annual allowance CYA page if there is no session data" should {
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         urlGet(fullUrl(pensionSchemeTaxReferenceUrl(taxYearEOY)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -322,7 +324,7 @@ class PensionSchemeTaxReferenceControllerISpec extends IntegrationTest with Befo
 
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(pensionSchemeTaxReferences = Some(Seq.empty))
         insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel), aUserRequest)
         urlPost(fullUrl(pensionSchemeTaxReferenceUrl(taxYearEOY)), body = form, follow = false,
@@ -346,7 +348,7 @@ class PensionSchemeTaxReferenceControllerISpec extends IntegrationTest with Befo
 
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(pensionSchemeTaxReferences = Some(Seq("12345678AB")))
         insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel), aUserRequest)
         urlPost(fullUrl(pensionSchemeTaxReferenceUrl(taxYearEOY, 0)), body = form, follow = false,
@@ -370,7 +372,7 @@ class PensionSchemeTaxReferenceControllerISpec extends IntegrationTest with Befo
 
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(pensionSchemeTaxReferences = Some(Seq("12345678AB", "12345678AC")))
         insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel), aUserRequest)
         urlPost(fullUrl(pensionSchemeTaxReferenceUrl(taxYearEOY)), body = form, follow = false,
@@ -394,7 +396,7 @@ class PensionSchemeTaxReferenceControllerISpec extends IntegrationTest with Befo
 
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(pensionSchemeTaxReferences = Some(Seq("12345678AB")))
         insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel), aUserRequest)
         urlPost(fullUrl(pensionSchemeTaxReferenceUrl(taxYearEOY, 3)), body = form, follow = false,
@@ -408,7 +410,7 @@ class PensionSchemeTaxReferenceControllerISpec extends IntegrationTest with Befo
 
       "updates pension scheme tax reference to contain both tax reference" in {
         lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
-        cyaModel.pensions.pensionsAnnualAllowances.pensionSchemeTaxReferences.get should not contain ("12345678RA")
+        cyaModel.pensions.pensionsAnnualAllowances.pensionSchemeTaxReferences.get should not contain "12345678RA"
       }
     }
 

@@ -159,7 +159,7 @@ class UkPensionIncomeSummaryControllerISpec extends IntegrationTest with BeforeA
     "redirect to the income from pensions CYA page if there is no session data" should {
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         urlGet(fullUrl(ukPensionSchemeSummaryListUrl(taxYearEOY)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }

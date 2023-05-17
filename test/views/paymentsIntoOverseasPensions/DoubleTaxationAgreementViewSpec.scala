@@ -155,8 +155,8 @@ class DoubleTaxationAgreementViewSpec extends ViewUnitTest with FakeRequestProvi
           Some(""),
           alphaTwoCountryCode = Some("AD"),
           doubleTaxationReliefAmount = Some(99.99),
-          doubleTaxationCountryArticle = Some("exampleArticle"),
-          doubleTaxationCountryTreaty = Some("exampleTreaty")
+          doubleTaxationArticle = Some("exampleArticle"),
+          doubleTaxationTreaty = Some("exampleTreaty")
         )
         implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] =
           UserSessionDataRequest(aPensionsUserData.copy(

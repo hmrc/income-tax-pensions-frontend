@@ -175,7 +175,7 @@ class WhereAnyOfTheUnauthorisedPaymentsControllerISpec extends IntegrationTest w
     "redirect to Pensions Summary page if there is no session data" should {
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         urlGet(fullUrl(whereAnyOfTheUnauthorisedPaymentsUrl(taxYearEOY)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -234,7 +234,7 @@ class WhereAnyOfTheUnauthorisedPaymentsControllerISpec extends IntegrationTest w
 
         insertCyaData(pensionsUserDataWithUnauthorisedPayments(viewModel), aUserRequest)
 
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         urlPost(fullUrl(whereAnyOfTheUnauthorisedPaymentsUrl(taxYearEOY)), body = form, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -261,7 +261,7 @@ class WhereAnyOfTheUnauthorisedPaymentsControllerISpec extends IntegrationTest w
 
         insertCyaData(pensionsUserDataWithUnauthorisedPayments(viewModel), aUserRequest)
 
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         urlPost(fullUrl(whereAnyOfTheUnauthorisedPaymentsUrl(taxYearEOY)), body = form, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -281,7 +281,7 @@ class WhereAnyOfTheUnauthorisedPaymentsControllerISpec extends IntegrationTest w
       lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.no)
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         urlPost(fullUrl(whereAnyOfTheUnauthorisedPaymentsUrl(taxYearEOY)), body = form, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
 

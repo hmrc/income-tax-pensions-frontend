@@ -22,14 +22,14 @@ import controllers.predicates.AuthorisedAction
 import controllers.predicates.TaxYearAction.taxYearAction
 import models.mongo.PensionsCYAModel
 import models.pension.reliefs.PaymentsIntoPensionViewModel
-import models.redirects.ConditionalRedirect
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
-import services.RedirectService.{PaymentsIntoPensionsRedirects, redirectBasedOnCurrentAnswers}
+import services.redirects.PaymentsIntoPensionsRedirects
+import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import services.redirects.PaymentsIntoPensionPages.WorkplacePensionAmountPage
 import utils.Clock
-import utils.PaymentsIntoPensionPages.WorkplacePensionAmountPage
 import views.html.pensions.paymentsIntoPensions.WorkplaceAmountView
 
 import javax.inject.{Inject, Singleton}
@@ -46,7 +46,8 @@ class WorkplaceAmountController @Inject()(authAction: AuthorisedAction,
 
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) { optData =>
-      redirectBasedOnCurrentAnswers(taxYear, optData)(redirects(_, taxYear)) { data =>
+      val checkRedirect = PaymentsIntoPensionsRedirects.journeyCheck(WorkplacePensionAmountPage, _, taxYear)
+      redirectBasedOnCurrentAnswers(taxYear, optData)(checkRedirect) { data =>
 
         val amountForm = formProvider.workplacePensionAmountForm
         data.pensions.paymentsIntoPension.totalWorkplacePensionPayments match {
@@ -64,7 +65,8 @@ class WorkplaceAmountController @Inject()(authAction: AuthorisedAction,
       formWithErrors => Future.successful(BadRequest(workplaceAmountView(formWithErrors, taxYear))),
       amount => {
         pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) { optData =>
-          redirectBasedOnCurrentAnswers(taxYear, optData)(redirects(_, taxYear)) { data =>
+          val checkRedirect = PaymentsIntoPensionsRedirects.journeyCheck(WorkplacePensionAmountPage, _, taxYear)
+          redirectBasedOnCurrentAnswers(taxYear, optData)(checkRedirect) { data =>
 
             val pensionsCYAModel: PensionsCYAModel = data.pensions
             val viewModel: PaymentsIntoPensionViewModel = pensionsCYAModel.paymentsIntoPension
@@ -81,11 +83,4 @@ class WorkplaceAmountController @Inject()(authAction: AuthorisedAction,
     )
   }
 
-  private def redirects(cya: PensionsCYAModel, taxYear: Int): Seq[ConditionalRedirect] = {
-    PaymentsIntoPensionsRedirects.journeyCheck(WorkplacePensionAmountPage, cya, taxYear) ++
-      Seq(ConditionalRedirect(
-        cya.paymentsIntoPension.workplacePensionPaymentsQuestion.contains(false),
-        controllers.pensions.paymentsIntoPensions.routes.WorkplacePensionController.show(taxYear)
-      ))
-  }
 }
