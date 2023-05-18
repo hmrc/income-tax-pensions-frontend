@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package utils
+package services.redirects
 
 sealed trait PaymentsIntoPensionPages {
   val journeyNo: Int

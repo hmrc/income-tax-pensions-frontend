@@ -18,8 +18,7 @@ package models.pension.charges
 
 import forms.Countries
 import models.mongo.TextAndKey
-import models.pension.income.{ForeignPension, OverseasPensionContribution, PensionIncome}
-import models.pension.reliefs.PensionReliefs
+import models.pension.income.OverseasPensionContribution
 import play.api.libs.json.{Json, OFormat}
 import utils.DecryptableSyntax.DecryptableOps
 import utils.DecryptorInstances.{bigDecimalDecryptor, booleanDecryptor, stringDecryptor}
@@ -118,20 +117,6 @@ case class PaymentsIntoOverseasPensionsViewModel(paymentsIntoOverseasPensionsQue
       reliefs = reliefs.map(_.encrypted())
     )
 
-  def toForeignPension: Seq[ForeignPension] = {
-    reliefs.map {
-      relief =>
-        ForeignPension(
-          countryCode = Countries.get3AlphaCodeFrom2AlphaCode(relief.alphaTwoCountryCode).get,
-          taxableAmount = paymentsIntoOverseasPensionsAmount.getOrElse(0),
-          amountBeforeTax = paymentsIntoOverseasPensionsAmount,
-          taxTakenOff = paymentsIntoOverseasPensionsAmount,
-          specialWithholdingTax = None,
-          foreignTaxCreditRelief = None
-        )
-    }
-  }
-
   def toPensionContributions: Seq[OverseasPensionContribution] = {
     reliefs.map{
       relief =>
@@ -140,7 +125,7 @@ case class PaymentsIntoOverseasPensionsViewModel(paymentsIntoOverseasPensionsQue
           exemptEmployersPensionContribs = relief.employerPaymentsAmount.getOrElse(0),
           migrantMemReliefQopsRefNo = relief.qopsReference,
           dblTaxationRelief = relief.doubleTaxationReliefAmount,
-          dblTaxationCountry = relief.alphaTwoCountryCode,
+          dblTaxationCountry = relief.alphaThreeCountryCode,
           dblTaxationArticle = relief.doubleTaxationArticle,
           dblTaxationTreaty = relief.doubleTaxationTreaty,
           sf74Reference = relief.sf74Reference

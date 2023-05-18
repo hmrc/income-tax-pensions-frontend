@@ -344,7 +344,7 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
     "redirect to annual allowance CYA if there is no session data" which {
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         urlGet(fullUrl(aboveAnnualAllowanceUrl(taxYearEOY)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -359,7 +359,7 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
     "redirect to reduced annual allowance page if question has not been answered" which {
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(
           aboveAnnualAllowanceQuestion = Some(true), reducedAnnualAllowanceQuestion = None)
         insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)), aUserRequest)
@@ -454,7 +454,7 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
     "redirect to reduced annual allowance page if question has not been answered" which {
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(
           aboveAnnualAllowanceQuestion = Some(true), reducedAnnualAllowanceQuestion = None)
         insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)), aUserRequest)
@@ -473,7 +473,7 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
       lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.yes)
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         userDataStub(anIncomeTaxUserData, nino, taxYearEOY)
         val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(
           aboveAnnualAllowanceQuestion = Some(true), aboveAnnualAllowance = None)
@@ -500,7 +500,7 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
       lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.no)
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(
           aboveAnnualAllowanceQuestion = Some(true), aboveAnnualAllowance = Some(333.44))
         insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)), aUserRequest)

@@ -50,8 +50,8 @@ class PensionOverseasPaymentService @Inject()(pensionUserDataRepository: Pension
     }
   }
 
-  def savePaymentsFromOverseasPensionsViewModel(user: User, taxYear: Int)(implicit hc: HeaderCarrier, ec: ExecutionContext,
-                                                                          clock: Clock): Future[Either[ServiceError, Unit]] = {
+  def savePaymentsFromOverseasPensionsViewModel(user: User, taxYear: Int)
+                                               (implicit hc: HeaderCarrier, ec: ExecutionContext, clock: Clock): Future[Either[ServiceError, Unit]] = {
 
 
     val hcWithExtras = hc.withExtraHeaders("mtditid" -> user.mtditid)
@@ -64,10 +64,9 @@ class PensionOverseasPaymentService @Inject()(pensionUserDataRepository: Pension
       viewModelOverseas = sessionData.map(_.pensions.paymentsIntoOverseasPensions)
       updatedIncomeData = CreateUpdatePensionIncomeModel(
         foreignPension = priorData.pensions.flatMap(_.pensionIncome.flatMap(_.foreignPension)),
-        overseasPensionContribution = viewModelOverseas.map(_.toPensionContributions)
+        overseasPensionContribution = viewModelOverseas.map(_.toPensionContributions).flatMap(seq => if(seq.nonEmpty) Some(seq) else None)
       )
       viewModelPayments = sessionData.map(_.pensions.paymentsIntoPension)
-
       updatedReliefsData = CreateOrUpdatePensionReliefsModel(
         pensionReliefs = Reliefs(
           regularPensionContributions = viewModelPayments.flatMap(_.totalRASPaymentsAndTaxRelief),

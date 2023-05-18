@@ -31,10 +31,10 @@ import play.api.libs.ws.WSResponse
 import utils.PageUrls.PaymentIntoPensions._
 import utils.PageUrls.fullUrl
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
-import views.OneOffRASPaymentsAmountSpec._
-import views.OneOffRASPaymentsAmountSpec.Selectors._
 import views.OneOffRASPaymentsAmountSpec.CommonExpectedEN._
 import views.OneOffRASPaymentsAmountSpec.ExpectedIndividualEN._
+import views.OneOffRASPaymentsAmountSpec.Selectors._
+import views.OneOffRASPaymentsAmountSpec._
 
 class OneOffRASPaymentsAmountControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
   private def pensionsUsersData(pensionsCyaModel: PensionsCYAModel): PensionsUserData = {
@@ -50,7 +50,7 @@ class OneOffRASPaymentsAmountControllerISpec extends IntegrationTest with ViewHe
     "render Total one off payments into relief at source (RAS) pensions page with no value when no cya data" which {
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
           oneOffRasPaymentPlusTaxReliefQuestion = Some(true), totalOneOffRasPaymentPlusTaxRelief = None)
         insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
@@ -84,7 +84,7 @@ class OneOffRASPaymentsAmountControllerISpec extends IntegrationTest with ViewHe
       val existingAmount: String = "999.88"
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
           oneOffRasPaymentPlusTaxReliefQuestion = Some(true), totalOneOffRasPaymentPlusTaxRelief = Some(BigDecimal(existingAmount)))
         insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
@@ -111,10 +111,10 @@ class OneOffRASPaymentsAmountControllerISpec extends IntegrationTest with ViewHe
       welshToggleCheck(isWelsh = false)
     }
 
-    "redirect to the oneOffRasPensionPaymentQuestion page if the question has not been answered" which {
+    "redirect to the ReliefAtSourcePensions question page if the previous question has not been answered" which {
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
           oneOffRasPaymentPlusTaxReliefQuestion = None, totalOneOffRasPaymentPlusTaxRelief = None)
         insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
@@ -124,14 +124,14 @@ class OneOffRASPaymentsAmountControllerISpec extends IntegrationTest with ViewHe
 
       "has a SEE_OTHER status and redirects correctly" in {
         result.status shouldBe SEE_OTHER
-        result.header("location").contains(reliefAtSourceOneOffPaymentsUrl(taxYearEOY)) shouldBe true
+        result.header("location").contains(reliefAtSourcePensionsUrl(taxYearEOY)) shouldBe true
       }
     }
 
-    "redirect to the oneOffRasPaymentQuestion page if the oneOffRasPaymentQuestion question has been answered as false" which {
+    "redirect to the ReliefAtSourcePensions question page if the oneOffRasPaymentQuestion has been answered as false" which {
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
           oneOffRasPaymentPlusTaxReliefQuestion = Some(false), totalOneOffRasPaymentPlusTaxRelief = None)
         insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
@@ -141,16 +141,16 @@ class OneOffRASPaymentsAmountControllerISpec extends IntegrationTest with ViewHe
 
       "has an SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location").contains(reliefAtSourceOneOffPaymentsUrl(taxYearEOY)) shouldBe true
+        result.header("location").contains(reliefAtSourcePensionsUrl(taxYearEOY)) shouldBe true
       }
     }
 
-    "redirect to the ReliefAtSourcePaymentsAmount page if 'totalRASPaymentsAndTaxRelief' is missing" which {
+    "redirect to the ReliefAtSourcePensions question page if the rasPensionPaymentQuestion has been answered as false" which {
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
-          totalRASPaymentsAndTaxRelief = None)
+          rasPensionPaymentQuestion = Some(false))
         insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
         urlGet(fullUrl(oneOffReliefAtSourcePaymentsAmountUrl(taxYearEOY)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
@@ -158,14 +158,14 @@ class OneOffRASPaymentsAmountControllerISpec extends IntegrationTest with ViewHe
 
       "has an SEE_OTHER status and redirects to the RAS payments amount page" in {
         result.status shouldBe SEE_OTHER
-        result.header("location").contains(reliefAtSourcePaymentsAndTaxReliefAmountUrl(taxYearEOY)) shouldBe true
+        result.header("location").contains(reliefAtSourcePensionsUrl(taxYearEOY)) shouldBe true
       }
     }
 
     "redirect to the CYA page if there is no session data" which {
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         urlGet(fullUrl(oneOffReliefAtSourcePaymentsAmountUrl(taxYearEOY)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -189,7 +189,7 @@ class OneOffRASPaymentsAmountControllerISpec extends IntegrationTest with ViewHe
         val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
           oneOffRasPaymentPlusTaxReliefQuestion = Some(true), totalOneOffRasPaymentPlusTaxRelief = None)
         insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         urlPost(fullUrl(oneOffReliefAtSourcePaymentsAmountUrl(taxYearEOY)), body = emptyForm,
           follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -227,7 +227,7 @@ class OneOffRASPaymentsAmountControllerISpec extends IntegrationTest with ViewHe
         val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
           oneOffRasPaymentPlusTaxReliefQuestion = Some(true), totalOneOffRasPaymentPlusTaxRelief = None)
         insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         urlPost(fullUrl(oneOffReliefAtSourcePaymentsAmountUrl(taxYearEOY)), body = invalidFormatForm,
           follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -265,7 +265,7 @@ class OneOffRASPaymentsAmountControllerISpec extends IntegrationTest with ViewHe
         val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
           oneOffRasPaymentPlusTaxReliefQuestion = Some(true), totalOneOffRasPaymentPlusTaxRelief = None)
         insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         urlPost(fullUrl(oneOffReliefAtSourcePaymentsAmountUrl(taxYearEOY)), body = overMaximumForm,
           follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -293,7 +293,7 @@ class OneOffRASPaymentsAmountControllerISpec extends IntegrationTest with ViewHe
       welshToggleCheck(isWelsh = false)
     }
 
-    "redirect to the ReliefAtSourcePaymentsAmount page if 'totalRASPaymentsAndTaxRelief' is missing when form is submitted with an error" which {
+    "redirect to the ReliefAtSourcePensions question page if 'oneOffRasPaymentPlusTaxReliefQuestion' is missing when form is submitted with an error" which {
 
       val amountOverMaximum = "100,000,000,000"
       val overMaximumForm: Map[String, String] = Map(AmountForm.amount -> amountOverMaximum)
@@ -301,16 +301,16 @@ class OneOffRASPaymentsAmountControllerISpec extends IntegrationTest with ViewHe
       lazy val result: WSResponse = {
         dropPensionsDB()
         val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
-          totalRASPaymentsAndTaxRelief = None)
+          oneOffRasPaymentPlusTaxReliefQuestion = None)
         insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         urlPost(fullUrl(oneOffReliefAtSourcePaymentsAmountUrl(taxYearEOY)), body = overMaximumForm,
           follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
       "has an SEE_OTHER status and redirects to the RAS payments amount page" in {
         result.status shouldBe SEE_OTHER
-        result.header("location").contains(reliefAtSourcePaymentsAndTaxReliefAmountUrl(taxYearEOY)) shouldBe true
+        result.header("location").contains(reliefAtSourcePensionsUrl(taxYearEOY)) shouldBe true
       }
     }
 
@@ -324,7 +324,7 @@ class OneOffRASPaymentsAmountControllerISpec extends IntegrationTest with ViewHe
         val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
           totalOneOffRasPaymentPlusTaxRelief = None, totalPaymentsIntoRASQuestion = Some(true))
         insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         urlPost(fullUrl(oneOffReliefAtSourcePaymentsAmountUrl(taxYearEOY)), body = validForm,
           follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }

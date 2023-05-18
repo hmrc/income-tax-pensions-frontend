@@ -23,7 +23,7 @@ import controllers.ControllerSpec._
 import controllers.YesNoControllerSpec
 import models.mongo.PensionsCYAModel
 import models.pension.reliefs.PaymentsIntoPensionViewModel
-import play.api.http.Status.{BAD_REQUEST, OK}
+import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 
 class PensionsTaxReliefNotClaimedControllerISpec
@@ -42,6 +42,7 @@ class PensionsTaxReliefNotClaimedControllerISpec
         totalOneOffRasPaymentPlusTaxRelief = Some(BigDecimal("1.00")),
         totalPaymentsIntoRASQuestion = Some(true)
       ))
+  val expectedRedirect: Option[String] = Some(PageRelativeURLs.paymentsIntoPensionsReliefAtSourcePage)
 
   "This page" when {
     "requested to be shown" should {
@@ -73,7 +74,8 @@ class PensionsTaxReliefNotClaimedControllerISpec
 
             implicit val response: WSResponse = getPage(Some(sessionData))
 
-            assertRedirectionAsExpected(PageRelativeURLs.paymentsIntoPensionsReliefAtSourceAmountPage)
+            response must haveStatus(SEE_OTHER)
+            response.header("Location") mustBe expectedRedirect
 
           }
           "only the RAS question, and the RAS amount has been answered" in {
@@ -89,7 +91,8 @@ class PensionsTaxReliefNotClaimedControllerISpec
 
             implicit val response: WSResponse = getPage(Some(sessionData))
 
-            assertRedirectionAsExpected(PageRelativeURLs.paymentsIntoPensionsOneOffPaymentsPage)
+            response must haveStatus(SEE_OTHER)
+            response.header("Location") mustBe expectedRedirect
 
           }
           "only the RAS question, the RAS amount, and the tax relief question has been answered" in {
@@ -106,7 +109,8 @@ class PensionsTaxReliefNotClaimedControllerISpec
 
             implicit val response: WSResponse = getPage(Some(sessionData))
 
-            assertRedirectionAsExpected(PageRelativeURLs.paymentsIntoPensionsOneOffPaymentsAmountPage)
+            response must haveStatus(SEE_OTHER)
+            response.header("Location") mustBe expectedRedirect
 
           }
           "only the RAS question, the RAS amount, the tax relief question, and tax relief amount has been answered" in {
@@ -124,7 +128,8 @@ class PensionsTaxReliefNotClaimedControllerISpec
 
             implicit val response: WSResponse = getPage(Some(sessionData))
 
-            assertRedirectionAsExpected(PageRelativeURLs.paymentsIntoPensionsTotalReliefAtSourceCheckPage)
+            response must haveStatus(SEE_OTHER)
+            response.header("Location") mustBe expectedRedirect
 
           }
         }

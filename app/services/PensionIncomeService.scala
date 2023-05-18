@@ -73,6 +73,5 @@ class PensionIncomeService @Inject()(pensionUserDataRepository: PensionsUserData
         result
       }).value
   }
-
 }
 

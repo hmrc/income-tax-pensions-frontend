@@ -293,7 +293,7 @@ class PensionAmountControllerISpec extends IntegrationTest with ViewHelpers with
     "redirect to uk pension scheme summary list page if index is out of bound" which {
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         val viewModel = anIncomeFromPensionEmptyViewModel.copy(uKPensionIncomesQuestion = Some(true), uKPensionIncomes = Seq(anUkPensionIncomeViewModelOne))
         insertCyaData(pensionsUserDataWithIncomeFromPensions(viewModel), aUserRequest)
         urlGet(fullUrl(pensionAmountUrl(taxYearEOY, Some(2))), follow = false,
@@ -309,7 +309,7 @@ class PensionAmountControllerISpec extends IntegrationTest with ViewHelpers with
     "redirect to the CYA page if there is no session data" which {
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         urlGet(fullUrl(pensionAmountUrl(taxYearEOY, Some(index))), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -322,7 +322,7 @@ class PensionAmountControllerISpec extends IntegrationTest with ViewHelpers with
     "redirect to Uk Pension Incomes Summary page if no index is given" which {
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         insertCyaData(aPensionsUserData, aUserRequest)
         urlGet(fullUrl(pensionAmountUrl(taxYearEOY, None)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
@@ -467,7 +467,7 @@ class PensionAmountControllerISpec extends IntegrationTest with ViewHelpers with
 
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         val viewModel = anIncomeFromPensionsViewModel.copy(uKPensionIncomes = Seq(anUkPensionIncomeViewModelOne))
         insertCyaData(pensionsUserDataWithIncomeFromPensions(viewModel), aUserRequest)
         urlPost(fullUrl(pensionAmountUrl(taxYearEOY, Some(index))), body = form,
@@ -493,7 +493,7 @@ class PensionAmountControllerISpec extends IntegrationTest with ViewHelpers with
 
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         insertCyaData(pensionsUserDataWithIncomeFromPensions(anIncomeFromPensionEmptyViewModel.copy
         (uKPensionIncomesQuestion = Some(true), uKPensionIncomes = Seq(UkPensionIncomeViewModel(amount =
           None, taxPaid = None)))), aUserRequest)
@@ -518,7 +518,7 @@ class PensionAmountControllerISpec extends IntegrationTest with ViewHelpers with
       lazy val form: Map[String, String] = pensionAmountForm(newAmount.toString, newAmount2.toString)
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         insertCyaData(pensionsUserDataWithIncomeFromPensions(anIncomeFromPensionEmptyViewModel.copy
         (uKPensionIncomesQuestion = Some(true), uKPensionIncomes = Seq(UkPensionIncomeViewModel(amount =
           None, taxPaid = None)))), aUserRequest)

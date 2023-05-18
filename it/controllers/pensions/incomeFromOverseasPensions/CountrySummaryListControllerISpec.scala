@@ -171,7 +171,7 @@ class CountrySummaryListControllerISpec extends IntegrationTest with BeforeAndAf
     "redirect to the pensions summary page if there is no session data" should {
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         urlGet(fullUrl(countrySummaryListControllerUrl(taxYearEOY)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }

@@ -65,7 +65,7 @@ class PensionSchemeSummaryControllerISpec extends IntegrationTest with ViewHelpe
     "redirect the user to the UK Pension Income Summary page when there is no pensionSchemeIndex" should {
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         insertCyaData(pensionsUsersData(aPensionsCYAModel), aUserRequest)
         urlGet(fullUrl(pensionSchemeSummaryUrl(taxYearEOY, None)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))

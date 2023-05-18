@@ -17,17 +17,11 @@
 package services
 
 import builders.AllPensionsDataBuilder.anAllPensionDataEmpty
-import builders.EmploymentPensionsBuilder.anEmploymentPensions
-import builders.PensionIncomeViewModelBuilder.aPensionIncome
 import builders.PensionsCYAModelBuilder._
 import config._
 import connectors.IncomeSourceConnector
 import models.mongo._
-import models.pension.AllPensionsData
 import models.pension.AllPensionsData.generateCyaFromPrior
-import models.pension.charges._
-import models.pension.reliefs.{PensionReliefs, Reliefs}
-import models.pension.statebenefits._
 import org.scalatest.concurrent.ScalaFutures
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, SEE_OTHER}
 import play.api.i18n.MessagesApi
@@ -36,8 +30,6 @@ import play.api.mvc.Results.{Ok, Redirect}
 import utils.UnitTest
 import views.html.templates.{InternalServerErrorTemplate, NotFoundTemplate, ServiceUnavailableTemplate}
 
-import java.time.{Instant, LocalDate}
-import java.util.UUID
 import scala.concurrent.Future
 
 class PensionSessionServiceSpec extends UnitTest

@@ -42,8 +42,8 @@ class PensionsConnector @Inject()(val http: HttpClient,
   def savePensionIncomeSessionData(nino: String, taxYear: Int, model: CreateUpdatePensionIncomeModel)
                                    (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[PensionIncomeSessionResponse] = {
     val url = appConfig.pensionBEBaseUrl + s"/pension-income/session-data/nino/$nino/taxYear/${taxYear.toString}"
-    http.PUT[CreateUpdatePensionIncomeModel, PensionIncomeSessionResponse](url,
-      model)(CreateUpdatePensionIncomeModel.format.writes,  PensionIncomeSessionHttpReads, hc, ec)
+    http.PUT[CreateUpdatePensionIncomeModel, PensionIncomeSessionResponse](url, model)(
+       CreateUpdatePensionIncomeModel.format.writes,  PensionIncomeSessionHttpReads, hc, ec)
   }
 
   def savePensionReliefSessionData(nino: String, taxYear: Int, model: CreateOrUpdatePensionReliefsModel)
