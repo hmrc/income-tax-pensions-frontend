@@ -60,6 +60,7 @@ class PensionOverseasPaymentService @Inject()(pensionUserDataRepository: Pension
       sessionData <- FutureEitherOps[ServiceError, Option[PensionsUserData]](pensionUserDataRepository.find(taxYear, user))
       priorData <- FutureEitherOps[ServiceError, IncomeTaxUserData](incomeTaxUserDataConnector.
         getUserData(user.nino, taxYear)(hc.withExtraHeaders("mtditid" -> user.mtditid)))
+
       viewModelOverseas = sessionData.map(_.pensions.paymentsIntoOverseasPensions)
       updatedIncomeData = CreateUpdatePensionIncomeModel(
         foreignPension = priorData.pensions.flatMap(_.pensionIncome.flatMap(_.foreignPension)),
@@ -84,4 +85,3 @@ class PensionOverseasPaymentService @Inject()(pensionUserDataRepository: Pension
     }).value
   }
 }
-
