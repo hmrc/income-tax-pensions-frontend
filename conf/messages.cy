@@ -213,7 +213,7 @@ pensions.reliefAtSourcePensions.title = Pensiynau rhyddhad wrth y ffynhonnell (R
 pensions.reliefAtSource.h2QuestionHeader.individual = A wnaethoch chi dalu i mewn i bensiwn RAS?
 pensions.reliefAtSource.h2QuestionHeader.agent = A wnaeth eich cleient dalu i mewn i bensiwn RAS?
 pensions.reliefAtSource.paragraph.individual = Dyma bensiynau rydych yn talu i mewn iddynt o:
-pensions.reliefAtSource.paragraph.agent = Dyma bensiynau y mae eich cleient yn talu i mewn iddynt o’i:
+pensions.reliefAtSource.paragraph.agent = Dyma bensiynau y mae eich cleient yn talu i mewn iddynt o:
 pensions.reliefAtSource.paragraph.example1.individual = eich incwm net (ar ôl i dreth gael ei didynnu), os ydych yn gyflogedig
 pensions.reliefAtSource.paragraph.example1.agent = incwm net eich cleient (ar ôl didynnu treth), os yw’n gyflogedig
 pensions.reliefAtSource.paragraph.example2.individual = eich incwm trethadwy, os ydych yn hunangyflogedig
@@ -234,7 +234,7 @@ pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.error.invalidFormat = Nod
 pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.error.overMaximum = Mae’n rhaid i’r cyfanswm a dalwyd i mewn i bensiynau RAS, ynghyd â rhyddhad treth ar y gyfradd sylfaenol, fod yn llai na £100,000,000,000
 
 pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.whereToFind.individual = Gallwch ddod o hyd i’r cyfanswm a daloch i mewn i bensiynau RAS, ynghyd â rhyddhad treth, ar y dystysgrif pensiwn neu’r dderbynneb gan eich gweinyddwr.
-pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.whereToFind.agent = Gallwch ddod o hyd i’r cyfanswm a dalwyd gan eich cleient i mewn i bensiynau RAS, ynghyd â rhyddhad treth, ar y dystysgrif pensiwn neu’r dderbynneb gan y gweinyddwr.
+pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.whereToFind.agent = Gallwch ddod o hyd i’r cyfanswm a dalwyd gan eich cleient i mewn i bensiynau RAS, ynghyd â rhyddhad treth, ar y dystysgrif pensiwn neu’r dderbynneb gan eich gweinyddwr.
 pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.howToWorkOut.individual = Er mwyn cyfrifo hyn eich hun, rhannwch y swm y gwnaethoch ei dalu mewn gwirionedd ag 80, a lluoswch y canlyniad â 100.
 pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.howToWorkOut.agent = Er mwyn cyfrifo hyn eich hun, rhannwch y swm a dalwyd gan eich cleient mewn gwirionedd ag 80, a lluoswch y canlyniad â 100.
 pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.exampleCalculation = Talodd Elin £500 i mewn i’w chynllun pensiwn. £500 wedi’i rhannu ag 80, ac yna ei lluosi â 100 yw £625. Ei hateb yw £625.
@@ -324,7 +324,7 @@ pensions.workplacePension.theseCases.individual = Mae’r achosion hyn yn anarfe
 pensions.workplacePension.theseCases.agent = Mae’r achosion hyn yn anarferol gan fod y rhan fwyaf o bensiynau gweithle wedi’u sefydlu i roi rhyddhad treth i’ch cleient ar adeg ei daliad.
 pensions.workplacePension.whereToCheck.individual = Gwiriwch gyda’ch cyflogwr neu ddarparwr pensiwn pa drefniant sydd gennych.
 pensions.workplacePension.whereToCheck.agent = Gwiriwch gyda chyflogwr neu ddarparwr pensiwn eich cleient pa drefniant sydd ganddo.
-pensions.workplacePension.findOutMore = Dysgwch ragor am ryddhad treth.
+pensions.workplacePension.findOutMore = Dysgwch ragor am ryddhad treth
 pensions.workplacePension.error.noEntry.individual = Dewiswch ‘Iawn’ os gwnaethoch dalu i mewn i bensiwn gweithle ac na chawsoch ryddhad treth
 pensions.workplacePension.error.noEntry.agent = Dewiswch ‘Iawn’ os talodd eich cleient i mewn i bensiwn gweithle ac na chafodd ryddhad treth
 

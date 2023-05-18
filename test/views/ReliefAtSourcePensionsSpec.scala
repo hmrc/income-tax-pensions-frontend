@@ -96,7 +96,7 @@ object ReliefAtSourcePensionsSpec {
   object ExpectedAgentCY extends SpecificExpectedResults {
     val expectedH2 = "A wnaeth eich cleient dalu i mewn i bensiwn RAS?"
     val expectedError = "Dewiswch ‘Iawn’ os talodd eich cleient i mewn i bensiwn RAS"
-    val expectedParagraph = "Dyma bensiynau y mae eich cleient yn talu i mewn iddynt o’i:"
+    val expectedParagraph = "Dyma bensiynau y mae eich cleient yn talu i mewn iddynt o:"
     val expectedExample1 = "incwm net eich cleient (ar ôl didynnu treth), os yw’n gyflogedig"
     val expectedExample2 = "incwm trethadwy eich cleient, os yw’n hunangyflogedig"
     val expectedPensionProviderText = "Yna, bydd y darparwr pensiwn yn hawlio rhyddhad treth ar gyfer eich cleient."
@@ -117,7 +117,7 @@ object ReliefAtSourcePensionsSpec {
     val expectedCaption: Int => String = (taxYear: Int) => s"Taliadau i bensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
     val expectedTitle = "Pensiynau rhyddhad wrth y ffynhonnell (RAS)"
     val expectedErrorTitle = s"Gwall: $expectedTitle"
-    val expectedHeading = "Pensiynau rhyddhad wrth y ffynhonnell (RAS)"    
+    val expectedHeading = "Pensiynau rhyddhad wrth y ffynhonnell (RAS)"
     val expectedButtonText = "Yn eich blaen"
     val yesText = "Iawn"
     val noText = "Na"

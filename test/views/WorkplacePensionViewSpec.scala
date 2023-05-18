@@ -83,7 +83,7 @@ object WorkplacePensionViewSpec {
     val yesText = "Iawn"
     val noText = "Na"
     val buttonText = "Yn eich blaen"
-    val expectedFindOutMoreText = "Dysgwch ragor am ryddhad treth. (yn agor tab newydd)"
+    val expectedFindOutMoreText = "Dysgwch ragor am ryddhad treth (yn agor tab newydd)"
   }
 
   object ExpectedIndividualEN extends SpecificExpectedResults {

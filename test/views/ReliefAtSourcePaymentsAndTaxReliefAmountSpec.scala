@@ -116,7 +116,7 @@ object ReliefAtSourcePaymentsAndTaxReliefAmountSpec {
 
   object ExpectedAgentCY extends SpecificExpectedResults {
     val expectedWhereToFind =
-      "Gallwch ddod o hyd i’r cyfanswm a dalwyd gan eich cleient i mewn i bensiynau RAS, ynghyd â rhyddhad treth, ar y dystysgrif pensiwn neu’r dderbynneb gan y gweinyddwr."
+      "Gallwch ddod o hyd i’r cyfanswm a dalwyd gan eich cleient i mewn i bensiynau RAS, ynghyd â rhyddhad treth, ar y dystysgrif pensiwn neu’r dderbynneb gan eich gweinyddwr."
     val expectedHowToWorkOut =
       "Er mwyn cyfrifo hyn eich hun, rhannwch y swm a dalwyd gan eich cleient mewn gwirionedd ag 80, a lluoswch y canlyniad â 100."
   }
