@@ -87,9 +87,9 @@ object OneOffRASPaymentsAmountSpec {
     val expectedHeading = "Cyfanswm y taliadau untro i mewn i bensiynau rhyddhad wrth y ffynhonnell (RAS), ynghyd â rhyddhad treth ar y gyfradd sylfaenol"
     val expectedTitle = "Cyfanswm y taliadau untro i mewn i bensiynau rhyddhad wrth y ffynhonnell (RAS), ynghyd â rhyddhad treth ar y gyfradd sylfaenol"
     val expectedErrorTitle = s"Gwall: $expectedTitle"
-    val expectedHowToWorkOut = "Er mwyn ei gyfrifo, rhannwch swm eich taliad untro â 80, a lluoswch y canlyniad â 100."
+    val expectedHowToWorkOut = "Er mwyn ei gyfrifo, rhannwch swm eich taliad untro ag 80, a lluoswch y canlyniad â 100."
     val expectedCalculationHeading = "Cyfrifiad enghreifftiol"
-    val expectedExampleCalculation = "Gwnaeth Elin daliad untro o £500. £500 wedi’i rannu â 80, a’i luosi â 100 yw £625. Ei hateb yw £625."
+    val expectedExampleCalculation = "Gwnaeth Elin daliad untro o £500. £500 wedi’i rhannu ag 80, a’i lluosi â 100 yw £625. Ei hateb yw £625."
     val hintText = "Er enghraifft, £193.52"
     val emptyErrorText = "Nodwch gyfanswm y taliadau untro a dalwyd i mewn i bensiynau RAS, ynghyd â rhyddhad treth ar y gyfradd sylfaenol"
     
