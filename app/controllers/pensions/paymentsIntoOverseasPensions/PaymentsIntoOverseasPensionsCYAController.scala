@@ -73,20 +73,12 @@ class PaymentsIntoOverseasPensionsCYAController @Inject()(authAction: Authorised
         Future.successful(Redirect(appConfig.incomeTaxSubmissionOverviewUrl(taxYear)))
       ) { model =>
         if (sessionDataDifferentThanPriorData(model.pensions, prior)) {
-          val tempCopy: PensionsUserData = PensionsUserData(
-            sessionId = model.sessionId,
-            mtdItId = model.mtdItId,
-            nino = model.nino,
-            taxYear = model.taxYear,
-            isPriorSubmission = model.isPriorSubmission,
-            pensions = model.pensions,
-            lastUpdated = model.lastUpdated
-          )
+          val pIOPCopy = model.pensions.paymentsIntoOverseasPensions.copy()
 
           pensionOverseasPaymentService.savePaymentsFromOverseasPensionsViewModel(request.user, taxYear).map {
             case Left(_) => errorHandler.internalServerError()
             case Right(_) =>
-              nrsService.submit(request.user.nino, tempCopy.pensions, request.user.mtditid)
+              nrsService.submit(request.user.nino, pIOPCopy, request.user.mtditid)
               Redirect(OverseasPensionsSummaryController.show(taxYear))
           }
         } else {
