@@ -16,7 +16,7 @@
 
 package services
 
-import connectors.{IncomeTaxUserDataConnector, PensionsConnector}
+import connectors.{IncomeTaxUserDataConnector, StateBenefitsConnector}
 import models.{IncomeTaxUserData, User}
 import models.mongo.{PensionsCYAModel, PensionsUserData, ServiceError}
 import models.pension.charges.{CreateUpdatePensionChargesRequestModel, IncomeFromOverseasPensionsViewModel}
@@ -32,13 +32,14 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 
-class StatePensionService @Inject()(pensionUserDataRepository: PensionsUserDataRepository, pensionsConnector: PensionsConnector,
+class StatePensionService @Inject()(pensionUserDataRepository: PensionsUserDataRepository, stateBenefitsConnector: StateBenefitsConnector,
                                      incomeTaxUserDataConnector: IncomeTaxUserDataConnector) {
 
   def persistIncomeFromPensionsViewModel(user: User, taxYear: Int)
                                              (implicit hc: HeaderCarrier, ec: ExecutionContext, clock: Clock): Future[Either[ServiceError, Unit]] = {
 
 
+    //scalastyle:off method.length
     val hcWithExtras = hc.withExtraHeaders("mtditid" -> user.mtditid)
 
 
@@ -90,9 +91,7 @@ class StatePensionService @Inject()(pensionUserDataRepository: PensionsUserDataR
         )
       )
 
-      _ <- FutureEitherOps[ServiceError, Unit](pensionsConnector.savePensionIncomeSessionData(user.nino, taxYear, updatedPIData)(hcWithExtras, ec))
-      _ <- FutureEitherOps[ServiceError, Unit](pensionsConnector.savePensionChargesSessionData(user.nino, taxYear, updatedPCRData)(hcWithExtras, ec))
-      _ <- FutureEitherOps[ServiceError, Unit](pensionsConnector.savePensionReliefSessionData(user.nino, taxYear, updatedPRData)(hcWithExtras, ec))
+      _ <- FutureEitherOps[ServiceError, Unit](stateBenefitsConnector.createSessionDataID(updatedPIData)(hcWithExtras, ec))
 
       updatedCYA = getPensionsUserData(sessionData, user)
       result <- FutureEitherOps[ServiceError, Unit](pensionUserDataRepository.createOrUpdate(updatedCYA))
@@ -100,5 +99,5 @@ class StatePensionService @Inject()(pensionUserDataRepository: PensionsUserDataR
       result
     }).value
 
-
+  }
 }
