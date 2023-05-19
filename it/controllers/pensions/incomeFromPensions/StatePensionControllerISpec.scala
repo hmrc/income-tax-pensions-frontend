@@ -27,7 +27,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.IncomeFromPensionsPages.statePension
+import utils.PageUrls.IncomeFromPensionsPages.{statePension, statePensionStartDateUrl}
 import utils.PageUrls._
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
@@ -84,7 +84,7 @@ class StatePensionControllerISpec extends IntegrationTest with ViewHelpers with 
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
       result.status shouldBe SEE_OTHER
-      result.header("location").contains(statePension(taxYearEOY)) shouldBe true
+      result.header("location").contains(statePensionStartDateUrl(taxYearEOY)) shouldBe true
     }
 
     "redirect to StatePensionView when user selects 'No'" in {

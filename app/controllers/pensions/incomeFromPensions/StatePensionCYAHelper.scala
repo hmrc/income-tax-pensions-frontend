@@ -16,33 +16,35 @@
 
 package controllers.pensions.incomeFromPensions
 
-import models.pension.statebenefits.IncomeFromPensionsViewModel
+import models.pension.statebenefits.{IncomeFromPensionsViewModel, StateBenefitViewModel}
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import utils.CYABaseHelper
 import utils.DateTimeUtil.dateToStringFormat
 
 object StatePensionCYAHelper extends CYABaseHelper {
-  def summaryListRows(statePension :IncomeFromPensionsViewModel, taxYear: Int)(implicit messages: Messages): Seq[SummaryListRow] =
-    Seq(
-      statePensionSR(statePension, taxYear),
-      startDateSR(statePension, taxYear),
-      lumpSumSR(statePension, taxYear),
-      lumpSumTaxSR(statePension, taxYear),
-      lumSumSDateSR(statePension, taxYear),
-      addStatePensionToTaxCalcsSR(statePension, taxYear)
+  def summaryListRows(incomeFromPensionsViewModel :IncomeFromPensionsViewModel, taxYear: Int)(implicit messages: Messages): Seq[SummaryListRow] = {
+    val s1 = Seq(
+      statePensionSR(incomeFromPensionsViewModel.statePension, taxYear),
+      startDateSR(incomeFromPensionsViewModel.statePension, taxYear),
+      lumpSumSR(incomeFromPensionsViewModel.statePensionLumpSum, taxYear),
+      lumpSumTaxSR(incomeFromPensionsViewModel.statePensionLumpSum, taxYear),
+      lumSumSDateSR(incomeFromPensionsViewModel.statePensionLumpSum, taxYear),
+      addStatePensionToTaxCalcsSR(incomeFromPensionsViewModel, taxYear)
     ).flatten
+    s1
+  }
 
-  private def statePensionSR(viewModel : IncomeFromPensionsViewModel, taxYear: Int)(implicit messages: Messages): Option[SummaryListRow] = {
+  private def statePensionSR(viewModel : Option[StateBenefitViewModel], taxYear: Int)(implicit messages: Messages): Option[SummaryListRow] = {
     Some(summaryListRowWithString(
       "statePension.cya.statePension.label",
-      Some(displayedValueForOptionalAmount(viewModel.statePension.flatMap(_.amount), messages("common.no"))),
+      Some(displayedValueForOptionalAmount(viewModel.flatMap(_.amount), messages("common.no"))),
       routes.StatePensionController.show(taxYear)
     ))
   }
 
-  private def startDateSR(viewModel : IncomeFromPensionsViewModel, taxYear: Int)(implicit messages: Messages): Option[SummaryListRow] = {
-    viewModel.statePension.flatMap(sb => sb.amountPaidQuestion.filter(x =>x).map( _ =>
+  private def startDateSR(viewModel : Option[StateBenefitViewModel], taxYear: Int)(implicit messages: Messages): Option[SummaryListRow] = {
+    viewModel.flatMap(sb => sb.amountPaidQuestion.filter(x =>x).map( _ =>
       summaryListRowWithString(
         "statePension.cya.startDate.label",
         sb.startDate.map(st => st.format(dateToStringFormat)),
@@ -51,18 +53,16 @@ object StatePensionCYAHelper extends CYABaseHelper {
     ))
   }
 
-  private def lumpSumSR(viewModel : IncomeFromPensionsViewModel, taxYear: Int)(implicit messages: Messages): Option[SummaryListRow] = {
-   viewModel.statePensionLumpSum.flatMap(sb => sb.amountPaidQuestion.filter(x =>x).map( _ =>
-     summaryListRowWithString(
+  private def lumpSumSR(viewModel: Option[StateBenefitViewModel], taxYear: Int)(implicit messages: Messages): Option[SummaryListRow] = {
+    Some(summaryListRowWithString(
       "statePension.cya.lumpSum.label",
-      sb.amount.map(displayedValue),
+      Some(displayedValueForOptionalAmount(viewModel.flatMap(_.amount), messages("common.no"))),
       routes.StatePensionLumpSumController.show(taxYear)
-     )
-   ))
+    ))
   }
 
-  private def lumpSumTaxSR(viewModel: IncomeFromPensionsViewModel, taxYear: Int)(implicit messages: Messages): Option[SummaryListRow] = {
-    viewModel.statePensionLumpSum.flatMap(sb => sb.taxPaidQuestion.filter(x => x).map(_ =>
+  private def lumpSumTaxSR(viewModel: Option[StateBenefitViewModel], taxYear: Int)(implicit messages: Messages): Option[SummaryListRow] = {
+    viewModel.flatMap(sb => sb.taxPaidQuestion.filter(x => x).map(_ =>
       summaryListRowWithString(
         "statePension.cya.lumpSumTax.label",
         sb.taxPaid.map(displayedValue),
@@ -71,8 +71,8 @@ object StatePensionCYAHelper extends CYABaseHelper {
     ))
   }
 
-  private def lumSumSDateSR(viewModel: IncomeFromPensionsViewModel, taxYear: Int)(implicit messages: Messages): Option[SummaryListRow] = {
-    viewModel.statePensionLumpSum.flatMap(sb => sb.amountPaidQuestion.filter(x => x).map(_ =>
+  private def lumSumSDateSR(viewModel: Option[StateBenefitViewModel], taxYear: Int)(implicit messages: Messages): Option[SummaryListRow] = {
+    viewModel.flatMap(sb => sb.amountPaidQuestion.filter(x => x).map(_ =>
       summaryListRowWithString(
         "statePension.cya.lumpSumDate.label",
         sb.startDate.map(st => st.format(dateToStringFormat)),
@@ -81,13 +81,11 @@ object StatePensionCYAHelper extends CYABaseHelper {
     ))
   }
 
-  private def addStatePensionToTaxCalcsSR(viewModel : IncomeFromPensionsViewModel, taxYear: Int)(implicit messages: Messages): Option[SummaryListRow] = {
-    viewModel.statePension.flatMap(sb => sb.amountPaidQuestion.filter(x => x).map(_ =>  //TODO: replace with correct question
+  private def addStatePensionToTaxCalcsSR(viewModel : IncomeFromPensionsViewModel, taxYear: Int)(implicit messages: Messages): Option[SummaryListRow] =
+    Some(
       summaryListRowWithString(
         "statePension.cya.taxCalc.label",
-        Some(messages("common.yes")),
-        routes.StatePensionLumpSumStartDateController.show(taxYear)  //TODO: replace by AddStatePensionToTaxCalcs
-      )
+        Some(messages("common.yes")),  //TODO: replace with correct question
+        routes.StatePensionCYAController.show(taxYear)  //TODO: replace by AddStatePensionToTaxCalcs
     ))
-  }
 }

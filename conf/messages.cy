@@ -575,14 +575,19 @@ statePension.cya.title.individual = Check your State Pension
 statePension.cya.paragraph1.agent  = Your client's State Pension income is based on the information we already hold about them.
 statePension.cya.paragraph2.agent  = You cannot update your client's State Pension income until 6 April 2023.
 statePension.cya.paragraph1.individual  = Your State Pension income is based on information we already hold about you.
-statePension.cya.paragraph2.individual  = You can change the amounts if they're not correct.
+statePension.cya.paragraph2.individual  = You can change the amounts if they''re not correct.
 statePension.cya.statePension.label = State Pension
+statePension.cya.statePension.label.hidden = Change state pension
 statePension.cya.startDate.label = State Pension start date
+statePension.cya.startDate.label.hidden = Change State Pension start date
 statePension.cya.lumpSum.label = Lump sum
+statePension.cya.lumpSum.label.hidden = Change lump sum
 statePension.cya.lumpSumTax.label = Lump sum tax
+statePension.cya.lumpSumTax.label.hidden = Change Lump sum tax
 statePension.cya.lumpSumDate.label = Lump sum date
+statePension.cya.lumpSumDate.label.hidden = Change lump sum date
 statePension.cya.taxCalc.label = State Pension added to tax calculation
-
+statePension.cya.taxCalc.label.hidden = Change State Pension added to tax calculation
 
 #Income From Pensions Summary
 incomeFromPensions.incomeFromPensionsSummary.statePensions = Pensiwn y Wladwriaeth
