@@ -59,13 +59,13 @@ class SF74ReferenceViewSpec extends ViewUnitTest{
   }
 
   object ExpectedContentsIndividualCY extends ExpectedContents {
-    val expectedTitle: String = "SF74 reference"
+    val expectedTitle: String = "Cyfeirnod SF74"
     val expectedCaption: Int => String = (taxYear: Int) => s"Taliadau i bensiynau tramor ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
-    val expectedPara1: String = "Enter your SF74 reference. You can find this out from your overseas scheme manager."
-    val hintText: String = "For example, 'SF74/1234', 'SF74/45865' or 'SF74/123456'"
+    val expectedPara1: String = "Nodwch eich cyfeirnod SF74. Gallwch ddysgu beth yw hyn oddi wrth eich rheolwr cynllun dramor."
+    val hintText: String = "Er enghraifft, “SF74/1234”, “SF74/45865” neu “SF74/123456”"
     val continue: String = "Yn eich blaen"
-    val emptyErrorMessage: String = "Enter your SF74 reference"
-    val invalidErrorMessage: String = "The SF74 reference must be between 1 and 10 digits long, contain only numbers and no special characters"
+    val emptyErrorMessage: String = "Nodwch eich cyfeirnod SF74"
+    val invalidErrorMessage: String = "Mae’n rhaid i’r cyfeirnod SF74 fod rhwng 1 a 10 digid, a chynnwys rhifau yn unig – dim cymeriadau arbennig"
     val errorText: String = "Gwall: "
   }
 
@@ -81,13 +81,13 @@ class SF74ReferenceViewSpec extends ViewUnitTest{
   }
 
   object ExpectedContentsAgentCY extends ExpectedContents {
-    val expectedTitle: String = "SF74 reference"
+    val expectedTitle: String = "Cyfeirnod SF74"
     val expectedCaption: Int => String = (taxYear: Int) => s"Taliadau i bensiynau tramor ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
-    val expectedPara1: String = "Enter your client’s SF74 reference. You can find this out from your client’s overseas scheme manager."
-    val hintText: String = "For example, 'SF74/1234', 'SF74/45865' or 'SF74/123456'"
+    val expectedPara1: String = "Nodwch gyfeirnod SF74 eich cleient. Gallwch ddysgu beth yw hyn oddi wrth reolwr cynllun dramor eich cleient."
+    val hintText: String = "Er enghraifft, “SF74/1234”, “SF74/45865” neu “SF74/123456”"
     val continue: String = "Yn eich blaen"
-    val emptyErrorMessage: String = "Enter your SF74 reference"
-    val invalidErrorMessage: String = "The SF74 reference must be between 1 and 10 digits long, contain only numbers and no special characters"
+    val emptyErrorMessage: String = "Nodwch eich cyfeirnod SF74"
+    val invalidErrorMessage: String = "Mae’n rhaid i’r cyfeirnod SF74 fod rhwng 1 a 10 digid, a chynnwys rhifau yn unig – dim cymeriadau arbennig"
     val errorText: String = "Gwall: "
   }
 
