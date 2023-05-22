@@ -25,7 +25,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.IncomeFromPensionsPages.{statePensionLumpSumUrl, taxOnLumpSumUrl}
+import utils.PageUrls.IncomeFromPensionsPages.{statePensionCyaUrl, statePensionLumpSumUrl, taxOnLumpSumUrl}
 import utils.PageUrls.{fullUrl, overviewUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
@@ -115,7 +115,7 @@ class StatePensionLumpSumControllerISpec extends IntegrationTest with BeforeAndA
       result.header("location") shouldBe Some(overviewUrl(taxYear))
     }
 
-    "redirect to the tax paid on state pension lump sum page and update question to 'Yes' with correct taxPaid amount" in {
+    "redirect to the tax paid on state pension lump sum page when update question to 'Yes' with correct taxPaid amount" in {
       lazy val form: Map[String, String] = Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "42.24")
 
       lazy val result: WSResponse = {
@@ -142,7 +142,7 @@ class StatePensionLumpSumControllerISpec extends IntegrationTest with BeforeAndA
       cyaModel.pensions.incomeFromPensions.statePensionLumpSum.get.amount shouldBe Some(BigDecimal("42.24"))
     }
 
-    "redirect to the tax paid on state pension lump sum page and update question to No and delete the tax paid amount when user selects no" in {
+    "redirect to the State Pension CYA page when update question to No and delete the tax paid amount when user selects No" in {
       lazy val form: Map[String, String] = Map(RadioButtonAmountForm.yesNo -> RadioButtonAmountForm.no)
 
       lazy val result: WSResponse = {
@@ -158,7 +158,7 @@ class StatePensionLumpSumControllerISpec extends IntegrationTest with BeforeAndA
       }
 
       result.status shouldBe SEE_OTHER
-      result.header("location") shouldBe Some(taxOnLumpSumUrl(taxYearEOY))
+      result.header("location") shouldBe Some(statePensionCyaUrl(taxYearEOY))
 
       lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
       cyaModel.pensions.incomeFromPensions.statePensionLumpSum.get.amountPaidQuestion shouldBe Some(false)
