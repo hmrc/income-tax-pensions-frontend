@@ -1005,12 +1005,12 @@ pensions.paymentsIntoOverseasPensions.reliefSchemeSummary.addAnotherReliefLink =
 pensions.paymentsIntoOverseasPensions.reliefSchemeSummary.addReliefLink = Add an overseas pension scheme
 
 #SF74 reference
-pensions.paymentsIntoOverseasPensions.sf74Reference.title = SF74 reference
-pensions.paymentsIntoOverseasPensions.sf74Reference.paragraph1.individual = Enter your SF74 reference. You can find this out from your overseas scheme manager.
-pensions.paymentsIntoOverseasPensions.sf74Reference.paragraph1.agent = Enter your client’s SF74 reference. You can find this out from your client’s overseas scheme manager.
-pensions.paymentsIntoOverseasPensions.sf74Reference.hint = For example, ''SF74/1234'', ''SF74/45865'' or ''SF74/123456''
-pensions.paymentsIntoOverseasPensions.sf74Reference.noEntry = Enter your SF74 reference
-pensions.paymentsIntoOverseasPensions.sf74Reference.incorrectFormat = The SF74 reference must be between 1 and 10 digits long, contain only numbers and no special characters
+pensions.paymentsIntoOverseasPensions.sf74Reference.title = Cyfeirnod SF74
+pensions.paymentsIntoOverseasPensions.sf74Reference.paragraph1.individual = Nodwch eich cyfeirnod SF74. Gallwch ddysgu beth yw hyn oddi wrth eich rheolwr cynllun dramor.
+pensions.paymentsIntoOverseasPensions.sf74Reference.paragraph1.agent = Nodwch gyfeirnod SF74 eich cleient. Gallwch ddysgu beth yw hyn oddi wrth reolwr cynllun dramor eich cleient.
+pensions.paymentsIntoOverseasPensions.sf74Reference.hint = Er enghraifft, “SF74/1234”, “SF74/45865” neu “SF74/123456”
+pensions.paymentsIntoOverseasPensions.sf74Reference.noEntry = Nodwch eich cyfeirnod SF74
+pensions.paymentsIntoOverseasPensions.sf74Reference.incorrectFormat = Mae’n rhaid i’r cyfeirnod SF74 fod rhwng 1 a 10 digid, a chynnwys rhifau yn unig – dim cymeriadau arbennig
 
 #Payment into overseas pensions CYA
 paymentsIntoOverseasPensions.cya.heading = Check payments into overseas pensions
@@ -1153,66 +1153,66 @@ common.overseasPensions.country.error.noEntry = Nodwch y wlad
 transferIntoOverseasPensions.summaryList.title = Cynlluniau pensiwn sy’n talu’r taliadau trosglwyddiadau – crynodeb
 
 #Short service refund - Taxable
-shortServiceRefunds.taxableRefundAmount.title = Taxable short service refunds
-shortServiceRefunds.taxableRefundAmount.p1.individual = The short service refund is taxable if you got UK tax relief on the money you paid into the scheme.
-shortServiceRefunds.taxableRefundAmount.p1.agent = The short service refund is taxable if your client got UK tax relief on the money they paid into the scheme.
-shortServiceRefunds.taxableRefundAmount.p2.individual = Tell us the total amount of short service refund you got from overseas pension schemes.
-shortServiceRefunds.taxableRefundAmount.p2.agent = Tell us the total amount of short service refund your client got from overseas pension schemes.
-shortServiceRefunds.taxableRefundAmount.details.title = What is a short service refund?
-shortServiceRefunds.taxableRefundAmount.details.p1.individual = A short service refund is a refund of money you paid into a workplace pension.
-shortServiceRefunds.taxableRefundAmount.details.p1.agent = A short service refund is a refund of money your client paid into a workplace pension.
-shortServiceRefunds.taxableRefundAmount.details.p2.individual = You might have got a short service refund if you paid into a scheme for less than 2 years. This depends on the type of pension scheme you have.
-shortServiceRefunds.taxableRefundAmount.details.p2.agent = Your client might have got a short service refund if they paid into a scheme for less than 2 years. This depends on the type of pension scheme they have.
-shortServiceRefunds.taxableRefundAmount.h2.individual = Did you get a short service refund?
-shortServiceRefunds.taxableRefundAmount.h2.agent = Did your client get a short service refund?
-shortServiceRefunds.taxableRefundAmount.amount.text = Total amount of short service refunds, in pounds
-shortServiceRefunds.taxableRefundAmount.error.noEntry.individual = Select yes if you got a taxable short service refund from an overseas pension scheme
-shortServiceRefunds.taxableRefundAmount.error.noEntry.agent = Select yes if your client got a taxable short service refund from an overseas pension scheme
-shortServiceRefunds.taxableRefundAmount.error.noAmountEntry.individual = Enter the taxable short service refund amount
-shortServiceRefunds.taxableRefundAmount.error.noAmountEntry.agent = Enter your client’s taxable short service refund amount
-shortServiceRefunds.taxableRefundAmount.error.incorrectFormat.individual = Enter the taxable short service refund amount in the correct format
-shortServiceRefunds.taxableRefundAmount.error.incorrectFormat.agent = Enter your client’s taxable short service refund amount in the correct format
-shortServiceRefunds.taxableRefundAmount.error.tooBig.individual = The taxable short service refund amount must be less than £100,000,000,000
-shortServiceRefunds.taxableRefundAmount.error.tooBig.agent = Your client’s taxable short service refund amount must be less than £100,000,000,000
+shortServiceRefunds.taxableRefundAmount.title = Ad-daliadau trethadwy am wasanaeth byr
+shortServiceRefunds.taxableRefundAmount.p1.individual = Mae’r ad-daliad am wasanaeth byr yn drethadwy os cawsoch ryddhad treth yn y DU ar yr arian a dalwyd gennych i mewn i’r cynllun.
+shortServiceRefunds.taxableRefundAmount.p1.agent = Mae’r ad-daliad am wasanaeth byr yn drethadwy os cafodd eich cleient ryddhad treth yn y DU ar yr arian a dalwyd ganddo i mewn i’r cynllun.
+shortServiceRefunds.taxableRefundAmount.p2.individual = Rhowch wybod i ni cyfanswm yr ad-daliad am wasanaeth byr a gawsoch o gynlluniau pensiwn tramor.
+shortServiceRefunds.taxableRefundAmount.p2.agent = Rhowch wybod i ni cyfanswm yr ad-daliad am wasanaeth byr a gafodd eich cleient o gynlluniau pensiwn tramor.
+shortServiceRefunds.taxableRefundAmount.details.title = Beth yw ad-daliad am wasanaeth byr?
+shortServiceRefunds.taxableRefundAmount.details.p1.individual = Ad-daliad o arian a dalwyd gennych i mewn i bensiwn gweithle yw ad-daliad am wasanaeth byr.
+shortServiceRefunds.taxableRefundAmount.details.p1.agent = Ad-daliad o arian a dalwyd gan eich cleient i mewn i bensiwn gweithle yw ad-daliad am wasanaeth byr.
+shortServiceRefunds.taxableRefundAmount.details.p2.individual = Mae’n bosibl eich bod wedi cael ad-daliad am wasanaeth byr os gwnaethoch dalu i mewn i gynllun am lai na 2 flynedd. Mae hyn yn ddibynnol ar y math o bensiwn sydd gennych.
+shortServiceRefunds.taxableRefundAmount.details.p2.agent = Mae’n bosibl i’ch cleient fod wedi cael ad-daliad am wasanaeth byr os dalodd i mewn i gynllun am lai na 2 flynedd. Mae hyn yn ddibynnol ar y math o bensiwn sydd gan eich cleient.
+shortServiceRefunds.taxableRefundAmount.h2.individual = A gawsoch ad-daliad am wasanaeth byr?
+shortServiceRefunds.taxableRefundAmount.h2.agent = A gafodd eich cleient ad-daliad am wasanaeth byr?
+shortServiceRefunds.taxableRefundAmount.amount.text = Cyfanswm yr ad-daliadau am wasanaeth byr, mewn punnoedd
+shortServiceRefunds.taxableRefundAmount.error.noEntry.individual = Dewiswch ‘Iawn’ os cawsoch ad-daliad trethadwy am wasanaeth byr o gynllun pensiwn tramor
+shortServiceRefunds.taxableRefundAmount.error.noEntry.agent = Dewiswch ‘Iawn’ os cafodd eich cleient ad-daliad trethadwy am wasanaeth byr o gynllun pensiwn tramor
+shortServiceRefunds.taxableRefundAmount.error.noAmountEntry.individual = Nodwch swm yr ad-daliad trethadwy am wasanaeth byr
+shortServiceRefunds.taxableRefundAmount.error.noAmountEntry.agent = Nodwch swm ad-daliad trethadwy eich cleient am wasanaeth byr
+shortServiceRefunds.taxableRefundAmount.error.incorrectFormat.individual = Nodwch swm yr ad-daliad trethadwy am wasanaeth byr yn y fformat cywir
+shortServiceRefunds.taxableRefundAmount.error.incorrectFormat.agent = Nodwch swm ad-daliad trethadwy eich cleient am wasanaeth byr yn y fformat cywir
+shortServiceRefunds.taxableRefundAmount.error.tooBig.individual = Mae’n rhaid i swm yr ad-daliad trethadwy am wasanaeth byr fod yn llai na £100,000,000,000
+shortServiceRefunds.taxableRefundAmount.error.tooBig.agent = Mae’n rhaid i swm ad-daliad trethadwy eich cleient am wasanaeth byr fod yn llai na £100,000,000,000
 
 #Non UK Tax Refunds
-shortServiceRefunds.nonUkTaxRefunds.title = Non-UK tax on short service refunds
-shortServiceRefunds.nonUkTaxRefunds.para1.individual = If you paid non-UK tax on more than one refund, add the amounts together.
-shortServiceRefunds.nonUkTaxRefunds.para1.agent = If your client paid non-UK tax on more than one refund, add the amounts together.
-shortServiceRefunds.nonUkTaxRefunds.para2.individual = If you do not know this information, you can check with the employer or pension scheme provider.
-shortServiceRefunds.nonUkTaxRefunds.para2.agent = If you do not know this information, you can ask your client to check with the employer or pension scheme provider.
-shortServiceRefunds.nonUkTaxRefunds.question.individual = Did you pay non-UK tax on short service refunds?
-shortServiceRefunds.nonUkTaxRefunds.question.agent = Did your client pay non-UK tax on short service refunds?
-shortServiceRefunds.nonUkTaxRefunds.amount.text = Total non-UK tax on short service refunds, in pounds
-shortServiceRefunds.nonUkTaxRefunds.error.noEntry.individual = Select yes if you paid non-UK tax on this short service refund
-shortServiceRefunds.nonUkTaxRefunds.error.noEntry.agent = Select yes if your client paid non-UK tax on this short service refund
-shortServiceRefunds.nonUkTaxRefunds.error.noAmountEntry.individual = Enter the amount of non-UK tax you paid on this short service refund
-shortServiceRefunds.nonUkTaxRefunds.error.noAmountEntry.agent = Enter the amount of non-UK tax your client paid on this short service refund
-shortServiceRefunds.nonUkTaxRefunds.error.incorrectFormat.individual = Enter the amount of non-UK tax you paid on this short service refund in the correct format
-shortServiceRefunds.nonUkTaxRefunds.error.incorrectFormat.agent = Enter the amount of non-UK tax your client paid on this short service refund in the correct format
-shortServiceRefunds.nonUkTaxRefunds.error.tooBig.individual = The amount of non-UK tax you paid on this short service refund must be less than £100,000,000,000
-shortServiceRefunds.nonUkTaxRefunds.error.tooBig.agent = The amount of non-UK tax your client paid on this short service refund must be less than £100,000,000,000
+shortServiceRefunds.nonUkTaxRefunds.title = Treth y tu allan i’r DU ar ad-daliadau am wasanaeth byr
+shortServiceRefunds.nonUkTaxRefunds.para1.individual = Os gwnaethoch dalu treth y tu allan i’r DU ar fwy nag un ad-daliad, ychwanegwch y symiau at ei gilydd.
+shortServiceRefunds.nonUkTaxRefunds.para1.agent = Os gwnaeth eich cleient dalu treth y tu allan i’r DU ar fwy nag un ad-daliad, ychwanegwch y symiau at ei gilydd.
+shortServiceRefunds.nonUkTaxRefunds.para2.individual = Os nad yw’r wybodaeth hon gennych, gallwch wirio gyda’r cyflogwr neu’r darparwr cynllun pensiwn.
+shortServiceRefunds.nonUkTaxRefunds.para2.agent = Os nad yw’r wybodaeth hon gennych, gallwch ofyn i’ch cleient wirio gyda’r cyflogwr neu’r darparwr cynllun pensiwn.
+shortServiceRefunds.nonUkTaxRefunds.question.individual = A wnaethoch dalu treth y tu allan i’r DU ar ad-daliadau am wasanaeth byr?
+shortServiceRefunds.nonUkTaxRefunds.question.agent = A wnaeth eich cleient dalu treth y tu allan i’r DU ar ad-daliadau am wasanaeth byr?
+shortServiceRefunds.nonUkTaxRefunds.amount.text = Cyfanswm treth y tu allan i’r DU ar ad-daliadau am wasanaeth byr, mewn punnoedd
+shortServiceRefunds.nonUkTaxRefunds.error.noEntry.individual = Dewiswch ‘Iawn’ os gwnaethoch dalu treth y tu allan i’r DU ar yr ad-daliad hwn am wasanaeth byr
+shortServiceRefunds.nonUkTaxRefunds.error.noEntry.agent = Dewiswch ‘Iawn’ os gwnaeth eich cleient dalu treth y tu allan i’r DU ar yr ad-daliad hwn am wasanaeth byr
+shortServiceRefunds.nonUkTaxRefunds.error.noAmountEntry.individual = Nodwch swm y dreth y gwnaethoch ei thalu y tu allan i’r DU ar yr ad-daliad hwn am wasanaeth byr
+shortServiceRefunds.nonUkTaxRefunds.error.noAmountEntry.agent = Nodwch swm y dreth y gwnaeth eich cleient ei thalu y tu allan i’r DU ar yr ad-daliad hwn am wasanaeth byr
+shortServiceRefunds.nonUkTaxRefunds.error.incorrectFormat.individual = Nodwch swm y dreth y gwnaethoch ei thalu y tu allan i’r DU ar yr ad-daliad hwn am wasanaeth byr yn y fformat cywir
+shortServiceRefunds.nonUkTaxRefunds.error.incorrectFormat.agent = Nodwch swm y dreth y gwnaeth eich cleient ei thalu y tu allan i’r DU ar yr ad-daliad hwn am wasanaeth byr yn y fformat cywir
+shortServiceRefunds.nonUkTaxRefunds.error.tooBig.individual = Mae’n rhaid i swm y dreth y gwnaethoch ei thalu y tu allan i’r DU ar yr ad-daliad hwn am wasanaeth byr fod yn llai na £100,000,000,000
+shortServiceRefunds.nonUkTaxRefunds.error.tooBig.agent = Mae’n rhaid i swm y dreth y gwnaeth eich cleient ei thalu y tu allan i’r DU ar yr ad-daliad hwn am wasanaeth byr fod yn llai na £100,000,000,000
 
 #Short service refund Pension Scheme
-shortServiceRefunds.PensionScheme.title = Pension scheme paying tax on the short service refund
+shortServiceRefunds.PensionScheme.title = Cynllun pensiwn yn talu’r dreth ar yr ad-daliad am wasanaeth byr
 
 #short service refund - UK pension scheme pay tax
-shortServiceRefunds.taxOnShortServiceRefund.title = Did a UK pension scheme pay tax on the short service refunds?
-shortServiceRefunds.taxOnShortServiceRefund.error.noEntry = Select yes if a UK pension scheme paid tax on the short service refund
+shortServiceRefunds.taxOnShortServiceRefund.title = A wnaeth cynllun pensiwn y DU dalu treth ar yr ad-daliadau trethadwy am wasanaeth byr?
+shortServiceRefunds.taxOnShortServiceRefund.error.noEntry = Dewiswch ‘Iawn’ os gwnaeth cynllun pensiwn y DU dalu treth ar yr ad-daliad am wasanaeth byr
 
 
 #Short service refund - Summary
-shortServiceRefunds.refundSummary.title = Short service refund summary
+shortServiceRefunds.refundSummary.title = Crynodeb o’r ad-daliad am wasanaeth byr
 
 #Short Service refund - CYA
-shortServiceRefunds.cya.heading = Check short service refunds
-shortServiceRefunds.cya.refund = Short service refunds
-shortServiceRefunds.cya.refundAmount = Refund amount
-shortServiceRefunds.cya.nonUk = Paid non-UK tax
-shortServiceRefunds.cya.nonUkAmount = Amount of non-UK tax
-shortServiceRefunds.cya.schemesPayingTax = Pension schemes paying tax
-shortServiceRefunds.cya.refund.hidden = Change short service refunds
-shortServiceRefunds.cya.refundAmount.hidden = Change refund amount
-shortServiceRefunds.cya.nonUk.hidden = Change paid non-UK tax
-shortServiceRefunds.cya.nonUkAmount.hidden = Change amount of non-UK tax
-shortServiceRefunds.cya.schemesPayingTax.hidden = Change pension schemes paying tax
+shortServiceRefunds.cya.heading = Gwirio’r ad-daliadau am wasanaeth byr
+shortServiceRefunds.cya.refund = Ad-daliadau am wasanaeth byr
+shortServiceRefunds.cya.refundAmount = Swm yr ad-daliad
+shortServiceRefunds.cya.nonUk = Treth y tu allan i’r DU sydd wedi’i dalu
+shortServiceRefunds.cya.nonUkAmount = Swm yr incwm y tu allan i’r DU
+shortServiceRefunds.cya.schemesPayingTax = Cynlluniau pensiwn yn talu treth
+shortServiceRefunds.cya.refund.hidden = Newid ad-daliadau am wasanaeth byr
+shortServiceRefunds.cya.refundAmount.hidden = Newid swm yr ad-daliad
+shortServiceRefunds.cya.nonUk.hidden = Newid treth y tu allan i’r DU sydd wedi’i dalu
+shortServiceRefunds.cya.nonUkAmount.hidden = Newid swm y dreth y tu allan i’r DU
+shortServiceRefunds.cya.schemesPayingTax.hidden = Newid cynlluniau pensiwn yn talu treth
