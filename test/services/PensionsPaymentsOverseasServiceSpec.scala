@@ -68,7 +68,7 @@ class PensionsPaymentsOverseasServiceSpec extends UnitTest
       mockSavePensionReliefSessionData(nino, taxYear, model2, Right(()))
       mockCreateOrUpdate(userWithEmptySavePaymentsIntoOverseasCya, Right(()))
 
-      val result =   await(overseasPaymentPensionService.savePaymentsFromOverseasPensionsViewModel(aUser, taxYear))
+      val result = await(overseasPaymentPensionService.savePaymentsFromOverseasPensionsViewModel(aUser, taxYear))
       result shouldBe Right(())
     }
     "return Left(DataNotFound) when user can not be found in DB" in {

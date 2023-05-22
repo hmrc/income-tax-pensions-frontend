@@ -83,8 +83,8 @@ class ShortServicePensionsSchemeViewSpec extends ViewUnitTest {
     val providerAddressOverCharLimitErrorText: String = "Pension providers address must be 250 characters or less"
   }
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedTitle: String = "Pension scheme paying tax on the short service refund"
-    val expectedHeading: String = "Pension scheme paying tax on the short service refund"
+    val expectedTitle: String = "Cynllun pensiwn yn talu’r dreth ar yr ad-daliad am wasanaeth byr"
+    val expectedHeading: String = "Cynllun pensiwn yn talu’r dreth ar yr ad-daliad am wasanaeth byr"
     val expectedErrorTitle: String = s"Gwall: $expectedTitle"
     val expectedCaption: Int => String = (taxYear: Int) => s"Ad-daliadau am wasanaeth byr ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
     val expectedIfYouGetParagraph: String = "Os gwnaeth mwy nag un cynllun pensiwn dalu tâl trosglwyddiadau, gallwch eu hychwanegu nes ymlaen."

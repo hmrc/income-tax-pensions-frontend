@@ -80,15 +80,15 @@ class ShortServiceTaxableRefundAmountSpec extends ViewUnitTest with FakeRequestP
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
-    override val expectedP1: String = "The short service refund is taxable if you got UK tax relief on the money you paid into the scheme."
-    override val expectedP2: String = "Tell us the total amount of short service refund you got from overseas pension schemes."
-    override val expectedDetailsP1: String = "A short service refund is a refund of money you paid into a workplace pension."
-    override val expectedDetailsP2: String = "You might have got a short service refund if you paid into a scheme for less than 2 years. This depends on the type of pension scheme you have."
-    override val h2: String = "Did you get a short service refund?"
-    override val expectedNoEntryErrorText: String = "Select yes if you got a taxable short service refund from an overseas pension scheme"
-    override val expectedNoAmountEntryErrorText: String = "Enter the taxable short service refund amount"
-    override val expectedIncorrectFormatErrorText: String = "Enter the taxable short service refund amount in the correct format"
-    override val expectedTooBigErrorText: String = "The taxable short service refund amount must be less than £100,000,000,000"
+    override val expectedP1: String = "Mae’r ad-daliad am wasanaeth byr yn drethadwy os cawsoch ryddhad treth yn y DU ar yr arian a dalwyd gennych i mewn i’r cynllun."
+    override val expectedP2: String = "Rhowch wybod i ni cyfanswm yr ad-daliad am wasanaeth byr a gawsoch o gynlluniau pensiwn tramor."
+    override val expectedDetailsP1: String = "Ad-daliad o arian a dalwyd gennych i mewn i bensiwn gweithle yw ad-daliad am wasanaeth byr."
+    override val expectedDetailsP2: String = "Mae’n bosibl eich bod wedi cael ad-daliad am wasanaeth byr os gwnaethoch dalu i mewn i gynllun am lai na 2 flynedd. Mae hyn yn ddibynnol ar y math o bensiwn sydd gennych."
+    override val h2: String = "A gawsoch ad-daliad am wasanaeth byr?"
+    override val expectedNoEntryErrorText: String = "Dewiswch ‘Iawn’ os cawsoch ad-daliad trethadwy am wasanaeth byr o gynllun pensiwn tramor"
+    override val expectedNoAmountEntryErrorText: String = "Nodwch swm yr ad-daliad trethadwy am wasanaeth byr"
+    override val expectedIncorrectFormatErrorText: String = "Nodwch swm yr ad-daliad trethadwy am wasanaeth byr yn y fformat cywir"
+    override val expectedTooBigErrorText: String = "Mae’n rhaid i swm yr ad-daliad trethadwy am wasanaeth byr fod yn llai na £100,000,000,000"
   }
 
     object ExpectedAgentEN extends SpecificExpectedResults {
@@ -104,15 +104,15 @@ class ShortServiceTaxableRefundAmountSpec extends ViewUnitTest with FakeRequestP
     }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
-    override val expectedP1: String = "The short service refund is taxable if your client got UK tax relief on the money they paid into the scheme."
-    override val expectedP2: String = "Tell us the total amount of short service refund your client got from overseas pension schemes."
-    override val expectedDetailsP1: String = "A short service refund is a refund of money your client paid into a workplace pension."
-    override val expectedDetailsP2: String = "Your client might have got a short service refund if they paid into a scheme for less than 2 years. This depends on the type of pension scheme they have."
-    override val h2: String = "Did your client get a short service refund?"
-    override val expectedNoEntryErrorText: String = "Select yes if your client got a taxable short service refund from an overseas pension scheme"
-    override val expectedNoAmountEntryErrorText: String = "Enter your client’s taxable short service refund amount"
-    override val expectedIncorrectFormatErrorText: String = "Enter your client’s taxable short service refund amount in the correct format"
-    override val expectedTooBigErrorText: String = "Your client’s taxable short service refund amount must be less than £100,000,000,000"
+    override val expectedP1: String = "Mae’r ad-daliad am wasanaeth byr yn drethadwy os cafodd eich cleient ryddhad treth yn y DU ar yr arian a dalwyd ganddo i mewn i’r cynllun."
+    override val expectedP2: String = "Rhowch wybod i ni cyfanswm yr ad-daliad am wasanaeth byr a gafodd eich cleient o gynlluniau pensiwn tramor."
+    override val expectedDetailsP1: String = "Ad-daliad o arian a dalwyd gan eich cleient i mewn i bensiwn gweithle yw ad-daliad am wasanaeth byr."
+    override val expectedDetailsP2: String = "Mae’n bosibl i’ch cleient fod wedi cael ad-daliad am wasanaeth byr os dalodd i mewn i gynllun am lai na 2 flynedd. Mae hyn yn ddibynnol ar y math o bensiwn sydd gan eich cleient."
+    override val h2: String = "A gafodd eich cleient ad-daliad am wasanaeth byr?"
+    override val expectedNoEntryErrorText: String = "Dewiswch ‘Iawn’ os cafodd eich cleient ad-daliad trethadwy am wasanaeth byr o gynllun pensiwn tramor"
+    override val expectedNoAmountEntryErrorText: String = "Nodwch swm ad-daliad trethadwy eich cleient am wasanaeth byr"
+    override val expectedIncorrectFormatErrorText: String = "Nodwch swm ad-daliad trethadwy eich cleient am wasanaeth byr yn y fformat cywir"
+    override val expectedTooBigErrorText: String = "Mae’n rhaid i swm ad-daliad trethadwy eich cleient am wasanaeth byr fod yn llai na £100,000,000,000"
   }
   
   object ExpectedCommonEN extends CommonExpectedResults {
@@ -128,13 +128,13 @@ class ShortServiceTaxableRefundAmountSpec extends ViewUnitTest with FakeRequestP
 
   object ExpectedCommonCY extends CommonExpectedResults {
     override val expectedCaption: Int => String = (taxYear: Int) => s"Ad-daliadau am wasanaeth byr ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
-    override val expectedTitle: String = "Taxable short service refunds"
-    override val expectedAmountText: String = "Total amount of short service refunds, in pounds"
+    override val expectedTitle: String = "Ad-daliadau trethadwy am wasanaeth byr"
+    override val expectedAmountText: String = "Cyfanswm yr ad-daliadau am wasanaeth byr, mewn punnoedd"
     override val expectedAmountHint: String = "For example, £193.54"
     override val yes: String = "Iawn"
     override val no: String = "Na"
     override val continue: String = "Yn eich blaen"
-    override val expectedDetailsTitle: String = "What is a short service refund?"
+    override val expectedDetailsTitle: String = "Beth yw ad-daliad am wasanaeth byr?"
   }
   
   
