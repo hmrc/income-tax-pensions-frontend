@@ -196,7 +196,7 @@ class StatePensionCYAViewSpec extends ViewUnitTest { //scalastyle:off magic.numb
         buttonCheck(buttonText)
       }
 
-      "render the CYA page when answering State Pension = Yes, Lump Sum = Yes, Adding State Pension to tax calculations = No" when {
+      "render the CYA page when answering State Pension = Yes, Lump Sum = Yes, Lump sum tax = No, Adding State Pension to tax calculations = No" when {
         val viewModel = anIncomeFromPensionsViewModel.copy(
           statePension = anIncomeFromPensionsViewModel
             .statePension.map(_.copy(amountPaidQuestion = Some(true), taxPaidQuestion = Some(false))),
@@ -209,9 +209,10 @@ class StatePensionCYAViewSpec extends ViewUnitTest { //scalastyle:off magic.numb
         cyaRowCheck(statePension, statePensionValue, ChangeLinks.changeStatePension(), hiddenStatePension, 1)
         cyaRowCheck(pensionStartDate, pensionStartDateValue, ChangeLinks.changeStartDate(), hiddenPensionStartDate, 2)
         cyaRowCheck(lumpSum, lumpSumValue, ChangeLinks.changeLumpSum(), hiddenLumpSum, 3)
-        cyaRowCheck(lumpSumDate, lumpSumDateValue, ChangeLinks.changeLumpSumStartDate(), hiddenLumpSumDate, 4)
+        cyaRowCheck(lumpSumTax, lumpSumTaxValue, ChangeLinks.changeLumpSumTax(), hiddenLumpSumTax, 4)
+        cyaRowCheck(lumpSumDate, lumpSumDateValue, ChangeLinks.changeLumpSumStartDate(), hiddenLumpSumDate, 5)
         cyaRowCheck(addStatePensionToTaxCalcs, addStatePensionToTaxCalcsAnswer, ChangeLinks.changeAddStatePensionToTaxCalcs(),
-          hiddenAddStatePensionToTaxCalcs, 5)
+          hiddenAddStatePensionToTaxCalcs, 6)
         buttonCheck(buttonText)
       }
       "render the CYA page when answering State Pension = Yes, Lump Sum = Yes, Lump sum tax = Yes, Adding State Pension to tax calculations = No" when {

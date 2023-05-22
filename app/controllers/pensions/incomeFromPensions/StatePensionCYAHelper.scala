@@ -62,10 +62,10 @@ object StatePensionCYAHelper extends CYABaseHelper {
   }
 
   private def lumpSumTaxSR(viewModel: Option[StateBenefitViewModel], taxYear: Int)(implicit messages: Messages): Option[SummaryListRow] = {
-    viewModel.flatMap(sb => sb.taxPaidQuestion.filter(x => x).map(_ =>
+    viewModel.flatMap(sb => sb.amountPaidQuestion.filter(x => x).map(_ =>
       summaryListRowWithString(
         "statePension.cya.lumpSumTax.label",
-        sb.taxPaid.map(displayedValue),
+        Some(displayedValueForOptionalAmount(viewModel.flatMap(_.taxPaid), messages("common.no"))),
         routes.TaxPaidOnStatePensionLumpSumController.show(taxYear)
       )
     ))
