@@ -18,6 +18,7 @@ package services
 
 import connectors.{IncomeTaxUserDataConnector, PensionsConnector}
 import models.mongo.{PensionsCYAModel, PensionsUserData, ServiceError}
+import models.pension.AllPensionsData
 import models.pension.charges.PaymentsIntoOverseasPensionsViewModel
 import models.pension.income.CreateUpdatePensionIncomeModel
 import models.pension.reliefs.{CreateOrUpdatePensionReliefsModel, Reliefs}
@@ -31,7 +32,8 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 
-class PensionOverseasPaymentService @Inject()(pensionUserDataRepository: PensionsUserDataRepository, pensionsConnector: PensionsConnector,
+class PensionOverseasPaymentService @Inject()(pensionUserDataRepository: PensionsUserDataRepository,
+                                              pensionsConnector: PensionsConnector,
                                               incomeTaxUserDataConnector: IncomeTaxUserDataConnector) {
 
 
@@ -49,6 +51,24 @@ class PensionOverseasPaymentService @Inject()(pensionUserDataRepository: Pension
       )
     }
   }
+  
+  private def updatePensionsUserData(optUserData: Option[PensionsUserData], optCya: Option[PensionsCYAModel], user: User, taxYear: Int)
+                                    (implicit clock: Clock): PensionsUserData = {
+    (optUserData, optCya) match {
+      case (Some(userData), Some(cya)) => userData.copy(pensions = cya)
+      case _ => PensionsUserData(
+        user.sessionId,
+        user.mtditid,
+        user.nino,
+        taxYear,
+        isPriorSubmission = false,
+        PensionsCYAModel.emptyModels,
+        clock.now(DateTimeZone.UTC)
+      )
+    }
+  }
+  
+  
 
   def savePaymentsFromOverseasPensionsViewModel(user: User, taxYear: Int)
                                                (implicit hc: HeaderCarrier, ec: ExecutionContext, clock: Clock): Future[Either[ServiceError, Unit]] = {
@@ -76,10 +96,13 @@ class PensionOverseasPaymentService @Inject()(pensionUserDataRepository: Pension
           overseasPensionSchemeContributions = sessionData.flatMap(_.pensions.paymentsIntoOverseasPensions.paymentsIntoOverseasPensionsAmount)
         )
       )
-      _ <- FutureEitherOps[ServiceError, Unit](pensionsConnector.savePensionIncomeSessionData(user.nino, taxYear, updatedIncomeData)(hcWithExtras, ec))
       _ <- FutureEitherOps[ServiceError, Unit](pensionsConnector.savePensionReliefSessionData(user.nino, taxYear, updatedReliefsData)(hcWithExtras, ec))
-      updatedCYA = getPensionsUserData(sessionData, user, taxYear)
-      result <- FutureEitherOps[ServiceError, Unit](pensionUserDataRepository.createOrUpdate(updatedCYA))
+      _ <- FutureEitherOps[ServiceError, Unit](pensionsConnector.savePensionIncomeSessionData(user.nino, taxYear, updatedIncomeData)(hcWithExtras, ec))
+      updatedPriorData <- FutureEitherOps[ServiceError, IncomeTaxUserData](incomeTaxUserDataConnector.
+                         getUserData(user.nino, taxYear)(hc.withExtraHeaders("mtditid" -> user.mtditid)))
+      optUpdatedCYA =  updatedPriorData.pensions.map(pr => AllPensionsData.generateCyaFromPrior(pr))
+      pensionsUserData = updatePensionsUserData(sessionData, optUpdatedCYA, user, taxYear)
+     result <- FutureEitherOps[ServiceError, Unit](pensionUserDataRepository.createOrUpdate(pensionsUserData))
     } yield {
       result
     }).value
