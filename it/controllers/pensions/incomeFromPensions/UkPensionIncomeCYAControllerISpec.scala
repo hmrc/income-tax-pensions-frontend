@@ -258,7 +258,7 @@ class UkPensionIncomeCYAControllerISpec extends IntegrationTest with ViewHelpers
         }
 
         "redirects to the overview page" in {
-          result.header("location") shouldBe Some(pensionSummaryUrl(taxYear))
+          result.header("location") shouldBe Some(pensionIncomeSummaryUrl(taxYear))
         }
       }
 
@@ -279,7 +279,7 @@ class UkPensionIncomeCYAControllerISpec extends IntegrationTest with ViewHelpers
         }
 
         "redirects to the overview page" in {
-          result.header("location") shouldBe Some(pensionSummaryUrl(taxYear))
+          result.header("location") shouldBe Some(pensionIncomeSummaryUrl(taxYear))
         }
 
       }
@@ -320,7 +320,7 @@ class UkPensionIncomeCYAControllerISpec extends IntegrationTest with ViewHelpers
         }
 
         "redirects to the overview page" in {
-          result.header("location") shouldBe Some(pensionSummaryUrl(taxYear))
+          result.header("location") shouldBe Some(pensionIncomeSummaryUrl(taxYear))
         }
       }
     }

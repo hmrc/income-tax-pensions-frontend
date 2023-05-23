@@ -29,16 +29,16 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.SessionHelper
-import views.html.pensions.incomeFromPensions.StateBenefitsStartDateView
+import views.html.pensions.incomeFromPensions.StatePensionStartDateView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class StateBenefitStartDateController @Inject()(actionsProvider: ActionsProvider,
+class StatePensionStartDateController @Inject()(actionsProvider: ActionsProvider,
                                                 pensionSessionService: PensionSessionService,
                                                 errorHandler: ErrorHandler,
-                                                view: StateBenefitsStartDateView,
+                                                view: StatePensionStartDateView,
                                                 formProvider: FormsProvider)
                                                (implicit val mcc: MessagesControllerComponents,
                                                 appConfig: AppConfig,

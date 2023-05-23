@@ -30,9 +30,9 @@ import play.api.i18n.Messages
 import play.api.mvc.AnyContent
 import support.ViewUnitTest
 import utils.FakeRequestProvider
-import views.html.pensions.incomeFromPensions.StateBenefitsStartDateView
+import views.html.pensions.incomeFromPensions.StatePensionStartDateView
 
-class stateBenefitStartDateViewSpec extends ViewUnitTest with FakeRequestProvider {
+class StatePensionStartDateViewSpec extends ViewUnitTest with FakeRequestProvider {
 
   def stateBenefitStartDateUrl(taxYear: Int): String =
     s"/update-and-submit-income-tax-return/pensions/${taxYear.toString}/pension-income/state-pension-start-date"
@@ -116,7 +116,7 @@ class stateBenefitStartDateViewSpec extends ViewUnitTest with FakeRequestProvide
     UserScenario(isWelsh = true, isAgent = false, CommonExpectedCY, Some(ExpectedIndividualCY)),
     UserScenario(isWelsh = true, isAgent = true, CommonExpectedCY, Some(ExpectedAgentCY)))
 
-  private lazy val underTest = inject[StateBenefitsStartDateView]
+  private lazy val underTest = inject[StatePensionStartDateView]
 
 
   userScenarios.foreach { userScenario =>
