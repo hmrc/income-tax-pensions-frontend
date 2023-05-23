@@ -104,7 +104,7 @@ object RetirementAnnuitySpec {
     val expectedParagraphText = "Rydym ond angen gwybod am daliadau os na fydd darparwr eich pensiwn yn hawlio rhyddhad treth (yn agor tab newydd)."
     val expectedErrorTitle = s"Gwall: $expectedTitle"
     val expectedErrorMessage = "Dewiswch ‘Iawn’ os gwnaethoch dalu i mewn i gontract blwydd-dal ymddeol"
-    val expectedYouCanFindThisOut = "Gallwch ddysgu beth yw hyn oddi wrth eich darparwr pensiwn."
+    val expectedYouCanFindThisOut = "Gallwch ddysgu hyn oddi wrth eich darparwr pensiwn."
 }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
@@ -122,7 +122,7 @@ object RetirementAnnuitySpec {
     val expectedParagraphText = "Rydym ond angen gwybod am daliadau os na fydd darparwr pensiwn eich cleient yn hawlio rhyddhad treth (yn agor tab newydd)."
     val expectedErrorTitle = s"Gwall: $expectedTitle"
     val expectedErrorMessage = "Dewiswch ‘Iawn’ os gwnaeth eich cleient dalu i mewn i gontract blwydd-dal ymddeol"
-    val expectedYouCanFindThisOut = "Gallwch ddysgu beth yw hyn oddi wrth ddarparwr pensiwn eich cleient."
+    val expectedYouCanFindThisOut = "Gallwch ddysgu hyn oddi wrth ddarparwr pensiwn eich cleient."
   }
 }
 class RetirementAnnuitySpec extends ViewUnitTest {

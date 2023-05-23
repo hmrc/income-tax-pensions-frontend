@@ -240,8 +240,8 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
             lazy val result: WSResponse = {
               dropPensionsDB()
               authoriseAgentOrIndividual(user.isAgent)
-              val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(
-                aboveAnnualAllowanceQuestion = Some(true), aboveAnnualAllowance = Some(BigDecimal(existingAmount)), reducedAnnualAllowanceQuestion = Some(false))
+              val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(aboveAnnualAllowanceQuestion = Some(true),
+                aboveAnnualAllowance = Some(BigDecimal(existingAmount)), reducedAnnualAllowanceQuestion = Some(false))
               insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)), aUserRequest)
               urlGet(fullUrl(amountAboveAnnualAllowanceUrl(taxYearEOY)), user.isWelsh, follow = false,
                 headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
@@ -270,7 +270,7 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
     "redirect to the above annual allowance question page if the question has not been answered" which {
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(
           aboveAnnualAllowanceQuestion = None, aboveAnnualAllowance = None)
         insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)), aUserRequest)
@@ -287,7 +287,7 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
     "redirect to the above annual allowance question page if the that question has been answered as false" which {
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(
           aboveAnnualAllowanceQuestion = Some(false), aboveAnnualAllowance = None)
         insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)), aUserRequest)
@@ -304,7 +304,7 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
     "redirect to the annual allowance CYA if there is no session data" which {
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         urlGet(fullUrl(amountAboveAnnualAllowanceUrl(taxYearEOY)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -319,7 +319,7 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
     "redirect to reduced annual allowance page if question has not been answered" which {
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(
           aboveAnnualAllowanceQuestion = Some(true), reducedAnnualAllowanceQuestion = None)
         insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)), aUserRequest)
@@ -423,8 +423,8 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
                 aboveAnnualAllowanceQuestion = Some(true), aboveAnnualAllowance = None, reducedAnnualAllowanceQuestion = Some(true))
               insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)), aUserRequest)
               authoriseAgentOrIndividual(user.isAgent)
-              urlPost(fullUrl(amountAboveAnnualAllowanceUrl(taxYearEOY)),
-                body = overMaximumForm, welsh = user.isWelsh, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+              urlPost(fullUrl(amountAboveAnnualAllowanceUrl(taxYearEOY)), body = overMaximumForm, welsh = user.isWelsh, follow = false,
+                headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
             }
             "has the correct status" in {
               result.status shouldBe BAD_REQUEST
@@ -526,8 +526,8 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
                 aboveAnnualAllowanceQuestion = Some(true), aboveAnnualAllowance = None, reducedAnnualAllowanceQuestion = Some(false))
               insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)), aUserRequest)
               authoriseAgentOrIndividual(user.isAgent)
-              urlPost(fullUrl(amountAboveAnnualAllowanceUrl(taxYearEOY)),
-                body = overMaximumForm, welsh = user.isWelsh, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+              urlPost(fullUrl(amountAboveAnnualAllowanceUrl(taxYearEOY)), body = overMaximumForm, welsh = user.isWelsh, follow = false,
+                headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
             }
             "has the correct status" in {
               result.status shouldBe BAD_REQUEST
@@ -562,7 +562,7 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
         val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(
           aboveAnnualAllowanceQuestion = Some(true), aboveAnnualAllowance = None)
         insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)), aUserRequest)
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         urlPost(fullUrl(amountAboveAnnualAllowanceUrl(taxYearEOY)),
           body = validForm, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))

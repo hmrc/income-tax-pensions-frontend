@@ -81,7 +81,7 @@ object PageUrls extends IntegrationTest {
 
     def statePension(taxYear: Int): String = s"$appUrl/$taxYear/pension-income/state-pension"
 
-    def stateBenefitStartDateUrl(taxYear: Int): String = s"$appUrl/${taxYear.toString}/pension-income/state-pension-start-date"
+    def statePensionStartDateUrl(taxYear: Int): String = s"$appUrl/${taxYear.toString}/pension-income/state-pension-start-date"
 
     def ukPensionSchemePayments(taxYear: Int): String = s"$appUrl/$taxYear/pension-income/uk-pension-schemes"
 
@@ -112,6 +112,8 @@ object PageUrls extends IntegrationTest {
     }
 
     def ukPensionIncomeCyaUrl(taxYear: Int): String = s"$appUrl/$taxYear/pension-income/check-uk-pension-income"
+    
+    def statePensionCyaUrl(taxYear: Int): String = s"$appUrl/$taxYear/pension-income/check-state-pension"
   }
 
   //  *****************     Pension annual allowance pages      ******************************

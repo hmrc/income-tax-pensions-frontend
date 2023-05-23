@@ -50,7 +50,7 @@
 
     @heading(titleForUse, Some(messages("common.incomeFromPensions.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-3")
 
-    @formWithCsrf(action = controllers.pensions.incomeFromPensions.routes.StateBenefitStartDateController.submit(taxYear)) {
+    @formWithCsrf(action = controllers.pensions.incomeFromPensions.routes.StatePensionStartDateController.submit(taxYear)) {
         @dateInput(
             form,
             name = "stateBenefitStartDate",

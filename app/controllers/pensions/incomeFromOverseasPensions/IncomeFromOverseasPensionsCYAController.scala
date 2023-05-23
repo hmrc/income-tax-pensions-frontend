@@ -22,6 +22,7 @@ import controllers.predicates.TaxYearAction.taxYearAction
 import models.pension.AllPensionsData
 import models.pension.AllPensionsData.generateCyaFromPrior
 import models.pension.charges.IncomeFromOverseasPensionsViewModel
+import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{PensionIncomeService, PensionSessionService}
@@ -42,6 +43,7 @@ class IncomeFromOverseasPensionsCYAController @Inject()(authAction: AuthorisedAc
                                                         appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport {
 
+  lazy val logger: Logger = Logger(this.getClass.getName)
 
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
 
@@ -75,8 +77,7 @@ class IncomeFromOverseasPensionsCYAController @Inject()(authAction: AuthorisedAc
   }
 
   def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
-    val p1 = pensionIncomeService.saveIncomeFromOverseasPensionsViewModel(request.user, taxYear)
-      p1.map {
+    pensionIncomeService.saveIncomeFromOverseasPensionsViewModel(request.user, taxYear).map {
       case Left(_) =>
         errorHandler.internalServerError()
       case Right(_) => Redirect(controllers.pensions.routes.OverseasPensionsSummaryController.show(taxYear))

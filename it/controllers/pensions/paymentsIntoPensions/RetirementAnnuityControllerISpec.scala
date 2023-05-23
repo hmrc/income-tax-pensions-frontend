@@ -53,7 +53,7 @@ class RetirementAnnuityControllerISpec extends IntegrationTest with ViewHelpers 
     "render the retirement annuity contract question page with no pre-filled radio buttons" which {
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(retirementAnnuityContractPaymentsQuestion = None)
         insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
         urlGet(fullUrl(retirementAnnuityUrl(taxYearEOY)), follow = false,
@@ -83,7 +83,7 @@ class RetirementAnnuityControllerISpec extends IntegrationTest with ViewHelpers 
     "render the retirement annuity contract question page with 'Yes' pre-filled when CYA data exists" which {
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         insertCyaData(pensionsUsersData(aPensionsCYAModel), aUserRequest)
         urlGet(fullUrl(retirementAnnuityUrl(taxYearEOY)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
@@ -114,7 +114,7 @@ class RetirementAnnuityControllerISpec extends IntegrationTest with ViewHelpers 
     "render the retirement annuity contract question page with 'No' pre-filled and not a prior submission" which {
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         val paymentsIntoPensionsViewModel = aPaymentsIntoPensionViewModel.copy(retirementAnnuityContractPaymentsQuestion = Some(false))
         insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPensionsViewModel)), aUserRequest)
         urlGet(fullUrl(retirementAnnuityUrl(taxYearEOY)), follow = false,
@@ -145,7 +145,7 @@ class RetirementAnnuityControllerISpec extends IntegrationTest with ViewHelpers 
     "redirect to the CYA page if there is no session data" which {
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         // no cya insert
         urlGet(fullUrl(retirementAnnuityUrl(taxYearEOY)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
@@ -166,7 +166,7 @@ class RetirementAnnuityControllerISpec extends IntegrationTest with ViewHelpers 
         dropPensionsDB()
         insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(
                   aPaymentsIntoPensionViewModel.copy(retirementAnnuityContractPaymentsQuestion = None))), aUserRequest)
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         urlPost(fullUrl(retirementAnnuityUrl(taxYearEOY)), body = form, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -199,7 +199,7 @@ class RetirementAnnuityControllerISpec extends IntegrationTest with ViewHelpers 
       lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.yes)
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         userDataStub(anIncomeTaxUserData, nino, taxYearEOY)
         val paymentsIntoPensionsViewModel = aPaymentsIntoPensionViewModel.copy(
           retirementAnnuityContractPaymentsQuestion = Some(false), totalRetirementAnnuityContractPayments = None)
@@ -224,7 +224,7 @@ class RetirementAnnuityControllerISpec extends IntegrationTest with ViewHelpers 
       lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.no)
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         userDataStub(anIncomeTaxUserData, nino, taxYearEOY)
         val paymentsIntoPensionsViewModel = aPaymentsIntoPensionViewModel.copy(
           retirementAnnuityContractPaymentsQuestion = Some(true), workplacePensionPaymentsQuestion = None)
@@ -249,7 +249,7 @@ class RetirementAnnuityControllerISpec extends IntegrationTest with ViewHelpers 
       lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.no)
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         userDataStub(anIncomeTaxUserData, nino, taxYearEOY)
         val paymentsIntoPensionsViewModel = aPaymentsIntoPensionViewModel.copy(
           retirementAnnuityContractPaymentsQuestion = Some(true))

@@ -270,7 +270,8 @@ class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAnd
             authoriseAgentOrIndividual(user.isAgent)
             dropPensionsDB()
 
-            val pensionsViewModel: UnauthorisedPaymentsViewModel = UnauthorisedPaymentsViewModel().copy(surchargeQuestion = Some(true), noSurchargeQuestion = Some(true))
+            val pensionsViewModel: UnauthorisedPaymentsViewModel = UnauthorisedPaymentsViewModel().copy(surchargeQuestion = Some(true),
+              noSurchargeQuestion = Some(true))
 
             insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false), aUserRequest)
             urlGet(fullUrl(unauthorisedPaymentsUrl(taxYearEOY)), user.isWelsh, follow = false,
@@ -583,7 +584,7 @@ class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAnd
 
       implicit lazy val result: WSResponse = {
 
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         dropPensionsDB()
 
         val pensionsViewModel = anUnauthorisedPaymentsViewModel.copy()
@@ -608,7 +609,7 @@ class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAnd
 
       implicit lazy val result: WSResponse = {
 
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         dropPensionsDB()
 
         val pensionsViewModel = anUnauthorisedPaymentsViewModel.copy()
@@ -633,7 +634,7 @@ class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAnd
 
       implicit lazy val result: WSResponse = {
 
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         dropPensionsDB()
 
         val pensionsViewModel = anUnauthorisedPaymentsViewModel.copy()

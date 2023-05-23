@@ -248,6 +248,15 @@ trait IntegrationTest extends AnyWordSpec with Matchers with GuiceOneServerPerSu
     )
   }
 
+  def nrsSubmissionStub(jsonBody: String, nino: String): StubMapping = {
+    stubPutWithHeadersCheck(
+      url = s"/income-tax-nrs-proxy/$nino/itsa-personal-income-submission", status = NO_CONTENT,
+      body = jsonBody,
+      sessionHeader = "X-Session-ID" -> defaultUser.sessionId,
+      mtdidHeader = "mtditid" -> defaultUser.mtdItId
+    )
+  }
+
   def userData(allData: String): IncomeTaxUserData = IncomeTaxUserData(Some(PensionDataStubs.fullPensionsModel))
 
   def emptyUserDataStub(nino: String = nino, taxYear: Int = taxYear): StubMapping = {

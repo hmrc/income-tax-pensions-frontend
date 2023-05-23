@@ -19,7 +19,7 @@ package controllers.pensions.paymentsIntoPensions
 import builders.PaymentsIntoPensionVewModelBuilder.aPaymentsIntoPensionViewModel
 import builders.PensionsUserDataBuilder.{anPensionsUserDataEmptyCya, pensionsUserDataWithPaymentsIntoPensions}
 import builders.UserBuilder.aUserRequest
-import controllers.pensions.paymentsIntoPensions.routes.{PaymentsIntoPensionsCYAController, PensionsTaxReliefNotClaimedController, ReliefAtSourcePaymentsAndTaxReliefAmountController}
+import controllers.pensions.paymentsIntoPensions.routes._
 import forms.YesNoForm
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -42,7 +42,7 @@ class ReliefAtSourcePensionsControllerISpec extends IntegrationTest with BeforeA
   ".show" should {
     "render 'Relief at source (RAS) pensions' page with correct content and no pre-filling" which {
       implicit lazy val result: WSResponse = {
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         dropPensionsDB()
         insertCyaData(anPensionsUserDataEmptyCya, aUserRequest)
         urlGet(fullUrl(reliefAtSourcePensionsUrl(taxYearEOY)), follow = false,
@@ -78,7 +78,7 @@ class ReliefAtSourcePensionsControllerISpec extends IntegrationTest with BeforeA
         dropPensionsDB()
         val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(rasPensionPaymentQuestion = Some(true))
         insertCyaData(pensionsUserDataWithPaymentsIntoPensions(pensionsViewModel), aUserRequest)
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         urlGet(fullUrl(reliefAtSourcePensionsUrl(taxYearEOY)), headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
@@ -111,7 +111,7 @@ class ReliefAtSourcePensionsControllerISpec extends IntegrationTest with BeforeA
         dropPensionsDB()
         val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(rasPensionPaymentQuestion = Some(false))
         insertCyaData(pensionsUserDataWithPaymentsIntoPensions(pensionsViewModel), aUserRequest)
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         urlGet(fullUrl(reliefAtSourcePensionsUrl(taxYearEOY)), headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
@@ -147,7 +147,7 @@ class ReliefAtSourcePensionsControllerISpec extends IntegrationTest with BeforeA
       lazy val result: WSResponse = {
         dropPensionsDB()
         insertCyaData(anPensionsUserDataEmptyCya, aUserRequest)
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         urlPost(fullUrl(reliefAtSourcePensionsUrl(taxYearEOY)), body = form, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -182,7 +182,7 @@ class ReliefAtSourcePensionsControllerISpec extends IntegrationTest with BeforeA
       lazy val result: WSResponse = {
         dropPensionsDB()
         insertCyaData(anPensionsUserDataEmptyCya, aUserRequest)
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         urlPost(fullUrl(reliefAtSourcePensionsUrl(taxYearEOY)), body = form, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -205,7 +205,7 @@ class ReliefAtSourcePensionsControllerISpec extends IntegrationTest with BeforeA
         dropPensionsDB()
         insertCyaData(pensionsUserDataWithPaymentsIntoPensions(aPaymentsIntoPensionViewModel.copy(
           rasPensionPaymentQuestion = Some(false), totalRASPaymentsAndTaxRelief = None)), aUserRequest)
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         urlPost(fullUrl(reliefAtSourcePensionsUrl(taxYearEOY)), body = form, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -227,7 +227,7 @@ class ReliefAtSourcePensionsControllerISpec extends IntegrationTest with BeforeA
       lazy val result: WSResponse = {
         dropPensionsDB()
         insertCyaData(anPensionsUserDataEmptyCya, aUserRequest)
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         urlPost(fullUrl(reliefAtSourcePensionsUrl(taxYearEOY)), body = form, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -252,7 +252,7 @@ class ReliefAtSourcePensionsControllerISpec extends IntegrationTest with BeforeA
         val paymentsIntoPensionsViewModel = aPaymentsIntoPensionViewModel.copy(rasPensionPaymentQuestion = Some(true),
           totalRASPaymentsAndTaxRelief = Some(123.12))
         insertCyaData(pensionsUserDataWithPaymentsIntoPensions(paymentsIntoPensionsViewModel), aUserRequest)
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         urlPost(fullUrl(reliefAtSourcePensionsUrl(taxYearEOY)), body = form, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }

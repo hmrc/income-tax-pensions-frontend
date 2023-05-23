@@ -17,7 +17,7 @@
 package controllers.pensions.incomeFromPensions
 
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.incomeFromPensions.routes.UkPensionSchemePaymentsController
+import controllers.pensions.incomeFromPensions.routes.{IncomeFromPensionsSummaryController, UkPensionSchemePaymentsController}
 import controllers.predicates.AuthorisedAction
 import controllers.predicates.TaxYearAction.taxYearAction
 import forms.FormUtils
@@ -61,15 +61,15 @@ class UkPensionIncomeCYAController @Inject()(implicit val mcc: MessagesControlle
   }
 
   def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
-    pensionSessionService.getAndHandle(taxYear, request.user) { (cya, prior) =>
+    pensionSessionService.getAndHandle(taxYear, request.user) {(cya, prior) =>
       cya.fold(
         Future.successful(Redirect(appConfig.incomeTaxSubmissionOverviewUrl(taxYear)))
       ) { model =>
         if (comparePriorData(model.pensions, prior)) {
           //TODO - build submission model from cya data and submit to DES if cya data doesn't match prior data
-          Future.successful(Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear)))
+          Future.successful(Redirect(IncomeFromPensionsSummaryController.show(taxYear)))
         } else {
-          Future.successful(Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear)))
+          Future.successful(Redirect(IncomeFromPensionsSummaryController.show(taxYear)))
         }
       }
     }

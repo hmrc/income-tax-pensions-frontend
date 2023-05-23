@@ -83,6 +83,8 @@ class MessagesSpec extends ViewTest with GuiceOneAppPerSuite {
     "incomeFromOverseasPensions.summary.pension.payments",
     "overseasPension.reliefDetails.pensionSchemeName",
     "common.overseasPensions.pensionScheme.providerName.subheading",
+    "statePension.cya.lumpSum.label",
+    "statePension.cya.lumpSum.label.hidden",
     "unauthorisedPayments.checkbox.hint"
   )
 

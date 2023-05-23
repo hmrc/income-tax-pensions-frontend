@@ -53,8 +53,8 @@ class IncomeFromOverseasPensionsCYAControllerISpec extends
   }
 
   trait SpecificExpectedResults {
-    val expectedH1: String
     val expectedTitle: String
+    lazy val expectedH1 = expectedTitle
   }
 
   trait CommonExpectedResults {
@@ -107,22 +107,18 @@ class IncomeFromOverseasPensionsCYAControllerISpec extends
   }
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
-    val expectedH1 = "Check income from overseas pensions"
     val expectedTitle = "Check income from overseas pensions"
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
-    val expectedH1 = "Check income from overseas pensions"
     val expectedTitle = "Check income from overseas pensions"
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
-    val expectedH1 = "Gwirio incwm o bensiynau tramor"
     val expectedTitle = "Gwirio incwm o bensiynau tramor"
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
-    val expectedH1 = "Gwirio incwm o bensiynau tramor"
     val expectedTitle = "Gwirio incwm o bensiynau tramor"
   }
 

@@ -86,11 +86,10 @@ class StatePensionController @Inject()(actionsProvider: ActionsProvider,
     pensionSessionService.createOrUpdateSessionData(request.user,
       updatedCyaModel, taxYear, pensionUserData.isPriorSubmission)(errorHandler.internalServerError()) {
       if (yesNo) {
-        Redirect(controllers.pensions.incomeFromPensions.routes.StatePensionController.show(taxYear))
-        //todo redirect to 'When did you start getting State Pension payments" page once created
+        Redirect(controllers.pensions.incomeFromPensions.routes.StatePensionStartDateController.show(taxYear))
       } else {
-        Redirect(controllers.pensions.incomeFromPensions.routes.StatePensionController.show(taxYear))
-        //todo redirect to Check your State Pension page
+        Redirect(controllers.pensions.incomeFromPensions.routes.StatePensionLumpSumController.show(taxYear))
+        //todo redirect to Check your State Pension or Lump sum page
       }
     }
   }

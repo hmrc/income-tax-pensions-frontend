@@ -79,8 +79,8 @@ class RefundSummaryViewSpec extends ViewUnitTest {
   object CommonExpectedCY extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Ad-daliadau am wasanaeth byr ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
     val expectedButtonText = "Yn eich blaen"
-    val expectedTitle = "Short service refund summary"
-    val expectedHeading = "Short service refund summary"
+    val expectedTitle = "Crynodeb o’r ad-daliad am wasanaeth byr"
+    val expectedHeading = "Crynodeb o’r ad-daliad am wasanaeth byr"
     val change = "Newid"
     val remove = "Tynnu"
     val expectedAddAnotherText = "Ychwanegu cynllun pensiwn arall"
