@@ -22,18 +22,17 @@ import controllers.predicates.AuthorisedAction
 import controllers.predicates.TaxYearAction.taxYearAction
 import forms.FormUtils
 import models.mongo.{PensionsCYAModel, PensionsUserData}
-import models.{APIErrorBodyModel, APIErrorModel, AuthorisationRequest, User}
 import models.pension.AllPensionsData
 import models.pension.AllPensionsData.generateCyaFromPrior
+import models.{APIErrorBodyModel, APIErrorModel, AuthorisationRequest, User}
+import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.{PensionIncomeService, PensionSessionService}
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import play.api.Logger
-import utils.{Clock, SessionHelper}
-import views.html.pensions.incomeFromPensions.UkPensionIncomeCYAView
+import services.{PensionSessionService, StatePensionService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import utils.{Clock, SessionHelper}
+import views.html.pensions.incomeFromPensions.UkPensionIncomeCYAView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -44,7 +43,7 @@ class UkPensionIncomeCYAController @Inject()(implicit val mcc: MessagesControlle
                                              view: UkPensionIncomeCYAView,
                                              appConfig: AppConfig,
                                              pensionSessionService: PensionSessionService,
-                                             pensionIncomeService: PensionIncomeService,
+                                             statePensionService: StatePensionService,
                                              errorHandler: ErrorHandler,
                                              clock: Clock) extends FrontendController(mcc) with I18nSupport with SessionHelper with FormUtils {
 
@@ -91,7 +90,7 @@ class UkPensionIncomeCYAController @Inject()(implicit val mcc: MessagesControlle
 
     (cya match {
       case Some(cyaData) =>
-        pensionIncomeService.saveIncomeFromOverseasPensionsViewModel(user, taxYear) map {
+        statePensionService.persistIncomeFromPensionsViewModel(user, taxYear) map {
           case Left(_) =>
             logger.info("[UkPensionIncomeCYAController][submit] Failed to create or update session")
             Left(APIErrorModel(BAD_REQUEST, APIErrorBodyModel(BAD_REQUEST.toString, "Unable to createOrUpdate pension service")))
@@ -104,7 +103,6 @@ class UkPensionIncomeCYAController @Inject()(implicit val mcc: MessagesControlle
     }).flatMap {
       case Right(_) =>
         pensionSessionService.clear(taxYear)(errorHandler.internalServerError())(
-          //todo right red?
           Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear))
         )
       case Left(error) => Future.successful(errorHandler.handleError(error.status))

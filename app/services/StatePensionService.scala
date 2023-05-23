@@ -16,32 +16,28 @@
 
 package services
 
-import connectors.{IncomeTaxUserDataConnector, StateBenefitsConnector}
-import models.{IncomeTaxUserData, User}
-import models.mongo.{PensionsCYAModel, PensionsUserData, ServiceError}
-import models.pension.charges.{CreateUpdatePensionChargesRequestModel, IncomeFromOverseasPensionsViewModel}
+import connectors.StateBenefitsConnector
+import models.User
+import models.mongo.{PensionsCYAModel, PensionsUserData, ServiceError, StateBenefitsUserData}
+import models.pension.statebenefits.{ClaimCYAModel, IncomeFromPensionsViewModel}
 import org.joda.time.DateTimeZone
 import repositories.PensionsUserDataRepository
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.{Clock, FutureEitherOps}
-import models.pension.income.CreateUpdatePensionIncomeModel
-import models.pension.reliefs.{CreateOrUpdatePensionReliefsModel, Reliefs}
-import models.pension.statebenefits.IncomeFromPensionsViewModel
 
+import java.time.{Instant, LocalDate}
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 
-class StatePensionService @Inject()(pensionUserDataRepository: PensionsUserDataRepository, stateBenefitsConnector: StateBenefitsConnector,
-                                     incomeTaxUserDataConnector: IncomeTaxUserDataConnector) {
+class StatePensionService @Inject()(pensionUserDataRepository: PensionsUserDataRepository, stateBenefitsConnector: StateBenefitsConnector) {
 
   def persistIncomeFromPensionsViewModel(user: User, taxYear: Int)
-                                             (implicit hc: HeaderCarrier, ec: ExecutionContext, clock: Clock): Future[Either[ServiceError, Unit]] = {
+                                        (implicit hc: HeaderCarrier, ec: ExecutionContext, clock: Clock): Future[Either[ServiceError, Unit]] = {
 
 
     //scalastyle:off method.length
     val hcWithExtras = hc.withExtraHeaders("mtditid" -> user.mtditid)
-
 
     def getPensionsUserData(userData: Option[PensionsUserData], user: User): PensionsUserData = {
       userData match {
@@ -58,40 +54,43 @@ class StatePensionService @Inject()(pensionUserDataRepository: PensionsUserDataR
       }
     }
 
+    def buildStateBenefitsUserData(sessionData: PensionsUserData, benefitType: String): StateBenefitsUserData = {
+      val conditionalData = if (benefitType.equals("statePension"))
+        sessionData.pensions.incomeFromPensions.statePension
+      else sessionData.pensions.incomeFromPensions.statePensionLumpSum
+
+      val claimModel = ClaimCYAModel(
+        benefitId = conditionalData.flatMap(_.benefitId),
+        startDate = conditionalData.flatMap(_.startDate).getOrElse(LocalDate.now()),
+        endDateQuestion = conditionalData.flatMap(_.endDateQuestion),
+        endDate = conditionalData.flatMap(_.endDate),
+        dateIgnored = conditionalData.flatMap(_.dateIgnored),
+        submittedOn = conditionalData.flatMap(_.submittedOn),
+        amount = conditionalData.flatMap(_.amount),
+        taxPaidQuestion = conditionalData.flatMap(_.taxPaidQuestion),
+        taxPaid = conditionalData.flatMap(_.taxPaid))
+
+      StateBenefitsUserData(
+        benefitType = benefitType,
+        sessionDataId = None,
+        sessionId = sessionData.sessionId,
+        mtdItId = sessionData.mtdItId,
+        nino = sessionData.nino,
+        taxYear = taxYear,
+        benefitDataType = "hmrcData", //todo check "hmrcData" / "customerAdded" / "customerOverride" benefit data types
+        claim = Some(claimModel),
+        lastUpdated = Instant.parse(sessionData.lastUpdated.toLocalDateTime.toString)
+      )
+    }
+
     (for {
       sessionData <- FutureEitherOps[ServiceError, Option[PensionsUserData]](pensionUserDataRepository.find(taxYear, user))
-      priorData <- FutureEitherOps[ServiceError, IncomeTaxUserData](incomeTaxUserDataConnector.
-        getUserData(user.nino, taxYear)(hc.withExtraHeaders("mtditid" -> user.mtditid)))
 
-      iFPViewModel = sessionData.map(_.pensions.incomeFromOverseasPensions)
-      updatedFp = iFPViewModel.map(_.toForeignPension)
-      updatedPIData = CreateUpdatePensionIncomeModel(
-        foreignPension = updatedFp,
-        overseasPensionContribution = priorData.pensions.flatMap(_.pensionIncome.map(y => y.overseasPensionContribution))
-      )
+      statePensionSubmission = buildStateBenefitsUserData(sessionData.get, "statePension")
+      statePensionLumpSumSubmission = buildStateBenefitsUserData(sessionData.get, "statePensionLumpSum")
 
-      //todo input data?
-      pensionCYAModel = sessionData.map(_.pensions)
-      updatedPCRData = CreateUpdatePensionChargesRequestModel(
-        pensionSavingsTaxCharges = priorData.pensions.flatMap(_.pensionCharges.flatMap(_.pensionSavingsTaxCharges)),
-        pensionSchemeOverseasTransfers = priorData.pensions.flatMap(_.pensionCharges.flatMap(_.pensionSchemeOverseasTransfers)),
-        pensionSchemeUnauthorisedPayments = priorData.pensions.flatMap(_.pensionCharges.flatMap(_.pensionSchemeUnauthorisedPayments)),
-        pensionContributions = priorData.pensions.flatMap(_.pensionCharges.flatMap(_.pensionContributions)),
-        overseasPensionContributions = priorData.pensions.flatMap(_.pensionCharges.flatMap(_.overseasPensionContributions))
-      )
-
-      pIPViewModel = sessionData.map(_.pensions.paymentsIntoPension)
-      updatedPRData = CreateOrUpdatePensionReliefsModel(
-        pensionReliefs = Reliefs(
-          regularPensionContributions = pIPViewModel.flatMap(_.totalRASPaymentsAndTaxRelief),
-          oneOffPensionContributionsPaid = pIPViewModel.flatMap(_.totalOneOffRasPaymentPlusTaxRelief),
-          retirementAnnuityPayments = pIPViewModel.flatMap(_.totalRetirementAnnuityContractPayments),
-          paymentToEmployersSchemeNoTaxRelief = pIPViewModel.flatMap(_.totalWorkplacePensionPayments),
-          overseasPensionSchemeContributions = sessionData.flatMap(_.pensions.paymentsIntoOverseasPensions.paymentsIntoOverseasPensionsAmount)
-        )
-      )
-
-      _ <- FutureEitherOps[ServiceError, Unit](stateBenefitsConnector.createSessionDataID(updatedPIData)(hcWithExtras, ec))
+      _ <- FutureEitherOps[ServiceError, Unit](stateBenefitsConnector.saveClaimData(user.nino, statePensionSubmission)(hcWithExtras, ec))
+      _ <- FutureEitherOps[ServiceError, Unit](stateBenefitsConnector.saveClaimData(user.nino, statePensionLumpSumSubmission)(hcWithExtras, ec))
 
       updatedCYA = getPensionsUserData(sessionData, user)
       result <- FutureEitherOps[ServiceError, Unit](pensionUserDataRepository.createOrUpdate(updatedCYA))

@@ -16,7 +16,7 @@
 
 package models.mongo
 
-import models.mongo.BenefitDataType.{CustomerAdded, CustomerOverride, HmrcData}
+import models.pension.statebenefits.{ClaimCYAModel, EncryptedClaimCYAModel}
 import play.api.libs.functional.syntax.toFunctionalBuilderOps
 import play.api.libs.json._
 import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
@@ -38,9 +38,9 @@ case class StateBenefitsUserData(benefitType: String,
 
   lazy val isPriorSubmission: Boolean = claim.exists(_.benefitId.isDefined)
   lazy val isNewClaim: Boolean = !isPriorSubmission
-  lazy val isHmrcData: Boolean = benefitDataType == HmrcData.name
-  lazy val isCustomerAdded: Boolean = benefitDataType == CustomerAdded.name
-  lazy val isCustomerOverride: Boolean = benefitDataType == CustomerOverride.name
+  lazy val isHmrcData: Boolean = benefitDataType == "hmrcData"
+  lazy val isCustomerAdded: Boolean = benefitDataType == "customerAdded"
+  lazy val isCustomerOverride: Boolean = benefitDataType == "customerOverride"
 
   def encrypted(implicit aesGcmAdCrypto: AesGcmAdCrypto, associatedText: String): EncryptedStateBenefitsUserData = EncryptedStateBenefitsUserData(
     benefitType: String,
