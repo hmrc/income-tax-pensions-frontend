@@ -127,6 +127,7 @@ common.summary.returnToOverviewMsg = If you don’t have a pensions scheme to ad
 
 #################       Common Remove Pension Scheme    ###########################################
 common.removePensionScheme.title = A ydych yn siŵr eich bod am dynnu {0}?
+common.removePensionScheme.overseas.title = Are you sure you want to remove this overseas pension scheme?
 common.removePensionScheme.p1 = This will remove:
 common.removePensionScheme.p1.bullet1 = The name of the pension scheme
 common.removePensionScheme.p1.bullet2 = Pensions scheme tax reference

@@ -84,6 +84,22 @@ object ViewUtils {
     )
   }
 
+  def removeSummaryListRow(key: HtmlContent,
+                           value: HtmlContent,
+                           keyClasses: String = "govuk-!-width-one-third",
+                           valueClasses: String = "govuk-!-width-one-third  govuk-!-text-align-right"): SummaryListRow = {
+    SummaryListRow(
+      key = Key(
+        content = key,
+        classes = keyClasses
+      ),
+      value = Value(
+        content = value,
+        classes = valueClasses
+      )
+    )
+  }
+
   def ariaHiddenChangeLink(linkText: String): HtmlContent = {
     HtmlContent(
       s"""<span aria-hidden="true">$linkText</span>"""

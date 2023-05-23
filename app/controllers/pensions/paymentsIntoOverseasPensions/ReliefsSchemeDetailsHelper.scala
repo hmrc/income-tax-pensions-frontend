@@ -112,4 +112,47 @@ object ReliefsSchemeDetailsHelper extends CYABaseHelper {
     }
 
   }
+  def removeSummaryListRows(relief :Relief, taxYear: Int, index: Option[Int])(implicit messages: Messages): Seq[SummaryListRow] =
+    Seq(
+      removePensionSchemeName(relief, taxYear, index),
+      removeUnTaxedPayerEmployments(relief, taxYear, index),
+      removeTypeOfRelief(relief, taxYear, index),
+    ).flatten
+
+  def removePensionSchemeName(relief : Relief, taxYear: Int, index: Option[Int])(implicit messages: Messages): Option[SummaryListRow] = {
+    Some(relief.customerReference.fold{
+      removeSummaryListRowWithString(
+        "overseasPension.reliefDetails.pensionSchemeName",
+        Some(messages("common.no")).map(Seq(_)))
+    }{cRNQ =>
+      removeSummaryListRowWithString(
+        "overseasPension.reliefDetails.pensionSchemeName",
+        Some(Seq(cRNQ)))
+    })
+  }
+
+  def removeUnTaxedPayerEmployments(relief : Relief, taxYear: Int, index: Option[Int])(implicit messages: Messages): Option[SummaryListRow] = {
+    Some(relief.employerPaymentsAmount.fold{
+      removeSummaryListRowWithString(
+        "overseasPension.reliefDetails.amount",
+        Some(messages("common.no")).map(Seq(_)))
+    }{ePA =>
+      removeSummaryListRowWithAmountValue(
+        "overseasPension.reliefDetails.amount",
+        ePA)
+    })
+  }
+
+  def removeTypeOfRelief(relief : Relief, taxYear: Int, index: Option[Int])(implicit messages: Messages): Option[SummaryListRow] = {
+    Some(relief.reliefType.fold{
+      removeSummaryListRowWithString(
+        "overseasPension.reliefDetails.typeOfRelief",
+        Some(messages("overseasPension.reliefDetails.noTaxRelief")).map(Seq(_)))
+    }{rT =>
+      removeSummaryListRowWithString(
+        "overseasPension.reliefDetails.typeOfRelief",
+        Some(typeOfReliefToMessage(rT)).map(Seq(_)))
+    })
+  }
+
 }

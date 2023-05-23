@@ -89,4 +89,16 @@ trait CYABaseHelper {
 
   def displayedValueForOptionalStrings(valueOpt: Option[Seq[String]]): String = valueOpt.map(_.mkString(", ")).getOrElse("")
 
+
+  def removeSummaryListRowWithAmountValue(labelMessageKey: String, value: BigDecimal)(implicit messages: Messages): SummaryListRow =
+    summaryListRow(labelMessageKey, displayedValue(value))
+
+  def removeSummaryListRowWithString(labelMessageKey: String, valueOpt: Option[Seq[String]])(implicit messages: Messages): SummaryListRow =
+    summaryListRow(labelMessageKey, displayedValueForOptionalStrings(valueOpt))
+
+  def summaryListRow(labelMessageKey: String, displayedValue: String)(implicit messages: Messages): SummaryListRow = {
+    ViewUtils.removeSummaryListRow(
+      HtmlContent(messages(labelMessageKey)),
+      HtmlContent(displayedValue))
+  }
 }

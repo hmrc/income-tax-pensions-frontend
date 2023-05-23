@@ -1,0 +1,71 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import controllers.pensions.shortServiceRefunds.routes._
+@import models.requests.UserSessionDataRequest
+@import views.html.templates.Layout
+@import views.html.templates.helpers.Heading
+@import views.html.templates.helpers.Button
+@import views.html.templates.helpers.ErrorSummary
+@import views.html.templates.helpers.Link
+@import views.html.templates.helpers.SummaryList
+@import controllers.pensions.paymentsIntoOverseasPensions.ReliefsSchemeDetailsHelper
+@import controllers.pensions.paymentsIntoOverseasPensions.routes.ReliefsSchemeSummaryController
+@import models.pension.charges.Relief
+
+@this(
+layout: Layout,
+heading: Heading,
+link: Link,
+formWithCsrf: FormWithCSRF,
+button: Button,
+errorSummary: ErrorSummary,
+govUkButton: GovukButton,
+summaryList: SummaryList
+)
+
+@(taxYear: Int, reliefSchemeList: Seq[Relief], index: Option[Int])(implicit messages: Messages, appConfig: AppConfig, request: UserSessionDataRequest[_])
+
+@titleText = @{messages("common.removePensionScheme.overseas.title")}
+
+@contentHtml = {
+<p class="govuk-body">
+    @{messages(s"common.removePensionScheme.p1")}
+</p>
+}
+
+@layout(pageTitle = titleText, taxYear = Some(taxYear), isAgent = request.user.isAgent) {
+
+@formWithCsrf(action = controllers.pensions.paymentsIntoOverseasPensions.routes.RemoveReliefSchemeController.submit(taxYear, index)) {
+    @heading(titleText, Some(messages("common.paymentsIntoOverseasPensions.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-2")
+    @contentHtml
+    @summaryList(ReliefsSchemeDetailsHelper.removeSummaryListRows(reliefSchemeList(index.getOrElse(0)), taxYear, index)(messages))
+
+    <div class="govuk-button-group">
+        @govUkButton(Button(
+        attributes = Map("data-module" -> "govuk-button", "id" -> "remove-pension-button-id"),
+        preventDoubleClick = Some(true),
+        content = Text(messages("common.remove")),
+        classes = "govuk-button--warning"
+        ))
+        @link(ReliefsSchemeSummaryController.show(taxYear).url, messages("common.cancel"), id = Some("cancel-link-id"))
+    </div>
+}
+}
+
+@{
+// $COVERAGE-OFF$
+}
