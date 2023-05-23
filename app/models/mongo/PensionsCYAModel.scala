@@ -30,6 +30,10 @@ case class PensionsCYAModel(paymentsIntoPension: PaymentsIntoPensionViewModel,
                             incomeFromOverseasPensions: IncomeFromOverseasPensionsViewModel,
                             transfersIntoOverseasPensions: TransfersIntoOverseasPensionsViewModel,
                             shortServiceRefunds: ShortServiceRefundsViewModel) {
+  
+  def isEmpty: Boolean = paymentsIntoPension.isEmpty && pensionsAnnualAllowances.isEmpty && pensionLifetimeAllowances.isEmpty &&
+    incomeFromPensions.isEmpty && paymentsIntoOverseasPensions.isEmpty &&
+      incomeFromOverseasPensions.isEmpty && transfersIntoOverseasPensions.isEmpty && shortServiceRefunds.isEmpty
 }
 
 object PensionsCYAModel {

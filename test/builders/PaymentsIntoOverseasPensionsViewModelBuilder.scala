@@ -34,8 +34,8 @@ object PaymentsIntoOverseasPensionsViewModelBuilder {
         qopsReference = None,
         alphaTwoCountryCode = None,
         alphaThreeCountryCode = None,
-        doubleTaxationCountryArticle = None,
-        doubleTaxationCountryTreaty = None,
+        doubleTaxationArticle = None,
+        doubleTaxationTreaty = None,
         doubleTaxationReliefAmount = None,
         sf74Reference = Some("SF74-123456")),
       Relief(
@@ -45,8 +45,8 @@ object PaymentsIntoOverseasPensionsViewModelBuilder {
         qopsReference = Some("123456"),
         alphaTwoCountryCode = None,
         alphaThreeCountryCode = None,
-        doubleTaxationCountryArticle = None,
-        doubleTaxationCountryTreaty = None,
+        doubleTaxationArticle = None,
+        doubleTaxationTreaty = None,
         doubleTaxationReliefAmount = None,
         sf74Reference = None)
     )

@@ -75,13 +75,13 @@ class PensionsReliefViewSpec extends ViewUnitTest with FakeRequestProvider {
 
   object ExpectedCommonCY extends CommonExpectedResults {
     override val expectedCaption: Int => String = (taxYear: Int) => s"Taliadau i bensiynau tramor ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
-    override val expectedMMR: String = "Migrant member relief"
-    override val expectedDTR: String = "Double taxation relief"
-    override val expectedTCR: String = "Transitional corresponding relief"
-    override val noneOfTheAbove: String = "None of these"
+    override val expectedMMR: String = "Rhyddhad aelod mudol"
+    override val expectedDTR: String = "Rhyddhad trethiant dwbl"
+    override val expectedTCR: String = "Rhyddhad cyfatebol trosiannol"
+    override val noneOfTheAbove: String = "Dim un o’r rhain"
     override val or: String = "neu"
-    override val expectedLinkText: String = "Find out about the types of tax relief for overseas pension scheme payments (yn agor tab newydd)"
-    override val expectedErrorText: String = "Select the type of tax relief or select none"
+    override val expectedLinkText: String = "Dysgwch am y mathau o ryddhad treth ar gyfer taliadau cynlluniau pensiwn tramor (yn agor tab newydd)"
+    override val expectedErrorText: String = "Dewiswch y math o ryddhad treth, neu dewiswch ‘dim’"
     override val continue: String = "Yn eich blaen"
   }
 
@@ -92,7 +92,7 @@ class PensionsReliefViewSpec extends ViewUnitTest with FakeRequestProvider {
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
-    override val expectedTitle: String = "What tax relief did you get on payments into overseas pensions?"
+    override val expectedTitle: String = "Pa ryddhad treth a gawsoch ar daliadau i mewn i bensiynau tramor?"
     override val expectedErrorTitle = s"Gwall: $expectedTitle"
 
   }
@@ -103,7 +103,7 @@ class PensionsReliefViewSpec extends ViewUnitTest with FakeRequestProvider {
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
-    override val expectedTitle: String = "What tax relief did your client get on payments into overseas pensions?"
+    override val expectedTitle: String = "Pa ryddhad treth a gafodd eich cleient ar daliadau i mewn i bensiynau tramor?"
     override val expectedErrorTitle = s"Gwall: $expectedTitle"
   }
 

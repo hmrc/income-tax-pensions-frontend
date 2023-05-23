@@ -31,7 +31,7 @@ import utils.PageUrls.PensionLifetimeAllowance.pensionTakenAnotherWayAmountUrl
 import utils.PageUrls.{fullUrl, pensionSummaryUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
-class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with BeforeAndAfterEach with ViewHelpers with PensionsDatabaseHelper{
+class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with BeforeAndAfterEach with ViewHelpers with PensionsDatabaseHelper {
   val newAmount = 25
   val newAmount2 = 30
   val poundPrefixText = "£"
@@ -60,8 +60,11 @@ class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with B
     val beforeTaxLabel = "#main-content > div > div > p.govuk-label.govuk-label--m"
     val taxPaidLabel = "#main-content > div > div > form > p.govuk-label.govuk-label--m"
     val taxPaidParagraphSelector = "#main-content > div > div > form > p.govuk-body"
+
     def mainParagraph(index: Int): String = s"#main-content > div > div > p:nth-child($index)"
+
     def beforeTaxParagraph(index: Int): String = s"#main-content > div > div > p:nth-child($index)"
+
     def poundPrefixSelector(index: Int): String = s"#main-content > div > div > form > div:nth-child($index) > div.govuk-input__wrapper > div"
 
   }
@@ -80,7 +83,7 @@ class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with B
 
   trait SpecificExpectedResults {
     val expectedTitle: String
-    val expectedHeading: String
+    lazy val expectedHeading: String = expectedTitle
     val expectedErrorTitle: String
     val beforeTaxErrorNoEntry: String
     val taxPaidErrorNoEntry: String
@@ -90,35 +93,34 @@ class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with B
     val beforeTaxErrorIncorrectFormat: String
 
   }
-  
+
   object CommonExpectedEN extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Annual and lifetime allowances for 6 April ${taxYear - 1} to 5 April $taxYear"
     val hintText = "For example, £193.52"
     val buttonText = "Continue"
-    val beforeTax: String = "Total amount before tax"
-    val taxPaid: String = "Total tax paid"
-    val beforeTaxErrorOverMaximum: String = "The amount of lifetime allowance must be less than 100,000,000,000"
-    val taxPaidErrorIncorrectFormat: String = "Enter the amount of lifetime allowance tax in the correct format"
-    val taxPaidErrorOverMaximum: String = "The amount of lifetime allowance tax must be less than 100,000,000,000"
-    val taxPaidParagraph: String = "If more than one pension scheme paid the lifetime allowance tax, give the total."
+    val beforeTax = "Total amount before tax"
+    val taxPaid = "Total tax paid"
+    val beforeTaxErrorOverMaximum = "The amount of lifetime allowance must be less than 100,000,000,000"
+    val taxPaidErrorIncorrectFormat = "Enter the amount of lifetime allowance tax in the correct format"
+    val taxPaidErrorOverMaximum = "The amount of lifetime allowance tax must be less than 100,000,000,000"
+    val taxPaidParagraph = "If more than one pension scheme paid the lifetime allowance tax, give the total."
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Lwfans blynyddol a lwfans oes ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
     val hintText = "Er enghraifft, £193.52"
     val buttonText = "Yn eich blaen"
-    val beforeTax: String = "Cyfanswm cyn treth"
-    val taxPaid: String = "Cyfanswm y dreth a dalwyd"
-    val beforeTaxErrorOverMaximum: String = "Mae’n rhaid i swm y lwfans oes fod yn llai na 100,000,000,000"
-    val taxPaidErrorIncorrectFormat: String = "Nodwch swm y dreth lwfans oes yn y fformat cywir"
-    val taxPaidErrorOverMaximum: String = "Mae’n rhaid i swm y dreth lwfans oes fod yn llai na 100,000,000,000"
-    val taxPaidParagraph: String = "If more than one pension scheme paid the lifetime allowance tax, give the total."
+    val beforeTax = "Cyfanswm cyn treth"
+    val taxPaid = "Cyfanswm y dreth a dalwyd"
+    val beforeTaxErrorOverMaximum = "Mae’n rhaid i swm y lwfans oes fod yn llai na 100,000,000,000"
+    val taxPaidErrorIncorrectFormat = "Nodwch swm y dreth lwfans oes yn y fformat cywir"
+    val taxPaidErrorOverMaximum = "Mae’n rhaid i swm y dreth lwfans oes fod yn llai na 100,000,000,000"
+    val taxPaidParagraph = "Os oedd mwy nag un cynllun pensiwn yn talu’r dreth lwfans oes, rhowch y cyfanswm."
 
   }
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
     val expectedTitle = "Your pension taken in another way"
-    val expectedHeading = "Your pension taken in another way"
     val expectedErrorTitle = s"Error: $expectedTitle"
     val beforeTaxErrorNoEntry = "Enter the amount you took above your lifetime allowance in another way"
     val taxPaidErrorNoEntry = "Enter the amount of lifetime allowance tax your pension provider paid or agreed to pay on the amount taken in another way"
@@ -126,25 +128,23 @@ class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with B
     val amountAboveAllowanceParagraph =
       "Tell us the amount above your lifetime allowance you’ve taken in other ways. This could be regular payments or a cash withdrawal."
     val beforeTaxParagraph = "If you got payments from more than one pension scheme, give the total."
-    val beforeTaxErrorIncorrectFormat: String = "Enter the amount you took above your lifetime allowance in the correct format"
+    val beforeTaxErrorIncorrectFormat = "Enter the amount you took above your lifetime allowance in the correct format"
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
-   val expectedTitle = "Your pension taken in another way"
-    val expectedHeading = "Your pension taken in another way"
+    val expectedTitle = "Eich pensiwn wedi’i gymryd mewn ffordd arall"
     val expectedErrorTitle = s"Gwall: $expectedTitle"
-    val beforeTaxErrorNoEntry = "Enter the amount you took above your lifetime allowance in another way"
-    val taxPaidErrorNoEntry = "Enter the amount of lifetime allowance tax your pension provider paid or agreed to pay on the amount taken in another way"
+    val beforeTaxErrorNoEntry = "Nodwch y swm a gymeroch sy’n uwch na’ch lwfans oes mewn ffordd arall"
+    val taxPaidErrorNoEntry = "Nodwch swm y dreth lwfans oes a dalodd eich darparwr pensiwn neu a gytunwyd i dalu ar y swm a gymerir mewn ffordd arall"
     val checkThisWithProviderParagraph = "Gwiriwch â’ch darparwyr pensiwn os nad ydych yn siŵr."
     val amountAboveAllowanceParagraph =
-      "Tell us the amount above your lifetime allowance you’ve taken in other ways. This could be regular payments or a cash withdrawal."
-    val beforeTaxParagraph = "If you got payments from more than one pension scheme, give the total."
-    val beforeTaxErrorIncorrectFormat: String = "Enter the amount you took above your lifetime allowance in the correct format"
+      "Rhowch wybod i ni’r swm sy’n uwch na’ch lwfans oes rydych wedi’i gymryd mewn ffyrdd eraill. Gallai hyn fod yn daliadau rheolaidd neu’n tynnu’n ôl arian."
+    val beforeTaxParagraph = "Os oeddech yn cael taliadau o fwy nag un cynllun pensiwn, rhowch y cyfanswm."
+    val beforeTaxErrorIncorrectFormat = "Nodwch y swm a gymeroch sy’n uwch na’ch lwfans oes yn y fformat cywir"
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
     val expectedTitle = "Your client’s pension taken in another way"
-    val expectedHeading = "Your client’s pension taken in another way"
     val expectedErrorTitle = s"Error: $expectedTitle"
     val beforeTaxErrorNoEntry = "Enter the amount your client took above their lifetime allowance in another way"
     val taxPaidErrorNoEntry =
@@ -153,21 +153,21 @@ class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with B
       "Tell us the amount above your client’s lifetime allowance they’ve taken in other ways. This could be regular payments or a cash withdrawal."
     val checkThisWithProviderParagraph = "Your client can check with their pension provider if you’re unsure."
     val beforeTaxParagraph = "If your client got payments from more than one pension scheme, give the total."
-    val beforeTaxErrorIncorrectFormat: String = "Enter the amount your client took above their lifetime allowance in the correct format"
+    val beforeTaxErrorIncorrectFormat = "Enter the amount your client took above their lifetime allowance in the correct format"
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
-    val expectedTitle = "Your client’s pension taken in another way"
-    val expectedHeading = "Your client’s pension taken in another way"
+    val expectedTitle = "Pensiwn eich cleient wedi’i gymryd mewn ffordd arall"
     val expectedErrorTitle = s"Gwall: $expectedTitle"
-    val beforeTaxErrorNoEntry = "Enter the amount your client took above their lifetime allowance in another way"
+    val beforeTaxErrorNoEntry = "Nodwch y swm a gymerodd eich cleient sy’n uwch na’u lwfans oes mewn ffordd arall"
     val taxPaidErrorNoEntry =
-      "Enter the amount of lifetime allowance tax your client’s pension provider paid or agreed to pay on the amount taken in another way"
+      "Rhowch swm y dreth lwfans oes a dalodd darparwr pensiwn eich cleient neu a gytunwyd i dalu ar y swm a gymerwyd mewn ffordd arall"
     val amountAboveAllowanceParagraph =
-      "Tell us the amount above your client’s lifetime allowance they’ve taken in other ways. This could be regular payments or a cash withdrawal."
+      "Rhowch wybod i ni’r swm sy’n uwch na lwfans oes eich cleient maen nhw wedi’i gymryd mewn ffyrdd eraill. " +
+        "Gallai hyn fod yn daliadau rheolaidd neu’n tynnu’n ôl arian."
     val checkThisWithProviderParagraph = "Gall eich cleient wirio â’i ddarparwr pensiwn os nad ydych yn siŵr."
-    val beforeTaxParagraph = "If your client got payments from more than one pension scheme, give the total."
-    val beforeTaxErrorIncorrectFormat: String = "Enter the amount your client took above their lifetime allowance in the correct format"
+    val beforeTaxParagraph = "Os oedd eich cleient yn cael taliadau o fwy nag un cynllun pensiwn, rhowch y cyfanswm."
+    val beforeTaxErrorIncorrectFormat = "Nodwch y swm a gymerodd eich cleient sy’n uwch na’u lwfans oes yn y fformat cywir"
   }
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(
@@ -177,7 +177,7 @@ class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with B
     UserScenario(isWelsh = true, isAgent = true, CommonExpectedCY, Some(ExpectedAgentCY))
   )
 
-  ".show" should {  //scalastyle:off magic.number
+  ".show" should { //scalastyle:off magic.number
     userScenarios.foreach { user =>
       import Selectors._
       import user.commonExpectedResults._
@@ -190,7 +190,7 @@ class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with B
           implicit lazy val result: WSResponse = {
             dropPensionsDB()
             val pensionsViewModel = aPensionLifetimeAllowanceViewModel.copy(
-              pensionPaidAnotherWay = LifetimeAllowance(None, None)
+              pensionPaidAnotherWay = None
             )
             insertCyaData(pensionsUserDataWithLifetimeAllowance(pensionsViewModel), aUserRequest)
             authoriseAgentOrIndividual(user.isAgent)
@@ -230,7 +230,7 @@ class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with B
           implicit lazy val result: WSResponse = {
             dropPensionsDB()
             val pensionsViewModel = aPensionLifetimeAllowanceViewModel.copy(
-              pensionPaidAnotherWay = LifetimeAllowance(Some(newAmount), Some(newAmount2))
+              pensionPaidAnotherWay = Some(LifetimeAllowance(Some(newAmount), Some(newAmount2)))
             )
             insertCyaData(pensionsUserDataWithLifetimeAllowance(pensionsViewModel), aUserRequest)
             authoriseAgentOrIndividual(user.isAgent)
@@ -269,7 +269,7 @@ class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with B
           implicit lazy val result: WSResponse = {
             dropPensionsDB()
             val pensionsViewModel = aPensionLifetimeAllowanceViewModel.copy(
-              pensionPaidAnotherWay = LifetimeAllowance(Some(newAmount), None)
+              pensionPaidAnotherWay = Some(LifetimeAllowance(Some(newAmount), None))
             )
             insertCyaData(pensionsUserDataWithLifetimeAllowance(pensionsViewModel), aUserRequest)
             authoriseAgentOrIndividual(user.isAgent)
@@ -308,7 +308,7 @@ class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with B
           implicit lazy val result: WSResponse = {
             dropPensionsDB()
             val pensionsViewModel = aPensionLifetimeAllowanceViewModel.copy(
-              pensionPaidAnotherWay = LifetimeAllowance(None, Some(newAmount))
+              pensionPaidAnotherWay = Some(LifetimeAllowance(None, Some(newAmount)))
             )
             insertCyaData(pensionsUserDataWithLifetimeAllowance(pensionsViewModel), aUserRequest)
             authoriseAgentOrIndividual(user.isAgent)
@@ -349,7 +349,7 @@ class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with B
     "redirect to the CYA page if there is no session data" which {
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         urlGet(fullUrl(pensionTakenAnotherWayAmountUrl(taxYearEOY)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -504,7 +504,7 @@ class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with B
 
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         insertCyaData(pensionsUserDataWithLifetimeAllowance(aPensionLifetimeAllowanceViewModel), aUserRequest)
 
         urlPost(fullUrl(pensionTakenAnotherWayAmountUrl(taxYearEOY)), body = form,
@@ -519,8 +519,8 @@ class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with B
 
       "update state pension amount to Some (new values)" in {
         lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
-        cyaModel.pensions.pensionLifetimeAllowances.pensionPaidAnotherWay.amount shouldBe Some(newAmount)
-        cyaModel.pensions.pensionLifetimeAllowances.pensionPaidAnotherWay.taxPaid shouldBe Some(newAmount2)
+        cyaModel.pensions.pensionLifetimeAllowances.pensionPaidAnotherWay.flatMap(_.amount) shouldBe Some(newAmount)
+        cyaModel.pensions.pensionLifetimeAllowances.pensionPaidAnotherWay.flatMap(_.taxPaid) shouldBe Some(newAmount2)
       }
     }
 
@@ -531,11 +531,11 @@ class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with B
 
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         insertCyaData(
           pensionsUserDataWithLifetimeAllowance(aPensionLifetimeAllowancesEmptyViewModel.copy(
             pensionPaidAnotherWayQuestion = Some(true),
-            pensionPaidAnotherWay = LifetimeAllowance(None, None)
+            pensionPaidAnotherWay = None
           )), aUserRequest)
 
         urlPost(fullUrl(pensionTakenAnotherWayAmountUrl(taxYearEOY)), body = form,
@@ -550,8 +550,8 @@ class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with B
 
       "update state pension amount to Some (new values)" in {
         lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
-        cyaModel.pensions.pensionLifetimeAllowances.pensionPaidAnotherWay.amount shouldBe Some(newAmount)
-        cyaModel.pensions.pensionLifetimeAllowances.pensionPaidAnotherWay.taxPaid shouldBe Some(newAmount2)
+        cyaModel.pensions.pensionLifetimeAllowances.pensionPaidAnotherWay.flatMap(_.amount) shouldBe Some(newAmount)
+        cyaModel.pensions.pensionLifetimeAllowances.pensionPaidAnotherWay.flatMap(_.taxPaid) shouldBe Some(newAmount2)
       }
     }
 

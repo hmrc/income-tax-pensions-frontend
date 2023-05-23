@@ -16,21 +16,20 @@
 
 package controllers.pensions.paymentsIntoOverseasPensions
 
-import builders.PensionsUserDataBuilder.{aPensionsUserData, pensionUserDataWithOnlyOverseasPensions, pensionUserDataWithOverseasPensions}
 import builders.PaymentsIntoOverseasPensionsViewModelBuilder.aPaymentsIntoOverseasPensionsViewModel
 import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import builders.PensionsUserDataBuilder
+import builders.PensionsUserDataBuilder.{aPensionsUserData, pensionUserDataWithOnlyOverseasPensions, pensionUserDataWithOverseasPensions}
 import builders.UserBuilder.aUserRequest
 import forms.SF74ReferenceForm
 import models.mongo.{PensionsCYAModel, PensionsUserData}
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
-import play.api.libs.ws.WSResponse
-import utils.PageUrls.overseasPensionsSummaryUrl
-import utils.PageUrls.fullUrl
-import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 import play.api.http.Status.{OK, SEE_OTHER}
-import utils.PageUrls.PaymentIntoOverseasPensions.{pensionCustomerReferenceNumberUrl, pensionReliefSchemeDetailsUrl, pensionReliefSchemeSummaryUrl, sf74ReferenceUrl}
+import play.api.libs.ws.WSResponse
+import utils.PageUrls.PaymentIntoOverseasPensions._
+import utils.PageUrls.{fullUrl, pensionSummaryUrl}
+import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 
 class SF74ReferenceControllerISpec extends IntegrationTest
@@ -76,13 +75,13 @@ class SF74ReferenceControllerISpec extends IntegrationTest
     "redirect to the overseas pensions summary page if there is no session data" should {
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         urlGet(fullUrl(sf74ReferenceUrl(taxYearEOY, schemeIndex0)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
       "have a SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(overseasPensionsSummaryUrl(taxYearEOY))
+        result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
       }
     }
 
@@ -92,7 +91,7 @@ class SF74ReferenceControllerISpec extends IntegrationTest
       lazy val result: WSResponse = {
         dropPensionsDB()
         insertCyaData(pensionUserDataWithOnlyOverseasPensions(pensionsNoSchemesViewModel), aUserRequest)
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         urlGet(fullUrl(sf74ReferenceUrl(taxYearEOY, 100)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -107,7 +106,7 @@ class SF74ReferenceControllerISpec extends IntegrationTest
       lazy val result: WSResponse = {
         dropPensionsDB()
         insertCyaData(aPensionsUserData, aUserRequest)
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         urlGet(fullUrl(sf74ReferenceUrl(taxYearEOY, 100)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -125,7 +124,7 @@ class SF74ReferenceControllerISpec extends IntegrationTest
       lazy val result: WSResponse = {
         dropPensionsDB()
         insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel)), aUserRequest)
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         urlPost(fullUrl(sf74ReferenceUrl(taxYearEOY, 0)), body = form,
           follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -142,7 +141,7 @@ class SF74ReferenceControllerISpec extends IntegrationTest
       lazy val result: WSResponse = {
         dropPensionsDB()
         insertCyaData(pensionUserDataWithOnlyOverseasPensions(pensionsNoSchemesViewModel), aUserRequest)
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         urlPost(fullUrl(sf74ReferenceUrl(taxYearEOY, 100)), body = form,
           follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -157,7 +156,7 @@ class SF74ReferenceControllerISpec extends IntegrationTest
       lazy val result: WSResponse = {
         dropPensionsDB()
         insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel)), aUserRequest)
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         urlPost(fullUrl(sf74ReferenceUrl(taxYearEOY, 100)), body = form,
           follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }

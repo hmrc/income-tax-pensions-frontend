@@ -17,9 +17,9 @@
 package services
 
 import connectors.{IncomeTaxUserDataConnector, PensionsConnector}
-import models.{IncomeTaxUserData, User}
 import models.mongo.{PensionsCYAModel, PensionsUserData, ServiceError}
-import models.pension.charges.{CreateUpdatePensionChargesRequestModel, PensionSchemeUnauthorisedPayments, UnauthorisedPaymentsViewModel}
+import models.pension.charges.{CreateUpdatePensionChargesRequestModel, UnauthorisedPaymentsViewModel}
+import models.{IncomeTaxUserData, User}
 import org.joda.time.DateTimeZone
 import repositories.PensionsUserDataRepository
 import uk.gov.hmrc.http.HeaderCarrier
@@ -59,7 +59,8 @@ class PensionChargesService @Inject()(pensionUserDataRepository: PensionsUserDat
       for {
         sessionData <- FutureEitherOps[ServiceError, Option[PensionsUserData]](pensionUserDataRepository.find(taxYear, user))
         priorData <-
-          FutureEitherOps[ServiceError, IncomeTaxUserData](incomeTaxUserDataConnector.getUserData(user.nino, taxYear)(hc.withExtraHeaders("mtditid" -> user.mtditid)))
+          FutureEitherOps[ServiceError, IncomeTaxUserData](incomeTaxUserDataConnector
+            .getUserData(user.nino, taxYear)(hc.withExtraHeaders("mtditid" -> user.mtditid)))
 
         currentData <- FutureEitherOps[ServiceError, Option[PensionsUserData]](pensionUserDataRepository.find(taxYear, user))
         viewModel = sessionData.map(_.pensions.unauthorisedPayments)

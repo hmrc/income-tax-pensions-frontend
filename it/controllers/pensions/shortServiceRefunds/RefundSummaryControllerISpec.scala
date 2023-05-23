@@ -25,55 +25,45 @@ import play.api.http.HeaderNames
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import utils.PageUrls.ShortServiceRefunds.refundSummaryUrl
-import utils.PageUrls.{fullUrl, overseasPensionsSummaryUrl}
+import utils.PageUrls.{fullUrl, pensionSummaryUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 // scalastyle:off magic.number
 class RefundSummaryControllerISpec extends IntegrationTest with BeforeAndAfterEach with ViewHelpers with PensionsDatabaseHelper {
 
-  val urlPrefix = s"/update-and-submit-income-tax-return/pensions/$taxYearEOY/"
-
   override val userScenarios: Seq[UserScenario[_, _]] = Seq.empty
 
+  ".show" when {
 
-  ".show" should {
-    userScenarios.foreach { user =>
-      s"language is ${welshTest(user.isWelsh)} and request is from an ${agentTest(user.isAgent)}" should {
+    "renders the 'short service refund' summary list page " should {
+      val pensionScheme = OverseasRefundPensionScheme(ukRefundCharge = Some(true), name = Some("Pension Scheme 1"))
+      val pensionScheme2 = OverseasRefundPensionScheme(ukRefundCharge = Some(true), name = Some("Pension Scheme 2"))
+      val newPensionSchemes = Seq(pensionScheme, pensionScheme2)
+      val refundViewModel = aShortServiceRefundsViewModel.copy(refundPensionScheme = newPensionSchemes)
 
-
-        "render the 'short service refund' summary list page " which {
-          val pensionScheme = OverseasRefundPensionScheme(ukRefundCharge = Some(true), name = Some("Pension Scheme 1"))
-          val pensionScheme2 = OverseasRefundPensionScheme(ukRefundCharge = Some(true), name = Some("Pension Scheme 2"))
-          val newPensionSchemes = Seq(pensionScheme, pensionScheme2)
-          val refundViewModel = aShortServiceRefundsViewModel.copy(refundPensionScheme = newPensionSchemes)
-
-          implicit lazy val result: WSResponse = {
-            authoriseAgentOrIndividual(user.isAgent)
-            dropPensionsDB()
-            val viewModel = refundViewModel
-            insertCyaData(pensionUserDataWithShortServiceViewModel(viewModel), aUserRequest)
-            urlGet(fullUrl(refundSummaryUrl(taxYearEOY)), user.isWelsh, follow = false,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
-          }
-
-          "has an OK status" in {
-            result.status shouldBe OK
-          }
-        }
-      }
-    }
-
-    "redirect to the pensions summary page if there is no session data" should {
-      lazy val result: WSResponse = {
+      implicit lazy val result: WSResponse = {
+        authoriseAgentOrIndividual()
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        val viewModel = refundViewModel
+        insertCyaData(pensionUserDataWithShortServiceViewModel(viewModel), aUserRequest)
         urlGet(fullUrl(refundSummaryUrl(taxYearEOY)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
+      "have an OK status" in {
+        result.status shouldBe OK
+      }
+    }
 
+    "redirecting to the pensions summary page if there is no session data" should {
+      lazy val result: WSResponse = {
+        dropPensionsDB()
+        authoriseAgentOrIndividual()
+        urlGet(fullUrl(refundSummaryUrl(taxYearEOY)), follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+      }
       "have a SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(overseasPensionsSummaryUrl(taxYearEOY))
+        result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
       }
     }
   }

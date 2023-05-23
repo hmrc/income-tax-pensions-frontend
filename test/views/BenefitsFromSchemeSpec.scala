@@ -73,9 +73,9 @@ class BenefitsFromSchemeSpec extends ViewUnitTest {
     val expectedNoText: String = "Na"
     val expectedButtonText: String = "Yn eich blaen"
     val paragraph1: String =
-      "Os nad yw cynllun pensiwn yn gofrestredig, gallai fod yn gynllun buddiant ymddeol a ariannwyd gan gyflogwyr (EFRBS)."
+      "Os nad yw cynllun pensiwn yn gofrestredig, gallai fod yn gynllun buddiannau ymddeol a ariannwyd gan gyflogwyr (EFRBS)."
     val paragraph2: String =
-      "Cynllun yw EFRBS sy’n talu rhai buddiannau ymddeoliad neu farwolaeth ar gyfer gweithwyr neu gyn-weithwyr, a elwir yn ‘fuddiannau perthnasol’."
+      "Cynllun yw EFRBS sy’n talu rhai buddiannau ymddeoliad neu farwolaeth ar gyfer gweithwyr neu gyn-weithwyr. Yr enw ar y rhain yw “buddiannau perthnasol”."
   }
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
@@ -95,7 +95,7 @@ class BenefitsFromSchemeSpec extends ViewUnitTest {
   object ExpectedIndividualCY extends SpecificExpectedResults {
     val expectedTitleText: String = "Cynlluniau buddiannau ymddeol a ariannwyd gan gyflogwyr"
     val expectedErrorTitleText: String = s"Gwall: $expectedTitleText"
-    val expectedErrorText: String = "Dewiswch ‘Iawn’ os oes gennych gynllun buddiannau ymddeol a ariannwyd gan gyflogwyr"
+    val expectedErrorText: String = "Dewiswch ‘Iawn’ os oes gennych gynllun buddiannau ymddeol a ariannwyd gan gyflogwr"
     val expectedQuestionText: String = "A oes gennych gynllun ymddeol a ariannwyd gan gyflogwr?"
   }
 
@@ -103,7 +103,7 @@ class BenefitsFromSchemeSpec extends ViewUnitTest {
     val expectedTitleText: String = "Cynlluniau buddiannau ymddeol a ariannwyd gan gyflogwyr"
     val expectedErrorTitleText: String = s"Gwall: $expectedTitleText"
     val expectedErrorText: String =
-      "Dewiswch ‘Iawn’ os oes gan eich cleient gynllun buddiannau ymddeol a ariannwyd gan gyflogwyr"
+      "Dewiswch ‘Iawn’ os oes gan eich cleient gynllun buddiannau ymddeol a ariannwyd gan gyflogwr"
     val expectedQuestionText: String = "A oes gan eich cleient gynllun ymddeol a ariannwyd gan gyflogwr?"
   }
 

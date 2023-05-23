@@ -36,7 +36,7 @@ case class IncomeFromOverseasPensionsViewModel(paymentsFromOverseasPensionsQuest
       overseasPensionSchemes = overseasIncomePensionSchemes.map(_.encrypted())
     )
 
-  def isEmpty(): Boolean = paymentsFromOverseasPensionsQuestion.isEmpty && overseasIncomePensionSchemes.isEmpty
+  def isEmpty: Boolean = paymentsFromOverseasPensionsQuestion.isEmpty && overseasIncomePensionSchemes.isEmpty
 
   def hasPriorData: Boolean = paymentsFromOverseasPensionsQuestion.exists(_ && overseasIncomePensionSchemes.nonEmpty)
 

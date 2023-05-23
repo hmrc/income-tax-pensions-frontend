@@ -178,7 +178,7 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
             dropPensionsDB()
             authoriseAgentOrIndividual(user.isAgent)
             insertCyaData(aPensionsUserData, aUserRequest)
-            urlGet(fullUrl(pensionSchemeDetailsUrl(taxYearEOY)), user.isWelsh, follow = false,
+            urlGet(fullUrl(pensionSchemeDetailsUrl(taxYearEOY, None)), user.isWelsh, follow = false,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
 
@@ -202,7 +202,7 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
           inputFieldValueCheck(refInputName, refInputSelector, "")
           inputFieldValueCheck(pIdInputName, pIdInputSelector, "")
           buttonCheck(buttonText, continueButtonSelector)
-          formPostLinkCheck(pensionSchemeDetailsUrl(taxYearEOY), formSelector)
+          formPostLinkCheck(pensionSchemeDetailsUrl(taxYearEOY, None), formSelector)
           welshToggleCheck(user.isWelsh)
         }
 
@@ -215,7 +215,7 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
             authoriseAgentOrIndividual(user.isAgent)
             insertCyaData(pensionsUserDataWithIncomeFromPensions(
               anIncomeFromPensionEmptyViewModel.copy(uKPensionIncomesQuestion = Some(true), uKPensionIncomes = Seq(pensionIncomeModel))), aUserRequest)
-            urlGet(fullUrl(pensionSchemeDetailsUrl(taxYearEOY, 0)), user.isWelsh, follow = false,
+            urlGet(fullUrl(pensionSchemeDetailsUrl(taxYearEOY, Some(0))), user.isWelsh, follow = false,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
 
@@ -239,7 +239,7 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
           inputFieldValueCheck(refInputName, refInputSelector, pensionIncomeModel.pensionSchemeRef.get)
           inputFieldValueCheck(pIdInputName, pIdInputSelector, pensionIncomeModel.pensionId.get)
           buttonCheck(buttonText, continueButtonSelector)
-          formPostLinkCheck(pensionSchemeDetailsUrl(taxYearEOY, 0), formSelector)
+          formPostLinkCheck(pensionSchemeDetailsUrl(taxYearEOY, Some(0)), formSelector)
           welshToggleCheck(user.isWelsh)
         }
       }
@@ -248,10 +248,10 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
     "redirect to UK Pension Scheme Payments question page if uKPensionIncomesQuestion is Some(false)" which {
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         insertCyaData(pensionsUserDataWithIncomeFromPensions(
           anIncomeFromPensionsViewModel.copy(uKPensionIncomesQuestion = Some(false), uKPensionIncomes = Seq.empty)), aUserRequest)
-        urlGet(fullUrl(pensionSchemeDetailsUrl(taxYearEOY)), follow = false,
+        urlGet(fullUrl(pensionSchemeDetailsUrl(taxYearEOY, None)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
@@ -264,8 +264,8 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
     "redirect to Uk Pension Income CYA page when there is no session data" which {
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
-        urlGet(fullUrl(pensionSchemeDetailsUrl(taxYearEOY)), follow = false,
+        authoriseAgentOrIndividual()
+        urlGet(fullUrl(pensionSchemeDetailsUrl(taxYearEOY, None)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
@@ -278,10 +278,10 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
     "redirect to the Uk Pension Incomes Summary page if index is out of bounds" which {
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         val viewModel = anIncomeFromPensionEmptyViewModel.copy(uKPensionIncomesQuestion = Some(true), uKPensionIncomes = Seq(anUkPensionIncomeViewModelOne))
         insertCyaData(pensionsUserDataWithIncomeFromPensions(viewModel), aUserRequest)
-        urlGet(fullUrl(pensionSchemeDetailsUrl(taxYearEOY, 2)), follow = false,
+        urlGet(fullUrl(pensionSchemeDetailsUrl(taxYearEOY, Some(2))), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
@@ -305,7 +305,7 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
             dropPensionsDB()
             authoriseAgentOrIndividual(user.isAgent)
             insertCyaData(aPensionsUserData, aUserRequest)
-            urlPost(fullUrl(pensionSchemeDetailsUrl(taxYearEOY)), body = form, welsh = user.isWelsh, follow = false,
+            urlPost(fullUrl(pensionSchemeDetailsUrl(taxYearEOY, None)), body = form, welsh = user.isWelsh, follow = false,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
 
@@ -336,7 +336,7 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
             dropPensionsDB()
             authoriseAgentOrIndividual(user.isAgent)
             insertCyaData(aPensionsUserData, aUserRequest)
-            urlPost(fullUrl(pensionSchemeDetailsUrl(taxYearEOY)), body = form, welsh = user.isWelsh, follow = false,
+            urlPost(fullUrl(pensionSchemeDetailsUrl(taxYearEOY, None)), body = form, welsh = user.isWelsh, follow = false,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
 
@@ -369,7 +369,7 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
             dropPensionsDB()
             authoriseAgentOrIndividual(user.isAgent)
             insertCyaData(aPensionsUserData, aUserRequest)
-            urlPost(fullUrl(pensionSchemeDetailsUrl(taxYearEOY)), body = form, welsh = user.isWelsh, follow = false,
+            urlPost(fullUrl(pensionSchemeDetailsUrl(taxYearEOY, None)), body = form, welsh = user.isWelsh, follow = false,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
 
@@ -400,18 +400,18 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
 
     lazy val result: WSResponse = {
       dropPensionsDB()
-      authoriseAgentOrIndividual(isAgent = false)
+      authoriseAgentOrIndividual()
       val uKPensionIncomesModel = anUkPensionIncomeViewModelTwo.copy(
         pensionSchemeName = Some("Scheme Name"), pensionSchemeRef = Some("123/PREF"), pensionId = Some("Pension Id"))
       insertCyaData(pensionsUserDataWithIncomeFromPensions(
         anIncomeFromPensionsViewModel.copy(uKPensionIncomes = Seq(anUkPensionIncomeViewModelOne, uKPensionIncomesModel))), aUserRequest)
-      urlPost(fullUrl(pensionSchemeDetailsUrl(taxYearEOY, 1)), body = form, follow = false,
+      urlPost(fullUrl(pensionSchemeDetailsUrl(taxYearEOY, Some(1))), body = form, follow = false,
         headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
     }
 
     "has an SEE_OTHER(303) status" in {
       result.status shouldBe SEE_OTHER
-      result.header("location") shouldBe Some(pensionAmountUrl(taxYearEOY, 1))
+      result.header("location") shouldBe Some(pensionAmountUrl(taxYearEOY, Some(1)))
     }
 
     "updates existing pension scheme with new values" in {
@@ -430,15 +430,15 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
 
     lazy val result: WSResponse = {
       dropPensionsDB()
-      authoriseAgentOrIndividual(isAgent = false)
+      authoriseAgentOrIndividual()
       insertCyaData(pensionsUserDataWithIncomeFromPensions(anIncomeFromPensionEmptyViewModel.copy(uKPensionIncomesQuestion = Some(true))), aUserRequest)
-      urlPost(fullUrl(pensionSchemeDetailsUrl(taxYearEOY)), body = form, follow = false,
+      urlPost(fullUrl(pensionSchemeDetailsUrl(taxYearEOY, None)), body = form, follow = false,
         headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
     }
 
     "has an SEE_OTHER(303) status" in {
       result.status shouldBe SEE_OTHER
-      result.header("location") shouldBe Some(pensionAmountUrl(taxYearEOY, 0))
+      result.header("location") shouldBe Some(pensionAmountUrl(taxYearEOY, Some(0)))
     }
 
     "updates existing pension scheme with new values" in {
@@ -457,22 +457,24 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
 
     lazy val result: WSResponse = {
       dropPensionsDB()
-      authoriseAgentOrIndividual(isAgent = false)
+      authoriseAgentOrIndividual()
       insertCyaData(pensionsUserDataWithIncomeFromPensions(anIncomeFromPensionsViewModel), aUserRequest)
-      urlPost(fullUrl(pensionSchemeDetailsUrl(taxYearEOY)), body = form, follow = false,
+      urlPost(fullUrl(pensionSchemeDetailsUrl(taxYearEOY, None)), body = form, follow = false,
         headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
     }
 
     "has an SEE_OTHER(303) status" in {
       result.status shouldBe SEE_OTHER
-      result.header("location") shouldBe Some(pensionAmountUrl(taxYearEOY, 2))
+      result.header("location") shouldBe Some(pensionAmountUrl(taxYearEOY, Some(2)))
     }
 
     "updates existing pension scheme with new values without changing existing pension schemes" in {
       lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
       cyaModel.pensions.incomeFromPensions.uKPensionIncomes.size shouldBe 3
-      cyaModel.pensions.incomeFromPensions.uKPensionIncomes(0).pensionSchemeName shouldBe anIncomeFromPensionsViewModel.uKPensionIncomes(0).pensionSchemeName
-      cyaModel.pensions.incomeFromPensions.uKPensionIncomes(1).pensionSchemeName shouldBe anIncomeFromPensionsViewModel.uKPensionIncomes(1).pensionSchemeName
+      cyaModel.pensions.incomeFromPensions.uKPensionIncomes.head.pensionSchemeName shouldBe
+        anIncomeFromPensionsViewModel.uKPensionIncomes.head.pensionSchemeName
+      cyaModel.pensions.incomeFromPensions.uKPensionIncomes(1).pensionSchemeName shouldBe
+        anIncomeFromPensionsViewModel.uKPensionIncomes(1).pensionSchemeName
       cyaModel.pensions.incomeFromPensions.uKPensionIncomes(2).pensionSchemeName shouldBe Some(validProviderName)
       cyaModel.pensions.incomeFromPensions.uKPensionIncomes(2).pensionSchemeRef shouldBe Some(validRef)
       cyaModel.pensions.incomeFromPensions.uKPensionIncomes(2).pensionId shouldBe Some(validPensionId)
@@ -484,8 +486,8 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
 
     lazy val result: WSResponse = {
       dropPensionsDB()
-      authoriseAgentOrIndividual(isAgent = false)
-      urlPost(fullUrl(pensionSchemeDetailsUrl(taxYearEOY)), body = form, follow = false,
+      authoriseAgentOrIndividual()
+      urlPost(fullUrl(pensionSchemeDetailsUrl(taxYearEOY, None)), body = form, follow = false,
         headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
     }
 
@@ -500,10 +502,10 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
 
     lazy val result: WSResponse = {
       dropPensionsDB()
-      authoriseAgentOrIndividual(isAgent = false)
+      authoriseAgentOrIndividual()
       val viewModel = anIncomeFromPensionEmptyViewModel.copy(uKPensionIncomesQuestion = Some(true))
       insertCyaData(pensionsUserDataWithIncomeFromPensions(viewModel), aUserRequest)
-      urlPost(fullUrl(pensionSchemeDetailsUrl(taxYearEOY, 0)), body = form, follow = false,
+      urlPost(fullUrl(pensionSchemeDetailsUrl(taxYearEOY, Some(0))), body = form, follow = false,
         headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
     }
 

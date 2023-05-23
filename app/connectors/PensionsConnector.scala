@@ -34,21 +34,21 @@ class PensionsConnector @Inject()(val http: HttpClient,
 
   def savePensionChargesSessionData(nino: String, taxYear: Int, model: CreateUpdatePensionChargesRequestModel)
                                    (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[PensionChargesSessionResponse] = {
-    val url = appConfig.pensionBEBaseUrl + s"/pension-charges/session-data/nino/$nino/taxYear/$taxYear"
+    val url = appConfig.pensionBEBaseUrl + s"/pension-charges/session-data/nino/$nino/taxYear/${taxYear.toString}"
     http.PUT[CreateUpdatePensionChargesRequestModel, PensionChargesSessionResponse](url,
       model)(CreateUpdatePensionChargesRequestModel.format.writes,  PensionChargesSessionHttpReads, hc, ec)
   }
 
   def savePensionIncomeSessionData(nino: String, taxYear: Int, model: CreateUpdatePensionIncomeModel)
                                    (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[PensionIncomeSessionResponse] = {
-    val url = appConfig.pensionBEBaseUrl + s"/pension-income/session-data/nino/$nino/taxYear/$taxYear"
-    http.PUT[CreateUpdatePensionIncomeModel, PensionIncomeSessionResponse](url,
-      model)(CreateUpdatePensionIncomeModel.format.writes,  PensionIncomeSessionHttpReads, hc, ec)
+    val url = appConfig.pensionBEBaseUrl + s"/pension-income/session-data/nino/$nino/taxYear/${taxYear.toString}"
+    http.PUT[CreateUpdatePensionIncomeModel, PensionIncomeSessionResponse](url, model)(
+       CreateUpdatePensionIncomeModel.format.writes,  PensionIncomeSessionHttpReads, hc, ec)
   }
 
   def savePensionReliefSessionData(nino: String, taxYear: Int, model: CreateOrUpdatePensionReliefsModel)
                                   (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[PensionReliefsSessionResponse] = {
-    val url = appConfig.pensionBEBaseUrl + s"/pension-reliefs/nino/$nino/taxYear/$taxYear"
+    val url = appConfig.pensionBEBaseUrl + s"/pension-reliefs/nino/$nino/taxYear/${taxYear.toString}"
     http.PUT[CreateOrUpdatePensionReliefsModel, PensionReliefsSessionResponse](url,
       model)(CreateOrUpdatePensionReliefsModel.format.writes, PensionReliefsSessionHttpReads, hc, ec)
   }

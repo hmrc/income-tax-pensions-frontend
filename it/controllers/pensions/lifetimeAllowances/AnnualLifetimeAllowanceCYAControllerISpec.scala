@@ -217,28 +217,28 @@ class AnnualLifetimeAllowanceCYAControllerISpec extends
     val pensionSchemeTaxReferencesHidden = "Change Pension Scheme Tax References"
 
 
-    val aboveAnnualOrLifetimeAllowance: String = "Above annual or lifetime allowance"
-    val reducedAnnualAllowance: String = "Reduced annual allowance"
-    val typeOfReducedAnnualAllowance: String = "Type of reduced annual allowance"
-    val aboveAnnualAllowance: String = "Above annual allowance"
-    val annualAllowanceTax: String = "Annual allowance tax"
-    val annualAllowanceSchemes: String = "Schemes paying annual allowance tax"
-    val aboveLifetimeAllowance: String = "Above lifetime allowance"
-    val lumpSum: String = "Lump sum"
-    val otherPayments: String = "Other payments"
-    val lifetimeAllowanceSchemes: String = "Schemes paying lifetime allowance tax"
+    val aboveAnnualOrLifetimeAllowance: String = "Uwch na’r lwfans blynyddol neu lwfans oes"
+    val reducedAnnualAllowance: String = "Lwfans blynyddol wedi’i ostwng"
+    val typeOfReducedAnnualAllowance: String = "Math o lwfans blynyddol wedi’i ostwng"
+    val aboveAnnualAllowance: String = "Uwch na’r lwfans blynyddol"
+    val annualAllowanceTax: String = "Treth lwfans blynyddol"
+    val annualAllowanceSchemes: String = "Cynlluniau sy’n talu treth lwfans blynyddol"
+    val aboveLifetimeAllowance: String = "Uwch na’r lwfans oes pensiwn"
+    val lumpSum: String = "Cyfandaliad"
+    val otherPayments: String = "Taliadau eraill"
+    val lifetimeAllowanceSchemes: String = "Cynlluniau sy’n talu treth lwfans oes"
 
 
-    val aboveAnnualOrLifetimeAllowanceHidden: String = "Change above annual or lifetime allowance"
-    val reducedAnnualAllowanceHidden: String = "Change reduced annual allowance"
-    val typeOfReducedAnnualAllowanceHidden: String = "Change type of reduced annual allowance"
-    val aboveAnnualAllowanceHidden: String = "Change above annual allowance"
-    val annualAllowanceTaxHidden: String = "Change annual allowance tax"
-    val annualAllowanceSchemesHidden: String = "Change schemes paying annual allowance tax"
-    val aboveLifetimeAllowanceHidden: String = "Change above lifetime allowance"
-    val lumpSumHidden: String = "Change lump sum"
-    val otherPaymentsHidden: String = "Change other payments"
-    val lifetimeAllowanceSchemesHidden: String = "Change schemes paying lifetime allowance tax"
+    val aboveAnnualOrLifetimeAllowanceHidden: String = "Newidiwch uwch na lwfans blynyddol neu lwfans oes"
+    val reducedAnnualAllowanceHidden: String = "Newidiwch lwfans blynyddol wedi’i ostwng"
+    val typeOfReducedAnnualAllowanceHidden: String = "Newidiwch fath o lwfans blynyddol wedi’i ostwng"
+    val aboveAnnualAllowanceHidden: String = "Newidiwch uwch na’r lwfans blynyddol"
+    val annualAllowanceTaxHidden: String = "Newidiwch dreth lwfans blynyddol"
+    val annualAllowanceSchemesHidden: String = "Newidiwch gynlluniau sy’n talu treth lwfans blynyddol"
+    val aboveLifetimeAllowanceHidden: String = "Newidiwch uwch na’r lwfans oes pensiwn"
+    val lumpSumHidden: String = "Newidiwch gyfandaliad"
+    val otherPaymentsHidden: String = "Newidiwch daliadau eraill"
+    val lifetimeAllowanceSchemesHidden: String = "Newidiwch gynlluniau sy’n talu treth lwfans oes"
   }
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
@@ -250,11 +250,11 @@ class AnnualLifetimeAllowanceCYAControllerISpec extends
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
-    val expectedTitle = "Check your annual and lifetime allowances"
+    val expectedTitle = "Gwiriwch eich lwfansau blynyddol ac oes"
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
-    val expectedTitle = "Check your client’s annual and lifetime allowances"
+    val expectedTitle = "Gwiriwch lwfansau blynyddol ac oes eich cleient"
   }
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(
@@ -341,7 +341,7 @@ class AnnualLifetimeAllowanceCYAControllerISpec extends
             savingsTaxCharges.get.benefitInExcessOfLifetimeAllowance.flatMap(_.taxPaid).get), ChangeLinksUnauthorisedPayments.otherPayments,
             otherPaymentsHidden, 9)
           
-          cyaRowCheck(lifetimeAllowanceSchemes, s"${savingsTaxCharges.get.pensionSchemeTaxReference.mkString(", ")}",
+          cyaRowCheck(lifetimeAllowanceSchemes, s"${savingsTaxCharges.get.pensionSchemeTaxReference.get.mkString(", ")}",
             ChangeLinksUnauthorisedPayments.lifetimeAllowanceSchemes, lifetimeAllowanceSchemesHidden, 10)
           
           buttonCheck(saveAndContinue)
@@ -415,7 +415,7 @@ class AnnualLifetimeAllowanceCYAControllerISpec extends
 
         lazy val result: WSResponse = {
           dropPensionsDB()
-          authoriseAgentOrIndividual(isAgent = false)
+          authoriseAgentOrIndividual()
           urlPost(fullUrl(checkAnnualLifetimeAllowanceCYA(taxYear)), form, follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
         }
@@ -441,7 +441,7 @@ class AnnualLifetimeAllowanceCYAControllerISpec extends
           userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYear)
           insertCyaData(aPensionsUserData.copy(pensions = aPensionsCYAModel.copy(paymentsIntoPension = cyaDataIncomplete),
             taxYear = taxYear), aUserRequest)
-          authoriseAgentOrIndividual(isAgent = false)
+          authoriseAgentOrIndividual()
           urlPost(fullUrl(checkAnnualLifetimeAllowanceCYA(taxYear)), form, follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
         }
@@ -477,7 +477,7 @@ class AnnualLifetimeAllowanceCYAControllerISpec extends
             unauthorisedPayments = anUnauthorisedPaymentsViewModel,
             paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel
           ), taxYear = taxYear), aUserRequest)
-          authoriseAgentOrIndividual(isAgent = false)
+          authoriseAgentOrIndividual()
           urlPost(fullUrl(checkAnnualLifetimeAllowanceCYA(taxYear)), form, follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
         }

@@ -63,8 +63,8 @@ class WhereAnyOfTheUnauthorisedPaymentsControllerISpec extends IntegrationTest w
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
-    val expectedTitle = "Were any of the unauthorised payments from a UK pension scheme?"
-    val expectedHeading = "Were any of the unauthorised payments from a UK pension scheme?"
+    val expectedTitle = "A ddaeth unrhyw rai o’r taliadau heb awdurdod o gynllun pensiwn yn y DU?"
+    val expectedHeading = "A ddaeth unrhyw rai o’r taliadau heb awdurdod o gynllun pensiwn yn y DU?"
     val expectedErrorTitle = s"Gwall: $expectedTitle"
     val noEntryErrorMessage = "Dewiswch ‘Iawn’ os cawsoch daliad heb awdurdod o gynllun pensiwn"
   }
@@ -77,8 +77,8 @@ class WhereAnyOfTheUnauthorisedPaymentsControllerISpec extends IntegrationTest w
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
-    val expectedTitle = "Were any of the unauthorised payments from a UK pension scheme?"
-    val expectedHeading = "Were any of the unauthorised payments from a UK pension scheme?"
+    val expectedTitle = "A ddaeth unrhyw rai o’r taliadau heb awdurdod o gynllun pensiwn yn y DU?"
+    val expectedHeading = "A ddaeth unrhyw rai o’r taliadau heb awdurdod o gynllun pensiwn yn y DU?"
     val expectedErrorTitle = s"Gwall: $expectedTitle"
     val noEntryErrorMessage = "Dewiswch ‘Iawn’ os cawsoch daliad heb awdurdod o gynllun pensiwn" //TODO need an agent equiv of this
   }
@@ -96,8 +96,8 @@ class WhereAnyOfTheUnauthorisedPaymentsControllerISpec extends IntegrationTest w
   object CommonExpectedCY extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Taliadau heb awdurdod o bensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
     val expectedButtonText = "Yn eich blaen"
-    val expectedTitle = "Were any of the unauthorised payments from a UK pension scheme?"
-    val expectedHeading = "Were any of the unauthorised payments from a UK pension scheme?"
+    val expectedTitle = "A ddaeth unrhyw rai o’r taliadau heb awdurdod o gynllun pensiwn yn y DU?"
+    val expectedHeading = "A ddaeth unrhyw rai o’r taliadau heb awdurdod o gynllun pensiwn yn y DU?"
     val yesText = "Iawn"
     val noText = "Na"
     val noEntryErrorMessage = "Select yes if you got an unauthorised payment from a pension scheme"
@@ -175,7 +175,7 @@ class WhereAnyOfTheUnauthorisedPaymentsControllerISpec extends IntegrationTest w
     "redirect to Pensions Summary page if there is no session data" should {
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         urlGet(fullUrl(whereAnyOfTheUnauthorisedPaymentsUrl(taxYearEOY)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -234,7 +234,7 @@ class WhereAnyOfTheUnauthorisedPaymentsControllerISpec extends IntegrationTest w
 
         insertCyaData(pensionsUserDataWithUnauthorisedPayments(viewModel), aUserRequest)
 
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         urlPost(fullUrl(whereAnyOfTheUnauthorisedPaymentsUrl(taxYearEOY)), body = form, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -261,7 +261,7 @@ class WhereAnyOfTheUnauthorisedPaymentsControllerISpec extends IntegrationTest w
 
         insertCyaData(pensionsUserDataWithUnauthorisedPayments(viewModel), aUserRequest)
 
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         urlPost(fullUrl(whereAnyOfTheUnauthorisedPaymentsUrl(taxYearEOY)), body = form, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -281,7 +281,7 @@ class WhereAnyOfTheUnauthorisedPaymentsControllerISpec extends IntegrationTest w
       lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.no)
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         urlPost(fullUrl(whereAnyOfTheUnauthorisedPaymentsUrl(taxYearEOY)), body = form, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
 

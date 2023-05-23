@@ -67,11 +67,11 @@ class LifeTimeAllowanceAnotherWayControllerISpec extends IntegrationTest with Be
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
-    val expectedTitle = "Did you take the amount above your lifetime allowance another way?"
-    val expectedParagraphText = "Tell us about any amount you’ve taken above your lifetime allowance in other " +
-      "ways. This could be regular payments or a cash withdrawal"
+    val expectedTitle = "A wnaethoch gymryd y swm sy’n uwch na’ch lwfans oes ffordd arall?"
+    val expectedParagraphText = "Rhowch wybod i ni am unrhyw swm rydych wedi’i gymryd sy’n uwch na’ch lwfans oes " +
+      "mewn ffyrdd eraill. Gallai hyn fod yn daliadau rheolaidd neu’n tynnu’n ôl arian"
     val expectedErrorTitle = s"Gwall: $expectedTitle"
-    val expectedError = "Select yes if you took the amount above your lifetime allowance in another way"
+    val expectedError = "Dewiswch ‘Iawn’ os wnaethoch gymryd y swm sy’n uwch na’ch lwfans oes mewn ffordd arall"
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
@@ -83,11 +83,11 @@ class LifeTimeAllowanceAnotherWayControllerISpec extends IntegrationTest with Be
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
-    val expectedTitle = "Did your client take the amount above their lifetime allowance another way?"
-    val expectedParagraphText = "Tell us about any amount your client has taken above their lifetime allowance in " +
-      "other ways. This could be regular payments or a cash withdrawal"
+    val expectedTitle = "A wnaeth eich cleient gymryd y swm sy’n uwch na’ch lwfans oes ffordd arall?"
+    val expectedParagraphText = "Rhowch wybod i ni am unrhyw swm y mae’ch cleient wedi’i gymryd sy’n uwch na’u " +
+      "lwfans oes mewn ffyrdd eraill. Gallai hyn fod yn daliadau rheolaidd neu’n tynnu’n ôl arian"
     val expectedErrorTitle = s"Gwall: $expectedTitle"
-    val expectedError = "Select yes if your client took the amount above their lifetime allowance in another way"
+    val expectedError = "Dewiswch ‘Iawn’ os wnaeth eich cleient gymryd y swm sy’n uwch na’ch lwfans oes mewn ffordd arall"
   }
 
   object CommonExpectedEN extends CommonExpectedResults {
@@ -103,7 +103,7 @@ class LifeTimeAllowanceAnotherWayControllerISpec extends IntegrationTest with Be
     val expectedButtonText = "Yn eich blaen"
     val yesText = "Iawn"
     val noText = "Na"
-    val expectedLumpSumText: String = "Do not tell us about lump sums."
+    val expectedLumpSumText: String = "Peidiwch â rhoi gwybod i ni am gyfandaliadau."
   }
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(
@@ -214,7 +214,7 @@ class LifeTimeAllowanceAnotherWayControllerISpec extends IntegrationTest with Be
     "redirect to Pensions Summary page if there is no session data" should {
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         urlGet(fullUrl(pensionLifeTimeAllowanceAnotherWayUrl(taxYearEOY)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -278,7 +278,7 @@ class LifeTimeAllowanceAnotherWayControllerISpec extends IntegrationTest with Be
 
         insertCyaData(pensionsUserDataWithLifetimeAllowance(pensionsViewModel), aUserRequest)
 
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         urlPost(fullUrl(pensionLifeTimeAllowanceAnotherWayUrl(taxYearEOY)), body = form, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -306,12 +306,12 @@ class LifeTimeAllowanceAnotherWayControllerISpec extends IntegrationTest with Be
         dropPensionsDB()
         val pensionsViewModel = aPensionLifetimeAllowanceViewModel.copy(
           pensionPaidAnotherWayQuestion = Some(true),
-          pensionPaidAnotherWay = LifetimeAllowance(Some(999.99), Some(99.99))
+          pensionPaidAnotherWay = Some(LifetimeAllowance(Some(999.99), Some(99.99)))
         )
 
         insertCyaData(pensionsUserDataWithLifetimeAllowance(pensionsViewModel), aUserRequest)
 
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         urlPost(fullUrl(pensionLifeTimeAllowanceAnotherWayUrl(taxYearEOY)), body = form, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -325,7 +325,7 @@ class LifeTimeAllowanceAnotherWayControllerISpec extends IntegrationTest with Be
 
       "updates aboveLifetimeAllowanceQuestion to Some(false) and clear the rest of the annual lifetime allowance data" in {
         lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
-        cyaModel.pensions.pensionLifetimeAllowances.pensionPaidAnotherWay shouldBe LifetimeAllowance(None,None)
+        cyaModel.pensions.pensionLifetimeAllowances.pensionPaidAnotherWay shouldBe None
         cyaModel.pensions.pensionLifetimeAllowances.pensionPaidAnotherWayQuestion shouldBe Some(false)
         cyaModel.pensions.pensionLifetimeAllowances.pensionAsLumpSumQuestion shouldBe aPensionLifetimeAllowanceViewModel.pensionAsLumpSumQuestion
         cyaModel.pensions.pensionLifetimeAllowances.pensionAsLumpSum shouldBe aPensionLifetimeAllowanceViewModel.pensionAsLumpSum
@@ -337,7 +337,7 @@ class LifeTimeAllowanceAnotherWayControllerISpec extends IntegrationTest with Be
       lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.no)
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         urlPost(fullUrl(pensionLifeTimeAllowanceAnotherWayUrl(taxYearEOY)), body = form, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
 

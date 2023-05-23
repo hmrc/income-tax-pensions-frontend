@@ -17,7 +17,7 @@
 package controllers.pensions.incomeFromPensions
 
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.incomeFromPensions.routes.UkPensionSchemePaymentsController
+import controllers.pensions.incomeFromPensions.routes.{IncomeFromPensionsSummaryController, UkPensionSchemePaymentsController}
 import controllers.predicates.AuthorisedAction
 import controllers.predicates.TaxYearAction.taxYearAction
 import forms.FormUtils
@@ -69,14 +69,14 @@ class UkPensionIncomeCYAController @Inject()(implicit val mcc: MessagesControlle
   }
 
   def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
-    pensionSessionService.getAndHandle(taxYear, request.user) { (cya, prior) =>
+    pensionSessionService.getAndHandle(taxYear, request.user) {(cya, prior) =>
       cya.fold(
         Future.successful(Redirect(appConfig.incomeTaxSubmissionOverviewUrl(taxYear)))
       ) { model =>
         if (comparePriorData(model.pensions, prior)) {
           performSubmission(taxYear, cya)(request.user, hc, request, clock)
         } else {
-          Future.successful(Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear)))
+          Future.successful(Redirect(IncomeFromPensionsSummaryController.show(taxYear)))
         }
       }
     }
@@ -111,8 +111,8 @@ class UkPensionIncomeCYAController @Inject()(implicit val mcc: MessagesControlle
 
   private def comparePriorData(cyaData: PensionsCYAModel, priorData: Option[AllPensionsData]): Boolean = {
     priorData match {
-      case None => true
       case Some(prior) => !cyaData.equals(generateCyaFromPrior(prior))
+      case None => true
     }
   }
 

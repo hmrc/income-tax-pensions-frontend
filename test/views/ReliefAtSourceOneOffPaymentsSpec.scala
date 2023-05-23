@@ -86,7 +86,7 @@ object ReliefAtSourceOneOffPaymentsSpec {
     val expectedErrorTitle = s"Gwall: $expectedTitle"
     val thisIncludes: String =
       s"Rydych wedi rhoi gwybod i ni mai’r cyfanswm a dalwyd gennych, ynghyd â rhyddhad treth, oedd £$someRasAmount. " +
-        "Rhowch wybod i ni os yw hwn yn cynnwys unrhyw daliadau untro. Un taliad yw taliad untro, a wneir unwaith."
+        "Rhowch wybod i ni a yw hwn yn cynnwys unrhyw daliadau untro. Un taliad yw taliad untro, a wneir unwaith."
     val expectedErrorMessage = "Dewiswch ‘Iawn’ os gwnaethoch daliadau untro i mewn i bensiynau RAS"
   }
 
@@ -106,7 +106,7 @@ object ReliefAtSourceOneOffPaymentsSpec {
     val expectedErrorTitle = s"Gwall: $expectedTitle"
     val thisIncludes: String =
       s"Rydych wedi rhoi gwybod i ni mai’r cyfanswm a dalwyd gan eich cleient, ynghyd â rhyddhad treth, oedd £$someRasAmount. " +
-        "Rhowch wybod i ni os yw hwn yn cynnwys unrhyw daliadau untro. Un taliad yw taliad untro, a wneir unwaith."
+        "Rhowch wybod i ni a yw hwn yn cynnwys unrhyw daliadau untro. Un taliad yw taliad untro, a wneir unwaith."
     val expectedErrorMessage = "Dewiswch ‘Iawn’ os gwnaeth eich cleient daliadau untro i mewn i bensiynau RAS"
   }
 }

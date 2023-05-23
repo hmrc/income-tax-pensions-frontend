@@ -83,11 +83,11 @@ lazy val microservice = Project(appName, file("."))
     Concat.groups := Seq(
       "javascripts/application.js" ->
         group(Seq(
-          "javascripts/app.js",
           "lib/govuk-frontend/govuk/all.js",
           "javascripts/jquery.min.js",
           "javascripts/autocomplete.js",
           "javascripts/libraries/location-autocomplete.min.js",
+          "javascripts/app.js",
         ))
     ),
     // prevent removal of unused code which generates warning errors due to use of third-party libs

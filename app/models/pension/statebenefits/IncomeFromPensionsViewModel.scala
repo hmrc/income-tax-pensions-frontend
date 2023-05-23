@@ -29,7 +29,7 @@ case class IncomeFromPensionsViewModel(
                                        statePensionLumpSum: Option[StateBenefitViewModel] = None,
                                        uKPensionIncomesQuestion: Option[Boolean] = None,
                                        uKPensionIncomes:Seq[UkPensionIncomeViewModel] = Seq.empty) {
-
+  def isEmpty: Boolean = statePension.isEmpty && uKPensionIncomesQuestion.isEmpty && uKPensionIncomes.isEmpty
   def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedIncomeFromPensionsViewModel =
     EncryptedIncomeFromPensionsViewModel(
       statePension = statePension.map(_.encrypted()),

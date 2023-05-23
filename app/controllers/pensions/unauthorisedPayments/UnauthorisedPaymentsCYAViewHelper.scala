@@ -111,7 +111,7 @@ object UnauthorisedPaymentsCYAViewHelper extends CYABaseHelper {
                                                          taxYear: Int)(implicit messages: Messages): Option[SummaryListRow] = {
     unauthorisedPaymentsViewModel.unauthorisedPaymentQuestion.filter(_ == true).flatMap(_ =>
       unauthorisedPaymentsViewModel.ukPensionSchemesQuestion.filter(_ == true).map(_ =>
-        summaryListRowWithString(
+        summaryListRowWithStrings(
           "unauthorisedPayments.cya.pensionSchemeTaxReferences",
           unauthorisedPaymentsViewModel.pensionSchemeTaxReference,
           routes.UkPensionSchemeDetailsController.show(taxYear))(messages)

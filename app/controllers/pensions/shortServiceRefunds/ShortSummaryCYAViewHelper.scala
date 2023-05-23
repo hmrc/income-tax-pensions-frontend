@@ -68,7 +68,7 @@ object ShortSummaryCYAViewHelper extends CYABaseHelper {
         routes.NonUkTaxRefundsController.show(taxYear))(messages))
       case Some(false) => Some(summaryListRowWithString(
         "shortServiceRefunds.cya.nonUk",
-        Some(messages("common.noTaxPaid")).map(Seq(_)),
+        Some(messages("common.noTaxPaid")),
         routes.NonUkTaxRefundsController.show(taxYear))(messages))
       case None => None
     }
@@ -95,7 +95,7 @@ object ShortSummaryCYAViewHelper extends CYABaseHelper {
         if (shortServiceRefundsViewModel.refundPensionScheme.isEmpty){
           Option.empty[SummaryListRow]
         } else {
-          Some(summaryListRowWithString(
+          Some(summaryListRowWithStrings(
             "shortServiceRefunds.cya.schemesPayingTax",
             Some(shortServiceRefundsViewModel.refundPensionScheme.flatMap(_.name)),
             routes.RefundSummaryController.show(taxYear))(messages)

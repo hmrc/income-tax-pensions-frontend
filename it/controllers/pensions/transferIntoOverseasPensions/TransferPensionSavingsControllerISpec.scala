@@ -35,7 +35,7 @@ class TransferPensionSavingsControllerISpec
           implicit val userConfig: UserConfig = userConfigWhenIrrelevant(None)
           implicit val response: WSResponse = getPage
 
-          assertRedirectionAsExpected(PageRelativeURLs.overseasPensionsSummary)
+          assertRedirectionAsExpected(PageRelativeURLs.pensionsSummaryPage)
         }
       }
     }
@@ -46,7 +46,7 @@ class TransferPensionSavingsControllerISpec
           implicit val userConfig: UserConfig = userConfigWhenIrrelevant(None)
           implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoPage(Some(false)))
 
-          assertRedirectionAsExpected(PageRelativeURLs.overseasPensionsSummary)
+          assertRedirectionAsExpected(PageRelativeURLs.pensionsSummaryPage)
           getTransferPensionsViewModel mustBe None
         }
       }

@@ -17,13 +17,13 @@
 package controllers.pensions.lifetimeAllowances
 
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.routes.PensionsSummaryController
 import controllers.pensions.lifetimeAllowances.routes.PensionTakenAnotherWayAmountController
+import controllers.pensions.routes.PensionsSummaryController
 import controllers.predicates.AuthorisedAction
 import forms.YesNoForm
 import models.User
 import models.mongo.PensionsCYAModel
-import models.pension.charges.{LifetimeAllowance, PensionLifetimeAllowancesViewModel}
+import models.pension.charges.PensionLifetimeAllowancesViewModel
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -33,8 +33,6 @@ import utils.Clock
 import views.html.pensions.lifetimeAllowances.LifeTimeAllowanceAnotherWayView
 
 import javax.inject.{Inject, Singleton}
-import models.pension.charges
-
 import scala.concurrent.Future
 
 @Singleton
@@ -77,7 +75,7 @@ class LifeTimeAllowanceAnotherWayController @Inject()(implicit val cc: MessagesC
               pensionsCYAModel.copy(
                 pensionLifetimeAllowances = viewModel.copy(
                   pensionPaidAnotherWayQuestion = Some(yesNo),
-                  pensionPaidAnotherWay = if (yesNo) charges.LifetimeAllowance(viewModel.pensionPaidAnotherWay.amount, viewModel.pensionPaidAnotherWay.taxPaid) else LifetimeAllowance())
+                  pensionPaidAnotherWay = if (yesNo) viewModel.pensionPaidAnotherWay else None)
               )
             }
             pensionSessionService.createOrUpdateSessionData(request.user,

@@ -16,16 +16,16 @@
 
 package services
 
-import models.mongo.{PensionsCYAModel, PensionsUserData}
-import models.redirects.ConditionalRedirect
 import controllers.pensions.paymentsIntoPensions.routes._
-import models.pension.reliefs.PaymentsIntoPensionViewModel
-import play.api.Logging
-import play.api.mvc.{Call, Request, Result}
-import play.api.mvc.Results.Redirect
-import utils.PaymentsIntoPensionPages
-import utils.PaymentsIntoPensionPages._
 import controllers.pensions.routes._
+import models.mongo.{PensionsCYAModel, PensionsUserData}
+import models.pension.reliefs.PaymentsIntoPensionViewModel
+import models.redirects.ConditionalRedirect
+import play.api.Logging
+import play.api.mvc.Results.Redirect
+import play.api.mvc.{Call, Result}
+import services.redirects.PaymentsIntoPensionPages
+import PaymentsIntoPensionPages._
 
 import scala.concurrent.Future
 
@@ -40,11 +40,11 @@ object RedirectService extends Logging {
   //1. Current Redirects
   //2. Next Page Redirects
 
-  def redirectBasedOnRequest[T](request: Request[T], optUserData: Option[PensionsUserData], taxYear: Int):
+  def redirectBasedOnRequest[T](optUserData: Option[PensionsUserData], taxYear: Int):
   Either[Result, PensionsUserData] = {
     optUserData match {
       case Some(userData) => Right(userData)
-      case None => Left(Redirect(OverseasPensionsSummaryController.show(taxYear))) //No session data atm redirect to overseas pensions summary page
+      case None => Left(Redirect(PensionsSummaryController.show(taxYear))) //No session data atm redirect to pensions summary page
     }
   }
 
@@ -116,7 +116,7 @@ object RedirectService extends Logging {
               RetirementAnnuityController.show(taxYear),
               Some(RetirementAnnuityPage.journeyNo)),
             ConditionalRedirect(
-              pIP.retirementAnnuityContractPaymentsQuestion.contains(true) && pIP.totalRetirementAnnuityContractPayments.isEmpty,
+              pIP.retirementAnnuityContractPaymentsQuestion.exists(x => x) && pIP.totalRetirementAnnuityContractPayments.isEmpty,
               RetirementAnnuityAmountController.show(taxYear),
               Some(RetirementAnnuityAmountPage.journeyNo)),
             ConditionalRedirect(
@@ -124,7 +124,7 @@ object RedirectService extends Logging {
               WorkplacePensionController.show(taxYear),
               Some(WorkplacePensionPage.journeyNo)),
             ConditionalRedirect(
-              pIP.workplacePensionPaymentsQuestion.contains(true) && pIP.totalWorkplacePensionPayments.isEmpty,
+              pIP.workplacePensionPaymentsQuestion.exists(x => x)  && pIP.totalWorkplacePensionPayments.isEmpty,
               WorkplaceAmountController.show(taxYear),
               Some(WorkplacePensionAmountPage.journeyNo))
           )

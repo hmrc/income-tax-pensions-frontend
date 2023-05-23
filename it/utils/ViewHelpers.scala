@@ -47,7 +47,7 @@ trait ViewHelpers {
 
   def agentTest(isAgent: Boolean): String = if (isAgent) "Agent" else "Individual"
 
-  def authoriseAgentOrIndividual(isAgent: Boolean, nino: Boolean = true): StubMapping = if (isAgent) authoriseAgent() else authoriseIndividual(nino)
+  def authoriseAgentOrIndividual(isAgent: Boolean = false, nino: Boolean = true): StubMapping = if (isAgent) authoriseAgent() else authoriseIndividual(nino)
 
   def unauthorisedAgentOrIndividual(isAgent: Boolean): StubMapping = if (isAgent) authoriseAgentUnauthorized() else authoriseIndividualUnauthorized()
 

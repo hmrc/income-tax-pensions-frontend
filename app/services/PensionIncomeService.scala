@@ -17,14 +17,14 @@
 package services
 
 import connectors.{IncomeTaxUserDataConnector, PensionsConnector}
-import models.{IncomeTaxUserData, User}
 import models.mongo.{PensionsCYAModel, PensionsUserData, ServiceError}
 import models.pension.charges.IncomeFromOverseasPensionsViewModel
+import models.pension.income.CreateUpdatePensionIncomeModel
+import models.{IncomeTaxUserData, User}
 import org.joda.time.DateTimeZone
 import repositories.PensionsUserDataRepository
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.{Clock, FutureEitherOps}
-import models.pension.income.CreateUpdatePensionIncomeModel
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -64,7 +64,7 @@ class PensionIncomeService @Inject()(pensionUserDataRepository: PensionsUserData
         updatedFp = viewModel.map(_.toForeignPension)
         updatedIncomeData = CreateUpdatePensionIncomeModel(
           foreignPension = updatedFp,
-          overseasPensionContribution = priorData.pensions.flatMap(_.pensionIncome.map(y => y.overseasPensionContribution))
+          overseasPensionContribution = priorData.pensions.flatMap(_.pensionIncome.flatMap(_.overseasPensionContribution))
         )
         _ <- FutureEitherOps[ServiceError, Unit](pensionsConnector.savePensionIncomeSessionData(user.nino, taxYear, updatedIncomeData)(hcWithExtras, ec))
         updatedCYA = getPensionsUserData(sessionData, user)
@@ -73,9 +73,5 @@ class PensionIncomeService @Inject()(pensionUserDataRepository: PensionsUserData
         result
       }).value
   }
-
 }
-
-
-
 

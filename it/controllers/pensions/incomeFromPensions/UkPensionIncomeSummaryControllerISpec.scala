@@ -117,12 +117,12 @@ class UkPensionIncomeSummaryControllerISpec extends IntegrationTest with BeforeA
           textOnPageCheck(pensionName2, pensionNameSelector(2))
           
           //TODO: replace hrefs "#" below with link to first details page when available .e.g. UkPensionSchemeDetailsCYAController.show(taxYearEOY, Some(1)).url
-          linkCheck(s"$change $change $pensionName1", changeLinkSelector(1), "#")
-          linkCheck(s"$change $change $pensionName2", changeLinkSelector(2),"#")
+          linkCheck(s"$change $change $pensionName1", changeLinkSelector(1), pensionSchemeSummaryUrl(taxYearEOY, Some(0)))
+          linkCheck(s"$change $change $pensionName2", changeLinkSelector(2), pensionSchemeSummaryUrl(taxYearEOY, Some(1)))
           //TODO: replace hrefs "#" below with link to remove page when available .e.g. RemovePensionSchemeDetailsController.show(taxYearEOY, Some(1)).url
           linkCheck(s"$remove $remove $pensionName1", removeLinkSelector(1), s"${removePensionSchemeUrl(taxYearEOY, Some(0))}")
           linkCheck(s"$remove $remove $pensionName2", removeLinkSelector(2), s"${removePensionSchemeUrl(taxYearEOY, Some(1))}")
-          linkCheck(expectedAddAnotherText, addAnotherLinkSelector, pensionSchemeDetailsUrl(taxYearEOY))
+          linkCheck(expectedAddAnotherText, addAnotherLinkSelector, pensionSchemeDetailsUrl(taxYearEOY, None))
           buttonCheck(expectedButtonText, continueButtonSelector, Some(ukPensionIncomeCyaUrl(taxYearEOY)))
           welshToggleCheck(user.isWelsh)
         }
@@ -148,7 +148,7 @@ class UkPensionIncomeSummaryControllerISpec extends IntegrationTest with BeforeA
           h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY))
           elementNotOnPageCheck(summaryListTableSelector)
-          linkCheck(expectedAddPensionSchemeText, addLinkSelector, pensionSchemeDetailsUrl(taxYearEOY))
+          linkCheck(expectedAddPensionSchemeText, addLinkSelector, pensionSchemeDetailsUrl(taxYearEOY, None))
           buttonCheck(expectedButtonText, continueButtonSelector, Some(ukPensionIncomeCyaUrl(taxYearEOY)))
           welshToggleCheck(user.isWelsh)
         }
@@ -159,7 +159,7 @@ class UkPensionIncomeSummaryControllerISpec extends IntegrationTest with BeforeA
     "redirect to the income from pensions CYA page if there is no session data" should {
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         urlGet(fullUrl(ukPensionSchemeSummaryListUrl(taxYearEOY)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }

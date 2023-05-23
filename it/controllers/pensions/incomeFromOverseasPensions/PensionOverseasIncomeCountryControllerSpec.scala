@@ -65,7 +65,7 @@ class PensionOverseasIncomeCountryControllerSpec extends CommonUtils with Before
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
-    val expectedError: String = "Enter the name of the country the pension scheme is registered in"
+    val expectedError: String = "Nodwch enw’r wlad lle y mae’r cynllun pensiwn wedi’i gofrestru"
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
@@ -73,7 +73,7 @@ class PensionOverseasIncomeCountryControllerSpec extends CommonUtils with Before
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
-    val expectedError: String = "Enter the name of the country that your client’s pension scheme is registered in"
+    val expectedError: String = "Nodwch enw’r wlad lle mae cynllun pensiwn eich cleient wedi’i gofrestru"
   }
 
   object CommonExpectedEN extends CommonExpectedResults {
@@ -87,11 +87,11 @@ class PensionOverseasIncomeCountryControllerSpec extends CommonUtils with Before
 
   object CommonExpectedCY extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Incwm o bensiynau tramor ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
-    val expectedTitle: String = "What country is the pension scheme registered in?"
+    val expectedTitle: String = "Ym mha wlad y mae’r cynllun pensiwn wedi’i gofrestru?"
     val expectedErrorTitle: String = s"Gwall: $expectedTitle"
     val expectedButtonText: String = "Yn eich blaen"
-    val expectedParagraph: String = "You can add pension schemes from other countries later."
-    val expectedSubHeading: String = "Country"
+    val expectedParagraph: String = "Gallwch ychwanegu cynlluniau pensiwn o wledydd eraill yn nes ymlaen."
+    val expectedSubHeading: String = "Gwlad"
   }
 
   val inputName: String = "countryId"

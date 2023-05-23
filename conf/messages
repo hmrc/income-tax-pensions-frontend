@@ -569,6 +569,26 @@ pensions.statePension.amount.error.noEntry.agent = Enter your client’s State P
 pensions.statePension.amount.error.incorrectFormat.agent = Enter your client’s State Pension amount in the correct format
 pensions.statePension.amount.error.overMaximum.agent = Your client’s State Pension amount must be less than £100,000,000,000
 
+#State Pension CYA page
+statePension.cya.title.agent = Check your client's State Pension
+statePension.cya.title.individual = Check your State Pension
+statePension.cya.paragraph1.agent  = Your client's State Pension income is based on the information we already hold about them.
+statePension.cya.paragraph2.agent  = You cannot update your client's State Pension income until 6 April 2023.
+statePension.cya.paragraph1.individual  = Your State Pension income is based on information we already hold about you.
+statePension.cya.paragraph2.individual  = You can change the amounts if they''re not correct.
+statePension.cya.statePension.label = State Pension
+statePension.cya.statePension.label.hidden = Change state pension
+statePension.cya.startDate.label = State Pension start date
+statePension.cya.startDate.label.hidden = Change State Pension start date
+statePension.cya.lumpSum.label = Lump sum
+statePension.cya.lumpSum.label.hidden = Change lump sum
+statePension.cya.lumpSumTax.label = Lump sum tax
+statePension.cya.lumpSumTax.label.hidden = Change Lump sum tax
+statePension.cya.lumpSumDate.label = Lump sum date
+statePension.cya.lumpSumDate.label.hidden = Change lump sum date
+statePension.cya.taxCalc.label = State Pension added to tax calculation
+statePension.cya.taxCalc.label.hidden = Change State Pension added to tax calculation
+
 #Income From Pensions Summary
 incomeFromPensions.incomeFromPensionsSummary.statePensions = State pension
 incomeFromPensions.incomeFromPensionsSummary.otherUkPensions = Other UK Pensions
@@ -635,12 +655,25 @@ incomeFromPensions.pensionStartDate.error.tooLongAgo = The pension start date mu
 incomeFromPensions.removePensionScheme.buttonText = Remove pension
 
 #Uk Pension Income CYA page
-incomeFromPensions.title = Check income from pensions
+incomeFromPensions.title = Check UK Pension Income
 incomeFromPensions.paragraph.individual = Your income from pensions is based on the information we already hold about you.
 incomeFromPensions.paragraph.agent = Your client’s income from pensions is based on the information we already hold about them.
 incomeFromPensions.pensionIncome.hidden.individual = Change whether you got income from UK pensions
 incomeFromPensions.pensionIncome.hidden.agent = Change whether your client got income from UK pensions
 incomeFromPensions.pensionSchemes.hidden = Change UK pension scheme details
+
+#Uk Pension Income Summary page
+incomeFromPensions.schemeDetails.summary.title = Check pension scheme details
+incomeFromPensions.schemeDetails.summary.details = Scheme details
+incomeFromPensions.schemeDetails.summary.details.hidden = Change scheme details
+incomeFromPensions.schemeDetails.summary.income = Pension income
+incomeFromPensions.schemeDetails.summary.income.hidden = Change pension income
+incomeFromPensions.schemeDetails.summary.date = Pension start date
+incomeFromPensions.schemeDetails.summary.date.hidden = Change pension start date
+incomeFromPensions.schemeDetails.summary.paye = PAYE:
+incomeFromPensions.schemeDetails.summary.pid = PID:
+incomeFromPensions.schemeDetails.summary.pay = Pay:
+incomeFromPensions.schemeDetails.summary.tax = Tax:
 
 #################       Lifetime Allowance       ########################################
 

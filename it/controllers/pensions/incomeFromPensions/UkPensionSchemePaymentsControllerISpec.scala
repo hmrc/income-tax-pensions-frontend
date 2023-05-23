@@ -29,7 +29,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.IncomeFromPensionsPages.{pensionSchemeDetailsUrl, ukPensionIncomeCyaUrl, ukPensionSchemePayments}
+import utils.PageUrls.IncomeFromPensionsPages.{ukPensionIncomeCyaUrl, ukPensionSchemePayments, ukPensionSchemeSummaryListUrl}
 import utils.PageUrls.{fullUrl, overviewUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
@@ -205,7 +205,7 @@ class UkPensionSchemePaymentsControllerISpec extends IntegrationTest with ViewHe
     "render the page if there is no session data" which {
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         urlGet(fullUrl(ukPensionSchemePayments(taxYearEOY)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -219,7 +219,7 @@ class UkPensionSchemePaymentsControllerISpec extends IntegrationTest with ViewHe
 
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         val pensionsViewModel = anIncomeFromPensionsViewModel.copy(uKPensionIncomesQuestion = None)
         insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(incomeFromPensions = pensionsViewModel)), aUserRequest)
         urlGet(fullUrl(ukPensionSchemePayments(taxYear)), follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
@@ -279,7 +279,7 @@ class UkPensionSchemePaymentsControllerISpec extends IntegrationTest with ViewHe
       lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.yes)
       lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(isAgent = false)
+        authoriseAgentOrIndividual()
         val pensionsViewModel = anIncomeFromPensionsViewModel.copy(uKPensionIncomesQuestion = None)
         insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(incomeFromPensions = pensionsViewModel)), aUserRequest)
         urlPost(fullUrl(ukPensionSchemePayments(taxYearEOY)), body = form, follow = false,
@@ -288,7 +288,7 @@ class UkPensionSchemePaymentsControllerISpec extends IntegrationTest with ViewHe
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(pensionSchemeDetailsUrl(taxYearEOY))
+        result.header("location") shouldBe Some(ukPensionSchemeSummaryListUrl(taxYearEOY))
       }
 
       "updates amount paid question to Some(true)" in {
@@ -302,7 +302,7 @@ class UkPensionSchemePaymentsControllerISpec extends IntegrationTest with ViewHe
     lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.no)
     lazy val result: WSResponse = {
       dropPensionsDB()
-      authoriseAgentOrIndividual(isAgent = false)
+      authoriseAgentOrIndividual()
       userDataStub(anIncomeTaxUserData, nino, taxYearEOY)
       val pensionsViewModel = anIncomeFromPensionsViewModel.copy(uKPensionIncomesQuestion = Some(true))
       insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(incomeFromPensions = pensionsViewModel)), aUserRequest)
@@ -329,7 +329,7 @@ class UkPensionSchemePaymentsControllerISpec extends IntegrationTest with ViewHe
     lazy val result: WSResponse = {
 
       dropPensionsDB()
-      authoriseAgentOrIndividual(isAgent = false)
+      authoriseAgentOrIndividual()
       userDataStub(anIncomeTaxUserData, nino, taxYear)
       val pensionsViewModel = anIncomeFromPensionsViewModel.copy(uKPensionIncomesQuestion = Some(true))
       insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(incomeFromPensions = pensionsViewModel)), aUserRequest)
