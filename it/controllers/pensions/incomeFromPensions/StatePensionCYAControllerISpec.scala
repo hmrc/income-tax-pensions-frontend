@@ -16,12 +16,13 @@
 
 package controllers.pensions.incomeFromPensions
 
-import builders.AllPensionsDataBuilder.anAllPensionsData
+import builders.AllPensionsDataBuilder.{anAllPensionDataEmpty, anAllPensionsData}
 import builders.IncomeTaxUserDataBuilder.anIncomeTaxUserData
-import builders.PensionsCYAModelBuilder.aPensionsCYAModel
+import builders.PensionsCYAModelBuilder.{aPensionsCYAEmptyModel, aPensionsCYAModel}
 import builders.PensionsUserDataBuilder
 import builders.UserBuilder.{aUser, aUserRequest}
 import models.mongo.PensionsCYAModel
+import models.pension.AllPensionsData.generateCyaFromPrior
 import play.api.http.HeaderNames
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
@@ -81,21 +82,24 @@ class StatePensionCYAControllerISpec extends IntegrationTest with ViewHelpers wi
         result.headers("location").head shouldBe overviewUrl(taxYear)
       }
 
-      "redirect to pension Income Summary page" in {
-        lazy implicit val result: WSResponse = {
-          dropPensionsDB()
-          authoriseAgentOrIndividual(aUser.isAgent)
-          insertCyaData(pensionsUsersData(aPensionsCYAModel), aUserRequest)
-          userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYearEOY)
-          urlPost(
-            fullUrl(statePensionCyaUrl(taxYearEOY)),
-            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
-            follow = false,
-            body = "")
+      for ( (state, cya) <- Seq( ("changed", aPensionsCYAModel), ("not changed", generateCyaFromPrior(anAllPensionDataEmpty)) )) {
+        s"redirect to pension Income Summary page when data has $state" in {
+          lazy implicit val result: WSResponse = {
+            dropPensionsDB()
+            authoriseAgentOrIndividual(aUser.isAgent)
+            insertCyaData(pensionsUsersData(cya), aUserRequest)
+            userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionDataEmpty)), nino, taxYearEOY)
+            urlPost(
+              fullUrl(statePensionCyaUrl(taxYearEOY)),
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
+              follow = false,
+              body = "")
+          }
+          result.status shouldBe SEE_OTHER
+          result.headers("location").head shouldBe pensionIncomeSummaryUrl(taxYearEOY)
         }
-        result.status shouldBe SEE_OTHER
-        result.headers("location").head shouldBe pensionIncomeSummaryUrl(taxYearEOY)
       }
+      //TODO: ADD tests for unhappy path  conditions following submission to API via connector
     }
   }
 }
