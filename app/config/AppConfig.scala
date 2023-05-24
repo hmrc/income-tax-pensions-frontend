@@ -40,10 +40,11 @@ class AppConfig @Inject()(servicesConfig: ServicesConfig) {
 
   lazy val pensionBEBaseUrl: String = servicesConfig.getString(ConfigKeys.incomeTaxPensionsUrl) + "/income-tax-pensions"
 
-  lazy val statePensionBEBaseUrl: String = servicesConfig.getString(ConfigKeys.incomeTaxStateBenefitsUrl)
+  lazy val statePensionBEBaseUrl: String = servicesConfig.getString(incomeTaxStateBenefitsUrl)
+  private val incomeTaxStateBenefitsUrl = "microservice.services.income-tax-state-benefits.url"
 
   lazy val nrsProxyBaseUrl: String = servicesConfig.getString(incomeTaxNrsProxyUrlKey)
-  val incomeTaxNrsProxyUrlKey = "microservice.services.income-tax-nrs-proxy.url"
+  private val incomeTaxNrsProxyUrlKey = "microservice.services.income-tax-nrs-proxy.url"
 
   def incomeTaxSubmissionBaseUrl: String = servicesConfig.getString(ConfigKeys.incomeTaxSubmissionFrontendUrl) +
     servicesConfig.getString("microservice.services.income-tax-submission-frontend.context")

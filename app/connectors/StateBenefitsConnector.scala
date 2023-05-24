@@ -29,7 +29,7 @@ class StateBenefitsConnector @Inject()(val http: HttpClient,
 
   def saveClaimData(nino: String, model: StateBenefitsUserData)
                    (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[StateBenefitsSessionResponse] = {
-    val url = appConfig.statePensionBEBaseUrl + s"/claim-data/nino/$nino"
+    val url = appConfig.statePensionBEBaseUrl + s"/income-tax-state-benefits/claim-data/nino/$nino"
     http.PUT[StateBenefitsUserData, StateBenefitsSessionResponse](
       url, model)(StateBenefitsUserData.stateBenefitsUserDataWrites, StateBenefitsSessionHttpReads, hc, ec)
   }
