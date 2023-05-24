@@ -40,8 +40,8 @@ class StatePensionServiceSpec extends UnitTest
   val userWithEmptySaveIncomeFromPensionsCya = aPensionsUserData.copy(pensions = aPensionsCYAEmptyModel)
 
   ".persistIncomeFromPensionsViewModel" should {
-    "return Right(Unit) when StatePension and StatePensionLumpSum models are saved successfully and income from pensions cya is cleared from DB" in {
 
+    "return Right(Unit) when StatePension and StatePensionLumpSum models are saved successfully and income from pensions cya is cleared from DB" in {
       mockFind(taxYear, aUser, Right(Option(sessionUserData)))
 
       mockSaveClaimData(nino, aStatePensionBenefitsUD, Right(()))

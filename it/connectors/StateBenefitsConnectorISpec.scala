@@ -43,15 +43,12 @@ class StateBenefitsConnectorISpec extends IntegrationTest {
 
     "Return a success result" when {
       "submission returns a 204" in {
-        stubPutWithHeadersCheck(
-          url,
-          NO_CONTENT,
-          "{}",
-          "X-Session-ID" -> sessionId,
+        stubPutWithHeadersCheck(url, NO_CONTENT, "{}", "X-Session-ID" -> sessionId,
           "mtditid" -> mtditid)
 
         val resultSP = Await.result(connector.saveClaimData(nino, sPModel), Duration.Inf)
         val resultSPLS = Await.result(connector.saveClaimData(nino, sPLSModel), Duration.Inf)
+
         resultSP shouldBe Right(())
         resultSPLS shouldBe Right(())
       }
