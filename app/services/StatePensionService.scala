@@ -79,7 +79,7 @@ class StatePensionService @Inject()(pensionUserDataRepository: PensionsUserDataR
         taxYear = taxYear,
         benefitDataType = "hmrcData", //todo check "hmrcData" / "customerAdded" / "customerOverride" benefit data types
         claim = Some(claimModel),
-        lastUpdated = Instant.parse(sessionData.lastUpdated.toLocalDateTime.toString)
+        lastUpdated = Instant.parse(sessionData.lastUpdated.toLocalDateTime.toString + "Z")
       )
     }
 

@@ -86,6 +86,7 @@ trait IntegrationTest extends AnyWordSpec with Matchers with GuiceOneServerPerSu
     "microservice.services.auth.port" -> wiremockPort.toString,
     "microservice.services.income-tax-pensions.url" -> s"http://$wiremockHost:$wiremockPort",
     "microservice.services.income-tax-submission.url" -> s"http://$wiremockHost:$wiremockPort",
+    "microservice.services.income-tax-state-benefits.url" -> s"http://$wiremockHost:$wiremockPort",
     "microservice.services.view-and-change.url" -> s"http://$wiremockHost:$wiremockPort",
     "microservice.services.income-tax-nrs-proxy.url" -> s"http://$wiremockHost:$wiremockPort",
     "microservice.services.sign-in.url" -> s"/auth-login-stub/gg-sign-in",
@@ -104,6 +105,7 @@ trait IntegrationTest extends AnyWordSpec with Matchers with GuiceOneServerPerSu
     "microservice.services.income-tax-pensions.url" -> s"http://$wiremockHost:$wiremockPort",
     "microservice.services.income-tax-expenses.url" -> s"http://$wiremockHost:$wiremockPort",
     "microservice.services.income-tax-submission.url" -> s"http://$wiremockHost:$wiremockPort",
+    "microservice.services.income-tax-state-benefits.url" -> s"http://$wiremockHost:$wiremockPort",
     "microservice.services.view-and-change.url" -> s"http://$wiremockHost:$wiremockPort",
     "microservice.services.sign-in.url" -> s"/auth-login-stub/gg-sign-in",
     "taxYearErrorFeatureSwitch" -> "false",
@@ -251,6 +253,15 @@ trait IntegrationTest extends AnyWordSpec with Matchers with GuiceOneServerPerSu
   def nrsSubmissionStub(jsonBody: String, nino: String): StubMapping = {
     stubPutWithHeadersCheck(
       url = s"/income-tax-nrs-proxy/$nino/itsa-personal-income-submission", status = NO_CONTENT,
+      body = jsonBody,
+      sessionHeader = "X-Session-ID" -> defaultUser.sessionId,
+      mtdidHeader = "mtditid" -> defaultUser.mtdItId
+    )
+  }
+
+  def stateBenefitsSubmissionStub(jsonBody: String, nino: String): StubMapping = {
+    stubPutWithHeadersCheck(
+      url = s"/income-tax-state-benefits/claim-data/nino/$nino", status = NO_CONTENT,
       body = jsonBody,
       sessionHeader = "X-Session-ID" -> defaultUser.sessionId,
       mtdidHeader = "mtditid" -> defaultUser.mtdItId

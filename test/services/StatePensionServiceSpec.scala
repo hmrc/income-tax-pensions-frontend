@@ -16,23 +16,16 @@
 
 package services
 
-import builders.AllPensionsDataBuilder.anAllPensionsData
 import builders.PensionsCYAModelBuilder.aPensionsCYAEmptyModel
 import builders.PensionsUserDataBuilder.aPensionsUserData
+import builders.StateBenefitsUserDataBuilder.{aStatePensionBenefitsUD, aStatePensionLumpSumBenefitsUD}
 import builders.UserBuilder.aUser
 import config.{MockIncomeTaxUserDataConnector, MockPensionUserDataRepository, MockStateBenefitsConnector}
-import connectors.StateBenefitsConnector
-import models.mongo.{DataNotFound, DataNotUpdated, StateBenefitsUserData}
-import models.pension.income.CreateUpdatePensionIncomeModel
-import models.pension.reliefs.{CreateOrUpdatePensionReliefsModel, Reliefs}
-import models.pension.statebenefits.ClaimCYAModel
-import models.{APIErrorBodyModel, APIErrorModel, IncomeTaxUserData}
+import models.mongo.{DataNotFound, DataNotUpdated}
+import models.{APIErrorBodyModel, APIErrorModel}
 import org.scalatest.concurrent.ScalaFutures
 import play.api.http.Status.BAD_REQUEST
-import java.time.{Instant, LocalDate}
 import utils.UnitTest
-
-import java.time.Instant
 
 class StatePensionServiceSpec extends UnitTest
   with MockPensionUserDataRepository
@@ -42,63 +35,48 @@ class StatePensionServiceSpec extends UnitTest
 
   val statePensionService = new StatePensionService(mockPensionUserDataRepository, mockStateBenefitsConnector)
 
+  val sessionCya = aPensionsCYAEmptyModel.copy(incomeFromPensions = aPensionsUserData.pensions.incomeFromPensions)
+  val sessionUserData = aPensionsUserData.copy(pensions = sessionCya)
+  val userWithEmptySaveIncomeFromPensionsCya = aPensionsUserData.copy(pensions = aPensionsCYAEmptyModel)
+
   ".persistIncomeFromPensionsViewModel" should {
     "return Right(Unit) when StatePension and StatePensionLumpSum models are saved successfully and income from pensions cya is cleared from DB" in {
-      val sessionCya = aPensionsCYAEmptyModel.copy(incomeFromPensions = aPensionsUserData.pensions.incomeFromPensions)
-      val sessionUserData = aPensionsUserData.copy(pensions = sessionCya)
 
       mockFind(taxYear, aUser, Right(Option(sessionUserData)))
 
-      val dataSP = sessionUserData.pensions.incomeFromPensions.statePension
-      val dataSPLS = sessionUserData.pensions.incomeFromPensions.statePensionLumpSum
-      val statePensionModel = StateBenefitsUserData(
-        benefitType = "statePension",
-        sessionDataId = None,
-        sessionId = sessionId,
-        mtdItId = mtditid,
-        nino = nino,
-        taxYear = taxYear,
-        benefitDataType = "hmrcData",
-        claim = Some(ClaimCYAModel(
-          benefitId = dataSP.flatMap(_.benefitId),
-          startDate = dataSP.flatMap(_.startDate).getOrElse(LocalDate.now()),
-          endDateQuestion = dataSP.flatMap(_.endDateQuestion),
-          endDate = dataSP.flatMap(_.endDate),
-          dateIgnored = dataSP.flatMap(_.dateIgnored),
-          submittedOn = dataSP.flatMap(_.submittedOn),
-          amount = dataSP.flatMap(_.amount),
-          taxPaidQuestion = dataSP.flatMap(_.taxPaidQuestion),
-          taxPaid = dataSP.flatMap(_.taxPaid))),
-        lastUpdated = Instant.parse(sessionUserData.lastUpdated.toLocalDateTime.toString)
-      )
-      val lumpSumModel = StateBenefitsUserData(
-        benefitType = "statePensionLumpSum",
-        sessionDataId = None,
-        sessionId = sessionId,
-        mtdItId = mtditid,
-        nino = nino,
-        taxYear = taxYear,
-        benefitDataType = "hmrcData",
-        claim = Some(ClaimCYAModel(
-          benefitId = dataSPLS.flatMap(_.benefitId),
-          startDate = dataSPLS.flatMap(_.startDate).getOrElse(LocalDate.now()),
-          endDateQuestion = dataSPLS.flatMap(_.endDateQuestion),
-          endDate = dataSPLS.flatMap(_.endDate),
-          dateIgnored = dataSPLS.flatMap(_.dateIgnored),
-          submittedOn = dataSPLS.flatMap(_.submittedOn),
-          amount = dataSPLS.flatMap(_.amount),
-          taxPaidQuestion = dataSPLS.flatMap(_.taxPaidQuestion),
-          taxPaid = dataSPLS.flatMap(_.taxPaid))),
-        lastUpdated = Instant.parse(sessionUserData.lastUpdated.toLocalDateTime.toString)
-      )
-
-      val userWithEmptySaveIncomeFromPensionsCya = aPensionsUserData.copy(pensions = aPensionsCYAEmptyModel)
-      mockSaveClaimData(nino, statePensionModel, Right(()))
-      mockSaveClaimData(nino, lumpSumModel, Right(()))
+      mockSaveClaimData(nino, aStatePensionBenefitsUD, Right(()))
+      mockSaveClaimData(nino, aStatePensionLumpSumBenefitsUD, Right(()))
       mockCreateOrUpdate(userWithEmptySaveIncomeFromPensionsCya, Right(()))
 
       val result = await(statePensionService.persistIncomeFromPensionsViewModel(aUser, taxYear))
       result shouldBe Right(())
+    }
+
+    "return Left(DataNotFound) when user can not be found in DB" in {
+      mockFind(taxYear, aUser, Left(DataNotFound))
+
+      val result = await(statePensionService.persistIncomeFromPensionsViewModel(aUser, taxYear))
+      result shouldBe Left(DataNotFound)
+    }
+
+    "return Left(APIErrorModel) when pension connector could not be connected" in {
+      mockFind(taxYear, aUser, Right(Option(sessionUserData)))
+
+      mockSaveClaimData(nino, aStatePensionBenefitsUD, Left(APIErrorModel(BAD_REQUEST, APIErrorBodyModel("FAILED", "failed"))))
+
+      val result = await(statePensionService.persistIncomeFromPensionsViewModel(aUser, taxYear))
+      result shouldBe Left(APIErrorModel(BAD_REQUEST, APIErrorBodyModel("FAILED", "failed")))
+    }
+
+    "return Left(DataNotUpdated) when data could not be updated" in {
+      mockFind(taxYear, aUser, Right(Option(sessionUserData)))
+
+      mockSaveClaimData(nino, aStatePensionBenefitsUD, Right(()))
+      mockSaveClaimData(nino, aStatePensionLumpSumBenefitsUD, Right(()))
+      mockCreateOrUpdate(userWithEmptySaveIncomeFromPensionsCya, Left(DataNotUpdated))
+
+      val result = await(statePensionService.persistIncomeFromPensionsViewModel(aUser, taxYear))
+      result shouldBe Left(DataNotUpdated)
     }
   }
 }

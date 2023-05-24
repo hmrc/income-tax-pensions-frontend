@@ -31,6 +31,7 @@ class AppConfigSpec extends UnitTest {
 
   (mockServicesConfig.getString(_: String)).expects("microservice.services.contact-frontend.url").returns("http://contact-frontend:9250")
   (mockServicesConfig.getString(_: String)).expects("microservice.services.income-tax-submission.url").returns("http://income-tax-submission")
+  (mockServicesConfig.getString(_: String)).expects("microservice.services.income-tax-state-benefits.url").returns("http://income-tax-state-benefits")
   (mockServicesConfig.getString(_: String)).expects("microservice.services.income-tax-submission-frontend.url")
     .returns("http://income-tax-submission-frontend").twice()
   (mockServicesConfig.getString(_: String)).expects("microservice.services.income-tax-submission-frontend.context")
