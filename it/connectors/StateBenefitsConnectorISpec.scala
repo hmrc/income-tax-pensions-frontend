@@ -17,12 +17,15 @@
 package connectors
 
 import builders.StateBenefitsUserDataBuilder.{aStatePensionBenefitsUD, aStatePensionLumpSumBenefitsUD}
+import connectors.httpParsers.StateBenefitsSessionHttpParser
+import connectors.httpParsers.StateBenefitsSessionHttpParser.StateBenefitsSessionResponse
 import models.{APIErrorBodyModel, APIErrorModel}
 import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.test.Helpers.OK
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
 import utils.IntegrationTest
+import utils.PagerDutyHelper.PagerDutyKeys.FAILED_TO_FIND_PENSIONS_DATA
 
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
@@ -41,13 +44,28 @@ class StateBenefitsConnectorISpec extends IntegrationTest {
 
   "StateBenefitsConnector .saveClaimData" should {
 
-    "Return a success result" when {
-      "submission returns a 204" in {
+    "Return a success 204 result" when {
+      "submission has no content" in {
+
         stubPutWithHeadersCheck(url, NO_CONTENT, "{}", "X-Session-ID" -> sessionId,
           "mtditid" -> mtditid)
 
-        val resultSP = Await.result(connector.saveClaimData(nino, sPModel), Duration.Inf)
-        val resultSPLS = Await.result(connector.saveClaimData(nino, sPLSModel), Duration.Inf)
+        val resultSP: StateBenefitsSessionResponse = Await.result(connector.saveClaimData(nino, sPModel), Duration.Inf)
+        val resultSPLS: StateBenefitsSessionResponse = Await.result(connector.saveClaimData(nino, sPLSModel), Duration.Inf)
+
+        resultSP shouldBe Right(())
+        resultSPLS shouldBe Right(())
+      }
+
+      "payload is successfully submitted" in {
+
+        stubPutWithHeadersCheck(url, NO_CONTENT, Json.toJson(sPModel).toString(),
+          "X-Session-ID" -> sessionId,"mtditid" -> mtditid)
+        stubPutWithHeadersCheck(url, NO_CONTENT, Json.toJson(sPLSModel).toString(),
+          "X-Session-ID" -> sessionId,"mtditid" -> mtditid)
+
+        val resultSP: StateBenefitsSessionResponse = Await.result(connector.saveClaimData(nino, sPModel), Duration.Inf)
+        val resultSPLS: StateBenefitsSessionResponse = Await.result(connector.saveClaimData(nino, sPLSModel), Duration.Inf)
 
         resultSP shouldBe Right(())
         resultSPLS shouldBe Right(())
@@ -56,13 +74,26 @@ class StateBenefitsConnectorISpec extends IntegrationTest {
 
     "Return an error result" when {
 
+      "the stub isn't matched due to the call being external as the headers won't be passed along" in {
+
+        implicit val hc: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId("sessionIdValue"))).withExtraHeaders("mtditid" -> mtditid)
+
+        stubPutWithHeadersCheck(url, NOT_FOUND, "{}","X-Session-ID" -> sessionId,"mtditid" -> mtditid)
+
+        val resultSP: StateBenefitsSessionResponse = Await.result(externalConnector.saveClaimData(nino, sPModel)(hc, ec), Duration.Inf)
+        val resultSPLS: StateBenefitsSessionResponse = Await.result(externalConnector.saveClaimData(nino, sPModel)(hc, ec), Duration.Inf)
+
+        resultSP shouldBe Left(APIErrorModel(NOT_FOUND, APIErrorBodyModel.parsingError))
+        resultSPLS shouldBe Left(APIErrorModel(NOT_FOUND, APIErrorBodyModel.parsingError))
+      }
+
       "submission returns a 200 but invalid json" in {
 
         stubPutWithHeadersCheck(url, OK, Json.toJson("""{"invalid": true}""").toString(),
           "X-Session-ID" -> sessionId, "mtditid" -> mtditid)
 
-        val resultSP = Await.result(connector.saveClaimData(nino, sPModel), Duration.Inf)
-        val resultSPLS = Await.result(connector.saveClaimData(nino, sPLSModel), Duration.Inf)
+        val resultSP: StateBenefitsSessionResponse = Await.result(connector.saveClaimData(nino, sPModel), Duration.Inf)
+        val resultSPLS: StateBenefitsSessionResponse = Await.result(connector.saveClaimData(nino, sPLSModel), Duration.Inf)
 
         resultSP shouldBe Left(APIErrorModel(INTERNAL_SERVER_ERROR, APIErrorBodyModel.parsingError))
         resultSPLS shouldBe Left(APIErrorModel(INTERNAL_SERVER_ERROR, APIErrorBodyModel.parsingError))
@@ -73,8 +104,8 @@ class StateBenefitsConnectorISpec extends IntegrationTest {
         stubPutWithHeadersCheck(url, INTERNAL_SERVER_ERROR, """{"code": "FAILED", "reason": "failed"}""",
           "X-Session-ID" -> sessionId, "mtditid" -> mtditid)
 
-        val resultSP = Await.result(connector.saveClaimData(nino, sPModel), Duration.Inf)
-        val resultSPLS = Await.result(connector.saveClaimData(nino, sPLSModel), Duration.Inf)
+        val resultSP: StateBenefitsSessionResponse = Await.result(connector.saveClaimData(nino, sPModel), Duration.Inf)
+        val resultSPLS: StateBenefitsSessionResponse = Await.result(connector.saveClaimData(nino, sPLSModel), Duration.Inf)
 
         resultSP shouldBe Left(APIErrorModel(INTERNAL_SERVER_ERROR, APIErrorBodyModel("FAILED", "failed")))
         resultSPLS shouldBe Left(APIErrorModel(INTERNAL_SERVER_ERROR, APIErrorBodyModel("FAILED", "failed")))
@@ -85,8 +116,8 @@ class StateBenefitsConnectorISpec extends IntegrationTest {
         stubPutWithHeadersCheck(url, SERVICE_UNAVAILABLE, """{"code": "FAILED", "reason": "failed"}""",
           "X-Session-ID" -> sessionId, "mtditid" -> mtditid)
 
-        val resultSP = Await.result(connector.saveClaimData(nino, sPModel), Duration.Inf)
-        val resultSPLS = Await.result(connector.saveClaimData(nino, sPLSModel), Duration.Inf)
+        val resultSP: StateBenefitsSessionResponse = Await.result(connector.saveClaimData(nino, sPModel), Duration.Inf)
+        val resultSPLS: StateBenefitsSessionResponse = Await.result(connector.saveClaimData(nino, sPLSModel), Duration.Inf)
 
         resultSP shouldBe Left(APIErrorModel(SERVICE_UNAVAILABLE, APIErrorBodyModel("FAILED", "failed")))
         resultSPLS shouldBe Left(APIErrorModel(SERVICE_UNAVAILABLE, APIErrorBodyModel("FAILED", "failed")))
@@ -97,8 +128,8 @@ class StateBenefitsConnectorISpec extends IntegrationTest {
         stubPutWithHeadersCheck(url, BAD_REQUEST, """{"code": "FAILED", "reason": "failed"}""",
           "X-Session-ID" -> sessionId, "mtditid" -> mtditid)
 
-        val resultSP = Await.result(connector.saveClaimData(nino, sPModel), Duration.Inf)
-        val resultSPLS = Await.result(connector.saveClaimData(nino, sPLSModel), Duration.Inf)
+        val resultSP: StateBenefitsSessionResponse = Await.result(connector.saveClaimData(nino, sPModel), Duration.Inf)
+        val resultSPLS: StateBenefitsSessionResponse = Await.result(connector.saveClaimData(nino, sPLSModel), Duration.Inf)
 
         resultSP shouldBe Left(APIErrorModel(BAD_REQUEST, APIErrorBodyModel("FAILED", "failed")))
         resultSPLS shouldBe Left(APIErrorModel(BAD_REQUEST, APIErrorBodyModel("FAILED", "failed")))

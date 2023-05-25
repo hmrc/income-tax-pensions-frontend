@@ -118,6 +118,7 @@ trait IntegrationTest extends AnyWordSpec with Matchers with GuiceOneServerPerSu
     "auditing.enabled" -> "false",
     "play.filters.csrf.header.bypassHeaders.Csrf-Token" -> "nocheck",
     "microservice.services.income-tax-submission.url" -> s"http://127.0.0.1:$wiremockPort",
+    "microservice.services.income-tax-state-benefits.url" -> s"http://127.0.0.1:$wiremockPort",
     "metrics.enabled" -> "false"
   )
 

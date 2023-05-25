@@ -32,9 +32,13 @@ object StateBenefitsSessionHttpParser extends APIParser {
 
     override def read(method: String, url: String, response: HttpResponse): StateBenefitsSessionResponse = {
       response.status match {
-        case NO_CONTENT | NOT_FOUND => Right(())
+        case NO_CONTENT =>
+          Right(())
         case BAD_REQUEST =>
           pagerDutyLog(FOURXX_RESPONSE_FROM_API, logMessage(response))
+          handleAPIError(response)
+        case NOT_FOUND =>
+          pagerDutyLog(FAILED_TO_FIND_PENSIONS_DATA, logMessage(response))
           handleAPIError(response)
         case INTERNAL_SERVER_ERROR =>
           pagerDutyLog(INTERNAL_SERVER_ERROR_FROM_API, logMessage(response))
