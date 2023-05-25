@@ -349,7 +349,7 @@ class PensionSchemeTaxReferenceControllerISpec extends IntegrationTest with Befo
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual()
-        val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(pensionSchemeTaxReferences = Some(Seq("12345678AB")))
+        val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(pensionSchemeTaxReferences = Some(Seq("12345678RB")))
         insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel), aUserRequest)
         urlPost(fullUrl(pensionSchemeTaxReferenceUrl(taxYearEOY, 0)), body = form, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
@@ -373,7 +373,7 @@ class PensionSchemeTaxReferenceControllerISpec extends IntegrationTest with Befo
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual()
-        val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(pensionSchemeTaxReferences = Some(Seq("12345678AB", "12345678AC")))
+        val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(pensionSchemeTaxReferences = Some(Seq("12345678RB", "12345678RC")))
         insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel), aUserRequest)
         urlPost(fullUrl(pensionSchemeTaxReferenceUrl(taxYearEOY)), body = form, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
@@ -397,7 +397,7 @@ class PensionSchemeTaxReferenceControllerISpec extends IntegrationTest with Befo
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual()
-        val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(pensionSchemeTaxReferences = Some(Seq("12345678AB")))
+        val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(pensionSchemeTaxReferences = Some(Seq("12345678RB")))
         insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel), aUserRequest)
         urlPost(fullUrl(pensionSchemeTaxReferenceUrl(taxYearEOY, 3)), body = form, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
