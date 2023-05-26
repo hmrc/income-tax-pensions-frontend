@@ -569,6 +569,12 @@ pensions.statePension.amount.error.noEntry.agent = Nodwch swm Pensiwn y Wladwria
 pensions.statePension.amount.error.incorrectFormat.agent = Nodwch swm Pensiwn y Wladwriaeth eich cleient yn y fformat cywir
 pensions.statePension.amount.error.overMaximum.agent = Mae’n rhaid i swm Pensiwn y Wladwriaeth eich cleient fod yn llai na £100,000,000,000
 
+#state pension add to calculation
+pensions.statePension.addToCalculation.title.individual = Do you want to add State Pension to your Income Tax calculation?
+pensions.statePension.addToCalculation.title.agent = Do you want to add State Pension to your client’s Income Tax calculation?
+pensions.statePension.addToCalculation.noEntry.individual = Select yes if you want to add State Pension to your Income Tax calculation
+#pensions.statePension.addToCalculation.noEntry.agent = Select yes if you want to add State Pension to your Income Tax calculation
+
 #State Pension CYA page
 statePension.cya.title.agent = Check your client's State Pension
 statePension.cya.title.individual = Check your State Pension
