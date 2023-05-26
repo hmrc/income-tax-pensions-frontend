@@ -29,12 +29,17 @@ object PensionSchemeTaxReferenceForm extends InputFilters {
   val taxReferenceId: String = "taxReferenceId"
   val regex: String = "^\\d{8}[R]{1}[a-zA-Z]{1}$"
 
-  def notEmpty(message : String): Constraint[String] = nonEmpty(message)
+  def notEmpty(message: String): Constraint[String] = nonEmpty(message)
 
-  def validateFormat(message : String): Constraint[String] = validateChar(regex)(message)
+  def validateFormat(message: String): Constraint[String] = validateChar(regex)(message)
 
-  def pensionSchemeTaxReferenceForm(noEntryMsg : String, incorrectFormatMsg : String): Form[String] = Form(
-    taxReferenceId -> trimmedText.transform[String](filter, identity).verifying(
+  private def filterAndUpperCase(input: String): String = {
+    val filtered = filter(input)
+    filtered.take(8) + filtered.takeRight(2).toUpperCase
+  }
+
+  def pensionSchemeTaxReferenceForm(noEntryMsg: String, incorrectFormatMsg: String): Form[String] = Form(
+    taxReferenceId -> trimmedText.transform[String](filterAndUpperCase, identity).verifying(
       notEmpty(noEntryMsg) andThen validateFormat(incorrectFormatMsg)
     )
   )
