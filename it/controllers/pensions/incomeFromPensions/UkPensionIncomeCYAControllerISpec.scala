@@ -16,21 +16,21 @@
 
 package controllers.pensions.incomeFromPensions
 
-import builders.AllPensionsDataBuilder.{anAllPensionDataEmpty, anAllPensionsData}
 import builders.IncomeFromPensionsViewModelBuilder.{anIncomeFromPensionEmptyViewModel, anIncomeFromPensionsViewModel}
 import builders.IncomeTaxUserDataBuilder.anIncomeTaxUserData
 import builders.PensionsCYAModelBuilder.{aPensionsCYAGeneratedFromPriorEmpty, aPensionsCYAModel}
 import builders.PensionsUserDataBuilder.{aPensionsUserData, pensionsUserDataWithIncomeFromPensions}
+import builders.StateBenefitsUserDataBuilder.aStatePensionBenefitsUD
 import builders.UkPensionIncomeViewModelBuilder.anUkPensionIncomeViewModelOne
 import builders.UserBuilder.aUserRequest
 import models.IncomeTaxUserData
-import models.pension.employmentPensions.{EmploymentPensionModel, EmploymentPensions}
-import models.pension.statebenefits.IncomeFromPensionsViewModel
+import models.pension.statebenefits.{ClaimCYAModel, IncomeFromPensionsViewModel, StateBenefitViewModel}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.SEE_OTHER
+import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
 import utils.PageUrls.IncomeFromPensionsPages._
 import utils.PageUrls.{fullUrl, pensionSummaryUrl}
@@ -71,7 +71,7 @@ class UkPensionIncomeCYAControllerISpec extends IntegrationTest with ViewHelpers
 
   object CommonExpectedEN extends CommonExpectedResults {
     val expectedTitle = "Check UK Pension Income"
-    val expectedCaption: Int => String = (taxYear: Int) =>  s"Income from pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Income from pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
     val buttonText = "Save and continue"
     val yesText = "Yes"
     val noText = "No"
@@ -82,7 +82,7 @@ class UkPensionIncomeCYAControllerISpec extends IntegrationTest with ViewHelpers
 
   object CommonExpectedCY extends CommonExpectedResults {
     val expectedTitle = "Check UK Pension Income"
-    val expectedCaption: Int => String = (taxYear: Int) =>  s"Incwm o bensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Incwm o bensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
     val buttonText = "Cadw ac yn eich blaen"
     val yesText = "Iawn"
     val noText = "Na"
@@ -117,6 +117,29 @@ class UkPensionIncomeCYAControllerISpec extends IntegrationTest with ViewHelpers
     UserScenario(isWelsh = true, isAgent = false, CommonExpectedCY, Some(ExpectedIndividualCY)),
     UserScenario(isWelsh = true, isAgent = true, CommonExpectedCY, Some(ExpectedAgentCY))
   )
+
+  val statePensionCYAModel: ClaimCYAModel = aStatePensionBenefitsUD.claim.get
+
+  val stateBenefitData = StateBenefitViewModel(
+    benefitId = statePensionCYAModel.benefitId,
+    startDateQuestion = Some(true),
+    startDate = Some(statePensionCYAModel.startDate),
+    endDateQuestion = statePensionCYAModel.endDateQuestion,
+    endDate = statePensionCYAModel.endDate,
+    submittedOnQuestion = Some(true),
+    submittedOn = statePensionCYAModel.submittedOn,
+    dateIgnoredQuestion = None,
+    dateIgnored = None,
+    amountPaidQuestion = Some(true),
+    amount = statePensionCYAModel.amount,
+    taxPaidQuestion = statePensionCYAModel.taxPaidQuestion,
+    taxPaid = statePensionCYAModel.taxPaid)
+
+  val priorCYAData = aPensionsUserData.copy(taxYear = taxYear, pensions = aPensionsCYAGeneratedFromPriorEmpty.copy(
+    incomeFromPensions = IncomeFromPensionsViewModel(
+      statePension = Some(stateBenefitData),
+      uKPensionIncomesQuestion = Some(true),
+      uKPensionIncomes = Seq(anUkPensionIncomeViewModelOne))))
 
   ".show" should {
 
@@ -247,8 +270,10 @@ class UkPensionIncomeCYAControllerISpec extends IntegrationTest with ViewHelpers
         lazy val result: WSResponse = {
           dropPensionsDB()
           authoriseAgentOrIndividual()
-          userDataStub(IncomeTaxUserData(None), nino, taxYear)
-          insertCyaData(aPensionsUserData.copy(pensions = aPensionsCYAModel.copy(incomeFromPensions = newIncomeFromPensions), taxYear = taxYear), aUserRequest)
+          stateBenefitsSubmissionStub(Json.toJson(stateBenefitData).toString(), nino)
+          insertCyaData(aPensionsUserData.copy(
+            pensions = aPensionsCYAModel.copy(incomeFromPensions = newIncomeFromPensions), taxYear = taxYear
+          ), aUserRequest)
           urlPost(fullUrl(ukPensionIncomeCyaUrl(taxYear)), form, follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
         }
@@ -264,12 +289,13 @@ class UkPensionIncomeCYAControllerISpec extends IntegrationTest with ViewHelpers
 
       "CYA data has been updated and differs from prior data" which {
         val form = Map[String, String]()
+        val submissionData = stateBenefitData.copy(amount = Some(500.20), taxPaid = Some(20.05))
 
         lazy val result: WSResponse = {
           dropPensionsDB()
           authoriseAgentOrIndividual()
-          userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYear)
-          insertCyaData(aPensionsUserData.copy(pensions = aPensionsCYAModel.copy(incomeFromPensions = newIncomeFromPensions), taxYear = taxYear), aUserRequest)
+          stateBenefitsSubmissionStub(Json.toJson(submissionData).toString(), nino)
+          insertCyaData(priorCYAData, aUserRequest)
           urlPost(fullUrl(ukPensionIncomeCyaUrl(taxYear)), form, follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
         }
@@ -287,30 +313,11 @@ class UkPensionIncomeCYAControllerISpec extends IntegrationTest with ViewHelpers
       "the user makes no changes and no submission to DES is made" which {
         val form = Map[String, String]()
 
-        val priorData = anAllPensionDataEmpty.copy(employmentPensions = Some(EmploymentPensions(
-          employmentData = Seq(EmploymentPensionModel(
-            employmentId = anUkPensionIncomeViewModelOne.employmentId.get,
-            pensionSchemeName = anUkPensionIncomeViewModelOne.pensionSchemeName.get,
-            pensionId = anUkPensionIncomeViewModelOne.pensionId,
-            startDate = anUkPensionIncomeViewModelOne.startDate,
-            endDate = anUkPensionIncomeViewModelOne.endDate,
-            pensionSchemeRef = anUkPensionIncomeViewModelOne.pensionSchemeRef,
-            amount = anUkPensionIncomeViewModelOne.amount,
-            taxPaid = anUkPensionIncomeViewModelOne.taxPaid,
-            isCustomerEmploymentData = Some(true)
-          ))
-        )))
-
-        val cyaData = aPensionsUserData.copy(taxYear = taxYear, pensions = aPensionsCYAGeneratedFromPriorEmpty.copy(
-          incomeFromPensions = IncomeFromPensionsViewModel(
-            uKPensionIncomesQuestion = Some(true),
-            uKPensionIncomes = Seq(anUkPensionIncomeViewModelOne))))
-
         lazy val result: WSResponse = {
           dropPensionsDB()
           authoriseAgentOrIndividual()
-          userDataStub(anIncomeTaxUserData.copy(pensions = Some(priorData)), nino, taxYear)
-          insertCyaData(cyaData, aUserRequest)
+          stateBenefitsSubmissionStub(Json.toJson(stateBenefitData).toString(), nino)
+          insertCyaData(priorCYAData, aUserRequest)
           urlPost(fullUrl(ukPensionIncomeCyaUrl(taxYear)), form, follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
         }
@@ -319,8 +326,8 @@ class UkPensionIncomeCYAControllerISpec extends IntegrationTest with ViewHelpers
           result.status shouldBe SEE_OTHER
         }
 
-        "redirects to the income summary page" in {
-          result.header("location") shouldBe Some(pensionIncomeSummaryUrl(taxYear))
+        "redirects to the summary page" in {
+          result.header("location") shouldBe Some(pensionSummaryUrl(taxYear))
         }
       }
     }
