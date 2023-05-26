@@ -33,10 +33,7 @@ object PensionSchemeTaxReferenceForm extends InputFilters {
 
   def validateFormat(message: String): Constraint[String] = validateChar(regex)(message)
 
-  private def filterAndUpperCase(input: String): String = {
-    val filtered = filter(input)
-    filtered.take(8) + filtered.takeRight(2).toUpperCase
-  }
+  def filterAndUpperCase(input: String): String = filter(input).toUpperCase
 
   def pensionSchemeTaxReferenceForm(noEntryMsg: String, incorrectFormatMsg: String): Form[String] = Form(
     taxReferenceId -> trimmedText.transform[String](filterAndUpperCase, identity).verifying(

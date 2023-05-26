@@ -22,30 +22,26 @@ class PSTRFormSpec extends UnitTest {
 
   "The Pension Scheme Tax Reference Form regex" when {
 
-    "provided a correct PSTR that starts with 8 numbers and 1 upper case 'R' and 1 upper case letter" should {
+    "provided a correct PSTR that starts with 8 numbers then one 'R' then one other letter" should {
       val pstr = "12345678RB"
       val pstr2 = "45671238RG"
+      val pstr3 = "12567348Rc"
+      val pstr4 = "12567348rc"
+      val pstr5 = "12567348rX"
 
       "return true" in {
         checkRegex(pstr) shouldBe true
         checkRegex(pstr2) shouldBe true
+        checkRegex(pstr3) shouldBe true
+        checkRegex(pstr4) shouldBe true
+        checkRegex(pstr5) shouldBe true
       }
     }
 
-    "provided a correct PSTR that starts with 8 numbers and 1 upper case 'R' and 1 lower case letter" should {
-      val pstr = "12345678Rc"
-      val pstr2 = "12567348Rc"
-
-      "return true" in {
-        checkRegex(pstr) shouldBe true
-        checkRegex(pstr2) shouldBe true
-      }
-    }
-
-    "provided an incorrect PSTR that does not contain an upper case 'R' in the 9th position" should {
+    "provided an incorrect PSTR that does not contain an 'R' in the 9th position" should {
       val pstr = "12345781c"
       val pstr2 = "1234578ac"
-      val pstr3 = "1257348rZ"
+      val pstr3 = "125734RdR"
 
       "return false" in {
         checkRegex(pstr) shouldBe false
@@ -54,9 +50,9 @@ class PSTRFormSpec extends UnitTest {
       }
     }
 
-    "provided an incorrect PSTR that starts with fewer than 8 numbers" should {
-      val pstr = "1234578Rc"
-      val pstr2 = "1257348RZ"
+    "provided an incorrect PSTR that contains too few characters" should {
+      val pstr = "1234567Rr"
+      val pstr2 = "12345678R"
 
       "return false" in {
         checkRegex(pstr) shouldBe false
@@ -66,7 +62,7 @@ class PSTRFormSpec extends UnitTest {
 
     "provided an incorrect PSTR that starts with more than 8 numbers" should {
       val pstr = "1234567899Rc"
-      val pstr2 = "1257348899RZ"
+      val pstr2 = "1257348R9RRZ"
 
       "return false" in {
         checkRegex(pstr) shouldBe false
@@ -76,7 +72,7 @@ class PSTRFormSpec extends UnitTest {
 
     "provided an incorrect PSTR that contains a symbol" should {
       val pstr = "1234578R#"
-      val pstr2 = "1257348+R"
+      val pstr2 = "1234567+Rc"
 
       "return false" in {
         checkRegex(pstr) shouldBe false
@@ -84,20 +80,24 @@ class PSTRFormSpec extends UnitTest {
       }
     }
 
-    "provided an incorrect PSTR that contains only letters" should {
+    "provided an incorrect PSTR that does not follow the correct format" should {
       val pstr = "abcdefghRi"
-      val pstr2 = "adefgbchii"
+      val pstr2 = "123456R8RR"
+      val pstr3 = "12345678AR"
+      val pstr4 = "12345678R8"
 
 
       "return false" in {
         checkRegex(pstr) shouldBe false
         checkRegex(pstr2) shouldBe false
+        checkRegex(pstr3) shouldBe false
+        checkRegex(pstr4) shouldBe false
       }
     }
 
   }
 
   private def checkRegex(input: String) = {
-    input.matches(PensionSchemeTaxReferenceForm.regex)
+    PensionSchemeTaxReferenceForm.filterAndUpperCase(input).matches(PensionSchemeTaxReferenceForm.regex)
   }
 }
