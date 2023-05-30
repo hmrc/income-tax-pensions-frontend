@@ -33,7 +33,7 @@ import play.api.http.HeaderNames
 import play.api.http.Status.SEE_OTHER
 import play.api.libs.ws.WSResponse
 import utils.PageUrls.IncomeFromPensionsPages._
-import utils.PageUrls.{fullUrl, pensionSummaryUrl}
+import utils.PageUrls.fullUrl
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 class UkPensionIncomeCYAControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
@@ -248,6 +248,7 @@ class UkPensionIncomeCYAControllerISpec extends IntegrationTest with ViewHelpers
           dropPensionsDB()
           authoriseAgentOrIndividual()
           userDataStub(IncomeTaxUserData(None), nino, taxYear)
+          employmentPensionStub("{valid-json:true}", nino)
           insertCyaData(aPensionsUserData.copy(pensions = aPensionsCYAModel.copy(incomeFromPensions = newIncomeFromPensions), taxYear = taxYear), aUserRequest)
           urlPost(fullUrl(ukPensionIncomeCyaUrl(taxYear)), form, follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))

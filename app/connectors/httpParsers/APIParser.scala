@@ -17,9 +17,9 @@
 package connectors.httpParsers
 
 import models.{APIErrorBodyModel, APIErrorModel, APIErrorsBodyModel}
-import play.api.http.Status.INTERNAL_SERVER_ERROR
-import uk.gov.hmrc.http.HttpResponse
-import utils.PagerDutyHelper.PagerDutyKeys.{BAD_SUCCESS_JSON_FROM_API, UNEXPECTED_RESPONSE_FROM_API}
+import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, NO_CONTENT, SERVICE_UNAVAILABLE}
+import uk.gov.hmrc.http.{HttpReads, HttpResponse}
+import utils.PagerDutyHelper.PagerDutyKeys._
 import utils.PagerDutyHelper.pagerDutyLog
 
 trait APIParser {
@@ -55,6 +55,28 @@ trait APIParser {
       }
     } catch {
       case _: Exception => Left(APIErrorModel(status, APIErrorBodyModel.parsingError))
+    }
+  }
+  
+  type SessionResponse = Either[APIErrorModel, Unit]
+  
+  implicit object SessionHttpReads extends HttpReads[SessionResponse] {
+    override def read(method: String, url: String, response: HttpResponse): SessionResponse = {
+      response.status match {
+        case NO_CONTENT  => Right(())  //TODO: check NOT_FOUND used in RefreshIncomeSourceHttpReads ONLY
+        case BAD_REQUEST =>
+          pagerDutyLog(FOURXX_RESPONSE_FROM_API, logMessage(response))
+          handleAPIError(response)
+        case INTERNAL_SERVER_ERROR =>
+          pagerDutyLog(INTERNAL_SERVER_ERROR_FROM_API, logMessage(response))
+          handleAPIError(response)
+        case SERVICE_UNAVAILABLE =>
+          pagerDutyLog(SERVICE_UNAVAILABLE_FROM_API, logMessage(response))
+          handleAPIError(response)
+        case _ =>
+          pagerDutyLog(UNEXPECTED_RESPONSE_FROM_API, logMessage(response))
+          handleAPIError(response, Some(INTERNAL_SERVER_ERROR))
+      }
     }
   }
 }

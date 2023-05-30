@@ -39,7 +39,6 @@ class PensionsConnectorISpec extends IntegrationTest {
     "Return a success result" when {
       "submission returns a 204" in {
 
-
         stubPutWithHeadersCheck(s"/income-tax-pensions/pension-charges/session-data/nino/$nino/taxYear/$taxYear", NO_CONTENT,
           "{}", "X-Session-ID" -> sessionId, "mtditid" -> mtditid)
 
@@ -77,7 +76,7 @@ class PensionsConnectorISpec extends IntegrationTest {
         result shouldBe Left(APIErrorModel(INTERNAL_SERVER_ERROR, APIErrorBodyModel.parsingError))
       }
 
-      "submission returns a 200 but invalid json" in {
+      "submission returns a 200 but invalid json" in { //TODO how is it possible to have an OK status if payload json is invalid ???
 
         stubPutWithHeadersCheck(s"/income-tax-pensions/pension-charges/session-data/nino/$nino/taxYear/$taxYear", OK,
           Json.toJson("""{"invalid": true}""").toString(), "X-Session-ID" -> sessionId, "mtditid" -> mtditid)
