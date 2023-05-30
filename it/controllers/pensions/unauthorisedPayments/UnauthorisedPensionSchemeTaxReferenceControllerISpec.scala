@@ -145,7 +145,7 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
             minimalSessionDataToAccessThisPage.copy(
               unauthorisedPayments = UnauthorisedPaymentsViewModel(
                 pensionSchemeTaxReference = Some(
-                  Seq("12345678RA", "22446688sA", "0000000XX"))
+                  Seq("12345678RA", "22446688RA", "0000000RX"))
               )
             )
           )
@@ -261,11 +261,11 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
 
             val expectedViewModel =
               sessionData.pensions.unauthorisedPayments.copy(
-                pensionSchemeTaxReference = Some(Seq("12345678TA"))
+                pensionSchemeTaxReference = Some(Seq("12345678RT"))
               )
 
             implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
-            implicit val response: WSResponse = submitForm(SubmittedFormDataForPage(Some("12345678TA")))
+            implicit val response: WSResponse = submitForm(SubmittedFormDataForPage(Some("12345678RT")))
 
             assertRedirectionAsExpected(relativeUrl("/unauthorised-payments-from-pensions/uk-pension-scheme-details"))
             getViewModel mustBe Some(expectedViewModel)
@@ -277,7 +277,7 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
             minimalSessionDataToAccessThisPage.copy(
               unauthorisedPayments = UnauthorisedPaymentsViewModel(
                 pensionSchemeTaxReference = Some(
-                  Seq("12345678RA", "22446688sA", "0000000XX"))
+                  Seq("12345678RA", "22446688RA", "0000000RX"))
               )
             )
           )
@@ -287,11 +287,11 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
 
             val expectedViewModel =
               sessionData.pensions.unauthorisedPayments.copy(
-                pensionSchemeTaxReference = Some(Seq("12345678RA", "22446688sA", "0000000XX", "88888888XY"))
+                pensionSchemeTaxReference = Some(Seq("12345678RA", "22446688RA", "0000000RX", "88888888RY"))
               )
 
             implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
-            implicit val response: WSResponse = submitForm(SubmittedFormDataForPage(Some("88888888XY")))
+            implicit val response: WSResponse = submitForm(SubmittedFormDataForPage(Some("88888888RY")))
 
             assertRedirectionAsExpected(relativeUrl("/unauthorised-payments-from-pensions/uk-pension-scheme-details"))
             getViewModel mustBe Some(expectedViewModel)
@@ -300,11 +300,11 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
 
             val expectedViewModel =
               sessionData.pensions.unauthorisedPayments.copy(
-                pensionSchemeTaxReference = Some(Seq("12345678RA", "22446688sA", "0000000XX", "88888888XY"))
+                pensionSchemeTaxReference = Some(Seq("12345678RA", "22446688RA", "0000000RX", "88888888RY"))
               )
 
             implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
-            implicit val response: WSResponse = submitForm(SubmittedFormDataForPage(Some("  88888888XY  ")))
+            implicit val response: WSResponse = submitForm(SubmittedFormDataForPage(Some("  88888888RY  ")))
 
             assertRedirectionAsExpected(relativeUrl("/unauthorised-payments-from-pensions/uk-pension-scheme-details"))
             getViewModel mustBe Some(expectedViewModel)
@@ -313,11 +313,11 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
 
             val expectedViewModel =
               sessionData.pensions.unauthorisedPayments.copy(
-                pensionSchemeTaxReference = Some(Seq("12345678RA", "22446688sA", "0000000XX", "22446688sA"))
+                pensionSchemeTaxReference = Some(Seq("12345678RA", "22446688RA", "0000000RX", "22446688RA"))
               )
 
             implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
-            implicit val response: WSResponse = submitForm(SubmittedFormDataForPage(Some("22446688sA")))
+            implicit val response: WSResponse = submitForm(SubmittedFormDataForPage(Some("22446688RA")))
 
             assertRedirectionAsExpected(relativeUrl("/unauthorised-payments-from-pensions/uk-pension-scheme-details"))
             getViewModel mustBe Some(expectedViewModel)
