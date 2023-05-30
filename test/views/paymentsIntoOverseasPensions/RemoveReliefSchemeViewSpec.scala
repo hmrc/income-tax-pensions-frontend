@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package views.paymentsIntoOverseasPensions
 
 import builders.PaymentsIntoOverseasPensionsViewModelBuilder.aPaymentsIntoOverseasPensionsViewModel
@@ -35,6 +36,7 @@ class RemoveReliefSchemeViewSpec extends ViewUnitTest with FakeRequestProvider {
     object Selectors {
       val captionSelector = "#main-content > div > div > header > p"
       val titleSelector = "#main-content > div > div > header > h1"
+      val paraSelector = s"#main-content > div > div > form > p"
     }
 
     trait CommonExpectedResults {
@@ -54,7 +56,7 @@ class RemoveReliefSchemeViewSpec extends ViewUnitTest with FakeRequestProvider {
     object CommonExpectedEN extends CommonExpectedResults {
       override val expectedCaption: Int => String = (taxYear: Int) => s"Payments into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
       override val expectedTitle: String = "Are you sure you want to remove this overseas pension scheme?"
-      override val expectedSubCaption: String = "This will remove: "
+      override val expectedSubCaption: String = "This will remove:"
       override val schemeName: String = "Pension scheme name"
       override val untaxedEmployerPayments: String = "Untaxed employer payments"
       override val reliefType: String = "Type of relief"
@@ -68,7 +70,7 @@ class RemoveReliefSchemeViewSpec extends ViewUnitTest with FakeRequestProvider {
     object CommonExpectedCY extends CommonExpectedResults {
       override val expectedCaption: Int => String = (taxYear: Int) => s"Taliadau i bensiynau tramor ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
       override val expectedTitle: String = "Are you sure you want to remove this overseas pension scheme?"
-      override val expectedSubCaption: String = "This will remove: "
+      override val expectedSubCaption: String = "This will remove:"
       override val schemeName: String = "Enw’r cynllun pensiwn"
       override val untaxedEmployerPayments: String = "Taliadau cyflogwr sydd heb eu trethu"
       override val reliefType: String = "Math o ryddhad"
@@ -106,7 +108,7 @@ class RemoveReliefSchemeViewSpec extends ViewUnitTest with FakeRequestProvider {
 
           captionCheck(userScenario.commonExpectedResults.expectedCaption(taxYearEOY), Selectors.captionSelector)
           titleCheck(userScenario.commonExpectedResults.expectedTitle, userScenario.isWelsh)
-          captionCheck(userScenario.commonExpectedResults.expectedSubCaption, Selectors.captionSelector)
+          captionCheck(userScenario.commonExpectedResults.expectedSubCaption, Selectors.paraSelector)
           removeCyaRowCheck(userScenario.commonExpectedResults.schemeName,
             "PENSIONINCOME245", 1)
           removeCyaRowCheck(userScenario.commonExpectedResults.untaxedEmployerPayments,
@@ -117,7 +119,6 @@ class RemoveReliefSchemeViewSpec extends ViewUnitTest with FakeRequestProvider {
             rowNumber = 3)
           buttonCheck(userScenario.commonExpectedResults.button)
         }
-
       }
     }
   }

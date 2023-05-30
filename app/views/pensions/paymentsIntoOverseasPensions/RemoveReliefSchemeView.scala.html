@@ -49,8 +49,9 @@ summaryList: SummaryList
 
 @layout(pageTitle = titleText, taxYear = Some(taxYear), isAgent = request.user.isAgent) {
 
+@heading(titleText, Some(messages("common.paymentsIntoOverseasPensions.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-2")
+
 @formWithCsrf(action = controllers.pensions.paymentsIntoOverseasPensions.routes.RemoveReliefSchemeController.submit(taxYear, index)) {
-    @heading(titleText, Some(messages("common.paymentsIntoOverseasPensions.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-2")
     @contentHtml
     @summaryList(ReliefsSchemeDetailsHelper.removeSummaryListRows(reliefSchemeList(index.getOrElse(0)), taxYear, index)(messages))
 
