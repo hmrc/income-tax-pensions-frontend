@@ -17,17 +17,17 @@
 package connectors.httpParsers
 
 import models.{APIErrorBodyModel, APIErrorModel, APIErrorsBodyModel}
-import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, NO_CONTENT, SERVICE_UNAVAILABLE}
+import play.api.http.Status._
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 import utils.PagerDutyHelper.PagerDutyKeys._
 import utils.PagerDutyHelper.pagerDutyLog
 
 trait APIParser {
 
-  val parserName : String
-  val service : String
+  val parserName: String
+  val service: String
 
-  def logMessage(response:HttpResponse): String ={
+  def logMessage(response: HttpResponse): String = {
     s"[$parserName][read] Received ${response.status} from $service API. Body:${response.body}"
   }
 
@@ -57,13 +57,13 @@ trait APIParser {
       case _: Exception => Left(APIErrorModel(status, APIErrorBodyModel.parsingError))
     }
   }
-  
+
   type SessionResponse = Either[APIErrorModel, Unit]
-  
+
   implicit object SessionHttpReads extends HttpReads[SessionResponse] {
     override def read(method: String, url: String, response: HttpResponse): SessionResponse = {
       response.status match {
-        case NO_CONTENT  => Right(())  //TODO: check NOT_FOUND used in RefreshIncomeSourceHttpReads ONLY
+        case NO_CONTENT => Right(()) //TODO: check NOT_FOUND used in RefreshIncomeSourceHttpReads and StateBenefitsSessionHttpReads
         case BAD_REQUEST =>
           pagerDutyLog(FOURXX_RESPONSE_FROM_API, logMessage(response))
           handleAPIError(response)

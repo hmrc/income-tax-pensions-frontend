@@ -33,7 +33,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class StatePensionService @Inject()(pensionUserDataRepository: PensionsUserDataRepository, stateBenefitsConnector: StateBenefitsConnector) {
 
-  def persistIncomeFromPensionsViewModel(user: User, taxYear: Int)
+  def persistStatePensionIncomeViewModel(user: User, taxYear: Int)
                                         (implicit hc: HeaderCarrier, ec: ExecutionContext, clock: Clock): Future[Either[ServiceError, Unit]] = {
 
 

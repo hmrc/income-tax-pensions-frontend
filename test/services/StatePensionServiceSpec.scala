@@ -48,14 +48,14 @@ class StatePensionServiceSpec extends UnitTest
       mockSaveClaimData(nino, aStatePensionLumpSumBenefitsUD, Right(()))
       mockCreateOrUpdate(userWithEmptySaveIncomeFromPensionsCya, Right(()))
 
-      val result = await(statePensionService.persistIncomeFromPensionsViewModel(aUser, taxYear))
+      val result = await(statePensionService.persistStatePensionIncomeViewModel(aUser, taxYear))
       result shouldBe Right(())
     }
 
     "return Left(DataNotFound) when user can not be found in DB" in {
       mockFind(taxYear, aUser, Left(DataNotFound))
 
-      val result = await(statePensionService.persistIncomeFromPensionsViewModel(aUser, taxYear))
+      val result = await(statePensionService.persistStatePensionIncomeViewModel(aUser, taxYear))
       result shouldBe Left(DataNotFound)
     }
 
@@ -64,7 +64,7 @@ class StatePensionServiceSpec extends UnitTest
 
       mockSaveClaimData(nino, aStatePensionBenefitsUD, Left(APIErrorModel(BAD_REQUEST, APIErrorBodyModel("FAILED", "failed"))))
 
-      val result = await(statePensionService.persistIncomeFromPensionsViewModel(aUser, taxYear))
+      val result = await(statePensionService.persistStatePensionIncomeViewModel(aUser, taxYear))
       result shouldBe Left(APIErrorModel(BAD_REQUEST, APIErrorBodyModel("FAILED", "failed")))
     }
 
@@ -75,7 +75,7 @@ class StatePensionServiceSpec extends UnitTest
       mockSaveClaimData(nino, aStatePensionLumpSumBenefitsUD, Right(()))
       mockCreateOrUpdate(userWithEmptySaveIncomeFromPensionsCya, Left(DataNotUpdated))
 
-      val result = await(statePensionService.persistIncomeFromPensionsViewModel(aUser, taxYear))
+      val result = await(statePensionService.persistStatePensionIncomeViewModel(aUser, taxYear))
       result shouldBe Left(DataNotUpdated)
     }
   }

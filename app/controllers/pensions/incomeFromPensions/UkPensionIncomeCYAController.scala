@@ -21,15 +21,12 @@ import controllers.pensions.incomeFromPensions.routes.{IncomeFromPensionsSummary
 import controllers.predicates.AuthorisedAction
 import controllers.predicates.TaxYearAction.taxYearAction
 import forms.FormUtils
-import models.mongo.{PensionsCYAModel, PensionsUserData}
+import models.mongo.PensionsCYAModel
 import models.pension.AllPensionsData
 import models.pension.AllPensionsData.generateCyaFromPrior
-import models.{APIErrorBodyModel, APIErrorModel, AuthorisationRequest, User}
-import play.api.Logger
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.{PensionSessionService, StatePensionService}
-import uk.gov.hmrc.http.HeaderCarrier
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.{EmploymentPensionService, PensionSessionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.incomeFromPensions.UkPensionIncomeCYAView
@@ -43,14 +40,10 @@ class UkPensionIncomeCYAController @Inject()(implicit val mcc: MessagesControlle
                                              view: UkPensionIncomeCYAView,
                                              appConfig: AppConfig,
                                              pensionSessionService: PensionSessionService,
-                                             statePensionService: StatePensionService,
+                                             employmentPensionService: EmploymentPensionService,
                                              errorHandler: ErrorHandler,
-                                             clock: Clock)
+                                             clock: Clock, ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport with SessionHelper with FormUtils {
-
-
-  lazy val logger: Logger = Logger(this.getClass.getName)
-  implicit val executionContext: ExecutionContext = mcc.executionContext
 
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     pensionSessionService.getAndHandle(taxYear, request.user) { (cya, prior) =>
@@ -75,38 +68,14 @@ class UkPensionIncomeCYAController @Inject()(implicit val mcc: MessagesControlle
         Future.successful(Redirect(appConfig.incomeTaxSubmissionOverviewUrl(taxYear)))
       ) { model =>
         if (sessionDataDifferentThanPriorData(model.pensions, prior)) {
-          performSubmission(taxYear, cya)(request.user, hc, request, clock)
+          employmentPensionService.persistUkPensionIncomeViewModel(request.user, taxYear).map {
+            case Left(_) => errorHandler.internalServerError()
+            case Right(_) => Redirect(IncomeFromPensionsSummaryController.show(taxYear))
+          }
         } else {
           Future.successful(Redirect(IncomeFromPensionsSummaryController.show(taxYear)))
         }
       }
-    }
-  }
-
-  private def performSubmission(taxYear: Int, cya: Option[PensionsUserData]
-                               )(implicit user: User,
-                                 hc: HeaderCarrier,
-                                 request: AuthorisationRequest[AnyContent],
-                                 clock: Clock): Future[Result] = {
-
-    (cya match {
-      case Some(cyaData) =>
-        statePensionService.persistIncomeFromPensionsViewModel(user, taxYear) map {
-          case Left(_) =>
-            logger.info("[UkPensionIncomeCYAController][submit] Failed to create or update session")
-            Left(APIErrorModel(BAD_REQUEST, APIErrorBodyModel(BAD_REQUEST.toString, "Unable to createOrUpdate pension service")))
-          case Right(_) =>
-            Right(Ok)
-        }
-      case _ =>
-        logger.info("[UkPensionIncomeCYAController][submit] CYA data or NINO missing from session.")
-        Future.successful(Left(APIErrorModel(BAD_REQUEST, APIErrorBodyModel("MISSING_DATA", "CYA data or NINO missing from session."))))
-    }).flatMap {
-      case Right(_) =>
-        pensionSessionService.clear(taxYear)(errorHandler.internalServerError())(
-          Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear))
-        )
-      case Left(error) => Future.successful(errorHandler.handleError(error.status))
     }
   }
 
