@@ -30,7 +30,7 @@ import models.mongo.PensionsUserData
 import models.pension.statebenefits.{IncomeFromPensionsViewModel, StateBenefitViewModel}
 import models.requests.UserSessionDataRequest
 import play.api.data.Form
-import utils.{Clock, SessionHelper}
+import utils.SessionHelper
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -43,7 +43,6 @@ class StatePensionAddToCalculationController @Inject () (actionsProvider: Action
                                                          errorHandler: ErrorHandler)
                                                         (implicit val mcc: MessagesControllerComponents,
                                                          appConfig: AppConfig,
-                                                         clock: Clock,
                                                          ec: ExecutionContext
                                                         )
   extends FrontendController(mcc) with SessionHelper with I18nSupport {
