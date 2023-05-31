@@ -573,7 +573,7 @@ pensions.statePension.amount.error.overMaximum.agent = Mae’n rhaid i swm Pensi
 pensions.statePension.addToCalculation.title.individual = Do you want to add State Pension to your Income Tax calculation?
 pensions.statePension.addToCalculation.title.agent = Do you want to add State Pension to your client’s Income Tax calculation?
 pensions.statePension.addToCalculation.noEntry.individual = Select yes if you want to add State Pension to your Income Tax calculation
-#pensions.statePension.addToCalculation.noEntry.agent = Select yes if you want to add State Pension to your Income Tax calculation
+pensions.statePension.addToCalculation.noEntry.agent = Select yes if you want to add State Pension to your client’s Income Tax Calculation
 
 #State Pension CYA page
 statePension.cya.title.agent = Check your client's State Pension

@@ -35,8 +35,7 @@ class StatePensionCYAViewSpec extends ViewUnitTest { //scalastyle:off magic.numb
     val changeLumpSum = () => routes.StatePensionLumpSumController.show(taxYearEOY).url
     val changeLumpSumTax = () => routes.TaxPaidOnStatePensionLumpSumController.show(taxYearEOY).url
     val changeLumpSumStartDate = () => routes.StatePensionLumpSumStartDateController.show(taxYearEOY).url
-    val changeAddStatePensionToTaxCalcs =
-      () => routes.StatePensionCYAController.show(taxYearEOY).url  //TODO:change to AddStatePensionToTaxCalcs route
+    val changeAddStatePensionToTaxCalc = () => routes.StatePensionAddToCalculationController.show(taxYearEOY).url
   }
 
   trait CommonExpectedResults {
@@ -56,10 +55,10 @@ class StatePensionCYAViewSpec extends ViewUnitTest { //scalastyle:off magic.numb
     val lumpSumDate: String
     val hiddenLumpSumDate: String
     val lumpSumDateValue: String
-    val addStatePensionToTaxCalcs: String
-    val hiddenAddStatePensionToTaxCalcs: String
-    val addStatePensionToTaxCalcsAnswer: String
-    
+    val addStatePensionToTaxCalc: String
+    val hiddenAddStatePensionToTaxCalc: String
+    val addStatePensionToTaxCalcAnswer: String
+
     val buttonText: String
   }
 
@@ -80,15 +79,15 @@ class StatePensionCYAViewSpec extends ViewUnitTest { //scalastyle:off magic.numb
     val lumpSumDate: String = "Lump sum date"
     val hiddenLumpSumDate: String = "Change lump sum date"
     val lumpSumDateValue: String = "14 November 2019"
-    val addStatePensionToTaxCalcs: String = "State Pension added to tax calculation"
-    val hiddenAddStatePensionToTaxCalcs: String = "Change State Pension added to tax calculation"
-    val addStatePensionToTaxCalcsAnswer: String = "Yes"
+    val addStatePensionToTaxCalc: String = "State Pension added to tax calculation"
+    val hiddenAddStatePensionToTaxCalc: String = "Change State Pension added to tax calculation"
+    val addStatePensionToTaxCalcAnswer: String = "No"
     val buttonText: String = "Save and continue"
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Incwm o bensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
-    
+
     val statePension: String = "State Pension"
     val hiddenStatePension = "Change state pension"
     val statePensionValue : String = "£155.88"
@@ -104,31 +103,36 @@ class StatePensionCYAViewSpec extends ViewUnitTest { //scalastyle:off magic.numb
     val lumpSumDate: String = "Lump sum date"
     val hiddenLumpSumDate: String = "Change lump sum date"
     val lumpSumDateValue: String = "14 November 2019"
-    val addStatePensionToTaxCalcs: String = "State Pension added to tax calculation"
-    val hiddenAddStatePensionToTaxCalcs: String = "Change State Pension added to tax calculation"
-    val addStatePensionToTaxCalcsAnswer: String = "Iawn"
+    val addStatePensionToTaxCalc: String = "State Pension added to tax calculation"
+    val hiddenAddStatePensionToTaxCalc: String = "Change State Pension added to tax calculation"
+    val addStatePensionToTaxCalcAnswer: String = "Na"
     val buttonText: String = "Cadw ac yn eich blaen"
   }
 
   trait SpecificExpectedResults {
     val expectedTitle: String
     lazy val expectedHeading = expectedTitle
+    val addStatePensionToTaxCalcAnswer: String
   }
-  
+
   object ExpectedIndividualEN extends SpecificExpectedResults {
     val expectedTitle: String = "Check your State Pension"
+    val addStatePensionToTaxCalcAnswer: String = "Yes"
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
     val expectedTitle: String = "Check your clients State Pension"
+    val addStatePensionToTaxCalcAnswer: String = "Yes"
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
     val expectedTitle: String = "Check your State Pension"
+    val addStatePensionToTaxCalcAnswer: String = "Iwan"
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
     val expectedTitle: String = "Check your clients State Pension"
+    val addStatePensionToTaxCalcAnswer: String = "Iwan"
   }
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(
@@ -160,21 +164,21 @@ class StatePensionCYAViewSpec extends ViewUnitTest { //scalastyle:off magic.numb
     import userScenario.commonExpectedResults._
 
     s"language is ${welshTest(userScenario.isWelsh)} and request is from an ${agentTest(userScenario.isAgent)}" should {
-      
+
       "render the CYA page when answering State Pension = No, Lump Sum = No, Adding State Pension to tax calculations= No" when {
         val viewModel = anIncomeFromPensionsViewModel.copy(
           statePension = anIncomeFromPensionsViewModel
             .statePension.map(_.copy(amountPaidQuestion = Some(false), taxPaidQuestion = Some(false))),
           statePensionLumpSum = anIncomeFromPensionsViewModel
-            .statePensionLumpSum.map(_.copy(amountPaidQuestion = Some(false), taxPaidQuestion = Some(false)))
-          //todo: add conditions for adding state pensions to tax calculations
+            .statePensionLumpSum.map(_.copy(amountPaidQuestion = Some(false), taxPaidQuestion = Some(false),
+            addToCalculation = Some(false)))
         )
         implicit val document: Document = renderPage(userScenario, viewModel)
 
         cyaRowCheck(statePension, statePensionValue, ChangeLinks.changeStatePension(),hiddenStatePension,1)
         cyaRowCheck(lumpSum, lumpSumValue, ChangeLinks.changeLumpSum(),hiddenLumpSum,2)
-        cyaRowCheck(addStatePensionToTaxCalcs, addStatePensionToTaxCalcsAnswer, ChangeLinks.changeAddStatePensionToTaxCalcs(),
-                                                                       hiddenAddStatePensionToTaxCalcs,3)
+        cyaRowCheck(addStatePensionToTaxCalc, addStatePensionToTaxCalcAnswer, ChangeLinks.changeAddStatePensionToTaxCalc(),
+                                                                       hiddenAddStatePensionToTaxCalc,3)
         buttonCheck(buttonText)
       }
 
@@ -183,16 +187,16 @@ class StatePensionCYAViewSpec extends ViewUnitTest { //scalastyle:off magic.numb
           statePension = anIncomeFromPensionsViewModel
             .statePension.map(_.copy(amountPaidQuestion = Some(true), taxPaidQuestion = Some(false))),
           statePensionLumpSum = anIncomeFromPensionsViewModel
-            .statePensionLumpSum.map(_.copy(amountPaidQuestion = Some(false), taxPaidQuestion = Some(false)))
-          //todo: add conditions for adding state pensions to tax calculations
+            .statePensionLumpSum.map(_.copy(amountPaidQuestion = Some(false), taxPaidQuestion = Some(false),
+            addToCalculation = Some(false)))
         )
         implicit val document: Document = renderPage(userScenario, viewModel)
 
         cyaRowCheck(statePension, statePensionValue, ChangeLinks.changeStatePension(), hiddenStatePension, 1)
         cyaRowCheck(pensionStartDate, pensionStartDateValue, ChangeLinks.changeStartDate(),hiddenPensionStartDate,2)
         cyaRowCheck(lumpSum, lumpSumValue, ChangeLinks.changeLumpSum(), hiddenLumpSum, 3)
-        cyaRowCheck(addStatePensionToTaxCalcs, addStatePensionToTaxCalcsAnswer, ChangeLinks.changeAddStatePensionToTaxCalcs(),
-                                                                                hiddenAddStatePensionToTaxCalcs, 4)
+        cyaRowCheck(addStatePensionToTaxCalc, addStatePensionToTaxCalcAnswer, ChangeLinks.changeAddStatePensionToTaxCalc(),
+                                                                                hiddenAddStatePensionToTaxCalc, 4)
         buttonCheck(buttonText)
       }
 
@@ -201,8 +205,8 @@ class StatePensionCYAViewSpec extends ViewUnitTest { //scalastyle:off magic.numb
           statePension = anIncomeFromPensionsViewModel
             .statePension.map(_.copy(amountPaidQuestion = Some(true), taxPaidQuestion = Some(false))),
           statePensionLumpSum = anIncomeFromPensionsViewModel
-            .statePensionLumpSum.map(_.copy(amountPaidQuestion = Some(true), taxPaidQuestion = Some(false)))
-          //todo: add conditions for adding state pensions to tax calculations
+            .statePensionLumpSum.map(_.copy(amountPaidQuestion = Some(true), taxPaidQuestion = Some(false),
+            addToCalculation = Some(false)))
         )
         implicit val document: Document = renderPage(userScenario, viewModel)
 
@@ -211,8 +215,8 @@ class StatePensionCYAViewSpec extends ViewUnitTest { //scalastyle:off magic.numb
         cyaRowCheck(lumpSum, lumpSumValue, ChangeLinks.changeLumpSum(), hiddenLumpSum, 3)
         cyaRowCheck(lumpSumTax, lumpSumTaxValue, ChangeLinks.changeLumpSumTax(), hiddenLumpSumTax, 4)
         cyaRowCheck(lumpSumDate, lumpSumDateValue, ChangeLinks.changeLumpSumStartDate(), hiddenLumpSumDate, 5)
-        cyaRowCheck(addStatePensionToTaxCalcs, addStatePensionToTaxCalcsAnswer, ChangeLinks.changeAddStatePensionToTaxCalcs(),
-          hiddenAddStatePensionToTaxCalcs, 6)
+        cyaRowCheck(addStatePensionToTaxCalc, addStatePensionToTaxCalcAnswer, ChangeLinks.changeAddStatePensionToTaxCalc(),
+          hiddenAddStatePensionToTaxCalc, 6)
         buttonCheck(buttonText)
       }
       "render the CYA page when answering State Pension = Yes, Lump Sum = Yes, Lump sum tax = Yes, Adding State Pension to tax calculations = No" when {
@@ -220,8 +224,8 @@ class StatePensionCYAViewSpec extends ViewUnitTest { //scalastyle:off magic.numb
           statePension = anIncomeFromPensionsViewModel
             .statePension.map(_.copy(amountPaidQuestion = Some(true), taxPaidQuestion = Some(false))),
           statePensionLumpSum = anIncomeFromPensionsViewModel
-            .statePensionLumpSum.map(_.copy(amountPaidQuestion = Some(true), taxPaidQuestion = Some(true)))
-          //todo: add conditions for adding state pensions to tax calculations
+            .statePensionLumpSum.map(_.copy(amountPaidQuestion = Some(true), taxPaidQuestion = Some(true),
+            addToCalculation = Some(false)))
         )
         implicit val document: Document = renderPage(userScenario, viewModel)
 
@@ -230,8 +234,8 @@ class StatePensionCYAViewSpec extends ViewUnitTest { //scalastyle:off magic.numb
         cyaRowCheck(lumpSum, lumpSumValue, ChangeLinks.changeLumpSum(), hiddenLumpSum, 3)
         cyaRowCheck(lumpSumTax, lumpSumTaxValue, ChangeLinks.changeLumpSumTax(), hiddenLumpSumTax, 4)
         cyaRowCheck(lumpSumDate, lumpSumDateValue, ChangeLinks.changeLumpSumStartDate(), hiddenLumpSumDate, 5)
-        cyaRowCheck(addStatePensionToTaxCalcs, addStatePensionToTaxCalcsAnswer, ChangeLinks.changeAddStatePensionToTaxCalcs(),
-          hiddenAddStatePensionToTaxCalcs, 6)
+        cyaRowCheck(addStatePensionToTaxCalc, addStatePensionToTaxCalcAnswer, ChangeLinks.changeAddStatePensionToTaxCalc(),
+          hiddenAddStatePensionToTaxCalc, 6)
         buttonCheck(buttonText)
       }
     }

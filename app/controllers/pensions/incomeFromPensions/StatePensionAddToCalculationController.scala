@@ -20,12 +20,14 @@ import config.{AppConfig, ErrorHandler}
 import controllers.predicates.ActionsProvider
 import forms.FormsProvider
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.pensions.incomeFromPensions.StatePensionAddToCalculationView
 import controllers.pensions.routes.PensionsSummaryController
-import models.pension.statebenefits.StateBenefitViewModel
+import controllers.pensions.incomeFromPensions.routes.StatePensionCYAController
+import models.mongo.PensionsUserData
+import models.pension.statebenefits.{IncomeFromPensionsViewModel, StateBenefitViewModel}
 import models.requests.UserSessionDataRequest
 import play.api.data.Form
 import utils.{Clock, SessionHelper}
@@ -41,7 +43,9 @@ class StatePensionAddToCalculationController @Inject () (actionsProvider: Action
                                                          errorHandler: ErrorHandler)
                                                         (implicit val mcc: MessagesControllerComponents,
                                                          appConfig: AppConfig,
-                                                         clock: Clock)
+                                                         clock: Clock,
+                                                         ec: ExecutionContext
+                                                        )
   extends FrontendController(mcc) with SessionHelper with I18nSupport {
 
   def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
@@ -50,15 +54,39 @@ class StatePensionAddToCalculationController @Inject () (actionsProvider: Action
         Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
       } { sp: StateBenefitViewModel =>
           sp.addToCalculation.fold {
-            Ok(view(formsProvider.statePensionAddToCalculationForm(sessionData.user.isAgent), taxYear))
+            Future.successful(Ok(view(formsProvider.statePensionAddToCalculationForm(sessionData.user.isAgent), taxYear)))
           } {
             addToCalculation: Boolean =>
               val filledForm: Form[Boolean] = formsProvider.statePensionAddToCalculationForm(sessionData.user.isAgent)
                 .fill(addToCalculation)
-              Ok(view(filledForm, taxYear))
+              Future.successful(Ok(view(filledForm, taxYear)))
           }
         }
   }
 
-  def submit(taxYear: Int): Action[AnyContent] = ???
+  def submit(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
+    implicit sessionData =>
+      formsProvider.statePensionAddToCalculationForm(sessionData.user.isAgent).bindFromRequest().fold(
+        formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
+        addToCalculation => updateSessionData(sessionData.pensionsUserData, addToCalculation, taxYear)
+      )
+  }
+
+  private def updateSessionData[T](pensionsUserData: PensionsUserData,
+                                   addToCalculation: Boolean,
+                                   taxYear: Int)(implicit request: UserSessionDataRequest[T]): Future[Result] = {
+    val viewModel: IncomeFromPensionsViewModel = pensionsUserData.pensions.incomeFromPensions
+    val updateStatePensionLumpSum: StateBenefitViewModel = viewModel.statePensionLumpSum match {
+      case Some(value) => value.copy(addToCalculation = Some(addToCalculation))
+      case None => StateBenefitViewModel(addToCalculation = Some(addToCalculation))
+    }
+    val updatedModel = pensionsUserData.copy(pensions =
+      pensionsUserData.pensions.copy(incomeFromPensions =
+        pensionsUserData.pensions.incomeFromPensions.copy(statePensionLumpSum =
+          Some(updateStatePensionLumpSum))))
+    pensionSessionService.createOrUpdateSessionData(updatedModel).map {
+      case Right(_) => Redirect(StatePensionCYAController.show(taxYear))
+      case _ => errorHandler.internalServerError()
+    }
+  }
 }

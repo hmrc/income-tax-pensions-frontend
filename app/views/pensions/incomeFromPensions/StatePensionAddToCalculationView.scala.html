@@ -41,7 +41,7 @@
 
     @heading(headingAndTitleForUse, Some(messages("common.incomeFromPensions.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-2")
 
-    @formWithCsrf(action = controllers.pensions.paymentsIntoPensions.routes.ReliefAtSourcePensionsController.submit(taxYear)) {
+    @formWithCsrf(action = controllers.pensions.incomeFromPensions.routes.StatePensionAddToCalculationController.submit(taxYear)) {
          @inputRadio(
              form = form,
              inline = true,
