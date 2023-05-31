@@ -47,24 +47,57 @@ summaryList: SummaryList
 </p>
 }
 
+@reliefSchemeSummaryList = {
+<div class="govuk-form-group" id="reliefSchemeSummaryList">
+    <dl class="hmrc-add-to-a-list hmrc-add-to-a-list--short">
+        @for((pensionIncome, index) <- reliefSchemeList.zipWithIndex){
+        <div class="hmrc-add-to-a-list__contents">
+
+            <div style="table-row">
+                <dd class="hmrc-add-to-a-list__identifier hmrc-add-to-a-list__identifier--light">
+                    <strong>@messages("overseasPension.reliefDetails.pensionSchemeName")</strong>
+                </dd>
+                <dd class="hmrc-add-to-a-list__identifier hmrc-add-to-a-list__identifier--light govuk-!-text-align-right">
+                    @pensionIncome.customerReference.getOrElse("")
+                </dd>
+            </div>
+            <div style="table-row">
+            <dd class="hmrc-add-to-a-list__identifier hmrc-add-to-a-list__identifier--light">
+                <strong>@messages("overseasPension.reliefDetails.amount")</strong>
+            </dd>
+            <dd class="hmrc-add-to-a-list__identifier hmrc-add-to-a-list__identifier--light govuk-!-text-align-right" >
+                @pensionIncome.employerPaymentsAmount.getOrElse("")
+            </dd>
+            </div>
+            <div style="table-row">
+            <dd class="hmrc-add-to-a-list__identifier hmrc-add-to-a-list__identifier--light">
+                <strong>@messages("overseasPension.reliefDetails.typeOfRelief")</strong>
+            </dd>
+            <dd class="hmrc-add-to-a-list__identifier hmrc-add-to-a-list__identifier--light govuk-!-text-align-right" >
+                @pensionIncome.reliefType.getOrElse("")
+            </dd>
+            </div>
+        </div>
+        }
+    </dl>
+</div>
+}
+
 @layout(pageTitle = titleText, taxYear = Some(taxYear), isAgent = request.user.isAgent) {
 
 @heading(titleText, Some(messages("common.paymentsIntoOverseasPensions.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-2")
+@contentHtml
+@reliefSchemeSummaryList
 
-@formWithCsrf(action = controllers.pensions.paymentsIntoOverseasPensions.routes.RemoveReliefSchemeController.submit(taxYear, index)) {
-    @contentHtml
-    @summaryList(ReliefsSchemeDetailsHelper.removeSummaryListRows(reliefSchemeList(index.getOrElse(0)), taxYear, index)(messages))
-
-    <div class="govuk-button-group">
-        @govUkButton(Button(
-        attributes = Map("data-module" -> "govuk-button", "id" -> "remove-pension-button-id"),
-        preventDoubleClick = Some(true),
-        content = Text(messages("common.remove")),
-        classes = "govuk-button--warning"
-        ))
-        @link(ReliefsSchemeSummaryController.show(taxYear).url, messages("common.cancel"), id = Some("cancel-link-id"))
-    </div>
-}
+<div class="govuk-button-group">
+@govUkButton(Button(
+attributes = Map("data-module" -> "govuk-button", "id" -> "remove-pension-button-id"),
+preventDoubleClick = Some(true),
+content = Text(messages("common.remove")),
+classes = "govuk-button--warning",
+))
+@link(ReliefsSchemeSummaryController.show(taxYear).url, messages("common.cancel"), id = Some("cancel-link-id"))
+</div>
 }
 
 @{

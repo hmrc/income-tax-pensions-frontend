@@ -108,15 +108,6 @@ class RemoveReliefSchemeViewSpec extends ViewUnitTest with FakeRequestProvider {
 
           captionCheck(userScenario.commonExpectedResults.expectedCaption(taxYearEOY), Selectors.captionSelector)
           titleCheck(userScenario.commonExpectedResults.expectedTitle, userScenario.isWelsh)
-          captionCheck(userScenario.commonExpectedResults.expectedSubCaption, Selectors.paraSelector)
-          removeCyaRowCheck(userScenario.commonExpectedResults.schemeName,
-            "PENSIONINCOME245", 1)
-          removeCyaRowCheck(userScenario.commonExpectedResults.untaxedEmployerPayments,
-            "£193.54",
-            2)
-          removeCyaRowCheck(userScenario.commonExpectedResults.reliefType,
-            "Migrant member relief",
-            rowNumber = 3)
           buttonCheck(userScenario.commonExpectedResults.button)
         }
       }

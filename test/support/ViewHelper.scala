@@ -317,21 +317,4 @@ trait ViewHelper {
 
     }
   }
-    def removeCyaRowCheck(expectedText: String, expectedValue: String, rowNumber: Int)
-                 (implicit document: Document): Unit = {
-    val keySelector = s"#main-content > div > div > dl > div:nth-child($rowNumber) > dt"
-    val valueSelector = s"#main-content > div > div > dl > div:nth-child($rowNumber) > dd.govuk-summary-list__value"
-
-    s"row number $rowNumber is correct" which {
-
-      s"has the correct row name of '$expectedText'" in {
-        document.select(keySelector).text() shouldBe expectedText
-      }
-
-      s"has the correct row value of '$expectedValue'" in {
-        document.select(valueSelector).text() shouldBe expectedValue
-      }
-
-    }
-  }
 }

@@ -44,12 +44,15 @@ class RemoveReliefSchemeController @Inject()(actionsProvider: ActionsProvider,
   extends FrontendController(mcc) with I18nSupport with SessionHelper {
 
   def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionUserData =>
-    val pensionReliefScheme: Seq[Relief] = sessionUserData.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs
-    validatedIndex(index, pensionReliefScheme.size) match {
-      case Some(value) => Future.successful(Ok(view(taxYear = taxYear, reliefSchemeList = pensionReliefScheme, index = Some(value))))
+    val pensionReliefSchemes: Seq[Relief] = sessionUserData.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs
+    getElementIndex(index, pensionReliefSchemes) match {
+      case Some(relief) => Future.successful(Ok(view(taxYear = taxYear, reliefSchemeList = List(relief), index = index)))
       case None => Future.successful(Redirect(ReliefsSchemeDetailsController.show(taxYear, Some(1)))): Future[Result]
     }
+  }
 
+  private def getElementIndex[A](maybeIndex: Option[Int], as: Seq[A]): Option[A] = {
+    maybeIndex.flatMap(index => as.lift(index))
   }
 
   def submit(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionUserData =>
