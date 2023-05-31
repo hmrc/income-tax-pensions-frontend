@@ -18,6 +18,7 @@ package services
 
 import connectors.StateBenefitsConnector
 import models.User
+import models.pension.statebenefits.StateBenefitViewModel
 import models.mongo.{PensionsCYAModel, PensionsUserData, ServiceError, StateBenefitsUserData}
 import models.pension.statebenefits.{ClaimCYAModel, IncomeFromPensionsViewModel}
 import org.joda.time.DateTimeZone
@@ -54,21 +55,20 @@ class StatePensionService @Inject()(pensionUserDataRepository: PensionsUserDataR
       }
     }
 
-    def buildStateBenefitsUserData(sessionData: PensionsUserData, benefitType: String): StateBenefitsUserData = {
-      val conditionalData = if (benefitType.equals("statePension"))
-        sessionData.pensions.incomeFromPensions.statePension
-      else sessionData.pensions.incomeFromPensions.statePensionLumpSum
+    def buildStateBenefitsUserData(sessionData: PensionsUserData,
+                                   stateBenefit: Option[StateBenefitViewModel],
+                                   benefitType: String): StateBenefitsUserData = {
 
       val claimModel = ClaimCYAModel(
-        benefitId = conditionalData.flatMap(_.benefitId),
-        startDate = conditionalData.flatMap(_.startDate).getOrElse(LocalDate.now()),
-        endDateQuestion = conditionalData.flatMap(_.endDateQuestion),
-        endDate = conditionalData.flatMap(_.endDate),
-        dateIgnored = conditionalData.flatMap(_.dateIgnored),
-        submittedOn = conditionalData.flatMap(_.submittedOn),
-        amount = conditionalData.flatMap(_.amount),
-        taxPaidQuestion = conditionalData.flatMap(_.taxPaidQuestion),
-        taxPaid = conditionalData.flatMap(_.taxPaid))
+        benefitId = stateBenefit.flatMap(_.benefitId),
+        startDate = stateBenefit.flatMap(_.startDate).getOrElse(LocalDate.now()),
+        endDateQuestion = stateBenefit.flatMap(_.endDateQuestion),
+        endDate = stateBenefit.flatMap(_.endDate),
+        dateIgnored = stateBenefit.flatMap(_.dateIgnored),
+        submittedOn = stateBenefit.flatMap(_.submittedOn),
+        amount = stateBenefit.flatMap(_.amount),
+        taxPaidQuestion = stateBenefit.flatMap(_.taxPaidQuestion),
+        taxPaid = stateBenefit.flatMap(_.taxPaid))
 
       StateBenefitsUserData(
         benefitType = benefitType,
@@ -84,15 +84,21 @@ class StatePensionService @Inject()(pensionUserDataRepository: PensionsUserDataR
     }
 
     (for {
-      sessionData <- FutureEitherOps[ServiceError, Option[PensionsUserData]](pensionUserDataRepository.find(taxYear, user))
+      optSessionData <- FutureEitherOps[ServiceError, Option[PensionsUserData]](pensionUserDataRepository.find(taxYear, user))
 
-      statePensionSubmission = buildStateBenefitsUserData(sessionData.get, "statePension")
-      statePensionLumpSumSubmission = buildStateBenefitsUserData(sessionData.get, "statePensionLumpSum")
+      sessionData = optSessionData.getOrElse(throw new RuntimeException("Session data is empty"))
+
+      statePensionSubmission = buildStateBenefitsUserData(
+        sessionData, sessionData.pensions.incomeFromPensions.statePension, "statePension"
+      )
+      statePensionLumpSumSubmission = buildStateBenefitsUserData(
+        sessionData, sessionData.pensions.incomeFromPensions.statePensionLumpSum, "statePensionLumpSum"
+      )
 
       _ <- FutureEitherOps[ServiceError, Unit](stateBenefitsConnector.saveClaimData(user.nino, statePensionSubmission)(hcWithExtras, ec))
       _ <- FutureEitherOps[ServiceError, Unit](stateBenefitsConnector.saveClaimData(user.nino, statePensionLumpSumSubmission)(hcWithExtras, ec))
 
-      updatedCYA = getPensionsUserData(sessionData, user)
+      updatedCYA = getPensionsUserData(Some(sessionData), user)
       result <- FutureEitherOps[ServiceError, Unit](pensionUserDataRepository.createOrUpdate(updatedCYA))
     } yield {
       result
