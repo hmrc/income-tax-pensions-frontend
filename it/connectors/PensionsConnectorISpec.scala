@@ -83,9 +83,9 @@ class PensionsConnectorISpec extends IntegrationTest {
         result shouldBe Left(APIErrorModel(INTERNAL_SERVER_ERROR, APIErrorBodyModel.parsingError))
       }
 
-      "submission returns a 200 but invalid json" in {
+      "submission returns invalid json" in {
 
-        stubPutWithHeadersCheck(chargesURL, OK, Json.toJson("""{"invalid": true}""").toString(),
+        stubPutWithHeadersCheck(chargesURL, INTERNAL_SERVER_ERROR, """{"invalid": true}""",
           "X-Session-ID" -> sessionId, "mtditid" -> mtditid)
 
         val result = Await.result(connector.savePensionChargesSessionData(nino, taxYear, chargesRequestModel), Duration.Inf)

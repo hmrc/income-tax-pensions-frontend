@@ -18,7 +18,6 @@ package services
 
 import connectors.{IncomeTaxUserDataConnector, PensionsConnector}
 import models.mongo.{PensionsCYAModel, PensionsUserData, ServiceError}
-import models.pension.AllPensionsData
 import models.pension.charges.PaymentsIntoOverseasPensionsViewModel
 import models.pension.income.CreateUpdatePensionIncomeModel
 import models.pension.reliefs.{CreateOrUpdatePensionReliefsModel, Reliefs}

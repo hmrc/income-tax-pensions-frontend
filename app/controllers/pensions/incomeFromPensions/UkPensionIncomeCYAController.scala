@@ -45,7 +45,8 @@ class UkPensionIncomeCYAController @Inject()(implicit val mcc: MessagesControlle
                                              pensionSessionService: PensionSessionService,
                                              statePensionService: StatePensionService,
                                              errorHandler: ErrorHandler,
-                                             clock: Clock) extends FrontendController(mcc) with I18nSupport with SessionHelper with FormUtils {
+                                             clock: Clock)
+  extends FrontendController(mcc) with I18nSupport with SessionHelper with FormUtils {
 
 
   lazy val logger: Logger = Logger(this.getClass.getName)
@@ -69,11 +70,11 @@ class UkPensionIncomeCYAController @Inject()(implicit val mcc: MessagesControlle
   }
 
   def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
-    pensionSessionService.getAndHandle(taxYear, request.user) {(cya, prior) =>
+    pensionSessionService.getAndHandle(taxYear, request.user) { (cya, prior) =>
       cya.fold(
         Future.successful(Redirect(appConfig.incomeTaxSubmissionOverviewUrl(taxYear)))
       ) { model =>
-        if (comparePriorData(model.pensions, prior)) {
+        if (sessionDataDifferentThanPriorData(model.pensions, prior)) {
           performSubmission(taxYear, cya)(request.user, hc, request, clock)
         } else {
           Future.successful(Redirect(IncomeFromPensionsSummaryController.show(taxYear)))
@@ -109,7 +110,7 @@ class UkPensionIncomeCYAController @Inject()(implicit val mcc: MessagesControlle
     }
   }
 
-  private def comparePriorData(cyaData: PensionsCYAModel, priorData: Option[AllPensionsData]): Boolean = {
+  private def sessionDataDifferentThanPriorData(cyaData: PensionsCYAModel, priorData: Option[AllPensionsData]): Boolean = {
     priorData match {
       case Some(prior) => !cyaData.equals(generateCyaFromPrior(prior))
       case None => true

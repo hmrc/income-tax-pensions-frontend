@@ -72,8 +72,7 @@ class PensionChargesService @Inject()(pensionUserDataRepository: PensionsUserDat
           pensionContributions = priorData.pensions.flatMap(_.pensionCharges.flatMap(_.pensionContributions)),
           overseasPensionContributions = priorData.pensions.flatMap(_.pensionCharges.flatMap(_.overseasPensionContributions))
         )
-        _ <- FutureEitherOps[ServiceError, Unit](pensionsConnector.savePensionChargesSessionData(
-          user.nino, taxYear, req)(hcWithExtras, ec))
+        _ <- FutureEitherOps[ServiceError, Unit](pensionsConnector.savePensionChargesSessionData(user.nino, taxYear, req)(hcWithExtras, ec))
         updatedCYA = getPensionsUserData(currentData, user)
         result <- FutureEitherOps[ServiceError, Unit](pensionUserDataRepository.createOrUpdate(updatedCYA))
       } yield {
