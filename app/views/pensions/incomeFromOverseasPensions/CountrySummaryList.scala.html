@@ -47,7 +47,7 @@
 
 @pensionIncomeSummaryList = {
     <div class="govuk-!-margin-bottom-9">
-        @if(pensionIncomeList.filter(scheme => scheme.alphaThreeCode.isDefined).nonEmpty){
+        @if(pensionIncomeList.nonEmpty){
             <div class="govuk-form-group" id="pensionIncomeSummaryList">
                 <dl class="hmrc-add-to-a-list hmrc-add-to-a-list--short">
                     @for((pensionIncome, index) <- pensionIncomeList.zipWithIndex){
