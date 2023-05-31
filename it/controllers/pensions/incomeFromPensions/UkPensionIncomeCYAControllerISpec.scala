@@ -258,13 +258,14 @@ class UkPensionIncomeCYAControllerISpec extends IntegrationTest with ViewHelpers
           result.status shouldBe SEE_OTHER
         }
 
-        "redirects to the summary page" in {
+        "redirects to the overview page" in {
           result.header("location") shouldBe Some(pensionIncomeSummaryUrl(taxYear))
         }
       }
 
       "CYA data has been updated and differs from prior data" which {
         val form = Map[String, String]()
+
         lazy val result: WSResponse = {
           dropPensionsDB()
           authoriseAgentOrIndividual()
@@ -283,6 +284,7 @@ class UkPensionIncomeCYAControllerISpec extends IntegrationTest with ViewHelpers
 
       "the user makes no changes and no submission to DES is made" which {
         val form = Map[String, String]()
+
         val priorData = anAllPensionDataEmpty.copy(employmentPensions = Some(EmploymentPensions(
           employmentData = Seq(EmploymentPensionModel(
             employmentId = anUkPensionIncomeViewModelOne.employmentId.get,
@@ -296,10 +298,12 @@ class UkPensionIncomeCYAControllerISpec extends IntegrationTest with ViewHelpers
             isCustomerEmploymentData = Some(true)
           ))
         )))
+
         val cyaData = aPensionsUserData.copy(taxYear = taxYear, pensions = aPensionsCYAGeneratedFromPriorEmpty.copy(
           incomeFromPensions = IncomeFromPensionsViewModel(
             uKPensionIncomesQuestion = Some(true),
             uKPensionIncomes = Seq(anUkPensionIncomeViewModelOne))))
+
         lazy val result: WSResponse = {
           dropPensionsDB()
           authoriseAgentOrIndividual()
@@ -313,7 +317,7 @@ class UkPensionIncomeCYAControllerISpec extends IntegrationTest with ViewHelpers
           result.status shouldBe SEE_OTHER
         }
 
-        "redirects to the summary page" in {
+        "redirects to the overview page" in {
           result.header("location") shouldBe Some(pensionIncomeSummaryUrl(taxYear))
         }
       }
