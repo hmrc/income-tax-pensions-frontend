@@ -26,13 +26,13 @@ import models.pension.AllPensionsData
 import models.pension.AllPensionsData.generateCyaFromPrior
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.PensionSessionService
+import services.{EmploymentPensionService, PensionSessionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.incomeFromPensions.UkPensionIncomeCYAView
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class UkPensionIncomeCYAController @Inject()(implicit val mcc: MessagesControllerComponents,
@@ -40,8 +40,10 @@ class UkPensionIncomeCYAController @Inject()(implicit val mcc: MessagesControlle
                                              view: UkPensionIncomeCYAView,
                                              appConfig: AppConfig,
                                              pensionSessionService: PensionSessionService,
+                                             employmentPensionService: EmploymentPensionService,
                                              errorHandler: ErrorHandler,
-                                             clock: Clock) extends FrontendController(mcc) with I18nSupport with SessionHelper with FormUtils {
+                                             clock: Clock, ec: ExecutionContext)
+                             extends FrontendController(mcc) with I18nSupport with SessionHelper with FormUtils {
 
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     pensionSessionService.getAndHandle(taxYear, request.user) { (cya, prior) =>
@@ -65,9 +67,11 @@ class UkPensionIncomeCYAController @Inject()(implicit val mcc: MessagesControlle
       cya.fold(
         Future.successful(Redirect(appConfig.incomeTaxSubmissionOverviewUrl(taxYear)))
       ) { model =>
-        if (comparePriorData(model.pensions, prior)) {
-          //TODO - build submission model from cya data and submit to DES if cya data doesn't match prior data
-          Future.successful(Redirect(IncomeFromPensionsSummaryController.show(taxYear)))
+        if (sessionDataDifferentThanPriorData(model.pensions, prior)) {
+          employmentPensionService.persistUkPensionIncomeViewModel(request.user, taxYear).map {
+            case Left(_) => errorHandler.internalServerError()
+            case Right(_) => Redirect(IncomeFromPensionsSummaryController.show(taxYear))
+          }
         } else {
           Future.successful(Redirect(IncomeFromPensionsSummaryController.show(taxYear)))
         }
@@ -75,7 +79,7 @@ class UkPensionIncomeCYAController @Inject()(implicit val mcc: MessagesControlle
     }
   }
 
-  private def comparePriorData(cyaData: PensionsCYAModel, priorData: Option[AllPensionsData]): Boolean = {
+  private def sessionDataDifferentThanPriorData(cyaData: PensionsCYAModel, priorData: Option[AllPensionsData]): Boolean = {
     priorData match {
       case Some(prior) => !cyaData.equals(generateCyaFromPrior(prior))
       case None => true

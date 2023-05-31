@@ -17,11 +17,13 @@
 package models.pension.statebenefits
 
 import models.mongo.TextAndKey
+import models.pension.employmentPensions.CreateUpdateEmploymentRequest
+import CreateUpdateEmploymentRequest.{CreateUpdateEmployment, CreateUpdateEmploymentData, PayModel}
 import play.api.libs.json.{Json, OFormat}
 import utils.DecryptableSyntax.DecryptableOps
-import utils.DecryptorInstances.{bigDecimalDecryptor, stringDecryptor, booleanDecryptor}
+import utils.DecryptorInstances.{bigDecimalDecryptor, booleanDecryptor, stringDecryptor}
 import utils.EncryptableSyntax.EncryptableOps
-import utils.EncryptorInstances.{bigDecimalEncryptor, stringEncryptor, booleanEncryptor}
+import utils.EncryptorInstances.{bigDecimalEncryptor, booleanEncryptor, stringEncryptor}
 import utils.{EncryptedValue, SecureGCMCipher}
 
 case class UkPensionIncomeViewModel(
@@ -49,6 +51,27 @@ case class UkPensionIncomeViewModel(
       isCustomerEmploymentData = isCustomerEmploymentData.map(_.encrypted)
 
     )
+
+  def toCreateUpdateEmploymentRequest: CreateUpdateEmploymentRequest =
+    CreateUpdateEmploymentRequest(
+      employmentId = this.employmentId,
+      employment = Some(
+        CreateUpdateEmployment(
+          employerRef = this.pensionSchemeRef,
+          employerName = this.pensionSchemeName.getOrElse(""),
+          startDate = this.startDate.getOrElse(""),
+          cessationDate = this.endDate,
+          payrollId = this.pensionId)
+      ),
+      employmentData = Some(
+        CreateUpdateEmploymentData(PayModel(
+          taxablePayToDate = this.amount.getOrElse(0.00),
+          totalTaxToDate = this.taxPaid.getOrElse(0.00)
+        ))
+      ),
+      isHmrcEmploymentId = this.isCustomerEmploymentData.map(!_)
+    )
+  
 }
 
 object UkPensionIncomeViewModel {
