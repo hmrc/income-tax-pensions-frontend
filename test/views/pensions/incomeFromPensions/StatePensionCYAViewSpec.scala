@@ -58,7 +58,6 @@ class StatePensionCYAViewSpec extends ViewUnitTest { //scalastyle:off magic.numb
     val addStatePensionToTaxCalc: String
     val hiddenAddStatePensionToTaxCalc: String
     val addStatePensionToTaxCalcAnswer: String
-
     val buttonText: String
   }
 
@@ -87,7 +86,6 @@ class StatePensionCYAViewSpec extends ViewUnitTest { //scalastyle:off magic.numb
 
   object CommonExpectedCY extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Incwm o bensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
-
     val statePension: String = "State Pension"
     val hiddenStatePension = "Change state pension"
     val statePensionValue : String = "£155.88"
@@ -112,27 +110,22 @@ class StatePensionCYAViewSpec extends ViewUnitTest { //scalastyle:off magic.numb
   trait SpecificExpectedResults {
     val expectedTitle: String
     lazy val expectedHeading = expectedTitle
-    val addStatePensionToTaxCalcAnswer: String
   }
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
     val expectedTitle: String = "Check your State Pension"
-    val addStatePensionToTaxCalcAnswer: String = "Yes"
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
     val expectedTitle: String = "Check your clients State Pension"
-    val addStatePensionToTaxCalcAnswer: String = "Yes"
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
     val expectedTitle: String = "Check your State Pension"
-    val addStatePensionToTaxCalcAnswer: String = "Iwan"
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
     val expectedTitle: String = "Check your clients State Pension"
-    val addStatePensionToTaxCalcAnswer: String = "Iwan"
   }
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(
