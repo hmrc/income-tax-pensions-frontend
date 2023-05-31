@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models.pensions.charges
+package models.pension.charges
 
 import builders.UnauthorisedPaymentsViewModelBuilder.anUnauthorisedPaymentsViewModel
 import support.UnitTest

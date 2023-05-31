@@ -16,13 +16,73 @@
 
 package models.pension.charges
 
+import models.pension.{PensionChargesRequestSubModel, PensionModelRequest, PensionRequestSubModel}
 import play.api.libs.json.{Json, OFormat}
 
 case class CreateUpdatePensionChargesRequestModel(pensionSavingsTaxCharges: Option[PensionSavingsTaxCharges],
                                                   pensionSchemeOverseasTransfers: Option[PensionSchemeOverseasTransfers],
                                                   pensionSchemeUnauthorisedPayments: Option[PensionSchemeUnauthorisedPayments],
                                                   pensionContributions: Option[PensionContributions],
-                                                  overseasPensionContributions: Option[OverseasPensionContributions])
+                                                  overseasPensionContributions: Option[OverseasPensionContributions]) extends PensionModelRequest {
+
+
+  //scalastyle:off
+  override def otherSubModelsEmpty[PensionChargesRequestSubModel <: PensionRequestSubModel](excludedModel: Option[PensionChargesRequestSubModel]): Boolean = {
+    excludedModel match {
+      case Some(_: PensionSavingsTaxCharges) =>
+        (pensionSchemeOverseasTransfers.isEmpty || pensionSchemeOverseasTransfers.exists(_.isEmpty)) &&
+          (pensionSchemeUnauthorisedPayments.isEmpty || pensionSchemeUnauthorisedPayments.exists(_.isEmpty)) &&
+          (pensionContributions.isEmpty || pensionContributions.exists(_.isEmpty)) &&
+          (overseasPensionContributions.isEmpty || overseasPensionContributions.exists(_.isEmpty))
+      case Some(_: PensionSchemeOverseasTransfers) =>
+        (pensionSavingsTaxCharges.isEmpty || pensionSavingsTaxCharges.exists(_.isEmpty)) &&
+          (pensionSchemeUnauthorisedPayments.isEmpty || pensionSchemeUnauthorisedPayments.exists(_.isEmpty)) &&
+          (pensionContributions.isEmpty || pensionContributions.exists(_.isEmpty)) &&
+        (overseasPensionContributions.isEmpty || overseasPensionContributions.exists(_.isEmpty))
+      case Some(_: PensionSchemeUnauthorisedPayments) =>
+        (pensionSavingsTaxCharges.isEmpty || pensionSavingsTaxCharges.exists(_.isEmpty)) &&
+          (pensionSchemeOverseasTransfers.isEmpty || pensionSchemeOverseasTransfers.exists(_.isEmpty)) &&
+          (pensionContributions.isEmpty || pensionContributions.exists(_.isEmpty))
+        (overseasPensionContributions.isEmpty || overseasPensionContributions.exists(_.isEmpty))
+      case Some(_: PensionContributions) =>
+        (pensionSavingsTaxCharges.isEmpty || pensionSavingsTaxCharges.exists(_.isEmpty)) &&
+          (pensionSchemeOverseasTransfers.isEmpty || pensionSchemeOverseasTransfers.exists(_.isEmpty)) &&
+          (pensionSchemeUnauthorisedPayments.isEmpty || pensionSchemeUnauthorisedPayments.exists(_.isEmpty)) &&
+          (overseasPensionContributions.isEmpty || overseasPensionContributions.exists(_.isEmpty))
+      case Some(_: OverseasPensionContributions) =>
+        (pensionSavingsTaxCharges.isEmpty || pensionSavingsTaxCharges.exists(_.isEmpty)) &&
+          (pensionSchemeOverseasTransfers.isEmpty || pensionSchemeOverseasTransfers.exists(_.isEmpty)) &&
+          (pensionSchemeUnauthorisedPayments.isEmpty || pensionSchemeUnauthorisedPayments.exists(_.isEmpty)) &&
+          pensionContributions.isEmpty
+      case _ =>
+        (pensionSavingsTaxCharges.isEmpty || pensionSavingsTaxCharges.exists(_.isEmpty)) &&
+          (pensionSchemeOverseasTransfers.isEmpty || pensionSchemeOverseasTransfers.exists(_.isEmpty)) &&
+          (pensionSchemeUnauthorisedPayments.isEmpty || pensionSchemeUnauthorisedPayments.exists(_.isEmpty)) &&
+          (pensionContributions.isEmpty || pensionContributions.exists(_.isEmpty))
+        (overseasPensionContributions.isEmpty || overseasPensionContributions.exists(_.isEmpty))
+    }
+  }
+  //scalastyle:on
+
+
+  def createSubModel: CreateUpdatePensionChargesRequestModel = {
+    def processModel[T <: PensionChargesRequestSubModel](model: Option[T]): Option[T] = {
+      if (model.exists(_.isEmpty) || model.isEmpty) {
+        None
+      } else {
+        model
+      }
+    }
+
+    CreateUpdatePensionChargesRequestModel(
+      pensionSavingsTaxCharges = processModel(this.pensionSavingsTaxCharges),
+      pensionSchemeOverseasTransfers = processModel(this.pensionSchemeOverseasTransfers),
+      pensionSchemeUnauthorisedPayments = processModel(this.pensionSchemeUnauthorisedPayments),
+      pensionContributions = processModel(this.pensionContributions),
+      overseasPensionContributions = processModel(this.overseasPensionContributions)
+    )
+  }
+}
 
 object CreateUpdatePensionChargesRequestModel {
   implicit val format: OFormat[CreateUpdatePensionChargesRequestModel] = Json.format[CreateUpdatePensionChargesRequestModel]

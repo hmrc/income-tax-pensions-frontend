@@ -18,7 +18,7 @@ package services
 
 import connectors.{IncomeTaxUserDataConnector, PensionsConnector}
 import models.mongo.{PensionsCYAModel, PensionsUserData, ServiceError}
-import models.pension.charges.{CreateUpdatePensionChargesRequestModel, UnauthorisedPaymentsViewModel}
+import models.pension.charges.{CreateUpdatePensionChargesRequestModel, PensionSchemeUnauthorisedPayments, UnauthorisedPaymentsViewModel}
 import models.{IncomeTaxUserData, User}
 import org.joda.time.DateTimeZone
 import repositories.PensionsUserDataRepository
@@ -30,7 +30,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 
 class PensionChargesService @Inject()(pensionUserDataRepository: PensionsUserDataRepository,
-                                      pensionsConnector: PensionsConnector,
+                                      pensionChargesHelper: PensionChargesConnectorHelper,
                                       incomeTaxUserDataConnector: IncomeTaxUserDataConnector) {
   def saveUnauthorisedViewModel(user: User, taxYear: Int)
                                (implicit hc: HeaderCarrier, ec: ExecutionContext, clock: Clock): Future[Either[ServiceError, Unit]] = {
@@ -63,7 +63,8 @@ class PensionChargesService @Inject()(pensionUserDataRepository: PensionsUserDat
             .getUserData(user.nino, taxYear)(hc.withExtraHeaders("mtditid" -> user.mtditid)))
 
         currentData <- FutureEitherOps[ServiceError, Option[PensionsUserData]](pensionUserDataRepository.find(taxYear, user))
-        viewModel = sessionData.map(_.pensions.unauthorisedPayments)
+        viewModel: Option[UnauthorisedPaymentsViewModel] = sessionData.map(_.pensions.unauthorisedPayments)
+        unauthModel: Option[PensionSchemeUnauthorisedPayments] = viewModel.map(_.toUnauth)
 
         req = CreateUpdatePensionChargesRequestModel(
           pensionSavingsTaxCharges = priorData.pensions.flatMap(_.pensionCharges.flatMap(_.pensionSavingsTaxCharges)),
@@ -72,8 +73,8 @@ class PensionChargesService @Inject()(pensionUserDataRepository: PensionsUserDat
           pensionContributions = priorData.pensions.flatMap(_.pensionCharges.flatMap(_.pensionContributions)),
           overseasPensionContributions = priorData.pensions.flatMap(_.pensionCharges.flatMap(_.overseasPensionContributions))
         )
-        _ <- FutureEitherOps[ServiceError, Unit](pensionsConnector.savePensionChargesSessionData(
-          user.nino, taxYear, req)(hcWithExtras, ec))
+        _ <- FutureEitherOps[ServiceError, Unit](pensionChargesHelper.sendDownstream(
+          user.nino, taxYear, unauthModel, viewModel, req)(hcWithExtras, ec))
         updatedCYA = getPensionsUserData(currentData, user)
         result <- FutureEitherOps[ServiceError, Unit](pensionUserDataRepository.createOrUpdate(updatedCYA))
       } yield {
