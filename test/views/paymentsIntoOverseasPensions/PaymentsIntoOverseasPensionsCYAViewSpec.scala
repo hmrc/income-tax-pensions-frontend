@@ -75,13 +75,13 @@ class PaymentsIntoOverseasPensionsCYAViewSpec extends ViewUnitTest { //scalastyl
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedTitle: String = "Check payments into overseas pensions"
+    val expectedTitle: String = "Gwirio taliadau i bensiynau tramor"
     val expectedCaption: Int => String = (taxYear: Int) => s"Taliadau i bensiynau tramor ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
     val piopYesNo: String = "Taliadau i bensiynau tramor"
-    val totalPayments: String = "Total payments"
-    val employerPaymentsYesNo: String = "Employer payments"
-    val employerTaxYesNo: String = "Tax paid on employer payments"
-    val schemes: String = "Overseas pension schemes"
+    val totalPayments: String = "Cyfanswm y taliadau"
+    val employerPaymentsYesNo: String = "Taliadau cyflogwr"
+    val employerTaxYesNo: String = "Treth sydd wedi’i thalu ar daliadau cyflogwr"
+    val schemes: String = "Cynllun pensiwn tramor"
     val hiddenPiopYesNo: String = "Newid taliadau i bensiynau tramor"
     val hiddenTotalPayments: String = "Change total payments"
     val hiddenEmployerPaymentsYesNo: String = "Change employer payments"
