@@ -17,6 +17,7 @@
 package connectors
 
 import config.AppConfig
+import connectors.httpParsers.DeletePensionChargesHttpParser.{DeletePensionChargesHttpReads, DeletePensionChargesResponse}
 import connectors.httpParsers.PensionChargesSessionHttpParser.{PensionChargesSessionHttpReads, PensionChargesSessionResponse}
 import connectors.httpParsers.PensionIncomeSessionHttpParser.{PensionIncomeSessionHttpReads, PensionIncomeSessionResponse}
 import connectors.httpParsers.PensionReliefsSessionHttpParser.PensionReliefsSessionResponse
@@ -36,7 +37,12 @@ class PensionsConnector @Inject()(val http: HttpClient,
                                    (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[PensionChargesSessionResponse] = {
     val url = appConfig.pensionBEBaseUrl + s"/pension-charges/session-data/nino/$nino/taxYear/${taxYear.toString}"
     http.PUT[CreateUpdatePensionChargesRequestModel, PensionChargesSessionResponse](url,
-      model)(CreateUpdatePensionChargesRequestModel.format.writes,  PensionChargesSessionHttpReads, hc, ec)
+      model)(CreateUpdatePensionChargesRequestModel.format.writes, PensionChargesSessionHttpReads, hc, ec)
+  }
+
+  def deletePensionCharges(nino: String, taxYear: Int)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[DeletePensionChargesResponse] = {
+    val url = appConfig.pensionBEBaseUrl + s"/pension-charges/session-data/nino/$nino/taxYear/${taxYear.toString}"
+    http.DELETE[DeletePensionChargesResponse](url)(DeletePensionChargesHttpReads, hc, ec)
   }
 
   def savePensionIncomeSessionData(nino: String, taxYear: Int, model: CreateUpdatePensionIncomeModel)

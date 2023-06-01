@@ -17,6 +17,7 @@
 package models.pension.charges
 
 import models.mongo.TextAndKey
+import models.pension.PensionCYABaseModel
 import play.api.libs.json.{Json, OFormat}
 import utils.DecryptableSyntax.DecryptableOps
 import utils.DecryptorInstances.{bigDecimalDecryptor, booleanDecryptor, stringDecryptor}
@@ -33,33 +34,26 @@ case class UnauthorisedPaymentsViewModel(surchargeQuestion: Option[Boolean] = No
                                          noSurchargeTaxAmountQuestion: Option[Boolean] = None,
                                          noSurchargeTaxAmount: Option[BigDecimal] = None,
                                          ukPensionSchemesQuestion: Option[Boolean] = None,
-                                         pensionSchemeTaxReference: Option[Seq[String]] = None) {
+                                         pensionSchemeTaxReference: Option[Seq[String]] = None) extends PensionCYABaseModel {
 
 
   def toUnauth: PensionSchemeUnauthorisedPayments = PensionSchemeUnauthorisedPayments(
     pensionSchemeTaxReference = pensionSchemeTaxReference,
     surcharge =
-      if (surchargeQuestion.getOrElse(false)) Some(Charge(this.surchargeAmount.getOrElse(0.00), this.surchargeTaxAmount.getOrElse(0.00))) else None,
+      if (surchargeQuestion.contains(true) && surchargeAmount.nonEmpty && surchargeTaxAmount.nonEmpty) {
+        Some(Charge(this.surchargeAmount.get, surchargeTaxAmount.get))
+      }
+      else {
+        None
+      },
     noSurcharge =
-      if (noSurchargeQuestion.getOrElse(false)) Some(Charge(this.surchargeAmount.getOrElse(0.00), this.surchargeTaxAmount.getOrElse(0.00))) else None
+      if (noSurchargeQuestion.contains(true) && noSurchargeAmount.nonEmpty && noSurchargeTaxAmount.nonEmpty) {
+        Some(Charge(this.noSurchargeAmount.get, noSurchargeTaxAmount.get))
+      }
+      else {
+        None
+      }
   )
-  def toCreatePensionChargeRequest: CreateUpdatePensionChargesRequestModel = {
-    CreateUpdatePensionChargesRequestModel(
-      pensionSavingsTaxCharges = None,
-      pensionSchemeOverseasTransfers = None,
-      pensionContributions = None,
-      overseasPensionContributions = None,
-      pensionSchemeUnauthorisedPayments = if (this.isEmpty) None else Some(
-        PensionSchemeUnauthorisedPayments(
-          pensionSchemeTaxReference = pensionSchemeTaxReference,
-          surcharge =
-            if (surchargeQuestion.getOrElse(false)) Some(Charge(this.surchargeAmount.getOrElse(0.00), this.surchargeTaxAmount.getOrElse(0.00))) else None,
-          noSurcharge =
-            if (noSurchargeQuestion.getOrElse(false)) Some(Charge(this.surchargeAmount.getOrElse(0.00), this.surchargeTaxAmount.getOrElse(0.00))) else None
-        )
-      )
-    )
-  }
 
   def isEmpty: Boolean = this.productIterator.forall(_ == None)
 
@@ -91,7 +85,7 @@ case class UnauthorisedPaymentsViewModel(surchargeQuestion: Option[Boolean] = No
                                noSurchargeQuestion: Option[Boolean]): UnauthorisedPaymentsViewModel = {
     val questionsSet = copy(surchargeQuestion = surchargeQuestion, noSurchargeQuestion = noSurchargeQuestion)
     val surchargeQuestionsApplied = {
-      if (!surchargeQuestion.getOrElse(false)) {
+      if (!surchargeQuestion.contains(true)) {
         questionsSet.copy(surchargeAmount = None, surchargeTaxAmountQuestion = None, surchargeTaxAmount = None)
       }
       else {
@@ -99,16 +93,39 @@ case class UnauthorisedPaymentsViewModel(surchargeQuestion: Option[Boolean] = No
       }
     }
     val noSurchargeQuestionsApplied = {
-      if (!noSurchargeQuestion.getOrElse(false)) {
+      if (!noSurchargeQuestion.contains(true)) {
         surchargeQuestionsApplied.copy(noSurchargeAmount = None, noSurchargeTaxAmountQuestion = None, noSurchargeTaxAmount = None)
       }
       else {
         surchargeQuestionsApplied
       }
     }
-    noSurchargeQuestionsApplied
+
+    val neitherSurchargeQuestionsApplied = {
+      if (!(noSurchargeQuestion contains true) && !(surchargeQuestion contains true)) {
+        noSurchargeQuestionsApplied.copy(ukPensionSchemesQuestion = None, pensionSchemeTaxReference = None)
+      }
+      else {
+        noSurchargeQuestionsApplied
+      }
+    }
+    neitherSurchargeQuestionsApplied
   }
 
+  override def journeyIsNo: Boolean =
+    (!noSurchargeQuestion.getOrElse(true)
+      && !surchargeQuestion.getOrElse(true)
+      && surchargeAmount.isEmpty
+      && surchargeTaxAmountQuestion.isEmpty
+      && surchargeTaxAmount.isEmpty
+      && noSurchargeAmount.isEmpty
+      && noSurchargeTaxAmountQuestion.isEmpty
+      && noSurchargeTaxAmount.isEmpty
+      && ukPensionSchemesQuestion.isEmpty
+      && pensionSchemeTaxReference.isEmpty
+      )
+
+  override def journeyIsUnanswered: Boolean = this.productIterator.forall(_ == None)
 }
 
 object UnauthorisedPaymentsViewModel {

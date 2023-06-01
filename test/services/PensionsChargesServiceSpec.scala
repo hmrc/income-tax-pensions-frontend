@@ -34,7 +34,8 @@ class PensionsChargesServiceSpec extends UnitTest
   with MockIncomeTaxUserDataConnector
   with ScalaFutures {
 
-  val pensionChargesService = new PensionChargesService(mockPensionUserDataRepository, mockPensionsConnector, mockUserDataConnector)
+
+  val pensionChargesService = new PensionChargesService(mockPensionUserDataRepository, mockPensionConnectorHelper, mockUserDataConnector)
 
   ".saveUnauthorisedViewModel" should {
     "return Right(Unit) when model is saved successfully and unauthorised cya is cleared from DB" in {
