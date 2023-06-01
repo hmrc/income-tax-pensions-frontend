@@ -260,13 +260,13 @@ POST        /:taxYear/overseas-pensions/income-from-overseas-pensions/pension-ov
 GET         /:taxYear/overseas-pensions/income-from-overseas-pensions/taxable-amount                                               controllers.pensions.incomeFromOverseasPensions.TaxableAmountController.show(taxYear: Int, index: Option[Int])
 POST        /:taxYear/overseas-pensions/income-from-overseas-pensions/taxable-amount                                               controllers.pensions.incomeFromOverseasPensions.TaxableAmountController.submit(taxYear: Int, index: Option[Int])
 
-GET         /:taxYear/overseas-pensions/income-from-overseas-pensions/check-overseas-pension-income-cya                            controllers.pensions.incomeFromOverseasPensions.IncomeFromOverseasPensionsCYAController.show(taxYear: Int)
-POST        /:taxYear/overseas-pensions/income-from-overseas-pensions/check-overseas-pension-income-cya                            controllers.pensions.incomeFromOverseasPensions.IncomeFromOverseasPensionsCYAController.submit(taxYear: Int)
-
 GET         /:taxYear/overseas-pensions/income-from-overseas-pensions/pension-scheme-summary                                       controllers.pensions.incomeFromOverseasPensions.PensionSchemeSummaryController.show(taxYear: Int, index:Option[Int])
 POST        /:taxYear/overseas-pensions/income-from-overseas-pensions/pension-scheme-summary                                       controllers.pensions.incomeFromOverseasPensions.PensionSchemeSummaryController.submit(taxYear: Int, index:Option[Int])
 
 GET         /:taxYear/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-country-summary                      controllers.pensions.incomeFromOverseasPensions.CountrySummaryListController.show(taxYear: Int)
+
+GET         /:taxYear/overseas-pensions/income-from-overseas-pensions/check-overseas-pension-income-cya                            controllers.pensions.incomeFromOverseasPensions.IncomeFromOverseasPensionsCYAController.show(taxYear: Int)
+POST        /:taxYear/overseas-pensions/income-from-overseas-pensions/check-overseas-pension-income-cya                            controllers.pensions.incomeFromOverseasPensions.IncomeFromOverseasPensionsCYAController.submit(taxYear: Int)
 
 ###########################     Transfer into overseas pensions pages     ####################################
 

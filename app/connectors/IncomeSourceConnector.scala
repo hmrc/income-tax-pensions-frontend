@@ -17,7 +17,7 @@
 package connectors
 
 import config.AppConfig
-import connectors.httpParsers.RefreshIncomeSourceHttpParser.{RefreshIncomeSourceHttpReads, RefreshIncomeSourceResponse}
+import connectors.httpParsers.RefreshIncomeSourceHttpParser.{SessionHttpReads, RefreshIncomeSourceResponse}
 import models.RefreshIncomeSourceRequest
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 

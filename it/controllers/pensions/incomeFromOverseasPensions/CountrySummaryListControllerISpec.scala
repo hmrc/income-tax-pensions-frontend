@@ -27,22 +27,30 @@ import play.api.http.HeaderNames
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import utils.PageUrls.IncomeFromOverseasPensionsPages._
-import utils.PageUrls.{fullUrl, pensionSummaryUrl}
-import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
+import utils.PageUrls.{fullUrl, overseasPensionsSummaryUrl, pensionSummaryUrl}
 import utils.ViewUtils.bigDecimalCurrency
+import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 // scalastyle:off magic.number
 class CountrySummaryListControllerISpec extends IntegrationTest with BeforeAndAfterEach with ViewHelpers with PensionsDatabaseHelper {
 
   val urlPrefix = s"/update-and-submit-income-tax-return/pensions/$taxYearEOY/"
+
   object Selectors {
     val captionSelector: String = "#main-content > div > div > header > p"
     val addAnotherLinkSelector = "#add-another-pension-link"
     val addLinkSelector = "#add-pension-income-link"
     val continueButtonSelector: String = "#continue"
+    val addSchemeButtonSelector: String = "#AddAScheme"
+    val overviewButtonSelector: String = "#ReturnToOverview"
     val summaryListTableSelector = "#pensionIncomeSummaryList"
+    val needToAddSchemeTextSelector: String = "#youNeedToAddOneOrMorePensionScheme1"
+    val returnToOverviewTextSelector: String = "#youNeedToAddOneOrMorePensionScheme2"
+
     def changeLinkSelector(index: Int): String = s"#pensionIncomeSummaryList > dl > div:nth-child($index) > dd.hmrc-add-to-a-list__change > a"
+
     def removeLinkSelector(index: Int): String = s"#pensionIncomeSummaryList > dl > div:nth-child($index) > dd.hmrc-add-to-a-list__remove > a"
+
     def pensionNameSelector(index: Int): String = s"#pensionIncomeSummaryList > dl > div:nth-child($index) > dt"
 
   }
@@ -53,32 +61,40 @@ class CountrySummaryListControllerISpec extends IntegrationTest with BeforeAndAf
     val expectedHeading: String
     val change: String
     val remove: String
-    val expectedButtonText: String
+    val expectedContinueButtonText: String
+    val expectedAddSchemeButtonText: String
+    val expectedOverviewButtonText: String
     val expectedAddAnotherText: String
-    val expectedAddPensionSchemeText: String
+    val expectedNeedToAddPensionSchemeText: String
+    val expectedReturnToOverviewPageText: String
   }
 
   object CommonExpectedEN extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Income from overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val expectedButtonText = "Continue"
+    val expectedContinueButtonText = "Continue"
+    val expectedAddSchemeButtonText = "Add a scheme"
+    val expectedOverviewButtonText = "Return to overview"
     val expectedTitle = "Overseas pension income"
     val expectedHeading = "Overseas pension income"
     val change = "Change"
     val remove = "Remove"
     val expectedAddAnotherText = "Add another pension scheme"
-    val expectedAddPensionSchemeText = "Add a pension scheme"
+    val expectedNeedToAddPensionSchemeText = "You need to add one or more pension scheme."
+    val expectedReturnToOverviewPageText = "If you don’t have a pensions scheme to add you can return to the overview page and come back later."
   }
-  
-  
+
   object CommonExpectedCY extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Incwm o bensiynau tramor ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
-    val expectedButtonText = "Yn eich blaen"
+    val expectedContinueButtonText = "Yn eich blaen"
+    val expectedAddSchemeButtonText = "Add a scheme"
+    val expectedOverviewButtonText = "Yn ôl i’r trosolwg"
     val expectedTitle = "Incwm o bensiwn tramor"
     val expectedHeading = "Incwm o bensiwn tramor"
     val change = "Newid"
     val remove = "Tynnu"
     val expectedAddAnotherText = "Ychwanegu cynllun pensiwn arall"
-    val expectedAddPensionSchemeText = "Ychwanegu cynllun pensiwn"
+    val expectedNeedToAddPensionSchemeText = "You need to add one or more pension scheme."
+    val expectedReturnToOverviewPageText = "If you don’t have a pensions scheme to add you can return to the overview page and come back later."
   }
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, Nothing]] = Seq(
@@ -123,7 +139,7 @@ class CountrySummaryListControllerISpec extends IntegrationTest with BeforeAndAf
           captionCheck(expectedCaption(taxYearEOY))
           textOnPageCheck(s"$pensionName1 $pensionAmount1", pensionNameSelector(1))
           textOnPageCheck(s"$pensionName2 $pensionAmount2", pensionNameSelector(2))
-          
+
           //TODO: replace hrefs "#" below with link to first details page when available .e.g. PensionSchemeSummaryController.show(taxYear, Some(0))).url
           linkCheck(s"$change $change $pensionName1", changeLinkSelector(1), overseasPensionsSchemeSummaryUrl(taxYearEOY, 0))
 
@@ -136,11 +152,11 @@ class CountrySummaryListControllerISpec extends IntegrationTest with BeforeAndAf
           linkCheck(s"$remove $remove $pensionName2", removeLinkSelector(2), countrySummaryListControllerUrl(taxYearEOY))
 
           linkCheck(expectedAddAnotherText, addAnotherLinkSelector, pensionOverseasIncomeCountryUrl(taxYearEOY))
-          buttonCheck(expectedButtonText, continueButtonSelector, Some(checkIncomeFromOverseasPensionsCyaUrl(taxYearEOY)))
+          buttonCheck(expectedContinueButtonText, continueButtonSelector, Some(checkIncomeFromOverseasPensionsCyaUrl(taxYearEOY)))
           welshToggleCheck(user.isWelsh)
         }
 
-        "render the 'Overseas pension income' summary list page with only an add link when there are no overseas income from pensions" which {
+        "render the page with the 'Add a scheme' specific format when no scheme data is present" which {
           implicit lazy val result: WSResponse = {
             authoriseAgentOrIndividual(user.isAgent)
             dropPensionsDB()
@@ -161,8 +177,10 @@ class CountrySummaryListControllerISpec extends IntegrationTest with BeforeAndAf
           h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY))
           elementNotOnPageCheck(summaryListTableSelector)
-          linkCheck(expectedAddPensionSchemeText, addLinkSelector, pensionOverseasIncomeCountryUrl(taxYearEOY))
-          buttonCheck(expectedButtonText, continueButtonSelector, Some(checkIncomeFromOverseasPensionsCyaUrl(taxYearEOY)))
+          buttonCheck(expectedAddSchemeButtonText, addSchemeButtonSelector, Some(pensionOverseasIncomeCountryUrl(taxYearEOY)))
+          textOnPageCheck(expectedNeedToAddPensionSchemeText, needToAddSchemeTextSelector)
+          buttonCheck(expectedOverviewButtonText, overviewButtonSelector, Some(overseasPensionsSummaryUrl(taxYearEOY)))
+          textOnPageCheck(expectedReturnToOverviewPageText, returnToOverviewTextSelector)
           welshToggleCheck(user.isWelsh)
         }
       }
