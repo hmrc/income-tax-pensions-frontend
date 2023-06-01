@@ -16,6 +16,59 @@
 
 package controllers.pensions.paymentsIntoOverseasPensions
 
-class RemoveReliefSchemeViewISpec {
+import builders.PensionsCYAModelBuilder.aPensionsCYAModel
+import controllers.ControllerSpec
+import controllers.ControllerSpec.UserConfig
+import models.pension.charges.Relief
+import play.api.libs.ws.WSResponse
 
+class RemoveReliefSchemeViewISpec extends ControllerSpec("/overseas-pensions/payments-into-overseas-pensions/remove-schemes") {
+
+  "This page" when {
+
+    "shown" should {
+      "redirect to the summary page" when {
+        "the user has no stored session data at all" in {
+          implicit val userConfig: UserConfig = userConfigWhenIrrelevant(None)
+          implicit val response: WSResponse = getPageWithIndex()
+          assertRedirectionAsExpected(PageRelativeURLs.pensionsSummaryPage)
+        }
+      }
+
+      "redirect to relief scheme summary page" when {
+        "the user accesses page with index out of bounds" in {
+          val sessionData = pensionsUserData(aPensionsCYAModel)
+          implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
+          implicit val response: WSResponse = getPageWithIndex(2)
+          assertRedirectionAsExpected(PageRelativeURLs.ReliefsSchemeDetails)
+        }
+      }
+    }
+
+    "submitted" should {
+      "the user has relevant session data and" when {
+        "removes a pension scheme successfully" in {
+
+          val sessionData = pensionsUserData(aPensionsCYAModel)
+          implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
+
+          implicit val response: WSResponse = submitForm(Map("" -> ""), Map("index" -> "0"))
+
+          assertRedirectionAsExpected(PageRelativeURLs.ReliefsSchemeSummary)
+          val expectedViewModel = sessionData.pensions.paymentsIntoOverseasPensions.copy(
+            reliefs = Seq(Relief(
+              Some("PENSIONINCOME356"),
+              Some(100.0),
+              Some("Migrant member relief"),
+              None, None, None, None, None,
+              Some("123456"),
+              None)
+            )
+          )
+          getPaymentsIntoOverseasPensionsViewModel mustBe Some(expectedViewModel)
+
+        }
+      }
+    }
+  }
 }

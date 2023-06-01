@@ -46,8 +46,10 @@ class RemoveReliefSchemeController @Inject()(actionsProvider: ActionsProvider,
   def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionUserData =>
     val pensionReliefSchemes: Seq[Relief] = sessionUserData.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs
     getElementIndex(index, pensionReliefSchemes) match {
-      case Some(relief) => Future.successful(Ok(view(taxYear = taxYear, reliefSchemeList = List(relief), index = index)))
-      case None => Future.successful(Redirect(ReliefsSchemeDetailsController.show(taxYear, Some(1)))): Future[Result]
+      case Some(relief) =>
+        Future.successful(Ok(view(taxYear = taxYear, reliefSchemeList = List(relief), index = index)))
+      case None =>
+        Future.successful(Redirect(ReliefsSchemeDetailsController.show(taxYear, None))): Future[Result]
     }
   }
 

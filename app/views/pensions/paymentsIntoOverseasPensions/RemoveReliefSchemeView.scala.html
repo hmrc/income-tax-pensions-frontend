@@ -89,6 +89,7 @@ summaryList: SummaryList
 @contentHtml
 @reliefSchemeSummaryList
 
+@formWithCsrf(action = controllers.pensions.paymentsIntoOverseasPensions.routes.RemoveReliefSchemeController.submit(taxYear, index)) {
 <div class="govuk-button-group">
 @govUkButton(Button(
 attributes = Map("data-module" -> "govuk-button", "id" -> "remove-pension-button-id"),
@@ -98,6 +99,7 @@ classes = "govuk-button--warning",
 ))
 @link(ReliefsSchemeSummaryController.show(taxYear).url, messages("common.cancel"), id = Some("cancel-link-id"))
 </div>
+}
 }
 
 @{

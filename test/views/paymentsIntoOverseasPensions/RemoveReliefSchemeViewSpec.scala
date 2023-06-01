@@ -29,6 +29,7 @@ import play.api.mvc.AnyContent
 import support.ViewUnitTest
 import utils.FakeRequestProvider
 import views.html.pensions.paymentsIntoOverseasPensions.RemoveReliefSchemeView
+import controllers.pensions.paymentsIntoOverseasPensions.routes._
 
 
 class RemoveReliefSchemeViewSpec extends ViewUnitTest with FakeRequestProvider {
@@ -37,12 +38,14 @@ class RemoveReliefSchemeViewSpec extends ViewUnitTest with FakeRequestProvider {
       val captionSelector = "#main-content > div > div > header > p"
       val titleSelector = "#main-content > div > div > header > h1"
       val paraSelector = s"#main-content > div > div > form > p"
+      def reliefSelector(index: Int): String = s"#reliefSchemeSummaryList > dl > div > div:nth-child($index) > dd"
+      val cancelLinkSelector: String = "#cancel-link-id"
     }
 
     trait CommonExpectedResults {
       val expectedCaption: Int => String
       val expectedTitle: String
-      val expectedSubCaption: String
+      val expectedPara: String
       val schemeName: String
       val untaxedEmployerPayments: String
       val reliefType: String
@@ -51,12 +54,13 @@ class RemoveReliefSchemeViewSpec extends ViewUnitTest with FakeRequestProvider {
       val noTaxRelief: String
       val no: String
       val button: String
+      val cancelText: String
     }
 
     object CommonExpectedEN extends CommonExpectedResults {
       override val expectedCaption: Int => String = (taxYear: Int) => s"Payments into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
       override val expectedTitle: String = "Are you sure you want to remove this overseas pension scheme?"
-      override val expectedSubCaption: String = "This will remove:"
+      override val expectedPara: String = "This will remove:"
       override val schemeName: String = "Pension scheme name"
       override val untaxedEmployerPayments: String = "Untaxed employer payments"
       override val reliefType: String = "Type of relief"
@@ -65,12 +69,13 @@ class RemoveReliefSchemeViewSpec extends ViewUnitTest with FakeRequestProvider {
       override val noTaxRelief = "No tax relief"
       override val no: String = "No"
       override val button: String = "Remove"
+      val cancelText = "Cancel"
     }
 
     object CommonExpectedCY extends CommonExpectedResults {
       override val expectedCaption: Int => String = (taxYear: Int) => s"Taliadau i bensiynau tramor ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
       override val expectedTitle: String = "Are you sure you want to remove this overseas pension scheme?"
-      override val expectedSubCaption: String = "This will remove:"
+      override val expectedPara: String = "This will remove:"
       override val schemeName: String = "Enw’r cynllun pensiwn"
       override val untaxedEmployerPayments: String = "Taliadau cyflogwr sydd heb eu trethu"
       override val reliefType: String = "Math o ryddhad"
@@ -79,6 +84,7 @@ class RemoveReliefSchemeViewSpec extends ViewUnitTest with FakeRequestProvider {
       override val noTaxRelief = "Dim rhyddhad treth"
       override val no: String = "Na"
       override val button: String = "Tynnu"
+      val cancelText = "Canslo"
     }
 
     override protected val userScenarios: Seq[UserScenario[CommonExpectedResults, Unit]] = Seq(
@@ -93,7 +99,8 @@ class RemoveReliefSchemeViewSpec extends ViewUnitTest with FakeRequestProvider {
         "Render the page with prefilled data for Migrant Scheme" which {
           implicit val messages: Messages = getMessages(userScenario.isWelsh)
 
-          val reliefToRemove: Relief = Relief(customerReference = Some("PENSIONINCOME245"),
+          val reliefToRemove: Relief = Relief(
+            customerReference = Some("PENSIONINCOME245"),
             employerPaymentsAmount = Some(193.54),
             reliefType = Some(TaxReliefQuestion.MigrantMemberRelief),
             qopsReference = Some("123456"),
@@ -106,9 +113,15 @@ class RemoveReliefSchemeViewSpec extends ViewUnitTest with FakeRequestProvider {
 
           implicit val document: Document = Jsoup.parse(underTest(taxYearEOY, Seq(reliefToRemove), Some(0)).body)
 
+          val url = ReliefsSchemeSummaryController.show(taxYearEOY).url
+
           captionCheck(userScenario.commonExpectedResults.expectedCaption(taxYearEOY), Selectors.captionSelector)
           titleCheck(userScenario.commonExpectedResults.expectedTitle, userScenario.isWelsh)
+          textOnPageCheck(userScenario.commonExpectedResults.schemeName + " " + reliefToRemove.customerReference.getOrElse(""), Selectors.reliefSelector(1))
+          textOnPageCheck(userScenario.commonExpectedResults.untaxedEmployerPayments + " " + reliefToRemove.employerPaymentsAmount.getOrElse(""), Selectors.reliefSelector(2))
+          textOnPageCheck(userScenario.commonExpectedResults.reliefType + " " + reliefToRemove.reliefType.getOrElse(""), Selectors.reliefSelector(3))
           buttonCheck(userScenario.commonExpectedResults.button)
+          linkCheck(userScenario.commonExpectedResults.cancelText, Selectors.cancelLinkSelector, s"$url")
         }
       }
     }
