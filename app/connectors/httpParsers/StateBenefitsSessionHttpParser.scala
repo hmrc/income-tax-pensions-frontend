@@ -19,6 +19,8 @@ package connectors.httpParsers
 import models.APIErrorModel
 import play.api.http.Status.NOT_FOUND
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
+import utils.PagerDutyHelper.PagerDutyKeys.FAILED_TO_FIND_PENSIONS_DATA
+import utils.PagerDutyHelper.pagerDutyLog
 
 object StateBenefitsSessionHttpParser extends APIParser {
   type StateBenefitsSessionResponse = Either[APIErrorModel, Unit]
@@ -30,7 +32,9 @@ object StateBenefitsSessionHttpParser extends APIParser {
 
     override def read(method: String, url: String, response: HttpResponse): StateBenefitsSessionResponse = {
       response.status match {
-        case NOT_FOUND => Right(())
+        case NOT_FOUND =>
+          pagerDutyLog(FAILED_TO_FIND_PENSIONS_DATA, logMessage(response))
+          handleAPIError(response)
         case _ => SessionHttpReads.read(method, url, response)
       }
     }
