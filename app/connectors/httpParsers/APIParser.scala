@@ -63,7 +63,7 @@ trait APIParser {
   implicit object SessionHttpReads extends HttpReads[SessionResponse] {
     override def read(method: String, url: String, response: HttpResponse): SessionResponse = {
       response.status match {
-        case NO_CONTENT  => Right(())  //TODO: check NOT_FOUND used in RefreshIncomeSourceHttpReads ONLY
+        case NO_CONTENT  => Right(())
         case BAD_REQUEST =>
           pagerDutyLog(FOURXX_RESPONSE_FROM_API, logMessage(response))
           handleAPIError(response)
