@@ -52,7 +52,8 @@ object StateBenefitViewModelBuilder {
     amountPaidQuestion = Some(true),
     amount = Some(166.88),
     taxPaidQuestion = Some(true),
-    taxPaid = Some(3.99)
+    taxPaid = Some(3.99),
+    addToCalculation = Some(true)
   )
   
   val anEmptyStateBenefitViewModel: StateBenefitViewModel = StateBenefitViewModel()
