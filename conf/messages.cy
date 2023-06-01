@@ -842,7 +842,7 @@ unauthorisedPayments.removePensionSchemeTaxReference.removeButton = Dileu cyfeir
 unauthorisedPayments.removePensionSchemeTaxReference.dontRemove = Peidiwch â dileu
 
 #################       Overseas Pension        ########################################
-common.overseas.pension.schemes = Overseas pension schemes
+common.overseas.pension.schemes = Cynllun pensiwn tramor
 common.overseas.pension.schemes.hidden = Change overseas pension schemes
 
 #Payments into overseas pension schemes page
@@ -1010,8 +1010,8 @@ overseasPension.yourTaxableAmount.table.nonUkTax = Treth a dalwyd y tu allan i�
 overseasPension.yourTaxableAmount.table.taxableAmount = Swm trethadwy
 
 #relief scheme summary view
-pensions.paymentsIntoOverseasPensions.reliefSchemeSummary.title = Schemes with untaxed employer payments
-pensions.paymentsIntoOverseasPensions.reliefSchemeSummary.addAnotherReliefLink = Add another overseas pension scheme
+pensions.paymentsIntoOverseasPensions.reliefSchemeSummary.title = Cynlluniau gyda thaliadau cyflogwr sydd heb eu trethu
+pensions.paymentsIntoOverseasPensions.reliefSchemeSummary.addAnotherReliefLink = Ychwanegu cynllun pensiwn tramor arall
 pensions.paymentsIntoOverseasPensions.reliefSchemeSummary.addReliefLink = Add an overseas pension scheme
 
 #SF74 reference
@@ -1023,12 +1023,12 @@ pensions.paymentsIntoOverseasPensions.sf74Reference.noEntry = Nodwch eich cyfeir
 pensions.paymentsIntoOverseasPensions.sf74Reference.incorrectFormat = Mae’n rhaid i’r cyfeirnod SF74 fod rhwng 1 a 10 digid, a chynnwys rhifau yn unig – dim cymeriadau arbennig
 
 #Payment into overseas pensions CYA
-paymentsIntoOverseasPensions.cya.heading = Check payments into overseas pensions
-paymentsIntoOverseasPensions.cya.totalPayments = Total payments
+paymentsIntoOverseasPensions.cya.heading = Gwirio taliadau i bensiynau tramor
+paymentsIntoOverseasPensions.cya.totalPayments = Cyfanswm y taliadau
 paymentsIntoOverseasPensions.cya.totalPayments.hidden = Change total payments
-paymentsIntoOverseasPensions.cya.employerPayments = Employer payments
+paymentsIntoOverseasPensions.cya.employerPayments = Taliadau cyflogwr
 paymentsIntoOverseasPensions.cya.employerPayments.hidden = Change employer payments
-paymentsIntoOverseasPensions.cya.employerPaymentsTax = Tax paid on employer payments
+paymentsIntoOverseasPensions.cya.employerPaymentsTax = Treth sydd wedi’i thalu ar daliadau cyflogwr
 paymentsIntoOverseasPensions.cya.employerPaymentsTax.hidden = Change tax paid on employer payments
 
 

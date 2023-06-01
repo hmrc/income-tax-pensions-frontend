@@ -97,7 +97,7 @@ class IncomeFromOverseasPensionsCYAControllerISpec extends
     val no = "Na"
 
     val paymentsFromOverseasPensions = "Taliadau o bensiynau tramor"
-    val overseasPensionsScheme = "Overseas pension schemes"
+    val overseasPensionsScheme = "Cynllun pensiwn tramor"
 
     val saveAndContinue = "Cadw ac yn eich blaen"
     val error = "Sorry, there is a problem with the service"
