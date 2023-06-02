@@ -115,9 +115,7 @@ class StatePensionAddToCalculationViewSpec extends ViewUnitTest with FakeRequest
         val htmlFormat = underTest(form, taxYearEOY)
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
-        captionCheck(userScenario.commonExpectedResults.expectedCaption(taxYearEOY), Selectors.captionSelector)
-        titleCheck(userScenario.specificExpectedResults.get.expectedTitle, userScenario.isWelsh)
-        h1Check(userScenario.specificExpectedResults.get.expectedHeading)
+        questionHeadingCheck(userScenario)
         radioButtonCheck(userScenario.commonExpectedResults.yesText, radioNumber = 1, checked = false)
         radioButtonCheck(userScenario.commonExpectedResults.noText, radioNumber = 2, checked = false)
         buttonCheck(userScenario.commonExpectedResults.buttonText, Selectors.continueButtonSelector)
@@ -138,9 +136,7 @@ class StatePensionAddToCalculationViewSpec extends ViewUnitTest with FakeRequest
         val htmlFormat = underTest(form.bind(Map(RadioButtonForm.value -> "false")), taxYearEOY)
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
-        captionCheck(userScenario.commonExpectedResults.expectedCaption(taxYearEOY), Selectors.captionSelector)
-        titleCheck(userScenario.specificExpectedResults.get.expectedTitle, userScenario.isWelsh)
-        h1Check(userScenario.specificExpectedResults.get.expectedHeading)
+        questionHeadingCheck(userScenario)
         radioButtonCheck(userScenario.commonExpectedResults.yesText, radioNumber = 1, checked = false)
         radioButtonCheck(userScenario.commonExpectedResults.noText, radioNumber = 2, checked = true)
         buttonCheck(userScenario.commonExpectedResults.buttonText, Selectors.continueButtonSelector)
@@ -165,5 +161,11 @@ class StatePensionAddToCalculationViewSpec extends ViewUnitTest with FakeRequest
         errorSummaryCheck(userScenario.specificExpectedResults.get.expectedErrorText, "#value")
       }
     }
+  }
+
+  def questionHeadingCheck(userScenario: UserScenario[CommonExpectedResults, SpecificExpectedResults])(implicit document: Document): Unit = {
+    captionCheck(userScenario.commonExpectedResults.expectedCaption(taxYearEOY), Selectors.captionSelector)
+    titleCheck(userScenario.specificExpectedResults.get.expectedTitle, userScenario.isWelsh)
+    h1Check(userScenario.specificExpectedResults.get.expectedHeading)
   }
 }
