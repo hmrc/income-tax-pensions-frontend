@@ -111,6 +111,7 @@ object PageUrls extends IntegrationTest {
       pensionSchemeIndex.fold(baseUrl)(idx =>s"$baseUrl?pensionSchemeIndex=$idx")
     }
 
+    def addToCalculationUrl(taxYear: Int): String = s"$appUrl/$taxYear/pension-income/state-pension-add-to-calculation"
     def ukPensionIncomeCyaUrl(taxYear: Int): String = s"$appUrl/$taxYear/pension-income/check-uk-pension-income"
     
     def statePensionCyaUrl(taxYear: Int): String = s"$appUrl/$taxYear/pension-income/check-state-pension"

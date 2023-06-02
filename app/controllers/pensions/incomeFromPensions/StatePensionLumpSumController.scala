@@ -17,7 +17,7 @@
 package controllers.pensions.incomeFromPensions
 
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.incomeFromPensions.routes.{StatePensionCYAController, TaxPaidOnStatePensionLumpSumController}
+import controllers.pensions.incomeFromPensions.routes.{StatePensionAddToCalculationController, TaxPaidOnStatePensionLumpSumController}
 import controllers.predicates.ActionsProvider
 import forms.FormsProvider
 import models.mongo.PensionsUserData
@@ -86,8 +86,12 @@ class StatePensionLumpSumController @Inject()(
     )
     pensionSessionService.createOrUpdateSessionData(request.user,
       updatedCyaModel, taxYear, pensionUserData.isPriorSubmission)(errorHandler.internalServerError()) {
-      Redirect(  //TODO: 'No' routes add state pension to tax calculation
-        if (yesNo) { TaxPaidOnStatePensionLumpSumController.show(taxYear)} else { StatePensionCYAController.show(taxYear)}
+      Redirect(
+        if (yesNo) {
+          TaxPaidOnStatePensionLumpSumController.show(taxYear)
+        } else {
+          StatePensionAddToCalculationController.show(taxYear)
+        }
       )
     }
   }

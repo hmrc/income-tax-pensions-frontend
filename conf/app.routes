@@ -87,6 +87,9 @@ POST        /:taxYear/pension-income/state-pension-lump-sum-tax                 
 GET         /:taxYear/pension-income/state-pension-lump-sum-date                                                                   controllers.pensions.incomeFromPensions.StatePensionLumpSumStartDateController.show(taxYear: Int)
 POST        /:taxYear/pension-income/state-pension-lump-sum-date                                                                   controllers.pensions.incomeFromPensions.StatePensionLumpSumStartDateController.submit(taxYear: Int)
 
+GET         /:taxYear/pension-income/state-pension-add-to-calculation                                                                     controllers.pensions.incomeFromPensions.StatePensionAddToCalculationController.show(taxYear: Int)
+POST        /:taxYear/pension-income/state-pension-add-to-calculation                                                                     controllers.pensions.incomeFromPensions.StatePensionAddToCalculationController.submit(taxYear: Int)
+
 GET         /:taxYear/pension-income/check-state-pension                                                                           controllers.pensions.incomeFromPensions.StatePensionCYAController.show(taxYear: Int)
 POST        /:taxYear/pension-income/check-state-pension                                                                           controllers.pensions.incomeFromPensions.StatePensionCYAController.submit(taxYear: Int)
 
