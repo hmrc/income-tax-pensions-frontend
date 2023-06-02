@@ -74,7 +74,7 @@ class TransferIntoOverseasPensionsCYAController @Inject()(authAction: Authorised
         if (sessionDataDifferentThanPriorData(model.pensions, prior)) {
           pensionChargesService.saveTransfersIntoOverseasPensionsViewModel(request.user, taxYear).map {
             case Left(_) => errorHandler.internalServerError()
-            case Right(_) => Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear))
+            case Right(_) => Redirect(OverseasPensionsSummaryController.show(taxYear))
           }
         } else {
           Future.successful(Redirect(OverseasPensionsSummaryController.show(taxYear)))

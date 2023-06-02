@@ -279,14 +279,20 @@ object PageUrls extends IntegrationTest {
     def overseasTransferChargePaidUrl(taxYear: Int, index: Int): String =
       s"$appUrl/$taxYear/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-paid?pensionSchemeIndex=$index"
 
-    def transferChargeSummaryUrl(taxYear: Int): String =
-      s"$appUrl/$taxYear/overseas-pensions/overseas-transfer-charges/transfer-charges-summary"
-
     def removeTransferChargeScheme(taxYear: Int, index: Int): String =
       s"$appUrl/$taxYear/overseas-pensions/payments-into-overseas-pensions/remove-overseas-pension-scheme?index=$index"
 
     def transferPensionSavingsUrl(taxYear: Int): String =
       s"$appUrl/$taxYear/overseas-pensions/overseas-transfer-charges/transfer-pension-savings"
+
+    def overseasTransferChargeUrl(taxYear: Int): String =
+      s"$appUrl/$taxYear/overseas-pensions/overseas-transfer-charges/transfer-charge"
+
+    def pensionSchemeTaxTransferUrl(taxYear: Int): String =
+      s"$appUrl/$taxYear/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-tax"
+
+    def transferChargeSummaryUrl(taxYear: Int): String =
+      s"$appUrl/$taxYear/overseas-pensions/overseas-transfer-charges/transfer-charges-summary"
 
     def checkYourDetailsPensionUrl(taxYear: Int): String =
       s"$appUrl/$taxYear/overseas-pensions/overseas-transfer-charges/transfer-charges/check-transfer-charges-details"
