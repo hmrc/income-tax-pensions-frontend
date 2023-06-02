@@ -39,6 +39,7 @@ class RemoveReliefSchemeViewSpec extends ViewUnitTest with FakeRequestProvider {
       val titleSelector = "#main-content > div > div > header > h1"
       val paraSelector = s"#main-content > div > div > form > p"
       def reliefSelector(index: Int): String = s"#reliefSchemeSummaryList > dl > div > div:nth-child($index) > dd"
+      def reliefTypeSelector(index: Int): String = s"#reliefSchemeSummaryList > dl > div > div:nth-child($index) > div > dd"
       val cancelLinkSelector: String = "#cancel-link-id"
     }
 
@@ -119,7 +120,8 @@ class RemoveReliefSchemeViewSpec extends ViewUnitTest with FakeRequestProvider {
           titleCheck(userScenario.commonExpectedResults.expectedTitle, userScenario.isWelsh)
           textOnPageCheck(userScenario.commonExpectedResults.schemeName + " " + reliefToRemove.customerReference.getOrElse(""), Selectors.reliefSelector(1))
           textOnPageCheck(userScenario.commonExpectedResults.untaxedEmployerPayments + " " + reliefToRemove.employerPaymentsAmount.getOrElse(""), Selectors.reliefSelector(2))
-          textOnPageCheck(userScenario.commonExpectedResults.reliefType + " " + reliefToRemove.reliefType.getOrElse(""), Selectors.reliefSelector(3))
+          textOnPageCheck(userScenario.commonExpectedResults.reliefType, Selectors.reliefSelector(3))
+          textOnPageCheck(reliefToRemove.reliefType.getOrElse(""), Selectors.reliefTypeSelector(3))
           buttonCheck(userScenario.commonExpectedResults.button)
           linkCheck(userScenario.commonExpectedResults.cancelText, Selectors.cancelLinkSelector, s"$url")
         }

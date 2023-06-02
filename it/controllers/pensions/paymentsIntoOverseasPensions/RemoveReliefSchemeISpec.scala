@@ -22,7 +22,7 @@ import controllers.ControllerSpec.UserConfig
 import models.pension.charges.Relief
 import play.api.libs.ws.WSResponse
 
-class RemoveReliefSchemeViewISpec extends ControllerSpec("/overseas-pensions/payments-into-overseas-pensions/remove-schemes") {
+class RemoveReliefSchemeISpec extends ControllerSpec("/overseas-pensions/payments-into-overseas-pensions/remove-schemes") {
 
   "This page" when {
 

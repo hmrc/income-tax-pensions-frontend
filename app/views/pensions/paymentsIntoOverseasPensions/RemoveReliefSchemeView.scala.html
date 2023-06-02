@@ -52,7 +52,6 @@ summaryList: SummaryList
     <dl class="hmrc-add-to-a-list hmrc-add-to-a-list--short">
         @for((pensionIncome, index) <- reliefSchemeList.zipWithIndex){
         <div class="hmrc-add-to-a-list__contents">
-
             <div style="table-row">
                 <dd class="hmrc-add-to-a-list__identifier">
                     @messages("overseasPension.reliefDetails.pensionSchemeName")
@@ -62,21 +61,19 @@ summaryList: SummaryList
                 </dd>
             </div>
             <div style="table-row">
-            <dd class="hmrc-add-to-a-list__identifier">
-                @messages("overseasPension.reliefDetails.amount")
-            </dd>
-            <dd class="hmrc-add-to-a-list__identifier hmrc-add-to-a-list__identifier--light govuk-!-text-align-right" >
-                @pensionIncome.employerPaymentsAmount.getOrElse("")
-            </dd>
+                <dd class="hmrc-add-to-a-list__identifier">
+                    @messages("overseasPension.reliefDetails.amount")
+                </dd>
+                <dd class="hmrc-add-to-a-list__identifier hmrc-add-to-a-list__identifier--light govuk-!-text-align-right" >
+                    @pensionIncome.employerPaymentsAmount.getOrElse("")
+                </dd>
             </div>
             <div style="table-row">
             <dd class="hmrc-add-to-a-list__identifier">
                 @messages("overseasPension.reliefDetails.typeOfRelief")
             </dd>
-            <div class="hmrc-add-to-a-list__identifier govuk-!-text-align-right" >
-                <dd class="hmrc-add-to-a-list__identifier--light">
-                @pensionIncome.reliefType.getOrElse("")
-                </dd>
+            <div class="hmrc-add-to-a-list__identifier govuk-!-text-align-right">
+                <dd class="hmrc-add-to-a-list__identifier--light"> @pensionIncome.reliefType.getOrElse("") </dd>
             </div>
             </div>
         </div>
