@@ -57,7 +57,7 @@ class TransferIntoOverseasPensionsCYAControllerISpec extends IntegrationTest wit
 
   ".show" should {
 
-    "return 200" in {
+    "return 200 status when tax year is valid" in {
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
@@ -68,6 +68,20 @@ class TransferIntoOverseasPensionsCYAControllerISpec extends IntegrationTest wit
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
       result.status shouldBe OK
+    }
+
+    "redirect to overview page when tax year is invalid" in {
+      lazy implicit val result: WSResponse = {
+        dropPensionsDB()
+        authoriseAgentOrIndividual(aUser.isAgent)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel), aUserRequest)
+        userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYearEOY)
+
+        urlGet(fullUrl(checkYourDetailsPensionUrl(taxYear)), !aUser.isAgent, follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+      }
+      result.status shouldBe SEE_OTHER
+      result.header("location") shouldBe Some(overviewUrl(taxYear))
     }
   }
 
