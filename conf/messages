@@ -19,6 +19,7 @@ common.saveAndContinue = Save and continue
 common.change = Change
 common.update = Update
 common.remove = Remove
+common.dontRemove = Don’t remove
 common.cancel = Cancel
 common.use = use
 common.error.errorKey = Error:
@@ -819,7 +820,6 @@ unauthorisedPayments.pensionSchemeDetails.addPensionSchemeTaxReference = Add a P
 #Remove unauthorised payments from UK pensions schemes
 unauthorisedPayments.removePensionSchemeTaxReference.title = Do you want to remove this Pension Scheme Tax Reference?
 unauthorisedPayments.removePensionSchemeTaxReference.removeButton = Remove reference
-unauthorisedPayments.removePensionSchemeTaxReference.dontRemove = Don’t remove
 
 #################       Overseas Pension        ########################################
 common.overseas.pension.schemes = Overseas pension schemes

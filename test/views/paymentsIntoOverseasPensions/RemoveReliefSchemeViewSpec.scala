@@ -37,7 +37,6 @@ class RemoveReliefSchemeViewSpec extends ViewUnitTest with FakeRequestProvider {
     object Selectors {
       val captionSelector = "#main-content > div > div > header > p"
       val titleSelector = "#main-content > div > div > header > h1"
-      val paraSelector = s"#main-content > div > div > form > p"
       def reliefSelector(index: Int): String = s"#reliefSchemeSummaryList > dl > div > div:nth-child($index) > dd"
       def reliefTypeSelector(index: Int): String = s"#reliefSchemeSummaryList > dl > div > div:nth-child($index) > div > dd"
       val cancelLinkSelector: String = "#cancel-link-id"
@@ -50,12 +49,10 @@ class RemoveReliefSchemeViewSpec extends ViewUnitTest with FakeRequestProvider {
       val schemeName: String
       val untaxedEmployerPayments: String
       val reliefType: String
-      val schemeDetails: String
       val migrantMemberRelief: String
-      val noTaxRelief: String
       val no: String
       val button: String
-      val cancelText: String
+      val dontRemove: String
     }
 
     object CommonExpectedEN extends CommonExpectedResults {
@@ -65,12 +62,10 @@ class RemoveReliefSchemeViewSpec extends ViewUnitTest with FakeRequestProvider {
       override val schemeName: String = "Pension scheme name"
       override val untaxedEmployerPayments: String = "Untaxed employer payments"
       override val reliefType: String = "Type of relief"
-      override val schemeDetails: String = "Scheme details"
       override val migrantMemberRelief: String = "Migrant member relief"
-      override val noTaxRelief = "No tax relief"
       override val no: String = "No"
       override val button: String = "Remove"
-      val cancelText = "Cancel"
+      val dontRemove = "Don’t remove"
     }
 
     object CommonExpectedCY extends CommonExpectedResults {
@@ -80,12 +75,10 @@ class RemoveReliefSchemeViewSpec extends ViewUnitTest with FakeRequestProvider {
       override val schemeName: String = "Enw’r cynllun pensiwn"
       override val untaxedEmployerPayments: String = "Taliadau cyflogwr sydd heb eu trethu"
       override val reliefType: String = "Math o ryddhad"
-      override val schemeDetails: String = "Manylion y cynllun"
       override val migrantMemberRelief: String = "Rhyddhad aelod mudol"
-      override val noTaxRelief = "Dim rhyddhad treth"
       override val no: String = "Na"
       override val button: String = "Tynnu"
-      val cancelText = "Canslo"
+      val dontRemove = "Peidiwch â dileu"
     }
 
     override protected val userScenarios: Seq[UserScenario[CommonExpectedResults, Unit]] = Seq(
@@ -123,7 +116,7 @@ class RemoveReliefSchemeViewSpec extends ViewUnitTest with FakeRequestProvider {
           textOnPageCheck(userScenario.commonExpectedResults.reliefType, Selectors.reliefSelector(3))
           textOnPageCheck(reliefToRemove.reliefType.getOrElse(""), Selectors.reliefTypeSelector(3))
           buttonCheck(userScenario.commonExpectedResults.button)
-          linkCheck(userScenario.commonExpectedResults.cancelText, Selectors.cancelLinkSelector, s"$url")
+          linkCheck(userScenario.commonExpectedResults.dontRemove, Selectors.cancelLinkSelector, s"$url")
         }
       }
     }

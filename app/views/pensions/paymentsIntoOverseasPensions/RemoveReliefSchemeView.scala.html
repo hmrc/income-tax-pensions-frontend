@@ -84,7 +84,7 @@ summaryList: SummaryList
 
 @layout(pageTitle = titleText, taxYear = Some(taxYear), isAgent = request.user.isAgent) {
 
-@heading(titleText, Some(messages("common.paymentsIntoOverseasPensions.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-2")
+  @heading(titleText, Some(messages("common.paymentsIntoOverseasPensions.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-2")
 @contentHtml
 @reliefSchemeSummaryList
 
@@ -96,7 +96,7 @@ preventDoubleClick = Some(true),
 content = Text(messages("common.remove")),
 classes = "govuk-button--warning",
 ))
-@link(ReliefsSchemeSummaryController.show(taxYear).url, messages("common.cancel"), id = Some("cancel-link-id"))
+@link(ReliefsSchemeSummaryController.show(taxYear).url, messages("common.dontRemove"), id = Some("cancel-link-id"))
 </div>
 }
 }
