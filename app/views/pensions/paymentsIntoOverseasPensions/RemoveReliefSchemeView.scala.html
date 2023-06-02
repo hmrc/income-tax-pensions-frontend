@@ -54,28 +54,30 @@ summaryList: SummaryList
         <div class="hmrc-add-to-a-list__contents">
 
             <div style="table-row">
-                <dd class="hmrc-add-to-a-list__identifier hmrc-add-to-a-list__identifier--light">
-                    <strong>@messages("overseasPension.reliefDetails.pensionSchemeName")</strong>
+                <dd class="hmrc-add-to-a-list__identifier">
+                    @messages("overseasPension.reliefDetails.pensionSchemeName")
                 </dd>
                 <dd class="hmrc-add-to-a-list__identifier hmrc-add-to-a-list__identifier--light govuk-!-text-align-right">
                     @pensionIncome.customerReference.getOrElse("")
                 </dd>
             </div>
             <div style="table-row">
-            <dd class="hmrc-add-to-a-list__identifier hmrc-add-to-a-list__identifier--light">
-                <strong>@messages("overseasPension.reliefDetails.amount")</strong>
+            <dd class="hmrc-add-to-a-list__identifier">
+                @messages("overseasPension.reliefDetails.amount")
             </dd>
             <dd class="hmrc-add-to-a-list__identifier hmrc-add-to-a-list__identifier--light govuk-!-text-align-right" >
                 @pensionIncome.employerPaymentsAmount.getOrElse("")
             </dd>
             </div>
             <div style="table-row">
-            <dd class="hmrc-add-to-a-list__identifier hmrc-add-to-a-list__identifier--light">
-                <strong>@messages("overseasPension.reliefDetails.typeOfRelief")</strong>
+            <dd class="hmrc-add-to-a-list__identifier">
+                @messages("overseasPension.reliefDetails.typeOfRelief")
             </dd>
-            <dd class="hmrc-add-to-a-list__identifier hmrc-add-to-a-list__identifier--light govuk-!-text-align-right" >
+            <div class="hmrc-add-to-a-list__identifier govuk-!-text-align-right" >
+                <dd class="hmrc-add-to-a-list__identifier--light">
                 @pensionIncome.reliefType.getOrElse("")
-            </dd>
+                </dd>
+            </div>
             </div>
         </div>
         }
