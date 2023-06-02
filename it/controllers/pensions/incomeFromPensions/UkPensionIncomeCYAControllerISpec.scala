@@ -30,7 +30,8 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
-import play.api.http.Status.SEE_OTHER
+import play.api.http.Status.{NO_CONTENT, SEE_OTHER}
+import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
 import utils.PageUrls.IncomeFromPensionsPages._
 import utils.PageUrls.fullUrl
@@ -245,10 +246,11 @@ class UkPensionIncomeCYAControllerISpec extends IntegrationTest with ViewHelpers
         val form = Map[String, String]()
 
         lazy val result: WSResponse = {
+          val payload = Json.toJson(newIncomeFromPensions.uKPensionIncomes.map(_.toCreateUpdateEmploymentRequest).head).toString()
           dropPensionsDB()
           authoriseAgentOrIndividual()
           userDataStub(IncomeTaxUserData(None), nino, taxYear)
-          employmentPensionStub("{valid-json:true}", nino)
+          employmentPensionStub(payload, nino, NO_CONTENT, "{}")
           insertCyaData(aPensionsUserData.copy(pensions = aPensionsCYAModel.copy(incomeFromPensions = newIncomeFromPensions), taxYear = taxYear), aUserRequest)
           urlPost(fullUrl(ukPensionIncomeCyaUrl(taxYear)), form, follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
@@ -267,10 +269,12 @@ class UkPensionIncomeCYAControllerISpec extends IntegrationTest with ViewHelpers
         val form = Map[String, String]()
 
         lazy val result: WSResponse = {
+          val payload = Json.toJson(newIncomeFromPensions.uKPensionIncomes.map(_.toCreateUpdateEmploymentRequest).head).toString()
           dropPensionsDB()
           authoriseAgentOrIndividual()
           userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYear)
           insertCyaData(aPensionsUserData.copy(pensions = aPensionsCYAModel.copy(incomeFromPensions = newIncomeFromPensions), taxYear = taxYear), aUserRequest)
+          employmentPensionStub(payload, nino, NO_CONTENT, "{}")
           urlPost(fullUrl(ukPensionIncomeCyaUrl(taxYear)), form, follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
         }
