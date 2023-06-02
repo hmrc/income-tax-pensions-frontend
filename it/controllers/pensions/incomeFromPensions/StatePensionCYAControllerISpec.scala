@@ -18,7 +18,7 @@ package controllers.pensions.incomeFromPensions
 
 import builders.AllPensionsDataBuilder.{anAllPensionDataEmpty, anAllPensionsData}
 import builders.IncomeTaxUserDataBuilder.anIncomeTaxUserData
-import builders.PensionsCYAModelBuilder.{aPensionsCYAEmptyModel, aPensionsCYAModel}
+import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import builders.PensionsUserDataBuilder
 import builders.UserBuilder.{aUser, aUserRequest}
 import models.mongo.PensionsCYAModel

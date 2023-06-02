@@ -21,6 +21,7 @@ import builders.PensionsUserDataBuilder.aPensionsUserData
 import connectors.httpParsers.EmploymentSessionHttpParser.EmploymentSessionResponse
 import models.{APIErrorBodyModel, APIErrorModel}
 import play.api.http.Status._
+import play.api.libs.json.Json
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
 import utils.IntegrationTest
 
@@ -37,7 +38,7 @@ class EmploymentConnectorISpec extends IntegrationTest {
     "Return a success result" when {
       "submission returns a 204" in new Setup {
         val httpStatus = NO_CONTENT
-        saveData("""{"valid": true}""") shouldBe successSaveResponse
+        saveData() shouldBe successSaveResponse
       }
     }
 
@@ -45,7 +46,7 @@ class EmploymentConnectorISpec extends IntegrationTest {
       for (status <- Seq(BAD_REQUEST, INTERNAL_SERVER_ERROR, SERVICE_UNAVAILABLE)) {
         s"submission returns a $status " in new Setup {
           val httpStatus = status
-          saveData(failedPayload) shouldBe failedSaveResponse
+          saveData() shouldBe failedSaveResponse
         }
       }
     }
@@ -53,17 +54,19 @@ class EmploymentConnectorISpec extends IntegrationTest {
     trait Setup {
       val httpStatus: Int
       
-      val failedPayload = """{"code": "FAILED", "reason": "failed"}"""
-      
       val successSaveResponse = Right(())
-      lazy val failedSaveResponse = Left(APIErrorModel(httpStatus, APIErrorBodyModel("FAILED", "failed")))
+      lazy val failedSaveResponse = Left(
+        APIErrorModel(httpStatus, APIErrorBodyModel("PARSING_ERROR", "Error parsing response from API")))
       
-      def saveData(payload: String): EmploymentSessionResponse = {
+      def saveData(): EmploymentSessionResponse = {
         implicit val hc: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId(sessionId)))
           .withExtraHeaders("mtditid" -> mtditid)
+
+        val payload = Json.toJson(aPensionsUserData.pensions.incomeFromPensions.uKPensionIncomes
+          .map(_.toCreateUpdateEmploymentRequest).head).toString()
         
-        stubPutWithHeadersCheck(s"/income-tax-employment/income-tax/nino/$nino/sources\\?taxYear=$taxYear", httpStatus,
-          payload, "X-Session-ID" -> sessionId, "mtditid" -> mtditid)
+        stubPostWithHeadersCheck(s"/income-tax-employment/income-tax/nino/$nino/sources\\?taxYear=$taxYear", httpStatus,
+          payload, "{}", "X-Session-ID" -> sessionId, "mtditid" -> mtditid)
 
         val sessionUserData = aPensionsUserData.copy(
           pensions = aPensionsCYAEmptyModel.copy(incomeFromPensions = aPensionsUserData.pensions.incomeFromPensions))

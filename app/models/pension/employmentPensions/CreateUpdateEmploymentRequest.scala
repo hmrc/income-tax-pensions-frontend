@@ -52,6 +52,12 @@ object CreateUpdateEmploymentRequest {
   object PayModel {
     implicit val formats: OFormat[PayModel] = Json.format[PayModel]
   }
+
+  case class CreatedEmployment(employmentId: Option[String])
+
+  object CreatedEmployment {
+    implicit val formats: OFormat[CreatedEmployment] = Json.format[CreatedEmployment]
+  }
 }
 
 

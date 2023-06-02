@@ -17,7 +17,7 @@
 package services
 
 import connectors.EmploymentConnector
-import connectors.httpParsers.EmploymentSessionHttpParser.SessionResponse
+import connectors.httpParsers.EmploymentSessionHttpParser.{EmploymentSessionResponse, SessionResponse}
 import models.User
 import models.mongo.{PensionsCYAModel, PensionsUserData, ServiceError}
 import org.joda.time.DateTimeZone
@@ -57,7 +57,7 @@ class EmploymentPensionService @Inject()(pensionUserDataRepository: PensionsUser
     (for {
       sessionData <- FutureEitherOps[ServiceError, Option[PensionsUserData]](pensionUserDataRepository.find(taxYear, user))
       optUkPensionIncomes = sessionData.map(p => p.pensions.incomeFromPensions.uKPensionIncomes)
-      saveEmployments = optUkPensionIncomes.fold(Seq[Future[SessionResponse]]())(_.map(ukPensionIncome =>
+      saveEmployments = optUkPensionIncomes.fold(Seq[Future[EmploymentSessionResponse]]())(_.map(ukPensionIncome =>
         employmentConnector.saveEmploymentPensionsData(user.nino, taxYear, ukPensionIncome.toCreateUpdateEmploymentRequest)(hcWithExtras, ec)
       ))
       _ <- FutureEitherOps[ServiceError, Seq[Unit]](Future.sequence(saveEmployments).map(sequence))
