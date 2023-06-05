@@ -45,7 +45,7 @@
     }
 
     @scriptElems = {
-        @autocompleteJavascript(CSPNonce.get)
+        @autocompleteJavascript()
         <script src='@controllers.routes.Assets.versioned("javascripts/autocompletePolyfill.js")'></script>
     }
 
@@ -55,7 +55,7 @@
         taxYear = Some(taxYear),
         hasErrors = hasFormErrors,
         isAgent = request.user.isAgent,
-        stylesheetsBlock= Some(autocompleteCss(CSPNonce.get)),
+        stylesheetsBlock= Some(autocompleteCss()),
         scriptsBlock = Some(scriptElems)
     ) {
 

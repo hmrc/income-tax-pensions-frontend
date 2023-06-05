@@ -17,19 +17,18 @@
 package controllers.pensions.paymentsIntoOverseasPensions
 
 import config.{AppConfig, ErrorHandler}
+import controllers.pensions.paymentsIntoOverseasPensions.routes._
 import controllers.predicates.ActionsProvider
 import controllers.validatedIndex
 import models.mongo.{PensionsCYAModel, PensionsUserData}
 import models.pension.charges.Relief
 import models.requests.UserSessionDataRequest
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import routes._
-import views.html.pensions.paymentsIntoOverseasPensions.RemoveReliefSchemeView
 import utils.{Clock, SessionHelper}
-
+import views.html.pensions.paymentsIntoOverseasPensions.RemoveReliefSchemeView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
@@ -69,7 +68,7 @@ class RemoveReliefSchemeController @Inject()(actionsProvider: ActionsProvider,
 
   private def updateSessionData[T](pensionUserData: PensionsUserData,
                                    reliefScheme: Seq[Relief],
-                                   taxYear: Int)(implicit request: UserSessionDataRequest[T], r: Request[_]) = {
+                                   taxYear: Int)(implicit request: UserSessionDataRequest[T]): Future[Result] = {
     val updatedCyaModel: PensionsCYAModel = pensionUserData.pensions.copy(
       paymentsIntoOverseasPensions = pensionUserData.pensions.paymentsIntoOverseasPensions.copy(
         reliefs = reliefScheme))
