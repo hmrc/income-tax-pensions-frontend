@@ -30,7 +30,7 @@ class EmploymentConnector @Inject()(val http: HttpClient,
                                 (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[EmploymentSessionResponse] = {
     
     val url = s"${config.employmentBEBaseUrl}/income-tax/nino/$nino/sources?taxYear=$taxYear"
-    http.PUT[CreateUpdateEmploymentRequest, EmploymentSessionResponse](url,model)(
+    http.POST[CreateUpdateEmploymentRequest, EmploymentSessionResponse](url,model)(
       CreateUpdateEmploymentRequest.format.writes, EmploymentSessionHttpReads, hc, ec)
   }
 }

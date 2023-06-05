@@ -261,10 +261,12 @@ trait IntegrationTest extends AnyWordSpec with Matchers with GuiceOneServerPerSu
     )
   }
   
-  def employmentPensionStub(jsonBody: String, nino: String): StubMapping = {
-    stubPutWithHeadersCheck(
-      url = s"/income-tax-employment/income-tax/nino/$nino/sources\\?taxYear=$taxYear", status = NO_CONTENT,
-      body = jsonBody,
+  def employmentPensionStub(jsonBody: String, nino: String, stat: Int, response: String): StubMapping = {
+    stubPostWithHeadersCheck(
+      url = s"/income-tax-employment/income-tax/nino/$nino/sources\\?taxYear=$taxYear",
+      status = stat,
+      requestBody = jsonBody,
+      responseBody = response,
       sessionHeader = "X-Session-ID" -> defaultUser.sessionId,
       mtdidHeader = "mtditid" -> defaultUser.mtdItId
     )

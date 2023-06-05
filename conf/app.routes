@@ -87,6 +87,9 @@ POST        /:taxYear/pension-income/state-pension-lump-sum-tax                 
 GET         /:taxYear/pension-income/state-pension-lump-sum-date                                                                   controllers.pensions.incomeFromPensions.StatePensionLumpSumStartDateController.show(taxYear: Int)
 POST        /:taxYear/pension-income/state-pension-lump-sum-date                                                                   controllers.pensions.incomeFromPensions.StatePensionLumpSumStartDateController.submit(taxYear: Int)
 
+GET         /:taxYear/pension-income/state-pension-add-to-calculation                                                                     controllers.pensions.incomeFromPensions.StatePensionAddToCalculationController.show(taxYear: Int)
+POST        /:taxYear/pension-income/state-pension-add-to-calculation                                                                     controllers.pensions.incomeFromPensions.StatePensionAddToCalculationController.submit(taxYear: Int)
+
 GET         /:taxYear/pension-income/check-state-pension                                                                           controllers.pensions.incomeFromPensions.StatePensionCYAController.show(taxYear: Int)
 POST        /:taxYear/pension-income/check-state-pension                                                                           controllers.pensions.incomeFromPensions.StatePensionCYAController.submit(taxYear: Int)
 
@@ -234,6 +237,9 @@ POST        /:taxYear/overseas-pensions/payments-into-overseas-pensions/double-t
 
 GET         /:taxYear/overseas-pensions/payments-into-overseas-pensions/untaxed-schemes-summary                                    controllers.pensions.paymentsIntoOverseasPensions.ReliefsSchemeSummaryController.show(taxYear: Int)
 
+GET         /:taxYear/overseas-pensions/payments-into-overseas-pensions/remove-schemes                                              controllers.pensions.paymentsIntoOverseasPensions.RemoveReliefSchemeController.show(taxYear: Int, index: Option[Int])
+POST        /:taxYear/overseas-pensions/payments-into-overseas-pensions/remove-schemes                                              controllers.pensions.paymentsIntoOverseasPensions.RemoveReliefSchemeController.submit(taxYear: Int, index: Option[Int])
+
 GET        /:taxYear/overseas-pensions/payments-into-overseas-pensions/check-overseas-pension-details                              controllers.pensions.paymentsIntoOverseasPensions.PaymentsIntoOverseasPensionsCYAController.show(taxYear: Int)
 POST       /:taxYear/overseas-pensions/payments-into-overseas-pensions/check-overseas-pension-details                              controllers.pensions.paymentsIntoOverseasPensions.PaymentsIntoOverseasPensionsCYAController.submit(taxYear: Int)
 
@@ -257,13 +263,13 @@ POST        /:taxYear/overseas-pensions/income-from-overseas-pensions/pension-ov
 GET         /:taxYear/overseas-pensions/income-from-overseas-pensions/taxable-amount                                               controllers.pensions.incomeFromOverseasPensions.TaxableAmountController.show(taxYear: Int, index: Option[Int])
 POST        /:taxYear/overseas-pensions/income-from-overseas-pensions/taxable-amount                                               controllers.pensions.incomeFromOverseasPensions.TaxableAmountController.submit(taxYear: Int, index: Option[Int])
 
-GET         /:taxYear/overseas-pensions/income-from-overseas-pensions/check-overseas-pension-income-cya                            controllers.pensions.incomeFromOverseasPensions.IncomeFromOverseasPensionsCYAController.show(taxYear: Int)
-POST        /:taxYear/overseas-pensions/income-from-overseas-pensions/check-overseas-pension-income-cya                            controllers.pensions.incomeFromOverseasPensions.IncomeFromOverseasPensionsCYAController.submit(taxYear: Int)
-
 GET         /:taxYear/overseas-pensions/income-from-overseas-pensions/pension-scheme-summary                                       controllers.pensions.incomeFromOverseasPensions.PensionSchemeSummaryController.show(taxYear: Int, index:Option[Int])
 POST        /:taxYear/overseas-pensions/income-from-overseas-pensions/pension-scheme-summary                                       controllers.pensions.incomeFromOverseasPensions.PensionSchemeSummaryController.submit(taxYear: Int, index:Option[Int])
 
 GET         /:taxYear/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-country-summary                      controllers.pensions.incomeFromOverseasPensions.CountrySummaryListController.show(taxYear: Int)
+
+GET         /:taxYear/overseas-pensions/income-from-overseas-pensions/check-overseas-pension-income-cya                            controllers.pensions.incomeFromOverseasPensions.IncomeFromOverseasPensionsCYAController.show(taxYear: Int)
+POST        /:taxYear/overseas-pensions/income-from-overseas-pensions/check-overseas-pension-income-cya                            controllers.pensions.incomeFromOverseasPensions.IncomeFromOverseasPensionsCYAController.submit(taxYear: Int)
 
 ###########################     Transfer into overseas pensions pages     ####################################
 

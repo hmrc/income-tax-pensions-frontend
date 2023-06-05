@@ -19,6 +19,7 @@ common.saveAndContinue = Cadw ac yn eich blaen
 common.change = Newid
 common.update = Diweddaru
 common.remove = Tynnu
+common.dontRemove = Peidiwch â dileu
 common.cancel = Canslo
 common.use = defnyddio
 common.error.errorKey = Gwall:
@@ -127,6 +128,7 @@ common.summary.returnToOverviewMsg = If you don’t have a pensions scheme to ad
 
 #################       Common Remove Pension Scheme    ###########################################
 common.removePensionScheme.title = A ydych yn siŵr eich bod am dynnu {0}?
+common.removePensionScheme.overseas.title = Are you sure you want to remove this overseas pension scheme?
 common.removePensionScheme.p1 = This will remove:
 common.removePensionScheme.p1.bullet1 = The name of the pension scheme
 common.removePensionScheme.p1.bullet2 = Pensions scheme tax reference
@@ -569,6 +571,12 @@ pensions.statePension.amount.error.noEntry.agent = Nodwch swm Pensiwn y Wladwria
 pensions.statePension.amount.error.incorrectFormat.agent = Nodwch swm Pensiwn y Wladwriaeth eich cleient yn y fformat cywir
 pensions.statePension.amount.error.overMaximum.agent = Mae’n rhaid i swm Pensiwn y Wladwriaeth eich cleient fod yn llai na £100,000,000,000
 
+#state pension add to calculation
+pensions.statePension.addToCalculation.title.individual = Do you want to add State Pension to your Income Tax calculation?
+pensions.statePension.addToCalculation.title.agent = Do you want to add State Pension to your client’s Income Tax calculation?
+pensions.statePension.addToCalculation.noEntry.individual = Select yes if you want to add State Pension to your Income Tax calculation
+pensions.statePension.addToCalculation.noEntry.agent = Select yes if you want to add State Pension to your client’s Income Tax Calculation
+
 #State Pension CYA page
 statePension.cya.title.agent = Check your client's State Pension
 statePension.cya.title.individual = Check your State Pension
@@ -839,10 +847,9 @@ unauthorisedPayments.pensionSchemeDetails.addPensionSchemeTaxReference = Ychwane
 #Remove unauthorised payments from UK pensions schemes
 unauthorisedPayments.removePensionSchemeTaxReference.title = A hoffech ddileu’r Cyfeirnod Treth ar gyfer y Cynllun Pensiwn hwn?
 unauthorisedPayments.removePensionSchemeTaxReference.removeButton = Dileu cyfeirnod
-unauthorisedPayments.removePensionSchemeTaxReference.dontRemove = Peidiwch â dileu
 
 #################       Overseas Pension        ########################################
-common.overseas.pension.schemes = Overseas pension schemes
+common.overseas.pension.schemes = Cynllun pensiwn tramor
 common.overseas.pension.schemes.hidden = Change overseas pension schemes
 
 #Payments into overseas pension schemes page
@@ -1010,8 +1017,8 @@ overseasPension.yourTaxableAmount.table.nonUkTax = Treth a dalwyd y tu allan i�
 overseasPension.yourTaxableAmount.table.taxableAmount = Swm trethadwy
 
 #relief scheme summary view
-pensions.paymentsIntoOverseasPensions.reliefSchemeSummary.title = Schemes with untaxed employer payments
-pensions.paymentsIntoOverseasPensions.reliefSchemeSummary.addAnotherReliefLink = Add another overseas pension scheme
+pensions.paymentsIntoOverseasPensions.reliefSchemeSummary.title = Cynlluniau gyda thaliadau cyflogwr sydd heb eu trethu
+pensions.paymentsIntoOverseasPensions.reliefSchemeSummary.addAnotherReliefLink = Ychwanegu cynllun pensiwn tramor arall
 pensions.paymentsIntoOverseasPensions.reliefSchemeSummary.addReliefLink = Add an overseas pension scheme
 
 #SF74 reference
@@ -1023,12 +1030,12 @@ pensions.paymentsIntoOverseasPensions.sf74Reference.noEntry = Nodwch eich cyfeir
 pensions.paymentsIntoOverseasPensions.sf74Reference.incorrectFormat = Mae’n rhaid i’r cyfeirnod SF74 fod rhwng 1 a 10 digid, a chynnwys rhifau yn unig – dim cymeriadau arbennig
 
 #Payment into overseas pensions CYA
-paymentsIntoOverseasPensions.cya.heading = Check payments into overseas pensions
-paymentsIntoOverseasPensions.cya.totalPayments = Total payments
+paymentsIntoOverseasPensions.cya.heading = Gwirio taliadau i bensiynau tramor
+paymentsIntoOverseasPensions.cya.totalPayments = Cyfanswm y taliadau
 paymentsIntoOverseasPensions.cya.totalPayments.hidden = Change total payments
-paymentsIntoOverseasPensions.cya.employerPayments = Employer payments
+paymentsIntoOverseasPensions.cya.employerPayments = Taliadau cyflogwr
 paymentsIntoOverseasPensions.cya.employerPayments.hidden = Change employer payments
-paymentsIntoOverseasPensions.cya.employerPaymentsTax = Tax paid on employer payments
+paymentsIntoOverseasPensions.cya.employerPaymentsTax = Treth sydd wedi’i thalu ar daliadau cyflogwr
 paymentsIntoOverseasPensions.cya.employerPaymentsTax.hidden = Change tax paid on employer payments
 
 

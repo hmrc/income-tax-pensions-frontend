@@ -51,7 +51,7 @@
                 content = Text(messages("unauthorisedPayments.removePensionSchemeTaxReference.removeButton")),
                 classes = "govuk-button--warning"
             ))
-            @link(controllers.pensions.unauthorisedPayments.routes.UkPensionSchemeDetailsController.show(taxYear).url, messages("unauthorisedPayments.removePensionSchemeTaxReference.dontRemove"), id = Some("cancel-link-id"))
+            @link(controllers.pensions.unauthorisedPayments.routes.UkPensionSchemeDetailsController.show(taxYear).url, messages("common.dontRemove"), id = Some("cancel-link-id"))
         </div>
     }
 }
