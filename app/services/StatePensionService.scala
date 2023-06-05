@@ -18,9 +18,8 @@ package services
 
 import connectors.StateBenefitsConnector
 import models.User
-import models.pension.statebenefits.StateBenefitViewModel
 import models.mongo.{PensionsCYAModel, PensionsUserData, ServiceError, StateBenefitsUserData}
-import models.pension.statebenefits.{ClaimCYAModel, IncomeFromPensionsViewModel}
+import models.pension.statebenefits.{ClaimCYAModel, IncomeFromPensionsViewModel, StateBenefitViewModel}
 import org.joda.time.DateTimeZone
 import repositories.PensionsUserDataRepository
 import uk.gov.hmrc.http.HeaderCarrier
@@ -95,8 +94,14 @@ class StatePensionService @Inject()(pensionUserDataRepository: PensionsUserDataR
         sessionData, sessionData.pensions.incomeFromPensions.statePensionLumpSum, "statePensionLumpSum"
       )
 
-      _ <- FutureEitherOps[ServiceError, Unit](stateBenefitsConnector.saveClaimData(user.nino, statePensionSubmission)(hcWithExtras, ec))
-      _ <- FutureEitherOps[ServiceError, Unit](stateBenefitsConnector.saveClaimData(user.nino, statePensionLumpSumSubmission)(hcWithExtras, ec))
+      _ <- FutureEitherOps[ServiceError, Unit] {
+        if (statePensionSubmission.claim.get.amount.nonEmpty) stateBenefitsConnector.saveClaimData(user.nino, statePensionSubmission)(hcWithExtras, ec)
+        else Future(Right(()))
+      }
+      _ <- FutureEitherOps[ServiceError, Unit] {
+        if (statePensionLumpSumSubmission.claim.get.amount.nonEmpty) stateBenefitsConnector.saveClaimData(user.nino, statePensionLumpSumSubmission)(hcWithExtras, ec)
+        else Future(Right(()))
+      }
 
       updatedCYA = getPensionsUserData(Some(sessionData), user)
       result <- FutureEitherOps[ServiceError, Unit](pensionUserDataRepository.createOrUpdate(updatedCYA))
