@@ -43,7 +43,7 @@ class UkPensionIncomeCYAController @Inject()(implicit val mcc: MessagesControlle
                                              employmentPensionService: EmploymentPensionService,
                                              errorHandler: ErrorHandler,
                                              clock: Clock, ec: ExecutionContext)
-                             extends FrontendController(mcc) with I18nSupport with SessionHelper with FormUtils {
+  extends FrontendController(mcc) with I18nSupport with SessionHelper with FormUtils {
 
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     pensionSessionService.getAndHandle(taxYear, request.user) { (cya, prior) =>
@@ -63,7 +63,7 @@ class UkPensionIncomeCYAController @Inject()(implicit val mcc: MessagesControlle
   }
 
   def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
-    pensionSessionService.getAndHandle(taxYear, request.user) {(cya, prior) =>
+    pensionSessionService.getAndHandle(taxYear, request.user) { (cya, prior) =>
       cya.fold(
         Future.successful(Redirect(appConfig.incomeTaxSubmissionOverviewUrl(taxYear)))
       ) { model =>

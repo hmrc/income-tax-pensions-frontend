@@ -34,7 +34,7 @@ import play.api.http.Status.{NO_CONTENT, SEE_OTHER}
 import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
 import utils.PageUrls.IncomeFromPensionsPages._
-import utils.PageUrls.fullUrl
+import utils.PageUrls.{fullUrl, pensionSummaryUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 class UkPensionIncomeCYAControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
@@ -72,7 +72,7 @@ class UkPensionIncomeCYAControllerISpec extends IntegrationTest with ViewHelpers
 
   object CommonExpectedEN extends CommonExpectedResults {
     val expectedTitle = "Check UK Pension Income"
-    val expectedCaption: Int => String = (taxYear: Int) =>  s"Income from pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Income from pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
     val buttonText = "Save and continue"
     val yesText = "Yes"
     val noText = "No"
@@ -83,7 +83,7 @@ class UkPensionIncomeCYAControllerISpec extends IntegrationTest with ViewHelpers
 
   object CommonExpectedCY extends CommonExpectedResults {
     val expectedTitle = "Check UK Pension Income"
-    val expectedCaption: Int => String = (taxYear: Int) =>  s"Incwm o bensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Incwm o bensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
     val buttonText = "Cadw ac yn eich blaen"
     val yesText = "Iawn"
     val noText = "Na"
@@ -278,15 +278,12 @@ class UkPensionIncomeCYAControllerISpec extends IntegrationTest with ViewHelpers
           urlPost(fullUrl(ukPensionIncomeCyaUrl(taxYear)), form, follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
         }
-
         "have the status SEE OTHER" in {
           result.status shouldBe SEE_OTHER
         }
-
         "redirects to the overview page" in {
           result.header("location") shouldBe Some(pensionIncomeSummaryUrl(taxYear))
         }
-
       }
 
       "the user makes no changes and no submission to DES is made" which {
