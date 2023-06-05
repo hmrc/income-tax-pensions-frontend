@@ -99,7 +99,6 @@ class TransferIntoOverseasPensionsCYAViewSpec extends ViewUnitTest {
 
   private def renderPage(userScenario: UserScenario[CommonExpectedResults, String], model: TransfersIntoOverseasPensionsViewModel): Document = {
     import userScenario.commonExpectedResults._
-    //    implicit val request: UserSessionDataRequest[AnyContent] = getUserSession(userScenario.isAgent)
     implicit val authorisationRequest: AuthorisationRequest[AnyContent] = getAuthRequest(userScenario.isAgent)
     implicit val messages: Messages = getMessages(userScenario.isWelsh)
 

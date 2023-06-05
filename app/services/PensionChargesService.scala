@@ -33,17 +33,6 @@ class PensionChargesService @Inject()(pensionUserDataRepository: PensionsUserDat
                                       pensionsConnector: PensionsConnector,
                                       incomeTaxUserDataConnector: IncomeTaxUserDataConnector) {
 
-  private def savePensionChargesData(user: User, taxYear: Int,
-                             submissionModel: CreateUpdatePensionChargesRequestModel,
-                             updatedCYA: PensionsUserData)
-                            (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[ServiceError, Unit]] = {
-
-    pensionsConnector.savePensionChargesSessionData(user.nino, taxYear, submissionModel)(
-      hc.withExtraHeaders("mtditid" -> user.mtditid), ec)
-
-    pensionUserDataRepository.createOrUpdate(updatedCYA)
-  }
-
 
   def saveUnauthorisedViewModel(user: User, taxYear: Int)(implicit hc: HeaderCarrier,
                                 ec: ExecutionContext, clock: Clock): Future[Either[ServiceError, Unit]] = {
@@ -112,7 +101,7 @@ class PensionChargesService @Inject()(pensionUserDataRepository: PensionsUserDat
         FutureEitherOps[ServiceError, Unit](savePensionChargesData(
           user = user,
           taxYear = taxYear,
-          submissionModel = createTransfersIOSChargesModel(viewModel, priorData),
+          submissionModel = createTransfersIOPChargesModel(viewModel, priorData),
           updatedCYA = getTransfersIntoOverseasUserData(sessionData, user, taxYear, clock)
         ))
     } yield {
@@ -135,7 +124,7 @@ class PensionChargesService @Inject()(pensionUserDataRepository: PensionsUserDat
       )
     }
   }
-  private def createTransfersIOSChargesModel(viewModel: Option[TransfersIntoOverseasPensionsViewModel],
+  private def createTransfersIOPChargesModel(viewModel: Option[TransfersIntoOverseasPensionsViewModel],
                                              priorData: IncomeTaxUserData): CreateUpdatePensionChargesRequestModel = {
     CreateUpdatePensionChargesRequestModel(
       pensionSavingsTaxCharges = priorData.pensions.flatMap(_.pensionCharges.flatMap(_.pensionSavingsTaxCharges)),
@@ -146,6 +135,17 @@ class PensionChargesService @Inject()(pensionUserDataRepository: PensionsUserDat
     )
   }
 
+
+  private def savePensionChargesData(user: User, taxYear: Int,
+                                     submissionModel: CreateUpdatePensionChargesRequestModel,
+                                     updatedCYA: PensionsUserData)
+                                    (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[ServiceError, Unit]] = {
+
+    pensionsConnector.savePensionChargesSessionData(user.nino, taxYear, submissionModel)(
+      hc.withExtraHeaders("mtditid" -> user.mtditid), ec)
+
+    pensionUserDataRepository.createOrUpdate(updatedCYA)
+  }
 
 }
 
