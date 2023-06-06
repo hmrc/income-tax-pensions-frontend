@@ -38,11 +38,18 @@ class UkPensionIncomeSummaryControllerISpec extends IntegrationTest with BeforeA
     val addAnotherLinkSelector = "#add-another-pension-link"
     val addLinkSelector = "#add-pension-income-link"
     val continueButtonSelector: String = "#continue"
+    val addSchemeButtonSelector: String = "#AddAScheme"
+    val overviewButtonSelector: String = "#ReturnToOverview"
     val summaryListTableSelector = "#pensionIncomeSummaryList"
-    def changeLinkSelector(index: Int): String = s"#pensionIncomeSummaryList > dl > div:nth-child($index) > dd.hmrc-add-to-a-list__change > a"
-    def removeLinkSelector(index: Int): String = s"#pensionIncomeSummaryList > dl > div:nth-child($index) > dd.hmrc-add-to-a-list__remove > a"
-    def pensionNameSelector(index: Int): String = s"#pensionIncomeSummaryList > dl > div:nth-child($index) > dt"
+    val needToAddSchemeTextSelector: String = "#youNeedToAddOneOrMorePensionScheme1"
+    val returnToOverviewTextSelector: String = "#youNeedToAddOneOrMorePensionScheme2"
 
+
+    def changeLinkSelector(index: Int): String = s"#pensionIncomeSummaryList > dl > div:nth-child($index) > dd.hmrc-add-to-a-list__change > a"
+
+    def removeLinkSelector(index: Int): String = s"#pensionIncomeSummaryList > dl > div:nth-child($index) > dd.hmrc-add-to-a-list__remove > a"
+
+    def pensionNameSelector(index: Int): String = s"#pensionIncomeSummaryList > dl > div:nth-child($index) > dt"
   }
 
   trait CommonExpectedResults {
@@ -51,31 +58,43 @@ class UkPensionIncomeSummaryControllerISpec extends IntegrationTest with BeforeA
     val expectedHeading: String
     val change: String
     val remove: String
-    val expectedButtonText: String
+    val expectedContinueButtonText: String
+    val expectedAddSchemeButtonText: String
+    val expectedOverviewButtonText: String
     val expectedAddAnotherText: String
     val expectedAddPensionSchemeText: String
+    val expectedReturnToOverviewPageText: String
+    val expectedNeedToAddPensionSchemeText: String
   }
 
   object CommonExpectedEN extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Income from pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val expectedButtonText = "Continue"
+    val expectedContinueButtonText = "Continue"
+    val expectedAddSchemeButtonText = "Add a scheme"
+    val expectedOverviewButtonText = "Return to overview"
     val expectedTitle = "UK pension income"
     val expectedHeading = "UK pension income"
     val change = "Change"
     val remove = "Remove"
     val expectedAddAnotherText = "Add another pension scheme"
     val expectedAddPensionSchemeText = "Add a pension scheme"
+    val expectedReturnToOverviewPageText = "If you don’t have a pensions scheme to add you can return to the overview page and come back later."
+    val expectedNeedToAddPensionSchemeText = "You need to add one or more pension scheme."
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Incwm o bensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
-    val expectedButtonText = "Yn eich blaen"
+    val expectedContinueButtonText = "Yn eich blaen"
+    val expectedAddSchemeButtonText = "Add a scheme"
+    val expectedOverviewButtonText = "Yn ôl i’r trosolwg"
     val expectedTitle = "Incwm o bensiynau’r DU"
     val expectedHeading = expectedTitle
     val change = "Newid"
     val remove = "Tynnu"
     val expectedAddAnotherText = "Ychwanegu cynllun pensiwn arall"
     val expectedAddPensionSchemeText = "Ychwanegu cynllun pensiwn"
+    val expectedReturnToOverviewPageText = "If you don’t have a pensions scheme to add you can return to the overview page and come back later."
+    val expectedNeedToAddPensionSchemeText = "You need to add one or more pension scheme."
   }
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, Nothing]] = Seq(
@@ -115,7 +134,7 @@ class UkPensionIncomeSummaryControllerISpec extends IntegrationTest with BeforeA
           captionCheck(expectedCaption(taxYearEOY))
           textOnPageCheck(pensionName1, pensionNameSelector(1))
           textOnPageCheck(pensionName2, pensionNameSelector(2))
-          
+
           //TODO: replace hrefs "#" below with link to first details page when available .e.g. UkPensionSchemeDetailsCYAController.show(taxYearEOY, Some(1)).url
           linkCheck(s"$change $change $pensionName1", changeLinkSelector(1), pensionSchemeSummaryUrl(taxYearEOY, Some(0)))
           linkCheck(s"$change $change $pensionName2", changeLinkSelector(2), pensionSchemeSummaryUrl(taxYearEOY, Some(1)))
@@ -123,7 +142,7 @@ class UkPensionIncomeSummaryControllerISpec extends IntegrationTest with BeforeA
           linkCheck(s"$remove $remove $pensionName1", removeLinkSelector(1), s"${removePensionSchemeUrl(taxYearEOY, Some(0))}")
           linkCheck(s"$remove $remove $pensionName2", removeLinkSelector(2), s"${removePensionSchemeUrl(taxYearEOY, Some(1))}")
           linkCheck(expectedAddAnotherText, addAnotherLinkSelector, pensionSchemeDetailsUrl(taxYearEOY, None))
-          buttonCheck(expectedButtonText, continueButtonSelector, Some(ukPensionIncomeCyaUrl(taxYearEOY)))
+          buttonCheck(expectedContinueButtonText, continueButtonSelector, Some(ukPensionIncomeCyaUrl(taxYearEOY)))
           welshToggleCheck(user.isWelsh)
         }
 
@@ -148,8 +167,11 @@ class UkPensionIncomeSummaryControllerISpec extends IntegrationTest with BeforeA
           h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY))
           elementNotOnPageCheck(summaryListTableSelector)
-          linkCheck(expectedAddPensionSchemeText, addLinkSelector, pensionSchemeDetailsUrl(taxYearEOY, None))
-          buttonCheck(expectedButtonText, continueButtonSelector, Some(ukPensionIncomeCyaUrl(taxYearEOY)))
+
+          buttonCheck(expectedAddSchemeButtonText, addSchemeButtonSelector, Some(pensionSchemeDetailsUrl(taxYearEOY, None)))
+          textOnPageCheck(expectedNeedToAddPensionSchemeText, needToAddSchemeTextSelector)
+          buttonCheck(expectedOverviewButtonText, overviewButtonSelector, Some(pensionIncomeSummaryUrl(taxYearEOY)))
+          textOnPageCheck(expectedReturnToOverviewPageText, returnToOverviewTextSelector)
           welshToggleCheck(user.isWelsh)
         }
 
