@@ -18,13 +18,17 @@ package controllers.pensions.shortServiceRefunds
 
 import builders.AllPensionsDataBuilder.anAllPensionsData
 import builders.IncomeTaxUserDataBuilder.anIncomeTaxUserData
+import builders.OverseasPensionContributionsBuilder.anOverseasPensionContributions
 import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import builders.PensionsUserDataBuilder
+import builders.PensionsUserDataBuilder.aPensionsUserData
 import builders.ShortServiceRefundsViewModelBuilder.emptyShortServiceRefundsViewModel
 import builders.UserBuilder.{aUser, aUserRequest}
 import models.mongo.PensionsCYAModel
+import models.pension.charges.{CreateUpdatePensionChargesRequestModel, PensionCharges}
 import play.api.http.HeaderNames
 import play.api.http.Status.{OK, SEE_OTHER}
+import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
 import utils.PageUrls.ShortServiceRefunds.shortServiceRefundsCYAUrl
 import utils.PageUrls.{fullUrl, overseasPensionsSummaryUrl, overviewUrl}
@@ -36,6 +40,20 @@ class ShortServiceRefundsCYAControllerISpec extends IntegrationTest with ViewHel
   private def pensionsUsersData(isPrior: Boolean, pensionsCyaModel: PensionsCYAModel) = {
     PensionsUserDataBuilder.aPensionsUserData.copy(isPriorSubmission = isPrior, pensions = pensionsCyaModel)
   }
+
+
+  val priorPensionChargesData: Option[PensionCharges] = anIncomeTaxUserData.pensions.flatMap(_.pensionCharges)
+
+  val priorPensionCharges: CreateUpdatePensionChargesRequestModel = CreateUpdatePensionChargesRequestModel(
+    pensionSavingsTaxCharges = priorPensionChargesData.flatMap(_.pensionSavingsTaxCharges),
+    pensionSchemeOverseasTransfers = priorPensionChargesData.flatMap(_.pensionSchemeOverseasTransfers),
+    pensionSchemeUnauthorisedPayments = priorPensionChargesData.flatMap(_.pensionSchemeUnauthorisedPayments),
+    pensionContributions = priorPensionChargesData.flatMap(_.pensionContributions),
+    overseasPensionContributions = priorPensionChargesData.flatMap(_.overseasPensionContributions)
+  )
+  val submissionChargesModel: CreateUpdatePensionChargesRequestModel = priorPensionCharges.copy(
+    overseasPensionContributions = Some(anOverseasPensionContributions.copy(shortServiceRefund = 1000.20, shortServiceRefundTaxPaid = 250.00))
+  )
 
   override val userScenarios: Seq[UserScenario[_, _]] = Nil
 
@@ -90,6 +108,40 @@ class ShortServiceRefundsCYAControllerISpec extends IntegrationTest with ViewHel
         authoriseAgentOrIndividual(aUser.isAgent)
         insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel), aUserRequest)
         userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYearEOY)
+        urlPost(
+          fullUrl(shortServiceRefundsCYAUrl(taxYearEOY)),
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
+          follow = false,
+          body = "")
+      }
+      result.status shouldBe SEE_OTHER
+      result.headers("location").head shouldBe overseasPensionsSummaryUrl(taxYearEOY)
+    }
+
+    "CYA data is updated and differs from prior data" in {
+      lazy implicit val result: WSResponse = {
+        dropPensionsDB()
+        authoriseAgentOrIndividual(aUser.isAgent)
+        pensionChargesSessionStub(Json.toJson(submissionChargesModel).toString(), nino, taxYearEOY)
+        userDataStub(anIncomeTaxUserData, nino, taxYearEOY)
+        insertCyaData(aPensionsUserData, aUserRequest)
+        urlPost(
+          fullUrl(shortServiceRefundsCYAUrl(taxYearEOY)),
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
+          follow = false,
+          body = "")
+      }
+      result.status shouldBe SEE_OTHER
+      result.headers("location").head shouldBe overseasPensionsSummaryUrl(taxYearEOY)
+    }
+
+    "the user makes no changes and no submission to DES is made" in {
+      lazy implicit val result: WSResponse = {
+        dropPensionsDB()
+        authoriseAgentOrIndividual(aUser.isAgent)
+        pensionChargesSessionStub(Json.toJson(priorPensionCharges).toString(), nino, taxYearEOY)
+        userDataStub(anIncomeTaxUserData, nino, taxYearEOY)
+        insertCyaData(aPensionsUserData, aUserRequest)
         urlPost(
           fullUrl(shortServiceRefundsCYAUrl(taxYearEOY)),
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
