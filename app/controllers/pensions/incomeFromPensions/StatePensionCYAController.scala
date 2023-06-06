@@ -16,32 +16,40 @@
 
 package controllers.pensions.incomeFromPensions
 
-import config.AppConfig
+import config.{AppConfig, ErrorHandler}
 import controllers.pensions.incomeFromPensions.routes.IncomeFromPensionsSummaryController
 import controllers.predicates.{ActionsProvider, AuthorisedAction}
-import models.mongo.PensionsCYAModel
+import models.mongo.{PensionsCYAModel, PensionsUserData}
 import models.pension.AllPensionsData
 import models.pension.AllPensionsData.generateCyaFromPrior
+import models.{APIErrorBodyModel, APIErrorModel, AuthorisationRequest, User}
+import play.api.Logger
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.PensionSessionService
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import services.{PensionSessionService, StatePensionService}
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.SessionHelper
+import utils.{Clock, SessionHelper}
 import views.html.pensions.incomeFromPensions.StatePensionCYAView
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class StatePensionCYAController @Inject()(authAction: AuthorisedAction,
                                           actionsProvider: ActionsProvider,
                                           pensionSessionService: PensionSessionService,
+                                          statePensionService: StatePensionService,
                                           view: StatePensionCYAView)
-                                         (implicit val mcc: MessagesControllerComponents, appConfig: AppConfig)
+                                         (implicit val mcc: MessagesControllerComponents,
+                                          appConfig: AppConfig, clock: Clock, errorHandler: ErrorHandler)
   extends FrontendController(mcc) with I18nSupport with SessionHelper {
 
-  def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) {implicit userSessionDataRequest =>
-     Ok(view(taxYear, userSessionDataRequest.pensionsUserData.pensions.incomeFromPensions))
+  lazy val logger: Logger = Logger(this.getClass.getName)
+  implicit val executionContext: ExecutionContext = mcc.executionContext
+
+  def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) { implicit userSessionDataRequest =>
+    Ok(view(taxYear, userSessionDataRequest.pensionsUserData.pensions.incomeFromPensions))
   }
 
   def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
@@ -49,17 +57,19 @@ class StatePensionCYAController @Inject()(authAction: AuthorisedAction,
       cya.fold(
         Future.successful(Redirect(appConfig.incomeTaxSubmissionOverviewUrl(taxYear)))
       ) { model =>
-        if (comparePriorData(model.pensions, prior)) {
-          //TODO - build submission model from cya data and submit to DES if cya data doesn't match prior data
-          Future.successful(Redirect(IncomeFromPensionsSummaryController.show(taxYear)))
-        } else {
-          Future.successful(Redirect(IncomeFromPensionsSummaryController.show(taxYear)))
+        if (sessionDataDifferentThanPriorData(model.pensions, prior)) {
+          statePensionService.persistStatePensionIncomeViewModel(request.user, taxYear) map {
+            case Left(_) => errorHandler.internalServerError()
+            case Right(_) => Redirect(IncomeFromPensionsSummaryController.show(taxYear))
+          }
+          } else {
+            Future.successful(Redirect(IncomeFromPensionsSummaryController.show(taxYear)))
+          }
         }
       }
-    }
   }
 
-  private def comparePriorData(cyaData: PensionsCYAModel, priorData: Option[AllPensionsData]): Boolean = {
+  private def sessionDataDifferentThanPriorData(cyaData: PensionsCYAModel, priorData: Option[AllPensionsData]): Boolean = {
     priorData match {
       case Some(prior) => !cyaData.equals(generateCyaFromPrior(prior))
       case None => true

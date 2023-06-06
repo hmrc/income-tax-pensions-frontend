@@ -34,7 +34,7 @@ class PensionReliefsServiceSpec extends UnitTest
 
   val pensionReliefsService = new PensionReliefsService(mockPensionUserDataRepository, mockPensionsConnector)
 
-  ".saveIncomeFromOverseasPensionsViewModel" should {
+  ".persistPaymentIntoPensionViewModel" should {
     "return Right(Unit) when model is saved successfully and payment into pensions cya is cleared from DB" in {
       val sessionCya = aPensionsCYAEmptyModel.copy(paymentsIntoPension = aPensionsUserData.pensions.paymentsIntoPension)
       val sessionUserData = aPensionsUserData.copy(pensions = sessionCya)

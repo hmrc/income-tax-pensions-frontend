@@ -19,7 +19,7 @@ package connectors
 import config.AppConfig
 import connectors.httpParsers.PensionChargesSessionHttpParser.{PensionChargesSessionHttpReads, PensionChargesSessionResponse}
 import connectors.httpParsers.PensionIncomeSessionHttpParser.{PensionIncomeSessionHttpReads, PensionIncomeSessionResponse}
-import connectors.httpParsers.PensionReliefsSessionHttpParser.PensionReliefsSessionResponse
+import connectors.httpParsers.PensionReliefsSessionHttpParser.{PensionReliefsSessionHttpReads, PensionReliefsSessionResponse}
 import models.pension.charges.CreateUpdatePensionChargesRequestModel
 import models.pension.income.CreateUpdatePensionIncomeModel
 import models.pension.reliefs.CreateOrUpdatePensionReliefsModel
@@ -50,6 +50,6 @@ class PensionsConnector @Inject()(val http: HttpClient,
                                   (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[PensionReliefsSessionResponse] = {
     val url = appConfig.pensionBEBaseUrl + s"/pension-reliefs/nino/$nino/taxYear/${taxYear.toString}"
     http.PUT[CreateOrUpdatePensionReliefsModel, PensionReliefsSessionResponse](url,
-      model)(CreateOrUpdatePensionReliefsModel.format.writes, PensionIncomeSessionHttpReads, hc, ec)
+      model)(CreateOrUpdatePensionReliefsModel.format.writes, PensionReliefsSessionHttpReads, hc, ec)
   }
 }

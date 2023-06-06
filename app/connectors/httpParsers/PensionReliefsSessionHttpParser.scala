@@ -19,14 +19,14 @@ package connectors.httpParsers
 import models.APIErrorModel
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 
-object 
-PensionReliefsSessionHttpParser extends APIParser {
+object PensionReliefsSessionHttpParser extends APIParser {
   type PensionReliefsSessionResponse = Either[APIErrorModel, Unit]
 
   override val parserName: String = "PensionReliefsSessionResponse"
   override val service: String = "income-tax-pensions"
-  
-  implicit object PensionIncomeSessionHttpReads extends HttpReads[PensionReliefsSessionResponse] {
+
+  implicit object PensionReliefsSessionHttpReads extends HttpReads[PensionReliefsSessionResponse] {
+
     override def read(method: String, url: String, response: HttpResponse): PensionReliefsSessionResponse = {
       SessionHttpReads.read(method, url, response)
     }

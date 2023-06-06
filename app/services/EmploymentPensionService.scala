@@ -17,7 +17,7 @@
 package services
 
 import connectors.EmploymentConnector
-import connectors.httpParsers.EmploymentSessionHttpParser.{EmploymentSessionResponse, SessionResponse}
+import connectors.httpParsers.EmploymentSessionHttpParser.EmploymentSessionResponse
 import models.User
 import models.mongo.{PensionsCYAModel, PensionsUserData, ServiceError}
 import org.joda.time.DateTimeZone
@@ -53,7 +53,7 @@ class EmploymentPensionService @Inject()(pensionUserDataRepository: PensionsUser
         )
       }
     }
-    
+
     (for {
       sessionData <- FutureEitherOps[ServiceError, Option[PensionsUserData]](pensionUserDataRepository.find(taxYear, user))
       optUkPensionIncomes = sessionData.map(p => p.pensions.incomeFromPensions.uKPensionIncomes)
@@ -67,7 +67,7 @@ class EmploymentPensionService @Inject()(pensionUserDataRepository: PensionsUser
       result
     }).value
   }
-  
+
   private def sequence[A, B](s: Seq[Either[A, B]]): Either[A, Seq[B]] = {
     s.foldRight(Right(Nil): Either[A, Seq[B]]) { (e, acc) => for (xs <- acc; x <- e) yield xs :+ x }
   }
