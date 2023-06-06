@@ -43,6 +43,7 @@
 }
 
 @pensionIncomeSummaryList = {
+<div class="govuk-!-margin-bottom-9">
     @if(pensionIncomeList.nonEmpty){
         <div class="govuk-form-group" id="pensionIncomeSummaryList">
             <dl class="hmrc-add-to-a-list hmrc-add-to-a-list--short">
@@ -69,11 +70,11 @@
         </div>
 @addAnotherLink(PensionSchemeDetailsController.show(taxYear, None).url)
 @button(Button(
-attributes = Map("id" -> "continue"),
-preventDoubleClick = Some(true),
-content = Text(messages("common.continue")),
-classes = "govuk-button govuk-!-margin-top-2",
-href = Some(UkPensionIncomeCYAController.show(taxYear).url)
+    attributes = Map("id" -> "continue"),
+    preventDoubleClick = Some(true),
+    content = Text(messages("common.continue")),
+    classes = "govuk-button govuk-!-margin-top-2",
+    href = Some(UkPensionIncomeCYAController.show(taxYear).url)
 ))
 } else {
 <p class="govuk-body" id="youNeedToAddOneOrMorePensionScheme1">
@@ -81,11 +82,11 @@ href = Some(UkPensionIncomeCYAController.show(taxYear).url)
 </p>
 
 @button(Button(
-attributes = Map("id" -> "AddAScheme"),
-preventDoubleClick = Some(true),
-classes = "govuk-button govuk-!-margin-top-2",
-content = Text(messages("common.summary.addAScheme")),
-href = Some(PensionSchemeDetailsController.show(taxYear, None).url)
+    attributes = Map("id" -> "AddAScheme"),
+    preventDoubleClick = Some(true),
+    classes = "govuk-button govuk-!-margin-top-2",
+    content = Text(messages("common.summary.addAScheme")),
+    href = Some(PensionSchemeDetailsController.show(taxYear, None).url)
 ))
 
 
@@ -95,16 +96,16 @@ href = Some(PensionSchemeDetailsController.show(taxYear, None).url)
 </p>
 
 @button(Button(
-attributes = Map("id" -> "ReturnToOverview"),
-preventDoubleClick = Some(true),
-classes = "govuk-button--secondary",
-content = Text(messages("common.return.overview.buttonText")),
-href = Some(IncomeFromPensionsSummaryController.show(taxYear).url)
+    attributes = Map("id" -> "ReturnToOverview"),
+    preventDoubleClick = Some(true),
+    classes = "govuk-button--secondary",
+    content = Text(messages("common.return.overview.buttonText")),
+    href = Some(IncomeFromPensionsSummaryController.show(taxYear).url)
 ))
 
 }
+</div>
 }
-
 
 @layout(pageTitle = headingForUse, taxYear = Some(taxYear)) {
     @heading(headingForUse, Some(messages("common.incomeFromPensions.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-2")
@@ -114,3 +115,4 @@ href = Some(IncomeFromPensionsSummaryController.show(taxYear).url)
 @{
 // $COVERAGE-OFF$
 }
+

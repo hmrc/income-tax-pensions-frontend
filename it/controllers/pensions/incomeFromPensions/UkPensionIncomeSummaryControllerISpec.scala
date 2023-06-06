@@ -62,7 +62,6 @@ class UkPensionIncomeSummaryControllerISpec extends IntegrationTest with BeforeA
     val expectedAddSchemeButtonText: String
     val expectedOverviewButtonText: String
     val expectedAddAnotherText: String
-    val expectedAddPensionSchemeText: String
     val expectedReturnToOverviewPageText: String
     val expectedNeedToAddPensionSchemeText: String
   }
@@ -77,7 +76,6 @@ class UkPensionIncomeSummaryControllerISpec extends IntegrationTest with BeforeA
     val change = "Change"
     val remove = "Remove"
     val expectedAddAnotherText = "Add another pension scheme"
-    val expectedAddPensionSchemeText = "Add a pension scheme"
     val expectedReturnToOverviewPageText = "If you don’t have a pensions scheme to add you can return to the overview page and come back later."
     val expectedNeedToAddPensionSchemeText = "You need to add one or more pension scheme."
   }
@@ -92,7 +90,6 @@ class UkPensionIncomeSummaryControllerISpec extends IntegrationTest with BeforeA
     val change = "Newid"
     val remove = "Tynnu"
     val expectedAddAnotherText = "Ychwanegu cynllun pensiwn arall"
-    val expectedAddPensionSchemeText = "Ychwanegu cynllun pensiwn"
     val expectedReturnToOverviewPageText = "If you don’t have a pensions scheme to add you can return to the overview page and come back later."
     val expectedNeedToAddPensionSchemeText = "You need to add one or more pension scheme."
   }
