@@ -30,7 +30,7 @@ import utils.PageUrls.ShortServiceRefunds.shortServiceRefundsCYAUrl
 import utils.PageUrls.{fullUrl, overseasPensionsSummaryUrl, overviewUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
-class ShortServiceRefundsCYAISpec extends IntegrationTest with ViewHelpers
+class ShortServiceRefundsCYAControllerISpec extends IntegrationTest with ViewHelpers
   with PensionsDatabaseHelper {
 
   private def pensionsUsersData(isPrior: Boolean, pensionsCyaModel: PensionsCYAModel) = {
