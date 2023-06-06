@@ -18,7 +18,7 @@ package services
 
 import connectors.{IncomeTaxUserDataConnector, PensionsConnector}
 import models.mongo.{PensionsCYAModel, PensionsUserData, ServiceError}
-import models.pension.charges.{CreateUpdatePensionChargesRequestModel, TransfersIntoOverseasPensionsViewModel, UnauthorisedPaymentsViewModel}
+import models.pension.charges.{CreateUpdatePensionChargesRequestModel, ShortServiceRefundsViewModel, TransfersIntoOverseasPensionsViewModel, UnauthorisedPaymentsViewModel}
 import models.{IncomeTaxUserData, User}
 import org.joda.time.DateTimeZone
 import repositories.PensionsUserDataRepository
@@ -147,8 +147,50 @@ class PensionChargesService @Inject()(pensionUserDataRepository: PensionsUserDat
     pensionUserDataRepository.createOrUpdate(updatedCYA)
   }
 
+
+  def saveShortServiceRefundsViewModel(user: User, taxYear: Int)(implicit hc: HeaderCarrier,
+                                                                 ec: ExecutionContext, clock: Clock): Future[Either[ServiceError, Unit]] = {
+    (for {
+      priorData <- FutureEitherOps[ServiceError, IncomeTaxUserData](incomeTaxUserDataConnector
+        .getUserData(user.nino, taxYear)(hc.withExtraHeaders("mtditid" -> user.mtditid)))
+      sessionData <- FutureEitherOps[ServiceError, Option[PensionsUserData]](pensionUserDataRepository.find(taxYear, user))
+      viewModel = sessionData.map(_.pensions.shortServiceRefunds)
+      result <-
+        FutureEitherOps[ServiceError, Unit](savePensionChargesData(
+          user = user,
+          taxYear = taxYear,
+          submissionModel = createShortServiceRefundsChargesModel(viewModel, priorData),
+          updatedCYA = getShortServiceRefundsUserData(sessionData, user, taxYear, clock)
+        ))
+    } yield {
+      result
+    }).value
+  }
+
+  private def createShortServiceRefundsChargesModel(viewModel: Option[ShortServiceRefundsViewModel],
+                                             priorData: IncomeTaxUserData): CreateUpdatePensionChargesRequestModel = {
+    CreateUpdatePensionChargesRequestModel(
+      pensionSavingsTaxCharges = priorData.pensions.flatMap(_.pensionCharges.flatMap(_.pensionSavingsTaxCharges)),
+      pensionSchemeOverseasTransfers = priorData.pensions.flatMap(_.pensionCharges.flatMap(_.pensionSchemeOverseasTransfers)),
+      pensionSchemeUnauthorisedPayments = priorData.pensions.flatMap(_.pensionCharges.flatMap(_.pensionSchemeUnauthorisedPayments)),
+      pensionContributions = priorData.pensions.flatMap(_.pensionCharges.flatMap(_.pensionContributions)),
+      overseasPensionContributions = viewModel.map(_.toOverseasPensionContributions)
+    )
+  }
+
+  private def getShortServiceRefundsUserData(userData: Option[PensionsUserData],
+                                               user: User, taxYear: Int, clock: Clock): PensionsUserData = {
+    userData match {
+      case Some(value) => value.copy(pensions = value.pensions.copy(
+        shortServiceRefunds = ShortServiceRefundsViewModel()
+      ))
+      case None => PensionsUserData(
+        user.sessionId, user.mtditid,
+        user.nino, taxYear,
+        isPriorSubmission = false,
+        PensionsCYAModel.emptyModels,
+        clock.now(DateTimeZone.UTC)
+      )
+    }
+  }
 }
-
-
-
-

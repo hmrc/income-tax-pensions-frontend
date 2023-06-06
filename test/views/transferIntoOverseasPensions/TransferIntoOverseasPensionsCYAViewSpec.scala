@@ -149,6 +149,5 @@ class TransferIntoOverseasPensionsCYAViewSpec extends ViewUnitTest {
         cyaRowCheck(transfersIOP, noText, ChangeLinks.transferPensionSavingsUrl, transfersIOPChange, 1)
       }
     }
-
   }
 }

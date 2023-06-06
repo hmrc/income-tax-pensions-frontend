@@ -25,7 +25,7 @@ import play.api.mvc.AnyContent
 import support.ViewUnitTest
 import views.html.pensions.shortServiceRefunds.ShortServiceRefundsCYAView
 
-class ShortServiceCYAViewSpec extends ViewUnitTest { //scalastyle:off magic.number
+class ShortServiceRefundsCYAViewSpec extends ViewUnitTest { //scalastyle:off magic.number
 
   object ChangeLinks {
     val changeRefund = controllers.pensions.shortServiceRefunds.routes.TaxableRefundAmountController.show(taxYearEOY).url
