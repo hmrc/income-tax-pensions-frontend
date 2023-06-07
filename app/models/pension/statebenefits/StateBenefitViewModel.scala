@@ -40,7 +40,9 @@ case class StateBenefitViewModel(
                                   amountPaidQuestion: Option[Boolean] = None,
                                   amount: Option[BigDecimal] = None,
                                   taxPaidQuestion: Option[Boolean] = None,
-                                  taxPaid: Option[BigDecimal] = None) {
+                                  taxPaid: Option[BigDecimal] = None,
+                                  addToCalculation: Option[Boolean] = None
+                                ) {
   def isEmpty: Boolean = this.productIterator.forall(_ == None)
 
   def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedStateBenefitViewModel =
@@ -58,8 +60,8 @@ case class StateBenefitViewModel(
       amountPaidQuestion = amountPaidQuestion.map(_.encrypted),
       amount = amount.map(_.encrypted),
       taxPaidQuestion = taxPaidQuestion.map(_.encrypted),
-      taxPaid = taxPaid.map(_.encrypted)
-
+      taxPaid = taxPaid.map(_.encrypted),
+      addToCalculation = addToCalculation.map(_.encrypted)
     )
 }
 
@@ -80,7 +82,9 @@ case class EncryptedStateBenefitViewModel(
                                            amountPaidQuestion: Option[EncryptedValue] = None,
                                            amount: Option[EncryptedValue] = None,
                                            taxPaidQuestion: Option[EncryptedValue],
-                                           taxPaid: Option[EncryptedValue] = None) {
+                                           taxPaid: Option[EncryptedValue] = None,
+                                           addToCalculation: Option[EncryptedValue] = None
+                                         ) {
 
   def decrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): StateBenefitViewModel =
     StateBenefitViewModel(
@@ -96,7 +100,8 @@ case class EncryptedStateBenefitViewModel(
       amountPaidQuestion = amountPaidQuestion.map(_.decrypted[Boolean]),
       amount = amount.map(_.decrypted[BigDecimal]),
       taxPaidQuestion = taxPaidQuestion.map(_.decrypted[Boolean]),
-      taxPaid = taxPaid.map(_.decrypted[BigDecimal])
+      taxPaid = taxPaid.map(_.decrypted[BigDecimal]),
+      addToCalculation = addToCalculation.map(_.decrypted[Boolean])
     )
 }
 

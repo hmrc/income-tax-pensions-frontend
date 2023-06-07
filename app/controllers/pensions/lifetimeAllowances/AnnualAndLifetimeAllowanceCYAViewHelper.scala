@@ -74,7 +74,7 @@ object AnnualAndLifetimeAllowanceCYAViewHelper extends CYABaseHelper {
           //TODO: When page is updated update CYA to ensure only one value can be correct
           val value =
             annualAllowancesViewModel.moneyPurchaseAnnualAllowance.collect { case true => "Money purchase" case false => "Tapered" }.map(Seq(_))
-          summaryListRowWithString(
+          summaryListRowWithStrings(
             "lifetimeAllowance.cya.typeOfReducedAnnualAllowance",
             value,
             annualRoutes.ReducedAnnualAllowanceTypeController.show(taxYear))(messages)
@@ -137,7 +137,7 @@ object AnnualAndLifetimeAllowanceCYAViewHelper extends CYABaseHelper {
     annualAllowancesViewModel.reducedAnnualAllowanceQuestion.filter(x => x).flatMap(_ =>
     annualAllowancesViewModel.aboveAnnualAllowanceQuestion.filter(x => x).flatMap(_ =>
       annualAllowancesViewModel.pensionProvidePaidAnnualAllowanceQuestion.filter(x => x).map(_ =>
-        summaryListRowWithString(
+        summaryListRowWithStrings(
           "lifetimeAllowance.cya.annualPensionSchemeTaxReferences",
           annualAllowancesViewModel.pensionSchemeTaxReferences,
           annualRoutes.PstrSummaryController.show(taxYear))(messages)
@@ -205,7 +205,7 @@ object AnnualAndLifetimeAllowanceCYAViewHelper extends CYABaseHelper {
 
     lifetimeAllowancesViewModel.aboveLifetimeAllowanceQuestion.filter(x => x).flatMap(_ =>
       combinedLumpSumOtherPaymentsQuestion.filter(x => x).map { _ =>
-        summaryListRowWithString(
+        summaryListRowWithStrings(
           "lifetimeAllowance.cya.lifetimePensionSchemeTaxReferences",
           lifetimeAllowancesViewModel.pensionSchemeTaxReferences,
           routes.AnnualLifetimeAllowanceCYAController.show(taxYear))(messages)

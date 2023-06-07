@@ -76,9 +76,10 @@ class IncomeFromOverseasPensionsCYAController @Inject()(authAction: AuthorisedAc
     }
   }
 
+  
   def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
-    val p1 = pensionIncomeService.saveIncomeFromOverseasPensionsViewModel(request.user, taxYear)
-      p1.map {
+    //TODO: missing the comparison of session with Prior data
+    pensionIncomeService.saveIncomeFromOverseasPensionsViewModel(request.user, taxYear).map {
       case Left(_) =>
         errorHandler.internalServerError()
       case Right(_) => Redirect(controllers.pensions.routes.OverseasPensionsSummaryController.show(taxYear))

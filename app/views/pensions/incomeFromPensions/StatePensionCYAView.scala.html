@@ -1,0 +1,60 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import controllers.pensions.incomeFromPensions.StatePensionCYAHelper
+@import controllers.pensions.incomeFromPensions.routes.StatePensionCYAController
+@import models.pension.statebenefits.IncomeFromPensionsViewModel
+@import models.requests.UserSessionDataRequest
+@import utils.ViewUtils.summaryListRow
+@import views.html.templates.helpers.{Button, Heading, Link, SummaryList}
+@import views.html.templates.Layout
+
+
+@this(
+  button: Button,
+  formWithCsrf: FormWithCSRF,
+  heading: Heading,
+  layout: Layout,
+  link:Link,
+  summaryList: SummaryList  
+)
+
+@(taxYear: Int, statePension: IncomeFromPensionsViewModel)(implicit messages: Messages, appConfig: AppConfig, request: UserSessionDataRequest[_])
+
+@agentOrIndividual = @{ if(request.user.isAgent) "agent" else "individual" }
+@headingForUse = @{messages(s"statePension.cya.title.$agentOrIndividual")}
+
+@para1 = @{
+  val p1 = messages(s"statePension.cya.paragraph1.$agentOrIndividual")
+  <p class="govuk-body">{p1}</p>
+}
+
+@para2 = @{
+  val p2 = messages(s"statePension.cya.paragraph2.$agentOrIndividual")
+  if (request.user.isAgent) <div class="govuk-inset-text">{p2}</div> else <p class="govuk-body">{p2}</p>
+}
+
+@layout(pageTitle = headingForUse, taxYear = Some(taxYear)) {
+
+  @heading(headingForUse, Some(messages("common.incomeFromPensions.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-5")
+  @para1
+  @para2
+  @summaryList(StatePensionCYAHelper.summaryListRows(statePension, taxYear)(messages))
+
+  @formWithCsrf(StatePensionCYAController.submit(taxYear)) {
+    @button("common.saveAndContinue")
+  }
+}

@@ -59,7 +59,7 @@ class TaxOnShortServiceRefundSpec extends ViewUnitTest with FakeRequestProvider 
 
   object ExpectedCommonCY extends CommonExpectedResults {
     override val expectedCaption: Int => String = (taxYear: Int) => s"Ad-daliadau am wasanaeth byr ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
-    override val expectedTitle: String = "Did a UK pension scheme pay tax on the short service refunds?"
+    override val expectedTitle: String = "A wnaeth cynllun pensiwn y DU dalu treth ar yr ad-daliadau trethadwy am wasanaeth byr?"
     override val continue: String = "Yn eich blaen"
     override val yes: String = "Iawn"
     override val no: String = "Na"
@@ -78,9 +78,9 @@ class TaxOnShortServiceRefundSpec extends ViewUnitTest with FakeRequestProvider 
 
   object ExpectedIndividualCY extends SpecificExpectedResults{
     val expectedCaption: Int => String = (taxYear: Int) => s"Ad-daliadau am wasanaeth byr ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
-    val expectedTitle: String = "Did a UK pension scheme pay tax on the short service refunds?"
+    val expectedTitle: String = "A wnaeth cynllun pensiwn y DU dalu treth ar yr ad-daliadau trethadwy am wasanaeth byr?"
     val continue: String = "Continue"
-    val expectedNoEntryErrorText : String = "Select yes if a UK pension scheme paid tax on the short service refund"
+    val expectedNoEntryErrorText : String = "Dewiswch ‘Iawn’ os gwnaeth cynllun pensiwn y DU dalu treth ar yr ad-daliad am wasanaeth byr"
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults{
@@ -92,9 +92,9 @@ class TaxOnShortServiceRefundSpec extends ViewUnitTest with FakeRequestProvider 
 
   object ExpectedAgentCY extends SpecificExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) =>  s"Ad-daliadau am wasanaeth byr ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
-    val expectedTitle: String = "Did a UK pension scheme pay tax on the short service refunds?"
+    val expectedTitle: String = "A wnaeth cynllun pensiwn y DU dalu treth ar yr ad-daliadau trethadwy am wasanaeth byr?"
     val continue: String = "Continue"
-    val expectedNoEntryErrorText : String = "Select yes if a UK pension scheme paid tax on the short service refund"
+    val expectedNoEntryErrorText : String = "Dewiswch ‘Iawn’ os gwnaeth cynllun pensiwn y DU dalu treth ar yr ad-daliad am wasanaeth byr"
   }
 
   override protected val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(

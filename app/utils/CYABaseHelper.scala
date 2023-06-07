@@ -50,11 +50,11 @@ trait CYABaseHelper {
   def summaryListRowWithAmountValue(labelMessageKey: String, value: BigDecimal, changeLink: Call)(implicit messages: Messages): SummaryListRow =
     summaryListRow(labelMessageKey, displayedValue(value), changeLink)
 
-  def summaryListRowWithString(labelMessageKey: String, valueOpt: Option[Seq[String]], changeLink: Call)(implicit messages: Messages): SummaryListRow =
+  def summaryListRowWithStrings(labelMessageKey: String, valueOpt: Option[Seq[String]], changeLink: Call)(implicit messages: Messages): SummaryListRow =
     summaryListRow(labelMessageKey, displayedValueForOptionalStrings(valueOpt), changeLink)
 
-  def summaryListRowWithStrings(labelMessageKey: String, valueOpt: Option[String], changeLink: Call)(implicit messages: Messages): SummaryListRow =
-    summaryListRow(labelMessageKey, valueOpt.getOrElse(""), changeLink)
+  def summaryListRowWithString(labelMessageKey: String, valueOpt: Option[String], changeLink: Call)(implicit messages: Messages): SummaryListRow =
+    summaryListRowWithStrings(labelMessageKey, valueOpt.map(Seq(_)), changeLink)
 
   def summaryListRowWithAmountAndTaxValue(
                                            labelMessageKey: String,
@@ -63,7 +63,7 @@ trait CYABaseHelper {
                                            changeLink: Call)(implicit messages: Messages): SummaryListRow =
     summaryListRow(labelMessageKey, displayedValueForAmountAndTax(amount, taxPaid), changeLink)
 
-  def displayedValueForOptionalAmount(valueOpt: Option[BigDecimal]): String = valueOpt.map(displayedValue).getOrElse("")
+  def displayedValueForOptionalAmount(valueOpt: Option[BigDecimal], noneValue: String = ""): String = valueOpt.map(displayedValue).getOrElse(noneValue)
 
   def displayedValue(value: BigDecimal): String =  formatNoZeros(value)
 

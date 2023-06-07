@@ -18,8 +18,10 @@
 @import views.html.templates.helpers.SummaryList
 @import views.html.templates.helpers.Heading
 @import views.html.templates.helpers.Link
-@import controllers.pensions.incomeFromPensions.routes.{PensionSchemeDetailsController, PensionSchemeSummaryController, RemovePensionSchemeController, UkPensionIncomeCYAController}
+@import controllers.pensions.routes._
+@import controllers.pensions.incomeFromPensions.routes.{PensionSchemeDetailsController, PensionSchemeSummaryController, RemovePensionSchemeController, UkPensionIncomeCYAController, IncomeFromPensionsSummaryController}
 @import models.pension.statebenefits.UkPensionIncomeViewModel
+@import models.requests.UserSessionDataRequest
 
 @this(
     layout: Layout,
@@ -32,27 +34,25 @@
 @(taxYear: Int, pensionIncomeList: Seq[UkPensionIncomeViewModel])(implicit messages: Messages, appConfig: AppConfig, request: AuthorisationRequest[_])
 
 @headingForUse = @{messages("common.incomeFromPensions.title")}
-@addAnotherLink() = {
+@addAnotherLink(pageUrl: String) = {
     @if(pensionIncomeList.isEmpty){
-        <p class="govuk-body">@link(PensionSchemeDetailsController.show(taxYear, None).url, "pensions.ukPensionIncomeSummary.addPensionIncomeLink", Some("add-pension-income-link"), fullStop = false)</p>
+        <p class="govuk-body">@link(pageUrl, "pensions.ukPensionIncomeSummary.addPensionIncomeLink", Some("add-pension-income-link"), fullStop = false)</p>
     } else {
-        <p class="govuk-body">@link(PensionSchemeDetailsController.show(taxYear, None).url, "pensions.ukPensionIncomeSummary.addAnotherPensionIncomeLink", Some("add-another-pension-link"), fullStop = false)</p>
+        <p class="govuk-body">@link(pageUrl, "pensions.ukPensionIncomeSummary.addAnotherPensionIncomeLink", Some("add-another-pension-link"), fullStop = false)</p>
     }
 }
 
 @pensionIncomeSummaryList = {
+<div class="govuk-!-margin-bottom-9">
     @if(pensionIncomeList.nonEmpty){
         <div class="govuk-form-group" id="pensionIncomeSummaryList">
             <dl class="hmrc-add-to-a-list hmrc-add-to-a-list--short">
-                @for((pensionIncome, index) <- pensionIncomeList.zipWithIndex){
+                @for((pensionIncome, index) <- pensionIncomeList.zipWithIndex if (pensionIncome.pensionSchemeName.isDefined)){
                     <div class="hmrc-add-to-a-list__contents">
                         <dt class="hmrc-add-to-a-list__identifier hmrc-add-to-a-list__identifier--light">
                             @pensionIncome.pensionSchemeName.getOrElse("")
                         </dt>
                         <dd class="hmrc-add-to-a-list__change">
-                        @*TODO:Update the link to the pension specific CYA details page with index when page available like below:
-                            i.e. replace "#"with "@UkPensionSchemeDetailsCYAController.show(taxYear, Some(index))"
-                        *@
                         <a class="govuk-link" href="@PensionSchemeSummaryController.show(taxYear, Some(index))">
                             <span aria-hidden="true">@messages("common.change")</span>
                             <span class="govuk-visually-hidden">@{s"${messages("common.change")} ${pensionIncome.pensionSchemeName.getOrElse("")}"}</span>
@@ -68,23 +68,48 @@
                 }
             </dl>
         </div>
-    }
-}
+        @addAnotherLink(PensionSchemeDetailsController.show(taxYear, None).url)
+        @button(Button(
+            attributes = Map("id" -> "continue"),
+            preventDoubleClick = Some(true),
+            content = Text(messages("common.continue")),
+            classes = "govuk-button govuk-!-margin-top-2",
+            href = Some(UkPensionIncomeCYAController.show(taxYear).url)
+        ))
+    } else {
+        <p class="govuk-body" id="youNeedToAddOneOrMorePensionScheme1">
+            @messages("common.summary.needToAddScheme")
+        </p>
 
+        @button(Button(
+            attributes = Map("id" -> "AddAScheme"),
+            preventDoubleClick = Some(true),
+            classes = "govuk-button govuk-!-margin-top-2",
+            content = Text(messages("common.summary.addAScheme")),
+            href = Some(PensionSchemeDetailsController.show(taxYear, None).url)
+        ))
+
+        <p class="govuk-body" id="youNeedToAddOneOrMorePensionScheme2">
+            @messages("common.summary.returnToOverviewMsg")
+        </p>
+
+        @button(Button(
+            attributes = Map("id" -> "ReturnToOverview"),
+            preventDoubleClick = Some(true),
+            classes = "govuk-button--secondary",
+            content = Text(messages("common.return.overview.buttonText")),
+            href = Some(IncomeFromPensionsSummaryController.show(taxYear).url)
+        ))
+    }
+</div>
+}
 
 @layout(pageTitle = headingForUse, taxYear = Some(taxYear)) {
     @heading(headingForUse, Some(messages("common.incomeFromPensions.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-2")
     @pensionIncomeSummaryList
-    @addAnotherLink()
     @*TODO: button to navigate to income from pensions CYA when available*@
-    @button(Button(
-        attributes = Map("id" -> "continue"),
-        preventDoubleClick = Some(true),
-        content = Text(messages("common.continue")),
-        classes = "govuk-button govuk-!-margin-top-2",
-        href = Some(UkPensionIncomeCYAController.show(taxYear).url)
-    ))
 }
 @{
 // $COVERAGE-OFF$
 }
+

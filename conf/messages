@@ -19,6 +19,7 @@ common.saveAndContinue = Save and continue
 common.change = Change
 common.update = Update
 common.remove = Remove
+common.dontRemove = Don’t remove
 common.cancel = Cancel
 common.use = use
 common.error.errorKey = Error:
@@ -127,6 +128,7 @@ common.summary.returnToOverviewMsg = If you don’t have a pensions scheme to ad
 
 #################       Common Remove Pension Scheme    ###########################################
 common.removePensionScheme.title = Are you sure you want to remove {0}?
+common.removePensionScheme.overseas.title = Are you sure you want to remove this overseas pension scheme?
 common.removePensionScheme.p1 = This will remove:
 common.removePensionScheme.p1.bullet1 = The name of the pension scheme
 common.removePensionScheme.p1.bullet2 = Pensions scheme tax reference
@@ -569,6 +571,32 @@ pensions.statePension.amount.error.noEntry.agent = Enter your client’s State P
 pensions.statePension.amount.error.incorrectFormat.agent = Enter your client’s State Pension amount in the correct format
 pensions.statePension.amount.error.overMaximum.agent = Your client’s State Pension amount must be less than £100,000,000,000
 
+#state pension add to calculation
+pensions.statePension.addToCalculation.title.individual = Do you want to add State Pension to your Income Tax calculation?
+pensions.statePension.addToCalculation.title.agent = Do you want to add State Pension to your client’s Income Tax calculation?
+pensions.statePension.addToCalculation.noEntry.individual = Select yes if you want to add State Pension to your Income Tax calculation
+pensions.statePension.addToCalculation.noEntry.agent = Select yes if you want to add State Pension to your client’s Income Tax Calculation
+
+#State Pension CYA page
+statePension.cya.title.agent = Check your client's State Pension
+statePension.cya.title.individual = Check your State Pension
+statePension.cya.paragraph1.agent  = Your client's State Pension income is based on the information we already hold about them.
+statePension.cya.paragraph2.agent  = You cannot update your client's State Pension income until 6 April 2023.
+statePension.cya.paragraph1.individual  = Your State Pension income is based on information we already hold about you.
+statePension.cya.paragraph2.individual  = You can change the amounts if they''re not correct.
+statePension.cya.statePension.label = State Pension
+statePension.cya.statePension.label.hidden = Change state pension
+statePension.cya.startDate.label = State Pension start date
+statePension.cya.startDate.label.hidden = Change State Pension start date
+statePension.cya.lumpSum.label = Lump sum
+statePension.cya.lumpSum.label.hidden = Change lump sum
+statePension.cya.lumpSumTax.label = Lump sum tax
+statePension.cya.lumpSumTax.label.hidden = Change Lump sum tax
+statePension.cya.lumpSumDate.label = Lump sum date
+statePension.cya.lumpSumDate.label.hidden = Change lump sum date
+statePension.cya.taxCalc.label = State Pension added to tax calculation
+statePension.cya.taxCalc.label.hidden = Change State Pension added to tax calculation
+
 #Income From Pensions Summary
 incomeFromPensions.incomeFromPensionsSummary.statePensions = State pension
 incomeFromPensions.incomeFromPensionsSummary.otherUkPensions = Other UK Pensions
@@ -800,6 +828,7 @@ unauthorisedPayments.findOutMoreAboutUnauthorisedPayment = Find out more about u
 unauthorisedPayments.didYouGetAnUnauthorisedPayment = Did you get an unauthorised payment from a pension scheme?
 unauthorisedPayments.checkbox.text1 = Yes, unauthorised payments that resulted in a surcharge
 unauthorisedPayments.checkbox.text2 = Yes, unauthorised payments that did not result in a surcharge
+unauthorisedPayments.checkbox.hint = Select all that apply.
 
 #Do you have an employer-financed retirement scheme?
 employerFinancedRetirementScheme.benefitsFromScheme.title = Employer-financed retirement benefits schemes
@@ -818,7 +847,6 @@ unauthorisedPayments.pensionSchemeDetails.addPensionSchemeTaxReference = Add a P
 #Remove unauthorised payments from UK pensions schemes
 unauthorisedPayments.removePensionSchemeTaxReference.title = Do you want to remove this Pension Scheme Tax Reference?
 unauthorisedPayments.removePensionSchemeTaxReference.removeButton = Remove reference
-unauthorisedPayments.removePensionSchemeTaxReference.dontRemove = Don’t remove
 
 #################       Overseas Pension        ########################################
 common.overseas.pension.schemes = Overseas pension schemes

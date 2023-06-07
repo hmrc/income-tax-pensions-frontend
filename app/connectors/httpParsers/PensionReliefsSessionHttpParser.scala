@@ -17,10 +17,7 @@
 package connectors.httpParsers
 
 import models.APIErrorModel
-import play.api.http.Status._
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
-import utils.PagerDutyHelper.PagerDutyKeys._
-import utils.PagerDutyHelper.pagerDutyLog
 
 object PensionReliefsSessionHttpParser extends APIParser {
   type PensionReliefsSessionResponse = Either[APIErrorModel, Unit]
@@ -28,24 +25,10 @@ object PensionReliefsSessionHttpParser extends APIParser {
   override val parserName: String = "PensionReliefsSessionResponse"
   override val service: String = "income-tax-pensions"
 
-  implicit object PensionIncomeSessionHttpReads extends HttpReads[PensionReliefsSessionResponse] {
+  implicit object PensionReliefsSessionHttpReads extends HttpReads[PensionReliefsSessionResponse] {
 
     override def read(method: String, url: String, response: HttpResponse): PensionReliefsSessionResponse = {
-      response.status match {
-        case NO_CONTENT => Right(())
-        case BAD_REQUEST =>
-          pagerDutyLog(FOURXX_RESPONSE_FROM_API, logMessage(response))
-          handleAPIError(response)
-        case INTERNAL_SERVER_ERROR =>
-          pagerDutyLog(INTERNAL_SERVER_ERROR_FROM_API, logMessage(response))
-          handleAPIError(response)
-        case SERVICE_UNAVAILABLE =>
-          pagerDutyLog(SERVICE_UNAVAILABLE_FROM_API, logMessage(response))
-          handleAPIError(response)
-        case _ =>
-          pagerDutyLog(UNEXPECTED_RESPONSE_FROM_API, logMessage(response))
-          handleAPIError(response, Some(INTERNAL_SERVER_ERROR))
-      }
+      SessionHttpReads.read(method, url, response)
     }
   }
 }

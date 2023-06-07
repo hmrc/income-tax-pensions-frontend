@@ -110,6 +110,9 @@ class ControllerSpec(val pathForThisPage: String) extends PlaySpec
     val taxOnShortServiceRefundController: String = relativeUrl("/overseas-pensions/short-service-refunds/short-service-refunds-uk-tax")
 
     val shortServiceRefundSummary: String = relativeUrl("/overseas-pensions/short-service-refunds/short-service-refund-summary")
+    val ReliefsSchemeSummary: String = relativeUrl("/overseas-pensions/payments-into-overseas-pensions/untaxed-schemes-summary")
+    val ReliefsSchemeDetails: String = relativeUrl("/overseas-pensions/payments-into-overseas-pensions/pensions-overseas-details-summary")
+    val RemoveReliefsScheme: String = relativeUrl("/overseas-pensions/payments-into-overseas-pensions/remove-schemes")
   }
 
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
@@ -124,6 +127,7 @@ class ControllerSpec(val pathForThisPage: String) extends PlaySpec
         "microservice.services.auth.port" -> wiremockPort.toString,
         "microservice.services.income-tax-pensions.url" -> wiremockBaseUrl,
         "microservice.services.income-tax-submission.url" -> wiremockBaseUrl,
+        "microservice.services.income-tax-state-benefits.url" -> wiremockBaseUrl,
         "microservice.services.view-and-change.url" -> wiremockBaseUrl,
         "microservice.services.income-tax-nrs-proxy.url" -> wiremockBaseUrl,
         "microservice.services.sign-in.url" -> "/auth-login-stub/gg-sign-in",
@@ -877,7 +881,7 @@ object ControllerSpec {
 
       override def apply(response: WSResponse): MatchResult = {
         val actualLocationHeaderValue = response.header("location")
-        val errorMessageIfExpected = s"The response doesn't have a location header value of '$value'. It is actually '$actualLocationHeaderValue'"
+        val errorMessageIfExpected = s"The response doesn't have a location header value of '${Some(value)}'. It is actually '${actualLocationHeaderValue}'"
         val errorMessageIfNotExpected = s"The response does indeed have a location header value of '$value', which was not expected."
         MatchResult(
           actualLocationHeaderValue.contains(value),

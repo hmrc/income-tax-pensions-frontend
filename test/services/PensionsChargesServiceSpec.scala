@@ -21,7 +21,7 @@ import builders.PensionsCYAModelBuilder.aPensionsCYAEmptyModel
 import builders.PensionsUserDataBuilder.aPensionsUserData
 import builders.UserBuilder.aUser
 import config.{MockIncomeTaxUserDataConnector, MockPensionUserDataRepository, MockPensionsConnector}
-import models.mongo.{DataNotFound, DataNotUpdated}
+import models.mongo.{DataNotFound, DataNotUpdated, MongoError}
 import models.pension.charges.CreateUpdatePensionChargesRequestModel
 import models.{APIErrorBodyModel, APIErrorModel, IncomeTaxUserData}
 import org.scalatest.concurrent.ScalaFutures
@@ -37,28 +37,49 @@ class PensionsChargesServiceSpec extends UnitTest
 
   val pensionChargesService = new PensionChargesService(mockPensionUserDataRepository, mockPensionsConnector, mockPensionConnectorHelper, mockUserDataConnector)
 
+  val userWithEmptyCya = aPensionsUserData.copy(pensions = aPensionsCYAEmptyModel)
+
+  val unauthorisedSessionUserData =
+    aPensionsUserData.copy(pensions = aPensionsCYAEmptyModel.copy(unauthorisedPayments = aPensionsUserData.pensions.unauthorisedPayments))
+  val transferIOPSessionUserData =
+    aPensionsUserData.copy(pensions = aPensionsCYAEmptyModel.copy(transfersIntoOverseasPensions = aPensionsUserData.pensions.transfersIntoOverseasPensions))
+
+  val shortServiceRefundsSessionUserData =
+    aPensionsUserData.copy(pensions = aPensionsCYAEmptyModel.copy(shortServiceRefunds = aPensionsUserData.pensions.shortServiceRefunds))
+
+  val priorPensionChargesData = IncomeTaxUserData(Some(anAllPensionsData)).pensions.flatMap(_.pensionCharges)
+  val unauthorisedPaymentsRequestModel = CreateUpdatePensionChargesRequestModel(
+    pensionSavingsTaxCharges = priorPensionChargesData.flatMap(_.pensionSavingsTaxCharges),
+    pensionSchemeOverseasTransfers = priorPensionChargesData.flatMap(_.pensionSchemeOverseasTransfers),
+    pensionSchemeUnauthorisedPayments = Some(unauthorisedSessionUserData.pensions.unauthorisedPayments.toUnauth),
+    pensionContributions = priorPensionChargesData.flatMap(_.pensionContributions),
+    overseasPensionContributions = priorPensionChargesData.flatMap(_.overseasPensionContributions)
+  )
+  val transferIOPRequestModel = CreateUpdatePensionChargesRequestModel(
+    pensionSavingsTaxCharges = priorPensionChargesData.flatMap(_.pensionSavingsTaxCharges),
+    pensionSchemeOverseasTransfers = Some(transferIOPSessionUserData.pensions.transfersIntoOverseasPensions.toTransfersIOP),
+    pensionSchemeUnauthorisedPayments = priorPensionChargesData.flatMap(_.pensionSchemeUnauthorisedPayments),
+    pensionContributions = priorPensionChargesData.flatMap(_.pensionContributions),
+    overseasPensionContributions = priorPensionChargesData.flatMap(_.overseasPensionContributions)
+  )
+
+  val shortServiceRefundsRequestModel = CreateUpdatePensionChargesRequestModel(
+    pensionSavingsTaxCharges = priorPensionChargesData.flatMap(_.pensionSavingsTaxCharges),
+    pensionSchemeOverseasTransfers = priorPensionChargesData.flatMap(_.pensionSchemeOverseasTransfers),
+    pensionSchemeUnauthorisedPayments = priorPensionChargesData.flatMap(_.pensionSchemeUnauthorisedPayments),
+    pensionContributions = priorPensionChargesData.flatMap(_.pensionContributions),
+    overseasPensionContributions = Some(shortServiceRefundsSessionUserData.pensions.shortServiceRefunds.toOverseasPensionContributions)
+  )
+
   ".saveUnauthorisedViewModel" should {
+
     "return Right(Unit) when model is saved successfully and unauthorised cya is cleared from DB" in {
 
-      val allPensionsData = anAllPensionsData
-      val sessionCya = aPensionsCYAEmptyModel.copy(unauthorisedPayments = aPensionsUserData.pensions.unauthorisedPayments)
-      val sessionUserData = aPensionsUserData.copy(pensions = sessionCya)
+      mockFind(taxYear, aUser, Right(Option(unauthorisedSessionUserData)))
+      mockFind(aUser.nino, taxYear, IncomeTaxUserData(Some(anAllPensionsData)))
 
-      val priorUserData = IncomeTaxUserData(Some(allPensionsData))
-      mockFind(taxYear, aUser, Right(Option(sessionUserData)))
-      mockFind(aUser.nino, taxYear, priorUserData)
-
-      val model = CreateUpdatePensionChargesRequestModel(
-        pensionSavingsTaxCharges = priorUserData.pensions.flatMap(_.pensionCharges.flatMap(_.pensionSavingsTaxCharges)),
-        pensionSchemeOverseasTransfers = priorUserData.pensions.flatMap(_.pensionCharges.flatMap(_.pensionSchemeOverseasTransfers)),
-        pensionSchemeUnauthorisedPayments = Some(sessionUserData.pensions.unauthorisedPayments.toUnauth),
-        pensionContributions = priorUserData.pensions.flatMap(_.pensionCharges.flatMap(_.pensionContributions)),
-        overseasPensionContributions = priorUserData.pensions.flatMap(_.pensionCharges.flatMap(_.overseasPensionContributions))
-      )
-
-      val userWithEmptyUnauthorisedCya = aPensionsUserData.copy(pensions = aPensionsCYAEmptyModel)
-      mockSavePensionChargesSessionData(nino, taxYear, model, Right(()))
-      mockCreateOrUpdate(userWithEmptyUnauthorisedCya, Right(()))
+      mockSavePensionChargesSessionData(nino, taxYear, unauthorisedPaymentsRequestModel, Right(()))
+      mockCreateOrUpdate(userWithEmptyCya, Right(()))
 
       val result = await(pensionChargesService.saveUnauthorisedViewModel(aUser, taxYear))
       result shouldBe Right(())
@@ -66,62 +87,121 @@ class PensionsChargesServiceSpec extends UnitTest
 
     "return Left(DataNotFound) when user can not be found in DB" in {
       mockFind(taxYear, aUser, Left(DataNotFound))
+      mockFind(aUser.nino, taxYear, IncomeTaxUserData(None))
+
       val result = await(pensionChargesService.saveUnauthorisedViewModel(aUser, taxYear))
       result shouldBe Left(DataNotFound)
     }
 
     "return Left(APIErrorModel) when pension connector could not be connected" in {
+      mockFind(taxYear, aUser, Right(Option(unauthorisedSessionUserData)))
+      mockFind(aUser.nino, taxYear, IncomeTaxUserData(Some(anAllPensionsData)))
 
-      val allPensionsData = anAllPensionsData
-      val sessionCya = aPensionsCYAEmptyModel.copy(unauthorisedPayments = aPensionsUserData.pensions.unauthorisedPayments)
-      val sessionUserData = aPensionsUserData.copy(pensions = sessionCya)
-
-      val priorUserData = IncomeTaxUserData(Some(allPensionsData))
-      mockFind(taxYear, aUser, Right(Option(sessionUserData)))
-      mockFind(aUser.nino, taxYear, priorUserData)
-
-      val model = CreateUpdatePensionChargesRequestModel(
-        pensionSavingsTaxCharges = priorUserData.pensions.flatMap(_.pensionCharges.flatMap(_.pensionSavingsTaxCharges)),
-        pensionSchemeOverseasTransfers = priorUserData.pensions.flatMap(_.pensionCharges.flatMap(_.pensionSchemeOverseasTransfers)),
-        pensionSchemeUnauthorisedPayments = Some(sessionUserData.pensions.unauthorisedPayments.toUnauth),
-        pensionContributions = priorUserData.pensions.flatMap(_.pensionCharges.flatMap(_.pensionContributions)),
-        overseasPensionContributions = priorUserData.pensions.flatMap(_.pensionCharges.flatMap(_.overseasPensionContributions))
-      )
-
-
-      mockSavePensionChargesSessionData(nino, taxYear, model, Left(APIErrorModel(BAD_REQUEST, APIErrorBodyModel("FAILED", "failed"))))
+      mockSavePensionChargesSessionData(nino, taxYear, unauthorisedPaymentsRequestModel, Left(APIErrorModel(BAD_REQUEST, APIErrorBodyModel("FAILED", "failed"))))
+      mockCreateOrUpdate(userWithEmptyCya, Left(MongoError("Failed to connect to database")))
 
       val result = await(pensionChargesService.saveUnauthorisedViewModel(aUser, taxYear))
-      result shouldBe Left(APIErrorModel(BAD_REQUEST, APIErrorBodyModel("FAILED", "failed")))
+      result shouldBe Left(MongoError("Failed to connect to database"))
     }
+
     "return Left(DataNotUpdated) when data could not be updated" in {
+      mockFind(taxYear, aUser, Right(Option(unauthorisedSessionUserData)))
+      mockFind(aUser.nino, taxYear, IncomeTaxUserData(Some(anAllPensionsData)))
 
-      val allPensionsData = anAllPensionsData
-      val sessionCya = aPensionsCYAEmptyModel.copy(unauthorisedPayments = aPensionsUserData.pensions.unauthorisedPayments)
-      val sessionUserData = aPensionsUserData.copy(pensions = sessionCya)
-
-      val priorUserData = IncomeTaxUserData(Some(allPensionsData))
-      mockFind(taxYear, aUser, Right(Option(sessionUserData)))
-      mockFind(aUser.nino, taxYear, priorUserData)
-
-      val model = CreateUpdatePensionChargesRequestModel(
-        pensionSavingsTaxCharges = priorUserData.pensions.flatMap(_.pensionCharges.flatMap(_.pensionSavingsTaxCharges)),
-        pensionSchemeOverseasTransfers = priorUserData.pensions.flatMap(_.pensionCharges.flatMap(_.pensionSchemeOverseasTransfers)),
-        pensionSchemeUnauthorisedPayments = Some(sessionUserData.pensions.unauthorisedPayments.toUnauth),
-        pensionContributions = priorUserData.pensions.flatMap(_.pensionCharges.flatMap(_.pensionContributions)),
-        overseasPensionContributions = priorUserData.pensions.flatMap(_.pensionCharges.flatMap(_.overseasPensionContributions))
-      )
-
-      val userWithEmptyUnauthorisedCya = aPensionsUserData.copy(pensions = aPensionsCYAEmptyModel)
-      mockSavePensionChargesSessionData(nino, taxYear, model, Right(()))
-      mockCreateOrUpdate(userWithEmptyUnauthorisedCya, Left(DataNotUpdated))
+      mockSavePensionChargesSessionData(nino, taxYear, unauthorisedPaymentsRequestModel, Right(()))
+      mockCreateOrUpdate(userWithEmptyCya, Left(DataNotUpdated))
 
       val result = await(pensionChargesService.saveUnauthorisedViewModel(aUser, taxYear))
       result shouldBe Left(DataNotUpdated)
     }
 
-
   }
 
+  ".saveTransfersIntoOverseasPensionsViewModel" should {
 
+    "return Right(Unit) when model is saved successfully and transfersIOP cya is cleared from DB" in {
+      mockFind(taxYear, aUser, Right(Option(transferIOPSessionUserData)))
+      mockFind(aUser.nino, taxYear, IncomeTaxUserData(Some(anAllPensionsData)))
+
+      mockSavePensionChargesSessionData(nino, taxYear, transferIOPRequestModel, Right(()))
+      mockCreateOrUpdate(userWithEmptyCya, Right(()))
+
+      val result = await(pensionChargesService.saveTransfersIntoOverseasPensionsViewModel(aUser, taxYear))
+      result shouldBe Right(())
+    }
+
+    "return Left(DataNotFound) when user can not be found in DB" in {
+      mockFind(taxYear, aUser, Left(DataNotFound))
+      mockFind(aUser.nino, taxYear, IncomeTaxUserData(None))
+
+      val result = await(pensionChargesService.saveTransfersIntoOverseasPensionsViewModel(aUser, taxYear))
+      result shouldBe Left(DataNotFound)
+    }
+
+    "return Left(APIErrorModel) when pension connector could not be connected" in {
+      mockFind(taxYear, aUser, Right(Option(transferIOPSessionUserData)))
+      mockFind(aUser.nino, taxYear, IncomeTaxUserData(Some(anAllPensionsData)))
+
+      mockSavePensionChargesSessionData(nino, taxYear, transferIOPRequestModel, Left(APIErrorModel(BAD_REQUEST, APIErrorBodyModel("FAILED", "failed"))))
+      mockCreateOrUpdate(userWithEmptyCya, Left(MongoError("Failed to connect to database")))
+
+      val result = await(pensionChargesService.saveTransfersIntoOverseasPensionsViewModel(aUser, taxYear))
+      result shouldBe Left(MongoError("Failed to connect to database"))
+    }
+
+    "return Left(DataNotUpdated) when data could not be updated" in {
+      mockFind(taxYear, aUser, Right(Option(transferIOPSessionUserData)))
+      mockFind(aUser.nino, taxYear, IncomeTaxUserData(Some(anAllPensionsData)))
+
+      mockSavePensionChargesSessionData(nino, taxYear, transferIOPRequestModel, Right(()))
+      mockCreateOrUpdate(userWithEmptyCya, Left(DataNotUpdated))
+
+      val result = await(pensionChargesService.saveTransfersIntoOverseasPensionsViewModel(aUser, taxYear))
+      result shouldBe Left(DataNotUpdated)
+    }
+  }
+
+  ".saveShortServiceRefundsViewModel" should {
+
+    "return Right(Unit) when model is saved successfully and shortServiceRefunds cya is cleared from DB" in {
+      mockFind(taxYear, aUser, Right(Option(shortServiceRefundsSessionUserData)))
+      mockFind(aUser.nino, taxYear, IncomeTaxUserData(Some(anAllPensionsData)))
+
+      mockSavePensionChargesSessionData(nino, taxYear, shortServiceRefundsRequestModel, Right(()))
+      mockCreateOrUpdate(userWithEmptyCya, Right(()))
+
+      val result = await(pensionChargesService.saveShortServiceRefundsViewModel(aUser, taxYear))
+      result shouldBe Right(())
+    }
+
+    "return Left(DataNotFound) when user can not be found in DB" in {
+      mockFind(taxYear, aUser, Left(DataNotFound))
+      mockFind(aUser.nino, taxYear, IncomeTaxUserData(None))
+
+      val result = await(pensionChargesService.saveShortServiceRefundsViewModel(aUser, taxYear))
+      result shouldBe Left(DataNotFound)
+    }
+
+    "return Left(APIErrorModel) when pension connector could not be connected" in {
+      mockFind(taxYear, aUser, Right(Option(shortServiceRefundsSessionUserData)))
+      mockFind(aUser.nino, taxYear, IncomeTaxUserData(Some(anAllPensionsData)))
+
+      mockSavePensionChargesSessionData(nino, taxYear, shortServiceRefundsRequestModel, Left(APIErrorModel(BAD_REQUEST, APIErrorBodyModel("FAILED", "failed"))))
+      mockCreateOrUpdate(userWithEmptyCya, Left(MongoError("Failed to connect to database")))
+
+      val result = await(pensionChargesService.saveShortServiceRefundsViewModel(aUser, taxYear))
+      result shouldBe Left(MongoError("Failed to connect to database"))
+    }
+
+    "return Left(DataNotUpdated) when data could not be updated" in {
+      mockFind(taxYear, aUser, Right(Option(shortServiceRefundsSessionUserData)))
+      mockFind(aUser.nino, taxYear, IncomeTaxUserData(Some(anAllPensionsData)))
+
+      mockSavePensionChargesSessionData(nino, taxYear, shortServiceRefundsRequestModel, Right(()))
+      mockCreateOrUpdate(userWithEmptyCya, Left(DataNotUpdated))
+
+      val result = await(pensionChargesService.saveShortServiceRefundsViewModel(aUser, taxYear))
+      result shouldBe Left(DataNotUpdated)
+    }
+  }
 }

@@ -19,6 +19,7 @@ common.saveAndContinue = Cadw ac yn eich blaen
 common.change = Newid
 common.update = Diweddaru
 common.remove = Tynnu
+common.dontRemove = Peidiwch â dileu
 common.cancel = Canslo
 common.use = defnyddio
 common.error.errorKey = Gwall:
@@ -44,8 +45,8 @@ common.overseasPensions.caption = Pensiynau tramor ar gyfer 6 Ebrill {0} i 5 Ebr
 common.return.overview.buttonText = Yn ôl i’r trosolwg
 common.currencyAmount = £{0}
 common.total = Cyfanswm
-common.youCanFindThisOut.individual = Gallwch ddysgu beth yw hyn oddi wrth eich darparwr pensiwn.
-common.youCanFindThisOut.agent = Gallwch ddysgu beth yw hyn oddi wrth ddarparwr pensiwn eich cleient.
+common.youCanFindThisOut.individual = Gallwch ddysgu hyn oddi wrth eich darparwr pensiwn.
+common.youCanFindThisOut.agent = Gallwch ddysgu hyn oddi wrth ddarparwr pensiwn eich cleient.
 common.moreThanOnePensionScheme.individual = Os gwnaeth mwy nag un o’ch cynlluniau pensiwn dalu’r dreth, gallwch ychwanegu’r manylion hyn yn nes ymlaen.
 common.moreThanOnePensionScheme.agent = Os gwnaeth mwy nag un o gynlluniau pensiwn eich cleient dalu’r dreth, gallwch ychwanegu’r manylion hyn yn nes ymlaen.
 common.sectionsToFill.individual = Dim ond yr adrannau sy’n berthnasol i chi y mae angen i chi eu llenwi.
@@ -127,6 +128,7 @@ common.summary.returnToOverviewMsg = If you don’t have a pensions scheme to ad
 
 #################       Common Remove Pension Scheme    ###########################################
 common.removePensionScheme.title = A ydych yn siŵr eich bod am dynnu {0}?
+common.removePensionScheme.overseas.title = Are you sure you want to remove this overseas pension scheme?
 common.removePensionScheme.p1 = This will remove:
 common.removePensionScheme.p1.bullet1 = The name of the pension scheme
 common.removePensionScheme.p1.bullet2 = Pensions scheme tax reference
@@ -213,8 +215,8 @@ pensions.reliefAtSourcePensions.title = Pensiynau rhyddhad wrth y ffynhonnell (R
 pensions.reliefAtSource.h2QuestionHeader.individual = A wnaethoch chi dalu i mewn i bensiwn RAS?
 pensions.reliefAtSource.h2QuestionHeader.agent = A wnaeth eich cleient dalu i mewn i bensiwn RAS?
 pensions.reliefAtSource.paragraph.individual = Dyma bensiynau rydych yn talu i mewn iddynt o:
-pensions.reliefAtSource.paragraph.agent = Dyma bensiynau y mae eich cleient yn talu i mewn iddynt o’i:
-pensions.reliefAtSource.paragraph.example1.individual = eich incwm net (ar ol i dreth cael ei didynnu), os ydych yn gyflogedig
+pensions.reliefAtSource.paragraph.agent = Dyma bensiynau y mae eich cleient yn talu i mewn iddynt o:
+pensions.reliefAtSource.paragraph.example1.individual = eich incwm net (ar ôl i dreth gael ei didynnu), os ydych yn gyflogedig
 pensions.reliefAtSource.paragraph.example1.agent = incwm net eich cleient (ar ôl didynnu treth), os yw’n gyflogedig
 pensions.reliefAtSource.paragraph.example2.individual = eich incwm trethadwy, os ydych yn hunangyflogedig
 pensions.reliefAtSource.paragraph.example2.agent = incwm trethadwy eich cleient, os yw’n hunangyflogedig
@@ -234,18 +236,18 @@ pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.error.invalidFormat = Nod
 pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.error.overMaximum = Mae’n rhaid i’r cyfanswm a dalwyd i mewn i bensiynau RAS, ynghyd â rhyddhad treth ar y gyfradd sylfaenol, fod yn llai na £100,000,000,000
 
 pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.whereToFind.individual = Gallwch ddod o hyd i’r cyfanswm a daloch i mewn i bensiynau RAS, ynghyd â rhyddhad treth, ar y dystysgrif pensiwn neu’r dderbynneb gan eich gweinyddwr.
-pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.whereToFind.agent = Gallwch ddod o hyd i’r cyfanswm a dalwyd gan eich cleient i mewn i bensiynau RAS, ynghyd â rhyddhad treth, ar y dystysgrif pensiwn neu’r dderbynneb gan y gweinyddwr.
-pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.howToWorkOut.individual = Er mwyn cyfrifo hyn eich hun, rhannwch y swm y gwnaethoch ei dalu mewn gwirionedd â 80, a lluoswch y canlyniad â 100.
-pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.howToWorkOut.agent = Er mwyn cyfrifo hyn eich hun, rhannwch y swm a dalwyd gan eich cleient mewn gwirionedd â 80, a lluoswch y canlyniad â 100.
-pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.exampleCalculation = Talodd Elin £500 i mewn i’w chynllun pensiwn. £500 wedi’i rhannu â 80, ac yna’i luosi â 100 yw £625 Ei hateb yw £625.
+pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.whereToFind.agent = Gallwch ddod o hyd i’r cyfanswm a dalwyd gan eich cleient i mewn i bensiynau RAS, ynghyd â rhyddhad treth, ar y dystysgrif pensiwn neu’r dderbynneb gan eich gweinyddwr.
+pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.howToWorkOut.individual = Er mwyn cyfrifo hyn eich hun, rhannwch y swm y gwnaethoch ei dalu mewn gwirionedd ag 80, a lluoswch y canlyniad â 100.
+pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.howToWorkOut.agent = Er mwyn cyfrifo hyn eich hun, rhannwch y swm a dalwyd gan eich cleient mewn gwirionedd ag 80, a lluoswch y canlyniad â 100.
+pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.exampleCalculation = Talodd Elin £500 i mewn i’w chynllun pensiwn. £500 wedi’i rhannu ag 80, ac yna ei lluosi â 100 yw £625. Ei hateb yw £625.
 
 
 #pensions tax at source one off payments
 
 pensions.reliefAtSourceOneOffPayments.title.individual = A wnaethoch unrhyw daliadau untro i mewn i bensiynau rhyddhad wrth y ffynhonnell (RAS)?
 pensions.reliefAtSourceOneOffPayments.title.agent = A wnaeth eich cleient unrhyw daliadau untro i mewn i bensiynau rhyddhad wrth y ffynhonnell (RAS)?
-pensions.reliefAtSourceOneOffPayments.thisIncludes.individual = Rydych wedi rhoi gwybod i ni mai’r cyfanswm a dalwyd gennych, ynghyd â rhyddhad treth, oedd {0}. Rhowch wybod i ni os yw hwn yn cynnwys unrhyw daliadau untro. Un taliad yw taliad untro, a wneir unwaith.
-pensions.reliefAtSourceOneOffPayments.thisIncludes.agent = Rydych wedi rhoi gwybod i ni mai’r cyfanswm a dalwyd gan eich cleient, ynghyd â rhyddhad treth, oedd {0}. Rhowch wybod i ni os yw hwn yn cynnwys unrhyw daliadau untro. Un taliad yw taliad untro, a wneir unwaith.
+pensions.reliefAtSourceOneOffPayments.thisIncludes.individual = Rydych wedi rhoi gwybod i ni mai’r cyfanswm a dalwyd gennych, ynghyd â rhyddhad treth, oedd {0}. Rhowch wybod i ni a yw hwn yn cynnwys unrhyw daliadau untro. Un taliad yw taliad untro, a wneir unwaith.
+pensions.reliefAtSourceOneOffPayments.thisIncludes.agent = Rydych wedi rhoi gwybod i ni mai’r cyfanswm a dalwyd gan eich cleient, ynghyd â rhyddhad treth, oedd {0}. Rhowch wybod i ni a yw hwn yn cynnwys unrhyw daliadau untro. Un taliad yw taliad untro, a wneir unwaith.
 pensions.reliefAtSourceOneOffPayments.error.noEntry.individual = Dewiswch ‘Iawn’ os gwnaethoch daliadau untro i mewn i bensiynau RAS
 pensions.reliefAtSourceOneOffPayments.error.noEntry.agent = Dewiswch ‘Iawn’ os gwnaeth eich cleient daliadau untro i mewn i bensiynau RAS
 
@@ -255,8 +257,8 @@ pensions.reliefAtSourceOneOffPayments.error.noEntry.agent = Dewiswch ‘Iawn’ 
 paymentsIntoPensions.oneOffRasAmount.heading = Cyfanswm y taliadau untro i mewn i bensiynau rhyddhad wrth y ffynhonnell (RAS), ynghyd â rhyddhad treth ar y gyfradd sylfaenol
 paymentsIntoPensions.oneOffRasAmount.youToldUs.individual = Rydych wedi rhoi gwybod i ni mai’r cyfanswm a dalwyd gennych, ynghyd â rhyddhad treth, oedd £{0}. Rhowch wybod i ni faint o hwn oedd yn daliad untro. Rhaid cynnwys rhyddhad treth.
 paymentsIntoPensions.oneOffRasAmount.youToldUs.agent = Rydych wedi rhoi gwybod i ni mai’r cyfanswm a dalwyd gan eich cleient, ynghyd â rhyddhad treth, oedd £{0}. Rhowch wybod i ni faint o hwn oedd yn daliad untro. Rhaid cynnwys rhyddhad treth.
-paymentsIntoPensions.oneOffRasAmount.workItOut = Er mwyn ei gyfrifo, rhannwch swm eich taliad untro â 80, a lluoswch y canlyniad â 100.
-paymentsIntoPensions.oneOffRasAmount.exampleCalculation = Gwnaeth Elin daliad untro o £500. £500 wedi’i rannu â 80, a’i luosi â 100 yw £625. Ei hateb yw £625.
+paymentsIntoPensions.oneOffRasAmount.workItOut = Er mwyn ei gyfrifo, rhannwch swm eich taliad untro ag 80, a lluoswch y canlyniad â 100.
+paymentsIntoPensions.oneOffRasAmount.exampleCalculation = Gwnaeth Elin daliad untro o £500. £500 wedi’i rhannu ag 80, a’i lluosi â 100 yw £625. Ei hateb yw £625.
 paymentsIntoPensions.oneOffRasAmount.error.noEntry = Nodwch gyfanswm y taliadau untro a dalwyd i mewn i bensiynau RAS, ynghyd â rhyddhad treth ar y gyfradd sylfaenol
 paymentsIntoPensions.oneOffRasAmount.error.invalidFormat = Nodwch gyfanswm y taliadau untro a dalwyd i mewn i bensiynau RAS, ynghyd â rhyddhad treth ar y gyfradd sylfaenol, yn y fformat cywir
 paymentsIntoPensions.oneOffRasAmount.error.overMaximum = Mae’n rhaid i gyfanswm y taliadau untro a dalwyd i mewn i bensiynau RAS, ynghyd â rhyddhad treth ar y gyfradd sylfaenol, fod yn llai na £100,000,000,000
@@ -307,8 +309,8 @@ pensions.retirementAnnuityContract.details.info = Math o gynllun pensiwn yw cont
 
 pensions.retirementAnnuityAmount.title.individual = Faint y gwnaethoch ei dalu i mewn i’ch contractau blwydd-dal ymddeol?
 pensions.retirementAnnuityAmount.title.agent = Faint y gwnaeth eich cleient ei dalu i mewn i’w gontractau blwydd-dal ymddeol?
-pensions.retirementAnnuityAmount.includes.individual = Dim ond taliadau na fydd darparwr eich pensiwn yn hawlio rhyddhad treth ar eu cyfer y dylech eu cynnwys. Gallwch ddysgu beth yw hyn oddi wrth ddarparwr eich pensiwn.
-pensions.retirementAnnuityAmount.includes.agent = Dim ond taliadau na fydd darparwr pensiwn eich cleient yn hawlio rhyddhad treth ar eu cyfer y dylech eu cynnwys. Gallwch ddysgu beth yw hyn oddi wrth ddarparwr pensiwn eich cleient.
+pensions.retirementAnnuityAmount.includes.individual = Dim ond taliadau na fydd darparwr eich pensiwn yn hawlio rhyddhad treth ar eu cyfer y dylech eu cynnwys. Gallwch ddysgu hyn oddi wrth ddarparwr eich pensiwn.
+pensions.retirementAnnuityAmount.includes.agent = Dim ond taliadau na fydd darparwr pensiwn eich cleient yn hawlio rhyddhad treth ar eu cyfer y dylech eu cynnwys. Gallwch ddysgu hyn oddi wrth ddarparwr pensiwn eich cleient.
 pensions.retirementAnnuityAmount.error.noEntry = Nodwch y swm a dalwyd i mewn i gontractau blwydd-dal ymddeol
 pensions.retirementAnnuityAmount.error.incorrectFormat = Nodwch y swm a dalwyd i mewn i gontractau blwydd-dal ymddeol yn y fformat cywir
 pensions.retirementAnnuityAmount.error.overMaximum = Mae’n rhaid i’r swm a dalwyd i mewn i gontractau blwydd-dal ymddeol fod yn llai na £100,000,000,000
@@ -319,12 +321,12 @@ pensions.retirementAnnuityAmount.error.overMaximum = Mae’n rhaid i’r swm a d
 pensions.workplacePension.title.individual = A wnaethoch dalu i mewn i bensiwn gweithle a heb dderbyn rhyddhad treth?
 pensions.workplacePension.title.agent = A wnaeth eich cleient dalu i mewn i bensiwn gweithle a heb dderbyn rhyddhad treth?
 pensions.workplacePension.info.individual = Byddech wedi gwneud eich taliadau ar ôl i’ch cyflog gael ei drethu.
-pensions.workplacePension.info.agent = Bydd eich cleient wedi gwneud ei daliadau ar ôl i’w gyflog gael ei drethu.
+pensions.workplacePension.info.agent = Byddai eich cleient wedi gwneud ei daliadau ar ôl i’w gyflog gael ei drethu.
 pensions.workplacePension.theseCases.individual = Mae’r achosion hyn yn anarferol gan fod y rhan fwyaf o bensiynau gweithle wedi’u sefydlu i roi rhyddhad treth i chi ar adeg eich taliad.
 pensions.workplacePension.theseCases.agent = Mae’r achosion hyn yn anarferol gan fod y rhan fwyaf o bensiynau gweithle wedi’u sefydlu i roi rhyddhad treth i’ch cleient ar adeg ei daliad.
 pensions.workplacePension.whereToCheck.individual = Gwiriwch gyda’ch cyflogwr neu ddarparwr pensiwn pa drefniant sydd gennych.
 pensions.workplacePension.whereToCheck.agent = Gwiriwch gyda chyflogwr neu ddarparwr pensiwn eich cleient pa drefniant sydd ganddo.
-pensions.workplacePension.findOutMore = Dysgwch ragor am ryddhad treth.
+pensions.workplacePension.findOutMore = Dysgwch ragor am ryddhad treth
 pensions.workplacePension.error.noEntry.individual = Dewiswch ‘Iawn’ os gwnaethoch dalu i mewn i bensiwn gweithle ac na chawsoch ryddhad treth
 pensions.workplacePension.error.noEntry.agent = Dewiswch ‘Iawn’ os talodd eich cleient i mewn i bensiwn gweithle ac na chafodd ryddhad treth
 
@@ -332,14 +334,14 @@ pensions.workplacePension.error.noEntry.agent = Dewiswch ‘Iawn’ os talodd ei
 #workplace amount
 
 pensions.workplaceAmount.title.individual = Faint y gwnaethoch ei dalu i mewn i bensiynau gweithle?
-pensions.workplaceAmount.bullet1.individual = wedi ei dalu ar ôl i’ch cyflog gael ei drethu
-pensions.workplaceAmount.bullet2.individual = ni fydd darparwr eich pensiwn yn hawlio rhyddhad treth ar ei gyfer
+pensions.workplaceAmount.bullet1.individual = taliadau a wnaed ar ôl i’ch cyflog gael ei drethu
+pensions.workplaceAmount.bullet2.individual = taliadau na fydd darparwr eich pensiwn yn hawlio rhyddhad treth ar eu cyfer
 pensions.workplaceAmount.youCanFindThisOut.individual = Gallwch gael gwybod hyn gan eich cyflogwr neu ddarparwr eich pensiwn.
 pensions.workplaceAmount.title.agent = Faint y gwnaeth eich cleient ei dalu i mewn i bensiynau gweithle?
-pensions.workplaceAmount.bullet1.agent = wedi ei dalu ar ôl i gyflog eich cleient gael ei drethu
-pensions.workplaceAmount.bullet2.agent = ni fydd darparwr pensiwn eich cleient yn hawlio rhyddhad treth ar ei gyfer
+pensions.workplaceAmount.bullet1.agent = taliadau a wnaed ar ôl i gyflog eich cleient gael ei drethu
+pensions.workplaceAmount.bullet2.agent = taliadau na fydd darparwr pensiwn eich cleient yn hawlio rhyddhad treth ar eu cyfer
 pensions.workplaceAmount.youCanFindThisOut.agent = Gall eich cleient gael gwybod am hyn gan ei gyflogwr neu ddarparwr pensiwn.
-pensions.workplaceAmount.paragraph = Dylech gynnwys taliadau yn unig:
+pensions.workplaceAmount.paragraph = Dylech gynnwys y taliadau canlynol yn unig:
 pensions.workplaceAmount.error.noEntry = Nodwch y swm a dalwyd i mewn i bensiynau gweithle
 pensions.workplaceAmount.error.incorrectFormat = Nodwch y swm a dalwyd i mewn i bensiynau gweithle yn y fformat cywir
 pensions.workplaceAmount.error.maxAmount = Mae’n rhaid i’r swm a dalwyd i mewn i bensiynau gweithle fod yn llai na £100,000,000,000
@@ -569,6 +571,32 @@ pensions.statePension.amount.error.noEntry.agent = Nodwch swm Pensiwn y Wladwria
 pensions.statePension.amount.error.incorrectFormat.agent = Nodwch swm Pensiwn y Wladwriaeth eich cleient yn y fformat cywir
 pensions.statePension.amount.error.overMaximum.agent = Mae’n rhaid i swm Pensiwn y Wladwriaeth eich cleient fod yn llai na £100,000,000,000
 
+#state pension add to calculation
+pensions.statePension.addToCalculation.title.individual = Do you want to add State Pension to your Income Tax calculation?
+pensions.statePension.addToCalculation.title.agent = Do you want to add State Pension to your client’s Income Tax calculation?
+pensions.statePension.addToCalculation.noEntry.individual = Select yes if you want to add State Pension to your Income Tax calculation
+pensions.statePension.addToCalculation.noEntry.agent = Select yes if you want to add State Pension to your client’s Income Tax Calculation
+
+#State Pension CYA page
+statePension.cya.title.agent = Check your client's State Pension
+statePension.cya.title.individual = Check your State Pension
+statePension.cya.paragraph1.agent  = Your client's State Pension income is based on the information we already hold about them.
+statePension.cya.paragraph2.agent  = You cannot update your client's State Pension income until 6 April 2023.
+statePension.cya.paragraph1.individual  = Your State Pension income is based on information we already hold about you.
+statePension.cya.paragraph2.individual  = You can change the amounts if they''re not correct.
+statePension.cya.statePension.label = State Pension
+statePension.cya.statePension.label.hidden = Change state pension
+statePension.cya.startDate.label = State Pension start date
+statePension.cya.startDate.label.hidden = Change State Pension start date
+statePension.cya.lumpSum.label = Lump sum
+statePension.cya.lumpSum.label.hidden = Change lump sum
+statePension.cya.lumpSumTax.label = Lump sum tax
+statePension.cya.lumpSumTax.label.hidden = Change Lump sum tax
+statePension.cya.lumpSumDate.label = Lump sum date
+statePension.cya.lumpSumDate.label.hidden = Change lump sum date
+statePension.cya.taxCalc.label = State Pension added to tax calculation
+statePension.cya.taxCalc.label.hidden = Change State Pension added to tax calculation
+
 #Income From Pensions Summary
 incomeFromPensions.incomeFromPensionsSummary.statePensions = Pensiwn y Wladwriaeth
 incomeFromPensions.incomeFromPensionsSummary.otherUkPensions = Pensiynau eraill y DU
@@ -641,19 +669,6 @@ incomeFromPensions.paragraph.agent = Mae incwm o bensiynau eich cleient yn seili
 incomeFromPensions.pensionIncome.hidden.individual = Newid p’un a gawsoch incwm o bensiynau’r DU
 incomeFromPensions.pensionIncome.hidden.agent = Newid p’un a gafodd eich cleient incwm o bensiynau’r DU
 incomeFromPensions.pensionSchemes.hidden = Newid manylion cynllun pensiwn y DU
-
-#Uk Pension Income Summary page
-incomeFromPensions.schemeDetails.summary.title = Check pension scheme details
-incomeFromPensions.schemeDetails.summary.details = Scheme details
-incomeFromPensions.schemeDetails.summary.details.hidden = Change scheme details
-incomeFromPensions.schemeDetails.summary.income = Pension income
-incomeFromPensions.schemeDetails.summary.income.hidden = Change pension income
-incomeFromPensions.schemeDetails.summary.date = Pension start date
-incomeFromPensions.schemeDetails.summary.date.hidden = Change pension start date
-incomeFromPensions.schemeDetails.summary.paye = PAYE:
-incomeFromPensions.schemeDetails.summary.pid = PID:
-incomeFromPensions.schemeDetails.summary.pay = Pay:
-incomeFromPensions.schemeDetails.summary.tax = Tax:
 
 #Uk Pension Income Summary page
 incomeFromPensions.schemeDetails.summary.title = Check pension scheme details
@@ -813,6 +828,7 @@ unauthorisedPayments.findOutMoreAboutUnauthorisedPayment = Dysgwch ragor am dali
 unauthorisedPayments.didYouGetAnUnauthorisedPayment = A gawsoch daliad heb awdurdod o gynllun pensiwn?
 unauthorisedPayments.checkbox.text1 = Iawn, taliadau heb awdurdod a wnaeth arwain at ordal
 unauthorisedPayments.checkbox.text2 = Iawn, taliadau heb awdurdod na wnaethant arwain at ordal
+unauthorisedPayments.checkbox.hint = Dewiswch bob un sy’n berthnasol.
 
 #Do you have an employer-financed retirement scheme?
 employerFinancedRetirementScheme.benefitsFromScheme.title = Cynlluniau buddiannau ymddeol a ariannwyd gan gyflogwyr
@@ -831,10 +847,9 @@ unauthorisedPayments.pensionSchemeDetails.addPensionSchemeTaxReference = Ychwane
 #Remove unauthorised payments from UK pensions schemes
 unauthorisedPayments.removePensionSchemeTaxReference.title = A hoffech ddileu’r Cyfeirnod Treth ar gyfer y Cynllun Pensiwn hwn?
 unauthorisedPayments.removePensionSchemeTaxReference.removeButton = Dileu cyfeirnod
-unauthorisedPayments.removePensionSchemeTaxReference.dontRemove = Peidiwch â dileu
 
 #################       Overseas Pension        ########################################
-common.overseas.pension.schemes = Overseas pension schemes
+common.overseas.pension.schemes = Cynllun pensiwn tramor
 common.overseas.pension.schemes.hidden = Change overseas pension schemes
 
 #Payments into overseas pension schemes page
@@ -857,6 +872,7 @@ overseasPension.paymentIntoOverseasPensionScheme.invalid.format.error.individual
 overseasPension.paymentIntoOverseasPensionScheme.invalid.format.error.agent = Nodwch y swm a dalodd eich cleient i mewn i gynlluniau pensiwn tramor yn y fformat cywir
 overseasPension.paymentIntoOverseasPensionScheme.maximum.error.individual = Mae’n rhaid i’r swm a daloch i mewn i gynlluniau pensiwn tramor fod yn llai na £100,000,000,000
 overseasPension.paymentIntoOverseasPensionScheme.maximum.error.agent = Mae’n rhaid i’r swm a dalodd eich cleient i mewn i gynlluniau pensiwn tramor fod yn llai na £100,000,000,000
+
 #Employer payment into overseas pension scheme page
 overseasPension.employerPayOverseasPension.title.individual = A wnaeth eich cyflogwr dalu i mewn i’ch cynlluniau pensiwn tramor?
 overseasPension.employerPayOverseasPension.title.agent = A wnaeth cyflogwr eich cleient dalu i mewn i’r cynlluniau pensiwn tramor?
@@ -864,6 +880,7 @@ overseasPension.employerPayOverseasPension.bullet2.individual = gofyn i’ch cyf
 overseasPension.employerPayOverseasPension.bullet2.agent = gofyn i’w gyflogwr
 overseasPension.employerPayOverseasPension.error.noEntry.individual = Dewiswch ‘Iawn’ os gwnaeth eich cyflogwr dalu i mewn i’ch cynlluniau pensiwn tramor
 overseasPension.employerPayOverseasPension.error.noEntry.agent = Dewiswch ‘Iawn’ os gwnaeth cyflogwr eich cleient dalu i mewn i’w gynlluniau pensiwn tramor
+
 #Pensions Overseas Emp Tax status page
 overseasPension.taxEmployerPayments.title.individual = A wnaethoch dalu treth ar y swm a dalodd eich cyflogwr?
 overseasPension.taxEmployerPayments.bullet2.individual = gofyn i ddarparwr eich pensiwn
@@ -1000,25 +1017,25 @@ overseasPension.yourTaxableAmount.table.nonUkTax = Treth a dalwyd y tu allan i�
 overseasPension.yourTaxableAmount.table.taxableAmount = Swm trethadwy
 
 #relief scheme summary view
-pensions.paymentsIntoOverseasPensions.reliefSchemeSummary.title = Schemes with untaxed employer payments
-pensions.paymentsIntoOverseasPensions.reliefSchemeSummary.addAnotherReliefLink = Add another overseas pension scheme
+pensions.paymentsIntoOverseasPensions.reliefSchemeSummary.title = Cynlluniau gyda thaliadau cyflogwr sydd heb eu trethu
+pensions.paymentsIntoOverseasPensions.reliefSchemeSummary.addAnotherReliefLink = Ychwanegu cynllun pensiwn tramor arall
 pensions.paymentsIntoOverseasPensions.reliefSchemeSummary.addReliefLink = Add an overseas pension scheme
 
 #SF74 reference
-pensions.paymentsIntoOverseasPensions.sf74Reference.title = SF74 reference
-pensions.paymentsIntoOverseasPensions.sf74Reference.paragraph1.individual = Enter your SF74 reference. You can find this out from your overseas scheme manager.
-pensions.paymentsIntoOverseasPensions.sf74Reference.paragraph1.agent = Enter your client’s SF74 reference. You can find this out from your client’s overseas scheme manager.
-pensions.paymentsIntoOverseasPensions.sf74Reference.hint = For example, ''SF74/1234'', ''SF74/45865'' or ''SF74/123456''
-pensions.paymentsIntoOverseasPensions.sf74Reference.noEntry = Enter your SF74 reference
-pensions.paymentsIntoOverseasPensions.sf74Reference.incorrectFormat = The SF74 reference must be between 1 and 10 digits long, contain only numbers and no special characters
+pensions.paymentsIntoOverseasPensions.sf74Reference.title = Cyfeirnod SF74
+pensions.paymentsIntoOverseasPensions.sf74Reference.paragraph1.individual = Nodwch eich cyfeirnod SF74. Gallwch ddysgu beth yw hyn oddi wrth eich rheolwr cynllun dramor.
+pensions.paymentsIntoOverseasPensions.sf74Reference.paragraph1.agent = Nodwch gyfeirnod SF74 eich cleient. Gallwch ddysgu beth yw hyn oddi wrth reolwr cynllun dramor eich cleient.
+pensions.paymentsIntoOverseasPensions.sf74Reference.hint = Er enghraifft, “SF74/1234”, “SF74/45865” neu “SF74/123456”
+pensions.paymentsIntoOverseasPensions.sf74Reference.noEntry = Nodwch eich cyfeirnod SF74
+pensions.paymentsIntoOverseasPensions.sf74Reference.incorrectFormat = Mae’n rhaid i’r cyfeirnod SF74 fod rhwng 1 a 10 digid, a chynnwys rhifau yn unig – dim cymeriadau arbennig
 
 #Payment into overseas pensions CYA
-paymentsIntoOverseasPensions.cya.heading = Check payments into overseas pensions
-paymentsIntoOverseasPensions.cya.totalPayments = Total payments
+paymentsIntoOverseasPensions.cya.heading = Gwirio taliadau i bensiynau tramor
+paymentsIntoOverseasPensions.cya.totalPayments = Cyfanswm y taliadau
 paymentsIntoOverseasPensions.cya.totalPayments.hidden = Change total payments
-paymentsIntoOverseasPensions.cya.employerPayments = Employer payments
+paymentsIntoOverseasPensions.cya.employerPayments = Taliadau cyflogwr
 paymentsIntoOverseasPensions.cya.employerPayments.hidden = Change employer payments
-paymentsIntoOverseasPensions.cya.employerPaymentsTax = Tax paid on employer payments
+paymentsIntoOverseasPensions.cya.employerPaymentsTax = Treth sydd wedi’i thalu ar daliadau cyflogwr
 paymentsIntoOverseasPensions.cya.employerPaymentsTax.hidden = Change tax paid on employer payments
 
 
@@ -1153,66 +1170,66 @@ common.overseasPensions.country.error.noEntry = Nodwch y wlad
 transferIntoOverseasPensions.summaryList.title = Cynlluniau pensiwn sy’n talu’r taliadau trosglwyddiadau – crynodeb
 
 #Short service refund - Taxable
-shortServiceRefunds.taxableRefundAmount.title = Taxable short service refunds
-shortServiceRefunds.taxableRefundAmount.p1.individual = The short service refund is taxable if you got UK tax relief on the money you paid into the scheme.
-shortServiceRefunds.taxableRefundAmount.p1.agent = The short service refund is taxable if your client got UK tax relief on the money they paid into the scheme.
-shortServiceRefunds.taxableRefundAmount.p2.individual = Tell us the total amount of short service refund you got from overseas pension schemes.
-shortServiceRefunds.taxableRefundAmount.p2.agent = Tell us the total amount of short service refund your client got from overseas pension schemes.
-shortServiceRefunds.taxableRefundAmount.details.title = What is a short service refund?
-shortServiceRefunds.taxableRefundAmount.details.p1.individual = A short service refund is a refund of money you paid into a workplace pension.
-shortServiceRefunds.taxableRefundAmount.details.p1.agent = A short service refund is a refund of money your client paid into a workplace pension.
-shortServiceRefunds.taxableRefundAmount.details.p2.individual = You might have got a short service refund if you paid into a scheme for less than 2 years. This depends on the type of pension scheme you have.
-shortServiceRefunds.taxableRefundAmount.details.p2.agent = Your client might have got a short service refund if they paid into a scheme for less than 2 years. This depends on the type of pension scheme they have.
-shortServiceRefunds.taxableRefundAmount.h2.individual = Did you get a short service refund?
-shortServiceRefunds.taxableRefundAmount.h2.agent = Did your client get a short service refund?
-shortServiceRefunds.taxableRefundAmount.amount.text = Total amount of short service refunds, in pounds
-shortServiceRefunds.taxableRefundAmount.error.noEntry.individual = Select yes if you got a taxable short service refund from an overseas pension scheme
-shortServiceRefunds.taxableRefundAmount.error.noEntry.agent = Select yes if your client got a taxable short service refund from an overseas pension scheme
-shortServiceRefunds.taxableRefundAmount.error.noAmountEntry.individual = Enter the taxable short service refund amount
-shortServiceRefunds.taxableRefundAmount.error.noAmountEntry.agent = Enter your client’s taxable short service refund amount
-shortServiceRefunds.taxableRefundAmount.error.incorrectFormat.individual = Enter the taxable short service refund amount in the correct format
-shortServiceRefunds.taxableRefundAmount.error.incorrectFormat.agent = Enter your client’s taxable short service refund amount in the correct format
-shortServiceRefunds.taxableRefundAmount.error.tooBig.individual = The taxable short service refund amount must be less than £100,000,000,000
-shortServiceRefunds.taxableRefundAmount.error.tooBig.agent = Your client’s taxable short service refund amount must be less than £100,000,000,000
+shortServiceRefunds.taxableRefundAmount.title = Ad-daliadau trethadwy am wasanaeth byr
+shortServiceRefunds.taxableRefundAmount.p1.individual = Mae’r ad-daliad am wasanaeth byr yn drethadwy os cawsoch ryddhad treth yn y DU ar yr arian a dalwyd gennych i mewn i’r cynllun.
+shortServiceRefunds.taxableRefundAmount.p1.agent = Mae’r ad-daliad am wasanaeth byr yn drethadwy os cafodd eich cleient ryddhad treth yn y DU ar yr arian a dalwyd ganddo i mewn i’r cynllun.
+shortServiceRefunds.taxableRefundAmount.p2.individual = Rhowch wybod i ni cyfanswm yr ad-daliad am wasanaeth byr a gawsoch o gynlluniau pensiwn tramor.
+shortServiceRefunds.taxableRefundAmount.p2.agent = Rhowch wybod i ni cyfanswm yr ad-daliad am wasanaeth byr a gafodd eich cleient o gynlluniau pensiwn tramor.
+shortServiceRefunds.taxableRefundAmount.details.title = Beth yw ad-daliad am wasanaeth byr?
+shortServiceRefunds.taxableRefundAmount.details.p1.individual = Ad-daliad o arian a dalwyd gennych i mewn i bensiwn gweithle yw ad-daliad am wasanaeth byr.
+shortServiceRefunds.taxableRefundAmount.details.p1.agent = Ad-daliad o arian a dalwyd gan eich cleient i mewn i bensiwn gweithle yw ad-daliad am wasanaeth byr.
+shortServiceRefunds.taxableRefundAmount.details.p2.individual = Mae’n bosibl eich bod wedi cael ad-daliad am wasanaeth byr os gwnaethoch dalu i mewn i gynllun am lai na 2 flynedd. Mae hyn yn ddibynnol ar y math o bensiwn sydd gennych.
+shortServiceRefunds.taxableRefundAmount.details.p2.agent = Mae’n bosibl i’ch cleient fod wedi cael ad-daliad am wasanaeth byr os dalodd i mewn i gynllun am lai na 2 flynedd. Mae hyn yn ddibynnol ar y math o bensiwn sydd gan eich cleient.
+shortServiceRefunds.taxableRefundAmount.h2.individual = A gawsoch ad-daliad am wasanaeth byr?
+shortServiceRefunds.taxableRefundAmount.h2.agent = A gafodd eich cleient ad-daliad am wasanaeth byr?
+shortServiceRefunds.taxableRefundAmount.amount.text = Cyfanswm yr ad-daliadau am wasanaeth byr, mewn punnoedd
+shortServiceRefunds.taxableRefundAmount.error.noEntry.individual = Dewiswch ‘Iawn’ os cawsoch ad-daliad trethadwy am wasanaeth byr o gynllun pensiwn tramor
+shortServiceRefunds.taxableRefundAmount.error.noEntry.agent = Dewiswch ‘Iawn’ os cafodd eich cleient ad-daliad trethadwy am wasanaeth byr o gynllun pensiwn tramor
+shortServiceRefunds.taxableRefundAmount.error.noAmountEntry.individual = Nodwch swm yr ad-daliad trethadwy am wasanaeth byr
+shortServiceRefunds.taxableRefundAmount.error.noAmountEntry.agent = Nodwch swm ad-daliad trethadwy eich cleient am wasanaeth byr
+shortServiceRefunds.taxableRefundAmount.error.incorrectFormat.individual = Nodwch swm yr ad-daliad trethadwy am wasanaeth byr yn y fformat cywir
+shortServiceRefunds.taxableRefundAmount.error.incorrectFormat.agent = Nodwch swm ad-daliad trethadwy eich cleient am wasanaeth byr yn y fformat cywir
+shortServiceRefunds.taxableRefundAmount.error.tooBig.individual = Mae’n rhaid i swm yr ad-daliad trethadwy am wasanaeth byr fod yn llai na £100,000,000,000
+shortServiceRefunds.taxableRefundAmount.error.tooBig.agent = Mae’n rhaid i swm ad-daliad trethadwy eich cleient am wasanaeth byr fod yn llai na £100,000,000,000
 
 #Non UK Tax Refunds
-shortServiceRefunds.nonUkTaxRefunds.title = Non-UK tax on short service refunds
-shortServiceRefunds.nonUkTaxRefunds.para1.individual = If you paid non-UK tax on more than one refund, add the amounts together.
-shortServiceRefunds.nonUkTaxRefunds.para1.agent = If your client paid non-UK tax on more than one refund, add the amounts together.
-shortServiceRefunds.nonUkTaxRefunds.para2.individual = If you do not know this information, you can check with the employer or pension scheme provider.
-shortServiceRefunds.nonUkTaxRefunds.para2.agent = If you do not know this information, you can ask your client to check with the employer or pension scheme provider.
-shortServiceRefunds.nonUkTaxRefunds.question.individual = Did you pay non-UK tax on short service refunds?
-shortServiceRefunds.nonUkTaxRefunds.question.agent = Did your client pay non-UK tax on short service refunds?
-shortServiceRefunds.nonUkTaxRefunds.amount.text = Total non-UK tax on short service refunds, in pounds
-shortServiceRefunds.nonUkTaxRefunds.error.noEntry.individual = Select yes if you paid non-UK tax on this short service refund
-shortServiceRefunds.nonUkTaxRefunds.error.noEntry.agent = Select yes if your client paid non-UK tax on this short service refund
-shortServiceRefunds.nonUkTaxRefunds.error.noAmountEntry.individual = Enter the amount of non-UK tax you paid on this short service refund
-shortServiceRefunds.nonUkTaxRefunds.error.noAmountEntry.agent = Enter the amount of non-UK tax your client paid on this short service refund
-shortServiceRefunds.nonUkTaxRefunds.error.incorrectFormat.individual = Enter the amount of non-UK tax you paid on this short service refund in the correct format
-shortServiceRefunds.nonUkTaxRefunds.error.incorrectFormat.agent = Enter the amount of non-UK tax your client paid on this short service refund in the correct format
-shortServiceRefunds.nonUkTaxRefunds.error.tooBig.individual = The amount of non-UK tax you paid on this short service refund must be less than £100,000,000,000
-shortServiceRefunds.nonUkTaxRefunds.error.tooBig.agent = The amount of non-UK tax your client paid on this short service refund must be less than £100,000,000,000
+shortServiceRefunds.nonUkTaxRefunds.title = Treth y tu allan i’r DU ar ad-daliadau am wasanaeth byr
+shortServiceRefunds.nonUkTaxRefunds.para1.individual = Os gwnaethoch dalu treth y tu allan i’r DU ar fwy nag un ad-daliad, ychwanegwch y symiau at ei gilydd.
+shortServiceRefunds.nonUkTaxRefunds.para1.agent = Os gwnaeth eich cleient dalu treth y tu allan i’r DU ar fwy nag un ad-daliad, ychwanegwch y symiau at ei gilydd.
+shortServiceRefunds.nonUkTaxRefunds.para2.individual = Os nad yw’r wybodaeth hon gennych, gallwch wirio gyda’r cyflogwr neu’r darparwr cynllun pensiwn.
+shortServiceRefunds.nonUkTaxRefunds.para2.agent = Os nad yw’r wybodaeth hon gennych, gallwch ofyn i’ch cleient wirio gyda’r cyflogwr neu’r darparwr cynllun pensiwn.
+shortServiceRefunds.nonUkTaxRefunds.question.individual = A wnaethoch dalu treth y tu allan i’r DU ar ad-daliadau am wasanaeth byr?
+shortServiceRefunds.nonUkTaxRefunds.question.agent = A wnaeth eich cleient dalu treth y tu allan i’r DU ar ad-daliadau am wasanaeth byr?
+shortServiceRefunds.nonUkTaxRefunds.amount.text = Cyfanswm treth y tu allan i’r DU ar ad-daliadau am wasanaeth byr, mewn punnoedd
+shortServiceRefunds.nonUkTaxRefunds.error.noEntry.individual = Dewiswch ‘Iawn’ os gwnaethoch dalu treth y tu allan i’r DU ar yr ad-daliad hwn am wasanaeth byr
+shortServiceRefunds.nonUkTaxRefunds.error.noEntry.agent = Dewiswch ‘Iawn’ os gwnaeth eich cleient dalu treth y tu allan i’r DU ar yr ad-daliad hwn am wasanaeth byr
+shortServiceRefunds.nonUkTaxRefunds.error.noAmountEntry.individual = Nodwch swm y dreth y gwnaethoch ei thalu y tu allan i’r DU ar yr ad-daliad hwn am wasanaeth byr
+shortServiceRefunds.nonUkTaxRefunds.error.noAmountEntry.agent = Nodwch swm y dreth y gwnaeth eich cleient ei thalu y tu allan i’r DU ar yr ad-daliad hwn am wasanaeth byr
+shortServiceRefunds.nonUkTaxRefunds.error.incorrectFormat.individual = Nodwch swm y dreth y gwnaethoch ei thalu y tu allan i’r DU ar yr ad-daliad hwn am wasanaeth byr yn y fformat cywir
+shortServiceRefunds.nonUkTaxRefunds.error.incorrectFormat.agent = Nodwch swm y dreth y gwnaeth eich cleient ei thalu y tu allan i’r DU ar yr ad-daliad hwn am wasanaeth byr yn y fformat cywir
+shortServiceRefunds.nonUkTaxRefunds.error.tooBig.individual = Mae’n rhaid i swm y dreth y gwnaethoch ei thalu y tu allan i’r DU ar yr ad-daliad hwn am wasanaeth byr fod yn llai na £100,000,000,000
+shortServiceRefunds.nonUkTaxRefunds.error.tooBig.agent = Mae’n rhaid i swm y dreth y gwnaeth eich cleient ei thalu y tu allan i’r DU ar yr ad-daliad hwn am wasanaeth byr fod yn llai na £100,000,000,000
 
 #Short service refund Pension Scheme
-shortServiceRefunds.PensionScheme.title = Pension scheme paying tax on the short service refund
+shortServiceRefunds.PensionScheme.title = Cynllun pensiwn yn talu’r dreth ar yr ad-daliad am wasanaeth byr
 
 #short service refund - UK pension scheme pay tax
-shortServiceRefunds.taxOnShortServiceRefund.title = Did a UK pension scheme pay tax on the short service refunds?
-shortServiceRefunds.taxOnShortServiceRefund.error.noEntry = Select yes if a UK pension scheme paid tax on the short service refund
+shortServiceRefunds.taxOnShortServiceRefund.title = A wnaeth cynllun pensiwn y DU dalu treth ar yr ad-daliadau trethadwy am wasanaeth byr?
+shortServiceRefunds.taxOnShortServiceRefund.error.noEntry = Dewiswch ‘Iawn’ os gwnaeth cynllun pensiwn y DU dalu treth ar yr ad-daliad am wasanaeth byr
 
 
 #Short service refund - Summary
-shortServiceRefunds.refundSummary.title = Short service refund summary
+shortServiceRefunds.refundSummary.title = Crynodeb o’r ad-daliad am wasanaeth byr
 
 #Short Service refund - CYA
-shortServiceRefunds.cya.heading = Check short service refunds
-shortServiceRefunds.cya.refund = Short service refunds
-shortServiceRefunds.cya.refundAmount = Refund amount
-shortServiceRefunds.cya.nonUk = Paid non-UK tax
-shortServiceRefunds.cya.nonUkAmount = Amount of non-UK tax
-shortServiceRefunds.cya.schemesPayingTax = Pension schemes paying tax
-shortServiceRefunds.cya.refund.hidden = Change short service refunds
-shortServiceRefunds.cya.refundAmount.hidden = Change refund amount
-shortServiceRefunds.cya.nonUk.hidden = Change paid non-UK tax
-shortServiceRefunds.cya.nonUkAmount.hidden = Change amount of non-UK tax
-shortServiceRefunds.cya.schemesPayingTax.hidden = Change pension schemes paying tax
+shortServiceRefunds.cya.heading = Gwirio’r ad-daliadau am wasanaeth byr
+shortServiceRefunds.cya.refund = Ad-daliadau am wasanaeth byr
+shortServiceRefunds.cya.refundAmount = Swm yr ad-daliad
+shortServiceRefunds.cya.nonUk = Treth y tu allan i’r DU sydd wedi’i dalu
+shortServiceRefunds.cya.nonUkAmount = Swm yr incwm y tu allan i’r DU
+shortServiceRefunds.cya.schemesPayingTax = Cynlluniau pensiwn yn talu treth
+shortServiceRefunds.cya.refund.hidden = Newid ad-daliadau am wasanaeth byr
+shortServiceRefunds.cya.refundAmount.hidden = Newid swm yr ad-daliad
+shortServiceRefunds.cya.nonUk.hidden = Newid treth y tu allan i’r DU sydd wedi’i dalu
+shortServiceRefunds.cya.nonUkAmount.hidden = Newid swm y dreth y tu allan i’r DU
+shortServiceRefunds.cya.schemesPayingTax.hidden = Newid cynlluniau pensiwn yn talu treth

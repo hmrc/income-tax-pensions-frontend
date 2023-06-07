@@ -24,7 +24,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.IncomeFromPensionsPages.statePensionLumpSumStartDateUrl
+import utils.PageUrls.IncomeFromPensionsPages.{addToCalculationUrl, statePensionLumpSumStartDateUrl}
 import utils.PageUrls.{fullUrl, overviewUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
@@ -130,8 +130,7 @@ class StatePensionLumpSumStartDateControllerISpec extends IntegrationTest with V
       }
 
       result.status shouldBe SEE_OTHER
-      result.headers("location").head shouldBe statePensionLumpSumStartDateUrl(taxYearEOY)
-      //todo redirect to 'Do you want to add state pension to your income tax calculation' page when created
+      result.headers("location").head shouldBe  addToCalculationUrl(taxYearEOY)
     }
 
     "the day field is empty" which {

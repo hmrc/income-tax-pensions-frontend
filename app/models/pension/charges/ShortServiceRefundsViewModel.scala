@@ -42,6 +42,31 @@ case class ShortServiceRefundsViewModel(
       refundPensionScheme = refundPensionScheme.map(_.encrypted())
     )
 
+  def toOverseasPensionContributions: OverseasPensionContributions = OverseasPensionContributions(
+    shortServiceRefund = this.shortServiceRefundCharge.getOrElse(0.00),
+    shortServiceRefundTaxPaid = this.shortServiceRefundTaxPaidCharge.getOrElse(0.00),
+    overseasSchemeProvider = fromTransferPensionScheme(this.refundPensionScheme)
+  )
+
+  private def fromTransferPensionScheme(scheme: Seq[OverseasRefundPensionScheme]): Seq[OverseasSchemeProvider] = {
+    scheme.map(x =>
+      OverseasSchemeProvider(
+        providerName = x.name.getOrElse(""),
+        qualifyingRecognisedOverseasPensionScheme = if (x.qualifyingRecognisedOverseasPensionScheme.nonEmpty) {
+          Some(Seq(x.qualifyingRecognisedOverseasPensionScheme.get))
+        } else {
+          None
+        },
+        pensionSchemeTaxReference = if (x.pensionSchemeTaxReference.nonEmpty) {
+          Some(Seq(x.pensionSchemeTaxReference.get))
+        } else {
+          None
+        },
+        providerAddress = x.providerAddress.getOrElse(""),
+        providerCountryCode = x.alphaThreeCountryCode.getOrElse("")
+      )
+    )
+  }
 }
 
 object ShortServiceRefundsViewModel {
