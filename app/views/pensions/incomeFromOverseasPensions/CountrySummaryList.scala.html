@@ -65,7 +65,7 @@
                                 </a>
                             </dd>
                             <dd class="hmrc-add-to-a-list__remove">
-                                <a class="govuk-link" href=@CountrySummaryListController.show(taxYear).url>
+                                <a class="govuk-link" href=@RemoveOverseasIncomeSchemeController.show(taxYear, Some(index)).url>
                                     <span aria-hidden="true">@messages("common.remove")</span>
                                     <span class="govuk-visually-hidden">@{s"${messages("common.remove")} ${getCountryFromCodeWithDefault(pensionIncome.alphaTwoCode)}"}</span>
                                 </a>
