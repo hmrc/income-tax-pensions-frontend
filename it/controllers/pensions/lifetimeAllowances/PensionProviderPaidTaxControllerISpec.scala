@@ -288,7 +288,7 @@ class PensionProviderPaidTaxControllerISpec
             implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
             implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(false), None))
 
-            assertRedirectionAsExpected(relativeUrlForThisPage)
+            assertRedirectionAsExpected(PageRelativeURLs.pensionSchemeTaxReferenceSummary)
             getViewModel mustBe Some(expectedViewModel)
 
           }
@@ -303,7 +303,7 @@ class PensionProviderPaidTaxControllerISpec
             implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
             implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("42.64")))
 
-            assertRedirectionAsExpected(relativeUrlForThisPage)
+            assertRedirectionAsExpected(PageRelativeURLs.pensionSchemeTaxReferenceSummary)
             getViewModel mustBe Some(expectedViewModel)
 
           }
@@ -318,7 +318,7 @@ class PensionProviderPaidTaxControllerISpec
             implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
             implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("£1,042.64")))
 
-            assertRedirectionAsExpected(relativeUrlForThisPage)
+            assertRedirectionAsExpected(PageRelativeURLs.pensionSchemeTaxReferenceSummary)
             getViewModel mustBe Some(expectedViewModel)
 
           }
@@ -339,7 +339,7 @@ class PensionProviderPaidTaxControllerISpec
             implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
             implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(false), None))
 
-            assertRedirectionAsExpected(relativeUrlForThisPage)
+            assertRedirectionAsExpected(PageRelativeURLs.pensionSchemeTaxReference)
             getViewModel mustBe Some(expectedViewModel)
 
           }
@@ -354,7 +354,7 @@ class PensionProviderPaidTaxControllerISpec
             implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
             implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("42.64")))
 
-            assertRedirectionAsExpected(relativeUrlForThisPage)
+            assertRedirectionAsExpected(PageRelativeURLs.pensionSchemeTaxReference)
             getViewModel mustBe Some(expectedViewModel)
 
           }
@@ -369,7 +369,7 @@ class PensionProviderPaidTaxControllerISpec
             implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
             implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("£1,042.64")))
 
-            assertRedirectionAsExpected(relativeUrlForThisPage)
+            assertRedirectionAsExpected(PageRelativeURLs.pensionSchemeTaxReference)
             getViewModel mustBe Some(expectedViewModel)
           }
         }
