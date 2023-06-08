@@ -52,8 +52,7 @@ class PensionChargesConnectorHelperSpec extends UnitTest with MockPensionsConnec
           val chargesModel = model.copy(
             pensionSchemeUnauthorisedPayments = None,
           )
-
-          mockSavePensionChargesSessionData(nino, taxYear, chargesModel, Right())
+          mockSavePensionChargesSessionData(nino, taxYear, chargesModel, Right(()))
 
           val result = Await.result(pensionChargerConnectorHelper
             .sendDownstream(nino, taxYear, Some(unauthModel), Some(noCYA), chargesModel), Duration.Inf)
@@ -74,7 +73,7 @@ class PensionChargesConnectorHelperSpec extends UnitTest with MockPensionsConnec
             overseasPensionContributions = None
           )
 
-          mockDeletePensionChargesSessionData(nino, taxYear, Right())
+          mockDeletePensionChargesSessionData(nino, taxYear, Right(()) )
 
           val result = Await.result(pensionChargerConnectorHelper
             .sendDownstream(nino, taxYear, None, Some(noCYA), chargesModel), Duration.Inf)
@@ -91,7 +90,7 @@ class PensionChargesConnectorHelperSpec extends UnitTest with MockPensionsConnec
             overseasPensionContributions = None
           )
 
-          mockDeletePensionChargesSessionData(nino, taxYear, Right())
+          mockDeletePensionChargesSessionData(nino, taxYear, Right(()) )
 
           val result = Await.result(pensionChargerConnectorHelper
             .sendDownstream(nino, taxYear, Some(unauthModel), Some(noCYA), chargesModel), Duration.Inf)
@@ -113,7 +112,7 @@ class PensionChargesConnectorHelperSpec extends UnitTest with MockPensionsConnec
         overseasPensionContributions = None
       )
 
-      mockSavePensionChargesSessionData(nino, taxYear, chargesModel, Right())
+      mockSavePensionChargesSessionData(nino, taxYear, chargesModel, Right(()) )
 
       val result = Await.result(pensionChargerConnectorHelper
         .sendDownstream(nino, taxYear, Some(unauthModel), Some(anUnauthorisedPaymentsViewModel), chargesModel), Duration.Inf)
@@ -133,7 +132,7 @@ class PensionChargesConnectorHelperSpec extends UnitTest with MockPensionsConnec
         overseasPensionContributions = None
       )
 
-      mockDeletePensionChargesSessionData(nino, taxYear, Right())
+      mockDeletePensionChargesSessionData(nino, taxYear, Right(()) )
 
       val result = Await.result(pensionChargerConnectorHelper
         .sendDownstream(nino, taxYear, Some(unauthModel), Some(anUnauthorisedPaymentsEmptyViewModel), chargesModel), Duration.Inf)

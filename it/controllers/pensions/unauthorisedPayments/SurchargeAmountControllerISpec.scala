@@ -125,7 +125,7 @@ class SurchargeAmountControllerISpec extends IntegrationTest with ViewHelpers wi
             dropPensionsDB()
             authoriseAgentOrIndividual(user.isAgent)
             val viewModel = anUnauthorisedPaymentsViewModel.copy(surchargeAmount = None)
-            insertCyaData(pensionsUserDataWithUnauthorisedPayments(viewModel, isPriorSubmission = false), aUserRequest)
+            insertCyaData(pensionsUserDataWithUnauthorisedPayments(viewModel, isPriorSubmission = false))
             urlGet(fullUrl(surchargeAmountUrl(taxYearEOY)), user.isWelsh, follow = false,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
@@ -155,7 +155,7 @@ class SurchargeAmountControllerISpec extends IntegrationTest with ViewHelpers wi
             dropPensionsDB()
             authoriseAgentOrIndividual(user.isAgent)
             val pensionsViewModel = anUnauthorisedPaymentsViewModel.copy(surchargeAmount = Some(existingAmount))
-            insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false), aUserRequest)
+            insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false))
             urlGet(fullUrl(surchargeAmountUrl(taxYearEOY)), user.isWelsh, follow = false,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
@@ -185,7 +185,7 @@ class SurchargeAmountControllerISpec extends IntegrationTest with ViewHelpers wi
         dropPensionsDB()
         authoriseAgentOrIndividual()
         val pensionsViewModel = anUnauthorisedPaymentsViewModel.copy(surchargeAmount = None, surchargeQuestion = None, noSurchargeQuestion = Some(true))
-        insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false), aUserRequest)
+        insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false))
         urlGet(fullUrl(surchargeAmountUrl(taxYearEOY)), follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
@@ -201,7 +201,7 @@ class SurchargeAmountControllerISpec extends IntegrationTest with ViewHelpers wi
         dropPensionsDB()
         authoriseAgentOrIndividual()
         val pensionsViewModel = anUnauthorisedPaymentsViewModel.copy(surchargeAmount = None, surchargeQuestion = None, noSurchargeQuestion = None)
-        insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false), aUserRequest)
+        insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false))
         urlGet(fullUrl(surchargeAmountUrl(taxYearEOY)), follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
@@ -238,7 +238,7 @@ class SurchargeAmountControllerISpec extends IntegrationTest with ViewHelpers wi
           lazy val result: WSResponse = {
             dropPensionsDB()
             val pensionsViewModel = anUnauthorisedPaymentsViewModel.copy(surchargeAmount = None)
-            insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false), aUserRequest)
+            insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false))
             authoriseAgentOrIndividual(user.isAgent)
             urlPost(fullUrl(surchargeAmountUrl(taxYearEOY)), body = emptyForm, welsh = user.isWelsh, follow = false,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
@@ -272,7 +272,7 @@ class SurchargeAmountControllerISpec extends IntegrationTest with ViewHelpers wi
           lazy val result: WSResponse = {
             dropPensionsDB()
             val pensionsViewModel = anUnauthorisedPaymentsViewModel.copy(surchargeAmount = None)
-            insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false), aUserRequest)
+            insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false))
             authoriseAgentOrIndividual(user.isAgent)
             urlPost(fullUrl(surchargeAmountUrl(taxYearEOY)), body = invalidFormatForm, welsh = user.isWelsh, follow = false,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
@@ -306,7 +306,7 @@ class SurchargeAmountControllerISpec extends IntegrationTest with ViewHelpers wi
           lazy val result: WSResponse = {
             dropPensionsDB()
             val pensionsViewModel = anUnauthorisedPaymentsViewModel.copy(surchargeAmount = None)
-            insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false), aUserRequest)
+            insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false))
             authoriseAgentOrIndividual(user.isAgent)
             urlPost(fullUrl(surchargeAmountUrl(taxYearEOY)), body = overMaximumForm, welsh = user.isWelsh, follow = false,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
@@ -341,7 +341,7 @@ class SurchargeAmountControllerISpec extends IntegrationTest with ViewHelpers wi
       lazy val result: WSResponse = {
         dropPensionsDB()
         val pensionsViewModel = anUnauthorisedPaymentsViewModel.copy(surchargeAmount = None)
-        insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false), aUserRequest)
+        insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false))
         authoriseAgentOrIndividual()
         urlPost(fullUrl(surchargeAmountUrl(taxYearEOY)), body = validForm, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))

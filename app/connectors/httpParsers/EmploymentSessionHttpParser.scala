@@ -31,7 +31,7 @@ object EmploymentSessionHttpParser extends APIParser {
     override def read(method: String, url: String, response: HttpResponse): EmploymentSessionResponse =
       response.status match {
         case CREATED => response.json.validate[CreatedEmployment].fold[EmploymentSessionResponse](
-          _ => badSuccessJsonFromAPI, _ => Right())
+          _ => badSuccessJsonFromAPI, _ => Right(()))
         case _ =>
           SessionHttpReads.read(method, url, response)
       }

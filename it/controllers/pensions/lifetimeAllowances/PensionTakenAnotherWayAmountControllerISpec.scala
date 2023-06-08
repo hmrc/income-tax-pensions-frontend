@@ -192,7 +192,7 @@ class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with B
             val pensionsViewModel = aPensionLifetimeAllowanceViewModel.copy(
               pensionPaidAnotherWay = None
             )
-            insertCyaData(pensionsUserDataWithLifetimeAllowance(pensionsViewModel), aUserRequest)
+            insertCyaData(pensionsUserDataWithLifetimeAllowance(pensionsViewModel))
             authoriseAgentOrIndividual(user.isAgent)
             urlGet(
               fullUrl(pensionTakenAnotherWayAmountUrl(taxYearEOY)),
@@ -232,7 +232,7 @@ class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with B
             val pensionsViewModel = aPensionLifetimeAllowanceViewModel.copy(
               pensionPaidAnotherWay = Some(LifetimeAllowance(Some(newAmount), Some(newAmount2)))
             )
-            insertCyaData(pensionsUserDataWithLifetimeAllowance(pensionsViewModel), aUserRequest)
+            insertCyaData(pensionsUserDataWithLifetimeAllowance(pensionsViewModel))
             authoriseAgentOrIndividual(user.isAgent)
             urlGet(
               fullUrl(pensionTakenAnotherWayAmountUrl(taxYearEOY)),
@@ -271,7 +271,7 @@ class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with B
             val pensionsViewModel = aPensionLifetimeAllowanceViewModel.copy(
               pensionPaidAnotherWay = Some(LifetimeAllowance(Some(newAmount), None))
             )
-            insertCyaData(pensionsUserDataWithLifetimeAllowance(pensionsViewModel), aUserRequest)
+            insertCyaData(pensionsUserDataWithLifetimeAllowance(pensionsViewModel))
             authoriseAgentOrIndividual(user.isAgent)
             urlGet(
               fullUrl(pensionTakenAnotherWayAmountUrl(taxYearEOY)),
@@ -310,7 +310,7 @@ class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with B
             val pensionsViewModel = aPensionLifetimeAllowanceViewModel.copy(
               pensionPaidAnotherWay = Some(LifetimeAllowance(None, Some(newAmount)))
             )
-            insertCyaData(pensionsUserDataWithLifetimeAllowance(pensionsViewModel), aUserRequest)
+            insertCyaData(pensionsUserDataWithLifetimeAllowance(pensionsViewModel))
             authoriseAgentOrIndividual(user.isAgent)
             urlGet(
               fullUrl(pensionTakenAnotherWayAmountUrl(taxYearEOY)),
@@ -376,7 +376,7 @@ class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with B
           lazy val result: WSResponse = {
             dropPensionsDB()
             authoriseAgentOrIndividual(user.isAgent)
-            insertCyaData(aPensionsUserData, aUserRequest)
+            insertCyaData(aPensionsUserData)
             urlPost(fullUrl(pensionTakenAnotherWayAmountUrl(taxYearEOY)), body = emptyForm, welsh = user.isWelsh,
               follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
@@ -417,7 +417,7 @@ class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with B
           lazy val result: WSResponse = {
             dropPensionsDB()
             authoriseAgentOrIndividual(user.isAgent)
-            insertCyaData(aPensionsUserData, aUserRequest)
+            insertCyaData(aPensionsUserData)
             urlPost(fullUrl(pensionTakenAnotherWayAmountUrl(taxYearEOY)), body = invalidFormatForm, welsh = user.isWelsh,
               follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
@@ -459,7 +459,7 @@ class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with B
           lazy val result: WSResponse = {
             dropPensionsDB()
             authoriseAgentOrIndividual(user.isAgent)
-            insertCyaData(aPensionsUserData, aUserRequest)
+            insertCyaData(aPensionsUserData)
             urlPost(fullUrl(pensionTakenAnotherWayAmountUrl(taxYearEOY)), body = overMaximumForm, welsh = user.isWelsh,
               follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
@@ -505,7 +505,7 @@ class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with B
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual()
-        insertCyaData(pensionsUserDataWithLifetimeAllowance(aPensionLifetimeAllowanceViewModel), aUserRequest)
+        insertCyaData(pensionsUserDataWithLifetimeAllowance(aPensionLifetimeAllowanceViewModel))
 
         urlPost(fullUrl(pensionTakenAnotherWayAmountUrl(taxYearEOY)), body = form,
           follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
@@ -536,7 +536,7 @@ class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with B
           pensionsUserDataWithLifetimeAllowance(aPensionLifetimeAllowancesEmptyViewModel.copy(
             pensionPaidAnotherWayQuestion = Some(true),
             pensionPaidAnotherWay = None
-          )), aUserRequest)
+          )))
 
         urlPost(fullUrl(pensionTakenAnotherWayAmountUrl(taxYearEOY)), body = form,
           follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))

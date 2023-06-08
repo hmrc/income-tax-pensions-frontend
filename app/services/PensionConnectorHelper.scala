@@ -29,25 +29,7 @@ trait PensionConnectorHelper[SubModel <: PensionRequestSubModel, ModelRequest <:
               (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[APIErrorModel, Unit]]
 
   def deleteData(nino: String, taxYear: Int)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[APIErrorModel, Unit]]
-
-
-  // pensionSchemeUnauthorisedPayments: Option[PensionSchemeUnauthorisedPayments],
-
-  // pensionSavingsTaxCharges: Option[PensionSavingsTaxCharges],
-  // pensionSchemeOverseasTransfers: Option[PensionSchemeOverseasTransfers],
-  // pensionContributions: Option[PensionContributions],
-  // overseasPensionContributions: Option[OverseasPensionContributions]
-
-
-
-  //other models | existing model    |
-  //true empty   | true              | delete
-  //true         | false (not empty) | delete
-  //false        | true              | save
-  //false        | false             | save
-
-
-
+  
   def sendDownstream(nino: String,
                      taxYear: Int,
                      subModel: Option[SubModel],

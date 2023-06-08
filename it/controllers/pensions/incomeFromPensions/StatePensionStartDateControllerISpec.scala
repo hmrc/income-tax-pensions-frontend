@@ -17,7 +17,7 @@
 package controllers.pensions.incomeFromPensions
 
 import builders.PensionsUserDataBuilder.aPensionsUserData
-import builders.UserBuilder.{aUser, aUserRequest}
+import builders.UserBuilder.aUser
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterEach
@@ -77,7 +77,7 @@ class StatePensionStartDateControllerISpec extends IntegrationTest with ViewHelp
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
-        insertCyaData(aPensionsUserData, aUserRequest)
+        insertCyaData(aPensionsUserData)
         urlGet(fullUrl(statePensionStartDateUrl(taxYear)), !aUser.isAgent, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
       }
@@ -90,7 +90,7 @@ class StatePensionStartDateControllerISpec extends IntegrationTest with ViewHelp
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
-        insertCyaData(aPensionsUserData, aUserRequest)
+        insertCyaData(aPensionsUserData)
         urlGet(fullUrl(statePensionStartDateUrl(taxYearEOY)), !aUser.isAgent, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -104,7 +104,7 @@ class StatePensionStartDateControllerISpec extends IntegrationTest with ViewHelp
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
         val formData = startDateForm(validDay, validMonth, validYear)
-        insertCyaData(aPensionsUserData, aUserRequest)
+        insertCyaData(aPensionsUserData)
         urlPost(
           fullUrl(statePensionStartDateUrl(taxYear)),
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)),
@@ -121,7 +121,7 @@ class StatePensionStartDateControllerISpec extends IntegrationTest with ViewHelp
         authoriseAgentOrIndividual(aUser.isAgent)
         val formData = startDateForm(validDay, validMonth, validYear)
 
-        insertCyaData(aPensionsUserData, aUserRequest)
+        insertCyaData(aPensionsUserData)
         urlPost(
           fullUrl(statePensionStartDateUrl(taxYearEOY)),
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
@@ -137,7 +137,7 @@ class StatePensionStartDateControllerISpec extends IntegrationTest with ViewHelp
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual()
-        insertCyaData(aPensionsUserData, aUserRequest)
+        insertCyaData(aPensionsUserData)
         urlPost(fullUrl(statePensionStartDateUrl(taxYearEOY)), body = form, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -161,7 +161,7 @@ class StatePensionStartDateControllerISpec extends IntegrationTest with ViewHelp
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual()
-        insertCyaData(aPensionsUserData, aUserRequest)
+        insertCyaData(aPensionsUserData)
         urlPost(fullUrl(statePensionStartDateUrl(taxYearEOY)), body = form, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -185,7 +185,7 @@ class StatePensionStartDateControllerISpec extends IntegrationTest with ViewHelp
         lazy val result: WSResponse = {
           dropPensionsDB()
           authoriseAgentOrIndividual()
-          insertCyaData(aPensionsUserData, aUserRequest)
+          insertCyaData(aPensionsUserData)
           urlPost(fullUrl(statePensionStartDateUrl(taxYearEOY)), body = form, follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
         }
@@ -210,7 +210,7 @@ class StatePensionStartDateControllerISpec extends IntegrationTest with ViewHelp
         lazy val result: WSResponse = {
           dropPensionsDB()
           authoriseAgentOrIndividual()
-          insertCyaData(aPensionsUserData, aUserRequest)
+          insertCyaData(aPensionsUserData)
           urlPost(fullUrl(statePensionStartDateUrl(taxYearEOY)), body = form, follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
         }
@@ -235,7 +235,7 @@ class StatePensionStartDateControllerISpec extends IntegrationTest with ViewHelp
         lazy val result: WSResponse = {
           dropPensionsDB()
           authoriseAgentOrIndividual()
-          insertCyaData(aPensionsUserData, aUserRequest)
+          insertCyaData(aPensionsUserData)
           urlPost(fullUrl(statePensionStartDateUrl(taxYearEOY)), body = form, follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
         }
@@ -260,7 +260,7 @@ class StatePensionStartDateControllerISpec extends IntegrationTest with ViewHelp
         lazy val result: WSResponse = {
           dropPensionsDB()
           authoriseAgentOrIndividual()
-          insertCyaData(aPensionsUserData, aUserRequest)
+          insertCyaData(aPensionsUserData)
           urlPost(fullUrl(statePensionStartDateUrl(taxYearEOY)), body = form, follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
         }
@@ -287,7 +287,7 @@ class StatePensionStartDateControllerISpec extends IntegrationTest with ViewHelp
         lazy val result: WSResponse = {
           dropPensionsDB()
           authoriseAgentOrIndividual()
-          insertCyaData(aPensionsUserData, aUserRequest)
+          insertCyaData(aPensionsUserData)
           urlPost(fullUrl(statePensionStartDateUrl(taxYearEOY)), body = form, follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
         }
@@ -312,7 +312,7 @@ class StatePensionStartDateControllerISpec extends IntegrationTest with ViewHelp
         lazy val result: WSResponse = {
           dropPensionsDB()
           authoriseAgentOrIndividual()
-          insertCyaData(aPensionsUserData, aUserRequest)
+          insertCyaData(aPensionsUserData)
           urlPost(fullUrl(statePensionStartDateUrl(taxYearEOY)), body = form, follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
         }
@@ -337,7 +337,7 @@ class StatePensionStartDateControllerISpec extends IntegrationTest with ViewHelp
         lazy val result: WSResponse = {
           dropPensionsDB()
           authoriseAgentOrIndividual()
-          insertCyaData(aPensionsUserData, aUserRequest)
+          insertCyaData(aPensionsUserData)
           urlPost(fullUrl(statePensionStartDateUrl(taxYearEOY)), body = form, follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
         }

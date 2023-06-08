@@ -18,8 +18,6 @@ package connectors
 
 import config.AppConfig
 import connectors.httpParsers.DeletePensionChargesHttpParser.{DeletePensionChargesHttpReads, DeletePensionChargesResponse}
-import connectors.httpParsers.DeletePensionIncomeHttpParser.{DeletePensionIncomeHttpReads, DeletePensionIncomeResponse}
-import connectors.httpParsers.DeletePensionReliefsHttpParser.{DeletePensionReliefsHttpReads, DeletePensionReliefsResponse}
 import connectors.httpParsers.PensionChargesSessionHttpParser.{PensionChargesSessionHttpReads, PensionChargesSessionResponse}
 import connectors.httpParsers.PensionIncomeSessionHttpParser.{PensionIncomeSessionHttpReads, PensionIncomeSessionResponse}
 import connectors.httpParsers.PensionReliefsSessionHttpParser.{PensionReliefsSessionHttpReads, PensionReliefsSessionResponse}
@@ -54,20 +52,11 @@ class PensionsConnector @Inject()(val http: HttpClient,
       CreateUpdatePensionIncomeModel.format.writes, PensionIncomeSessionHttpReads, hc, ec)
   }
 
-  def deletePensionIncome(nino: String, taxYear: Int)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[DeletePensionIncomeResponse] = {
-    val url = appConfig.pensionBEBaseUrl + s"/pension-income/nino/$nino/taxYear/${taxYear.toString}"
-    http.DELETE[DeletePensionIncomeResponse](url)(DeletePensionIncomeHttpReads, hc, ec)
-  }
-
   def savePensionReliefSessionData(nino: String, taxYear: Int, model: CreateOrUpdatePensionReliefsModel)
                                   (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[PensionReliefsSessionResponse] = {
     val url = appConfig.pensionBEBaseUrl + s"/pension-reliefs/nino/$nino/taxYear/${taxYear.toString}"
     http.PUT[CreateOrUpdatePensionReliefsModel, PensionReliefsSessionResponse](url,
       model)(CreateOrUpdatePensionReliefsModel.format.writes, PensionReliefsSessionHttpReads, hc, ec)
   }
-  def deletePensionReliefSessionData(nino: String, taxYear: Int, model: CreateOrUpdatePensionReliefsModel)
-                                  (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[DeletePensionReliefsResponse] = {
-    val url = appConfig.pensionBEBaseUrl + s"/pension-reliefs/nino/$nino/taxYear/${taxYear.toString}"
-    http.DELETE[DeletePensionReliefsResponse](url)(DeletePensionReliefsHttpReads, hc, ec)
-  }
+
 }

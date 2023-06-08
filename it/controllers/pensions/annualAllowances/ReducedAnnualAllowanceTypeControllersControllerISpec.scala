@@ -165,7 +165,7 @@ class ReducedAnnualAllowanceTypeControllersControllerISpec extends IntegrationTe
               taperedAnnualAllowance = None
             )
 
-            insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel), aUserRequest)
+            insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel))
             urlGet(fullUrl(reducedAnnualAllowanceTypeUrl(taxYearEOY)), user.isWelsh, follow = false,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
@@ -212,7 +212,7 @@ class ReducedAnnualAllowanceTypeControllersControllerISpec extends IntegrationTe
               taperedAnnualAllowance = Some(true)
             )
 
-            insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel), aUserRequest)
+            insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel))
             urlGet(fullUrl(reducedAnnualAllowanceTypeUrl(taxYearEOY)), user.isWelsh, follow = false,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
@@ -258,7 +258,7 @@ class ReducedAnnualAllowanceTypeControllersControllerISpec extends IntegrationTe
               taperedAnnualAllowance = Some(true)
             )
 
-            insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel), aUserRequest)
+            insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel))
             urlGet(fullUrl(reducedAnnualAllowanceTypeUrl(taxYearEOY)), user.isWelsh, follow = false,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
@@ -304,7 +304,7 @@ class ReducedAnnualAllowanceTypeControllersControllerISpec extends IntegrationTe
               taperedAnnualAllowance = None
             )
 
-            insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel), aUserRequest)
+            insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel))
             urlGet(fullUrl(reducedAnnualAllowanceTypeUrl(taxYearEOY)), user.isWelsh, follow = false,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
@@ -352,7 +352,7 @@ class ReducedAnnualAllowanceTypeControllersControllerISpec extends IntegrationTe
           taperedAnnualAllowance = None
         )
 
-        insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel), aUserRequest)
+        insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel))
         urlGet(fullUrl(reducedAnnualAllowanceTypeUrl(taxYearEOY)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -375,7 +375,7 @@ class ReducedAnnualAllowanceTypeControllersControllerISpec extends IntegrationTe
           taperedAnnualAllowance = None
         )
 
-        insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel), aUserRequest)
+        insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel))
         urlGet(fullUrl(reducedAnnualAllowanceTypeUrl(taxYearEOY)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -431,7 +431,7 @@ class ReducedAnnualAllowanceTypeControllersControllerISpec extends IntegrationTe
               taperedAnnualAllowance = Some(true)
             )
 
-            insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel), aUserRequest)
+            insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel))
             urlPost(fullUrl(reducedAnnualAllowanceTypeUrl(taxYearEOY)), body = form, user.isWelsh, follow = false,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
@@ -481,7 +481,7 @@ class ReducedAnnualAllowanceTypeControllersControllerISpec extends IntegrationTe
           taperedAnnualAllowance = None
         )
 
-        insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel), aUserRequest)
+        insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel))
         urlPost(fullUrl(reducedAnnualAllowanceTypeUrl(taxYearEOY)), body = validFormAllChecked, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -512,7 +512,7 @@ class ReducedAnnualAllowanceTypeControllersControllerISpec extends IntegrationTe
           taperedAnnualAllowance = None
         )
 
-        insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel), aUserRequest)
+        insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel))
         urlPost(fullUrl(reducedAnnualAllowanceTypeUrl(taxYearEOY)), body = form, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -543,7 +543,7 @@ class ReducedAnnualAllowanceTypeControllersControllerISpec extends IntegrationTe
           taperedAnnualAllowance = None
         )
 
-        insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel), aUserRequest)
+        insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel))
         urlPost(fullUrl(reducedAnnualAllowanceTypeUrl(taxYearEOY)), body = form, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -571,7 +571,7 @@ class ReducedAnnualAllowanceTypeControllersControllerISpec extends IntegrationTe
           taperedAnnualAllowance = None
         )
 
-        insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel), aUserRequest)
+        insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel))
         urlPost(fullUrl(reducedAnnualAllowanceTypeUrl(taxYearEOY)), body = validFormAllChecked, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -594,7 +594,7 @@ class ReducedAnnualAllowanceTypeControllersControllerISpec extends IntegrationTe
           taperedAnnualAllowance = None
         )
 
-        insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel), aUserRequest)
+        insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel))
         urlPost(fullUrl(reducedAnnualAllowanceTypeUrl(taxYearEOY)), body = validFormAllChecked, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }

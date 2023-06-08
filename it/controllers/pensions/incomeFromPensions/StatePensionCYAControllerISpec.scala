@@ -24,7 +24,7 @@ import builders.PensionsUserDataBuilder
 import builders.PensionsUserDataBuilder.aPensionsUserData
 import builders.StateBenefitsUserDataBuilder.aStatePensionBenefitsUD
 import builders.UkPensionIncomeViewModelBuilder.anUkPensionIncomeViewModelOne
-import builders.UserBuilder.{aUser, aUserRequest}
+import builders.UserBuilder.aUser
 import models.mongo.PensionsCYAModel
 import models.pension.statebenefits.{ClaimCYAModel, IncomeFromPensionsViewModel, StateBenefitViewModel}
 import play.api.http.HeaderNames
@@ -79,7 +79,7 @@ class StatePensionCYAControllerISpec extends IntegrationTest with ViewHelpers wi
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
-        insertCyaData(pensionsUsersData(aPensionsCYAModel), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel))
         urlGet(fullUrl(statePensionCyaUrl(taxYear)), !aUser.isAgent, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
       }
@@ -92,7 +92,7 @@ class StatePensionCYAControllerISpec extends IntegrationTest with ViewHelpers wi
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
-        insertCyaData(pensionsUsersData(aPensionsCYAModel), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel))
         urlGet(fullUrl(statePensionCyaUrl(taxYearEOY)), !aUser.isAgent, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -106,7 +106,7 @@ class StatePensionCYAControllerISpec extends IntegrationTest with ViewHelpers wi
         lazy implicit val result: WSResponse = {
           dropPensionsDB()
           authoriseAgentOrIndividual(aUser.isAgent)
-          insertCyaData(pensionsUsersData(aPensionsCYAModel), aUserRequest)
+          insertCyaData(pensionsUsersData(aPensionsCYAModel))
           userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYear)
           urlPost(
             fullUrl(statePensionCyaUrl(taxYear)),
@@ -144,7 +144,7 @@ class StatePensionCYAControllerISpec extends IntegrationTest with ViewHelpers wi
           userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYear)
           insertCyaData(aPensionsUserData.copy(
             pensions = aPensionsCYAModel.copy(incomeFromPensions = newIncomeFromPensions), taxYear = taxYear
-          ), aUserRequest)
+          ))
           urlPost(fullUrl(statePensionCyaUrl(taxYear)), form, follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
         }
@@ -167,7 +167,7 @@ class StatePensionCYAControllerISpec extends IntegrationTest with ViewHelpers wi
           authoriseAgentOrIndividual()
           stateBenefitsSubmissionStub(Json.toJson(submissionData).toString(), nino)
           userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYear)
-          insertCyaData(priorCYAData, aUserRequest)
+          insertCyaData(priorCYAData)
           urlPost(fullUrl(statePensionCyaUrl(taxYear)), form, follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
         }
@@ -189,7 +189,7 @@ class StatePensionCYAControllerISpec extends IntegrationTest with ViewHelpers wi
           authoriseAgentOrIndividual()
           stateBenefitsSubmissionStub(Json.toJson(stateBenefitData).toString(), nino)
           userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYear)
-          insertCyaData(priorCYAData, aUserRequest)
+          insertCyaData(priorCYAData)
           urlPost(fullUrl(statePensionCyaUrl(taxYear)), form, follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
         }

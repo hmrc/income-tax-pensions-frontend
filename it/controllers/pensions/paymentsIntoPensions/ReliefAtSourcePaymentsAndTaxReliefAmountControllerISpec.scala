@@ -52,7 +52,7 @@ class ReliefAtSourcePaymentsAndTaxReliefAmountControllerISpec extends Integratio
         authoriseAgentOrIndividual()
         val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
           rasPensionPaymentQuestion = Some(true), totalRASPaymentsAndTaxRelief = None)
-        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)))
         urlGet(fullUrl(reliefAtSourcePaymentsAndTaxReliefAmountUrl(taxYearEOY)),
           follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -86,7 +86,7 @@ class ReliefAtSourcePaymentsAndTaxReliefAmountControllerISpec extends Integratio
         authoriseAgentOrIndividual()
         val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
           rasPensionPaymentQuestion = Some(true), totalRASPaymentsAndTaxRelief = Some(BigDecimal(existingAmount)))
-        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)))
         urlGet(fullUrl(reliefAtSourcePaymentsAndTaxReliefAmountUrl(taxYearEOY)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -117,7 +117,7 @@ class ReliefAtSourcePaymentsAndTaxReliefAmountControllerISpec extends Integratio
         authoriseAgentOrIndividual()
         val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
           rasPensionPaymentQuestion = None, totalRASPaymentsAndTaxRelief = None)
-        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)))
         urlGet(fullUrl(reliefAtSourcePaymentsAndTaxReliefAmountUrl(taxYearEOY)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -135,7 +135,7 @@ class ReliefAtSourcePaymentsAndTaxReliefAmountControllerISpec extends Integratio
         authoriseAgentOrIndividual()
         val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
           rasPensionPaymentQuestion = Some(false), totalRASPaymentsAndTaxRelief = None)
-        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)))
         urlGet(fullUrl(reliefAtSourcePaymentsAndTaxReliefAmountUrl(taxYearEOY)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -172,7 +172,7 @@ class ReliefAtSourcePaymentsAndTaxReliefAmountControllerISpec extends Integratio
         dropPensionsDB()
         val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
           rasPensionPaymentQuestion = Some(true), totalRASPaymentsAndTaxRelief = None)
-        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)))
         authoriseAgentOrIndividual()
         urlPost(fullUrl(reliefAtSourcePaymentsAndTaxReliefAmountUrl(taxYearEOY)), body = emptyForm,
           follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
@@ -211,7 +211,7 @@ class ReliefAtSourcePaymentsAndTaxReliefAmountControllerISpec extends Integratio
         dropPensionsDB()
         val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
           rasPensionPaymentQuestion = Some(true), totalRASPaymentsAndTaxRelief = None)
-        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)))
         authoriseAgentOrIndividual()
         urlPost(fullUrl(reliefAtSourcePaymentsAndTaxReliefAmountUrl(taxYearEOY)), body = invalidFormatForm,
           follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
@@ -246,7 +246,7 @@ class ReliefAtSourcePaymentsAndTaxReliefAmountControllerISpec extends Integratio
         dropPensionsDB()
         val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
           rasPensionPaymentQuestion = Some(true), totalRASPaymentsAndTaxRelief = None)
-        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)))
         authoriseAgentOrIndividual()
         urlPost(fullUrl(reliefAtSourcePaymentsAndTaxReliefAmountUrl(taxYearEOY)), body = overMaximumForm,
           follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
@@ -283,7 +283,7 @@ class ReliefAtSourcePaymentsAndTaxReliefAmountControllerISpec extends Integratio
         dropPensionsDB()
         val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
           rasPensionPaymentQuestion = Some(true), totalRASPaymentsAndTaxRelief = None, totalPaymentsIntoRASQuestion = Some(true))
-        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)))
         authoriseAgentOrIndividual()
         urlPost(fullUrl(reliefAtSourcePaymentsAndTaxReliefAmountUrl(taxYearEOY)), body = validForm, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))

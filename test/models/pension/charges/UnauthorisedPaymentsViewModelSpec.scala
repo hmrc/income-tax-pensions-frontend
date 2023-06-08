@@ -44,7 +44,8 @@ class UnauthorisedPaymentsViewModelSpec extends UnitTest {
       "both 'surcharge' and 'no surcharge' are false" in {
         val expected = anUnauthorisedPaymentsViewModel
           .copy(surchargeQuestion = Some(false), surchargeAmount = None, surchargeTaxAmountQuestion = None, surchargeTaxAmount = None,
-                noSurchargeQuestion = Some(false), noSurchargeAmount = None, noSurchargeTaxAmountQuestion = None, noSurchargeTaxAmount = None)
+                noSurchargeQuestion = Some(false), noSurchargeAmount = None, noSurchargeTaxAmountQuestion = None, noSurchargeTaxAmount = None,
+            ukPensionSchemesQuestion = None, pensionSchemeTaxReference = None)
         anUnauthorisedPaymentsViewModel.copyWithQuestionsApplied(Some(false), Some(false)) shouldBe expected
       }
     }

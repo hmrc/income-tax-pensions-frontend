@@ -78,7 +78,7 @@ class RemovePensionSchemeControllerISpec extends IntegrationTest with ViewHelper
           lazy val result: WSResponse = {
             dropPensionsDB()
             authoriseAgentOrIndividual(user.isAgent)
-            insertCyaData(aPensionsUserData, aUserRequest)
+            insertCyaData(aPensionsUserData)
             urlGet(fullUrl(removePensionSchemeUrl(taxYearEOY, Some(0))), user.isWelsh, follow = false,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
@@ -123,7 +123,7 @@ class RemovePensionSchemeControllerISpec extends IntegrationTest with ViewHelper
         lazy val result: WSResponse = {
           dropPensionsDB()
           authoriseAgentOrIndividual()
-          insertCyaData(aPensionsUserData, aUserRequest)
+          insertCyaData(aPensionsUserData)
           urlGet(fullUrl(removePensionSchemeUrl(taxYearEOY, None)), follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
         }
@@ -139,7 +139,7 @@ class RemovePensionSchemeControllerISpec extends IntegrationTest with ViewHelper
         lazy val result: WSResponse = {
           dropPensionsDB()
           authoriseAgentOrIndividual()
-          insertCyaData(aPensionsUserData, aUserRequest)
+          insertCyaData(aPensionsUserData)
           urlGet(fullUrl(removePensionSchemeUrl(taxYearEOY, Some(3))), follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
         }
@@ -163,7 +163,7 @@ class RemovePensionSchemeControllerISpec extends IntegrationTest with ViewHelper
           lazy val result: WSResponse = {
             dropPensionsDB()
             authoriseAgentOrIndividual()
-            insertCyaData(aPensionsUserData, aUserRequest)
+            insertCyaData(aPensionsUserData)
             urlPost(fullUrl(removePensionSchemeUrl(taxYearEOY, Some(0))), body = "", follow = false,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
@@ -184,7 +184,7 @@ class RemovePensionSchemeControllerISpec extends IntegrationTest with ViewHelper
           lazy val result: WSResponse = {
             dropPensionsDB()
             authoriseAgentOrIndividual()
-            insertCyaData(aPensionsUserData, aUserRequest)
+            insertCyaData(aPensionsUserData)
             urlPost(fullUrl(removePensionSchemeUrl(taxYearEOY, Some(7))), body = "", follow = false,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }

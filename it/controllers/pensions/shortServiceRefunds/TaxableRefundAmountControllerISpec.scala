@@ -19,7 +19,7 @@ package controllers.pensions.shortServiceRefunds
 import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import builders.PensionsUserDataBuilder
 import builders.ShortServiceRefundsViewModelBuilder.{aShortServiceRefundsViewModel, emptyShortServiceRefundsViewModel}
-import builders.UserBuilder.{aUser, aUserRequest}
+import builders.UserBuilder.aUser
 import forms.RadioButtonAmountForm
 import forms.RadioButtonAmountForm.{amount2, yesNo}
 import models.mongo.PensionsCYAModel
@@ -34,8 +34,8 @@ import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 class TaxableRefundAmountControllerISpec
   extends IntegrationTest with ViewHelpers with PensionsDatabaseHelper {
 
-  private def pensionsUsersData(isPrior: Boolean, pensionsCyaModel: PensionsCYAModel) = {
-    PensionsUserDataBuilder.aPensionsUserData.copy(isPriorSubmission = isPrior, pensions = pensionsCyaModel)
+  private def pensionsUsersData(pensionsCyaModel: PensionsCYAModel) = {
+    PensionsUserDataBuilder.aPensionsUserData.copy(isPriorSubmission = false, pensions = pensionsCyaModel)
   }
 
   override val userScenarios: Seq[UserScenario[_, _]] = Seq.empty
@@ -45,7 +45,7 @@ class TaxableRefundAmountControllerISpec
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
-        insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel))
         urlGet(fullUrl(shortServiceTaxableRefundUrl(taxYear)), !aUser.isAgent, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
       }
@@ -58,7 +58,7 @@ class TaxableRefundAmountControllerISpec
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
-        insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel))
         urlGet(fullUrl(shortServiceTaxableRefundUrl(taxYearEOY)), !aUser.isAgent, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -73,7 +73,7 @@ class TaxableRefundAmountControllerISpec
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
         val formData = Map(s" $yesNo -> true, $amount2" -> "100")
-        insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(shortServiceRefunds = emptyShortServiceRefundsViewModel)), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(shortServiceRefunds = emptyShortServiceRefundsViewModel)))
         urlPost(
           fullUrl(shortServiceTaxableRefundUrl(taxYear)),
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)),
@@ -91,7 +91,7 @@ class TaxableRefundAmountControllerISpec
         val shortServiceRefundViewModel = aShortServiceRefundsViewModel.copy(
           shortServiceRefundCharge = Some(BigDecimal("100")), shortServiceRefund = Some(true))
         val formData = Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "100")
-        insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(shortServiceRefunds = shortServiceRefundViewModel)), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(shortServiceRefunds = shortServiceRefundViewModel)))
         urlPost(
           fullUrl(shortServiceTaxableRefundUrl(taxYearEOY)),
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
@@ -109,7 +109,7 @@ class TaxableRefundAmountControllerISpec
         val shortServiceRefundViewModel = aShortServiceRefundsViewModel.copy(
           shortServiceRefundCharge = None, shortServiceRefund = Some(false))
         val formData = Map(RadioButtonAmountForm.yesNo -> "false")
-        insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(shortServiceRefunds = shortServiceRefundViewModel)), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(shortServiceRefunds = shortServiceRefundViewModel)))
         urlPost(
           fullUrl(shortServiceTaxableRefundUrl(taxYearEOY)),
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
@@ -129,7 +129,7 @@ class TaxableRefundAmountControllerISpec
         authoriseAgentOrIndividual(aUser.isAgent)
         val shortServiceRefundViewModel = aShortServiceRefundsViewModel
         val formData = Map(RadioButtonAmountForm.yesNo -> "false")
-        insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(shortServiceRefunds = shortServiceRefundViewModel)), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(shortServiceRefunds = shortServiceRefundViewModel)))
         urlPost(
           fullUrl(shortServiceTaxableRefundUrl(taxYearEOY)),
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
@@ -149,7 +149,7 @@ class TaxableRefundAmountControllerISpec
         val shortServiceRefundViewModel = aShortServiceRefundsViewModel.copy(
           shortServiceRefundCharge = Some(BigDecimal("100")), shortServiceRefund = Some(true))
         val form = Map(RadioButtonAmountForm.yesNo -> "", RadioButtonAmountForm.amount2 -> "")
-        insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(shortServiceRefunds = shortServiceRefundViewModel)), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(shortServiceRefunds = shortServiceRefundViewModel)))
         urlPost(
           fullUrl(shortServiceTaxableRefundUrl(taxYearEOY)),
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
@@ -168,7 +168,7 @@ class TaxableRefundAmountControllerISpec
         val shortServiceRefundViewModel = aShortServiceRefundsViewModel.copy(
           shortServiceRefundCharge = Some(BigDecimal("100")), shortServiceRefund = Some(true))
         val form = Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "jhvgfxk")
-        insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(shortServiceRefunds = shortServiceRefundViewModel)), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(shortServiceRefunds = shortServiceRefundViewModel)))
         urlPost(
           fullUrl(shortServiceTaxableRefundUrl(taxYearEOY)),
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),

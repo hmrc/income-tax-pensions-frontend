@@ -155,7 +155,7 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
               authoriseAgentOrIndividual(user.isAgent)
               val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(
                 aboveAnnualAllowanceQuestion = Some(true), aboveAnnualAllowance = None, reducedAnnualAllowanceQuestion = Some(true))
-              insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)), aUserRequest)
+              insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)))
               urlGet(fullUrl(amountAboveAnnualAllowanceUrl(taxYearEOY)), user.isWelsh, follow = false,
                 headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
             }
@@ -184,7 +184,7 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
               authoriseAgentOrIndividual(user.isAgent)
               val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(
                 aboveAnnualAllowanceQuestion = Some(true), aboveAnnualAllowance = Some(BigDecimal(existingAmount)), reducedAnnualAllowanceQuestion = Some(true))
-              insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)), aUserRequest)
+              insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)))
               urlGet(fullUrl(amountAboveAnnualAllowanceUrl(taxYearEOY)), user.isWelsh, follow = false,
                 headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
             }
@@ -213,7 +213,7 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
               authoriseAgentOrIndividual(user.isAgent)
               val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(
                 aboveAnnualAllowanceQuestion = Some(true), aboveAnnualAllowance = None, reducedAnnualAllowanceQuestion = Some(false))
-              insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)), aUserRequest)
+              insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)))
               urlGet(fullUrl(amountAboveAnnualAllowanceUrl(taxYearEOY)), user.isWelsh, follow = false,
                 headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
             }
@@ -242,7 +242,7 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
               authoriseAgentOrIndividual(user.isAgent)
               val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(aboveAnnualAllowanceQuestion = Some(true),
                 aboveAnnualAllowance = Some(BigDecimal(existingAmount)), reducedAnnualAllowanceQuestion = Some(false))
-              insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)), aUserRequest)
+              insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)))
               urlGet(fullUrl(amountAboveAnnualAllowanceUrl(taxYearEOY)), user.isWelsh, follow = false,
                 headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
             }
@@ -273,7 +273,7 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
         authoriseAgentOrIndividual()
         val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(
           aboveAnnualAllowanceQuestion = None, aboveAnnualAllowance = None)
-        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)))
         urlGet(fullUrl(amountAboveAnnualAllowanceUrl(taxYearEOY)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -290,7 +290,7 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
         authoriseAgentOrIndividual()
         val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(
           aboveAnnualAllowanceQuestion = Some(false), aboveAnnualAllowance = None)
-        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)))
         urlGet(fullUrl(amountAboveAnnualAllowanceUrl(taxYearEOY)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -322,7 +322,7 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
         authoriseAgentOrIndividual()
         val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(
           aboveAnnualAllowanceQuestion = Some(true), reducedAnnualAllowanceQuestion = None)
-        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)))
 
         urlGet(fullUrl(aboveAnnualAllowanceUrl(taxYearEOY)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
@@ -352,7 +352,7 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
               dropPensionsDB()
               val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(
                 aboveAnnualAllowanceQuestion = Some(true), aboveAnnualAllowance = None, reducedAnnualAllowanceQuestion = Some(true))
-              insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)), aUserRequest)
+              insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)))
               authoriseAgentOrIndividual(user.isAgent)
               urlPost(fullUrl(amountAboveAnnualAllowanceUrl(taxYearEOY)), body = emptyForm, welsh = user.isWelsh,
                 follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
@@ -386,7 +386,7 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
               dropPensionsDB()
               val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(
                 aboveAnnualAllowanceQuestion = Some(true), aboveAnnualAllowance = None, reducedAnnualAllowanceQuestion = Some(true))
-              insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)), aUserRequest)
+              insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)))
               authoriseAgentOrIndividual(user.isAgent)
               urlPost(fullUrl(amountAboveAnnualAllowanceUrl(taxYearEOY)), body = invalidFormatForm, welsh = user.isWelsh,
                 follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
@@ -421,7 +421,7 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
               dropPensionsDB()
               val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(
                 aboveAnnualAllowanceQuestion = Some(true), aboveAnnualAllowance = None, reducedAnnualAllowanceQuestion = Some(true))
-              insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)), aUserRequest)
+              insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)))
               authoriseAgentOrIndividual(user.isAgent)
               urlPost(fullUrl(amountAboveAnnualAllowanceUrl(taxYearEOY)), body = overMaximumForm, welsh = user.isWelsh, follow = false,
                 headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
@@ -455,7 +455,7 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
               dropPensionsDB()
               val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(
                 aboveAnnualAllowanceQuestion = Some(true), aboveAnnualAllowance = None, reducedAnnualAllowanceQuestion = Some(false))
-              insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)), aUserRequest)
+              insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)))
               authoriseAgentOrIndividual(user.isAgent)
               urlPost(fullUrl(amountAboveAnnualAllowanceUrl(taxYearEOY)), body = emptyForm, welsh = user.isWelsh,
                 follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
@@ -489,7 +489,7 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
               dropPensionsDB()
               val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(
                 aboveAnnualAllowanceQuestion = Some(true), aboveAnnualAllowance = None, reducedAnnualAllowanceQuestion = Some(false))
-              insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)), aUserRequest)
+              insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)))
               authoriseAgentOrIndividual(user.isAgent)
               urlPost(fullUrl(amountAboveAnnualAllowanceUrl(taxYearEOY)), body = invalidFormatForm, welsh = user.isWelsh,
                 follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
@@ -524,7 +524,7 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
               dropPensionsDB()
               val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(
                 aboveAnnualAllowanceQuestion = Some(true), aboveAnnualAllowance = None, reducedAnnualAllowanceQuestion = Some(false))
-              insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)), aUserRequest)
+              insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)))
               authoriseAgentOrIndividual(user.isAgent)
               urlPost(fullUrl(amountAboveAnnualAllowanceUrl(taxYearEOY)), body = overMaximumForm, welsh = user.isWelsh, follow = false,
                 headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
@@ -561,7 +561,7 @@ class AboveReducedAnnualAllowanceAmountControllerISpec extends IntegrationTest w
         dropPensionsDB()
         val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(
           aboveAnnualAllowanceQuestion = Some(true), aboveAnnualAllowance = None)
-        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)))
         authoriseAgentOrIndividual()
         urlPost(fullUrl(amountAboveAnnualAllowanceUrl(taxYearEOY)),
           body = validForm, follow = false,

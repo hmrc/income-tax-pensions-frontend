@@ -97,11 +97,12 @@ class PensionsChargesServiceSpec extends UnitTest
       mockFind(taxYear, aUser, Right(Option(unauthorisedSessionUserData)))
       mockFind(aUser.nino, taxYear, IncomeTaxUserData(Some(anAllPensionsData)))
 
-      mockSavePensionChargesSessionData(nino, taxYear, unauthorisedPaymentsRequestModel, Left(APIErrorModel(BAD_REQUEST, APIErrorBodyModel("FAILED", "failed"))))
+      mockSavePensionChargesSessionData(nino, taxYear, unauthorisedPaymentsRequestModel,
+        Left(APIErrorModel(BAD_REQUEST, APIErrorBodyModel("FAILED", "failed"))))
       mockCreateOrUpdate(userWithEmptyCya, Left(MongoError("Failed to connect to database")))
 
       val result = await(pensionChargesService.saveUnauthorisedViewModel(aUser, taxYear))
-      result shouldBe Left(MongoError("Failed to connect to database"))
+      result shouldBe Left(APIErrorModel(BAD_REQUEST, APIErrorBodyModel("FAILED", "failed")))
     }
 
     "return Left(DataNotUpdated) when data could not be updated" in {

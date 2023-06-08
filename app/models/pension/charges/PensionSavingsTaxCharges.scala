@@ -16,7 +16,7 @@
 
 package models.pension.charges
 
-import models.pension.{PensionChargesRequestSubModel, PensionRequestSubModel}
+import models.pension.PensionChargesRequestSubModel
 import play.api.libs.json.{Json, OFormat}
 import utils.EncryptedValue
 

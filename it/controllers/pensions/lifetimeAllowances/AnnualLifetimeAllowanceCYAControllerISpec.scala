@@ -30,7 +30,7 @@ import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import builders.PensionsUserDataBuilder
 import builders.PensionsUserDataBuilder.{aPensionsUserData, pensionsUserDataWithAnnualAndLifetimeAllowance}
 import builders.UnauthorisedPaymentsViewModelBuilder.anUnauthorisedPaymentsViewModel
-import builders.UserBuilder.aUserRequest
+import controllers.pensions.lifetimeAllowances.routes._
 import models.mongo.{PensionsCYAModel, PensionsUserData}
 import models.pension.charges.PensionAnnualAllowancesViewModel
 import models.pension.reliefs.PaymentsIntoPensionViewModel
@@ -41,7 +41,6 @@ import play.api.Logging
 import play.api.http.HeaderNames
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import routes._
 import utils.PageUrls.PensionLifetimeAllowance.checkAnnualLifetimeAllowanceCYA
 import utils.PageUrls.fullUrl
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
@@ -59,8 +58,8 @@ class AnnualLifetimeAllowanceCYAControllerISpec extends
 
   // TODO: Duplicates UnauthorisedPaymentsCYAControllerISpec. Should we have a single Links object?
   object ChangeLinksUnauthorisedPayments {
-    import controllers.pensions.unauthorisedPayments.routes._
     import controllers.pensions.annualAllowances.routes._
+    import controllers.pensions.unauthorisedPayments.routes._
     
     val unauthorisedPayments: String = UnauthorisedPaymentsController.show(taxYear).url
     val amountSurcharged: String = SurchargeAmountController.show(taxYear).url
@@ -282,7 +281,7 @@ class AnnualLifetimeAllowanceCYAControllerISpec extends
             authoriseAgentOrIndividual(user.isAgent)
             dropPensionsDB()
             insertCyaData(pensionsUserDataWithAnnualAndLifetimeAllowance(
-              aPensionAnnualAllowanceViewModel, aPensionLifetimeAllowanceViewModel, isPriorSubmission = false), aUserRequest)
+              aPensionAnnualAllowanceViewModel, aPensionLifetimeAllowanceViewModel, isPriorSubmission = false))
             userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYear)
             urlGet(fullUrl(checkAnnualLifetimeAllowanceCYA(taxYear)), welsh = user.isWelsh,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
@@ -361,7 +360,7 @@ class AnnualLifetimeAllowanceCYAControllerISpec extends
             authoriseAgentOrIndividual(user.isAgent)
             dropPensionsDB()
             insertCyaData(pensionsUserDataWithAnnualAndLifetimeAllowance(aPensionAnnualAllowanceViewModel, aPensionLifetimeAllowanceViewModel,
-              isPriorSubmission = false), aUserRequest)
+              isPriorSubmission = false))
             userDataStub(anIncomeTaxUserData.copy(pensions = Some(updatedAllPensionsData)), nino, taxYear)
             urlGet(fullUrl(checkAnnualLifetimeAllowanceCYA(taxYear)), welsh = user.isWelsh,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
@@ -440,7 +439,7 @@ class AnnualLifetimeAllowanceCYAControllerISpec extends
           dropPensionsDB()
           userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYear)
           insertCyaData(aPensionsUserData.copy(pensions = aPensionsCYAModel.copy(paymentsIntoPension = cyaDataIncomplete),
-            taxYear = taxYear), aUserRequest)
+            taxYear = taxYear))
           authoriseAgentOrIndividual()
           urlPost(fullUrl(checkAnnualLifetimeAllowanceCYA(taxYear)), form, follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
@@ -476,7 +475,7 @@ class AnnualLifetimeAllowanceCYAControllerISpec extends
             incomeFromPensions = anIncomeFromPensionsViewModel,
             unauthorisedPayments = anUnauthorisedPaymentsViewModel,
             paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel
-          ), taxYear = taxYear), aUserRequest)
+          ), taxYear = taxYear))
           authoriseAgentOrIndividual()
           urlPost(fullUrl(checkAnnualLifetimeAllowanceCYA(taxYear)), form, follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
