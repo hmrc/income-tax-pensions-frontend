@@ -91,7 +91,7 @@ common.yourP60.agent = P60 eich cleient
 common.aboutGeneralIncreases.agent = y llythyr ’Ynglŷn â’r cynnydd cyffredinol mewn budd-daliadau’ a anfonwyd at eich cleient gan y Gwasanaeth Pensiwn
 
 common.employerFinancedRetirementScheme.caption = Cynlluniau buddiannau ymddeol a ariannwyd gan gyflogwyr ar gyfer 6 Ebrill {0} i 5 Ebrill {1}
-
+common.addAnotherPstrLink = Add another Pensions Scheme Tax Reference
 
 ################# Common lifetime allowance #################
 
@@ -476,9 +476,8 @@ unauthorisedPayments.pension.pensionSchemeTaxReference.error.incorrectFormat.age
 
 #Pension Scheme Tax Reference Summary Page
 
-annualAllowance.pstrSummary.title = Crynodeb Cyfeirnod Treth y Cynllun Pensiwn (PSTR)
-annualAllowance.addAnotherPstrLink = Ychwanegu PSTR arall
-annualAllowance.addPstrLink = Ychwanegu PSTR
+annualAllowance.pstrSummary.title = Pension schemes that paid or agreed to pay the annual allowance tax
+annualAllowance.addPstrLink = Add a PSTR
 
 #################       INCOME FROM PENSIONS        ########################################
 
@@ -841,7 +840,6 @@ employerFinancedRetirementScheme.benefitsFromScheme.error.agent = Dewiswch ‘Ia
 
 #Unauthorised payments from UK pensions schemes
 unauthorisedPayments.pensionSchemeDetails.title = Taliadau heb awdurdod o gynlluniau pensiwn yn y DU
-unauthorisedPayments.pensionSchemeDetails.addAnotherPensionSchemeTaxReference = Ychwanegu Cyfeirnod Treth ar gyfer Cynllun Pensiwn arall
 unauthorisedPayments.pensionSchemeDetails.addPensionSchemeTaxReference = Ychwanegu Cyfeirnod Treth ar gyfer Cynllun Pensiwn
 
 #Remove unauthorised payments from UK pensions schemes

@@ -36,7 +36,7 @@
     @if(pensionIncomeList.isEmpty){
         <p class="govuk-body">@link(UnauthorisedPensionSchemeTaxReferenceController.show(taxYear, None).url, "unauthorisedPayments.pensionSchemeDetails.addPensionSchemeTaxReference", Some("add-pension-income-link"), fullStop = false)</p>
     } else {
-        <p class="govuk-body">@link(UnauthorisedPensionSchemeTaxReferenceController.show(taxYear, None).url, "unauthorisedPayments.pensionSchemeDetails.addAnotherPensionSchemeTaxReference", Some("add-another-pension-link"), fullStop = false)</p>
+        <p class="govuk-body">@link(UnauthorisedPensionSchemeTaxReferenceController.show(taxYear, None).url, "common.addAnotherPstrLink", Some("add-another-pension-link"), fullStop = false)</p>
     }
 }
 
