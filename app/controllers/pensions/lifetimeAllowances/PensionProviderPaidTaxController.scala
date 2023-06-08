@@ -49,7 +49,18 @@ class PensionProviderPaidTaxController @Inject()(messagesControllerComponents: M
   override def redirectWhenNoSessionData(taxYear: Int): Result = redirectToSummaryPage(taxYear)
 
   override def redirectAfterUpdatingSessionData(pensionsUserData: PensionsUserData, taxYear: Int): Result =
-    Redirect(controllers.pensions.lifetimeAllowances.routes.PensionProviderPaidTaxController.show(taxYear))
+    redirectToNext(pensionsUserData, taxYear)
+
+  private def redirectToNext(pensionsUserData: PensionsUserData, taxYear: Int) = {
+    val pstrs = pensionsUserData.pensions.pensionLifetimeAllowances.pensionSchemeTaxReferences
+    if(pstrs.exists(_.nonEmpty)) {
+      Redirect(controllers.pensions.annualAllowances.routes.PstrSummaryController.show(taxYear: Int))
+    }
+    else {
+      Redirect(controllers.pensions.lifetimeAllowances.routes.PensionSchemeTaxReferenceLifetimeController.show(taxYear, None))
+    }
+
+  }
 
   override def prepareView(pensionsUserData: PensionsUserData, taxYear: Int)
                           (implicit request: AuthorisationRequest[AnyContent]): Html = pensionProviderPaidTaxView(populateForm(pensionsUserData), taxYear)
