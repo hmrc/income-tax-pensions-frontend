@@ -91,7 +91,7 @@ common.yourP60.agent = P60 eich cleient
 common.aboutGeneralIncreases.agent = y llythyr ’Ynglŷn â’r cynnydd cyffredinol mewn budd-daliadau’ a anfonwyd at eich cleient gan y Gwasanaeth Pensiwn
 
 common.employerFinancedRetirementScheme.caption = Cynlluniau buddiannau ymddeol a ariannwyd gan gyflogwyr ar gyfer 6 Ebrill {0} i 5 Ebrill {1}
-common.addAnotherPstrLink = Add another Pensions Scheme Tax Reference
+common.addAnotherPstrLink = Ychwanegu Cyfeirnod Treth ar gyfer Cynllun Pensiwn arall
 
 ################# Common lifetime allowance #################
 
