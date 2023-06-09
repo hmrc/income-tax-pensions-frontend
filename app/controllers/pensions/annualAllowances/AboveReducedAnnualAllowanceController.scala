@@ -17,8 +17,7 @@
 package controllers.pensions.annualAllowances
 
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.annualAllowances.routes.ReducedAnnualAllowanceController
-import controllers.pensions.lifetimeAllowances.routes.PensionProviderPaidTaxController
+import controllers.pensions.annualAllowances.routes.{AboveReducedAnnualAllowanceController, ReducedAnnualAllowanceController}
 import controllers.pensions.routes.PensionsSummaryController
 import controllers.predicates.ActionsProvider
 import forms.FormsProvider
@@ -56,7 +55,7 @@ class AboveReducedAnnualAllowanceController @Inject()(actionsProvider: ActionsPr
 
           (aboveAnnualAllowanceQuestion, amount) match {
             case (Some(yesNo), amount) => Future.successful(Ok(view(
-              formsProvider.aboveAnnualAllowanceForm(sessionData.user, isReduced).fill(yesNo, amount), taxYear, isReduced)))
+              formsProvider.aboveAnnualAllowanceForm(sessionData.user, isReduced).fill((yesNo, amount): (Boolean, Option[BigDecimal])), taxYear, isReduced)))
             case _ =>
               Future.successful(Ok(view(formsProvider.aboveAnnualAllowanceForm(sessionData.user, isReduced), taxYear, isReduced)))
           }
@@ -103,7 +102,8 @@ class AboveReducedAnnualAllowanceController @Inject()(actionsProvider: ActionsPr
     )(errorHandler.internalServerError()) {
       Redirect(
         if (yesNo) {
-          PensionProviderPaidTaxController.show(taxYear)
+          //TODO redirect to ANNUAL PensionProviderPaidTax page
+          AboveReducedAnnualAllowanceController.show(taxYear)
         } else {
           //TODO redirect to check your annual allowance page
           PensionsSummaryController.show(taxYear)
