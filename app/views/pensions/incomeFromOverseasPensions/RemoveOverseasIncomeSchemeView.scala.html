@@ -1,18 +1,18 @@
 @*
-* Copyright 2023 HM Revenue & Customs
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*@
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
 
 @import controllers.pensions.incomeFromOverseasPensions.routes._
 @import models.requests.UserSessionDataRequest
@@ -34,15 +34,15 @@
 
 @(taxYear: Int, pensionSchemeName: String, pensionSchemeIndex: Option[Int])(implicit messages: Messages, appConfig: AppConfig, request: UserSessionDataRequest[_])
 
-@titleText = @{messages("common.removePensionScheme.title", pensionSchemeName)}
+@titleText = @{messages("common.removePensionScheme.overseas.title")}
 
 @contentHtml = {
     <p class="govuk-body">
         @{messages(s"common.removePensionScheme.p1")}
         <ul class="govuk-list govuk-list--bullet">
-            <li>@{messages(s"common.removePensionScheme.p1.bullet1")}</li>
-            <li>@{messages(s"common.removePensionScheme.p1.bullet2")}</li>
-            <li>@{messages(s"common.removePensionScheme.p1.bullet3")}</li>
+            <li>@{messages(s"common.removePensionScheme.p1.bullet4")}</li>
+            <li>@{messages(s"common.removePensionScheme.p1.bullet5")}</li>
+            <li>@{messages(s"common.removePensionScheme.p1.bullet6")}</li>
         </ul>
     </p>
 }
@@ -52,7 +52,7 @@
     @formWithCsrf(action = controllers.pensions.incomeFromOverseasPensions.routes.RemoveOverseasIncomeSchemeController.submit(taxYear, pensionSchemeIndex)) {
         @heading(titleText, Some(messages("common.incomeFromOverseasPensions.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-2")
         @contentHtml
-        <div class="govuk-button-group">
+        <div class="govuk-button-group govuk-!-margin-bottom-9">
             @govUkButton(Button(
                 attributes = Map("data-module" -> "govuk-button", "id" -> "remove-pension-button-id"),
                 preventDoubleClick = Some(true),

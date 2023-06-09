@@ -45,6 +45,22 @@ object IncomeFromOverseasPensionsViewModelBuilder {
       )
     )
   )
+
+  val anIncomeFromOverseasPensionsSingleSchemeViewModel: IncomeFromOverseasPensionsViewModel = IncomeFromOverseasPensionsViewModel(
+    paymentsFromOverseasPensionsQuestion = Some(true),
+    overseasIncomePensionSchemes = Seq(
+      PensionScheme(
+        alphaThreeCode = Some("DEU"),
+        alphaTwoCode = Some("DE"),
+        pensionPaymentAmount = Some(2000.00),
+        pensionPaymentTaxPaid = Some(400.00),
+        specialWithholdingTaxQuestion = Some(true),
+        specialWithholdingTaxAmount = Some(400.00),
+        foreignTaxCreditReliefQuestion = Some(true),
+        taxableAmount = Some(2000.00)
+      )
+    )
+  )
   
   val anIncomeFromOverseasPensionsWithFalseFtcrValueViewModel: IncomeFromOverseasPensionsViewModel = IncomeFromOverseasPensionsViewModel(
     paymentsFromOverseasPensionsQuestion = Some(true),

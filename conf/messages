@@ -133,6 +133,9 @@ common.removePensionScheme.p1 = This will remove:
 common.removePensionScheme.p1.bullet1 = The name of the pension scheme
 common.removePensionScheme.p1.bullet2 = Pensions scheme tax reference
 common.removePensionScheme.p1.bullet3 = Pensions provider address
+common.removePensionScheme.p1.bullet4 = the name of the pension scheme
+common.removePensionScheme.p1.bullet5 = the amount paid before tax
+common.removePensionScheme.p1.bullet6 = the tax taken off
 
 #################       Error messages        ########################################
 

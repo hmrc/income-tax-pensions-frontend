@@ -264,6 +264,11 @@ object PageUrls extends IntegrationTest {
     def countrySummaryListControllerUrl(taxYear: Int): String =
       s"$appUrl/$taxYear/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-country-summary"
 
+    def removeOverseasIncomeSchemeControllerUrl(taxYear: Int, index: Option[Int]): String = {
+      val baseUrl = s"$appUrl/$taxYear/overseas-pensions/income-from-overseas-pensions/remove-overseas-income-scheme"
+      index.fold(baseUrl)(idx => s"$baseUrl?index=$idx")
+    }
+
     def overseasPensionsSchemeSummaryUrl(taxYear: Int, index: Int): String =
       s"$appUrl/$taxYear/overseas-pensions/income-from-overseas-pensions/pension-scheme-summary?index=$index"
 
