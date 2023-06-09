@@ -477,7 +477,7 @@ unauthorisedPayments.pension.pensionSchemeTaxReference.error.incorrectFormat.age
 #Pension Scheme Tax Reference Summary Page
 
 annualAllowance.pstrSummary.title = Pension schemes that paid or agreed to pay the annual allowance tax
-annualAllowance.addPstrLink = Add a PSTR
+annualAllowance.addPstrLink = Ychwanegu PSTR
 
 #################       INCOME FROM PENSIONS        ########################################
 
