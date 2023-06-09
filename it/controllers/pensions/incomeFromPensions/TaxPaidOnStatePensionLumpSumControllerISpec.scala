@@ -40,7 +40,7 @@ class TaxPaidOnStatePensionLumpSumControllerISpec extends IntegrationTest with B
         dropPensionsDB()
         val pensionsViewModel = anIncomeFromPensionsViewModel.copy(statePensionLumpSum =
           Some(anStateBenefitViewModelOne.copy(taxPaidQuestion = None)))
-        insertCyaData(pensionsUserDataWithIncomeFromPensions(pensionsViewModel), aUserRequest)
+        insertCyaData(pensionsUserDataWithIncomeFromPensions(pensionsViewModel))
         urlGet(fullUrl(taxOnLumpSumUrl(taxYearEOY)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -54,7 +54,7 @@ class TaxPaidOnStatePensionLumpSumControllerISpec extends IntegrationTest with B
         dropPensionsDB()
         val pensionsViewModel = anIncomeFromPensionsViewModel.copy(statePensionLumpSum =
           Some(anStateBenefitViewModelOne.copy(taxPaidQuestion = Some(true), taxPaid = Some(BigDecimal("100")))))
-        insertCyaData(pensionsUserDataWithIncomeFromPensions(pensionsViewModel), aUserRequest)
+        insertCyaData(pensionsUserDataWithIncomeFromPensions(pensionsViewModel))
         authoriseAgentOrIndividual(aUser.isAgent)
         urlGet(fullUrl(taxOnLumpSumUrl(taxYearEOY)), headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -72,7 +72,7 @@ class TaxPaidOnStatePensionLumpSumControllerISpec extends IntegrationTest with B
           Some(anStateBenefitViewModelOne.copy(taxPaidQuestion = None)))
 
         authoriseAgentOrIndividual(aUser.isAgent)
-        insertCyaData(pensionsUserDataWithIncomeFromPensions(pensionsViewModel), aUserRequest)
+        insertCyaData(pensionsUserDataWithIncomeFromPensions(pensionsViewModel))
         urlPost(fullUrl(taxOnLumpSumUrl(taxYearEOY)), body = form, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -90,7 +90,7 @@ class TaxPaidOnStatePensionLumpSumControllerISpec extends IntegrationTest with B
 
         val pensionsViewModel = anIncomeFromPensionsViewModel.copy(statePensionLumpSum =
           Some(anStateBenefitViewModelOne.copy(taxPaidQuestion = None)))
-        insertCyaData(pensionsUserDataWithIncomeFromPensions(pensionsViewModel), aUserRequest)
+        insertCyaData(pensionsUserDataWithIncomeFromPensions(pensionsViewModel))
 
         urlPost(fullUrl(taxOnLumpSumUrl(taxYearEOY)), body = form, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
@@ -107,7 +107,7 @@ class TaxPaidOnStatePensionLumpSumControllerISpec extends IntegrationTest with B
 
         val pensionsViewModel = anIncomeFromPensionsViewModel.copy(statePensionLumpSum =
           Some(anStateBenefitViewModelOne.copy(taxPaidQuestion = None)))
-        insertCyaData(pensionsUserDataWithIncomeFromPensions(pensionsViewModel), aUserRequest)
+        insertCyaData(pensionsUserDataWithIncomeFromPensions(pensionsViewModel))
 
         authoriseAgentOrIndividual()
 
@@ -128,7 +128,7 @@ class TaxPaidOnStatePensionLumpSumControllerISpec extends IntegrationTest with B
 
         val pensionsViewModel = anIncomeFromPensionsViewModel.copy(statePensionLumpSum =
           Some(anStateBenefitViewModelOne.copy(taxPaidQuestion = None)))
-        insertCyaData(pensionsUserDataWithIncomeFromPensions(pensionsViewModel), aUserRequest)
+        insertCyaData(pensionsUserDataWithIncomeFromPensions(pensionsViewModel))
 
         urlPost(
           fullUrl(taxOnLumpSumUrl(taxYearEOY)),
@@ -155,7 +155,7 @@ class TaxPaidOnStatePensionLumpSumControllerISpec extends IntegrationTest with B
 
         val pensionsViewModel = anIncomeFromPensionsViewModel.copy(statePensionLumpSum =
           Some(anStateBenefitViewModelOne.copy(taxPaidQuestion = Some(true), taxPaid = Some(44.55))))
-        insertCyaData(pensionsUserDataWithIncomeFromPensions(pensionsViewModel), aUserRequest)
+        insertCyaData(pensionsUserDataWithIncomeFromPensions(pensionsViewModel))
 
         urlPost(fullUrl(taxOnLumpSumUrl(taxYearEOY)), body = form, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))

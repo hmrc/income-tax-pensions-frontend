@@ -55,7 +55,7 @@ class RetirementAnnuityControllerISpec extends IntegrationTest with ViewHelpers 
         dropPensionsDB()
         authoriseAgentOrIndividual()
         val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(retirementAnnuityContractPaymentsQuestion = None)
-        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)))
         urlGet(fullUrl(retirementAnnuityUrl(taxYearEOY)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -84,7 +84,7 @@ class RetirementAnnuityControllerISpec extends IntegrationTest with ViewHelpers 
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual()
-        insertCyaData(pensionsUsersData(aPensionsCYAModel), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel))
         urlGet(fullUrl(retirementAnnuityUrl(taxYearEOY)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -116,7 +116,7 @@ class RetirementAnnuityControllerISpec extends IntegrationTest with ViewHelpers 
         dropPensionsDB()
         authoriseAgentOrIndividual()
         val paymentsIntoPensionsViewModel = aPaymentsIntoPensionViewModel.copy(retirementAnnuityContractPaymentsQuestion = Some(false))
-        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPensionsViewModel)), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPensionsViewModel)))
         urlGet(fullUrl(retirementAnnuityUrl(taxYearEOY)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -165,7 +165,7 @@ class RetirementAnnuityControllerISpec extends IntegrationTest with ViewHelpers 
       lazy val result: WSResponse = {
         dropPensionsDB()
         insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(
-                  aPaymentsIntoPensionViewModel.copy(retirementAnnuityContractPaymentsQuestion = None))), aUserRequest)
+                  aPaymentsIntoPensionViewModel.copy(retirementAnnuityContractPaymentsQuestion = None))))
         authoriseAgentOrIndividual()
         urlPost(fullUrl(retirementAnnuityUrl(taxYearEOY)), body = form, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
@@ -203,7 +203,7 @@ class RetirementAnnuityControllerISpec extends IntegrationTest with ViewHelpers 
         userDataStub(anIncomeTaxUserData, nino, taxYearEOY)
         val paymentsIntoPensionsViewModel = aPaymentsIntoPensionViewModel.copy(
           retirementAnnuityContractPaymentsQuestion = Some(false), totalRetirementAnnuityContractPayments = None)
-        insertCyaData(pensionsUsersData(paymentsIntoPensionOnlyCYAModel(paymentsIntoPensionsViewModel)), aUserRequest)
+        insertCyaData(pensionsUsersData(paymentsIntoPensionOnlyCYAModel(paymentsIntoPensionsViewModel)))
         urlPost(fullUrl(retirementAnnuityUrl(taxYearEOY)), body = form, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -228,7 +228,7 @@ class RetirementAnnuityControllerISpec extends IntegrationTest with ViewHelpers 
         userDataStub(anIncomeTaxUserData, nino, taxYearEOY)
         val paymentsIntoPensionsViewModel = aPaymentsIntoPensionViewModel.copy(
           retirementAnnuityContractPaymentsQuestion = Some(true), workplacePensionPaymentsQuestion = None)
-        insertCyaData(pensionsUserDataWithPaymentsIntoPensions(paymentsIntoPensionsViewModel), aUserRequest)
+        insertCyaData(pensionsUserDataWithPaymentsIntoPensions(paymentsIntoPensionsViewModel))
         urlPost(fullUrl(retirementAnnuityUrl(taxYearEOY)), body = form, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -253,7 +253,7 @@ class RetirementAnnuityControllerISpec extends IntegrationTest with ViewHelpers 
         userDataStub(anIncomeTaxUserData, nino, taxYearEOY)
         val paymentsIntoPensionsViewModel = aPaymentsIntoPensionViewModel.copy(
           retirementAnnuityContractPaymentsQuestion = Some(true))
-        insertCyaData(pensionsUserDataWithPaymentsIntoPensions(paymentsIntoPensionsViewModel), aUserRequest)
+        insertCyaData(pensionsUserDataWithPaymentsIntoPensions(paymentsIntoPensionsViewModel))
         urlPost(fullUrl(retirementAnnuityUrl(taxYearEOY)), body = form, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }

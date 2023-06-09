@@ -16,6 +16,7 @@
 
 package models.pension.charges
 
+import models.pension.PensionChargesRequestSubModel
 import play.api.libs.json.{Json, OFormat}
 import utils.EncryptedValue
 
@@ -24,7 +25,9 @@ case class PensionSavingsTaxCharges(pensionSchemeTaxReference: Option[Seq[String
                                     benefitInExcessOfLifetimeAllowance: Option[LifetimeAllowance],
                                     isAnnualAllowanceReduced: Boolean,
                                     taperedAnnualAllowance: Option[Boolean],
-                                    moneyPurchasedAllowance: Option[Boolean])
+                                    moneyPurchasedAllowance: Option[Boolean]) extends PensionChargesRequestSubModel {
+  override def isEmpty: Boolean = false
+}
 
 object PensionSavingsTaxCharges {
   implicit val format: OFormat[PensionSavingsTaxCharges] = Json.format[PensionSavingsTaxCharges]

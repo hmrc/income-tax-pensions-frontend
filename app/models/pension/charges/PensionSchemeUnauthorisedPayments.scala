@@ -16,12 +16,15 @@
 
 package models.pension.charges
 
+import models.pension.PensionChargesRequestSubModel
 import play.api.libs.json.{Json, OFormat}
 import utils.EncryptedValue
 
 case class PensionSchemeUnauthorisedPayments(pensionSchemeTaxReference: Option[Seq[String]],
                                              surcharge: Option[Charge],
-                                             noSurcharge: Option[Charge])
+                                             noSurcharge: Option[Charge]) extends PensionChargesRequestSubModel {
+  override def isEmpty: Boolean = this.productIterator.forall(_ == None)
+}
 
 object PensionSchemeUnauthorisedPayments {
   implicit val format: OFormat[PensionSchemeUnauthorisedPayments] = Json.format[PensionSchemeUnauthorisedPayments]

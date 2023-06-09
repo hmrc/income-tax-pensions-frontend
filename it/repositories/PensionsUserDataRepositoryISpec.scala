@@ -21,7 +21,7 @@ import com.mongodb.MongoTimeoutException
 import common.UUID
 import models.User
 import models.mongo._
-import models.pension.charges.{IncomeFromOverseasPensionsViewModel, PaymentsIntoOverseasPensionsViewModel, PensionAnnualAllowancesViewModel, PensionLifetimeAllowancesViewModel, ShortServiceRefundsViewModel, TransfersIntoOverseasPensionsViewModel, UnauthorisedPaymentsViewModel}
+import models.pension.charges._
 import models.pension.reliefs.PaymentsIntoPensionViewModel
 import models.pension.statebenefits.IncomeFromPensionsViewModel
 import org.joda.time.{DateTime, DateTimeZone}
@@ -50,7 +50,7 @@ class PensionsUserDataRepositoryISpec extends IntegrationTest with FutureAwaits 
 
   class EmptyDatabase {
     await(repo.collection.drop().toFuture())
-    await(repo.ensureIndexes)
+    await(repo.ensureIndexes())
     count mustBe 0
   }
 

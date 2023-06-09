@@ -129,7 +129,7 @@ class PensionSchemeTaxReferenceControllerISpec extends IntegrationTest with Befo
           implicit lazy val result: WSResponse = {
             authoriseAgentOrIndividual(user.isAgent)
             dropPensionsDB()
-            insertCyaData(anPensionsUserDataEmptyCya, aUserRequest)
+            insertCyaData(anPensionsUserDataEmptyCya)
             urlGet(fullUrl(pensionSchemeTaxReferenceUrl(taxYearEOY)), user.isWelsh, follow = false,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
@@ -159,7 +159,7 @@ class PensionSchemeTaxReferenceControllerISpec extends IntegrationTest with Befo
           implicit lazy val result: WSResponse = {
             dropPensionsDB()
             val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(pensionSchemeTaxReferences = Some(Seq(taxSchemeRef)))
-            insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel), aUserRequest)
+            insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel))
             authoriseAgentOrIndividual(user.isAgent)
             urlGet(fullUrl(pensionSchemeTaxReferenceUrl(taxYearEOY, index)), user.isWelsh,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
@@ -190,7 +190,7 @@ class PensionSchemeTaxReferenceControllerISpec extends IntegrationTest with Befo
           implicit lazy val result: WSResponse = {
             dropPensionsDB()
             val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(pensionSchemeTaxReferences = Some(Seq(taxSchemeRef)))
-            insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel), aUserRequest)
+            insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel))
             authoriseAgentOrIndividual(user.isAgent)
             urlGet(fullUrl(pensionSchemeTaxReferenceUrl(taxYearEOY, index)), user.isWelsh,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
@@ -221,7 +221,7 @@ class PensionSchemeTaxReferenceControllerISpec extends IntegrationTest with Befo
         dropPensionsDB()
         authoriseAgentOrIndividual()
         val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(pensionSchemeTaxReferences = Some(Seq("12345678AB")))
-        insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel), aUserRequest)
+        insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel))
         urlGet(fullUrl(pensionSchemeTaxReferenceUrl(taxYearEOY, 2)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -260,7 +260,7 @@ class PensionSchemeTaxReferenceControllerISpec extends IntegrationTest with Befo
           lazy val result: WSResponse = {
             dropPensionsDB()
             authoriseAgentOrIndividual(user.isAgent)
-            insertCyaData(aPensionsUserData, aUserRequest)
+            insertCyaData(aPensionsUserData)
             urlPost(fullUrl(pensionSchemeTaxReferenceUrl(taxYearEOY)), body = form, follow = false, welsh = user.isWelsh,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
@@ -291,7 +291,7 @@ class PensionSchemeTaxReferenceControllerISpec extends IntegrationTest with Befo
           lazy val result: WSResponse = {
             dropPensionsDB()
             authoriseAgentOrIndividual(user.isAgent)
-            insertCyaData(aPensionsUserData, aUserRequest)
+            insertCyaData(aPensionsUserData)
             urlPost(fullUrl(pensionSchemeTaxReferenceUrl(taxYearEOY)), body = form, follow = false, welsh = user.isWelsh,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
@@ -326,7 +326,7 @@ class PensionSchemeTaxReferenceControllerISpec extends IntegrationTest with Befo
         dropPensionsDB()
         authoriseAgentOrIndividual()
         val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(pensionSchemeTaxReferences = Some(Seq.empty))
-        insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel), aUserRequest)
+        insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel))
         urlPost(fullUrl(pensionSchemeTaxReferenceUrl(taxYearEOY)), body = form, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -350,7 +350,7 @@ class PensionSchemeTaxReferenceControllerISpec extends IntegrationTest with Befo
         dropPensionsDB()
         authoriseAgentOrIndividual()
         val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(pensionSchemeTaxReferences = Some(Seq("12345678RB")))
-        insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel), aUserRequest)
+        insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel))
         urlPost(fullUrl(pensionSchemeTaxReferenceUrl(taxYearEOY, 0)), body = form, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -374,7 +374,7 @@ class PensionSchemeTaxReferenceControllerISpec extends IntegrationTest with Befo
         dropPensionsDB()
         authoriseAgentOrIndividual()
         val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(pensionSchemeTaxReferences = Some(Seq("12345678RB", "12345678RC")))
-        insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel), aUserRequest)
+        insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel))
         urlPost(fullUrl(pensionSchemeTaxReferenceUrl(taxYearEOY)), body = form, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -398,7 +398,7 @@ class PensionSchemeTaxReferenceControllerISpec extends IntegrationTest with Befo
         dropPensionsDB()
         authoriseAgentOrIndividual()
         val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(pensionSchemeTaxReferences = Some(Seq("12345678RB")))
-        insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel), aUserRequest)
+        insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel))
         urlPost(fullUrl(pensionSchemeTaxReferenceUrl(taxYearEOY, 3)), body = form, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }

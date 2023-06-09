@@ -16,20 +16,15 @@
 
 package config
 
-import connectors.PensionsConnector
-import connectors.httpParsers.StateBenefitsSessionHttpParser.{StateBenefitsSessionHttpReads, StateBenefitsSessionResponse}
-import connectors.httpParsers.PensionIncomeSessionHttpParser.PensionIncomeSessionResponse
+import connectors.StateBenefitsConnector
+import connectors.httpParsers.StateBenefitsSessionHttpParser.StateBenefitsSessionResponse
 import models.APIErrorModel
-import models.pension.charges.CreateUpdatePensionChargesRequestModel
-import models.pension.income.CreateUpdatePensionIncomeModel
-import models.pension.reliefs.CreateOrUpdatePensionReliefsModel
-import org.scalamock.handlers.{CallHandler4, CallHandler5}
+import models.mongo.StateBenefitsUserData
+import org.scalamock.handlers.CallHandler4
 import org.scalamock.scalatest.MockFactory
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
-import connectors.StateBenefitsConnector
-import models.mongo.StateBenefitsUserData
 
 trait MockStateBenefitsConnector extends MockFactory {
 

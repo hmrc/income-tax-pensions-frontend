@@ -21,7 +21,6 @@ import builders.IncomeFromPensionsViewModelBuilder.anIncomeFromPensionsViewModel
 import builders.IncomeTaxUserDataBuilder.anIncomeTaxUserData
 import builders.PensionsUserDataBuilder.pensionsUserDataWithIncomeFromPensions
 import builders.StateBenefitViewModelBuilder.{anEmptyStateBenefitViewModel, anStateBenefitViewModelOne}
-import builders.UserBuilder.aUserRequest
 import models.pension.statebenefits.StateBenefitViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -49,8 +48,8 @@ class IncomeFromPensionsSummaryControllerISpec extends CommonUtils with BeforeAn
     val expectedParagraph : String
   }
 
-  def statePensionsLink(taxYear: Int = taxYear) : String = s"/update-and-submit-income-tax-return/pensions/${taxYear}/pension-income/state-pension"
-  def otherUkPensionsLink(taxYear: Int = taxYear) : String = s"/update-and-submit-income-tax-return/pensions/${taxYear}/pension-income/state-pension"
+  def statePensionsLink(taxYear: Int = taxYear) : String = s"/update-and-submit-income-tax-return/pensions/$taxYear/pension-income/state-pension"
+  def otherUkPensionsLink(taxYear: Int = taxYear) : String = s"/update-and-submit-income-tax-return/pensions/$taxYear/pension-income/state-pension"
   
   object Selectors {
     val captionSelector: String = "#main-content > div > div > header > p"
@@ -176,7 +175,7 @@ class IncomeFromPensionsSummaryControllerISpec extends CommonUtils with BeforeAn
         "render page when other UK pension are not started " which {
 
           val viewModel = anIncomeFromPensionsViewModel.copy(uKPensionIncomesQuestion = None)
-          insertCyaData(pensionsUserDataWithIncomeFromPensions(viewModel, isPriorSubmission = false), aUserRequest)
+          insertCyaData(pensionsUserDataWithIncomeFromPensions(viewModel, isPriorSubmission = false))
           lazy val result: WSResponse = showPage(user, pensionsUserDataWithIncomeFromPensions(viewModel, isPriorSubmission = false), anIncomeTaxUserData)
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)

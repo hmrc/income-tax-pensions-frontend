@@ -77,7 +77,7 @@ class TotalPaymentsIntoRASControllerISpec extends IntegrationTest with BeforeAnd
       lazy val result: WSResponse = {
         authoriseAgentOrIndividual()
         dropPensionsDB()
-        insertCyaData(pensionsUsersData(requiredViewModel), aUserRequest)
+        insertCyaData(pensionsUsersData(requiredViewModel))
         urlGet(fullUrl(totalPaymentsIntoRASUrl(taxYearEOY)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -115,7 +115,7 @@ class TotalPaymentsIntoRASControllerISpec extends IntegrationTest with BeforeAnd
         insertCyaData(pensionsUsersData(requiredViewModel.copy(
           oneOffRasPaymentPlusTaxReliefQuestion = Some(false),
           totalOneOffRasPaymentPlusTaxRelief = None)
-        ), aUserRequest)
+        ))
         urlGet(fullUrl(totalPaymentsIntoRASUrl(taxYearEOY)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -136,7 +136,7 @@ class TotalPaymentsIntoRASControllerISpec extends IntegrationTest with BeforeAnd
       lazy val result: WSResponse = {
         authoriseAgentOrIndividual()
         dropPensionsDB()
-        insertCyaData(pensionsUsersData(requiredViewModel.copy(totalPaymentsIntoRASQuestion = Some(true))), aUserRequest)
+        insertCyaData(pensionsUsersData(requiredViewModel.copy(totalPaymentsIntoRASQuestion = Some(true))))
         urlGet(fullUrl(totalPaymentsIntoRASUrl(taxYearEOY)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -179,7 +179,7 @@ class TotalPaymentsIntoRASControllerISpec extends IntegrationTest with BeforeAnd
       lazy val result: WSResponse = {
         authoriseAgentOrIndividual()
         dropPensionsDB()
-        insertCyaData(userDataModel, aUserRequest)
+        insertCyaData(userDataModel)
         urlGet(fullUrl(totalPaymentsIntoRASUrl(taxYearEOY)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -198,7 +198,7 @@ class TotalPaymentsIntoRASControllerISpec extends IntegrationTest with BeforeAnd
       lazy val result: WSResponse = {
         authoriseAgentOrIndividual()
         dropPensionsDB()
-        insertCyaData(pensionsUsersData(requiredViewModel), aUserRequest)
+        insertCyaData(pensionsUsersData(requiredViewModel))
         urlPost(fullUrl(totalPaymentsIntoRASUrl(taxYearEOY)), body = invalidForm, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -238,7 +238,7 @@ class TotalPaymentsIntoRASControllerISpec extends IntegrationTest with BeforeAnd
       lazy val result: WSResponse = {
         authoriseAgentOrIndividual()
         dropPensionsDB()
-        insertCyaData(pensionsUsersData(requiredViewModel), aUserRequest)
+        insertCyaData(pensionsUsersData(requiredViewModel))
         urlPost(fullUrl(totalPaymentsIntoRASUrl(taxYearEOY)), body = yesForm, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -263,7 +263,7 @@ class TotalPaymentsIntoRASControllerISpec extends IntegrationTest with BeforeAnd
         lazy val result: WSResponse = {
           authoriseAgentOrIndividual()
           dropPensionsDB()
-          insertCyaData(pensionsUsersData(requiredViewModel), aUserRequest)
+          insertCyaData(pensionsUsersData(requiredViewModel))
           urlPost(fullUrl(totalPaymentsIntoRASUrl(taxYearEOY)), body = noForm, follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
         }
@@ -294,7 +294,7 @@ class TotalPaymentsIntoRASControllerISpec extends IntegrationTest with BeforeAnd
         lazy val result: WSResponse = {
           authoriseAgentOrIndividual()
           dropPensionsDB()
-          insertCyaData(userDataModel, aUserRequest)
+          insertCyaData(userDataModel)
           urlPost(fullUrl(totalPaymentsIntoRASUrl(taxYearEOY)), body = invalidForm, follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
         }

@@ -27,10 +27,10 @@ trait PensionsDatabaseHelper {
 
   def dropPensionsDB(): Unit = {
     await(pensionsDatabase.collection.drop().toFutureOption())
-    await(pensionsDatabase.ensureIndexes)
+    await(pensionsDatabase.ensureIndexes())
   }
 
-  def insertCyaData(cya: PensionsUserData, user: User): Unit = {
+  def insertCyaData(cya: PensionsUserData): Unit = {
     await(pensionsDatabase.createOrUpdate(cya))
   }
 

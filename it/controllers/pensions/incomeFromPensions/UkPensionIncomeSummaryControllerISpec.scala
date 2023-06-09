@@ -19,7 +19,6 @@ package controllers.pensions.incomeFromPensions
 import builders.IncomeFromPensionsViewModelBuilder.anIncomeFromPensionsViewModel
 import builders.PensionsUserDataBuilder.pensionsUserDataWithIncomeFromPensions
 import builders.UkPensionIncomeViewModelBuilder.{anUkPensionIncomeViewModelOne, anUkPensionIncomeViewModelTwo}
-import builders.UserBuilder.aUserRequest
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterEach
@@ -115,7 +114,7 @@ class UkPensionIncomeSummaryControllerISpec extends IntegrationTest with BeforeA
             authoriseAgentOrIndividual(user.isAgent)
             dropPensionsDB()
             val viewModel = anIncomeFromPensionsViewModel.copy(uKPensionIncomes = Seq(anUkPensionIncomeViewModelOne, anUkPensionIncomeViewModelTwo))
-            insertCyaData(pensionsUserDataWithIncomeFromPensions(viewModel), aUserRequest)
+            insertCyaData(pensionsUserDataWithIncomeFromPensions(viewModel))
             urlGet(fullUrl(ukPensionSchemeSummaryListUrl(taxYearEOY)), user.isWelsh, follow = false,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
@@ -148,7 +147,7 @@ class UkPensionIncomeSummaryControllerISpec extends IntegrationTest with BeforeA
             authoriseAgentOrIndividual(user.isAgent)
             dropPensionsDB()
             val viewModel = anIncomeFromPensionsViewModel.copy(uKPensionIncomes = Seq.empty)
-            insertCyaData(pensionsUserDataWithIncomeFromPensions(viewModel), aUserRequest)
+            insertCyaData(pensionsUserDataWithIncomeFromPensions(viewModel))
 
             urlGet(fullUrl(ukPensionSchemeSummaryListUrl(taxYearEOY)), user.isWelsh, follow = false,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))

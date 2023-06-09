@@ -201,7 +201,7 @@ class PensionLumpSumDetailsControllerISpec extends IntegrationTest with ViewHelp
             val pensionsViewModel = aPensionLifetimeAllowanceViewModel.copy(
               pensionAsLumpSum = None
             )
-            insertCyaData(pensionsUserDataWithLifetimeAllowance(pensionsViewModel), aUserRequest)
+            insertCyaData(pensionsUserDataWithLifetimeAllowance(pensionsViewModel))
             authoriseAgentOrIndividual(user.isAgent)
             urlGet(
               fullUrl(pensionLumpSumDetails(taxYearEOY)),
@@ -226,7 +226,7 @@ class PensionLumpSumDetailsControllerISpec extends IntegrationTest with ViewHelp
             val pensionsViewModel = aPensionLifetimeAllowanceViewModel.copy(
               pensionAsLumpSum = Some(LifetimeAllowance(Some(newAmount), Some(newAmount2)))
             )
-            insertCyaData(pensionsUserDataWithLifetimeAllowance(pensionsViewModel), aUserRequest)
+            insertCyaData(pensionsUserDataWithLifetimeAllowance(pensionsViewModel))
             authoriseAgentOrIndividual(user.isAgent)
             urlGet(
               fullUrl(pensionLumpSumDetails(taxYearEOY)),
@@ -250,7 +250,7 @@ class PensionLumpSumDetailsControllerISpec extends IntegrationTest with ViewHelp
             val pensionsViewModel = aPensionLifetimeAllowanceViewModel.copy(
               pensionAsLumpSum = Some(LifetimeAllowance(None, Some(newAmount2)))
             )
-            insertCyaData(pensionsUserDataWithLifetimeAllowance(pensionsViewModel), aUserRequest)
+            insertCyaData(pensionsUserDataWithLifetimeAllowance(pensionsViewModel))
             authoriseAgentOrIndividual(user.isAgent)
             urlGet(
               fullUrl(pensionLumpSumDetails(taxYearEOY)),
@@ -274,7 +274,7 @@ class PensionLumpSumDetailsControllerISpec extends IntegrationTest with ViewHelp
             val pensionsViewModel = aPensionLifetimeAllowanceViewModel.copy(
               pensionAsLumpSum = Some(LifetimeAllowance(Some(newAmount), None))
             )
-            insertCyaData(pensionsUserDataWithLifetimeAllowance(pensionsViewModel), aUserRequest)
+            insertCyaData(pensionsUserDataWithLifetimeAllowance(pensionsViewModel))
             authoriseAgentOrIndividual(user.isAgent)
             urlGet(
               fullUrl(pensionLumpSumDetails(taxYearEOY)),
@@ -326,7 +326,7 @@ class PensionLumpSumDetailsControllerISpec extends IntegrationTest with ViewHelp
           lazy val result: WSResponse = {
             dropPensionsDB()
             authoriseAgentOrIndividual(user.isAgent)
-            insertCyaData(aPensionsUserData, aUserRequest)
+            insertCyaData(aPensionsUserData)
             urlPost(fullUrl(pensionLumpSumDetails(taxYearEOY)), body = emptyForm, welsh = user.isWelsh,
               follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
@@ -366,7 +366,7 @@ class PensionLumpSumDetailsControllerISpec extends IntegrationTest with ViewHelp
           lazy val result: WSResponse = {
             dropPensionsDB()
             authoriseAgentOrIndividual(user.isAgent)
-            insertCyaData(aPensionsUserData, aUserRequest)
+            insertCyaData(aPensionsUserData)
             urlPost(fullUrl(pensionLumpSumDetails(taxYearEOY)), body = invalidFormatForm, welsh = user.isWelsh,
               follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
@@ -407,7 +407,7 @@ class PensionLumpSumDetailsControllerISpec extends IntegrationTest with ViewHelp
           lazy val result: WSResponse = {
             dropPensionsDB()
             authoriseAgentOrIndividual(user.isAgent)
-            insertCyaData(aPensionsUserData, aUserRequest)
+            insertCyaData(aPensionsUserData)
             urlPost(fullUrl(pensionLumpSumDetails(taxYearEOY)), body = overMaximumForm, welsh = user.isWelsh,
               follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
@@ -452,7 +452,7 @@ class PensionLumpSumDetailsControllerISpec extends IntegrationTest with ViewHelp
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual()
-        insertCyaData(pensionsUserDataWithLifetimeAllowance(aPensionLifetimeAllowanceViewModel), aUserRequest)
+        insertCyaData(pensionsUserDataWithLifetimeAllowance(aPensionLifetimeAllowanceViewModel))
 
         urlPost(fullUrl(pensionLumpSumDetails(taxYearEOY)), body = form,
           follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
@@ -483,7 +483,7 @@ class PensionLumpSumDetailsControllerISpec extends IntegrationTest with ViewHelp
           pensionsUserDataWithLifetimeAllowance(aPensionLifetimeAllowancesEmptyViewModel.copy(
             pensionAsLumpSumQuestion = Some(true),
             pensionAsLumpSum = None
-          )), aUserRequest)
+          )))
 
         urlPost(fullUrl(pensionLumpSumDetails(taxYearEOY)), body = form,
           follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))

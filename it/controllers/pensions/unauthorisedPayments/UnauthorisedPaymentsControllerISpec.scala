@@ -137,7 +137,7 @@ class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAnd
 
             val pensionsViewModel = anUnauthorisedPaymentsEmptyViewModel.copy()
 
-            insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false), aUserRequest)
+            insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false))
             urlGet(fullUrl(unauthorisedPaymentsUrl(taxYearEOY)), user.isWelsh, follow = false,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
@@ -182,7 +182,7 @@ class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAnd
 
             val pensionsViewModel: UnauthorisedPaymentsViewModel = UnauthorisedPaymentsViewModel().copy(surchargeQuestion = Some(true))
 
-            insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false), aUserRequest)
+            insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false))
             urlGet(fullUrl(unauthorisedPaymentsUrl(taxYearEOY)), user.isWelsh, follow = false,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
@@ -227,7 +227,7 @@ class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAnd
 
             val pensionsViewModel: UnauthorisedPaymentsViewModel = UnauthorisedPaymentsViewModel().copy(noSurchargeQuestion = Some(true))
 
-            insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false), aUserRequest)
+            insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false))
             urlGet(fullUrl(unauthorisedPaymentsUrl(taxYearEOY)), user.isWelsh, follow = false,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
@@ -273,7 +273,7 @@ class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAnd
             val pensionsViewModel: UnauthorisedPaymentsViewModel = UnauthorisedPaymentsViewModel().copy(surchargeQuestion = Some(true),
               noSurchargeQuestion = Some(true))
 
-            insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false), aUserRequest)
+            insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false))
             urlGet(fullUrl(unauthorisedPaymentsUrl(taxYearEOY)), user.isWelsh, follow = false,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
@@ -319,7 +319,7 @@ class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAnd
               surchargeQuestion = Some(false), noSurchargeQuestion= Some(false)
             )
 
-            insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false), aUserRequest)
+            insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false))
             urlGet(fullUrl(unauthorisedPaymentsUrl(taxYearEOY)), user.isWelsh, follow = false,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
@@ -366,7 +366,7 @@ class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAnd
               surchargeQuestion = Some(true), noSurchargeQuestion = Some(true)
             )
 
-            insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false), aUserRequest)
+            insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false))
             urlGet(fullUrl(unauthorisedPaymentsUrl(taxYearEOY)), user.isWelsh, follow = false,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
@@ -415,12 +415,12 @@ class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAnd
 
             authoriseAgentOrIndividual(user.isAgent)
             dropPensionsDB()
-            insertCyaData(pensionsUserDataWithUnauthorisedPayments(anUnauthorisedPaymentsViewModel, isPriorSubmission = false), aUserRequest)
+            insertCyaData(pensionsUserDataWithUnauthorisedPayments(anUnauthorisedPaymentsViewModel, isPriorSubmission = false))
             userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYearEOY)
 
             val pensionsViewModel = anUnauthorisedPaymentsViewModel.copy()
 
-            insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false), aUserRequest)
+            insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false))
             urlPost(fullUrl(unauthorisedPaymentsUrl(taxYearEOY)), body = form, user.isWelsh, follow = false,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
@@ -468,7 +468,7 @@ class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAnd
 
           val pensionsViewModel = anUnauthorisedPaymentsViewModel.copy()
 
-          insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false), aUserRequest)
+          insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false))
           urlPost(fullUrl(unauthorisedPaymentsUrl(taxYearEOY)), body = form, user.isWelsh, follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
         }
@@ -493,7 +493,7 @@ class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAnd
 
           val pensionsViewModel = anUnauthorisedPaymentsViewModel.copy()
 
-          insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false), aUserRequest)
+          insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false))
           urlPost(fullUrl(unauthorisedPaymentsUrl(taxYearEOY)), body = form, user.isWelsh, follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
         }
@@ -517,7 +517,7 @@ class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAnd
 
             val pensionsViewModel = anUnauthorisedPaymentsViewModel.copy()
 
-            insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false), aUserRequest)
+            insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false))
             urlPost(fullUrl(unauthorisedPaymentsUrl(taxYearEOY)), body = form, user.isWelsh, follow = false,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
@@ -541,7 +541,7 @@ class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAnd
 
           val pensionsViewModel = anUnauthorisedPaymentsViewModel.copy()
 
-          insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false), aUserRequest)
+          insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false))
           urlPost(fullUrl(unauthorisedPaymentsUrl(taxYearEOY)), body = form, user.isWelsh, follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
         }
@@ -565,7 +565,7 @@ class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAnd
 
           val pensionsViewModel = anUnauthorisedPaymentsViewModel.copy()
 
-          insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false), aUserRequest)
+          insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false))
           urlPost(fullUrl(unauthorisedPaymentsUrl(taxYearEOY)), body = form, user.isWelsh, follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
         }
@@ -589,7 +589,7 @@ class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAnd
 
         val pensionsViewModel = anUnauthorisedPaymentsViewModel.copy()
 
-        insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false), aUserRequest)
+        insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false))
         urlPost(fullUrl(unauthorisedPaymentsUrl(taxYearEOY)), body = form, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -614,7 +614,7 @@ class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAnd
 
         val pensionsViewModel = anUnauthorisedPaymentsViewModel.copy()
 
-        insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false), aUserRequest)
+        insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false))
         urlPost(fullUrl(unauthorisedPaymentsUrl(taxYearEOY)), body = form, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -639,7 +639,7 @@ class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAnd
 
         val pensionsViewModel = anUnauthorisedPaymentsViewModel.copy()
 
-        insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false), aUserRequest)
+        insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false))
         urlPost(fullUrl(unauthorisedPaymentsUrl(taxYearEOY)), body = form, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }

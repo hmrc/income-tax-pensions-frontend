@@ -121,7 +121,7 @@ class WhereAnyOfTheUnauthorisedPaymentsControllerISpec extends IntegrationTest w
           implicit lazy val result: WSResponse = {
             authoriseAgentOrIndividual(user.isAgent)
             dropPensionsDB()
-            insertCyaData(pensionsUserDataWithUnauthorisedPayments(anUnauthorisedPaymentsViewModel.copy(ukPensionSchemesQuestion = None)), aUserRequest)
+            insertCyaData(pensionsUserDataWithUnauthorisedPayments(anUnauthorisedPaymentsViewModel.copy(ukPensionSchemesQuestion = None)))
             urlGet(fullUrl(whereAnyOfTheUnauthorisedPaymentsUrl(taxYearEOY)), user.isWelsh, follow = false,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
@@ -148,7 +148,7 @@ class WhereAnyOfTheUnauthorisedPaymentsControllerISpec extends IntegrationTest w
             dropPensionsDB()
 
             val viewModel = anUnauthorisedPaymentsViewModel.copy()
-            insertCyaData(pensionsUserDataWithUnauthorisedPayments(viewModel), aUserRequest)
+            insertCyaData(pensionsUserDataWithUnauthorisedPayments(viewModel))
             authoriseAgentOrIndividual(user.isAgent)
             urlGet(fullUrl(whereAnyOfTheUnauthorisedPaymentsUrl(taxYearEOY)), user.isWelsh,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
@@ -197,7 +197,7 @@ class WhereAnyOfTheUnauthorisedPaymentsControllerISpec extends IntegrationTest w
           lazy val result: WSResponse = {
             dropPensionsDB()
             authoriseAgentOrIndividual(user.isAgent)
-            insertCyaData(aPensionsUserData, aUserRequest)
+            insertCyaData(aPensionsUserData)
             urlPost(fullUrl(whereAnyOfTheUnauthorisedPaymentsUrl(taxYearEOY)), body = form, follow = false, welsh = user.isWelsh,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
@@ -230,9 +230,9 @@ class WhereAnyOfTheUnauthorisedPaymentsControllerISpec extends IntegrationTest w
       lazy val result: WSResponse = {
         dropPensionsDB()
         val viewModel = anUnauthorisedPaymentsViewModel.copy()
-        insertCyaData(pensionsUserDataWithUnauthorisedPayments(viewModel), aUserRequest)
+        insertCyaData(pensionsUserDataWithUnauthorisedPayments(viewModel))
 
-        insertCyaData(pensionsUserDataWithUnauthorisedPayments(viewModel), aUserRequest)
+        insertCyaData(pensionsUserDataWithUnauthorisedPayments(viewModel))
 
         authoriseAgentOrIndividual()
         urlPost(fullUrl(whereAnyOfTheUnauthorisedPaymentsUrl(taxYearEOY)), body = form, follow = false,
@@ -257,9 +257,9 @@ class WhereAnyOfTheUnauthorisedPaymentsControllerISpec extends IntegrationTest w
       lazy val result: WSResponse = {
         dropPensionsDB()
         val viewModel = anUnauthorisedPaymentsViewModel.copy()
-        insertCyaData(pensionsUserDataWithUnauthorisedPayments(viewModel), aUserRequest)
+        insertCyaData(pensionsUserDataWithUnauthorisedPayments(viewModel))
 
-        insertCyaData(pensionsUserDataWithUnauthorisedPayments(viewModel), aUserRequest)
+        insertCyaData(pensionsUserDataWithUnauthorisedPayments(viewModel))
 
         authoriseAgentOrIndividual()
         urlPost(fullUrl(whereAnyOfTheUnauthorisedPaymentsUrl(taxYearEOY)), body = form, follow = false,

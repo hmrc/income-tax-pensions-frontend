@@ -47,7 +47,7 @@ class StatePensionControllerISpec extends IntegrationTest with ViewHelpers with 
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
-        insertCyaData(pensionsUsersData(aPensionsCYAModel), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel))
         urlGet(fullUrl(statePension(taxYearEOY)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
         )
@@ -59,7 +59,7 @@ class StatePensionControllerISpec extends IntegrationTest with ViewHelpers with 
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
-        insertCyaData(pensionsUsersData(aPensionsCYAModel), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel))
         userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYearEOY)
         urlGet(fullUrl(statePension(taxYearEOY)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
@@ -76,7 +76,7 @@ class StatePensionControllerISpec extends IntegrationTest with ViewHelpers with 
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
         val form: Map[String, String] = Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "42.24")
-        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy()), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy()))
         urlPost(
           fullUrl(statePension(taxYearEOY)),
           body = form,
@@ -93,7 +93,7 @@ class StatePensionControllerISpec extends IntegrationTest with ViewHelpers with 
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
         val form: Map[String, String] = Map(RadioButtonAmountForm.yesNo -> "false")
-        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy()), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy()))
         urlPost(
           fullUrl(statePension(taxYearEOY)),
           body = form,
@@ -109,7 +109,7 @@ class StatePensionControllerISpec extends IntegrationTest with ViewHelpers with 
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
         val form: Map[String, String] = Map(RadioButtonAmountForm.yesNo -> "")
-        insertCyaData(pensionsUsersData(aPensionsCYAModel), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel))
         urlPost(
           fullUrl(statePension(taxYearEOY)),
           body = form,
@@ -124,7 +124,7 @@ class StatePensionControllerISpec extends IntegrationTest with ViewHelpers with 
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
         val form: Map[String, String] = Map(RadioButtonAmountForm.yesNo -> "false")
-        insertCyaData(pensionsUsersData(aPensionsCYAModel), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel))
         urlPost(
           fullUrl(statePension(taxYear)),
           body = form,

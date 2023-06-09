@@ -18,7 +18,6 @@ package controllers.pensions.incomeFromOverseasPensions
 
 import builders.IncomeFromOverseasPensionsViewModelBuilder.{anIncomeFromOverseasPensionsEmptyViewModel, anIncomeFromOverseasPensionsViewModel}
 import builders.PensionsUserDataBuilder.pensionUserDataWithIncomeOverseasPension
-import builders.UserBuilder.aUserRequest
 import forms.Countries
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -123,7 +122,7 @@ class CountrySummaryListControllerISpec extends IntegrationTest with BeforeAndAf
             authoriseAgentOrIndividual(user.isAgent)
             dropPensionsDB()
             val viewModel = anIncomeFromOverseasPensionsViewModel
-            insertCyaData(pensionUserDataWithIncomeOverseasPension(viewModel), aUserRequest)
+            insertCyaData(pensionUserDataWithIncomeOverseasPension(viewModel))
             urlGet(fullUrl(countrySummaryListControllerUrl(taxYearEOY)), user.isWelsh, follow = false,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
@@ -161,7 +160,7 @@ class CountrySummaryListControllerISpec extends IntegrationTest with BeforeAndAf
             authoriseAgentOrIndividual(user.isAgent)
             dropPensionsDB()
             val emptyViewModel = anIncomeFromOverseasPensionsEmptyViewModel
-            insertCyaData(pensionUserDataWithIncomeOverseasPension(emptyViewModel), aUserRequest)
+            insertCyaData(pensionUserDataWithIncomeOverseasPension(emptyViewModel))
 
             urlGet(fullUrl(countrySummaryListControllerUrl(taxYearEOY)), user.isWelsh, follow = false,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))

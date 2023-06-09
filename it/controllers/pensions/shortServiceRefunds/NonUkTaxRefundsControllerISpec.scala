@@ -19,10 +19,10 @@ package controllers.pensions.shortServiceRefunds
 import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import builders.PensionsUserDataBuilder
 import builders.ShortServiceRefundsViewModelBuilder.{aShortServiceRefundsViewModel, emptyShortServiceRefundsViewModel}
-import builders.UserBuilder.{aUser, aUserRequest}
+import builders.UserBuilder.aUser
 import forms.RadioButtonAmountForm
 import forms.RadioButtonAmountForm.{amount2, yesNo}
-import models.mongo.PensionsCYAModel
+import models.mongo.{PensionsCYAModel, PensionsUserData}
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
@@ -33,8 +33,8 @@ import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 class NonUkTaxRefundsControllerISpec extends IntegrationTest with ViewHelpers
   with PensionsDatabaseHelper {
 
-  private def pensionsUsersData(isPrior: Boolean, pensionsCyaModel: PensionsCYAModel) = {
-    PensionsUserDataBuilder.aPensionsUserData.copy(isPriorSubmission = isPrior, pensions = pensionsCyaModel)
+  private def pensionsUsersData(pensionsCyaModel: PensionsCYAModel): PensionsUserData = {
+    PensionsUserDataBuilder.aPensionsUserData.copy(isPriorSubmission = false, pensions = pensionsCyaModel)
   }
 
   override val userScenarios: Seq[UserScenario[_, _]] = Nil
@@ -44,7 +44,7 @@ class NonUkTaxRefundsControllerISpec extends IntegrationTest with ViewHelpers
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
-        insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel))
         urlGet(fullUrl(nonUkTaxRefundsUrl(taxYear)), !aUser.isAgent, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
       }
@@ -57,7 +57,7 @@ class NonUkTaxRefundsControllerISpec extends IntegrationTest with ViewHelpers
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
-        insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel))
         urlGet(fullUrl(nonUkTaxRefundsUrl(taxYearEOY)), !aUser.isAgent, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -71,7 +71,7 @@ class NonUkTaxRefundsControllerISpec extends IntegrationTest with ViewHelpers
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
         val formData = Map(s" $yesNo -> true, $amount2" -> "500")
-        insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(shortServiceRefunds = emptyShortServiceRefundsViewModel)), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(shortServiceRefunds = emptyShortServiceRefundsViewModel)))
         urlPost(
           fullUrl(nonUkTaxRefundsUrl(taxYear)),
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)),
@@ -91,7 +91,7 @@ class NonUkTaxRefundsControllerISpec extends IntegrationTest with ViewHelpers
           shortServiceRefundTaxPaidCharge = Some(BigDecimal("500.00"))
         )
         val formData = Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "500")
-        insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(shortServiceRefunds = shortServiceRefundViewModel)), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(shortServiceRefunds = shortServiceRefundViewModel)))
         urlPost(
           fullUrl(nonUkTaxRefundsUrl(taxYearEOY)),
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
@@ -110,7 +110,7 @@ class NonUkTaxRefundsControllerISpec extends IntegrationTest with ViewHelpers
           refundPensionScheme = Nil
         )
         val formData = Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "500")
-        insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(shortServiceRefunds = shortServiceRefundViewModel)), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(shortServiceRefunds = shortServiceRefundViewModel)))
         urlPost(
           fullUrl(nonUkTaxRefundsUrl(taxYearEOY)),
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
@@ -130,7 +130,7 @@ class NonUkTaxRefundsControllerISpec extends IntegrationTest with ViewHelpers
           shortServiceRefundTaxPaidCharge = None
         )
         val form = Map(RadioButtonAmountForm.yesNo -> "", RadioButtonAmountForm.amount2 -> "")
-        insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(shortServiceRefunds = shortServiceRefundViewModel)), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(shortServiceRefunds = shortServiceRefundViewModel)))
         urlPost(
           fullUrl(nonUkTaxRefundsUrl(taxYearEOY)),
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
@@ -147,7 +147,7 @@ class NonUkTaxRefundsControllerISpec extends IntegrationTest with ViewHelpers
         val shortServiceRefundViewModel = aShortServiceRefundsViewModel.copy(
           shortServiceRefundCharge = None, shortServiceRefund = Some(true))
         val form = Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "jhvgfxk")
-        insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(shortServiceRefunds = shortServiceRefundViewModel)), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(shortServiceRefunds = shortServiceRefundViewModel)))
         urlPost(
           fullUrl(nonUkTaxRefundsUrl(taxYearEOY)),
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),

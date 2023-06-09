@@ -76,7 +76,7 @@ class PensionsCustomerReferenceNumberControllerISpec extends IntegrationTest wit
         lazy implicit val result: WSResponse = {
           dropPensionsDB()
           authoriseAgentOrIndividual(aUser.isAgent)
-          insertCyaData(pensionsUsersData(aPensionsCYAEmptyModel), aUserRequest)
+          insertCyaData(pensionsUsersData(aPensionsCYAEmptyModel))
           urlGet(fullUrl(pensionCustomerReferenceNumberUrl(taxYearEOY, None)), follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
           )
@@ -92,7 +92,7 @@ class PensionsCustomerReferenceNumberControllerISpec extends IntegrationTest wit
           authoriseAgentOrIndividual(aUser.isAgent)
           val pensionsViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(reliefs =  Seq(noCrnRelief, noCrnRelief, noCrnRelief))
           val pensionCYAModel = aPensionsCYAModel.copy(paymentsIntoOverseasPensions = pensionsViewModel)
-          insertCyaData(pensionsUsersData(pensionCYAModel), aUserRequest)
+          insertCyaData(pensionsUsersData(pensionCYAModel))
           urlGet(fullUrl(pensionCustomerReferenceNumberUrl(taxYearEOY, Some(1))), follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
           )
@@ -108,7 +108,7 @@ class PensionsCustomerReferenceNumberControllerISpec extends IntegrationTest wit
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
-        insertCyaData(pensionsUsersData(aPensionsCYAModel), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel))
         userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYearEOY)
         urlGet(fullUrl(pensionCustomerReferenceNumberUrl(taxYearEOY, Some(1))), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
@@ -125,7 +125,7 @@ class PensionsCustomerReferenceNumberControllerISpec extends IntegrationTest wit
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
-        insertCyaData(pensionUserDataWithOnlyOverseasPensions(pensionsNoSchemesViewModel),  aUserRequest)
+        insertCyaData(pensionUserDataWithOnlyOverseasPensions(pensionsNoSchemesViewModel))
         urlGet(fullUrl(pensionCustomerReferenceNumberUrl(taxYearEOY, Some(3))), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
         )
@@ -138,7 +138,7 @@ class PensionsCustomerReferenceNumberControllerISpec extends IntegrationTest wit
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
-        insertCyaData(pensionsUsersData(aPensionsCYAModel, isPrior = true), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel, isPrior = true))
         urlGet(fullUrl(pensionCustomerReferenceNumberUrl(taxYearEOY, Some(-1))), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
         )
@@ -155,7 +155,7 @@ class PensionsCustomerReferenceNumberControllerISpec extends IntegrationTest wit
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
         val form: Map[String, String] = Map(PensionCustomerReferenceNumberForm.pensionsCustomerReferenceNumberId -> "PENSIONSINCOME25")
-        insertCyaData(pensionsUsersData(aPensionsCYAEmptyModel), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAEmptyModel))
         urlPost(fullUrl(pensionCustomerReferenceNumberUrl(taxYearEOY, None)), body = form,
           follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -172,7 +172,7 @@ class PensionsCustomerReferenceNumberControllerISpec extends IntegrationTest wit
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
         val pensionsViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(reliefs = Seq(someCrnRelief, someCrnRelief))
-        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoOverseasPensions = pensionsViewModel)), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoOverseasPensions = pensionsViewModel)))
         val form: Map[String, String] = Map(PensionCustomerReferenceNumberForm.pensionsCustomerReferenceNumberId -> "PENSIONSINCOME24")
         urlPost(fullUrl(pensionCustomerReferenceNumberUrl(taxYearEOY, Some(1))), body = form,
           follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
@@ -190,7 +190,7 @@ class PensionsCustomerReferenceNumberControllerISpec extends IntegrationTest wit
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
         lazy val form: Map[String, String] = Map(PensionCustomerReferenceNumberForm.pensionsCustomerReferenceNumberId -> "")
-        insertCyaData(pensionsUsersData(aPensionsCYAModel), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel))
         urlPost(
           fullUrl(pensionCustomerReferenceNumberUrl(taxYearEOY, Some(0))),
           body = form,
@@ -208,7 +208,7 @@ class PensionsCustomerReferenceNumberControllerISpec extends IntegrationTest wit
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
         lazy val form: Map[String, String] = Map(PensionCustomerReferenceNumberForm.pensionsCustomerReferenceNumberId -> "")
-        insertCyaData(pensionUserDataWithOnlyOverseasPensions(pensionsNoSchemesViewModel),  aUserRequest)
+        insertCyaData(pensionUserDataWithOnlyOverseasPensions(pensionsNoSchemesViewModel))
         urlPost(
           fullUrl(pensionCustomerReferenceNumberUrl(taxYearEOY, Some(-1))),
           body = form,
@@ -225,7 +225,7 @@ class PensionsCustomerReferenceNumberControllerISpec extends IntegrationTest wit
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
         lazy val form: Map[String, String] = Map(PensionCustomerReferenceNumberForm.pensionsCustomerReferenceNumberId -> "")
-        insertCyaData(pensionsUsersData(aPensionsCYAModel), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel))
         urlPost(
           fullUrl(pensionCustomerReferenceNumberUrl(taxYearEOY, Some(-1))),
           body = form,
