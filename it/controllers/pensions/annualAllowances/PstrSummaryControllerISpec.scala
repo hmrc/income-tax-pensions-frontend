@@ -77,7 +77,7 @@ class PstrSummaryControllerISpec extends IntegrationTest with BeforeAndAfterEach
     val remove = "Tynnu"
     val pensionSchemeTaxReference = "Cyfeirnod Treth y Cynllun Pensiwn"
     val expectedAddAnotherText = "Ychwanegu Cyfeirnod Treth ar gyfer Cynllun Pensiwn arall"
-    val expectedAddPstrText = "Add a PSTR"
+    val expectedAddPstrText = "Ychwanegu PSTR"
   }
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, Nothing]] = Seq(
