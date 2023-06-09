@@ -20,7 +20,7 @@ import builders.AllPensionsDataBuilder.anAllPensionsData
 import builders.IncomeTaxUserDataBuilder.anIncomeTaxUserData
 import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import builders.PensionsUserDataBuilder
-import builders.UserBuilder.{aUser, aUserRequest}
+import builders.UserBuilder.aUser
 import forms.RadioButtonForm
 import models.mongo.{PensionsCYAModel, PensionsUserData}
 import org.scalatest.BeforeAndAfterEach
@@ -47,7 +47,7 @@ class StatePensionAddToCalculationControllerISpec extends IntegrationTest
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
-        insertCyaData(pensionsUsersData(aPensionsCYAModel), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel))
         urlGet(fullUrl(addToCalculationUrl(taxYearEOY)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
         )
@@ -59,7 +59,7 @@ class StatePensionAddToCalculationControllerISpec extends IntegrationTest
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
-        insertCyaData(pensionsUsersData(aPensionsCYAModel), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel))
         userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYearEOY)
         urlGet(fullUrl(addToCalculationUrl(taxYearEOY)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
@@ -74,7 +74,7 @@ class StatePensionAddToCalculationControllerISpec extends IntegrationTest
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
-        insertCyaData(pensionsUsersData(aPensionsCYAModel), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel))
         val form: Map[String, String] = Map(RadioButtonForm.value -> "true")
         urlPost(
           fullUrl(addToCalculationUrl(taxYearEOY)),
@@ -91,7 +91,7 @@ class StatePensionAddToCalculationControllerISpec extends IntegrationTest
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
-        insertCyaData(pensionsUsersData(aPensionsCYAModel), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel))
         val form: Map[String, String] = Map(RadioButtonForm.value -> "false")
         urlPost(
           fullUrl(addToCalculationUrl(taxYearEOY)),
@@ -109,7 +109,7 @@ class StatePensionAddToCalculationControllerISpec extends IntegrationTest
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
         val form: Map[String, String] = Map(RadioButtonForm.value -> "")
-        insertCyaData(pensionsUsersData(aPensionsCYAModel), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel))
         userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYearEOY)
         urlPost(
           fullUrl(addToCalculationUrl(taxYearEOY)),
@@ -125,7 +125,7 @@ class StatePensionAddToCalculationControllerISpec extends IntegrationTest
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
         val form: Map[String, String] = Map(RadioButtonForm.value -> "false")
-        insertCyaData(pensionsUsersData(aPensionsCYAModel), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel))
         urlPost(
           fullUrl(statePension(taxYear)),
           body = form,

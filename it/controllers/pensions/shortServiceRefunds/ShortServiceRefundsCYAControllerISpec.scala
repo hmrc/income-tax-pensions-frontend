@@ -23,7 +23,7 @@ import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import builders.PensionsUserDataBuilder
 import builders.PensionsUserDataBuilder.aPensionsUserData
 import builders.ShortServiceRefundsViewModelBuilder.emptyShortServiceRefundsViewModel
-import builders.UserBuilder.{aUser, aUserRequest}
+import builders.UserBuilder.aUser
 import models.mongo.PensionsCYAModel
 import models.pension.charges.{CreateUpdatePensionChargesRequestModel, PensionCharges}
 import play.api.http.HeaderNames
@@ -37,8 +37,8 @@ import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 class ShortServiceRefundsCYAControllerISpec extends IntegrationTest with ViewHelpers
   with PensionsDatabaseHelper {
 
-  private def pensionsUsersData(isPrior: Boolean, pensionsCyaModel: PensionsCYAModel) = {
-    PensionsUserDataBuilder.aPensionsUserData.copy(isPriorSubmission = isPrior, pensions = pensionsCyaModel)
+  private def pensionsUsersData(pensionsCyaModel: PensionsCYAModel) = {
+    PensionsUserDataBuilder.aPensionsUserData.copy(isPriorSubmission = false, pensions = pensionsCyaModel)
   }
 
 
@@ -62,7 +62,7 @@ class ShortServiceRefundsCYAControllerISpec extends IntegrationTest with ViewHel
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
-        insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel))
         userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYear)
         urlGet(fullUrl(shortServiceRefundsCYAUrl(taxYear)), !aUser.isAgent, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
@@ -76,7 +76,7 @@ class ShortServiceRefundsCYAControllerISpec extends IntegrationTest with ViewHel
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
-        insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel))
         userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYearEOY)
         urlGet(fullUrl(shortServiceRefundsCYAUrl(taxYearEOY)), !aUser.isAgent, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
@@ -90,7 +90,7 @@ class ShortServiceRefundsCYAControllerISpec extends IntegrationTest with ViewHel
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
-        insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel.copy(shortServiceRefunds = emptyShortServiceRefundsViewModel)), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(shortServiceRefunds = emptyShortServiceRefundsViewModel)))
         userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYear)
         urlPost(
           fullUrl(shortServiceRefundsCYAUrl(taxYear)),
@@ -106,7 +106,7 @@ class ShortServiceRefundsCYAControllerISpec extends IntegrationTest with ViewHel
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
-        insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel))
         userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYearEOY)
         urlPost(
           fullUrl(shortServiceRefundsCYAUrl(taxYearEOY)),
@@ -124,7 +124,7 @@ class ShortServiceRefundsCYAControllerISpec extends IntegrationTest with ViewHel
         authoriseAgentOrIndividual(aUser.isAgent)
         pensionChargesSessionStub(Json.toJson(submissionChargesModel).toString(), nino, taxYearEOY)
         userDataStub(anIncomeTaxUserData, nino, taxYearEOY)
-        insertCyaData(aPensionsUserData, aUserRequest)
+        insertCyaData(aPensionsUserData)
         urlPost(
           fullUrl(shortServiceRefundsCYAUrl(taxYearEOY)),
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
@@ -141,7 +141,7 @@ class ShortServiceRefundsCYAControllerISpec extends IntegrationTest with ViewHel
         authoriseAgentOrIndividual(aUser.isAgent)
         pensionChargesSessionStub(Json.toJson(priorPensionCharges).toString(), nino, taxYearEOY)
         userDataStub(anIncomeTaxUserData, nino, taxYearEOY)
-        insertCyaData(aPensionsUserData, aUserRequest)
+        insertCyaData(aPensionsUserData)
         urlPost(
           fullUrl(shortServiceRefundsCYAUrl(taxYearEOY)),
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),

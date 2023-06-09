@@ -60,7 +60,7 @@ class ReliefAtSourceOneOffPaymentsControllerISpec extends IntegrationTest with V
         val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
           totalRASPaymentsAndTaxRelief = Some(someRasAmount),
           oneOffRasPaymentPlusTaxReliefQuestion = None)
-        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)))
         urlGet(
           fullUrl(
             reliefAtSourceOneOffPaymentsUrl(taxYearEOY)), follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
@@ -90,7 +90,7 @@ class ReliefAtSourceOneOffPaymentsControllerISpec extends IntegrationTest with V
         val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
           totalRASPaymentsAndTaxRelief = Some(someRasAmount),
           oneOffRasPaymentPlusTaxReliefQuestion = Some(true))
-        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)))
         urlGet(
           fullUrl(
             reliefAtSourceOneOffPaymentsUrl(taxYearEOY)), follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
@@ -121,7 +121,7 @@ class ReliefAtSourceOneOffPaymentsControllerISpec extends IntegrationTest with V
         val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
           totalRASPaymentsAndTaxRelief = Some(someRasAmount),
           oneOffRasPaymentPlusTaxReliefQuestion = Some(false))
-        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)))
         urlGet(
           fullUrl(
             reliefAtSourceOneOffPaymentsUrl(taxYearEOY)), follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
@@ -151,7 +151,7 @@ class ReliefAtSourceOneOffPaymentsControllerISpec extends IntegrationTest with V
         val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
           totalRASPaymentsAndTaxRelief = None,
           oneOffRasPaymentPlusTaxReliefQuestion = None)
-        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)))
         urlGet(
           fullUrl(
             reliefAtSourceOneOffPaymentsUrl(taxYearEOY)), follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
@@ -191,7 +191,7 @@ class ReliefAtSourceOneOffPaymentsControllerISpec extends IntegrationTest with V
         val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
           totalRASPaymentsAndTaxRelief = Some(someRasAmount),
           oneOffRasPaymentPlusTaxReliefQuestion = None)
-        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)))
         authoriseAgentOrIndividual()
         urlPost(fullUrl(reliefAtSourceOneOffPaymentsUrl(taxYearEOY)), body = invalidForm, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
@@ -226,7 +226,7 @@ class ReliefAtSourceOneOffPaymentsControllerISpec extends IntegrationTest with V
           totalRASPaymentsAndTaxRelief = Some(someRasAmount),
           oneOffRasPaymentPlusTaxReliefQuestion = None,
           workplacePensionPaymentsQuestion = None)
-        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)))
 
         urlPost(fullUrl(reliefAtSourceOneOffPaymentsUrl(taxYearEOY)), body = validFormYes, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
@@ -258,7 +258,7 @@ class ReliefAtSourceOneOffPaymentsControllerISpec extends IntegrationTest with V
           oneOffRasPaymentPlusTaxReliefQuestion = None,
           workplacePensionPaymentsQuestion = None)
 
-        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)))
 
         urlPost(fullUrl(reliefAtSourceOneOffPaymentsUrl(taxYearEOY)), body = validFormNo, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
@@ -303,7 +303,7 @@ class ReliefAtSourceOneOffPaymentsControllerISpec extends IntegrationTest with V
         val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
           totalRASPaymentsAndTaxRelief = None,
           oneOffRasPaymentPlusTaxReliefQuestion = Some(true))
-        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)))
         urlPost(fullUrl(reliefAtSourceOneOffPaymentsUrl(taxYearEOY)), body = validFormYes, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }

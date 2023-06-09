@@ -18,7 +18,6 @@ package controllers.pensions.shortServiceRefunds
 
 import builders.PensionsUserDataBuilder.pensionUserDataWithShortServiceViewModel
 import builders.ShortServiceRefundsViewModelBuilder.aShortServiceRefundsViewModel
-import builders.UserBuilder.aUserRequest
 import models.pension.charges.OverseasRefundPensionScheme
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
@@ -45,7 +44,7 @@ class RefundSummaryControllerISpec extends IntegrationTest with BeforeAndAfterEa
         authoriseAgentOrIndividual()
         dropPensionsDB()
         val viewModel = refundViewModel
-        insertCyaData(pensionUserDataWithShortServiceViewModel(viewModel), aUserRequest)
+        insertCyaData(pensionUserDataWithShortServiceViewModel(viewModel))
         urlGet(fullUrl(refundSummaryUrl(taxYearEOY)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }

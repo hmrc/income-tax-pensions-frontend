@@ -29,7 +29,6 @@ import builders.PensionsCYAModelBuilder.{aPensionsCYAModel, paymentsIntoPensionO
 import builders.PensionsUserDataBuilder.aPensionsUserData
 import builders.ReliefsBuilder.anReliefs
 import builders.UnauthorisedPaymentsViewModelBuilder.anUnauthorisedPaymentsViewModel
-import builders.UserBuilder.aUserRequest
 import models.IncomeTaxUserData
 import models.pension.charges.PensionAnnualAllowancesViewModel
 import models.pension.reliefs.PaymentsIntoPensionViewModel
@@ -105,7 +104,7 @@ class PaymentsIntoPensionsCYAControllerISpec extends IntegrationTest with ViewHe
       "CYA data is finished" which {
         lazy val result: WSResponse = {
           dropPensionsDB()
-          insertCyaData(aPensionsUserData.copy(taxYear = taxYear), aUserRequest)
+          insertCyaData(aPensionsUserData.copy(taxYear = taxYear))
           authoriseAgentOrIndividual()
           urlGet(url, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
         }
@@ -145,7 +144,7 @@ class PaymentsIntoPensionsCYAControllerISpec extends IntegrationTest with ViewHe
 
       lazy val result: WSResponse = {
         dropPensionsDB()
-        insertCyaData(aPensionsUserData.copy(pensions = paymentsIntoPensionOnlyCYAModel(cyaDataMinimal), taxYear = taxYear), aUserRequest)
+        insertCyaData(aPensionsUserData.copy(pensions = paymentsIntoPensionOnlyCYAModel(cyaDataMinimal), taxYear = taxYear))
         authoriseAgentOrIndividual()
         urlGet(url, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
       }
@@ -172,7 +171,7 @@ class PaymentsIntoPensionsCYAControllerISpec extends IntegrationTest with ViewHe
         dropPensionsDB()
         authoriseAgentOrIndividual()
         userDataStub(IncomeTaxUserData(None), nino, taxYear)
-        insertCyaData(aPensionsUserData.copy(pensions = aPensionsCYAModel.copy(paymentsIntoPension = cyaDataIncomplete), taxYear = taxYear), aUserRequest)
+        insertCyaData(aPensionsUserData.copy(pensions = aPensionsCYAModel.copy(paymentsIntoPension = cyaDataIncomplete), taxYear = taxYear))
 
         urlGet(url, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
       }
@@ -242,7 +241,7 @@ class PaymentsIntoPensionsCYAControllerISpec extends IntegrationTest with ViewHe
           dropPensionsDB()
           userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYear)
           pensionReliefsSessionStub("", nino, taxYear)
-          insertCyaData(aPensionsUserData.copy(pensions = aPensionsCYAModel.copy(paymentsIntoPension = cyaDataIncomplete), taxYear = taxYear), aUserRequest)
+          insertCyaData(aPensionsUserData.copy(pensions = aPensionsCYAModel.copy(paymentsIntoPension = cyaDataIncomplete), taxYear = taxYear))
           authoriseAgentOrIndividual()
           urlPost(url, form, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
         }
@@ -285,7 +284,7 @@ class PaymentsIntoPensionsCYAControllerISpec extends IntegrationTest with ViewHe
             unauthorisedPayments = anUnauthorisedPaymentsViewModel,
             paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel,
             incomeFromOverseasPensions = anIncomeFromOverseasPensionsViewModel
-          ), taxYear = taxYear), aUserRequest)
+          ), taxYear = taxYear))
           authoriseAgentOrIndividual()
           urlPost(url, form, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
         }

@@ -54,7 +54,7 @@ class WorkplaceAmountControllerISpec extends IntegrationTest with ViewHelpers wi
         authoriseAgentOrIndividual()
         val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
           workplacePensionPaymentsQuestion = Some(true), totalWorkplacePensionPayments = None)
-        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)))
         urlGet(
           fullUrl(workplacePensionAmount(taxYearEOY)), follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -89,7 +89,7 @@ class WorkplaceAmountControllerISpec extends IntegrationTest with ViewHelpers wi
         authoriseAgentOrIndividual()
         val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
           workplacePensionPaymentsQuestion = Some(true), totalWorkplacePensionPayments = Some(BigDecimal(existingAmount)))
-        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)))
         urlGet(fullUrl(workplacePensionAmount(taxYearEOY)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -121,7 +121,7 @@ class WorkplaceAmountControllerISpec extends IntegrationTest with ViewHelpers wi
         authoriseAgentOrIndividual()
         val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
           workplacePensionPaymentsQuestion = None, totalWorkplacePensionPayments = None)
-        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)))
         urlGet(fullUrl(workplacePensionAmount(taxYearEOY)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -139,7 +139,7 @@ class WorkplaceAmountControllerISpec extends IntegrationTest with ViewHelpers wi
         authoriseAgentOrIndividual()
         val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
           workplacePensionPaymentsQuestion = Some(false), totalWorkplacePensionPayments = None)
-        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)))
         urlGet(fullUrl(workplacePensionAmount(taxYearEOY)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -178,7 +178,7 @@ class WorkplaceAmountControllerISpec extends IntegrationTest with ViewHelpers wi
         dropPensionsDB()
         val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
           workplacePensionPaymentsQuestion = Some(true), totalWorkplacePensionPayments = None)
-        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)))
         authoriseAgentOrIndividual()
         urlPost(fullUrl(workplacePensionAmount(taxYearEOY)), body = emptyForm,
           follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
@@ -216,7 +216,7 @@ class WorkplaceAmountControllerISpec extends IntegrationTest with ViewHelpers wi
         dropPensionsDB()
         val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
           workplacePensionPaymentsQuestion = Some(true), totalWorkplacePensionPayments = None)
-        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)))
         authoriseAgentOrIndividual()
         urlPost(fullUrl(workplacePensionAmount(taxYearEOY)), body = invalidFormatForm,
           follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
@@ -255,7 +255,7 @@ class WorkplaceAmountControllerISpec extends IntegrationTest with ViewHelpers wi
         dropPensionsDB()
         val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
           workplacePensionPaymentsQuestion = Some(true), totalWorkplacePensionPayments = None)
-        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)))
         authoriseAgentOrIndividual()
         urlPost(fullUrl(workplacePensionAmount(taxYearEOY)), body = overMaximumForm,
           follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
@@ -293,7 +293,7 @@ class WorkplaceAmountControllerISpec extends IntegrationTest with ViewHelpers wi
         dropPensionsDB()
         val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
           workplacePensionPaymentsQuestion = Some(true), totalWorkplacePensionPayments = None)
-        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)))
         authoriseAgentOrIndividual()
         urlPost(fullUrl(workplacePensionAmount(taxYearEOY)), body = validForm, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))

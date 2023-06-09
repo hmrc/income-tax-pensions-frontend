@@ -22,7 +22,6 @@ import builders.IncomeTaxUserDataBuilder.anIncomeTaxUserData
 import builders.PensionsCYAModelBuilder.{aPensionsCYAGeneratedFromPriorEmpty, aPensionsCYAModel}
 import builders.PensionsUserDataBuilder.{aPensionsUserData, pensionsUserDataWithIncomeFromPensions}
 import builders.UkPensionIncomeViewModelBuilder.anUkPensionIncomeViewModelOne
-import builders.UserBuilder.aUserRequest
 import models.IncomeTaxUserData
 import models.pension.employmentPensions.{EmploymentPensionModel, EmploymentPensions}
 import models.pension.statebenefits.IncomeFromPensionsViewModel
@@ -34,7 +33,7 @@ import play.api.http.Status.{NO_CONTENT, SEE_OTHER}
 import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
 import utils.PageUrls.IncomeFromPensionsPages._
-import utils.PageUrls.{fullUrl, pensionSummaryUrl}
+import utils.PageUrls.fullUrl
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 class UkPensionIncomeCYAControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
@@ -155,7 +154,7 @@ class UkPensionIncomeCYAControllerISpec extends IntegrationTest with ViewHelpers
               dropPensionsDB()
               authoriseAgentOrIndividual(user.isAgent)
               userDataStub(anIncomeTaxUserData, nino, taxYearEOY)
-              insertCyaData(pensionsUserDataWithIncomeFromPensions(anIncomeFromPensionsViewModel), aUserRequest)
+              insertCyaData(pensionsUserDataWithIncomeFromPensions(anIncomeFromPensionsViewModel))
               urlGet(fullUrl(ukPensionIncomeCyaUrl(taxYearEOY)), welsh = user.isWelsh,
                 headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
             }
@@ -178,7 +177,7 @@ class UkPensionIncomeCYAControllerISpec extends IntegrationTest with ViewHelpers
               dropPensionsDB()
               authoriseAgentOrIndividual(user.isAgent)
               insertCyaData(pensionsUserDataWithIncomeFromPensions(anIncomeFromPensionEmptyViewModel.copy(
-                uKPensionIncomesQuestion = Some(false), uKPensionIncomes = Seq.empty), taxYear = taxYear), aUserRequest)
+                uKPensionIncomesQuestion = Some(false), uKPensionIncomes = Seq.empty), taxYear = taxYear))
               urlGet(fullUrl(ukPensionIncomeCyaUrl(taxYear)), welsh = user.isWelsh, follow = false,
                 headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
             }
@@ -251,7 +250,7 @@ class UkPensionIncomeCYAControllerISpec extends IntegrationTest with ViewHelpers
           authoriseAgentOrIndividual()
           userDataStub(IncomeTaxUserData(None), nino, taxYear)
           employmentPensionStub(payload, nino, NO_CONTENT, "{}")
-          insertCyaData(aPensionsUserData.copy(pensions = aPensionsCYAModel.copy(incomeFromPensions = newIncomeFromPensions), taxYear = taxYear), aUserRequest)
+          insertCyaData(aPensionsUserData.copy(pensions = aPensionsCYAModel.copy(incomeFromPensions = newIncomeFromPensions), taxYear = taxYear))
           urlPost(fullUrl(ukPensionIncomeCyaUrl(taxYear)), form, follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
         }
@@ -273,7 +272,7 @@ class UkPensionIncomeCYAControllerISpec extends IntegrationTest with ViewHelpers
           dropPensionsDB()
           authoriseAgentOrIndividual()
           userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYear)
-          insertCyaData(aPensionsUserData.copy(pensions = aPensionsCYAModel.copy(incomeFromPensions = newIncomeFromPensions), taxYear = taxYear), aUserRequest)
+          insertCyaData(aPensionsUserData.copy(pensions = aPensionsCYAModel.copy(incomeFromPensions = newIncomeFromPensions), taxYear = taxYear))
           employmentPensionStub(payload, nino, NO_CONTENT, "{}")
           urlPost(fullUrl(ukPensionIncomeCyaUrl(taxYear)), form, follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
@@ -312,7 +311,7 @@ class UkPensionIncomeCYAControllerISpec extends IntegrationTest with ViewHelpers
           dropPensionsDB()
           authoriseAgentOrIndividual()
           userDataStub(anIncomeTaxUserData.copy(pensions = Some(priorData)), nino, taxYear)
-          insertCyaData(cyaData, aUserRequest)
+          insertCyaData(cyaData)
           urlPost(fullUrl(ukPensionIncomeCyaUrl(taxYear)), form, follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
         }

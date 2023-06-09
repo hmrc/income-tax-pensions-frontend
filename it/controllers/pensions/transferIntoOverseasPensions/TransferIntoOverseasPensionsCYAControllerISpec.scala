@@ -23,7 +23,7 @@ import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import builders.PensionsUserDataBuilder
 import builders.PensionsUserDataBuilder.aPensionsUserData
 import builders.TransfersIntoOverseasPensionsViewModelBuilder.emptyTransfersIntoOverseasPensionsViewModel
-import builders.UserBuilder.{aUser, aUserRequest}
+import builders.UserBuilder.aUser
 import models.mongo.PensionsCYAModel
 import models.pension.charges.{CreateUpdatePensionChargesRequestModel, PensionCharges}
 import play.api.http.HeaderNames
@@ -61,7 +61,7 @@ class TransferIntoOverseasPensionsCYAControllerISpec extends IntegrationTest wit
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
-        insertCyaData(pensionsUsersData(aPensionsCYAModel), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel))
         userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYearEOY)
 
         urlGet(fullUrl(checkYourDetailsPensionUrl(taxYearEOY)), !aUser.isAgent, follow = false,
@@ -74,7 +74,7 @@ class TransferIntoOverseasPensionsCYAControllerISpec extends IntegrationTest wit
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
-        insertCyaData(pensionsUsersData(aPensionsCYAModel), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel))
         userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYearEOY)
 
         urlGet(fullUrl(checkYourDetailsPensionUrl(taxYear)), !aUser.isAgent, follow = false,
@@ -87,8 +87,7 @@ class TransferIntoOverseasPensionsCYAControllerISpec extends IntegrationTest wit
 
   ".submit" should {
     "redirect to overview page when there is no CYA data" which {
-      val form = Map[String, String]()
-
+     
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
@@ -119,7 +118,7 @@ class TransferIntoOverseasPensionsCYAControllerISpec extends IntegrationTest wit
           userDataStub(anIncomeTaxUserData, nino, taxYearEOY)
           insertCyaData(aPensionsUserData.copy(
             pensions = aPensionsCYAModel.copy(transfersIntoOverseasPensions = emptyTransfersIntoOverseasPensionsViewModel)
-          ), aUserRequest)
+          ))
           urlPost(
             fullUrl(checkYourDetailsPensionUrl(taxYearEOY)),
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
@@ -143,7 +142,7 @@ class TransferIntoOverseasPensionsCYAControllerISpec extends IntegrationTest wit
           authoriseAgentOrIndividual(aUser.isAgent)
           pensionChargesSessionStub(Json.toJson(submissionCRM).toString(), nino, taxYearEOY)
           userDataStub(anIncomeTaxUserData, nino, taxYearEOY)
-          insertCyaData(aPensionsUserData, aUserRequest)
+          insertCyaData(aPensionsUserData)
           urlPost(
             fullUrl(checkYourDetailsPensionUrl(taxYearEOY)),
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
@@ -167,7 +166,7 @@ class TransferIntoOverseasPensionsCYAControllerISpec extends IntegrationTest wit
           authoriseAgentOrIndividual(aUser.isAgent)
           pensionChargesSessionStub(Json.toJson(priorCRM).toString(), nino, taxYearEOY)
           userDataStub(anIncomeTaxUserData, nino, taxYearEOY)
-          insertCyaData(aPensionsUserData, aUserRequest)
+          insertCyaData(aPensionsUserData)
           urlPost(
             fullUrl(checkYourDetailsPensionUrl(taxYearEOY)),
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),

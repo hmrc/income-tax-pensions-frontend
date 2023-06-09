@@ -18,7 +18,6 @@ package controllers.pensions.annualAllowances
 
 import builders.PensionAnnualAllowanceViewModelBuilder.aPensionAnnualAllowanceViewModel
 import builders.PensionsUserDataBuilder.pensionsUserDataWithAnnualAllowances
-import builders.UserBuilder.aUserRequest
 import controllers.pensions.annualAllowances.routes.PensionSchemeTaxReferenceController
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -98,7 +97,7 @@ class PstrSummaryControllerISpec extends IntegrationTest with BeforeAndAfterEach
             authoriseAgentOrIndividual(user.isAgent)
             dropPensionsDB()
             val viewModel = aPensionAnnualAllowanceViewModel.copy(pensionSchemeTaxReferences = Some(Seq(pstr1, pstr2)))
-            insertCyaData(pensionsUserDataWithAnnualAllowances(viewModel), aUserRequest)
+            insertCyaData(pensionsUserDataWithAnnualAllowances(viewModel))
             urlGet(fullUrl(pstrSummaryUrl(taxYearEOY)), user.isWelsh, follow = false,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
@@ -131,7 +130,7 @@ class PstrSummaryControllerISpec extends IntegrationTest with BeforeAndAfterEach
             authoriseAgentOrIndividual(user.isAgent)
             dropPensionsDB()
             val viewModel = aPensionAnnualAllowanceViewModel.copy(pensionSchemeTaxReferences = Some(Seq()))
-            insertCyaData(pensionsUserDataWithAnnualAllowances(viewModel), aUserRequest)
+            insertCyaData(pensionsUserDataWithAnnualAllowances(viewModel))
             urlGet(fullUrl(pstrSummaryUrl(taxYearEOY)), user.isWelsh, follow = false,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }

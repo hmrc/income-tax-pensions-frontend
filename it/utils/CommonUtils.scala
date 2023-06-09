@@ -16,7 +16,6 @@
 
 package utils
 
-import builders.UserBuilder.aUserRequest
 import models.IncomeTaxUserData
 import models.mongo.PensionsUserData
 import play.api.http.HeaderNames
@@ -31,7 +30,7 @@ trait CommonUtils extends IntegrationTest with ViewHelpers with PensionsDatabase
     lazy val result: WSResponse = {
       dropPensionsDB()
       authoriseAgentOrIndividual(user.isAgent)
-      optPensionsUserData.fold(())(insertCyaData(_, aUserRequest))
+      optPensionsUserData.fold(())(insertCyaData)
       urlGet(fullUrl(url(taxYearEOY)), user.isWelsh, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
     }
     result
@@ -48,7 +47,7 @@ trait CommonUtils extends IntegrationTest with ViewHelpers with PensionsDatabase
     lazy val result: WSResponse = {
       dropPensionsDB()
       authoriseAgentOrIndividual(user.isAgent)
-      insertCyaData(pensionsUserData, aUserRequest)
+      insertCyaData(pensionsUserData)
       userDataStub(userData, nino, taxYearEOY)
       urlGet(fullUrl(url(taxYearEOY)), user.isWelsh, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
     }
@@ -61,7 +60,7 @@ trait CommonUtils extends IntegrationTest with ViewHelpers with PensionsDatabase
     lazy val result: WSResponse = {
       dropPensionsDB()
       authoriseAgentOrIndividual()
-      optPensionsUserData.fold(())(insertCyaData(_, aUserRequest))
+      optPensionsUserData.fold(())(insertCyaData)
       urlGet(fullUrl(url(taxYearEOY)), follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
     }
     result
@@ -86,7 +85,7 @@ trait CommonUtils extends IntegrationTest with ViewHelpers with PensionsDatabase
                       (implicit url: Int => String): WSResponse = {
     val result: WSResponse = {
       dropPensionsDB()
-      insertCyaData(pensionsUserData, aUserRequest)
+      insertCyaData(pensionsUserData)
       authoriseAgentOrIndividual(user.isAgent)
       urlPost(fullUrl(url(taxYearEOY)), body = form, welsh = user.isWelsh, follow = false,
         headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
@@ -100,7 +99,7 @@ trait CommonUtils extends IntegrationTest with ViewHelpers with PensionsDatabase
                 (implicit url: Int => String): WSResponse = {
     val result: WSResponse = {
       dropPensionsDB()
-      insertCyaData(pensionsUserData, aUserRequest)
+      insertCyaData(pensionsUserData)
       authoriseAgentOrIndividual()
       urlPost(fullUrl(url(taxYearEOY)), body = form, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
     }

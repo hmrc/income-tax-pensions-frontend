@@ -18,7 +18,6 @@ package controllers.pensions.transferIntoOverseasPensions
 
 import builders.PensionsUserDataBuilder.pensionUserDataWithTransferIntoOverseasPension
 import builders.TransfersIntoOverseasPensionsViewModelBuilder.{aTransfersIntoOverseasPensionsViewModel, emptyTransfersIntoOverseasPensionsViewModel}
-import builders.UserBuilder.aUserRequest
 import models.pension.charges.TransferPensionScheme
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -116,7 +115,7 @@ class TransferChargeSummaryControllerISpec extends IntegrationTest with BeforeAn
             authoriseAgentOrIndividual(user.isAgent)
             dropPensionsDB()
             val viewModel = transferViewModel
-            insertCyaData(pensionUserDataWithTransferIntoOverseasPension(viewModel), aUserRequest)
+            insertCyaData(pensionUserDataWithTransferIntoOverseasPension(viewModel))
             urlGet(fullUrl(transferChargeSummaryUrl(taxYearEOY)), user.isWelsh, follow = false,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
@@ -153,7 +152,7 @@ class TransferChargeSummaryControllerISpec extends IntegrationTest with BeforeAn
             authoriseAgentOrIndividual(user.isAgent)
             dropPensionsDB()
             val viewModel = transferViewModel
-            insertCyaData(pensionUserDataWithTransferIntoOverseasPension(viewModel), aUserRequest)
+            insertCyaData(pensionUserDataWithTransferIntoOverseasPension(viewModel))
             urlGet(fullUrl(transferChargeSummaryUrl(taxYearEOY)), user.isWelsh, follow = false,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
@@ -183,7 +182,7 @@ class TransferChargeSummaryControllerISpec extends IntegrationTest with BeforeAn
             authoriseAgentOrIndividual(user.isAgent)
             dropPensionsDB()
             val emptyViewModel = emptyTransfersIntoOverseasPensionsViewModel
-            insertCyaData(pensionUserDataWithTransferIntoOverseasPension(emptyViewModel), aUserRequest)
+            insertCyaData(pensionUserDataWithTransferIntoOverseasPension(emptyViewModel))
 
             urlGet(fullUrl(transferChargeSummaryUrl(taxYearEOY)), user.isWelsh, follow = false,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))

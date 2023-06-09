@@ -20,7 +20,7 @@ import builders.PaymentsIntoOverseasPensionsViewModelBuilder.aPaymentsIntoOverse
 import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import builders.PensionsUserDataBuilder
 import builders.PensionsUserDataBuilder.pensionUserDataWithOnlyOverseasPensions
-import builders.UserBuilder.{aUser, aUserRequest}
+import builders.UserBuilder.aUser
 import models.mongo.PensionsCYAModel
 import play.api.http.HeaderNames
 import play.api.http.Status.{OK, SEE_OTHER}
@@ -42,7 +42,7 @@ class ReliefSchemeDetailsControllerISpec extends IntegrationTest with ViewHelper
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
-        insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel), aUserRequest)
+        insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel))
         urlGet(fullUrl(pensionReliefSchemeDetailsUrl(taxYear, 1)), !aUser.isAgent, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
       }
@@ -54,7 +54,7 @@ class ReliefSchemeDetailsControllerISpec extends IntegrationTest with ViewHelper
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
-        insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel), aUserRequest)
+        insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel))
         urlGet(fullUrl(pensionReliefSchemeDetailsUrl(taxYearEOY, 1)), !aUser.isAgent, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -67,7 +67,7 @@ class ReliefSchemeDetailsControllerISpec extends IntegrationTest with ViewHelper
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
-        insertCyaData(pensionUserDataWithOnlyOverseasPensions(pensionsNoSchemesViewModel), aUserRequest)
+        insertCyaData(pensionUserDataWithOnlyOverseasPensions(pensionsNoSchemesViewModel))
         urlGet(fullUrl(pensionReliefSchemeDetailsUrl(taxYearEOY, 100)), !aUser.isAgent, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -79,7 +79,7 @@ class ReliefSchemeDetailsControllerISpec extends IntegrationTest with ViewHelper
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
-        insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel), aUserRequest)
+        insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel))
         urlGet(fullUrl(pensionReliefSchemeDetailsUrl(taxYearEOY, 100)), !aUser.isAgent, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -95,8 +95,7 @@ class ReliefSchemeDetailsControllerISpec extends IntegrationTest with ViewHelper
         authoriseAgentOrIndividual(aUser.isAgent)
         insertCyaData(pensionsUsersData(
           isPrior = false,
-          aPensionsCYAModel),
-          aUserRequest)
+          aPensionsCYAModel))
 
         urlPost(
           fullUrl(pensionReliefSchemeDetailsUrl(taxYear, 0)),
@@ -114,7 +113,7 @@ class ReliefSchemeDetailsControllerISpec extends IntegrationTest with ViewHelper
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
-        insertCyaData(pensionUserDataWithOnlyOverseasPensions(pensionsNoSchemesViewModel), aUserRequest)
+        insertCyaData(pensionUserDataWithOnlyOverseasPensions(pensionsNoSchemesViewModel))
 
         urlPost(
           fullUrl(pensionReliefSchemeDetailsUrl(taxYearEOY, 100)),
@@ -131,7 +130,7 @@ class ReliefSchemeDetailsControllerISpec extends IntegrationTest with ViewHelper
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
-        insertCyaData(pensionsUsersData(isPrior = true, aPensionsCYAModel), aUserRequest)
+        insertCyaData(pensionsUsersData(isPrior = true, aPensionsCYAModel))
 
         urlPost(
           fullUrl(pensionReliefSchemeDetailsUrl(taxYearEOY, 100)),
@@ -148,7 +147,7 @@ class ReliefSchemeDetailsControllerISpec extends IntegrationTest with ViewHelper
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
-        insertCyaData(pensionsUsersData(isPrior = true, aPensionsCYAModel), aUserRequest)
+        insertCyaData(pensionsUsersData(isPrior = true, aPensionsCYAModel))
         urlPost(
           fullUrl(pensionReliefSchemeDetailsUrl(taxYearEOY, 0)),
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),

@@ -22,7 +22,6 @@ import builders.PaymentsIntoOverseasPensionsViewModelBuilder.aPaymentsIntoOverse
 import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import builders.PensionsUserDataBuilder
 import builders.PensionsUserDataBuilder.pensionUserDataWithOnlyOverseasPensions
-import builders.UserBuilder.aUserRequest
 import models.mongo.{PensionsCYAModel, PensionsUserData}
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
@@ -68,7 +67,7 @@ class DoubleTaxationAgreementControllerISpec extends
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual()
-        insertCyaData(pensionsUsersData(aPensionsCYAModel), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel))
         userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYearEOY)
         urlGet(fullUrl(doubleTaxAgrtUrl(taxYearEOY)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
@@ -82,7 +81,7 @@ class DoubleTaxationAgreementControllerISpec extends
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual()
-        insertCyaData(pensionsUsersData(aPensionsCYAModel), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel))
         userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYearEOY)
         urlGet(fullUrl(doubleTaxAgrtUrl(taxYear)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
@@ -99,7 +98,7 @@ class DoubleTaxationAgreementControllerISpec extends
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual()
-        insertCyaData(pensionUserDataWithOnlyOverseasPensions(pensionsNoSchemesViewModel), aUserRequest)
+        insertCyaData(pensionUserDataWithOnlyOverseasPensions(pensionsNoSchemesViewModel))
         userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYearEOY)
         urlGet(fullUrl(doubleTaxAgrtUrl(taxYearEOY)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
@@ -114,7 +113,7 @@ class DoubleTaxationAgreementControllerISpec extends
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual()
-        insertCyaData(pensionsUsersData(aPensionsCYAModel), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel))
         userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYearEOY)
         urlGet(fullUrl(doubleTaxAgrtUrl(taxYearEOY)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
@@ -133,7 +132,7 @@ class DoubleTaxationAgreementControllerISpec extends
       val form: Map[String, String] = setFormData("AB3211-10", "Test Treaty", "100",Some("FR"))
       lazy val result: WSResponse = {
         dropPensionsDB()
-        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel)), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel)))
         authoriseAgentOrIndividual()
         urlPost(fullUrl(doubleTaxAgrtUrl(taxYearEOY)), body = form,
           follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
@@ -147,7 +146,7 @@ class DoubleTaxationAgreementControllerISpec extends
       val form: Map[String, String] = setFormData("AB3211-10", "Test Treaty", "100",Some("FR"))
       lazy val result: WSResponse = {
         dropPensionsDB()
-        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel)), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel)))
         authoriseAgentOrIndividual()
         urlPost(fullUrl(doubleTaxAgrtUrl(taxYear)), body = form,
           follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
@@ -160,7 +159,7 @@ class DoubleTaxationAgreementControllerISpec extends
       val form: Map[String, String] = setFormData("", "", "", None)
       lazy val result: WSResponse = {
         dropPensionsDB()
-        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel)), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel)))
         authoriseAgentOrIndividual()
         urlPost(fullUrl(doubleTaxAgrtUrl(taxYearEOY)), body = form,
           follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
@@ -176,7 +175,7 @@ class DoubleTaxationAgreementControllerISpec extends
       val form: Map[String, String] = setFormData("AB3211-10", "Test Treaty", "100",Some("FR"))
       lazy val result: WSResponse = {
         dropPensionsDB()
-        insertCyaData(pensionUserDataWithOnlyOverseasPensions(pensionsNoSchemesViewModel), aUserRequest)
+        insertCyaData(pensionUserDataWithOnlyOverseasPensions(pensionsNoSchemesViewModel))
         authoriseAgentOrIndividual()
         urlPost(fullUrl(doubleTaxAgrtUrl(taxYearEOY)), body = form,
           follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
@@ -192,7 +191,7 @@ class DoubleTaxationAgreementControllerISpec extends
       lazy val result: WSResponse = {
         dropPensionsDB()
         insertCyaData(pensionsUsersData(aPensionsCYAModel
-          .copy(paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel)), aUserRequest)
+          .copy(paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel)))
         authoriseAgentOrIndividual()
         urlPost(fullUrl(doubleTaxAgrtUrl(taxYearEOY)), body = form,
           follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))

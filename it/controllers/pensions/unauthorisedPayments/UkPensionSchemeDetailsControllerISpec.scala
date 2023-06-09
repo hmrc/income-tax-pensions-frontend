@@ -18,7 +18,6 @@ package controllers.pensions.unauthorisedPayments
 
 import builders.PensionsUserDataBuilder.pensionsUserDataWithUnauthorisedPayments
 import builders.UnauthorisedPaymentsViewModelBuilder.anUnauthorisedPaymentsViewModel
-import builders.UserBuilder.aUserRequest
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterEach
@@ -100,7 +99,7 @@ class UkPensionSchemeDetailsControllerISpec extends IntegrationTest with BeforeA
             authoriseAgentOrIndividual(user.isAgent)
             dropPensionsDB()
             val viewModel = anUnauthorisedPaymentsViewModel.copy(pensionSchemeTaxReference = Some(pensionSchemes))
-            insertCyaData(pensionsUserDataWithUnauthorisedPayments(viewModel), aUserRequest)
+            insertCyaData(pensionsUserDataWithUnauthorisedPayments(viewModel))
             urlGet(fullUrl(ukPensionSchemeDetailsUrl(taxYearEOY)), user.isWelsh, follow = false,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
@@ -133,7 +132,7 @@ class UkPensionSchemeDetailsControllerISpec extends IntegrationTest with BeforeA
             authoriseAgentOrIndividual(user.isAgent)
             dropPensionsDB()
             val viewModel = anUnauthorisedPaymentsViewModel.copy(pensionSchemeTaxReference = Some(Seq.empty))
-            insertCyaData(pensionsUserDataWithUnauthorisedPayments(viewModel), aUserRequest)
+            insertCyaData(pensionsUserDataWithUnauthorisedPayments(viewModel))
 
             urlGet(fullUrl(ukPensionSchemeDetailsUrl(taxYearEOY)), user.isWelsh, follow = false,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))

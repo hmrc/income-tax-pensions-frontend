@@ -18,8 +18,8 @@ package controllers.pensions.paymentsIntoOverseasPensions
 
 import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import builders.PensionsUserDataBuilder
-import builders.UserBuilder.{aUser, aUserRequest}
-import models.mongo.PensionsCYAModel
+import builders.UserBuilder.aUser
+import models.mongo.{PensionsCYAModel, PensionsUserData}
 import play.api.http.HeaderNames
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
@@ -29,8 +29,8 @@ import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 class ReliefSchemeSummaryControllerISpec extends IntegrationTest with ViewHelpers with PensionsDatabaseHelper {
 
-  private def pensionsUsersData(isPrior: Boolean, pensionsCyaModel: PensionsCYAModel) = {
-    PensionsUserDataBuilder.aPensionsUserData.copy(isPriorSubmission = isPrior, pensions = pensionsCyaModel)
+  private def pensionsUsersData(pensionsCyaModel: PensionsCYAModel): PensionsUserData = {
+    PensionsUserDataBuilder.aPensionsUserData.copy(isPriorSubmission = false, pensions = pensionsCyaModel)
   }
 
   ".show" should {
@@ -38,7 +38,7 @@ class ReliefSchemeSummaryControllerISpec extends IntegrationTest with ViewHelper
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
-        insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel))
         urlGet(fullUrl(pensionReliefSchemeSummaryUrl(taxYear)), !aUser.isAgent, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
       }
@@ -51,7 +51,7 @@ class ReliefSchemeSummaryControllerISpec extends IntegrationTest with ViewHelper
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
-        insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel))
         urlGet(fullUrl(pensionReliefSchemeSummaryUrl(taxYearEOY)), !aUser.isAgent, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }

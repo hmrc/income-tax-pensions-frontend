@@ -21,7 +21,7 @@ import builders.IncomeTaxUserDataBuilder.anIncomeTaxUserData
 import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import builders.PensionsUserDataBuilder
 import builders.ShortServiceRefundsViewModelBuilder.emptyShortServiceRefundsViewModel
-import builders.UserBuilder.{aUser, aUserRequest}
+import builders.UserBuilder.aUser
 import models.mongo.PensionsCYAModel
 import play.api.http.HeaderNames
 import play.api.http.Status.{OK, SEE_OTHER}
@@ -44,7 +44,7 @@ class PaymentIntoOverseasPensionsCYAControllerISpec extends IntegrationTest with
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
-        insertCyaData(pensionsUsersData(aPensionsCYAModel), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel))
         userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYear)
         
         urlGet(fullUrl(paymentsIntoOverseasPensionsCyaUrl(taxYear)), !aUser.isAgent, follow = false,
@@ -59,7 +59,7 @@ class PaymentIntoOverseasPensionsCYAControllerISpec extends IntegrationTest with
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
-        insertCyaData(pensionsUsersData(aPensionsCYAModel), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel))
         userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYearEOY)
         
         urlGet(fullUrl(paymentsIntoOverseasPensionsCyaUrl(taxYearEOY)), !aUser.isAgent, follow = false,
@@ -74,7 +74,7 @@ class PaymentIntoOverseasPensionsCYAControllerISpec extends IntegrationTest with
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
-        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(shortServiceRefunds = emptyShortServiceRefundsViewModel)), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(shortServiceRefunds = emptyShortServiceRefundsViewModel)))
         userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYear)
         urlPost(
           fullUrl(paymentsIntoOverseasPensionsCyaUrl(taxYear)),
@@ -90,7 +90,7 @@ class PaymentIntoOverseasPensionsCYAControllerISpec extends IntegrationTest with
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
-        insertCyaData(pensionsUsersData(aPensionsCYAModel), aUserRequest)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel))
         userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYearEOY)
         pensionReliefsSessionStub("", nino, taxYearEOY)
         pensionIncomeSessionStub("", nino, taxYearEOY)

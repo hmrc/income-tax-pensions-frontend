@@ -135,7 +135,7 @@ class AboveAnnualLifetimeAllowanceControllerISpec extends IntegrationTest with B
           implicit lazy val result: WSResponse = {
             authoriseAgentOrIndividual(user.isAgent)
             dropPensionsDB()
-            insertCyaData(anPensionsUserDataEmptyCya, aUserRequest)
+            insertCyaData(anPensionsUserDataEmptyCya)
             urlGet(fullUrl(pensionAboveAnnualLifetimeAllowanceUrl(taxYearEOY)), user.isWelsh, follow = false,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
@@ -158,7 +158,7 @@ class AboveAnnualLifetimeAllowanceControllerISpec extends IntegrationTest with B
             val pensionsViewModel = aPensionLifetimeAllowanceViewModel.copy(
               aboveLifetimeAllowanceQuestion = Some(true)
             )
-            insertCyaData(pensionsUserDataWithLifetimeAllowance(pensionsViewModel), aUserRequest)
+            insertCyaData(pensionsUserDataWithLifetimeAllowance(pensionsViewModel))
             authoriseAgentOrIndividual(user.isAgent)
             urlGet(fullUrl(pensionAboveAnnualLifetimeAllowanceUrl(taxYearEOY)), user.isWelsh,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
@@ -183,7 +183,7 @@ class AboveAnnualLifetimeAllowanceControllerISpec extends IntegrationTest with B
             val pensionsViewModel = aPensionLifetimeAllowanceViewModel.copy(
               aboveLifetimeAllowanceQuestion = Some(false)
             )
-            insertCyaData(pensionsUserDataWithLifetimeAllowance(pensionsViewModel), aUserRequest)
+            insertCyaData(pensionsUserDataWithLifetimeAllowance(pensionsViewModel))
             authoriseAgentOrIndividual(user.isAgent)
             urlGet(fullUrl(pensionAboveAnnualLifetimeAllowanceUrl(taxYearEOY)), user.isWelsh,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
@@ -227,7 +227,7 @@ class AboveAnnualLifetimeAllowanceControllerISpec extends IntegrationTest with B
           lazy val result: WSResponse = {
             dropPensionsDB()
             authoriseAgentOrIndividual(user.isAgent)
-            insertCyaData(aPensionsUserData, aUserRequest)
+            insertCyaData(aPensionsUserData)
             urlPost(fullUrl(pensionAboveAnnualLifetimeAllowanceUrl(taxYearEOY)), body = form, follow = false, welsh = user.isWelsh,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
@@ -270,7 +270,7 @@ class AboveAnnualLifetimeAllowanceControllerISpec extends IntegrationTest with B
             aboveLifetimeAllowanceQuestion = None
           )
 
-          insertCyaData(pensionsUserDataWithLifetimeAllowance(pensionsViewModel), aUserRequest)
+          insertCyaData(pensionsUserDataWithLifetimeAllowance(pensionsViewModel))
 
           authoriseAgentOrIndividual()
           urlPost(fullUrl(pensionAboveAnnualLifetimeAllowanceUrl(taxYearEOY)), body = form, follow = false,
@@ -304,7 +304,7 @@ class AboveAnnualLifetimeAllowanceControllerISpec extends IntegrationTest with B
             aboveLifetimeAllowanceQuestion = None
           )
 
-          insertCyaData(pensionsUserDataWithLifetimeAllowance(pensionsViewModel), aUserRequest)
+          insertCyaData(pensionsUserDataWithLifetimeAllowance(pensionsViewModel))
 
           authoriseAgentOrIndividual()
           urlPost(fullUrl(pensionAboveAnnualLifetimeAllowanceUrl(taxYearEOY)), body = form, follow = false,

@@ -20,7 +20,7 @@ import builders.PaymentsIntoOverseasPensionsViewModelBuilder.{aPaymentsIntoOvers
 import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import builders.PensionsUserDataBuilder
 import builders.PensionsUserDataBuilder.pensionUserDataWithOnlyOverseasPensions
-import builders.UserBuilder.{aUser, aUserRequest}
+import builders.UserBuilder.aUser
 import forms.RadioButtonForm
 import models.mongo.PensionsCYAModel
 import models.pension.charges.TaxReliefQuestion
@@ -47,7 +47,7 @@ class PensionsReliefTypeControllerISpec extends IntegrationTest with ViewHelpers
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
-        insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel), aUserRequest)
+        insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel))
         urlGet(fullUrl(pensionReliefTypeUrl(taxYear, schemeIndex01)), !aUser.isAgent, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
       }
@@ -59,7 +59,7 @@ class PensionsReliefTypeControllerISpec extends IntegrationTest with ViewHelpers
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
-        insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel), aUserRequest)
+        insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel))
         urlGet(fullUrl(pensionReliefTypeUrl(taxYearEOY, schemeIndex01)), !aUser.isAgent, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -71,7 +71,7 @@ class PensionsReliefTypeControllerISpec extends IntegrationTest with ViewHelpers
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
-        insertCyaData(pensionUserDataWithOnlyOverseasPensions(pensionsNoSchemesViewModel), aUserRequest)
+        insertCyaData(pensionUserDataWithOnlyOverseasPensions(pensionsNoSchemesViewModel))
         urlGet(fullUrl(pensionReliefTypeUrl(taxYearEOY, schemeIndex100)), !aUser.isAgent, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -83,7 +83,7 @@ class PensionsReliefTypeControllerISpec extends IntegrationTest with ViewHelpers
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
-        insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel), aUserRequest)
+        insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel))
         urlGet(fullUrl(pensionReliefTypeUrl(taxYearEOY, schemeIndex100)), !aUser.isAgent, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -101,8 +101,7 @@ class PensionsReliefTypeControllerISpec extends IntegrationTest with ViewHelpers
 
         insertCyaData(pensionsUsersData(
           isPrior = false,
-          aPensionsCYAModel.copy(paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsEmptyViewModel)),
-          aUserRequest)
+          aPensionsCYAModel.copy(paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsEmptyViewModel)))
 
         urlPost(
           fullUrl(pensionReliefTypeUrl(taxYear, 0)),
@@ -120,7 +119,7 @@ class PensionsReliefTypeControllerISpec extends IntegrationTest with ViewHelpers
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
         val formData = Map(RadioButtonForm.value -> TaxReliefQuestion.TransitionalCorrespondingRelief)
-        insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel), aUserRequest)
+        insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel))
         urlPost(
           fullUrl(pensionReliefTypeUrl(taxYearEOY, 0)),
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
@@ -137,7 +136,7 @@ class PensionsReliefTypeControllerISpec extends IntegrationTest with ViewHelpers
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
         val formData = Map(RadioButtonForm.value -> TaxReliefQuestion.MigrantMemberRelief)
-        insertCyaData(pensionsUsersData(isPrior = true, aPensionsCYAModel), aUserRequest)
+        insertCyaData(pensionsUsersData(isPrior = true, aPensionsCYAModel))
         urlPost(
           fullUrl(pensionReliefTypeUrl(taxYearEOY, 0)),
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
@@ -154,7 +153,7 @@ class PensionsReliefTypeControllerISpec extends IntegrationTest with ViewHelpers
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
         val formData = Map(RadioButtonForm.value -> TaxReliefQuestion.DoubleTaxationRelief)
-        insertCyaData(pensionsUsersData(isPrior = true, aPensionsCYAModel), aUserRequest)
+        insertCyaData(pensionsUsersData(isPrior = true, aPensionsCYAModel))
         urlPost(
           fullUrl(pensionReliefTypeUrl(taxYearEOY, 0)),
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
@@ -170,7 +169,7 @@ class PensionsReliefTypeControllerISpec extends IntegrationTest with ViewHelpers
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
         val formData = Map(RadioButtonForm.value -> TaxReliefQuestion.NoTaxRelief)
-        insertCyaData(pensionsUsersData(isPrior = true, aPensionsCYAModel), aUserRequest)
+        insertCyaData(pensionsUsersData(isPrior = true, aPensionsCYAModel))
         urlPost(
           fullUrl(pensionReliefTypeUrl(taxYearEOY, 0)),
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
@@ -186,7 +185,7 @@ class PensionsReliefTypeControllerISpec extends IntegrationTest with ViewHelpers
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
         val formData = Map(RadioButtonForm.value -> "")
-        insertCyaData(pensionsUsersData(isPrior = true, aPensionsCYAModel), aUserRequest)
+        insertCyaData(pensionsUsersData(isPrior = true, aPensionsCYAModel))
         urlPost(
           fullUrl(pensionReliefTypeUrl(taxYearEOY, 1)),
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
@@ -202,7 +201,7 @@ class PensionsReliefTypeControllerISpec extends IntegrationTest with ViewHelpers
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
         val formData = Map(RadioButtonForm.value -> TaxReliefQuestion.TransitionalCorrespondingRelief)
-        insertCyaData(pensionUserDataWithOnlyOverseasPensions(pensionsNoSchemesViewModel), aUserRequest)
+        insertCyaData(pensionUserDataWithOnlyOverseasPensions(pensionsNoSchemesViewModel))
         urlPost(
           fullUrl(pensionReliefTypeUrl(taxYearEOY, schemeIndex100)),
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
@@ -218,7 +217,7 @@ class PensionsReliefTypeControllerISpec extends IntegrationTest with ViewHelpers
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
         val formData = Map(RadioButtonForm.value -> TaxReliefQuestion.TransitionalCorrespondingRelief)
-        insertCyaData(pensionsUsersData(isPrior = true, aPensionsCYAModel), aUserRequest)
+        insertCyaData(pensionsUsersData(isPrior = true, aPensionsCYAModel))
         urlPost(
           fullUrl(pensionReliefTypeUrl(taxYearEOY, schemeIndex100)),
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
