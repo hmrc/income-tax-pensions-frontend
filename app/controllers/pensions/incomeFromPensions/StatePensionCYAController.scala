@@ -19,15 +19,12 @@ package controllers.pensions.incomeFromPensions
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.incomeFromPensions.routes.IncomeFromPensionsSummaryController
 import controllers.predicates.{ActionsProvider, AuthorisedAction}
-import models.mongo.{PensionsCYAModel, PensionsUserData}
+import models.mongo.PensionsCYAModel
 import models.pension.AllPensionsData
 import models.pension.AllPensionsData.generateCyaFromPrior
-import models.{APIErrorBodyModel, APIErrorModel, AuthorisationRequest, User}
-import play.api.Logger
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.{PensionSessionService, StatePensionService}
-import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.incomeFromPensions.StatePensionCYAView
@@ -45,7 +42,6 @@ class StatePensionCYAController @Inject()(authAction: AuthorisedAction,
                                           appConfig: AppConfig, clock: Clock, errorHandler: ErrorHandler)
   extends FrontendController(mcc) with I18nSupport with SessionHelper {
 
-  lazy val logger: Logger = Logger(this.getClass.getName)
   implicit val executionContext: ExecutionContext = mcc.executionContext
 
   def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) { implicit userSessionDataRequest =>
@@ -62,11 +58,11 @@ class StatePensionCYAController @Inject()(authAction: AuthorisedAction,
             case Left(_) => errorHandler.internalServerError()
             case Right(_) => Redirect(IncomeFromPensionsSummaryController.show(taxYear))
           }
-          } else {
-            Future.successful(Redirect(IncomeFromPensionsSummaryController.show(taxYear)))
-          }
+        } else {
+          Future.successful(Redirect(IncomeFromPensionsSummaryController.show(taxYear)))
         }
       }
+    }
   }
 
   private def sessionDataDifferentThanPriorData(cyaData: PensionsCYAModel, priorData: Option[AllPensionsData]): Boolean = {

@@ -115,7 +115,7 @@ class ReducedAnnualAllowanceControllerISpec extends IntegrationTest with BeforeA
   }
   
   object CommonExpectedEN extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Pension annual allowance for 6 April ${taxYear - 1} to 5 April $taxYear"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Annual allowances for 6 April ${taxYear - 1} to 5 April $taxYear"
     val expectedFindOut = "Find out what the annual allowance limit is for this tax year (opens in new tab)."
     val expectedFindOutLinkText = "annual allowance limit is for this tax year (opens in new tab)"
     val expectedOverLimitLinkText = "over the limit (opens in new tab)"
@@ -129,7 +129,7 @@ class ReducedAnnualAllowanceControllerISpec extends IntegrationTest with BeforeA
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Lwfans blynyddol pensiwn ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Lwfansau blynyddol ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
     val expectedFindOut = "Dysgwch beth yw terfyn y lwfans blynyddol ar gyfer y flwyddyn dreth hon (yn agor tab newydd)."
     val expectedFindOutLinkText = "terfyn y lwfans blynyddol ar gyfer y flwyddyn dreth hon (yn agor tab newydd)"
     val expectedOverLimitLinkText = "dros y terfyn (yn agor tab newydd)"

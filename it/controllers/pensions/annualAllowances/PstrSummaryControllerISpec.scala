@@ -59,7 +59,7 @@ class PstrSummaryControllerISpec extends IntegrationTest with BeforeAndAfterEach
   }
 
   object CommonExpectedEN extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Pension annual allowance for 6 April ${taxYear - 1} to 5 April $taxYear"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Annual allowances for 6 April ${taxYear - 1} to 5 April $taxYear"
     val expectedButtonText = "Continue"
     val expectedTitle = "Pension Scheme Tax Reference (PSTR) summary"
     val change = "Change"
@@ -70,7 +70,7 @@ class PstrSummaryControllerISpec extends IntegrationTest with BeforeAndAfterEach
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Lwfans blynyddol pensiwn ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Lwfansau blynyddol ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
     val expectedButtonText = "Yn eich blaen"
     val expectedTitle = "Crynodeb Cyfeirnod Treth y Cynllun Pensiwn (PSTR)"
     val change = "Newid"

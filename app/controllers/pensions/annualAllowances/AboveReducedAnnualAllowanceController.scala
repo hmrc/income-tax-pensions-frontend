@@ -17,18 +17,15 @@
 package controllers.pensions.annualAllowances
 
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.routes.PensionsSummaryController
-import controllers.pensions.annualAllowances.routes.AboveReducedAnnualAllowanceAmountController
 import controllers.pensions.annualAllowances.routes.ReducedAnnualAllowanceController
-import controllers.predicates.AuthorisedAction
-import controllers.predicates.TaxYearAction.taxYearAction
-import forms.YesNoForm
-import models.User
-import models.mongo.PensionsCYAModel
-import models.pension.charges.PensionAnnualAllowancesViewModel
-import play.api.data.Form
+import controllers.pensions.lifetimeAllowances.routes.PensionProviderPaidTaxController
+import controllers.pensions.routes.PensionsSummaryController
+import controllers.predicates.ActionsProvider
+import forms.FormsProvider
+import models.mongo.{PensionsCYAModel, PensionsUserData}
+import models.requests.UserSessionDataRequest
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
@@ -38,69 +35,81 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
 @Singleton
-class AboveReducedAnnualAllowanceController @Inject()(implicit val cc: MessagesControllerComponents,
-                                                      authAction: AuthorisedAction,
-                                                      aboveReducedAnnualAllowanceView: AboveReducedAnnualAllowanceView,
-                                                      appConfig: AppConfig,
+class AboveReducedAnnualAllowanceController @Inject()(actionsProvider: ActionsProvider,
                                                       pensionSessionService: PensionSessionService,
+                                                      view: AboveReducedAnnualAllowanceView,
                                                       errorHandler: ErrorHandler,
-                                                      clock: Clock) extends FrontendController(cc) with I18nSupport {
+                                                      formsProvider: FormsProvider
+                                                     )(implicit val cc: MessagesControllerComponents,
+                                                       appConfig: AppConfig,
+                                                       clock: Clock) extends FrontendController(cc) with I18nSupport {
 
+  def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
+    implicit sessionData =>
 
-  def yesNoForm(user: User, reducedAnnualAllowanceQuestion: Boolean): Form[Boolean] = YesNoForm.yesNoForm(
-    missingInputError = s"pensions.aboveReducedAnnualAllowance.${if (reducedAnnualAllowanceQuestion) "reduced" else "nonReduced"}." +
-      s"error.noEntry.${if (user.isAgent) "agent" else "individual"}"
-  )
+      val reducedAnnualAllowanceQuestion = sessionData.pensionsUserData.pensions.pensionsAnnualAllowances.reducedAnnualAllowanceQuestion
+      val aboveAnnualAllowanceQuestion = sessionData.pensionsUserData.pensions.pensionsAnnualAllowances.aboveAnnualAllowanceQuestion
+      val amount = sessionData.pensionsUserData.pensions.pensionsAnnualAllowances.aboveAnnualAllowance
 
-  def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
-    pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
-      case Some(data) =>
-        data.pensions.pensionsAnnualAllowances.reducedAnnualAllowanceQuestion match {
-          case Some(reducedAnnualAllowanceQuestion) =>
-            data.pensions.pensionsAnnualAllowances.aboveAnnualAllowanceQuestion match {
-              case Some(value) => Future.successful(Ok(aboveReducedAnnualAllowanceView(
-                yesNoForm(request.user, reducedAnnualAllowanceQuestion).fill(value), taxYear, reducedAnnualAllowanceQuestion)))
-              case None =>
-                Future.successful(Ok(aboveReducedAnnualAllowanceView(
-                  yesNoForm(request.user, reducedAnnualAllowanceQuestion), taxYear, reducedAnnualAllowanceQuestion)))
-            }
-          case None =>
-            Future.successful(Redirect(ReducedAnnualAllowanceController.show(taxYear)))
-        }
-      case None =>
-        //TODO: navigate to annual allowance CYA when available
-        Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
-    }
+      reducedAnnualAllowanceQuestion match {
+        case Some(isReduced) =>
+
+          (aboveAnnualAllowanceQuestion, amount) match {
+            case (Some(yesNo), amount) => Future.successful(Ok(view(
+              formsProvider.aboveAnnualAllowanceForm(sessionData.user, isReduced).fill(yesNo, amount), taxYear, isReduced)))
+            case _ =>
+              Future.successful(Ok(view(formsProvider.aboveAnnualAllowanceForm(sessionData.user, isReduced), taxYear, isReduced)))
+          }
+
+        case None => Future.successful(Redirect(ReducedAnnualAllowanceController.show(taxYear)))
+      }
   }
 
-  def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
-    pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
-      data =>
-        val pensionsCYAModel: PensionsCYAModel = data.map(_.pensions).getOrElse(PensionsCYAModel.emptyModels)
-        pensionsCYAModel.pensionsAnnualAllowances.reducedAnnualAllowanceQuestion match {
-          case Some(reducedAnnualAllowanceQuestion) =>
-            yesNoForm(request.user, reducedAnnualAllowanceQuestion).bindFromRequest().fold(
-              formWithErrors => Future.successful(BadRequest(aboveReducedAnnualAllowanceView(formWithErrors, taxYear, reducedAnnualAllowanceQuestion))),
-              yesNo => {
-                val viewModel: PensionAnnualAllowancesViewModel = pensionsCYAModel.pensionsAnnualAllowances
-                val updatedCyaModel: PensionsCYAModel = {
-                  pensionsCYAModel.copy(pensionsAnnualAllowances = viewModel.copy(
-                    aboveAnnualAllowanceQuestion = Some(yesNo),
-                    aboveAnnualAllowance = if (yesNo) viewModel.aboveAnnualAllowance else None))
-                }
-                pensionSessionService.createOrUpdateSessionData(request.user,
-                  updatedCyaModel, taxYear, data.exists(_.isPriorSubmission))(errorHandler.internalServerError()) {
-                  if (yesNo) {
-                    //TODO redirect to Above your annual allowance amount page
-                    Redirect(AboveReducedAnnualAllowanceAmountController.show(taxYear))
-                  } else {
-                    //TODO redirect to check your annual allowance page
-                    Redirect(PensionsSummaryController.show(taxYear))
-                  }
-                }
+
+  def submit(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
+    implicit sessionData =>
+
+      val reducedAnnualAllowanceQuestion = sessionData.pensionsUserData.pensions.pensionsAnnualAllowances.reducedAnnualAllowanceQuestion
+
+      reducedAnnualAllowanceQuestion match {
+        case Some(isReduced) =>
+
+          formsProvider.aboveAnnualAllowanceForm(sessionData.user, isReduced).bindFromRequest().fold(
+            formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear, isReduced))),
+            yesNoAmount => {
+              (yesNoAmount._1, yesNoAmount._2) match {
+                case (true, amount) => updateSessionData(sessionData.pensionsUserData, yesNo = true, amount, taxYear)
+                case (false, _) => updateSessionData(sessionData.pensionsUserData, yesNo = false, None, taxYear)
               }
-            )
+            }
+          )
+
+        case None => Future.successful(Redirect(ReducedAnnualAllowanceController.show(taxYear)))
+      }
+  }
+
+
+  private def updateSessionData[T](pensionUserData: PensionsUserData,
+                                   yesNo: Boolean,
+                                   amount: Option[BigDecimal],
+                                   taxYear: Int)(implicit request: UserSessionDataRequest[T]): Future[Result] = {
+
+    val updatedCyaModel: PensionsCYAModel = pensionUserData.pensions.copy(
+      pensionsAnnualAllowances = pensionUserData.pensions.pensionsAnnualAllowances.copy(
+        aboveAnnualAllowanceQuestion = Some(yesNo), aboveAnnualAllowance = amount)
+    )
+
+    pensionSessionService.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear, pensionUserData.isPriorSubmission
+    )(errorHandler.internalServerError()) {
+      Redirect(
+        if (yesNo) {
+          PensionProviderPaidTaxController.show(taxYear)
+        } else {
+          //TODO redirect to check your annual allowance page
+          PensionsSummaryController.show(taxYear)
         }
+      )
     }
   }
+
 }
