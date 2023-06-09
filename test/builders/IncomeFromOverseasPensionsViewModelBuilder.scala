@@ -61,7 +61,7 @@ object IncomeFromOverseasPensionsViewModelBuilder {
       )
     )
   )
-  
+
   val anIncomeFromOverseasPensionsWithFalseFtcrValueViewModel: IncomeFromOverseasPensionsViewModel = IncomeFromOverseasPensionsViewModel(
     paymentsFromOverseasPensionsQuestion = Some(true),
     overseasIncomePensionSchemes = Seq(
@@ -77,6 +77,6 @@ object IncomeFromOverseasPensionsViewModelBuilder {
       )
     )
   )
-  
+
   val anIncomeFromOverseasPensionsEmptyViewModel: IncomeFromOverseasPensionsViewModel = IncomeFromOverseasPensionsViewModel()
 }

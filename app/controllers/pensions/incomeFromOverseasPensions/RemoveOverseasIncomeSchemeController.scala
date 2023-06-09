@@ -17,6 +17,7 @@
 package controllers.pensions.incomeFromOverseasPensions
 
 import config.{AppConfig, ErrorHandler}
+import controllers.pensions.incomeFromOverseasPensions.routes._
 import controllers.predicates.ActionsProvider
 import controllers.validatedIndex
 import models.mongo.{PensionsCYAModel, PensionsUserData}
@@ -26,9 +27,8 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import routes._
-import views.html.pensions.incomeFromOverseasPensions.RemoveOverseasIncomeSchemeView
 import utils.{Clock, SessionHelper}
+import views.html.pensions.incomeFromOverseasPensions.RemoveOverseasIncomeSchemeView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
@@ -39,14 +39,14 @@ class RemoveOverseasIncomeSchemeController @Inject()(actionsProvider: ActionsPro
                                                      view: RemoveOverseasIncomeSchemeView,
                                                      errorHandler: ErrorHandler)
                                                     (implicit val mcc: MessagesControllerComponents,
-                                             appConfig: AppConfig, clock: Clock)
+                                                     appConfig: AppConfig, clock: Clock)
   extends FrontendController(mcc) with I18nSupport with SessionHelper {
 
   def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionUserData =>
     val overseasIncomeSchemes = sessionUserData.pensionsUserData.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes
     validatedIndex(index, overseasIncomeSchemes.size).fold(Future.successful(Redirect(CountrySummaryListController.show(taxYear)))) {
       i =>
-        overseasIncomeSchemes(i).alphaTwoCode.fold(Future.successful(Redirect(CountrySummaryListController.show(taxYear)))){
+        overseasIncomeSchemes(i).alphaTwoCode.fold(Future.successful(Redirect(CountrySummaryListController.show(taxYear)))) {
           country => Future.successful(Ok(view(taxYear, country, index)))
         }
     }
