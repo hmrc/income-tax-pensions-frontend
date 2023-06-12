@@ -75,7 +75,7 @@ class RemoveOverseasIncomeSchemeControllerISpec extends IntegrationTest with Bef
           lazy val result: WSResponse = {
             dropPensionsDB()
             authoriseAgentOrIndividual(user.isAgent)
-            insertCyaData(aPensionsUserData, aUserRequest)
+            insertCyaData(aPensionsUserData)
             urlGet(fullUrl(removeOverseasIncomeSchemeControllerUrl(taxYearEOY, Some(0))), user.isWelsh, follow = false,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
@@ -102,7 +102,7 @@ class RemoveOverseasIncomeSchemeControllerISpec extends IntegrationTest with Bef
         lazy val result: WSResponse = {
           dropPensionsDB()
           authoriseAgentOrIndividual()
-          insertCyaData(aPensionsUserData, aUserRequest)
+          insertCyaData(aPensionsUserData)
           urlGet(fullUrl(removeOverseasIncomeSchemeControllerUrl(taxYearEOY, None)), follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
         }
@@ -118,7 +118,7 @@ class RemoveOverseasIncomeSchemeControllerISpec extends IntegrationTest with Bef
         lazy val result: WSResponse = {
           dropPensionsDB()
           authoriseAgentOrIndividual()
-          insertCyaData(aPensionsUserData, aUserRequest)
+          insertCyaData(aPensionsUserData)
           urlGet(fullUrl(removeOverseasIncomeSchemeControllerUrl(taxYearEOY, Some(3))), follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
         }
@@ -142,7 +142,7 @@ class RemoveOverseasIncomeSchemeControllerISpec extends IntegrationTest with Bef
           lazy val result: WSResponse = {
             dropPensionsDB()
             authoriseAgentOrIndividual()
-            insertCyaData(aPensionsUserData, aUserRequest)
+            insertCyaData(aPensionsUserData)
             urlPost(fullUrl(removeOverseasIncomeSchemeControllerUrl(taxYearEOY, Some(0))), body = "", follow = false,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
@@ -160,11 +160,12 @@ class RemoveOverseasIncomeSchemeControllerISpec extends IntegrationTest with Bef
 
         "an invalid index is used" should {
 
+          val invalidIndex = 7
           lazy val result: WSResponse = {
             dropPensionsDB()
             authoriseAgentOrIndividual()
-            insertCyaData(aPensionsUserData, aUserRequest)
-            urlPost(fullUrl(removeOverseasIncomeSchemeControllerUrl(taxYearEOY, Some(7))), body = "", follow = false,
+            insertCyaData(aPensionsUserData)
+            urlPost(fullUrl(removeOverseasIncomeSchemeControllerUrl(taxYearEOY, Some(invalidIndex))), body = "", follow = false,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
 
