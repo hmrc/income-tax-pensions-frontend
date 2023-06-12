@@ -110,8 +110,7 @@ common.pensionSchemeTaxReference = Pension Scheme Tax Reference
 common.pensionSchemeTaxReference.forExample = For example, ‘12345678RA’
 common.pensionSchemeTaxReference.error.noEntry.individual = Enter your Pension Scheme Tax Reference
 common.pensionSchemeTaxReference.error.noEntry.agent = Enter your client’s Pension Scheme Tax Reference
-common.pensionSchemeTaxReference.p1.individual = If more than one pension scheme paid or agreed to pay the tax, you can add them later.
-common.pensionSchemeTaxReference.p1.agent = If more than one of your client’s pension schemes paid the tax, you can add these details later.
+common.pensionSchemeTaxReference.p1 = If more than one pension scheme paid or agreed to pay the tax, you can add them later.
 
 #################       Common overseas pensions        ########################################
 
