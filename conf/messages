@@ -90,7 +90,7 @@ common.yourP60.agent = your client’s P60
 common.aboutGeneralIncreases.agent = the ’About general increases in benefits’ letter the Pension Service sent your client
 
 common.employerFinancedRetirementScheme.caption = Employer-financed retirement benefits schemes for 6 April {0} to 5 April {1}
-
+common.addAnotherPstrLink = Add another Pensions Scheme Tax Reference
 
 ################# Common lifetime allowance #################
 
@@ -132,6 +132,9 @@ common.removePensionScheme.p1 = This will remove:
 common.removePensionScheme.p1.bullet1 = The name of the pension scheme
 common.removePensionScheme.p1.bullet2 = Pensions scheme tax reference
 common.removePensionScheme.p1.bullet3 = Pensions provider address
+common.removePensionScheme.p1.bullet4 = the name of the pension scheme
+common.removePensionScheme.p1.bullet5 = the amount paid before tax
+common.removePensionScheme.p1.bullet6 = the tax taken off
 
 #################       Error messages        ########################################
 
@@ -475,8 +478,7 @@ unauthorisedPayments.pension.pensionSchemeTaxReference.error.incorrectFormat.age
 
 #Pension Scheme Tax Reference Summary Page
 
-annualAllowance.pstrSummary.title = Pension Scheme Tax Reference (PSTR) summary
-annualAllowance.addAnotherPstrLink = Add another PSTR
+annualAllowance.pstrSummary.title = Pension schemes that paid or agreed to pay the annual allowance tax
 annualAllowance.addPstrLink = Add a PSTR
 
 #################       INCOME FROM PENSIONS        ########################################
@@ -840,7 +842,6 @@ employerFinancedRetirementScheme.benefitsFromScheme.error.agent = Select yes if 
 
 #Unauthorised payments from UK pensions schemes
 unauthorisedPayments.pensionSchemeDetails.title = Unauthorised payments from UK pensions schemes
-unauthorisedPayments.pensionSchemeDetails.addAnotherPensionSchemeTaxReference = Add another Pensions Scheme Tax Reference
 unauthorisedPayments.pensionSchemeDetails.addPensionSchemeTaxReference = Add a Pensions Scheme Tax Reference
 
 #Remove unauthorised payments from UK pensions schemes

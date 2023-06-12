@@ -302,7 +302,7 @@ class AnnualAndLifetimeAllowanceCYAViewHelperSpec extends AnyWordSpec with Match
       "Schemes paying annual allowance tax",
       expectedValue,
       "Change",
-      "/2022/annual-allowance/pension-scheme-tax-reference-summary",
+      "/2022/annual-allowance/pension-schemes-paying-annual-allowance-tax",
       "lifetimeAllowance.cya.annualPensionSchemeTaxReferences.hidden"))
   }
 

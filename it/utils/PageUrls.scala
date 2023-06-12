@@ -67,12 +67,12 @@ object PageUrls extends IntegrationTest {
     def totalPaymentsIntoRASUrl(taxYear: Int): String = s"$appUrl/$taxYear/payments-into-pensions/total-relief-at-source-check"
   }
 
-  
+
   //  *****************     Income from pensions pages      ******************************
 
   object IncomeFromPensionsPages {
     def pensionIncomeSummaryUrl(taxYear: Int): String = s"$appUrl/$taxYear/pension-income/pensions-income-summary"
-    
+
     def taxOnLumpSumUrl(taxYear: Int): String = s"$appUrl/$taxYear/pension-income/state-pension-lump-sum-tax"
 
     def statePensionLumpSumStartDateUrl(taxYear: Int): String = s"$appUrl/$taxYear/pension-income/state-pension-lump-sum-date"
@@ -89,31 +89,33 @@ object PageUrls extends IntegrationTest {
 
     def pensionSchemeDetailsUrl(taxYear: Int, pensionSchemeIndex: Option[Int]): String = {
       val baseUrl = s"$appUrl/$taxYear/pension-income/pension-income-details"
-      pensionSchemeIndex.fold(baseUrl)(idx =>s"$baseUrl?pensionSchemeIndex=$idx")
+      pensionSchemeIndex.fold(baseUrl)(idx => s"$baseUrl?pensionSchemeIndex=$idx")
     }
 
     def pensionAmountUrl(taxYear: Int, pensionSchemeIndex: Option[Int]): String = {
       val baseUrl = s"$appUrl/$taxYear/pension-income/pension-amount"
-      pensionSchemeIndex.fold(baseUrl)(idx =>s"$baseUrl?pensionSchemeIndex=$idx")
+      pensionSchemeIndex.fold(baseUrl)(idx => s"$baseUrl?pensionSchemeIndex=$idx")
     }
 
-    def pensionStartDateUrl(taxYear: Int, pensionSchemeIndex:Option[Int]): String = {
+    def pensionStartDateUrl(taxYear: Int, pensionSchemeIndex: Option[Int]): String = {
       val baseUrl = s"$appUrl/$taxYear/pension-income/pension-start-date"
-      pensionSchemeIndex.fold(baseUrl)(idx =>s"$baseUrl?pensionSchemeIndex=$idx")
+      pensionSchemeIndex.fold(baseUrl)(idx => s"$baseUrl?pensionSchemeIndex=$idx")
     }
 
     def removePensionSchemeUrl(taxYear: Int, pensionSchemeIndex: Option[Int] = None): String = {
       val baseUrl = s"$appUrl/$taxYear/pension-income/remove-pension-scheme"
-      pensionSchemeIndex.fold(baseUrl)(idx =>s"$baseUrl?pensionSchemeIndex=$idx")
+      pensionSchemeIndex.fold(baseUrl)(idx => s"$baseUrl?pensionSchemeIndex=$idx")
     }
+
     def pensionSchemeSummaryUrl(taxYear: Int, pensionSchemeIndex: Option[Int]): String = {
       val baseUrl = s"$appUrl/$taxYear/pension-income/pension-scheme-summary"
-      pensionSchemeIndex.fold(baseUrl)(idx =>s"$baseUrl?pensionSchemeIndex=$idx")
+      pensionSchemeIndex.fold(baseUrl)(idx => s"$baseUrl?pensionSchemeIndex=$idx")
     }
 
     def addToCalculationUrl(taxYear: Int): String = s"$appUrl/$taxYear/pension-income/state-pension-add-to-calculation"
+
     def ukPensionIncomeCyaUrl(taxYear: Int): String = s"$appUrl/$taxYear/pension-income/check-uk-pension-income"
-    
+
     def statePensionCyaUrl(taxYear: Int): String = s"$appUrl/$taxYear/pension-income/check-state-pension"
   }
 
@@ -135,7 +137,7 @@ object PageUrls extends IntegrationTest {
     def pensionSchemeTaxReferenceUrl(taxYear: Int, pensionSchemeTaxReference: Int): String =
       s"$appUrl/$taxYear/annual-allowance/pension-scheme-tax-reference?pensionSchemeTaxReferenceIndex=$pensionSchemeTaxReference"
 
-    def pstrSummaryUrl(taxYear: Int): String = s"$appUrl/$taxYear/annual-allowance/pension-scheme-tax-reference-summary"
+    def pstrSummaryUrl(taxYear: Int): String = s"$appUrl/$taxYear/annual-allowance/pension-schemes-paying-annual-allowance-tax"
 
     def transferPensionSchemeTaxUrl(taxYear: Int): String =
       s"$appUrl/${taxYear.toString}/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-tax"
@@ -188,7 +190,7 @@ object PageUrls extends IntegrationTest {
 
     def removePensionSchemeReferenceUrl(taxYear: Int, pensionSchemeIndex: Option[Int] = None): String = {
       val baseUrl = s"$appUrl/$taxYear/unauthorised-payments-from-pensions/remove-pension-scheme-tax-reference"
-      pensionSchemeIndex.fold(baseUrl)(idx =>s"$baseUrl?pensionSchemeIndex=$idx")
+      pensionSchemeIndex.fold(baseUrl)(idx => s"$baseUrl?pensionSchemeIndex=$idx")
     }
   }
 
@@ -201,7 +203,7 @@ object PageUrls extends IntegrationTest {
 
     def taxEmployerPaymentsUrl(taxYear: Int): String = s"$appUrl/$taxYear/overseas-pensions/payments-into-overseas-pensions/tax-employer-payments"
 
-    def qopsReferenceUrl(taxYear : Int): String =
+    def qopsReferenceUrl(taxYear: Int): String =
       s"$appUrl/$taxYear/overseas-pensions/payments-into-overseas-pensions/qualifying-overseas-pension-scheme-reference-number?index=0"
 
     def qopsReferenceUrlWithIndex(taxYear: Int, index: Int): String =
@@ -210,12 +212,12 @@ object PageUrls extends IntegrationTest {
     def sf74ReferenceUrl(taxYear: Int, index: Int): String =
       s"$appUrl/$taxYear/overseas-pensions/payments-into-overseas-pensions/pensions-overseas-sf74?reliefIndex=$index"
 
-    def pensionCustomerReferenceNumberUrl(taxYear:Int, index:Option[Int]): String = {
+    def pensionCustomerReferenceNumberUrl(taxYear: Int, index: Option[Int]): String = {
       val baseUrl = s"$appUrl/$taxYear/overseas-pensions/payments-into-overseas-pensions/pensions-customer-reference-number"
       index.fold(baseUrl)(idx => s"$baseUrl?index=$idx")
     }
-    
-   def untaxedEmployerPaymentsUrl(taxYear: Int, index: Int): String =
+
+    def untaxedEmployerPaymentsUrl(taxYear: Int, index: Int): String =
       s"$appUrl/$taxYear/overseas-pensions/payments-into-overseas-pensions/untaxed-employer-payments?index=$index"
 
     def pensionReliefTypeUrl(taxYear: Int, index: Int): String =
@@ -227,7 +229,7 @@ object PageUrls extends IntegrationTest {
     val doubleTaxationAgreementUrl: Int => Int => String =
       (index: Int) => (taxYear: Int) => s"$appUrl/$taxYear/overseas-pensions/payments-into-overseas-pensions/double-taxation-agreement-details?index=$index"
 
-    def pensionReliefSchemeSummaryUrl(taxYear: Int) : String =
+    def pensionReliefSchemeSummaryUrl(taxYear: Int): String =
       s"$appUrl/$taxYear/overseas-pensions/payments-into-overseas-pensions/untaxed-schemes-summary"
 
     val paymentsIntoOverseasPensionsCyaUrl: Int => String = (taxYear: Int) =>
@@ -263,6 +265,11 @@ object PageUrls extends IntegrationTest {
 
     def countrySummaryListControllerUrl(taxYear: Int): String =
       s"$appUrl/$taxYear/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-country-summary"
+
+    def removeOverseasIncomeSchemeControllerUrl(taxYear: Int, index: Option[Int]): String = {
+      val baseUrl = s"$appUrl/$taxYear/overseas-pensions/income-from-overseas-pensions/remove-overseas-income-scheme"
+      index.fold(baseUrl)(idx => s"$baseUrl?index=$idx")
+    }
 
     def overseasPensionsSchemeSummaryUrl(taxYear: Int, index: Int): String =
       s"$appUrl/$taxYear/overseas-pensions/income-from-overseas-pensions/pension-scheme-summary?index=$index"
