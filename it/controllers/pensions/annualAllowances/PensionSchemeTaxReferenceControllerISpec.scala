@@ -46,7 +46,7 @@ class PensionSchemeTaxReferenceControllerISpec extends IntegrationTest with Befo
   trait SpecificExpectedResults {
     val expectedNoEntryError: String
     val expectedIncorrectFormatError: String
-    val expectedParagraph2: String
+    val expectedParagraph1: String
   }
 
   trait CommonExpectedResults {
@@ -55,7 +55,7 @@ class PensionSchemeTaxReferenceControllerISpec extends IntegrationTest with Befo
     lazy val expectedHeading: String = expectedTitle
     val expectedErrorTitle: String
     val hintText: String
-    val expectedParagraph1: String
+    val expectedParagraph2: String
     val expectedButtonText: String
     val yesText: String
     val noText: String
@@ -64,48 +64,48 @@ class PensionSchemeTaxReferenceControllerISpec extends IntegrationTest with Befo
   object ExpectedIndividualEN extends SpecificExpectedResults {
     val expectedNoEntryError: String = "Enter your PSTR"
     val expectedIncorrectFormatError: String = "Enter your PSTR in the correct format"
-    val expectedParagraph2: String = "If more than one of your pension schemes paid the tax, you can add these details later."
+    val expectedParagraph1: String = "If more than one pension scheme paid or agreed to pay the tax, you can add them later."
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
     val expectedNoEntryError: String = "Nodwch eich PSTR"
     val expectedIncorrectFormatError: String = "Nodwch eich PSTR yn y fformat cywir"
-    val expectedParagraph2: String = "Os gwnaeth mwy nag un o’ch cynlluniau pensiwn dalu’r dreth, gallwch ychwanegu’r manylion hyn yn nes ymlaen."
+    val expectedParagraph1: String = "Os gwnaeth mwy nag un o’ch cynlluniau pensiwn dalu’r dreth, gallwch ychwanegu’r manylion hyn yn nes ymlaen."
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
     val expectedNoEntryError: String = "Enter your client’s PSTR"
     val expectedIncorrectFormatError: String = "Enter your client’s PSTR in the correct format"
-    val expectedParagraph2: String = "If more than one of your client’s pension schemes paid the tax, you can add these details later."
+    val expectedParagraph1: String = "If more than one of your client’s pension schemes paid the tax, you can add these details later."
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
     val expectedNoEntryError: String = "Nodwch PSTR eich cleient"
     val expectedIncorrectFormatError: String = "Nodwch PSTR eich cleient yn y fformat cywir"
-    val expectedParagraph2: String =
+    val expectedParagraph1: String =
       "Os gwnaeth mwy nag un o gynlluniau pensiwn eich cleient dalu’r dreth, gallwch ychwanegu’r manylion hyn yn nes ymlaen."
   }
 
   object CommonExpectedEN extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Pension annual allowance for 6 April ${taxYear - 1} to 5 April $taxYear"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Annual allowance for 6 April ${taxYear - 1} to 5 April $taxYear"
     val expectedButtonText = "Continue"
     val yesText = "Yes"
     val noText = "No"
-    val expectedTitle = "Pension Scheme Tax Reference"
+    val expectedTitle = "Tell us the pension scheme that paid or agreed to pay the tax"
     val expectedErrorTitle = s"Error: $expectedTitle"
     val hintText = "For example, ‘12345678RA’"
-    val expectedParagraph1 = "Enter the reference for the pension scheme that paid the tax."
+    val expectedParagraph2: String = "Pension Scheme Tax Reference"
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Lwfans blynyddol pensiwn ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Annual allowance for 6 April ${taxYear - 1} to 5 April $taxYear"
     val expectedButtonText = "Yn eich blaen"
     val yesText = "Iawn"
     val noText = "Na"
-    val expectedTitle = "Cyfeirnod Treth y Cynllun Pensiwn"
+    val expectedTitle = "Rhowch wybod i ni’r cynllun pensiwn a dalodd neu a gytunwyd i dalu’r dreth"
     val expectedErrorTitle = s"Gwall: $expectedTitle"
     val hintText = "Er enghraifft, ‘12345678RA’"
-    val expectedParagraph1 = "Nodwch y cyfeirnod ar gyfer y cynllun pensiwn a dalodd y dreth."
+    val expectedParagraph2: String = "Cyfeirnod Treth y Cynllun Pensiwn"
   }
 
   val inputName: String = "taxReferenceId"
@@ -143,8 +143,8 @@ class PensionSchemeTaxReferenceControllerISpec extends IntegrationTest with Befo
           titleCheck(expectedTitle, user.isWelsh)
           h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY))
-          textOnPageCheck(expectedParagraph1, paragraphSelector(1))
-          textOnPageCheck(user.specificExpectedResults.get.expectedParagraph2, paragraphSelector(2))
+          textOnPageCheck(user.specificExpectedResults.get.expectedParagraph1, paragraphSelector(1))
+          textOnPageCheck(expectedParagraph2, paragraphSelector(2))
           textOnPageCheck(hintText, hintTextSelector)
           inputFieldValueCheck(inputName, inputSelector, "")
           buttonCheck(expectedButtonText, continueButtonSelector)
@@ -174,8 +174,8 @@ class PensionSchemeTaxReferenceControllerISpec extends IntegrationTest with Befo
           titleCheck(expectedTitle, user.isWelsh)
           h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY))
-          textOnPageCheck(expectedParagraph1, paragraphSelector(1))
-          textOnPageCheck(user.specificExpectedResults.get.expectedParagraph2, paragraphSelector(2))
+          textOnPageCheck(user.specificExpectedResults.get.expectedParagraph1, paragraphSelector(1))
+          textOnPageCheck(expectedParagraph2, paragraphSelector(2))
           textOnPageCheck(hintText, hintTextSelector)
           inputFieldValueCheck(inputName, inputSelector, taxSchemeRef)
           buttonCheck(expectedButtonText, continueButtonSelector)
@@ -205,8 +205,8 @@ class PensionSchemeTaxReferenceControllerISpec extends IntegrationTest with Befo
           titleCheck(expectedTitle, user.isWelsh)
           h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY))
-          textOnPageCheck(expectedParagraph1, paragraphSelector(1))
-          textOnPageCheck(user.specificExpectedResults.get.expectedParagraph2, paragraphSelector(2))
+          textOnPageCheck(user.specificExpectedResults.get.expectedParagraph1, paragraphSelector(1))
+          textOnPageCheck(expectedParagraph2, paragraphSelector(2))
           textOnPageCheck(hintText, hintTextSelector)
           inputFieldValueCheck(inputName, inputSelector, taxSchemeRef)
           buttonCheck(expectedButtonText, continueButtonSelector)
@@ -275,8 +275,8 @@ class PensionSchemeTaxReferenceControllerISpec extends IntegrationTest with Befo
           titleCheck(expectedErrorTitle, user.isWelsh)
           h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY))
-          textOnPageCheck(expectedParagraph1, paragraphSelector(1))
-          textOnPageCheck(user.specificExpectedResults.get.expectedParagraph2, paragraphSelector(2))
+          textOnPageCheck(user.specificExpectedResults.get.expectedParagraph1, paragraphSelector(1))
+          textOnPageCheck(expectedParagraph2, paragraphSelector(2))
           textOnPageCheck(hintText, hintTextSelector)
           inputFieldValueCheck(inputName, inputSelector, "")
           buttonCheck(expectedButtonText, continueButtonSelector)
@@ -306,8 +306,8 @@ class PensionSchemeTaxReferenceControllerISpec extends IntegrationTest with Befo
           titleCheck(expectedErrorTitle, user.isWelsh)
           h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY))
-          textOnPageCheck(expectedParagraph1, paragraphSelector(1))
-          textOnPageCheck(user.specificExpectedResults.get.expectedParagraph2, paragraphSelector(2))
+          textOnPageCheck(user.specificExpectedResults.get.expectedParagraph1, paragraphSelector(1))
+          textOnPageCheck(expectedParagraph2, paragraphSelector(2))
           textOnPageCheck(hintText, hintTextSelector)
           inputFieldValueCheck(inputName, inputSelector, "1234567AB")
           buttonCheck(expectedButtonText, continueButtonSelector)

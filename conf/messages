@@ -38,6 +38,7 @@ common.transferIntoOverseasPensions.caption = Transfers into overseas pensions f
 common.shortServiceRefunds.caption = Short service refunds for 6 April {0} to 5 April {1}
 common.dividends.incomeFromPensions.caption = Dividends for 6 April {0} to 5 April {1}
 common.pensionAnnualAllowance.caption = Pension annual allowance for 6 April {0} to 5 April {1}
+common.annualAllowance.caption = Annual allowance for 6 April {0} to 5 April {1}
 common.incomeFromPensions.caption = Income from pensions for 6 April {0} to 5 April {1}
 common.uKPensionIncome.caption = UK pension income for 6 April {0} to 5 April {1}
 common.lifetimeAllowance.caption = Annual and lifetime allowances for 6 April {0} to 5 April {1}
@@ -109,6 +110,8 @@ common.pensionSchemeTaxReference = Pension Scheme Tax Reference
 common.pensionSchemeTaxReference.forExample = For example, ‘12345678RA’
 common.pensionSchemeTaxReference.error.noEntry.individual = Enter your Pension Scheme Tax Reference
 common.pensionSchemeTaxReference.error.noEntry.agent = Enter your client’s Pension Scheme Tax Reference
+common.pensionSchemeTaxReference.p1.individual = If more than one pension scheme paid or agreed to pay the tax, you can add them later.
+common.pensionSchemeTaxReference.p1.agent = If more than one of your client’s pension schemes paid the tax, you can add these details later.
 
 #################       Common overseas pensions        ########################################
 
@@ -774,7 +777,6 @@ lifetimeAllowance.cya.lifetimePensionSchemeTaxReferences.hidden = Change schemes
 
 #Pension scheme tax reference lifetime allowance
 lifetimeAllowance.pensionSchemeTaxReference.title = Tell us the pension scheme that paid or agreed to pay the tax
-lifetimeAllowance.pensionSchemeTaxReference.p1 = If more than one pension scheme paid or agreed to pay the tax, you can add them later.
 lifetimeAllowance.pensionSchemeTaxReference.error.incorrectFormat = Enter a reference with 8 numbers and 2 letters, such as ‘12345678AB’
 
 #Surcharge Amount

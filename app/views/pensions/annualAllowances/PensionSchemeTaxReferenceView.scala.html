@@ -34,21 +34,21 @@
 @(form: Form[String], taxYear: Int, pensionSchemeTaxReference: Option[Int])(implicit request: AuthorisationRequest[_], messages: Messages, appConfig: AppConfig)
 
 @titleForUse = @{
-    messages("common.pensionSchemeTaxReference")
+    messages("lifetimeAllowance.pensionSchemeTaxReference.title")
 }
 
 @hasFormErrors = @{form.hasErrors}
 
 @contentHtml = {
-    <p class="govuk-body">@messages("pension.pensionSchemeTaxReference.paragraph1")</p>
-    <p class="govuk-body">@messages(s"common.moreThanOnePensionScheme.${if(request.user.isAgent) "agent" else "individual"}")</p>
+    <p class="govuk-body">@messages(s"common.pensionSchemeTaxReference.p1.${if(request.user.isAgent) "agent" else "individual"}")</p>
+    <p class="govuk-label govuk-label--m">@messages("common.pensionSchemeTaxReference")</p>
 }
 
 
 @layout(pageTitle = titleForUse, taxYear = Some(taxYear), hasErrors = hasFormErrors, isAgent = request.user.isAgent) {
 
     @errorSummary(form.errors.distinct)
-    @heading(titleForUse, Some(messages("common.pensionAnnualAllowance.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-2")
+    @heading(titleForUse, Some(messages("common.annualAllowance.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-2")
     @contentHtml
 
     @formWithCsrf(action = controllers.pensions.annualAllowances.routes.PensionSchemeTaxReferenceController.submit(taxYear, pensionSchemeTaxReference)) {

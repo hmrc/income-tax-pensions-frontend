@@ -38,6 +38,7 @@ common.transferIntoOverseasPensions.caption = Trosglwyddiadau i bensiynau tramor
 common.shortServiceRefunds.caption = Ad-daliadau am wasanaeth byr ar gyfer 6 Ebrill {0} i 5 Ebrill {1}
 common.dividends.incomeFromPensions.caption = Difidendau ar gyfer 6 Ebrill {0} i 5 Ebrill {1}
 common.pensionAnnualAllowance.caption = Lwfans blynyddol pensiwn ar gyfer 6 Ebrill {0} i 5 Ebrill {1}
+common.annualAllowance.caption = Annual allowance for 6 April {0} to 5 April {1}
 common.incomeFromPensions.caption = Incwm o bensiynau ar gyfer 6 Ebrill {0} i 5 Ebrill {1}
 common.uKPensionIncome.caption = Incwm o bensiynau’r DU ar gyfer 6 Ebrill {0} i 5 Ebrill {1}
 common.lifetimeAllowance.caption = Lwfans blynyddol a lwfans oes ar gyfer 6 Ebrill {0} i 5 Ebrill {1}
@@ -109,6 +110,8 @@ common.pensionSchemeTaxReference = Cyfeirnod Treth y Cynllun Pensiwn
 common.pensionSchemeTaxReference.forExample = Er enghraifft, ‘12345678RA’
 common.pensionSchemeTaxReference.error.noEntry.individual = Nodwch Gyfeirnod Treth eich Cynllun Pensiwn
 common.pensionSchemeTaxReference.error.noEntry.agent = Nodwch Gyfeirnod Treth Cynllun Pensiwn eich cleient
+common.pensionSchemeTaxReference.p1.individual = Os gwnaeth mwy nag un o’ch cynlluniau pensiwn dalu’r dreth, gallwch ychwanegu’r manylion hyn yn nes ymlaen.
+common.pensionSchemeTaxReference.p1.agent = Os gwnaeth mwy nag un o gynlluniau pensiwn eich cleient dalu’r dreth, gallwch ychwanegu’r manylion hyn yn nes ymlaen.
 
 #################       Common overseas pensions        ########################################
 
@@ -774,7 +777,6 @@ lifetimeAllowance.cya.lifetimePensionSchemeTaxReferences.hidden = Newidiwch gynl
 
 #Pension scheme tax reference lifetime allowance
 lifetimeAllowance.pensionSchemeTaxReference.title = Rhowch wybod i ni’r cynllun pensiwn a dalodd neu a gytunwyd i dalu’r dreth
-lifetimeAllowance.pensionSchemeTaxReference.p1 = Os bydd mwy nag un cynllun pensiwn yn talu neu wedi cytuno i dalu’r dreth, gallwch eu hychwanegu nes ymlaen.
 lifetimeAllowance.pensionSchemeTaxReference.error.incorrectFormat = Nodwch gyfeirnod sydd ag 8 rhif a 2 lythyren, megis ‘12345678AB’
 
 #Surcharge Amount
