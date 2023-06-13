@@ -168,7 +168,7 @@ POST        /:taxYear/annual-lifetime-allowances/above-annual-allowance         
 GET         /:taxYear/annual-allowance/pension-scheme-tax-reference                                                                controllers.pensions.annualAllowances.PensionSchemeTaxReferenceController.show(taxYear: Int, pensionSchemeTaxReferenceIndex: Option[Int])
 POST        /:taxYear/annual-allowance/pension-scheme-tax-reference                                                                controllers.pensions.annualAllowances.PensionSchemeTaxReferenceController.submit(taxYear: Int, pensionSchemeTaxReferenceIndex: Option[Int])
 
-GET         /:taxYear/annual-allowance/pension-scheme-tax-reference-summary                                                        controllers.pensions.annualAllowances.PstrSummaryController.show(taxYear: Int)
+GET         /:taxYear/annual-allowance/pension-schemes-paying-annual-allowance-tax                                                 controllers.pensions.annualAllowances.PstrSummaryController.show(taxYear: Int)
 
 #  Lifetime Allowance Pages     ####################################
 
@@ -264,6 +264,9 @@ GET         /:taxYear/overseas-pensions/income-from-overseas-pensions/pension-sc
 POST        /:taxYear/overseas-pensions/income-from-overseas-pensions/pension-scheme-summary                                       controllers.pensions.incomeFromOverseasPensions.PensionSchemeSummaryController.submit(taxYear: Int, index:Option[Int])
 
 GET         /:taxYear/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-country-summary                      controllers.pensions.incomeFromOverseasPensions.CountrySummaryListController.show(taxYear: Int)
+
+GET         /:taxYear/overseas-pensions/income-from-overseas-pensions/remove-overseas-income-scheme                                controllers.pensions.incomeFromOverseasPensions.RemoveOverseasIncomeSchemeController.show(taxYear: Int, index: Option[Int])
+POST        /:taxYear/overseas-pensions/income-from-overseas-pensions/remove-overseas-income-scheme                                controllers.pensions.incomeFromOverseasPensions.RemoveOverseasIncomeSchemeController.submit(taxYear: Int, index: Option[Int])
 
 GET         /:taxYear/overseas-pensions/income-from-overseas-pensions/check-overseas-pension-income-cya                            controllers.pensions.incomeFromOverseasPensions.IncomeFromOverseasPensionsCYAController.show(taxYear: Int)
 POST        /:taxYear/overseas-pensions/income-from-overseas-pensions/check-overseas-pension-income-cya                            controllers.pensions.incomeFromOverseasPensions.IncomeFromOverseasPensionsCYAController.submit(taxYear: Int)

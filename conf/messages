@@ -37,7 +37,8 @@ common.incomeFromOverseasPensions.caption = Income from overseas pensions for 6 
 common.transferIntoOverseasPensions.caption = Transfers into overseas pensions for 6 April {0} to 5 April {1}
 common.shortServiceRefunds.caption = Short service refunds for 6 April {0} to 5 April {1}
 common.dividends.incomeFromPensions.caption = Dividends for 6 April {0} to 5 April {1}
-common.pensionAnnualAllowance.caption = Annual allowances for 6 April {0} to 5 April {1}
+common.pensionAnnualAllowance.caption = Pension annual allowance for 6 April {0} to 5 April {1}
+common.annualAllowance.caption = Annual allowance for 6 April {0} to 5 April {1}
 common.incomeFromPensions.caption = Income from pensions for 6 April {0} to 5 April {1}
 common.uKPensionIncome.caption = UK pension income for 6 April {0} to 5 April {1}
 common.lifetimeAllowance.caption = Annual and lifetime allowances for 6 April {0} to 5 April {1}
@@ -91,7 +92,7 @@ common.yourP60.agent = your client’s P60
 common.aboutGeneralIncreases.agent = the ’About general increases in benefits’ letter the Pension Service sent your client
 
 common.employerFinancedRetirementScheme.caption = Employer-financed retirement benefits schemes for 6 April {0} to 5 April {1}
-
+common.addAnotherPstrLink = Add another Pensions Scheme Tax Reference
 
 ################# Common lifetime allowance #################
 
@@ -109,6 +110,7 @@ common.pensionSchemeTaxReference = Pension Scheme Tax Reference
 common.pensionSchemeTaxReference.forExample = For example, ‘12345678RA’
 common.pensionSchemeTaxReference.error.noEntry.individual = Enter your Pension Scheme Tax Reference
 common.pensionSchemeTaxReference.error.noEntry.agent = Enter your client’s Pension Scheme Tax Reference
+common.pensionSchemeTaxReference.p1 = If more than one pension scheme paid or agreed to pay the tax, you can add them later.
 
 #################       Common overseas pensions        ########################################
 
@@ -133,6 +135,9 @@ common.removePensionScheme.p1 = This will remove:
 common.removePensionScheme.p1.bullet1 = The name of the pension scheme
 common.removePensionScheme.p1.bullet2 = Pensions scheme tax reference
 common.removePensionScheme.p1.bullet3 = Pensions provider address
+common.removePensionScheme.p1.bullet4 = the name of the pension scheme
+common.removePensionScheme.p1.bullet5 = the amount paid before tax
+common.removePensionScheme.p1.bullet6 = the tax taken off
 
 #################       Error messages        ########################################
 
@@ -387,7 +392,7 @@ annualAllowance.incomeFromFlexiAccess = income from a flexi-access drawdown fund
 annualAllowance.cashDirectlyFromPensionPot = cash directly from a pension pot (‘uncrystallised funds pension lump sums’)
 annualAllowance.overTheLimit.link = over the limit
 
-#Reduced annual allowance
+#reduced annual allowance
 
 annualAllowance.reducedAnnualAllowance.title.individual = Do you have a reduced annual allowance?
 annualAllowance.reducedAnnualAllowance.title.agent = Does your client have a reduced annual allowance?
@@ -408,40 +413,46 @@ annualAllowance.reducedAnnualAllowance.error.noEntry.agent = Select yes if your 
 
 #Reduced Annual Allowance Type
 
-pensions.reducedAnnualAllowanceType.title.individual = What type of reduced annual allowance do you have?
-pensions.reducedAnnualAllowanceType.title.agent = What type of reduced annual allowance does your client have?
-pensions.reducedAnnualAllowanceType.checkbox.hint = Select all that apply.
-pensions.reducedAnnualAllowanceType.moneyPurchaseCheckbox.text = Money purchase annual allowance
-pensions.reducedAnnualAllowanceType.taperedCheckbox.text = Tapered annual allowance
-pensions.reducedAnnualAllowanceType.checkbox.error.individual = Select the type of reduced annual allowance you have
-pensions.reducedAnnualAllowanceType.checkbox.error.agent = Select the type of reduced annual allowance your client has
-pensions.reducedAnnualAllowanceType.details.heading = More information about the types of reduced annual allowance
-pensions.reducedAnnualAllowanceType.details.moneyPurchaseInfo.individual = You’ll have this type of allowance if you flexibly access your pension. For example, this could include taking:
-pensions.reducedAnnualAllowanceType.details.moneyPurchaseInfo.agent = Your client will have this type of allowance if they flexibly access their pension. For example, this could include taking:
-pensions.reducedAnnualAllowanceType.details.taperedInfo.individual = You’ll have this type of annual allowance if both your ‘threshold income’ and ‘adjusted income’ are
-pensions.reducedAnnualAllowanceType.details.taperedInfo.agent = Your client will have this type of annual allowance if both their ‘threshold income’ and ‘adjusted income’ are
+pensions.ReducedAnnualAllowanceType.title.individual = What type of reduced annual allowance do you have?
+pensions.ReducedAnnualAllowanceType.title.agent = What type of reduced annual allowance does your client have?
+pensions.ReducedAnnualAllowanceType.checkbox.hint = Select all that apply.
+pensions.ReducedAnnualAllowanceType.moneyPurchaseCheckbox.text = Money purchase annual allowance
+pensions.ReducedAnnualAllowanceType.taperedCheckbox.text = Tapered annual allowance
+pensions.ReducedAnnualAllowanceType.checkbox.error.individual = Select the type of reduced annual allowance you have
+pensions.ReducedAnnualAllowanceType.checkbox.error.agent = Select the type of reduced annual allowance your client has
+pensions.ReducedAnnualAllowanceType.details.heading = More information about the types of reduced annual allowance
+pensions.ReducedAnnualAllowanceType.details.moneyPurchaseInfo.individual = You’ll have this type of allowance if you flexibly access your pension. For example, this could include taking:
+pensions.ReducedAnnualAllowanceType.details.moneyPurchaseInfo.agent = Your client will have this type of allowance if they flexibly access their pension. For example, this could include taking:
+pensions.ReducedAnnualAllowanceType.details.taperedInfo.individual = You’ll have this type of annual allowance if both your ‘threshold income’ and ‘adjusted income’ are
+pensions.ReducedAnnualAllowanceType.details.taperedInfo.agent = Your client will have this type of annual allowance if both their ‘threshold income’ and ‘adjusted income’ are
 
-#Above Annual Allowance
+#Reduced Annual Allowance amount
+
+pensions.reducedAnnualAllowanceAmount.reduced.title.individual = How much above your reduced annual allowance are you?
+pensions.reducedAnnualAllowanceAmount.reduced.title.agent = How much above your client’s reduced annual allowance are they?
+pensions.reducedAnnualAllowanceAmount.nonReduced.title.individual = How much above your annual allowance are you?
+pensions.reducedAnnualAllowanceAmount.nonReduced.title.agent = How much above your client’s annual allowance are they?
+pensions.reducedAnnualAllowanceAmount.paragraph = This is the amount on which tax is due.
+pensions.reducedAnnualAllowanceAmount.reduced.error.noEntry.individual = Enter the amount above your reduced annual allowance
+pensions.reducedAnnualAllowanceAmount.reduced.error.incorrectFormat.individual = Enter the amount above your reduced annual allowance in the correct format
+pensions.reducedAnnualAllowanceAmount.reduced.error.overMaximum.individual = The amount above your reduced annual allowance must be less than £100,000,000,000
+pensions.reducedAnnualAllowanceAmount.reduced.error.noEntry.agent = Enter the amount above your client’s reduced annual allowance
+pensions.reducedAnnualAllowanceAmount.reduced.error.incorrectFormat.agent = Enter the amount above your client’s reduced annual allowance in the correct format
+pensions.reducedAnnualAllowanceAmount.reduced.error.overMaximum.agent = The amount above your client’s reduced annual allowance must be less than £100,000,000,000
+pensions.reducedAnnualAllowanceAmount.nonReduced.error.noEntry = Enter the amount above the annual allowance
+pensions.reducedAnnualAllowanceAmount.nonReduced.error.incorrectFormat = Enter the amount above the annual allowance in the correct format
+pensions.reducedAnnualAllowanceAmount.nonReduced.error.overMaximum = The amount above the annual allowance must be less than £100,000,000,000
+
+#above Reduced Annual Allowance
 
 pensions.aboveReducedAnnualAllowance.reduced.title.individual = Have you gone above your reduced annual allowance?
 pensions.aboveReducedAnnualAllowance.reduced.title.agent = Has your client gone above their reduced annual allowance?
 pensions.aboveReducedAnnualAllowance.nonReduced.title.individual = Have you gone above the annual allowance?
 pensions.aboveReducedAnnualAllowance.nonReduced.title.agent = Has your client gone above the annual allowance?
-pensions.aboveReducedAnnualAllowance.reduced.amount = Amount above the reduced annual allowance, in pounds
-pensions.aboveReducedAnnualAllowance.nonReduced.amount = Amount above the annual allowance, in pounds
 pensions.aboveReducedAnnualAllowance.reduced.error.noEntry.individual = Select yes if you have gone above your reduced annual allowance
 pensions.aboveReducedAnnualAllowance.reduced.error.noEntry.agent = Select yes if your client has gone above their reduced annual allowance
 pensions.aboveReducedAnnualAllowance.nonReduced.error.noEntry.individual = Select yes if you have gone above the annual allowance
 pensions.aboveReducedAnnualAllowance.nonReduced.error.noEntry.agent = Select yes if your client has gone above the annual allowance
-pensions.aboveReducedAnnualAllowance.reduced.error.noAmountEntry.individual = Enter the amount above your reduced annual allowance
-pensions.aboveReducedAnnualAllowance.reduced.error.noAmountEntry.agent = Enter the amount above your client’s reduced annual allowance
-pensions.aboveReducedAnnualAllowance.nonReduced.error.noAmountEntry = Enter the amount above the annual allowance
-pensions.aboveReducedAnnualAllowance.reduced.error.incorrectFormat.individual = Enter the amount above your reduced annual allowance in the correct format
-pensions.aboveReducedAnnualAllowance.reduced.error.incorrectFormat.agent = Enter the amount above your client’s reduced annual allowance in the correct format
-pensions.aboveReducedAnnualAllowance.nonReduced.error.incorrectFormat = Enter the amount above the annual allowance in the correct format
-pensions.aboveReducedAnnualAllowance.reduced.error.overMaximum.individual = The amount above your reduced annual allowance must be less than £100,000,000,000
-pensions.aboveReducedAnnualAllowance.reduced.error.overMaximum.agent = The amount above your client’s reduced annual allowance must be less than £100,000,000,000
-pensions.aboveReducedAnnualAllowance.nonReduced.error.overMaximum = The amount above the annual allowance must be less than £100,000,000,000
 
 #Pension Provider Paid Tax Messages
 
@@ -470,8 +481,7 @@ unauthorisedPayments.pension.pensionSchemeTaxReference.error.incorrectFormat.age
 
 #Pension Scheme Tax Reference Summary Page
 
-annualAllowance.pstrSummary.title = Pension Scheme Tax Reference (PSTR) summary
-annualAllowance.addAnotherPstrLink = Add another PSTR
+annualAllowance.pstrSummary.title = Pension schemes that paid or agreed to pay the annual allowance tax
 annualAllowance.addPstrLink = Add a PSTR
 
 #################       INCOME FROM PENSIONS        ########################################
@@ -768,7 +778,6 @@ lifetimeAllowance.cya.lifetimePensionSchemeTaxReferences.hidden = Change schemes
 
 #Pension scheme tax reference lifetime allowance
 lifetimeAllowance.pensionSchemeTaxReference.title = Tell us the pension scheme that paid or agreed to pay the tax
-lifetimeAllowance.pensionSchemeTaxReference.p1 = If more than one pension scheme paid or agreed to pay the tax, you can add them later.
 lifetimeAllowance.pensionSchemeTaxReference.error.incorrectFormat = Enter a reference with 8 numbers and 2 letters, such as ‘12345678AB’
 
 #Surcharge Amount
@@ -835,7 +844,6 @@ employerFinancedRetirementScheme.benefitsFromScheme.error.agent = Select yes if 
 
 #Unauthorised payments from UK pensions schemes
 unauthorisedPayments.pensionSchemeDetails.title = Unauthorised payments from UK pensions schemes
-unauthorisedPayments.pensionSchemeDetails.addAnotherPensionSchemeTaxReference = Add another Pensions Scheme Tax Reference
 unauthorisedPayments.pensionSchemeDetails.addPensionSchemeTaxReference = Add a Pensions Scheme Tax Reference
 
 #Remove unauthorised payments from UK pensions schemes
