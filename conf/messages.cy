@@ -27,7 +27,6 @@ common.opensInNewTab = (yn agor tab newydd)
 common.currency.hint = Er enghraifft, £193.52
 common.currency.hint1 = Er enghraifft, £193.54
 common.help.getHelpWithThisPage = Help gyda’r dudalen hon
-common.status.toDo = I’w gwneud
 common.status.updated = Wedi diweddaru
 common.status.notStarted = Heb ddechrau
 common.pensions.caption = Pensiynau ar gyfer 6 Ebrill {0} i 5 Ebrill {1}
