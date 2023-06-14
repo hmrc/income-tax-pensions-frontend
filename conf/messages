@@ -38,12 +38,14 @@ common.transferIntoOverseasPensions.caption = Transfers into overseas pensions f
 common.shortServiceRefunds.caption = Short service refunds for 6 April {0} to 5 April {1}
 common.dividends.incomeFromPensions.caption = Dividends for 6 April {0} to 5 April {1}
 common.pensionAnnualAllowance.caption = Pension annual allowance for 6 April {0} to 5 April {1}
+common.AnnualAllowance.caption = Annual allowances for 6 April {0} to 5 April {1}
 common.incomeFromPensions.caption = Income from pensions for 6 April {0} to 5 April {1}
 common.uKPensionIncome.caption = UK pension income for 6 April {0} to 5 April {1}
 common.lifetimeAllowance.caption = Annual and lifetime allowances for 6 April {0} to 5 April {1}
 common.overseasPensions.caption = Overseas pensions for 6 April {0} to 5 April {1}
 common.return.overview.buttonText = Return to overview
 common.currencyAmount = £{0}
+common.display = {0}
 common.total = Total
 common.youCanFindThisOut.individual = You can find this out from your pension provider.
 common.youCanFindThisOut.agent = You can find this out from your client’s pension provider.
@@ -461,6 +463,7 @@ pensions.pensionProviderPaidTax.error.incorrectFormat.agent = Enter the amount o
 
 #Pension Scheme Tax Reference Messages
 pension.pensionSchemeTaxReference.paragraph1 = Enter the reference for the pension scheme that paid the tax.
+pension.pensionSchemeTaxReference.title = Do you want to remove this Pension Scheme Tax Reference?
 pension.pensionSchemeTaxReference.error.noEntry.individual = Enter your PSTR
 pension.pensionSchemeTaxReference.error.incorrectFormat.individual = Enter your PSTR in the correct format
 pension.pensionSchemeTaxReference.error.noEntry.agent = Enter your client’s PSTR

@@ -139,6 +139,9 @@ object PageUrls extends IntegrationTest {
 
     def pstrSummaryUrl(taxYear: Int): String = s"$appUrl/$taxYear/annual-allowance/pension-schemes-paying-annual-allowance-tax"
 
+    def removePstrUrl(taxYear: Int, pensionSchemeTaxReference: Option[Int]): String =
+      s"$appUrl/$taxYear/annual-allowance/remove-pension-scheme-tax-reference?pensionSchemeIndex=$pensionSchemeTaxReference"
+
     def transferPensionSchemeTaxUrl(taxYear: Int): String =
       s"$appUrl/${taxYear.toString}/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-tax"
   }

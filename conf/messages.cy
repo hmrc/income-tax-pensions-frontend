@@ -38,6 +38,7 @@ common.transferIntoOverseasPensions.caption = Trosglwyddiadau i bensiynau tramor
 common.shortServiceRefunds.caption = Ad-daliadau am wasanaeth byr ar gyfer 6 Ebrill {0} i 5 Ebrill {1}
 common.dividends.incomeFromPensions.caption = Difidendau ar gyfer 6 Ebrill {0} i 5 Ebrill {1}
 common.pensionAnnualAllowance.caption = Lwfans blynyddol pensiwn ar gyfer 6 Ebrill {0} i 5 Ebrill {1}
+common.AnnualAllowance.caption = Annual allowances for 6 April {0} to 5 April {1}
 common.incomeFromPensions.caption = Incwm o bensiynau ar gyfer 6 Ebrill {0} i 5 Ebrill {1}
 common.uKPensionIncome.caption = Incwm o bensiynau’r DU ar gyfer 6 Ebrill {0} i 5 Ebrill {1}
 common.lifetimeAllowance.caption = Lwfans blynyddol a lwfans oes ar gyfer 6 Ebrill {0} i 5 Ebrill {1}
@@ -46,6 +47,7 @@ common.return.overview.buttonText = Yn ôl i’r trosolwg
 common.currencyAmount = £{0}
 common.total = Cyfanswm
 common.youCanFindThisOut.individual = Gallwch ddysgu hyn oddi wrth eich darparwr pensiwn.
+common.display = {0}
 common.youCanFindThisOut.agent = Gallwch ddysgu hyn oddi wrth ddarparwr pensiwn eich cleient.
 common.moreThanOnePensionScheme.individual = Os gwnaeth mwy nag un o’ch cynlluniau pensiwn dalu’r dreth, gallwch ychwanegu’r manylion hyn yn nes ymlaen.
 common.moreThanOnePensionScheme.agent = Os gwnaeth mwy nag un o gynlluniau pensiwn eich cleient dalu’r dreth, gallwch ychwanegu’r manylion hyn yn nes ymlaen.
@@ -106,6 +108,7 @@ common.taxPaid.error.overMaximum = Mae’n rhaid i swm y dreth lwfans oes fod yn
 #################       Common PSTR        ########################################
 
 common.pensionSchemeTaxReference = Cyfeirnod Treth y Cynllun Pensiwn
+pension.pensionSchemeTaxReference.title = Do you want to remove this Pension Scheme Tax Reference?
 common.pensionSchemeTaxReference.forExample = Er enghraifft, ‘12345678RA’
 common.pensionSchemeTaxReference.error.noEntry.individual = Nodwch Gyfeirnod Treth eich Cynllun Pensiwn
 common.pensionSchemeTaxReference.error.noEntry.agent = Nodwch Gyfeirnod Treth Cynllun Pensiwn eich cleient
