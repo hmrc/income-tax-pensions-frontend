@@ -35,7 +35,7 @@ class PensionsChargesServiceSpec extends UnitTest
   with ScalaFutures {
 
 
-  val pensionChargesService = new PensionChargesService(mockPensionUserDataRepository, mockPensionsConnector, mockPensionConnectorHelper, mockUserDataConnector)
+  val pensionChargesService = new PensionChargesService(mockPensionUserDataRepository, mockPensionConnectorHelper, mockUserDataConnector)
 
   val userWithEmptyCya = aPensionsUserData.copy(pensions = aPensionsCYAEmptyModel)
 
