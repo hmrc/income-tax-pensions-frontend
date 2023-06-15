@@ -71,7 +71,6 @@ class RemoveAnnualAllowancePstrController @Inject()(implicit val mcc: MessagesCo
 
         checkIndexScheme(pensionSchemeIndex, pstrList) match {
           case Some(_) =>
-
             val rawPstrList: Seq[String] = pstrList.patch(pensionSchemeIndex.get, Nil, 1)
 
             val updatedPstrList = if(rawPstrList.isEmpty) None else Some(rawPstrList)
@@ -83,6 +82,8 @@ class RemoveAnnualAllowancePstrController @Inject()(implicit val mcc: MessagesCo
               updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
               Redirect(PstrSummaryController.show(taxYear))
             }
+          case _ =>
+            Future.successful(Redirect(PstrSummaryController.show(taxYear)))
         }
       case _ =>
         Future.successful(Redirect(PstrSummaryController.show(taxYear)))

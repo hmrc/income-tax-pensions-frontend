@@ -120,12 +120,13 @@ class RemoveAnnualAllowancePSTRControllerISpec extends IntegrationTest with View
     "redirect the user to the Pension Scheme Details page" when {
 
       "there is no pensionSchemeIndex" should {
+        val invalidIndex =  3
 
         lazy val result: WSResponse = {
           dropPensionsDB()
           authoriseAgentOrIndividual()
           insertCyaData(aPensionsUserData)
-          urlGet(fullUrl(removePstrUrl(taxYearEOY, 0)), follow = false,
+          urlGet(fullUrl(removePstrUrl(taxYearEOY, invalidIndex)), follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
         }
 
@@ -192,15 +193,15 @@ class RemoveAnnualAllowancePSTRControllerISpec extends IntegrationTest with View
 
           s"has a SEE_OTHER ($SEE_OTHER) status" in {
             result.status shouldBe SEE_OTHER
-            result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
+            result.header("location") shouldBe Some(pstrSummaryUrl(taxYearEOY))
           }
         }
       }
     }
 
-    "no data is returned from submission backend" should {
-
-      "redirect to the Unauthorised payments CYA page" should {
+    "no data is returned from submission backend" should {  //TODO: what submission is happening here!
+      
+      "redirect to the Unauthorised payments CYA page" should {   // TODO: change Unauthorised payments
 
         lazy val result: WSResponse = {
           dropPensionsDB()
@@ -211,7 +212,7 @@ class RemoveAnnualAllowancePSTRControllerISpec extends IntegrationTest with View
 
         s"has a SEE_OTHER ($SEE_OTHER) status" in {
           result.status shouldBe SEE_OTHER
-          result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
+          result.header("location") shouldBe Some(pstrSummaryUrl(taxYearEOY))
         }
       }
     }
