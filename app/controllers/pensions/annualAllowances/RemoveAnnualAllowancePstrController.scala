@@ -31,13 +31,13 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
 @Singleton
-class RemovePstrController @Inject()(implicit val mcc: MessagesControllerComponents,
-                                     authAction: AuthorisedAction,
-                                     removePensionSchemeView: RemoveAnnualAllowancesPstrView,
-                                     appConfig: AppConfig,
-                                     pensionSessionService: PensionSessionService,
-                                     errorHandler: ErrorHandler,
-                                     clock: Clock) extends FrontendController(mcc) with I18nSupport with SessionHelper {
+class RemoveAnnualAllowancePstrController @Inject()(implicit val mcc: MessagesControllerComponents,
+                                                    authAction: AuthorisedAction,
+                                                    removePensionSchemeView: RemoveAnnualAllowancesPstrView,
+                                                    appConfig: AppConfig,
+                                                    pensionSessionService: PensionSessionService,
+                                                    errorHandler: ErrorHandler,
+                                                    clock: Clock) extends FrontendController(mcc) with I18nSupport with SessionHelper {
 
   def show(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
