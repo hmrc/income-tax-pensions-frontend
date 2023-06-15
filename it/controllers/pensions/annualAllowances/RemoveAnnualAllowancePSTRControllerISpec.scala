@@ -16,11 +16,9 @@
 
 package controllers.pensions.annualAllowances
 
-import builders.AllPensionsDataBuilder.anAllPensionsData
 import builders.IncomeTaxUserDataBuilder.anIncomeTaxUserData
-import builders.PensionAnnualAllowanceViewModelBuilder.aPensionAnnualAllowanceViewModel
-import builders.PensionsUserDataBuilder.{aPensionsUserData, anPensionsUserDataEmptyCya, pensionsUserDataWithAnnualAllowances}
-import builders.UserBuilder.{aUser, aUserRequest}
+import builders.PensionsUserDataBuilder.aPensionsUserData
+import builders.UserBuilder.aUserRequest
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterEach
@@ -133,7 +131,7 @@ class RemoveAnnualAllowancePSTRControllerISpec extends IntegrationTest with View
 
         s"has a SEE_OTHER ($SEE_OTHER) status" in {
           result.status shouldBe SEE_OTHER
-          result.header("location").contains(pstrSummaryUrl(taxYearEOY)) shouldBe true
+          result.header("location") shouldBe Some(pstrSummaryUrl(taxYearEOY))
         }
       }
 
@@ -194,7 +192,7 @@ class RemoveAnnualAllowancePSTRControllerISpec extends IntegrationTest with View
 
           s"has a SEE_OTHER ($SEE_OTHER) status" in {
             result.status shouldBe SEE_OTHER
-            result.header("location").contains(pensionSummaryUrl(taxYearEOY)) shouldBe true
+            result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
           }
         }
       }
@@ -213,7 +211,7 @@ class RemoveAnnualAllowancePSTRControllerISpec extends IntegrationTest with View
 
         s"has a SEE_OTHER ($SEE_OTHER) status" in {
           result.status shouldBe SEE_OTHER
-          result.header("location").contains(pensionSummaryUrl(taxYearEOY)) shouldBe true
+          result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
         }
       }
     }
