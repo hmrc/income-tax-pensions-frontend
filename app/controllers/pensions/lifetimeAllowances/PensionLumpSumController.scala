@@ -38,7 +38,7 @@ import scala.concurrent.Future
 @Singleton
 class PensionLumpSumController @Inject()(implicit val cc: MessagesControllerComponents,
                                          authAction: AuthorisedAction,
-                                         pensionLumpSumView: PensionLumpSumView,
+                                         view: PensionLumpSumView,
                                          appConfig: AppConfig,
                                          pensionSessionService: PensionSessionService,
                                          errorHandler: ErrorHandler,
@@ -54,9 +54,9 @@ class PensionLumpSumController @Inject()(implicit val cc: MessagesControllerComp
     pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
       case Some(data) =>
         data.pensions.pensionLifetimeAllowances.pensionAsLumpSumQuestion match {
-          case Some(value) => Future.successful(Ok(pensionLumpSumView(
+          case Some(value) => Future.successful(Ok(view(
             yesNoForm(request.user).fill(value), taxYear)))
-          case None => Future.successful(Ok(pensionLumpSumView(yesNoForm(request.user), taxYear)))
+          case None => Future.successful(Ok(view(yesNoForm(request.user), taxYear)))
         }
       case None =>
         Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
@@ -65,7 +65,7 @@ class PensionLumpSumController @Inject()(implicit val cc: MessagesControllerComp
 
   def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
     yesNoForm(request.user).bindFromRequest().fold(
-      formWithErrors => Future.successful(BadRequest(pensionLumpSumView(formWithErrors, taxYear))),
+      formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
       yesNo => {
         pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
           data =>

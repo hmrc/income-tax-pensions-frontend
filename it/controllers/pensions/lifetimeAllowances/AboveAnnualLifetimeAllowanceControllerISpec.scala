@@ -26,8 +26,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.PensionAnnualAllowancePages.reducedAnnualAllowanceUrl
-import utils.PageUrls.PensionLifetimeAllowance.{checkAnnualLifetimeAllowanceCYA, pensionAboveAnnualLifetimeAllowanceUrl}
+import utils.PageUrls.PensionLifetimeAllowance.{checkAnnualLifetimeAllowanceCYA, pensionAboveAnnualLifetimeAllowanceUrl, pensionLumpSumUrl}
 import utils.PageUrls.fullUrl
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
@@ -279,7 +278,7 @@ class AboveAnnualLifetimeAllowanceControllerISpec extends IntegrationTest with B
 
         "has a SEE_OTHER(303) status and redirect Do you have a reduced annual allowance page" in {
           result.status shouldBe SEE_OTHER
-          result.header("location") shouldBe Some(reducedAnnualAllowanceUrl(taxYearEOY))
+          result.header("location") shouldBe Some(pensionLumpSumUrl(taxYearEOY))
         }
 
         "updates aboveLifetimeAllowanceQuestion to Some(true)" in {
