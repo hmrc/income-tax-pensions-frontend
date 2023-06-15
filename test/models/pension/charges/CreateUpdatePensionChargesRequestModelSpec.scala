@@ -38,7 +38,7 @@ class CreateUpdatePensionChargesRequestModelSpec extends UnitTest {
           anPensionCharges.pensionSchemeUnauthorisedPayments,
           anPensionCharges.pensionContributions,
           anPensionCharges.overseasPensionContributions,
-        ).otherSubModelsEmpty(subModel)
+        ).otherSubRequestModelsEmpty(subModel)
         actualResult shouldBe false
       }
 
@@ -49,7 +49,7 @@ class CreateUpdatePensionChargesRequestModelSpec extends UnitTest {
           None,
           None,
           None,
-        ).otherSubModelsEmpty(subModel)
+        ).otherSubRequestModelsEmpty(subModel)
         actualResult shouldBe true
       }
 
@@ -60,7 +60,7 @@ class CreateUpdatePensionChargesRequestModelSpec extends UnitTest {
           anPensionCharges.pensionSchemeUnauthorisedPayments.map(_.copy(None, None, None)),
           None,
           None,
-        ).otherSubModelsEmpty(subModel)
+        ).otherSubRequestModelsEmpty(subModel)
 
         actualResult shouldBe true
       }
@@ -72,7 +72,7 @@ class CreateUpdatePensionChargesRequestModelSpec extends UnitTest {
           anPensionCharges.pensionSchemeUnauthorisedPayments.map(_.copy(Some(Seq("PSTR")), None, None)),
           None,
           None,
-        ).otherSubModelsEmpty(subModel)
+        ).otherSubRequestModelsEmpty(subModel)
         actualResult shouldBe (if(subModel.get.isInstanceOf[PensionSchemeUnauthorisedPayments]) true else false)
       }
 

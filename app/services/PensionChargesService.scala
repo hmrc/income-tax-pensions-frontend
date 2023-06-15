@@ -19,7 +19,7 @@ package services
 import connectors.IncomeTaxUserDataConnector
 import models.mongo.{PensionsCYAModel, PensionsUserData, ServiceError}
 import models.pension.charges._
-import models.pension.{PensionCYABaseModel, PensionChargesRequestSubModel}
+import models.pension.{PensionCYABaseModel, PensionChargesSubRequestModel}
 import models.{IncomeTaxUserData, User}
 import org.joda.time.DateTimeZone
 import repositories.PensionsUserDataRepository
@@ -164,7 +164,7 @@ class PensionChargesService @Inject()(pensionUserDataRepository: PensionsUserDat
   }
 
   private def savePensionChargesData(user: User, taxYear: Int,
-                                     subModel: Option[PensionChargesRequestSubModel],
+                                     subModel: Option[PensionChargesSubRequestModel],
                                      cya: Option[PensionCYABaseModel],
                                      submissionModel: CreateUpdatePensionChargesRequestModel,
                                      updatedCYA: PensionsUserData)

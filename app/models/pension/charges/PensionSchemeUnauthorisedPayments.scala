@@ -16,13 +16,13 @@
 
 package models.pension.charges
 
-import models.pension.PensionChargesRequestSubModel
+import models.pension.PensionChargesSubRequestModel
 import play.api.libs.json.{Json, OFormat}
 import utils.EncryptedValue
 
 case class PensionSchemeUnauthorisedPayments(pensionSchemeTaxReference: Option[Seq[String]],
                                              surcharge: Option[Charge],
-                                             noSurcharge: Option[Charge]) extends PensionChargesRequestSubModel {
+                                             noSurcharge: Option[Charge]) extends PensionChargesSubRequestModel {
   override def isEmpty: Boolean = this.productIterator.forall(_ == None)
 }
 

@@ -16,13 +16,13 @@
 
 package models.pension.charges
 
-import models.pension.PensionChargesRequestSubModel
+import models.pension.PensionChargesSubRequestModel
 import play.api.libs.json.{Json, OFormat}
 import utils.EncryptedValue
 
 case class PensionContributions(pensionSchemeTaxReference: Seq[String],
                                 inExcessOfTheAnnualAllowance: BigDecimal,
-                                annualAllowanceTaxPaid: BigDecimal) extends PensionChargesRequestSubModel {
+                                annualAllowanceTaxPaid: BigDecimal) extends PensionChargesSubRequestModel {
   override def isEmpty: Boolean = false
 }
 
