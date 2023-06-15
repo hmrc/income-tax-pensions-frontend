@@ -99,9 +99,9 @@ common.lifetimeAllowance.Pension.checkWithProvider.Paragraph.individual = Gwiriw
 common.lifetimeAllowance.Pension.checkWithProvider.Paragraph.agent = Gall eich cleient wirio â’i ddarparwr pensiwn os nad ydych yn siŵr.
 common.total.taxPaid.title = Cyfanswm y dreth a dalwyd
 common.totalAmount.beforeTax.title = Cyfanswm cyn treth
-common.beforeTax.error.overMaximum = Mae’n rhaid i swm y lwfans oes fod yn llai na 100,000,000,000
+common.beforeTax.error.overMaximum = Mae’n rhaid i swm y lwfans oes fod yn llai na £100,000,000,000
 common.taxPaid.error.incorrectFormat = Nodwch swm y dreth lwfans oes yn y fformat cywir
-common.taxPaid.error.overMaximum = Mae’n rhaid i swm y dreth lwfans oes fod yn llai na 100,000,000,000
+common.taxPaid.error.overMaximum = Mae’n rhaid i swm y dreth lwfans oes fod yn llai na £100,000,000,000
 
 #################       Common PSTR        ########################################
 
