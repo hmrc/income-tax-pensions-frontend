@@ -47,7 +47,6 @@ common.return.overview.buttonText = Yn ôl i’r trosolwg
 common.currencyAmount = £{0}
 common.total = Cyfanswm
 common.youCanFindThisOut.individual = Gallwch ddysgu hyn oddi wrth eich darparwr pensiwn.
-common.display = {0}
 common.youCanFindThisOut.agent = Gallwch ddysgu hyn oddi wrth ddarparwr pensiwn eich cleient.
 common.moreThanOnePensionScheme.individual = Os gwnaeth mwy nag un o’ch cynlluniau pensiwn dalu’r dreth, gallwch ychwanegu’r manylion hyn yn nes ymlaen.
 common.moreThanOnePensionScheme.agent = Os gwnaeth mwy nag un o gynlluniau pensiwn eich cleient dalu’r dreth, gallwch ychwanegu’r manylion hyn yn nes ymlaen.

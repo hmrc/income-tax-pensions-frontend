@@ -45,7 +45,6 @@ common.lifetimeAllowance.caption = Annual and lifetime allowances for 6 April {0
 common.overseasPensions.caption = Overseas pensions for 6 April {0} to 5 April {1}
 common.return.overview.buttonText = Return to overview
 common.currencyAmount = £{0}
-common.display = {0}
 common.total = Total
 common.youCanFindThisOut.individual = You can find this out from your pension provider.
 common.youCanFindThisOut.agent = You can find this out from your client’s pension provider.

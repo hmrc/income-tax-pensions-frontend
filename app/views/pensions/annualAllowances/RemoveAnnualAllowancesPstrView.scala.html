@@ -33,15 +33,16 @@ govUkButton: GovukButton
 @(taxYear: Int, pensionSchemeName: String, pensionSchemeIndex: Option[Int])(implicit request: AuthorisationRequest[_], messages: Messages, appConfig: AppConfig)
 
 @titleText = @{messages("pension.pensionSchemeTaxReference.title")}
-@contentHtml = {
-    <p class="govuk-inset-text">@{messages("common.display", pensionSchemeName)}</p>
-}
 
 @layout(pageTitle = titleText, taxYear = Some(taxYear), isAgent = request.user.isAgent) {
 
 @formWithCsrf(action = controllers.pensions.annualAllowances.routes.RemovePstrController.submit(taxYear, pensionSchemeIndex)) {
 @heading(titleText, Some(messages("common.AnnualAllowance.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-2")
-@contentHtml
+
+<div class="govuk-inset-text">
+    <span>@pensionSchemeName</span>
+</div>
+
 <div class="govuk-button-group">
     @govUkButton(Button(
     attributes = Map("data-module" -> "govuk-button", "id" -> "remove-pension-button-id"),

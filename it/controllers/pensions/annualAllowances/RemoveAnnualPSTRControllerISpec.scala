@@ -16,8 +16,11 @@
 
 package controllers.pensions.annualAllowances
 
-import builders.PensionsUserDataBuilder.aPensionsUserData
-import builders.UserBuilder.aUserRequest
+import builders.AllPensionsDataBuilder.anAllPensionsData
+import builders.IncomeTaxUserDataBuilder.anIncomeTaxUserData
+import builders.PensionAnnualAllowanceViewModelBuilder.aPensionAnnualAllowanceViewModel
+import builders.PensionsUserDataBuilder.{aPensionsUserData, anPensionsUserDataEmptyCya, pensionsUserDataWithAnnualAllowances}
+import builders.UserBuilder.{aUser, aUserRequest}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterEach
@@ -25,7 +28,7 @@ import play.api.http.HeaderNames
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import utils.PageUrls.PensionAnnualAllowancePages.{pstrSummaryUrl, removePstrUrl}
-import utils.PageUrls.fullUrl
+import utils.PageUrls.{fullUrl, pensionSummaryUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 
@@ -48,16 +51,16 @@ class RemoveAnnualPSTRControllerISpec extends IntegrationTest with ViewHelpers w
 
   object CommonExpectedEN extends CommonExpectedResults {
     val expectedTitle = s"Do you want to remove this Pension Scheme Tax Reference?"
-    val expectedCaption: Int => String = (taxYear: Int) => s"Unauthorised payments from pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Annual allowances for 6 April ${taxYear - 1} to 5 April $taxYear"
     val buttonText = "Remove reference"
-    val cancelText = "Don’t remove"
+    val cancelText = "Cancel"
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedTitle = s"A hoffech ddileu’r Cyfeirnod Treth ar gyfer y Cynllun Pensiwn hwn?"
-    val expectedCaption: Int => String = (taxYear: Int) => s"Taliadau heb awdurdod o bensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
+    val expectedTitle = s"Do you want to remove this Pension Scheme Tax Reference?"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Annual allowances for 6 April ${taxYear - 1} to 5 April $taxYear"
     val buttonText = "Dileu cyfeirnod"
-    val cancelText = "Peidiwch â dileu"
+    val cancelText = "Canslo"
   }
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, String]] = Seq(
@@ -74,11 +77,11 @@ class RemoveAnnualPSTRControllerISpec extends IntegrationTest with ViewHelpers w
 
         "render the Remove Pension Scheme page" which {
 
-          lazy val result: WSResponse = {
+          implicit lazy val result: WSResponse = {
             dropPensionsDB()
             authoriseAgentOrIndividual(user.isAgent)
             insertCyaData(aPensionsUserData)
-            urlGet(fullUrl(removePstrUrl(taxYearEOY, Some(0))), user.isWelsh, follow = false,
+            urlGet(fullUrl(removePstrUrl(taxYearEOY, 1)), user.isWelsh,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
 
@@ -88,11 +91,11 @@ class RemoveAnnualPSTRControllerISpec extends IntegrationTest with ViewHelpers w
             result.status shouldBe OK
           }
 
+          captionCheck(expectedCaption(taxYearEOY), captionSelector)
           titleCheck(expectedTitle, user.isWelsh)
           h1Check(expectedHeading)
-          captionCheck(expectedCaption(taxYearEOY), captionSelector)
           buttonCheck(buttonText)
-          textOnPageCheck("12345678AB", insetSpanText)
+          textOnPageCheck("12345678RB", insetSpanText)
           linkCheck(cancelText, cancelLinkSelector, s"${pstrSummaryUrl(taxYearEOY)}")
         }
       }
@@ -100,18 +103,18 @@ class RemoveAnnualPSTRControllerISpec extends IntegrationTest with ViewHelpers w
 
     "no data is returned" should {
 
-      "redirect to the Unauthorised CYA page" should {
+      "redirect to the Annual Allowances PSTR summary page" should {
 
         lazy val result: WSResponse = {
           dropPensionsDB()
           authoriseAgentOrIndividual()
-          urlGet(fullUrl(removePstrUrl(taxYearEOY, Some(0))), follow = false,
+          userDataStub(anIncomeTaxUserData, nino, taxYearEOY)
+          urlGet(fullUrl(removePstrUrl(taxYearEOY, 0)),
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
         }
 
-        s"has a SEE_OTHER ($SEE_OTHER) status" in {
-          result.status shouldBe SEE_OTHER
-          result.header("location").contains(pstrSummaryUrl(taxYearEOY)) shouldBe true
+        s"redirect to PSTR Summary page" in {
+          result.status shouldBe OK
         }
       }
     }
@@ -124,7 +127,7 @@ class RemoveAnnualPSTRControllerISpec extends IntegrationTest with ViewHelpers w
           dropPensionsDB()
           authoriseAgentOrIndividual()
           insertCyaData(aPensionsUserData)
-          urlGet(fullUrl(removePstrUrl(taxYearEOY, None)), follow = false,
+          urlGet(fullUrl(removePstrUrl(taxYearEOY, 0)), follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
         }
 
@@ -140,13 +143,13 @@ class RemoveAnnualPSTRControllerISpec extends IntegrationTest with ViewHelpers w
           dropPensionsDB()
           authoriseAgentOrIndividual()
           insertCyaData(aPensionsUserData)
-          urlGet(fullUrl(removePstrUrl(taxYearEOY, Some(4))), follow = false,
+          urlGet(fullUrl(removePstrUrl(taxYearEOY, 12)), follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
         }
 
         s"has a SEE_OTHER ($SEE_OTHER) status" in {
           result.status shouldBe SEE_OTHER
-          result.header("location").contains(pstrSummaryUrl(taxYearEOY)) shouldBe true
+          result.header("location") shouldBe Some(pstrSummaryUrl(taxYearEOY))
         }
       }
     }
@@ -164,18 +167,18 @@ class RemoveAnnualPSTRControllerISpec extends IntegrationTest with ViewHelpers w
             dropPensionsDB()
             authoriseAgentOrIndividual()
             insertCyaData(aPensionsUserData)
-            urlPost(fullUrl(removePstrUrl(taxYearEOY, Some(0))), body = "", follow = false,
+            urlPost(fullUrl(removePstrUrl(taxYearEOY, 0)), body = "", follow = false,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
 
           s"has a SEE_OTHER ($SEE_OTHER) status" in {
             result.status shouldBe SEE_OTHER
-            result.header("location").contains(pstrSummaryUrl(taxYearEOY)) shouldBe true
+            result.header("location") shouldBe Some(pstrSummaryUrl(taxYearEOY))
           }
 
           s"remove that scheme from the list" in {
             lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
-            cyaModel.pensions.unauthorisedPayments.pensionSchemeTaxReference shouldBe Some(Seq( "12345678AC"))
+            cyaModel.pensions.pensionsAnnualAllowances.pensionSchemeTaxReferences shouldBe Some(Seq("12345678RB", "1234567DRD"))
           }
         }
 
@@ -185,13 +188,13 @@ class RemoveAnnualPSTRControllerISpec extends IntegrationTest with ViewHelpers w
             dropPensionsDB()
             authoriseAgentOrIndividual()
             insertCyaData(aPensionsUserData)
-            urlPost(fullUrl(removePstrUrl(taxYearEOY, Some(7))), body = "", follow = false,
+            urlPost(fullUrl(removePstrUrl(taxYearEOY, 12)), body = "", follow = false,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
 
           s"has a SEE_OTHER ($SEE_OTHER) status" in {
             result.status shouldBe SEE_OTHER
-            result.header("location").contains(pstrSummaryUrl(taxYearEOY)) shouldBe true
+            result.header("location").contains(pensionSummaryUrl(taxYearEOY)) shouldBe true
           }
         }
       }
@@ -204,13 +207,13 @@ class RemoveAnnualPSTRControllerISpec extends IntegrationTest with ViewHelpers w
         lazy val result: WSResponse = {
           dropPensionsDB()
           authoriseAgentOrIndividual()
-          urlPost(fullUrl(removePstrUrl(taxYearEOY, Some(0))), body = "", follow = false,
+          urlPost(fullUrl(removePstrUrl(taxYearEOY, 0)), body = "", follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
         }
 
         s"has a SEE_OTHER ($SEE_OTHER) status" in {
           result.status shouldBe SEE_OTHER
-          result.header("location").contains(pstrSummaryUrl(taxYearEOY)) shouldBe true
+          result.header("location").contains(pensionSummaryUrl(taxYearEOY)) shouldBe true
         }
       }
     }

@@ -18,7 +18,6 @@ package controllers.pensions.annualAllowances
 
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.annualAllowances.routes.PstrSummaryController
-import controllers.pensions.unauthorisedPayments.routes.UnauthorisedPaymentsCYAController
 import controllers.predicates.TaxYearAction.taxYearAction
 import controllers.predicates.AuthorisedAction
 import play.api.i18n.I18nSupport
@@ -55,6 +54,15 @@ class RemovePstrController @Inject()(implicit val mcc: MessagesControllerCompone
     }
   }
 
+  private def checkIndexScheme(pensionSchemeIndex: Option[Int], pensionSchemesList: Seq[String]): Option[String] = {
+    pensionSchemeIndex match {
+      case Some(index) if pensionSchemesList.size > index =>
+        Some(pensionSchemesList(index))
+      case _ =>
+        None
+    }
+  }
+
   def submit(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = authAction.async { implicit request =>
     pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
       case Some(data) =>
@@ -78,15 +86,6 @@ class RemovePstrController @Inject()(implicit val mcc: MessagesControllerCompone
         }
       case _ =>
         Future.successful(Redirect(PstrSummaryController.show(taxYear)))
-    }
-  }
-
-  private def checkIndexScheme(pensionSchemeIndex: Option[Int], pensionSchemesList: Seq[String]): Option[String] = {
-    pensionSchemeIndex match {
-      case Some(index) if pensionSchemesList.size > index =>
-        Some(pensionSchemesList(index))
-      case _ =>
-        None
     }
   }
 
