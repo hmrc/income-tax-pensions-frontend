@@ -99,9 +99,9 @@ common.lifetimeAllowance.Pension.checkWithProvider.Paragraph.individual = Check 
 common.lifetimeAllowance.Pension.checkWithProvider.Paragraph.agent = Your client can check with their pension provider if you’re unsure.
 common.total.taxPaid.title = Total tax paid
 common.totalAmount.beforeTax.title = Total amount before tax
-common.beforeTax.error.overMaximum = The amount of lifetime allowance must be less than 100,000,000,000
+common.beforeTax.error.overMaximum = The amount of lifetime allowance must be less than £100,000,000,000
 common.taxPaid.error.incorrectFormat = Enter the amount of lifetime allowance tax in the correct format
-common.taxPaid.error.overMaximum = The amount of lifetime allowance tax must be less than 100,000,000,000
+common.taxPaid.error.overMaximum = The amount of lifetime allowance tax must be less than £100,000,000,000
 
 #################       Common PSTR        ########################################
 
