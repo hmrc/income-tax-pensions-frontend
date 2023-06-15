@@ -29,6 +29,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.lifetimeAllowances.PensionLumpSumDetailsView
 import controllers.pensions.routes.PensionsSummaryController
+import controllers.pensions.lifetimeAllowances.routes.LifeTimeAllowanceAnotherWayController
 import controllers.pensions.lifetimeAllowances.routes.PensionLumpSumController
 import models.AuthorisationRequest
 
@@ -98,8 +99,7 @@ class PensionLumpSumDetailsController @Inject()(implicit val mcc: MessagesContro
                 }
                 pensionSessionService.createOrUpdateSessionData(request.user,
                   updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
-                  //TODO: Redirect to lifetime-other-status
-                  Redirect(PensionsSummaryController.show(taxYear))
+                  Redirect(LifeTimeAllowanceAnotherWayController.show(taxYear))
                 }
               } else {
                 Future.successful(Redirect(PensionLumpSumController.show(taxYear)))

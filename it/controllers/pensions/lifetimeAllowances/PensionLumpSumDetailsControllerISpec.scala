@@ -27,7 +27,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.PensionLifetimeAllowance.pensionLumpSumDetails
+import utils.PageUrls.PensionLifetimeAllowance.{pensionLifeTimeAllowanceAnotherWayUrl, pensionLumpSumDetails}
 import utils.PageUrls.{fullUrl, pensionSummaryUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
@@ -459,9 +459,8 @@ class PensionLumpSumDetailsControllerISpec extends IntegrationTest with ViewHelp
       }
 
       "has a SEE_OTHER(303) status" in {
-        //TODO: Redirect to lifetime-other-status
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
+        result.header("location") shouldBe Some(pensionLifeTimeAllowanceAnotherWayUrl(taxYearEOY))
       }
 
       "update state pension amount to Some (new values)" in {
@@ -490,9 +489,8 @@ class PensionLumpSumDetailsControllerISpec extends IntegrationTest with ViewHelp
       }
 
       "has a SEE_OTHER(303) status" in {
-        //TODO: Redirect to lifetime-other-status
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
+        result.header("location") shouldBe Some(pensionLifeTimeAllowanceAnotherWayUrl(taxYearEOY))
       }
 
       "update state pension amount to Some (new values)" in {
