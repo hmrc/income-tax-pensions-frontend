@@ -106,6 +106,7 @@ common.taxPaid.error.overMaximum = Mae’n rhaid i swm y dreth lwfans oes fod yn
 #################       Common PSTR        ########################################
 
 common.pensionSchemeTaxReference = Cyfeirnod Treth y Cynllun Pensiwn
+pension.pensionSchemeTaxReference.title = Do you want to remove this Pension Scheme Tax Reference?
 common.pensionSchemeTaxReference.forExample = Er enghraifft, ‘12345678RA’
 common.pensionSchemeTaxReference.error.noEntry.individual = Nodwch Gyfeirnod Treth eich Cynllun Pensiwn
 common.pensionSchemeTaxReference.error.noEntry.agent = Nodwch Gyfeirnod Treth Cynllun Pensiwn eich cleient

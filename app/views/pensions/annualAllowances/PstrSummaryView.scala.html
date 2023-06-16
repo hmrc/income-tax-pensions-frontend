@@ -19,6 +19,7 @@
 @import views.html.templates.helpers.Heading
 @import views.html.templates.helpers.Link
 @import controllers.pensions.annualAllowances.routes.PensionSchemeTaxReferenceController
+@import controllers.pensions.annualAllowances.routes.RemoveAnnualAllowancePstrController
 @import controllers.pensions.routes.PensionsSummaryController
 
 @this(
@@ -55,7 +56,7 @@
                             </a>
                         </dd>
                         <dd class="hmrc-add-to-a-list__remove">
-                            <a class="govuk-link" href="#">
+                            <a class="govuk-link" href="@RemoveAnnualAllowancePstrController.show(taxYear, Some(index))">
                                 <span aria-hidden="true">@messages("common.remove")</span>
                                 <span class="govuk-visually-hidden">@{s"${messages("common.remove")} ${messages("common.pensionSchemeTaxReference")} $pstr"}</span>
                             </a>

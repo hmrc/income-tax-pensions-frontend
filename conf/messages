@@ -462,6 +462,7 @@ pensions.pensionProviderPaidTax.error.incorrectFormat.agent = Enter the amount o
 
 #Pension Scheme Tax Reference Messages
 pension.pensionSchemeTaxReference.paragraph1 = Enter the reference for the pension scheme that paid the tax.
+pension.pensionSchemeTaxReference.title = Do you want to remove this Pension Scheme Tax Reference?
 pension.pensionSchemeTaxReference.error.noEntry.individual = Enter your PSTR
 pension.pensionSchemeTaxReference.error.incorrectFormat.individual = Enter your PSTR in the correct format
 pension.pensionSchemeTaxReference.error.noEntry.agent = Enter your client’s PSTR

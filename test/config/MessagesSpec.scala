@@ -86,6 +86,8 @@ class MessagesSpec extends ViewTest with GuiceOneAppPerSuite {
     "statePension.cya.lumpSum.label",
     "statePension.cya.lumpSum.label.hidden",
     "unauthorisedPayments.checkbox.hint",
+    "pension.pensionSchemeTaxReference.title",
+    "unauthorisedPayments.removePensionSchemeTaxReference.title",
     "common.pensionSchemeTaxReference.p1"
   )
 
