@@ -36,22 +36,22 @@ govUkButton: GovukButton
 
 @layout(pageTitle = titleText, taxYear = Some(taxYear), isAgent = request.user.isAgent) {
 
-@formWithCsrf(action = controllers.pensions.annualAllowances.routes.RemoveAnnualAllowancePstrController.submit(taxYear, pensionSchemeIndex)) {
-@heading(titleText, Some(messages("common.AnnualAllowance.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-2")
+    @formWithCsrf(action = controllers.pensions.annualAllowances.routes.RemoveAnnualAllowancePstrController.submit(taxYear, pensionSchemeIndex)) {
+    @heading(titleText, Some(messages("common.AnnualAllowance.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-2")
 
-<div class="govuk-inset-text">
-    <span>@pensionSchemeName</span>
-</div>
+    <div class="govuk-inset-text">
+        <span>@pensionSchemeName</span>
+    </div>
 
-<div class="govuk-button-group">
-    @govUkButton(Button(
-    attributes = Map("data-module" -> "govuk-button", "id" -> "remove-pension-button-id"),
-    preventDoubleClick = Some(true),
-    content = Text(messages("unauthorisedPayments.removePensionSchemeTaxReference.removeButton")),
-    classes = "govuk-button--warning"
-    ))
-    @link(controllers.pensions.annualAllowances.routes.PstrSummaryController.show(taxYear).url, messages("common.cancel"), id = Some("cancel-link-id"))
-</div>
+    <div class="govuk-button-group">
+        @govUkButton(Button(
+        attributes = Map("data-module" -> "govuk-button", "id" -> "remove-pension-button-id"),
+        preventDoubleClick = Some(true),
+        content = Text(messages("unauthorisedPayments.removePensionSchemeTaxReference.removeButton")),
+        classes = "govuk-button--warning"
+        ))
+        @link(controllers.pensions.annualAllowances.routes.PstrSummaryController.show(taxYear).url, messages("common.dontRemove"), id = Some("cancel-link-id"))
+    </div>
 }
 }
 

@@ -85,7 +85,9 @@ class MessagesSpec extends ViewTest with GuiceOneAppPerSuite {
     "common.overseasPensions.pensionScheme.providerName.subheading",
     "statePension.cya.lumpSum.label",
     "statePension.cya.lumpSum.label.hidden",
-    "unauthorisedPayments.checkbox.hint"
+    "unauthorisedPayments.checkbox.hint",
+    "pension.pensionSchemeTaxReference.title",
+    "unauthorisedPayments.removePensionSchemeTaxReference.title"
   )
 
   lazy val allLanguages: Map[String, Map[String, String]] = app.injector.instanceOf[MessagesApi].messages

@@ -26,7 +26,7 @@ import play.api.http.HeaderNames
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import utils.PageUrls.PensionAnnualAllowancePages.{pstrSummaryUrl, removePstrUrl}
-import utils.PageUrls.{fullUrl, pensionSummaryUrl}
+import utils.PageUrls.fullUrl
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 
@@ -51,14 +51,14 @@ class RemoveAnnualAllowancePSTRControllerISpec extends IntegrationTest with View
     val expectedTitle = s"Do you want to remove this Pension Scheme Tax Reference?"
     val expectedCaption: Int => String = (taxYear: Int) => s"Annual allowances for 6 April ${taxYear - 1} to 5 April $taxYear"
     val buttonText = "Remove reference"
-    val cancelText = "Cancel"
+    val cancelText = "Don’t remove"
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
     val expectedTitle = s"Do you want to remove this Pension Scheme Tax Reference?"
     val expectedCaption: Int => String = (taxYear: Int) => s"Annual allowances for 6 April ${taxYear - 1} to 5 April $taxYear"
     val buttonText = "Dileu cyfeirnod"
-    val cancelText = "Canslo"
+    val cancelText = "Peidiwch â dileu"
   }
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, String]] = Seq(
@@ -199,9 +199,9 @@ class RemoveAnnualAllowancePSTRControllerISpec extends IntegrationTest with View
       }
     }
 
-    "no data is returned from submission backend" should {  //TODO: what submission is happening here!
+    "no data is returned from the submit" should {
       
-      "redirect to the Unauthorised payments CYA page" should {   // TODO: change Unauthorised payments
+      "redirect to the PSTR Summary page" should {
 
         lazy val result: WSResponse = {
           dropPensionsDB()
