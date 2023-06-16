@@ -147,7 +147,7 @@ class PensionsChargesServiceSpec extends UnitTest
       mockCreateOrUpdate(userWithEmptyCya, Left(MongoError("Failed to connect to database")))
 
       val result = await(pensionChargesService.saveTransfersIntoOverseasPensionsViewModel(aUser, taxYear))
-      result shouldBe Left(MongoError("Failed to connect to database"))
+      result shouldBe Left(APIErrorModel(BAD_REQUEST, APIErrorBodyModel("FAILED", "failed")))
     }
 
     "return Left(DataNotUpdated) when data could not be updated" in {
@@ -191,7 +191,7 @@ class PensionsChargesServiceSpec extends UnitTest
       mockCreateOrUpdate(userWithEmptyCya, Left(MongoError("Failed to connect to database")))
 
       val result = await(pensionChargesService.saveShortServiceRefundsViewModel(aUser, taxYear))
-      result shouldBe Left(MongoError("Failed to connect to database"))
+      result shouldBe Left(APIErrorModel(BAD_REQUEST, APIErrorBodyModel("FAILED", "failed")))
     }
 
     "return Left(DataNotUpdated) when data could not be updated" in {

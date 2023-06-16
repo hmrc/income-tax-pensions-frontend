@@ -45,6 +45,7 @@ class PensionChargesService @Inject()(pensionUserDataRepository: PensionsUserDat
       viewModel: Option[UnauthorisedPaymentsViewModel] = sessionData.map(_.pensions.unauthorisedPayments)
       unauthModel: Option[PensionSchemeUnauthorisedPayments] = viewModel.map(_.toUnauth)
 
+
       result <-
         FutureEitherOps[ServiceError, Unit](savePensionChargesData(
           user = user,
@@ -170,11 +171,11 @@ class PensionChargesService @Inject()(pensionUserDataRepository: PensionsUserDat
                                      updatedCYA: PensionsUserData)
                                     (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[ServiceError, Unit]] = {
 
-
-    pensionChargesHelper.sendDownstream(user.nino, taxYear, subModel, cya, submissionModel)(
-      hc.withExtraHeaders("mtditid" -> user.mtditid), ec)
-
-    pensionUserDataRepository.createOrUpdate(updatedCYA)
+    (for {
+      _ <- FutureEitherOps[ServiceError, Unit](pensionChargesHelper.sendDownstream(user.nino, taxYear, subModel, cya, submissionModel)(
+        hc.withExtraHeaders("mtditid" -> user.mtditid), ec))
+      result <- FutureEitherOps[ServiceError, Unit](pensionUserDataRepository.createOrUpdate(updatedCYA))
+    } yield result).value
   }
 
   private def createShortServiceRefundsChargesModel(viewModel: Option[ShortServiceRefundsViewModel],
