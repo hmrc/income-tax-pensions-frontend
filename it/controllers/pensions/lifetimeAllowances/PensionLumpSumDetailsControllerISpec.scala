@@ -41,7 +41,7 @@ class PensionLumpSumDetailsControllerISpec extends IntegrationTest with ViewHelp
   val amount2InputName = "amount-2"
   val amountInvalidFormat = "invalid"
   val amountEmpty = ""
-  val amountOverMaximum = "100,000,000,000"
+  val amountOverMaximum = "£100,000,000,000"
 
 
   def amountForm(totalAmount: String, taxPaid: String): Map[String, String] = Map(
@@ -124,9 +124,9 @@ class PensionLumpSumDetailsControllerISpec extends IntegrationTest with ViewHelp
     val beforeTax: String = "Total amount before tax"
     val taxPaid: String = "Total tax paid"
     val beforeTaxErrorIncorrectFormat: String = "Enter the amount of lump sum in the correct format"
-    val beforeTaxErrorOverMaximum: String = "The amount of lifetime allowance must be less than 100,000,000,000"
+    val beforeTaxErrorOverMaximum: String = "The amount of lifetime allowance must be less than £100,000,000,000"
     val taxPaidErrorIncorrectFormat: String = "Enter the amount of lifetime allowance tax in the correct format"
-    val taxPaidErrorOverMaximum: String = "The amount of lifetime allowance tax must be less than 100,000,000,000"
+    val taxPaidErrorOverMaximum: String = "The amount of lifetime allowance tax must be less than £100,000,000,000"
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
@@ -136,9 +136,9 @@ class PensionLumpSumDetailsControllerISpec extends IntegrationTest with ViewHelp
     val beforeTax: String = "Cyfanswm cyn treth"
     val taxPaid: String = "Cyfanswm y dreth a dalwyd"
     val beforeTaxErrorIncorrectFormat: String = "Nodwch swm y cyfandaliad yn y fformat cywir"
-    val beforeTaxErrorOverMaximum: String = "Mae’n rhaid i swm y lwfans oes fod yn llai na 100,000,000,000"
+    val beforeTaxErrorOverMaximum: String = "Mae’n rhaid i swm y lwfans oes fod yn llai na £100,000,000,000"
     val taxPaidErrorIncorrectFormat: String = "Nodwch swm y dreth lwfans oes yn y fformat cywir"
-    val taxPaidErrorOverMaximum: String = "Mae’n rhaid i swm y dreth lwfans oes fod yn llai na 100,000,000,000"
+    val taxPaidErrorOverMaximum: String = "Mae’n rhaid i swm y dreth lwfans oes fod yn llai na £100,000,000,000"
   }
 
   object ExpectedIndividualEN extends SpecificExpectedResults {

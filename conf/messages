@@ -27,7 +27,6 @@ common.opensInNewTab = (opens in new tab)
 common.currency.hint = For example, £193.52
 common.currency.hint1 = For example, £193.54
 common.help.getHelpWithThisPage = Get help with this page
-common.status.toDo = To do
 common.status.updated = Updated
 common.status.notStarted = Not Started
 common.pensions.caption = Pensions for 6 April {0} to 5 April {1}
@@ -38,7 +37,7 @@ common.transferIntoOverseasPensions.caption = Transfers into overseas pensions f
 common.shortServiceRefunds.caption = Short service refunds for 6 April {0} to 5 April {1}
 common.dividends.incomeFromPensions.caption = Dividends for 6 April {0} to 5 April {1}
 common.pensionAnnualAllowance.caption = Pension annual allowance for 6 April {0} to 5 April {1}
-common.AnnualAllowance.caption = Annual allowances for 6 April {0} to 5 April {1}
+common.annualAllowance.caption = Annual allowance for 6 April {0} to 5 April {1}
 common.incomeFromPensions.caption = Income from pensions for 6 April {0} to 5 April {1}
 common.uKPensionIncome.caption = UK pension income for 6 April {0} to 5 April {1}
 common.lifetimeAllowance.caption = Annual and lifetime allowances for 6 April {0} to 5 April {1}
@@ -100,9 +99,9 @@ common.lifetimeAllowance.Pension.checkWithProvider.Paragraph.individual = Check 
 common.lifetimeAllowance.Pension.checkWithProvider.Paragraph.agent = Your client can check with their pension provider if you’re unsure.
 common.total.taxPaid.title = Total tax paid
 common.totalAmount.beforeTax.title = Total amount before tax
-common.beforeTax.error.overMaximum = The amount of lifetime allowance must be less than 100,000,000,000
+common.beforeTax.error.overMaximum = The amount of lifetime allowance must be less than £100,000,000,000
 common.taxPaid.error.incorrectFormat = Enter the amount of lifetime allowance tax in the correct format
-common.taxPaid.error.overMaximum = The amount of lifetime allowance tax must be less than 100,000,000,000
+common.taxPaid.error.overMaximum = The amount of lifetime allowance tax must be less than £100,000,000,000
 
 #################       Common PSTR        ########################################
 
@@ -110,6 +109,7 @@ common.pensionSchemeTaxReference = Pension Scheme Tax Reference
 common.pensionSchemeTaxReference.forExample = For example, ‘12345678RA’
 common.pensionSchemeTaxReference.error.noEntry.individual = Enter your Pension Scheme Tax Reference
 common.pensionSchemeTaxReference.error.noEntry.agent = Enter your client’s Pension Scheme Tax Reference
+common.pensionSchemeTaxReference.p1 = If more than one pension scheme paid or agreed to pay the tax, you can add them later.
 
 #################       Common overseas pensions        ########################################
 
@@ -778,7 +778,6 @@ lifetimeAllowance.cya.lifetimePensionSchemeTaxReferences.hidden = Change schemes
 
 #Pension scheme tax reference lifetime allowance
 lifetimeAllowance.pensionSchemeTaxReference.title = Tell us the pension scheme that paid or agreed to pay the tax
-lifetimeAllowance.pensionSchemeTaxReference.p1 = If more than one pension scheme paid or agreed to pay the tax, you can add them later.
 lifetimeAllowance.pensionSchemeTaxReference.error.incorrectFormat = Enter a reference with 8 numbers and 2 letters, such as ‘12345678AB’
 
 #Surcharge Amount

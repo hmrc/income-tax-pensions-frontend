@@ -37,7 +37,7 @@ govUkButton: GovukButton
 @layout(pageTitle = titleText, taxYear = Some(taxYear), isAgent = request.user.isAgent) {
 
     @formWithCsrf(action = controllers.pensions.annualAllowances.routes.RemoveAnnualAllowancePstrController.submit(taxYear, pensionSchemeIndex)) {
-    @heading(titleText, Some(messages("common.AnnualAllowance.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-2")
+    @heading(titleText, Some(messages("common.annualAllowance.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-2")
 
     <div class="govuk-inset-text">
         <span>@pensionSchemeName</span>
