@@ -168,6 +168,9 @@ POST        /:taxYear/annual-lifetime-allowances/above-annual-allowance         
 GET         /:taxYear/annual-allowance/pension-scheme-tax-reference                                                                controllers.pensions.annualAllowances.PensionSchemeTaxReferenceController.show(taxYear: Int, pensionSchemeTaxReferenceIndex: Option[Int])
 POST        /:taxYear/annual-allowance/pension-scheme-tax-reference                                                                controllers.pensions.annualAllowances.PensionSchemeTaxReferenceController.submit(taxYear: Int, pensionSchemeTaxReferenceIndex: Option[Int])
 
+GET         /:taxYear/annual-allowance/remove-pension-scheme-tax-reference                                                         controllers.pensions.annualAllowances.RemoveAnnualAllowancePstrController.show(taxYear: Int, pensionSchemeTaxReferenceIndex: Option[Int])
+POST        /:taxYear/annual-allowance/remove-pension-scheme-tax-reference                                                         controllers.pensions.annualAllowances.RemoveAnnualAllowancePstrController.submit(taxYear: Int, pensionSchemeTaxReferenceIndex: Option[Int])
+
 GET         /:taxYear/annual-allowance/pension-schemes-paying-annual-allowance-tax                                                 controllers.pensions.annualAllowances.PstrSummaryController.show(taxYear: Int)
 
 #  Lifetime Allowance Pages     ####################################

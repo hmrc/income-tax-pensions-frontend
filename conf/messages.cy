@@ -27,7 +27,6 @@ common.opensInNewTab = (yn agor tab newydd)
 common.currency.hint = Er enghraifft, £193.52
 common.currency.hint1 = Er enghraifft, £193.54
 common.help.getHelpWithThisPage = Help gyda’r dudalen hon
-common.status.toDo = I’w gwneud
 common.status.updated = Wedi diweddaru
 common.status.notStarted = Heb ddechrau
 common.pensions.caption = Pensiynau ar gyfer 6 Ebrill {0} i 5 Ebrill {1}
@@ -100,13 +99,14 @@ common.lifetimeAllowance.Pension.checkWithProvider.Paragraph.individual = Gwiriw
 common.lifetimeAllowance.Pension.checkWithProvider.Paragraph.agent = Gall eich cleient wirio â’i ddarparwr pensiwn os nad ydych yn siŵr.
 common.total.taxPaid.title = Cyfanswm y dreth a dalwyd
 common.totalAmount.beforeTax.title = Cyfanswm cyn treth
-common.beforeTax.error.overMaximum = Mae’n rhaid i swm y lwfans oes fod yn llai na 100,000,000,000
+common.beforeTax.error.overMaximum = Mae’n rhaid i swm y lwfans oes fod yn llai na £100,000,000,000
 common.taxPaid.error.incorrectFormat = Nodwch swm y dreth lwfans oes yn y fformat cywir
-common.taxPaid.error.overMaximum = Mae’n rhaid i swm y dreth lwfans oes fod yn llai na 100,000,000,000
+common.taxPaid.error.overMaximum = Mae’n rhaid i swm y dreth lwfans oes fod yn llai na £100,000,000,000
 
 #################       Common PSTR        ########################################
 
 common.pensionSchemeTaxReference = Cyfeirnod Treth y Cynllun Pensiwn
+pension.pensionSchemeTaxReference.title = Do you want to remove this Pension Scheme Tax Reference?
 common.pensionSchemeTaxReference.forExample = Er enghraifft, ‘12345678RA’
 common.pensionSchemeTaxReference.error.noEntry.individual = Nodwch Gyfeirnod Treth eich Cynllun Pensiwn
 common.pensionSchemeTaxReference.error.noEntry.agent = Nodwch Gyfeirnod Treth Cynllun Pensiwn eich cleient

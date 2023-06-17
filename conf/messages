@@ -27,7 +27,6 @@ common.opensInNewTab = (opens in new tab)
 common.currency.hint = For example, £193.52
 common.currency.hint1 = For example, £193.54
 common.help.getHelpWithThisPage = Get help with this page
-common.status.toDo = To do
 common.status.updated = Updated
 common.status.notStarted = Not Started
 common.pensions.caption = Pensions for 6 April {0} to 5 April {1}
@@ -100,9 +99,9 @@ common.lifetimeAllowance.Pension.checkWithProvider.Paragraph.individual = Check 
 common.lifetimeAllowance.Pension.checkWithProvider.Paragraph.agent = Your client can check with their pension provider if you’re unsure.
 common.total.taxPaid.title = Total tax paid
 common.totalAmount.beforeTax.title = Total amount before tax
-common.beforeTax.error.overMaximum = The amount of lifetime allowance must be less than 100,000,000,000
+common.beforeTax.error.overMaximum = The amount of lifetime allowance must be less than £100,000,000,000
 common.taxPaid.error.incorrectFormat = Enter the amount of lifetime allowance tax in the correct format
-common.taxPaid.error.overMaximum = The amount of lifetime allowance tax must be less than 100,000,000,000
+common.taxPaid.error.overMaximum = The amount of lifetime allowance tax must be less than £100,000,000,000
 
 #################       Common PSTR        ########################################
 
@@ -457,6 +456,7 @@ pensions.pensionProviderPaidTax.error.incorrectFormat.agent = Enter the amount o
 
 #Pension Scheme Tax Reference Messages
 pension.pensionSchemeTaxReference.paragraph1 = Enter the reference for the pension scheme that paid the tax.
+pension.pensionSchemeTaxReference.title = Do you want to remove this Pension Scheme Tax Reference?
 pension.pensionSchemeTaxReference.error.noEntry.individual = Enter your PSTR
 pension.pensionSchemeTaxReference.error.incorrectFormat.individual = Enter your PSTR in the correct format
 pension.pensionSchemeTaxReference.error.noEntry.agent = Enter your client’s PSTR

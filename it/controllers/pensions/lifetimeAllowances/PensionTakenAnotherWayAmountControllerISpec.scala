@@ -39,7 +39,7 @@ class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with B
   val amount2InputName = "amount-2"
   val amountInvalidFormat = "invalid"
   val amountEmpty = ""
-  val amountOverMaximum = "100,000,000,000"
+  val amountOverMaximum = "£100,000,000,000"
 
 
   def amountForm(totalAmount: String, taxPaid: String): Map[String, String] = Map(
@@ -100,9 +100,9 @@ class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with B
     val buttonText = "Continue"
     val beforeTax = "Total amount before tax"
     val taxPaid = "Total tax paid"
-    val beforeTaxErrorOverMaximum = "The amount of lifetime allowance must be less than 100,000,000,000"
+    val beforeTaxErrorOverMaximum = "The amount of lifetime allowance must be less than £100,000,000,000"
     val taxPaidErrorIncorrectFormat = "Enter the amount of lifetime allowance tax in the correct format"
-    val taxPaidErrorOverMaximum = "The amount of lifetime allowance tax must be less than 100,000,000,000"
+    val taxPaidErrorOverMaximum = "The amount of lifetime allowance tax must be less than £100,000,000,000"
     val taxPaidParagraph = "If more than one pension scheme paid the lifetime allowance tax, give the total."
   }
 
@@ -112,9 +112,9 @@ class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with B
     val buttonText = "Yn eich blaen"
     val beforeTax = "Cyfanswm cyn treth"
     val taxPaid = "Cyfanswm y dreth a dalwyd"
-    val beforeTaxErrorOverMaximum = "Mae’n rhaid i swm y lwfans oes fod yn llai na 100,000,000,000"
+    val beforeTaxErrorOverMaximum = "Mae’n rhaid i swm y lwfans oes fod yn llai na £100,000,000,000"
     val taxPaidErrorIncorrectFormat = "Nodwch swm y dreth lwfans oes yn y fformat cywir"
-    val taxPaidErrorOverMaximum = "Mae’n rhaid i swm y dreth lwfans oes fod yn llai na 100,000,000,000"
+    val taxPaidErrorOverMaximum = "Mae’n rhaid i swm y dreth lwfans oes fod yn llai na £100,000,000,000"
     val taxPaidParagraph = "Os oedd mwy nag un cynllun pensiwn yn talu’r dreth lwfans oes, rhowch y cyfanswm."
 
   }

@@ -68,7 +68,7 @@ class PensionsSummaryControllerISpec extends CommonUtils with BeforeAndAfterEach
     val buttonText: String
     val updated: String
     val cannotUpdate: String
-    val toDo: String
+    val notStarted: String
   }
 
   object CommonExpectedEN extends CommonExpectedResults {
@@ -82,7 +82,7 @@ class PensionsSummaryControllerISpec extends CommonUtils with BeforeAndAfterEach
     val buttonText = "Return to overview"
     val updated = "Updated"
     val cannotUpdate = "Cannot update"
-    val toDo = "To do"
+    val notStarted = "Not Started"
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
@@ -96,7 +96,7 @@ class PensionsSummaryControllerISpec extends CommonUtils with BeforeAndAfterEach
     val buttonText = "Yn ôl i’r trosolwg"
     val updated = "Wedi diweddaru"
     val cannotUpdate = "Cannot update"
-    val toDo = "I’w gwneud"
+    val notStarted = "Heb ddechrau"
     val paymentsToOverseasPensionsText = "Taliadau i bensiynau tramor"
   }
 
@@ -106,18 +106,18 @@ class PensionsSummaryControllerISpec extends CommonUtils with BeforeAndAfterEach
     UserScenario(isWelsh = true, isAgent = false, CommonExpectedCY),
     UserScenario(isWelsh = true, isAgent = true, CommonExpectedCY)
   )
-  
+
   lazy val pensionSessionService: PensionSessionService = inject[PensionSessionService]
 
   implicit val penSumUrl: Int => String = pensionSummaryUrl
-  
+
   ".show" when {
-    
+
     userScenarios.foreach { userScenario =>
       s"language is ${welshTest(userScenario.isWelsh)} and request is from an ${agentTest(userScenario.isAgent)}" should {
         import Selectors._
         import userScenario.commonExpectedResults._
-        
+
         "render the page where minimal prior data exists for all statuses to be all 'Updated'" which {
           implicit lazy val result: WSResponse = {
             authoriseAgentOrIndividual(userScenario.isAgent)
@@ -215,7 +215,7 @@ class PensionsSummaryControllerISpec extends CommonUtils with BeforeAndAfterEach
         }
 
         "render the page where no prior data exists for all pension data so the statuses are all 'To do'" which {
-          
+
           implicit lazy val result: WSResponse = {
             authoriseAgentOrIndividual(userScenario.isAgent)
             emptyUserDataStub(nino, taxYearEOY)
@@ -229,29 +229,29 @@ class PensionsSummaryControllerISpec extends CommonUtils with BeforeAndAfterEach
 
           "has an payment into pensions section" which {
             linkCheck(paymentsLinkText, paymentsIntoPensionsLink, reliefAtSourcePensionsUrl(taxYearEOY))
-            textOnPageCheck(toDo, summaryListStatusTagSelector(1))
+            textOnPageCheck(notStarted, summaryListStatusTagSelector(1))
           }
 
           "has an income from pensions section" which {
             linkCheck(incomeLinkText, incomeFromPensionsLink, pensionIncomeSummaryUrl(taxYearEOY))
-            textOnPageCheck(toDo, summaryListStatusTagSelector(2))
+            textOnPageCheck(notStarted, summaryListStatusTagSelector(2))
           }
 
           "has an pension annual allowance section" which {
             //TODO: Change to use the href below when pension annual allowance cya page available
             //linkCheck(annualAllowance, pensionAnnualAllowanceLink, checkPensionAnnualAllowanceCyaUrl(taxYearEOY))
             linkCheck(annualAllowance, pensionAnnualAllowanceLink, reducedAnnualAllowanceUrl(taxYearEOY))
-            textOnPageCheck(toDo, summaryListStatusTagSelector(3))
+            textOnPageCheck(notStarted, summaryListStatusTagSelector(3))
           }
 
           "has an pension lifetime allowance section" which {
             linkCheck(lifetimeAllowance, pensionLifetimeAllowanceLink, pensionAboveAnnualLifetimeAllowanceUrl(taxYearEOY))
-            textOnPageCheck(toDo, summaryListStatusTagSelector(4))
+            textOnPageCheck(notStarted, summaryListStatusTagSelector(4))
           }
 
           "has an unauthorised payments from pensions section" which {
             linkCheck(unauthLinkText, unauthorisedPaymentsFromPensionsLink, unauthorisedPaymentsUrl(taxYearEOY))
-            textOnPageCheck(toDo, summaryListStatusTagSelector(5))
+            textOnPageCheck(notStarted, summaryListStatusTagSelector(5))
           }
 
           buttonCheck(buttonText, buttonSelector)
@@ -262,7 +262,7 @@ class PensionsSummaryControllerISpec extends CommonUtils with BeforeAndAfterEach
         "render the page with prior data but only a subset of the underlying pension charges are present leading to a mix of 'updated' and To do'" which {
           implicit lazy val result: WSResponse = {
             authoriseAgentOrIndividual(userScenario.isAgent)
-            
+
             val userData = anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData.copy(
               pensionCharges = Some(anPensionCharges.copy(pensionSavingsTaxCharges = None, pensionContributions = None)))
             ))
@@ -286,12 +286,12 @@ class PensionsSummaryControllerISpec extends CommonUtils with BeforeAndAfterEach
             //TODO: Change to use the href below when pension annual allowance cya page available
             //linkCheck(annualAllowance, pensionAnnualAllowanceLink, checkPensionAnnualAllowanceCyaUrl(taxYearEOY))
             linkCheck(annualAllowance, pensionAnnualAllowanceLink, reducedAnnualAllowanceUrl(taxYearEOY))
-            textOnPageCheck(toDo, summaryListStatusTagSelector(3))
+            textOnPageCheck(notStarted, summaryListStatusTagSelector(3))
           }
 
           "has an pension lifetime allowance section" which {
             linkCheck(lifetimeAllowance, pensionLifetimeAllowanceLink, pensionAboveAnnualLifetimeAllowanceUrl(taxYearEOY))
-            textOnPageCheck(toDo, summaryListStatusTagSelector(4))
+            textOnPageCheck(notStarted, summaryListStatusTagSelector(4))
           }
 
           "has an unauthorised payments from pensions section" which {
@@ -342,7 +342,7 @@ class PensionsSummaryControllerISpec extends CommonUtils with BeforeAndAfterEach
 
           "has an unauthorised payments from pensions section" which {
             linkCheck(unauthLinkText, unauthorisedPaymentsFromPensionsLink, unauthorisedPaymentsUrl(taxYearEOY))
-            textOnPageCheck(toDo, summaryListStatusTagSelector(5))
+            textOnPageCheck(notStarted, summaryListStatusTagSelector(5))
           }
 
           buttonCheck(buttonText, buttonSelector)

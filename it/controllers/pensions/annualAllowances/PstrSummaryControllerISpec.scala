@@ -18,7 +18,7 @@ package controllers.pensions.annualAllowances
 
 import builders.PensionAnnualAllowanceViewModelBuilder.aPensionAnnualAllowanceViewModel
 import builders.PensionsUserDataBuilder.pensionsUserDataWithAnnualAllowances
-import controllers.pensions.annualAllowances.routes.PensionSchemeTaxReferenceController
+import controllers.pensions.annualAllowances.routes.{PensionSchemeTaxReferenceController, RemoveAnnualAllowancePstrController}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterEach
@@ -118,8 +118,10 @@ class PstrSummaryControllerISpec extends IntegrationTest with BeforeAndAfterEach
             PensionSchemeTaxReferenceController.show(taxYearEOY, Some(0)).url)
           linkCheck(s"$change $change $pensionSchemeTaxReference $pstr2", changeLinkSelector(2),
             PensionSchemeTaxReferenceController.show(taxYearEOY, Some(1)).url)
-          linkCheck(s"$remove $remove $pensionSchemeTaxReference $pstr1", removeLinkSelector(1), "#")
-          linkCheck(s"$remove $remove $pensionSchemeTaxReference $pstr2", removeLinkSelector(2), "#")
+          linkCheck(s"$remove $remove $pensionSchemeTaxReference $pstr1", removeLinkSelector(1),
+            RemoveAnnualAllowancePstrController.show(taxYearEOY, Some(0)).url)
+          linkCheck(s"$remove $remove $pensionSchemeTaxReference $pstr2", removeLinkSelector(2),
+            RemoveAnnualAllowancePstrController.show(taxYearEOY, Some(1)).url)
           linkCheck(expectedAddAnotherText, addAnotherLinkSelector, PensionSchemeTaxReferenceController.show(taxYearEOY, None).url)
           //TODO button href to go to annual allowance CYA page
           buttonCheck(expectedButtonText, continueButtonSelector, Some(checkAnnualLifetimeAllowanceCYA(taxYearEOY)))
