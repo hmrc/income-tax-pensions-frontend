@@ -18,7 +18,7 @@
 @import views.html.templates.helpers.SummaryList
 @import views.html.templates.helpers.Heading
 @import views.html.templates.helpers.Link
-@import controllers.pensions.unauthorisedPayments.routes.UnauthorisedPensionSchemeTaxReferenceController
+@import controllers.pensions.unauthorisedPayments.routes.{UnauthorisedPensionSchemeTaxReferenceController, RemovePSTRController}
 @import controllers.pensions.unauthorisedPayments.routes.UnauthorisedPaymentsCYAController
 
 @this(
@@ -50,13 +50,13 @@
                             @pensionIncome
                         </dt>
                         <dd class="hmrc-add-to-a-list__change">
-                        <a class="govuk-link" href="@controllers.pensions.unauthorisedPayments.routes.UnauthorisedPensionSchemeTaxReferenceController.show(taxYear, Some(index))">
+                        <a class="govuk-link" href="@UnauthorisedPensionSchemeTaxReferenceController.show(taxYear, Some(index))">
                             <span aria-hidden="true">@messages("common.change")</span>
                             <span class="govuk-visually-hidden">@{s"${messages("common.change")} ${pensionIncome}"}</span>
                             </a>
                         </dd>
                         <dd class="hmrc-add-to-a-list__remove">
-                        <a class="govuk-link" href="@controllers.pensions.unauthorisedPayments.routes.RemovePSTRController.show(taxYear, Some(index))">
+                        <a class="govuk-link" href="@RemovePSTRController.show(taxYear, Some(index))">
                                 <span aria-hidden="true">@messages("common.remove")</span>
                                 <span class="govuk-visually-hidden">@{s"${messages("common.remove")} ${pensionIncome}"}</span>
                             </a>

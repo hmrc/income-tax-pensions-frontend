@@ -162,8 +162,8 @@ POST        /:taxYear/annual-allowance/reduced-annual-allowance                 
 GET         /:taxYear/annual-allowance/reduced-annual-allowance-type                                                               controllers.pensions.annualAllowances.ReducedAnnualAllowanceTypeController.show(taxYear: Int)
 POST        /:taxYear/annual-allowance/reduced-annual-allowance-type                                                               controllers.pensions.annualAllowances.ReducedAnnualAllowanceTypeController.submit(taxYear: Int)
 
-GET         /:taxYear/annual-lifetime-allowances/above-annual-allowance                                                                      controllers.pensions.annualAllowances.AboveReducedAnnualAllowanceController.show(taxYear: Int)
-POST        /:taxYear/annual-lifetime-allowances/above-annual-allowance                                                                      controllers.pensions.annualAllowances.AboveReducedAnnualAllowanceController.submit(taxYear: Int)
+GET         /:taxYear/annual-lifetime-allowances/above-annual-allowance                                                            controllers.pensions.annualAllowances.AboveReducedAnnualAllowanceController.show(taxYear: Int)
+POST        /:taxYear/annual-lifetime-allowances/above-annual-allowance                                                            controllers.pensions.annualAllowances.AboveReducedAnnualAllowanceController.submit(taxYear: Int)
 
 GET         /:taxYear/annual-allowance/pension-scheme-tax-reference                                                                controllers.pensions.annualAllowances.PensionSchemeTaxReferenceController.show(taxYear: Int, pensionSchemeTaxReferenceIndex: Option[Int])
 POST        /:taxYear/annual-allowance/pension-scheme-tax-reference                                                                controllers.pensions.annualAllowances.PensionSchemeTaxReferenceController.submit(taxYear: Int, pensionSchemeTaxReferenceIndex: Option[Int])
@@ -193,8 +193,8 @@ POST        /:taxYear/annual-lifetime-allowances/lump-sum-details               
 GET         /:taxYear/annual-lifetime-allowances/pension-another-way-details                                                        controllers.pensions.lifetimeAllowances.PensionTakenAnotherWayAmountController.show(taxYear: Int)
 POST        /:taxYear/annual-lifetime-allowances/pension-another-way-details                                                        controllers.pensions.lifetimeAllowances.PensionTakenAnotherWayAmountController.submit(taxYear: Int)
 
-GET         /:taxYear/annual-lifetime-allowances/pension-scheme-tax-reference                                                              controllers.pensions.lifetimeAllowances.PensionSchemeTaxReferenceLifetimeController.show(taxYear: Int, pensionSchemeTaxReferenceIndex: Option[Int])
-POST        /:taxYear/annual-lifetime-allowances/pension-scheme-tax-reference                                                              controllers.pensions.lifetimeAllowances.PensionSchemeTaxReferenceLifetimeController.submit(taxYear: Int, pensionSchemeTaxReferenceIndex: Option[Int])
+GET         /:taxYear/annual-lifetime-allowances/pension-scheme-tax-reference                                                      controllers.pensions.lifetimeAllowances.PensionSchemeTaxReferenceLifetimeController.show(taxYear: Int, pensionSchemeTaxReferenceIndex: Option[Int])
+POST        /:taxYear/annual-lifetime-allowances/pension-scheme-tax-reference                                                      controllers.pensions.lifetimeAllowances.PensionSchemeTaxReferenceLifetimeController.submit(taxYear: Int, pensionSchemeTaxReferenceIndex: Option[Int])
 
 GET         /:taxYear/annual-lifetime-allowances/check-lifetime-allowances                                                         controllers.pensions.lifetimeAllowances.AnnualLifetimeAllowanceCYAController.show(taxYear:Int)
 POST        /:taxYear/annual-lifetime-allowances/check-lifetime-allowances                                                         controllers.pensions.lifetimeAllowances.AnnualLifetimeAllowanceCYAController.submit(taxYear:Int)

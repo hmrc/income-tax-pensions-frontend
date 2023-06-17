@@ -26,6 +26,7 @@ import play.api.http.HeaderNames
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import utils.PageUrls.PensionAnnualAllowancePages.{pensionSchemeTaxReferenceUrl, pstrSummaryUrl}
+import utils.PageUrls.PensionLifetimeAllowance.checkAnnualLifetimeAllowanceCYA
 import utils.PageUrls.{fullUrl, pensionSummaryUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
@@ -60,7 +61,7 @@ class PstrSummaryControllerISpec extends IntegrationTest with BeforeAndAfterEach
   object CommonExpectedEN extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Annual allowances for 6 April ${taxYear - 1} to 5 April $taxYear"
     val expectedButtonText = "Continue"
-    val expectedTitle = "Pension schemes that paid or agreed to pay the annual allowance tax"
+    val expectedTitle = "Pension Scheme Tax Reference (PSTR) summary"
     val change = "Change"
     val remove = "Remove"
     val pensionSchemeTaxReference = "Pension Scheme Tax Reference"
@@ -71,7 +72,7 @@ class PstrSummaryControllerISpec extends IntegrationTest with BeforeAndAfterEach
   object CommonExpectedCY extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Lwfansau blynyddol ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
     val expectedButtonText = "Yn eich blaen"
-    val expectedTitle = "Pension schemes that paid or agreed to pay the annual allowance tax"
+    val expectedTitle = "Crynodeb Cyfeirnod Treth y Cynllun Pensiwn (PSTR)"
     val change = "Newid"
     val remove = "Tynnu"
     val pensionSchemeTaxReference = "Cyfeirnod Treth y Cynllun Pensiwn"
@@ -121,7 +122,7 @@ class PstrSummaryControllerISpec extends IntegrationTest with BeforeAndAfterEach
           linkCheck(s"$remove $remove $pensionSchemeTaxReference $pstr2", removeLinkSelector(2), "#")
           linkCheck(expectedAddAnotherText, addAnotherLinkSelector, PensionSchemeTaxReferenceController.show(taxYearEOY, None).url)
           //TODO button href to go to annual allowance CYA page
-          buttonCheck(expectedButtonText, continueButtonSelector, Some(pensionSummaryUrl(taxYearEOY)))
+          buttonCheck(expectedButtonText, continueButtonSelector, Some(checkAnnualLifetimeAllowanceCYA(taxYearEOY)))
           welshToggleCheck(user.isWelsh)
         }
 
@@ -147,14 +148,14 @@ class PstrSummaryControllerISpec extends IntegrationTest with BeforeAndAfterEach
           elementNotOnPageCheck(pstrSelector(1))
           linkCheck(expectedAddPstrText, addLinkSelector, PensionSchemeTaxReferenceController.show(taxYearEOY, None).url)
           //TODO button href to go to annual allowance CYA page
-          buttonCheck(expectedButtonText, continueButtonSelector, Some(pensionSummaryUrl(taxYearEOY)))
+          buttonCheck(expectedButtonText, continueButtonSelector, Some(checkAnnualLifetimeAllowanceCYA(taxYearEOY)))
           welshToggleCheck(user.isWelsh)
         }
 
       }
     }
 
-    "redirect to the annual allowance CYA page if there is no session data" should {
+    "redirect to the Penions summary page if there is no session data" should {
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual()

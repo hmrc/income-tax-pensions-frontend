@@ -17,8 +17,8 @@
 package controllers.pensions.annualAllowances
 
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.annualAllowances.routes.{AboveReducedAnnualAllowanceController, ReducedAnnualAllowanceController}
-import controllers.pensions.routes.PensionsSummaryController
+import controllers.pensions.annualAllowances.routes._
+import controllers.pensions.lifetimeAllowances.routes.AnnualLifetimeAllowanceCYAController
 import controllers.predicates.ActionsProvider
 import forms.FormsProvider
 import models.mongo.{PensionsCYAModel, PensionsUserData}
@@ -102,13 +102,18 @@ class AboveReducedAnnualAllowanceController @Inject()(actionsProvider: ActionsPr
     )(errorHandler.internalServerError()) {
       Redirect(
         if (yesNo) {
-          //TODO redirect to ANNUAL PensionProviderPaidTax page
-          AboveReducedAnnualAllowanceController.show(taxYear)
+           pstrRedirect(taxYear, pensionUserData.pensions.pensionsAnnualAllowances.pensionSchemeTaxReferences)
         } else {
           //TODO redirect to check your annual allowance page
-          PensionsSummaryController.show(taxYear)
+          AnnualLifetimeAllowanceCYAController.show(taxYear)
         }
       )
+    }
+  }
+  
+  private def pstrRedirect(taxYear: Int, pstrSchemes: Option[Seq[String]]) = {
+    pstrSchemes.fold(PensionSchemeTaxReferenceController.show(taxYear, None)) { schemes =>
+      if (schemes.isEmpty) PensionSchemeTaxReferenceController.show(taxYear, None) else PstrSummaryController.show(taxYear)
     }
   }
 
