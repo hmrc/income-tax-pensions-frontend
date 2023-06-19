@@ -44,7 +44,8 @@ class SurchargeAmountController @Inject()(authAction: AuthorisedAction,
 
   val amountForm: Form[BigDecimal] = AmountForm.amountForm(
     emptyFieldKey = "unauthorisedPayments.surchargeAmount.error.noEntry",
-    wrongFormatKey = "common.error.incorrectFormat"
+    wrongFormatKey = "common.error.incorrectFormat",
+    exceedsMaxAmountKey = "unauthorisedPayments.surchargeAmount.error.maxLimit"
   )
 
 
