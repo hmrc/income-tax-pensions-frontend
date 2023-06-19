@@ -106,6 +106,7 @@ common.taxPaid.error.overMaximum = Mae’n rhaid i swm y dreth lwfans oes fod yn
 #################       Common PSTR        ########################################
 
 common.pensionSchemeTaxReference = Cyfeirnod Treth y Cynllun Pensiwn
+pension.pensionSchemeTaxReference.title = Do you want to remove this Pension Scheme Tax Reference?
 common.pensionSchemeTaxReference.forExample = Er enghraifft, ‘12345678RA’
 common.pensionSchemeTaxReference.error.noEntry.individual = Nodwch Gyfeirnod Treth eich Cynllun Pensiwn
 common.pensionSchemeTaxReference.error.noEntry.agent = Nodwch Gyfeirnod Treth Cynllun Pensiwn eich cleient
@@ -785,6 +786,7 @@ unauthorisedPayments.surchargeAmount.giveTotal.individual = Rhowch gyfanswm y ta
 unauthorisedPayments.surchargeAmount.giveTotal.agent = Rhowch gyfanswm y taliadau heb awdurdod o bob un o gynlluniau pensiwn eich cleient a wnaeth arwain at ordaliadau.
 unauthorisedPayments.surchargeAmount.tellUsAbout = Gallwch roi gwybod i ni am daliadau heb awdurdod na wnaethant arwain at ordal yn nes ymlaen.
 unauthorisedPayments.surchargeAmount.error.noEntry = Nodwch gyfanswm y taliadau heb awdurdod a wnaeth arwain at ordal
+unauthorisedPayments.surchargeAmount.error.maxLimit = The amount entered must be less than £100,000,000,000
 
 #No Surcharge Amount
 unauthorisedPayments.noSurchargeAmount.title = Y swm na wnaeth arwain at ordal

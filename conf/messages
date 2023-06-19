@@ -462,6 +462,7 @@ pensions.pensionProviderPaidTax.error.incorrectFormat.agent = Enter the amount o
 
 #Pension Scheme Tax Reference Messages
 pension.pensionSchemeTaxReference.paragraph1 = Enter the reference for the pension scheme that paid the tax.
+pension.pensionSchemeTaxReference.title = Do you want to remove this Pension Scheme Tax Reference?
 pension.pensionSchemeTaxReference.error.noEntry.individual = Enter your PSTR
 pension.pensionSchemeTaxReference.error.incorrectFormat.individual = Enter your PSTR in the correct format
 pension.pensionSchemeTaxReference.error.noEntry.agent = Enter your client’s PSTR
@@ -785,6 +786,7 @@ unauthorisedPayments.surchargeAmount.giveTotal.individual = Give a total of unau
 unauthorisedPayments.surchargeAmount.giveTotal.agent = Give a total of unauthorised payments that resulted in surcharges from all your client’s pension schemes.
 unauthorisedPayments.surchargeAmount.tellUsAbout = You can tell us about unauthorised payments that did not result in a surcharge later.
 unauthorisedPayments.surchargeAmount.error.noEntry = Enter the total amount of unauthorised payment that resulted in a surcharge
+unauthorisedPayments.surchargeAmount.error.maxLimit = The amount entered must be less than £100,000,000,000
 
 #No Surcharge Amount
 unauthorisedPayments.noSurchargeAmount.title = Amount that did not result in a surcharge
