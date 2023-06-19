@@ -153,14 +153,13 @@ class FormsProvider() {
     )
   }
 
-  def aboveAnnualAllowanceForm(user: User, reducedAnnualAllowanceQuestion: Boolean): Form[(Boolean, Option[BigDecimal])] = {
-    val reducedOption = if (reducedAnnualAllowanceQuestion) "reduced" else "nonReduced"
+  def aboveAnnualAllowanceForm(user: User): Form[(Boolean, Option[BigDecimal])] = {
     val agentOrIndividual = if (user.isAgent) "agent" else "individual"
     RadioButtonAmountForm.radioButtonAndAmountForm(
-      missingInputError = s"pensions.aboveReducedAnnualAllowance.$reducedOption.error.noEntry.$agentOrIndividual",
-      emptyFieldKey = s"pensions.aboveReducedAnnualAllowance.$reducedOption.error.noAmountEntry${if (reducedAnnualAllowanceQuestion) s".$agentOrIndividual"}",
-      wrongFormatKey = s"pensions.aboveReducedAnnualAllowance.$reducedOption.error.incorrectFormat${if (reducedAnnualAllowanceQuestion) s".$agentOrIndividual"}",
-      exceedsMaxAmountKey = s"pensions.aboveReducedAnnualAllowance.$reducedOption.error.overMaximum${if (reducedAnnualAllowanceQuestion) s".$agentOrIndividual"}"
+      missingInputError = s"pensions.aboveReducedAnnualAllowance.error.noEntry.$agentOrIndividual",
+      emptyFieldKey = s"pensions.aboveReducedAnnualAllowance.error.noAmountEntry.$agentOrIndividual",
+      wrongFormatKey = s"pensions.aboveReducedAnnualAllowance.error.incorrectFormat.$agentOrIndividual",
+      exceedsMaxAmountKey = s"pensions.aboveReducedAnnualAllowance.error.overMaximum.$agentOrIndividual"
     )
   }
 

@@ -17,8 +17,7 @@
 package controllers.pensions.annualAllowances
 
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.annualAllowances.routes.AboveReducedAnnualAllowanceController
-import controllers.pensions.lifetimeAllowances.routes.AnnualLifetimeAllowanceCYAController
+import controllers.pensions.annualAllowances.routes.{ReducedAnnualAllowanceController, ReducedAnnualAllowanceTypeController}
 import controllers.pensions.routes.PensionsSummaryController
 import controllers.predicates.AuthorisedAction
 import controllers.predicates.TaxYearAction.taxYearAction
@@ -80,9 +79,10 @@ class ReducedAnnualAllowanceController @Inject()(implicit val cc: MessagesContro
             pensionSessionService.createOrUpdateSessionData(request.user,
               updatedCyaModel, taxYear, data.exists(_.isPriorSubmission))(errorHandler.internalServerError()) {
               if (yesNo) {
-                Redirect(AboveReducedAnnualAllowanceController.show(taxYear))
+                Redirect(ReducedAnnualAllowanceTypeController.show(taxYear))
               } else {
-                Redirect(AnnualLifetimeAllowanceCYAController.show(taxYear))
+                //TODO redirect to AnnualAllowanceCYAController (not AnnualLifetimeAllowanceCYAController)
+                Redirect(ReducedAnnualAllowanceController.show(taxYear))
               }
             }
         }

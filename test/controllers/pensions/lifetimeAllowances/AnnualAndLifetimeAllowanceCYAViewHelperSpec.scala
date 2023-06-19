@@ -284,7 +284,7 @@ class AnnualAndLifetimeAllowanceCYAViewHelperSpec extends AnyWordSpec with Match
       "Above annual allowance",
       expectedValue,
       "Change",
-      "/2022/annual-lifetime-allowances/above-annual-allowance",
+      "/2022/annual-allowance/above-annual-allowance",
       "lifetimeAllowance.cya.aboveAnnualAllowance.hidden"))
   }
 

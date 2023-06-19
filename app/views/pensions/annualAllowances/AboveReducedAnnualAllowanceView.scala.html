@@ -34,10 +34,9 @@
     heading: Heading
 )
 
-@(form: Form[(Boolean, Option[BigDecimal])], taxYear: Int, reducedAnnualAllowanceQuestion: Boolean)(implicit request: UserSessionDataRequest[_], messages: Messages, appConfig: AppConfig)
+@(form: Form[(Boolean, Option[BigDecimal])], taxYear: Int)(implicit request: UserSessionDataRequest[_], messages: Messages, appConfig: AppConfig)
 
-@titleForUse = @{
-    messages(s"pensions.aboveReducedAnnualAllowance.${if(reducedAnnualAllowanceQuestion) "reduced" else "nonReduced"}.title.${if(request.user.isAgent) "agent" else "individual"}")
+@titleForUse = @{messages(s"pensions.aboveReducedAnnualAllowance.title.${if(request.user.isAgent) "agent" else "individual"}")
 }
 
 
@@ -56,8 +55,7 @@
         form,
         id = "amount-2",
         name = "amount-2",
-        label = if (reducedAnnualAllowanceQuestion) messages("pensions.aboveReducedAnnualAllowance.reduced.amount")
-                else messages("pensions.aboveReducedAnnualAllowance.nonReduced.amount"),
+        label = messages("pensions.aboveReducedAnnualAllowance.amount"),
         hint = Some(messages("common.currency.hint1")),
         isSubheading = false,
         labelHidden = false,

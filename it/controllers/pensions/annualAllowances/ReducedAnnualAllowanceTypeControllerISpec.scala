@@ -27,7 +27,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.PensionAnnualAllowancePages.{aboveAnnualAllowanceUrl, reducedAnnualAllowanceTypeUrl, reducedAnnualAllowanceUrl}
+import utils.PageUrls.PensionAnnualAllowancePages.{aboveReducedAnnualAllowanceUrl, reducedAnnualAllowanceTypeUrl, reducedAnnualAllowanceUrl}
 import utils.PageUrls.{fullUrl, pensionSummaryUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
@@ -488,7 +488,7 @@ class ReducedAnnualAllowanceTypeControllerISpec extends IntegrationTest with Bef
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location").contains(aboveAnnualAllowanceUrl(taxYearEOY)) shouldBe true
+        result.header("location").contains(aboveReducedAnnualAllowanceUrl(taxYearEOY)) shouldBe true
       }
 
       "updates moneyPurchaseAnnualAllowance and taperedAnnualAllowance to Some(true)" in {
@@ -519,7 +519,7 @@ class ReducedAnnualAllowanceTypeControllerISpec extends IntegrationTest with Bef
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location").contains(aboveAnnualAllowanceUrl(taxYearEOY)) shouldBe true
+        result.header("location").contains(aboveReducedAnnualAllowanceUrl(taxYearEOY)) shouldBe true
       }
 
       "updates moneyPurchaseAnnualAllowance to Some(false) and taperedAnnualAllowance to Some(true)" in {
@@ -550,7 +550,7 @@ class ReducedAnnualAllowanceTypeControllerISpec extends IntegrationTest with Bef
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location").contains(aboveAnnualAllowanceUrl(taxYearEOY)) shouldBe true
+        result.header("location").contains(aboveReducedAnnualAllowanceUrl(taxYearEOY)) shouldBe true
       }
 
       "updates moneyPurchaseAnnualAllowance to Some(true) and taperedAnnualAllowance to Some(false)" in {

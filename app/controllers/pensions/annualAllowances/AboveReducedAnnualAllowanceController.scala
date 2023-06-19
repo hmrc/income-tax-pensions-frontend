@@ -18,13 +18,12 @@ package controllers.pensions.annualAllowances
 
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.annualAllowances.routes._
-import controllers.pensions.lifetimeAllowances.routes.AnnualLifetimeAllowanceCYAController
 import controllers.predicates.ActionsProvider
 import forms.FormsProvider
 import models.mongo.{PensionsCYAModel, PensionsUserData}
 import models.requests.UserSessionDataRequest
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc._
 import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
@@ -51,13 +50,13 @@ class AboveReducedAnnualAllowanceController @Inject()(actionsProvider: ActionsPr
       val amount = sessionData.pensionsUserData.pensions.pensionsAnnualAllowances.aboveAnnualAllowance
 
       reducedAnnualAllowanceQuestion match {
-        case Some(isReduced) =>
+        case Some(_) =>
 
           (aboveAnnualAllowanceQuestion, amount) match {
             case (Some(yesNo), amount) => Future.successful(Ok(view(
-              formsProvider.aboveAnnualAllowanceForm(sessionData.user, isReduced).fill((yesNo, amount): (Boolean, Option[BigDecimal])), taxYear, isReduced)))
+              formsProvider.aboveAnnualAllowanceForm(sessionData.user).fill((yesNo, amount): (Boolean, Option[BigDecimal])), taxYear)))
             case _ =>
-              Future.successful(Ok(view(formsProvider.aboveAnnualAllowanceForm(sessionData.user, isReduced), taxYear, isReduced)))
+              Future.successful(Ok(view(formsProvider.aboveAnnualAllowanceForm(sessionData.user), taxYear)))
           }
 
         case None => Future.successful(Redirect(ReducedAnnualAllowanceController.show(taxYear)))
@@ -68,13 +67,11 @@ class AboveReducedAnnualAllowanceController @Inject()(actionsProvider: ActionsPr
   def submit(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit sessionData =>
 
-      val reducedAnnualAllowanceQuestion = sessionData.pensionsUserData.pensions.pensionsAnnualAllowances.reducedAnnualAllowanceQuestion
+      sessionData.pensionsUserData.pensions.pensionsAnnualAllowances.reducedAnnualAllowanceQuestion match {
+        case Some(_) =>
 
-      reducedAnnualAllowanceQuestion match {
-        case Some(isReduced) =>
-
-          formsProvider.aboveAnnualAllowanceForm(sessionData.user, isReduced).bindFromRequest().fold(
-            formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear, isReduced))),
+          formsProvider.aboveAnnualAllowanceForm(sessionData.user).bindFromRequest().fold(
+            formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
             yesNoAmount => {
               (yesNoAmount._1, yesNoAmount._2) match {
                 case (true, amount) => updateSessionData(sessionData.pensionsUserData, yesNo = true, amount, taxYear)
@@ -102,16 +99,17 @@ class AboveReducedAnnualAllowanceController @Inject()(actionsProvider: ActionsPr
     )(errorHandler.internalServerError()) {
       Redirect(
         if (yesNo) {
-           pstrRedirect(taxYear, pensionUserData.pensions.pensionsAnnualAllowances.pensionSchemeTaxReferences)
+          pstrRedirect(taxYear, pensionUserData.pensions.pensionsAnnualAllowances.pensionSchemeTaxReferences)
         } else {
           //TODO redirect to check your annual allowance page
-          AnnualLifetimeAllowanceCYAController.show(taxYear)
+          AboveReducedAnnualAllowanceController.show(taxYear)
         }
       )
     }
   }
-  
-  private def pstrRedirect(taxYear: Int, pstrSchemes: Option[Seq[String]]) = {
+
+  private def pstrRedirect(taxYear: Int, pstrSchemes: Option[Seq[String]]): Call = {
+    //TODO replace PensionSchemeTaxReferenceController.show() with 'Did your pension schemes pay or agree to pay the tax?' page when created
     pstrSchemes.fold(PensionSchemeTaxReferenceController.show(taxYear, None)) { schemes =>
       if (schemes.isEmpty) PensionSchemeTaxReferenceController.show(taxYear, None) else PstrSummaryController.show(taxYear)
     }

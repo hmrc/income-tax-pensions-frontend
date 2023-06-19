@@ -428,25 +428,17 @@ pensions.reducedAnnualAllowanceType.details.taperedInfo.agent = Bydd gan eich cl
 
 #Above Annual Allowance
 
-pensions.aboveReducedAnnualAllowance.reduced.title.individual = A ydych wedi mynd yn uwch na’ch lwfans blynyddol wedi’i ostwng?
-pensions.aboveReducedAnnualAllowance.reduced.title.agent = A yw’ch cleient wedi mynd yn uwch na’i lwfans blynyddol wedi’i ostwng?
-pensions.aboveReducedAnnualAllowance.nonReduced.title.individual = A ydych wedi mynd yn uwch na’r lwfans blynyddol?
-pensions.aboveReducedAnnualAllowance.nonReduced.title.agent = A yw’ch cleient wedi mynd yn uwch na’r lwfans blynyddol?
-pensions.aboveReducedAnnualAllowance.reduced.amount = Swm uwchlaw'r lwfans blynyddol gostyngol, mewn punnoedd
-pensions.aboveReducedAnnualAllowance.nonReduced.amount = Swm uwchlaw y lwfans blynyddol, mewn punnoedd
-pensions.aboveReducedAnnualAllowance.reduced.error.noEntry.individual = Dewiswch ‘Iawn’ os ydych wedi mynd yn uwch na’ch lwfans blynyddol wedi’i ostwng
-pensions.aboveReducedAnnualAllowance.reduced.error.noEntry.agent = Dewiswch ‘Iawn’ os yw’ch cleient wedi mynd yn uwch na’i lwfans blynyddol wedi’i ostwng
-pensions.aboveReducedAnnualAllowance.nonReduced.error.noEntry.individual = Dewiswch ‘Iawn’ os ydych wedi mynd yn uwch na’r lwfans blynyddol
-pensions.aboveReducedAnnualAllowance.nonReduced.error.noEntry.agent = Dewiswch ‘Iawn’ os yw’ch cleient wedi mynd yn uwch na’i lwfans blynyddol
-pensions.aboveReducedAnnualAllowance.reduced.error.noAmountEntry.individual = Nodwch y swm sydd uwchlaw’ch lwfans blynyddol wedi’i ostwng
-pensions.aboveReducedAnnualAllowance.reduced.error.noAmountEntry.agent = Nodwch y swm sydd uwchlaw lwfans blynyddol wedi’i ostwng eich cleient
-pensions.aboveReducedAnnualAllowance.nonReduced.error.noAmountEntry = Nodwch y swm sydd uwchlaw’r lwfans blynyddol
-pensions.aboveReducedAnnualAllowance.reduced.error.incorrectFormat.individual = Nodwch y swm sydd uwchlaw’ch lwfans blynyddol wedi’i ostwng yn y fformat cywir
-pensions.aboveReducedAnnualAllowance.reduced.error.incorrectFormat.agent = Nodwch y swm sydd uwchlaw lwfans blynyddol wedi’i ostwng eich cleient yn y fformat cywir
-pensions.aboveReducedAnnualAllowance.nonReduced.error.incorrectFormat = Nodwch y swm sydd uwchlaw’r lwfans blynyddol yn y fformat cywir
-pensions.aboveReducedAnnualAllowance.reduced.error.overMaximum.individual = Mae’n rhaid i’r swm sydd uwchlaw’ch lwfans blynyddol wedi’i ostwng fod yn llai na £100,000,000,000
-pensions.aboveReducedAnnualAllowance.reduced.error.overMaximum.agent = Mae’n rhaid i’r swm sydd uwchlaw lwfans blynyddol wedi’i ostwng eich cleient fod yn llai na £100,000,000,000
-pensions.aboveReducedAnnualAllowance.nonReduced.error.overMaximum = Mae’n rhaid i’r swm sydd uwchlaw’r lwfans blynyddol fod yn llai na £100,000,000,000
+pensions.aboveReducedAnnualAllowance.title.individual = A ydych wedi mynd yn uwch na’ch lwfans blynyddol wedi’i?
+pensions.aboveReducedAnnualAllowance.title.agent = A yw’ch cleient wedi mynd yn uwch na’i lwfans blynyddol wedi’i?
+pensions.aboveReducedAnnualAllowance.amount = Swm uwchlaw'r lwfans blynyddol gostyngol, mewn punnoedd
+pensions.aboveReducedAnnualAllowance.error.noEntry.individual = Dewiswch ‘Iawn’ os ydych wedi mynd yn uwch na’ch lwfans blynyddol wedi’i ostwng
+pensions.aboveReducedAnnualAllowance.error.noEntry.agent = Dewiswch ‘Iawn’ os yw’ch cleient wedi mynd yn uwch na’i lwfans blynyddol wedi’i ostwng
+pensions.aboveReducedAnnualAllowance.error.noAmountEntry.individual = Nodwch y swm sydd uwchlaw’ch lwfans blynyddol wedi’i ostwng
+pensions.aboveReducedAnnualAllowance.error.noAmountEntry.agent = Nodwch y swm sydd uwchlaw lwfans blynyddol wedi’i ostwng eich cleient
+pensions.aboveReducedAnnualAllowance.error.incorrectFormat.individual = Nodwch y swm sydd uwchlaw’ch lwfans blynyddol wedi’i ostwng yn y fformat cywir
+pensions.aboveReducedAnnualAllowance.error.incorrectFormat.agent = Nodwch y swm sydd uwchlaw lwfans blynyddol wedi’i ostwng eich cleient yn y fformat cywir
+pensions.aboveReducedAnnualAllowance.error.overMaximum.individual = Mae’n rhaid i’r swm sydd uwchlaw’ch lwfans blynyddol wedi’i ostwng fod yn llai na £100,000,000,000
+pensions.aboveReducedAnnualAllowance.error.overMaximum.agent = Mae’n rhaid i’r swm sydd uwchlaw lwfans blynyddol wedi’i ostwng eich cleient fod yn llai na £100,000,000,000
 
 #Pension Provider Paid Tax Messages
 

@@ -427,25 +427,17 @@ pensions.reducedAnnualAllowanceType.details.taperedInfo.agent = Your client will
 
 #Above Annual Allowance
 
-pensions.aboveReducedAnnualAllowance.reduced.title.individual = Have you gone above your reduced annual allowance?
-pensions.aboveReducedAnnualAllowance.reduced.title.agent = Has your client gone above their reduced annual allowance?
-pensions.aboveReducedAnnualAllowance.nonReduced.title.individual = Have you gone above the annual allowance?
-pensions.aboveReducedAnnualAllowance.nonReduced.title.agent = Has your client gone above the annual allowance?
-pensions.aboveReducedAnnualAllowance.reduced.amount = Amount above the reduced annual allowance, in pounds
-pensions.aboveReducedAnnualAllowance.nonReduced.amount = Amount above your annual allowance, in pounds
-pensions.aboveReducedAnnualAllowance.reduced.error.noEntry.individual = Select yes if you have gone above your reduced annual allowance
-pensions.aboveReducedAnnualAllowance.reduced.error.noEntry.agent = Select yes if your client has gone above their reduced annual allowance
-pensions.aboveReducedAnnualAllowance.nonReduced.error.noEntry.individual = Select yes if you have gone above the annual allowance
-pensions.aboveReducedAnnualAllowance.nonReduced.error.noEntry.agent = Select yes if your client has gone above the annual allowance
-pensions.aboveReducedAnnualAllowance.reduced.error.noAmountEntry.individual = Enter the amount above your reduced annual allowance
-pensions.aboveReducedAnnualAllowance.reduced.error.noAmountEntry.agent = Enter the amount above your client’s reduced annual allowance
-pensions.aboveReducedAnnualAllowance.nonReduced.error.noAmountEntry = Enter the amount above the annual allowance
-pensions.aboveReducedAnnualAllowance.reduced.error.incorrectFormat.individual = Enter the amount above your reduced annual allowance in the correct format
-pensions.aboveReducedAnnualAllowance.reduced.error.incorrectFormat.agent = Enter the amount above your client’s reduced annual allowance in the correct format
-pensions.aboveReducedAnnualAllowance.nonReduced.error.incorrectFormat = Enter the amount above the annual allowance in the correct format
-pensions.aboveReducedAnnualAllowance.reduced.error.overMaximum.individual = The amount above your reduced annual allowance must be less than £100,000,000,000
-pensions.aboveReducedAnnualAllowance.reduced.error.overMaximum.agent = The amount above your client’s reduced annual allowance must be less than £100,000,000,000
-pensions.aboveReducedAnnualAllowance.nonReduced.error.overMaximum = The amount above the annual allowance must be less than £100,000,000,000
+pensions.aboveReducedAnnualAllowance.title.individual = Have you gone above your annual allowance?
+pensions.aboveReducedAnnualAllowance.title.agent = Has your client gone above their annual allowance?
+pensions.aboveReducedAnnualAllowance.amount = Amount above the reduced annual allowance, in pounds
+pensions.aboveReducedAnnualAllowance.error.noEntry.individual = Select yes if you have gone above your reduced annual allowance
+pensions.aboveReducedAnnualAllowance.error.noEntry.agent = Select yes if your client has gone above their reduced annual allowance
+pensions.aboveReducedAnnualAllowance.error.noAmountEntry.individual = Enter the amount above your reduced annual allowance
+pensions.aboveReducedAnnualAllowance.error.noAmountEntry.agent = Enter the amount above your client’s reduced annual allowance
+pensions.aboveReducedAnnualAllowance.error.incorrectFormat.individual = Enter the amount above your reduced annual allowance in the correct format
+pensions.aboveReducedAnnualAllowance.error.incorrectFormat.agent = Enter the amount above your client’s reduced annual allowance in the correct format
+pensions.aboveReducedAnnualAllowance.error.overMaximum.individual = The amount above your reduced annual allowance must be less than £100,000,000,000
+pensions.aboveReducedAnnualAllowance.error.overMaximum.agent = The amount above your client’s reduced annual allowance must be less than £100,000,000,000
 
 #Pension Provider Paid Tax Messages
 
