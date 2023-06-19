@@ -149,7 +149,7 @@ object AnnualAndLifetimeAllowanceCYAViewHelper extends CYABaseHelper {
     lifetimeAllowancesViewModel.aboveLifetimeAllowanceQuestion.filter(x => x).map(_ =>
       summaryListRowWithBooleanValue(
         "lifetimeAllowance.cya.aboveLifetimeAllowance",
-        None,
+        lifetimeAllowancesViewModel.aboveLifetimeAllowanceQuestion,
         routes.AnnualLifetimeAllowanceCYAController.show(taxYear))(messages)
     )
   }
