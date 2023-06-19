@@ -786,6 +786,7 @@ unauthorisedPayments.surchargeAmount.giveTotal.individual = Rhowch gyfanswm y ta
 unauthorisedPayments.surchargeAmount.giveTotal.agent = Rhowch gyfanswm y taliadau heb awdurdod o bob un o gynlluniau pensiwn eich cleient a wnaeth arwain at ordaliadau.
 unauthorisedPayments.surchargeAmount.tellUsAbout = Gallwch roi gwybod i ni am daliadau heb awdurdod na wnaethant arwain at ordal yn nes ymlaen.
 unauthorisedPayments.surchargeAmount.error.noEntry = Nodwch gyfanswm y taliadau heb awdurdod a wnaeth arwain at ordal
+unauthorisedPayments.surchargeAmount.error.maxLimit = The amount entered must be less than £100,000,000,000
 
 #No Surcharge Amount
 unauthorisedPayments.noSurchargeAmount.title = Y swm na wnaeth arwain at ordal
