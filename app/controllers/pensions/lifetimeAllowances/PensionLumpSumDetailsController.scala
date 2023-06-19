@@ -29,7 +29,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.lifetimeAllowances.PensionLumpSumDetailsView
 import controllers.pensions.routes.PensionsSummaryController
-import controllers.pensions.lifetimeAllowances.routes.LifeTimeAllowanceAnotherWayController
+import controllers.pensions.lifetimeAllowances.routes.PensionSchemeTaxReferenceLifetimeController
 import controllers.pensions.lifetimeAllowances.routes.PensionLumpSumController
 import models.AuthorisationRequest
 
@@ -99,7 +99,8 @@ class PensionLumpSumDetailsController @Inject()(implicit val mcc: MessagesContro
                 }
                 pensionSessionService.createOrUpdateSessionData(request.user,
                   updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
-                  Redirect(LifeTimeAllowanceAnotherWayController.show(taxYear))
+                  // TODO: add functionality for passing index to the next page
+                  Redirect(PensionSchemeTaxReferenceLifetimeController.show(taxYear, Some(0)))
                 }
               } else {
                 Future.successful(Redirect(PensionLumpSumController.show(taxYear)))
