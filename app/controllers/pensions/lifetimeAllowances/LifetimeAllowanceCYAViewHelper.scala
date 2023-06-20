@@ -37,12 +37,12 @@ object LifetimeAllowanceCYAViewHelper extends CYABaseHelper {
 
   private def summaryRowForAboveLifetimeAllowanceQuestion(lifetimeAllowancesViewModel: PensionLifetimeAllowancesViewModel, taxYear: Int)
                                                          (implicit messages: Messages): Option[SummaryListRow] = {
-    lifetimeAllowancesViewModel.aboveLifetimeAllowanceQuestion.filter(x => x).map(_ =>
+    Some(
       summaryListRowWithBooleanValue(
         "lifetimeAllowance.cya.aboveLifetimeAllowance",
         lifetimeAllowancesViewModel.aboveLifetimeAllowanceQuestion,
         routes.AnnualLifetimeAllowanceCYAController.show(taxYear))(messages)
-    )
+      )
   }
 
   private def summaryRowForLumpSumAmounts(lifetimeAllowancesViewModel: PensionLifetimeAllowancesViewModel, taxYear: Int)

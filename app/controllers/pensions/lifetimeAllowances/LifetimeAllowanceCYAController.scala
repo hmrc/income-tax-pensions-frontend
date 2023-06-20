@@ -42,6 +42,7 @@ class LifetimeAllowanceCYAController @Inject()(authAction: AuthorisedAction,
                                                      errorHandler: ErrorHandler)
                                                     (implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock)
   extends FrontendController(mcc) with I18nSupport {
+
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     pensionSessionService.getAndHandle(taxYear, request.user) { (cya, prior) =>
       (cya, prior) match {
@@ -68,7 +69,7 @@ class LifetimeAllowanceCYAController @Inject()(authAction: AuthorisedAction,
         Future.successful(Redirect(appConfig.incomeTaxSubmissionOverviewUrl(taxYear)))
       ) { model =>
         if (sessionDataDifferentThanPriorData(model.pensions, prior)) {
-          Future.successful(Redirect(controllers.pensions.lifetimeAllowances.routes.LifetimeAllowanceCYAController.show(taxYear)))
+          Future.successful(Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear)))
         } else {
           Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
         }
@@ -77,10 +78,10 @@ class LifetimeAllowanceCYAController @Inject()(authAction: AuthorisedAction,
   }
 
   private def sessionDataDifferentThanPriorData(cyaData: PensionsCYAModel, priorData: Option[AllPensionsData]): Boolean = {
-    priorData match {
-      case None => true
-      case Some(prior) => !cyaData.equals(generateCyaFromPrior(prior))
+      priorData match {
+        case None => true
+        case Some(prior) => !cyaData.equals(generateCyaFromPrior(prior))
+      }
     }
-  }
 
   }

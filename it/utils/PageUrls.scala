@@ -165,6 +165,8 @@ object PageUrls extends IntegrationTest {
 
     def checkAnnualLifetimeAllowanceCYA(taxYear: Int): String = s"$appUrl/$taxYear/annual-lifetime-allowances/check-lifetime-allowances"
 
+    def lifetimeAllowanceCYA(taxYear: Int): String = s"$appUrl/$taxYear/annual-allowance/annual-lifetime-allowance/lifetime-allowance-summary"
+
   }
 
   object UnAuthorisedPayments {
