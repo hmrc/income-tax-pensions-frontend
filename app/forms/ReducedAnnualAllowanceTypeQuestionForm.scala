@@ -43,7 +43,7 @@ object ReducedAnnualAllowanceTypeQuestionForm {
     mapping(
       reducedAnnualAllowanceType -> seq(text)
     )(ReducedAnnualAllowanceTypeQuestionModel.apply)(ReducedAnnualAllowanceTypeQuestionModel.unapply).verifying(
-      allEmpty(s"pensions.ReducedAnnualAllowanceType.checkbox.error.${if (isAgent) "agent" else "individual"}")
+      allEmpty(s"pensions.reducedAnnualAllowanceType.checkbox.error.${if (isAgent) "agent" else "individual"}")
     )
   )
 }
