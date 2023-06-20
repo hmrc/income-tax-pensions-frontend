@@ -132,8 +132,8 @@ POST        /:taxYear/unauthorised-payments-from-pensions/amount-not-surcharged 
 GET         /:taxYear/unauthorised-payments-from-pensions/tax-on-amount-not-surcharged                                             controllers.pensions.unauthorisedPayments.NonUKTaxOnAmountNotResultedInSurchargeController.show(taxYear: Int)
 POST        /:taxYear/unauthorised-payments-from-pensions/tax-on-amount-not-surcharged                                             controllers.pensions.unauthorisedPayments.NonUKTaxOnAmountNotResultedInSurchargeController.submit(taxYear: Int)
 
-GET         /:taxYear/unauthorised-payments-from-pensions/uk-pension-scheme                                                        controllers.pensions.unauthorisedPayments.WhereAnyOfTheUnauthorisedPaymentsController.show(taxYear: Int)
-POST        /:taxYear/unauthorised-payments-from-pensions/uk-pension-scheme                                                        controllers.pensions.unauthorisedPayments.WhereAnyOfTheUnauthorisedPaymentsController.submit(taxYear: Int)
+GET         /:taxYear/unauthorised-payments-from-pensions/uk-pension-scheme                                                        controllers.pensions.unauthorisedPayments.WereAnyOfTheUnauthorisedPaymentsController.show(taxYear: Int)
+POST        /:taxYear/unauthorised-payments-from-pensions/uk-pension-scheme                                                        controllers.pensions.unauthorisedPayments.WereAnyOfTheUnauthorisedPaymentsController.submit(taxYear: Int)
 
 GET         /:taxYear/unauthorised-payments-from-pensions/pension-scheme-tax-reference                                             controllers.pensions.unauthorisedPayments.UnauthorisedPensionSchemeTaxReferenceController.show(taxYear: Int, pensionSchemeIndex: Option[Int])
 POST        /:taxYear/unauthorised-payments-from-pensions/pension-scheme-tax-reference                                             controllers.pensions.unauthorisedPayments.UnauthorisedPensionSchemeTaxReferenceController.submit(taxYear: Int, pensionSchemeIndex: Option[Int])

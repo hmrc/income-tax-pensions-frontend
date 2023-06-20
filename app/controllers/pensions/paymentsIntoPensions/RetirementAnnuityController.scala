@@ -24,10 +24,10 @@ import models.pension.reliefs.PaymentsIntoPensionViewModel
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
-import services.redirects.PaymentsIntoPensionsRedirects
-import services.redirects.SimpleRedirectService.{isFinishedCheck, redirectBasedOnCurrentAnswers}
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import services.redirects.PaymentsIntoPensionPages.RetirementAnnuityPage
+import services.redirects.PaymentsIntoPensionsRedirects.{cyaPageCall, isFinishedCheck, journeyCheck}
+import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.paymentsIntoPensions.PayIntoRetirementAnnuityContractView
 
@@ -46,8 +46,8 @@ class RetirementAnnuityController @Inject()(authAction: AuthorisedAction,
 
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) { optData =>
-      val checkRedirect = PaymentsIntoPensionsRedirects.journeyCheck(RetirementAnnuityPage, _, taxYear)
-      redirectBasedOnCurrentAnswers(taxYear, optData)(checkRedirect) { data =>
+      val checkRedirect = journeyCheck(RetirementAnnuityPage, _, taxYear)
+      redirectBasedOnCurrentAnswers(taxYear, optData, cyaPageCall(taxYear))(checkRedirect) { data =>
 
         val form = formProvider.retirementAnnuityForm(request.user.isAgent)
         data.pensions.paymentsIntoPension.retirementAnnuityContractPaymentsQuestion match {
@@ -64,8 +64,8 @@ class RetirementAnnuityController @Inject()(authAction: AuthorisedAction,
       formWithErrors => Future.successful(BadRequest(payIntoRetirementAnnuityContractView(formWithErrors, taxYear))),
       yesNo => {
         pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) { optData =>
-          val checkRedirect = PaymentsIntoPensionsRedirects.journeyCheck(RetirementAnnuityPage, _, taxYear)
-          redirectBasedOnCurrentAnswers(taxYear, optData)(checkRedirect) { data =>
+          val checkRedirect = journeyCheck(RetirementAnnuityPage, _, taxYear)
+          redirectBasedOnCurrentAnswers(taxYear, optData, cyaPageCall(taxYear))(checkRedirect) { data =>
 
             val pensionsCYAModel: PensionsCYAModel = data.pensions
             val viewModel: PaymentsIntoPensionViewModel = pensionsCYAModel.paymentsIntoPension
@@ -81,7 +81,7 @@ class RetirementAnnuityController @Inject()(authAction: AuthorisedAction,
 
             pensionSessionService.createOrUpdateSessionData(request.user,
               updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
-                isFinishedCheck(updatedCyaModel, taxYear, redirectLocation)
+              isFinishedCheck(updatedCyaModel, taxYear, redirectLocation)
             }
           }
         }

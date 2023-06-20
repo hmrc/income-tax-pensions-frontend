@@ -28,7 +28,7 @@ import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import utils.PageUrls.UnAuthorisedPayments.{noSurchargeAmountUrl, surchargeAmountUrl}
 import utils.PageUrls.fullUrl
-import utils.PageUrls.unauthorisedPaymentsPages.{checkUnauthorisedPaymentsCyaUrl, didYouPayNonUkTaxUrl, whereAnyOfTheUnauthorisedPaymentsUrl}
+import utils.PageUrls.unauthorisedPaymentsPages.{checkUnauthorisedPaymentsCyaUrl, didYouPayNonUkTaxUrl, wereAnyOfTheUnauthorisedPaymentsUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 class SurchargeAmountControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
@@ -207,7 +207,7 @@ class SurchargeAmountControllerISpec extends IntegrationTest with ViewHelpers wi
 
       "has an SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location").contains(whereAnyOfTheUnauthorisedPaymentsUrl(taxYearEOY)) shouldBe true
+        result.header("location").contains(wereAnyOfTheUnauthorisedPaymentsUrl(taxYearEOY)) shouldBe true
       }
     }
 

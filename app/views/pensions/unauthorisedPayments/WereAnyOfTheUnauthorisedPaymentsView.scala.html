@@ -33,7 +33,7 @@
 
 @(form: Form[Boolean], taxYear: Int)(implicit request: AuthorisationRequest[_], messages: Messages, appConfig: AppConfig)
 
-@titleForUse = @{messages("unauthorisedPayments.whereAnyOfTheUnauthorisedPayments.title")}
+@titleForUse = @{messages("unauthorisedPayments.wereAnyOfTheUnauthorisedPayments.title")}
 
 @hasFormErrors = @{form.hasErrors}
 
@@ -43,7 +43,7 @@
 
         @heading(titleForUse, Some(messages("common.unauthorisedPaymentsFromPension.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-3")
 
-        @formWithCsrf(action = controllers.pensions.unauthorisedPayments.routes.WhereAnyOfTheUnauthorisedPaymentsController.submit(taxYear)) {
+        @formWithCsrf(action = controllers.pensions.unauthorisedPayments.routes.WereAnyOfTheUnauthorisedPaymentsController.submit(taxYear)) {
             @inputRadio(
                 form = form,
                 legendHeading = Some(Html(titleForUse)),

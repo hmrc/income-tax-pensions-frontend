@@ -1,13 +1,38 @@
+/*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 package services.redirects
 
 import controllers.pensions.unauthorisedPayments.routes.UnauthorisedPaymentsController
 import models.mongo.PensionsCYAModel
 import models.pension.charges.UnauthorisedPaymentsViewModel
-import play.api.mvc.Result
+import play.api.mvc.{Call, Result}
 import play.api.mvc.Results.Redirect
 
 object UnauthorisedPaymentsRedirects { //scalastyle:off magic.number
+
+  def cyaPageCall(taxYear: Int): Call = controllers.pensions.unauthorisedPayments.routes.UnauthorisedPaymentsCYAController.show(taxYear)
+
+  def isFinishedCheck(cya: PensionsCYAModel, taxYear: Int, redirect: Call): Result = {
+    if (cya.paymentsIntoPension.isFinished) {
+      Redirect(cyaPageCall(taxYear))
+    } else {
+      Redirect(redirect)
+    }
+  }
 
   def journeyCheck(currentPage: UnauthorisedPaymentsPages, cya: PensionsCYAModel, taxYear: Int): Option[Result] = {
     val unauthorisedPayments = cya.unauthorisedPayments
@@ -30,14 +55,15 @@ object UnauthorisedPaymentsRedirects { //scalastyle:off magic.number
     }
 
     Map(
-      // ^ 2-8 need Q1 true ^
+      // ^ 2-9 need Q1 true ^
       // ^ 2,3 need Q1 true + surcharge ^
       2 -> surchargeQuestionFn, 3 -> surchargeQuestionFn,
       // ^ 4,5 need Q1 true + no surcharge ^
       4 -> noSurchargeQuestionFn, 5 -> noSurchargeQuestionFn,
-      // ^ 7,8 need Q6 true ^
+      // ^ 7,8,9 need Q6 true ^
       7 -> ukPensionSchemesQuestionFn,
-      8 -> ukPensionSchemesQuestionFn
+      8 -> ukPensionSchemesQuestionFn,
+      9 -> ukPensionSchemesQuestionFn
     )
   }
 
@@ -59,10 +85,11 @@ object UnauthorisedPaymentsRedirects { //scalastyle:off magic.number
     6 -> { unauthorisedPaymentsViewModel: UnauthorisedPaymentsViewModel => unauthorisedPaymentsViewModel.noSurchargeTaxAmountQuestion.isDefined },
 
     7 -> { unauthorisedPaymentsViewModel: UnauthorisedPaymentsViewModel => unauthorisedPaymentsViewModel.ukPensionSchemesQuestion.isDefined },
-    8 -> { unauthorisedPaymentsViewModel: UnauthorisedPaymentsViewModel => unauthorisedPaymentsViewModel.pensionSchemeTaxReference.nonEmpty },
+    8 -> { unauthorisedPaymentsViewModel: UnauthorisedPaymentsViewModel => unauthorisedPaymentsViewModel.ukPensionSchemesQuestion.isDefined },
+    9 -> { unauthorisedPaymentsViewModel: UnauthorisedPaymentsViewModel => unauthorisedPaymentsViewModel.pensionSchemeTaxReference.isDefined },
 
-    9 -> { unauthorisedPaymentsViewModel: UnauthorisedPaymentsViewModel =>
-      if (isPageValidInJourney(8, unauthorisedPaymentsViewModel)) unauthorisedPaymentsViewModel.pensionSchemeTaxReference.nonEmpty
+    10 -> { unauthorisedPaymentsViewModel: UnauthorisedPaymentsViewModel =>
+      if (isPageValidInJourney(8, unauthorisedPaymentsViewModel)) true
       else if (isPageValidInJourney(6, unauthorisedPaymentsViewModel)) unauthorisedPaymentsViewModel.ukPensionSchemesQuestion.isDefined
       else {
         !unauthorisedPaymentsViewModel.surchargeQuestion.getOrElse(false) && !unauthorisedPaymentsViewModel.noSurchargeQuestion.getOrElse(false)

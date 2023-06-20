@@ -18,6 +18,7 @@ package controllers.pensions.unauthorisedPayments
 
 
 import config.{AppConfig, ErrorHandler}
+import controllers.pensions.unauthorisedPayments.routes._
 import controllers.predicates.AuthorisedAction
 import forms.YesNoForm
 import models.mongo.PensionsCYAModel
@@ -26,71 +27,72 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
+import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
+import services.redirects.UnauthorisedPaymentsPages.WereAnyUnauthPaymentsFromUkPensionSchemePage
+import services.redirects.UnauthorisedPaymentsRedirects.{cyaPageCall, isFinishedCheck, journeyCheck}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
-import views.html.pensions.unauthorisedPayments.WhereAnyOfTheUnauthorisedPaymentsView
+import views.html.pensions.unauthorisedPayments.WereAnyOfTheUnauthorisedPaymentsView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
-class WhereAnyOfTheUnauthorisedPaymentsController @Inject()(implicit val cc: MessagesControllerComponents,
-                                                            authAction: AuthorisedAction,
-                                                            whereAnyOfTheUnauthorisedPaymentsView: WhereAnyOfTheUnauthorisedPaymentsView,
-                                                            appConfig: AppConfig,
-                                                            pensionSessionService: PensionSessionService,
-                                                            errorHandler: ErrorHandler,
-                                                            clock: Clock) extends FrontendController(cc) with I18nSupport {
+class WereAnyOfTheUnauthorisedPaymentsController @Inject()(implicit val cc: MessagesControllerComponents,
+                                                           authAction: AuthorisedAction,
+                                                           view: WereAnyOfTheUnauthorisedPaymentsView,
+                                                           appConfig: AppConfig,
+                                                           pensionSessionService: PensionSessionService,
+                                                           errorHandler: ErrorHandler,
+                                                           clock: Clock) extends FrontendController(cc) with I18nSupport {
 
 
   def yesNoForm(): Form[Boolean] = YesNoForm.yesNoForm(
     missingInputError = s"common.unauthorisedPayments.error.checkbox.or.radioButton.noEntry"
   )
 
-
   def show(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
     pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
       case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
-      case Right(optPensionUserData) => optPensionUserData match {
-        case Some(data) if data.pensions.unauthorisedPayments.noSurchargeQuestion.contains(true) || data.pensions.unauthorisedPayments.surchargeQuestion.contains(true) =>
+      case Right(optData) =>
+        val checkRedirect = journeyCheck(WereAnyUnauthPaymentsFromUkPensionSchemePage, _, taxYear)
+        redirectBasedOnCurrentAnswers(taxYear, optData, cyaPageCall(taxYear))(checkRedirect) { data =>
+
           data.pensions.unauthorisedPayments.ukPensionSchemesQuestion match {
-            case Some(value) => Future.successful(Ok(whereAnyOfTheUnauthorisedPaymentsView(
+            case Some(value) => Future.successful(Ok(view(
               yesNoForm().fill(value), taxYear)))
-            case None => Future.successful(Ok(whereAnyOfTheUnauthorisedPaymentsView(yesNoForm(), taxYear)))
+            case None => Future.successful(Ok(view(yesNoForm(), taxYear)))
           }
-        case _ =>
-          Future.successful(Redirect(controllers.pensions.unauthorisedPayments.routes.UnauthorisedPaymentsCYAController.show(taxYear)))
-      }
+        }
     }
   }
 
   def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
     yesNoForm().bindFromRequest().fold(
-      formWithErrors => Future.successful(BadRequest(whereAnyOfTheUnauthorisedPaymentsView(formWithErrors, taxYear))),
+      formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
       yesNo => {
         pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
           case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
-          case Right(optPensionUserData) => optPensionUserData match {
-            case Some(data) =>
+          case Right(optData) =>
+            val checkRedirect = journeyCheck(WereAnyUnauthPaymentsFromUkPensionSchemePage, _, taxYear)
+            redirectBasedOnCurrentAnswers(taxYear, optData, cyaPageCall(taxYear))(checkRedirect) { data =>
+
               val pensionsCYAModel: PensionsCYAModel = data.pensions
               val viewModel: UnauthorisedPaymentsViewModel = pensionsCYAModel.unauthorisedPayments
               val updatedCyaModel: PensionsCYAModel = {
                 pensionsCYAModel.copy(
                   unauthorisedPayments = viewModel.copy(ukPensionSchemesQuestion = Some(yesNo)))
               }
-              pensionSessionService.createOrUpdateSessionData(request.user,
-                updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
-                if (yesNo) {
-                  Redirect(controllers.pensions.unauthorisedPayments.routes.UnauthorisedPensionSchemeTaxReferenceController.show(taxYear, None))
-                } else {
-                  Redirect(controllers.pensions.unauthorisedPayments.routes.UnauthorisedPaymentsCYAController.show(taxYear))
-                }
+
+              val redirectLocation =
+                if (yesNo) UnauthorisedPensionSchemeTaxReferenceController.show(taxYear, None)
+                else UnauthorisedPaymentsCYAController.show(taxYear)
+              pensionSessionService.createOrUpdateSessionData(
+                request.user, updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
+                isFinishedCheck(updatedCyaModel, taxYear, redirectLocation)
               }
-            case _ => {
-              Future.successful(Redirect(controllers.pensions.unauthorisedPayments.routes.UnauthorisedPaymentsCYAController.show(taxYear)))
             }
-          }
         }
       }
     )

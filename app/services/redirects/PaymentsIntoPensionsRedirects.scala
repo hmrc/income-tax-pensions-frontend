@@ -19,11 +19,21 @@ package services.redirects
 import controllers.pensions.paymentsIntoPensions.routes.ReliefAtSourcePensionsController
 import models.mongo.PensionsCYAModel
 import models.pension.reliefs.PaymentsIntoPensionViewModel
-import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
+import play.api.mvc.{Call, Result}
 
 
 object PaymentsIntoPensionsRedirects { //scalastyle:off magic.number
+
+  def cyaPageCall(taxYear: Int): Call = controllers.pensions.paymentsIntoPensions.routes.PaymentsIntoPensionsCYAController.show(taxYear)
+
+  def isFinishedCheck(cya: PensionsCYAModel, taxYear: Int, redirect: Call): Result = {
+    if (cya.paymentsIntoPension.isFinished) {
+      Redirect(cyaPageCall(taxYear))
+    } else {
+      Redirect(redirect)
+    }
+  }
 
   def journeyCheck(currentPage: PaymentsIntoPensionPages, cya: PensionsCYAModel, taxYear: Int): Option[Result] = {
     val pIP = cya.paymentsIntoPension

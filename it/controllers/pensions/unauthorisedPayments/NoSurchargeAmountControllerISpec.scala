@@ -27,7 +27,7 @@ import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import utils.CommonUtils
 import utils.PageUrls.UnAuthorisedPayments.noSurchargeAmountUrl
-import utils.PageUrls.unauthorisedPaymentsPages.{checkUnauthorisedPaymentsCyaUrl, nonUKTaxOnAmountSurcharge, whereAnyOfTheUnauthorisedPaymentsUrl}
+import utils.PageUrls.unauthorisedPaymentsPages.{checkUnauthorisedPaymentsCyaUrl, nonUKTaxOnAmountSurcharge, wereAnyOfTheUnauthorisedPaymentsUrl}
 
 
 class NoSurchargeAmountControllerISpec extends CommonUtils with BeforeAndAfterEach {
@@ -188,7 +188,7 @@ class NoSurchargeAmountControllerISpec extends CommonUtils with BeforeAndAfterEa
       }
 
       "redirects successfully to Unauthorised Payements page" in {
-        result.header("location").contains(whereAnyOfTheUnauthorisedPaymentsUrl(taxYearEOY)) shouldBe true
+        result.header("location").contains(wereAnyOfTheUnauthorisedPaymentsUrl(taxYearEOY)) shouldBe true
       }
     }
 
@@ -328,7 +328,7 @@ class NoSurchargeAmountControllerISpec extends CommonUtils with BeforeAndAfterEa
       }
 
       "redirects successfully to cya page" in {
-        result.header("location").contains(whereAnyOfTheUnauthorisedPaymentsUrl(taxYearEOY)) shouldBe true
+        result.header("location").contains(wereAnyOfTheUnauthorisedPaymentsUrl(taxYearEOY)) shouldBe true
       }
     }
 

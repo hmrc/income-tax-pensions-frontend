@@ -24,6 +24,10 @@ import models.pension.AllPensionsData.generateCyaFromPrior
 import models.pension.charges.UnauthorisedPaymentsViewModel
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import services.redirects.UnauthorisedPaymentsRedirects.cyaPageCall
+import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
+import services.redirects.UnauthorisedPaymentsPages.CYAPage
+import services.redirects.UnauthorisedPaymentsRedirects.journeyCheck
 import services.{PensionChargesService, PensionSessionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
@@ -62,7 +66,10 @@ class UnauthorisedPaymentsCYAController @Inject()(authAction: AuthorisedAction,
         case (Some(data), Some(priorData: AllPensionsData)) if data.pensions.unauthorisedPayments.isEmpty =>
           cyaDataIsEmpty(priorData)
         case (Some(data), _) =>
-          unauthorisedPaymentsCYAExists(data.pensions.unauthorisedPayments)
+          val checkRedirect = journeyCheck(CYAPage, _, taxYear)
+          redirectBasedOnCurrentAnswers(taxYear, cya, cyaPageCall(taxYear))(checkRedirect) { data =>
+            unauthorisedPaymentsCYAExists(data.pensions.unauthorisedPayments)
+          }
         case (None, Some(priorData)) =>
           cyaDataIsEmpty(priorData)
         case (None, None) =>

@@ -17,6 +17,7 @@
 package controllers.pensions.unauthorisedPayments
 
 import config.{AppConfig, ErrorHandler}
+import controllers.pensions.unauthorisedPayments.routes._
 import controllers.predicates.AuthorisedAction
 import controllers.predicates.TaxYearAction.taxYearAction
 import forms.{AmountForm, FormUtils}
@@ -25,6 +26,9 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
+import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
+import services.redirects.UnauthorisedPaymentsPages.NotSurchargedAmountPage
+import services.redirects.UnauthorisedPaymentsRedirects.{cyaPageCall, isFinishedCheck, journeyCheck}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.unauthorisedPayments.NoSurchargeAmountView
@@ -37,26 +41,27 @@ class NoSurchargeAmountController @Inject()(authAction: AuthorisedAction,
                                             view: NoSurchargeAmountView,
                                             pensionSessionService: PensionSessionService,
                                             errorHandler: ErrorHandler)
-                                           (implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
+                                           (implicit val mcc: MessagesControllerComponents,
+                                            appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport with SessionHelper with FormUtils {
 
   val amountForm: Form[BigDecimal] = AmountForm.amountForm(
     emptyFieldKey = "unauthorisedPayments.noSurchargeAmount.error.noEntry",
-    wrongFormatKey = "common.error.incorrectFormat" //changed this to common to avoid duplicate messages error on jenkins SASS-3240 unauthorisedPayments.noSurchargeAmount.error.incorrectFormat
+    wrongFormatKey = "common.error.incorrectFormat"
   )
 
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
       case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
 
-      case Right(Some(data)) if data.pensions.unauthorisedPayments.noSurchargeQuestion.contains(true) =>
-        data.pensions.unauthorisedPayments.noSurchargeAmount
-          .map(value => Future.successful(Ok(view(amountForm.fill(value), taxYear))))
-          .getOrElse(Future.successful(Ok(view(amountForm, taxYear))))
-      case Right(Some(data)) if data.pensions.unauthorisedPayments.noSurchargeQuestion.contains(false) =>
-        Future.successful(Redirect(controllers.pensions.unauthorisedPayments.routes.WhereAnyOfTheUnauthorisedPaymentsController.show(taxYear)))
-      case _ =>
-        Future.successful(Redirect(controllers.pensions.unauthorisedPayments.routes.UnauthorisedPaymentsCYAController.show(taxYear)))
+      case Right(optData) =>
+        val checkRedirect = journeyCheck(NotSurchargedAmountPage, _, taxYear)
+        redirectBasedOnCurrentAnswers(taxYear, optData, cyaPageCall(taxYear))(checkRedirect) { data =>
+
+          data.pensions.unauthorisedPayments.noSurchargeAmount
+            .map(value => Future.successful(Ok(view(amountForm.fill(value), taxYear))))
+            .getOrElse(Future.successful(Ok(view(amountForm, taxYear))))
+        }
     }
   }
 
@@ -65,17 +70,20 @@ class NoSurchargeAmountController @Inject()(authAction: AuthorisedAction,
       formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
       amount => {
         pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
-          case Right(Some(data)) if data.pensions.unauthorisedPayments.noSurchargeQuestion.contains(true) =>
-            val updatedCyaModel: PensionsCYAModel = data.pensions.copy(unauthorisedPayments = data.pensions.unauthorisedPayments.copy(noSurchargeAmount = Some(amount)))
+          case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
+          case Right(optData) =>
+            val checkRedirect = journeyCheck(NotSurchargedAmountPage, _, taxYear)
+            redirectBasedOnCurrentAnswers(taxYear, optData, cyaPageCall(taxYear))(checkRedirect) { data =>
 
-            pensionSessionService.createOrUpdateSessionData(request.user,
-              updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
-              Redirect(controllers.pensions.unauthorisedPayments.routes.NonUKTaxOnAmountNotResultedInSurchargeController.show(taxYear))
+              val updatedCyaModel: PensionsCYAModel = data.pensions.copy(
+                unauthorisedPayments = data.pensions.unauthorisedPayments.copy(noSurchargeAmount = Some(amount))
+              )
+
+              pensionSessionService.createOrUpdateSessionData(request.user,
+                updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
+                isFinishedCheck(updatedCyaModel, taxYear, NonUKTaxOnAmountNotResultedInSurchargeController.show(taxYear))
+              }
             }
-          case Right(Some(data)) if data.pensions.unauthorisedPayments.noSurchargeQuestion.contains(false) =>
-            Future.successful(Redirect(controllers.pensions.unauthorisedPayments.routes.WhereAnyOfTheUnauthorisedPaymentsController.show(taxYear)))
-          case _ =>
-            Future.successful(Redirect(controllers.pensions.unauthorisedPayments.routes.UnauthorisedPaymentsCYAController.show(taxYear)))
         }
       }
     )

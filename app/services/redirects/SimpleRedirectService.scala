@@ -25,7 +25,7 @@ import scala.concurrent.Future
 
 object SimpleRedirectService extends Logging {
 
-  def redirectBasedOnCurrentAnswers(taxYear: Int, data: Option[PensionsUserData])
+  def redirectBasedOnCurrentAnswers(taxYear: Int, data: Option[PensionsUserData], cyaPage: Call)
                                    (shouldRedirect: PensionsCYAModel => Option[Result])
                                    (continue: PensionsUserData => Future[Result]): Future[Result] = {
 
@@ -40,20 +40,12 @@ object SimpleRedirectService extends Logging {
           Left(redirect)
       }
       case None =>
-        Left(Redirect(controllers.pensions.paymentsIntoPensions.routes.PaymentsIntoPensionsCYAController.show(taxYear)))
+        Left(Redirect(cyaPage))
     }
 
     redirectOrData match {
       case Right(cya) => continue(cya)
       case Left(redirect) => Future.successful(redirect)
-    }
-  }
-
-  def isFinishedCheck(cya: PensionsCYAModel, taxYear: Int, redirect: Call): Result = {
-    if (cya.paymentsIntoPension.isFinished) {
-      Redirect(controllers.pensions.paymentsIntoPensions.routes.PaymentsIntoPensionsCYAController.show(taxYear))
-    } else {
-      Redirect(redirect)
     }
   }
 
