@@ -18,6 +18,7 @@ package controllers.pensions.lifetimeAllowances
 
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.lifetimeAllowances.routes.PensionLumpSumDetailsController
+import controllers.pensions.lifetimeAllowances.routes.LifeTimeAllowanceAnotherWayController
 import controllers.pensions.routes._
 import controllers.predicates.AuthorisedAction
 import forms.YesNoForm
@@ -83,8 +84,7 @@ class PensionLumpSumController @Inject()(implicit val cc: MessagesControllerComp
               if (yesNo) {
                 Redirect(PensionLumpSumDetailsController.show(taxYear))
               } else {
-                //TODO redirect page to Lifetime Other Status page
-                Redirect(PensionsSummaryController.show(taxYear))
+                Redirect(LifeTimeAllowanceAnotherWayController.show(taxYear))
               }
             }
         }
