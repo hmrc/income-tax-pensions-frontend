@@ -17,6 +17,7 @@
 package models.pension.charges
 
 import models.mongo.TextAndKey
+import models.pension.PensionCYABaseModel
 import play.api.libs.json.{Json, OFormat}
 import utils.DecryptableSyntax.DecryptableOps
 import utils.DecryptorInstances.{bigDecimalDecryptor, booleanDecryptor, stringDecryptor}
@@ -30,7 +31,7 @@ case class TransfersIntoOverseasPensionsViewModel(
                                                    overseasTransferChargeAmount: Option[BigDecimal] = None,
                                                    pensionSchemeTransferCharge: Option[Boolean] = None,
                                                    pensionSchemeTransferChargeAmount: Option[BigDecimal] = None,
-                                                   transferPensionScheme: Seq[TransferPensionScheme] = Nil) {
+                                                   transferPensionScheme: Seq[TransferPensionScheme] = Nil) extends PensionCYABaseModel {
   def isEmpty: Boolean = transferPensionSavings.isEmpty && overseasTransferCharge.isEmpty && overseasTransferChargeAmount.isEmpty &&
     pensionSchemeTransferCharge.isEmpty && pensionSchemeTransferChargeAmount.isEmpty && transferPensionScheme.isEmpty
 
@@ -61,6 +62,10 @@ case class TransfersIntoOverseasPensionsViewModel(
       pensionSchemeTransferChargeAmount = pensionSchemeTransferChargeAmount.map(_.encrypted),
       transferPensionScheme = transferPensionScheme.map(_.encrypted())
     )
+
+  override def journeyIsNo: Boolean = this.transferPensionSavings.contains(false)
+
+  override def journeyIsUnanswered: Boolean = this.isEmpty
 }
 
 object TransfersIntoOverseasPensionsViewModel {

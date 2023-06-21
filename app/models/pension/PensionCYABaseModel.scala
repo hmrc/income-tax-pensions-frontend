@@ -22,18 +22,18 @@ trait PensionCYABaseModel {
   def journeyIsUnanswered: Boolean
 }
 
-trait PensionRequestSubModel {
+trait PensionSubRequestModel {
   def isEmpty: Boolean
 }
 
-trait PensionChargesRequestSubModel extends PensionRequestSubModel
+trait PensionChargesSubRequestModel extends PensionSubRequestModel
 
-trait PensionIncomeRequestSubModel extends PensionRequestSubModel
+trait PensionIncomeSubRequestModel extends PensionSubRequestModel
 
-trait PensionReliefsRequestSubModel extends PensionRequestSubModel
+trait PensionReliefsSubRequestModel extends PensionSubRequestModel
 
 
-trait PensionModelRequest {
-  def otherSubModelsEmpty[T <: PensionRequestSubModel](subModel: Option[T]): Boolean
-  def createSubModel: PensionModelRequest
+trait PensionRequestModel {
+  def otherSubRequestModelsEmpty[T <: PensionSubRequestModel](subModel: Option[T]): Boolean
+  def createSubModel: PensionRequestModel
 }

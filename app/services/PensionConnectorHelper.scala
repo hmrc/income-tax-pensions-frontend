@@ -17,33 +17,33 @@
 package services
 
 import models.APIErrorModel
-import models.pension.{PensionCYABaseModel, PensionModelRequest, PensionRequestSubModel}
+import models.pension.{PensionCYABaseModel, PensionRequestModel, PensionSubRequestModel}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
 
 
-trait PensionConnectorHelper[SubModel <: PensionRequestSubModel, ModelRequest <: PensionModelRequest] {
+trait PensionConnectorHelper[SubRequestModel <: PensionSubRequestModel, RequestModel <: PensionRequestModel] {
 
-  def saveData(nino: String, taxYear: Int, model: ModelRequest)
+  def saveData(nino: String, taxYear: Int, model: RequestModel)
               (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[APIErrorModel, Unit]]
 
   def deleteData(nino: String, taxYear: Int)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[APIErrorModel, Unit]]
-  
+
   def sendDownstream(nino: String,
                      taxYear: Int,
-                     subModel: Option[SubModel],
+                     subRequestModel: Option[SubRequestModel],
                      cya: Option[PensionCYABaseModel],
-                     requestModel: ModelRequest)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[APIErrorModel, Unit]] = {
+                     requestModel: RequestModel)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[APIErrorModel, Unit]] = {
 
-    val otherModels = requestModel.otherSubModelsEmpty(subModel)
+    val otherModels = requestModel.otherSubRequestModelsEmpty(subRequestModel)
 
-    def isSubModelEmpty(subModel: Option[SubModel]): Boolean = {
+    def isSubModelEmpty(subModel: Option[SubRequestModel]): Boolean = {
       subModel.exists(_.isEmpty)
     }
 
     if (cya.exists(_.journeyIsNo) || cya.exists(_.journeyIsUnanswered)) {
-      (otherModels, subModel.isEmpty || isSubModelEmpty(subModel)) match {
+      (otherModels, subRequestModel.isEmpty || isSubModelEmpty(subRequestModel)) match {
         case (true, true) =>
           //Do nothing or delete
           deleteData(nino, taxYear)
@@ -53,14 +53,14 @@ trait PensionConnectorHelper[SubModel <: PensionRequestSubModel, ModelRequest <:
           deleteData(nino, taxYear)
         case (false, true) =>
           // Put or do nothing
-          saveData(nino, taxYear, requestModel.createSubModel.asInstanceOf[ModelRequest])
+          saveData(nino, taxYear, requestModel.createSubModel.asInstanceOf[RequestModel])
         case (false, false) =>
           //Put
           //this is an issue, because once NO is selected, the sub model should not contain any data and should be empty
-          saveData(nino, taxYear, requestModel.createSubModel.asInstanceOf[ModelRequest])
+          saveData(nino, taxYear, requestModel.createSubModel.asInstanceOf[RequestModel])
       }
     } else {
-      saveData(nino, taxYear, requestModel.createSubModel.asInstanceOf[ModelRequest])
+      saveData(nino, taxYear, requestModel.createSubModel.asInstanceOf[RequestModel])
     }
   }
 }
