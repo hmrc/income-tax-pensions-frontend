@@ -17,7 +17,7 @@
 package controllers.pensions.paymentsIntoOverseasPensions
 
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.paymentsIntoOverseasPensions.routes.PaymentsIntoOverseasPensionsCYAController
+import controllers.pensions.paymentsIntoOverseasPensions.routes.{PaymentsIntoOverseasPensionsCYAController, PensionsCustomerReferenceNumberController, ReliefsSchemeSummaryController}
 import controllers.pensions.routes.OverseasPensionsSummaryController
 import controllers.predicates.AuthorisedAction
 import forms.YesNoForm
@@ -27,6 +27,7 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
+import services.redirects.SimpleRedirectService.checkForExistingSchemes
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.paymentsIntoOverseasPensions.TaxEmployerPaymentsView
@@ -75,11 +76,14 @@ class TaxEmployerPaymentsController @Inject()(authAction: AuthorisedAction,
                 taxPaidOnEmployerPaymentsQuestion = Some(yesNo)))
             pensionSessionService.createOrUpdateSessionData(request.user,
               updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
-              if(yesNo) {
-                Redirect(PaymentsIntoOverseasPensionsCYAController.show(taxYear))
+              if (yesNo) {
+                Redirect(checkForExistingSchemes(
+                  nextPage = PensionsCustomerReferenceNumberController.show(taxYear, None),
+                  summaryPage = ReliefsSchemeSummaryController.show(taxYear),
+                  schemes = updatedCyaModel.paymentsIntoOverseasPensions.reliefs
+                ))
               } else {
-                val reliefSize = data.pensions.paymentsIntoOverseasPensions.reliefs.size
-                Redirect(customerRefPageOrSchemeSummaryPage(reliefSize, taxYear))
+                Redirect(PaymentsIntoOverseasPensionsCYAController.show(taxYear))
               }
             }
           case _ =>
