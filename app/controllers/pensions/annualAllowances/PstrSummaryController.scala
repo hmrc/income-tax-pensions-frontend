@@ -41,7 +41,7 @@ class PstrSummaryController @Inject()(implicit val cc: MessagesControllerCompone
     pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
       case Some(data) =>
         val pstrList = data.pensions.pensionsAnnualAllowances.pensionSchemeTaxReferences
-        Future(Ok(pstrSummaryView(taxYear, pstrList.getOrElse(Seq()))))
+        Future(Ok(pstrSummaryView(taxYear, pstrList.getOrElse(Nil))))
       case None => Future(Redirect(PensionsSummaryController.show(taxYear)))
     }
   }

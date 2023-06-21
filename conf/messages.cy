@@ -36,7 +36,7 @@ common.incomeFromOverseasPensions.caption = Incwm o bensiynau tramor ar gyfer 6 
 common.transferIntoOverseasPensions.caption = Trosglwyddiadau i bensiynau tramor ar gyfer 6 Ebrill {0} i 5 Ebrill {1}
 common.shortServiceRefunds.caption = Ad-daliadau am wasanaeth byr ar gyfer 6 Ebrill {0} i 5 Ebrill {1}
 common.dividends.incomeFromPensions.caption = Difidendau ar gyfer 6 Ebrill {0} i 5 Ebrill {1}
-common.pensionAnnualAllowance.caption = Lwfans blynyddol pensiwn ar gyfer 6 Ebrill {0} i 5 Ebrill {1}
+common.pensionAnnualAllowance.caption = Lwfansau blynyddol ar gyfer 6 Ebrill {0} i 5 Ebrill {1}
 common.annualAllowance.caption = Annual allowance for 6 April {0} to 5 April {1}
 common.incomeFromPensions.caption = Incwm o bensiynau ar gyfer 6 Ebrill {0} i 5 Ebrill {1}
 common.uKPensionIncome.caption = Incwm o bensiynau’r DU ar gyfer 6 Ebrill {0} i 5 Ebrill {1}
@@ -392,7 +392,7 @@ annualAllowance.incomeFromFlexiAccess = incwm a gyrchir yn hyblyg o gronfa
 annualAllowance.cashDirectlyFromPensionPot = arian parod yn uniongyrchol o gronfa bensiwn (‘arian heb ei ddefnyddio ar ffurf cyfandaliad pensiwn’)
 annualAllowance.overTheLimit.link = dros y terfyn
 
-#reduced annual allowance
+#Reduced annual allowance
 
 annualAllowance.reducedAnnualAllowance.title.individual = A oes gennych lwfans blynyddol wedi’i ostwng?
 annualAllowance.reducedAnnualAllowance.title.agent = A oes gan eich cleient lwfans blynyddol wedi’i ostwng?
@@ -413,46 +413,32 @@ annualAllowance.reducedAnnualAllowance.error.noEntry.agent = Dewiswch ‘Iawn’
 
 #Reduced Annual Allowance Type
 
-pensions.ReducedAnnualAllowanceType.title.individual = Pa fath o lwfans blynyddol wedi’i ostwng sydd gennych?
-pensions.ReducedAnnualAllowanceType.title.agent = Pa fath o lwfans blynyddol wedi’i ostwng sydd gan eich cleient?
-pensions.ReducedAnnualAllowanceType.checkbox.hint = Dewiswch bob un sy’n berthnasol.
-pensions.ReducedAnnualAllowanceType.moneyPurchaseCheckbox.text = Lwfans blynyddol pryniannau arian
-pensions.ReducedAnnualAllowanceType.taperedCheckbox.text = Lwfans blynyddol wedi’i feinhau
-pensions.ReducedAnnualAllowanceType.checkbox.error.individual = Dewiswch y math o lwfans blynyddol wedi’i ostwng sydd gennych
-pensions.ReducedAnnualAllowanceType.checkbox.error.agent = Dewiswch y math o lwfans blynyddol wedi’i ostwng sydd gan eich cleient
-pensions.ReducedAnnualAllowanceType.details.heading = Rhagor o wybodaeth am y mathau o lwfans blynyddol wedi’u gostwng
-pensions.ReducedAnnualAllowanceType.details.moneyPurchaseInfo.individual = Bydd gennych y math hwn o lwfans os ydych yn cyrchu eich pensiwn yn hyblyg. Er enghraifft, gallai hyn gynnwys cymryd:
-pensions.ReducedAnnualAllowanceType.details.moneyPurchaseInfo.agent = Bydd gan eich cleient y math hwn o lwfans os bydd yn cyrchu ei bensiwn yn hyblyg. Er enghraifft, gallai hyn gynnwys cymryd:
-pensions.ReducedAnnualAllowanceType.details.taperedInfo.individual = Bydd gennych y math hwn o lwfans blynyddol os yw eich ‘incwm trothwy’ yn ogystal â’ch ‘incwm wedi’i addasu’ yn
-pensions.ReducedAnnualAllowanceType.details.taperedInfo.agent = Bydd gan eich cleient y math hwn o lwfans blynyddol os yw ei ‘incwm trothwy’ yn ogystal â’i ‘incwm wedi’i addasu’ yn
+pensions.reducedAnnualAllowanceType.title.individual = Pa fath o lwfans blynyddol wedi’i ostwng sydd gennych?
+pensions.reducedAnnualAllowanceType.title.agent = Pa fath o lwfans blynyddol wedi’i ostwng sydd gan eich cleient?
+pensions.reducedAnnualAllowanceType.checkbox.hint = Dewiswch bob un sy’n berthnasol.
+pensions.reducedAnnualAllowanceType.moneyPurchaseCheckbox.text = Lwfans blynyddol pryniannau arian
+pensions.reducedAnnualAllowanceType.taperedCheckbox.text = Lwfans blynyddol wedi’i feinhau
+pensions.reducedAnnualAllowanceType.checkbox.error.individual = Dewiswch y math o lwfans blynyddol wedi’i ostwng sydd gennych
+pensions.reducedAnnualAllowanceType.checkbox.error.agent = Dewiswch y math o lwfans blynyddol wedi’i ostwng sydd gan eich cleient
+pensions.reducedAnnualAllowanceType.details.heading = Rhagor o wybodaeth am y mathau o lwfans blynyddol wedi’u gostwng
+pensions.reducedAnnualAllowanceType.details.moneyPurchaseInfo.individual = Bydd gennych y math hwn o lwfans os ydych yn cyrchu eich pensiwn yn hyblyg. Er enghraifft, gallai hyn gynnwys cymryd:
+pensions.reducedAnnualAllowanceType.details.moneyPurchaseInfo.agent = Bydd gan eich cleient y math hwn o lwfans os bydd yn cyrchu ei bensiwn yn hyblyg. Er enghraifft, gallai hyn gynnwys cymryd:
+pensions.reducedAnnualAllowanceType.details.taperedInfo.individual = Bydd gennych y math hwn o lwfans blynyddol os yw eich ‘incwm trothwy’ yn ogystal â’ch ‘incwm wedi’i addasu’ yn
+pensions.reducedAnnualAllowanceType.details.taperedInfo.agent = Bydd gan eich cleient y math hwn o lwfans blynyddol os yw ei ‘incwm trothwy’ yn ogystal â’i ‘incwm wedi’i addasu’ yn
 
-#Reduced Annual Allowance amount
+#Above Annual Allowance
 
-pensions.reducedAnnualAllowanceAmount.reduced.title.individual = Faint yn uwch na’ch lwfans blynyddol wedi’i ostwng ydych chi?
-pensions.reducedAnnualAllowanceAmount.reduced.title.agent = Faint yn uwch na’i lwfans blynyddol wedi’i ostwng yw eich cleient?
-pensions.reducedAnnualAllowanceAmount.nonReduced.title.individual = Faint yn uwch na’ch lwfans blynyddol ydych chi?
-pensions.reducedAnnualAllowanceAmount.nonReduced.title.agent = Faint yn uwch na’i lwfans blynyddol yw eich cleient?
-pensions.reducedAnnualAllowanceAmount.paragraph = Dyma’r swm y mae treth yn ddyledus arno.
-pensions.reducedAnnualAllowanceAmount.reduced.error.noEntry.individual = Nodwch y swm sydd uwchlaw’ch lwfans blynyddol wedi’i ostwng
-pensions.reducedAnnualAllowanceAmount.reduced.error.incorrectFormat.individual = Nodwch y swm sydd uwchlaw’ch lwfans blynyddol wedi’i ostwng yn y fformat cywir
-pensions.reducedAnnualAllowanceAmount.reduced.error.overMaximum.individual = Mae’n rhaid i’r swm sydd uwchlaw’ch lwfans blynyddol wedi’i ostwng fod yn llai na £100,000,000,000
-pensions.reducedAnnualAllowanceAmount.reduced.error.noEntry.agent = Nodwch y swm sydd uwchlaw lwfans blynyddol wedi’i ostwng eich cleient
-pensions.reducedAnnualAllowanceAmount.reduced.error.incorrectFormat.agent = Nodwch y swm sydd uwchlaw lwfans blynyddol wedi’i ostwng eich cleient yn y fformat cywir
-pensions.reducedAnnualAllowanceAmount.reduced.error.overMaximum.agent = Mae’n rhaid i’r swm sydd uwchlaw lwfans blynyddol wedi’i ostwng eich cleient fod yn llai na £100,000,000,000
-pensions.reducedAnnualAllowanceAmount.nonReduced.error.noEntry = Nodwch y swm sydd uwchlaw’r lwfans blynyddol
-pensions.reducedAnnualAllowanceAmount.nonReduced.error.incorrectFormat = Nodwch y swm sydd uwchlaw’r lwfans blynyddol yn y fformat cywir
-pensions.reducedAnnualAllowanceAmount.nonReduced.error.overMaximum = Mae’n rhaid i’r swm sydd uwchlaw’r lwfans blynyddol fod yn llai na £100,000,000,000
-
-#above Reduced Annual Allowance
-
-pensions.aboveReducedAnnualAllowance.reduced.title.individual = A ydych wedi mynd yn uwch na’ch lwfans blynyddol wedi’i ostwng?
-pensions.aboveReducedAnnualAllowance.reduced.title.agent = A yw’ch cleient wedi mynd yn uwch na’i lwfans blynyddol wedi’i ostwng?
-pensions.aboveReducedAnnualAllowance.nonReduced.title.individual = A ydych wedi mynd yn uwch na’r lwfans blynyddol?
-pensions.aboveReducedAnnualAllowance.nonReduced.title.agent = A yw’ch cleient wedi mynd yn uwch na’r lwfans blynyddol?
-pensions.aboveReducedAnnualAllowance.reduced.error.noEntry.individual = Dewiswch ‘Iawn’ os ydych wedi mynd yn uwch na’ch lwfans blynyddol wedi’i ostwng
-pensions.aboveReducedAnnualAllowance.reduced.error.noEntry.agent = Dewiswch ‘Iawn’ os yw’ch cleient wedi mynd yn uwch na’i lwfans blynyddol wedi’i ostwng
-pensions.aboveReducedAnnualAllowance.nonReduced.error.noEntry.individual = Dewiswch ‘Iawn’ os ydych wedi mynd yn uwch na’r lwfans blynyddol
-pensions.aboveReducedAnnualAllowance.nonReduced.error.noEntry.agent = Dewiswch ‘Iawn’ os yw’ch cleient wedi mynd yn uwch na’i lwfans blynyddol
+pensions.aboveReducedAnnualAllowance.title.individual = A ydych wedi mynd yn uwch na’ch lwfans blynyddol wedi’i?
+pensions.aboveReducedAnnualAllowance.title.agent = A yw’ch cleient wedi mynd yn uwch na’i lwfans blynyddol wedi’i?
+pensions.aboveReducedAnnualAllowance.amount = Swm uwchlaw'r lwfans blynyddol gostyngol, mewn punnoedd
+pensions.aboveReducedAnnualAllowance.error.noEntry.individual = Dewiswch ‘Iawn’ os ydych wedi mynd yn uwch na’ch lwfans blynyddol wedi’i ostwng
+pensions.aboveReducedAnnualAllowance.error.noEntry.agent = Dewiswch ‘Iawn’ os yw’ch cleient wedi mynd yn uwch na’i lwfans blynyddol wedi’i ostwng
+pensions.aboveReducedAnnualAllowance.error.noAmountEntry.individual = Nodwch y swm sydd uwchlaw’ch lwfans blynyddol wedi’i ostwng
+pensions.aboveReducedAnnualAllowance.error.noAmountEntry.agent = Nodwch y swm sydd uwchlaw lwfans blynyddol wedi’i ostwng eich cleient
+pensions.aboveReducedAnnualAllowance.error.incorrectFormat.individual = Nodwch y swm sydd uwchlaw’ch lwfans blynyddol wedi’i ostwng yn y fformat cywir
+pensions.aboveReducedAnnualAllowance.error.incorrectFormat.agent = Nodwch y swm sydd uwchlaw lwfans blynyddol wedi’i ostwng eich cleient yn y fformat cywir
+pensions.aboveReducedAnnualAllowance.error.overMaximum.individual = Mae’n rhaid i’r swm sydd uwchlaw’ch lwfans blynyddol wedi’i ostwng fod yn llai na £100,000,000,000
+pensions.aboveReducedAnnualAllowance.error.overMaximum.agent = Mae’n rhaid i’r swm sydd uwchlaw lwfans blynyddol wedi’i ostwng eich cleient fod yn llai na £100,000,000,000
 
 #Pension Provider Paid Tax Messages
 
@@ -481,7 +467,8 @@ unauthorisedPayments.pension.pensionSchemeTaxReference.error.incorrectFormat.age
 
 #Pension Scheme Tax Reference Summary Page
 
-annualAllowance.pstrSummary.title = Pension schemes that paid or agreed to pay the annual allowance tax
+annualAllowance.pstrSummary.title = Crynodeb Cyfeirnod Treth y Cynllun Pensiwn (PSTR)
+annualAllowance.addAnotherPstrLink = Ychwanegu PSTR arall
 annualAllowance.addPstrLink = Ychwanegu PSTR
 
 #################       INCOME FROM PENSIONS        ########################################
@@ -778,6 +765,7 @@ lifetimeAllowance.cya.lifetimePensionSchemeTaxReferences.hidden = Newidiwch gynl
 
 #Pension scheme tax reference lifetime allowance
 lifetimeAllowance.pensionSchemeTaxReference.title = Rhowch wybod i ni’r cynllun pensiwn a dalodd neu a gytunwyd i dalu’r dreth
+lifetimeAllowance.pensionSchemeTaxReference.p1 = Os bydd mwy nag un cynllun pensiwn yn talu neu wedi cytuno i dalu’r dreth, gallwch eu hychwanegu nes ymlaen.
 lifetimeAllowance.pensionSchemeTaxReference.error.incorrectFormat = Nodwch gyfeirnod sydd ag 8 rhif a 2 lythyren, megis ‘12345678AB’
 
 #Surcharge Amount
@@ -845,6 +833,7 @@ employerFinancedRetirementScheme.benefitsFromScheme.error.agent = Dewiswch ‘Ia
 
 #Unauthorised payments from UK pensions schemes
 unauthorisedPayments.pensionSchemeDetails.title = Taliadau heb awdurdod o gynlluniau pensiwn yn y DU
+unauthorisedPayments.pensionSchemeDetails.addAnotherPensionSchemeTaxReference = Ychwanegu Cyfeirnod Treth ar gyfer Cynllun Pensiwn arall
 unauthorisedPayments.pensionSchemeDetails.addPensionSchemeTaxReference = Ychwanegu Cyfeirnod Treth ar gyfer Cynllun Pensiwn
 
 #Remove unauthorised payments from UK pensions schemes

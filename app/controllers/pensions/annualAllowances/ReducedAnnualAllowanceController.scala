@@ -17,8 +17,8 @@
 package controllers.pensions.annualAllowances
 
 import config.{AppConfig, ErrorHandler}
+import controllers.pensions.annualAllowances.routes.{ReducedAnnualAllowanceController, ReducedAnnualAllowanceTypeController}
 import controllers.pensions.routes.PensionsSummaryController
-import controllers.pensions.annualAllowances.routes.{AboveReducedAnnualAllowanceController, ReducedAnnualAllowanceTypeController}
 import controllers.predicates.AuthorisedAction
 import controllers.predicates.TaxYearAction.taxYearAction
 import forms.YesNoForm
@@ -81,7 +81,8 @@ class ReducedAnnualAllowanceController @Inject()(implicit val cc: MessagesContro
               if (yesNo) {
                 Redirect(ReducedAnnualAllowanceTypeController.show(taxYear))
               } else {
-                Redirect(AboveReducedAnnualAllowanceController.show(taxYear))
+                //TODO redirect to AnnualAllowanceCYAController (not AnnualLifetimeAllowanceCYAController)
+                Redirect(ReducedAnnualAllowanceController.show(taxYear))
               }
             }
         }

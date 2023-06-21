@@ -18,7 +18,7 @@ package services
 
 import connectors.PensionsConnector
 import models.APIErrorModel
-import models.pension.PensionChargesRequestSubModel
+import models.pension.PensionChargesSubRequestModel
 import models.pension.charges.CreateUpdatePensionChargesRequestModel
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -26,7 +26,7 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class PensionChargesConnectorHelper @Inject()(pensionConnector: PensionsConnector) extends
-  PensionConnectorHelper[PensionChargesRequestSubModel, CreateUpdatePensionChargesRequestModel] {
+  PensionConnectorHelper[PensionChargesSubRequestModel, CreateUpdatePensionChargesRequestModel] {
 
   override def saveData(nino: String, taxYear: Int, model: CreateUpdatePensionChargesRequestModel)
                        (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[APIErrorModel, Unit]] = {
