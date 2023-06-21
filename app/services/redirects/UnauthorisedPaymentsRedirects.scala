@@ -50,17 +50,22 @@ object UnauthorisedPaymentsRedirects { //scalastyle:off magic.number
 
     val surchargeQuestionFn = { unauthorisedPaymentsViewModel: UnauthorisedPaymentsViewModel => unauthorisedPaymentsViewModel.surchargeQuestion.getOrElse(false) }
     val noSurchargeQuestionFn = { unauthorisedPaymentsViewModel: UnauthorisedPaymentsViewModel => unauthorisedPaymentsViewModel.noSurchargeQuestion.getOrElse(false) }
+    val surchargeOrNoSurchargeQuestionFn = { unauthorisedPaymentsViewModel: UnauthorisedPaymentsViewModel =>
+      unauthorisedPaymentsViewModel.surchargeQuestion.getOrElse(false) || unauthorisedPaymentsViewModel.noSurchargeQuestion.getOrElse(false)
+    }
     val ukPensionSchemesQuestionFn = { unauthorisedPaymentsViewModel: UnauthorisedPaymentsViewModel =>
       (unauthorisedPaymentsViewModel.surchargeQuestion.getOrElse(false) || unauthorisedPaymentsViewModel.noSurchargeQuestion.getOrElse(false)) && unauthorisedPaymentsViewModel.ukPensionSchemesQuestion.getOrElse(false)
     }
 
     Map(
-      // ^ 2-9 need Q1 true ^
-      // ^ 2,3 need Q1 true + surcharge ^
+      // 2-9 need Q1 true
+      // 2,3 need Q1 true + surcharge
       2 -> surchargeQuestionFn, 3 -> surchargeQuestionFn,
-      // ^ 4,5 need Q1 true + no surcharge ^
+      // 4,5 need Q1 true + no surcharge
       4 -> noSurchargeQuestionFn, 5 -> noSurchargeQuestionFn,
-      // ^ 7,8,9 need Q6 true ^
+      // 6 needs Q1 or Q2 true
+      6 -> surchargeOrNoSurchargeQuestionFn,
+      // 7,8,9 need Q6 true
       7 -> ukPensionSchemesQuestionFn,
       8 -> ukPensionSchemesQuestionFn,
       9 -> ukPensionSchemesQuestionFn
@@ -82,17 +87,22 @@ object UnauthorisedPaymentsRedirects { //scalastyle:off magic.number
     },
     5 -> { unauthorisedPaymentsViewModel: UnauthorisedPaymentsViewModel => unauthorisedPaymentsViewModel.noSurchargeAmount.isDefined },
 
-    6 -> { unauthorisedPaymentsViewModel: UnauthorisedPaymentsViewModel => unauthorisedPaymentsViewModel.noSurchargeTaxAmountQuestion.isDefined },
+    6 -> { unauthorisedPaymentsViewModel: UnauthorisedPaymentsViewModel =>
+      if (isPageValidInJourney(5, unauthorisedPaymentsViewModel)) unauthorisedPaymentsViewModel.noSurchargeTaxAmountQuestion.isDefined
+      else unauthorisedPaymentsViewModel.surchargeTaxAmountQuestion.isDefined
+    },
 
     7 -> { unauthorisedPaymentsViewModel: UnauthorisedPaymentsViewModel => unauthorisedPaymentsViewModel.ukPensionSchemesQuestion.isDefined },
     8 -> { unauthorisedPaymentsViewModel: UnauthorisedPaymentsViewModel => unauthorisedPaymentsViewModel.ukPensionSchemesQuestion.isDefined },
     9 -> { unauthorisedPaymentsViewModel: UnauthorisedPaymentsViewModel => unauthorisedPaymentsViewModel.pensionSchemeTaxReference.nonEmpty },
 
     10 -> { unauthorisedPaymentsViewModel: UnauthorisedPaymentsViewModel =>
-      if (isPageValidInJourney(8, unauthorisedPaymentsViewModel)) true
-      else if (isPageValidInJourney(6, unauthorisedPaymentsViewModel)) unauthorisedPaymentsViewModel.ukPensionSchemesQuestion.isDefined
-      else {
-        !unauthorisedPaymentsViewModel.surchargeQuestion.getOrElse(false) && !unauthorisedPaymentsViewModel.noSurchargeQuestion.getOrElse(false)
+      if (isPageValidInJourney(7, unauthorisedPaymentsViewModel)) {
+        unauthorisedPaymentsViewModel.pensionSchemeTaxReference.nonEmpty
+      } else if (isPageValidInJourney(6, unauthorisedPaymentsViewModel)) {
+        !unauthorisedPaymentsViewModel.ukPensionSchemesQuestion.getOrElse(true)
+      } else {
+        !unauthorisedPaymentsViewModel.surchargeQuestion.getOrElse(true) && !unauthorisedPaymentsViewModel.noSurchargeQuestion.getOrElse(true)
       }
     }
   )
