@@ -16,9 +16,10 @@
 
 package services.redirects
 
-import controllers.pensions.paymentsIntoPensions.routes.ReliefAtSourcePensionsController
+import controllers.pensions.paymentsIntoPensions.routes.{PaymentsIntoPensionsCYAController, ReliefAtSourcePensionsController, TotalPaymentsIntoRASController}
 import models.mongo.PensionsCYAModel
 import models.pension.reliefs.PaymentsIntoPensionViewModel
+import play.api.mvc.Call
 import play.api.mvc.Results.Redirect
 import services.redirects.PaymentsIntoPensionPages._
 import utils.UnitTest
@@ -27,8 +28,74 @@ class PaymentsIntoPensionsRedirectsSpec extends UnitTest {
 
   private val cyaData: PensionsCYAModel = PensionsCYAModel.emptyModels
   private val someRedirect = Some(Redirect(ReliefAtSourcePensionsController.show(taxYear)))
+  private val cyaRedirect: Call = PaymentsIntoPensionsCYAController.show(taxYear)
+  private val contextualRedirect: Call = TotalPaymentsIntoRASController.show(taxYear)
 
-  "PaymentsIntoPensionsRedirects.journeyCheck" should {
+
+  ".isFinishedCheck" should {
+
+    "redirect to CYA page" when {
+      "all PIP questions have been answered" in {
+        val pIPData = cyaData.copy(paymentsIntoPension =
+          PaymentsIntoPensionViewModel(
+            rasPensionPaymentQuestion = Some(true),
+            totalRASPaymentsAndTaxRelief = Some(45.54),
+            oneOffRasPaymentPlusTaxReliefQuestion = Some(false),
+            totalOneOffRasPaymentPlusTaxRelief = Some(100.15),
+            totalPaymentsIntoRASQuestion = Some(true),
+            pensionTaxReliefNotClaimedQuestion = Some(true),
+            retirementAnnuityContractPaymentsQuestion = Some(true),
+            totalRetirementAnnuityContractPayments = Some(20.50),
+            workplacePensionPaymentsQuestion = Some(true),
+            totalWorkplacePensionPayments = Some(500.20))
+        )
+
+        val result = PaymentsIntoPensionsRedirects.isFinishedCheck(pIPData, taxYear, contextualRedirect)
+        result shouldBe Redirect(cyaRedirect)
+      }
+
+      "all valid PIP questions have been answered" in {
+        val pIPData = cyaData.copy(paymentsIntoPension =
+          PaymentsIntoPensionViewModel(
+            rasPensionPaymentQuestion = Some(false),
+            totalRASPaymentsAndTaxRelief = None,
+            oneOffRasPaymentPlusTaxReliefQuestion = None,
+            totalOneOffRasPaymentPlusTaxRelief = None,
+            totalPaymentsIntoRASQuestion = None,
+            pensionTaxReliefNotClaimedQuestion = Some(false),
+            retirementAnnuityContractPaymentsQuestion = None,
+            totalRetirementAnnuityContractPayments = None,
+            workplacePensionPaymentsQuestion = None,
+            totalWorkplacePensionPayments = None)
+        )
+
+        val result = PaymentsIntoPensionsRedirects.isFinishedCheck(pIPData, taxYear, contextualRedirect)
+        result shouldBe Redirect(cyaRedirect)
+      }
+    }
+
+    "redirect to argument call if not all valid PIP questions have been answered" in {
+      val pIPData = cyaData.copy(paymentsIntoPension =
+        PaymentsIntoPensionViewModel(
+          rasPensionPaymentQuestion = Some(true),
+          totalRASPaymentsAndTaxRelief = None,
+          oneOffRasPaymentPlusTaxReliefQuestion = None,
+          totalOneOffRasPaymentPlusTaxRelief = None,
+          totalPaymentsIntoRASQuestion = None,
+          pensionTaxReliefNotClaimedQuestion = Some(false),
+          retirementAnnuityContractPaymentsQuestion = None,
+          totalRetirementAnnuityContractPayments = None,
+          workplacePensionPaymentsQuestion = None,
+          totalWorkplacePensionPayments = None)
+      )
+
+      val result = PaymentsIntoPensionsRedirects.isFinishedCheck(pIPData, taxYear, contextualRedirect)
+      result shouldBe Redirect(contextualRedirect)
+    }
+
+  }
+
+  ".journeyCheck" should {
     "return None if page is valid and all previous questions have been answered" when {
       "current page is empty and at end of journey so far" in {
         val pIPData = cyaData.copy(paymentsIntoPension =

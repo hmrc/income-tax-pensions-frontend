@@ -66,7 +66,7 @@ class AnnualLifetimeAllowanceCYAControllerISpec extends
     val nonUKTaxOnAmountResultedInSurcharge: String = NonUKTaxOnAmountResultedInSurchargeController.show(taxYear).url
     val amountNotSurcharged: String = NoSurchargeAmountController.show(taxYear).url
     val nonUKTaxOnAmountNotResultedInSurcharge: String = NonUKTaxOnAmountNotResultedInSurchargeController.show(taxYear).url
-    val ukPensionSchemes: String = WhereAnyOfTheUnauthorisedPaymentsController.show(taxYear).url
+    val ukPensionSchemes: String = WereAnyOfTheUnauthorisedPaymentsController.show(taxYear).url
     val pensionSchemeTaxReferences: String = UnauthorisedPensionSchemeTaxReferenceController.show(taxYear, None).url
 
 

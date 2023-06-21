@@ -50,4 +50,42 @@ class UnauthorisedPaymentsViewModelSpec extends UnitTest {
       }
     }
   }
+
+  ".isFinished" should {
+    "return true" when {
+      "all questions are populated" in {
+        anUnauthorisedPaymentsViewModel.isFinished
+      }
+      "all required questions are answered" in {
+        anUnauthorisedPaymentsViewModel.copy(
+          surchargeQuestion = Some(false),
+          surchargeAmount = None,
+          surchargeTaxAmountQuestion = None,
+          surchargeTaxAmount = None,
+        ).isFinished
+
+        anUnauthorisedPaymentsViewModel.copy(
+          surchargeTaxAmountQuestion = Some(false),
+          surchargeTaxAmount = None,
+          noSurchargeQuestion = Some(false),
+          noSurchargeAmount = None,
+          noSurchargeTaxAmountQuestion = None,
+          noSurchargeTaxAmount = None,
+          ukPensionSchemesQuestion = Some(false),
+          pensionSchemeTaxReference = None
+        ).isFinished
+      }
+    }
+
+    "return false" when {
+      "not all necessary questions have been populated" in {
+        anUnauthorisedPaymentsViewModel.copy(
+          surchargeQuestion = Some(true),
+          surchargeAmount = None,
+          surchargeTaxAmountQuestion = Some(false),
+          surchargeTaxAmount = None,
+        ).isFinished
+      }
+    }
+  }
 }

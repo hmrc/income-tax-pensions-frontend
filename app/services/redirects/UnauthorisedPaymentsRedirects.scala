@@ -27,7 +27,7 @@ object UnauthorisedPaymentsRedirects { //scalastyle:off magic.number
   def cyaPageCall(taxYear: Int): Call = controllers.pensions.unauthorisedPayments.routes.UnauthorisedPaymentsCYAController.show(taxYear)
 
   def isFinishedCheck(cya: PensionsCYAModel, taxYear: Int, redirect: Call): Result = {
-    if (cya.paymentsIntoPension.isFinished) {
+    if (cya.unauthorisedPayments.isFinished) {
       Redirect(cyaPageCall(taxYear))
     } else {
       Redirect(redirect)
@@ -86,7 +86,7 @@ object UnauthorisedPaymentsRedirects { //scalastyle:off magic.number
 
     7 -> { unauthorisedPaymentsViewModel: UnauthorisedPaymentsViewModel => unauthorisedPaymentsViewModel.ukPensionSchemesQuestion.isDefined },
     8 -> { unauthorisedPaymentsViewModel: UnauthorisedPaymentsViewModel => unauthorisedPaymentsViewModel.ukPensionSchemesQuestion.isDefined },
-    9 -> { unauthorisedPaymentsViewModel: UnauthorisedPaymentsViewModel => unauthorisedPaymentsViewModel.pensionSchemeTaxReference.isDefined },
+    9 -> { unauthorisedPaymentsViewModel: UnauthorisedPaymentsViewModel => unauthorisedPaymentsViewModel.pensionSchemeTaxReference.nonEmpty },
 
     10 -> { unauthorisedPaymentsViewModel: UnauthorisedPaymentsViewModel =>
       if (isPageValidInJourney(8, unauthorisedPaymentsViewModel)) true

@@ -18,8 +18,8 @@ package controllers.pensions.unauthorisedPayments
 
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.unauthorisedPayments.routes._
+import controllers.predicates.AuthorisedAction
 import controllers.predicates.TaxYearAction.taxYearAction
-import controllers.predicates.{ActionsProvider, AuthorisedAction}
 import forms.FormsProvider
 import models.mongo.PensionsCYAModel
 import play.api.i18n.I18nSupport
