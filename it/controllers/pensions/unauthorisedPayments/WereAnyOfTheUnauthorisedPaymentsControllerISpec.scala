@@ -117,7 +117,7 @@ class WereAnyOfTheUnauthorisedPaymentsControllerISpec extends IntegrationTest wi
         import Selectors._
         import user.commonExpectedResults._
 
-        "render the 'where any of the unauthorised payments controller page' with no pre filling" which {
+        "render the Were any of the Unauthorised Payments controller page with no pre filling" which {
           implicit lazy val result: WSResponse = {
             authoriseAgentOrIndividual(user.isAgent)
             dropPensionsDB()
@@ -142,7 +142,7 @@ class WereAnyOfTheUnauthorisedPaymentsControllerISpec extends IntegrationTest wi
           welshToggleCheck(user.isWelsh)
         }
 
-        "render the 'where any of the unauthorised payments controller page' page with correct content and with pre-filled data" which {
+        "render the Were any of the Unauthorised Payments controller page with correct content and with pre-filled data" which {
 
           implicit lazy val result: WSResponse = {
             dropPensionsDB()
@@ -232,8 +232,6 @@ class WereAnyOfTheUnauthorisedPaymentsControllerISpec extends IntegrationTest wi
         val viewModel = anUnauthorisedPaymentsViewModel.copy()
         insertCyaData(pensionsUserDataWithUnauthorisedPayments(viewModel))
 
-        insertCyaData(pensionsUserDataWithUnauthorisedPayments(viewModel))
-
         authoriseAgentOrIndividual()
         urlPost(fullUrl(wereAnyOfTheUnauthorisedPaymentsUrl(taxYearEOY)), body = form, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
@@ -241,7 +239,6 @@ class WereAnyOfTheUnauthorisedPaymentsControllerISpec extends IntegrationTest wi
 
       "has a SEE_OTHER(303) status and redirect to Pension Scheme Tax Reference (PSTR) Page" in {
         result.status shouldBe SEE_OTHER
-        //TODO - redirect to "Pension Scheme Tax Reference PSTR" page once implemented
         result.header("location") shouldBe Some(pensionSchemeTaxReferenceUrl(taxYearEOY))
       }
 

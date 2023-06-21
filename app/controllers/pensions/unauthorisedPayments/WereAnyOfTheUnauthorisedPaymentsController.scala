@@ -29,7 +29,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
 import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
 import services.redirects.UnauthorisedPaymentsPages.WereAnyUnauthPaymentsFromUkPensionSchemePage
-import services.redirects.UnauthorisedPaymentsRedirects.{cyaPageCall, isFinishedCheck, journeyCheck}
+import services.redirects.UnauthorisedPaymentsRedirects.{cyaPageCall, journeyCheck}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.unauthorisedPayments.WereAnyOfTheUnauthorisedPaymentsView
@@ -90,7 +90,8 @@ class WereAnyOfTheUnauthorisedPaymentsController @Inject()(implicit val cc: Mess
                 else UnauthorisedPaymentsCYAController.show(taxYear)
               pensionSessionService.createOrUpdateSessionData(
                 request.user, updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
-                isFinishedCheck(updatedCyaModel, taxYear, redirectLocation)
+                if (yesNo) Redirect(controllers.pensions.unauthorisedPayments.routes.UnauthorisedPensionSchemeTaxReferenceController.show(taxYear, None))
+                else Redirect(controllers.pensions.unauthorisedPayments.routes.UnauthorisedPaymentsCYAController.show(taxYear))
               }
             }
         }

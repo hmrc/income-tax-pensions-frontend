@@ -174,13 +174,13 @@ object PageUrls extends IntegrationTest {
   }
 
   object unauthorisedPaymentsPages {
-    def didYouPayNonUkTaxUrl(taxYear: Int): String = s"$appUrl/$taxYear/unauthorised-payments-from-pensions/tax-on-amount-surcharged"
+    def unauthorisedPaymentsUrl(taxYear: Int): String = s"$appUrl/$taxYear/unauthorised-payments-from-pensions/unauthorised-payments"
 
-    def nonUKTaxOnAmountSurcharge(taxYear: Int): String = s"$appUrl/$taxYear/unauthorised-payments-from-pensions/tax-on-amount-not-surcharged"
+    def taxOnAmountSurchargedUrl(taxYear: Int): String = s"$appUrl/$taxYear/unauthorised-payments-from-pensions/tax-on-amount-surcharged"
+
+    def taxOnAmountNotSurchargedUrl(taxYear: Int): String = s"$appUrl/$taxYear/unauthorised-payments-from-pensions/tax-on-amount-not-surcharged"
 
     def wereAnyOfTheUnauthorisedPaymentsUrl(taxYear: Int): String = s"$appUrl/$taxYear/unauthorised-payments-from-pensions/uk-pension-scheme"
-
-    def unauthorisedPaymentsUrl(taxYear: Int): String = s"$appUrl/$taxYear/unauthorised-payments-from-pensions/unauthorised-payments"
 
     def pensionSchemeTaxReferenceUrl(taxYear: Int): String = s"$appUrl/$taxYear/unauthorised-payments-from-pensions/pension-scheme-tax-reference"
 
@@ -189,12 +189,12 @@ object PageUrls extends IntegrationTest {
 
     def ukPensionSchemeDetailsUrl(taxYear: Int): String = s"$appUrl/$taxYear/unauthorised-payments-from-pensions/uk-pension-scheme-details"
 
-    def checkUnauthorisedPaymentsCyaUrl(taxYear: Int): String = s"$appUrl/$taxYear/unauthorised-payments-from-pensions/check-unauthorised-payments"
-
     def removePensionSchemeReferenceUrl(taxYear: Int, pensionSchemeIndex: Option[Int] = None): String = {
       val baseUrl = s"$appUrl/$taxYear/unauthorised-payments-from-pensions/remove-pension-scheme-tax-reference"
       pensionSchemeIndex.fold(baseUrl)(idx => s"$baseUrl?pensionSchemeIndex=$idx")
     }
+
+    def checkUnauthorisedPaymentsCyaUrl(taxYear: Int): String = s"$appUrl/$taxYear/unauthorised-payments-from-pensions/check-unauthorised-payments"
   }
 
   object PaymentIntoOverseasPensions {

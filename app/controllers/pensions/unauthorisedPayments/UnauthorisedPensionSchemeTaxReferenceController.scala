@@ -110,7 +110,7 @@ class UnauthorisedPensionSchemeTaxReferenceController @Inject()(implicit val cc:
                   ))
                 pensionSessionService.createOrUpdateSessionData(request.user,
                   updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
-                  isFinishedCheck(updatedCyaModel, taxYear, UkPensionSchemeDetailsController.show(taxYear))
+                  Redirect(UkPensionSchemeDetailsController.show(taxYear))
                 }
               } else {
                 Future.successful(Redirect(controllers.pensions.unauthorisedPayments.routes.UkPensionSchemeDetailsController.show(taxYear)))

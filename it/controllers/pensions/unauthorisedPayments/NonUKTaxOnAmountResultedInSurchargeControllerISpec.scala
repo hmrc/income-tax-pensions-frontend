@@ -53,7 +53,7 @@ class NonUKTaxOnAmountResultedInSurchargeControllerISpec
           implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
           implicit val response: WSResponse = getPage
 
-          assertRedirectionAsExpected(relativeUrl("/unauthorised-payments-from-pensions/amount-not-surcharged"))
+          assertRedirectionAsExpected(relativeUrl("/unauthorised-payments-from-pensions/unauthorised-payments"))
         }
       }
       "appear as expected" when {
@@ -223,7 +223,7 @@ class NonUKTaxOnAmountResultedInSurchargeControllerISpec
           }
 
         }
-        "the user had previously answered 'No' without an amount, and" when {
+        "the user had previously answered 'No', and" when {
 
           val sessionData: PensionsUserData =
             pensionsUserData(aPensionsCYAModel.copy(unauthorisedPayments =
@@ -302,171 +302,6 @@ class NonUKTaxOnAmountResultedInSurchargeControllerISpec
                 radioButtonForNo = checkedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
                 amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "")))
-          }
-
-        }
-        "the user had previously answered 'No' with an amount of zero, and" when {
-
-          val sessionData: PensionsUserData =
-            pensionsUserData(aPensionsCYAModel.copy(unauthorisedPayments =
-              aPensionsCYAModel.unauthorisedPayments.copy(
-                surchargeTaxAmountQuestion = Some(false),
-                surchargeTaxAmount = Some(BigDecimal(0))
-              )
-            ))
-
-          scenarioNameForIndividualAndEnglish in {
-
-            implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
-            implicit val response: WSResponse = getPage
-
-            assertNTAPageAsExpected(
-              OK,
-              ExpectedYesNoAmountPageContents(
-                title = "Did you pay non-UK tax on the amount that resulted in a surcharge?",
-                header = "Did you pay non-UK tax on the amount that resulted in a surcharge?",
-                caption = s"Unauthorised payments from pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
-                radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
-                radioButtonForNo = checkedExpectedRadioButton("No"),
-                buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "")
-              ))
-
-          }
-          scenarioNameForIndividualAndWelsh ignore {
-
-            implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
-            implicit val response: WSResponse = getPage
-
-            assertNTAPageAsExpected(
-              OK,
-              ExpectedYesNoAmountPageContents(
-                title = "Did you pay non-UK tax on the amount that resulted in a surcharge?",
-                header = "Did you pay non-UK tax on the amount that resulted in a surcharge?",
-                caption = "Taliadau heb awdurdod o bensiynau ar gyfer 6 Ebrill 2021 i 5 Ebrill 2022",
-                radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
-                radioButtonForNo = checkedExpectedRadioButton("No"),
-                buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "")
-              ))
-
-          }
-          scenarioNameForAgentAndEnglish in {
-
-            implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
-            implicit val response: WSResponse = getPage
-
-            assertNTAPageAsExpected(
-              OK,
-              ExpectedYesNoAmountPageContents(
-                title = "Did your client pay non-UK tax on the amount that resulted in a surcharge?",
-                header = "Did your client pay non-UK tax on the amount that resulted in a surcharge?",
-                caption = s"Unauthorised payments from pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
-                radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
-                radioButtonForNo = checkedExpectedRadioButton("No"),
-                buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "")
-              ))
-
-          }
-          scenarioNameForAgentAndWelsh ignore {
-
-            implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
-            implicit val response: WSResponse = getPage
-
-            assertNTAPageAsExpected(
-              OK,
-              ExpectedYesNoAmountPageContents(
-                title = "Did your client pay non-UK tax on the amount that resulted in a surcharge?",
-                header = "Did your client pay non-UK tax on the amount that resulted in a surcharge?",
-                caption = "Taliadau heb awdurdod o bensiynau ar gyfer 6 Ebrill 2021 i 5 Ebrill 2022",
-                radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
-                radioButtonForNo = checkedExpectedRadioButton("No"),
-                buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "")))
-          }
-
-        }
-        "the user had previously answered 'No' with a negative amount, and" when {
-
-          val sessionData: PensionsUserData =
-            pensionsUserData(aPensionsCYAModel.copy(unauthorisedPayments =
-              aPensionsCYAModel.unauthorisedPayments.copy(
-                surchargeTaxAmountQuestion = Some(false),
-                surchargeTaxAmount = Some(BigDecimal(-42.64))
-              )
-            ))
-
-          scenarioNameForIndividualAndEnglish in {
-
-            implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
-            implicit val response: WSResponse = getPage
-
-            assertNTAPageAsExpected(
-              OK,
-              ExpectedYesNoAmountPageContents(
-                title = "Did you pay non-UK tax on the amount that resulted in a surcharge?",
-                header = "Did you pay non-UK tax on the amount that resulted in a surcharge?",
-                caption = s"Unauthorised payments from pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
-                radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
-                radioButtonForNo = checkedExpectedRadioButton("No"),
-                buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "")
-              ))
-
-          }
-          scenarioNameForIndividualAndWelsh ignore {
-
-            implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
-            implicit val response: WSResponse = getPage
-
-            assertNTAPageAsExpected(
-              OK,
-              ExpectedYesNoAmountPageContents(
-                title = "Did you pay non-UK tax on the amount that resulted in a surcharge?",
-                header = "Did you pay non-UK tax on the amount that resulted in a surcharge?",
-                caption = "Taliadau heb awdurdod o bensiynau ar gyfer 6 Ebrill 2021 i 5 Ebrill 2022",
-                radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
-                radioButtonForNo = checkedExpectedRadioButton("No"),
-                buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "")
-              ))
-
-          }
-          scenarioNameForAgentAndEnglish in {
-
-            implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
-            implicit val response: WSResponse = getPage
-
-            assertNTAPageAsExpected(
-              OK,
-              ExpectedYesNoAmountPageContents(
-                title = "Did your client pay non-UK tax on the amount that resulted in a surcharge?",
-                header = "Did your client pay non-UK tax on the amount that resulted in a surcharge?",
-                caption = s"Unauthorised payments from pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
-                radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
-                radioButtonForNo = checkedExpectedRadioButton("No"),
-                buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "")
-              ))
-
-          }
-          scenarioNameForAgentAndWelsh ignore {
-
-            implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
-            implicit val response: WSResponse = getPage
-
-            assertNTAPageAsExpected(
-              OK,
-              ExpectedYesNoAmountPageContents(
-                title = "Did your client pay non-UK tax on the amount that resulted in a surcharge?",
-                header = "Did your client pay non-UK tax on the amount that resulted in a surcharge?",
-                caption = "Taliadau heb awdurdod o bensiynau ar gyfer 6 Ebrill 2021 i 5 Ebrill 2022",
-                radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
-                radioButtonForNo = checkedExpectedRadioButton("No"),
-                buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Total non-UK tax in pounds", "")
-              ))
           }
 
         }
@@ -499,7 +334,7 @@ class NonUKTaxOnAmountResultedInSurchargeControllerISpec
           implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
           implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(false), None))
 
-          assertRedirectionAsExpected(relativeUrl("/unauthorised-payments-from-pensions/amount-not-surcharged"))
+          assertRedirectionAsExpected(relativeUrl("/unauthorised-payments-from-pensions/unauthorised-payments"))
           getViewModel mustBe Some(expectedViewModel)
 
         }
@@ -520,7 +355,7 @@ class NonUKTaxOnAmountResultedInSurchargeControllerISpec
             implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
             implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(false), None))
 
-            assertRedirectionAsExpected(relativeUrl("/unauthorised-payments-from-pensions/amount-not-surcharged"))
+            assertRedirectionAsExpected(relativeUrl("/unauthorised-payments-from-pensions/check-unauthorised-payments"))
             getViewModel mustBe Some(expectedViewModel)
 
           }
@@ -535,7 +370,7 @@ class NonUKTaxOnAmountResultedInSurchargeControllerISpec
             implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
             implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("42.64")))
 
-            assertRedirectionAsExpected(relativeUrl("/unauthorised-payments-from-pensions/amount-not-surcharged"))
+            assertRedirectionAsExpected(relativeUrl("/unauthorised-payments-from-pensions/check-unauthorised-payments"))
             getViewModel mustBe Some(expectedViewModel)
 
           }
@@ -550,7 +385,7 @@ class NonUKTaxOnAmountResultedInSurchargeControllerISpec
             implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
             implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("£1,042.64")))
 
-            assertRedirectionAsExpected(relativeUrl("/unauthorised-payments-from-pensions/amount-not-surcharged"))
+            assertRedirectionAsExpected(relativeUrl("/unauthorised-payments-from-pensions/check-unauthorised-payments"))
             getViewModel mustBe Some(expectedViewModel)
 
           }
@@ -565,7 +400,7 @@ class NonUKTaxOnAmountResultedInSurchargeControllerISpec
             implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
             implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("0")))
 
-            assertRedirectionAsExpected(relativeUrl("/unauthorised-payments-from-pensions/amount-not-surcharged"))
+            assertRedirectionAsExpected(relativeUrl("/unauthorised-payments-from-pensions/check-unauthorised-payments"))
             getViewModel mustBe Some(expectedViewModel)
 
           }
@@ -660,12 +495,12 @@ class NonUKTaxOnAmountResultedInSurchargeControllerISpec
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "There is a problem",
-                      body = "Select yes if you paid non-UK tax on the amount surcharged",
+                      body = "Select yes if your client paid non-UK tax on the amount surcharged",
                       link = "#value")
                   ),
                   errorAboveElementCheckSectionOpt = Some(
                     ErrorAboveElementCheckSection(
-                      title = "Error: Select yes if you paid non-UK tax on the amount surcharged",
+                      title = "Error: Select yes if your client paid non-UK tax on the amount surcharged",
                       idOpt = Some("value")
                     )
                   )
@@ -691,12 +526,12 @@ class NonUKTaxOnAmountResultedInSurchargeControllerISpec
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "Mae problem wedi codi",
-                      body = "Select yes if you paid non-UK tax on the amount surcharged",
+                      body = "Select yes if your client paid non-UK tax on the amount surcharged",
                       link = "#value")
                   ),
                   errorAboveElementCheckSectionOpt = Some(
                     ErrorAboveElementCheckSection(
-                      title = "Error: Select yes if you paid non-UK tax on the amount surcharged",
+                      title = "Error: Select yes if your client paid non-UK tax on the amount surcharged",
                       idOpt = Some("value")
                     )
                   )

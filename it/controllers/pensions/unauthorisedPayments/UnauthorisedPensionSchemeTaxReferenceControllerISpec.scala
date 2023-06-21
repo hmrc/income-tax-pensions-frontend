@@ -17,6 +17,7 @@
 package controllers.pensions.unauthorisedPayments
 
 import builders.PensionsCYAModelBuilder.aPensionsCYAEmptyModel
+import builders.UnauthorisedPaymentsViewModelBuilder.anUnauthorisedPaymentsViewModel
 import controllers.ControllerSpec
 import controllers.ControllerSpec.PreferredLanguages.{English, Welsh}
 import controllers.ControllerSpec.UserTypes.{Agent, Individual}
@@ -46,9 +47,11 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
         }
       }
       "appear as expected" when {
-        "the user has only the minimal session data for accessing this page and" when {
+        "the user has sufficient session data for accessing this page and" when {
 
-          val sessionData = pensionsUserData(minimalSessionDataToAccessThisPage)
+          val sessionData = pensionsUserData(
+            minimalSessionDataToAccessThisPage.copy(unauthorisedPayments = anUnauthorisedPaymentsViewModel.copy(pensionSchemeTaxReference = None))
+          )
 
           scenarioNameForIndividualAndEnglish in {
 
@@ -143,7 +146,7 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
 
           val sessionData = pensionsUserData(
             minimalSessionDataToAccessThisPage.copy(
-              unauthorisedPayments = UnauthorisedPaymentsViewModel(
+              unauthorisedPayments = anUnauthorisedPaymentsViewModel.copy(
                 pensionSchemeTaxReference = Some(
                   Seq("12345678RA", "22446688RA", "0000000RX"))
               )
@@ -255,7 +258,9 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
       "succeed" when {
         "the user hasn't entered any PSTRs, previously and" when {
 
-          val sessionData = pensionsUserData(minimalSessionDataToAccessThisPage)
+          val sessionData = pensionsUserData(
+            minimalSessionDataToAccessThisPage.copy(unauthorisedPayments = anUnauthorisedPaymentsViewModel.copy(pensionSchemeTaxReference = None))
+          )
 
           "they enter a valid one" in {
 
@@ -275,7 +280,7 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
 
           val sessionData = pensionsUserData(
             minimalSessionDataToAccessThisPage.copy(
-              unauthorisedPayments = UnauthorisedPaymentsViewModel(
+              unauthorisedPayments = anUnauthorisedPaymentsViewModel.copy(
                 pensionSchemeTaxReference = Some(
                   Seq("12345678RA", "22446688RA", "0000000RX"))
               )

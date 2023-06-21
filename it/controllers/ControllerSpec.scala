@@ -38,8 +38,8 @@ import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import play.api.{Application, Environment, Mode}
 import repositories.PensionsUserDataRepositoryImpl
 import uk.gov.hmrc.http.SessionKeys
-import java.util.UUID
 
+import java.util.UUID
 import scala.concurrent.ExecutionContext.Implicits.global
 
 // scalastyle:off magic.number number.of.methods line.size.limit method.length
@@ -82,6 +82,7 @@ class ControllerSpec(val pathForThisPage: String) extends PlaySpec
     val paymentsIntoPensionsReliefAtSourceAmountPage: String = relativeUrl("/payments-into-pensions/relief-at-source-amount")
     val paymentsIntoPensionsTotalReliefAtSourceCheckPage: String = relativeUrl("/payments-into-pensions/total-relief-at-source-check")
 
+    val unauthorisedPaymentsPage: String = relativeUrl("/unauthorised-payments-from-pensions/unauthorised-payments")
     val unauthorisedPaymentsCYAPage: String = relativeUrl("/unauthorised-payments-from-pensions/check-unauthorised-payments")
 
     val overseasSummaryPage: String = relativeUrl("/overseas-pensions")
@@ -92,7 +93,7 @@ class ControllerSpec(val pathForThisPage: String) extends PlaySpec
     val piopCustomerReferencePage: String = relativeUrl("/overseas-pensions/payments-into-overseas-pensions/pensions-customer-reference-number")
     val piopSchemeSummaryPage: String = relativeUrl("/overseas-pensions/payments-into-overseas-pensions/untaxed-schemes-summary")
     val piopPensionsReliefTypePage: String = relativeUrl("/overseas-pensions/payments-into-overseas-pensions/pensions-overseas-emp-relief-status")
-    
+
 
     val incomeFromOverseasPensionsStatus: String = relativeUrl("/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-status")
     val incomeFromOverseasPensionsCountry: String = relativeUrl("/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-country")
@@ -183,13 +184,13 @@ class ControllerSpec(val pathForThisPage: String) extends PlaySpec
       case _ => authoriseIndividual()
     }
   }
- 
+
   protected def submitForm(submittedFormData: SubmittedFormData, queryParams: Map[String, String] = Map.empty)
                           (implicit userConfig: UserConfig, wsClient: WSClient): WSResponse = {
     submitForm(submittedFormData.asMap, queryParams)
   }
-   
-  protected def submitForm(dataMap: Map[String, String] , queryParams: Map[String, String])
+
+  protected def submitForm(dataMap: Map[String, String], queryParams: Map[String, String])
                           (implicit userConfig: UserConfig, wsClient: WSClient): WSResponse = {
     givenAuthorised(userConfig)
     givenStoredSessionData(userConfig)
@@ -201,7 +202,7 @@ class ControllerSpec(val pathForThisPage: String) extends PlaySpec
         .post(dataMap)
     )
   }
-  
+
   protected def checkedExpectedRadioButton(label: String): ExpectedRadioButton = ExpectedRadioButton(label, isChecked = true)
 
   protected def uncheckedExpectedRadioButton(label: String): ExpectedRadioButton = ExpectedRadioButton(label, isChecked = false)
@@ -305,10 +306,10 @@ class ControllerSpec(val pathForThisPage: String) extends PlaySpec
       .withHttpHeaders(Seq(cookieHeader(userConfig), languageHeader(userConfig)): _*).get()
     )
   }
-  
+
   def getTransferPensionsViewModel(implicit userConfig: UserConfig): Option[TransfersIntoOverseasPensionsViewModel] =
     loadPensionUserData.map(_.pensions.transfersIntoOverseasPensions)
-    
+
   def getShortServicePensionsViewModel(implicit userConfig: UserConfig): Option[ShortServiceRefundsViewModel] =
     loadPensionUserData.map(_.pensions.shortServiceRefunds)
 
