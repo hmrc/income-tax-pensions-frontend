@@ -95,7 +95,7 @@ class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with B
   }
 
   object CommonExpectedEN extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Annual and lifetime allowances for 6 April ${taxYear - 1} to 5 April $taxYear"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Lifetime allowances for 6 April ${taxYear - 1} to 5 April $taxYear"
     val hintText = "For example, £193.52"
     val buttonText = "Continue"
     val beforeTax = "Total amount before tax"
@@ -107,7 +107,7 @@ class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with B
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Lwfans blynyddol a lwfans oes ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Lifetime allowances for 6 April ${taxYear - 1} to 5 April $taxYear"
     val hintText = "Er enghraifft, £193.52"
     val buttonText = "Yn eich blaen"
     val beforeTax = "Cyfanswm cyn treth"
