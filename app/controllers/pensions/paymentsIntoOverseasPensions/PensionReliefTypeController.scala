@@ -24,8 +24,9 @@ import forms.FormsProvider
 import models.pension.charges.{Relief, TaxReliefQuestion}
 import models.requests.UserSessionDataRequest
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc._
 import services.PensionSessionService
+import services.redirects.SimpleRedirectService.checkForExistingSchemes
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.paymentsIntoOverseasPensions.PensionReliefTypeView
@@ -34,12 +35,12 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
 @Singleton
-class PensionReliefTypeController@Inject()(actionsProvider: ActionsProvider,
-                                           pensionSessionService: PensionSessionService,
-                                           view: PensionReliefTypeView,
-                                           formsProvider: FormsProvider,
-                                           errorHandler: ErrorHandler)
-                                          (implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock)
+class PensionReliefTypeController @Inject()(actionsProvider: ActionsProvider,
+                                            pensionSessionService: PensionSessionService,
+                                            view: PensionReliefTypeView,
+                                            formsProvider: FormsProvider,
+                                            errorHandler: ErrorHandler)
+                                           (implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock)
   extends FrontendController(mcc) with I18nSupport with SessionHelper {
 
   def show(taxYear: Int, reliefIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
@@ -54,7 +55,7 @@ class PensionReliefTypeController@Inject()(actionsProvider: ActionsProvider,
               Future.successful(Ok(view(formsProvider.overseasPensionsReliefTypeForm.fill(reliefType), taxYear, reliefIndex)))
           }
         case _ =>
-          Future.successful(Redirect(customerRefPageOrSchemeSummaryPage(piopReliefs.size, taxYear)))
+          Future.successful(Redirect(redirectOnBadIndex(piopReliefs, taxYear)))
       }
   }
 
@@ -70,7 +71,7 @@ class PensionReliefTypeController@Inject()(actionsProvider: ActionsProvider,
                                taxReliefQuestion: String,
                                indexOpt: Option[Int],
                                taxYear: Int)(implicit request: UserSessionDataRequest[_]): Future[Result] = {
-    
+
     val piopReliefs = request.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs
     validatedIndex(indexOpt, piopReliefs.size) match {
       case Some(idx) =>
@@ -99,7 +100,7 @@ class PensionReliefTypeController@Inject()(actionsProvider: ActionsProvider,
           Future.successful(redirectBaseOnTaxReliefQuestion(taxReliefQuestion, taxYear, indexOpt)(request))
         }
       case _ =>
-        Future.successful(Redirect(customerRefPageOrSchemeSummaryPage(piopReliefs.size, taxYear)))
+        Future.successful(Redirect(redirectOnBadIndex(piopReliefs, taxYear)))
     }
   }
 
@@ -108,15 +109,21 @@ class PensionReliefTypeController@Inject()(actionsProvider: ActionsProvider,
                                               reliefIndex: Option[Int]
                                              )(implicit request: UserSessionDataRequest[_]): Result =
     taxReliefQuestion match {
-    case TaxReliefQuestion.DoubleTaxationRelief =>
-      Redirect(DoubleTaxationAgreementController.show(taxYear, reliefIndex))
-    case TaxReliefQuestion.MigrantMemberRelief =>
-     Redirect(QOPSReferenceController.show(taxYear, reliefIndex))
-    case TaxReliefQuestion.TransitionalCorrespondingRelief =>
-      Redirect(SF74ReferenceController.show(taxYear, reliefIndex))
-    case TaxReliefQuestion.NoTaxRelief =>
-      Redirect(ReliefsSchemeDetailsController.show(taxYear, reliefIndex))
-    case _ =>
-      BadRequest(view(formsProvider.overseasPensionsReliefTypeForm, taxYear, reliefIndex))
-  }
+      case TaxReliefQuestion.DoubleTaxationRelief =>
+        Redirect(DoubleTaxationAgreementController.show(taxYear, reliefIndex))
+      case TaxReliefQuestion.MigrantMemberRelief =>
+        Redirect(QOPSReferenceController.show(taxYear, reliefIndex))
+      case TaxReliefQuestion.TransitionalCorrespondingRelief =>
+        Redirect(SF74ReferenceController.show(taxYear, reliefIndex))
+      case TaxReliefQuestion.NoTaxRelief =>
+        Redirect(ReliefsSchemeDetailsController.show(taxYear, reliefIndex))
+      case _ =>
+        BadRequest(view(formsProvider.overseasPensionsReliefTypeForm, taxYear, reliefIndex))
+    }
+
+  private def redirectOnBadIndex(reliefs: Seq[Relief], taxYear: Int): Call = checkForExistingSchemes(
+    nextPage = PensionsCustomerReferenceNumberController.show(taxYear, None),
+    summaryPage = ReliefsSchemeSummaryController.show(taxYear),
+    schemes = reliefs
+  )
 }

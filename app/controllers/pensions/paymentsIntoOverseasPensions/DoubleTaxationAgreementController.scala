@@ -17,6 +17,7 @@
 package controllers.pensions.paymentsIntoOverseasPensions
 
 import config.{AppConfig, ErrorHandler}
+import controllers.pensions.paymentsIntoOverseasPensions.routes.{PensionsCustomerReferenceNumberController, ReliefsSchemeSummaryController}
 import controllers.predicates.ActionsProvider
 import controllers.validatedIndex
 import forms.Countries
@@ -27,8 +28,9 @@ import models.pension.charges.Relief
 import models.requests.UserSessionDataRequest
 import play.api.data.Form
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents, Result}
 import services.PensionSessionService
+import services.redirects.SimpleRedirectService.checkForExistingSchemes
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.paymentsIntoOverseasPensions.DoubleTaxationAgreementView
@@ -55,7 +57,7 @@ class DoubleTaxationAgreementController @Inject() (actionsProvider: ActionsProvi
               val form = dblTaxationAgreementForm(request.user).fill(updateViewModel(piopReliefs(idx)))
               Ok(view(form, taxYear, index))
             case _ =>
-              Redirect(customerRefPageOrSchemeSummaryPage(piopReliefs.size, taxYear))
+              Redirect(redirectOnBadIndex(piopReliefs, taxYear))
           }
       }
   }
@@ -63,14 +65,14 @@ class DoubleTaxationAgreementController @Inject() (actionsProvider: ActionsProvi
   def submit(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit request  =>
 
-      val reliefSize = request.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs.size
-      validatedIndex(index, reliefSize) match {
+      val reliefs = request.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs
+      validatedIndex(index, reliefs.size) match {
         case  Some(idx) =>
           dblTaxationAgreementForm(request.user).bindFromRequest().fold(
             formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear, index))),
             doubleTaxationAgreement => updateSessionData(request.pensionsUserData, doubleTaxationAgreement, taxYear, idx)
           )
-        case _ =>  Future.successful(Redirect(customerRefPageOrSchemeSummaryPage(reliefSize, taxYear)))
+        case _ =>  Future.successful(Redirect(redirectOnBadIndex(reliefs, taxYear)))
       }
   }
 
@@ -110,4 +112,9 @@ class DoubleTaxationAgreementController @Inject() (actionsProvider: ActionsProvi
       Redirect(routes.ReliefsSchemeDetailsController.show(taxYear, Some(idx)))
     }
   }
+  private def redirectOnBadIndex(reliefs: Seq[Relief], taxYear: Int): Call = checkForExistingSchemes(
+    nextPage = PensionsCustomerReferenceNumberController.show(taxYear, None),
+    summaryPage = ReliefsSchemeSummaryController.show(taxYear),
+    schemes = reliefs
+  )
 }

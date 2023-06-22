@@ -18,6 +18,7 @@ package controllers.pensions.unauthorisedPayments
 
 
 import config.{AppConfig, ErrorHandler}
+import controllers.pensions.unauthorisedPayments.routes._
 import controllers.predicates.AuthorisedAction
 import forms.YesNoForm
 import models.mongo.PensionsCYAModel
@@ -26,9 +27,10 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
+import services.redirects.SimpleRedirectService.checkForExistingSchemes
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
-import views.html.pensions.unauthorisedPayments.WhereAnyOfTheUnauthorisedPaymentsView
+import views.html.pensions.unauthorisedPayments.WereAnyOfTheUnauthorisedPaymentsView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -37,7 +39,7 @@ import scala.concurrent.Future
 @Singleton
 class WhereAnyOfTheUnauthorisedPaymentsController @Inject()(implicit val cc: MessagesControllerComponents,
                                                             authAction: AuthorisedAction,
-                                                            whereAnyOfTheUnauthorisedPaymentsView: WhereAnyOfTheUnauthorisedPaymentsView,
+                                                            whereAnyOfTheUnauthorisedPaymentsView: WereAnyOfTheUnauthorisedPaymentsView,
                                                             appConfig: AppConfig,
                                                             pensionSessionService: PensionSessionService,
                                                             errorHandler: ErrorHandler,
@@ -82,14 +84,16 @@ class WhereAnyOfTheUnauthorisedPaymentsController @Inject()(implicit val cc: Mes
               pensionSessionService.createOrUpdateSessionData(request.user,
                 updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
                 if (yesNo) {
-                  Redirect(controllers.pensions.unauthorisedPayments.routes.UnauthorisedPensionSchemeTaxReferenceController.show(taxYear, None))
+                  Redirect(checkForExistingSchemes(
+                    nextPage = UnauthorisedPensionSchemeTaxReferenceController.show(taxYear, None),
+                    summaryPage = UkPensionSchemeDetailsController.show(taxYear),
+                    schemes = updatedCyaModel.unauthorisedPayments.pensionSchemeTaxReference.getOrElse(Seq())
+                  ))
                 } else {
-                  Redirect(controllers.pensions.unauthorisedPayments.routes.UnauthorisedPaymentsCYAController.show(taxYear))
+                  Redirect(UnauthorisedPaymentsCYAController.show(taxYear))
                 }
               }
-            case _ => {
-              Future.successful(Redirect(controllers.pensions.unauthorisedPayments.routes.UnauthorisedPaymentsCYAController.show(taxYear)))
-            }
+            case _ => Future.successful(Redirect(UnauthorisedPaymentsCYAController.show(taxYear)))
           }
         }
       }
