@@ -159,7 +159,7 @@ object PageUrls extends IntegrationTest {
     def pensionTaxReferenceNumberLifetimeAllowanceUrl(taxYear: Int): String = s"$appUrl/$taxYear/annual-lifetime-allowances/pension-scheme-tax-reference"
 
     def pensionTaxReferenceNumberLifetimeAllowanceUrlWithIndex(taxYear: Int, index: Int): String =
-      s"$appUrl/$taxYear/lifetime-allowance/pension-scheme-tax-reference?pensionSchemeTaxReferenceIndex=$index"
+      s"$appUrl/$taxYear/annual-lifetime-allowances/pension-scheme-tax-reference?pensionSchemeTaxReferenceIndex=$index"
 
     def pensionTaxReferenceNumberLifetimeAllowanceUrlIndex: Int => Int => String = (pensionSchemeTaxReference: Int) =>
       (taxYear: Int) => s"$appUrl/$taxYear/annual-lifetime-allowances/pension-scheme-tax-reference?pensionSchemeTaxReferenceIndex=$pensionSchemeTaxReference"
