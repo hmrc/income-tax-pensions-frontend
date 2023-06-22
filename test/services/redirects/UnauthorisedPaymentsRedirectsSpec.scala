@@ -22,7 +22,7 @@ import models.mongo.PensionsCYAModel
 import play.api.mvc.Call
 import play.api.mvc.Results.Redirect
 import services.redirects.UnauthorisedPaymentsPages._
-import services.redirects.UnauthorisedPaymentsRedirects.{isFinishedCheck, journeyCheck}
+import services.redirects.UnauthorisedPaymentsRedirects.{cyaPageCall, isFinishedCheck, journeyCheck}
 import utils.UnitTest
 
 class UnauthorisedPaymentsRedirectsSpec extends UnitTest {
@@ -92,7 +92,20 @@ class UnauthorisedPaymentsRedirectsSpec extends UnitTest {
             noSurchargeTaxAmount = None,
             ukPensionSchemesQuestion = None,
             pensionSchemeTaxReference = None
+          )
         )
+        val result = journeyCheck(NonUkTaxOnNotSurchargedAmountPage, data, taxYear)
+
+        result shouldBe None
+      }
+      "current page is pre-filled and at end of journey so far" in {
+        val data = cyaData.copy(
+          unauthorisedPayments = anUnauthorisedPaymentsViewModel.copy(
+            noSurchargeTaxAmountQuestion = Some(true),
+            noSurchargeTaxAmount = Some(345),
+            ukPensionSchemesQuestion = None,
+            pensionSchemeTaxReference = None
+          )
         )
         val result = journeyCheck(NonUkTaxOnNotSurchargedAmountPage, data, taxYear)
 
@@ -104,7 +117,7 @@ class UnauthorisedPaymentsRedirectsSpec extends UnitTest {
 
         result shouldBe None
       }
-      "previous page is invalid/unanswered but previous valid question has been answered" in {
+      "previous page is unanswered but invalid and previous valid question has been answered" in {
         val data = cyaData.copy(
           unauthorisedPayments = anUnauthorisedPaymentsEmptyViewModel.copy(
             surchargeQuestion = Some(false),
@@ -144,6 +157,12 @@ class UnauthorisedPaymentsRedirectsSpec extends UnitTest {
 
         result shouldBe someRedirect
       }
+    }
+  }
+
+  ".cyaPageCall" should {
+    "return a redirect call to the cya page" in {
+      cyaPageCall(taxYear) shouldBe UnauthorisedPaymentsCYAController.show(taxYear)
     }
   }
 }

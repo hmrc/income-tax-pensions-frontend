@@ -16,7 +16,7 @@
 
 package models.pension.charges
 
-import builders.UnauthorisedPaymentsViewModelBuilder.anUnauthorisedPaymentsViewModel
+import builders.UnauthorisedPaymentsViewModelBuilder.{anUnauthorisedPaymentsEmptyViewModel, anUnauthorisedPaymentsViewModel}
 import support.UnitTest
 
 class UnauthorisedPaymentsViewModelSpec extends UnitTest {
@@ -51,7 +51,7 @@ class UnauthorisedPaymentsViewModelSpec extends UnitTest {
     }
   }
 
-  ".isFinished" should {
+  "isFinished" should {
     "return true" when {
       "all questions are populated" in {
         anUnauthorisedPaymentsViewModel.isFinished
@@ -86,6 +86,65 @@ class UnauthorisedPaymentsViewModelSpec extends UnitTest {
           surchargeTaxAmount = None,
         ).isFinished
       }
+    }
+  }
+
+  "toUnauth should transform an UnauthorisedPaymentsViewModel into a PensionSchemeUnauthorisedPayments model that" should {
+    "contain the PSTR, surcharge and non-surcharge data" in {
+      val expectedResult: PensionSchemeUnauthorisedPayments = PensionSchemeUnauthorisedPayments(
+        Some(Seq("12345678AB", "12345678AC")),
+        Some(Charge(12.11, 34.22)),
+        Some(Charge(88.11, 99.22))
+      )
+
+      anUnauthorisedPaymentsViewModel.toUnauth shouldBe expectedResult
+    }
+
+    "contain the partial data that is present in the view model" in {
+      val viewModel: UnauthorisedPaymentsViewModel = anUnauthorisedPaymentsViewModel.copy(
+        noSurchargeQuestion = Some(false), noSurchargeAmount = None, noSurchargeTaxAmountQuestion  = None, noSurchargeTaxAmount = None)
+      val expectedResult: PensionSchemeUnauthorisedPayments = PensionSchemeUnauthorisedPayments(
+        Some(Seq("12345678AB", "12345678AC")),
+        Some(Charge(12.11, 34.22)),
+        None
+      )
+
+      viewModel.toUnauth shouldBe expectedResult
+    }
+
+    "be empty when there is no surcharge or non-surcharge payments" in {
+      val viewModel: UnauthorisedPaymentsViewModel = anUnauthorisedPaymentsEmptyViewModel.copy(
+        surchargeQuestion = Some(false), noSurchargeQuestion = Some(false))
+      val expectedResult: PensionSchemeUnauthorisedPayments = PensionSchemeUnauthorisedPayments(None, None, None)
+
+      viewModel.toUnauth shouldBe expectedResult
+    }
+  }
+
+  "isEmpty" should {
+    "return true when all the ViewModel's arguments are 'None'" in {
+      anUnauthorisedPaymentsEmptyViewModel.isEmpty
+    }
+    "return false when any of the ViewModel's arguments are filled" in {
+      !anUnauthorisedPaymentsViewModel.isEmpty
+      !anUnauthorisedPaymentsViewModel.copy(pensionSchemeTaxReference = None).isEmpty
+      !anUnauthorisedPaymentsEmptyViewModel.copy(surchargeQuestion = Some(false)).isEmpty
+    }
+  }
+
+  "unauthorisedPaymentQuestion" should {
+    "return 'Some(true)' when surchargeQuestion and/or noSurchargeQuestion are 'true'" in {
+      anUnauthorisedPaymentsEmptyViewModel.copy(surchargeQuestion = Some(true), noSurchargeQuestion = Some(false)).unauthorisedPaymentQuestion
+      anUnauthorisedPaymentsEmptyViewModel.copy(surchargeQuestion = None, noSurchargeQuestion = Some(true)).unauthorisedPaymentQuestion
+      anUnauthorisedPaymentsEmptyViewModel.copy(surchargeQuestion = Some(true), noSurchargeQuestion = Some(true)).unauthorisedPaymentQuestion
+    }
+    "return 'Some(false)' when surchargeQuestion and/or noSurchargeQuestion are 'false'" in {
+      !anUnauthorisedPaymentsViewModel.copy(surchargeQuestion = Some(false), noSurchargeQuestion = Some(false)).unauthorisedPaymentQuestion.get
+      !anUnauthorisedPaymentsViewModel.copy(surchargeQuestion = None, noSurchargeQuestion = Some(false)).unauthorisedPaymentQuestion.get
+      !anUnauthorisedPaymentsViewModel.copy(surchargeQuestion = Some(false), noSurchargeQuestion = None).unauthorisedPaymentQuestion.get
+    }
+    "return 'None' when surchargeQuestion and noSurchargeQuestion are 'None'" in {
+      anUnauthorisedPaymentsEmptyViewModel.unauthorisedPaymentQuestion shouldBe None
     }
   }
 }

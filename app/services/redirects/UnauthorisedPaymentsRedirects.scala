@@ -16,7 +16,7 @@
 
 package services.redirects
 
-import controllers.pensions.unauthorisedPayments.routes.UnauthorisedPaymentsController
+import controllers.pensions.unauthorisedPayments.routes.{UnauthorisedPaymentsController, UnauthorisedPaymentsCYAController}
 import models.mongo.PensionsCYAModel
 import models.pension.charges.UnauthorisedPaymentsViewModel
 import play.api.mvc.{Call, Result}
@@ -24,7 +24,7 @@ import play.api.mvc.Results.Redirect
 
 object UnauthorisedPaymentsRedirects { //scalastyle:off magic.number
 
-  def cyaPageCall(taxYear: Int): Call = controllers.pensions.unauthorisedPayments.routes.UnauthorisedPaymentsCYAController.show(taxYear)
+  def cyaPageCall(taxYear: Int): Call = UnauthorisedPaymentsCYAController.show(taxYear)
 
   def isFinishedCheck(cya: PensionsCYAModel, taxYear: Int, redirect: Call): Result = {
     if (cya.unauthorisedPayments.isFinished) {

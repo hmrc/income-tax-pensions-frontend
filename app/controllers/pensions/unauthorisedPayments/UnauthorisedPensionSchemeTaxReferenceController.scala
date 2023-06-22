@@ -71,7 +71,6 @@ class UnauthorisedPensionSchemeTaxReferenceController @Inject()(implicit val cc:
     }
   }
 
-
   def submit(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = authAction.async { implicit request =>
     val errorMsgDetails = (
       s"common.pensionSchemeTaxReference.error.noEntry.${if (request.user.isAgent) "agent" else "individual"}",
@@ -113,7 +112,7 @@ class UnauthorisedPensionSchemeTaxReferenceController @Inject()(implicit val cc:
                   Redirect(UkPensionSchemeDetailsController.show(taxYear))
                 }
               } else {
-                Future.successful(Redirect(controllers.pensions.unauthorisedPayments.routes.UkPensionSchemeDetailsController.show(taxYear)))
+                Future.successful(Redirect(UkPensionSchemeDetailsController.show(taxYear)))
               }
             }
         }

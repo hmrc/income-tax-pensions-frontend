@@ -34,9 +34,7 @@ class SimpleRedirectServiceSpec extends UnitTest {
   val cyaRedirect: Call = PaymentsIntoPensionsCYAController.show(taxYear)
   val noneRedirect: PensionsCYAModel => Option[Result] = cyaData => None
   val someRedirect: PensionsCYAModel => Option[Result] = cyaData => Some(Redirect(ReliefAtSourcePensionsController.show(taxYear)))
-  val continueRedirect: PensionsUserData => Future[Result] = {
-    aPensionsUserData => Future.successful(Redirect(contextualRedirect))
-  }
+  val continueRedirect: PensionsUserData => Future[Result] = aPensionsUserData => Future.successful(Redirect(contextualRedirect))
   val cyaPageCall = controllers.pensions.paymentsIntoPensions.routes.PaymentsIntoPensionsCYAController.show(taxYear)
 
   ".redirectBasedOnCurrentAnswers" should {
@@ -58,7 +56,7 @@ class SimpleRedirectServiceSpec extends UnitTest {
       }
     }
 
-    "redirect to Relief at Source Pensions page when there is session data and 'shouldRedirect' is Some(rasRedirect)" which {
+    "redirect to first page in journey when there is session data and 'shouldRedirect' is Some(firstPageRedirect)" which {
       val result = SimpleRedirectService.redirectBasedOnCurrentAnswers(taxYear, Some(aPensionsUserData), cyaPageCall)(someRedirect)(continueRedirect)
       val resultStatus = result.map(_.header.status)
       val resultHeader = result.map(_.header.headers)

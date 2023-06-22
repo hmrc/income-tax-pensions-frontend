@@ -35,7 +35,7 @@ import play.api.http.HeaderNames
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import utils.PageUrls.fullUrl
-import utils.PageUrls.unauthorisedPaymentsPages.checkUnauthorisedPaymentsCyaUrl
+import utils.PageUrls.UnauthorisedPaymentsPages.checkUnauthorisedPaymentsCyaUrl
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 

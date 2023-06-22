@@ -26,12 +26,11 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.UnAuthorisedPayments.surchargeAmountUrl
+import utils.PageUrls.UnauthorisedPaymentsPages.{checkUnauthorisedPaymentsCyaUrl, noSurchargeAmountUrl, surchargeAmountUrl, taxOnAmountSurchargedUrl, unauthorisedPaymentsUrl}
 import utils.PageUrls.fullUrl
-import utils.PageUrls.unauthorisedPaymentsPages.{checkUnauthorisedPaymentsCyaUrl, taxOnAmountSurchargedUrl}
-import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
+import utils.{CommonUtils, IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
-class SurchargeAmountControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
+class SurchargeAmountControllerISpec extends IntegrationTest with CommonUtils with BeforeAndAfterEach with PensionsDatabaseHelper {
 
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] =
@@ -41,6 +40,7 @@ class SurchargeAmountControllerISpec extends IntegrationTest with ViewHelpers wi
       UserScenario(isWelsh = true, isAgent = true, CommonExpectedCY, Some(ExpectedAgentCY)))
   private val poundPrefixText = "£"
   private val amountInputName = "amount"
+  private implicit val url: Int => String = surchargeAmountUrl
 
   trait CommonExpectedResults {
     val expectedCaption: Int => String
@@ -178,6 +178,15 @@ class SurchargeAmountControllerISpec extends IntegrationTest with ViewHelpers wi
           welshToggleCheck(user.isWelsh)
         }
       }
+    }
+
+    "redirect to the first page in journey when current page is invalid in journey" in {
+        val viewModel = anUnauthorisedPaymentsViewModel.copy(surchargeQuestion = None, noSurchargeQuestion = None)
+        val pensionUserData = pensionsUserDataWithUnauthorisedPayments(viewModel, isPriorSubmission = false)
+        lazy val result: WSResponse = showPage(pensionUserData)
+
+        result.status shouldBe SEE_OTHER
+        result.header("location").contains(unauthorisedPaymentsUrl(taxYearEOY))
     }
 
     "redirect to the CYA page if there is no session data" which {
@@ -356,6 +365,17 @@ class SurchargeAmountControllerISpec extends IntegrationTest with ViewHelpers wi
         lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
         cyaModel.pensions.unauthorisedPayments.surchargeAmount shouldBe Some(BigDecimal(validAmount))
       }
+    }
+
+    "redirect to the first page in journey if submission is invalid in journey" in {
+      val viewModel = anUnauthorisedPaymentsViewModel.copy(noSurchargeQuestion = None)
+      val pensionUserData = pensionsUserDataWithUnauthorisedPayments(viewModel, isPriorSubmission = false)
+      val validAmount = "100.22"
+      val validForm: Map[String, String] = Map(AmountForm.amount -> validAmount)
+      lazy val result: WSResponse = submitPage(pensionUserData, validForm)
+
+      result.status shouldBe SEE_OTHER
+      result.header("location").contains(unauthorisedPaymentsUrl(taxYearEOY))
     }
 
   }
