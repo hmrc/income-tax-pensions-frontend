@@ -29,7 +29,7 @@ messages(s"lifetimeAllowance.cya.lifetime.heading.${if(request.user.isAgent) "ag
 
 @layout(pageTitle = headingForUse, taxYear = Some(taxYear)) {
 
-@heading(headingForUse, Some(messages("common.lifetimeAllowance.lifetime.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-5")
+@heading(headingForUse, Some(messages("common.lifetimeAllowance.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-5")
 
 @summaryList(LifetimeAllowanceCYAViewHelper.summaryListRows(lifetimeCya, taxYear)(messages))
 

@@ -36,12 +36,11 @@ common.incomeFromOverseasPensions.caption = Income from overseas pensions for 6 
 common.transferIntoOverseasPensions.caption = Transfers into overseas pensions for 6 April {0} to 5 April {1}
 common.shortServiceRefunds.caption = Short service refunds for 6 April {0} to 5 April {1}
 common.dividends.incomeFromPensions.caption = Dividends for 6 April {0} to 5 April {1}
-common.pensionAnnualAllowance.caption = Pension annual allowance for 6 April {0} to 5 April {1}
+common.pensionAnnualAllowance.caption = Annual allowances for 6 April {0} to 5 April {1}
 common.annualAllowance.caption = Annual allowance for 6 April {0} to 5 April {1}
-common.lifetimeAllowance.lifetime.caption = Lifetime allowances for 6 April {0} to 5 April {1}
 common.incomeFromPensions.caption = Income from pensions for 6 April {0} to 5 April {1}
 common.uKPensionIncome.caption = UK pension income for 6 April {0} to 5 April {1}
-common.lifetimeAllowance.caption = Annual and lifetime allowances for 6 April {0} to 5 April {1}
+common.lifetimeAllowance.caption = Lifetime allowances for 6 April {0} to 5 April {1}
 common.overseasPensions.caption = Overseas pensions for 6 April {0} to 5 April {1}
 common.return.overview.buttonText = Return to overview
 common.currencyAmount = £{0}
@@ -392,7 +391,7 @@ annualAllowance.incomeFromFlexiAccess = income from a flexi-access drawdown fund
 annualAllowance.cashDirectlyFromPensionPot = cash directly from a pension pot (‘uncrystallised funds pension lump sums’)
 annualAllowance.overTheLimit.link = over the limit
 
-#reduced annual allowance
+#Reduced annual allowance
 
 annualAllowance.reducedAnnualAllowance.title.individual = Do you have a reduced annual allowance?
 annualAllowance.reducedAnnualAllowance.title.agent = Does your client have a reduced annual allowance?
