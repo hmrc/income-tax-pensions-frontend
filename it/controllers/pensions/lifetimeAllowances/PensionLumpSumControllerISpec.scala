@@ -26,7 +26,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.PensionLifetimeAllowance.{pensionLumpSumDetails, pensionLumpSumUrl}
+import utils.PageUrls.PensionLifetimeAllowance.{pensionLifeTimeAllowanceAnotherWayUrl, pensionLumpSumDetails, pensionLumpSumUrl}
 import utils.PageUrls.{fullUrl, pensionSummaryUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
@@ -80,14 +80,14 @@ class PensionLumpSumControllerISpec extends IntegrationTest with BeforeAndAfterE
   }
 
   object CommonExpectedEN extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Annual and lifetime allowances for 6 April ${taxYear - 1} to 5 April $taxYear"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Lifetime allowances for 6 April ${taxYear - 1} to 5 April $taxYear"
     val expectedButtonText = "Continue"
     val yesText = "Yes"
     val noText = "No"
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Lwfans blynyddol a lwfans oes ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Lifetime allowances for 6 April ${taxYear - 1} to 5 April $taxYear"
     val expectedButtonText = "Yn eich blaen"
     val yesText = "Iawn"
     val noText = "Na"
@@ -300,10 +300,9 @@ class PensionLumpSumControllerISpec extends IntegrationTest with BeforeAndAfterE
         urlPost(fullUrl(pensionLumpSumUrl(taxYearEOY)), body = form, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
-      //TODO redirect page to Lifetime Other Status page
       "has a SEE_OTHER(303) status and redirect to the Lifetime Other Status page" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
+        result.header("location") shouldBe Some(pensionLifeTimeAllowanceAnotherWayUrl(taxYearEOY))
       }
 
       "updates pensionAsLumpSumQuestion to Some(false) and wipes amount value" in {

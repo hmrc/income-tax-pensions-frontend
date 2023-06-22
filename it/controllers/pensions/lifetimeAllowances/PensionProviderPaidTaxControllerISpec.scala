@@ -42,7 +42,7 @@ class PensionProviderPaidTaxControllerISpec
   }
   
   object CommonExpectedEN extends CommonExpectedResults {
-    val expectedCaption = (taxYear: Int) => s"Annual and lifetime allowances for 6 April ${taxYear - 1} to 5 April $taxYear"
+    val expectedCaption = (taxYear: Int) => s"Lifetime allowances for 6 April ${taxYear - 1} to 5 April $taxYear"
     val expectedAmountText = "Amount they paid or agreed to pay, in pounds"
     val expectedEG = "For example, £193.52"
     val expectedYesText = "Yes"
@@ -54,7 +54,7 @@ class PensionProviderPaidTaxControllerISpec
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedCaption = (taxYear: Int) => s"Lwfans blynyddol a lwfans oes ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
+    val expectedCaption = (taxYear: Int) => s"Lifetime allowances for 6 April ${taxYear - 1} to 5 April $taxYear"
     val expectedAmountText = "Y swm a dalwyd ganddo, neu’r swm a gytunodd i’w dalu, mewn punnoedd"
     val expectedEG = "Er enghraifft, £193.52"
     val expectedYesText = "Iawn"
