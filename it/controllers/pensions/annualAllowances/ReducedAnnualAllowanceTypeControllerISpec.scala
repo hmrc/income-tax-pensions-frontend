@@ -27,12 +27,12 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.PensionAnnualAllowancePages.{aboveAnnualAllowanceUrl, reducedAnnualAllowanceTypeUrl, reducedAnnualAllowanceUrl}
+import utils.PageUrls.PensionAnnualAllowancePages.{aboveReducedAnnualAllowanceUrl, reducedAnnualAllowanceTypeUrl, reducedAnnualAllowanceUrl}
 import utils.PageUrls.{fullUrl, pensionSummaryUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 // scalastyle:off magic.number
-class ReducedAnnualAllowanceTypeControllersControllerISpec extends IntegrationTest with BeforeAndAfterEach with ViewHelpers with PensionsDatabaseHelper {
+class ReducedAnnualAllowanceTypeControllerISpec extends IntegrationTest with BeforeAndAfterEach with ViewHelpers with PensionsDatabaseHelper {
 
   private val externalHref = "https://www.gov.uk/guidance/pension-schemes-work-out-your-tapered-annual-allowance"
 
@@ -114,7 +114,7 @@ class ReducedAnnualAllowanceTypeControllersControllerISpec extends IntegrationTe
   }
 
   object CommonExpectedEN extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Pension annual allowance for 6 April ${taxYear - 1} to 5 April $taxYear"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Annual allowances for 6 April ${taxYear - 1} to 5 April $taxYear"
     val checkboxHint = "Select all that apply."
     val checkboxMoneyPurchaseText = "Money purchase annual allowance"
     val checkboxTaperedText = "Tapered annual allowance"
@@ -128,7 +128,7 @@ class ReducedAnnualAllowanceTypeControllersControllerISpec extends IntegrationTe
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Lwfans blynyddol pensiwn ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Lwfansau blynyddol ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
     val checkboxHint = "Dewiswch bob un sy’n berthnasol."
     val checkboxMoneyPurchaseText = "Lwfans blynyddol pryniannau arian"
     val checkboxTaperedText = "Lwfans blynyddol wedi’i feinhau"
@@ -488,7 +488,7 @@ class ReducedAnnualAllowanceTypeControllersControllerISpec extends IntegrationTe
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location").contains(aboveAnnualAllowanceUrl(taxYearEOY)) shouldBe true
+        result.header("location").contains(aboveReducedAnnualAllowanceUrl(taxYearEOY)) shouldBe true
       }
 
       "updates moneyPurchaseAnnualAllowance and taperedAnnualAllowance to Some(true)" in {
@@ -519,7 +519,7 @@ class ReducedAnnualAllowanceTypeControllersControllerISpec extends IntegrationTe
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location").contains(aboveAnnualAllowanceUrl(taxYearEOY)) shouldBe true
+        result.header("location").contains(aboveReducedAnnualAllowanceUrl(taxYearEOY)) shouldBe true
       }
 
       "updates moneyPurchaseAnnualAllowance to Some(false) and taperedAnnualAllowance to Some(true)" in {
@@ -550,7 +550,7 @@ class ReducedAnnualAllowanceTypeControllersControllerISpec extends IntegrationTe
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location").contains(aboveAnnualAllowanceUrl(taxYearEOY)) shouldBe true
+        result.header("location").contains(aboveReducedAnnualAllowanceUrl(taxYearEOY)) shouldBe true
       }
 
       "updates moneyPurchaseAnnualAllowance to Some(true) and taperedAnnualAllowance to Some(false)" in {

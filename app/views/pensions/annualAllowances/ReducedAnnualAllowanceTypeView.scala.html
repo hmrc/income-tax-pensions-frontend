@@ -39,7 +39,7 @@
 @(form: Form[ReducedAnnualAllowanceTypeQuestionModel], taxYear: Int, moneyPurchasedAllowance: Option[Boolean] = None,
         taperedAnnualAllowance: Option[Boolean] = None)(implicit request: AuthorisationRequest[_], messages: Messages, appConfig: AppConfig)
 
-@titleForUse = @{messages(s"pensions.ReducedAnnualAllowanceType.title.${if(request.user.isAgent) "agent" else "individual"}")}
+@titleForUse = @{messages(s"pensions.reducedAnnualAllowanceType.title.${if(request.user.isAgent) "agent" else "individual"}")}
 
 @hasFormErrors = @{form.hasErrors}
 
@@ -49,14 +49,14 @@
 }
 
 @detailsHtml = {
-    <p class="govuk-body govuk-!-font-weight-bold"> @messages("pensions.ReducedAnnualAllowanceType.moneyPurchaseCheckbox.text")</p>
-    <p class="govuk-body">@{messages(s"pensions.ReducedAnnualAllowanceType.details.moneyPurchaseInfo.${if(request.user.isAgent) "agent" else "individual"}")}</p>
+    <p class="govuk-body govuk-!-font-weight-bold"> @messages("pensions.reducedAnnualAllowanceType.moneyPurchaseCheckbox.text")</p>
+    <p class="govuk-body">@{messages(s"pensions.reducedAnnualAllowanceType.details.moneyPurchaseInfo.${if(request.user.isAgent) "agent" else "individual"}")}</p>
     <ul class="govuk-list govuk-list--bullet  govuk-!-margin-bottom-6">
         <li>@messages("annualAllowance.incomeFromFlexiAccess")</li>
         <li>@messages("annualAllowance.cashDirectlyFromPensionPot")</li>
     </ul>
-    <p class="govuk-body govuk-!-font-weight-bold">@messages("pensions.ReducedAnnualAllowanceType.taperedCheckbox.text")</p>
-    <p class="govuk-body">@{messages(s"pensions.ReducedAnnualAllowanceType.details.taperedInfo.${if(request.user.isAgent) "agent" else "individual"}")}
+    <p class="govuk-body govuk-!-font-weight-bold">@messages("pensions.reducedAnnualAllowanceType.taperedCheckbox.text")</p>
+    <p class="govuk-body">@{messages(s"pensions.reducedAnnualAllowanceType.details.taperedInfo.${if(request.user.isAgent) "agent" else "individual"}")}
         @link("https://www.gov.uk/guidance/pension-schemes-work-out-your-tapered-annual-allowance", "annualAllowance.overTheLimit.link", Some("tapered-info-link"), true, fullStop = true)
     </p>
 }
@@ -76,19 +76,19 @@
                 ))
             )),
             hint = Some(Hint(
-                content = Text(messages("pensions.ReducedAnnualAllowanceType.checkbox.hint"))
+                content = Text(messages("pensions.reducedAnnualAllowanceType.checkbox.hint"))
             )),
             errorMessage = form.errors.headOption.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*)))),
             idPrefix = Some("reducedAnnualAllowanceType"),
             name = "reducedAnnualAllowanceType[]",
             items = Seq(
                 CheckboxItem(
-                    content = Text(messages("pensions.ReducedAnnualAllowanceType.moneyPurchaseCheckbox.text")),
+                    content = Text(messages("pensions.reducedAnnualAllowanceType.moneyPurchaseCheckbox.text")),
                     value = moneyPurchaseCheckboxValue,
                     hint = None,
                     checked = moneyPurchasedAllowance.contains(true)),
                 CheckboxItem(
-                    content = Text(messages("pensions.ReducedAnnualAllowanceType.taperedCheckbox.text")),
+                    content = Text(messages("pensions.reducedAnnualAllowanceType.taperedCheckbox.text")),
                     value = taperedCheckboxValue,
                     hint = None,
                     checked = taperedAnnualAllowance.contains(true))
@@ -97,7 +97,7 @@
         )
         )
 
-        @details("pensions.ReducedAnnualAllowanceType.details.heading", detailsHtml)
+        @details("pensions.reducedAnnualAllowanceType.details.heading", detailsHtml)
         @button()
     }
 

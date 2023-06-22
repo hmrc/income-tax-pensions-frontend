@@ -49,7 +49,7 @@ class AnnualLifetimeAllowanceControlllerISpec extends IntegrationTest
   }
 
   private def url(taxYear: Int): String = {
-    s"/update-and-submit-income-tax-return/pensions/$taxYear/annual-lifetime-allowance/annual-lifetime-allowance"
+    s"/update-and-submit-income-tax-return/pensions/$taxYear/annual-lifetime-allowances/annual-lifetime-allowance"
   }
 
   ".show" should {

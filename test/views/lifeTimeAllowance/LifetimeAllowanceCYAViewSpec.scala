@@ -29,10 +29,10 @@ import views.html.pensions.lifetimeAllowances.LifetimeAllowanceCYAView
 class LifetimeAllowanceCYAViewSpec extends ViewUnitTest { //scalastyle:off magic.number
 
   object ChangeLinks {
-    val changeAboveLifetimeAllowance = controllers.pensions.lifetimeAllowances.routes.AnnualLifetimeAllowanceCYAController.show(taxYear).url
+    val changeAboveLifetimeAllowance = controllers.pensions.lifetimeAllowances.routes.AboveAnnualLifetimeAllowanceController.show(taxYear).url
     val changeLumpSum = controllers.pensions.lifetimeAllowances.routes.PensionLumpSumController.show(taxYear).url
     val changeOtherPayments = controllers.pensions.lifetimeAllowances.routes.LifeTimeAllowanceAnotherWayController.show(taxYear).url
-    val changeSchemes = controllers.pensions.lifetimeAllowances.routes.AnnualLifetimeAllowanceCYAController.show(taxYear).url
+    val changeSchemes = controllers.pensions.annualAllowances.routes.PstrSummaryController.show(taxYear).url
   }
 
   trait CommonExpectedResults {

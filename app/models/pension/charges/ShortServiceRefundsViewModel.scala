@@ -17,6 +17,7 @@
 package models.pension.charges
 
 import models.mongo.TextAndKey
+import models.pension.PensionCYABaseModel
 import play.api.libs.json.{Json, OFormat}
 import utils.DecryptableSyntax.DecryptableOps
 import utils.DecryptorInstances.{bigDecimalDecryptor, booleanDecryptor, stringDecryptor}
@@ -30,9 +31,10 @@ case class ShortServiceRefundsViewModel(
                                          shortServiceRefundTaxPaid: Option[Boolean] = None,
                                          shortServiceRefundTaxPaidCharge: Option[BigDecimal] = None,
                                          refundPensionScheme: Seq[OverseasRefundPensionScheme] = Nil
-                                       ) {
+                                       ) extends PensionCYABaseModel {
   def isEmpty: Boolean = shortServiceRefund.isEmpty && shortServiceRefundCharge.isEmpty &&
     shortServiceRefundTaxPaid.isEmpty && shortServiceRefundTaxPaidCharge.isEmpty && refundPensionScheme.isEmpty
+
   def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedShortServiceRefundsViewModel =
     EncryptedShortServiceRefundsViewModel(
       shortServiceRefund = shortServiceRefund.map(_.encrypted),
@@ -67,6 +69,10 @@ case class ShortServiceRefundsViewModel(
       )
     )
   }
+
+  override def journeyIsNo: Boolean = this.shortServiceRefund.contains(false)
+
+  override def journeyIsUnanswered: Boolean = this.isEmpty
 }
 
 object ShortServiceRefundsViewModel {
@@ -127,7 +133,7 @@ case class EncryptedOverseasRefundPensionScheme(
                                                  providerAddress: Option[EncryptedValue] = None,
                                                  alphaTwoCountryCode: Option[EncryptedValue] = None,
                                                  alphaThreeCountryCode: Option[EncryptedValue] = None
-                                      ) {
+                                               ) {
   def decrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): OverseasRefundPensionScheme =
     OverseasRefundPensionScheme(
       ukRefundCharge = ukRefundCharge.map(_.decrypted[Boolean]),

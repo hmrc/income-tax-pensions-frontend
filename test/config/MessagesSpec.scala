@@ -91,7 +91,8 @@ class MessagesSpec extends ViewTest with GuiceOneAppPerSuite {
     "common.pensionSchemeTaxReference.p1",
     "common.lifetimeAllowance.lifetime.caption",
     "lifetimeAllowance.cya.lifetime.heading.individual",
-    "lifetimeAllowance.cya.lifetime.heading.agent"
+    "lifetimeAllowance.cya.lifetime.heading.agent",
+    "common.addAnotherPstrLink"
   )
 
   lazy val allLanguages: Map[String, Map[String, String]] = app.injector.instanceOf[MessagesApi].messages

@@ -41,7 +41,7 @@ object LifetimeAllowanceCYAViewHelper extends CYABaseHelper {
       summaryListRowWithBooleanValue(
         "lifetimeAllowance.cya.aboveLifetimeAllowance",
         lifetimeAllowancesViewModel.aboveLifetimeAllowanceQuestion,
-        routes.AnnualLifetimeAllowanceCYAController.show(taxYear))(messages)
+        routes.AboveAnnualLifetimeAllowanceController.show(taxYear))(messages)
       )
   }
 
@@ -85,7 +85,6 @@ object LifetimeAllowanceCYAViewHelper extends CYABaseHelper {
 
   private def summaryRowForLifetimeAllowanceSchemeTaxReferences(lifetimeAllowancesViewModel: PensionLifetimeAllowancesViewModel, taxYear: Int)
                                                                (implicit messages: Messages): Option[SummaryListRow] = {
-    //TODO: Update call to correct page
 
     val combinedLumpSumOtherPaymentsQuestion = (
       lifetimeAllowancesViewModel.pensionPaidAnotherWayQuestion, lifetimeAllowancesViewModel.pensionAsLumpSumQuestion) match {
@@ -99,7 +98,7 @@ object LifetimeAllowanceCYAViewHelper extends CYABaseHelper {
         summaryListRowWithStrings(
           "lifetimeAllowance.cya.lifetimePensionSchemeTaxReferences",
           lifetimeAllowancesViewModel.pensionSchemeTaxReferences,
-          routes.AnnualLifetimeAllowanceCYAController.show(taxYear))(messages)
+          controllers.pensions.annualAllowances.routes.PstrSummaryController.show(taxYear))(messages)
       }
     )
   }
