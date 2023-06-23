@@ -22,12 +22,11 @@ import controllers.pensions.paymentsIntoOverseasPensions.routes._
 import controllers.predicates.ActionsProvider
 import forms.QOPSReferenceNumberForm
 import models.mongo.{PensionsCYAModel, PensionsUserData}
-import models.pension.charges.Relief
 import play.api.data.Form
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
-import services.redirects.SimpleRedirectService.checkForExistingSchemes
+import services.redirects.PaymentsIntoOverseasPensionsRedirects.redirectOnBadIndexInSchemeLoop
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.paymentsIntoOverseasPensions.QOPSReferenceView
@@ -52,7 +51,7 @@ class QOPSReferenceController @Inject()(actionsProvider: ActionsProvider,
       val reliefs = sessionData.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs
       validatedIndex(index, reliefs.size) match {
         case Some(idx) => Future.successful(Ok(qopsReferenceView(referenceForm(sessionData.pensionsUserData, idx), taxYear, Some(idx))))
-        case _ => Future.successful(Redirect(redirectOnBadIndex(reliefs, taxYear)))
+        case _ => Future.successful(Redirect(redirectOnBadIndexInSchemeLoop(reliefs, taxYear)))
       }
   }
 
@@ -85,16 +84,11 @@ class QOPSReferenceController @Inject()(actionsProvider: ActionsProvider,
               }
             }
           )
-        case _ => Future.successful(Redirect(redirectOnBadIndex(piops.reliefs, taxYear)))
+        case _ => Future.successful(Redirect(redirectOnBadIndexInSchemeLoop(piops.reliefs, taxYear)))
       }
   }
 
   private def removePrefix(qopsReference: String): String = //TODO: check qops ref length
     if (qopsReference.length == 10) qopsReference.substring(4, 10) else qopsReference
 
-  private def redirectOnBadIndex(reliefs: Seq[Relief], taxYear: Int): Call = checkForExistingSchemes(
-    nextPage = PensionsCustomerReferenceNumberController.show(taxYear, None),
-    summaryPage = ReliefsSchemeSummaryController.show(taxYear),
-    schemes = reliefs
-  )
 }

@@ -17,7 +17,7 @@
 package controllers.pensions.incomeFromPensions
 
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.incomeFromPensions.routes.{PensionSchemeSummaryController, UkPensionIncomeSummaryController}
+import controllers.pensions.incomeFromPensions.routes.PensionSchemeSummaryController
 import controllers.predicates.ActionsProvider
 import controllers.validatedIndex
 import forms.DateForm.DateModel
@@ -28,6 +28,7 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
+import services.redirects.IncomeFromPensionsRedirects.redirectOnBadIndexInSchemeLoop
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import utils.DateTimeUtil.localDateTimeFormat
@@ -61,14 +62,14 @@ class PensionSchemeStartDateController @Inject()(pensionSessionService: PensionS
             ))
             Ok(view(filledForm, taxYear, validIndex))
           }
-        case None =>
-          Redirect(UkPensionIncomeSummaryController.show(taxYear))
+        case None => Redirect(redirectOnBadIndexInSchemeLoop(data, taxYear))
       }
     }
 
   def submit(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] =
     actionsProvider.userSessionDataFor(taxYear) async { implicit sessionDataRequest =>
-      validatedIndex(pensionSchemeIndex, sessionDataRequest.pensionsUserData.pensions.incomeFromPensions.uKPensionIncomes.size) match {
+      val pensionIncomes = sessionDataRequest.pensionsUserData.pensions.incomeFromPensions.uKPensionIncomes
+      validatedIndex(pensionSchemeIndex, pensionIncomes.size) match {
         case Some(validIndex) =>
           val verifiedForm = formProvider.pensionSchemeDateForm.bindFromRequest()
           verifiedForm.copy(errors = DateForm.verifyDate(verifiedForm.get, "incomeFromPensions.pensionStartDate")).fold(
@@ -91,7 +92,7 @@ class PensionSchemeStartDateController @Inject()(pensionSessionService: PensionS
               }
             }
           )
-        case _ => Future.successful(Redirect(UkPensionIncomeSummaryController.show(taxYear)))
+        case _ => Future.successful(Redirect(redirectOnBadIndexInSchemeLoop(pensionIncomes, taxYear)))
       }
     }
 }

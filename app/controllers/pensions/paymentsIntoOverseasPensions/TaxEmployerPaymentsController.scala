@@ -74,6 +74,7 @@ class TaxEmployerPaymentsController @Inject()(authAction: AuthorisedAction,
             val updatedCyaModel: PensionsCYAModel = data.pensions.copy(
               paymentsIntoOverseasPensions = data.pensions.paymentsIntoOverseasPensions.copy(
                 taxPaidOnEmployerPaymentsQuestion = Some(yesNo)))
+
             pensionSessionService.createOrUpdateSessionData(request.user,
               updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
               if (yesNo) {

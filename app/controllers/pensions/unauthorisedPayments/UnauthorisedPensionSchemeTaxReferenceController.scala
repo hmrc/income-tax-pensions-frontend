@@ -58,7 +58,7 @@ class UnauthorisedPensionSchemeTaxReferenceController @Inject()(implicit val cc:
           case Some(scheme) =>
             Future.successful(Ok(pensionSchemeTaxReferenceView(emptyForm.fill(scheme), pensionSchemeIndex, taxYear)))
           case None =>
-            Future.successful(Ok(pensionSchemeTaxReferenceView(emptyForm,pensionSchemeIndex, taxYear)))
+            Future.successful(Ok(pensionSchemeTaxReferenceView(emptyForm, pensionSchemeIndex, taxYear)))
         }
       case Right(None) => Future.successful(Redirect(controllers.pensions.unauthorisedPayments.routes.UnauthorisedPaymentsCYAController.show(taxYear)))
     }

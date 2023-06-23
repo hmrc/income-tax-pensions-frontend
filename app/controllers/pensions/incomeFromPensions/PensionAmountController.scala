@@ -17,7 +17,7 @@
 package controllers.pensions.incomeFromPensions
 
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.incomeFromPensions.routes.{PensionSchemeStartDateController, UkPensionIncomeCYAController, UkPensionIncomeSummaryController}
+import controllers.pensions.incomeFromPensions.routes.{PensionSchemeStartDateController, UkPensionIncomeCYAController}
 import controllers.predicates.AuthorisedAction
 import controllers.predicates.TaxYearAction.taxYearAction
 import forms.{FormUtils, FormsProvider}
@@ -26,6 +26,7 @@ import models.pension.statebenefits.{IncomeFromPensionsViewModel, UkPensionIncom
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
+import services.redirects.IncomeFromPensionsRedirects.redirectOnBadIndexInSchemeLoop
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.incomeFromPensions.PensionAmountView
@@ -61,7 +62,7 @@ class PensionAmountController @Inject()(implicit val mcc: MessagesControllerComp
               pensionIncomesList(index).amount,
               pensionIncomesList(index).taxPaid)),
               taxYear, index)))
-          case None => Future.successful(Redirect(UkPensionIncomeSummaryController.show(taxYear)))
+          case None => Future.successful(Redirect(redirectOnBadIndexInSchemeLoop(pensionIncomesList, taxYear)))
         }
       case _ =>
         Future.successful(Redirect(UkPensionIncomeCYAController.show(taxYear)))
@@ -72,7 +73,8 @@ class PensionAmountController @Inject()(implicit val mcc: MessagesControllerComp
   def submit(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = authAction.async { implicit request =>
     pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
       case Some(data) =>
-        validateIndex(pensionSchemeIndex, data.pensions.incomeFromPensions.uKPensionIncomes) match {
+        val pensionIncomesList: Seq[UkPensionIncomeViewModel] = data.pensions.incomeFromPensions.uKPensionIncomes
+        validateIndex(pensionSchemeIndex, pensionIncomesList) match {
           case Some(index) =>
             formsProvider.pensionAmountForm.bindFromRequest().fold(
               formWithErrors => Future.successful(BadRequest(pensionAmountView(formWithErrors, taxYear, index))),
@@ -92,7 +94,7 @@ class PensionAmountController @Inject()(implicit val mcc: MessagesControllerComp
                   Redirect(PensionSchemeStartDateController.show(taxYear, Some(index)))
                 }
               })
-          case None => Future.successful(Redirect(UkPensionIncomeSummaryController.show(taxYear)))
+          case None => Future.successful(Redirect(redirectOnBadIndexInSchemeLoop(pensionIncomesList, taxYear)))
         }
       case _ =>
         Future.successful(Redirect(UkPensionIncomeCYAController.show(taxYear)))

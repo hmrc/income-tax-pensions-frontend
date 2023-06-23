@@ -20,6 +20,7 @@ import common.MessageKeys.IncomeFromOverseasPensions.ForeignTaxCreditRelief
 import common.MessageKeys.YesNoForm
 import config.{AppConfig, ErrorHandler}
 import controllers.BaseYesNoWithIndexController
+import controllers.pensions.incomeFromOverseasPensions.routes._
 import controllers.predicates.AuthorisedAction
 import models.AuthorisationRequest
 import models.mongo.{PensionsCYAModel, PensionsUserData}
@@ -27,8 +28,8 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import play.twirl.api.Html
-import routes._
 import services.PensionSessionService
+import services.redirects.SimpleRedirectService.checkForExistingSchemes
 import utils.Clock
 import views.html.pensions.incomeFromOverseasPensions.ForeignTaxCreditReliefView
 
@@ -45,17 +46,24 @@ class ForeignTaxCreditReliefController @Inject()(messagesControllerComponents: M
 
   override protected def redirectToSummaryPage(taxYear: Int): Result = Redirect(controllers.pensions.routes.OverseasPensionsSummaryController.show(taxYear))
 
-  override def prepareView(pensionsUserData: PensionsUserData, taxYear: Int, index:Int)
+  override def prepareView(pensionsUserData: PensionsUserData, taxYear: Int, index: Int)
                           (implicit request: AuthorisationRequest[AnyContent]): Html = view(populateForm(pensionsUserData, index), taxYear, index)
 
   override def redirectWhenNoSessionData(taxYear: Int): Result = redirectToSummaryPage(taxYear)
 
-  override def redirectAfterUpdatingSessionData(taxYear: Int, index:Option[Int]): Result = Redirect(TaxableAmountController.show(taxYear, index))
+  override def redirectWhenIndexIsInvalid(data: PensionsUserData, taxYear: Int): Call =
+    checkForExistingSchemes(
+      nextPage = PensionOverseasIncomeCountryController.show(taxYear, None),
+      summaryPage = CountrySummaryListController.show(taxYear),
+      schemes = data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes
+    )
 
-  override def questionOpt(pensionsUserData: PensionsUserData, index:Int): Option[Boolean] =
+  override def redirectAfterUpdatingSessionData(taxYear: Int, index: Option[Int]): Result = Redirect(TaxableAmountController.show(taxYear, index))
+
+  override def questionOpt(pensionsUserData: PensionsUserData, index: Int): Option[Boolean] =
     pensionsUserData.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes(index).foreignTaxCreditReliefQuestion
 
-  override def proposedUpdatedSessionDataModel(currentSessionData: PensionsUserData, yesSelected: Boolean, index:Int): PensionsCYAModel = {
+  override def proposedUpdatedSessionDataModel(currentSessionData: PensionsUserData, yesSelected: Boolean, index: Int): PensionsCYAModel = {
     val incomeFromOverseasPension = currentSessionData.pensions.incomeFromOverseasPensions
     currentSessionData.pensions.copy(
       incomeFromOverseasPensions = incomeFromOverseasPension.copy(
@@ -64,7 +72,8 @@ class ForeignTaxCreditReliefController @Inject()(messagesControllerComponents: M
             incomeFromOverseasPension.overseasIncomePensionSchemes(index).copy(foreignTaxCreditReliefQuestion = Some(yesSelected)))
       ))
   }
-  override def whenFormIsInvalid(form: Form[Boolean], taxYear: Int, index:Int)
+
+  override def whenFormIsInvalid(form: Form[Boolean], taxYear: Int, index: Int)
                                 (implicit request: AuthorisationRequest[AnyContent]): Html = view(form, taxYear, index)
 
   override def errorMessageSet: YesNoForm = ForeignTaxCreditRelief

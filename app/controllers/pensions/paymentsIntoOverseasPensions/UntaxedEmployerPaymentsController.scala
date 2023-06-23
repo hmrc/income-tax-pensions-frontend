@@ -17,16 +17,15 @@
 package controllers.pensions.paymentsIntoOverseasPensions
 
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.paymentsIntoOverseasPensions.routes.{PensionsCustomerReferenceNumberController, ReliefsSchemeSummaryController}
+import controllers.pensions.paymentsIntoOverseasPensions.routes.PensionReliefTypeController
 import controllers.predicates.ActionsProvider
 import controllers.validatedSchemes
 import forms.FormsProvider
-import models.pension.charges.Relief
 import models.pension.pages.UntaxedEmployerPayments
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.PaymentsIntoOverseasPensionsService
-import services.redirects.SimpleRedirectService.checkForExistingSchemes
+import services.redirects.PaymentsIntoOverseasPensionsRedirects.redirectOnBadIndexInSchemeLoop
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.pensions.paymentsIntoOverseasPensions.UntaxedEmployerPaymentsView
 
@@ -48,7 +47,7 @@ class UntaxedEmployerPaymentsController @Inject()(actionsProvider: ActionsProvid
     val piopSessionData = sessionUserData.pensionsUserData.pensions.paymentsIntoOverseasPensions
 
     validatedSchemes(pensionSchemeIndex, piopSessionData.reliefs.map(_.customerReference)) match {
-      case Left(_) => Redirect(redirectOnBadIndex(piopSessionData.reliefs, taxYear))
+      case Left(_) => Redirect(redirectOnBadIndexInSchemeLoop(piopSessionData.reliefs, taxYear))
       case Right(_) => Ok(pageView(UntaxedEmployerPayments(taxYear, pensionSchemeIndex, piopSessionData,
         formsProvider.untaxedEmployerPayments(sessionUserData.user.isAgent))))
     }
@@ -59,7 +58,7 @@ class UntaxedEmployerPaymentsController @Inject()(actionsProvider: ActionsProvid
       val piopSessionData = sessionUserData.pensionsUserData.pensions.paymentsIntoOverseasPensions
 
       validatedSchemes(pensionSchemeIndex, piopSessionData.reliefs.map(_.customerReference)) match {
-        case Left(_) => Future.successful(Redirect(redirectOnBadIndex(piopSessionData.reliefs, taxYear)))
+        case Left(_) => Future.successful(Redirect(redirectOnBadIndexInSchemeLoop(piopSessionData.reliefs, taxYear)))
         case Right(_) => formsProvider.untaxedEmployerPayments(sessionUserData.user.isAgent).bindFromRequest().fold(
           formWithErrors => {
             Future.successful(
@@ -68,18 +67,11 @@ class UntaxedEmployerPaymentsController @Inject()(actionsProvider: ActionsProvid
           amount => {
             paymentsIntoOverseasService.updateUntaxedEmployerPayments(sessionUserData.pensionsUserData, amount, pensionSchemeIndex).map {
               case Left(_) => errorHandler.internalServerError()
-              case Right(userData) =>
-                Redirect(routes.PensionReliefTypeController.show(taxYear, pensionSchemeIndex))
+              case Right(userData) => Redirect(PensionReliefTypeController.show(taxYear, pensionSchemeIndex))
             }
           }
         )
       }
     }
   }
-
-  private def redirectOnBadIndex(reliefs: Seq[Relief], taxYear: Int): Call = checkForExistingSchemes(
-    nextPage = PensionsCustomerReferenceNumberController.show(taxYear, None),
-    summaryPage = ReliefsSchemeSummaryController.show(taxYear),
-    schemes = reliefs
-  )
 }

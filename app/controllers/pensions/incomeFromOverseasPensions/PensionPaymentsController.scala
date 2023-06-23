@@ -17,20 +17,22 @@
 package controllers.pensions.incomeFromOverseasPensions
 
 import config.{AppConfig, ErrorHandler}
+import controllers.pensions.incomeFromOverseasPensions.routes._
 import controllers.pensions.routes._
 import controllers.predicates.AuthorisedAction
 import controllers.predicates.TaxYearAction.taxYearAction
 import forms.{FormUtils, FormsProvider}
+import models.AuthorisationRequest
 import models.mongo.{PensionsCYAModel, PensionsUserData}
 import models.pension.charges.PensionScheme
-import models.AuthorisationRequest
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import routes._
 import services.PensionSessionService
+import services.redirects.IncomeFromOverseasPensionsRedirects.redirectOnBadIndexInSchemeLoop
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.incomeFromOverseasPensions.PensionPaymentsView
+
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -43,28 +45,23 @@ class PensionPaymentsController @Inject()(authAction: AuthorisedAction,
                                          (implicit mcc: MessagesControllerComponents, appConfig: AppConfig, ec: ExecutionContext, clock: Clock)
   extends FrontendController(mcc) with I18nSupport with SessionHelper with FormUtils {
 
-
-
-
-
-
   def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     pensionSessionService.getPensionSessionData(taxYear, request.user).map {
-        case Right(Some(data)) =>
+      case Right(Some(data)) =>
         validateIndex(index, data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes) match {
           case Some(i) => populateForm(data, taxYear, i)
           case None =>
-            Redirect(OverseasPensionsSummaryController.show(taxYear)) // Todo should redirect to another page
+            Redirect(redirectOnBadIndexInSchemeLoop(data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes, taxYear))
         }
-      case _ =>
-        Redirect(OverseasPensionsSummaryController.show(taxYear))
+      case _ => Redirect(OverseasPensionsSummaryController.show(taxYear))
     }
   }
 
   def submit(taxYear: Int, index: Option[Int]): Action[AnyContent] = authAction.async { implicit request =>
     pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
       case Right(Some(data)) =>
-        validateIndex(index, data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes) match {
+        val pensionSchemes = data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes
+        validateIndex(index, pensionSchemes) match {
           case Some(i) => formsProvider.pensionPaymentsForm(request.user).bindFromRequest().fold(
             formWithErrors => Future.successful(BadRequest(pensionPaymentsView(formWithErrors, taxYear, Some(i)))),
             amounts =>
@@ -72,7 +69,8 @@ class PensionPaymentsController @Inject()(authAction: AuthorisedAction,
                 Redirect(SpecialWithholdingTaxController.show(taxYear, index))
               )
           )
-          case None => Future.successful(Redirect(OverseasPensionsSummaryController.show(taxYear)))
+          case None =>
+            Future.successful(Redirect(redirectOnBadIndexInSchemeLoop(pensionSchemes, taxYear)))
         }
       case _ =>
         Future.successful(Redirect(OverseasPensionsSummaryController.show(taxYear)))
@@ -102,7 +100,7 @@ class PensionPaymentsController @Inject()(authAction: AuthorisedAction,
 
   private def updatePensionScheme(data: PensionsUserData, amountBeforeTaxOpt: Option[BigDecimal], nonUkTaxPaidOpt: Option[BigDecimal], taxYear: Int, index: Int)
                                  (redirect: Result)
-                                 (implicit request: AuthorisationRequest[AnyContent]) = {
+                                 (implicit request: AuthorisationRequest[AnyContent]): Future[Result] = {
     val viewModel = data.pensions.incomeFromOverseasPensions
     val updatedCyaModel: PensionsCYAModel = {
       data.pensions.copy(

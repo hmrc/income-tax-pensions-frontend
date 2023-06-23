@@ -17,17 +17,16 @@
 package controllers.pensions.paymentsIntoOverseasPensions
 
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.paymentsIntoOverseasPensions.routes.{PensionsCustomerReferenceNumberController, ReliefsSchemeSummaryController}
+import controllers.pensions.paymentsIntoOverseasPensions.routes.ReliefsSchemeDetailsController
 import controllers.predicates.ActionsProvider
 import controllers.validatedIndex
 import forms.FormsProvider
 import models.mongo.PensionsUserData
-import models.pension.charges.Relief
 import models.requests.UserSessionDataRequest
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.PensionSessionService
-import services.redirects.SimpleRedirectService.checkForExistingSchemes
+import services.redirects.PaymentsIntoOverseasPensionsRedirects.redirectOnBadIndexInSchemeLoop
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.paymentsIntoOverseasPensions.SF74ReferenceView
@@ -57,7 +56,7 @@ class SF74ReferenceController @Inject()(
           case None => Future.successful(Ok(view(formsProvider.sf74ReferenceIdForm, taxYear, reliefIndex)))
         }
       case _ =>
-        Future.successful(Redirect(redirectOnBadIndex(piopReliefs, taxYear)))
+        Future.successful(Redirect(redirectOnBadIndexInSchemeLoop(piopReliefs, taxYear)))
     }
   }
 
@@ -70,7 +69,7 @@ class SF74ReferenceController @Inject()(
             formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear, reliefIndex))),
             sf74Reference => updateSessionData(userSessionDataRequest.pensionsUserData, Some(sf74Reference), taxYear, idx))
         case _ =>
-          Future.successful(Redirect(redirectOnBadIndex(reliefs, taxYear)))
+          Future.successful(Redirect(redirectOnBadIndexInSchemeLoop(reliefs, taxYear)))
       }
   }
 
@@ -88,13 +87,8 @@ class SF74ReferenceController @Inject()(
     )
     pensionSessionService.createOrUpdateSessionData(request.user,
       updatedCyaModel, taxYear, pensionsUserData.isPriorSubmission)(errorHandler.internalServerError()) {
-      Redirect(routes.ReliefsSchemeDetailsController.show(taxYear, Some(idx)))
+      Redirect(ReliefsSchemeDetailsController.show(taxYear, Some(idx)))
     }
   }
 
-  private def redirectOnBadIndex(reliefs: Seq[Relief], taxYear: Int): Call = checkForExistingSchemes(
-    nextPage = PensionsCustomerReferenceNumberController.show(taxYear, None),
-    summaryPage = ReliefsSchemeSummaryController.show(taxYear),
-    schemes = reliefs
-  )
 }

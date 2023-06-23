@@ -20,14 +20,17 @@ import common.MessageKeys
 import common.MessageKeys.UnauthorisedPayments.SpecialWithholdingTax
 import config.{AppConfig, ErrorHandler}
 import controllers.BaseYesNoAmountWithIndexController
+import controllers.pensions.incomeFromOverseasPensions.routes._
+import controllers.pensions.routes._
 import controllers.predicates.AuthorisedAction
 import models.AuthorisationRequest
 import models.mongo.{PensionsCYAModel, PensionsUserData}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
-import play.api.mvc.{AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc.{AnyContent, Call, MessagesControllerComponents, Result}
 import play.twirl.api.Html
 import services.PensionSessionService
+import services.redirects.SimpleRedirectService.checkForExistingSchemes
 import utils.Clock
 import views.html.pensions.incomeFromOverseasPensions.SpecialWithholdingTaxView
 
@@ -40,36 +43,42 @@ class SpecialWithholdingTaxController @Inject()(messagesControllerComponents: Me
                                                 pensionSessionService: PensionSessionService,
                                                 errorHandler: ErrorHandler)
                                                (implicit appConfig: AppConfig, clock: Clock)
-  extends BaseYesNoAmountWithIndexController(messagesControllerComponents, pensionSessionService, authAction, errorHandler) with I18nSupport{
+  extends BaseYesNoAmountWithIndexController(messagesControllerComponents, pensionSessionService, authAction, errorHandler) with I18nSupport {
 
-  override protected def redirectToSummaryPage(taxYear: Int): Result = Redirect(controllers.pensions.routes.OverseasPensionsSummaryController.show(taxYear))
+  override protected def redirectToSummaryPage(taxYear: Int): Result = Redirect(OverseasPensionsSummaryController.show(taxYear))
 
   // TODO: Should we be redirecting to the CYA Page? It doesn't quite make sense as we won't have any session data.
   override def redirectWhenNoSessionData(taxYear: Int): Result = redirectToSummaryPage(taxYear)
 
-  override def redirectAfterUpdatingSessionData(taxYear: Int, index : Int): Result =
-    Redirect(controllers.pensions.incomeFromOverseasPensions.routes.ForeignTaxCreditReliefController.show(taxYear, Some(index)))
+  override def redirectAfterUpdatingSessionData(taxYear: Int, index: Int): Result =
+    Redirect(ForeignTaxCreditReliefController.show(taxYear, Some(index)))
 
+  override def redirectWhenIndexIsInvalid(data: PensionsUserData, taxYear: Int): Call =
+    checkForExistingSchemes(
+      nextPage = PensionOverseasIncomeCountryController.show(taxYear, None),
+      summaryPage = CountrySummaryListController.show(taxYear),
+      schemes = data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes
+    )
 
-  override def questionOpt(pensionsUserData: PensionsUserData, index : Int): Option[Boolean] =
+  override def questionOpt(pensionsUserData: PensionsUserData, index: Int): Option[Boolean] =
     pensionsUserData.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes(index).specialWithholdingTaxQuestion
 
-  override def amountOpt(pensionsUserData: PensionsUserData, index : Int): Option[BigDecimal] =
+  override def amountOpt(pensionsUserData: PensionsUserData, index: Int): Option[BigDecimal] =
     pensionsUserData.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes(index).specialWithholdingTaxAmount
 
 
   override def proposedUpdatedSessionDataModel(currentSessionData: PensionsUserData,
-                                               yesSelected: Boolean, amountOpt: Option[BigDecimal], index : Int): PensionsCYAModel =
+                                               yesSelected: Boolean, amountOpt: Option[BigDecimal], index: Int): PensionsCYAModel =
     currentSessionData.pensions.copy(
-            incomeFromOverseasPensions = currentSessionData.pensions.incomeFromOverseasPensions.copy(
-              overseasIncomePensionSchemes = currentSessionData.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes
-                .updated(index, currentSessionData.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes(index).copy(
-                  specialWithholdingTaxQuestion = Some(yesSelected),
-                  specialWithholdingTaxAmount = amountOpt
-                ))))
+      incomeFromOverseasPensions = currentSessionData.pensions.incomeFromOverseasPensions.copy(
+        overseasIncomePensionSchemes = currentSessionData.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes
+          .updated(index, currentSessionData.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes(index).copy(
+            specialWithholdingTaxQuestion = Some(yesSelected),
+            specialWithholdingTaxAmount = amountOpt
+          ))))
 
 
-  override def whenFormIsInvalid(form: Form[(Boolean, Option[BigDecimal])], taxYear: Int, index : Int)
+  override def whenFormIsInvalid(form: Form[(Boolean, Option[BigDecimal])], taxYear: Int, index: Int)
                                 (implicit request: AuthorisationRequest[AnyContent]): Html =
     view(form, taxYear, Some(index))
 
@@ -77,11 +86,11 @@ class SpecialWithholdingTaxController @Inject()(messagesControllerComponents: Me
 
   override def whenSessionDataIsInsufficient(taxYear: Int): Result = redirectToSummaryPage(taxYear)
 
-  override def sessionDataIsSufficient(pensionsUserData: PensionsUserData, index : Int): Boolean =
+  override def sessionDataIsSufficient(pensionsUserData: PensionsUserData, index: Int): Boolean =
     pensionsUserData.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes(index).pensionPaymentAmount.isDefined ||
-          pensionsUserData.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes(index).pensionPaymentTaxPaid.isDefined
+      pensionsUserData.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes(index).pensionPaymentTaxPaid.isDefined
 
 
-  override def prepareView(pensionsUserData: PensionsUserData, taxYear: Int, index : Int)
+  override def prepareView(pensionsUserData: PensionsUserData, taxYear: Int, index: Int)
                           (implicit request: AuthorisationRequest[AnyContent]): Html = view(populateForm(pensionsUserData, index), taxYear, Some(index))
 }

@@ -23,6 +23,7 @@ import controllers.validatedIndex
 import models.pension.statebenefits.UkPensionIncomeViewModel
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.redirects.IncomeFromPensionsRedirects.redirectOnBadIndexInSchemeLoop
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.SessionHelper
 import views.html.pensions.incomeFromPensions.PensionSchemeSummaryView
@@ -40,7 +41,7 @@ class PensionSchemeSummaryController @Inject()(view: PensionSchemeSummaryView,
       validatedIndex(pensionSchemeIndex, pensionIncomesList.size) match {
         case Some(idx) =>
           Ok(view(taxYear, pensionIncomesList(idx), pensionSchemeIndex))
-        case _ => Redirect(PensionsSummaryController.show(taxYear))
+        case _ => Redirect(redirectOnBadIndexInSchemeLoop(pensionIncomesList, taxYear))
       }
   }
 }

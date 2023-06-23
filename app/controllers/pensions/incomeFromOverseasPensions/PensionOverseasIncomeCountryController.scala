@@ -21,6 +21,7 @@ import controllers.predicates.AuthorisedAction
 import forms.{Countries, CountryForm}
 import models.User
 import play.api.data.Form
+import services.redirects.IncomeFromOverseasPensionsRedirects.redirectOnBadIndexInSchemeLoop
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import routes._
@@ -56,19 +57,17 @@ class PensionOverseasIncomeCountryController @Inject()(authAction: AuthorisedAct
           val countriesToInclude = Countries.overseasCountries
           val form = countryForm(request.user)
           index.fold {
-            Future.successful(Ok(
-              pensionOverseasIncomeCountryView(
-                form, countriesToInclude, taxYear, None)))
+            Future.successful(Ok(pensionOverseasIncomeCountryView(form, countriesToInclude, taxYear, None)))
           } {
             countryIndex =>
               val prefillValue = data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes.lift(countryIndex)
               prefillValue match {
                 case Some(_) =>
-                  Future.successful(Ok(
-                    pensionOverseasIncomeCountryView(
-                      form, countriesToInclude, taxYear, Some(countryIndex))))
+                  Future.successful(Ok(pensionOverseasIncomeCountryView(form, countriesToInclude, taxYear, Some(countryIndex))))
                 case None =>
-                  Future.successful(Redirect(OverseasPensionsSummaryController.show(taxYear)))  //invalid index -> Overseas Pension summary
+                  Future.successful(Redirect(
+                    redirectOnBadIndexInSchemeLoop(data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes, taxYear)
+                  ))  //invalid index ->  Loop start or summary
               }
           }
         case None =>
@@ -110,7 +109,7 @@ class PensionOverseasIncomeCountryController @Inject()(authAction: AuthorisedAct
                 Redirect(PensionPaymentsController.show(taxYear, currentIndex))
               }
             } else {
-              Future.successful(Redirect(OverseasPensionsSummaryController.show(taxYear))) //invalid index -> Overseas Pension summary
+              Future.successful(Redirect(redirectOnBadIndexInSchemeLoop(pensionSchemeList, taxYear))) //invalid index -> Loop start or summary
             }
 
           case _ => Future.successful(Redirect(OverseasPensionsSummaryController.show(taxYear))) //No session data -> Overseas Pension summary

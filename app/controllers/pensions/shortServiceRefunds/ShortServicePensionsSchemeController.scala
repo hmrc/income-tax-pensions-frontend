@@ -17,7 +17,6 @@
 package controllers.pensions.shortServiceRefunds
 
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.routes._
 import controllers.pensions.shortServiceRefunds.routes.RefundSummaryController
 import controllers.predicates.ActionsProvider
 import controllers.validatedIndex
@@ -30,6 +29,7 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
+import services.redirects.ShortServiceRefundsRedirects.redirectOnBadIndexInSchemeLoop
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.shortServiceRefunds.ShortServicePensionsSchemeView
@@ -54,7 +54,7 @@ class ShortServicePensionsSchemeController @Inject()(actionsProvider: ActionsPro
           val form = rfPensionSchemeForm(userSessionDataRequest.user, isUKScheme).fill(updateFormModel(ssrPensionSchemes(idx)))
           Ok(view(form, taxYear, isUKScheme, idx))
         case _ =>
-          Redirect(OverseasPensionsSummaryController.show(taxYear))
+          Redirect(redirectOnBadIndexInSchemeLoop(ssrPensionSchemes, taxYear))
       }
   }
 
@@ -66,46 +66,46 @@ class ShortServicePensionsSchemeController @Inject()(actionsProvider: ActionsPro
           val isUKScheme = rfPensionSchemes(idx).ukRefundCharge.contains(true)
           rfPensionSchemeForm(userSessionDataRequest.user, isUKScheme).bindFromRequest().fold(
             formWithErrors =>
-               Future.successful(BadRequest(view(formWithErrors, taxYear, isUKScheme, idx)))
-              ,
+              Future.successful(BadRequest(view(formWithErrors, taxYear, isUKScheme, idx)))
+            ,
             ssrPensionScheme => {
               val updatedCYAModel = updateViewModel(userSessionDataRequest.pensionsUserData, ssrPensionScheme, idx)
               pensionSessionService.createOrUpdateSessionData(userSessionDataRequest.user, updatedCYAModel, taxYear,
-                               userSessionDataRequest.pensionsUserData.isPriorSubmission)(errorHandler.internalServerError()) {
+                userSessionDataRequest.pensionsUserData.isPriorSubmission)(errorHandler.internalServerError()) {
                 Redirect(RefundSummaryController.show(taxYear))
               }
             }
           )
         case _ =>
-          Future.successful(Redirect(OverseasPensionsSummaryController.show(taxYear)))
+          Future.successful(Redirect(redirectOnBadIndexInSchemeLoop(rfPensionSchemes, taxYear)))
       }
   }
-   
-  
+
+
   private def rfPensionSchemeForm(user: User, isUKScheme: Boolean): Form[TcSsrPensionsSchemeFormModel] =
     tcSsrPensionSchemeForm(
       agentOrIndividual = if (user.isAgent) "agent" else "individual", isUKScheme
-  )
-  
+    )
+
   private def updateFormModel(scheme: OverseasRefundPensionScheme) =
     TcSsrPensionsSchemeFormModel(
       providerName = scheme.name.getOrElse(""),
       schemeReference = (if (scheme.ukRefundCharge.contains(true)) scheme.pensionSchemeTaxReference else scheme.qualifyingRecognisedOverseasPensionScheme)
         .getOrElse(""),
       providerAddress = scheme.providerAddress.getOrElse(""),
-      countryId = scheme.alphaTwoCountryCode.fold{
+      countryId = scheme.alphaTwoCountryCode.fold {
         Countries.get2AlphaCodeFrom3AlphaCode(scheme.alphaThreeCountryCode)
       } {
         alpha2 => Some(alpha2)
       }
     )
-  
+
   private def updateViewModel(pensionsUserdata: PensionsUserData, scheme: TcSsrPensionsSchemeFormModel, index: Int): PensionsCYAModel = {
     val viewModel = pensionsUserdata.pensions.shortServiceRefunds
     val updatedScheme = {
       val commonUpdatedScheme = viewModel.refundPensionScheme(index)
         .copy(name = Some(scheme.providerName), providerAddress = Some(scheme.providerAddress))
-      
+
       if (commonUpdatedScheme.ukRefundCharge.contains(true)) {
         commonUpdatedScheme.copy(pensionSchemeTaxReference = Some(scheme.schemeReference))
       } else {
@@ -115,10 +115,10 @@ class ShortServicePensionsSchemeController @Inject()(actionsProvider: ActionsPro
     }
     pensionsUserdata.pensions.copy(
       shortServiceRefunds = viewModel.copy(
-         refundPensionScheme= viewModel.refundPensionScheme.updated(index,updatedScheme)
+        refundPensionScheme = viewModel.refundPensionScheme.updated(index, updatedScheme)
       )
     )
   }
 
-  
+
 }
