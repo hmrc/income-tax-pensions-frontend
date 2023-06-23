@@ -17,6 +17,7 @@
 package services.redirects
 
 import models.mongo.{PensionsCYAModel, PensionsUserData}
+import models.pension.PensionCYABaseModel
 import play.api.Logging
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{Call, Result}
@@ -46,6 +47,14 @@ object SimpleRedirectService extends Logging {
     redirectOrData match {
       case Right(cya) => continue(cya)
       case Left(redirect) => Future.successful(redirect)
+    }
+  }
+
+  def isFinishedCheck(cya: PensionCYABaseModel, taxYear: Int, continueRedirect: Call, cyaRedirectFn: Int => Call): Result = {
+    if (cya.isFinished) {
+      Redirect(cyaRedirectFn(taxYear))
+    } else {
+      Redirect(continueRedirect)
     }
   }
 

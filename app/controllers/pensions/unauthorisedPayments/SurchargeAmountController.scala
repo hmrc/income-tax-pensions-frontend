@@ -17,18 +17,18 @@
 package controllers.pensions.unauthorisedPayments
 
 import config.{AppConfig, ErrorHandler}
+import controllers.pensions.unauthorisedPayments.routes.NonUKTaxOnAmountResultedInSurchargeController
 import controllers.predicates.AuthorisedAction
 import controllers.predicates.TaxYearAction.taxYearAction
 import forms.{AmountForm, FormUtils}
 import models.mongo.PensionsCYAModel
 import play.api.data.Form
-import controllers.pensions.unauthorisedPayments.routes.NonUKTaxOnAmountResultedInSurchargeController
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
-import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
+import services.redirects.SimpleRedirectService.{isFinishedCheck, redirectBasedOnCurrentAnswers}
 import services.redirects.UnauthorisedPaymentsPages.SurchargedAmountPage
-import services.redirects.UnauthorisedPaymentsRedirects.{cyaPageCall, isFinishedCheck, journeyCheck}
+import services.redirects.UnauthorisedPaymentsRedirects.{cyaPageCall, journeyCheck}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.unauthorisedPayments.SurchargeAmountView
@@ -79,7 +79,7 @@ class SurchargeAmountController @Inject()(authAction: AuthorisedAction,
 
             pensionSessionService.createOrUpdateSessionData(request.user,
               updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
-              isFinishedCheck(updatedCyaModel, taxYear, NonUKTaxOnAmountResultedInSurchargeController.show(taxYear))
+              isFinishedCheck(updatedCyaModel.unauthorisedPayments, taxYear, NonUKTaxOnAmountResultedInSurchargeController.show(taxYear), cyaPageCall)
             }
           }
         }

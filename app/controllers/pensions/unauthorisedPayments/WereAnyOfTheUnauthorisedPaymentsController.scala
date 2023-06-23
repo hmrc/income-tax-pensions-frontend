@@ -85,13 +85,10 @@ class WereAnyOfTheUnauthorisedPaymentsController @Inject()(implicit val cc: Mess
                   unauthorisedPayments = viewModel.copy(ukPensionSchemesQuestion = Some(yesNo)))
               }
 
-              val redirectLocation =
-                if (yesNo) UnauthorisedPensionSchemeTaxReferenceController.show(taxYear, None)
-                else UnauthorisedPaymentsCYAController.show(taxYear)
               pensionSessionService.createOrUpdateSessionData(
                 request.user, updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
-                if (yesNo) Redirect(controllers.pensions.unauthorisedPayments.routes.UnauthorisedPensionSchemeTaxReferenceController.show(taxYear, None))
-                else Redirect(controllers.pensions.unauthorisedPayments.routes.UnauthorisedPaymentsCYAController.show(taxYear))
+                if (yesNo) Redirect(UnauthorisedPensionSchemeTaxReferenceController.show(taxYear, None))
+                else Redirect(UnauthorisedPaymentsCYAController.show(taxYear))
               }
             }
         }

@@ -25,9 +25,9 @@ import models.mongo.PensionsCYAModel
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
-import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
+import services.redirects.SimpleRedirectService.{isFinishedCheck, redirectBasedOnCurrentAnswers}
 import services.redirects.UnauthorisedPaymentsPages.NonUkTaxOnNotSurchargedAmountPage
-import services.redirects.UnauthorisedPaymentsRedirects.{cyaPageCall, isFinishedCheck, journeyCheck}
+import services.redirects.UnauthorisedPaymentsRedirects.{cyaPageCall, journeyCheck}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.unauthorisedPayments.NonUkTaxOnAmountNotResultedInSurchargeView
@@ -87,7 +87,7 @@ class NonUKTaxOnAmountNotResultedInSurchargeController @Inject()(authAction: Aut
 
                 pensionSessionService.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear, data.isPriorSubmission
                 )(errorHandler.internalServerError()) {
-                  isFinishedCheck(updatedCyaModel, taxYear, WereAnyOfTheUnauthorisedPaymentsController.show(taxYear))
+                  isFinishedCheck(updatedCyaModel.unauthorisedPayments, taxYear, WereAnyOfTheUnauthorisedPaymentsController.show(taxYear), cyaPageCall)
                 }
               })
           }

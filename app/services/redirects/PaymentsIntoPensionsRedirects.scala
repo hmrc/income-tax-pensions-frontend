@@ -27,14 +27,6 @@ object PaymentsIntoPensionsRedirects { //scalastyle:off magic.number
 
   def cyaPageCall(taxYear: Int): Call = PaymentsIntoPensionsCYAController.show(taxYear)
 
-  def isFinishedCheck(cya: PensionsCYAModel, taxYear: Int, redirect: Call): Result = {
-    if (cya.paymentsIntoPension.isFinished) {
-      Redirect(cyaPageCall(taxYear))
-    } else {
-      Redirect(redirect)
-    }
-  }
-
   def journeyCheck(currentPage: PaymentsIntoPensionPages, cya: PensionsCYAModel, taxYear: Int): Option[Result] = {
     val pIP = cya.paymentsIntoPension
     if (isPageValidInJourney(currentPage.journeyNo, pIP) && previousQuestionIsAnswered(currentPage.journeyNo, pIP)) {
@@ -43,12 +35,12 @@ object PaymentsIntoPensionsRedirects { //scalastyle:off magic.number
       Some(Redirect(ReliefAtSourcePensionsController.show(taxYear)))
     }
   }
-  
+
   private val pageValidInJourneyMap: Map[Int, PaymentsIntoPensionViewModel => Boolean] = {
-    
-    val rasPaymentQuestionFn = {pIPViewModel: PaymentsIntoPensionViewModel => pIPViewModel.rasPensionPaymentQuestion.getOrElse(false)}
+
+    val rasPaymentQuestionFn = { pIPViewModel: PaymentsIntoPensionViewModel => pIPViewModel.rasPensionPaymentQuestion.getOrElse(false) }
     val taxReliefNotClaimedQuestionFn = { pIPViewModel: PaymentsIntoPensionViewModel => pIPViewModel.pensionTaxReliefNotClaimedQuestion.getOrElse(false) }
-    
+
     Map(
       // ^ 2,3,5 need Q1 ^
       2 -> rasPaymentQuestionFn, 3 -> rasPaymentQuestionFn, 5 -> rasPaymentQuestionFn,
@@ -98,7 +90,7 @@ object PaymentsIntoPensionsRedirects { //scalastyle:off magic.number
       else {pIPViewModel.pensionTaxReliefNotClaimedQuestion.isDefined}
     }
   )
-  
+
   private def isPageValidInJourney(pageNumber: Int, pIPViewModel: PaymentsIntoPensionViewModel): Boolean =
     pageValidInJourneyMap.getOrElse(pageNumber, { _: PaymentsIntoPensionViewModel => true })(pIPViewModel)
 

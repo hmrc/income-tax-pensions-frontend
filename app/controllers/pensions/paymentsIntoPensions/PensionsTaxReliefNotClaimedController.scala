@@ -26,8 +26,8 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
 import services.redirects.PaymentsIntoPensionPages.TaxReliefNotClaimedPage
 import services.redirects.PaymentsIntoPensionsRedirects
-import services.redirects.PaymentsIntoPensionsRedirects.{cyaPageCall, isFinishedCheck, journeyCheck}
-import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
+import services.redirects.PaymentsIntoPensionsRedirects.{cyaPageCall, journeyCheck}
+import services.redirects.SimpleRedirectService.{isFinishedCheck, redirectBasedOnCurrentAnswers}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.paymentsIntoPensions.PensionsTaxReliefNotClaimedView
@@ -94,7 +94,7 @@ class PensionsTaxReliefNotClaimedController @Inject()(authAction: AuthorisedActi
                   }
                   pensionSessionService.createOrUpdateSessionData(request.user,
                     updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
-                    isFinishedCheck(updatedCyaModel, taxYear, redirectLocation)
+                    isFinishedCheck(updatedCyaModel.paymentsIntoPension, taxYear, redirectLocation, cyaPageCall)
                   }
               }
           }

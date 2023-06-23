@@ -26,8 +26,8 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
 import services.redirects.PaymentsIntoPensionPages.RetirementAnnuityAmountPage
-import services.redirects.PaymentsIntoPensionsRedirects.{cyaPageCall, isFinishedCheck, journeyCheck}
-import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
+import services.redirects.PaymentsIntoPensionsRedirects.{cyaPageCall, journeyCheck}
+import services.redirects.SimpleRedirectService.{isFinishedCheck, redirectBasedOnCurrentAnswers}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.paymentsIntoPensions.RetirementAnnuityAmountView
@@ -79,8 +79,7 @@ class RetirementAnnuityAmountController @Inject()(authAction: AuthorisedAction,
             }
             pensionSessionService.createOrUpdateSessionData(request.user,
               updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
-              Redirect(WorkplacePensionController.show(taxYear = taxYear))
-              isFinishedCheck(updatedCyaModel, taxYear, WorkplacePensionController.show(taxYear))
+              isFinishedCheck(updatedCyaModel.paymentsIntoPension, taxYear, WorkplacePensionController.show(taxYear), cyaPageCall)
             }
           }
         }

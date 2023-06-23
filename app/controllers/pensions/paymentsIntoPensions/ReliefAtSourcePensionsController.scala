@@ -24,7 +24,8 @@ import models.mongo.PensionsCYAModel
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
-import services.redirects.PaymentsIntoPensionsRedirects.isFinishedCheck
+import services.redirects.PaymentsIntoPensionsRedirects.cyaPageCall
+import services.redirects.SimpleRedirectService.isFinishedCheck
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.paymentsIntoPensions.ReliefAtSourcePensionsView
@@ -87,7 +88,7 @@ class ReliefAtSourcePensionsController @Inject()(authAction: AuthorisedAction,
 
             pensionSessionService.createOrUpdateSessionData(request.user,
               updatedCyaModel, taxYear, optData.exists(_.isPriorSubmission))(errorHandler.internalServerError()) {
-              isFinishedCheck(updatedCyaModel, taxYear, redirectLocation)
+              isFinishedCheck(updatedCyaModel.paymentsIntoPension, taxYear, redirectLocation, cyaPageCall)
             }
         }
       }

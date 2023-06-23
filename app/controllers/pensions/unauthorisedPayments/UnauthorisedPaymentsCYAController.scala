@@ -17,6 +17,7 @@
 package controllers.pensions.unauthorisedPayments
 
 import config.{AppConfig, ErrorHandler}
+import controllers.pensions.routes._
 import controllers.predicates.AuthorisedAction
 import controllers.predicates.TaxYearAction.taxYearAction
 import models.pension.AllPensionsData
@@ -24,10 +25,9 @@ import models.pension.AllPensionsData.generateCyaFromPrior
 import models.pension.charges.UnauthorisedPaymentsViewModel
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.redirects.UnauthorisedPaymentsRedirects.cyaPageCall
 import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
 import services.redirects.UnauthorisedPaymentsPages.CYAPage
-import services.redirects.UnauthorisedPaymentsRedirects.journeyCheck
+import services.redirects.UnauthorisedPaymentsRedirects.{cyaPageCall, journeyCheck}
 import services.{PensionChargesService, PensionSessionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
@@ -48,12 +48,12 @@ class UnauthorisedPaymentsCYAController @Inject()(authAction: AuthorisedAction,
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
 
 
-    def cyaDataIsEmpty(priorData: AllPensionsData): Future[Result] ={
-        val cyaModel = generateCyaFromPrior(priorData)
-        pensionSessionService.createOrUpdateSessionData(request.user,
-          cyaModel, taxYear, isPriorSubmission = false)(
-          errorHandler.internalServerError())(
-          Ok(view(taxYear, cyaModel.unauthorisedPayments)))
+    def cyaDataIsEmpty(priorData: AllPensionsData): Future[Result] = {
+      val cyaModel = generateCyaFromPrior(priorData)
+      pensionSessionService.createOrUpdateSessionData(request.user,
+        cyaModel, taxYear, isPriorSubmission = false)(
+        errorHandler.internalServerError())(
+        Ok(view(taxYear, cyaModel.unauthorisedPayments)))
     }
 
     def unauthorisedPaymentsCYAExists(cya: UnauthorisedPaymentsViewModel): Future[Result] = {
@@ -83,9 +83,8 @@ class UnauthorisedPaymentsCYAController @Inject()(authAction: AuthorisedAction,
   def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
     //TODO: missing the comparison of session with Prior data
     pensionChargesService.saveUnauthorisedViewModel(request.user, taxYear).map {
-      case Left(_) =>
-        errorHandler.internalServerError()
-      case Right(_) => Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear))
+      case Left(_) => errorHandler.internalServerError()
+      case Right(_) => Redirect(PensionsSummaryController.show(taxYear))
     }
   }
 }

@@ -17,6 +17,7 @@
 package controllers.pensions.paymentsIntoPensions
 
 import config.{AppConfig, ErrorHandler}
+import controllers.pensions.paymentsIntoPensions.routes._
 import controllers.predicates.AuthorisedAction
 import controllers.predicates.TaxYearAction.taxYearAction
 import models.mongo.PensionsCYAModel
@@ -25,8 +26,8 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
 import services.redirects.PaymentsIntoPensionPages.RetirementAnnuityPage
-import services.redirects.PaymentsIntoPensionsRedirects.{cyaPageCall, isFinishedCheck, journeyCheck}
-import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
+import services.redirects.PaymentsIntoPensionsRedirects.{cyaPageCall, journeyCheck}
+import services.redirects.SimpleRedirectService.{isFinishedCheck, redirectBasedOnCurrentAnswers}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.paymentsIntoPensions.PayIntoRetirementAnnuityContractView
@@ -73,15 +74,12 @@ class RetirementAnnuityController @Inject()(authAction: AuthorisedAction,
               pensionsCYAModel.copy(paymentsIntoPension = viewModel.copy(retirementAnnuityContractPaymentsQuestion = Some(yesNo),
                 totalRetirementAnnuityContractPayments = if (yesNo) viewModel.totalRetirementAnnuityContractPayments else None))
             }
-            val redirectLocation = if (yesNo) {
-              controllers.pensions.paymentsIntoPensions.routes.RetirementAnnuityAmountController.show(taxYear)
-            } else {
-              controllers.pensions.paymentsIntoPensions.routes.WorkplacePensionController.show(taxYear)
-            }
+            val redirectLocation = if (yesNo) RetirementAnnuityAmountController.show(taxYear)
+            else controllers.pensions.paymentsIntoPensions.routes.WorkplacePensionController.show(taxYear)
 
             pensionSessionService.createOrUpdateSessionData(request.user,
               updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
-              isFinishedCheck(updatedCyaModel, taxYear, redirectLocation)
+              isFinishedCheck(updatedCyaModel.paymentsIntoPension, taxYear, redirectLocation, cyaPageCall)
             }
           }
         }
