@@ -29,7 +29,7 @@ case class ForeignPension(
                            specialWithholdingTax: Option[BigDecimal],
                            foreignTaxCreditRelief: Option[Boolean]
                          ) extends PensionIncomeSubRequestModel {
-  def isEmpty: Boolean = false
+  val isEmpty: Boolean = false
 }
 
 object ForeignPension {
@@ -59,7 +59,7 @@ case class OverseasPensionContribution(
                                         dblTaxationTreaty: Option[String],
                                         sf74Reference: Option[String]
                                       ) extends PensionIncomeSubRequestModel {
-  override def isEmpty: Boolean = false
+  val isEmpty: Boolean = false
 }
 
 object OverseasPensionContribution {
@@ -107,12 +107,12 @@ object EncryptedPensionIncome {
 
 case class ForeignPensionContainer(fp: Seq[ForeignPension]) extends PensionIncomeSubRequestModel {
   override def isEmpty: Boolean = {
-    fp.isEmpty || fp.forall(_.isEmpty)
+    fp.isEmpty
   }
 }
 case class OverseasPensionContributionContainer(opc: Seq[OverseasPensionContribution]) extends PensionIncomeSubRequestModel {
   override def isEmpty: Boolean = {
-    opc.isEmpty || opc.forall(_.isEmpty)
+    opc.isEmpty
   }
 }
 
@@ -140,8 +140,7 @@ case class CreateUpdatePensionIncomeModel(foreignPension: Option[ForeignPensionC
     excludedModel match {
       case Some(OverseasPensionContributionContainer(_)) => foreignPension.isEmpty || foreignPension.exists(_.isEmpty)
       case Some(ForeignPensionContainer(_)) => overseasPensionContribution.isEmpty || overseasPensionContribution.exists(_.isEmpty)
-      case _ => overseasPensionContribution.isEmpty || overseasPensionContribution.exists(_.isEmpty) &&
-        foreignPension.isEmpty || foreignPension.exists(_.isEmpty)
+      case None => true
     }
   }
 }
