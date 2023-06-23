@@ -22,7 +22,7 @@ import builders.PensionsUserDataBuilder.aPensionsUserData
 import builders.UserBuilder.aUser
 import config.{MockIncomeTaxUserDataConnector, MockPensionUserDataRepository, MockPensionsConnector}
 import models.mongo.{DataNotFound, DataNotUpdated}
-import models.pension.income.CreateUpdatePensionIncomeModel
+import models.pension.income.{CreateUpdatePensionIncomeModel, ForeignPensionContainer, OverseasPensionContributionContainer}
 import models.pension.reliefs.{CreateOrUpdatePensionReliefsModel, Reliefs}
 import models.{APIErrorBodyModel, APIErrorModel, IncomeTaxUserData}
 import org.scalatest.concurrent.ScalaFutures
@@ -49,8 +49,8 @@ class PensionsPaymentsOverseasServiceSpec extends UnitTest
 
 
       val model1 = CreateUpdatePensionIncomeModel(
-        foreignPension = priorUserData.pensions.flatMap(_.pensionIncome.flatMap(_.foreignPension)),
-        overseasPensionContribution = Some(sessionUserData.pensions.paymentsIntoOverseasPensions.toPensionContributions)
+        foreignPension = priorUserData.pensions.flatMap(_.pensionIncome.flatMap(_.foreignPension)).map(ForeignPensionContainer),
+        overseasPensionContribution = Some(OverseasPensionContributionContainer(sessionUserData.pensions.paymentsIntoOverseasPensions.toPensionContributions))
       )
 
       val model2 = CreateOrUpdatePensionReliefsModel(
@@ -88,8 +88,8 @@ class PensionsPaymentsOverseasServiceSpec extends UnitTest
 
 
       val model1 = CreateUpdatePensionIncomeModel(
-        foreignPension = priorUserData.pensions.flatMap(_.pensionIncome.flatMap(_.foreignPension)),
-        overseasPensionContribution = Some(sessionUserData.pensions.paymentsIntoOverseasPensions.toPensionContributions)
+        foreignPension = priorUserData.pensions.flatMap(_.pensionIncome.flatMap(_.foreignPension)).map(ForeignPensionContainer),
+        overseasPensionContribution = Some(OverseasPensionContributionContainer(sessionUserData.pensions.paymentsIntoOverseasPensions.toPensionContributions))
       )
 
       val model2 = CreateOrUpdatePensionReliefsModel(
@@ -118,10 +118,9 @@ class PensionsPaymentsOverseasServiceSpec extends UnitTest
       mockFind(taxYear, aUser, Right(Option(sessionUserData)))
       mockFind(aUser.nino, taxYear, priorUserData)
 
-
       val model1 = CreateUpdatePensionIncomeModel(
-        foreignPension = priorUserData.pensions.flatMap(_.pensionIncome.flatMap(_.foreignPension)),
-        overseasPensionContribution = Some(sessionUserData.pensions.paymentsIntoOverseasPensions.toPensionContributions)
+        foreignPension = priorUserData.pensions.flatMap(_.pensionIncome.flatMap(_.foreignPension)).map(ForeignPensionContainer),
+        overseasPensionContribution = Some(OverseasPensionContributionContainer(sessionUserData.pensions.paymentsIntoOverseasPensions.toPensionContributions))
       )
 
       val model2 = CreateOrUpdatePensionReliefsModel(
