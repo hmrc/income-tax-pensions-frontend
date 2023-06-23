@@ -72,7 +72,7 @@
 
 
 @layout(pageTitle = headingForUse, taxYear = Some(taxYear)) {
-    @heading(headingForUse, Some(messages("common.pensionAnnualAllowance.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-2")
+    @heading(headingForUse, Some(messages("common.lifetimeAllowance.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-2")
     @pstrSummaryList
     @addAnotherLink()
     @button(Button(
