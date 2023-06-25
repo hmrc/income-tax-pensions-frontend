@@ -208,7 +208,6 @@ object AnnualAndLifetimeAllowanceCYAViewHelper extends CYABaseHelper {
         summaryListRowWithStrings(
           "lifetimeAllowance.cya.lifetimePensionSchemeTaxReferences",
           lifetimeAllowancesViewModel.pensionSchemeTaxReferences,
-//          routes.AnnualLifetimeAllowanceCYAController.show(taxYear))(messages)
         lifetimeRoutes.LifetimePstrSummaryController.show(taxYear))(messages)
       }
     )
