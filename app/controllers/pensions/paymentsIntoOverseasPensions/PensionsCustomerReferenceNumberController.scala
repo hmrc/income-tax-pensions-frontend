@@ -28,7 +28,7 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.PensionSessionService
-import services.redirects.PaymentsIntoOverseasPensionsRedirects.redirectOnBadIndexInSchemeLoop
+import services.redirects.PaymentsIntoOverseasPensionsRedirects.redirectForSchemeLoop
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.paymentsIntoOverseasPensions.PensionsCustomerReferenceNumberView
@@ -62,7 +62,7 @@ class PensionsCustomerReferenceNumberController @Inject()(actionsProvider: Actio
                 .fill(customerReferenceNumber),
                 taxYear, index)))
           }
-          case None => Future.successful(Redirect(redirectOnBadIndexInSchemeLoop(piopReliefs, taxYear)))
+          case None => Future.successful(Redirect(redirectForSchemeLoop(piopReliefs, taxYear)))
         }
         case None => Future.successful(Ok(pensionsCustomerReferenceNumberView(referenceForm(sessionDataRequest.user), taxYear, None)))
       }
@@ -107,7 +107,7 @@ class PensionsCustomerReferenceNumberController @Inject()(actionsProvider: Actio
                     Some(updatedCyaModel.paymentsIntoOverseasPensions.reliefs.size - 1))(Some(_))
                   createOrUpdateSessionData(updatedCyaModel, currentIndex)
                 })
-            case _ => Future.successful(Redirect(redirectOnBadIndexInSchemeLoop(piop.reliefs, taxYear)))
+            case _ => Future.successful(Redirect(redirectForSchemeLoop(piop.reliefs, taxYear)))
           }
       }
   }

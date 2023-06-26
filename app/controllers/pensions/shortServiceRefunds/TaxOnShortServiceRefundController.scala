@@ -25,7 +25,7 @@ import models.pension.pages.shortServiceRefunds.TaxOnShortServiceRefundPage
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.ShortServiceRefundsService
-import services.redirects.ShortServiceRefundsRedirects.redirectOnBadIndexInSchemeLoop
+import services.redirects.ShortServiceRefundsRedirects.redirectForSchemeLoop
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.SessionHelper
 import views.html.pensions.shortServiceRefunds.TaxPaidOnShortServiceRefundView
@@ -44,7 +44,7 @@ class TaxOnShortServiceRefundController @Inject()(actionsProvider: ActionsProvid
 
   def show(taxYear: Int, refundPensionSchemeIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) { implicit sessionUserData =>
     validatedSchemes(refundPensionSchemeIndex, sessionUserData.pensionsUserData.pensions.shortServiceRefunds.refundPensionScheme) match {
-      case Left(_) => Redirect(redirectOnBadIndexInSchemeLoop(sessionUserData.pensionsUserData.pensions.shortServiceRefunds.refundPensionScheme, taxYear))
+      case Left(_) => Redirect(redirectForSchemeLoop(sessionUserData.pensionsUserData.pensions.shortServiceRefunds.refundPensionScheme, taxYear))
       case Right(_) => Ok(
         view(TaxOnShortServiceRefundPage(taxYear, refundPensionSchemeIndex, sessionUserData.pensionsUserData.pensions.shortServiceRefunds, formsProvider.shortServiceTaxOnShortServiceRefundForm)))
     }
@@ -54,7 +54,7 @@ class TaxOnShortServiceRefundController @Inject()(actionsProvider: ActionsProvid
     actionsProvider.userSessionDataFor(taxYear).async { implicit sessionUserData =>
 
       validatedSchemes(refundPensionSchemeIndex, sessionUserData.pensionsUserData.pensions.shortServiceRefunds.refundPensionScheme) match {
-        case Left(_) => Future.successful(Redirect(redirectOnBadIndexInSchemeLoop(sessionUserData.pensionsUserData.pensions.shortServiceRefunds.refundPensionScheme, taxYear)))
+        case Left(_) => Future.successful(Redirect(redirectForSchemeLoop(sessionUserData.pensionsUserData.pensions.shortServiceRefunds.refundPensionScheme, taxYear)))
         case Right(_) => formsProvider.shortServiceTaxOnShortServiceRefundForm.bindFromRequest().fold(
           formWithErrors =>
             Future.successful(

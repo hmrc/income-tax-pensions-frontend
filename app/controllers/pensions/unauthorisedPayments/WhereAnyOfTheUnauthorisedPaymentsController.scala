@@ -27,7 +27,7 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
-import services.redirects.SimpleRedirectService.checkForExistingSchemes
+import services.redirects.UnauthorisedPaymentsRedirects.redirectForSchemeLoop
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.unauthorisedPayments.WereAnyOfTheUnauthorisedPaymentsView
@@ -83,15 +83,9 @@ class WhereAnyOfTheUnauthorisedPaymentsController @Inject()(implicit val cc: Mes
               }
               pensionSessionService.createOrUpdateSessionData(request.user,
                 updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
-                if (yesNo) {
-                  Redirect(checkForExistingSchemes(
-                    nextPage = UnauthorisedPensionSchemeTaxReferenceController.show(taxYear, None),
-                    summaryPage = UkPensionSchemeDetailsController.show(taxYear),
-                    schemes = updatedCyaModel.unauthorisedPayments.pensionSchemeTaxReference.getOrElse(Seq())
-                  ))
-                } else {
-                  Redirect(UnauthorisedPaymentsCYAController.show(taxYear))
-                }
+
+                if (yesNo) Redirect(redirectForSchemeLoop(schemes = updatedCyaModel.unauthorisedPayments.pensionSchemeTaxReference.getOrElse(Seq()), taxYear))
+                else Redirect(UnauthorisedPaymentsCYAController.show(taxYear))
               }
             case _ => Future.successful(Redirect(UnauthorisedPaymentsCYAController.show(taxYear)))
           }

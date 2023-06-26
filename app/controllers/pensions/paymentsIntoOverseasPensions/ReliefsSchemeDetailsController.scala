@@ -17,14 +17,11 @@
 package controllers.pensions.paymentsIntoOverseasPensions
 
 import config.AppConfig
-import controllers.pensions.paymentsIntoOverseasPensions.routes.{PensionsCustomerReferenceNumberController, ReliefsSchemeSummaryController}
 import controllers.predicates.ActionsProvider
 import controllers.validatedIndex
-import models.pension.charges.Relief
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
-import services.redirects.PaymentsIntoOverseasPensionsRedirects.redirectOnBadIndexInSchemeLoop
-import services.redirects.SimpleRedirectService.checkForExistingSchemes
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.redirects.PaymentsIntoOverseasPensionsRedirects.redirectForSchemeLoop
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.SessionHelper
 import views.html.pensions.paymentsIntoOverseasPensions.ReliefSchemeDetailsView
@@ -45,7 +42,7 @@ class ReliefsSchemeDetailsController @Inject()(view: ReliefSchemeDetailsView,
         case Some(idx) =>
           Ok(view(taxYear, piopReliefs(idx), reliefIndex))
         case _ =>
-          Redirect(redirectOnBadIndexInSchemeLoop(piopReliefs, taxYear))
+          Redirect(redirectForSchemeLoop(piopReliefs, taxYear))
       }
   }
 
@@ -56,7 +53,7 @@ class ReliefsSchemeDetailsController @Inject()(view: ReliefSchemeDetailsView,
         case Some(_) =>
           Redirect(routes.ReliefsSchemeSummaryController.show(taxYear))
         case _ =>
-          Redirect(redirectOnBadIndexInSchemeLoop(reliefs, taxYear))
+          Redirect(redirectForSchemeLoop(reliefs, taxYear))
       }
   }
 }

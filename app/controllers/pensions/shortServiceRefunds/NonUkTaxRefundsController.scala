@@ -17,7 +17,6 @@
 package controllers.pensions.shortServiceRefunds
 
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.shortServiceRefunds.routes._
 import controllers.predicates.ActionsProvider
 import forms.FormsProvider
 import models.mongo.{PensionsCYAModel, PensionsUserData}
@@ -25,7 +24,7 @@ import models.requests.UserSessionDataRequest
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
-import services.redirects.SimpleRedirectService.checkForExistingSchemes
+import services.redirects.ShortServiceRefundsRedirects.redirectForSchemeLoop
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.shortServiceRefunds.NonUkTaxRefundsView
@@ -78,11 +77,7 @@ class NonUkTaxRefundsController @Inject()(
 
     pensionSessionService.createOrUpdateSessionData(request.user,
       updatedCyaModel, taxYear, pensionUserData.isPriorSubmission)(errorHandler.internalServerError()) {
-      Redirect(checkForExistingSchemes(
-        nextPage = TaxOnShortServiceRefundController.show(taxYear, None),
-        summaryPage = RefundSummaryController.show(taxYear),
-        schemes = updatedCyaModel.shortServiceRefunds.refundPensionScheme
-      ))
+      Redirect(redirectForSchemeLoop(schemes = updatedCyaModel.shortServiceRefunds.refundPensionScheme)
     }
   }
 }

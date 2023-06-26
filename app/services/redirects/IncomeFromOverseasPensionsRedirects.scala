@@ -8,11 +8,11 @@ import services.redirects.SimpleRedirectService.checkForExistingSchemes
 
 object IncomeFromOverseasPensionsRedirects {
 
-  def redirectOnBadIndexInSchemeLoop(reliefs: Seq[PensionScheme], taxYear: Int): Call = {
+  def redirectForSchemeLoop(schemes: Seq[PensionScheme], taxYear: Int): Call = {
     checkForExistingSchemes(
       nextPage = PensionOverseasIncomeCountryController.show(taxYear, None),
       summaryPage = CountrySummaryListController.show(taxYear),
-      schemes = reliefs
+      schemes = schemes
     )
   }
 

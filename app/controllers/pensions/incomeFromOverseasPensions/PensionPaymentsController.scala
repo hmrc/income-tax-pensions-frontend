@@ -28,7 +28,7 @@ import models.pension.charges.PensionScheme
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.PensionSessionService
-import services.redirects.IncomeFromOverseasPensionsRedirects.redirectOnBadIndexInSchemeLoop
+import services.redirects.IncomeFromOverseasPensionsRedirects.redirectForSchemeLoop
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.incomeFromOverseasPensions.PensionPaymentsView
@@ -51,7 +51,7 @@ class PensionPaymentsController @Inject()(authAction: AuthorisedAction,
         validateIndex(index, data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes) match {
           case Some(i) => populateForm(data, taxYear, i)
           case None =>
-            Redirect(redirectOnBadIndexInSchemeLoop(data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes, taxYear))
+            Redirect(redirectForSchemeLoop(data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes, taxYear))
         }
       case _ => Redirect(OverseasPensionsSummaryController.show(taxYear))
     }
@@ -70,7 +70,7 @@ class PensionPaymentsController @Inject()(authAction: AuthorisedAction,
               )
           )
           case None =>
-            Future.successful(Redirect(redirectOnBadIndexInSchemeLoop(pensionSchemes, taxYear)))
+            Future.successful(Redirect(redirectForSchemeLoop(pensionSchemes, taxYear)))
         }
       case _ =>
         Future.successful(Redirect(OverseasPensionsSummaryController.show(taxYear)))

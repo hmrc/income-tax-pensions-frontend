@@ -26,7 +26,7 @@ import models.requests.UserSessionDataRequest
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.PensionSessionService
-import services.redirects.PaymentsIntoOverseasPensionsRedirects.redirectOnBadIndexInSchemeLoop
+import services.redirects.PaymentsIntoOverseasPensionsRedirects.redirectForSchemeLoop
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.paymentsIntoOverseasPensions.SF74ReferenceView
@@ -56,7 +56,7 @@ class SF74ReferenceController @Inject()(
           case None => Future.successful(Ok(view(formsProvider.sf74ReferenceIdForm, taxYear, reliefIndex)))
         }
       case _ =>
-        Future.successful(Redirect(redirectOnBadIndexInSchemeLoop(piopReliefs, taxYear)))
+        Future.successful(Redirect(redirectForSchemeLoop(piopReliefs, taxYear)))
     }
   }
 
@@ -69,7 +69,7 @@ class SF74ReferenceController @Inject()(
             formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear, reliefIndex))),
             sf74Reference => updateSessionData(userSessionDataRequest.pensionsUserData, Some(sf74Reference), taxYear, idx))
         case _ =>
-          Future.successful(Redirect(redirectOnBadIndexInSchemeLoop(reliefs, taxYear)))
+          Future.successful(Redirect(redirectForSchemeLoop(reliefs, taxYear)))
       }
   }
 

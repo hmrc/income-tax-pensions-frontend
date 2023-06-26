@@ -29,7 +29,7 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
-import services.redirects.TransfersIntoOverseasPensionsRedirects.redirectOnBadIndexInSchemeLoop
+import services.redirects.TransfersIntoOverseasPensionsRedirects.redirectForSchemeLoop
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.transferIntoOverseasPensions.TransferPensionsSchemeView
@@ -54,7 +54,7 @@ class TransferPensionsSchemeController @Inject()(actionsProvider: ActionsProvide
           val form = tcPensionSchemeForm(userSessionDataRequest.user, isUKScheme).fill(updateFormModel(tcPensionSchemes(idx)))
           Ok(view(form, taxYear, isUKScheme, idx))
         case _ =>
-          Redirect(redirectOnBadIndexInSchemeLoop(tcPensionSchemes, taxYear))
+          Redirect(redirectForSchemeLoop(tcPensionSchemes, taxYear))
       }
   }
 
@@ -77,7 +77,7 @@ class TransferPensionsSchemeController @Inject()(actionsProvider: ActionsProvide
             }
           )
         case _ =>
-          Future.successful(Redirect(redirectOnBadIndexInSchemeLoop(tcPensionSchemes, taxYear)))
+          Future.successful(Redirect(redirectForSchemeLoop(tcPensionSchemes, taxYear)))
       }
   }
 

@@ -28,7 +28,7 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
-import services.redirects.IncomeFromPensionsRedirects.redirectOnBadIndexInSchemeLoop
+import services.redirects.IncomeFromPensionsRedirects.redirectForSchemeLoop
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import utils.DateTimeUtil.localDateTimeFormat
@@ -62,7 +62,7 @@ class PensionSchemeStartDateController @Inject()(pensionSessionService: PensionS
             ))
             Ok(view(filledForm, taxYear, validIndex))
           }
-        case None => Redirect(redirectOnBadIndexInSchemeLoop(data, taxYear))
+        case None => Redirect(redirectForSchemeLoop(data, taxYear))
       }
     }
 
@@ -92,7 +92,7 @@ class PensionSchemeStartDateController @Inject()(pensionSessionService: PensionS
               }
             }
           )
-        case _ => Future.successful(Redirect(redirectOnBadIndexInSchemeLoop(pensionIncomes, taxYear)))
+        case _ => Future.successful(Redirect(redirectForSchemeLoop(pensionIncomes, taxYear)))
       }
     }
 }

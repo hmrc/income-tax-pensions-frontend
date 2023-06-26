@@ -26,7 +26,7 @@ import models.pension.statebenefits.{IncomeFromPensionsViewModel, UkPensionIncom
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
-import services.redirects.IncomeFromPensionsRedirects.redirectOnBadIndexInSchemeLoop
+import services.redirects.IncomeFromPensionsRedirects.redirectForSchemeLoop
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.incomeFromPensions.PensionAmountView
@@ -62,7 +62,7 @@ class PensionAmountController @Inject()(implicit val mcc: MessagesControllerComp
               pensionIncomesList(index).amount,
               pensionIncomesList(index).taxPaid)),
               taxYear, index)))
-          case None => Future.successful(Redirect(redirectOnBadIndexInSchemeLoop(pensionIncomesList, taxYear)))
+          case None => Future.successful(Redirect(redirectForSchemeLoop(pensionIncomesList, taxYear)))
         }
       case _ =>
         Future.successful(Redirect(UkPensionIncomeCYAController.show(taxYear)))
@@ -94,7 +94,7 @@ class PensionAmountController @Inject()(implicit val mcc: MessagesControllerComp
                   Redirect(PensionSchemeStartDateController.show(taxYear, Some(index)))
                 }
               })
-          case None => Future.successful(Redirect(redirectOnBadIndexInSchemeLoop(pensionIncomesList, taxYear)))
+          case None => Future.successful(Redirect(redirectForSchemeLoop(pensionIncomesList, taxYear)))
         }
       case _ =>
         Future.successful(Redirect(UkPensionIncomeCYAController.show(taxYear)))

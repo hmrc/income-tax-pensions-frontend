@@ -29,7 +29,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import play.twirl.api.Html
 import services.PensionSessionService
-import services.redirects.SimpleRedirectService.checkForExistingSchemes
+import services.redirects.IncomeFromOverseasPensionsRedirects.redirectForSchemeLoop
 import utils.Clock
 import views.html.pensions.incomeFromOverseasPensions.ForeignTaxCreditReliefView
 
@@ -52,11 +52,7 @@ class ForeignTaxCreditReliefController @Inject()(messagesControllerComponents: M
   override def redirectWhenNoSessionData(taxYear: Int): Result = redirectToSummaryPage(taxYear)
 
   override def redirectWhenIndexIsInvalid(data: PensionsUserData, taxYear: Int): Call =
-    checkForExistingSchemes(
-      nextPage = PensionOverseasIncomeCountryController.show(taxYear, None),
-      summaryPage = CountrySummaryListController.show(taxYear),
-      schemes = data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes
-    )
+    redirectForSchemeLoop(data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes, taxYear)
 
   override def redirectAfterUpdatingSessionData(taxYear: Int, index: Option[Int]): Result = Redirect(TaxableAmountController.show(taxYear, index))
 

@@ -21,7 +21,7 @@ import controllers.predicates.AuthorisedAction
 import forms.{Countries, CountryForm}
 import models.User
 import play.api.data.Form
-import services.redirects.IncomeFromOverseasPensionsRedirects.redirectOnBadIndexInSchemeLoop
+import services.redirects.IncomeFromOverseasPensionsRedirects.redirectForSchemeLoop
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import routes._
@@ -66,7 +66,7 @@ class PensionOverseasIncomeCountryController @Inject()(authAction: AuthorisedAct
                   Future.successful(Ok(pensionOverseasIncomeCountryView(form, countriesToInclude, taxYear, Some(countryIndex))))
                 case None =>
                   Future.successful(Redirect(
-                    redirectOnBadIndexInSchemeLoop(data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes, taxYear)
+                    redirectForSchemeLoop(data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes, taxYear)
                   ))  //invalid index ->  Loop start or summary
               }
           }
@@ -109,7 +109,7 @@ class PensionOverseasIncomeCountryController @Inject()(authAction: AuthorisedAct
                 Redirect(PensionPaymentsController.show(taxYear, currentIndex))
               }
             } else {
-              Future.successful(Redirect(redirectOnBadIndexInSchemeLoop(pensionSchemeList, taxYear))) //invalid index -> Loop start or summary
+              Future.successful(Redirect(redirectForSchemeLoop(pensionSchemeList, taxYear))) //invalid index -> Loop start or summary
             }
 
           case _ => Future.successful(Redirect(OverseasPensionsSummaryController.show(taxYear))) //No session data -> Overseas Pension summary

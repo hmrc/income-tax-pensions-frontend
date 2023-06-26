@@ -26,7 +26,7 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
-import services.redirects.PaymentsIntoOverseasPensionsRedirects.redirectOnBadIndexInSchemeLoop
+import services.redirects.PaymentsIntoOverseasPensionsRedirects.redirectForSchemeLoop
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.paymentsIntoOverseasPensions.QOPSReferenceView
@@ -51,7 +51,7 @@ class QOPSReferenceController @Inject()(actionsProvider: ActionsProvider,
       val reliefs = sessionData.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs
       validatedIndex(index, reliefs.size) match {
         case Some(idx) => Future.successful(Ok(qopsReferenceView(referenceForm(sessionData.pensionsUserData, idx), taxYear, Some(idx))))
-        case _ => Future.successful(Redirect(redirectOnBadIndexInSchemeLoop(reliefs, taxYear)))
+        case _ => Future.successful(Redirect(redirectForSchemeLoop(reliefs, taxYear)))
       }
   }
 
@@ -84,7 +84,7 @@ class QOPSReferenceController @Inject()(actionsProvider: ActionsProvider,
               }
             }
           )
-        case _ => Future.successful(Redirect(redirectOnBadIndexInSchemeLoop(piops.reliefs, taxYear)))
+        case _ => Future.successful(Redirect(redirectForSchemeLoop(piops.reliefs, taxYear)))
       }
   }
 

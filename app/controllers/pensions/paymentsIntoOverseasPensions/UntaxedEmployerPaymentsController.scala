@@ -25,7 +25,7 @@ import models.pension.pages.UntaxedEmployerPayments
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.PaymentsIntoOverseasPensionsService
-import services.redirects.PaymentsIntoOverseasPensionsRedirects.redirectOnBadIndexInSchemeLoop
+import services.redirects.PaymentsIntoOverseasPensionsRedirects.redirectForSchemeLoop
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.pensions.paymentsIntoOverseasPensions.UntaxedEmployerPaymentsView
 
@@ -47,7 +47,7 @@ class UntaxedEmployerPaymentsController @Inject()(actionsProvider: ActionsProvid
     val piopSessionData = sessionUserData.pensionsUserData.pensions.paymentsIntoOverseasPensions
 
     validatedSchemes(pensionSchemeIndex, piopSessionData.reliefs.map(_.customerReference)) match {
-      case Left(_) => Redirect(redirectOnBadIndexInSchemeLoop(piopSessionData.reliefs, taxYear))
+      case Left(_) => Redirect(redirectForSchemeLoop(piopSessionData.reliefs, taxYear))
       case Right(_) => Ok(pageView(UntaxedEmployerPayments(taxYear, pensionSchemeIndex, piopSessionData,
         formsProvider.untaxedEmployerPayments(sessionUserData.user.isAgent))))
     }
@@ -58,7 +58,7 @@ class UntaxedEmployerPaymentsController @Inject()(actionsProvider: ActionsProvid
       val piopSessionData = sessionUserData.pensionsUserData.pensions.paymentsIntoOverseasPensions
 
       validatedSchemes(pensionSchemeIndex, piopSessionData.reliefs.map(_.customerReference)) match {
-        case Left(_) => Future.successful(Redirect(redirectOnBadIndexInSchemeLoop(piopSessionData.reliefs, taxYear)))
+        case Left(_) => Future.successful(Redirect(redirectForSchemeLoop(piopSessionData.reliefs, taxYear)))
         case Right(_) => formsProvider.untaxedEmployerPayments(sessionUserData.user.isAgent).bindFromRequest().fold(
           formWithErrors => {
             Future.successful(

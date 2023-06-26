@@ -26,7 +26,7 @@ import models.requests.UserSessionDataRequest
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.PensionSessionService
-import services.redirects.PaymentsIntoOverseasPensionsRedirects.redirectOnBadIndexInSchemeLoop
+import services.redirects.PaymentsIntoOverseasPensionsRedirects.redirectForSchemeLoop
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.paymentsIntoOverseasPensions.PensionReliefTypeView
@@ -55,7 +55,7 @@ class PensionReliefTypeController @Inject()(actionsProvider: ActionsProvider,
               Future.successful(Ok(view(formsProvider.overseasPensionsReliefTypeForm.fill(reliefType), taxYear, reliefIndex)))
           }
         case _ =>
-          Future.successful(Redirect(redirectOnBadIndexInSchemeLoop(piopReliefs, taxYear)))
+          Future.successful(Redirect(redirectForSchemeLoop(piopReliefs, taxYear)))
       }
   }
 
@@ -100,7 +100,7 @@ class PensionReliefTypeController @Inject()(actionsProvider: ActionsProvider,
           Future.successful(redirectBaseOnTaxReliefQuestion(taxReliefQuestion, taxYear, indexOpt)(request))
         }
       case _ =>
-        Future.successful(Redirect(redirectOnBadIndexInSchemeLoop(piopReliefs, taxYear)))
+        Future.successful(Redirect(redirectForSchemeLoop(piopReliefs, taxYear)))
     }
   }
 

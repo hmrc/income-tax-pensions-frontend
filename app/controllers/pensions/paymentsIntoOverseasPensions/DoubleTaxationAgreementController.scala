@@ -30,7 +30,7 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.PensionSessionService
-import services.redirects.PaymentsIntoOverseasPensionsRedirects.redirectOnBadIndexInSchemeLoop
+import services.redirects.PaymentsIntoOverseasPensionsRedirects.redirectForSchemeLoop
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.paymentsIntoOverseasPensions.DoubleTaxationAgreementView
@@ -57,7 +57,7 @@ class DoubleTaxationAgreementController @Inject()(actionsProvider: ActionsProvid
               val form = dblTaxationAgreementForm(request.user).fill(updateViewModel(piopReliefs(idx)))
               Ok(view(form, taxYear, index))
             case _ =>
-              Redirect(redirectOnBadIndexInSchemeLoop(piopReliefs, taxYear))
+              Redirect(redirectForSchemeLoop(piopReliefs, taxYear))
           }
       }
   }
@@ -72,7 +72,7 @@ class DoubleTaxationAgreementController @Inject()(actionsProvider: ActionsProvid
             formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear, index))),
             doubleTaxationAgreement => updateSessionData(request.pensionsUserData, doubleTaxationAgreement, taxYear, idx)
           )
-        case _ => Future.successful(Redirect(redirectOnBadIndexInSchemeLoop(reliefs, taxYear)))
+        case _ => Future.successful(Redirect(redirectForSchemeLoop(reliefs, taxYear)))
       }
   }
 

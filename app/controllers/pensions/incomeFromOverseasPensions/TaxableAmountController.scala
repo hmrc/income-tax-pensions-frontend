@@ -27,7 +27,7 @@ import models.pension.charges.PensionScheme
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
-import services.redirects.IncomeFromOverseasPensionsRedirects.redirectOnBadIndexInSchemeLoop
+import services.redirects.IncomeFromOverseasPensionsRedirects.redirectForSchemeLoop
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.incomeFromOverseasPensions.TaxableAmountView
@@ -60,7 +60,7 @@ class TaxableAmountController @Inject()(val authAction: AuthorisedAction,
               } else {
                 Redirect(OverseasPensionsSummaryController.show(taxYear))
               }
-            case None => Redirect(redirectOnBadIndexInSchemeLoop(data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes, taxYear))
+            case None => Redirect(redirectForSchemeLoop(data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes, taxYear))
           }
         case _ => Redirect(OverseasPensionsSummaryController.show(taxYear))
       }
@@ -77,7 +77,7 @@ class TaxableAmountController @Inject()(val authAction: AuthorisedAction,
                 updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
                 Redirect(PensionSchemeSummaryController.show(taxYear, index))
               }
-            case None => Future.successful(Redirect(redirectOnBadIndexInSchemeLoop(data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes, taxYear)))
+            case None => Future.successful(Redirect(redirectForSchemeLoop(data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes, taxYear)))
           }
         case _ =>
           Future.successful(Redirect(OverseasPensionsSummaryController.show(taxYear)))

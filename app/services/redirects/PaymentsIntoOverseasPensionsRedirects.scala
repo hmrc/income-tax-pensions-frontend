@@ -7,7 +7,7 @@ import services.redirects.SimpleRedirectService.checkForExistingSchemes
 
 object PaymentsIntoOverseasPensionsRedirects {
 
-  def redirectOnBadIndexInSchemeLoop(reliefs: Seq[Relief], taxYear: Int): Call = {
+  def redirectForSchemeLoop(reliefs: Seq[Relief], taxYear: Int): Call = {
     checkForExistingSchemes(
       nextPage = PensionsCustomerReferenceNumberController.show(taxYear, None),
       summaryPage = ReliefsSchemeSummaryController.show(taxYear),

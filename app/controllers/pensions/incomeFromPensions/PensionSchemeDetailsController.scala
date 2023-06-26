@@ -27,7 +27,7 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
-import services.redirects.IncomeFromPensionsRedirects.redirectOnBadIndexInSchemeLoop
+import services.redirects.IncomeFromPensionsRedirects.redirectForSchemeLoop
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.incomeFromPensions.PensionSchemeDetailsView
@@ -63,7 +63,7 @@ class PensionSchemeDetailsController @Inject()(implicit val mcc: MessagesControl
             case (_, _, _) => Future.successful(Ok(pensionSchemeDetailsView(form, taxYear, pensionSchemeIndex)))
           }
         } else {
-          Future.successful(Redirect(redirectOnBadIndexInSchemeLoop(pensionIncomesList, taxYear)))
+          Future.successful(Redirect(redirectForSchemeLoop(pensionIncomesList, taxYear)))
         }
       case None =>
         Future.successful(Redirect(UkPensionIncomeCYAController.show(taxYear)))
@@ -102,7 +102,7 @@ class PensionSchemeDetailsController @Inject()(implicit val mcc: MessagesControl
                 Redirect(PensionAmountController.show(taxYear, pensionSchemeIndex.orElse(Some(updatedPensionIncomesList.size - 1))))
               }
             } else {
-              Future.successful(Redirect(redirectOnBadIndexInSchemeLoop(viewModel.uKPensionIncomes, taxYear)))
+              Future.successful(Redirect(redirectForSchemeLoop(viewModel.uKPensionIncomes, taxYear)))
             }
           case None => Future.successful(Redirect(UkPensionIncomeCYAController.show(taxYear)))
         }

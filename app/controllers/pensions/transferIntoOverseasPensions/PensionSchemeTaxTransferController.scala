@@ -25,7 +25,7 @@ import models.requests.UserSessionDataRequest
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.PensionSessionService
-import services.redirects.SimpleRedirectService.checkForExistingSchemes
+import services.redirects.TransfersIntoOverseasPensionsRedirects.redirectForSchemeLoop
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.transferIntoOverseasPensions.pensionSchemeTaxTransferChargeView
@@ -79,15 +79,9 @@ class PensionSchemeTaxTransferController @Inject()(
 
     pensionSessionService.createOrUpdateSessionData(request.user,
       updatedCyaModel, taxYear, pensionUserData.isPriorSubmission)(errorHandler.internalServerError()) {
-      if (yesNo) {
-        Redirect(checkForExistingSchemes(
-          nextPage = OverseasTransferChargePaidController.show(taxYear, None),
-          summaryPage = TransferChargeSummaryController.show(taxYear),
-          schemes = updatedCyaModel.paymentsIntoOverseasPensions.reliefs
-        ))
-      } else {
-        Redirect(TransferIntoOverseasPensionsCYAController.show(taxYear))
-      }
+
+      if (yesNo) Redirect(redirectForSchemeLoop(schemes = updatedCyaModel.transfersIntoOverseasPensions.transferPensionScheme, taxYear))
+      else Redirect(TransferIntoOverseasPensionsCYAController.show(taxYear))
     }
   }
 }

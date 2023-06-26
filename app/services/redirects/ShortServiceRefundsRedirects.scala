@@ -7,7 +7,7 @@ import services.redirects.SimpleRedirectService.checkForExistingSchemes
 
 object ShortServiceRefundsRedirects {
 
-  def redirectOnBadIndexInSchemeLoop(refundSchemes: Seq[OverseasRefundPensionScheme], taxYear: Int): Call = {
+  def redirectForSchemeLoop(refundSchemes: Seq[OverseasRefundPensionScheme], taxYear: Int): Call = {
     checkForExistingSchemes(
       nextPage = TaxOnShortServiceRefundController.show(taxYear, None),
       summaryPage = RefundSummaryController.show(taxYear),

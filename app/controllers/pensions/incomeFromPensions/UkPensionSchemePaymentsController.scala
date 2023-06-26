@@ -28,7 +28,7 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
-import services.redirects.SimpleRedirectService.checkForExistingSchemes
+import services.redirects.IncomeFromPensionsRedirects.redirectForSchemeLoop
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.incomeFromPensions.UkPensionSchemePaymentsView
@@ -80,15 +80,9 @@ class UkPensionSchemePaymentsController @Inject()(implicit val mcc: MessagesCont
             }
             pensionSessionService.createOrUpdateSessionData(request.user,
               updatedCyaModel, taxYear, optData.exists(_.isPriorSubmission))(errorHandler.internalServerError()) {
-              if (yesNo) {
-                Redirect(checkForExistingSchemes(
-                  nextPage = PensionSchemeDetailsController.show(taxYear, None),
-                  summaryPage = UkPensionIncomeSummaryController.show(taxYear),
-                  schemes = viewModel.uKPensionIncomes
-                ))
-              } else {
-                Redirect(UkPensionIncomeCYAController.show(taxYear))
-              }
+
+              if (yesNo) Redirect(redirectForSchemeLoop(schemes = updatedCyaModel.incomeFromPensions.uKPensionIncomes, taxYear))
+              else Redirect(UkPensionIncomeCYAController.show(taxYear))
             }
           }
         }

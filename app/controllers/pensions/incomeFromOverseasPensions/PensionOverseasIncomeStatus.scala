@@ -27,7 +27,7 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
-import services.redirects.SimpleRedirectService.checkForExistingSchemes
+import services.redirects.IncomeFromOverseasPensionsRedirects.redirectForSchemeLoop
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.incomeFromOverseasPensions.IncomeFromOverseasPensionsView
@@ -88,11 +88,7 @@ class PensionOverseasIncomeStatus @Inject()(authAction: AuthorisedAction,
             pensionSessionService.createOrUpdateSessionData(request.user,
               updatedCyaModel, taxYear, isPriorSubmission)(errorHandler.internalServerError()) {
               if (yesNo) {
-                Redirect(checkForExistingSchemes(
-                  nextPage = PensionOverseasIncomeCountryController.show(taxYear, None),
-                  summaryPage = CountrySummaryListController.show(taxYear),
-                  schemes = updatedCyaModel.paymentsIntoOverseasPensions.reliefs
-                ))
+                Redirect(redirectForSchemeLoop(schemes = updatedCyaModel.incomeFromOverseasPensions.overseasIncomePensionSchemes, taxYear))
               } else {
                 Redirect(IncomeFromOverseasPensionsCYAController.show(taxYear))
               }

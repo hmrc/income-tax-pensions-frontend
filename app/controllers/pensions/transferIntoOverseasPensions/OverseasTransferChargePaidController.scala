@@ -25,7 +25,7 @@ import models.pension.pages.OverseasTransferChargePaidPage
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.OverseasTransferChargesService
-import services.redirects.TransfersIntoOverseasPensionsRedirects.redirectOnBadIndexInSchemeLoop
+import services.redirects.TransfersIntoOverseasPensionsRedirects.redirectForSchemeLoop
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.SessionHelper
 import views.html.pensions.transferIntoOverseasPensions.OverseasTransferChargesPaidView
@@ -45,7 +45,7 @@ class OverseasTransferChargePaidController @Inject()(actionsProvider: ActionsPro
   def show(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) { implicit sessionUserData =>
 
     validatedSchemes(pensionSchemeIndex, sessionUserData.pensionsUserData.pensions.transfersIntoOverseasPensions.transferPensionScheme) match {
-      case Left(_) => Redirect(redirectOnBadIndexInSchemeLoop(sessionUserData.pensionsUserData.pensions.transfersIntoOverseasPensions.transferPensionScheme, taxYear))
+      case Left(_) => Redirect(redirectForSchemeLoop(sessionUserData.pensionsUserData.pensions.transfersIntoOverseasPensions.transferPensionScheme, taxYear))
       case Right(_) => Ok(
         pageView(OverseasTransferChargePaidPage(taxYear, pensionSchemeIndex, sessionUserData.pensionsUserData.pensions.transfersIntoOverseasPensions, formsProvider.overseasTransferChargePaidForm)))
     }
@@ -55,7 +55,7 @@ class OverseasTransferChargePaidController @Inject()(actionsProvider: ActionsPro
     actionsProvider.userSessionDataFor(taxYear).async { implicit sessionUserData =>
       val schemes = sessionUserData.pensionsUserData.pensions.transfersIntoOverseasPensions.transferPensionScheme
       validatedSchemes(pensionSchemeIndex, schemes) match {
-        case Left(_) => Future.successful(Redirect(redirectOnBadIndexInSchemeLoop(schemes, taxYear)))
+        case Left(_) => Future.successful(Redirect(redirectForSchemeLoop(schemes, taxYear)))
         case Right(_) => formsProvider.overseasTransferChargePaidForm.bindFromRequest().fold(
           formWithErrors =>
             Future.successful(
