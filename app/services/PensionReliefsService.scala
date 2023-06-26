@@ -19,7 +19,7 @@ package services
 import connectors.PensionsConnector
 import models.User
 import models.mongo.{PensionsCYAModel, PensionsUserData, ServiceError}
-import models.pension.reliefs.{CreateOrUpdatePensionReliefsModel, PaymentsIntoPensionViewModel, Reliefs}
+import models.pension.reliefs.{CreateOrUpdatePensionReliefsModel, PaymentsIntoPensionsViewModel, Reliefs}
 import org.joda.time.DateTimeZone
 import repositories.PensionsUserDataRepository
 import uk.gov.hmrc.http.HeaderCarrier
@@ -41,7 +41,7 @@ class PensionReliefsService @Inject()(pensionUserDataRepository: PensionsUserDat
 
     def getPensionsUserData(userData: Option[PensionsUserData], user: User): PensionsUserData = {
       userData match {
-        case Some(value) => value.copy(pensions = value.pensions.copy(paymentsIntoPension = PaymentsIntoPensionViewModel()))
+        case Some(value) => value.copy(pensions = value.pensions.copy(paymentsIntoPension = PaymentsIntoPensionsViewModel()))
         case None => PensionsUserData(
           user.sessionId,
           user.mtditid,

@@ -27,7 +27,7 @@ import builders.TransfersIntoOverseasPensionsViewModelBuilder.{aTransfersIntoOve
 import builders.UnauthorisedPaymentsViewModelBuilder.{anUnauthorisedPaymentsEmptyViewModel, anUnauthorisedPaymentsViewModel}
 import models.mongo.PensionsCYAModel
 import models.pension.charges.{IncomeFromOverseasPensionsViewModel, PaymentsIntoOverseasPensionsViewModel, PensionAnnualAllowancesViewModel, PensionLifetimeAllowancesViewModel, ShortServiceRefundsViewModel, TransfersIntoOverseasPensionsViewModel, UnauthorisedPaymentsViewModel}
-import models.pension.reliefs.PaymentsIntoPensionViewModel
+import models.pension.reliefs.PaymentsIntoPensionsViewModel
 import models.pension.statebenefits.IncomeFromPensionsViewModel
 
 object PensionsCYAModelBuilder {
@@ -68,7 +68,7 @@ object PensionsCYAModelBuilder {
     shortServiceRefunds = emptyShortServiceRefundsViewModel
   )
 
-  def paymentsIntoPensionOnlyCYAModel(paymentsIntoPensionViewModel: PaymentsIntoPensionViewModel): PensionsCYAModel = {
+  def paymentsIntoPensionOnlyCYAModel(paymentsIntoPensionViewModel: PaymentsIntoPensionsViewModel): PensionsCYAModel = {
     PensionsCYAModel(paymentsIntoPensionViewModel, PensionAnnualAllowancesViewModel(),
       PensionLifetimeAllowancesViewModel(), IncomeFromPensionsViewModel(),
       UnauthorisedPaymentsViewModel(), PaymentsIntoOverseasPensionsViewModel(),

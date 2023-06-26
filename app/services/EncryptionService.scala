@@ -19,7 +19,7 @@ package services
 import config.AppConfig
 import models.mongo._
 import models.pension.charges.{EncryptedPensionAnnualAllowancesViewModel, PensionAnnualAllowancesViewModel}
-import models.pension.reliefs.{EncryptedPaymentsIntoPensionViewModel, PaymentsIntoPensionViewModel}
+import models.pension.reliefs.{EncryptedPaymentsIntoPensionViewModel, PaymentsIntoPensionsViewModel}
 import utils.SecureGCMCipher
 
 import javax.inject.Inject
@@ -41,7 +41,7 @@ class EncryptionService @Inject()(secureGCMCipher: SecureGCMCipher, appConfig: A
     )
   }
 
-  private def encryptPaymentsIntoPension(p: PaymentsIntoPensionViewModel)(implicit textAndKey: TextAndKey): EncryptedPaymentsIntoPensionViewModel = {
+  private def encryptPaymentsIntoPension(p: PaymentsIntoPensionsViewModel)(implicit textAndKey: TextAndKey): EncryptedPaymentsIntoPensionViewModel = {
     EncryptedPaymentsIntoPensionViewModel(
       rasPensionPaymentQuestion = p.rasPensionPaymentQuestion.map(secureGCMCipher.encrypt),
       totalRASPaymentsAndTaxRelief = p.totalRASPaymentsAndTaxRelief.map(secureGCMCipher.encrypt),
@@ -87,8 +87,8 @@ class EncryptionService @Inject()(secureGCMCipher: SecureGCMCipher, appConfig: A
     )
   }
 
-  private def decryptPaymentsIntoPensionViewModel(p: EncryptedPaymentsIntoPensionViewModel)(implicit textAndKey: TextAndKey): PaymentsIntoPensionViewModel = {
-    PaymentsIntoPensionViewModel(
+  private def decryptPaymentsIntoPensionViewModel(p: EncryptedPaymentsIntoPensionViewModel)(implicit textAndKey: TextAndKey): PaymentsIntoPensionsViewModel = {
+    PaymentsIntoPensionsViewModel(
       rasPensionPaymentQuestion = p.rasPensionPaymentQuestion.map(x => secureGCMCipher.decrypt[Boolean](x.value, x.nonce)),
       totalRASPaymentsAndTaxRelief = p.totalRASPaymentsAndTaxRelief.map(x => secureGCMCipher.decrypt[BigDecimal](x.value, x.nonce)),
       oneOffRasPaymentPlusTaxReliefQuestion = p.oneOffRasPaymentPlusTaxReliefQuestion.map(x => secureGCMCipher.decrypt[Boolean](x.value, x.nonce)),

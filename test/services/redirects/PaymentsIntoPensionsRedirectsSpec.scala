@@ -18,7 +18,7 @@ package services.redirects
 
 import controllers.pensions.paymentsIntoPensions.routes.{PaymentsIntoPensionsCYAController, ReliefAtSourcePensionsController, TotalPaymentsIntoRASController}
 import models.mongo.PensionsCYAModel
-import models.pension.reliefs.PaymentsIntoPensionViewModel
+import models.pension.reliefs.PaymentsIntoPensionsViewModel
 import play.api.mvc.Call
 import play.api.mvc.Results.Redirect
 import services.redirects.PaymentsIntoPensionPages._
@@ -36,7 +36,7 @@ class PaymentsIntoPensionsRedirectsSpec extends UnitTest {
     "return None if page is valid and all previous questions have been answered" when {
       "current page is empty and at end of journey so far" in {
         val pIPData = cyaData.copy(paymentsIntoPension =
-          PaymentsIntoPensionViewModel(
+          PaymentsIntoPensionsViewModel(
             rasPensionPaymentQuestion = Some(true),
             totalRASPaymentsAndTaxRelief = Some(45.54),
             oneOffRasPaymentPlusTaxReliefQuestion = Some(true),
@@ -54,7 +54,7 @@ class PaymentsIntoPensionsRedirectsSpec extends UnitTest {
       }
       "current page is pre-filled and at end of journey so far" in {
         val pIPData = cyaData.copy(paymentsIntoPension =
-          PaymentsIntoPensionViewModel(
+          PaymentsIntoPensionsViewModel(
             rasPensionPaymentQuestion = Some(true),
             totalRASPaymentsAndTaxRelief = Some(45.54),
             oneOffRasPaymentPlusTaxReliefQuestion = Some(true),
@@ -72,7 +72,7 @@ class PaymentsIntoPensionsRedirectsSpec extends UnitTest {
       }
       "current page is pre-filled and mid-journey" in {
         val pIPData = cyaData.copy(paymentsIntoPension =
-          PaymentsIntoPensionViewModel(
+          PaymentsIntoPensionsViewModel(
             rasPensionPaymentQuestion = Some(false),
             totalRASPaymentsAndTaxRelief = None,
             oneOffRasPaymentPlusTaxReliefQuestion = None,
@@ -90,7 +90,7 @@ class PaymentsIntoPensionsRedirectsSpec extends UnitTest {
       }
       "previous page is unanswered but invalid and previous valid question has been answered" in {
         val pIPData = cyaData.copy(paymentsIntoPension =
-          PaymentsIntoPensionViewModel(
+          PaymentsIntoPensionsViewModel(
             rasPensionPaymentQuestion = Some(true),
             totalRASPaymentsAndTaxRelief = Some(45.54),
             oneOffRasPaymentPlusTaxReliefQuestion = Some(false),
@@ -111,7 +111,7 @@ class PaymentsIntoPensionsRedirectsSpec extends UnitTest {
     "return Some(redirect) with redirect to RAS page" when {
       "previous question is unanswered" in {
         val pIPData = cyaData.copy(paymentsIntoPension =
-          PaymentsIntoPensionViewModel(
+          PaymentsIntoPensionsViewModel(
             rasPensionPaymentQuestion = Some(true),
             totalRASPaymentsAndTaxRelief = Some(45.54),
             oneOffRasPaymentPlusTaxReliefQuestion = Some(true),
@@ -129,7 +129,7 @@ class PaymentsIntoPensionsRedirectsSpec extends UnitTest {
       }
       "current page is invalid in journey" in {
         val pIPData = cyaData.copy(paymentsIntoPension =
-          PaymentsIntoPensionViewModel(
+          PaymentsIntoPensionsViewModel(
             rasPensionPaymentQuestion = Some(true),
             totalRASPaymentsAndTaxRelief = None,
             oneOffRasPaymentPlusTaxReliefQuestion = None,

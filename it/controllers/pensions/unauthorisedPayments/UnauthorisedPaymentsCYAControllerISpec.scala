@@ -26,7 +26,7 @@ import builders.PensionsUserDataBuilder.{aPensionsUserData, pensionsUserDataWith
 import builders.UnauthorisedPaymentsViewModelBuilder.anUnauthorisedPaymentsViewModel
 import controllers.pensions.unauthorisedPayments.routes._
 import models.mongo.{PensionsCYAModel, PensionsUserData}
-import models.pension.reliefs.PaymentsIntoPensionViewModel
+import models.pension.reliefs.PaymentsIntoPensionsViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterEach
@@ -45,7 +45,7 @@ class UnauthorisedPaymentsCYAControllerISpec extends
   BeforeAndAfterEach with
   PensionsDatabaseHelper with Logging { //scalastyle:off magic.number
 
-  val cyaDataIncomplete: PaymentsIntoPensionViewModel = PaymentsIntoPensionViewModel(
+  val cyaDataIncomplete: PaymentsIntoPensionsViewModel = PaymentsIntoPensionsViewModel(
     rasPensionPaymentQuestion = Some(true)
   )
 

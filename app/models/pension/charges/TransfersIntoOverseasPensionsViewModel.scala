@@ -35,10 +35,6 @@ case class TransfersIntoOverseasPensionsViewModel(
   def isEmpty: Boolean = transferPensionSavings.isEmpty && overseasTransferCharge.isEmpty && overseasTransferChargeAmount.isEmpty &&
     pensionSchemeTransferCharge.isEmpty && pensionSchemeTransferChargeAmount.isEmpty && transferPensionScheme.isEmpty
 
-  private def yesNoAndAmountPopulated(boolField: Option[Boolean], amountField: Option[BigDecimal]): Boolean = {
-    boolField.exists(value => !value || (value && amountField.nonEmpty))
-  }
-
   def isFinished: Boolean = {
     transferPensionSavings.exists(
       q => if (q) {
@@ -73,6 +69,10 @@ case class TransfersIntoOverseasPensionsViewModel(
     )
   }
 
+  def journeyIsNo: Boolean = this.transferPensionSavings.contains(false)
+
+  def journeyIsUnanswered: Boolean = this.isEmpty
+
   def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedTransfersIntoOverseasPensionsViewModel =
     EncryptedTransfersIntoOverseasPensionsViewModel(
       transferPensionSavings = transferPensionSavings.map(_.encrypted),
@@ -82,10 +82,6 @@ case class TransfersIntoOverseasPensionsViewModel(
       pensionSchemeTransferChargeAmount = pensionSchemeTransferChargeAmount.map(_.encrypted),
       transferPensionScheme = transferPensionScheme.map(_.encrypted())
     )
-
-  override def journeyIsNo: Boolean = this.transferPensionSavings.contains(false)
-
-  override def journeyIsUnanswered: Boolean = this.isEmpty
 }
 
 object TransfersIntoOverseasPensionsViewModel {

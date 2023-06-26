@@ -16,11 +16,11 @@
 
 package builders
 
-import models.pension.reliefs.PaymentsIntoPensionViewModel
+import models.pension.reliefs.PaymentsIntoPensionsViewModel
 
 object PaymentsIntoPensionVewModelBuilder {
 
-  val aPaymentsIntoPensionViewModel: PaymentsIntoPensionViewModel = PaymentsIntoPensionViewModel(
+  val aPaymentsIntoPensionViewModel: PaymentsIntoPensionsViewModel = PaymentsIntoPensionsViewModel(
     rasPensionPaymentQuestion = Some(true),
     totalRASPaymentsAndTaxRelief = Some(189.01),
     oneOffRasPaymentPlusTaxReliefQuestion = Some(true),
@@ -33,5 +33,5 @@ object PaymentsIntoPensionVewModelBuilder {
     totalWorkplacePensionPayments = Some(192.01)
   )
 
-  val aPaymentsIntoPensionsEmptyViewModel: PaymentsIntoPensionViewModel = PaymentsIntoPensionViewModel()
+  val aPaymentsIntoPensionsEmptyViewModel: PaymentsIntoPensionsViewModel = PaymentsIntoPensionsViewModel()
 }

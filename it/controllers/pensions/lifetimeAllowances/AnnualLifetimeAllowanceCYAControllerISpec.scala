@@ -33,7 +33,7 @@ import builders.UnauthorisedPaymentsViewModelBuilder.anUnauthorisedPaymentsViewM
 import controllers.pensions.lifetimeAllowances.routes._
 import models.mongo.{PensionsCYAModel, PensionsUserData}
 import models.pension.charges.PensionAnnualAllowancesViewModel
-import models.pension.reliefs.PaymentsIntoPensionViewModel
+import models.pension.reliefs.PaymentsIntoPensionsViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterEach
@@ -52,7 +52,7 @@ class AnnualLifetimeAllowanceCYAControllerISpec extends
   BeforeAndAfterEach with
   PensionsDatabaseHelper with Logging {
 
-  val cyaDataIncomplete: PaymentsIntoPensionViewModel = PaymentsIntoPensionViewModel(
+  val cyaDataIncomplete: PaymentsIntoPensionsViewModel = PaymentsIntoPensionsViewModel(
     rasPensionPaymentQuestion = Some(true)
   )
 

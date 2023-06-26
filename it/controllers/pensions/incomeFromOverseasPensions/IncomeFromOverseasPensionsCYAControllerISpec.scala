@@ -25,7 +25,7 @@ import builders.PensionsUserDataBuilder.{aPensionsUserData, pensionUserDataWithI
 import controllers.pensions.routes.OverseasPensionsSummaryController
 import models.mongo.{PensionsCYAModel, PensionsUserData}
 import models.pension.income.ForeignPension
-import models.pension.reliefs.PaymentsIntoPensionViewModel
+import models.pension.reliefs.PaymentsIntoPensionsViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterEach
@@ -44,7 +44,7 @@ class IncomeFromOverseasPensionsCYAControllerISpec extends
   PensionsDatabaseHelper with
   CommonUtils with Logging {   //scalastyle:off magic.number
   
-  val cyaDataIncomplete: PaymentsIntoPensionViewModel = PaymentsIntoPensionViewModel( rasPensionPaymentQuestion = Some(true))
+  val cyaDataIncomplete: PaymentsIntoPensionsViewModel = PaymentsIntoPensionsViewModel( rasPensionPaymentQuestion = Some(true))
 
   object ChangeLinksIncomeFromOverseasPensions {
     val paymentsFromOverseasPensions: String = controllers.pensions.incomeFromOverseasPensions.routes.PensionOverseasIncomeStatus.show(taxYear).url
