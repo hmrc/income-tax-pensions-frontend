@@ -784,10 +784,11 @@ unauthorisedPayments.noSurchargeAmount.error.noEntry = Nodwch gyfanswm y taliada
 #Did you pay non-UK tax that resulted in a surcharge
 unauthorisedPayments.didYouPayNonUkTax.title.individual = A wnaethoch dalu treth y tu allan i’r DU ar y swm a wnaeth arwain at ordal?
 unauthorisedPayments.didYouPayNonUkTax.title.agent = A wnaeth eich cleient dalu treth y tu allan i’r DU ar y swm a wnaeth arwain at ordal?
-unauthorisedPayments.didYouPayNonUkTax.error.noEntry = Dewiswch ‘Iawn’ os gwnaethoch dalu treth y tu allan i’r DU ar y swm y codwyd gordal arno
+unauthorisedPayments.didYouPayNonUkTax.error.noEntry.individual = Dewiswch ‘Iawn’ os gwnaethoch dalu treth y tu allan i’r DU ar y swm y codwyd gordal arno
+unauthorisedPayments.didYouPayNonUkTax.error.noEntry.agent = Dewiswch ‘Iawn’ os talodd eich cleient dreth y tu allan i’r DU ar y swm y codwyd gordal arno
 
-#Where any of the unauthorised payments from a UK pension scheme?
-unauthorisedPayments.whereAnyOfTheUnauthorisedPayments.title = A ddaeth unrhyw rai o’r taliadau heb awdurdod o gynllun pensiwn yn y DU?
+#Were any of the unauthorised payments from a UK pension scheme?
+unauthorisedPayments.wereAnyOfTheUnauthorisedPayments.title = A ddaeth unrhyw rai o’r taliadau heb awdurdod o gynllun pensiwn yn y DU?
 
 #payments into pensions CYA
 
@@ -809,7 +810,8 @@ unauthorisedPayments.cya.pensionSchemeTaxReferences.hidden = Newid Cyfeirnodau T
 #Did you pay non-UK tax that did not result in a surcharge
 unauthorisedPayments.nonUkTaxOnAmountNotSurcharge.title.individual = A wnaethoch dalu treth y tu allan i’r DU ar y swm na wnaeth arwain at ordal?
 unauthorisedPayments.nonUkTaxOnAmountNotSurcharge.title.agent = A wnaeth eich cleient dalu treth y tu allan i’r DU ar y swm na wnaeth arwain at ordal?
-unauthorisedPayments.nonUkTaxOnAmountNotSurcharge.error.noEntry = Dewiswch ‘Iawn’ os gwnaethoch dalu treth y tu allan i’r DU ar y swm na chodwyd gordal arno
+unauthorisedPayments.nonUkTaxOnAmountNotSurcharge.error.noEntry.individual = Dewiswch ‘Iawn’ os gwnaethoch dalu treth y tu allan i’r DU ar y swm na chodwyd gordal arno
+unauthorisedPayments.nonUkTaxOnAmountNotSurcharge.error.noEntry.agent = Dewiswch ‘Iawn’ os talodd eich cleient treth y tu allan i’r DU ar y swm na chodwyd gordal arno
 
 
 #Unauthorised Payments

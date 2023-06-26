@@ -20,6 +20,7 @@ trait PensionCYABaseModel {
   def isEmpty: Boolean
   def journeyIsNo: Boolean
   def journeyIsUnanswered: Boolean
+  def isFinished: Boolean
 }
 
 trait PensionSubRequestModel {

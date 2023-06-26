@@ -178,4 +178,24 @@ class FormsProvider() {
   def statePensionAddToCalculationForm(isAgent: Boolean): Form[Boolean] = YesNoForm.yesNoForm(
     missingInputError = s"pensions.statePension.addToCalculation.noEntry.${if (isAgent) "agent" else "individual"}"
   )
+
+  def unauthorisedNonUkTaxOnSurchargedAmountForm(implicit user: User): Form[(Boolean, Option[BigDecimal])] = {
+    val agentOrIndividual = if (user.isAgent) "agent" else "individual"
+    RadioButtonAmountForm.radioButtonAndAmountForm(
+      missingInputError = s"unauthorisedPayments.didYouPayNonUkTax.error.noEntry.$agentOrIndividual",
+      emptyFieldKey = "common.pensions.error.amount.noEntry",
+      wrongFormatKey = "common.unauthorisedPayments.error.Amount.incorrectFormat",
+      exceedsMaxAmountKey = "common.pensions.error.amount.overMaximum"
+    )
+  }
+
+  def unauthorisedNonUkTaxOnNotSurchargedAmountForm(implicit user: User): Form[(Boolean, Option[BigDecimal])] = {
+    val agentOrIndividual = if (user.isAgent) "agent" else "individual"
+    RadioButtonAmountForm.radioButtonAndAmountForm(
+      missingInputError = s"unauthorisedPayments.nonUkTaxOnAmountNotSurcharge.error.noEntry.$agentOrIndividual",
+      emptyFieldKey = "common.pensions.error.amount.noEntry",
+      wrongFormatKey = "common.unauthorisedPayments.error.Amount.incorrectFormat",
+      exceedsMaxAmountKey = "common.pensions.error.amount.overMaximum"
+    )
+  }
 }

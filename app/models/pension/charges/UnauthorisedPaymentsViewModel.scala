@@ -37,6 +37,31 @@ case class UnauthorisedPaymentsViewModel(surchargeQuestion: Option[Boolean] = No
                                          pensionSchemeTaxReference: Option[Seq[String]] = None) extends PensionCYABaseModel {
 
 
+  private def yesNoAndAmountPopulated(boolField: Option[Boolean], amountField: Option[BigDecimal]): Boolean = {
+    boolField.exists(value => !value || (value && amountField.nonEmpty))
+  }
+
+  def isFinished: Boolean = {
+    val isDone_surchargeQuestions = surchargeQuestion.exists(
+      q => if (q)
+        surchargeAmount.isDefined && yesNoAndAmountPopulated(surchargeTaxAmountQuestion, surchargeTaxAmount)
+      else
+        true
+    )
+    val isDone_noSurchargeQuestions = noSurchargeQuestion.exists(
+      q => if (q)
+        noSurchargeAmount.isDefined && yesNoAndAmountPopulated(noSurchargeTaxAmountQuestion, noSurchargeTaxAmount)
+      else
+        true
+    )
+    val isDone_pstrQuestions = ukPensionSchemesQuestion.exists(q => if (q) pensionSchemeTaxReference.nonEmpty else true)
+    Seq(
+      isDone_surchargeQuestions,
+      isDone_noSurchargeQuestions,
+      isDone_pstrQuestions
+    ).forall(x => x)
+  }
+
   def toUnauth: PensionSchemeUnauthorisedPayments = PensionSchemeUnauthorisedPayments(
     pensionSchemeTaxReference = pensionSchemeTaxReference,
     surcharge =

@@ -24,10 +24,11 @@ import models.pension.reliefs.PaymentsIntoPensionViewModel
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
+import services.redirects.PaymentsIntoPensionPages.TaxReliefNotClaimedPage
 import services.redirects.PaymentsIntoPensionsRedirects
+import services.redirects.PaymentsIntoPensionsRedirects.{cyaPageCall, journeyCheck}
 import services.redirects.SimpleRedirectService.{isFinishedCheck, redirectBasedOnCurrentAnswers}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import services.redirects.PaymentsIntoPensionPages.TaxReliefNotClaimedPage
 import utils.Clock
 import views.html.pensions.paymentsIntoPensions.PensionsTaxReliefNotClaimedView
 
@@ -49,8 +50,8 @@ class PensionsTaxReliefNotClaimedController @Inject()(authAction: AuthorisedActi
     implicit request =>
       pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
         optData =>
-          val checkRedirect = PaymentsIntoPensionsRedirects.journeyCheck(TaxReliefNotClaimedPage, _, taxYear)
-          redirectBasedOnCurrentAnswers(taxYear, optData)(checkRedirect) {
+          val checkRedirect = journeyCheck(TaxReliefNotClaimedPage, _, taxYear)
+          redirectBasedOnCurrentAnswers(taxYear, optData, cyaPageCall(taxYear))(checkRedirect) {
             data =>
 
               val form = formProvider.pensionsTaxReliefNotClaimedForm(request.user.isAgent)
@@ -70,7 +71,7 @@ class PensionsTaxReliefNotClaimedController @Inject()(authAction: AuthorisedActi
           pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
             optData =>
               val checkRedirect = PaymentsIntoPensionsRedirects.journeyCheck(TaxReliefNotClaimedPage, _, taxYear)
-              redirectBasedOnCurrentAnswers(taxYear, optData)(checkRedirect) {
+              redirectBasedOnCurrentAnswers(taxYear, optData, cyaPageCall(taxYear))(checkRedirect) {
                 data =>
 
                   val pensionsCYAModel: PensionsCYAModel = data.pensions
@@ -93,7 +94,7 @@ class PensionsTaxReliefNotClaimedController @Inject()(authAction: AuthorisedActi
                   }
                   pensionSessionService.createOrUpdateSessionData(request.user,
                     updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
-                      isFinishedCheck(updatedCyaModel, taxYear, redirectLocation)
+                    isFinishedCheck(updatedCyaModel.paymentsIntoPension, taxYear, redirectLocation, cyaPageCall)
                   }
               }
           }

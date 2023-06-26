@@ -23,10 +23,10 @@ import models.mongo.PensionsCYAModel
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
-import services.redirects.PaymentsIntoPensionsRedirects
+import services.redirects.PaymentsIntoPensionPages.TotalRasPage
+import services.redirects.PaymentsIntoPensionsRedirects.{cyaPageCall, journeyCheck}
 import services.redirects.SimpleRedirectService.{isFinishedCheck, redirectBasedOnCurrentAnswers}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import services.redirects.PaymentsIntoPensionPages.TotalRasPage
 import utils.Clock
 import views.html.pensions.paymentsIntoPensions.TotalPaymentsIntoRASView
 
@@ -47,8 +47,8 @@ class TotalPaymentsIntoRASController @Inject()(authAction: AuthorisedAction,
 
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) { optData =>
-      val checkRedirect = PaymentsIntoPensionsRedirects.journeyCheck(TotalRasPage, _, taxYear)
-      redirectBasedOnCurrentAnswers(taxYear, optData)(checkRedirect) { data =>
+      val checkRedirect = journeyCheck(TotalRasPage, _, taxYear)
+      redirectBasedOnCurrentAnswers(taxYear, optData, cyaPageCall(taxYear))(checkRedirect) { data =>
 
         val model = data.pensions.paymentsIntoPension
         model.totalRASPaymentsAndTaxRelief match {
@@ -65,8 +65,8 @@ class TotalPaymentsIntoRASController @Inject()(authAction: AuthorisedAction,
 
   def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
     pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) { optData =>
-      val checkRedirect = PaymentsIntoPensionsRedirects.journeyCheck(TotalRasPage, _, taxYear)
-      redirectBasedOnCurrentAnswers(taxYear, optData)(checkRedirect) { data =>
+      val checkRedirect = journeyCheck(TotalRasPage, _, taxYear)
+      redirectBasedOnCurrentAnswers(taxYear, optData, cyaPageCall(taxYear))(checkRedirect) { data =>
 
         val cya = data.pensions
         val model = cya.paymentsIntoPension
@@ -91,7 +91,7 @@ class TotalPaymentsIntoRASController @Inject()(authAction: AuthorisedAction,
 
             pensionSessionService.createOrUpdateSessionData(request.user,
               updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
-              isFinishedCheck(updatedCyaModel, taxYear, redirectLocation)
+              isFinishedCheck(updatedCyaModel.paymentsIntoPension, taxYear, redirectLocation, cyaPageCall)
             }
           }
         )

@@ -17,6 +17,7 @@
 package services.redirects
 
 import models.mongo.{PensionsCYAModel, PensionsUserData}
+import models.pension.PensionCYABaseModel
 import play.api.Logging
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{Call, Result}
@@ -25,7 +26,7 @@ import scala.concurrent.Future
 
 object SimpleRedirectService extends Logging {
 
-  def redirectBasedOnCurrentAnswers(taxYear: Int, data: Option[PensionsUserData])
+  def redirectBasedOnCurrentAnswers(taxYear: Int, data: Option[PensionsUserData], cyaPage: Call)
                                    (shouldRedirect: PensionsCYAModel => Option[Result])
                                    (continue: PensionsUserData => Future[Result]): Future[Result] = {
 
@@ -40,7 +41,7 @@ object SimpleRedirectService extends Logging {
           Left(redirect)
       }
       case None =>
-        Left(Redirect(controllers.pensions.paymentsIntoPensions.routes.PaymentsIntoPensionsCYAController.show(taxYear)))
+        Left(Redirect(cyaPage))
     }
 
     redirectOrData match {
@@ -49,11 +50,11 @@ object SimpleRedirectService extends Logging {
     }
   }
 
-  def isFinishedCheck(cya: PensionsCYAModel, taxYear: Int, redirect: Call): Result = {
-    if (cya.paymentsIntoPension.isFinished) {
-      Redirect(controllers.pensions.paymentsIntoPensions.routes.PaymentsIntoPensionsCYAController.show(taxYear))
+  def isFinishedCheck(cya: PensionCYABaseModel, taxYear: Int, continueRedirect: Call, cyaRedirectFn: Int => Call): Result = {
+    if (cya.isFinished) {
+      Redirect(cyaRedirectFn(taxYear))
     } else {
-      Redirect(redirect)
+      Redirect(continueRedirect)
     }
   }
 

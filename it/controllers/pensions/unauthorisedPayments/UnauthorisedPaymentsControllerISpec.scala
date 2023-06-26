@@ -30,9 +30,8 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.UnAuthorisedPayments.{noSurchargeAmountUrl, surchargeAmountUrl}
+import utils.PageUrls.UnauthorisedPaymentsPages.{checkUnauthorisedPaymentsCyaUrl, noSurchargeAmountUrl, surchargeAmountUrl, unauthorisedPaymentsUrl}
 import utils.PageUrls.fullUrl
-import utils.PageUrls.unauthorisedPaymentsPages.{checkUnauthorisedPaymentsCyaUrl, unauthorisedPaymentsUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAndAfterEach with ViewHelpers with PensionsDatabaseHelper {
@@ -64,7 +63,7 @@ class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAnd
     val expectedCaption: Int => String
     val expectedButtonText: String
     val expectedTitle: String
-    lazy val expectedHeading = expectedTitle
+    lazy val expectedHeading: String = expectedTitle
     val expectedError: String
     val expectedErrorTitle: String
     val expectedSubHeading: String
@@ -130,270 +129,194 @@ class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAnd
         import Selectors._
         import user.commonExpectedResults._
 
-        "render the 'unauthorised payments page' with no pre filling" which {
-          implicit lazy val result: WSResponse = {
-            authoriseAgentOrIndividual(user.isAgent)
-            dropPensionsDB()
+        "render the page" when {
+          "there is no pre-filling" which {
+            implicit lazy val result: WSResponse = {
+              authoriseAgentOrIndividual(user.isAgent)
+              dropPensionsDB()
 
-            val pensionsViewModel = anUnauthorisedPaymentsEmptyViewModel.copy()
+              val pensionsViewModel = anUnauthorisedPaymentsEmptyViewModel.copy()
 
-            insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false))
-            urlGet(fullUrl(unauthorisedPaymentsUrl(taxYearEOY)), user.isWelsh, follow = false,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+              insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false))
+              urlGet(fullUrl(unauthorisedPaymentsUrl(taxYearEOY)), user.isWelsh, follow = false,
+                headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+            }
+
+            "has an OK status" in {
+              result.status shouldBe OK
+            }
+
+            implicit def document: () => Document = () => Jsoup.parse(result.body)
+
+            titleCheck(expectedTitle, user.isWelsh)
+            h1Check(user.commonExpectedResults.expectedHeading)
+            captionCheck(expectedCaption(taxYearEOY), captionSelector)
+            hintTextCheck(checkboxHint, Selectors.checkboxHintSelector)
+            checkBoxCheck(expectedYesSurchargeCheckboxText, 1, checked = Some(false))
+            checkBoxCheck(expectedYesNotSurchargeCheckboxText, 2, checked = Some(false))
+            checkBoxCheck(expectedNoSurchargeCheckboxText, 3, checked = Some(false))
+            inputFieldValueCheck("unauthorisedPayments[]", Selectors.yesSurchargeSelector, yesSurchargeValue)
+            inputFieldValueCheck("unauthorisedPayments[]", Selectors.yesNotSurchargeSelector, yesNotSurchargeValue)
+            inputFieldValueCheck("unauthorisedPayments[]", Selectors.noSelector, noValue)
+            textOnPageCheck(expectedParagraphText, Selectors.paragraphTextSelector)
+            textOnPageCheck(expectedParagraphText1, Selectors.paragraphText1Selector)
+            linkCheck(expectedDetailsExternalLinkText, expectedDetailsLinkSelector, externalHref)
+            textOnPageCheck(expectedSubHeading, Selectors.subHeadingSelector)
+            buttonCheck(expectedButtonText, continueButtonSelector)
+            welshToggleCheck(user.isWelsh)
+            formPostLinkCheck(unauthorisedPaymentsUrl(taxYearEOY), formSelector)
           }
 
-          "has an OK status" in {
-            result.status shouldBe OK
+          "surchargeQuestion is pre-filled true" which {
+            implicit lazy val result: WSResponse = {
+              authoriseAgentOrIndividual(user.isAgent)
+              dropPensionsDB()
+
+              val pensionsViewModel: UnauthorisedPaymentsViewModel = UnauthorisedPaymentsViewModel().copy(surchargeQuestion = Some(true))
+
+              insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false))
+              urlGet(fullUrl(unauthorisedPaymentsUrl(taxYearEOY)), user.isWelsh, follow = false,
+                headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+            }
+
+            "has an OK status" in {
+              result.status shouldBe OK
+            }
+
+            implicit def document: () => Document = () => Jsoup.parse(result.body)
+
+            titleCheck(expectedTitle, user.isWelsh)
+            h1Check(user.commonExpectedResults.expectedHeading)
+            captionCheck(expectedCaption(taxYearEOY), captionSelector)
+            hintTextCheck(checkboxHint, Selectors.checkboxHintSelector)
+            checkBoxCheck(expectedYesSurchargeCheckboxText, 1, checked = Some(true))
+            checkBoxCheck(expectedYesNotSurchargeCheckboxText, 2, checked = Some(false))
+            checkBoxCheck(expectedNoSurchargeCheckboxText, 3, checked = Some(false))
+            inputFieldValueCheck("unauthorisedPayments[]", Selectors.yesSurchargeSelector, yesSurchargeValue)
+            inputFieldValueCheck("unauthorisedPayments[]", Selectors.yesNotSurchargeSelector, yesNotSurchargeValue)
+            inputFieldValueCheck("unauthorisedPayments[]", Selectors.noSelector, noValue)
+            textOnPageCheck(expectedParagraphText, Selectors.paragraphTextSelector)
+            textOnPageCheck(expectedParagraphText1, Selectors.paragraphText1Selector)
+            linkCheck(expectedDetailsExternalLinkText, expectedDetailsLinkSelector, externalHref)
+            textOnPageCheck(expectedSubHeading, Selectors.subHeadingSelector)
+            buttonCheck(expectedButtonText, continueButtonSelector)
+            welshToggleCheck(user.isWelsh)
+            formPostLinkCheck(unauthorisedPaymentsUrl(taxYearEOY), formSelector)
           }
 
-          implicit def document: () => Document = () => Jsoup.parse(result.body)
+          "noSurchargeQuestion is pre-filled true" which {
+            implicit lazy val result: WSResponse = {
+              authoriseAgentOrIndividual(user.isAgent)
+              dropPensionsDB()
 
-          titleCheck(expectedTitle, user.isWelsh)
-          h1Check(user.commonExpectedResults.expectedHeading)
-          captionCheck(expectedCaption(taxYearEOY), captionSelector)
-          hintTextCheck(checkboxHint, Selectors.checkboxHintSelector)
-          checkBoxCheck(expectedYesSurchargeCheckboxText, 1, checked = Some(false))
-          checkBoxCheck(expectedYesNotSurchargeCheckboxText, 2, checked = Some(false))
-          checkBoxCheck(expectedNoSurchargeCheckboxText, 3, checked = Some(false))
-          inputFieldValueCheck("unauthorisedPayments[]", Selectors.yesSurchargeSelector, yesSurchargeValue)
-          inputFieldValueCheck("unauthorisedPayments[]", Selectors.yesNotSurchargeSelector, yesNotSurchargeValue)
-          inputFieldValueCheck("unauthorisedPayments[]", Selectors.noSelector, noValue)
-          textOnPageCheck(expectedParagraphText, Selectors.paragraphTextSelector)
-          textOnPageCheck(expectedParagraphText1, Selectors.paragraphText1Selector)
-          linkCheck(expectedDetailsExternalLinkText, expectedDetailsLinkSelector, externalHref)
-          textOnPageCheck(expectedSubHeading, Selectors.subHeadingSelector)
-          buttonCheck(expectedButtonText, continueButtonSelector)
-          welshToggleCheck(user.isWelsh)
-          formPostLinkCheck(unauthorisedPaymentsUrl(taxYearEOY), formSelector)
-        }
-      }
-    }
+              val pensionsViewModel: UnauthorisedPaymentsViewModel = UnauthorisedPaymentsViewModel().copy(noSurchargeQuestion = Some(true))
 
-    userScenarios.foreach { user =>
-      s"language is ${welshTest(user.isWelsh)} and request is from an ${agentTest(user.isAgent)}" should {
+              insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false))
+              urlGet(fullUrl(unauthorisedPaymentsUrl(taxYearEOY)), user.isWelsh, follow = false,
+                headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+            }
 
-        import Selectors._
-        import user.commonExpectedResults._
+            "has an OK status" in {
+              result.status shouldBe OK
+            }
 
-        "render the 'unauthorised payments page' with no surchargeQuestion true" which {
-          implicit lazy val result: WSResponse = {
-            authoriseAgentOrIndividual(user.isAgent)
-            dropPensionsDB()
+            implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-            val pensionsViewModel: UnauthorisedPaymentsViewModel = UnauthorisedPaymentsViewModel().copy(surchargeQuestion = Some(true))
-
-            insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false))
-            urlGet(fullUrl(unauthorisedPaymentsUrl(taxYearEOY)), user.isWelsh, follow = false,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+            titleCheck(expectedTitle, user.isWelsh)
+            h1Check(user.commonExpectedResults.expectedHeading)
+            captionCheck(expectedCaption(taxYearEOY), captionSelector)
+            hintTextCheck(checkboxHint, Selectors.checkboxHintSelector)
+            checkBoxCheck(expectedYesSurchargeCheckboxText, 1, checked = Some(false))
+            checkBoxCheck(expectedYesNotSurchargeCheckboxText, 2, checked = Some(true))
+            checkBoxCheck(expectedNoSurchargeCheckboxText, 3, checked = Some(false))
+            inputFieldValueCheck("unauthorisedPayments[]", Selectors.yesSurchargeSelector, yesSurchargeValue)
+            inputFieldValueCheck("unauthorisedPayments[]", Selectors.yesNotSurchargeSelector, yesNotSurchargeValue)
+            inputFieldValueCheck("unauthorisedPayments[]", Selectors.noSelector, noValue)
+            textOnPageCheck(expectedParagraphText, Selectors.paragraphTextSelector)
+            textOnPageCheck(expectedParagraphText1, Selectors.paragraphText1Selector)
+            linkCheck(expectedDetailsExternalLinkText, expectedDetailsLinkSelector, externalHref)
+            textOnPageCheck(expectedSubHeading, Selectors.subHeadingSelector)
+            buttonCheck(expectedButtonText, continueButtonSelector)
+            welshToggleCheck(user.isWelsh)
+            formPostLinkCheck(unauthorisedPaymentsUrl(taxYearEOY), formSelector)
           }
 
-          "has an OK status" in {
-            result.status shouldBe OK
+          "surchargeQuestion and noSurchargeQuestion are pre-filled true" which {
+            implicit lazy val result: WSResponse = {
+              authoriseAgentOrIndividual(user.isAgent)
+              dropPensionsDB()
+
+              val pensionsViewModel: UnauthorisedPaymentsViewModel = UnauthorisedPaymentsViewModel().copy(surchargeQuestion = Some(true),
+                noSurchargeQuestion = Some(true))
+
+              insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false))
+              urlGet(fullUrl(unauthorisedPaymentsUrl(taxYearEOY)), user.isWelsh, follow = false,
+                headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+            }
+
+            "has an OK status" in {
+              result.status shouldBe OK
+            }
+
+            implicit def document: () => Document = () => Jsoup.parse(result.body)
+
+            titleCheck(expectedTitle, user.isWelsh)
+            h1Check(user.commonExpectedResults.expectedHeading)
+            captionCheck(expectedCaption(taxYearEOY), captionSelector)
+            hintTextCheck(checkboxHint, Selectors.checkboxHintSelector)
+            checkBoxCheck(expectedYesSurchargeCheckboxText, 1, checked = Some(true))
+            checkBoxCheck(expectedYesNotSurchargeCheckboxText, 2, checked = Some(true))
+            checkBoxCheck(expectedNoSurchargeCheckboxText, 3, checked = Some(false))
+            inputFieldValueCheck("unauthorisedPayments[]", Selectors.yesSurchargeSelector, yesSurchargeValue)
+            inputFieldValueCheck("unauthorisedPayments[]", Selectors.yesNotSurchargeSelector, yesNotSurchargeValue)
+            inputFieldValueCheck("unauthorisedPayments[]", Selectors.noSelector, noValue)
+            textOnPageCheck(expectedParagraphText, Selectors.paragraphTextSelector)
+            textOnPageCheck(expectedParagraphText1, Selectors.paragraphText1Selector)
+            linkCheck(expectedDetailsExternalLinkText, expectedDetailsLinkSelector, externalHref)
+            textOnPageCheck(expectedSubHeading, Selectors.subHeadingSelector)
+            buttonCheck(expectedButtonText, continueButtonSelector)
+            welshToggleCheck(user.isWelsh)
+            formPostLinkCheck(unauthorisedPaymentsUrl(taxYearEOY), formSelector)
           }
 
-          implicit def document: () => Document = () => Jsoup.parse(result.body)
+          "noValue is pre-filled true" which {
+            implicit lazy val result: WSResponse = {
+              authoriseAgentOrIndividual(user.isAgent)
+              dropPensionsDB()
 
-          titleCheck(expectedTitle, user.isWelsh)
-          h1Check(user.commonExpectedResults.expectedHeading)
-          captionCheck(expectedCaption(taxYearEOY), captionSelector)
-          hintTextCheck(checkboxHint, Selectors.checkboxHintSelector)
-          checkBoxCheck(expectedYesSurchargeCheckboxText, 1, checked = Some(true))
-          checkBoxCheck(expectedYesNotSurchargeCheckboxText, 2, checked = Some(false))
-          checkBoxCheck(expectedNoSurchargeCheckboxText, 3, checked = Some(false))
-          inputFieldValueCheck("unauthorisedPayments[]", Selectors.yesSurchargeSelector, yesSurchargeValue)
-          inputFieldValueCheck("unauthorisedPayments[]", Selectors.yesNotSurchargeSelector, yesNotSurchargeValue)
-          inputFieldValueCheck("unauthorisedPayments[]", Selectors.noSelector, noValue)
-          textOnPageCheck(expectedParagraphText, Selectors.paragraphTextSelector)
-          textOnPageCheck(expectedParagraphText1, Selectors.paragraphText1Selector)
-          linkCheck(expectedDetailsExternalLinkText, expectedDetailsLinkSelector, externalHref)
-          textOnPageCheck(expectedSubHeading, Selectors.subHeadingSelector)
-          buttonCheck(expectedButtonText, continueButtonSelector)
-          welshToggleCheck(user.isWelsh)
-          formPostLinkCheck(unauthorisedPaymentsUrl(taxYearEOY), formSelector)
-        }
-      }
-    }
+              val pensionsViewModel: UnauthorisedPaymentsViewModel = UnauthorisedPaymentsViewModel().copy(
+                surchargeQuestion = Some(false), noSurchargeQuestion = Some(false)
+              )
 
-    userScenarios.foreach { user =>
-      s"language is ${welshTest(user.isWelsh)} and request is from an ${agentTest(user.isAgent)}" should {
+              insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false))
+              urlGet(fullUrl(unauthorisedPaymentsUrl(taxYearEOY)), user.isWelsh, follow = false,
+                headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+            }
 
-        import Selectors._
-        import user.commonExpectedResults._
+            "has an OK status" in {
+              result.status shouldBe OK
+            }
 
-        "render the 'unauthorised payments page' with noSurchargeQuestion true" which {
-          implicit lazy val result: WSResponse = {
-            authoriseAgentOrIndividual(user.isAgent)
-            dropPensionsDB()
+            implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-            val pensionsViewModel: UnauthorisedPaymentsViewModel = UnauthorisedPaymentsViewModel().copy(noSurchargeQuestion = Some(true))
-
-            insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false))
-            urlGet(fullUrl(unauthorisedPaymentsUrl(taxYearEOY)), user.isWelsh, follow = false,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+            titleCheck(expectedTitle, user.isWelsh)
+            h1Check(user.commonExpectedResults.expectedHeading)
+            captionCheck(expectedCaption(taxYearEOY), captionSelector)
+            hintTextCheck(checkboxHint, Selectors.checkboxHintSelector)
+            checkBoxCheck(expectedYesSurchargeCheckboxText, 1, checked = Some(false))
+            checkBoxCheck(expectedYesNotSurchargeCheckboxText, 2, checked = Some(false))
+            checkBoxCheck(expectedNoSurchargeCheckboxText, 3, checked = Some(true))
+            inputFieldValueCheck("unauthorisedPayments[]", Selectors.yesSurchargeSelector, yesSurchargeValue)
+            inputFieldValueCheck("unauthorisedPayments[]", Selectors.yesNotSurchargeSelector, yesNotSurchargeValue)
+            inputFieldValueCheck("unauthorisedPayments[]", Selectors.noSelector, noValue)
+            textOnPageCheck(expectedParagraphText, Selectors.paragraphTextSelector)
+            textOnPageCheck(expectedParagraphText1, Selectors.paragraphText1Selector)
+            linkCheck(expectedDetailsExternalLinkText, expectedDetailsLinkSelector, externalHref)
+            textOnPageCheck(expectedSubHeading, Selectors.subHeadingSelector)
+            buttonCheck(expectedButtonText, continueButtonSelector)
+            welshToggleCheck(user.isWelsh)
+            formPostLinkCheck(unauthorisedPaymentsUrl(taxYearEOY), formSelector)
           }
-
-          "has an OK status" in {
-            result.status shouldBe OK
-          }
-
-          implicit def document: () => Document = () => Jsoup.parse(result.body)
-
-          titleCheck(expectedTitle, user.isWelsh)
-          h1Check(user.commonExpectedResults.expectedHeading)
-          captionCheck(expectedCaption(taxYearEOY), captionSelector)
-          hintTextCheck(checkboxHint, Selectors.checkboxHintSelector)
-          checkBoxCheck(expectedYesSurchargeCheckboxText, 1, checked = Some(false))
-          checkBoxCheck(expectedYesNotSurchargeCheckboxText, 2, checked = Some(true))
-          checkBoxCheck(expectedNoSurchargeCheckboxText, 3, checked = Some(false))
-          inputFieldValueCheck("unauthorisedPayments[]", Selectors.yesSurchargeSelector, yesSurchargeValue)
-          inputFieldValueCheck("unauthorisedPayments[]", Selectors.yesNotSurchargeSelector, yesNotSurchargeValue)
-          inputFieldValueCheck("unauthorisedPayments[]", Selectors.noSelector, noValue)
-          textOnPageCheck(expectedParagraphText, Selectors.paragraphTextSelector)
-          textOnPageCheck(expectedParagraphText1, Selectors.paragraphText1Selector)
-          linkCheck(expectedDetailsExternalLinkText, expectedDetailsLinkSelector, externalHref)
-          textOnPageCheck(expectedSubHeading, Selectors.subHeadingSelector)
-          buttonCheck(expectedButtonText, continueButtonSelector)
-          welshToggleCheck(user.isWelsh)
-          formPostLinkCheck(unauthorisedPaymentsUrl(taxYearEOY), formSelector)
-        }
-      }
-    }
-
-    userScenarios.foreach { user =>
-      s"language is ${welshTest(user.isWelsh)} and request is from an ${agentTest(user.isAgent)}" should {
-
-        import Selectors._
-        import user.commonExpectedResults._
-
-        "render the 'unauthorised payments page' with surchargeQuestion and noSurchargeQuestion true" which {
-          implicit lazy val result: WSResponse = {
-            authoriseAgentOrIndividual(user.isAgent)
-            dropPensionsDB()
-
-            val pensionsViewModel: UnauthorisedPaymentsViewModel = UnauthorisedPaymentsViewModel().copy(surchargeQuestion = Some(true),
-              noSurchargeQuestion = Some(true))
-
-            insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false))
-            urlGet(fullUrl(unauthorisedPaymentsUrl(taxYearEOY)), user.isWelsh, follow = false,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
-          }
-
-          "has an OK status" in {
-            result.status shouldBe OK
-          }
-          implicit def document: () => Document = () => Jsoup.parse(result.body)
-
-          titleCheck(expectedTitle, user.isWelsh)
-          h1Check(user.commonExpectedResults.expectedHeading)
-          captionCheck(expectedCaption(taxYearEOY), captionSelector)
-          hintTextCheck(checkboxHint, Selectors.checkboxHintSelector)
-          checkBoxCheck(expectedYesSurchargeCheckboxText, 1, checked = Some(true))
-          checkBoxCheck(expectedYesNotSurchargeCheckboxText, 2, checked = Some(true))
-          checkBoxCheck(expectedNoSurchargeCheckboxText, 3, checked = Some(false))
-          inputFieldValueCheck("unauthorisedPayments[]", Selectors.yesSurchargeSelector, yesSurchargeValue)
-          inputFieldValueCheck("unauthorisedPayments[]", Selectors.yesNotSurchargeSelector, yesNotSurchargeValue)
-          inputFieldValueCheck("unauthorisedPayments[]", Selectors.noSelector, noValue)
-          textOnPageCheck(expectedParagraphText, Selectors.paragraphTextSelector)
-          textOnPageCheck(expectedParagraphText1, Selectors.paragraphText1Selector)
-          linkCheck(expectedDetailsExternalLinkText, expectedDetailsLinkSelector, externalHref)
-          textOnPageCheck(expectedSubHeading, Selectors.subHeadingSelector)
-          buttonCheck(expectedButtonText, continueButtonSelector)
-          welshToggleCheck(user.isWelsh)
-          formPostLinkCheck(unauthorisedPaymentsUrl(taxYearEOY), formSelector)
-        }
-      }
-    }
-
-    userScenarios.foreach { user =>
-      s"language is ${welshTest(user.isWelsh)} and request is from an ${agentTest(user.isAgent)}" should {
-
-        import Selectors._
-        import user.commonExpectedResults._
-
-        "render the 'unauthorised payments page' with noValue true" which {
-          implicit lazy val result: WSResponse = {
-            authoriseAgentOrIndividual(user.isAgent)
-            dropPensionsDB()
-
-            val pensionsViewModel: UnauthorisedPaymentsViewModel = UnauthorisedPaymentsViewModel().copy(
-              surchargeQuestion = Some(false), noSurchargeQuestion= Some(false)
-            )
-
-            insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false))
-            urlGet(fullUrl(unauthorisedPaymentsUrl(taxYearEOY)), user.isWelsh, follow = false,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
-          }
-
-          "has an OK status" in {
-            result.status shouldBe OK
-          }
-
-          implicit def document: () => Document = () => Jsoup.parse(result.body)
-
-          titleCheck(expectedTitle, user.isWelsh)
-          h1Check(user.commonExpectedResults.expectedHeading)
-          captionCheck(expectedCaption(taxYearEOY), captionSelector)
-          hintTextCheck(checkboxHint, Selectors.checkboxHintSelector)
-          checkBoxCheck(expectedYesSurchargeCheckboxText, 1, checked = Some(false))
-          checkBoxCheck(expectedYesNotSurchargeCheckboxText, 2, checked = Some(false))
-          checkBoxCheck(expectedNoSurchargeCheckboxText, 3, checked = Some(true))
-          inputFieldValueCheck("unauthorisedPayments[]", Selectors.yesSurchargeSelector, yesSurchargeValue)
-          inputFieldValueCheck("unauthorisedPayments[]", Selectors.yesNotSurchargeSelector, yesNotSurchargeValue)
-          inputFieldValueCheck("unauthorisedPayments[]", Selectors.noSelector, noValue)
-          textOnPageCheck(expectedParagraphText, Selectors.paragraphTextSelector)
-          textOnPageCheck(expectedParagraphText1, Selectors.paragraphText1Selector)
-          linkCheck(expectedDetailsExternalLinkText, expectedDetailsLinkSelector, externalHref)
-          textOnPageCheck(expectedSubHeading, Selectors.subHeadingSelector)
-          buttonCheck(expectedButtonText, continueButtonSelector)
-          welshToggleCheck(user.isWelsh)
-          formPostLinkCheck(unauthorisedPaymentsUrl(taxYearEOY), formSelector)
-        }
-      }
-    }
-
-    userScenarios.foreach { user =>
-      s"language is ${welshTest(user.isWelsh)} and request is from an ${agentTest(user.isAgent)}" should {
-
-        import Selectors._
-        import user.commonExpectedResults._
-
-        "render the 'unauthorised payments page' with noValue and surchargeQuestion and noSurchargeQuestion true" which {
-          implicit lazy val result: WSResponse = {
-            authoriseAgentOrIndividual(user.isAgent)
-            dropPensionsDB()
-
-            val pensionsViewModel: UnauthorisedPaymentsViewModel = UnauthorisedPaymentsViewModel().copy(
-              surchargeQuestion = Some(true), noSurchargeQuestion = Some(true)
-            )
-
-            insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false))
-            urlGet(fullUrl(unauthorisedPaymentsUrl(taxYearEOY)), user.isWelsh, follow = false,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
-          }
-
-          "has an OK status" in {
-            result.status shouldBe OK
-          }
-
-          implicit def document: () => Document = () => Jsoup.parse(result.body)
-
-          titleCheck(expectedTitle, user.isWelsh)
-          h1Check(user.commonExpectedResults.expectedHeading)
-          captionCheck(expectedCaption(taxYearEOY), captionSelector)
-          hintTextCheck(checkboxHint, Selectors.checkboxHintSelector)
-          checkBoxCheck(expectedYesSurchargeCheckboxText, 1, checked = Some(true))
-          checkBoxCheck(expectedYesNotSurchargeCheckboxText, 2, checked = Some(true))
-          checkBoxCheck(expectedNoSurchargeCheckboxText, 3, checked = Some(false))
-          inputFieldValueCheck("unauthorisedPayments[]", Selectors.yesSurchargeSelector, yesSurchargeValue)
-          inputFieldValueCheck("unauthorisedPayments[]", Selectors.yesNotSurchargeSelector, yesNotSurchargeValue)
-          inputFieldValueCheck("unauthorisedPayments[]", Selectors.noSelector, noValue)
-          textOnPageCheck(expectedParagraphText, Selectors.paragraphTextSelector)
-          textOnPageCheck(expectedParagraphText1, Selectors.paragraphText1Selector)
-          linkCheck(expectedDetailsExternalLinkText, expectedDetailsLinkSelector, externalHref)
-          textOnPageCheck(expectedSubHeading, Selectors.subHeadingSelector)
-          buttonCheck(expectedButtonText, continueButtonSelector)
-          welshToggleCheck(user.isWelsh)
-          formPostLinkCheck(unauthorisedPaymentsUrl(taxYearEOY), formSelector)
         }
       }
     }
@@ -466,7 +389,7 @@ class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAnd
           authoriseAgentOrIndividual(user.isAgent)
           dropPensionsDB()
 
-          val pensionsViewModel = anUnauthorisedPaymentsViewModel.copy()
+          val pensionsViewModel = anUnauthorisedPaymentsEmptyViewModel.copy()
 
           insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false))
           urlPost(fullUrl(unauthorisedPaymentsUrl(taxYearEOY)), body = form, user.isWelsh, follow = false,
@@ -479,8 +402,7 @@ class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAnd
         }
       }
 
-      //TODO - redirect to Amount that did not result in a surcharge page once implemented
-      s"redirects to surchargeAmountUrl when ${agentTest(user.isAgent)} submits a valid form with " +
+      s"redirects to noSurchargeAmountUrl when ${agentTest(user.isAgent)} submits a valid form with " +
         s"yesNotSurchargeValue checkboxes checked in Language ${welshTest(user.isWelsh)}" which {
         val form = {
           Map(s"${UnAuthorisedPaymentsForm.unauthorisedPaymentsType}[]" -> Seq("", yesNotSurchargeValue))
@@ -491,7 +413,7 @@ class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAnd
           authoriseAgentOrIndividual(user.isAgent)
           dropPensionsDB()
 
-          val pensionsViewModel = anUnauthorisedPaymentsViewModel.copy()
+          val pensionsViewModel = anUnauthorisedPaymentsEmptyViewModel.copy()
 
           insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false))
           urlPost(fullUrl(unauthorisedPaymentsUrl(taxYearEOY)), body = form, user.isWelsh, follow = false,
@@ -506,26 +428,26 @@ class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAnd
 
       s"redirects to CYA page when ${agentTest(user.isAgent)} submits a valid form with " +
         s"noValue checkboxes checked in Language ${welshTest(user.isWelsh)}" which {
-          val form = {
-            Map(s"${UnAuthorisedPaymentsForm.unauthorisedPaymentsType}[]" -> Seq("", "", noValue))
-          }
+        val form = {
+          Map(s"${UnAuthorisedPaymentsForm.unauthorisedPaymentsType}[]" -> Seq("", "", noValue))
+        }
 
-          implicit lazy val result: WSResponse = {
+        implicit lazy val result: WSResponse = {
 
-            authoriseAgentOrIndividual(user.isAgent)
-            dropPensionsDB()
+          authoriseAgentOrIndividual(user.isAgent)
+          dropPensionsDB()
 
-            val pensionsViewModel = anUnauthorisedPaymentsViewModel.copy()
+          val pensionsViewModel = anUnauthorisedPaymentsEmptyViewModel.copy()
 
-            insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false))
-            urlPost(fullUrl(unauthorisedPaymentsUrl(taxYearEOY)), body = form, user.isWelsh, follow = false,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
-          }
+          insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false))
+          urlPost(fullUrl(unauthorisedPaymentsUrl(taxYearEOY)), body = form, user.isWelsh, follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        }
 
-          "has a SEE_OTHER(303) status" in {
-            result.status shouldBe SEE_OTHER
-            result.header("location").contains(checkUnauthorisedPaymentsCyaUrl(taxYearEOY)) shouldBe true
-          }
+        "has a SEE_OTHER(303) status" in {
+          result.status shouldBe SEE_OTHER
+          result.header("location").contains(checkUnauthorisedPaymentsCyaUrl(taxYearEOY)) shouldBe true
+        }
       }
 
       s"redirects to surchargeAmountUrl when ${agentTest(user.isAgent)} submits a valid form with both yesSurcharge " +
@@ -539,31 +461,7 @@ class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAnd
           authoriseAgentOrIndividual(user.isAgent)
           dropPensionsDB()
 
-          val pensionsViewModel = anUnauthorisedPaymentsViewModel.copy()
-
-          insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false))
-          urlPost(fullUrl(unauthorisedPaymentsUrl(taxYearEOY)), body = form, user.isWelsh, follow = false,
-            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
-        }
-
-        "has a SEE_OTHER(303) status" in {
-          result.status shouldBe SEE_OTHER
-          result.header("location").contains(surchargeAmountUrl(taxYearEOY)) shouldBe true
-        }
-      }
-
-      s"redirects to surchargeAmountUrl when ${agentTest(user.isAgent)} submits a valid form with yesSurcharge " +
-        s"and yesNotSurchargeValue and noValue checkboxes checked in Language ${welshTest(user.isWelsh)}" which {
-        val form = {
-          Map(s"${UnAuthorisedPaymentsForm.unauthorisedPaymentsType}[]" -> Seq(yesSurchargeValue, yesNotSurchargeValue, noValue))
-        }
-
-        implicit lazy val result: WSResponse = {
-
-          authoriseAgentOrIndividual(user.isAgent)
-          dropPensionsDB()
-
-          val pensionsViewModel = anUnauthorisedPaymentsViewModel.copy()
+          val pensionsViewModel = anUnauthorisedPaymentsEmptyViewModel.copy()
 
           insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false))
           urlPost(fullUrl(unauthorisedPaymentsUrl(taxYearEOY)), body = form, user.isWelsh, follow = false,
@@ -577,7 +475,7 @@ class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAnd
       }
     }
 
-    "clear the surcharge content if the surcharge question is not marked" in {
+    "clear the 'surcharge' content if the 'surcharge' question is not marked" in {
       val form = {
         Map(s"${UnAuthorisedPaymentsForm.unauthorisedPaymentsType}[]" -> Seq(yesNotSurchargeValue))
       }

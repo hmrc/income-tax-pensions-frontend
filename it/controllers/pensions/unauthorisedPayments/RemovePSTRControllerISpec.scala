@@ -16,7 +16,8 @@
 
 package controllers.pensions.unauthorisedPayments
 
-import builders.PensionsUserDataBuilder.aPensionsUserData
+import builders.PensionsUserDataBuilder.{aPensionsUserData, pensionsUserDataWithUnauthorisedPayments}
+import builders.UnauthorisedPaymentsViewModelBuilder.anUnauthorisedPaymentsViewModel
 import builders.UserBuilder.aUserRequest
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -24,13 +25,15 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
+import utils.PageUrls.UnauthorisedPaymentsPages._
 import utils.PageUrls.fullUrl
-import utils.PageUrls.unauthorisedPaymentsPages.{checkUnauthorisedPaymentsCyaUrl, removePensionSchemeReferenceUrl, ukPensionSchemeDetailsUrl}
-import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
+import utils.{CommonUtils, IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
-class RemovePSTRControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
+class RemovePSTRControllerISpec extends IntegrationTest with CommonUtils with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
   //scalastyle:off magic.number
-  
+
+  private implicit val url: Int => String = removePensionSchemeReferenceUrl
+
   object Selectors {
     val captionSelector: String = "#main-content > div > div > form > header > p"
     val cancelLinkSelector: String = "#cancel-link-id"
@@ -39,7 +42,7 @@ class RemovePSTRControllerISpec extends IntegrationTest with ViewHelpers with Be
 
   trait CommonExpectedResults {
     val expectedTitle: String
-    lazy val expectedHeading = expectedTitle
+    lazy val expectedHeading: String = expectedTitle
     val expectedCaption: Int => String
     val buttonText: String
     val cancelText: String
@@ -77,7 +80,7 @@ class RemovePSTRControllerISpec extends IntegrationTest with ViewHelpers with Be
             dropPensionsDB()
             authoriseAgentOrIndividual(user.isAgent)
             insertCyaData(aPensionsUserData)
-            urlGet(fullUrl(removePensionSchemeReferenceUrl(taxYearEOY, Some(0))), user.isWelsh, follow = false,
+            urlGet(fullUrl(removePensionSchemeReferenceUrlWithIndex(taxYearEOY, Some(0))), user.isWelsh, follow = false,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
 
@@ -97,21 +100,27 @@ class RemovePSTRControllerISpec extends IntegrationTest with ViewHelpers with Be
       }
     }
 
-    "no data is returned" should {
+    "redirect to the first page in journey if RemovePSTR page is invalid in current journey" in {
+      val viewModel = anUnauthorisedPaymentsViewModel.copy(ukPensionSchemesQuestion = Some(false), pensionSchemeTaxReference = None)
+      val pensionUserData = pensionsUserDataWithUnauthorisedPayments(viewModel, isPriorSubmission = false)
+      lazy val result: WSResponse = showPage(pensionUserData)
 
-      "redirect to the Unauthorised CYA page" should {
+      result.status shouldBe SEE_OTHER
+      result.header("location").contains(unauthorisedPaymentsUrl(taxYearEOY))
+    }
 
-        lazy val result: WSResponse = {
-          dropPensionsDB()
-          authoriseAgentOrIndividual()
-          urlGet(fullUrl(removePensionSchemeReferenceUrl(taxYearEOY, Some(0))), follow = false,
-            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
-        }
+    "redirect to the CYA page if there is no session data" which {
 
-        s"has a SEE_OTHER ($SEE_OTHER) status" in {
-          result.status shouldBe SEE_OTHER
-          result.header("location").contains(checkUnauthorisedPaymentsCyaUrl(taxYearEOY)) shouldBe true
-        }
+      lazy val result: WSResponse = {
+        dropPensionsDB()
+        authoriseAgentOrIndividual()
+        urlGet(fullUrl(removePensionSchemeReferenceUrlWithIndex(taxYearEOY, Some(0))), follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+      }
+
+      s"has a SEE_OTHER ($SEE_OTHER) status" in {
+        result.status shouldBe SEE_OTHER
+        result.header("location").contains(checkUnauthorisedPaymentsCyaUrl(taxYearEOY)) shouldBe true
       }
     }
 
@@ -123,7 +132,7 @@ class RemovePSTRControllerISpec extends IntegrationTest with ViewHelpers with Be
           dropPensionsDB()
           authoriseAgentOrIndividual()
           insertCyaData(aPensionsUserData)
-          urlGet(fullUrl(removePensionSchemeReferenceUrl(taxYearEOY, None)), follow = false,
+          urlGet(fullUrl(removePensionSchemeReferenceUrlWithIndex(taxYearEOY, None)), follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
         }
 
@@ -139,7 +148,7 @@ class RemovePSTRControllerISpec extends IntegrationTest with ViewHelpers with Be
           dropPensionsDB()
           authoriseAgentOrIndividual()
           insertCyaData(aPensionsUserData)
-          urlGet(fullUrl(removePensionSchemeReferenceUrl(taxYearEOY, Some(4))), follow = false,
+          urlGet(fullUrl(removePensionSchemeReferenceUrlWithIndex(taxYearEOY, Some(4))), follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
         }
 
@@ -151,67 +160,79 @@ class RemovePSTRControllerISpec extends IntegrationTest with ViewHelpers with Be
     }
   }
 
-  ".submit" when {
+  ".submit" should {
 
-    "data is returned from submission backend" should {
+    "redirect to the 'Pension Scheme Reference Details' page" when {
 
-      "redirect to the Pension scheme reference details page" when {
-
-        "a valid index is used" should {
-
-          lazy val result: WSResponse = {
-            dropPensionsDB()
-            authoriseAgentOrIndividual()
-            insertCyaData(aPensionsUserData)
-            urlPost(fullUrl(removePensionSchemeReferenceUrl(taxYearEOY, Some(0))), body = "", follow = false,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
-          }
-
-          s"has a SEE_OTHER ($SEE_OTHER) status" in {
-            result.status shouldBe SEE_OTHER
-            result.header("location").contains(ukPensionSchemeDetailsUrl(taxYearEOY)) shouldBe true
-          }
-
-          s"remove that scheme from the list" in {
-            lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
-            cyaModel.pensions.unauthorisedPayments.pensionSchemeTaxReference shouldBe Some(Seq( "12345678AC"))
-          }
-        }
-
-        "an invalid index is used" should {
-
-          lazy val result: WSResponse = {
-            dropPensionsDB()
-            authoriseAgentOrIndividual()
-            insertCyaData(aPensionsUserData)
-            urlPost(fullUrl(removePensionSchemeReferenceUrl(taxYearEOY, Some(7))), body = "", follow = false,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
-          }
-
-          s"has a SEE_OTHER ($SEE_OTHER) status" in {
-            result.status shouldBe SEE_OTHER
-            result.header("location").contains(ukPensionSchemeDetailsUrl(taxYearEOY)) shouldBe true
-          }
-        }
-      }
-    }
-
-    "no data is returned from submission backend" should {
-
-      "redirect to the Unauthorised payments CYA page" should {
+      "a valid index is used and the scheme is removed" should {
 
         lazy val result: WSResponse = {
           dropPensionsDB()
           authoriseAgentOrIndividual()
-          urlPost(fullUrl(removePensionSchemeReferenceUrl(taxYearEOY, Some(0))), body = "", follow = false,
+          insertCyaData(aPensionsUserData)
+          urlPost(fullUrl(removePensionSchemeReferenceUrlWithIndex(taxYearEOY, Some(0))), body = "", follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
         }
 
         s"has a SEE_OTHER ($SEE_OTHER) status" in {
           result.status shouldBe SEE_OTHER
-          result.header("location").contains(checkUnauthorisedPaymentsCyaUrl(taxYearEOY)) shouldBe true
+          result.header("location").contains(ukPensionSchemeDetailsUrl(taxYearEOY)) shouldBe true
+        }
+
+        s"remove that scheme from the list" in {
+          lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
+          cyaModel.pensions.unauthorisedPayments.pensionSchemeTaxReference shouldBe Some(Seq("12345678AC"))
         }
       }
+
+      "an invalid index is used and no schemes are removed" should {
+
+        lazy val result: WSResponse = {
+          dropPensionsDB()
+          authoriseAgentOrIndividual()
+          insertCyaData(aPensionsUserData)
+          urlPost(fullUrl(removePensionSchemeReferenceUrlWithIndex(taxYearEOY, Some(7))), body = "", follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        }
+
+        s"has a SEE_OTHER ($SEE_OTHER) status" in {
+          result.status shouldBe SEE_OTHER
+          result.header("location").contains(ukPensionSchemeDetailsUrl(taxYearEOY)) shouldBe true
+        }
+
+        s"no schemes are removed from the list" in {
+          lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
+          cyaModel.pensions.unauthorisedPayments.pensionSchemeTaxReference shouldBe Some(Seq("12345678AB", "12345678AC"))
+        }
+      }
+    }
+
+    "redirect to the first page in journey if RemovePSTR page is invalid in current journey" in {
+      val viewModel = anUnauthorisedPaymentsViewModel.copy(ukPensionSchemesQuestion = Some(false), pensionSchemeTaxReference = None)
+      val pensionUserData = pensionsUserDataWithUnauthorisedPayments(viewModel, isPriorSubmission = false)
+      lazy val result: WSResponse = {
+        dropPensionsDB()
+        authoriseAgentOrIndividual()
+        insertCyaData(pensionUserData)
+        urlPost(fullUrl(removePensionSchemeReferenceUrlWithIndex(taxYearEOY, Some(0))), body = "", follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+      }
+
+      result.status shouldBe SEE_OTHER
+      result.header("location").contains(unauthorisedPaymentsUrl(taxYearEOY))
+    }
+
+    "redirect to the Unauthorised Payments CYA page when no data is returned from submission backend" in {
+
+      lazy val result: WSResponse = {
+        dropPensionsDB()
+        authoriseAgentOrIndividual()
+        urlPost(fullUrl(removePensionSchemeReferenceUrlWithIndex(taxYearEOY, Some(0))), body = "", follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+      }
+
+      result.status shouldBe SEE_OTHER
+      result.header("location").contains(checkUnauthorisedPaymentsCyaUrl(taxYearEOY)) shouldBe true
     }
   }
 }
