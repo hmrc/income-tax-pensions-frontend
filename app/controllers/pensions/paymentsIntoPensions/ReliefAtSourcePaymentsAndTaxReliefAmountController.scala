@@ -25,10 +25,10 @@ import models.pension.reliefs.PaymentsIntoPensionViewModel
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
-import services.redirects.PaymentsIntoPensionsRedirects
+import services.redirects.PaymentsIntoPensionPages.RasAmountPage
+import services.redirects.PaymentsIntoPensionsRedirects.{cyaPageCall, journeyCheck}
 import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import services.redirects.PaymentsIntoPensionPages.RasAmountPage
 import utils.Clock
 import views.html.pensions.paymentsIntoPensions.ReliefAtSourcePaymentsAndTaxReliefAmountView
 
@@ -49,8 +49,8 @@ class ReliefAtSourcePaymentsAndTaxReliefAmountController @Inject()(authAction: A
     pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
       case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
       case Right(optData) =>
-        val checkRedirect = PaymentsIntoPensionsRedirects.journeyCheck(RasAmountPage, _, taxYear)
-        redirectBasedOnCurrentAnswers(taxYear, optData)(checkRedirect) { data =>
+        val checkRedirect = journeyCheck(RasAmountPage, _, taxYear)
+        redirectBasedOnCurrentAnswers(taxYear, optData, cyaPageCall(taxYear))(checkRedirect) { data =>
           data.pensions.paymentsIntoPension.totalRASPaymentsAndTaxRelief match {
             case Some(amount) => Future.successful(Ok(view(formProvider.reliefAtSourcePaymentsAndTaxReliefAmountForm.fill(amount), taxYear)))
             case None => Future.successful(Ok(view(formProvider.reliefAtSourcePaymentsAndTaxReliefAmountForm, taxYear)))
@@ -64,8 +64,8 @@ class ReliefAtSourcePaymentsAndTaxReliefAmountController @Inject()(authAction: A
       formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
       amount => {
         pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) { optData =>
-          val checkRedirect = PaymentsIntoPensionsRedirects.journeyCheck(RasAmountPage, _, taxYear)
-          redirectBasedOnCurrentAnswers(taxYear, optData)(checkRedirect) { data =>
+          val checkRedirect = journeyCheck(RasAmountPage, _, taxYear)
+          redirectBasedOnCurrentAnswers(taxYear, optData, cyaPageCall(taxYear))(checkRedirect) { data =>
 
             val pensionsCYAModel: PensionsCYAModel = data.pensions
             val viewModel: PaymentsIntoPensionViewModel = pensionsCYAModel.paymentsIntoPension

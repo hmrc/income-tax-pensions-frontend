@@ -784,10 +784,11 @@ unauthorisedPayments.noSurchargeAmount.error.noEntry = Enter the total amount of
 #Did you pay non-UK tax that resulted in a surcharge
 unauthorisedPayments.didYouPayNonUkTax.title.individual = Did you pay non-UK tax on the amount that resulted in a surcharge?
 unauthorisedPayments.didYouPayNonUkTax.title.agent = Did your client pay non-UK tax on the amount that resulted in a surcharge?
-unauthorisedPayments.didYouPayNonUkTax.error.noEntry = Select yes if you paid non-UK tax on the amount surcharged
+unauthorisedPayments.didYouPayNonUkTax.error.noEntry.individual = Select yes if you paid non-UK tax on the amount surcharged
+unauthorisedPayments.didYouPayNonUkTax.error.noEntry.agent = Select yes if your client paid non-UK tax on the amount surcharged
 
-#Where any of the unauthorised payments from a UK pension scheme?
-unauthorisedPayments.whereAnyOfTheUnauthorisedPayments.title = Were any of the unauthorised payments from a UK pension scheme?
+#Were any of the unauthorised payments from a UK pension scheme?
+unauthorisedPayments.wereAnyOfTheUnauthorisedPayments.title = Were any of the unauthorised payments from a UK pension scheme?
 
 #payments into pensions CYA
 
@@ -809,7 +810,8 @@ unauthorisedPayments.cya.pensionSchemeTaxReferences.hidden = Change Pension Sche
 #Did you pay non-UK tax that did not result in a surcharge
 unauthorisedPayments.nonUkTaxOnAmountNotSurcharge.title.individual = Did you pay non-UK tax on the amount that did not result in a surcharge?
 unauthorisedPayments.nonUkTaxOnAmountNotSurcharge.title.agent = Did your client pay non-UK tax on the amount that did not result in a surcharge?
-unauthorisedPayments.nonUkTaxOnAmountNotSurcharge.error.noEntry = Select yes if you paid non-UK tax on the amount not surcharged
+unauthorisedPayments.nonUkTaxOnAmountNotSurcharge.error.noEntry.individual = Select yes if you paid non-UK tax on the amount not surcharged
+unauthorisedPayments.nonUkTaxOnAmountNotSurcharge.error.noEntry.agent = Select yes if your client paid non-UK tax on the amount not surcharged
 
 
 #Unauthorised Payments

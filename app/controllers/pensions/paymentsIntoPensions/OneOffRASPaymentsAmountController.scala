@@ -25,10 +25,10 @@ import models.pension.reliefs.PaymentsIntoPensionViewModel
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
-import services.redirects.PaymentsIntoPensionsRedirects
+import services.redirects.PaymentsIntoPensionPages.OneOffRasAmountPage
+import services.redirects.PaymentsIntoPensionsRedirects.{cyaPageCall, journeyCheck}
 import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import services.redirects.PaymentsIntoPensionPages.OneOffRasAmountPage
 import utils.Clock
 import views.html.pensions.paymentsIntoPensions.OneOffRASPaymentsAmountView
 
@@ -48,8 +48,8 @@ class OneOffRASPaymentsAmountController @Inject()(authAction: AuthorisedAction,
 
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) { optData =>
-      val checkRedirect = PaymentsIntoPensionsRedirects.journeyCheck(OneOffRasAmountPage, _, taxYear)
-      redirectBasedOnCurrentAnswers(taxYear, optData)(checkRedirect) { data =>
+      val checkRedirect = journeyCheck(OneOffRasAmountPage, _, taxYear)
+      redirectBasedOnCurrentAnswers(taxYear, optData, cyaPageCall(taxYear))(checkRedirect) { data =>
 
         val viewModel = data.pensions.paymentsIntoPension
 
@@ -69,8 +69,8 @@ class OneOffRASPaymentsAmountController @Inject()(authAction: AuthorisedAction,
   def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
     pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
       optData =>
-        val checkRedirect = PaymentsIntoPensionsRedirects.journeyCheck(OneOffRasAmountPage, _, taxYear)
-        redirectBasedOnCurrentAnswers(taxYear, optData)(checkRedirect) { data =>
+        val checkRedirect = journeyCheck(OneOffRasAmountPage, _, taxYear)
+        redirectBasedOnCurrentAnswers(taxYear, optData, cyaPageCall(taxYear))(checkRedirect) { data =>
           formProvider.oneOffRASPaymentsAmountForm.bindFromRequest().fold(
             formWithErrors => {
               data.pensions.paymentsIntoPension.totalRASPaymentsAndTaxRelief.fold(

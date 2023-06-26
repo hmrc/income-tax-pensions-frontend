@@ -31,6 +31,6 @@ object TransfersIntoOverseasPensionsRedirects {
     )
   }
 
-  def journeyCheck: Unit = {}
+  def journeyCheck(): Unit = {}
 
 }

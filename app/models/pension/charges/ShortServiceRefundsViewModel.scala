@@ -35,6 +35,18 @@ case class ShortServiceRefundsViewModel(
   def isEmpty: Boolean = shortServiceRefund.isEmpty && shortServiceRefundCharge.isEmpty &&
     shortServiceRefundTaxPaid.isEmpty && shortServiceRefundTaxPaidCharge.isEmpty && refundPensionScheme.isEmpty
 
+  def isFinished: Boolean = {
+    shortServiceRefund.exists(
+      q => if (q) {
+        Seq(
+          shortServiceRefundCharge.isDefined,
+          shortServiceRefundTaxPaid.exists(q => if (q) shortServiceRefundTaxPaidCharge.isDefined else true),
+          refundPensionScheme.nonEmpty
+        ).forall(x => x)
+      } else true
+    )
+  }
+
   def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedShortServiceRefundsViewModel =
     EncryptedShortServiceRefundsViewModel(
       shortServiceRefund = shortServiceRefund.map(_.encrypted),

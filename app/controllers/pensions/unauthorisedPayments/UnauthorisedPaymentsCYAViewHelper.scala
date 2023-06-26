@@ -103,7 +103,7 @@ object UnauthorisedPaymentsCYAViewHelper extends CYABaseHelper {
       summaryListRowWithBooleanValue(
         "unauthorisedPayments.common.ukPensionSchemes",
         unauthorisedPaymentsViewModel.ukPensionSchemesQuestion,
-        routes.WhereAnyOfTheUnauthorisedPaymentsController.show(taxYear))(messages)
+        routes.WereAnyOfTheUnauthorisedPaymentsController.show(taxYear))(messages)
     )
 
   private def summaryRowForUKPensionSchemeTaxReferences(

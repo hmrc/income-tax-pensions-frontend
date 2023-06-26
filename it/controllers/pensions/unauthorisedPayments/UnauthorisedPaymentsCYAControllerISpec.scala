@@ -35,7 +35,7 @@ import play.api.http.HeaderNames
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import utils.PageUrls.fullUrl
-import utils.PageUrls.unauthorisedPaymentsPages.checkUnauthorisedPaymentsCyaUrl
+import utils.PageUrls.UnauthorisedPaymentsPages.checkUnauthorisedPaymentsCyaUrl
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 
@@ -56,7 +56,7 @@ class UnauthorisedPaymentsCYAControllerISpec extends
     val nonUKTaxOnAmountResultedInSurcharge: String = NonUKTaxOnAmountResultedInSurchargeController.show(taxYear).url
     val amountNotSurcharged: String = NoSurchargeAmountController.show(taxYear).url
     val nonUKTaxOnAmountNotResultedInSurcharge: String = NonUKTaxOnAmountNotResultedInSurchargeController.show(taxYear).url
-    val ukPensionSchemes: String = WhereAnyOfTheUnauthorisedPaymentsController.show(taxYear).url
+    val ukPensionSchemes: String = WereAnyOfTheUnauthorisedPaymentsController.show(taxYear).url
     val pensionSchemeTaxReferences: String = UnauthorisedPensionSchemeTaxReferenceController.show(taxYear, None).url
     val pensionSchemeTaxDetails: String = UkPensionSchemeDetailsController.show(taxYear).url
   }

@@ -16,64 +16,81 @@
 
 package controllers.pensions.unauthorisedPayments
 
-import common.MessageKeys.UnauthorisedPayments.NonUKTaxOnAmountNotResultedInSurcharge
-import common.MessageKeys.YesNoAmountForm
 import config.{AppConfig, ErrorHandler}
-import controllers.BaseYesNoAmountController
+import controllers.pensions.unauthorisedPayments.routes._
 import controllers.predicates.AuthorisedAction
-import models.AuthorisationRequest
-import models.mongo.{PensionsCYAModel, PensionsUserData}
-import play.api.data.Form
+import controllers.predicates.TaxYearAction.taxYearAction
+import forms.FormsProvider
+import models.mongo.PensionsCYAModel
 import play.api.i18n.I18nSupport
-import play.api.mvc.{AnyContent, MessagesControllerComponents, Result}
-import play.twirl.api.Html
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
-import utils.Clock
+import services.redirects.SimpleRedirectService.{isFinishedCheck, redirectBasedOnCurrentAnswers}
+import services.redirects.UnauthorisedPaymentsPages.NonUkTaxOnNotSurchargedAmountPage
+import services.redirects.UnauthorisedPaymentsRedirects.{cyaPageCall, journeyCheck}
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import utils.{Clock, SessionHelper}
 import views.html.pensions.unauthorisedPayments.NonUkTaxOnAmountNotResultedInSurchargeView
 
 import javax.inject.{Inject, Singleton}
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class NonUKTaxOnAmountNotResultedInSurchargeController @Inject()(messagesControllerComponents: MessagesControllerComponents,
-                                                                 authAction: AuthorisedAction,
+class NonUKTaxOnAmountNotResultedInSurchargeController @Inject()(authAction: AuthorisedAction,
                                                                  view: NonUkTaxOnAmountNotResultedInSurchargeView,
                                                                  pensionSessionService: PensionSessionService,
+                                                                 formsProvider: FormsProvider,
                                                                  errorHandler: ErrorHandler)
-                                                                (implicit appConfig: AppConfig, clock: Clock)
-  extends BaseYesNoAmountController(messagesControllerComponents, pensionSessionService, authAction, errorHandler) with I18nSupport {
+                                                                (implicit val mcc: MessagesControllerComponents,
+                                                                 appConfig: AppConfig,
+                                                                 clock: Clock, ec: ExecutionContext)
+  extends FrontendController(mcc) with SessionHelper with I18nSupport {
 
-  override val errorMessageSet: YesNoAmountForm = NonUKTaxOnAmountNotResultedInSurcharge
+  def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async {
+    implicit request =>
+      pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
+        case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
+        case Right(optData) =>
+          val checkRedirect = journeyCheck(NonUkTaxOnNotSurchargedAmountPage, _, taxYear)
+          redirectBasedOnCurrentAnswers(taxYear, optData, cyaPageCall(taxYear))(checkRedirect) { data =>
 
-  override def redirectWhenNoSessionData(taxYear: Int): Result =
-    Redirect(controllers.pensions.unauthorisedPayments.routes.UnauthorisedPaymentsCYAController.show(taxYear))
+            val noSurchargeTaxQuestion = data.pensions.unauthorisedPayments.noSurchargeTaxAmountQuestion
+            val noSurchargeTaxAmount = data.pensions.unauthorisedPayments.noSurchargeTaxAmount
+            (noSurchargeTaxQuestion, noSurchargeTaxAmount) match {
+              case (Some(yesNo), amount) =>
+                Future.successful(Ok(view(formsProvider.unauthorisedNonUkTaxOnNotSurchargedAmountForm(request.user).fill((yesNo, amount)), taxYear)))
+              case _ =>
+                Future.successful(Ok(view(formsProvider.unauthorisedNonUkTaxOnNotSurchargedAmountForm(request.user), taxYear)))
+            }
+          }
+      }
+  }
 
-  override def redirectAfterUpdatingSessionData(pensionsUserData: PensionsUserData, taxYear: Int): Result =
-    Redirect(controllers.pensions.unauthorisedPayments.routes.WhereAnyOfTheUnauthorisedPaymentsController.show(taxYear))
 
-  override def prepareView(pensionsUserData: PensionsUserData, taxYear: Int)
-                          (implicit request: AuthorisationRequest[AnyContent]): Html = view(populateForm(pensionsUserData), taxYear)
+  def submit(taxYear: Int): Action[AnyContent] = authAction.async {
+    implicit request =>
+      pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
+        case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
+        case Right(optData) =>
 
-  override def whenFormIsInvalid(form: Form[(Boolean, Option[BigDecimal])], taxYear: Int)
-                                (implicit request: AuthorisationRequest[AnyContent]): Html = view(form, taxYear)
+          val checkRedirect = journeyCheck(NonUkTaxOnNotSurchargedAmountPage, _, taxYear)
+          redirectBasedOnCurrentAnswers(taxYear, optData, cyaPageCall(taxYear))(checkRedirect) { data =>
 
-  override def questionOpt(pensionsUserData: PensionsUserData): Option[Boolean] =
-    pensionsUserData.pensions.unauthorisedPayments.noSurchargeTaxAmountQuestion
+            formsProvider.unauthorisedNonUkTaxOnNotSurchargedAmountForm(request.user).bindFromRequest().fold(
+              formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
+              yesNoAmount => {
+                val updatedCyaModel: PensionsCYAModel = data.pensions.copy(
+                  unauthorisedPayments = data.pensions.unauthorisedPayments.copy(
+                    noSurchargeTaxAmountQuestion = Some(yesNoAmount._1), noSurchargeTaxAmount = yesNoAmount._2
+                  )
+                )
 
-  override def amountOpt(pensionsUserData: PensionsUserData): Option[BigDecimal] =
-    pensionsUserData.pensions.unauthorisedPayments.noSurchargeTaxAmount
-
-  override def proposedUpdatedSessionDataModel(currentSessionData: PensionsUserData, yesSelected: Boolean, amountOpt: Option[BigDecimal]): PensionsCYAModel =
-    currentSessionData.pensions.copy(
-      unauthorisedPayments = currentSessionData.pensions.unauthorisedPayments.copy(
-        noSurchargeTaxAmountQuestion = Some(yesSelected),
-        noSurchargeTaxAmount = amountOpt.filter(_ => yesSelected)
-      )
-    )
-
-  override def whenSessionDataIsInsufficient(pensionsUserData: PensionsUserData, taxYear: Int): Result =
-    Redirect(controllers.pensions.unauthorisedPayments.routes.UnauthorisedPaymentsCYAController.show(taxYear))
-
-  override def sessionDataIsSufficient(pensionsUserData: PensionsUserData): Boolean =
-    pensionsUserData.pensions.unauthorisedPayments.noSurchargeAmount.isDefined
-
+                pensionSessionService.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear, data.isPriorSubmission
+                )(errorHandler.internalServerError()) {
+                  isFinishedCheck(updatedCyaModel.unauthorisedPayments, taxYear, WereAnyOfTheUnauthorisedPaymentsController.show(taxYear), cyaPageCall)
+                }
+              })
+          }
+      }
+  }
 }

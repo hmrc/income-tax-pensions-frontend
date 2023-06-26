@@ -31,6 +31,6 @@ object IncomeFromPensionsRedirects {
     )
   }
 
-  def journeyCheck: Unit = {}
+  def journeyCheck(): Unit = {}
 
 }

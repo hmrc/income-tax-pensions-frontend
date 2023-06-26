@@ -30,6 +30,6 @@ object LifetimeAllowancesRedirects {
     )
   }
 
-  def journeyCheck: Unit = {}
+  def journeyCheck(): Unit = {}
 
 }

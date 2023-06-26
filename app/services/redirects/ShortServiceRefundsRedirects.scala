@@ -31,6 +31,6 @@ object ShortServiceRefundsRedirects {
     )
   }
 
-  def journeyCheck: Unit = {}
+  def journeyCheck(): Unit = {}
 
 }

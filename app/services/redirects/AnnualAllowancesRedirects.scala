@@ -17,7 +17,6 @@
 package services.redirects
 
 import controllers.pensions.annualAllowances.routes.{PensionSchemeTaxReferenceController, PstrSummaryController}
-import models.pension.statebenefits.UkPensionIncomeViewModel
 import play.api.mvc.Call
 import services.redirects.SimpleRedirectService.checkForExistingSchemes
 
@@ -31,6 +30,6 @@ object AnnualAllowancesRedirects {
     )
   }
 
-  def journeyCheck: Unit = {}
+  def journeyCheck(): Unit = {}
 
 }

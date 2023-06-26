@@ -27,10 +27,10 @@ import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import utils.PageUrls.fullUrl
-import utils.PageUrls.unauthorisedPaymentsPages.{checkUnauthorisedPaymentsCyaUrl, pensionSchemeTaxReferenceUrl, whereAnyOfTheUnauthorisedPaymentsUrl}
+import utils.PageUrls.UnauthorisedPaymentsPages.{checkUnauthorisedPaymentsCyaUrl, pensionSchemeTaxReferenceUrl, wereAnyOfTheUnauthorisedPaymentsUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
-class WhereAnyOfTheUnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAndAfterEach with ViewHelpers with PensionsDatabaseHelper {
+class WereAnyOfTheUnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAndAfterEach with ViewHelpers with PensionsDatabaseHelper {
 
   object Selectors {
     val captionSelector: String = "#main-content > div > div > header > p"
@@ -117,12 +117,12 @@ class WhereAnyOfTheUnauthorisedPaymentsControllerISpec extends IntegrationTest w
         import Selectors._
         import user.commonExpectedResults._
 
-        "render the 'where any of the unauthorised payments controller page' with no pre filling" which {
+        "render the Were any of the Unauthorised Payments controller page with no pre filling" which {
           implicit lazy val result: WSResponse = {
             authoriseAgentOrIndividual(user.isAgent)
             dropPensionsDB()
             insertCyaData(pensionsUserDataWithUnauthorisedPayments(anUnauthorisedPaymentsViewModel.copy(ukPensionSchemesQuestion = None)))
-            urlGet(fullUrl(whereAnyOfTheUnauthorisedPaymentsUrl(taxYearEOY)), user.isWelsh, follow = false,
+            urlGet(fullUrl(wereAnyOfTheUnauthorisedPaymentsUrl(taxYearEOY)), user.isWelsh, follow = false,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
 
@@ -138,11 +138,11 @@ class WhereAnyOfTheUnauthorisedPaymentsControllerISpec extends IntegrationTest w
           radioButtonCheck(yesText, 1, checked = Some(false))
           radioButtonCheck(noText, 2, checked = Some(false))
           buttonCheck(expectedButtonText, continueButtonSelector)
-          formPostLinkCheck(whereAnyOfTheUnauthorisedPaymentsUrl(taxYearEOY), formSelector)
+          formPostLinkCheck(wereAnyOfTheUnauthorisedPaymentsUrl(taxYearEOY), formSelector)
           welshToggleCheck(user.isWelsh)
         }
 
-        "render the 'where any of the unauthorised payments controller page' page with correct content and with pre-filled data" which {
+        "render the Were any of the Unauthorised Payments controller page with correct content and with pre-filled data" which {
 
           implicit lazy val result: WSResponse = {
             dropPensionsDB()
@@ -150,7 +150,7 @@ class WhereAnyOfTheUnauthorisedPaymentsControllerISpec extends IntegrationTest w
             val viewModel = anUnauthorisedPaymentsViewModel.copy()
             insertCyaData(pensionsUserDataWithUnauthorisedPayments(viewModel))
             authoriseAgentOrIndividual(user.isAgent)
-            urlGet(fullUrl(whereAnyOfTheUnauthorisedPaymentsUrl(taxYearEOY)), user.isWelsh,
+            urlGet(fullUrl(wereAnyOfTheUnauthorisedPaymentsUrl(taxYearEOY)), user.isWelsh,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
 
@@ -166,7 +166,7 @@ class WhereAnyOfTheUnauthorisedPaymentsControllerISpec extends IntegrationTest w
           radioButtonCheck(yesText, 1, checked = Some(true))
           radioButtonCheck(noText, 2, checked = Some(false))
           buttonCheck(expectedButtonText, continueButtonSelector)
-          formPostLinkCheck(whereAnyOfTheUnauthorisedPaymentsUrl(taxYearEOY), formSelector)
+          formPostLinkCheck(wereAnyOfTheUnauthorisedPaymentsUrl(taxYearEOY), formSelector)
           welshToggleCheck(user.isWelsh)
         }
       }
@@ -176,7 +176,7 @@ class WhereAnyOfTheUnauthorisedPaymentsControllerISpec extends IntegrationTest w
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual()
-        urlGet(fullUrl(whereAnyOfTheUnauthorisedPaymentsUrl(taxYearEOY)), follow = false,
+        urlGet(fullUrl(wereAnyOfTheUnauthorisedPaymentsUrl(taxYearEOY)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
@@ -198,7 +198,7 @@ class WhereAnyOfTheUnauthorisedPaymentsControllerISpec extends IntegrationTest w
             dropPensionsDB()
             authoriseAgentOrIndividual(user.isAgent)
             insertCyaData(aPensionsUserData)
-            urlPost(fullUrl(whereAnyOfTheUnauthorisedPaymentsUrl(taxYearEOY)), body = form, follow = false, welsh = user.isWelsh,
+            urlPost(fullUrl(wereAnyOfTheUnauthorisedPaymentsUrl(taxYearEOY)), body = form, follow = false, welsh = user.isWelsh,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
 
@@ -215,7 +215,7 @@ class WhereAnyOfTheUnauthorisedPaymentsControllerISpec extends IntegrationTest w
           radioButtonCheck(yesText, 1, checked = Some(false))
           radioButtonCheck(noText, 2, checked = Some(false))
           buttonCheck(expectedButtonText, continueButtonSelector)
-          formPostLinkCheck(whereAnyOfTheUnauthorisedPaymentsUrl(taxYearEOY), formSelector)
+          formPostLinkCheck(wereAnyOfTheUnauthorisedPaymentsUrl(taxYearEOY), formSelector)
           welshToggleCheck(user.isWelsh)
 
           errorSummaryCheck(user.specificExpectedResults.get.noEntryErrorMessage, Selectors.yesSelector)
@@ -232,16 +232,13 @@ class WhereAnyOfTheUnauthorisedPaymentsControllerISpec extends IntegrationTest w
         val viewModel = anUnauthorisedPaymentsViewModel.copy()
         insertCyaData(pensionsUserDataWithUnauthorisedPayments(viewModel))
 
-        insertCyaData(pensionsUserDataWithUnauthorisedPayments(viewModel))
-
         authoriseAgentOrIndividual()
-        urlPost(fullUrl(whereAnyOfTheUnauthorisedPaymentsUrl(taxYearEOY)), body = form, follow = false,
+        urlPost(fullUrl(wereAnyOfTheUnauthorisedPaymentsUrl(taxYearEOY)), body = form, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
       "has a SEE_OTHER(303) status and redirect to Pension Scheme Tax Reference (PSTR) Page" in {
         result.status shouldBe SEE_OTHER
-        //TODO - redirect to "Pension Scheme Tax Reference PSTR" page once implemented
         result.header("location") shouldBe Some(pensionSchemeTaxReferenceUrl(taxYearEOY))
       }
 
@@ -262,7 +259,7 @@ class WhereAnyOfTheUnauthorisedPaymentsControllerISpec extends IntegrationTest w
         insertCyaData(pensionsUserDataWithUnauthorisedPayments(viewModel))
 
         authoriseAgentOrIndividual()
-        urlPost(fullUrl(whereAnyOfTheUnauthorisedPaymentsUrl(taxYearEOY)), body = form, follow = false,
+        urlPost(fullUrl(wereAnyOfTheUnauthorisedPaymentsUrl(taxYearEOY)), body = form, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
@@ -282,7 +279,7 @@ class WhereAnyOfTheUnauthorisedPaymentsControllerISpec extends IntegrationTest w
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual()
-        urlPost(fullUrl(whereAnyOfTheUnauthorisedPaymentsUrl(taxYearEOY)), body = form, follow = false,
+        urlPost(fullUrl(wereAnyOfTheUnauthorisedPaymentsUrl(taxYearEOY)), body = form, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
 
       }

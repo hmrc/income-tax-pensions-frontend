@@ -16,12 +16,15 @@
 
 package controllers.pensions.unauthorisedPayments
 
-import config.AppConfig
+import config.{AppConfig, ErrorHandler}
 import controllers.predicates.AuthorisedAction
 import controllers.predicates.TaxYearAction.taxYearAction
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
+import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
+import services.redirects.UnauthorisedPaymentsPages.PSTRSummaryPage
+import services.redirects.UnauthorisedPaymentsRedirects.{cyaPageCall, journeyCheck}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.pensions.unauthorisedPayments.UkPensionSchemeDetails
 
@@ -34,16 +37,20 @@ class UkPensionSchemeDetailsController @Inject()(implicit val cc: MessagesContro
                                                  authAction: AuthorisedAction,
                                                  ukPensionSchemeDetails: UkPensionSchemeDetails,
                                                  appConfig: AppConfig,
-                                                 pensionSessionService: PensionSessionService)
+                                                 pensionSessionService: PensionSessionService,
+                                                 errorHandler: ErrorHandler)
   extends FrontendController(cc) with I18nSupport {
 
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
-    pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
-      case Some(data) =>
-        val pensionSchemeTaxReferenceList: Seq[String] = data.pensions.unauthorisedPayments.pensionSchemeTaxReference.getOrElse(Seq.empty)
-        Future(Ok(ukPensionSchemeDetails(taxYear, pensionSchemeTaxReferenceList)))
-      case None =>
-        Future.successful(Redirect(controllers.pensions.unauthorisedPayments.routes.UnauthorisedPaymentsCYAController.show(taxYear)))
+    pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
+      case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
+      case Right(optData) =>
+        val checkRedirect = journeyCheck(PSTRSummaryPage, _, taxYear)
+        redirectBasedOnCurrentAnswers(taxYear, optData, cyaPageCall(taxYear))(checkRedirect) { data =>
+
+          val pensionSchemeTaxReferenceList: Seq[String] = data.pensions.unauthorisedPayments.pensionSchemeTaxReference.getOrElse(Seq.empty)
+          Future(Ok(ukPensionSchemeDetails(taxYear, pensionSchemeTaxReferenceList)))
+        }
     }
   }
 }
