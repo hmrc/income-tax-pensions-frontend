@@ -54,7 +54,7 @@ class AnnualLifetimeAllowanceGatewaySpec extends ViewUnitTest {
   }
 
   object CommonExpectedEN extends CommonExpectedResults {
-    override val expectedCaption: Int => String = (taxYear: Int) => s"Annual and lifetime allowances for 6 April ${taxYear - 1} to 5 April $taxYear"
+    override val expectedCaption: Int => String = (taxYear: Int) => s"Lifetime allowances for 6 April ${taxYear - 1} to 5 April $taxYear"
     override val expectedYesText: String = "Yes"
     override val expectedNoText: String = "No"
     override val expectedButtonText: String = "Continue"
@@ -63,7 +63,7 @@ class AnnualLifetimeAllowanceGatewaySpec extends ViewUnitTest {
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    override val expectedCaption: Int => String = (taxYear: Int) => s"Lwfans blynyddol a lwfans oes ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
+    override val expectedCaption: Int => String = (taxYear: Int) => s"Lifetime allowances for 6 April ${taxYear - 1} to 5 April $taxYear"
     override val expectedYesText: String = "Iawn"
     override val expectedNoText: String = "Na"
     override val expectedButtonText: String = "Yn eich blaen"

@@ -200,6 +200,8 @@ POST        /:taxYear/annual-lifetime-allowances/pension-another-way-details    
 GET         /:taxYear/annual-lifetime-allowances/pension-scheme-tax-reference                                                      controllers.pensions.lifetimeAllowances.PensionSchemeTaxReferenceLifetimeController.show(taxYear: Int, pensionSchemeTaxReferenceIndex: Option[Int])
 POST        /:taxYear/annual-lifetime-allowances/pension-scheme-tax-reference                                                      controllers.pensions.lifetimeAllowances.PensionSchemeTaxReferenceLifetimeController.submit(taxYear: Int, pensionSchemeTaxReferenceIndex: Option[Int])
 
+GET         /:taxYear/annual-lifetime-allowances/pension-scheme-tax-reference-summary                                              controllers.pensions.lifetimeAllowances.LifetimePstrSummaryController.show(taxYear: Int)
+
 GET         /:taxYear/annual-lifetime-allowances/check-lifetime-allowances                                                         controllers.pensions.lifetimeAllowances.AnnualLifetimeAllowanceCYAController.show(taxYear:Int)
 POST        /:taxYear/annual-lifetime-allowances/check-lifetime-allowances                                                         controllers.pensions.lifetimeAllowances.AnnualLifetimeAllowanceCYAController.submit(taxYear:Int)
 
@@ -238,8 +240,8 @@ POST        /:taxYear/overseas-pensions/payments-into-overseas-pensions/double-t
 
 GET         /:taxYear/overseas-pensions/payments-into-overseas-pensions/untaxed-schemes-summary                                    controllers.pensions.paymentsIntoOverseasPensions.ReliefsSchemeSummaryController.show(taxYear: Int)
 
-GET         /:taxYear/overseas-pensions/payments-into-overseas-pensions/remove-schemes                                              controllers.pensions.paymentsIntoOverseasPensions.RemoveReliefSchemeController.show(taxYear: Int, index: Option[Int])
-POST        /:taxYear/overseas-pensions/payments-into-overseas-pensions/remove-schemes                                              controllers.pensions.paymentsIntoOverseasPensions.RemoveReliefSchemeController.submit(taxYear: Int, index: Option[Int])
+GET         /:taxYear/overseas-pensions/payments-into-overseas-pensions/remove-schemes                                             controllers.pensions.paymentsIntoOverseasPensions.RemoveReliefSchemeController.show(taxYear: Int, index: Option[Int])
+POST        /:taxYear/overseas-pensions/payments-into-overseas-pensions/remove-schemes                                             controllers.pensions.paymentsIntoOverseasPensions.RemoveReliefSchemeController.submit(taxYear: Int, index: Option[Int])
 
 GET        /:taxYear/overseas-pensions/payments-into-overseas-pensions/check-overseas-pension-details                              controllers.pensions.paymentsIntoOverseasPensions.PaymentsIntoOverseasPensionsCYAController.show(taxYear: Int)
 POST       /:taxYear/overseas-pensions/payments-into-overseas-pensions/check-overseas-pension-details                              controllers.pensions.paymentsIntoOverseasPensions.PaymentsIntoOverseasPensionsCYAController.submit(taxYear: Int)

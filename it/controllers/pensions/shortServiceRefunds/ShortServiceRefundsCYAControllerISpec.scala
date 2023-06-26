@@ -108,6 +108,7 @@ class ShortServiceRefundsCYAControllerISpec extends IntegrationTest with ViewHel
         authoriseAgentOrIndividual(aUser.isAgent)
         insertCyaData(pensionsUsersData(aPensionsCYAModel))
         userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYearEOY)
+        pensionChargesSessionStub(Json.toJson(submissionChargesModel).toString(), nino, taxYearEOY)
         urlPost(
           fullUrl(shortServiceRefundsCYAUrl(taxYearEOY)),
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),

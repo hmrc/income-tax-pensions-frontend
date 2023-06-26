@@ -16,18 +16,18 @@
 
 package models.pension.charges
 
-import models.pension.{PensionChargesRequestSubModel, PensionModelRequest, PensionRequestSubModel}
+import models.pension.{PensionChargesSubRequestModel, PensionRequestModel, PensionSubRequestModel}
 import play.api.libs.json.{Json, OFormat}
 
 case class CreateUpdatePensionChargesRequestModel(pensionSavingsTaxCharges: Option[PensionSavingsTaxCharges],
                                                   pensionSchemeOverseasTransfers: Option[PensionSchemeOverseasTransfers],
                                                   pensionSchemeUnauthorisedPayments: Option[PensionSchemeUnauthorisedPayments],
                                                   pensionContributions: Option[PensionContributions],
-                                                  overseasPensionContributions: Option[OverseasPensionContributions]) extends PensionModelRequest {
+                                                  overseasPensionContributions: Option[OverseasPensionContributions]) extends PensionRequestModel {
 
 
   //scalastyle:off
-  override def otherSubModelsEmpty[PensionChargesRequestSubModel <: PensionRequestSubModel](excludedModel: Option[PensionChargesRequestSubModel]): Boolean = {
+  override def otherSubRequestModelsEmpty[PensionChargesRequestSubModel <: PensionSubRequestModel](excludedModel: Option[PensionChargesRequestSubModel]): Boolean = {
     excludedModel match {
       case Some(_: PensionSavingsTaxCharges) =>
         (pensionSchemeOverseasTransfers.isEmpty || pensionSchemeOverseasTransfers.exists(_.isEmpty)) &&
@@ -66,7 +66,7 @@ case class CreateUpdatePensionChargesRequestModel(pensionSavingsTaxCharges: Opti
 
 
   def createSubModel: CreateUpdatePensionChargesRequestModel = {
-    def processModel[T <: PensionChargesRequestSubModel](model: Option[T]): Option[T] = {
+    def processModel[T <: PensionChargesSubRequestModel](model: Option[T]): Option[T] = {
       if (model.exists(_.isEmpty) || model.isEmpty) {
         None
       } else {

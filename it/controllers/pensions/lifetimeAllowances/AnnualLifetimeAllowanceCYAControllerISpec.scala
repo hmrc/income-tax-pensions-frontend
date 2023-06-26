@@ -80,6 +80,7 @@ class AnnualLifetimeAllowanceCYAControllerISpec extends
     val lumpSum: String = PensionLumpSumController.show(taxYear).url
     val otherPayments: String = LifeTimeAllowanceAnotherWayController.show(taxYear).url
     val lifetimeAllowanceSchemes: String = AnnualLifetimeAllowanceCYAController.show(taxYear).url
+    val lifetimeAllowancePstrSummary: String = LifetimePstrSummaryController.show(taxYear).url
 
   }
 
@@ -341,7 +342,7 @@ class AnnualLifetimeAllowanceCYAControllerISpec extends
             otherPaymentsHidden, 9)
           
           cyaRowCheck(lifetimeAllowanceSchemes, s"${savingsTaxCharges.get.pensionSchemeTaxReference.get.mkString(", ")}",
-            ChangeLinksUnauthorisedPayments.lifetimeAllowanceSchemes, lifetimeAllowanceSchemesHidden, 10)
+            ChangeLinksUnauthorisedPayments.lifetimeAllowancePstrSummary, lifetimeAllowanceSchemesHidden, 10)
           
           buttonCheck(saveAndContinue)
           welshToggleCheck(user.isWelsh)

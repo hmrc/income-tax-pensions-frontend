@@ -40,7 +40,7 @@ common.pensionAnnualAllowance.caption = Annual allowances for 6 April {0} to 5 A
 common.annualAllowance.caption = Annual allowance for 6 April {0} to 5 April {1}
 common.incomeFromPensions.caption = Income from pensions for 6 April {0} to 5 April {1}
 common.uKPensionIncome.caption = UK pension income for 6 April {0} to 5 April {1}
-common.lifetimeAllowance.caption = Annual and lifetime allowances for 6 April {0} to 5 April {1}
+common.lifetimeAllowance.caption = Lifetime allowances for 6 April {0} to 5 April {1}
 common.overseasPensions.caption = Overseas pensions for 6 April {0} to 5 April {1}
 common.return.overview.buttonText = Return to overview
 common.currencyAmount = £{0}
@@ -92,6 +92,7 @@ common.aboutGeneralIncreases.agent = the ’About general increases in benefits�
 
 common.employerFinancedRetirementScheme.caption = Employer-financed retirement benefits schemes for 6 April {0} to 5 April {1}
 common.addAnotherPstrLink = Add another Pensions Scheme Tax Reference
+common.addPstrLink = Add a PSTR
 
 ################# Common lifetime allowance #################
 
@@ -469,7 +470,6 @@ unauthorisedPayments.pension.pensionSchemeTaxReference.error.incorrectFormat.age
 
 annualAllowance.pstrSummary.title = Pension Scheme Tax Reference (PSTR) summary
 annualAllowance.addAnotherPstrLink = Add another PSTR
-annualAllowance.addPstrLink = Add a PSTR
 
 #################       INCOME FROM PENSIONS        ########################################
 
@@ -736,9 +736,7 @@ lifetimeAllowance.pensionTakenAnotherWay.beforeTax.error.incorrectFormat.agent =
 lifetimeAllowance.pensionTakenAnotherWay.taxPaid.error.noEntry.individual = Enter the amount of lifetime allowance tax your pension provider paid or agreed to pay on the amount taken in another way
 lifetimeAllowance.pensionTakenAnotherWay.taxPaid.error.noEntry.agent = Enter the amount of lifetime allowance tax your client’s pension provider paid or agreed to pay on the amount taken in another way
 
-
 #Annual Allowance and Lifetime Allowance CYA
-
 lifetimeAllowance.cya.heading.individual = Check your annual and lifetime allowances
 lifetimeAllowance.cya.heading.agent = Check your client’s annual and lifetime allowances
 lifetimeAllowance.cya.aboveAnnualOrLifetimeAllowance = Above annual or lifetime allowance
@@ -762,6 +760,9 @@ lifetimeAllowance.cya.aboveLifetimeAllowance.hidden = Change above lifetime allo
 lifetimeAllowance.cya.lumpSum.hidden = Change lump sum
 lifetimeAllowance.cya.otherPayments.hidden = Change other payments
 lifetimeAllowance.cya.lifetimePensionSchemeTaxReferences.hidden = Change schemes paying lifetime allowance tax
+
+#Lifetime Allowance PSTR Summary
+lifetimeAllowance.pstrSummary.title = Pension schemes that paid or agreed to pay lifetime allowance tax
 
 #Pension scheme tax reference lifetime allowance
 lifetimeAllowance.pensionSchemeTaxReference.title = Tell us the pension scheme that paid or agreed to pay the tax

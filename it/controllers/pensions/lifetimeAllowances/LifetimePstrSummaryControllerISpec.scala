@@ -14,24 +14,24 @@
  * limitations under the License.
  */
 
-package controllers.pensions.annualAllowances
+package controllers.pensions.lifetimeAllowances
 
-import builders.PensionAnnualAllowanceViewModelBuilder.aPensionAnnualAllowanceViewModel
-import builders.PensionsUserDataBuilder.pensionsUserDataWithAnnualAllowances
-import controllers.pensions.annualAllowances.routes.{PensionSchemeTaxReferenceController, RemoveAnnualAllowancePstrController}
+import builders.PensionLifetimeAllowanceViewModelBuilder.aPensionLifetimeAllowanceViewModel
+import builders.PensionsUserDataBuilder.pensionsUserDataWithLifetimeAllowance
+import controllers.pensions.lifetimeAllowances.routes.PensionSchemeTaxReferenceLifetimeController
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.PensionAnnualAllowancePages.{pensionSchemeTaxReferenceUrl, pstrSummaryUrl}
-import utils.PageUrls.PensionLifetimeAllowance.checkAnnualLifetimeAllowanceCYA
+import utils.PageUrls.PensionAnnualAllowancePages.pensionSchemeTaxReferenceUrl
+import utils.PageUrls.PensionLifetimeAllowance.{checkAnnualLifetimeAllowanceCYA, lifetimeAllowancePstrSummaryUrl}
 import utils.PageUrls.{fullUrl, pensionSummaryUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 // scalastyle:off magic.number
-class PstrSummaryControllerISpec extends IntegrationTest with BeforeAndAfterEach with ViewHelpers with PensionsDatabaseHelper {
+class LifetimePstrSummaryControllerISpec extends IntegrationTest with BeforeAndAfterEach with ViewHelpers with PensionsDatabaseHelper {
 
   val pstr1 = "12345678RA"
   val pstr2 = "12345678RB"
@@ -59,9 +59,9 @@ class PstrSummaryControllerISpec extends IntegrationTest with BeforeAndAfterEach
   }
 
   object CommonExpectedEN extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Annual allowances for 6 April ${taxYear - 1} to 5 April $taxYear"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Lifetime allowances for 6 April ${taxYear - 1} to 5 April $taxYear"
     val expectedButtonText = "Continue"
-    val expectedTitle = "Pension Scheme Tax Reference (PSTR) summary"
+    val expectedTitle = "Pension schemes that paid or agreed to pay lifetime allowance tax"
     val change = "Change"
     val remove = "Remove"
     val pensionSchemeTaxReference = "Pension Scheme Tax Reference"
@@ -70,9 +70,9 @@ class PstrSummaryControllerISpec extends IntegrationTest with BeforeAndAfterEach
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Lwfansau blynyddol ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Lifetime allowances for 6 April ${taxYear - 1} to 5 April $taxYear"
     val expectedButtonText = "Yn eich blaen"
-    val expectedTitle = "Crynodeb Cyfeirnod Treth y Cynllun Pensiwn (PSTR)"
+    val expectedTitle = "Pension schemes that paid or agreed to pay lifetime allowance tax"
     val change = "Newid"
     val remove = "Tynnu"
     val pensionSchemeTaxReference = "Cyfeirnod Treth y Cynllun Pensiwn"
@@ -93,13 +93,13 @@ class PstrSummaryControllerISpec extends IntegrationTest with BeforeAndAfterEach
         import Selectors._
         import user.commonExpectedResults._
 
-        "render the 'PSTR Summary' page with pre-filled content" which {
+        "render the 'Lifetime PSTR Summary' page with pre-filled content" which {
           implicit lazy val result: WSResponse = {
             authoriseAgentOrIndividual(user.isAgent)
             dropPensionsDB()
-            val viewModel = aPensionAnnualAllowanceViewModel.copy(pensionSchemeTaxReferences = Some(Seq(pstr1, pstr2)))
-            insertCyaData(pensionsUserDataWithAnnualAllowances(viewModel))
-            urlGet(fullUrl(pstrSummaryUrl(taxYearEOY)), user.isWelsh, follow = false,
+            val viewModel = aPensionLifetimeAllowanceViewModel.copy(pensionSchemeTaxReferences = Some(Seq(pstr1, pstr2)))
+            insertCyaData(pensionsUserDataWithLifetimeAllowance(viewModel))
+            urlGet(fullUrl(lifetimeAllowancePstrSummaryUrl(taxYearEOY)), user.isWelsh, follow = false,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
 
@@ -115,26 +115,25 @@ class PstrSummaryControllerISpec extends IntegrationTest with BeforeAndAfterEach
           textOnPageCheck(pstr1, pstrSelector(1))
           textOnPageCheck(pstr2, pstrSelector(2))
           linkCheck(s"$change $change $pensionSchemeTaxReference $pstr1", changeLinkSelector(1),
-            PensionSchemeTaxReferenceController.show(taxYearEOY, Some(0)).url)
+            PensionSchemeTaxReferenceLifetimeController.show(taxYearEOY, Some(0)).url)
           linkCheck(s"$change $change $pensionSchemeTaxReference $pstr2", changeLinkSelector(2),
-            PensionSchemeTaxReferenceController.show(taxYearEOY, Some(1)).url)
+            PensionSchemeTaxReferenceLifetimeController.show(taxYearEOY, Some(1)).url)
           linkCheck(s"$remove $remove $pensionSchemeTaxReference $pstr1", removeLinkSelector(1),
-            RemoveAnnualAllowancePstrController.show(taxYearEOY, Some(0)).url)
+            "#")
           linkCheck(s"$remove $remove $pensionSchemeTaxReference $pstr2", removeLinkSelector(2),
-            RemoveAnnualAllowancePstrController.show(taxYearEOY, Some(1)).url)
-          linkCheck(expectedAddAnotherText, addAnotherLinkSelector, PensionSchemeTaxReferenceController.show(taxYearEOY, None).url)
-          //TODO button href to go to annual allowance CYA page
+            "#")
+          linkCheck(expectedAddAnotherText, addAnotherLinkSelector, PensionSchemeTaxReferenceLifetimeController.show(taxYearEOY, None).url)
           buttonCheck(expectedButtonText, continueButtonSelector, Some(checkAnnualLifetimeAllowanceCYA(taxYearEOY)))
           welshToggleCheck(user.isWelsh)
         }
 
-        "render the 'PSTR Summary' page with only an add link when there are no PSTRs" which {
+        "render the 'Lifetime PSTR Summary' page with only an add link when there are no PSTRs" which {
           implicit lazy val result: WSResponse = {
             authoriseAgentOrIndividual(user.isAgent)
             dropPensionsDB()
-            val viewModel = aPensionAnnualAllowanceViewModel.copy(pensionSchemeTaxReferences = Some(Seq()))
-            insertCyaData(pensionsUserDataWithAnnualAllowances(viewModel))
-            urlGet(fullUrl(pstrSummaryUrl(taxYearEOY)), user.isWelsh, follow = false,
+            val viewModel = aPensionLifetimeAllowanceViewModel.copy(pensionSchemeTaxReferences = Some(Seq()))
+            insertCyaData(pensionsUserDataWithLifetimeAllowance(viewModel))
+            urlGet(fullUrl(lifetimeAllowancePstrSummaryUrl(taxYearEOY)), user.isWelsh, follow = false,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
 
@@ -148,8 +147,7 @@ class PstrSummaryControllerISpec extends IntegrationTest with BeforeAndAfterEach
           h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY))
           elementNotOnPageCheck(pstrSelector(1))
-          linkCheck(expectedAddPstrText, addLinkSelector, PensionSchemeTaxReferenceController.show(taxYearEOY, None).url)
-          //TODO button href to go to annual allowance CYA page
+          linkCheck(expectedAddPstrText, addLinkSelector, PensionSchemeTaxReferenceLifetimeController.show(taxYearEOY, None).url)
           buttonCheck(expectedButtonText, continueButtonSelector, Some(checkAnnualLifetimeAllowanceCYA(taxYearEOY)))
           welshToggleCheck(user.isWelsh)
         }
@@ -167,7 +165,7 @@ class PstrSummaryControllerISpec extends IntegrationTest with BeforeAndAfterEach
 
       "has an SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER
-        //TODO redirect to annual allowance cya page
+        //TODO redirect to lifetime allowance cya page
         result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
       }
     }

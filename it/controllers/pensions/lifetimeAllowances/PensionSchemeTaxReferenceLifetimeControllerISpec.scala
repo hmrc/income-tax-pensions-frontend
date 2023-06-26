@@ -26,7 +26,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import utils.CommonUtils
-import utils.PageUrls.PensionLifetimeAllowance.{pensionTaxReferenceNumberLifetimeAllowanceUrl, pensionTaxReferenceNumberLifetimeAllowanceUrlIndex}
+import utils.PageUrls.PensionLifetimeAllowance.{lifetimeAllowancePstrSummaryUrl, pensionTaxReferenceNumberLifetimeAllowanceUrl, pensionTaxReferenceNumberLifetimeAllowanceUrlIndex}
 import utils.PageUrls.pensionSummaryUrl
 
 // scalastyle:off magic.number
@@ -75,7 +75,7 @@ class PensionSchemeTaxReferenceLifetimeControllerISpec extends CommonUtils with 
   }
 
   object CommonExpectedEN extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Annual and lifetime allowances for 6 April ${taxYear - 1} to 5 April $taxYear"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Lifetime allowances for 6 April ${taxYear - 1} to 5 April $taxYear"
     val expectedButtonText = "Continue"
     val expectedTitle = "Tell us the pension scheme that paid or agreed to pay the tax"
     val expectedHeading = expectedTitle
@@ -87,7 +87,7 @@ class PensionSchemeTaxReferenceLifetimeControllerISpec extends CommonUtils with 
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Lwfans blynyddol a lwfans oes ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Lifetime allowances for 6 April ${taxYear - 1} to 5 April $taxYear"
     val expectedButtonText = "Yn eich blaen"
     val yesText = "Iawn"
     val noText = "Na"
@@ -287,7 +287,7 @@ class PensionSchemeTaxReferenceLifetimeControllerISpec extends CommonUtils with 
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(pensionTaxReferenceNumberLifetimeAllowanceUrl(taxYearEOY))
+        result.header("location") shouldBe Some(lifetimeAllowancePstrSummaryUrl(taxYearEOY))
       }
 
       "updates pension scheme tax reference to contain tax reference" in {
@@ -309,7 +309,7 @@ class PensionSchemeTaxReferenceLifetimeControllerISpec extends CommonUtils with 
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(pensionTaxReferenceNumberLifetimeAllowanceUrl(taxYearEOY))//todo redirect to pstr summary page when implemented
+        result.header("location") shouldBe Some(lifetimeAllowancePstrSummaryUrl(taxYearEOY))
       }
 
       "updates pension scheme tax reference to contain both tax reference" in {
@@ -328,7 +328,7 @@ class PensionSchemeTaxReferenceLifetimeControllerISpec extends CommonUtils with 
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(pensionTaxReferenceNumberLifetimeAllowanceUrl(taxYearEOY))
+        result.header("location") shouldBe Some(lifetimeAllowancePstrSummaryUrl(taxYearEOY))
       }
 
       "updates pension scheme tax reference to contain both tax reference" in {

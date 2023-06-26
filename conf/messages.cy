@@ -40,7 +40,7 @@ common.pensionAnnualAllowance.caption = Lwfansau blynyddol ar gyfer 6 Ebrill {0}
 common.annualAllowance.caption = Annual allowance for 6 April {0} to 5 April {1}
 common.incomeFromPensions.caption = Incwm o bensiynau ar gyfer 6 Ebrill {0} i 5 Ebrill {1}
 common.uKPensionIncome.caption = Incwm o bensiynau’r DU ar gyfer 6 Ebrill {0} i 5 Ebrill {1}
-common.lifetimeAllowance.caption = Lwfans blynyddol a lwfans oes ar gyfer 6 Ebrill {0} i 5 Ebrill {1}
+common.lifetimeAllowance.caption = Lifetime allowances for 6 April {0} to 5 April {1}
 common.overseasPensions.caption = Pensiynau tramor ar gyfer 6 Ebrill {0} i 5 Ebrill {1}
 common.return.overview.buttonText = Yn ôl i’r trosolwg
 common.currencyAmount = £{0}
@@ -92,6 +92,7 @@ common.aboutGeneralIncreases.agent = y llythyr ’Ynglŷn â’r cynnydd cyffred
 
 common.employerFinancedRetirementScheme.caption = Cynlluniau buddiannau ymddeol a ariannwyd gan gyflogwyr ar gyfer 6 Ebrill {0} i 5 Ebrill {1}
 common.addAnotherPstrLink = Ychwanegu Cyfeirnod Treth ar gyfer Cynllun Pensiwn arall
+common.addPstrLink = Ychwanegu PSTR
 
 ################# Common lifetime allowance #################
 
@@ -469,7 +470,6 @@ unauthorisedPayments.pension.pensionSchemeTaxReference.error.incorrectFormat.age
 
 annualAllowance.pstrSummary.title = Crynodeb Cyfeirnod Treth y Cynllun Pensiwn (PSTR)
 annualAllowance.addAnotherPstrLink = Ychwanegu PSTR arall
-annualAllowance.addPstrLink = Ychwanegu PSTR
 
 #################       INCOME FROM PENSIONS        ########################################
 
@@ -736,9 +736,7 @@ lifetimeAllowance.pensionTakenAnotherWay.beforeTax.error.incorrectFormat.agent =
 lifetimeAllowance.pensionTakenAnotherWay.taxPaid.error.noEntry.individual = Nodwch swm y dreth lwfans oes a dalodd eich darparwr pensiwn neu a gytunwyd i dalu ar y swm a gymerir mewn ffordd arall
 lifetimeAllowance.pensionTakenAnotherWay.taxPaid.error.noEntry.agent = Rhowch swm y dreth lwfans oes a dalodd darparwr pensiwn eich cleient neu a gytunwyd i dalu ar y swm a gymerwyd mewn ffordd arall
 
-
 #Annual Allowance and Lifetime Allowance CYA
-
 lifetimeAllowance.cya.heading.individual = Gwiriwch eich lwfansau blynyddol ac oes
 lifetimeAllowance.cya.heading.agent = Gwiriwch lwfansau blynyddol ac oes eich cleient
 lifetimeAllowance.cya.aboveAnnualOrLifetimeAllowance = Uwch na’r lwfans blynyddol neu lwfans oes
@@ -762,6 +760,9 @@ lifetimeAllowance.cya.aboveLifetimeAllowance.hidden = Newidiwch uwch na’r lwfa
 lifetimeAllowance.cya.lumpSum.hidden = Newidiwch gyfandaliad
 lifetimeAllowance.cya.otherPayments.hidden = Newidiwch daliadau eraill
 lifetimeAllowance.cya.lifetimePensionSchemeTaxReferences.hidden = Newidiwch gynlluniau sy’n talu treth lwfans oes
+
+#Lifetime Allowance PSTR Summary
+lifetimeAllowance.pstrSummary.title = Pension schemes that paid or agreed to pay lifetime allowance tax
 
 #Pension scheme tax reference lifetime allowance
 lifetimeAllowance.pensionSchemeTaxReference.title = Rhowch wybod i ni’r cynllun pensiwn a dalodd neu a gytunwyd i dalu’r dreth

@@ -18,6 +18,7 @@ package controllers.pensions.lifetimeAllowances
 
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.lifetimeAllowances.routes.PensionSchemeTaxReferenceLifetimeController
+import controllers.pensions.lifetimeAllowances.routes.LifetimePstrSummaryController
 import controllers.pensions.routes.PensionsSummaryController
 import controllers.predicates.AuthorisedAction
 import controllers.predicates.TaxYearAction.taxYearAction
@@ -114,7 +115,7 @@ class PensionSchemeTaxReferenceLifetimeController @Inject()(authAction: Authoris
 
                 pensionSessionService.createOrUpdateSessionData(request.user,
                   updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
-                  Redirect(PensionSchemeTaxReferenceLifetimeController.show(taxYear, None))
+                  Redirect(LifetimePstrSummaryController.show(taxYear))
                 }
               } else {
                 //TODO Redirect to pstr summary controller for lifetime allowances
