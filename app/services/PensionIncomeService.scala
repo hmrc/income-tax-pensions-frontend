@@ -19,7 +19,7 @@ package services
 import connectors.{IncomeTaxUserDataConnector, PensionsConnector}
 import models.mongo.{PensionsCYAModel, PensionsUserData, ServiceError}
 import models.pension.charges.IncomeFromOverseasPensionsViewModel
-import models.pension.income.CreateUpdatePensionIncomeModel
+import models.pension.income.{CreateUpdatePensionIncomeModel, ForeignPensionContainer, OverseasPensionContributionContainer}
 import models.{IncomeTaxUserData, User}
 import org.joda.time.DateTimeZone
 import repositories.PensionsUserDataRepository
@@ -63,8 +63,9 @@ class PensionIncomeService @Inject()(pensionUserDataRepository: PensionsUserData
         viewModel = sessionData.map(_.pensions.incomeFromOverseasPensions)
         updatedFp = viewModel.map(_.toForeignPension)
         updatedIncomeData = CreateUpdatePensionIncomeModel(
-          foreignPension = updatedFp,
-          overseasPensionContribution = priorData.pensions.flatMap(_.pensionIncome.flatMap(_.overseasPensionContribution))
+          foreignPension = updatedFp.map(ForeignPensionContainer),
+          overseasPensionContribution =
+            priorData.pensions.flatMap(_.pensionIncome.flatMap(_.overseasPensionContribution.map(OverseasPensionContributionContainer)))
         )
         _ <- FutureEitherOps[ServiceError, Unit](pensionsConnector.savePensionIncomeSessionData(user.nino, taxYear, updatedIncomeData)(hcWithExtras, ec))
         updatedCYA = getPensionsUserData(sessionData, user)
