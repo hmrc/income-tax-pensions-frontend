@@ -63,6 +63,20 @@ class LifetimeAllowanceCYAControllerISpec extends IntegrationTest with ViewHelpe
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
       }
 
+      result.status shouldBe OK
+      result.headers("Location").head shouldBe Some(pensionSummaryUrl(taxYear))
+    }
+
+    "redirect to pension summary Page when in year" in {
+      lazy implicit val result: WSResponse = {
+        dropPensionsDB()
+        authoriseAgentOrIndividual(aUser.isAgent)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel))
+        emptyUserDataStub()
+        urlGet(fullUrl(lifetimeAllowanceCYA(taxYear)), !aUser.isAgent, follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
+      }
+
       result.status shouldBe SEE_OTHER
       result.headers("Location").head shouldBe Some(pensionSummaryUrl(taxYear))
     }
