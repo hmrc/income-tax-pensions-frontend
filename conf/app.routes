@@ -202,8 +202,8 @@ POST        /:taxYear/annual-lifetime-allowances/pension-scheme-tax-reference   
 GET         /:taxYear/annual-lifetime-allowances/check-lifetime-allowances                                                         controllers.pensions.lifetimeAllowances.AnnualLifetimeAllowanceCYAController.show(taxYear:Int)
 POST        /:taxYear/annual-lifetime-allowances/check-lifetime-allowances                                                         controllers.pensions.lifetimeAllowances.AnnualLifetimeAllowanceCYAController.submit(taxYear:Int)
 
-GET         /:taxYear/annual-allowance/annual-lifetime-allowance/lifetime-allowance-summary                                        controllers.pensions.lifetimeAllowances.LifetimeAllowanceCYAController.show(taxYear:Int)
-POST        /:taxYear/annual-allowance/annual-lifetime-allowance/lifetime-allowance-summary                                        controllers.pensions.lifetimeAllowances.LifetimeAllowanceCYAController.submit(taxYear:Int)
+GET         /:taxYear/annual-lifetime-allowance/lifetime-allowance-summary                                                         controllers.pensions.lifetimeAllowances.LifetimeAllowanceCYAController.show(taxYear:Int)
+POST        /:taxYear/annual-lifetime-allowance/lifetime-allowance-summary                                                         controllers.pensions.lifetimeAllowances.LifetimeAllowanceCYAController.submit(taxYear:Int)
 
 
 ###########################     Payment into overseas pension Pages     ####################################

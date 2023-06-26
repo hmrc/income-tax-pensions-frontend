@@ -20,19 +20,17 @@ import builders.AllPensionsDataBuilder.anAllPensionsData
 import builders.IncomeTaxUserDataBuilder.anIncomeTaxUserData
 import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import builders.PensionsUserDataBuilder
-import builders.PensionLifetimeAllowanceViewModelBuilder.{aPensionLifetimeAllowanceViewModel, minimalPensionLifetimeAllowanceViewModel}
+import builders.PensionLifetimeAllowanceViewModelBuilder.minimalPensionLifetimeAllowanceViewModel
 import builders.UserBuilder.aUser
 import models.mongo.PensionsCYAModel
-import models.pension.charges.{CreateUpdatePensionChargesRequestModel, PensionCharges}
 import play.api.http.HeaderNames
 import play.api.http.Status.{OK, SEE_OTHER}
-import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
 import utils.PageUrls.PensionLifetimeAllowance.lifetimeAllowanceCYA
 import utils.PageUrls.{fullUrl, overviewUrl, pensionSummaryUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
-class LifetimeAllowanceCYAISpec extends IntegrationTest with ViewHelpers
+class LifetimeAllowanceCYAControllerISpec extends IntegrationTest with ViewHelpers
   with PensionsDatabaseHelper {
 
   private def pensionsUsersData(pensionsCyaModel: PensionsCYAModel) = {
@@ -43,7 +41,7 @@ class LifetimeAllowanceCYAISpec extends IntegrationTest with ViewHelpers
 
   ".show" should {
 
-    "show page when EOY" in {
+    "show page when date is EOY" in {
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
@@ -54,7 +52,22 @@ class LifetimeAllowanceCYAISpec extends IntegrationTest with ViewHelpers
       }
       result.status shouldBe OK
     }
+
+    "redirect to Overview Page when in year" in {
+      lazy implicit val result: WSResponse = {
+        dropPensionsDB()
+        authoriseAgentOrIndividual(aUser.isAgent)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel))
+        userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYear)
+        urlGet(fullUrl(lifetimeAllowanceCYA(taxYear)), !aUser.isAgent, follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
+      }
+
+      result.status shouldBe SEE_OTHER
+      result.headers("Location").head shouldBe Some(pensionSummaryUrl(taxYear))
+    }
   }
+
 
   ".submit" should {
     "redirect to overview when in year" in {
