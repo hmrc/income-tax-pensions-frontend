@@ -34,7 +34,7 @@
 @headingForUse = @{messages("annualAllowance.pstrSummary.title")}
 @addAnotherLink() = {
     @if(pstrList.isEmpty){
-        <p class="govuk-body">@link(PensionSchemeTaxReferenceController.show(taxYear, None).url, "annualAllowance.addPstrLink", Some("add-pstr-link"), fullStop = false)</p>
+        <p class="govuk-body">@link(PensionSchemeTaxReferenceController.show(taxYear, None).url, "common.addPstrLink", Some("add-pstr-link"), fullStop = false)</p>
     } else {
         <p class="govuk-body">@link(PensionSchemeTaxReferenceController.show(taxYear, None).url, "common.addAnotherPstrLink", Some("add-another-link"), fullStop = false)</p>
     }

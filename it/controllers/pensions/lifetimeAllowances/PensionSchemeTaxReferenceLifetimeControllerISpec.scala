@@ -26,7 +26,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import utils.CommonUtils
-import utils.PageUrls.PensionLifetimeAllowance.{pensionTaxReferenceNumberLifetimeAllowanceUrl, pensionTaxReferenceNumberLifetimeAllowanceUrlIndex}
+import utils.PageUrls.PensionLifetimeAllowance.{lifetimeAllowancePstrSummaryUrl, pensionTaxReferenceNumberLifetimeAllowanceUrl, pensionTaxReferenceNumberLifetimeAllowanceUrlIndex}
 import utils.PageUrls.pensionSummaryUrl
 
 // scalastyle:off magic.number
@@ -287,7 +287,7 @@ class PensionSchemeTaxReferenceLifetimeControllerISpec extends CommonUtils with 
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(pensionTaxReferenceNumberLifetimeAllowanceUrl(taxYearEOY))
+        result.header("location") shouldBe Some(lifetimeAllowancePstrSummaryUrl(taxYearEOY))
       }
 
       "updates pension scheme tax reference to contain tax reference" in {
@@ -309,7 +309,7 @@ class PensionSchemeTaxReferenceLifetimeControllerISpec extends CommonUtils with 
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(pensionTaxReferenceNumberLifetimeAllowanceUrl(taxYearEOY))//todo redirect to pstr summary page when implemented
+        result.header("location") shouldBe Some(lifetimeAllowancePstrSummaryUrl(taxYearEOY))
       }
 
       "updates pension scheme tax reference to contain both tax reference" in {
@@ -328,7 +328,7 @@ class PensionSchemeTaxReferenceLifetimeControllerISpec extends CommonUtils with 
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(pensionTaxReferenceNumberLifetimeAllowanceUrl(taxYearEOY))
+        result.header("location") shouldBe Some(lifetimeAllowancePstrSummaryUrl(taxYearEOY))
       }
 
       "updates pension scheme tax reference to contain both tax reference" in {

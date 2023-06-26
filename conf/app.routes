@@ -87,8 +87,8 @@ POST        /:taxYear/pension-income/state-pension-lump-sum-tax                 
 GET         /:taxYear/pension-income/state-pension-lump-sum-date                                                                   controllers.pensions.incomeFromPensions.StatePensionLumpSumStartDateController.show(taxYear: Int)
 POST        /:taxYear/pension-income/state-pension-lump-sum-date                                                                   controllers.pensions.incomeFromPensions.StatePensionLumpSumStartDateController.submit(taxYear: Int)
 
-GET         /:taxYear/pension-income/state-pension-add-to-calculation                                                                     controllers.pensions.incomeFromPensions.StatePensionAddToCalculationController.show(taxYear: Int)
-POST        /:taxYear/pension-income/state-pension-add-to-calculation                                                                     controllers.pensions.incomeFromPensions.StatePensionAddToCalculationController.submit(taxYear: Int)
+GET         /:taxYear/pension-income/state-pension-add-to-calculation                                                              controllers.pensions.incomeFromPensions.StatePensionAddToCalculationController.show(taxYear: Int)
+POST        /:taxYear/pension-income/state-pension-add-to-calculation                                                              controllers.pensions.incomeFromPensions.StatePensionAddToCalculationController.submit(taxYear: Int)
 
 GET         /:taxYear/pension-income/check-state-pension                                                                           controllers.pensions.incomeFromPensions.StatePensionCYAController.show(taxYear: Int)
 POST        /:taxYear/pension-income/check-state-pension                                                                           controllers.pensions.incomeFromPensions.StatePensionCYAController.submit(taxYear: Int)
@@ -162,8 +162,8 @@ POST        /:taxYear/annual-allowance/reduced-annual-allowance                 
 GET         /:taxYear/annual-allowance/reduced-annual-allowance-type                                                               controllers.pensions.annualAllowances.ReducedAnnualAllowanceTypeController.show(taxYear: Int)
 POST        /:taxYear/annual-allowance/reduced-annual-allowance-type                                                               controllers.pensions.annualAllowances.ReducedAnnualAllowanceTypeController.submit(taxYear: Int)
 
-GET         /:taxYear/annual-allowance/above-annual-allowance                                                            controllers.pensions.annualAllowances.AboveReducedAnnualAllowanceController.show(taxYear: Int)
-POST        /:taxYear/annual-allowance/above-annual-allowance                                                            controllers.pensions.annualAllowances.AboveReducedAnnualAllowanceController.submit(taxYear: Int)
+GET         /:taxYear/annual-allowance/above-annual-allowance                                                                      controllers.pensions.annualAllowances.AboveReducedAnnualAllowanceController.show(taxYear: Int)
+POST        /:taxYear/annual-allowance/above-annual-allowance                                                                      controllers.pensions.annualAllowances.AboveReducedAnnualAllowanceController.submit(taxYear: Int)
 
 GET         /:taxYear/annual-allowance/pension-scheme-tax-reference                                                                controllers.pensions.annualAllowances.PensionSchemeTaxReferenceController.show(taxYear: Int, pensionSchemeTaxReferenceIndex: Option[Int])
 POST        /:taxYear/annual-allowance/pension-scheme-tax-reference                                                                controllers.pensions.annualAllowances.PensionSchemeTaxReferenceController.submit(taxYear: Int, pensionSchemeTaxReferenceIndex: Option[Int])
@@ -198,6 +198,8 @@ POST        /:taxYear/annual-lifetime-allowances/pension-another-way-details    
 
 GET         /:taxYear/annual-lifetime-allowances/pension-scheme-tax-reference                                                      controllers.pensions.lifetimeAllowances.PensionSchemeTaxReferenceLifetimeController.show(taxYear: Int, pensionSchemeTaxReferenceIndex: Option[Int])
 POST        /:taxYear/annual-lifetime-allowances/pension-scheme-tax-reference                                                      controllers.pensions.lifetimeAllowances.PensionSchemeTaxReferenceLifetimeController.submit(taxYear: Int, pensionSchemeTaxReferenceIndex: Option[Int])
+
+GET         /:taxYear/annual-lifetime-allowances/pension-scheme-tax-reference-summary                                              controllers.pensions.lifetimeAllowances.LifetimePstrSummaryController.show(taxYear: Int)
 
 GET         /:taxYear/annual-lifetime-allowances/check-lifetime-allowances                                                         controllers.pensions.lifetimeAllowances.AnnualLifetimeAllowanceCYAController.show(taxYear:Int)
 POST        /:taxYear/annual-lifetime-allowances/check-lifetime-allowances                                                         controllers.pensions.lifetimeAllowances.AnnualLifetimeAllowanceCYAController.submit(taxYear:Int)
@@ -237,8 +239,8 @@ POST        /:taxYear/overseas-pensions/payments-into-overseas-pensions/double-t
 
 GET         /:taxYear/overseas-pensions/payments-into-overseas-pensions/untaxed-schemes-summary                                    controllers.pensions.paymentsIntoOverseasPensions.ReliefsSchemeSummaryController.show(taxYear: Int)
 
-GET         /:taxYear/overseas-pensions/payments-into-overseas-pensions/remove-schemes                                              controllers.pensions.paymentsIntoOverseasPensions.RemoveReliefSchemeController.show(taxYear: Int, index: Option[Int])
-POST        /:taxYear/overseas-pensions/payments-into-overseas-pensions/remove-schemes                                              controllers.pensions.paymentsIntoOverseasPensions.RemoveReliefSchemeController.submit(taxYear: Int, index: Option[Int])
+GET         /:taxYear/overseas-pensions/payments-into-overseas-pensions/remove-schemes                                             controllers.pensions.paymentsIntoOverseasPensions.RemoveReliefSchemeController.show(taxYear: Int, index: Option[Int])
+POST        /:taxYear/overseas-pensions/payments-into-overseas-pensions/remove-schemes                                             controllers.pensions.paymentsIntoOverseasPensions.RemoveReliefSchemeController.submit(taxYear: Int, index: Option[Int])
 
 GET        /:taxYear/overseas-pensions/payments-into-overseas-pensions/check-overseas-pension-details                              controllers.pensions.paymentsIntoOverseasPensions.PaymentsIntoOverseasPensionsCYAController.show(taxYear: Int)
 POST       /:taxYear/overseas-pensions/payments-into-overseas-pensions/check-overseas-pension-details                              controllers.pensions.paymentsIntoOverseasPensions.PaymentsIntoOverseasPensionsCYAController.submit(taxYear: Int)
