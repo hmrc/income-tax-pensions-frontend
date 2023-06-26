@@ -22,7 +22,7 @@ import models.mongo.PensionsCYAModel
 import play.api.mvc.Call
 import play.api.mvc.Results.Redirect
 import services.redirects.UnauthorisedPaymentsPages._
-import services.redirects.UnauthorisedPaymentsRedirects.{cyaPageCall, isFinishedCheck, journeyCheck}
+import services.redirects.UnauthorisedPaymentsRedirects.{cyaPageCall, journeyCheck}
 import utils.UnitTest
 
 class UnauthorisedPaymentsRedirectsSpec extends UnitTest {
@@ -31,57 +31,6 @@ class UnauthorisedPaymentsRedirectsSpec extends UnitTest {
   private val someRedirect = Some(Redirect(UnauthorisedPaymentsController.show(taxYear)))
   private val cyaRedirect: Call = UnauthorisedPaymentsCYAController.show(taxYear)
   private val contextualRedirect: Call = NoSurchargeAmountController.show(taxYear)
-
-
-  ".isFinishedCheck" should {
-
-    "redirect to CYA page" when {
-      "all Unauthorised Payments questions have been answered" in {
-        val result = isFinishedCheck(
-          cyaData.copy(unauthorisedPayments = anUnauthorisedPaymentsViewModel),
-          taxYear, contextualRedirect)
-
-        result shouldBe Redirect(cyaRedirect)
-      }
-
-      "all valid Unauthorised Payments questions have been answered" in {
-        val completeData = cyaData.copy(
-          unauthorisedPayments = anUnauthorisedPaymentsViewModel.copy(
-            surchargeQuestion = Some(false),
-            surchargeAmount = None,
-            surchargeTaxAmountQuestion = None,
-            surchargeTaxAmount = None,
-            noSurchargeTaxAmountQuestion = Some(false),
-            noSurchargeTaxAmount = None
-          )
-        )
-        val result = isFinishedCheck(completeData, taxYear, contextualRedirect)
-
-        result shouldBe Redirect(cyaRedirect)
-      }
-    }
-
-    "redirect to argument call if not all valid questions have been answered" in {
-      val completeData = cyaData.copy(
-        unauthorisedPayments = anUnauthorisedPaymentsViewModel.copy(
-          surchargeQuestion = Some(false),
-          noSurchargeQuestion = Some(true),
-          surchargeAmount = None,
-          surchargeTaxAmountQuestion = None,
-          surchargeTaxAmount = None,
-          noSurchargeAmount = None,
-          noSurchargeTaxAmountQuestion = Some(true),
-          noSurchargeTaxAmount = None,
-          ukPensionSchemesQuestion = Some(true),
-          pensionSchemeTaxReference = None
-        )
-      )
-      val result = isFinishedCheck(completeData, taxYear, contextualRedirect)
-
-      result shouldBe Redirect(contextualRedirect)
-    }
-
-  }
 
   ".journeyCheck" should {
     "return None if page is valid and all previous questions have been answered" when {
