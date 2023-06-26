@@ -22,7 +22,7 @@ import forms.FormsProvider
 import models.mongo.{PensionsCYAModel, PensionsUserData}
 import models.requests.UserSessionDataRequest
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.PensionSessionService
 import services.redirects.ShortServiceRefundsRedirects.redirectForSchemeLoop
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -69,7 +69,7 @@ class NonUkTaxRefundsController @Inject()(
   private def updateSessionData[T](pensionUserData: PensionsUserData,
                                    yesNo: Boolean,
                                    amount: Option[BigDecimal],
-                                   taxYear: Int)(implicit request: UserSessionDataRequest[T]) = {
+                                   taxYear: Int)(implicit request: UserSessionDataRequest[T]): Future[Result] = {
     val updatedCyaModel: PensionsCYAModel = pensionUserData.pensions.copy(
       shortServiceRefunds = pensionUserData.pensions.shortServiceRefunds.copy(
         shortServiceRefundTaxPaid = Some(yesNo),
@@ -77,7 +77,9 @@ class NonUkTaxRefundsController @Inject()(
 
     pensionSessionService.createOrUpdateSessionData(request.user,
       updatedCyaModel, taxYear, pensionUserData.isPriorSubmission)(errorHandler.internalServerError()) {
-      Redirect(redirectForSchemeLoop(schemes = updatedCyaModel.shortServiceRefunds.refundPensionScheme)
+      Redirect(redirectForSchemeLoop(
+        refundSchemes = updatedCyaModel.shortServiceRefunds.refundPensionScheme,
+        taxYear))
     }
   }
 }

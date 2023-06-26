@@ -39,7 +39,7 @@ import scala.concurrent.Future
 @Singleton
 class WhereAnyOfTheUnauthorisedPaymentsController @Inject()(implicit val cc: MessagesControllerComponents,
                                                             authAction: AuthorisedAction,
-                                                            whereAnyOfTheUnauthorisedPaymentsView: WereAnyOfTheUnauthorisedPaymentsView,
+                                                            wereAnyOfTheUnauthorisedPaymentsView: WereAnyOfTheUnauthorisedPaymentsView,
                                                             appConfig: AppConfig,
                                                             pensionSessionService: PensionSessionService,
                                                             errorHandler: ErrorHandler,

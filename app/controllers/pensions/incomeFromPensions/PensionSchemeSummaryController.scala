@@ -17,7 +17,6 @@
 package controllers.pensions.incomeFromPensions
 
 import config.AppConfig
-import controllers.pensions.routes.PensionsSummaryController
 import controllers.predicates.ActionsProvider
 import controllers.validatedIndex
 import models.pension.statebenefits.UkPensionIncomeViewModel

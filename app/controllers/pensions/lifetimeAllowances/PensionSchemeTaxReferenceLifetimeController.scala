@@ -17,7 +17,6 @@
 package controllers.pensions.lifetimeAllowances
 
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.lifetimeAllowances.routes.PensionSchemeTaxReferenceLifetimeController
 import controllers.pensions.lifetimeAllowances.routes.LifetimePstrSummaryController
 import controllers.pensions.routes.PensionsSummaryController
 import controllers.predicates.AuthorisedAction
@@ -33,9 +32,8 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.lifetimeAllowances.PensionSchemeTaxReferenceLifetimeView
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
-import javax.inject.Singleton
 
 @Singleton
 class PensionSchemeTaxReferenceLifetimeController @Inject()(authAction: AuthorisedAction,
