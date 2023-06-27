@@ -26,7 +26,7 @@ import models.pension.statebenefits.{IncomeFromPensionsViewModel, UkPensionIncom
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
-import services.redirects.IncomeFromPensionsRedirects.redirectForSchemeLoop
+import services.redirects.IncomeFromOtherUkPensionsRedirects.redirectForSchemeLoop
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.incomeFromPensions.PensionAmountView

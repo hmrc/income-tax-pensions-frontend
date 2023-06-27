@@ -22,7 +22,7 @@ import controllers.validatedIndex
 import models.pension.statebenefits.UkPensionIncomeViewModel
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.redirects.IncomeFromPensionsRedirects.redirectForSchemeLoop
+import services.redirects.IncomeFromOtherUkPensionsRedirects.redirectForSchemeLoop
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.SessionHelper
 import views.html.pensions.incomeFromPensions.PensionSchemeSummaryView

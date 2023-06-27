@@ -21,7 +21,7 @@ import models.pension.statebenefits.UkPensionIncomeViewModel
 import play.api.mvc.Call
 import services.redirects.SimpleRedirectService.checkForExistingSchemes
 
-object IncomeFromPensionsRedirects {
+object IncomeFromOtherUkPensionsRedirects {
 
   def redirectForSchemeLoop(schemes: Seq[UkPensionIncomeViewModel], taxYear: Int): Call = {
     checkForExistingSchemes(
