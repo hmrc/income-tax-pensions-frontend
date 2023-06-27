@@ -26,8 +26,8 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
+import utils.PageUrls.UnauthorisedPaymentsPages.{checkUnauthorisedPaymentsCyaUrl, ukPensionSchemeDetailsUrl, wereAnyOfTheUnauthorisedPaymentsUrl}
 import utils.PageUrls.fullUrl
-import utils.PageUrls.UnauthorisedPaymentsPages.{checkUnauthorisedPaymentsCyaUrl, pensionSchemeTaxReferenceUrl, wereAnyOfTheUnauthorisedPaymentsUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 class WereAnyOfTheUnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAndAfterEach with ViewHelpers with PensionsDatabaseHelper {
@@ -239,7 +239,7 @@ class WereAnyOfTheUnauthorisedPaymentsControllerISpec extends IntegrationTest wi
 
       "has a SEE_OTHER(303) status and redirect to Pension Scheme Tax Reference (PSTR) Page" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(pensionSchemeTaxReferenceUrl(taxYearEOY))
+        result.header("location") shouldBe Some(ukPensionSchemeDetailsUrl(taxYearEOY))
       }
 
       "updates ukPensionSchemesQuestion to Some(true)" in {

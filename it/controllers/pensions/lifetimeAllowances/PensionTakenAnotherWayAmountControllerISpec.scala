@@ -27,8 +27,8 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.PensionLifetimeAllowance.pensionTakenAnotherWayAmountUrl
-import utils.PageUrls.{fullUrl, pensionSummaryUrl}
+import utils.PageUrls.PensionLifetimeAllowance.{checkAnnualLifetimeAllowanceCYA, lifetimeAllowancePstrSummaryUrl, pensionTakenAnotherWayAmountUrl, pensionTaxReferenceNumberLifetimeAllowanceUrl}
+import utils.PageUrls.fullUrl
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with BeforeAndAfterEach with ViewHelpers with PensionsDatabaseHelper {
@@ -181,7 +181,6 @@ class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with B
     userScenarios.foreach { user =>
       import Selectors._
       import user.commonExpectedResults._
-
 
       s"language is ${welshTest(user.isWelsh)} and request is from an ${agentTest(user.isAgent)}" should {
 
@@ -345,7 +344,6 @@ class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with B
       }
     }
 
-
     "redirect to the CYA page if there is no session data" which {
       lazy val result: WSResponse = {
         dropPensionsDB()
@@ -355,16 +353,13 @@ class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with B
       }
       "has an SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER
-        //TODO: - Redirect to Annual Lifetime allowances cya page
-        result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
+        result.header("location") shouldBe Some(checkAnnualLifetimeAllowanceCYA(taxYearEOY))
       }
     }
   }
 
   ".submit" should {
-
     userScenarios.foreach { user =>
-
       import Selectors._
       import user.commonExpectedResults._
 
@@ -512,9 +507,8 @@ class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with B
       }
 
       "has a SEE_OTHER(303) status" in {
-        //TODO: Redirect to lifetime-other-status
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(pensionTakenAnotherWayAmountUrl(taxYearEOY))
+        result.header("location") shouldBe Some(lifetimeAllowancePstrSummaryUrl(taxYearEOY))
       }
 
       "update state pension amount to Some (new values)" in {
@@ -524,11 +518,9 @@ class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with B
       }
     }
 
-
     "redirect to the correct page when a valid amount is submitted when there is No existing data" which {
 
       lazy val form: Map[String, String] = amountForm(newAmount.toString, newAmount2.toString)
-
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual()
@@ -543,9 +535,8 @@ class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with B
       }
 
       "has a SEE_OTHER(303) status" in {
-        //TODO: Redirect to lifetime-other-status
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(pensionTakenAnotherWayAmountUrl(taxYearEOY))
+        result.header("location") shouldBe Some(pensionTaxReferenceNumberLifetimeAllowanceUrl(taxYearEOY))
       }
 
       "update state pension amount to Some (new values)" in {
