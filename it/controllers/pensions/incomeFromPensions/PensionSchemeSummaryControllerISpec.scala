@@ -23,21 +23,21 @@ import models.mongo.PensionsCYAModel
 import play.api.http.HeaderNames
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.IncomeFromPensionsPages.pensionSchemeSummaryUrl
-import utils.PageUrls.{fullUrl, overviewUrl, pensionSummaryUrl}
+import utils.PageUrls.IncomeFromPensionsPages.{pensionSchemeSummaryUrl, ukPensionSchemeSummaryListUrl}
+import utils.PageUrls.{fullUrl, overviewUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 class PensionSchemeSummaryControllerISpec extends IntegrationTest with ViewHelpers with PensionsDatabaseHelper {
 
   override val userScenarios: Seq[UserScenario[_, _]] = Nil
-  
+
   private def pensionsUsersData(pensionsCyaModel: PensionsCYAModel, isPrior: Boolean = false) =
     PensionsUserDataBuilder.aPensionsUserData.copy(isPriorSubmission = isPrior, pensions = pensionsCyaModel)
-  
+
   val schemeIndex0 = 0
 
   ".show" should {
-    
+
     "redirect to Overview Page when in year" in {
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
@@ -61,8 +61,8 @@ class PensionSchemeSummaryControllerISpec extends IntegrationTest with ViewHelpe
       }
       result.status shouldBe OK
     }
-    
-    "redirect the user to the UK Pension Income Summary page when there is no pensionSchemeIndex" should {
+
+    "redirect the user to the UK Pension Income Summary page when there is no pensionSchemeIndex" in {
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual()
@@ -70,10 +70,9 @@ class PensionSchemeSummaryControllerISpec extends IntegrationTest with ViewHelpe
         urlGet(fullUrl(pensionSchemeSummaryUrl(taxYearEOY, None)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
-      s"has a SEE_OTHER ($SEE_OTHER) status" in {
-        result.status shouldBe SEE_OTHER
-        result.header("location").contains(pensionSummaryUrl(taxYearEOY)) shouldBe true
-      }
+
+      result.status shouldBe SEE_OTHER
+      result.header("location") shouldBe Some(ukPensionSchemeSummaryListUrl(taxYearEOY))
     }
   }
 }
