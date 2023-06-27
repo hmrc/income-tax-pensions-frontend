@@ -40,10 +40,12 @@ object UnauthorisedPaymentsRedirects { //scalastyle:off magic.number
 
   private val pageValidInJourneyMap: Map[Int, UnauthorisedPaymentsViewModel => Boolean] = {
 
-    val surchargeQuestionFn = { unauthorisedPaymentsViewModel: UnauthorisedPaymentsViewModel => unauthorisedPaymentsViewModel.surchargeQuestion.getOrElse(false) }
-    val noSurchargeQuestionFn = { unauthorisedPaymentsViewModel: UnauthorisedPaymentsViewModel => unauthorisedPaymentsViewModel.noSurchargeQuestion.getOrElse(false) }
+    val surchargeQuestionFn = {unauthorisedPaymentsViewModel: UnauthorisedPaymentsViewModel =>
+      unauthorisedPaymentsViewModel.surchargeQuestion.getOrElse(false)}
+    val noSurchargeQuestionFn = {unauthorisedPaymentsViewModel: UnauthorisedPaymentsViewModel =>
+      unauthorisedPaymentsViewModel.noSurchargeQuestion.getOrElse(false)}
     val surchargeOrNoSurchargeQuestionFn = { unauthorisedPaymentsViewModel: UnauthorisedPaymentsViewModel =>
-      unauthorisedPaymentsViewModel.surchargeQuestion.getOrElse(false) || unauthorisedPaymentsViewModel.noSurchargeQuestion.getOrElse(false)
+      unauthorisedPaymentsViewModel.surchargeQuestion.getOrElse(false) ||unauthorisedPaymentsViewModel.noSurchargeQuestion.getOrElse(false)
     }
     val ukPensionSchemesQuestionFn = { unauthorisedPaymentsViewModel: UnauthorisedPaymentsViewModel =>
       (unauthorisedPaymentsViewModel.surchargeQuestion.getOrElse(false) || unauthorisedPaymentsViewModel.noSurchargeQuestion.getOrElse(false)) && unauthorisedPaymentsViewModel.ukPensionSchemesQuestion.getOrElse(false)
