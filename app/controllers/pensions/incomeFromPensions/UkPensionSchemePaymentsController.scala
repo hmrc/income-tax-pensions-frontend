@@ -34,7 +34,7 @@ import utils.Clock
 import views.html.pensions.incomeFromPensions.UkPensionSchemePaymentsView
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class UkPensionSchemePaymentsController @Inject()(implicit val mcc: MessagesControllerComponents,

@@ -28,7 +28,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
 import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
 import services.redirects.UnauthorisedPaymentsPages.PSTRPage
-import services.redirects.UnauthorisedPaymentsRedirects.{cyaPageCall, journeyCheck}
+import services.redirects.UnauthorisedPaymentsRedirects.{cyaPageCall, journeyCheck, redirectForSchemeLoop}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.unauthorisedPayments.PensionSchemeTaxReferenceView
@@ -65,7 +65,7 @@ class UnauthorisedPensionSchemeTaxReferenceController @Inject()(implicit val cc:
             case Some(scheme) =>
               Future.successful(Ok(pensionSchemeTaxReferenceView(emptyForm.fill(scheme), pensionSchemeIndex, taxYear)))
             case None =>
-              Future.successful(Ok(pensionSchemeTaxReferenceView(emptyForm, pensionSchemeIndex, taxYear)))
+              Future.successful(Redirect(redirectForSchemeLoop(pstrList, taxYear)))
           }
         }
     }
@@ -112,7 +112,7 @@ class UnauthorisedPensionSchemeTaxReferenceController @Inject()(implicit val cc:
                   Redirect(UkPensionSchemeDetailsController.show(taxYear))
                 }
               } else {
-                Future.successful(Redirect(UkPensionSchemeDetailsController.show(taxYear)))
+                Future.successful(Redirect(redirectForSchemeLoop(pstrList, taxYear)))
               }
             }
         }
@@ -131,12 +131,8 @@ class UnauthorisedPensionSchemeTaxReferenceController @Inject()(implicit val cc:
 
   private def validateIndexScheme(pensionSchemeIndex: Option[Int], pensionSchemesList: Seq[String]): Boolean = {
     pensionSchemeIndex match {
-      case Some(index) if pensionSchemesList.size > index =>
-        true
-      case None =>
-        true
-      case _ =>
-        false
+      case Some(index) => pensionSchemesList.size > index
+      case _ => true
     }
   }
 }
