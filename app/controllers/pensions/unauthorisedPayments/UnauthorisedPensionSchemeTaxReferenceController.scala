@@ -61,12 +61,14 @@ class UnauthorisedPensionSchemeTaxReferenceController @Inject()(implicit val cc:
         redirectBasedOnCurrentAnswers(taxYear, optData, cyaPageCall(taxYear))(checkRedirect) { data =>
 
           val pstrList: Seq[String] = data.pensions.unauthorisedPayments.pensionSchemeTaxReference.getOrElse(Seq.empty)
-          checkIndexScheme(pensionSchemeIndex, pstrList) match {
-            case Some(scheme) =>
-              Future.successful(Ok(pensionSchemeTaxReferenceView(emptyForm.fill(scheme), pensionSchemeIndex, taxYear)))
-            case None =>
-              Future.successful(Redirect(redirectForSchemeLoop(pstrList, taxYear)))
-          }
+          if (validateIndexScheme(pensionSchemeIndex, pstrList)) {
+            checkIndexScheme(pensionSchemeIndex, pstrList) match {
+              case Some(scheme) =>
+                Future.successful(Ok(pensionSchemeTaxReferenceView(emptyForm.fill(scheme), pensionSchemeIndex, taxYear)))
+              case None =>
+                Future.successful(Ok(pensionSchemeTaxReferenceView(emptyForm, pensionSchemeIndex, taxYear)))
+            }
+          } else Future.successful(Redirect(redirectForSchemeLoop(pstrList, taxYear)))
         }
     }
   }
