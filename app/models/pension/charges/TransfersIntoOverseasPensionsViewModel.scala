@@ -35,6 +35,24 @@ case class TransfersIntoOverseasPensionsViewModel(
   def isEmpty: Boolean = transferPensionSavings.isEmpty && overseasTransferCharge.isEmpty && overseasTransferChargeAmount.isEmpty &&
     pensionSchemeTransferCharge.isEmpty && pensionSchemeTransferChargeAmount.isEmpty && transferPensionScheme.isEmpty
 
+  def isFinished: Boolean = {
+    transferPensionSavings.exists(
+      q => if (q) {
+        overseasTransferCharge.exists {
+          q =>
+            if (q) {
+              overseasTransferChargeAmount.isDefined &&
+                pensionSchemeTransferCharge.exists {
+                  q =>
+                    if (q) pensionSchemeTransferChargeAmount.isDefined && transferPensionScheme.nonEmpty
+                    else true
+                }
+            } else true
+        }
+      } else true
+    )
+  }
+
   def toTransfersIOP: PensionSchemeOverseasTransfers = PensionSchemeOverseasTransfers(
     overseasSchemeProvider = fromTransferPensionScheme(this.transferPensionScheme),
     transferCharge = this.overseasTransferChargeAmount.getOrElse(0.00),
