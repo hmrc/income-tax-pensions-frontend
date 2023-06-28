@@ -48,15 +48,17 @@ class SF74ReferenceController @Inject()(
 
     val piopReliefs = userSessionDataRequest.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs
 
-    validatedIndex(reliefIndex, piopReliefs.size) match {
-      case Some(idx) =>
-        val sf74Reference = piopReliefs(idx).sf74Reference
-        sf74Reference match {
-          case Some(value) => Future.successful(Ok(view(formsProvider.sf74ReferenceIdForm.fill(value), taxYear, reliefIndex)))
-          case None => Future.successful(Ok(view(formsProvider.sf74ReferenceIdForm, taxYear, reliefIndex)))
-        }
-      case _ =>
-        Future.successful(Redirect(redirectForSchemeLoop(piopReliefs, taxYear)))
+    Future.successful {
+      validatedIndex(reliefIndex, piopReliefs.size) match {
+        case Some(idx) =>
+          val sf74Reference = piopReliefs(idx).sf74Reference
+          sf74Reference match {
+            case Some(value) => Ok(view(formsProvider.sf74ReferenceIdForm.fill(value), taxYear, reliefIndex))
+            case None => Ok(view(formsProvider.sf74ReferenceIdForm, taxYear, reliefIndex))
+          }
+        case _ =>
+          Redirect(redirectForSchemeLoop(piopReliefs, taxYear))
+      }
     }
   }
 

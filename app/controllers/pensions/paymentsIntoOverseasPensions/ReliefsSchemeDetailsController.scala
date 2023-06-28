@@ -49,11 +49,11 @@ class ReliefsSchemeDetailsController @Inject()(view: ReliefSchemeDetailsView,
   def submit(taxYear: Int, reliefIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) {
     implicit userSessionDataRequest =>
       val reliefs = userSessionDataRequest.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs
-      validatedIndex(reliefIndex, reliefs.size) match {
-        case Some(_) =>
-          Redirect(routes.ReliefsSchemeSummaryController.show(taxYear))
-        case _ =>
-          Redirect(redirectForSchemeLoop(reliefs, taxYear))
+      Redirect {
+        validatedIndex(reliefIndex, reliefs.size) match {
+          case Some(_) => routes.ReliefsSchemeSummaryController.show(taxYear)
+          case _ => redirectForSchemeLoop(reliefs, taxYear)
+        }
       }
   }
 }

@@ -25,8 +25,7 @@ import utils.EncryptableSyntax.EncryptableOps
 import utils.EncryptorInstances.{bigDecimalEncryptor, booleanEncryptor, stringEncryptor}
 import utils.{EncryptedValue, SecureGCMCipher}
 
-case class TransfersIntoOverseasPensionsViewModel(
-                                                   transferPensionSavings: Option[Boolean] = None,
+case class TransfersIntoOverseasPensionsViewModel(transferPensionSavings: Option[Boolean] = None,
                                                    overseasTransferCharge: Option[Boolean] = None,
                                                    overseasTransferChargeAmount: Option[BigDecimal] = None,
                                                    pensionSchemeTransferCharge: Option[Boolean] = None,
@@ -36,19 +35,12 @@ case class TransfersIntoOverseasPensionsViewModel(
     pensionSchemeTransferCharge.isEmpty && pensionSchemeTransferChargeAmount.isEmpty && transferPensionScheme.isEmpty
 
   def isFinished: Boolean = {
-    transferPensionSavings.exists(
-      q => if (q) {
-        overseasTransferCharge.exists{
-          q => if (q) {
-            overseasTransferChargeAmount.isDefined &&
-              pensionSchemeTransferCharge.exists{
-                q => if (q) pensionSchemeTransferChargeAmount.isDefined && transferPensionScheme.nonEmpty
-                else true
-              }
-          } else true
-        }
-      } else true
-    )
+    transferPensionSavings.filter(x => x)
+      .flatMap(_ => overseasTransferCharge.filter(x => x))
+      .flatMap(_ => pensionSchemeTransferCharge.filter(x => x))
+      .map(_ => overseasTransferChargeAmount.isDefined)
+      .map(_ => pensionSchemeTransferChargeAmount.isDefined)
+      .exists(_ => transferPensionScheme.nonEmpty)
   }
 
   def toTransfersIOP: PensionSchemeOverseasTransfers = PensionSchemeOverseasTransfers(

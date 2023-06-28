@@ -87,11 +87,10 @@ class PensionOverseasIncomeStatus @Inject()(authAction: AuthorisedAction,
 
             pensionSessionService.createOrUpdateSessionData(request.user,
               updatedCyaModel, taxYear, isPriorSubmission)(errorHandler.internalServerError()) {
-              if (yesNo) {
-                Redirect(redirectForSchemeLoop(schemes = updatedCyaModel.incomeFromOverseasPensions.overseasIncomePensionSchemes, taxYear))
-              } else {
-                Redirect(IncomeFromOverseasPensionsCYAController.show(taxYear))
-              }
+              Redirect(
+                if (yesNo) redirectForSchemeLoop(schemes = updatedCyaModel.incomeFromOverseasPensions.overseasIncomePensionSchemes, taxYear)
+                else IncomeFromOverseasPensionsCYAController.show(taxYear)
+              )
             }
           case _ =>
             Future.successful(Redirect(OverseasPensionsSummaryController.show(taxYear)))
