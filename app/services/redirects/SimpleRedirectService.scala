@@ -58,4 +58,7 @@ object SimpleRedirectService extends Logging {
     }
   }
 
+  def checkForExistingSchemes[T](nextPage: Call, summaryPage: Call, schemes: Seq[T]): Call =
+    if (schemes.isEmpty) nextPage else summaryPage
+
 }

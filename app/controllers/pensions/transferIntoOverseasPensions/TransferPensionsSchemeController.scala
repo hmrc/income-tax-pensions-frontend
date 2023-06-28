@@ -17,7 +17,6 @@
 package controllers.pensions.transferIntoOverseasPensions
 
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.routes._
 import controllers.pensions.transferIntoOverseasPensions.routes._
 import controllers.predicates.ActionsProvider
 import controllers.validatedIndex
@@ -30,6 +29,7 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
+import services.redirects.TransfersIntoOverseasPensionsRedirects.redirectForSchemeLoop
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.transferIntoOverseasPensions.TransferPensionsSchemeView
@@ -54,7 +54,7 @@ class TransferPensionsSchemeController @Inject()(actionsProvider: ActionsProvide
           val form = tcPensionSchemeForm(userSessionDataRequest.user, isUKScheme).fill(updateFormModel(tcPensionSchemes(idx)))
           Ok(view(form, taxYear, isUKScheme, idx))
         case _ =>
-          Redirect(OverseasPensionsSummaryController.show(taxYear))
+          Redirect(redirectForSchemeLoop(tcPensionSchemes, taxYear))
       }
   }
 
@@ -66,46 +66,46 @@ class TransferPensionsSchemeController @Inject()(actionsProvider: ActionsProvide
           val isUKScheme = tcPensionSchemes(idx).ukTransferCharge.contains(true)
           tcPensionSchemeForm(userSessionDataRequest.user, isUKScheme).bindFromRequest().fold(
             formWithErrors =>
-               Future.successful(BadRequest(view(formWithErrors, taxYear, isUKScheme, idx)))
-              ,
+              Future.successful(BadRequest(view(formWithErrors, taxYear, isUKScheme, idx)))
+            ,
             tcPensionScheme => {
               val updatedCYAModel = updateViewModel(userSessionDataRequest.pensionsUserData, tcPensionScheme, idx)
               pensionSessionService.createOrUpdateSessionData(userSessionDataRequest.user, updatedCYAModel, taxYear,
-                               userSessionDataRequest.pensionsUserData.isPriorSubmission)(errorHandler.internalServerError()) {
+                userSessionDataRequest.pensionsUserData.isPriorSubmission)(errorHandler.internalServerError()) {
                 Redirect(TransferChargeSummaryController.show(taxYear)) //TODO: redirect to Overseas Transfer charge Pensions list
               }
             }
           )
         case _ =>
-          Future.successful(Redirect(OverseasPensionsSummaryController.show(taxYear)))
+          Future.successful(Redirect(redirectForSchemeLoop(tcPensionSchemes, taxYear)))
       }
   }
-   
-  
+
+
   private def tcPensionSchemeForm(user: User, isUKScheme: Boolean): Form[TcSsrPensionsSchemeFormModel] =
     tcSsrPensionSchemeForm(
       agentOrIndividual = if (user.isAgent) "agent" else "individual", isUKScheme
-  )
-  
+    )
+
   private def updateFormModel(scheme: TransferPensionScheme) =
     TcSsrPensionsSchemeFormModel(
       providerName = scheme.name.getOrElse(""),
       schemeReference = (if (scheme.ukTransferCharge.contains(true)) scheme.pstr else scheme.qops)
         .getOrElse(""),
       providerAddress = scheme.providerAddress.getOrElse(""),
-      countryId = scheme.alphaTwoCountryCode.fold{
+      countryId = scheme.alphaTwoCountryCode.fold {
         Countries.get2AlphaCodeFrom3AlphaCode(scheme.alphaThreeCountryCode)
       } {
         alpha2 => Some(alpha2)
       }
     )
-  
+
   private def updateViewModel(pensionsUserdata: PensionsUserData, scheme: TcSsrPensionsSchemeFormModel, index: Int) = {
     val viewModel = pensionsUserdata.pensions.transfersIntoOverseasPensions
     val updatedScheme = {
       val commonUpdatedScheme = viewModel.transferPensionScheme(index)
         .copy(name = Some(scheme.providerName), providerAddress = Some(scheme.providerAddress))
-      
+
       if (commonUpdatedScheme.ukTransferCharge.contains(true)) {
         commonUpdatedScheme.copy(pstr = Some(scheme.schemeReference))
       } else {
@@ -114,10 +114,9 @@ class TransferPensionsSchemeController @Inject()(actionsProvider: ActionsProvide
     }
     pensionsUserdata.pensions.copy(
       transfersIntoOverseasPensions = viewModel.copy(
-        transferPensionScheme = viewModel.transferPensionScheme.updated(index,updatedScheme)
+        transferPensionScheme = viewModel.transferPensionScheme.updated(index, updatedScheme)
       )
     )
   }
 
-  
 }

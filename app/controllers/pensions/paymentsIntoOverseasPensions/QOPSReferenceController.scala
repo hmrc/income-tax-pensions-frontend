@@ -26,6 +26,7 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
+import services.redirects.PaymentsIntoOverseasPensionsRedirects.redirectForSchemeLoop
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.paymentsIntoOverseasPensions.QOPSReferenceView
@@ -38,19 +39,19 @@ class QOPSReferenceController @Inject()(actionsProvider: ActionsProvider,
                                         qopsReferenceView: QOPSReferenceView,
                                         pensionSessionService: PensionSessionService,
                                         errorHandler: ErrorHandler)
-                                       (implicit val mcc: MessagesControllerComponents,  appConfig: AppConfig, clock: Clock)
+                                       (implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock)
   extends FrontendController(mcc) with I18nSupport with SessionHelper {
-  
+
   def referenceForm(): Form[String] = QOPSReferenceNumberForm.qopsReferenceNumberForm(
     incorrectFormatMsg = "common.overseasPensions.qops.error.incorrectFormat"
   )
 
-  def show(taxYear: Int, index : Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
+  def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit sessionData =>
-      val reliefSize = sessionData.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs.size
-      validatedIndex(index, reliefSize) match {
+      val reliefs = sessionData.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs
+      validatedIndex(index, reliefs.size) match {
         case Some(idx) => Future.successful(Ok(qopsReferenceView(referenceForm(sessionData.pensionsUserData, idx), taxYear, Some(idx))))
-        case _ => Future.successful(Redirect(customerRefPageOrSchemeSummaryPage(reliefSize, taxYear)))
+        case _ => Future.successful(Redirect(redirectForSchemeLoop(reliefs, taxYear)))
       }
   }
 
@@ -62,11 +63,11 @@ class QOPSReferenceController @Inject()(actionsProvider: ActionsProvider,
     }
   }
 
-  def submit(taxYear: Int, index : Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
+  def submit(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit request =>
       val piops = request.pensionsUserData.pensions.paymentsIntoOverseasPensions
       val reliefSize = piops.reliefs.size
-      
+
       validatedIndex(index, reliefSize) match {
         case Some(idx) =>
           referenceForm().bindFromRequest().fold(
@@ -83,10 +84,11 @@ class QOPSReferenceController @Inject()(actionsProvider: ActionsProvider,
               }
             }
           )
-        case _ => Future.successful(Redirect(customerRefPageOrSchemeSummaryPage(reliefSize, taxYear)))
+        case _ => Future.successful(Redirect(redirectForSchemeLoop(piops.reliefs, taxYear)))
       }
   }
 
-  def removePrefix(qopsReference: String): String =  //TODO: check qops ref length
+  private def removePrefix(qopsReference: String): String = //TODO: check qops ref length
     if (qopsReference.length == 10) qopsReference.substring(4, 10) else qopsReference
+
 }

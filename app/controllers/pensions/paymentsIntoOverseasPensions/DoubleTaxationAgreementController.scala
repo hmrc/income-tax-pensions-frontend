@@ -17,6 +17,7 @@
 package controllers.pensions.paymentsIntoOverseasPensions
 
 import config.{AppConfig, ErrorHandler}
+import controllers.pensions.paymentsIntoOverseasPensions.routes.ReliefsSchemeDetailsController
 import controllers.predicates.ActionsProvider
 import controllers.validatedIndex
 import forms.Countries
@@ -29,6 +30,7 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.PensionSessionService
+import services.redirects.PaymentsIntoOverseasPensionsRedirects.redirectForSchemeLoop
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.paymentsIntoOverseasPensions.DoubleTaxationAgreementView
@@ -37,11 +39,11 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class DoubleTaxationAgreementController @Inject() (actionsProvider: ActionsProvider,
-                                                   pensionSessionService: PensionSessionService,
-                                                   view: DoubleTaxationAgreementView,
-                                                   errorHandler: ErrorHandler)
-                                                  (implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
+class DoubleTaxationAgreementController @Inject()(actionsProvider: ActionsProvider,
+                                                  pensionSessionService: PensionSessionService,
+                                                  view: DoubleTaxationAgreementView,
+                                                  errorHandler: ErrorHandler)
+                                                 (implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport with SessionHelper {
 
   def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
@@ -55,27 +57,27 @@ class DoubleTaxationAgreementController @Inject() (actionsProvider: ActionsProvi
               val form = dblTaxationAgreementForm(request.user).fill(updateViewModel(piopReliefs(idx)))
               Ok(view(form, taxYear, index))
             case _ =>
-              Redirect(customerRefPageOrSchemeSummaryPage(piopReliefs.size, taxYear))
+              Redirect(redirectForSchemeLoop(piopReliefs, taxYear))
           }
       }
   }
 
   def submit(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
-    implicit request  =>
+    implicit request =>
 
-      val reliefSize = request.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs.size
-      validatedIndex(index, reliefSize) match {
-        case  Some(idx) =>
+      val reliefs = request.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs
+      validatedIndex(index, reliefs.size) match {
+        case Some(idx) =>
           dblTaxationAgreementForm(request.user).bindFromRequest().fold(
             formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear, index))),
             doubleTaxationAgreement => updateSessionData(request.pensionsUserData, doubleTaxationAgreement, taxYear, idx)
           )
-        case _ =>  Future.successful(Redirect(customerRefPageOrSchemeSummaryPage(reliefSize, taxYear)))
+        case _ => Future.successful(Redirect(redirectForSchemeLoop(reliefs, taxYear)))
       }
   }
 
   private def dblTaxationAgreementForm(user: User): Form[DoubleTaxationAgreementFormModel] =
-    doubleTaxationAgreementForm( agentOrIndividual = if (user.isAgent) "agent" else "individual")
+    doubleTaxationAgreementForm(agentOrIndividual = if (user.isAgent) "agent" else "individual")
 
   private def updateViewModel(relief: Relief): DoubleTaxationAgreementFormModel =
     DoubleTaxationAgreementFormModel(
@@ -92,7 +94,7 @@ class DoubleTaxationAgreementController @Inject() (actionsProvider: ActionsProvi
                                   (implicit request: UserSessionDataRequest[T]): Future[Result] = {
 
     val piopUserData = pensionsUserData.pensions.paymentsIntoOverseasPensions
-    
+
     val updatedCyaModel = pensionsUserData.pensions.copy(
       paymentsIntoOverseasPensions = piopUserData.copy(
         reliefs = piopUserData.reliefs.updated(idx, piopUserData.reliefs(idx).copy(
@@ -107,7 +109,7 @@ class DoubleTaxationAgreementController @Inject() (actionsProvider: ActionsProvi
 
     pensionSessionService.createOrUpdateSessionData(request.user,
       updatedCyaModel, taxYear, pensionsUserData.isPriorSubmission)(errorHandler.internalServerError()) {
-      Redirect(routes.ReliefsSchemeDetailsController.show(taxYear, Some(idx)))
+      Redirect(ReliefsSchemeDetailsController.show(taxYear, Some(idx)))
     }
   }
 }

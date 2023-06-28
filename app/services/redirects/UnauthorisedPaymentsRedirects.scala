@@ -16,13 +16,22 @@
 
 package services.redirects
 
-import controllers.pensions.unauthorisedPayments.routes.{UnauthorisedPaymentsCYAController, UnauthorisedPaymentsController}
+import controllers.pensions.unauthorisedPayments.routes.{UkPensionSchemeDetailsController, UnauthorisedPaymentsCYAController, UnauthorisedPaymentsController, UnauthorisedPensionSchemeTaxReferenceController}
 import models.mongo.PensionsCYAModel
 import models.pension.charges.UnauthorisedPaymentsViewModel
-import play.api.mvc.Results.Redirect
 import play.api.mvc.{Call, Result}
+import play.api.mvc.Results.Redirect
+import services.redirects.SimpleRedirectService.checkForExistingSchemes
 
 object UnauthorisedPaymentsRedirects { //scalastyle:off magic.number
+
+  def redirectForSchemeLoop(schemes: Seq[String], taxYear: Int): Call = {
+    checkForExistingSchemes(
+      nextPage = UnauthorisedPensionSchemeTaxReferenceController.show(taxYear, None),
+      summaryPage = UkPensionSchemeDetailsController.show(taxYear),
+      schemes = schemes
+    )
+  }
 
   def cyaPageCall(taxYear: Int): Call = UnauthorisedPaymentsCYAController.show(taxYear)
 
@@ -98,4 +107,5 @@ object UnauthorisedPaymentsRedirects { //scalastyle:off magic.number
       }
     }
   )
+
 }

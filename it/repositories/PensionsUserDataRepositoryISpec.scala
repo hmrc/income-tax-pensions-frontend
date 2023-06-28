@@ -22,7 +22,7 @@ import common.UUID
 import models.User
 import models.mongo._
 import models.pension.charges._
-import models.pension.reliefs.PaymentsIntoPensionViewModel
+import models.pension.reliefs.PaymentsIntoPensionsViewModel
 import models.pension.statebenefits.IncomeFromPensionsViewModel
 import org.joda.time.{DateTime, DateTimeZone}
 import org.mongodb.scala.model.Indexes.ascending
@@ -59,7 +59,7 @@ class PensionsUserDataRepositoryISpec extends IntegrationTest with FutureAwaits 
 
   private val now = DateTime.now(DateTimeZone.UTC)
 
-  private val paymentsIntoPension = PaymentsIntoPensionViewModel().copy(rasPensionPaymentQuestion = Some(true))
+  private val paymentsIntoPension = PaymentsIntoPensionsViewModel().copy(rasPensionPaymentQuestion = Some(true))
   private val pensionAnnualAllowances = PensionAnnualAllowancesViewModel(reducedAnnualAllowanceQuestion = Some(true))
   private val pensionLifetimeAllowances = PensionLifetimeAllowancesViewModel(aboveLifetimeAllowanceQuestion = Some(true))
   private val incomeFromPensions = IncomeFromPensionsViewModel(statePension = Some(anStateBenefitViewModelOne))

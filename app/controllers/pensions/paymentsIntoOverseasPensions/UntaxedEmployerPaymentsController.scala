@@ -17,6 +17,7 @@
 package controllers.pensions.paymentsIntoOverseasPensions
 
 import config.{AppConfig, ErrorHandler}
+import controllers.pensions.paymentsIntoOverseasPensions.routes.PensionReliefTypeController
 import controllers.predicates.ActionsProvider
 import controllers.validatedSchemes
 import forms.FormsProvider
@@ -24,6 +25,7 @@ import models.pension.pages.UntaxedEmployerPayments
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.PaymentsIntoOverseasPensionsService
+import services.redirects.PaymentsIntoOverseasPensionsRedirects.redirectForSchemeLoop
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.pensions.paymentsIntoOverseasPensions.UntaxedEmployerPaymentsView
 
@@ -37,18 +39,15 @@ class UntaxedEmployerPaymentsController @Inject()(actionsProvider: ActionsProvid
                                                   formsProvider: FormsProvider,
                                                   errorHandler: ErrorHandler)
                                                  (implicit val cc: MessagesControllerComponents,
-                                                                              appConfig: AppConfig,
-                                                                              ec: ExecutionContext)
-                                                         extends FrontendController(cc) with I18nSupport {
-
-  val outOfBoundsRedirect: (Int,Int) => Result = (schemeSize, taxYear: Int) =>
-    Redirect(customerRefPageOrSchemeSummaryPage(schemeSize, taxYear))
+                                                  appConfig: AppConfig,
+                                                  ec: ExecutionContext)
+  extends FrontendController(cc) with I18nSupport {
 
   def show(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) { implicit sessionUserData =>
     val piopSessionData = sessionUserData.pensionsUserData.pensions.paymentsIntoOverseasPensions
-    
+
     validatedSchemes(pensionSchemeIndex, piopSessionData.reliefs.map(_.customerReference)) match {
-      case Left(_) => outOfBoundsRedirect(piopSessionData.reliefs.size, taxYear)
+      case Left(_) => Redirect(redirectForSchemeLoop(piopSessionData.reliefs, taxYear))
       case Right(_) => Ok(pageView(UntaxedEmployerPayments(taxYear, pensionSchemeIndex, piopSessionData,
         formsProvider.untaxedEmployerPayments(sessionUserData.user.isAgent))))
     }
@@ -57,9 +56,9 @@ class UntaxedEmployerPaymentsController @Inject()(actionsProvider: ActionsProvid
   def submit(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = {
     actionsProvider.userSessionDataFor(taxYear).async { implicit sessionUserData =>
       val piopSessionData = sessionUserData.pensionsUserData.pensions.paymentsIntoOverseasPensions
-      
+
       validatedSchemes(pensionSchemeIndex, piopSessionData.reliefs.map(_.customerReference)) match {
-        case Left(_) => Future.successful(outOfBoundsRedirect(piopSessionData.reliefs.size, taxYear))
+        case Left(_) => Future.successful(Redirect(redirectForSchemeLoop(piopSessionData.reliefs, taxYear)))
         case Right(_) => formsProvider.untaxedEmployerPayments(sessionUserData.user.isAgent).bindFromRequest().fold(
           formWithErrors => {
             Future.successful(
@@ -68,8 +67,7 @@ class UntaxedEmployerPaymentsController @Inject()(actionsProvider: ActionsProvid
           amount => {
             paymentsIntoOverseasService.updateUntaxedEmployerPayments(sessionUserData.pensionsUserData, amount, pensionSchemeIndex).map {
               case Left(_) => errorHandler.internalServerError()
-              case Right(userData) =>
-                Redirect(routes.PensionReliefTypeController.show(taxYear, pensionSchemeIndex))
+              case Right(userData) => Redirect(PensionReliefTypeController.show(taxYear, pensionSchemeIndex))
             }
           }
         )

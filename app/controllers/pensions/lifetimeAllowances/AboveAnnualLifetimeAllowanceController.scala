@@ -17,7 +17,6 @@
 package controllers.pensions.lifetimeAllowances
 
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.annualAllowances.{routes => annualRoutes}
 import controllers.pensions.lifetimeAllowances.{routes => lifetimeRoutes}
 import controllers.predicates.AuthorisedAction
 import forms.YesNoForm

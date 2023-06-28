@@ -27,6 +27,7 @@ import models.pension.charges.PensionScheme
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
+import services.redirects.IncomeFromOverseasPensionsRedirects.redirectForSchemeLoop
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.incomeFromOverseasPensions.TaxableAmountView
@@ -41,10 +42,10 @@ class TaxableAmountController @Inject()(val authAction: AuthorisedAction,
                                         val pensionSessionService: PensionSessionService,
                                         val taxableAmountView: TaxableAmountView,
                                         errorHandler: ErrorHandler
-                                                         )(implicit val mcc: MessagesControllerComponents,
-                                                           appConfig: AppConfig,
-                                                           clock: Clock,
-                                                           ec: ExecutionContext)
+                                       )(implicit val mcc: MessagesControllerComponents,
+                                         appConfig: AppConfig,
+                                         clock: Clock,
+                                         ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport with SessionHelper with FormUtils {
 
   def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async {
@@ -59,7 +60,7 @@ class TaxableAmountController @Inject()(val authAction: AuthorisedAction,
               } else {
                 Redirect(OverseasPensionsSummaryController.show(taxYear))
               }
-            case None => Redirect(OverseasPensionsSummaryController.show(taxYear)) // Todo should redirect to another page
+            case None => Redirect(redirectForSchemeLoop(data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes, taxYear))
           }
         case _ => Redirect(OverseasPensionsSummaryController.show(taxYear))
       }
@@ -76,19 +77,19 @@ class TaxableAmountController @Inject()(val authAction: AuthorisedAction,
                 updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
                 Redirect(PensionSchemeSummaryController.show(taxYear, index))
               }
-            case None => Future.successful(Redirect(OverseasPensionsSummaryController.show(taxYear)))
+            case None => Future.successful(Redirect(redirectForSchemeLoop(data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes, taxYear)))
           }
         case _ =>
           Future.successful(Redirect(OverseasPensionsSummaryController.show(taxYear)))
       }
   }
-  
-   /***************************************  Helper functions  *****************************************/
-  
+
+  /** *************************************  Helper functions  **************************************** */
+
   private def validTaxAmounts(data: PensionsUserData, index: Int): Boolean = {
     val amountBeforeTax = data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes(index).pensionPaymentAmount
     val nonUkTaxPaidOpt = data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes(index).pensionPaymentTaxPaid
-    
+
     if (amountBeforeTax.isEmpty || nonUkTaxPaidOpt.isEmpty) false else true
   }
 

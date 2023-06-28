@@ -70,6 +70,7 @@ GET         /:taxYear/payments-into-pensions/no-tax-relief/workplace-amount     
 POST        /:taxYear/payments-into-pensions/no-tax-relief/workplace-amount                                                        controllers.pensions.paymentsIntoPensions.WorkplaceAmountController.submit(taxYear: Int)
 
 ###########################     Income from Pension pages     ####################################
+
 GET         /:taxYear/pension-income/pensions-income-summary                                                                       controllers.pensions.incomeFromPensions.IncomeFromPensionsSummaryController.show(taxYear: Int)
 
 GET         /:taxYear/pension-income/state-pension                                                                                 controllers.pensions.incomeFromPensions.StatePensionController.show(taxYear:Int)

@@ -19,7 +19,7 @@ package services
 import connectors.{IncomeTaxUserDataConnector, PensionsConnector}
 import models.mongo.{PensionsCYAModel, PensionsUserData, ServiceError}
 import models.pension.charges.PaymentsIntoOverseasPensionsViewModel
-import models.pension.income.{CreateUpdatePensionIncomeModel, ForeignPensionContainer, OverseasPensionContribution, OverseasPensionContributionContainer}
+import models.pension.income.{CreateUpdatePensionIncomeModel, ForeignPensionContainer, OverseasPensionContributionContainer}
 import models.pension.reliefs.{CreateOrUpdatePensionReliefsModel, Reliefs}
 import models.{IncomeTaxUserData, User}
 import org.joda.time.DateTimeZone

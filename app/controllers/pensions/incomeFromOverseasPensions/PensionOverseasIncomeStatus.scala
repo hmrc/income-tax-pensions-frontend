@@ -27,6 +27,7 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
+import services.redirects.IncomeFromOverseasPensionsRedirects.redirectForSchemeLoop
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.incomeFromOverseasPensions.IncomeFromOverseasPensionsView
@@ -75,7 +76,7 @@ class PensionOverseasIncomeStatus @Inject()(authAction: AuthorisedAction,
                 incomeFromOverseasPensions = data.pensions.incomeFromOverseasPensions.copy(
                   paymentsFromOverseasPensionsQuestion = Some(yesNo))
               )
-              case None =>  PensionsCYAModel.emptyModels.copy(
+              case None => PensionsCYAModel.emptyModels.copy(
                 incomeFromOverseasPensions = PensionsCYAModel.emptyModels.incomeFromOverseasPensions.copy(
                   paymentsFromOverseasPensionsQuestion = Some(yesNo)
                 )
@@ -86,14 +87,10 @@ class PensionOverseasIncomeStatus @Inject()(authAction: AuthorisedAction,
 
             pensionSessionService.createOrUpdateSessionData(request.user,
               updatedCyaModel, taxYear, isPriorSubmission)(errorHandler.internalServerError()) {
-              if (yesNo) {
-                val schemes = updatedCyaModel.incomeFromOverseasPensions.overseasIncomePensionSchemes
-                Redirect(
-                  if (schemes.isEmpty) PensionOverseasIncomeCountryController.show(taxYear, None) else CountrySummaryListController.show(taxYear)
-                )
-              } else {
-                Redirect(IncomeFromOverseasPensionsCYAController.show(taxYear))
-              }
+              Redirect(
+                if (yesNo) redirectForSchemeLoop(schemes = updatedCyaModel.incomeFromOverseasPensions.overseasIncomePensionSchemes, taxYear)
+                else IncomeFromOverseasPensionsCYAController.show(taxYear)
+              )
             }
           case _ =>
             Future.successful(Redirect(OverseasPensionsSummaryController.show(taxYear)))
