@@ -17,6 +17,7 @@
 package controllers.pensions.unauthorisedPayments
 
 import builders.PensionsCYAModelBuilder.aPensionsCYAEmptyModel
+import builders.UnauthorisedPaymentsViewModelBuilder.anUnauthorisedPaymentsViewModel
 import controllers.ControllerSpec
 import controllers.ControllerSpec.PreferredLanguages.{English, Welsh}
 import controllers.ControllerSpec.UserTypes.{Agent, Individual}
@@ -26,6 +27,7 @@ import models.pension.charges.UnauthorisedPaymentsViewModel
 import org.jsoup.Jsoup.parse
 import play.api.http.Status.{BAD_REQUEST, OK}
 import play.api.libs.ws.WSResponse
+import utils.PageUrls.UnauthorisedPaymentsPages.pensionSchemeTaxReferenceUrl
 
 class UnauthorisedPensionSchemeTaxReferenceControllerISpec
   extends ControllerSpec("/unauthorised-payments-from-pensions/pension-scheme-tax-reference") {
@@ -35,732 +37,718 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
   private val selectorForSecondParagraph = "#main-content > div > div > p:nth-of-type(2)"
   private val selectorForHint = "#taxReferenceId-hint"
 
-  "This page" when {
-    "requested to be shown" should {
-      "redirect to the expected page" when {
-        "the user has no stored session data at all" in {
+  private implicit val url: Int => String = pensionSchemeTaxReferenceUrl
 
-          implicit val response: WSResponse = getPage(None)
+  "show" should {
+    "render page" when {
+      "there is no prior data" when {
 
-          assertRedirectionAsExpected(PageRelativeURLs.unauthorisedPaymentsCYAPage)
-        }
-      }
-      "appear as expected" when {
-        "the user has only the minimal session data for accessing this page and" when {
+        val sessionData = pensionsUserData(
+          minimalSessionDataToAccessThisPage.copy(unauthorisedPayments = anUnauthorisedPaymentsViewModel.copy(pensionSchemeTaxReference = None))
+        )
 
-          val sessionData = pensionsUserData(minimalSessionDataToAccessThisPage)
+        scenarioNameForIndividualAndEnglish in {
 
-          scenarioNameForIndividualAndEnglish in {
+          implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
+          implicit val response: WSResponse = getPage
 
-            implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
-            implicit val response: WSResponse = getPage
-
-            assertPageAsExpected(
-              OK,
-              ExpectedPageContents(
-                title = "Pension Scheme Tax Reference (PSTR)",
-                header = "Pension Scheme Tax Reference (PSTR)",
-                caption = s"Unauthorised payments from pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
-                buttonForContinue = ExpectedButton("Continue", ""),
-                inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", ""),
-                text = Set(
-                  ExpectedText(selectorForFirstParagraph, "You can get this information from your pension provider."),
-                  ExpectedText(selectorForSecondParagraph,
-                    "If you got unauthorised payments from more than one UK pension provider, you can add the references later."),
-                  ExpectedText(selectorForHint, "For example, ‘12345678RA’")
-                )
-              )
-            )
-          }
-          scenarioNameForIndividualAndWelsh ignore {
-
-            implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
-            implicit val response: WSResponse = getPage
-
-            assertPageAsExpected(
-              OK,
-              ExpectedPageContents(
-                title = "Pension Scheme Tax Reference (PSTR)",
-                header = "Pension Scheme Tax Reference (PSTR)",
-                caption = "Taliadau heb awdurdod o bensiynau ar gyfer 6 Ebrill 2021 i 5 Ebrill 2022",
-                buttonForContinue = ExpectedButton("Continue", ""),
-                inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", ""),
-                text = Set(
-                  ExpectedText(selectorForFirstParagraph, "You can get this information from your pension provider."),
-                  ExpectedText(selectorForSecondParagraph,
-                    "If you got unauthorised payments from more than one UK pension provider, you can add the references later."),
-                  ExpectedText(selectorForHint, "For example, ‘12345678RA’")
-                )
-              )
-            )
-          }
-          scenarioNameForAgentAndEnglish in {
-
-            implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
-            implicit val response: WSResponse = getPage
-
-            assertPageAsExpected(
-              OK,
-              ExpectedPageContents(
-                title = "Pension Scheme Tax Reference (PSTR)",
-                header = "Pension Scheme Tax Reference (PSTR)",
-                caption = s"Unauthorised payments from pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
-                buttonForContinue = ExpectedButton("Continue", ""),
-                inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", ""),
-                text = Set(
-                  ExpectedText(selectorForFirstParagraph, "Your client can get this information from their pension provider."),
-                  ExpectedText(selectorForSecondParagraph,
-                    "If your client got unauthorised payments from more than UK pension provider, you can add the references later."),
-                  ExpectedText(selectorForHint, "For example, ‘12345678RA’")
-                )
-              )
-            )
-          }
-          scenarioNameForAgentAndWelsh ignore {
-
-            implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
-            implicit val response: WSResponse = getPage
-
-            assertPageAsExpected(
-              OK,
-              ExpectedPageContents(
-                title = "Pension Scheme Tax Reference (PSTR)",
-                header = "Pension Scheme Tax Reference (PSTR)",
-                caption = "Taliadau heb awdurdod o bensiynau ar gyfer 6 Ebrill 2021 i 5 Ebrill 2022",
-                buttonForContinue = ExpectedButton("Continue", ""),
-                inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", ""),
-                text = Set(
-                  ExpectedText(selectorForFirstParagraph, "Your client can get this information from their pension provider."),
-                  ExpectedText(selectorForSecondParagraph,
-                    "If your client got unauthorised payments from more than UK pension provider, you can add the references later."),
-                  ExpectedText(selectorForHint, "For example, ‘12345678RA’")
-                )
-              )
-            )
-          }
-        }
-        "the user had previously entered multiple, valid PSTRs" when {
-
-          val sessionData = pensionsUserData(
-            minimalSessionDataToAccessThisPage.copy(
-              unauthorisedPayments = UnauthorisedPaymentsViewModel(
-                pensionSchemeTaxReference = Some(
-                  Seq("12345678RA", "22446688RA", "0000000RX"))
+          assertPageAsExpected(
+            OK,
+            ExpectedPageContents(
+              title = "Pension Scheme Tax Reference (PSTR)",
+              header = "Pension Scheme Tax Reference (PSTR)",
+              caption = s"Unauthorised payments from pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
+              buttonForContinue = ExpectedButton("Continue", ""),
+              inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", ""),
+              text = Set(
+                ExpectedText(selectorForFirstParagraph, "You can get this information from your pension provider."),
+                ExpectedText(selectorForSecondParagraph,
+                  "If you got unauthorised payments from more than one UK pension provider, you can add the references later."),
+                ExpectedText(selectorForHint, "For example, ‘12345678RA’")
               )
             )
           )
+        }
+        scenarioNameForIndividualAndWelsh ignore {
 
-          scenarioNameForIndividualAndEnglish in {
+          implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
+          implicit val response: WSResponse = getPage
 
-            implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
-            implicit val response: WSResponse = getPage
-
-            assertPageAsExpected(
-              OK,
-              ExpectedPageContents(
-                title = "Pension Scheme Tax Reference (PSTR)",
-                header = "Pension Scheme Tax Reference (PSTR)",
-                caption = s"Unauthorised payments from pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
-                buttonForContinue = ExpectedButton("Continue", ""),
-                inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", ""),
-                text = Set(
-                  ExpectedText(selectorForFirstParagraph, "You can get this information from your pension provider."),
-                  ExpectedText(selectorForSecondParagraph,
-                    "If you got unauthorised payments from more than one UK pension provider, you can add the references later."),
-                  ExpectedText(selectorForHint, "For example, ‘12345678RA’")
-                )
+          assertPageAsExpected(
+            OK,
+            ExpectedPageContents(
+              title = "Pension Scheme Tax Reference (PSTR)",
+              header = "Pension Scheme Tax Reference (PSTR)",
+              caption = "Taliadau heb awdurdod o bensiynau ar gyfer 6 Ebrill 2021 i 5 Ebrill 2022",
+              buttonForContinue = ExpectedButton("Continue", ""),
+              inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", ""),
+              text = Set(
+                ExpectedText(selectorForFirstParagraph, "You can get this information from your pension provider."),
+                ExpectedText(selectorForSecondParagraph,
+                  "If you got unauthorised payments from more than one UK pension provider, you can add the references later."),
+                ExpectedText(selectorForHint, "For example, ‘12345678RA’")
               )
             )
-          }
-          scenarioNameForIndividualAndWelsh ignore {
+          )
+        }
+        scenarioNameForAgentAndEnglish in {
 
-            implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
-            implicit val response: WSResponse = getPage
+          implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
+          implicit val response: WSResponse = getPage
 
-            assertPageAsExpected(
-              OK,
-              ExpectedPageContents(
-                title = "Pension Scheme Tax Reference (PSTR)",
-                header = "Pension Scheme Tax Reference (PSTR)",
-                caption = "Taliadau heb awdurdod o bensiynau ar gyfer 6 Ebrill 2021 i 5 Ebrill 2022",
-                buttonForContinue = ExpectedButton("Continue", ""),
-                inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", ""),
-                text = Set(
-                  ExpectedText(selectorForFirstParagraph, "You can get this information from your pension provider."),
-                  ExpectedText(selectorForSecondParagraph,
-                    "If you got unauthorised payments from more than one UK pension provider, you can add the references later."),
-                  ExpectedText(selectorForHint, "For example, ‘12345678RA’")
-                )
+          assertPageAsExpected(
+            OK,
+            ExpectedPageContents(
+              title = "Pension Scheme Tax Reference (PSTR)",
+              header = "Pension Scheme Tax Reference (PSTR)",
+              caption = s"Unauthorised payments from pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
+              buttonForContinue = ExpectedButton("Continue", ""),
+              inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", ""),
+              text = Set(
+                ExpectedText(selectorForFirstParagraph, "Your client can get this information from their pension provider."),
+                ExpectedText(selectorForSecondParagraph,
+                  "If your client got unauthorised payments from more than UK pension provider, you can add the references later."),
+                ExpectedText(selectorForHint, "For example, ‘12345678RA’")
               )
             )
-          }
-          scenarioNameForAgentAndEnglish in {
+          )
+        }
+        scenarioNameForAgentAndWelsh ignore {
 
-            implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
-            implicit val response: WSResponse = getPage
+          implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
+          implicit val response: WSResponse = getPage
 
-            assertPageAsExpected(
-              OK,
-              ExpectedPageContents(
-                title = "Pension Scheme Tax Reference (PSTR)",
-                header = "Pension Scheme Tax Reference (PSTR)",
-                caption = s"Unauthorised payments from pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
-                buttonForContinue = ExpectedButton("Continue", ""),
-                inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", ""),
-                text = Set(
-                  ExpectedText(selectorForFirstParagraph, "Your client can get this information from their pension provider."),
-                  ExpectedText(selectorForSecondParagraph,
-                    "If your client got unauthorised payments from more than UK pension provider, you can add the references later."),
-                  ExpectedText(selectorForHint, "For example, ‘12345678RA’")
-                )
+          assertPageAsExpected(
+            OK,
+            ExpectedPageContents(
+              title = "Pension Scheme Tax Reference (PSTR)",
+              header = "Pension Scheme Tax Reference (PSTR)",
+              caption = "Taliadau heb awdurdod o bensiynau ar gyfer 6 Ebrill 2021 i 5 Ebrill 2022",
+              buttonForContinue = ExpectedButton("Continue", ""),
+              inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", ""),
+              text = Set(
+                ExpectedText(selectorForFirstParagraph, "Your client can get this information from their pension provider."),
+                ExpectedText(selectorForSecondParagraph,
+                  "If your client got unauthorised payments from more than UK pension provider, you can add the references later."),
+                ExpectedText(selectorForHint, "For example, ‘12345678RA’")
               )
             )
-          }
-          scenarioNameForAgentAndWelsh ignore {
+          )
+        }
+      }
+      "there is prior data" when {
 
-            implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
-            implicit val response: WSResponse = getPage
+        val sessionData = pensionsUserData(
+          minimalSessionDataToAccessThisPage.copy(
+            unauthorisedPayments = anUnauthorisedPaymentsViewModel.copy(
+              pensionSchemeTaxReference = Some(
+                Seq("12345678RA", "22446688RA", "0000000RX"))
+            )
+          )
+        )
 
-            assertPageAsExpected(
-              OK,
-              ExpectedPageContents(
-                title = "Pension Scheme Tax Reference (PSTR)",
-                header = "Pension Scheme Tax Reference (PSTR)",
-                caption = "Taliadau heb awdurdod o bensiynau ar gyfer 6 Ebrill 2021 i 5 Ebrill 2022",
-                buttonForContinue = ExpectedButton("Continue", ""),
-                inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", ""),
-                text = Set(
-                  ExpectedText(selectorForFirstParagraph, "Your client can get this information from their pension provider."),
-                  ExpectedText(selectorForSecondParagraph,
-                    "If your client got unauthorised payments from more than UK pension provider, you can add the references later."),
-                  ExpectedText(selectorForHint, "For example, ‘12345678RA’")
-                )
+        scenarioNameForIndividualAndEnglish in {
+
+          implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
+          implicit val response: WSResponse = getPage
+
+          assertPageAsExpected(
+            OK,
+            ExpectedPageContents(
+              title = "Pension Scheme Tax Reference (PSTR)",
+              header = "Pension Scheme Tax Reference (PSTR)",
+              caption = s"Unauthorised payments from pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
+              buttonForContinue = ExpectedButton("Continue", ""),
+              inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", ""),
+              text = Set(
+                ExpectedText(selectorForFirstParagraph, "You can get this information from your pension provider."),
+                ExpectedText(selectorForSecondParagraph,
+                  "If you got unauthorised payments from more than one UK pension provider, you can add the references later."),
+                ExpectedText(selectorForHint, "For example, ‘12345678RA’")
               )
             )
-          }
+          )
+        }
+        scenarioNameForIndividualAndWelsh ignore {
+
+          implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
+          implicit val response: WSResponse = getPage
+
+          assertPageAsExpected(
+            OK,
+            ExpectedPageContents(
+              title = "Pension Scheme Tax Reference (PSTR)",
+              header = "Pension Scheme Tax Reference (PSTR)",
+              caption = "Taliadau heb awdurdod o bensiynau ar gyfer 6 Ebrill 2021 i 5 Ebrill 2022",
+              buttonForContinue = ExpectedButton("Continue", ""),
+              inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", ""),
+              text = Set(
+                ExpectedText(selectorForFirstParagraph, "You can get this information from your pension provider."),
+                ExpectedText(selectorForSecondParagraph,
+                  "If you got unauthorised payments from more than one UK pension provider, you can add the references later."),
+                ExpectedText(selectorForHint, "For example, ‘12345678RA’")
+              )
+            )
+          )
+        }
+        scenarioNameForAgentAndEnglish in {
+
+          implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
+          implicit val response: WSResponse = getPage
+
+          assertPageAsExpected(
+            OK,
+            ExpectedPageContents(
+              title = "Pension Scheme Tax Reference (PSTR)",
+              header = "Pension Scheme Tax Reference (PSTR)",
+              caption = s"Unauthorised payments from pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
+              buttonForContinue = ExpectedButton("Continue", ""),
+              inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", ""),
+              text = Set(
+                ExpectedText(selectorForFirstParagraph, "Your client can get this information from their pension provider."),
+                ExpectedText(selectorForSecondParagraph,
+                  "If your client got unauthorised payments from more than UK pension provider, you can add the references later."),
+                ExpectedText(selectorForHint, "For example, ‘12345678RA’")
+              )
+            )
+          )
+        }
+        scenarioNameForAgentAndWelsh ignore {
+
+          implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
+          implicit val response: WSResponse = getPage
+
+          assertPageAsExpected(
+            OK,
+            ExpectedPageContents(
+              title = "Pension Scheme Tax Reference (PSTR)",
+              header = "Pension Scheme Tax Reference (PSTR)",
+              caption = "Taliadau heb awdurdod o bensiynau ar gyfer 6 Ebrill 2021 i 5 Ebrill 2022",
+              buttonForContinue = ExpectedButton("Continue", ""),
+              inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", ""),
+              text = Set(
+                ExpectedText(selectorForFirstParagraph, "Your client can get this information from their pension provider."),
+                ExpectedText(selectorForSecondParagraph,
+                  "If your client got unauthorised payments from more than UK pension provider, you can add the references later."),
+                ExpectedText(selectorForHint, "For example, ‘12345678RA’")
+              )
+            )
+          )
         }
       }
     }
-    "submitted" should {
-      "redirect to the expected page" when {
-        "the user has no stored session data at all" in {
+  }
 
-          implicit val userConfig: UserConfig = userConfigWhenIrrelevant(None)
-          implicit val response: WSResponse = submitForm(SubmittedFormDataForPage(Some("12345678RA")))
+  "submit" should {
+    "succeed and redirect to summary page" when {
+      "there are no prior PSTRs" when {
 
-          assertRedirectionAsExpected(PageRelativeURLs.unauthorisedPaymentsCYAPage)
-          getViewModel mustBe None
+        val sessionData = pensionsUserData(
+          minimalSessionDataToAccessThisPage.copy(unauthorisedPayments = anUnauthorisedPaymentsViewModel.copy(pensionSchemeTaxReference = None))
+        )
+
+        "a valid PSTR is submitted" in {
+
+          val expectedViewModel =
+            sessionData.pensions.unauthorisedPayments.copy(
+              pensionSchemeTaxReference = Some(Seq("12345678RT"))
+            )
+
+          implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
+          implicit val response: WSResponse = submitForm(SubmittedFormDataForPage(Some("12345678RT")))
+
+          assertRedirectionAsExpected(relativeUrl("/unauthorised-payments-from-pensions/uk-pension-scheme-details"))
+          getViewModel mustBe Some(expectedViewModel)
         }
       }
-      "succeed" when {
-        "the user hasn't entered any PSTRs, previously and" when {
 
-          val sessionData = pensionsUserData(minimalSessionDataToAccessThisPage)
+      "there are prior PSTRs" when {
 
-          "they enter a valid one" in {
+        val sessionData = pensionsUserData(
+          minimalSessionDataToAccessThisPage.copy(
+            unauthorisedPayments = anUnauthorisedPaymentsViewModel.copy(
+              pensionSchemeTaxReference = Some(
+                Seq("12345678RA", "22446688RA", "0000000RX"))
+            )
+          )
+        )
 
-            val expectedViewModel =
-              sessionData.pensions.unauthorisedPayments.copy(
-                pensionSchemeTaxReference = Some(Seq("12345678RT"))
-              )
+        "a new, valid PSTR is submitted" in {
+          val expectedViewModel =
+            sessionData.pensions.unauthorisedPayments.copy(
+              pensionSchemeTaxReference = Some(Seq("12345678RA", "22446688RA", "0000000RX", "88888888RY"))
+            )
 
-            implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
-            implicit val response: WSResponse = submitForm(SubmittedFormDataForPage(Some("12345678RT")))
+          implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
+          implicit val response: WSResponse = submitForm(SubmittedFormDataForPage(Some("88888888RY")))
 
-            assertRedirectionAsExpected(relativeUrl("/unauthorised-payments-from-pensions/uk-pension-scheme-details"))
-            getViewModel mustBe Some(expectedViewModel)
-          }
+          assertRedirectionAsExpected(relativeUrl("/unauthorised-payments-from-pensions/uk-pension-scheme-details"))
+          getViewModel mustBe Some(expectedViewModel)
         }
-        "the user had entered PSTRs, previously and" when {
 
-          val sessionData = pensionsUserData(
-            minimalSessionDataToAccessThisPage.copy(
-              unauthorisedPayments = UnauthorisedPaymentsViewModel(
-                pensionSchemeTaxReference = Some(
-                  Seq("12345678RA", "22446688RA", "0000000RX"))
+        "a new, valid PSTR (but with extra padding) is submitted" in {
+
+          val expectedViewModel =
+            sessionData.pensions.unauthorisedPayments.copy(
+              pensionSchemeTaxReference = Some(Seq("12345678RA", "22446688RA", "0000000RX", "88888888RY"))
+            )
+
+          implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
+          implicit val response: WSResponse = submitForm(SubmittedFormDataForPage(Some("  88888888RY  ")))
+
+          assertRedirectionAsExpected(relativeUrl("/unauthorised-payments-from-pensions/uk-pension-scheme-details"))
+          getViewModel mustBe Some(expectedViewModel)
+        }
+
+        "an already existing PSTR is submitted" in {
+
+          val expectedViewModel =
+            sessionData.pensions.unauthorisedPayments.copy(
+              pensionSchemeTaxReference = Some(Seq("12345678RA", "22446688RA", "0000000RX", "22446688RA"))
+            )
+
+          implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
+          implicit val response: WSResponse = submitForm(SubmittedFormDataForPage(Some("22446688RA")))
+
+          assertRedirectionAsExpected(relativeUrl("/unauthorised-payments-from-pensions/uk-pension-scheme-details"))
+          getViewModel mustBe Some(expectedViewModel)
+        }
+      }
+    }
+
+    "return BAD_REQUEST" when {
+
+      val sessionData = pensionsUserData(minimalSessionDataToAccessThisPage)
+      val expectedViewModel = sessionData.pensions.unauthorisedPayments
+
+      "the user has entered an empty PSTR" when {
+
+        scenarioNameForIndividualAndEnglish in {
+
+          implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
+          implicit val response: WSResponse = submitForm(SubmittedFormDataForPage(Some("")))
+
+          assertPageAsExpected(
+            BAD_REQUEST,
+            ExpectedPageContents(
+              title = "Error: Pension Scheme Tax Reference (PSTR)",
+              header = "Pension Scheme Tax Reference (PSTR)",
+              caption = s"Unauthorised payments from pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
+              buttonForContinue = ExpectedButton("Continue", ""),
+              inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", ""),
+              text = Set(
+                ExpectedText(selectorForFirstParagraph, "You can get this information from your pension provider."),
+                ExpectedText(selectorForSecondParagraph,
+                  "If you got unauthorised payments from more than one UK pension provider, you can add the references later."),
+                ExpectedText(selectorForHint, "For example, ‘12345678RA’")
+              ),
+              errorSummarySectionOpt = Some(
+                ErrorSummarySection(
+                  title = "There is a problem",
+                  body = "Enter your Pension Scheme Tax Reference",
+                  link = "#taxReferenceId")
+              ),
+              errorAboveElementCheckSectionOpt = Some(
+                ErrorAboveElementCheckSection(
+                  title = "Error: Enter your Pension Scheme Tax Reference",
+                  idOpt = Some("taxReferenceId")
+                )
               )
             )
           )
+          getViewModel mustBe Some(expectedViewModel)
+        }
+        scenarioNameForIndividualAndWelsh ignore {
 
+          implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
+          implicit val response: WSResponse = submitForm(SubmittedFormDataForPage(Some("")))
 
-          "they enter a valid one, which they haven't entered before" in {
-
-            val expectedViewModel =
-              sessionData.pensions.unauthorisedPayments.copy(
-                pensionSchemeTaxReference = Some(Seq("12345678RA", "22446688RA", "0000000RX", "88888888RY"))
+          assertPageAsExpected(
+            BAD_REQUEST,
+            ExpectedPageContents(
+              title = "Error: Pension Scheme Tax Reference (PSTR)",
+              header = "Pension Scheme Tax Reference (PSTR)",
+              caption = "Taliadau heb awdurdod o bensiynau ar gyfer 6 Ebrill 2021 i 5 Ebrill 2022",
+              buttonForContinue = ExpectedButton("Continue", ""),
+              inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", ""),
+              text = Set(
+                ExpectedText(selectorForFirstParagraph, "You can get this information from your pension provider."),
+                ExpectedText(selectorForSecondParagraph,
+                  "If you got unauthorised payments from more than one UK pension provider, you can add the references later."),
+                ExpectedText(selectorForHint, "For example, ‘12345678RA’")
+              ),
+              errorSummarySectionOpt = Some(
+                ErrorSummarySection(
+                  title = "Mae problem wedi codi",
+                  body = "Enter your Pension Scheme Tax Reference",
+                  link = "#taxReferenceId")
+              ),
+              errorAboveElementCheckSectionOpt = Some(
+                ErrorAboveElementCheckSection(
+                  title = "Error: Enter your Pension Scheme Tax Reference",
+                  idOpt = Some("taxReferenceId")
+                )
               )
+            )
+          )
+          getViewModel mustBe Some(expectedViewModel)
+        }
+        scenarioNameForAgentAndEnglish in {
 
-            implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
-            implicit val response: WSResponse = submitForm(SubmittedFormDataForPage(Some("88888888RY")))
+          implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
+          implicit val response: WSResponse = submitForm(SubmittedFormDataForPage(Some("")))
 
-            assertRedirectionAsExpected(relativeUrl("/unauthorised-payments-from-pensions/uk-pension-scheme-details"))
-            getViewModel mustBe Some(expectedViewModel)
-          }
-          "they enter a valid one (but with extra padding), which they haven't entered before" in {
-
-            val expectedViewModel =
-              sessionData.pensions.unauthorisedPayments.copy(
-                pensionSchemeTaxReference = Some(Seq("12345678RA", "22446688RA", "0000000RX", "88888888RY"))
+          assertPageAsExpected(
+            BAD_REQUEST,
+            ExpectedPageContents(
+              title = "Error: Pension Scheme Tax Reference (PSTR)",
+              header = "Pension Scheme Tax Reference (PSTR)",
+              caption = s"Unauthorised payments from pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
+              buttonForContinue = ExpectedButton("Continue", ""),
+              inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", ""),
+              text = Set(
+                ExpectedText(selectorForFirstParagraph, "Your client can get this information from their pension provider."),
+                ExpectedText(selectorForSecondParagraph,
+                  "If your client got unauthorised payments from more than UK pension provider, you can add the references later."),
+                ExpectedText(selectorForHint, "For example, ‘12345678RA’")
+              ),
+              errorSummarySectionOpt = Some(
+                ErrorSummarySection(
+                  title = "There is a problem",
+                  body = "Enter your client’s Pension Scheme Tax Reference",
+                  link = "#taxReferenceId")
+              ),
+              errorAboveElementCheckSectionOpt = Some(
+                ErrorAboveElementCheckSection(
+                  title = "Error: Enter your client’s Pension Scheme Tax Reference",
+                  idOpt = Some("taxReferenceId")
+                )
               )
+            )
+          )
+          getViewModel mustBe Some(expectedViewModel)
+        }
+        scenarioNameForAgentAndWelsh ignore {
 
-            implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
-            implicit val response: WSResponse = submitForm(SubmittedFormDataForPage(Some("  88888888RY  ")))
+          implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
+          implicit val response: WSResponse = submitForm(SubmittedFormDataForPage(Some("")))
 
-            assertRedirectionAsExpected(relativeUrl("/unauthorised-payments-from-pensions/uk-pension-scheme-details"))
-            getViewModel mustBe Some(expectedViewModel)
-          }
-          "they enter a valid one, which they have had previously entered" in {
-
-            val expectedViewModel =
-              sessionData.pensions.unauthorisedPayments.copy(
-                pensionSchemeTaxReference = Some(Seq("12345678RA", "22446688RA", "0000000RX", "22446688RA"))
+          assertPageAsExpected(
+            BAD_REQUEST,
+            ExpectedPageContents(
+              title = "Error: Pension Scheme Tax Reference (PSTR)",
+              header = "Pension Scheme Tax Reference (PSTR)",
+              caption = "Taliadau heb awdurdod o bensiynau ar gyfer 6 Ebrill 2021 i 5 Ebrill 2022",
+              buttonForContinue = ExpectedButton("Continue", ""),
+              inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", ""),
+              text = Set(
+                ExpectedText(selectorForFirstParagraph, "Your client can get this information from their pension provider."),
+                ExpectedText(selectorForSecondParagraph,
+                  "If your client got unauthorised payments from more than UK pension provider, you can add the references later."),
+                ExpectedText(selectorForHint, "For example, ‘12345678RA’")
+              ),
+              errorSummarySectionOpt = Some(
+                ErrorSummarySection(
+                  title = "Mae problem wedi codi",
+                  body = "Enter your client’s Pension Scheme Tax Reference",
+                  link = "#taxReferenceId")
+              ),
+              errorAboveElementCheckSectionOpt = Some(
+                ErrorAboveElementCheckSection(
+                  title = "Error: Enter your client’s Pension Scheme Tax Reference",
+                  idOpt = Some("taxReferenceId")
+                )
               )
-
-            implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
-            implicit val response: WSResponse = submitForm(SubmittedFormDataForPage(Some("22446688RA")))
-
-            assertRedirectionAsExpected(relativeUrl("/unauthorised-payments-from-pensions/uk-pension-scheme-details"))
-            getViewModel mustBe Some(expectedViewModel)
-          }
+            )
+          )
+          getViewModel mustBe Some(expectedViewModel)
         }
       }
-      "fail" when {
+      "the user has entered a PSTR consisting of only spaces" when {
+        scenarioNameForIndividualAndEnglish in {
 
-        "the user hasn't entered any PSTRs, previously and" when {
+          implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
+          implicit val response: WSResponse = submitForm(SubmittedFormDataForPage(Some("   ")))
 
-          val sessionData = pensionsUserData(minimalSessionDataToAccessThisPage)
-          val expectedViewModel = sessionData.pensions.unauthorisedPayments
-
-          "the user has entered an entirely empty PSTR" when {
-
-            scenarioNameForIndividualAndEnglish in {
-
-              implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
-              implicit val response: WSResponse = submitForm(SubmittedFormDataForPage(Some("")))
-
-              assertPageAsExpected(
-                BAD_REQUEST,
-                ExpectedPageContents(
-                  title = "Error: Pension Scheme Tax Reference (PSTR)",
-                  header = "Pension Scheme Tax Reference (PSTR)",
-                  caption = s"Unauthorised payments from pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
-                  buttonForContinue = ExpectedButton("Continue", ""),
-                  inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", ""),
-                  text = Set(
-                    ExpectedText(selectorForFirstParagraph, "You can get this information from your pension provider."),
-                    ExpectedText(selectorForSecondParagraph,
-                      "If you got unauthorised payments from more than one UK pension provider, you can add the references later."),
-                    ExpectedText(selectorForHint, "For example, ‘12345678RA’")
-                  ),
-                  errorSummarySectionOpt = Some(
-                    ErrorSummarySection(
-                      title = "There is a problem",
-                      body = "Enter your Pension Scheme Tax Reference",
-                      link = "#taxReferenceId")
-                  ),
-                  errorAboveElementCheckSectionOpt = Some(
-                    ErrorAboveElementCheckSection(
-                      title = "Error: Enter your Pension Scheme Tax Reference",
-                      idOpt = Some("taxReferenceId")
-                    )
-                  )
+          assertPageAsExpected(
+            BAD_REQUEST,
+            ExpectedPageContents(
+              title = "Error: Pension Scheme Tax Reference (PSTR)",
+              header = "Pension Scheme Tax Reference (PSTR)",
+              caption = s"Unauthorised payments from pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
+              buttonForContinue = ExpectedButton("Continue", ""),
+              inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", "   "),
+              text = Set(
+                ExpectedText(selectorForFirstParagraph, "You can get this information from your pension provider."),
+                ExpectedText(selectorForSecondParagraph,
+                  "If you got unauthorised payments from more than one UK pension provider, you can add the references later."),
+                ExpectedText(selectorForHint, "For example, ‘12345678RA’")
+              ),
+              errorSummarySectionOpt = Some(
+                ErrorSummarySection(
+                  title = "There is a problem",
+                  body = "Enter your Pension Scheme Tax Reference",
+                  link = "#taxReferenceId")
+              ),
+              errorAboveElementCheckSectionOpt = Some(
+                ErrorAboveElementCheckSection(
+                  title = "Error: Enter your Pension Scheme Tax Reference",
+                  idOpt = Some("taxReferenceId")
                 )
               )
-              getViewModel mustBe Some(expectedViewModel)
-            }
-            scenarioNameForIndividualAndWelsh ignore {
+            )
+          )
+          getViewModel mustBe Some(expectedViewModel)
+        }
+        scenarioNameForIndividualAndWelsh ignore {
 
-              implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
-              implicit val response: WSResponse = submitForm(SubmittedFormDataForPage(Some("")))
+          implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
+          implicit val response: WSResponse = submitForm(SubmittedFormDataForPage(Some("   ")))
 
-              assertPageAsExpected(
-                BAD_REQUEST,
-                ExpectedPageContents(
-                  title = "Error: Pension Scheme Tax Reference (PSTR)",
-                  header = "Pension Scheme Tax Reference (PSTR)",
-                  caption = "Taliadau heb awdurdod o bensiynau ar gyfer 6 Ebrill 2021 i 5 Ebrill 2022",
-                  buttonForContinue = ExpectedButton("Continue", ""),
-                  inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", ""),
-                  text = Set(
-                    ExpectedText(selectorForFirstParagraph, "You can get this information from your pension provider."),
-                    ExpectedText(selectorForSecondParagraph,
-                      "If you got unauthorised payments from more than one UK pension provider, you can add the references later."),
-                    ExpectedText(selectorForHint, "For example, ‘12345678RA’")
-                  ),
-                  errorSummarySectionOpt = Some(
-                    ErrorSummarySection(
-                      title = "Mae problem wedi codi",
-                      body = "Enter your Pension Scheme Tax Reference",
-                      link = "#taxReferenceId")
-                  ),
-                  errorAboveElementCheckSectionOpt = Some(
-                    ErrorAboveElementCheckSection(
-                      title = "Error: Enter your Pension Scheme Tax Reference",
-                      idOpt = Some("taxReferenceId")
-                    )
-                  )
+          assertPageAsExpected(
+            BAD_REQUEST,
+            ExpectedPageContents(
+              title = "Error: Pension Scheme Tax Reference (PSTR)",
+              header = "Pension Scheme Tax Reference (PSTR)",
+              caption = "Taliadau heb awdurdod o bensiynau ar gyfer 6 Ebrill 2021 i 5 Ebrill 2022",
+              buttonForContinue = ExpectedButton("Continue", ""),
+              inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", "   "),
+              text = Set(
+                ExpectedText(selectorForFirstParagraph, "You can get this information from your pension provider."),
+                ExpectedText(selectorForSecondParagraph,
+                  "If you got unauthorised payments from more than one UK pension provider, you can add the references later."),
+                ExpectedText(selectorForHint, "For example, ‘12345678RA’")
+              ),
+              errorSummarySectionOpt = Some(
+                ErrorSummarySection(
+                  title = "Mae problem wedi codi",
+                  body = "Enter your Pension Scheme Tax Reference",
+                  link = "#taxReferenceId")
+              ),
+              errorAboveElementCheckSectionOpt = Some(
+                ErrorAboveElementCheckSection(
+                  title = "Error: Enter your Pension Scheme Tax Reference",
+                  idOpt = Some("taxReferenceId")
                 )
               )
-              getViewModel mustBe Some(expectedViewModel)
-            }
-            scenarioNameForAgentAndEnglish in {
+            )
+          )
+          getViewModel mustBe Some(expectedViewModel)
+        }
+        scenarioNameForAgentAndEnglish in {
 
-              implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
-              implicit val response: WSResponse = submitForm(SubmittedFormDataForPage(Some("")))
+          implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
+          implicit val response: WSResponse = submitForm(SubmittedFormDataForPage(Some("   ")))
 
-              assertPageAsExpected(
-                BAD_REQUEST,
-                ExpectedPageContents(
-                  title = "Error: Pension Scheme Tax Reference (PSTR)",
-                  header = "Pension Scheme Tax Reference (PSTR)",
-                  caption = s"Unauthorised payments from pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
-                  buttonForContinue = ExpectedButton("Continue", ""),
-                  inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", ""),
-                  text = Set(
-                    ExpectedText(selectorForFirstParagraph, "Your client can get this information from their pension provider."),
-                    ExpectedText(selectorForSecondParagraph,
-                      "If your client got unauthorised payments from more than UK pension provider, you can add the references later."),
-                    ExpectedText(selectorForHint, "For example, ‘12345678RA’")
-                  ),
-                  errorSummarySectionOpt = Some(
-                    ErrorSummarySection(
-                      title = "There is a problem",
-                      body = "Enter your client’s Pension Scheme Tax Reference",
-                      link = "#taxReferenceId")
-                  ),
-                  errorAboveElementCheckSectionOpt = Some(
-                    ErrorAboveElementCheckSection(
-                      title = "Error: Enter your client’s Pension Scheme Tax Reference",
-                      idOpt = Some("taxReferenceId")
-                    )
-                  )
+          assertPageAsExpected(
+            BAD_REQUEST,
+            ExpectedPageContents(
+              title = "Error: Pension Scheme Tax Reference (PSTR)",
+              header = "Pension Scheme Tax Reference (PSTR)",
+              caption = s"Unauthorised payments from pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
+              buttonForContinue = ExpectedButton("Continue", ""),
+              inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", "   "),
+              text = Set(
+                ExpectedText(selectorForFirstParagraph, "Your client can get this information from their pension provider."),
+                ExpectedText(selectorForSecondParagraph,
+                  "If your client got unauthorised payments from more than UK pension provider, you can add the references later."),
+                ExpectedText(selectorForHint, "For example, ‘12345678RA’")
+              ),
+              errorSummarySectionOpt = Some(
+                ErrorSummarySection(
+                  title = "There is a problem",
+                  body = "Enter your client’s Pension Scheme Tax Reference",
+                  link = "#taxReferenceId")
+              ),
+              errorAboveElementCheckSectionOpt = Some(
+                ErrorAboveElementCheckSection(
+                  title = "Error: Enter your client’s Pension Scheme Tax Reference",
+                  idOpt = Some("taxReferenceId")
                 )
               )
-              getViewModel mustBe Some(expectedViewModel)
-            }
-            scenarioNameForAgentAndWelsh ignore {
+            )
+          )
+          getViewModel mustBe Some(expectedViewModel)
+        }
+        scenarioNameForAgentAndWelsh ignore {
 
-              implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
-              implicit val response: WSResponse = submitForm(SubmittedFormDataForPage(Some("")))
+          implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
+          implicit val response: WSResponse = submitForm(SubmittedFormDataForPage(Some("   ")))
 
-              assertPageAsExpected(
-                BAD_REQUEST,
-                ExpectedPageContents(
-                  title = "Error: Pension Scheme Tax Reference (PSTR)",
-                  header = "Pension Scheme Tax Reference (PSTR)",
-                  caption = "Taliadau heb awdurdod o bensiynau ar gyfer 6 Ebrill 2021 i 5 Ebrill 2022",
-                  buttonForContinue = ExpectedButton("Continue", ""),
-                  inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", ""),
-                  text = Set(
-                    ExpectedText(selectorForFirstParagraph, "Your client can get this information from their pension provider."),
-                    ExpectedText(selectorForSecondParagraph,
-                      "If your client got unauthorised payments from more than UK pension provider, you can add the references later."),
-                    ExpectedText(selectorForHint, "For example, ‘12345678RA’")
-                  ),
-                  errorSummarySectionOpt = Some(
-                    ErrorSummarySection(
-                      title = "Mae problem wedi codi",
-                      body = "Enter your client’s Pension Scheme Tax Reference",
-                      link = "#taxReferenceId")
-                  ),
-                  errorAboveElementCheckSectionOpt = Some(
-                    ErrorAboveElementCheckSection(
-                      title = "Error: Enter your client’s Pension Scheme Tax Reference",
-                      idOpt = Some("taxReferenceId")
-                    )
-                  )
+          assertPageAsExpected(
+            BAD_REQUEST,
+            ExpectedPageContents(
+              title = "Error: Pension Scheme Tax Reference (PSTR)",
+              header = "Pension Scheme Tax Reference (PSTR)",
+              caption = "Taliadau heb awdurdod o bensiynau ar gyfer 6 Ebrill 2021 i 5 Ebrill 2022",
+              buttonForContinue = ExpectedButton("Continue", ""),
+              inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", "   "),
+              text = Set(
+                ExpectedText(selectorForFirstParagraph, "Your client can get this information from their pension provider."),
+                ExpectedText(selectorForSecondParagraph,
+                  "If your client got unauthorised payments from more than UK pension provider, you can add the references later."),
+                ExpectedText(selectorForHint, "For example, ‘12345678RA’")
+              ),
+              errorSummarySectionOpt = Some(
+                ErrorSummarySection(
+                  title = "Mae problem wedi codi",
+                  body = "Enter your client’s Pension Scheme Tax Reference",
+                  link = "#taxReferenceId")
+              ),
+              errorAboveElementCheckSectionOpt = Some(
+                ErrorAboveElementCheckSection(
+                  title = "Error: Enter your client’s Pension Scheme Tax Reference",
+                  idOpt = Some("taxReferenceId")
                 )
               )
-              getViewModel mustBe Some(expectedViewModel)
-            }
-          }
-          "the user has entered a PSTR consisting of only spaces" when {
-            scenarioNameForIndividualAndEnglish in {
+            )
+          )
+          getViewModel mustBe Some(expectedViewModel)
+        }
+      }
+      "the user has entered a PSTR with an invalid format" when {
 
-              implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
-              implicit val response: WSResponse = submitForm(SubmittedFormDataForPage(Some("   ")))
+        val expectedViewModel = sessionData.pensions.unauthorisedPayments
 
-              assertPageAsExpected(
-                BAD_REQUEST,
-                ExpectedPageContents(
-                  title = "Error: Pension Scheme Tax Reference (PSTR)",
-                  header = "Pension Scheme Tax Reference (PSTR)",
-                  caption = s"Unauthorised payments from pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
-                  buttonForContinue = ExpectedButton("Continue", ""),
-                  inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", "   "),
-                  text = Set(
-                    ExpectedText(selectorForFirstParagraph, "You can get this information from your pension provider."),
-                    ExpectedText(selectorForSecondParagraph,
-                      "If you got unauthorised payments from more than one UK pension provider, you can add the references later."),
-                    ExpectedText(selectorForHint, "For example, ‘12345678RA’")
-                  ),
-                  errorSummarySectionOpt = Some(
-                    ErrorSummarySection(
-                      title = "There is a problem",
-                      body = "Enter your Pension Scheme Tax Reference",
-                      link = "#taxReferenceId")
-                  ),
-                  errorAboveElementCheckSectionOpt = Some(
-                    ErrorAboveElementCheckSection(
-                      title = "Error: Enter your Pension Scheme Tax Reference",
-                      idOpt = Some("taxReferenceId")
-                    )
-                  )
+        scenarioNameForIndividualAndEnglish in {
+
+          implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
+          implicit val response: WSResponse = submitForm(SubmittedFormDataForPage(Some("123456RA")))
+
+          assertPageAsExpected(
+            BAD_REQUEST,
+            ExpectedPageContents(
+              title = "Error: Pension Scheme Tax Reference (PSTR)",
+              header = "Pension Scheme Tax Reference (PSTR)",
+              caption = s"Unauthorised payments from pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
+              buttonForContinue = ExpectedButton("Continue", ""),
+              inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", "123456RA"),
+              text = Set(
+                ExpectedText(selectorForFirstParagraph, "You can get this information from your pension provider."),
+                ExpectedText(selectorForSecondParagraph,
+                  "If you got unauthorised payments from more than one UK pension provider, you can add the references later."),
+                ExpectedText(selectorForHint, "For example, ‘12345678RA’")
+              ),
+              errorSummarySectionOpt = Some(
+                ErrorSummarySection(
+                  title = "There is a problem",
+                  body = "Enter your Pension Scheme Tax Reference in the correct format",
+                  link = "#taxReferenceId")
+              ),
+              errorAboveElementCheckSectionOpt = Some(
+                ErrorAboveElementCheckSection(
+                  title = "Error: Enter your Pension Scheme Tax Reference in the correct format",
+                  idOpt = Some("taxReferenceId")
                 )
               )
-              getViewModel mustBe Some(expectedViewModel)
-            }
-            scenarioNameForIndividualAndWelsh ignore {
+            )
+          )
+          getViewModel mustBe Some(expectedViewModel)
+        }
+        scenarioNameForIndividualAndWelsh ignore {
 
-              implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
-              implicit val response: WSResponse = submitForm(SubmittedFormDataForPage(Some("   ")))
+          implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
+          implicit val response: WSResponse = submitForm(SubmittedFormDataForPage(Some("123456RA")))
 
-              assertPageAsExpected(
-                BAD_REQUEST,
-                ExpectedPageContents(
-                  title = "Error: Pension Scheme Tax Reference (PSTR)",
-                  header = "Pension Scheme Tax Reference (PSTR)",
-                  caption = "Taliadau heb awdurdod o bensiynau ar gyfer 6 Ebrill 2021 i 5 Ebrill 2022",
-                  buttonForContinue = ExpectedButton("Continue", ""),
-                  inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", "   "),
-                  text = Set(
-                    ExpectedText(selectorForFirstParagraph, "You can get this information from your pension provider."),
-                    ExpectedText(selectorForSecondParagraph,
-                      "If you got unauthorised payments from more than one UK pension provider, you can add the references later."),
-                    ExpectedText(selectorForHint, "For example, ‘12345678RA’")
-                  ),
-                  errorSummarySectionOpt = Some(
-                    ErrorSummarySection(
-                      title = "Mae problem wedi codi",
-                      body = "Enter your Pension Scheme Tax Reference",
-                      link = "#taxReferenceId")
-                  ),
-                  errorAboveElementCheckSectionOpt = Some(
-                    ErrorAboveElementCheckSection(
-                      title = "Error: Enter your Pension Scheme Tax Reference",
-                      idOpt = Some("taxReferenceId")
-                    )
-                  )
+          assertPageAsExpected(
+            BAD_REQUEST,
+            ExpectedPageContents(
+              title = "Error: Pension Scheme Tax Reference (PSTR)",
+              header = "Pension Scheme Tax Reference (PSTR)",
+              caption = "Taliadau heb awdurdod o bensiynau ar gyfer 6 Ebrill 2021 i 5 Ebrill 2022",
+              buttonForContinue = ExpectedButton("Continue", ""),
+              inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", "123456RA"),
+              text = Set(
+                ExpectedText(selectorForFirstParagraph, "You can get this information from your pension provider."),
+                ExpectedText(selectorForSecondParagraph,
+                  "If you got unauthorised payments from more than one UK pension provider, you can add the references later."),
+                ExpectedText(selectorForHint, "For example, ‘12345678RA’")
+              ),
+              errorSummarySectionOpt = Some(
+                ErrorSummarySection(
+                  title = "Mae problem wedi codi",
+                  body = "Enter your Pension Scheme Tax Reference in the correct format",
+                  link = "#taxReferenceId")
+              ),
+              errorAboveElementCheckSectionOpt = Some(
+                ErrorAboveElementCheckSection(
+                  title = "Error: Enter your Pension Scheme Tax Reference in the correct format",
+                  idOpt = Some("taxReferenceId")
                 )
               )
-              getViewModel mustBe Some(expectedViewModel)
-            }
-            scenarioNameForAgentAndEnglish in {
+            )
+          )
+          getViewModel mustBe Some(expectedViewModel)
+        }
+        scenarioNameForAgentAndEnglish in {
 
-              implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
-              implicit val response: WSResponse = submitForm(SubmittedFormDataForPage(Some("   ")))
+          implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
+          implicit val response: WSResponse = submitForm(SubmittedFormDataForPage(Some("123456RA")))
 
-              assertPageAsExpected(
-                BAD_REQUEST,
-                ExpectedPageContents(
-                  title = "Error: Pension Scheme Tax Reference (PSTR)",
-                  header = "Pension Scheme Tax Reference (PSTR)",
-                  caption = s"Unauthorised payments from pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
-                  buttonForContinue = ExpectedButton("Continue", ""),
-                  inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", "   "),
-                  text = Set(
-                    ExpectedText(selectorForFirstParagraph, "Your client can get this information from their pension provider."),
-                    ExpectedText(selectorForSecondParagraph,
-                      "If your client got unauthorised payments from more than UK pension provider, you can add the references later."),
-                    ExpectedText(selectorForHint, "For example, ‘12345678RA’")
-                  ),
-                  errorSummarySectionOpt = Some(
-                    ErrorSummarySection(
-                      title = "There is a problem",
-                      body = "Enter your client’s Pension Scheme Tax Reference",
-                      link = "#taxReferenceId")
-                  ),
-                  errorAboveElementCheckSectionOpt = Some(
-                    ErrorAboveElementCheckSection(
-                      title = "Error: Enter your client’s Pension Scheme Tax Reference",
-                      idOpt = Some("taxReferenceId")
-                    )
-                  )
+          assertPageAsExpected(
+            BAD_REQUEST,
+            ExpectedPageContents(
+              title = "Error: Pension Scheme Tax Reference (PSTR)",
+              header = "Pension Scheme Tax Reference (PSTR)",
+              caption = s"Unauthorised payments from pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
+              buttonForContinue = ExpectedButton("Continue", ""),
+              inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", "123456RA"),
+              text = Set(
+                ExpectedText(selectorForFirstParagraph, "Your client can get this information from their pension provider."),
+                ExpectedText(selectorForSecondParagraph,
+                  "If your client got unauthorised payments from more than UK pension provider, you can add the references later."),
+                ExpectedText(selectorForHint, "For example, ‘12345678RA’")
+              ),
+              errorSummarySectionOpt = Some(
+                ErrorSummarySection(
+                  title = "There is a problem",
+                  body = "Enter your client’s Pension Scheme Tax Reference in the correct format",
+                  link = "#taxReferenceId")
+              ),
+              errorAboveElementCheckSectionOpt = Some(
+                ErrorAboveElementCheckSection(
+                  title = "Error: Enter your client’s Pension Scheme Tax Reference in the correct format",
+                  idOpt = Some("taxReferenceId")
                 )
               )
-              getViewModel mustBe Some(expectedViewModel)
-            }
-            scenarioNameForAgentAndWelsh ignore {
+            )
+          )
+          getViewModel mustBe Some(expectedViewModel)
+        }
+        scenarioNameForAgentAndWelsh ignore {
 
-              implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
-              implicit val response: WSResponse = submitForm(SubmittedFormDataForPage(Some("   ")))
+          implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
+          implicit val response: WSResponse = submitForm(SubmittedFormDataForPage(Some("123456RA")))
 
-              assertPageAsExpected(
-                BAD_REQUEST,
-                ExpectedPageContents(
-                  title = "Error: Pension Scheme Tax Reference (PSTR)",
-                  header = "Pension Scheme Tax Reference (PSTR)",
-                  caption = "Taliadau heb awdurdod o bensiynau ar gyfer 6 Ebrill 2021 i 5 Ebrill 2022",
-                  buttonForContinue = ExpectedButton("Continue", ""),
-                  inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", "   "),
-                  text = Set(
-                    ExpectedText(selectorForFirstParagraph, "Your client can get this information from their pension provider."),
-                    ExpectedText(selectorForSecondParagraph,
-                      "If your client got unauthorised payments from more than UK pension provider, you can add the references later."),
-                    ExpectedText(selectorForHint, "For example, ‘12345678RA’")
-                  ),
-                  errorSummarySectionOpt = Some(
-                    ErrorSummarySection(
-                      title = "Mae problem wedi codi",
-                      body = "Enter your client’s Pension Scheme Tax Reference",
-                      link = "#taxReferenceId")
-                  ),
-                  errorAboveElementCheckSectionOpt = Some(
-                    ErrorAboveElementCheckSection(
-                      title = "Error: Enter your client’s Pension Scheme Tax Reference",
-                      idOpt = Some("taxReferenceId")
-                    )
-                  )
+          assertPageAsExpected(
+            BAD_REQUEST,
+            ExpectedPageContents(
+              title = "Error: Pension Scheme Tax Reference (PSTR)",
+              header = "Pension Scheme Tax Reference (PSTR)",
+              caption = "Taliadau heb awdurdod o bensiynau ar gyfer 6 Ebrill 2021 i 5 Ebrill 2022",
+              buttonForContinue = ExpectedButton("Continue", ""),
+              inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", "123456RA"),
+              text = Set(
+                ExpectedText(selectorForFirstParagraph, "Your client can get this information from their pension provider."),
+                ExpectedText(selectorForSecondParagraph,
+                  "If your client got unauthorised payments from more than UK pension provider, you can add the references later."),
+                ExpectedText(selectorForHint, "For example, ‘12345678RA’")
+              ),
+              errorSummarySectionOpt = Some(
+                ErrorSummarySection(
+                  title = "Mae problem wedi codi",
+                  body = "Enter your client’s Pension Scheme Tax Reference in the correct format",
+                  link = "#taxReferenceId")
+              ),
+              errorAboveElementCheckSectionOpt = Some(
+                ErrorAboveElementCheckSection(
+                  title = "Error: Enter your client’s Pension Scheme Tax Reference in the correct format",
+                  idOpt = Some("taxReferenceId")
                 )
               )
-              getViewModel mustBe Some(expectedViewModel)
-            }
-          }
-          "the user has entered a PSTR with an invalid format" when {
-
-            val expectedViewModel = sessionData.pensions.unauthorisedPayments
-
-            scenarioNameForIndividualAndEnglish in {
-
-              implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
-              implicit val response: WSResponse = submitForm(SubmittedFormDataForPage(Some("123456RA")))
-
-              assertPageAsExpected(
-                BAD_REQUEST,
-                ExpectedPageContents(
-                  title = "Error: Pension Scheme Tax Reference (PSTR)",
-                  header = "Pension Scheme Tax Reference (PSTR)",
-                  caption = s"Unauthorised payments from pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
-                  buttonForContinue = ExpectedButton("Continue", ""),
-                  inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", "123456RA"),
-                  text = Set(
-                    ExpectedText(selectorForFirstParagraph, "You can get this information from your pension provider."),
-                    ExpectedText(selectorForSecondParagraph,
-                      "If you got unauthorised payments from more than one UK pension provider, you can add the references later."),
-                    ExpectedText(selectorForHint, "For example, ‘12345678RA’")
-                  ),
-                  errorSummarySectionOpt = Some(
-                    ErrorSummarySection(
-                      title = "There is a problem",
-                      body = "Enter your Pension Scheme Tax Reference in the correct format",
-                      link = "#taxReferenceId")
-                  ),
-                  errorAboveElementCheckSectionOpt = Some(
-                    ErrorAboveElementCheckSection(
-                      title = "Error: Enter your Pension Scheme Tax Reference in the correct format",
-                      idOpt = Some("taxReferenceId")
-                    )
-                  )
-                )
-              )
-              getViewModel mustBe Some(expectedViewModel)
-            }
-            scenarioNameForIndividualAndWelsh ignore {
-
-              implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
-              implicit val response: WSResponse = submitForm(SubmittedFormDataForPage(Some("123456RA")))
-
-              assertPageAsExpected(
-                BAD_REQUEST,
-                ExpectedPageContents(
-                  title = "Error: Pension Scheme Tax Reference (PSTR)",
-                  header = "Pension Scheme Tax Reference (PSTR)",
-                  caption = "Taliadau heb awdurdod o bensiynau ar gyfer 6 Ebrill 2021 i 5 Ebrill 2022",
-                  buttonForContinue = ExpectedButton("Continue", ""),
-                  inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", "123456RA"),
-                  text = Set(
-                    ExpectedText(selectorForFirstParagraph, "You can get this information from your pension provider."),
-                    ExpectedText(selectorForSecondParagraph,
-                      "If you got unauthorised payments from more than one UK pension provider, you can add the references later."),
-                    ExpectedText(selectorForHint, "For example, ‘12345678RA’")
-                  ),
-                  errorSummarySectionOpt = Some(
-                    ErrorSummarySection(
-                      title = "Mae problem wedi codi",
-                      body = "Enter your Pension Scheme Tax Reference in the correct format",
-                      link = "#taxReferenceId")
-                  ),
-                  errorAboveElementCheckSectionOpt = Some(
-                    ErrorAboveElementCheckSection(
-                      title = "Error: Enter your Pension Scheme Tax Reference in the correct format",
-                      idOpt = Some("taxReferenceId")
-                    )
-                  )
-                )
-              )
-              getViewModel mustBe Some(expectedViewModel)
-            }
-            scenarioNameForAgentAndEnglish in {
-
-              implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
-              implicit val response: WSResponse = submitForm(SubmittedFormDataForPage(Some("123456RA")))
-
-              assertPageAsExpected(
-                BAD_REQUEST,
-                ExpectedPageContents(
-                  title = "Error: Pension Scheme Tax Reference (PSTR)",
-                  header = "Pension Scheme Tax Reference (PSTR)",
-                  caption = s"Unauthorised payments from pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
-                  buttonForContinue = ExpectedButton("Continue", ""),
-                  inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", "123456RA"),
-                  text = Set(
-                    ExpectedText(selectorForFirstParagraph, "Your client can get this information from their pension provider."),
-                    ExpectedText(selectorForSecondParagraph,
-                      "If your client got unauthorised payments from more than UK pension provider, you can add the references later."),
-                    ExpectedText(selectorForHint, "For example, ‘12345678RA’")
-                  ),
-                  errorSummarySectionOpt = Some(
-                    ErrorSummarySection(
-                      title = "There is a problem",
-                      body = "Enter your client’s Pension Scheme Tax Reference in the correct format",
-                      link = "#taxReferenceId")
-                  ),
-                  errorAboveElementCheckSectionOpt = Some(
-                    ErrorAboveElementCheckSection(
-                      title = "Error: Enter your client’s Pension Scheme Tax Reference in the correct format",
-                      idOpt = Some("taxReferenceId")
-                    )
-                  )
-                )
-              )
-              getViewModel mustBe Some(expectedViewModel)
-            }
-            scenarioNameForAgentAndWelsh ignore {
-
-              implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
-              implicit val response: WSResponse = submitForm(SubmittedFormDataForPage(Some("123456RA")))
-
-              assertPageAsExpected(
-                BAD_REQUEST,
-                ExpectedPageContents(
-                  title = "Error: Pension Scheme Tax Reference (PSTR)",
-                  header = "Pension Scheme Tax Reference (PSTR)",
-                  caption = "Taliadau heb awdurdod o bensiynau ar gyfer 6 Ebrill 2021 i 5 Ebrill 2022",
-                  buttonForContinue = ExpectedButton("Continue", ""),
-                  inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", "123456RA"),
-                  text = Set(
-                    ExpectedText(selectorForFirstParagraph, "Your client can get this information from their pension provider."),
-                    ExpectedText(selectorForSecondParagraph,
-                      "If your client got unauthorised payments from more than UK pension provider, you can add the references later."),
-                    ExpectedText(selectorForHint, "For example, ‘12345678RA’")
-                  ),
-                  errorSummarySectionOpt = Some(
-                    ErrorSummarySection(
-                      title = "Mae problem wedi codi",
-                      body = "Enter your client’s Pension Scheme Tax Reference in the correct format",
-                      link = "#taxReferenceId")
-                  ),
-                  errorAboveElementCheckSectionOpt = Some(
-                    ErrorAboveElementCheckSection(
-                      title = "Error: Enter your client’s Pension Scheme Tax Reference in the correct format",
-                      idOpt = Some("taxReferenceId")
-                    )
-                  )
-                )
-              )
-              getViewModel mustBe Some(expectedViewModel)
-            }
-          }
+            )
+          )
+          getViewModel mustBe Some(expectedViewModel)
         }
       }
     }

@@ -26,11 +26,11 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import utils.CommonUtils
-import utils.PageUrls.PensionLifetimeAllowance.{pensionTaxReferenceNumberLifetimeAllowanceUrl, pensionTaxReferenceNumberLifetimeAllowanceUrlIndex}
+import utils.PageUrls.PensionLifetimeAllowance.{checkAnnualLifetimeAllowanceCYA, lifetimeAllowancePstrSummaryUrl, pensionTaxReferenceNumberLifetimeAllowanceUrl, pensionTaxReferenceNumberLifetimeAllowanceUrlIndex}
 import utils.PageUrls.pensionSummaryUrl
 
 // scalastyle:off magic.number
-class PensionSchemeTaxReferenceLifetimeControllerISpec extends CommonUtils with BeforeAndAfterEach{
+class PensionSchemeTaxReferenceLifetimeControllerISpec extends CommonUtils with BeforeAndAfterEach {
 
   object Selectors {
     val captionSelector: String = "#main-content > div > div > header > p"
@@ -38,7 +38,9 @@ class PensionSchemeTaxReferenceLifetimeControllerISpec extends CommonUtils with 
     val formSelector: String = "#main-content > div > div > form"
     val inputSelector = "#taxReferenceId"
     val hintTextSelector = "#taxReferenceId-hint"
+
     def labelSelector(index: Int): String = s"form > div:nth-of-type($index) > label"
+
     def paragraphSelector(index: Int): String = s"#main-content > div > div > p:nth-of-type($index)"
   }
 
@@ -152,6 +154,7 @@ class PensionSchemeTaxReferenceLifetimeControllerISpec extends CommonUtils with 
           }
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
+
           titleCheck(expectedTitle, user.isWelsh)
           h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY))
@@ -191,7 +194,8 @@ class PensionSchemeTaxReferenceLifetimeControllerISpec extends CommonUtils with 
 
 
     }
-    "redirect to the PSTR summary page when the PSTR is out of bounds" should {
+
+    "redirect to the PSTR summary page when index is invalid and there previous schemes" should {
       val index = 3
       implicit val url: Int => String = pensionTaxReferenceNumberLifetimeAllowanceUrlIndex(index)
       val pensionsViewModel = aPensionLifetimeAllowanceViewModel.copy(pensionSchemeTaxReferences = Some(Seq("12345678AB")))
@@ -201,20 +205,32 @@ class PensionSchemeTaxReferenceLifetimeControllerISpec extends CommonUtils with 
 
       "has an SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))//Todo update this to pstr summary page when implemented
+        result.header("location") shouldBe Some(lifetimeAllowancePstrSummaryUrl(taxYearEOY))
       }
     }
 
+    "redirect to the first page of scheme loop when index is invalid and there are no previous schemes" should {
+      val index = 3
+      implicit val url: Int => String = pensionTaxReferenceNumberLifetimeAllowanceUrlIndex(index)
+      val pensionsViewModel = aPensionLifetimeAllowanceViewModel.copy(pensionSchemeTaxReferences = None)
+      val pensionUserData = pensionsUserDataWithLifetimeAllowance(pensionsViewModel)
+
+      lazy val result: WSResponse = showPage(pensionUserData)
+
+      "has an SEE_OTHER status" in {
+        result.status shouldBe SEE_OTHER
+        result.header("location") shouldBe Some(pensionTaxReferenceNumberLifetimeAllowanceUrl(taxYearEOY))
+      }
+    }
 
     "Redirect to the lifetime allowance CYA page if there is no session data" should {
-      implicit val url: Int=> String = pensionTaxReferenceNumberLifetimeAllowanceUrl
+      implicit val url: Int => String = pensionTaxReferenceNumberLifetimeAllowanceUrl
       lazy val result: WSResponse = getResponseNoSessionData()
 
 
       "has an SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER
-//        TODO redirect to lifetime allowance CYA
-        result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
+        result.header("location") shouldBe Some(checkAnnualLifetimeAllowanceCYA(taxYearEOY))
       }
     }
 
@@ -226,7 +242,7 @@ class PensionSchemeTaxReferenceLifetimeControllerISpec extends CommonUtils with 
 
         s"return $BAD_REQUEST error when no value is submitted" which {
           lazy val form: Map[String, String] = Map(PensionSchemeTaxReferenceForm.taxReferenceId -> "")
-          implicit val url: Int=> String = pensionTaxReferenceNumberLifetimeAllowanceUrl
+          implicit val url: Int => String = pensionTaxReferenceNumberLifetimeAllowanceUrl
           lazy val result: WSResponse = submitPage(user, aPensionsUserData, form)
 
 
@@ -287,7 +303,7 @@ class PensionSchemeTaxReferenceLifetimeControllerISpec extends CommonUtils with 
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(pensionTaxReferenceNumberLifetimeAllowanceUrl(taxYearEOY))
+        result.header("location") shouldBe Some(lifetimeAllowancePstrSummaryUrl(taxYearEOY))
       }
 
       "updates pension scheme tax reference to contain tax reference" in {
@@ -309,7 +325,7 @@ class PensionSchemeTaxReferenceLifetimeControllerISpec extends CommonUtils with 
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(pensionTaxReferenceNumberLifetimeAllowanceUrl(taxYearEOY))//todo redirect to pstr summary page when implemented
+        result.header("location") shouldBe Some(lifetimeAllowancePstrSummaryUrl(taxYearEOY))
       }
 
       "updates pension scheme tax reference to contain both tax reference" in {
@@ -328,7 +344,7 @@ class PensionSchemeTaxReferenceLifetimeControllerISpec extends CommonUtils with 
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(pensionTaxReferenceNumberLifetimeAllowanceUrl(taxYearEOY))
+        result.header("location") shouldBe Some(lifetimeAllowancePstrSummaryUrl(taxYearEOY))
       }
 
       "updates pension scheme tax reference to contain both tax reference" in {
@@ -338,7 +354,7 @@ class PensionSchemeTaxReferenceLifetimeControllerISpec extends CommonUtils with 
       }
     }
 
-    "redirect to pension summary page when pstr index does not exist" which {
+    "redirect to the PSTR summary page when pstr index does not exist" which {
       val index = 3
       implicit val url: Int => String = pensionTaxReferenceNumberLifetimeAllowanceUrlIndex(index)
       lazy val form: Map[String, String] = Map(PensionSchemeTaxReferenceForm.taxReferenceId -> "12345678RA")
@@ -348,7 +364,7 @@ class PensionSchemeTaxReferenceLifetimeControllerISpec extends CommonUtils with 
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
+        result.header("location") shouldBe Some(lifetimeAllowancePstrSummaryUrl(taxYearEOY))
       }
 
       "updates pension scheme tax reference to contain both tax reference" in {
@@ -365,7 +381,7 @@ class PensionSchemeTaxReferenceLifetimeControllerISpec extends CommonUtils with 
 
       "has an SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER
-//        TODO redirect to lifetime Allowances CYA
+        //        TODO redirect to lifetime Allowances CYA
 
         result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
       }

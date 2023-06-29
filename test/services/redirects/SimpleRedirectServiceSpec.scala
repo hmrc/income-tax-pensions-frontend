@@ -19,10 +19,14 @@ package services.redirects
 import builders.PensionsUserDataBuilder.aPensionsUserData
 import controllers.pensions.paymentsIntoPensions.routes.{PaymentsIntoPensionsCYAController, ReliefAtSourcePensionsController, TotalPaymentsIntoRASController}
 import models.mongo.{PensionsCYAModel, PensionsUserData}
-import models.pension.reliefs.PaymentsIntoPensionViewModel
+import models.pension.reliefs.PaymentsIntoPensionsViewModel
 import play.api.http.Status.SEE_OTHER
 import play.api.mvc.Results.Redirect
+import services.redirects.UnauthorisedPaymentsRedirects.cyaPageCall
 import play.api.mvc.{Call, Result}
+import builders.UnauthorisedPaymentsViewModelBuilder.{anUnauthorisedPaymentsEmptyViewModel, anUnauthorisedPaymentsViewModel}
+import controllers.pensions.unauthorisedPayments.routes._
+import play.api.libs.ws.WSResponse
 import utils.UnitTest
 
 import scala.concurrent.Future
@@ -34,13 +38,13 @@ class SimpleRedirectServiceSpec extends UnitTest {
   val cyaRedirect: Call = PaymentsIntoPensionsCYAController.show(taxYear)
   val noneRedirect: PensionsCYAModel => Option[Result] = cyaData => None
   val someRedirect: PensionsCYAModel => Option[Result] = cyaData => Some(Redirect(ReliefAtSourcePensionsController.show(taxYear)))
-  val continueRedirect: PensionsUserData => Future[Result] =
-    aPensionsUserData => Future.successful(Redirect(contextualRedirect))
+  val continueRedirect: PensionsUserData => Future[Result] = aPensionsUserData => Future.successful(Redirect(contextualRedirect))
+  val cyaPageCallLocal = PaymentsIntoPensionsCYAController.show(taxYear)
 
   ".redirectBasedOnCurrentAnswers" should {
 
     "continue to attempted page when there is session data and 'shouldRedirect' is None" which {
-      val result: Future[Result] = SimpleRedirectService.redirectBasedOnCurrentAnswers(taxYear, Some(aPensionsUserData))(noneRedirect)(continueRedirect)
+      val result: Future[Result] = SimpleRedirectService.redirectBasedOnCurrentAnswers(taxYear, Some(aPensionsUserData), cyaPageCallLocal)(noneRedirect)(continueRedirect)
       val resultStatus = result.map(_.header.status)
       val resultHeader = result.map(_.header.headers)
 
@@ -56,8 +60,8 @@ class SimpleRedirectServiceSpec extends UnitTest {
       }
     }
 
-    "redirect to Relief at Source Pensions page when there is session data and 'shouldRedirect' is Some(rasRedirect)" which {
-      val result = SimpleRedirectService.redirectBasedOnCurrentAnswers(taxYear, Some(aPensionsUserData))(someRedirect)(continueRedirect)
+    "redirect to first page in journey when there is session data and 'shouldRedirect' is Some(firstPageRedirect)" which {
+      val result = SimpleRedirectService.redirectBasedOnCurrentAnswers(taxYear, Some(aPensionsUserData), cyaPageCallLocal)(someRedirect)(continueRedirect)
       val resultStatus = result.map(_.header.status)
       val resultHeader = result.map(_.header.headers)
 
@@ -74,7 +78,7 @@ class SimpleRedirectServiceSpec extends UnitTest {
     }
 
     "redirect to CYA page when there is no session data" which {
-      val result = SimpleRedirectService.redirectBasedOnCurrentAnswers(taxYear, None)(someRedirect)(continueRedirect)
+      val result = SimpleRedirectService.redirectBasedOnCurrentAnswers(taxYear, None, cyaPageCallLocal)(someRedirect)(continueRedirect)
       val resultStatus = result.map(_.header.status)
       val resultHeader = result.map(_.header.headers)
 
@@ -93,65 +97,51 @@ class SimpleRedirectServiceSpec extends UnitTest {
   }
 
   ".isFinishedCheck" should {
-
-    "redirect to CYA page" when {
-      "all PIP questions have been answered" in {
-        val pIPData = cyaData.copy(paymentsIntoPension =
-          PaymentsIntoPensionViewModel(
-            rasPensionPaymentQuestion = Some(true),
-            totalRASPaymentsAndTaxRelief = Some(45.54),
-            oneOffRasPaymentPlusTaxReliefQuestion = Some(false),
-            totalOneOffRasPaymentPlusTaxRelief = Some(100.15),
-            totalPaymentsIntoRASQuestion = Some(true),
-            pensionTaxReliefNotClaimedQuestion = Some(true),
-            retirementAnnuityContractPaymentsQuestion = Some(true),
-            totalRetirementAnnuityContractPayments = Some(20.50),
-            workplacePensionPaymentsQuestion = Some(true),
-            totalWorkplacePensionPayments = Some(500.20))
+    "redirect to the CYA page" when {
+      "all journey questions are answered" in {
+        val result: Result = SimpleRedirectService.isFinishedCheck(
+          anUnauthorisedPaymentsViewModel,
+          taxYear,
+          UnauthorisedPensionSchemeTaxReferenceController.show(taxYear, Some(1)),
+          cyaPageCall
         )
-        val result = SimpleRedirectService.isFinishedCheck(pIPData, taxYear, cyaRedirect)
 
-        result shouldBe Redirect(cyaRedirect)
+        result.header.status shouldBe SEE_OTHER
+        result.header.headers("location").contains(UnauthorisedPaymentsCYAController)
       }
-      "all valid PIP questions have been answered" in {
-        val pIPData = cyaData.copy(paymentsIntoPension =
-          PaymentsIntoPensionViewModel(
-            rasPensionPaymentQuestion = Some(false),
-            totalRASPaymentsAndTaxRelief = None,
-            oneOffRasPaymentPlusTaxReliefQuestion = None,
-            totalOneOffRasPaymentPlusTaxRelief = None,
-            totalPaymentsIntoRASQuestion = None,
-            pensionTaxReliefNotClaimedQuestion = Some(false),
-            retirementAnnuityContractPaymentsQuestion = None,
-            totalRetirementAnnuityContractPayments = None,
-            workplacePensionPaymentsQuestion = None,
-            totalWorkplacePensionPayments = None)
+      "all necessary journey questions are answered" in {
+        val result = SimpleRedirectService.isFinishedCheck(
+          anUnauthorisedPaymentsViewModel.copy(
+            noSurchargeQuestion = Some(false),
+            noSurchargeAmount = None,
+            noSurchargeTaxAmountQuestion = None,
+            noSurchargeTaxAmount = None
+          ),
+          taxYear,
+          UnauthorisedPensionSchemeTaxReferenceController.show(taxYear, Some(1)),
+          cyaPageCall
         )
-        val result = SimpleRedirectService.isFinishedCheck(pIPData, taxYear, cyaRedirect)
 
-        result shouldBe Redirect(cyaRedirect)
+        result.header.status shouldBe SEE_OTHER
+        result.header.headers("location").contains(UnauthorisedPaymentsCYAController)
       }
     }
 
-    "redirect to argument call if not all valid PIP questions have been answered" in {
-      val pIPData = cyaData.copy(paymentsIntoPension =
-        PaymentsIntoPensionViewModel(
-          rasPensionPaymentQuestion = Some(true),
-          totalRASPaymentsAndTaxRelief = None,
-          oneOffRasPaymentPlusTaxReliefQuestion = None,
-          totalOneOffRasPaymentPlusTaxRelief = None,
-          totalPaymentsIntoRASQuestion = None,
-          pensionTaxReliefNotClaimedQuestion = Some(false),
-          retirementAnnuityContractPaymentsQuestion = None,
-          totalRetirementAnnuityContractPayments = None,
-          workplacePensionPaymentsQuestion = None,
-          totalWorkplacePensionPayments = None)
+    "continue to the next page when not all journey questions have been answered" in {
+      val result = SimpleRedirectService.isFinishedCheck(
+        anUnauthorisedPaymentsViewModel.copy(
+          noSurchargeQuestion = Some(true),
+          noSurchargeAmount = None,
+          noSurchargeTaxAmountQuestion = None,
+          noSurchargeTaxAmount = None
+        ),
+        taxYear,
+        UnauthorisedPensionSchemeTaxReferenceController.show(taxYear, Some(1)),
+        cyaPageCall
       )
-      val result = SimpleRedirectService.isFinishedCheck(pIPData, taxYear, contextualRedirect)
 
-      result shouldBe Redirect(contextualRedirect)
+      result.header.status shouldBe SEE_OTHER
+      result.header.headers("location").contains(UnauthorisedPensionSchemeTaxReferenceController)
     }
-
   }
-
 }

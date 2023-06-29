@@ -124,7 +124,7 @@ object PageUrls extends IntegrationTest {
   object PensionAnnualAllowancePages {
     def reducedAnnualAllowanceUrl(taxYear: Int): String = s"$appUrl/$taxYear/annual-allowance/reduced-annual-allowance"
 
-    def pensionProviderPaidTaxUrl(taxYear: Int): String = s"$appUrl/$taxYear/annual-lifetime-allowances/pension-provider-paid-tax"
+    def pensionProviderPaidTaxUrl(taxYear: Int): String = s"$appUrl/$taxYear/annual-allowances/pension-provider-paid-tax"
 
     def reducedAnnualAllowanceTypeUrl(taxYear: Int): String = s"$appUrl/$taxYear/annual-allowance/reduced-annual-allowance-type"
 
@@ -139,9 +139,8 @@ object PageUrls extends IntegrationTest {
 
     def removePstrUrl(taxYear: Int, pensionSchemeTaxReference: Int): String =
       s"$appUrl/$taxYear/annual-allowance/remove-pension-scheme-tax-reference?pensionSchemeTaxReferenceIndex=$pensionSchemeTaxReference"
-
-    def transferPensionSchemeTaxUrl(taxYear: Int): String =
-      s"$appUrl/${taxYear.toString}/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-tax"
+      
+    def annualAllowancesCYAUrl(taxYear: Int): String = s"$appUrl/$taxYear/annual-allowance/check-annual-allowance"
   }
 
   object PensionLifetimeAllowance {
@@ -158,6 +157,8 @@ object PageUrls extends IntegrationTest {
 
     def pensionTaxReferenceNumberLifetimeAllowanceUrl(taxYear: Int): String = s"$appUrl/$taxYear/annual-lifetime-allowances/pension-scheme-tax-reference"
 
+    def lifetimeAllowancePstrSummaryUrl(taxYear: Int): String = s"$appUrl/$taxYear/annual-lifetime-allowances/pension-scheme-tax-reference-summary"
+
     def pensionTaxReferenceNumberLifetimeAllowanceUrlWithIndex(taxYear: Int, index: Int): String =
       s"$appUrl/$taxYear/annual-lifetime-allowances/pension-scheme-tax-reference?pensionSchemeTaxReferenceIndex=$index"
 
@@ -170,20 +171,19 @@ object PageUrls extends IntegrationTest {
 
   }
 
-  object UnAuthorisedPayments {
-    def surchargeAmountUrl(taxYear: Int): String = s"$appUrl/$taxYear/unauthorised-payments-from-pensions/amount-surcharged"
-
-    def noSurchargeAmountUrl(taxYear: Int): String = s"$appUrl/$taxYear/unauthorised-payments-from-pensions/amount-not-surcharged"
-  }
-
-  object unauthorisedPaymentsPages {
-    def didYouPayNonUkTaxUrl(taxYear: Int): String = s"$appUrl/$taxYear/unauthorised-payments-from-pensions/tax-on-amount-surcharged"
-
-    def nonUKTaxOnAmountSurcharge(taxYear: Int): String = s"$appUrl/$taxYear/unauthorised-payments-from-pensions/tax-on-amount-not-surcharged"
-
-    def whereAnyOfTheUnauthorisedPaymentsUrl(taxYear: Int): String = s"$appUrl/$taxYear/unauthorised-payments-from-pensions/uk-pension-scheme"
+  object UnauthorisedPaymentsPages {
 
     def unauthorisedPaymentsUrl(taxYear: Int): String = s"$appUrl/$taxYear/unauthorised-payments-from-pensions/unauthorised-payments"
+
+    def surchargeAmountUrl(taxYear: Int): String = s"$appUrl/$taxYear/unauthorised-payments-from-pensions/amount-surcharged"
+
+    def taxOnAmountSurchargedUrl(taxYear: Int): String = s"$appUrl/$taxYear/unauthorised-payments-from-pensions/tax-on-amount-surcharged"
+
+    def noSurchargeAmountUrl(taxYear: Int): String = s"$appUrl/$taxYear/unauthorised-payments-from-pensions/amount-not-surcharged"
+
+    def taxOnAmountNotSurchargedUrl(taxYear: Int): String = s"$appUrl/$taxYear/unauthorised-payments-from-pensions/tax-on-amount-not-surcharged"
+
+    def wereAnyOfTheUnauthorisedPaymentsUrl(taxYear: Int): String = s"$appUrl/$taxYear/unauthorised-payments-from-pensions/uk-pension-scheme"
 
     def pensionSchemeTaxReferenceUrl(taxYear: Int): String = s"$appUrl/$taxYear/unauthorised-payments-from-pensions/pension-scheme-tax-reference"
 
@@ -192,12 +192,15 @@ object PageUrls extends IntegrationTest {
 
     def ukPensionSchemeDetailsUrl(taxYear: Int): String = s"$appUrl/$taxYear/unauthorised-payments-from-pensions/uk-pension-scheme-details"
 
-    def checkUnauthorisedPaymentsCyaUrl(taxYear: Int): String = s"$appUrl/$taxYear/unauthorised-payments-from-pensions/check-unauthorised-payments"
+    def removePensionSchemeReferenceUrl(taxYear: Int): String =
+      s"$appUrl/$taxYear/unauthorised-payments-from-pensions/remove-pension-scheme-tax-reference"
 
-    def removePensionSchemeReferenceUrl(taxYear: Int, pensionSchemeIndex: Option[Int] = None): String = {
+    def removePensionSchemeReferenceUrlWithIndex(taxYear: Int, pensionSchemeIndex: Option[Int] = None): String = {
       val baseUrl = s"$appUrl/$taxYear/unauthorised-payments-from-pensions/remove-pension-scheme-tax-reference"
       pensionSchemeIndex.fold(baseUrl)(idx => s"$baseUrl?pensionSchemeIndex=$idx")
     }
+
+    def checkUnauthorisedPaymentsCyaUrl(taxYear: Int): String = s"$appUrl/$taxYear/unauthorised-payments-from-pensions/check-unauthorised-payments"
   }
 
   object PaymentIntoOverseasPensions {
@@ -310,6 +313,9 @@ object PageUrls extends IntegrationTest {
 
     def checkYourDetailsPensionUrl(taxYear: Int): String =
       s"$appUrl/$taxYear/overseas-pensions/overseas-transfer-charges/transfer-charges/check-transfer-charges-details"
+
+    def transferPensionSchemeTaxUrl(taxYear: Int): String =
+      s"$appUrl/${taxYear.toString}/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-tax"
   }
 
   object ShortServiceRefunds {

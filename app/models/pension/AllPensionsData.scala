@@ -21,7 +21,7 @@ import models.mongo.PensionsCYAModel
 import models.pension.charges._
 import models.pension.employmentPensions.EmploymentPensions
 import models.pension.income.{ForeignPension, OverseasPensionContribution, PensionIncome}
-import models.pension.reliefs.{PaymentsIntoPensionViewModel, PensionReliefs}
+import models.pension.reliefs.{PaymentsIntoPensionsViewModel, PensionReliefs}
 import models.pension.statebenefits._
 import play.api.libs.json.{Json, OFormat}
 
@@ -41,7 +41,7 @@ object AllPensionsData {
     val statePensionLumpSum: Option[StateBenefit] = prior.stateBenefits.flatMap(_.stateBenefitsData.flatMap(_.statePensionLumpSum))
 
     PensionsCYAModel(
-      PaymentsIntoPensionViewModel(
+      PaymentsIntoPensionsViewModel(
         rasPensionPaymentQuestion = prior.pensionReliefs.map(_.pensionReliefs.regularPensionContributions.isDefined),
         totalRASPaymentsAndTaxRelief = prior.pensionReliefs.flatMap(_.pensionReliefs.regularPensionContributions),
         oneOffRasPaymentPlusTaxReliefQuestion = prior.pensionReliefs.map(_.pensionReliefs.oneOffPensionContributionsPaid.isDefined),

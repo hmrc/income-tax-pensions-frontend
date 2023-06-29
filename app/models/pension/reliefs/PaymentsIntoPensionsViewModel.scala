@@ -16,21 +16,22 @@
 
 package models.pension.reliefs
 
+import models.pension.PensionCYABaseModel
 import play.api.libs.json.{Json, OFormat}
 import utils.EncryptedValue
 
-case class PaymentsIntoPensionViewModel(rasPensionPaymentQuestion: Option[Boolean] = None,
-                                        totalRASPaymentsAndTaxRelief: Option[BigDecimal] = None,
-                                        oneOffRasPaymentPlusTaxReliefQuestion: Option[Boolean] = None,
-                                        totalOneOffRasPaymentPlusTaxRelief: Option[BigDecimal] = None,
-                                        totalPaymentsIntoRASQuestion: Option[Boolean] = None,
-                                        pensionTaxReliefNotClaimedQuestion: Option[Boolean] = None,
-                                        retirementAnnuityContractPaymentsQuestion: Option[Boolean] = None,
-                                        totalRetirementAnnuityContractPayments: Option[BigDecimal] = None,
-                                        workplacePensionPaymentsQuestion: Option[Boolean] = None,
-                                        totalWorkplacePensionPayments: Option[BigDecimal] = None) {
+case class PaymentsIntoPensionsViewModel(rasPensionPaymentQuestion: Option[Boolean] = None,
+                                         totalRASPaymentsAndTaxRelief: Option[BigDecimal] = None,
+                                         oneOffRasPaymentPlusTaxReliefQuestion: Option[Boolean] = None,
+                                         totalOneOffRasPaymentPlusTaxRelief: Option[BigDecimal] = None,
+                                         totalPaymentsIntoRASQuestion: Option[Boolean] = None,
+                                         pensionTaxReliefNotClaimedQuestion: Option[Boolean] = None,
+                                         retirementAnnuityContractPaymentsQuestion: Option[Boolean] = None,
+                                         totalRetirementAnnuityContractPayments: Option[BigDecimal] = None,
+                                         workplacePensionPaymentsQuestion: Option[Boolean] = None,
+                                         totalWorkplacePensionPayments: Option[BigDecimal] = None) extends PensionCYABaseModel {
 
-  private def yesNoAndAmountPopulated(boolField: Option[Boolean], amountField: Option[BigDecimal]) = {
+  private def yesNoAndAmountPopulated(boolField: Option[Boolean], amountField: Option[BigDecimal]): Boolean = {
     boolField.exists(value => !value || (value && amountField.nonEmpty))
   }
 
@@ -63,6 +64,20 @@ case class PaymentsIntoPensionViewModel(rasPensionPaymentQuestion: Option[Boolea
     ).forall(x => x)
   }
 
+  def journeyIsNo: Boolean =
+    (!rasPensionPaymentQuestion.getOrElse(true)
+      && totalRASPaymentsAndTaxRelief.isEmpty
+      && oneOffRasPaymentPlusTaxReliefQuestion.isEmpty
+      && totalOneOffRasPaymentPlusTaxRelief.isEmpty
+      && totalPaymentsIntoRASQuestion.isEmpty
+      && pensionTaxReliefNotClaimedQuestion.isEmpty
+      && retirementAnnuityContractPaymentsQuestion.isEmpty
+      && totalRetirementAnnuityContractPayments.isEmpty
+      && workplacePensionPaymentsQuestion.isEmpty
+      && totalWorkplacePensionPayments.isEmpty)
+
+  def journeyIsUnanswered: Boolean = this.productIterator.forall(_ == None)
+
   private def taxReliefNotClaimedQuestionCompleted: Boolean = {
     pensionTaxReliefNotClaimedQuestion match {
       case Some(true) =>
@@ -74,8 +89,8 @@ case class PaymentsIntoPensionViewModel(rasPensionPaymentQuestion: Option[Boolea
   }
 }
 
-object PaymentsIntoPensionViewModel {
-  implicit val format: OFormat[PaymentsIntoPensionViewModel] = Json.format[PaymentsIntoPensionViewModel]
+object PaymentsIntoPensionsViewModel {
+  implicit val format: OFormat[PaymentsIntoPensionsViewModel] = Json.format[PaymentsIntoPensionsViewModel]
 }
 
 case class EncryptedPaymentsIntoPensionViewModel(rasPensionPaymentQuestion: Option[EncryptedValue] = None,

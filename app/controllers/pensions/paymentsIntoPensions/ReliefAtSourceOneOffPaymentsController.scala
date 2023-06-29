@@ -24,10 +24,10 @@ import models.mongo.PensionsCYAModel
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
-import services.redirects.PaymentsIntoPensionsRedirects
+import services.redirects.PaymentsIntoPensionPages.OneOffRasPage
+import services.redirects.PaymentsIntoPensionsRedirects._
 import services.redirects.SimpleRedirectService.{isFinishedCheck, redirectBasedOnCurrentAnswers}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import services.redirects.PaymentsIntoPensionPages.OneOffRasPage
 import utils.Clock
 import views.html.pensions.paymentsIntoPensions.ReliefAtSourceOneOffPaymentsView
 
@@ -47,8 +47,8 @@ class ReliefAtSourceOneOffPaymentsController @Inject()(authAction: AuthorisedAct
 
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) { optData =>
-      val checkRedirect = PaymentsIntoPensionsRedirects.journeyCheck(OneOffRasPage, _, taxYear)
-      redirectBasedOnCurrentAnswers(taxYear, optData)(checkRedirect) { data =>
+      val checkRedirect = journeyCheck(OneOffRasPage, _, taxYear)
+      redirectBasedOnCurrentAnswers(taxYear, optData, cyaPageCall(taxYear))(checkRedirect) { data =>
 
         data.pensions.paymentsIntoPension.totalRASPaymentsAndTaxRelief.fold(Future.successful(errorHandler.internalServerError()))(
           totalRASPaymentsAndTaxRelief =>
@@ -66,8 +66,8 @@ class ReliefAtSourceOneOffPaymentsController @Inject()(authAction: AuthorisedAct
 
   def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
     pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) { optData =>
-      val checkRedirect = PaymentsIntoPensionsRedirects.journeyCheck(OneOffRasPage, _, taxYear)
-      redirectBasedOnCurrentAnswers(taxYear, optData)(checkRedirect) { data =>
+      val checkRedirect = journeyCheck(OneOffRasPage, _, taxYear)
+      redirectBasedOnCurrentAnswers(taxYear, optData, cyaPageCall(taxYear))(checkRedirect) { data =>
 
         data.pensions.paymentsIntoPension.totalRASPaymentsAndTaxRelief match {
           case Some(totalRASPaymentsAndTaxRelief) =>
@@ -89,8 +89,7 @@ class ReliefAtSourceOneOffPaymentsController @Inject()(authAction: AuthorisedAct
 
                 pensionSessionService.createOrUpdateSessionData(request.user,
                   updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
-                    isFinishedCheck(updatedCyaModel, taxYear, redirectLocation)
-                    Redirect(redirectLocation)
+                  isFinishedCheck(updatedCyaModel.paymentsIntoPension, taxYear, redirectLocation, cyaPageCall)
                 }
               }
             )

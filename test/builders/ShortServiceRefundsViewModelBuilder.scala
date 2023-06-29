@@ -19,7 +19,6 @@ package builders
 import models.pension.charges.{OverseasRefundPensionScheme, ShortServiceRefundsViewModel}
 
 object ShortServiceRefundsViewModelBuilder {
-  //TODO: Update test data with correct values
   val aShortServiceRefundsViewModel = ShortServiceRefundsViewModel(
     shortServiceRefund = Some(true),
     shortServiceRefundCharge = Some(1999.99),
@@ -51,6 +50,5 @@ object ShortServiceRefundsViewModelBuilder {
   )
   val emptyShortServiceRefundsViewModel = ShortServiceRefundsViewModel()
 
-  //TODO: shortServiceRefundTaxPaid shouldn't be part of minimal view model
-  val minimalShortServiceRefundsViewModel = ShortServiceRefundsViewModel(shortServiceRefund = Option(false), shortServiceRefundTaxPaid = Option(false))
+  val minimalShortServiceRefundsViewModel = ShortServiceRefundsViewModel(shortServiceRefund = Option(false))
 }

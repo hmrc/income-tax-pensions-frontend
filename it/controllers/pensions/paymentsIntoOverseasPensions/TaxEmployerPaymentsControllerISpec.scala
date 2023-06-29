@@ -75,8 +75,8 @@ class TaxEmployerPaymentsControllerISpec extends CommonUtils with BeforeAndAfter
   }
 
   //overseasPension.taxEmployerPayments.error.noEntry.agent = Select yes if your client paid tax on the amount their employer paid
-  
-  
+
+
   object ExpectedIndividualEN extends SpecificExpectedResults {
     val expectedTitle: String = "Did you pay tax on the amount your employer paid?"
     val expectedHeading: String = "Did you pay tax on the amount your employer paid?"
@@ -148,7 +148,7 @@ class TaxEmployerPaymentsControllerISpec extends CommonUtils with BeforeAndAfter
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          titleCheck(user.specificExpectedResults.get.expectedTitle,user.isWelsh)
+          titleCheck(user.specificExpectedResults.get.expectedTitle, user.isWelsh)
           h1Check(user.specificExpectedResults.get.expectedHeading)
           captionCheck(expectedCaption(taxYearEOY), captionSelector)
           textOnPageCheck(user.specificExpectedResults.get.expectedFindOut, paragraphSelector(1))
@@ -220,6 +220,7 @@ class TaxEmployerPaymentsControllerISpec extends CommonUtils with BeforeAndAfter
       }
     }
   }
+
   ".submit" should {
     userScenarios.foreach { user =>
       s"language is ${welshTest(user.isWelsh)} and request is from an ${agentTest(user.isAgent)}" should {
@@ -263,7 +264,7 @@ class TaxEmployerPaymentsControllerISpec extends CommonUtils with BeforeAndAfter
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(paymentsIntoOverseasPensionsCyaUrl(taxYearEOY))
+        result.header("location") shouldBe Some(pensionReliefSchemeSummaryUrl(taxYearEOY))
       }
 
       "updates taxPaidOnEmployerPaymentsQuestion to Some(true)" in {
@@ -281,7 +282,7 @@ class TaxEmployerPaymentsControllerISpec extends CommonUtils with BeforeAndAfter
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(paymentsIntoOverseasPensionsCyaUrl(taxYearEOY))
+        result.header("location") shouldBe Some(pensionReliefSchemeSummaryUrl(taxYearEOY))
       }
 
       "updates taxPaidOnEmployerPaymentsQuestion to Some(true)" in {
@@ -299,7 +300,7 @@ class TaxEmployerPaymentsControllerISpec extends CommonUtils with BeforeAndAfter
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(pensionReliefSchemeSummaryUrl(taxYearEOY))
+        result.header("location") shouldBe Some(paymentsIntoOverseasPensionsCyaUrl(taxYearEOY))
       }
 
       "updates taxPaidOnEmployerPaymentsQuestion to Some(false)" in {

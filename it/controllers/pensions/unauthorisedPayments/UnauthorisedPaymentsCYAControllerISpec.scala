@@ -26,7 +26,7 @@ import builders.PensionsUserDataBuilder.{aPensionsUserData, pensionsUserDataWith
 import builders.UnauthorisedPaymentsViewModelBuilder.anUnauthorisedPaymentsViewModel
 import controllers.pensions.unauthorisedPayments.routes._
 import models.mongo.{PensionsCYAModel, PensionsUserData}
-import models.pension.reliefs.PaymentsIntoPensionViewModel
+import models.pension.reliefs.PaymentsIntoPensionsViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterEach
@@ -35,7 +35,7 @@ import play.api.http.HeaderNames
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import utils.PageUrls.fullUrl
-import utils.PageUrls.unauthorisedPaymentsPages.checkUnauthorisedPaymentsCyaUrl
+import utils.PageUrls.UnauthorisedPaymentsPages.checkUnauthorisedPaymentsCyaUrl
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 
@@ -45,7 +45,7 @@ class UnauthorisedPaymentsCYAControllerISpec extends
   BeforeAndAfterEach with
   PensionsDatabaseHelper with Logging { //scalastyle:off magic.number
 
-  val cyaDataIncomplete: PaymentsIntoPensionViewModel = PaymentsIntoPensionViewModel(
+  val cyaDataIncomplete: PaymentsIntoPensionsViewModel = PaymentsIntoPensionsViewModel(
     rasPensionPaymentQuestion = Some(true)
   )
 
@@ -56,7 +56,7 @@ class UnauthorisedPaymentsCYAControllerISpec extends
     val nonUKTaxOnAmountResultedInSurcharge: String = NonUKTaxOnAmountResultedInSurchargeController.show(taxYear).url
     val amountNotSurcharged: String = NoSurchargeAmountController.show(taxYear).url
     val nonUKTaxOnAmountNotResultedInSurcharge: String = NonUKTaxOnAmountNotResultedInSurchargeController.show(taxYear).url
-    val ukPensionSchemes: String = WhereAnyOfTheUnauthorisedPaymentsController.show(taxYear).url
+    val ukPensionSchemes: String = WereAnyOfTheUnauthorisedPaymentsController.show(taxYear).url
     val pensionSchemeTaxReferences: String = UnauthorisedPensionSchemeTaxReferenceController.show(taxYear, None).url
     val pensionSchemeTaxDetails: String = UkPensionSchemeDetailsController.show(taxYear).url
   }

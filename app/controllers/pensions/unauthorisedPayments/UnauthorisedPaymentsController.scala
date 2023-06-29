@@ -22,9 +22,9 @@ import controllers.predicates.TaxYearAction.taxYearAction
 import forms.UnAuthorisedPaymentsForm
 import models.mongo.PensionsCYAModel
 import models.pension.AllPensionsData.generateCyaFromPrior
-import models.pension.reliefs.PaymentsIntoPensionViewModel
+import models.pension.reliefs.PaymentsIntoPensionsViewModel
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
@@ -63,7 +63,7 @@ class UnauthorisedPaymentsController @Inject()(implicit val mcc: MessagesControl
 
   def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
 
-    def saveDataAndRedirect(pensionsCYAModel: PensionsCYAModel, isPriorSubmission: Boolean) = {
+    def saveDataAndRedirect(pensionsCYAModel: PensionsCYAModel, isPriorSubmission: Boolean): Future[Result] = {
       UnAuthorisedPaymentsForm.unAuthorisedPaymentsTypeForm().bindFromRequest().fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
         unauthorisedPaymentsSelection => {
@@ -98,7 +98,7 @@ class UnauthorisedPaymentsController @Inject()(implicit val mcc: MessagesControl
           val cya: PensionsCYAModel = generateCyaFromPrior(priorData)
           saveDataAndRedirect(cya, isPriorSubmission = true)
         case (None, None) =>
-          val cya = PensionsCYAModel.emptyModels.copy(PaymentsIntoPensionViewModel())
+          val cya = PensionsCYAModel.emptyModels.copy(PaymentsIntoPensionsViewModel())
           saveDataAndRedirect(cya, isPriorSubmission = false)
       }
     }

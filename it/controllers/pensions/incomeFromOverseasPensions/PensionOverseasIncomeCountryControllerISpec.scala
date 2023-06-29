@@ -31,7 +31,7 @@ import utils.PageUrls.IncomeFromOverseasPensionsPages._
 import utils.PageUrls.{IncomeFromOverseasPensionsPages, overseasPensionsSummaryUrl}
 
 
-class PensionOverseasIncomeCountryControllerSpec extends CommonUtils with BeforeAndAfterEach {
+class PensionOverseasIncomeCountryControllerISpec extends CommonUtils with BeforeAndAfterEach {
 
   object Selectors {
     val captionSelector: String = "#main-content > div > div > header > p"
@@ -257,7 +257,7 @@ class PensionOverseasIncomeCountryControllerSpec extends CommonUtils with Before
 
       lazy val form: Map[String, String] = Map(CountryForm.countryId -> "GB")
       val pensionsViewModel = anIncomeFromOverseasPensionsEmptyViewModel.copy(
-        overseasIncomePensionSchemes =  Seq(
+        overseasIncomePensionSchemes = Seq(
           PensionScheme(alphaTwoCode = Some("IE")),
           PensionScheme(alphaTwoCode = Some("US")),
         )
@@ -281,7 +281,7 @@ class PensionOverseasIncomeCountryControllerSpec extends CommonUtils with Before
       }
     }
 
-    "redirect to pension summary page when country code index does not exist" which {
+    "redirect to country summary page when there are existing schemes but the index is invalid" which {
       val index = 3
       implicit val url: Int => String = pensionOverseasIncomeCountryUrlIndex(index)
       lazy val form: Map[String, String] = Map(CountryForm.countryId -> "GB")
@@ -296,7 +296,7 @@ class PensionOverseasIncomeCountryControllerSpec extends CommonUtils with Before
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(overseasPensionsSummaryUrl(taxYearEOY))
+        result.header("location") shouldBe Some(countrySummaryListControllerUrl(taxYearEOY))
       }
 
       "updates pension scheme tax reference to contain both tax reference" in {

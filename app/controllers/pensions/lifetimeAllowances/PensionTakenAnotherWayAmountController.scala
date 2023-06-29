@@ -17,8 +17,7 @@
 package controllers.pensions.lifetimeAllowances
 
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.lifetimeAllowances.routes.LifeTimeAllowanceAnotherWayController
-import controllers.pensions.lifetimeAllowances.routes.PensionTakenAnotherWayAmountController
+import controllers.pensions.lifetimeAllowances.routes.AnnualLifetimeAllowanceCYAController
 import controllers.pensions.routes.PensionsSummaryController
 import controllers.predicates.AuthorisedAction
 import controllers.predicates.TaxYearAction.taxYearAction
@@ -28,6 +27,7 @@ import models.pension.charges.{LifetimeAllowance, PensionLifetimeAllowancesViewM
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
+import services.redirects.LifetimeAllowancesRedirects.redirectForSchemeLoop
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.lifetimeAllowances.PensionTakenAnotherWayAmountView
@@ -67,8 +67,7 @@ class PensionTakenAnotherWayAmountController @Inject()(implicit val mcc: Message
             Future.successful(Ok(pensionTakenAnotherWayAmountView(formsProvider.pensionTakenAnotherWayAmountForm(request.user.isAgent), taxYear)))
         }
       case _ =>
-        //TODO: - Redirect to Annual Lifetime allowances cya page
-        Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
+        Future.successful(Redirect(AnnualLifetimeAllowanceCYAController.show(taxYear)))
 
     }
 
@@ -86,20 +85,18 @@ class PensionTakenAnotherWayAmountController @Inject()(implicit val mcc: Message
               val pensionsCYAModel: PensionsCYAModel = optData.pensions
               val viewModel: PensionLifetimeAllowancesViewModel = pensionsCYAModel.pensionLifetimeAllowances
               val updatedCyaModel: PensionsCYAModel = {
-                pensionsCYAModel.copy( pensionLifetimeAllowances = viewModel.copy(
-                    pensionPaidAnotherWay = if (amounts._1.isEmpty && amounts._2.isEmpty) None else Some(LifetimeAllowance(amounts._1, amounts._2))
+                pensionsCYAModel.copy(pensionLifetimeAllowances = viewModel.copy(
+                  pensionPaidAnotherWay = if (amounts._1.isEmpty && amounts._2.isEmpty) None else Some(LifetimeAllowance(amounts._1, amounts._2))
                 ))
               }
               pensionSessionService.createOrUpdateSessionData(request.user,
                 updatedCyaModel, taxYear, optData.isPriorSubmission)(errorHandler.internalServerError()) {
-                //TODO: (next page - Redirect to pension scheme that paid page)
-                Redirect(PensionTakenAnotherWayAmountController.show(taxYear))
+                Redirect(redirectForSchemeLoop(updatedCyaModel.pensionLifetimeAllowances.pensionSchemeTaxReferences.getOrElse(Seq()), taxYear))
               }
             } else {
-              Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
+              Future.successful(Redirect(AnnualLifetimeAllowanceCYAController.show(taxYear)))
             }
           case _ =>
-            //TODO: redirect to the lifetime allowance CYA page
             Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
         }
       }

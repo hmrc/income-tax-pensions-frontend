@@ -17,18 +17,21 @@
 package controllers.pensions.unauthorisedPayments
 
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.unauthorisedPayments.routes.{UkPensionSchemeDetailsController, UnauthorisedPaymentsCYAController}
+import controllers.pensions.unauthorisedPayments.routes.UkPensionSchemeDetailsController
 import controllers.predicates.AuthorisedAction
 import controllers.predicates.TaxYearAction.taxYearAction
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
+import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
+import services.redirects.UnauthorisedPaymentsPages.RemovePSTRPage
+import services.redirects.UnauthorisedPaymentsRedirects.{cyaPageCall, journeyCheck}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.unauthorisedPayments.RemovePSTRView
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class RemovePSTRController @Inject()(implicit val mcc: MessagesControllerComponents,
@@ -37,49 +40,57 @@ class RemovePSTRController @Inject()(implicit val mcc: MessagesControllerCompone
                                      appConfig: AppConfig,
                                      pensionSessionService: PensionSessionService,
                                      errorHandler: ErrorHandler,
-                                     clock: Clock) extends FrontendController(mcc) with I18nSupport with SessionHelper {
+                                     clock: Clock,
+                                     ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport with SessionHelper {
 
   def show(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
-    pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
-      case Some(data) =>
-        val pstrList: Seq[String] = data.pensions.unauthorisedPayments.pensionSchemeTaxReference.getOrElse(Seq.empty)
-        checkIndexScheme(pensionSchemeIndex, pstrList) match {
-          case Some(scheme) =>
-            Future.successful(Ok(removePensionSchemeView(taxYear, scheme, pensionSchemeIndex)))
-          case _ =>
-            Future.successful(Redirect(UkPensionSchemeDetailsController.show(taxYear)))
+    pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
+      case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
+
+      case Right(optData) =>
+        val checkRedirect = journeyCheck(RemovePSTRPage, _, taxYear)
+        redirectBasedOnCurrentAnswers(taxYear, optData, cyaPageCall(taxYear))(checkRedirect) { data =>
+
+          val pstrList: Seq[String] = data.pensions.unauthorisedPayments.pensionSchemeTaxReference.getOrElse(Seq.empty)
+          checkIndexScheme(pensionSchemeIndex, pstrList) match {
+            case Some(scheme) =>
+              Future.successful(Ok(removePensionSchemeView(taxYear, scheme, pensionSchemeIndex)))
+            case _ =>
+              Future.successful(Redirect(UkPensionSchemeDetailsController.show(taxYear)))
+          }
         }
-      case _ =>
-        Future.successful(Redirect(UnauthorisedPaymentsCYAController.show(taxYear)))
     }
   }
 
   def submit(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = authAction.async { implicit request =>
-    pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
-      case Some(data) =>
-        val pensionsCYAModel = data.pensions
-        val viewModel = pensionsCYAModel.unauthorisedPayments
-        val pstrList: Seq[String] = viewModel.pensionSchemeTaxReference.getOrElse(Seq.empty)
+    pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
+      case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
+      case Right(optData) =>
+        val checkRedirect = journeyCheck(RemovePSTRPage, _, taxYear)
+        redirectBasedOnCurrentAnswers(taxYear, optData, cyaPageCall(taxYear))(checkRedirect) { data =>
 
-        checkIndexScheme(pensionSchemeIndex, pstrList) match {
-          case Some(_) =>
+          val pensionsCYAModel = data.pensions
+          val viewModel = pensionsCYAModel.unauthorisedPayments
+          val pstrList: Seq[String] = viewModel.pensionSchemeTaxReference.getOrElse(Seq.empty)
 
-            val rawPstrList: Seq[String] = pstrList.patch(pensionSchemeIndex.get, Nil, 1)
+          checkIndexScheme(pensionSchemeIndex, pstrList) match {
+            case Some(_) =>
 
-            val updatedPstrList = if(rawPstrList.isEmpty) None else Some(rawPstrList)
+              val rawPstrList: Seq[String] = pstrList.patch(pensionSchemeIndex.get, Nil, 1)
 
-            val updatedCyaModel = pensionsCYAModel.copy(unauthorisedPayments = viewModel.copy(pensionSchemeTaxReference = updatedPstrList))
+              val updatedPstrList = if (rawPstrList.isEmpty) None else Some(rawPstrList)
 
-            //TODO - call API to remove pension scheme
-            pensionSessionService.createOrUpdateSessionData(request.user,
-              updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
-              Redirect(UkPensionSchemeDetailsController.show(taxYear))
-            }
-          case _ =>
-            Future.successful(Redirect(UkPensionSchemeDetailsController.show(taxYear)))
+              val updatedCyaModel = pensionsCYAModel.copy(unauthorisedPayments = viewModel.copy(pensionSchemeTaxReference = updatedPstrList))
+
+              //TODO - call API to remove pension scheme
+              pensionSessionService.createOrUpdateSessionData(request.user,
+                updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
+                Redirect(UkPensionSchemeDetailsController.show(taxYear))
+              }
+            case _ =>
+              Future.successful(Redirect(UkPensionSchemeDetailsController.show(taxYear)))
+          }
         }
-      case _ =>
-        Future.successful(Redirect(UnauthorisedPaymentsCYAController.show(taxYear)))
     }
   }
 

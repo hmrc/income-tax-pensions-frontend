@@ -26,7 +26,7 @@ import models.pension.charges.PensionScheme
 import play.api.http.Status.{BAD_REQUEST, OK}
 import play.api.libs.ws.{WSClient, WSResponse}
 
-class SpecialWithholdingTaxControllerISpec   extends YesNoAmountControllerSpec("/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-swt") {
+class SpecialWithholdingTaxControllerISpec extends YesNoAmountControllerSpec("/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-swt") {
   val selectorForSummaryText = "#main-content > div > div > details > summary"
   val selectorForSummaryPara1 = "#main-content > div > div > details > div > p:nth-child(1)"
   val selectorForSummaryBullet1 = "#main-content > div > div > details > div > ul > li:nth-child(1)"
@@ -117,241 +117,361 @@ class SpecialWithholdingTaxControllerISpec   extends YesNoAmountControllerSpec("
     formUrl = formUrl()
   )
 
-  implicit val isWelsh: Boolean = false  //set to true in welsh sections
+  implicit val isWelsh: Boolean = false //set to true in welsh sections
 
-  "This page" when { //scalastyle:off magic.number
-    "requested to be shown" should {
-      "redirect to the summary page" when {
-        "the user has no stored session data at all" in {
+  "show" should { //scalastyle:off magic.number
+    "redirect to the summary page the user has no stored session data" in {
+      implicit val userConfig: UserConfig = userConfigWhenIrrelevant(None)
+      implicit val response: WSResponse = getPageWithIndex()
 
-          implicit val userConfig: UserConfig = userConfigWhenIrrelevant(None)
+      assertRedirectionAsExpected(PageRelativeURLs.overseasSummaryPage)
+    }
+    "redirect to the the first page of the IFOP scheme loop when the user had not previously specified the amount" in {
+      val sessionData: PensionsUserData = pensionsUserData(aPensionsCYAEmptyModel)
+      implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
+      implicit val response: WSResponse = getPageWithIndex()
+
+      assertRedirectionAsExpected(PageRelativeURLs.incomeFromOverseasPensionsCountry)
+    }
+    "redirect to the the IFOP scheme summary page" when {
+      "an incorrect index is provided" in {
+        val sessionData = pensionsUserData(aPensionsCYAModel)
+        implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
+        implicit val response: WSResponse = getPageWithIndex(7)
+
+        assertRedirectionAsExpected(PageRelativeURLs.incomeFromOverseasPensionsCountrySummary)
+      }
+      "the user provides a negative index number" in {
+        val sessionData = pensionsUserData(aPensionsCYAModel)
+        implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
+        implicit val response: WSResponse = getPageWithIndex(-1)
+
+        assertRedirectionAsExpected(PageRelativeURLs.incomeFromOverseasPensionsCountrySummary)
+      }
+    }
+    "appear as expected" when {
+
+      val expectedContentIndividualEN = expectedContentEN
+      val expectedContentIndividualCY = expectedContentCY
+
+      val expectedContentAgentEN = expectedContentEN.copy(
+        title = "Did your client have Special Withholding Tax (SWT) deducted from their pension?",
+        header = "Did your client have Special Withholding Tax (SWT) deducted from their pension?",
+      )
+      val expectedContentAgentCY = expectedContentCY.copy(
+        title = "Did your client have Special Withholding Tax (SWT) deducted from their pension?",
+        header = "Did your client have Special Withholding Tax (SWT) deducted from their pension?",
+      )
+
+      "the user has no session data relevant to this page and" when {
+
+        val updatedPensionScheme = aPensionsCYAModel.incomeFromOverseasPensions.overseasIncomePensionSchemes.updated(
+          0, PensionScheme(
+            alphaTwoCode = Some("FR"),
+            alphaThreeCode = Some("FRA"),
+            pensionPaymentAmount = Some(1999.99),
+            pensionPaymentTaxPaid = Some(1999.99),
+            specialWithholdingTaxQuestion = None,
+            specialWithholdingTaxAmount = None,
+            foreignTaxCreditReliefQuestion = Some(false),
+            taxableAmount = Some(1999.99)
+          ))
+
+        val sessionData: PensionsUserData =
+          pensionsUserData(aPensionsCYAModel.copy(
+            incomeFromOverseasPensions = aPensionsCYAModel.incomeFromOverseasPensions.copy(overseasIncomePensionSchemes =
+              updatedPensionScheme)
+          ))
+
+        scenarioNameForIndividualAndEnglish in {
+
+          implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
           implicit val response: WSResponse = getPageWithIndex()
 
-          assertRedirectionAsExpected(PageRelativeURLs.overseasSummaryPage)
-
+          assertSWTPageAsExpected(OK, expectedContentIndividualEN)
         }
-        "the user had not previously specified the  amount" in {
 
-          val sessionData: PensionsUserData = pensionsUserData(aPensionsCYAEmptyModel)
+        scenarioNameForIndividualAndWelsh ignore {
 
-          implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
+          implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
           implicit val response: WSResponse = getPageWithIndex()
-
-          assertRedirectionAsExpected(PageRelativeURLs.overseasSummaryPage)
+          assertSWTPageAsExpected(OK, expectedContentIndividualCY, isWelsh = true)
         }
-        "incorrect index provided" in {
-          val sessionData = pensionsUserData(aPensionsCYAModel)
 
-          implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
-          implicit val response: WSResponse = getPageWithIndex(7)
-          assertRedirectionAsExpected(PageRelativeURLs.overseasSummaryPage)
+        scenarioNameForAgentAndEnglish in {
+
+          implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
+          implicit val response: WSResponse = getPageWithIndex()
+          assertSWTPageAsExpected(OK, expectedContentAgentEN)
         }
-        "the user provides a negative index number" in {
-          val sessionData = pensionsUserData(aPensionsCYAModel)
-          implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
-          implicit val response: WSResponse = getPageWithIndex(-1)
+        scenarioNameForAgentAndWelsh ignore {
 
-          assertRedirectionAsExpected(PageRelativeURLs.overseasSummaryPage)
+          implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
+          implicit val response: WSResponse = getPageWithIndex()
+          assertSWTPageAsExpected(OK, expectedContentAgentCY, isWelsh = true)
         }
       }
-      "appear as expected" when {
-        
-        val expectedContentIndividualEN = expectedContentEN
-        val expectedContentIndividualCY = expectedContentCY
-        
-        val expectedContentAgentEN = expectedContentEN.copy(
-          title = "Did your client have Special Withholding Tax (SWT) deducted from their pension?",
-          header = "Did your client have Special Withholding Tax (SWT) deducted from their pension?",
+      "the user had previously answered 'Yes' with a valid amount, and" when {
+
+        val sessionData: PensionsUserData =
+          pensionsUserData(aPensionsCYAModel.copy(
+            incomeFromOverseasPensions = aPensionsCYAModel.incomeFromOverseasPensions.copy(overseasIncomePensionSchemes =
+              aPensionsCYAModel.incomeFromOverseasPensions.overseasIncomePensionSchemes.updated(
+                0, PensionScheme(
+                  alphaTwoCode = Some("FR"),
+                  alphaThreeCode = Some("FRA"),
+                  pensionPaymentAmount = Some(1999.99),
+                  pensionPaymentTaxPaid = Some(1999.99),
+                  specialWithholdingTaxQuestion = Some(true),
+                  specialWithholdingTaxAmount = Some(1999.99),
+                  foreignTaxCreditReliefQuestion = Some(false),
+                  taxableAmount = Some(1999.99)
+                )))
+          ))
+
+        val expContentIndividualEN = expectedContentEN.copy(
+          radioButtonForYes = checkedExpectedRadioButton("Yes"),
+          amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "1,999.99", Some("For example, £193.54"))
         )
-        val expectedContentAgentCY = expectedContentCY.copy(
-          title = "Did your client have Special Withholding Tax (SWT) deducted from their pension?",
-          header = "Did your client have Special Withholding Tax (SWT) deducted from their pension?",
+        val expContentAgentEN = expectedContentAgentEN.copy(
+          radioButtonForYes = checkedExpectedRadioButton("Yes"),
+          amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "1,999.99", Some("For example, £193.54"))
         )
-        
-        "the user has no session data relevant to this page and" when {
 
-          val updatedPensionScheme = aPensionsCYAModel.incomeFromOverseasPensions.overseasIncomePensionSchemes.updated(
-            0, PensionScheme(
-              alphaTwoCode = Some("FR"),
-              alphaThreeCode = Some("FRA"),
-              pensionPaymentAmount = Some(1999.99),
-              pensionPaymentTaxPaid = Some(1999.99),
-              specialWithholdingTaxQuestion = None,
-              specialWithholdingTaxAmount = None,
-              foreignTaxCreditReliefQuestion = Some(false),
-              taxableAmount = Some(1999.99)
-            ))
+        val expContentIndividualCY = expectedContentCY.copy(
+          radioButtonForYes = checkedExpectedRadioButton("Yes"),
+          amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "1,999.99", Some("For example, £193.54"))
+        )
+        val expContentAgentCY = expectedContentAgentCY.copy(
+          radioButtonForYes = checkedExpectedRadioButton("Yes"),
+          amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "1,999.99", Some("For example, £193.54"))
+        )
 
-          val sessionData: PensionsUserData =
-            pensionsUserData(aPensionsCYAModel.copy(
-              incomeFromOverseasPensions = aPensionsCYAModel.incomeFromOverseasPensions.copy(overseasIncomePensionSchemes =
-                updatedPensionScheme)
-            ))
+        scenarioNameForIndividualAndEnglish in {
 
-          scenarioNameForIndividualAndEnglish in {
-
-            implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
-            implicit val response: WSResponse = getPageWithIndex()
-
-            assertSWTPageAsExpected(OK, expectedContentIndividualEN)
-          }
-          
-          scenarioNameForIndividualAndWelsh ignore {
-
-            implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
-            implicit val response: WSResponse = getPageWithIndex()
-            assertSWTPageAsExpected(OK, expectedContentIndividualCY, isWelsh = true)
-          }
-          
-          scenarioNameForAgentAndEnglish in {
-
-            implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
-            implicit val response: WSResponse = getPageWithIndex()
-            assertSWTPageAsExpected(OK, expectedContentAgentEN)
-          }
-          scenarioNameForAgentAndWelsh ignore {
-
-            implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
-            implicit val response: WSResponse = getPageWithIndex()
-            assertSWTPageAsExpected(OK, expectedContentAgentCY, isWelsh = true)
-          }
+          implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
+          implicit val response: WSResponse = getPageWithIndex()
+          assertPageAsExpected(OK, expContentIndividualEN)
         }
-        "the user had previously answered 'Yes' with a valid amount, and" when {
 
-          val sessionData: PensionsUserData =
-            pensionsUserData(aPensionsCYAModel.copy(
-              incomeFromOverseasPensions = aPensionsCYAModel.incomeFromOverseasPensions.copy(overseasIncomePensionSchemes =
-                aPensionsCYAModel.incomeFromOverseasPensions.overseasIncomePensionSchemes.updated(
+        scenarioNameForIndividualAndWelsh ignore {
+
+          implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
+          implicit val response: WSResponse = getPageWithIndex()
+          assertSWTPageAsExpected(OK, expContentIndividualCY, isWelsh = true)
+        }
+
+        scenarioNameForAgentAndEnglish in {
+
+          implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
+          implicit val response: WSResponse = getPageWithIndex()
+          assertSWTPageAsExpected(OK, expContentAgentEN)
+        }
+
+        scenarioNameForAgentAndWelsh ignore {
+
+          implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
+          implicit val response: WSResponse = getPageWithIndex()
+          assertSWTPageAsExpected(OK, expContentAgentCY, isWelsh = true)
+        }
+
+      }
+      "the user has multiple pensionSchemes, and" when {
+
+        val newSequence = PensionScheme(
+          alphaTwoCode = Some("GB"),
+          alphaThreeCode = Some("GBR"),
+          pensionPaymentAmount = Some(1999.99),
+          pensionPaymentTaxPaid = Some(1999.99),
+          specialWithholdingTaxQuestion = Some(true),
+          specialWithholdingTaxAmount = Some(1999.99),
+          foreignTaxCreditReliefQuestion = Some(false),
+          taxableAmount = Some(1999.99)
+        ) +: aPensionsCYAModel.incomeFromOverseasPensions.overseasIncomePensionSchemes
+
+        val sessionData: PensionsUserData =
+          pensionsUserData(aPensionsCYAModel.copy(
+            incomeFromOverseasPensions = aPensionsCYAModel.incomeFromOverseasPensions.copy(overseasIncomePensionSchemes = newSequence)
+          ))
+
+        val expContentIndividualEN = expectedContentEN.copy(
+          radioButtonForYes = checkedExpectedRadioButton("Yes"),
+          amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "1,999.99", Some("For example, £193.54")),
+          formUrl = formUrl(1)
+        )
+        val expContentAgentEN = expectedContentAgentEN.copy(
+          radioButtonForYes = checkedExpectedRadioButton("Yes"),
+          amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "1,999.99", Some("For example, £193.54")),
+          formUrl = formUrl(1)
+        )
+
+        val expContentIndividualCY = expectedContentCY.copy(
+          radioButtonForYes = checkedExpectedRadioButton("Yes"),
+          amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "1,999.99", Some("For example, £193.54")),
+          formUrl = formUrl(1)
+        )
+
+        val expContentAgentCY = expectedContentAgentCY.copy(
+          radioButtonForYes = checkedExpectedRadioButton("Yes"),
+          amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "1,999.99", Some("For example, £193.54")),
+          formUrl = formUrl(1)
+        )
+
+        scenarioNameForIndividualAndEnglish in {
+
+          implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
+          implicit val response: WSResponse = getPageWithIndex(1)
+          assertSWTPageAsExpected(OK, expContentIndividualEN)
+        }
+
+        scenarioNameForIndividualAndWelsh ignore {
+
+          implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
+          implicit val response: WSResponse = getPageWithIndex(1)
+          assertSWTPageAsExpected(OK, expContentIndividualCY, isWelsh = true)
+        }
+
+        scenarioNameForAgentAndEnglish in {
+
+          implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
+          implicit val response: WSResponse = getPageWithIndex(1)
+          assertSWTPageAsExpected(OK, expContentAgentEN)
+        }
+        scenarioNameForAgentAndWelsh ignore {
+
+          implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
+          implicit val response: WSResponse = getPageWithIndex(1)
+          assertSWTPageAsExpected(OK, expContentAgentCY, isWelsh = true)
+        }
+
+      }
+      "the user had previously answered 'No' without an amount, and" when {
+
+
+        val updatedPensionScheme = aPensionsCYAModel.incomeFromOverseasPensions.overseasIncomePensionSchemes.updated(
+          0, PensionScheme(
+            alphaTwoCode = Some("FR"),
+            alphaThreeCode = Some("FRA"),
+            pensionPaymentAmount = Some(1999.99),
+            pensionPaymentTaxPaid = Some(1999.99),
+            specialWithholdingTaxQuestion = Some(false),
+            specialWithholdingTaxAmount = None,
+            foreignTaxCreditReliefQuestion = Some(false),
+            taxableAmount = Some(1999.99)
+          ))
+
+        val sessionData: PensionsUserData =
+          pensionsUserData(aPensionsCYAModel.copy(
+            incomeFromOverseasPensions = aPensionsCYAModel.incomeFromOverseasPensions.copy(overseasIncomePensionSchemes =
+              updatedPensionScheme)
+          ))
+
+        val expContentIndividualEN = expectedContentEN.copy(
+          radioButtonForNo = checkedExpectedRadioButton("No"),
+          amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "", Some("For example, £193.54")),
+        )
+        val expContentAgentEN = expectedContentAgentEN.copy(
+          radioButtonForNo = checkedExpectedRadioButton("No"),
+          amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "", Some("For example, £193.54")),
+        )
+
+        val expContentIndividualCY = expectedContentCY.copy(
+          radioButtonForNo = checkedExpectedRadioButton("No"),
+          amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "", Some("For example, £193.54")),
+        )
+        val expContentAgentCY = expectedContentAgentCY.copy(
+          radioButtonForNo = checkedExpectedRadioButton("No"),
+          amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "", Some("For example, £193.54")),
+        )
+        scenarioNameForIndividualAndEnglish in {
+
+          implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
+          implicit val response: WSResponse = getPageWithIndex()
+          assertSWTPageAsExpected(OK, expContentIndividualEN)
+        }
+
+        scenarioNameForIndividualAndWelsh ignore {
+
+          implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
+          implicit val response: WSResponse = getPageWithIndex()
+          assertSWTPageAsExpected(OK, expContentIndividualCY, isWelsh = true)
+        }
+
+        scenarioNameForAgentAndEnglish in {
+
+          implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
+          implicit val response: WSResponse = getPageWithIndex()
+          assertSWTPageAsExpected(OK, expContentAgentEN)
+        }
+
+        scenarioNameForAgentAndWelsh ignore {
+
+          implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
+          implicit val response: WSResponse = getPageWithIndex()
+          assertSWTPageAsExpected(OK, expContentAgentCY)
+        }
+
+      }
+    }
+  }
+
+  "submit" should {
+    "redirect to the expected page" when {
+      "the index is invalid" in {
+        val sessionData: PensionsUserData = pensionsUserData(aPensionsCYAModel)
+
+        implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
+        implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(false), None))
+
+        assertRedirectionAsExpected(PageRelativeURLs.incomeFromOverseasPensionsCountrySummary)
+
+      }
+      "the user has no stored session data at all" in {
+
+        implicit val userConfig: UserConfig = userConfigWhenIrrelevant(None)
+        implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(false), None))
+        implicit val index: Int = 0
+
+        assertRedirectionAsExpected(PageRelativeURLs.overseasSummaryPage)
+        getViewModel mustBe None
+
+      }
+    }
+    "succeed" when {
+      "the user has relevant session data and" when {
+
+        val sessionData = pensionsUserData(aPensionsCYAModel)
+
+        "the user has selected 'No' with a blank amount" in {
+
+          val updatedModel: PensionsUserData =
+            pensionsUserData(sessionData.pensions.copy(
+              incomeFromOverseasPensions = sessionData.pensions.incomeFromOverseasPensions.copy(overseasIncomePensionSchemes =
+                sessionData.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes.updated(
                   0, PensionScheme(
                     alphaTwoCode = Some("FR"),
                     alphaThreeCode = Some("FRA"),
                     pensionPaymentAmount = Some(1999.99),
                     pensionPaymentTaxPaid = Some(1999.99),
-                    specialWithholdingTaxQuestion = Some(true),
-                    specialWithholdingTaxAmount = Some(1999.99),
-                    foreignTaxCreditReliefQuestion = Some(false),
+                    specialWithholdingTaxQuestion = Some(false),
+                    specialWithholdingTaxAmount = None,
+                    foreignTaxCreditReliefQuestion = Some(true),
                     taxableAmount = Some(1999.99)
                   )))
             ))
 
-          val expContentIndividualEN = expectedContentEN.copy(
-            radioButtonForYes = checkedExpectedRadioButton("Yes"),
-            amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "1,999.99", Some("For example, £193.54"))
-          )
-          val expContentAgentEN = expectedContentAgentEN.copy(
-            radioButtonForYes = checkedExpectedRadioButton("Yes"),
-            amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "1,999.99", Some("For example, £193.54"))
-          )
+          val expectedViewModel = updatedModel.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes.head
 
-          val expContentIndividualCY = expectedContentCY.copy(
-            radioButtonForYes = checkedExpectedRadioButton("Yes"),
-            amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "1,999.99", Some("For example, £193.54"))
-          )
-          val expContentAgentCY= expectedContentAgentCY.copy(
-            radioButtonForYes = checkedExpectedRadioButton("Yes"),
-            amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "1,999.99", Some("For example, £193.54"))
-          )
 
-          scenarioNameForIndividualAndEnglish in {
+          implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
+          implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForYesNoAmountPage(Some(false), Some("")))
+          implicit val index: Int = 0
 
-            implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
-            implicit val response: WSResponse = getPageWithIndex()
-            assertPageAsExpected(OK, expContentIndividualEN)
-          }
-          
-          scenarioNameForIndividualAndWelsh ignore {
-
-            implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
-            implicit val response: WSResponse = getPageWithIndex()
-            assertSWTPageAsExpected(OK, expContentIndividualCY, isWelsh = true)
-          }
-          
-          scenarioNameForAgentAndEnglish in {
-
-            implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
-            implicit val response: WSResponse = getPageWithIndex()
-            assertSWTPageAsExpected(OK, expContentAgentEN)
-          }
-          
-          scenarioNameForAgentAndWelsh ignore {
-
-            implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
-            implicit val response: WSResponse = getPageWithIndex()
-            assertSWTPageAsExpected(OK, expContentAgentCY, isWelsh = true)
-          }
+          assertRedirectionAsExpected(relativeUrl("/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-ftcr?index=0"))
+          getViewModel mustBe Some(expectedViewModel)
 
         }
-        "the user has multiple pensionSchemes, and" when {
-
-          val newSequence = PensionScheme(
-            alphaTwoCode = Some("GB"),
-            alphaThreeCode = Some("GBR"),
-            pensionPaymentAmount = Some(1999.99),
-            pensionPaymentTaxPaid = Some(1999.99),
-            specialWithholdingTaxQuestion = Some(true),
-            specialWithholdingTaxAmount = Some(1999.99),
-            foreignTaxCreditReliefQuestion = Some(false),
-            taxableAmount = Some(1999.99)
-          ) +: aPensionsCYAModel.incomeFromOverseasPensions.overseasIncomePensionSchemes
-          
-          val sessionData: PensionsUserData =
-            pensionsUserData(aPensionsCYAModel.copy(
-              incomeFromOverseasPensions = aPensionsCYAModel.incomeFromOverseasPensions.copy(overseasIncomePensionSchemes = newSequence)
-            ))
-            
-          val expContentIndividualEN = expectedContentEN.copy(
-            radioButtonForYes = checkedExpectedRadioButton("Yes"),
-            amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "1,999.99", Some("For example, £193.54")),
-            formUrl = formUrl(1)
-          )
-          val expContentAgentEN = expectedContentAgentEN.copy(
-            radioButtonForYes = checkedExpectedRadioButton("Yes"),
-            amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "1,999.99", Some("For example, £193.54")),
-            formUrl = formUrl(1)
-          )
-
-          val expContentIndividualCY = expectedContentCY.copy(
-            radioButtonForYes = checkedExpectedRadioButton("Yes"),
-            amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "1,999.99", Some("For example, £193.54")),
-            formUrl = formUrl(1)
-          )
-
-          val expContentAgentCY = expectedContentAgentCY.copy(
-            radioButtonForYes = checkedExpectedRadioButton("Yes"),
-            amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "1,999.99", Some("For example, £193.54")),
-            formUrl = formUrl(1)
-          )
-
-          scenarioNameForIndividualAndEnglish in {
-
-            implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
-            implicit val response: WSResponse = getPageWithIndex(1)
-            assertSWTPageAsExpected(OK, expContentIndividualEN)
-          }
-          
-          scenarioNameForIndividualAndWelsh ignore {
-
-            implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
-            implicit val response: WSResponse = getPageWithIndex(1)
-            assertSWTPageAsExpected(OK, expContentIndividualCY, isWelsh = true)
-          }
-          
-          scenarioNameForAgentAndEnglish in {
-
-            implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
-            implicit val response: WSResponse = getPageWithIndex(1)
-            assertSWTPageAsExpected(OK, expContentAgentEN)
-          }
-          scenarioNameForAgentAndWelsh ignore {
-
-            implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
-            implicit val response: WSResponse = getPageWithIndex(1)
-            assertSWTPageAsExpected(OK, expContentAgentCY, isWelsh = true)
-          }
-
-        }
-        "the user had previously answered 'No' without an amount, and" when {
-
+        "the user has selected 'Yes' as well as a valid amount (unformatted), and" in {
 
           val updatedPensionScheme = aPensionsCYAModel.incomeFromOverseasPensions.overseasIncomePensionSchemes.updated(
             0, PensionScheme(
@@ -359,65 +479,30 @@ class SpecialWithholdingTaxControllerISpec   extends YesNoAmountControllerSpec("
               alphaThreeCode = Some("FRA"),
               pensionPaymentAmount = Some(1999.99),
               pensionPaymentTaxPaid = Some(1999.99),
-              specialWithholdingTaxQuestion = Some(false),
-              specialWithholdingTaxAmount = None,
-              foreignTaxCreditReliefQuestion = Some(false),
+              specialWithholdingTaxQuestion = Some(true),
+              specialWithholdingTaxAmount = Some(BigDecimal(42.64)),
+              foreignTaxCreditReliefQuestion = Some(true),
               taxableAmount = Some(1999.99)
             ))
 
-          val sessionData: PensionsUserData =
+          val updatedModel: PensionsUserData =
             pensionsUserData(aPensionsCYAModel.copy(
               incomeFromOverseasPensions = aPensionsCYAModel.incomeFromOverseasPensions.copy(overseasIncomePensionSchemes =
                 updatedPensionScheme)
             ))
 
-          val expContentIndividualEN = expectedContentEN.copy(
-            radioButtonForNo = checkedExpectedRadioButton("No"),
-            amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "", Some("For example, £193.54")),
-          )
-          val expContentAgentEN = expectedContentAgentEN.copy(
-            radioButtonForNo = checkedExpectedRadioButton("No"),
-            amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "", Some("For example, £193.54")),
-          )
+          val expectedViewModel = updatedModel.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes.head
 
-          val expContentIndividualCY = expectedContentCY.copy(
-            radioButtonForNo = checkedExpectedRadioButton("No"),
-            amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "", Some("For example, £193.54")),
-          )
-          val expContentAgentCY = expectedContentAgentCY.copy(
-            radioButtonForNo = checkedExpectedRadioButton("No"),
-            amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "", Some("For example, £193.54")),
-          )
-          scenarioNameForIndividualAndEnglish in {
 
-            implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
-            implicit val response: WSResponse = getPageWithIndex()
-            assertSWTPageAsExpected(OK, expContentIndividualEN)
-          }
+          implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
+          implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForYesNoAmountPage(Some(true), Some("42.64")))
+          implicit val index: Int = 0
 
-          scenarioNameForIndividualAndWelsh ignore {
+          assertRedirectionAsExpected(relativeUrl("/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-ftcr?index=0"))
+          getViewModel mustBe Some(expectedViewModel)
 
-            implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
-            implicit val response: WSResponse = getPageWithIndex()
-            assertSWTPageAsExpected(OK, expContentIndividualCY, isWelsh = true)
-          }
-
-          scenarioNameForAgentAndEnglish in {
-
-            implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
-            implicit val response: WSResponse = getPageWithIndex()
-            assertSWTPageAsExpected(OK, expContentAgentEN)
-          }
-
-          scenarioNameForAgentAndWelsh ignore {
-
-            implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
-            implicit val response: WSResponse = getPageWithIndex()
-            assertSWTPageAsExpected(OK, expContentAgentCY)
-          }
-          
         }
-        "the user had previously answered 'No' with an amount of zero, and" when {
+        "the user has selected 'Yes' as well as a valid amount (formatted), and" in {
 
           val updatedPensionScheme = aPensionsCYAModel.incomeFromOverseasPensions.overseasIncomePensionSchemes.updated(
             0, PensionScheme(
@@ -425,753 +510,504 @@ class SpecialWithholdingTaxControllerISpec   extends YesNoAmountControllerSpec("
               alphaThreeCode = Some("FRA"),
               pensionPaymentAmount = Some(1999.99),
               pensionPaymentTaxPaid = Some(1999.99),
-              specialWithholdingTaxQuestion = Some(false),
-              specialWithholdingTaxAmount = Some(BigDecimal(0)),
-              foreignTaxCreditReliefQuestion = Some(false),
+              specialWithholdingTaxQuestion = Some(true),
+              specialWithholdingTaxAmount = Some(BigDecimal(1042.64)),
+              foreignTaxCreditReliefQuestion = Some(true),
               taxableAmount = Some(1999.99)
             ))
 
-          val sessionData: PensionsUserData =
+          val updatedModel: PensionsUserData =
             pensionsUserData(aPensionsCYAModel.copy(
               incomeFromOverseasPensions = aPensionsCYAModel.incomeFromOverseasPensions.copy(overseasIncomePensionSchemes =
                 updatedPensionScheme)
             ))
 
-          val expContentIndividualEN = expectedContentEN.copy(
-            radioButtonForNo = checkedExpectedRadioButton("No"),
-            amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "", Some("For example, £193.54")),
-          )
-          val expContentAgentEN = expectedContentAgentEN.copy(
-            radioButtonForNo = checkedExpectedRadioButton("No"),
-            amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "", Some("For example, £193.54")),
-          )
+          val expectedViewModel = updatedModel.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes.head
 
-          val expContentIndividualCY = expectedContentCY.copy(
-            radioButtonForNo = checkedExpectedRadioButton("No"),
-            amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "", Some("For example, £193.54")),
-          )
-          val expContentAgentCY = expectedContentAgentCY.copy(
-            radioButtonForNo = checkedExpectedRadioButton("No"),
-            amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "", Some("For example, £193.54")),
-          )
+          implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
+          implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForYesNoAmountPage(Some(true), Some("£1,042.64")))
+          implicit val index: Int = 0
 
-          scenarioNameForIndividualAndEnglish in {
+          assertRedirectionAsExpected(relativeUrl("/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-ftcr?index=0"))
+          getViewModel mustBe Some(expectedViewModel)
 
-            implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
-            implicit val response: WSResponse = getPageWithIndex()
-
-            assertSWTPageAsExpected(OK, expContentIndividualEN)
-          }
-          scenarioNameForIndividualAndWelsh ignore {
-
-            implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
-            implicit val response: WSResponse = getPageWithIndex()
-
-
-            assertSWTPageAsExpected(OK, expContentIndividualCY, isWelsh = true)
-          }
-          scenarioNameForAgentAndEnglish in {
-
-            implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
-            implicit val response: WSResponse = getPageWithIndex()
-
-            assertSWTPageAsExpected(OK, expContentAgentEN)
-          }
-          scenarioNameForAgentAndWelsh ignore {
-
-            implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
-            implicit val response: WSResponse = getPageWithIndex()
-
-            assertSWTPageAsExpected(OK, expContentAgentCY, isWelsh = true)
-          }
-          
-        }
-        "the user had previously answered 'No' with a negative amount, and" when {
-
-
-          val updatedPensionScheme = aPensionsCYAModel.incomeFromOverseasPensions.overseasIncomePensionSchemes.updated(
-            0, PensionScheme(
-              alphaTwoCode = Some("FR"),
-              alphaThreeCode = Some("FRA"),
-              pensionPaymentAmount = Some(1999.99),
-              pensionPaymentTaxPaid = Some(1999.99),
-              specialWithholdingTaxQuestion = Some(false),
-              specialWithholdingTaxAmount = Some(BigDecimal(-42.64)),
-              foreignTaxCreditReliefQuestion = Some(false),
-              taxableAmount = Some(1999.99)
-            ))
-
-          val sessionData: PensionsUserData =
-            pensionsUserData(aPensionsCYAModel.copy(
-              incomeFromOverseasPensions = aPensionsCYAModel.incomeFromOverseasPensions.copy(overseasIncomePensionSchemes =
-                updatedPensionScheme)
-            ))
-            
-          val expContentIndividualEN = expectedContentEN.copy(
-            radioButtonForNo = checkedExpectedRadioButton("No"),
-            amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "", Some("For example, £193.54")),
-          )
-          val expContentAgentEN = expectedContentAgentEN.copy(
-            radioButtonForNo = checkedExpectedRadioButton("No"),
-            amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "", Some("For example, £193.54")),
-          )
-
-          val expContentIndividualCY = expectedContentCY.copy(
-            radioButtonForNo = checkedExpectedRadioButton("No"),
-            amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "", Some("For example, £193.54")),
-          )
-          val expContentAgentCY = expectedContentAgentCY.copy(
-            radioButtonForNo = checkedExpectedRadioButton("No"),
-            amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "", Some("For example, £193.54")),
-          )
-
-          scenarioNameForIndividualAndEnglish in {
-
-            implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
-            implicit val response: WSResponse = getPageWithIndex()
-
-            assertSWTPageAsExpected(OK, expContentIndividualEN)
-          }
-          scenarioNameForIndividualAndWelsh ignore {
-
-            implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
-            implicit val response: WSResponse = getPageWithIndex()
-
-
-            assertSWTPageAsExpected(OK, expContentIndividualCY, isWelsh = true)
-          }
-          scenarioNameForAgentAndEnglish in {
-
-            implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
-            implicit val response: WSResponse = getPageWithIndex()
-
-            assertSWTPageAsExpected(OK, expContentAgentEN)
-          }
-          
-          scenarioNameForAgentAndWelsh ignore {
-
-            implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
-            implicit val response: WSResponse = getPageWithIndex()
-
-            assertSWTPageAsExpected(OK, expContentAgentCY, isWelsh = true)
-          }
         }
 
       }
     }
-    "submitted" should {
-      "redirect to the expected page" when {
-        "the user had not previously specified the 'no surcharge' amount" in {
+    "fail" when {
 
-          val sessionData: PensionsUserData =
-            pensionsUserData(aPensionsCYAModel.copy(
-              incomeFromOverseasPensions = aPensionsCYAModel.incomeFromOverseasPensions.copy(overseasIncomePensionSchemes =
-                aPensionsCYAModel.incomeFromOverseasPensions.overseasIncomePensionSchemes.updated(
-                  0, PensionScheme(
-                    alphaTwoCode = Some("FR"),
-                    alphaThreeCode = Some("FRA"),
-                    pensionPaymentAmount = None,
-                    pensionPaymentTaxPaid = None,
-                    specialWithholdingTaxQuestion = None,
-                    specialWithholdingTaxAmount = None,
-                    foreignTaxCreditReliefQuestion = None,
-                    taxableAmount = None
-                  )))
-            ))
-
-          val expectedViewModel = sessionData.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes.head
-
-          implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
-          implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(false), None))
-          implicit val index: Int = 0
-
-          assertRedirectionAsExpected(PageRelativeURLs.overseasSummaryPage)
-          getViewModel mustBe Some(expectedViewModel)
-
-        }
-        "the user has no stored session data at all" in {
-
-          implicit val userConfig: UserConfig = userConfigWhenIrrelevant(None)
-          implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(false), None))
-          implicit val index: Int = 0
-
-          assertRedirectionAsExpected(PageRelativeURLs.overseasSummaryPage)
-          getViewModel mustBe None
-
-        }
-      }
-      "succeed" when {
-        "the user has relevant session data and" when {
-
-          val sessionData = pensionsUserData(aPensionsCYAModel)
-
-          "the user has selected 'No' with a blank amount" in {
-
-            val updatedModel: PensionsUserData =
-              pensionsUserData(sessionData.pensions.copy(
-                incomeFromOverseasPensions = sessionData.pensions.incomeFromOverseasPensions.copy(overseasIncomePensionSchemes =
-                  sessionData.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes.updated(
-                    0, PensionScheme(
-                      alphaTwoCode = Some("FR"),
-                      alphaThreeCode = Some("FRA"),
-                      pensionPaymentAmount = Some(1999.99),
-                      pensionPaymentTaxPaid = Some(1999.99),
-                      specialWithholdingTaxQuestion =  Some(false),
-                      specialWithholdingTaxAmount = None,
-                      foreignTaxCreditReliefQuestion = Some(true),
-                      taxableAmount = Some(1999.99)
-                    )))
-              ))
-
-            val expectedViewModel = updatedModel.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes.head
-
-
-            implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
-            implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForYesNoAmountPage(Some(false), Some("")))
-            implicit val index: Int = 0
-
-            assertRedirectionAsExpected(relativeUrl("/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-ftcr?index=0"))
-            getViewModel mustBe Some(expectedViewModel)
-
-          }
-          "the user has selected 'Yes' as well as a valid amount (unformatted), and" in {
-
-            val updatedPensionScheme = aPensionsCYAModel.incomeFromOverseasPensions.overseasIncomePensionSchemes.updated(
-              0, PensionScheme(
-                alphaTwoCode = Some("FR"),
-                alphaThreeCode = Some("FRA"),
-                pensionPaymentAmount = Some(1999.99),
-                pensionPaymentTaxPaid = Some(1999.99),
-                specialWithholdingTaxQuestion =  Some(true),
-                specialWithholdingTaxAmount =  Some(BigDecimal(42.64)),
-                foreignTaxCreditReliefQuestion = Some(true),
-                taxableAmount = Some(1999.99)
-              ))
-
-            val updatedModel: PensionsUserData =
-              pensionsUserData(aPensionsCYAModel.copy(
-                incomeFromOverseasPensions = aPensionsCYAModel.incomeFromOverseasPensions.copy(overseasIncomePensionSchemes =
-                  updatedPensionScheme)
-              ))
-
-            val expectedViewModel = updatedModel.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes.head
-
-
-            implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
-            implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForYesNoAmountPage(Some(true), Some("42.64")))
-            implicit val index: Int = 0
-
-            assertRedirectionAsExpected(relativeUrl("/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-ftcr?index=0"))
-            getViewModel mustBe Some(expectedViewModel)
-
-          }
-          "the user has selected 'Yes' as well as a valid amount (formatted), and" in {
-
-            val updatedPensionScheme = aPensionsCYAModel.incomeFromOverseasPensions.overseasIncomePensionSchemes.updated(
-              0, PensionScheme(
-                alphaTwoCode = Some("FR"),
-                alphaThreeCode = Some("FRA"),
-                pensionPaymentAmount = Some(1999.99),
-                pensionPaymentTaxPaid = Some(1999.99),
-                specialWithholdingTaxQuestion =  Some(true),
-                specialWithholdingTaxAmount =  Some(BigDecimal(1042.64)),
-                foreignTaxCreditReliefQuestion = Some(true),
-                taxableAmount = Some(1999.99)
-              ))
-
-            val updatedModel: PensionsUserData =
-              pensionsUserData(aPensionsCYAModel.copy(
-                incomeFromOverseasPensions = aPensionsCYAModel.incomeFromOverseasPensions.copy(overseasIncomePensionSchemes =
-                  updatedPensionScheme)
-              ))
-
-            val expectedViewModel = updatedModel.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes.head
-
-            implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
-            implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForYesNoAmountPage(Some(true), Some("£1,042.64")))
-            implicit val index: Int = 0
-
-            assertRedirectionAsExpected(relativeUrl("/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-ftcr?index=0"))
-            getViewModel mustBe Some(expectedViewModel)
-
-          }
-
-        }
-      }
-      "fail" when {
-        
-        val expectedContentsIndividualEN = ExpectedYesNoAmountPageContents(
-          title = "Error: Did you have Special Withholding Tax (SWT) deducted from your pension?",
-          header = "Did you have Special Withholding Tax (SWT) deducted from your pension?",
-          caption = s"Income from overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
-          radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
-          radioButtonForNo = uncheckedExpectedRadioButton("No"),
-          buttonForContinue = ExpectedButton("Continue", ""),
-          amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "", Some("For example, £193.54")),
-          errorSummarySectionOpt = Some(
-            ErrorSummarySection(
-              title = "There is a problem",
-              body = "Select yes or no if you had Special Withholding Tax deducted from your pension.",
-              link = "#value")
-          ),
-          errorAboveElementCheckSectionOpt = Some(
-            ErrorAboveElementCheckSection(
-              title = "Error: Select yes or no if you had Special Withholding Tax deducted from your pension.",
-              idOpt = Some("value")
-            )
-          ),
-          formUrl = formUrl()
-        )
-        val expectedContentsAgentEN = expectedContentsIndividualEN.copy(
-          title = "Error: Did your client have Special Withholding Tax (SWT) deducted from their pension?",
-          header = "Did your client have Special Withholding Tax (SWT) deducted from their pension?",
-          errorSummarySectionOpt = Some(ErrorSummarySection(
-            title = "There is a problem", body = "Select yes or no if your client had Special Withholding Tax deducted from their pension.", link = "#value")
-          ),
-          errorAboveElementCheckSectionOpt = Some(ErrorAboveElementCheckSection(
-            title = "Error: Select yes or no if your client had Special Withholding Tax deducted from their pension.", idOpt = Some("value"))
+      val expectedContentsIndividualEN = ExpectedYesNoAmountPageContents(
+        title = "Error: Did you have Special Withholding Tax (SWT) deducted from your pension?",
+        header = "Did you have Special Withholding Tax (SWT) deducted from your pension?",
+        caption = s"Income from overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
+        radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
+        radioButtonForNo = uncheckedExpectedRadioButton("No"),
+        buttonForContinue = ExpectedButton("Continue", ""),
+        amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "", Some("For example, £193.54")),
+        errorSummarySectionOpt = Some(
+          ErrorSummarySection(
+            title = "There is a problem",
+            body = "Select yes or no if you had Special Withholding Tax deducted from your pension.",
+            link = "#value")
+        ),
+        errorAboveElementCheckSectionOpt = Some(
+          ErrorAboveElementCheckSection(
+            title = "Error: Select yes or no if you had Special Withholding Tax deducted from your pension.",
+            idOpt = Some("value")
           )
+        ),
+        formUrl = formUrl()
+      )
+      val expectedContentsAgentEN = expectedContentsIndividualEN.copy(
+        title = "Error: Did your client have Special Withholding Tax (SWT) deducted from their pension?",
+        header = "Did your client have Special Withholding Tax (SWT) deducted from their pension?",
+        errorSummarySectionOpt = Some(ErrorSummarySection(
+          title = "There is a problem", body = "Select yes or no if your client had Special Withholding Tax deducted from their pension.", link = "#value")
+        ),
+        errorAboveElementCheckSectionOpt = Some(ErrorAboveElementCheckSection(
+          title = "Error: Select yes or no if your client had Special Withholding Tax deducted from their pension.", idOpt = Some("value"))
         )
+      )
 
-        val expectedContentsIndividualCY = ExpectedYesNoAmountPageContents(
-          title = "Error: Did you have Special Withholding Tax (SWT) deducted from your pension?",
-          header = "Did you have Special Withholding Tax (SWT) deducted from your pension?",
-          caption = s"Income from overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
-          radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
-          radioButtonForNo = uncheckedExpectedRadioButton("No"),
-          buttonForContinue = ExpectedButton("Continue", ""),
-          amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "", Some("For example, £193.54")),
-          errorSummarySectionOpt = Some(
-            ErrorSummarySection(
-              title = "There is a problem",
-              body = "Select yes or no if you had Special Withholding Tax deducted from your pension.",
-              link = "#value")
-          ),
-          errorAboveElementCheckSectionOpt = Some(
-            ErrorAboveElementCheckSection(
-              title = "Error: Select yes or no if you had Special Withholding Tax deducted from your pension.",
-              idOpt = Some("value")
-            )
-          ),
-          formUrl = formUrl()
-        )
-        val expectedContentsAgentCY = expectedContentsIndividualEN.copy(
-          title = "Error: Did your client have Special Withholding Tax (SWT) deducted from their pension?",
-          header = "Did your client have Special Withholding Tax (SWT) deducted from their pension?",
-          errorSummarySectionOpt = Some(ErrorSummarySection(
-            title = "There is a problem", body = "Select yes or no if your client had Special Withholding Tax deducted from their pension.", link = "#value")
-          ),
-          errorAboveElementCheckSectionOpt = Some(ErrorAboveElementCheckSection(
-            title = "Error: Select yes or no if your client had Special Withholding Tax deducted from their pension.", idOpt = Some("value"))
+      val expectedContentsIndividualCY = ExpectedYesNoAmountPageContents(
+        title = "Error: Did you have Special Withholding Tax (SWT) deducted from your pension?",
+        header = "Did you have Special Withholding Tax (SWT) deducted from your pension?",
+        caption = s"Income from overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
+        radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
+        radioButtonForNo = uncheckedExpectedRadioButton("No"),
+        buttonForContinue = ExpectedButton("Continue", ""),
+        amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "", Some("For example, £193.54")),
+        errorSummarySectionOpt = Some(
+          ErrorSummarySection(
+            title = "There is a problem",
+            body = "Select yes or no if you had Special Withholding Tax deducted from your pension.",
+            link = "#value")
+        ),
+        errorAboveElementCheckSectionOpt = Some(
+          ErrorAboveElementCheckSection(
+            title = "Error: Select yes or no if you had Special Withholding Tax deducted from your pension.",
+            idOpt = Some("value")
           )
+        ),
+        formUrl = formUrl()
+      )
+      val expectedContentsAgentCY = expectedContentsIndividualEN.copy(
+        title = "Error: Did your client have Special Withholding Tax (SWT) deducted from their pension?",
+        header = "Did your client have Special Withholding Tax (SWT) deducted from their pension?",
+        errorSummarySectionOpt = Some(ErrorSummarySection(
+          title = "There is a problem", body = "Select yes or no if your client had Special Withholding Tax deducted from their pension.", link = "#value")
+        ),
+        errorAboveElementCheckSectionOpt = Some(ErrorAboveElementCheckSection(
+          title = "Error: Select yes or no if your client had Special Withholding Tax deducted from their pension.", idOpt = Some("value"))
         )
+      )
 
-        def welshTitle(epc:ExpectedYesNoAmountPageContents): Option[ErrorSummarySection] =
-          epc.errorSummarySectionOpt.map(ess => ess.copy(title = "Mae problem wedi codi"))
+      def welshTitle(epc: ExpectedYesNoAmountPageContents): Option[ErrorSummarySection] =
+        epc.errorSummarySectionOpt.map(ess => ess.copy(title = "Mae problem wedi codi"))
 
 
-        "the user has no session data relevant to this page and" when {
+      "the user has no session data relevant to this page and" when {
 
-          val updatedPensionScheme = aPensionsCYAModel.incomeFromOverseasPensions.overseasIncomePensionSchemes.updated(
-            0, PensionScheme(
-              alphaTwoCode = Some("FR"),
-              alphaThreeCode = Some("FRA"),
-              pensionPaymentAmount = Some(1999.99),
-              pensionPaymentTaxPaid = Some(1999.99),
-              specialWithholdingTaxQuestion = None,
-              specialWithholdingTaxAmount = None,
-              foreignTaxCreditReliefQuestion = Some(false),
-              taxableAmount = Some(1999.99)
-            ))
+        val updatedPensionScheme = aPensionsCYAModel.incomeFromOverseasPensions.overseasIncomePensionSchemes.updated(
+          0, PensionScheme(
+            alphaTwoCode = Some("FR"),
+            alphaThreeCode = Some("FRA"),
+            pensionPaymentAmount = Some(1999.99),
+            pensionPaymentTaxPaid = Some(1999.99),
+            specialWithholdingTaxQuestion = None,
+            specialWithholdingTaxAmount = None,
+            foreignTaxCreditReliefQuestion = Some(false),
+            taxableAmount = Some(1999.99)
+          ))
 
-          val sessionData: PensionsUserData =
-            pensionsUserData(aPensionsCYAModel.copy(
-              incomeFromOverseasPensions = aPensionsCYAModel.incomeFromOverseasPensions.copy(overseasIncomePensionSchemes =
-                updatedPensionScheme)
-            ))
+        val sessionData: PensionsUserData =
+          pensionsUserData(aPensionsCYAModel.copy(
+            incomeFromOverseasPensions = aPensionsCYAModel.incomeFromOverseasPensions.copy(overseasIncomePensionSchemes =
+              updatedPensionScheme)
+          ))
 
-          val expectedViewModel = sessionData.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes.head
-          implicit val index: Int = 0
-          
-          
-          "the user has selected neither 'Yes' nor 'No' and" when {
-            scenarioNameForIndividualAndEnglish in {
+        val expectedViewModel = sessionData.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes.head
+        implicit val index: Int = 0
 
-              implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
-              implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForYesNoAmountPage(None, None))
 
-              assertSWTPageAsExpected(BAD_REQUEST, expectedContentsIndividualEN)
-              getViewModel mustBe Some(expectedViewModel)
+        "the user has selected neither 'Yes' nor 'No' and" when {
+          scenarioNameForIndividualAndEnglish in {
 
-            }
-            scenarioNameForIndividualAndWelsh ignore {
+            implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
+            implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForYesNoAmountPage(None, None))
 
-              implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
-              implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForYesNoAmountPage(None, None))
+            assertSWTPageAsExpected(BAD_REQUEST, expectedContentsIndividualEN)
+            getViewModel mustBe Some(expectedViewModel)
 
-              assertSWTPageAsExpected(BAD_REQUEST, expectedContentsIndividualCY.copy(errorSummarySectionOpt = welshTitle(expectedContentsIndividualCY)))
-              getViewModel mustBe Some(expectedViewModel)
-
-            }
-            scenarioNameForAgentAndEnglish in {
-
-              implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
-              implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForYesNoAmountPage(None, None))
-
-              assertSWTPageAsExpected(BAD_REQUEST, expectedContentsAgentEN)
-              getViewModel mustBe Some(expectedViewModel)
-
-            }
-            scenarioNameForAgentAndWelsh ignore {
-
-              implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
-              implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForYesNoAmountPage(None, None))
-
-              assertSWTPageAsExpected(BAD_REQUEST, expectedContentsAgentCY.copy(errorSummarySectionOpt = welshTitle(expectedContentsAgentCY)))
-              getViewModel mustBe Some(expectedViewModel)
-            }
           }
-          
-          "the user has selected 'Yes' but has provided an empty amount, and" when {
-            
-            val expContentsIndividualEN = expectedContentsIndividualEN.copy(
-              radioButtonForYes = checkedExpectedRadioButton("Yes"),
-              errorSummarySectionOpt = Some(ErrorSummarySection(
-                title = "There is a problem", body = "Enter an amount in pounds for the amount of Special Withholding Tax deducted",link = "#amount-2")
-              ),
-               errorAboveElementCheckSectionOpt = Some( ErrorAboveElementCheckSection(
-                 title = "Error: Enter an amount in pounds for the amount of Special Withholding Tax deducted", idOpt = Some("amount-2")))
-            )
-            val expContentsAgentEN = expContentsIndividualEN.copy(
-              title = "Error: Did your client have Special Withholding Tax (SWT) deducted from their pension?",
-              header = "Did your client have Special Withholding Tax (SWT) deducted from their pension?",
-            )
+          scenarioNameForIndividualAndWelsh ignore {
 
-            val expContentsIndividualCY = expectedContentsIndividualEN.copy(
-              radioButtonForYes = checkedExpectedRadioButton("Yes"),
-              errorSummarySectionOpt = Some(ErrorSummarySection(
-                title = "There is a problem", body = "Enter an amount in pounds for the amount of Special Withholding Tax deducted",link = "#amount-2")
-              ),
-              errorAboveElementCheckSectionOpt = Some( ErrorAboveElementCheckSection(
-                title = "Error: Enter an amount in pounds for the amount of Special Withholding Tax deducted", idOpt = Some("amount-2")))
-            )
-            val expContentsAgentCY = expContentsIndividualEN.copy(
-              title = "Error: Did your client have Special Withholding Tax (SWT) deducted from their pension?",
-              header = "Did your client have Special Withholding Tax (SWT) deducted from their pension?",
-            )
-            
-            scenarioNameForIndividualAndEnglish in {
+            implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
+            implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForYesNoAmountPage(None, None))
 
-              implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
-              implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForYesNoAmountPage(Some(true), Some("")))
-              assertSWTPageAsExpected(BAD_REQUEST, expContentsIndividualEN)
-              getViewModel mustBe Some(expectedViewModel)
-            }
-            
-            scenarioNameForIndividualAndWelsh ignore {
+            assertSWTPageAsExpected(BAD_REQUEST, expectedContentsIndividualCY.copy(errorSummarySectionOpt = welshTitle(expectedContentsIndividualCY)))
+            getViewModel mustBe Some(expectedViewModel)
 
-              implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
-              implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForYesNoAmountPage(Some(true), None))
-
-              assertSWTPageAsExpected(BAD_REQUEST, expContentsIndividualCY.copy(errorSummarySectionOpt = welshTitle(expContentsIndividualCY)))
-              getViewModel mustBe Some(expectedViewModel)
-            }
-            
-            scenarioNameForAgentAndEnglish in {
-
-              implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
-              implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForYesNoAmountPage(Some(true), None))
-
-              assertSWTPageAsExpected(BAD_REQUEST, expContentsAgentEN)
-              getViewModel mustBe Some(expectedViewModel)
-            }
-            
-            scenarioNameForAgentAndWelsh ignore {
-
-              implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
-              implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForYesNoAmountPage(Some(true), None))
-
-              assertSWTPageAsExpected(BAD_REQUEST, expContentsAgentCY.copy(errorSummarySectionOpt = welshTitle(expContentsAgentCY)), isWelsh = true)
-              getViewModel mustBe Some(expectedViewModel)
-            }
-            
           }
-          "the user has selected 'Yes' but has provided an amount of an invalid format, and" when {
+          scenarioNameForAgentAndEnglish in {
 
-            val expContentsIndividualEN = expectedContentsIndividualEN.copy(
-              radioButtonForYes = checkedExpectedRadioButton("Yes"),
-              amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "x2.64", Some("For example, £193.54")),
-              errorSummarySectionOpt = Some(ErrorSummarySection(
-                title = "There is a problem", body = "Enter the amount of Special Withholding Tax deducted in the correct format",link = "#amount-2")
-              ),
-              errorAboveElementCheckSectionOpt = Some( ErrorAboveElementCheckSection(
-                title = "Error: Enter the amount of Special Withholding Tax deducted in the correct format", idOpt = Some("amount-2")))
-            )
-            val expContentsAgentEN = expContentsIndividualEN.copy(
-              title = "Error: Did your client have Special Withholding Tax (SWT) deducted from their pension?",
-              header = "Did your client have Special Withholding Tax (SWT) deducted from their pension?",
-            )
+            implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
+            implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForYesNoAmountPage(None, None))
 
-            val expContentsIndividualCY = expectedContentsIndividualCY.copy(
-              radioButtonForYes = checkedExpectedRadioButton("Yes"),
-              amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "x2.64", Some("For example, £193.54")),
-              errorSummarySectionOpt = Some(ErrorSummarySection(
-                title = "There is a problem", body = "Enter the amount of Special Withholding Tax deducted in the correct format",link = "#amount-2")
-              ),
-              errorAboveElementCheckSectionOpt = Some( ErrorAboveElementCheckSection(
-                title = "Error: Enter the amount of Special Withholding Tax deducted in the correct format", idOpt = Some("amount-2")))
-            )
-            val expContentsAgentCY = expContentsIndividualCY.copy(
-              title = "Error: Did your client have Special Withholding Tax (SWT) deducted from their pension?",
-              header = "Did your client have Special Withholding Tax (SWT) deducted from their pension?",
-            )
-            
-            scenarioNameForIndividualAndEnglish in {
+            assertSWTPageAsExpected(BAD_REQUEST, expectedContentsAgentEN)
+            getViewModel mustBe Some(expectedViewModel)
 
-              implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
-              implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForYesNoAmountPage(Some(true), Some("x2.64")))
-
-              assertSWTPageAsExpected(BAD_REQUEST, expContentsIndividualEN)
-              getViewModel mustBe Some(expectedViewModel)
-            }
-            
-            scenarioNameForIndividualAndWelsh ignore {
-
-              implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
-              implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForYesNoAmountPage(Some(true), Some("x2.64")))
-
-              assertSWTPageAsExpected(BAD_REQUEST, expContentsIndividualCY.copy(errorSummarySectionOpt = welshTitle(expContentsIndividualCY)))
-              getViewModel mustBe Some(expectedViewModel)
-            }
-            
-            scenarioNameForAgentAndEnglish in {
-
-              implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
-              implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForYesNoAmountPage(Some(true), Some("x2.64")))
-
-              assertSWTPageAsExpected(BAD_REQUEST, expContentsAgentEN)
-              getViewModel mustBe Some(expectedViewModel)
-
-            }
-            scenarioNameForAgentAndWelsh ignore {
-
-              implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
-              implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForYesNoAmountPage(Some(true), Some("x2.64")))
-
-              assertSWTPageAsExpected(BAD_REQUEST, expContentsAgentCY.copy(errorSummarySectionOpt = welshTitle(expContentsAgentEN)), isWelsh = true)
-              getViewModel mustBe Some(expectedViewModel)
-
-            }
           }
-          "the user has selected 'Yes' but has provided an amount of a negative format, and" when {
+          scenarioNameForAgentAndWelsh ignore {
 
-            val expContentsIndividualEN = expectedContentsIndividualEN.copy(
-              radioButtonForYes = checkedExpectedRadioButton("Yes"),
-              amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "-42.64", Some("For example, £193.54")),
-              errorSummarySectionOpt = Some(ErrorSummarySection(
-                title = "There is a problem", body = "Enter the amount of Special Withholding Tax deducted in the correct format",link = "#amount-2")
-              ),
-              errorAboveElementCheckSectionOpt = Some( ErrorAboveElementCheckSection(
-                title = "Error: Enter the amount of Special Withholding Tax deducted in the correct format", idOpt = Some("amount-2")))
-            )
-            val expContentsAgentEN = expContentsIndividualEN.copy(
-              title = "Error: Did your client have Special Withholding Tax (SWT) deducted from their pension?",
-              header = "Did your client have Special Withholding Tax (SWT) deducted from their pension?",
-            )
+            implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
+            implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForYesNoAmountPage(None, None))
 
-            val expContentsIndividualCY = expectedContentsIndividualCY.copy(
-              radioButtonForYes = checkedExpectedRadioButton("Yes"),
-              amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "-42.64", Some("For example, £193.54")),
-              errorSummarySectionOpt = Some(ErrorSummarySection(
-                title = "There is a problem", body = "Enter the amount of Special Withholding Tax deducted in the correct format",link = "#amount-2")
-              ),
-              errorAboveElementCheckSectionOpt = Some( ErrorAboveElementCheckSection(
-                title = "Error: Enter the amount of Special Withholding Tax deducted in the correct format", idOpt = Some("amount-2")))
-            )
-            val expContentsAgentCY = expContentsIndividualCY.copy(
-              title = "Error: Did your client have Special Withholding Tax (SWT) deducted from their pension?",
-              header = "Did your client have Special Withholding Tax (SWT) deducted from their pension?",
-            )
-            
-            scenarioNameForIndividualAndEnglish in {
-
-              implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
-              implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForYesNoAmountPage(Some(true), Some("-42.64")))
-
-              assertSWTPageAsExpected(BAD_REQUEST, expContentsIndividualEN)
-              getViewModel mustBe Some(expectedViewModel)
-            }
-            
-            scenarioNameForIndividualAndWelsh ignore {
-
-              implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
-              implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForYesNoAmountPage(Some(true), Some("-42.64")))
-
-              assertSWTPageAsExpected(BAD_REQUEST, expContentsIndividualCY.copy(errorSummarySectionOpt = welshTitle(expContentsIndividualCY)))
-              getViewModel mustBe Some(expectedViewModel)
-
-            }
-            scenarioNameForAgentAndEnglish in {
-
-              implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
-              implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForYesNoAmountPage(Some(true), Some("-42.64")))
-
-              assertSWTPageAsExpected(BAD_REQUEST, expContentsAgentEN)
-              getViewModel mustBe Some(expectedViewModel)
-            }
-            
-            scenarioNameForAgentAndWelsh ignore {
-
-              implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
-              implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForYesNoAmountPage(Some(true), Some("-42.64")))
-
-              assertSWTPageAsExpected(BAD_REQUEST, expContentsAgentCY.copy(errorSummarySectionOpt = welshTitle(expContentsAgentCY)), isWelsh = true)
-              getViewModel mustBe Some(expectedViewModel)
-            }
-            
+            assertSWTPageAsExpected(BAD_REQUEST, expectedContentsAgentCY.copy(errorSummarySectionOpt = welshTitle(expectedContentsAgentCY)))
+            getViewModel mustBe Some(expectedViewModel)
           }
-          "the user has selected 'Yes' but has provided an excessive amount, and" when {
+        }
 
-            val expContentsIndividualEN = expectedContentsIndividualEN.copy(
-              radioButtonForYes = checkedExpectedRadioButton("Yes"),
-              amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "100000000002", Some("For example, £193.54")),
-              errorSummarySectionOpt = Some(ErrorSummarySection(
-                title = "There is a problem", body = "Amount of Special Withholding Tax deducted must be less than £100,000,000,000",link = "#amount-2")
-              ),
-              errorAboveElementCheckSectionOpt = Some( ErrorAboveElementCheckSection(
-                title = "Error: Amount of Special Withholding Tax deducted must be less than £100,000,000,000", idOpt = Some("amount-2")))
-            )
-            val expContentsAgentEN = expContentsIndividualEN.copy(
-              title = "Error: Did your client have Special Withholding Tax (SWT) deducted from their pension?",
-              header = "Did your client have Special Withholding Tax (SWT) deducted from their pension?",
-            )
+        "the user has selected 'Yes' but has provided an empty amount, and" when {
 
-            val expContentsIndividualCY = expectedContentsIndividualCY.copy(
-              radioButtonForYes = checkedExpectedRadioButton("Yes"),
-              amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "100000000002", Some("For example, £193.54")),
-              errorSummarySectionOpt = Some(ErrorSummarySection(
-                title = "There is a problem", body = "Amount of Special Withholding Tax deducted must be less than £100,000,000,000",link = "#amount-2")
-              ),
-              errorAboveElementCheckSectionOpt = Some( ErrorAboveElementCheckSection(
-                title = "Error: Amount of Special Withholding Tax deducted must be less than £100,000,000,000", idOpt = Some("amount-2")))
-            )
-            val expContentsAgentCY = expContentsIndividualCY.copy(
-              title = "Error: Did your client have Special Withholding Tax (SWT) deducted from their pension?",
-              header = "Did your client have Special Withholding Tax (SWT) deducted from their pension?",
-            )
-            
-            scenarioNameForIndividualAndEnglish in {
+          val expContentsIndividualEN = expectedContentsIndividualEN.copy(
+            radioButtonForYes = checkedExpectedRadioButton("Yes"),
+            errorSummarySectionOpt = Some(ErrorSummarySection(
+              title = "There is a problem", body = "Enter an amount in pounds for the amount of Special Withholding Tax deducted", link = "#amount-2")
+            ),
+            errorAboveElementCheckSectionOpt = Some(ErrorAboveElementCheckSection(
+              title = "Error: Enter an amount in pounds for the amount of Special Withholding Tax deducted", idOpt = Some("amount-2")))
+          )
+          val expContentsAgentEN = expContentsIndividualEN.copy(
+            title = "Error: Did your client have Special Withholding Tax (SWT) deducted from their pension?",
+            header = "Did your client have Special Withholding Tax (SWT) deducted from their pension?",
+          )
 
-              implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
-              implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForYesNoAmountPage(Some(true), Some("100000000002")))
+          val expContentsIndividualCY = expectedContentsIndividualEN.copy(
+            radioButtonForYes = checkedExpectedRadioButton("Yes"),
+            errorSummarySectionOpt = Some(ErrorSummarySection(
+              title = "There is a problem", body = "Enter an amount in pounds for the amount of Special Withholding Tax deducted", link = "#amount-2")
+            ),
+            errorAboveElementCheckSectionOpt = Some(ErrorAboveElementCheckSection(
+              title = "Error: Enter an amount in pounds for the amount of Special Withholding Tax deducted", idOpt = Some("amount-2")))
+          )
+          val expContentsAgentCY = expContentsIndividualEN.copy(
+            title = "Error: Did your client have Special Withholding Tax (SWT) deducted from their pension?",
+            header = "Did your client have Special Withholding Tax (SWT) deducted from their pension?",
+          )
 
-              assertSWTPageAsExpected(BAD_REQUEST, expContentsIndividualEN)
-              getViewModel mustBe Some(expectedViewModel)
-            }
-            
-            scenarioNameForIndividualAndWelsh ignore {
+          scenarioNameForIndividualAndEnglish in {
 
-              implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
-              implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForYesNoAmountPage(Some(true), Some("100000000002")))
-
-              assertSWTPageAsExpected(BAD_REQUEST, expContentsIndividualCY.copy(errorSummarySectionOpt = welshTitle(expContentsIndividualCY)))
-              getViewModel mustBe Some(expectedViewModel)
-            }
-            
-            scenarioNameForAgentAndEnglish in {
-
-              implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
-              implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForYesNoAmountPage(Some(true), Some("100000000002")))
-
-              assertSWTPageAsExpected(BAD_REQUEST, expContentsAgentEN)
-              getViewModel mustBe Some(expectedViewModel)
-            }
-            
-            scenarioNameForAgentAndWelsh ignore {
-
-              implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
-              implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForYesNoAmountPage(Some(true), Some("100000000002")))
-
-              assertSWTPageAsExpected(BAD_REQUEST,
-                expContentsAgentCY.copy(errorSummarySectionOpt = welshTitle(expContentsAgentCY)), isWelsh = true)
-              getViewModel mustBe Some(expectedViewModel)
-            }
+            implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
+            implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForYesNoAmountPage(Some(true), Some("")))
+            assertSWTPageAsExpected(BAD_REQUEST, expContentsIndividualEN)
+            getViewModel mustBe Some(expectedViewModel)
           }
 
-          "the user has selected 'Yes' but has provided a zero for amount, and" when {
+          scenarioNameForIndividualAndWelsh ignore {
 
-            val expContentsIndividualEN = expectedContentsIndividualEN.copy(
-              radioButtonForYes = checkedExpectedRadioButton("Yes"),
-              amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "0", Some("For example, £193.54")),
-              errorSummarySectionOpt = Some(ErrorSummarySection(
-                title = "There is a problem", body = "Enter an amount greater than zero",link = "#amount-2")
-              ),
-              errorAboveElementCheckSectionOpt = Some( ErrorAboveElementCheckSection(
-                title = "Error: Enter an amount greater than zero", idOpt = Some("amount-2")))
-            )
-            val expContentsAgentEN = expContentsIndividualEN.copy(
-              title = "Error: Did your client have Special Withholding Tax (SWT) deducted from their pension?",
-              header = "Did your client have Special Withholding Tax (SWT) deducted from their pension?",
-            )
+            implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
+            implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForYesNoAmountPage(Some(true), None))
 
-            val expContentsIndividualCY = expectedContentsIndividualCY.copy(
-              radioButtonForYes = checkedExpectedRadioButton("Yes"),
-              amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "0", Some("For example, £193.54")),
-              errorSummarySectionOpt = Some(ErrorSummarySection(
-                title = "There is a problem", body = "Enter an amount greater than zero",link = "#amount-2")
-              ),
-              errorAboveElementCheckSectionOpt = Some( ErrorAboveElementCheckSection(
-                title = "Error: Enter an amount greater than zero", idOpt = Some("amount-2")))
-            )
-            val expContentsAgentCY = expContentsIndividualCY.copy(
-              title = "Error: Did your client have Special Withholding Tax (SWT) deducted from their pension?",
-              header = "Did your client have Special Withholding Tax (SWT) deducted from their pension?",
-            )
-            
-            scenarioNameForIndividualAndEnglish in {
+            assertSWTPageAsExpected(BAD_REQUEST, expContentsIndividualCY.copy(errorSummarySectionOpt = welshTitle(expContentsIndividualCY)))
+            getViewModel mustBe Some(expectedViewModel)
+          }
 
-              implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
-              implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForYesNoAmountPage(Some(true), Some("0")))
+          scenarioNameForAgentAndEnglish in {
 
-              assertSWTPageAsExpected(BAD_REQUEST, expContentsIndividualEN)
-              getViewModel mustBe Some(expectedViewModel)
-            }
-            
-            scenarioNameForIndividualAndWelsh ignore {
+            implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
+            implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForYesNoAmountPage(Some(true), None))
 
-              implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
-              implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForYesNoAmountPage(Some(true), Some("0")))
-              
-              assertSWTPageAsExpected(BAD_REQUEST, expContentsIndividualCY
-                .copy(errorSummarySectionOpt = welshTitle(expContentsIndividualCY)), isWelsh = true)
-              getViewModel mustBe Some(expectedViewModel)
-            }
-            
-            scenarioNameForAgentAndEnglish in {
+            assertSWTPageAsExpected(BAD_REQUEST, expContentsAgentEN)
+            getViewModel mustBe Some(expectedViewModel)
+          }
 
-              implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
-              implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForYesNoAmountPage(Some(true), Some("0")))
-              
-              assertSWTPageAsExpected(BAD_REQUEST, expContentsAgentEN)
-              getViewModel mustBe Some(expectedViewModel)
-            }
-            
-            scenarioNameForAgentAndWelsh ignore {
+          scenarioNameForAgentAndWelsh ignore {
 
-              implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
-              implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForYesNoAmountPage(Some(true), Some("0")))
+            implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
+            implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForYesNoAmountPage(Some(true), None))
 
-              assertSWTPageAsExpected(BAD_REQUEST,
-                expContentsAgentCY.copy(errorSummarySectionOpt = welshTitle(expContentsAgentCY)), isWelsh = true)
-              getViewModel mustBe Some(expectedViewModel)
-            }
+            assertSWTPageAsExpected(BAD_REQUEST, expContentsAgentCY.copy(errorSummarySectionOpt = welshTitle(expContentsAgentCY)), isWelsh = true)
+            getViewModel mustBe Some(expectedViewModel)
+          }
+
+        }
+        "the user has selected 'Yes' but has provided an amount of an invalid format, and" when {
+
+          val expContentsIndividualEN = expectedContentsIndividualEN.copy(
+            radioButtonForYes = checkedExpectedRadioButton("Yes"),
+            amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "x2.64", Some("For example, £193.54")),
+            errorSummarySectionOpt = Some(ErrorSummarySection(
+              title = "There is a problem", body = "Enter the amount of Special Withholding Tax deducted in the correct format", link = "#amount-2")
+            ),
+            errorAboveElementCheckSectionOpt = Some(ErrorAboveElementCheckSection(
+              title = "Error: Enter the amount of Special Withholding Tax deducted in the correct format", idOpt = Some("amount-2")))
+          )
+          val expContentsAgentEN = expContentsIndividualEN.copy(
+            title = "Error: Did your client have Special Withholding Tax (SWT) deducted from their pension?",
+            header = "Did your client have Special Withholding Tax (SWT) deducted from their pension?",
+          )
+
+          val expContentsIndividualCY = expectedContentsIndividualCY.copy(
+            radioButtonForYes = checkedExpectedRadioButton("Yes"),
+            amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "x2.64", Some("For example, £193.54")),
+            errorSummarySectionOpt = Some(ErrorSummarySection(
+              title = "There is a problem", body = "Enter the amount of Special Withholding Tax deducted in the correct format", link = "#amount-2")
+            ),
+            errorAboveElementCheckSectionOpt = Some(ErrorAboveElementCheckSection(
+              title = "Error: Enter the amount of Special Withholding Tax deducted in the correct format", idOpt = Some("amount-2")))
+          )
+          val expContentsAgentCY = expContentsIndividualCY.copy(
+            title = "Error: Did your client have Special Withholding Tax (SWT) deducted from their pension?",
+            header = "Did your client have Special Withholding Tax (SWT) deducted from their pension?",
+          )
+
+          scenarioNameForIndividualAndEnglish in {
+
+            implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
+            implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForYesNoAmountPage(Some(true), Some("x2.64")))
+
+            assertSWTPageAsExpected(BAD_REQUEST, expContentsIndividualEN)
+            getViewModel mustBe Some(expectedViewModel)
+          }
+
+          scenarioNameForIndividualAndWelsh ignore {
+
+            implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
+            implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForYesNoAmountPage(Some(true), Some("x2.64")))
+
+            assertSWTPageAsExpected(BAD_REQUEST, expContentsIndividualCY.copy(errorSummarySectionOpt = welshTitle(expContentsIndividualCY)))
+            getViewModel mustBe Some(expectedViewModel)
+          }
+
+          scenarioNameForAgentAndEnglish in {
+
+            implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
+            implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForYesNoAmountPage(Some(true), Some("x2.64")))
+
+            assertSWTPageAsExpected(BAD_REQUEST, expContentsAgentEN)
+            getViewModel mustBe Some(expectedViewModel)
+
+          }
+          scenarioNameForAgentAndWelsh ignore {
+
+            implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
+            implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForYesNoAmountPage(Some(true), Some("x2.64")))
+
+            assertSWTPageAsExpected(BAD_REQUEST, expContentsAgentCY.copy(errorSummarySectionOpt = welshTitle(expContentsAgentEN)), isWelsh = true)
+            getViewModel mustBe Some(expectedViewModel)
+
+          }
+        }
+        "the user has selected 'Yes' but has provided an amount of a negative format, and" when {
+
+          val expContentsIndividualEN = expectedContentsIndividualEN.copy(
+            radioButtonForYes = checkedExpectedRadioButton("Yes"),
+            amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "-42.64", Some("For example, £193.54")),
+            errorSummarySectionOpt = Some(ErrorSummarySection(
+              title = "There is a problem", body = "Enter the amount of Special Withholding Tax deducted in the correct format", link = "#amount-2")
+            ),
+            errorAboveElementCheckSectionOpt = Some(ErrorAboveElementCheckSection(
+              title = "Error: Enter the amount of Special Withholding Tax deducted in the correct format", idOpt = Some("amount-2")))
+          )
+          val expContentsAgentEN = expContentsIndividualEN.copy(
+            title = "Error: Did your client have Special Withholding Tax (SWT) deducted from their pension?",
+            header = "Did your client have Special Withholding Tax (SWT) deducted from their pension?",
+          )
+
+          val expContentsIndividualCY = expectedContentsIndividualCY.copy(
+            radioButtonForYes = checkedExpectedRadioButton("Yes"),
+            amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "-42.64", Some("For example, £193.54")),
+            errorSummarySectionOpt = Some(ErrorSummarySection(
+              title = "There is a problem", body = "Enter the amount of Special Withholding Tax deducted in the correct format", link = "#amount-2")
+            ),
+            errorAboveElementCheckSectionOpt = Some(ErrorAboveElementCheckSection(
+              title = "Error: Enter the amount of Special Withholding Tax deducted in the correct format", idOpt = Some("amount-2")))
+          )
+          val expContentsAgentCY = expContentsIndividualCY.copy(
+            title = "Error: Did your client have Special Withholding Tax (SWT) deducted from their pension?",
+            header = "Did your client have Special Withholding Tax (SWT) deducted from their pension?",
+          )
+
+          scenarioNameForIndividualAndEnglish in {
+
+            implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
+            implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForYesNoAmountPage(Some(true), Some("-42.64")))
+
+            assertSWTPageAsExpected(BAD_REQUEST, expContentsIndividualEN)
+            getViewModel mustBe Some(expectedViewModel)
+          }
+
+          scenarioNameForIndividualAndWelsh ignore {
+
+            implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
+            implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForYesNoAmountPage(Some(true), Some("-42.64")))
+
+            assertSWTPageAsExpected(BAD_REQUEST, expContentsIndividualCY.copy(errorSummarySectionOpt = welshTitle(expContentsIndividualCY)))
+            getViewModel mustBe Some(expectedViewModel)
+
+          }
+          scenarioNameForAgentAndEnglish in {
+
+            implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
+            implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForYesNoAmountPage(Some(true), Some("-42.64")))
+
+            assertSWTPageAsExpected(BAD_REQUEST, expContentsAgentEN)
+            getViewModel mustBe Some(expectedViewModel)
+          }
+
+          scenarioNameForAgentAndWelsh ignore {
+
+            implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
+            implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForYesNoAmountPage(Some(true), Some("-42.64")))
+
+            assertSWTPageAsExpected(BAD_REQUEST, expContentsAgentCY.copy(errorSummarySectionOpt = welshTitle(expContentsAgentCY)), isWelsh = true)
+            getViewModel mustBe Some(expectedViewModel)
+          }
+
+        }
+        "the user has selected 'Yes' but has provided an excessive amount, and" when {
+
+          val expContentsIndividualEN = expectedContentsIndividualEN.copy(
+            radioButtonForYes = checkedExpectedRadioButton("Yes"),
+            amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "100000000002", Some("For example, £193.54")),
+            errorSummarySectionOpt = Some(ErrorSummarySection(
+              title = "There is a problem", body = "Amount of Special Withholding Tax deducted must be less than £100,000,000,000", link = "#amount-2")
+            ),
+            errorAboveElementCheckSectionOpt = Some(ErrorAboveElementCheckSection(
+              title = "Error: Amount of Special Withholding Tax deducted must be less than £100,000,000,000", idOpt = Some("amount-2")))
+          )
+          val expContentsAgentEN = expContentsIndividualEN.copy(
+            title = "Error: Did your client have Special Withholding Tax (SWT) deducted from their pension?",
+            header = "Did your client have Special Withholding Tax (SWT) deducted from their pension?",
+          )
+
+          val expContentsIndividualCY = expectedContentsIndividualCY.copy(
+            radioButtonForYes = checkedExpectedRadioButton("Yes"),
+            amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "100000000002", Some("For example, £193.54")),
+            errorSummarySectionOpt = Some(ErrorSummarySection(
+              title = "There is a problem", body = "Amount of Special Withholding Tax deducted must be less than £100,000,000,000", link = "#amount-2")
+            ),
+            errorAboveElementCheckSectionOpt = Some(ErrorAboveElementCheckSection(
+              title = "Error: Amount of Special Withholding Tax deducted must be less than £100,000,000,000", idOpt = Some("amount-2")))
+          )
+          val expContentsAgentCY = expContentsIndividualCY.copy(
+            title = "Error: Did your client have Special Withholding Tax (SWT) deducted from their pension?",
+            header = "Did your client have Special Withholding Tax (SWT) deducted from their pension?",
+          )
+
+          scenarioNameForIndividualAndEnglish in {
+
+            implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
+            implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForYesNoAmountPage(Some(true), Some("100000000002")))
+
+            assertSWTPageAsExpected(BAD_REQUEST, expContentsIndividualEN)
+            getViewModel mustBe Some(expectedViewModel)
+          }
+
+          scenarioNameForIndividualAndWelsh ignore {
+
+            implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
+            implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForYesNoAmountPage(Some(true), Some("100000000002")))
+
+            assertSWTPageAsExpected(BAD_REQUEST, expContentsIndividualCY.copy(errorSummarySectionOpt = welshTitle(expContentsIndividualCY)))
+            getViewModel mustBe Some(expectedViewModel)
+          }
+
+          scenarioNameForAgentAndEnglish in {
+
+            implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
+            implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForYesNoAmountPage(Some(true), Some("100000000002")))
+
+            assertSWTPageAsExpected(BAD_REQUEST, expContentsAgentEN)
+            getViewModel mustBe Some(expectedViewModel)
+          }
+
+          scenarioNameForAgentAndWelsh ignore {
+
+            implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
+            implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForYesNoAmountPage(Some(true), Some("100000000002")))
+
+            assertSWTPageAsExpected(BAD_REQUEST,
+              expContentsAgentCY.copy(errorSummarySectionOpt = welshTitle(expContentsAgentCY)), isWelsh = true)
+            getViewModel mustBe Some(expectedViewModel)
+          }
+        }
+
+        "the user has selected 'Yes' but has provided a zero for amount, and" when {
+
+          val expContentsIndividualEN = expectedContentsIndividualEN.copy(
+            radioButtonForYes = checkedExpectedRadioButton("Yes"),
+            amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "0", Some("For example, £193.54")),
+            errorSummarySectionOpt = Some(ErrorSummarySection(
+              title = "There is a problem", body = "Enter an amount greater than zero", link = "#amount-2")
+            ),
+            errorAboveElementCheckSectionOpt = Some(ErrorAboveElementCheckSection(
+              title = "Error: Enter an amount greater than zero", idOpt = Some("amount-2")))
+          )
+          val expContentsAgentEN = expContentsIndividualEN.copy(
+            title = "Error: Did your client have Special Withholding Tax (SWT) deducted from their pension?",
+            header = "Did your client have Special Withholding Tax (SWT) deducted from their pension?",
+          )
+
+          val expContentsIndividualCY = expectedContentsIndividualCY.copy(
+            radioButtonForYes = checkedExpectedRadioButton("Yes"),
+            amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "0", Some("For example, £193.54")),
+            errorSummarySectionOpt = Some(ErrorSummarySection(
+              title = "There is a problem", body = "Enter an amount greater than zero", link = "#amount-2")
+            ),
+            errorAboveElementCheckSectionOpt = Some(ErrorAboveElementCheckSection(
+              title = "Error: Enter an amount greater than zero", idOpt = Some("amount-2")))
+          )
+          val expContentsAgentCY = expContentsIndividualCY.copy(
+            title = "Error: Did your client have Special Withholding Tax (SWT) deducted from their pension?",
+            header = "Did your client have Special Withholding Tax (SWT) deducted from their pension?",
+          )
+
+          scenarioNameForIndividualAndEnglish in {
+
+            implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
+            implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForYesNoAmountPage(Some(true), Some("0")))
+
+            assertSWTPageAsExpected(BAD_REQUEST, expContentsIndividualEN)
+            getViewModel mustBe Some(expectedViewModel)
+          }
+
+          scenarioNameForIndividualAndWelsh ignore {
+
+            implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
+            implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForYesNoAmountPage(Some(true), Some("0")))
+
+            assertSWTPageAsExpected(BAD_REQUEST, expContentsIndividualCY
+              .copy(errorSummarySectionOpt = welshTitle(expContentsIndividualCY)), isWelsh = true)
+            getViewModel mustBe Some(expectedViewModel)
+          }
+
+          scenarioNameForAgentAndEnglish in {
+
+            implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
+            implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForYesNoAmountPage(Some(true), Some("0")))
+
+            assertSWTPageAsExpected(BAD_REQUEST, expContentsAgentEN)
+            getViewModel mustBe Some(expectedViewModel)
+          }
+
+          scenarioNameForAgentAndWelsh ignore {
+
+            implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
+            implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForYesNoAmountPage(Some(true), Some("0")))
+
+            assertSWTPageAsExpected(BAD_REQUEST,
+              expContentsAgentCY.copy(errorSummarySectionOpt = welshTitle(expContentsAgentCY)), isWelsh = true)
+            getViewModel mustBe Some(expectedViewModel)
           }
         }
       }
     }
   }
 
-  private def getViewModel(implicit userConfig: UserConfig, index : Int): Option[PensionScheme] =
+  private def getViewModel(implicit userConfig: UserConfig, index: Int): Option[PensionScheme] =
     loadPensionUserData.map(_.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes(index))
 
   private def formUrl(index: Int = 0): Option[String] =
@@ -1184,9 +1020,9 @@ class SpecialWithholdingTaxControllerISpec   extends YesNoAmountControllerSpec("
   private def getMap(index: Int): Map[String, String] = {
     Map("index" -> index.toString)
   }
-  
+
   private def assertSWTPageAsExpected(expectedStatusCode: Int, expectedPageContents: ExpectedYesNoAmountPageContents, isWelsh: Boolean = false)
-                                      (implicit userConfig: UserConfig, response: WSResponse): Unit = {
+                                     (implicit userConfig: UserConfig, response: WSResponse): Unit = {
     assertPageAsExpected(expectedStatusCode, expectedPageContents)(userConfig, response, isWelsh)
   }
 

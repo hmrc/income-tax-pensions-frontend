@@ -16,14 +16,16 @@
 
 package services.redirects
 
-import controllers.pensions.paymentsIntoPensions.routes.ReliefAtSourcePensionsController
+import controllers.pensions.paymentsIntoPensions.routes.{PaymentsIntoPensionsCYAController, ReliefAtSourcePensionsController}
 import models.mongo.PensionsCYAModel
-import models.pension.reliefs.PaymentsIntoPensionViewModel
-import play.api.mvc.Result
+import models.pension.reliefs.PaymentsIntoPensionsViewModel
 import play.api.mvc.Results.Redirect
+import play.api.mvc.{Call, Result}
 
 
 object PaymentsIntoPensionsRedirects { //scalastyle:off magic.number
+
+  def cyaPageCall(taxYear: Int): Call = PaymentsIntoPensionsCYAController.show(taxYear)
 
   def journeyCheck(currentPage: PaymentsIntoPensionPages, cya: PensionsCYAModel, taxYear: Int): Option[Result] = {
     val pIP = cya.paymentsIntoPension
@@ -33,65 +35,65 @@ object PaymentsIntoPensionsRedirects { //scalastyle:off magic.number
       Some(Redirect(ReliefAtSourcePensionsController.show(taxYear)))
     }
   }
-  
-  private val pageValidInJourneyMap: Map[Int, PaymentsIntoPensionViewModel => Boolean] = {
-    
-    val rasPaymentQuestionFn = {pIPViewModel: PaymentsIntoPensionViewModel => pIPViewModel.rasPensionPaymentQuestion.getOrElse(false)}
-    val taxReliefNotClaimedQuestionFn = { pIPViewModel: PaymentsIntoPensionViewModel => pIPViewModel.pensionTaxReliefNotClaimedQuestion.getOrElse(false) }
-    
+
+  private val pageValidInJourneyMap: Map[Int, PaymentsIntoPensionsViewModel => Boolean] = {
+
+    val rasPaymentQuestionFn = { pIPViewModel: PaymentsIntoPensionsViewModel => pIPViewModel.rasPensionPaymentQuestion.getOrElse(false) }
+    val taxReliefNotClaimedQuestionFn = { pIPViewModel: PaymentsIntoPensionsViewModel => pIPViewModel.pensionTaxReliefNotClaimedQuestion.getOrElse(false) }
+
     Map(
       // ^ 2,3,5 need Q1 ^
       2 -> rasPaymentQuestionFn, 3 -> rasPaymentQuestionFn, 5 -> rasPaymentQuestionFn,
-      4 -> { pIPViewModel: PaymentsIntoPensionViewModel =>
+      4 -> { pIPViewModel: PaymentsIntoPensionsViewModel =>
         pIPViewModel.oneOffRasPaymentPlusTaxReliefQuestion.getOrElse(false) && // ^ 4 needs Q1+3
           pIPViewModel.rasPensionPaymentQuestion.getOrElse(false)
       },
       // ^ 7,9 need Q6 ^
       7 -> taxReliefNotClaimedQuestionFn, 9 -> taxReliefNotClaimedQuestionFn,
-      8 -> { pIPViewModel: PaymentsIntoPensionViewModel =>
+      8 -> { pIPViewModel: PaymentsIntoPensionsViewModel =>
         pIPViewModel.pensionTaxReliefNotClaimedQuestion.getOrElse(false) &&
           pIPViewModel.retirementAnnuityContractPaymentsQuestion.getOrElse(false)
       },
-      10 -> { pIPViewModel: PaymentsIntoPensionViewModel => pIPViewModel.workplacePensionPaymentsQuestion.getOrElse(false) }
+      10 -> { pIPViewModel: PaymentsIntoPensionsViewModel => pIPViewModel.workplacePensionPaymentsQuestion.getOrElse(false) }
     )
   }
 
-  private val prevQuestionIsAnsweredMap: Map[Int, PaymentsIntoPensionViewModel => Boolean] = Map(
-    1 -> { _: PaymentsIntoPensionViewModel => true },
-    2 -> { pIPViewModel: PaymentsIntoPensionViewModel => pIPViewModel.rasPensionPaymentQuestion.nonEmpty },
-    3 -> { pIPViewModel: PaymentsIntoPensionViewModel => pIPViewModel.totalRASPaymentsAndTaxRelief.nonEmpty },
-    4 -> { pIPViewModel: PaymentsIntoPensionViewModel => pIPViewModel.oneOffRasPaymentPlusTaxReliefQuestion.nonEmpty },
+  private val prevQuestionIsAnsweredMap: Map[Int, PaymentsIntoPensionsViewModel => Boolean] = Map(
+    1 -> { _: PaymentsIntoPensionsViewModel => true },
+    2 -> { pIPViewModel: PaymentsIntoPensionsViewModel => pIPViewModel.rasPensionPaymentQuestion.nonEmpty },
+    3 -> { pIPViewModel: PaymentsIntoPensionsViewModel => pIPViewModel.totalRASPaymentsAndTaxRelief.nonEmpty },
+    4 -> { pIPViewModel: PaymentsIntoPensionsViewModel => pIPViewModel.oneOffRasPaymentPlusTaxReliefQuestion.nonEmpty },
 
-    5 -> { pIPViewModel: PaymentsIntoPensionViewModel =>
+    5 -> { pIPViewModel: PaymentsIntoPensionsViewModel =>
       if (isPageValidInJourney(4, pIPViewModel)) {pIPViewModel.totalOneOffRasPaymentPlusTaxRelief.nonEmpty}
       else {pIPViewModel.oneOffRasPaymentPlusTaxReliefQuestion.nonEmpty}
     },
 
-    6 -> { pIPViewModel: PaymentsIntoPensionViewModel =>
+    6 -> { pIPViewModel: PaymentsIntoPensionsViewModel =>
       if (isPageValidInJourney(5, pIPViewModel)) {pIPViewModel.totalPaymentsIntoRASQuestion.nonEmpty}
       else {pIPViewModel.rasPensionPaymentQuestion.isDefined}
     },
 
-    7 -> { pIPViewModel: PaymentsIntoPensionViewModel => pIPViewModel.pensionTaxReliefNotClaimedQuestion.isDefined },
-    8 -> { pIPViewModel: PaymentsIntoPensionViewModel => pIPViewModel.retirementAnnuityContractPaymentsQuestion.isDefined },
+    7 -> { pIPViewModel: PaymentsIntoPensionsViewModel => pIPViewModel.pensionTaxReliefNotClaimedQuestion.isDefined },
+    8 -> { pIPViewModel: PaymentsIntoPensionsViewModel => pIPViewModel.retirementAnnuityContractPaymentsQuestion.isDefined },
 
-    9 -> { pIPViewModel: PaymentsIntoPensionViewModel =>
+    9 -> { pIPViewModel: PaymentsIntoPensionsViewModel =>
       if (isPageValidInJourney(8, pIPViewModel)) {pIPViewModel.totalRetirementAnnuityContractPayments.isDefined}
       else {pIPViewModel.retirementAnnuityContractPaymentsQuestion.isDefined}
     },
 
-    10 -> { pIPViewModel: PaymentsIntoPensionViewModel => pIPViewModel.workplacePensionPaymentsQuestion.isDefined },
+    10 -> { pIPViewModel: PaymentsIntoPensionsViewModel => pIPViewModel.workplacePensionPaymentsQuestion.isDefined },
 
-    11 -> { pIPViewModel: PaymentsIntoPensionViewModel =>
+    11 -> { pIPViewModel: PaymentsIntoPensionsViewModel =>
       if (isPageValidInJourney(10, pIPViewModel)) {pIPViewModel.totalWorkplacePensionPayments.isDefined}
       else if (isPageValidInJourney(7, pIPViewModel)) {pIPViewModel.workplacePensionPaymentsQuestion.isDefined}
       else {pIPViewModel.pensionTaxReliefNotClaimedQuestion.isDefined}
     }
   )
-  
-  private def isPageValidInJourney(pageNumber: Int, pIPViewModel: PaymentsIntoPensionViewModel): Boolean =
-    pageValidInJourneyMap.getOrElse(pageNumber, { _: PaymentsIntoPensionViewModel => true })(pIPViewModel)
 
-  private def previousQuestionIsAnswered(pageNumber: Int, pIPViewModel: PaymentsIntoPensionViewModel): Boolean =
+  private def isPageValidInJourney(pageNumber: Int, pIPViewModel: PaymentsIntoPensionsViewModel): Boolean =
+    pageValidInJourneyMap.getOrElse(pageNumber, { _: PaymentsIntoPensionsViewModel => true })(pIPViewModel)
+
+  private def previousQuestionIsAnswered(pageNumber: Int, pIPViewModel: PaymentsIntoPensionsViewModel): Boolean =
     prevQuestionIsAnsweredMap(pageNumber)(pIPViewModel)
 }

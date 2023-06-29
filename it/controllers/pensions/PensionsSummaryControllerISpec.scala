@@ -37,7 +37,7 @@ import utils.PageUrls.PaymentIntoPensions.{checkPaymentsIntoPensionCyaUrl, relie
 import utils.PageUrls.PensionAnnualAllowancePages.reducedAnnualAllowanceUrl
 import utils.PageUrls.PensionLifetimeAllowance.{checkAnnualLifetimeAllowanceCYA, pensionAboveAnnualLifetimeAllowanceUrl}
 import utils.PageUrls._
-import utils.PageUrls.unauthorisedPaymentsPages.{checkUnauthorisedPaymentsCyaUrl, unauthorisedPaymentsUrl}
+import utils.PageUrls.UnauthorisedPaymentsPages.{checkUnauthorisedPaymentsCyaUrl, unauthorisedPaymentsUrl}
 
 class PensionsSummaryControllerISpec extends CommonUtils with BeforeAndAfterEach with Injecting { // scalastyle:off magic.number
 

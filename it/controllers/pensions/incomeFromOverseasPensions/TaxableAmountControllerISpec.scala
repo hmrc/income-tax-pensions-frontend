@@ -24,7 +24,7 @@ import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.IncomeFromOverseasPensionsPages.overseasPensionsSchemeSummaryUrl
+import utils.PageUrls.IncomeFromOverseasPensionsPages.{countrySummaryListControllerUrl, overseasPensionsSchemeSummaryUrl}
 import utils.PageUrls.{IncomeFromOverseasPensionsPages, overseasPensionsSummaryUrl}
 import utils.{CommonUtils, PensionsDatabaseHelper}
 
@@ -202,14 +202,14 @@ class TaxableAmountControllerISpec extends
           }
         }
 
-        "redirect to pension summary page when pension scheme index does not exist" which {
+        "redirect to the country summary page when schemes exist but the index is invalid" which {
           val index = 3
           implicit val url: Int => String = IncomeFromOverseasPensionsPages.taxableAmountUrl(index)
           implicit lazy val result: WSResponse = showPage(user, aPensionsUserData)
 
           "has a SEE_OTHER(303) status" in {
             result.status shouldBe SEE_OTHER
-            result.header("location") shouldBe Some(overseasPensionsSummaryUrl(taxYearEOY))
+            result.header("location") shouldBe Some(countrySummaryListControllerUrl(taxYearEOY))
           }
         }
 

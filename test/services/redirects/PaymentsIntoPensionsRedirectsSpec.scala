@@ -16,23 +16,27 @@
 
 package services.redirects
 
-import controllers.pensions.paymentsIntoPensions.routes.ReliefAtSourcePensionsController
+import controllers.pensions.paymentsIntoPensions.routes.{PaymentsIntoPensionsCYAController, ReliefAtSourcePensionsController, TotalPaymentsIntoRASController}
 import models.mongo.PensionsCYAModel
-import models.pension.reliefs.PaymentsIntoPensionViewModel
+import models.pension.reliefs.PaymentsIntoPensionsViewModel
+import play.api.mvc.Call
 import play.api.mvc.Results.Redirect
 import services.redirects.PaymentsIntoPensionPages._
+import services.redirects.PaymentsIntoPensionsRedirects.{cyaPageCall, journeyCheck}
 import utils.UnitTest
 
 class PaymentsIntoPensionsRedirectsSpec extends UnitTest {
 
   private val cyaData: PensionsCYAModel = PensionsCYAModel.emptyModels
   private val someRedirect = Some(Redirect(ReliefAtSourcePensionsController.show(taxYear)))
+  private val cyaRedirect: Call = PaymentsIntoPensionsCYAController.show(taxYear)
+  private val contextualRedirect: Call = TotalPaymentsIntoRASController.show(taxYear)
 
-  "PaymentsIntoPensionsRedirects.journeyCheck" should {
+  ".journeyCheck" should {
     "return None if page is valid and all previous questions have been answered" when {
       "current page is empty and at end of journey so far" in {
         val pIPData = cyaData.copy(paymentsIntoPension =
-          PaymentsIntoPensionViewModel(
+          PaymentsIntoPensionsViewModel(
             rasPensionPaymentQuestion = Some(true),
             totalRASPaymentsAndTaxRelief = Some(45.54),
             oneOffRasPaymentPlusTaxReliefQuestion = Some(true),
@@ -44,13 +48,31 @@ class PaymentsIntoPensionsRedirectsSpec extends UnitTest {
             workplacePensionPaymentsQuestion = None,
             totalWorkplacePensionPayments = None)
         )
-        val result = PaymentsIntoPensionsRedirects.journeyCheck(RetirementAnnuityAmountPage, pIPData, taxYear)
+        val result = journeyCheck(RetirementAnnuityAmountPage, pIPData, taxYear)
+
+        result shouldBe None
+      }
+      "current page is pre-filled and at end of journey so far" in {
+        val pIPData = cyaData.copy(paymentsIntoPension =
+          PaymentsIntoPensionsViewModel(
+            rasPensionPaymentQuestion = Some(true),
+            totalRASPaymentsAndTaxRelief = Some(45.54),
+            oneOffRasPaymentPlusTaxReliefQuestion = Some(true),
+            totalOneOffRasPaymentPlusTaxRelief = Some(64.46),
+            totalPaymentsIntoRASQuestion = Some(true),
+            pensionTaxReliefNotClaimedQuestion = Some(true),
+            retirementAnnuityContractPaymentsQuestion = Some(true),
+            totalRetirementAnnuityContractPayments = Some(45),
+            workplacePensionPaymentsQuestion = None,
+            totalWorkplacePensionPayments = None)
+        )
+        val result = journeyCheck(RetirementAnnuityAmountPage, pIPData, taxYear)
 
         result shouldBe None
       }
       "current page is pre-filled and mid-journey" in {
         val pIPData = cyaData.copy(paymentsIntoPension =
-          PaymentsIntoPensionViewModel(
+          PaymentsIntoPensionsViewModel(
             rasPensionPaymentQuestion = Some(false),
             totalRASPaymentsAndTaxRelief = None,
             oneOffRasPaymentPlusTaxReliefQuestion = None,
@@ -62,13 +84,13 @@ class PaymentsIntoPensionsRedirectsSpec extends UnitTest {
             workplacePensionPaymentsQuestion = None,
             totalWorkplacePensionPayments = None)
         )
-        val result = PaymentsIntoPensionsRedirects.journeyCheck(TaxReliefNotClaimedPage, pIPData, taxYear)
+        val result = journeyCheck(TaxReliefNotClaimedPage, pIPData, taxYear)
 
         result shouldBe None
       }
-      "previous page is invalid/unanswered but previous valid question has been answered" in {
+      "previous page is unanswered but invalid and previous valid question has been answered" in {
         val pIPData = cyaData.copy(paymentsIntoPension =
-          PaymentsIntoPensionViewModel(
+          PaymentsIntoPensionsViewModel(
             rasPensionPaymentQuestion = Some(true),
             totalRASPaymentsAndTaxRelief = Some(45.54),
             oneOffRasPaymentPlusTaxReliefQuestion = Some(false),
@@ -80,7 +102,7 @@ class PaymentsIntoPensionsRedirectsSpec extends UnitTest {
             workplacePensionPaymentsQuestion = None,
             totalWorkplacePensionPayments = None)
         )
-        val result = PaymentsIntoPensionsRedirects.journeyCheck(TotalRasPage, pIPData, taxYear)
+        val result = journeyCheck(TotalRasPage, pIPData, taxYear)
 
         result shouldBe None
       }
@@ -89,7 +111,7 @@ class PaymentsIntoPensionsRedirectsSpec extends UnitTest {
     "return Some(redirect) with redirect to RAS page" when {
       "previous question is unanswered" in {
         val pIPData = cyaData.copy(paymentsIntoPension =
-          PaymentsIntoPensionViewModel(
+          PaymentsIntoPensionsViewModel(
             rasPensionPaymentQuestion = Some(true),
             totalRASPaymentsAndTaxRelief = Some(45.54),
             oneOffRasPaymentPlusTaxReliefQuestion = Some(true),
@@ -101,13 +123,13 @@ class PaymentsIntoPensionsRedirectsSpec extends UnitTest {
             workplacePensionPaymentsQuestion = None,
             totalWorkplacePensionPayments = None)
         )
-        val result = PaymentsIntoPensionsRedirects.journeyCheck(WorkplacePensionPage, pIPData, taxYear)
+        val result = journeyCheck(WorkplacePensionPage, pIPData, taxYear)
 
         result shouldBe someRedirect
       }
       "current page is invalid in journey" in {
         val pIPData = cyaData.copy(paymentsIntoPension =
-          PaymentsIntoPensionViewModel(
+          PaymentsIntoPensionsViewModel(
             rasPensionPaymentQuestion = Some(true),
             totalRASPaymentsAndTaxRelief = None,
             oneOffRasPaymentPlusTaxReliefQuestion = None,
@@ -119,10 +141,16 @@ class PaymentsIntoPensionsRedirectsSpec extends UnitTest {
             workplacePensionPaymentsQuestion = None,
             totalWorkplacePensionPayments = None)
         )
-        val result = PaymentsIntoPensionsRedirects.journeyCheck(OneOffRasPage, pIPData, taxYear)
+        val result = journeyCheck(OneOffRasPage, pIPData, taxYear)
 
         result shouldBe someRedirect
       }
+    }
+  }
+
+  ".cyaPageCall" should {
+    "return a redirect call to the cya page" in {
+      cyaPageCall(taxYear) shouldBe PaymentsIntoPensionsCYAController.show(taxYear)
     }
   }
 }

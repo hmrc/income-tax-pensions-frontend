@@ -70,6 +70,7 @@ GET         /:taxYear/payments-into-pensions/no-tax-relief/workplace-amount     
 POST        /:taxYear/payments-into-pensions/no-tax-relief/workplace-amount                                                        controllers.pensions.paymentsIntoPensions.WorkplaceAmountController.submit(taxYear: Int)
 
 ###########################     Income from Pension pages     ####################################
+
 GET         /:taxYear/pension-income/pensions-income-summary                                                                       controllers.pensions.incomeFromPensions.IncomeFromPensionsSummaryController.show(taxYear: Int)
 
 GET         /:taxYear/pension-income/state-pension                                                                                 controllers.pensions.incomeFromPensions.StatePensionController.show(taxYear:Int)
@@ -87,8 +88,8 @@ POST        /:taxYear/pension-income/state-pension-lump-sum-tax                 
 GET         /:taxYear/pension-income/state-pension-lump-sum-date                                                                   controllers.pensions.incomeFromPensions.StatePensionLumpSumStartDateController.show(taxYear: Int)
 POST        /:taxYear/pension-income/state-pension-lump-sum-date                                                                   controllers.pensions.incomeFromPensions.StatePensionLumpSumStartDateController.submit(taxYear: Int)
 
-GET         /:taxYear/pension-income/state-pension-add-to-calculation                                                                     controllers.pensions.incomeFromPensions.StatePensionAddToCalculationController.show(taxYear: Int)
-POST        /:taxYear/pension-income/state-pension-add-to-calculation                                                                     controllers.pensions.incomeFromPensions.StatePensionAddToCalculationController.submit(taxYear: Int)
+GET         /:taxYear/pension-income/state-pension-add-to-calculation                                                              controllers.pensions.incomeFromPensions.StatePensionAddToCalculationController.show(taxYear: Int)
+POST        /:taxYear/pension-income/state-pension-add-to-calculation                                                              controllers.pensions.incomeFromPensions.StatePensionAddToCalculationController.submit(taxYear: Int)
 
 GET         /:taxYear/pension-income/check-state-pension                                                                           controllers.pensions.incomeFromPensions.StatePensionCYAController.show(taxYear: Int)
 POST        /:taxYear/pension-income/check-state-pension                                                                           controllers.pensions.incomeFromPensions.StatePensionCYAController.submit(taxYear: Int)
@@ -117,26 +118,23 @@ POST        /:taxYear/pension-income/check-uk-pension-income                    
 
 ###########################     Unauthorised Payments Pages     ####################################
 
+GET         /:taxYear/unauthorised-payments-from-pensions/unauthorised-payments                                                    controllers.pensions.unauthorisedPayments.UnauthorisedPaymentsController.show(taxYear: Int)
+POST        /:taxYear/unauthorised-payments-from-pensions/unauthorised-payments                                                    controllers.pensions.unauthorisedPayments.UnauthorisedPaymentsController.submit(taxYear: Int)
+
 GET         /:taxYear/unauthorised-payments-from-pensions/amount-surcharged                                                        controllers.pensions.unauthorisedPayments.SurchargeAmountController.show(taxYear: Int)
 POST        /:taxYear/unauthorised-payments-from-pensions/amount-surcharged                                                        controllers.pensions.unauthorisedPayments.SurchargeAmountController.submit(taxYear: Int)
-
-GET         /:taxYear/unauthorised-payments-from-pensions/amount-not-surcharged                                                    controllers.pensions.unauthorisedPayments.NoSurchargeAmountController.show(taxYear: Int)
-POST        /:taxYear/unauthorised-payments-from-pensions/amount-not-surcharged                                                    controllers.pensions.unauthorisedPayments.NoSurchargeAmountController.submit(taxYear: Int)
 
 GET         /:taxYear/unauthorised-payments-from-pensions/tax-on-amount-surcharged                                                 controllers.pensions.unauthorisedPayments.NonUKTaxOnAmountResultedInSurchargeController.show(taxYear: Int)
 POST        /:taxYear/unauthorised-payments-from-pensions/tax-on-amount-surcharged                                                 controllers.pensions.unauthorisedPayments.NonUKTaxOnAmountResultedInSurchargeController.submit(taxYear: Int)
 
+GET         /:taxYear/unauthorised-payments-from-pensions/amount-not-surcharged                                                    controllers.pensions.unauthorisedPayments.NoSurchargeAmountController.show(taxYear: Int)
+POST        /:taxYear/unauthorised-payments-from-pensions/amount-not-surcharged                                                    controllers.pensions.unauthorisedPayments.NoSurchargeAmountController.submit(taxYear: Int)
+
 GET         /:taxYear/unauthorised-payments-from-pensions/tax-on-amount-not-surcharged                                             controllers.pensions.unauthorisedPayments.NonUKTaxOnAmountNotResultedInSurchargeController.show(taxYear: Int)
 POST        /:taxYear/unauthorised-payments-from-pensions/tax-on-amount-not-surcharged                                             controllers.pensions.unauthorisedPayments.NonUKTaxOnAmountNotResultedInSurchargeController.submit(taxYear: Int)
 
-GET         /:taxYear/unauthorised-payments-from-pensions/uk-pension-scheme                                                        controllers.pensions.unauthorisedPayments.WhereAnyOfTheUnauthorisedPaymentsController.show(taxYear: Int)
-POST        /:taxYear/unauthorised-payments-from-pensions/uk-pension-scheme                                                        controllers.pensions.unauthorisedPayments.WhereAnyOfTheUnauthorisedPaymentsController.submit(taxYear: Int)
-
-GET         /:taxYear/unauthorised-payments-from-pensions/unauthorised-payments                                                    controllers.pensions.unauthorisedPayments.UnauthorisedPaymentsController.show(taxYear: Int)
-POST        /:taxYear/unauthorised-payments-from-pensions/unauthorised-payments                                                    controllers.pensions.unauthorisedPayments.UnauthorisedPaymentsController.submit(taxYear: Int)
-
-GET         /:taxYear/unauthorised-payments-from-pensions/check-unauthorised-payments                                              controllers.pensions.unauthorisedPayments.UnauthorisedPaymentsCYAController.show(taxYear:Int)
-POST        /:taxYear/unauthorised-payments-from-pensions/check-unauthorised-payments                                              controllers.pensions.unauthorisedPayments.UnauthorisedPaymentsCYAController.submit(taxYear:Int)
+GET         /:taxYear/unauthorised-payments-from-pensions/uk-pension-scheme                                                        controllers.pensions.unauthorisedPayments.WereAnyOfTheUnauthorisedPaymentsController.show(taxYear: Int)
+POST        /:taxYear/unauthorised-payments-from-pensions/uk-pension-scheme                                                        controllers.pensions.unauthorisedPayments.WereAnyOfTheUnauthorisedPaymentsController.submit(taxYear: Int)
 
 GET         /:taxYear/unauthorised-payments-from-pensions/pension-scheme-tax-reference                                             controllers.pensions.unauthorisedPayments.UnauthorisedPensionSchemeTaxReferenceController.show(taxYear: Int, pensionSchemeIndex: Option[Int])
 POST        /:taxYear/unauthorised-payments-from-pensions/pension-scheme-tax-reference                                             controllers.pensions.unauthorisedPayments.UnauthorisedPensionSchemeTaxReferenceController.submit(taxYear: Int, pensionSchemeIndex: Option[Int])
@@ -146,15 +144,16 @@ GET         /:taxYear/unauthorised-payments-from-pensions/uk-pension-scheme-deta
 GET         /:taxYear/unauthorised-payments-from-pensions/remove-pension-scheme-tax-reference                                      controllers.pensions.unauthorisedPayments.RemovePSTRController.show(taxYear: Int, pensionSchemeIndex: Option[Int])
 POST        /:taxYear/unauthorised-payments-from-pensions/remove-pension-scheme-tax-reference                                      controllers.pensions.unauthorisedPayments.RemovePSTRController.submit(taxYear: Int, pensionSchemeIndex: Option[Int])
 
+GET         /:taxYear/unauthorised-payments-from-pensions/check-unauthorised-payments                                              controllers.pensions.unauthorisedPayments.UnauthorisedPaymentsCYAController.show(taxYear:Int)
+POST        /:taxYear/unauthorised-payments-from-pensions/check-unauthorised-payments                                              controllers.pensions.unauthorisedPayments.UnauthorisedPaymentsCYAController.submit(taxYear:Int)
+
 ###########################    Employer-financed Retirement Benefits Schemes Pages     ####################################
 
 GET         /:taxYear/employment-financed-retirement-benefits-scheme/benefits-from-scheme                                          controllers.pensions.employmentFinancedRetirementSchemes.BenefitsFromSchemeController.show(taxYear: Int)
 POST        /:taxYear/employment-financed-retirement-benefits-scheme/benefits-from-scheme                                          controllers.pensions.employmentFinancedRetirementSchemes.BenefitsFromSchemeController.submit(taxYear: Int)
 
 
-###########################    Annual and Lifetime Allowance Pages     ####################################
-
-#  Annual Allowance pages     ####################################
+#############  Annual Allowance pages     ####################################
 
 GET         /:taxYear/annual-allowance/reduced-annual-allowance                                                                    controllers.pensions.annualAllowances.ReducedAnnualAllowanceController.show(taxYear: Int)
 POST        /:taxYear/annual-allowance/reduced-annual-allowance                                                                    controllers.pensions.annualAllowances.ReducedAnnualAllowanceController.submit(taxYear: Int)
@@ -162,18 +161,24 @@ POST        /:taxYear/annual-allowance/reduced-annual-allowance                 
 GET         /:taxYear/annual-allowance/reduced-annual-allowance-type                                                               controllers.pensions.annualAllowances.ReducedAnnualAllowanceTypeController.show(taxYear: Int)
 POST        /:taxYear/annual-allowance/reduced-annual-allowance-type                                                               controllers.pensions.annualAllowances.ReducedAnnualAllowanceTypeController.submit(taxYear: Int)
 
-GET         /:taxYear/annual-allowance/above-annual-allowance                                                            controllers.pensions.annualAllowances.AboveReducedAnnualAllowanceController.show(taxYear: Int)
-POST        /:taxYear/annual-allowance/above-annual-allowance                                                            controllers.pensions.annualAllowances.AboveReducedAnnualAllowanceController.submit(taxYear: Int)
+GET         /:taxYear/annual-allowance/above-annual-allowance                                                                      controllers.pensions.annualAllowances.AboveReducedAnnualAllowanceController.show(taxYear: Int)
+POST        /:taxYear/annual-allowance/above-annual-allowance                                                                      controllers.pensions.annualAllowances.AboveReducedAnnualAllowanceController.submit(taxYear: Int)
 
 GET         /:taxYear/annual-allowance/pension-scheme-tax-reference                                                                controllers.pensions.annualAllowances.PensionSchemeTaxReferenceController.show(taxYear: Int, pensionSchemeTaxReferenceIndex: Option[Int])
 POST        /:taxYear/annual-allowance/pension-scheme-tax-reference                                                                controllers.pensions.annualAllowances.PensionSchemeTaxReferenceController.submit(taxYear: Int, pensionSchemeTaxReferenceIndex: Option[Int])
+
+GET         /:taxYear/annual-allowances/pension-provider-paid-tax                                                                  controllers.pensions.annualAllowances.PensionProviderPaidTaxController.show(taxYear: Int)
+POST        /:taxYear/annual-allowances/pension-provider-paid-tax                                                                  controllers.pensions.annualAllowances.PensionProviderPaidTaxController.submit(taxYear: Int)
 
 GET         /:taxYear/annual-allowance/remove-pension-scheme-tax-reference                                                         controllers.pensions.annualAllowances.RemoveAnnualAllowancePstrController.show(taxYear: Int, pensionSchemeTaxReferenceIndex: Option[Int])
 POST        /:taxYear/annual-allowance/remove-pension-scheme-tax-reference                                                         controllers.pensions.annualAllowances.RemoveAnnualAllowancePstrController.submit(taxYear: Int, pensionSchemeTaxReferenceIndex: Option[Int])
 
 GET         /:taxYear/annual-allowance/pension-schemes-paying-annual-allowance-tax                                                 controllers.pensions.annualAllowances.PstrSummaryController.show(taxYear: Int)
 
-#  Lifetime Allowance Pages     ####################################
+GET         /:taxYear/annual-allowance/check-annual-allowance                                                                      controllers.pensions.annualAllowances.AnnualAllowanceCYAController.show(taxYear:Int)
+POST        /:taxYear/annual-allowance/check-annual-allowance                                                                      controllers.pensions.annualAllowances.AnnualAllowanceCYAController.submit(taxYear:Int)
+
+############  Lifetime Allowance Pages     ####################################
 
 GET         /:taxYear/annual-lifetime-allowances/pension-provider-paid-tax                                                         controllers.pensions.lifetimeAllowances.PensionProviderPaidTaxController.show(taxYear: Int)
 POST        /:taxYear/annual-lifetime-allowances/pension-provider-paid-tax                                                         controllers.pensions.lifetimeAllowances.PensionProviderPaidTaxController.submit(taxYear: Int)
@@ -198,6 +203,8 @@ POST        /:taxYear/annual-lifetime-allowances/pension-another-way-details    
 
 GET         /:taxYear/annual-lifetime-allowances/pension-scheme-tax-reference                                                      controllers.pensions.lifetimeAllowances.PensionSchemeTaxReferenceLifetimeController.show(taxYear: Int, pensionSchemeTaxReferenceIndex: Option[Int])
 POST        /:taxYear/annual-lifetime-allowances/pension-scheme-tax-reference                                                      controllers.pensions.lifetimeAllowances.PensionSchemeTaxReferenceLifetimeController.submit(taxYear: Int, pensionSchemeTaxReferenceIndex: Option[Int])
+
+GET         /:taxYear/annual-lifetime-allowances/pension-scheme-tax-reference-summary                                              controllers.pensions.lifetimeAllowances.LifetimePstrSummaryController.show(taxYear: Int)
 
 GET         /:taxYear/annual-lifetime-allowances/check-lifetime-allowances                                                         controllers.pensions.lifetimeAllowances.AnnualLifetimeAllowanceCYAController.show(taxYear:Int)
 POST        /:taxYear/annual-lifetime-allowances/check-lifetime-allowances                                                         controllers.pensions.lifetimeAllowances.AnnualLifetimeAllowanceCYAController.submit(taxYear:Int)
@@ -240,8 +247,8 @@ POST        /:taxYear/overseas-pensions/payments-into-overseas-pensions/double-t
 
 GET         /:taxYear/overseas-pensions/payments-into-overseas-pensions/untaxed-schemes-summary                                    controllers.pensions.paymentsIntoOverseasPensions.ReliefsSchemeSummaryController.show(taxYear: Int)
 
-GET         /:taxYear/overseas-pensions/payments-into-overseas-pensions/remove-schemes                                              controllers.pensions.paymentsIntoOverseasPensions.RemoveReliefSchemeController.show(taxYear: Int, index: Option[Int])
-POST        /:taxYear/overseas-pensions/payments-into-overseas-pensions/remove-schemes                                              controllers.pensions.paymentsIntoOverseasPensions.RemoveReliefSchemeController.submit(taxYear: Int, index: Option[Int])
+GET         /:taxYear/overseas-pensions/payments-into-overseas-pensions/remove-schemes                                             controllers.pensions.paymentsIntoOverseasPensions.RemoveReliefSchemeController.show(taxYear: Int, index: Option[Int])
+POST        /:taxYear/overseas-pensions/payments-into-overseas-pensions/remove-schemes                                             controllers.pensions.paymentsIntoOverseasPensions.RemoveReliefSchemeController.submit(taxYear: Int, index: Option[Int])
 
 GET        /:taxYear/overseas-pensions/payments-into-overseas-pensions/check-overseas-pension-details                              controllers.pensions.paymentsIntoOverseasPensions.PaymentsIntoOverseasPensionsCYAController.show(taxYear: Int)
 POST       /:taxYear/overseas-pensions/payments-into-overseas-pensions/check-overseas-pension-details                              controllers.pensions.paymentsIntoOverseasPensions.PaymentsIntoOverseasPensionsCYAController.submit(taxYear: Int)

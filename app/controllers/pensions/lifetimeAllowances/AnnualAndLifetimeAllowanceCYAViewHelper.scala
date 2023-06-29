@@ -123,7 +123,7 @@ object AnnualAndLifetimeAllowanceCYAViewHelper extends CYABaseHelper {
               summaryListRowWithBooleanValue(
                 "lifetimeAllowance.cya.annualAllowanceTax",
                 annualAllowancesViewModel.pensionProvidePaidAnnualAllowanceQuestion,
-                routes.PensionProviderPaidTaxController.show(taxYear))(messages)
+                lifetimeRoutes.PensionProviderPaidTaxController.show(taxYear))(messages)
           }
         )
       )
@@ -208,7 +208,7 @@ object AnnualAndLifetimeAllowanceCYAViewHelper extends CYABaseHelper {
         summaryListRowWithStrings(
           "lifetimeAllowance.cya.lifetimePensionSchemeTaxReferences",
           lifetimeAllowancesViewModel.pensionSchemeTaxReferences,
-          routes.AnnualLifetimeAllowanceCYAController.show(taxYear))(messages)
+        lifetimeRoutes.LifetimePstrSummaryController.show(taxYear))(messages)
       }
     )
   }

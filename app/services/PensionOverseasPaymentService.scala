@@ -19,7 +19,7 @@ package services
 import connectors.{IncomeTaxUserDataConnector, PensionsConnector}
 import models.mongo.{PensionsCYAModel, PensionsUserData, ServiceError}
 import models.pension.charges.PaymentsIntoOverseasPensionsViewModel
-import models.pension.income.CreateUpdatePensionIncomeModel
+import models.pension.income.{CreateUpdatePensionIncomeModel, ForeignPensionContainer, OverseasPensionContributionContainer}
 import models.pension.reliefs.{CreateOrUpdatePensionReliefsModel, Reliefs}
 import models.{IncomeTaxUserData, User}
 import org.joda.time.DateTimeZone
@@ -50,7 +50,7 @@ class PensionOverseasPaymentService @Inject()(pensionUserDataRepository: Pension
       )
     }
   }
-  
+
   def savePaymentsFromOverseasPensionsViewModel(user: User, taxYear: Int)
                                                (implicit hc: HeaderCarrier, ec: ExecutionContext, clock: Clock): Future[Either[ServiceError, Unit]] = {
 
@@ -62,10 +62,12 @@ class PensionOverseasPaymentService @Inject()(pensionUserDataRepository: Pension
       priorData <- FutureEitherOps[ServiceError, IncomeTaxUserData](incomeTaxUserDataConnector.
         getUserData(user.nino, taxYear)(hc.withExtraHeaders("mtditid" -> user.mtditid)))
 
+
       viewModelOverseas = sessionData.map(_.pensions.paymentsIntoOverseasPensions)
+      opc = (viewModelOverseas.map(_.toPensionContributions).flatMap(seq => if (seq.nonEmpty) Some(seq) else None))
       updatedIncomeData = CreateUpdatePensionIncomeModel(
-        foreignPension = priorData.pensions.flatMap(_.pensionIncome.flatMap(_.foreignPension)),
-        overseasPensionContribution = viewModelOverseas.map(_.toPensionContributions).flatMap(seq => if(seq.nonEmpty) Some(seq) else None)
+        foreignPension = priorData.pensions.flatMap(_.pensionIncome.flatMap(_.foreignPension)).map(ForeignPensionContainer),
+        overseasPensionContribution = opc.map(OverseasPensionContributionContainer)
       )
       viewModelPayments = sessionData.map(_.pensions.paymentsIntoPension)
       updatedReliefsData = CreateOrUpdatePensionReliefsModel(
