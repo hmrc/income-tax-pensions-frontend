@@ -314,7 +314,14 @@ trait ViewHelper {
       s"has the correct row value of '$expectedValue'" in {
         document.select(valueSelector).text() shouldBe expectedValue
       }
-
+    }
+  }
+  
+  def cyaNoMoreRowsAfterCheck(rowNumber: Int)(implicit document: Document): Unit = {
+    val keySelector = s"#main-content > div > div > dl > div:nth-child(${rowNumber + 1}) > dt"
+    
+    s"no rows after row $rowNumber" in {
+      document.select(keySelector).isEmpty shouldBe true
     }
   }
 }

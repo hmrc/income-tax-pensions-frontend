@@ -25,7 +25,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.PensionAnnualAllowancePages.{pensionSchemeTaxReferenceUrl, pstrSummaryUrl}
+import utils.PageUrls.PensionAnnualAllowancePages.{annualAllowancesCYAUrl, pensionSchemeTaxReferenceUrl, pstrSummaryUrl}
 import utils.PageUrls.PensionLifetimeAllowance.checkAnnualLifetimeAllowanceCYA
 import utils.PageUrls.{fullUrl, pensionSummaryUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
@@ -124,7 +124,7 @@ class PstrSummaryControllerISpec extends IntegrationTest with BeforeAndAfterEach
             RemoveAnnualAllowancePstrController.show(taxYearEOY, Some(1)).url)
           linkCheck(expectedAddAnotherText, addAnotherLinkSelector, PensionSchemeTaxReferenceController.show(taxYearEOY, None).url)
           //TODO button href to go to annual allowance CYA page
-          buttonCheck(expectedButtonText, continueButtonSelector, Some(checkAnnualLifetimeAllowanceCYA(taxYearEOY)))
+          buttonCheck(expectedButtonText, continueButtonSelector, Some(annualAllowancesCYAUrl(taxYearEOY)))
           welshToggleCheck(user.isWelsh)
         }
 
@@ -150,7 +150,7 @@ class PstrSummaryControllerISpec extends IntegrationTest with BeforeAndAfterEach
           elementNotOnPageCheck(pstrSelector(1))
           linkCheck(expectedAddPstrText, addLinkSelector, PensionSchemeTaxReferenceController.show(taxYearEOY, None).url)
           //TODO button href to go to annual allowance CYA page
-          buttonCheck(expectedButtonText, continueButtonSelector, Some(checkAnnualLifetimeAllowanceCYA(taxYearEOY)))
+          buttonCheck(expectedButtonText, continueButtonSelector, Some(annualAllowancesCYAUrl(taxYearEOY)))
           welshToggleCheck(user.isWelsh)
         }
 
