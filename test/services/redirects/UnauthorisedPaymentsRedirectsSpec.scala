@@ -17,9 +17,8 @@
 package services.redirects
 
 import builders.UnauthorisedPaymentsViewModelBuilder.{anUnauthorisedPaymentsEmptyViewModel, anUnauthorisedPaymentsViewModel}
-import controllers.pensions.unauthorisedPayments.routes.{NoSurchargeAmountController, UnauthorisedPaymentsCYAController, UnauthorisedPaymentsController}
+import controllers.pensions.unauthorisedPayments.routes.{UnauthorisedPaymentsCYAController, UnauthorisedPaymentsController}
 import models.mongo.PensionsCYAModel
-import play.api.mvc.Call
 import play.api.mvc.Results.Redirect
 import services.redirects.UnauthorisedPaymentsPages._
 import services.redirects.UnauthorisedPaymentsRedirects.{cyaPageCall, journeyCheck}
@@ -29,8 +28,6 @@ class UnauthorisedPaymentsRedirectsSpec extends UnitTest {
 
   private val cyaData: PensionsCYAModel = PensionsCYAModel.emptyModels
   private val someRedirect = Some(Redirect(UnauthorisedPaymentsController.show(taxYear)))
-  private val cyaRedirect: Call = UnauthorisedPaymentsCYAController.show(taxYear)
-  private val contextualRedirect: Call = NoSurchargeAmountController.show(taxYear)
 
   ".journeyCheck" should {
     "return None if page is valid and all previous questions have been answered" when {

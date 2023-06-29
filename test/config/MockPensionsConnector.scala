@@ -26,7 +26,7 @@ import models.pension.income.CreateUpdatePensionIncomeModel
 import models.pension.reliefs.CreateOrUpdatePensionReliefsModel
 import org.scalamock.handlers.{CallHandler4, CallHandler5}
 import org.scalamock.scalatest.MockFactory
-import services.PensionChargesConnectorHelper
+import services.{PensionChargesConnectorHelper, PensionIncomeConnectorHelper}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -36,6 +36,7 @@ trait MockPensionsConnector extends MockFactory {
 
   val mockPensionsConnector: PensionsConnector = mock[PensionsConnector]
   val mockPensionConnectorHelper = new PensionChargesConnectorHelper(mockPensionsConnector)
+  val mockPensionIncomeConnectorHelper = new PensionIncomeConnectorHelper(mockPensionsConnector)
 
 
   def mockSavePensionChargesSessionData(nino: String, taxYear: Int, model: CreateUpdatePensionChargesRequestModel, response: Either[APIErrorModel, Unit]):

@@ -118,7 +118,7 @@ case class PaymentsIntoOverseasPensionsViewModel(paymentsIntoOverseasPensionsQue
             if (_) {
               taxPaidOnEmployerPaymentsQuestion.exists { x =>
                 if (x) x
-                else reliefs.map(reliefIsCompleted(_)).forall(x => x)
+                else reliefs.map(reliefIsCompleted).forall(x => x)
               }
             } else true
           }
