@@ -40,17 +40,22 @@ object IncomeFromPensionsRedirects { //scalastyle:off magic.number
 
   private val pageValidInJourneyMap: Map[Int, IncomeFromPensionsViewModel => Boolean] = {
 
-    val amountPaidQuestionFn = {statePensionViewModel: StateBenefitViewModel =>
-      statePensionViewModel.amountPaidQuestion.getOrElse(false)
+    val amountPaidQuestionFn = {incomeFromPensionsViewModel: IncomeFromPensionsViewModel =>
+      incomeFromPensionsViewModel.statePension.exists(a => a.amountPaidQuestion.exists(x => x))
     }
 
+    val lumpSumPaidQuestionFn = {incomeFromPensionsViewModel: IncomeFromPensionsViewModel =>
+      incomeFromPensionsViewModel.statePensionLumpSum.exists(a => a.amountPaidQuestion.exists(x => x))
+    }
 
     Map(
       // 2-7 need Q1 true
       // 2 need Q1 true + Q1 amount
-//      2 -> amountPaidQuestionFn,
+      2 -> amountPaidQuestionFn,
       // 3 need Q1 true + Q2 date OR Q1 false
-      // 4 and 5 need Q1 true + Q3 amount
+
+      // 4 and 5 need Q3 true
+      4 -> lumpSumPaidQuestionFn, 5 -> lumpSumPaidQuestionFn
     )
   }
 
@@ -72,11 +77,11 @@ object IncomeFromPensionsRedirects { //scalastyle:off magic.number
 
     4 -> {incomeFromPensionsViewModel: IncomeFromPensionsViewModel => incomeFromPensionsViewModel.statePensionLumpSum.head.amountPaidQuestion.isDefined},
 
-    5 -> {incomeFromPensionsViewModel: IncomeFromPensionsViewModel => incomeFromPensionsViewModel.statePensionLumpSum.head.startDateQuestion.isDefined},
+    5 -> {incomeFromPensionsViewModel: IncomeFromPensionsViewModel => incomeFromPensionsViewModel.statePensionLumpSum.head.taxPaidQuestion.isDefined},
 
     6 -> {incomeFromPensionsViewModel: IncomeFromPensionsViewModel =>
       if (isPageValidInJourney(6, incomeFromPensionsViewModel)) {
-        incomeFromPensionsViewModel.statePensionLumpSum.head.startDateQuestion.isDefined}
+        incomeFromPensionsViewModel.statePensionLumpSum .head.startDateQuestion.isDefined}
       else {
         incomeFromPensionsViewModel.statePensionLumpSum.head.amountPaidQuestion.isDefined
       }
