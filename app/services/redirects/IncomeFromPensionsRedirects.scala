@@ -53,9 +53,10 @@ object IncomeFromPensionsRedirects { //scalastyle:off magic.number
       // 2 need Q1 true + Q1 amount
       2 -> amountPaidQuestionFn,
       // 3 need Q1 true + Q2 date OR Q1 false
-
+      3 -> amountPaidQuestionFn,
       // 4 and 5 need Q3 true
-      4 -> lumpSumPaidQuestionFn, 5 -> lumpSumPaidQuestionFn
+      4 -> lumpSumPaidQuestionFn, 5 -> lumpSumPaidQuestionFn,
+      6 -> lumpSumPaidQuestionFn
     )
   }
 
@@ -69,8 +70,8 @@ object IncomeFromPensionsRedirects { //scalastyle:off magic.number
 
     3 -> {incomeFromPensionsViewModel: IncomeFromPensionsViewModel =>
           if (isPageValidInJourney(3, incomeFromPensionsViewModel)) {
-            incomeFromPensionsViewModel.statePension.head.startDateQuestion.isDefined}
-          else {
+            incomeFromPensionsViewModel.statePension.head.startDateQuestion.isDefined
+          }else {
             incomeFromPensionsViewModel.statePension.head.amountPaidQuestion.isDefined
           }
     },
@@ -81,7 +82,7 @@ object IncomeFromPensionsRedirects { //scalastyle:off magic.number
 
     6 -> {incomeFromPensionsViewModel: IncomeFromPensionsViewModel =>
       if (isPageValidInJourney(6, incomeFromPensionsViewModel)) {
-        incomeFromPensionsViewModel.statePensionLumpSum .head.startDateQuestion.isDefined}
+        incomeFromPensionsViewModel.statePensionLumpSum.head.startDateQuestion.isDefined}
       else {
         incomeFromPensionsViewModel.statePensionLumpSum.head.amountPaidQuestion.isDefined
       }

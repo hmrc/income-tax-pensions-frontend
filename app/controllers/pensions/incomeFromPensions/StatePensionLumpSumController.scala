@@ -26,6 +26,9 @@ import models.requests.UserSessionDataRequest
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
+import services.redirects.IncomeFromPensionsPages.StatePensionLumpSumPage
+import services.redirects.IncomeFromPensionsRedirects.{cyaPageCall, journeyCheck}
+import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.incomeFromPensions.StatePensionLumpSumView
@@ -47,26 +50,34 @@ class StatePensionLumpSumController @Inject()(
 
   def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit sessionData =>
-      val amountPaidQuestion = sessionData.pensionsUserData.pensions.incomeFromPensions.statePensionLumpSum.flatMap(_.amountPaidQuestion)
-      val amount = sessionData.pensionsUserData.pensions.incomeFromPensions.statePensionLumpSum.flatMap(_.amount)
+      val checkRedirect = journeyCheck(StatePensionLumpSumPage, _, taxYear)
+      redirectBasedOnCurrentAnswers(taxYear, Some(sessionData.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) { data =>
+
+      val amountPaidQuestion = data.pensions.incomeFromPensions.statePensionLumpSum.flatMap(_.amountPaidQuestion)
+      val amount = data.pensions.incomeFromPensions.statePensionLumpSum.flatMap(_.amount)
 
       (amountPaidQuestion, amount) match {
         case (Some(yesNo), amount) => Future.successful(Ok(view(formsProvider.statePensionLumpSum(sessionData.user).fill((yesNo, amount)), taxYear)))
         case _ => Future.successful(Ok(view(formsProvider.statePensionLumpSum(sessionData.user), taxYear)))
       }
+    }
   }
 
   def submit(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit sessionData =>
-      formsProvider.statePensionLumpSum(sessionData.user).bindFromRequest().fold(
-        formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
-        yesNoAmount => {
-          (yesNoAmount._1, yesNoAmount._2) match {
-            case (true, amount) => updateSessionData(sessionData.pensionsUserData, yesNo = true, amount, taxYear)
-            case (false, _) => updateSessionData(sessionData.pensionsUserData, yesNo = false, None, taxYear)
+      val checkRedirect = journeyCheck(StatePensionLumpSumPage, _, taxYear)
+      redirectBasedOnCurrentAnswers(taxYear, Some(sessionData.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) { data =>
+
+        formsProvider.statePensionLumpSum(sessionData.user).bindFromRequest().fold(
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
+          yesNoAmount => {
+            (yesNoAmount._1, yesNoAmount._2) match {
+              case (true, amount) => updateSessionData(data, yesNo = true, amount, taxYear)
+              case (false, _) => updateSessionData(data, yesNo = false, None, taxYear)
+            }
           }
-        }
-      )
+        )
+      }
   }
 
   private def updateSessionData[T](pensionUserData: PensionsUserData,
