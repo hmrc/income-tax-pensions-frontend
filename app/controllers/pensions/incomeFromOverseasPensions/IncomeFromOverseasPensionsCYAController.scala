@@ -17,6 +17,7 @@
 package controllers.pensions.incomeFromOverseasPensions
 
 import config.{AppConfig, ErrorHandler}
+import controllers.pensions.routes.{OverseasPensionsSummaryController, PensionsSummaryController}
 import controllers.predicates.AuthorisedAction
 import controllers.predicates.TaxYearAction.taxYearAction
 import models.pension.AllPensionsData
@@ -71,18 +72,18 @@ class IncomeFromOverseasPensionsCYAController @Inject()(authAction: AuthorisedAc
           val emptyIncomeFromOverseasPensionsViewModel = IncomeFromOverseasPensionsViewModel(paymentsFromOverseasPensionsQuestion = None,
             overseasIncomePensionSchemes = Nil)
           Future.successful(Ok(view(taxYear, emptyIncomeFromOverseasPensionsViewModel)))
-        case _ => Future.successful(Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear)))
+        case _ => Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
       }
     }
   }
 
-  
+
   def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
     //TODO: missing the comparison of session with Prior data
     pensionIncomeService.saveIncomeFromOverseasPensionsViewModel(request.user, taxYear).map {
       case Left(_) =>
         errorHandler.internalServerError()
-      case Right(_) => Redirect(controllers.pensions.routes.OverseasPensionsSummaryController.show(taxYear))
+      case Right(_) => Redirect(OverseasPensionsSummaryController.show(taxYear))
     }
   }
 }

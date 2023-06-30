@@ -17,16 +17,14 @@
 package services.redirects
 
 import builders.PensionsUserDataBuilder.aPensionsUserData
+import builders.UnauthorisedPaymentsViewModelBuilder.anUnauthorisedPaymentsViewModel
 import controllers.pensions.paymentsIntoPensions.routes.{PaymentsIntoPensionsCYAController, ReliefAtSourcePensionsController, TotalPaymentsIntoRASController}
+import controllers.pensions.unauthorisedPayments.routes._
 import models.mongo.{PensionsCYAModel, PensionsUserData}
-import models.pension.reliefs.PaymentsIntoPensionsViewModel
 import play.api.http.Status.SEE_OTHER
 import play.api.mvc.Results.Redirect
-import services.redirects.UnauthorisedPaymentsRedirects.cyaPageCall
 import play.api.mvc.{Call, Result}
-import builders.UnauthorisedPaymentsViewModelBuilder.{anUnauthorisedPaymentsEmptyViewModel, anUnauthorisedPaymentsViewModel}
-import controllers.pensions.unauthorisedPayments.routes._
-import play.api.libs.ws.WSResponse
+import services.redirects.UnauthorisedPaymentsRedirects.cyaPageCall
 import utils.UnitTest
 
 import scala.concurrent.Future
