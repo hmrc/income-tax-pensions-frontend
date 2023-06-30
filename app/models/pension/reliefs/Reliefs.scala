@@ -16,6 +16,7 @@
 
 package models.pension.reliefs
 
+import models.pension.PensionReliefsSubRequestModel
 import play.api.libs.json.{Json, OFormat}
 import utils.EncryptedValue
 
@@ -24,18 +25,23 @@ case class Reliefs(regularPensionContributions: Option[BigDecimal],
                    retirementAnnuityPayments: Option[BigDecimal],
                    paymentToEmployersSchemeNoTaxRelief: Option[BigDecimal],
                    overseasPensionSchemeContributions: Option[BigDecimal]
-                  )
-
+                  ) extends PensionReliefsSubRequestModel {
+  override def isEmpty: Boolean = regularPensionContributions.isEmpty &&
+    oneOffPensionContributionsPaid.isEmpty &&
+    retirementAnnuityPayments.isEmpty &&
+    paymentToEmployersSchemeNoTaxRelief.isEmpty &&
+    overseasPensionSchemeContributions.isEmpty
+}
 object Reliefs {
   implicit val formats: OFormat[Reliefs] = Json.format[Reliefs]
 }
 
 case class EncryptedReliefs(regularPensionContributions: Option[EncryptedValue],
-                   oneOffPensionContributionsPaid: Option[EncryptedValue],
-                   retirementAnnuityPayments: Option[EncryptedValue],
-                   paymentToEmployersSchemeNoTaxRelief: Option[EncryptedValue],
-                   overseasPensionSchemeContributions: Option[EncryptedValue]
-                  )
+                            oneOffPensionContributionsPaid: Option[EncryptedValue],
+                            retirementAnnuityPayments: Option[EncryptedValue],
+                            paymentToEmployersSchemeNoTaxRelief: Option[EncryptedValue],
+                            overseasPensionSchemeContributions: Option[EncryptedValue]
+                           )
 
 object EncryptedReliefs {
   implicit val formats: OFormat[EncryptedReliefs] = Json.format[EncryptedReliefs]

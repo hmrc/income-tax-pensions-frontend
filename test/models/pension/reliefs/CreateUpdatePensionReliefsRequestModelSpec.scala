@@ -16,14 +16,22 @@
 
 package models.pension.reliefs
 
-import models.pension.{PensionRequestModel, PensionSubRequestModel}
-import play.api.libs.json.{Json, OFormat}
+import builders.PensionReliefsBuilder.anPensionReliefs
+import utils.UnitTest
 
-case class CreateOrUpdatePensionReliefsModel(pensionReliefs: Reliefs) extends PensionRequestModel {
-  override def otherSubRequestModelsEmpty[T <: PensionSubRequestModel](subModel: Option[T]): Boolean = true
-  override def createSubModel: PensionRequestModel = this
-}
+class CreateUpdatePensionReliefsRequestModelSpec extends UnitTest {
 
-object CreateOrUpdatePensionReliefsModel {
-    implicit val format: OFormat[CreateOrUpdatePensionReliefsModel] = Json.format[CreateOrUpdatePensionReliefsModel]
+  ".otherSubModelsEmpty" should {
+
+    Seq(
+      anPensionReliefs.pensionReliefs
+    ).foreach { subModel =>
+      s"be false when it is the only sub model in model request" in {
+        val actualResult = CreateOrUpdatePensionReliefsModel(
+          anPensionReliefs.pensionReliefs,
+        ).otherSubRequestModelsEmpty(Some(subModel))
+        actualResult shouldBe true
+      }
+    }
   }
+}
