@@ -30,8 +30,8 @@ object MessageKeys {
       override val minAmountMessage: UserTypeMessage = UserTypeMessage("","")
       override val amountHasInvalidFormat: UserTypeMessage =
         UserTypeMessage(
-          "pensions.pensionsProviderPaidTax.error.incorrectFormat.individual",
-          "pensions.pensionsProviderPaidTax.error.incorrectFormat.agent")
+          "pensions.pensionProviderPaidTax.error.incorrectFormat.individual",
+          "pensions.pensionProviderPaidTax.error.incorrectFormat.agent")
       override val amountIsExcessive: UserTypeMessage =
         UserTypeMessage(
           "common.pensions.error.amountMaxLimit.individual",

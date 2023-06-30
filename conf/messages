@@ -392,7 +392,8 @@ annualAllowance.incomeFromFlexiAccess = income from a flexi-access drawdown fund
 annualAllowance.cashDirectlyFromPensionPot = cash directly from a pension pot (‘uncrystallised funds pension lump sums’)
 annualAllowance.overTheLimit.link = over the limit
 
-###### reduced annual allowance ######
+#Reduced annual allowance
+
 annualAllowance.reducedAnnualAllowance.title.individual = Do you have a reduced annual allowance?
 annualAllowance.reducedAnnualAllowance.title.agent = Does your client have a reduced annual allowance?
 annualAllowance.reducedAnnualAllowance.info.individual = Annual allowance is the most you can save in your pension pots each year, before you have to pay tax.
@@ -410,7 +411,8 @@ annualAllowance.reducedAnnualAllowance.details.thisIncludes = This could include
 annualAllowance.reducedAnnualAllowance.error.noEntry.individual = Select yes if you have a reduced annual allowance
 annualAllowance.reducedAnnualAllowance.error.noEntry.agent = Select yes if your client has a reduced annual allowance
 
-###### Reduced Annual Allowance Type ######
+#Reduced Annual Allowance Type
+
 pensions.reducedAnnualAllowanceType.title.individual = What type of reduced annual allowance do you have?
 pensions.reducedAnnualAllowanceType.title.agent = What type of reduced annual allowance does your client have?
 pensions.reducedAnnualAllowanceType.checkbox.hint = Select all that apply.
@@ -424,23 +426,8 @@ pensions.reducedAnnualAllowanceType.details.moneyPurchaseInfo.agent = Your clien
 pensions.reducedAnnualAllowanceType.details.taperedInfo.individual = You’ll have this type of annual allowance if both your ‘threshold income’ and ‘adjusted income’ are
 pensions.reducedAnnualAllowanceType.details.taperedInfo.agent = Your client will have this type of annual allowance if both their ‘threshold income’ and ‘adjusted income’ are
 
-###### Reduced Annual Allowance amount ######
-pensions.reducedAnnualAllowanceAmount.reduced.title.individual = How much above your reduced annual allowance are you?
-pensions.reducedAnnualAllowanceAmount.reduced.title.agent = How much above your client’s reduced annual allowance are they?
-pensions.reducedAnnualAllowanceAmount.nonReduced.title.individual = How much above your annual allowance are you?
-pensions.reducedAnnualAllowanceAmount.nonReduced.title.agent = How much above your client’s annual allowance are they?
-pensions.reducedAnnualAllowanceAmount.paragraph = This is the amount on which tax is due.
-pensions.reducedAnnualAllowanceAmount.reduced.error.noEntry.individual = Enter the amount above your reduced annual allowance
-pensions.reducedAnnualAllowanceAmount.reduced.error.incorrectFormat.individual = Enter the amount above your reduced annual allowance in the correct format
-pensions.reducedAnnualAllowanceAmount.reduced.error.overMaximum.individual = The amount above your reduced annual allowance must be less than £100,000,000,000
-pensions.reducedAnnualAllowanceAmount.reduced.error.noEntry.agent = Enter the amount above your client’s reduced annual allowance
-pensions.reducedAnnualAllowanceAmount.reduced.error.incorrectFormat.agent = Enter the amount above your client’s reduced annual allowance in the correct format
-pensions.reducedAnnualAllowanceAmount.reduced.error.overMaximum.agent = The amount above your client’s reduced annual allowance must be less than £100,000,000,000
-pensions.reducedAnnualAllowanceAmount.nonReduced.error.noEntry = Enter the amount above the annual allowance
-pensions.reducedAnnualAllowanceAmount.nonReduced.error.incorrectFormat = Enter the amount above the annual allowance in the correct format
-pensions.reducedAnnualAllowanceAmount.nonReduced.error.overMaximum = The amount above the annual allowance must be less than £100,000,000,000
+#Above Annual Allowance
 
-#####Above Reduced Annual Allowance ######
 pensions.aboveReducedAnnualAllowance.title.individual = Have you gone above your annual allowance?
 pensions.aboveReducedAnnualAllowance.title.agent = Has your client gone above their annual allowance?
 pensions.aboveReducedAnnualAllowance.amount = Amount above the reduced annual allowance, in pounds
@@ -453,25 +440,12 @@ pensions.aboveReducedAnnualAllowance.error.incorrectFormat.agent = Enter the amo
 pensions.aboveReducedAnnualAllowance.error.overMaximum.individual = The amount above your reduced annual allowance must be less than £100,000,000,000
 pensions.aboveReducedAnnualAllowance.error.overMaximum.agent = The amount above your client’s reduced annual allowance must be less than £100,000,000,000
 
-####### annual allowance CYA #######
-annualAllowance.cya.heading.individual = Check your annual allowance
-annualAllowance.cya.heading.agent = Check your client’s annual allowance
-annualAllowance.cya.reducedAnnualAllowance = Reduced annual allowance
-annualAllowance.cya.typeOfReducedAnnualAllowance = Type of reduced annual allowance
-annualAllowance.cya.aboveAnnualAllowance = Above annual allowance
-annualAllowance.cya.amountAboveAnnualAllowance = Amount above annual allowance
-annualAllowance.cya.annualAllowanceTax = Annual allowance tax
-annualAllowance.cya.annualPensionSchemeTaxReferences = Schemes paying annual allowance tax
-
-
-
 #Pension Provider Paid Tax Messages
-pensions.pensionsProviderPaidTax.error.noEntry.individual = Select yes if your pension provider paid or agreed to pay tax
-pensions.pensionsProviderPaidTax.error.noEntry.agent = Select yes if your client’s pension provider paid or agreed to pay tax
+
 pensions.pensionsProviderPaidTax.error.noAmount.individual = Enter the amount of tax your pension provider paid or agreed to pay
 pensions.pensionsProviderPaidTax.error.noAmount.agent = Enter the amount of tax your client’s pension provider paid or agreed to pay
-pensions.pensionsProviderPaidTax.error.incorrectFormat.individual = Enter the amount of tax your pension provider paid or agreed to pay in the correct format
-pensions.pensionsProviderPaidTax.error.incorrectFormat.agent = Enter the amount of tax your client’s pension provider paid or agreed to pay in the correct format
+pensions.pensionProviderPaidTax.error.incorrectFormat.individual = Enter the amount of tax your pension provider paid or agreed to pay in the correct format
+pensions.pensionProviderPaidTax.error.incorrectFormat.agent = Enter the amount of tax your client’s pension provider paid or agreed to pay in the correct format
 
 #Pension Scheme Tax Reference Messages
 pension.pensionSchemeTaxReference.paragraph1 = Enter the reference for the pension scheme that paid the tax.

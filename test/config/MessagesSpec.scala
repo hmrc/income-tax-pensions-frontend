@@ -89,27 +89,7 @@ class MessagesSpec extends ViewTest with GuiceOneAppPerSuite {
     "pension.pensionSchemeTaxReference.title",
     "unauthorisedPayments.removePensionSchemeTaxReference.title",
     "common.pensionSchemeTaxReference.p1",
-    "common.addAnotherPstrLink",
-    "lifetimeAllowance.cya.annualPensionSchemeTaxReferences",
-    "lifetimeAllowance.cya.annualAllowanceTax",
-    "lifetimeAllowance.cya.typeOfReducedAnnualAllowance",
-    "lifetimeAllowance.cya.aboveAnnualOrLifetimeAllowance",
-    "lifetimeAllowance.cya.reducedAnnualAllowance",
-    "lifetimeAllowance.cya.aboveLifetimeAllowance",
-    "lifetimeAllowance.cya.aboveAnnualAllowance",
-
-    "pensions.aboveReducedAnnualAllowance.error.overMaximum.individual",
-    "pensions.reducedAnnualAllowanceAmount.reduced.error.overMaximum.individual",
-    "pensions.reducedAnnualAllowanceAmount.reduced.error.incorrectFormat.agent",
-    "pensions.aboveReducedAnnualAllowance.error.incorrectFormat.individual",
-    "pensions.reducedAnnualAllowanceAmount.reduced.error.noEntry.individual",
-    "pensions.aboveReducedAnnualAllowance.error.noAmountEntry.agent",
-    "pensions.aboveReducedAnnualAllowance.error.overMaximum.agent",
-    "pensions.aboveReducedAnnualAllowance.error.noAmountEntry.individual",
-    "pensions.reducedAnnualAllowanceAmount.reduced.error.noEntry.agent",
-    "pensions.aboveReducedAnnualAllowance.error.incorrectFormat.agent",
-    "pensions.reducedAnnualAllowanceAmount.reduced.error.incorrectFormat.individual",
-    "pensions.reducedAnnualAllowanceAmount.reduced.error.overMaximum.agent"
+    "common.addAnotherPstrLink"
   )
 
   lazy val allLanguages: Map[String, Map[String, String]] = app.injector.instanceOf[MessagesApi].messages

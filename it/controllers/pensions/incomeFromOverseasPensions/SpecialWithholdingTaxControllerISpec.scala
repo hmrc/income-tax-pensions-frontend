@@ -420,8 +420,11 @@ class SpecialWithholdingTaxControllerISpec extends YesNoAmountControllerSpec("/o
       "the index is invalid" in {
         val sessionData: PensionsUserData = pensionsUserData(aPensionsCYAModel)
 
+        val expectedViewModel = sessionData.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes.head
+
         implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
         implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(false), None))
+        implicit val index: Int = 7
 
         assertRedirectionAsExpected(PageRelativeURLs.incomeFromOverseasPensionsCountrySummary)
 
