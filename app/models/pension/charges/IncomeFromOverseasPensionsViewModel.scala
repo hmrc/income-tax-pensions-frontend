@@ -39,19 +39,18 @@ case class IncomeFromOverseasPensionsViewModel(paymentsFromOverseasPensionsQuest
   def isEmpty: Boolean = paymentsFromOverseasPensionsQuestion.isEmpty && overseasIncomePensionSchemes.isEmpty
 
   def isFinished: Boolean = {
-    paymentsFromOverseasPensionsQuestion.exists {
-      if (_) {
-        overseasIncomePensionSchemes.map {
-          scheme: PensionScheme =>
-            scheme.alphaThreeCode.isDefined &&
-              scheme.alphaTwoCode.isDefined &&
-              scheme.pensionPaymentAmount.isDefined &&
-              scheme.pensionPaymentTaxPaid.isDefined &&
-              yesNoAndAmountPopulated(scheme.specialWithholdingTaxQuestion, scheme.specialWithholdingTaxAmount) &&
-              yesNoAndAmountPopulated(scheme.foreignTaxCreditReliefQuestion, scheme.taxableAmount)
-        }.forall(x => x)
-      } else true
-    }
+    paymentsFromOverseasPensionsQuestion.filter(x => x)
+      .exists(_ => overseasIncomePensionSchemes.map {
+        scheme: PensionScheme =>
+          scheme.alphaThreeCode.isDefined &&
+            scheme.alphaTwoCode.isDefined &&
+            scheme.pensionPaymentAmount.isDefined &&
+            scheme.pensionPaymentTaxPaid.isDefined &&
+            yesNoAndAmountPopulated(scheme.specialWithholdingTaxQuestion,
+              scheme.specialWithholdingTaxAmount) &&
+            yesNoAndAmountPopulated(scheme.foreignTaxCreditReliefQuestion, scheme.taxableAmount)
+      }.forall(x => x)
+      )
   }
 
   def journeyIsNo: Boolean = !paymentsFromOverseasPensionsQuestion.getOrElse(true) && overseasIncomePensionSchemes.isEmpty
