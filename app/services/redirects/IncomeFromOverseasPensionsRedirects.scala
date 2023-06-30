@@ -17,9 +17,11 @@
 package services.redirects
 
 
-import controllers.pensions.incomeFromOverseasPensions.routes.{CountrySummaryListController, PensionOverseasIncomeCountryController}
-import models.pension.charges.PensionScheme
-import play.api.mvc.Call
+import controllers.pensions.incomeFromOverseasPensions.routes.{CountrySummaryListController, IncomeFromOverseasPensionsCYAController, PensionOverseasIncomeCountryController, PensionOverseasIncomeStatus}
+import models.mongo.PensionsCYAModel
+import models.pension.charges.{IncomeFromOverseasPensionsViewModel, PensionScheme}
+import play.api.mvc.Results.Redirect
+import play.api.mvc.{Call, Result}
 import services.redirects.SimpleRedirectService.checkForExistingSchemes
 
 object IncomeFromOverseasPensionsRedirects {
@@ -32,6 +34,64 @@ object IncomeFromOverseasPensionsRedirects {
     )
   }
 
-  def journeyCheck(): Unit = {}
+  def cyaPageCall(taxYear: Int): Call = IncomeFromOverseasPensionsCYAController.show(taxYear)
+
+  def journeyCheck(currentPage: IncomeFromOverseasPensionsPages, cya: PensionsCYAModel, taxYear: Int): Option[Result] = {
+    val incomeFOP = cya.incomeFromOverseasPensions
+    if (isPageValidInJourney(currentPage.journeyNo, incomeFOP) && previousQuestionIsAnswered(currentPage.journeyNo, incomeFOP)) {
+      None
+    } else {
+      Some(Redirect(PensionOverseasIncomeStatus.show(taxYear)))
+    }
+  }
+
+  private def isPageValidInJourney(pageNumber: Int, incomeFromOverseasPensionsViewModel: IncomeFromOverseasPensionsViewModel): Boolean =
+    pageValidInJourneyMap.getOrElse(pageNumber, { _: IncomeFromOverseasPensionsViewModel => true })(incomeFromOverseasPensionsViewModel)
+
+  private val pageValidInJourneyMap: Map[Int, IncomeFromOverseasPensionsViewModel => Boolean] = {
+
+    Map(
+      1 | 10 -> true,
+      // 2-9 need Q1 true
+      2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 -> { incomeFromOverseasPensionsViewModel: IncomeFromOverseasPensionsViewModel =>
+        incomeFromOverseasPensionsViewModel.paymentsFromOverseasPensionsQuestion.getOrElse(false)
+      }
+    )
+  }
+
+  private def previousQuestionIsAnswered(pageNumber: Int, incomeFromOverseasPensionsViewModel: IncomeFromOverseasPensionsViewModel): Boolean =
+    prevQuestionIsAnsweredMap(pageNumber)(incomeFromOverseasPensionsViewModel)
+
+  private val prevQuestionIsAnsweredMap: Map[Int, IncomeFromOverseasPensionsViewModel => Boolean] = Map(
+    1 -> { _: IncomeFromOverseasPensionsViewModel => true },
+
+    2 -> { incomeFromOverseasPensionsViewModel: IncomeFromOverseasPensionsViewModel => incomeFromOverseasPensionsViewModel.paymentsFromOverseasPensionsQuestion.isDefined },
+
+    3 -> { incomeFromOverseasPensionsViewModel: IncomeFromOverseasPensionsViewModel =>
+      incomeFromOverseasPensionsViewModel.overseasIncomePensionSchemes.head.alphaThreeCode.isDefined
+    },
+    4 -> { incomeFromOverseasPensionsViewModel: IncomeFromOverseasPensionsViewModel =>
+      incomeFromOverseasPensionsViewModel.overseasIncomePensionSchemes.head.pensionPaymentAmount.isDefined &&
+        incomeFromOverseasPensionsViewModel.overseasIncomePensionSchemes.head.pensionPaymentTaxPaid.isDefined
+    },
+    5 -> { incomeFromOverseasPensionsViewModel: IncomeFromOverseasPensionsViewModel =>
+      incomeFromOverseasPensionsViewModel.overseasIncomePensionSchemes.head.specialWithholdingTaxQuestion.exists(x =>
+        if (x) incomeFromOverseasPensionsViewModel.overseasIncomePensionSchemes.head.specialWithholdingTaxAmount.isDefined else true)
+    },
+
+    6 | 7 | 8 -> { incomeFromOverseasPensionsViewModel: IncomeFromOverseasPensionsViewModel =>
+      incomeFromOverseasPensionsViewModel.overseasIncomePensionSchemes.head.foreignTaxCreditReliefQuestion.isDefined
+    },
+
+    9 -> { incomeFromOverseasPensionsViewModel: IncomeFromOverseasPensionsViewModel => incomeFromOverseasPensionsViewModel.overseasIncomePensionSchemes.nonEmpty },
+
+    10 -> { incomeFromOverseasPensionsViewModel: IncomeFromOverseasPensionsViewModel =>
+      if (isPageValidInJourney(2, incomeFromOverseasPensionsViewModel)) {
+        incomeFromOverseasPensionsViewModel.overseasIncomePensionSchemes.nonEmpty
+      } else {
+        !incomeFromOverseasPensionsViewModel.paymentsFromOverseasPensionsQuestion.getOrElse(true)
+      }
+    }
+  )
 
 }
