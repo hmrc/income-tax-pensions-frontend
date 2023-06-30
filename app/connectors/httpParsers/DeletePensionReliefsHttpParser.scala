@@ -31,23 +31,7 @@ object DeletePensionReliefsHttpParser extends APIParser {
 
   implicit object DeletePensionReliefsHttpReads extends HttpReads[DeletePensionReliefsResponse] {
 
-    override def read(method: String, url: String, response: HttpResponse): DeletePensionReliefsResponse = {
-      response.status match {
-
-        case NO_CONTENT => Right(())
-        case INTERNAL_SERVER_ERROR =>
-          pagerDutyLog(INTERNAL_SERVER_ERROR_FROM_API, logMessage(response))
-          handleAPIError(response)
-        case SERVICE_UNAVAILABLE =>
-          pagerDutyLog(SERVICE_UNAVAILABLE_FROM_API, logMessage(response))
-          handleAPIError(response)
-        case BAD_REQUEST | NOT_FOUND =>
-          pagerDutyLog(FOURXX_RESPONSE_FROM_API, logMessage(response))
-          handleAPIError(response)
-        case _ =>
-          pagerDutyLog(UNEXPECTED_RESPONSE_FROM_API, logMessage(response))
-          handleAPIError(response, Some(INTERNAL_SERVER_ERROR))
-      }
-    }
+    override def read(method: String, url: String, response: HttpResponse): DeletePensionReliefsResponse =
+      SessionHttpReads.read(method, url, response)
   }
 }

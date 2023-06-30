@@ -30,6 +30,5 @@ object DeletePensionIncomeHttpParser extends APIParser {
 
     override def read(method: String, url: String, response: HttpResponse): DeletePensionIncomeResponse =
       SessionHttpReads.read(method, url, response)
-
   }
 }
