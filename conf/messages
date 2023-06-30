@@ -764,9 +764,9 @@ lifetimeAllowance.pensionTakenAnotherWay.taxPaid.error.noEntry.agent = Enter the
 
 #Annual Allowance and Lifetime Allowance CYA
 lifetimeAllowance.cya.heading.individual = Check your annual and lifetime allowances
-lifetimeAllowance.cya.lifetime.heading.individual = Check your lifetime allowances
 lifetimeAllowance.cya.heading.agent = Check your client’s annual and lifetime allowances
-lifetimeAllowance.cya.lifetime.heading.agent = Check your client’s lifetime allowances
+lifetimeAllowance.cya.lifetime.heading.individual = Check your lifetime allowance
+lifetimeAllowance.cya.lifetime.heading.agent = Check your client’s lifetime allowance
 lifetimeAllowance.cya.aboveAnnualOrLifetimeAllowance = Above annual or lifetime allowance
 lifetimeAllowance.cya.reducedAnnualAllowance = Reduced annual allowance
 lifetimeAllowance.cya.typeOfReducedAnnualAllowance = Type of reduced annual allowance

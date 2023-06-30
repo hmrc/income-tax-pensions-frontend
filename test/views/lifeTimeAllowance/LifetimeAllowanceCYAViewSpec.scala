@@ -17,7 +17,6 @@
 package views.lifeTimeAllowance
 
 import builders.PensionLifetimeAllowanceViewModelBuilder.{aPensionLifetimeAllowanceViewModel, minimalPensionLifetimeAllowanceViewModel}
-import builders.PensionsUserDataBuilder.authorisationRequest
 import models.requests.UserSessionDataRequest
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -36,8 +35,6 @@ class LifetimeAllowanceCYAViewSpec extends ViewUnitTest { //scalastyle:off magic
   }
 
   trait CommonExpectedResults {
-    val expectedTitle: String
-    val expectedHeading: String
     val expectedCaption: Int => String
     val aboveLifetimeAllowance: String
     val lumpSumAmount: String
@@ -53,8 +50,6 @@ class LifetimeAllowanceCYAViewSpec extends ViewUnitTest { //scalastyle:off magic
   }
 
   object CommonExpectedEN extends CommonExpectedResults {
-    val expectedTitle: String = "Check your lifetime allowances"
-    val expectedHeading: String = "Check your lifetime allowances"
     val expectedCaption: Int => String = (taxYear: Int) => s"Lifetime allowances for 6 April ${taxYear - 1} to 5 April $taxYear"
     val aboveLifetimeAllowance: String = "Above lifetime allowance"
     val lumpSumAmount: String = "Lump sum"
@@ -70,8 +65,6 @@ class LifetimeAllowanceCYAViewSpec extends ViewUnitTest { //scalastyle:off magic
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedTitle: String = "Check your lifetime allowances"
-    val expectedHeading: String = "Check your lifetime allowances"
     val expectedCaption: Int => String = (taxYear: Int) => s"Lifetime allowances for 6 April ${taxYear - 1} to 5 April $taxYear"
     val aboveLifetimeAllowance: String = "Uwch na’r lwfans oes pensiwn"
     val lumpSumAmount: String = "Cyfandaliad"
@@ -85,12 +78,33 @@ class LifetimeAllowanceCYAViewSpec extends ViewUnitTest { //scalastyle:off magic
     val noText: String = "Na"
     val yesText: String = "Iawn"
   }
+  
+  trait SpecificExpectedResults {
+    val expectedTitle: String
+    lazy val expectedHeading = expectedTitle
+  }
+  
+  object ExpectedIndividualEN extends SpecificExpectedResults {
+    val expectedTitle =  "Check your lifetime allowance"
+  }
 
-  val userScenarios: Seq[UserScenario[CommonExpectedResults, String]] = Seq(
-    UserScenario(isWelsh = false, isAgent = false, CommonExpectedEN, None),
-    UserScenario(isWelsh = true, isAgent = true, CommonExpectedCY, None),
-    UserScenario(isWelsh = false, isAgent = true, CommonExpectedEN, None),
-    UserScenario(isWelsh = true, isAgent = false, CommonExpectedCY, None)
+  object ExpectedAgentEN extends SpecificExpectedResults {
+    val expectedTitle = "Check your client’s lifetime allowance"
+  }
+
+  object ExpectedIndividualCY extends SpecificExpectedResults {
+    val expectedTitle = "Check your lifetime allowance"
+  }
+
+  object ExpectedAgentCY extends SpecificExpectedResults {
+    val expectedTitle = "Check your client’s lifetime allowance"
+  }
+
+  val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(
+    UserScenario(isWelsh = false, isAgent = false, CommonExpectedEN, Some(ExpectedIndividualEN)),
+    UserScenario(isWelsh = false, isAgent = true, CommonExpectedEN, Some(ExpectedAgentEN)),
+    UserScenario(isWelsh = true, isAgent = false, CommonExpectedCY, Some(ExpectedIndividualCY)),
+    UserScenario(isWelsh = true, isAgent = true, CommonExpectedCY, Some(ExpectedAgentCY))
   )
 
   private lazy val underTest = inject[LifetimeAllowanceCYAView]
@@ -98,7 +112,8 @@ class LifetimeAllowanceCYAViewSpec extends ViewUnitTest { //scalastyle:off magic
   userScenarios.foreach { userScenario =>
 
     s"language is ${welshTest(userScenario.isWelsh)} and request is from an ${agentTest(userScenario.isAgent)}" should {
-
+      import userScenario.specificExpectedResults
+      
       "render the page with a full CYA model" which {
 
         implicit val request: UserSessionDataRequest[AnyContent] = getUserSession(userScenario.isAgent)
@@ -106,10 +121,12 @@ class LifetimeAllowanceCYAViewSpec extends ViewUnitTest { //scalastyle:off magic
 
         val htmlFormat = underTest(taxYearEOY, aPensionLifetimeAllowanceViewModel)
         import userScenario.commonExpectedResults._
+        
+        
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
-        titleCheck(expectedTitle, userScenario.isWelsh)
-        h1Check(expectedHeading)
+        titleCheck(specificExpectedResults.get.expectedTitle, userScenario.isWelsh)
+        h1Check(specificExpectedResults.get.expectedHeading)
         captionCheck(expectedCaption(taxYearEOY))
 
         cyaRowCheck(aboveLifetimeAllowance, yesText, ChangeLinks.changeAboveLifetimeAllowance, hiddenAboveLifetimeAllowance, 1)
@@ -128,8 +145,8 @@ class LifetimeAllowanceCYAViewSpec extends ViewUnitTest { //scalastyle:off magic
         import userScenario.commonExpectedResults._
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
-        titleCheck(expectedTitle, userScenario.isWelsh)
-        h1Check(expectedHeading)
+        titleCheck(specificExpectedResults.get.expectedTitle, userScenario.isWelsh)
+        h1Check(specificExpectedResults.get.expectedHeading)
         captionCheck(expectedCaption(taxYearEOY))
 
         cyaRowCheck(aboveLifetimeAllowance, noText, ChangeLinks.changeAboveLifetimeAllowance, hiddenAboveLifetimeAllowance, 1)
@@ -140,3 +157,4 @@ class LifetimeAllowanceCYAViewSpec extends ViewUnitTest { //scalastyle:off magic
   }
 
 }
+  

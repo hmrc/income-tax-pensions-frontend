@@ -27,7 +27,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.PensionLifetimeAllowance.{pensionLifeTimeAllowanceAnotherWayUrl, pensionTakenAnotherWayAmountUrl}
+import utils.PageUrls.PensionLifetimeAllowance.{lifetimeAllowanceCYA, pensionLifeTimeAllowanceAnotherWayUrl, pensionTakenAnotherWayAmountUrl}
 import utils.PageUrls.{fullUrl, pensionSummaryUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
@@ -221,7 +221,6 @@ class LifeTimeAllowanceAnotherWayControllerISpec extends IntegrationTest with Be
 
       "has an SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER
-        //TODO - redirect to CYA page once implemented
         result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
       }
     }
@@ -319,8 +318,7 @@ class LifeTimeAllowanceAnotherWayControllerISpec extends IntegrationTest with Be
 
       "has a SEE_OTHER(303) status and redirect to the lifetime allowances CYA Page" in {
         result.status shouldBe SEE_OTHER
-        //TODO redirect page to the Annual and lifetime allowances CYA Page
-        result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
+        result.header("location") shouldBe Some(lifetimeAllowanceCYA(taxYearEOY))
       }
 
       "updates aboveLifetimeAllowanceQuestion to Some(false) and clear the rest of the annual lifetime allowance data" in {

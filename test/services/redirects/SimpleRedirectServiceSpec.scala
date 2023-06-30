@@ -17,16 +17,14 @@
 package services.redirects
 
 import builders.PensionsUserDataBuilder.aPensionsUserData
+import builders.UnauthorisedPaymentsViewModelBuilder.anUnauthorisedPaymentsViewModel
 import controllers.pensions.paymentsIntoPensions.routes.{PaymentsIntoPensionsCYAController, ReliefAtSourcePensionsController, TotalPaymentsIntoRASController}
+import controllers.pensions.unauthorisedPayments.routes._
 import models.mongo.{PensionsCYAModel, PensionsUserData}
-import models.pension.reliefs.PaymentsIntoPensionsViewModel
 import play.api.http.Status.SEE_OTHER
 import play.api.mvc.Results.Redirect
-import services.redirects.UnauthorisedPaymentsRedirects.cyaPageCall
 import play.api.mvc.{Call, Result}
-import builders.UnauthorisedPaymentsViewModelBuilder.{anUnauthorisedPaymentsEmptyViewModel, anUnauthorisedPaymentsViewModel}
-import controllers.pensions.unauthorisedPayments.routes._
-import play.api.libs.ws.WSResponse
+import services.redirects.UnauthorisedPaymentsRedirects.cyaPageCall
 import utils.UnitTest
 
 import scala.concurrent.Future
@@ -36,15 +34,16 @@ class SimpleRedirectServiceSpec extends UnitTest {
   val cyaData: PensionsCYAModel = PensionsCYAModel.emptyModels
   val contextualRedirect: Call = TotalPaymentsIntoRASController.show(taxYear)
   val cyaRedirect: Call = PaymentsIntoPensionsCYAController.show(taxYear)
-  val noneRedirect: PensionsCYAModel => Option[Result] = cyaData => None
-  val someRedirect: PensionsCYAModel => Option[Result] = cyaData => Some(Redirect(ReliefAtSourcePensionsController.show(taxYear)))
-  val continueRedirect: PensionsUserData => Future[Result] = aPensionsUserData => Future.successful(Redirect(contextualRedirect))
+  val noneRedirect: PensionsCYAModel => Option[Result] = _ => None
+  val someRedirect: PensionsCYAModel => Option[Result] = _ => Some(Redirect(ReliefAtSourcePensionsController.show(taxYear)))
+  val continueRedirect: PensionsUserData => Future[Result] = _ => Future.successful(Redirect(contextualRedirect))
   val cyaPageCallLocal = PaymentsIntoPensionsCYAController.show(taxYear)
 
   ".redirectBasedOnCurrentAnswers" should {
 
     "continue to attempted page when there is session data and 'shouldRedirect' is None" which {
-      val result: Future[Result] = SimpleRedirectService.redirectBasedOnCurrentAnswers(taxYear, Some(aPensionsUserData), cyaPageCallLocal)(noneRedirect)(continueRedirect)
+      val result: Future[Result] = SimpleRedirectService.redirectBasedOnCurrentAnswers(taxYear, Some(aPensionsUserData),
+        cyaPageCallLocal)(noneRedirect)(continueRedirect)
       val resultStatus = result.map(_.header.status)
       val resultHeader = result.map(_.header.headers)
 
@@ -54,7 +53,7 @@ class SimpleRedirectServiceSpec extends UnitTest {
         status shouldBe SEE_OTHER
       }
       "location header is dependent on the 'continue' argument" in {
-        val locationHeader = resultHeader.value.get.get.get("Location").get
+        val locationHeader = resultHeader.value.get.get("Location")
 
         locationHeader shouldBe contextualRedirect.url
       }
@@ -71,7 +70,7 @@ class SimpleRedirectServiceSpec extends UnitTest {
         status shouldBe SEE_OTHER
       }
       "location header is first page of journey" in {
-        val locationHeader = resultHeader.value.get.get.get("Location").get
+        val locationHeader = resultHeader.value.get.get("Location")
 
         locationHeader shouldBe ReliefAtSourcePensionsController.show(taxYear).url
       }
@@ -88,7 +87,7 @@ class SimpleRedirectServiceSpec extends UnitTest {
         status shouldBe SEE_OTHER
       }
       "location header is CYA page" in {
-        val locationHeader = resultHeader.value.get.get.get("Location").get
+        val locationHeader = resultHeader.value.get.get("Location")
 
         locationHeader shouldBe cyaRedirect.url
       }

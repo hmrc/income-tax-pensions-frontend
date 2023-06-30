@@ -63,8 +63,8 @@ class LifetimeAllowanceCYAControllerISpec extends IntegrationTest with ViewHelpe
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
       }
 
-      result.status shouldBe OK
-      result.headers("Location").head shouldBe Some(pensionSummaryUrl(taxYear))
+      result.status shouldBe SEE_OTHER
+      result.headers("Location").head shouldBe overviewUrl(taxYear)
     }
 
     "redirect to pension summary Page when in year" in {
@@ -78,7 +78,7 @@ class LifetimeAllowanceCYAControllerISpec extends IntegrationTest with ViewHelpe
       }
 
       result.status shouldBe SEE_OTHER
-      result.headers("Location").head shouldBe Some(pensionSummaryUrl(taxYear))
+      result.headers("Location").head shouldBe overviewUrl(taxYear)
     }
   }
 

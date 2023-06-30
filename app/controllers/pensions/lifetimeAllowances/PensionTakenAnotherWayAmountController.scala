@@ -17,7 +17,7 @@
 package controllers.pensions.lifetimeAllowances
 
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.lifetimeAllowances.routes.AnnualLifetimeAllowanceCYAController
+import controllers.pensions.lifetimeAllowances.routes.{LifeTimeAllowanceAnotherWayController, LifetimeAllowanceCYAController}
 import controllers.pensions.routes.PensionsSummaryController
 import controllers.predicates.AuthorisedAction
 import controllers.predicates.TaxYearAction.taxYearAction
@@ -67,7 +67,7 @@ class PensionTakenAnotherWayAmountController @Inject()(implicit val mcc: Message
             Future.successful(Ok(pensionTakenAnotherWayAmountView(formsProvider.pensionTakenAnotherWayAmountForm(request.user.isAgent), taxYear)))
         }
       case _ =>
-        Future.successful(Redirect(AnnualLifetimeAllowanceCYAController.show(taxYear)))
+        Future.successful(Redirect(LifetimeAllowanceCYAController.show(taxYear)))
 
     }
 
@@ -77,29 +77,28 @@ class PensionTakenAnotherWayAmountController @Inject()(implicit val mcc: Message
   def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
     formsProvider.pensionTakenAnotherWayAmountForm(request.user.isAgent).bindFromRequest().fold(
       formWithErrors => Future.successful(BadRequest(pensionTakenAnotherWayAmountView(formWithErrors, taxYear))),
-      amounts => {
+      amounts =>
         pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
-          case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
+          case Left(_) =>
+            Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
+            
           case Right(Some(optData)) =>
             if (optData.pensions.pensionLifetimeAllowances.pensionPaidAnotherWayQuestion.contains(true)) {
-              val pensionsCYAModel: PensionsCYAModel = optData.pensions
-              val viewModel: PensionLifetimeAllowancesViewModel = pensionsCYAModel.pensionLifetimeAllowances
-              val updatedCyaModel: PensionsCYAModel = {
-                pensionsCYAModel.copy(pensionLifetimeAllowances = viewModel.copy(
-                  pensionPaidAnotherWay = if (amounts._1.isEmpty && amounts._2.isEmpty) None else Some(LifetimeAllowance(amounts._1, amounts._2))
+              val pensionsCYAModel = optData.pensions
+              val updatedCyaModel = pensionsCYAModel.copy(
+                pensionLifetimeAllowances = pensionsCYAModel.pensionLifetimeAllowances
+                  .copy( pensionPaidAnotherWay = if (amounts._1.isEmpty && amounts._2.isEmpty) None else Some(LifetimeAllowance(amounts._1, amounts._2))
                 ))
-              }
               pensionSessionService.createOrUpdateSessionData(request.user,
                 updatedCyaModel, taxYear, optData.isPriorSubmission)(errorHandler.internalServerError()) {
                 Redirect(redirectForSchemeLoop(updatedCyaModel.pensionLifetimeAllowances.pensionSchemeTaxReferences.getOrElse(Seq()), taxYear))
               }
             } else {
-              Future.successful(Redirect(AnnualLifetimeAllowanceCYAController.show(taxYear)))
+              Future.successful(Redirect(LifeTimeAllowanceAnotherWayController.show(taxYear)))
             }
           case _ =>
             Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
         }
-      }
     )
   }
 

@@ -26,7 +26,7 @@ import play.api.http.HeaderNames
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import utils.PageUrls.PensionAnnualAllowancePages.pensionSchemeTaxReferenceUrl
-import utils.PageUrls.PensionLifetimeAllowance.{checkAnnualLifetimeAllowanceCYA, lifetimeAllowancePstrSummaryUrl}
+import utils.PageUrls.PensionLifetimeAllowance.{checkAnnualLifetimeAllowanceCYA, lifetimeAllowanceCYA, lifetimeAllowancePstrSummaryUrl}
 import utils.PageUrls.{fullUrl, pensionSummaryUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
@@ -123,7 +123,7 @@ class LifetimePstrSummaryControllerISpec extends IntegrationTest with BeforeAndA
           linkCheck(s"$remove $remove $pensionSchemeTaxReference $pstr2", removeLinkSelector(2),
             "#")
           linkCheck(expectedAddAnotherText, addAnotherLinkSelector, PensionSchemeTaxReferenceLifetimeController.show(taxYearEOY, None).url)
-          buttonCheck(expectedButtonText, continueButtonSelector, Some(checkAnnualLifetimeAllowanceCYA(taxYearEOY)))
+          buttonCheck(expectedButtonText, continueButtonSelector, Some(lifetimeAllowanceCYA(taxYearEOY)))
           welshToggleCheck(user.isWelsh)
         }
 
@@ -148,7 +148,7 @@ class LifetimePstrSummaryControllerISpec extends IntegrationTest with BeforeAndA
           captionCheck(expectedCaption(taxYearEOY))
           elementNotOnPageCheck(pstrSelector(1))
           linkCheck(expectedAddPstrText, addLinkSelector, PensionSchemeTaxReferenceLifetimeController.show(taxYearEOY, None).url)
-          buttonCheck(expectedButtonText, continueButtonSelector, Some(checkAnnualLifetimeAllowanceCYA(taxYearEOY)))
+          buttonCheck(expectedButtonText, continueButtonSelector, Some(lifetimeAllowanceCYA(taxYearEOY)))
           welshToggleCheck(user.isWelsh)
         }
 

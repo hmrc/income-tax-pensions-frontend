@@ -18,6 +18,7 @@ package controllers.pensions.lifetimeAllowances
 
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.lifetimeAllowances.{routes => lifetimeRoutes}
+import controllers.pensions.annualAllowances.{routes => annualRoutes}
 import controllers.predicates.AuthorisedAction
 import forms.YesNoForm
 import models.User
@@ -80,7 +81,7 @@ class AboveAnnualLifetimeAllowanceController @Inject()(implicit val cc: Messages
             pensionSessionService.createOrUpdateSessionData(request.user,
               updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
               if (yesNo) {
-                Redirect(annualRoutes.ReducedAnnualAllowanceController.show(taxYear))
+                Redirect(lifetimeRoutes.PensionLumpSumController.show(taxYear))
               } else {
                 Redirect(lifetimeRoutes.AnnualLifetimeAllowanceCYAController.show(taxYear))
               }

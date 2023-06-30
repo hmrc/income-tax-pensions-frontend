@@ -16,7 +16,6 @@
 
 package controllers.pensions.lifetimeAllowances
 
-import controllers.pensions.lifetimeAllowances.{routes => lifetimeRoutes}
 import models.pension.charges.PensionLifetimeAllowancesViewModel
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
@@ -98,7 +97,7 @@ object LifetimeAllowanceCYAViewHelper extends CYABaseHelper {
         summaryListRowWithStrings(
           "lifetimeAllowance.cya.lifetimePensionSchemeTaxReferences",
           lifetimeAllowancesViewModel.pensionSchemeTaxReferences,
-          controllers.pensions.annualAllowances.routes.PstrSummaryController.show(taxYear))(messages)
+          controllers.pensions.lifetimeAllowances.routes.LifetimePstrSummaryController.show(taxYear))(messages)
       }
     )
   }

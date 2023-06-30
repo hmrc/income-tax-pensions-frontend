@@ -80,12 +80,14 @@ class PensionSchemeTaxReferenceLifetimeController @Inject()(authAction: Authoris
 
   def submit(taxYear: Int, pensionSchemeTaxReferenceIndex: Option[Int] = None): Action[AnyContent] = authAction.async {
     implicit request =>
+      
       val errorMsgDetails = (
         s"common.pensionSchemeTaxReference.error.noEntry.${if (request.user.isAgent) "agent" else "individual"}",
         s"lifetimeAllowance.pensionSchemeTaxReference.error.incorrectFormat")
+      
       PensionSchemeTaxReferenceForm.pensionSchemeTaxReferenceForm(errorMsgDetails._1, errorMsgDetails._2).bindFromRequest().fold(
         formWithErrors => Future.successful(BadRequest(pensionSchemeTaxReferenceView(formWithErrors, taxYear, pensionSchemeTaxReferenceIndex))),
-        pensionScheme => {
+        pensionScheme =>
           pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
             case Right(Some(data)) =>
 
@@ -119,7 +121,6 @@ class PensionSchemeTaxReferenceLifetimeController @Inject()(authAction: Authoris
               }
             case _ => Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
           }
-        }
       )
   }
 
