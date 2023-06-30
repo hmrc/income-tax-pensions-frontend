@@ -74,7 +74,7 @@ class AnnualLifetimeAllowanceCYAControllerISpec extends
     val reducedAnnualAllowance: String = ReducedAnnualAllowanceController.show(taxYear).url
     val typeOfReducedAnnualAllowance: String = ReducedAnnualAllowanceTypeController.show(taxYear).url
     val aboveAnnualAllowance: String = AboveReducedAnnualAllowanceController.show(taxYear).url
-    val annualAllowanceTax: String = routes.PensionProviderPaidTaxController.show(taxYear).url
+    val annualAllowanceTax: String = PensionProviderPaidTaxController.show(taxYear).url
     val annualAllowanceSchemes: String = PstrSummaryController.show(taxYear).url
     val aboveLifetimeAllowance: String = AnnualLifetimeAllowanceCYAController.show(taxYear).url
     val lumpSum: String = PensionLumpSumController.show(taxYear).url

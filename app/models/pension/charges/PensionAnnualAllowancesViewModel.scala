@@ -29,15 +29,6 @@ case class PensionAnnualAllowancesViewModel(
                                             taxPaidByPensionProvider: Option[BigDecimal] = None,
                                             pensionSchemeTaxReferences: Option[Seq[String]] = None) {
   def isEmpty: Boolean = this.productIterator.forall(_ == None)
-  
-  def typeOfAllowance: Option[Seq[String]] = {
-    (moneyPurchaseAnnualAllowance, taperedAnnualAllowance) match {
-      case (Some(true), Some(true)) => Some(Seq("Money purchase", "Tapered"))
-      case (Some(true), _) => Some(Seq("Money purchase"))
-      case (_, Some(true)) => Some(Seq("Tapered"))
-      case _ => None
-    }
-  }
 }
 
 object PensionAnnualAllowancesViewModel {

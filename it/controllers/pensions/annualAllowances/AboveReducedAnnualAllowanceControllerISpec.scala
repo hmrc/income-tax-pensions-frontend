@@ -31,7 +31,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.PensionAnnualAllowancePages._
+import utils.PageUrls.PensionAnnualAllowancePages.{aboveReducedAnnualAllowanceUrl, pensionSchemeTaxReferenceUrl, pstrSummaryUrl, reducedAnnualAllowanceUrl}
 import utils.PageUrls._
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
@@ -422,7 +422,7 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
       }
     }
 
-    "redirect to the Pension paid tax amount page when user selects 'yes' with an amount and is not a prior submission" which {
+    "redirect to the PensionSchemeTaxReference page when user selects 'yes' with an amount and is not a prior submission" which { //TODO redirect to 'Did your pension schemes pay or agree to pay the tax?' page when created
       lazy val form: Map[String, String] = Map(RadioButtonAmountForm.yesNo -> RadioButtonAmountForm.yes, RadioButtonAmountForm.amount2 -> "22.55")
       lazy val result: WSResponse = {
         dropPensionsDB()
@@ -438,7 +438,7 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
 
       "has a SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(pensionProviderPaidTaxUrl(taxYearEOY))
+        result.header("location") shouldBe Some(pensionSchemeTaxReferenceUrl(taxYearEOY))
       }
 
       "persists submission details" in {
@@ -448,7 +448,7 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
       }
     }
 
-    "redirect to the Pensions paid tax amount page when user selects 'yes' with an amount and pension schemes already exist" which {
+    "redirect to the PensionSchemeTaxReference page when user selects 'yes' with an amount and pension schemes already exist" which {
       lazy val form: Map[String, String] = Map(RadioButtonAmountForm.yesNo -> RadioButtonAmountForm.yes, RadioButtonAmountForm.amount2 -> "22.55")
       lazy val result: WSResponse = {
         dropPensionsDB()
@@ -464,7 +464,7 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
 
       "has a SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(pensionProviderPaidTaxUrl(taxYearEOY))
+        result.header("location") shouldBe Some(pstrSummaryUrl(taxYearEOY))
       }
 
       "persists submission details" in {
@@ -474,7 +474,7 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
       }
     }
 
-    "redirect to the AnnualAllowance CYA page when user selects 'no' and not a prior submission" which {
+    "redirect to the AboveReducedAnnualAllowance page when user selects 'no' and not a prior submission" which { //TODO: redirect to annual allowance CYA page when created
       lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.no)
       lazy val result: WSResponse = {
         dropPensionsDB()
@@ -488,7 +488,7 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
 
       "has a SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(annualAllowancesCYAUrl(taxYearEOY))
+        result.header("location") shouldBe Some(aboveReducedAnnualAllowanceUrl(taxYearEOY))
       }
 
       "persists submission details" in {
@@ -497,5 +497,7 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
         cyaModel.pensions.pensionsAnnualAllowances.aboveAnnualAllowance shouldBe None
       }
     }
+
   }
+
 }

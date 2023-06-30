@@ -46,11 +46,24 @@
     form.hasErrors
 }
 
+@AmountInput=@{inputText(
+        form,
+        id="amount-2",
+        name="amount-2",
+        label = messages("common.pensions.amountTheyAgreedToPay.text"),
+        hint = Some(messages("common.currency.hint")),
+        isSubheading=false,
+        labelHidden=false,
+        currency=true
+    )
+}
+
 @layout(pageTitle = titleForUse, taxYear = Some(taxYear), hasErrors = hasFormErrors, isAgent = request.user.isAgent) {
 
     @errorSummary(form.errors.distinct)
 
     @heading(titleForUse, Some(messages("common.lifetimeAllowance.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-2")
+
 
     @formWithCsrf(action = controllers.pensions.lifetimeAllowances.routes.PensionProviderPaidTaxController.submit(taxYear)) {
 
@@ -60,28 +73,18 @@
             legendHidden = true,
             inline = false,
             items = Seq(
-                RadioItem(id = Some("value"),
+                    RadioItem(id = Some("value"),
                     value = Some("true"),
                     content = Text(messages("common.yes")),
                     checked = form("value").value.contains("true"),
-                    conditionalHtml = Some(
-                        inputText(
-                            form,
-                            id="amount-2",
-                            name="amount-2",
-                            label = messages("common.pensions.amountTheyAgreedToPay.text"),
-                            hint = Some(messages("common.currency.hint")),
-                            isSubheading=false,
-                            labelHidden=false,
-                            currency=true
-                        )
-                    )
-                ),
-                RadioItem(id = Some("value-no"),
+                    conditionalHtml = Some(AmountInput)
+                    ),
+                    RadioItem(id = Some("value-no"),
                     value = Some("false"),
                     content = Text(messages("common.no")),
                     checked = form("value").value.contains("false")
-                )
+                    )
+
             )
         )
         @button()
