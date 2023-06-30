@@ -26,9 +26,9 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.UnauthorisedPaymentsPages.{checkUnauthorisedPaymentsCyaUrl, noSurchargeAmountUrl, surchargeAmountUrl, taxOnAmountSurchargedUrl, unauthorisedPaymentsUrl}
+import utils.PageUrls.UnauthorisedPaymentsPages.{checkUnauthorisedPaymentsCyaUrl, surchargeAmountUrl, taxOnAmountSurchargedUrl, unauthorisedPaymentsUrl}
 import utils.PageUrls.fullUrl
-import utils.{CommonUtils, IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
+import utils.{CommonUtils, IntegrationTest, PensionsDatabaseHelper}
 
 class SurchargeAmountControllerISpec extends IntegrationTest with CommonUtils with BeforeAndAfterEach with PensionsDatabaseHelper {
 

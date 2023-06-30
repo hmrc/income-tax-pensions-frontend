@@ -31,7 +31,6 @@ import views.html.pensions.annualAllowances.AboveReducedAnnualAllowanceView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
-import services.redirects.AnnualAllowancesRedirects.redirectForSchemeLoop
 
 @Singleton
 class AboveReducedAnnualAllowanceController @Inject()(actionsProvider: ActionsProvider,
@@ -98,11 +97,9 @@ class AboveReducedAnnualAllowanceController @Inject()(actionsProvider: ActionsPr
 
     pensionSessionService.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear, pensionUserData.isPriorSubmission
     )(errorHandler.internalServerError()) {
-      Redirect( // TODO 'yes' -> redirect to 'Did your pension pay or agree to pay tax...?' page when is made. and that page should use the 'redirectForSchemeLoop' method instead
-        if (yesNo) redirectForSchemeLoop(updatedCyaModel.pensionsAnnualAllowances.pensionSchemeTaxReferences.getOrElse(Seq()), taxYear)
-        else AboveReducedAnnualAllowanceController.show(taxYear) //TODO redirect to check your annual allowance page
+      Redirect(
+        if (yesNo) PensionProviderPaidTaxController.show(taxYear) else AnnualAllowanceCYAController.show(taxYear)
       )
     }
   }
-
 }

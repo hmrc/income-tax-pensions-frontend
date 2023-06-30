@@ -123,7 +123,7 @@ object AnnualAndLifetimeAllowanceCYAViewHelper extends CYABaseHelper {
               summaryListRowWithBooleanValue(
                 "lifetimeAllowance.cya.annualAllowanceTax",
                 annualAllowancesViewModel.pensionProvidePaidAnnualAllowanceQuestion,
-                routes.PensionProviderPaidTaxController.show(taxYear))(messages)
+                lifetimeRoutes.PensionProviderPaidTaxController.show(taxYear))(messages)
           }
         )
       )

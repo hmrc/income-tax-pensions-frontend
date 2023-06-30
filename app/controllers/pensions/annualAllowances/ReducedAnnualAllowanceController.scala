@@ -17,14 +17,10 @@
 package controllers.pensions.annualAllowances
 
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.annualAllowances.routes.{ReducedAnnualAllowanceController, ReducedAnnualAllowanceTypeController}
-import controllers.pensions.routes.PensionsSummaryController
-import controllers.predicates.AuthorisedAction
-import controllers.predicates.TaxYearAction.taxYearAction
-import forms.YesNoForm
-import models.User
-import models.mongo.PensionsCYAModel
-import play.api.data.Form
+import controllers.predicates.ActionsProvider
+import forms.FormsProvider
+import models.mongo.PensionsUserData
+import models.requests.UserSessionDataRequest
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
@@ -37,56 +33,40 @@ import scala.concurrent.Future
 
 @Singleton
 class ReducedAnnualAllowanceController @Inject()(implicit val cc: MessagesControllerComponents,
-                                                 authAction: AuthorisedAction,
+                                                 actionsProvider: ActionsProvider,
                                                  reducedAnnualAllowanceView: ReducedAnnualAllowanceView,
                                                  appConfig: AppConfig,
                                                  pensionSessionService: PensionSessionService,
+                                                 formsProvider: FormsProvider,
                                                  errorHandler: ErrorHandler,
                                                  clock: Clock) extends FrontendController(cc) with I18nSupport {
-
-  def yesNoForm(implicit user: User): Form[Boolean] = YesNoForm.yesNoForm(
-    missingInputError = s"annualAllowance.reducedAnnualAllowance.error.noEntry.${if (user.isAgent) "agent" else "individual"}"
-  )
-
-  def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
-    pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
-      case Some(data) =>
-        data.pensions.pensionsAnnualAllowances.reducedAnnualAllowanceQuestion match {
-          case Some(question) => Future.successful(Ok(reducedAnnualAllowanceView(yesNoForm(request.user).fill(question), taxYear)))
-          case None => Future.successful(Ok(reducedAnnualAllowanceView(yesNoForm(request.user), taxYear)))
-        }
-      case _ =>
-        Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
+  def show(taxYear: Int): Action[AnyContent] =  actionsProvider.userSessionDataFor(taxYear) async { implicit request =>
+    val yesNoForm = formsProvider.reducedAnnualAllowanceForm(request.user)
+    request.pensionsUserData.pensions.pensionsAnnualAllowances.reducedAnnualAllowanceQuestion match {
+      case Some(question) => Future.successful(Ok(reducedAnnualAllowanceView(yesNoForm.fill(question), taxYear)))
+      case None => Future.successful(Ok(reducedAnnualAllowanceView(yesNoForm, taxYear)))
     }
   }
 
-  def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
-    yesNoForm(request.user).bindFromRequest().fold(
+  def submit(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit request =>
+    formsProvider.reducedAnnualAllowanceForm(request.user).bindFromRequest().fold(
       formWithErrors => Future.successful(BadRequest(reducedAnnualAllowanceView(formWithErrors, taxYear))),
-      yesNo => {
-        //todo verify what should happen if no data is present. Should be redirected to CYA page.
-        pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
-          data =>
-            val pensionsCYAModel: PensionsCYAModel = data.map(_.pensions).getOrElse(PensionsCYAModel.emptyModels)
-            val viewModel = pensionsCYAModel.pensionsAnnualAllowances
-
-            val updatedCyaModel = pensionsCYAModel.copy(pensionsAnnualAllowances = viewModel.copy(
-              reducedAnnualAllowanceQuestion = Some(yesNo),
-              moneyPurchaseAnnualAllowance = if (yesNo) viewModel.moneyPurchaseAnnualAllowance else None,
-              taperedAnnualAllowance = if (yesNo) viewModel.taperedAnnualAllowance else None
-            ))
-
-            pensionSessionService.createOrUpdateSessionData(request.user,
-              updatedCyaModel, taxYear, data.exists(_.isPriorSubmission))(errorHandler.internalServerError()) {
-              if (yesNo) {
-                Redirect(ReducedAnnualAllowanceTypeController.show(taxYear))
-              } else {
-                //TODO redirect to AnnualAllowanceCYAController (not AnnualLifetimeAllowanceCYAController)
-                Redirect(ReducedAnnualAllowanceController.show(taxYear))
-              }
-            }
-        }
-      }
+      yesNo => updateSessionData(request.pensionsUserData, yesNo, taxYear)
     )
+  }
+  
+  private def updateSessionData[T](pensionUserData: PensionsUserData,
+                                   reducedAnnualAllowanceQ: Boolean, taxYear: Int)
+                                  (implicit request: UserSessionDataRequest[T]) = {
+    
+    val updatedCyaModel = pensionUserData.pensions.copy(
+      pensionsAnnualAllowances = pensionUserData.pensions.pensionsAnnualAllowances.copy(Some(reducedAnnualAllowanceQ))
+    )
+    pensionSessionService.createOrUpdateSessionData(
+      request.user, updatedCyaModel, taxYear, pensionUserData.isPriorSubmission)(errorHandler.internalServerError()) {
+      Redirect(
+        if (reducedAnnualAllowanceQ) routes.ReducedAnnualAllowanceTypeController.show(taxYear) else routes.AnnualAllowanceCYAController.show(taxYear)
+      )
+    }
   }
 }

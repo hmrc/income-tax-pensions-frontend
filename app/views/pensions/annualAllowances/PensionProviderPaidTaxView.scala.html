@@ -14,6 +14,7 @@
  * limitations under the License.
  *@
 
+@import models.requests.UserSessionDataRequest
 @import views.html.templates.Layout
 @import views.html.templates.helpers.ErrorSummary
 @import views.html.templates.helpers.Button
@@ -36,7 +37,7 @@
     link: Link
 )
 
-@(form: Form[(Boolean, Option[BigDecimal])], taxYear: Int)(implicit request: AuthorisationRequest[_], messages: Messages, appConfig: AppConfig)
+@(form: Form[(Boolean, Option[BigDecimal])], taxYear: Int)(implicit request: UserSessionDataRequest[_], messages: Messages, appConfig: AppConfig)
 
 @titleForUse = @{
     messages(s"common.pensions.didYourPensionSchemesAgreeToPayTheTax.title.${if(request.user.isAgent) "agent" else "individual"}")
@@ -50,9 +51,9 @@
 
     @errorSummary(form.errors.distinct)
 
-    @heading(titleForUse, Some(messages("common.lifetimeAllowance.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-2")
+    @heading(titleForUse, Some(messages("common.pensionAnnualAllowance.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-2")
 
-    @formWithCsrf(action = controllers.pensions.lifetimeAllowances.routes.PensionProviderPaidTaxController.submit(taxYear)) {
+    @formWithCsrf(action = controllers.pensions.annualAllowances.routes.PensionProviderPaidTaxController.submit(taxYear)) {
 
         @inputRadio(
             form = form,
