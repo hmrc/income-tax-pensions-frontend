@@ -27,6 +27,7 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
+import services.redirects.UnauthorisedPaymentsRedirects.redirectForSchemeLoop
 import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
 import services.redirects.UnauthorisedPaymentsPages.WereAnyUnauthPaymentsFromUkPensionSchemePage
 import services.redirects.UnauthorisedPaymentsRedirects.{cyaPageCall, journeyCheck}
@@ -60,8 +61,7 @@ class WereAnyOfTheUnauthorisedPaymentsController @Inject()(implicit val cc: Mess
         redirectBasedOnCurrentAnswers(taxYear, optData, cyaPageCall(taxYear))(checkRedirect) { data =>
 
           data.pensions.unauthorisedPayments.ukPensionSchemesQuestion match {
-            case Some(value) => Future.successful(Ok(view(
-              yesNoForm().fill(value), taxYear)))
+            case Some(value) => Future.successful(Ok(view(yesNoForm().fill(value), taxYear)))
             case None => Future.successful(Ok(view(yesNoForm(), taxYear)))
           }
         }
@@ -87,7 +87,8 @@ class WereAnyOfTheUnauthorisedPaymentsController @Inject()(implicit val cc: Mess
 
               pensionSessionService.createOrUpdateSessionData(
                 request.user, updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
-                if (yesNo) Redirect(UnauthorisedPensionSchemeTaxReferenceController.show(taxYear, None))
+
+                if (yesNo) Redirect(redirectForSchemeLoop(schemes = updatedCyaModel.unauthorisedPayments.pensionSchemeTaxReference.getOrElse(Seq()), taxYear))
                 else Redirect(UnauthorisedPaymentsCYAController.show(taxYear))
               }
             }

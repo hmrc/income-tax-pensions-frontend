@@ -20,7 +20,7 @@ import config.{AppConfig, ErrorHandler}
 import controllers.predicates.AuthorisedAction
 import controllers.predicates.TaxYearAction.taxYearAction
 import models.mongo.PensionsCYAModel
-import models.pension.reliefs.PaymentsIntoPensionViewModel
+import models.pension.reliefs.PaymentsIntoPensionsViewModel
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
@@ -75,7 +75,7 @@ class PensionsTaxReliefNotClaimedController @Inject()(authAction: AuthorisedActi
                 data =>
 
                   val pensionsCYAModel: PensionsCYAModel = data.pensions
-                  val viewModel: PaymentsIntoPensionViewModel = pensionsCYAModel.paymentsIntoPension
+                  val viewModel: PaymentsIntoPensionsViewModel = pensionsCYAModel.paymentsIntoPension
                   val updatedCyaModel: PensionsCYAModel = {
                     pensionsCYAModel.copy(
                       paymentsIntoPension = viewModel.copy(

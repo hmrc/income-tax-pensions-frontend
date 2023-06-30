@@ -19,6 +19,7 @@
 @import views.html.templates.helpers.InputRadioAlt
 @import views.html.templates.helpers.Button
 @import views.html.templates.helpers.ErrorSummary
+@import controllers.pensions.unauthorisedPayments.routes.WereAnyOfTheUnauthorisedPaymentsController
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 
 @this(
@@ -43,7 +44,7 @@
 
         @heading(titleForUse, Some(messages("common.unauthorisedPaymentsFromPension.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-3")
 
-        @formWithCsrf(action = controllers.pensions.unauthorisedPayments.routes.WereAnyOfTheUnauthorisedPaymentsController.submit(taxYear)) {
+        @formWithCsrf(action = WereAnyOfTheUnauthorisedPaymentsController.submit(taxYear)) {
             @inputRadio(
                 form = form,
                 legendHeading = Some(Html(titleForUse)),

@@ -22,7 +22,7 @@ import controllers.predicates.TaxYearAction.taxYearAction
 import forms.UnAuthorisedPaymentsForm
 import models.mongo.PensionsCYAModel
 import models.pension.AllPensionsData.generateCyaFromPrior
-import models.pension.reliefs.PaymentsIntoPensionViewModel
+import models.pension.reliefs.PaymentsIntoPensionsViewModel
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.PensionSessionService
@@ -98,7 +98,7 @@ class UnauthorisedPaymentsController @Inject()(implicit val mcc: MessagesControl
           val cya: PensionsCYAModel = generateCyaFromPrior(priorData)
           saveDataAndRedirect(cya, isPriorSubmission = true)
         case (None, None) =>
-          val cya = PensionsCYAModel.emptyModels.copy(PaymentsIntoPensionViewModel())
+          val cya = PensionsCYAModel.emptyModels.copy(PaymentsIntoPensionsViewModel())
           saveDataAndRedirect(cya, isPriorSubmission = false)
       }
     }

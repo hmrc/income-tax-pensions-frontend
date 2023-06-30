@@ -14,16 +14,23 @@
  * limitations under the License.
  */
 
-package controllers.pensions
+package services.redirects
 
-import controllers.pensions.paymentsIntoOverseasPensions.routes._
+import models.pension.charges.Relief
 import play.api.mvc.Call
+import controllers.pensions.paymentsIntoOverseasPensions.routes._
+import services.redirects.SimpleRedirectService.checkForExistingSchemes
 
-package object paymentsIntoOverseasPensions {
-  val customerRefPageOrCYAPage: (Int, Int) => Call = (reliefSize, taxYear) =>
-    if (reliefSize == 0) PensionsCustomerReferenceNumberController.show(taxYear, None) else PaymentsIntoOverseasPensionsCYAController.show(taxYear)
-  
-  val customerRefPageOrSchemeSummaryPage: (Int, Int) => Call = (reliefSize, taxYear) =>
-    if (reliefSize == 0) PensionsCustomerReferenceNumberController.show(taxYear, None) else ReliefsSchemeSummaryController.show(taxYear)
-  
+object PaymentsIntoOverseasPensionsRedirects {
+
+  def redirectForSchemeLoop(reliefs: Seq[Relief], taxYear: Int): Call = {
+    checkForExistingSchemes(
+      nextPage = PensionsCustomerReferenceNumberController.show(taxYear, None),
+      summaryPage = ReliefsSchemeSummaryController.show(taxYear),
+      schemes = reliefs
+    )
+  }
+
+  def journeyCheck(): Unit ={}
+
 }

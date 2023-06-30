@@ -17,17 +17,18 @@
 package controllers.pensions.transferIntoOverseasPensions
 
 import config.{AppConfig, ErrorHandler}
+import controllers._
+import controllers.pensions.transferIntoOverseasPensions.routes.TransferPensionsSchemeController
 import controllers.predicates.ActionsProvider
 import forms.FormsProvider
-import models.mongo.PensionsUserData
 import models.pension.pages.OverseasTransferChargePaidPage
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.OverseasTransferChargesService
+import services.redirects.TransfersIntoOverseasPensionsRedirects.redirectForSchemeLoop
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.SessionHelper
 import views.html.pensions.transferIntoOverseasPensions.OverseasTransferChargesPaidView
-import controllers._
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -41,13 +42,10 @@ class OverseasTransferChargePaidController @Inject()(actionsProvider: ActionsPro
                                                     )(implicit mcc: MessagesControllerComponents, appConfig: AppConfig, ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport with SessionHelper {
 
-
-  val outOfBoundsRedirect: Int => Result = (taxYear: Int) => Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear))
-
   def show(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) { implicit sessionUserData =>
 
     validatedSchemes(pensionSchemeIndex, sessionUserData.pensionsUserData.pensions.transfersIntoOverseasPensions.transferPensionScheme) match {
-      case Left(_) => outOfBoundsRedirect(taxYear)
+      case Left(_) => Redirect(redirectForSchemeLoop(sessionUserData.pensionsUserData.pensions.transfersIntoOverseasPensions.transferPensionScheme, taxYear))
       case Right(_) => Ok(
         pageView(OverseasTransferChargePaidPage(taxYear, pensionSchemeIndex, sessionUserData.pensionsUserData.pensions.transfersIntoOverseasPensions, formsProvider.overseasTransferChargePaidForm)))
     }
@@ -55,9 +53,9 @@ class OverseasTransferChargePaidController @Inject()(actionsProvider: ActionsPro
 
   def submit(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = {
     actionsProvider.userSessionDataFor(taxYear).async { implicit sessionUserData =>
-
-      validatedSchemes(pensionSchemeIndex, sessionUserData.pensionsUserData.pensions.transfersIntoOverseasPensions.transferPensionScheme) match {
-        case Left(_) => Future.successful(outOfBoundsRedirect(taxYear))
+      val schemes = sessionUserData.pensionsUserData.pensions.transfersIntoOverseasPensions.transferPensionScheme
+      validatedSchemes(pensionSchemeIndex, schemes) match {
+        case Left(_) => Future.successful(Redirect(redirectForSchemeLoop(schemes, taxYear)))
         case Right(_) => formsProvider.overseasTransferChargePaidForm.bindFromRequest().fold(
           formWithErrors =>
             Future.successful(
@@ -65,24 +63,11 @@ class OverseasTransferChargePaidController @Inject()(actionsProvider: ActionsPro
           yesNoValue => {
             overseasTransferChargesService.updateOverseasTransferChargeQuestion(sessionUserData.pensionsUserData, yesNoValue, pensionSchemeIndex).map {
               case Left(_) => errorHandler.internalServerError()
-              case Right(userData) => pensionSchemeIndex.getOrElse(userData.pensions.transfersIntoOverseasPensions.transferPensionScheme.size)
-                Redirect(getRedirectCall(
-                  taxYear,
-                  Some(pensionSchemeIndex.getOrElse(userData.pensions.transfersIntoOverseasPensions.transferPensionScheme.size-1)),
-                  yesNoValue,
-                  userData))
+              case Right(userData) => Redirect(TransferPensionsSchemeController.show(taxYear, Some(pensionSchemeIndex.getOrElse(userData.pensions.transfersIntoOverseasPensions.transferPensionScheme.size - 1))))
             }
           }
         )
       }
     }
-  }
-
-
-  private def getRedirectCall(taxYear: Int,
-                              pensionSchemeIndex: Option[Int],
-                              yesNoValue: Boolean,
-                              userData: PensionsUserData): Call = {
-      controllers.pensions.transferIntoOverseasPensions.routes.TransferPensionsSchemeController.show(taxYear, pensionSchemeIndex)
   }
 }

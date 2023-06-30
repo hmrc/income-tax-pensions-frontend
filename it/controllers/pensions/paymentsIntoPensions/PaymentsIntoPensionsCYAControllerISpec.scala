@@ -31,7 +31,7 @@ import builders.ReliefsBuilder.anReliefs
 import builders.UnauthorisedPaymentsViewModelBuilder.anUnauthorisedPaymentsViewModel
 import models.IncomeTaxUserData
 import models.pension.charges.PensionAnnualAllowancesViewModel
-import models.pension.reliefs.PaymentsIntoPensionViewModel
+import models.pension.reliefs.PaymentsIntoPensionsViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterEach
@@ -51,11 +51,11 @@ class PaymentsIntoPensionsCYAControllerISpec extends IntegrationTest with ViewHe
 
   val url: String = fullUrl(checkPaymentsIntoPensionCyaUrl(taxYear))
 
-  val cyaDataIncomplete: PaymentsIntoPensionViewModel = PaymentsIntoPensionViewModel(
+  val cyaDataIncomplete: PaymentsIntoPensionsViewModel = PaymentsIntoPensionsViewModel(
     rasPensionPaymentQuestion = Some(true)
   )
 
-  val cyaDataMinimal: PaymentsIntoPensionViewModel = PaymentsIntoPensionViewModel(
+  val cyaDataMinimal: PaymentsIntoPensionsViewModel = PaymentsIntoPensionsViewModel(
     rasPensionPaymentQuestion = Some(false),
     pensionTaxReliefNotClaimedQuestion = Some(false)
   )
@@ -258,7 +258,7 @@ class PaymentsIntoPensionsCYAControllerISpec extends IntegrationTest with ViewHe
       "the user makes no changes and no submission to DES is made" should {
 
         val unchangedModel =
-          PaymentsIntoPensionViewModel(
+          PaymentsIntoPensionsViewModel(
             Some(true), anReliefs.regularPensionContributions,
             Some(true), anReliefs.oneOffPensionContributionsPaid, Some(true), Some(true), Some(true),
             anReliefs.retirementAnnuityPayments, Some(true), anReliefs.paymentToEmployersSchemeNoTaxRelief)

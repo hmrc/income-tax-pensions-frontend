@@ -111,19 +111,11 @@ case class PaymentsIntoOverseasPensionsViewModel(paymentsIntoOverseasPensionsQue
     employerPaymentsQuestion.isEmpty && taxPaidOnEmployerPaymentsQuestion.isEmpty && reliefs.isEmpty
 
   def isFinished: Boolean = {
-    paymentsIntoOverseasPensionsQuestions.exists {
-      if (_) {
-        paymentsIntoOverseasPensionsAmount.isDefined &&
-          employerPaymentsQuestion.exists {
-            if (_) {
-              taxPaidOnEmployerPaymentsQuestion.exists { x =>
-                if (x) x
-                else reliefs.map(reliefIsCompleted).forall(x => x)
-              }
-            } else true
-          }
-      } else true
-    }
+    paymentsIntoOverseasPensionsQuestions.filter(x => x)
+      .map(_ => paymentsIntoOverseasPensionsAmount.isDefined)
+      .flatMap(_ => employerPaymentsQuestion.filter(x => x))
+      .flatMap(_ => taxPaidOnEmployerPaymentsQuestion.filter(x => !x))
+      .exists(_ => reliefs.map(reliefIsCompleted).forall(x => x))
   }
 
   def journeyIsNo: Boolean =

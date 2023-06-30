@@ -17,6 +17,7 @@
 package views.shortServiceRefunds
 
 import builders.ShortServiceRefundsViewModelBuilder.{aShortServiceRefundsViewModel, minimalShortServiceRefundsViewModel}
+import controllers.pensions.shortServiceRefunds.routes._
 import models.requests.UserSessionDataRequest
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -28,9 +29,9 @@ import views.html.pensions.shortServiceRefunds.ShortServiceRefundsCYAView
 class ShortServiceRefundsCYAViewSpec extends ViewUnitTest { //scalastyle:off magic.number
 
   object ChangeLinks {
-    val changeRefund = controllers.pensions.shortServiceRefunds.routes.TaxableRefundAmountController.show(taxYearEOY).url
-    val changeNonUkRefund = controllers.pensions.shortServiceRefunds.routes.NonUkTaxRefundsController.show(taxYearEOY).url
-    val changeScheme = controllers.pensions.shortServiceRefunds.routes.RefundSummaryController.show(taxYearEOY).url
+    val changeRefund = TaxableRefundAmountController.show(taxYearEOY).url
+    val changeNonUkRefund = NonUkTaxRefundsController.show(taxYearEOY).url
+    val changeScheme = RefundSummaryController.show(taxYearEOY).url
   }
 
   trait CommonExpectedResults {
@@ -115,7 +116,7 @@ class ShortServiceRefundsCYAViewSpec extends ViewUnitTest { //scalastyle:off mag
         titleCheck(expectedTitle, userScenario.isWelsh)
         h1Check(expectedHeading)
         captionCheck(expectedCaption(taxYearEOY))
-        
+
         cyaRowCheck(refundBoolean, yesText, ChangeLinks.changeRefund, hiddenRefundBoolean, 1)
         cyaRowCheck(refundAmount, "£1,999.99", ChangeLinks.changeRefund, hiddenRefundAmount, 2)
         cyaRowCheck(nonUKBoolean, yesText, ChangeLinks.changeNonUkRefund, hiddenNonUKBoolean, 3)
@@ -136,9 +137,8 @@ class ShortServiceRefundsCYAViewSpec extends ViewUnitTest { //scalastyle:off mag
         titleCheck(expectedTitle, userScenario.isWelsh)
         h1Check(expectedHeading)
         captionCheck(expectedCaption(taxYearEOY))
-        
+
         cyaRowCheck(refundBoolean, noText, ChangeLinks.changeRefund, hiddenRefundBoolean, 1)
-        cyaRowCheck(nonUKBoolean, "No tax paid", ChangeLinks.changeNonUkRefund, hiddenNonUKBoolean, 2)
         buttonCheck(buttonText)
       }
 

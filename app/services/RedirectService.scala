@@ -19,7 +19,7 @@ package services
 import controllers.pensions.paymentsIntoPensions.routes._
 import controllers.pensions.routes._
 import models.mongo.{PensionsCYAModel, PensionsUserData}
-import models.pension.reliefs.PaymentsIntoPensionViewModel
+import models.pension.reliefs.PaymentsIntoPensionsViewModel
 import models.redirects.ConditionalRedirect
 import play.api.Logging
 import play.api.mvc.Results.Redirect
@@ -74,7 +74,7 @@ object RedirectService extends Logging {
         ).filter(_.journeyNo.exists(_ < currentPage.journeyNo))
     }
 
-    private def rasSection(currentPage: PaymentsIntoPensionPages, pIP: PaymentsIntoPensionViewModel, taxYear: Int): Seq[ConditionalRedirect] = {
+    private def rasSection(currentPage: PaymentsIntoPensionPages, pIP: PaymentsIntoPensionsViewModel, taxYear: Int): Seq[ConditionalRedirect] = {
       pIP.rasPensionPaymentQuestion match {
         case Some(true) =>
           Seq(
@@ -107,7 +107,7 @@ object RedirectService extends Logging {
       }
     }
 
-    private def taxReliefNotClaimedSection(currentPage: PaymentsIntoPensionPages, pIP: PaymentsIntoPensionViewModel, taxYear: Int): Seq[ConditionalRedirect] = {
+    private def taxReliefNotClaimedSection(currentPage: PaymentsIntoPensionPages, pIP: PaymentsIntoPensionsViewModel, taxYear: Int): Seq[ConditionalRedirect] = {
       pIP.pensionTaxReliefNotClaimedQuestion match {
         case Some(true) =>
           Seq(

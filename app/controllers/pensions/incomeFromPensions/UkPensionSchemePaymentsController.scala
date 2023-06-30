@@ -28,6 +28,7 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
+import services.redirects.IncomeFromOtherUkPensionsRedirects.redirectForSchemeLoop
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.incomeFromPensions.UkPensionSchemePaymentsView
@@ -37,13 +38,13 @@ import scala.concurrent.Future
 
 @Singleton
 class UkPensionSchemePaymentsController @Inject()(implicit val mcc: MessagesControllerComponents,
-                                              appConfig: AppConfig,
-                                              authAction: AuthorisedAction,
-                                              inYearAction: InYearAction,
-                                              pensionSessionService: PensionSessionService,
-                                              errorHandler: ErrorHandler,
-                                              view: UkPensionSchemePaymentsView,
-                                              clock: Clock) extends FrontendController(mcc) with I18nSupport {
+                                                  appConfig: AppConfig,
+                                                  authAction: AuthorisedAction,
+                                                  inYearAction: InYearAction,
+                                                  pensionSessionService: PensionSessionService,
+                                                  errorHandler: ErrorHandler,
+                                                  view: UkPensionSchemePaymentsView,
+                                                  clock: Clock) extends FrontendController(mcc) with I18nSupport {
 
   private def yesNoForm(user: User): Form[Boolean] = YesNoForm.yesNoForm(
     missingInputError = s"pensions.ukPensionSchemePayments.error.noEntry.${if (user.isAgent) "agent" else "individual"}"
@@ -70,24 +71,19 @@ class UkPensionSchemePaymentsController @Inject()(implicit val mcc: MessagesCont
         yesNo => {
           pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) { optData =>
 
-              val pensionsCYAModel: PensionsCYAModel = optData.map(_.pensions).getOrElse(PensionsCYAModel.emptyModels)
-              val viewModel: IncomeFromPensionsViewModel = pensionsCYAModel.incomeFromPensions
-              val updatedCyaModel: PensionsCYAModel = {
-                pensionsCYAModel.copy(
-                  incomeFromPensions = viewModel.copy(uKPensionIncomesQuestion = Some(yesNo),
-                    uKPensionIncomes = if (yesNo) viewModel.uKPensionIncomes else Seq.empty))
-              }
-              pensionSessionService.createOrUpdateSessionData(request.user,
-                updatedCyaModel, taxYear, optData.exists(_.isPriorSubmission))(errorHandler.internalServerError()) {
-                if (yesNo) {
-                  Redirect( //scalastyle:off if.brace
-                    if (viewModel.uKPensionIncomes.nonEmpty) UkPensionIncomeSummaryController.show(taxYear) else
-                      PensionSchemeDetailsController.show(taxYear, None)
-                  )
-                } else {
-                  Redirect(UkPensionIncomeCYAController.show(taxYear))
-                }
-              }
+            val pensionsCYAModel: PensionsCYAModel = optData.map(_.pensions).getOrElse(PensionsCYAModel.emptyModels)
+            val viewModel: IncomeFromPensionsViewModel = pensionsCYAModel.incomeFromPensions
+            val updatedCyaModel: PensionsCYAModel = {
+              pensionsCYAModel.copy(
+                incomeFromPensions = viewModel.copy(uKPensionIncomesQuestion = Some(yesNo),
+                  uKPensionIncomes = if (yesNo) viewModel.uKPensionIncomes else Seq.empty))
+            }
+            pensionSessionService.createOrUpdateSessionData(request.user,
+              updatedCyaModel, taxYear, optData.exists(_.isPriorSubmission))(errorHandler.internalServerError()) {
+
+              if (yesNo) Redirect(redirectForSchemeLoop(schemes = updatedCyaModel.incomeFromPensions.uKPensionIncomes, taxYear))
+              else Redirect(UkPensionIncomeCYAController.show(taxYear))
+            }
           }
         }
       )

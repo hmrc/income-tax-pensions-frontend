@@ -17,8 +17,7 @@
 package controllers.pensions.lifetimeAllowances
 
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.lifetimeAllowances.routes.PensionSchemeTaxReferenceLifetimeController
-import controllers.pensions.lifetimeAllowances.routes.LifetimePstrSummaryController
+import controllers.pensions.lifetimeAllowances.routes.{LifetimePstrSummaryController, AnnualLifetimeAllowanceCYAController}
 import controllers.pensions.routes.PensionsSummaryController
 import controllers.predicates.AuthorisedAction
 import controllers.predicates.TaxYearAction.taxYearAction
@@ -29,13 +28,13 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
+import services.redirects.LifetimeAllowancesRedirects.redirectForSchemeLoop
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.lifetimeAllowances.PensionSchemeTaxReferenceLifetimeView
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
-import javax.inject.Singleton
 
 @Singleton
 class PensionSchemeTaxReferenceLifetimeController @Inject()(authAction: AuthorisedAction,
@@ -72,12 +71,10 @@ class PensionSchemeTaxReferenceLifetimeController @Inject()(authAction: Authoris
             )
             Future.successful(Ok(pensionSchemeTaxReferenceView(form, taxYear, pensionSchemeTaxReferenceIndex)))
           } else {
-            //todo Redirect to pstr summary controller for lifetime allowances
-            Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
+            Future.successful(Redirect(redirectForSchemeLoop(pstrList.getOrElse(Seq.empty), taxYear)))
           }
         case _ =>
-          //TODO: redirect to the lifetime allowances CYA page
-          Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
+          Future.successful(Redirect(AnnualLifetimeAllowanceCYAController.show(taxYear)))
       }
   }
 
@@ -90,7 +87,7 @@ class PensionSchemeTaxReferenceLifetimeController @Inject()(authAction: Authoris
         formWithErrors => Future.successful(BadRequest(pensionSchemeTaxReferenceView(formWithErrors, taxYear, pensionSchemeTaxReferenceIndex))),
         pensionScheme => {
           pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
-            case Right(Some(data)) => {
+            case Right(Some(data)) =>
 
               val pstrList: Option[Seq[String]] = data.pensions.pensionLifetimeAllowances.pensionSchemeTaxReferences
 
@@ -118,11 +115,8 @@ class PensionSchemeTaxReferenceLifetimeController @Inject()(authAction: Authoris
                   Redirect(LifetimePstrSummaryController.show(taxYear))
                 }
               } else {
-                //TODO Redirect to pstr summary controller for lifetime allowances
-                Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
+                Future.successful(Redirect(redirectForSchemeLoop(pstrList.getOrElse(Seq.empty), taxYear)))
               }
-            }
-            //TODO: redirect to the lifetime allowances CYA page
             case _ => Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
           }
         }

@@ -70,6 +70,9 @@ class PaymentsIntoOverseasPensionsViewModelSpec extends UnitTest {
     "return false" when {
       "not all necessary questions have been populated" in {
         aPaymentsIntoOverseasPensionsEmptyViewModel.copy(paymentsIntoOverseasPensionsQuestions = Some(true)).isFinished
+        aPaymentsIntoOverseasPensionsEmptyViewModel.copy(
+          paymentsIntoOverseasPensionsQuestions = Some(true), taxPaidOnEmployerPaymentsQuestion = Some(true)
+        ).isFinished
         aPaymentsIntoOverseasPensionsViewModel.copy(reliefs = Seq(
           Relief(
             reliefType = Some(TaxReliefQuestion.DoubleTaxationRelief),

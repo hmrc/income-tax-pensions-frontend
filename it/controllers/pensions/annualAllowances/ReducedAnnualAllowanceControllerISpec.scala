@@ -26,9 +26,8 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
+import utils.PageUrls.PensionAnnualAllowancePages.{annualAllowancesCYAUrl, reducedAnnualAllowanceTypeUrl, reducedAnnualAllowanceUrl}
 import utils.PageUrls.{fullUrl, pensionSummaryUrl}
-import utils.PageUrls.PensionAnnualAllowancePages.{aboveReducedAnnualAllowanceUrl, reducedAnnualAllowanceTypeUrl, reducedAnnualAllowanceUrl}
-import utils.PageUrls.PensionLifetimeAllowance.checkAnnualLifetimeAllowanceCYA
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 // scalastyle:off magic.number
@@ -337,7 +336,7 @@ class ReducedAnnualAllowanceControllerISpec extends IntegrationTest with BeforeA
       }
     }
 
-    "redirect and update question to 'Yes' when user selects yes when there is no cya data" which {
+    "redirect to Pensions Summary when user selects yes when there is no cya data" which {
       lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.yes)
 
       lazy val result: WSResponse = {
@@ -349,12 +348,7 @@ class ReducedAnnualAllowanceControllerISpec extends IntegrationTest with BeforeA
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(reducedAnnualAllowanceTypeUrl(taxYearEOY))
-      }
-
-      "updates reducedAnnualAllowanceQuestion to Some(true)" in {
-        lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
-        cyaModel.pensions.pensionsAnnualAllowances.reducedAnnualAllowanceQuestion shouldBe Some(true)
+        result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
       }
     }
 
@@ -396,15 +390,12 @@ class ReducedAnnualAllowanceControllerISpec extends IntegrationTest with BeforeA
       }
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(reducedAnnualAllowanceUrl(taxYearEOY))
-        //TODO redirect to AnnualAllowanceCYAController when created
+        result.header("location") shouldBe Some(annualAllowancesCYAUrl(taxYearEOY))
       }
 
-      "updates reducedAnnualAllowanceQuestion to Some(false) and wipe moneyPurchaseAnnualAllowance and taperedAnnualAllowance values" in {
+      "updates reducedAnnualAllowanceQuestion to Some(false)" in {
         lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
         cyaModel.pensions.pensionsAnnualAllowances.reducedAnnualAllowanceQuestion shouldBe Some(false)
-        cyaModel.pensions.pensionsAnnualAllowances.moneyPurchaseAnnualAllowance shouldBe None
-        cyaModel.pensions.pensionsAnnualAllowances.taperedAnnualAllowance shouldBe None
       }
     }
   }

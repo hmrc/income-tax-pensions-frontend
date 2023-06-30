@@ -21,6 +21,7 @@ import controllers.predicates.ActionsProvider
 import controllers.validatedIndex
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.redirects.PaymentsIntoOverseasPensionsRedirects.redirectForSchemeLoop
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.SessionHelper
 import views.html.pensions.paymentsIntoOverseasPensions.ReliefSchemeDetailsView
@@ -36,23 +37,23 @@ class ReliefsSchemeDetailsController @Inject()(view: ReliefSchemeDetailsView,
   def show(taxYear: Int, reliefIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) {
     implicit userSessionDataRequest =>
       val piopReliefs = userSessionDataRequest.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs
-      
+
       validatedIndex(reliefIndex, piopReliefs.size) match {
         case Some(idx) =>
           Ok(view(taxYear, piopReliefs(idx), reliefIndex))
         case _ =>
-          Redirect(customerRefPageOrSchemeSummaryPage(piopReliefs.size, taxYear))
+          Redirect(redirectForSchemeLoop(piopReliefs, taxYear))
       }
   }
 
   def submit(taxYear: Int, reliefIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) {
     implicit userSessionDataRequest =>
-      val reliefSize = userSessionDataRequest.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs.size
-      validatedIndex(reliefIndex, reliefSize) match {
-        case Some(_) =>
-          Redirect(routes.ReliefsSchemeSummaryController.show(taxYear))
-        case _ =>
-          Redirect(customerRefPageOrSchemeSummaryPage(reliefSize, taxYear))
+      val reliefs = userSessionDataRequest.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs
+      Redirect {
+        validatedIndex(reliefIndex, reliefs.size) match {
+          case Some(_) => routes.ReliefsSchemeSummaryController.show(taxYear)
+          case _ => redirectForSchemeLoop(reliefs, taxYear)
+        }
       }
-    }
+  }
 }

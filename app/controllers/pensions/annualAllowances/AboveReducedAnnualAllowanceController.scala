@@ -98,21 +98,8 @@ class AboveReducedAnnualAllowanceController @Inject()(actionsProvider: ActionsPr
     pensionSessionService.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear, pensionUserData.isPriorSubmission
     )(errorHandler.internalServerError()) {
       Redirect(
-        if (yesNo) {
-          pstrRedirect(taxYear, pensionUserData.pensions.pensionsAnnualAllowances.pensionSchemeTaxReferences)
-        } else {
-          //TODO redirect to check your annual allowance page
-          AboveReducedAnnualAllowanceController.show(taxYear)
-        }
+        if (yesNo) PensionProviderPaidTaxController.show(taxYear) else AnnualAllowanceCYAController.show(taxYear)
       )
     }
   }
-
-  private def pstrRedirect(taxYear: Int, pstrSchemes: Option[Seq[String]]): Call = {
-    //TODO replace PensionSchemeTaxReferenceController.show() with 'Did your pension schemes pay or agree to pay the tax?' page when created
-    pstrSchemes.fold(PensionSchemeTaxReferenceController.show(taxYear, None)) { schemes =>
-      if (schemes.isEmpty) PensionSchemeTaxReferenceController.show(taxYear, None) else PstrSummaryController.show(taxYear)
-    }
-  }
-
 }
