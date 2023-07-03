@@ -26,6 +26,7 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
+import services.redirects.LifetimeAllowancesRedirects.redirectForSchemeLoop
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.lifetimeAllowances.LifeTimeAllowanceAnotherWayView
@@ -88,7 +89,7 @@ class LifeTimeAllowanceAnotherWayController @Inject()(implicit val cc: MessagesC
                 if (yesNo) {
                   Redirect(PensionTakenAnotherWayAmountController.show(taxYear))
                 } else {
-                  Redirect(LifetimePstrSummaryController.show(taxYear))
+                  Redirect(redirectForSchemeLoop(updatedCyaModel.pensionLifetimeAllowances.pensionSchemeTaxReferences.getOrElse(Seq()), taxYear))
                 }
               }
             case _ =>  Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
