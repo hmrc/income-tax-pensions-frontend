@@ -30,7 +30,7 @@ import utils.PageUrls.PaymentIntoOverseasPensions.paymentsIntoOverseasPensionsCy
 import utils.PageUrls.{fullUrl, overseasPensionsSummaryUrl, overviewUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
-class PaymentIntoOverseasPensionsCYAControllerISpec extends IntegrationTest with ViewHelpers
+class PaymentsIntoOverseasPensionsCYAControllerISpec extends IntegrationTest with ViewHelpers
   with PensionsDatabaseHelper {
 
   private def pensionsUsersData(pensionsCyaModel: PensionsCYAModel, isPrior: Boolean = false) =

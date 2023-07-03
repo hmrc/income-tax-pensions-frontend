@@ -34,7 +34,7 @@ class PensionsIncomeServiceSpec extends UnitTest
   with MockIncomeTaxUserDataConnector
   with ScalaFutures {
 
-  val pensionIncomeService = new PensionIncomeService(mockPensionUserDataRepository, mockPensionsConnector, mockUserDataConnector)
+  val pensionIncomeService = new PensionIncomeService(mockPensionUserDataRepository, mockPensionIncomeConnectorHelper, mockUserDataConnector)
 
   ".saveIncomeFromOverseasPensionsViewModel" should {
     "return Right(Unit) when model is saved successfully and income income from overseas pensions cya is cleared from DB" in {

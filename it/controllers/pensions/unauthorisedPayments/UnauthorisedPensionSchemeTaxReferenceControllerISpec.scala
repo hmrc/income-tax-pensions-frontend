@@ -37,8 +37,6 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
   private val selectorForSecondParagraph = "#main-content > div > div > p:nth-of-type(2)"
   private val selectorForHint = "#taxReferenceId-hint"
 
-  private implicit val url: Int => String = pensionSchemeTaxReferenceUrl
-
   "show" should {
     "render page" when {
       "there is no prior data" when {

@@ -18,6 +18,7 @@ package models.pension.charges
 
 import forms.Countries
 import models.mongo.TextAndKey
+import models.pension.PensionCYABaseModel
 import models.pension.income.ForeignPension
 import play.api.libs.json.{Json, OFormat}
 import utils.DecryptableSyntax.DecryptableOps
@@ -28,18 +29,35 @@ import utils.{EncryptedValue, SecureGCMCipher}
 
 
 case class IncomeFromOverseasPensionsViewModel(paymentsFromOverseasPensionsQuestion: Option[Boolean] = None,
-                                               overseasIncomePensionSchemes: Seq[PensionScheme] = Nil) {
+                                               overseasIncomePensionSchemes: Seq[PensionScheme] = Nil
+                                              ) extends PensionCYABaseModel {
 
-  def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedIncomeFromOverseasPensionsViewModel =
-    EncryptedIncomeFromOverseasPensionsViewModel(
-      paymentsFromOverseasPensionsQuestion = paymentsFromOverseasPensionsQuestion.map(_.encrypted),
-      overseasPensionSchemes = overseasIncomePensionSchemes.map(_.encrypted())
-    )
+  private def yesNoAndAmountPopulated(boolField: Option[Boolean], amountField: Option[BigDecimal]): Boolean = {
+    boolField.exists(value => !value || (value && amountField.nonEmpty))
+  }
 
   def isEmpty: Boolean = paymentsFromOverseasPensionsQuestion.isEmpty && overseasIncomePensionSchemes.isEmpty
 
-  def hasPriorData: Boolean = paymentsFromOverseasPensionsQuestion.exists(_ && overseasIncomePensionSchemes.nonEmpty)
+  def isFinished: Boolean = {
+    paymentsFromOverseasPensionsQuestion.filter(x => x)
+      .exists(_ => overseasIncomePensionSchemes.map {
+        scheme: PensionScheme =>
+          scheme.alphaThreeCode.isDefined &&
+            scheme.alphaTwoCode.isDefined &&
+            scheme.pensionPaymentAmount.isDefined &&
+            scheme.pensionPaymentTaxPaid.isDefined &&
+            yesNoAndAmountPopulated(scheme.specialWithholdingTaxQuestion,
+              scheme.specialWithholdingTaxAmount) &&
+            yesNoAndAmountPopulated(scheme.foreignTaxCreditReliefQuestion, scheme.taxableAmount)
+      }.forall(x => x)
+      )
+  }
 
+  def journeyIsNo: Boolean = !paymentsFromOverseasPensionsQuestion.getOrElse(true) && overseasIncomePensionSchemes.isEmpty
+
+  def journeyIsUnanswered: Boolean = this.productIterator.forall(_ == None)
+
+  def hasPriorData: Boolean = paymentsFromOverseasPensionsQuestion.exists(_ && overseasIncomePensionSchemes.nonEmpty)
 
   def toForeignPension: Seq[ForeignPension] = {
     overseasIncomePensionSchemes.map {
@@ -54,6 +72,12 @@ case class IncomeFromOverseasPensionsViewModel(paymentsFromOverseasPensionsQuest
         )
     }
   }
+
+  def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedIncomeFromOverseasPensionsViewModel =
+    EncryptedIncomeFromOverseasPensionsViewModel(
+      paymentsFromOverseasPensionsQuestion = paymentsFromOverseasPensionsQuestion.map(_.encrypted),
+      overseasPensionSchemes = overseasIncomePensionSchemes.map(_.encrypted())
+    )
 }
 
 object IncomeFromOverseasPensionsViewModel {

@@ -17,18 +17,21 @@
 package connectors.httpParsers
 
 import models.APIErrorModel
+import play.api.http.Status._
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
+import utils.PagerDutyHelper.PagerDutyKeys._
+import utils.PagerDutyHelper.pagerDutyLog
 
-object DeletePensionIncomeHttpParser extends APIParser {
-  type DeletePensionIncomeResponse = Either[APIErrorModel, Unit]
+object DeletePensionReliefsHttpParser extends APIParser {
+  type DeletePensionReliefsResponse = Either[APIErrorModel, Unit]
 
-  override val parserName: String = "DeletePensionIncomeHttpParser"
+  override val parserName: String = "DeletePensionReliefsHttpParser"
   override val service: String = "income-tax-pensions-frontend"
 
 
-  implicit object DeletePensionIncomeHttpReads extends HttpReads[DeletePensionIncomeResponse] {
+  implicit object DeletePensionReliefsHttpReads extends HttpReads[DeletePensionReliefsResponse] {
 
-    override def read(method: String, url: String, response: HttpResponse): DeletePensionIncomeResponse =
+    override def read(method: String, url: String, response: HttpResponse): DeletePensionReliefsResponse =
       SessionHttpReads.read(method, url, response)
   }
 }

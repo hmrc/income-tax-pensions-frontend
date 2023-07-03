@@ -32,11 +32,11 @@ import scala.concurrent.{ExecutionContext, Future}
 
 
 class PensionOverseasPaymentService @Inject()(pensionUserDataRepository: PensionsUserDataRepository,
+                                              pensionIncomeConnectorHelper: PensionIncomeConnectorHelper,
                                               pensionsConnector: PensionsConnector,
                                               incomeTaxUserDataConnector: IncomeTaxUserDataConnector) {
 
-
-  def getPensionsUserData(userData: Option[PensionsUserData], user: User, taxYear: Int)(implicit clock: Clock): PensionsUserData = {
+  private def getPensionsUserData(userData: Option[PensionsUserData], user: User, taxYear: Int)(implicit clock: Clock): PensionsUserData = {
     userData match {
       case Some(value) => value.copy(pensions = value.pensions.copy(paymentsIntoOverseasPensions = PaymentsIntoOverseasPensionsViewModel()))
       case None => PensionsUserData(
@@ -60,15 +60,11 @@ class PensionOverseasPaymentService @Inject()(pensionUserDataRepository: Pension
     (for {
       sessionData <- FutureEitherOps[ServiceError, Option[PensionsUserData]](pensionUserDataRepository.find(taxYear, user))
       priorData <- FutureEitherOps[ServiceError, IncomeTaxUserData](incomeTaxUserDataConnector.
-        getUserData(user.nino, taxYear)(hc.withExtraHeaders("mtditid" -> user.mtditid)))
-
+        getUserData(user.nino, taxYear)(hcWithExtras))
 
       viewModelOverseas = sessionData.map(_.pensions.paymentsIntoOverseasPensions)
-      opc = (viewModelOverseas.map(_.toPensionContributions).flatMap(seq => if (seq.nonEmpty) Some(seq) else None))
-      updatedIncomeData = CreateUpdatePensionIncomeModel(
-        foreignPension = priorData.pensions.flatMap(_.pensionIncome.flatMap(_.foreignPension)).map(ForeignPensionContainer),
-        overseasPensionContribution = opc.map(OverseasPensionContributionContainer)
-      )
+      incomeSubModel = viewModelOverseas.map(_.toPensionContributions).flatMap(seq => if (seq.nonEmpty) Some(seq) else None).map(OverseasPensionContributionContainer)
+
       viewModelPayments = sessionData.map(_.pensions.paymentsIntoPension)
       updatedReliefsData = CreateOrUpdatePensionReliefsModel(
         pensionReliefs = Reliefs(
@@ -79,8 +75,14 @@ class PensionOverseasPaymentService @Inject()(pensionUserDataRepository: Pension
           overseasPensionSchemeContributions = sessionData.flatMap(_.pensions.paymentsIntoOverseasPensions.paymentsIntoOverseasPensionsAmount)
         )
       )
+      updatedIncomeData = CreateUpdatePensionIncomeModel(
+        foreignPension = priorData.pensions.flatMap(_.pensionIncome.flatMap(_.foreignPension)).map(ForeignPensionContainer),
+        overseasPensionContribution = incomeSubModel
+      )
+
       _ <- FutureEitherOps[ServiceError, Unit](pensionsConnector.savePensionReliefSessionData(user.nino, taxYear, updatedReliefsData)(hcWithExtras, ec))
-      _ <- FutureEitherOps[ServiceError, Unit](pensionsConnector.savePensionIncomeSessionData(user.nino, taxYear, updatedIncomeData)(hcWithExtras, ec))
+      _ <- FutureEitherOps[ServiceError, Unit](pensionIncomeConnectorHelper.sendDownstream(user.nino, taxYear, incomeSubModel, viewModelOverseas, updatedIncomeData)(hcWithExtras, ec))
+
       updatedCYA = getPensionsUserData(sessionData, user, taxYear)
       result <- FutureEitherOps[ServiceError, Unit](pensionUserDataRepository.createOrUpdate(updatedCYA))
     } yield {
