@@ -27,7 +27,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.PensionLifetimeAllowance.{checkAnnualLifetimeAllowanceCYA, lifetimeAllowanceCYA, lifetimeAllowancePstrSummaryUrl, pensionTakenAnotherWayAmountUrl, pensionTaxReferenceNumberLifetimeAllowanceUrl}
+import utils.PageUrls.PensionLifetimeAllowance._
 import utils.PageUrls.fullUrl
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 

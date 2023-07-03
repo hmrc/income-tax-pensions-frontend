@@ -18,7 +18,6 @@ package forms
 
 import forms.FormsProvider.userType
 import forms.OptionalTupleAmountForm.OptionalTupleAmountFormErrorMessage
-import forms.overseas.DoubleTaxationAgreementForm.exceedsMaxAmountKey
 import models.User
 import models.pension.charges.TaxReliefQuestion
 import play.api.data.Form

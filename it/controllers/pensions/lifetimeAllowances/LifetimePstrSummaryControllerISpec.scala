@@ -26,7 +26,7 @@ import play.api.http.HeaderNames
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import utils.PageUrls.PensionAnnualAllowancePages.pensionSchemeTaxReferenceUrl
-import utils.PageUrls.PensionLifetimeAllowance.{checkAnnualLifetimeAllowanceCYA, lifetimeAllowanceCYA, lifetimeAllowancePstrSummaryUrl}
+import utils.PageUrls.PensionLifetimeAllowance.{lifetimeAllowanceCYA, lifetimeAllowancePstrSummaryUrl}
 import utils.PageUrls.{fullUrl, pensionSummaryUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 

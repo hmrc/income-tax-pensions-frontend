@@ -17,13 +17,11 @@
 package controllers.pensions.lifetimeAllowances
 
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.lifetimeAllowances.routes.{LifetimeAllowanceCYAController, PensionTakenAnotherWayAmountController}
+import controllers.pensions.lifetimeAllowances.routes.{LifetimePstrSummaryController, PensionTakenAnotherWayAmountController}
 import controllers.pensions.routes.PensionsSummaryController
 import controllers.predicates.AuthorisedAction
 import forms.YesNoForm
 import models.User
-import models.mongo.PensionsCYAModel
-import models.pension.charges.PensionLifetimeAllowancesViewModel
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -90,7 +88,7 @@ class LifeTimeAllowanceAnotherWayController @Inject()(implicit val cc: MessagesC
                 if (yesNo) {
                   Redirect(PensionTakenAnotherWayAmountController.show(taxYear))
                 } else {
-                  Redirect(LifetimeAllowanceCYAController.show(taxYear))
+                  Redirect(LifetimePstrSummaryController.show(taxYear))
                 }
               }
             case _ =>  Future.successful(Redirect(PensionsSummaryController.show(taxYear)))

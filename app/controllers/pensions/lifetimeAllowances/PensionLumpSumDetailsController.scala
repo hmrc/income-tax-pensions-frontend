@@ -17,20 +17,20 @@
 package controllers.pensions.lifetimeAllowances
 
 import config.{AppConfig, ErrorHandler}
-import controllers.predicates.TaxYearAction.taxYearAction
+import controllers.pensions.lifetimeAllowances.routes.{LifeTimeAllowanceAnotherWayController, PensionLumpSumController}
+import controllers.pensions.routes.PensionsSummaryController
 import controllers.predicates.AuthorisedAction
+import controllers.predicates.TaxYearAction.taxYearAction
 import forms.{FormUtils, FormsProvider}
+import models.AuthorisationRequest
 import models.mongo.{PensionsCYAModel, PensionsUserData}
-import models.pension.charges.{LifetimeAllowance, PensionLifetimeAllowancesViewModel}
+import models.pension.charges.LifetimeAllowance
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.lifetimeAllowances.PensionLumpSumDetailsView
-import controllers.pensions.routes.PensionsSummaryController
-import controllers.pensions.lifetimeAllowances.routes.{LifeTimeAllowanceAnotherWayController, PensionLumpSumController, PensionSchemeTaxReferenceLifetimeController, PensionTakenAnotherWayAmountController}
-import models.AuthorisationRequest
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
