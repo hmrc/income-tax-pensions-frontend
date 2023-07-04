@@ -18,8 +18,7 @@ package services
 
 import connectors.PensionsConnector
 import models.APIErrorModel
-import models.pension.{PensionChargesSubRequestModel, PensionReliefsSubRequestModel}
-import models.pension.charges.CreateUpdatePensionChargesRequestModel
+import models.pension.PensionReliefsSubRequestModel
 import models.pension.reliefs.CreateOrUpdatePensionReliefsModel
 import uk.gov.hmrc.http.HeaderCarrier
 
