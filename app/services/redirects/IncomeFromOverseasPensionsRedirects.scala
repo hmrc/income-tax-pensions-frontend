@@ -99,7 +99,7 @@ object IncomeFromOverseasPensionsRedirects {
       },
 
       3 -> { incomeFromOverseasPensionsViewModel: IncomeFromOverseasPensionsViewModel =>
-        incomeFromOverseasPensionsViewModel.overseasIncomePensionSchemes(index).alphaThreeCode.isDefined
+        incomeFromOverseasPensionsViewModel.overseasIncomePensionSchemes(index).alphaTwoCode.isDefined
       },
       4 -> { incomeFromOverseasPensionsViewModel: IncomeFromOverseasPensionsViewModel =>
         incomeFromOverseasPensionsViewModel.overseasIncomePensionSchemes(index).pensionPaymentAmount.isDefined &&
