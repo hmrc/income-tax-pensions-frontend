@@ -25,18 +25,18 @@
 @(taxYear: Int, lifetimeCya: PensionLifetimeAllowancesViewModel)(implicit messages: Messages, appConfig: AppConfig, request: UserSessionDataRequest[_])
 
 @headingForUse = @{
-messages(s"lifetimeAllowance.cya.lifetime.heading.${if(request.user.isAgent) "agent" else "individual"}")
-}
+    messages(s"lifetimeAllowance.cya.lifetime.heading.${if(request.user.isAgent) "agent" else "individual"}")
+ }
 
 @layout(pageTitle = headingForUse, taxYear = Some(taxYear)) {
 
-@heading(headingForUse, Some(messages("common.lifetimeAllowance.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-5")
+    @heading(headingForUse, Some(messages("common.lifetimeAllowance.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-5")
 
-@summaryList(LifetimeAllowanceCYAViewHelper.summaryListRows(lifetimeCya, taxYear)(messages))
+    @summaryList(LifetimeAllowanceCYAViewHelper.summaryListRows(lifetimeCya, taxYear)(messages))
 
-@csrfForm(controllers.pensions.lifetimeAllowances.routes.LifetimeAllowanceCYAController.submit(taxYear)) {
-@button("common.saveAndContinue")
-}
+    @csrfForm(controllers.pensions.lifetimeAllowances.routes.LifetimeAllowanceCYAController.submit(taxYear)) {
+      @button("common.saveAndContinue")
+    }
 }
 @{
 // $COVERAGE-OFF$
