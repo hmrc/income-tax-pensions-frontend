@@ -81,18 +81,6 @@ case class ShortServiceRefundsViewModel(shortServiceRefund: Option[Boolean] = No
 
   override def journeyIsUnanswered: Boolean = this.isEmpty
 
-
-  def isFinished: Boolean = {
-    shortServiceRefund.exists(
-      q => if (q) {
-        Seq(
-          shortServiceRefundCharge.isDefined,
-          shortServiceRefundTaxPaid.exists(q => if (q) shortServiceRefundTaxPaidCharge.isDefined else true),
-          refundPensionScheme.nonEmpty
-        ).forall(x => x)
-      } else true
-    )
-  }
 }
 
 object ShortServiceRefundsViewModel {

@@ -75,13 +75,6 @@ case class TransfersIntoOverseasPensionsViewModel(transferPensionSavings: Option
       transferPensionScheme = transferPensionScheme.map(_.encrypted())
     )
 
-
-  override def journeyIsNo: Boolean = this.transferPensionSavings.contains(false)
-
-  override def journeyIsUnanswered: Boolean = this.isEmpty
-
-  override def isFinished: Boolean = ???
-
 }
 
 object TransfersIntoOverseasPensionsViewModel {
