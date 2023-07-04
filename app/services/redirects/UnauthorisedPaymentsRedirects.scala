@@ -61,13 +61,15 @@ object UnauthorisedPaymentsRedirects { //scalastyle:off magic.number
     Map(
       // 2-9 need Q1 true
       // 2,3 need Q1 true + surcharge
-      2 | 3 -> surchargeQuestionFn,
+      2 -> surchargeQuestionFn, 3 -> surchargeQuestionFn,
       // 4,5 need Q1 true + no surcharge
-      4 | 5 -> noSurchargeQuestionFn,
+      4 -> noSurchargeQuestionFn, 5 -> noSurchargeQuestionFn,
       // 6 needs Q1 or Q2 true
       6 -> surchargeOrNoSurchargeQuestionFn,
       // 7,8,9 need Q6 true
-      7 | 8| 9 -> ukPensionSchemesQuestionFn
+      7 -> ukPensionSchemesQuestionFn,
+      8 -> ukPensionSchemesQuestionFn,
+      9 -> ukPensionSchemesQuestionFn
     )
   }
 

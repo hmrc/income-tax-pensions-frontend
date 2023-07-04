@@ -43,13 +43,13 @@ object PaymentsIntoPensionsRedirects { //scalastyle:off magic.number
 
     Map(
       // ^ 2,3,5 need Q1 ^
-      2 | 3 | 5 -> rasPaymentQuestionFn,
+      2 -> rasPaymentQuestionFn, 3 -> rasPaymentQuestionFn, 5 -> rasPaymentQuestionFn,
       4 -> { pIPViewModel: PaymentsIntoPensionsViewModel =>
         pIPViewModel.oneOffRasPaymentPlusTaxReliefQuestion.getOrElse(false) && // ^ 4 needs Q1+3
           pIPViewModel.rasPensionPaymentQuestion.getOrElse(false)
       },
       // ^ 7,9 need Q6 ^
-      7 | 9 -> taxReliefNotClaimedQuestionFn,
+      7 -> taxReliefNotClaimedQuestionFn, 9 -> taxReliefNotClaimedQuestionFn,
       8 -> { pIPViewModel: PaymentsIntoPensionsViewModel =>
         pIPViewModel.pensionTaxReliefNotClaimedQuestion.getOrElse(false) &&
           pIPViewModel.retirementAnnuityContractPaymentsQuestion.getOrElse(false)

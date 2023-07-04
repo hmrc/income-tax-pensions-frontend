@@ -17,64 +17,98 @@
 package controllers.pensions.incomeFromOverseasPensions
 
 import common.MessageKeys.IncomeFromOverseasPensions.ForeignTaxCreditRelief
-import common.MessageKeys.YesNoForm
 import config.{AppConfig, ErrorHandler}
-import controllers.BaseYesNoWithIndexController
 import controllers.pensions.incomeFromOverseasPensions.routes._
+import controllers.pensions.routes.PensionsSummaryController
 import controllers.predicates.AuthorisedAction
+import controllers.predicates.TaxYearAction.taxYearAction
+import forms.YesNoForm
 import models.AuthorisationRequest
-import models.mongo.{PensionsCYAModel, PensionsUserData}
+import models.mongo.PensionsUserData
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import play.twirl.api.Html
 import services.PensionSessionService
-import services.redirects.IncomeFromOverseasPensionsRedirects.redirectForSchemeLoop
+import services.redirects.IncomeFromOverseasPensionsPages.ForeignTaxCreditReliefPage
+import services.redirects.IncomeFromOverseasPensionsRedirects.indexCheckThenJourneyCheck
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.incomeFromOverseasPensions.ForeignTaxCreditReliefView
 
 import javax.inject.{Inject, Singleton}
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ForeignTaxCreditReliefController @Inject()(messagesControllerComponents: MessagesControllerComponents,
-                                                 authAction: AuthorisedAction,
+class ForeignTaxCreditReliefController @Inject()(authAction: AuthorisedAction,
                                                  view: ForeignTaxCreditReliefView,
                                                  pensionSessionService: PensionSessionService,
                                                  errorHandler: ErrorHandler)
-                                                (implicit appConfig: AppConfig, clock: Clock)
-  extends BaseYesNoWithIndexController(messagesControllerComponents, pensionSessionService, authAction, errorHandler) with I18nSupport {
+                                                (implicit mcc: MessagesControllerComponents,
+                                                 appConfig: AppConfig, clock: Clock,
+                                                 ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
 
-  override protected def redirectToSummaryPage(taxYear: Int): Result = Redirect(controllers.pensions.routes.OverseasPensionsSummaryController.show(taxYear))
+  def show(taxYear: Int, index: Option[Int] = None): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
+    pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
+      case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
+      case Right(Some(data)) =>
+        indexCheckThenJourneyCheck(data, index, ForeignTaxCreditReliefPage, taxYear) { data =>
 
-  override def prepareView(pensionsUserData: PensionsUserData, taxYear: Int, index: Int)
-                          (implicit request: AuthorisationRequest[AnyContent]): Html = view(populateForm(pensionsUserData, index), taxYear, index)
+          val form = populateForm(data, index.getOrElse(0))
+          Future.successful(Ok(view(form, taxYear, index.getOrElse(0))))
 
-  override def redirectWhenNoSessionData(taxYear: Int): Result = redirectToSummaryPage(taxYear)
-
-  override def redirectWhenIndexIsInvalid(data: PensionsUserData, taxYear: Int): Call =
-    redirectForSchemeLoop(data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes, taxYear)
-
-  override def redirectAfterUpdatingSessionData(taxYear: Int, index: Option[Int]): Result = Redirect(TaxableAmountController.show(taxYear, index))
-
-  override def questionOpt(pensionsUserData: PensionsUserData, index: Int): Option[Boolean] =
-    pensionsUserData.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes(index).foreignTaxCreditReliefQuestion
-
-  override def proposedUpdatedSessionDataModel(currentSessionData: PensionsUserData, yesSelected: Boolean, index: Int): PensionsCYAModel = {
-    val incomeFromOverseasPension = currentSessionData.pensions.incomeFromOverseasPensions
-    currentSessionData.pensions.copy(
-      incomeFromOverseasPensions = incomeFromOverseasPension.copy(
-        overseasIncomePensionSchemes =
-          incomeFromOverseasPension.overseasIncomePensionSchemes.updated(index,
-            incomeFromOverseasPension.overseasIncomePensionSchemes(index).copy(foreignTaxCreditReliefQuestion = Some(yesSelected)))
-      ))
+        }
+      case Right(None) => Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
+    }
   }
 
-  override def whenFormIsInvalid(form: Form[Boolean], taxYear: Int, index: Int)
-                                (implicit request: AuthorisationRequest[AnyContent]): Html = view(form, taxYear, index)
+  def submit(taxYear: Int, index: Option[Int] = None): Action[AnyContent] = authAction.async { implicit request =>
+    pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
+      case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
+      case Right(Some(data)) =>
+        indexCheckThenJourneyCheck(data, index, ForeignTaxCreditReliefPage, taxYear) { data =>
 
-  override def errorMessageSet: YesNoForm = ForeignTaxCreditRelief
+          form(request.user.isAgent).bindFromRequest().fold(
+            formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear, index.getOrElse(0)))),
+            validForm =>
+              onValidForm(data, taxYear, validForm, index.getOrElse(0)))
+        }
+    }
+  }
 
-  override def whenSessionDataIsInsufficient(taxYear: Int): Result = redirectToSummaryPage(taxYear)
+  private def form(isAgent: Boolean): Form[Boolean] = YesNoForm.yesNoForm(missingInputError = ForeignTaxCreditRelief.noEntry.get(isAgent))
 
-  override def sessionDataIsSufficient(pensionsUserData: PensionsUserData): Boolean = true
+  private def populateForm(pensionsUserData: PensionsUserData, index: Int)
+                          (implicit request: AuthorisationRequest[AnyContent]): Form[Boolean] = {
+    val baseForm = form(request.user.isAgent)
+    pensionsUserData.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes(index).foreignTaxCreditReliefQuestion match {
+      case Some(true) => baseForm.fill(true)
+      case Some(false) => baseForm.fill(false)
+      case None => baseForm
+    }
+  }
+
+  private def onValidForm(pensionsUserData: PensionsUserData, taxYear: Int, validForm: Boolean, index: Int)
+                         (implicit request: AuthorisationRequest[AnyContent], clock: Clock): Future[Result] = {
+
+    val incomeFromOverseasPension = pensionsUserData.pensions.incomeFromOverseasPensions
+    validForm match {
+      case yesWasSelected =>
+        pensionSessionService.createOrUpdateSessionData(
+          request.user,
+          pensionsUserData.pensions.copy(
+            incomeFromOverseasPensions = incomeFromOverseasPension.copy(
+              overseasIncomePensionSchemes = incomeFromOverseasPension.overseasIncomePensionSchemes.updated(
+                index,
+                incomeFromOverseasPension.overseasIncomePensionSchemes(index).copy(
+                  foreignTaxCreditReliefQuestion = Some(yesWasSelected)
+                )
+              )
+            )),
+          taxYear,
+          pensionsUserData.isPriorSubmission
+        )(errorHandler.handleError(INTERNAL_SERVER_ERROR))(
+          Redirect(TaxableAmountController.show(taxYear, Some(index))))
+    }
+  }
+
 }

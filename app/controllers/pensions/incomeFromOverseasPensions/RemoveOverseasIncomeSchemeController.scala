@@ -26,6 +26,9 @@ import models.requests.UserSessionDataRequest
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.PensionSessionService
+import services.redirects.IncomeFromOverseasPensionsPages.RemoveSchemePage
+import services.redirects.IncomeFromOverseasPensionsRedirects.{cyaPageCall, journeyCheck}
+import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.incomeFromOverseasPensions.RemoveOverseasIncomeSchemeView
@@ -47,7 +50,11 @@ class RemoveOverseasIncomeSchemeController @Inject()(actionsProvider: ActionsPro
     validatedIndex(index, overseasIncomeSchemes.size).fold(Future.successful(Redirect(CountrySummaryListController.show(taxYear)))) {
       i =>
         overseasIncomeSchemes(i).alphaTwoCode.fold(Future.successful(Redirect(CountrySummaryListController.show(taxYear)))) {
-          country => Future.successful(Ok(view(taxYear, country, index)))
+          country =>
+            val checkRedirect = journeyCheck(RemoveSchemePage, _: PensionsCYAModel, taxYear)
+            redirectBasedOnCurrentAnswers(taxYear, Some(sessionUserData.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) { _ =>
+              Future.successful(Ok(view(taxYear, country, index)))
+            }
         }
     }
   }
@@ -57,8 +64,11 @@ class RemoveOverseasIncomeSchemeController @Inject()(actionsProvider: ActionsPro
     validatedIndex(index, overseasIncomeSchemes.size)
       .fold(Future.successful(Redirect(CountrySummaryListController.show(taxYear)))) {
         i =>
+          val checkRedirect = journeyCheck(RemoveSchemePage, _: PensionsCYAModel, taxYear)
           val updatedRefundScheme = overseasIncomeSchemes.patch(i, Nil, 1)
-          updateSessionData(sessionUserData.pensionsUserData, updatedRefundScheme, taxYear)
+          redirectBasedOnCurrentAnswers(taxYear, Some(sessionUserData.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) { data =>
+            updateSessionData(data, updatedRefundScheme, taxYear)
+          }
       }
   }
 
@@ -74,6 +84,5 @@ class RemoveOverseasIncomeSchemeController @Inject()(actionsProvider: ActionsPro
       Redirect(CountrySummaryListController.show(taxYear))
     }
   }
-
 
 }

@@ -16,10 +16,9 @@
 
 package services.redirects
 
-import controllers.pensions.paymentsIntoPensions.routes.{PaymentsIntoPensionsCYAController, ReliefAtSourcePensionsController, TotalPaymentsIntoRASController}
+import controllers.pensions.paymentsIntoPensions.routes.{PaymentsIntoPensionsCYAController, ReliefAtSourcePensionsController}
 import models.mongo.PensionsCYAModel
 import models.pension.reliefs.PaymentsIntoPensionsViewModel
-import play.api.mvc.Call
 import play.api.mvc.Results.Redirect
 import services.redirects.PaymentsIntoPensionPages._
 import services.redirects.PaymentsIntoPensionsRedirects.{cyaPageCall, journeyCheck}
@@ -29,8 +28,6 @@ class PaymentsIntoPensionsRedirectsSpec extends UnitTest {
 
   private val cyaData: PensionsCYAModel = PensionsCYAModel.emptyModels
   private val someRedirect = Some(Redirect(ReliefAtSourcePensionsController.show(taxYear)))
-  private val cyaRedirect: Call = PaymentsIntoPensionsCYAController.show(taxYear)
-  private val contextualRedirect: Call = TotalPaymentsIntoRASController.show(taxYear)
 
   ".journeyCheck" should {
     "return None if page is valid and all previous questions have been answered" when {

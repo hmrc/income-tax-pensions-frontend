@@ -27,7 +27,6 @@ import models.pension.charges.UnauthorisedPaymentsViewModel
 import org.jsoup.Jsoup.parse
 import play.api.http.Status.{BAD_REQUEST, OK}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.UnauthorisedPaymentsPages.pensionSchemeTaxReferenceUrl
 
 class UnauthorisedPensionSchemeTaxReferenceControllerISpec
   extends ControllerSpec("/unauthorised-payments-from-pensions/pension-scheme-tax-reference") {
@@ -36,8 +35,6 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
   private val selectorForFirstParagraph = "#main-content > div > div > p:nth-of-type(1)"
   private val selectorForSecondParagraph = "#main-content > div > div > p:nth-of-type(2)"
   private val selectorForHint = "#taxReferenceId-hint"
-
-  private implicit val url: Int => String = pensionSchemeTaxReferenceUrl
 
   "show" should {
     "render page" when {
