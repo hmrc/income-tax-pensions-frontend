@@ -51,8 +51,7 @@ class IncomeFromPensionsRedirectsSpec extends UnitTest {
               amountPaidQuestion = Some(true),
               amount = Some(155.88),
               startDate = None
-            )
-            )
+            ))
           )
         )
         val result = journeyCheck(DoYouGetRegularStatePaymentsPage, data, taxYear)
@@ -76,8 +75,7 @@ class IncomeFromPensionsRedirectsSpec extends UnitTest {
               amountPaidQuestion = Some(false),
               amount = None,
               startDateQuestion = Some(true)
-            )
-            )
+            ))
           )
         )
         val result = journeyCheck(DoYouGetRegularStatePaymentsPage, data, taxYear)
@@ -94,8 +92,7 @@ class IncomeFromPensionsRedirectsSpec extends UnitTest {
               amountPaidQuestion = None,
               amount = None,
               startDateQuestion = Some(true)
-            )
-            )
+            ))
           )
         )
         val result = journeyCheck(StatePensionLumpSumPage, data, taxYear)
@@ -108,8 +105,7 @@ class IncomeFromPensionsRedirectsSpec extends UnitTest {
             statePension = Some(anStateBenefitViewModelTwo.copy(
             amountPaidQuestion = Some(false),
             amount = None
-          )
-        )
+          ))
           )
         )
         val result = journeyCheck(WhenDidYouStartGettingStatePaymentsPage, data, taxYear)

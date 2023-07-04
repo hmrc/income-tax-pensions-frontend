@@ -74,7 +74,6 @@ case class TransfersIntoOverseasPensionsViewModel(transferPensionSavings: Option
       pensionSchemeTransferChargeAmount = pensionSchemeTransferChargeAmount.map(_.encrypted),
       transferPensionScheme = transferPensionScheme.map(_.encrypted())
     )
-
 }
 
 object TransfersIntoOverseasPensionsViewModel {

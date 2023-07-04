@@ -68,6 +68,7 @@ class StatePensionLumpSumControllerISpec extends IntegrationTest with BeforeAndA
             statePension = Some(anStateBenefitViewModelOne.copy(
               amountPaidQuestion = None,
               amount = None,
+              startDateQuestion = None
               ))
           )))
 
