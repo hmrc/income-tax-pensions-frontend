@@ -16,13 +16,13 @@
 
 package controllers.pensions.incomeFromOverseasPensions
 
-import builders.PensionsCYAModelBuilder.{aPensionsCYAEmptyModel, aPensionsCYAModel}
+import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import controllers.ControllerSpec.PreferredLanguages.{English, Welsh}
 import controllers.ControllerSpec.UserTypes.{Agent, Individual}
 import controllers.ControllerSpec._
 import controllers.YesNoAmountControllerSpec
 import models.mongo.PensionsUserData
-import models.pension.charges.PensionScheme
+import models.pension.charges.{IncomeFromOverseasPensionsViewModel, PensionScheme}
 import play.api.http.Status.{BAD_REQUEST, OK}
 import play.api.libs.ws.{WSClient, WSResponse}
 
@@ -120,14 +120,16 @@ class SpecialWithholdingTaxControllerISpec extends YesNoAmountControllerSpec("/o
   implicit val isWelsh: Boolean = false //set to true in welsh sections
 
   "show" should { //scalastyle:off magic.number
-    "redirect to the summary page the user has no stored session data" in {
+    "redirect to the summary page when the user has no stored session data" in {
       implicit val userConfig: UserConfig = userConfigWhenIrrelevant(None)
       implicit val response: WSResponse = getPageWithIndex()
 
-      assertRedirectionAsExpected(PageRelativeURLs.overseasSummaryPage)
+      assertRedirectionAsExpected(PageRelativeURLs.pensionsSummaryPage)
     }
-    "redirect to the the first page of the IFOP scheme loop when the user had not previously specified the amount" in {
-      val sessionData: PensionsUserData = pensionsUserData(aPensionsCYAEmptyModel)
+    "redirect to the first page in scheme loop when there is no scheme data" in {
+      val emptySchemesIFOPViewModel: IncomeFromOverseasPensionsViewModel = aPensionsCYAModel.incomeFromOverseasPensions.copy(overseasIncomePensionSchemes = Seq.empty)
+      val cyaModel = aPensionsCYAModel.copy(incomeFromOverseasPensions = emptySchemesIFOPViewModel)
+      val sessionData: PensionsUserData = pensionsUserData(cyaModel)
       implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
       implicit val response: WSResponse = getPageWithIndex()
 
@@ -432,7 +434,7 @@ class SpecialWithholdingTaxControllerISpec extends YesNoAmountControllerSpec("/o
         implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(false), None))
         implicit val index: Int = 0
 
-        assertRedirectionAsExpected(PageRelativeURLs.overseasSummaryPage)
+        assertRedirectionAsExpected(PageRelativeURLs.pensionsSummaryPage)
         getViewModel mustBe None
 
       }

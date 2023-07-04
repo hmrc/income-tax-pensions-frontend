@@ -19,7 +19,7 @@ package controllers.pensions.incomeFromOverseasPensions
 import common.MessageKeys.IncomeFromOverseasPensions.ForeignTaxCreditRelief
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.incomeFromOverseasPensions.routes._
-import controllers.pensions.routes.PensionsSummaryController
+import controllers.pensions.routes._
 import controllers.predicates.AuthorisedAction
 import controllers.predicates.TaxYearAction.taxYearAction
 import forms.YesNoForm
@@ -72,6 +72,8 @@ class ForeignTaxCreditReliefController @Inject()(authAction: AuthorisedAction,
             validForm =>
               onValidForm(data, taxYear, validForm, index.getOrElse(0)))
         }
+      case _ =>
+        Future.successful(Redirect(OverseasPensionsSummaryController.show(taxYear)))
     }
   }
 
