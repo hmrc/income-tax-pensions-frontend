@@ -26,7 +26,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.PensionLifetimeAllowance.{checkAnnualLifetimeAllowanceCYA, pensionAboveAnnualLifetimeAllowanceUrl, pensionLumpSumUrl}
+import utils.PageUrls.PensionLifetimeAllowance.{lifetimeAllowanceCYA, pensionAboveAnnualLifetimeAllowanceUrl, pensionLumpSumUrl}
 import utils.PageUrls.fullUrl
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
@@ -211,7 +211,7 @@ class AboveAnnualLifetimeAllowanceControllerISpec extends IntegrationTest with B
 
       "has an SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(checkAnnualLifetimeAllowanceCYA(taxYearEOY))
+        result.header("location") shouldBe Some(lifetimeAllowanceCYA(taxYearEOY))
       }
     }
   }
@@ -312,7 +312,7 @@ class AboveAnnualLifetimeAllowanceControllerISpec extends IntegrationTest with B
 
         "has a SEE_OTHER(303) status and redirect to the lifetime allowances CYA Page" in {
           result.status shouldBe SEE_OTHER
-          result.header("location") shouldBe Some(checkAnnualLifetimeAllowanceCYA(taxYearEOY))
+          result.header("location") shouldBe Some(lifetimeAllowanceCYA(taxYearEOY))
         }
 
         "updates aboveLifetimeAllowanceQuestion to Some(false) and clear the rest of the annual lifetime allowance data" in {
@@ -339,7 +339,7 @@ class AboveAnnualLifetimeAllowanceControllerISpec extends IntegrationTest with B
     }
     "has an SEE_OTHER status" in {
       result.status shouldBe SEE_OTHER
-      result.header("location") shouldBe Some(checkAnnualLifetimeAllowanceCYA(taxYearEOY))
+      result.header("location") shouldBe Some(lifetimeAllowanceCYA(taxYearEOY))
     }
   }
 }

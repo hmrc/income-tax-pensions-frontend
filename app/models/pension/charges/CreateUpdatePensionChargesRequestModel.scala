@@ -38,12 +38,12 @@ case class CreateUpdatePensionChargesRequestModel(pensionSavingsTaxCharges: Opti
         (pensionSavingsTaxCharges.isEmpty || pensionSavingsTaxCharges.exists(_.isEmpty)) &&
           (pensionSchemeUnauthorisedPayments.isEmpty || pensionSchemeUnauthorisedPayments.exists(_.isEmpty)) &&
           (pensionContributions.isEmpty || pensionContributions.exists(_.isEmpty)) &&
-        (overseasPensionContributions.isEmpty || overseasPensionContributions.exists(_.isEmpty))
+          (overseasPensionContributions.isEmpty || overseasPensionContributions.exists(_.isEmpty))
       case Some(_: PensionSchemeUnauthorisedPayments) =>
         (pensionSavingsTaxCharges.isEmpty || pensionSavingsTaxCharges.exists(_.isEmpty)) &&
           (pensionSchemeOverseasTransfers.isEmpty || pensionSchemeOverseasTransfers.exists(_.isEmpty)) &&
-          (pensionContributions.isEmpty || pensionContributions.exists(_.isEmpty))
-        (overseasPensionContributions.isEmpty || overseasPensionContributions.exists(_.isEmpty))
+          (pensionContributions.isEmpty || pensionContributions.exists(_.isEmpty)) &&
+          (overseasPensionContributions.isEmpty || overseasPensionContributions.exists(_.isEmpty))
       case Some(_: PensionContributions) =>
         (pensionSavingsTaxCharges.isEmpty || pensionSavingsTaxCharges.exists(_.isEmpty)) &&
           (pensionSchemeOverseasTransfers.isEmpty || pensionSchemeOverseasTransfers.exists(_.isEmpty)) &&
@@ -58,8 +58,8 @@ case class CreateUpdatePensionChargesRequestModel(pensionSavingsTaxCharges: Opti
         (pensionSavingsTaxCharges.isEmpty || pensionSavingsTaxCharges.exists(_.isEmpty)) &&
           (pensionSchemeOverseasTransfers.isEmpty || pensionSchemeOverseasTransfers.exists(_.isEmpty)) &&
           (pensionSchemeUnauthorisedPayments.isEmpty || pensionSchemeUnauthorisedPayments.exists(_.isEmpty)) &&
-          (pensionContributions.isEmpty || pensionContributions.exists(_.isEmpty))
-        (overseasPensionContributions.isEmpty || overseasPensionContributions.exists(_.isEmpty))
+          (pensionContributions.isEmpty || pensionContributions.exists(_.isEmpty)) &&
+          (overseasPensionContributions.isEmpty || overseasPensionContributions.exists(_.isEmpty))
     }
   }
   //scalastyle:on

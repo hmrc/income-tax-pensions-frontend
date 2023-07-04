@@ -765,6 +765,8 @@ lifetimeAllowance.pensionTakenAnotherWay.taxPaid.error.noEntry.agent = Rhowch sw
 #Annual Allowance and Lifetime Allowance CYA
 lifetimeAllowance.cya.heading.individual = Gwiriwch eich lwfansau blynyddol ac oes
 lifetimeAllowance.cya.heading.agent = Gwiriwch lwfansau blynyddol ac oes eich cleient
+lifetimeAllowance.cya.lifetime.heading.individual = Check your lifetime allowance
+lifetimeAllowance.cya.lifetime.heading.agent = Check your client’s lifetime allowance
 lifetimeAllowance.cya.aboveAnnualOrLifetimeAllowance = Uwch na’r lwfans blynyddol neu lwfans oes
 lifetimeAllowance.cya.reducedAnnualAllowance = Lwfans blynyddol wedi’i ostwng
 lifetimeAllowance.cya.typeOfReducedAnnualAllowance = Math o lwfans blynyddol wedi’i ostwng

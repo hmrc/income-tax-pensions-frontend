@@ -17,7 +17,7 @@
 package controllers.pensions.lifetimeAllowances
 
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.lifetimeAllowances.routes.{LifetimePstrSummaryController, AnnualLifetimeAllowanceCYAController}
+import controllers.pensions.lifetimeAllowances.routes.{LifetimePstrSummaryController, LifetimeAllowanceCYAController}
 import controllers.pensions.routes.PensionsSummaryController
 import controllers.predicates.AuthorisedAction
 import controllers.predicates.TaxYearAction.taxYearAction
@@ -41,7 +41,8 @@ class PensionSchemeTaxReferenceLifetimeController @Inject()(authAction: Authoris
                                                             pensionSchemeTaxReferenceView: PensionSchemeTaxReferenceLifetimeView,
                                                             pensionSessionService: PensionSessionService,
                                                             errorHandler: ErrorHandler
-                                                           )(implicit val cc: MessagesControllerComponents, ec: ExecutionContext, clock: Clock, appConfig: AppConfig)
+                                                           )(implicit val cc: MessagesControllerComponents, ec: ExecutionContext,
+                                                             clock: Clock, appConfig: AppConfig)
   extends FrontendController(cc) with I18nSupport {
 
 
@@ -74,18 +75,20 @@ class PensionSchemeTaxReferenceLifetimeController @Inject()(authAction: Authoris
             Future.successful(Redirect(redirectForSchemeLoop(pstrList.getOrElse(Seq.empty), taxYear)))
           }
         case _ =>
-          Future.successful(Redirect(AnnualLifetimeAllowanceCYAController.show(taxYear)))
+          Future.successful(Redirect(LifetimeAllowanceCYAController.show(taxYear)))
       }
   }
 
   def submit(taxYear: Int, pensionSchemeTaxReferenceIndex: Option[Int] = None): Action[AnyContent] = authAction.async {
     implicit request =>
+      
       val errorMsgDetails = (
         s"common.pensionSchemeTaxReference.error.noEntry.${if (request.user.isAgent) "agent" else "individual"}",
         s"lifetimeAllowance.pensionSchemeTaxReference.error.incorrectFormat")
+      
       PensionSchemeTaxReferenceForm.pensionSchemeTaxReferenceForm(errorMsgDetails._1, errorMsgDetails._2).bindFromRequest().fold(
         formWithErrors => Future.successful(BadRequest(pensionSchemeTaxReferenceView(formWithErrors, taxYear, pensionSchemeTaxReferenceIndex))),
-        pensionScheme => {
+        pensionScheme =>
           pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
             case Right(Some(data)) =>
 
@@ -119,7 +122,6 @@ class PensionSchemeTaxReferenceLifetimeController @Inject()(authAction: Authoris
               }
             case _ => Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
           }
-        }
       )
   }
 

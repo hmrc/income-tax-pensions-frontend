@@ -27,7 +27,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.PensionLifetimeAllowance.{checkAnnualLifetimeAllowanceCYA, lifetimeAllowancePstrSummaryUrl, pensionTakenAnotherWayAmountUrl, pensionTaxReferenceNumberLifetimeAllowanceUrl}
+import utils.PageUrls.PensionLifetimeAllowance._
 import utils.PageUrls.fullUrl
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
@@ -353,7 +353,7 @@ class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with B
       }
       "has an SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(checkAnnualLifetimeAllowanceCYA(taxYearEOY))
+        result.header("location") shouldBe Some(lifetimeAllowanceCYA(taxYearEOY))
       }
     }
   }

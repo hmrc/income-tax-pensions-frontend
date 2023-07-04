@@ -14,40 +14,52 @@
  * limitations under the License.
  */
 
-package controllers.pensions.paymentsIntoOverseasPensions
+package controllers.pensions.lifetimeAllowances
 
 import builders.AllPensionsDataBuilder.anAllPensionsData
 import builders.IncomeTaxUserDataBuilder.anIncomeTaxUserData
 import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import builders.PensionsUserDataBuilder
-import builders.ShortServiceRefundsViewModelBuilder.emptyShortServiceRefundsViewModel
+import builders.PensionLifetimeAllowanceViewModelBuilder.minimalPensionLifetimeAllowanceViewModel
 import builders.UserBuilder.aUser
 import models.mongo.PensionsCYAModel
 import play.api.http.HeaderNames
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.PaymentIntoOverseasPensions.paymentsIntoOverseasPensionsCyaUrl
-import utils.PageUrls.{fullUrl, overseasPensionsSummaryUrl, overviewUrl}
+import utils.PageUrls.PensionLifetimeAllowance.lifetimeAllowanceCYA
+import utils.PageUrls.{fullUrl, overviewUrl, pensionSummaryUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
-class PaymentIntoOverseasPensionsCYAControllerISpec extends IntegrationTest with ViewHelpers
+class LifetimeAllowanceCYAControllerISpec extends IntegrationTest with ViewHelpers
   with PensionsDatabaseHelper {
 
-  private def pensionsUsersData(pensionsCyaModel: PensionsCYAModel, isPrior: Boolean = false) =
-    PensionsUserDataBuilder.aPensionsUserData.copy(isPriorSubmission = isPrior, pensions = pensionsCyaModel)
-  
+  private def pensionsUsersData(pensionsCyaModel: PensionsCYAModel) = {
+    PensionsUserDataBuilder.aPensionsUserData.copy(isPriorSubmission = false, pensions = pensionsCyaModel)
+  }
 
   override val userScenarios: Seq[UserScenario[_, _]] = Nil
 
   ".show" should {
+
+    "show page when date is EOY" in {
+      lazy implicit val result: WSResponse = {
+        dropPensionsDB()
+        authoriseAgentOrIndividual(aUser.isAgent)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel))
+        userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYearEOY)
+        urlGet(fullUrl(lifetimeAllowanceCYA(taxYearEOY)), !aUser.isAgent, follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+      }
+      result.status shouldBe OK
+    }
+
     "redirect to Overview Page when in year" in {
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
         insertCyaData(pensionsUsersData(aPensionsCYAModel))
         userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYear)
-        
-        urlGet(fullUrl(paymentsIntoOverseasPensionsCyaUrl(taxYear)), !aUser.isAgent, follow = false,
+        urlGet(fullUrl(lifetimeAllowanceCYA(taxYear)), !aUser.isAgent, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
       }
 
@@ -55,29 +67,31 @@ class PaymentIntoOverseasPensionsCYAControllerISpec extends IntegrationTest with
       result.headers("Location").head shouldBe overviewUrl(taxYear)
     }
 
-    "show page when EOY" in {
+    "redirect to pension summary Page when in year" in {
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
         insertCyaData(pensionsUsersData(aPensionsCYAModel))
-        userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYearEOY)
-        
-        urlGet(fullUrl(paymentsIntoOverseasPensionsCyaUrl(taxYearEOY)), !aUser.isAgent, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        emptyUserDataStub()
+        urlGet(fullUrl(lifetimeAllowanceCYA(taxYear)), !aUser.isAgent, follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
       }
-      result.status shouldBe OK
+
+      result.status shouldBe SEE_OTHER
+      result.headers("Location").head shouldBe overviewUrl(taxYear)
     }
   }
+
 
   ".submit" should {
     "redirect to overview when in year" in {
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
-        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(shortServiceRefunds = emptyShortServiceRefundsViewModel)))
+        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(pensionLifetimeAllowances = minimalPensionLifetimeAllowanceViewModel)))
         userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYear)
         urlPost(
-          fullUrl(paymentsIntoOverseasPensionsCyaUrl(taxYear)),
+          fullUrl(lifetimeAllowanceCYA(taxYear)),
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)),
           follow = false,
           body = "")
@@ -92,17 +106,15 @@ class PaymentIntoOverseasPensionsCYAControllerISpec extends IntegrationTest with
         authoriseAgentOrIndividual(aUser.isAgent)
         insertCyaData(pensionsUsersData(aPensionsCYAModel))
         userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYearEOY)
-        pensionReliefsSessionStub("", nino, taxYearEOY)
-        pensionIncomeSessionStub("", nino, taxYearEOY)
-        nrsSubmissionStub("", nino)
         urlPost(
-          fullUrl(paymentsIntoOverseasPensionsCyaUrl(taxYearEOY)),
+          fullUrl(lifetimeAllowanceCYA(taxYearEOY)),
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
           follow = false,
           body = "")
       }
       result.status shouldBe SEE_OTHER
-      result.headers("location").head shouldBe overseasPensionsSummaryUrl(taxYearEOY)
+      result.headers("location").head shouldBe pensionSummaryUrl(taxYearEOY)
     }
+
   }
 }

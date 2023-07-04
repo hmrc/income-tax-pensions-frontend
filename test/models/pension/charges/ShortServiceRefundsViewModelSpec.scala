@@ -38,12 +38,20 @@ class ShortServiceRefundsViewModelSpec extends UnitTest {
       }
       "all required questions are answered" in {
         emptyShortServiceRefundsViewModel.copy(shortServiceRefund = Some(false)).isFinished
+        emptyShortServiceRefundsViewModel.copy(
+          shortServiceRefund = Some(true),
+          shortServiceRefundCharge = Some(25),
+          shortServiceRefundTaxPaid = Some(false)
+        ).isFinished
       }
     }
 
     "return false" when {
       "not all necessary questions have been populated" in {
         aShortServiceRefundsViewModel.copy(shortServiceRefundTaxPaidCharge = None).isFinished
+        emptyShortServiceRefundsViewModel.copy(
+          shortServiceRefund = Some(true), shortServiceRefundTaxPaid = Some(false)
+        ).isFinished
       }
     }
   }
