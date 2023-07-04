@@ -29,13 +29,13 @@ import org.scalatest.concurrent.ScalaFutures
 import play.api.http.Status.BAD_REQUEST
 import utils.UnitTest
 
-class PensionsPaymentsOverseasServiceSpec extends UnitTest
+class PensionOverseasPaymentServiceSpec extends UnitTest
   with MockPensionUserDataRepository
   with MockPensionsConnector
   with MockIncomeTaxUserDataConnector
   with ScalaFutures {
 
-  val overseasPaymentPensionService = new PensionOverseasPaymentService(mockPensionUserDataRepository, mockPensionsConnector, mockUserDataConnector)
+  val overseasPaymentPensionService = new PensionOverseasPaymentService(mockPensionUserDataRepository, mockPensionIncomeConnectorHelper, mockPensionsConnector, mockUserDataConnector)
 
   ".savePaymentsFromOverseasPensionsViewModel" should {
     "return Right(Unit) when model is saved successfully and payment from overseas pensions cya is cleared from DB" in {

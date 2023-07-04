@@ -18,14 +18,14 @@
 @import views.html.templates.helpers.SummaryList
 @import views.html.templates.helpers.Heading
 @import views.html.templates.helpers.Button
-@import models.pension.reliefs.PaymentsIntoPensionViewModel
+@import models.pension.reliefs.PaymentsIntoPensionsViewModel
 @import utils.ViewUtils.bigDecimalCurrency
 @import utils.ViewUtils.summaryListRow
 @import models.pension.AllPensionsData
 
 
 @this(layout: Layout, summaryList: SummaryList, heading: Heading, button: Button, csrfForm: FormWithCSRF)
-@(taxYear: Int, cya: PaymentsIntoPensionViewModel)(implicit messages: Messages, appConfig: AppConfig, request: AuthorisationRequest[_])
+@(taxYear: Int, cya: PaymentsIntoPensionsViewModel)(implicit messages: Messages, appConfig: AppConfig, request: AuthorisationRequest[_])
 
 @headingForUse = @{messages(s"paymentsIntoPensions.cya.heading.${if(request.user.isAgent) "agent" else "individual"}")}
 

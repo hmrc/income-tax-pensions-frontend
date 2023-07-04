@@ -26,8 +26,9 @@ import models.mongo.PensionsCYAModel
 import models.pension.charges.Relief
 import play.api.data.Form
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc._
 import services.PensionSessionService
+import services.redirects.PaymentsIntoOverseasPensionsRedirects.redirectForSchemeLoop
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.paymentsIntoOverseasPensions.PensionsCustomerReferenceNumberView
@@ -51,7 +52,7 @@ class PensionsCustomerReferenceNumberController @Inject()(actionsProvider: Actio
   def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit sessionDataRequest =>
       val piopReliefs = sessionDataRequest.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs
-      
+
       index match {
         case Some(_) => validatedIndex(index, piopReliefs.size) match {
           case Some(idx) => piopReliefs(idx).customerReference match {
@@ -61,7 +62,7 @@ class PensionsCustomerReferenceNumberController @Inject()(actionsProvider: Actio
                 .fill(customerReferenceNumber),
                 taxYear, index)))
           }
-          case None => Future.successful(Redirect(customerRefPageOrSchemeSummaryPage(piopReliefs.size, taxYear)))
+          case None => Future.successful(Redirect(redirectForSchemeLoop(piopReliefs, taxYear)))
         }
         case None => Future.successful(Ok(pensionsCustomerReferenceNumberView(referenceForm(sessionDataRequest.user), taxYear, None)))
       }
@@ -69,14 +70,14 @@ class PensionsCustomerReferenceNumberController @Inject()(actionsProvider: Actio
 
   def submit(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit sessionDataRequest =>
-      
+
       val piop = sessionDataRequest.pensionsUserData.pensions.paymentsIntoOverseasPensions
 
       def createOrUpdateSessionData(updatedCyaModel: PensionsCYAModel, newIndex: Some[Int]): Future[Result] =
         pensionSessionService.createOrUpdateSessionData(sessionDataRequest.user, updatedCyaModel, taxYear,
-          sessionDataRequest.pensionsUserData.isPriorSubmission )(errorHandler.internalServerError()) {
-        Redirect(UntaxedEmployerPaymentsController.show(taxYear, newIndex))
-      }
+          sessionDataRequest.pensionsUserData.isPriorSubmission)(errorHandler.internalServerError()) {
+          Redirect(UntaxedEmployerPaymentsController.show(taxYear, newIndex))
+        }
 
       index match {
         case None => referenceForm(sessionDataRequest.user).bindFromRequest().fold(
@@ -106,7 +107,7 @@ class PensionsCustomerReferenceNumberController @Inject()(actionsProvider: Actio
                     Some(updatedCyaModel.paymentsIntoOverseasPensions.reliefs.size - 1))(Some(_))
                   createOrUpdateSessionData(updatedCyaModel, currentIndex)
                 })
-            case _ => Future.successful(Redirect(customerRefPageOrSchemeSummaryPage(piop.reliefs.size, taxYear)))
+            case _ => Future.successful(Redirect(redirectForSchemeLoop(piop.reliefs, taxYear)))
           }
       }
   }

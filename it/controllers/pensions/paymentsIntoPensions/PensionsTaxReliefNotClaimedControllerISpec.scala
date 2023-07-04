@@ -22,7 +22,7 @@ import controllers.ControllerSpec.UserTypes.{Agent, Individual}
 import controllers.ControllerSpec._
 import controllers.YesNoControllerSpec
 import models.mongo.PensionsCYAModel
-import models.pension.reliefs.PaymentsIntoPensionViewModel
+import models.pension.reliefs.PaymentsIntoPensionsViewModel
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 
@@ -35,7 +35,7 @@ class PensionsTaxReliefNotClaimedControllerISpec
 
   val minimalSessionDataToAccessThisPage: PensionsCYAModel = aPensionsCYAEmptyModel
     .copy(paymentsIntoPension =
-      PaymentsIntoPensionViewModel(
+      PaymentsIntoPensionsViewModel(
         rasPensionPaymentQuestion = Some(true),
         totalRASPaymentsAndTaxRelief = Some(BigDecimal("1.00")),
         oneOffRasPaymentPlusTaxReliefQuestion = Some(true),
@@ -67,7 +67,7 @@ class PensionsTaxReliefNotClaimedControllerISpec
             val sessionData = pensionsUserData(
               aPensionsCYAEmptyModel
                 .copy(paymentsIntoPension =
-                  PaymentsIntoPensionViewModel(
+                  PaymentsIntoPensionsViewModel(
                     rasPensionPaymentQuestion = Some(true)
                   ))
             )
@@ -83,7 +83,7 @@ class PensionsTaxReliefNotClaimedControllerISpec
             val sessionData = pensionsUserData(
               aPensionsCYAEmptyModel
                 .copy(paymentsIntoPension =
-                  PaymentsIntoPensionViewModel(
+                  PaymentsIntoPensionsViewModel(
                     rasPensionPaymentQuestion = Some(true),
                     totalRASPaymentsAndTaxRelief = Some(BigDecimal("1.00"))
                   ))
@@ -100,7 +100,7 @@ class PensionsTaxReliefNotClaimedControllerISpec
             val sessionData = pensionsUserData(
               aPensionsCYAEmptyModel
                 .copy(paymentsIntoPension =
-                  PaymentsIntoPensionViewModel(
+                  PaymentsIntoPensionsViewModel(
                     rasPensionPaymentQuestion = Some(true),
                     totalRASPaymentsAndTaxRelief = Some(BigDecimal("1.00")),
                     oneOffRasPaymentPlusTaxReliefQuestion = Some(true)
@@ -118,7 +118,7 @@ class PensionsTaxReliefNotClaimedControllerISpec
             val sessionData = pensionsUserData(
               aPensionsCYAEmptyModel
                 .copy(paymentsIntoPension =
-                  PaymentsIntoPensionViewModel(
+                  PaymentsIntoPensionsViewModel(
                     rasPensionPaymentQuestion = Some(true),
                     totalRASPaymentsAndTaxRelief = Some(BigDecimal("1.00")),
                     oneOffRasPaymentPlusTaxReliefQuestion = Some(true),
@@ -677,7 +677,7 @@ class PensionsTaxReliefNotClaimedControllerISpec
     }
   }
 
-  private def getViewModel(implicit userConfig: UserConfig): Option[PaymentsIntoPensionViewModel] =
+  private def getViewModel(implicit userConfig: UserConfig): Option[PaymentsIntoPensionsViewModel] =
     loadPensionUserData.map(_.pensions.paymentsIntoPension)
 
 }

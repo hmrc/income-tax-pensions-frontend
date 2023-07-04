@@ -27,6 +27,7 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
+import services.redirects.PaymentsIntoOverseasPensionsRedirects.redirectForSchemeLoop
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.paymentsIntoOverseasPensions.TaxEmployerPaymentsView
@@ -73,14 +74,14 @@ class TaxEmployerPaymentsController @Inject()(authAction: AuthorisedAction,
             val updatedCyaModel: PensionsCYAModel = data.pensions.copy(
               paymentsIntoOverseasPensions = data.pensions.paymentsIntoOverseasPensions.copy(
                 taxPaidOnEmployerPaymentsQuestion = Some(yesNo)))
+
             pensionSessionService.createOrUpdateSessionData(request.user,
               updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
-              if(yesNo) {
-                Redirect(PaymentsIntoOverseasPensionsCYAController.show(taxYear))
-              } else {
-                val reliefSize = data.pensions.paymentsIntoOverseasPensions.reliefs.size
-                Redirect(customerRefPageOrSchemeSummaryPage(reliefSize, taxYear))
-              }
+
+              Redirect(
+                if (yesNo) redirectForSchemeLoop(updatedCyaModel.paymentsIntoOverseasPensions.reliefs, taxYear)
+                else PaymentsIntoOverseasPensionsCYAController.show(taxYear)
+              )
             }
           case _ =>
             Future.successful(Redirect(OverseasPensionsSummaryController.show(taxYear)))

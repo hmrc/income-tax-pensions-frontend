@@ -17,14 +17,16 @@
 package controllers.pensions.paymentsIntoOverseasPensions
 
 import config.{AppConfig, ErrorHandler}
+import controllers.pensions.paymentsIntoOverseasPensions.routes.ReliefsSchemeDetailsController
 import controllers.predicates.ActionsProvider
 import controllers.validatedIndex
 import forms.FormsProvider
 import models.mongo.PensionsUserData
 import models.requests.UserSessionDataRequest
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc._
 import services.PensionSessionService
+import services.redirects.PaymentsIntoOverseasPensionsRedirects.redirectForSchemeLoop
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.paymentsIntoOverseasPensions.SF74ReferenceView
@@ -39,54 +41,56 @@ class SF74ReferenceController @Inject()(
                                          view: SF74ReferenceView,
                                          formsProvider: FormsProvider,
                                          errorHandler: ErrorHandler
-                                       ) (implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock)
-  extends FrontendController(mcc) with I18nSupport with SessionHelper{
+                                       )(implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock)
+  extends FrontendController(mcc) with I18nSupport with SessionHelper {
 
   def show(taxYear: Int, reliefIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit userSessionDataRequest =>
-    
+
     val piopReliefs = userSessionDataRequest.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs
-    val reliefSize = piopReliefs.size
-    
-    validatedIndex(reliefIndex, reliefSize) match {
-      case Some(idx) =>
-        val sf74Reference = piopReliefs(idx).sf74Reference
-        sf74Reference match {
-          case Some(value) => Future.successful(Ok(view(formsProvider.sf74ReferenceIdForm.fill(value), taxYear, reliefIndex)))
-          case None => Future.successful(Ok(view(formsProvider.sf74ReferenceIdForm, taxYear, reliefIndex)))
-        }
-      case _ =>
-        Future.successful(Redirect(customerRefPageOrSchemeSummaryPage(reliefSize, taxYear)))
+
+    Future.successful {
+      validatedIndex(reliefIndex, piopReliefs.size) match {
+        case Some(idx) =>
+          val sf74Reference = piopReliefs(idx).sf74Reference
+          sf74Reference match {
+            case Some(value) => Ok(view(formsProvider.sf74ReferenceIdForm.fill(value), taxYear, reliefIndex))
+            case None => Ok(view(formsProvider.sf74ReferenceIdForm, taxYear, reliefIndex))
+          }
+        case _ =>
+          Redirect(redirectForSchemeLoop(piopReliefs, taxYear))
+      }
     }
   }
 
   def submit(taxYear: Int, reliefIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit userSessionDataRequest =>
-      val reliefSize = userSessionDataRequest.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs.size
-      validatedIndex(reliefIndex, reliefSize) match {
+      val reliefs = userSessionDataRequest.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs
+      validatedIndex(reliefIndex, reliefs.size) match {
         case Some(idx) =>
           formsProvider.sf74ReferenceIdForm.bindFromRequest().fold(
             formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear, reliefIndex))),
-            sf74Reference =>  updateSessionData(userSessionDataRequest.pensionsUserData, Some(sf74Reference), taxYear, idx))
+            sf74Reference => updateSessionData(userSessionDataRequest.pensionsUserData, Some(sf74Reference), taxYear, idx))
         case _ =>
-          Future.successful(Redirect(customerRefPageOrSchemeSummaryPage(reliefSize, taxYear)))
-    }
+          Future.successful(Redirect(redirectForSchemeLoop(reliefs, taxYear)))
+      }
   }
 
   private def updateSessionData[T](pensionsUserData: PensionsUserData,
-                                   sf74Reference : Option[String],
+                                   sf74Reference: Option[String],
                                    taxYear: Int,
-                                   idx: Int)(implicit request: UserSessionDataRequest[T]) = {
-    
+                                   idx: Int)(implicit request: UserSessionDataRequest[T]): Future[Result] = {
+
     val piopUserData = pensionsUserData.pensions.paymentsIntoOverseasPensions
-    
+
     val updatedCyaModel = pensionsUserData.pensions.copy(
       paymentsIntoOverseasPensions = piopUserData.copy(
         reliefs = piopUserData.reliefs.updated(idx, piopUserData.reliefs(idx).copy(sf74Reference = sf74Reference)
-      ))
+        ))
     )
     pensionSessionService.createOrUpdateSessionData(request.user,
       updatedCyaModel, taxYear, pensionsUserData.isPriorSubmission)(errorHandler.internalServerError()) {
-        Redirect(routes.ReliefsSchemeDetailsController.show(taxYear, Some(idx)))
+      Redirect(ReliefsSchemeDetailsController.show(taxYear, Some(idx)))
     }
   }
+
 }

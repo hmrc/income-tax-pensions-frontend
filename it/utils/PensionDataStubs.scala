@@ -29,7 +29,7 @@ import builders.UnauthorisedPaymentsViewModelBuilder.anUnauthorisedPaymentsViewM
 import models.mongo.{PensionsCYAModel, PensionsUserData}
 import models.pension.AllPensionsData
 import models.pension.charges._
-import models.pension.reliefs.{PaymentsIntoPensionViewModel, PensionReliefs, Reliefs}
+import models.pension.reliefs.{PaymentsIntoPensionsViewModel, PensionReliefs, Reliefs}
 
 object PensionDataStubs {
 
@@ -109,7 +109,7 @@ object PensionDataStubs {
 object PensionUserDataStub extends IntegrationTest {
   implicit val testClock: Clock = UnitTestClock
 
-  val paymentsIntoPensionViewModel: PaymentsIntoPensionViewModel = PaymentsIntoPensionViewModel(
+  val paymentsIntoPensionViewModel: PaymentsIntoPensionsViewModel = PaymentsIntoPensionsViewModel(
     Some(true), Some(222.3), Some(true), Some(22.44), Some(true), Some(true), Some(true), Some(44.00), Some(true), Some(55.55))
 
   val pensionsAnnualAllowancesViewModel: PensionAnnualAllowancesViewModel = PensionAnnualAllowancesViewModel(

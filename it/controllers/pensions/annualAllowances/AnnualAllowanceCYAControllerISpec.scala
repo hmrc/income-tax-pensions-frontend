@@ -14,95 +14,88 @@
  * limitations under the License.
  */
 
-package controllers.pensions.paymentsIntoOverseasPensions
+package controllers.pensions.annualAllowances
 
 import builders.AllPensionsDataBuilder.anAllPensionsData
 import builders.IncomeTaxUserDataBuilder.anIncomeTaxUserData
 import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import builders.PensionsUserDataBuilder
-import builders.ShortServiceRefundsViewModelBuilder.emptyShortServiceRefundsViewModel
 import builders.UserBuilder.aUser
 import models.mongo.PensionsCYAModel
 import play.api.http.HeaderNames
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.PaymentIntoOverseasPensions.paymentsIntoOverseasPensionsCyaUrl
-import utils.PageUrls.{fullUrl, overseasPensionsSummaryUrl, overviewUrl}
+import utils.PageUrls.PensionAnnualAllowancePages.annualAllowancesCYAUrl
+import utils.PageUrls.{fullUrl, overviewUrl, pensionSummaryUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
-class PaymentIntoOverseasPensionsCYAControllerISpec extends IntegrationTest with ViewHelpers
-  with PensionsDatabaseHelper {
-
-  private def pensionsUsersData(pensionsCyaModel: PensionsCYAModel, isPrior: Boolean = false) =
-    PensionsUserDataBuilder.aPensionsUserData.copy(isPriorSubmission = isPrior, pensions = pensionsCyaModel)
-  
+class AnnualAllowanceCYAControllerISpec extends IntegrationTest with ViewHelpers with PensionsDatabaseHelper {
+  private def pensionsUsersData(pensionsCyaModel: PensionsCYAModel) = {
+    PensionsUserDataBuilder.aPensionsUserData.copy(isPriorSubmission = false, pensions = pensionsCyaModel)
+  }
 
   override val userScenarios: Seq[UserScenario[_, _]] = Nil
-
+  
   ".show" should {
-    "redirect to Overview Page when in year" in {
+     "redirect to Overview Page when in year" in {
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
         insertCyaData(pensionsUsersData(aPensionsCYAModel))
         userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYear)
-        
-        urlGet(fullUrl(paymentsIntoOverseasPensionsCyaUrl(taxYear)), !aUser.isAgent, follow = false,
+        urlGet(fullUrl(annualAllowancesCYAUrl(taxYear)), !aUser.isAgent, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
       }
 
       result.status shouldBe SEE_OTHER
       result.headers("Location").head shouldBe overviewUrl(taxYear)
     }
-
+    
     "show page when EOY" in {
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
         insertCyaData(pensionsUsersData(aPensionsCYAModel))
         userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYearEOY)
-        
-        urlGet(fullUrl(paymentsIntoOverseasPensionsCyaUrl(taxYearEOY)), !aUser.isAgent, follow = false,
+        urlGet(fullUrl(annualAllowancesCYAUrl(taxYearEOY)), !aUser.isAgent, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
       result.status shouldBe OK
     }
   }
-
+  
   ".submit" should {
     "redirect to overview when in year" in {
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
-        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(shortServiceRefunds = emptyShortServiceRefundsViewModel)))
+        insertCyaData(pensionsUsersData(aPensionsCYAModel))
         userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYear)
         urlPost(
-          fullUrl(paymentsIntoOverseasPensionsCyaUrl(taxYear)),
+          fullUrl(annualAllowancesCYAUrl(taxYear)),
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)),
           follow = false,
-          body = "")
+          body = ""
+        )
       }
       result.status shouldBe SEE_OTHER
       result.headers("location").head shouldBe overviewUrl(taxYear)
     }
-
-    "redirect to next page" in {
-      lazy implicit val result: WSResponse = {
+     "redirect to next page" in {
+       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
         insertCyaData(pensionsUsersData(aPensionsCYAModel))
         userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYearEOY)
-        pensionReliefsSessionStub("", nino, taxYearEOY)
-        pensionIncomeSessionStub("", nino, taxYearEOY)
-        nrsSubmissionStub("", nino)
         urlPost(
-          fullUrl(paymentsIntoOverseasPensionsCyaUrl(taxYearEOY)),
+          fullUrl(annualAllowancesCYAUrl(taxYearEOY)),
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
           follow = false,
-          body = "")
-      }
-      result.status shouldBe SEE_OTHER
-      result.headers("location").head shouldBe overseasPensionsSummaryUrl(taxYearEOY)
-    }
+          body = ""
+        )
+       }
+       result.status shouldBe SEE_OTHER
+       result.headers("location").head shouldBe pensionSummaryUrl(taxYearEOY)
+     }
   }
 }

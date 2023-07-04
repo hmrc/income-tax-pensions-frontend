@@ -30,7 +30,7 @@ import builders.UnauthorisedPaymentsViewModelBuilder.anUnauthorisedPaymentsViewM
 import builders.UserBuilder.aUserRequest
 import forms.YesNoForm
 import models.mongo.PensionsCYAModel
-import models.pension.reliefs.PaymentsIntoPensionViewModel
+import models.pension.reliefs.PaymentsIntoPensionsViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterEach
@@ -47,7 +47,7 @@ import views.TotalPaymentsIntoRasSpec.ExpectedIndividualEN._
 
 class TotalPaymentsIntoRASControllerISpec extends IntegrationTest with BeforeAndAfterEach with ViewHelpers with PensionsDatabaseHelper {
 
-  private def pensionsUsersData(paymentsIntoPensionViewModel: PaymentsIntoPensionViewModel) = { //scalastyle:off magic.number
+  private def pensionsUsersData(paymentsIntoPensionViewModel: PaymentsIntoPensionsViewModel) = { //scalastyle:off magic.number
 
     PensionsUserDataBuilder.aPensionsUserData.copy(
       pensions = PensionsCYAModel(paymentsIntoPensionViewModel,
@@ -63,7 +63,7 @@ class TotalPaymentsIntoRASControllerISpec extends IntegrationTest with BeforeAnd
     )
   }
 
-  private val requiredViewModel = PaymentsIntoPensionViewModel(
+  private val requiredViewModel = PaymentsIntoPensionsViewModel(
     rasPensionPaymentQuestion = Some(true),
     totalRASPaymentsAndTaxRelief = Some(BigDecimal(7400)),
     oneOffRasPaymentPlusTaxReliefQuestion = Some(true),
@@ -174,7 +174,7 @@ class TotalPaymentsIntoRASControllerISpec extends IntegrationTest with BeforeAnd
 
       val userDataModel = aPensionsUserData.copy(
         pensions = aPensionsCYAEmptyModel.copy(
-          paymentsIntoPension = PaymentsIntoPensionViewModel(rasPensionPaymentQuestion = Some(true))))
+          paymentsIntoPension = PaymentsIntoPensionsViewModel(rasPensionPaymentQuestion = Some(true))))
 
       lazy val result: WSResponse = {
         authoriseAgentOrIndividual()
@@ -289,7 +289,7 @@ class TotalPaymentsIntoRASControllerISpec extends IntegrationTest with BeforeAnd
 
         val userDataModel = aPensionsUserData.copy(
           pensions = aPensionsCYAEmptyModel.copy(
-            paymentsIntoPension = PaymentsIntoPensionViewModel(rasPensionPaymentQuestion = Some(true))))
+            paymentsIntoPension = PaymentsIntoPensionsViewModel(rasPensionPaymentQuestion = Some(true))))
 
         lazy val result: WSResponse = {
           authoriseAgentOrIndividual()

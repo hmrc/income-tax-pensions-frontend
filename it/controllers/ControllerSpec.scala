@@ -102,7 +102,7 @@ class ControllerSpec(val pathForThisPage: String) extends PlaySpec
     val incomeFromOverseasPensionsFtcr: String = relativeUrl("/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-ftcr")
     val incomeFromOverseasPensionstaxable: String = relativeUrl("/overseas-pensions/income-from-overseas-pensions/taxable-amount")
     val incomeFromOverseasPensionsScheme: String = relativeUrl("/overseas-pensions/income-from-overseas-pensions/pension-scheme-summary")
-    val incomeFromOverseasPensionsCountrySummary: String = relativeUrl("/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-sountry-summary")
+    val incomeFromOverseasPensionsCountrySummary: String = relativeUrl("/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-country-summary")
     val incomeFromOverseasPensionsCya: String = relativeUrl("/overseas-pensions/income-from-overseas-pensions/check-overseas-pension-income-cya")
 
     val pensionSchemeTaxReferenceSummary: String = relativeUrl("/annual-allowance/pension-schemes-paying-annual-allowance-tax")

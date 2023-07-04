@@ -497,7 +497,7 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
     }
   }
 
-  "redirect to the Uk Pension Incomes Summary page if index is out of bounds" which {
+  "redirect to the first page of scheme loop if index is invalid and there are no previous schemes" which {
     lazy val form: Map[String, String] = pensionDetailsForm(validProviderName, validRef, validPensionId)
 
     lazy val result: WSResponse = {
@@ -511,7 +511,7 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
 
     "has an SEE_OTHER(303) status" in {
       result.status shouldBe SEE_OTHER
-      result.header("location") shouldBe Some(ukPensionSchemeSummaryListUrl(taxYearEOY))
+      result.header("location") shouldBe Some(pensionSchemeDetailsUrl(taxYearEOY, None))
     }
   }
 }

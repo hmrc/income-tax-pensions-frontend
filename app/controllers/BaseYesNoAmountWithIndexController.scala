@@ -24,7 +24,7 @@ import controllers.predicates.TaxYearAction.taxYearAction
 import models.AuthorisationRequest
 import models.mongo.{PensionsCYAModel, PensionsUserData}
 import play.api.data.Form
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents, Result}
 import play.twirl.api.Html
 import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -58,6 +58,8 @@ abstract class BaseYesNoAmountWithIndexController(messagesControllerComponents: 
 
   def whenSessionDataIsInsufficient(taxYear: Int): Result
 
+  def redirectWhenIndexIsInvalid(data: PensionsUserData, taxYear: Int): Call
+
   def sessionDataIsSufficient(pensionsUserData: PensionsUserData, index : Int): Boolean
 
   def onError(implicit request: AuthorisationRequest[AnyContent]): Result = errorHandler.handleError(INTERNAL_SERVER_ERROR)
@@ -89,7 +91,7 @@ abstract class BaseYesNoAmountWithIndexController(messagesControllerComponents: 
       case Left(_) => Future.successful(onError)
       case Right(Some(data)) => validateIndex(index, data) match {
         case Some(id) => ensureThatSessionDataIsSufficient(data, taxYear, id)(shows)
-        case None => Future.successful(redirectWhenNoSessionData(taxYear))
+        case None => Future.successful(Redirect(redirectWhenIndexIsInvalid(data, taxYear)))
       }
       case Right(None) => Future.successful(redirectWhenNoSessionData(taxYear))
     }
@@ -106,7 +108,7 @@ abstract class BaseYesNoAmountWithIndexController(messagesControllerComponents: 
       case Left(_) => Future.successful(onError)
       case Right(Some(data)) => validateIndex(index, data) match {
         case Some(id) => ensureThatSessionDataIsSufficient(data, taxYear, id)(submit)
-        case None => Future.successful(redirectWhenNoSessionData(taxYear))
+        case None => Future.successful(Redirect(redirectWhenIndexIsInvalid(data, taxYear)))
       }
       case Right(None) => Future.successful(redirectWhenNoSessionData(taxYear))
     }}}

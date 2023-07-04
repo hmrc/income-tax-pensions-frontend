@@ -16,8 +16,7 @@
 
 package controllers.pensions.shortServiceRefunds
 
-import builders.ShortServiceRefundsViewModelBuilder.{aShortServiceRefundsViewModel, emptyShortServiceRefundsViewModel, minimalShortServiceRefundsViewModel}
-import models.pension.charges.ShortServiceRefundsViewModel
+import builders.ShortServiceRefundsViewModelBuilder.{aShortServiceRefundsViewModel, minimalShortServiceRefundsViewModel}
 import org.scalatest.Assertion
 import org.scalatest.matchers.should._
 import org.scalatest.wordspec.AnyWordSpec
@@ -35,58 +34,31 @@ class ShortServiceRefundsCYAViewHelperSpec extends AnyWordSpec with Matchers {
 
   "Getting the summary rows" should {
     "return the expected" when {
-      "we haven't provided any answers" in {
-
-        val model = emptyShortServiceRefundsViewModel
-
-        val summaryListRows = ShortSummaryCYAViewHelper.summaryListRows(model, taxYear)
-
-        summaryListRows.length shouldBe 1
-        assertRowForRefundBoolean(summaryListRows.head, "")
-
-      }
-
-      "we have only partially completed the section (only the initial question)" in {
-
+      "we have only answered 'no' to the initial question" in {
         val summaryListRows = ShortSummaryCYAViewHelper.summaryListRows(minimalShortServiceRefundsViewModel, taxYear)
 
-        summaryListRows.length shouldBe 2
+        summaryListRows.length shouldBe 1
         assertRowForRefundBoolean(summaryListRows.head, "No")
       }
-      "we have only non UK amount question " in {
 
-
-        val summaryListRows = ShortSummaryCYAViewHelper.summaryListRows(ShortServiceRefundsViewModel(
-          shortServiceRefund = Some(false),
-          shortServiceRefundTaxPaid = Some(true),
-          shortServiceRefundTaxPaidCharge = Some(BigDecimal(100))),
-          taxYear)
-
-
-        summaryListRows.length shouldBe 3
-        assertRowForRefundBoolean(summaryListRows.head, "No")
-        assertRowForNonUKBoolean(summaryListRows(1), "Yes")
-        assertRowForNonUKAmount(summaryListRows(2), "£100")
-      }
-      "we have only added schemes" in {
-
-        val model = minimalShortServiceRefundsViewModel.copy(refundPensionScheme = aShortServiceRefundsViewModel.refundPensionScheme)
-
+      "we answer 'no' to non-UK tax on short service refunds" in {
+        val model = aShortServiceRefundsViewModel.copy(
+          shortServiceRefundTaxPaid = Some(false),
+          shortServiceRefundTaxPaidCharge = None
+        )
         val summaryListRows = ShortSummaryCYAViewHelper.summaryListRows(model, taxYear)
 
-        summaryListRows.length shouldBe 3
-        assertRowForRefundBoolean(summaryListRows.head, "No")
-        assertRowForNonUKBoolean(summaryListRows(1), "No tax paid")
-        assertRowForSchemes(summaryListRows(2), "Overseas Refund Scheme Name")
-
+        summaryListRows.length shouldBe 4
+        assertRowForRefundBoolean(summaryListRows.head, "Yes")
+        assertRowForRefundAmount(summaryListRows(1), "£1,999.99")
+        assertRowForNonUKBoolean(summaryListRows(2), "No tax paid")
+        assertRowForSchemes(summaryListRows(3), "Overseas Refund Scheme Name")
       }
+
       "we have completed all sections" in {
-
-
         val summaryListRows = ShortSummaryCYAViewHelper.summaryListRows(aShortServiceRefundsViewModel, taxYear)
 
         summaryListRows.length shouldBe 5
-
         assertRowForRefundBoolean(summaryListRows.head, "Yes")
         assertRowForRefundAmount(summaryListRows(1), "£1,999.99")
         assertRowForNonUKBoolean(summaryListRows(2), "Yes")

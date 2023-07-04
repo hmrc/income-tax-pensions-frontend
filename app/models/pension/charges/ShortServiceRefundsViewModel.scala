@@ -25,15 +25,22 @@ import utils.EncryptableSyntax.EncryptableOps
 import utils.EncryptorInstances.{bigDecimalEncryptor, booleanEncryptor, stringEncryptor}
 import utils.{EncryptedValue, SecureGCMCipher}
 
-case class ShortServiceRefundsViewModel(
-                                         shortServiceRefund: Option[Boolean] = None,
-                                         shortServiceRefundCharge: Option[BigDecimal] = None,
-                                         shortServiceRefundTaxPaid: Option[Boolean] = None,
-                                         shortServiceRefundTaxPaidCharge: Option[BigDecimal] = None,
-                                         refundPensionScheme: Seq[OverseasRefundPensionScheme] = Nil
+case class ShortServiceRefundsViewModel(shortServiceRefund: Option[Boolean] = None,
+                                        shortServiceRefundCharge: Option[BigDecimal] = None,
+                                        shortServiceRefundTaxPaid: Option[Boolean] = None,
+                                        shortServiceRefundTaxPaidCharge: Option[BigDecimal] = None,
+                                        refundPensionScheme: Seq[OverseasRefundPensionScheme] = Nil
                                        ) extends PensionCYABaseModel {
   def isEmpty: Boolean = shortServiceRefund.isEmpty && shortServiceRefundCharge.isEmpty &&
     shortServiceRefundTaxPaid.isEmpty && shortServiceRefundTaxPaidCharge.isEmpty && refundPensionScheme.isEmpty
+
+  def isFinished: Boolean = {
+    shortServiceRefund.filter(x => x)
+      .flatMap(_ => shortServiceRefundTaxPaid.filter(x => x))
+      .map(_ => shortServiceRefundCharge.isDefined)
+      .map(_ => shortServiceRefundTaxPaidCharge.isDefined)
+      .exists(_ => refundPensionScheme.nonEmpty)
+  }
 
   def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedShortServiceRefundsViewModel =
     EncryptedShortServiceRefundsViewModel(

@@ -19,7 +19,7 @@ package builders
 import builders.PensionsCYAModelBuilder.{aPensionsCYAEmptyModel, aPensionsCYAModel}
 import models.mongo.PensionsUserData
 import models.pension.charges._
-import models.pension.reliefs.PaymentsIntoPensionViewModel
+import models.pension.reliefs.PaymentsIntoPensionsViewModel
 import models.pension.statebenefits.IncomeFromPensionsViewModel
 import utils.UnitTest
 
@@ -36,7 +36,7 @@ object PensionsUserDataBuilder extends UnitTest {
 
   val anPensionsUserDataEmptyCya: PensionsUserData = aPensionsUserData.copy(pensions = aPensionsCYAEmptyModel)
 
-  def pensionsUserDataWithPaymentsIntoPensions(paymentsIntoPension: PaymentsIntoPensionViewModel,
+  def pensionsUserDataWithPaymentsIntoPensions(paymentsIntoPension: PaymentsIntoPensionsViewModel,
                                                isPriorSubmission: Boolean = true): PensionsUserData = {
     aPensionsUserData.copy(isPriorSubmission = isPriorSubmission,
       pensions = aPensionsCYAModel.copy(paymentsIntoPension = paymentsIntoPension)

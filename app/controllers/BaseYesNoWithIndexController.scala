@@ -25,7 +25,7 @@ import models.AuthorisationRequest
 import models.mongo.{PensionsCYAModel, PensionsUserData}
 import models.pension.charges.PensionScheme
 import play.api.data.Form
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents, Result}
 import play.twirl.api.Html
 import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -47,6 +47,8 @@ abstract class BaseYesNoWithIndexController(
                  (implicit request: AuthorisationRequest[AnyContent]): Html
 
   def redirectWhenNoSessionData(taxYear: Int): Result
+
+  def redirectWhenIndexIsInvalid(data: PensionsUserData, taxYear: Int): Call
 
   def redirectAfterUpdatingSessionData(taxYear: Int, index: Option[Int]): Result
 
@@ -70,7 +72,7 @@ abstract class BaseYesNoWithIndexController(
         pensionsUserDataOpt
           .map(pensions => {
             validateIndex(index, pensions.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes).fold(
-              Future.successful(redirectWhenNoSessionData(taxYear))
+              Future.successful(Redirect(redirectWhenIndexIsInvalid(pensions, taxYear)))
             )(i => {
               ensureThatSessionDataIsSufficient(pensions, taxYear, i)(show)
             })
@@ -85,7 +87,7 @@ abstract class BaseYesNoWithIndexController(
         pensionsUserDataOpt
           .map(pensions => {
             validateIndex(index, pensions.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes).fold(
-              Future.successful(redirectWhenNoSessionData(taxYear))
+              Future.successful(Redirect(redirectWhenIndexIsInvalid(pensions, taxYear)))
             )(i => {
               ensureThatSessionDataIsSufficient(pensions, taxYear, i)(submit)
             })
