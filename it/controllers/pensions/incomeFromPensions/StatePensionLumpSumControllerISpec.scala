@@ -17,7 +17,8 @@
 package controllers.pensions.incomeFromPensions
 
 import builders.IncomeFromPensionsViewModelBuilder.anIncomeFromPensionsViewModel
-import builders.PensionsUserDataBuilder.pensionsUserDataWithIncomeFromPensions
+import builders.PensionsCYAModelBuilder.aPensionsCYAModel
+import builders.PensionsUserDataBuilder.{aPensionsUserData, pensionsUserDataWithIncomeFromPensions}
 import builders.StateBenefitViewModelBuilder.anStateBenefitViewModelOne
 import builders.UserBuilder.{aUser, aUserRequest}
 import forms.RadioButtonAmountForm
@@ -25,13 +26,14 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.IncomeFromPensionsPages.{addToCalculationUrl, statePensionLumpSumUrl, taxOnLumpSumUrl}
+import utils.PageUrls.IncomeFromPensionsPages.{addToCalculationUrl, statePension, statePensionLumpSumUrl, statePensionStartDateUrl, taxOnLumpSumUrl}
 import utils.PageUrls.{fullUrl, overviewUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 class StatePensionLumpSumControllerISpec extends IntegrationTest with BeforeAndAfterEach with ViewHelpers with PensionsDatabaseHelper {
 
   override val userScenarios: Seq[UserScenario[_, _]] = Seq.empty
+
   ".show" should {
     "Return OK response 'Did you get a State Pension lump sum?' page with correct content and no pre-filling" in {
       implicit lazy val result: WSResponse = {
@@ -57,6 +59,27 @@ class StatePensionLumpSumControllerISpec extends IntegrationTest with BeforeAndA
         urlGet(fullUrl(statePensionLumpSumUrl(taxYearEOY)), headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
       result.status shouldBe OK
+    }
+
+    "redirect to the first page in journey if the previous question has not been answered" in {
+      val data = aPensionsUserData.copy(
+        pensions = aPensionsCYAModel.copy(
+          incomeFromPensions = anIncomeFromPensionsViewModel.copy(
+            statePension = Some(anStateBenefitViewModelOne.copy(
+              amountPaidQuestion = None,
+              amount = None,
+              ))
+          )))
+
+      lazy implicit val result: WSResponse = {
+        dropPensionsDB()
+        authoriseAgentOrIndividual(aUser.isAgent)
+        insertCyaData(data)
+        urlGet(fullUrl(statePensionLumpSumUrl(taxYearEOY)), !aUser.isAgent, follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+      }
+      result.status shouldBe SEE_OTHER
+      result.header("location").contains(statePension(taxYearEOY))
     }
   }
 

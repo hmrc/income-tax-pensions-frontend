@@ -16,7 +16,11 @@
 
 package controllers.pensions.incomeFromPensions
 
+import builders.IncomeFromPensionsViewModelBuilder.anIncomeFromPensionsViewModel
+import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import builders.PensionsUserDataBuilder.aPensionsUserData
+import builders.StateBenefitViewModelBuilder.anStateBenefitViewModelOne
+import utils.CommonUtils
 import builders.UserBuilder.aUser
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -24,7 +28,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.IncomeFromPensionsPages.statePensionStartDateUrl
+import utils.PageUrls.IncomeFromPensionsPages.{statePension, statePensionStartDateUrl}
 import utils.PageUrls.{fullUrl, overviewUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
@@ -95,6 +99,26 @@ class StatePensionStartDateControllerISpec extends IntegrationTest with ViewHelp
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
       result.status shouldBe OK
+    }
+
+    "redirect to the first page in journey if the previous question has not been answered" in {
+      val data = aPensionsUserData.copy(
+        pensions = aPensionsCYAModel.copy(
+        incomeFromPensions = anIncomeFromPensionsViewModel.copy(
+          statePension = Some(anStateBenefitViewModelOne.copy(
+            amountPaidQuestion = None,
+            amount = None))
+        )))
+
+      lazy implicit val result: WSResponse = {
+        dropPensionsDB()
+        authoriseAgentOrIndividual(aUser.isAgent)
+        insertCyaData(data)
+        urlGet(fullUrl(statePensionStartDateUrl(taxYearEOY)), !aUser.isAgent, follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+      }
+      result.status shouldBe SEE_OTHER
+      result.header("location").contains(statePension(taxYearEOY))
     }
   }
 
