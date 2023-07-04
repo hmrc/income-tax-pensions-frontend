@@ -17,10 +17,7 @@
 package connectors.httpParsers
 
 import models.APIErrorModel
-import play.api.http.Status._
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
-import utils.PagerDutyHelper.PagerDutyKeys._
-import utils.PagerDutyHelper.pagerDutyLog
 
 object DeletePensionChargesHttpParser extends APIParser {
   type DeletePensionChargesResponse = Either[APIErrorModel, Unit]

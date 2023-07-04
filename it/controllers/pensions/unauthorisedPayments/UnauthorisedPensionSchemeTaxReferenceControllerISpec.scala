@@ -27,7 +27,6 @@ import models.pension.charges.UnauthorisedPaymentsViewModel
 import org.jsoup.Jsoup.parse
 import play.api.http.Status.{BAD_REQUEST, OK}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.UnauthorisedPaymentsPages.pensionSchemeTaxReferenceUrl
 
 class UnauthorisedPensionSchemeTaxReferenceControllerISpec
   extends ControllerSpec("/unauthorised-payments-from-pensions/pension-scheme-tax-reference") {

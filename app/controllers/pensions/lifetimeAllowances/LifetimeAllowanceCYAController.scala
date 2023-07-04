@@ -17,70 +17,69 @@
 package controllers.pensions.lifetimeAllowances
 
 import config.{AppConfig, ErrorHandler}
-import controllers.predicates.AuthorisedAction
-import controllers.predicates.TaxYearAction.taxYearAction
+import controllers.pensions.routes.PensionsSummaryController
+import controllers.predicates.ActionsProvider
 import models.mongo.PensionsCYAModel
 import models.pension.AllPensionsData
 import models.pension.AllPensionsData.generateCyaFromPrior
-import models.pension.charges.{PensionAnnualAllowancesViewModel, PensionLifetimeAllowancesViewModel}
+import models.pension.charges.PensionLifetimeAllowancesViewModel
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
-import views.html.pensions.lifetimeAllowances.AnnualAllowanceAndLifetimeAllownaceCYAView
+import views.html.pensions.lifetimeAllowances.LifetimeAllowanceCYAView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
 @Singleton
-class AnnualLifetimeAllowanceCYAController @Inject()(authAction: AuthorisedAction,
-                                                     view: AnnualAllowanceAndLifetimeAllownaceCYAView,
+class LifetimeAllowanceCYAController @Inject()(actionsProvider: ActionsProvider,
+                                                     view: LifetimeAllowanceCYAView,
                                                      pensionSessionService: PensionSessionService,
                                                      errorHandler: ErrorHandler)
                                                     (implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock)
   extends FrontendController(mcc) with I18nSupport {
 
-  def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
+  def show(taxYear: Int): Action[AnyContent] = ( actionsProvider.userSessionDataFor(taxYear)).async { implicit request =>
     pensionSessionService.getAndHandle(taxYear, request.user) { (cya, prior) =>
       (cya, prior) match {
         case (Some(data), _) =>
-            Future.successful(Ok(view(taxYear, data.pensions.pensionsAnnualAllowances, data.pensions.pensionLifetimeAllowances)))
+          Future.successful(Ok(view(taxYear, data.pensions.pensionLifetimeAllowances)))
         case (None, Some(priorData)) =>
           val cyaModel = generateCyaFromPrior(priorData)
           pensionSessionService.createOrUpdateSessionData(request.user,
-            cyaModel, taxYear, isPriorSubmission = false)(
+            cyaModel, taxYear, isPriorSubmission = true)(
             errorHandler.internalServerError())(
-            Ok(view(taxYear, cyaModel.pensionsAnnualAllowances, cyaModel.pensionLifetimeAllowances))
-          )
+            Ok(view(taxYear, cyaModel.pensionLifetimeAllowances)))
         case (None, None) =>
-          val emptyAnnualAllowanceModel: PensionAnnualAllowancesViewModel = PensionAnnualAllowancesViewModel()
-          val emptyLifetimeAllowanceModel: PensionLifetimeAllowancesViewModel = PensionLifetimeAllowancesViewModel()
-          Future.successful(Ok(view(taxYear, emptyAnnualAllowanceModel,emptyLifetimeAllowanceModel )))
+          val emptyLifetimeAllowances = PensionLifetimeAllowancesViewModel()
+          Future.successful(Ok(view(taxYear, emptyLifetimeAllowances)))
         case _ => Future.successful(Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear)))
       }
     }
   }
 
-  def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
+
+  def submit(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit request =>
     pensionSessionService.getAndHandle(taxYear, request.user) { (cya, prior) =>
       cya.fold(
         Future.successful(Redirect(appConfig.incomeTaxSubmissionOverviewUrl(taxYear)))
       ) { model =>
         if (sessionDataDifferentThanPriorData(model.pensions, prior)) {
-          //        TODO - build submission model from cya data and submit to DES if cya data doesn't match prior data (SASS-3444)
-          Future.successful(Redirect(controllers.pensions.lifetimeAllowances.routes.AnnualLifetimeAllowanceCYAController.show(taxYear)))
+          Future.successful(Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear)))
         } else {
-          Future.successful(Redirect(controllers.pensions.lifetimeAllowances.routes.AnnualLifetimeAllowanceCYAController.show(taxYear)))
+          Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
         }
       }
     }
   }
 
   private def sessionDataDifferentThanPriorData(cyaData: PensionsCYAModel, priorData: Option[AllPensionsData]): Boolean = {
-    priorData match {
-      case None => true
-      case Some(prior) => !cyaData.equals(generateCyaFromPrior(prior))
+      priorData match {
+        case None => true
+        case Some(prior) => !cyaData.equals(generateCyaFromPrior(prior))
+      }
     }
+
   }
-}

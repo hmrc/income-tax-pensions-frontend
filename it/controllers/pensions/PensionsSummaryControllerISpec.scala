@@ -34,10 +34,10 @@ import services.PensionSessionService
 import utils.CommonUtils
 import utils.PageUrls.IncomeFromPensionsPages.pensionIncomeSummaryUrl
 import utils.PageUrls.PaymentIntoPensions.{checkPaymentsIntoPensionCyaUrl, reliefAtSourcePensionsUrl}
-import utils.PageUrls.PensionAnnualAllowancePages.reducedAnnualAllowanceUrl
-import utils.PageUrls.PensionLifetimeAllowance.{checkAnnualLifetimeAllowanceCYA, pensionAboveAnnualLifetimeAllowanceUrl}
-import utils.PageUrls._
+import utils.PageUrls.PensionAnnualAllowancePages.{annualAllowancesCYAUrl, reducedAnnualAllowanceUrl}
+import utils.PageUrls.PensionLifetimeAllowance.{lifetimeAllowanceCYA, pensionAboveAnnualLifetimeAllowanceUrl}
 import utils.PageUrls.UnauthorisedPaymentsPages.{checkUnauthorisedPaymentsCyaUrl, unauthorisedPaymentsUrl}
+import utils.PageUrls._
 
 class PensionsSummaryControllerISpec extends CommonUtils with BeforeAndAfterEach with Injecting { // scalastyle:off magic.number
 
@@ -145,14 +145,12 @@ class PensionsSummaryControllerISpec extends CommonUtils with BeforeAndAfterEach
           }
 
           "has an pension annual allowance section" which {
-            //TODO: Change to use the href below when pension annual allowance cya page available
-            //linkCheck("Pension annual allowance", pensionAnnualAllowanceLink, checkPensionAnnualAllowanceCyaUrl(taxYearEOY))
-            linkCheck(annualAllowance, pensionAnnualAllowanceLink, reducedAnnualAllowanceUrl(taxYearEOY))
+            linkCheck(annualAllowance, pensionAnnualAllowanceLink, annualAllowancesCYAUrl(taxYearEOY))
             textOnPageCheck(updated, summaryListStatusTagSelector(3))
           }
 
           "has an pension lifetime allowance section" which {
-            linkCheck(lifetimeAllowance, pensionLifetimeAllowanceLink, checkAnnualLifetimeAllowanceCYA(taxYearEOY))
+            linkCheck(lifetimeAllowance, pensionLifetimeAllowanceLink, lifetimeAllowanceCYA(taxYearEOY))
             textOnPageCheck(updated, summaryListStatusTagSelector(4))
           }
 
@@ -194,14 +192,12 @@ class PensionsSummaryControllerISpec extends CommonUtils with BeforeAndAfterEach
           }
 
           "has an pension annual allowance section" which {
-            //TODO: Change to use the href below when pension annual allowance cya page available
-            //linkCheck(annualAllowance, pensionAnnualAllowanceLink, checkPensionAnnualAllowanceCyaUrl(taxYearEOY))
-            linkCheck(annualAllowance, pensionAnnualAllowanceLink, reducedAnnualAllowanceUrl(taxYearEOY) )
+            linkCheck(annualAllowance, pensionAnnualAllowanceLink, annualAllowancesCYAUrl(taxYearEOY))
             textOnPageCheck(updated, summaryListStatusTagSelector(3))
           }
 
           "has an pension lifetime allowance section" which {
-            linkCheck(lifetimeAllowance, pensionLifetimeAllowanceLink, checkAnnualLifetimeAllowanceCYA(taxYearEOY))
+            linkCheck(lifetimeAllowance, pensionLifetimeAllowanceLink, lifetimeAllowanceCYA(taxYearEOY))
             textOnPageCheck(updated, summaryListStatusTagSelector(4))
           }
 
@@ -238,8 +234,6 @@ class PensionsSummaryControllerISpec extends CommonUtils with BeforeAndAfterEach
           }
 
           "has an pension annual allowance section" which {
-            //TODO: Change to use the href below when pension annual allowance cya page available
-            //linkCheck(annualAllowance, pensionAnnualAllowanceLink, checkPensionAnnualAllowanceCyaUrl(taxYearEOY))
             linkCheck(annualAllowance, pensionAnnualAllowanceLink, reducedAnnualAllowanceUrl(taxYearEOY))
             textOnPageCheck(notStarted, summaryListStatusTagSelector(3))
           }
@@ -283,8 +277,6 @@ class PensionsSummaryControllerISpec extends CommonUtils with BeforeAndAfterEach
           }
 
           "has an pension annual allowance section" which {
-            //TODO: Change to use the href below when pension annual allowance cya page available
-            //linkCheck(annualAllowance, pensionAnnualAllowanceLink, checkPensionAnnualAllowanceCyaUrl(taxYearEOY))
             linkCheck(annualAllowance, pensionAnnualAllowanceLink, reducedAnnualAllowanceUrl(taxYearEOY))
             textOnPageCheck(notStarted, summaryListStatusTagSelector(3))
           }
@@ -330,13 +322,13 @@ class PensionsSummaryControllerISpec extends CommonUtils with BeforeAndAfterEach
 
           "has an pension annual allowance section" which {
             //TODO: Change to use the href below when pension annual allowance cya page available
-            //linkCheck(annualAllowance, pensionAnnualAllowanceLink, checkPensionAnnualAllowanceCyaUrl(taxYearEOY))
-            linkCheck(annualAllowance, pensionAnnualAllowanceLink, reducedAnnualAllowanceUrl(taxYearEOY))
+            linkCheck(annualAllowance, pensionAnnualAllowanceLink, annualAllowancesCYAUrl(taxYearEOY))
+//            linkCheck(annualAllowance, pensionAnnualAllowanceLink, reducedAnnualAllowanceUrl(taxYearEOY))
             textOnPageCheck(updated, summaryListStatusTagSelector(3))
           }
 
           "has an pension lifetime allowance section" which {
-            linkCheck(lifetimeAllowance, pensionLifetimeAllowanceLink, checkAnnualLifetimeAllowanceCYA(taxYearEOY))
+            linkCheck(lifetimeAllowance, pensionLifetimeAllowanceLink, lifetimeAllowanceCYA(taxYearEOY))
             textOnPageCheck(updated, summaryListStatusTagSelector(4))
           }
 

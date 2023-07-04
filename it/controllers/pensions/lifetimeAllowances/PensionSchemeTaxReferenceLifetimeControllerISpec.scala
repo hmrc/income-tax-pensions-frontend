@@ -26,7 +26,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import utils.CommonUtils
-import utils.PageUrls.PensionLifetimeAllowance.{checkAnnualLifetimeAllowanceCYA, lifetimeAllowancePstrSummaryUrl, pensionTaxReferenceNumberLifetimeAllowanceUrl, pensionTaxReferenceNumberLifetimeAllowanceUrlIndex}
+import utils.PageUrls.PensionLifetimeAllowance._
 import utils.PageUrls.pensionSummaryUrl
 
 // scalastyle:off magic.number
@@ -230,7 +230,7 @@ class PensionSchemeTaxReferenceLifetimeControllerISpec extends CommonUtils with 
 
       "has an SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(checkAnnualLifetimeAllowanceCYA(taxYearEOY))
+        result.header("location") shouldBe Some(lifetimeAllowanceCYA(taxYearEOY))
       }
     }
 
@@ -369,11 +369,11 @@ class PensionSchemeTaxReferenceLifetimeControllerISpec extends CommonUtils with 
 
       "updates pension scheme tax reference to contain both tax reference" in {
         lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
-        cyaModel.pensions.pensionLifetimeAllowances.pensionSchemeTaxReferences.get should not contain ("12345678RA")
+        cyaModel.pensions.pensionLifetimeAllowances.pensionSchemeTaxReferences.get should not contain "12345678RA"
       }
     }
 
-    "redirect to lifetime allowance CYA page if there is no session data" should {
+    "redirect to pensions summary page if there is no session data" should {
       implicit val url: Int => String = pensionTaxReferenceNumberLifetimeAllowanceUrl
       lazy val form: Map[String, String] = Map(PensionSchemeTaxReferenceForm.taxReferenceId -> "12345678RA")
 
@@ -381,8 +381,6 @@ class PensionSchemeTaxReferenceLifetimeControllerISpec extends CommonUtils with 
 
       "has an SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER
-        //        TODO redirect to lifetime Allowances CYA
-
         result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
       }
     }

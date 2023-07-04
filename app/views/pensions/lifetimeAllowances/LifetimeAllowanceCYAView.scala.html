@@ -14,28 +14,31 @@
  * limitations under the License.
  *@
 
-@import models.pension.charges.{PensionAnnualAllowancesViewModel, PensionLifetimeAllowancesViewModel}
+@import models.pension.charges.PensionLifetimeAllowancesViewModel
 @import views.html.templates.Layout
 @import views.html.templates.helpers.{Button, Heading, SummaryList}
-@import controllers.pensions.lifetimeAllowances.AnnualAndLifetimeAllowanceCYAViewHelper
+@import controllers.pensions.lifetimeAllowances.LifetimeAllowanceCYAViewHelper
+@import models.requests.UserSessionDataRequest
+
 @this(layout: Layout, summaryList: SummaryList, heading: Heading, button: Button, csrfForm: FormWithCSRF)
-@(taxYear: Int, annualCya: PensionAnnualAllowancesViewModel, lifetimeCya: PensionLifetimeAllowancesViewModel)(implicit messages: Messages, appConfig: AppConfig, request: AuthorisationRequest[_])
+
+@(taxYear: Int, lifetimeCya: PensionLifetimeAllowancesViewModel)(implicit messages: Messages, appConfig: AppConfig, request: UserSessionDataRequest[_])
 
 @headingForUse = @{
-    messages(s"lifetimeAllowance.cya.heading.${if(request.user.isAgent) "agent" else "individual"}")
-}
+    messages(s"lifetimeAllowance.cya.lifetime.heading.${if(request.user.isAgent) "agent" else "individual"}")
+ }
 
 @layout(pageTitle = headingForUse, taxYear = Some(taxYear)) {
 
     @heading(headingForUse, Some(messages("common.lifetimeAllowance.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-5")
 
-    @summaryList(AnnualAndLifetimeAllowanceCYAViewHelper.summaryListRows(annualCya, lifetimeCya, taxYear)(messages))
+    @summaryList(LifetimeAllowanceCYAViewHelper.summaryListRows(lifetimeCya, taxYear)(messages))
 
-    @csrfForm(controllers.pensions.lifetimeAllowances.routes.AnnualLifetimeAllowanceCYAController.submit(taxYear)) {
-        @button("common.saveAndContinue")
+    @csrfForm(controllers.pensions.lifetimeAllowances.routes.LifetimeAllowanceCYAController.submit(taxYear)) {
+      @button("common.saveAndContinue")
     }
 }
 @{
-    // $COVERAGE-OFF$
+// $COVERAGE-OFF$
 }
 

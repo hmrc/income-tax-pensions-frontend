@@ -28,6 +28,10 @@ object PensionLifetimeAllowanceViewModelBuilder {
     pensionSchemeTaxReferences = Some(Seq("1234567CRC","12345678RB","1234567DRD"))
   )
 
+  val minimalPensionLifetimeAllowanceViewModel: PensionLifetimeAllowancesViewModel = PensionLifetimeAllowancesViewModel(
+    aboveLifetimeAllowanceQuestion = Some(false)
+  )
+
   val aPensionLifetimeAllowancesEmptyViewModel: PensionLifetimeAllowancesViewModel = PensionLifetimeAllowancesViewModel()
 
 }

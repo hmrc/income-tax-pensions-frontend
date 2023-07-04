@@ -57,12 +57,15 @@
 }
 
 @annualAllowanceUrlRedirect() = @{
-  aaRoutes.ReducedAnnualAllowanceController.show(taxYear).url
+  if(annualAllowanceHasPriorData(prior))
+    aaRoutes.AnnualAllowanceCYAController.show(taxYear).url
+  else
+    aaRoutes.ReducedAnnualAllowanceController.show(taxYear).url
 }
 
 @lifetimeAllowanceUrlRedirect() = @{
   if(lifetimeAllowanceHasPriorData(prior))
-   laRoutes.AnnualLifetimeAllowanceCYAController.show(taxYear).url
+   laRoutes.LifetimeAllowanceCYAController.show(taxYear).url
   else
     laRoutes.AboveAnnualLifetimeAllowanceController.show(taxYear).url
 }

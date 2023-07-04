@@ -24,7 +24,7 @@ import services.redirects.PaymentsIntoPensionPages._
 import services.redirects.PaymentsIntoPensionsRedirects.{cyaPageCall, journeyCheck}
 import utils.UnitTest
 
-class PaymentsIntoPensionsRedirectsSpec extends UnitTest {
+class PaymentsIntoPensionsRedirectsSpec extends UnitTest { //scalatest:off magic.number
 
   private val cyaData: PensionsCYAModel = PensionsCYAModel.emptyModels
   private val someRedirect = Some(Redirect(ReliefAtSourcePensionsController.show(taxYear)))
