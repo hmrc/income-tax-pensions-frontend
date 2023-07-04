@@ -19,12 +19,12 @@ package services.redirects
 import models.mongo.PensionsCYAModel
 import play.api.mvc.{Call, Result}
 import play.api.mvc.Results.Redirect
-import controllers.pensions.incomeFromPensions.routes.{StatePensionController, UkPensionIncomeCYAController}
+import controllers.pensions.incomeFromPensions.routes.{StatePensionController, StatePensionCYAController}
 import models.pension.statebenefits.{IncomeFromPensionsViewModel, StateBenefitViewModel}
 
 object IncomeFromPensionsRedirects { //scalastyle:off magic.number
 
-  def cyaPageCall(taxYear: Int): Call = UkPensionIncomeCYAController.show(taxYear)
+  def cyaPageCall(taxYear: Int): Call = StatePensionCYAController.show(taxYear)
 
   def journeyCheck(currentPage: IncomeFromPensionsPages, cya: PensionsCYAModel, taxYear: Int): Option[Result] = {
     val incomeFromPensions = cya.incomeFromPensions
