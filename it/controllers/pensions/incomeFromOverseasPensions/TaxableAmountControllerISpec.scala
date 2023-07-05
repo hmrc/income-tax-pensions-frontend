@@ -24,7 +24,7 @@ import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.IncomeFromOverseasPensionsPages.{countrySummaryListControllerUrl, overseasPensionsSchemeSummaryUrl}
+import utils.PageUrls.IncomeFromOverseasPensionsPages.{countrySummaryListControllerUrl, incomeFromOverseasPensionsStatus, overseasPensionsSchemeSummaryUrl}
 import utils.PageUrls.{IncomeFromOverseasPensionsPages, overseasPensionsSummaryUrl}
 import utils.{CommonUtils, PensionsDatabaseHelper}
 
@@ -176,7 +176,7 @@ class TaxableAmountControllerISpec extends
           }
         }
 
-        "Redirects to the pension summary page if pension payment amount is missing" which {
+        "Redirects to the first page in journey if pension payment amount is missing" which {
           implicit val taxableAmountUrl: Int => String = IncomeFromOverseasPensionsPages.taxableAmountUrl(0)
           val pensionUserData = pensionUserDataWithIncomeOverseasPension(anIncomeFromOverseasPensionsWithFalseFtcrValueViewModel
             .copy(overseasIncomePensionSchemes = Seq(PensionScheme(pensionPaymentAmount = None))))
@@ -185,11 +185,11 @@ class TaxableAmountControllerISpec extends
 
           "has SEE_OTHER status" in {
             result.status shouldBe SEE_OTHER
-            result.header("location") shouldBe Some(overseasPensionsSummaryUrl(taxYearEOY))
+            result.header("location") shouldBe Some(incomeFromOverseasPensionsStatus(taxYearEOY))
           }
         }
 
-        "Redirects to the pension summary page if pension payment tax paid amount is missing" should {
+        "Redirects to the first page in journey if pension payment tax paid amount is missing" should {
           implicit val taxableAmountUrl: Int => String = IncomeFromOverseasPensionsPages.taxableAmountUrl(0)
           val pensionUserData = pensionUserDataWithIncomeOverseasPension(anIncomeFromOverseasPensionsWithFalseFtcrValueViewModel
             .copy(overseasIncomePensionSchemes = Seq(PensionScheme(pensionPaymentTaxPaid = None))))
@@ -198,7 +198,7 @@ class TaxableAmountControllerISpec extends
 
           "has SEE_OTHER status" in {
             result.status shouldBe SEE_OTHER
-            result.header("location") shouldBe Some(overseasPensionsSummaryUrl(taxYearEOY))
+            result.header("location") shouldBe Some(incomeFromOverseasPensionsStatus(taxYearEOY))
           }
         }
 
@@ -229,10 +229,10 @@ class TaxableAmountControllerISpec extends
           textOnPageCheck(expectedParagraph, paragraphSelector(1))
 
           textOnPageCheck(expectedTableCaption, tableCaptionSelector)
-          textOnPageCheck(expectedTableHeader1, tableHeadSelector(1,1))
-          textOnPageCheck(expectedTableHeader2, tableHeadSelector(1,2))
-          textOnPageCheck(expectedRowHeading1, tableRowHeadSelector(1,1))
-          textOnPageCheck(expectedRowHeading3, tableRowHeadSelector(2,1))
+          textOnPageCheck(expectedTableHeader1, tableHeadSelector(1, 1))
+          textOnPageCheck(expectedTableHeader2, tableHeadSelector(1, 2))
+          textOnPageCheck(expectedRowHeading1, tableRowHeadSelector(1, 1))
+          textOnPageCheck(expectedRowHeading3, tableRowHeadSelector(2, 1))
 
           formPostLinkCheck(IncomeFromOverseasPensionsPages.taxableAmountUrl(0)(taxYearEOY), formSelector)
           buttonCheck(expectedButtonText)
@@ -242,6 +242,7 @@ class TaxableAmountControllerISpec extends
         "renders correct pension payment amount from user data" should {
           implicit val taxableAmountUrl: Int => String = IncomeFromOverseasPensionsPages.taxableAmountUrl(0)
           implicit lazy val result: WSResponse = showPage(user, aPensionsUserData)
+
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
           val pensionPaymentAmount = aPensionsUserData.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes.head.pensionPaymentAmount
@@ -252,6 +253,7 @@ class TaxableAmountControllerISpec extends
         "renders correct taxable amounts from user data" should {
           implicit val taxableAmountUrl: Int => String = IncomeFromOverseasPensionsPages.taxableAmountUrl(0)
           implicit lazy val result: WSResponse = showPage(user, aPensionsUserData)
+
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
           val taxableAmount = aPensionsUserData.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes.head.pensionPaymentAmount
@@ -263,6 +265,7 @@ class TaxableAmountControllerISpec extends
           implicit val taxableAmountUrl: Int => String = IncomeFromOverseasPensionsPages.taxableAmountUrl(0)
           val pensionUserData = pensionUserDataWithIncomeOverseasPension(anIncomeFromOverseasPensionsWithFalseFtcrValueViewModel)
           implicit lazy val result: WSResponse = showPage(user, pensionUserData)
+
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
           "has an OK status" in {
@@ -277,11 +280,11 @@ class TaxableAmountControllerISpec extends
           textOnPageCheck(expectedFtcrParaItem2, paraItemSelector(2))
 
           textOnPageCheck(expectedTableCaption, tableCaptionSelector)
-          textOnPageCheck(expectedTableHeader1, tableHeadSelector(1,1))
-          textOnPageCheck(expectedTableHeader2, tableHeadSelector(1,2))
-          textOnPageCheck(expectedRowHeading1, tableRowHeadSelector(1,1))
-          textOnPageCheck(expectedRowHeading2, tableRowHeadSelector(2,1))
-          textOnPageCheck(expectedRowHeading3, tableRowHeadSelector(3,1))
+          textOnPageCheck(expectedTableHeader1, tableHeadSelector(1, 1))
+          textOnPageCheck(expectedTableHeader2, tableHeadSelector(1, 2))
+          textOnPageCheck(expectedRowHeading1, tableRowHeadSelector(1, 1))
+          textOnPageCheck(expectedRowHeading2, tableRowHeadSelector(2, 1))
+          textOnPageCheck(expectedRowHeading3, tableRowHeadSelector(3, 1))
 
           formPostLinkCheck(IncomeFromOverseasPensionsPages.taxableAmountUrl(0)(taxYearEOY), formSelector)
           buttonCheck(expectedButtonText)
@@ -292,6 +295,7 @@ class TaxableAmountControllerISpec extends
           implicit val taxableAmountUrl: Int => String = IncomeFromOverseasPensionsPages.taxableAmountUrl(0)
           val pensionUserData = pensionUserDataWithIncomeOverseasPension(anIncomeFromOverseasPensionsWithFalseFtcrValueViewModel)
           implicit lazy val result: WSResponse = showPage(user, pensionUserData)
+
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
           val pensionPaymentAmount = pensionUserData.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes.head.pensionPaymentAmount
@@ -336,5 +340,6 @@ class TaxableAmountControllerISpec extends
       }
     }
   }
+
   private def formatNoZeros(amount: BigDecimal): String = NumberFormat.getCurrencyInstance(Locale.UK).format(amount).replaceAll("\\.00", "")
 }

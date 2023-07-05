@@ -42,8 +42,7 @@ case class IncomeFromOverseasPensionsViewModel(paymentsFromOverseasPensionsQuest
     paymentsFromOverseasPensionsQuestion.filter(x => x)
       .exists(_ => overseasIncomePensionSchemes.map {
         scheme: PensionScheme =>
-          scheme.alphaThreeCode.isDefined &&
-            scheme.alphaTwoCode.isDefined &&
+          scheme.alphaTwoCode.isDefined &&
             scheme.pensionPaymentAmount.isDefined &&
             scheme.pensionPaymentTaxPaid.isDefined &&
             yesNoAndAmountPopulated(scheme.specialWithholdingTaxQuestion,
@@ -150,6 +149,14 @@ case class PensionScheme(
       foreignTaxCredit = foreignTaxCreditReliefQuestion.map(_.encrypted),
       taxableAmount = taxableAmount.map(_.encrypted)
     )
+  }
+
+  def isFinished: Boolean = {
+    this.alphaTwoCode.isDefined &&
+      this.pensionPaymentAmount.isDefined &&
+      this.pensionPaymentTaxPaid.isDefined &&
+      this.specialWithholdingTaxQuestion.exists(value => !value || (value && this.specialWithholdingTaxAmount.nonEmpty)) &&
+      this.foreignTaxCreditReliefQuestion.exists(value => !value || (value && this.taxableAmount.nonEmpty))
   }
 }
 

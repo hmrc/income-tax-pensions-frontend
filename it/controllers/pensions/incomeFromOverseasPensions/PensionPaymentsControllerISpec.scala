@@ -36,12 +36,14 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
       assertRedirectionAsExpected(PageRelativeURLs.overseasSummaryPage)
     }
 
-    "redirect to the the first page of the IFOP scheme loop when the user has no relevant session data" in {
-      val sessionData = pensionsUserData(aPensionsCYAEmptyModel)
+    "redirect to the the first page of the journey when the user has no relevant scheme data" in {
+      val emptySchemesIFOPViewModel: IncomeFromOverseasPensionsViewModel = aPensionsCYAModel.incomeFromOverseasPensions.copy(overseasIncomePensionSchemes = Seq.empty)
+      val cyaModel = aPensionsCYAModel.copy(incomeFromOverseasPensions = emptySchemesIFOPViewModel)
+      val sessionData = pensionsUserData(cyaModel)
       implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
       implicit val response: WSResponse = getPageWithIndex()
 
-      assertRedirectionAsExpected(PageRelativeURLs.incomeFromOverseasPensionsCountry)
+      assertRedirectionAsExpected(PageRelativeURLs.incomeFromOverseasPensionsStatus)
     }
 
     "redirect to the the IFOP scheme summary page" when {

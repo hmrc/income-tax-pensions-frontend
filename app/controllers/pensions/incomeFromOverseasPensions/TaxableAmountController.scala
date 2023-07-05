@@ -22,12 +22,12 @@ import controllers.pensions.routes.OverseasPensionsSummaryController
 import controllers.predicates.AuthorisedAction
 import controllers.predicates.TaxYearAction.taxYearAction
 import forms.FormUtils
-import models.mongo.PensionsUserData
-import models.pension.charges.PensionScheme
+import models.mongo.{PensionsCYAModel, PensionsUserData}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
-import services.redirects.IncomeFromOverseasPensionsRedirects.redirectForSchemeLoop
+import services.redirects.IncomeFromOverseasPensionsPages.YourTaxableAmountPage
+import services.redirects.IncomeFromOverseasPensionsRedirects.indexCheckThenJourneyCheck
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.incomeFromOverseasPensions.TaxableAmountView
@@ -38,50 +38,46 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class TaxableAmountController @Inject()(val authAction: AuthorisedAction,
-                                        val pensionSessionService: PensionSessionService,
-                                        val taxableAmountView: TaxableAmountView,
-                                        errorHandler: ErrorHandler
-                                       )(implicit val mcc: MessagesControllerComponents,
-                                         appConfig: AppConfig,
-                                         clock: Clock,
-                                         ec: ExecutionContext)
-  extends FrontendController(mcc) with I18nSupport with SessionHelper with FormUtils {
+class TaxableAmountController @Inject()(authAction: AuthorisedAction,
+                                        pensionSessionService: PensionSessionService,
+                                        taxableAmountView: TaxableAmountView,
+                                        errorHandler: ErrorHandler)
+                                       (implicit val mcc: MessagesControllerComponents,
+                                        appConfig: AppConfig, clock: Clock,
+                                        ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport with SessionHelper with FormUtils {
 
-  def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async {
-    implicit request =>
-      pensionSessionService.getPensionSessionData(taxYear, request.user).map {
-        case Right(Some(data)) =>
-          validateIndex(index, data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes) match {
-            case Some(i) =>
-              if (validTaxAmounts(data, i)) {
-                val (amountBeforeTax, signedNonUkTaxPaid, taxableAmount, ftcr) = populateView(data, i)
-                Ok(taxableAmountView(amountBeforeTax, signedNonUkTaxPaid, taxableAmount, ftcr, taxYear, index))
-              } else {
-                Redirect(OverseasPensionsSummaryController.show(taxYear))
-              }
-            case None => Redirect(redirectForSchemeLoop(data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes, taxYear))
-          }
-        case _ => Redirect(OverseasPensionsSummaryController.show(taxYear))
-      }
+  def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
+    pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
+      case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
+      case Right(Some(data)) =>
+        indexCheckThenJourneyCheck(data, index, YourTaxableAmountPage, taxYear) { data =>
+
+          if (validTaxAmounts(data, index.getOrElse(0))) {
+            val (amountBeforeTax, signedNonUkTaxPaid, taxableAmount, ftcr) = populateView(data, index.getOrElse(0))
+            Future.successful(Ok(taxableAmountView(amountBeforeTax, signedNonUkTaxPaid, taxableAmount, ftcr, taxYear, index)))
+          } else
+            Future.successful(Redirect(OverseasPensionsSummaryController.show(taxYear)))
+
+        }
+      case _ => Future.successful(Redirect(OverseasPensionsSummaryController.show(taxYear)))
+    }
   }
 
-  def submit(taxYear: Int, index: Option[Int]): Action[AnyContent] = authAction.async {
-    implicit request =>
-      pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
-        case Right(Some(data)) =>
-          validateIndex(index, data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes) match {
-            case Some(i) =>
-              val updatedCyaModel = updatePensionScheme(data, getTaxableAmount(data, i), taxYear, i)
-              pensionSessionService.createOrUpdateSessionData(request.user,
-                updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
-                Redirect(PensionSchemeSummaryController.show(taxYear, index))
-              }
-            case None => Future.successful(Redirect(redirectForSchemeLoop(data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes, taxYear)))
+  def submit(taxYear: Int, index: Option[Int]): Action[AnyContent] = authAction.async { implicit request =>
+    pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
+      case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
+      case Right(Some(data)) =>
+        indexCheckThenJourneyCheck(data, index, YourTaxableAmountPage, taxYear) { data =>
+
+          val updatedCyaModel = updatePensionScheme(data, getTaxableAmount(data, index.getOrElse(0)), taxYear, index.getOrElse(0))
+          pensionSessionService.createOrUpdateSessionData(request.user,
+            updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
+            Redirect(PensionSchemeSummaryController.show(taxYear, index))
           }
-        case _ =>
-          Future.successful(Redirect(OverseasPensionsSummaryController.show(taxYear)))
-      }
+
+        }
+      case _ => Future.successful(Redirect(OverseasPensionsSummaryController.show(taxYear)))
+    }
   }
 
   /** *************************************  Helper functions  **************************************** */
@@ -118,11 +114,7 @@ class TaxableAmountController @Inject()(val authAction: AuthorisedAction,
     )
   }
 
-  private def validateIndex(index: Option[Int], pensionSchemesList: Seq[PensionScheme]): Option[Int] = {
-    index.filter(i => i >= 0 && i < pensionSchemesList.size)
-  }
-
-  private def getTaxableAmount(data: PensionsUserData, index: Int) = {
+  private def getTaxableAmount(data: PensionsUserData, index: Int): Option[BigDecimal] = {
     val amountBeforeTaxOpt = data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes(index).pensionPaymentAmount
     val nonUkTaxPaidOpt = data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes(index).pensionPaymentTaxPaid
     for {
@@ -137,7 +129,7 @@ class TaxableAmountController @Inject()(val authAction: AuthorisedAction,
     } yield taxableAmount
   }
 
-  private def updatePensionScheme(data: PensionsUserData, taxableAmount: Option[BigDecimal], taxYear: Int, index: Int) = {
+  private def updatePensionScheme(data: PensionsUserData, taxableAmount: Option[BigDecimal], taxYear: Int, index: Int): PensionsCYAModel = {
     val viewModel = data.pensions.incomeFromOverseasPensions
     data.pensions.copy(
       incomeFromOverseasPensions = viewModel.copy(
