@@ -91,8 +91,6 @@ common.yourP60.agent = P60 eich cleient
 common.aboutGeneralIncreases.agent = y llythyr ’Ynglŷn â’r cynnydd cyffredinol mewn budd-daliadau’ a anfonwyd at eich cleient gan y Gwasanaeth Pensiwn
 
 common.employerFinancedRetirementScheme.caption = Cynlluniau buddiannau ymddeol a ariannwyd gan gyflogwyr ar gyfer 6 Ebrill {0} i 5 Ebrill {1}
-common.addAnotherPstrLink = Ychwanegu Cyfeirnod Treth ar gyfer Cynllun Pensiwn arall
-common.addPstrLink = Ychwanegu PSTR
 
 ################# Common lifetime allowance #################
 
@@ -111,6 +109,10 @@ common.pensionSchemeTaxReference.forExample = Er enghraifft, ‘12345678RA’
 common.pensionSchemeTaxReference.error.noEntry.individual = Nodwch Gyfeirnod Treth eich Cynllun Pensiwn
 common.pensionSchemeTaxReference.error.noEntry.agent = Nodwch Gyfeirnod Treth Cynllun Pensiwn eich cleient
 common.pensionSchemeTaxReference.p1 = Os bydd mwy nag un cynllun pensiwn yn talu neu wedi cytuno i dalu’r dreth, gallwch eu hychwanegu nes ymlaen.
+common.pensionSchemeTaxReference.addAnotherPstrLink = Ychwanegu PSTR arall
+common.pensionSchemeTaxReference.addAPstrLink = You need to add one or more Pensions Scheme Tax Reference (PSTR).
+common.addAnotherPstrLink = Ychwanegu Cyfeirnod Treth ar gyfer Cynllun Pensiwn arall
+common.addPstrLink = Ychwanegu PSTR
 
 #################       Common overseas pensions        ########################################
 
@@ -494,8 +496,7 @@ unauthorisedPayments.pension.pensionSchemeTaxReference.error.incorrectFormat.age
 
 #Pension Scheme Tax Reference Summary Page
 
-annualAllowance.pstrSummary.title = Crynodeb Cyfeirnod Treth y Cynllun Pensiwn (PSTR)
-annualAllowance.addAnotherPstrLink = Ychwanegu PSTR arall
+annualAllowance.pstrSummary.title = Pension schemes that paid or agreed to pay the annual allowance tax
 
 #################       INCOME FROM PENSIONS        ########################################
 
