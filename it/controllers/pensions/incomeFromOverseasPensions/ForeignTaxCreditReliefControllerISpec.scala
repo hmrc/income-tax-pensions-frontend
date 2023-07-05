@@ -49,14 +49,14 @@ class ForeignTaxCreditReliefControllerISpec extends YesNoControllerSpec("/overse
       assertRedirectionAsExpected(PageRelativeURLs.pensionsSummaryPage)
     }
 
-    "redirect to the the first page of the IFOP scheme loop when current page is invalid and user has no previous schemes" in {
+    "redirect to the the first page of the journey when current page is invalid and user has no previous schemes" in {
       val emptySchemesIFOPViewModel: IncomeFromOverseasPensionsViewModel = aPensionsCYAModel.incomeFromOverseasPensions.copy(overseasIncomePensionSchemes = Seq.empty)
       val cyaModel = aPensionsCYAModel.copy(incomeFromOverseasPensions = emptySchemesIFOPViewModel)
       val sessionData = pensionsUserData(cyaModel)
       implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
       implicit val response: WSResponse = getPageWithIndex()
 
-      assertRedirectionAsExpected(PageRelativeURLs.incomeFromOverseasPensionsCountry)
+      assertRedirectionAsExpected(PageRelativeURLs.incomeFromOverseasPensionsStatus)
     }
 
     "redirect to the the IFOP scheme summary page" when {

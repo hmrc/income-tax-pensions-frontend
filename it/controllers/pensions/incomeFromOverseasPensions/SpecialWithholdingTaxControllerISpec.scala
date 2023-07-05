@@ -126,14 +126,14 @@ class SpecialWithholdingTaxControllerISpec extends YesNoAmountControllerSpec("/o
 
       assertRedirectionAsExpected(PageRelativeURLs.pensionsSummaryPage)
     }
-    "redirect to the first page in scheme loop when there is no scheme data" in {
+    "redirect to the first page in journey when there is no scheme data" in {
       val emptySchemesIFOPViewModel: IncomeFromOverseasPensionsViewModel = aPensionsCYAModel.incomeFromOverseasPensions.copy(overseasIncomePensionSchemes = Seq.empty)
       val cyaModel = aPensionsCYAModel.copy(incomeFromOverseasPensions = emptySchemesIFOPViewModel)
       val sessionData: PensionsUserData = pensionsUserData(cyaModel)
       implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
       implicit val response: WSResponse = getPageWithIndex()
 
-      assertRedirectionAsExpected(PageRelativeURLs.incomeFromOverseasPensionsCountry)
+      assertRedirectionAsExpected(PageRelativeURLs.incomeFromOverseasPensionsStatus)
     }
     "redirect to the the IFOP scheme summary page" when {
       "an incorrect index is provided" in {
