@@ -113,7 +113,7 @@ class IncomeFromOverseasPensionsRedirectsSpec extends UnitTest {
         statusHeader shouldBe SEE_OTHER
         locationHeader shouldBe Some(PensionOverseasIncomeStatus.show(taxYear).url)
       }
-      "redirect to the first page in scheme loop when there are no schemes" in {
+      "redirect to the first page in journey when there are no schemes" in {
         val emptySchemesIFOPViewModel: IncomeFromOverseasPensionsViewModel = aPensionsCYAModel.incomeFromOverseasPensions.copy(overseasIncomePensionSchemes = Seq.empty)
         val cyaModel = aPensionsCYAModel.copy(incomeFromOverseasPensions = emptySchemesIFOPViewModel)
         val result = indexCheckThenJourneyCheck(
@@ -125,7 +125,7 @@ class IncomeFromOverseasPensionsRedirectsSpec extends UnitTest {
         val locationHeader = await(result.map(_.header.headers).map(_.get("Location")))
 
         statusHeader shouldBe SEE_OTHER
-        locationHeader shouldBe Some(schemeStartCall.url)
+        locationHeader shouldBe Some(PensionOverseasIncomeStatus.show(taxYear).url)
       }
       "redirect to the scheme summary page when schemes already exist" in {
         val result: Future[Result] = indexCheckThenJourneyCheck(
