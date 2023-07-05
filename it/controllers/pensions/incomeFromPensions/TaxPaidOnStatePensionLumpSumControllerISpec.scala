@@ -17,17 +17,20 @@
 package controllers.pensions.incomeFromPensions
 
 import builders.IncomeFromPensionsViewModelBuilder.anIncomeFromPensionsViewModel
-import builders.PensionsUserDataBuilder.pensionsUserDataWithIncomeFromPensions
-import builders.StateBenefitViewModelBuilder.anStateBenefitViewModelOne
+import builders.PensionsCYAModelBuilder.aPensionsCYAModel
+import builders.PensionsUserDataBuilder.{aPensionsUserData, pensionsUserDataWithIncomeFromPensions}
+import builders.StateBenefitViewModelBuilder.{anStateBenefitViewModelOne, anStateBenefitViewModelTwo}
 import builders.UserBuilder.{aUser, aUserRequest}
 import forms.{RadioButtonAmountForm, YesNoForm}
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.IncomeFromPensionsPages.{statePensionLumpSumStartDateUrl, taxOnLumpSumUrl}
+import utils.PageUrls.IncomeFromPensionsPages.{statePension, statePensionLumpSumStartDateUrl, statePensionStartDateUrl, taxOnLumpSumUrl}
 import utils.PageUrls.{fullUrl, overviewUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
+
+import java.time.LocalDate
 
 // scalastyle:off magic.number
 class TaxPaidOnStatePensionLumpSumControllerISpec extends IntegrationTest with BeforeAndAfterEach with ViewHelpers with PensionsDatabaseHelper {
@@ -59,6 +62,26 @@ class TaxPaidOnStatePensionLumpSumControllerISpec extends IntegrationTest with B
         urlGet(fullUrl(taxOnLumpSumUrl(taxYearEOY)), headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
       result.status shouldBe OK
+    }
+
+    "redirect to the first page in journey if the previous question has not been answered" in {
+      val data = aPensionsUserData.copy(
+        pensions = aPensionsCYAModel.copy(
+          incomeFromPensions = anIncomeFromPensionsViewModel.copy(
+            statePensionLumpSum = Some(anStateBenefitViewModelTwo.copy(
+              amountPaidQuestion = None
+              ))
+          )))
+
+      lazy implicit val result: WSResponse = {
+        dropPensionsDB()
+        authoriseAgentOrIndividual(aUser.isAgent)
+        insertCyaData(data)
+        urlGet(fullUrl(taxOnLumpSumUrl(taxYearEOY)), !aUser.isAgent, follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+      }
+      result.status shouldBe SEE_OTHER
+      result.header("location").contains(statePension(taxYearEOY))
     }
   }
 

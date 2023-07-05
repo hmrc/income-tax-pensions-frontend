@@ -30,6 +30,9 @@ import models.mongo.PensionsUserData
 import models.pension.statebenefits.{IncomeFromPensionsViewModel, StateBenefitViewModel}
 import models.requests.UserSessionDataRequest
 import play.api.data.Form
+import services.redirects.IncomeFromPensionsPages.{AddStatePensionToIncomeTaxCalcPage, WhenDidYouGetYourStatePensionLumpSumPage}
+import services.redirects.IncomeFromPensionsRedirects.{cyaPageCall, journeyCheck}
+import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
 import utils.SessionHelper
 
 import javax.inject.{Inject, Singleton}
@@ -49,9 +52,11 @@ class StatePensionAddToCalculationController @Inject () (actionsProvider: Action
 
   def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit sessionData =>
-      sessionData.pensionsUserData.pensions.incomeFromPensions.statePensionLumpSum.fold {
-        Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
-      } { sp: StateBenefitViewModel =>
+      val checkRedirect = journeyCheck(AddStatePensionToIncomeTaxCalcPage, _, taxYear)
+      redirectBasedOnCurrentAnswers(taxYear, Some(sessionData.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) { data =>
+        data.pensions.incomeFromPensions.statePensionLumpSum.fold {
+          Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
+        } { sp: StateBenefitViewModel =>
           sp.addToCalculation.fold {
             Future.successful(Ok(view(formsProvider.statePensionAddToCalculationForm(sessionData.user.isAgent), taxYear)))
           } {
@@ -61,14 +66,18 @@ class StatePensionAddToCalculationController @Inject () (actionsProvider: Action
               Future.successful(Ok(view(filledForm, taxYear)))
           }
         }
+      }
   }
 
   def submit(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit sessionData =>
-      formsProvider.statePensionAddToCalculationForm(sessionData.user.isAgent).bindFromRequest().fold(
-        formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
-        addToCalculation => updateSessionData(sessionData.pensionsUserData, addToCalculation, taxYear)
-      )
+      val checkRedirect = journeyCheck(AddStatePensionToIncomeTaxCalcPage, _, taxYear)
+      redirectBasedOnCurrentAnswers(taxYear, Some(sessionData.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) { data =>
+        formsProvider.statePensionAddToCalculationForm(sessionData.user.isAgent).bindFromRequest().fold(
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
+          addToCalculation => updateSessionData(data, addToCalculation, taxYear)
+        )
+      }
   }
 
   private def updateSessionData[T](pensionsUserData: PensionsUserData,

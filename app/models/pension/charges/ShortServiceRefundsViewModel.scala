@@ -80,6 +80,7 @@ case class ShortServiceRefundsViewModel(shortServiceRefund: Option[Boolean] = No
   override def journeyIsNo: Boolean = this.shortServiceRefund.contains(false)
 
   override def journeyIsUnanswered: Boolean = this.isEmpty
+
 }
 
 object ShortServiceRefundsViewModel {
