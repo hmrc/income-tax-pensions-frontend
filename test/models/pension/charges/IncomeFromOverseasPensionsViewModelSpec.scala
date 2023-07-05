@@ -31,7 +31,7 @@ class IncomeFromOverseasPensionsViewModelSpec extends UnitTest {
         anIncomeFromOverseasPensionsEmptyViewModel.copy(paymentsFromOverseasPensionsQuestion = Some(false)).isFinished
         anIncomeFromOverseasPensionsViewModel.copy(overseasIncomePensionSchemes = Seq(
           PensionScheme(
-            alphaThreeCode = Some("FRA"),
+            alphaThreeCode = None,
             alphaTwoCode = Some("FR"),
             pensionPaymentAmount = Some(1999.99),
             pensionPaymentTaxPaid = Some(1999.99),
@@ -49,7 +49,7 @@ class IncomeFromOverseasPensionsViewModelSpec extends UnitTest {
         anIncomeFromOverseasPensionsEmptyViewModel.copy(paymentsFromOverseasPensionsQuestion = Some(true)).isFinished
         anIncomeFromOverseasPensionsViewModel.copy(overseasIncomePensionSchemes = Seq(
           PensionScheme(
-            alphaThreeCode = Some("FRA"),
+            alphaThreeCode = None,
             alphaTwoCode = Some("FR"),
             pensionPaymentAmount = Some(1999.99),
             pensionPaymentTaxPaid = Some(1999.99),

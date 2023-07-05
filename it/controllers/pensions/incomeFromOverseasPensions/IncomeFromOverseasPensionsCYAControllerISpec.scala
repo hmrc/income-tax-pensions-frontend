@@ -22,8 +22,10 @@ import builders.IncomeTaxUserDataBuilder.anIncomeTaxUserData
 import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import builders.PensionsUserDataBuilder
 import builders.PensionsUserDataBuilder.{aPensionsUserData, pensionUserDataWithIncomeOverseasPension}
+import builders.UserBuilder.aUser
 import controllers.pensions.routes.OverseasPensionsSummaryController
 import models.mongo.{PensionsCYAModel, PensionsUserData}
+import models.pension.charges.PensionScheme
 import models.pension.income.ForeignPension
 import models.pension.reliefs.PaymentsIntoPensionsViewModel
 import org.jsoup.Jsoup
@@ -33,7 +35,7 @@ import play.api.Logging
 import play.api.http.HeaderNames
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.IncomeFromOverseasPensionsPages.checkIncomeFromOverseasPensionsCyaUrl
+import utils.PageUrls.IncomeFromOverseasPensionsPages.{checkIncomeFromOverseasPensionsCyaUrl, incomeFromOverseasPensionsStatus}
 import utils.PageUrls.fullUrl
 import utils.{CommonUtils, IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
@@ -42,18 +44,18 @@ class IncomeFromOverseasPensionsCYAControllerISpec extends
   ViewHelpers with
   BeforeAndAfterEach with
   PensionsDatabaseHelper with
-  CommonUtils with Logging {   //scalastyle:off magic.number
-  
-  val cyaDataIncomplete: PaymentsIntoPensionsViewModel = PaymentsIntoPensionsViewModel( rasPensionPaymentQuestion = Some(true))
+  CommonUtils with Logging { //scalastyle:off magic.number
+
+  val cyaDataIncomplete: PaymentsIntoPensionsViewModel = PaymentsIntoPensionsViewModel(rasPensionPaymentQuestion = Some(true))
 
   object ChangeLinksIncomeFromOverseasPensions {
     val paymentsFromOverseasPensions: String = controllers.pensions.incomeFromOverseasPensions.routes.PensionOverseasIncomeStatus.show(taxYear).url
-    val countrySummaryListController : String = controllers.pensions.incomeFromOverseasPensions.routes.CountrySummaryListController.show(taxYear).url
+    val countrySummaryListController: String = controllers.pensions.incomeFromOverseasPensions.routes.CountrySummaryListController.show(taxYear).url
   }
 
   trait SpecificExpectedResults {
     val expectedTitle: String
-    lazy val expectedH1 = expectedTitle
+    lazy val expectedH1: String = expectedTitle
   }
 
   trait CommonExpectedResults {
@@ -63,13 +65,13 @@ class IncomeFromOverseasPensionsCYAControllerISpec extends
     val no: String
 
     val paymentsFromOverseasPensions: String
-    val overseasPensionsScheme : String
+    val overseasPensionsScheme: String
 
     val saveAndContinue: String
     val error: String
 
     val paymentsFromOverseasPensionsHidden: String
-    val overseasPensionsSchemeHidden : String
+    val overseasPensionsSchemeHidden: String
   }
 
   object CommonExpectedEN extends CommonExpectedResults {
@@ -133,8 +135,6 @@ class IncomeFromOverseasPensionsCYAControllerISpec extends
       isPriorSubmission = isPrior, pensions = pensionsCyaModel)
   }
 
- 
-
   ".show" should {
     userScenarios.foreach { user =>
       s"language is ${welshTest(user.isWelsh)} and request is from an ${agentTest(user.isAgent)}" should {
@@ -146,7 +146,7 @@ class IncomeFromOverseasPensionsCYAControllerISpec extends
 
           val anUpdatedAllPensionsData = anAllPensionsData.copy(
             pensionIncome = Some(anAllPensionsData.pensionIncome.get.copy(
-              foreignPension = anAllPensionsData.pensionIncome.get.foreignPension.map(_.updated(0, ForeignPension (
+              foreignPension = anAllPensionsData.pensionIncome.get.foreignPension.map(_.updated(0, ForeignPension(
                 countryCode = "FRA",
                 taxableAmount = BigDecimal(100),
                 amountBeforeTax = Some(BigDecimal(100)),
@@ -184,7 +184,7 @@ class IncomeFromOverseasPensionsCYAControllerISpec extends
         "there is no CYA data and a CYA model is generated and there is no foreign pensions " which {
 
           val anUpdatedAllPensionsData = anAllPensionsData.copy(
-            pensionIncome = Some(anAllPensionsData.pensionIncome.get.copy(foreignPension =Some(Seq[ForeignPension]())))
+            pensionIncome = Some(anAllPensionsData.pensionIncome.get.copy(foreignPension = Some(Seq[ForeignPension]())))
           )
           implicit lazy val result: WSResponse = {
             authoriseAgentOrIndividual(user.isAgent)
@@ -209,61 +209,89 @@ class IncomeFromOverseasPensionsCYAControllerISpec extends
           welshToggleCheck(user.isWelsh)
         }
       }
+    }
 
+    "redirect to the first page in the journey if journey is incomplete" in {
+      val incompleteViewModel = anIncomeFromOverseasPensionsViewModel.copy(
+        overseasIncomePensionSchemes = Seq(
+          PensionScheme(
+            alphaThreeCode = None,
+            alphaTwoCode = Some("FR"),
+            pensionPaymentAmount = Some(1999.99),
+            pensionPaymentTaxPaid = Some(1999.99),
+            specialWithholdingTaxQuestion = Some(true),
+            specialWithholdingTaxAmount = None,
+            foreignTaxCreditReliefQuestion = Some(true),
+            taxableAmount = Some(1999.99)
+          )
+        )
+      )
+      implicit lazy val result: WSResponse = {
+        authoriseAgentOrIndividual(aUser.isAgent)
+        dropPensionsDB()
+        userDataStub(anIncomeTaxUserData, nino, taxYearEOY)
+        insertCyaData(pensionUserDataWithIncomeOverseasPension(incompleteViewModel))
+
+        urlGet(fullUrl(checkIncomeFromOverseasPensionsCyaUrl(taxYearEOY)), aUser.isAgent, follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+      }
+
+      result.status shouldBe SEE_OTHER
+      result.header("location") shouldBe Some(incomeFromOverseasPensionsStatus(taxYearEOY))
     }
   }
 
   ".submit" should {
-      "redirect to the overview page" when {
-        "there is no CYA data available" should {
+    "redirect to the overview page" when {
+      "there is no CYA data available" should {
 
-          val form = Map[String, String]()
-          val userData = anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData))
+        val form = Map[String, String]()
+        val userData = anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData))
 
 
-          lazy val result: WSResponse = {
-            dropPensionsDB()
-            authoriseAgentOrIndividual()
-            userDataStub(userData, nino, taxYear)
-            pensionIncomeSessionStub("", nino, taxYear)
-            urlPost(fullUrl(checkIncomeFromOverseasPensionsCyaUrl(taxYear)), form, follow = false,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
-          }
-
-          "have the status SEE OTHER" in {
-            result.status shouldBe SEE_OTHER
-          }
-
-          "redirects to the overview page" in {
-            result.headers("Location").head shouldBe OverseasPensionsSummaryController.show(taxYear).url
-          }
+        lazy val result: WSResponse = {
+          dropPensionsDB()
+          authoriseAgentOrIndividual()
+          userDataStub(userData, nino, taxYear)
+          pensionIncomeSessionStub("", nino, taxYear)
+          urlPost(fullUrl(checkIncomeFromOverseasPensionsCyaUrl(taxYear)), form, follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
         }
-      }
 
-      "redirect to the summary page" when {
+        "have the status SEE OTHER" in {
+          result.status shouldBe SEE_OTHER
+        }
 
-        "the CYA data is persisted" should {
-
-          val form = Map[String, String]()
-
-          lazy val result: WSResponse = {
-            dropPensionsDB()
-            userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYear)
-            pensionIncomeSessionStub("", nino, taxYear)
-            insertCyaData(aPensionsUserData.copy(pensions = aPensionsCYAModel.copy(paymentsIntoPension = cyaDataIncomplete), taxYear = taxYear))
-            authoriseAgentOrIndividual()
-            urlPost(fullUrl(checkIncomeFromOverseasPensionsCyaUrl(taxYear)), form, follow = false,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
-          }
-
-          "the status is SEE OTHER" in {
-            result.status shouldBe SEE_OTHER
-          }
-
-          "redirects to the summary page" in {
-            result.headers("Location").head shouldBe OverseasPensionsSummaryController.show(taxYear).url
-          }
+        "redirects to the overview page" in {
+          result.headers("Location").head shouldBe OverseasPensionsSummaryController.show(taxYear).url
         }
       }
     }
+
+    "redirect to the summary page" when {
+
+      "the CYA data is persisted" should {
+
+        val form = Map[String, String]()
+
+        lazy val result: WSResponse = {
+          dropPensionsDB()
+          userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYear)
+          pensionIncomeSessionStub("", nino, taxYear)
+          insertCyaData(aPensionsUserData.copy(pensions = aPensionsCYAModel.copy(paymentsIntoPension = cyaDataIncomplete), taxYear = taxYear))
+          authoriseAgentOrIndividual()
+          urlPost(fullUrl(checkIncomeFromOverseasPensionsCyaUrl(taxYear)), form, follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
+        }
+
+        "the status is SEE OTHER" in {
+          result.status shouldBe SEE_OTHER
+        }
+
+        "redirects to the summary page" in {
+          result.headers("Location").head shouldBe OverseasPensionsSummaryController.show(taxYear).url
+        }
+      }
+    }
+  }
 }

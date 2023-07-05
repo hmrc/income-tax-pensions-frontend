@@ -17,15 +17,20 @@
 package controllers.pensions.incomeFromOverseasPensions
 
 import config.{AppConfig, ErrorHandler}
+import controllers.pensions.incomeFromOverseasPensions.routes.PensionOverseasIncomeStatus
 import controllers.pensions.routes.{OverseasPensionsSummaryController, PensionsSummaryController}
 import controllers.predicates.AuthorisedAction
 import controllers.predicates.TaxYearAction.taxYearAction
+import models.mongo.PensionsCYAModel
 import models.pension.AllPensionsData
 import models.pension.AllPensionsData.generateCyaFromPrior
 import models.pension.charges.IncomeFromOverseasPensionsViewModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import services.redirects.IncomeFromOverseasPensionsPages.CYAPage
+import services.redirects.IncomeFromOverseasPensionsRedirects.journeyCheck
+import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
 import services.{PensionIncomeService, PensionSessionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
@@ -61,11 +66,15 @@ class IncomeFromOverseasPensionsCYAController @Inject()(authAction: AuthorisedAc
     }
 
     pensionSessionService.getAndHandle(taxYear, request.user) { (cya, prior) =>
+
       (cya, prior) match {
         case (Some(data), Some(priorData: AllPensionsData)) if data.pensions.incomeFromOverseasPensions.isEmpty =>
           cyaDataIsEmpty(priorData)
         case (Some(data), _) =>
-          incomeFromOverseasPensionsViewModelExists(data.pensions.incomeFromOverseasPensions)
+          val checkRedirect = journeyCheck(CYAPage, _: PensionsCYAModel, taxYear)
+          redirectBasedOnCurrentAnswers(taxYear, cya, PensionOverseasIncomeStatus.show(taxYear))(checkRedirect) { _ =>
+            incomeFromOverseasPensionsViewModelExists(data.pensions.incomeFromOverseasPensions)
+          }
         case (None, Some(priorData)) =>
           cyaDataIsEmpty(priorData)
         case (None, None) =>

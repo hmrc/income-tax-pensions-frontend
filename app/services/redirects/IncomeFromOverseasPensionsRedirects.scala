@@ -124,7 +124,7 @@ object IncomeFromOverseasPensionsRedirects {
 
       10 -> { incomeFromOverseasPensionsViewModel: IncomeFromOverseasPensionsViewModel =>
         if (isPageValidInJourney(2, incomeFromOverseasPensionsViewModel)) {
-          incomeFromOverseasPensionsViewModel.overseasIncomePensionSchemes.nonEmpty
+          incomeFromOverseasPensionsViewModel.isFinished
         } else {
           !incomeFromOverseasPensionsViewModel.paymentsFromOverseasPensionsQuestion.getOrElse(true)
         }
