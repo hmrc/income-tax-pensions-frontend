@@ -132,7 +132,7 @@ object IncomeFromOverseasPensionsRedirects {
     )
 
     if (incomeFromOverseasPensionsViewModel.overseasIncomePensionSchemes.isEmpty)
-      incomeFromOverseasPensionsViewModel.paymentsFromOverseasPensionsQuestion.isDefined
+      !incomeFromOverseasPensionsViewModel.paymentsFromOverseasPensionsQuestion.getOrElse(true)
     else
       prevQuestionIsAnsweredMap(pageNumber)(incomeFromOverseasPensionsViewModel)
   }
