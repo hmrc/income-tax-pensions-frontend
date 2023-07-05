@@ -18,7 +18,9 @@ package controllers.pensions.incomeFromOverseasPensions
 
 import builders.IncomeFromOverseasPensionsViewModelBuilder.{anIncomeFromOverseasPensionsEmptyViewModel, anIncomeFromOverseasPensionsViewModel}
 import builders.PensionsUserDataBuilder.pensionUserDataWithIncomeOverseasPension
+import builders.UserBuilder.aUserRequest
 import forms.Countries
+import models.pension.charges.PensionScheme
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterEach
@@ -179,6 +181,81 @@ class CountrySummaryListControllerISpec extends IntegrationTest with BeforeAndAf
           buttonCheck(expectedOverviewButtonText, overviewButtonSelector, Some(overseasPensionsSummaryUrl(taxYearEOY)))
           textOnPageCheck(expectedReturnToOverviewPageText, returnToOverviewTextSelector)
           welshToggleCheck(user.isWelsh)
+        }
+
+        "filter out any incomplete schemes and update the session data before rendering the page" which {
+          val incompleteViewModel = anIncomeFromOverseasPensionsViewModel.copy(
+            overseasIncomePensionSchemes = Seq(
+              PensionScheme(
+                alphaThreeCode = None,
+                alphaTwoCode = Some("FR"),
+                pensionPaymentAmount = Some(1999.99),
+                pensionPaymentTaxPaid = Some(1999.99),
+                specialWithholdingTaxQuestion = None,
+                specialWithholdingTaxAmount = Some(1999.99),
+                foreignTaxCreditReliefQuestion = Some(true),
+                taxableAmount = Some(1999.99)
+              ),
+              PensionScheme(
+                alphaThreeCode = None,
+                alphaTwoCode = Some("DE"),
+                pensionPaymentAmount = Some(2000.00),
+                pensionPaymentTaxPaid = Some(400.00),
+                specialWithholdingTaxQuestion = Some(true),
+                specialWithholdingTaxAmount = Some(400.00),
+                foreignTaxCreditReliefQuestion = Some(true),
+                taxableAmount = Some(2000.00)
+              ),
+              PensionScheme(
+                alphaThreeCode = None,
+                alphaTwoCode = Some("DE"),
+                pensionPaymentAmount = None,
+                pensionPaymentTaxPaid = Some(400.00),
+                specialWithholdingTaxQuestion = Some(true),
+                specialWithholdingTaxAmount = Some(400.00),
+                foreignTaxCreditReliefQuestion = Some(true),
+                taxableAmount = Some(1000.00)
+              )
+            )
+          )
+          implicit lazy val result: WSResponse = {
+            authoriseAgentOrIndividual(user.isAgent)
+            dropPensionsDB()
+            insertCyaData(pensionUserDataWithIncomeOverseasPension(incompleteViewModel))
+            urlGet(fullUrl(countrySummaryListControllerUrl(taxYearEOY)), user.isWelsh, follow = false,
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+          }
+
+          "has an OK status" in {
+            result.status shouldBe OK
+          }
+
+          implicit def document: () => Document = () => Jsoup.parse(result.body)
+
+          "renders the correct valid schemes" which {
+            textOnPageCheck(s"$pensionName2 $pensionAmount2", pensionNameSelector(1))
+            linkCheck(s"$change $change $pensionName2", changeLinkSelector(1), overseasPensionsSchemeSummaryUrl(taxYearEOY, 0))
+            linkCheck(s"$remove $remove $pensionName2", removeLinkSelector(1), removeOverseasIncomeSchemeControllerUrl(taxYearEOY, Some(0)))
+          }
+
+          "removes incomplete schemes from the session data" in {
+            val filteredSchemes = incompleteViewModel.copy(
+              overseasIncomePensionSchemes = Seq(
+                PensionScheme(
+                  alphaThreeCode = None,
+                  alphaTwoCode = Some("DE"),
+                  pensionPaymentAmount = Some(2000.00),
+                  pensionPaymentTaxPaid = Some(400.00),
+                  specialWithholdingTaxQuestion = Some(true),
+                  specialWithholdingTaxAmount = Some(400.00),
+                  foreignTaxCreditReliefQuestion = Some(true),
+                  taxableAmount = Some(2000.00)
+                )
+              )
+            )
+            lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
+            cyaModel.pensions.incomeFromOverseasPensions shouldBe filteredSchemes
+          }
         }
       }
     }

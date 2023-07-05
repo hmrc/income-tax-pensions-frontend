@@ -22,7 +22,8 @@ import controllers.pensions.routes.OverseasPensionsSummaryController
 import controllers.predicates.AuthorisedAction
 import forms.YesNoForm
 import models.User
-import models.mongo.PensionsCYAModel
+import models.mongo.{PensionsCYAModel, PensionsUserData}
+import models.pension.charges.PensionScheme
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -54,6 +55,7 @@ class PensionOverseasIncomeStatus @Inject()(authAction: AuthorisedAction,
       case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
       case Right(optPensionUserData) => optPensionUserData match {
         case Some(data) =>
+          cleanUpSchemes(data)
           val form =
             data.pensions.incomeFromOverseasPensions.paymentsFromOverseasPensionsQuestion.fold(yesNoForm(request.user)
             )(yesNoForm(request.user).fill(_))
@@ -97,5 +99,15 @@ class PensionOverseasIncomeStatus @Inject()(authAction: AuthorisedAction,
         }
       }
     )
+  }
+
+  private def cleanUpSchemes(pensionsUserData: PensionsUserData): Seq[PensionScheme] = {
+    val schemes = pensionsUserData.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes
+    val filteredSchemes = if (schemes.nonEmpty) schemes.filter(scheme => scheme.isFinished) else schemes
+    val updatedViewModel = pensionsUserData.pensions.incomeFromOverseasPensions.copy(overseasIncomePensionSchemes = filteredSchemes)
+    val updatedPensionData = pensionsUserData.pensions.copy(incomeFromOverseasPensions = updatedViewModel)
+    val updatedUserData = pensionsUserData.copy(pensions = updatedPensionData)
+    pensionSessionService.createOrUpdateSessionData(updatedUserData)
+    filteredSchemes
   }
 }

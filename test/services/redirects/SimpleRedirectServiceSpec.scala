@@ -31,65 +31,53 @@ import scala.concurrent.Future
 
 class SimpleRedirectServiceSpec extends UnitTest {
 
-  val cyaData: PensionsCYAModel = PensionsCYAModel.emptyModels
-  val contextualRedirect: Call = TotalPaymentsIntoRASController.show(taxYear)
-  val cyaRedirect: Call = PaymentsIntoPensionsCYAController.show(taxYear)
-  val noneRedirect: PensionsCYAModel => Option[Result] = _ => None
-  val someRedirect: PensionsCYAModel => Option[Result] = _ => Some(Redirect(ReliefAtSourcePensionsController.show(taxYear)))
-  val continueRedirect: PensionsUserData => Future[Result] = _ => Future.successful(Redirect(contextualRedirect))
-  val cyaPageCallLocal = PaymentsIntoPensionsCYAController.show(taxYear)
+  private val cyaData: PensionsCYAModel = PensionsCYAModel.emptyModels
+  private val contextualRedirect: Call = TotalPaymentsIntoRASController.show(taxYear)
+  private val cyaRedirect: Call = PaymentsIntoPensionsCYAController.show(taxYear)
+  private val noneRedirect: PensionsCYAModel => Option[Result] = cyaData => None
+  private val someRedirect: PensionsCYAModel => Option[Result] = cyaData => Some(Redirect(ReliefAtSourcePensionsController.show(taxYear)))
+  private val continueToContextualRedirect: PensionsUserData => Future[Result] = aPensionsUserData => Future.successful(Redirect(contextualRedirect))
+  private val pIPCyaPageCall = PaymentsIntoPensionsCYAController.show(taxYear)
 
   ".redirectBasedOnCurrentAnswers" should {
 
     "continue to attempted page when there is session data and 'shouldRedirect' is None" which {
-      val result: Future[Result] = SimpleRedirectService.redirectBasedOnCurrentAnswers(taxYear, Some(aPensionsUserData),
-        cyaPageCallLocal)(noneRedirect)(continueRedirect)
-      val resultStatus = result.map(_.header.status)
-      val resultHeader = result.map(_.header.headers)
+      val result: Future[Result] = SimpleRedirectService.redirectBasedOnCurrentAnswers(
+        taxYear, Some(aPensionsUserData), pIPCyaPageCall)(noneRedirect)(continueToContextualRedirect)
+      val statusHeader = await(result.map(_.header.status))
+      val locationHeader = await(result.map(_.header.headers).map(_.get("Location")))
 
       "result status is 303" in {
-        val status = resultStatus.value.get.get
-
-        status shouldBe SEE_OTHER
+        statusHeader shouldBe SEE_OTHER
       }
       "location header is dependent on the 'continue' argument" in {
-        val locationHeader = resultHeader.value.get.get("Location")
-
-        locationHeader shouldBe contextualRedirect.url
+        locationHeader shouldBe Some(contextualRedirect.url)
       }
     }
 
     "redirect to first page in journey when there is session data and 'shouldRedirect' is Some(firstPageRedirect)" which {
-      val result = SimpleRedirectService.redirectBasedOnCurrentAnswers(taxYear, Some(aPensionsUserData), cyaPageCallLocal)(someRedirect)(continueRedirect)
-      val resultStatus = result.map(_.header.status)
-      val resultHeader = result.map(_.header.headers)
+      val result = SimpleRedirectService.redirectBasedOnCurrentAnswers(taxYear, Some(aPensionsUserData), pIPCyaPageCall)(someRedirect)(continueToContextualRedirect)
+      val statusHeader = await(result.map(_.header.status))
+      val locationHeader = await(result.map(_.header.headers).map(_.get("Location")))
 
       "result status is 303" in {
-        val status = resultStatus.value.get.get
-
-        status shouldBe SEE_OTHER
+        statusHeader shouldBe SEE_OTHER
       }
       "location header is first page of journey" in {
-        val locationHeader = resultHeader.value.get.get("Location")
-
-        locationHeader shouldBe ReliefAtSourcePensionsController.show(taxYear).url
+        locationHeader shouldBe Some(ReliefAtSourcePensionsController.show(taxYear).url)
       }
     }
 
     "redirect to CYA page when there is no session data" which {
-      val result = SimpleRedirectService.redirectBasedOnCurrentAnswers(taxYear, None, cyaPageCallLocal)(someRedirect)(continueRedirect)
-      val resultStatus = result.map(_.header.status)
-      val resultHeader = result.map(_.header.headers)
+      val result = SimpleRedirectService.redirectBasedOnCurrentAnswers(taxYear, None, pIPCyaPageCall)(someRedirect)(continueToContextualRedirect)
+      val statusHeader = await(result.map(_.header.status))
+      val locationHeader = await(result.map(_.header.headers).map(_.get("Location")))
 
       "result status is 303" in {
-        val status = resultStatus.value.get.get
-
-        status shouldBe SEE_OTHER
+        statusHeader shouldBe SEE_OTHER
       }
       "location header is CYA page" in {
-        val locationHeader = resultHeader.value.get.get("Location")
-
-        locationHeader shouldBe cyaRedirect.url
+        locationHeader shouldBe Some(cyaRedirect.url)
       }
     }
 
@@ -141,6 +129,27 @@ class SimpleRedirectServiceSpec extends UnitTest {
 
       result.header.status shouldBe SEE_OTHER
       result.header.headers("location").contains(UnauthorisedPensionSchemeTaxReferenceController)
+    }
+  }
+
+  ".checkForExistingSchemes" should {
+    "return a Call to the first page in scheme loop when 'schemes' is empty" in {
+      val emptySchemes: Seq[String] = Seq.empty
+      val result = SimpleRedirectService.checkForExistingSchemes(
+        nextPage = UnauthorisedPensionSchemeTaxReferenceController.show(taxYear, None),
+        summaryPage = UkPensionSchemeDetailsController.show(taxYear),
+        emptySchemes)
+
+      result shouldBe UnauthorisedPensionSchemeTaxReferenceController.show(taxYear, None)
+    }
+    "return a Call to the scheme summary page when 'schemes' already exist" in {
+      val existingSchemes: Seq[String] = Seq("12345", "54321", "55555")
+      val result = SimpleRedirectService.checkForExistingSchemes(
+        nextPage = UnauthorisedPensionSchemeTaxReferenceController.show(taxYear, None),
+        summaryPage = UkPensionSchemeDetailsController.show(taxYear),
+        existingSchemes)
+
+      result shouldBe UkPensionSchemeDetailsController.show(taxYear)
     }
   }
 }

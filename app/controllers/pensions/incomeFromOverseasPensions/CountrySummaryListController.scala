@@ -19,8 +19,11 @@ package controllers.pensions.incomeFromOverseasPensions
 
 import config.AppConfig
 import controllers.predicates.ActionsProvider
+import models.mongo.PensionsUserData
+import models.pension.charges.PensionScheme
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.SessionHelper
 import views.html.pensions.incomeFromOverseasPensions.CountrySummaryList
@@ -28,11 +31,23 @@ import views.html.pensions.incomeFromOverseasPensions.CountrySummaryList
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class CountrySummaryListController @Inject()(actionsProvider: ActionsProvider, countrySummary: CountrySummaryList)
+class CountrySummaryListController @Inject()(actionsProvider: ActionsProvider, countrySummary: CountrySummaryList,
+                                             pensionSessionService: PensionSessionService)
                                             (implicit mcc: MessagesControllerComponents, appConfig: AppConfig)
   extends FrontendController(mcc) with I18nSupport with SessionHelper {
 
   def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) { implicit sessionUserData =>
-    Ok(countrySummary(taxYear, sessionUserData.pensionsUserData.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes))
+    val filteredSchemes = cleanUpSchemes(sessionUserData.pensionsUserData)
+    Ok(countrySummary(taxYear, filteredSchemes))
+  }
+
+  private def cleanUpSchemes(pensionsUserData: PensionsUserData): Seq[PensionScheme] = {
+    val schemes = pensionsUserData.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes
+    val filteredSchemes = if (schemes.nonEmpty) schemes.filter(scheme => scheme.isFinished) else schemes
+    val updatedViewModel = pensionsUserData.pensions.incomeFromOverseasPensions.copy(overseasIncomePensionSchemes = filteredSchemes)
+    val updatedPensionData = pensionsUserData.pensions.copy(incomeFromOverseasPensions = updatedViewModel)
+    val updatedUserData = pensionsUserData.copy(pensions = updatedPensionData)
+    pensionSessionService.createOrUpdateSessionData(updatedUserData)
+    filteredSchemes
   }
 }

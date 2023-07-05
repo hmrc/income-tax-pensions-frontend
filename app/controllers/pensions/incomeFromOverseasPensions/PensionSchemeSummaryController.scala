@@ -22,23 +22,30 @@ import controllers.predicates.ActionsProvider
 import models.pension.pages.OverseasPensionSchemeSummaryPage
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.redirects.IncomeFromOverseasPensionsPages.PensionSchemeSummaryPage
+import services.redirects.IncomeFromOverseasPensionsRedirects.indexCheckThenJourneyCheck
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.SessionHelper
 import views.html.pensions.incomeFromOverseasPensions.PensionsSchemeSummary
 
 import javax.inject.{Inject, Singleton}
+import scala.concurrent.Future
 
 @Singleton
 class PensionSchemeSummaryController @Inject()(actionsProvider: ActionsProvider,
-                                               pageView:  PensionsSchemeSummary)
+                                               pageView: PensionsSchemeSummary)
                                               (implicit mcc: MessagesControllerComponents, appConfig: AppConfig)
   extends FrontendController(mcc) with I18nSupport with SessionHelper {
 
-  def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) { implicit sessionUserData =>
-    Ok(pageView(OverseasPensionSchemeSummaryPage.apply (taxYear, sessionUserData.pensionsUserData, index)))
+  def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionUserData =>
+    indexCheckThenJourneyCheck(sessionUserData.pensionsUserData, index, PensionSchemeSummaryPage, taxYear) { data =>
+      Future.successful(Ok(pageView(OverseasPensionSchemeSummaryPage.apply(taxYear, data, index))))
+    }
   }
 
-  def submit(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear)  { _ =>
-      Redirect(CountrySummaryListController.show(taxYear))
+  def submit(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionUserData =>
+    indexCheckThenJourneyCheck(sessionUserData.pensionsUserData, index, PensionSchemeSummaryPage, taxYear) { _ =>
+      Future.successful(Redirect(CountrySummaryListController.show(taxYear)))
+    }
   }
 }
