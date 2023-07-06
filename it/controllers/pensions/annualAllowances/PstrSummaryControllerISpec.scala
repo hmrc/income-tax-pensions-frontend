@@ -40,9 +40,14 @@ class PstrSummaryControllerISpec extends IntegrationTest with BeforeAndAfterEach
     val addAnotherLinkSelector = "#add-another-link"
     val addLinkSelector = "#add-pstr-link"
     val continueButtonSelector: String = "#continue"
+    val addSchemeButtonSelector: String = "#AddAScheme"
+    val overviewButtonSelector: String = "#ReturnToOverview"
+    val needToAddSchemeTextSelector: String = "#youNeedToAddOneOrMorePensionScheme1"
+    val returnToOverviewTextSelector: String = "#youNeedToAddOneOrMorePensionScheme2"
+
     def changeLinkSelector(index: Int): String = s"div:nth-child($index) > dd.hmrc-add-to-a-list__change > a"
     def removeLinkSelector(index: Int): String = s"div:nth-child($index) > dd.hmrc-add-to-a-list__remove > a"
-    def pstrSelector(index: Int): String = s"#main-content > div > div > div > dl > div:nth-child($index) > dt"
+    def pstrSelector(index: Int): String = s"div:nth-child($index) > dt"
   }
 
   trait CommonExpectedResults {
@@ -53,30 +58,39 @@ class PstrSummaryControllerISpec extends IntegrationTest with BeforeAndAfterEach
     val remove: String
     val pensionSchemeTaxReference: String
     val expectedButtonText: String
+    val expectedAddPstrButtonText: String
+    val expectedOverviewButtonText: String
     val expectedAddAnotherText: String
-    val expectedAddPstrText: String
+    val expectedNeedToAddPensionSchemeText: String
+    val expectedReturnToOverviewPageText: String
   }
 
   object CommonExpectedEN extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Annual allowances for 6 April ${taxYear - 1} to 5 April $taxYear"
     val expectedButtonText = "Continue"
-    val expectedTitle = "Pension Scheme Tax Reference (PSTR) summary"
+    val expectedAddPstrButtonText = "Add a PSTR"
+    val expectedOverviewButtonText = "Return to overview"
+    val expectedTitle = "Pension schemes that paid or agreed to pay the annual allowance tax"
     val change = "Change"
     val remove = "Remove"
     val pensionSchemeTaxReference = "Pension Scheme Tax Reference"
     val expectedAddAnotherText = "Add another Pensions Scheme Tax Reference"
-    val expectedAddPstrText = "Add a PSTR"
+    val expectedNeedToAddPensionSchemeText = "You need to add one or more Pensions Scheme Tax Reference (PSTR)."
+    val expectedReturnToOverviewPageText = "If you don’t have a pensions scheme to add you can return to the overview page and come back later."
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Lwfansau blynyddol ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
     val expectedButtonText = "Yn eich blaen"
-    val expectedTitle = "Crynodeb Cyfeirnod Treth y Cynllun Pensiwn (PSTR)"
+    val expectedAddPstrButtonText = "Ychwanegu PSTR"
+    val expectedOverviewButtonText = "Yn ôl i’r trosolwg"
+    val expectedTitle = "Pension schemes that paid or agreed to pay the annual allowance tax"
     val change = "Newid"
     val remove = "Tynnu"
     val pensionSchemeTaxReference = "Cyfeirnod Treth y Cynllun Pensiwn"
     val expectedAddAnotherText = "Ychwanegu Cyfeirnod Treth ar gyfer Cynllun Pensiwn arall"
-    val expectedAddPstrText = "Ychwanegu PSTR"
+    val expectedNeedToAddPensionSchemeText = "You need to add one or more Pensions Scheme Tax Reference (PSTR)."
+    val expectedReturnToOverviewPageText = "If you don’t have a pensions scheme to add you can return to the overview page and come back later."
   }
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, Nothing]] = Seq(
@@ -122,12 +136,11 @@ class PstrSummaryControllerISpec extends IntegrationTest with BeforeAndAfterEach
           linkCheck(s"$remove $remove $pensionSchemeTaxReference $pstr2", removeLinkSelector(2),
             RemoveAnnualAllowancePstrController.show(taxYearEOY, Some(1)).url)
           linkCheck(expectedAddAnotherText, addAnotherLinkSelector, PensionSchemeTaxReferenceController.show(taxYearEOY, None).url)
-          //TODO button href to go to annual allowance CYA page
           buttonCheck(expectedButtonText, continueButtonSelector, Some(annualAllowancesCYAUrl(taxYearEOY)))
           welshToggleCheck(user.isWelsh)
         }
 
-        "render the 'PSTR Summary' page with only an add link when there are no PSTRs" which {
+        "render the 'PSTR Summary' page with the 'Add a scheme' specific format when there are no PSTRs" which {
           implicit lazy val result: WSResponse = {
             authoriseAgentOrIndividual(user.isAgent)
             dropPensionsDB()
@@ -147,9 +160,10 @@ class PstrSummaryControllerISpec extends IntegrationTest with BeforeAndAfterEach
           h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY))
           elementNotOnPageCheck(pstrSelector(1))
-          linkCheck(expectedAddPstrText, addLinkSelector, PensionSchemeTaxReferenceController.show(taxYearEOY, None).url)
-          //TODO button href to go to annual allowance CYA page
-          buttonCheck(expectedButtonText, continueButtonSelector, Some(annualAllowancesCYAUrl(taxYearEOY)))
+          buttonCheck(expectedAddPstrButtonText, addSchemeButtonSelector, Some(pensionSchemeTaxReferenceUrl(taxYearEOY)))
+          textOnPageCheck(expectedNeedToAddPensionSchemeText, needToAddSchemeTextSelector)
+          buttonCheck(expectedOverviewButtonText, overviewButtonSelector, Some(pensionSummaryUrl(taxYearEOY)))
+          textOnPageCheck(expectedReturnToOverviewPageText, returnToOverviewTextSelector)
           welshToggleCheck(user.isWelsh)
         }
 
