@@ -74,14 +74,14 @@ class PensionSchemeSummaryViewSpec extends ViewUnitTest { //scalastyle:off magic
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedTitle: String = "Check pension scheme details"
+    val expectedTitle: String = "Gwirio manylion y cynllun pensiwn"
     val expectedCaption: Int => String = (taxYear: Int) => s"Incwm o bensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
-    val schemeDetails: String = "Scheme details"
+    val schemeDetails: String = "Manylion y cynllun"
     val hiddenSchemeDetails = "Change scheme details"
     val schemeName: String = "pension name 1"
     val schemePAYE: String = "PAYE: 666/66666"
     val schemePID: String = "PID: Some customer ref 1"
-    val schemeIncome = "Pension income"
+    val schemeIncome = "Incwm o bensiwn"
     val hiddenSchemeIncome = "Change pension income"
     val paymentsAmount: String = "Pay: 211.33"
     val paymentsTax: String = "Tax: 14.77"
