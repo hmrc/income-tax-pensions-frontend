@@ -70,7 +70,7 @@ class RemoveReliefSchemeViewSpec extends ViewUnitTest with FakeRequestProvider {
 
     object CommonExpectedCY extends CommonExpectedResults {
       override val expectedCaption: Int => String = (taxYear: Int) => s"Taliadau i bensiynau tramor ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
-      override val expectedTitle: String = "Are you sure you want to remove this overseas pension scheme?"
+      override val expectedTitle: String = "A ydych chi’n siŵr eich bod am dynnu’r cynllun pensiwn tramor hwn?"
       override val expectedPara: String = "This will remove:"
       override val schemeName: String = "Enw’r cynllun pensiwn"
       override val untaxedEmployerPayments: String = "Taliadau cyflogwr sydd heb eu trethu"

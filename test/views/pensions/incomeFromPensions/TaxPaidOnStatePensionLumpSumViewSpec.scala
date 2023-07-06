@@ -89,15 +89,15 @@ class TaxPaidOnStatePensionLumpSumViewSpec extends ViewUnitTest with FakeRequest
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
-    val expectedTitle = "Did you pay tax on the State Pension lump sum?"
-    val expectedHeading = "Did you pay tax on the State Pension lump sum?"
+    val expectedTitle = "A wnaethoch chi dalu treth ar gyfandaliad Pensiwn y Wladwriaeth?"
+    val expectedHeading = "A wnaethoch chi dalu treth ar gyfandaliad Pensiwn y Wladwriaeth?"
     val expectedErrorTitle = s"Gwall: $expectedTitle"
-    val expectedError = "Select yes if you paid tax on the State Pension lump sum"
+    val expectedError = "Dewiswch ‘Iawn’ os gwnaethoch dalu treth ar gyfandaliad Pensiwn y Wladwriaeth"
     val expectedDetailsBullet1 = "eich P60"
     val expectedDetailsBullet2 = "y llythyr ’Ynglŷn â’r cynnydd cyffredinol mewn budd-daliadau’ a anfonwyd atoch gan y Gwasanaeth Pensiwn"
-    val emptyErrorText = "Enter the total amount of tax paid on the State Pension lump sum"
-    val incorrectFormatErrorText = "Enter the total amount of tax paid on the State Pension lump sum in the correct format"
-    val maxAmountErrorText = "The amount of tax paid on the State Pension lump sum must be less than £100,000,000,000"
+    val emptyErrorText = "Nodwch gyfanswm y dreth a dalwyd ar gyfandaliad Pensiwn y Wladwriaeth"
+    val incorrectFormatErrorText = "Nodwch gyfanswm y dreth a dalwyd ar gyfandaliad Pensiwn y Wladwriaeth yn y fformat cywir"
+    val maxAmountErrorText = "Mae’n rhaid i swm y dreth a dalwyd ar gyfandaliad Pensiwn y Wladwriaeth fod yn llai na £100,000,000,000"
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
@@ -113,15 +113,15 @@ class TaxPaidOnStatePensionLumpSumViewSpec extends ViewUnitTest with FakeRequest
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
-    val expectedTitle = "Did your client pay tax on the State Pension lump sum?"
-    val expectedHeading = "Did your client pay tax on the State Pension lump sum?"
+    val expectedTitle = "A wnaeth eich cleient dalu treth ar gyfandaliad Pensiwn y Wladwriaeth?"
+    val expectedHeading = "A wnaeth eich cleient dalu treth ar gyfandaliad Pensiwn y Wladwriaeth?"
     val expectedErrorTitle = s"Gwall: $expectedTitle"
-    val expectedError = "Select yes if your client paid tax on the State Pension lump sum"
+    val expectedError = "Dewiswch ‘Iawn’ os gwnaeth eich cleient dalu treth ar gyfandaliad Pensiwn y Wladwriaeth"
     val expectedDetailsBullet1 = "P60 eich cleient"
     val expectedDetailsBullet2 = "y llythyr ’Ynglŷn â’r cynnydd cyffredinol mewn budd-daliadau’ a anfonwyd at eich cleient gan y Gwasanaeth Pensiwn"
-    val emptyErrorText = "Enter the amount of tax your client paid on the State Pension lump sum"
-    val incorrectFormatErrorText = "Enter the amount of tax your client paid on the State Pension lump sum in the correct format"
-    val maxAmountErrorText = "The amount of tax your client paid on the State Pension lump sum must be less than £100,000,000,000"
+    val emptyErrorText = "Nodwch swm y dreth a dalodd eich cleient ar y cyfandaliad Pensiwn y Wladwriaeth"
+    val incorrectFormatErrorText = "Nodwch gyfanswm y dreth a dalodd eich cleient ar y cyfandaliad Pensiwn y Wladwriaeth yn y fformat cywir"
+    val maxAmountErrorText = "Mae’n rhaid i swm y dreth a dalodd eich cleient ar y cyfandaliad Pensiwn y Wladwriaeth fod yn llai na £100,000,000,000"
   }
 
   object CommonExpectedEN extends CommonExpectedResults {

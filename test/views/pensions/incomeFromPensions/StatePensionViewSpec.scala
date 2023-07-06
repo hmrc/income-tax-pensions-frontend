@@ -78,7 +78,7 @@ class StatePensionViewSpec extends ViewUnitTest with FakeRequestProvider {
     val expectedOverMaximumErrorMessage = "Your State Pension amount must be less than £100,000,000,000"
   }
   object ExpectedIndividualCY extends SpecificExpectedResults {
-    val expectedTitle = "Do you get regular State Pension payments?"
+    val expectedTitle = "A ydych chi’n cael taliadau rheolaidd o Bensiwn y Wladwriaeth?"
     val expectedErrorTitle = s"Gwall: $expectedTitle"
     val expectedNoEntryErrorMessage = "Dewiswch ‘Iawn’ os cawsoch Bensiwn y Wladwriaeth y flwyddyn hon"
     val expectedNoAmountErrorMessage = "Nodwch swm eich Pensiwn y Wladwriaeth"
@@ -95,7 +95,7 @@ class StatePensionViewSpec extends ViewUnitTest with FakeRequestProvider {
     val expectedOverMaximumErrorMessage = "Your client’s State Pension amount must be less than £100,000,000,000"
   }
   object ExpectedAgentCY extends SpecificExpectedResults {
-    val expectedTitle = "Does your client get regular State Pension payments?"
+    val expectedTitle = "A yw’ch cleient yn cael taliadau rheolaidd o Bensiwn y Wladwriaeth?"
     val expectedErrorTitle = s"Gwall: $expectedTitle"
     val expectedNoEntryErrorMessage = "Dewiswch ‘Iawn’ os cafodd eich cleient Pensiwn y Wladwriaeth y flwyddyn hon"
     val expectedNoAmountErrorMessage = "Nodwch swm Pensiwn y Wladwriaeth eich cleient"
