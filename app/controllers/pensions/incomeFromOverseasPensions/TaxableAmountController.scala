@@ -19,8 +19,8 @@ package controllers.pensions.incomeFromOverseasPensions
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.incomeFromOverseasPensions.routes.PensionSchemeSummaryController
 import controllers.pensions.routes.OverseasPensionsSummaryController
-import controllers.predicates.AuthorisedAction
-import controllers.predicates.TaxYearAction.taxYearAction
+import controllers.predicates.actions.AuthorisedAction
+import controllers.predicates.actions.TaxYearAction.taxYearAction
 import forms.FormUtils
 import models.mongo.{PensionsCYAModel, PensionsUserData}
 import play.api.i18n.I18nSupport

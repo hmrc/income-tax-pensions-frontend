@@ -19,7 +19,7 @@ package controllers.pensions.incomeFromPensions
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.incomeFromPensions.routes.StatePensionAddToCalculationController
 import controllers.pensions.routes.PensionsSummaryController
-import controllers.predicates.ActionsProvider
+import controllers.predicates.actions.ActionsProvider
 import forms.DateForm.DateModel
 import forms.{DateForm, FormsProvider}
 import models.pension.statebenefits.StateBenefitViewModel
@@ -27,7 +27,7 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
-import services.redirects.IncomeFromPensionsPages.{TaxOnStatePensionLumpSumPage, WhenDidYouGetYourStatePensionLumpSumPage}
+import services.redirects.IncomeFromPensionsPages.WhenDidYouGetYourStatePensionLumpSumPage
 import services.redirects.IncomeFromPensionsRedirects.{cyaPageCall, journeyCheck}
 import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController

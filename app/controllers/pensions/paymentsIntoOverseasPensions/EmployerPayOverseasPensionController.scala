@@ -19,7 +19,7 @@ package controllers.pensions.paymentsIntoOverseasPensions
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.paymentsIntoOverseasPensions.routes.{PaymentsIntoOverseasPensionsCYAController, TaxEmployerPaymentsController}
 import controllers.pensions.routes.OverseasPensionsSummaryController
-import controllers.predicates.AuthorisedAction
+import controllers.predicates.actions.AuthorisedAction
 import forms.YesNoForm
 import models.User
 import models.mongo.PensionsCYAModel

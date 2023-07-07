@@ -18,7 +18,7 @@ package support.mocks
 
 import common.{EnrolmentIdentifiers, EnrolmentKeys}
 import config.MockAppConfig
-import controllers.predicates.AuthorisedAction
+import controllers.predicates.actions.AuthorisedAction
 import org.scalamock.handlers.CallHandler4
 import org.scalamock.scalatest.MockFactory
 import play.api.test.Helpers.stubMessagesControllerComponents

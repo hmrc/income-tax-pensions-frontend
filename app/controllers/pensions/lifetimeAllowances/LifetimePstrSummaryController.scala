@@ -17,14 +17,14 @@
 package controllers.pensions.lifetimeAllowances
 
 import config.AppConfig
-import controllers.predicates.AuthorisedAction
-import controllers.predicates.TaxYearAction.taxYearAction
+import controllers.predicates.actions.TaxYearAction.taxYearAction
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.pensions.lifetimeAllowances.LifetimePstrSummaryView
 import controllers.pensions.routes.PensionsSummaryController
+import controllers.predicates.actions.AuthorisedAction
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 

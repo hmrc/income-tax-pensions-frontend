@@ -41,9 +41,9 @@ import play.api.libs.ws.WSResponse
 import utils.PageUrls.PaymentIntoPensions.checkPaymentsIntoPensionCyaUrl
 import utils.PageUrls.fullUrl
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
-import views.PaymentsIntoPensionsCYASpec.CommonExpectedEN.{no => answerNo, _}
-import views.PaymentsIntoPensionsCYASpec.ExpectedIndividualEN._
-import views.PaymentsIntoPensionsCYASpec._
+import views.pensions.paymentsIntoPensions.PaymentsIntoPensionsCYASpec.CommonExpectedEN.{no => answerNo, _}
+import views.pensions.paymentsIntoPensions.PaymentsIntoPensionsCYASpec.ExpectedIndividualEN._
+import views.pensions.paymentsIntoPensions.PaymentsIntoPensionsCYASpec._
 
 
 // scalastyle:off magic.number

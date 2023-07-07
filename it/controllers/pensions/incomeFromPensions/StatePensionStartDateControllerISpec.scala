@@ -20,7 +20,6 @@ import builders.IncomeFromPensionsViewModelBuilder.anIncomeFromPensionsViewModel
 import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import builders.PensionsUserDataBuilder.aPensionsUserData
 import builders.StateBenefitViewModelBuilder.anStateBenefitViewModelOne
-import utils.CommonUtils
 import builders.UserBuilder.aUser
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document

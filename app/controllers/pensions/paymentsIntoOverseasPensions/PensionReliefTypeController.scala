@@ -18,7 +18,7 @@ package controllers.pensions.paymentsIntoOverseasPensions
 
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.paymentsIntoOverseasPensions.routes._
-import controllers.predicates.ActionsProvider
+import controllers.predicates.actions.ActionsProvider
 import controllers.validatedIndex
 import forms.FormsProvider
 import models.pension.charges.{Relief, TaxReliefQuestion}
