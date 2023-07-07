@@ -22,12 +22,14 @@ import controllers.pensions.routes.OverseasPensionsSummaryController
 import controllers.predicates.AuthorisedAction
 import forms.YesNoForm
 import models.User
-import models.mongo.PensionsCYAModel
+import models.mongo.{PensionsCYAModel, PensionsUserData}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
-import services.redirects.PaymentsIntoOverseasPensionsRedirects.redirectForSchemeLoop
+import services.redirects.PaymentsIntoOverseasPensionsPages.TaxEmployerPaymentsPage
+import services.redirects.PaymentsIntoOverseasPensionsRedirects.{cyaPageCall, journeyCheck, redirectForSchemeLoop}
+import services.redirects.SimpleRedirectService.{isFinishedCheck, redirectBasedOnCurrentAnswers}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.paymentsIntoOverseasPensions.TaxEmployerPaymentsView
@@ -52,16 +54,16 @@ class TaxEmployerPaymentsController @Inject()(authAction: AuthorisedAction,
   def show(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
     pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
       case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
-      case Right(optPensionUserData) => optPensionUserData match {
-        case Some(data) =>
+      case Right(optPensionUserData) =>
+
+        val checkRedirect = journeyCheck(TaxEmployerPaymentsPage, _: PensionsCYAModel, taxYear)
+        redirectBasedOnCurrentAnswers(taxYear, optPensionUserData, cyaPageCall(taxYear))(checkRedirect) { data: PensionsUserData =>
           data.pensions.paymentsIntoOverseasPensions.taxPaidOnEmployerPaymentsQuestion match {
             case Some(value) => Future.successful(Ok(taxEmployerPaymentsView(
               yesNoForm(request.user).fill(value), taxYear)))
             case None => Future.successful(Ok(taxEmployerPaymentsView(yesNoForm(request.user), taxYear)))
           }
-        case None =>
-          Future.successful(Redirect(OverseasPensionsSummaryController.show(taxYear)))
-      }
+        }
     }
   }
 
@@ -75,16 +77,16 @@ class TaxEmployerPaymentsController @Inject()(authAction: AuthorisedAction,
               paymentsIntoOverseasPensions = data.pensions.paymentsIntoOverseasPensions.copy(
                 taxPaidOnEmployerPaymentsQuestion = Some(yesNo)))
 
+            val redirectLocation = if (yesNo) {
+              cyaPageCall(taxYear)
+            } else {
+              redirectForSchemeLoop(updatedCyaModel.paymentsIntoOverseasPensions.reliefs, taxYear)
+            }
+
             pensionSessionService.createOrUpdateSessionData(request.user,
               updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
-
-              Redirect(
-                if (yesNo) redirectForSchemeLoop(updatedCyaModel.paymentsIntoOverseasPensions.reliefs, taxYear)
-                else PaymentsIntoOverseasPensionsCYAController.show(taxYear)
-              )
+              isFinishedCheck(updatedCyaModel.paymentsIntoPension, taxYear, redirectLocation, cyaPageCall)
             }
-          case _ =>
-            Future.successful(Redirect(OverseasPensionsSummaryController.show(taxYear)))
         }
       }
     )

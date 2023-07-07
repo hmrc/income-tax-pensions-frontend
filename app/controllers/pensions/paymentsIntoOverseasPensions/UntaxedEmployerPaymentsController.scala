@@ -21,11 +21,14 @@ import controllers.pensions.paymentsIntoOverseasPensions.routes.PensionReliefTyp
 import controllers.predicates.ActionsProvider
 import controllers.validatedSchemes
 import forms.FormsProvider
+import models.pension.charges.Relief
 import models.pension.pages.UntaxedEmployerPayments
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.PaymentsIntoOverseasPensionsService
-import services.redirects.PaymentsIntoOverseasPensionsRedirects.redirectForSchemeLoop
+import services.redirects.PaymentsIntoOverseasPensionsPages.UntaxedEmployerPaymentsPage
+import services.redirects.PaymentsIntoOverseasPensionsRedirects.{cyaPageCall, indexCheckThenJourneyCheck, redirectForSchemeLoop}
+import services.redirects.SimpleRedirectService.isFinishedCheck
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.pensions.paymentsIntoOverseasPensions.UntaxedEmployerPaymentsView
 
@@ -43,23 +46,23 @@ class UntaxedEmployerPaymentsController @Inject()(actionsProvider: ActionsProvid
                                                   ec: ExecutionContext)
   extends FrontendController(cc) with I18nSupport {
 
-  def show(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) { implicit sessionUserData =>
+  def show(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionUserData =>
     val piopSessionData = sessionUserData.pensionsUserData.pensions.paymentsIntoOverseasPensions
 
-    validatedSchemes(pensionSchemeIndex, piopSessionData.reliefs.map(_.customerReference)) match {
-      case Left(_) => Redirect(redirectForSchemeLoop(piopSessionData.reliefs, taxYear))
-      case Right(_) => Ok(pageView(UntaxedEmployerPayments(taxYear, pensionSchemeIndex, piopSessionData,
-        formsProvider.untaxedEmployerPayments(sessionUserData.user.isAgent))))
+    indexCheckThenJourneyCheck(sessionUserData.pensionsUserData, pensionSchemeIndex, UntaxedEmployerPaymentsPage, taxYear) { _: Relief =>
+      Future.successful(
+        Ok(pageView(UntaxedEmployerPayments(taxYear, pensionSchemeIndex, piopSessionData,
+          formsProvider.untaxedEmployerPayments(sessionUserData.user.isAgent)))))
     }
   }
 
   def submit(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = {
     actionsProvider.userSessionDataFor(taxYear).async { implicit sessionUserData =>
       val piopSessionData = sessionUserData.pensionsUserData.pensions.paymentsIntoOverseasPensions
+      val redirectLocation = PensionReliefTypeController.show(taxYear, pensionSchemeIndex)
 
-      validatedSchemes(pensionSchemeIndex, piopSessionData.reliefs.map(_.customerReference)) match {
-        case Left(_) => Future.successful(Redirect(redirectForSchemeLoop(piopSessionData.reliefs, taxYear)))
-        case Right(_) => formsProvider.untaxedEmployerPayments(sessionUserData.user.isAgent).bindFromRequest().fold(
+      indexCheckThenJourneyCheck(sessionUserData.pensionsUserData, pensionSchemeIndex, UntaxedEmployerPaymentsPage, taxYear) { _: Relief =>
+        formsProvider.untaxedEmployerPayments(sessionUserData.user.isAgent).bindFromRequest().fold(
           formWithErrors => {
             Future.successful(
               BadRequest(pageView(UntaxedEmployerPayments(taxYear, pensionSchemeIndex, piopSessionData, formWithErrors))))
@@ -67,7 +70,8 @@ class UntaxedEmployerPaymentsController @Inject()(actionsProvider: ActionsProvid
           amount => {
             paymentsIntoOverseasService.updateUntaxedEmployerPayments(sessionUserData.pensionsUserData, amount, pensionSchemeIndex).map {
               case Left(_) => errorHandler.internalServerError()
-              case Right(userData) => Redirect(PensionReliefTypeController.show(taxYear, pensionSchemeIndex))
+              case Right(_) =>
+                isFinishedCheck(sessionUserData.pensionsUserData.pensions.paymentsIntoOverseasPensions, taxYear, redirectLocation, cyaPageCall)
             }
           }
         )

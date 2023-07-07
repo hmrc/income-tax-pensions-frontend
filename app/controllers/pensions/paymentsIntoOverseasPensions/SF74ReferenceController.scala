@@ -22,11 +22,13 @@ import controllers.predicates.ActionsProvider
 import controllers.validatedIndex
 import forms.FormsProvider
 import models.mongo.PensionsUserData
+import models.pension.charges.Relief
 import models.requests.UserSessionDataRequest
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.PensionSessionService
-import services.redirects.PaymentsIntoOverseasPensionsRedirects.redirectForSchemeLoop
+import services.redirects.PaymentsIntoOverseasPensionsPages.SF74ReferencePage
+import services.redirects.PaymentsIntoOverseasPensionsRedirects.{indexCheckThenJourneyCheck, redirectForSchemeLoop}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.paymentsIntoOverseasPensions.SF74ReferenceView
@@ -44,34 +46,23 @@ class SF74ReferenceController @Inject()(
                                        )(implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock)
   extends FrontendController(mcc) with I18nSupport with SessionHelper {
 
-  def show(taxYear: Int, reliefIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit userSessionDataRequest =>
-
-    val piopReliefs = userSessionDataRequest.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs
-
-    Future.successful {
-      validatedIndex(reliefIndex, piopReliefs.size) match {
-        case Some(idx) =>
-          val sf74Reference = piopReliefs(idx).sf74Reference
-          sf74Reference match {
-            case Some(value) => Ok(view(formsProvider.sf74ReferenceIdForm.fill(value), taxYear, reliefIndex))
-            case None => Ok(view(formsProvider.sf74ReferenceIdForm, taxYear, reliefIndex))
-          }
-        case _ =>
-          Redirect(redirectForSchemeLoop(piopReliefs, taxYear))
+  def show(taxYear: Int, reliefIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
+    implicit userSessionDataRequest =>
+      indexCheckThenJourneyCheck(userSessionDataRequest.pensionsUserData, reliefIndex, SF74ReferencePage, taxYear) { relief: Relief =>
+        relief.sf74Reference match {
+          case Some(value) => Future.successful(Ok(view(formsProvider.sf74ReferenceIdForm.fill(value), taxYear, reliefIndex)))
+          case None => Future.successful(Ok(view(formsProvider.sf74ReferenceIdForm, taxYear, reliefIndex)))
+        }
       }
-    }
   }
 
   def submit(taxYear: Int, reliefIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit userSessionDataRequest =>
       val reliefs = userSessionDataRequest.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs
-      validatedIndex(reliefIndex, reliefs.size) match {
-        case Some(idx) =>
-          formsProvider.sf74ReferenceIdForm.bindFromRequest().fold(
-            formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear, reliefIndex))),
-            sf74Reference => updateSessionData(userSessionDataRequest.pensionsUserData, Some(sf74Reference), taxYear, idx))
-        case _ =>
-          Future.successful(Redirect(redirectForSchemeLoop(reliefs, taxYear)))
+      indexCheckThenJourneyCheck(userSessionDataRequest.pensionsUserData, reliefIndex, SF74ReferencePage, taxYear) { _: Relief =>
+        formsProvider.sf74ReferenceIdForm.bindFromRequest().fold(
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear, reliefIndex))),
+          sf74Reference => updateSessionData(userSessionDataRequest.pensionsUserData, Some(sf74Reference), taxYear, reliefIndex.get))
       }
   }
 

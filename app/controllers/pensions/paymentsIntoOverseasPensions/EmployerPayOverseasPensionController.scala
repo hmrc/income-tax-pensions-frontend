@@ -22,11 +22,14 @@ import controllers.pensions.routes.OverseasPensionsSummaryController
 import controllers.predicates.AuthorisedAction
 import forms.YesNoForm
 import models.User
-import models.mongo.PensionsCYAModel
+import models.mongo.{PensionsCYAModel, PensionsUserData}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
+import services.redirects.PaymentsIntoOverseasPensionsPages.{EmployerPayOverseasPensionPage, UntaxedEmployerPaymentsPage}
+import services.redirects.PaymentsIntoOverseasPensionsRedirects.{cyaPageCall, journeyCheck}
+import services.redirects.SimpleRedirectService.{isFinishedCheck, redirectBasedOnCurrentAnswers}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.paymentsIntoOverseasPensions.EmployerPayOverseasPensionView
@@ -38,10 +41,10 @@ import scala.concurrent.{ExecutionContext, Future}
 class EmployerPayOverseasPensionController @Inject()(authAction: AuthorisedAction,
                                                      employerPayOverseasPensionView: EmployerPayOverseasPensionView,
                                                      pensionSessionService: PensionSessionService,
-                                                     errorHandler: ErrorHandler) (implicit val cc: MessagesControllerComponents,
-                                                     appConfig: AppConfig,
-                                                     clock: Clock,
-                                                     ec: ExecutionContext) extends FrontendController(cc) with I18nSupport {
+                                                     errorHandler: ErrorHandler)(implicit val cc: MessagesControllerComponents,
+                                                                                 appConfig: AppConfig,
+                                                                                 clock: Clock,
+                                                                                 ec: ExecutionContext) extends FrontendController(cc) with I18nSupport {
 
   def yesNoForm(user: User): Form[Boolean] = YesNoForm.yesNoForm(
     missingInputError = s"overseasPension.employerPayOverseasPension.error.noEntry.${if (user.isAgent) "agent" else "individual"}"
@@ -50,17 +53,15 @@ class EmployerPayOverseasPensionController @Inject()(authAction: AuthorisedActio
   def show(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
     pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
       case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
-      case Right(optPensionUserData) => optPensionUserData match {
-        case Some(data) =>
+      case Right(optPensionUserData) =>
+        val checkRedirect = journeyCheck(EmployerPayOverseasPensionPage, _: PensionsCYAModel, taxYear)
+        redirectBasedOnCurrentAnswers(taxYear, optPensionUserData, cyaPageCall(taxYear))(checkRedirect) { data =>
           data.pensions.paymentsIntoOverseasPensions.employerPaymentsQuestion match {
             case Some(value) => Future.successful(Ok(employerPayOverseasPensionView(
               yesNoForm(request.user).fill(value), taxYear)))
             case None => Future.successful(Ok(employerPayOverseasPensionView(yesNoForm(request.user), taxYear)))
           }
-        case None =>
-          //TODO - redirect to CYA page once implemented
-          Future.successful(Redirect(OverseasPensionsSummaryController.show(taxYear)))
-      }
+        }
     }
   }
 
@@ -69,22 +70,24 @@ class EmployerPayOverseasPensionController @Inject()(authAction: AuthorisedActio
       formWithErrors => Future.successful(BadRequest(employerPayOverseasPensionView(formWithErrors, taxYear))),
       yesNo => {
         pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
-          case Right(Some(data)) =>
-            val updatedCyaModel: PensionsCYAModel = data.pensions.copy(
-              paymentsIntoOverseasPensions = data.pensions.paymentsIntoOverseasPensions.copy(
-                employerPaymentsQuestion = Some(yesNo)))
+          case Right(optPensionUserData) =>
+            val checkRedirect = journeyCheck(EmployerPayOverseasPensionPage, _: PensionsCYAModel, taxYear)
+            redirectBasedOnCurrentAnswers(taxYear, optPensionUserData, cyaPageCall(taxYear))(checkRedirect) { data: PensionsUserData =>
+              val updatedCyaModel: PensionsCYAModel = data.pensions.copy(
+                paymentsIntoOverseasPensions = data.pensions.paymentsIntoOverseasPensions.copy(
+                  employerPaymentsQuestion = Some(yesNo)))
 
-            pensionSessionService.createOrUpdateSessionData(request.user,
-              updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
-
-              if (yesNo) {
-                Redirect(TaxEmployerPaymentsController.show(taxYear))
+              val redirectLocation = if (yesNo) {
+                controllers.pensions.paymentsIntoOverseasPensions.routes.TaxEmployerPaymentsController.show(taxYear)
               } else {
-                Redirect(PaymentsIntoOverseasPensionsCYAController.show(taxYear))
+                controllers.pensions.paymentsIntoOverseasPensions.routes.PaymentsIntoOverseasPensionsCYAController.show(taxYear)
+              }
+
+              pensionSessionService.createOrUpdateSessionData(request.user,
+                updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
+                isFinishedCheck(updatedCyaModel.paymentsIntoPension, taxYear, redirectLocation, cyaPageCall)
               }
             }
-          case _ =>
-            Future.successful(Redirect(OverseasPensionsSummaryController.show(taxYear)))
         }
       }
     )

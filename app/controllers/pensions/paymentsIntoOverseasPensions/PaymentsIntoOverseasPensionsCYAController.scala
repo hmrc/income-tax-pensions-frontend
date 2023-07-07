@@ -25,6 +25,9 @@ import models.pension.AllPensionsData.generateCyaFromPrior
 import models.pension.charges.PaymentsIntoOverseasPensionsViewModel
 import play.api.i18n.I18nSupport
 import play.api.mvc._
+import services.redirects.PaymentsIntoOverseasPensionsPages.{PaymentsIntoOverseasPensionsCYAPage, TaxEmployerPaymentsPage}
+import services.redirects.PaymentsIntoOverseasPensionsRedirects.{cyaPageCall, journeyCheck}
+import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
 import services.{NrsService, PensionOverseasPaymentService, PensionSessionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
@@ -47,17 +50,27 @@ class PaymentsIntoOverseasPensionsCYAController @Inject()(authAction: Authorised
 
 
   def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit request =>
+
+    def cyaDataIsEmpty(priorData: AllPensionsData): Future[Result] = {
+      val cyaModel = generateCyaFromPrior(priorData)
+      pensionSessionService.createOrUpdateSessionData(request.user,
+        cyaModel, taxYear, isPriorSubmission = false)(
+        errorHandler.internalServerError())(
+        Ok(view(taxYear, cyaModel.paymentsIntoOverseasPensions)))
+    }
+
+
     pensionSessionService.getAndHandle(taxYear, request.user) { (cya, prior) =>
       (cya, prior) match {
-        case (Some(data), _) =>
-          Future.successful(Ok(view(taxYear, data.pensions.paymentsIntoOverseasPensions)))
+        case (Some(data), Some(priorData: AllPensionsData)) if data.pensions.paymentsIntoOverseasPensions.isEmpty =>
+          cyaDataIsEmpty(priorData)
+        case (Some(_), _) =>
+          val checkRedirect = journeyCheck(PaymentsIntoOverseasPensionsCYAPage, _: PensionsCYAModel, taxYear)
+          redirectBasedOnCurrentAnswers(taxYear, cya, cyaPageCall(taxYear))(checkRedirect) { data =>
+            Future.successful(Ok(view(taxYear, data.pensions.paymentsIntoOverseasPensions)))
+          }
         case (None, Some(priorData)) =>
-          val cyaModel = generateCyaFromPrior(priorData)
-          pensionSessionService.createOrUpdateSessionData(request.user,
-            cyaModel, taxYear, isPriorSubmission = false)(
-            errorHandler.internalServerError())(
-            Ok(view(taxYear, cyaModel.paymentsIntoOverseasPensions))
-          )
+          cyaDataIsEmpty(priorData)
         case (None, None) =>
           val emptyPaymentsIntoOverseasPensions = PaymentsIntoOverseasPensionsViewModel()
           Future.successful(Ok(view(taxYear, emptyPaymentsIntoOverseasPensions)))

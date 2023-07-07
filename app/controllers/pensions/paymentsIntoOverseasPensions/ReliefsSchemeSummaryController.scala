@@ -18,13 +18,18 @@ package controllers.pensions.paymentsIntoOverseasPensions
 
 import config.AppConfig
 import controllers.predicates.ActionsProvider
+import models.mongo.PensionsCYAModel
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.redirects.PaymentsIntoOverseasPensionsPages.ReliefsSchemeSummaryPage
+import services.redirects.PaymentsIntoOverseasPensionsRedirects.{cyaPageCall, journeyCheck}
+import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.SessionHelper
 import views.html.pensions.paymentsIntoOverseasPensions.ReliefSchemeSummaryView
 
 import javax.inject.{Inject, Singleton}
+import scala.concurrent.Future
 
 @Singleton
 class ReliefsSchemeSummaryController @Inject()(view: ReliefSchemeSummaryView,
@@ -32,9 +37,11 @@ class ReliefsSchemeSummaryController @Inject()(view: ReliefSchemeSummaryView,
                                               (implicit val mcc: MessagesControllerComponents, appConfig: AppConfig)
   extends FrontendController(mcc) with I18nSupport with SessionHelper {
 
-  def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) {
+  def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit userSessionDataRequest =>
-          Ok(view(taxYear, userSessionDataRequest.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs))
+      val checkRedirect = journeyCheck(ReliefsSchemeSummaryPage, _: PensionsCYAModel, taxYear)
+      redirectBasedOnCurrentAnswers(taxYear, Some(userSessionDataRequest.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) { _ =>
+        Future.successful(Ok(view(taxYear, userSessionDataRequest.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs)))
+      }
   }
-
 }

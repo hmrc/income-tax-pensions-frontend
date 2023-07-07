@@ -37,15 +37,12 @@ object IncomeFromOverseasPensionsRedirects {
     val pensionSchemes = data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes
     validateIndex(optIndex, pensionSchemes) match {
       case Some(index) =>
-
         val checkRedirect = journeyCheck(currentPage, _, taxYear, Some(index))
         redirectBasedOnCurrentAnswers(taxYear, Some(data), cyaPageCall(taxYear))(checkRedirect) {
           data: PensionsUserData =>
             continue(data)
         }
-
       case None =>
-
         val checkRedirect = journeyCheck(currentPage, _: PensionsCYAModel, taxYear)
         redirectBasedOnCurrentAnswers(taxYear, Some(data), cyaPageCall(taxYear))(checkRedirect) {
           _ =>
