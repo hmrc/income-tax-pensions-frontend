@@ -18,8 +18,8 @@ package controllers.pensions.annualAllowances
 
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.annualAllowances.routes.PstrSummaryController
-import controllers.predicates.TaxYearAction.taxYearAction
-import controllers.predicates.AuthorisedAction
+import controllers.predicates.actions.AuthorisedAction
+import controllers.predicates.actions.TaxYearAction.taxYearAction
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService

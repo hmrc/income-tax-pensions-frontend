@@ -17,7 +17,7 @@
 package controllers.pensions.incomeFromOverseasPensions
 
 import builders.IncomeFromOverseasPensionsViewModelBuilder.anIncomeFromOverseasPensionsViewModel
-import builders.PensionsCYAModelBuilder.{aPensionsCYAEmptyModel, aPensionsCYAModel}
+import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import controllers.ControllerSpec.PreferredLanguages.{English, Welsh}
 import controllers.ControllerSpec.UserTypes.{Agent, Individual}
 import controllers.ControllerSpec._

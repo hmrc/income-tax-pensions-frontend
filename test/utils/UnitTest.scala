@@ -20,7 +20,7 @@ import akka.actor.ActorSystem
 import com.codahale.metrics.SharedMetricRegistries
 import common.{EnrolmentIdentifiers, EnrolmentKeys, SessionValues}
 import config.{AppConfig, ErrorHandler, MockAppConfig}
-import controllers.predicates.{AuthorisedAction, InYearAction}
+import controllers.predicates.actions.{AuthorisedAction, InYearAction}
 import models.{AuthorisationRequest, User}
 import org.scalamock.handlers.CallHandler4
 import org.scalamock.scalatest.MockFactory

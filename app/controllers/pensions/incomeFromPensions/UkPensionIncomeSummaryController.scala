@@ -18,8 +18,8 @@ package controllers.pensions.incomeFromPensions
 
 import config.AppConfig
 import controllers.pensions.incomeFromPensions.routes.UkPensionIncomeCYAController
-import controllers.predicates.AuthorisedAction
-import controllers.predicates.TaxYearAction.taxYearAction
+import controllers.predicates.actions.AuthorisedAction
+import controllers.predicates.actions.TaxYearAction.taxYearAction
 import models.pension.statebenefits.UkPensionIncomeViewModel
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
