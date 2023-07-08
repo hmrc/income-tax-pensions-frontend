@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.pensions.paymentsIntoPensions
+package controllers.pensions.paymentsIntoOverseasPensions
 
 import forms.YesNoForm
 import org.scalatest.BeforeAndAfterEach

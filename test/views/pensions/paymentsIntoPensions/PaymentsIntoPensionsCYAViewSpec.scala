@@ -17,6 +17,7 @@
 package views.pensions.paymentsIntoPensions
 
 import builders.PaymentsIntoPensionVewModelBuilder.aPaymentsIntoPensionViewModel
+import builders.PensionsUserDataBuilder.taxYearEOY
 import models.pension.reliefs.PaymentsIntoPensionsViewModel
 import models.requests.UserSessionDataRequest
 import org.jsoup.Jsoup
@@ -27,14 +28,8 @@ import support.ViewUnitTest
 import views.html.pensions.paymentsIntoPensions.PaymentsIntoPensionsCYAView
 import views.pensions.paymentsIntoPensions.PaymentsIntoPensionsCYASpec._
 
-import java.time.LocalDate
-
 // scalastyle:off magic.number
 object PaymentsIntoPensionsCYASpec {
-
-  private val dateNow: LocalDate = LocalDate.now()
-  private val taxYearCutoffDate: LocalDate = LocalDate.parse(s"${dateNow.getYear}-04-05")
-  private val taxYear: Int = if (dateNow.isAfter(taxYearCutoffDate)) LocalDate.now().getYear + 1 else LocalDate.now().getYear
 
   val cyaDataMinimal: PaymentsIntoPensionsViewModel = PaymentsIntoPensionsViewModel(
     rasPensionPaymentQuestion = Some(false),
@@ -42,15 +37,15 @@ object PaymentsIntoPensionsCYASpec {
   )
 
   object ChangeLinks {
-    val reliefAtSource: String = controllers.pensions.paymentsIntoPensions.routes.ReliefAtSourcePensionsController.show(taxYear).url
-    val reliefAtSourceAmount: String = controllers.pensions.paymentsIntoPensions.routes.ReliefAtSourcePaymentsAndTaxReliefAmountController.show(taxYear).url
-    val oneOff: String = controllers.pensions.paymentsIntoPensions.routes.ReliefAtSourceOneOffPaymentsController.show(taxYear).url
-    val oneOffAmount: String = controllers.pensions.paymentsIntoPensions.routes.OneOffRASPaymentsAmountController.show(taxYear).url
-    val pensionsTaxReliefNotClaimed: String = controllers.pensions.paymentsIntoPensions.routes.PensionsTaxReliefNotClaimedController.show(taxYear).url
-    val retirementAnnuity: String = controllers.pensions.paymentsIntoPensions.routes.RetirementAnnuityController.show(taxYear).url
-    val retirementAnnuityAmount: String = controllers.pensions.paymentsIntoPensions.routes.RetirementAnnuityAmountController.show(taxYear).url
-    val workplacePayments: String = controllers.pensions.paymentsIntoPensions.routes.WorkplacePensionController.show(taxYear).url
-    val workplacePaymentsAmount: String = controllers.pensions.paymentsIntoPensions.routes.WorkplaceAmountController.show(taxYear).url
+    val reliefAtSource: String = controllers.pensions.paymentsIntoPensions.routes.ReliefAtSourcePensionsController.show(taxYearEOY).url
+    val reliefAtSourceAmount: String = controllers.pensions.paymentsIntoPensions.routes.ReliefAtSourcePaymentsAndTaxReliefAmountController.show(taxYearEOY).url
+    val oneOff: String = controllers.pensions.paymentsIntoPensions.routes.ReliefAtSourceOneOffPaymentsController.show(taxYearEOY).url
+    val oneOffAmount: String = controllers.pensions.paymentsIntoPensions.routes.OneOffRASPaymentsAmountController.show(taxYearEOY).url
+    val pensionsTaxReliefNotClaimed: String = controllers.pensions.paymentsIntoPensions.routes.PensionsTaxReliefNotClaimedController.show(taxYearEOY).url
+    val retirementAnnuity: String = controllers.pensions.paymentsIntoPensions.routes.RetirementAnnuityController.show(taxYearEOY).url
+    val retirementAnnuityAmount: String = controllers.pensions.paymentsIntoPensions.routes.RetirementAnnuityAmountController.show(taxYearEOY).url
+    val workplacePayments: String = controllers.pensions.paymentsIntoPensions.routes.WorkplacePensionController.show(taxYearEOY).url
+    val workplacePaymentsAmount: String = controllers.pensions.paymentsIntoPensions.routes.WorkplaceAmountController.show(taxYearEOY).url
   }
 
   trait SpecificExpectedResults {
@@ -175,7 +170,7 @@ object PaymentsIntoPensionsCYASpec {
   }
 }
 
-class PaymentsIntoPensionsCYASpec extends ViewUnitTest {
+class PaymentsIntoPensionsCYAViewSpec extends ViewUnitTest {
   val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(
     UserScenario(isWelsh = false, isAgent = false, CommonExpectedEN, Some(ExpectedIndividualEN)),
     UserScenario(isWelsh = false, isAgent = true, CommonExpectedEN, Some(ExpectedAgentEN)),
@@ -205,8 +200,7 @@ class PaymentsIntoPensionsCYASpec extends ViewUnitTest {
         titleCheck(userScenario.specificExpectedResults.get.expectedTitle, userScenario.isWelsh)
         h1Check(userScenario.specificExpectedResults.get.expectedH1)
         captionCheck(userScenario.commonExpectedResults.expectedCaption(taxYear))
-
-        //noinspection ScalaStyle
+        
         cyaRowCheck(reliefAtSource, yes, ChangeLinks.reliefAtSource, reliefAtSourceHidden, 1)
         cyaRowCheck(reliefAtSourceAmount, s"${moneyContent(aPaymentsIntoPensionViewModel.totalRASPaymentsAndTaxRelief.get)}",
           ChangeLinks.reliefAtSourceAmount, reliefAtSourceAmountHidden, 2)
@@ -238,7 +232,6 @@ class PaymentsIntoPensionsCYASpec extends ViewUnitTest {
 
         import userScenario.commonExpectedResults.{no => answerNo}
 
-        //noinspection ScalaStyle
         cyaRowCheck(reliefAtSource, answerNo, ChangeLinks.reliefAtSource, reliefAtSourceHidden, 1)
         cyaRowCheck(pensionsTaxReliefNotClaimed, answerNo, ChangeLinks.pensionsTaxReliefNotClaimed, pensionsTaxReliefNotClaimedHidden, 2)
 
