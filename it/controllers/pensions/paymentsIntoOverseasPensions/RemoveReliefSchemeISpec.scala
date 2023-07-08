@@ -40,7 +40,7 @@ class RemoveReliefSchemeISpec extends ControllerSpec("/overseas-pensions/payment
           val sessionData = pensionsUserData(aPensionsCYAModel)
           implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
           implicit val response: WSResponse = getPageWithIndex(2)
-          assertRedirectionAsExpected(PageRelativeURLs.ReliefsSchemeDetails)
+          assertRedirectionAsExpected(PageRelativeURLs.reliefsSchemeDetails)
         }
       }
     }
@@ -54,7 +54,7 @@ class RemoveReliefSchemeISpec extends ControllerSpec("/overseas-pensions/payment
 
           implicit val response: WSResponse = submitForm(Map("" -> ""), Map("index" -> "0"))
 
-          assertRedirectionAsExpected(PageRelativeURLs.ReliefsSchemeSummary)
+          assertRedirectionAsExpected(PageRelativeURLs.reliefsSchemeSummary)
           val expectedViewModel = sessionData.pensions.paymentsIntoOverseasPensions.copy(
             reliefs = Seq(Relief(
               Some("PENSIONINCOME356"),

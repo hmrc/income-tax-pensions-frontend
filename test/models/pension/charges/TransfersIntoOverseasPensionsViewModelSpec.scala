@@ -26,8 +26,8 @@ class TransfersIntoOverseasPensionsViewModelSpec extends UnitTest {
       emptyTransfersIntoOverseasPensionsViewModel.isEmpty
     }
     "return false when any questions have been answered" in {
-      emptyTransfersIntoOverseasPensionsViewModel.copy(transferPensionSavings = Some(true)).isEmpty
-      aTransfersIntoOverseasPensionsViewModel.isEmpty
+      emptyTransfersIntoOverseasPensionsViewModel.copy(transferPensionSavings = Some(true)).isEmpty shouldBe false
+      aTransfersIntoOverseasPensionsViewModel.isEmpty shouldBe false
     }
   }
 
@@ -47,7 +47,7 @@ class TransfersIntoOverseasPensionsViewModelSpec extends UnitTest {
 
     "return false" when {
       "not all necessary questions have been populated" in {
-        aTransfersIntoOverseasPensionsViewModel.copy(pensionSchemeTransferChargeAmount = None).isFinished
+        !aTransfersIntoOverseasPensionsViewModel.copy(pensionSchemeTransferChargeAmount = None).isFinished
       }
     }
   }
@@ -56,8 +56,15 @@ class TransfersIntoOverseasPensionsViewModelSpec extends UnitTest {
     "transform a TransfersIntoOverseasPensionsViewModel into a PensionSchemeOverseasTransfers" in {
       val result = PensionSchemeOverseasTransfers(overseasSchemeProvider = Seq(
         OverseasSchemeProvider(
-          providerName = "Foreign Scheme Name",
-          providerAddress = "Scheme Address",
+          providerName = "UK TPS",
+          providerAddress = "Some address 1",
+          providerCountryCode = "",
+          qualifyingRecognisedOverseasPensionScheme = None,
+          pensionSchemeTaxReference = Some(Seq("12345678RA"))
+        ),
+        OverseasSchemeProvider(
+          providerName = "Non-UK TPS",
+          providerAddress = "Some address 2",
           providerCountryCode = "FRA",
           qualifyingRecognisedOverseasPensionScheme = Some(Seq("QOPS123456")),
           pensionSchemeTaxReference = None

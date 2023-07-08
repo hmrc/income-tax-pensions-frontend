@@ -34,22 +34,23 @@ object IncomeFromOverseasPensionsRedirects {
                                  currentPage: IncomeFromOverseasPensionsPages,
                                  taxYear: Int)(continue: PensionsUserData => Future[Result]): Future[Result] = {
 
-    val pensionSchemes = data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes
-    validateIndex(optIndex, pensionSchemes) match {
-      case Some(index) =>
-
-        val checkRedirect = journeyCheck(currentPage, _, taxYear, Some(index))
-        redirectBasedOnCurrentAnswers(taxYear, Some(data), cyaPageCall(taxYear))(checkRedirect) {
-          data: PensionsUserData =>
-            continue(data)
-        }
-
-      case None =>
+    val pensionSchemes: Seq[PensionScheme] = data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes
+    val validatedIndex: Option[Int] = validateIndex(optIndex, pensionSchemes)
+    (pensionSchemes, validatedIndex) match {
+      case (schemes, None) if schemes.nonEmpty =>
 
         val checkRedirect = journeyCheck(currentPage, _: PensionsCYAModel, taxYear)
         redirectBasedOnCurrentAnswers(taxYear, Some(data), cyaPageCall(taxYear))(checkRedirect) {
           _ =>
             Future.successful(Redirect(redirectForSchemeLoop(pensionSchemes, taxYear)))
+        }
+
+      case (_, someIndex) =>
+
+        val checkRedirect = journeyCheck(currentPage, _, taxYear, someIndex)
+        redirectBasedOnCurrentAnswers(taxYear, Some(data), cyaPageCall(taxYear))(checkRedirect) {
+          data: PensionsUserData =>
+            continue(data)
         }
     }
   }
@@ -88,54 +89,50 @@ object IncomeFromOverseasPensionsRedirects {
     )
   }
 
-  private def previousQuestionIsAnswered(pageNumber: Int, optIndex: Option[Int], incomeFromOverseasPensionsViewModel: IncomeFromOverseasPensionsViewModel): Boolean = {
+  private def previousQuestionIsAnswered(pageNumber: Int, optIndex: Option[Int], ifopVM: IncomeFromOverseasPensionsViewModel): Boolean = {
     val index = optIndex.getOrElse(0)
+    val schemesEmpty = ifopVM.overseasIncomePensionSchemes.isEmpty
 
     val prevQuestionIsAnsweredMap: Map[Int, IncomeFromOverseasPensionsViewModel => Boolean] = Map(
       1 -> { _: IncomeFromOverseasPensionsViewModel => true },
 
-      2 -> { incomeFromOverseasPensionsViewModel: IncomeFromOverseasPensionsViewModel =>
-        incomeFromOverseasPensionsViewModel.paymentsFromOverseasPensionsQuestion.isDefined
+      2 -> { ifopVM: IncomeFromOverseasPensionsViewModel =>
+        ifopVM.paymentsFromOverseasPensionsQuestion.isDefined
       },
 
-      3 -> { incomeFromOverseasPensionsViewModel: IncomeFromOverseasPensionsViewModel =>
-        incomeFromOverseasPensionsViewModel.overseasIncomePensionSchemes(index).alphaTwoCode.isDefined
+      3 -> { ifopVM: IncomeFromOverseasPensionsViewModel =>
+        if (schemesEmpty) false else ifopVM.overseasIncomePensionSchemes(index).alphaTwoCode.isDefined
       },
-      4 -> { incomeFromOverseasPensionsViewModel: IncomeFromOverseasPensionsViewModel =>
-        incomeFromOverseasPensionsViewModel.overseasIncomePensionSchemes(index).pensionPaymentAmount.isDefined &&
-          incomeFromOverseasPensionsViewModel.overseasIncomePensionSchemes(index).pensionPaymentTaxPaid.isDefined
+      4 -> { ifopVM: IncomeFromOverseasPensionsViewModel =>
+        if (schemesEmpty) false
+        else ifopVM.overseasIncomePensionSchemes(index).pensionPaymentAmount.isDefined && ifopVM.overseasIncomePensionSchemes(index).pensionPaymentTaxPaid.isDefined
       },
-      5 -> { incomeFromOverseasPensionsViewModel: IncomeFromOverseasPensionsViewModel =>
-        incomeFromOverseasPensionsViewModel.overseasIncomePensionSchemes(index).specialWithholdingTaxQuestion.exists(x =>
-          if (x) incomeFromOverseasPensionsViewModel.overseasIncomePensionSchemes(index).specialWithholdingTaxAmount.isDefined else true)
-      },
-
-      6 -> { incomeFromOverseasPensionsViewModel: IncomeFromOverseasPensionsViewModel =>
-        incomeFromOverseasPensionsViewModel.overseasIncomePensionSchemes(index).foreignTaxCreditReliefQuestion.isDefined
-      },
-      7 -> { incomeFromOverseasPensionsViewModel: IncomeFromOverseasPensionsViewModel =>
-        incomeFromOverseasPensionsViewModel.overseasIncomePensionSchemes(index).foreignTaxCreditReliefQuestion.isDefined
-      },
-      8 -> { incomeFromOverseasPensionsViewModel: IncomeFromOverseasPensionsViewModel =>
-        incomeFromOverseasPensionsViewModel.overseasIncomePensionSchemes(index).foreignTaxCreditReliefQuestion.isDefined
+      5 -> { ifopVM: IncomeFromOverseasPensionsViewModel =>
+        if (schemesEmpty) false else ifopVM.overseasIncomePensionSchemes(index).specialWithholdingTaxQuestion.exists(x =>
+          if (x) ifopVM.overseasIncomePensionSchemes(index).specialWithholdingTaxAmount.isDefined else true)
       },
 
-      9 -> { incomeFromOverseasPensionsViewModel: IncomeFromOverseasPensionsViewModel => incomeFromOverseasPensionsViewModel.overseasIncomePensionSchemes.nonEmpty },
+      6 -> { ifopVM: IncomeFromOverseasPensionsViewModel =>
+        if (schemesEmpty) false else ifopVM.overseasIncomePensionSchemes(index).foreignTaxCreditReliefQuestion.isDefined
+      },
+      7 -> { ifopVM: IncomeFromOverseasPensionsViewModel =>
+        if (schemesEmpty) false else ifopVM.overseasIncomePensionSchemes(index).isFinished
+      },
+      8 -> { ifopVM: IncomeFromOverseasPensionsViewModel =>
+        if (schemesEmpty) true else ifopVM.overseasIncomePensionSchemes.forall(_.isFinished)
+      },
 
-      10 -> { incomeFromOverseasPensionsViewModel: IncomeFromOverseasPensionsViewModel =>
-        if (isPageValidInJourney(2, incomeFromOverseasPensionsViewModel)) {
-          incomeFromOverseasPensionsViewModel.isFinished
-        } else {
-          !incomeFromOverseasPensionsViewModel.paymentsFromOverseasPensionsQuestion.getOrElse(true)
-        }
+      9 -> { ifopVM: IncomeFromOverseasPensionsViewModel =>
+        if (schemesEmpty) false else ifopVM.overseasIncomePensionSchemes(index).isFinished
+      },
+
+      10 -> { ifopVM: IncomeFromOverseasPensionsViewModel =>
+        if (isPageValidInJourney(2, ifopVM)) ifopVM.isFinished
+        else !ifopVM.paymentsFromOverseasPensionsQuestion.getOrElse(true)
       }
     )
 
-    if (pageNumber.equals(2)) incomeFromOverseasPensionsViewModel.paymentsFromOverseasPensionsQuestion.getOrElse(false)
-    else if (incomeFromOverseasPensionsViewModel.overseasIncomePensionSchemes.isEmpty)
-      !incomeFromOverseasPensionsViewModel.paymentsFromOverseasPensionsQuestion.getOrElse(true)
-    else
-      prevQuestionIsAnsweredMap(pageNumber)(incomeFromOverseasPensionsViewModel)
+    prevQuestionIsAnsweredMap(pageNumber)(ifopVM)
   }
 
   private def validateIndex(index: Option[Int], pensionSchemesList: Seq[PensionScheme]): Option[Int] = {

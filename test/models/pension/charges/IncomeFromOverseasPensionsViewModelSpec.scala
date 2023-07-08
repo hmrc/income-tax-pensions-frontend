@@ -28,7 +28,7 @@ class IncomeFromOverseasPensionsViewModelSpec extends UnitTest {
         anIncomeFromOverseasPensionsViewModel.isFinished
       }
       "all required questions are answered" in {
-        anIncomeFromOverseasPensionsEmptyViewModel.copy(paymentsFromOverseasPensionsQuestion = Some(false)).isFinished
+        anIncomeFromOverseasPensionsEmptyViewModel.copy(paymentsFromOverseasPensionsQuestion = Some(false)).isFinished shouldBe true
         anIncomeFromOverseasPensionsViewModel.copy(overseasIncomePensionSchemes = Seq(
           PensionScheme(
             alphaThreeCode = None,
@@ -40,13 +40,13 @@ class IncomeFromOverseasPensionsViewModelSpec extends UnitTest {
             foreignTaxCreditReliefQuestion = Some(false),
             taxableAmount = None
           )
-        )).isFinished
+        )).isFinished shouldBe true
       }
     }
 
     "return false" when {
       "not all necessary questions have been populated" in {
-        anIncomeFromOverseasPensionsEmptyViewModel.copy(paymentsFromOverseasPensionsQuestion = Some(true)).isFinished
+        anIncomeFromOverseasPensionsEmptyViewModel.copy(paymentsFromOverseasPensionsQuestion = Some(true)).isFinished shouldBe false
         anIncomeFromOverseasPensionsViewModel.copy(overseasIncomePensionSchemes = Seq(
           PensionScheme(
             alphaThreeCode = None,
@@ -58,7 +58,7 @@ class IncomeFromOverseasPensionsViewModelSpec extends UnitTest {
             foreignTaxCreditReliefQuestion = Some(true),
             taxableAmount = None
           )
-        )).isFinished
+        )).isFinished shouldBe false
       }
     }
   }
@@ -68,9 +68,9 @@ class IncomeFromOverseasPensionsViewModelSpec extends UnitTest {
       anIncomeFromOverseasPensionsEmptyViewModel.isEmpty
     }
     "return false when any of the ViewModel's arguments are filled" in {
-      !anIncomeFromOverseasPensionsViewModel.isEmpty
-      !anIncomeFromOverseasPensionsViewModel.copy(paymentsFromOverseasPensionsQuestion = None).isEmpty
-      !anIncomeFromOverseasPensionsEmptyViewModel.copy(paymentsFromOverseasPensionsQuestion = Some(false)).isEmpty
+      anIncomeFromOverseasPensionsViewModel.isEmpty shouldBe false
+      anIncomeFromOverseasPensionsViewModel.copy(paymentsFromOverseasPensionsQuestion = None).isEmpty shouldBe false
+      anIncomeFromOverseasPensionsEmptyViewModel.copy(paymentsFromOverseasPensionsQuestion = Some(false)).isEmpty shouldBe false
     }
   }
 
@@ -79,9 +79,9 @@ class IncomeFromOverseasPensionsViewModelSpec extends UnitTest {
       anIncomeFromOverseasPensionsEmptyViewModel.copy(paymentsFromOverseasPensionsQuestion = Some(false)).journeyIsNo
     }
     "return false in any other case" in {
-      anIncomeFromOverseasPensionsEmptyViewModel.journeyIsNo
-      anIncomeFromOverseasPensionsEmptyViewModel.copy(paymentsFromOverseasPensionsQuestion = Some(true)).journeyIsNo
-      anIncomeFromOverseasPensionsViewModel.copy(paymentsFromOverseasPensionsQuestion = Some(false)).journeyIsNo
+      anIncomeFromOverseasPensionsEmptyViewModel.journeyIsNo shouldBe false
+      anIncomeFromOverseasPensionsEmptyViewModel.copy(paymentsFromOverseasPensionsQuestion = Some(true)).journeyIsNo shouldBe false
+      anIncomeFromOverseasPensionsViewModel.copy(paymentsFromOverseasPensionsQuestion = Some(false)).journeyIsNo shouldBe false
     }
   }
 
@@ -90,9 +90,9 @@ class IncomeFromOverseasPensionsViewModelSpec extends UnitTest {
       anIncomeFromOverseasPensionsEmptyViewModel.journeyIsUnanswered
     }
     "return false when any of the ViewModel's arguments are filled" in {
-      !anIncomeFromOverseasPensionsViewModel.journeyIsUnanswered
-      !anIncomeFromOverseasPensionsViewModel.copy(paymentsFromOverseasPensionsQuestion = None).journeyIsUnanswered
-      !anIncomeFromOverseasPensionsEmptyViewModel.copy(paymentsFromOverseasPensionsQuestion = Some(false)).journeyIsUnanswered
+      anIncomeFromOverseasPensionsViewModel.journeyIsUnanswered shouldBe false
+      anIncomeFromOverseasPensionsViewModel.copy(paymentsFromOverseasPensionsQuestion = None).journeyIsUnanswered shouldBe false
+      anIncomeFromOverseasPensionsEmptyViewModel.copy(paymentsFromOverseasPensionsQuestion = Some(false)).journeyIsUnanswered shouldBe false
     }
   }
 
@@ -101,9 +101,9 @@ class IncomeFromOverseasPensionsViewModelSpec extends UnitTest {
       anIncomeFromOverseasPensionsViewModel.hasPriorData
     }
     "return false when payments question is 'false' and/or no schemes exist" in {
-      anIncomeFromOverseasPensionsEmptyViewModel.hasPriorData
-      anIncomeFromOverseasPensionsEmptyViewModel.copy(paymentsFromOverseasPensionsQuestion = Some(false)).hasPriorData
-      anIncomeFromOverseasPensionsViewModel.copy(overseasIncomePensionSchemes = Seq.empty).hasPriorData
+      anIncomeFromOverseasPensionsEmptyViewModel.hasPriorData shouldBe false
+      anIncomeFromOverseasPensionsEmptyViewModel.copy(paymentsFromOverseasPensionsQuestion = Some(false)).hasPriorData shouldBe false
+      anIncomeFromOverseasPensionsViewModel.copy(overseasIncomePensionSchemes = Seq.empty).hasPriorData shouldBe false
     }
   }
 

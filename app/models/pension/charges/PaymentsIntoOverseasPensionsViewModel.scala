@@ -49,6 +49,23 @@ case class Relief(
                    sf74Reference: Option[String] = None
                  ) {
 
+  def isFinished: Boolean = {
+    customerReference.isDefined &&
+      employerPaymentsAmount.isDefined &&
+      reliefType.exists { reliefType =>
+        reliefType match {
+          case TaxReliefQuestion.MigrantMemberRelief => qopsReference.isDefined
+          case TaxReliefQuestion.DoubleTaxationRelief =>
+            alphaTwoCountryCode.isDefined &&
+              alphaThreeCountryCode.isDefined &&
+              doubleTaxationReliefAmount.isDefined
+          case TaxReliefQuestion.TransitionalCorrespondingRelief => sf74Reference.isDefined
+          case TaxReliefQuestion.NoTaxRelief => true
+          case _ => false
+        }
+      }
+  }
+
   def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedRelief =
     EncryptedRelief(
       customerReference = customerReference.map(_.encrypted),
@@ -111,11 +128,12 @@ case class PaymentsIntoOverseasPensionsViewModel(paymentsIntoOverseasPensionsQue
     employerPaymentsQuestion.isEmpty && taxPaidOnEmployerPaymentsQuestion.isEmpty && reliefs.isEmpty
 
   def isFinished: Boolean = {
-    paymentsIntoOverseasPensionsQuestions.filter(x => x)
-      .map(_ => paymentsIntoOverseasPensionsAmount.isDefined)
-      .flatMap(_ => employerPaymentsQuestion.filter(x => x))
-      .flatMap(_ => taxPaidOnEmployerPaymentsQuestion.filter(x => !x))
-      .exists(_ => reliefs.map(reliefIsCompleted).forall(x => x))
+    paymentsIntoOverseasPensionsQuestions.exists(x =>
+      if (!x) true else paymentsIntoOverseasPensionsAmount.isDefined &&
+      employerPaymentsQuestion.exists(x =>
+        if (!x) true else taxPaidOnEmployerPaymentsQuestion.exists(x =>
+          if (x) true else reliefs.nonEmpty && reliefs.forall(_.isFinished)
+        )))
   }
 
   def journeyIsNo: Boolean =
@@ -126,23 +144,6 @@ case class PaymentsIntoOverseasPensionsViewModel(paymentsIntoOverseasPensionsQue
       && reliefs.isEmpty)
 
   def journeyIsUnanswered: Boolean = this.productIterator.forall(_ == None)
-
-  private def reliefIsCompleted(relief: Relief): Boolean = {
-    relief.customerReference.isDefined &&
-      relief.employerPaymentsAmount.isDefined &&
-      relief.reliefType.exists { reliefType =>
-        reliefType match {
-          case TaxReliefQuestion.MigrantMemberRelief => relief.qopsReference.isDefined
-          case TaxReliefQuestion.DoubleTaxationRelief =>
-            relief.alphaTwoCountryCode.isDefined &&
-              relief.alphaThreeCountryCode.isDefined &&
-              relief.doubleTaxationReliefAmount.isDefined
-          case TaxReliefQuestion.TransitionalCorrespondingRelief => relief.sf74Reference.isDefined
-          case TaxReliefQuestion.NoTaxRelief => true
-          case _ => false
-        }
-      }
-  }
 
   def toPensionContributions: Seq[OverseasPensionContribution] = {
     reliefs.map {

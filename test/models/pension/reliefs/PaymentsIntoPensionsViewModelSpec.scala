@@ -26,8 +26,8 @@ class PaymentsIntoPensionsViewModelSpec extends UnitTest {
       aPaymentsIntoPensionsEmptyViewModel.isEmpty
     }
     "return false when any questions have been answered" in {
-      aPaymentsIntoPensionsEmptyViewModel.copy(rasPensionPaymentQuestion = Some(true)).isEmpty
-      aPaymentsIntoPensionViewModel.isEmpty
+      aPaymentsIntoPensionsEmptyViewModel.copy(rasPensionPaymentQuestion = Some(true)).isEmpty shouldBe false
+      aPaymentsIntoPensionViewModel.isEmpty shouldBe false
     }
   }
 
@@ -48,7 +48,7 @@ class PaymentsIntoPensionsViewModelSpec extends UnitTest {
 
     "return false" when {
       "not all necessary questions have been populated" in {
-        aPaymentsIntoPensionViewModel.copy(totalWorkplacePensionPayments = None).isFinished
+        !aPaymentsIntoPensionViewModel.copy(totalWorkplacePensionPayments = None).isFinished
       }
     }
   }
@@ -58,9 +58,9 @@ class PaymentsIntoPensionsViewModelSpec extends UnitTest {
       aPaymentsIntoPensionsEmptyViewModel.copy(rasPensionPaymentQuestion = Some(false)).journeyIsNo
     }
     "return false in any other case" in {
-      aPaymentsIntoPensionsEmptyViewModel.journeyIsNo
-      aPaymentsIntoPensionsEmptyViewModel.copy(rasPensionPaymentQuestion = Some(true)).journeyIsNo
-      aPaymentsIntoPensionViewModel.copy(rasPensionPaymentQuestion = Some(false)).journeyIsNo
+      aPaymentsIntoPensionsEmptyViewModel.journeyIsNo shouldBe false
+      aPaymentsIntoPensionsEmptyViewModel.copy(rasPensionPaymentQuestion = Some(true)).journeyIsNo shouldBe false
+      aPaymentsIntoPensionViewModel.copy(rasPensionPaymentQuestion = Some(false)).journeyIsNo shouldBe false
     }
   }
 }

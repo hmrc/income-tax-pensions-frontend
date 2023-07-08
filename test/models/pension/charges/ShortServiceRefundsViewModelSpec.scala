@@ -16,6 +16,7 @@
 
 package models.pension.charges
 
+import builders.OverseasRefundPensionSchemeBuilder.{anOverseasRefundPensionSchemeWithUkRefundCharge, anOverseasRefundPensionSchemeWithoutUkRefundCharge}
 import builders.ShortServiceRefundsViewModelBuilder.{aShortServiceRefundsViewModel, emptyShortServiceRefundsViewModel}
 import support.UnitTest
 
@@ -26,8 +27,8 @@ class ShortServiceRefundsViewModelSpec extends UnitTest {
       emptyShortServiceRefundsViewModel.isEmpty
     }
     "return false when any questions have been answered" in {
-      emptyShortServiceRefundsViewModel.copy(shortServiceRefund = Some(true)).isEmpty
-      aShortServiceRefundsViewModel.isEmpty
+      emptyShortServiceRefundsViewModel.copy(shortServiceRefund = Some(true)).isEmpty shouldBe false
+      aShortServiceRefundsViewModel.isEmpty shouldBe false
     }
   }
 
@@ -37,33 +38,58 @@ class ShortServiceRefundsViewModelSpec extends UnitTest {
         aShortServiceRefundsViewModel.isFinished
       }
       "all required questions are answered" in {
-        emptyShortServiceRefundsViewModel.copy(shortServiceRefund = Some(false)).isFinished
+        emptyShortServiceRefundsViewModel.copy(shortServiceRefund = Some(false)).isFinished shouldBe true
         emptyShortServiceRefundsViewModel.copy(
           shortServiceRefund = Some(true),
           shortServiceRefundCharge = Some(25),
-          shortServiceRefundTaxPaid = Some(false)
-        ).isFinished
+          shortServiceRefundTaxPaid = Some(false),
+          refundPensionScheme = Seq(anOverseasRefundPensionSchemeWithUkRefundCharge, anOverseasRefundPensionSchemeWithoutUkRefundCharge)
+        ).isFinished shouldBe true
       }
     }
 
     "return false" when {
       "not all necessary questions have been populated" in {
-        aShortServiceRefundsViewModel.copy(shortServiceRefundTaxPaidCharge = None).isFinished
+        aShortServiceRefundsViewModel.copy(shortServiceRefundTaxPaidCharge = None).isFinished shouldBe false
         emptyShortServiceRefundsViewModel.copy(
           shortServiceRefund = Some(true), shortServiceRefundTaxPaid = Some(false)
-        ).isFinished
+        ).isFinished shouldBe false
+        emptyShortServiceRefundsViewModel.copy(
+          shortServiceRefund = Some(true),
+          shortServiceRefundCharge = Some(25),
+          shortServiceRefundTaxPaid = Some(false),
+          refundPensionScheme = Seq(
+            OverseasRefundPensionScheme(
+              ukRefundCharge = Some(false),
+              name = Some("Overseas Refund Scheme Name"),
+              pensionSchemeTaxReference = None,
+              qualifyingRecognisedOverseasPensionScheme = Some("QOPS123456"),
+              providerAddress = Some("Scheme Address"),
+              alphaTwoCountryCode = Some("FR"),
+              alphaThreeCountryCode = Some("FRA")
+            ),
+            OverseasRefundPensionScheme(
+              ukRefundCharge = Some(false),
+              name = Some("Overseas Refund Scheme Name"),
+              pensionSchemeTaxReference = Some("12345678RA"),
+              qualifyingRecognisedOverseasPensionScheme = None,
+              providerAddress = Some("Scheme Address"),
+              alphaTwoCountryCode = None,
+              alphaThreeCountryCode = None
+            )
+          )
+        ).isFinished shouldBe false
       }
     }
   }
 
   ".journeyIsNo" should {
-    "return true when shortServiceRefund is 'false' and no others have been answered" in {
+    "return true when shortServiceRefund is 'false'" in {
       emptyShortServiceRefundsViewModel.copy(shortServiceRefund = Some(false)).journeyIsNo
     }
-    "return false in any other case" in {
-      emptyShortServiceRefundsViewModel.journeyIsNo
-      emptyShortServiceRefundsViewModel.copy(shortServiceRefund = Some(true)).journeyIsNo
-      aShortServiceRefundsViewModel.copy(shortServiceRefund = Some(false)).journeyIsNo
+    "return false if shortServiceRefund is not 'false'" in {
+      emptyShortServiceRefundsViewModel.journeyIsNo shouldBe false
+      emptyShortServiceRefundsViewModel.copy(shortServiceRefund = Some(true)).journeyIsNo shouldBe false
     }
   }
 
@@ -71,10 +97,17 @@ class ShortServiceRefundsViewModelSpec extends UnitTest {
     "transform a ShortServiceRefundsViewModel into a OverseasPensionContributions" in {
       val result = OverseasPensionContributions(overseasSchemeProvider = Seq(
         OverseasSchemeProvider(
-          providerName = "Overseas Refund Scheme Name",
-          providerAddress = "Scheme Address",
+          providerName = "Scheme Name with UK charge",
+          providerAddress = "Scheme Address 1",
+          providerCountryCode = "",
+          qualifyingRecognisedOverseasPensionScheme = None,
+          pensionSchemeTaxReference = Some(Seq("12345678RA"))
+        ),
+        OverseasSchemeProvider(
+          providerName = "Scheme Name without UK charge",
+          providerAddress = "Scheme Address 2",
           providerCountryCode = "FRA",
-          qualifyingRecognisedOverseasPensionScheme = Some(Seq("QOPS123456")),
+          qualifyingRecognisedOverseasPensionScheme = Some(List("QOPS123456")),
           pensionSchemeTaxReference = None
         )),
         shortServiceRefund = 1999.99,
