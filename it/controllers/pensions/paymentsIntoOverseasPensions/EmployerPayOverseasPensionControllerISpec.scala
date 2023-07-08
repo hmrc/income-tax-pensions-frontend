@@ -214,7 +214,7 @@ class EmployerPayOverseasPensionControllerISpec extends CommonUtils with BeforeA
 
       "has an SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(overseasPensionsSummaryUrl(taxYearEOY))
+        result.header("location") shouldBe Some(paymentsIntoOverseasPensionsCyaUrl(taxYearEOY))
       }
     }
   }
@@ -261,7 +261,7 @@ class EmployerPayOverseasPensionControllerISpec extends CommonUtils with BeforeA
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(taxEmployerPaymentsUrl(taxYearEOY))
+        result.header("location") shouldBe Some(paymentsIntoOverseasPensionsCyaUrl(taxYearEOY))
       }
 
       "updates employerPaymentsQuestion to Some(true)" in {
@@ -279,7 +279,7 @@ class EmployerPayOverseasPensionControllerISpec extends CommonUtils with BeforeA
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(taxEmployerPaymentsUrl(taxYearEOY))
+        result.header("location") shouldBe Some(paymentsIntoOverseasPensionsCyaUrl(taxYearEOY))
       }
 
       "updates employerPaymentsQuestion to Some(true)" in {

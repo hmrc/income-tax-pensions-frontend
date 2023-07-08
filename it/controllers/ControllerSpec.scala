@@ -93,6 +93,7 @@ class ControllerSpec(val pathForThisPage: String) extends PlaySpec
     val piopCustomerReferencePage: String = relativeUrl("/overseas-pensions/payments-into-overseas-pensions/pensions-customer-reference-number")
     val piopSchemeSummaryPage: String = relativeUrl("/overseas-pensions/payments-into-overseas-pensions/untaxed-schemes-summary")
     val piopPensionsReliefTypePage: String = relativeUrl("/overseas-pensions/payments-into-overseas-pensions/pensions-overseas-emp-relief-status")
+    val piopCheckPiopPage: String = relativeUrl("/overseas-pensions/payments-into-overseas-pensions/check-overseas-pension-details")
 
 
     val incomeFromOverseasPensionsStatus: String = relativeUrl("/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-status")

@@ -19,10 +19,12 @@ package controllers.pensions.paymentsIntoOverseasPensions
 import builders.AllPensionsDataBuilder.anAllPensionsData
 import builders.IncomeTaxUserDataBuilder.anIncomeTaxUserData
 import builders.PaymentsIntoOverseasPensionsViewModelBuilder.aPaymentsIntoOverseasPensionsViewModel
-import builders.PensionsCYAModelBuilder.aPensionsCYAModel
+import builders.PensionsCYAModelBuilder.{aPensionsCYAModel, paymentsIntoPensionOnlyCYAModel}
 import builders.PensionsUserDataBuilder
-import builders.PensionsUserDataBuilder.pensionUserDataWithOnlyOverseasPensions
+import builders.PensionsUserDataBuilder.{pensionUserDataWithOnlyOverseasPensions, pensionUserDataWithOverseasPensions}
 import models.mongo.{PensionsCYAModel, PensionsUserData}
+import models.pension.charges.Relief
+import models.pension.charges.TaxReliefQuestion.{DoubleTaxationRelief, TransitionalCorrespondingRelief}
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
@@ -67,7 +69,16 @@ class DoubleTaxationAgreementControllerISpec extends
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual()
-        insertCyaData(pensionsUsersData(aPensionsCYAModel))
+        val relief = Relief(
+          reliefType = Some(DoubleTaxationRelief),
+          customerReference = Some("PENSIONINCOME245"),
+          employerPaymentsAmount = Some(1999.99)
+        )
+
+        val pensionsViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(reliefs = Seq(relief))
+        val pensionsUserData = pensionUserDataWithOverseasPensions(pensionsViewModel)
+
+        insertCyaData(pensionsUserData)
         userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYearEOY)
         urlGet(fullUrl(doubleTaxAgrtUrl(taxYearEOY)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
@@ -127,7 +138,7 @@ class DoubleTaxationAgreementControllerISpec extends
   "submit " should {
     val schemeIndex0 = 0
     
-    "redirect to the next page " in {
+    "redirect to the summary page " in {
       implicit val doubleTaxAgrtUrl : Int => String = doubleTaxationAgreementUrl(schemeIndex0)
       val form: Map[String, String] = setFormData("AB3211-10", "Test Treaty", "100",Some("FR"))
       lazy val result: WSResponse = {
@@ -138,7 +149,7 @@ class DoubleTaxationAgreementControllerISpec extends
           follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
       result.status shouldBe SEE_OTHER
-      result.header("location") shouldBe Some(pensionReliefSchemeDetailsUrl(taxYearEOY, schemeIndex0))
+      result.header("location") shouldBe Some(pensionReliefSchemeSummaryUrl(taxYearEOY))
     }
 
     "redirect when wrong tax year is used in the url " in {
@@ -157,9 +168,20 @@ class DoubleTaxationAgreementControllerISpec extends
     "throw bad request when user does not complete mandatory fields " in {
       implicit val doubleTaxAgrtUrl : Int => String = doubleTaxationAgreementUrl(schemeIndex0)
       val form: Map[String, String] = setFormData("", "", "", None)
+
       lazy val result: WSResponse = {
-        dropPensionsDB()
-        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel)))
+
+
+        val relief = Relief(
+          reliefType = Some(DoubleTaxationRelief),
+          customerReference = Some("PENSIONINCOME245"),
+          employerPaymentsAmount = Some(1999.99)
+        )
+
+        val pensionsViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(reliefs = Seq(relief))
+        val pensionsUserData = pensionUserDataWithOverseasPensions(pensionsViewModel)
+
+        insertCyaData(pensionsUserData)
         authoriseAgentOrIndividual()
         urlPost(fullUrl(doubleTaxAgrtUrl(taxYearEOY)), body = form,
           follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))

@@ -22,7 +22,7 @@ import builders.PensionsUserDataBuilder.{aPensionsUserData, pensionUserDataWithO
 import builders.UserBuilder.aUserRequest
 import forms.QOPSReferenceNumberForm
 import models.pension.charges.Relief
-import models.pension.charges.TaxReliefQuestion.{MigrantMemberRelief, TransitionalCorrespondingRelief}
+import models.pension.charges.TaxReliefQuestion.{MigrantMemberRelief}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterEach
@@ -112,7 +112,7 @@ class QOPSReferenceControllerISpec extends CommonUtils with BeforeAndAfterEach w
 
         "render the 'QOPS' page with correct content and no pre-filling" which {
           val relief: Relief = Relief(
-            reliefType = Some(TransitionalCorrespondingRelief),
+            reliefType = Some(MigrantMemberRelief),
             customerReference = Some("PENSIONINCOME245"),
             employerPaymentsAmount = Some(1999.99),
             qopsReference = None)
@@ -144,7 +144,7 @@ class QOPSReferenceControllerISpec extends CommonUtils with BeforeAndAfterEach w
           val qopsRef = "123456"
 
           val relief = Relief(
-            reliefType = Some(TransitionalCorrespondingRelief),
+            reliefType = Some(MigrantMemberRelief),
             customerReference = Some("PENSIONINCOME245"),
             employerPaymentsAmount = Some(1999.99),
             qopsReference = Some(qopsRef),
@@ -179,7 +179,7 @@ class QOPSReferenceControllerISpec extends CommonUtils with BeforeAndAfterEach w
           val expectedQopsRef = "123456"
 
           val relief = Relief(
-            reliefType = Some(TransitionalCorrespondingRelief),
+            reliefType = Some(MigrantMemberRelief),
             customerReference = Some("PENSIONINCOME245"),
             employerPaymentsAmount = Some(1999.99),
             qopsReference = Some(qopsRef),
@@ -213,7 +213,7 @@ class QOPSReferenceControllerISpec extends CommonUtils with BeforeAndAfterEach w
           val expectedQopsRef = "123456"
 
           val relief = Relief(
-            reliefType = Some(TransitionalCorrespondingRelief),
+            reliefType = Some(MigrantMemberRelief),
             customerReference = Some("PENSIONINCOME245"),
             employerPaymentsAmount = Some(1999.99),
             qopsReference = Some(qopsRef),
@@ -269,7 +269,7 @@ class QOPSReferenceControllerISpec extends CommonUtils with BeforeAndAfterEach w
           val qopsRef = "123456"
 
           val relief = Relief(
-            reliefType = Some(TransitionalCorrespondingRelief),
+            reliefType = Some(MigrantMemberRelief),
             customerReference = Some("PENSIONINCOME245"),
             employerPaymentsAmount = Some(1999.99),
             qopsReference = Some(qopsRef),
@@ -294,10 +294,21 @@ class QOPSReferenceControllerISpec extends CommonUtils with BeforeAndAfterEach w
     userScenarios.foreach { user =>
       s"language is ${welshTest(user.isWelsh)} and request is from an ${agentTest(user.isAgent)}" should {
 
+        val relief = Relief(
+          reliefType = Some(MigrantMemberRelief),
+          customerReference = Some("PENSIONINCOME245"),
+          employerPaymentsAmount = Some(1999.99),
+          qopsReference = None,
+        )
+
+        val pensionsViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(reliefs = Seq(relief))
+        val pensionsUserData = pensionUserDataWithOverseasPensions(pensionsViewModel)
+
+
         s"return $BAD_REQUEST error when incorrect format is submitted" which {
           lazy val form: Map[String, String] = Map(QOPSReferenceNumberForm.qopsReferenceId -> "1234567")
           implicit val url: Int => String = (taxYear: Int) => qopsReferenceUrl(taxYear)
-          lazy val result: WSResponse = submitPage(user, aPensionsUserData, form)
+          lazy val result: WSResponse = submitPage(user, pensionsUserData, form)
 
 
           "has the correct status" in {

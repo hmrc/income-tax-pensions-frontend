@@ -76,7 +76,7 @@ class UntaxedEmployerPaymentsControllerISpec extends ControllerSpec("/overseas-p
           .copy(reliefs = sessionData.pensions.paymentsIntoOverseasPensions.reliefs.updated(0, expectedRelief))
 
         getPaymentsIntoOverseasPensionsViewModel.get.reliefs mustBe expectedViewModel.reliefs
-        assertRedirectionAsExpected(PageRelativeURLs.piopPensionsReliefTypePage ++ s"?reliefIndex=$schemeIndex0")
+        assertRedirectionAsExpected(PageRelativeURLs.piopCheckPiopPage)
       }
 
       "redirects to the customer reference page when the index is out of bounds and there are No pensions schemes" in {
