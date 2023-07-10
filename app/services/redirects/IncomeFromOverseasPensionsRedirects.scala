@@ -56,10 +56,11 @@ object IncomeFromOverseasPensionsRedirects {
   }
 
   def redirectForSchemeLoop(schemes: Seq[PensionScheme], taxYear: Int): Call = {
+    val filteredSchemes = schemes.filter(scheme => scheme.isFinished)
     checkForExistingSchemes(
       nextPage = PensionOverseasIncomeCountryController.show(taxYear, None),
       summaryPage = CountrySummaryListController.show(taxYear),
-      schemes = schemes
+      schemes = filteredSchemes
     )
   }
 
@@ -90,8 +91,8 @@ object IncomeFromOverseasPensionsRedirects {
   }
 
   private def previousQuestionIsAnswered(pageNumber: Int, optIndex: Option[Int], ifopVM: IncomeFromOverseasPensionsViewModel): Boolean = {
-    val index = optIndex.getOrElse(0)
     val schemesEmpty = ifopVM.overseasIncomePensionSchemes.isEmpty
+    val index = optIndex.getOrElse(if (schemesEmpty) 0 else ifopVM.overseasIncomePensionSchemes.size -1)
 
     val prevQuestionIsAnsweredMap: Map[Int, IncomeFromOverseasPensionsViewModel => Boolean] = Map(
       1 -> { _: IncomeFromOverseasPensionsViewModel => true },
