@@ -36,17 +36,13 @@ case class ShortServiceRefundsViewModel(shortServiceRefund: Option[Boolean] = No
     shortServiceRefundTaxPaid.isEmpty && shortServiceRefundTaxPaidCharge.isEmpty && refundPensionScheme.isEmpty
 
   def isFinished: Boolean = {
-    println("------- checking")
-    val boo = shortServiceRefund.exists(x =>
+    shortServiceRefund.exists(x =>
       if (x)
         shortServiceRefundCharge.isDefined &&
           shortServiceRefundTaxPaid.exists(x => if (x) shortServiceRefundTaxPaidCharge.isDefined else true) &&
           refundPensionScheme.nonEmpty && refundPensionScheme.forall(rps => rps.isFinished)
       else true
     )
-
-    println("------- " + boo)
-    boo
   }
 
   def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedShortServiceRefundsViewModel =

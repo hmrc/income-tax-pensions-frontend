@@ -107,7 +107,7 @@ class ShortServiceRefundsViewModelSpec extends UnitTest {
           providerName = "Scheme Name without UK charge",
           providerAddress = "Scheme Address 2",
           providerCountryCode = "FRA",
-          qualifyingRecognisedOverseasPensionScheme = Some(List("QOPS123456")),
+          qualifyingRecognisedOverseasPensionScheme = Some(List("123456")),
           pensionSchemeTaxReference = None
         )),
         shortServiceRefund = 1999.99,

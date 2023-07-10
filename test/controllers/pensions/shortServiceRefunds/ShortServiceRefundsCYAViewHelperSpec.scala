@@ -52,7 +52,7 @@ class ShortServiceRefundsCYAViewHelperSpec extends AnyWordSpec with Matchers {
         assertRowForRefundBoolean(summaryListRows.head, "Yes")
         assertRowForRefundAmount(summaryListRows(1), "£1,999.99")
         assertRowForNonUKBoolean(summaryListRows(2), "No tax paid")
-        assertRowForSchemes(summaryListRows(3), "Overseas Refund Scheme Name")
+        assertRowForSchemes(summaryListRows(3), "Scheme Name with UK charge, Scheme Name without UK charge")
       }
 
       "we have completed all sections" in {
@@ -63,7 +63,7 @@ class ShortServiceRefundsCYAViewHelperSpec extends AnyWordSpec with Matchers {
         assertRowForRefundAmount(summaryListRows(1), "£1,999.99")
         assertRowForNonUKBoolean(summaryListRows(2), "Yes")
         assertRowForNonUKAmount(summaryListRows(3), "£1,000")
-        assertRowForSchemes(summaryListRows(4), "Overseas Refund Scheme Name")
+        assertRowForSchemes(summaryListRows(4), "Scheme Name with UK charge, Scheme Name without UK charge")
       }
     }
   }
@@ -96,7 +96,6 @@ class ShortServiceRefundsCYAViewHelperSpec extends AnyWordSpec with Matchers {
       "Change paid non-UK tax"))
   }
 
-
   private def assertRowForNonUKAmount(summaryListRow: SummaryListRow, expectedValue: String): Unit = {
     assertSummaryListRow(summaryListRow, ExpectedSummaryRowContents(
       "Amount of non-UK tax",
@@ -114,7 +113,6 @@ class ShortServiceRefundsCYAViewHelperSpec extends AnyWordSpec with Matchers {
       "/2022/overseas-pensions/short-service-refunds/short-service-refund-summary",
       "Change pension schemes paying tax"))
   }
-
 
   private def assertSummaryListRow(summaryListRow: SummaryListRow, expectedSummaryRowContents: ExpectedSummaryRowContents): Unit = {
     assertLabel(summaryListRow, expectedSummaryRowContents.label)
