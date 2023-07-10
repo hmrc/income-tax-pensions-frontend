@@ -16,10 +16,11 @@
 
 package controllers.pensions.paymentsIntoOverseasPensions
 
+import builders.PaymentsIntoOverseasPensionsViewModelBuilder.aPaymentsIntoOverseasPensionsViewModel
 import builders.PensionsCYAModelBuilder.aPensionsCYAModel
+import builders.ReliefBuilder.{aDoubleTaxationRelief, aMigrantMemberRelief, aNoTaxRelief}
 import controllers.ControllerSpec
 import controllers.ControllerSpec.UserConfig
-import models.pension.charges.Relief
 import play.api.libs.ws.WSResponse
 
 class RemoveReliefSchemeISpec extends ControllerSpec("/overseas-pensions/payments-into-overseas-pensions/remove-schemes") {
@@ -39,7 +40,7 @@ class RemoveReliefSchemeISpec extends ControllerSpec("/overseas-pensions/payment
         "the user accesses page with index out of bounds" in {
           val sessionData = pensionsUserData(aPensionsCYAModel)
           implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
-          implicit val response: WSResponse = getPageWithIndex(2)
+          implicit val response: WSResponse = getPageWithIndex(8)
           assertRedirectionAsExpected(PageRelativeURLs.reliefsSchemeDetails)
         }
       }
@@ -55,16 +56,7 @@ class RemoveReliefSchemeISpec extends ControllerSpec("/overseas-pensions/payment
           implicit val response: WSResponse = submitForm(Map("" -> ""), Map("index" -> "0"))
 
           assertRedirectionAsExpected(PageRelativeURLs.reliefsSchemeSummary)
-          val expectedViewModel = sessionData.pensions.paymentsIntoOverseasPensions.copy(
-            reliefs = Seq(Relief(
-              Some("PENSIONINCOME356"),
-              Some(100.0),
-              Some("Migrant member relief"),
-              None, None, None, None, None,
-              Some("123456"),
-              None)
-            )
-          )
+          val expectedViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(reliefs = Seq(aMigrantMemberRelief, aDoubleTaxationRelief, aNoTaxRelief))
           getPaymentsIntoOverseasPensionsViewModel mustBe Some(expectedViewModel)
 
         }
