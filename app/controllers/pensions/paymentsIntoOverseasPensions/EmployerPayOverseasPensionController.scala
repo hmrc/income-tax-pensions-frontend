@@ -18,7 +18,6 @@ package controllers.pensions.paymentsIntoOverseasPensions
 
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.paymentsIntoOverseasPensions.routes.{PaymentsIntoOverseasPensionsCYAController, TaxEmployerPaymentsController}
-import controllers.pensions.routes.OverseasPensionsSummaryController
 import controllers.predicates.AuthorisedAction
 import forms.YesNoForm
 import models.User
@@ -27,7 +26,7 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
-import services.redirects.PaymentsIntoOverseasPensionsPages.{EmployerPayOverseasPensionPage, UntaxedEmployerPaymentsPage}
+import services.redirects.PaymentsIntoOverseasPensionsPages.EmployerPayOverseasPensionPage
 import services.redirects.PaymentsIntoOverseasPensionsRedirects.{cyaPageCall, journeyCheck}
 import services.redirects.SimpleRedirectService.{isFinishedCheck, redirectBasedOnCurrentAnswers}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -77,11 +76,9 @@ class EmployerPayOverseasPensionController @Inject()(authAction: AuthorisedActio
                 paymentsIntoOverseasPensions = data.pensions.paymentsIntoOverseasPensions.copy(
                   employerPaymentsQuestion = Some(yesNo)))
 
-              val redirectLocation = if (yesNo) {
-                controllers.pensions.paymentsIntoOverseasPensions.routes.TaxEmployerPaymentsController.show(taxYear)
-              } else {
-                controllers.pensions.paymentsIntoOverseasPensions.routes.PaymentsIntoOverseasPensionsCYAController.show(taxYear)
-              }
+              val redirectLocation =
+                if (yesNo) TaxEmployerPaymentsController.show(taxYear)
+                else PaymentsIntoOverseasPensionsCYAController.show(taxYear)
 
               pensionSessionService.createOrUpdateSessionData(request.user,
                 updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {

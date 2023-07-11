@@ -19,7 +19,6 @@ package controllers.pensions.paymentsIntoOverseasPensions
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.paymentsIntoOverseasPensions.routes.ReliefsSchemeDetailsController
 import controllers.predicates.ActionsProvider
-import controllers.validatedIndex
 import forms.FormsProvider
 import models.mongo.PensionsUserData
 import models.pension.charges.Relief
@@ -28,7 +27,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.PensionSessionService
 import services.redirects.PaymentsIntoOverseasPensionsPages.SF74ReferencePage
-import services.redirects.PaymentsIntoOverseasPensionsRedirects.{indexCheckThenJourneyCheck, redirectForSchemeLoop}
+import services.redirects.PaymentsIntoOverseasPensionsRedirects.indexCheckThenJourneyCheck
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.paymentsIntoOverseasPensions.SF74ReferenceView
@@ -37,13 +36,12 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
 @Singleton
-class SF74ReferenceController @Inject()(
-                                         actionsProvider: ActionsProvider,
-                                         pensionSessionService: PensionSessionService,
-                                         view: SF74ReferenceView,
-                                         formsProvider: FormsProvider,
-                                         errorHandler: ErrorHandler
-                                       )(implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock)
+class SF74ReferenceController @Inject()(actionsProvider: ActionsProvider,
+                                        pensionSessionService: PensionSessionService,
+                                        view: SF74ReferenceView,
+                                        formsProvider: FormsProvider,
+                                        errorHandler: ErrorHandler)
+                                       (implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock)
   extends FrontendController(mcc) with I18nSupport with SessionHelper {
 
   def show(taxYear: Int, reliefIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
@@ -58,7 +56,6 @@ class SF74ReferenceController @Inject()(
 
   def submit(taxYear: Int, reliefIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit userSessionDataRequest =>
-      val reliefs = userSessionDataRequest.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs
       indexCheckThenJourneyCheck(userSessionDataRequest.pensionsUserData, reliefIndex, SF74ReferencePage, taxYear) { _: Relief =>
         formsProvider.sf74ReferenceIdForm.bindFromRequest().fold(
           formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear, reliefIndex))),

@@ -78,8 +78,13 @@ object PaymentsIntoOverseasPensionsPages {
     override val hasIndex = false
   }
 
-  case object PaymentsIntoOverseasPensionsCYAPage extends PaymentsIntoOverseasPensionsPages {
+  case object RemoveReliefsSchemePage extends PaymentsIntoOverseasPensionsPages {
     override val journeyNo: Int = 12
+    override val hasIndex = true
+  }
+
+  case object PaymentsIntoOverseasPensionsCYAPage extends PaymentsIntoOverseasPensionsPages {
+    override val journeyNo: Int = 13
     override val hasIndex = false
   }
 

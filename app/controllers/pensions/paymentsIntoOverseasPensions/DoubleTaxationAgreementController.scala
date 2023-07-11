@@ -29,8 +29,8 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.PensionSessionService
-import services.redirects.PaymentsIntoOverseasPensionsPages.{DoubleTaxationAgreementPage, QOPSReferencePage}
-import services.redirects.PaymentsIntoOverseasPensionsRedirects.{cyaPageCall, indexCheckThenJourneyCheck, redirectForSchemeLoop}
+import services.redirects.PaymentsIntoOverseasPensionsPages.DoubleTaxationAgreementPage
+import services.redirects.PaymentsIntoOverseasPensionsRedirects.{cyaPageCall, indexCheckThenJourneyCheck}
 import services.redirects.SimpleRedirectService.isFinishedCheck
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
@@ -58,7 +58,7 @@ class DoubleTaxationAgreementController @Inject()(actionsProvider: ActionsProvid
 
   def submit(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit request =>
-      indexCheckThenJourneyCheck(request.pensionsUserData, index, DoubleTaxationAgreementPage, taxYear) { relief: Relief =>
+      indexCheckThenJourneyCheck(request.pensionsUserData, index, DoubleTaxationAgreementPage, taxYear) { _ =>
         dblTaxationAgreementForm(request.user).bindFromRequest().fold(
           formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear, index))),
           doubleTaxationAgreement => updateSessionData(request.pensionsUserData, doubleTaxationAgreement, taxYear, index.get)

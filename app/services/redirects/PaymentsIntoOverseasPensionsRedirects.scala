@@ -18,7 +18,7 @@ package services.redirects
 
 import controllers.pensions.paymentsIntoOverseasPensions.routes._
 import models.mongo.{PensionsCYAModel, PensionsUserData}
-import models.pension.charges.TaxReliefQuestion.{DoubleTaxationRelief, MigrantMemberRelief, NoTaxRelief, TransitionalCorrespondingRelief}
+import models.pension.charges.TaxReliefQuestion.{DoubleTaxationRelief, MigrantMemberRelief, TransitionalCorrespondingRelief}
 import models.pension.charges.{PaymentsIntoOverseasPensionsViewModel, Relief}
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{Call, Result}
@@ -29,11 +29,13 @@ import scala.concurrent.Future
 
 
 object PaymentsIntoOverseasPensionsRedirects {
+
   def redirectForSchemeLoop(reliefs: Seq[Relief], taxYear: Int): Call = {
+    val filteredReliefs = reliefs.filter(relief => relief.isFinished)
     checkForExistingSchemes(
       nextPage = PensionsCustomerReferenceNumberController.show(taxYear, None),
       summaryPage = ReliefsSchemeSummaryController.show(taxYear),
-      schemes = reliefs
+      schemes = filteredReliefs
     )
   }
 
@@ -58,8 +60,8 @@ object PaymentsIntoOverseasPensionsRedirects {
     }
   }
 
-  def journeyCheckIndex(currentPage: PaymentsIntoOverseasPensionsPages, cya: PensionsCYAModel, taxYear: Int,
-                        reliefs: Seq[Relief], index: Option[Int] = None): Option[Result] = {
+  private def journeyCheckIndex(currentPage: PaymentsIntoOverseasPensionsPages, cya: PensionsCYAModel, taxYear: Int,
+                                reliefs: Seq[Relief], index: Option[Int] = None): Option[Result] = {
     val paymentsIOP = cya.paymentsIntoOverseasPensions
     if (isPageValidInJourney(currentPage, paymentsIOP, index)) {
       None
@@ -90,45 +92,25 @@ object PaymentsIntoOverseasPensionsRedirects {
       4 -> { relief: Relief => relief.customerReference.isDefined },
       5 -> { relief: Relief => relief.customerReference.isDefined },
       6 -> { relief: Relief => relief.customerReference.isDefined },
-      7 -> { relief: Relief =>
-        relief.customerReference.isDefined &&
-          relief.reliefType.contains(MigrantMemberRelief)
-
-      }, //MMR QOPS Page
-      8 -> { relief: Relief =>
-        relief.customerReference.isDefined &&
-          relief.reliefType.contains(DoubleTaxationRelief)
-      }, //DTR Page
-      9 -> { relief: Relief =>
-        relief.customerReference.isDefined &&
-          relief.reliefType.contains(TransitionalCorrespondingRelief)
-      }, // TCR SF74 Page
-      10 -> {
-        relief: Relief =>
-
-          relief.reliefType match {
-            case Some(TransitionalCorrespondingRelief) => relief.sf74Reference.isDefined
-            case Some(DoubleTaxationRelief) =>
-              relief.alphaThreeCountryCode.isDefined &&
-                relief.alphaTwoCountryCode.isDefined &&
-                relief.doubleTaxationReliefAmount.isDefined
-            case Some(MigrantMemberRelief) =>
-              relief.qopsReference.isDefined
-            case Some(NoTaxRelief) => true
-            case _ => false
-          }
-      }
+      7 -> { relief: Relief => relief.customerReference.isDefined && relief.reliefType.contains(MigrantMemberRelief) }, //MMR QOPS Page
+      8 -> { relief: Relief => relief.customerReference.isDefined && relief.reliefType.contains(DoubleTaxationRelief) }, //DTR Page
+      9 -> { relief: Relief => relief.customerReference.isDefined && relief.reliefType.contains(TransitionalCorrespondingRelief) }, // TCR SF74 Page
+      10 -> { relief: Relief => relief.isFinished },
+      12 -> { relief: Relief => relief.isFinished }
     )
   }
 
   private val pageValidInJourneyMap: Map[Int, PaymentsIntoOverseasPensionsViewModel => Boolean] = {
     Map(
       1 -> { _: PaymentsIntoOverseasPensionsViewModel => true },
-      2 -> { _: PaymentsIntoOverseasPensionsViewModel => true },
-      3 -> { pOPViewModel: PaymentsIntoOverseasPensionsViewModel => pOPViewModel.employerPaymentsQuestion.getOrElse(false) },
-      4 -> { pOPViewModel: PaymentsIntoOverseasPensionsViewModel => !pOPViewModel.taxPaidOnEmployerPaymentsQuestion.getOrElse(true) }, //cust reference
-      11 -> { _: PaymentsIntoOverseasPensionsViewModel => true }, //summary page
-      12 -> { _: PaymentsIntoOverseasPensionsViewModel => true }
+      2 -> { piopVM: PaymentsIntoOverseasPensionsViewModel =>
+        piopVM.paymentsIntoOverseasPensionsQuestions.exists(x =>
+          x && piopVM.paymentsIntoOverseasPensionsAmount.isDefined)
+      },
+      3 -> { piopVM: PaymentsIntoOverseasPensionsViewModel => piopVM.employerPaymentsQuestion.getOrElse(false) },
+      4 -> { piopVM: PaymentsIntoOverseasPensionsViewModel => !piopVM.taxPaidOnEmployerPaymentsQuestion.getOrElse(true) }, //cust reference
+      11 -> { piopVM: PaymentsIntoOverseasPensionsViewModel => piopVM.reliefs.isEmpty || piopVM.reliefs.forall(_.isFinished) }, //summary page
+      13 -> { piopVM: PaymentsIntoOverseasPensionsViewModel => piopVM.isFinished }
     )
   }
 

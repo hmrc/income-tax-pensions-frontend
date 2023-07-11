@@ -17,13 +17,13 @@
 package controllers.pensions.paymentsIntoOverseasPensions
 
 import config.AppConfig
+import controllers.pensions.paymentsIntoOverseasPensions.routes.ReliefsSchemeSummaryController
 import controllers.predicates.ActionsProvider
-import controllers.validatedIndex
 import models.pension.charges.Relief
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.redirects.PaymentsIntoOverseasPensionsPages.{ReliefsSchemeDetailsPage, SF74ReferencePage}
-import services.redirects.PaymentsIntoOverseasPensionsRedirects.{indexCheckThenJourneyCheck, redirectForSchemeLoop}
+import services.redirects.PaymentsIntoOverseasPensionsPages.ReliefsSchemeDetailsPage
+import services.redirects.PaymentsIntoOverseasPensionsRedirects.indexCheckThenJourneyCheck
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.SessionHelper
 import views.html.pensions.paymentsIntoOverseasPensions.ReliefSchemeDetailsView
@@ -46,8 +46,8 @@ class ReliefsSchemeDetailsController @Inject()(view: ReliefSchemeDetailsView,
 
   def submit(taxYear: Int, reliefIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit userSessionDataRequest =>
-      indexCheckThenJourneyCheck(userSessionDataRequest.pensionsUserData, reliefIndex, ReliefsSchemeDetailsPage, taxYear) { relief: Relief =>
-        Future.successful(Redirect(routes.ReliefsSchemeSummaryController.show(taxYear)))
+      indexCheckThenJourneyCheck(userSessionDataRequest.pensionsUserData, reliefIndex, ReliefsSchemeDetailsPage, taxYear) { _ =>
+        Future.successful(Redirect(ReliefsSchemeSummaryController.show(taxYear)))
       }
   }
 }

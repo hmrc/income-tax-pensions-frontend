@@ -17,8 +17,6 @@
 package controllers.pensions.paymentsIntoOverseasPensions
 
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.paymentsIntoOverseasPensions.routes.PaymentsIntoOverseasPensionsCYAController
-import controllers.pensions.routes.OverseasPensionsSummaryController
 import controllers.predicates.AuthorisedAction
 import forms.YesNoForm
 import models.User
@@ -41,11 +39,11 @@ import scala.concurrent.{ExecutionContext, Future}
 class TaxEmployerPaymentsController @Inject()(authAction: AuthorisedAction,
                                               taxEmployerPaymentsView: TaxEmployerPaymentsView,
                                               pensionSessionService: PensionSessionService,
-                                              errorHandler: ErrorHandler
-                                             )(implicit val mcc: MessagesControllerComponents,
-                                               appConfig: AppConfig,
-                                               clock: Clock,
-                                               ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
+                                              errorHandler: ErrorHandler)
+                                             (implicit val mcc: MessagesControllerComponents,
+                                              appConfig: AppConfig,
+                                              clock: Clock,
+                                              ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
 
   def yesNoForm(user: User): Form[Boolean] = YesNoForm.yesNoForm(
     missingInputError = s"overseasPension.taxEmployerPayments.error.noEntry.${if (user.isAgent) "agent" else "individual"}"
