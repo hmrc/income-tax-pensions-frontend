@@ -24,6 +24,9 @@ import models.pension.AllPensionsData
 import models.pension.AllPensionsData.generateCyaFromPrior
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
+import services.redirects.StatePensionPages.StatePensionsCYAPage
+import services.redirects.StatePensionRedirects.{cyaPageCall, journeyCheck}
 import services.{PensionSessionService, StatePensionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
@@ -39,13 +42,17 @@ class StatePensionCYAController @Inject()(authAction: AuthorisedAction,
                                           statePensionService: StatePensionService,
                                           view: StatePensionCYAView)
                                          (implicit val mcc: MessagesControllerComponents,
-                                          appConfig: AppConfig, clock: Clock, errorHandler: ErrorHandler)
+                                          appConfig: AppConfig, clock: Clock,
+                                          executionContext: ExecutionContext,
+                                          errorHandler: ErrorHandler)
   extends FrontendController(mcc) with I18nSupport with SessionHelper {
 
-  implicit val executionContext: ExecutionContext = mcc.executionContext
-
-  def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) { implicit userSessionDataRequest =>
-    Ok(view(taxYear, userSessionDataRequest.pensionsUserData.pensions.incomeFromPensions))
+  def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
+    implicit userSessionDataRequest =>
+      val checkRedirect = journeyCheck(StatePensionsCYAPage, _, taxYear)
+      redirectBasedOnCurrentAnswers(taxYear, Some(userSessionDataRequest.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) {
+        data => Future.successful(Ok(view(taxYear, data.pensions.incomeFromPensions)))
+      }
   }
 
   def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>

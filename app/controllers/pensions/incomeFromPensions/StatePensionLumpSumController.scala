@@ -24,10 +24,10 @@ import models.mongo.PensionsUserData
 import models.pension.statebenefits.{IncomeFromPensionsViewModel, StateBenefitViewModel}
 import models.requests.UserSessionDataRequest
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.PensionSessionService
-import services.redirects.IncomeFromPensionsPages.StatePensionLumpSumPage
-import services.redirects.IncomeFromPensionsRedirects.{cyaPageCall, journeyCheck}
+import services.redirects.StatePensionPages.StatePensionLumpSumPage
+import services.redirects.StatePensionRedirects.{cyaPageCall, journeyCheck}
 import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
@@ -53,14 +53,14 @@ class StatePensionLumpSumController @Inject()(
       val checkRedirect = journeyCheck(StatePensionLumpSumPage, _, taxYear)
       redirectBasedOnCurrentAnswers(taxYear, Some(sessionData.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) { data =>
 
-      val amountPaidQuestion = data.pensions.incomeFromPensions.statePensionLumpSum.flatMap(_.amountPaidQuestion)
-      val amount = data.pensions.incomeFromPensions.statePensionLumpSum.flatMap(_.amount)
+        val amountPaidQuestion = data.pensions.incomeFromPensions.statePensionLumpSum.flatMap(_.amountPaidQuestion)
+        val amount = data.pensions.incomeFromPensions.statePensionLumpSum.flatMap(_.amount)
 
-      (amountPaidQuestion, amount) match {
-        case (Some(yesNo), amount) => Future.successful(Ok(view(formsProvider.statePensionLumpSum(sessionData.user).fill((yesNo, amount)), taxYear)))
-        case _ => Future.successful(Ok(view(formsProvider.statePensionLumpSum(sessionData.user), taxYear)))
+        (amountPaidQuestion, amount) match {
+          case (Some(yesNo), amount) => Future.successful(Ok(view(formsProvider.statePensionLumpSum(sessionData.user).fill((yesNo, amount)), taxYear)))
+          case _ => Future.successful(Ok(view(formsProvider.statePensionLumpSum(sessionData.user), taxYear)))
+        }
       }
-    }
   }
 
   def submit(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
@@ -83,27 +83,22 @@ class StatePensionLumpSumController @Inject()(
   private def updateSessionData[T](pensionUserData: PensionsUserData,
                                    yesNo: Boolean,
                                    amount: Option[BigDecimal],
-                                   taxYear: Int)(implicit request: UserSessionDataRequest[T]) = {
+                                   taxYear: Int)(implicit request: UserSessionDataRequest[T]): Future[Result] = {
     val viewModel: IncomeFromPensionsViewModel = pensionUserData.pensions.incomeFromPensions
-    val updateStatePensionLumpSum: StateBenefitViewModel = viewModel.statePensionLumpSum match {
-      case Some(value) => value.copy(amountPaidQuestion = Some(yesNo), amount = if (yesNo) amount else None)
-      case _ => StateBenefitViewModel(amountPaidQuestion = Some(yesNo), amount = if (yesNo) amount else None)
-    }
+    val updateStatePensionLumpSum: StateBenefitViewModel =
+      if (yesNo) viewModel.statePensionLumpSum match {
+        case Some(value) => value.copy(amountPaidQuestion = Some(true), amount = amount)
+        case _ => StateBenefitViewModel(amountPaidQuestion = Some(true), amount = amount)
+      }
+      else StateBenefitViewModel(amountPaidQuestion = Some(false))
 
-    val updatedCyaModel = pensionUserData.pensions.copy(
-      incomeFromPensions = viewModel.copy(
-        statePensionLumpSum = Some(updateStatePensionLumpSum)
-      )
-    )
+    val updatedCyaModel = pensionUserData.pensions.copy(incomeFromPensions = viewModel.copy(
+      statePensionLumpSum = Some(updateStatePensionLumpSum)))
     pensionSessionService.createOrUpdateSessionData(request.user,
       updatedCyaModel, taxYear, pensionUserData.isPriorSubmission)(errorHandler.internalServerError()) {
       Redirect(
-        if (yesNo) {
-          TaxPaidOnStatePensionLumpSumController.show(taxYear)
-        } else {
-          StatePensionAddToCalculationController.show(taxYear)
-        }
-      )
+        if (yesNo) TaxPaidOnStatePensionLumpSumController.show(taxYear)
+        else StatePensionAddToCalculationController.show(taxYear))
     }
   }
 }
