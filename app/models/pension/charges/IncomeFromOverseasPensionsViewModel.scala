@@ -32,23 +32,11 @@ case class IncomeFromOverseasPensionsViewModel(paymentsFromOverseasPensionsQuest
                                                overseasIncomePensionSchemes: Seq[PensionScheme] = Nil
                                               ) extends PensionCYABaseModel {
 
-  private def yesNoAndAmountPopulated(boolField: Option[Boolean], amountField: Option[BigDecimal]): Boolean = {
-    boolField.exists(value => !value || (value && amountField.nonEmpty))
-  }
-
   def isEmpty: Boolean = paymentsFromOverseasPensionsQuestion.isEmpty && overseasIncomePensionSchemes.isEmpty
 
   def isFinished: Boolean = {
-    paymentsFromOverseasPensionsQuestion.filter(x => x)
-      .exists(_ => overseasIncomePensionSchemes.map {
-        scheme: PensionScheme =>
-          scheme.alphaTwoCode.isDefined &&
-            scheme.pensionPaymentAmount.isDefined &&
-            scheme.pensionPaymentTaxPaid.isDefined &&
-            yesNoAndAmountPopulated(scheme.specialWithholdingTaxQuestion,
-              scheme.specialWithholdingTaxAmount) &&
-            yesNoAndAmountPopulated(scheme.foreignTaxCreditReliefQuestion, scheme.taxableAmount)
-      }.forall(x => x)
+    paymentsFromOverseasPensionsQuestion.exists(x =>
+      if (!x) true else overseasIncomePensionSchemes.nonEmpty && overseasIncomePensionSchemes.forall(_.isFinished)
       )
   }
 
