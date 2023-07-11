@@ -16,15 +16,15 @@
 
 package services.redirects
 
-import builders.IncomeFromPensionsViewModelBuilder.anIncomeFromPensionsViewModel
-import builders.StateBenefitViewModelBuilder.{anStateBenefitViewModelOne, anStateBenefitViewModelTwo}
-import models.mongo.PensionsCYAModel
-import play.api.mvc.Results.Redirect
-import utils.UnitTest
+import builders.IncomeFromPensionsViewModelBuilder.aStatePensionIncomeFromPensionsViewModel
+import builders.StateBenefitViewModelBuilder.{aMinimalStatePensionViewModel, aStatePensionViewModel, anEmptyStateBenefitViewModel}
 import controllers.pensions.incomeFromPensions.routes.{StatePensionCYAController, StatePensionController}
-import services.redirects.StatePensionPages.{
-  AddStatePensionToIncomeTaxCalcPage, StatePensionPage, StatePensionLumpSumPage, WhenDidYouStartGettingStatePaymentsPage}
+import models.mongo.PensionsCYAModel
+import models.pension.statebenefits.IncomeFromPensionsViewModel
+import play.api.mvc.Results.Redirect
+import services.redirects.StatePensionPages._
 import services.redirects.StatePensionRedirects.{cyaPageCall, journeyCheck}
+import utils.UnitTest
 
 class StatePensionRedirectsSpec extends UnitTest {
 
@@ -34,11 +34,7 @@ class StatePensionRedirectsSpec extends UnitTest {
   ".journeyCheck" should {
     "return None if page is valid and all previous questions have been answered" when {
       "current page is empty and at end of journey so far" in {
-        val data = cyaData.copy(
-          incomeFromPensions = anIncomeFromPensionsViewModel.copy(
-            statePension = Some(anStateBenefitViewModelOne.copy(
-              amountPaidQuestion = None))
-          ))
+        val data = cyaData.copy(incomeFromPensions = IncomeFromPensionsViewModel(statePension = Some(anEmptyStateBenefitViewModel)))
         val result = journeyCheck(StatePensionPage, data, taxYear)
 
         result shouldBe None
@@ -46,13 +42,8 @@ class StatePensionRedirectsSpec extends UnitTest {
 
       "current page is pre-filled and at end of journey so far" in {
         val data = cyaData.copy(
-          incomeFromPensions = anIncomeFromPensionsViewModel.copy(
-            statePension = Some(anStateBenefitViewModelOne.copy(
-              amountPaidQuestion = Some(true),
-              amount = Some(155.88),
-              startDate = None
-            ))
-          )
+          incomeFromPensions = IncomeFromPensionsViewModel(statePension = Some(anEmptyStateBenefitViewModel.copy(
+            amountPaidQuestion = Some(true), amount = Some(155.88))))
         )
         val result = journeyCheck(StatePensionPage, data, taxYear)
 
@@ -60,25 +51,16 @@ class StatePensionRedirectsSpec extends UnitTest {
       }
 
       "current page is pre-filled and mid-journey" in {
-        val data = cyaData.copy(incomeFromPensions = anIncomeFromPensionsViewModel.copy(
-          statePension = Some(anStateBenefitViewModelOne)
-        ))
-        val result = journeyCheck(AddStatePensionToIncomeTaxCalcPage, data, taxYear)
+        val data = cyaData.copy(incomeFromPensions = aStatePensionIncomeFromPensionsViewModel)
+        val result = journeyCheck(TaxOnStatePensionLumpSumPage, data, taxYear)
 
         result shouldBe None
       }
 
       "previous page is unanswered but invalid and previous valid question has been answered" in {
-        val data = cyaData.copy(
-          incomeFromPensions = anIncomeFromPensionsViewModel.copy(
-            statePension = Some(anStateBenefitViewModelOne.copy(
-              amountPaidQuestion = Some(false),
-              amount = None,
-              startDateQuestion = Some(true)
-            ))
-          )
-        )
-        val result = journeyCheck(StatePensionPage, data, taxYear)
+        val data = cyaData.copy(incomeFromPensions = IncomeFromPensionsViewModel(
+          statePension = Some(aMinimalStatePensionViewModel)))
+        val result = journeyCheck(StatePensionLumpSumPage, data, taxYear)
 
         result shouldBe None
       }
@@ -87,41 +69,29 @@ class StatePensionRedirectsSpec extends UnitTest {
     "return Some(redirect) with redirect to the first page in journey page" when {
       "previous question is unanswered" in {
         val data = cyaData.copy(
-          incomeFromPensions = anIncomeFromPensionsViewModel.copy(
-            statePension = Some(anStateBenefitViewModelTwo.copy(
-              amountPaidQuestion = None,
-              amount = None,
-              startDateQuestion = Some(true)
-            ))
-          )
+          incomeFromPensions = aStatePensionIncomeFromPensionsViewModel.copy(
+            statePension = Some(aStatePensionViewModel.copy(
+              amountPaidQuestion = None, amount = None
+            )))
         )
         val result = journeyCheck(StatePensionLumpSumPage, data, taxYear)
 
         result shouldBe someRedirect
       }
       "current page is invalid in journey" in {
-        val data = cyaData.copy(
-          incomeFromPensions = anIncomeFromPensionsViewModel.copy(
-            statePension = Some(anStateBenefitViewModelTwo.copy(
-            amountPaidQuestion = Some(false),
-            amount = None
-          ))
-          )
-        )
+        val data = cyaData.copy(incomeFromPensions = IncomeFromPensionsViewModel(
+          statePension = Some(aMinimalStatePensionViewModel)))
         val result = journeyCheck(WhenDidYouStartGettingStatePaymentsPage, data, taxYear)
 
         result shouldBe someRedirect
       }
-
     }
+  }
 
-
-      ".cyaPageCall" should {
-        "return a redirect call to the cya page" in {
-          cyaPageCall(taxYear) shouldBe StatePensionCYAController.show(taxYear)
-        }
-      }
-
+  ".cyaPageCall" should {
+    "return a redirect call to the cya page" in {
+      cyaPageCall(taxYear) shouldBe StatePensionCYAController.show(taxYear)
     }
+  }
 
 }

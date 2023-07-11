@@ -23,6 +23,7 @@ import controllers.predicates.AuthorisedAction
 import forms.YesNoForm
 import models.User
 import models.mongo.PensionsCYAModel
+import models.pension.charges.PaymentsIntoOverseasPensionsViewModel
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -39,11 +40,10 @@ import scala.concurrent.{ExecutionContext, Future}
 class TaxEmployerPaymentsController @Inject()(authAction: AuthorisedAction,
                                               taxEmployerPaymentsView: TaxEmployerPaymentsView,
                                               pensionSessionService: PensionSessionService,
-                                              errorHandler: ErrorHandler
-                                             )(implicit val mcc: MessagesControllerComponents,
-                                               appConfig: AppConfig,
-                                               clock: Clock,
-                                               ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
+                                              errorHandler: ErrorHandler)
+                                             (implicit val mcc: MessagesControllerComponents,
+                                              appConfig: AppConfig, clock: Clock,
+                                              ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
 
   def yesNoForm(user: User): Form[Boolean] = YesNoForm.yesNoForm(
     missingInputError = s"overseasPension.taxEmployerPayments.error.noEntry.${if (user.isAgent) "agent" else "individual"}"
@@ -71,9 +71,12 @@ class TaxEmployerPaymentsController @Inject()(authAction: AuthorisedAction,
       yesNo => {
         pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
           case Right(Some(data)) =>
-            val updatedCyaModel: PensionsCYAModel = data.pensions.copy(
-              paymentsIntoOverseasPensions = data.pensions.paymentsIntoOverseasPensions.copy(
-                taxPaidOnEmployerPaymentsQuestion = Some(yesNo)))
+
+            val cyaModel: PensionsCYAModel = data.pensions
+            val updatedViewModel: PaymentsIntoOverseasPensionsViewModel =
+              if (yesNo) cyaModel.paymentsIntoOverseasPensions.copy(taxPaidOnEmployerPaymentsQuestion = Some(true), reliefs = Seq.empty)
+              else cyaModel.paymentsIntoOverseasPensions.copy(taxPaidOnEmployerPaymentsQuestion = Some(false))
+            val updatedCyaModel: PensionsCYAModel = cyaModel.copy(paymentsIntoOverseasPensions = updatedViewModel)
 
             pensionSessionService.createOrUpdateSessionData(request.user,
               updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
@@ -83,8 +86,7 @@ class TaxEmployerPaymentsController @Inject()(authAction: AuthorisedAction,
                 else PaymentsIntoOverseasPensionsCYAController.show(taxYear)
               )
             }
-          case _ =>
-            Future.successful(Redirect(OverseasPensionsSummaryController.show(taxYear)))
+          case _ => Future.successful(Redirect(OverseasPensionsSummaryController.show(taxYear)))
         }
       }
     )

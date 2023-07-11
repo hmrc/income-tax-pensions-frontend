@@ -427,10 +427,7 @@ class PaymentIntoPensionSchemeControllerISpec
 
           "the user has selected 'No'" in {
 
-            val expectedViewModel =
-              sessionData.pensions.paymentsIntoOverseasPensions.copy(
-                paymentsIntoOverseasPensionsQuestions = Some(false),
-                paymentsIntoOverseasPensionsAmount = None)
+            val expectedViewModel = PaymentsIntoOverseasPensionsViewModel(paymentsIntoOverseasPensionsQuestions = Some(false))
 
             implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
             implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(false), None))

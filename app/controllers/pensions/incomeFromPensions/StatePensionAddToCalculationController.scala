@@ -50,22 +50,18 @@ class StatePensionAddToCalculationController @Inject()(actionsProvider: ActionsP
 
   def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit sessionData =>
-      val data = sessionData.pensionsUserData
-      if (data.pensions.incomeFromPensions.journeyIsNoStatePension) Future.successful(Redirect(StatePensionCYAController.show(taxYear)))
-      else {
-        val checkRedirect = journeyCheck(AddStatePensionToIncomeTaxCalcPage, _, taxYear)
-        redirectBasedOnCurrentAnswers(taxYear, Some(data), cyaPageCall(taxYear))(checkRedirect) { data =>
-          data.pensions.incomeFromPensions.statePensionLumpSum.fold {
-            Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
-          } { sp: StateBenefitViewModel =>
-            sp.addToCalculation.fold {
-              Future.successful(Ok(view(formsProvider.statePensionAddToCalculationForm(sessionData.user.isAgent), taxYear)))
-            } {
-              addToCalculation: Boolean =>
-                val filledForm: Form[Boolean] = formsProvider.statePensionAddToCalculationForm(sessionData.user.isAgent)
-                  .fill(addToCalculation)
-                Future.successful(Ok(view(filledForm, taxYear)))
-            }
+
+      val checkRedirect = journeyCheck(AddStatePensionToIncomeTaxCalcPage, _, taxYear)
+      redirectBasedOnCurrentAnswers(taxYear, Some(sessionData.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) { data =>
+        data.pensions.incomeFromPensions.statePensionLumpSum.fold {
+          Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
+        } { sp: StateBenefitViewModel =>
+          sp.addToCalculation.fold {
+            Future.successful(Ok(view(formsProvider.statePensionAddToCalculationForm(sessionData.user.isAgent), taxYear)))
+          } { addToCalculation: Boolean =>
+            val filledForm: Form[Boolean] = formsProvider.statePensionAddToCalculationForm(sessionData.user.isAgent)
+              .fill(addToCalculation)
+            Future.successful(Ok(view(filledForm, taxYear)))
           }
         }
       }

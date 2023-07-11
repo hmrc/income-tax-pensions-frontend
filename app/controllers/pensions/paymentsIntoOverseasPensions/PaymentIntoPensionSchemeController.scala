@@ -23,6 +23,7 @@ import controllers.BaseYesNoAmountController
 import controllers.predicates.AuthorisedAction
 import models.AuthorisationRequest
 import models.mongo.{PensionsCYAModel, PensionsUserData}
+import models.pension.charges.PaymentsIntoOverseasPensionsViewModel
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{AnyContent, MessagesControllerComponents, Result}
@@ -62,13 +63,16 @@ class PaymentIntoPensionSchemeController @Inject()(messagesControllerComponents:
   override def amountOpt(pensionsUserData: PensionsUserData): Option[BigDecimal] =
     pensionsUserData.pensions.paymentsIntoOverseasPensions.paymentsIntoOverseasPensionsAmount
 
-  override def proposedUpdatedSessionDataModel(currentSessionData: PensionsUserData, yesSelected: Boolean, amountOpt: Option[BigDecimal]): PensionsCYAModel =
-    currentSessionData.pensions.copy(
-      paymentsIntoOverseasPensions = currentSessionData.pensions.paymentsIntoOverseasPensions.copy(
-        paymentsIntoOverseasPensionsQuestions = Some(yesSelected),
-        paymentsIntoOverseasPensionsAmount = amountOpt.filter(_ => yesSelected)
-      )
-    )
+  override def proposedUpdatedSessionDataModel(currentSessionData: PensionsUserData, yesSelected: Boolean, amountOpt: Option[BigDecimal]): PensionsCYAModel = {
+    val piopData: PaymentsIntoOverseasPensionsViewModel = {
+      if (yesSelected)
+        currentSessionData.pensions.paymentsIntoOverseasPensions.copy(
+          paymentsIntoOverseasPensionsQuestions = Some(true),
+          paymentsIntoOverseasPensionsAmount = amountOpt)
+      else PaymentsIntoOverseasPensionsViewModel(paymentsIntoOverseasPensionsQuestions = Some(false))
+    }
+    currentSessionData.pensions.copy(paymentsIntoOverseasPensions = piopData)
+  }
 
   override def whenSessionDataIsInsufficient(pensionsUserData: PensionsUserData, taxYear: Int): Result = redirectToSummaryPage(taxYear)
 

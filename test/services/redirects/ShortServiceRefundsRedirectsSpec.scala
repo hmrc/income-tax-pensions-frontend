@@ -17,13 +17,11 @@
 package services.redirects
 
 import builders.OverseasRefundPensionSchemeBuilder.{anEmptyOverseasRefundPensionScheme, anOverseasRefundPensionSchemeWithoutUkRefundCharge}
-import builders.ShortServiceRefundsViewModelBuilder._
-import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import builders.PensionsUserDataBuilder.aPensionsUserData
+import builders.ShortServiceRefundsViewModelBuilder._
 import controllers.pensions.shortServiceRefunds.routes._
-import controllers.pensions.shortServiceRefunds.routes.TaxOnShortServiceRefundController
 import models.mongo.{PensionsCYAModel, PensionsUserData}
-import models.pension.charges.{OverseasRefundPensionScheme, PensionScheme, ShortServiceRefundsViewModel}
+import models.pension.charges.{OverseasRefundPensionScheme, ShortServiceRefundsViewModel}
 import play.api.http.Status.SEE_OTHER
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{Call, Result}
@@ -164,24 +162,24 @@ class ShortServiceRefundsRedirectsSpec extends UnitTest {
     }
     "return a Call to the scheme summary page when 'schemes' already exist" in {
       val existingSchemes: Seq[OverseasRefundPensionScheme] = Seq(
-          OverseasRefundPensionScheme(
-            ukRefundCharge = Some(false),
-            name = Some("Overseas Refund Scheme Name"),
-            pensionSchemeTaxReference = None,
-            qualifyingRecognisedOverseasPensionScheme = Some("QOPS123456"),
-            providerAddress = Some("Scheme Address"),
-            alphaTwoCountryCode = Some("FR"),
-            alphaThreeCountryCode = Some("FRA")
-          ),
-          OverseasRefundPensionScheme(
-            ukRefundCharge = Some(true),
-            name = Some("Overseas Refund Scheme Name"),
-            pensionSchemeTaxReference = Some("12345678RA"),
-            qualifyingRecognisedOverseasPensionScheme = None,
-            providerAddress = Some("Scheme Address"),
-            alphaTwoCountryCode = None,
-            alphaThreeCountryCode = None
-          )
+        OverseasRefundPensionScheme(
+          ukRefundCharge = Some(false),
+          name = Some("Overseas Refund Scheme Name"),
+          pensionSchemeTaxReference = None,
+          qualifyingRecognisedOverseasPensionScheme = Some("QOPS123456"),
+          providerAddress = Some("Scheme Address"),
+          alphaTwoCountryCode = Some("FR"),
+          alphaThreeCountryCode = Some("FRA")
+        ),
+        OverseasRefundPensionScheme(
+          ukRefundCharge = Some(true),
+          name = Some("Overseas Refund Scheme Name"),
+          pensionSchemeTaxReference = Some("12345678RA"),
+          qualifyingRecognisedOverseasPensionScheme = None,
+          providerAddress = Some("Scheme Address"),
+          alphaTwoCountryCode = None,
+          alphaThreeCountryCode = None
+        )
       )
       val result = redirectForSchemeLoop(existingSchemes, taxYear)
 

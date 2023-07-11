@@ -24,10 +24,11 @@ import services.redirects.SimpleRedirectService.checkForExistingSchemes
 object IncomeFromOtherUkPensionsRedirects {
 
   def redirectForSchemeLoop(schemes: Seq[UkPensionIncomeViewModel], taxYear: Int): Call = {
+    val filteredSchemes = schemes.filter(scheme => scheme.isFinished)
     checkForExistingSchemes(
       nextPage = PensionSchemeDetailsController.show(taxYear, None),
       summaryPage = UkPensionIncomeSummaryController.show(taxYear),
-      schemes = schemes
+      schemes = filteredSchemes
     )
   }
 

@@ -20,13 +20,11 @@ package controllers.pensions.incomeFromOverseasPensions
 import config.AppConfig
 import controllers.predicates.ActionsProvider
 import models.mongo.{PensionsCYAModel, PensionsUserData}
-import models.pension.charges.PensionScheme
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
 import services.redirects.IncomeFromOverseasPensionsPages.CountrySchemeSummaryListPage
-import services.redirects.IncomeFromOverseasPensionsRedirects.journeyCheck
-import services.redirects.IncomeFromPensionsRedirects.cyaPageCall
+import services.redirects.IncomeFromOverseasPensionsRedirects.{cyaPageCall, journeyCheck}
 import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.SessionHelper

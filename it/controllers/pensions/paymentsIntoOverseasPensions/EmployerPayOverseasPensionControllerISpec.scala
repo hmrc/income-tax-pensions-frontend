@@ -20,13 +20,14 @@ import builders.PaymentsIntoOverseasPensionsViewModelBuilder.aPaymentsIntoOverse
 import builders.PensionsUserDataBuilder.{aPensionsUserData, anPensionsUserDataEmptyCya, pensionUserDataWithOverseasPensions}
 import builders.UserBuilder.aUserRequest
 import forms.YesNoForm
+import models.pension.charges.PaymentsIntoOverseasPensionsViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import utils.CommonUtils
-import utils.PageUrls.PaymentIntoOverseasPensions.{paymentsIntoOverseasPensionsCyaUrl, employerPayOverseasPensionUrl, taxEmployerPaymentsUrl}
+import utils.PageUrls.PaymentIntoOverseasPensions.{employerPayOverseasPensionUrl, paymentsIntoOverseasPensionsCyaUrl, taxEmployerPaymentsUrl}
 import utils.PageUrls.overseasPensionsSummaryUrl
 
 class EmployerPayOverseasPensionControllerISpec extends CommonUtils with BeforeAndAfterEach {
@@ -301,8 +302,15 @@ class EmployerPayOverseasPensionControllerISpec extends CommonUtils with BeforeA
       }
 
       "updates employerPaymentsQuestion to Some(false)" in {
+        lazy val expectedViewModel = PaymentsIntoOverseasPensionsViewModel(
+          paymentsIntoOverseasPensionsQuestions = Some(true),
+          paymentsIntoOverseasPensionsAmount = Some(1999.99),
+          employerPaymentsQuestion = Some(false),
+          taxPaidOnEmployerPaymentsQuestion = None,
+          reliefs = Seq.empty
+        )
         lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
-        cyaModel.pensions.paymentsIntoOverseasPensions.employerPaymentsQuestion shouldBe Some(false)
+        cyaModel.pensions.paymentsIntoOverseasPensions shouldBe expectedViewModel
       }
     }
   }
