@@ -24,7 +24,9 @@ import models.requests.UserSessionDataRequest
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.PensionSessionService
-import services.redirects.ShortServiceRefundsRedirects.redirectForSchemeLoop
+import services.redirects.ShortServiceRefundsPages.NonUkTaxRefundsAmountPage
+import services.redirects.ShortServiceRefundsRedirects.{cyaPageCall, journeyCheck, redirectForSchemeLoop}
+import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.shortServiceRefunds.NonUkTaxRefundsView
@@ -43,24 +45,35 @@ class NonUkTaxRefundsController @Inject()(
   extends FrontendController(mcc) with I18nSupport with SessionHelper {
   def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit sessionData =>
-      val refundTaxPaid: Option[Boolean] = sessionData.pensionsUserData.pensions.shortServiceRefunds.shortServiceRefundTaxPaid
-      val refundTaxPaidCharge: Option[BigDecimal] = sessionData.pensionsUserData.pensions.shortServiceRefunds.shortServiceRefundTaxPaidCharge
 
-      (refundTaxPaid, refundTaxPaidCharge) match {
-        case (Some(a), refundTaxPaidCharge) => Future.successful(
-          Ok(view(formsProvider.nonUkTaxRefundsForm(sessionData.user).fill((a, refundTaxPaidCharge)), taxYear)))
-        case _ => Future.successful(Ok(view(formsProvider.nonUkTaxRefundsForm(sessionData.user), taxYear)))
+      val checkRedirect = journeyCheck(NonUkTaxRefundsAmountPage, _: PensionsCYAModel, taxYear)
+      redirectBasedOnCurrentAnswers(taxYear, Some(sessionData.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) { data =>
+
+        val refundTaxPaid: Option[Boolean] = data.pensions.shortServiceRefunds.shortServiceRefundTaxPaid
+        val refundTaxPaidCharge: Option[BigDecimal] = data.pensions.shortServiceRefunds.shortServiceRefundTaxPaidCharge
+
+        (refundTaxPaid, refundTaxPaidCharge) match {
+          case (Some(a), refundTaxPaidCharge) => Future.successful(
+            Ok(view(formsProvider.nonUkTaxRefundsForm(sessionData.user).fill((a, refundTaxPaidCharge)), taxYear)))
+          case _ => Future.successful(Ok(view(formsProvider.nonUkTaxRefundsForm(sessionData.user), taxYear)))
+        }
       }
   }
 
   def submit(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit sessionUserData =>
+
       formsProvider.nonUkTaxRefundsForm(sessionUserData.user).bindFromRequest().fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
         yesNoAmount => {
-          (yesNoAmount._1, yesNoAmount._2) match {
-            case (true, amount) => updateSessionData(sessionUserData.pensionsUserData, yesNo = true, amount, taxYear)
-            case (false, _) => updateSessionData(sessionUserData.pensionsUserData, yesNo = false, None, taxYear)
+
+          val checkRedirect = journeyCheck(NonUkTaxRefundsAmountPage, _: PensionsCYAModel, taxYear)
+          redirectBasedOnCurrentAnswers(taxYear, Some(sessionUserData.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) { data =>
+
+            (yesNoAmount._1, yesNoAmount._2) match {
+              case (true, amount) => updateSessionData(data, yesNo = true, amount, taxYear)
+              case (false, _) => updateSessionData(data, yesNo = false, None, taxYear)
+            }
           }
         }
       )
@@ -77,9 +90,7 @@ class NonUkTaxRefundsController @Inject()(
 
     pensionSessionService.createOrUpdateSessionData(request.user,
       updatedCyaModel, taxYear, pensionUserData.isPriorSubmission)(errorHandler.internalServerError()) {
-      Redirect(redirectForSchemeLoop(
-        refundSchemes = updatedCyaModel.shortServiceRefunds.refundPensionScheme,
-        taxYear))
+      Redirect(redirectForSchemeLoop(updatedCyaModel.shortServiceRefunds.refundPensionScheme, taxYear))
     }
   }
 }

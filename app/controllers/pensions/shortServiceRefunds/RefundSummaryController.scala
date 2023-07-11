@@ -18,20 +18,41 @@ package controllers.pensions.shortServiceRefunds
 
 import config.AppConfig
 import controllers.predicates.ActionsProvider
+import models.mongo.{PensionsCYAModel, PensionsUserData}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.PensionSessionService
+import services.redirects.ShortServiceRefundsPages.RefundSchemesSummaryPage
+import services.redirects.ShortServiceRefundsRedirects.{cyaPageCall, journeyCheck}
+import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.SessionHelper
 import views.html.pensions.shortServiceRefunds.RefundSummaryView
 
 import javax.inject.{Inject, Singleton}
+import scala.concurrent.Future
 
 @Singleton
-class RefundSummaryController @Inject()(actionsProvider: ActionsProvider, view: RefundSummaryView)
+class RefundSummaryController @Inject()(actionsProvider: ActionsProvider, view: RefundSummaryView,
+                                        pensionSessionService: PensionSessionService)
                                        (implicit mcc: MessagesControllerComponents, appConfig: AppConfig)
   extends FrontendController(mcc) with I18nSupport with SessionHelper {
 
-  def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) { implicit sessionUserData =>
-    Ok(view(taxYear, sessionUserData.pensionsUserData.pensions.shortServiceRefunds.refundPensionScheme))
+  def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionUserData =>
+    val updatedUserData = cleanUpSchemes(sessionUserData.pensionsUserData)
+    val checkRedirect = journeyCheck(RefundSchemesSummaryPage, _: PensionsCYAModel, taxYear)
+    redirectBasedOnCurrentAnswers(taxYear, Some(updatedUserData), cyaPageCall(taxYear))(checkRedirect) { _ =>
+      Future.successful(Ok(view(taxYear, updatedUserData.pensions.shortServiceRefunds.refundPensionScheme)))
+    }
+  }
+
+  private def cleanUpSchemes(pensionsUserData: PensionsUserData): PensionsUserData = {
+    val schemes = pensionsUserData.pensions.shortServiceRefunds.refundPensionScheme
+    val filteredSchemes = if (schemes.nonEmpty) schemes.filter(scheme => scheme.isFinished) else schemes
+    val updatedViewModel = pensionsUserData.pensions.shortServiceRefunds.copy(refundPensionScheme = filteredSchemes)
+    val updatedPensionData = pensionsUserData.pensions.copy(shortServiceRefunds = updatedViewModel)
+    val updatedUserData = pensionsUserData.copy(pensions = updatedPensionData)
+    pensionSessionService.createOrUpdateSessionData(updatedUserData)
+    updatedUserData
   }
 }

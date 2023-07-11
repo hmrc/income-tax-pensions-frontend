@@ -39,6 +39,7 @@ class IncomeFromOverseasPensionsRedirectsSpec extends UnitTest {
   private val schemeStartCall: Call = PensionOverseasIncomeCountryController.show(taxYear, None)
   private val schemeSummaryCall: Call = CountrySummaryListController.show(taxYear)
   private val continueToContextualRedirect: PensionsUserData => Future[Result] = aPensionsUserData => Future.successful(Redirect(taxableAmountPageCall))
+  private val continueToSummaryRedirect: PensionsUserData => Future[Result] = aPensionsUserData => Future.successful(Redirect(schemeSummaryCall))
 
   ".indexCheckThenJourneyCheck" when {
     "index is valid" should {
@@ -126,6 +127,21 @@ class IncomeFromOverseasPensionsRedirectsSpec extends UnitTest {
 
         statusHeader shouldBe SEE_OTHER
         locationHeader shouldBe Some(PensionOverseasIncomeStatus.show(taxYear).url)
+      }
+      "redirect to the first page in scheme loop when trying to load the summary page but there are no schemes" in {
+        val emptySchemesIFOPViewModel: IncomeFromOverseasPensionsViewModel =
+          aPensionsCYAModel.incomeFromOverseasPensions.copy(overseasIncomePensionSchemes = Seq.empty)
+        val cyaModel = aPensionsCYAModel.copy(incomeFromOverseasPensions = emptySchemesIFOPViewModel)
+        val result = indexCheckThenJourneyCheck(
+          data = aPensionsUserData.copy(pensions = cyaModel),
+          optIndex = Some(8),
+          currentPage = CountrySchemeSummaryListPage,
+          taxYear = taxYear)(continueToSummaryRedirect)
+        val statusHeader = await(result.map(_.header.status))
+        val locationHeader = await(result.map(_.header.headers).map(_.get("Location")))
+
+        statusHeader shouldBe SEE_OTHER
+        locationHeader shouldBe Some(schemeSummaryCall.url)
       }
       "redirect to the scheme summary page when schemes already exist" in {
         val result: Future[Result] = indexCheckThenJourneyCheck(
