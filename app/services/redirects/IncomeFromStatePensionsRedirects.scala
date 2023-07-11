@@ -22,11 +22,11 @@ import play.api.mvc.Results.Redirect
 import controllers.pensions.incomeFromPensions.routes.{StatePensionController, StatePensionCYAController}
 import models.pension.statebenefits.{IncomeFromPensionsViewModel, StateBenefitViewModel}
 
-object IncomeFromPensionsRedirects { //scalastyle:off magic.number
+object IncomeFromStatePensionsRedirects { //scalastyle:off magic.number
 
   def cyaPageCall(taxYear: Int): Call = StatePensionCYAController.show(taxYear)
 
-  def journeyCheck(currentPage: IncomeFromPensionsPages, cya: PensionsCYAModel, taxYear: Int): Option[Result] = {
+  def journeyCheck(currentPage: IncomeFromStatePensionsPages, cya: PensionsCYAModel, taxYear: Int): Option[Result] = {
     val incomeFromPensions = cya.incomeFromPensions
     if (isPageValidInJourney(currentPage.journeyNo, incomeFromPensions) && previousQuestionIsAnswered(currentPage.journeyNo, incomeFromPensions)) {
       None

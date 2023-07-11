@@ -27,8 +27,8 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
-import services.redirects.IncomeFromPensionsPages.{TaxOnStatePensionLumpSumPage, WhenDidYouGetYourStatePensionLumpSumPage}
-import services.redirects.IncomeFromPensionsRedirects.{cyaPageCall, journeyCheck}
+import services.redirects.IncomeFromStatePensionsPages.{TaxOnStatePensionLumpSumPage, WhenDidYouGetYourStatePensionLumpSumPage}
+import services.redirects.IncomeFromStatePensionsRedirects.{cyaPageCall, journeyCheck}
 import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.SessionHelper

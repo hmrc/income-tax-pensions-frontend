@@ -30,8 +30,8 @@ import models.mongo.PensionsUserData
 import models.pension.statebenefits.{IncomeFromPensionsViewModel, StateBenefitViewModel}
 import models.requests.UserSessionDataRequest
 import play.api.data.Form
-import services.redirects.IncomeFromPensionsPages.{AddStatePensionToIncomeTaxCalcPage, WhenDidYouGetYourStatePensionLumpSumPage}
-import services.redirects.IncomeFromPensionsRedirects.{cyaPageCall, journeyCheck}
+import services.redirects.IncomeFromStatePensionsPages.{AddStatePensionToIncomeTaxCalcPage$State, WhenDidYouGetYourStatePensionLumpSumPage}
+import services.redirects.IncomeFromStatePensionsRedirects.{cyaPageCall, journeyCheck}
 import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
 import utils.SessionHelper
 
@@ -52,7 +52,7 @@ class StatePensionAddToCalculationController @Inject () (actionsProvider: Action
 
   def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit sessionData =>
-      val checkRedirect = journeyCheck(AddStatePensionToIncomeTaxCalcPage, _, taxYear)
+      val checkRedirect = journeyCheck(AddStatePensionToIncomeTaxCalcPage$State, _, taxYear)
       redirectBasedOnCurrentAnswers(taxYear, Some(sessionData.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) { data =>
         data.pensions.incomeFromPensions.statePensionLumpSum.fold {
           Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
@@ -71,7 +71,7 @@ class StatePensionAddToCalculationController @Inject () (actionsProvider: Action
 
   def submit(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit sessionData =>
-      val checkRedirect = journeyCheck(AddStatePensionToIncomeTaxCalcPage, _, taxYear)
+      val checkRedirect = journeyCheck(AddStatePensionToIncomeTaxCalcPage$State, _, taxYear)
       redirectBasedOnCurrentAnswers(taxYear, Some(sessionData.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) { data =>
         formsProvider.statePensionAddToCalculationForm(sessionData.user.isAgent).bindFromRequest().fold(
           formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),

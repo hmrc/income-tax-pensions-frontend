@@ -22,11 +22,11 @@ import models.mongo.PensionsCYAModel
 import play.api.mvc.Results.Redirect
 import utils.UnitTest
 import controllers.pensions.incomeFromPensions.routes.{StatePensionCYAController, StatePensionController}
-import services.redirects.IncomeFromPensionsPages.{
-  AddStatePensionToIncomeTaxCalcPage, DoYouGetRegularStatePaymentsPage, StatePensionLumpSumPage, WhenDidYouStartGettingStatePaymentsPage}
-import services.redirects.IncomeFromPensionsRedirects.{cyaPageCall, journeyCheck}
+import services.redirects.IncomeFromStatePensionsPages.{
+  AddStatePensionToIncomeTaxCalcPage$State, DoYouGetRegularStatePaymentsPage, StatePensionLumpSumPage, WhenDidYouStartGettingStatePaymentsPage}
+import services.redirects.IncomeFromStatePensionsRedirects.{cyaPageCall, journeyCheck}
 
-class IncomeFromPensionsRedirectsSpec extends UnitTest {
+class IncomeFromStatePensionsRedirectsSpec extends UnitTest {
 
   private val cyaData: PensionsCYAModel = PensionsCYAModel.emptyModels
   private val someRedirect = Some(Redirect(StatePensionController.show(taxYear)))
@@ -63,7 +63,7 @@ class IncomeFromPensionsRedirectsSpec extends UnitTest {
         val data = cyaData.copy(incomeFromPensions = anIncomeFromPensionsViewModel.copy(
           statePension = Some(anStateBenefitViewModelOne)
         ))
-        val result = journeyCheck(AddStatePensionToIncomeTaxCalcPage, data, taxYear)
+        val result = journeyCheck(AddStatePensionToIncomeTaxCalcPage$State, data, taxYear)
 
         result shouldBe None
       }
