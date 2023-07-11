@@ -120,7 +120,7 @@ class DoubleTaxationAgreementControllerISpec extends
     }
 
     "redirect to pension schemes summary page when using an out of bounds index and there are pensions schemes" in {
-      implicit val doubleTaxAgrtUrl : Int => String = doubleTaxationAgreementUrl(2)
+      implicit val doubleTaxAgrtUrl: Int => String = doubleTaxationAgreementUrl(8)
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual()

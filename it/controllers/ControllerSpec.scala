@@ -114,10 +114,14 @@ class ControllerSpec(val pathForThisPage: String) extends PlaySpec
     val transferChargeSchemeSummary: String = relativeUrl("/overseas-pensions/overseas-transfer-charges/transfer-charges-summary")
     val taxOnShortServiceRefundController: String = relativeUrl("/overseas-pensions/short-service-refunds/short-service-refunds-uk-tax")
 
+    val taxableShortServiceRefunds: String = relativeUrl("/overseas-pensions/short-service-refunds/taxable-short-service-refunds")
+    val taxOnShortServiceRefunds: String = relativeUrl("/overseas-pensions/short-service-refunds/short-service-refunds-uk-tax")
+    val shortServicePensionsScheme: String = relativeUrl("/overseas-pensions/short-service-refunds/short-service-refunds-pension-scheme")
     val shortServiceRefundSummary: String = relativeUrl("/overseas-pensions/short-service-refunds/short-service-refund-summary")
-    val ReliefsSchemeSummary: String = relativeUrl("/overseas-pensions/payments-into-overseas-pensions/untaxed-schemes-summary")
-    val ReliefsSchemeDetails: String = relativeUrl("/overseas-pensions/payments-into-overseas-pensions/pensions-overseas-details-summary")
-    val RemoveReliefsScheme: String = relativeUrl("/overseas-pensions/payments-into-overseas-pensions/remove-schemes")
+
+    val reliefsSchemeSummary: String = relativeUrl("/overseas-pensions/payments-into-overseas-pensions/untaxed-schemes-summary")
+    val reliefsSchemeDetails: String = relativeUrl("/overseas-pensions/payments-into-overseas-pensions/pensions-overseas-details-summary")
+    val removeReliefsScheme: String = relativeUrl("/overseas-pensions/payments-into-overseas-pensions/remove-schemes")
   }
 
   override implicit lazy val app: Application = new GuiceApplicationBuilder()

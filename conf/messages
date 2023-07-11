@@ -91,8 +91,6 @@ common.yourP60.agent = your client’s P60
 common.aboutGeneralIncreases.agent = the ’About general increases in benefits’ letter the Pension Service sent your client
 
 common.employerFinancedRetirementScheme.caption = Employer-financed retirement benefits schemes for 6 April {0} to 5 April {1}
-common.addAnotherPstrLink = Add another Pensions Scheme Tax Reference
-common.addPstrLink = Add a PSTR
 
 ################# Common lifetime allowance #################
 
@@ -111,6 +109,10 @@ common.pensionSchemeTaxReference.forExample = For example, ‘12345678RA’
 common.pensionSchemeTaxReference.error.noEntry.individual = Enter your Pension Scheme Tax Reference
 common.pensionSchemeTaxReference.error.noEntry.agent = Enter your client’s Pension Scheme Tax Reference
 common.pensionSchemeTaxReference.p1 = If more than one pension scheme paid or agreed to pay the tax, you can add them later.
+common.pensionSchemeTaxReference.addAnotherPstrLink = Add another PSTR
+common.pensionSchemeTaxReference.addAPstrLink = You need to add one or more Pensions Scheme Tax Reference (PSTR).
+common.addAnotherPstrLink = Add another Pensions Scheme Tax Reference
+common.addPstrLink = Add a PSTR
 
 #################       Common overseas pensions        ########################################
 
@@ -494,8 +496,7 @@ unauthorisedPayments.pension.pensionSchemeTaxReference.error.incorrectFormat.age
 
 #Pension Scheme Tax Reference Summary Page
 
-annualAllowance.pstrSummary.title = Pension Scheme Tax Reference (PSTR) summary
-annualAllowance.addAnotherPstrLink = Add another PSTR
+annualAllowance.pstrSummary.title = Pension schemes that paid or agreed to pay the annual allowance tax
 
 #################       INCOME FROM PENSIONS        ########################################
 

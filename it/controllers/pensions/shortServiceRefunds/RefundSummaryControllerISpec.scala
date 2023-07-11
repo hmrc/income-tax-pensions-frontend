@@ -16,14 +16,15 @@
 
 package controllers.pensions.shortServiceRefunds
 
+import builders.OverseasRefundPensionSchemeBuilder.{anOverseasRefundPensionSchemeWithUkRefundCharge, anOverseasRefundPensionSchemeWithoutUkRefundCharge}
 import builders.PensionsUserDataBuilder.pensionUserDataWithShortServiceViewModel
-import builders.ShortServiceRefundsViewModelBuilder.aShortServiceRefundsViewModel
-import models.pension.charges.OverseasRefundPensionScheme
+import builders.ShortServiceRefundsViewModelBuilder.{aShortServiceRefundsViewModel, emptyShortServiceRefundsViewModel}
+import builders.UserBuilder.aUserRequest
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.ShortServiceRefunds.refundSummaryUrl
+import utils.PageUrls.ShortServiceRefunds.{refundSummaryUrl, shortServiceTaxableRefundUrl, taxOnShortServiceRefund}
 import utils.PageUrls.{fullUrl, pensionSummaryUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
@@ -32,37 +33,71 @@ class RefundSummaryControllerISpec extends IntegrationTest with BeforeAndAfterEa
 
   override val userScenarios: Seq[UserScenario[_, _]] = Seq.empty
 
-  ".show" when {
+  ".show" should {
 
-    "renders the 'short service refund' summary list page " should {
-      val pensionScheme = OverseasRefundPensionScheme(ukRefundCharge = Some(true), name = Some("Pension Scheme 1"))
-      val pensionScheme2 = OverseasRefundPensionScheme(ukRefundCharge = Some(true), name = Some("Pension Scheme 2"))
-      val newPensionSchemes = Seq(pensionScheme, pensionScheme2)
-      val refundViewModel = aShortServiceRefundsViewModel.copy(refundPensionScheme = newPensionSchemes)
-
+    "render the 'short service refund' summary list page" which {
+      val incompleteViewModel = aShortServiceRefundsViewModel.copy(refundPensionScheme = Seq(
+        anOverseasRefundPensionSchemeWithUkRefundCharge, anOverseasRefundPensionSchemeWithoutUkRefundCharge.copy(providerAddress = None)
+      ))
       implicit lazy val result: WSResponse = {
         authoriseAgentOrIndividual()
         dropPensionsDB()
-        val viewModel = refundViewModel
-        insertCyaData(pensionUserDataWithShortServiceViewModel(viewModel))
+        insertCyaData(pensionUserDataWithShortServiceViewModel(incompleteViewModel))
         urlGet(fullUrl(refundSummaryUrl(taxYearEOY)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
-      "have an OK status" in {
+
+      "returns an OK status" in {
         result.status shouldBe OK
+      }
+      "filters out any incomplete schemes and updates the session data" in {
+        val filteredSchemes = incompleteViewModel.copy(refundPensionScheme = Seq(anOverseasRefundPensionSchemeWithUkRefundCharge))
+        lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
+
+        cyaModel.pensions.shortServiceRefunds shouldBe filteredSchemes
       }
     }
 
-    "redirecting to the pensions summary page if there is no session data" should {
+    "redirect to the pensions summary page if there is no session data" in {
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual()
         urlGet(fullUrl(refundSummaryUrl(taxYearEOY)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
-      "have a SEE_OTHER status" in {
+      result.status shouldBe SEE_OTHER
+      result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
+
+    }
+
+    "redirect to the first page in journey" when {
+      "page is invalid in journey" in {
+        val invalidJourneyViewModel = emptyShortServiceRefundsViewModel.copy(shortServiceRefund = Some(false))
+        implicit lazy val result: WSResponse = {
+          authoriseAgentOrIndividual()
+          dropPensionsDB()
+          insertCyaData(pensionUserDataWithShortServiceViewModel(invalidJourneyViewModel))
+          urlGet(fullUrl(refundSummaryUrl(taxYearEOY)), follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        }
+
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
+        result.header("location") shouldBe Some(shortServiceTaxableRefundUrl(taxYearEOY))
+      }
+      "previous questions are unanswered" in {
+        val incompleteViewModel = emptyShortServiceRefundsViewModel.copy(
+          shortServiceRefundTaxPaid = Some(true), shortServiceRefundTaxPaidCharge = Some(1000.00)
+        )
+        implicit lazy val result: WSResponse = {
+          authoriseAgentOrIndividual()
+          dropPensionsDB()
+          insertCyaData(pensionUserDataWithShortServiceViewModel(incompleteViewModel))
+          urlGet(fullUrl(refundSummaryUrl(taxYearEOY)), follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        }
+
+        result.status shouldBe SEE_OTHER
+        result.header("location") shouldBe Some(shortServiceTaxableRefundUrl(taxYearEOY))
       }
     }
   }
