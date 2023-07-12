@@ -299,13 +299,7 @@ class PensionOverseasIncomeCountryControllerISpec extends CommonUtils with Befor
       val index = 3
       implicit val url: Int => String = pensionOverseasIncomeCountryUrlIndex(index)
       lazy val form: Map[String, String] = Map(CountryForm.countryId -> "GB")
-      val pensionsViewModel = anIncomeFromOverseasPensionsEmptyViewModel.copy(
-        overseasIncomePensionSchemes = Seq(
-          PensionScheme(alphaTwoCode = Some("IE")),
-          PensionScheme(alphaTwoCode = Some("US")),
-        )
-      )
-      val pensionUserData = pensionUserDataWithIncomeOverseasPension(pensionsViewModel)
+      val pensionUserData = pensionUserDataWithIncomeOverseasPension(anIncomeFromOverseasPensionsViewModel)
       lazy val result: WSResponse = submitPage(pensionUserData, form)
 
       "has a SEE_OTHER(303) status" in {

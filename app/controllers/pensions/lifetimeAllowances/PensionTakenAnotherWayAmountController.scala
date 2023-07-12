@@ -19,8 +19,8 @@ package controllers.pensions.lifetimeAllowances
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.lifetimeAllowances.routes.{LifeTimeAllowanceAnotherWayController, LifetimeAllowanceCYAController}
 import controllers.pensions.routes.PensionsSummaryController
-import controllers.predicates.AuthorisedAction
-import controllers.predicates.TaxYearAction.taxYearAction
+import controllers.predicates.actions.AuthorisedAction
+import controllers.predicates.actions.TaxYearAction.taxYearAction
 import forms.{FormUtils, FormsProvider}
 import models.pension.charges.LifetimeAllowance
 import play.api.i18n.I18nSupport

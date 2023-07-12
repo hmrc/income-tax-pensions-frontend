@@ -19,7 +19,7 @@ package controllers.pensions.incomeFromOverseasPensions
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.incomeFromOverseasPensions.routes._
 import controllers.pensions.routes.OverseasPensionsSummaryController
-import controllers.predicates.AuthorisedAction
+import controllers.predicates.actions.AuthorisedAction
 import forms.{Countries, CountryForm}
 import models.User
 import models.pension.charges.PensionScheme

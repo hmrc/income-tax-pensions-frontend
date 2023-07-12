@@ -17,7 +17,7 @@
 package controllers.pensions.transferIntoOverseasPensions
 
 import config.{AppConfig, ErrorHandler}
-import controllers.predicates.ActionsProvider
+import controllers.predicates.actions.ActionsProvider
 import forms.TransferPensionSavingsForm.yesNoForm
 import models.mongo.PensionsUserData
 import models.requests.UserSessionDataRequest

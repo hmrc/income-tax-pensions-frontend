@@ -16,6 +16,7 @@
 
 package builders
 
+import builders.ReliefBuilder.{aDoubleTaxationRelief, aMigrantMemberRelief, aNoTaxRelief, aTransitionalCorrespondingRelief}
 import models.pension.charges.{PaymentsIntoOverseasPensionsViewModel, Relief}
 import models.pension.charges.TaxReliefQuestion.{MigrantMemberRelief, TransitionalCorrespondingRelief}
 
@@ -26,32 +27,8 @@ object PaymentsIntoOverseasPensionsViewModelBuilder {
     paymentsIntoOverseasPensionsAmount = Some(1999.99),
     employerPaymentsQuestion = Some(true),
     taxPaidOnEmployerPaymentsQuestion = Some(false),
-    reliefs = Seq(
-      Relief(
-        reliefType = Some(TransitionalCorrespondingRelief),
-        customerReference = Some("PENSIONINCOME245"),
-        employerPaymentsAmount = Some(1999.99),
-        qopsReference = None,
-        alphaTwoCountryCode = None,
-        alphaThreeCountryCode = None,
-        doubleTaxationArticle = None,
-        doubleTaxationTreaty = None,
-        doubleTaxationReliefAmount = None,
-        sf74Reference = Some("SF74-123456")),
-      Relief(
-        reliefType = Some(MigrantMemberRelief),
-        customerReference = Some("PENSIONINCOME356"),
-        employerPaymentsAmount = Some(100.00),
-        qopsReference = Some("123456"),
-        alphaTwoCountryCode = None,
-        alphaThreeCountryCode = None,
-        doubleTaxationArticle = None,
-        doubleTaxationTreaty = None,
-        doubleTaxationReliefAmount = None,
-        sf74Reference = None)
-    )
+    reliefs = Seq(aTransitionalCorrespondingRelief, aMigrantMemberRelief, aDoubleTaxationRelief, aNoTaxRelief)
   )
-
 
   val aPaymentsIntoOverseasPensionsEmptyViewModel: PaymentsIntoOverseasPensionsViewModel = PaymentsIntoOverseasPensionsViewModel()
 

@@ -30,14 +30,13 @@ import utils.UnitTest
 import scala.concurrent.Future
 
 class SimpleRedirectServiceSpec extends UnitTest {
-
-  private val cyaData: PensionsCYAModel = PensionsCYAModel.emptyModels
-  private val contextualRedirect: Call = TotalPaymentsIntoRASController.show(taxYear)
-  private val cyaRedirect: Call = PaymentsIntoPensionsCYAController.show(taxYear)
-  private val noneRedirect: PensionsCYAModel => Option[Result] = cyaData => None
-  private val someRedirect: PensionsCYAModel => Option[Result] = cyaData => Some(Redirect(ReliefAtSourcePensionsController.show(taxYear)))
-  private val continueToContextualRedirect: PensionsUserData => Future[Result] = aPensionsUserData => Future.successful(Redirect(contextualRedirect))
-  private val pIPCyaPageCall = PaymentsIntoPensionsCYAController.show(taxYear)
+  
+  val contextualRedirect: Call = TotalPaymentsIntoRASController.show(taxYear)
+  val cyaRedirect: Call = PaymentsIntoPensionsCYAController.show(taxYear)
+  val noneRedirect: PensionsCYAModel => Option[Result] = _ => None
+  val someRedirect: PensionsCYAModel => Option[Result] = _ => Some(Redirect(ReliefAtSourcePensionsController.show(taxYear)))
+  val continueToContextualRedirect: PensionsUserData => Future[Result] = _ => Future.successful(Redirect(contextualRedirect))
+  val pIPCyaPageCall = PaymentsIntoPensionsCYAController.show(taxYear)
 
   ".redirectBasedOnCurrentAnswers" should {
 
@@ -56,7 +55,8 @@ class SimpleRedirectServiceSpec extends UnitTest {
     }
 
     "redirect to first page in journey when there is session data and 'shouldRedirect' is Some(firstPageRedirect)" which {
-      val result = SimpleRedirectService.redirectBasedOnCurrentAnswers(taxYear, Some(aPensionsUserData), pIPCyaPageCall)(someRedirect)(continueToContextualRedirect)
+      val result = SimpleRedirectService
+        .redirectBasedOnCurrentAnswers(taxYear, Some(aPensionsUserData), pIPCyaPageCall)(someRedirect)(continueToContextualRedirect)
       val statusHeader = await(result.map(_.header.status))
       val locationHeader = await(result.map(_.header.headers).map(_.get("Location")))
 

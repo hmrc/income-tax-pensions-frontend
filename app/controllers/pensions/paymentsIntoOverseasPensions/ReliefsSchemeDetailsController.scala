@@ -17,7 +17,7 @@
 package controllers.pensions.paymentsIntoOverseasPensions
 
 import config.AppConfig
-import controllers.predicates.ActionsProvider
+import controllers.predicates.actions.ActionsProvider
 import controllers.validatedIndex
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}

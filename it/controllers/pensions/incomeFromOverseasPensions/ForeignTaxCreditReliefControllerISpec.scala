@@ -17,7 +17,7 @@
 package controllers.pensions.incomeFromOverseasPensions
 
 import builders.IncomeFromOverseasPensionsViewModelBuilder.anIncomeFromOverseasPensionsViewModel
-import builders.PensionsCYAModelBuilder.{aPensionsCYAEmptyModel, aPensionsCYAModel}
+import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import controllers.ControllerSpec.PreferredLanguages.{English, Welsh}
 import controllers.ControllerSpec.UserTypes.{Agent, Individual}
 import controllers.ControllerSpec._
@@ -359,7 +359,7 @@ class ForeignTaxCreditReliefControllerISpec extends YesNoControllerSpec("/overse
       overseasIncomePensionSchemes = Seq(
         PensionScheme(
           alphaTwoCode = Some("FR"),
-          alphaThreeCode = Some("FRA"),
+          alphaThreeCode = None,
           pensionPaymentAmount = Some(1999.99),
           pensionPaymentTaxPaid = Some(1999.99),
           specialWithholdingTaxQuestion = Some(true),
