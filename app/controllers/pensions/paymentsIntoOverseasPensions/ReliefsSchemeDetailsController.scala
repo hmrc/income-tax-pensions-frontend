@@ -18,7 +18,7 @@ package controllers.pensions.paymentsIntoOverseasPensions
 
 import config.AppConfig
 import controllers.pensions.paymentsIntoOverseasPensions.routes.ReliefsSchemeSummaryController
-import controllers.predicates.ActionsProvider
+import controllers.predicates.actions.ActionsProvider
 import models.pension.charges.Relief
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}

@@ -21,7 +21,7 @@ import common.MessageKeys.YesNoAmountForm
 import config.{AppConfig, ErrorHandler}
 import controllers.BaseYesNoAmountController
 import controllers.pensions.paymentsIntoOverseasPensions.routes.{EmployerPayOverseasPensionController, PaymentsIntoOverseasPensionsCYAController}
-import controllers.predicates.AuthorisedAction
+import controllers.predicates.actions.AuthorisedAction
 import models.AuthorisationRequest
 import models.mongo.{PensionsCYAModel, PensionsUserData}
 import play.api.data.Form

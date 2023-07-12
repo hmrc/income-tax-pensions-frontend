@@ -18,7 +18,7 @@ package controllers.pensions.incomeFromOverseasPensions
 
 import config.AppConfig
 import controllers.pensions.incomeFromOverseasPensions.routes.CountrySummaryListController
-import controllers.predicates.ActionsProvider
+import controllers.predicates.actions.ActionsProvider
 import models.pension.pages.OverseasPensionSchemeSummaryPage
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
