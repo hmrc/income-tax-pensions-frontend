@@ -114,7 +114,7 @@ class PaymentsIntoOverseasPensionsCYAViewSpec extends ViewUnitTest { //scalastyl
     captionCheck(expectedCaption(taxYearEOY))
     document
   }
-  
+
 
   userScenarios.foreach { userScenario =>
     import userScenario.commonExpectedResults._
@@ -123,36 +123,37 @@ class PaymentsIntoOverseasPensionsCYAViewSpec extends ViewUnitTest { //scalastyl
 
       "render the page with a full CYA model" when {
         implicit val document: Document = renderPage(userScenario, aPaymentsIntoOverseasPensionsViewModel)
-        
+
         cyaRowCheck(piopYesNo, yesText, ChangeLinks.changePiop, hiddenPiopYesNo, 1)
         cyaRowCheck(totalPayments, "£1,999.99", ChangeLinks.changeTotalPayments, hiddenTotalPayments, 2)
         cyaRowCheck(employerPaymentsYesNo, yesText, ChangeLinks.changeEmployerPayments, hiddenEmployerPaymentsYesNo, 3)
         cyaRowCheck(employerTaxYesNo, noText, ChangeLinks.changeEmployerTax, hiddenEmployerTaxYesNo, 4)
         cyaRowCheck(schemes, "tcrPENSIONINCOME2000, mmrPENSIONINCOME356, dtrPENSIONINCOME550, noPENSIONINCOME100", ChangeLinks.changeScheme, hiddenSchemes, 5)
-        buttonCheck(buttonText)
-      }
-      
-      "render the page with a No Payments into Overseas pensions but employer and employer tax payments" when {
-        val piopNoEmployerYesTaxYesModel = aPaymentsIntoOverseasPensionsViewModel.copy(
-          paymentsIntoOverseasPensionsQuestions = Some(false), employerPaymentsQuestion = Some(true), taxPaidOnEmployerPaymentsQuestion = Some(true)
-        )
-        implicit val document: Document = renderPage(userScenario, piopNoEmployerYesTaxYesModel)
-        
-        cyaRowCheck(piopYesNo, noText, ChangeLinks.changePiop, hiddenPiopYesNo, 1)
-        cyaRowCheck(employerPaymentsYesNo, yesText, ChangeLinks.changeEmployerPayments, hiddenEmployerPaymentsYesNo, 2)
-        cyaRowCheck(employerTaxYesNo, yesText, ChangeLinks.changeEmployerTax, hiddenEmployerTaxYesNo, 3)
+        cyaNoMoreRowsAfterCheck(5)
         buttonCheck(buttonText)
       }
 
-      "render the page with No Payments into Overseas pensions and No employer payments" when {
-        val minPiopModel = aPaymentsIntoOverseasPensionsViewModel.copy(
-          paymentsIntoOverseasPensionsQuestions = Some(false), employerPaymentsQuestion = Some(false)
-        )
+      "render the page with 'Yes' to all gateway questions and no schemes" when {
+        val piopModel = aPaymentsIntoOverseasPensionsViewModel.copy(
+          taxPaidOnEmployerPaymentsQuestion = Some(true), reliefs = Seq.empty)
+        implicit val document: Document = renderPage(userScenario, piopModel)
+
+        cyaRowCheck(piopYesNo, yesText, ChangeLinks.changePiop, hiddenPiopYesNo, 1)
+        cyaRowCheck(totalPayments, "£1,999.99", ChangeLinks.changeTotalPayments, hiddenPiopYesNo, 2)
+        cyaRowCheck(employerPaymentsYesNo, yesText, ChangeLinks.changeEmployerPayments, hiddenEmployerPaymentsYesNo, 3)
+        cyaRowCheck(employerTaxYesNo, yesText, ChangeLinks.changeEmployerTax, hiddenEmployerTaxYesNo, 4)
+        cyaNoMoreRowsAfterCheck(4)
+        buttonCheck(buttonText)
+      }
+
+      "render the page with 'No' Payments into Overseas pensions" when {
+        val minPiopModel = aPaymentsIntoOverseasPensionsEmptyViewModel.copy(
+          paymentsIntoOverseasPensionsQuestions = Some(false))
         import userScenario.commonExpectedResults._
         implicit val document: Document = renderPage(userScenario, minPiopModel)
-        
+
         cyaRowCheck(piopYesNo, noText, ChangeLinks.changePiop, hiddenPiopYesNo, 1)
-        cyaRowCheck(employerPaymentsYesNo, noText, ChangeLinks.changeEmployerPayments, hiddenEmployerPaymentsYesNo, 2)
+        cyaNoMoreRowsAfterCheck(1)
         buttonCheck(buttonText)
       }
     }

@@ -20,6 +20,7 @@ import common.MessageKeys.OverseasPensions.PaymentIntoScheme
 import common.MessageKeys.YesNoAmountForm
 import config.{AppConfig, ErrorHandler}
 import controllers.BaseYesNoAmountController
+import controllers.pensions.paymentsIntoOverseasPensions.routes.{EmployerPayOverseasPensionController, PaymentsIntoOverseasPensionsCYAController}
 import controllers.predicates.AuthorisedAction
 import models.AuthorisationRequest
 import models.mongo.{PensionsCYAModel, PensionsUserData}
@@ -32,7 +33,6 @@ import utils.Clock
 import views.html.pensions.paymentsIntoOverseasPensions.PaymentIntoPensionSchemeView
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.Future
 
 @Singleton
 class PaymentIntoPensionSchemeController @Inject()(messagesControllerComponents: MessagesControllerComponents,
@@ -45,11 +45,15 @@ class PaymentIntoPensionSchemeController @Inject()(messagesControllerComponents:
 
   override val errorMessageSet: YesNoAmountForm = PaymentIntoScheme
 
-  // TODO: Once we've creating the CYA page (in SASS-3268), we can redirect to it.
   override def redirectWhenNoSessionData(taxYear: Int): Result = Redirect(controllers.pensions.routes.OverseasPensionsSummaryController.show(taxYear))
 
-  override def redirectAfterUpdatingSessionData(pensionsUserData: PensionsUserData, taxYear: Int): Result =
-    Redirect(controllers.pensions.paymentsIntoOverseasPensions.routes.EmployerPayOverseasPensionController.show(taxYear))
+  override def redirectAfterUpdatingSessionData(pensionsUserData: PensionsUserData, taxYear: Int): Result = {
+    val model = pensionsUserData.pensions.paymentsIntoOverseasPensions
+    Redirect(
+      if (model.paymentsIntoOverseasPensionsQuestions.getOrElse(false)) EmployerPayOverseasPensionController.show(taxYear)
+      else PaymentsIntoOverseasPensionsCYAController.show(taxYear)
+    )
+  }
 
   override def prepareView(pensionsUserData: PensionsUserData, taxYear: Int)
                           (implicit request: AuthorisationRequest[AnyContent]): Html =
