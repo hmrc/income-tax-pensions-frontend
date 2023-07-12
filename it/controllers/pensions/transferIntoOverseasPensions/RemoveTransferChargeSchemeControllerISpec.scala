@@ -17,6 +17,8 @@
 package controllers.pensions.transferIntoOverseasPensions
 
 import builders.PensionsCYAModelBuilder.aPensionsCYAModel
+import builders.TransferPensionSchemeBuilder.aNonUkTransferPensionScheme
+import builders.TransfersIntoOverseasPensionsViewModelBuilder.aTransfersIntoOverseasPensionsViewModel
 import controllers.ControllerSpec
 import controllers.ControllerSpec.UserConfig
 import play.api.libs.ws.WSResponse
@@ -38,7 +40,7 @@ class RemoveTransferChargeSchemeControllerISpec extends ControllerSpec("/oversea
         "the user accesses page with index out of bounds" in {
           val sessionData = pensionsUserData(aPensionsCYAModel)
           implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
-          implicit val response: WSResponse = getPageWithIndex(1)
+          implicit val response: WSResponse = getPageWithIndex(8)
 
           assertRedirectionAsExpected(PageRelativeURLs.transferChargeSchemeSummary)
         }
@@ -50,10 +52,10 @@ class RemoveTransferChargeSchemeControllerISpec extends ControllerSpec("/oversea
             val sessionData = pensionsUserData(aPensionsCYAModel)
             implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
 
-            implicit val response: WSResponse = submitForm(Map("" ->""), Map("index" -> "0"))
+            implicit val response: WSResponse = submitForm(Map("" -> ""), Map("index" -> "0"))
 
             assertRedirectionAsExpected(PageRelativeURLs.transferChargeSchemeSummary)
-            val expectedViewModel = sessionData.pensions.transfersIntoOverseasPensions.copy(transferPensionScheme = Seq.empty)
+            val expectedViewModel = aTransfersIntoOverseasPensionsViewModel.copy(transferPensionScheme = Seq(aNonUkTransferPensionScheme))
             getTransferPensionsViewModel mustBe Some(expectedViewModel)
 
           }

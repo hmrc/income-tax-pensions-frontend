@@ -129,7 +129,7 @@ class TransferIntoOverseasPensionsCYAViewSpec extends ViewUnitTest {
         cyaRowCheck(transfersIOP, yesText, ChangeLinks.transferPensionSavingsUrl, transfersIOPChange, 1)
         cyaRowCheck(amountCharged, "£1,999.99", ChangeLinks.overseasTransferChargeUrl, amountChargedChange, 2)
         cyaRowCheck(taxOnAmount, "£1,000", ChangeLinks.pensionSchemeTaxTransferUrl, taxOnAmountChange, 3)
-        cyaRowCheck(schemesPayingTax, "Foreign Scheme Name", ChangeLinks.transferChargeSummaryUrl, schemesPayingTaxChange, 4)
+        cyaRowCheck(schemesPayingTax, "UK TPS, Non-UK TPS", ChangeLinks.transferChargeSummaryUrl, schemesPayingTaxChange, 4)
       }
 
       "render the CYA page with no tax paid on amount charged" which {

@@ -95,97 +95,72 @@ class ReliefSchemeSummaryViewSpec extends ViewUnitTest with FakeRequestProvider 
     val text2 = "If you don’t have a pensions scheme to add you can return to the overview page and come back later."
   }
 
+  val cyaUrl = PaymentsIntoOverseasPensionsCYAController.show(taxYearEOY).url
+  val changeUrl = (index: Int) => ReliefsSchemeDetailsController.show(taxYearEOY, Some(index)).url
+  val removeUrl = (index: Int) => RemoveReliefSchemeController.show(taxYearEOY, Some(index)).url
+  val addSchemeUrl = PensionsCustomerReferenceNumberController.show(taxYearEOY, None).url
+
   val userScenarios: Seq[UserScenario[CommonExpectedResults, Unit]] = Seq(
     UserScenario(isWelsh = false, isAgent = false, CommonExpectedEN),
     UserScenario(isWelsh = true, isAgent = false, CommonExpectedCY)
   )
 
   private lazy val underTest = inject[ReliefSchemeSummaryView]
-    userScenarios.foreach { userScenario =>
-      s"language is ${welshTest(userScenario.isWelsh)} and request is from an ${agentTest(userScenario.isAgent)}" should {
-        "Render the refund scheme summary list page with multiple schemes" which {
-            import Selectors._
-            import userScenario.commonExpectedResults._
+  userScenarios.foreach { userScenario =>
+    s"language is ${welshTest(userScenario.isWelsh)} and request is from an ${agentTest(userScenario.isAgent)}" should {
+      "render the refund scheme summary list page when there are existing schemes" which {
+        import Selectors._
+        import userScenario.commonExpectedResults._
 
-            implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = UserSessionDataRequest(aPensionsUserData, aUser, fakeIndividualRequest)
-            implicit val messages: Messages = getMessages(userScenario.isWelsh)
-            val schemes = aPaymentsIntoOverseasPensionsViewModel.reliefs
-            val htmlFormat = underTest(taxYearEOY, schemes)
-            implicit val document: Document = Jsoup.parse(htmlFormat.body)
+        implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = UserSessionDataRequest(aPensionsUserData, aUser, fakeIndividualRequest)
+        implicit val messages: Messages = getMessages(userScenario.isWelsh)
+        val schemes = aPaymentsIntoOverseasPensionsViewModel.reliefs
+        val htmlFormat = underTest(taxYearEOY, schemes)
+        implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
-            val cyaUrl = PaymentsIntoOverseasPensionsCYAController.show(taxYearEOY).url //todo update when CYA is added
-            val changeUrl = (index: Int) =>  ReliefsSchemeDetailsController.show(taxYearEOY, Some(index)).url
-            val addSchemeUrl =  PensionsCustomerReferenceNumberController.show(taxYearEOY, None).url
+        titleCheck(expectedTitle, userScenario.isWelsh)
+        h1Check(expectedHeading)
+        captionCheck(expectedCaption(taxYearEOY))
+        welshToggleCheck(userScenario.isWelsh)
 
-            titleCheck(expectedTitle, userScenario.isWelsh)
-            h1Check(expectedHeading)
-            captionCheck(expectedCaption(taxYearEOY))
-            textOnPageCheck(s"${schemes.head.customerReference.getOrElse("")}", pensionNameSelector(1))
-            textOnPageCheck(s"${schemes.last.customerReference.getOrElse("")}", pensionNameSelector(2))
+        textOnPageCheck(s"${schemes.head.customerReference.getOrElse("")}", pensionNameSelector(1))
+        textOnPageCheck(s"${schemes(1).customerReference.getOrElse("")}", pensionNameSelector(2))
+        textOnPageCheck(s"${schemes(2).customerReference.getOrElse("")}", pensionNameSelector(3))
+        textOnPageCheck(s"${schemes(3).customerReference.getOrElse("")}", pensionNameSelector(4))
 
-            linkCheck(s"$change $change ${schemes.head.customerReference.getOrElse("")}", changeLinkSelector(1), changeUrl(0))
-            //linkCheck(s"$remove $remove ${schemes.head.customerReference.getOrElse("")}", removeLinkSelector(1), )
+        linkCheck(s"$change $change ${schemes.head.customerReference.getOrElse("")}", changeLinkSelector(1), changeUrl(0))
+        linkCheck(s"$remove $remove ${schemes.head.customerReference.getOrElse("")}", removeLinkSelector(1), removeUrl(0))
+        linkCheck(s"$change $change ${schemes(1).customerReference.getOrElse("")}", changeLinkSelector(2), changeUrl(1))
+        linkCheck(s"$remove $remove ${schemes(1).customerReference.getOrElse("")}", removeLinkSelector(2), removeUrl(1))
+        linkCheck(s"$change $change ${schemes(2).customerReference.getOrElse("")}", changeLinkSelector(3), changeUrl(2))
+        linkCheck(s"$remove $remove ${schemes(2).customerReference.getOrElse("")}", removeLinkSelector(3), removeUrl(2))
+        linkCheck(s"$change $change ${schemes(3).customerReference.getOrElse("")}", changeLinkSelector(4), changeUrl(3))
+        linkCheck(s"$remove $remove ${schemes(3).customerReference.getOrElse("")}", removeLinkSelector(4), removeUrl(3))
 
-            linkCheck(s"$change $change ${schemes.last.customerReference.getOrElse("")}", changeLinkSelector(2), changeUrl(1))
-            //linkCheck(s"$remove $remove ${schemes.last.customerReference.getOrElse("")}", removeLinkSelector(2), )
-            linkCheck(expectedAddAnotherText, addAnotherLinkSelector, addSchemeUrl)
+        linkCheck(expectedAddAnotherText, addAnotherLinkSelector, addSchemeUrl)
+        buttonCheck(expectedButtonText, continueButtonSelector, Some(cyaUrl))
+      }
 
-            buttonCheck(expectedButtonText, continueButtonSelector, Some(cyaUrl))
-            welshToggleCheck(userScenario.isWelsh)
-          }
+      "render alternative refund scheme summary list page when no pensions schemes are provided" which {
+        import Selectors._
+        import userScenario.commonExpectedResults._
 
+        implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = UserSessionDataRequest(aPensionsUserData, aUser, fakeIndividualRequest)
+        implicit val messages: Messages = getMessages(userScenario.isWelsh)
+        val htmlFormat = underTest(taxYearEOY, Seq.empty)
+        implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
-        "Render the refund scheme summary list page with pre-filled content containing refund pension scheme but no customerReference" which {
-            import Selectors._
-            import userScenario.commonExpectedResults._
-            implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = UserSessionDataRequest(aPensionsUserData, aUser, fakeIndividualRequest)
-            implicit val messages: Messages = getMessages(userScenario.isWelsh)
-
-            val schemes = aPaymentsIntoOverseasPensionsViewModel.reliefs
-              .updated(1, aPaymentsIntoOverseasPensionsViewModel.reliefs.last.copy(customerReference = None))
-            val htmlFormat = underTest(taxYearEOY, schemes)
-            implicit val document: Document = Jsoup.parse(htmlFormat.body)
-
-            val cyaUrl: String = PaymentsIntoOverseasPensionsCYAController.show(taxYearEOY).url
-            val changeUrl = (index: Int) => ReliefsSchemeDetailsController.show(taxYearEOY, Some(index)).url
-            val addSchemeUrl: String = PensionsCustomerReferenceNumberController.show(taxYearEOY, None).url
-
-          titleCheck(expectedTitle, userScenario.isWelsh)
-            h1Check(expectedHeading)
-            captionCheck(expectedCaption(taxYearEOY))
-            textOnPageCheck(s"${schemes.head.customerReference.getOrElse("")}", pensionNameSelector(1))
-            elementNotOnPageCheck(pensionNameSelector(2))
-
-            linkCheck(s"$change $change ${schemes.head.customerReference.getOrElse("")}", changeLinkSelector(1), changeUrl(0))
-            //linkCheck(s"$remove $remove ${schemes.head.customerReference.getOrElse("")}", removeLinkSelector(1), removeLink(0))
-            linkCheck(expectedAddAnotherText, addAnotherLinkSelector, addSchemeUrl)
-
-            buttonCheck(expectedButtonText, continueButtonSelector, Some(cyaUrl))
-            welshToggleCheck(userScenario.isWelsh)
-          }
-
-        "Render alternative refund scheme summary list page when no pensions schemes are provided" which {
-            import Selectors._
-            import userScenario.commonExpectedResults._
-
-            implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = UserSessionDataRequest(aPensionsUserData, aUser, fakeIndividualRequest)
-            implicit val messages: Messages = getMessages(userScenario.isWelsh)
-            val htmlFormat = underTest(taxYearEOY, Seq.empty)
-            implicit val document: Document = Jsoup.parse(htmlFormat.body)
-
-
-            titleCheck(expectedTitle, userScenario.isWelsh)
-            h1Check(expectedHeading)
-            captionCheck(expectedCaption(taxYearEOY))
-            elementNotOnPageCheck(summaryListTableSelector)
-            //todo update redirect to to transfer journey CYA page when navigation is linked up
-            buttonCheck(addASchemeButton, "#AddAScheme")
-            textOnPageCheck(text1, insetSpanText1)
-            buttonCheck(returnToOverviewButton, "#ReturnToOverview")
-            textOnPageCheck(text2, insetSpanText2)
-            welshToggleCheck(userScenario.isWelsh)
-          }
-        }
+        titleCheck(expectedTitle, userScenario.isWelsh)
+        h1Check(expectedHeading)
+        captionCheck(expectedCaption(taxYearEOY))
+        elementNotOnPageCheck(summaryListTableSelector)
+        buttonCheck(addASchemeButton, "#AddAScheme")
+        textOnPageCheck(text1, insetSpanText1)
+        buttonCheck(returnToOverviewButton, "#ReturnToOverview")
+        textOnPageCheck(text2, insetSpanText2)
+        welshToggleCheck(userScenario.isWelsh)
+      }
     }
+  }
 }
 

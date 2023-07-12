@@ -19,7 +19,6 @@ package controllers.pensions.shortServiceRefunds
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.shortServiceRefunds.routes.RefundSummaryController
 import controllers.predicates.actions.ActionsProvider
-import controllers.validatedIndex
 import forms.Countries
 import forms.overseas.PensionSchemeForm.{TcSsrPensionsSchemeFormModel, tcSsrPensionSchemeForm}
 import models.User
@@ -29,7 +28,8 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
-import services.redirects.ShortServiceRefundsRedirects.redirectForSchemeLoop
+import services.redirects.ShortServiceRefundsPages.SchemeDetailsPage
+import services.redirects.ShortServiceRefundsRedirects.indexCheckThenJourneyCheck
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.shortServiceRefunds.ShortServicePensionsSchemeView
@@ -45,49 +45,51 @@ class ShortServicePensionsSchemeController @Inject()(actionsProvider: ActionsPro
                                                     (implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock)
   extends FrontendController(mcc) with I18nSupport with SessionHelper {
 
-  def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) {
+  def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit userSessionDataRequest =>
-      val ssrPensionSchemes = userSessionDataRequest.pensionsUserData.pensions.shortServiceRefunds.refundPensionScheme
-      validatedIndex(index, ssrPensionSchemes.size) match {
-        case Some(idx) =>
+
+      indexCheckThenJourneyCheck(userSessionDataRequest.pensionsUserData, index, SchemeDetailsPage, taxYear) {
+        data =>
+          val ssrPensionSchemes = data.pensions.shortServiceRefunds.refundPensionScheme
+          val idx = index.getOrElse(0)
           val isUKScheme = ssrPensionSchemes(idx).ukRefundCharge.contains(true)
           val form = rfPensionSchemeForm(userSessionDataRequest.user, isUKScheme).fill(updateFormModel(ssrPensionSchemes(idx)))
-          Ok(view(form, taxYear, isUKScheme, idx))
-        case _ =>
-          Redirect(redirectForSchemeLoop(ssrPensionSchemes, taxYear))
+          Future.successful(Ok(view(form, taxYear, isUKScheme, idx)))
       }
   }
 
   def submit(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit userSessionDataRequest =>
-      val rfPensionSchemes = userSessionDataRequest.pensionsUserData.pensions.shortServiceRefunds.refundPensionScheme
-      validatedIndex(index, rfPensionSchemes.size) match {
-        case Some(idx) =>
-          val isUKScheme = rfPensionSchemes(idx).ukRefundCharge.contains(true)
+
+
+      indexCheckThenJourneyCheck(userSessionDataRequest.pensionsUserData, index, SchemeDetailsPage, taxYear) {
+        data =>
+
+          val ssrPensionSchemes = data.pensions.shortServiceRefunds.refundPensionScheme
+          val idx = index.getOrElse(0)
+          val isUKScheme = ssrPensionSchemes(idx).ukRefundCharge.contains(true)
           rfPensionSchemeForm(userSessionDataRequest.user, isUKScheme).bindFromRequest().fold(
             formWithErrors =>
-              Future.successful(BadRequest(view(formWithErrors, taxYear, isUKScheme, idx)))
-            ,
+              Future.successful(BadRequest(view(formWithErrors, taxYear, isUKScheme, idx))),
             ssrPensionScheme => {
-              val updatedCYAModel = updateViewModel(userSessionDataRequest.pensionsUserData, ssrPensionScheme, idx)
-              pensionSessionService.createOrUpdateSessionData(userSessionDataRequest.user, updatedCYAModel, taxYear,
-                userSessionDataRequest.pensionsUserData.isPriorSubmission)(errorHandler.internalServerError()) {
+
+              val updatedCYAModel = updateViewModel(data, ssrPensionScheme, idx)
+              pensionSessionService.createOrUpdateSessionData(
+                userSessionDataRequest.user, updatedCYAModel, taxYear, data.isPriorSubmission
+              )(errorHandler.internalServerError()) {
                 Redirect(RefundSummaryController.show(taxYear))
               }
             }
           )
-        case _ =>
-          Future.successful(Redirect(redirectForSchemeLoop(rfPensionSchemes, taxYear)))
       }
   }
-
 
   private def rfPensionSchemeForm(user: User, isUKScheme: Boolean): Form[TcSsrPensionsSchemeFormModel] =
     tcSsrPensionSchemeForm(
       agentOrIndividual = if (user.isAgent) "agent" else "individual", isUKScheme
     )
 
-  private def updateFormModel(scheme: OverseasRefundPensionScheme) =
+  private def updateFormModel(scheme: OverseasRefundPensionScheme): TcSsrPensionsSchemeFormModel =
     TcSsrPensionsSchemeFormModel(
       providerName = scheme.name.getOrElse(""),
       schemeReference = (if (scheme.ukRefundCharge.contains(true)) scheme.pensionSchemeTaxReference else scheme.qualifyingRecognisedOverseasPensionScheme)

@@ -128,7 +128,7 @@ class PaymentsIntoOverseasPensionsCYAViewSpec extends ViewUnitTest { //scalastyl
         cyaRowCheck(totalPayments, "£1,999.99", ChangeLinks.changeTotalPayments, hiddenTotalPayments, 2)
         cyaRowCheck(employerPaymentsYesNo, yesText, ChangeLinks.changeEmployerPayments, hiddenEmployerPaymentsYesNo, 3)
         cyaRowCheck(employerTaxYesNo, noText, ChangeLinks.changeEmployerTax, hiddenEmployerTaxYesNo, 4)
-        cyaRowCheck(schemes, "PENSIONINCOME245, PENSIONINCOME356", ChangeLinks.changeScheme, hiddenSchemes, 5)
+        cyaRowCheck(schemes, "tcrPENSIONINCOME2000, mmrPENSIONINCOME356, dtrPENSIONINCOME550, noPENSIONINCOME100", ChangeLinks.changeScheme, hiddenSchemes, 5)
         buttonCheck(buttonText)
       }
       

@@ -16,50 +16,82 @@
 
 package controllers.pensions.shortServiceRefunds
 
+import builders.OverseasRefundPensionSchemeBuilder.anOverseasRefundPensionSchemeWithoutUkRefundCharge
 import builders.PensionsCYAModelBuilder.aPensionsCYAModel
+import builders.ShortServiceRefundsViewModelBuilder.{aShortServiceRefundsEmptySchemeViewModel, aShortServiceRefundsViewModel}
 import controllers.ControllerSpec
 import controllers.ControllerSpec.UserConfig
+import play.api.http.Status.OK
 import play.api.libs.ws.WSResponse
 
 class RemoveRefundSchemeControllerISpec extends ControllerSpec("/overseas-pensions/short-service-refunds/remove-pension-scheme") {
 
-  "This page" when {
+  "show" should {
+    "show page when using a valid index" in {
+      val sessionData = pensionsUserData(aPensionsCYAModel)
+      implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
+      implicit val response: WSResponse = getPageWithIndex(1)
 
-    "shown" should {
-      "not show the form page but redirect to the summary page" when {
-        "the user has no stored session data at all" in {
-          implicit val userConfig: UserConfig = userConfigWhenIrrelevant(None)
-          implicit val response: WSResponse = getPageWithIndex()
-          assertRedirectionAsExpected(PageRelativeURLs.pensionsSummaryPage)
-        }
+      response.status equals OK
+    }
+
+    "redirect to the summary page" when {
+      "the user has no stored session data at all" in {
+        implicit val userConfig: UserConfig = userConfigWhenIrrelevant(None)
+        implicit val response: WSResponse = getPageWithIndex()
+        assertRedirectionAsExpected(PageRelativeURLs.pensionsSummaryPage)
       }
+    }
 
-      "redirect to refund scheme summary page" when {
-        "the user accesses page with index out of bounds" in {
-          val sessionData = pensionsUserData(aPensionsCYAModel)
-          implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
-          implicit val response: WSResponse = getPageWithIndex(1)
+    "redirect to refund scheme summary page" when {
+      "the user accesses page with index out of bounds" in {
+        val sessionData = pensionsUserData(aPensionsCYAModel)
+        implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
+        implicit val response: WSResponse = getPageWithIndex(10)
 
-          assertRedirectionAsExpected(PageRelativeURLs.shortServiceRefundSummary)
-        }
-      }
-      "submitted" should {
-        "the user has relevant session data and" when {
-          "removes a pension scheme successfully" in {
-
-            val sessionData = pensionsUserData(aPensionsCYAModel)
-            implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
-
-            implicit val response: WSResponse = submitForm(Map("" ->""), Map("index" -> "0"))
-
-            assertRedirectionAsExpected(PageRelativeURLs.shortServiceRefundSummary)
-            val expectedViewModel = sessionData.pensions.shortServiceRefunds.copy(refundPensionScheme = Seq.empty)
-            getShortServicePensionsViewModel mustBe Some(expectedViewModel)
-
-          }
-        }
+        assertRedirectionAsExpected(PageRelativeURLs.shortServiceRefundSummary)
       }
     }
   }
 
+  "submit" should {
+
+    "redirect to the scheme summary page" when {
+
+      "a valid index is used and the scheme is successfully removed from the session data" in {
+        val sessionData = pensionsUserData(aPensionsCYAModel)
+        implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
+        implicit val response: WSResponse = submitForm(Map("" -> ""), Map("index" -> "0"))
+        val expectedViewModel = sessionData.pensions.shortServiceRefunds.copy(refundPensionScheme = Seq(anOverseasRefundPensionSchemeWithoutUkRefundCharge))
+
+        assertRedirectionAsExpected(PageRelativeURLs.shortServiceRefundSummary)
+        getShortServicePensionsViewModel mustBe Some(expectedViewModel)
+      }
+
+      "an invalid index is used and there are existing schemes" in {
+        val sessionData = pensionsUserData(aPensionsCYAModel)
+        implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
+        implicit val response: WSResponse = submitForm(Map("" -> ""), Map("index" -> "4"))
+
+        assertRedirectionAsExpected(PageRelativeURLs.shortServiceRefundSummary)
+        getShortServicePensionsViewModel mustBe Some(aShortServiceRefundsViewModel)
+      }
+      "an invalid index is used and there are no existing schemes" in {
+        val sessionData = pensionsUserData(aPensionsCYAModel.copy(shortServiceRefunds = aShortServiceRefundsEmptySchemeViewModel))
+        implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
+        implicit val response: WSResponse = submitForm(Map("" -> ""), Map("index" -> "4"))
+
+        assertRedirectionAsExpected(PageRelativeURLs.shortServiceRefundSummary)
+        getShortServicePensionsViewModel mustBe Some(aShortServiceRefundsEmptySchemeViewModel)
+      }
+    }
+
+    "redirect to the Pensions Summary page when the user has no stored session data at all" in {
+      implicit val userConfig: UserConfig = userConfigWhenIrrelevant(None)
+      implicit val response: WSResponse = submitForm(Map("" -> ""), Map("index" -> "0"))
+
+      assertRedirectionAsExpected(PageRelativeURLs.pensionsSummaryPage)
+      getTransferPensionsViewModel mustBe None
+    }
+  }
 }

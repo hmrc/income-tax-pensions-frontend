@@ -23,10 +23,11 @@ import builders.UserBuilder.aUser
 import forms.RadioButtonAmountForm
 import forms.RadioButtonAmountForm.{amount2, yesNo}
 import models.mongo.{PensionsCYAModel, PensionsUserData}
+import models.pension.charges.ShortServiceRefundsViewModel
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.ShortServiceRefunds.{nonUkTaxRefundsUrl, refundSummaryUrl, taxOnShortServiceRefund}
+import utils.PageUrls.ShortServiceRefunds.{nonUkTaxRefundsUrl, refundSummaryUrl, shortServiceTaxableRefundUrl, taxOnShortServiceRefund}
 import utils.PageUrls.{fullUrl, overviewUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
@@ -62,6 +63,35 @@ class NonUkTaxRefundsControllerISpec extends IntegrationTest with ViewHelpers
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
       result.status shouldBe OK
+    }
+
+    "redirect to the first page in journey" when {
+      "previous questions have not been answered" in {
+        val incompleteCYAModel = aPensionsCYAModel.copy(shortServiceRefunds = ShortServiceRefundsViewModel(shortServiceRefund = Some(true)))
+        lazy implicit val result: WSResponse = {
+          dropPensionsDB()
+          authoriseAgentOrIndividual(aUser.isAgent)
+          insertCyaData(pensionsUsersData(incompleteCYAModel))
+          urlGet(fullUrl(nonUkTaxRefundsUrl(taxYearEOY)), !aUser.isAgent, follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        }
+
+        result.status shouldBe SEE_OTHER
+        result.headers("Location").head shouldBe shortServiceTaxableRefundUrl(taxYearEOY)
+      }
+      "page is invalid in journey" in {
+        val incompleteCYAModel = aPensionsCYAModel.copy(shortServiceRefunds = ShortServiceRefundsViewModel(shortServiceRefund = Some(false)))
+        lazy implicit val result: WSResponse = {
+          dropPensionsDB()
+          authoriseAgentOrIndividual(aUser.isAgent)
+          insertCyaData(pensionsUsersData(incompleteCYAModel))
+          urlGet(fullUrl(nonUkTaxRefundsUrl(taxYearEOY)), !aUser.isAgent, follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        }
+
+        result.status shouldBe SEE_OTHER
+        result.headers("Location").head shouldBe shortServiceTaxableRefundUrl(taxYearEOY)
+      }
     }
   }
 
@@ -102,7 +132,7 @@ class NonUkTaxRefundsControllerISpec extends IntegrationTest with ViewHelpers
       result.headers("location").head shouldBe refundSummaryUrl(taxYearEOY)
     }
 
-    "persist amount and redirect to summary page when there is no short service scheme " in {
+    "persist amount and redirect to next page when there is no short service scheme " in {
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)

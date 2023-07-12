@@ -21,11 +21,14 @@ import controllers.pensions.shortServiceRefunds.routes.ShortServicePensionsSchem
 import controllers.predicates.actions.ActionsProvider
 import controllers.validatedSchemes
 import forms.FormsProvider
+import models.mongo.PensionsCYAModel
 import models.pension.pages.shortServiceRefunds.TaxOnShortServiceRefundPage
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.ShortServiceRefundsService
-import services.redirects.ShortServiceRefundsRedirects.redirectForSchemeLoop
+import services.redirects.ShortServiceRefundsPages.SchemePaidTaxOnRefundsPage
+import services.redirects.ShortServiceRefundsRedirects.{cyaPageCall, journeyCheck, redirectForSchemeLoop}
+import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.SessionHelper
 import views.html.pensions.shortServiceRefunds.TaxPaidOnShortServiceRefundView
@@ -42,38 +45,57 @@ class TaxOnShortServiceRefundController @Inject()(actionsProvider: ActionsProvid
                                                  (implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport with SessionHelper {
 
-  def show(taxYear: Int, refundPensionSchemeIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) { implicit sessionUserData =>
-    validatedSchemes(refundPensionSchemeIndex, sessionUserData.pensionsUserData.pensions.shortServiceRefunds.refundPensionScheme) match {
-      case Left(_) => Redirect(redirectForSchemeLoop(sessionUserData.pensionsUserData.pensions.shortServiceRefunds.refundPensionScheme, taxYear))
-      case Right(_) => Ok(
-        view(TaxOnShortServiceRefundPage(taxYear, refundPensionSchemeIndex, sessionUserData.pensionsUserData.pensions.shortServiceRefunds, formsProvider.shortServiceTaxOnShortServiceRefundForm)))
-    }
-  }
-
-  def submit(taxYear: Int, refundPensionSchemeIndex: Option[Int]): Action[AnyContent] = {
-    actionsProvider.userSessionDataFor(taxYear).async { implicit sessionUserData =>
+  def show(taxYear: Int, refundPensionSchemeIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
+    implicit sessionUserData =>
 
       validatedSchemes(refundPensionSchemeIndex, sessionUserData.pensionsUserData.pensions.shortServiceRefunds.refundPensionScheme) match {
-        case Left(_) => Future.successful(Redirect(redirectForSchemeLoop(sessionUserData.pensionsUserData.pensions.shortServiceRefunds.refundPensionScheme, taxYear)))
-        case Right(_) => formsProvider.shortServiceTaxOnShortServiceRefundForm.bindFromRequest().fold(
-          formWithErrors =>
-            Future.successful(
-              BadRequest(view(
-                TaxOnShortServiceRefundPage(taxYear, refundPensionSchemeIndex, sessionUserData.pensionsUserData.pensions.shortServiceRefunds, formWithErrors)
-              ))),
-          yesNoValue => {
-            shortServiceRefundsService.createOrUpdateShortServiceRefundQuestion(sessionUserData.pensionsUserData, yesNoValue, refundPensionSchemeIndex).map {
-              case Left(_) => errorHandler.internalServerError()
-              case Right(userData) =>
-                //The collection will always have a value
-                val index = Some(refundPensionSchemeIndex.getOrElse(userData.pensions.shortServiceRefunds.refundPensionScheme.size - 1))
-                Redirect(ShortServicePensionsSchemeController.show(taxYear, index))
-            }
+        case Left(_) =>
+          Future.successful(Redirect(redirectForSchemeLoop(sessionUserData.pensionsUserData.pensions.shortServiceRefunds.refundPensionScheme, taxYear)))
+        case Right(_) =>
+
+          val checkRedirect = journeyCheck(SchemePaidTaxOnRefundsPage, _: PensionsCYAModel, taxYear)
+          redirectBasedOnCurrentAnswers(taxYear, Some(sessionUserData.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) {
+            data =>
+              Future.successful(Ok(view(TaxOnShortServiceRefundPage(
+                taxYear, refundPensionSchemeIndex,
+                data.pensions.shortServiceRefunds,
+                formsProvider.shortServiceTaxOnShortServiceRefundForm
+              ))))
           }
-        )
       }
-    }
   }
 
+  def submit(taxYear: Int, refundPensionSchemeIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
+    implicit sessionUserData =>
+
+      validatedSchemes(refundPensionSchemeIndex, sessionUserData.pensionsUserData.pensions.shortServiceRefunds.refundPensionScheme) match {
+        case Left(_) =>
+          Future.successful(Redirect(redirectForSchemeLoop(sessionUserData.pensionsUserData.pensions.shortServiceRefunds.refundPensionScheme, taxYear)))
+        case Right(_) =>
+
+          formsProvider.shortServiceTaxOnShortServiceRefundForm.bindFromRequest().fold(
+            formWithErrors =>
+
+              Future.successful(BadRequest(view(TaxOnShortServiceRefundPage(
+                taxYear, refundPensionSchemeIndex,
+                sessionUserData.pensionsUserData.pensions.shortServiceRefunds, formWithErrors)
+              ))),
+            yesNoValue => {
+
+              val checkRedirect = journeyCheck(SchemePaidTaxOnRefundsPage, _: PensionsCYAModel, taxYear)
+              redirectBasedOnCurrentAnswers(taxYear, Some(sessionUserData.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) {
+                data =>
+                  shortServiceRefundsService.createOrUpdateShortServiceRefundQuestion(data, yesNoValue, refundPensionSchemeIndex).map {
+                    case Left(_) => errorHandler.internalServerError()
+                    case Right(userData) =>
+                      //The collection will always have a value
+                      val index = Some(refundPensionSchemeIndex.getOrElse(userData.pensions.shortServiceRefunds.refundPensionScheme.size - 1))
+                      Redirect(ShortServicePensionsSchemeController.show(taxYear, index))
+                  }
+              }
+            }
+          )
+      }
+  }
 
 }

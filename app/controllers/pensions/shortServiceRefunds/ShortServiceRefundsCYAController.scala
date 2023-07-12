@@ -17,7 +17,8 @@
 package controllers.pensions.shortServiceRefunds
 
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.routes.OverseasPensionsSummaryController
+import controllers.pensions.routes.{OverseasPensionsSummaryController, PensionsSummaryController}
+import controllers.pensions.shortServiceRefunds.routes.TaxableRefundAmountController
 import controllers.predicates.actions.{ActionsProvider, AuthorisedAction}
 import models.mongo.PensionsCYAModel
 import models.pension.AllPensionsData
@@ -25,6 +26,9 @@ import models.pension.AllPensionsData.generateCyaFromPrior
 import models.pension.charges.ShortServiceRefundsViewModel
 import play.api.i18n.I18nSupport
 import play.api.mvc._
+import services.redirects.ShortServiceRefundsPages.CYAPage
+import services.redirects.ShortServiceRefundsRedirects.journeyCheck
+import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
 import services.{PensionChargesService, PensionSessionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
@@ -49,7 +53,10 @@ class ShortServiceRefundsCYAController @Inject()(authAction: AuthorisedAction,
     pensionSessionService.getAndHandle(taxYear, request.user) { (cya, prior) =>
       (cya, prior) match {
         case (Some(data), _) =>
-          Future.successful(Ok(view(taxYear, data.pensions.shortServiceRefunds)))
+          val checkRedirect = journeyCheck(CYAPage, _: PensionsCYAModel, taxYear)
+          redirectBasedOnCurrentAnswers(taxYear, cya, TaxableRefundAmountController.show(taxYear))(checkRedirect) { _ =>
+            Future.successful(Ok(view(taxYear, data.pensions.shortServiceRefunds)))
+          }
         case (None, Some(priorData)) =>
           val cyaModel = generateCyaFromPrior(priorData)
           pensionSessionService.createOrUpdateSessionData(request.user,
@@ -59,24 +66,26 @@ class ShortServiceRefundsCYAController @Inject()(authAction: AuthorisedAction,
         case (None, None) =>
           val emptyShortServiceRefunds = ShortServiceRefundsViewModel()
           Future.successful(Ok(view(taxYear, emptyShortServiceRefunds)))
-        case _ => Future.successful(Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear)))
+        case _ => Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
       }
     }
   }
-
 
   def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
     pensionSessionService.getAndHandle(taxYear, request.user) { (cya, prior) =>
       cya.fold(
         Future.successful(Redirect(appConfig.incomeTaxSubmissionOverviewUrl(taxYear)))
       ) { model =>
-        if (sessionDataDifferentThanPriorData(model.pensions, prior)) {
-          pensionChargesService.saveShortServiceRefundsViewModel(request.user, taxYear).map {
-            case Left(_) => errorHandler.internalServerError()
-            case Right(_) => Redirect(OverseasPensionsSummaryController.show(taxYear))
+        val checkRedirect = journeyCheck(CYAPage, _: PensionsCYAModel, taxYear)
+        redirectBasedOnCurrentAnswers(taxYear, cya, TaxableRefundAmountController.show(taxYear))(checkRedirect) { _ =>
+          if (sessionDataDifferentThanPriorData(model.pensions, prior)) {
+            pensionChargesService.saveShortServiceRefundsViewModel(request.user, taxYear).map {
+              case Left(_) => errorHandler.internalServerError()
+              case Right(_) => Redirect(OverseasPensionsSummaryController.show(taxYear))
+            }
+          } else {
+            Future.successful(Redirect(OverseasPensionsSummaryController.show(taxYear)))
           }
-        } else {
-          Future.successful(Redirect(OverseasPensionsSummaryController.show(taxYear)))
         }
       }
     }
