@@ -27,7 +27,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.IncomeFromPensionsPages.{statePension, statePensionLumpSumUrl, statePensionStartDateUrl}
+import utils.PageUrls.IncomeFromPensionsPages.{statePension, statePensionCyaUrl, statePensionStartDateUrl}
 import utils.PageUrls._
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
@@ -101,7 +101,7 @@ class StatePensionControllerISpec extends IntegrationTest with ViewHelpers with 
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
       result.status shouldBe SEE_OTHER
-      result.header("location") shouldBe Some(statePensionLumpSumUrl(taxYearEOY))
+      result.header("location") shouldBe Some(statePensionCyaUrl(taxYearEOY))
     }
 
     "return a Bad Request when form is submitted with errors" in {
