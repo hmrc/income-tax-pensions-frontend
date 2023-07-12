@@ -18,9 +18,41 @@ package services.redirects
 
 
 sealed trait TransfersIntoOverseasPensionsPages {
-
+val journeyNo: Int
 }
 
 object TransfersIntoOverseasPensionsPages {
+
+  case object DidYouTransferIntoAnOverseasPensionSchemePage extends TransfersIntoOverseasPensionsPages {
+    override val journeyNo: Int = 1
+  }
+
+  case object OverseasTransferChargeAmountPage extends TransfersIntoOverseasPensionsPages {
+    override val journeyNo: Int = 2
+  }
+
+  case object TaxOnPensionSchemesAmountPage extends TransfersIntoOverseasPensionsPages {
+    override val journeyNo: Int = 3
+  }
+
+  case object SchemesPayingTransferChargesSummary extends TransfersIntoOverseasPensionsPages {
+    override val journeyNo: Int = 4
+  }
+
+  case object DidAUKPensionSchemePayTransferChargePage extends TransfersIntoOverseasPensionsPages {
+    override val journeyNo: Int = 5
+  }
+
+  case object PensionSchemeDetailsPage extends TransfersIntoOverseasPensionsPages {
+    override val journeyNo: Int = 6
+  }
+
+  case object RemoveSchemePage extends TransfersIntoOverseasPensionsPages {
+    override val journeyNo: Int = 7
+  }
+
+  case object TransferIntoOverseasPensionsCYA extends TransfersIntoOverseasPensionsPages {
+    override val journeyNo: Int = 8
+  }
 
 }

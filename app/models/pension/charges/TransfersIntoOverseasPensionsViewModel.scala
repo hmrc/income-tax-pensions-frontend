@@ -30,7 +30,8 @@ case class TransfersIntoOverseasPensionsViewModel(transferPensionSavings: Option
                                                    overseasTransferChargeAmount: Option[BigDecimal] = None,
                                                    pensionSchemeTransferCharge: Option[Boolean] = None,
                                                    pensionSchemeTransferChargeAmount: Option[BigDecimal] = None,
-                                                   transferPensionScheme: Seq[TransferPensionScheme] = Nil) extends PensionCYABaseModel {
+                                                   transferPensionScheme: Seq[TransferPensionScheme] = Nil
+                                                 )extends PensionCYABaseModel {
   def isEmpty: Boolean = transferPensionSavings.isEmpty && overseasTransferCharge.isEmpty && overseasTransferChargeAmount.isEmpty &&
     pensionSchemeTransferCharge.isEmpty && pensionSchemeTransferChargeAmount.isEmpty && transferPensionScheme.isEmpty
 

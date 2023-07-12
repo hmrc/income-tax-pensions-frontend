@@ -47,7 +47,8 @@ class OverseasTransferChargePaidController @Inject()(actionsProvider: ActionsPro
     validatedSchemes(pensionSchemeIndex, sessionUserData.pensionsUserData.pensions.transfersIntoOverseasPensions.transferPensionScheme) match {
       case Left(_) => Redirect(redirectForSchemeLoop(sessionUserData.pensionsUserData.pensions.transfersIntoOverseasPensions.transferPensionScheme, taxYear))
       case Right(_) => Ok(
-        pageView(OverseasTransferChargePaidPage(taxYear, pensionSchemeIndex, sessionUserData.pensionsUserData.pensions.transfersIntoOverseasPensions, formsProvider.overseasTransferChargePaidForm)))
+        pageView(OverseasTransferChargePaidPage(
+          taxYear, pensionSchemeIndex, sessionUserData.pensionsUserData.pensions.transfersIntoOverseasPensions, formsProvider.overseasTransferChargePaidForm)))
     }
   }
 
@@ -59,11 +60,13 @@ class OverseasTransferChargePaidController @Inject()(actionsProvider: ActionsPro
         case Right(_) => formsProvider.overseasTransferChargePaidForm.bindFromRequest().fold(
           formWithErrors =>
             Future.successful(
-              BadRequest(pageView(OverseasTransferChargePaidPage(taxYear, pensionSchemeIndex, sessionUserData.pensionsUserData.pensions.transfersIntoOverseasPensions, formWithErrors)))),
+              BadRequest(pageView(OverseasTransferChargePaidPage(
+                taxYear, pensionSchemeIndex, sessionUserData.pensionsUserData.pensions.transfersIntoOverseasPensions, formWithErrors)))),
           yesNoValue => {
             overseasTransferChargesService.updateOverseasTransferChargeQuestion(sessionUserData.pensionsUserData, yesNoValue, pensionSchemeIndex).map {
               case Left(_) => errorHandler.internalServerError()
-              case Right(userData) => Redirect(TransferPensionsSchemeController.show(taxYear, Some(pensionSchemeIndex.getOrElse(userData.pensions.transfersIntoOverseasPensions.transferPensionScheme.size - 1))))
+              case Right(userData) => Redirect(TransferPensionsSchemeController.show(
+                taxYear, Some(pensionSchemeIndex.getOrElse(userData.pensions.transfersIntoOverseasPensions.transferPensionScheme.size - 1))))
             }
           }
         )
