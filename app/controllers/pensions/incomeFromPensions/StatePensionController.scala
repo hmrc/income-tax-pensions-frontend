@@ -17,7 +17,7 @@
 package controllers.pensions.incomeFromPensions
 
 import config.{AppConfig, ErrorHandler}
-import controllers.predicates.{ActionsProvider, InYearAction}
+import controllers.predicates.actions.{ActionsProvider, InYearAction}
 import forms.FormsProvider
 import models.mongo.{PensionsCYAModel, PensionsUserData}
 import models.pension.statebenefits.{IncomeFromPensionsViewModel, StateBenefitViewModel}

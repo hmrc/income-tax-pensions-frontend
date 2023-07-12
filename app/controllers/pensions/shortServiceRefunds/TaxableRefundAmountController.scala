@@ -18,7 +18,7 @@ package controllers.pensions.shortServiceRefunds
 
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.shortServiceRefunds.routes.{NonUkTaxRefundsController, ShortServiceRefundsCYAController}
-import controllers.predicates.ActionsProvider
+import controllers.predicates.actions.ActionsProvider
 import forms.FormsProvider
 import models.mongo.{PensionsCYAModel, PensionsUserData}
 import models.pension.charges.OverseasRefundPensionScheme

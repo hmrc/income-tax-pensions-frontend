@@ -21,7 +21,7 @@ import builders.PensionsUserDataBuilder.aPensionsUserData
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import common.SessionValues
 import config.AppConfig
-import controllers.predicates.AuthorisedAction
+import controllers.predicates.actions.AuthorisedAction
 import helpers.{PlaySessionCookieBaker, WireMockHelper, WiremockStubHelpers}
 import models.IncomeTaxUserData
 import models.mongo.PensionsUserData

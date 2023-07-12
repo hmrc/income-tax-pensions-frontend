@@ -17,23 +17,23 @@
 package controllers.pensions.incomeFromPensions
 
 import config.{AppConfig, ErrorHandler}
-import controllers.predicates.ActionsProvider
-import forms.FormsProvider
-import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.PensionSessionService
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import views.html.pensions.incomeFromPensions.StatePensionAddToCalculationView
-import controllers.pensions.routes.PensionsSummaryController
 import controllers.pensions.incomeFromPensions.routes.StatePensionCYAController
+import controllers.pensions.routes.PensionsSummaryController
+import controllers.predicates.actions.ActionsProvider
+import forms.FormsProvider
 import models.mongo.PensionsUserData
 import models.pension.statebenefits.{IncomeFromPensionsViewModel, StateBenefitViewModel}
 import models.requests.UserSessionDataRequest
 import play.api.data.Form
-import services.redirects.IncomeFromPensionsPages.{AddStatePensionToIncomeTaxCalcPage, WhenDidYouGetYourStatePensionLumpSumPage}
+import play.api.i18n.I18nSupport
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import services.PensionSessionService
+import services.redirects.IncomeFromPensionsPages.AddStatePensionToIncomeTaxCalcPage
 import services.redirects.IncomeFromPensionsRedirects.{cyaPageCall, journeyCheck}
 import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.SessionHelper
+import views.html.pensions.incomeFromPensions.StatePensionAddToCalculationView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}

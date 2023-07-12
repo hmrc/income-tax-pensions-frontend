@@ -17,7 +17,7 @@
 package controllers.pensions.annualAllowances
 
 import config.{AppConfig, ErrorHandler}
-import controllers.predicates.ActionsProvider
+import controllers.predicates.actions.ActionsProvider
 import forms.FormsProvider
 import models.mongo.PensionsUserData
 import models.requests.UserSessionDataRequest

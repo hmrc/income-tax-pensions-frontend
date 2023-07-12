@@ -167,8 +167,7 @@ class ControllerSpec(val pathForThisPage: String) extends PlaySpec
   protected def assertRadioButtonAsExpected(document: Document, index: Int, expectedRadioButton: ExpectedRadioButton): Unit = {
     document must haveARadioButtonAtIndex(index)
     document must haveARadioButtonAtIndexWithLabel(index, expectedRadioButton.label)
-    if (expectedRadioButton.isChecked) document must haveACheckedRadioButtonAtIndex(index)
-    else document must not(haveACheckedRadioButtonAtIndex(index))
+    if (expectedRadioButton.isChecked) document must haveACheckedRadioButtonAtIndex(index) else document must not(haveACheckedRadioButtonAtIndex(index))
   }
 
   protected def assertTextInputAsExpected(document: Document, expectedInputField: ExpectedInputField): Unit = {
@@ -821,65 +820,65 @@ object ControllerSpec {
       }
     }
 
-    def haveTitle(partialTitle: String)(implicit isWelsh: Boolean) = new HasTitle(partialTitle)
+    def haveTitle(partialTitle: String)(implicit isWelsh: Boolean): HasTitle = new HasTitle(partialTitle)
 
-    def haveHeader(header: String) = new HasHeader(header)
+    def haveHeader(header: String): HasHeader = new HasHeader(header)
 
-    def haveCaption(header: String) = new HasCaption(header)
+    def haveCaption(header: String): HasCaption = new HasCaption(header)
 
-    def havePreferredLanguageSelectorTitle(preferredLanguage: PreferredLanguage, title: String) = new HavePreferredLanguageSelectorTitle(preferredLanguage: PreferredLanguage, title)
+    def havePreferredLanguageSelectorTitle(preferredLanguage: PreferredLanguage, title: String): HavePreferredLanguageSelectorTitle = new HavePreferredLanguageSelectorTitle(preferredLanguage: PreferredLanguage, title)
 
-    def haveOtherLanguageSelectorTitle(preferredLanguage: PreferredLanguage, title: String) = new HaveOtherLanguageSelectorTitle(preferredLanguage: PreferredLanguage, title)
+    def haveOtherLanguageSelectorTitle(preferredLanguage: PreferredLanguage, title: String): HaveOtherLanguageSelectorTitle = new HaveOtherLanguageSelectorTitle(preferredLanguage: PreferredLanguage, title)
 
-    def haveLanguageSelectorLink(link: String) = new HaveLanguageSelectorLink(link)
+    def haveLanguageSelectorLink(link: String): HaveLanguageSelectorLink = new HaveLanguageSelectorLink(link)
 
-    def haveARadioButtonAtIndex(index: Int) = new HaveARadioButtonAtIndex(index)
+    def haveARadioButtonAtIndex(index: Int): HaveARadioButtonAtIndex = new HaveARadioButtonAtIndex(index)
 
-    def haveARadioButtonAtIndexWithLabel(index: Int, label: String) = new HaveARadioButtonAtIndexWithLabel(index, label)
+    def haveARadioButtonAtIndexWithLabel(index: Int, label: String): HaveARadioButtonAtIndexWithLabel = new HaveARadioButtonAtIndexWithLabel(index, label)
 
-    def haveACheckedRadioButtonAtIndex(index: Int) = new HaveACheckedRadioButtonAtIndex(index)
+    def haveACheckedRadioButtonAtIndex(index: Int): HaveACheckedRadioButtonAtIndex = new HaveACheckedRadioButtonAtIndex(index)
 
-    def haveAContinueButtonWithLabel(label: String) = new HaveAContinueButtonWithLabel(label)
+    def haveAContinueButtonWithLabel(label: String): HaveAContinueButtonWithLabel = new HaveAContinueButtonWithLabel(label)
 
-    def haveAContinueButtonWithLink(link: String) = new HaveAContinueButtonWithLink(link)
+    def haveAContinueButtonWithLink(link: String): HaveAContinueButtonWithLink = new HaveAContinueButtonWithLink(link)
 
-    def haveAnAmountLabel(link: String) = new HaveAnAmountLabel(link)
+    def haveAnAmountLabel(link: String): HaveAnAmountLabel = new HaveAnAmountLabel(link)
 
-    def haveAnAmountHint(link: String) = new HaveAnAmountHint(link)
+    def haveAnAmountHint(link: String): HaveAnAmountHint = new HaveAnAmountHint(link)
 
-    def haveAnAmountValue(value: String, name: String) = new HaveAnAmountValue(value, name)
+    def haveAnAmountValue(value: String, name: String): HaveAnAmountValue = new HaveAnAmountValue(value, name)
 
-    def haveAnAmountName(value: String) = new HaveAnAmountName(value)
+    def haveAnAmountName(value: String): HaveAnAmountName = new HaveAnAmountName(value)
 
-    def haveAFormWithTargetAction(url: String) = new HaveAFormWithTargetAction(url)
+    def haveAFormWithTargetAction(url: String): HaveAFormWithTargetAction = new HaveAFormWithTargetAction(url)
 
-    def haveAnErrorSummarySection = new HaveAnErrorSummarySection
+    def haveAnErrorSummarySection: HaveAnErrorSummarySection = new HaveAnErrorSummarySection
 
-    def haveAnErrorSummaryTitle(title: String) = new HaveAnErrorSummaryTitle(title)
+    def haveAnErrorSummaryTitle(title: String): HaveAnErrorSummaryTitle = new HaveAnErrorSummaryTitle(title)
 
-    def haveAnErrorSummaryBody(body: String) = new HaveAnErrorSummaryBody(body)
+    def haveAnErrorSummaryBody(body: String): HaveAnErrorSummaryBody = new HaveAnErrorSummaryBody(body)
 
-    def haveAnErrorSummaryLink(link: String, body: String) = new HaveAnErrorSummaryLink(link, body)
+    def haveAnErrorSummaryLink(link: String, body: String): HaveAnErrorSummaryLink = new HaveAnErrorSummaryLink(link, body)
 
-    def haveAnErrorAboveElementSection(idOpt: Option[String] = None) = new HaveAnErrorAboveElementSection(idOpt)
+    def haveAnErrorAboveElementSection(idOpt: Option[String] = None): HaveAnErrorAboveElementSection = new HaveAnErrorAboveElementSection(idOpt)
 
-    def haveAnErrorAboveElementTitle(idOpt: Option[String] = None, title: String) = new HaveAnErrorAboveElementTitle(idOpt, title)
+    def haveAnErrorAboveElementTitle(idOpt: Option[String] = None, title: String): HaveAnErrorAboveElementTitle = new HaveAnErrorAboveElementTitle(idOpt, title)
 
-    def haveLinkForId(id: String) = new HaveLinkForId(id)
+    def haveLinkForId(id: String): HaveLinkForId = new HaveLinkForId(id)
 
-    def haveLinkLabel(id: String, label: String) = new HaveLinkLabel(id, label)
+    def haveLinkLabel(id: String, label: String): HaveLinkLabel = new HaveLinkLabel(id, label)
 
-    def haveLinkHref(id: String, href: String) = new HaveLinkHref(id, href)
+    def haveLinkHref(id: String, href: String): HaveLinkHref = new HaveLinkHref(id, href)
 
-    def haveTextForSelector(selector: String) = new HaveTextForSelector(selector)
+    def haveTextForSelector(selector: String): HaveTextForSelector = new HaveTextForSelector(selector)
 
-    def haveTextContents(selector: String, contents: String) = new HaveTextContents(selector, contents)
+    def haveTextContents(selector: String, contents: String): HaveTextContents = new HaveTextContents(selector, contents)
 
-    def haveATextInputForSelector(selector: String) = new HaveATextInputForSelector(selector)
+    def haveATextInputForSelector(selector: String): HaveATextInputForSelector = new HaveATextInputForSelector(selector)
 
-    def haveATextInputName(selector: String, name: String) = new HaveATextInputName(selector, name)
+    def haveATextInputName(selector: String, name: String): HaveATextInputName = new HaveATextInputName(selector, name)
 
-    def haveATextInputValue(selector: String, value: String) = new HaveATextInputValue(selector, value)
+    def haveATextInputValue(selector: String, value: String): HaveATextInputValue = new HaveATextInputValue(selector, value)
   }
 
 
@@ -889,7 +888,7 @@ object ControllerSpec {
 
       override def apply(response: WSResponse): MatchResult = {
         val actualLocationHeaderValue = response.header("location")
-        val errorMessageIfExpected = s"The response doesn't have a location header value of '${Some(value)}'. It is actually '${actualLocationHeaderValue}'"
+        val errorMessageIfExpected = s"The response doesn't have a location header value of '${Some(value)}'. It is actually '$actualLocationHeaderValue'"
         val errorMessageIfNotExpected = s"The response does indeed have a location header value of '$value', which was not expected."
         MatchResult(
           actualLocationHeaderValue.contains(value),
@@ -914,9 +913,9 @@ object ControllerSpec {
       }
     }
 
-    def haveALocationHeaderValue(value: String) = new HaveALocationHeaderValue(value)
+    def haveALocationHeaderValue(value: String): HaveALocationHeaderValue = new HaveALocationHeaderValue(value)
 
-    def haveStatus(status: Int) = new MustHaveStatus(status)
+    def haveStatus(status: Int): MustHaveStatus = new MustHaveStatus(status)
   }
 
   case class UserConfig(userType: UserTypes.UserType,

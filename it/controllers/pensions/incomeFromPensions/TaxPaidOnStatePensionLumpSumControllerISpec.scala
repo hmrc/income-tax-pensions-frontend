@@ -26,11 +26,9 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.IncomeFromPensionsPages.{statePension, statePensionLumpSumStartDateUrl, statePensionStartDateUrl, taxOnLumpSumUrl}
+import utils.PageUrls.IncomeFromPensionsPages.{statePension, statePensionLumpSumStartDateUrl, taxOnLumpSumUrl}
 import utils.PageUrls.{fullUrl, overviewUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
-
-import java.time.LocalDate
 
 // scalastyle:off magic.number
 class TaxPaidOnStatePensionLumpSumControllerISpec extends IntegrationTest with BeforeAndAfterEach with ViewHelpers with PensionsDatabaseHelper {

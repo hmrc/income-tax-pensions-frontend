@@ -16,11 +16,11 @@
 
 package services.redirects
 
+import controllers.pensions.incomeFromPensions.routes.{StatePensionCYAController, StatePensionController}
 import models.mongo.PensionsCYAModel
-import play.api.mvc.{Call, Result}
+import models.pension.statebenefits.IncomeFromPensionsViewModel
 import play.api.mvc.Results.Redirect
-import controllers.pensions.incomeFromPensions.routes.{StatePensionController, StatePensionCYAController}
-import models.pension.statebenefits.{IncomeFromPensionsViewModel, StateBenefitViewModel}
+import play.api.mvc.{Call, Result}
 
 object IncomeFromPensionsRedirects { //scalastyle:off magic.number
 
