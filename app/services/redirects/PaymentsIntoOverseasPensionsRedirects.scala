@@ -44,18 +44,30 @@ object PaymentsIntoOverseasPensionsRedirects {
                                  taxYear: Int)(continue: Relief => Future[Result]): Future[Result] = {
 
     val reliefs = data.pensions.paymentsIntoOverseasPensions.reliefs
-    validateIndex(optIndex, reliefs) match {
-      case Some(index) =>
-        val checkRedirect = journeyCheckIndex(currentPage, _, taxYear, reliefs, Some(index))
-        redirectBasedOnCurrentAnswers(taxYear, Some(data), cyaPageCall(taxYear))(checkRedirect) {
-          data: PensionsUserData =>
-            continue(data.pensions.paymentsIntoOverseasPensions.reliefs(index))
-        }
-      case None =>
+    val validatedIndex: Option[Int] = validateIndex(optIndex, reliefs)
+    (reliefs, validatedIndex) match {
+      case (reliefs, None) if reliefs.nonEmpty =>
+
         val checkRedirect = journeyCheckIndex(currentPage, _, taxYear, reliefs, None)
         redirectBasedOnCurrentAnswers(taxYear, Some(data), cyaPageCall(taxYear))(checkRedirect) {
           _ =>
             Future.successful(Redirect(redirectForSchemeLoop(reliefs, taxYear)))
+        }
+
+      case (_, None) =>
+
+        val checkRedirect = journeyCheck(currentPage, _: PensionsCYAModel, taxYear)
+        redirectBasedOnCurrentAnswers(taxYear, Some(data), cyaPageCall(taxYear))(checkRedirect) {
+          _ =>
+            Future.successful(Redirect(redirectForSchemeLoop(reliefs, taxYear)))
+        }
+
+      case (_, Some(index)) =>
+
+        val checkRedirect = journeyCheckIndex(currentPage, _, taxYear, reliefs, Some(index))
+        redirectBasedOnCurrentAnswers(taxYear, Some(data), cyaPageCall(taxYear))(checkRedirect) {
+          data: PensionsUserData =>
+            continue(data.pensions.paymentsIntoOverseasPensions.reliefs(index))
         }
     }
   }

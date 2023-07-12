@@ -20,6 +20,7 @@ import builders.PaymentsIntoOverseasPensionsViewModelBuilder.aPaymentsIntoOverse
 import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import builders.PensionsUserDataBuilder
 import builders.PensionsUserDataBuilder.{aPensionsUserData, pensionUserDataWithOnlyOverseasPensions, pensionUserDataWithOverseasPensions}
+import builders.ReliefBuilder.aTransitionalCorrespondingRelief
 import forms.SF74ReferenceForm
 import models.mongo.{PensionsCYAModel, PensionsUserData}
 import org.scalatest.BeforeAndAfterEach
@@ -33,7 +34,7 @@ import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 class SF74ReferenceControllerISpec extends IntegrationTest
   with BeforeAndAfterEach with ViewHelpers with PensionsDatabaseHelper { //scalastyle:off magic.number
-  
+
   override val userScenarios: Seq[UserScenario[_, _]] = Seq.empty
 
   private def pensionsUsersData(pensionsCyaModel: PensionsCYAModel): PensionsUserData = {
@@ -42,7 +43,7 @@ class SF74ReferenceControllerISpec extends IntegrationTest
       pensions = pensionsCyaModel
     )
   }
-  
+
   val schemeIndex0 = 0
   val schemeIndex100 = 100
 
@@ -84,9 +85,10 @@ class SF74ReferenceControllerISpec extends IntegrationTest
       }
     }
 
-    "redirect to the customer reference page if the index doesn't match and there are NO pension schemes" should {
-      val pensionsNoSchemesViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(reliefs = Seq())
-      
+    "redirect to the first page in scheme loop if the index doesn't match and there are NO pension schemes" should {
+      val pensionsNoSchemesViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(
+        reliefs = Seq(aTransitionalCorrespondingRelief.copy(sf74Reference = None)))
+
       lazy val result: WSResponse = {
         dropPensionsDB()
         insertCyaData(pensionUserDataWithOnlyOverseasPensions(pensionsNoSchemesViewModel))
@@ -100,7 +102,7 @@ class SF74ReferenceControllerISpec extends IntegrationTest
       }
 
     }
-    
+
     "redirect to the pension relief scheme summary page if the index doesn't match and there are pension schemes" should {
       lazy val result: WSResponse = {
         dropPensionsDB()
@@ -114,8 +116,8 @@ class SF74ReferenceControllerISpec extends IntegrationTest
         result.header("location") shouldBe Some(pensionReliefSchemeSummaryUrl(taxYearEOY))
       }
 
+    }
   }
-}
 
   ".submit" should {
     "redirect to the pensions scheme details page " should {
@@ -132,9 +134,10 @@ class SF74ReferenceControllerISpec extends IntegrationTest
         result.header("location") shouldBe Some(pensionReliefSchemeDetailsUrl(taxYearEOY, 0))
       }
     }
-    
-    "redirect to the customer reference page if the index doesn't match and there are No pension schemes" should {
-      val pensionsNoSchemesViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(reliefs = Seq())
+
+    "redirect to the the first page in scheme loop if the index doesn't match and there are no complete relief schemes" should {
+      val pensionsNoSchemesViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(
+        reliefs = Seq(aTransitionalCorrespondingRelief.copy(sf74Reference = None)))
       val form: Map[String, String] = Map(SF74ReferenceForm.sf74ReferenceId -> "1234567")
 
       lazy val result: WSResponse = {

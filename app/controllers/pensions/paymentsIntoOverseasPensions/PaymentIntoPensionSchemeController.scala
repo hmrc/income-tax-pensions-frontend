@@ -32,6 +32,7 @@ import utils.Clock
 import views.html.pensions.paymentsIntoOverseasPensions.PaymentIntoPensionSchemeView
 
 import javax.inject.{Inject, Singleton}
+import scala.concurrent.Future
 
 @Singleton
 class PaymentIntoPensionSchemeController @Inject()(messagesControllerComponents: MessagesControllerComponents,
@@ -51,7 +52,9 @@ class PaymentIntoPensionSchemeController @Inject()(messagesControllerComponents:
     Redirect(controllers.pensions.paymentsIntoOverseasPensions.routes.EmployerPayOverseasPensionController.show(taxYear))
 
   override def prepareView(pensionsUserData: PensionsUserData, taxYear: Int)
-                          (implicit request: AuthorisationRequest[AnyContent]): Html = paymentIntoPensionSchemeView(populateForm(pensionsUserData), taxYear)
+                          (implicit request: AuthorisationRequest[AnyContent]): Html =
+
+    paymentIntoPensionSchemeView(populateForm(cleanUpReliefs(pensionsUserData)), taxYear)
 
   override def whenFormIsInvalid(form: Form[(Boolean, Option[BigDecimal])], taxYear: Int)
                                 (implicit request: AuthorisationRequest[AnyContent]): Html = paymentIntoPensionSchemeView(form, taxYear)
@@ -74,4 +77,14 @@ class PaymentIntoPensionSchemeController @Inject()(messagesControllerComponents:
 
   override def sessionDataIsSufficient(pensionsUserData: PensionsUserData): Boolean = true
 
+
+  private def cleanUpReliefs(pensionsUserData: PensionsUserData): PensionsUserData = {
+    val reliefs = pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs
+    val filteredReliefs = if (reliefs.nonEmpty) reliefs.filter(relief => relief.isFinished) else reliefs
+    val updatedViewModel = pensionsUserData.pensions.paymentsIntoOverseasPensions.copy(reliefs = filteredReliefs)
+    val updatedPensionData = pensionsUserData.pensions.copy(paymentsIntoOverseasPensions = updatedViewModel)
+    val updatedUserData = pensionsUserData.copy(pensions = updatedPensionData)
+    pensionSessionService.createOrUpdateSessionData(updatedUserData)
+    updatedUserData
+  }
 }

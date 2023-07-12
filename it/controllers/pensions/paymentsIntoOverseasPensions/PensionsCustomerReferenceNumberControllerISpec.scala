@@ -37,8 +37,9 @@ import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 class PensionsCustomerReferenceNumberControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
 
-  override val userScenarios: Seq[UserScenario[_,_]] = Seq.empty
+  override val userScenarios: Seq[UserScenario[_, _]] = Seq.empty
   val inputName: String = "pensionsCustomerReferenceNumberId"
+
   private def pensionsUsersData(pensionsCyaModel: PensionsCYAModel, isPrior: Boolean = false): PensionsUserData = {
     PensionsUserDataBuilder.aPensionsUserData.copy(
       isPriorSubmission = isPrior,
@@ -105,7 +106,7 @@ class PensionsCustomerReferenceNumberControllerISpec extends IntegrationTest wit
       result.body.contains("""value="PENSIONINCOME245""")
       result.body.contains("/pensions-customer-reference-number?index=1")
     }
-    
+
     "Redirect to the Customer Reference page if index is invalid and there are No pension schemes" in {
       val pensionsNoSchemesViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(reliefs = Seq())
       lazy implicit val result: WSResponse = {
@@ -133,7 +134,7 @@ class PensionsCustomerReferenceNumberControllerISpec extends IntegrationTest wit
       }
 
       result.status shouldBe SEE_OTHER
-      result.header("location") shouldBe Some(pensionReliefSchemeSummaryUrl(taxYearEOY))
+      result.header("location") shouldBe Some(pensionCustomerReferenceNumberUrl(taxYearEOY, None))
     }
 
     "Redirect to the pension scheme summary page if index is invalid and there are pension schemes" in {
@@ -216,9 +217,9 @@ class PensionsCustomerReferenceNumberControllerISpec extends IntegrationTest wit
         )
       }
       result.status shouldBe SEE_OTHER
-      result.header("location") .head shouldBe pensionCustomerReferenceNumberUrl(taxYearEOY, None)
+      result.header("location").head shouldBe pensionCustomerReferenceNumberUrl(taxYearEOY, None)
     }
-    
+
     "Redirect to the pension scheme summary page if index is invalid and there are pension schemes" in {
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
@@ -233,7 +234,7 @@ class PensionsCustomerReferenceNumberControllerISpec extends IntegrationTest wit
         )
       }
       result.status shouldBe SEE_OTHER
-      result.header("location") .head shouldBe pensionReliefSchemeSummaryUrl(taxYearEOY)
+      result.header("location").head shouldBe pensionReliefSchemeSummaryUrl(taxYearEOY)
     }
   }
 }

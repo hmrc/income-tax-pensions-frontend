@@ -21,15 +21,16 @@ import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import builders.PensionsUserDataBuilder.pensionUserDataWithOnlyOverseasPensions
 import controllers.ControllerSpec
 import controllers.ControllerSpec.UserConfig
+import models.pension.charges.Relief
 import play.api.libs.ws.WSResponse
 
 
 class UntaxedEmployerPaymentsControllerISpec extends ControllerSpec("/overseas-pensions/payments-into-overseas-pensions/untaxed-employer-payments") {
 
   "This page" when {
-    
+
     "shown" should {
-     
+
       "not show the form page but redirect to the summary page" which {
         "the user has no stored session data at all" in {
           implicit val userConfig: UserConfig = userConfigWhenIrrelevant(None)
@@ -39,10 +40,11 @@ class UntaxedEmployerPaymentsControllerISpec extends ControllerSpec("/overseas-p
       }
 
       "redirect to pension scheme summary page or customer reference page" which {
-        
-        "the user accesses page with index out of bounds and there are No pensions schemes" in {
+
+        "the user accesses page with index out of bounds and there are no complete relief schemes" in {
           val schemeIndex10 = 10
-          val pensionsNoSchemesViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(reliefs = Seq())
+          val pensionsNoSchemesViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(
+            reliefs = Seq(Relief(customerReference = Some("PENSIONINCOME2000"))))
           val sessionData = pensionUserDataWithOnlyOverseasPensions(pensionsNoSchemesViewModel)
           implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
           implicit val response: WSResponse = getPageWithIndex(schemeIndex10)
@@ -60,11 +62,11 @@ class UntaxedEmployerPaymentsControllerISpec extends ControllerSpec("/overseas-p
       }
     }
     "submitted" should {
-      
+
       val schemeIndex0 = 0
       val schemeIndex10 = 10
       val amount1001 = 1001
-      
+
       "successfully updates the untaxed employer amount and redirects to the pensions relief type page" in {
 
         val sessionData = pensionsUserData(aPensionsCYAModel)
@@ -79,15 +81,16 @@ class UntaxedEmployerPaymentsControllerISpec extends ControllerSpec("/overseas-p
         assertRedirectionAsExpected(PageRelativeURLs.piopCheckPiopPage)
       }
 
-      "redirects to the customer reference page when the index is out of bounds and there are No pensions schemes" in {
-        val pensionsNoSchemesViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(reliefs = Seq())
+      "redirects to the customer reference page when the index is out of bounds and there are no complete relief schemes" in {
+        val pensionsNoSchemesViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(
+          reliefs = Seq(Relief(customerReference = Some("PENSIONINCOME2000"))))
         val sessionData = pensionUserDataWithOnlyOverseasPensions(pensionsNoSchemesViewModel)
         implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
         implicit val response: WSResponse = submitForm(Map("amount" -> amount1001.toString), Map("index" -> schemeIndex10.toString))
 
         assertRedirectionAsExpected(PageRelativeURLs.piopCustomerReferencePage)
       }
-      
+
       "redirects to the pension scheme summary page when the index is out of bounds and there are pensions schemes" in {
         val sessionData = pensionsUserData(aPensionsCYAModel)
         implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))

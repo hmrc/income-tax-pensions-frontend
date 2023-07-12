@@ -19,7 +19,6 @@ package controllers.pensions.paymentsIntoOverseasPensions
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.paymentsIntoOverseasPensions.routes._
 import controllers.predicates.ActionsProvider
-import controllers.validatedIndex
 import forms.PensionCustomerReferenceNumberForm
 import models.User
 import models.mongo.{PensionsCYAModel, PensionsUserData}
@@ -29,7 +28,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.PensionSessionService
 import services.redirects.PaymentsIntoOverseasPensionsPages.PensionsCustomerReferenceNumberPage
-import services.redirects.PaymentsIntoOverseasPensionsRedirects.{cyaPageCall, indexCheckThenJourneyCheck, journeyCheck, redirectForSchemeLoop}
+import services.redirects.PaymentsIntoOverseasPensionsRedirects.{cyaPageCall, indexCheckThenJourneyCheck, journeyCheck}
 import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
@@ -73,7 +72,7 @@ class PensionsCustomerReferenceNumberController @Inject()(actionsProvider: Actio
       }
   }
 
-  def submit(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
+  def submit(taxYear: Int, optIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit sessionDataRequest =>
 
       val piop = sessionDataRequest.pensionsUserData.pensions.paymentsIntoOverseasPensions
@@ -84,35 +83,35 @@ class PensionsCustomerReferenceNumberController @Inject()(actionsProvider: Actio
           Redirect(UntaxedEmployerPaymentsController.show(taxYear, newIndex))
         }
 
-      index match {
+      optIndex match {
         case None =>
           val checkRedirect = journeyCheck(PensionsCustomerReferenceNumberPage, _: PensionsCYAModel, taxYear)
           redirectBasedOnCurrentAnswers(taxYear, Some(sessionDataRequest.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) { data: PensionsUserData =>
             referenceForm(sessionDataRequest.user).bindFromRequest().fold(
               formWithErrors =>
-                Future.successful(BadRequest(pensionsCustomerReferenceNumberView(formWithErrors, taxYear, index))),
+                Future.successful(BadRequest(pensionsCustomerReferenceNumberView(formWithErrors, taxYear, optIndex))),
               pensionCustomerReferenceNumber => {
-                val updatedCyaModel: PensionsCYAModel = sessionDataRequest.pensionsUserData.pensions.copy(
+                val updatedCyaModel: PensionsCYAModel = data.pensions.copy(
                   paymentsIntoOverseasPensions = piop.copy(
                     reliefs = piop.reliefs :+ Relief(customerReference = Some(pensionCustomerReferenceNumber))
                   ))
                 createOrUpdateSessionData(updatedCyaModel, Some(updatedCyaModel.paymentsIntoOverseasPensions.reliefs.size - 1))
               })
           }
-        case Some(validIndex) =>
-          indexCheckThenJourneyCheck(sessionDataRequest.pensionsUserData, index, PensionsCustomerReferenceNumberPage, taxYear) { _: Relief =>
+        case Some(index) =>
+          indexCheckThenJourneyCheck(sessionDataRequest.pensionsUserData, Some(index), PensionsCustomerReferenceNumberPage, taxYear) { _: Relief =>
             referenceForm(sessionDataRequest.user).bindFromRequest().fold(
               formWithErrors =>
-                Future.successful(BadRequest(pensionsCustomerReferenceNumberView(formWithErrors, taxYear, Some(validIndex)))),
+                Future.successful(BadRequest(pensionsCustomerReferenceNumberView(formWithErrors, taxYear, Some(index)))),
 
               pensionCustomerReferenceNumber => {
                 val updatedCyaModel: PensionsCYAModel = sessionDataRequest.pensionsUserData.pensions.copy(
                   paymentsIntoOverseasPensions = piop.copy(
                     reliefs = piop.reliefs.updated(
-                      validIndex,
-                      piop.reliefs(validIndex).copy(customerReference = Some(pensionCustomerReferenceNumber))
+                      index,
+                      piop.reliefs(index).copy(customerReference = Some(pensionCustomerReferenceNumber))
                     )))
-                val currentIndex = index.fold(
+                val currentIndex = optIndex.fold(
                   Some(updatedCyaModel.paymentsIntoOverseasPensions.reliefs.size - 1))(Some(_))
                 createOrUpdateSessionData(updatedCyaModel, currentIndex)
               })
