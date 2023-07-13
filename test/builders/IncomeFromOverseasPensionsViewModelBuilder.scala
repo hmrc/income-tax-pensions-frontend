@@ -16,64 +16,33 @@
 
 package builders
 
+import builders.PensionSchemeBuilder.{aPensionScheme1, aPensionScheme2}
 import models.pension.charges.{IncomeFromOverseasPensionsViewModel, PensionScheme}
 
 object IncomeFromOverseasPensionsViewModelBuilder {
 
   val anIncomeFromOverseasPensionsViewModel: IncomeFromOverseasPensionsViewModel = IncomeFromOverseasPensionsViewModel(
     paymentsFromOverseasPensionsQuestion = Some(true),
-    overseasIncomePensionSchemes = Seq(
-      PensionScheme(
-        alphaThreeCode = Some("FRA"),
-        alphaTwoCode = Some("FR"),
-        pensionPaymentAmount = Some(1999.99),
-        pensionPaymentTaxPaid = Some(1999.99),
-        specialWithholdingTaxQuestion = Some(true),
-        specialWithholdingTaxAmount = Some(1999.99),
-        foreignTaxCreditReliefQuestion = Some(true),
-        taxableAmount = Some(1999.99)
-      ),
-      PensionScheme(
-        alphaThreeCode = Some("DEU"),
-        alphaTwoCode = Some("DE"),
-        pensionPaymentAmount = Some(2000.00),
-        pensionPaymentTaxPaid = Some(400.00),
-        specialWithholdingTaxQuestion = Some(true),
-        specialWithholdingTaxAmount = Some(400.00),
-        foreignTaxCreditReliefQuestion = Some(true),
-        taxableAmount = Some(2000.00)
-      )
-    )
+    overseasIncomePensionSchemes = Seq(aPensionScheme1, aPensionScheme2)
   )
 
   val anIncomeFromOverseasPensionsSingleSchemeViewModel: IncomeFromOverseasPensionsViewModel = IncomeFromOverseasPensionsViewModel(
     paymentsFromOverseasPensionsQuestion = Some(true),
-    overseasIncomePensionSchemes = Seq(
-      PensionScheme(
-        alphaThreeCode = Some("DEU"),
-        alphaTwoCode = Some("DE"),
-        pensionPaymentAmount = Some(2000.00),
-        pensionPaymentTaxPaid = Some(400.00),
-        specialWithholdingTaxQuestion = Some(true),
-        specialWithholdingTaxAmount = Some(400.00),
-        foreignTaxCreditReliefQuestion = Some(true),
-        taxableAmount = Some(2000.00)
-      )
-    )
+    overseasIncomePensionSchemes = Seq(aPensionScheme1)
   )
 
   val anIncomeFromOverseasPensionsWithFalseFtcrValueViewModel: IncomeFromOverseasPensionsViewModel = IncomeFromOverseasPensionsViewModel(
     paymentsFromOverseasPensionsQuestion = Some(true),
     overseasIncomePensionSchemes = Seq(
       PensionScheme(
-        alphaThreeCode = Some("FRA"),
+        alphaThreeCode = None,
         alphaTwoCode = Some("FR"),
         pensionPaymentAmount = Some(2999.99),
         pensionPaymentTaxPaid = Some(999.99),
         specialWithholdingTaxQuestion = Some(true),
         specialWithholdingTaxAmount = Some(1999.99),
         foreignTaxCreditReliefQuestion = Some(false),
-        taxableAmount = Some(2000.00)
+        taxableAmount = None
       )
     )
   )

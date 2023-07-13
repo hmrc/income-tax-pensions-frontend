@@ -16,10 +16,11 @@
 
 package controllers.pensions.shortServiceRefunds
 
+import builders.OverseasRefundPensionSchemeBuilder.{anOverseasRefundPensionSchemeWithUkRefundCharge, anOverseasRefundPensionSchemeWithoutUkRefundCharge}
 import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import builders.PensionsUserDataBuilder
 import builders.ShortServiceRefundsViewModelBuilder.{aShortServiceRefundsViewModel, emptyShortServiceRefundsViewModel}
-import builders.UserBuilder.aUser
+import builders.UserBuilder.{aUser, aUserRequest}
 import forms.RadioButtonAmountForm
 import forms.RadioButtonAmountForm.{amount2, yesNo}
 import models.mongo.PensionsCYAModel
@@ -54,17 +55,27 @@ class TaxableRefundAmountControllerISpec
       result.headers("Location").head shouldBe overviewUrl(taxYear)
     }
 
-    "show page when EOY" in {
+    "show page when EOY" which {
+      val incompleteViewModel = aShortServiceRefundsViewModel.copy(refundPensionScheme = Seq(
+        anOverseasRefundPensionSchemeWithUkRefundCharge, anOverseasRefundPensionSchemeWithoutUkRefundCharge.copy(providerAddress = None)
+      ))
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
-        insertCyaData(pensionsUsersData(aPensionsCYAModel))
+        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(shortServiceRefunds = incompleteViewModel)))
         urlGet(fullUrl(shortServiceTaxableRefundUrl(taxYearEOY)), !aUser.isAgent, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
-      result.status shouldBe OK
-    }
+      "returns an Ok status" in {
+        result.status shouldBe OK
+      }
+      "filters out any incomplete schemes and updates the session data" in {
+        val filteredSchemes = incompleteViewModel.copy(refundPensionScheme = Seq(anOverseasRefundPensionSchemeWithUkRefundCharge))
+        lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
 
+        cyaModel.pensions.shortServiceRefunds shouldBe filteredSchemes
+      }
+    }
   }
 
   ".submit" should {

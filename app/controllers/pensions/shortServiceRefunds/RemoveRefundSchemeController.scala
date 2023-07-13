@@ -17,18 +17,21 @@
 package controllers.pensions.shortServiceRefunds
 
 import config.{AppConfig, ErrorHandler}
+import controllers.pensions.shortServiceRefunds.routes._
 import controllers.predicates.ActionsProvider
 import controllers.validatedIndex
 import models.mongo.{PensionsCYAModel, PensionsUserData}
 import models.pension.charges.OverseasRefundPensionScheme
 import models.requests.UserSessionDataRequest
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.PensionSessionService
+import services.redirects.ShortServiceRefundsPages.RemoveRefundSchemePage
+import services.redirects.ShortServiceRefundsRedirects.{cyaPageCall, journeyCheck}
+import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import routes._
-import views.html.pensions.shortServiceRefunds.RemoveRefundSchemeView
 import utils.{Clock, SessionHelper}
+import views.html.pensions.shortServiceRefunds.RemoveRefundSchemeView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
@@ -39,15 +42,19 @@ class RemoveRefundSchemeController @Inject()(actionsProvider: ActionsProvider,
                                              view: RemoveRefundSchemeView,
                                              errorHandler: ErrorHandler)
                                             (implicit val mcc: MessagesControllerComponents,
-                                                     appConfig: AppConfig, clock: Clock)
+                                             appConfig: AppConfig, clock: Clock)
   extends FrontendController(mcc) with I18nSupport with SessionHelper {
 
   def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionUserData =>
     val refundChargeScheme = sessionUserData.pensionsUserData.pensions.shortServiceRefunds.refundPensionScheme
     validatedIndex(index, refundChargeScheme.size).fold(Future.successful(Redirect(RefundSummaryController.show(taxYear)))) {
       i =>
-        refundChargeScheme(i).name.fold(Future.successful(Redirect(RefundSummaryController.show(taxYear)))){
-          name => Future.successful(Ok(view(taxYear, name, index)))
+        refundChargeScheme(i).name.fold(Future.successful(Redirect(RefundSummaryController.show(taxYear)))) {
+          name =>
+            val checkRedirect = journeyCheck(RemoveRefundSchemePage, _: PensionsCYAModel, taxYear)
+            redirectBasedOnCurrentAnswers(taxYear, Some(sessionUserData.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) { _ =>
+              Future.successful(Ok(view(taxYear, name, index)))
+            }
         }
     }
   }
@@ -58,13 +65,16 @@ class RemoveRefundSchemeController @Inject()(actionsProvider: ActionsProvider,
       .fold(Future.successful(Redirect(RefundSummaryController.show(taxYear)))) {
         i =>
           val updatedRefundScheme = refundChargeScheme.patch(i, Nil, 1)
-          updateSessionData(sessionUserData.pensionsUserData, updatedRefundScheme, taxYear)
+          val checkRedirect = journeyCheck(RemoveRefundSchemePage, _: PensionsCYAModel, taxYear)
+          redirectBasedOnCurrentAnswers(taxYear, Some(sessionUserData.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) { data =>
+            updateSessionData(data, updatedRefundScheme, taxYear)
+          }
       }
   }
 
   private def updateSessionData[T](pensionUserData: PensionsUserData,
                                    refundChargeScheme: Seq[OverseasRefundPensionScheme],
-                                   taxYear: Int)(implicit request: UserSessionDataRequest[T]) = {
+                                   taxYear: Int)(implicit request: UserSessionDataRequest[T]): Future[Result] = {
     val updatedCyaModel: PensionsCYAModel = pensionUserData.pensions.copy(
       shortServiceRefunds = pensionUserData.pensions.shortServiceRefunds.copy(
         refundPensionScheme = refundChargeScheme))
@@ -74,6 +84,5 @@ class RemoveRefundSchemeController @Inject()(actionsProvider: ActionsProvider,
       Redirect(RefundSummaryController.show(taxYear))
     }
   }
-
 
 }

@@ -107,7 +107,7 @@ class TransferPensionsSchemeControllerISpec extends ControllerSpec("/overseas-pe
 
     def setupTestData(isUKCountry: Boolean, sessionData: PensionsUserData, hasPriorPensionsSchemeData: Boolean = true): (TransferPensionScheme, Map[String, String], PensionsUserData) = {
 
-      val tcPensionSchemes = sessionData.pensions.transfersIntoOverseasPensions.transferPensionScheme
+      val tcPensionScheme = sessionData.pensions.transfersIntoOverseasPensions.transferPensionScheme.filter(_.ukTransferCharge.get)
 
       val transferPenScheme =
         if (isUKCountry) {
@@ -125,7 +125,7 @@ class TransferPensionsSchemeControllerISpec extends ControllerSpec("/overseas-pe
         }
 
       val ukOrOverseasAlignedSessionData = {
-        val alignedTCPensionSchemes = tcPensionSchemes.map { tcps =>
+        val alignedTCPensionSchemes = tcPensionScheme.map { tcps =>
           if (hasPriorPensionsSchemeData) {
             if (isUKCountry) {
               tcps.copy(ukTransferCharge = Some(isUKCountry), qops = None, alphaTwoCountryCode = None, alphaThreeCountryCode = None)

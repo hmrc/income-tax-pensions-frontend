@@ -83,7 +83,7 @@ object TransfersIntoOverseasPensionsRedirects {
       // 1 and 7 are always valid
       1 -> isTrue, 8 -> isTrue,
       // 2-6 need Q1 true
-      2 -> firstQuestionTrue, 3 -> firstQuestionTrue, 4 -> firstQuestionTrue, 5 -> firstQuestionTrue, 6 -> firstQuestionTrue
+      2 -> firstQuestionTrue, 3 -> firstQuestionTrue, 4 -> firstQuestionTrue, 5 -> firstQuestionTrue, 6 -> firstQuestionTrue, 7 -> firstQuestionTrue
     )
   }
 
@@ -98,26 +98,26 @@ object TransfersIntoOverseasPensionsRedirects {
       3 -> { tIOPVM: TransfersIntoOverseasPensionsViewModel => tIOPVM.overseasTransferCharge.getOrElse(false) && tIOPVM.overseasTransferChargeAmount.nonEmpty
       },
       4 -> { tIOPVM: TransfersIntoOverseasPensionsViewModel =>
-        tIOPVM.pensionSchemeTransferCharge.exists(value =>
-          !value || (value && tIOPVM.pensionSchemeTransferCharge.nonEmpty))
+        if (schemesEmpty) false else tIOPVM.isFinished
       },
-//      5 -> { tIOPVM: TransfersIntoOverseasPensionsViewModel =>
-//        if (schemesEmpty) false else tIOPVM.transferPensionScheme(index).ukTransferCharge.isDefined
-//      },
-//      5 -> { tIOPVM: TransfersIntoOverseasPensionsViewModel =>
-//        if (schemesEmpty) true else tIOPVM.isFinished
-//      },
-//      6 -> { tIOPVM: TransfersIntoOverseasPensionsViewModel =>
-//        if (schemesEmpty) false else tIOPVM.isFinished
-//      },
-//
-//      7 -> { tIOPVM: TransfersIntoOverseasPensionsViewModel =>
-//        if (!isPageValidInJourney(2, tIOPVM)) {
-//          !tIOPVM.overseasTransferCharge.getOrElse(true)
-//        } else {
-//          tIOPVM.isFinished
-//        }
-//      }
+      5 -> { tIOPVM: TransfersIntoOverseasPensionsViewModel =>
+        tIOPVM.pensionSchemeTransferCharge.exists(value =>
+                    !value || (value && tIOPVM.pensionSchemeTransferCharge.nonEmpty))
+      },
+      6 -> { tIOPVM: TransfersIntoOverseasPensionsViewModel =>
+        if (schemesEmpty) false else tIOPVM.transferPensionScheme(index).ukTransferCharge.isDefined
+      },
+      7 -> { tIOPVM: TransfersIntoOverseasPensionsViewModel =>
+        if (schemesEmpty) false else tIOPVM.isFinished
+      },
+
+      8 -> { tIOPVM: TransfersIntoOverseasPensionsViewModel =>
+        if (!isPageValidInJourney(2, tIOPVM)) {
+          !tIOPVM.overseasTransferCharge.getOrElse(true)
+        } else {
+          tIOPVM.isFinished
+        }
+      }
     )
 
     prevQuestionIsAnsweredMap(pageNumber)(transferOverseasViewModel)

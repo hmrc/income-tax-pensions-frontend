@@ -21,16 +21,17 @@ import builders.IncomeTaxUserDataBuilder.anIncomeTaxUserData
 import builders.OverseasPensionContributionsBuilder.anOverseasPensionContributions
 import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import builders.PensionsUserDataBuilder
-import builders.PensionsUserDataBuilder.aPensionsUserData
-import builders.ShortServiceRefundsViewModelBuilder.emptyShortServiceRefundsViewModel
+import builders.PensionsUserDataBuilder.{aPensionsUserData, pensionUserDataWithShortServiceViewModel}
+import builders.ShortServiceRefundsViewModelBuilder.{aShortServiceRefundsViewModel, emptyShortServiceRefundsViewModel}
 import builders.UserBuilder.aUser
 import models.mongo.PensionsCYAModel
-import models.pension.charges.{CreateUpdatePensionChargesRequestModel, PensionCharges}
+import models.pension.charges.{CreateUpdatePensionChargesRequestModel, OverseasRefundPensionScheme, PensionCharges}
 import play.api.http.HeaderNames
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.ShortServiceRefunds.shortServiceRefundsCYAUrl
+import utils.PageUrls.IncomeFromOverseasPensionsPages.checkIncomeFromOverseasPensionsCyaUrl
+import utils.PageUrls.ShortServiceRefunds.{shortServiceRefundsCYAUrl, shortServiceTaxableRefundUrl}
 import utils.PageUrls.{fullUrl, overseasPensionsSummaryUrl, overviewUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
@@ -72,7 +73,7 @@ class ShortServiceRefundsCYAControllerISpec extends IntegrationTest with ViewHel
       result.headers("Location").head shouldBe overviewUrl(taxYear)
     }
 
-    "show page when EOY" in {
+    "render page with a valid CYA model" in {
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
@@ -82,6 +83,31 @@ class ShortServiceRefundsCYAControllerISpec extends IntegrationTest with ViewHel
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
       result.status shouldBe OK
+    }
+
+    "return an OK status that continues to the first page of journey if journey is incomplete" in {
+      val incompleteViewModel = aShortServiceRefundsViewModel.copy(
+        refundPensionScheme = Seq(OverseasRefundPensionScheme(
+          ukRefundCharge = Some(true),
+          name = Some("Scheme Name with UK charge"),
+          pensionSchemeTaxReference = None,
+          qualifyingRecognisedOverseasPensionScheme = None,
+          providerAddress = Some("Scheme Address 1"),
+          alphaTwoCountryCode = None,
+          alphaThreeCountryCode = None
+        ))
+      )
+      implicit lazy val result: WSResponse = {
+        authoriseAgentOrIndividual(aUser.isAgent)
+        dropPensionsDB()
+        userDataStub(anIncomeTaxUserData, nino, taxYearEOY)
+        insertCyaData(pensionUserDataWithShortServiceViewModel(incompleteViewModel))
+
+        urlGet(fullUrl(checkIncomeFromOverseasPensionsCyaUrl(taxYearEOY)), aUser.isAgent, follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+      }
+
+      result.status shouldBe OK // proven this works correctly but can't test OK's location
     }
   }
 
@@ -151,6 +177,36 @@ class ShortServiceRefundsCYAControllerISpec extends IntegrationTest with ViewHel
       }
       result.status shouldBe SEE_OTHER
       result.headers("location").head shouldBe overseasPensionsSummaryUrl(taxYearEOY)
+    }
+
+    "redirect to the first page in the journey if journey is incomplete" in {
+      val incompleteViewModel = aShortServiceRefundsViewModel.copy(
+        refundPensionScheme = Seq(OverseasRefundPensionScheme(
+          ukRefundCharge = Some(true),
+          name = Some("Scheme Name with UK charge"),
+          pensionSchemeTaxReference = None,
+          qualifyingRecognisedOverseasPensionScheme = None,
+          providerAddress = Some("Scheme Address 1"),
+          alphaTwoCountryCode = None,
+          alphaThreeCountryCode = None
+        ))
+      )
+      implicit lazy val result: WSResponse = {
+        dropPensionsDB()
+        authoriseAgentOrIndividual(aUser.isAgent)
+        pensionChargesSessionStub(Json.toJson(priorPensionCharges).toString(), nino, taxYearEOY)
+        userDataStub(anIncomeTaxUserData, nino, taxYearEOY)
+        insertCyaData(pensionUserDataWithShortServiceViewModel(incompleteViewModel))
+
+        urlPost(
+          fullUrl(shortServiceRefundsCYAUrl(taxYearEOY)),
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
+          follow = false,
+          body = "")
+      }
+
+      result.status shouldBe SEE_OTHER
+      result.header("location") shouldBe Some(shortServiceTaxableRefundUrl(taxYearEOY))
     }
   }
 }

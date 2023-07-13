@@ -44,7 +44,7 @@ class PensionSchemeSpec extends UnitTest {
           specialWithholdingTaxAmount = None,
           foreignTaxCreditReliefQuestion = Some(true),
           taxableAmount = Some(2000.00)
-        ).isFinished
+        ).isFinished shouldBe true
         PensionScheme(
           alphaThreeCode = None,
           alphaTwoCode = Some("DE"),
@@ -54,7 +54,7 @@ class PensionSchemeSpec extends UnitTest {
           specialWithholdingTaxAmount = None,
           foreignTaxCreditReliefQuestion = Some(false),
           taxableAmount = None
-        ).isFinished
+        ).isFinished shouldBe true
       }
     }
 
@@ -69,7 +69,7 @@ class PensionSchemeSpec extends UnitTest {
           specialWithholdingTaxAmount = None,
           foreignTaxCreditReliefQuestion = Some(false),
           taxableAmount = None
-        ).isFinished
+        ).isFinished shouldBe false
         PensionScheme(
           alphaThreeCode = None,
           alphaTwoCode = Some("DE"),
@@ -79,7 +79,7 @@ class PensionSchemeSpec extends UnitTest {
           specialWithholdingTaxAmount = Some(20),
           foreignTaxCreditReliefQuestion = Some(false),
           taxableAmount = None
-        ).isFinished
+        ).isFinished shouldBe false
       }
     }
   }
