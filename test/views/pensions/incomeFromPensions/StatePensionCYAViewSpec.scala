@@ -65,16 +65,16 @@ class StatePensionCYAViewSpec extends ViewUnitTest { //scalastyle:off magic.numb
     val expectedCaption: Int => String = (taxYear: Int) => s"Income from pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
     val statePension: String = "State Pension"
     val hiddenStatePension = "Change state pension"
-    val statePensionValue : String = "£155.88"
+    val statePensionValue : String = "£166.88"
     val pensionStartDate: String = "State Pension start date"
     val hiddenPensionStartDate: String = "Change State Pension start date"
-    val pensionStartDateValue: String = "13 November 2019"
+    val pensionStartDateValue: String = "14 November 2019"
     val lumpSum = "Lump sum"
     val hiddenLumpSum = "Change lump sum"
-    val lumpSumValue: String = "£166.88"
+    val lumpSumValue: String = "£200"
     val lumpSumTax: String = "Lump sum tax"
     val hiddenLumpSumTax: String = "Change Lump sum tax"
-    val lumpSumTaxValue: String = "£3.99"
+    val lumpSumTaxValue: String = "£50"
     val lumpSumDate: String = "Lump sum date"
     val hiddenLumpSumDate: String = "Change lump sum date"
     val lumpSumDateValue: String = "14 November 2019"
@@ -88,16 +88,16 @@ class StatePensionCYAViewSpec extends ViewUnitTest { //scalastyle:off magic.numb
     val expectedCaption: Int => String = (taxYear: Int) => s"Incwm o bensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
     val statePension: String = "State Pension"
     val hiddenStatePension = "Change state pension"
-    val statePensionValue : String = "£155.88"
+    val statePensionValue : String = "£166.88"
     val pensionStartDate: String = "State Pension start date"
     val hiddenPensionStartDate: String = "Change State Pension start date"
-    val pensionStartDateValue: String = "13 November 2019"
+    val pensionStartDateValue: String = "14 November 2019"
     val lumpSum = "Lump sum"
     val hiddenLumpSum = "Change lump sum"
-    val lumpSumValue: String = "£166.88"
+    val lumpSumValue: String = "£200"
     val lumpSumTax: String = "Lump sum tax"
     val hiddenLumpSumTax: String = "Change Lump sum tax"
-    val lumpSumTaxValue: String = "£3.99"
+    val lumpSumTaxValue: String = "£50"
     val lumpSumDate: String = "Lump sum date"
     val hiddenLumpSumDate: String = "Change lump sum date"
     val lumpSumDateValue: String = "14 November 2019"
@@ -212,6 +212,7 @@ class StatePensionCYAViewSpec extends ViewUnitTest { //scalastyle:off magic.numb
           hiddenAddStatePensionToTaxCalc, 6)
         buttonCheck(buttonText)
       }
+
       "render the CYA page when answering State Pension = Yes, Lump Sum = Yes, Lump sum tax = Yes, Adding State Pension to tax calculations = No" when {
         val viewModel = anIncomeFromPensionsViewModel.copy(
           statePension = anIncomeFromPensionsViewModel
