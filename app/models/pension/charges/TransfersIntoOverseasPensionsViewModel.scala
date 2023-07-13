@@ -60,8 +60,9 @@ case class TransfersIntoOverseasPensionsViewModel(transferPensionSavings: Option
         providerName = x.name.getOrElse(""),
         providerAddress = x.providerAddress.getOrElse(""),
         providerCountryCode = x.alphaThreeCountryCode.getOrElse(""),
-        qualifyingRecognisedOverseasPensionScheme = if (x.qops.nonEmpty) Some(Seq(x.qops.get)) else None,
-        pensionSchemeTaxReference = if (x.pstr.nonEmpty) Some(Seq(x.pstr.get)) else None
+        qualifyingRecognisedOverseasPensionScheme = if (x.qops.nonEmpty) Some(Seq(s"Q${x.qops.get}")) else None,
+        pensionSchemeTaxReference = if (x.pstr.nonEmpty && x.alphaThreeCountryCode.isEmpty) Some(Seq(x.pstr.get)) else None
+        //TODO: remove above alpha check when field get cleared out when changing between PSTR and QOPS
       )
     )
   }

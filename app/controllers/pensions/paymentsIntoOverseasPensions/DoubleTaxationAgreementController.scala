@@ -19,7 +19,6 @@ package controllers.pensions.paymentsIntoOverseasPensions
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.paymentsIntoOverseasPensions.routes.ReliefsSchemeDetailsController
 import controllers.predicates.actions.ActionsProvider
-import controllers.validatedIndex
 import forms.Countries
 import forms.overseas.DoubleTaxationAgreementForm.{DoubleTaxationAgreementFormModel, doubleTaxationAgreementForm}
 import models.User
@@ -30,7 +29,9 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.PensionSessionService
-import services.redirects.PaymentsIntoOverseasPensionsRedirects.redirectForSchemeLoop
+import services.redirects.PaymentsIntoOverseasPensionsPages.DoubleTaxationAgreementPage
+import services.redirects.PaymentsIntoOverseasPensionsRedirects.{cyaPageCall, indexCheckThenJourneyCheck}
+import services.redirects.SimpleRedirectService.isFinishedCheck
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.paymentsIntoOverseasPensions.DoubleTaxationAgreementView
@@ -47,32 +48,21 @@ class DoubleTaxationAgreementController @Inject()(actionsProvider: ActionsProvid
   extends FrontendController(mcc) with I18nSupport with SessionHelper {
 
   def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
-    implicit request =>
-      pensionSessionService.getPensionSessionData(taxYear, request.user).map {
-        case Left(_) => errorHandler.handleError(INTERNAL_SERVER_ERROR)
-        case Right(_) =>
-          val piopReliefs = request.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs
-          validatedIndex(index, piopReliefs.size) match {
-            case Some(idx) =>
-              val form = dblTaxationAgreementForm(request.user).fill(updateViewModel(piopReliefs(idx)))
-              Ok(view(form, taxYear, index))
-            case _ =>
-              Redirect(redirectForSchemeLoop(piopReliefs, taxYear))
-          }
+    implicit sessionData =>
+      indexCheckThenJourneyCheck(sessionData.pensionsUserData, index, DoubleTaxationAgreementPage, taxYear) { relief: Relief =>
+        val form: Form[DoubleTaxationAgreementFormModel] = dblTaxationAgreementForm(sessionData.user).fill(updateViewModel(relief))
+        Future.successful(Ok(view(form, taxYear, index)))
       }
   }
 
+
   def submit(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit request =>
-
-      val reliefs = request.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs
-      validatedIndex(index, reliefs.size) match {
-        case Some(idx) =>
-          dblTaxationAgreementForm(request.user).bindFromRequest().fold(
-            formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear, index))),
-            doubleTaxationAgreement => updateSessionData(request.pensionsUserData, doubleTaxationAgreement, taxYear, idx)
-          )
-        case _ => Future.successful(Redirect(redirectForSchemeLoop(reliefs, taxYear)))
+      indexCheckThenJourneyCheck(request.pensionsUserData, index, DoubleTaxationAgreementPage, taxYear) { _ =>
+        dblTaxationAgreementForm(request.user).bindFromRequest().fold(
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear, index))),
+          doubleTaxationAgreement => updateSessionData(request.pensionsUserData, doubleTaxationAgreement, taxYear, index.get)
+        )
       }
   }
 
@@ -94,7 +84,7 @@ class DoubleTaxationAgreementController @Inject()(actionsProvider: ActionsProvid
                                   (implicit request: UserSessionDataRequest[T]): Future[Result] = {
 
     val piopUserData = pensionsUserData.pensions.paymentsIntoOverseasPensions
-
+    val redirectLocation = ReliefsSchemeDetailsController.show(taxYear, Some(idx))
     val updatedCyaModel = pensionsUserData.pensions.copy(
       paymentsIntoOverseasPensions = piopUserData.copy(
         reliefs = piopUserData.reliefs.updated(idx, piopUserData.reliefs(idx).copy(
@@ -109,7 +99,7 @@ class DoubleTaxationAgreementController @Inject()(actionsProvider: ActionsProvid
 
     pensionSessionService.createOrUpdateSessionData(request.user,
       updatedCyaModel, taxYear, pensionsUserData.isPriorSubmission)(errorHandler.internalServerError()) {
-      Redirect(ReliefsSchemeDetailsController.show(taxYear, Some(idx)))
+      isFinishedCheck(updatedCyaModel.paymentsIntoPension, taxYear, redirectLocation, cyaPageCall)
     }
   }
 }
