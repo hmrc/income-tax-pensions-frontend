@@ -20,6 +20,7 @@ import common.MessageKeys.OverseasPensions.PaymentIntoScheme
 import common.MessageKeys.YesNoAmountForm
 import config.{AppConfig, ErrorHandler}
 import controllers.BaseYesNoAmountController
+import controllers.pensions.paymentsIntoOverseasPensions.routes.{EmployerPayOverseasPensionController, PaymentsIntoOverseasPensionsCYAController}
 import controllers.predicates.actions.AuthorisedAction
 import models.AuthorisationRequest
 import models.mongo.{PensionsCYAModel, PensionsUserData}
@@ -44,14 +45,20 @@ class PaymentIntoPensionSchemeController @Inject()(messagesControllerComponents:
 
   override val errorMessageSet: YesNoAmountForm = PaymentIntoScheme
 
-  // TODO: Once we've creating the CYA page (in SASS-3268), we can redirect to it.
   override def redirectWhenNoSessionData(taxYear: Int): Result = Redirect(controllers.pensions.routes.OverseasPensionsSummaryController.show(taxYear))
 
-  override def redirectAfterUpdatingSessionData(pensionsUserData: PensionsUserData, taxYear: Int): Result =
-    Redirect(controllers.pensions.paymentsIntoOverseasPensions.routes.EmployerPayOverseasPensionController.show(taxYear))
+  override def redirectAfterUpdatingSessionData(pensionsUserData: PensionsUserData, taxYear: Int): Result = {
+    val model = pensionsUserData.pensions.paymentsIntoOverseasPensions
+    Redirect(
+      if (model.paymentsIntoOverseasPensionsQuestions.getOrElse(false)) EmployerPayOverseasPensionController.show(taxYear)
+      else PaymentsIntoOverseasPensionsCYAController.show(taxYear)
+    )
+  }
 
   override def prepareView(pensionsUserData: PensionsUserData, taxYear: Int)
-                          (implicit request: AuthorisationRequest[AnyContent]): Html = paymentIntoPensionSchemeView(populateForm(pensionsUserData), taxYear)
+                          (implicit request: AuthorisationRequest[AnyContent]): Html =
+
+    paymentIntoPensionSchemeView(populateForm(cleanUpReliefs(pensionsUserData)), taxYear)
 
   override def whenFormIsInvalid(form: Form[(Boolean, Option[BigDecimal])], taxYear: Int)
                                 (implicit request: AuthorisationRequest[AnyContent]): Html = paymentIntoPensionSchemeView(form, taxYear)
@@ -74,4 +81,14 @@ class PaymentIntoPensionSchemeController @Inject()(messagesControllerComponents:
 
   override def sessionDataIsSufficient(pensionsUserData: PensionsUserData): Boolean = true
 
+
+  private def cleanUpReliefs(pensionsUserData: PensionsUserData): PensionsUserData = {
+    val reliefs = pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs
+    val filteredReliefs = if (reliefs.nonEmpty) reliefs.filter(relief => relief.isFinished) else reliefs
+    val updatedViewModel = pensionsUserData.pensions.paymentsIntoOverseasPensions.copy(reliefs = filteredReliefs)
+    val updatedPensionData = pensionsUserData.pensions.copy(paymentsIntoOverseasPensions = updatedViewModel)
+    val updatedUserData = pensionsUserData.copy(pensions = updatedPensionData)
+    pensionSessionService.createOrUpdateSessionData(updatedUserData)
+    updatedUserData
+  }
 }

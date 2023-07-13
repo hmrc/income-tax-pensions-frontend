@@ -34,6 +34,7 @@ object IncomeFromOverseasPensionsRedirects {
                                  currentPage: IncomeFromOverseasPensionsPages,
                                  taxYear: Int)(continue: PensionsUserData => Future[Result]): Future[Result] = {
 
+
     val pensionSchemes: Seq[PensionScheme] = data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes
     val validatedIndex: Option[Int] = validateIndex(optIndex, pensionSchemes)
     (pensionSchemes, validatedIndex) match {
