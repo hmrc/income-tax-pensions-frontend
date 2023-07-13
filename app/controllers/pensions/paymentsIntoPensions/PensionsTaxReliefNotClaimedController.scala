@@ -17,6 +17,7 @@
 package controllers.pensions.paymentsIntoPensions
 
 import config.{AppConfig, ErrorHandler}
+import controllers.pensions.paymentsIntoPensions.routes.{PaymentsIntoPensionsCYAController, RetirementAnnuityController}
 import controllers.predicates.actions.AuthorisedAction
 import controllers.predicates.actions.TaxYearAction.taxYearAction
 import models.mongo.PensionsCYAModel
@@ -34,7 +35,6 @@ import views.html.pensions.paymentsIntoPensions.PensionsTaxReliefNotClaimedView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
-
 
 @Singleton
 class PensionsTaxReliefNotClaimedController @Inject()(authAction: AuthorisedAction,
@@ -87,11 +87,8 @@ class PensionsTaxReliefNotClaimedController @Inject()(authAction: AuthorisedActi
                       )
                     )
                   }
-                  val redirectLocation = if (yesNo) {
-                    controllers.pensions.paymentsIntoPensions.routes.RetirementAnnuityController.show(taxYear)
-                  } else {
-                    controllers.pensions.paymentsIntoPensions.routes.PaymentsIntoPensionsCYAController.show(taxYear)
-                  }
+                  val redirectLocation =
+                    if (yesNo) RetirementAnnuityController.show(taxYear) else PaymentsIntoPensionsCYAController.show(taxYear)
                   pensionSessionService.createOrUpdateSessionData(request.user,
                     updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
                     isFinishedCheck(updatedCyaModel.paymentsIntoPension, taxYear, redirectLocation, cyaPageCall)

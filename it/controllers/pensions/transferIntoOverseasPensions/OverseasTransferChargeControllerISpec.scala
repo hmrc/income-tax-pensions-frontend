@@ -368,11 +368,9 @@ class OverseasTransferChargeControllerISpec
 
           "the user has selected 'No'" in {
 
-            val expectedViewModel = sessionData.pensions.transfersIntoOverseasPensions.copy(
-              overseasTransferCharge = Some(false),
-              overseasTransferChargeAmount = None
+            val expectedViewModel = TransfersIntoOverseasPensionsViewModel(
+                transferPensionSavings = Some(true), overseasTransferCharge = Some(false)
             )
-
 
             implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
             implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(false), None))
@@ -412,7 +410,9 @@ class OverseasTransferChargeControllerISpec
         }
         "the user has no pension-related session data and" when {
 
-          val sessionData = pensionsUserData(aPensionsCYAEmptyModel)
+          val sessionData = pensionsUserData(aPensionsCYAEmptyModel.copy(
+            transfersIntoOverseasPensions = TransfersIntoOverseasPensionsViewModel(transferPensionSavings = Some(true))
+          ))
 
           "the user has selected 'No'" in {
 
@@ -427,7 +427,6 @@ class OverseasTransferChargeControllerISpec
 
             assertRedirectionAsExpected(redirectPage)
             getViewModel mustBe Some(expectedViewModel)
-
           }
           "the user has selected 'Yes' as well as a valid amount (unformatted)" in {
 
@@ -442,7 +441,6 @@ class OverseasTransferChargeControllerISpec
 
             assertRedirectionAsExpected(redirectPage)
             getViewModel mustBe Some(expectedViewModel)
-
           }
           "the user has selected 'Yes' as well as a valid amount (formatted)" in {
 
@@ -457,7 +455,6 @@ class OverseasTransferChargeControllerISpec
 
             assertRedirectionAsExpected(redirectPage)
             getViewModel mustBe Some(expectedViewModel)
-
           }
 
         }
@@ -1111,10 +1108,3 @@ class OverseasTransferChargeControllerISpec
     assertPageAsExpected(expectedStatusCode, expectedPageContents)(userConfig, response, isWelsh)
   }
 }
-
-
-
-
-
-
-

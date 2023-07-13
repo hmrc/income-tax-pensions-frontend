@@ -20,6 +20,7 @@ import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import builders.PensionsUserDataBuilder.taxYearEOY
 import controllers.ControllerSpec.UserConfig
 import controllers.YesNoControllerSpec
+import models.pension.charges.TransfersIntoOverseasPensionsViewModel
 import play.api.http.Status.BAD_REQUEST
 import play.api.libs.ws.WSResponse
 import utils.PageUrls.TransferIntoOverseasPensions.checkYourDetailsPensionUrl
@@ -69,15 +70,11 @@ class TransferPensionSavingsControllerISpec
           }
 
           "the user has selected 'No'" in {
-            val expectedViewModel = sessionData.pensions.transfersIntoOverseasPensions.copy(
-              transferPensionSavings = Some(false)
-            )
-
             implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
             implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoPage(Some(false)))
 
             assertRedirectionAsExpected(checkYourDetailsPensionUrl(taxYearEOY))
-            getTransferPensionsViewModel mustBe Some(expectedViewModel)
+            getTransferPensionsViewModel mustBe Some(TransfersIntoOverseasPensionsViewModel(transferPensionSavings = Some(false)))
           }
 
           "the user has not selected any option" in {

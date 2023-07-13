@@ -28,7 +28,6 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.PensionSessionService
-import services.redirects.IncomeFromPensionsRedirects.cyaPageCall
 import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
 import services.redirects.StatePensionPages.AddStatePensionToIncomeTaxCalcPage
 import services.redirects.StatePensionRedirects.{cyaPageCall, journeyCheck}
