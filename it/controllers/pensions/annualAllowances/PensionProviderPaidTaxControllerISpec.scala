@@ -18,16 +18,18 @@ package controllers.pensions.annualAllowances
 
 import builders.AllPensionsDataBuilder.anAllPensionsData
 import builders.IncomeTaxUserDataBuilder.anIncomeTaxUserData
+import builders.PensionAnnualAllowanceViewModelBuilder.aPensionAnnualAllowanceViewModel
 import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import builders.PensionsUserDataBuilder
-import builders.UserBuilder.aUser
-import forms.RadioButtonAmountForm
+import builders.PensionsUserDataBuilder.pensionsUserDataWithAnnualAllowances
+import builders.UserBuilder.{aUser, aUserRequest}
+import forms.{RadioButtonAmountForm, YesNoForm}
 import models.mongo.PensionsCYAModel
 import play.api.http.HeaderNames
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.PensionAnnualAllowancePages.{pensionProviderPaidTaxUrl, pstrSummaryUrl}
-import utils.PageUrls.{fullUrl, overviewUrl}
+import utils.PageUrls.PensionAnnualAllowancePages.{annualAllowancesCYAUrl, pensionProviderPaidTaxUrl, pensionSchemeTaxReferenceUrl, pstrSummaryUrl}
+import utils.PageUrls.{fullUrl, overviewUrl, pensionSummaryUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 class PensionProviderPaidTaxControllerISpec extends IntegrationTest with ViewHelpers with PensionsDatabaseHelper {
@@ -36,9 +38,9 @@ class PensionProviderPaidTaxControllerISpec extends IntegrationTest with ViewHel
   }
 
   override val userScenarios: Seq[UserScenario[_, _]] = Nil
-  
+
   ".show" should {
-     "redirect to Overview Page when in year" in {
+    "redirect to Overview Page when in year" in {
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
@@ -51,7 +53,7 @@ class PensionProviderPaidTaxControllerISpec extends IntegrationTest with ViewHel
       result.status shouldBe SEE_OTHER
       result.headers("Location").head shouldBe overviewUrl(taxYear)
     }
-    
+
     "show page when EOY" in {
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
@@ -64,11 +66,26 @@ class PensionProviderPaidTaxControllerISpec extends IntegrationTest with ViewHel
       result.status shouldBe OK
     }
   }
-  
+
   ".submit" should {
-    lazy val formData = Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "20")
-    
-    "redirect to overview when in year" in {
+
+    "redirect to Pensions Summary when user selects yes when there is no cya data" which {
+      lazy val form: Map[String, String] = Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "14.55")
+
+      lazy val result: WSResponse = {
+        dropPensionsDB()
+        authoriseAgentOrIndividual()
+        urlPost(fullUrl(pensionProviderPaidTaxUrl(taxYearEOY)), body = form, follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+      }
+
+      "has a SEE_OTHER(303) status" in {
+        result.status shouldBe SEE_OTHER
+        result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
+      }
+    }
+
+    "redirect to overview page when in year" in {
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
@@ -78,27 +95,103 @@ class PensionProviderPaidTaxControllerISpec extends IntegrationTest with ViewHel
           fullUrl(pensionProviderPaidTaxUrl(taxYear)),
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)),
           follow = false,
-          body = formData
+          body = Map(YesNoForm.yesNo -> YesNoForm.no)
         )
       }
       result.status shouldBe SEE_OTHER
       result.headers("location").head shouldBe overviewUrl(taxYear)
     }
-     "redirect to next page" in {
-       lazy implicit val result: WSResponse = {
+
+    "redirect to PensionSchemeTaxReference page when user selects 'yes' with an amount and is not a prior submission" which {
+      lazy val form: Map[String, String] = Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "14.55")
+      val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(
+        pensionProvidePaidAnnualAllowanceQuestion = None, taxPaidByPensionProvider = None, pensionSchemeTaxReferences = None)
+      lazy val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(aUser.isAgent)
-        insertCyaData(pensionsUsersData(aPensionsCYAModel))
-        userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYearEOY)
-        urlPost(
-          fullUrl(pensionProviderPaidTaxUrl(taxYearEOY)),
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
-          follow = false,
-          body = formData
-        )
-       }
-       result.status shouldBe SEE_OTHER
-       result.headers("location").head shouldBe pstrSummaryUrl(taxYearEOY)
-     }
+        authoriseAgentOrIndividual()
+        insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel))
+        urlPost(fullUrl(pensionProviderPaidTaxUrl(taxYearEOY)), body = form, follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+      }
+
+      "has a SEE_OTHER(303) status" in {
+        result.status shouldBe SEE_OTHER
+        result.header("location") shouldBe Some(pensionSchemeTaxReferenceUrl(taxYearEOY))
+      }
+
+      "updates reducedAnnualAllowanceQuestion to Some(true)" in {
+        val expectedViewModel = aPensionAnnualAllowanceViewModel.copy(pensionSchemeTaxReferences = None)
+        lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
+        cyaModel.pensions.pensionsAnnualAllowances shouldBe expectedViewModel
+      }
+    }
+
+    "redirect to PensionSchemeTaxReference summary page when user selects 'yes' with an amount and pension schemes already exist" which {
+      lazy val form: Map[String, String] = Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "300")
+      lazy val result: WSResponse = {
+        dropPensionsDB()
+        authoriseAgentOrIndividual()
+        insertCyaData(pensionsUserDataWithAnnualAllowances(aPensionAnnualAllowanceViewModel))
+        urlPost(fullUrl(pensionProviderPaidTaxUrl(taxYearEOY)), body = form, follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+      }
+
+      "has a SEE_OTHER(303) status" in {
+        result.status shouldBe SEE_OTHER
+        result.header("location") shouldBe Some(pstrSummaryUrl(taxYearEOY))
+      }
+
+      "updates reducedAnnualAllowanceQuestion to Some(true)" in {
+        lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
+        cyaModel.pensions.pensionsAnnualAllowances shouldBe aPensionAnnualAllowanceViewModel.copy(taxPaidByPensionProvider = Some(300))
+      }
+    }
+
+    "redirect to the CYA page when user selects 'no' without prior data" which {
+      lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.no)
+      val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(
+        pensionProvidePaidAnnualAllowanceQuestion = None, taxPaidByPensionProvider = None, pensionSchemeTaxReferences = None)
+      lazy val result: WSResponse = {
+        dropPensionsDB()
+        authoriseAgentOrIndividual()
+        insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel))
+        urlPost(fullUrl(pensionProviderPaidTaxUrl(taxYearEOY)), body = form, follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+      }
+
+      "has a SEE_OTHER(303) status" in {
+        result.status shouldBe SEE_OTHER
+        result.header("location") shouldBe Some(annualAllowancesCYAUrl(taxYearEOY))
+      }
+
+      "updates reducedAnnualAllowanceQuestion to Some(false)" in {
+        val expectedViewModel = pensionsViewModel.copy(pensionProvidePaidAnnualAllowanceQuestion = Some(false))
+        lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
+        cyaModel.pensions.pensionsAnnualAllowances shouldBe expectedViewModel
+      }
+    }
+
+    "redirect to the CYA page updating question to 'no' and clearing other prior data" which {
+      lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.no)
+      lazy val result: WSResponse = {
+        dropPensionsDB()
+        authoriseAgentOrIndividual()
+        insertCyaData(pensionsUserDataWithAnnualAllowances(aPensionAnnualAllowanceViewModel))
+        urlPost(fullUrl(pensionProviderPaidTaxUrl(taxYearEOY)), body = form, follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+      }
+
+      "has a SEE_OTHER(303) status" in {
+        result.status shouldBe SEE_OTHER
+        result.header("location") shouldBe Some(annualAllowancesCYAUrl(taxYearEOY))
+      }
+
+      "updates reducedAnnualAllowanceQuestion to Some(false)" in {
+        val expectedViewModel = aPensionAnnualAllowanceViewModel.copy(
+          pensionProvidePaidAnnualAllowanceQuestion = Some(false), taxPaidByPensionProvider = None, pensionSchemeTaxReferences = None)
+        lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
+        cyaModel.pensions.pensionsAnnualAllowances shouldBe expectedViewModel
+      }
+    }
   }
 }

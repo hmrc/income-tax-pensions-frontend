@@ -23,7 +23,7 @@ import controllers.predicates.AuthorisedAction
 import forms.YesNoForm
 import models.User
 import models.mongo.{PensionsCYAModel, PensionsUserData}
-import models.pension.charges.PensionScheme
+import models.pension.charges.{IncomeFromOverseasPensionsViewModel, PensionScheme}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -73,16 +73,15 @@ class PensionOverseasIncomeStatus @Inject()(authAction: AuthorisedAction,
       yesNo => {
         pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
           case Right(optPensionsUserData) =>
+
             val updatedCyaModel = optPensionsUserData match {
-              case Some(data) => data.pensions.copy(
-                incomeFromOverseasPensions = data.pensions.incomeFromOverseasPensions.copy(
-                  paymentsFromOverseasPensionsQuestion = Some(yesNo))
-              )
-              case None => PensionsCYAModel.emptyModels.copy(
-                incomeFromOverseasPensions = PensionsCYAModel.emptyModels.incomeFromOverseasPensions.copy(
-                  paymentsFromOverseasPensionsQuestion = Some(yesNo)
-                )
-              )
+
+              case Some(data) => data.pensions.copy(incomeFromOverseasPensions =
+                if (yesNo) data.pensions.incomeFromOverseasPensions.copy(paymentsFromOverseasPensionsQuestion = Some(yesNo))
+                else IncomeFromOverseasPensionsViewModel(paymentsFromOverseasPensionsQuestion = Some(yesNo)))
+
+              case None => PensionsCYAModel.emptyModels.copy(incomeFromOverseasPensions =
+                IncomeFromOverseasPensionsViewModel(paymentsFromOverseasPensionsQuestion = Some(yesNo)))
             }
 
             val isPriorSubmission = optPensionsUserData.fold(false)(_.isPriorSubmission)
