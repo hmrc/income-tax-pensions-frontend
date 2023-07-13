@@ -20,7 +20,7 @@ import builders.OverseasRefundPensionSchemeBuilder.{anOverseasRefundPensionSchem
 import builders.ShortServiceRefundsViewModelBuilder.{aShortServiceRefundsViewModel, emptyShortServiceRefundsViewModel}
 import support.UnitTest
 
-class ShortServiceRefundsViewModelSpec extends UnitTest {
+class ShortServiceRefundsViewModelSpec extends UnitTest { //scalatest:off magic.number
 
   ".isEmpty" should {
     "return true when no questions have been answered" in {
@@ -107,7 +107,7 @@ class ShortServiceRefundsViewModelSpec extends UnitTest {
           providerName = "Scheme Name without UK charge",
           providerAddress = "Scheme Address 2",
           providerCountryCode = "FRA",
-          qualifyingRecognisedOverseasPensionScheme = Some(List("123456")),
+          qualifyingRecognisedOverseasPensionScheme = Some(Seq("Q123456")),
           pensionSchemeTaxReference = None
         )),
         shortServiceRefund = 1999.99,

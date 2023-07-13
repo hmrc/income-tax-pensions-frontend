@@ -18,7 +18,7 @@ package controllers.pensions.annualAllowances
 
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.annualAllowances.routes.AnnualAllowanceCYAController
-import controllers.predicates.ActionsProvider
+import controllers.predicates.actions.ActionsProvider
 import forms.FormsProvider.pensionProviderPaidTaxForm
 import models.mongo.{PensionsCYAModel, PensionsUserData}
 import models.pension.charges.PensionAnnualAllowancesViewModel

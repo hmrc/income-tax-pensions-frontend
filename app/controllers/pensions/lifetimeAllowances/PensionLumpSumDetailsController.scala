@@ -19,8 +19,8 @@ package controllers.pensions.lifetimeAllowances
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.lifetimeAllowances.routes.{LifeTimeAllowanceAnotherWayController, PensionLumpSumController}
 import controllers.pensions.routes.PensionsSummaryController
-import controllers.predicates.AuthorisedAction
-import controllers.predicates.TaxYearAction.taxYearAction
+import controllers.predicates.actions.AuthorisedAction
+import controllers.predicates.actions.TaxYearAction.taxYearAction
 import forms.{FormUtils, FormsProvider}
 import models.AuthorisationRequest
 import models.mongo.{PensionsCYAModel, PensionsUserData}

@@ -17,8 +17,10 @@
 package controllers.pensions.annualAllowances
 
 import config.{AppConfig, ErrorHandler}
+import controllers.pensions.annualAllowances.routes._
 import controllers.pensions.routes._
-import controllers.predicates.AuthorisedAction
+import controllers.predicates.actions.AuthorisedAction
+import controllers.predicates.actions.TaxYearAction.taxYearAction
 import forms.ReducedAnnualAllowanceTypeQuestionForm
 import models.mongo.PensionsCYAModel
 import play.api.i18n.I18nSupport
@@ -30,8 +32,6 @@ import views.html.pensions.annualAllowances.ReducedAnnualAllowanceTypeView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
-import controllers.pensions.annualAllowances.routes._
-import controllers.predicates.TaxYearAction.taxYearAction
 
 @Singleton
 class ReducedAnnualAllowanceTypeController @Inject()(implicit val mcc: MessagesControllerComponents,

@@ -21,6 +21,7 @@ import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import builders.ReliefBuilder.{aDoubleTaxationRelief, aMigrantMemberRelief, aNoTaxRelief}
 import controllers.ControllerSpec
 import controllers.ControllerSpec.UserConfig
+import play.api.http.Status.OK
 import play.api.libs.ws.WSResponse
 
 class RemoveReliefSchemeISpec extends ControllerSpec("/overseas-pensions/payments-into-overseas-pensions/remove-schemes") {
@@ -28,6 +29,14 @@ class RemoveReliefSchemeISpec extends ControllerSpec("/overseas-pensions/payment
   "This page" when {
 
     "shown" should {
+      "show page when using a valid index" in {
+        val sessionData = pensionsUserData(aPensionsCYAModel)
+        implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
+        implicit val response: WSResponse = getPageWithIndex(1)
+
+        response.status equals OK
+      }
+
       "redirect to the summary page" when {
         "the user has no stored session data at all" in {
           implicit val userConfig: UserConfig = userConfigWhenIrrelevant(None)
@@ -41,25 +50,48 @@ class RemoveReliefSchemeISpec extends ControllerSpec("/overseas-pensions/payment
           val sessionData = pensionsUserData(aPensionsCYAModel)
           implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
           implicit val response: WSResponse = getPageWithIndex(8)
-          assertRedirectionAsExpected(PageRelativeURLs.reliefsSchemeDetails)
+          assertRedirectionAsExpected(PageRelativeURLs.reliefsSchemeSummary)
         }
       }
     }
 
     "submitted" should {
-      "the user has relevant session data and" when {
-        "removes a pension scheme successfully" in {
-
+      "redirect to the scheme summary page" when {
+        "a valid index is used and the scheme is successfully removed from the session data" in {
           val sessionData = pensionsUserData(aPensionsCYAModel)
           implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
-
           implicit val response: WSResponse = submitForm(Map("" -> ""), Map("index" -> "0"))
+          val expectedViewModel = sessionData.pensions.paymentsIntoOverseasPensions.copy(reliefs = Seq(aMigrantMemberRelief, aDoubleTaxationRelief, aNoTaxRelief))
 
           assertRedirectionAsExpected(PageRelativeURLs.reliefsSchemeSummary)
-          val expectedViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(reliefs = Seq(aMigrantMemberRelief, aDoubleTaxationRelief, aNoTaxRelief))
           getPaymentsIntoOverseasPensionsViewModel mustBe Some(expectedViewModel)
-
         }
+
+        "an invalid index is used and there are existing schemes" in {
+          val sessionData = pensionsUserData(aPensionsCYAModel)
+          implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
+          implicit val response: WSResponse = submitForm(Map("" -> ""), Map("index" -> "4"))
+
+          assertRedirectionAsExpected(PageRelativeURLs.reliefsSchemeSummary)
+          getPaymentsIntoOverseasPensionsViewModel mustBe Some(aPaymentsIntoOverseasPensionsViewModel)
+        }
+        "an invalid index is used and there are no existing schemes" in {
+          val sessionData = pensionsUserData(aPensionsCYAModel.copy(
+            paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel.copy(reliefs = Seq.empty)))
+          implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
+          implicit val response: WSResponse = submitForm(Map("" -> ""), Map("index" -> "4"))
+
+          assertRedirectionAsExpected(PageRelativeURLs.reliefsSchemeSummary)
+          getPaymentsIntoOverseasPensionsViewModel mustBe Some(aPaymentsIntoOverseasPensionsViewModel.copy(reliefs = Seq.empty))
+        }
+      }
+
+      "redirect to the Pensions Summary page when the user has no stored session data at all" in {
+        implicit val userConfig: UserConfig = userConfigWhenIrrelevant(None)
+        implicit val response: WSResponse = submitForm(Map("" -> ""), Map("index" -> "0"))
+
+        assertRedirectionAsExpected(PageRelativeURLs.pensionsSummaryPage)
+        getTransferPensionsViewModel mustBe None
       }
     }
   }

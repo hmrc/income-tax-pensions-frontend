@@ -16,8 +16,8 @@
 
 package controllers.pensions.paymentsIntoOverseasPensions
 
-import builders.PaymentsIntoOverseasPensionsViewModelBuilder.aPaymentsIntoOverseasPensionsViewModel
-import builders.PensionsUserDataBuilder.{aPensionsUserData, anPensionsUserDataEmptyCya, pensionUserDataWithOverseasPensions}
+import builders.PaymentsIntoOverseasPensionsViewModelBuilder.{aPaymentsIntoOverseasPensionsEmptyViewModel, aPaymentsIntoOverseasPensionsViewModel}
+import builders.PensionsUserDataBuilder.{aPensionsUserData, pensionUserDataWithOverseasPensions}
 import builders.UserBuilder.aUserRequest
 import forms.YesNoForm
 import models.pension.charges.PaymentsIntoOverseasPensionsViewModel
@@ -27,8 +27,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import utils.CommonUtils
-import utils.PageUrls.PaymentIntoOverseasPensions.{employerPayOverseasPensionUrl, paymentsIntoOverseasPensionsCyaUrl, taxEmployerPaymentsUrl}
-import utils.PageUrls.overseasPensionsSummaryUrl
+import utils.PageUrls.PaymentIntoOverseasPensions.{employerPayOverseasPensionUrl, paymentsIntoOverseasPensionsCyaUrl}
 
 class EmployerPayOverseasPensionControllerISpec extends CommonUtils with BeforeAndAfterEach {
 
@@ -137,8 +136,11 @@ class EmployerPayOverseasPensionControllerISpec extends CommonUtils with BeforeA
         import user.commonExpectedResults._
 
         "render the 'Employer Pay Overseas Pension' page with correct content and no pre-filling" which {
-
-          implicit lazy val result: WSResponse = showPage(user, anPensionsUserDataEmptyCya)
+          val overseasPensionViewModel = aPaymentsIntoOverseasPensionsEmptyViewModel.copy(
+            paymentsIntoOverseasPensionsQuestions = Some(true),
+            paymentsIntoOverseasPensionsAmount = Some(1999.99))
+          val pensionsUserData = pensionUserDataWithOverseasPensions(overseasPensionViewModel)
+          implicit lazy val result: WSResponse = showPage(user, pensionsUserData)
 
           "has an OK status" in {
             result.status shouldBe OK
@@ -215,7 +217,7 @@ class EmployerPayOverseasPensionControllerISpec extends CommonUtils with BeforeA
 
       "has an SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(overseasPensionsSummaryUrl(taxYearEOY))
+        result.header("location") shouldBe Some(paymentsIntoOverseasPensionsCyaUrl(taxYearEOY))
       }
     }
   }
@@ -262,7 +264,7 @@ class EmployerPayOverseasPensionControllerISpec extends CommonUtils with BeforeA
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(taxEmployerPaymentsUrl(taxYearEOY))
+        result.header("location") shouldBe Some(paymentsIntoOverseasPensionsCyaUrl(taxYearEOY))
       }
 
       "updates employerPaymentsQuestion to Some(true)" in {
@@ -280,7 +282,7 @@ class EmployerPayOverseasPensionControllerISpec extends CommonUtils with BeforeA
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(taxEmployerPaymentsUrl(taxYearEOY))
+        result.header("location") shouldBe Some(paymentsIntoOverseasPensionsCyaUrl(taxYearEOY))
       }
 
       "updates employerPaymentsQuestion to Some(true)" in {

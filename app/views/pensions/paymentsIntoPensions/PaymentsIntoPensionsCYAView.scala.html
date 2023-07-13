@@ -22,10 +22,11 @@
 @import utils.ViewUtils.bigDecimalCurrency
 @import utils.ViewUtils.summaryListRow
 @import models.pension.AllPensionsData
+@import models.requests.UserSessionDataRequest
 
 
 @this(layout: Layout, summaryList: SummaryList, heading: Heading, button: Button, csrfForm: FormWithCSRF)
-@(taxYear: Int, cya: PaymentsIntoPensionsViewModel)(implicit messages: Messages, appConfig: AppConfig, request: AuthorisationRequest[_])
+@(taxYear: Int, cya: PaymentsIntoPensionsViewModel)(implicit messages: Messages, appConfig: AppConfig, request: UserSessionDataRequest[_])
 
 @headingForUse = @{messages(s"paymentsIntoPensions.cya.heading.${if(request.user.isAgent) "agent" else "individual"}")}
 

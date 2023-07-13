@@ -423,24 +423,23 @@ class PaymentIntoPensionSchemeControllerISpec
       "succeed" when {
         "the user has relevant session data and" when {
 
-          val sessionData = pensionsUserData(aPensionsCYAModel)
-
           "the user has selected 'No'" in {
 
             val expectedViewModel = PaymentsIntoOverseasPensionsViewModel(paymentsIntoOverseasPensionsQuestions = Some(false))
+            val sessionData = pensionsUserData(aPensionsCYAModel.copy(paymentsIntoOverseasPensions = expectedViewModel))
 
             implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
             implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(false), None))
 
-            assertRedirectionAsExpected(PageRelativeURLs.piopSchemeEmployerPaymentsPage)
+            assertRedirectionAsExpected(PageRelativeURLs.piopCheckPiopPage)
             getViewModel mustBe Some(expectedViewModel)
           }
           "the user has selected 'Yes' as well as a valid amount (unformatted)" in {
 
-            val expectedViewModel =
-              sessionData.pensions.paymentsIntoOverseasPensions.copy(
-                paymentsIntoOverseasPensionsQuestions = Some(true),
-                paymentsIntoOverseasPensionsAmount = Some(BigDecimal(42.64)))
+            val expectedViewModel = PaymentsIntoOverseasPensionsViewModel(
+              paymentsIntoOverseasPensionsQuestions = Some(true),
+              paymentsIntoOverseasPensionsAmount = Some(BigDecimal(42.64)))
+            val sessionData = pensionsUserData(aPensionsCYAModel.copy(paymentsIntoOverseasPensions = expectedViewModel))
 
             implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
             implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("42.64")))
@@ -450,10 +449,10 @@ class PaymentIntoPensionSchemeControllerISpec
           }
           "the user has selected 'Yes' as well as a valid amount (formatted)" in {
 
-            val expectedViewModel =
-              sessionData.pensions.paymentsIntoOverseasPensions.copy(
-                paymentsIntoOverseasPensionsQuestions = Some(true),
-                paymentsIntoOverseasPensionsAmount = Some(BigDecimal(1042.64)))
+            val expectedViewModel = PaymentsIntoOverseasPensionsViewModel(
+              paymentsIntoOverseasPensionsQuestions = Some(true),
+              paymentsIntoOverseasPensionsAmount = Some(BigDecimal(1042.64)))
+            val sessionData = pensionsUserData(aPensionsCYAModel.copy(paymentsIntoOverseasPensions = expectedViewModel))
 
             implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
             implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("£1,042.64")))
@@ -476,7 +475,7 @@ class PaymentIntoPensionSchemeControllerISpec
             implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
             implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(false), None))
 
-            assertRedirectionAsExpected(PageRelativeURLs.piopSchemeEmployerPaymentsPage)
+            assertRedirectionAsExpected(PageRelativeURLs.piopCheckPiopPage)
             getViewModel mustBe Some(expectedViewModel)
 
           }
@@ -1206,7 +1205,7 @@ class PaymentIntoPensionSchemeControllerISpec
     loadPensionUserData.map(_.pensions.paymentsIntoOverseasPensions)
 
   private def assertPPSPageAsExpected(expectedStatusCode: Int, expectedPageContents: ExpectedYesNoAmountPageContents, isWelsh: Boolean = false)
-                                      (implicit userConfig: UserConfig, response: WSResponse): Unit = {
+                                     (implicit userConfig: UserConfig, response: WSResponse): Unit = {
     assertPageAsExpected(expectedStatusCode, expectedPageContents)(userConfig, response, isWelsh)
   }
 }

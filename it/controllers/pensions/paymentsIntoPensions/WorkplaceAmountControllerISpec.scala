@@ -31,10 +31,10 @@ import play.api.libs.ws.WSResponse
 import utils.PageUrls.PaymentIntoPensions.{checkPaymentsIntoPensionCyaUrl, reliefAtSourcePensionsUrl, workplacePensionAmount}
 import utils.PageUrls.fullUrl
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
-import views.WorkplaceAmountSpec.CommonExpectedEN._
-import views.WorkplaceAmountSpec.ExpectedIndividualEN._
-import views.WorkplaceAmountSpec.Selectors._
-import views.WorkplaceAmountSpec._
+import views.pensions.paymentsIntoPensions.WorkplaceAmountSpec.CommonExpectedEN._
+import views.pensions.paymentsIntoPensions.WorkplaceAmountSpec.ExpectedIndividualEN._
+import views.pensions.paymentsIntoPensions.WorkplaceAmountSpec.Selectors._
+import views.pensions.paymentsIntoPensions.WorkplaceAmountSpec._
 
 // scalastyle:off magic.number
 class WorkplaceAmountControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {

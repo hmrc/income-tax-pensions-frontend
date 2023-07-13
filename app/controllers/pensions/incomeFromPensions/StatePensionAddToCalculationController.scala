@@ -19,7 +19,7 @@ package controllers.pensions.incomeFromPensions
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.incomeFromPensions.routes.StatePensionCYAController
 import controllers.pensions.routes.PensionsSummaryController
-import controllers.predicates.ActionsProvider
+import controllers.predicates.actions.ActionsProvider
 import forms.FormsProvider
 import models.mongo.PensionsUserData
 import models.pension.statebenefits.{IncomeFromPensionsViewModel, StateBenefitViewModel}
@@ -28,6 +28,7 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.PensionSessionService
+import services.redirects.IncomeFromPensionsRedirects.cyaPageCall
 import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
 import services.redirects.StatePensionPages.AddStatePensionToIncomeTaxCalcPage
 import services.redirects.StatePensionRedirects.{cyaPageCall, journeyCheck}

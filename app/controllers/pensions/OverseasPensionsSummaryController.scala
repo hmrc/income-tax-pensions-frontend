@@ -17,8 +17,8 @@
 package controllers.pensions
 
 import config.AppConfig
-import controllers.predicates.AuthorisedAction
-import controllers.predicates.TaxYearAction.taxYearAction
+import controllers.predicates.actions.AuthorisedAction
+import controllers.predicates.actions.TaxYearAction.taxYearAction
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.PensionSessionService

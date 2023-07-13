@@ -18,8 +18,8 @@ package controllers
 
 import common.MessageKeys.YesNoForm
 import config.{AppConfig, ErrorHandler}
-import controllers.predicates.AuthorisedAction
-import controllers.predicates.TaxYearAction.taxYearAction
+import controllers.predicates.actions.AuthorisedAction
+import controllers.predicates.actions.TaxYearAction.taxYearAction
 import forms.YesNoForm
 import models.AuthorisationRequest
 import models.mongo.{PensionsCYAModel, PensionsUserData}

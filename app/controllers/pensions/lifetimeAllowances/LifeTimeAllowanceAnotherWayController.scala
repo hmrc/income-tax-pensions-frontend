@@ -19,7 +19,7 @@ package controllers.pensions.lifetimeAllowances
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.lifetimeAllowances.routes.{LifetimeAllowanceCYAController, PensionTakenAnotherWayAmountController}
 import controllers.pensions.routes.PensionsSummaryController
-import controllers.predicates.AuthorisedAction
+import controllers.predicates.actions.AuthorisedAction
 import forms.YesNoForm
 import models.User
 import play.api.data.Form
