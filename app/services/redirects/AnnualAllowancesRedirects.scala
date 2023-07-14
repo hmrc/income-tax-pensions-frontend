@@ -21,6 +21,7 @@ import models.mongo.PensionsCYAModel
 import models.pension.charges.PensionAnnualAllowancesViewModel
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{Call, Result}
+import services.redirects.AnnualAllowancesPages.{PSTRPage, RemovePSTRPage}
 import services.redirects.SimpleRedirectService.checkForExistingSchemes
 
 object AnnualAllowancesRedirects {
@@ -28,19 +29,44 @@ object AnnualAllowancesRedirects {
   def cyaPageCall(taxYear: Int): Call = AnnualAllowanceCYAController.show(taxYear)
 
   def redirectForSchemeLoop(schemes: Seq[String], taxYear: Int): Call = {
+    val filteredSchemes: Seq[String] = schemes.filter(!_.trim.isEmpty)
     checkForExistingSchemes(
       nextPage = PensionSchemeTaxReferenceController.show(taxYear, None),
       summaryPage = PstrSummaryController.show(taxYear),
-      schemes = schemes
+      schemes = filteredSchemes
     )
   }
 
-  def journeyCheck(currentPage: AnnualAllowancesPages, cya: PensionsCYAModel, taxYear: Int, index: Option[Int] = None): Option[Result] = {
+  def journeyCheck(currentPage: AnnualAllowancesPages, cya: PensionsCYAModel, taxYear: Int, optIndex: Option[Int] = None): Option[Result] = {
     val annualAllowanceData = cya.pensionsAnnualAllowances
-    if (isPageValidInJourney(currentPage.journeyNo, annualAllowanceData) && previousQuestionIsAnswered(currentPage.journeyNo, index, annualAllowanceData)) {
+
+    if (currentPage.equals(PSTRPage))
+      pstrPageCheck(cya, taxYear, optIndex)
+    else if (currentPage.equals(RemovePSTRPage) && !previousQuestionIsAnswered(currentPage.journeyNo, optIndex, annualAllowanceData))
+      Some(Redirect(PstrSummaryController.show(taxYear)))
+    else if (previousQuestionIsAnswered(currentPage.journeyNo, optIndex, annualAllowanceData) && isPageValidInJourney(currentPage.journeyNo, annualAllowanceData))
       None
-    } else {
+    else
       Some(Redirect(ReducedAnnualAllowanceController.show(taxYear)))
+  }
+
+  private def pstrPageCheck(cya: PensionsCYAModel, taxYear: Int, optIndex: Option[Int] = None): Option[Result] = {
+    val annualAllowanceVM: PensionAnnualAllowancesViewModel = cya.pensionsAnnualAllowances
+    val previousQuestionsAnswered: Boolean =
+      annualAllowanceVM.pensionProvidePaidAnnualAllowanceQuestion.exists(x => if (x) annualAllowanceVM.taxPaidByPensionProvider.isDefined else true)
+    val optSchemes: Option[Seq[String]] = annualAllowanceVM.pensionSchemeTaxReferences
+    val schemesEmpty: Boolean = !optSchemes.exists(_.nonEmpty)
+    val index: Option[Int] = optIndex.filter(i => i >= 0 && i < annualAllowanceVM.pensionSchemeTaxReferences.size)
+
+    (previousQuestionsAnswered, schemesEmpty, index) match {
+      // unanswered -> start of journey
+      case (false, _, _) => Some(Redirect(ReducedAnnualAllowanceController.show(taxYear)))
+      // editing scheme -> continue to scheme
+      case (true, false, Some(_)) => None
+      // new-scheme -> continue to new scheme
+      case (true, false, None) if optIndex.isEmpty => None
+      // 1st-scheme/bad-index -> redirectForSchemeLoop to summary or PSTR with None index
+      case _ => Some(Redirect(redirectForSchemeLoop(optSchemes.getOrElse(Seq.empty), taxYear)))
     }
   }
 
@@ -65,15 +91,6 @@ object AnnualAllowancesRedirects {
   private def previousQuestionIsAnswered(pageNumber: Int, optIndex: Option[Int], annualAVM: PensionAnnualAllowancesViewModel): Boolean = {
     val schemesEmpty = !annualAVM.pensionSchemeTaxReferences.exists(_.nonEmpty)
     val index = optIndex.filter(i => i >= 0 && i < annualAVM.pensionSchemeTaxReferences.size)
-    // 1. empty and None -> 1st time/new // 2. empty and Some() -> FALSE // 3. full and None -> FALSE/new // 4. full and Some() -> revisit
-    val pstrPageCheck: Boolean = {
-      (schemesEmpty, index) match {
-        case (true, None) => true
-        case (false, Some(_)) => true
-        case (false, None) if optIndex.isEmpty => true
-        case _ => false
-      }
-    }
 
     val prevQuestionIsAnsweredMap: Map[Int, PensionAnnualAllowancesViewModel => Boolean] = Map(
       1 -> { _: PensionAnnualAllowancesViewModel => true },
@@ -86,10 +103,8 @@ object AnnualAllowancesRedirects {
         annualAVM.aboveAnnualAllowanceQuestion.exists(x => if (x) annualAVM.aboveAnnualAllowance.isDefined else true)
       },
 
-      5 -> { annualAVM: PensionAnnualAllowancesViewModel =>
-        annualAVM.pensionProvidePaidAnnualAllowanceQuestion.exists(x => if (x) annualAVM.taxPaidByPensionProvider.isDefined else true)
-      },
-      6 -> { _: PensionAnnualAllowancesViewModel => pstrPageCheck },
+      5 -> { _: PensionAnnualAllowancesViewModel => false }, // uncaught PSTR page check
+      6 -> { _: PensionAnnualAllowancesViewModel => true }, // if valid then PSTRs can exist or be empty
       7 -> { annualAVM: PensionAnnualAllowancesViewModel =>
         if (schemesEmpty || index.isEmpty) false else annualAVM.pensionSchemeTaxReferences.exists(x => x(index.get).nonEmpty)
       },
