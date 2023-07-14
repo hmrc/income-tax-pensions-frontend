@@ -64,21 +64,7 @@ class PaymentsIntoPensionsCYAControllerISpec extends IntegrationTest with ViewHe
   val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq.empty
 
   ".show" when {
-
-    "redirect to Overview Page when in year" in {
-      lazy implicit val result: WSResponse = {
-        dropPensionsDB()
-        authoriseAgentOrIndividual(aUser.isAgent)
-        insertCyaData(aPensionsUserData.copy(taxYear = taxYear))
-        userDataStub(anIncomeTaxUserData, nino, taxYear)
-        urlGet(fullUrl(checkPaymentsIntoPensionCyaUrl(taxYear)), !aUser.isAgent, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
-      }
-
-      result.status shouldBe SEE_OTHER
-      result.headers("Location").head shouldBe overviewUrl(taxYear)
-    }
-
+    
     "render the page with a full CYA model" should {
 
       lazy val result: WSResponse = {
@@ -151,24 +137,30 @@ class PaymentsIntoPensionsCYAControllerISpec extends IntegrationTest with ViewHe
       result.status shouldBe SEE_OTHER
       result.headers("Location").head shouldBe routes.ReliefAtSourcePensionsController.show(taxYearEOY).url
     }
-  }
 
-  ".submit" should {
-
-    "redirect to Overview Page when in year" in {
-      val form = Map[String, String]()
-      lazy val result: WSResponse = {
+    "render the page when in year" should {
+      lazy implicit val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(aUser.isAgent)
+        authoriseAgentOrIndividual()
         insertCyaData(aPensionsUserData.copy(taxYear = taxYear))
-        userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYear)
-        urlPost(fullUrl(checkPaymentsIntoPensionCyaUrl(taxYear)), form, follow = false,
+        userDataStub(anIncomeTaxUserData, nino, taxYear)
+        urlGet(fullUrl(checkPaymentsIntoPensionCyaUrl(taxYear)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
       }
 
-      result.status shouldBe SEE_OTHER
-      result.headers("Location").head shouldBe overviewUrl(taxYear)
+      "has an OK status" in {
+        result.status shouldBe OK
+      }
+
+      implicit def document: () => Document = () => Jsoup.parse(result.body)
+
+      titleCheck(expectedTitle)
+      h1Check(expectedH1)
+      captionCheck(expectedCaption(taxYear))
     }
+  }
+
+  ".submit" should {
     
     "redirect to the summary page" when {
 
@@ -222,6 +214,22 @@ class PaymentsIntoPensionsCYAControllerISpec extends IntegrationTest with ViewHe
 
         result.status shouldBe SEE_OTHER
         result.headers("Location").head shouldBe controllers.pensions.routes.PensionsSummaryController.show(taxYearEOY).url
+      }
+
+      "submitting in year" in {
+        val form = Map[String, String]()
+        lazy val result: WSResponse = {
+          dropPensionsDB()
+          authoriseAgentOrIndividual()
+          insertCyaData(aPensionsUserData.copy(taxYear = taxYear))
+          userDataStub(anIncomeTaxUserData, nino, taxYear)
+          pensionReliefsSessionStub("", nino, taxYear)
+          urlPost(fullUrl(checkPaymentsIntoPensionCyaUrl(taxYear)), form, follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
+        }
+
+        result.status shouldBe SEE_OTHER
+        result.headers("Location").head shouldBe controllers.pensions.routes.PensionsSummaryController.show(taxYear).url
       }
     }
   }
