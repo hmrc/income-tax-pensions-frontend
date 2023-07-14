@@ -40,33 +40,28 @@ object AnnualAllowancesRedirects {
   def journeyCheck(currentPage: AnnualAllowancesPages, cya: PensionsCYAModel, taxYear: Int, optIndex: Option[Int] = None): Option[Result] = {
     val annualAllowanceData = cya.pensionsAnnualAllowances
 
-    if (currentPage.equals(PSTRPage))
-      pstrPageCheck(cya, taxYear, optIndex)
-    else if (currentPage.equals(RemovePSTRPage) && !previousQuestionIsAnswered(currentPage.journeyNo, optIndex, annualAllowanceData))
+    if (currentPage.equals(RemovePSTRPage) && !previousQuestionIsAnswered(currentPage.journeyNo, optIndex, annualAllowanceData))
       Some(Redirect(PstrSummaryController.show(taxYear)))
-    else if (previousQuestionIsAnswered(currentPage.journeyNo, optIndex, annualAllowanceData) && isPageValidInJourney(currentPage.journeyNo, annualAllowanceData))
-      None
-    else
+    else if (!previousQuestionIsAnswered(currentPage.journeyNo, optIndex, annualAllowanceData) || !isPageValidInJourney(currentPage.journeyNo, annualAllowanceData))
       Some(Redirect(ReducedAnnualAllowanceController.show(taxYear)))
+    else if (currentPage.equals(PSTRPage))
+      pstrPageCheck(cya, taxYear, optIndex)
+    else
+      None
   }
 
   private def pstrPageCheck(cya: PensionsCYAModel, taxYear: Int, optIndex: Option[Int] = None): Option[Result] = {
     val annualAllowanceVM: PensionAnnualAllowancesViewModel = cya.pensionsAnnualAllowances
-    val previousQuestionsAnswered: Boolean =
-      annualAllowanceVM.pensionProvidePaidAnnualAllowanceQuestion.exists(x => if (x) annualAllowanceVM.taxPaidByPensionProvider.isDefined else true)
     val optSchemes: Option[Seq[String]] = annualAllowanceVM.pensionSchemeTaxReferences
     val schemesEmpty: Boolean = !optSchemes.exists(_.nonEmpty)
     val index: Option[Int] = optIndex.filter(i => i >= 0 && i < annualAllowanceVM.pensionSchemeTaxReferences.size)
 
-    (previousQuestionsAnswered, schemesEmpty, index) match {
-      // unanswered -> start of journey
-      case (false, _, _) => Some(Redirect(ReducedAnnualAllowanceController.show(taxYear)))
-      // editing scheme -> continue to scheme
-      case (true, false, Some(_)) => None
-      // new-scheme -> continue to new scheme
-      case (true, false, None) if optIndex.isEmpty => None
-      // 1st-scheme/bad-index -> redirectForSchemeLoop to summary or PSTR with None index
-      case _ => Some(Redirect(redirectForSchemeLoop(optSchemes.getOrElse(Seq.empty), taxYear)))
+    (schemesEmpty, index) match {
+      // schemes but bad-index -> redirect
+      case (false, None) if optIndex.nonEmpty => Some(Redirect(redirectForSchemeLoop(optSchemes.getOrElse(Seq.empty), taxYear)))
+      // no schemes but index -> error, redirect
+      case (true, Some(_)) => Some(Redirect(redirectForSchemeLoop(optSchemes.getOrElse(Seq.empty), taxYear)))
+      case (_, _) => None
     }
   }
 
@@ -76,7 +71,9 @@ object AnnualAllowancesRedirects {
   private val pageValidInJourneyMap: Map[Int, PensionAnnualAllowancesViewModel => Boolean] = {
     val isTrue = { _: PensionAnnualAllowancesViewModel => true }
     val firstQuestionTrue = { annualAVM: PensionAnnualAllowancesViewModel => annualAVM.reducedAnnualAllowanceQuestion.getOrElse(false) }
-    val thirdQuestionTrue = { annualAVM: PensionAnnualAllowancesViewModel => annualAVM.aboveAnnualAllowanceQuestion.getOrElse(false) }
+    val thirdQuestionTrue = { annualAVM: PensionAnnualAllowancesViewModel =>
+      annualAVM.reducedAnnualAllowanceQuestion.getOrElse(false) && annualAVM.aboveAnnualAllowanceQuestion.getOrElse(false)
+    }
 
     Map(
       // 1 and 8 are always valid
@@ -89,8 +86,8 @@ object AnnualAllowancesRedirects {
   }
 
   private def previousQuestionIsAnswered(pageNumber: Int, optIndex: Option[Int], annualAVM: PensionAnnualAllowancesViewModel): Boolean = {
-    val schemesEmpty = !annualAVM.pensionSchemeTaxReferences.exists(_.nonEmpty)
-    val index = optIndex.filter(i => i >= 0 && i < annualAVM.pensionSchemeTaxReferences.size)
+    val schemesEmpty: Boolean = !annualAVM.pensionSchemeTaxReferences.exists(_.nonEmpty)
+    val index: Option[Int] = if (schemesEmpty) None else optIndex.filter(i => i >= 0 && i < annualAVM.pensionSchemeTaxReferences.get.size)
 
     val prevQuestionIsAnsweredMap: Map[Int, PensionAnnualAllowancesViewModel => Boolean] = Map(
       1 -> { _: PensionAnnualAllowancesViewModel => true },
@@ -100,10 +97,12 @@ object AnnualAllowancesRedirects {
         annualAVM.moneyPurchaseAnnualAllowance.getOrElse(false) || annualAVM.taperedAnnualAllowance.getOrElse(false)
       },
       4 -> { annualAVM: PensionAnnualAllowancesViewModel =>
-        annualAVM.aboveAnnualAllowanceQuestion.exists(x => if (x) annualAVM.aboveAnnualAllowance.isDefined else true)
+        annualAVM.aboveAnnualAllowanceQuestion.exists(x => !x || annualAVM.aboveAnnualAllowance.isDefined)
       },
 
-      5 -> { _: PensionAnnualAllowancesViewModel => false }, // uncaught PSTR page check
+      5 -> { annualAllowanceVM: PensionAnnualAllowancesViewModel =>
+        annualAllowanceVM.pensionProvidePaidAnnualAllowanceQuestion.exists(x => !x || annualAllowanceVM.taxPaidByPensionProvider.isDefined)
+      },
       6 -> { _: PensionAnnualAllowancesViewModel => true }, // if valid then PSTRs can exist or be empty
       7 -> { annualAVM: PensionAnnualAllowancesViewModel =>
         if (schemesEmpty || index.isEmpty) false else annualAVM.pensionSchemeTaxReferences.exists(x => x(index.get).nonEmpty)

@@ -18,6 +18,7 @@ package controllers.pensions.annualAllowances
 
 import builders.AllPensionsDataBuilder.anAllPensionsData
 import builders.IncomeTaxUserDataBuilder.anIncomeTaxUserData
+import builders.PensionAnnualAllowanceViewModelBuilder.aPensionAnnualAllowanceViewModel
 import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import builders.PensionsUserDataBuilder
 import builders.UserBuilder.aUser
@@ -26,7 +27,7 @@ import models.mongo.PensionsCYAModel
 import play.api.http.HeaderNames
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.PensionAnnualAllowancePages.{pensionProviderPaidTaxUrl, pstrSummaryUrl}
+import utils.PageUrls.PensionAnnualAllowancePages.{pensionProviderPaidTaxUrl, pstrSummaryUrl, reducedAnnualAllowanceUrl}
 import utils.PageUrls.{fullUrl, overviewUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
@@ -36,9 +37,9 @@ class PensionProviderPaidTaxControllerISpec extends IntegrationTest with ViewHel
   }
 
   override val userScenarios: Seq[UserScenario[_, _]] = Nil
-  
+
   ".show" should {
-     "redirect to Overview Page when in year" in {
+    "redirect to Overview Page when in year" in {
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
@@ -51,7 +52,7 @@ class PensionProviderPaidTaxControllerISpec extends IntegrationTest with ViewHel
       result.status shouldBe SEE_OTHER
       result.headers("Location").head shouldBe overviewUrl(taxYear)
     }
-    
+
     "show page when EOY" in {
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
@@ -63,11 +64,47 @@ class PensionProviderPaidTaxControllerISpec extends IntegrationTest with ViewHel
       }
       result.status shouldBe OK
     }
+
+    "redirect to reduced annual allowance page" when {
+      "previous questions have not been answered" which {
+        lazy val result: WSResponse = {
+          dropPensionsDB()
+          authoriseAgentOrIndividual()
+          val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(aboveAnnualAllowance = None)
+          insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)))
+
+          urlGet(fullUrl(pensionProviderPaidTaxUrl(taxYearEOY)), follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        }
+
+        "has a SEE_OTHER status" in {
+          result.status shouldBe SEE_OTHER
+          result.header("location").contains(reducedAnnualAllowanceUrl(taxYearEOY)) shouldBe true
+        }
+
+      }
+      "page is invalid in journey" which {
+        lazy val result: WSResponse = {
+          dropPensionsDB()
+          authoriseAgentOrIndividual()
+          val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(aboveAnnualAllowanceQuestion = Some(false))
+          insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)))
+
+          urlGet(fullUrl(pensionProviderPaidTaxUrl(taxYearEOY)), follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        }
+
+        "has a SEE_OTHER status" in {
+          result.status shouldBe SEE_OTHER
+          result.header("location").contains(reducedAnnualAllowanceUrl(taxYearEOY)) shouldBe true
+        }
+      }
+    }
   }
-  
+
   ".submit" should {
     lazy val formData = Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "20")
-    
+
     "redirect to overview when in year" in {
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
@@ -84,8 +121,9 @@ class PensionProviderPaidTaxControllerISpec extends IntegrationTest with ViewHel
       result.status shouldBe SEE_OTHER
       result.headers("location").head shouldBe overviewUrl(taxYear)
     }
-     "redirect to next page" in {
-       lazy implicit val result: WSResponse = {
+
+    "redirect to next page" in {
+      lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
         insertCyaData(pensionsUsersData(aPensionsCYAModel))
@@ -96,9 +134,45 @@ class PensionProviderPaidTaxControllerISpec extends IntegrationTest with ViewHel
           follow = false,
           body = formData
         )
-       }
-       result.status shouldBe SEE_OTHER
-       result.headers("location").head shouldBe pstrSummaryUrl(taxYearEOY)
-     }
+      }
+      result.status shouldBe SEE_OTHER
+      result.headers("location").head shouldBe pstrSummaryUrl(taxYearEOY)
+    }
+
+    "redirect to reduced annual allowance page" when {
+      "previous questions have not been answered" which {
+        lazy val result: WSResponse = {
+          dropPensionsDB()
+          authoriseAgentOrIndividual()
+          val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(reducedAnnualAllowanceQuestion = None)
+          insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)))
+
+          urlPost(fullUrl(pensionProviderPaidTaxUrl(taxYearEOY)), body = formData, follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        }
+
+        "has a SEE_OTHER status" in {
+          result.status shouldBe SEE_OTHER
+          result.header("location") shouldBe Some(reducedAnnualAllowanceUrl(taxYearEOY))
+        }
+
+      }
+      "page is invalid in journey" which {
+        lazy val result: WSResponse = {
+          dropPensionsDB()
+          authoriseAgentOrIndividual()
+          val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(reducedAnnualAllowanceQuestion = Some(false))
+          insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)))
+
+          urlPost(fullUrl(pensionProviderPaidTaxUrl(taxYearEOY)), body = formData, follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        }
+
+        "has a SEE_OTHER status" in {
+          result.status shouldBe SEE_OTHER
+          result.header("location") shouldBe Some(reducedAnnualAllowanceUrl(taxYearEOY))
+        }
+      }
+    }
   }
 }
