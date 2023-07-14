@@ -37,12 +37,12 @@ class AuditActionsProvider @Inject()(authAction: AuthorisedAction,
   extends ActionsProvider(authAction, pensionSessionService, errorHandler, appConfig) {
   
   def paymentsIntoPensionsViewAuditing(taxYear: Int): ActionBuilder[UserSessionDataRequest, AnyContent] = {
-    userSessionDataFor(taxYear)
+    userSessionDataForInYear(taxYear)
       .andThen(PaymentsIntoPensionsViewAuditAction(auditService))
   }
 
   def paymentsIntoPensionsUpdateAuditing(taxYear: Int): ActionBuilder[UserPriorAndSessionDataRequest, AnyContent] = {
-    userPriorAndSessionDataFor(taxYear)
+    userPriorAndSessionDataForInYear(taxYear)
       .andThen(PaymentsIntoPensionsUpdateAuditAction(auditService))
   }
 }

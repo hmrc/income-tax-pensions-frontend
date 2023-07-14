@@ -57,7 +57,7 @@ class ActionsProviderSpec extends ControllerUnitTest
   for ( (actionName: String, action) <- Seq(
     ("endOfYear", actionsProvider.endOfYear: ActionType),
     ("userSessionDataFo", actionsProvider.userSessionDataFor :ActionType),
-    ("userPriorAndSessionDataFor", actionsProvider.userPriorAndSessionDataFor:ActionType))) {
+    ("userPriorAndSessionDataFor", actionsProvider.userPriorAndSessionDataForInYear:ActionType))) {
 
     s".$actionName(taxYear)" should {
       
@@ -68,12 +68,14 @@ class ActionsProviderSpec extends ControllerUnitTest
         await(underTest(fakeIndividualRequest)) shouldBe Redirect(UnauthorisedUserErrorController.show)
       }
 
-      "redirect to Income Tax Submission Overview when in year" in {
-        mockAuthAsIndividual(Some(aUser.nino))
+      if (actionName != "userPriorAndSessionDataFor") {
+        "redirect to Income Tax Submission Overview when in year" in {
+          mockAuthAsIndividual(Some(aUser.nino))
 
-        val underTest = action(taxYear)(block = anyBlock)
-        await(underTest(fakeIndividualRequest.withSession(TAX_YEAR -> taxYear.toString, VALID_TAX_YEARS -> validTaxYears))) shouldBe
-          Redirect(appConfig.incomeTaxSubmissionOverviewUrl(taxYear))
+          val underTest = action(taxYear)(block = anyBlock)
+          await(underTest(fakeIndividualRequest.withSession(TAX_YEAR -> taxYear.toString, VALID_TAX_YEARS -> validTaxYears))) shouldBe
+            Redirect(appConfig.incomeTaxSubmissionOverviewUrl(taxYear))
+        }
       }
 
       if (actionName != "endOfYear") {
