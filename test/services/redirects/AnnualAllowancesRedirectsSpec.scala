@@ -146,26 +146,33 @@ class AnnualAllowancesRedirectsSpec extends UnitTest {
     }
 
     "when trying to render the PSTR page" should {
-      "return Some(redirect) to PSTR details page" when {
+
+      "return None" when {
+        "using a valid index to an existing scheme" in {
+          val data = cyaData.copy(pensionsAnnualAllowances = aPensionAnnualAllowanceViewModel)
+          val result = journeyCheck(PSTRPage, data, taxYear, Some(0))
+
+          result shouldBe None
+        }
         "index is None and there are no existing schemes" in {
           val data = cyaData.copy(pensionsAnnualAllowances = aPensionAnnualAllowanceViewModel.copy(
             pensionSchemeTaxReferences = None))
           val result = journeyCheck(PSTRPage, data, taxYear)
-          val statusHeader = result.map(_.header.status)
-          val locationHeader = result.map(_.header.headers).map(_.get("Location"))
 
-          statusHeader shouldBe Some(SEE_OTHER)
-          locationHeader.get shouldBe Some(schemeDetailsCall.url)
+          result shouldBe None
         }
-        "index is invalid and there are no existing schemes" in {
+        "index is None and there are existing schemes" in {
+          val data = cyaData.copy(pensionsAnnualAllowances = aPensionAnnualAllowanceViewModel)
+          val result = journeyCheck(PSTRPage, data, taxYear)
+
+          result shouldBe None
+        }
+        "index is invalid but there are no existing schemes" in {
           val data = cyaData.copy(pensionsAnnualAllowances = aPensionAnnualAllowanceViewModel.copy(
             pensionSchemeTaxReferences = None))
           val result = journeyCheck(PSTRPage, data, taxYear, Some(-5))
-          val statusHeader = result.map(_.header.status)
-          val locationHeader = result.map(_.header.headers).map(_.get("Location"))
 
-          statusHeader shouldBe Some(SEE_OTHER)
-          locationHeader.get shouldBe Some(schemeDetailsCall.url)
+          result shouldBe None
         }
       }
 
@@ -177,20 +184,6 @@ class AnnualAllowancesRedirectsSpec extends UnitTest {
 
         statusHeader shouldBe Some(SEE_OTHER)
         locationHeader.get shouldBe Some(schemeSummaryCall.url)
-      }
-
-      "return None when using a valid index" in {
-        val data = cyaData.copy(pensionsAnnualAllowances = aPensionAnnualAllowanceViewModel)
-        val result = journeyCheck(PSTRPage, data, taxYear, Some(0))
-
-        result shouldBe None
-      }
-
-      "return None when index is None and there are existing schemes" in {
-        val data = cyaData.copy(pensionsAnnualAllowances = aPensionAnnualAllowanceViewModel)
-        val result = journeyCheck(PSTRPage, data, taxYear)
-
-        result shouldBe None
       }
     }
   }
