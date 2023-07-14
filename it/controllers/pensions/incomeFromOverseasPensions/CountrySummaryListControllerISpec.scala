@@ -276,10 +276,16 @@ class CountrySummaryListControllerISpec extends IntegrationTest with BeforeAndAf
         result.header("location") shouldBe Some(incomeFromOverseasPensionsStatus(taxYearEOY))
       }
       "previous questions are unanswered" in {
+        val incompleteViewModel = anIncomeFromOverseasPensionsEmptyViewModel.copy(
+          paymentsFromOverseasPensionsQuestion = Some(false),
+          overseasIncomePensionSchemes = Seq(PensionScheme(
+              alphaThreeCode = None,
+              alphaTwoCode = Some("FR"),
+              pensionPaymentAmount = Some(2999.99))))
         implicit lazy val result: WSResponse = {
           authoriseAgentOrIndividual()
           dropPensionsDB()
-          insertCyaData(pensionUserDataWithIncomeOverseasPension(anIncomeFromOverseasPensionsEmptyViewModel))
+          insertCyaData(pensionUserDataWithIncomeOverseasPension(incompleteViewModel))
           urlGet(fullUrl(countrySummaryListControllerUrl(taxYearEOY)), follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
         }

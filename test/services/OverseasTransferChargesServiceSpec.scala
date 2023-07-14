@@ -39,7 +39,7 @@ class OverseasTransferChargesServiceSpec extends UnitTest with MockPensionSessio
 
       mockCreateOrUpdateSessionData(userData.copy(pensions = expectedCYA))
 
-      await(underTest.updateOverseasTransferChargeQuestion(userData, question = false, index)) shouldBe Right(aPensionsUserData.copy(pensions = expectedCYA))
+      await(underTest.updateOverseasTransferChargeQuestion(userData, yesNo = false, index)) shouldBe Right(aPensionsUserData.copy(pensions = expectedCYA))
     }
 
     "update cya with ukTransferCharge to true when no TransferPensionScheme exists" in {
@@ -52,7 +52,7 @@ class OverseasTransferChargesServiceSpec extends UnitTest with MockPensionSessio
 
       mockCreateOrUpdateSessionData(userData.copy(pensions = expectedCYA))
 
-      await(underTest.updateOverseasTransferChargeQuestion(userData, question = true, index)) shouldBe Right(aPensionsUserData.copy(pensions = expectedCYA))
+      await(underTest.updateOverseasTransferChargeQuestion(userData, yesNo = true, index)) shouldBe Right(aPensionsUserData.copy(pensions = expectedCYA))
     }
 
     "update cya with ukTransferCharge to false when no TransferPensionScheme exists" in {
@@ -65,7 +65,7 @@ class OverseasTransferChargesServiceSpec extends UnitTest with MockPensionSessio
 
       mockCreateOrUpdateSessionData(userData.copy(pensions = expectedCYA))
 
-      await(underTest.updateOverseasTransferChargeQuestion(userData, question = false, index)) shouldBe Right(aPensionsUserData.copy(pensions = expectedCYA))
+      await(underTest.updateOverseasTransferChargeQuestion(userData, yesNo = false, index)) shouldBe Right(aPensionsUserData.copy(pensions = expectedCYA))
     }
 
 
@@ -82,7 +82,7 @@ class OverseasTransferChargesServiceSpec extends UnitTest with MockPensionSessio
 
       mockCreateOrUpdateSessionData(userData.copy(pensions = expectedCYA))
 
-      await(underTest.updateOverseasTransferChargeQuestion(userData, question = true, index)) shouldBe Right(aPensionsUserData.copy(pensions = expectedCYA))
+      await(underTest.updateOverseasTransferChargeQuestion(userData, yesNo = true, index)) shouldBe Right(aPensionsUserData.copy(pensions = expectedCYA))
     }
 
     "update cya with ukTransferCharge to false when TransferPensionSchemes exists" in {
@@ -98,7 +98,7 @@ class OverseasTransferChargesServiceSpec extends UnitTest with MockPensionSessio
 
       mockCreateOrUpdateSessionData(userData.copy(pensions = expectedCYA))
 
-      await(underTest.updateOverseasTransferChargeQuestion(userData, question = false, index)) shouldBe Right(aPensionsUserData.copy(pensions = expectedCYA))
+      await(underTest.updateOverseasTransferChargeQuestion(userData, yesNo = false, index)) shouldBe Right(aPensionsUserData.copy(pensions = expectedCYA))
     }
 
     "update cya with existing ukTransferCharge to true when multiple TransferPensionSchemes exists but latest scheme does not contain name" in {
@@ -120,7 +120,7 @@ class OverseasTransferChargesServiceSpec extends UnitTest with MockPensionSessio
 
       mockCreateOrUpdateSessionData(userData.copy(pensions = expectedCYA))
       expectedCYA.transfersIntoOverseasPensions.transferPensionScheme.size shouldBe 2
-      await(underTest.updateOverseasTransferChargeQuestion(userData, question = true, index)) shouldBe Right(aPensionsUserData.copy(pensions = expectedCYA))
+      await(underTest.updateOverseasTransferChargeQuestion(userData, yesNo = true, index)) shouldBe Right(aPensionsUserData.copy(pensions = expectedCYA))
     }
   }
 }
