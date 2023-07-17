@@ -27,7 +27,7 @@ import builders.PensionLifetimeAllowancesViewModelBuilder.aPensionLifetimeAllowa
 import builders.PensionSavingTaxChargesBuilder.anPensionSavngTaxCharges
 import builders.PensionsCYAModelBuilder.{aPensionsCYAModel, paymentsIntoPensionOnlyCYAModel}
 import builders.PensionsUserDataBuilder.aPensionsUserData
-import builders.ReliefsBuilder.anReliefs
+import builders.ReliefsBuilder.aReliefs
 import builders.UnauthorisedPaymentsViewModelBuilder.anUnauthorisedPaymentsViewModel
 import builders.UserBuilder.aUser
 import models.IncomeTaxUserData
@@ -182,9 +182,9 @@ class PaymentsIntoPensionsCYAControllerISpec extends IntegrationTest with ViewHe
       "the user makes no changes and no submission to DES is made" in {
         val unchangedModel =
           PaymentsIntoPensionsViewModel(
-            Some(true), anReliefs.regularPensionContributions,
-            Some(true), anReliefs.oneOffPensionContributionsPaid, Some(true), Some(true), Some(true),
-            anReliefs.retirementAnnuityPayments, Some(true), anReliefs.paymentToEmployersSchemeNoTaxRelief)
+            Some(true), aReliefs.regularPensionContributions,
+            Some(true), aReliefs.oneOffPensionContributionsPaid, Some(true), Some(true), Some(true),
+            aReliefs.retirementAnnuityPayments, Some(true), aReliefs.paymentToEmployersSchemeNoTaxRelief)
 
         val unchangedAllowances = PensionAnnualAllowancesViewModel(
           Some(anPensionSavngTaxCharges.isAnnualAllowanceReduced),
