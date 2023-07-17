@@ -76,11 +76,11 @@ class TransferPensionsSchemeViewSpec extends ViewUnitTest {
     val providerAddressLabel: String = "Pension provider address"
     val providerNameEmptyErrorText: String = "Enter the name of the pension scheme"
     val refEmptyErrorText: String  = "Enter the Pension Scheme Tax Reference"
-    val providerAddressEmptyErrorText: String = "Enter the pension providers address"
+    val providerAddressEmptyErrorText: String = "Enter the pension provider’s address"
     val providerNameInvalidFormatErrorText: String = "The pension scheme name must only include numbers 0-9, " +
       "letters a to z, hyphens, spaces, apostrophes, commas, full stops, round brackets and the special characters, &, /, @, £, *."
     val providerNameOverCharLimitErrorText: String = "Name of pension scheme must be 105 characters or less"
-    val providerAddressOverCharLimitErrorText: String = "Pension providers address must be 250 characters or less"
+    val providerAddressOverCharLimitErrorText: String = "Pension provider’s address must be 250 characters or less"
   }
   object CommonExpectedCY extends CommonExpectedResults {
     val expectedTitle: String = "Cynllun pensiwn yn talu’r tâl trosglwyddiadau"
@@ -117,7 +117,7 @@ class TransferPensionsSchemeViewSpec extends ViewUnitTest {
     val ukReferenceLabel: String = "Pension Scheme Tax Reference"
     val nonUkReferenceLabel: String = "Qualifying Overseas Pension Scheme reference"
     val uKRefHintText: String = "For example, ‘12345678RA’"
-    val nonUKRefHintText: String = "For example, ’QOPS123456’"
+    val nonUKRefHintText: String = "For example, QOPS123456"
     val ukRefInvalidFormatErrorText: String =
       "Enter a Pension Scheme Tax Reference number that is 8 numbers, then R, then a letter a to z or A to Z, like 00123456RA"
     val nonUKRefInvalidFormatErrorText: String = "Enter a six digit number"
@@ -128,7 +128,7 @@ class TransferPensionsSchemeViewSpec extends ViewUnitTest {
     val ukReferenceLabel: String = "Cyfeirnod Treth y Cynllun Pensiwn"
     val nonUkReferenceLabel: String = "Cyfeirnod Cynllun Pensiwn Tramor Cymwys"
     val uKRefHintText: String = "Er enghraifft, ‘12345678RA’"
-    val nonUKRefHintText: String = "Er enghraifft, ’QOPS123456’"
+    val nonUKRefHintText: String = "Er enghraifft, QOPS123456"
     val ukRefInvalidFormatErrorText: String =
       "Nodwch Gyfeirnod Treth y Cynllun Pensiwn sy’n 8 rhif, wedyn y llythyren ‘R’, ac wedyn llythyren rhwng a-z (neu A-Z), megis 00123456RA"
     val nonUKRefInvalidFormatErrorText: String = "Nodwch rif chwe digid"
