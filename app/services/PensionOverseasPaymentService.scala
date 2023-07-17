@@ -16,7 +16,7 @@
 
 package services
 
-import connectors.{IncomeTaxUserDataConnector, PensionsConnector}
+import connectors.IncomeTaxUserDataConnector
 import models.mongo.{PensionsCYAModel, PensionsUserData, ServiceError}
 import models.pension.charges.PaymentsIntoOverseasPensionsViewModel
 import models.pension.income.{CreateUpdatePensionIncomeModel, ForeignPensionContainer, OverseasPensionContributionContainer}
@@ -33,7 +33,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class PensionOverseasPaymentService @Inject()(pensionUserDataRepository: PensionsUserDataRepository,
                                               pensionIncomeConnectorHelper: PensionIncomeConnectorHelper,
-                                              pensionsConnector: PensionsConnector,
+                                              pensionReliefsConnectorHelper: PensionReliefsConnectorHelper,
                                               incomeTaxUserDataConnector: IncomeTaxUserDataConnector) {
 
   private def getPensionsUserData(userData: Option[PensionsUserData], user: User, taxYear: Int)(implicit clock: Clock): PensionsUserData = {
@@ -52,18 +52,14 @@ class PensionOverseasPaymentService @Inject()(pensionUserDataRepository: Pension
   }
 
   def savePaymentsFromOverseasPensionsViewModel(user: User, taxYear: Int)
-                                               (implicit hc: HeaderCarrier, ec: ExecutionContext, clock: Clock): Future[Either[ServiceError, Unit]] = {
-
+                                               (implicit hc: HeaderCarrier,
+                                                ec: ExecutionContext, clock: Clock): Future[Either[ServiceError, Unit]] = {
 
     val hcWithExtras = hc.withExtraHeaders("mtditid" -> user.mtditid)
 
     (for {
       sessionData <- FutureEitherOps[ServiceError, Option[PensionsUserData]](pensionUserDataRepository.find(taxYear, user))
-      priorData <- FutureEitherOps[ServiceError, IncomeTaxUserData](incomeTaxUserDataConnector.
-        getUserData(user.nino, taxYear)(hcWithExtras))
-
-      viewModelOverseas = sessionData.map(_.pensions.paymentsIntoOverseasPensions)
-      incomeSubModel = viewModelOverseas.map(_.toPensionContributions).flatMap(seq => if (seq.nonEmpty) Some(seq) else None).map(OverseasPensionContributionContainer)
+      priorData <- FutureEitherOps[ServiceError, IncomeTaxUserData](incomeTaxUserDataConnector.getUserData(user.nino, taxYear)(hcWithExtras))
 
       viewModelPayments = sessionData.map(_.pensions.paymentsIntoPension)
       updatedReliefsData = CreateOrUpdatePensionReliefsModel(
@@ -75,13 +71,23 @@ class PensionOverseasPaymentService @Inject()(pensionUserDataRepository: Pension
           overseasPensionSchemeContributions = sessionData.flatMap(_.pensions.paymentsIntoOverseasPensions.paymentsIntoOverseasPensionsAmount)
         )
       )
+
+      viewModelOverseas = sessionData.map(_.pensions.paymentsIntoOverseasPensions)
+      incomeSubModel = viewModelOverseas.map(_.toPensionContributions).flatMap(seq =>
+        if (seq.nonEmpty) Some(seq) else None).map(OverseasPensionContributionContainer)
       updatedIncomeData = CreateUpdatePensionIncomeModel(
         foreignPension = priorData.pensions.flatMap(_.pensionIncome.flatMap(_.foreignPension)).map(ForeignPensionContainer),
         overseasPensionContribution = incomeSubModel
       )
 
-      _ <- FutureEitherOps[ServiceError, Unit](pensionsConnector.savePensionReliefSessionData(user.nino, taxYear, updatedReliefsData)(hcWithExtras, ec))
-      _ <- FutureEitherOps[ServiceError, Unit](pensionIncomeConnectorHelper.sendDownstream(user.nino, taxYear, incomeSubModel, viewModelOverseas, updatedIncomeData)(hcWithExtras, ec))
+      _ <- FutureEitherOps[ServiceError, Unit](pensionReliefsConnectorHelper.sendDownstream(user.nino, taxYear,
+        subRequestModel = None,
+        cya = viewModelPayments,
+        requestModel = updatedReliefsData)(hcWithExtras, ec))
+      _ <- FutureEitherOps[ServiceError, Unit](pensionIncomeConnectorHelper.sendDownstream(user.nino, taxYear,
+        subRequestModel = incomeSubModel,
+        cya = viewModelOverseas,
+        requestModel = updatedIncomeData)(hcWithExtras, ec))
 
       updatedCYA = getPensionsUserData(sessionData, user, taxYear)
       result <- FutureEitherOps[ServiceError, Unit](pensionUserDataRepository.createOrUpdate(updatedCYA))
