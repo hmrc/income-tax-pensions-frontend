@@ -30,9 +30,9 @@ case class PaymentsIntoPensionsAudit(
   paymentsIntoPension: PaymentsIntoPensionsViewModel,
   priorPaymentsIntoPension: Option[PaymentsIntoPensionsViewModel] = None
 ) {
-  private val amend = "AmendPaymentsIntoPensionsAudit"
-  private val create = "CreatePaymentsIntoPensionsAudit"
-  private val view = "ViewPaymentsIntoPensionsAudit"
+  private val amend = "AmendPaymentsIntoPension"
+  private val create = "CreatePaymentsIntoPension"
+  private val view = "ViewPaymentsIntoPension"
   
   def toAuditModelAmend: AuditModel[PaymentsIntoPensionsAudit] = toAuditModel(amend)
   
