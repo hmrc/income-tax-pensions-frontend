@@ -16,7 +16,7 @@
 
 package controllers.pensions.lifetimeAllowances
 
-import builders.PensionLifetimeAllowanceViewModelBuilder.aPensionLifetimeAllowanceViewModel
+import builders.PensionLifetimeAllowancesViewModelBuilder.aPensionLifetimeAllowancesViewModel
 import builders.PensionsUserDataBuilder.pensionsUserDataWithLifetimeAllowance
 import controllers.pensions.lifetimeAllowances.routes.PensionSchemeTaxReferenceLifetimeController
 import org.jsoup.Jsoup
@@ -97,7 +97,7 @@ class LifetimePstrSummaryControllerISpec extends IntegrationTest with BeforeAndA
           implicit lazy val result: WSResponse = {
             authoriseAgentOrIndividual(user.isAgent)
             dropPensionsDB()
-            val viewModel = aPensionLifetimeAllowanceViewModel.copy(pensionSchemeTaxReferences = Some(Seq(pstr1, pstr2)))
+            val viewModel = aPensionLifetimeAllowancesViewModel.copy(pensionSchemeTaxReferences = Some(Seq(pstr1, pstr2)))
             insertCyaData(pensionsUserDataWithLifetimeAllowance(viewModel))
             urlGet(fullUrl(lifetimeAllowancePstrSummaryUrl(taxYearEOY)), user.isWelsh, follow = false,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
@@ -131,7 +131,7 @@ class LifetimePstrSummaryControllerISpec extends IntegrationTest with BeforeAndA
           implicit lazy val result: WSResponse = {
             authoriseAgentOrIndividual(user.isAgent)
             dropPensionsDB()
-            val viewModel = aPensionLifetimeAllowanceViewModel.copy(pensionSchemeTaxReferences = Some(Seq()))
+            val viewModel = aPensionLifetimeAllowancesViewModel.copy(pensionSchemeTaxReferences = Some(Seq()))
             insertCyaData(pensionsUserDataWithLifetimeAllowance(viewModel))
             urlGet(fullUrl(lifetimeAllowancePstrSummaryUrl(taxYearEOY)), user.isWelsh, follow = false,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))

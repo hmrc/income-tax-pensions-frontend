@@ -16,7 +16,7 @@
 
 package controllers.pensions.lifetimeAllowances
 
-import builders.PensionLifetimeAllowanceViewModelBuilder.aPensionLifetimeAllowanceViewModel
+import builders.PensionLifetimeAllowancesViewModelBuilder.aPensionLifetimeAllowancesViewModel
 import builders.PensionsUserDataBuilder.{aPensionsUserData, anPensionsUserDataEmptyCya, pensionsUserDataWithLifetimeAllowance}
 import builders.UserBuilder.aUserRequest
 import forms.YesNoForm
@@ -154,7 +154,7 @@ class AboveAnnualLifetimeAllowanceControllerISpec extends IntegrationTest with B
 
           implicit lazy val result: WSResponse = {
             dropPensionsDB()
-            val pensionsViewModel = aPensionLifetimeAllowanceViewModel.copy(
+            val pensionsViewModel = aPensionLifetimeAllowancesViewModel.copy(
               aboveLifetimeAllowanceQuestion = Some(true)
             )
             insertCyaData(pensionsUserDataWithLifetimeAllowance(pensionsViewModel))
@@ -179,7 +179,7 @@ class AboveAnnualLifetimeAllowanceControllerISpec extends IntegrationTest with B
           implicit lazy val result: WSResponse = {
             dropPensionsDB()
 
-            val pensionsViewModel = aPensionLifetimeAllowanceViewModel.copy(
+            val pensionsViewModel = aPensionLifetimeAllowancesViewModel.copy(
               aboveLifetimeAllowanceQuestion = Some(false)
             )
             insertCyaData(pensionsUserDataWithLifetimeAllowance(pensionsViewModel))
@@ -265,7 +265,7 @@ class AboveAnnualLifetimeAllowanceControllerISpec extends IntegrationTest with B
 
         lazy val result: WSResponse = {
           dropPensionsDB()
-          val pensionsViewModel = aPensionLifetimeAllowanceViewModel.copy(
+          val pensionsViewModel = aPensionLifetimeAllowancesViewModel.copy(
             aboveLifetimeAllowanceQuestion = None
           )
 
@@ -284,11 +284,11 @@ class AboveAnnualLifetimeAllowanceControllerISpec extends IntegrationTest with B
         "updates aboveLifetimeAllowanceQuestion to Some(true)" in {
           lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
           cyaModel.pensions.pensionLifetimeAllowances.aboveLifetimeAllowanceQuestion shouldBe Some(true)
-          cyaModel.pensions.pensionLifetimeAllowances.pensionAsLumpSumQuestion shouldBe aPensionLifetimeAllowanceViewModel.pensionAsLumpSumQuestion
-          cyaModel.pensions.pensionLifetimeAllowances.pensionAsLumpSum shouldBe aPensionLifetimeAllowanceViewModel.pensionAsLumpSum
+          cyaModel.pensions.pensionLifetimeAllowances.pensionAsLumpSumQuestion shouldBe aPensionLifetimeAllowancesViewModel.pensionAsLumpSumQuestion
+          cyaModel.pensions.pensionLifetimeAllowances.pensionAsLumpSum shouldBe aPensionLifetimeAllowancesViewModel.pensionAsLumpSum
           cyaModel.pensions.pensionLifetimeAllowances.pensionPaidAnotherWayQuestion shouldBe
-            aPensionLifetimeAllowanceViewModel.pensionPaidAnotherWayQuestion
-          cyaModel.pensions.pensionLifetimeAllowances.pensionPaidAnotherWay shouldBe aPensionLifetimeAllowanceViewModel.pensionPaidAnotherWay
+            aPensionLifetimeAllowancesViewModel.pensionPaidAnotherWayQuestion
+          cyaModel.pensions.pensionLifetimeAllowances.pensionPaidAnotherWay shouldBe aPensionLifetimeAllowancesViewModel.pensionPaidAnotherWay
         }
       }
     }
@@ -299,7 +299,7 @@ class AboveAnnualLifetimeAllowanceControllerISpec extends IntegrationTest with B
 
         lazy val result: WSResponse = {
           dropPensionsDB()
-          val pensionsViewModel = aPensionLifetimeAllowanceViewModel.copy(
+          val pensionsViewModel = aPensionLifetimeAllowancesViewModel.copy(
             aboveLifetimeAllowanceQuestion = None
           )
 

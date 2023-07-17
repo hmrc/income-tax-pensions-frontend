@@ -23,7 +23,7 @@ import builders.IncomeTaxUserDataBuilder.anIncomeTaxUserData
 import builders.PaymentsIntoOverseasPensionsViewModelBuilder.aPaymentsIntoOverseasPensionsViewModel
 import builders.PaymentsIntoPensionVewModelBuilder.aPaymentsIntoPensionViewModel
 import builders.PensionContributionsBuilder.anPensionContributions
-import builders.PensionLifetimeAllowanceViewModelBuilder.aPensionLifetimeAllowanceViewModel
+import builders.PensionLifetimeAllowancesViewModelBuilder.aPensionLifetimeAllowancesViewModel
 import builders.PensionSavingTaxChargesBuilder.anPensionSavngTaxCharges
 import builders.PensionsCYAModelBuilder.{aPensionsCYAModel, paymentsIntoPensionOnlyCYAModel}
 import builders.PensionsUserDataBuilder.aPensionsUserData
@@ -201,7 +201,7 @@ class PaymentsIntoPensionsCYAControllerISpec extends IntegrationTest with ViewHe
           insertCyaData(aPensionsUserData.copy(pensions = aPensionsCYAModel
             .copy(paymentsIntoPension = unchangedModel,
               pensionsAnnualAllowances = unchangedAllowances,
-              pensionLifetimeAllowances = aPensionLifetimeAllowanceViewModel,
+              pensionLifetimeAllowances = aPensionLifetimeAllowancesViewModel,
               incomeFromPensions = anIncomeFromPensionsViewModel,
               unauthorisedPayments = anUnauthorisedPaymentsViewModel,
               paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel,

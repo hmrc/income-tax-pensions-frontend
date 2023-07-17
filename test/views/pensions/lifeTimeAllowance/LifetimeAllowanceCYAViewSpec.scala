@@ -16,7 +16,7 @@
 
 package views.pensions.lifeTimeAllowance
 
-import builders.PensionLifetimeAllowanceViewModelBuilder.{aPensionLifetimeAllowanceViewModel, minimalPensionLifetimeAllowanceViewModel}
+import builders.PensionLifetimeAllowancesViewModelBuilder.{aPensionLifetimeAllowancesViewModel, minimalPensionLifetimeAllowancesViewModel}
 import models.requests.UserSessionDataRequest
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -119,7 +119,7 @@ class LifetimeAllowanceCYAViewSpec extends ViewUnitTest { //scalastyle:off magic
         implicit val request: UserSessionDataRequest[AnyContent] = getUserSession(userScenario.isAgent)
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
 
-        val htmlFormat = underTest(taxYearEOY, aPensionLifetimeAllowanceViewModel)
+        val htmlFormat = underTest(taxYearEOY, aPensionLifetimeAllowancesViewModel)
         import userScenario.commonExpectedResults._
         
         
@@ -141,7 +141,7 @@ class LifetimeAllowanceCYAViewSpec extends ViewUnitTest { //scalastyle:off magic
         implicit val request: UserSessionDataRequest[AnyContent] = getUserSession(userScenario.isAgent)
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
 
-        val htmlFormat = underTest(taxYearEOY, minimalPensionLifetimeAllowanceViewModel)
+        val htmlFormat = underTest(taxYearEOY, minimalPensionLifetimeAllowancesViewModel)
         import userScenario.commonExpectedResults._
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
 

@@ -16,7 +16,7 @@
 
 package controllers.pensions.lifetimeAllowances
 
-import builders.PensionLifetimeAllowanceViewModelBuilder.aPensionLifetimeAllowanceViewModel
+import builders.PensionLifetimeAllowancesViewModelBuilder.aPensionLifetimeAllowancesViewModel
 import builders.PensionsUserDataBuilder.{aPensionsUserData, anPensionsUserDataEmptyCya, pensionsUserDataWithLifetimeAllowance}
 import builders.UserBuilder.aUserRequest
 import forms.YesNoForm
@@ -151,7 +151,7 @@ class LifeTimeAllowanceAnotherWayControllerISpec extends IntegrationTest with Be
 
           implicit lazy val result: WSResponse = {
             dropPensionsDB()
-            val pensionsViewModel = aPensionLifetimeAllowanceViewModel.copy(
+            val pensionsViewModel = aPensionLifetimeAllowancesViewModel.copy(
               pensionPaidAnotherWayQuestion = Some(true)
             )
             insertCyaData(pensionsUserDataWithLifetimeAllowance(pensionsViewModel))
@@ -183,7 +183,7 @@ class LifeTimeAllowanceAnotherWayControllerISpec extends IntegrationTest with Be
           implicit lazy val result: WSResponse = {
             dropPensionsDB()
 
-            val pensionsViewModel = aPensionLifetimeAllowanceViewModel.copy(
+            val pensionsViewModel = aPensionLifetimeAllowancesViewModel.copy(
               pensionPaidAnotherWayQuestion = Some(false)
             )
             insertCyaData(pensionsUserDataWithLifetimeAllowance(pensionsViewModel))
@@ -271,7 +271,7 @@ class LifeTimeAllowanceAnotherWayControllerISpec extends IntegrationTest with Be
 
       lazy val result: WSResponse = {
         dropPensionsDB()
-        val pensionsViewModel = aPensionLifetimeAllowanceViewModel.copy(
+        val pensionsViewModel = aPensionLifetimeAllowancesViewModel.copy(
           pensionPaidAnotherWayQuestion = None
         )
 
@@ -290,11 +290,11 @@ class LifeTimeAllowanceAnotherWayControllerISpec extends IntegrationTest with Be
       "updates pensionPaidAnotherWayQuestion to Some(true)" in {
         lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
         cyaModel.pensions.pensionLifetimeAllowances.pensionPaidAnotherWayQuestion shouldBe Some(true)
-        cyaModel.pensions.pensionLifetimeAllowances.pensionAsLumpSumQuestion shouldBe aPensionLifetimeAllowanceViewModel.pensionAsLumpSumQuestion
-        cyaModel.pensions.pensionLifetimeAllowances.pensionAsLumpSum shouldBe aPensionLifetimeAllowanceViewModel.pensionAsLumpSum
-        cyaModel.pensions.pensionLifetimeAllowances.pensionPaidAnotherWay shouldBe aPensionLifetimeAllowanceViewModel.pensionPaidAnotherWay
+        cyaModel.pensions.pensionLifetimeAllowances.pensionAsLumpSumQuestion shouldBe aPensionLifetimeAllowancesViewModel.pensionAsLumpSumQuestion
+        cyaModel.pensions.pensionLifetimeAllowances.pensionAsLumpSum shouldBe aPensionLifetimeAllowancesViewModel.pensionAsLumpSum
+        cyaModel.pensions.pensionLifetimeAllowances.pensionPaidAnotherWay shouldBe aPensionLifetimeAllowancesViewModel.pensionPaidAnotherWay
         cyaModel.pensions.pensionLifetimeAllowances.aboveLifetimeAllowanceQuestion shouldBe
-          aPensionLifetimeAllowanceViewModel.aboveLifetimeAllowanceQuestion
+          aPensionLifetimeAllowancesViewModel.aboveLifetimeAllowanceQuestion
       }
     }
 
@@ -303,7 +303,7 @@ class LifeTimeAllowanceAnotherWayControllerISpec extends IntegrationTest with Be
 
       lazy val result: WSResponse = {
         dropPensionsDB()
-        val pensionsViewModel = aPensionLifetimeAllowanceViewModel.copy(
+        val pensionsViewModel = aPensionLifetimeAllowancesViewModel.copy(
           pensionPaidAnotherWayQuestion = Some(true),
           pensionPaidAnotherWay = Some(LifetimeAllowance(Some(999.99), Some(99.99)))
         )
@@ -325,9 +325,9 @@ class LifeTimeAllowanceAnotherWayControllerISpec extends IntegrationTest with Be
         lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
         cyaModel.pensions.pensionLifetimeAllowances.pensionPaidAnotherWay shouldBe None
         cyaModel.pensions.pensionLifetimeAllowances.pensionPaidAnotherWayQuestion shouldBe Some(false)
-        cyaModel.pensions.pensionLifetimeAllowances.pensionAsLumpSumQuestion shouldBe aPensionLifetimeAllowanceViewModel.pensionAsLumpSumQuestion
-        cyaModel.pensions.pensionLifetimeAllowances.pensionAsLumpSum shouldBe aPensionLifetimeAllowanceViewModel.pensionAsLumpSum
-        cyaModel.pensions.pensionLifetimeAllowances.aboveLifetimeAllowanceQuestion shouldBe aPensionLifetimeAllowanceViewModel.aboveLifetimeAllowanceQuestion
+        cyaModel.pensions.pensionLifetimeAllowances.pensionAsLumpSumQuestion shouldBe aPensionLifetimeAllowancesViewModel.pensionAsLumpSumQuestion
+        cyaModel.pensions.pensionLifetimeAllowances.pensionAsLumpSum shouldBe aPensionLifetimeAllowancesViewModel.pensionAsLumpSum
+        cyaModel.pensions.pensionLifetimeAllowances.aboveLifetimeAllowanceQuestion shouldBe aPensionLifetimeAllowancesViewModel.aboveLifetimeAllowanceQuestion
       }
     }
 
