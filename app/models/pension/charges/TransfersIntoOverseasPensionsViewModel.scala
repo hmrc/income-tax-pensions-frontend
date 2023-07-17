@@ -121,9 +121,11 @@ case class TransferPensionScheme(ukTransferCharge: Option[Boolean] = None,
   def isFinished: Boolean = {
     this.name.isDefined && this.providerAddress.isDefined &&
       this.ukTransferCharge.exists(x =>
-        if (x) this.pstr.isDefined
-        else this.qops.isDefined && this.alphaTwoCountryCode.isDefined && this.alphaThreeCountryCode.isDefined
-      )
+        if (x){
+          this.pstr.isDefined
+        }else{
+          this.qops.isDefined && this.alphaThreeCountryCode.isDefined
+        })
   }
 
   def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedTransferPensionScheme = {
