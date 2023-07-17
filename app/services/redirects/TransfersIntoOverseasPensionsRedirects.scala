@@ -77,12 +77,12 @@ object TransfersIntoOverseasPensionsRedirects {
 
   private val pageValidInJourneyMap: Map[Int, TransfersIntoOverseasPensionsViewModel => Boolean] = {
     val isTrue = { v: TransfersIntoOverseasPensionsViewModel => true }
-    val firstQuestionTrue = { tIOP: TransfersIntoOverseasPensionsViewModel => tIOP.overseasTransferCharge.getOrElse(false) }
+    val firstQuestionTrue = { tIOP: TransfersIntoOverseasPensionsViewModel => tIOP.transferPensionSavings.getOrElse(false) }
 
     Map(
-      // 1 and 7 are always valid
+      // 1 and 8 are always valid
       1 -> isTrue, 8 -> isTrue,
-      // 2-6 need Q1 true
+      // 2-7 need Q1 true
       2 -> firstQuestionTrue, 3 -> firstQuestionTrue, 4 -> firstQuestionTrue, 5 -> firstQuestionTrue, 6 -> firstQuestionTrue, 7 -> firstQuestionTrue
     )
   }
@@ -98,7 +98,7 @@ object TransfersIntoOverseasPensionsRedirects {
       3 -> { tIOPVM: TransfersIntoOverseasPensionsViewModel => tIOPVM.overseasTransferCharge.getOrElse(false) && tIOPVM.overseasTransferChargeAmount.nonEmpty
       },
       4 -> { tIOPVM: TransfersIntoOverseasPensionsViewModel =>
-        if (schemesEmpty) false else tIOPVM.isFinished
+        if (schemesEmpty && tIOPVM.pensionSchemeTransferChargeAmount.nonEmpty) true else tIOPVM.transferPensionScheme.forall(p => p.isFinished)
       },
       5 -> { tIOPVM: TransfersIntoOverseasPensionsViewModel =>
         tIOPVM.pensionSchemeTransferCharge.exists(value =>
@@ -112,11 +112,10 @@ object TransfersIntoOverseasPensionsRedirects {
       },
 
       8 -> { tIOPVM: TransfersIntoOverseasPensionsViewModel =>
-        if (!isPageValidInJourney(2, tIOPVM)) {
-          !tIOPVM.overseasTransferCharge.getOrElse(true)
-        } else {
-          tIOPVM.isFinished
-        }
+        if (!isPageValidInJourney(2, tIOPVM)) !tIOPVM.transferPensionSavings.getOrElse(true)
+        else if (!isPageValidInJourney(3, tIOPVM)) !tIOPVM.overseasTransferCharge.getOrElse(true)
+        else if (!isPageValidInJourney(4, tIOPVM)) !tIOPVM.pensionSchemeTransferCharge.getOrElse(true)
+        else tIOPVM.isFinished
       }
     )
 

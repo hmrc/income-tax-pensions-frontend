@@ -29,6 +29,9 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.transferIntoOverseasPensions.RemoveTransferChargeSchemeView
 import routes._
+import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
+import services.redirects.TransfersIntoOverseasPensionsPages.{RemoveSchemePage, TaxOnPensionSchemesAmountPage}
+import services.redirects.TransfersIntoOverseasPensionsRedirects.{cyaPageCall, journeyCheck}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
@@ -45,8 +48,13 @@ class RemoveTransferChargeSchemeController @Inject()(actionsProvider: ActionsPro
     val transferChargeScheme = sessionUserData.pensionsUserData.pensions.transfersIntoOverseasPensions.transferPensionScheme
     validatedIndex(index, transferChargeScheme.size).fold(Future.successful(Redirect(TransferChargeSummaryController.show(taxYear)))) {
       i =>
-        transferChargeScheme(i).name.fold(Future.successful(Redirect(TransferChargeSummaryController.show(taxYear)))){
-          name => Future.successful(Ok(view(taxYear, name, index)))
+        transferChargeScheme(i).name.fold(Future.successful(Redirect(TransferChargeSummaryController.show(taxYear)))) {
+          name =>
+            val checkRedirect = journeyCheck(RemoveSchemePage, _: PensionsCYAModel, taxYear)
+            redirectBasedOnCurrentAnswers(taxYear, Some(sessionUserData.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) {
+              _ =>
+                Future.successful(Ok(view(taxYear, name, index)))
+            }
         }
     }
   }
@@ -57,7 +65,11 @@ class RemoveTransferChargeSchemeController @Inject()(actionsProvider: ActionsPro
       .fold(Future.successful(Redirect(TransferChargeSummaryController.show(taxYear)))) {
         i =>
           val updatedTransferScheme = transferChargeScheme.patch(i, Nil, 1)
-          updateSessionData(sessionUserData.pensionsUserData, updatedTransferScheme, taxYear)
+          val checkRedirect = journeyCheck(RemoveSchemePage, _: PensionsCYAModel, taxYear)
+          redirectBasedOnCurrentAnswers(taxYear, Some(sessionUserData.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) {
+            _ =>
+              updateSessionData(sessionUserData.pensionsUserData, updatedTransferScheme, taxYear)
+          }
       }
   }
 
