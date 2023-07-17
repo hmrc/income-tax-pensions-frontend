@@ -14,16 +14,22 @@
  * limitations under the License.
  */
 
-package builders
+package models.pension.reliefs
 
-import builders.ReliefsBuilder.aReliefs
-import models.pension.reliefs.PensionReliefs
+import builders.ReliefsBuilder.{aReliefs, anEmptyReliefs}
+import utils.UnitTest
 
-object PensionReliefsBuilder {
+class ReliefsSpec extends UnitTest {
 
-  val anPensionReliefs: PensionReliefs = PensionReliefs(
-    submittedOn = "2020-07-27T17:00:19Z",
-    deletedOn = None,
-    pensionReliefs = aReliefs
-  )
+  "isEmpty" should {
+    "return true when all the ViewModel's arguments are 'None'" in {
+      anEmptyReliefs.isEmpty
+    }
+    "return false when any of the ViewModel's arguments are filled" in {
+      aReliefs.isEmpty shouldBe false
+      aReliefs.copy(regularPensionContributions = None).isEmpty shouldBe false
+      anEmptyReliefs.copy(regularPensionContributions = Some(100.00)).isEmpty shouldBe false
+    }
+  }
+
 }

@@ -43,8 +43,13 @@ class ActionsProvider @Inject()(authAction: AuthorisedAction,
      endOfYear(taxYear)
       .andThen(UserSessionDataRequestRefinerAction(taxYear, pensionSessionService, errorHandler))
       
- def userPriorAndSessionDataFor(taxYear: Int): ActionBuilder[UserPriorAndSessionDataRequest, AnyContent] =
-   userSessionDataFor(taxYear)
+  def userSessionDataForInYear(taxYear: Int): ActionBuilder[UserSessionDataRequest, AnyContent] =
+     authAction
+       .andThen(TaxYearAction(taxYear)(appConfig, messagesApi))
+       .andThen(UserSessionDataRequestRefinerAction(taxYear, pensionSessionService, errorHandler))
+      
+ def userPriorAndSessionDataForInYear(taxYear: Int): ActionBuilder[UserPriorAndSessionDataRequest, AnyContent] =
+   userSessionDataForInYear(taxYear)
       .andThen(UserPriorAndSessionDataRequestRefinerAction(taxYear, pensionSessionService, errorHandler))
   
 }
