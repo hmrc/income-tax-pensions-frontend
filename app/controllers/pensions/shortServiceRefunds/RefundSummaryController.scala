@@ -17,7 +17,7 @@
 package controllers.pensions.shortServiceRefunds
 
 import config.AppConfig
-import controllers.predicates.ActionsProvider
+import controllers.predicates.actions.ActionsProvider
 import models.mongo.{PensionsCYAModel, PensionsUserData}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}

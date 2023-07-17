@@ -18,7 +18,7 @@ package controllers.pensions.lifetimeAllowances
 
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.routes.PensionsSummaryController
-import controllers.predicates.ActionsProvider
+import controllers.predicates.actions.ActionsProvider
 import models.mongo.PensionsCYAModel
 import models.pension.AllPensionsData
 import models.pension.AllPensionsData.generateCyaFromPrior
@@ -41,7 +41,7 @@ class LifetimeAllowanceCYAController @Inject()(actionsProvider: ActionsProvider,
                                                     (implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock)
   extends FrontendController(mcc) with I18nSupport {
 
-  def show(taxYear: Int): Action[AnyContent] = ( actionsProvider.userSessionDataFor(taxYear)).async { implicit request =>
+  def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit request =>
     pensionSessionService.getAndHandle(taxYear, request.user) { (cya, prior) =>
       (cya, prior) match {
         case (Some(data), _) =>

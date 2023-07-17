@@ -19,7 +19,7 @@ package controllers.pensions.transferIntoOverseasPensions
 import config.{AppConfig, ErrorHandler}
 import controllers._
 import controllers.pensions.transferIntoOverseasPensions.routes.TransferPensionsSchemeController
-import controllers.predicates.ActionsProvider
+import controllers.predicates.actions.ActionsProvider
 import forms.FormsProvider
 import models.mongo.PensionsCYAModel
 import models.pension.pages.OverseasTransferChargePaidPage

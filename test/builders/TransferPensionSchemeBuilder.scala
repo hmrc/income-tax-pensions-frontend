@@ -34,7 +34,7 @@ object TransferPensionSchemeBuilder {
     ukTransferCharge = Some(false),
     name = Some("Non-UK TPS"),
     pstr = None,
-    qops = Some("QOPS123456"),
+    qops = Some("123456"),
     providerAddress = Some("Some address 2"),
     alphaTwoCountryCode = Some("FR"),
     alphaThreeCountryCode = Some("FRA")

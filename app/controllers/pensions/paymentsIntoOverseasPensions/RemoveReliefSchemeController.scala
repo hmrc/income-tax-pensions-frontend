@@ -18,7 +18,7 @@ package controllers.pensions.paymentsIntoOverseasPensions
 
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.paymentsIntoOverseasPensions.routes._
-import controllers.predicates.ActionsProvider
+import controllers.predicates.actions.ActionsProvider
 import controllers.validatedIndex
 import models.mongo.{PensionsCYAModel, PensionsUserData}
 import models.pension.charges.Relief
@@ -26,6 +26,8 @@ import models.requests.UserSessionDataRequest
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.PensionSessionService
+import services.redirects.PaymentsIntoOverseasPensionsPages.RemoveReliefsSchemePage
+import services.redirects.PaymentsIntoOverseasPensionsRedirects.indexCheckThenJourneyCheck
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.paymentsIntoOverseasPensions.RemoveReliefSchemeView
@@ -43,17 +45,10 @@ class RemoveReliefSchemeController @Inject()(actionsProvider: ActionsProvider,
   extends FrontendController(mcc) with I18nSupport with SessionHelper {
 
   def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionUserData =>
-    val pensionReliefSchemes: Seq[Relief] = sessionUserData.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs
-    getElementIndex(index, pensionReliefSchemes) match {
-      case Some(relief) =>
-        Future.successful(Ok(view(taxYear = taxYear, reliefSchemeList = List(relief), index = index)))
-      case None =>
-        Future.successful(Redirect(ReliefsSchemeDetailsController.show(taxYear, None))): Future[Result]
-    }
-  }
 
-  private def getElementIndex[A](maybeIndex: Option[Int], as: Seq[A]): Option[A] = {
-    maybeIndex.flatMap(index => as.lift(index))
+    indexCheckThenJourneyCheck(sessionUserData.pensionsUserData, index, RemoveReliefsSchemePage, taxYear) { relief: Relief =>
+      Future.successful(Ok(view(taxYear = taxYear, reliefSchemeList = List(relief), index = index)))
+    }
   }
 
   def submit(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionUserData =>
@@ -61,8 +56,10 @@ class RemoveReliefSchemeController @Inject()(actionsProvider: ActionsProvider,
     validatedIndex(index, pensionReliefScheme.size)
       .fold(Future.successful(Redirect(ReliefsSchemeSummaryController.show(taxYear)))) {
         i =>
-          val updatedPensionReliefScheme = pensionReliefScheme.patch(i, Nil, 1)
-          updateSessionData(sessionUserData.pensionsUserData, updatedPensionReliefScheme, taxYear)
+          indexCheckThenJourneyCheck(sessionUserData.pensionsUserData, Some(i), RemoveReliefsSchemePage, taxYear) { _ =>
+            val updatedPensionReliefScheme = pensionReliefScheme.patch(i, Nil, 1)
+            updateSessionData(sessionUserData.pensionsUserData, updatedPensionReliefScheme, taxYear)
+          }
       }
   }
 
@@ -77,4 +74,5 @@ class RemoveReliefSchemeController @Inject()(actionsProvider: ActionsProvider,
       updatedCyaModel, taxYear, pensionUserData.isPriorSubmission)(errorHandler.internalServerError()) {
       Redirect(ReliefsSchemeSummaryController.show(taxYear))
     }
-  }}
+  }
+}

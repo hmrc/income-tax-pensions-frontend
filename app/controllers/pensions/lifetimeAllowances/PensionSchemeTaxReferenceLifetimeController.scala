@@ -19,8 +19,8 @@ package controllers.pensions.lifetimeAllowances
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.lifetimeAllowances.routes.{LifetimePstrSummaryController, LifetimeAllowanceCYAController}
 import controllers.pensions.routes.PensionsSummaryController
-import controllers.predicates.AuthorisedAction
-import controllers.predicates.TaxYearAction.taxYearAction
+import controllers.predicates.actions.AuthorisedAction
+import controllers.predicates.actions.TaxYearAction.taxYearAction
 import forms.PensionSchemeTaxReferenceForm
 import models.User
 import models.mongo.PensionsCYAModel

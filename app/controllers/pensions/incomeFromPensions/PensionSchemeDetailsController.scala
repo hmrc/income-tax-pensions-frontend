@@ -18,8 +18,8 @@ package controllers.pensions.incomeFromPensions
 
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.incomeFromPensions.routes._
-import controllers.predicates.AuthorisedAction
-import controllers.predicates.TaxYearAction.taxYearAction
+import controllers.predicates.actions.AuthorisedAction
+import controllers.predicates.actions.TaxYearAction.taxYearAction
 import forms.PensionSchemeDetailsForm.PensionSchemeDetailsModel
 import forms.{FormUtils, PensionSchemeDetailsForm}
 import models.pension.statebenefits.UkPensionIncomeViewModel

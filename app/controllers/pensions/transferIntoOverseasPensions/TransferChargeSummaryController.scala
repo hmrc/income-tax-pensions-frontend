@@ -18,8 +18,8 @@ package controllers.pensions.transferIntoOverseasPensions
 
 
 import config.AppConfig
-import controllers.predicates.ActionsProvider
 import models.mongo.PensionsCYAModel
+import controllers.predicates.actions.ActionsProvider
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers

@@ -19,7 +19,7 @@ package controllers.pensions.incomeFromPensions
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.incomeFromPensions.routes.StatePensionLumpSumController
 import controllers.pensions.routes.PensionsSummaryController
-import controllers.predicates.ActionsProvider
+import controllers.predicates.actions.ActionsProvider
 import forms.DateForm.DateModel
 import forms.{DateForm, FormsProvider}
 import models.mongo.PensionsUserData

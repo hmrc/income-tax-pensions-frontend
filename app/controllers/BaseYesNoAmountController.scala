@@ -18,8 +18,8 @@ package controllers
 
 import common.MessageKeys.YesNoAmountForm
 import config.{AppConfig, ErrorHandler}
-import controllers.predicates.AuthorisedAction
-import controllers.predicates.TaxYearAction.taxYearAction
+import controllers.predicates.actions.AuthorisedAction
+import controllers.predicates.actions.TaxYearAction.taxYearAction
 import forms.RadioButtonAmountForm
 import models.AuthorisationRequest
 import models.mongo.{PensionsCYAModel, PensionsUserData}
@@ -125,14 +125,16 @@ abstract class BaseYesNoAmountController(
       validForm => onValidForm(pensionsUserData, taxYear, validForm))
 
   private def onValidForm(pensionsUserData: PensionsUserData, taxYear: Int, validForm: (Boolean, Option[BigDecimal]))
-                         (implicit request: AuthorisationRequest[AnyContent], clock: Clock): Future[Result] =
+                         (implicit request: AuthorisationRequest[AnyContent], clock: Clock): Future[Result] = {
     validForm match {
       case (yesWasSelected, amountOpt) =>
+        val updatedData = proposedUpdatedSessionDataModel(pensionsUserData, yesWasSelected, amountOpt)
         pensionSessionService.createOrUpdateSessionData(
           request.user,
-          proposedUpdatedSessionDataModel(pensionsUserData, yesWasSelected, amountOpt),
+          updatedData,
           taxYear,
-          pensionsUserData.isPriorSubmission)(onError)(redirectAfterUpdatingSessionData(pensionsUserData, taxYear))
+          pensionsUserData.isPriorSubmission)(onError)(redirectAfterUpdatingSessionData(pensionsUserData.copy(pensions = updatedData), taxYear))
     }
+  }
 
 }

@@ -22,7 +22,7 @@ import org.jsoup.nodes.Document
 import play.api.i18n.Messages
 import play.api.mvc.AnyContent
 import support.ViewUnitTest
-import views.WorkplacePensionViewSpec._
+import views.pensions.paymentsIntoPensions.WorkplacePensionViewSpec._
 import controllers.pensions.incomeFromOverseasPensions.routes
 import models.pension.charges.{IncomeFromOverseasPensionsViewModel, PensionScheme}
 import models.pension.pages.OverseasPensionSchemeSummaryPage

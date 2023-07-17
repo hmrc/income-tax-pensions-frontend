@@ -27,7 +27,7 @@ class RemoveTransferChargeSchemeControllerISpec extends ControllerSpec("/oversea
 
   "This page" when {
 
-    "performing .show" should {
+    ".show" should {
       "not show the form page but redirect to the summary page" when {
         "the user has no stored session data at all" in {
           implicit val userConfig: UserConfig = userConfigWhenIrrelevant(None)
@@ -45,7 +45,8 @@ class RemoveTransferChargeSchemeControllerISpec extends ControllerSpec("/oversea
           assertRedirectionAsExpected(PageRelativeURLs.transferChargeSchemeSummary)
         }
       }
-      "performing .submit" should {
+    }
+      ".submit" should {
         "the user has relevant session data and" when {
           "removes a pension scheme successfully" in {
 
@@ -62,6 +63,6 @@ class RemoveTransferChargeSchemeControllerISpec extends ControllerSpec("/oversea
         }
       }
     }
-  }
+
 
 }

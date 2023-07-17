@@ -140,7 +140,9 @@ class TaxEmployerPaymentsControllerISpec extends CommonUtils with BeforeAndAfter
 
         "render the 'Tax Employer Payments' page with correct content and no pre-filling" which {
 
-          implicit lazy val result: WSResponse = showPage(user, anPensionsUserDataEmptyCya)
+          val overseasPensionViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(taxPaidOnEmployerPaymentsQuestion = None)
+          val pensionsUserData = pensionUserDataWithOverseasPensions(overseasPensionViewModel)
+          implicit lazy val result: WSResponse = showPage(user, pensionsUserData)
 
           "has an OK status" in {
             result.status shouldBe OK
@@ -216,7 +218,7 @@ class TaxEmployerPaymentsControllerISpec extends CommonUtils with BeforeAndAfter
       lazy val result: WSResponse = getResponseNoSessionData()
       "has an SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(overseasPensionsSummaryUrl(taxYearEOY))
+        result.header("location") shouldBe Some(paymentsIntoOverseasPensionsCyaUrl(taxYearEOY))
       }
     }
   }
@@ -264,7 +266,7 @@ class TaxEmployerPaymentsControllerISpec extends CommonUtils with BeforeAndAfter
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(pensionReliefSchemeSummaryUrl(taxYearEOY))
+        result.header("location") shouldBe Some(paymentsIntoOverseasPensionsCyaUrl(taxYearEOY))
       }
 
       "updates taxPaidOnEmployerPaymentsQuestion to Some(true)" in {
@@ -282,7 +284,7 @@ class TaxEmployerPaymentsControllerISpec extends CommonUtils with BeforeAndAfter
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(pensionReliefSchemeSummaryUrl(taxYearEOY))
+        result.header("location") shouldBe Some(paymentsIntoOverseasPensionsCyaUrl(taxYearEOY))
       }
 
       "updates taxPaidOnEmployerPaymentsQuestion to Some(true)" in {
