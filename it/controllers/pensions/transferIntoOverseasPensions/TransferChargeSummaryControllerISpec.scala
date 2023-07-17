@@ -16,8 +16,10 @@
 
 package controllers.pensions.transferIntoOverseasPensions
 
+import builders.IncomeTaxUserDataBuilder.anIncomeTaxUserData
 import builders.PensionsUserDataBuilder.pensionUserDataWithTransferIntoOverseasPension
 import builders.TransfersIntoOverseasPensionsViewModelBuilder.{aTransfersIntoOverseasPensionsViewModel, emptyTransfersIntoOverseasPensionsViewModel}
+import builders.UserBuilder.aUser
 import models.pension.charges.TransferPensionScheme
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -206,6 +208,28 @@ class TransferChargeSummaryControllerISpec extends IntegrationTest with BeforeAn
           welshToggleCheck(user.isWelsh)
         }
       }
+    }
+
+    "redirect to the first page in the journey" should {
+      val incompleteViewModel = aTransfersIntoOverseasPensionsViewModel.copy(
+        transferPensionScheme = Seq.empty
+      )
+      implicit lazy val result: WSResponse = {
+        authoriseAgentOrIndividual(aUser.isAgent)
+        dropPensionsDB()
+        userDataStub(anIncomeTaxUserData, nino, taxYearEOY)
+        insertCyaData(pensionUserDataWithTransferIntoOverseasPension(incompleteViewModel))
+
+        urlPost(fullUrl(checkYourDetailsPensionUrl(taxYearEOY)),
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
+          follow = false,
+          body = "")
+      }
+
+      "if journey is incomplete" in {
+      result.status shouldBe SEE_OTHER
+      result.header("location") shouldBe Some(transferPensionSavingsUrl(taxYearEOY))
+    }
     }
 
     "redirect to the pensions summary page if there is no session data" should {

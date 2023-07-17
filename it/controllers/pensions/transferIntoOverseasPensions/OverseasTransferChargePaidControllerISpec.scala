@@ -16,7 +16,8 @@
 
 package controllers.pensions.transferIntoOverseasPensions
 
-import builders.PensionsCYAModelBuilder.aPensionsCYAEmptyModel
+import builders.PensionsCYAModelBuilder.{aPensionsCYAEmptyModel, aPensionsCYAModel}
+import builders.TransfersIntoOverseasPensionsViewModelBuilder.aTransfersIntoOverseasPensionsViewModel
 import controllers.ControllerSpec.PreferredLanguages.{English, Welsh}
 import controllers.ControllerSpec.UserTypes.{Agent, Individual}
 import controllers.ControllerSpec._
@@ -33,7 +34,7 @@ class OverseasTransferChargePaidControllerISpec
   val minimalSessionDataToAccessThisPage: PensionsCYAModel = aPensionsCYAEmptyModel
 
   "This page" when {
-    "requested to be shown" should {
+    ".show" should {
       "redirect to the expected page" when {
         "the user has no stored session data at all" in {
 
@@ -324,7 +325,8 @@ class OverseasTransferChargePaidControllerISpec
           }
         }
       }
-      "submitted" should {
+    }
+      ".submit" should {
         "succeed" when {
           "the user has selected 'No' and" when {
 
@@ -571,9 +573,21 @@ class OverseasTransferChargePaidControllerISpec
           }
 
         }
+        "redirect to first page of journey" when {
+          "previous question has not been answered" in {
+              val incompleteCYAModel = aPensionsCYAModel.copy(
+                transfersIntoOverseasPensions = TransfersIntoOverseasPensionsViewModel(overseasTransferCharge = Some(false)))
+              val sessionData = pensionsUserData(incompleteCYAModel)
+              implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
+              implicit val response: WSResponse = getPageWithIndex()
+
+              assertRedirectionAsExpected(PageRelativeURLs.transferPensionSavings)
+            }
+          }
       }
-    }
-  }
+      }
+
+
 
   private def getViewModel(implicit userConfig: UserConfig): Option[TransfersIntoOverseasPensionsViewModel] =
     loadPensionUserData.map(_.pensions.transfersIntoOverseasPensions)

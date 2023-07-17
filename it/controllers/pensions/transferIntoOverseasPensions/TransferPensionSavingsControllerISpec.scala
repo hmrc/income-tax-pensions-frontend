@@ -28,7 +28,7 @@ class TransferPensionSavingsControllerISpec
   extends YesNoControllerSpec("/overseas-pensions/overseas-transfer-charges/transfer-pension-savings") {
 
   "This page" when {
-    "requested to be shown" should {
+    ".show" should {
       "redirect to the summary page" when {
         "the user has no stored session data at all" in {
 
@@ -39,7 +39,7 @@ class TransferPensionSavingsControllerISpec
         }
       }
     }
-    "submitted" should {
+    ".submit" should {
       "redirect to the expected page" when {
         "the user has no stored session data at all" in {
 

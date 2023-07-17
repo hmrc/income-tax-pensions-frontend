@@ -21,11 +21,12 @@ import builders.IncomeTaxUserDataBuilder.anIncomeTaxUserData
 import builders.PensionSchemeOverseasTransfersBuilder.anPensionSchemeOverseasTransfers
 import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import builders.PensionsUserDataBuilder
-import builders.PensionsUserDataBuilder.aPensionsUserData
-import builders.TransfersIntoOverseasPensionsViewModelBuilder.emptyTransfersIntoOverseasPensionsViewModel
+import builders.PensionsUserDataBuilder.authorisationRequest.body
+import builders.PensionsUserDataBuilder.{aPensionsUserData, pensionUserDataWithTransferIntoOverseasPension}
+import builders.TransfersIntoOverseasPensionsViewModelBuilder.{aTransfersIntoOverseasPensionsViewModel, emptyTransfersIntoOverseasPensionsViewModel}
 import builders.UserBuilder.aUser
 import models.mongo.PensionsCYAModel
-import models.pension.charges.{CreateUpdatePensionChargesRequestModel, PensionCharges}
+import models.pension.charges.{CreateUpdatePensionChargesRequestModel, PensionCharges, TransferPensionScheme}
 import play.api.http.HeaderNames
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.json.Json
@@ -183,5 +184,33 @@ class TransferIntoOverseasPensionsCYAControllerISpec extends IntegrationTest wit
         }
       }
     }
+
+    "redirect to the first page in the journey if journey is incomplete" in {
+      val incompleteViewModel = aTransfersIntoOverseasPensionsViewModel.copy(
+        transferPensionScheme = Seq(TransferPensionScheme(
+          ukTransferCharge = Some(true),
+          name = Some("UK TPS"),
+          pstr = None,
+          qops = None,
+          providerAddress = Some("Some address 1"),
+          alphaTwoCountryCode = None,
+          alphaThreeCountryCode = None
+        ))
+      )
+      implicit lazy val result: WSResponse = {
+        authoriseAgentOrIndividual(aUser.isAgent)
+        dropPensionsDB()
+        userDataStub(anIncomeTaxUserData, nino, taxYearEOY)
+        insertCyaData(pensionUserDataWithTransferIntoOverseasPension(incompleteViewModel))
+
+        urlPost(fullUrl(checkYourDetailsPensionUrl(taxYearEOY)),
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
+            follow = false,
+            body = "")
+      }
+      result.status shouldBe SEE_OTHER
+      result.header("location") shouldBe Some(transferPensionSavingsUrl(taxYearEOY))
+    }
+
   }
 }

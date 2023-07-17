@@ -91,6 +91,15 @@ object TransfersIntoOverseasPensionsRedirects {
     val schemesEmpty = transferOverseasViewModel.transferPensionScheme.isEmpty
     val index = optIndex.getOrElse(if (schemesEmpty) 0 else transferOverseasViewModel.transferPensionScheme.size - 1)
 
+    def cyaPageCheck(tIOPVM: TransfersIntoOverseasPensionsViewModel) = {
+      if (!isPageValidInJourney(2, tIOPVM)){!tIOPVM.transferPensionSavings.getOrElse(true)
+      }else if (!isPageValidInJourney(3, tIOPVM)){
+        !tIOPVM.overseasTransferCharge.getOrElse(true)}else if
+      (!isPageValidInJourney(4, tIOPVM)){
+        !tIOPVM.pensionSchemeTransferCharge.getOrElse(true)}
+      else {tIOPVM.isFinished}
+    }
+
     val prevQuestionIsAnsweredMap: Map[Int, TransfersIntoOverseasPensionsViewModel => Boolean] = Map(
       1 -> { _: TransfersIntoOverseasPensionsViewModel => true },
       2 -> { tIOPVM: TransfersIntoOverseasPensionsViewModel => tIOPVM.transferPensionSavings.getOrElse(false)
@@ -112,10 +121,7 @@ object TransfersIntoOverseasPensionsRedirects {
       },
 
       8 -> { tIOPVM: TransfersIntoOverseasPensionsViewModel =>
-        if (!isPageValidInJourney(2, tIOPVM)) !tIOPVM.transferPensionSavings.getOrElse(true)
-        else if (!isPageValidInJourney(3, tIOPVM)) !tIOPVM.overseasTransferCharge.getOrElse(true)
-        else if (!isPageValidInJourney(4, tIOPVM)) !tIOPVM.pensionSchemeTransferCharge.getOrElse(true)
-        else tIOPVM.isFinished
+        cyaPageCheck(tIOPVM)
       }
     )
 

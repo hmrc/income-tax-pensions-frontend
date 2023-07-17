@@ -29,7 +29,7 @@ class OverseasTransferChargeControllerISpec
   extends YesNoAmountControllerSpec("/overseas-pensions/overseas-transfer-charges/transfer-charge") {
 
   "This page" when {
-    "requested to be shown" should {
+    ".show" should {
       "redirect to the summary page" when {
         "the user has no stored session data at all" in {
 
@@ -350,7 +350,7 @@ class OverseasTransferChargeControllerISpec
         }
       }
     }
-    "submitted" should {
+    ".submit" should {
       "redirect to the expected page" when {
         "the user has no stored session data at all" in {
 
@@ -1098,6 +1098,17 @@ class OverseasTransferChargeControllerISpec
               getViewModel mustBe Some(expectedViewModel)
             }
           }
+        }
+      }
+      "redirect to first page of journey" when {
+        "previous question has not been answered" in {
+          val incompleteCYAModel = aPensionsCYAModel.copy(
+            transfersIntoOverseasPensions = TransfersIntoOverseasPensionsViewModel(transferPensionSavings = Some(false)))
+          val sessionData = pensionsUserData(incompleteCYAModel)
+          implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
+          implicit val response: WSResponse = getPageWithIndex()
+
+          assertRedirectionAsExpected(PageRelativeURLs.transferPensionSavings)
         }
       }
     }

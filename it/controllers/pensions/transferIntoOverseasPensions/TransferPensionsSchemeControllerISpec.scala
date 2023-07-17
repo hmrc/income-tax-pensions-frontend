@@ -20,7 +20,7 @@ import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import controllers.ControllerSpec
 import controllers.ControllerSpec.UserConfig
 import models.mongo.PensionsUserData
-import models.pension.charges.TransferPensionScheme
+import models.pension.charges.{TransferPensionScheme, TransfersIntoOverseasPensionsViewModel}
 import play.api.http.Status.{BAD_REQUEST, OK}
 import play.api.libs.ws.WSResponse
 //import utils.PageUrls.convertToAnyShouldWrapper
@@ -41,6 +41,18 @@ class TransferPensionsSchemeControllerISpec extends ControllerSpec("/overseas-pe
           implicit val userConfig: UserConfig = userConfigWhenIrrelevant(None)
           implicit val response: WSResponse = getPageWithIndex()
           assertRedirectionAsExpected(PageRelativeURLs.pensionsSummaryPage)
+        }
+      }
+
+      "redirect to first page of journey" when {
+        "previous question has not been answered" in {
+          val incompleteCYAModel = aPensionsCYAModel.copy(
+            transfersIntoOverseasPensions = TransfersIntoOverseasPensionsViewModel(pensionSchemeTransferCharge = Some(false), pensionSchemeTransferChargeAmount = None))
+          val sessionData = pensionsUserData(incompleteCYAModel)
+          implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
+          implicit val response: WSResponse = getPageWithIndex()
+
+          assertRedirectionAsExpected(PageRelativeURLs.transferPensionSavings)
         }
       }
 

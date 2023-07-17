@@ -61,6 +61,14 @@ class RemoveTransferChargeSchemeControllerISpec extends ControllerSpec("/oversea
 
           }
         }
+
+        "redirect to the Pensions Summary page when the user has no stored session data at all" in {
+          implicit val userConfig: UserConfig = userConfigWhenIrrelevant(None)
+          implicit val response: WSResponse = submitForm(Map("" -> ""), Map("index" -> "0"))
+
+          assertRedirectionAsExpected(PageRelativeURLs.pensionsSummaryPage)
+          getTransferPensionsViewModel mustBe None
+        }
       }
     }
 
