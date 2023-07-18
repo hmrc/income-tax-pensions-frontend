@@ -34,6 +34,7 @@ object TransfersIntoOverseasPensionsRedirects {
 
     val schemes: Seq[TransferPensionScheme] = data.pensions.transfersIntoOverseasPensions.transferPensionScheme
     val validatedIndex: Option[Int] = validateIndex(optIndex, schemes)
+    println("---------------------" + schemes + validatedIndex)
     (schemes, validatedIndex) match {
       case (schemes, None) if schemes.nonEmpty =>
 
@@ -56,15 +57,18 @@ object TransfersIntoOverseasPensionsRedirects {
   def cyaPageCall(taxYear: Int): Call = TransferIntoOverseasPensionsCYAController.show(taxYear)
 
   def redirectForSchemeLoop(schemes: Seq[TransferPensionScheme], taxYear: Int): Call = {
+    val filteredSchemes = schemes.filter(scheme => scheme.isFinished)
     checkForExistingSchemes(
       nextPage = OverseasTransferChargePaidController.show(taxYear, None),
       summaryPage = TransferChargeSummaryController.show(taxYear),
-      schemes = schemes
+      schemes = filteredSchemes
     )
   }
 
   def journeyCheck(currentPage: TransfersIntoOverseasPensionsPages, cya: PensionsCYAModel, taxYear: Int, index: Option[Int] = None): Option[Result] = {
     val tIOPData = cya.transfersIntoOverseasPensions
+    println("!!!!!!!!!!!!!!!!!!!!!!!!" + isPageValidInJourney(currentPage.journeyNo, tIOPData))
+    println("?????????????????????????" + previousQuestionIsAnswered(currentPage.journeyNo, index, tIOPData))
     if (isPageValidInJourney(currentPage.journeyNo, tIOPData) && previousQuestionIsAnswered(currentPage.journeyNo, index, tIOPData)) {
       None
     } else {
@@ -117,7 +121,7 @@ object TransfersIntoOverseasPensionsRedirects {
         if (schemesEmpty) false else tIOPVM.transferPensionScheme(index).ukTransferCharge.isDefined
       },
       7 -> { tIOPVM: TransfersIntoOverseasPensionsViewModel =>
-        if (schemesEmpty) false else tIOPVM.isFinished
+        if (schemesEmpty) false else tIOPVM.transferPensionScheme(index).isFinished
       },
 
       8 -> { tIOPVM: TransfersIntoOverseasPensionsViewModel =>
