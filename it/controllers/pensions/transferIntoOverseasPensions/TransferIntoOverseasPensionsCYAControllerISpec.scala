@@ -109,7 +109,7 @@ class TransferIntoOverseasPensionsCYAControllerISpec extends IntegrationTest wit
       }
     }
 
-    "redirect to Overseas Pension Summary page" when {
+    "redirect to start of journey" when {
       "there is no prior data and CYA data is submitted" which {
 
         lazy implicit val result: WSResponse = {
@@ -132,9 +132,12 @@ class TransferIntoOverseasPensionsCYAControllerISpec extends IntegrationTest wit
         }
 
         "redirects to the overview page" in {
-          result.header("location") shouldBe Some(overseasPensionsSummaryUrl(taxYearEOY))
+          result.header("location") shouldBe Some(transferPensionSavingsUrl(taxYearEOY))
         }
       }
+    }
+
+    "redirect to Overseas Pension Summary page" when {
 
       "CYA data has been updated and differs from prior data" which {
 

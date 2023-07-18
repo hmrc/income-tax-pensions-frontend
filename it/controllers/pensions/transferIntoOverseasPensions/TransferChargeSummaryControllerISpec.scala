@@ -18,7 +18,7 @@ package controllers.pensions.transferIntoOverseasPensions
 
 import builders.IncomeTaxUserDataBuilder.anIncomeTaxUserData
 import builders.PensionsUserDataBuilder.pensionUserDataWithTransferIntoOverseasPension
-import builders.TransfersIntoOverseasPensionsViewModelBuilder.{aTransfersIntoOverseasPensionsViewModel, emptyTransfersIntoOverseasPensionsViewModel}
+import builders.TransfersIntoOverseasPensionsViewModelBuilder.aTransfersIntoOverseasPensionsViewModel
 import builders.UserBuilder.aUser
 import models.pension.charges.TransferPensionScheme
 import org.jsoup.Jsoup
@@ -108,8 +108,14 @@ class TransferChargeSummaryControllerISpec extends IntegrationTest with BeforeAn
         import user.commonExpectedResults._
         
         "render the 'overseas transfer charge' summary list page with pre-filled content" which {
-          val pensionScheme = TransferPensionScheme(ukTransferCharge = Some(true), name = Some("Pension Scheme 1"))
-          val pensionScheme2 = TransferPensionScheme(ukTransferCharge = Some(true), name = Some("Pension Scheme 2"))
+          val pensionScheme = TransferPensionScheme(ukTransferCharge = Some(true), name = Some("Pension Scheme 1"), pstr = Some("12345678RA"),
+            qops = None,
+            providerAddress = Some("Some address 1"),
+            alphaThreeCountryCode = None)
+          val pensionScheme2 = TransferPensionScheme(ukTransferCharge = Some(true), name = Some("Pension Scheme 2"), pstr = Some("12345678RA"),
+            qops = None,
+            providerAddress = Some("Some address 2"),
+            alphaThreeCountryCode = None)
           val newPensionSchemes = Seq(pensionScheme, pensionScheme2)
           val transferViewModel = aTransfersIntoOverseasPensionsViewModel.copy(transferPensionScheme = newPensionSchemes)
 
@@ -144,73 +150,10 @@ class TransferChargeSummaryControllerISpec extends IntegrationTest with BeforeAn
           welshToggleCheck(user.isWelsh)
         }
 
-        "render the 'overseas transfer charge' summary list page with pre-filled content with transfer pension scheme but no name" which {
-          val pensionScheme = TransferPensionScheme(ukTransferCharge = Some(true), name = Some("Pension Scheme 1"))
-          val pensionScheme2 = TransferPensionScheme(ukTransferCharge = Some(true), name = None)
-          val newPensionSchemes = Seq(pensionScheme, pensionScheme2)
-          val transferViewModel = aTransfersIntoOverseasPensionsViewModel.copy(transferPensionScheme = newPensionSchemes)
-
-          implicit lazy val result: WSResponse = {
-            authoriseAgentOrIndividual(user.isAgent)
-            dropPensionsDB()
-            val viewModel = transferViewModel
-            insertCyaData(pensionUserDataWithTransferIntoOverseasPension(viewModel))
-            urlGet(fullUrl(transferChargeSummaryUrl(taxYearEOY)), user.isWelsh, follow = false,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
-          }
-
-          "has an OK status" in {
-            result.status shouldBe OK
-          }
-
-          implicit def document: () => Document = () => Jsoup.parse(result.body)
-
-          titleCheck(expectedTitle, user.isWelsh)
-          h1Check(expectedHeading)
-          captionCheck(expectedCaption(taxYearEOY))
-          textOnPageCheck(s"${pensionScheme.name.get}", pensionNameSelector(1))
-          elementNotOnPageCheck(pensionNameSelector(2))
-
-          linkCheck(s"$change $change ${pensionScheme.name.get}", changeLinkSelector(1), overseasTransferChargePaidUrl(taxYearEOY, 0))
-          linkCheck(s"$remove $remove ${pensionScheme.name.get}", removeLinkSelector(1), removeTransferChargeScheme(taxYearEOY, 0))
-          linkCheck(expectedAddAnotherText, addAnotherLinkSelector, overseasTransferChargePaidUrl(taxYearEOY))
-
-          buttonCheck(expectedButtonText, continueButtonSelector, Some(checkYourDetailsPensionUrl(taxYearEOY)))
-          welshToggleCheck(user.isWelsh)
-        }
-
-        "render the 'overseas transfer charge' summary list page with only an add link when there are no overseas income from pensions" which {
-          implicit lazy val result: WSResponse = {
-            authoriseAgentOrIndividual(user.isAgent)
-            dropPensionsDB()
-            val emptyViewModel = emptyTransfersIntoOverseasPensionsViewModel
-            insertCyaData(pensionUserDataWithTransferIntoOverseasPension(emptyViewModel))
-
-            urlGet(fullUrl(transferChargeSummaryUrl(taxYearEOY)), user.isWelsh, follow = false,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
-          }
-
-          "has an OK status" in {
-            result.status shouldBe OK
-          }
-
-          implicit def document: () => Document = () => Jsoup.parse(result.body)
-
-          titleCheck(expectedTitle, user.isWelsh)
-          h1Check(expectedHeading)
-          captionCheck(expectedCaption(taxYearEOY))
-          elementNotOnPageCheck(summaryListTableSelector)
-          //todo update redirect to to transfer journey CYA page when navigation is linked up
-          buttonCheck(addASchemeButton, "#AddAScheme", Some(overseasTransferChargePaidUrlNoIndex(taxYearEOY)))
-          textOnPageCheck(text1, insetSpanText1)
-          buttonCheck(returnToOverviewButton, "#ReturnToOverview")
-          textOnPageCheck(text2, insetSpanText2)
-          welshToggleCheck(user.isWelsh)
-        }
       }
     }
 
-    "redirect to the first page in the journey" should {
+    "redirect to the first page in the journey when schemes incomplete" should {
       val incompleteViewModel = aTransfersIntoOverseasPensionsViewModel.copy(
         transferPensionScheme = Seq.empty
       )
