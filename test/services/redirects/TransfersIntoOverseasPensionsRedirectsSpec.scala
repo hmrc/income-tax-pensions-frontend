@@ -16,16 +16,16 @@
 
 package services.redirects
 
-import builders.OverseasRefundPensionSchemeBuilder.anOverseasRefundPensionSchemeWithoutUkRefundCharge
+
 import models.mongo.{PensionsCYAModel, PensionsUserData}
 import play.api.mvc.{Call, Result}
 import play.api.mvc.Results.Redirect
 import utils.UnitTest
 import builders.PensionsUserDataBuilder.aPensionsUserData
 import builders.TransferPensionSchemeBuilder.{aNonUkTransferPensionScheme, anEmptyTransferPensionScheme}
-import builders.TransfersIntoOverseasPensionsViewModelBuilder.{aTransfersIntoOverseasPensionsViewModel, emptyTransfersIntoOverseasPensionsViewModel}
+import builders.TransfersIntoOverseasPensionsViewModelBuilder.aTransfersIntoOverseasPensionsViewModel
 import controllers.pensions.transferIntoOverseasPensions.routes._
-import models.pension.charges.{TransferPensionScheme, TransfersIntoOverseasPensionsViewModel}
+import models.pension.charges.TransferPensionScheme
 import play.api.http.Status.SEE_OTHER
 import services.redirects.TransfersIntoOverseasPensionsPages.{DidYouTransferIntoAnOverseasPensionSchemePage, OverseasTransferChargeAmountPage, PensionSchemeDetailsPage, RemoveSchemePage, SchemesPayingTransferChargesSummary, TaxOnPensionSchemesAmountPage, TransferIntoOverseasPensionsCYA}
 import services.redirects.TransfersIntoOverseasPensionsRedirects.{cyaPageCall, indexCheckThenJourneyCheck, journeyCheck, redirectForSchemeLoop}
@@ -131,21 +131,6 @@ class TransfersIntoOverseasPensionsRedirectsSpec extends UnitTest {
         statusHeader shouldBe SEE_OTHER
         locationHeader shouldBe Some(journeyStartCall.url)
       }
-
-//      "redirect to the first page in scheme loop when trying to load the summary page but there are no schemes" in {
-//                val CYAModel = cyaData.copy(transfersIntoOverseasPensions = aTransfersIntoOverseasPensionsViewModel.copy(transferPensionScheme = Seq.empty))
-//                val result = indexCheckThenJourneyCheck(
-//                  data = aPensionsUserData.copy(pensions = CYAModel),
-//                  optIndex = Some(2),
-//                  currentPage = SchemesPayingTransferChargesSummary,
-//                  taxYear = taxYear)(continueToContextualRedirect)
-//
-//                val statusHeader = await(result.map(_.header.status))
-//                val locationHeader = await(result.map(_.header.headers).map(_.get("Location")))
-//
-//                statusHeader shouldBe SEE_OTHER
-//                locationHeader shouldBe Some(schemeSummaryCall.url)
-//      }
 
       "redirect to the scheme summary page when schemes already exist" in {
         val result : Future[Result] = indexCheckThenJourneyCheck(
