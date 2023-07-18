@@ -90,4 +90,6 @@ class UkPensionSchemePaymentsController @Inject()(implicit val mcc: MessagesCont
     }
   }
 
+  //todo add cleanScheme
+  //private def cleanUpSchemes(pensionsUserData: PensionsUserData): PensionsUserData = {
 }

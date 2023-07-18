@@ -71,7 +71,15 @@ case class UkPensionIncomeViewModel(
       ),
       isHmrcEmploymentId = this.isCustomerEmploymentData.map(!_)
     )
-  
+
+  def isPopulated: Boolean = {
+    this.pensionId.isDefined &&
+    this.startDate.isDefined &&
+    this.pensionSchemeName.isDefined &&
+    this.pensionSchemeRef.isDefined &&
+    this.amount.isDefined &&
+    this.taxPaid.isDefined
+  }
 }
 
 object UkPensionIncomeViewModel {
