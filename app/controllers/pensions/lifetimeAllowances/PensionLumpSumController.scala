@@ -17,8 +17,7 @@
 package controllers.pensions.lifetimeAllowances
 
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.lifetimeAllowances.routes.PensionLumpSumDetailsController
-import controllers.pensions.lifetimeAllowances.routes.LifeTimeAllowanceAnotherWayController
+import controllers.pensions.lifetimeAllowances.routes.{LifeTimeAllowanceAnotherWayController, PensionLumpSumDetailsController}
 import controllers.pensions.routes._
 import controllers.predicates.actions.AuthorisedAction
 import forms.YesNoForm
@@ -29,6 +28,9 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
+import services.redirects.LifetimeAllowancesPages.LumpSumPage
+import services.redirects.LifetimeAllowancesRedirects.{cyaPageCall, journeyCheck}
+import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.lifetimeAllowances.PensionLumpSumView
@@ -45,22 +47,22 @@ class PensionLumpSumController @Inject()(implicit val cc: MessagesControllerComp
                                          errorHandler: ErrorHandler,
                                          clock: Clock) extends FrontendController(cc) with I18nSupport {
 
-
   def yesNoForm(user: User): Form[Boolean] = YesNoForm.yesNoForm(
     missingInputError = s"lifetimeAllowance.pensionLumpSum.error.noEntry.${if (user.isAgent) "agent" else "individual"}"
   )
 
   def show(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
-
     pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
       case Some(data) =>
-        data.pensions.pensionLifetimeAllowances.pensionAsLumpSumQuestion match {
-          case Some(value) => Future.successful(Ok(view(
-            yesNoForm(request.user).fill(value), taxYear)))
-          case None => Future.successful(Ok(view(yesNoForm(request.user), taxYear)))
+        val checkRedirect = journeyCheck(LumpSumPage, _: PensionsCYAModel, taxYear)
+        redirectBasedOnCurrentAnswers(taxYear, Some(data), cyaPageCall(taxYear))(checkRedirect) {
+          data =>
+            data.pensions.pensionLifetimeAllowances.pensionAsLumpSumQuestion match {
+              case Some(value) => Future.successful(Ok(view(yesNoForm(request.user).fill(value), taxYear)))
+              case None => Future.successful(Ok(view(yesNoForm(request.user), taxYear)))
+            }
         }
-      case None =>
-        Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
+      case None => Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
     }
   }
 
@@ -70,25 +72,26 @@ class PensionLumpSumController @Inject()(implicit val cc: MessagesControllerComp
       yesNo => {
         pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
           data =>
-            val pensionsCYAModel: PensionsCYAModel = data.map(_.pensions).getOrElse(PensionsCYAModel.emptyModels)
-            val viewModel: PensionLifetimeAllowancesViewModel = pensionsCYAModel.pensionLifetimeAllowances
-            val updatedCyaModel: PensionsCYAModel = {
-              pensionsCYAModel.copy(
-                pensionLifetimeAllowances = viewModel.copy(
+            val checkRedirect = journeyCheck(LumpSumPage, _: PensionsCYAModel, taxYear)
+            redirectBasedOnCurrentAnswers(taxYear, data, cyaPageCall(taxYear))(checkRedirect) {
+              data =>
+                val pensionsCYAModel: PensionsCYAModel = data.pensions
+                val viewModel: PensionLifetimeAllowancesViewModel = pensionsCYAModel.pensionLifetimeAllowances
+                val updatedCyaModel: PensionsCYAModel = pensionsCYAModel.copy(pensionLifetimeAllowances = viewModel.copy(
                   pensionAsLumpSumQuestion = Some(yesNo),
                   pensionAsLumpSum = if (yesNo) viewModel.pensionAsLumpSum else None)
-              )
-            }
-            pensionSessionService.createOrUpdateSessionData(request.user,
-              updatedCyaModel, taxYear, data.exists(_.isPriorSubmission))(errorHandler.internalServerError()) {
-              if (yesNo) {
-                Redirect(PensionLumpSumDetailsController.show(taxYear))
-              } else {
-                Redirect(LifeTimeAllowanceAnotherWayController.show(taxYear))
-              }
+                )
+                pensionSessionService.createOrUpdateSessionData(request.user,
+                  updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
+                  Redirect(
+                    if (yesNo) PensionLumpSumDetailsController.show(taxYear)
+                    else LifeTimeAllowanceAnotherWayController.show(taxYear)
+                  )
+                }
             }
         }
       }
     )
   }
+
 }
