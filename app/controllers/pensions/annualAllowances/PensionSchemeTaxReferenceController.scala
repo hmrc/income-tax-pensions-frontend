@@ -17,7 +17,6 @@
 package controllers.pensions.annualAllowances
 
 import config.{AppConfig, ErrorHandler}
-import controllers.predicates.AuthorisedAction
 import forms.PensionSchemeTaxReferenceForm
 import models.mongo.PensionsCYAModel
 import play.api.data.Form
@@ -29,7 +28,8 @@ import utils.Clock
 import views.html.pensions.annualAllowances.PensionSchemeTaxReferenceView
 import controllers.pensions.routes.PensionsSummaryController
 import controllers.pensions.annualAllowances.routes.PstrSummaryController
-import controllers.predicates.TaxYearAction.taxYearAction
+import controllers.predicates.actions.AuthorisedAction
+import controllers.predicates.actions.TaxYearAction.taxYearAction
 import models.User
 
 import javax.inject.{Inject, Singleton}

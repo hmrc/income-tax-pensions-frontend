@@ -18,7 +18,7 @@ package controllers.pensions.incomeFromPensions
 
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.incomeFromPensions.routes.PensionSchemeSummaryController
-import controllers.predicates.ActionsProvider
+import controllers.predicates.actions.ActionsProvider
 import controllers.validatedIndex
 import forms.DateForm.DateModel
 import forms.{DateForm, FormsProvider}

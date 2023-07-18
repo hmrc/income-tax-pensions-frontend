@@ -18,8 +18,8 @@ package controllers.pensions.incomeFromPensions
 
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.incomeFromPensions.routes._
-import controllers.predicates.TaxYearAction.taxYearAction
-import controllers.predicates.{AuthorisedAction, InYearAction}
+import controllers.predicates.actions.{AuthorisedAction, InYearAction}
+import controllers.predicates.actions.TaxYearAction.taxYearAction
 import forms.YesNoForm
 import models.User
 import models.mongo.PensionsCYAModel

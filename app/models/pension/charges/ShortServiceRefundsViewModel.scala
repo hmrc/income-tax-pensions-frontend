@@ -64,16 +64,10 @@ case class ShortServiceRefundsViewModel(shortServiceRefund: Option[Boolean] = No
     scheme.map(x =>
       OverseasSchemeProvider(
         providerName = x.name.getOrElse(""),
-        qualifyingRecognisedOverseasPensionScheme = if (x.qualifyingRecognisedOverseasPensionScheme.nonEmpty) {
-          Some(Seq(x.qualifyingRecognisedOverseasPensionScheme.get))
-        } else {
-          None
-        },
-        pensionSchemeTaxReference = if (x.pensionSchemeTaxReference.nonEmpty) {
-          Some(Seq(x.pensionSchemeTaxReference.get))
-        } else {
-          None
-        },
+        qualifyingRecognisedOverseasPensionScheme =
+          if (x.qualifyingRecognisedOverseasPensionScheme.nonEmpty) Some(Seq(s"Q${x.qualifyingRecognisedOverseasPensionScheme.get}")) else None ,
+        pensionSchemeTaxReference =
+          if (x.pensionSchemeTaxReference.nonEmpty && x.alphaThreeCountryCode.isEmpty) Some(Seq(x.pensionSchemeTaxReference.get)) else None,
         providerAddress = x.providerAddress.getOrElse(""),
         providerCountryCode = x.alphaThreeCountryCode.getOrElse("")
       )

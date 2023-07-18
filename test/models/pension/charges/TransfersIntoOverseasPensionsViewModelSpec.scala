@@ -66,7 +66,7 @@ class TransfersIntoOverseasPensionsViewModelSpec extends UnitTest {
           providerName = "Non-UK TPS",
           providerAddress = "Some address 2",
           providerCountryCode = "FRA",
-          qualifyingRecognisedOverseasPensionScheme = Some(Seq("QOPS123456")),
+          qualifyingRecognisedOverseasPensionScheme = Some(Seq("Q123456")),
           pensionSchemeTaxReference = None
         )),
         transferCharge = 1999.99,

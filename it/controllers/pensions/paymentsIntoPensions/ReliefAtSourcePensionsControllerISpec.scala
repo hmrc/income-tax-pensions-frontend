@@ -30,9 +30,9 @@ import play.api.libs.ws.WSResponse
 import utils.PageUrls.PaymentIntoPensions.reliefAtSourcePensionsUrl
 import utils.PageUrls.fullUrl
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
-import views.ReliefAtSourcePensionsSpec.Selectors._
-import views.ReliefAtSourcePensionsSpec.CommonExpectedEN._
-import views.ReliefAtSourcePensionsSpec.ExpectedIndividualEN._
+import views.pensions.paymentsIntoPensions.ReliefAtSourcePensionsSpec.Selectors._
+import views.pensions.paymentsIntoPensions.ReliefAtSourcePensionsSpec.CommonExpectedEN._
+import views.pensions.paymentsIntoPensions.ReliefAtSourcePensionsSpec.ExpectedIndividualEN._
 
 // scalastyle:off magic.number
 class ReliefAtSourcePensionsControllerISpec extends IntegrationTest with BeforeAndAfterEach with ViewHelpers with PensionsDatabaseHelper {

@@ -23,7 +23,7 @@ import utils.CYABaseHelper
 
 object PaymentsIntoOverseasPensionCYAViewHelper extends CYABaseHelper {
 
-  def summaryListRows( piopViewModel: PaymentsIntoOverseasPensionsViewModel, taxYear: Int)
+  def summaryListRows(piopViewModel: PaymentsIntoOverseasPensionsViewModel, taxYear: Int)
                      (implicit messages: Messages): Seq[SummaryListRow] =
     Seq(
       summaryRowForPiop(piopViewModel, taxYear),
@@ -34,7 +34,7 @@ object PaymentsIntoOverseasPensionCYAViewHelper extends CYABaseHelper {
     ).flatten
 
   private def summaryRowForPiop(piopViewModel: PaymentsIntoOverseasPensionsViewModel, taxYear: Int)
-                                                       (implicit messages: Messages): Option[SummaryListRow] =
+                               (implicit messages: Messages): Option[SummaryListRow] =
     Some(
       summaryListRowWithBooleanValue(
         "pensions.pensionSummary.paymentsToOverseasPensions",
@@ -57,30 +57,35 @@ object PaymentsIntoOverseasPensionCYAViewHelper extends CYABaseHelper {
       )
 
   private def summaryRowForEmployerPayments(piopViewModel: PaymentsIntoOverseasPensionsViewModel, taxYear: Int)
-                                             (implicit messages: Messages): Option[SummaryListRow] =
-    Some(
-      summaryListRowWithBooleanValue(
-        "paymentsIntoOverseasPensions.cya.employerPayments",
-        piopViewModel.employerPaymentsQuestion,
-        routes.EmployerPayOverseasPensionController.show(taxYear))(messages)
-    )
+                                           (implicit messages: Messages): Option[SummaryListRow] =
+    piopViewModel.paymentsIntoOverseasPensionsQuestions
+      .filter(x => x)
+      .flatMap(_ =>
+        piopViewModel.employerPaymentsQuestion
+          .map(_ =>
+            summaryListRowWithBooleanValue(
+              "paymentsIntoOverseasPensions.cya.employerPayments",
+              piopViewModel.employerPaymentsQuestion,
+              routes.EmployerPayOverseasPensionController.show(taxYear))(messages)
+          )
+      )
 
   private def summaryRowForEmployerPaymentsTax(piopViewModel: PaymentsIntoOverseasPensionsViewModel, taxYear: Int)
-                                           (implicit messages: Messages): Option[SummaryListRow] =
+                                              (implicit messages: Messages): Option[SummaryListRow] =
     piopViewModel.employerPaymentsQuestion
       .filter(x => x)
       .map(_ =>
-          summaryListRowWithBooleanValue(
-            "paymentsIntoOverseasPensions.cya.employerPaymentsTax",
-            piopViewModel.taxPaidOnEmployerPaymentsQuestion,
-            routes.TaxEmployerPaymentsController.show(taxYear))(messages)
-        )
+        summaryListRowWithBooleanValue(
+          "paymentsIntoOverseasPensions.cya.employerPaymentsTax",
+          piopViewModel.taxPaidOnEmployerPaymentsQuestion,
+          routes.TaxEmployerPaymentsController.show(taxYear))(messages)
+      )
 
   private def summaryRowForOverseasSchemes(piopViewModel: PaymentsIntoOverseasPensionsViewModel, taxYear: Int)
-                                           (implicit messages: Messages): Option[SummaryListRow] = {
+                                          (implicit messages: Messages): Option[SummaryListRow] = {
     piopViewModel.employerPaymentsQuestion.filter(x => x).flatMap(_ => {
       piopViewModel.taxPaidOnEmployerPaymentsQuestion
-        .filterNot(x =>x)
+        .filterNot(x => x)
         .map(_ =>
           summaryListRowWithStrings(
             "common.overseas.pension.schemes",

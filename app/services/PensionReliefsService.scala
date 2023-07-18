@@ -16,7 +16,6 @@
 
 package services
 
-import connectors.PensionsConnector
 import models.User
 import models.mongo.{PensionsCYAModel, PensionsUserData, ServiceError}
 import models.pension.reliefs.{CreateOrUpdatePensionReliefsModel, PaymentsIntoPensionsViewModel, Reliefs}
@@ -30,14 +29,11 @@ import scala.concurrent.{ExecutionContext, Future}
 
 
 class PensionReliefsService @Inject()(pensionUserDataRepository: PensionsUserDataRepository,
-                                      pensionsConnector: PensionsConnector) {
+                                      pensionReliefsConnectorHelper: PensionReliefsConnectorHelper) {
 
   def persistPaymentIntoPensionViewModel(user: User, taxYear: Int)
                                         (implicit hc: HeaderCarrier,
-                                      ec: ExecutionContext, clock: Clock): Future[Either[ServiceError, Unit]] = {
-
-    val hcWithExtras = hc.withExtraHeaders("mtditid" -> user.mtditid)
-
+                                         ec: ExecutionContext, clock: Clock): Future[Either[ServiceError, Unit]] = {
 
     def getPensionsUserData(userData: Option[PensionsUserData], user: User): PensionsUserData = {
       userData match {
@@ -67,7 +63,12 @@ class PensionReliefsService @Inject()(pensionUserDataRepository: PensionsUserDat
           overseasPensionSchemeContributions = sessionData.flatMap(_.pensions.paymentsIntoOverseasPensions.paymentsIntoOverseasPensionsAmount)
         )
       )
-      _ <- FutureEitherOps[ServiceError, Unit](pensionsConnector.savePensionReliefSessionData(user.nino, taxYear, updatedReliefsData)(hcWithExtras, ec))
+
+      _ <- FutureEitherOps[ServiceError, Unit](pensionReliefsConnectorHelper.sendDownstream(user.nino, taxYear,
+        subRequestModel = None,
+        cya = viewModel,
+        requestModel = updatedReliefsData)(hc.withExtraHeaders("mtditid" -> user.mtditid), ec))
+
       updatedCYA = getPensionsUserData(sessionData, user)
       result <- FutureEitherOps[ServiceError, Unit](pensionUserDataRepository.createOrUpdate(updatedCYA))
     } yield {

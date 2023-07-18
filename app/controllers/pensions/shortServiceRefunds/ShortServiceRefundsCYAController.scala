@@ -19,7 +19,7 @@ package controllers.pensions.shortServiceRefunds
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.routes.{OverseasPensionsSummaryController, PensionsSummaryController}
 import controllers.pensions.shortServiceRefunds.routes.TaxableRefundAmountController
-import controllers.predicates.{ActionsProvider, AuthorisedAction}
+import controllers.predicates.actions.{ActionsProvider, AuthorisedAction}
 import models.mongo.PensionsCYAModel
 import models.pension.AllPensionsData
 import models.pension.AllPensionsData.generateCyaFromPrior

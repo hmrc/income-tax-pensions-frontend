@@ -19,7 +19,7 @@ package controllers.pensions.unauthorisedPayments
 
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.unauthorisedPayments.routes._
-import controllers.predicates.AuthorisedAction
+import controllers.predicates.actions.AuthorisedAction
 import forms.YesNoForm
 import models.mongo.PensionsCYAModel
 import models.pension.charges.UnauthorisedPaymentsViewModel

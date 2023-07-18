@@ -37,7 +37,7 @@ class ReliefSchemeDetailsControllerISpec extends IntegrationTest with ViewHelper
 
   override val userScenarios: Seq[UserScenario[_, _]] = Nil
 
-  ".show" should {  //scalastyle:off magic.number
+  ".show" should { //scalastyle:off magic.number
     "redirect to Overview Page when in year" in {
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
@@ -60,10 +60,10 @@ class ReliefSchemeDetailsControllerISpec extends IntegrationTest with ViewHelper
       }
       result.status shouldBe OK
     }
-    
-    "redirect to customer reference page when index doesn't match and there are No pensions schemes" in {
+
+    "redirect to first page in journey when index doesn't match and there are no relief schemes" in {
       val pensionsNoSchemesViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(reliefs = Seq())
-      
+
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
@@ -72,9 +72,9 @@ class ReliefSchemeDetailsControllerISpec extends IntegrationTest with ViewHelper
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
       result.status shouldBe SEE_OTHER
-      result.headers("Location").head shouldBe pensionCustomerReferenceNumberUrl(taxYearEOY, None)
+      result.headers("Location").head shouldBe paymentsIntoPensionSchemeUrl(taxYearEOY)
     }
-    
+
     "redirect to pension relief scheme summary page when index doesn't match and there are pensions schemes" in {
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
@@ -107,8 +107,8 @@ class ReliefSchemeDetailsControllerISpec extends IntegrationTest with ViewHelper
       result.status shouldBe SEE_OTHER
       result.headers("location").head shouldBe overviewUrl(taxYear)
     }
-    
-    "redirect to customer reference Page when index doesn't match and there are No pensions schemes" in {
+
+    "redirect to first page in journey when index doesn't match and there are no relief schemes" in {
       val pensionsNoSchemesViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(reliefs = Seq())
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
@@ -121,11 +121,11 @@ class ReliefSchemeDetailsControllerISpec extends IntegrationTest with ViewHelper
           follow = false,
           body = "")
       }
-      
+
       result.status shouldBe SEE_OTHER
-      result.headers("Location").head shouldBe pensionCustomerReferenceNumberUrl(taxYearEOY, None)
+      result.headers("Location").head shouldBe paymentsIntoPensionSchemeUrl(taxYearEOY)
     }
-    
+
     "redirect to pension Relief Scheme Summary when index doesn't match and there are pensions schemes" in {
       lazy implicit val result: WSResponse = {
         dropPensionsDB()

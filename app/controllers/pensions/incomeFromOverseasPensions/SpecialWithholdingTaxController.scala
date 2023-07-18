@@ -20,8 +20,8 @@ import common.MessageKeys.UnauthorisedPayments.SpecialWithholdingTax
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.incomeFromOverseasPensions.routes._
 import controllers.pensions.routes._
-import controllers.predicates.AuthorisedAction
-import controllers.predicates.TaxYearAction.taxYearAction
+import controllers.predicates.actions.AuthorisedAction
+import controllers.predicates.actions.TaxYearAction.taxYearAction
 import forms.RadioButtonAmountForm
 import models.AuthorisationRequest
 import models.mongo.PensionsUserData

@@ -16,7 +16,7 @@
 
 package builders
 
-import builders.ReliefsBuilder.anReliefs
+import builders.ReliefsBuilder.aReliefs
 import models.pension.reliefs.PensionReliefs
 
 object PensionReliefsBuilder {
@@ -24,6 +24,6 @@ object PensionReliefsBuilder {
   val anPensionReliefs: PensionReliefs = PensionReliefs(
     submittedOn = "2020-07-27T17:00:19Z",
     deletedOn = None,
-    pensionReliefs = anReliefs
+    pensionReliefs = aReliefs
   )
 }
