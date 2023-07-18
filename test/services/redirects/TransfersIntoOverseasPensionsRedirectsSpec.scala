@@ -27,7 +27,7 @@ import builders.TransfersIntoOverseasPensionsViewModelBuilder.aTransfersIntoOver
 import controllers.pensions.transferIntoOverseasPensions.routes._
 import models.pension.charges.TransferPensionScheme
 import play.api.http.Status.SEE_OTHER
-import services.redirects.TransfersIntoOverseasPensionsPages.{DidYouTransferIntoAnOverseasPensionSchemePage, OverseasTransferChargeAmountPage, PensionSchemeDetailsPage, RemoveSchemePage, SchemesPayingTransferChargesSummary, TaxOnPensionSchemesAmountPage, TransferIntoOverseasPensionsCYA}
+import services.redirects.TransfersIntoOverseasPensionsPages.{DidYouTransferIntoAnOverseasPensionSchemePage, OverseasTransferChargeAmountPage, PensionSchemeDetailsPage, RemoveSchemePage, TaxOnPensionSchemesAmountPage, TransferIntoOverseasPensionsCYA}
 import services.redirects.TransfersIntoOverseasPensionsRedirects.{cyaPageCall, indexCheckThenJourneyCheck, journeyCheck, redirectForSchemeLoop}
 
 import scala.concurrent.Future
@@ -168,7 +168,7 @@ class TransfersIntoOverseasPensionsRedirectsSpec extends UnitTest {
         )
       )
       val result = redirectForSchemeLoop(existingSchemes, taxYear)
-      result shouldBe schemeSummaryCall
+      result shouldBe schemeStartCall
 
     }
   }
