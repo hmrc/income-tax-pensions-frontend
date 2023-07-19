@@ -27,10 +27,9 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
-import services.redirects.UnauthorisedPaymentsRedirects.redirectForSchemeLoop
 import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
 import services.redirects.UnauthorisedPaymentsPages.WereAnyUnauthPaymentsFromUkPensionSchemePage
-import services.redirects.UnauthorisedPaymentsRedirects.{cyaPageCall, journeyCheck}
+import services.redirects.UnauthorisedPaymentsRedirects.{cyaPageCall, journeyCheck, redirectForSchemeLoop}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.unauthorisedPayments.WereAnyOfTheUnauthorisedPaymentsView
@@ -81,8 +80,9 @@ class WereAnyOfTheUnauthorisedPaymentsController @Inject()(implicit val cc: Mess
               val pensionsCYAModel: PensionsCYAModel = data.pensions
               val viewModel: UnauthorisedPaymentsViewModel = pensionsCYAModel.unauthorisedPayments
               val updatedCyaModel: PensionsCYAModel = {
-                pensionsCYAModel.copy(
-                  unauthorisedPayments = viewModel.copy(ukPensionSchemesQuestion = Some(yesNo)))
+                pensionsCYAModel.copy(unauthorisedPayments =
+                  if (yesNo) viewModel.copy(ukPensionSchemesQuestion = Some(true))
+                  else viewModel.copy(ukPensionSchemesQuestion = Some(false), pensionSchemeTaxReference = None))
               }
 
               pensionSessionService.createOrUpdateSessionData(

@@ -17,7 +17,6 @@
 package controllers.pensions.paymentsIntoOverseasPensions
 
 import config.{AppConfig, ErrorHandler}
-import controllers._
 import controllers.pensions.paymentsIntoOverseasPensions.routes._
 import controllers.predicates.actions.ActionsProvider
 import forms.QOPSReferenceNumberForm
@@ -27,8 +26,8 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
-import services.redirects.PaymentsIntoOverseasPensionsPages.{PensionReliefTypePage, QOPSReferencePage}
-import services.redirects.PaymentsIntoOverseasPensionsRedirects.{indexCheckThenJourneyCheck, redirectForSchemeLoop}
+import services.redirects.PaymentsIntoOverseasPensionsPages.QOPSReferencePage
+import services.redirects.PaymentsIntoOverseasPensionsRedirects.indexCheckThenJourneyCheck
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.paymentsIntoOverseasPensions.QOPSReferenceView

@@ -27,8 +27,7 @@ import utils.{EncryptedValue, SecureGCMCipher}
 import java.time.{Instant, LocalDate}
 import java.util.UUID
 
-case class StateBenefitViewModel(
-                                  benefitId: Option[UUID] = None,
+case class StateBenefitViewModel(benefitId: Option[UUID] = None,
                                   startDateQuestion: Option[Boolean] = None,
                                   startDate: Option[LocalDate] = None,
                                   endDateQuestion: Option[Boolean] = None,
@@ -41,9 +40,15 @@ case class StateBenefitViewModel(
                                   amount: Option[BigDecimal] = None,
                                   taxPaidQuestion: Option[Boolean] = None,
                                   taxPaid: Option[BigDecimal] = None,
-                                  addToCalculation: Option[Boolean] = None
-                                ) {
+                                  addToCalculation: Option[Boolean] = None) {
   def isEmpty: Boolean = this.productIterator.forall(_ == None)
+
+  def isFinished: Boolean =
+    amountPaidQuestion.exists(x =>
+    if (!x) true else
+      amount.isDefined && startDateQuestion.getOrElse(false) && startDate.isDefined && addToCalculation.isDefined &&
+        (if (taxPaidQuestion.getOrElse(false)) taxPaid.isDefined else true)
+    )
 
   def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedStateBenefitViewModel =
     EncryptedStateBenefitViewModel(

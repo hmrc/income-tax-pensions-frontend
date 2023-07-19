@@ -17,6 +17,7 @@
 package controllers.pensions.unauthorisedPayments
 
 import config.{AppConfig, ErrorHandler}
+import controllers.pensions.unauthorisedPayments.routes.{NoSurchargeAmountController, SurchargeAmountController, UnauthorisedPaymentsCYAController}
 import controllers.predicates.actions.AuthorisedAction
 import controllers.predicates.actions.TaxYearAction.taxYearAction
 import forms.UnAuthorisedPaymentsForm
@@ -77,14 +78,14 @@ class UnauthorisedPaymentsController @Inject()(implicit val mcc: MessagesControl
           }
           pensionSessionService.createOrUpdateSessionData(request.user,
             updatedCyaModel, taxYear, isPriorSubmission)(errorHandler.internalServerError()) {
-            if (unauthorisedPaymentsSelection.containsYesSurcharge) {
-              Redirect(controllers.pensions.unauthorisedPayments.routes.SurchargeAmountController.show(taxYear))
-            }
-            else if (unauthorisedPaymentsSelection.containsYesNotSurcharge) {
-              Redirect(controllers.pensions.unauthorisedPayments.routes.NoSurchargeAmountController.show(taxYear))
-            } else {
-              Redirect(controllers.pensions.unauthorisedPayments.routes.UnauthorisedPaymentsCYAController.show(taxYear))
-            }
+            Redirect(
+              if (unauthorisedPaymentsSelection.containsYesSurcharge)
+                SurchargeAmountController.show(taxYear)
+              else if (unauthorisedPaymentsSelection.containsYesNotSurcharge)
+                NoSurchargeAmountController.show(taxYear)
+              else
+                UnauthorisedPaymentsCYAController.show(taxYear)
+            )
           }
         }
       )

@@ -18,6 +18,7 @@ package controllers.pensions.lifetimeAllowances
 
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.lifetimeAllowances.routes.{LifetimeAllowanceCYAController, PensionLumpSumController}
+import controllers.pensions.routes.PensionsSummaryController
 import controllers.predicates.actions.AuthorisedAction
 import forms.YesNoForm
 import models.User
@@ -88,7 +89,7 @@ class AboveAnnualLifetimeAllowanceController @Inject()(implicit val cc: Messages
                   )
                 }
             }
-          case _ => Future.successful(Redirect(LifetimeAllowanceCYAController.show(taxYear)))
+          case _ => Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
         }
       }
     )

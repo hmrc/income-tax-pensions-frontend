@@ -46,7 +46,6 @@ class LifeTimeAllowanceAnotherWayController @Inject()(implicit val cc: MessagesC
                                                       errorHandler: ErrorHandler,
                                                       clock: Clock, ec: ExecutionContext) extends FrontendController(cc) with I18nSupport {
 
-
   def yesNoForm(user: User): Form[Boolean] = YesNoForm.yesNoForm(
     missingInputError = s"lifetimeAllowance.lifetimeAllowanceAnotherWay.error.noEntry.${if (user.isAgent) "agent" else "individual"}"
   )

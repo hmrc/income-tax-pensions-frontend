@@ -16,7 +16,7 @@
 
 package controllers.pensions.incomeFromOverseasPensions
 
-import builders.PensionsCYAModelBuilder.aPensionsCYAEmptyModel
+import builders.PensionsCYAModelBuilder.{aPensionsCYAEmptyModel, aPensionsCYAModel}
 import controllers.ControllerSpec.PreferredLanguages.{English, Welsh}
 import controllers.ControllerSpec.UserTypes.{Agent, Individual}
 import controllers.ControllerSpec._
@@ -31,173 +31,173 @@ class PensionOverseasIncomeStatusISpec
 
   val minimalSessionDataToAccessThisPage: PensionsCYAModel = aPensionsCYAEmptyModel
 
-  val expectedYesNoPageContentsIndividual = ExpectedYesNoPageContents(
+  val expectedYesNoPageContentsIndividual: ExpectedYesNoPageContents = ExpectedYesNoPageContents(
     title = "Did you get payments from an overseas pension scheme?",
     header = "Did you get payments from an overseas pension scheme?",
-    caption = s"Income from overseas pensions for 6 April ${taxYear -1} to 5 April $taxYear",
+    caption = s"Income from overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
     radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
     radioButtonForNo = uncheckedExpectedRadioButton("No"),
     buttonForContinue = ExpectedButton("Continue", ""),
     links = Set.empty,
     text = Set.empty
   )
-  val expectedYesNoPageContentsAgent = expectedYesNoPageContentsIndividual
+  val expectedYesNoPageContentsAgent: ExpectedYesNoPageContents = expectedYesNoPageContentsIndividual
     .copy(title = "Did your client get payments from an overseas pension scheme?",
       header = "Did your client get payments from an overseas pension scheme?")
-  
+
   "This page" when {
     "requested to be shown" should {
 
-        "appear as expected" when {
-          
-          "the user has no stored session data at all" when {
-            
-            scenarioNameForIndividualAndEnglish in {
-              
-              implicit val userConfig: UserConfig = UserConfig(Individual, English, None)
-              val response = getPage
-              
-              response must haveStatus(OK)
-              assertPageAsExpected(parse(response.body), expectedYesNoPageContentsIndividual)
-            }
-          }
-          
-          "the user has only the minimal session data for accessing this page and" when {
+      "appear as expected" when {
 
-            val sessionData = pensionsUserData(minimalSessionDataToAccessThisPage)
+        "the user has no stored session data at all" when {
 
-            scenarioNameForIndividualAndEnglish in {
+          scenarioNameForIndividualAndEnglish in {
 
-              implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
-              val response = getPage
+            implicit val userConfig: UserConfig = UserConfig(Individual, English, None)
+            val response = getPage
 
-              response must haveStatus(OK)
-              assertPageAsExpected(parse(response.body), expectedYesNoPageContentsIndividual)
-            }
-            scenarioNameForIndividualAndWelsh ignore {
-
-              implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
-              val response = getPage
-
-              response must haveStatus(OK)
-              assertPageAsExpected(parse(response.body), expectedYesNoPageContentsIndividual )
-
-            }
-            scenarioNameForAgentAndEnglish in {
-
-              implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
-              val response = getPage
-
-              response must haveStatus(OK)
-              assertPageAsExpected(parse(response.body), expectedYesNoPageContentsAgent)
-
-            }
-            scenarioNameForAgentAndWelsh ignore {
-
-              implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
-              val response = getPage
-
-              response must haveStatus(OK)
-              assertPageAsExpected(parse(response.body), expectedYesNoPageContentsAgent)
-
-            }
-          }
-          "the user had previously answered 'Yes', and" when {
-
-            val sessionData = pensionsUserData(
-              minimalSessionDataToAccessThisPage.copy(
-                incomeFromOverseasPensions = minimalSessionDataToAccessThisPage.incomeFromOverseasPensions.copy(
-                  paymentsFromOverseasPensionsQuestion = Some(true)
-                )
-              )
-            )
-
-            scenarioNameForIndividualAndEnglish in {
-
-              implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
-              val response = getPage
-
-              response must haveStatus(OK)
-              assertPageAsExpected(parse(response.body), expectedYesNoPageContentsIndividual)
-
-            }
-            scenarioNameForIndividualAndWelsh ignore {
-
-              implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
-              val response = getPage
-
-              response must haveStatus(OK)
-              assertPageAsExpected(parse(response.body), expectedYesNoPageContentsIndividual)
-
-            }
-            scenarioNameForAgentAndEnglish in {
-
-              implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
-              val response = getPage
-
-              response must haveStatus(OK)
-              assertPageAsExpected(parse(response.body), expectedYesNoPageContentsAgent)
-
-            }
-            scenarioNameForAgentAndWelsh ignore {
-
-              implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
-              val response = getPage
-
-              response must haveStatus(OK)
-              assertPageAsExpected(parse(response.body), expectedYesNoPageContentsAgent)
-
-            }
-          }
-
-          "the user had previously answered 'No', and" when {
-            
-            val sessionData = pensionsUserData(
-              minimalSessionDataToAccessThisPage.copy(
-                incomeFromOverseasPensions = minimalSessionDataToAccessThisPage.incomeFromOverseasPensions.copy(
-                  paymentsFromOverseasPensionsQuestion = Some(false)
-                )
-              )
-            )
-
-            scenarioNameForIndividualAndEnglish in {
-
-              implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
-              val response = getPage
-
-              response must haveStatus(OK)
-              assertPageAsExpected(parse(response.body), expectedYesNoPageContentsIndividual)
-            }
-            
-            scenarioNameForIndividualAndWelsh ignore {
-
-              implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
-              val response = getPage
-
-              response must haveStatus(OK)
-              assertPageAsExpected(parse(response.body), expectedYesNoPageContentsIndividual)
-            }
-            
-            scenarioNameForAgentAndEnglish in {
-
-              implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
-              val response = getPage
-
-              response must haveStatus(OK)
-              assertPageAsExpected(parse(response.body), expectedYesNoPageContentsAgent)
-            }
-            
-            scenarioNameForAgentAndWelsh ignore {
-
-              implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
-              val response = getPage
-
-              response must haveStatus(OK)
-              assertPageAsExpected(parse(response.body), expectedYesNoPageContentsAgent)
-            }
+            response must haveStatus(OK)
+            assertPageAsExpected(parse(response.body), expectedYesNoPageContentsIndividual)
           }
         }
-        
+
+        "the user has only the minimal session data for accessing this page and" when {
+
+          val sessionData = pensionsUserData(minimalSessionDataToAccessThisPage)
+
+          scenarioNameForIndividualAndEnglish in {
+
+            implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
+            val response = getPage
+
+            response must haveStatus(OK)
+            assertPageAsExpected(parse(response.body), expectedYesNoPageContentsIndividual)
+          }
+          scenarioNameForIndividualAndWelsh ignore {
+
+            implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
+            val response = getPage
+
+            response must haveStatus(OK)
+            assertPageAsExpected(parse(response.body), expectedYesNoPageContentsIndividual)
+
+          }
+          scenarioNameForAgentAndEnglish in {
+
+            implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
+            val response = getPage
+
+            response must haveStatus(OK)
+            assertPageAsExpected(parse(response.body), expectedYesNoPageContentsAgent)
+
+          }
+          scenarioNameForAgentAndWelsh ignore {
+
+            implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
+            val response = getPage
+
+            response must haveStatus(OK)
+            assertPageAsExpected(parse(response.body), expectedYesNoPageContentsAgent)
+
+          }
+        }
+        "the user had previously answered 'Yes', and" when {
+
+          val sessionData = pensionsUserData(
+            minimalSessionDataToAccessThisPage.copy(
+              incomeFromOverseasPensions = minimalSessionDataToAccessThisPage.incomeFromOverseasPensions.copy(
+                paymentsFromOverseasPensionsQuestion = Some(true)
+              )
+            )
+          )
+
+          scenarioNameForIndividualAndEnglish in {
+
+            implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
+            val response = getPage
+
+            response must haveStatus(OK)
+            assertPageAsExpected(parse(response.body), expectedYesNoPageContentsIndividual)
+
+          }
+          scenarioNameForIndividualAndWelsh ignore {
+
+            implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
+            val response = getPage
+
+            response must haveStatus(OK)
+            assertPageAsExpected(parse(response.body), expectedYesNoPageContentsIndividual)
+
+          }
+          scenarioNameForAgentAndEnglish in {
+
+            implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
+            val response = getPage
+
+            response must haveStatus(OK)
+            assertPageAsExpected(parse(response.body), expectedYesNoPageContentsAgent)
+
+          }
+          scenarioNameForAgentAndWelsh ignore {
+
+            implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
+            val response = getPage
+
+            response must haveStatus(OK)
+            assertPageAsExpected(parse(response.body), expectedYesNoPageContentsAgent)
+
+          }
+        }
+
+        "the user had previously answered 'No', and" when {
+
+          val sessionData = pensionsUserData(
+            minimalSessionDataToAccessThisPage.copy(
+              incomeFromOverseasPensions = minimalSessionDataToAccessThisPage.incomeFromOverseasPensions.copy(
+                paymentsFromOverseasPensionsQuestion = Some(false)
+              )
+            )
+          )
+
+          scenarioNameForIndividualAndEnglish in {
+
+            implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
+            val response = getPage
+
+            response must haveStatus(OK)
+            assertPageAsExpected(parse(response.body), expectedYesNoPageContentsIndividual)
+          }
+
+          scenarioNameForIndividualAndWelsh ignore {
+
+            implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
+            val response = getPage
+
+            response must haveStatus(OK)
+            assertPageAsExpected(parse(response.body), expectedYesNoPageContentsIndividual)
+          }
+
+          scenarioNameForAgentAndEnglish in {
+
+            implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
+            val response = getPage
+
+            response must haveStatus(OK)
+            assertPageAsExpected(parse(response.body), expectedYesNoPageContentsAgent)
+          }
+
+          scenarioNameForAgentAndWelsh ignore {
+
+            implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
+            val response = getPage
+
+            response must haveStatus(OK)
+            assertPageAsExpected(parse(response.body), expectedYesNoPageContentsAgent)
+          }
+        }
+      }
+
       "submitted" should {
         "succeed" when {
           "the user has selected 'No' and" when {
@@ -241,7 +241,8 @@ class PensionOverseasIncomeStatusISpec
 
             }
             scenarioNameForAgentAndWelsh ignore {
-
+              val sessionData = pensionsUserData(aPensionsCYAModel)
+              val expectedViewModel = IncomeFromOverseasPensionsViewModel(paymentsFromOverseasPensionsQuestion = Some(false))
               implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
               val response = submitForm(SubmittedFormDataForYesNoPage(Some(false)))
 
@@ -327,7 +328,7 @@ class PensionOverseasIncomeStatusISpec
               )
             )
           )
-          
+
           val expectedYesNoPageContentsAgent = expectedYesNoPageContentsIndividual.copy(
             title = "Error: Did your client get payments from an overseas pension scheme?",
             header = "Did your client get payments from an overseas pension scheme?",
@@ -336,15 +337,15 @@ class PensionOverseasIncomeStatusISpec
             errorAboveElementCheckSectionOpt = Some(ErrorAboveElementCheckSection(
               title = "Error: Select yes if your client had income from an overseas pension scheme", idOpt = Some("value")))
           )
-          
-          def welshTitle(epc:ExpectedYesNoPageContents): Option[ErrorSummarySection] =
+
+          def welshTitle(epc: ExpectedYesNoPageContents): Option[ErrorSummarySection] =
             epc.errorSummarySectionOpt.map(ess => ess.copy(title = "Mae problem wedi codi"))
-            
-          
+
+
           "the user has selected neither 'Yes' nor 'No' and" when {
 
             val sessionData = pensionsUserData(minimalSessionDataToAccessThisPage)
-            
+
             scenarioNameForIndividualAndEnglish in {
 
               implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
@@ -353,7 +354,7 @@ class PensionOverseasIncomeStatusISpec
               response must haveStatus(BAD_REQUEST)
               assertPageAsExpected(parse(response.body), expectedYesNoPageContentsIndividual)
             }
-            
+
             scenarioNameForIndividualAndWelsh ignore {
 
               implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
@@ -363,7 +364,7 @@ class PensionOverseasIncomeStatusISpec
               assertPageAsExpected(parse(response.body),
                 expectedYesNoPageContentsIndividual.copy(errorSummarySectionOpt = welshTitle(expectedYesNoPageContentsIndividual)))
             }
-            
+
             scenarioNameForAgentAndEnglish in {
 
               implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))

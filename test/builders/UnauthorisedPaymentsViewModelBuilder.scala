@@ -33,6 +33,19 @@ object UnauthorisedPaymentsViewModelBuilder {
     pensionSchemeTaxReference = Some(Seq("12345678AB", "12345678AC"))
   )
 
+  val anUnauthorisedPaymentsEmptySchemesViewModel: UnauthorisedPaymentsViewModel = UnauthorisedPaymentsViewModel(
+    surchargeQuestion = Some(true),
+    noSurchargeQuestion = Some(true),
+    surchargeAmount = Some(12.11),
+    surchargeTaxAmountQuestion = Some(true),
+    surchargeTaxAmount = Some(34.22),
+    noSurchargeAmount = Some(88.11),
+    noSurchargeTaxAmountQuestion = Some(true),
+    noSurchargeTaxAmount = Some(99.22),
+    ukPensionSchemesQuestion = Some(false),
+    pensionSchemeTaxReference = None
+  )
+
   val anUnauthorisedPaymentsEmptyViewModel: UnauthorisedPaymentsViewModel = UnauthorisedPaymentsViewModel()
 
 }

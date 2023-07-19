@@ -17,14 +17,16 @@
 package controllers.pensions.transferIntoOverseasPensions
 
 import config.{AppConfig, ErrorHandler}
+import controllers.pensions.transferIntoOverseasPensions.routes.{PensionSchemeTaxTransferController, TransferIntoOverseasPensionsCYAController}
 import controllers.predicates.actions.ActionsProvider
 import forms.RadioButtonAmountForm
 import models.User
 import models.mongo.{PensionsCYAModel, PensionsUserData}
+import models.pension.charges.TransfersIntoOverseasPensionsViewModel
 import models.requests.UserSessionDataRequest
 import play.api.data.Form
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
@@ -76,19 +78,20 @@ class OverseasTransferChargeController @Inject()(actionsProvider: ActionsProvide
   private def updateSessionData[T](pensionUserData: PensionsUserData,
                                    yesNo: Boolean,
                                    amount: Option[BigDecimal],
-                                   taxYear: Int)(implicit request: UserSessionDataRequest[T]) = {
-    val updatedCyaModel: PensionsCYAModel = pensionUserData.pensions.copy(
-      transfersIntoOverseasPensions = pensionUserData.pensions.transfersIntoOverseasPensions.copy(
-        overseasTransferCharge = Some(yesNo),
-        overseasTransferChargeAmount = amount))
+                                   taxYear: Int)(implicit request: UserSessionDataRequest[T]): Future[Result] = {
+
+    val cyaModel = pensionUserData.pensions
+    val updateViewModel = cyaModel.copy(transfersIntoOverseasPensions =
+      if (yesNo) cyaModel.transfersIntoOverseasPensions.copy(
+        overseasTransferCharge = Some(true), overseasTransferChargeAmount = amount)
+      else TransfersIntoOverseasPensionsViewModel(transferPensionSavings = Some(true), overseasTransferCharge = Some(false)))
 
     pensionSessionService.createOrUpdateSessionData(request.user,
-      updatedCyaModel, taxYear, pensionUserData.isPriorSubmission)(errorHandler.internalServerError()) {
-      if (yesNo) {
-        Redirect(controllers.pensions.transferIntoOverseasPensions.routes.PensionSchemeTaxTransferController.show(taxYear))
-      } else {
-        Redirect(controllers.pensions.transferIntoOverseasPensions.routes.TransferIntoOverseasPensionsCYAController.show(taxYear))
-      }
+      updateViewModel, taxYear, pensionUserData.isPriorSubmission)(errorHandler.internalServerError()) {
+      Redirect(
+        if (yesNo) PensionSchemeTaxTransferController.show(taxYear)
+        else TransferIntoOverseasPensionsCYAController.show(taxYear)
+      )
     }
   }
 }
