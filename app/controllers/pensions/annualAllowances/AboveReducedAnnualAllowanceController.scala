@@ -21,6 +21,7 @@ import controllers.pensions.annualAllowances.routes._
 import controllers.predicates.actions.ActionsProvider
 import forms.FormsProvider
 import models.mongo.{PensionsCYAModel, PensionsUserData}
+import models.pension.charges.PensionAnnualAllowancesViewModel
 import models.requests.UserSessionDataRequest
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -84,13 +85,20 @@ class AboveReducedAnnualAllowanceController @Inject()(actionsProvider: ActionsPr
                                    amount: Option[BigDecimal],
                                    taxYear: Int)(implicit request: UserSessionDataRequest[T]): Future[Result] = {
 
-    val updatedCyaModel: PensionsCYAModel = pensionUserData.pensions.copy(
-      pensionsAnnualAllowances = pensionUserData.pensions.pensionsAnnualAllowances.copy(
-        aboveAnnualAllowanceQuestion = Some(yesNo), aboveAnnualAllowance = amount))
+    val viewModel: PensionAnnualAllowancesViewModel = pensionUserData.pensions.pensionsAnnualAllowances
+    val updatedCyaModel: PensionsCYAModel = pensionUserData.pensions.copy(pensionsAnnualAllowances = {
+      if (yesNo) viewModel.copy(aboveAnnualAllowanceQuestion = Some(true), aboveAnnualAllowance = amount)
+      else viewModel.copy(
+        aboveAnnualAllowanceQuestion = Some(false), aboveAnnualAllowance = None,
+        pensionProvidePaidAnnualAllowanceQuestion = None, taxPaidByPensionProvider = None, pensionSchemeTaxReferences = None)
+    })
 
     pensionSessionService.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear, pensionUserData.isPriorSubmission
     )(errorHandler.internalServerError()) {
-      Redirect(if (yesNo) PensionProviderPaidTaxController.show(taxYear) else AnnualAllowanceCYAController.show(taxYear))
+      Redirect(
+        if (yesNo) PensionProviderPaidTaxController.show(taxYear)
+        else AnnualAllowanceCYAController.show(taxYear)
+      )
     }
   }
 }

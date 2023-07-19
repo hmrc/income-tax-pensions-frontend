@@ -132,20 +132,38 @@ class RemoveAnnualAllowancePSTRControllerISpec extends IntegrationTest with View
       }
     }
 
-    "redirect to reduced annual allowance page when page is invalid in journey" which {
-      lazy val result: WSResponse = {
-        dropPensionsDB()
-        authoriseAgentOrIndividual()
-        val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(aboveAnnualAllowanceQuestion = Some(false))
-        insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel))
+    "redirect to reduced annual allowance page" when {
+      "page is invalid in journey" which {
+        lazy val result: WSResponse = {
+          dropPensionsDB()
+          authoriseAgentOrIndividual()
+          val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(aboveAnnualAllowanceQuestion = Some(false))
+          insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel))
 
-        urlGet(fullUrl(removePstrUrl(taxYearEOY, 0)), follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+          urlGet(fullUrl(removePstrUrl(taxYearEOY, 0)), follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        }
+
+        "has a SEE_OTHER status" in {
+          result.status shouldBe SEE_OTHER
+          result.header("location") shouldBe Some(reducedAnnualAllowanceUrl(taxYearEOY))
+        }
       }
+      "previous questions are unanswered" which {
+        lazy val result: WSResponse = {
+          dropPensionsDB()
+          authoriseAgentOrIndividual()
+          val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(taxPaidByPensionProvider = None)
+          insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel))
 
-      "has a SEE_OTHER status" in {
-        result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(reducedAnnualAllowanceUrl(taxYearEOY))
+          urlGet(fullUrl(removePstrUrl(taxYearEOY, 0)), follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        }
+
+        "has a SEE_OTHER status" in {
+          result.status shouldBe SEE_OTHER
+          result.header("location") shouldBe Some(reducedAnnualAllowanceUrl(taxYearEOY))
+        }
       }
     }
   }

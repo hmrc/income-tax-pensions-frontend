@@ -17,11 +17,12 @@
 package controllers.pensions.incomeFromPensions
 
 import builders.AllPensionsDataBuilder.anAllPensionsData
-import builders.IncomeFromPensionsViewModelBuilder.anIncomeFromPensionEmptyViewModel
+import builders.IncomeFromPensionsViewModelBuilder.{aStatePensionIncomeFromPensionsViewModel, anIncomeFromPensionEmptyViewModel}
 import builders.IncomeTaxUserDataBuilder.anIncomeTaxUserData
 import builders.PensionsCYAModelBuilder.{aPensionsCYAGeneratedFromPriorEmpty, aPensionsCYAModel}
 import builders.PensionsUserDataBuilder
 import builders.PensionsUserDataBuilder.aPensionsUserData
+import builders.StateBenefitViewModelBuilder.anStateBenefitViewModelOne
 import builders.StateBenefitsUserDataBuilder.aStatePensionBenefitsUD
 import builders.UkPensionIncomeViewModelBuilder.anUkPensionIncomeViewModelOne
 import builders.UserBuilder.aUser
@@ -31,7 +32,7 @@ import play.api.http.HeaderNames
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.IncomeFromPensionsPages.{pensionIncomeSummaryUrl, statePensionCyaUrl}
+import utils.PageUrls.IncomeFromPensionsPages.{pensionIncomeSummaryUrl, statePension, statePensionCyaUrl}
 import utils.PageUrls.{fullUrl, overviewUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
@@ -97,6 +98,22 @@ class StatePensionCYAControllerISpec extends IntegrationTest with ViewHelpers wi
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
       result.status shouldBe OK
+    }
+
+    "redirect to the first page in journey if journey is incomplete" in {
+      val data = aPensionsUserData.copy(pensions = aPensionsCYAModel.copy(
+          incomeFromPensions = aStatePensionIncomeFromPensionsViewModel.copy(
+            statePension = Some(anStateBenefitViewModelOne.copy(startDateQuestion = None)))))
+
+      lazy implicit val result: WSResponse = {
+        dropPensionsDB()
+        authoriseAgentOrIndividual(aUser.isAgent)
+        insertCyaData(data)
+        urlGet(fullUrl(statePensionCyaUrl(taxYearEOY)), !aUser.isAgent, follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+      }
+      result.status shouldBe SEE_OTHER
+      result.header("location").contains(statePension(taxYearEOY))
     }
   }
 

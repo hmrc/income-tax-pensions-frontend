@@ -104,7 +104,7 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
     val buttonText = "Yn eich blaen"
     val expectedLinkText = "os bydd angen i chi gyfrifo hyn (yn agor tab newydd)"
     val expectedUseACalculator: String = s"Defnyddiwch gyfrifiannell $expectedLinkText."
-    val expectedAmountHeadingText = "Swm uwchlawr lwfans blynyddol gostyngol, mewn punnoedd"
+    val expectedAmountHeadingText = "Swm uwchlaw’r lwfans blynyddol gostyngol, mewn punnoedd"
     val amountHintText = "Er enghraifft, £193.54"
   }
 
@@ -441,15 +441,15 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
     }
 
     "redirect to the Pension paid tax amount page when user selects 'yes' with an amount and is not a prior submission" which {
-      lazy val form: Map[String, String] = Map(RadioButtonAmountForm.yesNo -> RadioButtonAmountForm.yes, RadioButtonAmountForm.amount2 -> "22.55")
+      lazy val form: Map[String, String] = Map(RadioButtonAmountForm.yesNo -> RadioButtonAmountForm.yes, RadioButtonAmountForm.amount2 -> "12.44")
+      val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(
+        aboveAnnualAllowanceQuestion = None, aboveAnnualAllowance = None,
+        pensionProvidePaidAnnualAllowanceQuestion = None, taxPaidByPensionProvider = None, pensionSchemeTaxReferences = None)
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual()
         userDataStub(anIncomeTaxUserData, nino, taxYearEOY)
-        val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(
-          aboveAnnualAllowanceQuestion = None, aboveAnnualAllowance = None, pensionSchemeTaxReferences = None)
         insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)))
-
         urlPost(fullUrl(aboveReducedAnnualAllowanceUrl(taxYearEOY)), body = form, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -460,9 +460,9 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
       }
 
       "persists submission details" in {
+        val expectedViewModel = pensionsViewModel.copy(aboveAnnualAllowanceQuestion = Some(true), aboveAnnualAllowance = Some(12.44))
         lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
-        cyaModel.pensions.pensionsAnnualAllowances.aboveAnnualAllowanceQuestion shouldBe Some(true)
-        cyaModel.pensions.pensionsAnnualAllowances.aboveAnnualAllowance shouldBe Some(22.55)
+        cyaModel.pensions.pensionsAnnualAllowances shouldBe expectedViewModel
       }
     }
 
@@ -472,10 +472,7 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
         dropPensionsDB()
         authoriseAgentOrIndividual()
         userDataStub(anIncomeTaxUserData, nino, taxYearEOY)
-        val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(
-          aboveAnnualAllowanceQuestion = None, aboveAnnualAllowance = None)
-        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)))
-
+        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(pensionsAnnualAllowances = aPensionAnnualAllowanceViewModel)))
         urlPost(fullUrl(aboveReducedAnnualAllowanceUrl(taxYearEOY)), body = form, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -487,18 +484,19 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
 
       "persists submission details" in {
         lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
-        cyaModel.pensions.pensionsAnnualAllowances.aboveAnnualAllowanceQuestion shouldBe Some(true)
-        cyaModel.pensions.pensionsAnnualAllowances.aboveAnnualAllowance shouldBe Some(22.55)
+        cyaModel.pensions.pensionsAnnualAllowances shouldBe aPensionAnnualAllowanceViewModel.copy(aboveAnnualAllowance = Some(22.55))
       }
     }
 
     "redirect to the AnnualAllowance CYA page when user selects 'no' and not a prior submission" which {
       lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.no)
+      val pensionsViewModel = PensionAnnualAllowancesViewModel(
+        reducedAnnualAllowanceQuestion = Some(true),
+        moneyPurchaseAnnualAllowance = Some(true),
+        taperedAnnualAllowance = Some(true))
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual()
-        val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(
-          aboveAnnualAllowanceQuestion = Some(false), aboveAnnualAllowance = None)
         insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)))
         urlPost(fullUrl(aboveReducedAnnualAllowanceUrl(taxYearEOY)), body = form, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
@@ -511,8 +509,33 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
 
       "persists submission details" in {
         lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
-        cyaModel.pensions.pensionsAnnualAllowances.aboveAnnualAllowanceQuestion shouldBe Some(false)
-        cyaModel.pensions.pensionsAnnualAllowances.aboveAnnualAllowance shouldBe None
+        cyaModel.pensions.pensionsAnnualAllowances shouldBe pensionsViewModel.copy(aboveAnnualAllowanceQuestion = Some(false))
+      }
+    }
+
+    "redirect to the CYA page updating question to 'no' and clearing other prior data" which {
+      lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.no)
+      lazy val result: WSResponse = {
+        dropPensionsDB()
+        authoriseAgentOrIndividual()
+        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(pensionsAnnualAllowances = aPensionAnnualAllowanceViewModel)))
+        urlPost(fullUrl(aboveReducedAnnualAllowanceUrl(taxYearEOY)), body = form, follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+      }
+
+      "has a SEE_OTHER status" in {
+        result.status shouldBe SEE_OTHER
+        result.header("location") shouldBe Some(annualAllowancesCYAUrl(taxYearEOY))
+      }
+
+      "persists submission details" in {
+        val expectedModel = PensionAnnualAllowancesViewModel(
+          reducedAnnualAllowanceQuestion = Some(true),
+          moneyPurchaseAnnualAllowance = Some(true),
+          taperedAnnualAllowance = Some(true),
+          aboveAnnualAllowanceQuestion = Some(false))
+        lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
+        cyaModel.pensions.pensionsAnnualAllowances shouldBe expectedModel
       }
     }
 

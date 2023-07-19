@@ -17,17 +17,17 @@
 package controllers.pensions.paymentsIntoOverseasPensions
 
 import builders.PaymentsIntoOverseasPensionsViewModelBuilder.aPaymentsIntoOverseasPensionsViewModel
-import builders.PensionsUserDataBuilder.{aPensionsUserData, anPensionsUserDataEmptyCya, pensionUserDataWithOverseasPensions}
+import builders.PensionsUserDataBuilder.{aPensionsUserData, pensionUserDataWithOverseasPensions}
 import builders.UserBuilder.aUserRequest
 import forms.YesNoForm
+import models.pension.charges.PaymentsIntoOverseasPensionsViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import utils.CommonUtils
-import utils.PageUrls.PaymentIntoOverseasPensions.{paymentsIntoOverseasPensionsCyaUrl, pensionReliefSchemeSummaryUrl, taxEmployerPaymentsUrl}
-import utils.PageUrls.overseasPensionsSummaryUrl
+import utils.PageUrls.PaymentIntoOverseasPensions._
 
 class TaxEmployerPaymentsControllerISpec extends CommonUtils with BeforeAndAfterEach {
 
@@ -260,7 +260,7 @@ class TaxEmployerPaymentsControllerISpec extends CommonUtils with BeforeAndAfter
 
     "redirect and update question to 'Yes' when user selects yes and there was no previous selection" which {
       lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.yes)
-      val pensionsViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(taxPaidOnEmployerPaymentsQuestion = None)
+      val pensionsViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(taxPaidOnEmployerPaymentsQuestion = None, reliefs = Seq.empty)
       val pensionUserData = pensionUserDataWithOverseasPensions(pensionsViewModel)
       lazy val result: WSResponse = submitPage(pensionUserData, form)
 
@@ -277,7 +277,7 @@ class TaxEmployerPaymentsControllerISpec extends CommonUtils with BeforeAndAfter
 
     "redirect and update question to 'Yes' when user selects yes and previously selected no" which {
       lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.yes)
-      val pensionsViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(taxPaidOnEmployerPaymentsQuestion = Some(false))
+      val pensionsViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(taxPaidOnEmployerPaymentsQuestion = Some(false), reliefs = Seq.empty)
       val pensionUserData = pensionUserDataWithOverseasPensions(pensionsViewModel)
 
       lazy val result: WSResponse = submitPage(pensionUserData, form)
@@ -295,7 +295,7 @@ class TaxEmployerPaymentsControllerISpec extends CommonUtils with BeforeAndAfter
 
     "redirect and update question to 'No' when user selects no and previously selected yes" which {
       lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.no)
-      val pensionsViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(taxPaidOnEmployerPaymentsQuestion = Some(true))
+      val pensionsViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(taxPaidOnEmployerPaymentsQuestion = Some(true), reliefs = Seq.empty)
       val pensionsUserData = pensionUserDataWithOverseasPensions(pensionsViewModel)
 
       lazy val result: WSResponse = submitPage(pensionsUserData, form)
@@ -306,8 +306,15 @@ class TaxEmployerPaymentsControllerISpec extends CommonUtils with BeforeAndAfter
       }
 
       "updates taxPaidOnEmployerPaymentsQuestion to Some(false)" in {
+        lazy val expectedViewModel = PaymentsIntoOverseasPensionsViewModel(
+          paymentsIntoOverseasPensionsQuestions = Some(true),
+          paymentsIntoOverseasPensionsAmount = Some(1999.99),
+          employerPaymentsQuestion = Some(true),
+          taxPaidOnEmployerPaymentsQuestion = Some(false),
+          reliefs = Seq.empty
+        )
         lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
-        cyaModel.pensions.paymentsIntoOverseasPensions.taxPaidOnEmployerPaymentsQuestion shouldBe Some(false)
+        cyaModel.pensions.paymentsIntoOverseasPensions shouldBe expectedViewModel
       }
     }
   }

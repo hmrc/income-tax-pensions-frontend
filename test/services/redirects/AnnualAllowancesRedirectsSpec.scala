@@ -105,14 +105,19 @@ class AnnualAllowancesRedirectsSpec extends UnitTest {
 
     "return Some(redirect) with redirect to the first page in journey page" when {
       "previous question is unanswered" in {
-        val data = cyaData.copy(pensionsAnnualAllowances = PensionAnnualAllowancesViewModel(
+        val data1 = cyaData.copy(pensionsAnnualAllowances = PensionAnnualAllowancesViewModel(
           reducedAnnualAllowanceQuestion = Some(true),
           moneyPurchaseAnnualAllowance = Some(true),
           taperedAnnualAllowance = Some(true)
         ))
-        val result = journeyCheck(PensionProviderPaidTaxPage, data, taxYear)
+        val data2 = cyaData.copy(pensionsAnnualAllowances = aPensionAnnualAllowanceViewModel.copy(
+          aboveAnnualAllowanceQuestion = None
+        ))
+        val result1 = journeyCheck(PensionProviderPaidTaxPage, data1, taxYear)
+        val result2 = journeyCheck(RemovePSTRPage, data2, taxYear)
 
-        result shouldBe journeyStartRedirect
+        result1 shouldBe journeyStartRedirect
+        result2 shouldBe journeyStartRedirect
       }
       "current page is invalid in journey" in {
         val data = cyaData.copy(pensionsAnnualAllowances = PensionAnnualAllowancesViewModel(

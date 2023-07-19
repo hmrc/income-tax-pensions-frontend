@@ -21,6 +21,7 @@ import controllers.pensions.annualAllowances.routes.{AnnualAllowanceCYAControlle
 import controllers.predicates.actions.ActionsProvider
 import forms.FormsProvider
 import models.mongo.{PensionsCYAModel, PensionsUserData}
+import models.pension.charges.PensionAnnualAllowancesViewModel
 import models.requests.UserSessionDataRequest
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -71,14 +72,20 @@ class ReducedAnnualAllowanceController @Inject()(implicit val cc: MessagesContro
                                    reducedAnnualAllowanceQ: Boolean, taxYear: Int)
                                   (implicit request: UserSessionDataRequest[T]): Future[Result] = {
 
-    val updatedCyaModel = pensionUserData.pensions.copy(
-      pensionsAnnualAllowances = pensionUserData.pensions.pensionsAnnualAllowances.copy(Some(reducedAnnualAllowanceQ))
-    )
+    val pensionsCYAModel: PensionsCYAModel = pensionUserData.pensions
+    val viewModel: PensionAnnualAllowancesViewModel = pensionsCYAModel.pensionsAnnualAllowances
+    val updatedCyaModel: PensionsCYAModel = pensionsCYAModel.copy(
+      pensionsAnnualAllowances = {
+        if (reducedAnnualAllowanceQ) viewModel.copy(reducedAnnualAllowanceQuestion = Some(true))
+        else PensionAnnualAllowancesViewModel(reducedAnnualAllowanceQuestion = Some(false))
+      })
     pensionSessionService.createOrUpdateSessionData(
       request.user, updatedCyaModel, taxYear, pensionUserData.isPriorSubmission)(errorHandler.internalServerError()) {
       Redirect(
-        if (reducedAnnualAllowanceQ) ReducedAnnualAllowanceTypeController.show(taxYear) else AnnualAllowanceCYAController.show(taxYear)
+        if (reducedAnnualAllowanceQ) ReducedAnnualAllowanceTypeController.show(taxYear)
+        else AnnualAllowanceCYAController.show(taxYear)
       )
     }
   }
+
 }

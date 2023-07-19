@@ -21,6 +21,7 @@ import controllers.pensions.annualAllowances.routes.AnnualAllowanceCYAController
 import controllers.predicates.actions.ActionsProvider
 import forms.FormsProvider.pensionProviderPaidTaxForm
 import models.mongo.{PensionsCYAModel, PensionsUserData}
+import models.pension.charges.PensionAnnualAllowancesViewModel
 import models.requests.UserSessionDataRequest
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -53,9 +54,10 @@ class PensionProviderPaidTaxController @Inject()(actionsProvider: ActionsProvide
           val taxPaid = data.pensions.pensionsAnnualAllowances.taxPaidByPensionProvider
 
           (providePaidAnnualAllowanceQuestion, taxPaid) match {
-            case (Some(bool), amount) => Future.successful(
-              Ok(view(pensionProviderPaidTaxForm(sessionData.user.isAgent).fill((bool, amount)), taxYear)))
-            case _ => Future.successful(Ok(view(pensionProviderPaidTaxForm(sessionData.user.isAgent), taxYear)))
+            case (Some(bool), amount) =>
+              Future.successful(Ok(view(pensionProviderPaidTaxForm(sessionData.user.isAgent).fill((bool, amount)), taxYear)))
+            case _ =>
+              Future.successful(Ok(view(pensionProviderPaidTaxForm(sessionData.user.isAgent), taxYear)))
           }
       }
   }
@@ -82,10 +84,13 @@ class PensionProviderPaidTaxController @Inject()(actionsProvider: ActionsProvide
                                    amount: Option[BigDecimal],
                                    taxYear: Int)(implicit request: UserSessionDataRequest[T]): Future[Result] = {
 
-    val updatedCyaModel: PensionsCYAModel = pensionUserData.pensions.copy(
-      pensionsAnnualAllowances = pensionUserData.pensions.pensionsAnnualAllowances.copy(
-        pensionProvidePaidAnnualAllowanceQuestion = Some(yesNo), taxPaidByPensionProvider = amount)
-    )
+    val viewModel: PensionAnnualAllowancesViewModel = pensionUserData.pensions.pensionsAnnualAllowances
+    val updatedCyaModel: PensionsCYAModel = pensionUserData.pensions.copy(pensionsAnnualAllowances = {
+      if (yesNo)
+        viewModel.copy(pensionProvidePaidAnnualAllowanceQuestion = Some(true), taxPaidByPensionProvider = amount)
+      else
+        viewModel.copy(pensionProvidePaidAnnualAllowanceQuestion = Some(false), taxPaidByPensionProvider = None, pensionSchemeTaxReferences = None)
+    })
     pensionSessionService.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear,
       pensionUserData.isPriorSubmission)(errorHandler.internalServerError()) {
       Redirect(
@@ -94,4 +99,5 @@ class PensionProviderPaidTaxController @Inject()(actionsProvider: ActionsProvide
       )
     }
   }
+
 }
