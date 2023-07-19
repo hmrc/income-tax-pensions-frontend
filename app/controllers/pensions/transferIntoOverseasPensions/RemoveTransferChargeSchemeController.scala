@@ -45,14 +45,14 @@ class RemoveTransferChargeSchemeController @Inject()(actionsProvider: ActionsPro
   extends FrontendController(mcc) with I18nSupport with SessionHelper {
 
   def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionUserData =>
-    val transferChargeScheme = sessionUserData.pensionsUserData.pensions.transfersIntoOverseasPensions.transferPensionScheme
-    validatedIndex(index, transferChargeScheme.size).fold(Future.successful(Redirect(TransferChargeSummaryController.show(taxYear)))) {
+    val checkRedirect = journeyCheck(RemoveSchemePage, _: PensionsCYAModel, taxYear)
+    redirectBasedOnCurrentAnswers(taxYear, Some(sessionUserData.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) {
+      data =>
+      val transferChargeScheme = data.pensions.transfersIntoOverseasPensions.transferPensionScheme
+      validatedIndex(index, transferChargeScheme.size).fold(Future.successful(Redirect(TransferChargeSummaryController.show(taxYear)))) {
       i =>
         transferChargeScheme(i).name.fold(Future.successful(Redirect(TransferChargeSummaryController.show(taxYear)))) {
           name =>
-            val checkRedirect = journeyCheck(RemoveSchemePage, _: PensionsCYAModel, taxYear)
-            redirectBasedOnCurrentAnswers(taxYear, Some(sessionUserData.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) {
-              _ =>
                 Future.successful(Ok(view(taxYear, name, index)))
             }
         }

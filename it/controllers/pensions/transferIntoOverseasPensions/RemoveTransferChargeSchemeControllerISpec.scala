@@ -23,7 +23,7 @@ import controllers.ControllerSpec
 import controllers.ControllerSpec.UserConfig
 import play.api.libs.ws.WSResponse
 
-class RemoveTransferChargeSchemeControllerISpec extends ControllerSpec("/overseas-pensions/payments-into-overseas-pensions/remove-overseas-pension-scheme") {
+class RemoveTransferChargeSchemeControllerISpec extends ControllerSpec("/overseas-pensions/overseas-transfer-charges/remove-overseas-pension-scheme") {
 
   "This page" when {
 

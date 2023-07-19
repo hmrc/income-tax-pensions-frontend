@@ -34,7 +34,6 @@ object TransfersIntoOverseasPensionsRedirects {
 
     val schemes: Seq[TransferPensionScheme] = data.pensions.transfersIntoOverseasPensions.transferPensionScheme
     val validatedIndex: Option[Int] = validateIndex(optIndex, schemes)
-    println("---------------------" + schemes + validatedIndex)
     (schemes, validatedIndex) match {
       case (schemes, None) if schemes.nonEmpty =>
 
@@ -67,8 +66,6 @@ object TransfersIntoOverseasPensionsRedirects {
 
   def journeyCheck(currentPage: TransfersIntoOverseasPensionsPages, cya: PensionsCYAModel, taxYear: Int, index: Option[Int] = None): Option[Result] = {
     val tIOPData = cya.transfersIntoOverseasPensions
-    println("!!!!!!!!!!!!!!!!!!!!!!!!" + isPageValidInJourney(currentPage.journeyNo, tIOPData))
-    println("?????????????????????????" + previousQuestionIsAnswered(currentPage.journeyNo, index, tIOPData))
     if (isPageValidInJourney(currentPage.journeyNo, tIOPData) && previousQuestionIsAnswered(currentPage.journeyNo, index, tIOPData)) {
       None
     } else {
@@ -82,12 +79,20 @@ object TransfersIntoOverseasPensionsRedirects {
   private val pageValidInJourneyMap: Map[Int, TransfersIntoOverseasPensionsViewModel => Boolean] = {
     val isTrue = { v: TransfersIntoOverseasPensionsViewModel => true }
     val firstQuestionTrue = { tIOP: TransfersIntoOverseasPensionsViewModel => tIOP.transferPensionSavings.getOrElse(false) }
+    val firstAndSecondTrue = {
+      tIOP: TransfersIntoOverseasPensionsViewModel => {tIOP.overseasTransferCharge.getOrElse(false)}
+    }
+    val firstSecondAndThirdTrue = {tIOP: TransfersIntoOverseasPensionsViewModel => {tIOP.pensionSchemeTransferCharge.getOrElse(false)}}
 
     Map(
       // 1 and 8 are always valid
       1 -> isTrue, 8 -> isTrue,
-      // 2-7 need Q1 true
-      2 -> firstQuestionTrue, 3 -> firstQuestionTrue, 4 -> firstQuestionTrue, 5 -> firstQuestionTrue, 6 -> firstQuestionTrue, 7 -> firstQuestionTrue
+      // 2 need Q1 true
+      2 -> firstQuestionTrue,
+      // 3 needs Q1 & Q2 true
+      3 -> firstAndSecondTrue,
+      // 4-7 need Q1, Q2 and Q3 true
+      4 -> firstSecondAndThirdTrue, 5 -> firstSecondAndThirdTrue, 6 -> firstSecondAndThirdTrue, 7 -> firstSecondAndThirdTrue
     )
   }
 
