@@ -17,10 +17,12 @@
 package controllers.pensions.paymentsIntoOverseasPensions
 
 import config.{AppConfig, ErrorHandler}
+import controllers.pensions.routes.OverseasPensionsSummaryController
 import controllers.predicates.actions.AuthorisedAction
 import forms.YesNoForm
 import models.User
 import models.mongo.{PensionsCYAModel, PensionsUserData}
+import models.pension.charges.PaymentsIntoOverseasPensionsViewModel
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -41,8 +43,7 @@ class TaxEmployerPaymentsController @Inject()(authAction: AuthorisedAction,
                                               pensionSessionService: PensionSessionService,
                                               errorHandler: ErrorHandler)
                                              (implicit val mcc: MessagesControllerComponents,
-                                              appConfig: AppConfig,
-                                              clock: Clock,
+                                              appConfig: AppConfig, clock: Clock,
                                               ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
 
   def yesNoForm(user: User): Form[Boolean] = YesNoForm.yesNoForm(
@@ -71,20 +72,22 @@ class TaxEmployerPaymentsController @Inject()(authAction: AuthorisedAction,
       yesNo => {
         pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
           case Right(Some(data)) =>
-            val updatedCyaModel: PensionsCYAModel = data.pensions.copy(
-              paymentsIntoOverseasPensions = data.pensions.paymentsIntoOverseasPensions.copy(
-                taxPaidOnEmployerPaymentsQuestion = Some(yesNo)))
 
-            val redirectLocation = if (yesNo) {
-              cyaPageCall(taxYear)
-            } else {
-              redirectForSchemeLoop(updatedCyaModel.paymentsIntoOverseasPensions.reliefs, taxYear)
-            }
+            val cyaModel: PensionsCYAModel = data.pensions
+            val updatedViewModel: PaymentsIntoOverseasPensionsViewModel =
+              if (yesNo) cyaModel.paymentsIntoOverseasPensions.copy(taxPaidOnEmployerPaymentsQuestion = Some(true), reliefs = Seq.empty)
+              else cyaModel.paymentsIntoOverseasPensions.copy(taxPaidOnEmployerPaymentsQuestion = Some(false))
+            val updatedCyaModel: PensionsCYAModel = cyaModel.copy(paymentsIntoOverseasPensions = updatedViewModel)
+
+            val redirectLocation =
+              if (yesNo) cyaPageCall(taxYear)
+              else redirectForSchemeLoop(updatedCyaModel.paymentsIntoOverseasPensions.reliefs, taxYear)
 
             pensionSessionService.createOrUpdateSessionData(request.user,
               updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
               isFinishedCheck(updatedCyaModel.paymentsIntoPension, taxYear, redirectLocation, cyaPageCall)
             }
+          case _ => Future.successful(Redirect(OverseasPensionsSummaryController.show(taxYear)))
         }
       }
     )

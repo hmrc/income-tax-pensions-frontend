@@ -42,19 +42,14 @@ case class UnauthorisedPaymentsViewModel(surchargeQuestion: Option[Boolean] = No
   }
 
   def isFinished: Boolean = {
-    val isDone_surchargeQuestions = surchargeQuestion.exists(
-      q => if (q)
-        surchargeAmount.isDefined && yesNoAndAmountPopulated(surchargeTaxAmountQuestion, surchargeTaxAmount)
-      else
-        true
-    )
-    val isDone_noSurchargeQuestions = noSurchargeQuestion.exists(
-      q => if (q)
-        noSurchargeAmount.isDefined && yesNoAndAmountPopulated(noSurchargeTaxAmountQuestion, noSurchargeTaxAmount)
-      else
-        true
-    )
-    val isDone_pstrQuestions = ukPensionSchemesQuestion.exists(q => if (q) pensionSchemeTaxReference.nonEmpty else true)
+    val isDone_surchargeQuestions = surchargeQuestion.exists(q =>
+      if (q) surchargeAmount.isDefined && yesNoAndAmountPopulated(surchargeTaxAmountQuestion, surchargeTaxAmount)
+      else true)
+    val isDone_noSurchargeQuestions = noSurchargeQuestion.exists(q =>
+      if (q) noSurchargeAmount.isDefined && yesNoAndAmountPopulated(noSurchargeTaxAmountQuestion, noSurchargeTaxAmount)
+      else true)
+    val isDone_pstrQuestions = !ukPensionSchemesQuestion.exists(q => if (q) pensionSchemeTaxReference.isEmpty else false)
+
     Seq(
       isDone_surchargeQuestions,
       isDone_noSurchargeQuestions,

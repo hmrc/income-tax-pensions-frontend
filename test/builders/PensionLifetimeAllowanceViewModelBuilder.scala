@@ -21,11 +21,11 @@ import models.pension.charges.{LifetimeAllowance, PensionLifetimeAllowancesViewM
 object PensionLifetimeAllowanceViewModelBuilder {
   val aPensionLifetimeAllowanceViewModel: PensionLifetimeAllowancesViewModel = PensionLifetimeAllowancesViewModel(
     aboveLifetimeAllowanceQuestion = Some(true),
+    pensionAsLumpSumQuestion = Some(true),
     pensionAsLumpSum = Some(LifetimeAllowance(Some(134.22), Some(23.55))),
     pensionPaidAnotherWayQuestion = Some(true),
     pensionPaidAnotherWay = Some(LifetimeAllowance(Some(1667.22), Some(11.33))),
-    pensionAsLumpSumQuestion = Some(true),
-    pensionSchemeTaxReferences = Some(Seq("1234567CRC","12345678RB","1234567DRD"))
+    pensionSchemeTaxReferences = Some(Seq("1234567CRC", "12345678RB", "1234567DRD"))
   )
 
   val minimalPensionLifetimeAllowanceViewModel: PensionLifetimeAllowancesViewModel = PensionLifetimeAllowancesViewModel(

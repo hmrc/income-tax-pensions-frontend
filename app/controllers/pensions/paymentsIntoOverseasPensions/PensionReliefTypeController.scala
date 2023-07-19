@@ -26,7 +26,7 @@ import models.requests.UserSessionDataRequest
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.PensionSessionService
-import services.redirects.PaymentsIntoOverseasPensionsPages.{PensionReliefTypePage, UntaxedEmployerPaymentsPage}
+import services.redirects.PaymentsIntoOverseasPensionsPages.PensionReliefTypePage
 import services.redirects.PaymentsIntoOverseasPensionsRedirects.{indexCheckThenJourneyCheck, redirectForSchemeLoop}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}

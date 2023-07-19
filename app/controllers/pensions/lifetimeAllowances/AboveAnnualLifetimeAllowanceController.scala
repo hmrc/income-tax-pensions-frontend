@@ -17,6 +17,7 @@
 package controllers.pensions.lifetimeAllowances
 
 import config.{AppConfig, ErrorHandler}
+import controllers.pensions.lifetimeAllowances.routes._
 import controllers.pensions.lifetimeAllowances.{routes => lifetimeRoutes}
 import controllers.predicates.actions.AuthorisedAction
 import forms.YesNoForm
@@ -67,26 +68,18 @@ class AboveAnnualLifetimeAllowanceController @Inject()(implicit val cc: Messages
           case Some(data) =>
             val pensionsCYAModel: PensionsCYAModel = data.pensions
             val viewModel: PensionLifetimeAllowancesViewModel = pensionsCYAModel.pensionLifetimeAllowances
-            val updatedCyaModel: PensionsCYAModel = {
-              pensionsCYAModel.copy(
-                pensionLifetimeAllowances = viewModel.copy(
-                  aboveLifetimeAllowanceQuestion = Some(yesNo),
-                  pensionAsLumpSumQuestion = if (yesNo) viewModel.pensionAsLumpSumQuestion else None,
-                  pensionAsLumpSum = if (yesNo) viewModel.pensionAsLumpSum else None,
-                  pensionPaidAnotherWayQuestion = if (yesNo) viewModel.pensionPaidAnotherWayQuestion else None,
-                  pensionPaidAnotherWay = if (yesNo) viewModel.pensionPaidAnotherWay else None)
-              )
-            }
+            val updatedCyaModel: PensionsCYAModel = pensionsCYAModel.copy(pensionLifetimeAllowances = {
+              if (yesNo) viewModel.copy(aboveLifetimeAllowanceQuestion = Some(true))
+              else PensionLifetimeAllowancesViewModel(aboveLifetimeAllowanceQuestion = Some(false))
+            })
             pensionSessionService.createOrUpdateSessionData(request.user,
               updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
-              if (yesNo) {
-                Redirect(lifetimeRoutes.PensionLumpSumController.show(taxYear))
-              } else {
-                Redirect(lifetimeRoutes.LifetimeAllowanceCYAController.show(taxYear))
-              }
+              Redirect(
+                if (yesNo) PensionLumpSumController.show(taxYear)
+                else LifetimeAllowanceCYAController.show(taxYear)
+              )
             }
-          case _ =>
-            Future.successful(Redirect(lifetimeRoutes.LifetimeAllowanceCYAController.show(taxYear)))
+          case _ => Future.successful(Redirect(LifetimeAllowanceCYAController.show(taxYear)))
         }
       }
     )

@@ -139,6 +139,7 @@ class ReliefAtSourcePensionsControllerISpec extends IntegrationTest with BeforeA
     }
 
   }
+
   ".submit" should {
 
     s"return $BAD_REQUEST error when no value is submitted" which {
@@ -249,9 +250,7 @@ class ReliefAtSourcePensionsControllerISpec extends IntegrationTest with BeforeA
 
       lazy val result: WSResponse = {
         dropPensionsDB()
-        val paymentsIntoPensionsViewModel = aPaymentsIntoPensionViewModel.copy(rasPensionPaymentQuestion = Some(true),
-          totalRASPaymentsAndTaxRelief = Some(123.12))
-        insertCyaData(pensionsUserDataWithPaymentsIntoPensions(paymentsIntoPensionsViewModel))
+        insertCyaData(pensionsUserDataWithPaymentsIntoPensions(aPaymentsIntoPensionViewModel))
         authoriseAgentOrIndividual()
         urlPost(fullUrl(reliefAtSourcePensionsUrl(taxYearEOY)), body = form, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))

@@ -16,7 +16,7 @@
 
 package controllers.pensions.incomeFromPensions
 
-import builders.IncomeFromPensionsViewModelBuilder.{anIncomeFromPensionEmptyViewModel, anIncomeFromPensionsViewModel}
+import builders.IncomeFromPensionsViewModelBuilder.{aUKIncomeFromPensionsViewModel, anIncomeFromPensionEmptyViewModel, anIncomeFromPensionsViewModel}
 import builders.PensionsUserDataBuilder.{aPensionsUserData, pensionsUserDataWithIncomeFromPensions}
 import builders.UkPensionIncomeViewModelBuilder.anUkPensionIncomeViewModelOne
 import builders.UserBuilder.aUserRequest
@@ -28,7 +28,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.IncomeFromPensionsPages.{pensionAmountUrl, pensionStartDateUrl, ukPensionIncomeCyaUrl, ukPensionSchemeSummaryListUrl}
+import utils.PageUrls.IncomeFromPensionsPages.{pensionSchemeDetailsUrl, pensionAmountUrl, pensionStartDateUrl, ukPensionIncomeCyaUrl, ukPensionSchemeSummaryListUrl}
 import utils.PageUrls.fullUrl
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
@@ -486,7 +486,6 @@ class PensionAmountControllerISpec extends IntegrationTest with ViewHelpers with
       }
     }
 
-
     "redirect to the correct page when a valid amount is submitted when there is No existing data" which {
 
       lazy val form: Map[String, String] = pensionAmountForm(newAmount.toString, newAmount2.toString)
@@ -514,14 +513,12 @@ class PensionAmountControllerISpec extends IntegrationTest with ViewHelpers with
       }
     }
 
-    "redirect to pension scheme details page when there is No existing data and index is out of bound" which {
+    "redirect to pension scheme summary page when there are existing schemes and index is out of bound" which {
       lazy val form: Map[String, String] = pensionAmountForm(newAmount.toString, newAmount2.toString)
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual()
-        insertCyaData(pensionsUserDataWithIncomeFromPensions(anIncomeFromPensionEmptyViewModel.copy
-        (uKPensionIncomesQuestion = Some(true), uKPensionIncomes = Seq(UkPensionIncomeViewModel(amount =
-          None, taxPaid = None)))))
+        insertCyaData(pensionsUserDataWithIncomeFromPensions(aUKIncomeFromPensionsViewModel))
 
         urlPost(fullUrl(pensionAmountUrl(taxYearEOY, Some(2))), body = form,
           follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
@@ -529,7 +526,25 @@ class PensionAmountControllerISpec extends IntegrationTest with ViewHelpers with
 
       "has an SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location").contains(ukPensionSchemeSummaryListUrl(taxYearEOY)) shouldBe true
+        result.header("location") shouldBe Some(ukPensionSchemeSummaryListUrl(taxYearEOY))
+      }
+    }
+
+    "redirect to pension scheme details page when there is no existing data and index is out of bound" which {
+      lazy val form: Map[String, String] = pensionAmountForm(newAmount.toString, newAmount2.toString)
+      lazy val result: WSResponse = {
+        dropPensionsDB()
+        authoriseAgentOrIndividual()
+        insertCyaData(pensionsUserDataWithIncomeFromPensions(aUKIncomeFromPensionsViewModel.copy(
+          uKPensionIncomes = Seq.empty)))
+
+        urlPost(fullUrl(pensionAmountUrl(taxYearEOY, Some(2))), body = form,
+          follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+      }
+
+      "has an SEE_OTHER status" in {
+        result.status shouldBe SEE_OTHER
+        result.header("location") shouldBe Some(pensionSchemeDetailsUrl(taxYearEOY, None))
       }
     }
 
