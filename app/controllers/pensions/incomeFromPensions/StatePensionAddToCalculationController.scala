@@ -82,9 +82,10 @@ class StatePensionAddToCalculationController @Inject()(actionsProvider: ActionsP
                                    addToCalculation: Boolean,
                                    taxYear: Int)(implicit request: UserSessionDataRequest[T]): Future[Result] = {
     val viewModel: IncomeFromPensionsViewModel = pensionsUserData.pensions.incomeFromPensions
-    val updatedViewModels: Seq[StateBenefitViewModel] =
-      Seq(viewModel.statePension.get, viewModel.statePensionLumpSum.get).map(vm =>
-        if (vm.amountPaidQuestion.getOrElse(false)) vm.copy(addToCalculation = Some(addToCalculation)) else vm)
+    val updatedViewModels: Seq[StateBenefitViewModel] = Seq(
+      viewModel.statePension.getOrElse(StateBenefitViewModel()),
+      viewModel.statePensionLumpSum.getOrElse(StateBenefitViewModel())
+    ).map(vm => if (vm.amountPaidQuestion.getOrElse(false)) vm.copy(addToCalculation = Some(addToCalculation)) else vm)
     val updatedUserData = pensionsUserData.copy(pensions = pensionsUserData.pensions.copy(incomeFromPensions =
       viewModel.copy(statePension = Some(updatedViewModels(0)), statePensionLumpSum = Some(updatedViewModels(1)))))
 
