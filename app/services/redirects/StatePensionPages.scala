@@ -16,37 +16,37 @@
 
 package services.redirects
 
-sealed trait IncomeFromStatePensionsPages {
+sealed trait StatePensionPages {
   val journeyNo: Int
 }
 
-object IncomeFromStatePensionsPages {
+object StatePensionPages {
 
-  case object DoYouGetRegularStatePaymentsPage extends IncomeFromStatePensionsPages {
+  case object DoYouGetRegularStatePaymentsPage extends StatePensionPages {
     override val journeyNo: Int = 1
   }
 
-  case object WhenDidYouStartGettingStatePaymentsPage extends IncomeFromStatePensionsPages {
+  case object WhenDidYouStartGettingStatePaymentsPage extends StatePensionPages {
     override val journeyNo: Int = 2
   }
 
-  case object StatePensionLumpSumPage extends IncomeFromStatePensionsPages {
+  case object StatePensionLumpSumPage extends StatePensionPages {
     override val journeyNo: Int = 3
   }
 
-  case object TaxOnStatePensionLumpSumPage extends IncomeFromStatePensionsPages {
+  case object TaxOnStatePensionLumpSumPage extends StatePensionPages {
     override val journeyNo: Int = 4
   }
 
-  case object WhenDidYouGetYourStatePensionLumpSumPage extends IncomeFromStatePensionsPages {
+  case object WhenDidYouGetYourStatePensionLumpSumPage extends StatePensionPages {
     override val journeyNo: Int = 5
   }
 
-  case object AddStatePensionToIncomeTaxCalcPage$State extends IncomeFromStatePensionsPages {
+  case object AddStatePensionToIncomeTaxCalcPage extends StatePensionPages {
     override val journeyNo: Int = 6
   }
 
-  case object StateStatePensionsCYAPage$ extends IncomeFromStatePensionsPages {
+  case object StatePensionsCYAPage extends StatePensionPages {
     override val journeyNo: Int = 7
   }
 }

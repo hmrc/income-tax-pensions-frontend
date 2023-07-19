@@ -20,6 +20,7 @@ import builders.PensionLifetimeAllowanceViewModelBuilder.aPensionLifetimeAllowan
 import builders.PensionsUserDataBuilder.{aPensionsUserData, anPensionsUserDataEmptyCya, pensionsUserDataWithLifetimeAllowance}
 import builders.UserBuilder.aUserRequest
 import forms.YesNoForm
+import models.pension.charges.PensionLifetimeAllowancesViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterEach
@@ -198,7 +199,6 @@ class PensionLumpSumControllerISpec extends IntegrationTest with BeforeAndAfterE
       }
 
 
-      //TODO - redirect to CYA page once implemented
       "has an SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER
         result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
@@ -245,10 +245,10 @@ class PensionLumpSumControllerISpec extends IntegrationTest with BeforeAndAfterE
 
     "redirect and update question to 'Yes' when user selects yes when there is no cya data" which {
       lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.yes)
-
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual()
+        insertCyaData(pensionsUserDataWithLifetimeAllowance(PensionLifetimeAllowancesViewModel(aboveLifetimeAllowanceQuestion = Some(true))))
         urlPost(fullUrl(pensionLumpSumUrl(taxYearEOY)), body = form, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -259,21 +259,19 @@ class PensionLumpSumControllerISpec extends IntegrationTest with BeforeAndAfterE
       }
 
       "updates pensionAsLumpSumQuestion to Some(true)" in {
+        val expectedViewModel = PensionLifetimeAllowancesViewModel(
+          aboveLifetimeAllowanceQuestion = Some(true), pensionAsLumpSumQuestion = Some(true))
         lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
-        cyaModel.pensions.pensionLifetimeAllowances.pensionAsLumpSumQuestion shouldBe Some(true)
+        cyaModel.pensions.pensionLifetimeAllowances shouldBe expectedViewModel
       }
     }
 
     "redirect and update question to 'Yes' when user selects yes and cya data exists" which {
       lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.yes)
-
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual()
-        val pensionsViewModel = aPensionLifetimeAllowanceViewModel.copy(
-          pensionAsLumpSumQuestion = Some(false)
-        )
-        insertCyaData(pensionsUserDataWithLifetimeAllowance(pensionsViewModel))
+        insertCyaData(pensionsUserDataWithLifetimeAllowance(aPensionLifetimeAllowanceViewModel))
         urlPost(fullUrl(pensionLumpSumUrl(taxYearEOY)), body = form, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -285,30 +283,53 @@ class PensionLumpSumControllerISpec extends IntegrationTest with BeforeAndAfterE
 
       "updates pensionAsLumpSumQuestion to Some(true)" in {
         lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
-        cyaModel.pensions.pensionLifetimeAllowances.pensionAsLumpSumQuestion shouldBe Some(true)
+        cyaModel.pensions.pensionLifetimeAllowances shouldBe aPensionLifetimeAllowanceViewModel
       }
     }
 
-    "redirect and update question to 'No' when user selects no and cya data exists" which {
+    "redirect and update question to 'No' when user selects no and no further cya data exists" which {
       lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.no)
-
+      val pensionsViewModel = PensionLifetimeAllowancesViewModel(aboveLifetimeAllowanceQuestion = Some(true))
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual()
-        val pensionsViewModel = aPensionLifetimeAllowanceViewModel
         insertCyaData(pensionsUserDataWithLifetimeAllowance(pensionsViewModel))
         urlPost(fullUrl(pensionLumpSumUrl(taxYearEOY)), body = form, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
-      "has a SEE_OTHER(303) status and redirect to the Lifetime Other Status page" in {
+
+      "has a SEE_OTHER(303) status" in {
+        result.status shouldBe SEE_OTHER
+        result.header("location") shouldBe Some(pensionLifeTimeAllowanceAnotherWayUrl(taxYearEOY))
+      }
+
+      "updates pensionAsLumpSumQuestion to Some(false)" in {
+        val expectedViewModel = pensionsViewModel.copy(pensionAsLumpSumQuestion = Some(false))
+        lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
+        cyaModel.pensions.pensionLifetimeAllowances shouldBe expectedViewModel
+      }
+    }
+
+    "redirect and update question to 'No' when user selects no and cya data exists and lump sum data is cleared" which {
+      lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.no)
+      lazy val result: WSResponse = {
+        dropPensionsDB()
+        authoriseAgentOrIndividual()
+        insertCyaData(pensionsUserDataWithLifetimeAllowance(aPensionLifetimeAllowanceViewModel))
+        urlPost(fullUrl(pensionLumpSumUrl(taxYearEOY)), body = form, follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+      }
+
+      "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
         result.header("location") shouldBe Some(pensionLifeTimeAllowanceAnotherWayUrl(taxYearEOY))
       }
 
       "updates pensionAsLumpSumQuestion to Some(false) and wipes amount value" in {
+        val expectedViewModel = aPensionLifetimeAllowanceViewModel.copy(
+          pensionAsLumpSumQuestion = Some(false), pensionAsLumpSum = None)
         lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
-        cyaModel.pensions.pensionLifetimeAllowances.pensionAsLumpSumQuestion shouldBe Some(false)
-        cyaModel.pensions.pensionLifetimeAllowances.pensionAsLumpSum shouldBe None
+        cyaModel.pensions.pensionLifetimeAllowances shouldBe expectedViewModel
       }
     }
   }

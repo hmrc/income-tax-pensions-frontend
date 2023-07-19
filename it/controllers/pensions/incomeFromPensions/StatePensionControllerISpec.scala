@@ -17,9 +17,12 @@
 package controllers.pensions.incomeFromPensions
 
 import builders.AllPensionsDataBuilder.anAllPensionsData
+import builders.IncomeFromPensionsViewModelBuilder.{anIncomeFromPensionEmptyViewModel, anIncomeFromPensionsViewModel}
 import builders.IncomeTaxUserDataBuilder.anIncomeTaxUserData
 import builders.PensionsCYAModelBuilder._
 import builders.PensionsUserDataBuilder
+import builders.PensionsUserDataBuilder.pensionsUserDataWithIncomeFromPensions
+import builders.StateBenefitViewModelBuilder.{aMinimalStatePensionViewModel, aStatePensionViewModel}
 import builders.UserBuilder._
 import forms.RadioButtonAmountForm
 import models.mongo.{PensionsCYAModel, PensionsUserData}
@@ -27,7 +30,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.IncomeFromPensionsPages.{statePension, statePensionCyaUrl, statePensionStartDateUrl}
+import utils.PageUrls.IncomeFromPensionsPages.{statePension, statePensionLumpSumUrl, statePensionStartDateUrl}
 import utils.PageUrls._
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
@@ -70,8 +73,7 @@ class StatePensionControllerISpec extends IntegrationTest with ViewHelpers with 
   }
 
   ".submit" should {
-    "redirect to StatePensionView when user selects 'Yes' with amount" in {
-      //todo redirect to 'When did you start getting State Pension payments" page once created
+    "redirect to StatePensionStartDate page when user selects 'Yes' with amount" in {
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
@@ -87,13 +89,12 @@ class StatePensionControllerISpec extends IntegrationTest with ViewHelpers with 
       result.header("location").contains(statePensionStartDateUrl(taxYearEOY)) shouldBe true
     }
 
-    "redirect to StatePensionView when user selects 'No'" in {
-      //todo redirect to Check your State Pension page
+    "redirect to StatePensionLumpSum page when user selects 'No' with no prior data" in {
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
         val form: Map[String, String] = Map(RadioButtonAmountForm.yesNo -> "false")
-        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy()))
+        insertCyaData(pensionsUserDataWithIncomeFromPensions(anIncomeFromPensionEmptyViewModel))
         urlPost(
           fullUrl(statePension(taxYearEOY)),
           body = form,
@@ -101,7 +102,28 @@ class StatePensionControllerISpec extends IntegrationTest with ViewHelpers with 
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
       result.status shouldBe SEE_OTHER
-      result.header("location") shouldBe Some(statePensionCyaUrl(taxYearEOY))
+      result.header("location") shouldBe Some(statePensionLumpSumUrl(taxYearEOY))
+    }
+
+    "redirect to StatePensionLumpSum page and clear other existing StatePension data when user selects 'No' with prior data" in {
+      lazy implicit val result: WSResponse = {
+        dropPensionsDB()
+        authoriseAgentOrIndividual(aUser.isAgent)
+        val form: Map[String, String] = Map(RadioButtonAmountForm.yesNo -> "false")
+        val pensionsViewModel = anIncomeFromPensionsViewModel.copy(
+          statePension = Some(aStatePensionViewModel))
+        insertCyaData(pensionsUserDataWithIncomeFromPensions(pensionsViewModel))
+        urlPost(
+          fullUrl(statePension(taxYearEOY)),
+          body = form,
+          follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+      }
+      result.status shouldBe SEE_OTHER
+      result.header("location") shouldBe Some(statePensionLumpSumUrl(taxYearEOY))
+
+      lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
+      cyaModel.pensions.incomeFromPensions.statePension shouldBe Some(aMinimalStatePensionViewModel)
     }
 
     "return a Bad Request when form is submitted with errors" in {

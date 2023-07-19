@@ -74,8 +74,8 @@ class RetirementAnnuityController @Inject()(authAction: AuthorisedAction,
               pensionsCYAModel.copy(paymentsIntoPension = viewModel.copy(retirementAnnuityContractPaymentsQuestion = Some(yesNo),
                 totalRetirementAnnuityContractPayments = if (yesNo) viewModel.totalRetirementAnnuityContractPayments else None))
             }
-            val redirectLocation = if (yesNo) RetirementAnnuityAmountController.show(taxYear)
-            else controllers.pensions.paymentsIntoPensions.routes.WorkplacePensionController.show(taxYear)
+            val redirectLocation =
+              if (yesNo) RetirementAnnuityAmountController.show(taxYear) else WorkplacePensionController.show(taxYear)
 
             pensionSessionService.createOrUpdateSessionData(request.user,
               updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {

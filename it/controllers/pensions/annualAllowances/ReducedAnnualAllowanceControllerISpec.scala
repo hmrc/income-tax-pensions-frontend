@@ -16,7 +16,7 @@
 
 package controllers.pensions.annualAllowances
 
-import builders.PensionAnnualAllowanceViewModelBuilder.aPensionAnnualAllowanceViewModel
+import builders.PensionAnnualAllowanceViewModelBuilder.{aPensionAnnualAllowanceEmptyViewModel, aPensionAnnualAllowanceViewModel}
 import builders.PensionsUserDataBuilder.{aPensionsUserData, anPensionsUserDataEmptyCya, pensionsUserDataWithAnnualAllowances}
 import builders.UserBuilder.aUserRequest
 import forms.YesNoForm
@@ -44,7 +44,9 @@ class ReducedAnnualAllowanceControllerISpec extends IntegrationTest with BeforeA
     val detailsSelector = "#main-content > div > div > form > details > summary > span"
 
     def paragraphSelector(index: Int): String = s"#main-content > div > div > p:nth-of-type($index)"
+
     def bulletSelector(index: Int): String = s"#main-content > div > div > ul > li:nth-child($index)"
+
     def detailsBulletSelector(index: Int): String = s"#main-content > div > div > form > details > div > ul > li:nth-child($index)"
   }
 
@@ -58,7 +60,6 @@ class ReducedAnnualAllowanceControllerISpec extends IntegrationTest with BeforeA
     val expectedExample1: String
     val expectedExample2: String
   }
-  
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
     val expectedTitle = "Do you have a reduced annual allowance?"
@@ -89,7 +90,7 @@ class ReducedAnnualAllowanceControllerISpec extends IntegrationTest with BeforeA
     val expectedExample1 = "rydych yn cyrchu eich pensiwn yn hyblyg"
     val expectedExample2 = "mae eich ‘incwm trothwy’ yn ogystal â’ch ‘incwm wedi’i addasu’ yn dros y terfyn (yn agor tab newydd)"
   }
-  
+
   object ExpectedAgentCY extends SpecificExpectedResults {
     val expectedTitle = "A oes gan eich cleient lwfans blynyddol wedi’i ostwng?"
     val expectedErrorTitle = s"Gwall: $expectedTitle"
@@ -113,7 +114,7 @@ class ReducedAnnualAllowanceControllerISpec extends IntegrationTest with BeforeA
     val yesText: String
     val noText: String
   }
-  
+
   object CommonExpectedEN extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Annual allowances for 6 April ${taxYear - 1} to 5 April $taxYear"
     val expectedFindOut = "Find out what the annual allowance limit is for this tax year (opens in new tab)."
@@ -352,15 +353,36 @@ class ReducedAnnualAllowanceControllerISpec extends IntegrationTest with BeforeA
       }
     }
 
-    "redirect and update question to 'Yes' when user selects yes and cya data exists" which {
+    "proceed and update question to 'Yes' when user selects yes" which {
       lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.yes)
 
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual()
-        val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(
-          reducedAnnualAllowanceQuestion = None, moneyPurchaseAnnualAllowance = None, taperedAnnualAllowance = None)
-        insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel))
+        insertCyaData(pensionsUserDataWithAnnualAllowances(aPensionAnnualAllowanceEmptyViewModel))
+        urlPost(fullUrl(reducedAnnualAllowanceUrl(taxYearEOY)), body = form, follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+      }
+
+      "has a SEE_OTHER(303) status" in {
+        result.status shouldBe SEE_OTHER
+        result.header("location") shouldBe Some(reducedAnnualAllowanceTypeUrl(taxYearEOY))
+      }
+
+      "updates reducedAnnualAllowanceQuestion to Some(true)" in {
+        val expectedViewModel = aPensionAnnualAllowanceEmptyViewModel.copy(reducedAnnualAllowanceQuestion = Some(true))
+        lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
+        cyaModel.pensions.pensionsAnnualAllowances shouldBe expectedViewModel
+      }
+    }
+
+    "proceed and persist answer as 'Yes' when answer was already yes and cya data exists" which {
+      lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.yes)
+
+      lazy val result: WSResponse = {
+        dropPensionsDB()
+        authoriseAgentOrIndividual()
+        insertCyaData(pensionsUserDataWithAnnualAllowances(aPensionAnnualAllowanceViewModel))
         urlPost(fullUrl(reducedAnnualAllowanceUrl(taxYearEOY)), body = form, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -372,30 +394,53 @@ class ReducedAnnualAllowanceControllerISpec extends IntegrationTest with BeforeA
 
       "updates reducedAnnualAllowanceQuestion to Some(true)" in {
         lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
-        cyaModel.pensions.pensionsAnnualAllowances.reducedAnnualAllowanceQuestion shouldBe Some(true)
+        cyaModel.pensions.pensionsAnnualAllowances shouldBe aPensionAnnualAllowanceViewModel
       }
     }
 
-    "redirect and update question to 'No' when user selects no and cya data exists" which {
+    "redirect to CYA page and update question to 'No' when user selects no" which {
       lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.no)
 
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual()
-        val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(
-          reducedAnnualAllowanceQuestion = Some(true), moneyPurchaseAnnualAllowance = Some(true), taperedAnnualAllowance = Some(true))
-        insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel))
+        insertCyaData(pensionsUserDataWithAnnualAllowances(aPensionAnnualAllowanceEmptyViewModel))
         urlPost(fullUrl(reducedAnnualAllowanceUrl(taxYearEOY)), body = form, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
+
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
         result.header("location") shouldBe Some(annualAllowancesCYAUrl(taxYearEOY))
       }
 
       "updates reducedAnnualAllowanceQuestion to Some(false)" in {
+        val expectedViewModel = aPensionAnnualAllowanceEmptyViewModel.copy(reducedAnnualAllowanceQuestion = Some(false))
         lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
-        cyaModel.pensions.pensionsAnnualAllowances.reducedAnnualAllowanceQuestion shouldBe Some(false)
+        cyaModel.pensions.pensionsAnnualAllowances shouldBe expectedViewModel
+      }
+    }
+
+    "redirect to CYA page and update question to 'No' and clear other data when user selects no and prior cya data exists" which {
+      lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.no)
+
+      lazy val result: WSResponse = {
+        dropPensionsDB()
+        authoriseAgentOrIndividual()
+        insertCyaData(pensionsUserDataWithAnnualAllowances(aPensionAnnualAllowanceViewModel))
+        urlPost(fullUrl(reducedAnnualAllowanceUrl(taxYearEOY)), body = form, follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+      }
+
+      "has a SEE_OTHER(303) status" in {
+        result.status shouldBe SEE_OTHER
+        result.header("location") shouldBe Some(annualAllowancesCYAUrl(taxYearEOY))
+      }
+
+      "updates reducedAnnualAllowanceQuestion to Some(false)" in {
+        val expectedViewModel = aPensionAnnualAllowanceEmptyViewModel.copy(reducedAnnualAllowanceQuestion = Some(false))
+        lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
+        cyaModel.pensions.pensionsAnnualAllowances shouldBe expectedViewModel
       }
     }
   }

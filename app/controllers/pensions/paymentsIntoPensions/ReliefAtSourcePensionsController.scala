@@ -68,18 +68,17 @@ class ReliefAtSourcePensionsController @Inject()(authAction: AuthorisedAction,
 
             val pensionsCya = optData.map(_.pensions).getOrElse(PensionsCYAModel.emptyModels)
             val viewModel = pensionsCya.paymentsIntoPension
+            val updatedCyaModel = pensionsCya.copy(paymentsIntoPension =
+              if (yesNo)
+                viewModel.copy(rasPensionPaymentQuestion = Some(true))
+              else
+                viewModel.copy(
+                  rasPensionPaymentQuestion = Some(false),
+                  totalRASPaymentsAndTaxRelief = None,
+                  oneOffRasPaymentPlusTaxReliefQuestion = None,
+                  totalOneOffRasPaymentPlusTaxRelief = None,
+                  totalPaymentsIntoRASQuestion = None))
 
-            val updatedCyaModel = {
-              pensionsCya.copy(
-                paymentsIntoPension = viewModel.copy(
-                  rasPensionPaymentQuestion = Some(yesNo),
-                  totalRASPaymentsAndTaxRelief = if (yesNo) viewModel.totalRASPaymentsAndTaxRelief else None,
-                  oneOffRasPaymentPlusTaxReliefQuestion = if (yesNo) viewModel.oneOffRasPaymentPlusTaxReliefQuestion else None,
-                  totalOneOffRasPaymentPlusTaxRelief = if (yesNo) viewModel.totalOneOffRasPaymentPlusTaxRelief else None,
-                  totalPaymentsIntoRASQuestion = if (yesNo) viewModel.totalPaymentsIntoRASQuestion else None
-                )
-              )
-            }
             val redirectLocation = if (yesNo) {
               ReliefAtSourcePaymentsAndTaxReliefAmountController.show(taxYear)
             } else {

@@ -26,8 +26,7 @@ import utils.EncryptableSyntax.EncryptableOps
 import utils.EncryptorInstances.{bigDecimalEncryptor, booleanEncryptor, stringEncryptor}
 import utils.{EncryptedValue, SecureGCMCipher}
 
-case class UkPensionIncomeViewModel(
-                                     employmentId: Option[String] = None,
+case class UkPensionIncomeViewModel(employmentId: Option[String] = None,
                                      pensionId: Option[String] = None,
                                      startDate: Option[String] = None,
                                      endDate: Option[String] = None,
@@ -36,6 +35,10 @@ case class UkPensionIncomeViewModel(
                                      amount: Option[BigDecimal] = None,
                                      taxPaid: Option[BigDecimal] = None,
                                      isCustomerEmploymentData: Option[Boolean] = None) {
+
+  def isFinished: Boolean =
+    pensionSchemeName.isDefined && pensionSchemeRef.isDefined && pensionId.isDefined &&
+      amount.isDefined && taxPaid.isDefined && startDate.isDefined
 
   def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedUkPensionIncomeViewModel =
     EncryptedUkPensionIncomeViewModel(

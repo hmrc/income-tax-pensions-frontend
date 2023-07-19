@@ -25,12 +25,12 @@ import models.mongo.PensionsUserData
 import models.pension.statebenefits.{IncomeFromPensionsViewModel, StateBenefitViewModel}
 import models.requests.UserSessionDataRequest
 import play.api.data.Form
-import services.redirects.IncomeFromStatePensionsPages.AddStatePensionToIncomeTaxCalcPage$State
-import services.redirects.IncomeFromStatePensionsRedirects.{cyaPageCall, journeyCheck}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.PensionSessionService
 import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
+import services.redirects.StatePensionPages.AddStatePensionToIncomeTaxCalcPage
+import services.redirects.StatePensionRedirects.{cyaPageCall, journeyCheck}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.SessionHelper
 import views.html.pensions.incomeFromPensions.StatePensionAddToCalculationView
@@ -39,31 +39,29 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class StatePensionAddToCalculationController @Inject () (actionsProvider: ActionsProvider,
-                                                         pensionSessionService: PensionSessionService,
-                                                         view: StatePensionAddToCalculationView,
-                                                         formsProvider: FormsProvider,
-                                                         errorHandler: ErrorHandler)
-                                                        (implicit val mcc: MessagesControllerComponents,
-                                                         appConfig: AppConfig,
-                                                         ec: ExecutionContext
-                                                        )
+class StatePensionAddToCalculationController @Inject()(actionsProvider: ActionsProvider,
+                                                       pensionSessionService: PensionSessionService,
+                                                       view: StatePensionAddToCalculationView,
+                                                       formsProvider: FormsProvider,
+                                                       errorHandler: ErrorHandler)
+                                                      (implicit val mcc: MessagesControllerComponents,
+                                                       appConfig: AppConfig, ec: ExecutionContext)
   extends FrontendController(mcc) with SessionHelper with I18nSupport {
 
   def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit sessionData =>
-      val checkRedirect = journeyCheck(AddStatePensionToIncomeTaxCalcPage$State, _, taxYear)
+
+      val checkRedirect = journeyCheck(AddStatePensionToIncomeTaxCalcPage, _, taxYear)
       redirectBasedOnCurrentAnswers(taxYear, Some(sessionData.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) { data =>
         data.pensions.incomeFromPensions.statePensionLumpSum.fold {
           Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
         } { sp: StateBenefitViewModel =>
           sp.addToCalculation.fold {
             Future.successful(Ok(view(formsProvider.statePensionAddToCalculationForm(sessionData.user.isAgent), taxYear)))
-          } {
-            addToCalculation: Boolean =>
-              val filledForm: Form[Boolean] = formsProvider.statePensionAddToCalculationForm(sessionData.user.isAgent)
-                .fill(addToCalculation)
-              Future.successful(Ok(view(filledForm, taxYear)))
+          } { addToCalculation: Boolean =>
+            val filledForm: Form[Boolean] = formsProvider.statePensionAddToCalculationForm(sessionData.user.isAgent)
+              .fill(addToCalculation)
+            Future.successful(Ok(view(filledForm, taxYear)))
           }
         }
       }
@@ -71,7 +69,7 @@ class StatePensionAddToCalculationController @Inject () (actionsProvider: Action
 
   def submit(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit sessionData =>
-      val checkRedirect = journeyCheck(AddStatePensionToIncomeTaxCalcPage$State, _, taxYear)
+      val checkRedirect = journeyCheck(AddStatePensionToIncomeTaxCalcPage, _, taxYear)
       redirectBasedOnCurrentAnswers(taxYear, Some(sessionData.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) { data =>
         formsProvider.statePensionAddToCalculationForm(sessionData.user.isAgent).bindFromRequest().fold(
           formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
@@ -84,15 +82,14 @@ class StatePensionAddToCalculationController @Inject () (actionsProvider: Action
                                    addToCalculation: Boolean,
                                    taxYear: Int)(implicit request: UserSessionDataRequest[T]): Future[Result] = {
     val viewModel: IncomeFromPensionsViewModel = pensionsUserData.pensions.incomeFromPensions
-    val updateStatePensionLumpSum: StateBenefitViewModel = viewModel.statePensionLumpSum match {
-      case Some(value) => value.copy(addToCalculation = Some(addToCalculation))
-      case None => StateBenefitViewModel(addToCalculation = Some(addToCalculation))
-    }
-    val updatedModel = pensionsUserData.copy(pensions =
-      pensionsUserData.pensions.copy(incomeFromPensions =
-        pensionsUserData.pensions.incomeFromPensions.copy(statePensionLumpSum =
-          Some(updateStatePensionLumpSum))))
-    pensionSessionService.createOrUpdateSessionData(updatedModel).map {
+    val updatedViewModels: Seq[StateBenefitViewModel] = Seq(
+      viewModel.statePension.getOrElse(StateBenefitViewModel()),
+      viewModel.statePensionLumpSum.getOrElse(StateBenefitViewModel())
+    ).map(vm => if (vm.amountPaidQuestion.getOrElse(false)) vm.copy(addToCalculation = Some(addToCalculation)) else vm)
+    val updatedUserData = pensionsUserData.copy(pensions = pensionsUserData.pensions.copy(incomeFromPensions =
+      viewModel.copy(statePension = Some(updatedViewModels(0)), statePensionLumpSum = Some(updatedViewModels(1)))))
+
+    pensionSessionService.createOrUpdateSessionData(updatedUserData).map {
       case Right(_) => Redirect(StatePensionCYAController.show(taxYear))
       case _ => errorHandler.internalServerError()
     }

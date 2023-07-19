@@ -19,7 +19,6 @@ package controllers.pensions.paymentsIntoOverseasPensions
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.paymentsIntoOverseasPensions.routes.PensionReliefTypeController
 import controllers.predicates.actions.ActionsProvider
-import controllers.validatedSchemes
 import forms.FormsProvider
 import models.pension.charges.Relief
 import models.pension.pages.UntaxedEmployerPayments
@@ -27,7 +26,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.PaymentsIntoOverseasPensionsService
 import services.redirects.PaymentsIntoOverseasPensionsPages.UntaxedEmployerPaymentsPage
-import services.redirects.PaymentsIntoOverseasPensionsRedirects.{cyaPageCall, indexCheckThenJourneyCheck, redirectForSchemeLoop}
+import services.redirects.PaymentsIntoOverseasPensionsRedirects.{cyaPageCall, indexCheckThenJourneyCheck}
 import services.redirects.SimpleRedirectService.isFinishedCheck
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.pensions.paymentsIntoOverseasPensions.UntaxedEmployerPaymentsView

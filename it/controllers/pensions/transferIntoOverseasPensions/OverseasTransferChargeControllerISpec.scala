@@ -359,11 +359,58 @@ class OverseasTransferChargeControllerISpec
 
           "the user has selected 'No'" in {
 
+            val expectedViewModel = TransfersIntoOverseasPensionsViewModel(
+                transferPensionSavings = Some(true), overseasTransferCharge = Some(false)
+            )
+
+            implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
+            implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(false), None))
+            val redirectPage = relativeUrl("/overseas-pensions/overseas-transfer-charges/transfer-charges/check-transfer-charges-details")
+
+            assertRedirectionAsExpected(redirectPage)
+            getViewModel mustBe Some(expectedViewModel)
+          }
+          "the user has selected 'Yes' as well as a valid amount (unformatted)" in {
+
+            val expectedViewModel = sessionData.pensions.transfersIntoOverseasPensions.copy(
+              overseasTransferCharge = Some(true),
+              overseasTransferChargeAmount = Some(BigDecimal(42.64))
+            )
+
+            implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
+            implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("42.64")))
+            val redirectPage = relativeUrl("/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-tax")
+
+            assertRedirectionAsExpected(redirectPage)
+            getViewModel mustBe Some(expectedViewModel)
+          }
+          "the user has selected 'Yes' as well as a valid amount (formatted)" in {
+
+            val expectedViewModel = sessionData.pensions.transfersIntoOverseasPensions.copy(
+              overseasTransferCharge = Some(true),
+              overseasTransferChargeAmount = Some(BigDecimal(1042.64))
+            )
+
+            implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
+            implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("£1,042.64")))
+            val redirectPage = relativeUrl("/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-tax")
+
+            assertRedirectionAsExpected(redirectPage)
+            getViewModel mustBe Some(expectedViewModel)
+          }
+        }
+        "the user has no pension-related session data and" when {
+
+          val sessionData = pensionsUserData(aPensionsCYAEmptyModel.copy(
+            transfersIntoOverseasPensions = TransfersIntoOverseasPensionsViewModel(transferPensionSavings = Some(true))
+          ))
+
+          "the user has selected 'No'" in {
+
             val expectedViewModel = sessionData.pensions.transfersIntoOverseasPensions.copy(
               overseasTransferCharge = Some(false),
               overseasTransferChargeAmount = None
             )
-
 
             implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
             implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(false), None))
@@ -1062,10 +1109,3 @@ class OverseasTransferChargeControllerISpec
     assertPageAsExpected(expectedStatusCode, expectedPageContents)(userConfig, response, isWelsh)
   }
 }
-
-
-
-
-
-
-
