@@ -17,7 +17,7 @@
 package controllers.pensions.lifetimeAllowances
 
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.lifetimeAllowances.routes.PensionTakenAnotherWayAmountController
+import controllers.pensions.lifetimeAllowances.routes.{LifetimeAllowanceCYAController, PensionTakenAnotherWayAmountController}
 import controllers.pensions.routes.PensionsSummaryController
 import controllers.predicates.actions.AuthorisedAction
 import forms.YesNoForm
@@ -26,7 +26,6 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
-import services.redirects.LifetimeAllowancesRedirects.redirectForSchemeLoop
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.lifetimeAllowances.LifeTimeAllowanceAnotherWayView
@@ -36,13 +35,12 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class LifeTimeAllowanceAnotherWayController @Inject()(implicit val cc: MessagesControllerComponents,
-                                                       authAction: AuthorisedAction,
-                                                       view: LifeTimeAllowanceAnotherWayView,
-                                                       appConfig: AppConfig,
-                                                       pensionSessionService: PensionSessionService,
-                                                       errorHandler: ErrorHandler,
-                                                       clock: Clock, ec: ExecutionContext) extends FrontendController(cc) with I18nSupport {
-
+                                                      authAction: AuthorisedAction,
+                                                      view: LifeTimeAllowanceAnotherWayView,
+                                                      appConfig: AppConfig,
+                                                      pensionSessionService: PensionSessionService,
+                                                      errorHandler: ErrorHandler,
+                                                      clock: Clock, ec: ExecutionContext) extends FrontendController(cc) with I18nSupport {
 
   def yesNoForm(user: User): Form[Boolean] = YesNoForm.yesNoForm(
     missingInputError = s"lifetimeAllowance.lifetimeAllowanceAnotherWay.error.noEntry.${if (user.isAgent) "agent" else "individual"}"
@@ -72,30 +70,28 @@ class LifeTimeAllowanceAnotherWayController @Inject()(implicit val cc: MessagesC
         pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
           case Left(_) =>
             Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
-            
+
           case Right(optPensionUserData) => optPensionUserData match {
             case Some(data) =>
               val pensionsCYAModel = data.pensions
-              
+
               val viewModel = pensionsCYAModel.pensionLifetimeAllowances
-              
-              val updatedCyaModel = pensionsCYAModel.copy(
-                pensionLifetimeAllowances = viewModel.copy(
-                  pensionPaidAnotherWayQuestion = Some(yesNo),
-                  pensionPaidAnotherWay = if (yesNo) viewModel.pensionPaidAnotherWay else None)
-                )
+
+              val updatedCyaModel = pensionsCYAModel.copy(pensionLifetimeAllowances = viewModel.copy(
+                pensionPaidAnotherWayQuestion = Some(yesNo),
+                pensionPaidAnotherWay = if (yesNo) viewModel.pensionPaidAnotherWay else None,
+                pensionSchemeTaxReferences = if (yesNo) viewModel.pensionSchemeTaxReferences else None))
               pensionSessionService.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear, data.isPriorSubmission)(
                 errorHandler.internalServerError()) {
-                if (yesNo) {
-                  Redirect(PensionTakenAnotherWayAmountController.show(taxYear))
-                } else {
-                  Redirect(redirectForSchemeLoop(updatedCyaModel.pensionLifetimeAllowances.pensionSchemeTaxReferences.getOrElse(Seq()), taxYear))
-                }
+                Redirect(
+                  if (yesNo) PensionTakenAnotherWayAmountController.show(taxYear)
+                  else LifetimeAllowanceCYAController.show(taxYear)
+                )
               }
-            case _ =>  Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
+            case _ => Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
+          }
         }
-      }
     )
   }
-  
+
 }

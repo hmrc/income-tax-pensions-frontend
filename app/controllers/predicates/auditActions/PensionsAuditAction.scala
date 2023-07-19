@@ -53,7 +53,8 @@ object PensionsAuditAction {
       val toAuditModel = {
         val auditModel = PaymentsIntoPensionsAudit.amendAudit(
           req.user, req.pensionsUserData, req.pensions)
-        if (req.pensions.isEmpty) auditModel.toAuditModelCreate _ else auditModel.toAuditModelAmend _
+        if (req.pensions.isEmpty) () => auditModel.toAuditModelCreate
+        else () => auditModel.toAuditModelAmend
       }
       auditService.sendAudit(toAuditModel())(hc(req.request), ec, PaymentsIntoPensionsAudit.writes)
       None

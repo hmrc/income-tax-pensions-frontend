@@ -27,28 +27,20 @@ class OverseasTransferChargesService @Inject()(pensionSessionService: PensionSes
                                               (implicit ec: ExecutionContext) {
 
 
-  def updateOverseasTransferChargeQuestion(userData: PensionsUserData, question: Boolean, pensionIndex: Option[Int]): Future[Either[Unit, PensionsUserData]] = {
-    val pensionScheme = pensionIndex match {
-      case Some(index) => userData.pensions.transfersIntoOverseasPensions.transferPensionScheme(index)
-      case None => TransferPensionScheme()
-    }
-    val model = userData.pensions.transfersIntoOverseasPensions
-    val updatedModel: TransfersIntoOverseasPensionsViewModel =
-      pensionIndex match {
-        case Some(index) =>
-          model.copy(transferPensionScheme = model.transferPensionScheme.updated(index, pensionScheme.copy(ukTransferCharge = Some(question))))
-        case None =>
-         if(model.transferPensionScheme.isEmpty) {
-          model.copy(transferPensionScheme = Seq(pensionScheme.copy(ukTransferCharge = Some(question))))
-         }else{
-           model.transferPensionScheme.last.name match{
-             case Some(_) => model.copy(transferPensionScheme = model.transferPensionScheme ++ Seq(pensionScheme.copy(ukTransferCharge = Some(question))))
-             case None => model.copy(transferPensionScheme = model.transferPensionScheme.updated(model.transferPensionScheme.size - 1, pensionScheme.copy(ukTransferCharge = Some(question))))
-           }
-
-         }
+  def updateOverseasTransferChargeQuestion(userData: PensionsUserData, yesNo: Boolean, pensionIndex: Option[Int]): Future[Either[Unit, PensionsUserData]] = {
+    val schemes: Seq[TransferPensionScheme] = userData.pensions.transfersIntoOverseasPensions.transferPensionScheme
+    val optIndex: Option[Int] = pensionIndex.filter(i => i >= 0 && i < schemes.size)
+    val updatedSchemes: Seq[TransferPensionScheme] = {
+      optIndex match {
+        case Some(index) if schemes(index).ukTransferCharge.getOrElse(false).equals(yesNo) => // if scheme exists and equals prior answer
+          schemes.updated(index, schemes(index)) // ensure is the same
+        case Some(index) => // if index scheme exists and is different
+          schemes.updated(index, TransferPensionScheme(ukTransferCharge = Some(yesNo))) // clear old data
+        case _ => // if new or other
+          schemes ++ Seq(TransferPensionScheme(ukTransferCharge = Some(yesNo))) // add new to the end
       }
-    createOrUpdateModel(userData, updatedModel)
+    }
+    createOrUpdateModel(userData, userData.pensions.transfersIntoOverseasPensions.copy(transferPensionScheme = updatedSchemes))
   }
 
   private def createOrUpdateModel(originalUserData: PensionsUserData, updatedModel: TransfersIntoOverseasPensionsViewModel)

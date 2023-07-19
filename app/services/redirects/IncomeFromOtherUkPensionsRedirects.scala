@@ -53,7 +53,7 @@ object IncomeFromOtherUkPensionsRedirects {
   }
 
   def redirectForSchemeLoop(schemes: Seq[UkPensionIncomeViewModel], taxYear: Int): Call = {
-    val filteredSchemes = schemes.filter(_.isPopulated)
+    val filteredSchemes = schemes.filter(_.isFinished)
     checkForExistingSchemes(
       nextPage = PensionSchemeDetailsController.show(taxYear, None),
       summaryPage = UkPensionIncomeSummaryController.show(taxYear),
@@ -119,21 +119,21 @@ object IncomeFromOtherUkPensionsRedirects {
         if (emptyScheme) {
           false
         } else {
-          viewModel.uKPensionIncomes(index).isPopulated
+          viewModel.uKPensionIncomes(index).isFinished
         }
       },
       6 -> { viewModel: IncomeFromPensionsViewModel =>
         if (emptyScheme) {
           false
         } else {
-          viewModel.uKPensionIncomes.forall(_.isPopulated)
+          viewModel.uKPensionIncomes.forall(_.isFinished)
         }
       },
       7 -> { viewModel: IncomeFromPensionsViewModel =>
         if (emptyScheme) {
           false
         } else {
-          viewModel.uKPensionIncomes(index).isPopulated
+          viewModel.uKPensionIncomes(index).isFinished
         }
       },
       8 -> { viewModel: IncomeFromPensionsViewModel =>

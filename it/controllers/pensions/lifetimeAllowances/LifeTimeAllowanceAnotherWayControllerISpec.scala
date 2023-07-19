@@ -20,7 +20,6 @@ import builders.PensionLifetimeAllowanceViewModelBuilder.aPensionLifetimeAllowan
 import builders.PensionsUserDataBuilder.{aPensionsUserData, anPensionsUserDataEmptyCya, pensionsUserDataWithLifetimeAllowance}
 import builders.UserBuilder.aUserRequest
 import forms.YesNoForm
-import models.pension.charges.LifetimeAllowance
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterEach
@@ -39,7 +38,8 @@ class LifeTimeAllowanceAnotherWayControllerISpec extends IntegrationTest with Be
     val formSelector: String = "#main-content > div > div > form"
     val yesSelector = "#value"
     val noSelector = "#value-no"
-    def paragraphSelector(index : Int) : String = s"#main-content > div > div > p:nth-child($index)"
+
+    def paragraphSelector(index: Int): String = s"#main-content > div > div > p:nth-child($index)"
   }
 
   trait SpecificExpectedResults {
@@ -266,68 +266,95 @@ class LifeTimeAllowanceAnotherWayControllerISpec extends IntegrationTest with Be
       }
     }
 
-    "redirect and update question to 'Yes' when there is currently no radio button value selected and the user selects 'Yes'" which {
-      lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.yes)
-
-      lazy val result: WSResponse = {
-        dropPensionsDB()
+    "redirect to PensionTakenAnotherWayAmount page and update question to 'Yes'" when {
+      "there is no prior data" which {
+        lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.yes)
         val pensionsViewModel = aPensionLifetimeAllowanceViewModel.copy(
-          pensionPaidAnotherWayQuestion = None
-        )
+          pensionPaidAnotherWayQuestion = None, pensionPaidAnotherWay = None, pensionSchemeTaxReferences = None)
+        lazy val result: WSResponse = {
+          dropPensionsDB()
+          insertCyaData(pensionsUserDataWithLifetimeAllowance(pensionsViewModel))
+          authoriseAgentOrIndividual()
+          urlPost(fullUrl(pensionLifeTimeAllowanceAnotherWayUrl(taxYearEOY)), body = form, follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        }
 
-        insertCyaData(pensionsUserDataWithLifetimeAllowance(pensionsViewModel))
+        "has a SEE_OTHER(303) status" in {
+          result.status shouldBe SEE_OTHER
+          result.header("location") shouldBe Some(pensionTakenAnotherWayAmountUrl(taxYearEOY))
+        }
 
-        authoriseAgentOrIndividual()
-        urlPost(fullUrl(pensionLifeTimeAllowanceAnotherWayUrl(taxYearEOY)), body = form, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        "updates pensionPaidAnotherWayQuestion to Some(true)" in {
+          lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
+          cyaModel.pensions.pensionLifetimeAllowances shouldBe pensionsViewModel.copy(pensionPaidAnotherWayQuestion = Some(true))
+        }
       }
+      "there is prior data" which {
+        lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.yes)
+        lazy val result: WSResponse = {
+          dropPensionsDB()
+          insertCyaData(pensionsUserDataWithLifetimeAllowance(aPensionLifetimeAllowanceViewModel))
+          authoriseAgentOrIndividual()
+          urlPost(fullUrl(pensionLifeTimeAllowanceAnotherWayUrl(taxYearEOY)), body = form, follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        }
 
-      "has a SEE_OTHER(303) status and redirect Do you have a reduced annual allowance page" in {
-        result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(pensionTakenAnotherWayAmountUrl(taxYearEOY))
-      }
+        "has a SEE_OTHER(303) status" in {
+          result.status shouldBe SEE_OTHER
+          result.header("location") shouldBe Some(pensionTakenAnotherWayAmountUrl(taxYearEOY))
+        }
 
-      "updates pensionPaidAnotherWayQuestion to Some(true)" in {
-        lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
-        cyaModel.pensions.pensionLifetimeAllowances.pensionPaidAnotherWayQuestion shouldBe Some(true)
-        cyaModel.pensions.pensionLifetimeAllowances.pensionAsLumpSumQuestion shouldBe aPensionLifetimeAllowanceViewModel.pensionAsLumpSumQuestion
-        cyaModel.pensions.pensionLifetimeAllowances.pensionAsLumpSum shouldBe aPensionLifetimeAllowanceViewModel.pensionAsLumpSum
-        cyaModel.pensions.pensionLifetimeAllowances.pensionPaidAnotherWay shouldBe aPensionLifetimeAllowanceViewModel.pensionPaidAnotherWay
-        cyaModel.pensions.pensionLifetimeAllowances.aboveLifetimeAllowanceQuestion shouldBe
-          aPensionLifetimeAllowanceViewModel.aboveLifetimeAllowanceQuestion
+        "updates pensionPaidAnotherWayQuestion to Some(true)" in {
+          lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
+          cyaModel.pensions.pensionLifetimeAllowances shouldBe aPensionLifetimeAllowanceViewModel
+        }
       }
     }
 
-    "redirect and update question to 'No' when there is currently radio button value is currently set to Some(true) and the user selects 'No'" which {
-      lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.no)
-
-      lazy val result: WSResponse = {
-        dropPensionsDB()
+    "redirect to CYA page and update question to 'No'" when {
+      "there is no further data" which {
+        lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.no)
         val pensionsViewModel = aPensionLifetimeAllowanceViewModel.copy(
-          pensionPaidAnotherWayQuestion = Some(true),
-          pensionPaidAnotherWay = Some(LifetimeAllowance(Some(999.99), Some(99.99)))
-        )
+          pensionPaidAnotherWayQuestion = None, pensionPaidAnotherWay = None, pensionSchemeTaxReferences = None)
+        lazy val result: WSResponse = {
+          dropPensionsDB()
+          insertCyaData(pensionsUserDataWithLifetimeAllowance(pensionsViewModel))
+          authoriseAgentOrIndividual()
+          urlPost(fullUrl(pensionLifeTimeAllowanceAnotherWayUrl(taxYearEOY)), body = form, follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        }
 
-        insertCyaData(pensionsUserDataWithLifetimeAllowance(pensionsViewModel))
+        "has a SEE_OTHER(303) status and redirect to the CYA Page" in {
+          result.status shouldBe SEE_OTHER
+          result.header("location") shouldBe Some(lifetimeAllowanceCYA(taxYearEOY))
+        }
 
-        authoriseAgentOrIndividual()
-        urlPost(fullUrl(pensionLifeTimeAllowanceAnotherWayUrl(taxYearEOY)), body = form, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        "updates pensionPaidAnotherWayQuestion to Some(false)" in {
+          lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
+          cyaModel.pensions.pensionLifetimeAllowances shouldBe pensionsViewModel.copy(pensionPaidAnotherWayQuestion = Some(false))
+        }
       }
+      "there is further data" which {
+        lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.no)
+        lazy val result: WSResponse = {
+          dropPensionsDB()
+          insertCyaData(pensionsUserDataWithLifetimeAllowance(aPensionLifetimeAllowanceViewModel))
+          authoriseAgentOrIndividual()
+          urlPost(fullUrl(pensionLifeTimeAllowanceAnotherWayUrl(taxYearEOY)), body = form, follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        }
 
+        "has a SEE_OTHER(303) status and redirect to the CYA Page" in {
+          result.status shouldBe SEE_OTHER
+          result.header("location") shouldBe Some(lifetimeAllowanceCYA(taxYearEOY))
+        }
 
-      "has a SEE_OTHER(303) status and redirect to the PSTR summary Page" in {
-        result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(lifetimeAllowancePstrSummaryUrl(taxYearEOY))
-      }
-
-      "updates aboveLifetimeAllowanceQuestion to Some(false) and clear the rest of the annual lifetime allowance data" in {
-        lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
-        cyaModel.pensions.pensionLifetimeAllowances.pensionPaidAnotherWay shouldBe None
-        cyaModel.pensions.pensionLifetimeAllowances.pensionPaidAnotherWayQuestion shouldBe Some(false)
-        cyaModel.pensions.pensionLifetimeAllowances.pensionAsLumpSumQuestion shouldBe aPensionLifetimeAllowanceViewModel.pensionAsLumpSumQuestion
-        cyaModel.pensions.pensionLifetimeAllowances.pensionAsLumpSum shouldBe aPensionLifetimeAllowanceViewModel.pensionAsLumpSum
-        cyaModel.pensions.pensionLifetimeAllowances.aboveLifetimeAllowanceQuestion shouldBe aPensionLifetimeAllowanceViewModel.aboveLifetimeAllowanceQuestion
+        "updates pensionPaidAnotherWayQuestion to Some(false) and clears further data" in {
+          val expectedViewModel = aPensionLifetimeAllowanceViewModel.copy(
+            pensionPaidAnotherWayQuestion = Some(false), pensionPaidAnotherWay = None, pensionSchemeTaxReferences = None)
+          lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
+          cyaModel.pensions.pensionLifetimeAllowances shouldBe expectedViewModel
+        }
       }
     }
 
@@ -338,14 +365,13 @@ class LifeTimeAllowanceAnotherWayControllerISpec extends IntegrationTest with Be
         authoriseAgentOrIndividual()
         urlPost(fullUrl(pensionLifeTimeAllowanceAnotherWayUrl(taxYearEOY)), body = form, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
-
       }
 
       "has an SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER
-        //TODO - redirect to "Check your client's annual and lifetime allowances" Page
         result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
       }
     }
   }
+
 }

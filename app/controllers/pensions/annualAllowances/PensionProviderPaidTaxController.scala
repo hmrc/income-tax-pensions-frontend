@@ -17,12 +17,14 @@
 package controllers.pensions.annualAllowances
 
 import config.{AppConfig, ErrorHandler}
+import controllers.pensions.annualAllowances.routes.AnnualAllowanceCYAController
 import controllers.predicates.actions.ActionsProvider
 import forms.FormsProvider.pensionProviderPaidTaxForm
 import models.mongo.{PensionsCYAModel, PensionsUserData}
+import models.pension.charges.PensionAnnualAllowancesViewModel
 import models.requests.UserSessionDataRequest
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.PensionSessionService
 import services.redirects.AnnualAllowancesRedirects.redirectForSchemeLoop
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -33,24 +35,27 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
 @Singleton
-class PensionProviderPaidTaxController @Inject()(
-                                           actionsProvider: ActionsProvider,
-                                           pensionSessionService: PensionSessionService,
-                                           view: PensionProviderPaidTaxView,
-                                           errorHandler: ErrorHandler
-                                         ) (implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock)
+class PensionProviderPaidTaxController @Inject()(actionsProvider: ActionsProvider,
+                                                 pensionSessionService: PensionSessionService,
+                                                 view: PensionProviderPaidTaxView,
+                                                 errorHandler: ErrorHandler)
+                                                (implicit val mcc: MessagesControllerComponents,
+                                                 appConfig: AppConfig, clock: Clock)
   extends FrontendController(mcc) with I18nSupport with SessionHelper {
+
   def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit sessionData =>
       val providePaidAnnualAllowanceQuestion = sessionData.pensionsUserData.pensions.pensionsAnnualAllowances.pensionProvidePaidAnnualAllowanceQuestion
       val taxPaid = sessionData.pensionsUserData.pensions.pensionsAnnualAllowances.taxPaidByPensionProvider
 
       (providePaidAnnualAllowanceQuestion, taxPaid) match {
-        case (Some(bool), amount) => Future.successful(
-          Ok(view(pensionProviderPaidTaxForm(sessionData.user.isAgent).fill((bool, amount)), taxYear)))
-        case _ => Future.successful(Ok(view(pensionProviderPaidTaxForm(sessionData.user.isAgent), taxYear)))
+        case (Some(bool), amount) =>
+          Future.successful(Ok(view(pensionProviderPaidTaxForm(sessionData.user.isAgent).fill((bool, amount)), taxYear)))
+        case _ =>
+          Future.successful(Ok(view(pensionProviderPaidTaxForm(sessionData.user.isAgent), taxYear)))
       }
   }
+
   def submit(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit sessionUserData =>
       pensionProviderPaidTaxForm(sessionUserData.user.isAgent).bindFromRequest().fold(
@@ -67,20 +72,20 @@ class PensionProviderPaidTaxController @Inject()(
   private def updateSessionData[T](pensionUserData: PensionsUserData,
                                    yesNo: Boolean,
                                    amount: Option[BigDecimal],
-                                   taxYear: Int)(implicit request: UserSessionDataRequest[T]) = {
-    
-    val updatedCyaModel: PensionsCYAModel = pensionUserData.pensions.copy(
-      pensionsAnnualAllowances = pensionUserData.pensions.pensionsAnnualAllowances.copy(
-        pensionProvidePaidAnnualAllowanceQuestion = Some(yesNo), taxPaidByPensionProvider = amount)
-    )
-    pensionSessionService.createOrUpdateSessionData(request.user,  updatedCyaModel, taxYear,
+                                   taxYear: Int)(implicit request: UserSessionDataRequest[T]): Future[Result] = {
+
+    val viewModel: PensionAnnualAllowancesViewModel = pensionUserData.pensions.pensionsAnnualAllowances
+    val updatedCyaModel: PensionsCYAModel = pensionUserData.pensions.copy(pensionsAnnualAllowances = {
+      if (yesNo)
+        viewModel.copy(pensionProvidePaidAnnualAllowanceQuestion = Some(true), taxPaidByPensionProvider = amount)
+      else
+        viewModel.copy(pensionProvidePaidAnnualAllowanceQuestion = Some(false), taxPaidByPensionProvider = None, pensionSchemeTaxReferences = None)
+    })
+    pensionSessionService.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear,
       pensionUserData.isPriorSubmission)(errorHandler.internalServerError()) {
       Redirect(
-        if (yesNo) {
-          redirectForSchemeLoop(updatedCyaModel.pensionsAnnualAllowances.pensionSchemeTaxReferences.getOrElse(Nil), taxYear)
-        } else {
-          routes.AnnualAllowanceCYAController.show(taxYear)
-        }
+        if (yesNo) redirectForSchemeLoop(updatedCyaModel.pensionsAnnualAllowances.pensionSchemeTaxReferences.getOrElse(Nil), taxYear)
+        else AnnualAllowanceCYAController.show(taxYear)
       )
     }
   }

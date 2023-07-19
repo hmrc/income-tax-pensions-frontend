@@ -25,7 +25,7 @@ import models.pension.AllPensionsData.generateCyaFromPrior
 import models.pension.charges.PaymentsIntoOverseasPensionsViewModel
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.redirects.PaymentsIntoOverseasPensionsPages.{PaymentsIntoOverseasPensionsCYAPage, TaxEmployerPaymentsPage}
+import services.redirects.PaymentsIntoOverseasPensionsPages.PaymentsIntoOverseasPensionsCYAPage
 import services.redirects.PaymentsIntoOverseasPensionsRedirects.{cyaPageCall, journeyCheck}
 import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
 import services.{NrsService, PensionOverseasPaymentService, PensionSessionService}
