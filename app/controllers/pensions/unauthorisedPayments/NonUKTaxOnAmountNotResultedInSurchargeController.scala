@@ -51,7 +51,7 @@ class NonUKTaxOnAmountNotResultedInSurchargeController @Inject()(authAction: Aut
       pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
         case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
         case Right(optData) =>
-          val checkRedirect = journeyCheck(NonUkTaxOnNotSurchargedAmountPage, _, taxYear)
+          val checkRedirect = journeyCheck(NonUkTaxOnNotSurchargedAmountPage, _: PensionsCYAModel, taxYear)
           redirectBasedOnCurrentAnswers(taxYear, optData, cyaPageCall(taxYear))(checkRedirect) { data =>
 
             val noSurchargeTaxQuestion = data.pensions.unauthorisedPayments.noSurchargeTaxAmountQuestion
@@ -73,7 +73,7 @@ class NonUKTaxOnAmountNotResultedInSurchargeController @Inject()(authAction: Aut
         case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
         case Right(optData) =>
 
-          val checkRedirect = journeyCheck(NonUkTaxOnNotSurchargedAmountPage, _, taxYear)
+          val checkRedirect = journeyCheck(NonUkTaxOnNotSurchargedAmountPage, _: PensionsCYAModel, taxYear)
           redirectBasedOnCurrentAnswers(taxYear, optData, cyaPageCall(taxYear))(checkRedirect) { data =>
 
             formsProvider.unauthorisedNonUkTaxOnNotSurchargedAmountForm(request.user).bindFromRequest().fold(

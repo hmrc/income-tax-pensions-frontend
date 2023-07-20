@@ -55,7 +55,7 @@ class NoSurchargeAmountController @Inject()(authAction: AuthorisedAction,
       case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
 
       case Right(optData) =>
-        val checkRedirect = journeyCheck(NotSurchargedAmountPage, _, taxYear)
+        val checkRedirect = journeyCheck(NotSurchargedAmountPage, _: PensionsCYAModel, taxYear)
         redirectBasedOnCurrentAnswers(taxYear, optData, cyaPageCall(taxYear))(checkRedirect) { data =>
 
           data.pensions.unauthorisedPayments.noSurchargeAmount
@@ -72,7 +72,7 @@ class NoSurchargeAmountController @Inject()(authAction: AuthorisedAction,
         pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
           case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
           case Right(optData) =>
-            val checkRedirect = journeyCheck(NotSurchargedAmountPage, _, taxYear)
+            val checkRedirect = journeyCheck(NotSurchargedAmountPage, _: PensionsCYAModel, taxYear)
             redirectBasedOnCurrentAnswers(taxYear, optData, cyaPageCall(taxYear))(checkRedirect) { data =>
 
               val updatedCyaModel: PensionsCYAModel = data.pensions.copy(
