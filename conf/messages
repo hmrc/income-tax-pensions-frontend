@@ -596,12 +596,12 @@ pensions.statePension.addToCalculation.noEntry.individual = Select yes if you wa
 pensions.statePension.addToCalculation.noEntry.agent = Select yes if you want to add State Pension to your client’s Income Tax Calculation
 
 #State Pension CYA page
-statePension.cya.title.agent = Check your client's State Pension
+statePension.cya.title.agent = Check your client’s State Pension
 statePension.cya.title.individual = Check your State Pension
-statePension.cya.paragraph1.agent  = Your client's State Pension income is based on the information we already hold about them.
-statePension.cya.paragraph2.agent  = You cannot update your client's State Pension income until 6 April 2023.
+statePension.cya.paragraph1.agent  = Your client’s State Pension income is based on the information we already hold about them.
+statePension.cya.paragraph2.agent  = You cannot update your client’s State Pension income until 6 April 2023.
 statePension.cya.paragraph1.individual  = Your State Pension income is based on information we already hold about you.
-statePension.cya.paragraph2.individual  = You can change the amounts if they''re not correct.
+statePension.cya.paragraph2.individual  = You can change the amounts if they’re not correct.
 statePension.cya.statePension.label = State Pension
 statePension.cya.statePension.label.hidden = Change state pension
 statePension.cya.startDate.label = State Pension start date
@@ -857,7 +857,7 @@ unauthorisedPayments.checkbox.hint = Select all that apply.
 #Do you have an employer-financed retirement scheme?
 employerFinancedRetirementScheme.benefitsFromScheme.title = Employer-financed retirement benefits schemes
 employerFinancedRetirementScheme.benefitsFromScheme.paragraph.1 = If a pension scheme is not a registered it might be an employer-financed retirement benefit scheme (EFRBS).
-employerFinancedRetirementScheme.benefitsFromScheme.paragraph.2 = An EFRBS is a scheme that pays certain retirement or death benefits for employees or former employees called ''relevant benefits''.
+employerFinancedRetirementScheme.benefitsFromScheme.paragraph.2 = An EFRBS is a scheme that pays certain retirement or death benefits for employees or former employees called ’relevant benefits’.
 employerFinancedRetirementScheme.benefitsFromScheme.question.individual = Do you have an employer-financed retirement scheme?
 employerFinancedRetirementScheme.benefitsFromScheme.question.agent = Does your client have an employer-financed retirement scheme?
 employerFinancedRetirementScheme.benefitsFromScheme.error.individual = Select yes if you have an employer-financed retirement benefits scheme
@@ -990,7 +990,7 @@ overseasPension.pensionsCustomerReferenceNumber.title.individual = What’s your
 overseasPension.pensionsCustomerReferenceNumber.title.agent = What’s your client’s customer reference number?
 overseasPension.pensionsCustomerReferenceNumber.paragraph1.individual = Your pension provider should have given you a customer reference number.
 overseasPension.pensionsCustomerReferenceNumber.paragraph1.agent = Your client’s pension provider should have given them a customer reference number.
-overseasPension.pensionsCustomerReferenceNumber.hint = For example, ''PENSIONINCOME245''
+overseasPension.pensionsCustomerReferenceNumber.hint = For example, ’PENSIONINCOME245’
 overseasPension.pensionsCustomerReferenceNumber.error.noEntry.individual = Enter your customer reference number
 overseasPension.pensionsCustomerReferenceNumber.error.noEntry.agent = Enter your client’s customer reference number
 
@@ -1049,7 +1049,7 @@ pensions.paymentsIntoOverseasPensions.reliefSchemeSummary.addReliefLink = Add an
 pensions.paymentsIntoOverseasPensions.sf74Reference.title = SF74 reference
 pensions.paymentsIntoOverseasPensions.sf74Reference.paragraph1.individual = Enter your SF74 reference. You can find this out from your overseas scheme manager.
 pensions.paymentsIntoOverseasPensions.sf74Reference.paragraph1.agent = Enter your client’s SF74 reference. You can find this out from your client’s overseas scheme manager.
-pensions.paymentsIntoOverseasPensions.sf74Reference.hint = For example, ''SF74/1234'', ''SF74/45865'' or ''SF74/123456''
+pensions.paymentsIntoOverseasPensions.sf74Reference.hint = For example, ’SF74/1234’, ’SF74/45865’ or ’SF74/123456’
 pensions.paymentsIntoOverseasPensions.sf74Reference.noEntry = Enter your SF74 reference
 pensions.paymentsIntoOverseasPensions.sf74Reference.incorrectFormat = The SF74 reference must be between 1 and 10 digits long, contain only numbers and no special characters
 
@@ -1183,8 +1183,8 @@ common.overseasPensions.pensionScheme.providerAddress.subheading = Pension provi
 common.overseasPensions.providerName.error.noEntry = Enter the name of the pension scheme
 common.overseasPensions.providerName.error.overCharLimit = Name of pension scheme must be 105 characters or less
 common.overseasPensions.providerName.error.incorrectFormat = The pension scheme name must only include numbers 0-9, letters a to z, hyphens, spaces, apostrophes, commas, full stops, round brackets and the special characters, &, /, @, £, *.
-common.overseasPensions.providerAddress.error.noEntry = Enter the pension provider's address
-common.overseasPensions.providerAddress.error.overCharLimit = Pension provider's address must be 250 characters or less
+common.overseasPensions.providerAddress.error.noEntry = Enter the pension provider’s address
+common.overseasPensions.providerAddress.error.overCharLimit = Pension provider’s address must be 250 characters or less
 common.overseasPensions.schemeTaxRef.error.noEntry = Enter the Pension Scheme Tax Reference
 common.overseasPensions.pstr.error.incorrectFormat = Enter a Pension Scheme Tax Reference number that is 8 numbers, then R, then a letter a to z or A to Z, like 00123456RA
 common.overseasPensions.qops.error.incorrectFormat = Enter a six digit number

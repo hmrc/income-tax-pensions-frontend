@@ -20,9 +20,13 @@ import config.AppConfig
 import controllers.pensions.routes.PensionsSummaryController
 import controllers.predicates.actions.AuthorisedAction
 import controllers.predicates.actions.TaxYearAction.taxYearAction
+import models.mongo.PensionsCYAModel
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
+import services.redirects.AnnualAllowancesPages.PSTRSummaryPage
+import services.redirects.AnnualAllowancesRedirects.{cyaPageCall, journeyCheck}
+import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.pensions.annualAllowances.PstrSummaryView
 
@@ -40,8 +44,12 @@ class PstrSummaryController @Inject()(implicit val cc: MessagesControllerCompone
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
       case Some(data) =>
-        val pstrList = data.pensions.pensionsAnnualAllowances.pensionSchemeTaxReferences
-        Future(Ok(pstrSummaryView(taxYear, pstrList.getOrElse(Nil))))
+        val checkRedirect = journeyCheck(PSTRSummaryPage, _: PensionsCYAModel, taxYear)
+        redirectBasedOnCurrentAnswers(taxYear, Some(data), cyaPageCall(taxYear))(checkRedirect) {
+          data =>
+            val pstrList = data.pensions.pensionsAnnualAllowances.pensionSchemeTaxReferences
+            Future(Ok(pstrSummaryView(taxYear, pstrList.getOrElse(Nil))))
+        }
       case None => Future(Redirect(PensionsSummaryController.show(taxYear)))
     }
   }
