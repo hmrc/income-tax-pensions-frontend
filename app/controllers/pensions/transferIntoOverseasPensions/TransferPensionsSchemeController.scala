@@ -30,8 +30,8 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
 import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
-import services.redirects.TransfersIntoOverseasPensionsPages.{DidAUKPensionSchemePayTransferChargePage, TaxOnPensionSchemesAmountPage}
-import services.redirects.TransfersIntoOverseasPensionsRedirects.{cyaPageCall, journeyCheck, redirectForSchemeLoop}
+import services.redirects.TransfersIntoOverseasPensionsPages.DidAUKPensionSchemePayTransferChargePage
+import services.redirects.TransfersIntoOverseasPensionsRedirects.{cyaPageCall, indexCheckThenJourneyCheck, journeyCheck, redirectForSchemeLoop}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.transferIntoOverseasPensions.TransferPensionsSchemeView
@@ -49,8 +49,7 @@ class TransferPensionsSchemeController @Inject()(actionsProvider: ActionsProvide
 
   def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit userSessionDataRequest =>
-
-      val checkRedirect = journeyCheck(DidAUKPensionSchemePayTransferChargePage, _: PensionsCYAModel, taxYear)
+      val checkRedirect = journeyCheck(DidAUKPensionSchemePayTransferChargePage, _: PensionsCYAModel, taxYear, index)
       redirectBasedOnCurrentAnswers(taxYear, Some(userSessionDataRequest.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) {
         data =>
         val tcPensionSchemes = data.pensions.transfersIntoOverseasPensions.transferPensionScheme
@@ -67,8 +66,8 @@ class TransferPensionsSchemeController @Inject()(actionsProvider: ActionsProvide
 
   def submit(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit userSessionDataRequest =>
-      val checkRedirect = journeyCheck(DidAUKPensionSchemePayTransferChargePage, _: PensionsCYAModel, taxYear)
-      redirectBasedOnCurrentAnswers(taxYear, Some(userSessionDataRequest.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) {
+
+      indexCheckThenJourneyCheck(userSessionDataRequest.pensionsUserData, index,DidAUKPensionSchemePayTransferChargePage, taxYear) {
         data =>
       val tcPensionSchemes = data.pensions.transfersIntoOverseasPensions.transferPensionScheme
       validatedIndex(index, tcPensionSchemes.size) match {

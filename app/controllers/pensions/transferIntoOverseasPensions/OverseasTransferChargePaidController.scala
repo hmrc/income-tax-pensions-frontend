@@ -21,11 +21,11 @@ import controllers._
 import controllers.pensions.transferIntoOverseasPensions.routes.TransferPensionsSchemeController
 import controllers.predicates.actions.ActionsProvider
 import forms.FormsProvider
-import models.mongo.PensionsCYAModel
+import models.mongo.{PensionsCYAModel, PensionsUserData}
 import models.pension.pages.OverseasTransferChargePaidPage
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.OverseasTransferChargesService
+import services.{OverseasTransferChargesService, PensionSessionService}
 import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
 import services.redirects.TransfersIntoOverseasPensionsPages.{DidAUKPensionSchemePayTransferChargePage, TaxOnPensionSchemesAmountPage}
 import services.redirects.TransfersIntoOverseasPensionsRedirects.{cyaPageCall, journeyCheck, redirectForSchemeLoop}
@@ -40,6 +40,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class OverseasTransferChargePaidController @Inject()(actionsProvider: ActionsProvider,
                                                      formsProvider: FormsProvider,
                                                      pageView: OverseasTransferChargesPaidView,
+                                                     pensionSessionService: PensionSessionService,
                                                      errorHandler: ErrorHandler,
                                                      overseasTransferChargesService: OverseasTransferChargesService
                                                     )(implicit mcc: MessagesControllerComponents, appConfig: AppConfig, ec: ExecutionContext)
@@ -47,9 +48,9 @@ class OverseasTransferChargePaidController @Inject()(actionsProvider: ActionsPro
 
   def show(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit sessionUserData =>
-
+      val updatedUserData = cleanUpSchemes(sessionUserData.pensionsUserData)
       val checkRedirect = journeyCheck(DidAUKPensionSchemePayTransferChargePage, _: PensionsCYAModel, taxYear)
-      redirectBasedOnCurrentAnswers(taxYear, Some(sessionUserData.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) {
+      redirectBasedOnCurrentAnswers(taxYear, Some(updatedUserData), cyaPageCall(taxYear))(checkRedirect) {
         data =>
 
     validatedSchemes(pensionSchemeIndex, data.pensions.transfersIntoOverseasPensions.transferPensionScheme) match {
@@ -59,6 +60,16 @@ class OverseasTransferChargePaidController @Inject()(actionsProvider: ActionsPro
           taxYear, pensionSchemeIndex, data.pensions.transfersIntoOverseasPensions, formsProvider.overseasTransferChargePaidForm))))
           }
       }
+  }
+
+  private def cleanUpSchemes(pensionsUserData: PensionsUserData): PensionsUserData = {
+    val schemes = pensionsUserData.pensions.transfersIntoOverseasPensions.transferPensionScheme
+    val filteredSchemes = if (schemes.nonEmpty) schemes.filter(scheme => scheme.isFinished) else schemes
+    val updatedViewModel = pensionsUserData.pensions.transfersIntoOverseasPensions.copy(transferPensionScheme = filteredSchemes)
+    val updatedPensionData = pensionsUserData.pensions.copy(transfersIntoOverseasPensions = updatedViewModel)
+    val updatedUserData = pensionsUserData.copy(pensions = updatedPensionData)
+    pensionSessionService.createOrUpdateSessionData(updatedUserData)
+    updatedUserData
   }
 
   def submit(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = {
