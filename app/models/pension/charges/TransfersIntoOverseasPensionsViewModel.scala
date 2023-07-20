@@ -31,6 +31,7 @@ case class TransfersIntoOverseasPensionsViewModel(transferPensionSavings: Option
                                                   pensionSchemeTransferCharge: Option[Boolean] = None,
                                                   pensionSchemeTransferChargeAmount: Option[BigDecimal] = None,
                                                   transferPensionScheme: Seq[TransferPensionScheme] = Nil) extends PensionCYABaseModel {
+
   def isEmpty: Boolean = transferPensionSavings.isEmpty && overseasTransferCharge.isEmpty && overseasTransferChargeAmount.isEmpty &&
     pensionSchemeTransferCharge.isEmpty && pensionSchemeTransferChargeAmount.isEmpty && transferPensionScheme.isEmpty
 
@@ -120,9 +121,11 @@ case class TransferPensionScheme(ukTransferCharge: Option[Boolean] = None,
   def isFinished: Boolean = {
     this.name.isDefined && this.providerAddress.isDefined &&
       this.ukTransferCharge.exists(x =>
-        if (x) this.pstr.isDefined
-        else this.qops.isDefined && this.alphaTwoCountryCode.isDefined && this.alphaThreeCountryCode.isDefined
-      )
+        if (x){
+          this.pstr.isDefined
+        }else{
+          this.qops.isDefined && this.alphaThreeCountryCode.isDefined
+        })
   }
 
   def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedTransferPensionScheme = {

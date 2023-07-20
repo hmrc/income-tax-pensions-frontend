@@ -43,6 +43,7 @@ class NonUkTaxRefundsController @Inject()(
                                            errorHandler: ErrorHandler
                                          )(implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock)
   extends FrontendController(mcc) with I18nSupport with SessionHelper {
+
   def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit sessionData =>
 

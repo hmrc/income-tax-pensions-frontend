@@ -16,37 +16,43 @@
 
 package services.redirects
 
-sealed trait StatePensionPages {
-  val journeyNo: Int
+
+sealed trait TransfersIntoOverseasPensionsPages {
+val journeyNo: Int
 }
 
-object StatePensionPages {
+object TransfersIntoOverseasPensionsPages {
 
-  case object DoYouGetRegularStatePaymentsPage extends StatePensionPages {
+  case object DidYouTransferIntoAnOverseasPensionSchemePage extends TransfersIntoOverseasPensionsPages {
     override val journeyNo: Int = 1
   }
 
-  case object WhenDidYouStartGettingStatePaymentsPage extends StatePensionPages {
+  case object OverseasTransferChargeAmountPage extends TransfersIntoOverseasPensionsPages {
     override val journeyNo: Int = 2
   }
 
-  case object StatePensionLumpSumPage extends StatePensionPages {
+  case object TaxOnPensionSchemesAmountPage extends TransfersIntoOverseasPensionsPages {
     override val journeyNo: Int = 3
   }
 
-  case object TaxOnStatePensionLumpSumPage extends StatePensionPages {
+  case object SchemesPayingTransferChargesSummary extends TransfersIntoOverseasPensionsPages {
     override val journeyNo: Int = 4
   }
 
-  case object WhenDidYouGetYourStatePensionLumpSumPage extends StatePensionPages {
+  case object DidAUKPensionSchemePayTransferChargePage extends TransfersIntoOverseasPensionsPages {
     override val journeyNo: Int = 5
   }
 
-  case object AddStatePensionToIncomeTaxCalcPage extends StatePensionPages {
+  case object PensionSchemeDetailsPage extends TransfersIntoOverseasPensionsPages {
     override val journeyNo: Int = 6
   }
 
-  case object StatePensionsCYAPage extends StatePensionPages {
+  case object RemoveSchemePage extends TransfersIntoOverseasPensionsPages {
     override val journeyNo: Int = 7
   }
+
+  case object TransferIntoOverseasPensionsCYA extends TransfersIntoOverseasPensionsPages {
+    override val journeyNo: Int = 8
+  }
+
 }
