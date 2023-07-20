@@ -56,7 +56,7 @@ class WereAnyOfTheUnauthorisedPaymentsController @Inject()(implicit val cc: Mess
     pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
       case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
       case Right(optData) =>
-        val checkRedirect = journeyCheck(WereAnyUnauthPaymentsFromUkPensionSchemePage, _, taxYear)
+        val checkRedirect = journeyCheck(WereAnyUnauthPaymentsFromUkPensionSchemePage, _: PensionsCYAModel, taxYear)
         redirectBasedOnCurrentAnswers(taxYear, optData, cyaPageCall(taxYear))(checkRedirect) { data =>
 
           data.pensions.unauthorisedPayments.ukPensionSchemesQuestion match {
@@ -74,7 +74,7 @@ class WereAnyOfTheUnauthorisedPaymentsController @Inject()(implicit val cc: Mess
         pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
           case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
           case Right(optData) =>
-            val checkRedirect = journeyCheck(WereAnyUnauthPaymentsFromUkPensionSchemePage, _, taxYear)
+            val checkRedirect = journeyCheck(WereAnyUnauthPaymentsFromUkPensionSchemePage, _: PensionsCYAModel, taxYear)
             redirectBasedOnCurrentAnswers(taxYear, optData, cyaPageCall(taxYear))(checkRedirect) { data =>
 
               val pensionsCYAModel: PensionsCYAModel = data.pensions
