@@ -157,7 +157,7 @@ class IncomeFromOtherUkPensionsRedirectsSpec extends UnitTest {
           val result = indexCheckThenJourneyCheck(
             data = pensionsUserDataWithIncomeFromPensions(incompleteJourney),
             optIndex = Some(10),
-            currentPage = CheckPensionSchemeDetailsPage,
+            currentPage = SchemeSummaryPage,
             taxYear = taxYear)(continueToContextualRedirect(schemeDetailsCall))
           val statusHeader = await(result.map(_.header.status))
           val locationHeader = await(result.map(_.header.headers).map(_.get("Location")))

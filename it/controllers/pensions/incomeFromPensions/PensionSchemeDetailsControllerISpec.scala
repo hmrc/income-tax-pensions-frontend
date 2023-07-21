@@ -16,12 +16,11 @@
 
 package controllers.pensions.incomeFromPensions
 
-import builders.IncomeFromPensionsViewModelBuilder.{anIncomeFromPensionEmptyViewModel, anIncomeFromPensionsViewModel}
+import builders.IncomeFromPensionsViewModelBuilder.{aUKIncomeFromPensionsViewModel, anIncomeFromPensionEmptyViewModel, anIncomeFromPensionsViewModel}
 import builders.PensionsUserDataBuilder.{aPensionsUserData, pensionsUserDataWithIncomeFromPensions}
 import builders.UkPensionIncomeViewModelBuilder.{anUkPensionIncomeViewModelOne, anUkPensionIncomeViewModelTwo}
 import builders.UserBuilder.aUserRequest
 import forms.PensionSchemeDetailsForm
-import models.pension.statebenefits.UkPensionIncomeViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterEach
@@ -29,7 +28,7 @@ import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import utils.PageUrls.IncomeFromPensionsPages._
-import utils.PageUrls.fullUrl
+import utils.PageUrls.{fullUrl, pensionSummaryUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
@@ -174,10 +173,11 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
 
       s"language is ${welshTest(user.isWelsh)} and request is from an ${agentTest(user.isAgent)}" should {
         "render Did you get a Pension Scheme Details page with no prefilling" which {
+          lazy val pensionIncomeModel = anIncomeFromPensionEmptyViewModel.copy(uKPensionIncomesQuestion = Some(true))
           lazy val result: WSResponse = {
             dropPensionsDB()
             authoriseAgentOrIndividual(user.isAgent)
-            insertCyaData(aPensionsUserData)
+            insertCyaData(pensionsUserDataWithIncomeFromPensions(pensionIncomeModel))
             urlGet(fullUrl(pensionSchemeDetailsUrl(taxYearEOY, None)), user.isWelsh, follow = false,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
@@ -207,14 +207,10 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
         }
 
         "render Did you get a Pension Scheme Details page with prefilled data" which {
-          lazy val pensionIncomeModel = UkPensionIncomeViewModel(
-            pensionSchemeName = Some("Scheme Name"), pensionSchemeRef = Some("123/123AB"), pensionId = Some("Pension Id"))
-
           lazy val result: WSResponse = {
             dropPensionsDB()
             authoriseAgentOrIndividual(user.isAgent)
-            insertCyaData(pensionsUserDataWithIncomeFromPensions(
-              anIncomeFromPensionEmptyViewModel.copy(uKPensionIncomesQuestion = Some(true), uKPensionIncomes = Seq(pensionIncomeModel))))
+            insertCyaData(aPensionsUserData)
             urlGet(fullUrl(pensionSchemeDetailsUrl(taxYearEOY, Some(0))), user.isWelsh, follow = false,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
@@ -235,9 +231,9 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
           textOnPageCheck(pIdLabel, labelSelector(3))
           textOnPageCheck(refHintText, refHintSelector)
           textOnPageCheck(user.specificExpectedResults.get.pIdHintText, pIdHintSelector)
-          inputFieldValueCheck(providerNameInputName, providerNameInputSelector, pensionIncomeModel.pensionSchemeName.get)
-          inputFieldValueCheck(refInputName, refInputSelector, pensionIncomeModel.pensionSchemeRef.get)
-          inputFieldValueCheck(pIdInputName, pIdInputSelector, pensionIncomeModel.pensionId.get)
+          inputFieldValueCheck(providerNameInputName, providerNameInputSelector, anUkPensionIncomeViewModelOne.pensionSchemeName.get)
+          inputFieldValueCheck(refInputName, refInputSelector, anUkPensionIncomeViewModelOne.pensionSchemeRef.get)
+          inputFieldValueCheck(pIdInputName, pIdInputSelector, anUkPensionIncomeViewModelOne.pensionId.get)
           buttonCheck(buttonText, continueButtonSelector)
           formPostLinkCheck(pensionSchemeDetailsUrl(taxYearEOY, Some(0)), formSelector)
           welshToggleCheck(user.isWelsh)
@@ -245,23 +241,7 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
       }
     }
 
-    "redirect to UK Pension Scheme Payments question page if uKPensionIncomesQuestion is Some(false)" which {
-      lazy val result: WSResponse = {
-        dropPensionsDB()
-        authoriseAgentOrIndividual()
-        insertCyaData(pensionsUserDataWithIncomeFromPensions(
-          anIncomeFromPensionsViewModel.copy(uKPensionIncomesQuestion = Some(false), uKPensionIncomes = Seq.empty)))
-        urlGet(fullUrl(pensionSchemeDetailsUrl(taxYearEOY, None)), follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
-      }
-
-      "has an SEE_OTHER(303) status" in {
-        result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(ukPensionSchemePayments(taxYearEOY))
-      }
-    }
-
-    "redirect to Uk Pension Income CYA page when there is no session data" which {
+    "redirect to the Pensions Summary page if there is no session data" which {
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual()
@@ -271,23 +251,58 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
 
       "has an SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(ukPensionIncomeCyaUrl(taxYearEOY))
+        result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
       }
     }
 
-    "redirect to the Uk Pension Incomes Summary page if index is out of bounds" which {
-      lazy val result: WSResponse = {
-        dropPensionsDB()
-        authoriseAgentOrIndividual()
-        val viewModel = anIncomeFromPensionEmptyViewModel.copy(uKPensionIncomesQuestion = Some(true), uKPensionIncomes = Seq(anUkPensionIncomeViewModelOne))
-        insertCyaData(pensionsUserDataWithIncomeFromPensions(viewModel))
-        urlGet(fullUrl(pensionSchemeDetailsUrl(taxYearEOY, Some(2))), follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+    "redirect to the first page in journey" when {
+      "page is invalid in journey" which {
+        val invalidJourney = anIncomeFromPensionEmptyViewModel.copy(uKPensionIncomesQuestion = Some(false))
+        lazy val result: WSResponse = {
+          dropPensionsDB()
+          authoriseAgentOrIndividual()
+          insertCyaData(pensionsUserDataWithIncomeFromPensions(invalidJourney))
+          urlGet(fullUrl(pensionSchemeDetailsUrl(taxYearEOY, Some(0))), follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        }
+
+        "has an SEE_OTHER(303) status" in {
+          result.status shouldBe SEE_OTHER
+          result.header("location") shouldBe Some(ukPensionSchemePayments(taxYearEOY))
+        }
       }
 
-      "has an SEE_OTHER(303) status" in {
-        result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(ukPensionSchemeSummaryListUrl(taxYearEOY))
+      "previous questions are unanswered" which {
+        val incompleteJourney = aUKIncomeFromPensionsViewModel.copy(
+          uKPensionIncomesQuestion = None)
+        lazy val result: WSResponse = {
+          dropPensionsDB()
+          authoriseAgentOrIndividual()
+          insertCyaData(pensionsUserDataWithIncomeFromPensions(incompleteJourney))
+          urlGet(fullUrl(pensionSchemeDetailsUrl(taxYearEOY, Some(0))), follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        }
+
+        "has an SEE_OTHER(303) status" in {
+          result.status shouldBe SEE_OTHER
+          result.header("location") shouldBe Some(ukPensionSchemePayments(taxYearEOY))
+        }
+      }
+
+      "index is invalid" which {
+        lazy val result: WSResponse = {
+          dropPensionsDB()
+          authoriseAgentOrIndividual()
+          val viewModel = anIncomeFromPensionEmptyViewModel.copy(uKPensionIncomesQuestion = Some(true), uKPensionIncomes = Seq(anUkPensionIncomeViewModelOne))
+          insertCyaData(pensionsUserDataWithIncomeFromPensions(viewModel))
+          urlGet(fullUrl(pensionSchemeDetailsUrl(taxYearEOY, Some(8))), follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        }
+
+        "has an SEE_OTHER status" in {
+          result.status shouldBe SEE_OTHER
+          result.header("location") shouldBe Some(ukPensionSchemePayments(taxYearEOY))
+        }
       }
     }
   }
@@ -394,7 +409,7 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
     }
   }
 
-  "redirect and update and existing Pension Scheme at given index when valid form is submitted" which {
+  "redirect and update an existing Pension Scheme at given index when valid form is submitted" which {
 
     lazy val form: Map[String, String] = pensionDetailsForm(validProviderName, validRef, validPensionId)
 
@@ -438,7 +453,7 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
 
     "has an SEE_OTHER(303) status" in {
       result.status shouldBe SEE_OTHER
-      result.header("location") shouldBe Some(pensionAmountUrl(taxYearEOY, Some(0)))
+      result.header("location") shouldBe Some(pensionAmountUrl(taxYearEOY, None))
     }
 
     "updates existing pension scheme with new values" in {
@@ -451,7 +466,7 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
     }
   }
 
-  "redirect and add to an existing Uk Pension Schemes List when no index given and valid form is submitted" which {
+  "redirect and add to an existing Uk Pension Schemes List when index is None and valid form is submitted" which {
 
     lazy val form: Map[String, String] = pensionDetailsForm(validProviderName, validRef, validPensionId)
 
@@ -465,7 +480,7 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
 
     "has an SEE_OTHER(303) status" in {
       result.status shouldBe SEE_OTHER
-      result.header("location") shouldBe Some(pensionAmountUrl(taxYearEOY, Some(2)))
+      result.header("location") shouldBe Some(pensionAmountUrl(taxYearEOY, None))
     }
 
     "updates existing pension scheme with new values without changing existing pension schemes" in {
@@ -481,7 +496,7 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
     }
   }
 
-  "redirect to Uk Pension Income CYA Page if there is no session data" which {
+  "redirect to Pension Summary page when there is no session data" which {
     lazy val form: Map[String, String] = pensionDetailsForm(validProviderName, validRef, validPensionId)
 
     lazy val result: WSResponse = {
@@ -493,25 +508,59 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
 
     "has an SEE_OTHER(303) status" in {
       result.status shouldBe SEE_OTHER
-      result.header("location") shouldBe Some(ukPensionIncomeCyaUrl(taxYearEOY))
+      result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
     }
   }
 
-  "redirect to the first page of scheme loop if index is invalid and there are no previous schemes" which {
+  "redirect to the first page in journey" when {
     lazy val form: Map[String, String] = pensionDetailsForm(validProviderName, validRef, validPensionId)
 
-    lazy val result: WSResponse = {
-      dropPensionsDB()
-      authoriseAgentOrIndividual()
-      val viewModel = anIncomeFromPensionEmptyViewModel.copy(uKPensionIncomesQuestion = Some(true))
-      insertCyaData(pensionsUserDataWithIncomeFromPensions(viewModel))
-      urlPost(fullUrl(pensionSchemeDetailsUrl(taxYearEOY, Some(0))), body = form, follow = false,
-        headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+    "page is invalid in journey" which {
+      val invalidJourney = anIncomeFromPensionEmptyViewModel.copy(uKPensionIncomesQuestion = Some(false))
+      lazy val result: WSResponse = {
+        dropPensionsDB()
+        authoriseAgentOrIndividual()
+        insertCyaData(pensionsUserDataWithIncomeFromPensions(invalidJourney))
+        urlPost(fullUrl(pensionSchemeDetailsUrl(taxYearEOY, Some(0))), body = form,
+          follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+      }
+
+      "has an SEE_OTHER(303) status" in {
+        result.status shouldBe SEE_OTHER
+        result.header("location") shouldBe Some(ukPensionSchemePayments(taxYearEOY))
+      }
     }
 
-    "has an SEE_OTHER(303) status" in {
-      result.status shouldBe SEE_OTHER
-      result.header("location") shouldBe Some(pensionSchemeDetailsUrl(taxYearEOY, None))
+    "previous questions are unanswered" which {
+      val incompleteJourney = aUKIncomeFromPensionsViewModel.copy(
+        uKPensionIncomesQuestion = None)
+      lazy val result: WSResponse = {
+        dropPensionsDB()
+        authoriseAgentOrIndividual()
+        insertCyaData(pensionsUserDataWithIncomeFromPensions(incompleteJourney))
+        urlPost(fullUrl(pensionSchemeDetailsUrl(taxYearEOY, Some(0))), body = form,
+          follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+      }
+
+      "has an SEE_OTHER(303) status" in {
+        result.status shouldBe SEE_OTHER
+        result.header("location") shouldBe Some(ukPensionSchemePayments(taxYearEOY))
+      }
+    }
+
+    "index is invalid" which {
+      lazy val result: WSResponse = {
+        dropPensionsDB()
+        authoriseAgentOrIndividual()
+        insertCyaData(pensionsUserDataWithIncomeFromPensions(aUKIncomeFromPensionsViewModel))
+        urlPost(fullUrl(pensionSchemeDetailsUrl(taxYearEOY, Some(4))), body = form,
+          follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+      }
+
+      "has an SEE_OTHER status" in {
+        result.status shouldBe SEE_OTHER
+        result.header("location") shouldBe Some(ukPensionSchemePayments(taxYearEOY))
+      }
     }
   }
 }

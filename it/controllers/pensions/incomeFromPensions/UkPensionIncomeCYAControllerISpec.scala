@@ -17,7 +17,7 @@
 package controllers.pensions.incomeFromPensions
 
 import builders.AllPensionsDataBuilder.{anAllPensionDataEmpty, anAllPensionsData}
-import builders.IncomeFromPensionsViewModelBuilder.{anIncomeFromPensionEmptyViewModel, anIncomeFromPensionsViewModel}
+import builders.IncomeFromPensionsViewModelBuilder.{aUKIncomeFromPensionsViewModel, anIncomeFromPensionEmptyViewModel, anIncomeFromPensionsViewModel}
 import builders.IncomeTaxUserDataBuilder.anIncomeTaxUserData
 import builders.PensionsCYAModelBuilder.{aPensionsCYAGeneratedFromPriorEmpty, aPensionsCYAModel}
 import builders.PensionsUserDataBuilder.{aPensionsUserData, pensionsUserDataWithIncomeFromPensions}
@@ -54,7 +54,7 @@ class UkPensionIncomeCYAControllerISpec extends IntegrationTest with ViewHelpers
 
   trait CommonExpectedResults {
     val expectedTitle: String
-    lazy val expectedH1 = expectedTitle
+    lazy val expectedH1: String = expectedTitle
     val expectedCaption: Int => String
     val buttonText: String
     val yesText: String
@@ -198,24 +198,43 @@ class UkPensionIncomeCYAControllerISpec extends IntegrationTest with ViewHelpers
       }
     }
 
-    "redirect to the first page in the journey when there is no CYA or prior data" which {
-      lazy val result: WSResponse = {
-        dropPensionsDB()
-        authoriseAgentOrIndividual()
-        userDataStub(IncomeTaxUserData(None), nino, taxYearEOY)
-        urlGet(fullUrl(ukPensionIncomeCyaUrl(taxYearEOY)), follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
-      }
+    "redirect to the first page in the journey" when {
+      "there is no CYA or prior data" which {
+        lazy val result: WSResponse = {
+          dropPensionsDB()
+          authoriseAgentOrIndividual()
+          userDataStub(IncomeTaxUserData(None), nino, taxYearEOY)
+          urlGet(fullUrl(ukPensionIncomeCyaUrl(taxYearEOY)), follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        }
 
-      "have the status SEE OTHER" in {
-        result.status shouldBe SEE_OTHER
-      }
+        "have the status SEE OTHER" in {
+          result.status shouldBe SEE_OTHER
+        }
 
-      "redirects to the uk pension scheme payments question page" in {
-        result.header("location") shouldBe Some(ukPensionSchemePayments(taxYearEOY))
+        "redirects to the uk pension scheme payments question page" in {
+          result.header("location") shouldBe Some(ukPensionSchemePayments(taxYearEOY))
+        }
+      }
+      "previous questions are unanswered" which {
+        lazy val result: WSResponse = {
+          dropPensionsDB()
+          authoriseAgentOrIndividual()
+          insertCyaData(pensionsUserDataWithIncomeFromPensions(aUKIncomeFromPensionsViewModel.copy(
+            uKPensionIncomes = Seq(anUkPensionIncomeViewModelOne.copy(startDate = None))), taxYear = taxYear))
+          urlGet(fullUrl(ukPensionIncomeCyaUrl(taxYearEOY)), follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        }
+
+        "have the status SEE OTHER" in {
+          result.status shouldBe SEE_OTHER
+        }
+
+        "redirects to the uk pension scheme payments question page" in {
+          result.header("location") shouldBe Some(ukPensionSchemePayments(taxYearEOY))
+        }
       }
     }
-
   }
 
   ".submit" should {
@@ -259,7 +278,7 @@ class UkPensionIncomeCYAControllerISpec extends IntegrationTest with ViewHelpers
           result.status shouldBe SEE_OTHER
         }
 
-        "redirects to the overview page" in {
+        "redirects to the summary page" in {
           result.header("location") shouldBe Some(pensionIncomeSummaryUrl(taxYear))
         }
       }
@@ -280,7 +299,7 @@ class UkPensionIncomeCYAControllerISpec extends IntegrationTest with ViewHelpers
         "have the status SEE OTHER" in {
           result.status shouldBe SEE_OTHER
         }
-        "redirects to the overview page" in {
+        "redirects to the summary page" in {
           result.header("location") shouldBe Some(pensionIncomeSummaryUrl(taxYear))
         }
       }
@@ -320,9 +339,29 @@ class UkPensionIncomeCYAControllerISpec extends IntegrationTest with ViewHelpers
           result.status shouldBe SEE_OTHER
         }
 
-        "redirects to the overview page" in {
+        "redirects to the summary page" in {
           result.header("location") shouldBe Some(pensionIncomeSummaryUrl(taxYear))
         }
+      }
+    }
+
+    "redirect to the first page in journey when model is incomplete" which {
+      val form = Map[String, String]()
+      lazy val result: WSResponse = {
+        dropPensionsDB()
+        authoriseAgentOrIndividual()
+        insertCyaData(pensionsUserDataWithIncomeFromPensions(aUKIncomeFromPensionsViewModel.copy(
+          uKPensionIncomes = Seq.empty), taxYear = taxYear))
+        urlPost(fullUrl(ukPensionIncomeCyaUrl(taxYear)), form, follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
+      }
+
+      "have the status SEE OTHER" in {
+        result.status shouldBe SEE_OTHER
+      }
+
+      "redirects to the uk pension scheme payments question page" in {
+        result.header("location") shouldBe Some(ukPensionSchemePayments(taxYear))
       }
     }
   }

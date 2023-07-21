@@ -91,7 +91,10 @@ object IncomeFromOtherUkPensionsRedirects {
 
     val previousQuestionAnswered: Map[Int, IncomeFromPensionsViewModel => Boolean] = Map(
       1 -> { _: IncomeFromPensionsViewModel => true },
-      2 -> { viewModel: IncomeFromPensionsViewModel => viewModel.uKPensionIncomesQuestion.isDefined },
+      2 -> { viewModel: IncomeFromPensionsViewModel =>
+        if (optIndex.nonEmpty && validIndex.isEmpty) false
+        else viewModel.uKPensionIncomesQuestion.isDefined
+      },
       3 -> { viewModel: IncomeFromPensionsViewModel =>
         if (validIndex.isEmpty)
           false

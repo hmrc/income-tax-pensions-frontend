@@ -38,7 +38,7 @@ object IncomeFromOtherUkPensionsPages {
     override val pageId: Int = 4
   }
 
-  case object CheckPensionSchemeDetailsPage extends IncomeFromOtherUkPensionsPages {
+  case object SchemeSummaryPage extends IncomeFromOtherUkPensionsPages {
     override val pageId: Int = 5
   }
 
