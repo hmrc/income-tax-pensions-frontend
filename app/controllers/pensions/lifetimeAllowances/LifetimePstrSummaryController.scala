@@ -47,8 +47,8 @@ class LifetimePstrSummaryController @Inject()(authAction: AuthorisedAction,
         val checkRedirect = journeyCheck(PSTRSummaryPage, _: PensionsCYAModel, taxYear)
         redirectBasedOnCurrentAnswers(taxYear, Some(data), cyaPageCall(taxYear))(checkRedirect) {
           data =>
-            val pstrList = data.pensions.pensionLifetimeAllowances.pensionSchemeTaxReferences
-            Future(Ok(view(taxYear, pstrList.getOrElse(Nil))))
+            val pstrList: Seq[String] = data.pensions.pensionLifetimeAllowances.pensionSchemeTaxReferences.getOrElse(Seq.empty)
+            Future(Ok(view(taxYear, pstrList)))
         }
       case None => Future(Redirect(PensionsSummaryController.show(taxYear)))
     }
