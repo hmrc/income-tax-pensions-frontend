@@ -28,6 +28,9 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.PensionSessionService
+import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
+import services.redirects.TransfersIntoOverseasPensionsPages.OverseasTransferChargeAmountPage
+import services.redirects.TransfersIntoOverseasPensionsRedirects.{cyaPageCall, journeyCheck}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.transferIntoOverseasPensions.OverseasTransferChargeView
@@ -36,18 +39,26 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
 @Singleton
-class OverseasTransferChargeController @Inject()(actionsProvider: ActionsProvider, pensionSessionService: PensionSessionService,
-                                                 view: OverseasTransferChargeView, errorHandler: ErrorHandler)
+class OverseasTransferChargeController @Inject()(
+                                                  actionsProvider: ActionsProvider,
+                                                 pensionSessionService: PensionSessionService,
+                                                 view: OverseasTransferChargeView,
+                                                 errorHandler: ErrorHandler)
                                                 (implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock)
   extends FrontendController(mcc) with I18nSupport with SessionHelper {
 
   def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit sessionData =>
-      val transferChargeAmount: Option[BigDecimal] = sessionData.pensionsUserData.pensions.transfersIntoOverseasPensions.overseasTransferChargeAmount
-      val transferCharge: Option[Boolean] = sessionData.pensionsUserData.pensions.transfersIntoOverseasPensions.overseasTransferCharge
-      (transferCharge, transferChargeAmount) match {
-        case (Some(a), amount) => Future.successful(Ok(view(amountForm(sessionData.user).fill((a, amount)), taxYear)))
-        case _ => Future.successful(Ok(view(amountForm(sessionData.user), taxYear)))
+
+      val checkRedirect = journeyCheck(OverseasTransferChargeAmountPage, _: PensionsCYAModel, taxYear)
+      redirectBasedOnCurrentAnswers(taxYear, Some(sessionData.pensionsUserData), cyaPageCall(taxYear))(checkRedirect){
+        data =>
+          val transferChargeAmount: Option[BigDecimal] = data.pensions.transfersIntoOverseasPensions.overseasTransferChargeAmount
+          val transferCharge: Option[Boolean] = data.pensions.transfersIntoOverseasPensions.overseasTransferCharge
+          (transferCharge, transferChargeAmount) match {
+            case (Some(a), amount) => Future.successful(Ok(view(amountForm(sessionData.user).fill((a, amount)), taxYear)))
+            case _ => Future.successful(Ok(view(amountForm(sessionData.user), taxYear)))
+          }
       }
   }
 
@@ -56,9 +67,14 @@ class OverseasTransferChargeController @Inject()(actionsProvider: ActionsProvide
       amountForm(sessionUserData.user).bindFromRequest().fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
         yesNoAmount => {
-          (yesNoAmount._1, yesNoAmount._2) match {
-            case (true, amount) => updateSessionData(sessionUserData.pensionsUserData, yesNo = true, amount, taxYear)
-            case (false, _) => updateSessionData(sessionUserData.pensionsUserData, yesNo = false, None, taxYear)
+          val checkRedirect = journeyCheck(OverseasTransferChargeAmountPage, _: PensionsCYAModel, taxYear)
+          redirectBasedOnCurrentAnswers(taxYear, Some(sessionUserData.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) {
+            data => {
+              (yesNoAmount._1, yesNoAmount._2) match {
+                case (true, amount) => updateSessionData(data, yesNo = true, amount, taxYear)
+                case (false, _) => updateSessionData(data, yesNo = false, None, taxYear)
+              }
+            }
           }
         }
       )

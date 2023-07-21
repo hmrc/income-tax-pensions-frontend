@@ -17,7 +17,7 @@
 package controllers.pensions.annualAllowances
 
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.annualAllowances.routes._
+import controllers.pensions.annualAllowances.routes.{AnnualAllowanceCYAController, ReducedAnnualAllowanceTypeController}
 import controllers.predicates.actions.ActionsProvider
 import forms.FormsProvider
 import models.mongo.{PensionsCYAModel, PensionsUserData}
@@ -26,6 +26,9 @@ import models.requests.UserSessionDataRequest
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.PensionSessionService
+import services.redirects.AnnualAllowancesPages.ReducedAnnualAllowancePage
+import services.redirects.AnnualAllowancesRedirects.{cyaPageCall, journeyCheck}
+import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.annualAllowances.ReducedAnnualAllowanceView
@@ -43,18 +46,26 @@ class ReducedAnnualAllowanceController @Inject()(implicit val cc: MessagesContro
                                                  errorHandler: ErrorHandler,
                                                  clock: Clock) extends FrontendController(cc) with I18nSupport {
   def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit request =>
-    val yesNoForm = formsProvider.reducedAnnualAllowanceForm(request.user)
-    request.pensionsUserData.pensions.pensionsAnnualAllowances.reducedAnnualAllowanceQuestion match {
-      case Some(question) => Future.successful(Ok(reducedAnnualAllowanceView(yesNoForm.fill(question), taxYear)))
-      case None => Future.successful(Ok(reducedAnnualAllowanceView(yesNoForm, taxYear)))
+    val checkRedirect = journeyCheck(ReducedAnnualAllowancePage, _: PensionsCYAModel, taxYear)
+    redirectBasedOnCurrentAnswers(taxYear, Some(request.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) {
+      data =>
+        val yesNoForm = formsProvider.reducedAnnualAllowanceForm(request.user)
+        data.pensions.pensionsAnnualAllowances.reducedAnnualAllowanceQuestion match {
+          case Some(question) => Future.successful(Ok(reducedAnnualAllowanceView(yesNoForm.fill(question), taxYear)))
+          case None => Future.successful(Ok(reducedAnnualAllowanceView(yesNoForm, taxYear)))
+        }
     }
   }
 
   def submit(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit request =>
-    formsProvider.reducedAnnualAllowanceForm(request.user).bindFromRequest().fold(
-      formWithErrors => Future.successful(BadRequest(reducedAnnualAllowanceView(formWithErrors, taxYear))),
-      yesNo => updateSessionData(request.pensionsUserData, yesNo, taxYear)
-    )
+    val checkRedirect = journeyCheck(ReducedAnnualAllowancePage, _: PensionsCYAModel, taxYear)
+    redirectBasedOnCurrentAnswers(taxYear, Some(request.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) {
+      data =>
+        formsProvider.reducedAnnualAllowanceForm(request.user).bindFromRequest().fold(
+          formWithErrors => Future.successful(BadRequest(reducedAnnualAllowanceView(formWithErrors, taxYear))),
+          yesNo => updateSessionData(data, yesNo, taxYear)
+        )
+    }
   }
 
   private def updateSessionData[T](pensionUserData: PensionsUserData,
@@ -76,4 +87,5 @@ class ReducedAnnualAllowanceController @Inject()(implicit val cc: MessagesContro
       )
     }
   }
+
 }

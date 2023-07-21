@@ -109,6 +109,7 @@ class ControllerSpec(val pathForThisPage: String) extends PlaySpec
     val pensionSchemeTaxReferenceSummary: String = relativeUrl("/annual-allowance/pension-schemes-paying-annual-allowance-tax")
     val pensionSchemeTaxReference: String = relativeUrl("/annual-lifetime-allowances/pension-scheme-tax-reference")
 
+    val transferPensionSavings: String = relativeUrl("/overseas-pensions/overseas-transfer-charges/transfer-pension-savings")
     val overseasTransferChargePaid: String = relativeUrl("/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-paid")
     val transferIntoOverseasPensionsScheme: String = relativeUrl("/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-pension-scheme")
     val transferChargeSchemeSummary: String = relativeUrl("/overseas-pensions/overseas-transfer-charges/transfer-charges-summary")

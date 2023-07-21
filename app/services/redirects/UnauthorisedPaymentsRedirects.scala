@@ -22,26 +22,57 @@ import models.pension.charges.UnauthorisedPaymentsViewModel
 import play.api.mvc.{Call, Result}
 import play.api.mvc.Results.Redirect
 import services.redirects.SimpleRedirectService.checkForExistingSchemes
+import services.redirects.UnauthorisedPaymentsPages.{PSTRPage, RemovePSTRPage}
 
 object UnauthorisedPaymentsRedirects { //scalastyle:off magic.number
 
   def redirectForSchemeLoop(schemes: Seq[String], taxYear: Int): Call = {
+    val filteredSchemes: Seq[String] = schemes.filter(_.trim.nonEmpty)
     checkForExistingSchemes(
       nextPage = UnauthorisedPensionSchemeTaxReferenceController.show(taxYear, None),
       summaryPage = UkPensionSchemeDetailsController.show(taxYear),
-      schemes = schemes
+      schemes = filteredSchemes
     )
   }
 
   def cyaPageCall(taxYear: Int): Call = UnauthorisedPaymentsCYAController.show(taxYear)
 
-  def journeyCheck(currentPage: UnauthorisedPaymentsPages, cya: PensionsCYAModel, taxYear: Int): Option[Result] = {
+  def journeyCheck(currentPage: UnauthorisedPaymentsPages, cya: PensionsCYAModel, taxYear: Int, optIndex: Option[Int] = None): Option[Result] = {
     val unauthorisedPayments = cya.unauthorisedPayments
-    if (isPageValidInJourney(currentPage.journeyNo, unauthorisedPayments) && previousQuestionIsAnswered(currentPage.journeyNo, unauthorisedPayments)) {
-      None
-    } else {
+
+    if (!previousQuestionIsAnswered(currentPage.journeyNo, unauthorisedPayments) || !isPageValidInJourney(currentPage.journeyNo, unauthorisedPayments))
       Some(Redirect(UnauthorisedPaymentsController.show(taxYear)))
+    else if (currentPage.equals(RemovePSTRPage))
+      removePstrPageCheck(cya, taxYear, optIndex)
+    else if (currentPage.equals(PSTRPage))
+      pstrPageCheck(cya, taxYear, optIndex)
+    else
+      None
+  }
+
+  private def pstrPageCheck(cya: PensionsCYAModel, taxYear: Int, optIndex: Option[Int] = None): Option[Result] = {
+    val unauthorisedPayments: UnauthorisedPaymentsViewModel = cya.unauthorisedPayments
+    val optSchemes: Seq[String] = unauthorisedPayments.pensionSchemeTaxReference.getOrElse(Seq.empty)
+    val schemesEmpty: Boolean = !optSchemes.exists(_.nonEmpty)
+    val index: Option[Int] = optIndex.filter(i => i >= 0 && i < optSchemes.size)
+
+    (schemesEmpty, index) match {
+      // schemes but bad-index -> redirect
+      case (false, None) if optIndex.nonEmpty => Some(Redirect(redirectForSchemeLoop(optSchemes, taxYear)))
+      // no schemes but index -> error, redirect
+      case (true, Some(_)) => Some(Redirect(redirectForSchemeLoop(optSchemes, taxYear)))
+      case (_, _) => None
     }
+  }
+
+  private def removePstrPageCheck(cya: PensionsCYAModel, taxYear: Int, optIndex: Option[Int] = None): Option[Result] = {
+    val unauthorisedPayments: UnauthorisedPaymentsViewModel = cya.unauthorisedPayments
+    val optSchemes: Seq[String] = unauthorisedPayments.pensionSchemeTaxReference.getOrElse(Seq.empty)
+    val index: Option[Int] = optIndex.filter(i => i >= 0 && i < optSchemes.size)
+    val schemeIsValid: Boolean = if (index.isEmpty) false else optSchemes(index.getOrElse(0)).nonEmpty
+
+    if (schemeIsValid) None
+    else Some(Redirect(UkPensionSchemeDetailsController.show(taxYear)))
   }
 
   private def isPageValidInJourney(pageNumber: Int, unauthorisedPaymentsViewModel: UnauthorisedPaymentsViewModel): Boolean =
@@ -96,8 +127,8 @@ object UnauthorisedPaymentsRedirects { //scalastyle:off magic.number
     },
 
     7 -> { unauthorisedPaymentsViewModel: UnauthorisedPaymentsViewModel => unauthorisedPaymentsViewModel.ukPensionSchemesQuestion.isDefined },
-    8 -> { unauthorisedPaymentsViewModel: UnauthorisedPaymentsViewModel => unauthorisedPaymentsViewModel.ukPensionSchemesQuestion.isDefined },
-    9 -> { unauthorisedPaymentsViewModel: UnauthorisedPaymentsViewModel => unauthorisedPaymentsViewModel.pensionSchemeTaxReference.nonEmpty },
+    8 -> { _: UnauthorisedPaymentsViewModel => true },
+    9 -> { unauthorisedPaymentsViewModel: UnauthorisedPaymentsViewModel => unauthorisedPaymentsViewModel.ukPensionSchemesQuestion.isDefined },
 
     10 -> { unauthorisedPaymentsViewModel: UnauthorisedPaymentsViewModel =>
       if (isPageValidInJourney(7, unauthorisedPaymentsViewModel)) {

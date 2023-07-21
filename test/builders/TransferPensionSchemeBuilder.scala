@@ -40,4 +40,6 @@ object TransferPensionSchemeBuilder {
     alphaThreeCountryCode = Some("FRA")
   )
 
+  val anEmptyTransferPensionScheme = TransferPensionScheme()
+
 }

@@ -164,11 +164,11 @@ POST        /:taxYear/annual-allowance/reduced-annual-allowance-type            
 GET         /:taxYear/annual-allowance/above-annual-allowance                                                                      controllers.pensions.annualAllowances.AboveReducedAnnualAllowanceController.show(taxYear: Int)
 POST        /:taxYear/annual-allowance/above-annual-allowance                                                                      controllers.pensions.annualAllowances.AboveReducedAnnualAllowanceController.submit(taxYear: Int)
 
-GET         /:taxYear/annual-allowance/pension-scheme-tax-reference                                                                controllers.pensions.annualAllowances.PensionSchemeTaxReferenceController.show(taxYear: Int, pensionSchemeTaxReferenceIndex: Option[Int])
-POST        /:taxYear/annual-allowance/pension-scheme-tax-reference                                                                controllers.pensions.annualAllowances.PensionSchemeTaxReferenceController.submit(taxYear: Int, pensionSchemeTaxReferenceIndex: Option[Int])
-
 GET         /:taxYear/annual-allowances/pension-provider-paid-tax                                                                  controllers.pensions.annualAllowances.PensionProviderPaidTaxController.show(taxYear: Int)
 POST        /:taxYear/annual-allowances/pension-provider-paid-tax                                                                  controllers.pensions.annualAllowances.PensionProviderPaidTaxController.submit(taxYear: Int)
+
+GET         /:taxYear/annual-allowance/pension-scheme-tax-reference                                                                controllers.pensions.annualAllowances.PensionSchemeTaxReferenceController.show(taxYear: Int, pensionSchemeTaxReferenceIndex: Option[Int])
+POST        /:taxYear/annual-allowance/pension-scheme-tax-reference                                                                controllers.pensions.annualAllowances.PensionSchemeTaxReferenceController.submit(taxYear: Int, pensionSchemeTaxReferenceIndex: Option[Int])
 
 GET         /:taxYear/annual-allowance/remove-pension-scheme-tax-reference                                                         controllers.pensions.annualAllowances.RemoveAnnualAllowancePstrController.show(taxYear: Int, pensionSchemeTaxReferenceIndex: Option[Int])
 POST        /:taxYear/annual-allowance/remove-pension-scheme-tax-reference                                                         controllers.pensions.annualAllowances.RemoveAnnualAllowancePstrController.submit(taxYear: Int, pensionSchemeTaxReferenceIndex: Option[Int])
@@ -283,19 +283,19 @@ POST        /:taxYear/overseas-pensions/overseas-transfer-charges/transfer-pensi
 GET         /:taxYear/overseas-pensions/overseas-transfer-charges/transfer-charge                                                  controllers.pensions.transferIntoOverseasPensions.OverseasTransferChargeController.show(taxYear: Int)
 POST        /:taxYear/overseas-pensions/overseas-transfer-charges/transfer-charge                                                  controllers.pensions.transferIntoOverseasPensions.OverseasTransferChargeController.submit(taxYear: Int)
 
-GET         /:taxYear/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-paid                                    controllers.pensions.transferIntoOverseasPensions.OverseasTransferChargePaidController.show(taxYear: Int, pensionSchemeIndex: Option[Int])
-POST        /:taxYear/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-paid                                    controllers.pensions.transferIntoOverseasPensions.OverseasTransferChargePaidController.submit(taxYear: Int, pensionSchemeIndex: Option[Int])
-
 GET         /:taxYear/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-tax                                     controllers.pensions.transferIntoOverseasPensions.PensionSchemeTaxTransferController.show(taxYear: Int)
 POST        /:taxYear/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-tax                                     controllers.pensions.transferIntoOverseasPensions.PensionSchemeTaxTransferController.submit(taxYear: Int)
 
 GET         /:taxYear/overseas-pensions/overseas-transfer-charges/transfer-charges-summary                                         controllers.pensions.transferIntoOverseasPensions.TransferChargeSummaryController.show(taxYear: Int)
 
+GET         /:taxYear/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-paid                                    controllers.pensions.transferIntoOverseasPensions.OverseasTransferChargePaidController.show(taxYear: Int, pensionSchemeIndex: Option[Int])
+POST        /:taxYear/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-paid                                    controllers.pensions.transferIntoOverseasPensions.OverseasTransferChargePaidController.submit(taxYear: Int, pensionSchemeIndex: Option[Int])
+
 GET         /:taxYear/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-pension-scheme                          controllers.pensions.transferIntoOverseasPensions.TransferPensionsSchemeController.show(taxYear: Int, index: Option[Int])
 POST        /:taxYear/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-pension-scheme                          controllers.pensions.transferIntoOverseasPensions.TransferPensionsSchemeController.submit(taxYear: Int, index: Option[Int])
 
-GET         /:taxYear/overseas-pensions/payments-into-overseas-pensions/remove-overseas-pension-scheme                             controllers.pensions.transferIntoOverseasPensions.RemoveTransferChargeSchemeController.show(taxYear: Int, index: Option[Int])
-POST        /:taxYear/overseas-pensions/payments-into-overseas-pensions/remove-overseas-pension-scheme                             controllers.pensions.transferIntoOverseasPensions.RemoveTransferChargeSchemeController.submit(taxYear: Int, index: Option[Int])
+GET         /:taxYear/overseas-pensions/overseas-transfer-charges/remove-overseas-pension-scheme                                   controllers.pensions.transferIntoOverseasPensions.RemoveTransferChargeSchemeController.show(taxYear: Int, index: Option[Int])
+POST        /:taxYear/overseas-pensions/overseas-transfer-charges/remove-overseas-pension-scheme                                   controllers.pensions.transferIntoOverseasPensions.RemoveTransferChargeSchemeController.submit(taxYear: Int, index: Option[Int])
 
 GET         /:taxYear/overseas-pensions/overseas-transfer-charges/transfer-charges/check-transfer-charges-details                  controllers.pensions.transferIntoOverseasPensions.TransferIntoOverseasPensionsCYAController.show(taxYear: Int)
 POST        /:taxYear/overseas-pensions/overseas-transfer-charges/transfer-charges/check-transfer-charges-details                  controllers.pensions.transferIntoOverseasPensions.TransferIntoOverseasPensionsCYAController.submit(taxYear: Int)

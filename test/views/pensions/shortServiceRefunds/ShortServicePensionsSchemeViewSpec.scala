@@ -76,11 +76,11 @@ class ShortServicePensionsSchemeViewSpec extends ViewUnitTest {
     val providerAddressLabel: String = "Pension provider address"
     val providerNameEmptyErrorText: String = "Enter the name of the pension scheme"
     val refEmptyErrorText: String  = "Enter the Pension Scheme Tax Reference"
-    val providerAddressEmptyErrorText: String = "Enter the pension providers address"
+    val providerAddressEmptyErrorText: String = "Enter the pension provider’s address"
     val providerNameInvalidFormatErrorText: String = "The pension scheme name must only include numbers 0-9, " +
       "letters a to z, hyphens, spaces, apostrophes, commas, full stops, round brackets and the special characters, &, /, @, £, *."
     val providerNameOverCharLimitErrorText: String = "Name of pension scheme must be 105 characters or less"
-    val providerAddressOverCharLimitErrorText: String = "Pension providers address must be 250 characters or less"
+    val providerAddressOverCharLimitErrorText: String = "Pension provider’s address must be 250 characters or less"
   }
   object CommonExpectedCY extends CommonExpectedResults {
     val expectedTitle: String = "Cynllun pensiwn yn talu’r dreth ar yr ad-daliad am wasanaeth byr"

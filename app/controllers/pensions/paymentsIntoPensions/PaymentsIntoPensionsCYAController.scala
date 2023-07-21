@@ -21,7 +21,7 @@ import controllers.predicates.auditActions.AuditActionsProvider
 import models.mongo.{PensionsCYAModel, PensionsUserData}
 import models.pension.AllPensionsData
 import models.pension.AllPensionsData.generateCyaFromPrior
-import models.requests.UserPriorAndSessionDataRequest
+import models.requests.{UserPriorAndSessionDataRequest, UserSessionDataRequest}
 import models.{APIErrorBodyModel, APIErrorModel, User}
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -47,6 +47,7 @@ class PaymentsIntoPensionsCYAController @Inject()(auditProvider: AuditActionsPro
                                                   excludeJourneyService: ExcludeJourneyService
                                                  )(implicit val mcc: MessagesControllerComponents,
                                                    appConfig: AppConfig,
+//                                                   request: UserSessionDataRequest[_],
                                                    clock: Clock) extends FrontendController(mcc) with I18nSupport {
 
   lazy val logger: Logger = Logger(this.getClass.getName)

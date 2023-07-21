@@ -20,6 +20,7 @@ import config.{AppConfig, ErrorHandler}
 import controllers.pensions.routes._
 import controllers.predicates.actions.AuthorisedAction
 import controllers.predicates.actions.TaxYearAction.taxYearAction
+import models.mongo.PensionsCYAModel
 import models.pension.AllPensionsData
 import models.pension.AllPensionsData.generateCyaFromPrior
 import models.pension.charges.UnauthorisedPaymentsViewModel
@@ -66,7 +67,7 @@ class UnauthorisedPaymentsCYAController @Inject()(authAction: AuthorisedAction,
         case (Some(data), Some(priorData: AllPensionsData)) if data.pensions.unauthorisedPayments.isEmpty =>
           cyaDataIsEmpty(priorData)
         case (Some(data), _) =>
-          val checkRedirect = journeyCheck(CYAPage, _, taxYear)
+          val checkRedirect = journeyCheck(CYAPage, _: PensionsCYAModel, taxYear)
           redirectBasedOnCurrentAnswers(taxYear, cya, cyaPageCall(taxYear))(checkRedirect) { data =>
             unauthorisedPaymentsCYAExists(data.pensions.unauthorisedPayments)
           }
@@ -81,10 +82,21 @@ class UnauthorisedPaymentsCYAController @Inject()(authAction: AuthorisedAction,
   }
 
   def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
-    //TODO: missing the comparison of session with Prior data
-    pensionChargesService.saveUnauthorisedViewModel(request.user, taxYear).map {
-      case Left(_) => errorHandler.internalServerError()
-      case Right(_) => Redirect(PensionsSummaryController.show(taxYear))
+    pensionSessionService.getAndHandle(taxYear, request.user) { (cya, prior) =>
+      cya.fold(
+        Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
+      ) { model =>
+        val checkRedirect = journeyCheck(CYAPage, _: PensionsCYAModel, taxYear)
+        redirectBasedOnCurrentAnswers(taxYear, Some(model), cyaPageCall(taxYear))(checkRedirect) { data =>
+
+          //TODO: missing the comparison of session with Prior data
+          pensionChargesService.saveUnauthorisedViewModel(request.user, taxYear).map {
+            case Left(_) => errorHandler.internalServerError()
+            case Right(_) => Redirect(PensionsSummaryController.show(taxYear))
+          }
+        }
+      }
     }
   }
+
 }

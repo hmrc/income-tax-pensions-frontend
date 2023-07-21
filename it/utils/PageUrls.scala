@@ -294,7 +294,7 @@ object PageUrls extends IntegrationTest {
       s"$appUrl/$taxYear/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-paid?pensionSchemeIndex=$index"
 
     def removeTransferChargeScheme(taxYear: Int, index: Int): String =
-      s"$appUrl/$taxYear/overseas-pensions/payments-into-overseas-pensions/remove-overseas-pension-scheme?index=$index"
+      s"$appUrl/$taxYear/overseas-pensions/overseas-transfer-charges/remove-overseas-pension-scheme?index=$index"
 
     def transferPensionSavingsUrl(taxYear: Int): String =
       s"$appUrl/$taxYear/overseas-pensions/overseas-transfer-charges/transfer-pension-savings"

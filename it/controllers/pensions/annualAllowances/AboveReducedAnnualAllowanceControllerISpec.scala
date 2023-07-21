@@ -104,7 +104,7 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
     val buttonText = "Yn eich blaen"
     val expectedLinkText = "os bydd angen i chi gyfrifo hyn (yn agor tab newydd)"
     val expectedUseACalculator: String = s"Defnyddiwch gyfrifiannell $expectedLinkText."
-    val expectedAmountHeadingText = "Swm uwchlawr lwfans blynyddol gostyngol, mewn punnoedd"
+    val expectedAmountHeadingText = "Swm uwchlaw’r lwfans blynyddol gostyngol, mewn punnoedd"
     val amountHintText = "Er enghraifft, £193.54"
   }
 
@@ -271,22 +271,40 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
 
     }
 
-    "redirect to reduced annual allowance page if question has not been answered" which {
-      lazy val result: WSResponse = {
-        dropPensionsDB()
-        authoriseAgentOrIndividual()
-        val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(reducedAnnualAllowanceQuestion = None)
-        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)))
+    "redirect to reduced annual allowance page" when {
+      "previous questions have not been answered" which {
+        lazy val result: WSResponse = {
+          dropPensionsDB()
+          authoriseAgentOrIndividual()
+          val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(reducedAnnualAllowanceQuestion = None)
+          insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)))
 
-        urlGet(fullUrl(aboveReducedAnnualAllowanceUrl(taxYearEOY)), follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+          urlGet(fullUrl(aboveReducedAnnualAllowanceUrl(taxYearEOY)), follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        }
+
+        "has a SEE_OTHER status" in {
+          result.status shouldBe SEE_OTHER
+          result.header("location").contains(reducedAnnualAllowanceUrl(taxYearEOY)) shouldBe true
+        }
+
       }
+      "page is invalid in journey" which {
+        lazy val result: WSResponse = {
+          dropPensionsDB()
+          authoriseAgentOrIndividual()
+          val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(reducedAnnualAllowanceQuestion = Some(false))
+          insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)))
 
-      "has a SEE_OTHER status" in {
-        result.status shouldBe SEE_OTHER
-        result.header("location").contains(reducedAnnualAllowanceUrl(taxYearEOY)) shouldBe true
+          urlGet(fullUrl(aboveReducedAnnualAllowanceUrl(taxYearEOY)), follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        }
+
+        "has a SEE_OTHER status" in {
+          result.status shouldBe SEE_OTHER
+          result.header("location").contains(reducedAnnualAllowanceUrl(taxYearEOY)) shouldBe true
+        }
       }
-
     }
   }
 
@@ -518,6 +536,44 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
           aboveAnnualAllowanceQuestion = Some(false))
         lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
         cyaModel.pensions.pensionsAnnualAllowances shouldBe expectedModel
+      }
+    }
+
+    "redirect to reduced annual allowance page" when {
+      "previous questions have not been answered" which {
+        lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.no)
+        lazy val result: WSResponse = {
+          dropPensionsDB()
+          authoriseAgentOrIndividual()
+          val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(reducedAnnualAllowanceQuestion = None)
+          insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)))
+
+          urlPost(fullUrl(aboveReducedAnnualAllowanceUrl(taxYearEOY)), body = form, follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        }
+
+        "has a SEE_OTHER status" in {
+          result.status shouldBe SEE_OTHER
+          result.header("location").contains(reducedAnnualAllowanceUrl(taxYearEOY)) shouldBe true
+        }
+
+      }
+      "page is invalid in journey" which {
+        lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.no)
+        lazy val result: WSResponse = {
+          dropPensionsDB()
+          authoriseAgentOrIndividual()
+          val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(reducedAnnualAllowanceQuestion = Some(false))
+          insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)))
+
+          urlPost(fullUrl(aboveReducedAnnualAllowanceUrl(taxYearEOY)), body = form, follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        }
+
+        "has a SEE_OTHER status" in {
+          result.status shouldBe SEE_OTHER
+          result.header("location").contains(reducedAnnualAllowanceUrl(taxYearEOY)) shouldBe true
+        }
       }
     }
   }
