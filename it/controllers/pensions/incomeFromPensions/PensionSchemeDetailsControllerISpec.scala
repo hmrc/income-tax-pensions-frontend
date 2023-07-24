@@ -65,7 +65,7 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
 
   trait CommonExpectedResults {
     val expectedTitle: String
-    lazy val expectedHeading = expectedTitle
+    lazy val expectedHeading: String = expectedTitle
     val expectedErrorTitle: String
     val expectedCaption: Int => String
     val buttonText: String
@@ -407,159 +407,159 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
         }
       }
     }
-  }
 
-  "redirect and update an existing Pension Scheme at given index when valid form is submitted" which {
+    "redirect and update an existing Pension Scheme at given index when valid form is submitted" which {
 
-    lazy val form: Map[String, String] = pensionDetailsForm(validProviderName, validRef, validPensionId)
+      lazy val form: Map[String, String] = pensionDetailsForm(validProviderName, validRef, validPensionId)
 
-    lazy val result: WSResponse = {
-      dropPensionsDB()
-      authoriseAgentOrIndividual()
-      val uKPensionIncomesModel = anUkPensionIncomeViewModelTwo.copy(
-        pensionSchemeName = Some("Scheme Name"), pensionSchemeRef = Some("123/PREF"), pensionId = Some("Pension Id"))
-      insertCyaData(pensionsUserDataWithIncomeFromPensions(
-        anIncomeFromPensionsViewModel.copy(uKPensionIncomes = Seq(anUkPensionIncomeViewModelOne, uKPensionIncomesModel))))
-      urlPost(fullUrl(pensionSchemeDetailsUrl(taxYearEOY, Some(1))), body = form, follow = false,
-        headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
-    }
-
-    "has an SEE_OTHER(303) status" in {
-      result.status shouldBe SEE_OTHER
-      result.header("location") shouldBe Some(pensionAmountUrl(taxYearEOY, Some(1)))
-    }
-
-    "updates existing pension scheme with new values" in {
-      lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
-      cyaModel.pensions.incomeFromPensions.uKPensionIncomes.size shouldBe 2
-      cyaModel.pensions.incomeFromPensions.uKPensionIncomes(1).pensionSchemeName shouldBe Some(validProviderName)
-      cyaModel.pensions.incomeFromPensions.uKPensionIncomes(1).pensionSchemeRef shouldBe Some(validRef)
-      cyaModel.pensions.incomeFromPensions.uKPensionIncomes(1).pensionId shouldBe Some(validPensionId)
-      cyaModel.pensions.incomeFromPensions.uKPensionIncomes(1).employmentId shouldBe anUkPensionIncomeViewModelTwo.employmentId
-    }
-  }
-
-  "redirect and update session data when valid form is submitted and there are no existing Pension Schemes" which {
-
-    lazy val form: Map[String, String] = pensionDetailsForm(validProviderName, validRef, validPensionId)
-
-    lazy val result: WSResponse = {
-      dropPensionsDB()
-      authoriseAgentOrIndividual()
-      insertCyaData(pensionsUserDataWithIncomeFromPensions(anIncomeFromPensionEmptyViewModel.copy(uKPensionIncomesQuestion = Some(true))))
-      urlPost(fullUrl(pensionSchemeDetailsUrl(taxYearEOY, None)), body = form, follow = false,
-        headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
-    }
-
-    "has an SEE_OTHER(303) status" in {
-      result.status shouldBe SEE_OTHER
-      result.header("location") shouldBe Some(pensionAmountUrl(taxYearEOY, None))
-    }
-
-    "updates existing pension scheme with new values" in {
-      lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
-      cyaModel.pensions.incomeFromPensions.uKPensionIncomes.size shouldBe 1
-      cyaModel.pensions.incomeFromPensions.uKPensionIncomes.head.pensionSchemeName shouldBe Some(validProviderName)
-      cyaModel.pensions.incomeFromPensions.uKPensionIncomes.head.pensionSchemeRef shouldBe Some(validRef)
-      cyaModel.pensions.incomeFromPensions.uKPensionIncomes.head.pensionId shouldBe Some(validPensionId)
-      cyaModel.pensions.incomeFromPensions.uKPensionIncomes.head.employmentId shouldBe None
-    }
-  }
-
-  "redirect and add to an existing Uk Pension Schemes List when index is None and valid form is submitted" which {
-
-    lazy val form: Map[String, String] = pensionDetailsForm(validProviderName, validRef, validPensionId)
-
-    lazy val result: WSResponse = {
-      dropPensionsDB()
-      authoriseAgentOrIndividual()
-      insertCyaData(pensionsUserDataWithIncomeFromPensions(anIncomeFromPensionsViewModel))
-      urlPost(fullUrl(pensionSchemeDetailsUrl(taxYearEOY, None)), body = form, follow = false,
-        headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
-    }
-
-    "has an SEE_OTHER(303) status" in {
-      result.status shouldBe SEE_OTHER
-      result.header("location") shouldBe Some(pensionAmountUrl(taxYearEOY, None))
-    }
-
-    "updates existing pension scheme with new values without changing existing pension schemes" in {
-      lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
-      cyaModel.pensions.incomeFromPensions.uKPensionIncomes.size shouldBe 3
-      cyaModel.pensions.incomeFromPensions.uKPensionIncomes.head.pensionSchemeName shouldBe
-        anIncomeFromPensionsViewModel.uKPensionIncomes.head.pensionSchemeName
-      cyaModel.pensions.incomeFromPensions.uKPensionIncomes(1).pensionSchemeName shouldBe
-        anIncomeFromPensionsViewModel.uKPensionIncomes(1).pensionSchemeName
-      cyaModel.pensions.incomeFromPensions.uKPensionIncomes(2).pensionSchemeName shouldBe Some(validProviderName)
-      cyaModel.pensions.incomeFromPensions.uKPensionIncomes(2).pensionSchemeRef shouldBe Some(validRef)
-      cyaModel.pensions.incomeFromPensions.uKPensionIncomes(2).pensionId shouldBe Some(validPensionId)
-    }
-  }
-
-  "redirect to Pension Summary page when there is no session data" which {
-    lazy val form: Map[String, String] = pensionDetailsForm(validProviderName, validRef, validPensionId)
-
-    lazy val result: WSResponse = {
-      dropPensionsDB()
-      authoriseAgentOrIndividual()
-      urlPost(fullUrl(pensionSchemeDetailsUrl(taxYearEOY, None)), body = form, follow = false,
-        headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
-    }
-
-    "has an SEE_OTHER(303) status" in {
-      result.status shouldBe SEE_OTHER
-      result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
-    }
-  }
-
-  "redirect to the first page in journey" when {
-    lazy val form: Map[String, String] = pensionDetailsForm(validProviderName, validRef, validPensionId)
-
-    "page is invalid in journey" which {
-      val invalidJourney = anIncomeFromPensionEmptyViewModel.copy(uKPensionIncomesQuestion = Some(false))
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual()
-        insertCyaData(pensionsUserDataWithIncomeFromPensions(invalidJourney))
-        urlPost(fullUrl(pensionSchemeDetailsUrl(taxYearEOY, Some(0))), body = form,
-          follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        val uKPensionIncomesModel = anUkPensionIncomeViewModelTwo.copy(
+          pensionSchemeName = Some("Scheme Name"), pensionSchemeRef = Some("123/PREF"), pensionId = Some("Pension Id"))
+        insertCyaData(pensionsUserDataWithIncomeFromPensions(
+          anIncomeFromPensionsViewModel.copy(uKPensionIncomes = Seq(anUkPensionIncomeViewModelOne, uKPensionIncomesModel))))
+        urlPost(fullUrl(pensionSchemeDetailsUrl(taxYearEOY, Some(1))), body = form, follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
       "has an SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(ukPensionSchemePayments(taxYearEOY))
+        result.header("location") shouldBe Some(pensionAmountUrl(taxYearEOY, Some(1)))
+      }
+
+      "updates existing pension scheme with new values" in {
+        lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
+        cyaModel.pensions.incomeFromPensions.uKPensionIncomes.size shouldBe 2
+        cyaModel.pensions.incomeFromPensions.uKPensionIncomes(1).pensionSchemeName shouldBe Some(validProviderName)
+        cyaModel.pensions.incomeFromPensions.uKPensionIncomes(1).pensionSchemeRef shouldBe Some(validRef)
+        cyaModel.pensions.incomeFromPensions.uKPensionIncomes(1).pensionId shouldBe Some(validPensionId)
+        cyaModel.pensions.incomeFromPensions.uKPensionIncomes(1).employmentId shouldBe anUkPensionIncomeViewModelTwo.employmentId
       }
     }
 
-    "previous questions are unanswered" which {
-      val incompleteJourney = aUKIncomeFromPensionsViewModel.copy(
-        uKPensionIncomesQuestion = None)
+    "redirect and update session data when valid form is submitted and there are no existing Pension Schemes" which {
+
+      lazy val form: Map[String, String] = pensionDetailsForm(validProviderName, validRef, validPensionId)
+
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual()
-        insertCyaData(pensionsUserDataWithIncomeFromPensions(incompleteJourney))
-        urlPost(fullUrl(pensionSchemeDetailsUrl(taxYearEOY, Some(0))), body = form,
-          follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        insertCyaData(pensionsUserDataWithIncomeFromPensions(anIncomeFromPensionEmptyViewModel.copy(uKPensionIncomesQuestion = Some(true))))
+        urlPost(fullUrl(pensionSchemeDetailsUrl(taxYearEOY, None)), body = form, follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
       "has an SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(ukPensionSchemePayments(taxYearEOY))
+        result.header("location") shouldBe Some(pensionAmountUrl(taxYearEOY, Some(0)))
+      }
+
+      "updates existing pension scheme with new values" in {
+        lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
+        cyaModel.pensions.incomeFromPensions.uKPensionIncomes.size shouldBe 1
+        cyaModel.pensions.incomeFromPensions.uKPensionIncomes.head.pensionSchemeName shouldBe Some(validProviderName)
+        cyaModel.pensions.incomeFromPensions.uKPensionIncomes.head.pensionSchemeRef shouldBe Some(validRef)
+        cyaModel.pensions.incomeFromPensions.uKPensionIncomes.head.pensionId shouldBe Some(validPensionId)
+        cyaModel.pensions.incomeFromPensions.uKPensionIncomes.head.employmentId shouldBe None
       }
     }
 
-    "index is invalid" which {
+    "redirect and add to an existing Uk Pension Schemes List when index is None and valid form is submitted" which {
+
+      lazy val form: Map[String, String] = pensionDetailsForm(validProviderName, validRef, validPensionId)
+
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual()
-        insertCyaData(pensionsUserDataWithIncomeFromPensions(aUKIncomeFromPensionsViewModel))
-        urlPost(fullUrl(pensionSchemeDetailsUrl(taxYearEOY, Some(4))), body = form,
-          follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        insertCyaData(pensionsUserDataWithIncomeFromPensions(anIncomeFromPensionsViewModel))
+        urlPost(fullUrl(pensionSchemeDetailsUrl(taxYearEOY, None)), body = form, follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
-      "has an SEE_OTHER status" in {
+      "has an SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(ukPensionSchemePayments(taxYearEOY))
+        result.header("location") shouldBe Some(pensionAmountUrl(taxYearEOY, Some(2)))
+      }
+
+      "updates existing pension scheme with new values without changing existing pension schemes" in {
+        lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
+        cyaModel.pensions.incomeFromPensions.uKPensionIncomes.size shouldBe 3
+        cyaModel.pensions.incomeFromPensions.uKPensionIncomes.head.pensionSchemeName shouldBe
+          anIncomeFromPensionsViewModel.uKPensionIncomes.head.pensionSchemeName
+        cyaModel.pensions.incomeFromPensions.uKPensionIncomes(1).pensionSchemeName shouldBe
+          anIncomeFromPensionsViewModel.uKPensionIncomes(1).pensionSchemeName
+        cyaModel.pensions.incomeFromPensions.uKPensionIncomes(2).pensionSchemeName shouldBe Some(validProviderName)
+        cyaModel.pensions.incomeFromPensions.uKPensionIncomes(2).pensionSchemeRef shouldBe Some(validRef)
+        cyaModel.pensions.incomeFromPensions.uKPensionIncomes(2).pensionId shouldBe Some(validPensionId)
+      }
+    }
+
+    "redirect to Pension Summary page when there is no session data" which {
+      lazy val form: Map[String, String] = pensionDetailsForm(validProviderName, validRef, validPensionId)
+
+      lazy val result: WSResponse = {
+        dropPensionsDB()
+        authoriseAgentOrIndividual()
+        urlPost(fullUrl(pensionSchemeDetailsUrl(taxYearEOY, None)), body = form, follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+      }
+
+      "has an SEE_OTHER(303) status" in {
+        result.status shouldBe SEE_OTHER
+        result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
+      }
+    }
+
+    "redirect to the first page in journey" when {
+      lazy val form: Map[String, String] = pensionDetailsForm(validProviderName, validRef, validPensionId)
+
+      "page is invalid in journey" which {
+        val invalidJourney = anIncomeFromPensionEmptyViewModel.copy(uKPensionIncomesQuestion = Some(false))
+        lazy val result: WSResponse = {
+          dropPensionsDB()
+          authoriseAgentOrIndividual()
+          insertCyaData(pensionsUserDataWithIncomeFromPensions(invalidJourney))
+          urlPost(fullUrl(pensionSchemeDetailsUrl(taxYearEOY, Some(0))), body = form,
+            follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        }
+
+        "has an SEE_OTHER(303) status" in {
+          result.status shouldBe SEE_OTHER
+          result.header("location") shouldBe Some(ukPensionSchemePayments(taxYearEOY))
+        }
+      }
+
+      "previous questions are unanswered" which {
+        val incompleteJourney = aUKIncomeFromPensionsViewModel.copy(
+          uKPensionIncomesQuestion = None)
+        lazy val result: WSResponse = {
+          dropPensionsDB()
+          authoriseAgentOrIndividual()
+          insertCyaData(pensionsUserDataWithIncomeFromPensions(incompleteJourney))
+          urlPost(fullUrl(pensionSchemeDetailsUrl(taxYearEOY, Some(0))), body = form,
+            follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        }
+
+        "has an SEE_OTHER(303) status" in {
+          result.status shouldBe SEE_OTHER
+          result.header("location") shouldBe Some(ukPensionSchemePayments(taxYearEOY))
+        }
+      }
+
+      "index is invalid" which {
+        lazy val result: WSResponse = {
+          dropPensionsDB()
+          authoriseAgentOrIndividual()
+          insertCyaData(pensionsUserDataWithIncomeFromPensions(aUKIncomeFromPensionsViewModel))
+          urlPost(fullUrl(pensionSchemeDetailsUrl(taxYearEOY, Some(4))), body = form,
+            follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        }
+
+        "has an SEE_OTHER status" in {
+          result.status shouldBe SEE_OTHER
+          result.header("location") shouldBe Some(ukPensionSchemePayments(taxYearEOY))
+        }
       }
     }
   }
