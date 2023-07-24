@@ -45,7 +45,6 @@ class RemoveLifetimeAllowancePstrController @Inject()(implicit val cc: MessagesC
 
   def show(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit request =>
-      println("-------- in show: " + pensionSchemeIndex)
       val checkRedirect = journeyCheck(RemovePSTRPage, _: PensionsCYAModel, taxYear, pensionSchemeIndex)
       redirectBasedOnCurrentAnswers(taxYear, Some(request.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) {
         data =>
