@@ -26,6 +26,9 @@ import models.pension.charges.PensionLifetimeAllowancesViewModel
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
+import services.redirects.LifetimeAllowancesPages.CYAPage
+import services.redirects.LifetimeAllowancesRedirects.{cyaPageCall, journeyCheck}
+import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.lifetimeAllowances.LifetimeAllowanceCYAView
@@ -35,51 +38,58 @@ import scala.concurrent.Future
 
 @Singleton
 class LifetimeAllowanceCYAController @Inject()(actionsProvider: ActionsProvider,
-                                                     view: LifetimeAllowanceCYAView,
-                                                     pensionSessionService: PensionSessionService,
-                                                     errorHandler: ErrorHandler)
-                                                    (implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock)
-  extends FrontendController(mcc) with I18nSupport {
+                                               view: LifetimeAllowanceCYAView,
+                                               pensionSessionService: PensionSessionService,
+                                               errorHandler: ErrorHandler)
+                                              (implicit val mcc: MessagesControllerComponents,
+                                               appConfig: AppConfig, clock: Clock) extends FrontendController(mcc) with I18nSupport {
 
   def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit request =>
     pensionSessionService.getAndHandle(taxYear, request.user) { (cya, prior) =>
       (cya, prior) match {
         case (Some(data), _) =>
-          Future.successful(Ok(view(taxYear, data.pensions.pensionLifetimeAllowances)))
+          val checkRedirect = journeyCheck(CYAPage, _: PensionsCYAModel, taxYear)
+          redirectBasedOnCurrentAnswers(taxYear, Some(data), cyaPageCall(taxYear))(checkRedirect) {
+            data =>
+              Future.successful(Ok(view(taxYear, data.pensions.pensionLifetimeAllowances)))
+          }
+
         case (None, Some(priorData)) =>
           val cyaModel = generateCyaFromPrior(priorData)
-          pensionSessionService.createOrUpdateSessionData(request.user,
-            cyaModel, taxYear, isPriorSubmission = true)(
+          pensionSessionService.createOrUpdateSessionData(request.user, cyaModel, taxYear, isPriorSubmission = true)(
             errorHandler.internalServerError())(
             Ok(view(taxYear, cyaModel.pensionLifetimeAllowances)))
+
         case (None, None) =>
           val emptyLifetimeAllowances = PensionLifetimeAllowancesViewModel()
           Future.successful(Ok(view(taxYear, emptyLifetimeAllowances)))
-        case _ => Future.successful(Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear)))
+
+        case _ =>
+          Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
       }
     }
   }
 
-
   def submit(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit request =>
     pensionSessionService.getAndHandle(taxYear, request.user) { (cya, prior) =>
-      cya.fold(
-        Future.successful(Redirect(appConfig.incomeTaxSubmissionOverviewUrl(taxYear)))
-      ) { model =>
-        if (sessionDataDifferentThanPriorData(model.pensions, prior)) {
-          Future.successful(Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear)))
-        } else {
-          Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
-        }
+      cya.fold(Future.successful(Redirect(appConfig.incomeTaxSubmissionOverviewUrl(taxYear)))) {
+        model =>
+          if (sessionDataDifferentThanPriorData(model.pensions, prior)) {
+            val checkRedirect = journeyCheck(CYAPage, _: PensionsCYAModel, taxYear)
+            redirectBasedOnCurrentAnswers(taxYear, Some(model), cyaPageCall(taxYear))(checkRedirect) {
+              _ => // TODO submit data
+                Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
+            }
+          } else Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
       }
     }
   }
 
   private def sessionDataDifferentThanPriorData(cyaData: PensionsCYAModel, priorData: Option[AllPensionsData]): Boolean = {
-      priorData match {
-        case None => true
-        case Some(prior) => !cyaData.equals(generateCyaFromPrior(prior))
-      }
+    priorData match {
+      case None => true
+      case Some(prior) => !cyaData.equals(generateCyaFromPrior(prior))
     }
-
   }
+
+}

@@ -16,19 +16,30 @@
 
 package builders
 
-import models.pension.charges.{LifetimeAllowance, PensionLifetimeAllowancesViewModel}
+import builders.LifetimeAllowanceBuilder.{aLifetimeAllowance1, aLifetimeAllowance2}
+import models.pension.charges.PensionLifetimeAllowancesViewModel
 
-object PensionLifetimeAllowanceViewModelBuilder {
-  val aPensionLifetimeAllowanceViewModel: PensionLifetimeAllowancesViewModel = PensionLifetimeAllowancesViewModel(
+object PensionLifetimeAllowancesViewModelBuilder {
+
+  val aPensionLifetimeAllowancesViewModel: PensionLifetimeAllowancesViewModel = PensionLifetimeAllowancesViewModel(
     aboveLifetimeAllowanceQuestion = Some(true),
     pensionAsLumpSumQuestion = Some(true),
-    pensionAsLumpSum = Some(LifetimeAllowance(Some(134.22), Some(23.55))),
+    pensionAsLumpSum = Some(aLifetimeAllowance1),
     pensionPaidAnotherWayQuestion = Some(true),
-    pensionPaidAnotherWay = Some(LifetimeAllowance(Some(1667.22), Some(11.33))),
+    pensionPaidAnotherWay = Some(aLifetimeAllowance2),
     pensionSchemeTaxReferences = Some(Seq("1234567CRC", "12345678RB", "1234567DRD"))
   )
 
-  val minimalPensionLifetimeAllowanceViewModel: PensionLifetimeAllowancesViewModel = PensionLifetimeAllowancesViewModel(
+  val aPensionLifetimeAllowancesEmptySchemesViewModel: PensionLifetimeAllowancesViewModel = PensionLifetimeAllowancesViewModel(
+    aboveLifetimeAllowanceQuestion = Some(true),
+    pensionAsLumpSumQuestion = Some(true),
+    pensionAsLumpSum = Some(aLifetimeAllowance1),
+    pensionPaidAnotherWayQuestion = Some(true),
+    pensionPaidAnotherWay = Some(aLifetimeAllowance2),
+    pensionSchemeTaxReferences = None
+  )
+
+  val minimalPensionLifetimeAllowancesViewModel: PensionLifetimeAllowancesViewModel = PensionLifetimeAllowancesViewModel(
     aboveLifetimeAllowanceQuestion = Some(false)
   )
 

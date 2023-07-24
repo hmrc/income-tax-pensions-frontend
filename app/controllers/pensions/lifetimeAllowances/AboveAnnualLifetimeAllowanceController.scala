@@ -17,8 +17,8 @@
 package controllers.pensions.lifetimeAllowances
 
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.lifetimeAllowances.routes._
-import controllers.pensions.lifetimeAllowances.{routes => lifetimeRoutes}
+import controllers.pensions.lifetimeAllowances.routes.{LifetimeAllowanceCYAController, PensionLumpSumController}
+import controllers.pensions.routes.PensionsSummaryController
 import controllers.predicates.actions.AuthorisedAction
 import forms.YesNoForm
 import models.User
@@ -28,6 +28,9 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
+import services.redirects.LifetimeAllowancesPages.AboveLifetimeAllowancePage
+import services.redirects.LifetimeAllowancesRedirects.{cyaPageCall, journeyCheck}
+import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.lifetimeAllowances.AboveAnnualLifetimeAllowanceView
@@ -51,12 +54,15 @@ class AboveAnnualLifetimeAllowanceController @Inject()(implicit val cc: Messages
   def show(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
     pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
       case Some(data) =>
-        data.pensions.pensionLifetimeAllowances.aboveLifetimeAllowanceQuestion match {
-          case Some(value) => Future.successful(Ok(view(yesNoForm(request.user).fill(value), taxYear)))
-          case None => Future.successful(Ok(view(yesNoForm(request.user), taxYear)))
+        val checkRedirect = journeyCheck(AboveLifetimeAllowancePage, _: PensionsCYAModel, taxYear)
+        redirectBasedOnCurrentAnswers(taxYear, Some(data), cyaPageCall(taxYear))(checkRedirect) {
+          data =>
+            data.pensions.pensionLifetimeAllowances.aboveLifetimeAllowanceQuestion match {
+              case Some(value) => Future.successful(Ok(view(yesNoForm(request.user).fill(value), taxYear)))
+              case None => Future.successful(Ok(view(yesNoForm(request.user), taxYear)))
+            }
         }
-      case None =>
-        Future.successful(Redirect(lifetimeRoutes.LifetimeAllowanceCYAController.show(taxYear)))
+      case None => Future.successful(Redirect(LifetimeAllowanceCYAController.show(taxYear)))
     }
   }
 
@@ -66,22 +72,27 @@ class AboveAnnualLifetimeAllowanceController @Inject()(implicit val cc: Messages
       yesNo => {
         pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
           case Some(data) =>
-            val pensionsCYAModel: PensionsCYAModel = data.pensions
-            val viewModel: PensionLifetimeAllowancesViewModel = pensionsCYAModel.pensionLifetimeAllowances
-            val updatedCyaModel: PensionsCYAModel = pensionsCYAModel.copy(pensionLifetimeAllowances = {
-              if (yesNo) viewModel.copy(aboveLifetimeAllowanceQuestion = Some(true))
-              else PensionLifetimeAllowancesViewModel(aboveLifetimeAllowanceQuestion = Some(false))
-            })
-            pensionSessionService.createOrUpdateSessionData(request.user,
-              updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
-              Redirect(
-                if (yesNo) PensionLumpSumController.show(taxYear)
-                else LifetimeAllowanceCYAController.show(taxYear)
-              )
+            val checkRedirect = journeyCheck(AboveLifetimeAllowancePage, _: PensionsCYAModel, taxYear)
+            redirectBasedOnCurrentAnswers(taxYear, Some(data), cyaPageCall(taxYear))(checkRedirect) {
+              data =>
+                val pensionsCYAModel: PensionsCYAModel = data.pensions
+                val viewModel: PensionLifetimeAllowancesViewModel = pensionsCYAModel.pensionLifetimeAllowances
+                val updatedCyaModel: PensionsCYAModel = pensionsCYAModel.copy(pensionLifetimeAllowances =
+                  if (yesNo) viewModel.copy(aboveLifetimeAllowanceQuestion = Some(true))
+                  else PensionLifetimeAllowancesViewModel(aboveLifetimeAllowanceQuestion = Some(false))
+                )
+                pensionSessionService.createOrUpdateSessionData(request.user,
+                  updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
+                  Redirect(
+                    if (yesNo) PensionLumpSumController.show(taxYear)
+                    else LifetimeAllowanceCYAController.show(taxYear)
+                  )
+                }
             }
-          case _ => Future.successful(Redirect(LifetimeAllowanceCYAController.show(taxYear)))
+          case _ => Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
         }
       }
     )
   }
+
 }

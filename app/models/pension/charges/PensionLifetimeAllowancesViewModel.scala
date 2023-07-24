@@ -24,15 +24,27 @@ import utils.EncryptableSyntax.EncryptableOps
 import utils.EncryptorInstances.booleanEncryptor
 import utils.{EncryptedValue, SecureGCMCipher}
 
-case class PensionLifetimeAllowancesViewModel(
-                                               aboveLifetimeAllowanceQuestion: Option[Boolean] = None,
-                                               pensionAsLumpSumQuestion: Option[Boolean] = None,
-                                               pensionAsLumpSum: Option[LifetimeAllowance] = None,
-                                               pensionPaidAnotherWayQuestion: Option[Boolean] = None,
-                                               pensionPaidAnotherWay: Option[LifetimeAllowance] = None,
-                                               pensionSchemeTaxReferences: Option[Seq[String]] = None) {
+case class PensionLifetimeAllowancesViewModel(aboveLifetimeAllowanceQuestion: Option[Boolean] = None,
+                                              pensionAsLumpSumQuestion: Option[Boolean] = None,
+                                              pensionAsLumpSum: Option[LifetimeAllowance] = None,
+                                              pensionPaidAnotherWayQuestion: Option[Boolean] = None,
+                                              pensionPaidAnotherWay: Option[LifetimeAllowance] = None,
+                                              pensionSchemeTaxReferences: Option[Seq[String]] = None) {
+
   def isEmpty: Boolean = this.productIterator.forall(_ == None)
-  
+
+  def isFinished: Boolean = {
+    aboveLifetimeAllowanceQuestion.exists(x => !x || {
+
+      pensionAsLumpSumQuestion.exists(x => !x || pensionAsLumpSum.exists(_.isFinished)) &&
+        pensionPaidAnotherWayQuestion.exists(x => !x || {
+
+          pensionPaidAnotherWay.exists(_.isFinished) &&
+            pensionSchemeTaxReferences.exists(_.nonEmpty)
+        })
+    })
+  }
+
   def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedPensionLifetimeAllowancesViewModel = {
     EncryptedPensionLifetimeAllowancesViewModel(
       aboveLifetimeAllowanceQuestion = aboveLifetimeAllowanceQuestion.map(_.encrypted),

@@ -16,7 +16,7 @@
 
 package controllers.pensions.lifetimeAllowances
 
-import builders.PensionLifetimeAllowanceViewModelBuilder.aPensionLifetimeAllowanceViewModel
+import builders.PensionLifetimeAllowancesViewModelBuilder.aPensionLifetimeAllowancesViewModel
 import builders.PensionsUserDataBuilder.{aPensionsUserData, anPensionsUserDataEmptyCya, pensionsUserDataWithLifetimeAllowance}
 import builders.UserBuilder.aUserRequest
 import forms.YesNoForm
@@ -41,10 +41,9 @@ class PensionLumpSumControllerISpec extends IntegrationTest with BeforeAndAfterE
     val noSelector = "#value-no"
   }
 
-
   trait SpecificExpectedResults {
     val expectedTitle: String
-    lazy val expectedHeading = expectedTitle
+    lazy val expectedHeading: String = expectedTitle
     val expectedErrorTitle: String
     val expectedError: String
   }
@@ -112,7 +111,8 @@ class PensionLumpSumControllerISpec extends IntegrationTest with BeforeAndAfterE
           implicit lazy val result: WSResponse = {
             authoriseAgentOrIndividual(user.isAgent)
             dropPensionsDB()
-            insertCyaData(anPensionsUserDataEmptyCya)
+            val pensionsViewModel = PensionLifetimeAllowancesViewModel(aboveLifetimeAllowanceQuestion = Some(true))
+            insertCyaData(pensionsUserDataWithLifetimeAllowance(pensionsViewModel))
             urlGet(fullUrl(pensionLumpSumUrl(taxYearEOY)), user.isWelsh, follow = false,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
@@ -137,7 +137,7 @@ class PensionLumpSumControllerISpec extends IntegrationTest with BeforeAndAfterE
 
           implicit lazy val result: WSResponse = {
             dropPensionsDB()
-            val pensionsViewModel = aPensionLifetimeAllowanceViewModel
+            val pensionsViewModel = aPensionLifetimeAllowancesViewModel
             insertCyaData(pensionsUserDataWithLifetimeAllowance(pensionsViewModel))
             authoriseAgentOrIndividual(user.isAgent)
             urlGet(fullUrl(pensionLumpSumUrl(taxYearEOY)), user.isWelsh, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
@@ -164,7 +164,7 @@ class PensionLumpSumControllerISpec extends IntegrationTest with BeforeAndAfterE
           implicit lazy val result: WSResponse = {
             dropPensionsDB()
 
-            val pensionsViewModel = aPensionLifetimeAllowanceViewModel.copy(
+            val pensionsViewModel = aPensionLifetimeAllowancesViewModel.copy(
               pensionAsLumpSumQuestion = Some(false)
             )
             insertCyaData(pensionsUserDataWithLifetimeAllowance(pensionsViewModel))
@@ -243,7 +243,7 @@ class PensionLumpSumControllerISpec extends IntegrationTest with BeforeAndAfterE
       }
     }
 
-    "redirect and update question to 'Yes' when user selects yes when there is no cya data" which {
+    "redirect and update question to 'Yes' when user selects yes" which {
       lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.yes)
       lazy val result: WSResponse = {
         dropPensionsDB()
@@ -266,12 +266,15 @@ class PensionLumpSumControllerISpec extends IntegrationTest with BeforeAndAfterE
       }
     }
 
-    "redirect and update question to 'Yes' when user selects yes and cya data exists" which {
+    "redirect and update question to 'Yes' when user selects yes and data was previously set to 'No'" which {
       lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.yes)
+      val pensionsViewModel = PensionLifetimeAllowancesViewModel(
+        aboveLifetimeAllowanceQuestion = Some(true), pensionAsLumpSumQuestion = Some(false)
+      )
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual()
-        insertCyaData(pensionsUserDataWithLifetimeAllowance(aPensionLifetimeAllowanceViewModel))
+        insertCyaData(pensionsUserDataWithLifetimeAllowance(pensionsViewModel))
         urlPost(fullUrl(pensionLumpSumUrl(taxYearEOY)), body = form, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -283,39 +286,16 @@ class PensionLumpSumControllerISpec extends IntegrationTest with BeforeAndAfterE
 
       "updates pensionAsLumpSumQuestion to Some(true)" in {
         lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
-        cyaModel.pensions.pensionLifetimeAllowances shouldBe aPensionLifetimeAllowanceViewModel
+        cyaModel.pensions.pensionLifetimeAllowances shouldBe pensionsViewModel.copy(pensionAsLumpSumQuestion = Some(true))
       }
     }
 
-    "redirect and update question to 'No' when user selects no and no further cya data exists" which {
-      lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.no)
-      val pensionsViewModel = PensionLifetimeAllowancesViewModel(aboveLifetimeAllowanceQuestion = Some(true))
-      lazy val result: WSResponse = {
-        dropPensionsDB()
-        authoriseAgentOrIndividual()
-        insertCyaData(pensionsUserDataWithLifetimeAllowance(pensionsViewModel))
-        urlPost(fullUrl(pensionLumpSumUrl(taxYearEOY)), body = form, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
-      }
-
-      "has a SEE_OTHER(303) status" in {
-        result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(pensionLifeTimeAllowanceAnotherWayUrl(taxYearEOY))
-      }
-
-      "updates pensionAsLumpSumQuestion to Some(false)" in {
-        val expectedViewModel = pensionsViewModel.copy(pensionAsLumpSumQuestion = Some(false))
-        lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
-        cyaModel.pensions.pensionLifetimeAllowances shouldBe expectedViewModel
-      }
-    }
-
-    "redirect and update question to 'No' when user selects no and cya data exists and lump sum data is cleared" which {
+    "redirect and update question to 'No' when user selects no and clear existing lump sum data" which {
       lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.no)
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual()
-        insertCyaData(pensionsUserDataWithLifetimeAllowance(aPensionLifetimeAllowanceViewModel))
+        insertCyaData(pensionsUserDataWithLifetimeAllowance(aPensionLifetimeAllowancesViewModel))
         urlPost(fullUrl(pensionLumpSumUrl(taxYearEOY)), body = form, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -326,7 +306,7 @@ class PensionLumpSumControllerISpec extends IntegrationTest with BeforeAndAfterE
       }
 
       "updates pensionAsLumpSumQuestion to Some(false) and wipes amount value" in {
-        val expectedViewModel = aPensionLifetimeAllowanceViewModel.copy(
+        val expectedViewModel = aPensionLifetimeAllowancesViewModel.copy(
           pensionAsLumpSumQuestion = Some(false), pensionAsLumpSum = None)
         lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
         cyaModel.pensions.pensionLifetimeAllowances shouldBe expectedViewModel

@@ -16,8 +16,8 @@
 
 package controllers.pensions.lifetimeAllowances
 
-import builders.PensionLifetimeAllowanceViewModelBuilder.{aPensionLifetimeAllowanceViewModel, aPensionLifetimeAllowancesEmptyViewModel}
-import builders.PensionsUserDataBuilder.{aPensionsUserData, anPensionsUserDataEmptyCya, pensionsUserDataWithLifetimeAllowance}
+import builders.PensionLifetimeAllowancesViewModelBuilder.{aPensionLifetimeAllowancesEmptySchemesViewModel, aPensionLifetimeAllowancesViewModel}
+import builders.PensionsUserDataBuilder.{aPensionsUserData, pensionsUserDataWithLifetimeAllowance}
 import builders.UserBuilder.aUserRequest
 import forms.PensionSchemeTaxReferenceForm
 import org.jsoup.Jsoup
@@ -80,7 +80,7 @@ class PensionSchemeTaxReferenceLifetimeControllerISpec extends CommonUtils with 
     val expectedCaption: Int => String = (taxYear: Int) => s"Lifetime allowances for 6 April ${taxYear - 1} to 5 April $taxYear"
     val expectedButtonText = "Continue"
     val expectedTitle = "Tell us the pension scheme that paid or agreed to pay the tax"
-    val expectedHeading = expectedTitle
+    val expectedHeading: String = expectedTitle
     val expectedErrorTitle = s"Error: $expectedTitle"
     val hintText = "For example, ‘12345678RA’"
     val expectedParagraph1 = "If more than one pension scheme paid or agreed to pay the tax, you can add them later."
@@ -94,7 +94,7 @@ class PensionSchemeTaxReferenceLifetimeControllerISpec extends CommonUtils with 
     val yesText = "Iawn"
     val noText = "Na"
     val expectedTitle = "Rhowch wybod i ni’r cynllun pensiwn a dalodd neu a gytunwyd i dalu’r dreth"
-    val expectedHeading = expectedTitle
+    val expectedHeading: String = expectedTitle
     val expectedErrorTitle = s"Gwall: $expectedTitle"
     val hintText = "Er enghraifft, ‘12345678RA’"
     val expectedParagraph1 = "Os bydd mwy nag un cynllun pensiwn yn talu neu wedi cytuno i dalu’r dreth, gallwch eu hychwanegu nes ymlaen."
@@ -103,7 +103,6 @@ class PensionSchemeTaxReferenceLifetimeControllerISpec extends CommonUtils with 
   }
 
   val inputName: String = "taxReferenceId"
-
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(
     UserScenario(isWelsh = false, isAgent = false, CommonExpectedEN, Some(ExpectedIndividualEN)),
@@ -121,7 +120,7 @@ class PensionSchemeTaxReferenceLifetimeControllerISpec extends CommonUtils with 
 
         "render the 'PSTR' page with correct content and no pre-filling and no PSTR index" which {
           implicit val url: Int => String = pensionTaxReferenceNumberLifetimeAllowanceUrl
-          implicit lazy val result: WSResponse = showPage(user, anPensionsUserDataEmptyCya)
+          implicit lazy val result: WSResponse = showPage(user, aPensionsUserData)
 
 
           "has an OK status" in {
@@ -145,7 +144,7 @@ class PensionSchemeTaxReferenceLifetimeControllerISpec extends CommonUtils with 
           val taxSchemeRef = "12345678RB"
           val index = 0
           implicit val url: Int => String = pensionTaxReferenceNumberLifetimeAllowanceUrlIndex(index)
-          val pensionsViewModel = aPensionLifetimeAllowanceViewModel.copy(pensionSchemeTaxReferences = Some(Seq(taxSchemeRef)))
+          val pensionsViewModel = aPensionLifetimeAllowancesViewModel.copy(pensionSchemeTaxReferences = Some(Seq(taxSchemeRef)))
           val pensionUserData = pensionsUserDataWithLifetimeAllowance(pensionsViewModel)
           implicit lazy val result: WSResponse = showPage(user, pensionUserData)
 
@@ -170,7 +169,7 @@ class PensionSchemeTaxReferenceLifetimeControllerISpec extends CommonUtils with 
           val taxSchemeRef = "1234568B"
           val index = 0
           implicit val url: Int => String = pensionTaxReferenceNumberLifetimeAllowanceUrlIndex(index)
-          val pensionsViewModel = aPensionLifetimeAllowanceViewModel.copy(pensionSchemeTaxReferences = Some(Seq(taxSchemeRef)))
+          val pensionsViewModel = aPensionLifetimeAllowancesViewModel.copy(pensionSchemeTaxReferences = Some(Seq(taxSchemeRef)))
           val pensionUserData = pensionsUserDataWithLifetimeAllowance(pensionsViewModel)
           implicit lazy val result: WSResponse = showPage(user, pensionUserData)
 
@@ -198,7 +197,7 @@ class PensionSchemeTaxReferenceLifetimeControllerISpec extends CommonUtils with 
     "redirect to the PSTR summary page when index is invalid and there previous schemes" should {
       val index = 3
       implicit val url: Int => String = pensionTaxReferenceNumberLifetimeAllowanceUrlIndex(index)
-      val pensionsViewModel = aPensionLifetimeAllowanceViewModel.copy(pensionSchemeTaxReferences = Some(Seq("12345678AB")))
+      val pensionsViewModel = aPensionLifetimeAllowancesViewModel.copy(pensionSchemeTaxReferences = Some(Seq("12345678AB")))
       val pensionUserData = pensionsUserDataWithLifetimeAllowance(pensionsViewModel)
 
       lazy val result: WSResponse = showPage(pensionUserData)
@@ -212,7 +211,7 @@ class PensionSchemeTaxReferenceLifetimeControllerISpec extends CommonUtils with 
     "redirect to the first page of scheme loop when index is invalid and there are no previous schemes" should {
       val index = 3
       implicit val url: Int => String = pensionTaxReferenceNumberLifetimeAllowanceUrlIndex(index)
-      val pensionsViewModel = aPensionLifetimeAllowanceViewModel.copy(pensionSchemeTaxReferences = None)
+      val pensionsViewModel = aPensionLifetimeAllowancesViewModel.copy(pensionSchemeTaxReferences = None)
       val pensionUserData = pensionsUserDataWithLifetimeAllowance(pensionsViewModel)
 
       lazy val result: WSResponse = showPage(pensionUserData)
@@ -295,8 +294,7 @@ class PensionSchemeTaxReferenceLifetimeControllerISpec extends CommonUtils with 
 
     "redirect and update question to contain pension scheme tax reference when list PSTR list is empty" which {
       lazy val form: Map[String, String] = Map(PensionSchemeTaxReferenceForm.taxReferenceId -> "12345678RB")
-      val pensionsViewModel = aPensionLifetimeAllowancesEmptyViewModel.copy(pensionSchemeTaxReferences = Some(Seq.empty))
-      val pensionUserData = pensionsUserDataWithLifetimeAllowance(pensionsViewModel)
+      val pensionUserData = pensionsUserDataWithLifetimeAllowance(aPensionLifetimeAllowancesEmptySchemesViewModel)
       implicit val url: Int => String = pensionTaxReferenceNumberLifetimeAllowanceUrl
 
       lazy val result: WSResponse = submitPage(pensionUserData, form)
@@ -317,7 +315,7 @@ class PensionSchemeTaxReferenceLifetimeControllerISpec extends CommonUtils with 
       val index = 0
       implicit val url: Int => String = pensionTaxReferenceNumberLifetimeAllowanceUrlIndex(index)
       lazy val form: Map[String, String] = Map(PensionSchemeTaxReferenceForm.taxReferenceId -> "12345678RA")
-      val pensionsViewModel = aPensionLifetimeAllowanceViewModel.copy(pensionSchemeTaxReferences = Some(Seq("12345678RB")))
+      val pensionsViewModel = aPensionLifetimeAllowancesViewModel.copy(pensionSchemeTaxReferences = Some(Seq("12345678RB")))
       val pensionUserData = pensionsUserDataWithLifetimeAllowance(pensionsViewModel)
 
       lazy val result: WSResponse = submitPage(pensionUserData, form)
@@ -338,7 +336,7 @@ class PensionSchemeTaxReferenceLifetimeControllerISpec extends CommonUtils with 
     "redirect and update pstr list to contain new pstr when there is an existing pstr list" which {
       implicit val url: Int => String = pensionTaxReferenceNumberLifetimeAllowanceUrl
       lazy val form: Map[String, String] = Map(PensionSchemeTaxReferenceForm.taxReferenceId -> "12345678RA")
-      val pensionsViewModel = aPensionLifetimeAllowanceViewModel.copy(pensionSchemeTaxReferences = Some(Seq("12345678RB", "12345678RC")))
+      val pensionsViewModel = aPensionLifetimeAllowancesViewModel.copy(pensionSchemeTaxReferences = Some(Seq("12345678RB", "12345678RC")))
       val pensionUserData = pensionsUserDataWithLifetimeAllowance(pensionsViewModel)
       lazy val result: WSResponse = submitPage(pensionUserData, form)
 
@@ -358,7 +356,7 @@ class PensionSchemeTaxReferenceLifetimeControllerISpec extends CommonUtils with 
       val index = 3
       implicit val url: Int => String = pensionTaxReferenceNumberLifetimeAllowanceUrlIndex(index)
       lazy val form: Map[String, String] = Map(PensionSchemeTaxReferenceForm.taxReferenceId -> "12345678RA")
-      val pensionsViewModel = aPensionLifetimeAllowanceViewModel.copy(pensionSchemeTaxReferences = Some(Seq("12345678RB")))
+      val pensionsViewModel = aPensionLifetimeAllowancesViewModel.copy(pensionSchemeTaxReferences = Some(Seq("12345678RB")))
       val pensionUserData = pensionsUserDataWithLifetimeAllowance(pensionsViewModel)
       lazy val result: WSResponse = submitPage(pensionUserData, form)
 
