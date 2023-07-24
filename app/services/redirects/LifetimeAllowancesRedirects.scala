@@ -118,7 +118,7 @@ object LifetimeAllowancesRedirects {
 
       6 -> { lifetimeAVM: PensionLifetimeAllowancesViewModel => lifetimeAVM.pensionPaidAnotherWay.exists(_.isFinished) },
 
-      7 -> { _: PensionLifetimeAllowancesViewModel => true },
+      7 -> { lifetimeAVM: PensionLifetimeAllowancesViewModel => lifetimeAVM.pensionPaidAnotherWay.exists(_.isFinished) },
 
       8 -> { lifetimeAVM: PensionLifetimeAllowancesViewModel => lifetimeAVM.pensionPaidAnotherWay.exists(_.isFinished) },
 

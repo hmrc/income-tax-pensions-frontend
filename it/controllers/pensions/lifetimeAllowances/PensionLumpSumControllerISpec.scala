@@ -41,10 +41,9 @@ class PensionLumpSumControllerISpec extends IntegrationTest with BeforeAndAfterE
     val noSelector = "#value-no"
   }
 
-
   trait SpecificExpectedResults {
     val expectedTitle: String
-    lazy val expectedHeading = expectedTitle
+    lazy val expectedHeading: String = expectedTitle
     val expectedErrorTitle: String
     val expectedError: String
   }
@@ -112,7 +111,8 @@ class PensionLumpSumControllerISpec extends IntegrationTest with BeforeAndAfterE
           implicit lazy val result: WSResponse = {
             authoriseAgentOrIndividual(user.isAgent)
             dropPensionsDB()
-            insertCyaData(anPensionsUserDataEmptyCya)
+            val pensionsViewModel = PensionLifetimeAllowancesViewModel(aboveLifetimeAllowanceQuestion = Some(true))
+            insertCyaData(pensionsUserDataWithLifetimeAllowance(pensionsViewModel))
             urlGet(fullUrl(pensionLumpSumUrl(taxYearEOY)), user.isWelsh, follow = false,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }

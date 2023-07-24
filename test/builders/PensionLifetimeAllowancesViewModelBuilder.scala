@@ -23,19 +23,19 @@ object PensionLifetimeAllowancesViewModelBuilder {
 
   val aPensionLifetimeAllowancesViewModel: PensionLifetimeAllowancesViewModel = PensionLifetimeAllowancesViewModel(
     aboveLifetimeAllowanceQuestion = Some(true),
+    pensionAsLumpSumQuestion = Some(true),
     pensionAsLumpSum = Some(aLifetimeAllowance1),
     pensionPaidAnotherWayQuestion = Some(true),
     pensionPaidAnotherWay = Some(aLifetimeAllowance2),
-    pensionAsLumpSumQuestion = Some(true),
     pensionSchemeTaxReferences = Some(Seq("1234567CRC", "12345678RB", "1234567DRD"))
   )
 
   val aPensionLifetimeAllowancesEmptySchemesViewModel: PensionLifetimeAllowancesViewModel = PensionLifetimeAllowancesViewModel(
     aboveLifetimeAllowanceQuestion = Some(true),
+    pensionAsLumpSumQuestion = Some(true),
     pensionAsLumpSum = Some(aLifetimeAllowance1),
     pensionPaidAnotherWayQuestion = Some(true),
     pensionPaidAnotherWay = Some(aLifetimeAllowance2),
-    pensionAsLumpSumQuestion = Some(true),
     pensionSchemeTaxReferences = None
   )
 

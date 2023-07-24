@@ -49,7 +49,7 @@ class LifetimePstrSummaryControllerISpec extends IntegrationTest with BeforeAndA
 
     def removeLinkSelector(index: Int): String = s"div:nth-child($index) > dd.hmrc-add-to-a-list__remove > a"
 
-    def pstrSelector(index: Int): String = s"#main-content > div > div > div > dl > div:nth-child($index) > dt"
+    def pstrSelector(index: Int): String = s"div > dl > div:nth-child($index) > dt"
   }
 
   trait CommonExpectedResults {
