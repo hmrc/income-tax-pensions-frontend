@@ -75,7 +75,6 @@ class PensionSchemeDetailsController @Inject()(implicit val mcc: MessagesControl
       formModel => {
         pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
           case Some(data) =>
-            println("------ in details submit")
             indexCheckThenJourneyCheck(data, pensionSchemeIndex, PensionSchemeDetailsPage, taxYear) {
               data =>
                 val pensionsCYAModel = data.pensions

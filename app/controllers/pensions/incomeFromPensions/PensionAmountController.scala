@@ -56,7 +56,6 @@ class PensionAmountController @Inject()(implicit val mcc: MessagesControllerComp
   def show(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
       case Some(data) =>
-        println("------ in amount show, index: " + pensionSchemeIndex)
         indexCheckThenJourneyCheck(data, pensionSchemeIndex, HowMuchPensionDidYouGetPaidPage, taxYear) {
           data =>
             val pensionIncomesList: Seq[UkPensionIncomeViewModel] = data.pensions.incomeFromPensions.uKPensionIncomes
