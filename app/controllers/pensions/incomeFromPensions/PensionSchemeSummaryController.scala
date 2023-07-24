@@ -18,29 +18,29 @@ package controllers.pensions.incomeFromPensions
 
 import config.AppConfig
 import controllers.predicates.actions.ActionsProvider
-import controllers.validatedIndex
 import models.pension.statebenefits.UkPensionIncomeViewModel
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.redirects.IncomeFromOtherUkPensionsRedirects.redirectForSchemeLoop
+import services.redirects.IncomeFromOtherUkPensionsPages.SchemeSummaryPage
+import services.redirects.IncomeFromOtherUkPensionsRedirects.indexCheckThenJourneyCheck
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.SessionHelper
 import views.html.pensions.incomeFromPensions.PensionSchemeSummaryView
 
 import javax.inject.Inject
+import scala.concurrent.Future
 
 class PensionSchemeSummaryController @Inject()(view: PensionSchemeSummaryView,
                                                actionsProvider: ActionsProvider)
                                               (implicit val mcc: MessagesControllerComponents, appConfig: AppConfig)
   extends FrontendController(mcc) with I18nSupport with SessionHelper {
 
-  def show(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) {
+  def show(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit userSessionDataRequest =>
-      val pensionIncomesList: Seq[UkPensionIncomeViewModel] = userSessionDataRequest.pensionsUserData.pensions.incomeFromPensions.uKPensionIncomes
-      validatedIndex(pensionSchemeIndex, pensionIncomesList.size) match {
-        case Some(idx) =>
-          Ok(view(taxYear, pensionIncomesList(idx), pensionSchemeIndex))
-        case _ => Redirect(redirectForSchemeLoop(pensionIncomesList, taxYear))
+      indexCheckThenJourneyCheck(userSessionDataRequest.pensionsUserData, pensionSchemeIndex, SchemeSummaryPage, taxYear) {
+        data =>
+          val scheme: UkPensionIncomeViewModel = data.pensions.incomeFromPensions.uKPensionIncomes(pensionSchemeIndex.getOrElse(0))
+          Future.successful(Ok(view(taxYear, scheme, pensionSchemeIndex)))
       }
   }
 }

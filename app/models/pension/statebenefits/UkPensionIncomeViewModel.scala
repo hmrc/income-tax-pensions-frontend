@@ -36,10 +36,6 @@ case class UkPensionIncomeViewModel(employmentId: Option[String] = None,
                                      taxPaid: Option[BigDecimal] = None,
                                      isCustomerEmploymentData: Option[Boolean] = None) {
 
-  def isFinished: Boolean =
-    pensionSchemeName.isDefined && pensionSchemeRef.isDefined && pensionId.isDefined &&
-      amount.isDefined && taxPaid.isDefined && startDate.isDefined
-
   def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedUkPensionIncomeViewModel =
     EncryptedUkPensionIncomeViewModel(
 
@@ -74,7 +70,15 @@ case class UkPensionIncomeViewModel(employmentId: Option[String] = None,
       ),
       isHmrcEmploymentId = this.isCustomerEmploymentData.map(!_)
     )
-  
+
+  def isFinished: Boolean = {
+    this.pensionId.isDefined &&
+    this.startDate.isDefined &&
+    this.pensionSchemeName.isDefined &&
+    this.pensionSchemeRef.isDefined &&
+    this.amount.isDefined &&
+    this.taxPaid.isDefined
+  }
 }
 
 object UkPensionIncomeViewModel {
