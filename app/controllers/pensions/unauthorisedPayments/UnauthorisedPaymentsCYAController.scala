@@ -17,8 +17,7 @@
 package controllers.pensions.unauthorisedPayments
 
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.routes._
-//import controllers.pensions.routes.PensionsSummaryController
+import controllers.pensions.routes.PensionsSummaryController
 import controllers.predicates.auditActions.AuditActionsProvider
 import models.mongo.{PensionsCYAModel, PensionsUserData}
 import models.pension.AllPensionsData
