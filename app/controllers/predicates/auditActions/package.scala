@@ -16,12 +16,18 @@
 
 package controllers.predicates
 
-import models.audit.{AuditModel, PaymentsIntoPensionsAudit}
+import models.audit.{AuditModel, PaymentsIntoPensionsAudit, UnauthorisedPaymentsAudit}
 import play.api.libs.json.{Json, OWrites}
 
 package object auditActions {
-  def auditJson(auditModel: AuditModel[PaymentsIntoPensionsAudit]): String = {
+
+  def auditJsonPaymentsIntoPensions(auditModel: AuditModel[PaymentsIntoPensionsAudit]): String = {
     implicit val audWrites: OWrites[AuditModel[PaymentsIntoPensionsAudit]] = Json.writes[AuditModel[PaymentsIntoPensionsAudit]]
+    Json.toJson(auditModel).toString()
+  }
+
+  def auditJsonUnauthorisedPayments(auditModel: AuditModel[UnauthorisedPaymentsAudit]): String = {
+    implicit val audWrites: OWrites[AuditModel[UnauthorisedPaymentsAudit]] = Json.writes[AuditModel[UnauthorisedPaymentsAudit]]
     Json.toJson(auditModel).toString()
   }
 }

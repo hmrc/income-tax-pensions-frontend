@@ -21,7 +21,7 @@ import builders.PensionsUserDataBuilder.aPensionsUserData
 import builders.UserBuilder.aUser
 import common.SessionValues.{TAX_YEAR, VALID_TAX_YEARS}
 import controllers.errors.routes.UnauthorisedUserErrorController
-import models.audit.PaymentsIntoPensionsAudit
+import models.audit.{PaymentsIntoPensionsAudit, UnauthorisedPaymentsAudit}
 import models.pension.AllPensionsData.generateCyaFromPrior
 import models.{APIErrorBodyModel, APIErrorModel}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
@@ -61,7 +61,9 @@ class AuditActionsProviderSpec extends ControllerUnitTest
 
   for ((actionName: String, action) <- Seq(
     ("paymentsIntoPensionsViewAuditing", auditProvider.paymentsIntoPensionsViewAuditing: ActionType),
-    ("paymentsIntoPensionsUpdateAuditing", auditProvider.paymentsIntoPensionsUpdateAuditing: ActionType)
+    ("paymentsIntoPensionsUpdateAuditing", auditProvider.paymentsIntoPensionsUpdateAuditing: ActionType),
+    ("unauthorisedPaymentsViewAuditing", auditProvider.unauthorisedPaymentsViewAuditing: ActionType),
+    ("unauthorisedPaymentsUpdateAuditing", auditProvider.unauthorisedPaymentsUpdateAuditing: ActionType)
   )) {
 
     s".$actionName(taxYear)" should {
@@ -81,7 +83,7 @@ class AuditActionsProviderSpec extends ControllerUnitTest
         val underTest = action(taxYearEOY)(block = anyBlock)
         await(underTest(fakeIndividualRequest.withSession(TAX_YEAR -> taxYearEOY.toString, VALID_TAX_YEARS -> validTaxYears))) shouldBe InternalServerError
       }
-      if (actionName == "paymentsIntoPensionsUpdateAuditing") {
+      if (actionName.contains("UpdateAuditing")) {
         "handle internal server error when getUserPriorAndSessionData result in error" in {
           mockAuthAsIndividual(Some(aUser.nino))
           mockGetPensionSessionData(taxYearEOY, Right(Some(aPensionsUserData)))
@@ -93,25 +95,36 @@ class AuditActionsProviderSpec extends ControllerUnitTest
           await(underTest(fakeIndividualRequest.withSession(TAX_YEAR -> taxYearEOY.toString, VALID_TAX_YEARS -> validTaxYears))) shouldBe InternalServerError
         }
       }
-      
-      val repeatSeq = if (actionName == "paymentsIntoPensionsUpdateAuditing") Seq("create", "amend") else Seq("View")
+
+      val repeatSeq = if (actionName.contains("UpdateAuditing")) Seq("create", "amend") else Seq("View")
 
       for (auditType <- repeatSeq) {
         s"return successful $auditType response when end of year" in {
           mockAuthAsIndividual(Some(aUser.nino))
           mockGetPensionSessionData(taxYearEOY, Right(Some(aPensionsUserData)))
 
-          val auditModel = if (actionName == "paymentsIntoPensionsUpdateAuditing") {
-            val priorData = if (auditType == "amend") anIncomeTaxUserData else anIncomeTaxUserData.copy(pensions = None)
-            mockGetPriorData(taxYearEOY, aUser, Right(priorData))
-            val audModel = PaymentsIntoPensionsAudit(taxYearEOY, aUser, aPensionsUserData.pensions.paymentsIntoPension,
-                                                        priorData.pensions.map(generateCyaFromPrior).map(_.paymentsIntoPension))
-            if (audModel.priorPaymentsIntoPension.isEmpty) audModel.toAuditModelCreate else audModel.toAuditModelAmend
-          } else {
-            PaymentsIntoPensionsAudit(taxYearEOY, aUser, aPensionsUserData.pensions.paymentsIntoPension, None).toAuditModelView
+          val auditModel = actionName match {
+            case "paymentsIntoPensionsUpdateAuditing" =>
+              val priorData = if (auditType == "amend") anIncomeTaxUserData else anIncomeTaxUserData.copy(pensions = None)
+              mockGetPriorData(taxYearEOY, aUser, Right(priorData))
+              val audModel = PaymentsIntoPensionsAudit(taxYearEOY, aUser, aPensionsUserData.pensions.paymentsIntoPension,
+                priorData.pensions.map(generateCyaFromPrior).map(_.paymentsIntoPension))
+              if (audModel.priorPaymentsIntoPension.isEmpty) audModel.toAuditModelCreate else audModel.toAuditModelAmend
+            case "paymentsIntoPensionsViewAuditing" =>
+              PaymentsIntoPensionsAudit(taxYearEOY, aUser, aPensionsUserData.pensions.paymentsIntoPension, None).toAuditModelView
+
+            case "unauthorisedPaymentsUpdateAuditing" =>
+              val priorData = if (auditType == "amend") anIncomeTaxUserData else anIncomeTaxUserData.copy(pensions = None)
+              mockGetPriorData(taxYearEOY, aUser, Right(priorData))
+              val audModel = UnauthorisedPaymentsAudit(taxYearEOY, aUser, aPensionsUserData.pensions.unauthorisedPayments,
+                priorData.pensions.map(generateCyaFromPrior).map(_.unauthorisedPayments))
+              if (audModel.priorUnauthorisedPayments.isEmpty) audModel.toAuditModelCreate else audModel.toAuditModelAmend
+            case "unauthorisedPaymentsViewAuditing" =>
+              UnauthorisedPaymentsAudit(taxYearEOY, aUser, aPensionsUserData.pensions.unauthorisedPayments, None).toAuditModelView
+
           }
           mockAuditResult(auditModel, mockedAuditSuccessResult)
-          
+
           val underTest = action(taxYearEOY)(block = anyBlock)
           status(underTest(fakeIndividualRequest.withSession(TAX_YEAR -> taxYearEOY.toString, VALID_TAX_YEARS -> validTaxYears))) shouldBe OK
         }
