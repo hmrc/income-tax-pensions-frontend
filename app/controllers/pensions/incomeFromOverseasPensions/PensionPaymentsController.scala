@@ -30,7 +30,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.PensionSessionService
 import services.redirects.IncomeFromOverseasPensionsPages.PensionsPaymentsAmountPage
-import services.redirects.IncomeFromOverseasPensionsRedirects.indexCheckThenJourneyCheck
+import services.redirects.IncomeFromOverseasPensionsRedirects.{indexCheckThenJourneyCheck, schemeIsFinishedCheck}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.incomeFromOverseasPensions.PensionPaymentsView
@@ -71,13 +71,10 @@ class PensionPaymentsController @Inject()(authAction: AuthorisedAction,
           formsProvider.pensionPaymentsForm(request.user).bindFromRequest().fold(
             formWithErrors => Future.successful(BadRequest(pensionPaymentsView(formWithErrors, taxYear, index))),
             amounts =>
-              updatePensionScheme(data, amounts._1, amounts._2, taxYear, index.getOrElse(0))(
-                Redirect(SpecialWithholdingTaxController.show(taxYear, index))
-              )
+              updatePensionScheme(data, amounts._1, amounts._2, taxYear, index.getOrElse(0))
           )
         }
-      case _ =>
-        Future.successful(Redirect(OverseasPensionsSummaryController.show(taxYear)))
+      case _ => Future.successful(Redirect(OverseasPensionsSummaryController.show(taxYear)))
     }
   }
 
@@ -95,21 +92,18 @@ class PensionPaymentsController @Inject()(authAction: AuthorisedAction,
   }
 
   private def updatePensionScheme(data: PensionsUserData, amountBeforeTaxOpt: Option[BigDecimal], nonUkTaxPaidOpt: Option[BigDecimal], taxYear: Int, index: Int)
-                                 (redirect: Result)
                                  (implicit request: AuthorisationRequest[AnyContent]): Future[Result] = {
     val viewModel = data.pensions.incomeFromOverseasPensions
-    val updatedCyaModel: PensionsCYAModel = {
-      data.pensions.copy(
-        incomeFromOverseasPensions = viewModel.copy(
-          overseasIncomePensionSchemes = viewModel.overseasIncomePensionSchemes
-            .updated(index, viewModel.overseasIncomePensionSchemes(index)
-              .copy(pensionPaymentAmount = amountBeforeTaxOpt, pensionPaymentTaxPaid = nonUkTaxPaidOpt))
+    val updatedSchemes: Seq[PensionScheme] = viewModel.overseasIncomePensionSchemes
+      .updated(index, viewModel.overseasIncomePensionSchemes(index)
+        .copy(pensionPaymentAmount = amountBeforeTaxOpt, pensionPaymentTaxPaid = nonUkTaxPaidOpt))
+    val updatedCyaModel: PensionsCYAModel = data.pensions.copy(
+      incomeFromOverseasPensions = viewModel.copy(overseasIncomePensionSchemes = updatedSchemes))
 
-        ))
-    }
     pensionSessionService.createOrUpdateSessionData(request.user,
       updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
-      redirect
+
+      schemeIsFinishedCheck(updatedSchemes, index, taxYear, SpecialWithholdingTaxController.show(taxYear, Some(index)))
     }
   }
 

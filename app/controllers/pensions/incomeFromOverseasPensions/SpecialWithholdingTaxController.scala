@@ -24,13 +24,14 @@ import controllers.predicates.actions.AuthorisedAction
 import controllers.predicates.actions.TaxYearAction.taxYearAction
 import forms.RadioButtonAmountForm
 import models.AuthorisationRequest
-import models.mongo.PensionsUserData
+import models.mongo.{PensionsCYAModel, PensionsUserData}
+import models.pension.charges.{IncomeFromOverseasPensionsViewModel, PensionScheme}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.PensionSessionService
 import services.redirects.IncomeFromOverseasPensionsPages.SpecialWithholdingTaxPage
-import services.redirects.IncomeFromOverseasPensionsRedirects.indexCheckThenJourneyCheck
+import services.redirects.IncomeFromOverseasPensionsRedirects.{indexCheckThenJourneyCheck, schemeIsFinishedCheck}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.incomeFromOverseasPensions.SpecialWithholdingTaxView
@@ -83,21 +84,16 @@ class SpecialWithholdingTaxController @Inject()(authAction: AuthorisedAction,
                          (implicit request: AuthorisationRequest[AnyContent], clock: Clock): Future[Result] = {
     validForm match {
       case (yesWasSelected, amountOpt) =>
-        pensionSessionService.createOrUpdateSessionData(
-          request.user,
-          pensionsUserData.pensions.copy(
-            incomeFromOverseasPensions = pensionsUserData.pensions.incomeFromOverseasPensions.copy(
-              overseasIncomePensionSchemes = pensionsUserData.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes
-                .updated(index, pensionsUserData.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes(index).copy(
-                  specialWithholdingTaxQuestion = Some(yesWasSelected),
-                  specialWithholdingTaxAmount = amountOpt
-                ))
-            )
-          ),
-          taxYear,
-          pensionsUserData.isPriorSubmission
-        )(errorHandler.handleError(INTERNAL_SERVER_ERROR))(
-          Redirect(ForeignTaxCreditReliefController.show(taxYear, Some(index))))
+        val ifopData: IncomeFromOverseasPensionsViewModel = pensionsUserData.pensions.incomeFromOverseasPensions
+        val updatedSchemes: Seq[PensionScheme] = ifopData.overseasIncomePensionSchemes
+          .updated(index, ifopData.overseasIncomePensionSchemes(index).copy(
+            specialWithholdingTaxQuestion = Some(yesWasSelected), specialWithholdingTaxAmount = amountOpt))
+        val updatedCyaModel: PensionsCYAModel = pensionsUserData.pensions.copy(
+          incomeFromOverseasPensions = ifopData.copy(overseasIncomePensionSchemes = updatedSchemes))
+
+        pensionSessionService.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear, pensionsUserData.isPriorSubmission)(
+          errorHandler.handleError(INTERNAL_SERVER_ERROR))(
+          schemeIsFinishedCheck(updatedSchemes, index, taxYear, ForeignTaxCreditReliefController.show(taxYear, Some(index))))
     }
   }
 

@@ -139,7 +139,7 @@ object PageUrls extends IntegrationTest {
 
     def removePstrUrl(taxYear: Int, pensionSchemeTaxReference: Int): String =
       s"$appUrl/$taxYear/annual-allowance/remove-pension-scheme-tax-reference?pensionSchemeTaxReferenceIndex=$pensionSchemeTaxReference"
-      
+
     def annualAllowancesCYAUrl(taxYear: Int): String = s"$appUrl/$taxYear/annual-allowance/check-annual-allowance"
   }
 
@@ -164,7 +164,7 @@ object PageUrls extends IntegrationTest {
 
     def removePstrUrl(taxYear: Int, pensionSchemeTaxReference: Int): String =
       s"$appUrl/$taxYear/lifetime-allowance/remove-pension-scheme-tax-reference?pensionSchemeTaxReferenceIndex=$pensionSchemeTaxReference"
-    
+
     def lifetimeAllowanceCYA(taxYear: Int): String = s"$appUrl/$taxYear/lifetime-allowance/lifetime-allowance-summary"
 
   }
@@ -261,14 +261,14 @@ object PageUrls extends IntegrationTest {
     def incomeFromOverseasPensionsAmounts(taxYear: Int, index: Int): String =
       s"$appUrl/$taxYear/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-amounts?index=$index"
 
-    def checkIncomeFromOverseasPensionsCyaUrl(taxYear: Int): String =
-      s"$appUrl/$taxYear/overseas-pensions/income-from-overseas-pensions/check-overseas-pension-income-cya"
-
     def foreignTaxCreditReliefControllerUrl(taxYear: Int, index: Int): String =
       s"$appUrl/$taxYear/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-ftcr?index=$index"
 
     def taxableAmountUrl: Int => Int => String =
       (index: Int) => (taxYear: Int) => s"$appUrl/$taxYear/overseas-pensions/income-from-overseas-pensions/taxable-amount?index=$index"
+
+    def overseasPensionsSchemeSummaryUrl(taxYear: Int, index: Int): String =
+      s"$appUrl/$taxYear/overseas-pensions/income-from-overseas-pensions/pension-scheme-summary?index=$index"
 
     def countrySummaryListControllerUrl(taxYear: Int): String =
       s"$appUrl/$taxYear/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-country-summary"
@@ -278,9 +278,8 @@ object PageUrls extends IntegrationTest {
       index.fold(baseUrl)(idx => s"$baseUrl?index=$idx")
     }
 
-    def overseasPensionsSchemeSummaryUrl(taxYear: Int, index: Int): String =
-      s"$appUrl/$taxYear/overseas-pensions/income-from-overseas-pensions/pension-scheme-summary?index=$index"
-
+    def checkIncomeFromOverseasPensionsCyaUrl(taxYear: Int): String =
+      s"$appUrl/$taxYear/overseas-pensions/income-from-overseas-pensions/check-overseas-pension-income-cya"
   }
 
   object TransferIntoOverseasPensions {

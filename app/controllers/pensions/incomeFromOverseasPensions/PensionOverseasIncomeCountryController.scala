@@ -22,13 +22,14 @@ import controllers.pensions.routes.OverseasPensionsSummaryController
 import controllers.predicates.actions.AuthorisedAction
 import forms.{Countries, CountryForm}
 import models.User
+import models.mongo.PensionsCYAModel
 import models.pension.charges.PensionScheme
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
 import services.redirects.IncomeFromOverseasPensionsPages.WhatCountryIsSchemeRegisteredInPage
-import services.redirects.IncomeFromOverseasPensionsRedirects.{cyaPageCall, journeyCheck, redirectForSchemeLoop}
+import services.redirects.IncomeFromOverseasPensionsRedirects.{cyaPageCall, journeyCheck, redirectForSchemeLoop, schemeIsFinishedCheck}
 import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
@@ -98,25 +99,22 @@ class PensionOverseasIncomeCountryController @Inject()(authAction: AuthorisedAct
               val checkRedirect = journeyCheck(WhatCountryIsSchemeRegisteredInPage, _, taxYear, index)
               redirectBasedOnCurrentAnswers(taxYear, Some(data), cyaPageCall(taxYear))(checkRedirect) { data =>
 
-                val updatedCyaModel = index match {
+                val updatedSchemes: Seq[PensionScheme] = index match {
                   case Some(value) =>
                     val scheme = pensionSchemeList(value).copy(alphaTwoCode = Some(country))
-                    data.pensions.copy(
-                      incomeFromOverseasPensions = data.pensions.incomeFromOverseasPensions.copy(
-                        overseasIncomePensionSchemes = pensionSchemeList.updated(value, scheme)
-                      ))
+                    pensionSchemeList.updated(value, scheme)
                   case None =>
                     val currentSchemes = pensionSchemeList
-                    data.pensions.copy(
-                      incomeFromOverseasPensions = data.pensions.incomeFromOverseasPensions.copy(
-                        overseasIncomePensionSchemes = currentSchemes ++ Seq(PensionScheme(alphaTwoCode = Some(country)))
-                      ))
+                    currentSchemes ++ Seq(PensionScheme(alphaTwoCode = Some(country)))
                 }
+                val updatedCyaModel: PensionsCYAModel = data.pensions.copy(incomeFromOverseasPensions = data.pensions.incomeFromOverseasPensions.copy(
+                  overseasIncomePensionSchemes = updatedSchemes))
+
                 pensionSessionService.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear, data.isPriorSubmission)(
                   errorHandler.internalServerError()) {
-                  val currentIndex = index.fold(
-                    Some(updatedCyaModel.incomeFromOverseasPensions.overseasIncomePensionSchemes.size - 1))(index => Some(index))
-                  Redirect(PensionPaymentsController.show(taxYear, currentIndex))
+                  val currentIndex = index.fold(updatedSchemes.size - 1)(index => index)
+
+                  schemeIsFinishedCheck(updatedSchemes, currentIndex, taxYear, PensionPaymentsController.show(taxYear, Some(currentIndex)))
                 }
               }
             }

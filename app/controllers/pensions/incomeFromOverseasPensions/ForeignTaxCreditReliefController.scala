@@ -24,13 +24,14 @@ import controllers.predicates.actions.AuthorisedAction
 import controllers.predicates.actions.TaxYearAction.taxYearAction
 import forms.YesNoForm
 import models.AuthorisationRequest
-import models.mongo.PensionsUserData
+import models.mongo.{PensionsCYAModel, PensionsUserData}
+import models.pension.charges.{IncomeFromOverseasPensionsViewModel, PensionScheme}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.PensionSessionService
 import services.redirects.IncomeFromOverseasPensionsPages.ForeignTaxCreditReliefPage
-import services.redirects.IncomeFromOverseasPensionsRedirects.indexCheckThenJourneyCheck
+import services.redirects.IncomeFromOverseasPensionsRedirects.{indexCheckThenJourneyCheck, schemeIsFinishedCheck}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.incomeFromOverseasPensions.ForeignTaxCreditReliefView
@@ -72,8 +73,7 @@ class ForeignTaxCreditReliefController @Inject()(authAction: AuthorisedAction,
             validForm =>
               onValidForm(data, taxYear, validForm, index.getOrElse(0)))
         }
-      case _ =>
-        Future.successful(Redirect(OverseasPensionsSummaryController.show(taxYear)))
+      case _ => Future.successful(Redirect(OverseasPensionsSummaryController.show(taxYear)))
     }
   }
 
@@ -92,24 +92,18 @@ class ForeignTaxCreditReliefController @Inject()(authAction: AuthorisedAction,
   private def onValidForm(pensionsUserData: PensionsUserData, taxYear: Int, validForm: Boolean, index: Int)
                          (implicit request: AuthorisationRequest[AnyContent], clock: Clock): Future[Result] = {
 
-    val incomeFromOverseasPension = pensionsUserData.pensions.incomeFromOverseasPensions
     validForm match {
       case yesWasSelected =>
-        pensionSessionService.createOrUpdateSessionData(
-          request.user,
-          pensionsUserData.pensions.copy(
-            incomeFromOverseasPensions = incomeFromOverseasPension.copy(
-              overseasIncomePensionSchemes = incomeFromOverseasPension.overseasIncomePensionSchemes.updated(
-                index,
-                incomeFromOverseasPension.overseasIncomePensionSchemes(index).copy(
-                  foreignTaxCreditReliefQuestion = Some(yesWasSelected)
-                )
-              )
-            )),
-          taxYear,
-          pensionsUserData.isPriorSubmission
-        )(errorHandler.handleError(INTERNAL_SERVER_ERROR))(
-          Redirect(TaxableAmountController.show(taxYear, Some(index))))
+        val ifopData: IncomeFromOverseasPensionsViewModel = pensionsUserData.pensions.incomeFromOverseasPensions
+        val updatedSchemes: Seq[PensionScheme] = ifopData.overseasIncomePensionSchemes
+          .updated(index, ifopData.overseasIncomePensionSchemes(index).copy(
+            foreignTaxCreditReliefQuestion = Some(yesWasSelected)))
+        val updatedCyaModel: PensionsCYAModel = pensionsUserData.pensions.copy(
+          incomeFromOverseasPensions = ifopData.copy(overseasIncomePensionSchemes = updatedSchemes))
+
+        pensionSessionService.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear, pensionsUserData.isPriorSubmission)(
+          errorHandler.handleError(INTERNAL_SERVER_ERROR))(
+          schemeIsFinishedCheck(updatedSchemes, index, taxYear, TaxableAmountController.show(taxYear, Some(index))))
     }
   }
 
