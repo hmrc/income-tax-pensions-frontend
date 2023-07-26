@@ -16,7 +16,7 @@
 
 package controllers.predicates
 
-import models.audit.{AuditModel, PaymentsIntoPensionsAudit, UnauthorisedPaymentsAudit}
+import models.audit._
 import play.api.libs.json.{Json, OWrites}
 
 package object auditActions {
@@ -28,6 +28,11 @@ package object auditActions {
 
   def auditJsonUnauthorisedPayments(auditModel: AuditModel[UnauthorisedPaymentsAudit]): String = {
     implicit val audWrites: OWrites[AuditModel[UnauthorisedPaymentsAudit]] = Json.writes[AuditModel[UnauthorisedPaymentsAudit]]
+    Json.toJson(auditModel).toString()
+  }
+
+  def auditJsonShortServiceRefunds(auditModel: AuditModel[ShortServiceRefundsAudit]): String = {
+    implicit val audWrites: OWrites[AuditModel[ShortServiceRefundsAudit]] = Json.writes[AuditModel[ShortServiceRefundsAudit]]
     Json.toJson(auditModel).toString()
   }
 }
