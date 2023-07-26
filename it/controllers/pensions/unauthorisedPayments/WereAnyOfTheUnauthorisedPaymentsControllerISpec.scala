@@ -249,7 +249,7 @@ class WereAnyOfTheUnauthorisedPaymentsControllerISpec extends IntegrationTest wi
       }
     }
 
-    "redirect to the scheme summary page and persist question as 'Yes' when it was previously 'Yes' with existing schemes" which {
+    "redirect to the CYA page and persist question as 'Yes' when CYA data is now complete" which {
       lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.yes)
 
       lazy val result: WSResponse = {
@@ -262,7 +262,7 @@ class WereAnyOfTheUnauthorisedPaymentsControllerISpec extends IntegrationTest wi
 
       "has a SEE_OTHER(303) status and redirect to Pension Scheme Tax Reference (PSTR) Page" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(ukPensionSchemeDetailsUrl(taxYearEOY))
+        result.header("location") shouldBe Some(checkUnauthorisedPaymentsCyaUrl(taxYearEOY))
       }
 
       "updates ukPensionSchemesQuestion to Some(true)" in {

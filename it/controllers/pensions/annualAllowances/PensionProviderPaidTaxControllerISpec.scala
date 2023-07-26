@@ -200,7 +200,7 @@ class PensionProviderPaidTaxControllerISpec extends IntegrationTest with ViewHel
       }
     }
 
-    "redirect to PensionSchemeTaxReference summary page when user selects 'yes' with an amount and pension schemes already exist" which {
+    "redirect to CYA page when user selects 'yes' with an amount, updating existing CYA data which is now complete" which {
       lazy val form: Map[String, String] = Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "300")
       lazy val result: WSResponse = {
         dropPensionsDB()
@@ -212,7 +212,7 @@ class PensionProviderPaidTaxControllerISpec extends IntegrationTest with ViewHel
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(pstrSummaryUrl(taxYearEOY))
+        result.header("location") shouldBe Some(annualAllowancesCYAUrl(taxYearEOY))
       }
 
       "updates reducedAnnualAllowanceQuestion to Some(true)" in {

@@ -16,6 +16,7 @@
 
 package models.pension.charges
 
+import models.pension.PensionCYABaseModel
 import play.api.libs.json.{Json, OFormat}
 import utils.EncryptedValue
 
@@ -26,7 +27,8 @@ case class PensionAnnualAllowancesViewModel(reducedAnnualAllowanceQuestion: Opti
                                             aboveAnnualAllowance: Option[BigDecimal] = None,
                                             pensionProvidePaidAnnualAllowanceQuestion: Option[Boolean] = None,
                                             taxPaidByPensionProvider: Option[BigDecimal] = None,
-                                            pensionSchemeTaxReferences: Option[Seq[String]] = None) {
+                                            pensionSchemeTaxReferences: Option[Seq[String]] = None) extends PensionCYABaseModel {
+
   def isEmpty: Boolean = this.productIterator.forall(_ == None)
 
   def isFinished: Boolean = {
@@ -34,11 +36,24 @@ case class PensionAnnualAllowancesViewModel(reducedAnnualAllowanceQuestion: Opti
       (moneyPurchaseAnnualAllowance.getOrElse(false) || taperedAnnualAllowance.getOrElse(false)) &&
         aboveAnnualAllowanceQuestion.exists(x => !x || {
           aboveAnnualAllowance.isDefined &&
-            pensionProvidePaidAnnualAllowanceQuestion.exists(x => !x || taxPaidByPensionProvider.isDefined) &&
-            pensionSchemeTaxReferences.exists(_.nonEmpty)
+            pensionProvidePaidAnnualAllowanceQuestion.exists(x => !x || {
+              taxPaidByPensionProvider.isDefined && pensionSchemeTaxReferences.exists(_.nonEmpty)
+            })
         })
     })
   }
+
+  def journeyIsNo: Boolean =
+    (!reducedAnnualAllowanceQuestion.getOrElse(true)
+      && moneyPurchaseAnnualAllowance.isEmpty
+      && taperedAnnualAllowance.isEmpty
+      && aboveAnnualAllowanceQuestion.isEmpty
+      && aboveAnnualAllowance.isEmpty
+      && pensionProvidePaidAnnualAllowanceQuestion.isEmpty
+      && taxPaidByPensionProvider.isEmpty
+      && pensionSchemeTaxReferences.isEmpty)
+
+  def journeyIsUnanswered: Boolean = this.isEmpty
 
   def typeOfAllowance: Option[Seq[String]] = {
     (moneyPurchaseAnnualAllowance, taperedAnnualAllowance) match {

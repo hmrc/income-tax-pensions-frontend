@@ -28,7 +28,7 @@ import play.api.mvc._
 import services.PensionSessionService
 import services.redirects.AnnualAllowancesPages.AboveAnnualAllowancePage
 import services.redirects.AnnualAllowancesRedirects.{cyaPageCall, journeyCheck}
-import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
+import services.redirects.SimpleRedirectService.{isFinishedCheck, redirectBasedOnCurrentAnswers}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.annualAllowances.AboveReducedAnnualAllowanceView
@@ -93,12 +93,9 @@ class AboveReducedAnnualAllowanceController @Inject()(actionsProvider: ActionsPr
         pensionProvidePaidAnnualAllowanceQuestion = None, taxPaidByPensionProvider = None, pensionSchemeTaxReferences = None)
     })
 
-    pensionSessionService.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear, pensionUserData.isPriorSubmission
-    )(errorHandler.internalServerError()) {
-      Redirect(
-        if (yesNo) PensionProviderPaidTaxController.show(taxYear)
-        else AnnualAllowanceCYAController.show(taxYear)
-      )
+    pensionSessionService.createOrUpdateSessionData(
+      request.user, updatedCyaModel, taxYear, pensionUserData.isPriorSubmission)(errorHandler.internalServerError()) {
+      isFinishedCheck(updatedCyaModel.pensionsAnnualAllowances, taxYear, PensionProviderPaidTaxController.show(taxYear), cyaPageCall)
     }
   }
 }

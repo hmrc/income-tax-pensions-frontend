@@ -28,7 +28,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
 import services.redirects.AnnualAllowancesPages.ReducedAnnualAllowanceTypePage
 import services.redirects.AnnualAllowancesRedirects.{cyaPageCall, journeyCheck}
-import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
+import services.redirects.SimpleRedirectService.{isFinishedCheck, redirectBasedOnCurrentAnswers}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.annualAllowances.ReducedAnnualAllowanceTypeView
@@ -73,15 +73,15 @@ class ReducedAnnualAllowanceTypeController @Inject()(implicit val mcc: MessagesC
 
                 val pensionsCYAModel: PensionsCYAModel = data.pensions
                 val pensionsAnnualAllowances = pensionsCYAModel.pensionsAnnualAllowances
-
                 val updatedCyaModel: PensionsCYAModel = {
                   pensionsCYAModel.copy(pensionsAnnualAllowances = pensionsAnnualAllowances.copy(
                     moneyPurchaseAnnualAllowance = Some(reducedAllowanceTypeSelections.containsMoneyPurchase),
                     taperedAnnualAllowance = Some(reducedAllowanceTypeSelections.containsTapered)))
                 }
+
                 pensionSessionService.createOrUpdateSessionData(request.user,
                   updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
-                  Redirect(AboveReducedAnnualAllowanceController.show(taxYear))
+                  isFinishedCheck(updatedCyaModel.pensionsAnnualAllowances, taxYear, AboveReducedAnnualAllowanceController.show(taxYear), cyaPageCall)
                 }
               }
             )

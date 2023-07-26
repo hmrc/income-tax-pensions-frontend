@@ -28,7 +28,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
 import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
 import services.redirects.UnauthorisedPaymentsPages.PSTRPage
-import services.redirects.UnauthorisedPaymentsRedirects.{cyaPageCall, journeyCheck, redirectForSchemeLoop}
+import services.redirects.UnauthorisedPaymentsRedirects.{cyaPageCall, journeyCheck}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.unauthorisedPayments.PensionSchemeTaxReferenceView
