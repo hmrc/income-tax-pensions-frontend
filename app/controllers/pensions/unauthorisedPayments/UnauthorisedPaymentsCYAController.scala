@@ -47,11 +47,10 @@ class UnauthorisedPaymentsCYAController @Inject()(auditProvider: AuditActionsPro
                                                   errorHandler: ErrorHandler,
                                                   excludeJourneyService: ExcludeJourneyService)
                                                  (implicit val mcc: MessagesControllerComponents,
-                                                  appConfig: AppConfig, clock: Clock)
-  extends FrontendController(mcc) with I18nSupport {
+                                                  appConfig: AppConfig, clock: Clock,
+                                                  ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
 
   lazy val logger: Logger = Logger(this.getClass.getName)
-  implicit val executionContext: ExecutionContext = mcc.executionContext
 
   def show(taxYear: Int): Action[AnyContent] = auditProvider.unauthorisedPaymentsViewAuditing(taxYear) async {
     implicit sessionDataRequest =>
@@ -97,13 +96,13 @@ class UnauthorisedPaymentsCYAController @Inject()(auditProvider: AuditActionsPro
       case Some(_) =>
         pensionChargesService.saveUnauthorisedViewModel(user, taxYear) map {
           case Left(_) =>
-            logger.info("[UnauthorisedPaymentsCYAController][submit] Failed to create or update session")
+            logger.info("[submit] Failed to create or update session")
             Left(APIErrorModel(BAD_REQUEST, APIErrorBodyModel(BAD_REQUEST.toString, "Unable to createOrUpdate pension service")))
           case Right(_) =>
             Right(Ok)
         }
       case _ =>
-        logger.info("[UnauthorisedPaymentsCYAController][submit] CYA data or NINO missing from session.")
+        logger.info("[submit] CYA data or NINO missing from session.")
         Future.successful(Left(APIErrorModel(BAD_REQUEST, APIErrorBodyModel("MISSING_DATA", "CYA data or NINO missing from session."))))
     }).flatMap {
       case Right(_) => //TODO: investigate  the use of the previously used pensionSessionService.clear

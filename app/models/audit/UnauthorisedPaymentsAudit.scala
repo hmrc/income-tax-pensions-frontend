@@ -22,14 +22,13 @@ import models.pension.AllPensionsData
 import models.pension.charges.UnauthorisedPaymentsViewModel
 import play.api.libs.json.{Json, OWrites}
 
-case class UnauthorisedPaymentsAudit(
-  taxYear: Int,
-  userType: String,
-  nino: String,
-  mtdItId: String,
-  unauthorisedPayments: UnauthorisedPaymentsViewModel,
-  priorUnauthorisedPayments: Option[UnauthorisedPaymentsViewModel] = None
-) {
+case class UnauthorisedPaymentsAudit(taxYear: Int,
+                                     userType: String,
+                                     nino: String,
+                                     mtdItId: String,
+                                     unauthorisedPayments: UnauthorisedPaymentsViewModel,
+                                     priorUnauthorisedPayments: Option[UnauthorisedPaymentsViewModel] = None) {
+
   private val amend = "AmendUnauthorisedPayments"
   private val create = "CreateUnauthorisedPayments"
   private val view = "ViewUnauthorisedPayments"
@@ -45,12 +44,11 @@ case class UnauthorisedPaymentsAudit(
 
 object UnauthorisedPaymentsAudit {
 
-  def apply(
-    taxYear: Int,
-    user: User,
-    unauthorisedPayments: UnauthorisedPaymentsViewModel,
-    priorUnauthorisedPayments: Option[UnauthorisedPaymentsViewModel]
-  ): UnauthorisedPaymentsAudit = {
+  def apply(taxYear: Int,
+            user: User,
+            unauthorisedPayments: UnauthorisedPaymentsViewModel,
+            priorUnauthorisedPayments: Option[UnauthorisedPaymentsViewModel]): UnauthorisedPaymentsAudit = {
+
     UnauthorisedPaymentsAudit(
       taxYear, user.affinityGroup, user.nino, user.mtditid, unauthorisedPayments, priorUnauthorisedPayments
     )
