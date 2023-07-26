@@ -16,14 +16,14 @@
 
 package builders
 
-import builders.ChargeBuilder.anCharge
+import builders.ChargeBuilder.{aCharge1, aCharge2}
 import models.pension.charges.PensionSchemeUnauthorisedPayments
 
 object PensionSchemeUnauthorisedPaymentsBuilder {
 
   val anPensionSchemeUnauthorisedPayments: PensionSchemeUnauthorisedPayments = PensionSchemeUnauthorisedPayments(
-    pensionSchemeTaxReference = Some(Seq("00123456RA", "00123456RB")),
-    surcharge = Some(anCharge),
-    noSurcharge = Some(anCharge)
+    pensionSchemeTaxReference = Some(Seq("12345678AB", "12345678AC")),
+    surcharge = Some(aCharge1),
+    noSurcharge = Some(aCharge2)
   )
 }

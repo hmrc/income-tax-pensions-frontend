@@ -143,6 +143,8 @@ object PageUrls extends IntegrationTest {
     def annualAllowancesCYAUrl(taxYear: Int): String = s"$appUrl/$taxYear/annual-allowance/check-annual-allowance"
   }
 
+  //  *****************     Pension lifetime allowance pages      ******************************
+
   object PensionLifetimeAllowance {
 
     def pensionAboveAnnualLifetimeAllowanceUrl(taxYear: Int): String = s"$appUrl/$taxYear/lifetime-allowance/above-annual-allowance"
@@ -168,6 +170,8 @@ object PageUrls extends IntegrationTest {
     def lifetimeAllowanceCYA(taxYear: Int): String = s"$appUrl/$taxYear/lifetime-allowance/lifetime-allowance-summary"
 
   }
+
+  //  *****************     Unauthorised payments pages      ******************************
 
   object UnauthorisedPaymentsPages {
 
@@ -200,6 +204,8 @@ object PageUrls extends IntegrationTest {
 
     def checkUnauthorisedPaymentsCyaUrl(taxYear: Int): String = s"$appUrl/$taxYear/unauthorised-payments-from-pensions/check-unauthorised-payments"
   }
+
+  //  *****************     Payments into overseas pensions pages      ******************************
 
   object PaymentIntoOverseasPensions {
 
@@ -283,6 +289,8 @@ object PageUrls extends IntegrationTest {
 
   }
 
+  //  *****************     Transfers into overseas pensions pages      ******************************
+
   object TransferIntoOverseasPensions {
 
     def overseasTransferChargePaidUrl(taxYear: Int): String =
@@ -315,6 +323,8 @@ object PageUrls extends IntegrationTest {
     def transferPensionSchemeTaxUrl(taxYear: Int): String =
       s"$appUrl/${taxYear.toString}/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-tax"
   }
+
+  //  *****************     Short service refunds pages      ******************************
 
   object ShortServiceRefunds {
     def taxOnShortServiceRefund(taxYear: Int): String = s"$appUrl/$taxYear/overseas-pensions/short-service-refunds/short-service-refunds-uk-tax"
