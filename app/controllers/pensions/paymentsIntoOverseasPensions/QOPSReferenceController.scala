@@ -20,7 +20,7 @@ import config.{AppConfig, ErrorHandler}
 import controllers.pensions.paymentsIntoOverseasPensions.routes._
 import controllers.predicates.actions.ActionsProvider
 import forms.QOPSReferenceNumberForm
-import models.mongo.{PensionsCYAModel, PensionsUserData}
+import models.mongo.PensionsCYAModel
 import models.pension.charges.Relief
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -55,14 +55,6 @@ class QOPSReferenceController @Inject()(actionsProvider: ActionsProvider,
           case None => Future.successful(Ok(qopsReferenceView(referenceForm, taxYear, index)))
         }
       }
-  }
-
-  private def referenceForm(pensionUserData: PensionsUserData, index: Int): Form[String] = {
-    val qopsNumber = pensionUserData.pensions.paymentsIntoOverseasPensions.reliefs(index).qopsReference
-    qopsNumber match {
-      case Some(qopsNumber) => referenceForm.fill(removePrefix(qopsNumber))
-      case None => referenceForm
-    }
   }
 
   def submit(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {

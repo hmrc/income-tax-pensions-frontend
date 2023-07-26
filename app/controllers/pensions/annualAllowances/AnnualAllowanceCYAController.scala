@@ -21,11 +21,11 @@ import controllers.pensions.routes.PensionsSummaryController
 import controllers.predicates.actions.{ActionsProvider, AuthorisedAction}
 import models.mongo.PensionsCYAModel
 import models.pension.AllPensionsData
-import models.pension.AllPensionsData.generateCyaFromPrior
+import models.pension.AllPensionsData.{generateAnnualAllowanceCyaFromPrior, generateCyaFromPrior}
 import models.pension.charges.PensionAnnualAllowancesViewModel
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.PensionSessionService
+import services.{PensionChargesService, PensionSessionService}
 import services.redirects.AnnualAllowancesPages.CYAPage
 import services.redirects.AnnualAllowancesRedirects.{cyaPageCall, journeyCheck}
 import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
@@ -34,16 +34,17 @@ import utils.Clock
 import views.html.pensions.annualAllowances.AnnualAllowancesCYAView
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class AnnualAllowanceCYAController @Inject()(authAction: AuthorisedAction,
                                              actionsProvider: ActionsProvider,
                                              view: AnnualAllowancesCYAView,
                                              pensionSessionService: PensionSessionService,
+                                             pensionChargesService: PensionChargesService,
                                              errorHandler: ErrorHandler)
                                             (implicit val mcc: MessagesControllerComponents,
-                                             appConfig: AppConfig, clock: Clock) extends FrontendController(mcc) with I18nSupport {
+                                             appConfig: AppConfig, clock: Clock, ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
 
   def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit request =>
     pensionSessionService.getAndHandle(taxYear, request.user) { (cya, prior) =>
@@ -78,8 +79,10 @@ class AnnualAllowanceCYAController @Inject()(authAction: AuthorisedAction,
         redirectBasedOnCurrentAnswers(taxYear, Some(model), cyaPageCall(taxYear))(checkRedirect) {
           data =>
             if (sessionDataDifferentThanPriorData(data.pensions, prior)) {
-              //        TODO - build submission model from cya data and submit to DES if cya data doesn't match prior data (SASS-3444)
-              Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
+              pensionChargesService.saveAnnualAllowanceViewModel(request.user, taxYear).map {
+                case Left(_) => errorHandler.internalServerError()
+                case Right(_) => Redirect(PensionsSummaryController.show(taxYear))
+              }
             } else {
               Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
             }
@@ -91,7 +94,7 @@ class AnnualAllowanceCYAController @Inject()(authAction: AuthorisedAction,
   private def sessionDataDifferentThanPriorData(cyaData: PensionsCYAModel, priorData: Option[AllPensionsData]): Boolean = {
     priorData match {
       case None => true
-      case Some(prior) => !cyaData.equals(generateCyaFromPrior(prior))
+      case Some(prior) => !cyaData.pensionsAnnualAllowances.equals(generateAnnualAllowanceCyaFromPrior(prior))
     }
   }
 }

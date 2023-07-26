@@ -17,7 +17,7 @@
 package controllers.pensions.shortServiceRefunds
 
 import builders.PensionsCYAModelBuilder.aPensionsCYAModel
-import builders.ShortServiceRefundsViewModelBuilder.{aShortServiceRefundsEmptySchemeViewModel, aShortServiceRefundsNonUkEmptySchemeViewModel, aShortServiceRefundsViewModel, minimalShortServiceRefundsViewModel}
+import builders.ShortServiceRefundsViewModelBuilder._
 import controllers.ControllerSpec.UserConfig
 import controllers.YesNoControllerSpec
 import models.pension.charges.{OverseasRefundPensionScheme, ShortServiceRefundsViewModel}
@@ -37,7 +37,6 @@ class TaxOnShortServiceRefundControllerISpec extends YesNoControllerSpec("/overs
         response.status equals OK
       }
       "has no index" in {
-        val emptySchemeCYAModel = aPensionsCYAModel.copy(shortServiceRefunds = aShortServiceRefundsViewModel.copy(refundPensionScheme = Seq.empty))
         val sessionData = pensionsUserData(aPensionsCYAModel)
         implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
         implicit val response: WSResponse = getPageWithIndex()

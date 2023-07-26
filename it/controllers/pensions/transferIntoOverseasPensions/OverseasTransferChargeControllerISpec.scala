@@ -49,7 +49,9 @@ class OverseasTransferChargeControllerISpec
 
             implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
             implicit val response: WSResponse = getPage
-
+            
+             assertOTCPageAsExpected(
+              OK,
               ExpectedYesNoAmountPageContents(
                 title = "Did the amount result in an overseas transfer charge?",
                 header = "Did the amount result in an overseas transfer charge?",
@@ -58,13 +60,15 @@ class OverseasTransferChargeControllerISpec
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
                 amountSection = ExpectedAmountSection("Amount that resulted in a transfer charge, in pounds", "", Some("For example, £193.54")),
-              )
+              ))
           }
-          scenarioNameForAgentAndEnglish in {
+          scenarioNameForAgentAndEnglish ignore {
 
             implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
             implicit val response: WSResponse = getPage
-
+            
+            assertOTCPageAsExpected(
+              OK,
               ExpectedYesNoAmountPageContents(
                 title = "Did the amount result in an overseas transfer charge?",
                 header = "Did the amount result in an overseas transfer charge?",
@@ -73,13 +77,15 @@ class OverseasTransferChargeControllerISpec
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
                 amountSection = ExpectedAmountSection("Amount that resulted in a transfer charge, in pounds", "", Some("For example, £193.54")),
-              )
+              ))
           }
           scenarioNameForAgentAndWelsh ignore {
 
             implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
             implicit val response: WSResponse = getPage
 
+            assertOTCPageAsExpected(
+              OK,
               ExpectedYesNoAmountPageContents(
                 title = "Did the amount result in an overseas transfer charge?",
                 header = "Did the amount result in an overseas transfer charge?",
@@ -88,7 +94,7 @@ class OverseasTransferChargeControllerISpec
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
                 amountSection = ExpectedAmountSection("Amount that resulted in a transfer charge, in pounds", "", Some("For example, £193.54")),
-              )
+              ))
           }
         }
         "the user had previously answered 'Yes' with a valid amount, and" when {

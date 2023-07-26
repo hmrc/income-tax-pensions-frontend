@@ -112,13 +112,4 @@ class PensionSchemeDetailsController @Inject()(implicit val mcc: MessagesControl
         }
       })
   }
-
-  private def validateIndex(pensionSchemeIndex: Option[Int], pensionSchemesList: Seq[UkPensionIncomeViewModel]): Boolean = {
-    pensionSchemeIndex match {
-      case Some(index) =>
-        pensionSchemesList.size > index
-      case _ =>
-        true
-    }
-  }
 }

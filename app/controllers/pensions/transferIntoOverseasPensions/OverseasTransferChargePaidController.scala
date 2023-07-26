@@ -25,10 +25,10 @@ import models.mongo.{PensionsCYAModel, PensionsUserData}
 import models.pension.pages.OverseasTransferChargePaidPage
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.{OverseasTransferChargesService, PensionSessionService}
 import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
-import services.redirects.TransfersIntoOverseasPensionsPages.{DidAUKPensionSchemePayTransferChargePage, TaxOnPensionSchemesAmountPage}
+import services.redirects.TransfersIntoOverseasPensionsPages.DidAUKPensionSchemePayTransferChargePage
 import services.redirects.TransfersIntoOverseasPensionsRedirects.{cyaPageCall, journeyCheck, redirectForSchemeLoop}
+import services.{OverseasTransferChargesService, PensionSessionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.SessionHelper
 import views.html.pensions.transferIntoOverseasPensions.OverseasTransferChargesPaidView

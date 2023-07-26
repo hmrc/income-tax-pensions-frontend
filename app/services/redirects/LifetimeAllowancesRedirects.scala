@@ -40,27 +40,27 @@ object LifetimeAllowancesRedirects {
   def journeyCheck(currentPage: LifetimeAllowancesPages, cya: PensionsCYAModel, taxYear: Int, optIndex: Option[Int] = None): Option[Result] = {
     val lifetimeAllowancesData = cya.pensionLifetimeAllowances
 
-    if (!previousQuestionIsAnswered(currentPage.journeyNo, lifetimeAllowancesData) || !isPageValidInJourney(currentPage.journeyNo, lifetimeAllowancesData))
+    if (!previousQuestionIsAnswered(currentPage.journeyNo, lifetimeAllowancesData) || !isPageValidInJourney(currentPage.journeyNo, lifetimeAllowancesData)) {
       Some(Redirect(AboveAnnualLifetimeAllowanceController.show(taxYear)))
-    else if (currentPage.equals(RemovePSTRPage))
+    } else if (currentPage.equals(RemovePSTRPage)) {
       removePstrPageCheck(cya, taxYear, optIndex)
-    else if (currentPage.equals(PSTRPage))
+    } else if (currentPage.equals(PSTRPage)) {
       pstrPageCheck(cya, taxYear, optIndex)
-    else
+    } else {
       None
+    }
   }
 
-  private def removePstrPageCheck(cya: PensionsCYAModel, taxYear: Int, optIndex: Option[Int] = None): Option[Result] = {
+  private def removePstrPageCheck(cya: PensionsCYAModel, taxYear: Int, optIndex: Option[Int]): Option[Result] = {
     val lifetimeAVM: PensionLifetimeAllowancesViewModel = cya.pensionLifetimeAllowances
     val optSchemes: Seq[String] = lifetimeAVM.pensionSchemeTaxReferences.getOrElse(Seq.empty)
     val index: Option[Int] = optIndex.filter(i => i >= 0 && i < optSchemes.size)
     val schemeIsValid: Boolean = if (index.isEmpty) false else optSchemes(index.getOrElse(0)).nonEmpty
 
-    if (schemeIsValid) None
-    else Some(Redirect(LifetimePstrSummaryController.show(taxYear)))
+    if (schemeIsValid) None else Some(Redirect(LifetimePstrSummaryController.show(taxYear)))
   }
 
-  private def pstrPageCheck(cya: PensionsCYAModel, taxYear: Int, optIndex: Option[Int] = None): Option[Result] = {
+  private def pstrPageCheck(cya: PensionsCYAModel, taxYear: Int, optIndex: Option[Int]): Option[Result] = {
     val lifetimeAllowanceVM: PensionLifetimeAllowancesViewModel = cya.pensionLifetimeAllowances
     val optSchemes: Seq[String] = lifetimeAllowanceVM.pensionSchemeTaxReferences.getOrElse(Seq.empty)
     val schemesEmpty: Boolean = !optSchemes.exists(_.nonEmpty)
@@ -110,8 +110,11 @@ object LifetimeAllowancesRedirects {
       3 -> { lifetimeAVM: PensionLifetimeAllowancesViewModel => lifetimeAVM.pensionAsLumpSumQuestion.isDefined },
 
       4 -> { lifetimeAVM: PensionLifetimeAllowancesViewModel =>
-        if (isPageValidInJourney(3, lifetimeAVM)) lifetimeAVM.pensionAsLumpSum.exists(_.isFinished)
-        else lifetimeAVM.pensionAsLumpSumQuestion.isDefined
+        if (isPageValidInJourney(3, lifetimeAVM)) {
+          lifetimeAVM.pensionAsLumpSum.exists(_.isFinished)
+        } else {
+          lifetimeAVM.pensionAsLumpSumQuestion.isDefined
+        }
       },
 
       5 -> { lifetimeAllowanceVM: PensionLifetimeAllowancesViewModel => lifetimeAllowanceVM.pensionPaidAnotherWayQuestion.isDefined },
@@ -123,9 +126,13 @@ object LifetimeAllowancesRedirects {
       8 -> { lifetimeAVM: PensionLifetimeAllowancesViewModel => lifetimeAVM.pensionPaidAnotherWay.exists(_.isFinished) },
 
       9 -> { lifetimeAVM: PensionLifetimeAllowancesViewModel =>
-        if (!isPageValidInJourney(2, lifetimeAVM)) !lifetimeAVM.aboveLifetimeAllowanceQuestion.getOrElse(true)
-        else if (!isPageValidInJourney(5, lifetimeAVM)) !lifetimeAVM.pensionPaidAnotherWayQuestion.getOrElse(true)
-        else lifetimeAVM.isFinished
+        if (!isPageValidInJourney(2, lifetimeAVM)) { // scalastyle:off magic.number
+          !lifetimeAVM.aboveLifetimeAllowanceQuestion.getOrElse(true)
+        } else if (!isPageValidInJourney(5, lifetimeAVM)) {
+          !lifetimeAVM.pensionPaidAnotherWayQuestion.getOrElse(true)
+        } else {
+          lifetimeAVM.isFinished
+        }
       }
     )
 

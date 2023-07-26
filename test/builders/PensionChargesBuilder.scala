@@ -18,7 +18,7 @@ package builders
 
 import builders.OverseasPensionContributionsBuilder.anOverseasPensionContributions
 import builders.PensionContributionsBuilder.anPensionContributions
-import builders.PensionSavingTaxChargesBuilder.anPensionSavngTaxCharges
+import builders.PensionSavingTaxChargesBuilder.aPensionSavingsTaxCharges
 import builders.PensionSchemeOverseasTransfersBuilder.anPensionSchemeOverseasTransfers
 import builders.PensionSchemeUnauthorisedPaymentsBuilder.anPensionSchemeUnauthorisedPayments
 import models.pension.charges.PensionCharges
@@ -27,7 +27,7 @@ object PensionChargesBuilder {
 
   val anPensionCharges: PensionCharges = PensionCharges(
     submittedOn = "2020-07-27T17:00:19Z",
-    pensionSavingsTaxCharges = Some(anPensionSavngTaxCharges),
+    pensionSavingsTaxCharges = Some(aPensionSavingsTaxCharges),
     pensionSchemeOverseasTransfers = Some(anPensionSchemeOverseasTransfers),
     pensionSchemeUnauthorisedPayments = Some(anPensionSchemeUnauthorisedPayments),
     pensionContributions = Some(anPensionContributions),
