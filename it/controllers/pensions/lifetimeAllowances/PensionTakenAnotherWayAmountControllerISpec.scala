@@ -16,7 +16,7 @@
 
 package controllers.pensions.lifetimeAllowances
 
-import builders.PensionLifetimeAllowanceViewModelBuilder.{aPensionLifetimeAllowanceViewModel, aPensionLifetimeAllowancesEmptyViewModel}
+import builders.PensionLifetimeAllowancesViewModelBuilder.{aPensionLifetimeAllowancesEmptySchemesViewModel, aPensionLifetimeAllowancesViewModel}
 import builders.PensionsUserDataBuilder.{aPensionsUserData, pensionsUserDataWithLifetimeAllowance}
 import builders.UserBuilder.aUserRequest
 import forms.OptionalTupleAmountForm
@@ -28,10 +28,11 @@ import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import utils.PageUrls.PensionLifetimeAllowance._
-import utils.PageUrls.fullUrl
+import utils.PageUrls.{fullUrl, pensionSummaryUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with BeforeAndAfterEach with ViewHelpers with PensionsDatabaseHelper {
+
   val newAmount = 25
   val newAmount2 = 30
   val poundPrefixText = "£"
@@ -162,7 +163,7 @@ class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with B
     val beforeTaxErrorNoEntry = "Nodwch y swm a gymerodd eich cleient sy’n uwch na’u lwfans oes mewn ffordd arall"
     val taxPaidErrorNoEntry =
       "Rhowch swm y dreth lwfans oes a dalodd darparwr pensiwn eich cleient neu a gytunwyd i dalu ar y swm a gymerwyd mewn ffordd arall"
-    val amountAboveAllowanceParagraph =
+    val amountAboveAllowanceParagraph: String =
       "Rhowch wybod i ni’r swm sy’n uwch na lwfans oes eich cleient maen nhw wedi’i gymryd mewn ffyrdd eraill. " +
         "Gallai hyn fod yn daliadau rheolaidd neu’n tynnu’n ôl arian."
     val checkThisWithProviderParagraph = "Gall eich cleient wirio â’i ddarparwr pensiwn os nad ydych yn siŵr."
@@ -188,7 +189,7 @@ class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with B
 
           implicit lazy val result: WSResponse = {
             dropPensionsDB()
-            val pensionsViewModel = aPensionLifetimeAllowanceViewModel.copy(
+            val pensionsViewModel = aPensionLifetimeAllowancesViewModel.copy(
               pensionPaidAnotherWay = None
             )
             insertCyaData(pensionsUserDataWithLifetimeAllowance(pensionsViewModel))
@@ -228,7 +229,7 @@ class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with B
         "render pension taken another way page with prefilled value for before tax and tax paid" which {
           implicit lazy val result: WSResponse = {
             dropPensionsDB()
-            val pensionsViewModel = aPensionLifetimeAllowanceViewModel.copy(
+            val pensionsViewModel = aPensionLifetimeAllowancesViewModel.copy(
               pensionPaidAnotherWay = Some(LifetimeAllowance(Some(newAmount), Some(newAmount2)))
             )
             insertCyaData(pensionsUserDataWithLifetimeAllowance(pensionsViewModel))
@@ -267,7 +268,7 @@ class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with B
         "render pension taken another way page with prefilled value for before tax and None for tax paid" which {
           implicit lazy val result: WSResponse = {
             dropPensionsDB()
-            val pensionsViewModel = aPensionLifetimeAllowanceViewModel.copy(
+            val pensionsViewModel = aPensionLifetimeAllowancesViewModel.copy(
               pensionPaidAnotherWay = Some(LifetimeAllowance(Some(newAmount), None))
             )
             insertCyaData(pensionsUserDataWithLifetimeAllowance(pensionsViewModel))
@@ -306,7 +307,7 @@ class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with B
         "render pension taken another way page with None value for before tax and value for tax paid" which {
           implicit lazy val result: WSResponse = {
             dropPensionsDB()
-            val pensionsViewModel = aPensionLifetimeAllowanceViewModel.copy(
+            val pensionsViewModel = aPensionLifetimeAllowancesViewModel.copy(
               pensionPaidAnotherWay = Some(LifetimeAllowance(None, Some(newAmount)))
             )
             insertCyaData(pensionsUserDataWithLifetimeAllowance(pensionsViewModel))
@@ -344,7 +345,7 @@ class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with B
       }
     }
 
-    "redirect to the CYA page if there is no session data" which {
+    "redirect to the Pensions Summary page if there is no session data" which {
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual()
@@ -353,7 +354,7 @@ class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with B
       }
       "has an SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(lifetimeAllowanceCYA(taxYearEOY))
+        result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
       }
     }
   }
@@ -500,7 +501,7 @@ class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with B
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual()
-        insertCyaData(pensionsUserDataWithLifetimeAllowance(aPensionLifetimeAllowanceViewModel))
+        insertCyaData(pensionsUserDataWithLifetimeAllowance(aPensionLifetimeAllowancesViewModel))
 
         urlPost(fullUrl(pensionTakenAnotherWayAmountUrl(taxYearEOY)), body = form,
           follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
@@ -518,17 +519,14 @@ class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with B
       }
     }
 
-    "redirect to the correct page when a valid amount is submitted when there is No existing data" which {
+    "redirect to the correct page when a valid amount is submitted when there is no existing data" which {
 
       lazy val form: Map[String, String] = amountForm(newAmount.toString, newAmount2.toString)
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual()
         insertCyaData(
-          pensionsUserDataWithLifetimeAllowance(aPensionLifetimeAllowancesEmptyViewModel.copy(
-            pensionPaidAnotherWayQuestion = Some(true),
-            pensionPaidAnotherWay = None
-          )))
+          pensionsUserDataWithLifetimeAllowance(aPensionLifetimeAllowancesEmptySchemesViewModel.copy(pensionPaidAnotherWay = None)))
 
         urlPost(fullUrl(pensionTakenAnotherWayAmountUrl(taxYearEOY)), body = form,
           follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
