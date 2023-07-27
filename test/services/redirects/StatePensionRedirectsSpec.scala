@@ -35,7 +35,7 @@ class StatePensionRedirectsSpec extends UnitTest {
     "return None if page is valid and all previous questions have been answered" when {
       "current page is empty and at end of journey so far" in {
         val data = cyaData.copy(incomeFromPensions = IncomeFromPensionsViewModel(statePension = Some(anEmptyStateBenefitViewModel)))
-        val result = journeyCheck(StatePensionPage, data, taxYear)
+        val result = journeyCheck(DoYouGetRegularStatePaymentsPage, data, taxYear)
 
         result shouldBe None
       }
@@ -45,7 +45,7 @@ class StatePensionRedirectsSpec extends UnitTest {
           incomeFromPensions = IncomeFromPensionsViewModel(statePension = Some(anEmptyStateBenefitViewModel.copy(
             amountPaidQuestion = Some(true), amount = Some(155.88))))
         )
-        val result = journeyCheck(StatePensionPage, data, taxYear)
+        val result = journeyCheck(DoYouGetRegularStatePaymentsPage, data, taxYear)
 
         result shouldBe None
       }

@@ -22,7 +22,7 @@ sealed trait StatePensionPages {
 
 object StatePensionPages {
 
-  case object StatePensionPage extends StatePensionPages {
+  case object DoYouGetRegularStatePaymentsPage extends StatePensionPages {
     override val journeyNo: Int = 1
   }
 

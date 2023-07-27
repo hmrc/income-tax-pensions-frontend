@@ -25,7 +25,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.PensionAnnualAllowancePages.{annualAllowancesCYAUrl, pensionSchemeTaxReferenceUrl, pstrSummaryUrl}
+import utils.PageUrls.PensionAnnualAllowancePages.{annualAllowancesCYAUrl, pensionSchemeTaxReferenceUrl, pstrSummaryUrl, reducedAnnualAllowanceUrl}
 import utils.PageUrls.{fullUrl, pensionSummaryUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
@@ -167,6 +167,42 @@ class PstrSummaryControllerISpec extends IntegrationTest with BeforeAndAfterEach
           welshToggleCheck(user.isWelsh)
         }
 
+      }
+    }
+
+    "redirect to reduced annual allowance page" when {
+      "previous questions have not been answered" which {
+        lazy val result: WSResponse = {
+          dropPensionsDB()
+          authoriseAgentOrIndividual()
+          val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(taxPaidByPensionProvider = None)
+          insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel))
+
+          urlGet(fullUrl(pensionSchemeTaxReferenceUrl(taxYearEOY)), follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        }
+
+        "has a SEE_OTHER status" in {
+          result.status shouldBe SEE_OTHER
+          result.header("location").contains(reducedAnnualAllowanceUrl(taxYearEOY)) shouldBe true
+        }
+
+      }
+      "page is invalid in journey" which {
+        lazy val result: WSResponse = {
+          dropPensionsDB()
+          authoriseAgentOrIndividual()
+          val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(aboveAnnualAllowanceQuestion = Some(false))
+          insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel))
+
+          urlGet(fullUrl(pensionSchemeTaxReferenceUrl(taxYearEOY)), follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        }
+
+        "has a SEE_OTHER status" in {
+          result.status shouldBe SEE_OTHER
+          result.header("location").contains(reducedAnnualAllowanceUrl(taxYearEOY)) shouldBe true
+        }
       }
     }
 

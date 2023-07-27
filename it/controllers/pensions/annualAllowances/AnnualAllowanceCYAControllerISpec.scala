@@ -18,14 +18,16 @@ package controllers.pensions.annualAllowances
 
 import builders.AllPensionsDataBuilder.anAllPensionsData
 import builders.IncomeTaxUserDataBuilder.anIncomeTaxUserData
+import builders.PensionAnnualAllowanceViewModelBuilder.aPensionAnnualAllowanceViewModel
 import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import builders.PensionsUserDataBuilder
+import builders.PensionsUserDataBuilder.pensionsUserDataWithAnnualAllowances
 import builders.UserBuilder.aUser
 import models.mongo.PensionsCYAModel
 import play.api.http.HeaderNames
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.PensionAnnualAllowancePages.annualAllowancesCYAUrl
+import utils.PageUrls.PensionAnnualAllowancePages.{annualAllowancesCYAUrl, pensionSchemeTaxReferenceUrl, reducedAnnualAllowanceUrl}
 import utils.PageUrls.{fullUrl, overviewUrl, pensionSummaryUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
@@ -62,6 +64,23 @@ class AnnualAllowanceCYAControllerISpec extends IntegrationTest with ViewHelpers
       }
       result.status shouldBe OK
     }
+
+    "redirect to reduced annual allowance page previous questions have not been answered" which {
+        lazy val result: WSResponse = {
+          dropPensionsDB()
+          authoriseAgentOrIndividual()
+          val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(taxPaidByPensionProvider = None)
+          insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel))
+
+          urlGet(fullUrl(annualAllowancesCYAUrl(taxYearEOY)), follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        }
+
+        "has a SEE_OTHER status" in {
+          result.status shouldBe SEE_OTHER
+          result.header("location") shouldBe Some(reducedAnnualAllowanceUrl(taxYearEOY))
+        }
+    }
   }
   
   ".submit" should {
@@ -97,5 +116,24 @@ class AnnualAllowanceCYAControllerISpec extends IntegrationTest with ViewHelpers
        result.status shouldBe SEE_OTHER
        result.headers("location").head shouldBe pensionSummaryUrl(taxYearEOY)
      }
+
+    "redirect to reduced annual allowance page previous questions have not been answered" which {
+      lazy val form: Map[String, String] = Map("" -> "12345678RA")
+      lazy val result: WSResponse = {
+        dropPensionsDB()
+        authoriseAgentOrIndividual()
+        val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(pensionProvidePaidAnnualAllowanceQuestion = None)
+        insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel))
+
+        urlPost(fullUrl(annualAllowancesCYAUrl(taxYearEOY)), body = form, follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+      }
+
+      "has a SEE_OTHER status" in {
+        result.status shouldBe SEE_OTHER
+        result.header("location") shouldBe Some(reducedAnnualAllowanceUrl(taxYearEOY))
+      }
+
+    }
   }
 }

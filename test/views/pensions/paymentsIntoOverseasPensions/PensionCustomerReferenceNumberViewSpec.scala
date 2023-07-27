@@ -77,13 +77,13 @@ class PensionCustomerReferenceNumberViewSpec extends ViewUnitTest with FakeReque
 
   object CommonExpectedEN extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Payments into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val hintText: String = "For example, 'PENSIONINCOME245'"
+    val hintText: String = "For example, ’PENSIONINCOME245’"
     val expectedButtonText: String = "Continue"
 
   }
   object CommonExpectedCY extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Taliadau i bensiynau tramor ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
-    val hintText: String = "Er enghraifft, 'INCWMPENSIWN245'"
+    val hintText: String = "Er enghraifft, ’INCWMPENSIWN245’"
     val expectedButtonText: String = "Yn eich blaen"
   }
 

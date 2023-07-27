@@ -19,8 +19,7 @@ package models.pension.charges
 import play.api.libs.json.{Json, OFormat}
 import utils.EncryptedValue
 
-case class PensionAnnualAllowancesViewModel(
-                                            reducedAnnualAllowanceQuestion: Option[Boolean] = None,
+case class PensionAnnualAllowancesViewModel(reducedAnnualAllowanceQuestion: Option[Boolean] = None,
                                             moneyPurchaseAnnualAllowance: Option[Boolean] = None,
                                             taperedAnnualAllowance: Option[Boolean] = None,
                                             aboveAnnualAllowanceQuestion: Option[Boolean] = None,
@@ -29,7 +28,18 @@ case class PensionAnnualAllowancesViewModel(
                                             taxPaidByPensionProvider: Option[BigDecimal] = None,
                                             pensionSchemeTaxReferences: Option[Seq[String]] = None) {
   def isEmpty: Boolean = this.productIterator.forall(_ == None)
-  
+
+  def isFinished: Boolean = {
+    reducedAnnualAllowanceQuestion.exists(x => !x || {
+      (moneyPurchaseAnnualAllowance.getOrElse(false) || taperedAnnualAllowance.getOrElse(false)) &&
+        aboveAnnualAllowanceQuestion.exists(x => !x || {
+          aboveAnnualAllowance.isDefined &&
+            pensionProvidePaidAnnualAllowanceQuestion.exists(x => !x || taxPaidByPensionProvider.isDefined) &&
+            pensionSchemeTaxReferences.exists(_.nonEmpty)
+        })
+    })
+  }
+
   def typeOfAllowance: Option[Seq[String]] = {
     (moneyPurchaseAnnualAllowance, taperedAnnualAllowance) match {
       case (Some(true), Some(true)) => Some(Seq("Money purchase", "Tapered"))
@@ -44,8 +54,7 @@ object PensionAnnualAllowancesViewModel {
   implicit val format: OFormat[PensionAnnualAllowancesViewModel] = Json.format[PensionAnnualAllowancesViewModel]
 }
 
-case class EncryptedPensionAnnualAllowancesViewModel(
-                                                     reducedAnnualAllowanceQuestion: Option[EncryptedValue] = None,
+case class EncryptedPensionAnnualAllowancesViewModel(reducedAnnualAllowanceQuestion: Option[EncryptedValue] = None,
                                                      moneyPurchaseAnnualAllowance: Option[EncryptedValue] = None,
                                                      taperedAnnualAllowance: Option[EncryptedValue] = None,
                                                      aboveAnnualAllowanceQuestion: Option[EncryptedValue] = None,

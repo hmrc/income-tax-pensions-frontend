@@ -21,7 +21,7 @@ import builders.IncomeFromPensionsViewModelBuilder.{anIncomeFromPensionEmptyView
 import builders.PaymentsIntoOverseasPensionsViewModelBuilder.{aPaymentsIntoOverseasPensionsEmptyViewModel, aPaymentsIntoOverseasPensionsViewModel}
 import builders.PaymentsIntoPensionVewModelBuilder.{aPaymentsIntoPensionViewModel, aPaymentsIntoPensionsEmptyViewModel}
 import builders.PensionAnnualAllowanceViewModelBuilder.{aPensionAnnualAllowanceEmptyViewModel, aPensionAnnualAllowanceViewModel}
-import builders.PensionLifetimeAllowanceViewModelBuilder.{aPensionLifetimeAllowanceViewModel, aPensionLifetimeAllowancesEmptyViewModel}
+import builders.PensionLifetimeAllowancesViewModelBuilder.{aPensionLifetimeAllowancesViewModel, aPensionLifetimeAllowancesEmptyViewModel}
 import builders.ShortServiceRefundsViewModelBuilder.{aShortServiceRefundsViewModel, emptyShortServiceRefundsViewModel}
 import builders.TransfersIntoOverseasPensionsViewModelBuilder.{aTransfersIntoOverseasPensionsViewModel, emptyTransfersIntoOverseasPensionsViewModel}
 import builders.UnauthorisedPaymentsViewModelBuilder.{anUnauthorisedPaymentsEmptyViewModel, anUnauthorisedPaymentsViewModel}
@@ -35,7 +35,7 @@ object PensionsCYAModelBuilder {
   val aPensionsCYAModel: PensionsCYAModel = PensionsCYAModel(
     paymentsIntoPension = aPaymentsIntoPensionViewModel,
     pensionsAnnualAllowances = aPensionAnnualAllowanceViewModel,
-    pensionLifetimeAllowances = aPensionLifetimeAllowanceViewModel,
+    pensionLifetimeAllowances = aPensionLifetimeAllowancesViewModel,
     incomeFromPensions = anIncomeFromPensionsViewModel,
     unauthorisedPayments = anUnauthorisedPaymentsViewModel,
     paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel,

@@ -117,7 +117,7 @@ class StatePensionCYAViewSpec extends ViewUnitTest { //scalastyle:off magic.numb
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
-    val expectedTitle: String = "Check your clients State Pension"
+    val expectedTitle: String = "Check your client’s State Pension"
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
@@ -125,7 +125,7 @@ class StatePensionCYAViewSpec extends ViewUnitTest { //scalastyle:off magic.numb
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
-    val expectedTitle: String = "Check your clients State Pension"
+    val expectedTitle: String = "Check your client’s State Pension"
   }
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(

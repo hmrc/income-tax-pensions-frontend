@@ -16,7 +16,9 @@
 
 package controllers.pensions.transferIntoOverseasPensions
 
-import builders.PensionsCYAModelBuilder.aPensionsCYAEmptyModel
+import builders.PensionsCYAModelBuilder.{aPensionsCYAEmptyModel, aPensionsCYAModel}
+import builders.TransferPensionSchemeBuilder.{aNonUkTransferPensionScheme, aUkTransferPensionScheme, anEmptyTransferPensionScheme}
+import builders.TransfersIntoOverseasPensionsViewModelBuilder.{aTransfersIntoOverseasPensionsViewModel, emptyTransfersIntoOverseasPensionsViewModel}
 import controllers.ControllerSpec.PreferredLanguages.{English, Welsh}
 import controllers.ControllerSpec.UserTypes.{Agent, Individual}
 import controllers.ControllerSpec._
@@ -30,10 +32,11 @@ import play.api.libs.ws.{WSClient, WSResponse}
 class OverseasTransferChargePaidControllerISpec
   extends YesNoControllerSpec("/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-paid") {
 
-  val minimalSessionDataToAccessThisPage: PensionsCYAModel = aPensionsCYAEmptyModel
+  val minimalSessionDataToAccessThisPage: PensionsCYAModel = aPensionsCYAModel.copy(
+    transfersIntoOverseasPensions = aTransfersIntoOverseasPensionsViewModel.copy(transferPensionScheme = Seq.empty))
 
   "This page" when {
-    "requested to be shown" should {
+    ".show" should {
       "redirect to the expected page" when {
         "the user has no stored session data at all" in {
 
@@ -42,29 +45,18 @@ class OverseasTransferChargePaidControllerISpec
           response must haveALocationHeaderValue(PageRelativeURLs.pensionsSummaryPage)
         }
 
-        "appear as expected" when {
-          "the user has only the minimal session data for accessing this page and" when {
+        "redirect to the start of the journey" when {
+          "the user has only the minimal/incomplete session data for accessing this page and" when {
 
-            val sessionData = pensionsUserData(minimalSessionDataToAccessThisPage)
+            val sessionData = pensionsUserData(aPensionsCYAModel.copy(transfersIntoOverseasPensions = emptyTransfersIntoOverseasPensionsViewModel))
 
             scenarioNameForIndividualAndEnglish in {
 
               implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
               val response = getPage
 
-              response must haveStatus(OK)
-              assertPageAsExpected(
-                parse(response.body),
-                ExpectedYesNoPageContents(
-                  title = "Did a UK pension scheme pay the transfer charge to HMRC?",
-                  header = "Did a UK pension scheme pay the transfer charge to HMRC?",
-                  caption = s"Transfers into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
-                  radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
-                  radioButtonForNo = uncheckedExpectedRadioButton("No"),
-                  buttonForContinue = ExpectedButton("Continue", ""),
-                  links = Set.empty,
-                  text = Set.empty
-                ))
+              response must haveStatus(SEE_OTHER)
+              response must haveALocationHeaderValue(PageRelativeURLs.transferPensionSavings)
 
             }
             scenarioNameForIndividualAndWelsh ignore {
@@ -72,19 +64,8 @@ class OverseasTransferChargePaidControllerISpec
               implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
               val response = getPage
 
-              response must haveStatus(OK)
-              assertPageAsExpected(
-                parse(response.body),
-                ExpectedYesNoPageContents(
-                  title = "Did a UK pension scheme pay the transfer charge to HMRC?",
-                  header = "Did a UK pension scheme pay the transfer charge to HMRC?",
-                  caption = s"Transfers into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
-                  radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
-                  radioButtonForNo = uncheckedExpectedRadioButton("No"),
-                  buttonForContinue = ExpectedButton("Continue", ""),
-                  links = Set.empty,
-                  text = Set.empty
-                ))
+              response must haveStatus(SEE_OTHER)
+              response must haveALocationHeaderValue(PageRelativeURLs.transferPensionSavings)
 
             }
             scenarioNameForAgentAndEnglish in {
@@ -92,19 +73,8 @@ class OverseasTransferChargePaidControllerISpec
               implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
               val response = getPage
 
-              response must haveStatus(OK)
-              assertPageAsExpected(
-                parse(response.body),
-                ExpectedYesNoPageContents(
-                  title = "Did a UK pension scheme pay the transfer charge to HMRC?",
-                  header = "Did a UK pension scheme pay the transfer charge to HMRC?",
-                  caption = s"Transfers into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
-                  radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
-                  radioButtonForNo = uncheckedExpectedRadioButton("No"),
-                  buttonForContinue = ExpectedButton("Continue", ""),
-                  links = Set.empty,
-                  text = Set.empty
-                ))
+              response must haveStatus(SEE_OTHER)
+              response must haveALocationHeaderValue(PageRelativeURLs.transferPensionSavings)
 
             }
             scenarioNameForAgentAndWelsh ignore {
@@ -128,14 +98,14 @@ class OverseasTransferChargePaidControllerISpec
 
             }
           }
-          "the user had previously answered 'Yes', and" when {
+
+          "load page as expected" when {
+          "the user had previously answered all questions" when {
 
             val sessionData = pensionsUserData(
               minimalSessionDataToAccessThisPage.copy(
-                transfersIntoOverseasPensions = minimalSessionDataToAccessThisPage.transfersIntoOverseasPensions.copy(
-                  transferPensionScheme = Seq(TransferPensionScheme(ukTransferCharge = Some(true))
-                ))
-              )
+                transfersIntoOverseasPensions = aTransfersIntoOverseasPensionsViewModel
+                )
             )
 
             scenarioNameForIndividualAndEnglish in {
@@ -221,122 +191,26 @@ class OverseasTransferChargePaidControllerISpec
                   text = Set.empty,
                   formUrl = formUrl()
                 ))
-
+            }
             }
           }
-          "the user had previously answered 'No', and" when {
 
-            val sessionData = pensionsUserData(
-              minimalSessionDataToAccessThisPage.copy(
-                transfersIntoOverseasPensions = minimalSessionDataToAccessThisPage.transfersIntoOverseasPensions.copy(
-                  transferPensionScheme = Seq(TransferPensionScheme(ukTransferCharge = Some(false))
-                  ))
-              )
-            )
-
-            scenarioNameForIndividualAndEnglish in {
-
-              implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
-              val response = getPageWithIndex()
-
-              response must haveStatus(OK)
-              assertPageAsExpected(
-                parse(response.body),
-                ExpectedYesNoPageContents(
-                  title = "Did a UK pension scheme pay the transfer charge to HMRC?",
-                  header = "Did a UK pension scheme pay the transfer charge to HMRC?",
-                  caption = s"Transfers into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
-                  radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
-                  radioButtonForNo = checkedExpectedRadioButton("No"),
-                  buttonForContinue = ExpectedButton("Continue", ""),
-                  links = Set.empty,
-                  text = Set.empty,
-                  formUrl = formUrl()
-                ))
-
-            }
-            scenarioNameForIndividualAndWelsh ignore {
-
-              implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
-              val response = getPageWithIndex()
-
-              response must haveStatus(OK)
-              assertPageAsExpected(
-                parse(response.body),
-                ExpectedYesNoPageContents(
-                  title = "Did a UK pension scheme pay the transfer charge to HMRC?",
-                  header = "Did a UK pension scheme pay the transfer charge to HMRC?",
-                  caption = s"Transfers into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
-                  radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
-                  radioButtonForNo = checkedExpectedRadioButton("No"),
-                  buttonForContinue = ExpectedButton("Continue", ""),
-                  links = Set.empty,
-                  text = Set.empty,
-                  formUrl = formUrl()
-                ))
-
-
-            }
-            scenarioNameForAgentAndEnglish in {
-
-              implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
-              val response = getPageWithIndex()
-
-              response must haveStatus(OK)
-              assertPageAsExpected(
-                parse(response.body),
-                ExpectedYesNoPageContents(
-                  title = "Did a UK pension scheme pay the transfer charge to HMRC?",
-                  header = "Did a UK pension scheme pay the transfer charge to HMRC?",
-                  caption = s"Transfers into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
-                  radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
-                  radioButtonForNo = checkedExpectedRadioButton("No"),
-                  buttonForContinue = ExpectedButton("Continue", ""),
-                  links = Set.empty,
-                  text = Set.empty,
-                  formUrl = formUrl()
-
-                ))
-
-            }
-            scenarioNameForAgentAndWelsh ignore {
-
-              implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
-              val response = getPageWithIndex()
-
-              response must haveStatus(OK)
-              assertPageAsExpected(
-                parse(response.body),
-                ExpectedYesNoPageContents(
-                  title = "Did a UK pension scheme pay the transfer charge to HMRC?",
-                  header = "Did a UK pension scheme pay the transfer charge to HMRC?",
-                  caption = s"Transfers into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
-                  radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
-                  radioButtonForNo = checkedExpectedRadioButton("No"),
-                  buttonForContinue = ExpectedButton("Continue", ""),
-                  links = Set.empty,
-                  text = Set.empty,
-                  formUrl = formUrl()
-                ))
-
-            }
-
-          }
         }
       }
-      "submitted" should {
+    }
+      ".submit" should {
         "succeed" when {
           "the user has selected 'No' and" when {
 
-            val sessionData = pensionsUserData(minimalSessionDataToAccessThisPage)
+            val minimalSessionData = pensionsUserData(minimalSessionDataToAccessThisPage)
 
             val expectedScheme = TransferPensionScheme(ukTransferCharge = Some(false))
             val expectedViewModel =
-              sessionData.pensions.transfersIntoOverseasPensions.copy(transferPensionScheme = Seq(expectedScheme))
+              minimalSessionData.pensions.transfersIntoOverseasPensions.copy(transferPensionScheme = Seq(expectedScheme))
 
             scenarioNameForIndividualAndEnglish in {
 
-              implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
+              implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(minimalSessionData))
               implicit val response = submitForm(SubmittedFormDataForYesNoPage(Some(false)))
               val redirectPage = relativeUrl("/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-pension-scheme?index=0")
 
@@ -347,7 +221,7 @@ class OverseasTransferChargePaidControllerISpec
             }
             scenarioNameForIndividualAndWelsh ignore {
 
-              implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
+              implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(minimalSessionData))
               implicit val response = submitForm(SubmittedFormDataForYesNoPage(Some(false)))
               val redirectPage = relativeUrl("/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-pension-scheme?index=0")
 
@@ -358,7 +232,7 @@ class OverseasTransferChargePaidControllerISpec
             }
             scenarioNameForAgentAndEnglish in {
 
-              implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
+              implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(minimalSessionData))
               implicit val response = submitForm(SubmittedFormDataForYesNoPage(Some(false)))
               val redirectPage = relativeUrl("/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-pension-scheme?index=0")
 
@@ -369,7 +243,7 @@ class OverseasTransferChargePaidControllerISpec
             }
             scenarioNameForAgentAndWelsh ignore {
 
-              implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
+              implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(minimalSessionData))
               implicit val response = submitForm(SubmittedFormDataForYesNoPage(Some(false)))
               val redirectPage = relativeUrl("/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-pension-scheme?index=0")
 
@@ -571,9 +445,21 @@ class OverseasTransferChargePaidControllerISpec
           }
 
         }
+        "redirect to first page of journey" when {
+          "previous question has not been answered" in {
+              val incompleteCYAModel = aPensionsCYAModel.copy(
+                transfersIntoOverseasPensions = TransfersIntoOverseasPensionsViewModel(overseasTransferCharge = Some(false)))
+              val sessionData = pensionsUserData(incompleteCYAModel)
+              implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
+              implicit val response: WSResponse = getPageWithIndex()
+
+              assertRedirectionAsExpected(PageRelativeURLs.transferPensionSavings)
+            }
+          }
       }
-    }
-  }
+      }
+
+
 
   private def getViewModel(implicit userConfig: UserConfig): Option[TransfersIntoOverseasPensionsViewModel] =
     loadPensionUserData.map(_.pensions.transfersIntoOverseasPensions)

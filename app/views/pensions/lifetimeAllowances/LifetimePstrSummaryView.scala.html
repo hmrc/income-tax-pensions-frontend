@@ -18,9 +18,7 @@
 @import views.html.templates.helpers.SummaryList
 @import views.html.templates.helpers.Heading
 @import views.html.templates.helpers.Link
-@import controllers.pensions.lifetimeAllowances.routes.LifetimeAllowanceCYAController
-@import controllers.pensions.lifetimeAllowances.routes.PensionSchemeTaxReferenceLifetimeController
-@import controllers.pensions.annualAllowances.routes.RemoveAnnualAllowancePstrController
+@import controllers.pensions.lifetimeAllowances.routes.{LifetimeAllowanceCYAController,PensionSchemeTaxReferenceLifetimeController,RemoveLifetimeAllowancePstrController}
 @import controllers.pensions.routes.PensionsSummaryController
 
 @this(
@@ -34,54 +32,81 @@
 
 @headingForUse = @{messages("lifetimeAllowance.pstrSummary.title")}
 @addAnotherLink() = {
-    @if(pstrList.isEmpty){
-        <p class="govuk-body">@link(PensionSchemeTaxReferenceLifetimeController.show(taxYear, None).url, "common.addPstrLink", Some("add-pstr-link"), fullStop = false)</p>
-    } else {
-        <p class="govuk-body">@link(PensionSchemeTaxReferenceLifetimeController.show(taxYear, None).url, "common.addAnotherPstrLink", Some("add-another-link"), fullStop = false)</p>
-    }
+    <p class="govuk-body">
+        @link(PensionSchemeTaxReferenceLifetimeController.show(taxYear, None).url, "common.addAnotherPstrLink", Some("add-another-link"), fullStop = false)
+    </p>
 }
 
 @pstrSummaryList = {
-    @if(pstrList.nonEmpty){
-        <div class="govuk-form-group">
-            <dl class="hmrc-add-to-a-list hmrc-add-to-a-list--short">
-            @for((pstr, index) <- pstrList.zipWithIndex){
-                <div class="hmrc-add-to-a-list__contents">
-                    <dt class="hmrc-add-to-a-list__identifier hmrc-add-to-a-list__identifier--light">
-                    @pstr
-                    </dt>
-                    <dd class="hmrc-add-to-a-list__change">
-                        <a class="govuk-link" href="@PensionSchemeTaxReferenceLifetimeController.show(taxYear, Some(index))">
-                            <span aria-hidden="true">@messages("common.change")</span>
-                            <span class="govuk-visually-hidden">@{s"${messages("common.change")} ${messages("common.pensionSchemeTaxReference")} $pstr"}</span>
-                        </a>
-                    </dd>
-                    <dd class="hmrc-add-to-a-list__remove">
-                        @* TODO: Update href link to remove PSTR page *@
-                        <a class="govuk-link" href="#">
-                            <span aria-hidden="true">@messages("common.remove")</span>
-                            <span class="govuk-visually-hidden">@{s"${messages("common.remove")} ${messages("common.pensionSchemeTaxReference")} $pstr"}</span>
-                        </a>
-                    </dd>
-                </div>
-            }
-            </dl>
-        </div>
-    }
+    <div class="govuk-form-group">
+        <dl class="hmrc-add-to-a-list hmrc-add-to-a-list--short">
+        @for((pstr, index) <- pstrList.zipWithIndex){
+            <div class="hmrc-add-to-a-list__contents">
+                <dt class="hmrc-add-to-a-list__identifier hmrc-add-to-a-list__identifier--light">
+                @pstr
+                </dt>
+                <dd class="hmrc-add-to-a-list__change">
+                    <a class="govuk-link" href="@PensionSchemeTaxReferenceLifetimeController.show(taxYear, Some(index))">
+                        <span aria-hidden="true">@messages("common.change")</span>
+                        <span class="govuk-visually-hidden">@{s"${messages("common.change")} ${messages("common.pensionSchemeTaxReference")} $pstr"}</span>
+                    </a>
+                </dd>
+                <dd class="hmrc-add-to-a-list__remove">
+                    <a class="govuk-link" href="@RemoveLifetimeAllowancePstrController.show(taxYear, Some(index))">
+                        <span aria-hidden="true">@messages("common.remove")</span>
+                        <span class="govuk-visually-hidden">@{s"${messages("common.remove")} ${messages("common.pensionSchemeTaxReference")} $pstr"}</span>
+                    </a>
+                </dd>
+            </div>
+        }
+        </dl>
+    </div>
 }
 
 
 @layout(pageTitle = headingForUse, taxYear = Some(taxYear)) {
     @heading(headingForUse, Some(messages("common.lifetimeAllowance.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-2")
-    @pstrSummaryList
-    @addAnotherLink()
-    @button(Button(
-        attributes = Map("id" -> "continue"),
-        preventDoubleClick = Some(true),
-        content = Text(messages("common.continue")),
-        classes = "govuk-button govuk-!-margin-top-2",
-        href = Some(LifetimeAllowanceCYAController.show(taxYear).url)
-    ))
+
+    <div class="govuk-!-margin-bottom-9">
+        @if(pstrList.nonEmpty){
+
+            @pstrSummaryList
+            @addAnotherLink()
+            @button(Button(
+                attributes = Map("id" -> "continue"),
+                preventDoubleClick = Some(true),
+                content = Text(messages("common.continue")),
+                classes = "govuk-button govuk-!-margin-top-2",
+                href = Some(LifetimeAllowanceCYAController.show(taxYear).url)
+            ))
+
+        } else {
+
+            <p class="govuk-body" id="youNeedToAddOneOrMorePensionScheme1">
+                @messages("common.pensionSchemeTaxReference.addAPstrLink")
+            </p>
+
+            @button(Button(
+                attributes = Map("id" -> "AddAScheme"),
+                preventDoubleClick = Some(true),
+                classes = "govuk-button govuk-!-margin-top-2",
+                content = Text(messages("common.addPstrLink")),
+                href = Some(PensionSchemeTaxReferenceLifetimeController.show(taxYear, None).url)
+            ))
+
+            <p class="govuk-body" id="youNeedToAddOneOrMorePensionScheme2">
+                @messages("common.summary.returnToOverviewMsg")
+            </p>
+
+            @button(Button(
+                attributes = Map("id" -> "ReturnToOverview"),
+                preventDoubleClick = Some(true),
+                classes = "govuk-button--secondary",
+                content = Text(messages("common.return.overview.buttonText")),
+                href = Some(PensionsSummaryController.show(taxYear).url)
+            ))
+        }
+    </div>
 }
 
 @{

@@ -26,6 +26,9 @@ import models.pension.AllPensionsData.generateCyaFromPrior
 import models.pension.charges.TransfersIntoOverseasPensionsViewModel
 import play.api.i18n.I18nSupport
 import play.api.mvc._
+import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
+import services.redirects.TransfersIntoOverseasPensionsPages.{RemoveSchemePage, TransferIntoOverseasPensionsCYA}
+import services.redirects.TransfersIntoOverseasPensionsRedirects.{cyaPageCall, journeyCheck}
 import services.{PensionChargesService, PensionSessionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
@@ -49,7 +52,11 @@ class TransferIntoOverseasPensionsCYAController @Inject()(authAction: Authorised
     pensionSessionService.getAndHandle(taxYear, request.user) { (cya, prior) =>
       (cya, prior) match {
         case (Some(data), _) =>
+          val checkRedirect = journeyCheck(TransferIntoOverseasPensionsCYA, _: PensionsCYAModel, taxYear)
+          redirectBasedOnCurrentAnswers(taxYear, cya, cyaPageCall(taxYear))(checkRedirect) {
+            _ =>
           Future.successful(Ok(view(taxYear, data.pensions.transfersIntoOverseasPensions)))
+          }
         case (None, Some(priorData)) =>
           val cyaModel = generateCyaFromPrior(priorData)
           pensionSessionService.createOrUpdateSessionData(request.user,
@@ -71,6 +78,9 @@ class TransferIntoOverseasPensionsCYAController @Inject()(authAction: Authorised
       cya.fold(
         Future.successful(Redirect(appConfig.incomeTaxSubmissionOverviewUrl(taxYear)))
       ) { model =>
+        val checkRedirect = journeyCheck(TransferIntoOverseasPensionsCYA, _: PensionsCYAModel, taxYear)
+        redirectBasedOnCurrentAnswers(taxYear, cya, cyaPageCall(taxYear))(checkRedirect) {
+          _ =>
         if (sessionDataDifferentThanPriorData(model.pensions, prior)) {
           pensionChargesService.saveTransfersIntoOverseasPensionsViewModel(request.user, taxYear).map {
             case Left(_) => errorHandler.internalServerError()
@@ -78,6 +88,7 @@ class TransferIntoOverseasPensionsCYAController @Inject()(authAction: Authorised
           }
         } else {
           Future.successful(Redirect(OverseasPensionsSummaryController.show(taxYear)))
+          }
         }
       }
     }

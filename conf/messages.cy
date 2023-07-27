@@ -445,7 +445,7 @@ pensions.reducedAnnualAllowanceAmount.nonReduced.error.overMaximum = Mae’n rha
 ####### Above Reduced Annual Allowance ######
 pensions.aboveReducedAnnualAllowance.title.individual = A ydych wedi mynd yn uwch na’ch lwfans blynyddol wedi’i?
 pensions.aboveReducedAnnualAllowance.title.agent = A yw’ch cleient wedi mynd yn uwch na’i lwfans blynyddol wedi’i?
-pensions.aboveReducedAnnualAllowance.amount = Swm uwchlaw'r lwfans blynyddol gostyngol, mewn punnoedd
+pensions.aboveReducedAnnualAllowance.amount = Swm uwchlaw’r lwfans blynyddol gostyngol, mewn punnoedd
 pensions.aboveReducedAnnualAllowance.error.noEntry.individual = Dewiswch ‘Iawn’ os ydych wedi mynd yn uwch na’ch lwfans blynyddol wedi’i ostwng
 pensions.aboveReducedAnnualAllowance.error.noEntry.agent = Dewiswch ‘Iawn’ os yw’ch cleient wedi mynd yn uwch na’i lwfans blynyddol wedi’i ostwng
 pensions.aboveReducedAnnualAllowance.error.noAmountEntry.individual = Nodwch y swm sydd uwchlaw’ch lwfans blynyddol wedi’i ostwng
@@ -596,12 +596,12 @@ pensions.statePension.addToCalculation.noEntry.individual = Select yes if you wa
 pensions.statePension.addToCalculation.noEntry.agent = Select yes if you want to add State Pension to your client’s Income Tax Calculation
 
 #State Pension CYA page
-statePension.cya.title.agent = Check your client's State Pension
+statePension.cya.title.agent = Check your client’s State Pension
 statePension.cya.title.individual = Check your State Pension
-statePension.cya.paragraph1.agent  = Your client's State Pension income is based on the information we already hold about them.
-statePension.cya.paragraph2.agent  = You cannot update your client's State Pension income until 6 April 2023.
+statePension.cya.paragraph1.agent  = Your client’s State Pension income is based on the information we already hold about them.
+statePension.cya.paragraph2.agent  = You cannot update your client’s State Pension income until 6 April 2023.
 statePension.cya.paragraph1.individual  = Your State Pension income is based on information we already hold about you.
-statePension.cya.paragraph2.individual  = You can change the amounts if they''re not correct.
+statePension.cya.paragraph2.individual  = You can change the amounts if they’re not correct.
 statePension.cya.statePension.label = State Pension
 statePension.cya.statePension.label.hidden = Change state pension
 statePension.cya.startDate.label = State Pension start date
@@ -990,7 +990,7 @@ overseasPension.pensionsCustomerReferenceNumber.title.individual = Beth yw’ch 
 overseasPension.pensionsCustomerReferenceNumber.title.agent = Beth yw cyfeirnod cwsmer eich cleient?
 overseasPension.pensionsCustomerReferenceNumber.paragraph1.individual = Dylai’ch darparwr pensiwn fod wedi rhoi cyfeirnod cwsmer i chi.
 overseasPension.pensionsCustomerReferenceNumber.paragraph1.agent = Dylai darparwr pensiwn eich cleient fod wedi rhoi cyfeirnod cwsmer i’ch cleient.
-overseasPension.pensionsCustomerReferenceNumber.hint = Er enghraifft, ''INCWMPENSIWN245''
+overseasPension.pensionsCustomerReferenceNumber.hint = Er enghraifft, ’INCWMPENSIWN245’
 overseasPension.pensionsCustomerReferenceNumber.error.noEntry.individual = Nodwch eich cyfeirnod cwsmer
 overseasPension.pensionsCustomerReferenceNumber.error.noEntry.agent = Nodwch gyfeirnod cwsmer eich cleient
 

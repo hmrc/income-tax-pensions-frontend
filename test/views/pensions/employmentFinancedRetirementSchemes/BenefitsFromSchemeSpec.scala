@@ -62,7 +62,7 @@ class BenefitsFromSchemeSpec extends ViewUnitTest {
     val paragraph1: String =
       "If a pension scheme is not a registered it might be an employer-financed retirement benefit scheme (EFRBS)."
     val paragraph2: String =
-      "An EFRBS is a scheme that pays certain retirement or death benefits for employees or former employees called 'relevant benefits'."
+      "An EFRBS is a scheme that pays certain retirement or death benefits for employees or former employees called ’relevant benefits’."
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
@@ -143,7 +143,7 @@ class BenefitsFromSchemeSpec extends ViewUnitTest {
         buttonCheck(userScenario.commonExpectedResults.expectedButtonText, Selectors.buttonSelector)
       }
 
-      "render page with filled in form using selected 'Yes' value" which {
+      "render page with filled in form using selected ’Yes’ value" which {
         implicit val userSessionDataRequest: AuthorisationRequest[AnyContent] = getAuthRequest(userScenario.isAgent)
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
 
@@ -162,7 +162,7 @@ class BenefitsFromSchemeSpec extends ViewUnitTest {
         buttonCheck(userScenario.commonExpectedResults.expectedButtonText, Selectors.buttonSelector)
       }
 
-      "render page with filled in form using selected 'No' value" which {
+      "render page with filled in form using selected ’No’ value" which {
         implicit val userSessionDataRequest: AuthorisationRequest[AnyContent] = getAuthRequest(userScenario.isAgent)
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
 
