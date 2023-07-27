@@ -45,7 +45,7 @@ object AllPensionsData {
       paymentsIntoOverseasPensions = generatePaymentsIntoOverseasPensionsFromPrior(prior),
       incomeFromOverseasPensions = generateIncomeFromOverseasPensionsCyaFromPrior(prior),
       transfersIntoOverseasPensions = generateTransfersIntoOverseasPensionsCyaFromPrior(prior),
-      shortServiceRefunds = generateShortServiceRefundCyaFromPrior(prior),
+      shortServiceRefunds = generateShortServiceRefundCyaFromPrior(prior)
     )
   }
   
