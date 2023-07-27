@@ -18,16 +18,17 @@ package controllers.pensions.incomeFromPensions
 
 import builders.IncomeFromPensionsViewModelBuilder.anIncomeFromPensionsViewModel
 import builders.PensionsCYAModelBuilder.aPensionsCYAModel
-import builders.PensionsUserDataBuilder.aPensionsUserData
-import builders.StateBenefitViewModelBuilder.anStateBenefitViewModelOne
+import builders.PensionsUserDataBuilder.{aPensionsUserData, pensionsUserDataWithIncomeFromPensions}
+import builders.StateBenefitViewModelBuilder.{aStatePensionViewModel, anStateBenefitViewModelOne}
 import builders.UserBuilder.aUser
+import models.pension.statebenefits.IncomeFromPensionsViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.IncomeFromPensionsPages.{statePension, statePensionStartDateUrl}
+import utils.PageUrls.IncomeFromPensionsPages.{statePension, statePensionCyaUrl, statePensionLumpSumUrl, statePensionStartDateUrl}
 import utils.PageUrls.{fullUrl, overviewUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
@@ -37,10 +38,10 @@ import java.time.LocalDate
 class StatePensionStartDateControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
 
   def startDateForm(day: String, month: String, year: String): Map[String, String] = Map(
-      dayInputName -> day,
-      monthInputName -> month,
-      yearInputName -> year
-    )
+    dayInputName -> day,
+    monthInputName -> month,
+    yearInputName -> year
+  )
 
   override val userScenarios: Seq[UserScenario[_, _]] = Nil
 
@@ -103,11 +104,11 @@ class StatePensionStartDateControllerISpec extends IntegrationTest with ViewHelp
     "redirect to the first page in journey if the previous question has not been answered" in {
       val data = aPensionsUserData.copy(
         pensions = aPensionsCYAModel.copy(
-        incomeFromPensions = anIncomeFromPensionsViewModel.copy(
-          statePension = Some(anStateBenefitViewModelOne.copy(
-            amountPaidQuestion = None,
-            amount = None))
-        )))
+          incomeFromPensions = anIncomeFromPensionsViewModel.copy(
+            statePension = Some(anStateBenefitViewModelOne.copy(
+              amountPaidQuestion = None,
+              amount = None))
+          )))
 
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
@@ -138,7 +139,28 @@ class StatePensionStartDateControllerISpec extends IntegrationTest with ViewHelp
       result.headers("location").head shouldBe overviewUrl(taxYear)
     }
 
-    "persist amount and redirect to next page" in {
+    "persist amount and redirect to StatePensionLumpSum page" in {
+      val formData = startDateForm(validDay, validMonth, validYear)
+      val viewModel = IncomeFromPensionsViewModel(statePension = Some(aStatePensionViewModel.copy(
+        startDate = Some(LocalDate.parse("2019-11-14")),
+        startDateQuestion = Some(true),
+        addToCalculation = Some(true))))
+
+      lazy implicit val result: WSResponse = {
+        dropPensionsDB()
+        authoriseAgentOrIndividual(aUser.isAgent)
+        insertCyaData(pensionsUserDataWithIncomeFromPensions(viewModel))
+        urlPost(
+          fullUrl(statePensionStartDateUrl(taxYearEOY)),
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
+          follow = false,
+          body = formData)
+      }
+      result.status shouldBe SEE_OTHER
+      result.headers("location").head shouldBe statePensionLumpSumUrl(taxYearEOY)
+    }
+
+    "persist amount and redirect to CYA page when model is now completed" in {
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
@@ -152,55 +174,59 @@ class StatePensionStartDateControllerISpec extends IntegrationTest with ViewHelp
           body = formData)
       }
       result.status shouldBe SEE_OTHER
+      result.headers("location").head shouldBe statePensionCyaUrl(taxYearEOY)
     }
 
-    "the day field is empty" which {
-      lazy val form = startDateForm("", validMonth, validYear)
+    "return BAD_REQUEST" when {
 
-      lazy val result: WSResponse = {
-        dropPensionsDB()
-        authoriseAgentOrIndividual()
-        insertCyaData(aPensionsUserData)
-        urlPost(fullUrl(statePensionStartDateUrl(taxYearEOY)), body = form, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+      "the day field is empty" which {
+        lazy val form = startDateForm("", validMonth, validYear)
+
+        lazy val result: WSResponse = {
+          dropPensionsDB()
+          authoriseAgentOrIndividual()
+          insertCyaData(aPensionsUserData)
+          urlPost(fullUrl(statePensionStartDateUrl(taxYearEOY)), body = form, follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        }
+
+        "has the correct status" in {
+          result.status shouldBe BAD_REQUEST
+        }
+
+        implicit def document: () => Document = () => Jsoup.parse(result.body)
+
+        inputFieldValueCheck(dayInputName, Selectors.dayInputSelector, "")
+        inputFieldValueCheck(monthInputName, Selectors.monthInputSelector, validMonth)
+        inputFieldValueCheck(yearInputName, Selectors.yearInputSelector, validYear)
+        errorSummaryCheck(emptyDayErrorText, Selectors.dayInputHref)
+        errorAboveElementCheck(emptyDayErrorText)
       }
 
-      "has the correct status" in {
-        result.status shouldBe BAD_REQUEST
+      "the day and month fields are empty" which {
+        lazy val form = startDateForm("", "", validYear)
+
+        lazy val result: WSResponse = {
+          dropPensionsDB()
+          authoriseAgentOrIndividual()
+          insertCyaData(aPensionsUserData)
+          urlPost(fullUrl(statePensionStartDateUrl(taxYearEOY)), body = form, follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        }
+
+        "has the correct status" in {
+          result.status shouldBe BAD_REQUEST
+        }
+
+        implicit def document: () => Document = () => Jsoup.parse(result.body)
+
+        titleCheck(expectedErrorTitle)
+        inputFieldValueCheck(dayInputName, Selectors.dayInputSelector, "")
+        inputFieldValueCheck(monthInputName, Selectors.monthInputSelector, "")
+        inputFieldValueCheck(yearInputName, Selectors.yearInputSelector, validYear)
+        errorSummaryCheck(emptyDayMonthErrorText, Selectors.dayInputHref)
+        errorAboveElementCheck(emptyDayMonthErrorText)
       }
-
-      implicit def document: () => Document = () => Jsoup.parse(result.body)
-
-      inputFieldValueCheck(dayInputName, Selectors.dayInputSelector, "")
-      inputFieldValueCheck(monthInputName, Selectors.monthInputSelector, validMonth)
-      inputFieldValueCheck(yearInputName, Selectors.yearInputSelector, validYear)
-      errorSummaryCheck(emptyDayErrorText, Selectors.dayInputHref)
-      errorAboveElementCheck(emptyDayErrorText)
-    }
-
-    "the day and month fields are empty" which {
-      lazy val form = startDateForm("", "", validYear)
-
-      lazy val result: WSResponse = {
-        dropPensionsDB()
-        authoriseAgentOrIndividual()
-        insertCyaData(aPensionsUserData)
-        urlPost(fullUrl(statePensionStartDateUrl(taxYearEOY)), body = form, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
-      }
-
-      "has the correct status" in {
-        result.status shouldBe BAD_REQUEST
-      }
-
-      implicit def document: () => Document = () => Jsoup.parse(result.body)
-
-      titleCheck(expectedErrorTitle)
-      inputFieldValueCheck(dayInputName, Selectors.dayInputSelector, "")
-      inputFieldValueCheck(monthInputName, Selectors.monthInputSelector, "")
-      inputFieldValueCheck(yearInputName, Selectors.yearInputSelector, validYear)
-      errorSummaryCheck(emptyDayMonthErrorText, Selectors.dayInputHref)
-      errorAboveElementCheck(emptyDayMonthErrorText)
 
       "the day and year fields are empty" which {
         lazy val form = startDateForm("", validMonth, "")
@@ -378,7 +404,6 @@ class StatePensionStartDateControllerISpec extends IntegrationTest with ViewHelp
         errorSummaryCheck(tooLongAgoErrorText, Selectors.dayInputHref)
         errorAboveElementCheck(tooLongAgoErrorText)
       }
-
     }
   }
 }

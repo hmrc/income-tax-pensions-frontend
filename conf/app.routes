@@ -98,8 +98,8 @@ POST        /:taxYear/pension-income/check-state-pension                        
 
     ###     Income From Other UK Pensions     ###
 
-GET         /:taxYear/pension-income/uk-pension-schemes                                                                            controllers.pensions.incomeFromPensions.UkPensionSchemePaymentsController.show(taxYear: Int)
-POST        /:taxYear/pension-income/uk-pension-schemes                                                                            controllers.pensions.incomeFromPensions.UkPensionSchemePaymentsController.submit(taxYear: Int)
+GET         /:taxYear/pension-income/uk-pension-income                                                                             controllers.pensions.incomeFromPensions.UkPensionSchemePaymentsController.show(taxYear: Int)
+POST        /:taxYear/pension-income/uk-pension-income                                                                             controllers.pensions.incomeFromPensions.UkPensionSchemePaymentsController.submit(taxYear: Int)
 
 GET         /:taxYear/pension-income/pension-income-details                                                                        controllers.pensions.incomeFromPensions.PensionSchemeDetailsController.show(taxYear: Int, pensionSchemeIndex: Option[Int])
 POST        /:taxYear/pension-income/pension-income-details                                                                        controllers.pensions.incomeFromPensions.PensionSchemeDetailsController.submit(taxYear: Int, pensionSchemeIndex: Option[Int])
@@ -112,7 +112,7 @@ POST        /:taxYear/pension-income/pension-start-date                         
 
 GET         /:taxYear/pension-income/pension-scheme-summary                                                                        controllers.pensions.incomeFromPensions.PensionSchemeSummaryController.show(taxYear: Int, pensionSchemeIndex: Option[Int])
 
-GET         /:taxYear/pension-income/uk-pension-income                                                                             controllers.pensions.incomeFromPensions.UkPensionIncomeSummaryController.show(taxYear: Int)
+GET         /:taxYear/pension-income/uk-pension-schemes                                                                            controllers.pensions.incomeFromPensions.UkPensionIncomeSummaryController.show(taxYear: Int)
 
 GET         /:taxYear/pension-income/remove-pension-scheme                                                                         controllers.pensions.incomeFromPensions.RemovePensionSchemeController.show(taxYear: Int, pensionSchemeIndex: Option[Int])
 POST        /:taxYear/pension-income/remove-pension-scheme                                                                         controllers.pensions.incomeFromPensions.RemovePensionSchemeController.submit(taxYear: Int, pensionSchemeIndex: Option[Int])

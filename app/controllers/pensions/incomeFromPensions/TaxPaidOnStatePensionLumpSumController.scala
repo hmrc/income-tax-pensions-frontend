@@ -26,9 +26,9 @@ import models.requests.UserSessionDataRequest
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.PensionSessionService
-import services.redirects.StatePensionPages.TaxOnStatePensionLumpSumPage
 import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
-import services.redirects.StatePensionRedirects.{cyaPageCall, journeyCheck}
+import services.redirects.StatePensionPages.TaxOnStatePensionLumpSumPage
+import services.redirects.StatePensionRedirects.{cyaPageCall, journeyCheck, statePensionIsFinishedCheck}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.incomeFromPensions.TaxPaidOnStatePensionLumpSumView
@@ -91,9 +91,9 @@ class TaxPaidOnStatePensionLumpSumController @Inject()(actionsProvider: ActionsP
     val updatedCyaModel = pensionUserData.pensions.copy(
       incomeFromPensions = viewModel.copy(statePensionLumpSum = Some(updateStatePensionLumpSum)))
 
-    pensionSessionService.createOrUpdateSessionData(request.user,
-      updatedCyaModel, taxYear, pensionUserData.isPriorSubmission)(errorHandler.internalServerError()) {
-      Redirect(StatePensionLumpSumStartDateController.show(taxYear))
+    pensionSessionService.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear, pensionUserData.isPriorSubmission)(
+      errorHandler.internalServerError()) {
+      statePensionIsFinishedCheck(updatedCyaModel.incomeFromPensions, taxYear, StatePensionLumpSumStartDateController.show(taxYear))
     }
   }
 }

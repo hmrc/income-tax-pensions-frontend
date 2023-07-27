@@ -17,6 +17,7 @@
 package models.pension.statebenefits
 
 import models.mongo.TextAndKey
+import models.pension.PensionCYABaseModel
 import play.api.libs.json.{Json, OFormat}
 import utils.DecryptableSyntax.DecryptableOps
 import utils.DecryptorInstances.booleanDecryptor
@@ -27,7 +28,7 @@ import utils.{EncryptedValue, SecureGCMCipher}
 case class IncomeFromPensionsViewModel(statePension: Option[StateBenefitViewModel] = None,
                                        statePensionLumpSum: Option[StateBenefitViewModel] = None,
                                        uKPensionIncomesQuestion: Option[Boolean] = None,
-                                       uKPensionIncomes: Seq[UkPensionIncomeViewModel] = Seq.empty) {
+                                       uKPensionIncomes: Seq[UkPensionIncomeViewModel] = Seq.empty) extends PensionCYABaseModel {
 
   def isEmpty: Boolean =
     statePension.isEmpty && statePensionLumpSum.isEmpty && uKPensionIncomesQuestion.isEmpty && uKPensionIncomes.isEmpty
@@ -36,8 +37,16 @@ case class IncomeFromPensionsViewModel(statePension: Option[StateBenefitViewMode
 
   def isFinishedUkPension: Boolean = uKPensionIncomesQuestion.exists(x => !x || (uKPensionIncomes.nonEmpty && uKPensionIncomes.forall(_.isFinished)))
 
+  def isFinished: Boolean = isFinishedStatePension && isFinishedUkPension
+
   def journeyIsNoStatePension: Boolean =
     statePension.exists(!_.amountPaidQuestion.getOrElse(true)) && statePensionLumpSum.exists(!_.amountPaidQuestion.getOrElse(true))
+
+  def journeyIsNoUkPension: Boolean = uKPensionIncomesQuestion.exists(x => !x && uKPensionIncomes.isEmpty)
+
+  def journeyIsNo: Boolean = journeyIsNoStatePension && journeyIsNoUkPension
+
+  def journeyIsUnanswered: Boolean = this.isEmpty
 
   def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedIncomeFromPensionsViewModel =
     EncryptedIncomeFromPensionsViewModel(

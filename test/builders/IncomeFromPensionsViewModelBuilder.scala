@@ -16,7 +16,7 @@
 
 package builders
 
-import builders.StateBenefitViewModelBuilder.{aStatePensionLumpSumViewModel, aStatePensionViewModel}
+import builders.StateBenefitViewModelBuilder.{aStatePensionLumpSumNoAddToCalculationViewModel, aStatePensionLumpSumViewModel, aStatePensionNoAddToCalculationViewModel, aStatePensionViewModel}
 import builders.UkPensionIncomeViewModelBuilder.{anUkPensionIncomeViewModelOne, anUkPensionIncomeViewModelTwo}
 import models.pension.statebenefits.IncomeFromPensionsViewModel
 
@@ -32,6 +32,13 @@ object IncomeFromPensionsViewModelBuilder {
   val aStatePensionIncomeFromPensionsViewModel: IncomeFromPensionsViewModel = IncomeFromPensionsViewModel(
     statePension = Some(aStatePensionViewModel),
     statePensionLumpSum = Some(aStatePensionLumpSumViewModel),
+    uKPensionIncomesQuestion = None,
+    uKPensionIncomes = Seq.empty
+  )
+
+  val aStatePensionIncomeFromPensionsNoAddToCalculationViewModel: IncomeFromPensionsViewModel = IncomeFromPensionsViewModel(
+    statePension = Some(aStatePensionNoAddToCalculationViewModel),
+    statePensionLumpSum = Some(aStatePensionLumpSumNoAddToCalculationViewModel),
     uKPensionIncomesQuestion = None,
     uKPensionIncomes = Seq.empty
   )

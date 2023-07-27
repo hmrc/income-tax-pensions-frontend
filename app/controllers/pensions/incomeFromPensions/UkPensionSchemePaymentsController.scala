@@ -88,9 +88,10 @@ class UkPensionSchemePaymentsController @Inject()(implicit val mcc: MessagesCont
                 }
                 pensionSessionService.createOrUpdateSessionData(request.user,
                   updatedCyaModel, taxYear, optData.exists(_.isPriorSubmission))(errorHandler.internalServerError()) {
-
-                  if (yesNo) Redirect(redirectForSchemeLoop(schemes = updatedCyaModel.incomeFromPensions.uKPensionIncomes, taxYear))
-                  else Redirect(UkPensionIncomeCYAController.show(taxYear))
+                  Redirect(
+                    if (yesNo) redirectForSchemeLoop(schemes = updatedCyaModel.incomeFromPensions.uKPensionIncomes, taxYear)
+                    else UkPensionIncomeCYAController.show(taxYear)
+                  )
                 }
               }
           }

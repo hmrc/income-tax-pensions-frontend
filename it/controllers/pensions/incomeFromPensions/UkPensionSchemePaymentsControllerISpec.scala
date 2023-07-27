@@ -296,57 +296,56 @@ class UkPensionSchemePaymentsControllerISpec extends IntegrationTest with ViewHe
         cyaModel.pensions.incomeFromPensions.statePension.flatMap(_.amountPaidQuestion) shouldBe Some(true)
       }
     }
+
+    "redirect to Pension CYA page and clear other data when user selects 'no' with prior data" which {
+      lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.no)
+      lazy val result: WSResponse = {
+        dropPensionsDB()
+        authoriseAgentOrIndividual()
+        userDataStub(anIncomeTaxUserData, nino, taxYearEOY)
+        val pensionsViewModel = anIncomeFromPensionsViewModel.copy(uKPensionIncomesQuestion = Some(true))
+        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(incomeFromPensions = pensionsViewModel)))
+
+        urlPost(fullUrl(ukPensionSchemePayments(taxYearEOY)), body = form, follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+      }
+
+      "has a SEE_OTHER(303) status" in {
+        result.status shouldBe SEE_OTHER
+        result.header("location") shouldBe Some(ukPensionIncomeCyaUrl(taxYearEOY))
+      }
+
+      "updates uKPensionIncomesQuestion to Some(false) and wipe the sets the uk pensions list to Seq.empty" in {
+        lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
+        cyaModel.pensions.incomeFromPensions.uKPensionIncomesQuestion shouldBe Some(false)
+        cyaModel.pensions.incomeFromPensions.uKPensionIncomes shouldBe Seq.empty
+      }
+
+    }
+
+    "redirect user to the pension summary page when in year" which {
+      lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.yes)
+      lazy val result: WSResponse = {
+
+        dropPensionsDB()
+        authoriseAgentOrIndividual()
+        userDataStub(anIncomeTaxUserData, nino, taxYear)
+        val pensionsViewModel = anIncomeFromPensionsViewModel.copy(uKPensionIncomesQuestion = Some(true))
+        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(incomeFromPensions = pensionsViewModel)))
+        urlPost(fullUrl(ukPensionSchemePayments(taxYear)), body = form, follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
+      }
+
+      "has an SEE_OTHER(303) status" in {
+        result.status shouldBe SEE_OTHER
+        result.header("location").contains(overviewUrl(taxYear)) shouldBe true
+      }
+
+      "updates uKPensionIncomesQuestion to Some(true) and check pensions is not empty" in {
+        lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
+        cyaModel.pensions.incomeFromPensions.uKPensionIncomesQuestion shouldBe Some(true)
+        Seq(cyaModel.pensions.incomeFromPensions.uKPensionIncomes).length.shouldBe(1)
+      }
+    }
   }
-
-  "redirect to Pension CYA page and clear other data when user selects 'no' with prior data" which {
-    lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.no)
-    lazy val result: WSResponse = {
-      dropPensionsDB()
-      authoriseAgentOrIndividual()
-      userDataStub(anIncomeTaxUserData, nino, taxYearEOY)
-      val pensionsViewModel = anIncomeFromPensionsViewModel.copy(uKPensionIncomesQuestion = Some(true))
-      insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(incomeFromPensions = pensionsViewModel)))
-
-      urlPost(fullUrl(ukPensionSchemePayments(taxYearEOY)), body = form, follow = false,
-        headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
-    }
-
-    "has a SEE_OTHER(303) status" in {
-      result.status shouldBe SEE_OTHER
-      result.header("location") shouldBe Some(ukPensionIncomeCyaUrl(taxYearEOY))
-    }
-
-    "updates uKPensionIncomesQuestion to Some(false) and wipe the sets the uk pensions list to Seq.empty" in {
-      lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
-      cyaModel.pensions.incomeFromPensions.uKPensionIncomesQuestion shouldBe Some(false)
-      cyaModel.pensions.incomeFromPensions.uKPensionIncomes shouldBe Seq.empty
-    }
-
-  }
-
-  "Redirect user to the pension summary page when in year" which {
-    lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.yes)
-    lazy val result: WSResponse = {
-
-      dropPensionsDB()
-      authoriseAgentOrIndividual()
-      userDataStub(anIncomeTaxUserData, nino, taxYear)
-      val pensionsViewModel = anIncomeFromPensionsViewModel.copy(uKPensionIncomesQuestion = Some(true))
-      insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(incomeFromPensions = pensionsViewModel)))
-      urlPost(fullUrl(ukPensionSchemePayments(taxYear)), body = form, follow = false,
-        headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
-    }
-
-    "has an SEE_OTHER(303) status" in {
-      result.status shouldBe SEE_OTHER
-      result.header("location").contains(overviewUrl(taxYear)) shouldBe true
-    }
-
-    "updates uKPensionIncomesQuestion to Some(true) and check pensions is not empty" in {
-      lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
-      cyaModel.pensions.incomeFromPensions.uKPensionIncomesQuestion shouldBe Some(true)
-      Seq(cyaModel.pensions.incomeFromPensions.uKPensionIncomes).length.shouldBe(1)
-    }
-  }
-
 }
