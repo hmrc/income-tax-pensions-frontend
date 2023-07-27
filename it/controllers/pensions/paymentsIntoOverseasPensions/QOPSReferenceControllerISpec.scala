@@ -18,7 +18,7 @@ package controllers.pensions.paymentsIntoOverseasPensions
 
 import builders.PaymentsIntoOverseasPensionsViewModelBuilder.aPaymentsIntoOverseasPensionsViewModel
 import builders.PensionsCYAModelBuilder.aPensionsCYAModel
-import builders.PensionsUserDataBuilder.{aPensionsUserData, pensionUserDataWithOnlyOverseasPensions, pensionUserDataWithOverseasPensions}
+import builders.PensionsUserDataBuilder.{aPensionsUserData, pensionUserDataWithPaymentsIntoOverseasPensions, pensionUserDataWithOverseasPensions}
 import builders.ReliefBuilder.aMigrantMemberRelief
 import builders.UserBuilder.aUserRequest
 import forms.QOPSReferenceNumberForm
@@ -257,7 +257,7 @@ class QOPSReferenceControllerISpec extends CommonUtils with BeforeAndAfterEach w
           val pensionsViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(reliefs = Seq(aMigrantMemberRelief.copy(qopsReference = None)))
 
           implicit val url: Int => String = (taxYear: Int) => qopsReferenceUrlWithIndex(taxYear, 100)
-          val pensionUserData = pensionUserDataWithOnlyOverseasPensions(pensionsViewModel)
+          val pensionUserData = pensionUserDataWithPaymentsIntoOverseasPensions(pensionsViewModel)
           implicit lazy val result: WSResponse = showPage(user, pensionUserData)
 
           "has an SEE_OTHER status" in {

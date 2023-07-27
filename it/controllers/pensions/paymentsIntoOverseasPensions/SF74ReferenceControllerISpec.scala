@@ -19,7 +19,7 @@ package controllers.pensions.paymentsIntoOverseasPensions
 import builders.PaymentsIntoOverseasPensionsViewModelBuilder.aPaymentsIntoOverseasPensionsViewModel
 import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import builders.PensionsUserDataBuilder
-import builders.PensionsUserDataBuilder.{aPensionsUserData, pensionUserDataWithOnlyOverseasPensions, pensionUserDataWithOverseasPensions}
+import builders.PensionsUserDataBuilder.{aPensionsUserData, pensionUserDataWithPaymentsIntoOverseasPensions, pensionUserDataWithOverseasPensions}
 import builders.ReliefBuilder.aTransitionalCorrespondingRelief
 import forms.SF74ReferenceForm
 import models.mongo.{PensionsCYAModel, PensionsUserData}
@@ -91,7 +91,7 @@ class SF74ReferenceControllerISpec extends IntegrationTest
 
       lazy val result: WSResponse = {
         dropPensionsDB()
-        insertCyaData(pensionUserDataWithOnlyOverseasPensions(pensionsNoSchemesViewModel))
+        insertCyaData(pensionUserDataWithPaymentsIntoOverseasPensions(pensionsNoSchemesViewModel))
         authoriseAgentOrIndividual()
         urlGet(fullUrl(sf74ReferenceUrl(taxYearEOY, 100)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
@@ -142,7 +142,7 @@ class SF74ReferenceControllerISpec extends IntegrationTest
 
       lazy val result: WSResponse = {
         dropPensionsDB()
-        insertCyaData(pensionUserDataWithOnlyOverseasPensions(pensionsNoSchemesViewModel))
+        insertCyaData(pensionUserDataWithPaymentsIntoOverseasPensions(pensionsNoSchemesViewModel))
         authoriseAgentOrIndividual()
         urlPost(fullUrl(sf74ReferenceUrl(taxYearEOY, 100)), body = form,
           follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))

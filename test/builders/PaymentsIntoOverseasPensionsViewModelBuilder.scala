@@ -30,6 +30,14 @@ object PaymentsIntoOverseasPensionsViewModelBuilder {
     reliefs = Seq(aTransitionalCorrespondingRelief, aMigrantMemberRelief, aDoubleTaxationRelief, aNoTaxRelief)
   )
 
+  val aPaymentsIntoOverseasPensionsNoReliefsViewModel: PaymentsIntoOverseasPensionsViewModel = PaymentsIntoOverseasPensionsViewModel(
+    paymentsIntoOverseasPensionsQuestions = Some(true),
+    paymentsIntoOverseasPensionsAmount = Some(1999.99),
+    employerPaymentsQuestion = Some(true),
+    taxPaidOnEmployerPaymentsQuestion = Some(false),
+    reliefs = Seq.empty
+  )
+
   val aPaymentsIntoOverseasPensionsEmptyViewModel: PaymentsIntoOverseasPensionsViewModel = PaymentsIntoOverseasPensionsViewModel()
 
 }

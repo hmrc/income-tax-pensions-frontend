@@ -18,11 +18,13 @@ package controllers.pensions.paymentsIntoOverseasPensions
 
 import builders.PaymentsIntoOverseasPensionsViewModelBuilder.aPaymentsIntoOverseasPensionsViewModel
 import builders.PensionsCYAModelBuilder.aPensionsCYAModel
-import builders.PensionsUserDataBuilder.pensionUserDataWithOnlyOverseasPensions
+import builders.PensionsUserDataBuilder.{pensionUserDataWithPaymentsIntoOverseasPensions, taxYearEOY}
+import builders.ReliefBuilder.aTransitionalCorrespondingRelief
 import controllers.ControllerSpec
 import controllers.ControllerSpec.UserConfig
 import models.pension.charges.Relief
 import play.api.libs.ws.WSResponse
+import utils.PageUrls.PaymentIntoOverseasPensions.{pensionReliefSchemeDetailsUrl, pensionReliefTypeUrl}
 
 
 class UntaxedEmployerPaymentsControllerISpec extends ControllerSpec("/overseas-pensions/payments-into-overseas-pensions/untaxed-employer-payments") {
@@ -45,7 +47,7 @@ class UntaxedEmployerPaymentsControllerISpec extends ControllerSpec("/overseas-p
           val schemeIndex10 = 10
           val pensionsNoSchemesViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(
             reliefs = Seq(Relief(customerReference = Some("PENSIONINCOME2000"))))
-          val sessionData = pensionUserDataWithOnlyOverseasPensions(pensionsNoSchemesViewModel)
+          val sessionData = pensionUserDataWithPaymentsIntoOverseasPensions(pensionsNoSchemesViewModel)
           implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
           implicit val response: WSResponse = getPageWithIndex(schemeIndex10)
 
@@ -67,7 +69,21 @@ class UntaxedEmployerPaymentsControllerISpec extends ControllerSpec("/overseas-p
       val schemeIndex10 = 10
       val amount1001 = 1001
 
-      "successfully updates the untaxed employer amount and redirects to the pensions relief type page" in {
+      "successfully submits the untaxed employer amount and redirects to the pensions relief type page" in {
+        val viewModel = aPaymentsIntoOverseasPensionsViewModel.copy(reliefs = Seq(
+          aTransitionalCorrespondingRelief, Relief(customerReference = Some("tcrPENSIONINCOME2000"))))
+        val sessionData = pensionUserDataWithPaymentsIntoOverseasPensions(viewModel)
+        implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
+        implicit val response: WSResponse = submitForm(Map("amount" -> amount1001.toString), Map("index" -> "1"))
+
+        val expectedViewModel = viewModel.copy(reliefs = Seq(
+          aTransitionalCorrespondingRelief, Relief(customerReference = Some("tcrPENSIONINCOME2000"), employerPaymentsAmount = Some(1001))))
+
+        getPaymentsIntoOverseasPensionsViewModel mustBe Some(expectedViewModel)
+        assertRedirectionAsExpected(pensionReliefTypeUrl(taxYearEOY, 1))
+      }
+
+      "successfully updates the untaxed employer amount and redirects to the scheme's summary page" in {
 
         val sessionData = pensionsUserData(aPensionsCYAModel)
         implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
@@ -78,13 +94,13 @@ class UntaxedEmployerPaymentsControllerISpec extends ControllerSpec("/overseas-p
           .copy(reliefs = sessionData.pensions.paymentsIntoOverseasPensions.reliefs.updated(0, expectedRelief))
 
         getPaymentsIntoOverseasPensionsViewModel.get.reliefs mustBe expectedViewModel.reliefs
-        assertRedirectionAsExpected(PageRelativeURLs.piopCheckPiopPage)
+        assertRedirectionAsExpected(pensionReliefSchemeDetailsUrl(taxYearEOY, 0))
       }
 
       "redirects to the customer reference page when the index is out of bounds and there are no complete relief schemes" in {
         val pensionsNoSchemesViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(
           reliefs = Seq(Relief(customerReference = Some("PENSIONINCOME2000"))))
-        val sessionData = pensionUserDataWithOnlyOverseasPensions(pensionsNoSchemesViewModel)
+        val sessionData = pensionUserDataWithPaymentsIntoOverseasPensions(pensionsNoSchemesViewModel)
         implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
         implicit val response: WSResponse = submitForm(Map("amount" -> amount1001.toString), Map("index" -> schemeIndex10.toString))
 

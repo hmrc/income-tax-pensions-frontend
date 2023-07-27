@@ -509,7 +509,7 @@ class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with B
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(lifetimeAllowancePstrSummaryUrl(taxYearEOY))
+        result.header("location") shouldBe Some(lifetimeAllowanceCYA(taxYearEOY))
       }
 
       "update state pension amount to Some (new values)" in {

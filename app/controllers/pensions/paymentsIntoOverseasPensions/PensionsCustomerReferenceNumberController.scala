@@ -28,7 +28,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.PensionSessionService
 import services.redirects.PaymentsIntoOverseasPensionsPages.PensionsCustomerReferenceNumberPage
-import services.redirects.PaymentsIntoOverseasPensionsRedirects.{cyaPageCall, indexCheckThenJourneyCheck, journeyCheck}
+import services.redirects.PaymentsIntoOverseasPensionsRedirects.{cyaPageCall, indexCheckThenJourneyCheck, journeyCheck, schemeIsFinishedCheck}
 import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
@@ -80,7 +80,11 @@ class PensionsCustomerReferenceNumberController @Inject()(actionsProvider: Actio
       def createOrUpdateSessionData(updatedCyaModel: PensionsCYAModel, newIndex: Some[Int]): Future[Result] =
         pensionSessionService.createOrUpdateSessionData(sessionDataRequest.user, updatedCyaModel, taxYear,
           sessionDataRequest.pensionsUserData.isPriorSubmission)(errorHandler.internalServerError()) {
-          Redirect(UntaxedEmployerPaymentsController.show(taxYear, newIndex))
+          schemeIsFinishedCheck(
+            updatedCyaModel.paymentsIntoOverseasPensions.reliefs,
+            newIndex.getOrElse(0),
+            taxYear,
+            UntaxedEmployerPaymentsController.show(taxYear, newIndex))
         }
 
       optIndex match {

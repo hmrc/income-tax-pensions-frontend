@@ -16,7 +16,7 @@
 
 package controllers.pensions.lifetimeAllowances
 
-import builders.PensionLifetimeAllowancesViewModelBuilder.aPensionLifetimeAllowancesViewModel
+import builders.PensionLifetimeAllowancesViewModelBuilder.{aPensionLifetimeAllowancesEmptySchemesViewModel, aPensionLifetimeAllowancesViewModel}
 import builders.PensionsUserDataBuilder.{aPensionsUserData, anPensionsUserDataEmptyCya, pensionsUserDataWithLifetimeAllowance}
 import builders.UserBuilder.aUserRequest
 import forms.YesNoForm
@@ -27,7 +27,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.PensionLifetimeAllowance.{pensionLifeTimeAllowanceAnotherWayUrl, pensionLumpSumDetails, pensionLumpSumUrl}
+import utils.PageUrls.PensionLifetimeAllowance.{lifetimeAllowanceCYA, pensionLifeTimeAllowanceAnotherWayUrl, pensionLumpSumDetails, pensionLumpSumUrl}
 import utils.PageUrls.{fullUrl, pensionSummaryUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
@@ -295,7 +295,8 @@ class PensionLumpSumControllerISpec extends IntegrationTest with BeforeAndAfterE
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual()
-        insertCyaData(pensionsUserDataWithLifetimeAllowance(aPensionLifetimeAllowancesViewModel))
+        insertCyaData(pensionsUserDataWithLifetimeAllowance(aPensionLifetimeAllowancesEmptySchemesViewModel.copy(
+          pensionPaidAnotherWayQuestion = None, pensionPaidAnotherWay = None)))
         urlPost(fullUrl(pensionLumpSumUrl(taxYearEOY)), body = form, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -303,6 +304,30 @@ class PensionLumpSumControllerISpec extends IntegrationTest with BeforeAndAfterE
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
         result.header("location") shouldBe Some(pensionLifeTimeAllowanceAnotherWayUrl(taxYearEOY))
+      }
+
+      "updates pensionAsLumpSumQuestion to Some(false) and wipes amount value" in {
+        val expectedViewModel = aPensionLifetimeAllowancesEmptySchemesViewModel.copy(
+          pensionPaidAnotherWayQuestion = None, pensionPaidAnotherWay = None,
+          pensionAsLumpSumQuestion = Some(false), pensionAsLumpSum = None)
+        lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
+        cyaModel.pensions.pensionLifetimeAllowances shouldBe expectedViewModel
+      }
+    }
+
+    "redirect to CYA page and update question to 'No' when user selects no, clearing existing lump sum data and completing the model" which {
+      lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.no)
+      lazy val result: WSResponse = {
+        dropPensionsDB()
+        authoriseAgentOrIndividual()
+        insertCyaData(pensionsUserDataWithLifetimeAllowance(aPensionLifetimeAllowancesViewModel))
+        urlPost(fullUrl(pensionLumpSumUrl(taxYearEOY)), body = form, follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+      }
+
+      "has a SEE_OTHER(303) status" in {
+        result.status shouldBe SEE_OTHER
+        result.header("location") shouldBe Some(lifetimeAllowanceCYA(taxYearEOY))
       }
 
       "updates pensionAsLumpSumQuestion to Some(false) and wipes amount value" in {

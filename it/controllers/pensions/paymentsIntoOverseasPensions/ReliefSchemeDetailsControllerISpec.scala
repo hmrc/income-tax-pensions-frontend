@@ -19,7 +19,7 @@ package controllers.pensions.paymentsIntoOverseasPensions
 import builders.PaymentsIntoOverseasPensionsViewModelBuilder.aPaymentsIntoOverseasPensionsViewModel
 import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import builders.PensionsUserDataBuilder
-import builders.PensionsUserDataBuilder.pensionUserDataWithOnlyOverseasPensions
+import builders.PensionsUserDataBuilder.pensionUserDataWithPaymentsIntoOverseasPensions
 import builders.UserBuilder.aUser
 import models.mongo.PensionsCYAModel
 import play.api.http.HeaderNames
@@ -67,7 +67,7 @@ class ReliefSchemeDetailsControllerISpec extends IntegrationTest with ViewHelper
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
-        insertCyaData(pensionUserDataWithOnlyOverseasPensions(pensionsNoSchemesViewModel))
+        insertCyaData(pensionUserDataWithPaymentsIntoOverseasPensions(pensionsNoSchemesViewModel))
         urlGet(fullUrl(pensionReliefSchemeDetailsUrl(taxYearEOY, 100)), !aUser.isAgent, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -113,7 +113,7 @@ class ReliefSchemeDetailsControllerISpec extends IntegrationTest with ViewHelper
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
-        insertCyaData(pensionUserDataWithOnlyOverseasPensions(pensionsNoSchemesViewModel))
+        insertCyaData(pensionUserDataWithPaymentsIntoOverseasPensions(pensionsNoSchemesViewModel))
 
         urlPost(
           fullUrl(pensionReliefSchemeDetailsUrl(taxYearEOY, 100)),

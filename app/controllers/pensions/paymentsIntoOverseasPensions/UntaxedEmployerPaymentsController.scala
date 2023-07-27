@@ -26,8 +26,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.PaymentsIntoOverseasPensionsService
 import services.redirects.PaymentsIntoOverseasPensionsPages.UntaxedEmployerPaymentsPage
-import services.redirects.PaymentsIntoOverseasPensionsRedirects.{cyaPageCall, indexCheckThenJourneyCheck}
-import services.redirects.SimpleRedirectService.isFinishedCheck
+import services.redirects.PaymentsIntoOverseasPensionsRedirects.{indexCheckThenJourneyCheck, schemeIsFinishedCheck}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.pensions.paymentsIntoOverseasPensions.UntaxedEmployerPaymentsView
 
@@ -58,7 +57,6 @@ class UntaxedEmployerPaymentsController @Inject()(actionsProvider: ActionsProvid
   def submit(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = {
     actionsProvider.userSessionDataFor(taxYear).async { implicit sessionUserData =>
       val piopSessionData = sessionUserData.pensionsUserData.pensions.paymentsIntoOverseasPensions
-      val redirectLocation = PensionReliefTypeController.show(taxYear, pensionSchemeIndex)
 
       indexCheckThenJourneyCheck(sessionUserData.pensionsUserData, pensionSchemeIndex, UntaxedEmployerPaymentsPage, taxYear) { _: Relief =>
         formsProvider.untaxedEmployerPayments(sessionUserData.user.isAgent).bindFromRequest().fold(
@@ -70,7 +68,11 @@ class UntaxedEmployerPaymentsController @Inject()(actionsProvider: ActionsProvid
             paymentsIntoOverseasService.updateUntaxedEmployerPayments(sessionUserData.pensionsUserData, amount, pensionSchemeIndex).map {
               case Left(_) => errorHandler.internalServerError()
               case Right(_) =>
-                isFinishedCheck(sessionUserData.pensionsUserData.pensions.paymentsIntoOverseasPensions, taxYear, redirectLocation, cyaPageCall)
+                schemeIsFinishedCheck(
+                  sessionUserData.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs,
+                  pensionSchemeIndex.getOrElse(0),
+                  taxYear,
+                  PensionReliefTypeController.show(taxYear, pensionSchemeIndex))
             }
           }
         )

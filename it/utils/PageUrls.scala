@@ -218,12 +218,6 @@ object PageUrls extends IntegrationTest {
     def qopsReferenceUrl(taxYear: Int): String =
       s"$appUrl/$taxYear/overseas-pensions/payments-into-overseas-pensions/qualifying-overseas-pension-scheme-reference-number?index=0"
 
-    def qopsReferenceUrlWithIndex(taxYear: Int, index: Int): String =
-      s"$appUrl/$taxYear/overseas-pensions/payments-into-overseas-pensions/qualifying-overseas-pension-scheme-reference-number?index=$index"
-
-    def sf74ReferenceUrl(taxYear: Int, index: Int): String =
-      s"$appUrl/$taxYear/overseas-pensions/payments-into-overseas-pensions/pensions-overseas-sf74?reliefIndex=$index"
-
     def pensionCustomerReferenceNumberUrl(taxYear: Int, index: Option[Int]): String = {
       val baseUrl = s"$appUrl/$taxYear/overseas-pensions/payments-into-overseas-pensions/pensions-customer-reference-number"
       index.fold(baseUrl)(idx => s"$baseUrl?index=$idx")
@@ -235,11 +229,17 @@ object PageUrls extends IntegrationTest {
     def pensionReliefTypeUrl(taxYear: Int, index: Int): String =
       s"$appUrl/$taxYear/overseas-pensions/payments-into-overseas-pensions/pensions-overseas-emp-relief-status?reliefIndex=$index"
 
-    def pensionReliefSchemeDetailsUrl(taxYear: Int, index: Int): String =
-      s"$appUrl/$taxYear/overseas-pensions/payments-into-overseas-pensions/pensions-overseas-details-summary?reliefIndex=$index"
+    def qopsReferenceUrlWithIndex(taxYear: Int, index: Int): String =
+      s"$appUrl/$taxYear/overseas-pensions/payments-into-overseas-pensions/qualifying-overseas-pension-scheme-reference-number?index=$index"
+
+    def sf74ReferenceUrl(taxYear: Int, index: Int): String =
+      s"$appUrl/$taxYear/overseas-pensions/payments-into-overseas-pensions/pensions-overseas-sf74?reliefIndex=$index"
 
     val doubleTaxationAgreementUrl: Int => Int => String =
       (index: Int) => (taxYear: Int) => s"$appUrl/$taxYear/overseas-pensions/payments-into-overseas-pensions/double-taxation-agreement-details?index=$index"
+
+    def pensionReliefSchemeDetailsUrl(taxYear: Int, index: Int): String =
+      s"$appUrl/$taxYear/overseas-pensions/payments-into-overseas-pensions/pensions-overseas-details-summary?reliefIndex=$index"
 
     def pensionReliefSchemeSummaryUrl(taxYear: Int): String =
       s"$appUrl/$taxYear/overseas-pensions/payments-into-overseas-pensions/untaxed-schemes-summary"

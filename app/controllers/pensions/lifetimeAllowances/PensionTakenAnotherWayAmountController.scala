@@ -27,7 +27,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
 import services.redirects.LifetimeAllowancesPages.LifetimeAllowanceAnotherWayAmountPage
-import services.redirects.LifetimeAllowancesRedirects.{cyaPageCall, journeyCheck, redirectForSchemeLoop}
+import services.redirects.LifetimeAllowancesRedirects.{cyaPageCall, journeyCheck, redirectForSchemeLoop, statePensionIsFinishedCheck}
 import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
@@ -91,9 +91,12 @@ class PensionTakenAnotherWayAmountController @Inject()(implicit val mcc: Message
                   pensionLifetimeAllowances = pensionsCYAModel.pensionLifetimeAllowances.copy(
                     pensionPaidAnotherWay = if (amounts._1.isEmpty && amounts._2.isEmpty) None else Some(LifetimeAllowance(amounts._1, amounts._2))
                   ))
-                pensionSessionService.createOrUpdateSessionData(request.user,
-                  updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
-                  Redirect(redirectForSchemeLoop(updatedCyaModel.pensionLifetimeAllowances.pensionSchemeTaxReferences.getOrElse(Seq()), taxYear))
+                pensionSessionService.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear, data.isPriorSubmission)(
+                  errorHandler.internalServerError()) {
+                  statePensionIsFinishedCheck(
+                    updatedCyaModel.pensionLifetimeAllowances,
+                    taxYear,
+                    redirectForSchemeLoop(updatedCyaModel.pensionLifetimeAllowances.pensionSchemeTaxReferences.getOrElse(Seq()), taxYear))
                 }
             }
           case _ => Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
