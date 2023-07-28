@@ -82,8 +82,10 @@ class UnauthorisedPaymentsCYAController @Inject()(auditProvider: AuditActionsPro
             case Right(_) => performSubmission(taxYear, Some(cya))(priorAndSessionRequest.user, hc, priorAndSessionRequest, clock)
             case Left(_) => errorHandler.futureInternalServerError()
           }
-          if (!comparePriorData(cya.pensions, prior)) Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
-          else performSubmission(taxYear, Some(cya))(priorAndSessionRequest.user, hc, priorAndSessionRequest, clock)
+          if (!comparePriorData(cya.pensions, prior)) {
+            Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
+          }
+          else { performSubmission(taxYear, Some(cya))(priorAndSessionRequest.user, hc, priorAndSessionRequest, clock)}
       }
   }
 
