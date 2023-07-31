@@ -16,7 +16,7 @@
 
 package controllers.predicates.auditActions
 
-import models.audit.PaymentsIntoPensionsAudit
+import models.audit.{PaymentsIntoPensionsAudit, UnauthorisedPaymentsAudit}
 import models.requests.{UserPriorAndSessionDataRequest, UserSessionDataRequest}
 import play.api.mvc.{ActionFilter, Result}
 import services.AuditService
@@ -57,6 +57,31 @@ object PensionsAuditAction {
         else () => auditModel.toAuditModelAmend
       }
       auditService.sendAudit(toAuditModel())(hc(req.request), ec, PaymentsIntoPensionsAudit.writes)
+      None
+    }
+  }
+
+  case class UnauthorisedPaymentsViewAuditAction @Inject()(auditService: AuditService)(implicit val ec: ExecutionContext)
+    extends ActionFilter[UserSessionDataRequest] with PensionsAuditAction {
+
+    override protected[auditActions] def filter[A](req: UserSessionDataRequest[A]): Future[Option[Result]] = Future.successful {
+      val auditModel = UnauthorisedPaymentsAudit.standardAudit(req.user, req.pensionsUserData)
+      auditService.sendAudit(auditModel.toAuditModelView)(hc(req.request), ec, UnauthorisedPaymentsAudit.writes)
+      None
+    }
+  }
+
+  case class UnauthorisedPaymentsUpdateAuditAction @Inject()(auditService: AuditService)(implicit val ec: ExecutionContext)
+    extends ActionFilter[UserPriorAndSessionDataRequest] with PensionsAuditAction {
+
+    override protected[auditActions] def filter[A](req: UserPriorAndSessionDataRequest[A]): Future[Option[Result]] = Future.successful {
+      val toAuditModel = {
+        val auditModel = UnauthorisedPaymentsAudit.amendAudit(
+          req.user, req.pensionsUserData, req.pensions)
+        if (req.pensions.isEmpty) () => auditModel.toAuditModelCreate
+        else () => auditModel.toAuditModelAmend
+      }
+      auditService.sendAudit(toAuditModel())(hc(req.request), ec, UnauthorisedPaymentsAudit.writes)
       None
     }
   }

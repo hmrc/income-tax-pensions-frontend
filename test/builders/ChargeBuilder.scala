@@ -20,8 +20,13 @@ import models.pension.charges.Charge
 
 object ChargeBuilder {
 
-  val anCharge: Charge = Charge(
-    amount = 666.66,
-    foreignTaxPaid = 441.22
+  val aCharge1: Charge = Charge(
+    amount = 12.11,
+    foreignTaxPaid = 34.22
+  )
+
+  val aCharge2: Charge = Charge(
+    amount = 88.11,
+    foreignTaxPaid = 99.22
   )
 }
