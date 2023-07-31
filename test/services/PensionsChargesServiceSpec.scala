@@ -75,7 +75,8 @@ class PensionsChargesServiceSpec extends UnitTest
   )
   
   val annualAllowanceRequestModel = {
-    val annualAllowanceChargesModel = annualAllowanceSessionUserData.pensions.pensionsAnnualAllowances.toAnnualAllowanceChargesModel
+    val annualAllowanceChargesModel = annualAllowanceSessionUserData.pensions.pensionsAnnualAllowances
+      .toAnnualAllowanceChargesModel(Some(anAllPensionsData))
     CreateUpdatePensionChargesRequestModel(
       pensionSavingsTaxCharges = annualAllowanceChargesModel.pensionSavingsTaxCharges,
       pensionSchemeOverseasTransfers = priorPensionChargesData.flatMap(_.pensionSchemeOverseasTransfers),

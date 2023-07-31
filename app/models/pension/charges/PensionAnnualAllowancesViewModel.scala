@@ -16,7 +16,7 @@
 
 package models.pension.charges
 
-import models.pension.PensionCYABaseModel
+import models.pension.{AllPensionsData, PensionCYABaseModel}
 import play.api.libs.json.{Json, OFormat}
 import utils.EncryptedValue
 
@@ -50,7 +50,7 @@ case class PensionAnnualAllowancesViewModel(reducedAnnualAllowanceQuestion: Opti
     }
   }
 
-  def toAnnualAllowanceChargesModel: AnnualAllowancesPensionCharges = {
+  def toAnnualAllowanceChargesModel(prior: Option[AllPensionsData]): AnnualAllowancesPensionCharges = {
     val pensionContributionsOpt =
       if (pensionSchemeTaxReferences.getOrElse(Nil) == Nil && aboveAnnualAllowance.isEmpty && taxPaidByPensionProvider.isEmpty) {
         None
@@ -63,7 +63,7 @@ case class PensionAnnualAllowancesViewModel(reducedAnnualAllowanceQuestion: Opti
         taperedAnnualAllowance.isEmpty && moneyPurchaseAnnualAllowance.isEmpty) {
         None
       } else {
-        Some(PensionSavingsTaxCharges.toPensionSavingsTaxCharges(this))
+        Some(PensionSavingsTaxCharges.toPensionSavingsTaxCharges(prior)(this))
       }
     AnnualAllowancesPensionCharges(pensionSavingsTaxChargesOpt, pensionContributionsOpt)
   }
