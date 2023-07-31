@@ -26,7 +26,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
 import services.redirects.PaymentsIntoPensionPages.RasAmountPage
-import services.redirects.PaymentsIntoPensionsRedirects.{cyaPageCall, journeyCheck}
+import services.redirects.PaymentsIntoPensionsRedirects.{cyaPageCall, isFinishedCheck, journeyCheck}
 import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
@@ -69,14 +69,12 @@ class ReliefAtSourcePaymentsAndTaxReliefAmountController @Inject()(authAction: A
 
             val pensionsCYAModel: PensionsCYAModel = data.pensions
             val viewModel: PaymentsIntoPensionsViewModel = pensionsCYAModel.paymentsIntoPension
-            val updatedCyaModel: PensionsCYAModel = {
-              pensionsCYAModel.copy(paymentsIntoPension = viewModel.copy(
-                totalRASPaymentsAndTaxRelief = Some(amount), totalPaymentsIntoRASQuestion = None
-              ))
-            }
+            val updatedCyaModel: PensionsCYAModel = pensionsCYAModel.copy(paymentsIntoPension = viewModel.copy(
+              totalRASPaymentsAndTaxRelief = Some(amount)))
+
             pensionSessionService.createOrUpdateSessionData(request.user,
               updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
-              Redirect(ReliefAtSourceOneOffPaymentsController.show(taxYear))
+              isFinishedCheck(updatedCyaModel.paymentsIntoPension, taxYear, ReliefAtSourceOneOffPaymentsController.show(taxYear))
             }
           }
         }

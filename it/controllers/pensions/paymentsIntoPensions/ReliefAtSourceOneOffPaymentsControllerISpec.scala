@@ -16,9 +16,10 @@
 
 package controllers.pensions.paymentsIntoPensions
 
-import builders.PaymentsIntoPensionVewModelBuilder.aPaymentsIntoPensionViewModel
+import builders.PaymentsIntoPensionVewModelBuilder.{aPaymentsIntoPensionViewModel, aPaymentsIntoPensionsEmptyViewModel}
 import builders.PensionsCYAModelBuilder._
 import builders.PensionsUserDataBuilder
+import builders.PensionsUserDataBuilder.{aPensionsUserData, pensionsUserDataWithPaymentsIntoPensions}
 import builders.UserBuilder._
 import forms.YesNoForm
 import models.mongo.{PensionsCYAModel, PensionsUserData}
@@ -69,6 +70,7 @@ class ReliefAtSourceOneOffPaymentsControllerISpec extends IntegrationTest with V
       "has an OK status" in {
         result.status shouldBe OK
       }
+
       implicit def document: () => Document = () => Jsoup.parse(result.body)
 
       titleCheck(expectedTitle)
@@ -101,7 +103,7 @@ class ReliefAtSourceOneOffPaymentsControllerISpec extends IntegrationTest with V
       }
 
       implicit def document: () => Document = () => Jsoup.parse(result.body)
-      
+
       titleCheck(expectedTitle)
       h1Check(expectedHeading)
       captionCheck(expectedCaption(taxYearEOY), captionSelector)
@@ -132,6 +134,7 @@ class ReliefAtSourceOneOffPaymentsControllerISpec extends IntegrationTest with V
       }
 
       implicit def document: () => Document = () => Jsoup.parse(result.body)
+
       titleCheck(expectedTitle)
       h1Check(expectedHeading)
       captionCheck(expectedCaption(taxYearEOY), captionSelector)
@@ -248,18 +251,13 @@ class ReliefAtSourceOneOffPaymentsControllerISpec extends IntegrationTest with V
     }
 
     "redirect to correct page when user submits a 'no' answer and updates the session value to no" which {
+      val pensionsViewModel = aPaymentsIntoPensionsEmptyViewModel.copy(
+        rasPensionPaymentQuestion = Some(true), totalRASPaymentsAndTaxRelief = Some(189.01))
+
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual()
-
-        val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
-          totalOneOffRasPaymentPlusTaxRelief = Some(someRasAmount),
-          totalRASPaymentsAndTaxRelief = Some(someRasAmount),
-          oneOffRasPaymentPlusTaxReliefQuestion = None,
-          workplacePensionPaymentsQuestion = None)
-
-        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)))
-
+        insertCyaData(pensionsUserDataWithPaymentsIntoPensions(pensionsViewModel))
         urlPost(fullUrl(reliefAtSourceOneOffPaymentsUrl(taxYearEOY)), body = validFormNo, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -271,10 +269,28 @@ class ReliefAtSourceOneOffPaymentsControllerISpec extends IntegrationTest with V
 
       "updates OffRasPaymentPlusTaxReliefQuestion question to Some(false) and clear the totalOneOffRasPaymentPlusTaxRelief amount" in {
         lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
-        cyaModel.pensions.paymentsIntoPension.oneOffRasPaymentPlusTaxReliefQuestion shouldBe Some(false)
-        cyaModel.pensions.paymentsIntoPension.totalRASPaymentsAndTaxRelief shouldBe Some(someRasAmount)
-        cyaModel.pensions.paymentsIntoPension.totalOneOffRasPaymentPlusTaxRelief shouldBe None
+        cyaModel.pensions.paymentsIntoPension shouldBe pensionsViewModel.copy(oneOffRasPaymentPlusTaxReliefQuestion = Some(false))
+      }
+    }
 
+    "redirect to correct page when user submits a 'no' answer, completing the CYA data" which {
+      lazy val result: WSResponse = {
+        dropPensionsDB()
+        authoriseAgentOrIndividual()
+        insertCyaData(aPensionsUserData)
+        urlPost(fullUrl(reliefAtSourceOneOffPaymentsUrl(taxYearEOY)), body = validFormNo, follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+      }
+
+      "has a SEE_OTHER(303) status" in {
+        result.status shouldBe SEE_OTHER
+        result.header("location") shouldBe Some(checkPaymentsIntoPensionCyaUrl(taxYearEOY))
+      }
+
+      "updates OffRasPaymentPlusTaxReliefQuestion question to Some(false) and clear the totalOneOffRasPaymentPlusTaxRelief amount" in {
+        lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
+        cyaModel.pensions.paymentsIntoPension shouldBe aPaymentsIntoPensionViewModel.copy(
+          oneOffRasPaymentPlusTaxReliefQuestion = Some(false), totalOneOffRasPaymentPlusTaxRelief = None)
       }
     }
 

@@ -19,9 +19,11 @@ package controllers.pensions.paymentsIntoPensions
 import builders.PaymentsIntoPensionVewModelBuilder.aPaymentsIntoPensionViewModel
 import builders.PensionsCYAModelBuilder._
 import builders.PensionsUserDataBuilder
+import builders.PensionsUserDataBuilder.{aPensionsUserData, pensionsUserDataWithPaymentsIntoPensions}
 import builders.UserBuilder._
 import forms.AmountForm
 import models.mongo.{PensionsCYAModel, PensionsUserData}
+import models.pension.reliefs.PaymentsIntoPensionsViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterEach
@@ -94,6 +96,7 @@ class OneOffRASPaymentsAmountControllerISpec extends IntegrationTest with ViewHe
       "has an OK status" in {
         result.status shouldBe OK
       }
+
       implicit def document: () => Document = () => Jsoup.parse(result.body)
 
       titleCheck(expectedTitle)
@@ -179,151 +182,133 @@ class OneOffRASPaymentsAmountControllerISpec extends IntegrationTest with ViewHe
   }
 
   ".submit" should {
-    "return an error when form is submitted with no input entry" which {
+    "return an error" when {
+      "form is submitted with no input entry" which {
 
-      val amountEmpty = ""
-      val emptyForm: Map[String, String] = Map(AmountForm.amount -> amountEmpty)
+        val amountEmpty = ""
+        val emptyForm: Map[String, String] = Map(AmountForm.amount -> amountEmpty)
 
-      lazy val result: WSResponse = {
-        dropPensionsDB()
-        val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
-          oneOffRasPaymentPlusTaxReliefQuestion = Some(true), totalOneOffRasPaymentPlusTaxRelief = None)
-        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)))
-        authoriseAgentOrIndividual()
-        urlPost(fullUrl(oneOffReliefAtSourcePaymentsAmountUrl(taxYearEOY)), body = emptyForm,
-          follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        lazy val result: WSResponse = {
+          dropPensionsDB()
+          val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
+            oneOffRasPaymentPlusTaxReliefQuestion = Some(true), totalOneOffRasPaymentPlusTaxRelief = None)
+          insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)))
+          authoriseAgentOrIndividual()
+          urlPost(fullUrl(oneOffReliefAtSourcePaymentsAmountUrl(taxYearEOY)), body = emptyForm,
+            follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        }
+
+        "has the correct status" in {
+          result.status shouldBe BAD_REQUEST
+        }
+
+        implicit def document: () => Document = () => Jsoup.parse(result.body)
+
+        titleCheck(expectedErrorTitle)
+        h1Check(expectedHeading)
+        captionCheck(expectedCaption(taxYearEOY), captionSelector)
+        textOnPageCheck(expectedYouToldUs, paragraphSelector(1))
+        textOnPageCheck(expectedHowToWorkOut, paragraphSelector(2))
+        textOnPageCheck(expectedCalculationHeading, insetSpanText(1))
+        textOnPageCheck(expectedExampleCalculation, insetSpanText(2))
+        textOnPageCheck(hintText, hintTextSelector)
+        textOnPageCheck(poundPrefixText, poundPrefixSelector)
+        inputFieldValueCheck(amountInputName, inputSelector, "")
+        buttonCheck(buttonText, continueButtonSelector)
+        formPostLinkCheck(oneOffReliefAtSourcePaymentsAmountUrl(taxYearEOY), formSelector)
+        errorSummaryCheck(emptyErrorText, expectedErrorHref)
+        errorAboveElementCheck(emptyErrorText)
+        welshToggleCheck(isWelsh = false)
       }
 
-      "has the correct status" in {
-        result.status shouldBe BAD_REQUEST
+      "form is submitted with an invalid format input" which {
+
+        val amountInvalidFormat = "invalid"
+        val invalidFormatForm: Map[String, String] = Map(AmountForm.amount -> amountInvalidFormat)
+
+        lazy val result: WSResponse = {
+          dropPensionsDB()
+          val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
+            oneOffRasPaymentPlusTaxReliefQuestion = Some(true), totalOneOffRasPaymentPlusTaxRelief = None)
+          insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)))
+          authoriseAgentOrIndividual()
+          urlPost(fullUrl(oneOffReliefAtSourcePaymentsAmountUrl(taxYearEOY)), body = invalidFormatForm,
+            follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        }
+
+        "has the correct status" in {
+          result.status shouldBe BAD_REQUEST
+        }
+
+        implicit def document: () => Document = () => Jsoup.parse(result.body)
+
+        titleCheck(expectedErrorTitle)
+        h1Check(expectedHeading)
+        captionCheck(expectedCaption(taxYearEOY), captionSelector)
+        textOnPageCheck(expectedYouToldUs, paragraphSelector(1))
+        textOnPageCheck(expectedHowToWorkOut, paragraphSelector(2))
+        textOnPageCheck(expectedCalculationHeading, insetSpanText(1))
+        textOnPageCheck(expectedExampleCalculation, insetSpanText(2))
+        textOnPageCheck(hintText, hintTextSelector)
+        textOnPageCheck(poundPrefixText, poundPrefixSelector)
+        inputFieldValueCheck(amountInputName, inputSelector, "invalid")
+        buttonCheck(buttonText, continueButtonSelector)
+        formPostLinkCheck(oneOffReliefAtSourcePaymentsAmountUrl(taxYearEOY), formSelector)
+        errorSummaryCheck(invalidFormatErrorText, expectedErrorHref)
+        errorAboveElementCheck(invalidFormatErrorText)
+        welshToggleCheck(isWelsh = false)
       }
 
-      implicit def document: () => Document = () => Jsoup.parse(result.body)
+      "form is submitted with input over maximum allowed value" which {
 
-      titleCheck(expectedErrorTitle)
-      h1Check(expectedHeading)
-      captionCheck(expectedCaption(taxYearEOY), captionSelector)
-      textOnPageCheck(expectedYouToldUs, paragraphSelector(1))
-      textOnPageCheck(expectedHowToWorkOut, paragraphSelector(2))
-      textOnPageCheck(expectedCalculationHeading, insetSpanText(1))
-      textOnPageCheck(expectedExampleCalculation, insetSpanText(2))
-      textOnPageCheck(hintText, hintTextSelector)
-      textOnPageCheck(poundPrefixText, poundPrefixSelector)
-      inputFieldValueCheck(amountInputName, inputSelector, "")
-      buttonCheck(buttonText, continueButtonSelector)
-      formPostLinkCheck(oneOffReliefAtSourcePaymentsAmountUrl(taxYearEOY), formSelector)
-      errorSummaryCheck(emptyErrorText, expectedErrorHref)
-      errorAboveElementCheck(emptyErrorText)
-      welshToggleCheck(isWelsh = false)
-    }
+        val amountOverMaximum = "100,000,000,000"
+        val overMaximumForm: Map[String, String] = Map(AmountForm.amount -> amountOverMaximum)
 
-    "return an error when form is submitted with an invalid format input" which {
+        lazy val result: WSResponse = {
+          dropPensionsDB()
+          val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
+            oneOffRasPaymentPlusTaxReliefQuestion = Some(true), totalOneOffRasPaymentPlusTaxRelief = None)
+          insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)))
+          authoriseAgentOrIndividual()
+          urlPost(fullUrl(oneOffReliefAtSourcePaymentsAmountUrl(taxYearEOY)), body = overMaximumForm,
+            follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        }
 
-      val amountInvalidFormat = "invalid"
-      val invalidFormatForm: Map[String, String] = Map(AmountForm.amount -> amountInvalidFormat)
+        "has the correct status" in {
+          result.status shouldBe BAD_REQUEST
+        }
 
-      lazy val result: WSResponse = {
-        dropPensionsDB()
-        val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
-          oneOffRasPaymentPlusTaxReliefQuestion = Some(true), totalOneOffRasPaymentPlusTaxRelief = None)
-        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)))
-        authoriseAgentOrIndividual()
-        urlPost(fullUrl(oneOffReliefAtSourcePaymentsAmountUrl(taxYearEOY)), body = invalidFormatForm,
-          follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
-      }
+        implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-      "has the correct status" in {
-        result.status shouldBe BAD_REQUEST
-      }
-
-      implicit def document: () => Document = () => Jsoup.parse(result.body)
-
-      titleCheck(expectedErrorTitle)
-      h1Check(expectedHeading)
-      captionCheck(expectedCaption(taxYearEOY), captionSelector)
-      textOnPageCheck(expectedYouToldUs, paragraphSelector(1))
-      textOnPageCheck(expectedHowToWorkOut, paragraphSelector(2))
-      textOnPageCheck(expectedCalculationHeading, insetSpanText(1))
-      textOnPageCheck(expectedExampleCalculation, insetSpanText(2))
-      textOnPageCheck(hintText, hintTextSelector)
-      textOnPageCheck(poundPrefixText, poundPrefixSelector)
-      inputFieldValueCheck(amountInputName, inputSelector, "invalid")
-      buttonCheck(buttonText, continueButtonSelector)
-      formPostLinkCheck(oneOffReliefAtSourcePaymentsAmountUrl(taxYearEOY), formSelector)
-      errorSummaryCheck(invalidFormatErrorText, expectedErrorHref)
-      errorAboveElementCheck(invalidFormatErrorText)
-      welshToggleCheck(isWelsh = false)
-    }
-
-    "return an error when form is submitted with input over maximum allowed value" which {
-
-      val amountOverMaximum = "100,000,000,000"
-      val overMaximumForm: Map[String, String] = Map(AmountForm.amount -> amountOverMaximum)
-
-      lazy val result: WSResponse = {
-        dropPensionsDB()
-        val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
-          oneOffRasPaymentPlusTaxReliefQuestion = Some(true), totalOneOffRasPaymentPlusTaxRelief = None)
-        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)))
-        authoriseAgentOrIndividual()
-        urlPost(fullUrl(oneOffReliefAtSourcePaymentsAmountUrl(taxYearEOY)), body = overMaximumForm,
-          follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
-      }
-
-      "has the correct status" in {
-        result.status shouldBe BAD_REQUEST
-      }
-
-      implicit def document: () => Document = () => Jsoup.parse(result.body)
-
-      titleCheck(expectedErrorTitle)
-      h1Check(expectedHeading)
-      captionCheck(expectedCaption(taxYearEOY), captionSelector)
-      textOnPageCheck(expectedYouToldUs, paragraphSelector(1))
-      textOnPageCheck(expectedHowToWorkOut, paragraphSelector(2))
-      textOnPageCheck(expectedCalculationHeading, insetSpanText(1))
-      textOnPageCheck(expectedExampleCalculation, insetSpanText(2))
-      textOnPageCheck(hintText, hintTextSelector)
-      textOnPageCheck(poundPrefixText, poundPrefixSelector)
-      inputFieldValueCheck(amountInputName, inputSelector, "100,000,000,000")
-      buttonCheck(buttonText, continueButtonSelector)
-      formPostLinkCheck(oneOffReliefAtSourcePaymentsAmountUrl(taxYearEOY), formSelector)
-      errorSummaryCheck(maxAmountErrorText, expectedErrorHref)
-      errorAboveElementCheck(maxAmountErrorText)
-      welshToggleCheck(isWelsh = false)
-    }
-
-    "redirect to the ReliefAtSourcePensions question page if 'oneOffRasPaymentPlusTaxReliefQuestion' is missing when form is submitted with an error" which {
-
-      val amountOverMaximum = "100,000,000,000"
-      val overMaximumForm: Map[String, String] = Map(AmountForm.amount -> amountOverMaximum)
-
-      lazy val result: WSResponse = {
-        dropPensionsDB()
-        val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
-          oneOffRasPaymentPlusTaxReliefQuestion = None)
-        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)))
-        authoriseAgentOrIndividual()
-        urlPost(fullUrl(oneOffReliefAtSourcePaymentsAmountUrl(taxYearEOY)), body = overMaximumForm,
-          follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
-      }
-
-      "has an SEE_OTHER status and redirects to the RAS payments amount page" in {
-        result.status shouldBe SEE_OTHER
-        result.header("location").contains(reliefAtSourcePensionsUrl(taxYearEOY)) shouldBe true
+        titleCheck(expectedErrorTitle)
+        h1Check(expectedHeading)
+        captionCheck(expectedCaption(taxYearEOY), captionSelector)
+        textOnPageCheck(expectedYouToldUs, paragraphSelector(1))
+        textOnPageCheck(expectedHowToWorkOut, paragraphSelector(2))
+        textOnPageCheck(expectedCalculationHeading, insetSpanText(1))
+        textOnPageCheck(expectedExampleCalculation, insetSpanText(2))
+        textOnPageCheck(hintText, hintTextSelector)
+        textOnPageCheck(poundPrefixText, poundPrefixSelector)
+        inputFieldValueCheck(amountInputName, inputSelector, "100,000,000,000")
+        buttonCheck(buttonText, continueButtonSelector)
+        formPostLinkCheck(oneOffReliefAtSourcePaymentsAmountUrl(taxYearEOY), formSelector)
+        errorSummaryCheck(maxAmountErrorText, expectedErrorHref)
+        errorAboveElementCheck(maxAmountErrorText)
+        welshToggleCheck(isWelsh = false)
       }
     }
 
     "redirect to the total RAS payments page when a valid amount is submitted and update the session amount" which {
-
       val validAmount = "100.22"
       val validForm: Map[String, String] = Map(AmountForm.amount -> validAmount)
 
       lazy val result: WSResponse = {
         dropPensionsDB()
-        val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
-          totalOneOffRasPaymentPlusTaxRelief = None, totalPaymentsIntoRASQuestion = Some(true))
-        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)))
+        val pensionsViewModel = PaymentsIntoPensionsViewModel(
+          rasPensionPaymentQuestion = Some(true),
+          totalRASPaymentsAndTaxRelief = Some(189.01),
+          oneOffRasPaymentPlusTaxReliefQuestion = Some(true))
+        insertCyaData(pensionsUserDataWithPaymentsIntoPensions(pensionsViewModel))
         authoriseAgentOrIndividual()
         urlPost(fullUrl(oneOffReliefAtSourcePaymentsAmountUrl(taxYearEOY)), body = validForm,
           follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
@@ -338,6 +323,29 @@ class OneOffRASPaymentsAmountControllerISpec extends IntegrationTest with ViewHe
         lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
         cyaModel.pensions.paymentsIntoPension.totalOneOffRasPaymentPlusTaxRelief shouldBe Some(BigDecimal(validAmount))
         cyaModel.pensions.paymentsIntoPension.totalPaymentsIntoRASQuestion shouldBe None
+      }
+    }
+
+    "redirect to the CYA page when a valid amount is submitted and completes the View Model" which {
+      val validAmount = "100.22"
+      val validForm: Map[String, String] = Map(AmountForm.amount -> validAmount)
+
+      lazy val result: WSResponse = {
+        dropPensionsDB()
+        insertCyaData(aPensionsUserData)
+        authoriseAgentOrIndividual()
+        urlPost(fullUrl(oneOffReliefAtSourcePaymentsAmountUrl(taxYearEOY)), body = validForm,
+          follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+      }
+
+      "has a SEE_OTHER(303) status" in {
+        result.status shouldBe SEE_OTHER
+        result.header("location") shouldBe Some(checkPaymentsIntoPensionCyaUrl(taxYearEOY))
+      }
+
+      "updates totalOneOffRasPaymentPlusTaxRelief to Some(100.22)" in {
+        lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
+        cyaModel.pensions.paymentsIntoPension.totalOneOffRasPaymentPlusTaxRelief shouldBe Some(BigDecimal(validAmount))
       }
     }
   }

@@ -26,8 +26,8 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
 import services.redirects.PaymentsIntoPensionPages.WorkplacePensionPage
-import services.redirects.PaymentsIntoPensionsRedirects.{cyaPageCall, journeyCheck}
-import services.redirects.SimpleRedirectService.{isFinishedCheck, redirectBasedOnCurrentAnswers}
+import services.redirects.PaymentsIntoPensionsRedirects.{cyaPageCall, isFinishedCheck, journeyCheck}
+import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.paymentsIntoPensions.WorkplacePensionView
@@ -73,14 +73,12 @@ class WorkplacePensionController @Inject()(authAction: AuthorisedAction,
               pensionsCYAModel.copy(paymentsIntoPension = viewModel.copy(workplacePensionPaymentsQuestion = Some(yesNo),
                 totalWorkplacePensionPayments = if (yesNo) viewModel.totalWorkplacePensionPayments else None))
             }
-            val redirectLocation = if (yesNo) {
-              WorkplaceAmountController.show(taxYear)
-            } else {
-              PaymentsIntoPensionsCYAController.show(taxYear)
-            }
+            val redirectLocation =
+              if (yesNo) WorkplaceAmountController.show(taxYear) else PaymentsIntoPensionsCYAController.show(taxYear)
+
             pensionSessionService.createOrUpdateSessionData(request.user,
               updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
-              isFinishedCheck(updatedCyaModel.paymentsIntoPension, taxYear, redirectLocation, cyaPageCall)
+              isFinishedCheck(updatedCyaModel.paymentsIntoPension, taxYear, redirectLocation)
             }
           }
         }

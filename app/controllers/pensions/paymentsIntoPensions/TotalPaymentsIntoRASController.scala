@@ -17,6 +17,7 @@
 package controllers.pensions.paymentsIntoPensions
 
 import config.{AppConfig, ErrorHandler}
+import controllers.pensions.paymentsIntoPensions.routes._
 import controllers.predicates.actions.AuthorisedAction
 import controllers.predicates.actions.TaxYearAction.taxYearAction
 import models.mongo.PensionsCYAModel
@@ -24,8 +25,8 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
 import services.redirects.PaymentsIntoPensionPages.TotalRasPage
-import services.redirects.PaymentsIntoPensionsRedirects.{cyaPageCall, journeyCheck}
-import services.redirects.SimpleRedirectService.{isFinishedCheck, redirectBasedOnCurrentAnswers}
+import services.redirects.PaymentsIntoPensionsRedirects.{cyaPageCall, isFinishedCheck, journeyCheck}
+import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.paymentsIntoPensions.TotalPaymentsIntoRASView
@@ -83,15 +84,12 @@ class TotalPaymentsIntoRASController @Inject()(authAction: AuthorisedAction,
           yesNo => {
             val updatedCyaModel: PensionsCYAModel =
               cya.copy(paymentsIntoPension = model.copy(totalPaymentsIntoRASQuestion = Some(yesNo)))
-            val redirectLocation = if (yesNo) {
-              controllers.pensions.paymentsIntoPensions.routes.PensionsTaxReliefNotClaimedController.show(taxYear)
-            } else {
-              controllers.pensions.paymentsIntoPensions.routes.ReliefAtSourcePaymentsAndTaxReliefAmountController.show(taxYear)
-            }
+            val redirectLocation =
+              if (yesNo) PensionsTaxReliefNotClaimedController.show(taxYear) else ReliefAtSourcePaymentsAndTaxReliefAmountController.show(taxYear)
 
             pensionSessionService.createOrUpdateSessionData(request.user,
               updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
-              isFinishedCheck(updatedCyaModel.paymentsIntoPension, taxYear, redirectLocation, cyaPageCall)
+              isFinishedCheck(updatedCyaModel.paymentsIntoPension, taxYear, redirectLocation)
             }
           }
         )

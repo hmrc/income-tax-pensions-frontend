@@ -21,13 +21,12 @@ import controllers.pensions.paymentsIntoPensions.routes._
 import controllers.predicates.actions.AuthorisedAction
 import controllers.predicates.actions.TaxYearAction.taxYearAction
 import models.mongo.PensionsCYAModel
-import models.pension.reliefs.PaymentsIntoPensionsViewModel
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
 import services.redirects.PaymentsIntoPensionPages.RetirementAnnuityAmountPage
-import services.redirects.PaymentsIntoPensionsRedirects.{cyaPageCall, journeyCheck}
-import services.redirects.SimpleRedirectService.{isFinishedCheck, redirectBasedOnCurrentAnswers}
+import services.redirects.PaymentsIntoPensionsRedirects.{cyaPageCall, isFinishedCheck, journeyCheck}
+import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.paymentsIntoPensions.RetirementAnnuityAmountView
@@ -73,13 +72,12 @@ class RetirementAnnuityAmountController @Inject()(authAction: AuthorisedAction,
           redirectBasedOnCurrentAnswers(taxYear, optData, cyaPageCall(taxYear))(checkRedirect) { data =>
 
             val pensionsCYAModel: PensionsCYAModel = data.pensions
-            val viewModel: PaymentsIntoPensionsViewModel = pensionsCYAModel.paymentsIntoPension
-            val updatedCyaModel: PensionsCYAModel = {
-              pensionsCYAModel.copy(paymentsIntoPension = viewModel.copy(totalRetirementAnnuityContractPayments = Some(amount)))
-            }
+            val updatedCyaModel: PensionsCYAModel = pensionsCYAModel.copy(
+              paymentsIntoPension = pensionsCYAModel.paymentsIntoPension.copy(totalRetirementAnnuityContractPayments = Some(amount)))
+
             pensionSessionService.createOrUpdateSessionData(request.user,
               updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
-              isFinishedCheck(updatedCyaModel.paymentsIntoPension, taxYear, WorkplacePensionController.show(taxYear), cyaPageCall)
+              isFinishedCheck(updatedCyaModel.paymentsIntoPension, taxYear, WorkplacePensionController.show(taxYear))
             }
           }
         }
