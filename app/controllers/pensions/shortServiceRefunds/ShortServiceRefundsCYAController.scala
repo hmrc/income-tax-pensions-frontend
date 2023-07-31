@@ -19,11 +19,12 @@ package controllers.pensions.shortServiceRefunds
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.routes.{OverseasPensionsSummaryController, PensionsSummaryController}
 import controllers.pensions.shortServiceRefunds.routes.TaxableRefundAmountController
-import controllers.predicates.actions.{ActionsProvider, AuthorisedAction}
+import controllers.predicates.auditActions.AuditActionsProvider
 import models.mongo.PensionsCYAModel
 import models.pension.AllPensionsData
 import models.pension.AllPensionsData.generateCyaFromPrior
 import models.pension.charges.ShortServiceRefundsViewModel
+import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.redirects.ShortServiceRefundsPages.CYAPage
@@ -38,40 +39,40 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ShortServiceRefundsCYAController @Inject()(authAction: AuthorisedAction,
+class ShortServiceRefundsCYAController @Inject()(auditProvider: AuditActionsProvider,
                                                  view: ShortServiceRefundsCYAView,
                                                  pensionSessionService: PensionSessionService,
                                                  pensionChargesService: PensionChargesService,
-                                                 errorHandler: ErrorHandler,
-                                                 actionsProvider: ActionsProvider)
+                                                 errorHandler: ErrorHandler)
                                                 (implicit val mcc: MessagesControllerComponents, appConfig: AppConfig,
                                                  clock: Clock, ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport with SessionHelper {
 
 
-  def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit request =>
-    pensionSessionService.getAndHandle(taxYear, request.user) { (cya, prior) =>
-      (cya, prior) match {
-        case (Some(data), _) =>
-          val checkRedirect = journeyCheck(CYAPage, _: PensionsCYAModel, taxYear)
-          redirectBasedOnCurrentAnswers(taxYear, cya, TaxableRefundAmountController.show(taxYear))(checkRedirect) { _ =>
-            Future.successful(Ok(view(taxYear, data.pensions.shortServiceRefunds)))
-          }
-        case (None, Some(priorData)) =>
-          val cyaModel = generateCyaFromPrior(priorData)
-          pensionSessionService.createOrUpdateSessionData(request.user,
-            cyaModel, taxYear, isPriorSubmission = true)(
-            errorHandler.internalServerError())(
-            Ok(view(taxYear, cyaModel.shortServiceRefunds)))
-        case (None, None) =>
-          val emptyShortServiceRefunds = ShortServiceRefundsViewModel()
-          Future.successful(Ok(view(taxYear, emptyShortServiceRefunds)))
-        case _ => Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
+  def show(taxYear: Int): Action[AnyContent] = auditProvider.shortServiceRefundsViewAuditing(taxYear) async {
+    implicit request =>
+      pensionSessionService.getAndHandle(taxYear, request.user) { (cya, prior) =>
+        (cya, prior) match {
+          case (Some(data), _) =>
+            val checkRedirect = journeyCheck(CYAPage, _: PensionsCYAModel, taxYear)
+            redirectBasedOnCurrentAnswers(taxYear, cya, TaxableRefundAmountController.show(taxYear))(checkRedirect) { _ =>
+              Future.successful(Ok(view(taxYear, data.pensions.shortServiceRefunds)))
+            }
+          case (None, Some(priorData)) =>
+            val cyaModel = generateCyaFromPrior(priorData)
+            pensionSessionService.createOrUpdateSessionData(request.user,
+              cyaModel, taxYear, isPriorSubmission = true)(
+              errorHandler.internalServerError())(
+              Ok(view(taxYear, cyaModel.shortServiceRefunds)))
+          case (None, None) =>
+            val emptyShortServiceRefunds = ShortServiceRefundsViewModel()
+            Future.successful(Ok(view(taxYear, emptyShortServiceRefunds)))
+          case _ => Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
+        }
       }
-    }
   }
 
-  def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
+  def submit(taxYear: Int): Action[AnyContent] = auditProvider.shortServiceRefundsUpdateAuditing(taxYear) async { implicit request =>
     pensionSessionService.getAndHandle(taxYear, request.user) { (cya, prior) =>
       cya.fold(
         Future.successful(Redirect(appConfig.incomeTaxSubmissionOverviewUrl(taxYear)))
