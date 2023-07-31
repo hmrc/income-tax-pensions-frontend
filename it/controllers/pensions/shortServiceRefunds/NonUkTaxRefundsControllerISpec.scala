@@ -27,7 +27,7 @@ import models.pension.charges.ShortServiceRefundsViewModel
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.ShortServiceRefunds.{nonUkTaxRefundsUrl, refundSummaryUrl, shortServiceTaxableRefundUrl, taxOnShortServiceRefund}
+import utils.PageUrls.ShortServiceRefunds.{nonUkTaxRefundsUrl, shortServiceRefundsCYAUrl, shortServiceTaxableRefundUrl, taxOnShortServiceRefund}
 import utils.PageUrls.{fullUrl, overviewUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
@@ -112,79 +112,83 @@ class NonUkTaxRefundsControllerISpec extends IntegrationTest with ViewHelpers
       result.headers("location").head shouldBe overviewUrl(taxYear)
     }
 
-    "persist amount and redirect to summary page when there is a short service scheme " in {
-      lazy implicit val result: WSResponse = {
-        dropPensionsDB()
-        authoriseAgentOrIndividual(aUser.isAgent)
-        val shortServiceRefundViewModel = aShortServiceRefundsViewModel.copy(
-          shortServiceRefundTaxPaid = Some(true),
-          shortServiceRefundTaxPaidCharge = Some(BigDecimal("500.00"))
-        )
-        val formData = Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "500")
-        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(shortServiceRefunds = shortServiceRefundViewModel)))
-        urlPost(
-          fullUrl(nonUkTaxRefundsUrl(taxYearEOY)),
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
-          follow = false,
-          body = formData)
+    "valid submission should persist amount and redirect" which {
+      "directs to the CYA page when there is a short service schemes and so Submission Model is now complete " in {
+        lazy implicit val result: WSResponse = {
+          dropPensionsDB()
+          authoriseAgentOrIndividual(aUser.isAgent)
+          val shortServiceRefundViewModel = aShortServiceRefundsViewModel.copy(
+            shortServiceRefundTaxPaid = Some(true),
+            shortServiceRefundTaxPaidCharge = Some(BigDecimal("500.00"))
+          )
+          val formData = Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "500")
+          insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(shortServiceRefunds = shortServiceRefundViewModel)))
+          urlPost(
+            fullUrl(nonUkTaxRefundsUrl(taxYearEOY)),
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
+            follow = false,
+            body = formData)
+        }
+        result.status shouldBe SEE_OTHER
+        result.headers("location").head shouldBe shortServiceRefundsCYAUrl(taxYearEOY)
       }
-      result.status shouldBe SEE_OTHER
-      result.headers("location").head shouldBe refundSummaryUrl(taxYearEOY)
+
+      "directs to the next page when there are no short service schemes" in {
+        lazy implicit val result: WSResponse = {
+          dropPensionsDB()
+          authoriseAgentOrIndividual(aUser.isAgent)
+          val shortServiceRefundViewModel = aShortServiceRefundsViewModel.copy(
+            refundPensionScheme = Nil
+          )
+          val formData = Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "500")
+          insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(shortServiceRefunds = shortServiceRefundViewModel)))
+          urlPost(
+            fullUrl(nonUkTaxRefundsUrl(taxYearEOY)),
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
+            follow = false,
+            body = formData)
+        }
+        result.status shouldBe SEE_OTHER
+        result.headers("location").head shouldBe taxOnShortServiceRefund(taxYearEOY)
+      }
     }
 
-    "persist amount and redirect to next page when there is no short service scheme " in {
-      lazy implicit val result: WSResponse = {
-        dropPensionsDB()
-        authoriseAgentOrIndividual(aUser.isAgent)
-        val shortServiceRefundViewModel = aShortServiceRefundsViewModel.copy(
-          refundPensionScheme = Nil
-        )
-        val formData = Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "500")
-        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(shortServiceRefunds = shortServiceRefundViewModel)))
-        urlPost(
-          fullUrl(nonUkTaxRefundsUrl(taxYearEOY)),
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
-          follow = false,
-          body = formData)
-      }
-      result.status shouldBe SEE_OTHER
-      result.headers("location").head shouldBe taxOnShortServiceRefund(taxYearEOY)
-    }
-
-    "return an error when form is submitted with no entry" in {
-      lazy val result: WSResponse = {
-        dropPensionsDB()
-        authoriseAgentOrIndividual(aUser.isAgent)
-        val shortServiceRefundViewModel = aShortServiceRefundsViewModel.copy(
-          shortServiceRefundTaxPaid = Some(true),
-          shortServiceRefundTaxPaidCharge = None
-        )
-        val form = Map(RadioButtonAmountForm.yesNo -> "", RadioButtonAmountForm.amount2 -> "")
-        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(shortServiceRefunds = shortServiceRefundViewModel)))
-        urlPost(
-          fullUrl(nonUkTaxRefundsUrl(taxYearEOY)),
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
-          follow = false,
-          body = form)
-      }
+    "return an error" when {
+      "form is submitted with no entry" in {
+        lazy val result: WSResponse = {
+          dropPensionsDB()
+          authoriseAgentOrIndividual(aUser.isAgent)
+          val shortServiceRefundViewModel = aShortServiceRefundsViewModel.copy(
+            shortServiceRefundTaxPaid = Some(true),
+            shortServiceRefundTaxPaidCharge = None
+          )
+          val form = Map(RadioButtonAmountForm.yesNo -> "", RadioButtonAmountForm.amount2 -> "")
+          insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(shortServiceRefunds = shortServiceRefundViewModel)))
+          urlPost(
+            fullUrl(nonUkTaxRefundsUrl(taxYearEOY)),
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
+            follow = false,
+            body = form)
+        }
         result.status shouldBe BAD_REQUEST
-    }
-
-    "return an error when form is submitted with the wrong format" in {
-      lazy val result: WSResponse = {
-        dropPensionsDB()
-        authoriseAgentOrIndividual(aUser.isAgent)
-        val shortServiceRefundViewModel = aShortServiceRefundsViewModel.copy(
-          shortServiceRefundCharge = None, shortServiceRefund = Some(true))
-        val form = Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "jhvgfxk")
-        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(shortServiceRefunds = shortServiceRefundViewModel)))
-        urlPost(
-          fullUrl(nonUkTaxRefundsUrl(taxYearEOY)),
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
-          follow = false,
-          body = form)
       }
+
+      "form is submitted with the wrong format" in {
+        lazy val result: WSResponse = {
+          dropPensionsDB()
+          authoriseAgentOrIndividual(aUser.isAgent)
+          val shortServiceRefundViewModel = aShortServiceRefundsViewModel.copy(
+            shortServiceRefundCharge = None, shortServiceRefund = Some(true))
+          val form = Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "jhvgfxk")
+          insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(shortServiceRefunds = shortServiceRefundViewModel)))
+          urlPost(
+            fullUrl(nonUkTaxRefundsUrl(taxYearEOY)),
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
+            follow = false,
+            body = form)
+        }
         result.status shouldBe BAD_REQUEST
+      }
     }
   }
 }
