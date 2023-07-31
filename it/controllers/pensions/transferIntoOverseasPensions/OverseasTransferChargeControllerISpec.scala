@@ -17,6 +17,7 @@
 package controllers.pensions.transferIntoOverseasPensions
 
 import builders.PensionsCYAModelBuilder.{aPensionsCYAEmptyModel, aPensionsCYAModel}
+import builders.TransfersIntoOverseasPensionsViewModelBuilder.emptyTransfersIntoOverseasPensionsViewModel
 import controllers.ControllerSpec.PreferredLanguages.{English, Welsh}
 import controllers.ControllerSpec.UserTypes.{Agent, Individual}
 import controllers.ControllerSpec._
@@ -29,7 +30,6 @@ import play.api.libs.ws.WSResponse
 class OverseasTransferChargeControllerISpec
   extends YesNoAmountControllerSpec("/overseas-pensions/overseas-transfer-charges/transfer-charge") {
 
-  "This page" when {
     ".show" should {
       "redirect to the summary page" when {
         "the user has no stored session data at all" in {
@@ -327,22 +327,30 @@ class OverseasTransferChargeControllerISpec
         }
       }
     }
+
     ".submit" should {
-      "redirect to the expected page" when {
-        "the user has no stored session data at all" in {
+      "redirect to the pensions summary page when the user has no stored session data at all" in {
 
           implicit val userConfig: UserConfig = userConfigWhenIrrelevant(None)
           implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(false), None))
 
           assertRedirectionAsExpected(PageRelativeURLs.pensionsSummaryPage)
           getViewModel mustBe None
-        }
       }
 
       "redirect to the start of the journey" when {
         "the journey is incomplete" in {
-          val emptySchemesTIOPViewModel: TransfersIntoOverseasPensionsViewModel = aPensionsCYAModel.transfersIntoOverseasPensions.copy(
-            transferPensionSavings= None)
+          val cyaModel = aPensionsCYAModel.copy(transfersIntoOverseasPensions = emptyTransfersIntoOverseasPensionsViewModel)
+          val sessionData: PensionsUserData = pensionsUserData(cyaModel)
+          implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
+          implicit val response: WSResponse = getPageWithIndex()
+
+          assertRedirectionAsExpected(PageRelativeURLs.transferPensionSavings)
+        }
+
+        "the page is invalid in the journey" in {
+          val emptySchemesTIOPViewModel: TransfersIntoOverseasPensionsViewModel = emptyTransfersIntoOverseasPensionsViewModel.copy(
+            transferPensionSavings = Some(false))
           val cyaModel = aPensionsCYAModel.copy(transfersIntoOverseasPensions = emptySchemesTIOPViewModel)
           val sessionData: PensionsUserData = pensionsUserData(cyaModel)
           implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
@@ -379,7 +387,7 @@ class OverseasTransferChargeControllerISpec
 
             implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
             implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("42.64")))
-            val redirectPage = relativeUrl("/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-tax")
+            val redirectPage = relativeUrl("/overseas-pensions/overseas-transfer-charges/transfer-charges/check-transfer-charges-details")
 
             assertRedirectionAsExpected(redirectPage)
             getViewModel mustBe Some(expectedViewModel)
@@ -393,7 +401,7 @@ class OverseasTransferChargeControllerISpec
 
             implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
             implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("£1,042.64")))
-            val redirectPage = relativeUrl("/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-tax")
+            val redirectPage = relativeUrl("/overseas-pensions/overseas-transfer-charges/transfer-charges/check-transfer-charges-details")
 
             assertRedirectionAsExpected(redirectPage)
             getViewModel mustBe Some(expectedViewModel)
@@ -1099,7 +1107,6 @@ class OverseasTransferChargeControllerISpec
         }
       }
     }
-  }
 
   private def getViewModel(implicit userConfig: UserConfig): Option[TransfersIntoOverseasPensionsViewModel] =
     loadPensionUserData.map(_.pensions.transfersIntoOverseasPensions)

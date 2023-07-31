@@ -41,9 +41,9 @@ import scala.concurrent.Future
 @Singleton
 class OverseasTransferChargeController @Inject()(
                                                   actionsProvider: ActionsProvider,
-                                                 pensionSessionService: PensionSessionService,
-                                                 view: OverseasTransferChargeView,
-                                                 errorHandler: ErrorHandler)
+                                                  pensionSessionService: PensionSessionService,
+                                                  view: OverseasTransferChargeView,
+                                                  errorHandler: ErrorHandler)
                                                 (implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock)
   extends FrontendController(mcc) with I18nSupport with SessionHelper {
 
@@ -51,7 +51,7 @@ class OverseasTransferChargeController @Inject()(
     implicit sessionData =>
 
       val checkRedirect = journeyCheck(OverseasTransferChargeAmountPage, _: PensionsCYAModel, taxYear)
-      redirectBasedOnCurrentAnswers(taxYear, Some(sessionData.pensionsUserData), cyaPageCall(taxYear))(checkRedirect){
+      redirectBasedOnCurrentAnswers(taxYear, Some(sessionData.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) {
         data =>
           val transferChargeAmount: Option[BigDecimal] = data.pensions.transfersIntoOverseasPensions.overseasTransferChargeAmount
           val transferCharge: Option[Boolean] = data.pensions.transfersIntoOverseasPensions.overseasTransferCharge
@@ -105,8 +105,8 @@ class OverseasTransferChargeController @Inject()(
     pensionSessionService.createOrUpdateSessionData(request.user,
       updateViewModel, taxYear, pensionUserData.isPriorSubmission)(errorHandler.internalServerError()) {
       Redirect(
-        if (yesNo) PensionSchemeTaxTransferController.show(taxYear)
-        else TransferIntoOverseasPensionsCYAController.show(taxYear)
+        if (!yesNo || updateViewModel.transfersIntoOverseasPensions.isFinished) TransferIntoOverseasPensionsCYAController.show(taxYear)
+        else PensionSchemeTaxTransferController.show(taxYear)
       )
     }
   }

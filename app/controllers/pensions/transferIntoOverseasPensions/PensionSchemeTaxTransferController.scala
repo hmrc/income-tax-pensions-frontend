@@ -94,8 +94,8 @@ class PensionSchemeTaxTransferController @Inject()(actionsProvider: ActionsProvi
     pensionSessionService.createOrUpdateSessionData(request.user,
       updatedModel, taxYear, pensionUserData.isPriorSubmission)(errorHandler.internalServerError()) {
       Redirect(
-        if (yesNo) redirectForSchemeLoop(schemes = updatedModel.transfersIntoOverseasPensions.transferPensionScheme, taxYear)
-        else TransferIntoOverseasPensionsCYAController.show(taxYear)
+        if (!yesNo || updatedModel.transfersIntoOverseasPensions.isFinished) TransferIntoOverseasPensionsCYAController.show(taxYear)
+        else redirectForSchemeLoop(schemes = updatedModel.transfersIntoOverseasPensions.transferPensionScheme, taxYear)
       )
     }
   }
