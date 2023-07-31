@@ -32,7 +32,7 @@ import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
 import utils.PageUrls.IncomeFromOverseasPensionsPages.checkIncomeFromOverseasPensionsCyaUrl
 import utils.PageUrls.ShortServiceRefunds.{shortServiceRefundsCYAUrl, shortServiceTaxableRefundUrl}
-import utils.PageUrls.{fullUrl, overseasPensionsSummaryUrl, overviewUrl}
+import utils.PageUrls.{fullUrl, overseasPensionsSummaryUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 class ShortServiceRefundsCYAControllerISpec extends IntegrationTest with ViewHelpers
@@ -59,20 +59,17 @@ class ShortServiceRefundsCYAControllerISpec extends IntegrationTest with ViewHel
   override val userScenarios: Seq[UserScenario[_, _]] = Nil
 
   ".show" should {
-    "redirect to Overview Page when in year" in {
+    "render the page when in year" in {
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
-        authoriseAgentOrIndividual(aUser.isAgent)
-        insertCyaData(pensionsUsersData(aPensionsCYAModel))
-        userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYear)
-        urlGet(fullUrl(shortServiceRefundsCYAUrl(taxYear)), !aUser.isAgent, follow = false,
+        authoriseAgentOrIndividual()
+        insertCyaData(aPensionsUserData.copy(taxYear = taxYear))
+        userDataStub(anIncomeTaxUserData, nino, taxYear)
+        urlGet(fullUrl(shortServiceRefundsCYAUrl(taxYear)), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
       }
-
-      result.status shouldBe SEE_OTHER
-      result.headers("Location").head shouldBe overviewUrl(taxYear)
+      result.status shouldBe OK
     }
-
     "render page with a valid CYA model" in {
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
@@ -112,22 +109,6 @@ class ShortServiceRefundsCYAControllerISpec extends IntegrationTest with ViewHel
   }
 
   ".submit" should {
-    "redirect to overview when in year" in {
-      lazy implicit val result: WSResponse = {
-        dropPensionsDB()
-        authoriseAgentOrIndividual(aUser.isAgent)
-        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(shortServiceRefunds = emptyShortServiceRefundsViewModel)))
-        userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYear)
-        urlPost(
-          fullUrl(shortServiceRefundsCYAUrl(taxYear)),
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)),
-          follow = false,
-          body = "")
-      }
-      result.status shouldBe SEE_OTHER
-      result.headers("location").head shouldBe overviewUrl(taxYear)
-    }
-
     "redirect to next page" in {
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
@@ -207,6 +188,22 @@ class ShortServiceRefundsCYAControllerISpec extends IntegrationTest with ViewHel
 
       result.status shouldBe SEE_OTHER
       result.header("location") shouldBe Some(shortServiceTaxableRefundUrl(taxYearEOY))
+    }
+
+    "submitting in year" in {
+      lazy implicit val result: WSResponse = {
+        dropPensionsDB()
+        authoriseAgentOrIndividual(aUser.isAgent)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(shortServiceRefunds = emptyShortServiceRefundsViewModel)))
+        userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYear)
+        urlPost(
+          fullUrl(shortServiceRefundsCYAUrl(taxYear)),
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)),
+          follow = false,
+          body = "")
+      }
+      result.status shouldBe SEE_OTHER
+      result.headers("location").head shouldBe controllers.pensions.routes.PensionsSummaryController.show(taxYear).url
     }
   }
 }
