@@ -21,6 +21,7 @@ import builders.IncomeTaxUserDataBuilder.anIncomeTaxUserData
 import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import builders.PensionsUserDataBuilder
 import builders.PensionLifetimeAllowancesViewModelBuilder.minimalPensionLifetimeAllowancesViewModel
+import builders.PensionsUserDataBuilder.aPensionsUserData
 import builders.UserBuilder.aUser
 import models.mongo.PensionsCYAModel
 import play.api.http.HeaderNames
@@ -100,20 +101,44 @@ class LifetimeAllowanceCYAControllerISpec extends IntegrationTest with ViewHelpe
       result.headers("location").head shouldBe overviewUrl(taxYear)
     }
 
-    "redirect to next page" in {
-      lazy implicit val result: WSResponse = {
-        dropPensionsDB()
-        authoriseAgentOrIndividual(aUser.isAgent)
-        insertCyaData(pensionsUsersData(aPensionsCYAModel))
-        userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYearEOY)
-        urlPost(
-          fullUrl(lifetimeAllowanceCYA(taxYearEOY)),
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
-          follow = false,
-          body = "")
+    "redirect to next page" when {
+
+      "the cya data is persisted to pensions backend" in {
+
+        lazy implicit val result: WSResponse = {
+          dropPensionsDB()
+          val userData = anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData))
+          authoriseAgentOrIndividual(aUser.isAgent)
+          userDataStub(userData, nino, taxYearEOY)
+          insertCyaData(aPensionsUserData)
+          pensionChargesSessionStub("", nino, taxYearEOY)
+          urlPost(
+            fullUrl(lifetimeAllowanceCYA(taxYearEOY)),
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
+            follow = false,
+            body = "")
+        }
+        result.status shouldBe SEE_OTHER
+        result.headers("location").head shouldBe pensionSummaryUrl(taxYearEOY)
       }
-      result.status shouldBe SEE_OTHER
-      result.headers("location").head shouldBe pensionSummaryUrl(taxYearEOY)
+
+      "there is no CYA data available" which {
+        val form = Map[String, String]()
+        lazy val result: WSResponse = {
+          dropPensionsDB()
+          authoriseAgentOrIndividual()
+          pensionChargesSessionStub("", nino, taxYearEOY)
+          urlPost(fullUrl(lifetimeAllowanceCYA(taxYearEOY)), form, follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        }
+        "have the status SEE OTHER" in {
+          result.status shouldBe SEE_OTHER
+        }
+        "redirects to the overview page" in {
+          result.headers("Location").head shouldBe pensionSummaryUrl(taxYearEOY)
+        }
+      }
+
     }
 
   }
