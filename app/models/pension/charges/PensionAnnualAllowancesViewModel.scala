@@ -59,7 +59,8 @@ case class PensionAnnualAllowancesViewModel(reducedAnnualAllowanceQuestion: Opti
 
   def toPensionSavingsTaxCharges(prior: Option[AllPensionsData]): PensionSavingsTaxCharges = {
     PensionSavingsTaxCharges(
-      pensionSchemeTaxReference = pensionSchemeTaxReferences,
+      pensionSchemeTaxReference = prior.flatMap(_.pensionCharges).flatMap(_.pensionSavingsTaxCharges)
+        .flatMap(_.pensionSchemeTaxReference),
       lumpSumBenefitTakenInExcessOfLifetimeAllowance = prior.flatMap(_.pensionCharges).flatMap(_.pensionSavingsTaxCharges)
         .flatMap(_.lumpSumBenefitTakenInExcessOfLifetimeAllowance),
       benefitInExcessOfLifetimeAllowance = prior.flatMap(_.pensionCharges).flatMap(_.pensionSavingsTaxCharges).flatMap(_.benefitInExcessOfLifetimeAllowance),
