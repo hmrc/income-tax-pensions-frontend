@@ -82,6 +82,7 @@ case class PensionAnnualAllowancesViewModel(reducedAnnualAllowanceQuestion: Opti
       moneyPurchasedAllowance = moneyPurchaseAnnualAllowance
     )
   }
+
   def toAnnualAllowanceChargesModel(prior: Option[AllPensionsData]): AnnualAllowancesPensionCharges = {
     val pensionContributionsOpt =
       if (pensionSchemeTaxReferences.getOrElse(Nil) == Nil && aboveAnnualAllowance.isEmpty && taxPaidByPensionProvider.isEmpty) {
@@ -99,11 +100,6 @@ case class PensionAnnualAllowancesViewModel(reducedAnnualAllowanceQuestion: Opti
       }
     AnnualAllowancesPensionCharges(pensionSavingsTaxChargesOpt, pensionContributionsOpt)
   }
-
-  override def journeyIsNo: Boolean =
-    !reducedAnnualAllowanceQuestion.getOrElse(false)
-
-  override def journeyIsUnanswered: Boolean = this.productIterator.forall(_ == None)
 }
 
 object PensionAnnualAllowancesViewModel {
