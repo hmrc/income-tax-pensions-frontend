@@ -17,12 +17,12 @@
 package controllers.pensions.incomeFromPensions
 
 import builders.AllPensionsDataBuilder.anAllPensionsData
-import builders.IncomeFromPensionsViewModelBuilder.anIncomeFromPensionsViewModel
+import builders.IncomeFromPensionsViewModelBuilder.aStatePensionIncomeFromPensionsViewModel
 import builders.IncomeTaxUserDataBuilder.anIncomeTaxUserData
 import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import builders.PensionsUserDataBuilder
 import builders.PensionsUserDataBuilder.aPensionsUserData
-import builders.StateBenefitViewModelBuilder.anStateBenefitViewModelTwo
+import builders.StateBenefitViewModelBuilder.aStatePensionLumpSumViewModel
 import builders.UserBuilder.aUser
 import forms.RadioButtonForm
 import models.mongo.{PensionsCYAModel, PensionsUserData}
@@ -30,7 +30,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.IncomeFromPensionsPages.{addToCalculationUrl, statePension, statePensionCyaUrl, taxOnLumpSumUrl}
+import utils.PageUrls.IncomeFromPensionsPages.{addToCalculationUrl, statePension, statePensionCyaUrl}
 import utils.PageUrls.{fullUrl, overviewUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
@@ -72,13 +72,12 @@ class StatePensionAddToCalculationControllerISpec extends IntegrationTest
     }
 
     "redirect to the first page in journey if the previous question has not been answered" in {
-      val data = aPensionsUserData.copy(
-        pensions = aPensionsCYAModel.copy(
-          incomeFromPensions = anIncomeFromPensionsViewModel.copy(
-            statePensionLumpSum = Some(anStateBenefitViewModelTwo.copy(
-              startDateQuestion = None
-            ))
-          )))
+      val data = aPensionsUserData.copy(pensions = aPensionsCYAModel.copy(
+        incomeFromPensions = aStatePensionIncomeFromPensionsViewModel.copy(
+          statePensionLumpSum = Some(aStatePensionLumpSumViewModel.copy(
+            startDateQuestion = None
+          ))
+        )))
 
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
@@ -93,7 +92,7 @@ class StatePensionAddToCalculationControllerISpec extends IntegrationTest
   }
 
   ".submit" should {
-    "redirect to the state pension page when the user selects yes" in {
+    "redirect to the CYA page when the user selects yes" in {
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
@@ -110,7 +109,7 @@ class StatePensionAddToCalculationControllerISpec extends IntegrationTest
       result.header(HeaderNames.LOCATION) shouldBe Some(statePensionCyaUrl(taxYearEOY))
     }
 
-    "redirect to the state pension page when the user selects no" in {
+    "redirect to the CYA page when the user selects no" in {
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)

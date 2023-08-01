@@ -19,7 +19,7 @@ package controllers.pensions.unauthorisedPayments
 
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.unauthorisedPayments.routes._
-import controllers.predicates.AuthorisedAction
+import controllers.predicates.actions.AuthorisedAction
 import forms.YesNoForm
 import models.mongo.PensionsCYAModel
 import models.pension.charges.UnauthorisedPaymentsViewModel
@@ -27,10 +27,9 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
-import services.redirects.UnauthorisedPaymentsRedirects.redirectForSchemeLoop
 import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
 import services.redirects.UnauthorisedPaymentsPages.WereAnyUnauthPaymentsFromUkPensionSchemePage
-import services.redirects.UnauthorisedPaymentsRedirects.{cyaPageCall, journeyCheck}
+import services.redirects.UnauthorisedPaymentsRedirects.{cyaPageCall, journeyCheck, redirectForSchemeLoop}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.unauthorisedPayments.WereAnyOfTheUnauthorisedPaymentsView
@@ -57,7 +56,7 @@ class WereAnyOfTheUnauthorisedPaymentsController @Inject()(implicit val cc: Mess
     pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
       case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
       case Right(optData) =>
-        val checkRedirect = journeyCheck(WereAnyUnauthPaymentsFromUkPensionSchemePage, _, taxYear)
+        val checkRedirect = journeyCheck(WereAnyUnauthPaymentsFromUkPensionSchemePage, _: PensionsCYAModel, taxYear)
         redirectBasedOnCurrentAnswers(taxYear, optData, cyaPageCall(taxYear))(checkRedirect) { data =>
 
           data.pensions.unauthorisedPayments.ukPensionSchemesQuestion match {
@@ -75,14 +74,15 @@ class WereAnyOfTheUnauthorisedPaymentsController @Inject()(implicit val cc: Mess
         pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
           case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
           case Right(optData) =>
-            val checkRedirect = journeyCheck(WereAnyUnauthPaymentsFromUkPensionSchemePage, _, taxYear)
+            val checkRedirect = journeyCheck(WereAnyUnauthPaymentsFromUkPensionSchemePage, _: PensionsCYAModel, taxYear)
             redirectBasedOnCurrentAnswers(taxYear, optData, cyaPageCall(taxYear))(checkRedirect) { data =>
 
               val pensionsCYAModel: PensionsCYAModel = data.pensions
               val viewModel: UnauthorisedPaymentsViewModel = pensionsCYAModel.unauthorisedPayments
               val updatedCyaModel: PensionsCYAModel = {
-                pensionsCYAModel.copy(
-                  unauthorisedPayments = viewModel.copy(ukPensionSchemesQuestion = Some(yesNo)))
+                pensionsCYAModel.copy(unauthorisedPayments =
+                  if (yesNo) viewModel.copy(ukPensionSchemesQuestion = Some(true))
+                  else viewModel.copy(ukPensionSchemesQuestion = Some(false), pensionSchemeTaxReference = None))
               }
 
               pensionSessionService.createOrUpdateSessionData(

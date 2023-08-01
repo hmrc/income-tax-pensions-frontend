@@ -20,7 +20,7 @@ import builders.IncomeFromOverseasPensionsViewModelBuilder.anIncomeFromOverseasP
 import builders.IncomeFromPensionsViewModelBuilder.anIncomeFromPensionEmptyViewModel
 import builders.PaymentsIntoOverseasPensionsViewModelBuilder.aPaymentsIntoOverseasPensionsViewModel
 import builders.PensionAnnualAllowanceViewModelBuilder.aPensionAnnualAllowanceEmptyViewModel
-import builders.PensionLifetimeAllowanceViewModelBuilder.aPensionLifetimeAllowancesEmptyViewModel
+import builders.PensionLifetimeAllowancesViewModelBuilder.aPensionLifetimeAllowancesEmptyViewModel
 import builders.PensionsCYAModelBuilder.aPensionsCYAEmptyModel
 import builders.PensionsUserDataBuilder
 import builders.PensionsUserDataBuilder.aPensionsUserData
@@ -40,10 +40,10 @@ import play.api.libs.ws.WSResponse
 import utils.PageUrls.PaymentIntoPensions._
 import utils.PageUrls.fullUrl
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
-import views.TotalPaymentsIntoRasSpec.Selectors._
-import views.TotalPaymentsIntoRasSpec._
-import views.TotalPaymentsIntoRasSpec.CommonExpectedEN._
-import views.TotalPaymentsIntoRasSpec.ExpectedIndividualEN._
+import views.pensions.paymentsIntoPensions.TotalPaymentsIntoRasSpec.Selectors._
+import views.pensions.paymentsIntoPensions.TotalPaymentsIntoRasSpec._
+import views.pensions.paymentsIntoPensions.TotalPaymentsIntoRasSpec.CommonExpectedEN._
+import views.pensions.paymentsIntoPensions.TotalPaymentsIntoRasSpec.ExpectedIndividualEN._
 
 class TotalPaymentsIntoRASControllerISpec extends IntegrationTest with BeforeAndAfterEach with ViewHelpers with PensionsDatabaseHelper {
 

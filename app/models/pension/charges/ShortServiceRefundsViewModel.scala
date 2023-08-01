@@ -31,15 +31,18 @@ case class ShortServiceRefundsViewModel(shortServiceRefund: Option[Boolean] = No
                                         shortServiceRefundTaxPaidCharge: Option[BigDecimal] = None,
                                         refundPensionScheme: Seq[OverseasRefundPensionScheme] = Nil
                                        ) extends PensionCYABaseModel {
+
   def isEmpty: Boolean = shortServiceRefund.isEmpty && shortServiceRefundCharge.isEmpty &&
     shortServiceRefundTaxPaid.isEmpty && shortServiceRefundTaxPaidCharge.isEmpty && refundPensionScheme.isEmpty
 
   def isFinished: Boolean = {
-    shortServiceRefund.filter(x => x)
-      .flatMap(_ => shortServiceRefundTaxPaid.filter(x => x))
-      .map(_ => shortServiceRefundCharge.isDefined)
-      .map(_ => shortServiceRefundTaxPaidCharge.isDefined)
-      .exists(_ => refundPensionScheme.nonEmpty)
+    shortServiceRefund.exists(x =>
+      if (x)
+        shortServiceRefundCharge.isDefined &&
+          shortServiceRefundTaxPaid.exists(x => if (x) shortServiceRefundTaxPaidCharge.isDefined else true) &&
+          refundPensionScheme.nonEmpty && refundPensionScheme.forall(rps => rps.isFinished)
+      else true
+    )
   }
 
   def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedShortServiceRefundsViewModel =
@@ -61,16 +64,10 @@ case class ShortServiceRefundsViewModel(shortServiceRefund: Option[Boolean] = No
     scheme.map(x =>
       OverseasSchemeProvider(
         providerName = x.name.getOrElse(""),
-        qualifyingRecognisedOverseasPensionScheme = if (x.qualifyingRecognisedOverseasPensionScheme.nonEmpty) {
-          Some(Seq(x.qualifyingRecognisedOverseasPensionScheme.get))
-        } else {
-          None
-        },
-        pensionSchemeTaxReference = if (x.pensionSchemeTaxReference.nonEmpty) {
-          Some(Seq(x.pensionSchemeTaxReference.get))
-        } else {
-          None
-        },
+        qualifyingRecognisedOverseasPensionScheme =
+          if (x.qualifyingRecognisedOverseasPensionScheme.nonEmpty) Some(Seq(s"Q${x.qualifyingRecognisedOverseasPensionScheme.get}")) else None ,
+        pensionSchemeTaxReference =
+          if (x.pensionSchemeTaxReference.nonEmpty && x.alphaThreeCountryCode.isEmpty) Some(Seq(x.pensionSchemeTaxReference.get)) else None,
         providerAddress = x.providerAddress.getOrElse(""),
         providerCountryCode = x.alphaThreeCountryCode.getOrElse("")
       )
@@ -117,6 +114,15 @@ case class OverseasRefundPensionScheme(
                                         alphaTwoCountryCode: Option[String] = None,
                                         alphaThreeCountryCode: Option[String] = None
                                       ) {
+
+  def isFinished: Boolean = {
+    name.isDefined && providerAddress.isDefined &&
+      ukRefundCharge.exists(x =>
+        if (x) pensionSchemeTaxReference.isDefined
+        else qualifyingRecognisedOverseasPensionScheme.isDefined && alphaTwoCountryCode.isDefined && alphaThreeCountryCode.isDefined
+      )
+  }
+
   def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedOverseasRefundPensionScheme =
     EncryptedOverseasRefundPensionScheme(
       ukRefundCharge = ukRefundCharge.map(_.encrypted),

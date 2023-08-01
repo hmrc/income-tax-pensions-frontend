@@ -17,32 +17,39 @@
 package controllers.pensions.lifetimeAllowances
 
 import config.AppConfig
-import controllers.predicates.AuthorisedAction
-import controllers.predicates.TaxYearAction.taxYearAction
+import controllers.pensions.routes.PensionsSummaryController
+import controllers.predicates.actions.AuthorisedAction
+import controllers.predicates.actions.TaxYearAction.taxYearAction
+import models.mongo.PensionsCYAModel
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
+import services.redirects.LifetimeAllowancesPages.PSTRSummaryPage
+import services.redirects.LifetimeAllowancesRedirects.{cyaPageCall, journeyCheck}
+import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.pensions.lifetimeAllowances.LifetimePstrSummaryView
-import controllers.pensions.routes.PensionsSummaryController
+
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class LifetimePstrSummaryController @Inject()(
-                                       authAction: AuthorisedAction,
-                                       view: LifetimePstrSummaryView,
-                                       pensionSessionService: PensionSessionService)
+class LifetimePstrSummaryController @Inject()(authAction: AuthorisedAction,
+                                              view: LifetimePstrSummaryView,
+                                              pensionSessionService: PensionSessionService)
                                              (implicit val appConfig: AppConfig,
-                                      cc: MessagesControllerComponents,
-                                      ec: ExecutionContext)
-  extends FrontendController(cc) with I18nSupport {
+                                              cc: MessagesControllerComponents,
+                                              ec: ExecutionContext) extends FrontendController(cc) with I18nSupport {
 
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
       case Some(data) =>
-        val pstrList = data.pensions.pensionLifetimeAllowances.pensionSchemeTaxReferences
-        Future(Ok(view(taxYear, pstrList.getOrElse(Nil))))
+        val checkRedirect = journeyCheck(PSTRSummaryPage, _: PensionsCYAModel, taxYear)
+        redirectBasedOnCurrentAnswers(taxYear, Some(data), cyaPageCall(taxYear))(checkRedirect) {
+          data =>
+            val pstrList: Seq[String] = data.pensions.pensionLifetimeAllowances.pensionSchemeTaxReferences.getOrElse(Seq.empty)
+            Future(Ok(view(taxYear, pstrList)))
+        }
       case None => Future(Redirect(PensionsSummaryController.show(taxYear)))
     }
   }

@@ -20,7 +20,7 @@ import builders.AllPensionsDataBuilder.anAllPensionsData
 import builders.IncomeTaxUserDataBuilder.anIncomeTaxUserData
 import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import builders.PensionsUserDataBuilder
-import builders.PensionLifetimeAllowanceViewModelBuilder.minimalPensionLifetimeAllowanceViewModel
+import builders.PensionLifetimeAllowancesViewModelBuilder.minimalPensionLifetimeAllowancesViewModel
 import builders.UserBuilder.aUser
 import models.mongo.PensionsCYAModel
 import play.api.http.HeaderNames
@@ -88,7 +88,7 @@ class LifetimeAllowanceCYAControllerISpec extends IntegrationTest with ViewHelpe
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
-        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(pensionLifetimeAllowances = minimalPensionLifetimeAllowanceViewModel)))
+        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(pensionLifetimeAllowances = minimalPensionLifetimeAllowancesViewModel)))
         userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYear)
         urlPost(
           fullUrl(lifetimeAllowanceCYA(taxYear)),

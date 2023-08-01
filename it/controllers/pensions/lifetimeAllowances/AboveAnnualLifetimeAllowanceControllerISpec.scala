@@ -16,7 +16,7 @@
 
 package controllers.pensions.lifetimeAllowances
 
-import builders.PensionLifetimeAllowanceViewModelBuilder.aPensionLifetimeAllowanceViewModel
+import builders.PensionLifetimeAllowancesViewModelBuilder.{aPensionLifetimeAllowancesViewModel, minimalPensionLifetimeAllowancesViewModel}
 import builders.PensionsUserDataBuilder.{aPensionsUserData, anPensionsUserDataEmptyCya, pensionsUserDataWithLifetimeAllowance}
 import builders.UserBuilder.aUserRequest
 import forms.YesNoForm
@@ -27,7 +27,7 @@ import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import utils.PageUrls.PensionLifetimeAllowance.{lifetimeAllowanceCYA, pensionAboveAnnualLifetimeAllowanceUrl, pensionLumpSumUrl}
-import utils.PageUrls.fullUrl
+import utils.PageUrls.{fullUrl, pensionSummaryUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 class AboveAnnualLifetimeAllowanceControllerISpec extends IntegrationTest with BeforeAndAfterEach with ViewHelpers with PensionsDatabaseHelper {
@@ -154,7 +154,7 @@ class AboveAnnualLifetimeAllowanceControllerISpec extends IntegrationTest with B
 
           implicit lazy val result: WSResponse = {
             dropPensionsDB()
-            val pensionsViewModel = aPensionLifetimeAllowanceViewModel.copy(
+            val pensionsViewModel = aPensionLifetimeAllowancesViewModel.copy(
               aboveLifetimeAllowanceQuestion = Some(true)
             )
             insertCyaData(pensionsUserDataWithLifetimeAllowance(pensionsViewModel))
@@ -179,7 +179,7 @@ class AboveAnnualLifetimeAllowanceControllerISpec extends IntegrationTest with B
           implicit lazy val result: WSResponse = {
             dropPensionsDB()
 
-            val pensionsViewModel = aPensionLifetimeAllowanceViewModel.copy(
+            val pensionsViewModel = aPensionLifetimeAllowancesViewModel.copy(
               aboveLifetimeAllowanceQuestion = Some(false)
             )
             insertCyaData(pensionsUserDataWithLifetimeAllowance(pensionsViewModel))
@@ -262,15 +262,12 @@ class AboveAnnualLifetimeAllowanceControllerISpec extends IntegrationTest with B
 
       "there is currently no radio button value selected and the user selects 'Yes'" which {
         lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.yes)
-
         lazy val result: WSResponse = {
           dropPensionsDB()
-          val pensionsViewModel = aPensionLifetimeAllowanceViewModel.copy(
+          val pensionsViewModel = aPensionLifetimeAllowancesViewModel.copy(
             aboveLifetimeAllowanceQuestion = None
           )
-
           insertCyaData(pensionsUserDataWithLifetimeAllowance(pensionsViewModel))
-
           authoriseAgentOrIndividual()
           urlPost(fullUrl(pensionAboveAnnualLifetimeAllowanceUrl(taxYearEOY)), body = form, follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
@@ -284,11 +281,11 @@ class AboveAnnualLifetimeAllowanceControllerISpec extends IntegrationTest with B
         "updates aboveLifetimeAllowanceQuestion to Some(true)" in {
           lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
           cyaModel.pensions.pensionLifetimeAllowances.aboveLifetimeAllowanceQuestion shouldBe Some(true)
-          cyaModel.pensions.pensionLifetimeAllowances.pensionAsLumpSumQuestion shouldBe aPensionLifetimeAllowanceViewModel.pensionAsLumpSumQuestion
-          cyaModel.pensions.pensionLifetimeAllowances.pensionAsLumpSum shouldBe aPensionLifetimeAllowanceViewModel.pensionAsLumpSum
+          cyaModel.pensions.pensionLifetimeAllowances.pensionAsLumpSumQuestion shouldBe aPensionLifetimeAllowancesViewModel.pensionAsLumpSumQuestion
+          cyaModel.pensions.pensionLifetimeAllowances.pensionAsLumpSum shouldBe aPensionLifetimeAllowancesViewModel.pensionAsLumpSum
           cyaModel.pensions.pensionLifetimeAllowances.pensionPaidAnotherWayQuestion shouldBe
-            aPensionLifetimeAllowanceViewModel.pensionPaidAnotherWayQuestion
-          cyaModel.pensions.pensionLifetimeAllowances.pensionPaidAnotherWay shouldBe aPensionLifetimeAllowanceViewModel.pensionPaidAnotherWay
+            aPensionLifetimeAllowancesViewModel.pensionPaidAnotherWayQuestion
+          cyaModel.pensions.pensionLifetimeAllowances.pensionPaidAnotherWay shouldBe aPensionLifetimeAllowancesViewModel.pensionPaidAnotherWay
         }
       }
     }
@@ -296,10 +293,9 @@ class AboveAnnualLifetimeAllowanceControllerISpec extends IntegrationTest with B
     "redirect to CYA page and update question to 'No'" when {
       "there is currently no radio button value selected and the user selects 'No'" which {
         lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.no)
-
         lazy val result: WSResponse = {
           dropPensionsDB()
-          val pensionsViewModel = aPensionLifetimeAllowanceViewModel.copy(
+          val pensionsViewModel = aPensionLifetimeAllowancesViewModel.copy(
             aboveLifetimeAllowanceQuestion = None
           )
 
@@ -316,30 +312,46 @@ class AboveAnnualLifetimeAllowanceControllerISpec extends IntegrationTest with B
         }
 
         "updates aboveLifetimeAllowanceQuestion to Some(false) and clear the rest of the annual lifetime allowance data" in {
-          findCyaData(taxYearEOY, aUserRequest).foreach { cyaModel =>
-            cyaModel.pensions.pensionLifetimeAllowances.aboveLifetimeAllowanceQuestion shouldBe Some(false)
-            cyaModel.pensions.pensionLifetimeAllowances.pensionAsLumpSumQuestion shouldBe None
-            cyaModel.pensions.pensionLifetimeAllowances.pensionAsLumpSum shouldBe None
-            cyaModel.pensions.pensionLifetimeAllowances.pensionPaidAnotherWayQuestion shouldBe None
-            cyaModel.pensions.pensionLifetimeAllowances.pensionPaidAnotherWay shouldBe None
-          }
+          lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
+          cyaModel.pensions.pensionLifetimeAllowances shouldBe minimalPensionLifetimeAllowancesViewModel
         }
+      }
+      "there is prior data which is now cleared" which {
+        lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.no)
+        lazy val result: WSResponse = {
+          dropPensionsDB()
+          insertCyaData(pensionsUserDataWithLifetimeAllowance(aPensionLifetimeAllowancesViewModel))
+          authoriseAgentOrIndividual()
+          urlPost(fullUrl(pensionAboveAnnualLifetimeAllowanceUrl(taxYearEOY)), body = form, follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        }
+
+        "has a SEE_OTHER(303) status and redirect to the lifetime allowances CYA Page" in {
+          result.status shouldBe SEE_OTHER
+          result.header("location") shouldBe Some(lifetimeAllowanceCYA(taxYearEOY))
+        }
+
+        "updates aboveLifetimeAllowanceQuestion to Some(false) and clear the rest of the annual lifetime allowance data" in {
+          lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
+          cyaModel.pensions.pensionLifetimeAllowances shouldBe minimalPensionLifetimeAllowancesViewModel
+        }
+      }
+    }
+
+    "redirect to the Pensions Summary page if there is no session data" should {
+      lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.no)
+      lazy val result: WSResponse = {
+        dropPensionsDB()
+        authoriseAgentOrIndividual()
+        urlPost(fullUrl(pensionAboveAnnualLifetimeAllowanceUrl(taxYearEOY)), body = form, follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+
+      }
+      "has an SEE_OTHER status" in {
+        result.status shouldBe SEE_OTHER
+        result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
       }
     }
   }
 
-  "redirect to CYA page if there is no session data" should {
-    lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.no)
-    lazy val result: WSResponse = {
-      dropPensionsDB()
-      authoriseAgentOrIndividual()
-      urlPost(fullUrl(pensionAboveAnnualLifetimeAllowanceUrl(taxYearEOY)), body = form, follow = false,
-        headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
-
-    }
-    "has an SEE_OTHER status" in {
-      result.status shouldBe SEE_OTHER
-      result.header("location") shouldBe Some(lifetimeAllowanceCYA(taxYearEOY))
-    }
-  }
 }

@@ -55,7 +55,75 @@ object StateBenefitViewModelBuilder {
     taxPaid = Some(3.99),
     addToCalculation = Some(true)
   )
-  
+
+  val aStatePensionViewModel: StateBenefitViewModel = StateBenefitViewModel(
+    benefitId = None,
+    startDate = Some(LocalDate.parse("2019-11-14")),
+    startDateQuestion = Some(true),
+    dateIgnoredQuestion = None,
+    dateIgnored = None,
+    submittedOnQuestion = None,
+    submittedOn = None,
+    endDateQuestion = None,
+    endDate = None,
+    amountPaidQuestion = Some(true),
+    amount = Some(166.88),
+    taxPaidQuestion = None,
+    taxPaid = None,
+    addToCalculation = Some(true)
+  )
+
+  val aStatePensionLumpSumViewModel: StateBenefitViewModel = StateBenefitViewModel(
+    benefitId = None,
+    startDate = Some(LocalDate.parse("2019-11-14")),
+    startDateQuestion = Some(true),
+    dateIgnoredQuestion = None,
+    dateIgnored = None,
+    submittedOnQuestion = None,
+    submittedOn = None,
+    endDateQuestion = None,
+    endDate = None,
+    amountPaidQuestion = Some(true),
+    amount = Some(200.00),
+    taxPaidQuestion = Some(true),
+    taxPaid = Some(50.00),
+    addToCalculation = Some(true)
+  )
+
+  val aMinimalStatePensionViewModel: StateBenefitViewModel = StateBenefitViewModel(
+    benefitId = None,
+    startDate = None,
+    startDateQuestion = None,
+    dateIgnoredQuestion = None,
+    dateIgnored = None,
+    submittedOnQuestion = None,
+    submittedOn = None,
+    endDateQuestion = None,
+    endDate = None,
+    amountPaidQuestion = Some(false),
+    amount = None,
+    taxPaidQuestion = None,
+    taxPaid = None,
+    addToCalculation = None
+  )
+
+  val aMinimalStatePensionLumpSumViewModel: StateBenefitViewModel = StateBenefitViewModel(
+    benefitId = None,
+    startDate = None,
+    startDateQuestion = None,
+    dateIgnoredQuestion = None,
+    dateIgnored = None,
+    submittedOnQuestion = None,
+    submittedOn = None,
+    endDateQuestion = None,
+    endDate = None,
+    amountPaidQuestion = Some(false),
+    amount = None,
+    taxPaidQuestion = None,
+    taxPaid = None,
+    addToCalculation = None
+  )
+
   val anEmptyStateBenefitViewModel: StateBenefitViewModel = StateBenefitViewModel()
 
 }

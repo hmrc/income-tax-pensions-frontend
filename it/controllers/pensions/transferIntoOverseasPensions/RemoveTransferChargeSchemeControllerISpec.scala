@@ -17,15 +17,17 @@
 package controllers.pensions.transferIntoOverseasPensions
 
 import builders.PensionsCYAModelBuilder.aPensionsCYAModel
+import builders.TransferPensionSchemeBuilder.aNonUkTransferPensionScheme
+import builders.TransfersIntoOverseasPensionsViewModelBuilder.aTransfersIntoOverseasPensionsViewModel
 import controllers.ControllerSpec
 import controllers.ControllerSpec.UserConfig
 import play.api.libs.ws.WSResponse
 
-class RemoveTransferChargeSchemeControllerISpec extends ControllerSpec("/overseas-pensions/payments-into-overseas-pensions/remove-overseas-pension-scheme") {
+class RemoveTransferChargeSchemeControllerISpec extends ControllerSpec("/overseas-pensions/overseas-transfer-charges/remove-overseas-pension-scheme") {
 
   "This page" when {
 
-    "performing .show" should {
+    ".show" should {
       "not show the form page but redirect to the summary page" when {
         "the user has no stored session data at all" in {
           implicit val userConfig: UserConfig = userConfigWhenIrrelevant(None)
@@ -38,28 +40,37 @@ class RemoveTransferChargeSchemeControllerISpec extends ControllerSpec("/oversea
         "the user accesses page with index out of bounds" in {
           val sessionData = pensionsUserData(aPensionsCYAModel)
           implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
-          implicit val response: WSResponse = getPageWithIndex(1)
+          implicit val response: WSResponse = getPageWithIndex(8)
 
           assertRedirectionAsExpected(PageRelativeURLs.transferChargeSchemeSummary)
         }
       }
-      "performing .submit" should {
+    }
+      ".submit" should {
         "the user has relevant session data and" when {
           "removes a pension scheme successfully" in {
 
             val sessionData = pensionsUserData(aPensionsCYAModel)
             implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
 
-            implicit val response: WSResponse = submitForm(Map("" ->""), Map("index" -> "0"))
+            implicit val response: WSResponse = submitForm(Map("" -> ""), Map("index" -> "0"))
 
             assertRedirectionAsExpected(PageRelativeURLs.transferChargeSchemeSummary)
-            val expectedViewModel = sessionData.pensions.transfersIntoOverseasPensions.copy(transferPensionScheme = Seq.empty)
+            val expectedViewModel = aTransfersIntoOverseasPensionsViewModel.copy(transferPensionScheme = Seq(aNonUkTransferPensionScheme))
             getTransferPensionsViewModel mustBe Some(expectedViewModel)
 
           }
         }
+
+        "redirect to the Pensions Summary page when the user has no stored session data at all" in {
+          implicit val userConfig: UserConfig = userConfigWhenIrrelevant(None)
+          implicit val response: WSResponse = submitForm(Map("" -> ""), Map("index" -> "0"))
+
+          assertRedirectionAsExpected(PageRelativeURLs.pensionsSummaryPage)
+          getTransferPensionsViewModel mustBe None
+        }
       }
     }
-  }
+
 
 }

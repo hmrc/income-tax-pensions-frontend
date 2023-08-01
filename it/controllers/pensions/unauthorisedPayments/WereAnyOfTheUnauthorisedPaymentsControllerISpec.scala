@@ -17,7 +17,7 @@
 package controllers.pensions.unauthorisedPayments
 
 import builders.PensionsUserDataBuilder.{aPensionsUserData, pensionsUserDataWithUnauthorisedPayments}
-import builders.UnauthorisedPaymentsViewModelBuilder.anUnauthorisedPaymentsViewModel
+import builders.UnauthorisedPaymentsViewModelBuilder.{anUnauthorisedPaymentsEmptySchemesViewModel, anUnauthorisedPaymentsViewModel}
 import builders.UserBuilder.aUserRequest
 import forms.YesNoForm
 import org.jsoup.Jsoup
@@ -26,7 +26,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.UnauthorisedPaymentsPages.{checkUnauthorisedPaymentsCyaUrl, ukPensionSchemeDetailsUrl, wereAnyOfTheUnauthorisedPaymentsUrl}
+import utils.PageUrls.UnauthorisedPaymentsPages._
 import utils.PageUrls.fullUrl
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
@@ -229,9 +229,32 @@ class WereAnyOfTheUnauthorisedPaymentsControllerISpec extends IntegrationTest wi
 
       lazy val result: WSResponse = {
         dropPensionsDB()
-        val viewModel = anUnauthorisedPaymentsViewModel.copy()
+        val viewModel = anUnauthorisedPaymentsViewModel.copy(
+          ukPensionSchemesQuestion = None, pensionSchemeTaxReference = None)
         insertCyaData(pensionsUserDataWithUnauthorisedPayments(viewModel))
+        authoriseAgentOrIndividual()
+        urlPost(fullUrl(wereAnyOfTheUnauthorisedPaymentsUrl(taxYearEOY)), body = form, follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+      }
 
+      "has a SEE_OTHER(303) status and redirect to Pension Scheme Tax Reference (PSTR) Page" in {
+        result.status shouldBe SEE_OTHER
+        result.header("location") shouldBe Some(pensionSchemeTaxReferenceUrl(taxYearEOY))
+      }
+
+      "updates ukPensionSchemesQuestion to Some(true)" in {
+        val expectedViewModel = anUnauthorisedPaymentsEmptySchemesViewModel.copy(ukPensionSchemesQuestion = Some(true))
+        lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
+        cyaModel.pensions.unauthorisedPayments shouldBe expectedViewModel
+      }
+    }
+
+    "redirect to the scheme summary page and persist question as 'Yes' when it was previously 'Yes' with existing schemes" which {
+      lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.yes)
+
+      lazy val result: WSResponse = {
+        dropPensionsDB()
+        insertCyaData(pensionsUserDataWithUnauthorisedPayments(anUnauthorisedPaymentsViewModel))
         authoriseAgentOrIndividual()
         urlPost(fullUrl(wereAnyOfTheUnauthorisedPaymentsUrl(taxYearEOY)), body = form, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
@@ -244,7 +267,7 @@ class WereAnyOfTheUnauthorisedPaymentsControllerISpec extends IntegrationTest wi
 
       "updates ukPensionSchemesQuestion to Some(true)" in {
         lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
-        cyaModel.pensions.unauthorisedPayments.ukPensionSchemesQuestion shouldBe Some(true)
+        cyaModel.pensions.unauthorisedPayments shouldBe anUnauthorisedPaymentsViewModel
       }
     }
 
@@ -253,11 +276,9 @@ class WereAnyOfTheUnauthorisedPaymentsControllerISpec extends IntegrationTest wi
 
       lazy val result: WSResponse = {
         dropPensionsDB()
-        val viewModel = anUnauthorisedPaymentsViewModel.copy()
+        val viewModel = anUnauthorisedPaymentsViewModel.copy(
+          ukPensionSchemesQuestion = None, pensionSchemeTaxReference = None)
         insertCyaData(pensionsUserDataWithUnauthorisedPayments(viewModel))
-
-        insertCyaData(pensionsUserDataWithUnauthorisedPayments(viewModel))
-
         authoriseAgentOrIndividual()
         urlPost(fullUrl(wereAnyOfTheUnauthorisedPaymentsUrl(taxYearEOY)), body = form, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
@@ -270,7 +291,29 @@ class WereAnyOfTheUnauthorisedPaymentsControllerISpec extends IntegrationTest wi
 
       "updates ukPensionSchemesQuestion to Some(false)" in {
         lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
-        cyaModel.pensions.unauthorisedPayments.ukPensionSchemesQuestion shouldBe Some(false)
+        cyaModel.pensions.unauthorisedPayments shouldBe anUnauthorisedPaymentsEmptySchemesViewModel
+      }
+    }
+
+    "redirect to CYA page, updating question to 'No' and clearing PSTR collection when prior session data was 'Yes'" which {
+      lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.no)
+
+      lazy val result: WSResponse = {
+        dropPensionsDB()
+        insertCyaData(pensionsUserDataWithUnauthorisedPayments(anUnauthorisedPaymentsViewModel))
+        authoriseAgentOrIndividual()
+        urlPost(fullUrl(wereAnyOfTheUnauthorisedPaymentsUrl(taxYearEOY)), body = form, follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+      }
+
+      "has a SEE_OTHER(303) status and redirect to Check your unauthorised payments page" in {
+        result.status shouldBe SEE_OTHER
+        result.header("location") shouldBe Some(checkUnauthorisedPaymentsCyaUrl(taxYearEOY))
+      }
+
+      "updates ukPensionSchemesQuestion to Some(false)" in {
+        lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
+        cyaModel.pensions.unauthorisedPayments shouldBe anUnauthorisedPaymentsEmptySchemesViewModel
       }
     }
 

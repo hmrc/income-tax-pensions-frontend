@@ -19,14 +19,14 @@ package controllers.pensions.incomeFromPensions
 import builders.IncomeFromPensionsViewModelBuilder.anIncomeFromPensionsViewModel
 import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import builders.PensionsUserDataBuilder.{aPensionsUserData, pensionsUserDataWithIncomeFromPensions}
-import builders.StateBenefitViewModelBuilder.anStateBenefitViewModelOne
+import builders.StateBenefitViewModelBuilder.{aMinimalStatePensionViewModel, aStatePensionLumpSumViewModel, anStateBenefitViewModelOne}
 import builders.UserBuilder.{aUser, aUserRequest}
 import forms.RadioButtonAmountForm
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.IncomeFromPensionsPages.{addToCalculationUrl, statePension, statePensionLumpSumUrl, statePensionStartDateUrl, taxOnLumpSumUrl}
+import utils.PageUrls.IncomeFromPensionsPages.{addToCalculationUrl, statePension, statePensionLumpSumUrl, taxOnLumpSumUrl}
 import utils.PageUrls.{fullUrl, overviewUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
@@ -166,15 +166,15 @@ class StatePensionLumpSumControllerISpec extends IntegrationTest with BeforeAndA
       cyaModel.pensions.incomeFromPensions.statePensionLumpSum.get.amount shouldBe Some(BigDecimal("42.24"))
     }
 
-    "redirect to the Add to calculation page when update question to No and delete the tax paid amount when user selects No" in {
+    "redirect to the Add to calculation page when update question to 'No' and clear the other StateBenefitViewModel data" in {
       lazy val form: Map[String, String] = Map(RadioButtonAmountForm.yesNo -> RadioButtonAmountForm.no)
 
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual()
 
-        val pensionsViewModel = anIncomeFromPensionsViewModel.copy(statePensionLumpSum =
-          Some(anStateBenefitViewModelOne.copy(amountPaidQuestion = Some(true), amount = Some(44.55))))
+        val pensionsViewModel = anIncomeFromPensionsViewModel.copy(
+          statePensionLumpSum = Some(aStatePensionLumpSumViewModel))
         insertCyaData(pensionsUserDataWithIncomeFromPensions(pensionsViewModel))
 
         urlPost(fullUrl(statePensionLumpSumUrl(taxYearEOY)), body = form, follow = false,
@@ -185,8 +185,7 @@ class StatePensionLumpSumControllerISpec extends IntegrationTest with BeforeAndA
       result.header("location") shouldBe Some(addToCalculationUrl(taxYearEOY))
 
       lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
-      cyaModel.pensions.incomeFromPensions.statePensionLumpSum.get.amountPaidQuestion shouldBe Some(false)
-      cyaModel.pensions.incomeFromPensions.statePensionLumpSum.get.amount shouldBe None
+      cyaModel.pensions.incomeFromPensions.statePensionLumpSum shouldBe Some(aMinimalStatePensionViewModel)
     }
   }
 }

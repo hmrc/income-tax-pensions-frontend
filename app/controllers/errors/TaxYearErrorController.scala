@@ -17,7 +17,7 @@
 package controllers.errors
 
 import config.AppConfig
-import controllers.predicates.AuthorisedAction
+import controllers.predicates.actions.AuthorisedAction
 
 import javax.inject.Inject
 import play.api.i18n.I18nSupport

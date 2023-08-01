@@ -91,8 +91,6 @@ common.yourP60.agent = P60 eich cleient
 common.aboutGeneralIncreases.agent = y llythyr ’Ynglŷn â’r cynnydd cyffredinol mewn budd-daliadau’ a anfonwyd at eich cleient gan y Gwasanaeth Pensiwn
 
 common.employerFinancedRetirementScheme.caption = Cynlluniau buddiannau ymddeol a ariannwyd gan gyflogwyr ar gyfer 6 Ebrill {0} i 5 Ebrill {1}
-common.addAnotherPstrLink = Ychwanegu Cyfeirnod Treth ar gyfer Cynllun Pensiwn arall
-common.addPstrLink = Ychwanegu PSTR
 
 ################# Common lifetime allowance #################
 
@@ -111,6 +109,10 @@ common.pensionSchemeTaxReference.forExample = Er enghraifft, ‘12345678RA’
 common.pensionSchemeTaxReference.error.noEntry.individual = Nodwch Gyfeirnod Treth eich Cynllun Pensiwn
 common.pensionSchemeTaxReference.error.noEntry.agent = Nodwch Gyfeirnod Treth Cynllun Pensiwn eich cleient
 common.pensionSchemeTaxReference.p1 = Os bydd mwy nag un cynllun pensiwn yn talu neu wedi cytuno i dalu’r dreth, gallwch eu hychwanegu nes ymlaen.
+common.pensionSchemeTaxReference.addAnotherPstrLink = Ychwanegu PSTR arall
+common.pensionSchemeTaxReference.addAPstrLink = You need to add one or more Pensions Scheme Tax Reference (PSTR).
+common.addAnotherPstrLink = Ychwanegu Cyfeirnod Treth ar gyfer Cynllun Pensiwn arall
+common.addPstrLink = Ychwanegu PSTR
 
 #################       Common overseas pensions        ########################################
 
@@ -443,7 +445,7 @@ pensions.reducedAnnualAllowanceAmount.nonReduced.error.overMaximum = Mae’n rha
 ####### Above Reduced Annual Allowance ######
 pensions.aboveReducedAnnualAllowance.title.individual = A ydych wedi mynd yn uwch na’ch lwfans blynyddol wedi’i?
 pensions.aboveReducedAnnualAllowance.title.agent = A yw’ch cleient wedi mynd yn uwch na’i lwfans blynyddol wedi’i?
-pensions.aboveReducedAnnualAllowance.amount = Swm uwchlaw'r lwfans blynyddol gostyngol, mewn punnoedd
+pensions.aboveReducedAnnualAllowance.amount = Swm uwchlaw’r lwfans blynyddol gostyngol, mewn punnoedd
 pensions.aboveReducedAnnualAllowance.error.noEntry.individual = Dewiswch ‘Iawn’ os ydych wedi mynd yn uwch na’ch lwfans blynyddol wedi’i ostwng
 pensions.aboveReducedAnnualAllowance.error.noEntry.agent = Dewiswch ‘Iawn’ os yw’ch cleient wedi mynd yn uwch na’i lwfans blynyddol wedi’i ostwng
 pensions.aboveReducedAnnualAllowance.error.noAmountEntry.individual = Nodwch y swm sydd uwchlaw’ch lwfans blynyddol wedi’i ostwng
@@ -494,8 +496,7 @@ unauthorisedPayments.pension.pensionSchemeTaxReference.error.incorrectFormat.age
 
 #Pension Scheme Tax Reference Summary Page
 
-annualAllowance.pstrSummary.title = Crynodeb Cyfeirnod Treth y Cynllun Pensiwn (PSTR)
-annualAllowance.addAnotherPstrLink = Ychwanegu PSTR arall
+annualAllowance.pstrSummary.title = Pension schemes that paid or agreed to pay the annual allowance tax
 
 #################       INCOME FROM PENSIONS        ########################################
 
@@ -562,9 +563,6 @@ pensions.statePensionLumpSumStartDate.title.individual = Pryd cawsoch eich cyfan
 pensions.statePensionLumpSumStartDate.title.agent = Pryd cafodd eich cleient gyfandaliad Pensiwn y Wladwriaeth?
 pensions.statePensionLumpSumStartDate.hint.individual = Mae hwn i’w weld ar eich P60.
 pensions.statePensionLumpSumStartDate.hint.agent = Mae hwn i’w weld ar ei P60.
-pensions.statePensionLumpSumStartDate.error.empty.day = Mae’n rhaid i’r dyddiad dechrau ar gyfer y cyfandaliad pensiwn gynnwys diwrnod
-pensions.statePensionLumpSumStartDate.error.empty.month = Mae’n rhaid i’r dyddiad dechrau ar gyfer y cyfandaliad pensiwn gynnwys mis
-pensions.statePensionLumpSumStartDate.error.empty.year = Mae’n rhaid i’r dyddiad dechrau ar gyfer y cyfandaliad pensiwn gynnwys blwyddyn
 pensions.statePensionLumpSumStartDate.error.empty.all = Nodwch y dyddiad dechrau ar gyfer y cyfandaliad pensiwn
 pensions.statePensionLumpSumStartDate.error.empty.day = Mae’n rhaid i’r dyddiad dechrau ar gyfer y cyfandaliad pensiwn gynnwys diwrnod
 pensions.statePensionLumpSumStartDate.error.empty.dayMonth = Mae’n rhaid i’r dyddiad dechrau ar gyfer y cyfandaliad pensiwn gynnwys diwrnod a mis
@@ -989,7 +987,7 @@ overseasPension.pensionsCustomerReferenceNumber.title.individual = Beth yw’ch 
 overseasPension.pensionsCustomerReferenceNumber.title.agent = Beth yw cyfeirnod cwsmer eich cleient?
 overseasPension.pensionsCustomerReferenceNumber.paragraph1.individual = Dylai’ch darparwr pensiwn fod wedi rhoi cyfeirnod cwsmer i chi.
 overseasPension.pensionsCustomerReferenceNumber.paragraph1.agent = Dylai darparwr pensiwn eich cleient fod wedi rhoi cyfeirnod cwsmer i’ch cleient.
-overseasPension.pensionsCustomerReferenceNumber.hint = Er enghraifft, ''INCWMPENSIWN245''
+overseasPension.pensionsCustomerReferenceNumber.hint = Er enghraifft, ’INCWMPENSIWN245’
 overseasPension.pensionsCustomerReferenceNumber.error.noEntry.individual = Nodwch eich cyfeirnod cwsmer
 overseasPension.pensionsCustomerReferenceNumber.error.noEntry.agent = Nodwch gyfeirnod cwsmer eich cleient
 

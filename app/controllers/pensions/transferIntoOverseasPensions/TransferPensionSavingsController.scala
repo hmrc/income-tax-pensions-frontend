@@ -17,12 +17,14 @@
 package controllers.pensions.transferIntoOverseasPensions
 
 import config.{AppConfig, ErrorHandler}
-import controllers.predicates.ActionsProvider
+import controllers.pensions.transferIntoOverseasPensions.routes.{OverseasTransferChargeController, TransferIntoOverseasPensionsCYAController}
+import controllers.predicates.actions.ActionsProvider
 import forms.TransferPensionSavingsForm.yesNoForm
 import models.mongo.PensionsUserData
+import models.pension.charges.TransfersIntoOverseasPensionsViewModel
 import models.requests.UserSessionDataRequest
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
@@ -35,10 +37,9 @@ import scala.concurrent.Future
 class TransferPensionSavingsController @Inject()(actionsProvider: ActionsProvider,
                                                  pensionSessionService: PensionSessionService,
                                                  view: TransferPensionSavingsView,
-                                                 errorHandler: ErrorHandler
-                                              )(implicit cc: MessagesControllerComponents,
-                                                appConfig: AppConfig,
-                                                clock: Clock)
+                                                 errorHandler: ErrorHandler)
+                                                (implicit cc: MessagesControllerComponents,
+                                                 appConfig: AppConfig, clock: Clock)
   extends FrontendController(cc) with I18nSupport with SessionHelper {
 
   def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
@@ -53,29 +54,30 @@ class TransferPensionSavingsController @Inject()(actionsProvider: ActionsProvide
 
   def submit(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit sessionUserData =>
-          yesNoForm(sessionUserData.user).bindFromRequest().fold(
-            formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
-            transferPensionSavings => {
-              updateSessionData(sessionUserData.pensionsUserData, transferPensionSavings, taxYear)
-            }
-          )
+      yesNoForm(sessionUserData.user).bindFromRequest().fold(
+        formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
+        transferPensionSavings => {
+          updateSessionData(sessionUserData.pensionsUserData, transferPensionSavings, taxYear)
+        }
+      )
   }
 
   private def updateSessionData[T](pensionUserData: PensionsUserData,
                                    transferPensionSavings: Boolean,
-                                   taxYear: Int
-                                  )(implicit request: UserSessionDataRequest[T]) = {
-    val updatedCyaModel = pensionUserData.pensions.copy(
-      transfersIntoOverseasPensions = pensionUserData.pensions.transfersIntoOverseasPensions.copy(
-        transferPensionSavings = Some(transferPensionSavings)))
+                                   taxYear: Int)(implicit request: UserSessionDataRequest[T]): Future[Result] = {
+
+    val cyaModel = pensionUserData.pensions
+    val updateViewModel = cyaModel.copy(transfersIntoOverseasPensions =
+      if (transferPensionSavings) cyaModel.transfersIntoOverseasPensions.copy(transferPensionSavings = Some(transferPensionSavings))
+      else TransfersIntoOverseasPensionsViewModel(transferPensionSavings = Some(transferPensionSavings))
+    )
 
     pensionSessionService.createOrUpdateSessionData(request.user,
-      updatedCyaModel, taxYear, pensionUserData.isPriorSubmission)(errorHandler.internalServerError()) {
-      if(transferPensionSavings) {
-        Redirect(controllers.pensions.transferIntoOverseasPensions.routes.OverseasTransferChargeController.show(taxYear))
-      } else {
-        Redirect(controllers.pensions.transferIntoOverseasPensions.routes.TransferIntoOverseasPensionsCYAController.show(taxYear))
-      }
+      updateViewModel, taxYear, pensionUserData.isPriorSubmission)(errorHandler.internalServerError()) {
+      Redirect(
+        if (transferPensionSavings) OverseasTransferChargeController.show(taxYear)
+        else TransferIntoOverseasPensionsCYAController.show(taxYear)
+      )
     }
   }
 }

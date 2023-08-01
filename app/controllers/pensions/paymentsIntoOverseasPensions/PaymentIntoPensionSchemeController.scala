@@ -20,9 +20,11 @@ import common.MessageKeys.OverseasPensions.PaymentIntoScheme
 import common.MessageKeys.YesNoAmountForm
 import config.{AppConfig, ErrorHandler}
 import controllers.BaseYesNoAmountController
-import controllers.predicates.AuthorisedAction
+import controllers.pensions.paymentsIntoOverseasPensions.routes.{EmployerPayOverseasPensionController, PaymentsIntoOverseasPensionsCYAController}
+import controllers.predicates.actions.AuthorisedAction
 import models.AuthorisationRequest
 import models.mongo.{PensionsCYAModel, PensionsUserData}
+import models.pension.charges.PaymentsIntoOverseasPensionsViewModel
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{AnyContent, MessagesControllerComponents, Result}
@@ -44,14 +46,20 @@ class PaymentIntoPensionSchemeController @Inject()(messagesControllerComponents:
 
   override val errorMessageSet: YesNoAmountForm = PaymentIntoScheme
 
-  // TODO: Once we've creating the CYA page (in SASS-3268), we can redirect to it.
   override def redirectWhenNoSessionData(taxYear: Int): Result = Redirect(controllers.pensions.routes.OverseasPensionsSummaryController.show(taxYear))
 
-  override def redirectAfterUpdatingSessionData(pensionsUserData: PensionsUserData, taxYear: Int): Result =
-    Redirect(controllers.pensions.paymentsIntoOverseasPensions.routes.EmployerPayOverseasPensionController.show(taxYear))
+  override def redirectAfterUpdatingSessionData(pensionsUserData: PensionsUserData, taxYear: Int): Result = {
+    val model = pensionsUserData.pensions.paymentsIntoOverseasPensions
+    Redirect(
+      if (model.paymentsIntoOverseasPensionsQuestions.getOrElse(false)) EmployerPayOverseasPensionController.show(taxYear)
+      else PaymentsIntoOverseasPensionsCYAController.show(taxYear)
+    )
+  }
 
   override def prepareView(pensionsUserData: PensionsUserData, taxYear: Int)
-                          (implicit request: AuthorisationRequest[AnyContent]): Html = paymentIntoPensionSchemeView(populateForm(pensionsUserData), taxYear)
+                          (implicit request: AuthorisationRequest[AnyContent]): Html =
+
+    paymentIntoPensionSchemeView(populateForm(cleanUpReliefs(pensionsUserData)), taxYear)
 
   override def whenFormIsInvalid(form: Form[(Boolean, Option[BigDecimal])], taxYear: Int)
                                 (implicit request: AuthorisationRequest[AnyContent]): Html = paymentIntoPensionSchemeView(form, taxYear)
@@ -62,16 +70,29 @@ class PaymentIntoPensionSchemeController @Inject()(messagesControllerComponents:
   override def amountOpt(pensionsUserData: PensionsUserData): Option[BigDecimal] =
     pensionsUserData.pensions.paymentsIntoOverseasPensions.paymentsIntoOverseasPensionsAmount
 
-  override def proposedUpdatedSessionDataModel(currentSessionData: PensionsUserData, yesSelected: Boolean, amountOpt: Option[BigDecimal]): PensionsCYAModel =
-    currentSessionData.pensions.copy(
-      paymentsIntoOverseasPensions = currentSessionData.pensions.paymentsIntoOverseasPensions.copy(
-        paymentsIntoOverseasPensionsQuestions = Some(yesSelected),
-        paymentsIntoOverseasPensionsAmount = amountOpt.filter(_ => yesSelected)
-      )
-    )
+  override def proposedUpdatedSessionDataModel(currentSessionData: PensionsUserData, yesSelected: Boolean, amountOpt: Option[BigDecimal]): PensionsCYAModel = {
+    val piopData: PaymentsIntoOverseasPensionsViewModel = {
+      if (yesSelected)
+        currentSessionData.pensions.paymentsIntoOverseasPensions.copy(
+          paymentsIntoOverseasPensionsQuestions = Some(true),
+          paymentsIntoOverseasPensionsAmount = amountOpt)
+      else PaymentsIntoOverseasPensionsViewModel(paymentsIntoOverseasPensionsQuestions = Some(false))
+    }
+    currentSessionData.pensions.copy(paymentsIntoOverseasPensions = piopData)
+  }
 
   override def whenSessionDataIsInsufficient(pensionsUserData: PensionsUserData, taxYear: Int): Result = redirectToSummaryPage(taxYear)
 
   override def sessionDataIsSufficient(pensionsUserData: PensionsUserData): Boolean = true
 
+
+  private def cleanUpReliefs(pensionsUserData: PensionsUserData): PensionsUserData = {
+    val reliefs = pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs
+    val filteredReliefs = if (reliefs.nonEmpty) reliefs.filter(relief => relief.isFinished) else reliefs
+    val updatedViewModel = pensionsUserData.pensions.paymentsIntoOverseasPensions.copy(reliefs = filteredReliefs)
+    val updatedPensionData = pensionsUserData.pensions.copy(paymentsIntoOverseasPensions = updatedViewModel)
+    val updatedUserData = pensionsUserData.copy(pensions = updatedPensionData)
+    pensionSessionService.createOrUpdateSessionData(updatedUserData)
+    updatedUserData
+  }
 }

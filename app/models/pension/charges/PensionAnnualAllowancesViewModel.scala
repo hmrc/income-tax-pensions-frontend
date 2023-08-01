@@ -16,20 +16,31 @@
 
 package models.pension.charges
 
+import models.pension.{AllPensionsData, PensionCYABaseModel}
 import play.api.libs.json.{Json, OFormat}
 import utils.EncryptedValue
 
-case class PensionAnnualAllowancesViewModel(
-                                            reducedAnnualAllowanceQuestion: Option[Boolean] = None,
+case class PensionAnnualAllowancesViewModel(reducedAnnualAllowanceQuestion: Option[Boolean] = None,
                                             moneyPurchaseAnnualAllowance: Option[Boolean] = None,
                                             taperedAnnualAllowance: Option[Boolean] = None,
                                             aboveAnnualAllowanceQuestion: Option[Boolean] = None,
                                             aboveAnnualAllowance: Option[BigDecimal] = None,
                                             pensionProvidePaidAnnualAllowanceQuestion: Option[Boolean] = None,
                                             taxPaidByPensionProvider: Option[BigDecimal] = None,
-                                            pensionSchemeTaxReferences: Option[Seq[String]] = None) {
+                                            pensionSchemeTaxReferences: Option[Seq[String]] = None) extends PensionCYABaseModel {
   def isEmpty: Boolean = this.productIterator.forall(_ == None)
-  
+
+  def isFinished: Boolean = {
+    reducedAnnualAllowanceQuestion.exists(x => !x || {
+      (moneyPurchaseAnnualAllowance.getOrElse(false) || taperedAnnualAllowance.getOrElse(false)) &&
+        aboveAnnualAllowanceQuestion.exists(x => !x || {
+          aboveAnnualAllowance.isDefined &&
+            pensionProvidePaidAnnualAllowanceQuestion.exists(x => !x || taxPaidByPensionProvider.isDefined) &&
+            pensionSchemeTaxReferences.exists(_.nonEmpty)
+        })
+    })
+  }
+
   def typeOfAllowance: Option[Seq[String]] = {
     (moneyPurchaseAnnualAllowance, taperedAnnualAllowance) match {
       case (Some(true), Some(true)) => Some(Seq("Money purchase", "Tapered"))
@@ -38,14 +49,54 @@ case class PensionAnnualAllowancesViewModel(
       case _ => None
     }
   }
+
+  def toPensionContributions: PensionContributions =
+    PensionContributions(
+      pensionSchemeTaxReference = pensionSchemeTaxReferences.getOrElse(Nil),
+      inExcessOfTheAnnualAllowance = aboveAnnualAllowance.getOrElse(BigDecimal(0.00)),
+      annualAllowanceTaxPaid = taxPaidByPensionProvider.getOrElse(BigDecimal(0.00))
+    )
+
+  def toPensionSavingsTaxCharges(prior: Option[AllPensionsData]): PensionSavingsTaxCharges = {
+    PensionSavingsTaxCharges(
+      pensionSchemeTaxReference = pensionSchemeTaxReferences,
+      lumpSumBenefitTakenInExcessOfLifetimeAllowance = prior.flatMap(_.pensionCharges).flatMap(_.pensionSavingsTaxCharges)
+        .flatMap(_.lumpSumBenefitTakenInExcessOfLifetimeAllowance),
+      benefitInExcessOfLifetimeAllowance = prior.flatMap(_.pensionCharges).flatMap(_.pensionSavingsTaxCharges).flatMap(_.benefitInExcessOfLifetimeAllowance),
+      isAnnualAllowanceReduced = reducedAnnualAllowanceQuestion,
+      taperedAnnualAllowance = taperedAnnualAllowance,
+      moneyPurchasedAllowance = moneyPurchaseAnnualAllowance
+    )
+  }
+  def toAnnualAllowanceChargesModel(prior: Option[AllPensionsData]): AnnualAllowancesPensionCharges = {
+    val pensionContributionsOpt =
+      if (pensionSchemeTaxReferences.getOrElse(Nil) == Nil && aboveAnnualAllowance.isEmpty && taxPaidByPensionProvider.isEmpty) {
+        None
+      } else {
+        Some(toPensionContributions)
+      }
+
+    val pensionSavingsTaxChargesOpt =
+      if (pensionSchemeTaxReferences.getOrElse(Nil) == Nil && reducedAnnualAllowanceQuestion.isEmpty &&
+        taperedAnnualAllowance.isEmpty && moneyPurchaseAnnualAllowance.isEmpty) {
+        None
+      } else {
+        Some(toPensionSavingsTaxCharges(prior))
+      }
+    AnnualAllowancesPensionCharges(pensionSavingsTaxChargesOpt, pensionContributionsOpt)
+  }
+
+  override def journeyIsNo: Boolean =
+    !reducedAnnualAllowanceQuestion.getOrElse(false)
+
+  override def journeyIsUnanswered: Boolean = this.productIterator.forall(_ == None)
 }
 
 object PensionAnnualAllowancesViewModel {
   implicit val format: OFormat[PensionAnnualAllowancesViewModel] = Json.format[PensionAnnualAllowancesViewModel]
 }
 
-case class EncryptedPensionAnnualAllowancesViewModel(
-                                                     reducedAnnualAllowanceQuestion: Option[EncryptedValue] = None,
+case class EncryptedPensionAnnualAllowancesViewModel(reducedAnnualAllowanceQuestion: Option[EncryptedValue] = None,
                                                      moneyPurchaseAnnualAllowance: Option[EncryptedValue] = None,
                                                      taperedAnnualAllowance: Option[EncryptedValue] = None,
                                                      aboveAnnualAllowanceQuestion: Option[EncryptedValue] = None,

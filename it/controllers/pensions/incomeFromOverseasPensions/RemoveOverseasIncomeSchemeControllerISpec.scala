@@ -143,7 +143,7 @@ class RemoveOverseasIncomeSchemeControllerISpec extends IntegrationTest with Bef
             dropPensionsDB()
             authoriseAgentOrIndividual()
             insertCyaData(aPensionsUserData)
-            urlPost(fullUrl(removeOverseasIncomeSchemeControllerUrl(taxYearEOY, Some(0))), body = "", follow = false,
+            urlPost(fullUrl(removeOverseasIncomeSchemeControllerUrl(taxYearEOY, Some(1))), body = "", follow = false,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
 

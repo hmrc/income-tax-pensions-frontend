@@ -298,7 +298,7 @@ class UkPensionSchemePaymentsControllerISpec extends IntegrationTest with ViewHe
     }
   }
 
-  "redirect to Pension CYA page when user selects 'no'" which {
+  "redirect to Pension CYA page and clear other data when user selects 'no' with prior data" which {
     lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.no)
     lazy val result: WSResponse = {
       dropPensionsDB()

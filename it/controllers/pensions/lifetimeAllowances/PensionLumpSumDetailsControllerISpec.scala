@@ -16,7 +16,7 @@
 
 package controllers.pensions.lifetimeAllowances
 
-import builders.PensionLifetimeAllowanceViewModelBuilder.{aPensionLifetimeAllowanceViewModel, aPensionLifetimeAllowancesEmptyViewModel}
+import builders.PensionLifetimeAllowancesViewModelBuilder.{aPensionLifetimeAllowancesViewModel, aPensionLifetimeAllowancesEmptyViewModel}
 import builders.PensionsUserDataBuilder.{aPensionsUserData, pensionsUserDataWithLifetimeAllowance}
 import builders.UserBuilder.aUserRequest
 import forms.TupleAmountForm
@@ -33,7 +33,7 @@ import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 class PensionLumpSumDetailsControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
   //scalastyle:off magic.number
-  
+
   val newAmount = 25
   val newAmount2 = 30
   val poundPrefixText = "£"
@@ -75,7 +75,7 @@ class PensionLumpSumDetailsControllerISpec extends IntegrationTest with ViewHelp
   }
 
 
-  def commonPageCheck(user : UserScenario[CommonExpectedResults, SpecificExpectedResults])(implicit document: () => Document): Unit = {
+  def commonPageCheck(user: UserScenario[CommonExpectedResults, SpecificExpectedResults])(implicit document: () => Document): Unit = {
     titleCheck(user.specificExpectedResults.get.expectedTitle, user.isWelsh)
     h1Check(user.specificExpectedResults.get.expectedHeading)
     captionCheck(user.commonExpectedResults.expectedCaption(taxYearEOY), Selectors.captionSelector)
@@ -187,18 +187,18 @@ class PensionLumpSumDetailsControllerISpec extends IntegrationTest with ViewHelp
     UserScenario(isWelsh = true, isAgent = false, CommonExpectedCY, Some(ExpectedIndividualCY)),
     UserScenario(isWelsh = true, isAgent = true, CommonExpectedCY, Some(ExpectedAgentCY))
   )
-  
+
   ".show" should {
     userScenarios.foreach { user =>
       import Selectors._
-      
+
       s"language is ${welshTest(user.isWelsh)} and request is from an ${agentTest(user.isAgent)}" should {
 
         "render Your pension lump sum details page with no prefilled value for tax paid and before tax" which {
 
           implicit lazy val result: WSResponse = {
             dropPensionsDB()
-            val pensionsViewModel = aPensionLifetimeAllowanceViewModel.copy(
+            val pensionsViewModel = aPensionLifetimeAllowancesViewModel.copy(
               pensionAsLumpSum = None
             )
             insertCyaData(pensionsUserDataWithLifetimeAllowance(pensionsViewModel))
@@ -223,7 +223,7 @@ class PensionLumpSumDetailsControllerISpec extends IntegrationTest with ViewHelp
         "render Your pension lump sum details page with prefilled value for before tax and tax paid" which {
           implicit lazy val result: WSResponse = {
             dropPensionsDB()
-            val pensionsViewModel = aPensionLifetimeAllowanceViewModel.copy(
+            val pensionsViewModel = aPensionLifetimeAllowancesViewModel.copy(
               pensionAsLumpSum = Some(LifetimeAllowance(Some(newAmount), Some(newAmount2)))
             )
             insertCyaData(pensionsUserDataWithLifetimeAllowance(pensionsViewModel))
@@ -247,7 +247,7 @@ class PensionLumpSumDetailsControllerISpec extends IntegrationTest with ViewHelp
         "render Your pension lump sum details page with prefilled value for before tax but not tax paid" which {
           implicit lazy val result: WSResponse = {
             dropPensionsDB()
-            val pensionsViewModel = aPensionLifetimeAllowanceViewModel.copy(
+            val pensionsViewModel = aPensionLifetimeAllowancesViewModel.copy(
               pensionAsLumpSum = Some(LifetimeAllowance(None, Some(newAmount2)))
             )
             insertCyaData(pensionsUserDataWithLifetimeAllowance(pensionsViewModel))
@@ -271,7 +271,7 @@ class PensionLumpSumDetailsControllerISpec extends IntegrationTest with ViewHelp
         "render Your pension lump sum details page with prefilled value for tax paid but not before tax" which {
           implicit lazy val result: WSResponse = {
             dropPensionsDB()
-            val pensionsViewModel = aPensionLifetimeAllowanceViewModel.copy(
+            val pensionsViewModel = aPensionLifetimeAllowancesViewModel.copy(
               pensionAsLumpSum = Some(LifetimeAllowance(Some(newAmount), None))
             )
             insertCyaData(pensionsUserDataWithLifetimeAllowance(pensionsViewModel))
@@ -452,7 +452,7 @@ class PensionLumpSumDetailsControllerISpec extends IntegrationTest with ViewHelp
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual()
-        insertCyaData(pensionsUserDataWithLifetimeAllowance(aPensionLifetimeAllowanceViewModel))
+        insertCyaData(pensionsUserDataWithLifetimeAllowance(aPensionLifetimeAllowancesViewModel))
 
         urlPost(fullUrl(pensionLumpSumDetails(taxYearEOY)), body = form,
           follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
@@ -478,12 +478,10 @@ class PensionLumpSumDetailsControllerISpec extends IntegrationTest with ViewHelp
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual()
-        insertCyaData(
-          pensionsUserDataWithLifetimeAllowance(aPensionLifetimeAllowancesEmptyViewModel.copy(
-            pensionAsLumpSumQuestion = Some(true),
-            pensionAsLumpSum = None
-          )))
-
+        insertCyaData(pensionsUserDataWithLifetimeAllowance(aPensionLifetimeAllowancesEmptyViewModel.copy(
+          aboveLifetimeAllowanceQuestion = Some(true),
+          pensionAsLumpSumQuestion = Some(true),
+          pensionAsLumpSum = None)))
         urlPost(fullUrl(pensionLumpSumDetails(taxYearEOY)), body = form,
           follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }

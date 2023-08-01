@@ -18,21 +18,31 @@ package controllers.pensions.transferIntoOverseasPensions
 
 
 import config.AppConfig
-import controllers.predicates.ActionsProvider
+import models.mongo.PensionsCYAModel
+import controllers.predicates.actions.ActionsProvider
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
+import services.redirects.TransfersIntoOverseasPensionsPages.SchemesPayingTransferChargesSummary
+import services.redirects.TransfersIntoOverseasPensionsRedirects.{cyaPageCall, journeyCheck}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.SessionHelper
 import views.html.pensions.transferIntoOverseasPensions.TransferChargeSummaryView
 
 import javax.inject.{Inject, Singleton}
+import scala.concurrent.Future
 
 @Singleton
 class TransferChargeSummaryController @Inject()(actionsProvider: ActionsProvider, view: TransferChargeSummaryView)
                                             (implicit mcc: MessagesControllerComponents, appConfig: AppConfig)
   extends FrontendController(mcc) with I18nSupport with SessionHelper {
 
-  def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) { implicit sessionUserData =>
-    Ok(view(taxYear, sessionUserData.pensionsUserData.pensions.transfersIntoOverseasPensions.transferPensionScheme))
+  def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionUserData =>
+      val checkRedirect = journeyCheck(SchemesPayingTransferChargesSummary, _: PensionsCYAModel, taxYear)
+      redirectBasedOnCurrentAnswers(taxYear, Some(sessionUserData.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) {
+        data => {
+          Future.successful(Ok(view(taxYear, data.pensions.transfersIntoOverseasPensions.transferPensionScheme)))
+        }
+    }
   }
 }

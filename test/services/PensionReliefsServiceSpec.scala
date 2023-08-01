@@ -32,7 +32,7 @@ class PensionReliefsServiceSpec extends UnitTest
   with MockPensionsConnector
   with ScalaFutures {
 
-  val pensionReliefsService = new PensionReliefsService(mockPensionUserDataRepository, mockPensionsConnector)
+  val pensionReliefsService = new PensionReliefsService(mockPensionUserDataRepository, mockPensionReliefsConnectorHelper)
 
   ".persistPaymentIntoPensionViewModel" should {
     "return Right(Unit) when model is saved successfully and payment into pensions cya is cleared from DB" in {
@@ -51,8 +51,8 @@ class PensionReliefsServiceSpec extends UnitTest
           overseasPensionSchemeContributions = None
         )
       )
-
       val userWithEmptySavePaymentsIntoPensionCya = aPensionsUserData.copy(pensions = aPensionsCYAEmptyModel)
+
       mockSavePensionReliefSessionData(nino, taxYear, model, Right(()))
       mockCreateOrUpdate(userWithEmptySavePaymentsIntoPensionCya, Right(()))
 
@@ -63,6 +63,7 @@ class PensionReliefsServiceSpec extends UnitTest
     "return Left(DataNotFound) when user can not be found in DB" in {
       mockFind(taxYear, aUser, Left(DataNotFound))
       val result = await(pensionReliefsService.persistPaymentIntoPensionViewModel(aUser, taxYear))
+
       result shouldBe Left(DataNotFound)
     }
 
@@ -105,8 +106,8 @@ class PensionReliefsServiceSpec extends UnitTest
           overseasPensionSchemeContributions = None
         )
       )
-
       val userWithEmptySavePaymentsIntoPensionCya = aPensionsUserData.copy(pensions = aPensionsCYAEmptyModel)
+
       mockSavePensionReliefSessionData(nino, taxYear, model, Right(()))
       mockCreateOrUpdate(userWithEmptySavePaymentsIntoPensionCya, Left(DataNotUpdated))
 

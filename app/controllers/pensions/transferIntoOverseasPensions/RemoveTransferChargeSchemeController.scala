@@ -17,7 +17,8 @@
 package controllers.pensions.transferIntoOverseasPensions
 
 import config.{AppConfig, ErrorHandler}
-import controllers.predicates.ActionsProvider
+import controllers.pensions.transferIntoOverseasPensions.routes._
+import controllers.predicates.actions.ActionsProvider
 import controllers.validatedIndex
 import models.mongo.{PensionsCYAModel, PensionsUserData}
 import models.pension.charges.TransferPensionScheme
@@ -25,10 +26,12 @@ import models.requests.UserSessionDataRequest
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
+import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
+import services.redirects.TransfersIntoOverseasPensionsPages.RemoveSchemePage
+import services.redirects.TransfersIntoOverseasPensionsRedirects.{cyaPageCall, journeyCheck}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.transferIntoOverseasPensions.RemoveTransferChargeSchemeView
-import routes._
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
@@ -42,11 +45,16 @@ class RemoveTransferChargeSchemeController @Inject()(actionsProvider: ActionsPro
   extends FrontendController(mcc) with I18nSupport with SessionHelper {
 
   def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionUserData =>
-    val transferChargeScheme = sessionUserData.pensionsUserData.pensions.transfersIntoOverseasPensions.transferPensionScheme
-    validatedIndex(index, transferChargeScheme.size).fold(Future.successful(Redirect(TransferChargeSummaryController.show(taxYear)))) {
+    val checkRedirect = journeyCheck(RemoveSchemePage, _: PensionsCYAModel, taxYear)
+    redirectBasedOnCurrentAnswers(taxYear, Some(sessionUserData.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) {
+      data =>
+      val transferChargeScheme = data.pensions.transfersIntoOverseasPensions.transferPensionScheme
+      validatedIndex(index, transferChargeScheme.size).fold(Future.successful(Redirect(TransferChargeSummaryController.show(taxYear)))) {
       i =>
-        transferChargeScheme(i).name.fold(Future.successful(Redirect(TransferChargeSummaryController.show(taxYear)))){
-          name => Future.successful(Ok(view(taxYear, name, index)))
+        transferChargeScheme(i).name.fold(Future.successful(Redirect(TransferChargeSummaryController.show(taxYear)))) {
+          name =>
+                Future.successful(Ok(view(taxYear, name, index)))
+            }
         }
     }
   }
@@ -57,7 +65,11 @@ class RemoveTransferChargeSchemeController @Inject()(actionsProvider: ActionsPro
       .fold(Future.successful(Redirect(TransferChargeSummaryController.show(taxYear)))) {
         i =>
           val updatedTransferScheme = transferChargeScheme.patch(i, Nil, 1)
-          updateSessionData(sessionUserData.pensionsUserData, updatedTransferScheme, taxYear)
+          val checkRedirect = journeyCheck(RemoveSchemePage, _: PensionsCYAModel, taxYear)
+          redirectBasedOnCurrentAnswers(taxYear, Some(sessionUserData.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) {
+            _ =>
+              updateSessionData(sessionUserData.pensionsUserData, updatedTransferScheme, taxYear)
+          }
       }
   }
 

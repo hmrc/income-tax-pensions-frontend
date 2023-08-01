@@ -24,12 +24,21 @@ import utils.EncryptableSyntax.EncryptableOps
 import utils.EncryptorInstances.booleanEncryptor
 import utils.{EncryptedValue, SecureGCMCipher}
 
-case class IncomeFromPensionsViewModel(
-                                       statePension: Option[StateBenefitViewModel] = None,
+case class IncomeFromPensionsViewModel(statePension: Option[StateBenefitViewModel] = None,
                                        statePensionLumpSum: Option[StateBenefitViewModel] = None,
                                        uKPensionIncomesQuestion: Option[Boolean] = None,
-                                       uKPensionIncomes:Seq[UkPensionIncomeViewModel] = Seq.empty) {
-  def isEmpty: Boolean = statePension.isEmpty && uKPensionIncomesQuestion.isEmpty && uKPensionIncomes.isEmpty
+                                       uKPensionIncomes: Seq[UkPensionIncomeViewModel] = Seq.empty) {
+
+  def isEmpty: Boolean =
+    statePension.isEmpty && statePensionLumpSum.isEmpty && uKPensionIncomesQuestion.isEmpty && uKPensionIncomes.isEmpty
+
+  def isFinishedStatePension: Boolean = statePension.exists(_.isFinished) && statePensionLumpSum.exists(_.isFinished)
+
+  def isFinishedUkPension: Boolean = uKPensionIncomesQuestion.exists(x => !x || (uKPensionIncomes.nonEmpty && uKPensionIncomes.forall(_.isFinished)))
+
+  def journeyIsNoStatePension: Boolean =
+    statePension.exists(!_.amountPaidQuestion.getOrElse(true)) && statePensionLumpSum.exists(!_.amountPaidQuestion.getOrElse(true))
+
   def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedIncomeFromPensionsViewModel =
     EncryptedIncomeFromPensionsViewModel(
       statePension = statePension.map(_.encrypted()),

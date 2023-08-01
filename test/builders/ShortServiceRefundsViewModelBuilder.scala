@@ -16,25 +16,17 @@
 
 package builders
 
+import builders.OverseasRefundPensionSchemeBuilder.{anOverseasRefundPensionSchemeWithUkRefundCharge, anOverseasRefundPensionSchemeWithoutUkRefundCharge}
 import models.pension.charges.{OverseasRefundPensionScheme, ShortServiceRefundsViewModel}
 
 object ShortServiceRefundsViewModelBuilder {
+
   val aShortServiceRefundsViewModel = ShortServiceRefundsViewModel(
     shortServiceRefund = Some(true),
     shortServiceRefundCharge = Some(1999.99),
     shortServiceRefundTaxPaid = Some(true),
     shortServiceRefundTaxPaidCharge = Some(1000.00),
-    refundPensionScheme = Seq(
-      OverseasRefundPensionScheme(
-        ukRefundCharge = Some(true),
-        name = Some("Overseas Refund Scheme Name"),
-        pensionSchemeTaxReference = None,
-        qualifyingRecognisedOverseasPensionScheme = Some("QOPS123456"),
-        providerAddress = Some("Scheme Address"),
-        alphaTwoCountryCode = Some("FR"),
-        alphaThreeCountryCode = Some("FRA")
-      )
-    )
+    refundPensionScheme = Seq(anOverseasRefundPensionSchemeWithUkRefundCharge, anOverseasRefundPensionSchemeWithoutUkRefundCharge)
   )
 
   val aShortServiceRefundsNonUkEmptySchemeViewModel = ShortServiceRefundsViewModel(
@@ -48,7 +40,16 @@ object ShortServiceRefundsViewModelBuilder {
       )
     )
   )
+
+  val aShortServiceRefundsEmptySchemeViewModel = ShortServiceRefundsViewModel(
+    shortServiceRefund = Some(true),
+    shortServiceRefundCharge = Some(1999.99),
+    shortServiceRefundTaxPaid = Some(true),
+    shortServiceRefundTaxPaidCharge = Some(1000.00),
+    refundPensionScheme = Seq.empty
+  )
+
   val emptyShortServiceRefundsViewModel = ShortServiceRefundsViewModel()
 
-  val minimalShortServiceRefundsViewModel = ShortServiceRefundsViewModel(shortServiceRefund = Option(false))
+  val minimalShortServiceRefundsViewModel = ShortServiceRefundsViewModel(shortServiceRefund = Some(false))
 }

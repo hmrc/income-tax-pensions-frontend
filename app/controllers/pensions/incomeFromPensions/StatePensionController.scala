@@ -17,7 +17,8 @@
 package controllers.pensions.incomeFromPensions
 
 import config.{AppConfig, ErrorHandler}
-import controllers.predicates.{ActionsProvider, InYearAction}
+import controllers.pensions.incomeFromPensions.routes.{StatePensionLumpSumController, StatePensionStartDateController}
+import controllers.predicates.actions.{ActionsProvider, InYearAction}
 import forms.FormsProvider
 import models.mongo.{PensionsCYAModel, PensionsUserData}
 import models.pension.statebenefits.{IncomeFromPensionsViewModel, StateBenefitViewModel}
@@ -46,9 +47,9 @@ class StatePensionController @Inject()(actionsProvider: ActionsProvider,
   def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit sessionData =>
       val maybeYesNo: Option[Boolean] =
-        sessionData.pensionsUserData.pensions.incomeFromPensions.statePension.flatMap(sP => sP.amountPaidQuestion)
+        sessionData.pensionsUserData.pensions.incomeFromPensions.statePension.flatMap(_.amountPaidQuestion)
       val maybeAmount: Option[BigDecimal] =
-        sessionData.pensionsUserData.pensions.incomeFromPensions.statePension.flatMap(sP => sP.amount)
+        sessionData.pensionsUserData.pensions.incomeFromPensions.statePension.flatMap(_.amount)
       (maybeYesNo, maybeAmount) match {
         case (Some(yesNo), amount) =>
           Future.successful(Ok(view(formsProvider.statePensionForm(sessionData.user).fill((yesNo, amount)), taxYear)))
@@ -59,17 +60,17 @@ class StatePensionController @Inject()(actionsProvider: ActionsProvider,
 
   def submit(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit sessionData =>
-    inYearAction.notInYear(taxYear) {
-      formsProvider.statePensionForm(sessionData.user).bindFromRequest().fold(
-        formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
-        yesNoAmount => {
-          (yesNoAmount._1, yesNoAmount._2) match {
-            case (true, amount) => updateSessionData(sessionData.pensionsUserData, yesNo = true, amount, taxYear)
-            case (false, _) => updateSessionData(sessionData.pensionsUserData, yesNo = false, None, taxYear)
+      inYearAction.notInYear(taxYear) {
+        formsProvider.statePensionForm(sessionData.user).bindFromRequest().fold(
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
+          yesNoAmount => {
+            (yesNoAmount._1, yesNoAmount._2) match {
+              case (true, amount) => updateSessionData(sessionData.pensionsUserData, yesNo = true, amount, taxYear)
+              case (false, _) => updateSessionData(sessionData.pensionsUserData, yesNo = false, None, taxYear)
+            }
           }
-        }
-      )
-    }
+        )
+      }
   }
 
   private def updateSessionData[T](pensionUserData: PensionsUserData,
@@ -77,20 +78,20 @@ class StatePensionController @Inject()(actionsProvider: ActionsProvider,
                                    amount: Option[BigDecimal],
                                    taxYear: Int)(implicit request: UserSessionDataRequest[T]): Future[Result] = {
     val viewModel: IncomeFromPensionsViewModel = pensionUserData.pensions.incomeFromPensions
-    val updateStatePension: StateBenefitViewModel = viewModel.statePension match {
-      case Some(value) => value.copy(amountPaidQuestion = Some(yesNo), amount = if (yesNo) amount else None)
-      case _ => StateBenefitViewModel(amountPaidQuestion = Some(yesNo), amount = if (yesNo) amount else None)
-    }
-    val updatedCyaModel: PensionsCYAModel =
-      pensionUserData.pensions.copy(incomeFromPensions = viewModel.copy(statePension = Some(updateStatePension)))
+    val updateStatePension: StateBenefitViewModel =
+      if (yesNo) viewModel.statePension match {
+        case Some(value) => value.copy(amountPaidQuestion = Some(true), amount = amount)
+        case _ => StateBenefitViewModel(amountPaidQuestion = Some(true), amount = amount)
+      }
+      else StateBenefitViewModel(amountPaidQuestion = Some(false))
+
+    val updatedCyaModel: PensionsCYAModel = pensionUserData.pensions.copy(
+      incomeFromPensions = viewModel.copy(statePension = Some(updateStatePension)))
     pensionSessionService.createOrUpdateSessionData(request.user,
       updatedCyaModel, taxYear, pensionUserData.isPriorSubmission)(errorHandler.internalServerError()) {
-      if (yesNo) {
-        Redirect(controllers.pensions.incomeFromPensions.routes.StatePensionStartDateController.show(taxYear))
-      } else {
-        Redirect(controllers.pensions.incomeFromPensions.routes.StatePensionLumpSumController.show(taxYear))
-        //todo redirect to Check your State Pension or Lump sum page
-      }
+      Redirect(
+        if (yesNo) StatePensionStartDateController.show(taxYear)
+        else StatePensionLumpSumController.show(taxYear))
     }
   }
 }

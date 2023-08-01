@@ -17,13 +17,17 @@
 package controllers.pensions.incomeFromPensions
 
 import config.AppConfig
-import controllers.pensions.incomeFromPensions.routes.UkPensionIncomeCYAController
-import controllers.predicates.AuthorisedAction
-import controllers.predicates.TaxYearAction.taxYearAction
+import controllers.pensions.routes.PensionsSummaryController
+import controllers.predicates.actions.AuthorisedAction
+import controllers.predicates.actions.TaxYearAction.taxYearAction
+import models.mongo.{PensionsCYAModel, PensionsUserData}
 import models.pension.statebenefits.UkPensionIncomeViewModel
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
+import services.redirects.IncomeFromOtherUkPensionsPages.UkPensionIncomePage
+import services.redirects.IncomeFromOtherUkPensionsRedirects.{cyaPageCall, journeyCheck}
+import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.pensions.incomeFromPensions.UkPensionIncomeSummary
 
@@ -41,9 +45,24 @@ class UkPensionIncomeSummaryController @Inject()(implicit val cc: MessagesContro
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
       case Some(data) =>
-        val incomeFromPensionList: Seq[UkPensionIncomeViewModel] = data.pensions.incomeFromPensions.uKPensionIncomes
-        Future(Ok(ukPensionIncomeSummary(taxYear, incomeFromPensionList)))
-      case None => Future(Redirect(UkPensionIncomeCYAController.show(taxYear)))
+        val updatedUserData = cleanUpSchemes(data)
+        val checkRedirect = journeyCheck(UkPensionIncomePage, _: PensionsCYAModel, taxYear)
+        redirectBasedOnCurrentAnswers(taxYear, Some(updatedUserData), cyaPageCall(taxYear))(checkRedirect) {
+          data =>
+            val incomeFromPensionList: Seq[UkPensionIncomeViewModel] = data.pensions.incomeFromPensions.uKPensionIncomes
+            Future(Ok(ukPensionIncomeSummary(taxYear, incomeFromPensionList)))
+        }
+      case None => Future(Redirect(PensionsSummaryController.show(taxYear)))
     }
+  }
+
+  private def cleanUpSchemes(pensionsUserData: PensionsUserData): PensionsUserData = {
+    val schemes = pensionsUserData.pensions.incomeFromPensions.uKPensionIncomes
+    val filteredSchemes = if (schemes.nonEmpty) schemes.filter(scheme => scheme.isFinished) else schemes
+    val updatedViewModel = pensionsUserData.pensions.incomeFromPensions.copy(uKPensionIncomes = filteredSchemes)
+    val updatedPensionData = pensionsUserData.pensions.copy(incomeFromPensions = updatedViewModel)
+    val updatedUserData = pensionsUserData.copy(pensions = updatedPensionData)
+    pensionSessionService.createOrUpdateSessionData(updatedUserData)
+    updatedUserData
   }
 }

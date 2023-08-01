@@ -17,16 +17,18 @@
 package controllers.pensions.lifetimeAllowances
 
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.lifetimeAllowances.routes.{LifeTimeAllowanceAnotherWayController, LifetimeAllowanceCYAController}
 import controllers.pensions.routes.PensionsSummaryController
-import controllers.predicates.AuthorisedAction
-import controllers.predicates.TaxYearAction.taxYearAction
+import controllers.predicates.actions.AuthorisedAction
+import controllers.predicates.actions.TaxYearAction.taxYearAction
 import forms.{FormUtils, FormsProvider}
+import models.mongo.PensionsCYAModel
 import models.pension.charges.LifetimeAllowance
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
-import services.redirects.LifetimeAllowancesRedirects.redirectForSchemeLoop
+import services.redirects.LifetimeAllowancesPages.LifetimeAllowanceAnotherWayAmountPage
+import services.redirects.LifetimeAllowancesRedirects.{cyaPageCall, journeyCheck, redirectForSchemeLoop}
+import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.lifetimeAllowances.PensionTakenAnotherWayAmountView
@@ -45,61 +47,58 @@ class PensionTakenAnotherWayAmountController @Inject()(implicit val mcc: Message
                                                        formsProvider: FormsProvider,
                                                        clock: Clock) extends FrontendController(mcc) with I18nSupport with SessionHelper with FormUtils {
 
-
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
       case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
       case Right(Some(data)) =>
-        val totalTaxOpt = data.pensions.pensionLifetimeAllowances.pensionPaidAnotherWay.flatMap(_.amount)
-        val taxPaidOpt = data.pensions.pensionLifetimeAllowances.pensionPaidAnotherWay.flatMap(_.taxPaid)
-        (totalTaxOpt, taxPaidOpt) match {
-          case (Some(totalTax), Some(taxPaid)) =>
-            Future.successful(Ok(pensionTakenAnotherWayAmountView(formsProvider.pensionTakenAnotherWayAmountForm(request.user.isAgent)
-              .fill((Some(totalTax), Some(taxPaid))), taxYear)))
-          case (Some(totalTax), None) =>
-            Future.successful(Ok(pensionTakenAnotherWayAmountView(formsProvider.pensionTakenAnotherWayAmountForm(request.user.isAgent)
-              .fill((Some(totalTax), None)), taxYear)))
-          case (None, Some(taxPaid)) =>
-            Future.successful(Ok(pensionTakenAnotherWayAmountView(formsProvider.pensionTakenAnotherWayAmountForm(request.user.isAgent)
-              .fill((None, Some(taxPaid))), taxYear)))
-          case (_, _) =>
-            Future.successful(Ok(pensionTakenAnotherWayAmountView(formsProvider.pensionTakenAnotherWayAmountForm(request.user.isAgent), taxYear)))
+        val checkRedirect = journeyCheck(LifetimeAllowanceAnotherWayAmountPage, _: PensionsCYAModel, taxYear)
+        redirectBasedOnCurrentAnswers(taxYear, Some(data), cyaPageCall(taxYear))(checkRedirect) {
+          data =>
+            val totalTaxOpt = data.pensions.pensionLifetimeAllowances.pensionPaidAnotherWay.flatMap(_.amount)
+            val taxPaidOpt = data.pensions.pensionLifetimeAllowances.pensionPaidAnotherWay.flatMap(_.taxPaid)
+            (totalTaxOpt, taxPaidOpt) match {
+              case (Some(totalTax), Some(taxPaid)) =>
+                Future.successful(Ok(pensionTakenAnotherWayAmountView(formsProvider.pensionTakenAnotherWayAmountForm(request.user.isAgent)
+                  .fill((Some(totalTax), Some(taxPaid))), taxYear)))
+              case (Some(totalTax), None) =>
+                Future.successful(Ok(pensionTakenAnotherWayAmountView(formsProvider.pensionTakenAnotherWayAmountForm(request.user.isAgent)
+                  .fill((Some(totalTax), None)), taxYear)))
+              case (None, Some(taxPaid)) =>
+                Future.successful(Ok(pensionTakenAnotherWayAmountView(formsProvider.pensionTakenAnotherWayAmountForm(request.user.isAgent)
+                  .fill((None, Some(taxPaid))), taxYear)))
+              case (_, _) =>
+                Future.successful(Ok(pensionTakenAnotherWayAmountView(formsProvider.pensionTakenAnotherWayAmountForm(request.user.isAgent), taxYear)))
+            }
         }
       case _ =>
-        Future.successful(Redirect(LifetimeAllowanceCYAController.show(taxYear)))
-
+        Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
     }
-
   }
-
 
   def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
     formsProvider.pensionTakenAnotherWayAmountForm(request.user.isAgent).bindFromRequest().fold(
       formWithErrors => Future.successful(BadRequest(pensionTakenAnotherWayAmountView(formWithErrors, taxYear))),
       amounts =>
         pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
-          case Left(_) =>
-            Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
-            
-          case Right(Some(optData)) =>
-            if (optData.pensions.pensionLifetimeAllowances.pensionPaidAnotherWayQuestion.contains(true)) {
-              val pensionsCYAModel = optData.pensions
-              val updatedCyaModel = pensionsCYAModel.copy(
-                pensionLifetimeAllowances = pensionsCYAModel.pensionLifetimeAllowances
-                  .copy( pensionPaidAnotherWay = if (amounts._1.isEmpty && amounts._2.isEmpty) None else Some(LifetimeAllowance(amounts._1, amounts._2))
-                ))
-              pensionSessionService.createOrUpdateSessionData(request.user,
-                updatedCyaModel, taxYear, optData.isPriorSubmission)(errorHandler.internalServerError()) {
-                Redirect(redirectForSchemeLoop(updatedCyaModel.pensionLifetimeAllowances.pensionSchemeTaxReferences.getOrElse(Seq()), taxYear))
-              }
-            } else {
-              Future.successful(Redirect(LifeTimeAllowanceAnotherWayController.show(taxYear)))
+          case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
+          case Right(Some(data)) =>
+
+            val checkRedirect = journeyCheck(LifetimeAllowanceAnotherWayAmountPage, _: PensionsCYAModel, taxYear)
+            redirectBasedOnCurrentAnswers(taxYear, Some(data), cyaPageCall(taxYear))(checkRedirect) {
+              data =>
+                val pensionsCYAModel = data.pensions
+                val updatedCyaModel = pensionsCYAModel.copy(
+                  pensionLifetimeAllowances = pensionsCYAModel.pensionLifetimeAllowances.copy(
+                    pensionPaidAnotherWay = if (amounts._1.isEmpty && amounts._2.isEmpty) None else Some(LifetimeAllowance(amounts._1, amounts._2))
+                  ))
+                pensionSessionService.createOrUpdateSessionData(request.user,
+                  updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
+                  Redirect(redirectForSchemeLoop(updatedCyaModel.pensionLifetimeAllowances.pensionSchemeTaxReferences.getOrElse(Seq()), taxYear))
+                }
             }
-          case _ =>
-            Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
+          case _ => Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
         }
     )
   }
-
 
 }

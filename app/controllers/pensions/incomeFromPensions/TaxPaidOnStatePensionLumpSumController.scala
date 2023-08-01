@@ -18,17 +18,17 @@ package controllers.pensions.incomeFromPensions
 
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.incomeFromPensions.routes.StatePensionLumpSumStartDateController
-import controllers.predicates.ActionsProvider
+import controllers.predicates.actions.ActionsProvider
 import forms.FormsProvider
 import models.mongo.PensionsUserData
 import models.pension.statebenefits.{IncomeFromPensionsViewModel, StateBenefitViewModel}
 import models.requests.UserSessionDataRequest
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.PensionSessionService
-import services.redirects.IncomeFromPensionsPages.{StatePensionLumpSumPage, TaxOnStatePensionLumpSumPage}
-import services.redirects.IncomeFromPensionsRedirects.{cyaPageCall, journeyCheck}
+import services.redirects.StatePensionPages.TaxOnStatePensionLumpSumPage
 import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
+import services.redirects.StatePensionRedirects.{cyaPageCall, journeyCheck}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.incomeFromPensions.TaxPaidOnStatePensionLumpSumView
@@ -37,16 +37,13 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
 @Singleton
-class TaxPaidOnStatePensionLumpSumController @Inject()(
-                                                        actionsProvider: ActionsProvider,
-                                                        pensionSessionService: PensionSessionService,
-                                                        view: TaxPaidOnStatePensionLumpSumView,
-                                                        errorHandler: ErrorHandler,
-                                                        formsProvider: FormsProvider
-                                                      )
+class TaxPaidOnStatePensionLumpSumController @Inject()(actionsProvider: ActionsProvider,
+                                                       pensionSessionService: PensionSessionService,
+                                                       view: TaxPaidOnStatePensionLumpSumView,
+                                                       errorHandler: ErrorHandler,
+                                                       formsProvider: FormsProvider)
                                                       (implicit val mcc: MessagesControllerComponents,
-                                                       appConfig: AppConfig,
-                                                       clock: Clock)
+                                                       appConfig: AppConfig, clock: Clock)
   extends FrontendController(mcc) with SessionHelper with I18nSupport {
 
   def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
@@ -57,12 +54,13 @@ class TaxPaidOnStatePensionLumpSumController @Inject()(
         val taxPaid = data.pensions.incomeFromPensions.statePensionLumpSum.flatMap(_.taxPaid)
 
         (taxPaidQuestion, taxPaid) match {
-          case (Some(yesNo), taxPaid) => Future.successful(
-            Ok(view(formsProvider.taxPaidOnStatePensionLumpSum(sessionData.user).fill((yesNo, taxPaid)), taxYear)))
-          case _ => Future.successful(Ok(view(formsProvider.taxPaidOnStatePensionLumpSum(sessionData.user), taxYear)))
+          case (Some(yesNo), taxPaid) =>
+            Future.successful(Ok(view(formsProvider.taxPaidOnStatePensionLumpSum(sessionData.user).fill((yesNo, taxPaid)), taxYear)))
+          case _ =>
+            Future.successful(Ok(view(formsProvider.taxPaidOnStatePensionLumpSum(sessionData.user), taxYear)))
         }
       }
-    }
+  }
 
   def submit(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit sessionData =>
@@ -83,7 +81,7 @@ class TaxPaidOnStatePensionLumpSumController @Inject()(
   private def updateSessionData[T](pensionUserData: PensionsUserData,
                                    yesNo: Boolean,
                                    taxPaid: Option[BigDecimal],
-                                   taxYear: Int)(implicit request: UserSessionDataRequest[T]) = {
+                                   taxYear: Int)(implicit request: UserSessionDataRequest[T]): Future[Result] = {
     val viewModel: IncomeFromPensionsViewModel = pensionUserData.pensions.incomeFromPensions
     val updateStatePensionLumpSum: StateBenefitViewModel = viewModel.statePensionLumpSum match {
       case Some(value) => value.copy(taxPaidQuestion = Some(yesNo), taxPaid = if (yesNo) taxPaid else None)
@@ -91,10 +89,7 @@ class TaxPaidOnStatePensionLumpSumController @Inject()(
     }
 
     val updatedCyaModel = pensionUserData.pensions.copy(
-      incomeFromPensions = viewModel.copy(
-        statePensionLumpSum = Some(updateStatePensionLumpSum)
-      )
-    )
+      incomeFromPensions = viewModel.copy(statePensionLumpSum = Some(updateStatePensionLumpSum)))
 
     pensionSessionService.createOrUpdateSessionData(request.user,
       updatedCyaModel, taxYear, pensionUserData.isPriorSubmission)(errorHandler.internalServerError()) {

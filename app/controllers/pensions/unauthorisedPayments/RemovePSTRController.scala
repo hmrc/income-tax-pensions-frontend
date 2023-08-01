@@ -18,8 +18,9 @@ package controllers.pensions.unauthorisedPayments
 
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.unauthorisedPayments.routes.UkPensionSchemeDetailsController
-import controllers.predicates.AuthorisedAction
-import controllers.predicates.TaxYearAction.taxYearAction
+import controllers.predicates.actions.AuthorisedAction
+import controllers.predicates.actions.TaxYearAction.taxYearAction
+import models.mongo.PensionsCYAModel
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
@@ -48,7 +49,7 @@ class RemovePSTRController @Inject()(implicit val mcc: MessagesControllerCompone
       case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
 
       case Right(optData) =>
-        val checkRedirect = journeyCheck(RemovePSTRPage, _, taxYear)
+        val checkRedirect = journeyCheck(RemovePSTRPage, _: PensionsCYAModel, taxYear, pensionSchemeIndex)
         redirectBasedOnCurrentAnswers(taxYear, optData, cyaPageCall(taxYear))(checkRedirect) { data =>
 
           val pstrList: Seq[String] = data.pensions.unauthorisedPayments.pensionSchemeTaxReference.getOrElse(Seq.empty)
@@ -66,7 +67,7 @@ class RemovePSTRController @Inject()(implicit val mcc: MessagesControllerCompone
     pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
       case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
       case Right(optData) =>
-        val checkRedirect = journeyCheck(RemovePSTRPage, _, taxYear)
+        val checkRedirect = journeyCheck(RemovePSTRPage, _: PensionsCYAModel, taxYear, pensionSchemeIndex)
         redirectBasedOnCurrentAnswers(taxYear, optData, cyaPageCall(taxYear))(checkRedirect) { data =>
 
           val pensionsCYAModel = data.pensions

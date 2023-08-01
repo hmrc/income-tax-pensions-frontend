@@ -16,16 +16,16 @@
 
 package builders
 
-import builders.LifetimeAllowanceBuilder.anLifetimeAllowance
+import builders.LifetimeAllowanceBuilder.aLifetimeAllowance2
 import models.pension.charges.PensionSavingsTaxCharges
 
 object PensionSavingTaxChargesBuilder {
 
-  val anPensionSavngTaxCharges: PensionSavingsTaxCharges = PensionSavingsTaxCharges(
-    lumpSumBenefitTakenInExcessOfLifetimeAllowance = Some(anLifetimeAllowance),
-    benefitInExcessOfLifetimeAllowance = Some(anLifetimeAllowance),
+  val aPensionSavingsTaxCharges: PensionSavingsTaxCharges = PensionSavingsTaxCharges(
+    lumpSumBenefitTakenInExcessOfLifetimeAllowance = Some(aLifetimeAllowance2),
+    benefitInExcessOfLifetimeAllowance = Some(aLifetimeAllowance2),
     pensionSchemeTaxReference = Some(Seq("00123456RA", "00123456RB")),
-    isAnnualAllowanceReduced = true,
+    isAnnualAllowanceReduced = Some(true),
     taperedAnnualAllowance = Some(true),
     moneyPurchasedAllowance = Some(true)
   )

@@ -18,14 +18,17 @@ package controllers.pensions.incomeFromPensions
 
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.incomeFromPensions.routes.{IncomeFromPensionsSummaryController, UkPensionSchemePaymentsController}
-import controllers.predicates.AuthorisedAction
-import controllers.predicates.TaxYearAction.taxYearAction
+import controllers.predicates.actions.AuthorisedAction
+import controllers.predicates.actions.TaxYearAction.taxYearAction
 import forms.FormUtils
 import models.mongo.PensionsCYAModel
 import models.pension.AllPensionsData
 import models.pension.AllPensionsData.generateCyaFromPrior
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.redirects.IncomeFromOtherUkPensionsPages.CheckUkPensionIncomeCYAPage
+import services.redirects.IncomeFromOtherUkPensionsRedirects.{cyaPageCall, journeyCheck}
+import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
 import services.{EmploymentPensionService, PensionSessionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
@@ -49,8 +52,10 @@ class UkPensionIncomeCYAController @Inject()(implicit val mcc: MessagesControlle
     pensionSessionService.getAndHandle(taxYear, request.user) { (cya, prior) =>
       (cya, prior) match {
         case (Some(cyaData), _) =>
-          Future.successful(Ok(view(taxYear, cyaData.pensions.incomeFromPensions)))
-
+          val checkRedirect = journeyCheck(CheckUkPensionIncomeCYAPage, _: PensionsCYAModel, taxYear)
+          redirectBasedOnCurrentAnswers(taxYear, Some(cyaData), cyaPageCall(taxYear))(checkRedirect) { _ =>
+            Future.successful(Ok(view(taxYear, cyaData.pensions.incomeFromPensions)))
+          }
         case (None, Some(priorData)) =>
           val cyaModel = generateCyaFromPrior(priorData)
           pensionSessionService.createOrUpdateSessionData(request.user, cyaModel, taxYear, isPriorSubmission = false)(
@@ -67,13 +72,17 @@ class UkPensionIncomeCYAController @Inject()(implicit val mcc: MessagesControlle
       cya.fold(
         Future.successful(Redirect(appConfig.incomeTaxSubmissionOverviewUrl(taxYear)))
       ) { model =>
-        if (sessionDataDifferentThanPriorData(model.pensions, prior)) {
-          employmentPensionService.persistUkPensionIncomeViewModel(request.user, taxYear).map {
-            case Left(_) => errorHandler.internalServerError()
-            case Right(_) => Redirect(IncomeFromPensionsSummaryController.show(taxYear))
-          }
-        } else {
-          Future.successful(Redirect(IncomeFromPensionsSummaryController.show(taxYear)))
+        val checkRedirect = journeyCheck(CheckUkPensionIncomeCYAPage, _: PensionsCYAModel, taxYear)
+        redirectBasedOnCurrentAnswers(taxYear, Some(model), cyaPageCall(taxYear))(checkRedirect) {
+          data =>
+            if (sessionDataDifferentThanPriorData(data.pensions, prior)) {
+              employmentPensionService.persistUkPensionIncomeViewModel(request.user, taxYear).map {
+                case Left(_) => errorHandler.internalServerError()
+                case Right(_) => Redirect(IncomeFromPensionsSummaryController.show(taxYear))
+              }
+            } else {
+              Future.successful(Redirect(IncomeFromPensionsSummaryController.show(taxYear)))
+            }
         }
       }
     }

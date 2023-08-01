@@ -359,7 +359,7 @@ class ForeignTaxCreditReliefControllerISpec extends YesNoControllerSpec("/overse
       overseasIncomePensionSchemes = Seq(
         PensionScheme(
           alphaTwoCode = Some("FR"),
-          alphaThreeCode = Some("FRA"),
+          alphaThreeCode = None,
           pensionPaymentAmount = Some(1999.99),
           pensionPaymentTaxPaid = Some(1999.99),
           specialWithholdingTaxQuestion = Some(true),

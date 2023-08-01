@@ -17,38 +17,44 @@
 package controllers.pensions.shortServiceRefunds
 
 import config.{AppConfig, ErrorHandler}
-import controllers.predicates.ActionsProvider
+import controllers.pensions.shortServiceRefunds.routes.{NonUkTaxRefundsController, ShortServiceRefundsCYAController}
+import controllers.predicates.actions.ActionsProvider
 import forms.FormsProvider
-import models.mongo.{PensionsCYAModel, PensionsUserData}
+import models.mongo.{DatabaseError, PensionsCYAModel, PensionsUserData}
+import models.pension.charges.OverseasRefundPensionScheme
 import models.requests.UserSessionDataRequest
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{PensionSessionService, ShortServiceRefundsService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.shortServiceRefunds.TaxableRefundAmountView
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class TaxableRefundAmountController@Inject()(actionsProvider: ActionsProvider,
-                                             pensionSessionService: PensionSessionService,
-                                             shortServiceRefundsService: ShortServiceRefundsService,
-                                             view: TaxableRefundAmountView,
-                                             formsProvider: FormsProvider,
-                                             errorHandler: ErrorHandler)
-                                            (implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock)
+class TaxableRefundAmountController @Inject()(actionsProvider: ActionsProvider,
+                                              pensionSessionService: PensionSessionService,
+                                              shortServiceRefundsService: ShortServiceRefundsService,
+                                              view: TaxableRefundAmountView,
+                                              formsProvider: FormsProvider,
+                                              errorHandler: ErrorHandler)
+                                             (implicit val mcc: MessagesControllerComponents, appConfig: AppConfig,
+                                              clock: Clock, ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport with SessionHelper {
 
   def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit sessionData =>
-      val shortServiceRefundCharge: Option[BigDecimal] = sessionData.pensionsUserData.pensions.shortServiceRefunds.shortServiceRefundCharge
-      val refundOpt: Option[Boolean] = sessionData.pensionsUserData.pensions.shortServiceRefunds.shortServiceRefund
-      (refundOpt, shortServiceRefundCharge) match {
-        case (Some(a), amount) => Future.successful(Ok(view(formsProvider.shortServiceTaxableRefundForm(sessionData.user).fill((a, amount)), taxYear)))
-        case _ => Future.successful(Ok(view(formsProvider.shortServiceTaxableRefundForm(sessionData.user), taxYear)))
-      }
+      cleanUpSchemes(sessionData.pensionsUserData).map({
+        case Right(_) =>
+          val shortServiceRefundCharge: Option[BigDecimal] = sessionData.pensionsUserData.pensions.shortServiceRefunds.shortServiceRefundCharge
+          val refundOpt: Option[Boolean] = sessionData.pensionsUserData.pensions.shortServiceRefunds.shortServiceRefund
+          (refundOpt, shortServiceRefundCharge) match {
+            case (Some(a), amount) => Ok(view(formsProvider.shortServiceTaxableRefundForm(sessionData.user).fill((a, amount)), taxYear))
+            case _ => Ok(view(formsProvider.shortServiceTaxableRefundForm(sessionData.user), taxYear))
+          }
+      })
   }
 
   def submit(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
@@ -67,18 +73,28 @@ class TaxableRefundAmountController@Inject()(actionsProvider: ActionsProvider,
   private def updateSessionData[T](pensionUserData: PensionsUserData,
                                    yesNo: Boolean,
                                    amount: Option[BigDecimal],
-                                   taxYear: Int)(implicit request: UserSessionDataRequest[T]) = {
+                                   taxYear: Int)(implicit request: UserSessionDataRequest[T]): Future[Result] = {
 
     val updatedCyaModel: PensionsCYAModel = shortServiceRefundsService.updateCyaWithShortServiceRefundGatewayQuestion(
-       pensionUserData, yesNo, amount)
+      pensionUserData, yesNo, amount)
 
     pensionSessionService.createOrUpdateSessionData(request.user,
       updatedCyaModel, taxYear, pensionUserData.isPriorSubmission)(errorHandler.internalServerError()) {
       if (yesNo) {
-        Redirect(controllers.pensions.shortServiceRefunds.routes.NonUkTaxRefundsController.show(taxYear))
+        Redirect(NonUkTaxRefundsController.show(taxYear))
       } else {
-        Redirect(controllers.pensions.shortServiceRefunds.routes.ShortServiceRefundsCYAController.show(taxYear))
+        Redirect(ShortServiceRefundsCYAController.show(taxYear))
       }
     }
+  }
+
+  private def cleanUpSchemes(pensionsUserData: PensionsUserData)
+                            (implicit ec: ExecutionContext): Future[Either[DatabaseError, Seq[OverseasRefundPensionScheme]]] = {
+    val schemes = pensionsUserData.pensions.shortServiceRefunds.refundPensionScheme
+    val filteredSchemes = if (schemes.nonEmpty) schemes.filter(scheme => scheme.isFinished) else schemes
+    val updatedViewModel = pensionsUserData.pensions.shortServiceRefunds.copy(refundPensionScheme = filteredSchemes)
+    val updatedPensionData = pensionsUserData.pensions.copy(shortServiceRefunds = updatedViewModel)
+    val updatedUserData = pensionsUserData.copy(pensions = updatedPensionData)
+    pensionSessionService.createOrUpdateSessionData(updatedUserData).map(_.map(_ => filteredSchemes))
   }
 }

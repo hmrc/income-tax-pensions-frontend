@@ -17,13 +17,16 @@
 package controllers.pensions.incomeFromPensions
 
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.incomeFromPensions.routes.{UkPensionIncomeCYAController, UkPensionIncomeSummaryController}
-import controllers.predicates.AuthorisedAction
-import controllers.predicates.TaxYearAction.taxYearAction
+import controllers.pensions.incomeFromPensions.routes.UkPensionIncomeSummaryController
+import controllers.pensions.routes.PensionsSummaryController
+import controllers.predicates.actions.AuthorisedAction
+import controllers.predicates.actions.TaxYearAction.taxYearAction
 import models.pension.statebenefits.UkPensionIncomeViewModel
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
+import services.redirects.IncomeFromOtherUkPensionsPages.RemovePensionIncomePage
+import services.redirects.IncomeFromOtherUkPensionsRedirects.indexCheckThenJourneyCheck
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.incomeFromPensions.RemovePensionSchemeView
@@ -44,53 +47,33 @@ class RemovePensionSchemeController @Inject()(implicit val mcc: MessagesControll
   def show(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
       case Some(data) =>
-        val pensionIncomesList: Seq[UkPensionIncomeViewModel] = data.pensions.incomeFromPensions.uKPensionIncomes
-
-        checkIndexScheme(pensionSchemeIndex, pensionIncomesList) match {
-          case Some(scheme) =>
+        indexCheckThenJourneyCheck(data, pensionSchemeIndex, RemovePensionIncomePage, taxYear) {
+          data =>
+            val scheme: UkPensionIncomeViewModel = data.pensions.incomeFromPensions.uKPensionIncomes(pensionSchemeIndex.getOrElse(0))
             Future.successful(Ok(removePensionSchemeView(taxYear, scheme.pensionSchemeName.getOrElse(""), pensionSchemeIndex)))
-          case _ =>
-            Future.successful(Redirect(UkPensionIncomeSummaryController.show(taxYear)))
         }
-      case _ =>
-        Future.successful(Redirect(UkPensionIncomeCYAController.show(taxYear)))
+      case _ => Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
     }
   }
 
   def submit(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = authAction.async { implicit request =>
     pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
       case Some(data) =>
-        val pensionsCYAModel = data.pensions
-        val viewModel = pensionsCYAModel.incomeFromPensions
-        val pensionIncomesList: Seq[UkPensionIncomeViewModel] = viewModel.uKPensionIncomes
+        indexCheckThenJourneyCheck(data, pensionSchemeIndex, RemovePensionIncomePage, taxYear) {
+          data =>
+            val pensionsCYAModel = data.pensions
+            val viewModel = pensionsCYAModel.incomeFromPensions
+            val pensionIncomesList: Seq[UkPensionIncomeViewModel] = viewModel.uKPensionIncomes
 
-        checkIndexScheme(pensionSchemeIndex, pensionIncomesList) match {
-          case Some(scheme) =>
-
-            val updatedPensionIncomesList: Seq[UkPensionIncomeViewModel] =
-              pensionIncomesList.patch(pensionSchemeIndex.get, Nil, 1)
-
+            val updatedPensionIncomesList: Seq[UkPensionIncomeViewModel] = pensionIncomesList.patch(pensionSchemeIndex.get, Nil, 1)
             val updatedCyaModel = pensionsCYAModel.copy(incomeFromPensions = viewModel.copy(uKPensionIncomes = updatedPensionIncomesList))
 
-            //TODO - call API to remove pension scheme
             pensionSessionService.createOrUpdateSessionData(request.user,
               updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
               Redirect(UkPensionIncomeSummaryController.show(taxYear))
             }
-          case _ =>
-            Future.successful(Redirect(UkPensionIncomeSummaryController.show(taxYear)))
         }
-      case _ =>
-        Future.successful(Redirect(UkPensionIncomeCYAController.show(taxYear)))
-    }
-  }
-
-  private def checkIndexScheme(pensionSchemeIndex: Option[Int], pensionSchemesList: Seq[UkPensionIncomeViewModel]): Option[UkPensionIncomeViewModel] = {
-    pensionSchemeIndex match {
-      case Some(index) if pensionSchemesList.size > index =>
-        Some(pensionSchemesList(index))
-      case _ =>
-        None
+      case _ => Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
     }
   }
 

@@ -26,21 +26,27 @@ import utils.EncryptorInstances.{bigDecimalEncryptor, booleanEncryptor, stringEn
 import utils.{EncryptedValue, SecureGCMCipher}
 
 case class TransfersIntoOverseasPensionsViewModel(transferPensionSavings: Option[Boolean] = None,
-                                                   overseasTransferCharge: Option[Boolean] = None,
-                                                   overseasTransferChargeAmount: Option[BigDecimal] = None,
-                                                   pensionSchemeTransferCharge: Option[Boolean] = None,
-                                                   pensionSchemeTransferChargeAmount: Option[BigDecimal] = None,
-                                                   transferPensionScheme: Seq[TransferPensionScheme] = Nil) extends PensionCYABaseModel {
+                                                  overseasTransferCharge: Option[Boolean] = None,
+                                                  overseasTransferChargeAmount: Option[BigDecimal] = None,
+                                                  pensionSchemeTransferCharge: Option[Boolean] = None,
+                                                  pensionSchemeTransferChargeAmount: Option[BigDecimal] = None,
+                                                  transferPensionScheme: Seq[TransferPensionScheme] = Nil) extends PensionCYABaseModel {
+
   def isEmpty: Boolean = transferPensionSavings.isEmpty && overseasTransferCharge.isEmpty && overseasTransferChargeAmount.isEmpty &&
     pensionSchemeTransferCharge.isEmpty && pensionSchemeTransferChargeAmount.isEmpty && transferPensionScheme.isEmpty
 
   def isFinished: Boolean = {
-    transferPensionSavings.filter(x => x)
-      .flatMap(_ => overseasTransferCharge.filter(x => x))
-      .flatMap(_ => pensionSchemeTransferCharge.filter(x => x))
-      .map(_ => overseasTransferChargeAmount.isDefined)
-      .map(_ => pensionSchemeTransferChargeAmount.isDefined)
-      .exists(_ => transferPensionScheme.nonEmpty)
+    transferPensionSavings.exists(x =>
+      if (x)
+        overseasTransferCharge.exists(x => if (!x) true else
+          overseasTransferChargeAmount.isDefined &&
+            pensionSchemeTransferCharge.exists(x => if (!x) true else
+              pensionSchemeTransferChargeAmount.isDefined &&
+                transferPensionScheme.nonEmpty && transferPensionScheme.forall(tps => tps.isFinished)
+            )
+        )
+      else true
+    )
   }
 
   def toTransfersIOP: PensionSchemeOverseasTransfers = PensionSchemeOverseasTransfers(
@@ -55,8 +61,9 @@ case class TransfersIntoOverseasPensionsViewModel(transferPensionSavings: Option
         providerName = x.name.getOrElse(""),
         providerAddress = x.providerAddress.getOrElse(""),
         providerCountryCode = x.alphaThreeCountryCode.getOrElse(""),
-        qualifyingRecognisedOverseasPensionScheme = if (x.qops.nonEmpty) Some(Seq(x.qops.get)) else None,
-        pensionSchemeTaxReference = if (x.pstr.nonEmpty) Some(Seq(x.pstr.get)) else None
+        qualifyingRecognisedOverseasPensionScheme = if (x.qops.nonEmpty) Some(Seq(s"Q${x.qops.get}")) else None,
+        pensionSchemeTaxReference = if (x.pstr.nonEmpty && x.alphaThreeCountryCode.isEmpty) Some(Seq(x.pstr.get)) else None
+        //TODO: remove above alpha check when field get cleared out when changing between PSTR and QOPS
       )
     )
   }
@@ -103,14 +110,23 @@ object EncryptedTransfersIntoOverseasPensionsViewModel {
   implicit val format: OFormat[EncryptedTransfersIntoOverseasPensionsViewModel] = Json.format[EncryptedTransfersIntoOverseasPensionsViewModel]
 }
 
-case class TransferPensionScheme(
-                                  ukTransferCharge: Option[Boolean] = None,
+case class TransferPensionScheme(ukTransferCharge: Option[Boolean] = None,
                                   name: Option[String] = None,
                                   pstr: Option[String] = None,
                                   qops: Option[String] = None,
                                   providerAddress: Option[String] = None,
                                   alphaTwoCountryCode: Option[String] = None,
                                   alphaThreeCountryCode: Option[String] = None) {
+
+  def isFinished: Boolean = {
+    this.name.isDefined && this.providerAddress.isDefined &&
+      this.ukTransferCharge.exists(x =>
+        if (x){
+          this.pstr.isDefined
+        }else{
+          this.qops.isDefined && this.alphaThreeCountryCode.isDefined
+        })
+  }
 
   def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedTransferPensionScheme = {
     EncryptedTransferPensionScheme(

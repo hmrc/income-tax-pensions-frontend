@@ -35,15 +35,15 @@ class PensionOverseasPaymentServiceSpec extends UnitTest
   with MockIncomeTaxUserDataConnector
   with ScalaFutures {
 
-  val overseasPaymentPensionService = new PensionOverseasPaymentService(mockPensionUserDataRepository, mockPensionIncomeConnectorHelper, mockPensionsConnector, mockUserDataConnector)
+  val overseasPaymentPensionService = new PensionOverseasPaymentService(mockPensionUserDataRepository, mockPensionIncomeConnectorHelper, mockPensionReliefsConnectorHelper, mockUserDataConnector)
 
   ".savePaymentsFromOverseasPensionsViewModel" should {
     "return Right(Unit) when model is saved successfully and payment from overseas pensions cya is cleared from DB" in {
       val allPensionsData = anAllPensionsData
       val sessionCya = aPensionsCYAEmptyModel.copy(paymentsIntoOverseasPensions = aPensionsUserData.pensions.paymentsIntoOverseasPensions)
       val sessionUserData = aPensionsUserData.copy(pensions = sessionCya)
-
       val priorUserData = IncomeTaxUserData(Some(allPensionsData))
+
       mockFind(taxYear, aUser, Right(Option(sessionUserData)))
       mockFind(aUser.nino, taxYear, priorUserData)
 
@@ -52,7 +52,6 @@ class PensionOverseasPaymentServiceSpec extends UnitTest
         foreignPension = priorUserData.pensions.flatMap(_.pensionIncome.flatMap(_.foreignPension)).map(ForeignPensionContainer),
         overseasPensionContribution = Some(OverseasPensionContributionContainer(sessionUserData.pensions.paymentsIntoOverseasPensions.toPensionContributions))
       )
-
       val model2 = CreateOrUpdatePensionReliefsModel(
         pensionReliefs = Reliefs(
           regularPensionContributions = sessionUserData.pensions.paymentsIntoPension.totalRASPaymentsAndTaxRelief,
@@ -62,8 +61,9 @@ class PensionOverseasPaymentServiceSpec extends UnitTest
           overseasPensionSchemeContributions = sessionUserData.pensions.paymentsIntoOverseasPensions.paymentsIntoOverseasPensionsAmount
         )
       )
-
       val userWithEmptySavePaymentsIntoOverseasCya = aPensionsUserData.copy(pensions = aPensionsCYAEmptyModel)
+
+      mockDeletePensionReliefSessionData(nino, taxYear, Right(()))
       mockSavePensionIncomeSessionData(nino, taxYear, model1, Right(()))
       mockSavePensionReliefSessionData(nino, taxYear, model2, Right(()))
       mockCreateOrUpdate(userWithEmptySavePaymentsIntoOverseasCya, Right(()))
@@ -71,6 +71,7 @@ class PensionOverseasPaymentServiceSpec extends UnitTest
       val result = await(overseasPaymentPensionService.savePaymentsFromOverseasPensionsViewModel(aUser, taxYear))
       result shouldBe Right(())
     }
+
     "return Left(DataNotFound) when user can not be found in DB" in {
       mockFind(taxYear, aUser, Left(DataNotFound))
       val result = await(overseasPaymentPensionService.savePaymentsFromOverseasPensionsViewModel(aUser, taxYear))
@@ -81,8 +82,8 @@ class PensionOverseasPaymentServiceSpec extends UnitTest
       val allPensionsData = anAllPensionsData
       val sessionCya = aPensionsCYAEmptyModel.copy(paymentsIntoOverseasPensions = aPensionsUserData.pensions.paymentsIntoOverseasPensions)
       val sessionUserData = aPensionsUserData.copy(pensions = sessionCya)
-
       val priorUserData = IncomeTaxUserData(Some(allPensionsData))
+
       mockFind(taxYear, aUser, Right(Option(sessionUserData)))
       mockFind(aUser.nino, taxYear, priorUserData)
 
@@ -91,7 +92,6 @@ class PensionOverseasPaymentServiceSpec extends UnitTest
         foreignPension = priorUserData.pensions.flatMap(_.pensionIncome.flatMap(_.foreignPension)).map(ForeignPensionContainer),
         overseasPensionContribution = Some(OverseasPensionContributionContainer(sessionUserData.pensions.paymentsIntoOverseasPensions.toPensionContributions))
       )
-
       val model2 = CreateOrUpdatePensionReliefsModel(
         pensionReliefs = Reliefs(
           regularPensionContributions = sessionUserData.pensions.paymentsIntoPension.totalRASPaymentsAndTaxRelief,
@@ -101,6 +101,8 @@ class PensionOverseasPaymentServiceSpec extends UnitTest
           overseasPensionSchemeContributions = sessionUserData.pensions.paymentsIntoOverseasPensions.paymentsIntoOverseasPensionsAmount
         )
       )
+
+      mockDeletePensionReliefSessionData(nino, taxYear, Right(()))
       mockSavePensionIncomeSessionData(nino, taxYear, model1, Left(APIErrorModel(BAD_REQUEST, APIErrorBodyModel("FAILED", "failed"))))
       mockSavePensionReliefSessionData(nino, taxYear, model2, Left(APIErrorModel(BAD_REQUEST, APIErrorBodyModel("FAILED", "failed"))))
 
@@ -108,13 +110,12 @@ class PensionOverseasPaymentServiceSpec extends UnitTest
       result shouldBe Left(APIErrorModel(BAD_REQUEST, APIErrorBodyModel("FAILED", "failed")))
     }
 
-
     "return Left(DataNotUpdated) when data could not be updated" in {
       val allPensionsData = anAllPensionsData
       val sessionCya = aPensionsCYAEmptyModel.copy(paymentsIntoOverseasPensions = aPensionsUserData.pensions.paymentsIntoOverseasPensions)
       val sessionUserData = aPensionsUserData.copy(pensions = sessionCya)
-
       val priorUserData = IncomeTaxUserData(Some(allPensionsData))
+
       mockFind(taxYear, aUser, Right(Option(sessionUserData)))
       mockFind(aUser.nino, taxYear, priorUserData)
 
@@ -122,7 +123,6 @@ class PensionOverseasPaymentServiceSpec extends UnitTest
         foreignPension = priorUserData.pensions.flatMap(_.pensionIncome.flatMap(_.foreignPension)).map(ForeignPensionContainer),
         overseasPensionContribution = Some(OverseasPensionContributionContainer(sessionUserData.pensions.paymentsIntoOverseasPensions.toPensionContributions))
       )
-
       val model2 = CreateOrUpdatePensionReliefsModel(
         pensionReliefs = Reliefs(
           regularPensionContributions = sessionUserData.pensions.paymentsIntoPension.totalRASPaymentsAndTaxRelief,
@@ -132,8 +132,9 @@ class PensionOverseasPaymentServiceSpec extends UnitTest
           overseasPensionSchemeContributions = sessionUserData.pensions.paymentsIntoOverseasPensions.paymentsIntoOverseasPensionsAmount
         )
       )
-
       val userWithEmptySavePaymentsIntoOverseasCya = aPensionsUserData.copy(pensions = aPensionsCYAEmptyModel)
+
+      mockDeletePensionReliefSessionData(nino, taxYear, Right(()))
       mockSavePensionIncomeSessionData(nino, taxYear, model1, Right(()))
       mockSavePensionReliefSessionData(nino, taxYear, model2, Right(()))
       mockCreateOrUpdate(userWithEmptySavePaymentsIntoOverseasCya, Left(DataNotUpdated))

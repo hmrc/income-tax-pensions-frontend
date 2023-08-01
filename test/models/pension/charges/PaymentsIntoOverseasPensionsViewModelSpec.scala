@@ -17,19 +17,20 @@
 package models.pension.charges
 
 import builders.PaymentsIntoOverseasPensionsViewModelBuilder.{aPaymentsIntoOverseasPensionsEmptyViewModel, aPaymentsIntoOverseasPensionsViewModel}
+import builders.ReliefBuilder.{aDoubleTaxationRelief, aMigrantMemberRelief, aNoTaxRelief, aTransitionalCorrespondingRelief}
 import models.pension.income.OverseasPensionContribution
 import utils.UnitTest
 
-class PaymentsIntoOverseasPensionsViewModelSpec extends UnitTest {
+class PaymentsIntoOverseasPensionsViewModelSpec extends UnitTest {  //scalastyle:off magic.number
 
   "isEmpty" should {
     "return true when all the ViewModel's arguments are 'None'" in {
       aPaymentsIntoOverseasPensionsEmptyViewModel.isEmpty
     }
     "return false when any of the ViewModel's arguments are filled" in {
-      !aPaymentsIntoOverseasPensionsViewModel.isEmpty
-      !aPaymentsIntoOverseasPensionsViewModel.copy(paymentsIntoOverseasPensionsAmount = None).isEmpty
-      !aPaymentsIntoOverseasPensionsEmptyViewModel.copy(paymentsIntoOverseasPensionsQuestions = Some(false)).isEmpty
+      aPaymentsIntoOverseasPensionsViewModel.isEmpty shouldBe false
+      aPaymentsIntoOverseasPensionsViewModel.copy(paymentsIntoOverseasPensionsAmount = None).isEmpty shouldBe false
+      aPaymentsIntoOverseasPensionsEmptyViewModel.copy(paymentsIntoOverseasPensionsQuestions = Some(false)).isEmpty shouldBe false
     }
   }
 
@@ -39,40 +40,28 @@ class PaymentsIntoOverseasPensionsViewModelSpec extends UnitTest {
         aPaymentsIntoOverseasPensionsViewModel.isFinished
       }
       "all required questions are answered" in {
-        aPaymentsIntoOverseasPensionsEmptyViewModel.copy(paymentsIntoOverseasPensionsQuestions = Some(false)).isFinished
+        aPaymentsIntoOverseasPensionsEmptyViewModel.copy(paymentsIntoOverseasPensionsQuestions = Some(false)).isFinished shouldBe true
         aPaymentsIntoOverseasPensionsEmptyViewModel.copy(
           paymentsIntoOverseasPensionsQuestions = Some(true),
           paymentsIntoOverseasPensionsAmount = Some(10),
           employerPaymentsQuestion = Some(false)
-        ).isFinished
+        ).isFinished shouldBe true
         aPaymentsIntoOverseasPensionsEmptyViewModel.copy(
           paymentsIntoOverseasPensionsQuestions = Some(true),
           paymentsIntoOverseasPensionsAmount = Some(10),
           employerPaymentsQuestion = Some(true),
           taxPaidOnEmployerPaymentsQuestion = Some(true)
-        ).isFinished
-        aPaymentsIntoOverseasPensionsViewModel.copy(reliefs = Seq(
-          Relief(
-            reliefType = Some(TaxReliefQuestion.NoTaxRelief),
-            customerReference = None,
-            employerPaymentsAmount = None,
-            qopsReference = None,
-            alphaTwoCountryCode = None,
-            alphaThreeCountryCode = None,
-            doubleTaxationArticle = None,
-            doubleTaxationTreaty = None,
-            doubleTaxationReliefAmount = None,
-            sf74Reference = None)
-        )).isFinished
+        ).isFinished shouldBe true
+        aPaymentsIntoOverseasPensionsViewModel.copy(reliefs = Seq(aNoTaxRelief)).isFinished shouldBe true
       }
     }
 
     "return false" when {
       "not all necessary questions have been populated" in {
-        aPaymentsIntoOverseasPensionsEmptyViewModel.copy(paymentsIntoOverseasPensionsQuestions = Some(true)).isFinished
+        aPaymentsIntoOverseasPensionsEmptyViewModel.copy(paymentsIntoOverseasPensionsQuestions = Some(true)).isFinished shouldBe false
         aPaymentsIntoOverseasPensionsEmptyViewModel.copy(
           paymentsIntoOverseasPensionsQuestions = Some(true), taxPaidOnEmployerPaymentsQuestion = Some(true)
-        ).isFinished
+        ).isFinished shouldBe false
         aPaymentsIntoOverseasPensionsViewModel.copy(reliefs = Seq(
           Relief(
             reliefType = Some(TaxReliefQuestion.DoubleTaxationRelief),
@@ -85,7 +74,7 @@ class PaymentsIntoOverseasPensionsViewModelSpec extends UnitTest {
             doubleTaxationTreaty = None,
             doubleTaxationReliefAmount = None,
             sf74Reference = None)
-        )).isFinished
+        )).isFinished shouldBe false
       }
     }
   }
@@ -95,9 +84,9 @@ class PaymentsIntoOverseasPensionsViewModelSpec extends UnitTest {
       aPaymentsIntoOverseasPensionsEmptyViewModel.copy(paymentsIntoOverseasPensionsQuestions = Some(false)).journeyIsNo
     }
     "return false in any other case" in {
-      aPaymentsIntoOverseasPensionsEmptyViewModel.journeyIsNo
-      aPaymentsIntoOverseasPensionsEmptyViewModel.copy(paymentsIntoOverseasPensionsQuestions = Some(true)).journeyIsNo
-      aPaymentsIntoOverseasPensionsViewModel.copy(paymentsIntoOverseasPensionsQuestions = Some(false)).journeyIsNo
+      aPaymentsIntoOverseasPensionsEmptyViewModel.journeyIsNo shouldBe false
+      aPaymentsIntoOverseasPensionsEmptyViewModel.copy(paymentsIntoOverseasPensionsQuestions = Some(true)).journeyIsNo shouldBe false
+      aPaymentsIntoOverseasPensionsViewModel.copy(paymentsIntoOverseasPensionsQuestions = Some(false)).journeyIsNo shouldBe false
     }
   }
 
@@ -106,17 +95,20 @@ class PaymentsIntoOverseasPensionsViewModelSpec extends UnitTest {
       aPaymentsIntoOverseasPensionsEmptyViewModel.journeyIsUnanswered
     }
     "return false when any of the ViewModel's arguments are filled" in {
-      !aPaymentsIntoOverseasPensionsViewModel.journeyIsUnanswered
-      !aPaymentsIntoOverseasPensionsViewModel.copy(paymentsIntoOverseasPensionsQuestions = None).journeyIsUnanswered
-      !aPaymentsIntoOverseasPensionsEmptyViewModel.copy(paymentsIntoOverseasPensionsQuestions = Some(false)).journeyIsUnanswered
+      aPaymentsIntoOverseasPensionsViewModel.journeyIsUnanswered shouldBe false
+      aPaymentsIntoOverseasPensionsViewModel.copy(paymentsIntoOverseasPensionsQuestions = None).journeyIsUnanswered shouldBe false
+      aPaymentsIntoOverseasPensionsEmptyViewModel.copy(paymentsIntoOverseasPensionsQuestions = Some(false)).journeyIsUnanswered shouldBe false
     }
   }
 
   "toPensionContributions" should {
     "transform a PaymentsIntoOverseasPensionsViewModel into Seq[OverseasPensionContribution]" in {
       val expectedResult: Seq[OverseasPensionContribution] = Seq(
-        OverseasPensionContribution(Some("PENSIONINCOME245"), 1999.99, None, None, None, None, None, Some("SF74-123456")),
-        OverseasPensionContribution(Some("PENSIONINCOME356"), 100.0, Some("123456"), None, None, None, None, None))
+        OverseasPensionContribution(Some("tcrPENSIONINCOME2000"), 1999.99, None, None, None, None, None, Some("SF74-123456")),
+        OverseasPensionContribution(Some("mmrPENSIONINCOME356"), 356.0, Some("123456"), None, None, None, None, None),
+        OverseasPensionContribution(Some("dtrPENSIONINCOME550"), 550.0, Some("123456"), Some(55), Some("ATG"), None, None, None),
+        OverseasPensionContribution(Some("noPENSIONINCOME100"), 100, None, None, None, None, None, None)
+      )
 
       aPaymentsIntoOverseasPensionsViewModel.toPensionContributions shouldBe expectedResult
     }
@@ -125,6 +117,18 @@ class PaymentsIntoOverseasPensionsViewModelSpec extends UnitTest {
       val expectedResult: Seq[OverseasPensionContribution] = Seq.empty
 
       viewModel.toPensionContributions shouldBe expectedResult
+    }
+  }
+
+  "Relief.isFinished" should {
+    "return true when all relevant questions are answered" in {
+      Seq(aTransitionalCorrespondingRelief, aMigrantMemberRelief, aDoubleTaxationRelief, aNoTaxRelief).forall(_.isFinished)
+    }
+    "return false when all not relevant questions are answered" in {
+      aTransitionalCorrespondingRelief.copy(employerPaymentsAmount = None).isFinished shouldBe false
+      aMigrantMemberRelief.copy(qopsReference = None).isFinished shouldBe false
+      aDoubleTaxationRelief.copy(alphaThreeCountryCode = None).isFinished shouldBe false
+      aNoTaxRelief.copy(reliefType = None).isFinished shouldBe false
     }
   }
 

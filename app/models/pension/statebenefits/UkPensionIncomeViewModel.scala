@@ -26,8 +26,7 @@ import utils.EncryptableSyntax.EncryptableOps
 import utils.EncryptorInstances.{bigDecimalEncryptor, booleanEncryptor, stringEncryptor}
 import utils.{EncryptedValue, SecureGCMCipher}
 
-case class UkPensionIncomeViewModel(
-                                     employmentId: Option[String] = None,
+case class UkPensionIncomeViewModel(employmentId: Option[String] = None,
                                      pensionId: Option[String] = None,
                                      startDate: Option[String] = None,
                                      endDate: Option[String] = None,
@@ -71,7 +70,15 @@ case class UkPensionIncomeViewModel(
       ),
       isHmrcEmploymentId = this.isCustomerEmploymentData.map(!_)
     )
-  
+
+  def isFinished: Boolean = {
+    this.pensionId.isDefined &&
+    this.startDate.isDefined &&
+    this.pensionSchemeName.isDefined &&
+    this.pensionSchemeRef.isDefined &&
+    this.amount.isDefined &&
+    this.taxPaid.isDefined
+  }
 }
 
 object UkPensionIncomeViewModel {

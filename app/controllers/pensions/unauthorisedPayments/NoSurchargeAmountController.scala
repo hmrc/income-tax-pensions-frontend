@@ -18,8 +18,8 @@ package controllers.pensions.unauthorisedPayments
 
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.unauthorisedPayments.routes._
-import controllers.predicates.AuthorisedAction
-import controllers.predicates.TaxYearAction.taxYearAction
+import controllers.predicates.actions.AuthorisedAction
+import controllers.predicates.actions.TaxYearAction.taxYearAction
 import forms.{AmountForm, FormUtils}
 import models.mongo.PensionsCYAModel
 import play.api.data.Form
@@ -55,7 +55,7 @@ class NoSurchargeAmountController @Inject()(authAction: AuthorisedAction,
       case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
 
       case Right(optData) =>
-        val checkRedirect = journeyCheck(NotSurchargedAmountPage, _, taxYear)
+        val checkRedirect = journeyCheck(NotSurchargedAmountPage, _: PensionsCYAModel, taxYear)
         redirectBasedOnCurrentAnswers(taxYear, optData, cyaPageCall(taxYear))(checkRedirect) { data =>
 
           data.pensions.unauthorisedPayments.noSurchargeAmount
@@ -72,7 +72,7 @@ class NoSurchargeAmountController @Inject()(authAction: AuthorisedAction,
         pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
           case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
           case Right(optData) =>
-            val checkRedirect = journeyCheck(NotSurchargedAmountPage, _, taxYear)
+            val checkRedirect = journeyCheck(NotSurchargedAmountPage, _: PensionsCYAModel, taxYear)
             redirectBasedOnCurrentAnswers(taxYear, optData, cyaPageCall(taxYear))(checkRedirect) { data =>
 
               val updatedCyaModel: PensionsCYAModel = data.pensions.copy(

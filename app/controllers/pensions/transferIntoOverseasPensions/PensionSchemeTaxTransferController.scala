@@ -18,14 +18,16 @@ package controllers.pensions.transferIntoOverseasPensions
 
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.transferIntoOverseasPensions.routes._
-import controllers.predicates.ActionsProvider
+import controllers.predicates.actions.ActionsProvider
 import forms.FormsProvider
 import models.mongo.{PensionsCYAModel, PensionsUserData}
 import models.requests.UserSessionDataRequest
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.PensionSessionService
-import services.redirects.TransfersIntoOverseasPensionsRedirects.redirectForSchemeLoop
+import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
+import services.redirects.TransfersIntoOverseasPensionsPages.{OverseasTransferChargeAmountPage, TaxOnPensionSchemesAmountPage}
+import services.redirects.TransfersIntoOverseasPensionsRedirects.{cyaPageCall, journeyCheck, redirectForSchemeLoop}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.transferIntoOverseasPensions.pensionSchemeTaxTransferChargeView
@@ -34,24 +36,28 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
 @Singleton
-class PensionSchemeTaxTransferController @Inject()(
-                                                    actionsProvider: ActionsProvider,
-                                                    pensionSessionService: PensionSessionService,
-                                                    view: pensionSchemeTaxTransferChargeView,
-                                                    formsProvider: FormsProvider,
-                                                    errorHandler: ErrorHandler)
-                                                  (implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock)
+class PensionSchemeTaxTransferController @Inject()(actionsProvider: ActionsProvider,
+                                                   pensionSessionService: PensionSessionService,
+                                                   view: pensionSchemeTaxTransferChargeView,
+                                                   formsProvider: FormsProvider,
+                                                   errorHandler: ErrorHandler)
+                                                  (implicit val mcc: MessagesControllerComponents,
+                                                   appConfig: AppConfig, clock: Clock)
   extends FrontendController(mcc) with I18nSupport with SessionHelper {
 
 
   def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit sessionData =>
-      val transferSchemeChargeAmount: Option[BigDecimal] =
-        sessionData.pensionsUserData.pensions.transfersIntoOverseasPensions.pensionSchemeTransferChargeAmount
-      val transferSchemeCharge: Option[Boolean] = sessionData.pensionsUserData.pensions.transfersIntoOverseasPensions.pensionSchemeTransferCharge
-      (transferSchemeCharge, transferSchemeChargeAmount) match {
-        case (Some(a), amount) => Future.successful(Ok(view(formsProvider.pensionSchemeTaxTransferForm(sessionData.user).fill((a, amount)), taxYear)))
-        case _ => Future.successful(Ok(view(formsProvider.pensionSchemeTaxTransferForm(sessionData.user), taxYear)))
+      val checkRedirect = journeyCheck(TaxOnPensionSchemesAmountPage, _: PensionsCYAModel, taxYear)
+      redirectBasedOnCurrentAnswers(taxYear, Some(sessionData.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) {
+        data =>
+          val transferSchemeChargeAmount: Option[BigDecimal] =
+            data.pensions.transfersIntoOverseasPensions.pensionSchemeTransferChargeAmount
+          val transferSchemeCharge: Option[Boolean] = data.pensions.transfersIntoOverseasPensions.pensionSchemeTransferCharge
+          (transferSchemeCharge, transferSchemeChargeAmount) match {
+            case (Some(a), amount) => Future.successful(Ok(view(formsProvider.pensionSchemeTaxTransferForm(sessionData.user).fill((a, amount)), taxYear)))
+            case _ => Future.successful(Ok(view(formsProvider.pensionSchemeTaxTransferForm(sessionData.user), taxYear)))
+          }
       }
   }
 
@@ -60,9 +66,14 @@ class PensionSchemeTaxTransferController @Inject()(
       formsProvider.pensionSchemeTaxTransferForm(sessionData.user).bindFromRequest().fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
         yesNoAmount => {
-          (yesNoAmount._1, yesNoAmount._2) match {
-            case (true, amount) => updateSessionData(sessionData.pensionsUserData, yesNo = true, amount, taxYear)
-            case (false, _) => updateSessionData(sessionData.pensionsUserData, yesNo = false, None, taxYear)
+          val checkRedirect = journeyCheck(OverseasTransferChargeAmountPage, _: PensionsCYAModel, taxYear)
+          redirectBasedOnCurrentAnswers(taxYear, Some(sessionData.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) {
+            data => {
+              (yesNoAmount._1, yesNoAmount._2) match {
+                case (true, amount) => updateSessionData(data, yesNo = true, amount, taxYear)
+                case (false, _) => updateSessionData(data, yesNo = false, None, taxYear)
+              }
+            }
           }
         }
       )
@@ -72,16 +83,20 @@ class PensionSchemeTaxTransferController @Inject()(
                                    yesNo: Boolean,
                                    amount: Option[BigDecimal],
                                    taxYear: Int)(implicit request: UserSessionDataRequest[T]): Future[Result] = {
-    val updatedCyaModel: PensionsCYAModel = pensionUserData.pensions.copy(
-      transfersIntoOverseasPensions = pensionUserData.pensions.transfersIntoOverseasPensions.copy(
-        pensionSchemeTransferCharge = Some(yesNo),
-        pensionSchemeTransferChargeAmount = amount))
+    val cyaModel = pensionUserData.pensions
+    val viewModel = cyaModel.transfersIntoOverseasPensions
+    val updatedModel: PensionsCYAModel = cyaModel.copy(transfersIntoOverseasPensions = viewModel.copy(
+      pensionSchemeTransferCharge = Some(yesNo),
+      pensionSchemeTransferChargeAmount = amount,
+      transferPensionScheme = if (yesNo) viewModel.transferPensionScheme else Seq.empty
+    ))
 
     pensionSessionService.createOrUpdateSessionData(request.user,
-      updatedCyaModel, taxYear, pensionUserData.isPriorSubmission)(errorHandler.internalServerError()) {
-
-      if (yesNo) Redirect(redirectForSchemeLoop(schemes = updatedCyaModel.transfersIntoOverseasPensions.transferPensionScheme, taxYear))
-      else Redirect(TransferIntoOverseasPensionsCYAController.show(taxYear))
+      updatedModel, taxYear, pensionUserData.isPriorSubmission)(errorHandler.internalServerError()) {
+      Redirect(
+        if (yesNo) redirectForSchemeLoop(schemes = updatedModel.transfersIntoOverseasPensions.transferPensionScheme, taxYear)
+        else TransferIntoOverseasPensionsCYAController.show(taxYear)
+      )
     }
   }
 }

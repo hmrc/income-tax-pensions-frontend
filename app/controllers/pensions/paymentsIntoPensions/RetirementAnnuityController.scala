@@ -18,8 +18,8 @@ package controllers.pensions.paymentsIntoPensions
 
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.paymentsIntoPensions.routes._
-import controllers.predicates.AuthorisedAction
-import controllers.predicates.TaxYearAction.taxYearAction
+import controllers.predicates.actions.AuthorisedAction
+import controllers.predicates.actions.TaxYearAction.taxYearAction
 import models.mongo.PensionsCYAModel
 import models.pension.reliefs.PaymentsIntoPensionsViewModel
 import play.api.i18n.I18nSupport
@@ -74,8 +74,8 @@ class RetirementAnnuityController @Inject()(authAction: AuthorisedAction,
               pensionsCYAModel.copy(paymentsIntoPension = viewModel.copy(retirementAnnuityContractPaymentsQuestion = Some(yesNo),
                 totalRetirementAnnuityContractPayments = if (yesNo) viewModel.totalRetirementAnnuityContractPayments else None))
             }
-            val redirectLocation = if (yesNo) RetirementAnnuityAmountController.show(taxYear)
-            else controllers.pensions.paymentsIntoPensions.routes.WorkplacePensionController.show(taxYear)
+            val redirectLocation =
+              if (yesNo) RetirementAnnuityAmountController.show(taxYear) else WorkplacePensionController.show(taxYear)
 
             pensionSessionService.createOrUpdateSessionData(request.user,
               updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {

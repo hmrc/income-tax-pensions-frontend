@@ -16,7 +16,8 @@
 
 package builders
 
-import models.pension.charges.{TransferPensionScheme, TransfersIntoOverseasPensionsViewModel}
+import builders.TransferPensionSchemeBuilder.{aNonUkTransferPensionScheme, aUkTransferPensionScheme}
+import models.pension.charges.TransfersIntoOverseasPensionsViewModel
 
 object TransfersIntoOverseasPensionsViewModelBuilder {
 
@@ -26,18 +27,9 @@ object TransfersIntoOverseasPensionsViewModelBuilder {
     overseasTransferChargeAmount = Some(1999.99),
     pensionSchemeTransferCharge = Some(true),
     pensionSchemeTransferChargeAmount = Some(1000.00),
-    transferPensionScheme = Seq(
-      TransferPensionScheme(
-        ukTransferCharge = Some(false),
-        name = Some("Foreign Scheme Name"),
-        pstr = None,
-        qops = Some("QOPS123456"),
-        providerAddress = Some("Scheme Address"),
-        alphaTwoCountryCode = Some("FR"),
-        alphaThreeCountryCode = Some("FRA")
-      )
-    )
+    transferPensionScheme = Seq(aUkTransferPensionScheme, aNonUkTransferPensionScheme)
   )
+
   val emptyTransfersIntoOverseasPensionsViewModel = TransfersIntoOverseasPensionsViewModel()
 
 }

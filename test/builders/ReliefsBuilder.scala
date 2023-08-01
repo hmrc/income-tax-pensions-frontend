@@ -20,11 +20,20 @@ import models.pension.reliefs.Reliefs
 
 object ReliefsBuilder {
 
-  val anReliefs: Reliefs = Reliefs(regularPensionContributions = Some(100.00),
+  val aReliefs: Reliefs = Reliefs(
+    regularPensionContributions = Some(100.00),
     oneOffPensionContributionsPaid = Some(200.00),
     retirementAnnuityPayments = Some(300.00),
     paymentToEmployersSchemeNoTaxRelief = Some(400.00),
     overseasPensionSchemeContributions = Some(500.00)
-
   )
+
+  val anEmptyReliefs: Reliefs = Reliefs(
+    regularPensionContributions = None,
+    oneOffPensionContributionsPaid = None,
+    retirementAnnuityPayments = None,
+    paymentToEmployersSchemeNoTaxRelief = None,
+    overseasPensionSchemeContributions = None
+  )
+
 }

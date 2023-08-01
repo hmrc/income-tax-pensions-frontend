@@ -107,6 +107,49 @@ class CountrySummaryListControllerISpec extends IntegrationTest with BeforeAndAf
 
   val countries = Countries
   ".show" should {
+
+    "redirect to the pensions summary page if there is no session data" should {
+      lazy val result: WSResponse = {
+        dropPensionsDB()
+        authoriseAgentOrIndividual()
+        urlGet(fullUrl(countrySummaryListControllerUrl(taxYearEOY)), follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+      }
+
+      "have a SEE_OTHER status" in {
+        result.status shouldBe SEE_OTHER
+        result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
+      }
+    }
+
+    "redirect to the first page in journey" when {
+      "page is invalid in journey" in {
+        val invalidJourneyViewModel = anIncomeFromOverseasPensionsEmptyViewModel.copy(paymentsFromOverseasPensionsQuestion = Some(false))
+        implicit lazy val result: WSResponse = {
+          authoriseAgentOrIndividual()
+          dropPensionsDB()
+          insertCyaData(pensionUserDataWithIncomeOverseasPension(invalidJourneyViewModel))
+          urlGet(fullUrl(countrySummaryListControllerUrl(taxYearEOY)), follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        }
+
+        result.status shouldBe SEE_OTHER
+        result.header("location") shouldBe Some(incomeFromOverseasPensionsStatus(taxYearEOY))
+      }
+      "previous questions are unanswered" in {
+        implicit lazy val result: WSResponse = {
+          authoriseAgentOrIndividual()
+          dropPensionsDB()
+          insertCyaData(pensionUserDataWithIncomeOverseasPension(anIncomeFromOverseasPensionsEmptyViewModel))
+          urlGet(fullUrl(countrySummaryListControllerUrl(taxYearEOY)), follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        }
+
+        result.status shouldBe SEE_OTHER
+        result.header("location") shouldBe Some(incomeFromOverseasPensionsStatus(taxYearEOY))
+      }
+    }
+
     userScenarios.foreach { user =>
       s"language is ${welshTest(user.isWelsh)} and request is from an ${agentTest(user.isAgent)}" should {
         import Selectors._
@@ -159,7 +202,7 @@ class CountrySummaryListControllerISpec extends IntegrationTest with BeforeAndAf
           implicit lazy val result: WSResponse = {
             authoriseAgentOrIndividual(user.isAgent)
             dropPensionsDB()
-            val emptyViewModel = anIncomeFromOverseasPensionsEmptyViewModel
+            val emptyViewModel = anIncomeFromOverseasPensionsEmptyViewModel.copy(paymentsFromOverseasPensionsQuestion = Some(true))
             insertCyaData(pensionUserDataWithIncomeOverseasPension(emptyViewModel))
 
             urlGet(fullUrl(countrySummaryListControllerUrl(taxYearEOY)), user.isWelsh, follow = false,
@@ -257,20 +300,6 @@ class CountrySummaryListControllerISpec extends IntegrationTest with BeforeAndAf
             cyaModel.pensions.incomeFromOverseasPensions shouldBe filteredSchemes
           }
         }
-      }
-    }
-
-    "redirect to the pensions summary page if there is no session data" should {
-      lazy val result: WSResponse = {
-        dropPensionsDB()
-        authoriseAgentOrIndividual()
-        urlGet(fullUrl(countrySummaryListControllerUrl(taxYearEOY)), follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
-      }
-
-      "have a SEE_OTHER status" in {
-        result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
       }
     }
   }

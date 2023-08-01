@@ -46,6 +46,9 @@ class PensionsChargesServiceSpec extends UnitTest
 
   val shortServiceRefundsSessionUserData =
     aPensionsUserData.copy(pensions = aPensionsCYAEmptyModel.copy(shortServiceRefunds = aPensionsUserData.pensions.shortServiceRefunds))
+    
+  val annualAllowanceSessionUserData =
+     aPensionsUserData.copy(pensions = aPensionsCYAEmptyModel.copy(pensionsAnnualAllowances = aPensionsUserData.pensions.pensionsAnnualAllowances))
 
   val priorPensionChargesData = IncomeTaxUserData(Some(anAllPensionsData)).pensions.flatMap(_.pensionCharges)
   val unauthorisedPaymentsRequestModel = CreateUpdatePensionChargesRequestModel(
@@ -70,6 +73,18 @@ class PensionsChargesServiceSpec extends UnitTest
     pensionContributions = priorPensionChargesData.flatMap(_.pensionContributions),
     overseasPensionContributions = Some(shortServiceRefundsSessionUserData.pensions.shortServiceRefunds.toOverseasPensionContributions)
   )
+  
+  val annualAllowanceRequestModel = {
+    val annualAllowanceChargesModel = annualAllowanceSessionUserData.pensions.pensionsAnnualAllowances
+      .toAnnualAllowanceChargesModel(Some(anAllPensionsData))
+    CreateUpdatePensionChargesRequestModel(
+      pensionSavingsTaxCharges = annualAllowanceChargesModel.pensionSavingsTaxCharges,
+      pensionSchemeOverseasTransfers = priorPensionChargesData.flatMap(_.pensionSchemeOverseasTransfers),
+      pensionSchemeUnauthorisedPayments = priorPensionChargesData.flatMap(_.pensionSchemeUnauthorisedPayments),
+      pensionContributions = annualAllowanceChargesModel.pensionContributions,
+        overseasPensionContributions = priorPensionChargesData.flatMap(_.overseasPensionContributions)
+    )
+  }
 
   ".saveUnauthorisedViewModel" should {
 
@@ -202,6 +217,49 @@ class PensionsChargesServiceSpec extends UnitTest
       mockCreateOrUpdate(userWithEmptyCya, Left(DataNotUpdated))
 
       val result = await(pensionChargesService.saveShortServiceRefundsViewModel(aUser, taxYear))
+      result shouldBe Left(DataNotUpdated)
+    }
+  }
+  ".saveAnnualAllowanceViewModel" should {
+    
+    "return Right(Unit) when model is saved successfully and shortServiceRefunds cya is cleared from DB" in {
+      mockFind(taxYear, aUser, Right(Option(annualAllowanceSessionUserData)))
+      mockFind(aUser.nino, taxYear, IncomeTaxUserData(Some(anAllPensionsData)))
+
+      mockSavePensionChargesSessionData(nino, taxYear, annualAllowanceRequestModel, Right(()))
+      mockCreateOrUpdate(userWithEmptyCya, Right(()))
+
+      val result = await(pensionChargesService.saveAnnualAllowanceViewModel(aUser, taxYear))
+      result shouldBe Right(())
+    }
+
+    "return Left(DataNotFound) when user can not be found in DB" in {
+      mockFind(taxYear, aUser, Left(DataNotFound))
+      mockFind(aUser.nino, taxYear, IncomeTaxUserData(None))
+
+      val result = await(pensionChargesService.saveAnnualAllowanceViewModel(aUser, taxYear))
+      result shouldBe Left(DataNotFound)
+    }
+
+    "return Left(APIErrorModel) when pension connector could not be connected" in {
+      mockFind(taxYear, aUser, Right(Option(annualAllowanceSessionUserData)))
+      mockFind(aUser.nino, taxYear, IncomeTaxUserData(Some(anAllPensionsData)))
+
+      mockSavePensionChargesSessionData(nino, taxYear, annualAllowanceRequestModel, Left(APIErrorModel(BAD_REQUEST, APIErrorBodyModel("FAILED", "failed"))))
+      mockCreateOrUpdate(userWithEmptyCya, Left(MongoError("Failed to connect to database")))
+
+      val result = await(pensionChargesService.saveAnnualAllowanceViewModel(aUser, taxYear))
+      result shouldBe Left(APIErrorModel(BAD_REQUEST, APIErrorBodyModel("FAILED", "failed")))
+    }
+
+    "return Left(DataNotUpdated) when data could not be updated" in {
+      mockFind(taxYear, aUser, Right(Option(annualAllowanceSessionUserData)))
+      mockFind(aUser.nino, taxYear, IncomeTaxUserData(Some(anAllPensionsData)))
+
+      mockSavePensionChargesSessionData(nino, taxYear, annualAllowanceRequestModel, Right(()))
+      mockCreateOrUpdate(userWithEmptyCya, Left(DataNotUpdated))
+
+      val result = await(pensionChargesService.saveAnnualAllowanceViewModel(aUser, taxYear))
       result shouldBe Left(DataNotUpdated)
     }
   }

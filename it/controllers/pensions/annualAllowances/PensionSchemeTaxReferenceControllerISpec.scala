@@ -17,7 +17,7 @@
 package controllers.pensions.annualAllowances
 
 import builders.PensionAnnualAllowanceViewModelBuilder.aPensionAnnualAllowanceViewModel
-import builders.PensionsUserDataBuilder.{aPensionsUserData, anPensionsUserDataEmptyCya, pensionsUserDataWithAnnualAllowances}
+import builders.PensionsUserDataBuilder.{aPensionsUserData, pensionsUserDataWithAnnualAllowances}
 import builders.UserBuilder.aUserRequest
 import forms.PensionSchemeTaxReferenceForm
 import org.jsoup.Jsoup
@@ -26,7 +26,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.PensionAnnualAllowancePages.{pensionSchemeTaxReferenceUrl, pstrSummaryUrl}
+import utils.PageUrls.PensionAnnualAllowancePages.{pensionSchemeTaxReferenceUrl, pstrSummaryUrl, reducedAnnualAllowanceUrl}
 import utils.PageUrls.{fullUrl, pensionSummaryUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
@@ -129,7 +129,8 @@ class PensionSchemeTaxReferenceControllerISpec extends IntegrationTest with Befo
           implicit lazy val result: WSResponse = {
             authoriseAgentOrIndividual(user.isAgent)
             dropPensionsDB()
-            insertCyaData(anPensionsUserDataEmptyCya)
+            val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(pensionSchemeTaxReferences = Some(Seq.empty))
+            insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel))
             urlGet(fullUrl(pensionSchemeTaxReferenceUrl(taxYearEOY)), user.isWelsh, follow = false,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
@@ -216,6 +217,7 @@ class PensionSchemeTaxReferenceControllerISpec extends IntegrationTest with Befo
 
       }
     }
+
     "redirect to the PSTR summary page when the PSTR is out of bounds" should {
       lazy val result: WSResponse = {
         dropPensionsDB()
@@ -232,7 +234,6 @@ class PensionSchemeTaxReferenceControllerISpec extends IntegrationTest with Befo
       }
     }
 
-
     "Redirect to the annual allowance CYA page if there is no session data" should {
       lazy val result: WSResponse = {
         dropPensionsDB()
@@ -243,8 +244,43 @@ class PensionSchemeTaxReferenceControllerISpec extends IntegrationTest with Befo
 
       "has an SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER
-//        TODO redirect to annual allowance CYA
         result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
+      }
+    }
+
+    "redirect to reduced annual allowance page" when {
+      "previous questions have not been answered" which {
+        lazy val result: WSResponse = {
+          dropPensionsDB()
+          authoriseAgentOrIndividual()
+          val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(taxPaidByPensionProvider = None)
+          insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel))
+
+          urlGet(fullUrl(pensionSchemeTaxReferenceUrl(taxYearEOY)), follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        }
+
+        "has a SEE_OTHER status" in {
+          result.status shouldBe SEE_OTHER
+          result.header("location") shouldBe Some(reducedAnnualAllowanceUrl(taxYearEOY))
+        }
+
+      }
+      "page is invalid in journey" which {
+        lazy val result: WSResponse = {
+          dropPensionsDB()
+          authoriseAgentOrIndividual()
+          val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(aboveAnnualAllowanceQuestion = Some(false))
+          insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel))
+
+          urlGet(fullUrl(pensionSchemeTaxReferenceUrl(taxYearEOY)), follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        }
+
+        "has a SEE_OTHER status" in {
+          result.status shouldBe SEE_OTHER
+          result.header("location") shouldBe Some(reducedAnnualAllowanceUrl(taxYearEOY))
+        }
       }
     }
 
@@ -338,8 +374,7 @@ class PensionSchemeTaxReferenceControllerISpec extends IntegrationTest with Befo
 
       "updates pension scheme tax reference to contain tax reference" in {
         lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
-        cyaModel.pensions.pensionsAnnualAllowances.pensionSchemeTaxReferences.size shouldBe 1
-        cyaModel.pensions.pensionsAnnualAllowances.pensionSchemeTaxReferences.get.head shouldBe "12345678RA"
+        cyaModel.pensions.pensionsAnnualAllowances.pensionSchemeTaxReferences shouldBe Some(Seq("12345678RA"))
       }
     }
 
@@ -414,6 +449,43 @@ class PensionSchemeTaxReferenceControllerISpec extends IntegrationTest with Befo
       }
     }
 
+    "redirect to reduced annual allowance page" when {
+      "previous questions have not been answered" which {
+        lazy val form: Map[String, String] = Map(PensionSchemeTaxReferenceForm.taxReferenceId -> "12345678RA")
+        lazy val result: WSResponse = {
+          dropPensionsDB()
+          authoriseAgentOrIndividual()
+          val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(pensionProvidePaidAnnualAllowanceQuestion = None)
+          insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel))
+
+          urlPost(fullUrl(pensionSchemeTaxReferenceUrl(taxYearEOY)), body = form, follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        }
+
+        "has a SEE_OTHER status" in {
+          result.status shouldBe SEE_OTHER
+          result.header("location") shouldBe Some(reducedAnnualAllowanceUrl(taxYearEOY))
+        }
+      }
+      "page is invalid in journey" which {
+        lazy val form: Map[String, String] = Map(PensionSchemeTaxReferenceForm.taxReferenceId -> "12345678RA")
+        lazy val result: WSResponse = {
+          dropPensionsDB()
+          authoriseAgentOrIndividual()
+          val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(reducedAnnualAllowanceQuestion = Some(false))
+          insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel))
+
+          urlPost(fullUrl(pensionSchemeTaxReferenceUrl(taxYearEOY)), body = form, follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        }
+
+        "has a SEE_OTHER status" in {
+          result.status shouldBe SEE_OTHER
+          result.header("location") shouldBe Some(reducedAnnualAllowanceUrl(taxYearEOY))
+        }
+      }
+    }
+
     "redirect to annual allowance CYA page if there is no session data" should {
       lazy val form: Map[String, String] = Map(PensionSchemeTaxReferenceForm.taxReferenceId -> "12345678RA")
 
@@ -425,7 +497,7 @@ class PensionSchemeTaxReferenceControllerISpec extends IntegrationTest with Befo
 
       "has an SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER
-//        TODO redirect to Annual Allowances CYA
+        //        TODO redirect to Annual Allowances CYA
         result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
       }
     }
