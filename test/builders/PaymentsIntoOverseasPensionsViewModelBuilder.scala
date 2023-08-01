@@ -17,8 +17,7 @@
 package builders
 
 import builders.ReliefBuilder.{aDoubleTaxationRelief, aMigrantMemberRelief, aNoTaxRelief, aTransitionalCorrespondingRelief}
-import models.pension.charges.{PaymentsIntoOverseasPensionsViewModel, Relief}
-import models.pension.charges.TaxReliefQuestion.{MigrantMemberRelief, TransitionalCorrespondingRelief}
+import models.pension.charges.PaymentsIntoOverseasPensionsViewModel
 
 object PaymentsIntoOverseasPensionsViewModelBuilder {
 

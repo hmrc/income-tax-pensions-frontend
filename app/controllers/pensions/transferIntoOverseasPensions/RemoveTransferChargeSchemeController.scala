@@ -17,6 +17,7 @@
 package controllers.pensions.transferIntoOverseasPensions
 
 import config.{AppConfig, ErrorHandler}
+import controllers.pensions.transferIntoOverseasPensions.routes._
 import controllers.predicates.actions.ActionsProvider
 import controllers.validatedIndex
 import models.mongo.{PensionsCYAModel, PensionsUserData}
@@ -25,13 +26,12 @@ import models.requests.UserSessionDataRequest
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
+import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
+import services.redirects.TransfersIntoOverseasPensionsPages.RemoveSchemePage
+import services.redirects.TransfersIntoOverseasPensionsRedirects.{cyaPageCall, journeyCheck}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.transferIntoOverseasPensions.RemoveTransferChargeSchemeView
-import routes._
-import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
-import services.redirects.TransfersIntoOverseasPensionsPages.{RemoveSchemePage, TaxOnPensionSchemesAmountPage}
-import services.redirects.TransfersIntoOverseasPensionsRedirects.{cyaPageCall, journeyCheck}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future

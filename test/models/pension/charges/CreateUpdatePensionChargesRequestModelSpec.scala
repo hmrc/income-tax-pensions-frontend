@@ -23,12 +23,14 @@ class CreateUpdatePensionChargesRequestModelSpec extends UnitTest {
 
   ".otherSubModelsEmpty" should {
 
+    val annualAllowancesPensionSubModel = AnnualAllowancesPensionCharges(anPensionCharges.pensionSavingsTaxCharges, anPensionCharges.pensionContributions)
     Seq(
       anPensionCharges.pensionContributions,
       anPensionCharges.overseasPensionContributions,
       anPensionCharges.pensionSavingsTaxCharges,
       anPensionCharges.pensionSchemeUnauthorisedPayments,
       anPensionCharges.pensionSchemeOverseasTransfers,
+      Some(annualAllowancesPensionSubModel)
     ).foreach { subModel =>
 
       s"be false when subModel is non empty ${subModel.get.getClass.getName} and other models are not empty" in {
@@ -42,7 +44,7 @@ class CreateUpdatePensionChargesRequestModelSpec extends UnitTest {
         actualResult shouldBe false
       }
 
-      s"be true when subModel is non empty ${subModel.get.getClass.getName} and other models are empty" in {
+      s"be true when ${subModel.get.getClass.getName} subModel is non empty and other models are empty" in {
         val actualResult = CreateUpdatePensionChargesRequestModel(
           None,
           None,
@@ -53,9 +55,9 @@ class CreateUpdatePensionChargesRequestModelSpec extends UnitTest {
         actualResult shouldBe true
       }
 
-      s"be true when subModel is non empty ${subModel.get.getClass.getName} and other models are empty and unauthorised model contents is empty" in {
+      s"be true when ${subModel.get.getClass.getName} subModel is non empty and the other models are either empty or have empty contents" in {
         val actualResult = CreateUpdatePensionChargesRequestModel(
-          None,
+          anPensionCharges.pensionSavingsTaxCharges.map(_.copy(None, None, None, None, None, None)),
           None,
           anPensionCharges.pensionSchemeUnauthorisedPayments.map(_.copy(None, None, None)),
           None,
@@ -65,22 +67,16 @@ class CreateUpdatePensionChargesRequestModelSpec extends UnitTest {
         actualResult shouldBe true
       }
 
-      s"be false when subModel is non empty ${subModel.get.getClass.getName} and other models are empty but unauthorised model contents are non empty" in {
+      s"be false when ${subModel.get.getClass.getName} subModel is non empty and some other models have non-empty contents" in {
         val actualResult = CreateUpdatePensionChargesRequestModel(
-          None,
+          anPensionCharges.pensionSavingsTaxCharges.map(_.copy(None, None, None, None, None)),
           None,
           anPensionCharges.pensionSchemeUnauthorisedPayments.map(_.copy(Some(Seq("PSTR")), None, None)),
           None,
           None,
         ).otherSubRequestModelsEmpty(subModel)
-        actualResult shouldBe (if(subModel.get.isInstanceOf[PensionSchemeUnauthorisedPayments]) true else false)
+        actualResult shouldBe false
       }
-
-
     }
-
-
   }
-
-
 }

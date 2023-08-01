@@ -24,7 +24,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.ShortServiceRefunds.{refundSummaryUrl, shortServiceTaxableRefundUrl, taxOnShortServiceRefund}
+import utils.PageUrls.ShortServiceRefunds.{refundSummaryUrl, shortServiceTaxableRefundUrl}
 import utils.PageUrls.{fullUrl, pensionSummaryUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 

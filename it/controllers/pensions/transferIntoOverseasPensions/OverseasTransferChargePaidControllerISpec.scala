@@ -16,8 +16,7 @@
 
 package controllers.pensions.transferIntoOverseasPensions
 
-import builders.PensionsCYAModelBuilder.{aPensionsCYAEmptyModel, aPensionsCYAModel}
-import builders.TransferPensionSchemeBuilder.{aNonUkTransferPensionScheme, aUkTransferPensionScheme, anEmptyTransferPensionScheme}
+import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import builders.TransfersIntoOverseasPensionsViewModelBuilder.{aTransfersIntoOverseasPensionsViewModel, emptyTransfersIntoOverseasPensionsViewModel}
 import controllers.ControllerSpec.PreferredLanguages.{English, Welsh}
 import controllers.ControllerSpec.UserTypes.{Agent, Individual}
@@ -211,7 +210,7 @@ class OverseasTransferChargePaidControllerISpec
             scenarioNameForIndividualAndEnglish in {
 
               implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(minimalSessionData))
-              implicit val response = submitForm(SubmittedFormDataForYesNoPage(Some(false)))
+              implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoPage(Some(false)))
               val redirectPage = relativeUrl("/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-pension-scheme?index=0")
 
               response must haveStatus(SEE_OTHER)
@@ -222,7 +221,7 @@ class OverseasTransferChargePaidControllerISpec
             scenarioNameForIndividualAndWelsh ignore {
 
               implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(minimalSessionData))
-              implicit val response = submitForm(SubmittedFormDataForYesNoPage(Some(false)))
+              implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoPage(Some(false)))
               val redirectPage = relativeUrl("/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-pension-scheme?index=0")
 
               response must haveStatus(SEE_OTHER)
@@ -233,7 +232,7 @@ class OverseasTransferChargePaidControllerISpec
             scenarioNameForAgentAndEnglish in {
 
               implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(minimalSessionData))
-              implicit val response = submitForm(SubmittedFormDataForYesNoPage(Some(false)))
+              implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoPage(Some(false)))
               val redirectPage = relativeUrl("/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-pension-scheme?index=0")
 
               response must haveStatus(SEE_OTHER)
@@ -244,7 +243,7 @@ class OverseasTransferChargePaidControllerISpec
             scenarioNameForAgentAndWelsh ignore {
 
               implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(minimalSessionData))
-              implicit val response = submitForm(SubmittedFormDataForYesNoPage(Some(false)))
+              implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoPage(Some(false)))
               val redirectPage = relativeUrl("/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-pension-scheme?index=0")
 
               response must haveStatus(SEE_OTHER)
@@ -265,7 +264,7 @@ class OverseasTransferChargePaidControllerISpec
             scenarioNameForIndividualAndEnglish in {
 
               implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
-              implicit val response = submitForm(SubmittedFormDataForYesNoPage(Some(true)))
+              implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoPage(Some(true)))
               val redirectPage = relativeUrl("/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-pension-scheme?index=0")
 
               response must haveStatus(SEE_OTHER)
@@ -276,7 +275,7 @@ class OverseasTransferChargePaidControllerISpec
             scenarioNameForIndividualAndWelsh ignore {
 
               implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
-              implicit val response = submitForm(SubmittedFormDataForYesNoPage(Some(true)))
+              implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoPage(Some(true)))
               val redirectPage = relativeUrl("/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-pension-scheme?index=0")
 
               response must haveStatus(SEE_OTHER)
@@ -287,7 +286,7 @@ class OverseasTransferChargePaidControllerISpec
             scenarioNameForAgentAndEnglish in {
 
               implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
-              implicit val response = submitForm(SubmittedFormDataForYesNoPage(Some(true)))
+              implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoPage(Some(true)))
               val redirectPage = relativeUrl("/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-pension-scheme?index=0")
 
               response must haveStatus(SEE_OTHER)
@@ -298,7 +297,7 @@ class OverseasTransferChargePaidControllerISpec
             scenarioNameForAgentAndWelsh ignore {
 
               implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
-              implicit val response = submitForm(SubmittedFormDataForYesNoPage(Some(true)))
+              implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoPage(Some(true)))
               val redirectPage = relativeUrl("/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-pension-scheme?index=0")
 
               response must haveStatus(SEE_OTHER)

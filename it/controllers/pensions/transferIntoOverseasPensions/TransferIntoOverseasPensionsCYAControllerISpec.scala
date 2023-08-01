@@ -17,16 +17,15 @@
 package controllers.pensions.transferIntoOverseasPensions
 
 import builders.AllPensionsDataBuilder.anAllPensionsData
+import builders.CreateUpdatePensionChargesRequestBuilder.{priorPensionChargesRM, transferChargeSubmissionCRM}
 import builders.IncomeTaxUserDataBuilder.anIncomeTaxUserData
-import builders.PensionSchemeOverseasTransfersBuilder.anPensionSchemeOverseasTransfers
 import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import builders.PensionsUserDataBuilder
-import builders.PensionsUserDataBuilder.authorisationRequest.body
 import builders.PensionsUserDataBuilder.{aPensionsUserData, pensionUserDataWithTransferIntoOverseasPension}
 import builders.TransfersIntoOverseasPensionsViewModelBuilder.{aTransfersIntoOverseasPensionsViewModel, emptyTransfersIntoOverseasPensionsViewModel}
 import builders.UserBuilder.aUser
 import models.mongo.PensionsCYAModel
-import models.pension.charges.{CreateUpdatePensionChargesRequestModel, PensionCharges, TransferPensionScheme}
+import models.pension.charges.TransferPensionScheme
 import play.api.http.HeaderNames
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.json.Json
@@ -40,19 +39,6 @@ class TransferIntoOverseasPensionsCYAControllerISpec extends IntegrationTest wit
 
   private def pensionsUsersData(pensionsCyaModel: PensionsCYAModel, isPrior: Boolean = false) =
     PensionsUserDataBuilder.aPensionsUserData.copy(isPriorSubmission = isPrior, pensions = pensionsCyaModel)
-
-  val priorPensionChargesData: Option[PensionCharges] = anIncomeTaxUserData.pensions.flatMap(_.pensionCharges)
-
-  val priorCRM: CreateUpdatePensionChargesRequestModel = CreateUpdatePensionChargesRequestModel(
-    pensionSavingsTaxCharges = priorPensionChargesData.flatMap(_.pensionSavingsTaxCharges),
-    pensionSchemeOverseasTransfers = priorPensionChargesData.flatMap(_.pensionSchemeOverseasTransfers),
-    pensionSchemeUnauthorisedPayments = priorPensionChargesData.flatMap(_.pensionSchemeUnauthorisedPayments),
-    pensionContributions = priorPensionChargesData.flatMap(_.pensionContributions),
-    overseasPensionContributions = priorPensionChargesData.flatMap(_.overseasPensionContributions)
-  )
-  val submissionCRM: CreateUpdatePensionChargesRequestModel = priorCRM.copy(
-    pensionSchemeOverseasTransfers = Some(anPensionSchemeOverseasTransfers.copy(transferCharge = 500.20, transferChargeTaxPaid = 200.50))
-  )
 
   override val userScenarios: Seq[UserScenario[_, _]] = Nil
 
@@ -115,7 +101,7 @@ class TransferIntoOverseasPensionsCYAControllerISpec extends IntegrationTest wit
         lazy implicit val result: WSResponse = {
           dropPensionsDB()
           authoriseAgentOrIndividual(aUser.isAgent)
-          pensionChargesSessionStub(Json.toJson(submissionCRM).toString(), nino, taxYearEOY)
+          pensionChargesSessionStub(Json.toJson(transferChargeSubmissionCRM).toString(), nino, taxYearEOY)
           userDataStub(anIncomeTaxUserData, nino, taxYearEOY)
           insertCyaData(aPensionsUserData.copy(
             pensions = aPensionsCYAModel.copy(transfersIntoOverseasPensions = emptyTransfersIntoOverseasPensionsViewModel)
@@ -124,7 +110,7 @@ class TransferIntoOverseasPensionsCYAControllerISpec extends IntegrationTest wit
             fullUrl(checkYourDetailsPensionUrl(taxYearEOY)),
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
             follow = false,
-            body = Json.toJson(submissionCRM).toString())
+            body = Json.toJson(transferChargeSubmissionCRM).toString())
         }
 
         "have the status SEE OTHER" in {
@@ -144,14 +130,14 @@ class TransferIntoOverseasPensionsCYAControllerISpec extends IntegrationTest wit
         lazy implicit val result: WSResponse = {
           dropPensionsDB()
           authoriseAgentOrIndividual(aUser.isAgent)
-          pensionChargesSessionStub(Json.toJson(submissionCRM).toString(), nino, taxYearEOY)
+          pensionChargesSessionStub(Json.toJson(transferChargeSubmissionCRM).toString(), nino, taxYearEOY)
           userDataStub(anIncomeTaxUserData, nino, taxYearEOY)
           insertCyaData(aPensionsUserData)
           urlPost(
             fullUrl(checkYourDetailsPensionUrl(taxYearEOY)),
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
             follow = false,
-            body = Json.toJson(submissionCRM).toString())
+            body = Json.toJson(transferChargeSubmissionCRM).toString())
         }
 
         "have the status SEE OTHER" in {
@@ -168,14 +154,14 @@ class TransferIntoOverseasPensionsCYAControllerISpec extends IntegrationTest wit
         lazy implicit val result: WSResponse = {
           dropPensionsDB()
           authoriseAgentOrIndividual(aUser.isAgent)
-          pensionChargesSessionStub(Json.toJson(priorCRM).toString(), nino, taxYearEOY)
+          pensionChargesSessionStub(Json.toJson(priorPensionChargesRM).toString(), nino, taxYearEOY)
           userDataStub(anIncomeTaxUserData, nino, taxYearEOY)
           insertCyaData(aPensionsUserData)
           urlPost(
             fullUrl(checkYourDetailsPensionUrl(taxYearEOY)),
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
             follow = false,
-            body = Json.toJson(priorCRM).toString())
+            body = Json.toJson(priorPensionChargesRM).toString())
         }
 
         "have the status SEE OTHER" in {

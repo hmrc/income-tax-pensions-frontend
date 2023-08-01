@@ -22,7 +22,7 @@ import controllers.predicates.actions.TaxYearAction.taxYearAction
 import controllers.predicates.actions.{AuthorisedAction, InYearAction}
 import forms.YesNoForm
 import models.User
-import models.mongo.{PensionsCYAModel, PensionsUserData}
+import models.mongo.{DatabaseError, PensionsCYAModel, PensionsUserData}
 import models.pension.statebenefits.IncomeFromPensionsViewModel
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -36,7 +36,7 @@ import utils.Clock
 import views.html.pensions.incomeFromPensions.UkPensionSchemePaymentsView
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class UkPensionSchemePaymentsController @Inject()(implicit val mcc: MessagesControllerComponents,
@@ -46,7 +46,7 @@ class UkPensionSchemePaymentsController @Inject()(implicit val mcc: MessagesCont
                                                   pensionSessionService: PensionSessionService,
                                                   errorHandler: ErrorHandler,
                                                   view: UkPensionSchemePaymentsView,
-                                                  clock: Clock) extends FrontendController(mcc) with I18nSupport {
+                                                  clock: Clock, ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
 
   private def yesNoForm(user: User): Form[Boolean] = YesNoForm.yesNoForm(
     missingInputError = s"pensions.ukPensionSchemePayments.error.noEntry.${if (user.isAgent) "agent" else "individual"}"
@@ -56,15 +56,18 @@ class UkPensionSchemePaymentsController @Inject()(implicit val mcc: MessagesCont
     inYearAction.notInYear(taxYear) {
       pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
         case Some(data) =>
-          val updatedData = cleanUpSchemes(data)
-          val checkRedirect = journeyCheck(DoYouGetUkPensionSchemePaymentsPage, _: PensionsCYAModel, taxYear)
-          redirectBasedOnCurrentAnswers(taxYear, Some(updatedData), cyaPageCall(taxYear))(checkRedirect) {
-            data =>
-              data.pensions.incomeFromPensions.uKPensionIncomesQuestion match {
-                case Some(value) => Future.successful(Ok(view(yesNoForm(request.user).fill(value), taxYear)))
-                case _ => Future.successful(Ok(view(yesNoForm(request.user), taxYear)))
+          cleanUpSchemes(data).flatMap({
+            case Right(updatedUserData) =>
+              val checkRedirect = journeyCheck(DoYouGetUkPensionSchemePaymentsPage, _: PensionsCYAModel, taxYear)
+              redirectBasedOnCurrentAnswers(taxYear, Some(updatedUserData), cyaPageCall(taxYear))(checkRedirect) {
+                data =>
+                  data.pensions.incomeFromPensions.uKPensionIncomesQuestion match {
+                    case Some(value) => Future.successful(Ok(view(yesNoForm(request.user).fill(value), taxYear)))
+                    case _ => Future.successful(Ok(view(yesNoForm(request.user), taxYear)))
+                  }
               }
-          }
+          })
+
         case _ => Future.successful(Ok(view(yesNoForm(request.user), taxYear)))
       }
     }
@@ -89,8 +92,11 @@ class UkPensionSchemePaymentsController @Inject()(implicit val mcc: MessagesCont
                 pensionSessionService.createOrUpdateSessionData(request.user,
                   updatedCyaModel, taxYear, optData.exists(_.isPriorSubmission))(errorHandler.internalServerError()) {
 
-                  if (yesNo) Redirect(redirectForSchemeLoop(schemes = updatedCyaModel.incomeFromPensions.uKPensionIncomes, taxYear))
-                  else Redirect(UkPensionIncomeCYAController.show(taxYear))
+                  if (yesNo) {
+                    Redirect(redirectForSchemeLoop(schemes = updatedCyaModel.incomeFromPensions.uKPensionIncomes, taxYear))
+                  } else {
+                    Redirect(UkPensionIncomeCYAController.show(taxYear))
+                  }
                 }
               }
           }
@@ -99,13 +105,12 @@ class UkPensionSchemePaymentsController @Inject()(implicit val mcc: MessagesCont
     }
   }
 
-  private def cleanUpSchemes(pensionsUserData: PensionsUserData): PensionsUserData = {
+  private def cleanUpSchemes(pensionsUserData: PensionsUserData)(implicit ec: ExecutionContext): Future[Either[DatabaseError, PensionsUserData]] = {
     val schemes = pensionsUserData.pensions.incomeFromPensions.uKPensionIncomes
     val filteredSchemes = if (schemes.nonEmpty) schemes.filter(scheme => scheme.isFinished) else schemes
     val updatedViewModel = pensionsUserData.pensions.incomeFromPensions.copy(uKPensionIncomes = filteredSchemes)
     val updatedPensionData = pensionsUserData.pensions.copy(incomeFromPensions = updatedViewModel)
     val updatedUserData = pensionsUserData.copy(pensions = updatedPensionData)
-    pensionSessionService.createOrUpdateSessionData(updatedUserData)
-    updatedUserData
+    pensionSessionService.createOrUpdateSessionData(updatedUserData).map(_.map(_ => updatedUserData))
   }
 }

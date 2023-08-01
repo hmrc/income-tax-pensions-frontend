@@ -17,7 +17,7 @@
 package controllers.pensions.annualAllowances
 
 import builders.PensionAnnualAllowanceViewModelBuilder.aPensionAnnualAllowanceViewModel
-import builders.PensionsUserDataBuilder.{aPensionsUserData, anPensionsUserDataEmptyCya, pensionsUserDataWithAnnualAllowances}
+import builders.PensionsUserDataBuilder.{aPensionsUserData, pensionsUserDataWithAnnualAllowances}
 import builders.UserBuilder.aUserRequest
 import forms.PensionSchemeTaxReferenceForm
 import org.jsoup.Jsoup

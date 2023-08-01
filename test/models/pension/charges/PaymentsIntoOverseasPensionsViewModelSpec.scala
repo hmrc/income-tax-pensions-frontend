@@ -18,11 +18,10 @@ package models.pension.charges
 
 import builders.PaymentsIntoOverseasPensionsViewModelBuilder.{aPaymentsIntoOverseasPensionsEmptyViewModel, aPaymentsIntoOverseasPensionsViewModel}
 import builders.ReliefBuilder.{aDoubleTaxationRelief, aMigrantMemberRelief, aNoTaxRelief, aTransitionalCorrespondingRelief}
-import models.pension.charges.TaxReliefQuestion.{MigrantMemberRelief, TransitionalCorrespondingRelief}
 import models.pension.income.OverseasPensionContribution
 import utils.UnitTest
 
-class PaymentsIntoOverseasPensionsViewModelSpec extends UnitTest {
+class PaymentsIntoOverseasPensionsViewModelSpec extends UnitTest {  //scalastyle:off magic.number
 
   "isEmpty" should {
     "return true when all the ViewModel's arguments are 'None'" in {

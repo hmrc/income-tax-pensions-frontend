@@ -19,7 +19,7 @@ package controllers.pensions.incomeFromOverseasPensions
 
 import config.AppConfig
 import controllers.predicates.actions.ActionsProvider
-import models.mongo.{PensionsCYAModel, PensionsUserData}
+import models.mongo.{DatabaseError, PensionsCYAModel, PensionsUserData}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
@@ -31,29 +31,30 @@ import utils.SessionHelper
 import views.html.pensions.incomeFromOverseasPensions.CountrySummaryList
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class CountrySummaryListController @Inject()(actionsProvider: ActionsProvider, countrySummary: CountrySummaryList,
                                              pensionSessionService: PensionSessionService)
-                                            (implicit mcc: MessagesControllerComponents, appConfig: AppConfig)
+                                            (implicit mcc: MessagesControllerComponents, appConfig: AppConfig, ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport with SessionHelper {
 
   def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionUserData =>
-    val updatedUserData = cleanUpSchemes(sessionUserData.pensionsUserData)
-    val checkRedirect = journeyCheck(CountrySchemeSummaryListPage, _: PensionsCYAModel, taxYear)
-    redirectBasedOnCurrentAnswers(taxYear, Some(updatedUserData), cyaPageCall(taxYear))(checkRedirect) { _ =>
-      Future.successful(Ok(countrySummary(taxYear, updatedUserData.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes)))
-    }
+    cleanUpSchemes(sessionUserData.pensionsUserData).flatMap({
+      case Right(updatedUserData) =>
+        val checkRedirect = journeyCheck(CountrySchemeSummaryListPage, _: PensionsCYAModel, taxYear)
+        redirectBasedOnCurrentAnswers(taxYear, Some(updatedUserData), cyaPageCall(taxYear))(checkRedirect) { _ =>
+          Future.successful(Ok(countrySummary(taxYear, updatedUserData.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes)))
+        }
+    })
   }
 
-  private def cleanUpSchemes(pensionsUserData: PensionsUserData): PensionsUserData = {
+  private def cleanUpSchemes(pensionsUserData: PensionsUserData)(implicit ec: ExecutionContext): Future[Either[DatabaseError, PensionsUserData]] = {
     val schemes = pensionsUserData.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes
     val filteredSchemes = if (schemes.nonEmpty) schemes.filter(scheme => scheme.isFinished) else schemes
     val updatedViewModel = pensionsUserData.pensions.incomeFromOverseasPensions.copy(overseasIncomePensionSchemes = filteredSchemes)
     val updatedPensionData = pensionsUserData.pensions.copy(incomeFromOverseasPensions = updatedViewModel)
     val updatedUserData = pensionsUserData.copy(pensions = updatedPensionData)
-    pensionSessionService.createOrUpdateSessionData(updatedUserData)
-    updatedUserData
+    pensionSessionService.createOrUpdateSessionData(updatedUserData).map(_.map(_ => updatedUserData))
   }
 }

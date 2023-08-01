@@ -50,7 +50,7 @@ object UnauthorisedPaymentsRedirects { //scalastyle:off magic.number
       None
   }
 
-  private def pstrPageCheck(cya: PensionsCYAModel, taxYear: Int, optIndex: Option[Int] = None): Option[Result] = {
+  private def pstrPageCheck(cya: PensionsCYAModel, taxYear: Int, optIndex: Option[Int]): Option[Result] = {
     val unauthorisedPayments: UnauthorisedPaymentsViewModel = cya.unauthorisedPayments
     val optSchemes: Seq[String] = unauthorisedPayments.pensionSchemeTaxReference.getOrElse(Seq.empty)
     val schemesEmpty: Boolean = !optSchemes.exists(_.nonEmpty)
@@ -65,14 +65,13 @@ object UnauthorisedPaymentsRedirects { //scalastyle:off magic.number
     }
   }
 
-  private def removePstrPageCheck(cya: PensionsCYAModel, taxYear: Int, optIndex: Option[Int] = None): Option[Result] = {
+  private def removePstrPageCheck(cya: PensionsCYAModel, taxYear: Int, optIndex: Option[Int]): Option[Result] = {
     val unauthorisedPayments: UnauthorisedPaymentsViewModel = cya.unauthorisedPayments
     val optSchemes: Seq[String] = unauthorisedPayments.pensionSchemeTaxReference.getOrElse(Seq.empty)
     val index: Option[Int] = optIndex.filter(i => i >= 0 && i < optSchemes.size)
     val schemeIsValid: Boolean = if (index.isEmpty) false else optSchemes(index.getOrElse(0)).nonEmpty
 
-    if (schemeIsValid) None
-    else Some(Redirect(UkPensionSchemeDetailsController.show(taxYear)))
+    if (schemeIsValid) None   else Some(Redirect(UkPensionSchemeDetailsController.show(taxYear)))
   }
 
   private def isPageValidInJourney(pageNumber: Int, unauthorisedPaymentsViewModel: UnauthorisedPaymentsViewModel): Boolean =
