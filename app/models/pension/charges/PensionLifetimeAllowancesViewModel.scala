@@ -17,6 +17,7 @@
 package models.pension.charges
 
 import models.mongo.TextAndKey
+import models.pension.{AllPensionsData, PensionCYABaseModel}
 import play.api.libs.json.{Json, OFormat}
 import utils.DecryptableSyntax.DecryptableOps
 import utils.DecryptorInstances.booleanDecryptor
@@ -29,7 +30,7 @@ case class PensionLifetimeAllowancesViewModel(aboveLifetimeAllowanceQuestion: Op
                                               pensionAsLumpSum: Option[LifetimeAllowance] = None,
                                               pensionPaidAnotherWayQuestion: Option[Boolean] = None,
                                               pensionPaidAnotherWay: Option[LifetimeAllowance] = None,
-                                              pensionSchemeTaxReferences: Option[Seq[String]] = None) {
+                                              pensionSchemeTaxReferences: Option[Seq[String]] = None) extends PensionCYABaseModel{
 
   def isEmpty: Boolean = this.productIterator.forall(_ == None)
 
@@ -45,6 +46,17 @@ case class PensionLifetimeAllowancesViewModel(aboveLifetimeAllowanceQuestion: Op
     })
   }
 
+  def toPensionSavingsTaxChargesModel(priorData: Option[AllPensionsData]): PensionSavingsTaxCharges = {
+    PensionSavingsTaxCharges(
+      lumpSumBenefitTakenInExcessOfLifetimeAllowance = this.pensionAsLumpSum,
+      benefitInExcessOfLifetimeAllowance = this.pensionPaidAnotherWay,
+      pensionSchemeTaxReference = this.pensionSchemeTaxReferences,
+      isAnnualAllowanceReduced = priorData.flatMap(_.pensionCharges.flatMap(_.pensionSavingsTaxCharges.flatMap(_.isAnnualAllowanceReduced))),
+      taperedAnnualAllowance = priorData.flatMap(_.pensionCharges.flatMap(_.pensionSavingsTaxCharges.flatMap(_.taperedAnnualAllowance))),
+      moneyPurchasedAllowance = priorData.flatMap(_.pensionCharges.flatMap(_.pensionSavingsTaxCharges.flatMap(_.moneyPurchasedAllowance)))
+    )
+  }
+
   def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedPensionLifetimeAllowancesViewModel = {
     EncryptedPensionLifetimeAllowancesViewModel(
       aboveLifetimeAllowanceQuestion = aboveLifetimeAllowanceQuestion.map(_.encrypted),
@@ -57,6 +69,9 @@ case class PensionLifetimeAllowancesViewModel(aboveLifetimeAllowanceQuestion: Op
     )
   }
 
+  override def journeyIsNo: Boolean = !aboveLifetimeAllowanceQuestion.getOrElse(true)
+
+  override def journeyIsUnanswered: Boolean = this.productIterator.forall(_ == None)
 }
 
 object PensionLifetimeAllowancesViewModel {
