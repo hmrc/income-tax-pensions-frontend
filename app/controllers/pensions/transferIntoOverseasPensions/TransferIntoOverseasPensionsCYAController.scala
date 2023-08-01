@@ -27,7 +27,7 @@ import models.pension.charges.TransfersIntoOverseasPensionsViewModel
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
-import services.redirects.TransfersIntoOverseasPensionsPages.{RemoveSchemePage, TransferIntoOverseasPensionsCYA}
+import services.redirects.TransfersIntoOverseasPensionsPages.TransferIntoOverseasPensionsCYA
 import services.redirects.TransfersIntoOverseasPensionsRedirects.{cyaPageCall, journeyCheck}
 import services.{PensionChargesService, PensionSessionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController

@@ -81,7 +81,7 @@ object PaymentsIntoOverseasPensionsRedirects {
   }
 
   private def journeyCheckIndex(currentPage: PaymentsIntoOverseasPensionsPages, cya: PensionsCYAModel, taxYear: Int,
-                                reliefs: Seq[Relief], index: Option[Int] = None): Option[Result] = {
+                                reliefs: Seq[Relief], index: Option[Int]): Option[Result] = {
     val paymentsIOP = cya.paymentsIntoOverseasPensions
     if (isPageValidInJourney(currentPage, paymentsIOP, index)) {
       None
@@ -137,8 +137,7 @@ object PaymentsIntoOverseasPensionsRedirects {
 
   private def isPageValidInJourney(currentPage: PaymentsIntoOverseasPensionsPages,
                                    pIPViewModel: PaymentsIntoOverseasPensionsViewModel,
-                                   index: Option[Int] = None): Boolean = {
-
+                                   index: Option[Int]): Boolean = {
     validateIndex(index, pIPViewModel.reliefs) match {
       case Some(value) if currentPage.hasIndex =>
         indexPageValidInJourney.getOrElse(currentPage.journeyNo, { _: Relief => false })(pIPViewModel.reliefs(value))

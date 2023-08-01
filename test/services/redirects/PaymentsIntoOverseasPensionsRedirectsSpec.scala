@@ -32,7 +32,7 @@ import utils.UnitTest
 
 import scala.concurrent.Future
 
-class PaymentsIntoOverseasPensionsRedirectsSpec extends UnitTest {
+class PaymentsIntoOverseasPensionsRedirectsSpec extends UnitTest {  //scalastyle:off magic.number
 
   private val cyaData: PensionsCYAModel = PensionsCYAModel.emptyModels
   private val journeyStartCall: Call = PaymentIntoPensionSchemeController.show(taxYear)
@@ -41,8 +41,7 @@ class PaymentsIntoOverseasPensionsRedirectsSpec extends UnitTest {
   private val reliefDetailsCall: Call = ReliefsSchemeDetailsController.show(taxYear, Some(0))
   private val reliefSummaryCall: Call = ReliefsSchemeSummaryController.show(taxYear)
   private val checkYourAnswersCall: Call = PaymentsIntoOverseasPensionsCYAController.show(taxYear)
-  private val continueToContextualRedirect: Relief => Future[Result] = relief => Future.successful(Redirect(reliefDetailsCall))
-  private val continueToSummaryRedirect: Relief => Future[Result] = relief => Future.successful(Redirect(reliefSummaryCall))
+  private val continueToContextualRedirect: Relief => Future[Result] = _ => Future.successful(Redirect(reliefDetailsCall))
 
   ".cyaPageCall" should {
     "return a redirect call to the cya page" in {

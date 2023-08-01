@@ -36,14 +36,14 @@ import utils.{Clock, SessionHelper}
 import views.html.pensions.paymentsIntoOverseasPensions.DoubleTaxationAgreementView
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 @Singleton
 class DoubleTaxationAgreementController @Inject()(actionsProvider: ActionsProvider,
                                                   pensionSessionService: PensionSessionService,
                                                   view: DoubleTaxationAgreementView,
                                                   errorHandler: ErrorHandler)
-                                                 (implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
+                                                 (implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock)
   extends FrontendController(mcc) with I18nSupport with SessionHelper {
 
   def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {

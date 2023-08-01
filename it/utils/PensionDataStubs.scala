@@ -56,7 +56,7 @@ object PensionDataStubs {
           amount = Some(800.02),
           taxPaid = Some(200.02)
         )),
-        isAnnualAllowanceReduced = false,
+        isAnnualAllowanceReduced = Some(false),
         taperedAnnualAllowance = Some(false),
         moneyPurchasedAllowance = Some(false)
       )),

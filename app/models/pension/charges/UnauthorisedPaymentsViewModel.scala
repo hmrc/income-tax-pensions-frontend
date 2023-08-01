@@ -47,8 +47,9 @@ case class UnauthorisedPaymentsViewModel(surchargeQuestion: Option[Boolean] = No
     val isDone_noSurchargeQuestions = noSurchargeQuestion.exists(q => !q ||
       noSurchargeAmount.isDefined && yesNoAndAmountPopulated(noSurchargeTaxAmountQuestion, noSurchargeTaxAmount))
     val isDone_pstrQuestions =
-      if (isDone_surchargeQuestions || isDone_noSurchargeQuestions) ukPensionSchemesQuestion.exists(q => !q || pensionSchemeTaxReference.nonEmpty)
-      else true
+      if (isDone_surchargeQuestions || isDone_noSurchargeQuestions) {
+        ukPensionSchemesQuestion.exists(q => !q || pensionSchemeTaxReference.nonEmpty)
+      } else {true}
 
     Seq(
       isDone_surchargeQuestions,
@@ -57,41 +58,21 @@ case class UnauthorisedPaymentsViewModel(surchargeQuestion: Option[Boolean] = No
     ).forall(x => x)
   }
 
-  def toUnauth: PensionSchemeUnauthorisedPayments = PensionSchemeUnauthorisedPayments(
+  def toUnauth: PensionSchemeUnauthorisedPayments = PensionSchemeUnauthorisedPayments( //scalastyle:off simplify.boolean.expression
     pensionSchemeTaxReference = pensionSchemeTaxReference,
     surcharge =
-      if (surchargeQuestion.contains(true) && surchargeAmount.nonEmpty && surchargeTaxAmount.nonEmpty) {
-        Some(Charge(this.surchargeAmount.get, surchargeTaxAmount.get))
-      }
-      else {
+      if (surchargeQuestion.contains(true) && surchargeAmount.nonEmpty) {
+        Some(Charge(this.surchargeAmount.get, surchargeTaxAmount.getOrElse(0)))
+      } else {
         None
       },
     noSurcharge =
-      if (noSurchargeQuestion.contains(true) && noSurchargeAmount.nonEmpty && noSurchargeTaxAmount.nonEmpty) {
-        Some(Charge(this.noSurchargeAmount.get, noSurchargeTaxAmount.get))
-      }
-      else {
+      if (noSurchargeQuestion.contains(true) && noSurchargeAmount.nonEmpty) {
+        Some(Charge(this.noSurchargeAmount.get, noSurchargeTaxAmount.getOrElse(0)))
+      } else {
         None
       }
-  )
-
-  def toCreatePensionChargeRequest: CreateUpdatePensionChargesRequestModel = {
-    CreateUpdatePensionChargesRequestModel(
-      pensionSavingsTaxCharges = None,
-      pensionSchemeOverseasTransfers = None,
-      pensionContributions = None,
-      overseasPensionContributions = None,
-      pensionSchemeUnauthorisedPayments = if (this.isEmpty) None else Some(
-        PensionSchemeUnauthorisedPayments(
-          pensionSchemeTaxReference = pensionSchemeTaxReference,
-          surcharge =
-            if (surchargeQuestion.getOrElse(false)) Some(Charge(this.surchargeAmount.getOrElse(0.00), this.surchargeTaxAmount.getOrElse(0.00))) else None,
-          noSurcharge =
-            if (noSurchargeQuestion.getOrElse(false)) Some(Charge(this.surchargeAmount.getOrElse(0.00), this.surchargeTaxAmount.getOrElse(0.00))) else None
-        )
-      )
-    )
-  }
+  ) //scalastyle:on simplify.boolean.expression
 
   def isEmpty: Boolean = this.productIterator.forall(_ == None)
 
@@ -108,7 +89,7 @@ case class UnauthorisedPaymentsViewModel(surchargeQuestion: Option[Boolean] = No
       fromUkPensionSchemeQuestion = ukPensionSchemesQuestion.map(_.encrypted),
       pensionSchemeTaxReference = pensionSchemeTaxReference.map(_.map(_.encrypted))
     )
-
+  
   def unauthorisedPaymentQuestion: Option[Boolean] = {
     (noSurchargeQuestion, surchargeQuestion) match {
       case (None, None) => None
@@ -139,10 +120,10 @@ case class UnauthorisedPaymentsViewModel(surchargeQuestion: Option[Boolean] = No
       }
     }
 
-    val neitherSurchargeQuestionsApplied = {
+    val neitherSurchargeQuestionsApplied = { //scalastyle:off simplify.boolean.expression
       if (!noSurchargeQuestion.getOrElse(false) && !surchargeQuestion.getOrElse(false)) {
         noSurchargeQuestionsApplied.copy(ukPensionSchemesQuestion = None, pensionSchemeTaxReference = None)
-      }
+      } //scalastyle:on simplify.boolean.expression
       else {
         noSurchargeQuestionsApplied
       }

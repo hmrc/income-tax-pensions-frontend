@@ -40,27 +40,27 @@ object AnnualAllowancesRedirects {
   def journeyCheck(currentPage: AnnualAllowancesPages, cya: PensionsCYAModel, taxYear: Int, optIndex: Option[Int] = None): Option[Result] = {
     val annualAllowanceData = cya.pensionsAnnualAllowances
 
-    if (!previousQuestionIsAnswered(currentPage.journeyNo, annualAllowanceData) || !isPageValidInJourney(currentPage.journeyNo, annualAllowanceData))
+    if (!previousQuestionIsAnswered(currentPage.journeyNo, annualAllowanceData) || !isPageValidInJourney(currentPage.journeyNo, annualAllowanceData)) {
       Some(Redirect(ReducedAnnualAllowanceController.show(taxYear)))
-    else if (currentPage.equals(RemovePSTRPage))
+    } else if (currentPage.equals(RemovePSTRPage)) {
       removePstrPageCheck(cya, taxYear, optIndex)
-    else if (currentPage.equals(PSTRPage))
+    } else if (currentPage.equals(PSTRPage)) {
       pstrPageCheck(cya, taxYear, optIndex)
-    else
+    } else {
       None
+    }
   }
 
-  private def removePstrPageCheck(cya: PensionsCYAModel, taxYear: Int, optIndex: Option[Int] = None): Option[Result] = {
+  private def removePstrPageCheck(cya: PensionsCYAModel, taxYear: Int, optIndex: Option[Int]): Option[Result] = {
     val annualAVM: PensionAnnualAllowancesViewModel = cya.pensionsAnnualAllowances
     val optSchemes: Seq[String] = annualAVM.pensionSchemeTaxReferences.getOrElse(Seq.empty)
     val index: Option[Int] = optIndex.filter(i => i >= 0 && i < optSchemes.size)
     val schemeIsValid: Boolean = if (index.isEmpty) false else optSchemes(index.getOrElse(0)).nonEmpty
 
-    if (schemeIsValid) None
-    else Some(Redirect(PstrSummaryController.show(taxYear)))
+    if (schemeIsValid) None  else Some(Redirect(PstrSummaryController.show(taxYear)))
   }
 
-  private def pstrPageCheck(cya: PensionsCYAModel, taxYear: Int, optIndex: Option[Int] = None): Option[Result] = {
+  private def pstrPageCheck(cya: PensionsCYAModel, taxYear: Int, optIndex: Option[Int]): Option[Result] = {
     val annualAllowanceVM: PensionAnnualAllowancesViewModel = cya.pensionsAnnualAllowances
     val optSchemes: Seq[String] = annualAllowanceVM.pensionSchemeTaxReferences.getOrElse(Seq.empty)
     val schemesEmpty: Boolean = !optSchemes.exists(_.nonEmpty)

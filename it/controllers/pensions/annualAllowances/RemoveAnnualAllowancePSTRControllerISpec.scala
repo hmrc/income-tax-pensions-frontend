@@ -16,7 +16,6 @@
 
 package controllers.pensions.annualAllowances
 
-import builders.IncomeTaxUserDataBuilder.anIncomeTaxUserDataEmpty
 import builders.PensionAnnualAllowanceViewModelBuilder.aPensionAnnualAllowanceViewModel
 import builders.PensionsUserDataBuilder.{aPensionsUserData, pensionsUserDataWithAnnualAllowances}
 import builders.UserBuilder.aUserRequest

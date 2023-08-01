@@ -17,6 +17,7 @@
 package controllers.pensions.annualAllowances
 
 import builders.AllPensionsDataBuilder.anAllPensionsData
+import builders.CreateUpdatePensionChargesRequestBuilder.{annualAllowanceSubmissionCRM, priorPensionChargesRM}
 import builders.IncomeTaxUserDataBuilder.anIncomeTaxUserData
 import builders.PensionAnnualAllowanceViewModelBuilder.aPensionAnnualAllowanceViewModel
 import builders.PensionsCYAModelBuilder.aPensionsCYAModel
@@ -26,8 +27,9 @@ import builders.UserBuilder.aUser
 import models.mongo.PensionsCYAModel
 import play.api.http.HeaderNames
 import play.api.http.Status.{OK, SEE_OTHER}
+import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.PensionAnnualAllowancePages.{annualAllowancesCYAUrl, pensionSchemeTaxReferenceUrl, reducedAnnualAllowanceUrl}
+import utils.PageUrls.PensionAnnualAllowancePages.{annualAllowancesCYAUrl, reducedAnnualAllowanceUrl}
 import utils.PageUrls.{fullUrl, overviewUrl, pensionSummaryUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
@@ -37,9 +39,9 @@ class AnnualAllowanceCYAControllerISpec extends IntegrationTest with ViewHelpers
   }
 
   override val userScenarios: Seq[UserScenario[_, _]] = Nil
-  
+
   ".show" should {
-     "redirect to Overview Page when in year" in {
+    "redirect to Overview Page when in year" in {
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
@@ -52,7 +54,7 @@ class AnnualAllowanceCYAControllerISpec extends IntegrationTest with ViewHelpers
       result.status shouldBe SEE_OTHER
       result.headers("Location").head shouldBe overviewUrl(taxYear)
     }
-    
+
     "show page when EOY" in {
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
@@ -66,30 +68,31 @@ class AnnualAllowanceCYAControllerISpec extends IntegrationTest with ViewHelpers
     }
 
     "redirect to reduced annual allowance page previous questions have not been answered" which {
-        lazy val result: WSResponse = {
-          dropPensionsDB()
-          authoriseAgentOrIndividual()
-          val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(taxPaidByPensionProvider = None)
-          insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel))
+      lazy val result: WSResponse = {
+        dropPensionsDB()
+        authoriseAgentOrIndividual()
+        val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(taxPaidByPensionProvider = None)
+        insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel))
 
-          urlGet(fullUrl(annualAllowancesCYAUrl(taxYearEOY)), follow = false,
-            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
-        }
+        urlGet(fullUrl(annualAllowancesCYAUrl(taxYearEOY)), follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+      }
 
-        "has a SEE_OTHER status" in {
-          result.status shouldBe SEE_OTHER
-          result.header("location") shouldBe Some(reducedAnnualAllowanceUrl(taxYearEOY))
-        }
+      "has a SEE_OTHER status" in {
+        result.status shouldBe SEE_OTHER
+        result.header("location") shouldBe Some(reducedAnnualAllowanceUrl(taxYearEOY))
+      }
     }
   }
-  
+
   ".submit" should {
+    
     "redirect to overview when in year" in {
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
         insertCyaData(pensionsUsersData(aPensionsCYAModel))
-        userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYear)
+        userDataStub(anIncomeTaxUserData, nino, taxYear)
         urlPost(
           fullUrl(annualAllowancesCYAUrl(taxYear)),
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)),
@@ -100,24 +103,43 @@ class AnnualAllowanceCYAControllerISpec extends IntegrationTest with ViewHelpers
       result.status shouldBe SEE_OTHER
       result.headers("location").head shouldBe overviewUrl(taxYear)
     }
-     "redirect to next page" in {
-       lazy implicit val result: WSResponse = {
+
+    "the user makes no changes and no API submission is made" in {
+      lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
         insertCyaData(pensionsUsersData(aPensionsCYAModel))
-        userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYearEOY)
+        userDataStub(anIncomeTaxUserData, nino, taxYearEOY)
+        pensionChargesSessionStub(Json.toJson(priorPensionChargesRM).toString(), nino, taxYearEOY)
+        urlPost(
+          fullUrl(annualAllowancesCYAUrl(taxYearEOY)),
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
+          follow = false,
+          body = "")
+      }
+      result.status shouldBe SEE_OTHER
+      result.headers("location").head shouldBe pensionSummaryUrl(taxYearEOY)
+    }
+    
+    "redirect to next page after submitting updated CYA data that differs from prior data" in {
+      lazy implicit val result: WSResponse = {
+        dropPensionsDB()
+        authoriseAgentOrIndividual(aUser.isAgent)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel))
+        userDataStub(anIncomeTaxUserData, nino, taxYearEOY)
+        pensionChargesSessionStub(Json.toJson(annualAllowanceSubmissionCRM).toString(), nino, taxYearEOY)
         urlPost(
           fullUrl(annualAllowancesCYAUrl(taxYearEOY)),
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
           follow = false,
           body = ""
         )
-       }
-       result.status shouldBe SEE_OTHER
-       result.headers("location").head shouldBe pensionSummaryUrl(taxYearEOY)
-     }
+      }
+      result.status shouldBe SEE_OTHER
+      result.headers("location").head shouldBe pensionSummaryUrl(taxYearEOY)
+    }
 
-    "redirect to reduced annual allowance page previous questions have not been answered" which {
+    "redirect to reduced annual allowance page when previous questions have not been answered" which {
       lazy val form: Map[String, String] = Map("" -> "12345678RA")
       lazy val result: WSResponse = {
         dropPensionsDB()

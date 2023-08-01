@@ -18,7 +18,7 @@ package controllers.pensions.shortServiceRefunds
 
 import config.AppConfig
 import controllers.predicates.actions.ActionsProvider
-import models.mongo.{PensionsCYAModel, PensionsUserData}
+import models.mongo.{DatabaseError, PensionsCYAModel, PensionsUserData}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
@@ -30,29 +30,30 @@ import utils.SessionHelper
 import views.html.pensions.shortServiceRefunds.RefundSummaryView
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class RefundSummaryController @Inject()(actionsProvider: ActionsProvider, view: RefundSummaryView,
                                         pensionSessionService: PensionSessionService)
-                                       (implicit mcc: MessagesControllerComponents, appConfig: AppConfig)
+                                       (implicit mcc: MessagesControllerComponents, appConfig: AppConfig, ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport with SessionHelper {
 
   def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionUserData =>
-    val updatedUserData = cleanUpSchemes(sessionUserData.pensionsUserData)
-    val checkRedirect = journeyCheck(RefundSchemesSummaryPage, _: PensionsCYAModel, taxYear)
-    redirectBasedOnCurrentAnswers(taxYear, Some(updatedUserData), cyaPageCall(taxYear))(checkRedirect) { _ =>
-      Future.successful(Ok(view(taxYear, updatedUserData.pensions.shortServiceRefunds.refundPensionScheme)))
-    }
+    cleanUpSchemes(sessionUserData.pensionsUserData).flatMap({
+      case Right(updatedUserData) =>
+        val checkRedirect = journeyCheck(RefundSchemesSummaryPage, _: PensionsCYAModel, taxYear)
+        redirectBasedOnCurrentAnswers(taxYear, Some(updatedUserData), cyaPageCall(taxYear))(checkRedirect) { _ =>
+          Future.successful(Ok(view(taxYear, updatedUserData.pensions.shortServiceRefunds.refundPensionScheme)))
+        }
+    })
   }
 
-  private def cleanUpSchemes(pensionsUserData: PensionsUserData): PensionsUserData = {
+  private def cleanUpSchemes(pensionsUserData: PensionsUserData)(implicit ec: ExecutionContext): Future[Either[DatabaseError, PensionsUserData]] = {
     val schemes = pensionsUserData.pensions.shortServiceRefunds.refundPensionScheme
     val filteredSchemes = if (schemes.nonEmpty) schemes.filter(scheme => scheme.isFinished) else schemes
     val updatedViewModel = pensionsUserData.pensions.shortServiceRefunds.copy(refundPensionScheme = filteredSchemes)
     val updatedPensionData = pensionsUserData.pensions.copy(shortServiceRefunds = updatedViewModel)
     val updatedUserData = pensionsUserData.copy(pensions = updatedPensionData)
-    pensionSessionService.createOrUpdateSessionData(updatedUserData)
-    updatedUserData
+    pensionSessionService.createOrUpdateSessionData(updatedUserData).map(_.map(_ => updatedUserData))
   }
 }
