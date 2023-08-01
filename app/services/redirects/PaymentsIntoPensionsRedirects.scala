@@ -27,14 +27,6 @@ object PaymentsIntoPensionsRedirects { //scalastyle:off magic.number
 
   def cyaPageCall(taxYear: Int): Call = PaymentsIntoPensionsCYAController.show(taxYear)
 
-  def isFinishedCheck(viewModel: PaymentsIntoPensionsViewModel, taxYear: Int, continueRedirect: Call): Result = {
-    if (viewModel.isFinished) {
-      Redirect(cyaPageCall(taxYear))
-    } else {
-      Redirect(continueRedirect)
-    }
-  }
-
   def journeyCheck(currentPage: PaymentsIntoPensionPages, cya: PensionsCYAModel, taxYear: Int): Option[Result] = {
     val pIP = cya.paymentsIntoPension
     if (isPageValidInJourney(currentPage.journeyNo, pIP) && previousQuestionIsAnswered(currentPage.journeyNo, pIP)) {

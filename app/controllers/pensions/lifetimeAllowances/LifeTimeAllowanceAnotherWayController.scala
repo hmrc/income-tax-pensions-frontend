@@ -28,8 +28,8 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
 import services.redirects.LifetimeAllowancesPages.LifetimeAllowanceAnotherWayPage
-import services.redirects.LifetimeAllowancesRedirects.{cyaPageCall, journeyCheck, statePensionIsFinishedCheck}
-import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
+import services.redirects.LifetimeAllowancesRedirects.{cyaPageCall, journeyCheck}
+import services.redirects.SimpleRedirectService.{isFinishedCheck, redirectBasedOnCurrentAnswers}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.lifetimeAllowances.LifeTimeAllowanceAnotherWayView
@@ -91,7 +91,8 @@ class LifeTimeAllowanceAnotherWayController @Inject()(implicit val cc: MessagesC
                   val redirectLocation = if (yesNo) PensionTakenAnotherWayAmountController.show(taxYear) else LifetimeAllowanceCYAController.show(taxYear)
                   pensionSessionService.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear, data.isPriorSubmission)(
                     errorHandler.internalServerError()) {
-                    statePensionIsFinishedCheck(updatedCyaModel.pensionLifetimeAllowances, taxYear, redirectLocation)
+
+                    isFinishedCheck(updatedCyaModel.pensionLifetimeAllowances, taxYear, redirectLocation, cyaPageCall)
                   }
               }
             case _ => Future.successful(Redirect(PensionsSummaryController.show(taxYear)))

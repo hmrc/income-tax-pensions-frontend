@@ -28,14 +28,6 @@ object LifetimeAllowancesRedirects {
 
   def cyaPageCall(taxYear: Int): Call = LifetimeAllowanceCYAController.show(taxYear)
 
-  def statePensionIsFinishedCheck(cya: PensionLifetimeAllowancesViewModel, taxYear: Int, continueRedirect: Call): Result = {
-    if (cya.isFinished) {
-      Redirect(cyaPageCall(taxYear))
-    } else {
-      Redirect(continueRedirect)
-    }
-  }
-
   def redirectForSchemeLoop(schemes: Seq[String], taxYear: Int): Call = {
     val filteredSchemes: Seq[String] = schemes.filter(_.trim.nonEmpty)
     checkForExistingSchemes(

@@ -29,8 +29,8 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.PensionSessionService
 import services.redirects.LifetimeAllowancesPages.LumpSumAmountPage
-import services.redirects.LifetimeAllowancesRedirects.{cyaPageCall, journeyCheck, statePensionIsFinishedCheck}
-import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
+import services.redirects.LifetimeAllowancesRedirects.{cyaPageCall, journeyCheck}
+import services.redirects.SimpleRedirectService.{isFinishedCheck, redirectBasedOnCurrentAnswers}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.lifetimeAllowances.PensionLumpSumDetailsView
@@ -99,7 +99,11 @@ class PensionLumpSumDetailsController @Inject()(implicit val mcc: MessagesContro
                   )
                   pensionSessionService.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear, data.isPriorSubmission)(
                     errorHandler.internalServerError()) {
-                    statePensionIsFinishedCheck(updatedCyaModel.pensionLifetimeAllowances, taxYear, LifeTimeAllowanceAnotherWayController.show(taxYear))
+                    isFinishedCheck(
+                      updatedCyaModel.pensionLifetimeAllowances,
+                      taxYear,
+                      LifeTimeAllowanceAnotherWayController.show(taxYear),
+                      cyaPageCall)
                   }
               }
             case _ => Future.successful(Redirect(PensionsSummaryController.show(taxYear)))

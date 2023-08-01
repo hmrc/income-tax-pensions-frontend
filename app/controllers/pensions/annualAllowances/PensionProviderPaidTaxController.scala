@@ -17,6 +17,7 @@
 package controllers.pensions.annualAllowances
 
 import config.{AppConfig, ErrorHandler}
+import controllers.pensions.annualAllowances.routes.PensionSchemeTaxReferenceController
 import controllers.predicates.actions.ActionsProvider
 import forms.FormsProvider.pensionProviderPaidTaxForm
 import models.mongo.{PensionsCYAModel, PensionsUserData}
@@ -26,7 +27,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.PensionSessionService
 import services.redirects.AnnualAllowancesPages.PensionProviderPaidTaxPage
-import services.redirects.AnnualAllowancesRedirects.{cyaPageCall, journeyCheck, redirectForSchemeLoop}
+import services.redirects.AnnualAllowancesRedirects.{cyaPageCall, journeyCheck}
 import services.redirects.SimpleRedirectService.{isFinishedCheck, redirectBasedOnCurrentAnswers}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
@@ -94,7 +95,7 @@ class PensionProviderPaidTaxController @Inject()(actionsProvider: ActionsProvide
       pensionUserData.isPriorSubmission)(errorHandler.internalServerError()) {
       isFinishedCheck(
         updatedCyaModel.pensionsAnnualAllowances, taxYear,
-        redirectForSchemeLoop(updatedCyaModel.pensionsAnnualAllowances.pensionSchemeTaxReferences.getOrElse(Nil), taxYear),
+        PensionSchemeTaxReferenceController.show(taxYear, None),
         cyaPageCall)
     }
   }

@@ -17,6 +17,7 @@
 package controllers.pensions.lifetimeAllowances
 
 import config.{AppConfig, ErrorHandler}
+import controllers.pensions.lifetimeAllowances.routes.PensionSchemeTaxReferenceLifetimeController
 import controllers.pensions.routes.PensionsSummaryController
 import controllers.predicates.actions.AuthorisedAction
 import controllers.predicates.actions.TaxYearAction.taxYearAction
@@ -27,8 +28,8 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
 import services.redirects.LifetimeAllowancesPages.LifetimeAllowanceAnotherWayAmountPage
-import services.redirects.LifetimeAllowancesRedirects.{cyaPageCall, journeyCheck, redirectForSchemeLoop, statePensionIsFinishedCheck}
-import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
+import services.redirects.LifetimeAllowancesRedirects.{cyaPageCall, journeyCheck}
+import services.redirects.SimpleRedirectService.{isFinishedCheck, redirectBasedOnCurrentAnswers}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.lifetimeAllowances.PensionTakenAnotherWayAmountView
@@ -93,10 +94,11 @@ class PensionTakenAnotherWayAmountController @Inject()(implicit val mcc: Message
                   ))
                 pensionSessionService.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear, data.isPriorSubmission)(
                   errorHandler.internalServerError()) {
-                  statePensionIsFinishedCheck(
+                  isFinishedCheck(
                     updatedCyaModel.pensionLifetimeAllowances,
                     taxYear,
-                    redirectForSchemeLoop(updatedCyaModel.pensionLifetimeAllowances.pensionSchemeTaxReferences.getOrElse(Seq()), taxYear))
+                    PensionSchemeTaxReferenceLifetimeController.show(taxYear, None),
+                    cyaPageCall)
                 }
             }
           case _ => Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
