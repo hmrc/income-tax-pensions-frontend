@@ -23,10 +23,10 @@ import utils.EncryptedValue
 case class PensionSavingsTaxCharges(pensionSchemeTaxReference: Option[Seq[String]],
                                     lumpSumBenefitTakenInExcessOfLifetimeAllowance: Option[LifetimeAllowance],
                                     benefitInExcessOfLifetimeAllowance: Option[LifetimeAllowance],
-                                    isAnnualAllowanceReduced: Boolean,
+                                    isAnnualAllowanceReduced: Option[Boolean],
                                     taperedAnnualAllowance: Option[Boolean],
                                     moneyPurchasedAllowance: Option[Boolean]) extends PensionChargesSubRequestModel {
-  override def isEmpty: Boolean = false
+  override def isEmpty: Boolean = this.productIterator.forall(_ == None)
 }
 
 object PensionSavingsTaxCharges {
@@ -36,7 +36,7 @@ object PensionSavingsTaxCharges {
 case class EncryptedPensionSavingsTaxCharges(pensionSchemeTaxReference: Option[Seq[EncryptedValue]],
                                              lumpSumBenefitTakenInExcessOfLifetimeAllowance: Option[EncryptedLifetimeAllowance],
                                              benefitInExcessOfLifetimeAllowance: Option[EncryptedLifetimeAllowance],
-                                             isAnnualAllowanceReduced: EncryptedValue,
+                                             isAnnualAllowanceReduced: Option[EncryptedValue],
                                              taperedAnnualAllowance: Option[EncryptedValue],
                                              moneyPurchasedAllowance: Option[EncryptedValue])
 

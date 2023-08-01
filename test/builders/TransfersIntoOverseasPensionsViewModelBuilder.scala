@@ -17,7 +17,7 @@
 package builders
 
 import builders.TransferPensionSchemeBuilder.{aNonUkTransferPensionScheme, aUkTransferPensionScheme}
-import models.pension.charges.{TransferPensionScheme, TransfersIntoOverseasPensionsViewModel}
+import models.pension.charges.TransfersIntoOverseasPensionsViewModel
 
 object TransfersIntoOverseasPensionsViewModelBuilder {
 

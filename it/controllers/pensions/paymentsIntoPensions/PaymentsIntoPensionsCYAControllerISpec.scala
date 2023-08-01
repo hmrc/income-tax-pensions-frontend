@@ -24,12 +24,11 @@ import builders.PaymentsIntoOverseasPensionsViewModelBuilder.aPaymentsIntoOverse
 import builders.PaymentsIntoPensionVewModelBuilder.aPaymentsIntoPensionViewModel
 import builders.PensionContributionsBuilder.anPensionContributions
 import builders.PensionLifetimeAllowancesViewModelBuilder.aPensionLifetimeAllowancesViewModel
-import builders.PensionSavingTaxChargesBuilder.anPensionSavngTaxCharges
+import builders.PensionSavingTaxChargesBuilder.aPensionSavingsTaxCharges
 import builders.PensionsCYAModelBuilder.{aPensionsCYAModel, paymentsIntoPensionOnlyCYAModel}
 import builders.PensionsUserDataBuilder.aPensionsUserData
 import builders.ReliefsBuilder.aReliefs
 import builders.UnauthorisedPaymentsViewModelBuilder.anUnauthorisedPaymentsViewModel
-import builders.UserBuilder.aUser
 import models.IncomeTaxUserData
 import models.pension.charges.PensionAnnualAllowancesViewModel
 import models.pension.reliefs.PaymentsIntoPensionsViewModel
@@ -40,7 +39,7 @@ import play.api.http.HeaderNames
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import utils.PageUrls.PaymentIntoPensions.checkPaymentsIntoPensionCyaUrl
-import utils.PageUrls.{fullUrl, overviewUrl}
+import utils.PageUrls.fullUrl
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 import views.pensions.paymentsIntoPensions.PaymentsIntoPensionsCYASpec.CommonExpectedEN.{no => answerNo, _}
 import views.pensions.paymentsIntoPensions.PaymentsIntoPensionsCYASpec.ExpectedIndividualEN._
@@ -187,8 +186,8 @@ class PaymentsIntoPensionsCYAControllerISpec extends IntegrationTest with ViewHe
             aReliefs.retirementAnnuityPayments, Some(true), aReliefs.paymentToEmployersSchemeNoTaxRelief)
 
         val unchangedAllowances = PensionAnnualAllowancesViewModel(
-          Some(anPensionSavngTaxCharges.isAnnualAllowanceReduced),
-          anPensionSavngTaxCharges.moneyPurchasedAllowance, anPensionSavngTaxCharges.taperedAnnualAllowance,
+          aPensionSavingsTaxCharges.isAnnualAllowanceReduced,
+          aPensionSavingsTaxCharges.moneyPurchasedAllowance, aPensionSavingsTaxCharges.taperedAnnualAllowance,
           Some(true), Some(anPensionContributions.inExcessOfTheAnnualAllowance), Some(true),
           Some(anPensionContributions.annualAllowanceTaxPaid),
           Some(anPensionContributions.pensionSchemeTaxReference))

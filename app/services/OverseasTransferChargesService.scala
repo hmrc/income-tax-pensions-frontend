@@ -32,7 +32,7 @@ class OverseasTransferChargesService @Inject()(pensionSessionService: PensionSes
     val optIndex: Option[Int] = pensionIndex.filter(i => i >= 0 && i < schemes.size)
     val updatedSchemes: Seq[TransferPensionScheme] = {
       optIndex match {
-        case Some(index) if schemes(index).ukTransferCharge.getOrElse(false).equals(yesNo) => // if scheme exists and equals prior answer
+        case Some(index) if schemes(index).ukTransferCharge.getOrElse(false) == yesNo => // if scheme exists and equals prior answer
           schemes.updated(index, schemes(index)) // ensure is the same
         case Some(index) => // if index scheme exists and is different
           schemes.updated(index, TransferPensionScheme(ukTransferCharge = Some(yesNo))) // clear old data

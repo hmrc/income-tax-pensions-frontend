@@ -17,7 +17,6 @@
 package controllers.pensions.incomeFromOverseasPensions
 
 import builders.IncomeFromOverseasPensionsViewModelBuilder.{anIncomeFromOverseasPensionsEmptyViewModel, anIncomeFromOverseasPensionsViewModel}
-import builders.PensionSchemeBuilder.aPensionScheme1
 import builders.PensionsUserDataBuilder.pensionUserDataWithIncomeOverseasPension
 import builders.UserBuilder.aUserRequest
 import forms.Countries
