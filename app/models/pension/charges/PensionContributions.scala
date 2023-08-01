@@ -28,13 +28,6 @@ case class PensionContributions(pensionSchemeTaxReference: Seq[String],
 
 object PensionContributions {
   implicit val format: OFormat[PensionContributions] = Json.format[PensionContributions]
-  
-  def toPensionContributions(paavm:PensionAnnualAllowancesViewModel): PensionContributions =
-    PensionContributions(
-      pensionSchemeTaxReference = paavm.pensionSchemeTaxReferences.getOrElse(Nil),
-      inExcessOfTheAnnualAllowance = paavm.aboveAnnualAllowance.getOrElse(BigDecimal(0.00)),
-      annualAllowanceTaxPaid = paavm.taxPaidByPensionProvider.getOrElse(BigDecimal(0.00))
-    )
 }
 
 case class EncryptedPensionContributions(pensionSchemeTaxReference: Seq[EncryptedValue],

@@ -50,12 +50,30 @@ case class PensionAnnualAllowancesViewModel(reducedAnnualAllowanceQuestion: Opti
     }
   }
 
+  def toPensionContributions: PensionContributions =
+    PensionContributions(
+      pensionSchemeTaxReference = pensionSchemeTaxReferences.getOrElse(Nil),
+      inExcessOfTheAnnualAllowance = aboveAnnualAllowance.getOrElse(BigDecimal(0.00)),
+      annualAllowanceTaxPaid = taxPaidByPensionProvider.getOrElse(BigDecimal(0.00))
+    )
+
+  def toPensionSavingsTaxCharges(prior: Option[AllPensionsData]): PensionSavingsTaxCharges = {
+    PensionSavingsTaxCharges(
+      pensionSchemeTaxReference = pensionSchemeTaxReferences,
+      lumpSumBenefitTakenInExcessOfLifetimeAllowance = prior.flatMap(_.pensionCharges).flatMap(_.pensionSavingsTaxCharges)
+        .flatMap(_.lumpSumBenefitTakenInExcessOfLifetimeAllowance),
+      benefitInExcessOfLifetimeAllowance = prior.flatMap(_.pensionCharges).flatMap(_.pensionSavingsTaxCharges).flatMap(_.benefitInExcessOfLifetimeAllowance),
+      isAnnualAllowanceReduced = reducedAnnualAllowanceQuestion,
+      taperedAnnualAllowance = taperedAnnualAllowance,
+      moneyPurchasedAllowance = moneyPurchaseAnnualAllowance
+    )
+  }
   def toAnnualAllowanceChargesModel(prior: Option[AllPensionsData]): AnnualAllowancesPensionCharges = {
     val pensionContributionsOpt =
       if (pensionSchemeTaxReferences.getOrElse(Nil) == Nil && aboveAnnualAllowance.isEmpty && taxPaidByPensionProvider.isEmpty) {
         None
       } else {
-        Some(PensionContributions.toPensionContributions(this))
+        Some(toPensionContributions)
       }
 
     val pensionSavingsTaxChargesOpt =
@@ -63,7 +81,7 @@ case class PensionAnnualAllowancesViewModel(reducedAnnualAllowanceQuestion: Opti
         taperedAnnualAllowance.isEmpty && moneyPurchaseAnnualAllowance.isEmpty) {
         None
       } else {
-        Some(PensionSavingsTaxCharges.toPensionSavingsTaxCharges(prior)(this))
+        Some(toPensionSavingsTaxCharges(prior))
       }
     AnnualAllowancesPensionCharges(pensionSavingsTaxChargesOpt, pensionContributionsOpt)
   }

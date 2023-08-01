@@ -16,7 +16,7 @@
 
 package models.pension.charges
 
-import models.pension.{AllPensionsData, PensionChargesSubRequestModel}
+import models.pension.PensionChargesSubRequestModel
 import play.api.libs.json.{Json, OFormat}
 import utils.EncryptedValue
 
@@ -31,18 +31,6 @@ case class PensionSavingsTaxCharges(pensionSchemeTaxReference: Option[Seq[String
 
 object PensionSavingsTaxCharges {
   implicit val format: OFormat[PensionSavingsTaxCharges] = Json.format[PensionSavingsTaxCharges]
-
-  def toPensionSavingsTaxCharges(prior: Option[AllPensionsData])(paavm: PensionAnnualAllowancesViewModel): PensionSavingsTaxCharges = {
-    PensionSavingsTaxCharges(
-      pensionSchemeTaxReference = paavm.pensionSchemeTaxReferences,
-      lumpSumBenefitTakenInExcessOfLifetimeAllowance = prior.flatMap(_.pensionCharges).flatMap(_.pensionSavingsTaxCharges)
-        .flatMap(_.lumpSumBenefitTakenInExcessOfLifetimeAllowance),
-      benefitInExcessOfLifetimeAllowance = prior.flatMap(_.pensionCharges).flatMap(_.pensionSavingsTaxCharges).flatMap(_.benefitInExcessOfLifetimeAllowance),
-      isAnnualAllowanceReduced = paavm.reducedAnnualAllowanceQuestion,
-      taperedAnnualAllowance = paavm.taperedAnnualAllowance,
-      moneyPurchasedAllowance = paavm.moneyPurchaseAnnualAllowance
-    )
-  }
 }
 
 case class EncryptedPensionSavingsTaxCharges(pensionSchemeTaxReference: Option[Seq[EncryptedValue]],

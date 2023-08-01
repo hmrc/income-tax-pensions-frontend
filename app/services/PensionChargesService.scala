@@ -158,10 +158,10 @@ object PensionChargesService {
     def createAnnualAllowanceChargesModel(viewModel: Option[PensionAnnualAllowancesViewModel],
                                                   priorData: IncomeTaxUserData): CreateUpdatePensionChargesRequestModel = {
       CreateUpdatePensionChargesRequestModel(
-        pensionSavingsTaxCharges = viewModel.map(PensionSavingsTaxCharges.toPensionSavingsTaxCharges(priorData.pensions)),
+        pensionSavingsTaxCharges = viewModel.map(_.toPensionSavingsTaxCharges(priorData.pensions)),
         pensionSchemeOverseasTransfers = priorData.pensions.flatMap(_.pensionCharges.flatMap(_.pensionSchemeOverseasTransfers)),
         pensionSchemeUnauthorisedPayments = priorData.pensions.flatMap(_.pensionCharges.flatMap(_.pensionSchemeUnauthorisedPayments)),
-        pensionContributions = viewModel.map(PensionContributions.toPensionContributions),
+        pensionContributions = viewModel.map(_.toPensionContributions),
         overseasPensionContributions = priorData.pensions.flatMap(_.pensionCharges.flatMap(_.overseasPensionContributions))
       )
     }
