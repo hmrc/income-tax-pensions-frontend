@@ -19,7 +19,7 @@ package controllers.pensions.shortServiceRefunds
 import builders.OverseasRefundPensionSchemeBuilder.{anOverseasRefundPensionSchemeWithUkRefundCharge, anOverseasRefundPensionSchemeWithoutUkRefundCharge}
 import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import builders.PensionsUserDataBuilder
-import builders.ShortServiceRefundsViewModelBuilder.{aShortServiceRefundsViewModel, emptyShortServiceRefundsViewModel}
+import builders.ShortServiceRefundsViewModelBuilder.{aShortServiceRefundsViewModel, emptyShortServiceRefundsViewModel, minimalShortServiceRefundsViewModel}
 import builders.UserBuilder.{aUser, aUserRequest}
 import forms.RadioButtonAmountForm
 import forms.RadioButtonAmountForm.{amount2, yesNo}
@@ -95,99 +95,142 @@ class TaxableRefundAmountControllerISpec
       result.headers("location").head shouldBe overviewUrl(taxYear)
     }
 
-    "persist amount and redirect to next page when user selects yes" in {
+    "persist amount and redirect to next page when user selects yes" which {
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
-        val shortServiceRefundViewModel = aShortServiceRefundsViewModel.copy(
-          shortServiceRefundCharge = Some(BigDecimal("100")), shortServiceRefund = Some(true))
         val formData = Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "100")
-        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(shortServiceRefunds = shortServiceRefundViewModel)))
+        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(shortServiceRefunds = emptyShortServiceRefundsViewModel)))
         urlPost(
           fullUrl(shortServiceTaxableRefundUrl(taxYearEOY)),
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
           follow = false,
           body = formData)
       }
-      result.status shouldBe SEE_OTHER
-      result.headers("location").head shouldBe nonUkTaxRefundsUrl(taxYearEOY)
-    }
 
-    "persist amount and redirect to next page when user selects no" in {
-      lazy implicit val result: WSResponse = {
-        dropPensionsDB()
-        authoriseAgentOrIndividual(aUser.isAgent)
-        val shortServiceRefundViewModel = aShortServiceRefundsViewModel.copy(
-          shortServiceRefundCharge = None, shortServiceRefund = Some(false))
-        val formData = Map(RadioButtonAmountForm.yesNo -> "false")
-        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(shortServiceRefunds = shortServiceRefundViewModel)))
-        urlPost(
-          fullUrl(shortServiceTaxableRefundUrl(taxYearEOY)),
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
-          follow = false,
-          body = formData)
+      "has a SEE_OTHER(303) status" in {
+        result.status shouldBe SEE_OTHER
+        result.headers("location").head shouldBe nonUkTaxRefundsUrl(taxYearEOY)
       }
-      result.status shouldBe SEE_OTHER
-      result.headers("location").head shouldBe shortServiceRefundsCYAUrl(taxYearEOY)
-    }
 
-    //TODO: A bit confusing what these IT tests are doing. tests are saving values directly in DB using `insertCyaData`
-    //That shouldn't be the case or if its saved directly then IT tests should assert values what urlPost has done,
-    //because insertCyaData is unvalidated data saved that has not gone through service logic
-    "clears shortServiceRefunds and redirect to next page when user selects no" in {
-      lazy implicit val result: WSResponse = {
-        dropPensionsDB()
-        authoriseAgentOrIndividual(aUser.isAgent)
-        val shortServiceRefundViewModel = aShortServiceRefundsViewModel
-        val formData = Map(RadioButtonAmountForm.yesNo -> "false")
-        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(shortServiceRefunds = shortServiceRefundViewModel)))
-        urlPost(
-          fullUrl(shortServiceTaxableRefundUrl(taxYearEOY)),
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
-          follow = false,
-          body = formData)
-      }
-      result.status shouldBe SEE_OTHER
-      result.headers("location").head shouldBe shortServiceRefundsCYAUrl(taxYearEOY)
-      //TODO: We should verify that data saved is what we expect in this case Line:130 `aShortServiceRefundsViewModel`
-      //should be become empty as we submitted with false
-    }
-
-    "return an error when form is submitted with no entry" which {
-      lazy val result: WSResponse = {
-        dropPensionsDB()
-        authoriseAgentOrIndividual(aUser.isAgent)
-        val shortServiceRefundViewModel = aShortServiceRefundsViewModel.copy(
-          shortServiceRefundCharge = Some(BigDecimal("100")), shortServiceRefund = Some(true))
-        val form = Map(RadioButtonAmountForm.yesNo -> "", RadioButtonAmountForm.amount2 -> "")
-        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(shortServiceRefunds = shortServiceRefundViewModel)))
-        urlPost(
-          fullUrl(shortServiceTaxableRefundUrl(taxYearEOY)),
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
-          follow = false,
-          body = form)
-      }
-      "status is bad request" in {
-        result.status shouldBe BAD_REQUEST
+      "submitted data is persisted" in {
+        lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
+        cyaModel.pensions.shortServiceRefunds shouldBe emptyShortServiceRefundsViewModel.copy(
+          shortServiceRefund = Some(true), shortServiceRefundCharge = Some(100))
       }
     }
 
-    "return an error when form is submitted with the wrong format" which {
-      lazy val result: WSResponse = {
-        dropPensionsDB()
-        authoriseAgentOrIndividual(aUser.isAgent)
-        val shortServiceRefundViewModel = aShortServiceRefundsViewModel.copy(
-          shortServiceRefundCharge = Some(BigDecimal("100")), shortServiceRefund = Some(true))
-        val form = Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "jhvgfxk")
-        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(shortServiceRefunds = shortServiceRefundViewModel)))
-        urlPost(
-          fullUrl(shortServiceTaxableRefundUrl(taxYearEOY)),
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
-          follow = false,
-          body = form)
+    "persist amount and redirect to the CYA page" when {
+      "user selects no" which {
+        lazy implicit val result: WSResponse = {
+          dropPensionsDB()
+          authoriseAgentOrIndividual(aUser.isAgent)
+          val formData = Map(RadioButtonAmountForm.yesNo -> "false")
+          insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(shortServiceRefunds = emptyShortServiceRefundsViewModel)))
+          urlPost(
+            fullUrl(shortServiceTaxableRefundUrl(taxYearEOY)),
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
+            follow = false,
+            body = formData)
+        }
+
+        "has a SEE_OTHER(303) status" in {
+          result.status shouldBe SEE_OTHER
+          result.headers("location").head shouldBe shortServiceRefundsCYAUrl(taxYearEOY)
+        }
+
+        "correct data is persisted" in {
+          lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
+          cyaModel.pensions.shortServiceRefunds shouldBe minimalShortServiceRefundsViewModel
+        }
       }
-      "status is bad request" in {
-        result.status shouldBe BAD_REQUEST
+
+      "user selects no and existing shortServiceRefunds data is cleared" which {
+        lazy implicit val result: WSResponse = {
+          dropPensionsDB()
+          authoriseAgentOrIndividual(aUser.isAgent)
+          val formData = Map(RadioButtonAmountForm.yesNo -> "false")
+          insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(shortServiceRefunds = aShortServiceRefundsViewModel)))
+          urlPost(
+            fullUrl(shortServiceTaxableRefundUrl(taxYearEOY)),
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
+            follow = false,
+            body = formData)
+        }
+
+        "has a SEE_OTHER(303) status" in {
+          result.status shouldBe SEE_OTHER
+          result.headers("location").head shouldBe shortServiceRefundsCYAUrl(taxYearEOY)
+        }
+
+        "clears the existing data" in {
+          lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
+          cyaModel.pensions.shortServiceRefunds shouldBe minimalShortServiceRefundsViewModel
+        }
+      }
+
+      "user selects yes with new amount and the submission model is now complete" which {
+        lazy implicit val result: WSResponse = {
+          dropPensionsDB()
+          authoriseAgentOrIndividual(aUser.isAgent)
+          val formData = Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "100")
+          insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(shortServiceRefunds = aShortServiceRefundsViewModel)))
+          urlPost(
+            fullUrl(shortServiceTaxableRefundUrl(taxYearEOY)),
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
+            follow = false,
+            body = formData)
+        }
+
+        "has a SEE_OTHER(303) status" in {
+          result.status shouldBe SEE_OTHER
+          result.headers("location").head shouldBe shortServiceRefundsCYAUrl(taxYearEOY)
+        }
+
+        "updated data is persisted" in {
+          lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
+          cyaModel.pensions.shortServiceRefunds shouldBe aShortServiceRefundsViewModel.copy(shortServiceRefundCharge = Some(100))
+        }
+      }
+    }
+
+    "return an error" when {
+      "form is submitted with no entry" which {
+        lazy val result: WSResponse = {
+          dropPensionsDB()
+          authoriseAgentOrIndividual(aUser.isAgent)
+          val shortServiceRefundViewModel = aShortServiceRefundsViewModel.copy(
+            shortServiceRefundCharge = Some(BigDecimal("100")), shortServiceRefund = Some(true))
+          val form = Map(RadioButtonAmountForm.yesNo -> "", RadioButtonAmountForm.amount2 -> "")
+          insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(shortServiceRefunds = shortServiceRefundViewModel)))
+          urlPost(
+            fullUrl(shortServiceTaxableRefundUrl(taxYearEOY)),
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
+            follow = false,
+            body = form)
+        }
+        "status is bad request" in {
+          result.status shouldBe BAD_REQUEST
+        }
+      }
+
+      "form is submitted with the wrong format" which {
+        lazy val result: WSResponse = {
+          dropPensionsDB()
+          authoriseAgentOrIndividual(aUser.isAgent)
+          val shortServiceRefundViewModel = aShortServiceRefundsViewModel.copy(
+            shortServiceRefundCharge = Some(BigDecimal("100")), shortServiceRefund = Some(true))
+          val form = Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "jhvgfxk")
+          insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(shortServiceRefunds = shortServiceRefundViewModel)))
+          urlPost(
+            fullUrl(shortServiceTaxableRefundUrl(taxYearEOY)),
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
+            follow = false,
+            body = form)
+        }
+        "status is bad request" in {
+          result.status shouldBe BAD_REQUEST
+        }
       }
     }
   }

@@ -39,6 +39,14 @@ object PaymentsIntoOverseasPensionsRedirects {
     )
   }
 
+  def schemeIsFinishedCheck(schemes: Seq[Relief], index: Int, taxYear: Int, continueRedirect: Call): Result = {
+    if (schemes(index).isFinished) {
+      Redirect(ReliefsSchemeDetailsController.show(taxYear, Some(index)))
+    } else {
+      Redirect(continueRedirect)
+    }
+  }
+
   def indexCheckThenJourneyCheck(data: PensionsUserData, optIndex: Option[Int],
                                  currentPage: PaymentsIntoOverseasPensionsPages,
                                  taxYear: Int)(continue: Relief => Future[Result]): Future[Result] = {

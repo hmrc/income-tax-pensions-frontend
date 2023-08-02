@@ -25,6 +25,7 @@ import models.pension.charges.OverseasRefundPensionScheme
 import models.requests.UserSessionDataRequest
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import services.redirects.ShortServiceRefundsRedirects.cyaPageCall
 import services.{PensionSessionService, ShortServiceRefundsService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
@@ -77,14 +78,16 @@ class TaxableRefundAmountController @Inject()(actionsProvider: ActionsProvider,
 
     val updatedCyaModel: PensionsCYAModel = shortServiceRefundsService.updateCyaWithShortServiceRefundGatewayQuestion(
       pensionUserData, yesNo, amount)
+    val redirectLocation = {
+      if (updatedCyaModel.shortServiceRefunds.isFinished) cyaPageCall(taxYear)
+      else if (yesNo) NonUkTaxRefundsController.show(taxYear)
+      else ShortServiceRefundsCYAController.show(taxYear)
+    }
 
     pensionSessionService.createOrUpdateSessionData(request.user,
       updatedCyaModel, taxYear, pensionUserData.isPriorSubmission)(errorHandler.internalServerError()) {
-      if (yesNo) {
-        Redirect(NonUkTaxRefundsController.show(taxYear))
-      } else {
-        Redirect(ShortServiceRefundsCYAController.show(taxYear))
-      }
+
+      Redirect(redirectLocation)
     }
   }
 

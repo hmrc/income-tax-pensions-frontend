@@ -27,9 +27,9 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
-import services.redirects.StatePensionPages.WhenDidYouGetYourStatePensionLumpSumPage
 import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
-import services.redirects.StatePensionRedirects.{cyaPageCall, journeyCheck}
+import services.redirects.StatePensionPages.WhenDidYouGetYourStatePensionLumpSumPage
+import services.redirects.StatePensionRedirects.{cyaPageCall, journeyCheck, statePensionIsFinishedCheck}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.SessionHelper
 import views.html.pensions.incomeFromPensions.StatePensionLumpSumStartDateView
@@ -89,7 +89,8 @@ class StatePensionLumpSumStartDateController @Inject()(actionsProvider: ActionsP
                     Some(sP.copy(startDateQuestion = Some(true), startDate = Some(formWithStartDate.toLocalDate)))
                   )))
               pensionSessionService.createOrUpdateSessionData(updatedModel).map {
-                case Right(_) => Redirect(StatePensionAddToCalculationController.show(taxYear))
+                case Right(_) =>
+                  statePensionIsFinishedCheck(updatedModel.pensions.incomeFromPensions, taxYear, StatePensionAddToCalculationController.show(taxYear))
                 case _ => errorHandler.internalServerError()
               }
             }

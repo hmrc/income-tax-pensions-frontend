@@ -84,6 +84,11 @@ object AnnualAllowancesRedirects {
     val thirdQuestionTrue = { annualAVM: PensionAnnualAllowancesViewModel =>
       annualAVM.reducedAnnualAllowanceQuestion.getOrElse(false) && annualAVM.aboveAnnualAllowanceQuestion.getOrElse(false)
     }
+    val fourthQuestionTrue = { annualAVM: PensionAnnualAllowancesViewModel =>
+      annualAVM.reducedAnnualAllowanceQuestion.getOrElse(false) &&
+        annualAVM.aboveAnnualAllowanceQuestion.getOrElse(false) &&
+        annualAVM.pensionProvidePaidAnnualAllowanceQuestion.getOrElse(false)
+    }
 
     Map(
       // 1 and 8 are always valid
@@ -91,7 +96,9 @@ object AnnualAllowancesRedirects {
       // 2-7 need Q1 true
       2 -> firstQuestionTrue, 3 -> firstQuestionTrue,
       // 4-7 need Q3 true
-      4 -> thirdQuestionTrue, 5 -> thirdQuestionTrue, 6 -> thirdQuestionTrue, 7 -> thirdQuestionTrue
+      4 -> thirdQuestionTrue,
+      // 5-7 need Q4 true
+      5 -> fourthQuestionTrue, 6 -> fourthQuestionTrue, 7 -> fourthQuestionTrue
     )
   }
 
@@ -105,23 +112,22 @@ object AnnualAllowancesRedirects {
         annualAVM.moneyPurchaseAnnualAllowance.getOrElse(false) || annualAVM.taperedAnnualAllowance.getOrElse(false)
       },
       4 -> { annualAVM: PensionAnnualAllowancesViewModel =>
-        annualAVM.aboveAnnualAllowanceQuestion.exists(x => !x || annualAVM.aboveAnnualAllowance.isDefined)
+        annualAVM.aboveAnnualAllowanceQuestion.exists(x => x && annualAVM.aboveAnnualAllowance.isDefined)
       },
 
       5 -> { annualAVM: PensionAnnualAllowancesViewModel =>
-        annualAVM.pensionProvidePaidAnnualAllowanceQuestion.exists(x => !x || annualAVM.taxPaidByPensionProvider.isDefined)
+        annualAVM.pensionProvidePaidAnnualAllowanceQuestion.exists(x => x && annualAVM.taxPaidByPensionProvider.isDefined)
       },
       6 -> { _: PensionAnnualAllowancesViewModel => true }, // if valid then PSTRs can exist or be empty
       7 -> { annualAVM: PensionAnnualAllowancesViewModel =>
-        annualAVM.pensionProvidePaidAnnualAllowanceQuestion.exists(x => !x || annualAVM.taxPaidByPensionProvider.isDefined)
+        annualAVM.pensionProvidePaidAnnualAllowanceQuestion.exists(x => x && annualAVM.taxPaidByPensionProvider.isDefined)
       },
 
       8 -> { annualAVM: PensionAnnualAllowancesViewModel =>
-        if (!isPageValidInJourney( pageNumber = 2, annualAVM)) {
-          !annualAVM.reducedAnnualAllowanceQuestion.getOrElse(true)
-        } else if (!isPageValidInJourney(pageNumber = 4, annualAVM)) { //scalastyle:off magic.number
-          !annualAVM.aboveAnnualAllowanceQuestion.getOrElse(true)
-        } else {annualAVM.isFinished}
+        if (!isPageValidInJourney(2, annualAVM)) !annualAVM.reducedAnnualAllowanceQuestion.getOrElse(true)
+        else if (!isPageValidInJourney(4, annualAVM)) !annualAVM.aboveAnnualAllowanceQuestion.getOrElse(true)
+        else if (!isPageValidInJourney(5, annualAVM)) !annualAVM.pensionProvidePaidAnnualAllowanceQuestion.getOrElse(true)
+        else annualAVM.isFinished
       }
     )
 

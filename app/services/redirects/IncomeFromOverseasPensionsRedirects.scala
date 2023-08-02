@@ -30,6 +30,23 @@ object IncomeFromOverseasPensionsRedirects {
 
   def cyaPageCall(taxYear: Int): Call = IncomeFromOverseasPensionsCYAController.show(taxYear)
 
+  def redirectForSchemeLoop(schemes: Seq[PensionScheme], taxYear: Int): Call = {
+    val filteredSchemes = schemes.filter(scheme => scheme.isFinished)
+    checkForExistingSchemes(
+      nextPage = PensionOverseasIncomeCountryController.show(taxYear, None),
+      summaryPage = CountrySummaryListController.show(taxYear),
+      schemes = filteredSchemes
+    )
+  }
+
+  def schemeIsFinishedCheck(schemes: Seq[PensionScheme], index: Int, taxYear: Int, continueRedirect: Call): Result = {
+    if (schemes(index).isFinished) {
+      Redirect(PensionSchemeSummaryController.show(taxYear, Some(index)))
+    } else {
+      Redirect(continueRedirect)
+    }
+  }
+
   def indexCheckThenJourneyCheck(data: PensionsUserData, optIndex: Option[Int],
                                  currentPage: IncomeFromOverseasPensionsPages,
                                  taxYear: Int)(continue: PensionsUserData => Future[Result]): Future[Result] = {
@@ -54,15 +71,6 @@ object IncomeFromOverseasPensionsRedirects {
             continue(data)
         }
     }
-  }
-
-  def redirectForSchemeLoop(schemes: Seq[PensionScheme], taxYear: Int): Call = {
-    val filteredSchemes = schemes.filter(scheme => scheme.isFinished)
-    checkForExistingSchemes(
-      nextPage = PensionOverseasIncomeCountryController.show(taxYear, None),
-      summaryPage = CountrySummaryListController.show(taxYear),
-      schemes = filteredSchemes
-    )
   }
 
   def journeyCheck(currentPage: IncomeFromOverseasPensionsPages, cya: PensionsCYAModel, taxYear: Int, index: Option[Int] = None): Option[Result] = {
@@ -93,7 +101,7 @@ object IncomeFromOverseasPensionsRedirects {
 
   private def previousQuestionIsAnswered(pageNumber: Int, optIndex: Option[Int], ifopVM: IncomeFromOverseasPensionsViewModel): Boolean = {
     val schemesEmpty = ifopVM.overseasIncomePensionSchemes.isEmpty
-    val index = optIndex.getOrElse(if (schemesEmpty) 0 else ifopVM.overseasIncomePensionSchemes.size -1)
+    val index = optIndex.getOrElse(if (schemesEmpty) 0 else ifopVM.overseasIncomePensionSchemes.size - 1)
 
     val prevQuestionIsAnsweredMap: Map[Int, IncomeFromOverseasPensionsViewModel => Boolean] = Map(
       1 -> { _: IncomeFromOverseasPensionsViewModel => true },

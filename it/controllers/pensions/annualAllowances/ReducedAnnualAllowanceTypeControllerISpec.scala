@@ -16,18 +16,19 @@
 
 package controllers.pensions.annualAllowances
 
-import builders.PensionAnnualAllowanceViewModelBuilder.aPensionAnnualAllowanceViewModel
+import builders.PensionAnnualAllowanceViewModelBuilder.{aPensionAnnualAllowanceEmptyViewModel, aPensionAnnualAllowanceViewModel}
 import builders.PensionsUserDataBuilder.pensionsUserDataWithAnnualAllowances
 import builders.UserBuilder.aUserRequest
 import forms.ReducedAnnualAllowanceTypeQuestionForm
 import forms.ReducedAnnualAllowanceTypeQuestionForm.{moneyPurchaseCheckboxValue, taperedCheckboxValue}
+import models.pension.charges.PensionAnnualAllowancesViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.PensionAnnualAllowancePages.{aboveReducedAnnualAllowanceUrl, reducedAnnualAllowanceTypeUrl, reducedAnnualAllowanceUrl}
+import utils.PageUrls.PensionAnnualAllowancePages.{aboveReducedAnnualAllowanceUrl, annualAllowancesCYAUrl, reducedAnnualAllowanceTypeUrl, reducedAnnualAllowanceUrl}
 import utils.PageUrls.{fullUrl, pensionSummaryUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
@@ -47,6 +48,7 @@ class ReducedAnnualAllowanceTypeControllerISpec extends IntegrationTest with Bef
     val expectedDetailsLinkSelector = "#tapered-info-link"
 
     def bulletSelector(index: Int): String = s"#main-content > div > div > form > details > div > ul > li:nth-child($index)"
+
     def detailsParagraphSelector(index: Int): String = s"#main-content > div > div > form > details > div > p:nth-child($index)"
   }
 
@@ -470,159 +472,123 @@ class ReducedAnnualAllowanceTypeControllerISpec extends IntegrationTest with Bef
       }
     }
 
-    "redirects and updates Cya session when user submits a valid form with both checkboxes checked" which {
+    "redirect to Above Annual Allowance page and update CYA session" when {
+      "user submits a valid form with both checkboxes checked" which {
+        implicit lazy val result: WSResponse = {
+          authoriseAgentOrIndividual()
+          dropPensionsDB()
+          insertCyaData(pensionsUserDataWithAnnualAllowances(aPensionAnnualAllowanceEmptyViewModel.copy(
+            reducedAnnualAllowanceQuestion = Some(true))))
+          urlPost(fullUrl(reducedAnnualAllowanceTypeUrl(taxYearEOY)), body = validFormAllChecked, follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        }
 
-      implicit lazy val result: WSResponse = {
-        authoriseAgentOrIndividual()
-        dropPensionsDB()
-        val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(
-          reducedAnnualAllowanceQuestion = Some(true),
-          moneyPurchaseAnnualAllowance = None,
-          taperedAnnualAllowance = None
-        )
+        "has a SEE_OTHER(303) status" in {
+          result.status shouldBe SEE_OTHER
+          result.header("location") shouldBe Some(aboveReducedAnnualAllowanceUrl(taxYearEOY))
+        }
 
-        insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel))
-        urlPost(fullUrl(reducedAnnualAllowanceTypeUrl(taxYearEOY)), body = validFormAllChecked, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        "updates moneyPurchaseAnnualAllowance and taperedAnnualAllowance to Some(true)" in {
+          lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
+          cyaModel.pensions.pensionsAnnualAllowances shouldBe PensionAnnualAllowancesViewModel(
+            reducedAnnualAllowanceQuestion = Some(true),
+            moneyPurchaseAnnualAllowance = Some(true),
+            taperedAnnualAllowance = Some(true))
+        }
       }
 
-      "has a SEE_OTHER(303) status" in {
-        result.status shouldBe SEE_OTHER
-        result.header("location").contains(aboveReducedAnnualAllowanceUrl(taxYearEOY)) shouldBe true
-      }
+      "user submits a valid form with one type checked" which {
+        val form = Map(
+          s"${ReducedAnnualAllowanceTypeQuestionForm.reducedAnnualAllowanceType}[]" -> Seq(taperedCheckboxValue))
+        implicit lazy val result: WSResponse = {
+          authoriseAgentOrIndividual()
+          dropPensionsDB()
+          insertCyaData(pensionsUserDataWithAnnualAllowances(aPensionAnnualAllowanceEmptyViewModel.copy(
+            reducedAnnualAllowanceQuestion = Some(true))))
+          urlPost(fullUrl(reducedAnnualAllowanceTypeUrl(taxYearEOY)), body = form, follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        }
 
-      "updates moneyPurchaseAnnualAllowance and taperedAnnualAllowance to Some(true)" in {
-        lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
-        cyaModel.pensions.pensionsAnnualAllowances.moneyPurchaseAnnualAllowance shouldBe Some(true)
-        cyaModel.pensions.pensionsAnnualAllowances.taperedAnnualAllowance shouldBe Some(true)
-      }
-    }
+        "has a SEE_OTHER(303) status" in {
+          result.status shouldBe SEE_OTHER
+          result.header("location") shouldBe Some(aboveReducedAnnualAllowanceUrl(taxYearEOY))
+        }
 
-    "redirects and updates Cya session when user submits a valid form with tapered checkbox only checked" which {
-
-      val form = Map(
-        s"${ReducedAnnualAllowanceTypeQuestionForm.reducedAnnualAllowanceType}[]" -> Seq(taperedCheckboxValue))
-
-      implicit lazy val result: WSResponse = {
-        authoriseAgentOrIndividual()
-        dropPensionsDB()
-        val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(
-          reducedAnnualAllowanceQuestion = Some(true),
-          moneyPurchaseAnnualAllowance = None,
-          taperedAnnualAllowance = None
-        )
-
-        insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel))
-        urlPost(fullUrl(reducedAnnualAllowanceTypeUrl(taxYearEOY)), body = form, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
-      }
-
-      "has a SEE_OTHER(303) status" in {
-        result.status shouldBe SEE_OTHER
-        result.header("location").contains(aboveReducedAnnualAllowanceUrl(taxYearEOY)) shouldBe true
-      }
-
-      "updates moneyPurchaseAnnualAllowance to Some(false) and taperedAnnualAllowance to Some(true)" in {
-        lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
-        cyaModel.pensions.pensionsAnnualAllowances.moneyPurchaseAnnualAllowance shouldBe Some(false)
-        cyaModel.pensions.pensionsAnnualAllowances.taperedAnnualAllowance shouldBe Some(true)
+        "updates taperedAnnualAllowance to Some(true)" in {
+          lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
+          cyaModel.pensions.pensionsAnnualAllowances shouldBe PensionAnnualAllowancesViewModel(
+            reducedAnnualAllowanceQuestion = Some(true),
+            moneyPurchaseAnnualAllowance = Some(false),
+            taperedAnnualAllowance = Some(true))
+        }
       }
     }
 
-    "redirects and updates Cya session when user submits a valid form with money purchase checkbox only checked" which {
-
+    "redirect to CYA page and update CYA session when type is changed from existing data and CYA is now complete" which {
       val form = Map(
         s"${ReducedAnnualAllowanceTypeQuestionForm.reducedAnnualAllowanceType}[]" -> Seq(moneyPurchaseCheckboxValue))
-
       implicit lazy val result: WSResponse = {
         authoriseAgentOrIndividual()
         dropPensionsDB()
-        val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(
-          reducedAnnualAllowanceQuestion = Some(true),
-          moneyPurchaseAnnualAllowance = None,
-          taperedAnnualAllowance = None
-        )
-
-        insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel))
+        insertCyaData(pensionsUserDataWithAnnualAllowances(aPensionAnnualAllowanceViewModel))
         urlPost(fullUrl(reducedAnnualAllowanceTypeUrl(taxYearEOY)), body = form, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location").contains(aboveReducedAnnualAllowanceUrl(taxYearEOY)) shouldBe true
+        result.header("location") shouldBe Some(annualAllowancesCYAUrl(taxYearEOY))
       }
 
-      "updates moneyPurchaseAnnualAllowance to Some(true) and taperedAnnualAllowance to Some(false)" in {
+      "updates taperedAnnualAllowance to Some(false)" in {
         lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
-        cyaModel.pensions.pensionsAnnualAllowances.moneyPurchaseAnnualAllowance shouldBe Some(true)
-        cyaModel.pensions.pensionsAnnualAllowances.taperedAnnualAllowance shouldBe Some(false)
+        cyaModel.pensions.pensionsAnnualAllowances shouldBe aPensionAnnualAllowanceViewModel.copy(taperedAnnualAllowance = Some(false))
       }
     }
 
-    "redirect to the reduced annual allowance question page if it has not been answered" which {
-
-      implicit lazy val result: WSResponse = {
-        authoriseAgentOrIndividual()
-        dropPensionsDB()
-        val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(
-          reducedAnnualAllowanceQuestion = None,
-          moneyPurchaseAnnualAllowance = None,
-          taperedAnnualAllowance = None
-        )
-
-        insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel))
-        urlPost(fullUrl(reducedAnnualAllowanceTypeUrl(taxYearEOY)), body = validFormAllChecked, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+    "redirect to the first page in journey" when {
+      "previous questions are unanswered" which {
+        implicit lazy val result: WSResponse = {
+          authoriseAgentOrIndividual()
+          dropPensionsDB()
+          insertCyaData(pensionsUserDataWithAnnualAllowances(aPensionAnnualAllowanceEmptyViewModel))
+          urlPost(fullUrl(reducedAnnualAllowanceTypeUrl(taxYearEOY)), body = validFormAllChecked, follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        }
+        "has an SEE_OTHER status" in {
+          result.status shouldBe SEE_OTHER
+          result.header("location") shouldBe Some(reducedAnnualAllowanceUrl(taxYearEOY))
+        }
       }
 
-      "has an SEE_OTHER status" in {
-        result.status shouldBe SEE_OTHER
-        result.header("location").contains(reducedAnnualAllowanceUrl(taxYearEOY)) shouldBe true
+      "page is invalid in journey" which {
+        implicit lazy val result: WSResponse = {
+          authoriseAgentOrIndividual()
+          dropPensionsDB()
+          insertCyaData(pensionsUserDataWithAnnualAllowances(aPensionAnnualAllowanceEmptyViewModel.copy(
+            reducedAnnualAllowanceQuestion = Some(false))))
+          urlPost(fullUrl(reducedAnnualAllowanceTypeUrl(taxYearEOY)), body = validFormAllChecked, follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        }
+        "has an SEE_OTHER status" in {
+          result.status shouldBe SEE_OTHER
+          result.header("location") shouldBe Some(reducedAnnualAllowanceUrl(taxYearEOY))
+        }
       }
-
     }
 
-    "redirect to the reduced annual allowance question page if it has been answered as No" which {
-
-      implicit lazy val result: WSResponse = {
-        authoriseAgentOrIndividual()
-        dropPensionsDB()
-        val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(
-          reducedAnnualAllowanceQuestion = Some(false),
-          moneyPurchaseAnnualAllowance = None,
-          taperedAnnualAllowance = None
-        )
-
-        insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel))
-        urlPost(fullUrl(reducedAnnualAllowanceTypeUrl(taxYearEOY)), body = validFormAllChecked, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
-      }
-
-      "has an SEE_OTHER status" in {
-        result.status shouldBe SEE_OTHER
-        result.header("location").contains(reducedAnnualAllowanceUrl(taxYearEOY)) shouldBe true
-      }
-
-    }
-
-    "redirect to the CYA page if there is no session data" which {
+    "redirect to the Pension Summary page if there is no session data" which {
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual()
-        // no cya insert
         urlPost(fullUrl(reducedAnnualAllowanceTypeUrl(taxYearEOY)), body = validFormAllChecked, follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
-
       "has an SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER
-        //TODO - go to annual allowance cya page when available
-        result.header("location").contains(pensionSummaryUrl(taxYearEOY)) shouldBe true
+        result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
       }
-
     }
-
   }
 }
 // scalastyle:on magic.number

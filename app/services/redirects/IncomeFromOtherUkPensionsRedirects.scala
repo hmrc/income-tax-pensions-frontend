@@ -30,6 +30,14 @@ object IncomeFromOtherUkPensionsRedirects {
 
   def cyaPageCall(taxYear: Int): Call = UkPensionIncomeCYAController.show(taxYear)
 
+  def schemeIsFinishedCheck(schemes: Seq[UkPensionIncomeViewModel], index: Int, taxYear: Int, continueRedirect: Call): Result = {
+    if (schemes(index).isFinished) {
+      Redirect(PensionSchemeSummaryController.show(taxYear, Some(index)))
+    } else {
+      Redirect(continueRedirect)
+    }
+  }
+
   def indexCheckThenJourneyCheck(data: PensionsUserData, optIndex: Option[Int],
                                  currentPage: IncomeFromOtherUkPensionsPages,
                                  taxYear: Int)(continue: PensionsUserData => Future[Result]): Future[Result] = {

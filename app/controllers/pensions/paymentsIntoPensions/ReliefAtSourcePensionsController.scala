@@ -79,11 +79,9 @@ class ReliefAtSourcePensionsController @Inject()(authAction: AuthorisedAction,
                   totalOneOffRasPaymentPlusTaxRelief = None,
                   totalPaymentsIntoRASQuestion = None))
 
-            val redirectLocation = if (yesNo) {
-              ReliefAtSourcePaymentsAndTaxReliefAmountController.show(taxYear)
-            } else {
-              PensionsTaxReliefNotClaimedController.show(taxYear)
-            }
+            val redirectLocation =
+              if (yesNo) ReliefAtSourcePaymentsAndTaxReliefAmountController.show(taxYear)
+              else PensionsTaxReliefNotClaimedController.show(taxYear)
 
             pensionSessionService.createOrUpdateSessionData(request.user,
               updatedCyaModel, taxYear, optData.exists(_.isPriorSubmission))(errorHandler.internalServerError()) {

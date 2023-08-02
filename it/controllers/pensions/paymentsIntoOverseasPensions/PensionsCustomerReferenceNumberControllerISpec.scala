@@ -18,10 +18,11 @@ package controllers.pensions.paymentsIntoOverseasPensions
 
 import builders.AllPensionsDataBuilder.anAllPensionsData
 import builders.IncomeTaxUserDataBuilder.anIncomeTaxUserData
-import builders.PaymentsIntoOverseasPensionsViewModelBuilder.aPaymentsIntoOverseasPensionsViewModel
+import builders.PaymentsIntoOverseasPensionsViewModelBuilder.{aPaymentsIntoOverseasPensionsNoReliefsViewModel, aPaymentsIntoOverseasPensionsViewModel}
 import builders.PensionsCYAModelBuilder._
 import builders.PensionsUserDataBuilder
-import builders.PensionsUserDataBuilder.{pensionUserDataWithOnlyOverseasPensions, pensionUserDataWithOverseasPensions}
+import builders.PensionsUserDataBuilder.{pensionUserDataWithOverseasPensions, pensionUserDataWithPaymentsIntoOverseasPensions}
+import builders.ReliefBuilder.{aDoubleTaxationRelief, aMigrantMemberRelief, aNoTaxRelief, aTransitionalCorrespondingRelief}
 import builders.UserBuilder.{aUser, aUserRequest}
 import forms.PensionCustomerReferenceNumberForm
 import models.mongo.{PensionsCYAModel, PensionsUserData}
@@ -47,7 +48,7 @@ class PensionsCustomerReferenceNumberControllerISpec extends IntegrationTest wit
     )
   }
 
-  val noCrnRelief = Relief(reliefType = Some(TransitionalCorrespondingRelief),
+  val noCrnRelief: Relief = Relief(reliefType = Some(TransitionalCorrespondingRelief),
     customerReference = None,
     employerPaymentsAmount = Some(1999.99),
     qopsReference = None,
@@ -58,7 +59,7 @@ class PensionsCustomerReferenceNumberControllerISpec extends IntegrationTest wit
     doubleTaxationReliefAmount = None,
     sf74Reference = Some("SF74-123456")
   )
-  val someCrnRelief = Relief(reliefType = Some(TransitionalCorrespondingRelief),
+  val someCrnRelief: Relief = Relief(reliefType = Some(TransitionalCorrespondingRelief),
     customerReference = Some("PENSIONSINCOME480"),
     employerPaymentsAmount = Some(1999.99),
     qopsReference = None,
@@ -112,7 +113,7 @@ class PensionsCustomerReferenceNumberControllerISpec extends IntegrationTest wit
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
-        insertCyaData(pensionUserDataWithOnlyOverseasPensions(pensionsNoSchemesViewModel))
+        insertCyaData(pensionUserDataWithPaymentsIntoOverseasPensions(pensionsNoSchemesViewModel))
         urlGet(fullUrl(pensionCustomerReferenceNumberUrl(taxYearEOY, Some(3))), follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
         )
@@ -153,36 +154,52 @@ class PensionsCustomerReferenceNumberControllerISpec extends IntegrationTest wit
 
   ".submit" should {
 
-    "Redirect to CRN page and add to user relief data when user submits a valid CRN with no prior data" in {
+    "redirect to CRN page and add to user relief data when user submits a valid CRN with no prior data" in {
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
         val form: Map[String, String] = Map(PensionCustomerReferenceNumberForm.pensionsCustomerReferenceNumberId -> "PENSIONSINCOME25")
-        insertCyaData(pensionsUsersData(aPensionsCYAEmptyModel))
+        insertCyaData(pensionUserDataWithPaymentsIntoOverseasPensions(aPaymentsIntoOverseasPensionsNoReliefsViewModel))
         urlPost(fullUrl(pensionCustomerReferenceNumberUrl(taxYearEOY, None)), body = form,
           follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
       result.status shouldBe SEE_OTHER
-      result.header("location").head shouldBe paymentsIntoPensionSchemeUrl(taxYearEOY)
+      result.header("location").head shouldBe untaxedEmployerPaymentsUrl(taxYearEOY, 0)
     }
 
-    "Redirect to CRN page and update user data reliefs when user submits a valid CRN with prior data" in {
+    "redirect to CRN page and add to user relief data when user submits creates a new scheme" in {
+      lazy implicit val result: WSResponse = {
+        dropPensionsDB()
+        authoriseAgentOrIndividual(aUser.isAgent)
+        val form: Map[String, String] = Map(PensionCustomerReferenceNumberForm.pensionsCustomerReferenceNumberId -> "PENSIONSINCOME25")
+        insertCyaData(pensionUserDataWithPaymentsIntoOverseasPensions(aPaymentsIntoOverseasPensionsViewModel))
+        urlPost(fullUrl(pensionCustomerReferenceNumberUrl(taxYearEOY, None)), body = form,
+          follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+      }
+
+      result.status shouldBe SEE_OTHER
+      result.header("location").head shouldBe untaxedEmployerPaymentsUrl(taxYearEOY, 4)
+    }
+
+    "redirect to scheme summary page when user submits a valid CRN, updating an existing scheme" in {
       implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
-        val pensionsViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(reliefs = Seq(someCrnRelief, someCrnRelief))
-        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoOverseasPensions = pensionsViewModel)))
+        insertCyaData(pensionUserDataWithPaymentsIntoOverseasPensions(aPaymentsIntoOverseasPensionsViewModel))
         val form: Map[String, String] = Map(PensionCustomerReferenceNumberForm.pensionsCustomerReferenceNumberId -> "PENSIONSINCOME24")
         urlPost(fullUrl(pensionCustomerReferenceNumberUrl(taxYearEOY, Some(1))), body = form,
           follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
       result.status shouldBe SEE_OTHER
-      result.header("location").head shouldBe untaxedEmployerPaymentsUrl(taxYearEOY, 1)
+      result.header("location").head shouldBe pensionReliefSchemeDetailsUrl(taxYearEOY, 1)
 
       lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
-      cyaModel.pensions.paymentsIntoOverseasPensions.reliefs(1).customerReference.get shouldBe "PENSIONSINCOME24"
+      cyaModel.pensions.paymentsIntoOverseasPensions shouldBe aPaymentsIntoOverseasPensionsViewModel.copy(
+        reliefs = Seq(
+          aTransitionalCorrespondingRelief, aMigrantMemberRelief.copy(customerReference = Some("PENSIONSINCOME24")),
+          aDoubleTaxationRelief, aNoTaxRelief))
     }
 
     "return BadRequest error when an empty CRN value is submitted" in {
@@ -208,7 +225,7 @@ class PensionsCustomerReferenceNumberControllerISpec extends IntegrationTest wit
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
         lazy val form: Map[String, String] = Map(PensionCustomerReferenceNumberForm.pensionsCustomerReferenceNumberId -> "")
-        insertCyaData(pensionUserDataWithOnlyOverseasPensions(pensionsNoSchemesViewModel))
+        insertCyaData(pensionUserDataWithPaymentsIntoOverseasPensions(pensionsNoSchemesViewModel))
         urlPost(
           fullUrl(pensionCustomerReferenceNumberUrl(taxYearEOY, Some(-1))),
           body = form,

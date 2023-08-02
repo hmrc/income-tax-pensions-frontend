@@ -29,7 +29,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
 import services.redirects.IncomeFromOtherUkPensionsPages.PensionSchemeDetailsPage
-import services.redirects.IncomeFromOtherUkPensionsRedirects.indexCheckThenJourneyCheck
+import services.redirects.IncomeFromOtherUkPensionsRedirects.{indexCheckThenJourneyCheck, schemeIsFinishedCheck}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.incomeFromPensions.PensionSchemeDetailsView
@@ -102,9 +102,13 @@ class PensionSchemeDetailsController @Inject()(implicit val mcc: MessagesControl
                     case (_, Some(_)) => pensionSchemeIndex
                   }
 
-                pensionSessionService.createOrUpdateSessionData(request.user,
-                  updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
-                  Redirect(PensionAmountController.show(taxYear, updatedPensionSchemeIndex))
+                pensionSessionService.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear, data.isPriorSubmission)(
+                  errorHandler.internalServerError()) {
+                  schemeIsFinishedCheck(
+                    updatedPensionIncomesList,
+                    updatedPensionSchemeIndex.getOrElse(0),
+                    taxYear,
+                    PensionAmountController.show(taxYear, updatedPensionSchemeIndex))
                 }
             }
 

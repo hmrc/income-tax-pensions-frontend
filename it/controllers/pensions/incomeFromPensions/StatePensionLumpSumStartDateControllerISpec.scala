@@ -16,9 +16,9 @@
 
 package controllers.pensions.incomeFromPensions
 
-import builders.IncomeFromPensionsViewModelBuilder.anIncomeFromPensionsViewModel
+import builders.IncomeFromPensionsViewModelBuilder.{aStatePensionIncomeFromPensionsNoAddToCalculationViewModel, anIncomeFromPensionsViewModel}
 import builders.PensionsCYAModelBuilder.aPensionsCYAModel
-import builders.PensionsUserDataBuilder.aPensionsUserData
+import builders.PensionsUserDataBuilder.{aPensionsUserData, pensionsUserDataWithIncomeFromPensions}
 import builders.StateBenefitViewModelBuilder.anStateBenefitViewModelTwo
 import builders.UserBuilder.aUser
 import org.jsoup.Jsoup
@@ -27,7 +27,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.IncomeFromPensionsPages.{addToCalculationUrl, statePension, statePensionLumpSumStartDateUrl}
+import utils.PageUrls.IncomeFromPensionsPages.{addToCalculationUrl, statePension, statePensionCyaUrl, statePensionLumpSumStartDateUrl}
 import utils.PageUrls.{fullUrl, overviewUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
@@ -138,12 +138,28 @@ class StatePensionLumpSumStartDateControllerISpec extends IntegrationTest with V
       result.headers("location").head shouldBe overviewUrl(taxYear)
     }
 
-    "persist amount and redirect to next page" in {
+    "persist amount and redirect to the 'Add to calculation' page" in {
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
         val formData = startDateForm(validDay, validMonth, validYear)
+        insertCyaData(pensionsUserDataWithIncomeFromPensions(aStatePensionIncomeFromPensionsNoAddToCalculationViewModel))
+        urlPost(
+          fullUrl(statePensionLumpSumStartDateUrl(taxYearEOY)),
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
+          follow = false,
+          body = formData)
+      }
 
+      result.status shouldBe SEE_OTHER
+      result.headers("location").head shouldBe addToCalculationUrl(taxYearEOY)
+    }
+
+    "persist amount and redirect to the 'CYA' page when model is now complete" in {
+      lazy implicit val result: WSResponse = {
+        dropPensionsDB()
+        authoriseAgentOrIndividual(aUser.isAgent)
+        val formData = startDateForm(validDay, validMonth, validYear)
         insertCyaData(aPensionsUserData)
         urlPost(
           fullUrl(statePensionLumpSumStartDateUrl(taxYearEOY)),
@@ -153,231 +169,235 @@ class StatePensionLumpSumStartDateControllerISpec extends IntegrationTest with V
       }
 
       result.status shouldBe SEE_OTHER
-      result.headers("location").head shouldBe  addToCalculationUrl(taxYearEOY)
+      result.headers("location").head shouldBe statePensionCyaUrl(taxYearEOY)
     }
 
-    "the day field is empty" which {
-      lazy val form = startDateForm("", validMonth, validYear)
+    "return a BAD_REQUEST" when {
 
-      lazy val result: WSResponse = {
-        dropPensionsDB()
-        authoriseAgentOrIndividual()
-        insertCyaData(aPensionsUserData)
-        urlPost(fullUrl(statePensionLumpSumStartDateUrl(taxYearEOY)), body = form, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+      "the day field is empty" which {
+        lazy val form = startDateForm("", validMonth, validYear)
+
+        lazy val result: WSResponse = {
+          dropPensionsDB()
+          authoriseAgentOrIndividual()
+          insertCyaData(aPensionsUserData)
+          urlPost(fullUrl(statePensionLumpSumStartDateUrl(taxYearEOY)), body = form, follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        }
+
+        "has the correct status" in {
+          result.status shouldBe BAD_REQUEST
+        }
+
+        implicit def document: () => Document = () => Jsoup.parse(result.body)
+
+        inputFieldValueCheck(dayInputName, Selectors.dayInputSelector, "")
+        inputFieldValueCheck(monthInputName, Selectors.monthInputSelector, validMonth)
+        inputFieldValueCheck(yearInputName, Selectors.yearInputSelector, validYear)
+        errorSummaryCheck(emptyDayErrorText, Selectors.dayInputHref)
+        errorAboveElementCheck(emptyDayErrorText)
       }
 
-      "has the correct status" in {
-        result.status shouldBe BAD_REQUEST
+      "the day and month fields are empty" which {
+        lazy val form = startDateForm("", "", validYear)
+
+        lazy val result: WSResponse = {
+          dropPensionsDB()
+          authoriseAgentOrIndividual()
+          insertCyaData(aPensionsUserData)
+          urlPost(fullUrl(statePensionLumpSumStartDateUrl(taxYearEOY)), body = form, follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        }
+
+        "has the correct status" in {
+          result.status shouldBe BAD_REQUEST
+        }
+
+        implicit def document: () => Document = () => Jsoup.parse(result.body)
+
+        titleCheck(expectedErrorTitle)
+        inputFieldValueCheck(dayInputName, Selectors.dayInputSelector, "")
+        inputFieldValueCheck(monthInputName, Selectors.monthInputSelector, "")
+        inputFieldValueCheck(yearInputName, Selectors.yearInputSelector, validYear)
+        errorSummaryCheck(emptyDayMonthErrorText, Selectors.dayInputHref)
+        errorAboveElementCheck(emptyDayMonthErrorText)
       }
 
-      implicit def document: () => Document = () => Jsoup.parse(result.body)
+      "the day and year fields are empty" which {
+        lazy val form = startDateForm("", validMonth, "")
 
-      inputFieldValueCheck(dayInputName, Selectors.dayInputSelector, "")
-      inputFieldValueCheck(monthInputName, Selectors.monthInputSelector, validMonth)
-      inputFieldValueCheck(yearInputName, Selectors.yearInputSelector, validYear)
-      errorSummaryCheck(emptyDayErrorText, Selectors.dayInputHref)
-      errorAboveElementCheck(emptyDayErrorText)
-    }
+        lazy val result: WSResponse = {
+          dropPensionsDB()
+          authoriseAgentOrIndividual()
+          insertCyaData(aPensionsUserData)
+          urlPost(fullUrl(statePensionLumpSumStartDateUrl(taxYearEOY)), body = form, follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        }
 
-    "the day and month fields are empty" which {
-      lazy val form = startDateForm("", "", validYear)
+        "has the correct status" in {
+          result.status shouldBe BAD_REQUEST
+        }
 
-      lazy val result: WSResponse = {
-        dropPensionsDB()
-        authoriseAgentOrIndividual()
-        insertCyaData(aPensionsUserData)
-        urlPost(fullUrl(statePensionLumpSumStartDateUrl(taxYearEOY)), body = form, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        implicit def document: () => Document = () => Jsoup.parse(result.body)
+
+        titleCheck(expectedErrorTitle)
+        inputFieldValueCheck(dayInputName, Selectors.dayInputSelector, "")
+        inputFieldValueCheck(monthInputName, Selectors.monthInputSelector, validMonth)
+        inputFieldValueCheck(yearInputName, Selectors.yearInputSelector, "")
+        errorSummaryCheck(emptyDayYearErrorText, Selectors.dayInputHref)
+        errorAboveElementCheck(emptyDayYearErrorText)
       }
 
-      "has the correct status" in {
-        result.status shouldBe BAD_REQUEST
+      "the month field is empty" which {
+        lazy val form = startDateForm(validDay, "", validYear)
+
+        lazy val result: WSResponse = {
+          dropPensionsDB()
+          authoriseAgentOrIndividual()
+          insertCyaData(aPensionsUserData)
+          urlPost(fullUrl(statePensionLumpSumStartDateUrl(taxYearEOY)), body = form, follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        }
+        "has the correct status" in {
+          result.status shouldBe BAD_REQUEST
+        }
+
+        implicit def document: () => Document = () => Jsoup.parse(result.body)
+
+        titleCheck(expectedErrorTitle)
+        inputFieldValueCheck(dayInputName, Selectors.dayInputSelector, validDay)
+        inputFieldValueCheck(monthInputName, Selectors.monthInputSelector, "")
+        inputFieldValueCheck(yearInputName, Selectors.yearInputSelector, validYear)
+        errorSummaryCheck(emptyMonthErrorText, Selectors.monthInputHref)
+        errorAboveElementCheck(emptyMonthErrorText)
       }
 
-      implicit def document: () => Document = () => Jsoup.parse(result.body)
+      "the month and year fields are empty" which {
+        lazy val form = startDateForm(validDay, "", "")
 
-      titleCheck(expectedErrorTitle)
-      inputFieldValueCheck(dayInputName, Selectors.dayInputSelector, "")
-      inputFieldValueCheck(monthInputName, Selectors.monthInputSelector, "")
-      inputFieldValueCheck(yearInputName, Selectors.yearInputSelector, validYear)
-      errorSummaryCheck(emptyDayMonthErrorText, Selectors.dayInputHref)
-      errorAboveElementCheck(emptyDayMonthErrorText)
-  }
+        lazy val result: WSResponse = {
+          dropPensionsDB()
+          authoriseAgentOrIndividual()
+          insertCyaData(aPensionsUserData)
+          urlPost(fullUrl(statePensionLumpSumStartDateUrl(taxYearEOY)), body = form, follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        }
 
-    "the day and year fields are empty" which {
-      lazy val form = startDateForm("", validMonth, "")
+        "has the correct status" in {
+          result.status shouldBe BAD_REQUEST
+        }
 
-      lazy val result: WSResponse = {
-        dropPensionsDB()
-        authoriseAgentOrIndividual()
-        insertCyaData(aPensionsUserData)
-        urlPost(fullUrl(statePensionLumpSumStartDateUrl(taxYearEOY)), body = form, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        implicit def document: () => Document = () => Jsoup.parse(result.body)
+
+        titleCheck(expectedErrorTitle)
+        inputFieldValueCheck(dayInputName, Selectors.dayInputSelector, validDay)
+        inputFieldValueCheck(monthInputName, Selectors.monthInputSelector, "")
+        inputFieldValueCheck(yearInputName, Selectors.yearInputSelector, "")
+        errorSummaryCheck(emptyMonthYearErrorText, Selectors.monthInputHref)
+        errorAboveElementCheck(emptyMonthYearErrorText)
       }
 
-      "has the correct status" in {
-        result.status shouldBe BAD_REQUEST
+      "the year field is empty" which {
+        lazy val form = startDateForm(validDay, validMonth, "")
+
+        lazy val result: WSResponse = {
+          dropPensionsDB()
+          authoriseAgentOrIndividual()
+          insertCyaData(aPensionsUserData)
+          urlPost(fullUrl(statePensionLumpSumStartDateUrl(taxYearEOY)), body = form, follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        }
+
+        "has the correct status" in {
+          result.status shouldBe BAD_REQUEST
+        }
+
+        implicit def document: () => Document = () => Jsoup.parse(result.body)
+
+        titleCheck(expectedErrorTitle)
+
+        inputFieldValueCheck(dayInputName, Selectors.dayInputSelector, validDay)
+        inputFieldValueCheck(monthInputName, Selectors.monthInputSelector, validMonth)
+        inputFieldValueCheck(yearInputName, Selectors.yearInputSelector, "")
+        errorSummaryCheck(emptyYearErrorText, Selectors.yearInputHref)
+        errorAboveElementCheck(emptyYearErrorText)
       }
 
-      implicit def document: () => Document = () => Jsoup.parse(result.body)
+      "the date submitted is in the future" which {
+        val futureYear: Int = LocalDate.now().getYear + 1
+        lazy val form = startDateForm(validDay, validMonth, s"$futureYear")
 
-      titleCheck(expectedErrorTitle)
-      inputFieldValueCheck(dayInputName, Selectors.dayInputSelector, "")
-      inputFieldValueCheck(monthInputName, Selectors.monthInputSelector, validMonth)
-      inputFieldValueCheck(yearInputName, Selectors.yearInputSelector, "")
-      errorSummaryCheck(emptyDayYearErrorText, Selectors.dayInputHref)
-      errorAboveElementCheck(emptyDayYearErrorText)
-    }
+        lazy val result: WSResponse = {
+          dropPensionsDB()
+          authoriseAgentOrIndividual()
+          insertCyaData(aPensionsUserData)
+          urlPost(fullUrl(statePensionLumpSumStartDateUrl(taxYearEOY)), body = form, follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        }
 
-    "the month field is empty" which {
-      lazy val form = startDateForm(validDay, "", validYear)
+        "has the correct status" in {
+          result.status shouldBe BAD_REQUEST
+        }
 
-      lazy val result: WSResponse = {
-        dropPensionsDB()
-        authoriseAgentOrIndividual()
-        insertCyaData(aPensionsUserData)
-        urlPost(fullUrl(statePensionLumpSumStartDateUrl(taxYearEOY)), body = form, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
-      }
-      "has the correct status" in {
-        result.status shouldBe BAD_REQUEST
-      }
+        implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-      implicit def document: () => Document = () => Jsoup.parse(result.body)
-
-      titleCheck(expectedErrorTitle)
-      inputFieldValueCheck(dayInputName, Selectors.dayInputSelector, validDay)
-      inputFieldValueCheck(monthInputName, Selectors.monthInputSelector, "")
-      inputFieldValueCheck(yearInputName, Selectors.yearInputSelector, validYear)
-      errorSummaryCheck(emptyMonthErrorText, Selectors.monthInputHref)
-      errorAboveElementCheck(emptyMonthErrorText)
-    }
-
-    "the month and year fields are empty" which {
-      lazy val form = startDateForm(validDay, "", "")
-
-      lazy val result: WSResponse = {
-        dropPensionsDB()
-        authoriseAgentOrIndividual()
-        insertCyaData(aPensionsUserData)
-        urlPost(fullUrl(statePensionLumpSumStartDateUrl(taxYearEOY)), body = form, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        titleCheck(expectedErrorTitle)
+        inputFieldValueCheck(dayInputName, Selectors.dayInputSelector, validDay)
+        inputFieldValueCheck(monthInputName, Selectors.monthInputSelector, validMonth)
+        inputFieldValueCheck(yearInputName, Selectors.yearInputSelector, s"$futureYear")
+        errorSummaryCheck(dateInFutureErrorText, Selectors.dayInputHref)
+        errorAboveElementCheck(dateInFutureErrorText)
       }
 
-      "has the correct status" in {
-        result.status shouldBe BAD_REQUEST
+      "the date submitted is invalid and not a real date" which {
+        lazy val form = startDateForm(validDay, "13", validYear)
+
+        lazy val result: WSResponse = {
+          dropPensionsDB()
+          authoriseAgentOrIndividual()
+          insertCyaData(aPensionsUserData)
+          urlPost(fullUrl(statePensionLumpSumStartDateUrl(taxYearEOY)), body = form, follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        }
+
+        "has the correct status" in {
+          result.status shouldBe BAD_REQUEST
+        }
+
+        implicit def document: () => Document = () => Jsoup.parse(result.body)
+
+        titleCheck(expectedErrorTitle)
+        inputFieldValueCheck(dayInputName, Selectors.dayInputSelector, validDay)
+        inputFieldValueCheck(monthInputName, Selectors.monthInputSelector, "13")
+        inputFieldValueCheck(yearInputName, Selectors.yearInputSelector, validYear)
+        errorSummaryCheck(realDateErrorText, Selectors.dayInputHref)
+        errorAboveElementCheck(realDateErrorText)
       }
 
-      implicit def document: () => Document = () => Jsoup.parse(result.body)
+      "the date submitted is too long ago before 1 Jan 1900" which {
+        lazy val form = startDateForm("01", "01", "1898")
 
-      titleCheck(expectedErrorTitle)
-      inputFieldValueCheck(dayInputName, Selectors.dayInputSelector, validDay)
-      inputFieldValueCheck(monthInputName, Selectors.monthInputSelector, "")
-      inputFieldValueCheck(yearInputName, Selectors.yearInputSelector, "")
-      errorSummaryCheck(emptyMonthYearErrorText, Selectors.monthInputHref)
-      errorAboveElementCheck(emptyMonthYearErrorText)
-    }
-    "the year field is empty" which {
-      lazy val form = startDateForm(validDay, validMonth, "")
+        lazy val result: WSResponse = {
+          dropPensionsDB()
+          authoriseAgentOrIndividual()
+          insertCyaData(aPensionsUserData)
+          urlPost(fullUrl(statePensionLumpSumStartDateUrl(taxYearEOY)), body = form, follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        }
 
-      lazy val result: WSResponse = {
-        dropPensionsDB()
-        authoriseAgentOrIndividual()
-        insertCyaData(aPensionsUserData)
-        urlPost(fullUrl(statePensionLumpSumStartDateUrl(taxYearEOY)), body = form, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        "has the correct status" in {
+          result.status shouldBe BAD_REQUEST
+        }
+
+        implicit def document: () => Document = () => Jsoup.parse(result.body)
+
+        titleCheck(expectedErrorTitle)
+        inputFieldValueCheck(dayInputName, Selectors.dayInputSelector, "01")
+        inputFieldValueCheck(monthInputName, Selectors.monthInputSelector, "01")
+        inputFieldValueCheck(yearInputName, Selectors.yearInputSelector, "1898")
+        errorSummaryCheck(tooLongAgoErrorText, Selectors.dayInputHref)
+        errorAboveElementCheck(tooLongAgoErrorText)
       }
-
-      "has the correct status" in {
-        result.status shouldBe BAD_REQUEST
-      }
-
-      implicit def document: () => Document = () => Jsoup.parse(result.body)
-
-      titleCheck(expectedErrorTitle)
-
-      inputFieldValueCheck(dayInputName, Selectors.dayInputSelector, validDay)
-      inputFieldValueCheck(monthInputName, Selectors.monthInputSelector, validMonth)
-      inputFieldValueCheck(yearInputName, Selectors.yearInputSelector, "")
-      errorSummaryCheck(emptyYearErrorText, Selectors.yearInputHref)
-      errorAboveElementCheck(emptyYearErrorText)
-    }
-
-    "the date submitted is in the future" which {
-      val futureYear: Int = LocalDate.now().getYear + 1
-      lazy val form = startDateForm(validDay, validMonth, s"$futureYear")
-
-      lazy val result: WSResponse = {
-        dropPensionsDB()
-        authoriseAgentOrIndividual()
-        insertCyaData(aPensionsUserData)
-        urlPost(fullUrl(statePensionLumpSumStartDateUrl(taxYearEOY)), body = form, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
-      }
-
-      "has the correct status" in {
-        result.status shouldBe BAD_REQUEST
-      }
-
-      implicit def document: () => Document = () => Jsoup.parse(result.body)
-
-      titleCheck(expectedErrorTitle)
-      inputFieldValueCheck(dayInputName, Selectors.dayInputSelector, validDay)
-      inputFieldValueCheck(monthInputName, Selectors.monthInputSelector, validMonth)
-      inputFieldValueCheck(yearInputName, Selectors.yearInputSelector, s"$futureYear")
-      errorSummaryCheck(dateInFutureErrorText, Selectors.dayInputHref)
-      errorAboveElementCheck(dateInFutureErrorText)
-    }
-
-    "the date submitted is invalid and not a real date" which {
-      lazy val form = startDateForm(validDay, "13", validYear)
-
-      lazy val result: WSResponse = {
-        dropPensionsDB()
-        authoriseAgentOrIndividual()
-        insertCyaData(aPensionsUserData)
-        urlPost(fullUrl(statePensionLumpSumStartDateUrl(taxYearEOY)), body = form, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
-      }
-
-      "has the correct status" in {
-        result.status shouldBe BAD_REQUEST
-      }
-
-      implicit def document: () => Document = () => Jsoup.parse(result.body)
-
-      titleCheck(expectedErrorTitle)
-      inputFieldValueCheck(dayInputName, Selectors.dayInputSelector, validDay)
-      inputFieldValueCheck(monthInputName, Selectors.monthInputSelector, "13")
-      inputFieldValueCheck(yearInputName, Selectors.yearInputSelector, validYear)
-      errorSummaryCheck(realDateErrorText, Selectors.dayInputHref)
-      errorAboveElementCheck(realDateErrorText)
-    }
-
-    "the date submitted is too long ago before 1 Jan 1900" which {
-      lazy val form = startDateForm("01", "01", "1898")
-
-      lazy val result: WSResponse = {
-        dropPensionsDB()
-        authoriseAgentOrIndividual()
-        insertCyaData(aPensionsUserData)
-        urlPost(fullUrl(statePensionLumpSumStartDateUrl(taxYearEOY)), body = form, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
-      }
-
-      "has the correct status" in {
-        result.status shouldBe BAD_REQUEST
-      }
-
-      implicit def document: () => Document = () => Jsoup.parse(result.body)
-
-      titleCheck(expectedErrorTitle)
-      inputFieldValueCheck(dayInputName, Selectors.dayInputSelector, "01")
-      inputFieldValueCheck(monthInputName, Selectors.monthInputSelector, "01")
-      inputFieldValueCheck(yearInputName, Selectors.yearInputSelector, "1898")
-      errorSummaryCheck(tooLongAgoErrorText, Selectors.dayInputHref)
-      errorAboveElementCheck(tooLongAgoErrorText)
     }
   }
 }

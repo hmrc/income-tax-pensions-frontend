@@ -30,7 +30,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.IncomeFromPensionsPages.{statePension, statePensionLumpSumUrl, statePensionStartDateUrl}
+import utils.PageUrls.IncomeFromPensionsPages.{statePension, statePensionCyaUrl, statePensionLumpSumUrl, statePensionStartDateUrl}
 import utils.PageUrls._
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
@@ -73,12 +73,13 @@ class StatePensionControllerISpec extends IntegrationTest with ViewHelpers with 
   }
 
   ".submit" should {
-    "redirect to StatePensionStartDate page when user selects 'Yes' with amount" in {
+
+    "redirect to StatePensionStartDate page when user selects 'Yes' with amount and incomplete prior data" in {
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
         val form: Map[String, String] = Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "42.24")
-        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy()))
+        insertCyaData(pensionsUserDataWithIncomeFromPensions(anIncomeFromPensionEmptyViewModel))
         urlPost(
           fullUrl(statePension(taxYearEOY)),
           body = form,
@@ -89,7 +90,7 @@ class StatePensionControllerISpec extends IntegrationTest with ViewHelpers with 
       result.header("location").contains(statePensionStartDateUrl(taxYearEOY)) shouldBe true
     }
 
-    "redirect to StatePensionLumpSum page when user selects 'No' with no prior data" in {
+    "redirect to StatePensionLumpSum page when user selects 'No' with incomplete prior data" in {
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
@@ -105,7 +106,7 @@ class StatePensionControllerISpec extends IntegrationTest with ViewHelpers with 
       result.header("location") shouldBe Some(statePensionLumpSumUrl(taxYearEOY))
     }
 
-    "redirect to StatePensionLumpSum page and clear other existing StatePension data when user selects 'No' with prior data" in {
+    "redirect to CYA page and clear other existing StatePension data when user selects 'No', completing the prior data" in {
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
@@ -120,7 +121,7 @@ class StatePensionControllerISpec extends IntegrationTest with ViewHelpers with 
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
       result.status shouldBe SEE_OTHER
-      result.header("location") shouldBe Some(statePensionLumpSumUrl(taxYearEOY))
+      result.header("location") shouldBe Some(statePensionCyaUrl(taxYearEOY))
 
       lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
       cyaModel.pensions.incomeFromPensions.statePension shouldBe Some(aMinimalStatePensionViewModel)
@@ -141,7 +142,7 @@ class StatePensionControllerISpec extends IntegrationTest with ViewHelpers with 
       result.status shouldBe BAD_REQUEST
     }
 
-    "redirect if not within Tax Year" in {
+    "redirect to the Overview page if not within Tax Year" in {
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)

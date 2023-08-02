@@ -81,11 +81,8 @@ class ReliefAtSourceOneOffPaymentsController @Inject()(authAction: AuthorisedAct
                   pensionsCYAModel.copy(paymentsIntoPension = paymentsIntoPension.copy(oneOffRasPaymentPlusTaxReliefQuestion = Some(yesNo),
                     totalOneOffRasPaymentPlusTaxRelief = if (yesNo) paymentsIntoPension.totalOneOffRasPaymentPlusTaxRelief else None))
                 }
-                val redirectLocation = if (yesNo) {
-                  OneOffRASPaymentsAmountController.show(taxYear)
-                } else {
-                  TotalPaymentsIntoRASController.show(taxYear)
-                }
+                val redirectLocation =
+                  if (yesNo) OneOffRASPaymentsAmountController.show(taxYear) else TotalPaymentsIntoRASController.show(taxYear)
 
                 pensionSessionService.createOrUpdateSessionData(request.user,
                   updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {

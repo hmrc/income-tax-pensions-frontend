@@ -17,6 +17,7 @@
 package controllers.pensions.incomeFromOverseasPensions
 
 import builders.IncomeFromOverseasPensionsViewModelBuilder.anIncomeFromOverseasPensionsViewModel
+import builders.PensionSchemeBuilder.{aPensionScheme1, aPensionScheme2}
 import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import controllers.ControllerSpec.PreferredLanguages.{English, Welsh}
 import controllers.ControllerSpec.UserTypes.{Agent, Individual}
@@ -237,18 +238,33 @@ class ForeignTaxCreditReliefControllerISpec extends YesNoControllerSpec("/overse
   }
 
   "submit" should {
-    "redirect to the expected page" when {
-      "the user has no stored session data at all" in {
-        implicit val userConfig: UserConfig = userConfigWhenIrrelevant(None)
-        implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForYesNoPage(None))
-        assertRedirectionAsExpected(PageRelativeURLs.overseasSummaryPage)
-        getViewModel mustBe None
-      }
+
+    "redirect to the Overseas Summary page when there is no session data" in {
+      implicit val userConfig: UserConfig = userConfigWhenIrrelevant(None)
+      implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForYesNoPage(None))
+
+      assertRedirectionAsExpected(PageRelativeURLs.overseasSummaryPage)
+      getViewModel mustBe None
     }
+
     "succeed" when {
       "the user has relevant session data and" when {
         val sessionData = getSessionData
-        "selected 'Yes'" in {
+
+        "selected 'Yes', redirecting to the Taxable Amount page" in {
+          val ifopViewModel: IncomeFromOverseasPensionsViewModel = anIncomeFromOverseasPensionsViewModel.copy(
+            overseasIncomePensionSchemes = Seq(aPensionScheme1, aPensionScheme2.copy(
+              foreignTaxCreditReliefQuestion = None, taxableAmount = None)))
+          implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData.copy(pensions = sessionData.pensions.copy(
+            incomeFromOverseasPensions = ifopViewModel))))
+          implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForYesNoPage(Some(true)), 1)
+
+          assertRedirectionAsExpected(PageRelativeURLs.incomeFromOverseasPensionstaxable + "?index=1")
+          getViewModel mustBe Some(ifopViewModel.copy(overseasIncomePensionSchemes = Seq(
+            aPensionScheme1, aPensionScheme2.copy(taxableAmount = None))))
+        }
+
+        "selected 'Yes', redirecting to the scheme summary page when scheme is now complete" in {
           implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
           implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForYesNoPage(Some(true)))
 
@@ -256,23 +272,22 @@ class ForeignTaxCreditReliefControllerISpec extends YesNoControllerSpec("/overse
             anIncomeFromOverseasPensionsViewModel.overseasIncomePensionSchemes.head
               .copy(foreignTaxCreditReliefQuestion = Some(true))))
 
-          assertRedirectionAsExpected(PageRelativeURLs.incomeFromOverseasPensionstaxable + "?index=0")
+          assertRedirectionAsExpected(PageRelativeURLs.incomeFromOverseasPensionsScheme + "?index=0")
           getViewModel mustBe Some(incomeViewModel)
         }
       }
-      "the user has relevant session data and" when {
+
+      "the user has relevant session data and selected 'No'" in {
         val sessionData = getSessionData
-        "selected 'No'" in {
-          implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
-          implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForYesNoPage(Some(false)))
+        implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
+        implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForYesNoPage(Some(false)))
 
-          val incomeViewModel = anIncomeFromOverseasPensionsViewModel.copy(overseasIncomePensionSchemes = Seq(
-            anIncomeFromOverseasPensionsViewModel.overseasIncomePensionSchemes.head
-              .copy(foreignTaxCreditReliefQuestion = Some(false))))
+        val incomeViewModel = anIncomeFromOverseasPensionsViewModel.copy(overseasIncomePensionSchemes = Seq(
+          anIncomeFromOverseasPensionsViewModel.overseasIncomePensionSchemes.head
+            .copy(foreignTaxCreditReliefQuestion = Some(false))))
 
-          assertRedirectionAsExpected(PageRelativeURLs.incomeFromOverseasPensionstaxable + "?index=0")
-          getViewModel mustBe Some(incomeViewModel)
-        }
+        assertRedirectionAsExpected(PageRelativeURLs.incomeFromOverseasPensionsScheme + "?index=0")
+        getViewModel mustBe Some(incomeViewModel)
       }
     }
 

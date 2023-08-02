@@ -90,6 +90,40 @@ object StateBenefitViewModelBuilder {
     addToCalculation = Some(true)
   )
 
+  val aStatePensionNoAddToCalculationViewModel: StateBenefitViewModel = StateBenefitViewModel(
+    benefitId = None,
+    startDate = Some(LocalDate.parse("2019-11-14")),
+    startDateQuestion = Some(true),
+    dateIgnoredQuestion = None,
+    dateIgnored = None,
+    submittedOnQuestion = None,
+    submittedOn = None,
+    endDateQuestion = None,
+    endDate = None,
+    amountPaidQuestion = Some(true),
+    amount = Some(166.88),
+    taxPaidQuestion = None,
+    taxPaid = None,
+    addToCalculation = None
+  )
+
+  val aStatePensionLumpSumNoAddToCalculationViewModel: StateBenefitViewModel = StateBenefitViewModel(
+    benefitId = None,
+    startDate = Some(LocalDate.parse("2019-11-14")),
+    startDateQuestion = Some(true),
+    dateIgnoredQuestion = None,
+    dateIgnored = None,
+    submittedOnQuestion = None,
+    submittedOn = None,
+    endDateQuestion = None,
+    endDate = None,
+    amountPaidQuestion = Some(true),
+    amount = Some(200.00),
+    taxPaidQuestion = Some(true),
+    taxPaid = Some(50.00),
+    addToCalculation = None
+  )
+
   val aMinimalStatePensionViewModel: StateBenefitViewModel = StateBenefitViewModel(
     benefitId = None,
     startDate = None,

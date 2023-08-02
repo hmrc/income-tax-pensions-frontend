@@ -26,7 +26,6 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
 import services.redirects.PaymentsIntoPensionPages.TaxReliefNotClaimedPage
-import services.redirects.PaymentsIntoPensionsRedirects
 import services.redirects.PaymentsIntoPensionsRedirects.{cyaPageCall, journeyCheck}
 import services.redirects.SimpleRedirectService.{isFinishedCheck, redirectBasedOnCurrentAnswers}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -70,7 +69,7 @@ class PensionsTaxReliefNotClaimedController @Inject()(authAction: AuthorisedActi
         yesNo => {
           pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
             optData =>
-              val checkRedirect = PaymentsIntoPensionsRedirects.journeyCheck(TaxReliefNotClaimedPage, _, taxYear)
+              val checkRedirect = journeyCheck(TaxReliefNotClaimedPage, _, taxYear)
               redirectBasedOnCurrentAnswers(taxYear, optData, cyaPageCall(taxYear))(checkRedirect) {
                 data =>
 

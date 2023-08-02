@@ -43,7 +43,7 @@ class SpecialWithholdingTaxControllerISpec extends YesNoAmountControllerSpec("/o
   val selectorForSummaryPara2 = "#main-content > div > div > details > div > #para2"
   val selectorForSummaryPara3 = "#main-content > div > div > details > div > #para3"
 
-  val expectedContentEN = ExpectedYesNoAmountPageContents(
+  val expectedContentEN: ExpectedYesNoAmountPageContents = ExpectedYesNoAmountPageContents(
     title = "Did you have Special Withholding Tax (SWT) deducted from your pension?",
     header = "Did you have Special Withholding Tax (SWT) deducted from your pension?",
     caption = s"Income from overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
@@ -80,7 +80,7 @@ class SpecialWithholdingTaxControllerISpec extends YesNoAmountControllerSpec("/o
     formUrl = formUrl()
   )
 
-  val expectedContentCY = ExpectedYesNoAmountPageContents(
+  val expectedContentCY: ExpectedYesNoAmountPageContents = ExpectedYesNoAmountPageContents(
     title = "Did you have Special Withholding Tax (SWT) deducted from your pension?",
     header = "Did you have Special Withholding Tax (SWT) deducted from your pension?",
     caption = s"Income from overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear",
@@ -444,28 +444,31 @@ class SpecialWithholdingTaxControllerISpec extends YesNoAmountControllerSpec("/o
 
         val sessionData = pensionsUserData(aPensionsCYAModel)
 
-        "the user has selected 'No' with a blank amount" in {
-
-          val updatedModel: PensionsUserData =
+        "the user has selected 'No' with a blank amount and incomplete scheme data" in {
+          val data: PensionsUserData =
             pensionsUserData(sessionData.pensions.copy(
               incomeFromOverseasPensions = sessionData.pensions.incomeFromOverseasPensions.copy(overseasIncomePensionSchemes =
-                sessionData.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes.updated(
-                  0, PensionScheme(
+                sessionData.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes.updated(0,
+                  PensionScheme(
                     alphaTwoCode = Some("FR"),
                     alphaThreeCode = None,
                     pensionPaymentAmount = Some(1999.99),
                     pensionPaymentTaxPaid = Some(1999.99),
-                    specialWithholdingTaxQuestion = Some(false),
+                    specialWithholdingTaxQuestion = None,
                     specialWithholdingTaxAmount = None,
-                    foreignTaxCreditReliefQuestion = Some(true),
-                    taxableAmount = Some(1999.99)
-                  )))
-            ))
+                    foreignTaxCreditReliefQuestion = None,
+                    taxableAmount = None
+                  )))))
 
-          val expectedViewModel = updatedModel.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes.head
+          val expectedViewModel = PensionScheme(
+            alphaTwoCode = Some("FR"),
+            alphaThreeCode = None,
+            pensionPaymentAmount = Some(1999.99),
+            pensionPaymentTaxPaid = Some(1999.99),
+            specialWithholdingTaxQuestion = Some(false))
 
 
-          implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
+          implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(data))
           implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForYesNoAmountPage(Some(false), Some("")))
           implicit val index: Int = 0
 
@@ -500,7 +503,7 @@ class SpecialWithholdingTaxControllerISpec extends YesNoAmountControllerSpec("/o
           implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForYesNoAmountPage(Some(true), Some("42.64")))
           implicit val index: Int = 0
 
-          assertRedirectionAsExpected(relativeUrl("/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-ftcr?index=0"))
+          assertRedirectionAsExpected(relativeUrl("/overseas-pensions/income-from-overseas-pensions/pension-scheme-summary?index=0"))
           getViewModel mustBe Some(expectedViewModel)
 
         }
@@ -530,7 +533,7 @@ class SpecialWithholdingTaxControllerISpec extends YesNoAmountControllerSpec("/o
           implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForYesNoAmountPage(Some(true), Some("£1,042.64")))
           implicit val index: Int = 0
 
-          assertRedirectionAsExpected(relativeUrl("/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-ftcr?index=0"))
+          assertRedirectionAsExpected(relativeUrl("/overseas-pensions/income-from-overseas-pensions/pension-scheme-summary?index=0"))
           getViewModel mustBe Some(expectedViewModel)
 
         }

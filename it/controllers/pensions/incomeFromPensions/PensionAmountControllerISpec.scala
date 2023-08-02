@@ -21,13 +21,14 @@ import builders.PensionsUserDataBuilder.{aPensionsUserData, pensionsUserDataWith
 import builders.UkPensionIncomeViewModelBuilder.anUkPensionIncomeViewModelOne
 import builders.UserBuilder.aUserRequest
 import forms.OptionalTupleAmountForm
+import models.pension.statebenefits.UkPensionIncomeViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.IncomeFromPensionsPages.{pensionAmountUrl, pensionStartDateUrl, ukPensionSchemePayments}
+import utils.PageUrls.IncomeFromPensionsPages.{pensionAmountUrl, pensionSchemeSummaryUrl, pensionStartDateUrl, ukPensionSchemePayments}
 import utils.PageUrls.{fullUrl, pensionSummaryUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
@@ -422,15 +423,18 @@ class PensionAmountControllerISpec extends IntegrationTest with ViewHelpers with
 
     }
 
-    "redirect to the correct page when a valid amount is submitted when there is existing data" which {
-
+    "redirect to the PensionSchemeStartDate page when a valid amount is submitted" which {
       lazy val form: Map[String, String] = pensionAmountForm(newAmount.toString, newAmount2.toString)
+      val scheme = UkPensionIncomeViewModel(
+        pensionSchemeName = Some("pension name 2"),
+        pensionId = Some("Some hmrc ref 1"),
+        pensionSchemeRef = Some("777/77777")
+      )
 
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual()
-        val viewModel = anIncomeFromPensionsViewModel.copy(uKPensionIncomes = Seq(anUkPensionIncomeViewModelOne))
-        insertCyaData(pensionsUserDataWithIncomeFromPensions(viewModel))
+        insertCyaData(pensionsUserDataWithIncomeFromPensions(anIncomeFromPensionsViewModel.copy(uKPensionIncomes = Seq(scheme))))
         urlPost(fullUrl(pensionAmountUrl(taxYearEOY, Some(index))), body = form,
           follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
@@ -440,10 +444,36 @@ class PensionAmountControllerISpec extends IntegrationTest with ViewHelpers with
         result.header("location") shouldBe Some(pensionStartDateUrl(taxYearEOY, Some(index)))
       }
 
-      "update state pension amount to Some (new values)" in {
+      "update state pension amount to Some(new values)" in {
         lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
-        cyaModel.pensions.incomeFromPensions.uKPensionIncomes(index).amount shouldBe Some(newAmount)
-        cyaModel.pensions.incomeFromPensions.uKPensionIncomes(index).taxPaid shouldBe Some(newAmount2)
+        cyaModel.pensions.incomeFromPensions.uKPensionIncomes(index) shouldBe scheme.copy(
+          amount = Some(newAmount), taxPaid = Some(newAmount2)
+        )
+      }
+    }
+
+    "redirect to the Scheme Summary page when a valid amount is submitted, completing the scheme" which {
+      lazy val form: Map[String, String] = pensionAmountForm(newAmount.toString, newAmount2.toString)
+      val viewModel = anIncomeFromPensionsViewModel.copy(uKPensionIncomes = Seq(anUkPensionIncomeViewModelOne))
+
+      lazy val result: WSResponse = {
+        dropPensionsDB()
+        authoriseAgentOrIndividual()
+        insertCyaData(pensionsUserDataWithIncomeFromPensions(viewModel))
+        urlPost(fullUrl(pensionAmountUrl(taxYearEOY, Some(index))), body = form,
+          follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+      }
+
+      "has a SEE_OTHER(303) status" in {
+        result.status shouldBe SEE_OTHER
+        result.header("location") shouldBe Some(pensionSchemeSummaryUrl(taxYearEOY, Some(index)))
+      }
+
+      "update state pension amount to Some(new values)" in {
+        lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
+        cyaModel.pensions.incomeFromPensions.uKPensionIncomes(index) shouldBe anUkPensionIncomeViewModelOne.copy(
+          amount = Some(newAmount), taxPaid = Some(newAmount2)
+        )
       }
     }
 

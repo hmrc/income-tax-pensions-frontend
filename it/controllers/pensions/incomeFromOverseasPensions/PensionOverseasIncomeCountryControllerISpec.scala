@@ -16,7 +16,8 @@
 
 package controllers.pensions.incomeFromOverseasPensions
 
-import builders.IncomeFromOverseasPensionsViewModelBuilder.{anIncomeFromOverseasPensionsEmptyViewModel, anIncomeFromOverseasPensionsViewModel}
+import builders.IncomeFromOverseasPensionsViewModelBuilder.{anIncomeFromOverseasPensionsEmptyViewModel, anIncomeFromOverseasPensionsSingleSchemeViewModel, anIncomeFromOverseasPensionsViewModel}
+import builders.PensionSchemeBuilder.aPensionScheme1
 import builders.PensionsUserDataBuilder.{aPensionsUserData, pensionUserDataWithIncomeOverseasPension}
 import builders.UserBuilder.aUserRequest
 import forms.CountryForm
@@ -219,79 +220,67 @@ class PensionOverseasIncomeCountryControllerISpec extends CommonUtils with Befor
       }
     }
 
-    "redirect and update question to contain country code when pension schemes list is empty" which {
-      lazy val form: Map[String, String] = Map(CountryForm.countryId -> "GB")
-      val pensionsViewModel = anIncomeFromOverseasPensionsEmptyViewModel.copy(
-        paymentsFromOverseasPensionsQuestion = Some(true),
-        overseasIncomePensionSchemes = Seq.empty
-      )
-      val pensionUserData = pensionUserDataWithIncomeOverseasPension(pensionsViewModel)
-      implicit val url: Int => String = IncomeFromOverseasPensionsPages.pensionOverseasIncomeCountryUrl
-
-      lazy val result: WSResponse = submitPage(pensionUserData, form)
-
-      "has a SEE_OTHER(303) status" in {
-        result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(incomeFromOverseasPensionsAmounts(taxYearEOY, 0))
-      }
-
-      "updates pension scheme tax reference to contain tax reference" in {
-        lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
-        cyaModel.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes.size shouldBe 1
-        cyaModel.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes.head.alphaTwoCode.get shouldBe "GB"
-      }
-    }
-
-    "redirect and update country code when cya data exists" which {
-      val index = 0
-      implicit val url: Int => String = pensionOverseasIncomeCountryUrlIndex(index)
-      lazy val form: Map[String, String] = Map(CountryForm.countryId -> "GB")
-      val pensionsViewModel = anIncomeFromOverseasPensionsEmptyViewModel.copy(
-        paymentsFromOverseasPensionsQuestion = Some(true),
-        overseasIncomePensionSchemes = Seq(PensionScheme(alphaTwoCode = Some("GB")))
-      )
-      val pensionUserData = pensionUserDataWithIncomeOverseasPension(pensionsViewModel)
-      lazy val result: WSResponse = submitPage(pensionUserData, form)
-
-
-      "has a SEE_OTHER(303) status" in {
-        result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(incomeFromOverseasPensionsAmounts(taxYearEOY, index))
-      }
-
-      "updates pension scheme tax reference to contain both tax reference" in {
-        lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
-        cyaModel.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes.size shouldBe 1
-        cyaModel.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes.head.alphaTwoCode.get shouldBe "GB"
-      }
-    }
-
-    "redirect and update pension schemes list to contain new country code when there is an existing pension schemes list" which {
-
-      lazy val form: Map[String, String] = Map(CountryForm.countryId -> "GB")
-      val pensionsViewModel = anIncomeFromOverseasPensionsEmptyViewModel.copy(
-        paymentsFromOverseasPensionsQuestion = Some(true),
-        overseasIncomePensionSchemes = Seq(
-          PensionScheme(alphaTwoCode = Some("IE")),
-          PensionScheme(alphaTwoCode = Some("US")),
+    "redirect to Payments Amounts page when creating a new scheme" when {
+      "schemes list is empty" which {
+        lazy val form: Map[String, String] = Map(CountryForm.countryId -> "GB")
+        val pensionsViewModel = anIncomeFromOverseasPensionsEmptyViewModel.copy(
+          paymentsFromOverseasPensionsQuestion = Some(true),
+          overseasIncomePensionSchemes = Seq.empty
         )
-      )
+        val pensionUserData = pensionUserDataWithIncomeOverseasPension(pensionsViewModel)
+        implicit val url: Int => String = IncomeFromOverseasPensionsPages.pensionOverseasIncomeCountryUrl
+
+        lazy val result: WSResponse = submitPage(pensionUserData, form)
+
+        "has a SEE_OTHER(303) status" in {
+          result.status shouldBe SEE_OTHER
+          result.header("location") shouldBe Some(incomeFromOverseasPensionsAmounts(taxYearEOY, 0))
+        }
+
+        "updates pension scheme tax reference to contain tax reference" in {
+          lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
+          cyaModel.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes.size shouldBe 1
+          cyaModel.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes.head.alphaTwoCode.get shouldBe "GB"
+        }
+      }
+
+      "adding to existing schemes list" which {
+        lazy val form: Map[String, String] = Map(CountryForm.countryId -> "GB")
+        val pensionUserData = pensionUserDataWithIncomeOverseasPension(anIncomeFromOverseasPensionsSingleSchemeViewModel)
+
+        implicit val url: Int => String = pensionOverseasIncomeCountryUrl
+        lazy val result: WSResponse = submitPage(pensionUserData, form)
+
+        "has a SEE_OTHER(303) status" in {
+          result.status shouldBe SEE_OTHER
+          result.header("location") shouldBe Some(incomeFromOverseasPensionsAmounts(taxYearEOY, 1))
+        }
+
+        "updates pension scheme tax reference to contain both tax reference" in {
+          lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
+          cyaModel.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes shouldBe Seq(
+            aPensionScheme1, PensionScheme(alphaTwoCode = Some("GB")))
+        }
+      }
+    }
+
+    "redirect to Scheme Summary page and update country code of existing scheme when scheme is now completed" which {
+      lazy val form: Map[String, String] = Map(CountryForm.countryId -> "GB")
+      val pensionsViewModel = anIncomeFromOverseasPensionsSingleSchemeViewModel
       val pensionUserData = pensionUserDataWithIncomeOverseasPension(pensionsViewModel)
-      val index = pensionUserData.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes.size
 
-
-      implicit val url: Int => String = pensionOverseasIncomeCountryUrl
+      implicit val url: Int => String = pensionOverseasIncomeCountryUrlIndex(0)
       lazy val result: WSResponse = submitPage(pensionUserData, form)
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(incomeFromOverseasPensionsAmounts(taxYearEOY, index))
+        result.header("location") shouldBe Some(overseasPensionsSchemeSummaryUrl(taxYearEOY, 0))
       }
 
       "updates pension scheme tax reference to contain both tax reference" in {
         lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
-        cyaModel.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes.size shouldBe 3
-        cyaModel.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes.last.alphaTwoCode.get shouldBe "GB"
+        cyaModel.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes shouldBe Seq(
+          aPensionScheme1.copy(alphaTwoCode = Some("GB")))
       }
     }
 

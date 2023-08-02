@@ -63,4 +63,25 @@ class PensionAnnualAllowancesViewModelSpec extends UnitTest {
     }
   }
 
+  "journeyIsNo" should {
+    "return true when shortServiceRefund is 'false' and no others have been answered" in {
+      aPensionAnnualAllowanceEmptyViewModel.copy(reducedAnnualAllowanceQuestion = Some(false)).journeyIsNo
+    }
+    "return false in any other case" in {
+      aPensionAnnualAllowanceEmptyViewModel.journeyIsNo shouldBe false
+      aPensionAnnualAllowanceEmptyViewModel.copy(reducedAnnualAllowanceQuestion = Some(true)).journeyIsNo shouldBe false
+      aPensionAnnualAllowanceViewModel.copy(reducedAnnualAllowanceQuestion = Some(false)).journeyIsNo shouldBe false
+    }
+  }
+
+  "journeyIsUnanswered" should {
+    "return true when all the ViewModel's arguments are 'None'" in {
+      aPensionAnnualAllowanceEmptyViewModel.journeyIsUnanswered
+    }
+    "return false when any of the ViewModel's arguments are filled" in {
+      aPensionAnnualAllowanceViewModel.journeyIsUnanswered shouldBe false
+      aPensionAnnualAllowanceViewModel.copy(pensionSchemeTaxReferences = None).journeyIsUnanswered shouldBe false
+      aPensionAnnualAllowanceEmptyViewModel.copy(reducedAnnualAllowanceQuestion = Some(false)).journeyIsUnanswered shouldBe false
+    }
+  }
 }

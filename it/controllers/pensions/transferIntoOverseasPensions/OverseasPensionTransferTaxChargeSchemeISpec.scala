@@ -26,8 +26,7 @@ import models.mongo.{PensionsCYAModel, PensionsUserData}
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.TransferIntoOverseasPensions.transferPensionSchemeTaxUrl
-import utils.PageUrls.TransferIntoOverseasPensions.{checkYourDetailsPensionUrl, overseasTransferChargePaidUrl, transferChargeSummaryUrl}
+import utils.PageUrls.TransferIntoOverseasPensions.{checkYourDetailsPensionUrl, overseasTransferChargePaidUrl, transferChargeSummaryUrl, transferPensionSchemeTaxUrl}
 import utils.PageUrls.{fullUrl, overviewUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
@@ -38,150 +37,151 @@ class OverseasPensionTransferTaxChargeSchemeISpec
   private def pensionsUsersData(pensionsCyaModel: PensionsCYAModel): PensionsUserData = {
     PensionsUserDataBuilder.aPensionsUserData.copy(isPriorSubmission = false, pensions = pensionsCyaModel)
   }
+
   override val userScenarios: Seq[UserScenario[_, _]] = Seq.empty
 
   ".show" should {
-      "redirect to Overview Page when in year" in {
-        lazy implicit val result: WSResponse = {
-          dropPensionsDB()
-          authoriseAgentOrIndividual(aUser.isAgent)
-          val transferViewModel = aTransfersIntoOverseasPensionsViewModel.copy(pensionSchemeTransferChargeAmount = None, pensionSchemeTransferCharge = None)
-          insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(transfersIntoOverseasPensions = transferViewModel)))
-          urlGet(fullUrl(transferPensionSchemeTaxUrl(taxYear)), !aUser.isAgent, follow = false,
-            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
-        }
-
-        result.status shouldBe SEE_OTHER
-        result.headers("Location").head shouldBe overviewUrl(taxYear)
+    "redirect to Overview Page when in year" in {
+      lazy implicit val result: WSResponse = {
+        dropPensionsDB()
+        authoriseAgentOrIndividual(aUser.isAgent)
+        val transferViewModel = aTransfersIntoOverseasPensionsViewModel.copy(pensionSchemeTransferChargeAmount = None, pensionSchemeTransferCharge = None)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(transfersIntoOverseasPensions = transferViewModel)))
+        urlGet(fullUrl(transferPensionSchemeTaxUrl(taxYear)), !aUser.isAgent, follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
       }
 
-      "show page when EOY" in {
-        lazy implicit val result: WSResponse = {
-          dropPensionsDB()
-          authoriseAgentOrIndividual(aUser.isAgent)
-          insertCyaData(pensionsUsersData(aPensionsCYAModel))
-          urlGet(fullUrl(transferPensionSchemeTaxUrl(taxYearEOY)), !aUser.isAgent, follow = false,
-            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
-        }
-        result.status shouldBe OK
+      result.status shouldBe SEE_OTHER
+      result.headers("Location").head shouldBe overviewUrl(taxYear)
+    }
+
+    "show page when EOY" in {
+      lazy implicit val result: WSResponse = {
+        dropPensionsDB()
+        authoriseAgentOrIndividual(aUser.isAgent)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel))
+        urlGet(fullUrl(transferPensionSchemeTaxUrl(taxYearEOY)), !aUser.isAgent, follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
+      result.status shouldBe OK
+    }
 
+  }
+
+  ".submit" should {
+    "redirect to overview when in year" in {
+      lazy implicit val result: WSResponse = {
+        dropPensionsDB()
+        authoriseAgentOrIndividual(aUser.isAgent)
+        val formData = Map(s" $yesNo -> true, $amount2" -> "100")
+        val transferViewModel = aTransfersIntoOverseasPensionsViewModel.copy(pensionSchemeTransferChargeAmount = None, pensionSchemeTransferCharge = None)
+        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(transfersIntoOverseasPensions = transferViewModel)))
+        urlPost(
+          fullUrl(transferPensionSchemeTaxUrl(taxYear)),
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)),
+          follow = false,
+          body = formData)
       }
+      result.status shouldBe SEE_OTHER
+      result.headers("location").head shouldBe overviewUrl(taxYear)
+    }
 
-      ".submit" should {
-        "redirect to overview when in year" in {
-          lazy implicit val result: WSResponse = {
-            dropPensionsDB()
-            authoriseAgentOrIndividual(aUser.isAgent)
-            val formData = Map(s" $yesNo -> true, $amount2" -> "100")
-            val transferViewModel = aTransfersIntoOverseasPensionsViewModel.copy(pensionSchemeTransferChargeAmount = None, pensionSchemeTransferCharge = None)
-            insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(transfersIntoOverseasPensions = transferViewModel)))
-            urlPost(
-              fullUrl(transferPensionSchemeTaxUrl(taxYear)),
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)),
-              follow = false,
-              body = formData)
-          }
-          result.status shouldBe SEE_OTHER
-          result.headers("location").head shouldBe overviewUrl(taxYear)
-        }
-
-        "persist amount and redirect to transfer charge summary page when user selects 'yes' and there is a transferPensionScheme " in {
-          lazy implicit val result: WSResponse = {
-            dropPensionsDB()
-            authoriseAgentOrIndividual(aUser.isAgent)
-            val transferViewModel = aTransfersIntoOverseasPensionsViewModel.copy(
-              pensionSchemeTransferChargeAmount = Some(100), pensionSchemeTransferCharge = Some(true))
-            val formData = Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "100")
-            insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(transfersIntoOverseasPensions = transferViewModel)))
-            urlPost(
-              fullUrl(transferPensionSchemeTaxUrl(taxYearEOY)),
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
-              follow = false,
-              body = formData)
-          }
-          result.status shouldBe SEE_OTHER
-          result.header("location").contains(transferChargeSummaryUrl(taxYearEOY)) shouldBe true
-        }
-
-        "persist amount and redirect to overseas transfer charge paid page when user selects 'yes' and there is no transferPensionScheme" in {
-          lazy implicit val result: WSResponse = {
-            dropPensionsDB()
-            authoriseAgentOrIndividual(aUser.isAgent)
-            val transferViewModel = aTransfersIntoOverseasPensionsViewModel.copy(
-              pensionSchemeTransferChargeAmount = Some(100),
-              pensionSchemeTransferCharge = Some(true),
-              transferPensionScheme = Nil
-            )
-            val formData = Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "100")
-            insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(transfersIntoOverseasPensions = transferViewModel)))
-            urlPost(
-              fullUrl(transferPensionSchemeTaxUrl(taxYearEOY)),
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
-              follow = false,
-              body = formData)
-          }
-          result.status shouldBe SEE_OTHER
-          result.header("location").contains(overseasTransferChargePaidUrl(taxYearEOY)) shouldBe true
-        }
-
-        "persist amount and redirect to  page when user selects 'no'" in {
-          lazy implicit val result: WSResponse = {
-            dropPensionsDB()
-            authoriseAgentOrIndividual(aUser.isAgent)
-            val transferViewModel = aTransfersIntoOverseasPensionsViewModel.copy(
-              pensionSchemeTransferChargeAmount = Some(100),
-              pensionSchemeTransferCharge = Some(true),
-              transferPensionScheme = Nil
-            )
-            val formData = Map(RadioButtonAmountForm.yesNo -> "false")
-            insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(transfersIntoOverseasPensions = transferViewModel)))
-            urlPost(
-              fullUrl(transferPensionSchemeTaxUrl(taxYearEOY)),
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
-              follow = false,
-              body = formData)
-          }
-          result.status shouldBe SEE_OTHER
-          result.header("location").contains(checkYourDetailsPensionUrl(taxYearEOY)) shouldBe true
-        }
-
-        "return an error when form is submitted with no entry" which {
-          lazy val result: WSResponse = {
-            dropPensionsDB()
-            authoriseAgentOrIndividual(aUser.isAgent)
-            val transferViewModel = aTransfersIntoOverseasPensionsViewModel.copy(
-              pensionSchemeTransferChargeAmount = Some(100), pensionSchemeTransferCharge = Some(true))
-            lazy val form: Map[String, String] = Map(RadioButtonAmountForm.yesNo -> "")
-            insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(transfersIntoOverseasPensions = transferViewModel)))
-            urlPost(
-              fullUrl(transferPensionSchemeTaxUrl(taxYearEOY)),
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
-              follow = false,
-              body = form)
-          }
-          "status is bad request" in {
-            result.status shouldBe BAD_REQUEST
-          }
-        }
-
-        "return an error when form is submitted with the wrong format" which {
-          lazy val result: WSResponse = {
-            dropPensionsDB()
-            authoriseAgentOrIndividual(aUser.isAgent)
-            val transferViewModel = aTransfersIntoOverseasPensionsViewModel.copy(
-              pensionSchemeTransferChargeAmount = Some(100), pensionSchemeTransferCharge = Some(true))
-            lazy val form: Map[String, String] = Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "dhjsvjdsg")
-            insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(transfersIntoOverseasPensions = transferViewModel)))
-            urlPost(
-              fullUrl(transferPensionSchemeTaxUrl(taxYearEOY)),
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
-              follow = false,
-              body = form)
-          }
-         "status is bad request" in {
-           result.status shouldBe BAD_REQUEST
-         }
-        }
+    "persist amount and redirect to CYA page when user selects 'yes' and submission data is now complete" in {
+      lazy implicit val result: WSResponse = {
+        dropPensionsDB()
+        authoriseAgentOrIndividual(aUser.isAgent)
+        val transferViewModel = aTransfersIntoOverseasPensionsViewModel.copy(
+          pensionSchemeTransferChargeAmount = Some(100), pensionSchemeTransferCharge = Some(true))
+        val formData = Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "100")
+        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(transfersIntoOverseasPensions = transferViewModel)))
+        urlPost(
+          fullUrl(transferPensionSchemeTaxUrl(taxYearEOY)),
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
+          follow = false,
+          body = formData)
       }
+      result.status shouldBe SEE_OTHER
+      result.header("location").head shouldBe checkYourDetailsPensionUrl(taxYearEOY)
+    }
+
+    "persist amount and redirect to overseas transfer charge paid page when user selects 'yes' and there is no transferPensionScheme" in {
+      lazy implicit val result: WSResponse = {
+        dropPensionsDB()
+        authoriseAgentOrIndividual(aUser.isAgent)
+        val transferViewModel = aTransfersIntoOverseasPensionsViewModel.copy(
+          pensionSchemeTransferChargeAmount = Some(100),
+          pensionSchemeTransferCharge = Some(true),
+          transferPensionScheme = Nil
+        )
+        val formData = Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "100")
+        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(transfersIntoOverseasPensions = transferViewModel)))
+        urlPost(
+          fullUrl(transferPensionSchemeTaxUrl(taxYearEOY)),
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
+          follow = false,
+          body = formData)
+      }
+      result.status shouldBe SEE_OTHER
+      result.header("location").contains(overseasTransferChargePaidUrl(taxYearEOY)) shouldBe true
+    }
+
+    "persist amount and redirect to  page when user selects 'no'" in {
+      lazy implicit val result: WSResponse = {
+        dropPensionsDB()
+        authoriseAgentOrIndividual(aUser.isAgent)
+        val transferViewModel = aTransfersIntoOverseasPensionsViewModel.copy(
+          pensionSchemeTransferChargeAmount = Some(100),
+          pensionSchemeTransferCharge = Some(true),
+          transferPensionScheme = Nil
+        )
+        val formData = Map(RadioButtonAmountForm.yesNo -> "false")
+        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(transfersIntoOverseasPensions = transferViewModel)))
+        urlPost(
+          fullUrl(transferPensionSchemeTaxUrl(taxYearEOY)),
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
+          follow = false,
+          body = formData)
+      }
+      result.status shouldBe SEE_OTHER
+      result.header("location").contains(checkYourDetailsPensionUrl(taxYearEOY)) shouldBe true
+    }
+
+    "return an error when form is submitted with no entry" which {
+      lazy val result: WSResponse = {
+        dropPensionsDB()
+        authoriseAgentOrIndividual(aUser.isAgent)
+        val transferViewModel = aTransfersIntoOverseasPensionsViewModel.copy(
+          pensionSchemeTransferChargeAmount = Some(100), pensionSchemeTransferCharge = Some(true))
+        lazy val form: Map[String, String] = Map(RadioButtonAmountForm.yesNo -> "")
+        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(transfersIntoOverseasPensions = transferViewModel)))
+        urlPost(
+          fullUrl(transferPensionSchemeTaxUrl(taxYearEOY)),
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
+          follow = false,
+          body = form)
+      }
+      "status is bad request" in {
+        result.status shouldBe BAD_REQUEST
+      }
+    }
+
+    "return an error when form is submitted with the wrong format" which {
+      lazy val result: WSResponse = {
+        dropPensionsDB()
+        authoriseAgentOrIndividual(aUser.isAgent)
+        val transferViewModel = aTransfersIntoOverseasPensionsViewModel.copy(
+          pensionSchemeTransferChargeAmount = Some(100), pensionSchemeTransferCharge = Some(true))
+        lazy val form: Map[String, String] = Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "dhjsvjdsg")
+        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(transfersIntoOverseasPensions = transferViewModel)))
+        urlPost(
+          fullUrl(transferPensionSchemeTaxUrl(taxYearEOY)),
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
+          follow = false,
+          body = form)
+      }
+      "status is bad request" in {
+        result.status shouldBe BAD_REQUEST
+      }
+    }
+  }
 }

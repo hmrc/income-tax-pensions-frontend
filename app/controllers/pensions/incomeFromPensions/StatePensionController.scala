@@ -26,6 +26,7 @@ import models.requests.UserSessionDataRequest
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.PensionSessionService
+import services.redirects.StatePensionRedirects.statePensionIsFinishedCheck
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.incomeFromPensions.StatePensionView
@@ -87,11 +88,11 @@ class StatePensionController @Inject()(actionsProvider: ActionsProvider,
 
     val updatedCyaModel: PensionsCYAModel = pensionUserData.pensions.copy(
       incomeFromPensions = viewModel.copy(statePension = Some(updateStatePension)))
-    pensionSessionService.createOrUpdateSessionData(request.user,
-      updatedCyaModel, taxYear, pensionUserData.isPriorSubmission)(errorHandler.internalServerError()) {
-      Redirect(
-        if (yesNo) StatePensionStartDateController.show(taxYear)
-        else StatePensionLumpSumController.show(taxYear))
+    val redirectLocation = if (yesNo) StatePensionStartDateController.show(taxYear) else StatePensionLumpSumController.show(taxYear)
+
+    pensionSessionService.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear, pensionUserData.isPriorSubmission)(
+      errorHandler.internalServerError()) {
+      statePensionIsFinishedCheck(updatedCyaModel.incomeFromPensions, taxYear, redirectLocation)
     }
   }
 }

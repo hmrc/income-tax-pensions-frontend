@@ -88,10 +88,15 @@ class NonUkTaxRefundsController @Inject()(
       shortServiceRefunds = pensionUserData.pensions.shortServiceRefunds.copy(
         shortServiceRefundTaxPaid = Some(yesNo),
         shortServiceRefundTaxPaidCharge = amount))
+    val redirectLocation = {
+      if (updatedCyaModel.shortServiceRefunds.isFinished) cyaPageCall(taxYear)
+      else redirectForSchemeLoop(updatedCyaModel.shortServiceRefunds.refundPensionScheme, taxYear)
+    }
 
     pensionSessionService.createOrUpdateSessionData(request.user,
       updatedCyaModel, taxYear, pensionUserData.isPriorSubmission)(errorHandler.internalServerError()) {
-      Redirect(redirectForSchemeLoop(updatedCyaModel.shortServiceRefunds.refundPensionScheme, taxYear))
+
+      Redirect(redirectLocation)
     }
   }
 }

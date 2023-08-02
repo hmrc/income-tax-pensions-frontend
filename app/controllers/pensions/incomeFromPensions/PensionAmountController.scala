@@ -28,7 +28,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
 import services.redirects.IncomeFromOtherUkPensionsPages.HowMuchPensionDidYouGetPaidPage
-import services.redirects.IncomeFromOtherUkPensionsRedirects.{indexCheckThenJourneyCheck, redirectForSchemeLoop}
+import services.redirects.IncomeFromOtherUkPensionsRedirects.{indexCheckThenJourneyCheck, redirectForSchemeLoop, schemeIsFinishedCheck}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.incomeFromPensions.PensionAmountView
@@ -94,9 +94,10 @@ class PensionAmountController @Inject()(implicit val mcc: MessagesControllerComp
                       pensionsCYAModel.copy(incomeFromPensions =
                         viewModel.copy(uKPensionIncomes = updatedList))
                     }
-                    pensionSessionService.createOrUpdateSessionData(request.user,
-                      updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
-                      Redirect(PensionSchemeStartDateController.show(taxYear, Some(index)))
+                    pensionSessionService.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear, data.isPriorSubmission)(
+                      errorHandler.internalServerError()) {
+
+                      schemeIsFinishedCheck(updatedList, index, taxYear, PensionSchemeStartDateController.show(taxYear, Some(index)))
                     }
                   })
               case None => Future.successful(Redirect(redirectForSchemeLoop(pensionIncomesList, taxYear)))

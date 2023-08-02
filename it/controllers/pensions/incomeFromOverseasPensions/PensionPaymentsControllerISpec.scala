@@ -17,12 +17,13 @@
 package controllers.pensions.incomeFromOverseasPensions
 
 import builders.IncomeFromOverseasPensionsViewModelBuilder.anIncomeFromOverseasPensionsViewModel
+import builders.PensionSchemeBuilder.{aPensionScheme1, aPensionScheme2}
 import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import controllers.ControllerSpec.PreferredLanguages.{English, Welsh}
 import controllers.ControllerSpec.UserTypes.{Agent, Individual}
 import controllers.ControllerSpec._
 import controllers.{SubmittedFormDataForOptionTupleAmountPage, TwoAmountsControllerISpec}
-import models.pension.charges.IncomeFromOverseasPensionsViewModel
+import models.pension.charges.{IncomeFromOverseasPensionsViewModel, PensionScheme}
 import play.api.http.Status.{BAD_REQUEST, OK}
 import play.api.libs.ws.{WSClient, WSResponse}
 
@@ -241,34 +242,47 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
   }
 
   "submit" should {
-    "redirect to the expected page" when {
-      "the user has no stored session data at all" in {
-        implicit val userConfig: UserConfig = userConfigWhenIrrelevant(None)
-        implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(None, None))
-        assertRedirectionAsExpected(PageRelativeURLs.overseasSummaryPage)
-        getViewModel mustBe None
-      }
+
+    "redirect to the Overseas Summary page when there is no session data" in {
+      implicit val userConfig: UserConfig = userConfigWhenIrrelevant(None)
+      implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(None, None))
+
+      assertRedirectionAsExpected(PageRelativeURLs.overseasSummaryPage)
+      getViewModel mustBe None
     }
+
     "succeed" when {
-      "the user has relevant session data and" when {
-        val sessionData = pensionsUserData(aPensionsCYAModel)
-        "with payments" in {
+      "the user submits both amount values which are persisted" when {
+        "the scheme is now complete and so redirects to the Scheme Summary page" in {
+          val sessionData = pensionsUserData(aPensionsCYAModel)
           implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
-          implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(Some("1234.56"), Some("78.90")))
+          implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(Some("1234.56"), Some("78.90")), 1)
 
-          val modifiedPensionScheme = anIncomeFromOverseasPensionsViewModel.overseasIncomePensionSchemes.head
-            .copy(pensionPaymentAmount = Some(BigDecimal(1234.56)), pensionPaymentTaxPaid = Some(BigDecimal(78.90)))
+          val expectedViewModel = anIncomeFromOverseasPensionsViewModel.copy(overseasIncomePensionSchemes = Seq(aPensionScheme1, aPensionScheme2.copy(
+            pensionPaymentAmount = Some(1234.56), pensionPaymentTaxPaid = Some(78.90))))
 
-          val remainderPensionScheme = anIncomeFromOverseasPensionsViewModel.overseasIncomePensionSchemes.tail
+          assertRedirectionAsExpected(PageRelativeURLs.incomeFromOverseasPensionsScheme + "?index=1")
+          getViewModel mustBe Some(expectedViewModel)
+        }
 
-          val incomeViewModel = anIncomeFromOverseasPensionsViewModel.copy(
-            overseasIncomePensionSchemes = modifiedPensionScheme +: remainderPensionScheme
+        "the scheme is not yet complete and so redirects to the Special Withholding Tax page" in {
+          val viewModel = anIncomeFromOverseasPensionsViewModel.copy(
+            overseasIncomePensionSchemes = Seq(aPensionScheme1, aPensionScheme2, PensionScheme(alphaTwoCode = Some("GB"))))
+          val sessionData = pensionsUserData(aPensionsCYAModel.copy(incomeFromOverseasPensions = viewModel))
+          implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
+          implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(Some("1234.56"), Some("78.90")), 2)
+
+          val expectedViewModel = viewModel.copy(
+            overseasIncomePensionSchemes = Seq(aPensionScheme1, aPensionScheme2, PensionScheme(
+              alphaTwoCode = Some("GB"), pensionPaymentAmount = Some(1234.56), pensionPaymentTaxPaid = Some(78.90)))
           )
-          assertRedirectionAsExpected(PageRelativeURLs.incomeFromOverseasPensionsSwt + "?index=0")
-          getViewModel mustBe Some(incomeViewModel)
+
+          assertRedirectionAsExpected(PageRelativeURLs.incomeFromOverseasPensionsSwt + "?index=2")
+          getViewModel mustBe Some(expectedViewModel)
         }
       }
     }
+
     "fail" when {
 
       val expectedPageContents = ExpectedOptionTupleAmountPageContents(

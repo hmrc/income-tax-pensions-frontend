@@ -30,7 +30,7 @@ case class PensionLifetimeAllowancesViewModel(aboveLifetimeAllowanceQuestion: Op
                                               pensionAsLumpSum: Option[LifetimeAllowance] = None,
                                               pensionPaidAnotherWayQuestion: Option[Boolean] = None,
                                               pensionPaidAnotherWay: Option[LifetimeAllowance] = None,
-                                              pensionSchemeTaxReferences: Option[Seq[String]] = None) extends PensionCYABaseModel{
+                                              pensionSchemeTaxReferences: Option[Seq[String]] = None) extends PensionCYABaseModel {
 
   def isEmpty: Boolean = this.productIterator.forall(_ == None)
 
@@ -46,6 +46,14 @@ case class PensionLifetimeAllowancesViewModel(aboveLifetimeAllowanceQuestion: Op
     })
   }
 
+  def journeyIsNo: Boolean =
+    !aboveLifetimeAllowanceQuestion.getOrElse(true) &&
+      pensionAsLumpSumQuestion.isEmpty &&
+      pensionAsLumpSum.isEmpty &&
+      pensionPaidAnotherWayQuestion.isEmpty &&
+      pensionPaidAnotherWay.isEmpty &&
+      pensionSchemeTaxReferences.isEmpty
+  
   def toPensionSavingsTaxChargesModel(priorData: Option[AllPensionsData]): PensionSavingsTaxCharges = {
     PensionSavingsTaxCharges(
       lumpSumBenefitTakenInExcessOfLifetimeAllowance = this.pensionAsLumpSum,
@@ -69,9 +77,7 @@ case class PensionLifetimeAllowancesViewModel(aboveLifetimeAllowanceQuestion: Op
     )
   }
 
-  override def journeyIsNo: Boolean = !aboveLifetimeAllowanceQuestion.getOrElse(true)
-
-  override def journeyIsUnanswered: Boolean = this.productIterator.forall(_ == None)
+  def journeyIsUnanswered: Boolean = this.isEmpty
 }
 
 object PensionLifetimeAllowancesViewModel {

@@ -73,11 +73,9 @@ class WorkplacePensionController @Inject()(authAction: AuthorisedAction,
               pensionsCYAModel.copy(paymentsIntoPension = viewModel.copy(workplacePensionPaymentsQuestion = Some(yesNo),
                 totalWorkplacePensionPayments = if (yesNo) viewModel.totalWorkplacePensionPayments else None))
             }
-            val redirectLocation = if (yesNo) {
-              WorkplaceAmountController.show(taxYear)
-            } else {
-              PaymentsIntoPensionsCYAController.show(taxYear)
-            }
+            val redirectLocation =
+              if (yesNo) WorkplaceAmountController.show(taxYear) else PaymentsIntoPensionsCYAController.show(taxYear)
+
             pensionSessionService.createOrUpdateSessionData(request.user,
               updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
               isFinishedCheck(updatedCyaModel.paymentsIntoPension, taxYear, redirectLocation, cyaPageCall)

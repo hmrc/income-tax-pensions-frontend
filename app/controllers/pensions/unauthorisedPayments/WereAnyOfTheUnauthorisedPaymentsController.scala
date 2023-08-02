@@ -18,7 +18,7 @@ package controllers.pensions.unauthorisedPayments
 
 
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.unauthorisedPayments.routes._
+import controllers.pensions.unauthorisedPayments.routes.UnauthorisedPensionSchemeTaxReferenceController
 import controllers.predicates.actions.AuthorisedAction
 import forms.YesNoForm
 import models.mongo.PensionsCYAModel
@@ -27,9 +27,9 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
-import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
+import services.redirects.SimpleRedirectService.{isFinishedCheck, redirectBasedOnCurrentAnswers}
 import services.redirects.UnauthorisedPaymentsPages.WereAnyUnauthPaymentsFromUkPensionSchemePage
-import services.redirects.UnauthorisedPaymentsRedirects.{cyaPageCall, journeyCheck, redirectForSchemeLoop}
+import services.redirects.UnauthorisedPaymentsRedirects.{cyaPageCall, journeyCheck}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.unauthorisedPayments.WereAnyOfTheUnauthorisedPaymentsView
@@ -87,9 +87,10 @@ class WereAnyOfTheUnauthorisedPaymentsController @Inject()(implicit val cc: Mess
 
               pensionSessionService.createOrUpdateSessionData(
                 request.user, updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
-
-                if (yesNo) Redirect(redirectForSchemeLoop(schemes = updatedCyaModel.unauthorisedPayments.pensionSchemeTaxReference.getOrElse(Seq()), taxYear))
-                else Redirect(UnauthorisedPaymentsCYAController.show(taxYear))
+                isFinishedCheck(
+                  updatedCyaModel.unauthorisedPayments, taxYear,
+                  UnauthorisedPensionSchemeTaxReferenceController.show(taxYear, None),
+                  cyaPageCall)
               }
             }
         }

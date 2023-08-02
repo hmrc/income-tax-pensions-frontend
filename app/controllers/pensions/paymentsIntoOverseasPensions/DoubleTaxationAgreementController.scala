@@ -30,8 +30,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.PensionSessionService
 import services.redirects.PaymentsIntoOverseasPensionsPages.DoubleTaxationAgreementPage
-import services.redirects.PaymentsIntoOverseasPensionsRedirects.{cyaPageCall, indexCheckThenJourneyCheck}
-import services.redirects.SimpleRedirectService.isFinishedCheck
+import services.redirects.PaymentsIntoOverseasPensionsRedirects.indexCheckThenJourneyCheck
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.paymentsIntoOverseasPensions.DoubleTaxationAgreementView
@@ -84,7 +83,6 @@ class DoubleTaxationAgreementController @Inject()(actionsProvider: ActionsProvid
                                   (implicit request: UserSessionDataRequest[T]): Future[Result] = {
 
     val piopUserData = pensionsUserData.pensions.paymentsIntoOverseasPensions
-    val redirectLocation = ReliefsSchemeDetailsController.show(taxYear, Some(idx))
     val updatedCyaModel = pensionsUserData.pensions.copy(
       paymentsIntoOverseasPensions = piopUserData.copy(
         reliefs = piopUserData.reliefs.updated(idx, piopUserData.reliefs(idx).copy(
@@ -99,7 +97,7 @@ class DoubleTaxationAgreementController @Inject()(actionsProvider: ActionsProvid
 
     pensionSessionService.createOrUpdateSessionData(request.user,
       updatedCyaModel, taxYear, pensionsUserData.isPriorSubmission)(errorHandler.internalServerError()) {
-      isFinishedCheck(updatedCyaModel.paymentsIntoPension, taxYear, redirectLocation, cyaPageCall)
+      Redirect(ReliefsSchemeDetailsController.show(taxYear, Some(idx)))
     }
   }
 }

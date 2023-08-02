@@ -44,8 +44,7 @@ case class StateBenefitViewModel(benefitId: Option[UUID] = None,
   def isEmpty: Boolean = this.productIterator.forall(_ == None)
 
   def isFinished: Boolean =
-    amountPaidQuestion.exists(x =>
-    if (!x) true else
+    amountPaidQuestion.exists(x => !x ||
       amount.isDefined && startDateQuestion.getOrElse(false) && startDate.isDefined && addToCalculation.isDefined &&
         (if (taxPaidQuestion.getOrElse(false)) taxPaid.isDefined else true)
     )

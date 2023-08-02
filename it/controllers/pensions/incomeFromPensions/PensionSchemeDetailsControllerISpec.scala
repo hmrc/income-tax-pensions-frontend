@@ -408,7 +408,7 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
       }
     }
 
-    "redirect and update an existing Pension Scheme at given index when valid form is submitted" which {
+    "redirect to scheme summary page and update a completed Pension Scheme at given index when valid form is submitted" which {
 
       lazy val form: Map[String, String] = pensionDetailsForm(validProviderName, validRef, validPensionId)
 
@@ -425,7 +425,7 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
 
       "has an SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(pensionAmountUrl(taxYearEOY, Some(1)))
+        result.header("location") shouldBe Some(pensionSchemeSummaryUrl(taxYearEOY, Some(1)))
       }
 
       "updates existing pension scheme with new values" in {

@@ -16,7 +16,7 @@
 
 package controllers.pensions.lifetimeAllowances
 
-import builders.PensionLifetimeAllowancesViewModelBuilder.{aPensionLifetimeAllowancesViewModel, aPensionLifetimeAllowancesEmptyViewModel}
+import builders.PensionLifetimeAllowancesViewModelBuilder.{aPensionLifetimeAllowancesEmptyViewModel, aPensionLifetimeAllowancesViewModel}
 import builders.PensionsUserDataBuilder.{aPensionsUserData, pensionsUserDataWithLifetimeAllowance}
 import builders.UserBuilder.aUserRequest
 import forms.TupleAmountForm
@@ -460,7 +460,7 @@ class PensionLumpSumDetailsControllerISpec extends IntegrationTest with ViewHelp
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(pensionLifeTimeAllowanceAnotherWayUrl(taxYearEOY))
+        result.header("location") shouldBe Some(lifetimeAllowanceCYA(taxYearEOY))
       }
 
       "update state pension amount to Some (new values)" in {
@@ -469,7 +469,6 @@ class PensionLumpSumDetailsControllerISpec extends IntegrationTest with ViewHelp
         cyaModel.pensions.pensionLifetimeAllowances.pensionAsLumpSum.flatMap(_.taxPaid) shouldBe Some(newAmount2)
       }
     }
-
 
     "redirect to the correct page when a valid amount is submitted when there is No existing data" which {
 

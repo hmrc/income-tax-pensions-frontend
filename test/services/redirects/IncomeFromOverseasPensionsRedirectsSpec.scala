@@ -26,7 +26,7 @@ import play.api.http.Status.SEE_OTHER
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{Call, Result}
 import services.redirects.IncomeFromOverseasPensionsPages._
-import services.redirects.IncomeFromOverseasPensionsRedirects.{cyaPageCall, indexCheckThenJourneyCheck, journeyCheck, redirectForSchemeLoop}
+import services.redirects.IncomeFromOverseasPensionsRedirects.{cyaPageCall, indexCheckThenJourneyCheck, journeyCheck, redirectForSchemeLoop, schemeIsFinishedCheck}
 import utils.UnitTest
 
 import scala.concurrent.Future
@@ -35,11 +35,13 @@ class IncomeFromOverseasPensionsRedirectsSpec extends UnitTest {
 
   private val cyaData: PensionsCYAModel = PensionsCYAModel.emptyModels
   private val statusPageRedirect = Some(Redirect(PensionOverseasIncomeStatus.show(taxYear)))
-  private val taxableAmountPageCall: Call = TaxableAmountController.show(taxYear, None)
   private val schemeStartCall: Call = PensionOverseasIncomeCountryController.show(taxYear, None)
-  private val schemeSummaryCall: Call = CountrySummaryListController.show(taxYear)
-  private val continueToContextualRedirect: PensionsUserData => Future[Result] = aPensionsUserData => Future.successful(Redirect(taxableAmountPageCall))
-  private val continueToSummaryRedirect: PensionsUserData => Future[Result] = aPensionsUserData => Future.successful(Redirect(schemeSummaryCall))
+  private val ftcrPageCall: Call = ForeignTaxCreditReliefController.show(taxYear, Some(1))
+  private val taxableAmountPageCall: Call = TaxableAmountController.show(taxYear, Some(0))
+  private val schemesSummaryCall: Call = CountrySummaryListController.show(taxYear)
+  private val schemeSummaryRedirect: Result = Redirect(PensionSchemeSummaryController.show(taxYear, Some(1)))
+  private val continueToContextualRedirect: PensionsUserData => Future[Result] = _ => Future.successful(Redirect(taxableAmountPageCall))
+  private val continueToSummaryRedirect: PensionsUserData => Future[Result] = _ => Future.successful(Redirect(schemesSummaryCall))
 
   ".indexCheckThenJourneyCheck" when {
     "index is valid" should {
@@ -141,7 +143,7 @@ class IncomeFromOverseasPensionsRedirectsSpec extends UnitTest {
         val locationHeader = await(result.map(_.header.headers).map(_.get("Location")))
 
         statusHeader shouldBe SEE_OTHER
-        locationHeader shouldBe Some(schemeSummaryCall.url)
+        locationHeader shouldBe Some(schemesSummaryCall.url)
       }
       "redirect to the scheme summary page when schemes already exist" in {
         val result: Future[Result] = indexCheckThenJourneyCheck(
@@ -153,7 +155,7 @@ class IncomeFromOverseasPensionsRedirectsSpec extends UnitTest {
         val locationHeader = await(result.map(_.header.headers).map(_.get("Location")))
 
         statusHeader shouldBe SEE_OTHER
-        locationHeader shouldBe Some(schemeSummaryCall.url)
+        locationHeader shouldBe Some(schemesSummaryCall.url)
       }
     }
   }
@@ -190,7 +192,62 @@ class IncomeFromOverseasPensionsRedirectsSpec extends UnitTest {
       )
       val result = redirectForSchemeLoop(existingSchemes, taxYear)
 
-      result shouldBe schemeSummaryCall
+      result shouldBe schemesSummaryCall
+    }
+  }
+
+  ".schemeIsFinishedCheck" should {
+    "return a Redirect to the scheme summary page when the scheme is completed" in {
+      val schemes: Seq[PensionScheme] = Seq(
+        PensionScheme(
+          alphaThreeCode = Some("FRA"),
+          alphaTwoCode = Some("FR"),
+          pensionPaymentAmount = Some(1999.99),
+          pensionPaymentTaxPaid = Some(1999.99),
+          specialWithholdingTaxQuestion = Some(true),
+          specialWithholdingTaxAmount = Some(1999.99),
+          foreignTaxCreditReliefQuestion = Some(true),
+          taxableAmount = Some(1999.99)
+        ),
+        PensionScheme(
+          alphaThreeCode = Some("DEU"),
+          alphaTwoCode = Some("DE"),
+          pensionPaymentAmount = Some(2000.00),
+          pensionPaymentTaxPaid = Some(400.00),
+          specialWithholdingTaxQuestion = Some(true),
+          specialWithholdingTaxAmount = Some(400.00),
+          foreignTaxCreditReliefQuestion = Some(true),
+          taxableAmount = Some(2000.00)
+        ))
+      val result = schemeIsFinishedCheck(schemes, 1, taxYear, ftcrPageCall)
+
+      result shouldBe schemeSummaryRedirect
+    }
+    "return a Redirect to the next page if scheme is not finished" in {
+      val schemes: Seq[PensionScheme] = Seq(
+        PensionScheme(
+          alphaThreeCode = Some("FRA"),
+          alphaTwoCode = Some("FR"),
+          pensionPaymentAmount = Some(1999.99),
+          pensionPaymentTaxPaid = Some(1999.99),
+          specialWithholdingTaxQuestion = Some(true),
+          specialWithholdingTaxAmount = Some(1999.99),
+          foreignTaxCreditReliefQuestion = Some(true),
+          taxableAmount = Some(1999.99)
+        ),
+        PensionScheme(
+          alphaThreeCode = Some("DEU"),
+          alphaTwoCode = Some("DE"),
+          pensionPaymentAmount = Some(2000.00),
+          pensionPaymentTaxPaid = Some(400.00),
+          specialWithholdingTaxQuestion = Some(true),
+          specialWithholdingTaxAmount = Some(400.00),
+          foreignTaxCreditReliefQuestion = Some(true),
+          taxableAmount = None
+        ))
+      val result = schemeIsFinishedCheck(schemes, 1, taxYear, ftcrPageCall)
+
+      result shouldBe Redirect(ftcrPageCall)
     }
   }
 

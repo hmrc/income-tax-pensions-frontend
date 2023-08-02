@@ -27,6 +27,8 @@ import models.pension.reliefs.PaymentsIntoPensionsViewModel
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.PensionSessionService
+import services.redirects.SimpleRedirectService.isFinishedCheck
+import services.redirects.UnauthorisedPaymentsRedirects.cyaPageCall
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.unauthorisedPayments.UnauthorisedPaymentsView
@@ -76,16 +78,14 @@ class UnauthorisedPaymentsController @Inject()(implicit val mcc: MessagesControl
               noSurchargeQuestion = Some(unauthorisedPaymentsSelection.containsYesNotSurcharge)
             ))
           }
+          val redirectLocation =
+            if (unauthorisedPaymentsSelection.containsYesSurcharge) SurchargeAmountController.show(taxYear)
+            else if (unauthorisedPaymentsSelection.containsYesNotSurcharge) NoSurchargeAmountController.show(taxYear)
+            else UnauthorisedPaymentsCYAController.show(taxYear)
+
           pensionSessionService.createOrUpdateSessionData(request.user,
             updatedCyaModel, taxYear, isPriorSubmission)(errorHandler.internalServerError()) {
-            Redirect(
-              if (unauthorisedPaymentsSelection.containsYesSurcharge)
-                SurchargeAmountController.show(taxYear)
-              else if (unauthorisedPaymentsSelection.containsYesNotSurcharge)
-                NoSurchargeAmountController.show(taxYear)
-              else
-                UnauthorisedPaymentsCYAController.show(taxYear)
-            )
+            isFinishedCheck(updatedCyaModel.unauthorisedPayments, taxYear, redirectLocation, cyaPageCall)
           }
         }
       )
