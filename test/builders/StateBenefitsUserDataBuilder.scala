@@ -16,7 +16,7 @@
 
 package builders
 
-import builders.ClaimCYAModelBuilder.{aStatePensionClaimCYAModel, aStatePensionLumpSumClaimCYAModel}
+import builders.ClaimCYAModelBuilder.{aPriorStatePensionClaimCYAModel, aPriorStatePensionLumpSumClaimCYAModel, aStatePensionClaimCYAModel, aStatePensionLumpSumClaimCYAModel}
 import builders.PensionsUserDataBuilder.{aPensionsUserData, taxYear}
 import models.mongo.StateBenefitsUserData
 
@@ -26,27 +26,51 @@ object StateBenefitsUserDataBuilder {
 
   val instant = Instant.parse(aPensionsUserData.lastUpdated.toLocalDateTime.toString + "Z")
 
-  val aStatePensionBenefitsUD: StateBenefitsUserData = StateBenefitsUserData(
+  val aCreateStatePensionBenefitsUD: StateBenefitsUserData = StateBenefitsUserData(
     benefitType = "statePension",
     sessionDataId = None,
     sessionId = aPensionsUserData.sessionId,
     mtdItId = aPensionsUserData.mtdItId,
     nino = aPensionsUserData.nino,
     taxYear = taxYear,
-    benefitDataType = "hmrcData",
+    benefitDataType = "customerAdded",
     claim = Some(aStatePensionClaimCYAModel),
     lastUpdated = instant
   )
 
-  val aStatePensionLumpSumBenefitsUD: StateBenefitsUserData = StateBenefitsUserData(
+  val aCreateStatePensionLumpSumBenefitsUD: StateBenefitsUserData = StateBenefitsUserData(
     benefitType = "statePensionLumpSum",
     sessionDataId = None,
     sessionId = aPensionsUserData.sessionId,
     mtdItId = aPensionsUserData.mtdItId,
     nino = aPensionsUserData.nino,
     taxYear = taxYear,
-    benefitDataType = "hmrcData",
+    benefitDataType = "customerAdded",
     claim = Some(aStatePensionLumpSumClaimCYAModel),
+    lastUpdated = instant
+  )
+
+  val anUpdateStatePensionBenefitsUD: StateBenefitsUserData = StateBenefitsUserData(
+    benefitType = "statePension",
+    sessionDataId = None,
+    sessionId = aPensionsUserData.sessionId,
+    mtdItId = aPensionsUserData.mtdItId,
+    nino = aPensionsUserData.nino,
+    taxYear = taxYear,
+    benefitDataType = "customerOverride",
+    claim = Some(aPriorStatePensionClaimCYAModel),
+    lastUpdated = instant
+  )
+
+  val anUpdateStatePensionLumpSumBenefitsUD: StateBenefitsUserData = StateBenefitsUserData(
+    benefitType = "statePensionLumpSum",
+    sessionDataId = None,
+    sessionId = aPensionsUserData.sessionId,
+    mtdItId = aPensionsUserData.mtdItId,
+    nino = aPensionsUserData.nino,
+    taxYear = taxYear,
+    benefitDataType = "customerOverride",
+    claim = Some(aPriorStatePensionLumpSumClaimCYAModel),
     lastUpdated = instant
   )
 

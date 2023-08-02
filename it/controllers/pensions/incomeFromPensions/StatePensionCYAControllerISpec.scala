@@ -23,7 +23,7 @@ import builders.PensionsCYAModelBuilder.{aPensionsCYAGeneratedFromPriorEmpty, aP
 import builders.PensionsUserDataBuilder
 import builders.PensionsUserDataBuilder.aPensionsUserData
 import builders.StateBenefitViewModelBuilder.anStateBenefitViewModelOne
-import builders.StateBenefitsUserDataBuilder.aStatePensionBenefitsUD
+import builders.StateBenefitsUserDataBuilder.aCreateStatePensionBenefitsUD
 import builders.UkPensionIncomeViewModelBuilder.anUkPensionIncomeViewModelOne
 import builders.UserBuilder.aUser
 import models.mongo.PensionsCYAModel
@@ -50,7 +50,7 @@ class StatePensionCYAControllerISpec extends IntegrationTest with ViewHelpers wi
       pensionSchemeRef = Some("123/123"),
       pensionId = Some("123456"))))
 
-  private val statePensionCYAModel: ClaimCYAModel = aStatePensionBenefitsUD.claim.get
+  private val statePensionCYAModel: ClaimCYAModel = aCreateStatePensionBenefitsUD.claim.get
 
   private val stateBenefitData = StateBenefitViewModel(
     benefitId = statePensionCYAModel.benefitId,

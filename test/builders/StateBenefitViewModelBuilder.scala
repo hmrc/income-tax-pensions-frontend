@@ -90,6 +90,40 @@ object StateBenefitViewModelBuilder {
     addToCalculation = Some(true)
   )
 
+  val aPriorStatePensionViewModel: StateBenefitViewModel = StateBenefitViewModel(
+    benefitId = Some(UUID.fromString("558238ef-d2ff-4839-bd6d-307324d6fe37")),
+    startDate = Some(LocalDate.parse("2019-11-14")),
+    startDateQuestion = Some(true),
+    dateIgnoredQuestion = None,
+    dateIgnored = None,
+    submittedOnQuestion = None,
+    submittedOn = None,
+    endDateQuestion = None,
+    endDate = None,
+    amountPaidQuestion = Some(true),
+    amount = Some(166.88),
+    taxPaidQuestion = None,
+    taxPaid = None,
+    addToCalculation = Some(true)
+  )
+
+  val aPriorStatePensionLumpSumViewModel: StateBenefitViewModel = StateBenefitViewModel(
+    benefitId = Some(UUID.fromString("558238ef-d2ff-4839-bd6d-307324d6fe37")),
+    startDate = Some(LocalDate.parse("2019-11-14")),
+    startDateQuestion = Some(true),
+    dateIgnoredQuestion = None,
+    dateIgnored = None,
+    submittedOnQuestion = None,
+    submittedOn = None,
+    endDateQuestion = None,
+    endDate = None,
+    amountPaidQuestion = Some(true),
+    amount = Some(200.00),
+    taxPaidQuestion = Some(true),
+    taxPaid = Some(50.00),
+    addToCalculation = Some(true)
+  )
+
   val aStatePensionNoAddToCalculationViewModel: StateBenefitViewModel = StateBenefitViewModel(
     benefitId = None,
     startDate = Some(LocalDate.parse("2019-11-14")),
