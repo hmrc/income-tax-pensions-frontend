@@ -120,7 +120,7 @@ class TaxPaidOnStatePensionLumpSumViewSpec extends ViewUnitTest with FakeRequest
     val expectedDetailsBullet1 = "P60 eich cleient"
     val expectedDetailsBullet2 = "y llythyr ’Ynglŷn â’r cynnydd cyffredinol mewn budd-daliadau’ a anfonwyd at eich cleient gan y Gwasanaeth Pensiwn"
     val emptyErrorText = "Nodwch swm y dreth a dalodd eich cleient ar y cyfandaliad Pensiwn y Wladwriaeth"
-    val incorrectFormatErrorText = "Nodwch gyfanswm y dreth a dalodd eich cleient ar y cyfandaliad Pensiwn y Wladwriaeth yn y fformat cywir"
+    val incorrectFormatErrorText = "Nodwch swm y dreth a dalodd eich cleient ar y cyfandaliad Pensiwn y Wladwriaeth yn y fformat cywir"
     val maxAmountErrorText = "Mae’n rhaid i swm y dreth a dalodd eich cleient ar y cyfandaliad Pensiwn y Wladwriaeth fod yn llai na £100,000,000,000"
   }
 
@@ -140,7 +140,7 @@ class TaxPaidOnStatePensionLumpSumViewSpec extends ViewUnitTest with FakeRequest
     val expectedButtonText = "Yn eich blaen"
     val yesText = "Iawn"
     val noText = "Na"
-    val amountHeading = "Amount of tax paid"
+    val amountHeading = "Swm y dreth a dalwyd"
     val amountHint = "Er enghraifft, £193.54"
   }
 

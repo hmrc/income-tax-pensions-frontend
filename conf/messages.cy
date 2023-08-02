@@ -19,7 +19,7 @@ common.saveAndContinue = Cadw ac yn eich blaen
 common.change = Newid
 common.update = Diweddaru
 common.remove = Tynnu
-common.dontRemove = Peidiwch â dileu
+common.dontRemove = Peidiwch â tynnu
 common.cancel = Canslo
 common.use = defnyddio
 common.error.errorKey = Gwall:
@@ -543,10 +543,10 @@ incomeFromPensions.stateBenefitStartDate.error.empty.monthYear = Mae’n rhaid i
 incomeFromPensions.stateBenefitStartDate.error.empty.year = Mae’n rhaid i ddyddiad dechrau’r pensiwn gynnwys blwyddyn
 incomeFromPensions.stateBenefitStartDate.error.invalidFormat = Mae’n rhaid i’r diwrnod, mis a’r flwyddyn fod yn ddilys
 incomeFromPensions.stateBenefitStartDate.error.dateInFuture = Mae’n rhaid i ddyddiad dechrau’r pensiwn fod yn y gorffennol
-incomeFromPensions.stateBenefitStartDate.error.tooLongAgo = Mae’n rhaid i ddyddiad dechrau’r pensiwn fod ar ol 1 Ionawr 1900
+incomeFromPensions.stateBenefitStartDate.error.tooLongAgo = Mae’n rhaid i ddyddiad dechrau’r pensiwn fod ar ôl 1 Ionawr 1900
 
 #tax paid on state pension lump sum
-pensions.taxPaidOnStatePensionLumpSum.amount = Amount of tax paid
+pensions.taxPaidOnStatePensionLumpSum.amount = Swm y dreth a dalwyd
 pensions.taxPaidOnStatePensionLumpSum.title.individual = A wnaethoch chi dalu treth ar gyfandaliad Pensiwn y Wladwriaeth?
 pensions.taxPaidOnStatePensionLumpSum.error.noEntry.individual = Dewiswch ‘Iawn’ os gwnaethoch dalu treth ar gyfandaliad Pensiwn y Wladwriaeth
 pensions.taxPaidOnStatePensionLumpSum.title.agent = A wnaeth eich cleient dalu treth ar gyfandaliad Pensiwn y Wladwriaeth?
@@ -554,7 +554,7 @@ pensions.taxPaidOnStatePensionLumpSum.error.noEntry.agent = Dewiswch ‘Iawn’ 
 pensions.taxPaidOnStatePensionLumpSum.amount.error.noEntry.individual = Nodwch gyfanswm y dreth a dalwyd ar gyfandaliad Pensiwn y Wladwriaeth
 pensions.taxPaidOnStatePensionLumpSum.amount.error.noEntry.agent = Nodwch swm y dreth a dalodd eich cleient ar y cyfandaliad Pensiwn y Wladwriaeth
 pensions.taxPaidOnStatePensionLumpSum.amount.error.incorrectFormat.individual = Nodwch gyfanswm y dreth a dalwyd ar gyfandaliad Pensiwn y Wladwriaeth yn y fformat cywir
-pensions.taxPaidOnStatePensionLumpSum.amount.error.incorrectFormat.agent = Nodwch gyfanswm y dreth a dalodd eich cleient ar y cyfandaliad Pensiwn y Wladwriaeth yn y fformat cywir
+pensions.taxPaidOnStatePensionLumpSum.amount.error.incorrectFormat.agent = Nodwch swm y dreth a dalodd eich cleient ar y cyfandaliad Pensiwn y Wladwriaeth yn y fformat cywir
 pensions.taxPaidOnStatePensionLumpSum.amount.error.overMaximum.individual = Mae’n rhaid i swm y dreth a dalwyd ar gyfandaliad Pensiwn y Wladwriaeth fod yn llai na £100,000,000,000
 pensions.taxPaidOnStatePensionLumpSum.amount.error.overMaximum.agent = Mae’n rhaid i swm y dreth a dalodd eich cleient ar y cyfandaliad Pensiwn y Wladwriaeth fod yn llai na £100,000,000,000
 

@@ -78,7 +78,7 @@ class RemoveReliefSchemeViewSpec extends ViewUnitTest with FakeRequestProvider {
       override val migrantMemberRelief: String = "Rhyddhad aelod mudol"
       override val no: String = "Na"
       override val button: String = "Tynnu"
-      val dontRemove = "Peidiwch â dileu"
+      val dontRemove = "Peidiwch â tynnu"
     }
 
     override protected val userScenarios: Seq[UserScenario[CommonExpectedResults, Unit]] = Seq(
