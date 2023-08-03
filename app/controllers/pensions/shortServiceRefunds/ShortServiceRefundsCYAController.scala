@@ -24,7 +24,6 @@ import models.mongo.PensionsCYAModel
 import models.pension.AllPensionsData
 import models.pension.AllPensionsData.generateCyaFromPrior
 import models.pension.charges.ShortServiceRefundsViewModel
-import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.redirects.ShortServiceRefundsPages.CYAPage

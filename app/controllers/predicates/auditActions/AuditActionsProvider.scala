@@ -65,5 +65,14 @@ class AuditActionsProvider @Inject()(authAction: AuthorisedAction,
     userPriorAndSessionDataForInYear(taxYear)
       .andThen(ShortServiceRefundsUpdateAuditAction(auditService))
   }
+
+  def incomeFromStatePensionsViewAuditing(taxYear: Int): ActionBuilder[UserSessionDataRequest, AnyContent] = {
+    userSessionDataForInYear(taxYear)
+      .andThen(IncomeFromStatePensionsViewAuditAction(auditService))
+  }
+  def incomeFromStatePensionsUpdateAuditing(taxYear: Int): ActionBuilder[UserPriorAndSessionDataRequest, AnyContent] = {
+    userPriorAndSessionDataForInYear(taxYear)
+      .andThen(IncomeFromStatePensionsUpdateAuditAction(auditService))
+  }
 }
 
