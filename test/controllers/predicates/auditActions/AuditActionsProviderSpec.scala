@@ -21,7 +21,7 @@ import builders.PensionsUserDataBuilder.aPensionsUserData
 import builders.UserBuilder.aUser
 import common.SessionValues.{TAX_YEAR, VALID_TAX_YEARS}
 import controllers.errors.routes.UnauthorisedUserErrorController
-import models.audit.{PaymentsIntoPensionsAudit, ShortServiceRefundsAudit, UnauthorisedPaymentsAudit}
+import models.audit.{PaymentsIntoPensionsAudit, ShortServiceRefundsAudit, UkPensionIncomeAudit, UnauthorisedPaymentsAudit}
 import models.pension.AllPensionsData.generateCyaFromPrior
 import models.{APIErrorBodyModel, APIErrorModel}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
@@ -65,7 +65,9 @@ class AuditActionsProviderSpec extends ControllerUnitTest
     ("unauthorisedPaymentsViewAuditing", auditProvider.unauthorisedPaymentsViewAuditing: ActionType),
     ("unauthorisedPaymentsUpdateAuditing", auditProvider.unauthorisedPaymentsUpdateAuditing: ActionType),
     ("shortServiceRefundsViewAuditing", auditProvider.shortServiceRefundsViewAuditing: ActionType),
-    ("shortServiceRefundsUpdateAuditing", auditProvider.shortServiceRefundsUpdateAuditing: ActionType)
+    ("shortServiceRefundsUpdateAuditing", auditProvider.shortServiceRefundsUpdateAuditing: ActionType),
+    ("ukPensionIncomeViewAuditing", auditProvider.ukPensionIncomeViewAuditing: ActionType),
+    ("ukPensionIncomeUpdateAuditing", auditProvider.ukPensionIncomeUpdateAuditing: ActionType)
   )) {
 
     s".$actionName(taxYear)" should {
@@ -132,6 +134,15 @@ class AuditActionsProviderSpec extends ControllerUnitTest
               if (audModel.priorShortServiceRefunds.isEmpty) audModel.toAuditModelCreate else audModel.toAuditModelAmend
             case "shortServiceRefundsViewAuditing" =>
               ShortServiceRefundsAudit(taxYearEOY, aUser, aPensionsUserData.pensions.shortServiceRefunds, None).toAuditModelView
+
+            case "ukPensionIncomeUpdateAuditing" =>
+              val priorData = if (auditType == "amend") anIncomeTaxUserData else anIncomeTaxUserData.copy(pensions = None)
+              mockGetPriorData(taxYearEOY, aUser, Right(priorData))
+              val audModel = UkPensionIncomeAudit(taxYearEOY, aUser, aPensionsUserData.pensions.incomeFromPensions,
+                priorData.pensions.map(generateCyaFromPrior).map(_.incomeFromPensions))
+              if (audModel.priorUkPensionIncome.isEmpty) audModel.toAuditModelCreate else audModel.toAuditModelAmend
+            case "ukPensionIncomeViewAuditing" =>
+              UkPensionIncomeAudit(taxYearEOY, aUser, aPensionsUserData.pensions.incomeFromPensions, None).toAuditModelView
           }
 
           mockAuditResult(auditModel, mockedAuditSuccessResult)

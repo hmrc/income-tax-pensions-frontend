@@ -18,8 +18,8 @@ package controllers.predicates.auditActions
 
 import config.{AppConfig, ErrorHandler}
 import controllers.predicates.actions.{ActionsProvider, AuthorisedAction}
+import controllers.predicates.auditActions.PensionsAuditAction._
 import models.requests.{UserPriorAndSessionDataRequest, UserSessionDataRequest}
-import PensionsAuditAction._
 import play.api.i18n.MessagesApi
 import play.api.mvc.{ActionBuilder, AnyContent}
 import services.{AuditService, PensionSessionService}
@@ -64,6 +64,16 @@ class AuditActionsProvider @Inject()(authAction: AuthorisedAction,
   def shortServiceRefundsUpdateAuditing(taxYear: Int): ActionBuilder[UserPriorAndSessionDataRequest, AnyContent] = {
     userPriorAndSessionDataForInYear(taxYear)
       .andThen(ShortServiceRefundsUpdateAuditAction(auditService))
+  }
+
+  def ukPensionIncomeViewAuditing(taxYear: Int): ActionBuilder[UserSessionDataRequest, AnyContent] = {
+    userSessionDataForInYear(taxYear)
+      .andThen(UkPensionIncomeViewAuditAction(auditService))
+  }
+
+  def ukPensionIncomeUpdateAuditing(taxYear: Int): ActionBuilder[UserPriorAndSessionDataRequest, AnyContent] = {
+    userPriorAndSessionDataForInYear(taxYear)
+      .andThen(UkPensionIncomeUpdateAuditAction(auditService))
   }
 }
 
