@@ -19,8 +19,7 @@ package controllers.pensions.incomeFromOverseasPensions
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.incomeFromOverseasPensions.routes.PensionOverseasIncomeStatus
 import controllers.pensions.routes.{OverseasPensionsSummaryController, PensionsSummaryController}
-import controllers.predicates.actions.AuthorisedAction
-import controllers.predicates.actions.TaxYearAction.taxYearAction
+import controllers.predicates.auditActions.AuditActionsProvider
 import models.mongo.PensionsCYAModel
 import models.pension.AllPensionsData
 import models.pension.AllPensionsData.generateCyaFromPrior
@@ -40,7 +39,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class IncomeFromOverseasPensionsCYAController @Inject()(authAction: AuthorisedAction,
+class IncomeFromOverseasPensionsCYAController @Inject()(auditProvider: AuditActionsProvider,
                                                         view: IncomeFromOverseasPensionsCYAView,
                                                         pensionSessionService: PensionSessionService,
                                                         pensionIncomeService: PensionIncomeService,
@@ -51,7 +50,7 @@ class IncomeFromOverseasPensionsCYAController @Inject()(authAction: AuthorisedAc
 
   lazy val logger: Logger = Logger(this.getClass.getName)
 
-  def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
+  def show(taxYear: Int): Action[AnyContent] = auditProvider.incomeFromOverseasPensionsViewAuditing(taxYear) async { implicit request =>
 
     def cyaDataIsEmpty(priorData: AllPensionsData): Future[Result] = {
       val cyaModel = generateCyaFromPrior(priorData)
@@ -87,7 +86,7 @@ class IncomeFromOverseasPensionsCYAController @Inject()(authAction: AuthorisedAc
   }
 
 
-  def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
+  def submit(taxYear: Int): Action[AnyContent] = auditProvider.incomeFromOverseasPensionsUpdateAuditing(taxYear) async { implicit request =>
     //TODO: missing the comparison of session with Prior data
     pensionIncomeService.saveIncomeFromOverseasPensionsViewModel(request.user, taxYear).map {
       case Left(_) =>
