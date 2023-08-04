@@ -76,7 +76,7 @@ class StatePensionService @Inject()(pensionUserDataRepository: PensionsUserDataR
         mtdItId = sessionData.mtdItId,
         nino = sessionData.nino,
         taxYear = taxYear,
-        benefitDataType = "hmrcData", //todo check "hmrcData" / "customerAdded" / "customerOverride" benefit data types
+        benefitDataType = if (claimModel.benefitId.isEmpty) "customerAdded" else "customerOverride",
         claim = Some(claimModel),
         lastUpdated = Instant.parse(sessionData.lastUpdated.toLocalDateTime.toString + "Z")
       )
@@ -95,12 +95,18 @@ class StatePensionService @Inject()(pensionUserDataRepository: PensionsUserDataR
       )
 
       _ <- FutureEitherOps[ServiceError, Unit] {
-        if (statePensionSubmission.claim.get.amount.nonEmpty) stateBenefitsConnector.saveClaimData(user.nino, statePensionSubmission)(hcWithExtras, ec)
-        else Future(Right(()))
+        if (statePensionSubmission.claim.get.amount.nonEmpty) {
+          stateBenefitsConnector.saveClaimData(user.nino, statePensionSubmission)(hcWithExtras, ec)
+        } else {
+          Future(Right(()))
+        }
       }
       _ <- FutureEitherOps[ServiceError, Unit] {
-        if (statePensionLumpSumSubmission.claim.get.amount.nonEmpty) stateBenefitsConnector.saveClaimData(user.nino, statePensionLumpSumSubmission)(hcWithExtras, ec)
-        else Future(Right(()))
+        if (statePensionLumpSumSubmission.claim.get.amount.nonEmpty) {
+          stateBenefitsConnector.saveClaimData(user.nino, statePensionLumpSumSubmission)(hcWithExtras, ec)
+        } else {
+          Future(Right(()))
+        }
       }
 
       updatedCYA = getPensionsUserData(Some(sessionData), user)
