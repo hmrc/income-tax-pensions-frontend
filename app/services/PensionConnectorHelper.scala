@@ -49,14 +49,12 @@ trait PensionConnectorHelper[SubRequestModel <: PensionSubRequestModel, RequestM
           deleteData(nino, taxYear)
         case (true, false) =>
           //delete
-          //this is an issue, because once NO is selected, the sub model should not contain any data and should be empty
           deleteData(nino, taxYear)
         case (false, true) =>
           // Put or do nothing
           saveData(nino, taxYear, requestModel.createSubModel.asInstanceOf[RequestModel])
         case (false, false) =>
           //Put
-          //this is an issue, because once NO is selected, the sub model should not contain any data and should be empty
           saveData(nino, taxYear, requestModel.createSubModel.asInstanceOf[RequestModel])
       }
     } else {

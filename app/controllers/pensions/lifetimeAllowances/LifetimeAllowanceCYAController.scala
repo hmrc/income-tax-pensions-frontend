@@ -17,31 +17,28 @@
 package controllers.pensions.lifetimeAllowances
 
 import config.{AppConfig, ErrorHandler}
-import controllers.predicates.actions.ActionsProvider
-import models.mongo.{PensionsCYAModel, PensionsUserData}
+import controllers.pensions.routes.PensionsSummaryController
+import controllers.predicates.auditActions.AuditActionsProvider
+import models.mongo.PensionsCYAModel
 import models.pension.AllPensionsData
 import models.pension.AllPensionsData.generateCyaFromPrior
 import models.pension.charges.PensionLifetimeAllowancesViewModel
-import models.requests.UserSessionDataRequest
-import models.{APIErrorBodyModel, APIErrorModel, User}
 import play.api.Logger
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.redirects.LifetimeAllowancesPages.CYAPage
 import services.redirects.LifetimeAllowancesRedirects.{cyaPageCall, journeyCheck}
 import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
 import services.{PensionChargesService, PensionSessionService}
-import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.lifetimeAllowances.LifetimeAllowanceCYAView
-import controllers.pensions.routes.PensionsSummaryController
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class LifetimeAllowanceCYAController @Inject()(actionsProvider: ActionsProvider,
+class LifetimeAllowanceCYAController @Inject()(auditProvider: AuditActionsProvider,
                                                view: LifetimeAllowanceCYAView,
                                                pensionSessionService: PensionSessionService,
                                                pensionChargesService: PensionChargesService,
@@ -52,7 +49,7 @@ class LifetimeAllowanceCYAController @Inject()(actionsProvider: ActionsProvider,
   lazy val logger: Logger = Logger(this.getClass.getName)
 
 
-  def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit request =>
+  def show(taxYear: Int): Action[AnyContent] = auditProvider.lifetimeAllowancesViewAuditing(taxYear) async { implicit request =>
     pensionSessionService.getAndHandle(taxYear, request.user) { (cya, prior) =>
       (cya, prior) match {
         case (Some(data), _) =>
@@ -78,45 +75,27 @@ class LifetimeAllowanceCYAController @Inject()(actionsProvider: ActionsProvider,
     }
   }
 
-  def submit(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit request =>
+  def submit(taxYear: Int): Action[AnyContent] = auditProvider.lifetimeAllowancesUpdateAuditing(taxYear) async { implicit request =>
     pensionSessionService.getAndHandle(taxYear, request.user) { (cya, prior) =>
       cya.fold(Future.successful(Redirect(appConfig.incomeTaxSubmissionOverviewUrl(taxYear)))) {
         model =>
           if (sessionDataDifferentThanPriorData(model.pensions, prior)) {
             val checkRedirect = journeyCheck(CYAPage, _: PensionsCYAModel, taxYear)
             redirectBasedOnCurrentAnswers(taxYear, Some(model), cyaPageCall(taxYear))(checkRedirect) {
-              _ => performSubmission(taxYear, cya)(request.user, request, hc, clock)
+              _ =>
+                pensionChargesService.saveLifetimeAllowancesViewModel(request.user, taxYear).map {
+                  case Right(_) =>
+                    //TODO: investigate the use of the previously used pensionSessionService.clear
+                    Redirect(PensionsSummaryController.show(taxYear))
+                  case Left(_) =>
+                    logger.info("[submit] Failed to create or update session")
+                    errorHandler.handleError(BAD_REQUEST)
+                }
             }
           } else {
             Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
           }
       }
-    }
-  }
-
-  private def performSubmission(taxYear: Int, cya: Option[PensionsUserData])
-                               (implicit user: User,
-                                request: UserSessionDataRequest[AnyContent],
-                                hc: HeaderCarrier,
-                                clock: Clock
-                               ): Future[Result] = {
-    (cya match {
-      case Some(_) =>
-        pensionChargesService.saveLifetimeAllowancesViewModel(user, taxYear) map {
-          case Left(_) =>
-            logger.info("[submit] Failed to create or update session")
-            Left(APIErrorModel(BAD_REQUEST, APIErrorBodyModel(BAD_REQUEST.toString, "Unable to createOrUpdate pension service")))
-          case Right(_) =>
-            Right(Ok)
-        }
-      case _ =>
-        logger.info("[submit] CYA data or NINO missing from session.")
-        Future.successful(Left(APIErrorModel(BAD_REQUEST, APIErrorBodyModel("MISSING_DATA", "CYA data or NINO missing from session."))))
-    }).flatMap {
-      case Right(_) =>
-        //TODO: investigate  the use of the previously used pensionSessionService.clear
-        Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
-      case Left(error) => Future.successful(errorHandler.handleError(error.status))
     }
   }
 

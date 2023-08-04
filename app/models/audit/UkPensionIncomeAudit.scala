@@ -23,11 +23,11 @@ import models.pension.statebenefits.IncomeFromPensionsViewModel
 import play.api.libs.json.{Json, OWrites}
 
 case class UkPensionIncomeAudit(taxYear: Int,
-                           userType: String,
-                           nino: String, 
-                           mtdItId: String,
-                           ukPensionIncome: IncomeFromPensionsViewModel, 
-                           priorUkPensionIncome: Option[IncomeFromPensionsViewModel] = None) {
+                                userType: String,
+                                nino: String,
+                                mtdItId: String,
+                                ukPensionIncome: IncomeFromPensionsViewModel,
+                                priorUkPensionIncome: Option[IncomeFromPensionsViewModel] = None) {
 
     private val amend = "AmendUkPensionIncome"
     private val create = "CreateUkPensionIncome"

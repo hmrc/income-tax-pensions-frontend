@@ -75,5 +75,15 @@ class AuditActionsProvider @Inject()(authAction: AuthorisedAction,
     userPriorAndSessionDataForInYear(taxYear)
       .andThen(UkPensionIncomeUpdateAuditAction(auditService))
   }
+
+  def lifetimeAllowancesViewAuditing(taxYear: Int): ActionBuilder[UserSessionDataRequest, AnyContent] = {
+    userSessionDataForInYear(taxYear)
+      .andThen(LifetimeAllowancesViewAuditAction(auditService))
+  }
+
+  def lifetimeAllowancesUpdateAuditing(taxYear: Int): ActionBuilder[UserPriorAndSessionDataRequest, AnyContent] = {
+    userPriorAndSessionDataForInYear(taxYear)
+      .andThen(LifetimeAllowancesUpdateAuditAction(auditService))
+  }
 }
 
