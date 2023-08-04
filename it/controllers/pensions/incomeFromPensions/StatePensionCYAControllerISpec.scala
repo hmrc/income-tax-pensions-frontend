@@ -33,7 +33,7 @@ import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
 import utils.PageUrls.IncomeFromPensionsPages.{pensionIncomeSummaryUrl, statePension, statePensionCyaUrl}
-import utils.PageUrls.fullUrl
+import utils.PageUrls.{fullUrl, overviewUrl, pensionSummaryUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 class StatePensionCYAControllerISpec extends IntegrationTest with ViewHelpers with PensionsDatabaseHelper {
@@ -118,22 +118,6 @@ class StatePensionCYAControllerISpec extends IntegrationTest with ViewHelpers wi
 
   ".submit" should {
     "redirect to overview page" when {
-      "in year" in {
-        lazy implicit val result: WSResponse = {
-          dropPensionsDB()
-          authoriseAgentOrIndividual(aUser.isAgent)
-          insertCyaData(pensionsUsersData(aPensionsCYAModel))
-          userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYear)
-          urlPost(
-            fullUrl(statePensionCyaUrl(taxYear)),
-            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)),
-            follow = false,
-            body = "")
-        }
-        result.status shouldBe SEE_OTHER
-        result.headers("location").head shouldBe appConfig.incomeTaxSubmissionOverviewUrl(taxYear)
-      }
-
       "there is no CYA data available" in {
         val form = Map[String, String]()
 
@@ -144,7 +128,7 @@ class StatePensionCYAControllerISpec extends IntegrationTest with ViewHelpers wi
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
         }
         result.status shouldBe SEE_OTHER
-        result.headers("location").head shouldBe appConfig.incomeTaxSubmissionOverviewUrl(taxYear)
+        result.headers("location").head shouldBe pensionSummaryUrl(taxYear)
       }
     }
 
