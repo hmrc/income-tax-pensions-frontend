@@ -16,7 +16,7 @@
 
 package controllers.predicates.auditActions
 
-import models.audit.{PaymentsIntoPensionsAudit, ShortServiceRefundsAudit, UnauthorisedPaymentsAudit}
+import models.audit.{IncomeFromOverseasPensionsAudit, PaymentsIntoPensionsAudit, ShortServiceRefundsAudit, UnauthorisedPaymentsAudit}
 import models.requests.{UserPriorAndSessionDataRequest, UserSessionDataRequest}
 import play.api.mvc.{ActionFilter, Result}
 import services.AuditService
@@ -109,6 +109,33 @@ object PensionsAuditAction {
         }
       }
       auditService.sendAudit(toAuditModel())(hc(req.request), ec, ShortServiceRefundsAudit.writes)
+      Future.successful(None)
+    }
+  }
+
+  case class IncomeFromOverseasPensionsViewAuditAction @Inject()(auditService: AuditService)(implicit val ec: ExecutionContext)
+    extends ActionFilter[UserSessionDataRequest] with PensionsAuditAction {
+
+    override protected[auditActions] def filter[A](req: UserSessionDataRequest[A]): Future[Option[Result]] = {
+      val auditModel = IncomeFromOverseasPensionsAudit.standardAudit(req.user, req.pensionsUserData)
+      auditService.sendAudit(auditModel.toAuditModelView)(hc(req.request), ec, IncomeFromOverseasPensionsAudit.writes)
+      Future.successful(None)
+    }
+  }
+
+  case class IncomeFromOverseasPensionsUpdateAuditAction @Inject()(auditService: AuditService)(implicit val ec: ExecutionContext)
+    extends ActionFilter[UserPriorAndSessionDataRequest] with PensionsAuditAction {
+    override protected[auditActions] def filter[A](req: UserPriorAndSessionDataRequest[A]): Future[Option[Result]] = {
+      val toAuditModel = {
+        val auditModel = IncomeFromOverseasPensionsAudit.amendAudit(
+          req.user, req.pensionsUserData, req.pensions)
+        if (req.pensions.isEmpty) {
+          () => auditModel.toAuditModelCreate
+        } else {
+          () => auditModel.toAuditModelAmend
+        }
+      }
+      auditService.sendAudit(toAuditModel())(hc(req.request), ec, IncomeFromOverseasPensionsAudit.writes)
       Future.successful(None)
     }
   }
