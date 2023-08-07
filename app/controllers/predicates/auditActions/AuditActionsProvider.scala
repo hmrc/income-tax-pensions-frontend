@@ -18,8 +18,8 @@ package controllers.predicates.auditActions
 
 import config.{AppConfig, ErrorHandler}
 import controllers.predicates.actions.{ActionsProvider, AuthorisedAction}
+import controllers.predicates.auditActions.PensionsAuditAction._
 import models.requests.{UserPriorAndSessionDataRequest, UserSessionDataRequest}
-import PensionsAuditAction._
 import play.api.i18n.MessagesApi
 import play.api.mvc.{ActionBuilder, AnyContent}
 import services.{AuditService, PensionSessionService}
@@ -35,7 +35,7 @@ class AuditActionsProvider @Inject()(authAction: AuthorisedAction,
                                      auditService: AuditService)
                                     (implicit ec: ExecutionContext, messagesApi: MessagesApi)
   extends ActionsProvider(authAction, pensionSessionService, errorHandler, appConfig) {
-  
+
   def paymentsIntoPensionsViewAuditing(taxYear: Int): ActionBuilder[UserSessionDataRequest, AnyContent] = {
     userSessionDataForInYear(taxYear)
       .andThen(PaymentsIntoPensionsViewAuditAction(auditService))
@@ -70,9 +70,20 @@ class AuditActionsProvider @Inject()(authAction: AuthorisedAction,
     userSessionDataForInYear(taxYear)
       .andThen(IncomeFromStatePensionsViewAuditAction(auditService))
   }
+
   def incomeFromStatePensionsUpdateAuditing(taxYear: Int): ActionBuilder[UserPriorAndSessionDataRequest, AnyContent] = {
     userPriorAndSessionDataForInYear(taxYear)
       .andThen(IncomeFromStatePensionsUpdateAuditAction(auditService))
+  }
+
+  def annualAllowancesViewAuditing(taxYear: Int): ActionBuilder[UserSessionDataRequest, AnyContent] = {
+    userSessionDataForInYear(taxYear)
+      .andThen(AnnualAllowancesViewAuditAction(auditService))
+  }
+
+  def annualAllowancesUpdateAuditing(taxYear: Int): ActionBuilder[UserPriorAndSessionDataRequest, AnyContent] = {
+    userPriorAndSessionDataForInYear(taxYear)
+      .andThen(AnnualAllowancesUpdateAuditAction(auditService))
   }
 }
 

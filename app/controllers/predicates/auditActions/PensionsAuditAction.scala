@@ -16,7 +16,7 @@
 
 package controllers.predicates.auditActions
 
-import models.audit.{IncomeFromStatePensionsAudit, PaymentsIntoPensionsAudit, ShortServiceRefundsAudit, UnauthorisedPaymentsAudit}
+import models.audit._
 import models.requests.{UserPriorAndSessionDataRequest, UserSessionDataRequest}
 import play.api.mvc.{ActionFilter, Result}
 import services.AuditService
@@ -26,9 +26,9 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 trait PensionsAuditAction extends FrontendHeaderCarrierProvider {
-  
+
   def auditService: AuditService
-  
+
   def ec: ExecutionContext
 
   protected[auditActions] def executionContext: ExecutionContext = ec
@@ -137,6 +137,34 @@ object PensionsAuditAction {
         }
       }
       auditService.sendAudit(toAuditModel())(hc(req.request), ec, IncomeFromStatePensionsAudit.writes)
+      Future.successful(None)
+    }
+  }
+
+  case class AnnualAllowancesViewAuditAction @Inject()(auditService: AuditService)(implicit val ec: ExecutionContext)
+    extends ActionFilter[UserSessionDataRequest] with PensionsAuditAction {
+
+    override protected[auditActions] def filter[A](req: UserSessionDataRequest[A]): Future[Option[Result]] = {
+      val auditModel = AnnualAllowancesAudit.standardAudit(req.user, req.pensionsUserData)
+      auditService.sendAudit(auditModel.toAuditModelView)(hc(req.request), ec, AnnualAllowancesAudit.writes)
+      Future.successful(None)
+    }
+  }
+
+  case class AnnualAllowancesUpdateAuditAction @Inject()(auditService: AuditService)(implicit val ec: ExecutionContext)
+    extends ActionFilter[UserPriorAndSessionDataRequest] with PensionsAuditAction {
+
+    override protected[auditActions] def filter[A](req: UserPriorAndSessionDataRequest[A]): Future[Option[Result]] = {
+      val toAuditModel = {
+        val auditModel = AnnualAllowancesAudit.amendAudit(
+          req.user, req.pensionsUserData, req.pensions)
+        if (req.pensions.isEmpty) {
+          () => auditModel.toAuditModelCreate
+        } else {
+          () => auditModel.toAuditModelAmend
+        }
+      }
+      auditService.sendAudit(toAuditModel())(hc(req.request), ec, AnnualAllowancesAudit.writes)
       Future.successful(None)
     }
   }

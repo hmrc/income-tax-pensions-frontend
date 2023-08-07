@@ -18,17 +18,16 @@ package controllers.pensions.annualAllowances
 
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.routes.PensionsSummaryController
-import controllers.predicates.actions.{ActionsProvider, AuthorisedAction}
+import controllers.predicates.auditActions.AuditActionsProvider
 import models.mongo.PensionsCYAModel
 import models.pension.AllPensionsData
-import models.pension.AllPensionsData.{generateAnnualAllowanceCyaFromPrior, generateCyaFromPrior}
-import models.pension.charges.PensionAnnualAllowancesViewModel
+import models.pension.AllPensionsData.generateAnnualAllowanceCyaFromPrior
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.{PensionChargesService, PensionSessionService}
 import services.redirects.AnnualAllowancesPages.CYAPage
 import services.redirects.AnnualAllowancesRedirects.{cyaPageCall, journeyCheck}
 import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
+import services.{PensionChargesService, PensionSessionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.annualAllowances.AnnualAllowancesCYAView
@@ -37,8 +36,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class AnnualAllowanceCYAController @Inject()(authAction: AuthorisedAction,
-                                             actionsProvider: ActionsProvider,
+class AnnualAllowanceCYAController @Inject()(auditProvider: AuditActionsProvider,
                                              view: AnnualAllowancesCYAView,
                                              pensionSessionService: PensionSessionService,
                                              pensionChargesService: PensionChargesService,
@@ -46,31 +44,19 @@ class AnnualAllowanceCYAController @Inject()(authAction: AuthorisedAction,
                                             (implicit val mcc: MessagesControllerComponents,
                                              appConfig: AppConfig, clock: Clock, ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
 
-  def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit request =>
-    pensionSessionService.getAndHandle(taxYear, request.user) { (cya, prior) =>
-      (cya, prior) match {
-        case (Some(data), _) =>
-          val checkRedirect = journeyCheck(CYAPage, _: PensionsCYAModel, taxYear)
-          redirectBasedOnCurrentAnswers(taxYear, Some(data), cyaPageCall(taxYear))(checkRedirect) {
-            data =>
-              Future.successful(Ok(view(taxYear, data.pensions.pensionsAnnualAllowances)))
-          }
-        case (None, Some(priorData)) =>
-          val cyaModel = generateCyaFromPrior(priorData)
-          pensionSessionService.createOrUpdateSessionData(request.user,
-            cyaModel, taxYear, isPriorSubmission = false)(
-            errorHandler.internalServerError())(
-            Ok(view(taxYear, cyaModel.pensionsAnnualAllowances))
-          )
-        case (None, None) =>
-          val emptyAnnualAllowanceModel: PensionAnnualAllowancesViewModel = PensionAnnualAllowancesViewModel()
-          Future.successful(Ok(view(taxYear, emptyAnnualAllowanceModel)))
-        case _ => Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
-      }
+  def show(taxYear: Int): Action[AnyContent] = auditProvider.annualAllowancesViewAuditing(taxYear) async { implicit request =>
+    pensionSessionService.getAndHandle(taxYear, request.user) {
+      case (Some(data), _) =>
+        val checkRedirect = journeyCheck(CYAPage, _: PensionsCYAModel, taxYear)
+        redirectBasedOnCurrentAnswers(taxYear, Some(data), cyaPageCall(taxYear))(checkRedirect) {
+          data =>
+            Future.successful(Ok(view(taxYear, data.pensions.pensionsAnnualAllowances)))
+        }
+      case _ => Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
     }
   }
 
-  def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
+  def submit(taxYear: Int): Action[AnyContent] = auditProvider.annualAllowancesUpdateAuditing(taxYear) async { implicit request =>
     pensionSessionService.getAndHandle(taxYear, request.user) { (cya, prior) =>
       cya.fold(
         Future.successful(Redirect(appConfig.incomeTaxSubmissionOverviewUrl(taxYear)))
