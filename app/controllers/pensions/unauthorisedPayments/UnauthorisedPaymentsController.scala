@@ -79,9 +79,13 @@ class UnauthorisedPaymentsController @Inject()(implicit val mcc: MessagesControl
             ))
           }
           val redirectLocation =
-            if (unauthorisedPaymentsSelection.containsYesSurcharge) SurchargeAmountController.show(taxYear)
-            else if (unauthorisedPaymentsSelection.containsYesNotSurcharge) NoSurchargeAmountController.show(taxYear)
-            else UnauthorisedPaymentsCYAController.show(taxYear)
+            if (unauthorisedPaymentsSelection.containsYesSurcharge) {
+            SurchargeAmountController.show(taxYear)
+            } else if (unauthorisedPaymentsSelection.containsYesNotSurcharge) {
+              NoSurchargeAmountController.show(taxYear)
+            } else {
+              UnauthorisedPaymentsCYAController.show(taxYear)
+            }
 
           pensionSessionService.createOrUpdateSessionData(request.user,
             updatedCyaModel, taxYear, isPriorSubmission)(errorHandler.internalServerError()) {

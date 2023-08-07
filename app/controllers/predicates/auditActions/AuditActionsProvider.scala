@@ -35,7 +35,7 @@ class AuditActionsProvider @Inject()(authAction: AuthorisedAction,
                                      auditService: AuditService)
                                     (implicit ec: ExecutionContext, messagesApi: MessagesApi)
   extends ActionsProvider(authAction, pensionSessionService, errorHandler, appConfig) {
-  
+
   def paymentsIntoPensionsViewAuditing(taxYear: Int): ActionBuilder[UserSessionDataRequest, AnyContent] = {
     userSessionDataForInYear(taxYear)
       .andThen(PaymentsIntoPensionsViewAuditAction(auditService))
@@ -64,6 +64,16 @@ class AuditActionsProvider @Inject()(authAction: AuthorisedAction,
   def shortServiceRefundsUpdateAuditing(taxYear: Int): ActionBuilder[UserPriorAndSessionDataRequest, AnyContent] = {
     userPriorAndSessionDataForInYear(taxYear)
       .andThen(ShortServiceRefundsUpdateAuditAction(auditService))
+  }
+
+  def incomeFromStatePensionsViewAuditing(taxYear: Int): ActionBuilder[UserSessionDataRequest, AnyContent] = {
+    userSessionDataForInYear(taxYear)
+      .andThen(IncomeFromStatePensionsViewAuditAction(auditService))
+  }
+
+  def incomeFromStatePensionsUpdateAuditing(taxYear: Int): ActionBuilder[UserPriorAndSessionDataRequest, AnyContent] = {
+    userPriorAndSessionDataForInYear(taxYear)
+      .andThen(IncomeFromStatePensionsUpdateAuditAction(auditService))
   }
 
   def ukPensionIncomeViewAuditing(taxYear: Int): ActionBuilder[UserSessionDataRequest, AnyContent] = {

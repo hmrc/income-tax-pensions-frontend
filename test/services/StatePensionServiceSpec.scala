@@ -18,10 +18,11 @@ package services
 
 import builders.PensionsCYAModelBuilder.aPensionsCYAEmptyModel
 import builders.PensionsUserDataBuilder.aPensionsUserData
-import builders.StateBenefitsUserDataBuilder.{aStatePensionBenefitsUD, aStatePensionLumpSumBenefitsUD}
+import builders.StateBenefitViewModelBuilder.{aPriorStatePensionLumpSumViewModel, aPriorStatePensionViewModel}
+import builders.StateBenefitsUserDataBuilder.{aCreateStatePensionBenefitsUD, aCreateStatePensionLumpSumBenefitsUD, anUpdateStatePensionBenefitsUD, anUpdateStatePensionLumpSumBenefitsUD}
 import builders.UserBuilder.aUser
 import config.{MockIncomeTaxUserDataConnector, MockPensionUserDataRepository, MockStateBenefitsConnector}
-import models.mongo.{DataNotFound, DataNotUpdated, PensionsUserData}
+import models.mongo.{DataNotFound, DataNotUpdated, PensionsCYAModel, PensionsUserData}
 import models.{APIErrorBodyModel, APIErrorModel}
 import org.scalatest.concurrent.ScalaFutures
 import play.api.http.Status.BAD_REQUEST
@@ -35,9 +36,9 @@ class StatePensionServiceSpec extends UnitTest
 
   val statePensionService = new StatePensionService(mockPensionUserDataRepository, mockStateBenefitsConnector)
 
-  val sessionCya = aPensionsCYAEmptyModel.copy(incomeFromPensions = aPensionsUserData.pensions.incomeFromPensions)
-  val sessionUserData = aPensionsUserData.copy(pensions = sessionCya)
-  val userWithEmptySaveIncomeFromPensionsCya = aPensionsUserData.copy(pensions = aPensionsCYAEmptyModel)
+  val sessionCya: PensionsCYAModel = aPensionsCYAEmptyModel.copy(incomeFromPensions = aPensionsUserData.pensions.incomeFromPensions)
+  val sessionUserData: PensionsUserData = aPensionsUserData.copy(pensions = sessionCya)
+  val userWithEmptySaveIncomeFromPensionsCya: PensionsUserData = aPensionsUserData.copy(pensions = aPensionsCYAEmptyModel)
 
   ".persistIncomeFromPensionsViewModel" should {
 
@@ -46,38 +47,40 @@ class StatePensionServiceSpec extends UnitTest
       "both StatePension and StatePensionLumpSum models are successfully submitted" in {
         mockFind(taxYear, aUser, Right(Option(sessionUserData)))
 
-        mockSaveClaimData(nino, aStatePensionBenefitsUD, Right(()))
-        mockSaveClaimData(nino, aStatePensionLumpSumBenefitsUD, Right(()))
+        mockSaveClaimData(nino, aCreateStatePensionBenefitsUD, Right(()))
+        mockSaveClaimData(nino, aCreateStatePensionLumpSumBenefitsUD, Right(()))
         mockCreateOrUpdate(userWithEmptySaveIncomeFromPensionsCya, Right(()))
 
         val result = await(statePensionService.persistStatePensionIncomeViewModel(aUser, taxYear))
         result shouldBe Right(())
       }
 
-      "only StatePension model is submitted" in {
+      "only StatePension model is submitted, updating a prior submission" in {
         val statePensionOnlySessionData: PensionsUserData =
           sessionUserData.copy(pensions = sessionUserData.pensions.copy(
-            incomeFromPensions = sessionCya.incomeFromPensions.copy(statePensionLumpSum = None)
+            incomeFromPensions = sessionCya.incomeFromPensions.copy(
+              statePension = Some(aPriorStatePensionViewModel), statePensionLumpSum = None)
           ))
 
         mockFind(taxYear, aUser, Right(Option(statePensionOnlySessionData)))
 
-        mockSaveClaimData(nino, aStatePensionBenefitsUD, Right(()))
+        mockSaveClaimData(nino, anUpdateStatePensionBenefitsUD, Right(()))
         mockCreateOrUpdate(userWithEmptySaveIncomeFromPensionsCya, Right(()))
 
         val result = await(statePensionService.persistStatePensionIncomeViewModel(aUser, taxYear))
         result shouldBe Right(())
       }
 
-      "only StatePensionLumpSum model is submitted" in {
+      "only StatePensionLumpSum model is submitted, updating a prior submission" in {
         val statePensionLumpSumOnlySessionData: PensionsUserData =
           sessionUserData.copy(pensions = sessionUserData.pensions.copy(
-            incomeFromPensions = sessionCya.incomeFromPensions.copy(statePension = None)
+            incomeFromPensions = sessionCya.incomeFromPensions.copy(
+              statePension = None, statePensionLumpSum = Some(aPriorStatePensionLumpSumViewModel))
           ))
 
         mockFind(taxYear, aUser, Right(Option(statePensionLumpSumOnlySessionData)))
 
-        mockSaveClaimData(nino, aStatePensionLumpSumBenefitsUD, Right(()))
+        mockSaveClaimData(nino, anUpdateStatePensionLumpSumBenefitsUD, Right(()))
         mockCreateOrUpdate(userWithEmptySaveIncomeFromPensionsCya, Right(()))
 
         val result = await(statePensionService.persistStatePensionIncomeViewModel(aUser, taxYear))
@@ -95,7 +98,7 @@ class StatePensionServiceSpec extends UnitTest
     "return Left(APIErrorModel) when pension connector could not be connected" in {
       mockFind(taxYear, aUser, Right(Option(sessionUserData)))
 
-      mockSaveClaimData(nino, aStatePensionBenefitsUD, Left(APIErrorModel(BAD_REQUEST, APIErrorBodyModel("FAILED", "failed"))))
+      mockSaveClaimData(nino, aCreateStatePensionBenefitsUD, Left(APIErrorModel(BAD_REQUEST, APIErrorBodyModel("FAILED", "failed"))))
 
       val result = await(statePensionService.persistStatePensionIncomeViewModel(aUser, taxYear))
       result shouldBe Left(APIErrorModel(BAD_REQUEST, APIErrorBodyModel("FAILED", "failed")))
@@ -104,8 +107,8 @@ class StatePensionServiceSpec extends UnitTest
     "return Left(DataNotUpdated) when data could not be updated" in {
       mockFind(taxYear, aUser, Right(Option(sessionUserData)))
 
-      mockSaveClaimData(nino, aStatePensionBenefitsUD, Right(()))
-      mockSaveClaimData(nino, aStatePensionLumpSumBenefitsUD, Right(()))
+      mockSaveClaimData(nino, aCreateStatePensionBenefitsUD, Right(()))
+      mockSaveClaimData(nino, aCreateStatePensionLumpSumBenefitsUD, Right(()))
       mockCreateOrUpdate(userWithEmptySaveIncomeFromPensionsCya, Left(DataNotUpdated))
 
       val result = await(statePensionService.persistStatePensionIncomeViewModel(aUser, taxYear))

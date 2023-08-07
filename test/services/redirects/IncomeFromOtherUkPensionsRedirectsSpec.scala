@@ -43,7 +43,7 @@ class IncomeFromOtherUkPensionsRedirectsSpec extends UnitTest {
   private val removeSchemeCall: Call = RemovePensionSchemeController.show(taxYear, Some(0))
   private val checkYourAnswersCall: Call = UkPensionIncomeCYAController.show(taxYear)
   private val journeyStartRedirect: Some[Result] = Some(Redirect(journeyStartCall))
-  private def continueToContextualRedirect(continue: Call): PensionsUserData => Future[Result] = aPensionsUserData =>
+  private def continueToContextualRedirect(continue: Call): PensionsUserData => Future[Result] = _ =>
     Future.successful(Redirect(continue))
 
   ".cyaPageCall" should {
@@ -240,8 +240,6 @@ class IncomeFromOtherUkPensionsRedirectsSpec extends UnitTest {
           cya = pensionsUserDataWithIncomeFromPensions(incompleteJourney).pensions,
           taxYear = taxYear,
           optIndex = Some(0))
-        val statusHeader = result.map(_.header.status)
-        val locationHeader = result.map(_.header.headers).map(_.get("Location"))
 
         result shouldBe journeyStartRedirect
       }
@@ -253,8 +251,6 @@ class IncomeFromOtherUkPensionsRedirectsSpec extends UnitTest {
           cya = pensionsUserDataWithIncomeFromPensions(invalidJourney).pensions,
           taxYear = taxYear,
           optIndex = Some(0))
-        val statusHeader = result.map(_.header.status)
-        val locationHeader = result.map(_.header.headers).map(_.get("Location"))
 
         result shouldBe journeyStartRedirect
       }
