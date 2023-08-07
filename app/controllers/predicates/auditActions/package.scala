@@ -40,4 +40,9 @@ package object auditActions {
     implicit val audWrites: OWrites[AuditModel[IncomeFromOverseasPensionsAudit]] = Json.writes[AuditModel[IncomeFromOverseasPensionsAudit]]
     Json.toJson(auditModel).toString()
   }
+
+  def auditIncomeFromStatePensions(auditModel: AuditModel[IncomeFromStatePensionsAudit]): String = {
+    implicit val audWrites: OWrites[AuditModel[IncomeFromStatePensionsAudit]] = Json.writes[AuditModel[IncomeFromStatePensionsAudit]]
+    Json.toJson(auditModel).toString()
+  }
 }

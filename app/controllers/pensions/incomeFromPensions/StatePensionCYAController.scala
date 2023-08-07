@@ -18,7 +18,7 @@ package controllers.pensions.incomeFromPensions
 
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.incomeFromPensions.routes.IncomeFromPensionsSummaryController
-import controllers.predicates.actions.{ActionsProvider, AuthorisedAction}
+import controllers.predicates.auditActions.AuditActionsProvider
 import models.mongo.PensionsCYAModel
 import models.pension.AllPensionsData
 import models.pension.AllPensionsData.generateCyaFromPrior
@@ -36,8 +36,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class StatePensionCYAController @Inject()(authAction: AuthorisedAction,
-                                          actionsProvider: ActionsProvider,
+class StatePensionCYAController @Inject()(auditProvider: AuditActionsProvider,
                                           pensionSessionService: PensionSessionService,
                                           statePensionService: StatePensionService,
                                           view: StatePensionCYAView)
@@ -47,7 +46,7 @@ class StatePensionCYAController @Inject()(authAction: AuthorisedAction,
                                           errorHandler: ErrorHandler)
   extends FrontendController(mcc) with I18nSupport with SessionHelper {
 
-  def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
+  def show(taxYear: Int): Action[AnyContent] = auditProvider.incomeFromStatePensionsViewAuditing(taxYear) async {
     implicit userSessionDataRequest =>
       val checkRedirect = journeyCheck(StatePensionsCYAPage, _, taxYear)
       redirectBasedOnCurrentAnswers(taxYear, Some(userSessionDataRequest.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) {
@@ -55,7 +54,7 @@ class StatePensionCYAController @Inject()(authAction: AuthorisedAction,
       }
   }
 
-  def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
+  def submit(taxYear: Int): Action[AnyContent] = auditProvider.incomeFromStatePensionsUpdateAuditing(taxYear) async { implicit request =>
     pensionSessionService.getAndHandle(taxYear, request.user) { (cya, prior) =>
       cya.fold(
         Future.successful(Redirect(appConfig.incomeTaxSubmissionOverviewUrl(taxYear)))
