@@ -67,19 +67,11 @@ class IncomeFromOverseasPensionsCYAController @Inject()(auditProvider: AuditActi
     pensionSessionService.getAndHandle(taxYear, request.user) { (cya, prior) =>
 
       (cya, prior) match {
-        case (Some(data), Some(priorData: AllPensionsData)) if data.pensions.incomeFromOverseasPensions.isEmpty =>
-          cyaDataIsEmpty(priorData)
         case (Some(data), _) =>
           val checkRedirect = journeyCheck(CYAPage, _: PensionsCYAModel, taxYear)
           redirectBasedOnCurrentAnswers(taxYear, cya, PensionOverseasIncomeStatus.show(taxYear))(checkRedirect) { _ =>
             incomeFromOverseasPensionsViewModelExists(data.pensions.incomeFromOverseasPensions)
           }
-        case (None, Some(priorData)) =>
-          cyaDataIsEmpty(priorData)
-        case (None, None) =>
-          val emptyIncomeFromOverseasPensionsViewModel = IncomeFromOverseasPensionsViewModel(paymentsFromOverseasPensionsQuestion = None,
-            overseasIncomePensionSchemes = Nil)
-          Future.successful(Ok(view(taxYear, emptyIncomeFromOverseasPensionsViewModel)))
         case _ => Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
       }
     }
