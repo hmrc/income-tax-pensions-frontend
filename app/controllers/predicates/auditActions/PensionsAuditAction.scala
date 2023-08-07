@@ -137,7 +137,7 @@ object PensionsAuditAction {
           () => auditModel.toAuditModelAmend
         }
       }
-      auditService.sendAudit(toAuditModel())(hc(req.request), ec, UkPensionIncomeAudit.writes)
+      auditService.sendAudit(toAuditModel())(hc(req.request), ec, IncomeFromStatePensionsAudit.writes)
       Future.successful(None)
     }
   }

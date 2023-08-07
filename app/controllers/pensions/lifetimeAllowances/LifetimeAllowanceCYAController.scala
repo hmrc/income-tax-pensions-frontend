@@ -50,28 +50,13 @@ class LifetimeAllowanceCYAController @Inject()(auditProvider: AuditActionsProvid
 
 
   def show(taxYear: Int): Action[AnyContent] = auditProvider.lifetimeAllowancesViewAuditing(taxYear) async { implicit request =>
-    pensionSessionService.getAndHandle(taxYear, request.user) { (cya, prior) =>
-      (cya, prior) match {
-        case (Some(data), _) =>
-          val checkRedirect = journeyCheck(CYAPage, _: PensionsCYAModel, taxYear)
-          redirectBasedOnCurrentAnswers(taxYear, Some(data), cyaPageCall(taxYear))(checkRedirect) {
-            data =>
-              Future.successful(Ok(view(taxYear, data.pensions.pensionLifetimeAllowances)))
-          }
-
-        case (None, Some(priorData)) =>
-          val cyaModel = generateCyaFromPrior(priorData)
-          pensionSessionService.createOrUpdateSessionData(request.user, cyaModel, taxYear, isPriorSubmission = true)(
-            errorHandler.internalServerError())(
-            Ok(view(taxYear, cyaModel.pensionLifetimeAllowances)))
-
-        case (None, None) =>
-          val emptyLifetimeAllowances = PensionLifetimeAllowancesViewModel()
-          Future.successful(Ok(view(taxYear, emptyLifetimeAllowances)))
-
-        case _ =>
-          Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
-      }
+    pensionSessionService.getAndHandle(taxYear, request.user) {
+      case (Some(data), _) =>
+        val checkRedirect = journeyCheck(CYAPage, _: PensionsCYAModel, taxYear)
+        redirectBasedOnCurrentAnswers(taxYear, Some(data), cyaPageCall(taxYear))(checkRedirect) {
+          data => Future.successful(Ok(view(taxYear, data.pensions.pensionLifetimeAllowances)))
+        }
+      case _ => Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
     }
   }
 

@@ -128,27 +128,6 @@ class UkPensionIncomeCYAControllerISpec extends IntegrationTest with ViewHelpers
 
         "render the Check UK pension income page" when {
 
-          "CYA data is generated from prior data" which {
-            lazy val result: WSResponse = {
-              dropPensionsDB()
-              authoriseAgentOrIndividual(user.isAgent)
-              userDataStub(anIncomeTaxUserData, nino, taxYearEOY)
-              urlGet(fullUrl(ukPensionIncomeCyaUrl(taxYearEOY)), welsh = user.isWelsh,
-                headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
-            }
-
-            implicit def document: () => Document = () => Jsoup.parse(result.body)
-
-            titleCheck(expectedTitle, user.isWelsh)
-            h1Check(expectedH1)
-            captionCheck(user.commonExpectedResults.expectedCaption(taxYearEOY))
-            textOnPageCheck(user.specificExpectedResults.get.expectedParagraph, paragraphSelector)
-            cyaRowCheck(ukPensionIncome, yesText, ukPensionSchemePayments(taxYearEOY), user.specificExpectedResults.get.ukPensionIncomesHidden, 1)
-            cyaRowCheck(ukPensionSchemes, schemeNames, ukPensionSchemeSummaryListUrl(taxYearEOY), ukPensionSchemesHidden, 2)
-            buttonCheck(buttonText)
-            welshToggleCheck(user.isWelsh)
-          }
-
           "there is CYA data with multiple pension schemes" which {
             lazy val result: WSResponse = {
               dropPensionsDB()
@@ -198,7 +177,7 @@ class UkPensionIncomeCYAControllerISpec extends IntegrationTest with ViewHelpers
       }
     }
 
-    "redirect to the pensions summary page when there is no CYA or prior data" which {
+    "redirect to the pensions summary page when there is no CYA regardless of prior data" which {
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual()
