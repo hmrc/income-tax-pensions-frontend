@@ -39,7 +39,8 @@ case class UserSessionDataRequestRefinerAction(taxYear: Int,
       case Left(_) => Left(errorHandler.handleError(INTERNAL_SERVER_ERROR)(input.request))
       case Right(optPensionsUserData) =>
         RedirectService.redirectBasedOnRequest(optPensionsUserData, taxYear) match {
-          case Left(value) => Left(value)
+          case Left(value) =>
+            Left(value)
           case Right(pensionsUserData) =>
             Right(UserSessionDataRequest(pensionsUserData, input.user, input.request))
         }
