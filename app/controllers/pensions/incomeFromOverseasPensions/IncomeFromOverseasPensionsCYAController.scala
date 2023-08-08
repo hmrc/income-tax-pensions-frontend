@@ -18,19 +18,16 @@ package controllers.pensions.incomeFromOverseasPensions
 
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.incomeFromOverseasPensions.routes.PensionOverseasIncomeStatus
-import controllers.pensions.routes.{OverseasPensionsSummaryController, PensionsSummaryController}
+import controllers.pensions.routes.OverseasPensionsSummaryController
 import controllers.predicates.auditActions.AuditActionsProvider
 import models.mongo.PensionsCYAModel
-import models.pension.AllPensionsData
-import models.pension.AllPensionsData.generateCyaFromPrior
-import models.pension.charges.IncomeFromOverseasPensionsViewModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.redirects.IncomeFromOverseasPensionsPages.CYAPage
 import services.redirects.IncomeFromOverseasPensionsRedirects.journeyCheck
 import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
-import services.{PensionIncomeService, PensionSessionService}
+import services.PensionIncomeService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.incomeFromOverseasPensions.IncomeFromOverseasPensionsCYAView
