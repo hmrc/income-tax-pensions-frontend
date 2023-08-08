@@ -56,6 +56,26 @@ class AuditActionsProvider @Inject()(authAction: AuthorisedAction,
       .andThen(UnauthorisedPaymentsUpdateAuditAction(auditService))
   }
 
+  def incomeFromOverseasPensionsViewAuditing(taxYear: Int): ActionBuilder[UserSessionDataRequest, AnyContent] = {
+    userSessionDataForInYear(taxYear)
+      .andThen(IncomeFromOverseasPensionsViewAuditAction(auditService))
+  }
+
+  def incomeFromOverseasPensionsUpdateAuditing(taxYear: Int): ActionBuilder[UserPriorAndSessionDataRequest, AnyContent] = {
+    userPriorAndSessionDataForInYear(taxYear)
+      .andThen(IncomeFromOverseasPensionsUpdateAuditAction(auditService))
+  }
+
+  def paymentsIntoOverseasPensionsViewAuditing(taxYear: Int): ActionBuilder[UserSessionDataRequest, AnyContent] = {
+    userSessionDataForInYear(taxYear)
+      .andThen(PaymentsIntoOverseasPensionsViewAuditAction(auditService))
+  }
+
+  def paymentsIntoOverseasPensionsUpdateAuditing(taxYear: Int): ActionBuilder[UserPriorAndSessionDataRequest, AnyContent] = {
+    userPriorAndSessionDataForInYear(taxYear)
+      .andThen(PaymentsIntoOverseasPensionsUpdateAuditAction(auditService))
+  }
+
   def shortServiceRefundsViewAuditing(taxYear: Int): ActionBuilder[UserSessionDataRequest, AnyContent] = {
     userSessionDataForInYear(taxYear)
       .andThen(ShortServiceRefundsViewAuditAction(auditService))
@@ -74,6 +94,7 @@ class AuditActionsProvider @Inject()(authAction: AuthorisedAction,
   def incomeFromStatePensionsUpdateAuditing(taxYear: Int): ActionBuilder[UserPriorAndSessionDataRequest, AnyContent] = {
     userPriorAndSessionDataForInYear(taxYear)
       .andThen(IncomeFromStatePensionsUpdateAuditAction(auditService))
+
   }
 
   def ukPensionIncomeViewAuditing(taxYear: Int): ActionBuilder[UserSessionDataRequest, AnyContent] = {
@@ -84,6 +105,16 @@ class AuditActionsProvider @Inject()(authAction: AuthorisedAction,
   def ukPensionIncomeUpdateAuditing(taxYear: Int): ActionBuilder[UserPriorAndSessionDataRequest, AnyContent] = {
     userPriorAndSessionDataForInYear(taxYear)
       .andThen(UkPensionIncomeUpdateAuditAction(auditService))
+  }
+
+  def annualAllowancesViewAuditing(taxYear: Int): ActionBuilder[UserSessionDataRequest, AnyContent] = {
+    userSessionDataForInYear(taxYear)
+      .andThen(AnnualAllowancesViewAuditAction(auditService))
+  }
+
+  def annualAllowancesUpdateAuditing(taxYear: Int): ActionBuilder[UserPriorAndSessionDataRequest, AnyContent] = {
+    userPriorAndSessionDataForInYear(taxYear)
+      .andThen(AnnualAllowancesUpdateAuditAction(auditService))
   }
 
   def lifetimeAllowancesViewAuditing(taxYear: Int): ActionBuilder[UserSessionDataRequest, AnyContent] = {

@@ -64,7 +64,7 @@ object LifetimeAllowancesAudit {
       nino = sessionData.nino,
       mtdItId = sessionData.mtdItId,
       lifetimeAllowances = sessionData.pensions.pensionLifetimeAllowances,
-      priorLifetimeAllowances = priorData.map(pd => AllPensionsData.generateCyaFromPrior(pd).pensionLifetimeAllowances)
+      priorLifetimeAllowances = priorData.map(pd => AllPensionsData.generateLifetimeAllowanceCyaFromPrior(pd))
     )
 
   def standardAudit(user: User, sessionData: PensionsUserData): LifetimeAllowancesAudit =
