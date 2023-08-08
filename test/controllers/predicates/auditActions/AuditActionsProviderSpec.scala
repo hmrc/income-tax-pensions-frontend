@@ -64,6 +64,8 @@ class AuditActionsProviderSpec extends ControllerUnitTest
     ("paymentsIntoPensionsUpdateAuditing", auditProvider.paymentsIntoPensionsUpdateAuditing: ActionType),
     ("unauthorisedPaymentsViewAuditing", auditProvider.unauthorisedPaymentsViewAuditing: ActionType),
     ("unauthorisedPaymentsUpdateAuditing", auditProvider.unauthorisedPaymentsUpdateAuditing: ActionType),
+    ("paymentsIntoOverseasPensionsViewAuditing", auditProvider.paymentsIntoOverseasPensionsViewAuditing: ActionType),
+    ("paymentsIntoOverseasPensionsUpdateAuditing", auditProvider.paymentsIntoOverseasPensionsUpdateAuditing: ActionType),
     ("shortServiceRefundsViewAuditing", auditProvider.shortServiceRefundsViewAuditing: ActionType),
     ("shortServiceRefundsUpdateAuditing", auditProvider.shortServiceRefundsUpdateAuditing: ActionType),
     ("incomeFromStatePensionsViewAuditing", auditProvider.incomeFromStatePensionsViewAuditing: ActionType),
@@ -128,6 +130,15 @@ class AuditActionsProviderSpec extends ControllerUnitTest
             case "unauthorisedPaymentsViewAuditing" =>
               UnauthorisedPaymentsAudit(taxYearEOY, aUser, aPensionsUserData.pensions.unauthorisedPayments, None).toAuditModelView
 
+            case "paymentsIntoOverseasPensionsUpdateAuditing" =>
+              val priorData = if (auditType == "amend") anIncomeTaxUserData else anIncomeTaxUserData.copy(pensions = None)
+              mockGetPriorData(taxYearEOY, aUser, Right(priorData))
+              val audModel = PaymentsIntoOverseasPensionsAudit(taxYearEOY, aUser, aPensionsUserData.pensions.paymentsIntoOverseasPensions,
+                priorData.pensions.map(generateCyaFromPrior).map(_.paymentsIntoOverseasPensions))
+              if (audModel.priorPaymentsIntoOverseasPensions.isEmpty) audModel.toAuditModelCreate else audModel.toAuditModelAmend
+            case "paymentsIntoOverseasPensionsViewAuditing" =>
+              PaymentsIntoOverseasPensionsAudit(taxYearEOY, aUser, aPensionsUserData.pensions.paymentsIntoOverseasPensions, None).toAuditModelView
+
             case "shortServiceRefundsUpdateAuditing" =>
               val priorData = if (auditType == "amend") anIncomeTaxUserData else anIncomeTaxUserData.copy(pensions = None)
               mockGetPriorData(taxYearEOY, aUser, Right(priorData))
@@ -154,6 +165,7 @@ class AuditActionsProviderSpec extends ControllerUnitTest
               if (audModel.priorAnnualAllowances.isEmpty) audModel.toAuditModelCreate else audModel.toAuditModelAmend
             case "annualAllowancesViewAuditing" =>
               AnnualAllowancesAudit(taxYearEOY, aUser, aPensionsUserData.pensions.pensionsAnnualAllowances, None).toAuditModelView
+
           }
 
           mockAuditResult(auditModel, mockedAuditSuccessResult)

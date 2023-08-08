@@ -56,6 +56,16 @@ class AuditActionsProvider @Inject()(authAction: AuthorisedAction,
       .andThen(UnauthorisedPaymentsUpdateAuditAction(auditService))
   }
 
+  def paymentsIntoOverseasPensionsViewAuditing(taxYear: Int): ActionBuilder[UserSessionDataRequest, AnyContent] = {
+    userSessionDataForInYear(taxYear)
+      .andThen(PaymentsIntoOverseasPensionsViewAuditAction(auditService))
+  }
+
+  def paymentsIntoOverseasPensionsUpdateAuditing(taxYear: Int): ActionBuilder[UserPriorAndSessionDataRequest, AnyContent] = {
+    userPriorAndSessionDataForInYear(taxYear)
+      .andThen(PaymentsIntoOverseasPensionsUpdateAuditAction(auditService))
+  }
+
   def shortServiceRefundsViewAuditing(taxYear: Int): ActionBuilder[UserSessionDataRequest, AnyContent] = {
     userSessionDataForInYear(taxYear)
       .andThen(ShortServiceRefundsViewAuditAction(auditService))
