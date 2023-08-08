@@ -59,12 +59,18 @@ class IncomeFromOverseasPensionsCYAController @Inject()(auditProvider: AuditActi
   }
 
 
-  def submit(taxYear: Int): Action[AnyContent] = auditProvider.incomeFromOverseasPensionsUpdateAuditing(taxYear) async { implicit request =>
-    //TODO: missing the comparison of session with Prior data
-    pensionIncomeService.saveIncomeFromOverseasPensionsViewModel(request.user, taxYear).map {
-      case Left(_) =>
-        errorHandler.internalServerError()
-      case Right(_) => Redirect(OverseasPensionsSummaryController.show(taxYear))
-    }
+  def submit(taxYear: Int): Action[AnyContent] = auditProvider.incomeFromOverseasPensionsUpdateAuditing(taxYear) async {
+    implicit request =>
+      //TODO: missing the comparison of session with Prior data
+      val checkRedirect = journeyCheck(CYAPage, _: PensionsCYAModel, taxYear)
+      redirectBasedOnCurrentAnswers(taxYear, Some(request.pensionsUserData), PensionOverseasIncomeStatus.show(taxYear))(checkRedirect) {
+        sessionData =>
+            pensionIncomeService.saveIncomeFromOverseasPensionsViewModel(request.user, taxYear).map {
+              case Left(_) =>
+                errorHandler.internalServerError()
+              case Right(_) => Redirect(OverseasPensionsSummaryController.show(taxYear))
+            }
+          }
+      }
   }
-}
+
