@@ -18,20 +18,16 @@ package controllers.pensions.incomeFromOverseasPensions
 
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.incomeFromOverseasPensions.routes.PensionOverseasIncomeStatus
-import controllers.pensions.routes.{OverseasPensionsSummaryController, PensionsSummaryController}
-import controllers.predicates.actions.AuthorisedAction
-import controllers.predicates.actions.TaxYearAction.taxYearAction
+import controllers.pensions.routes.OverseasPensionsSummaryController
+import controllers.predicates.auditActions.AuditActionsProvider
 import models.mongo.PensionsCYAModel
-import models.pension.AllPensionsData
-import models.pension.AllPensionsData.generateCyaFromPrior
-import models.pension.charges.IncomeFromOverseasPensionsViewModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.redirects.IncomeFromOverseasPensionsPages.CYAPage
 import services.redirects.IncomeFromOverseasPensionsRedirects.journeyCheck
 import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
-import services.{PensionIncomeService, PensionSessionService}
+import services.PensionIncomeService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.incomeFromOverseasPensions.IncomeFromOverseasPensionsCYAView
@@ -40,9 +36,8 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class IncomeFromOverseasPensionsCYAController @Inject()(authAction: AuthorisedAction,
+class IncomeFromOverseasPensionsCYAController @Inject()(auditProvider: AuditActionsProvider,
                                                         view: IncomeFromOverseasPensionsCYAView,
-                                                        pensionSessionService: PensionSessionService,
                                                         pensionIncomeService: PensionIncomeService,
                                                         errorHandler: ErrorHandler)
                                                        (implicit val mcc: MessagesControllerComponents,
@@ -51,48 +46,28 @@ class IncomeFromOverseasPensionsCYAController @Inject()(authAction: AuthorisedAc
 
   lazy val logger: Logger = Logger(this.getClass.getName)
 
-  def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
-
-    def cyaDataIsEmpty(priorData: AllPensionsData): Future[Result] = {
-      val cyaModel = generateCyaFromPrior(priorData)
-      pensionSessionService.createOrUpdateSessionData(request.user,
-        cyaModel, taxYear, isPriorSubmission = false)(
-        errorHandler.internalServerError())(
-        Ok(view(taxYear, cyaModel.incomeFromOverseasPensions)))
+  def show(taxYear: Int): Action[AnyContent] = auditProvider.incomeFromOverseasPensionsViewAuditing(taxYear) async {
+    implicit request =>
+    val cya = Some(request.pensionsUserData)
+      val checkRedirect = journeyCheck(CYAPage, _: PensionsCYAModel, taxYear)
+      redirectBasedOnCurrentAnswers(taxYear, cya, PensionOverseasIncomeStatus.show(taxYear))(checkRedirect) {
+        data => Future.successful(Ok(view(taxYear, data.pensions.incomeFromOverseasPensions)))
     }
+  }
 
-    def incomeFromOverseasPensionsViewModelExists(cya: IncomeFromOverseasPensionsViewModel): Future[Result] = {
-      Future.successful(Ok(view(taxYear, cya)))
-    }
 
-    pensionSessionService.getAndHandle(taxYear, request.user) { (cya, prior) =>
-
-      (cya, prior) match {
-        case (Some(data), Some(priorData: AllPensionsData)) if data.pensions.incomeFromOverseasPensions.isEmpty =>
-          cyaDataIsEmpty(priorData)
-        case (Some(data), _) =>
-          val checkRedirect = journeyCheck(CYAPage, _: PensionsCYAModel, taxYear)
-          redirectBasedOnCurrentAnswers(taxYear, cya, PensionOverseasIncomeStatus.show(taxYear))(checkRedirect) { _ =>
-            incomeFromOverseasPensionsViewModelExists(data.pensions.incomeFromOverseasPensions)
+  def submit(taxYear: Int): Action[AnyContent] = auditProvider.incomeFromOverseasPensionsUpdateAuditing(taxYear) async {
+    implicit request =>
+      //TODO: missing the comparison of session with Prior data
+      val checkRedirect = journeyCheck(CYAPage, _: PensionsCYAModel, taxYear)
+      redirectBasedOnCurrentAnswers(taxYear, Some(request.pensionsUserData), PensionOverseasIncomeStatus.show(taxYear))(checkRedirect) {
+        sessionData =>
+            pensionIncomeService.saveIncomeFromOverseasPensionsViewModel(request.user, taxYear).map {
+              case Left(_) =>
+                errorHandler.internalServerError()
+              case Right(_) => Redirect(OverseasPensionsSummaryController.show(taxYear))
+            }
           }
-        case (None, Some(priorData)) =>
-          cyaDataIsEmpty(priorData)
-        case (None, None) =>
-          val emptyIncomeFromOverseasPensionsViewModel = IncomeFromOverseasPensionsViewModel(paymentsFromOverseasPensionsQuestion = None,
-            overseasIncomePensionSchemes = Nil)
-          Future.successful(Ok(view(taxYear, emptyIncomeFromOverseasPensionsViewModel)))
-        case _ => Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
       }
-    }
   }
 
-
-  def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
-    //TODO: missing the comparison of session with Prior data
-    pensionIncomeService.saveIncomeFromOverseasPensionsViewModel(request.user, taxYear).map {
-      case Left(_) =>
-        errorHandler.internalServerError()
-      case Right(_) => Redirect(OverseasPensionsSummaryController.show(taxYear))
-    }
-  }
-}
