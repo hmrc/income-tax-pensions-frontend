@@ -26,7 +26,6 @@ import builders.UserBuilder.aUser
 import controllers.pensions.routes.{OverseasPensionsSummaryController, PensionsSummaryController}
 import models.mongo.{PensionsCYAModel, PensionsUserData}
 import models.pension.charges.PensionScheme
-import models.pension.income.ForeignPension
 import models.pension.reliefs.PaymentsIntoPensionsViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -165,7 +164,7 @@ class  IncomeFromOverseasPensionsCYAControllerISpec extends
       }
     }
 
-    "redirect to the first page in the journey if journey is incomplete" in {
+    "redirect to the first page in the journey if cya data is incomplete" in {
       val incompleteViewModel = anIncomeFromOverseasPensionsViewModel.copy(
         overseasIncomePensionSchemes = Seq(
           PensionScheme(
@@ -196,7 +195,7 @@ class  IncomeFromOverseasPensionsCYAControllerISpec extends
   }
 
   ".submit" should {
-    "redirect to the overview page" when {
+    "redirect to the summary page" when {
       "there is no CYA data available" should {
 
         val form = Map[String, String]()
@@ -216,7 +215,7 @@ class  IncomeFromOverseasPensionsCYAControllerISpec extends
           result.status shouldBe SEE_OTHER
         }
 
-        "redirects to the overview page" in {
+        "redirects to the summary page" in {
           result.headers("Location").head shouldBe PensionsSummaryController.show(taxYear).url
         }
       }
