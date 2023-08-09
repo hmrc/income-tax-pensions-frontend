@@ -21,8 +21,9 @@ import builders.PensionsUserDataBuilder.aPensionsUserData
 import builders.UserBuilder.aUser
 import common.SessionValues.{TAX_YEAR, VALID_TAX_YEARS}
 import controllers.errors.routes.UnauthorisedUserErrorController
+import models.audit.UkPensionIncomeAudit.AuditUkPensionIncome
 import models.audit._
-import models.pension.AllPensionsData.generateCyaFromPrior
+import models.pension.AllPensionsData.{generateCyaFromPrior, generateUkPensionCyaFromPrior}
 import models.{APIErrorBodyModel, APIErrorModel}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.i18n.MessagesApi
@@ -176,11 +177,25 @@ class AuditActionsProviderSpec extends ControllerUnitTest
             case "ukPensionIncomeUpdateAuditing" =>
               val priorData = if (auditType == "amend") anIncomeTaxUserData else anIncomeTaxUserData.copy(pensions = None)
               mockGetPriorData(taxYearEOY, aUser, Right(priorData))
-              val audModel = UkPensionIncomeAudit(taxYearEOY, aUser, aPensionsUserData.pensions.incomeFromPensions,
-                priorData.pensions.map(generateCyaFromPrior).map(_.incomeFromPensions))
+              val audModel = UkPensionIncomeAudit(
+                taxYearEOY, aUser,
+                AuditUkPensionIncome(
+                  aPensionsUserData.pensions.incomeFromPensions.uKPensionIncomesQuestion,
+                  aPensionsUserData.pensions.incomeFromPensions.uKPensionIncomes
+                ),
+                priorData.pensions.map(pd => generateUkPensionCyaFromPrior(pd))
+                  .map({case (ukPensionIncomeQ, ukPensionIncomes) => AuditUkPensionIncome(ukPensionIncomeQ, ukPensionIncomes)})
+              )
               if (audModel.priorUkPensionIncome.isEmpty) audModel.toAuditModelCreate else audModel.toAuditModelAmend
             case "ukPensionIncomeViewAuditing" =>
-              UkPensionIncomeAudit(taxYearEOY, aUser, aPensionsUserData.pensions.incomeFromPensions, None).toAuditModelView
+              UkPensionIncomeAudit(
+                taxYearEOY, aUser,
+                AuditUkPensionIncome(
+                  aPensionsUserData.pensions.incomeFromPensions.uKPensionIncomesQuestion,
+                  aPensionsUserData.pensions.incomeFromPensions.uKPensionIncomes
+                ),
+                None
+              ).toAuditModelView
 
             case "lifetimeAllowancesUpdateAuditing" =>
               val priorData = if (auditType == "amend") anIncomeTaxUserData else anIncomeTaxUserData.copy(pensions = None)

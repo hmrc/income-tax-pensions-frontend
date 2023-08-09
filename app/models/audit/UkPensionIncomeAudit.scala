@@ -17,17 +17,18 @@
 package models.audit
 
 import models.User
+import models.audit.UkPensionIncomeAudit.AuditUkPensionIncome
 import models.mongo.PensionsUserData
 import models.pension.AllPensionsData
-import models.pension.statebenefits.IncomeFromPensionsViewModel
+import models.pension.statebenefits.{IncomeFromPensionsViewModel, UkPensionIncomeViewModel}
 import play.api.libs.json.{Json, OWrites}
 
 case class UkPensionIncomeAudit(taxYear: Int,
                                 userType: String,
                                 nino: String,
                                 mtdItId: String,
-                                ukPensionIncome: IncomeFromPensionsViewModel,
-                                priorUkPensionIncome: Option[IncomeFromPensionsViewModel] = None) {
+                                ukPensionIncome: AuditUkPensionIncome,
+                                priorUkPensionIncome: Option[AuditUkPensionIncome] = None) {
 
     private val amend = "AmendUkPensionIncome"
     private val create = "CreateUkPensionIncome"
@@ -44,11 +45,18 @@ case class UkPensionIncomeAudit(taxYear: Int,
 
 
 object UkPensionIncomeAudit {
+  
+  case class AuditUkPensionIncome(uKPensionIncomesQuestion: Option[Boolean] = None,
+                                  uKPensionIncomes: Seq[UkPensionIncomeViewModel] = Seq.empty)
+  
+  object AuditUkPensionIncome {
+    implicit val auditUkPensionIncomeWrites: OWrites[AuditUkPensionIncome] = Json.writes[AuditUkPensionIncome]
+  }
 
   def apply(taxYear: Int,
             user: User,
-            ukPensionIncome: IncomeFromPensionsViewModel,
-            priorUkPensionIncome: Option[IncomeFromPensionsViewModel]): UkPensionIncomeAudit = {
+            ukPensionIncome: AuditUkPensionIncome,
+            priorUkPensionIncome: Option[AuditUkPensionIncome]): UkPensionIncomeAudit = {
 
     UkPensionIncomeAudit(
       taxYear, user.affinityGroup, user.nino, user.mtditid, ukPensionIncome, priorUkPensionIncome
@@ -63,8 +71,11 @@ object UkPensionIncomeAudit {
       userType = user.affinityGroup,
       nino = sessionData.nino,
       mtdItId = sessionData.mtdItId,
-      ukPensionIncome = sessionData.pensions.incomeFromPensions,
-      priorUkPensionIncome = priorData.map(pd => AllPensionsData.generateCyaFromPrior(pd).incomeFromPensions)
+      ukPensionIncome = AuditUkPensionIncome(
+        sessionData.pensions.incomeFromPensions.uKPensionIncomesQuestion,
+        sessionData.pensions.incomeFromPensions.uKPensionIncomes),
+      priorUkPensionIncome =  priorData.map(pd => AllPensionsData.generateUkPensionCyaFromPrior(pd))
+          .map({case (ukPensionIncomeQ, ukPensionIncomes) => AuditUkPensionIncome(ukPensionIncomeQ, ukPensionIncomes)})
     )
 
   def standardAudit(user: User, sessionData: PensionsUserData): UkPensionIncomeAudit =
@@ -73,6 +84,8 @@ object UkPensionIncomeAudit {
       userType = user.affinityGroup,
       nino = sessionData.nino,
       mtdItId = sessionData.mtdItId,
-      ukPensionIncome = sessionData.pensions.incomeFromPensions
+      ukPensionIncome = AuditUkPensionIncome(
+        sessionData.pensions.incomeFromPensions.uKPensionIncomesQuestion,
+        sessionData.pensions.incomeFromPensions.uKPensionIncomes)
     )
 }
