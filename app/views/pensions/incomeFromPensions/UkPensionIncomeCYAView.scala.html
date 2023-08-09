@@ -17,6 +17,7 @@
 @import controllers.pensions.incomeFromPensions.routes.UkPensionIncomeCYAController
 @import controllers.pensions.incomeFromPensions.routes.UkPensionSchemePaymentsController
 @import controllers.pensions.incomeFromPensions.routes.UkPensionIncomeSummaryController
+@import models.requests.UserSessionDataRequest
 @import utils.ViewUtils.summaryListRow
 @import models.pension.statebenefits.IncomeFromPensionsViewModel
 @import views.html.templates.helpers.{Button, Heading, Link, SummaryList}
@@ -33,7 +34,7 @@
 )
 
 
-@(taxYear: Int, cya: IncomeFromPensionsViewModel)(implicit messages: Messages, appConfig: AppConfig, request: AuthorisationRequest[_])
+@(taxYear: Int, cya: IncomeFromPensionsViewModel)(implicit messages: Messages, appConfig: AppConfig, request: UserSessionDataRequest[_])
 
 @headingForUse = @{messages("incomeFromPensions.title")}
 @contentHtml = {

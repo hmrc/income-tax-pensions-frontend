@@ -33,7 +33,7 @@ import play.api.http.Status.{NO_CONTENT, SEE_OTHER}
 import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
 import utils.PageUrls.IncomeFromPensionsPages._
-import utils.PageUrls.fullUrl
+import utils.PageUrls.{fullUrl, pensionSummaryUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 class UkPensionIncomeCYAControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
@@ -128,27 +128,6 @@ class UkPensionIncomeCYAControllerISpec extends IntegrationTest with ViewHelpers
 
         "render the Check UK pension income page" when {
 
-          "CYA data is generated from prior data" which {
-            lazy val result: WSResponse = {
-              dropPensionsDB()
-              authoriseAgentOrIndividual(user.isAgent)
-              userDataStub(anIncomeTaxUserData, nino, taxYear)
-              urlGet(fullUrl(ukPensionIncomeCyaUrl(taxYear)), welsh = user.isWelsh,
-                headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
-            }
-
-            implicit def document: () => Document = () => Jsoup.parse(result.body)
-
-            titleCheck(expectedTitle, user.isWelsh)
-            h1Check(expectedH1)
-            captionCheck(user.commonExpectedResults.expectedCaption(taxYear))
-            textOnPageCheck(user.specificExpectedResults.get.expectedParagraph, paragraphSelector)
-            cyaRowCheck(ukPensionIncome, yesText, ukPensionSchemePayments(taxYear), user.specificExpectedResults.get.ukPensionIncomesHidden, 1)
-            cyaRowCheck(ukPensionSchemes, schemeNames, ukPensionSchemeSummaryListUrl(taxYear), ukPensionSchemesHidden, 2)
-            buttonCheck(buttonText)
-            welshToggleCheck(user.isWelsh)
-          }
-
           "there is CYA data with multiple pension schemes" which {
             lazy val result: WSResponse = {
               dropPensionsDB()
@@ -177,18 +156,18 @@ class UkPensionIncomeCYAControllerISpec extends IntegrationTest with ViewHelpers
               dropPensionsDB()
               authoriseAgentOrIndividual(user.isAgent)
               insertCyaData(pensionsUserDataWithIncomeFromPensions(anIncomeFromPensionEmptyViewModel.copy(
-                uKPensionIncomesQuestion = Some(false), uKPensionIncomes = Seq.empty), taxYear = taxYear))
-              urlGet(fullUrl(ukPensionIncomeCyaUrl(taxYear)), welsh = user.isWelsh, follow = false,
-                headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
+                uKPensionIncomesQuestion = Some(false), uKPensionIncomes = Seq.empty), taxYear = taxYearEOY))
+              urlGet(fullUrl(ukPensionIncomeCyaUrl(taxYearEOY)), welsh = user.isWelsh, follow = false,
+                headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
             }
 
             implicit def document: () => Document = () => Jsoup.parse(result.body)
 
             titleCheck(expectedTitle, user.isWelsh)
             h1Check(expectedH1)
-            captionCheck(user.commonExpectedResults.expectedCaption(taxYear))
+            captionCheck(user.commonExpectedResults.expectedCaption(taxYearEOY))
             textOnPageCheck(user.specificExpectedResults.get.expectedParagraph, paragraphSelector)
-            cyaRowCheck(ukPensionIncome, noText, ukPensionSchemePayments(taxYear), user.specificExpectedResults.get.ukPensionIncomesHidden, 1)
+            cyaRowCheck(ukPensionIncome, noText, ukPensionSchemePayments(taxYearEOY), user.specificExpectedResults.get.ukPensionIncomesHidden, 1)
             elementNotOnPageCheck(ukPensionSchemesRowSelector)
             buttonCheck(buttonText)
             welshToggleCheck(user.isWelsh)
@@ -198,48 +177,47 @@ class UkPensionIncomeCYAControllerISpec extends IntegrationTest with ViewHelpers
       }
     }
 
-    "redirect to the first page in the journey" when {
-      "there is no CYA or prior data" which {
-        lazy val result: WSResponse = {
-          dropPensionsDB()
-          authoriseAgentOrIndividual()
-          userDataStub(IncomeTaxUserData(None), nino, taxYearEOY)
-          urlGet(fullUrl(ukPensionIncomeCyaUrl(taxYearEOY)), follow = false,
-            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
-        }
-
-        "have the status SEE OTHER" in {
-          result.status shouldBe SEE_OTHER
-        }
-
-        "redirects to the uk pension scheme payments question page" in {
-          result.header("location") shouldBe Some(ukPensionSchemePayments(taxYearEOY))
-        }
+    "redirect to the pensions summary page when there is no CYA regardless of prior data" which {
+      lazy val result: WSResponse = {
+        dropPensionsDB()
+        authoriseAgentOrIndividual()
+        userDataStub(IncomeTaxUserData(None), nino, taxYearEOY)
+        urlGet(fullUrl(ukPensionIncomeCyaUrl(taxYearEOY)), follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
-      "previous questions are unanswered" which {
-        lazy val result: WSResponse = {
-          dropPensionsDB()
-          authoriseAgentOrIndividual()
-          insertCyaData(pensionsUserDataWithIncomeFromPensions(aUKIncomeFromPensionsViewModel.copy(
-            uKPensionIncomes = Seq(anUkPensionIncomeViewModelOne.copy(startDate = None))), taxYear = taxYear))
-          urlGet(fullUrl(ukPensionIncomeCyaUrl(taxYearEOY)), follow = false,
-            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
-        }
 
-        "have the status SEE OTHER" in {
-          result.status shouldBe SEE_OTHER
-        }
+      "has the status SEE OTHER" in {
+        result.status shouldBe SEE_OTHER
+      }
 
-        "redirects to the uk pension scheme payments question page" in {
-          result.header("location") shouldBe Some(ukPensionSchemePayments(taxYearEOY))
-        }
+      "redirects to the pensions summary page" in {
+        result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
+      }
+    }
+
+    "redirect to the first page in the journey when previous questions are unanswered" which {
+      lazy val result: WSResponse = {
+        dropPensionsDB()
+        authoriseAgentOrIndividual()
+        insertCyaData(pensionsUserDataWithIncomeFromPensions(aUKIncomeFromPensionsViewModel.copy(
+          uKPensionIncomes = Seq(anUkPensionIncomeViewModelOne.copy(startDate = None))), taxYear = taxYearEOY))
+        urlGet(fullUrl(ukPensionIncomeCyaUrl(taxYearEOY)), follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+      }
+
+      "has the status SEE OTHER" in {
+        result.status shouldBe SEE_OTHER
+      }
+
+      "redirects to the uk pension scheme payments question page" in {
+        result.header("location") shouldBe Some(ukPensionSchemePayments(taxYearEOY))
       }
     }
   }
 
   ".submit" should {
 
-    "redirect to overview page when there is no CYA data available" which {
+    "redirect to the pensions summary page when there is no CYA data available" which {
       val form = Map[String, String]()
 
       lazy val result: WSResponse = {
@@ -254,11 +232,11 @@ class UkPensionIncomeCYAControllerISpec extends IntegrationTest with ViewHelpers
       }
 
       "redirects to the overview page" in {
-        result.header("location") shouldBe Some(appConfig.incomeTaxSubmissionOverviewUrl(taxYear))
+        result.header("location") shouldBe Some(pensionSummaryUrl(taxYear))
       }
     }
 
-    "redirect to pensions summary" when {
+    "redirect to pensions income summary page" when {
 
       "there is no prior data and CYA data is submitted" which {
         val form = Map[String, String]()

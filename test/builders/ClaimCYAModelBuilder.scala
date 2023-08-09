@@ -16,8 +16,8 @@
 
 package builders
 
-import builders.PensionsUserDataBuilder.aPensionsUserData
-import builders.StateBenefitViewModelBuilder.{aPriorStatePensionLumpSumViewModel, aPriorStatePensionViewModel, aStatePensionLumpSumViewModel, aStatePensionViewModel}
+import builders.StateBenefitViewModelBuilder
+.{aPriorStatePensionLumpSumViewModel, aPriorStatePensionViewModel, aStatePensionLumpSumViewModel, aStatePensionViewModel}
 import models.pension.statebenefits.ClaimCYAModel
 
 import java.time.LocalDate
