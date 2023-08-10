@@ -18,9 +18,10 @@
 @import views.html.templates.Layout
 @import views.html.templates.helpers.{Button, Heading, SummaryList}
 @import controllers.pensions.transferIntoOverseasPensions.TransferIntoOverseasPensionCYAViewHelper
+@import models.requests.UserSessionDataRequest
 @this(layout: Layout, summaryList: SummaryList, heading: Heading, button: Button, csrfForm: FormWithCSRF)
 
-@(taxYear: Int, transfersIntoOverseasPensionsViewModel: TransfersIntoOverseasPensionsViewModel)(implicit messages: Messages, appConfig: AppConfig, request: AuthorisationRequest[_])
+@(taxYear: Int, transfersIntoOverseasPensionsViewModel: TransfersIntoOverseasPensionsViewModel)(implicit messages: Messages, appConfig: AppConfig, request: UserSessionDataRequest[_])
 
 @headingForUse = @{
     messages(s"transferIntoOverseasPensions.cya.heading")

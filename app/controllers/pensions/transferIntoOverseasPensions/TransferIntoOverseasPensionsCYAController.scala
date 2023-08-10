@@ -18,7 +18,7 @@ package controllers.pensions.transferIntoOverseasPensions
 
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.routes.OverseasPensionsSummaryController
-import controllers.predicates.actions.AuthorisedAction
+import controllers.predicates.auditActions.AuditActionsProvider
 import controllers.predicates.actions.TaxYearAction.taxYearAction
 import models.mongo.PensionsCYAModel
 import models.pension.AllPensionsData
@@ -38,7 +38,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class TransferIntoOverseasPensionsCYAController @Inject()(authAction: AuthorisedAction,
+class TransferIntoOverseasPensionsCYAController @Inject()(auditProvider: AuditActionsProvider,
                                                           view: TransferIntoOverseasPensionsCYAView,
                                                           pensionSessionService: PensionSessionService,
                                                           pensionChargesService: PensionChargesService,
@@ -48,7 +48,7 @@ class TransferIntoOverseasPensionsCYAController @Inject()(authAction: Authorised
   extends FrontendController(mcc) with I18nSupport with SessionHelper {
 
 
-  def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
+  def show(taxYear: Int): Action[AnyContent] = auditProvider.transfersIntoOverseasPensionsViewAuditing(taxYear).async { implicit request =>
     pensionSessionService.getAndHandle(taxYear, request.user) { (cya, prior) =>
       (cya, prior) match {
         case (Some(data), _) =>
@@ -73,7 +73,7 @@ class TransferIntoOverseasPensionsCYAController @Inject()(authAction: Authorised
   }
 
 
-  def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
+  def submit(taxYear: Int): Action[AnyContent] = auditProvider.transfersIntoOverseasPensionsUpdateAuditing(taxYear).async { implicit request =>
     pensionSessionService.getAndHandle(taxYear, request.user) { (cya, prior) =>
       cya.fold(
         Future.successful(Redirect(appConfig.incomeTaxSubmissionOverviewUrl(taxYear)))
@@ -100,6 +100,5 @@ class TransferIntoOverseasPensionsCYAController @Inject()(authAction: Authorised
       case Some(prior) => !cyaData.equals(generateCyaFromPrior(prior))
     }
   }
-
 
 }

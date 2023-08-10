@@ -31,7 +31,7 @@ import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
 import utils.PageUrls.TransferIntoOverseasPensions._
-import utils.PageUrls.{fullUrl, overseasPensionsSummaryUrl, overviewUrl}
+import utils.PageUrls.{fullUrl, overseasPensionsSummaryUrl, overviewUrl, pensionSummaryUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 class TransferIntoOverseasPensionsCYAControllerISpec extends IntegrationTest with ViewHelpers
@@ -73,7 +73,7 @@ class TransferIntoOverseasPensionsCYAControllerISpec extends IntegrationTest wit
   }
 
   ".submit" should {
-    "redirect to overview page when there is no CYA data" which {
+    "redirect to summary page when there is no CYA data" which {
      
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
@@ -90,8 +90,8 @@ class TransferIntoOverseasPensionsCYAControllerISpec extends IntegrationTest wit
         result.status shouldBe SEE_OTHER
       }
 
-      "redirects to the overview page" in {
-        result.header("location") shouldBe Some(overviewUrl(taxYear))
+      "redirects to the summary page" in {
+        result.header("location") shouldBe Some(pensionSummaryUrl(taxYear))
       }
     }
 
