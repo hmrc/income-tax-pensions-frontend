@@ -19,7 +19,7 @@ common.saveAndContinue = Cadw ac yn eich blaen
 common.change = Newid
 common.update = Diweddaru
 common.remove = Tynnu
-common.dontRemove = Peidiwch â dileu
+common.dontRemove = Peidiwch â tynnu
 common.cancel = Canslo
 common.use = defnyddio
 common.error.errorKey = Gwall:
@@ -52,7 +52,7 @@ common.moreThanOnePensionScheme.agent = Os gwnaeth mwy nag un o gynlluniau pensi
 common.sectionsToFill.individual = Dim ond yr adrannau sy’n berthnasol i chi y mae angen i chi eu llenwi.
 common.sectionsToFill.agent = Dim ond yr adrannau sy’n berthnasol i’ch cleient y mae angen i chi eu llenwi.
 common.country.select = dewiswch wlad
-common.noTaxPaid = No tax paid
+common.noTaxPaid = Dim treth wedi’i thalu
 
 common.error.amountMaxLimit = Mae’n rhaid i’r cyfanswm fod yn llai na £100,000,000,000
 common.pensions.error.amountMaxLimit.individual = Mae’n rhaid i swm y dreth a dalwyd gan eich darparwr pensiwn, neu’r swm a gytunodd i’w dalu, fod yn llai na £100,000,000,000
@@ -125,21 +125,21 @@ common.incomeFromPensions.title = Incwm o bensiynau’r DU
 
 
 #################       Common Summary/Remove Pension Scheme    ###########################################
-common.summary.addAScheme = Add a scheme
-common.summary.needToAddScheme = You need to add one or more pension scheme.
-common.summary.returnToOverviewMsg = If you don’t have a pensions scheme to add you can return to the overview page and come back later.
+common.summary.addAScheme = Ychwanegu cynllun
+common.summary.needToAddScheme = Bydd angen i chi ychwanegu un cynllun pensiwn neu fwy.
+common.summary.returnToOverviewMsg = Os nad oes gennych gynllun pensiwn i’w ychwanegu, gallwch ddychwelyd i’r trosolwg a dod nôl yn nes ymlaen.
 
 
 #################       Common Remove Pension Scheme    ###########################################
 common.removePensionScheme.title = A ydych yn siŵr eich bod am dynnu {0}?
-common.removePensionScheme.overseas.title = Are you sure you want to remove this overseas pension scheme?
-common.removePensionScheme.p1 = This will remove:
-common.removePensionScheme.p1.bullet1 = The name of the pension scheme
-common.removePensionScheme.p1.bullet2 = Pensions scheme tax reference
-common.removePensionScheme.p1.bullet3 = Pensions provider address
-common.removePensionScheme.p1.bullet4 = the name of the pension scheme
-common.removePensionScheme.p1.bullet5 = the amount paid before tax
-common.removePensionScheme.p1.bullet6 = the tax taken off
+common.removePensionScheme.overseas.title = A ydych chi’n siŵr eich bod am dynnu’r cynllun pensiwn tramor hwn?
+common.removePensionScheme.p1 = Bydd hyn yn tynnu:
+common.removePensionScheme.p1.bullet1 = Enw’r cynllun pensiwn
+common.removePensionScheme.p1.bullet2 = Cyfeirnod treth y cynllun pensiwn
+common.removePensionScheme.p1.bullet3 = Cyfeiriad y darparwr pensiwn
+common.removePensionScheme.p1.bullet4 = enw’r cynllun pensiwn
+common.removePensionScheme.p1.bullet5 = y swm a dalwyd cyn treth
+common.removePensionScheme.p1.bullet6 = y dreth a ddidynnwyd
 
 #################       Error messages        ########################################
 
@@ -518,7 +518,7 @@ incomeFromPensions.statePensionLumpSum.title.agent = A gafodd eich cleient gyfan
 incomeFromPensions.statePensionLumpSum.para.individual = Mae’n bosibl y byddwch wedi cael cyfandaliad unigol os oeddech wedi oedi cyn hawlio’ch Pensiwn y Wladwriaeth am 12 mis yn olynol.
 incomeFromPensions.statePensionLumpSum.para.agent = Mae’n bosibl y byddai’ch cleient wedi cael cyfandaliad unigol os oedden nhw wedi oedi cyn hawlio ei Bensiwn y Wladwriaeth am 12 mis yn olynol.
 incomeFromPensions.statePensionLumpSum.onlyApplies = Mae hyn ond yn berthnasol i bobl sy’n cyrraedd oedran Pensiwn y Wladwriaeth cyn 6 Ebrill 2016.
-incomeFromPensions.statePensionLumpSum.amount = Amount of lump sum
+incomeFromPensions.statePensionLumpSum.amount = Swm y cyfandaliad
 incomeFromPensions.statePensionLumpSum.aboutGeneralIncreases.individual = the ‘About general increases in benefits‘ letter, the Pension Service sent you
 incomeFromPensions.statePensionLumpSum.aboutGeneralIncreases.agent = the ‘About general increases in benefits‘ letter, the Pension Service sent your client
 incomeFromPensions.statePensionLumpSum.error.noEntry.individual = Dewiswch ‘Iawn’ os cawsoch gyfandaliad Pensiwn y Wladwriaeth
@@ -531,55 +531,52 @@ incomeFromPensions.statePensionLumpSum.amount.error.incorrectFormat.agent = Nodw
 incomeFromPensions.statePensionLumpSum.amount.error.overMaximum.agent = Mae’n rhaid i swm cyfandaliad Pensiwn y Wladwriaeth eich cleient fod yn llai na £100,000,000,000
 
 #state pension start date
-incomeFromPensions.stateBenefitStartDate.title.individual = When did you start getting State Pension payments?
-incomeFromPensions.stateBenefitStartDate.title.agent = When did your client start getting State Pension payments?
-incomeFromPensions.stateBenefitStartDate.date.hint = For example, 27 3 2007
-incomeFromPensions.stateBenefitStartDate.error.empty.all = Enter the pension start date
-incomeFromPensions.stateBenefitStartDate.error.empty.day = The pension start date must include a day
-incomeFromPensions.stateBenefitStartDate.error.empty.dayMonth = The pension start date must include a day and month
-incomeFromPensions.stateBenefitStartDate.error.empty.dayYear = The pension start date must include a day and year
-incomeFromPensions.stateBenefitStartDate.error.empty.month = The pension start date must include a month
-incomeFromPensions.stateBenefitStartDate.error.empty.monthYear = The pension start date must include a month and year
-incomeFromPensions.stateBenefitStartDate.error.empty.year = The pension start date must include a year
-incomeFromPensions.stateBenefitStartDate.error.invalidFormat = The day, month and year must be valid
-incomeFromPensions.stateBenefitStartDate.error.dateInFuture = The pension start date must be in the past
-incomeFromPensions.stateBenefitStartDate.error.tooLongAgo = The pension start date must be after 1 January 1900
+incomeFromPensions.stateBenefitStartDate.title.individual = Pryd y gwnaethoch chi ddechrau cael taliadau Pensiwn y Wladwriaeth?
+incomeFromPensions.stateBenefitStartDate.title.agent = Pryd y gwnaeth eich cleient ddechrau cael taliadau Pensiwn y Wladwriaeth?
+incomeFromPensions.stateBenefitStartDate.date.hint = Er enghraifft, 27 3 2007
+incomeFromPensions.stateBenefitStartDate.error.empty.all = Nodwch ddyddiad dechrau’r pensiwn
+incomeFromPensions.stateBenefitStartDate.error.empty.day = Mae’n rhaid i ddyddiad dechrau’r pensiwn gynnwys diwrnod
+incomeFromPensions.stateBenefitStartDate.error.empty.dayMonth = Mae’n rhaid i ddyddiad dechrau’r pensiwn gynnwys diwrnod a mis
+incomeFromPensions.stateBenefitStartDate.error.empty.dayYear = Mae’n rhaid i ddyddiad dechrau’r pensiwn gynnwys diwrnod a blwyddyn
+incomeFromPensions.stateBenefitStartDate.error.empty.month = Mae’n rhaid i ddyddiad dechrau’r pensiwn gynnwys mis
+incomeFromPensions.stateBenefitStartDate.error.empty.monthYear = Mae’n rhaid i ddyddiad dechrau’r pensiwn gynnwys mis a blwyddyn
+incomeFromPensions.stateBenefitStartDate.error.empty.year = Mae’n rhaid i ddyddiad dechrau’r pensiwn gynnwys blwyddyn
+incomeFromPensions.stateBenefitStartDate.error.invalidFormat = Mae’n rhaid i’r diwrnod, mis a’r flwyddyn fod yn ddilys
+incomeFromPensions.stateBenefitStartDate.error.dateInFuture = Mae’n rhaid i ddyddiad dechrau’r pensiwn fod yn y gorffennol
+incomeFromPensions.stateBenefitStartDate.error.tooLongAgo = Mae’n rhaid i ddyddiad dechrau’r pensiwn fod ar ôl 1 Ionawr 1900
 
 #tax paid on state pension lump sum
-pensions.taxPaidOnStatePensionLumpSum.amount = Amount of tax paid
-pensions.taxPaidOnStatePensionLumpSum.title.individual = Did you pay tax on the State Pension lump sum?
-pensions.taxPaidOnStatePensionLumpSum.error.noEntry.individual = Select yes if you paid tax on the State Pension lump sum
-pensions.taxPaidOnStatePensionLumpSum.title.agent = Did your client pay tax on the State Pension lump sum?
-pensions.taxPaidOnStatePensionLumpSum.error.noEntry.agent = Select yes if your client paid tax on the State Pension lump sum
-pensions.taxPaidOnStatePensionLumpSum.amount.error.noEntry.individual = Enter the total amount of tax paid on the State Pension lump sum
-pensions.taxPaidOnStatePensionLumpSum.amount.error.noEntry.agent = Enter the amount of tax your client paid on the State Pension lump sum
-pensions.taxPaidOnStatePensionLumpSum.amount.error.incorrectFormat.individual = Enter the total amount of tax paid on the State Pension lump sum in the correct format
-pensions.taxPaidOnStatePensionLumpSum.amount.error.incorrectFormat.agent = Enter the amount of tax your client paid on the State Pension lump sum in the correct format
-pensions.taxPaidOnStatePensionLumpSum.amount.error.overMaximum.individual = The amount of tax paid on the State Pension lump sum must be less than £100,000,000,000
-pensions.taxPaidOnStatePensionLumpSum.amount.error.overMaximum.agent = The amount of tax your client paid on the State Pension lump sum must be less than £100,000,000,000
+pensions.taxPaidOnStatePensionLumpSum.amount = Swm y dreth a dalwyd
+pensions.taxPaidOnStatePensionLumpSum.title.individual = A wnaethoch chi dalu treth ar gyfandaliad Pensiwn y Wladwriaeth?
+pensions.taxPaidOnStatePensionLumpSum.error.noEntry.individual = Dewiswch ‘Iawn’ os gwnaethoch dalu treth ar gyfandaliad Pensiwn y Wladwriaeth
+pensions.taxPaidOnStatePensionLumpSum.title.agent = A wnaeth eich cleient dalu treth ar gyfandaliad Pensiwn y Wladwriaeth?
+pensions.taxPaidOnStatePensionLumpSum.error.noEntry.agent = Dewiswch ‘Iawn’ os gwnaeth eich cleient dalu treth ar gyfandaliad Pensiwn y Wladwriaeth
+pensions.taxPaidOnStatePensionLumpSum.amount.error.noEntry.individual = Nodwch gyfanswm y dreth a dalwyd ar gyfandaliad Pensiwn y Wladwriaeth
+pensions.taxPaidOnStatePensionLumpSum.amount.error.noEntry.agent = Nodwch swm y dreth a dalodd eich cleient ar y cyfandaliad Pensiwn y Wladwriaeth
+pensions.taxPaidOnStatePensionLumpSum.amount.error.incorrectFormat.individual = Nodwch gyfanswm y dreth a dalwyd ar gyfandaliad Pensiwn y Wladwriaeth yn y fformat cywir
+pensions.taxPaidOnStatePensionLumpSum.amount.error.incorrectFormat.agent = Nodwch swm y dreth a dalodd eich cleient ar y cyfandaliad Pensiwn y Wladwriaeth yn y fformat cywir
+pensions.taxPaidOnStatePensionLumpSum.amount.error.overMaximum.individual = Mae’n rhaid i swm y dreth a dalwyd ar gyfandaliad Pensiwn y Wladwriaeth fod yn llai na £100,000,000,000
+pensions.taxPaidOnStatePensionLumpSum.amount.error.overMaximum.agent = Mae’n rhaid i swm y dreth a dalodd eich cleient ar y cyfandaliad Pensiwn y Wladwriaeth fod yn llai na £100,000,000,000
 
 #start date of state pension lump sum
-pensions.statePensionLumpSumStartDate.title.individual = When did you get your State Pension lump sum?
-pensions.statePensionLumpSumStartDate.title.agent = When did your client get their State Pension lump sum?
-pensions.statePensionLumpSumStartDate.hint.individual = You can find this in your P60.
-pensions.statePensionLumpSumStartDate.hint.agent = They can find this on their P60.
-pensions.statePensionLumpSumStartDate.error.empty.day = The pension lump sum start date must include a day
-pensions.statePensionLumpSumStartDate.error.empty.month = The pension lump sum start date must include a month
-pensions.statePensionLumpSumStartDate.error.empty.year = The pension lump sum start date must include a year
-pensions.statePensionLumpSumStartDate.error.empty.all = Enter the pension lump sum start date
-pensions.statePensionLumpSumStartDate.error.empty.day = The pension lump sum start date must include a day
-pensions.statePensionLumpSumStartDate.error.empty.dayMonth = The pension lump sum start date must include a day and month
-pensions.statePensionLumpSumStartDate.error.empty.dayYear = The pension lump sum start date must include a day and year
-pensions.statePensionLumpSumStartDate.error.empty.month = The pension lump sum start date must include a month
-pensions.statePensionLumpSumStartDate.error.empty.monthYear = The pension lump sum start date must include a month and year
-pensions.statePensionLumpSumStartDate.error.empty.year = The pension lump sum start date must include a year
-pensions.statePensionLumpSumStartDate.error.invalidFormat = The day, month and year must be valid
-pensions.statePensionLumpSumStartDate.error.dateInFuture = The date you entered must be in the past
-pensions.statePensionLumpSumStartDate.error.tooLongAgo = The date must be after 1 January 1900
+pensions.statePensionLumpSumStartDate.title.individual = Pryd cawsoch eich cyfandaliad Pensiwn y Wladwriaeth?
+pensions.statePensionLumpSumStartDate.title.agent = Pryd cafodd eich cleient gyfandaliad Pensiwn y Wladwriaeth?
+pensions.statePensionLumpSumStartDate.hint.individual = Mae hwn i’w weld ar eich P60.
+pensions.statePensionLumpSumStartDate.hint.agent = Mae hwn i’w weld ar ei P60.
+pensions.statePensionLumpSumStartDate.error.empty.all = Nodwch y dyddiad dechrau ar gyfer y cyfandaliad pensiwn
+pensions.statePensionLumpSumStartDate.error.empty.day = Mae’n rhaid i’r dyddiad dechrau ar gyfer y cyfandaliad pensiwn gynnwys diwrnod
+pensions.statePensionLumpSumStartDate.error.empty.dayMonth = Mae’n rhaid i’r dyddiad dechrau ar gyfer y cyfandaliad pensiwn gynnwys diwrnod a mis
+pensions.statePensionLumpSumStartDate.error.empty.dayYear = Mae’n rhaid i’r dyddiad dechrau ar gyfer y cyfandaliad pensiwn gynnwys diwrnod a blwyddyn
+pensions.statePensionLumpSumStartDate.error.empty.month = Mae’n rhaid i’r dyddiad dechrau ar gyfer y cyfandaliad pensiwn gynnwys mis
+pensions.statePensionLumpSumStartDate.error.empty.monthYear = Mae’n rhaid i’r dyddiad dechrau ar gyfer cyfandaliad pensiwn gynnwys mis a blwyddyn
+pensions.statePensionLumpSumStartDate.error.empty.year = Mae’n rhaid i’r dyddiad dechrau ar gyfer y cyfandaliad pensiwn gynnwys blwyddyn
+pensions.statePensionLumpSumStartDate.error.invalidFormat = Mae’n rhaid i’r diwrnod, mis a’r flwyddyn fod yn ddilys
+pensions.statePensionLumpSumStartDate.error.dateInFuture = Mae’n rhaid i’r dyddiad a nodwyd gennych fod yn y gorffennol
+pensions.statePensionLumpSumStartDate.error.tooLongAgo = Mae’n rhaid i’r dyddiad fod ar ôl 1 Ionawr 1900
 
 #state pension
-pensions.statePension.title.individual = Do you get regular State Pension payments?
-pensions.statePension.title.agent = Does your client get regular State Pension payments?
+pensions.statePension.title.individual = A ydych chi’n cael taliadau rheolaidd o Bensiwn y Wladwriaeth?
+pensions.statePension.title.agent = A yw’ch cleient yn cael taliadau rheolaidd o Bensiwn y Wladwriaeth?
 pensions.statePension.error.noEntry.individual = Dewiswch ‘Iawn’ os cawsoch Bensiwn y Wladwriaeth y flwyddyn hon
 pensions.statePension.error.noEntry.agent = Dewiswch ‘Iawn’ os cafodd eich cleient Pensiwn y Wladwriaeth y flwyddyn hon
 pensions.statePension.amount.error.noEntry.individual = Nodwch swm eich Pensiwn y Wladwriaeth
@@ -590,37 +587,37 @@ pensions.statePension.amount.error.incorrectFormat.agent = Nodwch swm Pensiwn y 
 pensions.statePension.amount.error.overMaximum.agent = Mae’n rhaid i swm Pensiwn y Wladwriaeth eich cleient fod yn llai na £100,000,000,000
 
 #state pension add to calculation
-pensions.statePension.addToCalculation.title.individual = Do you want to add State Pension to your Income Tax calculation?
-pensions.statePension.addToCalculation.title.agent = Do you want to add State Pension to your client’s Income Tax calculation?
-pensions.statePension.addToCalculation.noEntry.individual = Select yes if you want to add State Pension to your Income Tax calculation
-pensions.statePension.addToCalculation.noEntry.agent = Select yes if you want to add State Pension to your client’s Income Tax Calculation
+pensions.statePension.addToCalculation.title.individual = A ydych chi am ychwanegu Pensiwn y Wladwriaeth i’ch cyfrifiad Treth Incwm?
+pensions.statePension.addToCalculation.title.agent = A ydych chi am ychwanegu Pensiwn y Wladwriaeth i gyfrifiad Treth Incwm eich cleient?
+pensions.statePension.addToCalculation.noEntry.individual = Dewiswch ‘Iawn’ os ydych am ychwanegu Pensiwn y Wladwriaeth i’ch cyfrifiad Treth Incwm
+pensions.statePension.addToCalculation.noEntry.agent = Dewiswch ‘Iawn’ os ydych am ychwanegu Pensiwn y Wladwriaeth i gyfrifiad Treth Incwm eich cleient
 
 #State Pension CYA page
-statePension.cya.title.agent = Check your client’s State Pension
-statePension.cya.title.individual = Check your State Pension
-statePension.cya.paragraph1.agent  = Your client’s State Pension income is based on the information we already hold about them.
-statePension.cya.paragraph2.agent  = You cannot update your client’s State Pension income until 6 April 2023.
-statePension.cya.paragraph1.individual  = Your State Pension income is based on information we already hold about you.
-statePension.cya.paragraph2.individual  = You can change the amounts if they’re not correct.
-statePension.cya.statePension.label = State Pension
-statePension.cya.statePension.label.hidden = Change state pension
-statePension.cya.startDate.label = State Pension start date
-statePension.cya.startDate.label.hidden = Change State Pension start date
-statePension.cya.lumpSum.label = Lump sum
-statePension.cya.lumpSum.label.hidden = Change lump sum
-statePension.cya.lumpSumTax.label = Lump sum tax
-statePension.cya.lumpSumTax.label.hidden = Change Lump sum tax
-statePension.cya.lumpSumDate.label = Lump sum date
-statePension.cya.lumpSumDate.label.hidden = Change lump sum date
-statePension.cya.taxCalc.label = State Pension added to tax calculation
-statePension.cya.taxCalc.label.hidden = Change State Pension added to tax calculation
+statePension.cya.title.agent = Gwirio Pensiwn y Wladwriaeth eich cleient
+statePension.cya.title.individual = Gwirioʼch Pensiwn y Wladwriaeth
+statePension.cya.paragraph1.agent  = Mae incwm o Bensiwn y Wladwriaeth eich cleient yn seiliedig ar yr wybodaeth sydd eisoes gennym amdano.
+statePension.cya.paragraph2.agent  = Ni allwch ddiweddaru incwm Pensiwn y Wladwriaeth eich cleient tan 6 Ebrill 2023.
+statePension.cya.paragraph1.individual  = Mae’ch incwm o Bensiwn y Wladwriaeth yn seiliedig ar yr wybodaeth sydd eisoes gennym amdanoch.
+statePension.cya.paragraph2.individual  = Gallwch newid y symiau os nad ydynt yn gywir.
+statePension.cya.statePension.label = Pensiwn y Wladwriaeth
+statePension.cya.statePension.label.hidden = Newid Pensiwn y Wladwriaeth
+statePension.cya.startDate.label = Dyddiad dechrau Pensiwn y Wladwriaeth
+statePension.cya.startDate.label.hidden = Newid dyddiad dechrau Pensiwn y Wladwriaeth
+statePension.cya.lumpSum.label = Cyfandaliad
+statePension.cya.lumpSum.label.hidden = Newid cyfandaliad
+statePension.cya.lumpSumTax.label = Treth cyfandaliad
+statePension.cya.lumpSumTax.label.hidden = Newid treth cyfandaliad
+statePension.cya.lumpSumDate.label = Dyddiad y cyfandaliad
+statePension.cya.lumpSumDate.label.hidden = Newid dyddiad y cyfandaliad
+statePension.cya.taxCalc.label = Ychwanegwyd Pensiwn y Wladwriaeth i’r cyfrifiad treth
+statePension.cya.taxCalc.label.hidden = Ychwanegwyd ‘Newid Pensiwn y Wladwriaeth’ i’r cyfrifiad treth
 
 #Income From Pensions Summary
 incomeFromPensions.incomeFromPensionsSummary.statePensions = Pensiwn y Wladwriaeth
 incomeFromPensions.incomeFromPensionsSummary.otherUkPensions = Pensiynau eraill y DU
 
 #Do You Get UK Pension Scheme Payments Messages
-pensions.ukPensionSchemePayments.title.individual = Do you get UK pension scheme payments?
+pensions.ukPensionSchemePayments.title.individual = A ydych chi’n cael taliadau o gynlluniau pensiwn y DU?
 pensions.ukPensionSchemePayments.title.agent = A yw eich cleient yn cael taliadau o gynlluniau pensiwn y DU?
 pensions.ukPensionSchemePayments.error.noEntry.individual = Dewiswch Iawn os cawsoch daliadau o gynlluniau pensiwn y DU
 pensions.ukPensionSchemePayments.error.noEntry.agent = Dewiswch Iawn os cafodd eich cleient daliadau o gynlluniau pensiwn y DU
@@ -681,7 +678,7 @@ incomeFromPensions.pensionStartDate.error.tooLongAgo = Mae’n rhaid i ddyddiad 
 incomeFromPensions.removePensionScheme.buttonText = Dileu’r pensiwn
 
 #Uk Pension Income CYA page
-incomeFromPensions.title = Check UK Pension Income
+incomeFromPensions.title = Gwirio incwm o bensiwn y DU
 incomeFromPensions.paragraph.individual = Mae’ch incwm o bensiynau yn seiliedig ar yr wybodaeth sydd eisoes gennym amdanoch.
 incomeFromPensions.paragraph.agent = Mae incwm o bensiynau eich cleient yn seiliedig ar yr wybodaeth sydd eisoes gennym amdano.
 incomeFromPensions.pensionIncome.hidden.individual = Newid p’un a gawsoch incwm o bensiynau’r DU
@@ -689,17 +686,17 @@ incomeFromPensions.pensionIncome.hidden.agent = Newid p’un a gafodd eich cleie
 incomeFromPensions.pensionSchemes.hidden = Newid manylion cynllun pensiwn y DU
 
 #Uk Pension Income Summary page
-incomeFromPensions.schemeDetails.summary.title = Check pension scheme details
-incomeFromPensions.schemeDetails.summary.details = Scheme details
-incomeFromPensions.schemeDetails.summary.details.hidden = Change scheme details
-incomeFromPensions.schemeDetails.summary.income = Pension income
-incomeFromPensions.schemeDetails.summary.income.hidden = Change pension income
-incomeFromPensions.schemeDetails.summary.date = Pension start date
-incomeFromPensions.schemeDetails.summary.date.hidden = Change pension start date
-incomeFromPensions.schemeDetails.summary.paye = PAYE:
-incomeFromPensions.schemeDetails.summary.pid = PID:
-incomeFromPensions.schemeDetails.summary.pay = Pay:
-incomeFromPensions.schemeDetails.summary.tax = Tax:
+incomeFromPensions.schemeDetails.summary.title = Gwirio manylion y cynllun pensiwn
+incomeFromPensions.schemeDetails.summary.details = Manylion y cynllun
+incomeFromPensions.schemeDetails.summary.details.hidden = Newid manylion y cynllun
+incomeFromPensions.schemeDetails.summary.income = Incwm o bensiwn
+incomeFromPensions.schemeDetails.summary.income.hidden = Newid incwm o bensiwn
+incomeFromPensions.schemeDetails.summary.date = Dyddiad dechrau’r pensiwn
+incomeFromPensions.schemeDetails.summary.date.hidden = Newid dyddiad dechrau’r pensiwn
+incomeFromPensions.schemeDetails.summary.paye = TWE:
+incomeFromPensions.schemeDetails.summary.pid = Rhif gwaith (PID):
+incomeFromPensions.schemeDetails.summary.pay = Cyflog:
+incomeFromPensions.schemeDetails.summary.tax = Treth:
 
 #################       Lifetime Allowance       ########################################
 
@@ -1056,11 +1053,11 @@ pensions.paymentsIntoOverseasPensions.sf74Reference.incorrectFormat = Mae’n rh
 #Payment into overseas pensions CYA
 paymentsIntoOverseasPensions.cya.heading = Gwirio taliadau i bensiynau tramor
 paymentsIntoOverseasPensions.cya.totalPayments = Cyfanswm y taliadau
-paymentsIntoOverseasPensions.cya.totalPayments.hidden = Change total payments
+paymentsIntoOverseasPensions.cya.totalPayments.hidden = Newid cyfanswm y taliadau
 paymentsIntoOverseasPensions.cya.employerPayments = Taliadau cyflogwr
-paymentsIntoOverseasPensions.cya.employerPayments.hidden = Change employer payments
+paymentsIntoOverseasPensions.cya.employerPayments.hidden = Newid taliadau cyflogwr
 paymentsIntoOverseasPensions.cya.employerPaymentsTax = Treth sydd wedi’i thalu ar daliadau cyflogwr
-paymentsIntoOverseasPensions.cya.employerPaymentsTax.hidden = Change tax paid on employer payments
+paymentsIntoOverseasPensions.cya.employerPaymentsTax.hidden = Newid y dreth a dalwyd ar daliadau cyflogwr
 
 
 ############################################## INCOME FROM OVERSEAS PENSIONS ##############################################

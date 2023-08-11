@@ -68,9 +68,9 @@ class StatePensionAddToCalculationViewSpec extends ViewUnitTest with FakeRequest
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
-    val expectedTitle = "Do you want to add State Pension to your Income Tax calculation?"
+    val expectedTitle = "A ydych chi am ychwanegu Pensiwn y Wladwriaeth i’ch cyfrifiad Treth Incwm?"
     val expectedErrorTitle = s"Gwall: $expectedTitle"
-    val expectedErrorText = "Select yes if you want to add State Pension to your Income Tax calculation"
+    val expectedErrorText = "Dewiswch ‘Iawn’ os ydych am ychwanegu Pensiwn y Wladwriaeth i’ch cyfrifiad Treth Incwm"
   }
   object ExpectedAgentEN extends SpecificExpectedResults {
     val expectedTitle = "Do you want to add State Pension to your client’s Income Tax calculation?"
@@ -79,9 +79,9 @@ class StatePensionAddToCalculationViewSpec extends ViewUnitTest with FakeRequest
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
-    val expectedTitle = "Do you want to add State Pension to your client’s Income Tax calculation?"
+    val expectedTitle = "A ydych chi am ychwanegu Pensiwn y Wladwriaeth i gyfrifiad Treth Incwm eich cleient?"
     val expectedErrorTitle = s"Gwall: $expectedTitle"
-    val expectedErrorText = "Select yes if you want to add State Pension to your client’s Income Tax Calculation"
+    val expectedErrorText = "Dewiswch ‘Iawn’ os ydych am ychwanegu Pensiwn y Wladwriaeth i gyfrifiad Treth Incwm eich cleient"
   }
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(

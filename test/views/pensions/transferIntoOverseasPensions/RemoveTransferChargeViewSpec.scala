@@ -63,10 +63,10 @@ class RemoveTransferChargeViewSpec extends ViewUnitTest {
     val expectedTitle = s"A ydych yn siŵr eich bod am dynnu $pensionName?"
     val expectedHeading = expectedTitle
     val expectedCaption: Int => String = (taxYear: Int) => s"Trosglwyddiadau i bensiynau tramor ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
-    val expectedParagraph1 = "This will remove:"
-    val expectedBullet1 = "The name of the pension scheme"
-    val expectedBullet2 = "Pensions scheme tax reference"
-    val expectedBullet3 = "Pensions provider address"
+    val expectedParagraph1 = "Bydd hyn yn tynnu:"
+    val expectedBullet1 = "Enw’r cynllun pensiwn"
+    val expectedBullet2 = "Cyfeirnod treth y cynllun pensiwn"
+    val expectedBullet3 = "Cyfeiriad y darparwr pensiwn"
     val buttonText = "Tynnu"
     val cancelText = "Canslo"
   }

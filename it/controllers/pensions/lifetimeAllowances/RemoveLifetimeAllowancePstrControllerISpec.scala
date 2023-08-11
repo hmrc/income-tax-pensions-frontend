@@ -57,7 +57,7 @@ class RemoveLifetimeAllowancePstrControllerISpec extends IntegrationTest with Vi
     val expectedTitle = s"Do you want to remove this Pension Scheme Tax Reference?"
     val expectedCaption: Int => String = (taxYear: Int) => s"Lifetime allowances for 6 April ${taxYear - 1} to 5 April $taxYear"
     val buttonText = "Dileu cyfeirnod"
-    val cancelText = "Peidiwch â dileu"
+    val cancelText = "Peidiwch â tynnu"
   }
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, String]] = Seq(

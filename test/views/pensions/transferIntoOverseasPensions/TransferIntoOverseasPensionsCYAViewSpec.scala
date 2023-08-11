@@ -76,7 +76,7 @@ class TransferIntoOverseasPensionsCYAViewSpec extends ViewUnitTest {
     val buttonText = "Cadw ac yn eich blaen"
     val yesText = "Iawn"
     val noText = "Na"
-    val noTaxPaidText = "No tax paid"
+    val noTaxPaidText = "Dim treth wedi’i thalu"
     val transfersIOP = "Trosglwyddiadau i bensiynau tramor"
     val transfersIOPChange = "Newid trosglwyddiadau i bensiynau tramor"
     val amountCharged = "Y swm a godir"

@@ -52,7 +52,7 @@ class RemoveOverseasIncomeSchemeControllerISpec extends IntegrationTest with Bef
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedTitle = "Are you sure you want to remove this overseas pension scheme?"
+    val expectedTitle = "A ydych chi’n siŵr eich bod am dynnu’r cynllun pensiwn tramor hwn?"
     val expectedCaption: Int => String = (taxYear: Int) => s"Incwm o bensiynau tramor ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
     val buttonText = "Tynnu"
     val cancelText = "Canslo"
