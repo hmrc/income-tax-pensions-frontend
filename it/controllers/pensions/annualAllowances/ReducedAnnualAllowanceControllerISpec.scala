@@ -130,7 +130,7 @@ class ReducedAnnualAllowanceControllerISpec extends IntegrationTest with BeforeA
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Lwfansau blynyddol ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Lwfans blynyddol ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
     val expectedFindOut = "Dysgwch beth yw terfyn y lwfans blynyddol ar gyfer y flwyddyn dreth hon (yn agor tab newydd)."
     val expectedFindOutLinkText = "terfyn y lwfans blynyddol ar gyfer y flwyddyn dreth hon (yn agor tab newydd)"
     val expectedOverLimitLinkText = "dros y terfyn (yn agor tab newydd)"
