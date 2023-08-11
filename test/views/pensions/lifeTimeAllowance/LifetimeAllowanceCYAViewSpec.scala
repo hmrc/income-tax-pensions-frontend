@@ -71,7 +71,7 @@ class LifetimeAllowanceCYAViewSpec extends ViewUnitTest { //scalastyle:off magic
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Lifetime allowances for 6 April ${taxYear - 1} to 5 April $taxYear"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Lwfansau oes ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
     val aboveLifetimeAllowanceText: String = "Uwch na’r lwfans oes pensiwn"
     val lumpSumText: String = "Cyfandaliad"
     val lumpSumAmount: String = "Amount: £50 Tax paid: £20"

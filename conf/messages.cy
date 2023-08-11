@@ -36,11 +36,11 @@ common.incomeFromOverseasPensions.caption = Incwm o bensiynau tramor ar gyfer 6 
 common.transferIntoOverseasPensions.caption = Trosglwyddiadau i bensiynau tramor ar gyfer 6 Ebrill {0} i 5 Ebrill {1}
 common.shortServiceRefunds.caption = Ad-daliadau am wasanaeth byr ar gyfer 6 Ebrill {0} i 5 Ebrill {1}
 common.dividends.incomeFromPensions.caption = Difidendau ar gyfer 6 Ebrill {0} i 5 Ebrill {1}
-common.pensionAnnualAllowance.caption = Lwfansau blynyddol ar gyfer 6 Ebrill {0} i 5 Ebrill {1}
-common.annualAllowance.caption = Annual allowance for 6 April {0} to 5 April {1}
+common.pensionAnnualAllowance.caption = Lwfans blynyddol ar gyfer 6 Ebrill {0} i 5 Ebrill {1}
+common.annualAllowance.caption = Lwfans blynyddol ar gyfer 6 Ebrill {0} i 5 Ebrill {1}
 common.incomeFromPensions.caption = Incwm o bensiynau ar gyfer 6 Ebrill {0} i 5 Ebrill {1}
 common.uKPensionIncome.caption = Incwm o bensiynau’r DU ar gyfer 6 Ebrill {0} i 5 Ebrill {1}
-common.lifetimeAllowance.caption = Lifetime allowances for 6 April {0} to 5 April {1}
+common.lifetimeAllowance.caption = Lwfansau oes ar gyfer 6 Ebrill {0} i 5 Ebrill {1}
 common.overseasPensions.caption = Pensiynau tramor ar gyfer 6 Ebrill {0} i 5 Ebrill {1}
 common.return.overview.buttonText = Yn ôl i’r trosolwg
 common.currencyAmount = £{0}
@@ -468,8 +468,8 @@ annualAllowance.cya.annualPensionSchemeTaxReferences = Cynlluniau sy’n talu tr
 
 
 #Pension Provider Paid Tax Messages
-pensions.pensionsProviderPaidTax.error.noEntry.individual = Select yes if your pension provider paid or agreed to pay tax
-pensions.pensionsProviderPaidTax.error.noEntry.agent = Select yes if your client’s pension provider paid or agreed to pay tax
+pensions.pensionsProviderPaidTax.error.noEntry.individual = Dewiswch ‘Iawn’ os gwnaeth eich darparwr pensiwn dalu treth neu gytuno i wneud hynny
+pensions.pensionsProviderPaidTax.error.noEntry.agent = Dewiswch ‘Iawn’ os gwnaeth darparwr pensiwn eich cleient dalu treth neu gytuno i wneud hynny
 pensions.pensionsProviderPaidTax.error.noAmount.individual = Nodwch swm y dreth a dalwyd gan eich darparwr pensiwn, neu’r swm a gytunodd i’w dalu
 pensions.pensionsProviderPaidTax.error.noAmount.agent = Nodwch swm y dreth a dalwyd gan ddarparwr pensiwn eich cleient, neu’r swm a gytunodd i’w dalu
 pensions.pensionsProviderPaidTax.error.incorrectFormat.individual = Nodwch swm y dreth a dalwyd gan eich darparwr pensiwn, neu’r swm a gytunodd i’w dalu, yn y fformat cywir
@@ -477,7 +477,7 @@ pensions.pensionsProviderPaidTax.error.incorrectFormat.agent = Nodwch swm y dret
 
 #Pension Scheme Tax Reference Messages
 pension.pensionSchemeTaxReference.paragraph1 = Nodwch y cyfeirnod ar gyfer y cynllun pensiwn a dalodd y dreth.
-pension.pensionSchemeTaxReference.title = Do you want to remove this Pension Scheme Tax Reference?
+pension.pensionSchemeTaxReference.title = A hoffech ddileu’r Cyfeirnod Treth ar gyfer y Cynllun Pensiwn hwn?
 pension.pensionSchemeTaxReference.error.noEntry.individual = Nodwch eich PSTR
 pension.pensionSchemeTaxReference.error.incorrectFormat.individual = Nodwch eich PSTR yn y fformat cywir
 pension.pensionSchemeTaxReference.error.noEntry.agent = Nodwch PSTR eich cleient
@@ -496,7 +496,7 @@ unauthorisedPayments.pension.pensionSchemeTaxReference.error.incorrectFormat.age
 
 #Pension Scheme Tax Reference Summary Page
 
-annualAllowance.pstrSummary.title = Pension schemes that paid or agreed to pay the annual allowance tax
+annualAllowance.pstrSummary.title = Cynlluniau pensiwn a dalodd y dreth lwfans blynyddol neu a gytunodd i wneud hynny
 
 #################       INCOME FROM PENSIONS        ########################################
 
@@ -518,9 +518,9 @@ incomeFromPensions.statePensionLumpSum.title.agent = A gafodd eich cleient gyfan
 incomeFromPensions.statePensionLumpSum.para.individual = Mae’n bosibl y byddwch wedi cael cyfandaliad unigol os oeddech wedi oedi cyn hawlio’ch Pensiwn y Wladwriaeth am 12 mis yn olynol.
 incomeFromPensions.statePensionLumpSum.para.agent = Mae’n bosibl y byddai’ch cleient wedi cael cyfandaliad unigol os oedden nhw wedi oedi cyn hawlio ei Bensiwn y Wladwriaeth am 12 mis yn olynol.
 incomeFromPensions.statePensionLumpSum.onlyApplies = Mae hyn ond yn berthnasol i bobl sy’n cyrraedd oedran Pensiwn y Wladwriaeth cyn 6 Ebrill 2016.
-incomeFromPensions.statePensionLumpSum.amount = Amount of lump sum
-incomeFromPensions.statePensionLumpSum.aboutGeneralIncreases.individual = the ‘About general increases in benefits‘ letter, the Pension Service sent you
-incomeFromPensions.statePensionLumpSum.aboutGeneralIncreases.agent = the ‘About general increases in benefits‘ letter, the Pension Service sent your client
+incomeFromPensions.statePensionLumpSum.amount = Swm y cyfandaliad
+incomeFromPensions.statePensionLumpSum.aboutGeneralIncreases.individual = y llythyr ‘Ynglŷn â’r cynnydd cyffredinol mewn budd-daliadau’ a anfonwyd atoch gan y Gwasanaeth Pensiwn
+incomeFromPensions.statePensionLumpSum.aboutGeneralIncreases.agent = y llythyr ‘Ynglŷn â’r cynnydd cyffredinol mewn budd-daliadau’ a anfonwyd at eich cleient gan y Gwasanaeth Pensiwn
 incomeFromPensions.statePensionLumpSum.error.noEntry.individual = Dewiswch ‘Iawn’ os cawsoch gyfandaliad Pensiwn y Wladwriaeth
 incomeFromPensions.statePensionLumpSum.error.noEntry.agent = Dewiswch ‘Iawn’ os cafodd eich cleient gyfandaliad Pensiwn y Wladwriaeth
 incomeFromPensions.statePensionLumpSum.amount.error.noEntry.individual = Nodwch swm eich cyfandaliad Pensiwn y Wladwriaeth

@@ -54,8 +54,8 @@ class RemoveLifetimeAllowancePstrControllerISpec extends IntegrationTest with Vi
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedTitle = s"Do you want to remove this Pension Scheme Tax Reference?"
-    val expectedCaption: Int => String = (taxYear: Int) => s"Lifetime allowances for 6 April ${taxYear - 1} to 5 April $taxYear"
+    val expectedTitle = s"A hoffech ddileu’r Cyfeirnod Treth ar gyfer y Cynllun Pensiwn hwn?"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Lwfansau oes ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
     val buttonText = "Dileu cyfeirnod"
     val cancelText = "Peidiwch â dileu"
   }

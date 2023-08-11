@@ -98,7 +98,7 @@ class StatePensionLumpSumViewSpec extends ViewUnitTest with FakeRequestProvider 
     val incorrectFormatErrorText = "Nodwch swm eich cyfandaliad Pensiwn y Wladwriaeth yn y fformat cywir"
     val maxAmountErrorText = "Mae’n rhaid i swm eich cyfandaliad Pensiwn y Wladwriaeth fod yn llai na £100,000,000,000"
     val expectedBullet1 = "eich P60"
-    val expectedBullet2 = "the ‘About general increases in benefits‘ letter, the Pension Service sent you"
+    val expectedBullet2 = "y llythyr ‘Ynglŷn â’r cynnydd cyffredinol mewn budd-daliadau’ a anfonwyd atoch gan y Gwasanaeth Pensiwn"
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
@@ -122,7 +122,7 @@ class StatePensionLumpSumViewSpec extends ViewUnitTest with FakeRequestProvider 
     val incorrectFormatErrorText = "Nodwch swm cyfandaliad Pensiwn y Wladwriaeth eich cleient yn y fformat cywir"
     val maxAmountErrorText = "Mae’n rhaid i swm cyfandaliad Pensiwn y Wladwriaeth eich cleient fod yn llai na £100,000,000,000"
     val expectedBullet1 = "P60 eich cleient"
-    val expectedBullet2 = "the ‘About general increases in benefits‘ letter, the Pension Service sent your client"
+    val expectedBullet2 = "y llythyr ‘Ynglŷn â’r cynnydd cyffredinol mewn budd-daliadau’ a anfonwyd at eich cleient gan y Gwasanaeth Pensiwn"
   }
 
   object CommonExpectedEN extends CommonExpectedResults {

@@ -79,7 +79,7 @@ class AnnualAllowanceCYAViewSpec extends ViewUnitTest {
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Lwfansau blynyddol ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Lwfans blynyddol ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
     val reducedAnnualAllowance: String = "Lwfans blynyddol wedi’i ostwng"
     val typeOfReducedAnnualAllowance: String = "Math o lwfans blynyddol wedi’i ostwng"
     val aboveAnnualAllowance: String = "Uwch na’r lwfans blynyddol"
