@@ -87,15 +87,15 @@ class CountrySummaryListControllerISpec extends IntegrationTest with BeforeAndAf
   object CommonExpectedCY extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Incwm o bensiynau tramor ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
     val expectedContinueButtonText = "Yn eich blaen"
-    val expectedAddSchemeButtonText = "Add a scheme"
+    val expectedAddSchemeButtonText = "Ychwanegu cynllun"
     val expectedOverviewButtonText = "Yn ôl i’r trosolwg"
     val expectedTitle = "Incwm o bensiwn tramor"
     val expectedHeading = "Incwm o bensiwn tramor"
     val change = "Newid"
     val remove = "Tynnu"
     val expectedAddAnotherText = "Ychwanegu cynllun pensiwn arall"
-    val expectedNeedToAddPensionSchemeText = "You need to add one or more pension scheme."
-    val expectedReturnToOverviewPageText = "If you don’t have a pensions scheme to add you can return to the overview page and come back later."
+    val expectedNeedToAddPensionSchemeText = "Bydd angen i chi ychwanegu un cynllun pensiwn neu fwy."
+    val expectedReturnToOverviewPageText = "Os nad oes gennych gynllun pensiwn i’w ychwanegu, gallwch ddychwelyd i’r trosolwg a dod nôl yn nes ymlaen."
   }
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, Nothing]] = Seq(

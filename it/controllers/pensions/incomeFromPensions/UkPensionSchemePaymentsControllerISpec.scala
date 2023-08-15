@@ -89,8 +89,8 @@ class UkPensionSchemePaymentsControllerISpec extends IntegrationTest with ViewHe
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
-    val expectedTitle = "Do you get UK pension scheme payments?"
-    val expectedHeading = "Do you get UK pension scheme payments?"
+    val expectedTitle = "A ydych chi’n cael taliadau o gynlluniau pensiwn y DU?"
+    val expectedHeading = "A ydych chi’n cael taliadau o gynlluniau pensiwn y DU?"
     val expectedErrorTitle = s"Gwall: $expectedTitle"
     val expectedErrorMessage = "Dewiswch Iawn os cawsoch daliadau o gynlluniau pensiwn y DU"
   }

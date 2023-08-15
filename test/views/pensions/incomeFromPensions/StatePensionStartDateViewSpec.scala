@@ -83,7 +83,7 @@ class StatePensionStartDateViewSpec extends ViewUnitTest with FakeRequestProvide
   object CommonExpectedCY extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Incwm o bensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
     val buttonText = "Yn eich blaen"
-    val expectedHintText = "For example, 27 3 2007"
+    val expectedHintText = "Er enghraifft, 27 3 2007"
     val expectedDayLabel = "Diwrnod"
     val expectedMonthLabel = "Mis"
     val expectedYearLabel = "Blwyddyn"
@@ -95,8 +95,8 @@ class StatePensionStartDateViewSpec extends ViewUnitTest with FakeRequestProvide
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
-    val expectedTitle = "When did you start getting State Pension payments?"
-    val expectedHeading = "When did you start getting State Pension payments?"
+    val expectedTitle = "Pryd y gwnaethoch chi ddechrau cael taliadau Pensiwn y Wladwriaeth?"
+    val expectedHeading = "Pryd y gwnaethoch chi ddechrau cael taliadau Pensiwn y Wladwriaeth?"
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
@@ -105,8 +105,8 @@ class StatePensionStartDateViewSpec extends ViewUnitTest with FakeRequestProvide
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
-    val expectedTitle = "When did your client start getting State Pension payments?"
-    val expectedHeading = "When did your client start getting State Pension payments?"
+    val expectedTitle = "Pryd y gwnaeth eich cleient ddechrau cael taliadau Pensiwn y Wladwriaeth?"
+    val expectedHeading = "Pryd y gwnaeth eich cleient ddechrau cael taliadau Pensiwn y Wladwriaeth?"
   }
 
 

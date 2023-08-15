@@ -18,7 +18,7 @@ package views.pensions.transferIntoOverseasPensions
 
 import builders.TransfersIntoOverseasPensionsViewModelBuilder.{aTransfersIntoOverseasPensionsViewModel, emptyTransfersIntoOverseasPensionsViewModel}
 import controllers.pensions.transferIntoOverseasPensions.routes
-import models.AuthorisationRequest
+import models.requests.UserSessionDataRequest
 import models.pension.charges.TransfersIntoOverseasPensionsViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -76,7 +76,7 @@ class TransferIntoOverseasPensionsCYAViewSpec extends ViewUnitTest {
     val buttonText = "Cadw ac yn eich blaen"
     val yesText = "Iawn"
     val noText = "Na"
-    val noTaxPaidText = "No tax paid"
+    val noTaxPaidText = "Dim treth wedi’i thalu"
     val transfersIOP = "Trosglwyddiadau i bensiynau tramor"
     val transfersIOPChange = "Newid trosglwyddiadau i bensiynau tramor"
     val amountCharged = "Y swm a godir"
@@ -99,7 +99,7 @@ class TransferIntoOverseasPensionsCYAViewSpec extends ViewUnitTest {
 
   private def renderPage(userScenario: UserScenario[CommonExpectedResults, String], model: TransfersIntoOverseasPensionsViewModel): Document = {
     import userScenario.commonExpectedResults._
-    implicit val authorisationRequest: AuthorisationRequest[AnyContent] = getAuthRequest(userScenario.isAgent)
+    implicit val authorisationRequest: UserSessionDataRequest[AnyContent] = getUserSession(userScenario.isAgent)
     implicit val messages: Messages = getMessages(userScenario.isWelsh)
 
     val htmlFormat = underTest(taxYearEOY, model)

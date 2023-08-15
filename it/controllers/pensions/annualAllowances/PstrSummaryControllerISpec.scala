@@ -90,7 +90,7 @@ class PstrSummaryControllerISpec extends IntegrationTest with BeforeAndAfterEach
     val pensionSchemeTaxReference = "Cyfeirnod Treth y Cynllun Pensiwn"
     val expectedAddAnotherText = "Ychwanegu Cyfeirnod Treth ar gyfer Cynllun Pensiwn arall"
     val expectedNeedToAddPensionSchemeText = "You need to add one or more Pensions Scheme Tax Reference (PSTR)."
-    val expectedReturnToOverviewPageText = "If you don’t have a pensions scheme to add you can return to the overview page and come back later."
+    val expectedReturnToOverviewPageText = "Os nad oes gennych gynllun pensiwn i’w ychwanegu, gallwch ddychwelyd i’r trosolwg a dod nôl yn nes ymlaen."
   }
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, Nothing]] = Seq(

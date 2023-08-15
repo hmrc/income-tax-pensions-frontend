@@ -76,8 +76,8 @@ class StatePensionLumpSumStartDateViewSpec extends ViewUnitTest with FakeRequest
     val expectedHint = "You can find this in your P60."
   }
   object ExpectedIndividualCY extends SpecificExpectedResults {
-    val expectedTitle = "When did you get your State Pension lump sum?"
-    val expectedHint = "You can find this in your P60."
+    val expectedTitle = "Pryd cawsoch eich cyfandaliad Pensiwn y Wladwriaeth?"
+    val expectedHint = "Mae hwn i’w weld ar eich P60."
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
@@ -85,8 +85,8 @@ class StatePensionLumpSumStartDateViewSpec extends ViewUnitTest with FakeRequest
     val expectedHint = "They can find this on their P60."
   }
   object ExpectedAgentCY extends SpecificExpectedResults {
-    val expectedTitle = "When did your client get their State Pension lump sum?"
-    val expectedHint = "They can find this on their P60."
+    val expectedTitle = "Pryd cafodd eich cleient gyfandaliad Pensiwn y Wladwriaeth?"
+    val expectedHint = "Mae hwn i’w weld ar ei P60."
   }
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(

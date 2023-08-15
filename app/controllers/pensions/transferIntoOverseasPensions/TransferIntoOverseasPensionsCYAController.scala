@@ -18,12 +18,13 @@ package controllers.pensions.transferIntoOverseasPensions
 
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.routes.OverseasPensionsSummaryController
-import controllers.predicates.actions.AuthorisedAction
+import controllers.predicates.auditActions.AuditActionsProvider
 import controllers.predicates.actions.TaxYearAction.taxYearAction
 import models.mongo.PensionsCYAModel
 import models.pension.AllPensionsData
 import models.pension.AllPensionsData.generateCyaFromPrior
 import models.pension.charges.TransfersIntoOverseasPensionsViewModel
+import models.requests.UserSessionDataRequest
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
@@ -38,7 +39,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class TransferIntoOverseasPensionsCYAController @Inject()(authAction: AuthorisedAction,
+class TransferIntoOverseasPensionsCYAController @Inject()(auditProvider: AuditActionsProvider,
                                                           view: TransferIntoOverseasPensionsCYAView,
                                                           pensionSessionService: PensionSessionService,
                                                           pensionChargesService: PensionChargesService,
@@ -48,51 +49,35 @@ class TransferIntoOverseasPensionsCYAController @Inject()(authAction: Authorised
   extends FrontendController(mcc) with I18nSupport with SessionHelper {
 
 
-  def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
-    pensionSessionService.getAndHandle(taxYear, request.user) { (cya, prior) =>
-      (cya, prior) match {
-        case (Some(data), _) =>
-          val checkRedirect = journeyCheck(TransferIntoOverseasPensionsCYA, _: PensionsCYAModel, taxYear)
-          redirectBasedOnCurrentAnswers(taxYear, cya, cyaPageCall(taxYear))(checkRedirect) {
-            _ =>
+  def show(taxYear: Int): Action[AnyContent] = auditProvider.transfersIntoOverseasPensionsViewAuditing(taxYear) async { implicit sessionDataRequest =>
+    val cyaData = sessionDataRequest.pensionsUserData
+    if (!cyaData.pensions.transfersIntoOverseasPensions.isFinished) {
+      val checkRedirect = journeyCheck(TransferIntoOverseasPensionsCYA, _: PensionsCYAModel, taxYear)
+      redirectBasedOnCurrentAnswers(taxYear, Some(cyaData), cyaPageCall(taxYear))(checkRedirect) { data =>
           Future.successful(Ok(view(taxYear, data.pensions.transfersIntoOverseasPensions)))
-          }
-        case (None, Some(priorData)) =>
-          val cyaModel = generateCyaFromPrior(priorData)
-          pensionSessionService.createOrUpdateSessionData(request.user,
-            cyaModel, taxYear, isPriorSubmission = false)(
-            errorHandler.internalServerError())(
-            Ok(view(taxYear, cyaModel.transfersIntoOverseasPensions))
-          )
-        case (None, None) =>
-          val emptyTransfersIntoOverseasPensions = TransfersIntoOverseasPensionsViewModel()
-          Future.successful(Ok(view(taxYear, emptyTransfersIntoOverseasPensions)))
-        case _ => Future.successful(Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear)))
       }
+    } else {
+      pensionSessionService.createOrUpdateSessionData(sessionDataRequest.user, cyaData.pensions, taxYear, isPriorSubmission = false)(
+        errorHandler.internalServerError())(Ok(view(taxYear, cyaData.pensions.transfersIntoOverseasPensions)))
     }
   }
 
-
-  def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
-    pensionSessionService.getAndHandle(taxYear, request.user) { (cya, prior) =>
-      cya.fold(
-        Future.successful(Redirect(appConfig.incomeTaxSubmissionOverviewUrl(taxYear)))
-      ) { model =>
-        val checkRedirect = journeyCheck(TransferIntoOverseasPensionsCYA, _: PensionsCYAModel, taxYear)
-        redirectBasedOnCurrentAnswers(taxYear, cya, cyaPageCall(taxYear))(checkRedirect) {
-          _ =>
-        if (sessionDataDifferentThanPriorData(model.pensions, prior)) {
-          pensionChargesService.saveTransfersIntoOverseasPensionsViewModel(request.user, taxYear).map {
-            case Left(_) => errorHandler.internalServerError()
-            case Right(_) => Redirect(OverseasPensionsSummaryController.show(taxYear))
+  def submit(taxYear: Int): Action[AnyContent] = auditProvider.transfersIntoOverseasPensionsUpdateAuditing(taxYear) async {
+    implicit request =>
+      val checkRedirect = journeyCheck(TransferIntoOverseasPensionsCYA, _: PensionsCYAModel, taxYear)
+      redirectBasedOnCurrentAnswers(taxYear, Some(request.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) {
+        sessionData =>
+          if (sessionDataDifferentThanPriorData(sessionData.pensions, request.pensions)) {
+            pensionChargesService.saveTransfersIntoOverseasPensionsViewModel(request.user, taxYear).map {
+              case Left(_) => errorHandler.internalServerError()
+              case Right(_) => Redirect(OverseasPensionsSummaryController.show(taxYear))
+            }
+          } else {
+            Future.successful(Redirect(OverseasPensionsSummaryController.show(taxYear)))
           }
-        } else {
-          Future.successful(Redirect(OverseasPensionsSummaryController.show(taxYear)))
-          }
-        }
       }
-    }
   }
+
 
   private def sessionDataDifferentThanPriorData(cyaData: PensionsCYAModel, priorData: Option[AllPensionsData]): Boolean = {
     priorData match {
@@ -100,6 +85,5 @@ class TransferIntoOverseasPensionsCYAController @Inject()(authAction: Authorised
       case Some(prior) => !cyaData.equals(generateCyaFromPrior(prior))
     }
   }
-
 
 }

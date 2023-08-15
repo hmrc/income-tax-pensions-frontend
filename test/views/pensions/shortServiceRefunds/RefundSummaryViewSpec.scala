@@ -85,10 +85,10 @@ class RefundSummaryViewSpec extends ViewUnitTest {
     val remove = "Tynnu"
     val expectedAddAnotherText = "Ychwanegu cynllun pensiwn arall"
     val expectedAddPensionSchemeText = "Add a pension scheme"
-    val addASchemeButton = "Add a scheme"
+    val addASchemeButton = "Ychwanegu cynllun"
     val returnToOverviewButton = "Yn ôl i’r trosolwg"
-    val text1 = "You need to add one or more pension scheme."
-    val text2 = "If you don’t have a pensions scheme to add you can return to the overview page and come back later."
+    val text1 = "Bydd angen i chi ychwanegu un cynllun pensiwn neu fwy."
+    val text2 = "Os nad oes gennych gynllun pensiwn i’w ychwanegu, gallwch ddychwelyd i’r trosolwg a dod nôl yn nes ymlaen."
   }
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, Nothing]] = Seq(

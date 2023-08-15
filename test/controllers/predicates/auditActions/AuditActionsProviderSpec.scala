@@ -78,7 +78,9 @@ class AuditActionsProviderSpec extends ControllerUnitTest
     ("lifetimeAllowancesViewAuditing", auditProvider.lifetimeAllowancesViewAuditing: ActionType),
     ("lifetimeAllowancesUpdateAuditing", auditProvider.lifetimeAllowancesUpdateAuditing: ActionType),
     ("annualAllowancesViewAuditing", auditProvider.annualAllowancesViewAuditing: ActionType),
-    ("annualAllowancesUpdateAuditing", auditProvider.annualAllowancesUpdateAuditing: ActionType)
+    ("annualAllowancesUpdateAuditing", auditProvider.annualAllowancesUpdateAuditing: ActionType),
+    ("transfersIntoOverseasPensionsViewAuditing", auditProvider.transfersIntoOverseasPensionsViewAuditing: ActionType),
+    ("transfersIntoOverseasPensionsUpdateAuditing", auditProvider.transfersIntoOverseasPensionsUpdateAuditing: ActionType)
 
   )) {
 
@@ -215,6 +217,14 @@ class AuditActionsProviderSpec extends ControllerUnitTest
             case "annualAllowancesViewAuditing" =>
               AnnualAllowancesAudit(taxYearEOY, aUser, aPensionsUserData.pensions.pensionsAnnualAllowances, None).toAuditModelView
 
+            case "transfersIntoOverseasPensionsUpdateAuditing" =>
+              val priorData = if (auditType == "amend") anIncomeTaxUserData else anIncomeTaxUserData.copy(pensions = None)
+              mockGetPriorData(taxYearEOY, aUser, Right(priorData))
+              val audModel = TransfersIntoOverseasPensionsAudit(taxYearEOY, aUser, aPensionsUserData.pensions.transfersIntoOverseasPensions,
+                priorData.pensions.map(generateCyaFromPrior).map(_.transfersIntoOverseasPensions))
+              if (audModel.priorTransfersIntoOverseasPensions.isEmpty) audModel.toAuditModelCreate else audModel.toAuditModelAmend
+            case "transfersIntoOverseasPensionsViewAuditing" =>
+              TransfersIntoOverseasPensionsAudit(taxYearEOY, aUser, aPensionsUserData.pensions.transfersIntoOverseasPensions, None).toAuditModelView
           }
 
           mockAuditResult(auditModel, mockedAuditSuccessResult)

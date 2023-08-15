@@ -58,7 +58,7 @@ class RemoveAnnualAllowancePSTRControllerISpec extends IntegrationTest with View
     val expectedTitle = s"A hoffech ddileu’r Cyfeirnod Treth ar gyfer y Cynllun Pensiwn hwn?"
     val expectedCaption: Int => String = (taxYear: Int) => s"Lwfans blynyddol ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
     val buttonText = "Dileu cyfeirnod"
-    val cancelText = "Peidiwch â dileu"
+    val cancelText = "Peidiwch â tynnu"
   }
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, String]] = Seq(

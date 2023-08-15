@@ -86,23 +86,23 @@ class StatePensionCYAViewSpec extends ViewUnitTest { //scalastyle:off magic.numb
 
   object CommonExpectedCY extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Incwm o bensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
-    val statePension: String = "State Pension"
+    val statePension: String = "Pensiwn y Wladwriaeth"
     val hiddenStatePension = "Change state pension"
     val statePensionValue : String = "£166.88"
-    val pensionStartDate: String = "State Pension start date"
+    val pensionStartDate: String = "Dyddiad dechrau Pensiwn y Wladwriaeth"
     val hiddenPensionStartDate: String = "Change State Pension start date"
     val pensionStartDateValue: String = "14 November 2019"
-    val lumpSum = "Lump sum"
+    val lumpSum = "Cyfandaliad"
     val hiddenLumpSum = "Change lump sum"
     val lumpSumValue: String = "£200"
-    val lumpSumTax: String = "Lump sum tax"
+    val lumpSumTax: String = "Treth cyfandaliad"
     val hiddenLumpSumTax: String = "Change Lump sum tax"
     val lumpSumTaxValue: String = "£50"
-    val lumpSumDate: String = "Lump sum date"
+    val lumpSumDate: String = "Dyddiad y cyfandaliad"
     val hiddenLumpSumDate: String = "Change lump sum date"
     val lumpSumDateValue: String = "14 November 2019"
-    val addStatePensionToTaxCalc: String = "State Pension added to tax calculation"
-    val hiddenAddStatePensionToTaxCalc: String = "Change State Pension added to tax calculation"
+    val addStatePensionToTaxCalc: String = "Ychwanegwyd Pensiwn y Wladwriaeth i’r cyfrifiad treth"
+    val hiddenAddStatePensionToTaxCalc: String = "Ychwanegwyd Pensiwn y Wladwriaeth i’r cyfrifiad treth"
     val addStatePensionToTaxCalcAnswer: String = "Na"
     val buttonText: String = "Cadw ac yn eich blaen"
   }
@@ -121,11 +121,11 @@ class StatePensionCYAViewSpec extends ViewUnitTest { //scalastyle:off magic.numb
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
-    val expectedTitle: String = "Check your State Pension"
+    val expectedTitle: String = "Gwirioʼch Pensiwn y Wladwriaeth"
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
-    val expectedTitle: String = "Check your client’s State Pension"
+    val expectedTitle: String = "Gwirio Pensiwn y Wladwriaeth eich cleient"
   }
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(
