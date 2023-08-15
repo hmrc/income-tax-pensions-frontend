@@ -88,7 +88,7 @@ class ReducedAnnualAllowanceControllerISpec extends IntegrationTest with BeforeA
     val expectedInfo = "Lwfans blynyddol yw’r uchafswm y gallwch ei gynilo yn eich cronfeydd pensiwn bob blwyddyn, cyn i chi orfod talu treth."
     val expectedWillBeReducedIf = "Bydd eich lwfans blynyddol yn cael ei ostwng os:"
     val expectedExample1 = "rydych yn cyrchu eich pensiwn yn hyblyg"
-    val expectedExample2 = "mae eich ‘incwm trothwy’ yn ogystal â’ch ‘incwm wedi’i addasu’ yn dros y terfyn (yn agor tab newydd)"
+    val expectedExample2 = "mae’ch ‘incwm trothwy’, yn ogystal â’ch ‘incwm wedi’i addasu’ dros y terfyn (yn agor tab newydd)"
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
@@ -98,7 +98,7 @@ class ReducedAnnualAllowanceControllerISpec extends IntegrationTest with BeforeA
     val expectedInfo = "Lwfans blynyddol yw’r uchafswm y gall eich cleient ei gynilo yn ei gronfeydd pensiwn bob blwyddyn, cyn iddo orfod talu treth."
     val expectedWillBeReducedIf = "Bydd lwfans blynyddol eich cleient yn cael ei ostwng os:"
     val expectedExample1 = "mae’n cyrchu ei bensiwn yn hyblyg"
-    val expectedExample2 = "mae ei ‘incwm trothwy’ yn ogystal â’i ‘incwm wedi’i addasu’ yn dros y terfyn (yn agor tab newydd)"
+    val expectedExample2 = "mae’ch ‘incwm trothwy’, yn ogystal â’ch ‘incwm wedi’i addasu’ dros y terfyn (yn agor tab newydd)"
   }
 
   trait CommonExpectedResults {

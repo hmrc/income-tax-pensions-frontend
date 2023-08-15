@@ -111,7 +111,7 @@ common.pensionSchemeTaxReference.error.noEntry.agent = Nodwch Gyfeirnod Treth Cy
 common.pensionSchemeTaxReference.p1 = Os bydd mwy nag un cynllun pensiwn yn talu neu wedi cytuno i dalu’r dreth, gallwch eu hychwanegu nes ymlaen.
 common.pensionSchemeTaxReference.addAnotherPstrLink = Ychwanegu PSTR arall
 common.pensionSchemeTaxReference.addAPstrLink = You need to add one or more Pensions Scheme Tax Reference (PSTR).
-common.addAnotherPstrLink = Ychwanegu Cyfeirnod Treth ar gyfer Cynllun Pensiwn arall
+common.addAnotherPstrLink = Ychwanegu Cyfeirnod Treth Cynllun Pensiwn arall
 common.addPstrLink = Ychwanegu PSTR
 
 #################       Common overseas pensions        ########################################
@@ -405,7 +405,7 @@ annualAllowance.reducedAnnualAllowance.willBeReducedIf.individual = Bydd eich lw
 annualAllowance.reducedAnnualAllowance.willBeReducedIf.agent = Bydd lwfans blynyddol eich cleient yn cael ei ostwng os:
 annualAllowance.reducedAnnualAllowance.bullet1.individual = rydych yn cyrchu eich pensiwn yn hyblyg
 annualAllowance.reducedAnnualAllowance.bullet1.agent = mae’n cyrchu ei bensiwn yn hyblyg
-annualAllowance.reducedAnnualAllowance.bullet2.individual = mae eich ‘incwm trothwy’ yn ogystal â’ch ‘incwm wedi’i addasu’ yn
+annualAllowance.reducedAnnualAllowance.bullet2.individual = mae’ch ‘incwm trothwy’, yn ogystal â’ch ‘incwm wedi’i addasu’
 annualAllowance.reducedAnnualAllowance.bullet2.agent = mae ei ‘incwm trothwy’ yn ogystal â’i ‘incwm wedi’i addasu’ yn
 annualAllowance.reducedAnnualAllowance.details.title = Beth y mae’n ei olygu i gyrchu eich pensiwn yn hyblyg?
 annualAllowance.reducedAnnualAllowance.details.thisIncludes = Gallai hyn gynnwys cymryd:
@@ -477,7 +477,7 @@ pensions.pensionsProviderPaidTax.error.incorrectFormat.agent = Nodwch swm y dret
 
 #Pension Scheme Tax Reference Messages
 pension.pensionSchemeTaxReference.paragraph1 = Nodwch y cyfeirnod ar gyfer y cynllun pensiwn a dalodd y dreth.
-pension.pensionSchemeTaxReference.title = A hoffech ddileu’r Cyfeirnod Treth ar gyfer y Cynllun Pensiwn hwn?
+pension.pensionSchemeTaxReference.title = A hoffech ddileu’r Cyfeirnod Treth Cynllun Pensiwn hwn?
 pension.pensionSchemeTaxReference.error.noEntry.individual = Nodwch eich PSTR
 pension.pensionSchemeTaxReference.error.incorrectFormat.individual = Nodwch eich PSTR yn y fformat cywir
 pension.pensionSchemeTaxReference.error.noEntry.agent = Nodwch PSTR eich cleient
@@ -865,7 +865,7 @@ employerFinancedRetirementScheme.benefitsFromScheme.error.agent = Dewiswch ‘Ia
 
 #Unauthorised payments from UK pensions schemes
 unauthorisedPayments.pensionSchemeDetails.title = Taliadau heb awdurdod o gynlluniau pensiwn yn y DU
-unauthorisedPayments.pensionSchemeDetails.addAnotherPensionSchemeTaxReference = Ychwanegu Cyfeirnod Treth ar gyfer Cynllun Pensiwn arall
+unauthorisedPayments.pensionSchemeDetails.addAnotherPensionSchemeTaxReference = Ychwanegu Cyfeirnod Treth Cynllun Pensiwn arall
 unauthorisedPayments.pensionSchemeDetails.addPensionSchemeTaxReference = Ychwanegu Cyfeirnod Treth ar gyfer Cynllun Pensiwn
 
 #Remove unauthorised payments from UK pensions schemes
