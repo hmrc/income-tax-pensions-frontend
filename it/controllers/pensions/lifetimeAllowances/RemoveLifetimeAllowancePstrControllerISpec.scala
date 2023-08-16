@@ -54,10 +54,10 @@ class RemoveLifetimeAllowancePstrControllerISpec extends IntegrationTest with Vi
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedTitle = s"A hoffech ddileu’r Cyfeirnod Treth ar gyfer y Cynllun Pensiwn hwn?"
+    val expectedTitle = s"A hoffech ddileu’r Cyfeirnod Treth Cynllun Pensiwn hwn?"
     val expectedCaption: Int => String = (taxYear: Int) => s"Lwfansau oes ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
     val buttonText = "Dileu cyfeirnod"
-    val cancelText = "Peidiwch â tynnu"
+    val cancelText = "Peidiwch â thynnu"
   }
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, String]] = Seq(

@@ -88,7 +88,7 @@ class LifetimePstrSummaryControllerISpec extends IntegrationTest with BeforeAndA
     val change = "Newid"
     val remove = "Tynnu"
     val pensionSchemeTaxReference = "Cyfeirnod Treth y Cynllun Pensiwn"
-    val expectedAddAnotherText = "Ychwanegu Cyfeirnod Treth ar gyfer Cynllun Pensiwn arall"
+    val expectedAddAnotherText = "Ychwanegu Cyfeirnod Treth Cynllun Pensiwn arall"
     val expectedAddPstrButtonText = "Ychwanegu PSTR"
     val expectedOverviewButtonText = "Yn ôl i’r trosolwg"
     val expectedNeedToAddPensionSchemeText = "You need to add one or more Pensions Scheme Tax Reference (PSTR)."
