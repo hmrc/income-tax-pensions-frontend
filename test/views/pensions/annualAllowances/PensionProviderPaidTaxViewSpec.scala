@@ -56,7 +56,7 @@ class PensionProviderPaidTaxViewSpec extends ViewUnitTest {
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedCaption: Int => String = taxYear => s"Lwfansau blynyddol ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
+    val expectedCaption: Int => String = taxYear => s"Lwfans blynyddol ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
     val amountText ="Y swm a dalwyd ganddo, neu’r swm a gytunodd i’w dalu, mewn punnoedd"
     val amountHint = "Er enghraifft, £193.52"
     val yesText = "Iawn"

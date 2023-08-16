@@ -55,10 +55,10 @@ class RemoveAnnualAllowancePSTRControllerISpec extends IntegrationTest with View
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedTitle = s"Do you want to remove this Pension Scheme Tax Reference?"
-    val expectedCaption: Int => String = (taxYear: Int) => s"Annual allowance for 6 April ${taxYear - 1} to 5 April $taxYear"
+    val expectedTitle = s"A hoffech ddileu’r Cyfeirnod Treth Cynllun Pensiwn hwn?"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Lwfans blynyddol ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
     val buttonText = "Dileu cyfeirnod"
-    val cancelText = "Peidiwch â tynnu"
+    val cancelText = "Peidiwch â thynnu"
   }
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, String]] = Seq(

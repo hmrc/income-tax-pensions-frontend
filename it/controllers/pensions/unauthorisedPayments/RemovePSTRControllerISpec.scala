@@ -59,7 +59,7 @@ class RemovePSTRControllerISpec extends IntegrationTest with CommonUtils with Vi
     val expectedTitle = s"A hoffech ddileu’r Cyfeirnod Treth ar gyfer y Cynllun Pensiwn hwn?"
     val expectedCaption: Int => String = (taxYear: Int) => s"Taliadau heb awdurdod o bensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
     val buttonText = "Dileu cyfeirnod"
-    val cancelText = "Peidiwch â tynnu"
+    val cancelText = "Peidiwch â thynnu"
   }
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, String]] = Seq(

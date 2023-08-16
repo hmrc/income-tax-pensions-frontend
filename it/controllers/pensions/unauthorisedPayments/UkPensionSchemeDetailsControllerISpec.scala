@@ -72,7 +72,7 @@ class UkPensionSchemeDetailsControllerISpec extends IntegrationTest with BeforeA
     val expectedHeading = "Taliadau heb awdurdod o gynlluniau pensiwn yn y DU"
     val change = "Newid"
     val remove = "Tynnu"
-    val expectedAddAnotherText = "Ychwanegu Cyfeirnod Treth ar gyfer Cynllun Pensiwn arall"
+    val expectedAddAnotherText = "Ychwanegu Cyfeirnod Treth Cynllun Pensiwn arall"
     val expectedAddPensionSchemeText = "Ychwanegu Cyfeirnod Treth ar gyfer Cynllun Pensiwn"
   }
 

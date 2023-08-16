@@ -82,13 +82,13 @@ class LifetimePstrSummaryControllerISpec extends IntegrationTest with BeforeAndA
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Lifetime allowances for 6 April ${taxYear - 1} to 5 April $taxYear"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Lwfansau oes ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
     val expectedButtonText = "Yn eich blaen"
     val expectedTitle = "Pension schemes that paid or agreed to pay lifetime allowance tax"
     val change = "Newid"
     val remove = "Tynnu"
     val pensionSchemeTaxReference = "Cyfeirnod Treth y Cynllun Pensiwn"
-    val expectedAddAnotherText = "Ychwanegu Cyfeirnod Treth ar gyfer Cynllun Pensiwn arall"
+    val expectedAddAnotherText = "Ychwanegu Cyfeirnod Treth Cynllun Pensiwn arall"
     val expectedAddPstrButtonText = "Ychwanegu PSTR"
     val expectedOverviewButtonText = "Yn ôl i’r trosolwg"
     val expectedNeedToAddPensionSchemeText = "You need to add one or more Pensions Scheme Tax Reference (PSTR)."

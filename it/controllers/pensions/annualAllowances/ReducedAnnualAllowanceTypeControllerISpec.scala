@@ -130,7 +130,7 @@ class ReducedAnnualAllowanceTypeControllerISpec extends IntegrationTest with Bef
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Lwfansau blynyddol ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Lwfans blynyddol ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
     val checkboxHint = "Dewiswch bob un sy’n berthnasol."
     val checkboxMoneyPurchaseText = "Lwfans blynyddol pryniannau arian"
     val checkboxTaperedText = "Lwfans blynyddol wedi’i feinhau"
