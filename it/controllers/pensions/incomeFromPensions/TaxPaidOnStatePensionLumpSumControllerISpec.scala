@@ -27,7 +27,7 @@ import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import utils.PageUrls.IncomeFromPensionsPages.{statePension, statePensionCyaUrl, statePensionLumpSumStartDateUrl, taxOnLumpSumUrl}
-import utils.PageUrls.{fullUrl, overviewUrl}
+import utils.PageUrls.fullUrl
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 // scalastyle:off magic.number
@@ -120,24 +120,6 @@ class TaxPaidOnStatePensionLumpSumControllerISpec extends IntegrationTest with B
 
         result.status shouldBe BAD_REQUEST
       }
-    }
-
-    "redirect to the overview page if it is not end of year" in {
-      lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.yes)
-
-      lazy val result: WSResponse = {
-        dropPensionsDB()
-        val pensionsViewModel = aStatePensionIncomeFromPensionsNoAddToCalculationViewModel.copy(statePensionLumpSum =
-          Some(anStateBenefitViewModelOne.copy(taxPaidQuestion = None)))
-        insertCyaData(pensionsUserDataWithIncomeFromPensions(pensionsViewModel))
-        authoriseAgentOrIndividual()
-
-        urlPost(fullUrl(taxOnLumpSumUrl(taxYear)), body = form, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
-      }
-
-      result.status shouldBe SEE_OTHER
-      result.header("location") shouldBe Some(overviewUrl(taxYear))
     }
 
     "redirect to the 'State Pension Lump Sum start date' page and update question to 'Yes' with correct taxPaid amount" in {

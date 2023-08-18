@@ -29,7 +29,7 @@ import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import utils.PageUrls.IncomeFromPensionsPages.{statePension, statePensionCyaUrl, statePensionLumpSumUrl, statePensionStartDateUrl}
-import utils.PageUrls.{fullUrl, overviewUrl}
+import utils.PageUrls.fullUrl
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 import java.time.LocalDate
@@ -77,19 +77,6 @@ class StatePensionStartDateControllerISpec extends IntegrationTest with ViewHelp
   val expectedErrorTitle = "Error: When did you start getting State Pension payments?"
 
   ".show" should {
-    "redirect to Overview Page when in year" in {
-      lazy implicit val result: WSResponse = {
-        dropPensionsDB()
-        authoriseAgentOrIndividual(aUser.isAgent)
-        insertCyaData(aPensionsUserData)
-        urlGet(fullUrl(statePensionStartDateUrl(taxYear)), !aUser.isAgent, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
-      }
-
-      result.status shouldBe SEE_OTHER
-      result.headers("Location").head shouldBe overviewUrl(taxYear)
-    }
-
     "show page when EOY" in {
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
@@ -123,22 +110,6 @@ class StatePensionStartDateControllerISpec extends IntegrationTest with ViewHelp
   }
 
   ".submit" should {
-    "redirect to overview when in year" in {
-      lazy implicit val result: WSResponse = {
-        dropPensionsDB()
-        authoriseAgentOrIndividual(aUser.isAgent)
-        val formData = startDateForm(validDay, validMonth, validYear)
-        insertCyaData(aPensionsUserData)
-        urlPost(
-          fullUrl(statePensionStartDateUrl(taxYear)),
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)),
-          follow = false,
-          body = formData)
-      }
-      result.status shouldBe SEE_OTHER
-      result.headers("location").head shouldBe overviewUrl(taxYear)
-    }
-
     "persist amount and redirect to StatePensionLumpSum page" in {
       val formData = startDateForm(validDay, validMonth, validYear)
       val viewModel = IncomeFromPensionsViewModel(statePension = Some(aStatePensionViewModel.copy(

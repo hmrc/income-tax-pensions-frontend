@@ -48,7 +48,7 @@ class StatePensionStartDateController @Inject()(actionsProvider: ActionsProvider
                                                 appConfig: AppConfig,
                                                 ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport with SessionHelper {
 
-  def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
+  def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataForInYear(taxYear) async {
     implicit userSessionDataRequest: UserSessionDataRequest[AnyContent] =>
 
       val checkRedirect = journeyCheck(WhenDidYouStartGettingStatePaymentsPage, _, taxYear)
@@ -73,7 +73,7 @@ class StatePensionStartDateController @Inject()(actionsProvider: ActionsProvider
     }
   }
 
-  def submit(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
+  def submit(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataForInYear(taxYear) async {
     implicit userSessionDataRequest =>
       val checkRedirect = journeyCheck(WhenDidYouStartGettingStatePaymentsPage, _, taxYear)
       redirectBasedOnCurrentAnswers(taxYear, Some(userSessionDataRequest.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) { data =>

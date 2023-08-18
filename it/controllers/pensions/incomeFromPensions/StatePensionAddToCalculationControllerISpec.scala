@@ -31,7 +31,7 @@ import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import utils.PageUrls.IncomeFromPensionsPages.{addToCalculationUrl, statePension, statePensionCyaUrl}
-import utils.PageUrls.{fullUrl, overviewUrl}
+import utils.PageUrls.fullUrl
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 class StatePensionAddToCalculationControllerISpec extends IntegrationTest
@@ -140,22 +140,6 @@ class StatePensionAddToCalculationControllerISpec extends IntegrationTest
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
       result.status shouldBe BAD_REQUEST
-    }
-
-    "redirect if not within Tax Year" in {
-      lazy implicit val result: WSResponse = {
-        dropPensionsDB()
-        authoriseAgentOrIndividual(aUser.isAgent)
-        val form: Map[String, String] = Map(RadioButtonForm.value -> "false")
-        insertCyaData(pensionsUsersData(aPensionsCYAModel))
-        urlPost(
-          fullUrl(statePension(taxYear)),
-          body = form,
-          follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
-      }
-      result.status shouldBe SEE_OTHER
-      result.header("location").contains(overviewUrl(taxYear)) shouldBe true
     }
   }
 }
