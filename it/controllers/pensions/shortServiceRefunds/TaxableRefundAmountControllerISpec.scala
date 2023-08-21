@@ -22,13 +22,12 @@ import builders.PensionsUserDataBuilder
 import builders.ShortServiceRefundsViewModelBuilder.{aShortServiceRefundsViewModel, emptyShortServiceRefundsViewModel, minimalShortServiceRefundsViewModel}
 import builders.UserBuilder.{aUser, aUserRequest}
 import forms.RadioButtonAmountForm
-import forms.RadioButtonAmountForm.{amount2, yesNo}
 import models.mongo.PensionsCYAModel
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import utils.PageUrls.ShortServiceRefunds.{nonUkTaxRefundsUrl, shortServiceRefundsCYAUrl, shortServiceTaxableRefundUrl}
-import utils.PageUrls.{fullUrl, overviewUrl}
+import utils.PageUrls.fullUrl
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 
