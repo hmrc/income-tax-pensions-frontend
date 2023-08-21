@@ -45,7 +45,7 @@ class RemoveRefundSchemeController @Inject()(actionsProvider: ActionsProvider,
                                              appConfig: AppConfig, clock: Clock)
   extends FrontendController(mcc) with I18nSupport with SessionHelper {
 
-  def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionUserData =>
+  def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataForInYear(taxYear) async { implicit sessionUserData =>
     val refundChargeScheme = sessionUserData.pensionsUserData.pensions.shortServiceRefunds.refundPensionScheme
     validatedIndex(index, refundChargeScheme.size).fold(Future.successful(Redirect(RefundSummaryController.show(taxYear)))) {
       i =>
@@ -59,7 +59,7 @@ class RemoveRefundSchemeController @Inject()(actionsProvider: ActionsProvider,
     }
   }
 
-  def submit(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionUserData =>
+  def submit(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataForInYear(taxYear) async { implicit sessionUserData =>
     val refundChargeScheme = sessionUserData.pensionsUserData.pensions.shortServiceRefunds.refundPensionScheme
     validatedIndex(index, refundChargeScheme.size)
       .fold(Future.successful(Redirect(RefundSummaryController.show(taxYear)))) {

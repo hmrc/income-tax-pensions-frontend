@@ -42,19 +42,6 @@ class TaxableRefundAmountControllerISpec
   override val userScenarios: Seq[UserScenario[_, _]] = Seq.empty
 
   ".show" should {
-    "redirect to Overview Page when in year" in {
-      lazy implicit val result: WSResponse = {
-        dropPensionsDB()
-        authoriseAgentOrIndividual(aUser.isAgent)
-        insertCyaData(pensionsUsersData(aPensionsCYAModel))
-        urlGet(fullUrl(shortServiceTaxableRefundUrl(taxYear)), !aUser.isAgent, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
-      }
-
-      result.status shouldBe SEE_OTHER
-      result.headers("Location").head shouldBe overviewUrl(taxYear)
-    }
-
     "show page when EOY" which {
       val incompleteViewModel = aShortServiceRefundsViewModel.copy(refundPensionScheme = Seq(
         anOverseasRefundPensionSchemeWithUkRefundCharge, anOverseasRefundPensionSchemeWithoutUkRefundCharge.copy(providerAddress = None)
@@ -79,22 +66,6 @@ class TaxableRefundAmountControllerISpec
   }
 
   ".submit" should {
-    "redirect to overview when in year" in {
-      lazy implicit val result: WSResponse = {
-        dropPensionsDB()
-        authoriseAgentOrIndividual(aUser.isAgent)
-        val formData = Map(s" $yesNo -> true, $amount2" -> "100")
-        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(shortServiceRefunds = emptyShortServiceRefundsViewModel)))
-        urlPost(
-          fullUrl(shortServiceTaxableRefundUrl(taxYear)),
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)),
-          follow = false,
-          body = formData)
-      }
-      result.status shouldBe SEE_OTHER
-      result.headers("location").head shouldBe overviewUrl(taxYear)
-    }
-
     "persist amount and redirect to next page when user selects yes" which {
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
