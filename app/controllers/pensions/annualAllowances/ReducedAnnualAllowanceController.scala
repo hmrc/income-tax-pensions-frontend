@@ -45,7 +45,7 @@ class ReducedAnnualAllowanceController @Inject()(implicit val cc: MessagesContro
                                                  formsProvider: FormsProvider,
                                                  errorHandler: ErrorHandler,
                                                  clock: Clock) extends FrontendController(cc) with I18nSupport {
-  def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit request =>
+  def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataForInYear(taxYear) async { implicit request =>
     val checkRedirect = journeyCheck(ReducedAnnualAllowancePage, _: PensionsCYAModel, taxYear)
     redirectBasedOnCurrentAnswers(taxYear, Some(request.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) {
       data =>
@@ -57,7 +57,7 @@ class ReducedAnnualAllowanceController @Inject()(implicit val cc: MessagesContro
     }
   }
 
-  def submit(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit request =>
+  def submit(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataForInYear(taxYear) async { implicit request =>
     val checkRedirect = journeyCheck(ReducedAnnualAllowancePage, _: PensionsCYAModel, taxYear)
     redirectBasedOnCurrentAnswers(taxYear, Some(request.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) {
       data =>

@@ -45,7 +45,7 @@ class RemoveOverseasIncomeSchemeController @Inject()(actionsProvider: ActionsPro
                                                      appConfig: AppConfig, clock: Clock)
   extends FrontendController(mcc) with I18nSupport with SessionHelper {
 
-  def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionUserData =>
+  def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataForInYear(taxYear) async { implicit sessionUserData =>
     val overseasIncomeSchemes = sessionUserData.pensionsUserData.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes
     validatedIndex(index, overseasIncomeSchemes.size).fold(Future.successful(Redirect(CountrySummaryListController.show(taxYear)))) {
       i =>
@@ -59,7 +59,7 @@ class RemoveOverseasIncomeSchemeController @Inject()(actionsProvider: ActionsPro
     }
   }
 
-  def submit(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionUserData =>
+  def submit(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataForInYear(taxYear) async { implicit sessionUserData =>
     val overseasIncomeSchemes = sessionUserData.pensionsUserData.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes
     validatedIndex(index, overseasIncomeSchemes.size)
       .fold(Future.successful(Redirect(CountrySummaryListController.show(taxYear)))) {

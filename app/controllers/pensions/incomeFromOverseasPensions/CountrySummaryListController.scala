@@ -39,7 +39,7 @@ class CountrySummaryListController @Inject()(actionsProvider: ActionsProvider, c
                                             (implicit mcc: MessagesControllerComponents, appConfig: AppConfig, ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport with SessionHelper {
 
-  def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionUserData =>
+  def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataForInYear(taxYear) async { implicit sessionUserData =>
     cleanUpSchemes(sessionUserData.pensionsUserData).flatMap({
       case Right(updatedUserData) =>
         val checkRedirect = journeyCheck(CountrySchemeSummaryListPage, _: PensionsCYAModel, taxYear)
