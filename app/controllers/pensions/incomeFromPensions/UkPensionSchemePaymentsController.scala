@@ -53,54 +53,50 @@ class UkPensionSchemePaymentsController @Inject()(implicit val mcc: MessagesCont
   )
 
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
-    inYearAction.notInYear(taxYear) {
-      pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
-        case Some(data) =>
-          cleanUpSchemes(data).flatMap({
-            case Right(updatedUserData) =>
-              val checkRedirect = journeyCheck(DoYouGetUkPensionSchemePaymentsPage, _: PensionsCYAModel, taxYear)
-              redirectBasedOnCurrentAnswers(taxYear, Some(updatedUserData), cyaPageCall(taxYear))(checkRedirect) {
-                data =>
-                  data.pensions.incomeFromPensions.uKPensionIncomesQuestion match {
-                    case Some(value) => Future.successful(Ok(view(yesNoForm(request.user).fill(value), taxYear)))
-                    case _ => Future.successful(Ok(view(yesNoForm(request.user), taxYear)))
-                  }
-              }
-          })
+    pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
+      case Some(data) =>
+        cleanUpSchemes(data).flatMap({
+          case Right(updatedUserData) =>
+            val checkRedirect = journeyCheck(DoYouGetUkPensionSchemePaymentsPage, _: PensionsCYAModel, taxYear)
+            redirectBasedOnCurrentAnswers(taxYear, Some(updatedUserData), cyaPageCall(taxYear))(checkRedirect) {
+              data =>
+                data.pensions.incomeFromPensions.uKPensionIncomesQuestion match {
+                  case Some(value) => Future.successful(Ok(view(yesNoForm(request.user).fill(value), taxYear)))
+                  case _ => Future.successful(Ok(view(yesNoForm(request.user), taxYear)))
+                }
+            }
+        })
 
-        case _ => Future.successful(Ok(view(yesNoForm(request.user), taxYear)))
-      }
+      case _ => Future.successful(Ok(view(yesNoForm(request.user), taxYear)))
     }
   }
 
   def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
-    inYearAction.notInYear(taxYear) {
-      yesNoForm(request.user).bindFromRequest().fold(
-        formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
-        yesNo => {
-          pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
-            optData =>
-              val checkRedirect = journeyCheck(DoYouGetUkPensionSchemePaymentsPage, _: PensionsCYAModel, taxYear)
-              redirectBasedOnCurrentAnswers(taxYear, optData, cyaPageCall(taxYear))(checkRedirect) { _ =>
-                val pensionsCYAModel: PensionsCYAModel = optData.map(_.pensions).getOrElse(PensionsCYAModel.emptyModels)
-                val viewModel: IncomeFromPensionsViewModel = pensionsCYAModel.incomeFromPensions
-                val updatedCyaModel: PensionsCYAModel = {
-                  pensionsCYAModel.copy(
-                    incomeFromPensions = viewModel.copy(uKPensionIncomesQuestion = Some(yesNo),
-                      uKPensionIncomes = if (yesNo) viewModel.uKPensionIncomes else Seq.empty))
-                }
-                pensionSessionService.createOrUpdateSessionData(request.user,
-                  updatedCyaModel, taxYear, optData.exists(_.isPriorSubmission))(errorHandler.internalServerError()) {
-                  Redirect(
-                    if (yesNo) redirectForSchemeLoop(schemes = updatedCyaModel.incomeFromPensions.uKPensionIncomes, taxYear)
-                    else UkPensionIncomeCYAController.show(taxYear)
-                  )
-                }
+    yesNoForm(request.user).bindFromRequest().fold(
+      formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
+      yesNo => {
+        pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
+          optData =>
+            val checkRedirect = journeyCheck(DoYouGetUkPensionSchemePaymentsPage, _: PensionsCYAModel, taxYear)
+            redirectBasedOnCurrentAnswers(taxYear, optData, cyaPageCall(taxYear))(checkRedirect) { _ =>
+              val pensionsCYAModel: PensionsCYAModel = optData.map(_.pensions).getOrElse(PensionsCYAModel.emptyModels)
+              val viewModel: IncomeFromPensionsViewModel = pensionsCYAModel.incomeFromPensions
+              val updatedCyaModel: PensionsCYAModel = {
+                pensionsCYAModel.copy(
+                  incomeFromPensions = viewModel.copy(uKPensionIncomesQuestion = Some(yesNo),
+                    uKPensionIncomes = if (yesNo) viewModel.uKPensionIncomes else Seq.empty))
               }
-          }
+              pensionSessionService.createOrUpdateSessionData(request.user,
+                updatedCyaModel, taxYear, optData.exists(_.isPriorSubmission))(errorHandler.internalServerError()) {
+                Redirect(
+                  if (yesNo) redirectForSchemeLoop(schemes = updatedCyaModel.incomeFromPensions.uKPensionIncomes, taxYear)
+                  else UkPensionIncomeCYAController.show(taxYear)
+                )
+              }
+            }
         }
-      )
-    }
+      }
+    )
   }
 
   private def cleanUpSchemes(pensionsUserData: PensionsUserData)(implicit ec: ExecutionContext): Future[Either[DatabaseError, PensionsUserData]] = {

@@ -45,7 +45,7 @@ class StatePensionController @Inject()(actionsProvider: ActionsProvider,
                                        appConfig: AppConfig,
                                        clock: Clock) extends FrontendController(mcc) with I18nSupport with SessionHelper {
 
-  def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
+  def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataForInYear(taxYear) async {
     implicit sessionData =>
       val maybeYesNo: Option[Boolean] =
         sessionData.pensionsUserData.pensions.incomeFromPensions.statePension.flatMap(_.amountPaidQuestion)
@@ -59,19 +59,17 @@ class StatePensionController @Inject()(actionsProvider: ActionsProvider,
       }
   }
 
-  def submit(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
+  def submit(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataForInYear(taxYear) async {
     implicit sessionData =>
-      inYearAction.notInYear(taxYear) {
-        formsProvider.statePensionForm(sessionData.user).bindFromRequest().fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
-          yesNoAmount => {
-            (yesNoAmount._1, yesNoAmount._2) match {
-              case (true, amount) => updateSessionData(sessionData.pensionsUserData, yesNo = true, amount, taxYear)
-              case (false, _) => updateSessionData(sessionData.pensionsUserData, yesNo = false, None, taxYear)
-            }
+      formsProvider.statePensionForm(sessionData.user).bindFromRequest().fold(
+        formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
+        yesNoAmount => {
+          (yesNoAmount._1, yesNoAmount._2) match {
+            case (true, amount) => updateSessionData(sessionData.pensionsUserData, yesNo = true, amount, taxYear)
+            case (false, _) => updateSessionData(sessionData.pensionsUserData, yesNo = false, None, taxYear)
           }
-        )
-      }
+        }
+      )
   }
 
   private def updateSessionData[T](pensionUserData: PensionsUserData,

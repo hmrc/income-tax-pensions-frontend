@@ -141,22 +141,6 @@ class StatePensionControllerISpec extends IntegrationTest with ViewHelpers with 
       }
       result.status shouldBe BAD_REQUEST
     }
-
-    "redirect to the Overview page if not within Tax Year" in {
-      lazy implicit val result: WSResponse = {
-        dropPensionsDB()
-        authoriseAgentOrIndividual(aUser.isAgent)
-        val form: Map[String, String] = Map(RadioButtonAmountForm.yesNo -> "false")
-        insertCyaData(pensionsUsersData(aPensionsCYAModel))
-        urlPost(
-          fullUrl(statePension(taxYear)),
-          body = form,
-          follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
-      }
-      result.status shouldBe SEE_OTHER
-      result.header("location").contains(overviewUrl(taxYear)) shouldBe true
-    }
   }
 }
 

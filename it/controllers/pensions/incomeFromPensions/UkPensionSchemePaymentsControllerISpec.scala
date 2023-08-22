@@ -30,7 +30,7 @@ import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import utils.PageUrls.IncomeFromPensionsPages.{ukPensionIncomeCyaUrl, ukPensionSchemePayments, ukPensionSchemeSummaryListUrl}
-import utils.PageUrls.{fullUrl, overviewUrl}
+import utils.PageUrls.fullUrl
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 class UkPensionSchemePaymentsControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
@@ -214,22 +214,6 @@ class UkPensionSchemePaymentsControllerISpec extends IntegrationTest with ViewHe
         result.status shouldBe OK
       }
     }
-
-    "Redirect user to the pension summary page when in year" which {
-
-      lazy val result: WSResponse = {
-        dropPensionsDB()
-        authoriseAgentOrIndividual()
-        val pensionsViewModel = anIncomeFromPensionsViewModel.copy(uKPensionIncomesQuestion = None)
-        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(incomeFromPensions = pensionsViewModel)))
-        urlGet(fullUrl(ukPensionSchemePayments(taxYear)), follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
-      }
-
-      "has an SEE_OTHER(303) status" in {
-        result.status shouldBe SEE_OTHER
-        result.header("location").contains(overviewUrl(taxYear)) shouldBe true
-      }
-    }
   }
 
   ".submit" should {
@@ -321,31 +305,6 @@ class UkPensionSchemePaymentsControllerISpec extends IntegrationTest with ViewHe
         cyaModel.pensions.incomeFromPensions.uKPensionIncomes shouldBe Seq.empty
       }
 
-    }
-
-    "redirect user to the pension summary page when in year" which {
-      lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.yes)
-      lazy val result: WSResponse = {
-
-        dropPensionsDB()
-        authoriseAgentOrIndividual()
-        userDataStub(anIncomeTaxUserData, nino, taxYear)
-        val pensionsViewModel = anIncomeFromPensionsViewModel.copy(uKPensionIncomesQuestion = Some(true))
-        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(incomeFromPensions = pensionsViewModel)))
-        urlPost(fullUrl(ukPensionSchemePayments(taxYear)), body = form, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
-      }
-
-      "has an SEE_OTHER(303) status" in {
-        result.status shouldBe SEE_OTHER
-        result.header("location").contains(overviewUrl(taxYear)) shouldBe true
-      }
-
-      "updates uKPensionIncomesQuestion to Some(true) and check pensions is not empty" in {
-        lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
-        cyaModel.pensions.incomeFromPensions.uKPensionIncomesQuestion shouldBe Some(true)
-        Seq(cyaModel.pensions.incomeFromPensions.uKPensionIncomes).length.shouldBe(1)
-      }
     }
   }
 }
