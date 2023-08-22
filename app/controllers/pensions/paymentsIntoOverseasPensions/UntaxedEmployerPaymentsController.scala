@@ -44,7 +44,7 @@ class UntaxedEmployerPaymentsController @Inject()(actionsProvider: ActionsProvid
                                                   ec: ExecutionContext)
   extends FrontendController(cc) with I18nSupport {
 
-  def show(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionUserData =>
+  def show(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataForInYear(taxYear) async { implicit sessionUserData =>
     val piopSessionData = sessionUserData.pensionsUserData.pensions.paymentsIntoOverseasPensions
 
     indexCheckThenJourneyCheck(sessionUserData.pensionsUserData, pensionSchemeIndex, UntaxedEmployerPaymentsPage, taxYear) { _: Relief =>
@@ -55,7 +55,7 @@ class UntaxedEmployerPaymentsController @Inject()(actionsProvider: ActionsProvid
   }
 
   def submit(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = {
-    actionsProvider.userSessionDataFor(taxYear).async { implicit sessionUserData =>
+    actionsProvider.userSessionDataForInYear(taxYear).async { implicit sessionUserData =>
       val piopSessionData = sessionUserData.pensionsUserData.pensions.paymentsIntoOverseasPensions
 
       indexCheckThenJourneyCheck(sessionUserData.pensionsUserData, pensionSchemeIndex, UntaxedEmployerPaymentsPage, taxYear) { _: Relief =>

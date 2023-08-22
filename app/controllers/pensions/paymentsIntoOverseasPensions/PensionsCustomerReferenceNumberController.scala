@@ -50,7 +50,7 @@ class PensionsCustomerReferenceNumberController @Inject()(actionsProvider: Actio
     incorrectFormatMsg = s"overseasPension.pensionsCustomerReferenceNumber.error.noEntry.${if (user.isAgent) "agent" else "individual"}"
   )
 
-  def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
+  def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataForInYear(taxYear) async {
     implicit sessionDataRequest =>
       index match {
         case Some(_) =>
@@ -72,7 +72,7 @@ class PensionsCustomerReferenceNumberController @Inject()(actionsProvider: Actio
       }
   }
 
-  def submit(taxYear: Int, optIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
+  def submit(taxYear: Int, optIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataForInYear(taxYear) async {
     implicit sessionDataRequest =>
 
       val piop = sessionDataRequest.pensionsUserData.pensions.paymentsIntoOverseasPensions

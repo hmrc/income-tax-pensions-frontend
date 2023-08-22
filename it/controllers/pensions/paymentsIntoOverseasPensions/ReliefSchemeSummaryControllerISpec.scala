@@ -34,18 +34,6 @@ class ReliefSchemeSummaryControllerISpec extends IntegrationTest with ViewHelper
   }
 
   ".show" should {
-    "redirect to Overview Page when in year" in {
-      lazy implicit val result: WSResponse = {
-        dropPensionsDB()
-        authoriseAgentOrIndividual(aUser.isAgent)
-        insertCyaData(pensionsUsersData(aPensionsCYAModel))
-        urlGet(fullUrl(pensionReliefSchemeSummaryUrl(taxYear)), !aUser.isAgent, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
-      }
-
-      result.status shouldBe SEE_OTHER
-      result.headers("Location").head shouldBe overviewUrl(taxYear)
-    }
 
     "show page when EOY" in {
       lazy implicit val result: WSResponse = {
