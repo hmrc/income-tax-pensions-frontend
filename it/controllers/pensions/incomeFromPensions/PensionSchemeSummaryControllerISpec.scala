@@ -26,6 +26,7 @@ import models.mongo.PensionsCYAModel
 import play.api.http.HeaderNames
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
+import utils.PageUrls.IncomeFromOverseasPensionsPages.overseasPensionsSchemeSummaryUrl
 import utils.PageUrls.IncomeFromPensionsPages.{pensionSchemeSummaryUrl, ukPensionSchemePayments}
 import utils.PageUrls.{fullUrl, pensionSummaryUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
@@ -40,7 +41,6 @@ class PensionSchemeSummaryControllerISpec extends IntegrationTest with ViewHelpe
   val schemeIndex0 = 0
 
   ".show" should {
-
     "show page when EOY" in {
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
