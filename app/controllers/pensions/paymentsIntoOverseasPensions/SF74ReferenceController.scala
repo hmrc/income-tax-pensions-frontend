@@ -44,7 +44,7 @@ class SF74ReferenceController @Inject()(actionsProvider: ActionsProvider,
                                        (implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock)
   extends FrontendController(mcc) with I18nSupport with SessionHelper {
 
-  def show(taxYear: Int, reliefIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
+  def show(taxYear: Int, reliefIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataForInYear(taxYear) async {
     implicit userSessionDataRequest =>
       indexCheckThenJourneyCheck(userSessionDataRequest.pensionsUserData, reliefIndex, SF74ReferencePage, taxYear) { relief: Relief =>
         relief.sf74Reference match {
@@ -54,7 +54,7 @@ class SF74ReferenceController @Inject()(actionsProvider: ActionsProvider,
       }
   }
 
-  def submit(taxYear: Int, reliefIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
+  def submit(taxYear: Int, reliefIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataForInYear(taxYear) async {
     implicit userSessionDataRequest =>
       indexCheckThenJourneyCheck(userSessionDataRequest.pensionsUserData, reliefIndex, SF74ReferencePage, taxYear) { _: Relief =>
         formsProvider.sf74ReferenceIdForm.bindFromRequest().fold(

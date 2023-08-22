@@ -46,7 +46,7 @@ class DoubleTaxationAgreementController @Inject()(actionsProvider: ActionsProvid
                                                  (implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock)
   extends FrontendController(mcc) with I18nSupport with SessionHelper {
 
-  def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
+  def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataForInYear(taxYear) async {
     implicit sessionData =>
       indexCheckThenJourneyCheck(sessionData.pensionsUserData, index, DoubleTaxationAgreementPage, taxYear) { relief: Relief =>
         val form: Form[DoubleTaxationAgreementFormModel] = dblTaxationAgreementForm(sessionData.user).fill(updateViewModel(relief))
@@ -55,7 +55,7 @@ class DoubleTaxationAgreementController @Inject()(actionsProvider: ActionsProvid
   }
 
 
-  def submit(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
+  def submit(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataForInYear(taxYear) async {
     implicit request =>
       indexCheckThenJourneyCheck(request.pensionsUserData, index, DoubleTaxationAgreementPage, taxYear) { _ =>
         dblTaxationAgreementForm(request.user).bindFromRequest().fold(

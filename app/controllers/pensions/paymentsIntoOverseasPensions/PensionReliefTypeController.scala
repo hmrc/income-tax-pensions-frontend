@@ -44,7 +44,7 @@ class PensionReliefTypeController @Inject()(actionsProvider: ActionsProvider,
                                            (implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock)
   extends FrontendController(mcc) with I18nSupport with SessionHelper {
 
-  def show(taxYear: Int, reliefIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
+  def show(taxYear: Int, reliefIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataForInYear(taxYear) async {
     implicit sessionData =>
       indexCheckThenJourneyCheck(sessionData.pensionsUserData, reliefIndex, PensionReliefTypePage, taxYear) { relief: Relief =>
         relief.reliefType.fold {
@@ -56,7 +56,7 @@ class PensionReliefTypeController @Inject()(actionsProvider: ActionsProvider,
       }
   }
 
-  def submit(taxYear: Int, reliefIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
+  def submit(taxYear: Int, reliefIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataForInYear(taxYear) async {
     implicit sessionData =>
       indexCheckThenJourneyCheck(sessionData.pensionsUserData, reliefIndex, PensionReliefTypePage, taxYear) { _: Relief =>
         formsProvider.overseasPensionsReliefTypeForm.bindFromRequest().fold(

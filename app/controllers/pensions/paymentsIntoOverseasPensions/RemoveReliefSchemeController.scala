@@ -44,14 +44,14 @@ class RemoveReliefSchemeController @Inject()(actionsProvider: ActionsProvider,
                                              appConfig: AppConfig, clock: Clock)
   extends FrontendController(mcc) with I18nSupport with SessionHelper {
 
-  def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionUserData =>
+  def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataForInYear(taxYear) async { implicit sessionUserData =>
 
     indexCheckThenJourneyCheck(sessionUserData.pensionsUserData, index, RemoveReliefsSchemePage, taxYear) { relief: Relief =>
       Future.successful(Ok(view(taxYear = taxYear, reliefSchemeList = List(relief), index = index)))
     }
   }
 
-  def submit(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionUserData =>
+  def submit(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataForInYear(taxYear) async { implicit sessionUserData =>
     val pensionReliefScheme = sessionUserData.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs
     validatedIndex(index, pensionReliefScheme.size)
       .fold(Future.successful(Redirect(ReliefsSchemeSummaryController.show(taxYear)))) {

@@ -42,17 +42,6 @@ class PensionsReliefTypeControllerISpec extends IntegrationTest with ViewHelpers
   val schemeIndex100 = 100
 
   ".show" should {
-    "redirect to Overview Page when in year" in {
-      lazy implicit val result: WSResponse = {
-        dropPensionsDB()
-        authoriseAgentOrIndividual(aUser.isAgent)
-        insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel))
-        urlGet(fullUrl(pensionReliefTypeUrl(taxYear, schemeIndex01)), !aUser.isAgent, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
-      }
-      result.status shouldBe SEE_OTHER
-      result.headers("Location").head shouldBe overviewUrl(taxYear)
-    }
 
     "show page when EOY" in {
       lazy implicit val result: WSResponse = {
@@ -79,26 +68,6 @@ class PensionsReliefTypeControllerISpec extends IntegrationTest with ViewHelpers
   }
 
   ".submit" should {
-    "redirect to overview when in year" in {
-      lazy implicit val result: WSResponse = {
-        dropPensionsDB()
-        authoriseAgentOrIndividual(aUser.isAgent)
-        val formData = Map(RadioButtonForm.value -> TaxReliefQuestion.TransitionalCorrespondingRelief)
-
-        insertCyaData(pensionsUsersData(
-          isPrior = false,
-          aPensionsCYAModel.copy(paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsEmptyViewModel)))
-
-        urlPost(
-          fullUrl(pensionReliefTypeUrl(taxYear, 0)),
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)),
-          follow = false,
-          body = formData)
-      }
-
-      result.status shouldBe SEE_OTHER
-      result.headers("location").head shouldBe overviewUrl(taxYear)
-    }
 
     "persist data and redirect to SF74 reference page when TCR is selected" in {
       lazy implicit val result: WSResponse = {
