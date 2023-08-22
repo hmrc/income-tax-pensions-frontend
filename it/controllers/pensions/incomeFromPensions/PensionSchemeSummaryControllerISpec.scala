@@ -26,6 +26,7 @@ import models.mongo.PensionsCYAModel
 import play.api.http.HeaderNames
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
+import utils.PageUrls.IncomeFromOverseasPensionsPages.overseasPensionsSchemeSummaryUrl
 import utils.PageUrls.IncomeFromPensionsPages.{pensionSchemeSummaryUrl, ukPensionSchemePayments}
 import utils.PageUrls.{fullUrl, overviewUrl, pensionSummaryUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
@@ -40,7 +41,6 @@ class PensionSchemeSummaryControllerISpec extends IntegrationTest with ViewHelpe
   val schemeIndex0 = 0
 
   ".show" should {
-
     "redirect to Overview Page when in year" in {
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
@@ -54,7 +54,7 @@ class PensionSchemeSummaryControllerISpec extends IntegrationTest with ViewHelpe
       result.headers("Location").head shouldBe overviewUrl(taxYear)
     }
 
-    "show page when EOY" in {
+       "show page when EOY" in {
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
