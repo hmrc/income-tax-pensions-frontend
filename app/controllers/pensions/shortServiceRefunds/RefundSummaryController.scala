@@ -38,7 +38,7 @@ class RefundSummaryController @Inject()(actionsProvider: ActionsProvider, view: 
                                        (implicit mcc: MessagesControllerComponents, appConfig: AppConfig, ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport with SessionHelper {
 
-  def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionUserData =>
+  def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataForInYear(taxYear) async { implicit sessionUserData =>
     cleanUpSchemes(sessionUserData.pensionsUserData).flatMap({
       case Right(updatedUserData) =>
         val checkRedirect = journeyCheck(RefundSchemesSummaryPage, _: PensionsCYAModel, taxYear)

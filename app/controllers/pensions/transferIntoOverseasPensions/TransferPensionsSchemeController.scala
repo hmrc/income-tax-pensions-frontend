@@ -47,7 +47,7 @@ class TransferPensionsSchemeController @Inject()(actionsProvider: ActionsProvide
                                                 (implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock)
   extends FrontendController(mcc) with I18nSupport with SessionHelper {
 
-  def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
+  def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataForInYear(taxYear) async {
     implicit userSessionDataRequest =>
       val checkRedirect = journeyCheck(DidAUKPensionSchemePayTransferChargePage, _: PensionsCYAModel, taxYear, index)
       redirectBasedOnCurrentAnswers(taxYear, Some(userSessionDataRequest.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) {
@@ -64,7 +64,7 @@ class TransferPensionsSchemeController @Inject()(actionsProvider: ActionsProvide
       }
   }
 
-  def submit(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
+  def submit(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataForInYear(taxYear) async {
     implicit userSessionDataRequest =>
 
       indexCheckThenJourneyCheck(userSessionDataRequest.pensionsUserData, index,DidAUKPensionSchemePayTransferChargePage, taxYear) {

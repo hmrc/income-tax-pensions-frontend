@@ -21,14 +21,13 @@ import builders.PensionsUserDataBuilder
 import builders.ShortServiceRefundsViewModelBuilder.{aShortServiceRefundsViewModel, emptyShortServiceRefundsViewModel}
 import builders.UserBuilder.aUser
 import forms.RadioButtonAmountForm
-import forms.RadioButtonAmountForm.{amount2, yesNo}
 import models.mongo.{PensionsCYAModel, PensionsUserData}
 import models.pension.charges.ShortServiceRefundsViewModel
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import utils.PageUrls.ShortServiceRefunds.{nonUkTaxRefundsUrl, shortServiceRefundsCYAUrl, shortServiceTaxableRefundUrl, taxOnShortServiceRefund}
-import utils.PageUrls.{fullUrl, overviewUrl}
+import utils.PageUrls.fullUrl
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 class NonUkTaxRefundsControllerISpec extends IntegrationTest with ViewHelpers
@@ -41,19 +40,6 @@ class NonUkTaxRefundsControllerISpec extends IntegrationTest with ViewHelpers
   override val userScenarios: Seq[UserScenario[_, _]] = Nil
 
   ".show" should {
-    "redirect to Overview Page when in year" in {
-      lazy implicit val result: WSResponse = {
-        dropPensionsDB()
-        authoriseAgentOrIndividual(aUser.isAgent)
-        insertCyaData(pensionsUsersData(aPensionsCYAModel))
-        urlGet(fullUrl(nonUkTaxRefundsUrl(taxYear)), !aUser.isAgent, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
-      }
-
-      result.status shouldBe SEE_OTHER
-      result.headers("Location").head shouldBe overviewUrl(taxYear)
-    }
-
     "show page when EOY" in {
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
@@ -96,22 +82,6 @@ class NonUkTaxRefundsControllerISpec extends IntegrationTest with ViewHelpers
   }
 
   ".submit" should {
-    "redirect to overview when in year" in {
-      lazy implicit val result: WSResponse = {
-        dropPensionsDB()
-        authoriseAgentOrIndividual(aUser.isAgent)
-        val formData = Map(s" $yesNo -> true, $amount2" -> "500")
-        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(shortServiceRefunds = emptyShortServiceRefundsViewModel)))
-        urlPost(
-          fullUrl(nonUkTaxRefundsUrl(taxYear)),
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)),
-          follow = false,
-          body = formData)
-      }
-      result.status shouldBe SEE_OTHER
-      result.headers("location").head shouldBe overviewUrl(taxYear)
-    }
-
     "valid submission should persist amount and redirect" which {
       "directs to the CYA page when there is a short service schemes and so Submission Model is now complete " in {
         lazy implicit val result: WSResponse = {

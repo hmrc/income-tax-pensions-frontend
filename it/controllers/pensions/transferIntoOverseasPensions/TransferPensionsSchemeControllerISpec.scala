@@ -23,7 +23,6 @@ import models.mongo.PensionsUserData
 import models.pension.charges.{TransferPensionScheme, TransfersIntoOverseasPensionsViewModel}
 import play.api.http.Status.{BAD_REQUEST, OK}
 import play.api.libs.ws.WSResponse
-//import utils.PageUrls.convertToAnyShouldWrapper
 
 class TransferPensionsSchemeControllerISpec extends ControllerSpec("/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-pension-scheme") {
 

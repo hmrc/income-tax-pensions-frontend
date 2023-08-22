@@ -20,7 +20,6 @@ import models.User
 import models.mongo.PensionsUserData
 import models.pension.AllPensionsData
 import models.pension.charges.TransfersIntoOverseasPensionsViewModel
-import models.pension.statebenefits.IncomeFromPensionsViewModel
 import play.api.libs.json.{Json, OWrites}
 
 case class TransfersIntoOverseasPensionsAudit(taxYear: Int,
