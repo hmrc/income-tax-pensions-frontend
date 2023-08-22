@@ -45,7 +45,7 @@ class PensionProviderPaidTaxController @Inject()(actionsProvider: ActionsProvide
                                                  appConfig: AppConfig,
                                                  clock: Clock) extends FrontendController(mcc) with I18nSupport with SessionHelper {
 
-  def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataForInYear(taxYear) async {
+  def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit sessionData =>
       val checkRedirect = journeyCheck(PensionProviderPaidTaxPage, _: PensionsCYAModel, taxYear)
       redirectBasedOnCurrentAnswers(taxYear, Some(sessionData.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) {
@@ -62,7 +62,7 @@ class PensionProviderPaidTaxController @Inject()(actionsProvider: ActionsProvide
       }
   }
 
-  def submit(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataForInYear(taxYear) async {
+  def submit(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit sessionData =>
       val checkRedirect = journeyCheck(PensionProviderPaidTaxPage, _: PensionsCYAModel, taxYear)
       redirectBasedOnCurrentAnswers(taxYear, Some(sessionData.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) {

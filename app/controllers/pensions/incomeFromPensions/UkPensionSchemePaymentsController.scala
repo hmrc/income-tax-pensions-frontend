@@ -19,7 +19,7 @@ package controllers.pensions.incomeFromPensions
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.incomeFromPensions.routes._
 import controllers.predicates.actions.TaxYearAction.taxYearAction
-import controllers.predicates.actions.{AuthorisedAction, InYearAction}
+import controllers.predicates.actions.AuthorisedAction
 import forms.YesNoForm
 import models.User
 import models.mongo.{DatabaseError, PensionsCYAModel, PensionsUserData}
@@ -42,7 +42,6 @@ import scala.concurrent.{ExecutionContext, Future}
 class UkPensionSchemePaymentsController @Inject()(implicit val mcc: MessagesControllerComponents,
                                                   appConfig: AppConfig,
                                                   authAction: AuthorisedAction,
-                                                  inYearAction: InYearAction,
                                                   pensionSessionService: PensionSessionService,
                                                   errorHandler: ErrorHandler,
                                                   view: UkPensionSchemePaymentsView,

@@ -18,7 +18,7 @@ package controllers.pensions.shortServiceRefunds
 
 import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import builders.PensionsUserDataBuilder
-import builders.ShortServiceRefundsViewModelBuilder.{aShortServiceRefundsViewModel, emptyShortServiceRefundsViewModel}
+import builders.ShortServiceRefundsViewModelBuilder.aShortServiceRefundsViewModel
 import builders.UserBuilder.aUser
 import forms.RadioButtonAmountForm
 import models.mongo.{PensionsCYAModel, PensionsUserData}

@@ -45,7 +45,7 @@ class TaxableRefundAmountController @Inject()(actionsProvider: ActionsProvider,
                                               clock: Clock, ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport with SessionHelper {
 
-  def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataForInYear(taxYear) async {
+  def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit sessionData =>
       cleanUpSchemes(sessionData.pensionsUserData).map({
         case Right(_) =>
@@ -58,7 +58,7 @@ class TaxableRefundAmountController @Inject()(actionsProvider: ActionsProvider,
       })
   }
 
-  def submit(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataForInYear(taxYear) async {
+  def submit(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit sessionUserData =>
       formsProvider.shortServiceTaxableRefundForm(sessionUserData.user).bindFromRequest().fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),

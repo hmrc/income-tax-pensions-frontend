@@ -18,7 +18,7 @@ package controllers.pensions.incomeFromPensions
 
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.incomeFromPensions.routes.{StatePensionLumpSumController, StatePensionStartDateController}
-import controllers.predicates.actions.{ActionsProvider, InYearAction}
+import controllers.predicates.actions.ActionsProvider
 import forms.FormsProvider
 import models.mongo.{PensionsCYAModel, PensionsUserData}
 import models.pension.statebenefits.{IncomeFromPensionsViewModel, StateBenefitViewModel}
@@ -39,13 +39,12 @@ class StatePensionController @Inject()(actionsProvider: ActionsProvider,
                                        pensionSessionService: PensionSessionService,
                                        view: StatePensionView,
                                        formsProvider: FormsProvider,
-                                       inYearAction: InYearAction,
                                        errorHandler: ErrorHandler)
                                       (implicit val mcc: MessagesControllerComponents,
                                        appConfig: AppConfig,
                                        clock: Clock) extends FrontendController(mcc) with I18nSupport with SessionHelper {
 
-  def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataForInYear(taxYear) async {
+  def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit sessionData =>
       val maybeYesNo: Option[Boolean] =
         sessionData.pensionsUserData.pensions.incomeFromPensions.statePension.flatMap(_.amountPaidQuestion)
@@ -59,7 +58,7 @@ class StatePensionController @Inject()(actionsProvider: ActionsProvider,
       }
   }
 
-  def submit(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataForInYear(taxYear) async {
+  def submit(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit sessionData =>
       formsProvider.statePensionForm(sessionData.user).bindFromRequest().fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),

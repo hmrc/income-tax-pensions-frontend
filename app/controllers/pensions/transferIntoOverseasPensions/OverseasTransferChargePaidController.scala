@@ -46,7 +46,7 @@ class OverseasTransferChargePaidController @Inject()(actionsProvider: ActionsPro
                                                     )(implicit mcc: MessagesControllerComponents, appConfig: AppConfig, ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport with SessionHelper {
 
-  def show(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataForInYear(taxYear) async {
+  def show(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit sessionUserData =>
       cleanUpSchemes(sessionUserData.pensionsUserData).flatMap({
         case Right(updatedUserData) =>
@@ -74,7 +74,7 @@ class OverseasTransferChargePaidController @Inject()(actionsProvider: ActionsPro
   }
 
   def submit(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = {
-    actionsProvider.userSessionDataForInYear(taxYear).async { implicit sessionUserData =>
+    actionsProvider.userSessionDataFor(taxYear).async { implicit sessionUserData =>
 
       val checkRedirect = journeyCheck(DidAUKPensionSchemePayTransferChargePage, _: PensionsCYAModel, taxYear)
       redirectBasedOnCurrentAnswers(taxYear, Some(sessionUserData.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) {

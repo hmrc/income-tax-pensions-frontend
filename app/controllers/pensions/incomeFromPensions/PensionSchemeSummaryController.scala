@@ -35,7 +35,7 @@ class PensionSchemeSummaryController @Inject()(view: PensionSchemeSummaryView,
                                               (implicit val mcc: MessagesControllerComponents, appConfig: AppConfig)
   extends FrontendController(mcc) with I18nSupport with SessionHelper {
 
-  def show(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataForInYear(taxYear) async {
+  def show(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit userSessionDataRequest =>
       indexCheckThenJourneyCheck(userSessionDataRequest.pensionsUserData, pensionSchemeIndex, SchemeSummaryPage, taxYear) {
         data =>

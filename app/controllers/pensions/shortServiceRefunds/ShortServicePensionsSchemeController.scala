@@ -45,7 +45,7 @@ class ShortServicePensionsSchemeController @Inject()(actionsProvider: ActionsPro
                                                     (implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock)
   extends FrontendController(mcc) with I18nSupport with SessionHelper {
 
-  def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataForInYear(taxYear) async {
+  def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit userSessionDataRequest =>
 
       indexCheckThenJourneyCheck(userSessionDataRequest.pensionsUserData, index, SchemeDetailsPage, taxYear) {
@@ -58,7 +58,7 @@ class ShortServicePensionsSchemeController @Inject()(actionsProvider: ActionsPro
       }
   }
 
-  def submit(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataForInYear(taxYear) async {
+  def submit(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit userSessionDataRequest =>
 
 

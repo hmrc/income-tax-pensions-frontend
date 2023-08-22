@@ -46,7 +46,7 @@ class TaxPaidOnStatePensionLumpSumController @Inject()(actionsProvider: ActionsP
                                                        appConfig: AppConfig, clock: Clock)
   extends FrontendController(mcc) with SessionHelper with I18nSupport {
 
-  def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataForInYear(taxYear) async {
+  def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit sessionData =>
       val checkRedirect = journeyCheck(TaxOnStatePensionLumpSumPage, _, taxYear)
       redirectBasedOnCurrentAnswers(taxYear, Some(sessionData.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) { data =>
@@ -62,7 +62,7 @@ class TaxPaidOnStatePensionLumpSumController @Inject()(actionsProvider: ActionsP
       }
   }
 
-  def submit(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataForInYear(taxYear) async {
+  def submit(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit sessionData =>
       val checkRedirect = journeyCheck(TaxOnStatePensionLumpSumPage, _, taxYear)
       redirectBasedOnCurrentAnswers(taxYear, Some(sessionData.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) { data =>

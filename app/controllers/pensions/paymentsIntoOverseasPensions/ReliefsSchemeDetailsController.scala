@@ -37,14 +37,14 @@ class ReliefsSchemeDetailsController @Inject()(view: ReliefSchemeDetailsView,
                                               (implicit val mcc: MessagesControllerComponents, appConfig: AppConfig)
   extends FrontendController(mcc) with I18nSupport with SessionHelper {
 
-  def show(taxYear: Int, reliefIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataForInYear(taxYear) async {
+  def show(taxYear: Int, reliefIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit userSessionDataRequest =>
       indexCheckThenJourneyCheck(userSessionDataRequest.pensionsUserData, reliefIndex, ReliefsSchemeDetailsPage, taxYear) { relief: Relief =>
         Future.successful(Ok(view(taxYear, relief, reliefIndex)))
       }
   }
 
-  def submit(taxYear: Int, reliefIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataForInYear(taxYear) async {
+  def submit(taxYear: Int, reliefIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit userSessionDataRequest =>
       indexCheckThenJourneyCheck(userSessionDataRequest.pensionsUserData, reliefIndex, ReliefsSchemeDetailsPage, taxYear) { _ =>
         Future.successful(Redirect(ReliefsSchemeSummaryController.show(taxYear)))

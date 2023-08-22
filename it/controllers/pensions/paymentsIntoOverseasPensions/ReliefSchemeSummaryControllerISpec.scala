@@ -21,10 +21,10 @@ import builders.PensionsUserDataBuilder
 import builders.UserBuilder.aUser
 import models.mongo.{PensionsCYAModel, PensionsUserData}
 import play.api.http.HeaderNames
-import play.api.http.Status.{OK, SEE_OTHER}
+import play.api.http.Status.OK
 import play.api.libs.ws.WSResponse
 import utils.PageUrls.PaymentIntoOverseasPensions.pensionReliefSchemeSummaryUrl
-import utils.PageUrls.{fullUrl, overviewUrl}
+import utils.PageUrls.fullUrl
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 class ReliefSchemeSummaryControllerISpec extends IntegrationTest with ViewHelpers with PensionsDatabaseHelper {
