@@ -20,7 +20,7 @@ import akka.actor.ActorSystem
 import com.codahale.metrics.SharedMetricRegistries
 import common.{EnrolmentIdentifiers, EnrolmentKeys, SessionValues}
 import config.{AppConfig, ErrorHandler, MockAppConfig}
-import controllers.predicates.actions.{AuthorisedAction, InYearAction}
+import controllers.predicates.actions.AuthorisedAction
 import models.{AuthorisationRequest, User}
 import org.scalamock.handlers.CallHandler4
 import org.scalamock.scalatest.MockFactory
@@ -89,9 +89,6 @@ trait UnitTest extends AnyWordSpec with Matchers with MockFactory with BeforeAnd
     new AuthorisationRequest[AnyContent](User("1234567890", None, "AA123456A", sessionId, AffinityGroup.Individual.toString), fakeRequest)
 
   val authorisedAction = new AuthorisedAction(mockAppConfig)(mockAuthService, stubMessagesControllerComponents())
-
-  val inYearAction = new InYearAction
-
   def status(awaitable: Future[Result]): Int = await(awaitable).header.status
 
   def bodyOf(awaitable: Future[Result]): String = {

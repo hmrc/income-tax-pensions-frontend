@@ -26,7 +26,7 @@ import play.api.http.HeaderNames
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import utils.PageUrls.PaymentIntoOverseasPensions._
-import utils.PageUrls.{fullUrl, overviewUrl}
+import utils.PageUrls.fullUrl
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 class ReliefSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpers with PensionsDatabaseHelper {
@@ -38,17 +38,6 @@ class ReliefSchemeDetailsControllerISpec extends IntegrationTest with ViewHelper
   override val userScenarios: Seq[UserScenario[_, _]] = Nil
 
   ".show" should { //scalastyle:off magic.number
-    "redirect to Overview Page when in year" in {
-      lazy implicit val result: WSResponse = {
-        dropPensionsDB()
-        authoriseAgentOrIndividual(aUser.isAgent)
-        insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel))
-        urlGet(fullUrl(pensionReliefSchemeDetailsUrl(taxYear, 1)), !aUser.isAgent, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
-      }
-      result.status shouldBe SEE_OTHER
-      result.headers("Location").head shouldBe overviewUrl(taxYear)
-    }
 
     "show page when EOY" in {
       lazy implicit val result: WSResponse = {
@@ -89,24 +78,6 @@ class ReliefSchemeDetailsControllerISpec extends IntegrationTest with ViewHelper
   }
 
   ".submit" should {
-    "redirect to overview when in year" in {
-      lazy implicit val result: WSResponse = {
-        dropPensionsDB()
-        authoriseAgentOrIndividual(aUser.isAgent)
-        insertCyaData(pensionsUsersData(
-          isPrior = false,
-          aPensionsCYAModel))
-
-        urlPost(
-          fullUrl(pensionReliefSchemeDetailsUrl(taxYear, 0)),
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)),
-          follow = false,
-          body = "")
-      }
-
-      result.status shouldBe SEE_OTHER
-      result.headers("location").head shouldBe overviewUrl(taxYear)
-    }
 
     "redirect to first page in journey when index doesn't match and there are no relief schemes" in {
       val pensionsNoSchemesViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(reliefs = Seq())

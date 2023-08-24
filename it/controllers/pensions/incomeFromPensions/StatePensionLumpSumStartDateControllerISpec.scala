@@ -28,7 +28,7 @@ import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import utils.PageUrls.IncomeFromPensionsPages.{addToCalculationUrl, statePension, statePensionCyaUrl, statePensionLumpSumStartDateUrl}
-import utils.PageUrls.{fullUrl, overviewUrl}
+import utils.PageUrls.fullUrl
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 import java.time.LocalDate
@@ -74,19 +74,6 @@ class StatePensionLumpSumStartDateControllerISpec extends IntegrationTest with V
   val expectedErrorTitle = "Error: When did you get your State Pension lump sum?"
 
   ".show" should {
-    "redirect to Overview Page when in year" in {
-      lazy implicit val result: WSResponse = {
-        dropPensionsDB()
-        authoriseAgentOrIndividual(aUser.isAgent)
-        insertCyaData(aPensionsUserData)
-        urlGet(fullUrl(statePensionLumpSumStartDateUrl(taxYear)), !aUser.isAgent, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
-      }
-
-      result.status shouldBe SEE_OTHER
-      result.headers("Location").head shouldBe overviewUrl(taxYear)
-    }
-
     "show page when EOY" in {
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
@@ -121,23 +108,6 @@ class StatePensionLumpSumStartDateControllerISpec extends IntegrationTest with V
   }
 
   ".submit" should {
-    "redirect to overview when in year" in {
-      lazy implicit val result: WSResponse = {
-        dropPensionsDB()
-        authoriseAgentOrIndividual(aUser.isAgent)
-        val formData = startDateForm(validDay, validMonth, validYear)
-        insertCyaData(aPensionsUserData)
-        urlPost(
-          fullUrl(statePensionLumpSumStartDateUrl(taxYear)),
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)),
-          follow = false,
-          body = formData)
-      }
-
-      result.status shouldBe SEE_OTHER
-      result.headers("location").head shouldBe overviewUrl(taxYear)
-    }
-
     "persist amount and redirect to the 'Add to calculation' page" in {
       lazy implicit val result: WSResponse = {
         dropPensionsDB()

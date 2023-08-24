@@ -18,7 +18,7 @@ package controllers.pensions.incomeFromPensions
 
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.incomeFromPensions.routes.{StatePensionLumpSumController, StatePensionStartDateController}
-import controllers.predicates.actions.{ActionsProvider, InYearAction}
+import controllers.predicates.actions.ActionsProvider
 import forms.FormsProvider
 import models.mongo.{PensionsCYAModel, PensionsUserData}
 import models.pension.statebenefits.{IncomeFromPensionsViewModel, StateBenefitViewModel}
@@ -39,7 +39,6 @@ class StatePensionController @Inject()(actionsProvider: ActionsProvider,
                                        pensionSessionService: PensionSessionService,
                                        view: StatePensionView,
                                        formsProvider: FormsProvider,
-                                       inYearAction: InYearAction,
                                        errorHandler: ErrorHandler)
                                       (implicit val mcc: MessagesControllerComponents,
                                        appConfig: AppConfig,
@@ -61,17 +60,15 @@ class StatePensionController @Inject()(actionsProvider: ActionsProvider,
 
   def submit(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit sessionData =>
-      inYearAction.notInYear(taxYear) {
-        formsProvider.statePensionForm(sessionData.user).bindFromRequest().fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
-          yesNoAmount => {
-            (yesNoAmount._1, yesNoAmount._2) match {
-              case (true, amount) => updateSessionData(sessionData.pensionsUserData, yesNo = true, amount, taxYear)
-              case (false, _) => updateSessionData(sessionData.pensionsUserData, yesNo = false, None, taxYear)
-            }
+      formsProvider.statePensionForm(sessionData.user).bindFromRequest().fold(
+        formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
+        yesNoAmount => {
+          (yesNoAmount._1, yesNoAmount._2) match {
+            case (true, amount) => updateSessionData(sessionData.pensionsUserData, yesNo = true, amount, taxYear)
+            case (false, _) => updateSessionData(sessionData.pensionsUserData, yesNo = false, None, taxYear)
           }
-        )
-      }
+        }
+      )
   }
 
   private def updateSessionData[T](pensionUserData: PensionsUserData,

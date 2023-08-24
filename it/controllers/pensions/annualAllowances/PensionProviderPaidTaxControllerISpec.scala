@@ -29,7 +29,7 @@ import play.api.http.HeaderNames
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import utils.PageUrls.PensionAnnualAllowancePages._
-import utils.PageUrls.{fullUrl, overviewUrl, pensionSummaryUrl}
+import utils.PageUrls.{fullUrl, pensionSummaryUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 class PensionProviderPaidTaxControllerISpec extends IntegrationTest with ViewHelpers with PensionsDatabaseHelper {
@@ -40,20 +40,6 @@ class PensionProviderPaidTaxControllerISpec extends IntegrationTest with ViewHel
   override val userScenarios: Seq[UserScenario[_, _]] = Nil
 
   ".show" should {
-    "redirect to Overview Page when in year" in {
-      lazy implicit val result: WSResponse = {
-        dropPensionsDB()
-        authoriseAgentOrIndividual(aUser.isAgent)
-        insertCyaData(pensionsUsersData(aPensionsCYAModel))
-        userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYear)
-        urlGet(fullUrl(pensionProviderPaidTaxUrl(taxYear)), !aUser.isAgent, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
-      }
-
-      result.status shouldBe SEE_OTHER
-      result.headers("Location").head shouldBe overviewUrl(taxYear)
-    }
-
     "show page when EOY" in {
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
@@ -119,23 +105,6 @@ class PensionProviderPaidTaxControllerISpec extends IntegrationTest with ViewHel
         result.status shouldBe SEE_OTHER
         result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
       }
-    }
-
-    "redirect to overview page when in year" in {
-      lazy implicit val result: WSResponse = {
-        dropPensionsDB()
-        authoriseAgentOrIndividual(aUser.isAgent)
-        insertCyaData(pensionsUsersData(aPensionsCYAModel))
-        userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYear)
-        urlPost(
-          fullUrl(pensionProviderPaidTaxUrl(taxYear)),
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)),
-          follow = false,
-          body = Map(YesNoForm.yesNo -> YesNoForm.no)
-        )
-      }
-      result.status shouldBe SEE_OTHER
-      result.headers("location").head shouldBe overviewUrl(taxYear)
     }
 
     "redirect to reduced annual allowance page" when {

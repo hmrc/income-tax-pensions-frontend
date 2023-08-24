@@ -33,23 +33,16 @@ class ActionsProvider @Inject()(authAction: AuthorisedAction,
                                 appConfig: AppConfig)
                                (implicit ec: ExecutionContext, val messagesApi: MessagesApi) {
 
-  //Should we have tax year
   def endOfYear(taxYear: Int): ActionBuilder[AuthorisationRequest, AnyContent] =
     authAction
       .andThen(TaxYearAction(taxYear)(appConfig, messagesApi))
-      .andThen(EndOfYearFilterAction(taxYear, appConfig))
-  
+
   def userSessionDataFor(taxYear: Int): ActionBuilder[UserSessionDataRequest, AnyContent] =
      endOfYear(taxYear)
       .andThen(UserSessionDataRequestRefinerAction(taxYear, pensionSessionService, errorHandler))
-      
-  def userSessionDataForInYear(taxYear: Int): ActionBuilder[UserSessionDataRequest, AnyContent] =
-     authAction
-       .andThen(TaxYearAction(taxYear)(appConfig, messagesApi))
-       .andThen(UserSessionDataRequestRefinerAction(taxYear, pensionSessionService, errorHandler))
-      
- def userPriorAndSessionDataForInYear(taxYear: Int): ActionBuilder[UserPriorAndSessionDataRequest, AnyContent] =
-   userSessionDataForInYear(taxYear)
+
+ def userPriorAndSessionDataFor(taxYear: Int): ActionBuilder[UserPriorAndSessionDataRequest, AnyContent] =
+   userSessionDataFor(taxYear)
       .andThen(UserPriorAndSessionDataRequestRefinerAction(taxYear, pensionSessionService, errorHandler))
   
 }
