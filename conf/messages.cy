@@ -108,6 +108,7 @@ common.pensionSchemeTaxReference = Cyfeirnod Treth y Cynllun Pensiwn
 common.pensionSchemeTaxReference.forExample = Er enghraifft, ‘12345678RA’
 common.pensionSchemeTaxReference.error.noEntry.individual = Nodwch Gyfeirnod Treth eich Cynllun Pensiwn
 common.pensionSchemeTaxReference.error.noEntry.agent = Nodwch Gyfeirnod Treth Cynllun Pensiwn eich cleient
+common.pensionSchemeTaxReference.error.incorrectFormat = Nodwch gyfeirnod sydd ag 8 rhif a 2 lythyren, megis ‘12345678AB’
 common.pensionSchemeTaxReference.p1 = Os bydd mwy nag un cynllun pensiwn yn talu neu wedi cytuno i dalu’r dreth, gallwch eu hychwanegu nes ymlaen.
 common.pensionSchemeTaxReference.addAnotherPstrLink = Ychwanegu PSTR arall
 common.pensionSchemeTaxReference.addAPstrLink = You need to add one or more Pensions Scheme Tax Reference (PSTR).
@@ -455,6 +456,23 @@ pensions.aboveReducedAnnualAllowance.error.incorrectFormat.agent = Nodwch y swm 
 pensions.aboveReducedAnnualAllowance.error.overMaximum.individual = Mae’n rhaid i’r swm sydd uwchlaw’ch lwfans blynyddol wedi’i ostwng fod yn llai na £100,000,000,000
 pensions.aboveReducedAnnualAllowance.error.overMaximum.agent = Mae’n rhaid i’r swm sydd uwchlaw lwfans blynyddol wedi’i ostwng eich cleient fod yn llai na £100,000,000,000
 
+#Pension Provider Paid Tax Messages
+pensions.pensionsProviderPaidTax.error.noEntry.individual = Dewiswch ‘Iawn’ os gwnaeth eich darparwr pensiwn dalu treth neu gytuno i wneud hynny
+pensions.pensionsProviderPaidTax.error.noEntry.agent = Dewiswch ‘Iawn’ os gwnaeth darparwr pensiwn eich cleient dalu treth neu gytuno i wneud hynny
+pensions.pensionsProviderPaidTax.error.noAmount.individual = Nodwch swm y dreth a dalwyd gan eich darparwr pensiwn, neu’r swm a gytunodd i’w dalu
+pensions.pensionsProviderPaidTax.error.noAmount.agent = Nodwch swm y dreth a dalwyd gan ddarparwr pensiwn eich cleient, neu’r swm a gytunodd i’w dalu
+pensions.pensionsProviderPaidTax.error.incorrectFormat.individual = Nodwch swm y dreth a dalwyd gan eich darparwr pensiwn, neu’r swm a gytunodd i’w dalu, yn y fformat cywir
+pensions.pensionsProviderPaidTax.error.incorrectFormat.agent = Nodwch swm y dreth a dalwyd gan ddarparwr pensiwn eich cleient, neu’r swm a gytunodd i’w dalu, yn y fformat cywir
+pensions.pensionsProviderPaidTax.error.overMaximum.individual = The amount of tax your pension schemes paid or agreed to pay must be less than £100,000,000,000
+pensions.pensionsProviderPaidTax.error.overMaximum.agent = The amount of tax your client’s pension provider paid or agreed to pay must be less than £100,000,000,000
+
+#Pension Scheme Tax Reference Messages
+pension.pensionSchemeTaxReference.paragraph1 = Nodwch y cyfeirnod ar gyfer y cynllun pensiwn a dalodd y dreth.
+pension.pensionSchemeTaxReference.title = A hoffech ddileu’r Cyfeirnod Treth Cynllun Pensiwn hwn?
+
+#Pension Scheme Tax Reference Summary Page
+annualAllowance.pstrSummary.title = Cynlluniau pensiwn a dalodd y dreth lwfans blynyddol neu a gytunodd i wneud hynny
+
 ####### annual allowance CYA #######
 annualAllowance.cya.heading.individual = Gwiriwch eich lwfansau blynyddol
 annualAllowance.cya.heading.agent = Gwiriwch lwfansau blynyddol eich cleient
@@ -464,39 +482,6 @@ annualAllowance.cya.aboveAnnualAllowance = Uwch na’r lwfans blynyddol
 annualAllowance.cya.amountAboveAnnualAllowance = Swm uwch na’r lwfans blynyddol
 annualAllowance.cya.annualAllowanceTax = Treth lwfans blynyddol
 annualAllowance.cya.annualPensionSchemeTaxReferences = Cynlluniau sy’n talu treth lwfans blynyddol
-
-
-
-#Pension Provider Paid Tax Messages
-pensions.pensionsProviderPaidTax.error.noEntry.individual = Dewiswch ‘Iawn’ os gwnaeth eich darparwr pensiwn dalu treth neu gytuno i wneud hynny
-pensions.pensionsProviderPaidTax.error.noEntry.agent = Dewiswch ‘Iawn’ os gwnaeth darparwr pensiwn eich cleient dalu treth neu gytuno i wneud hynny
-pensions.pensionsProviderPaidTax.error.noAmount.individual = Nodwch swm y dreth a dalwyd gan eich darparwr pensiwn, neu’r swm a gytunodd i’w dalu
-pensions.pensionsProviderPaidTax.error.noAmount.agent = Nodwch swm y dreth a dalwyd gan ddarparwr pensiwn eich cleient, neu’r swm a gytunodd i’w dalu
-pensions.pensionsProviderPaidTax.error.incorrectFormat.individual = Nodwch swm y dreth a dalwyd gan eich darparwr pensiwn, neu’r swm a gytunodd i’w dalu, yn y fformat cywir
-pensions.pensionsProviderPaidTax.error.incorrectFormat.agent = Nodwch swm y dreth a dalwyd gan ddarparwr pensiwn eich cleient, neu’r swm a gytunodd i’w dalu, yn y fformat cywir
-
-#Pension Scheme Tax Reference Messages
-pension.pensionSchemeTaxReference.paragraph1 = Nodwch y cyfeirnod ar gyfer y cynllun pensiwn a dalodd y dreth.
-pension.pensionSchemeTaxReference.title = A hoffech ddileu’r Cyfeirnod Treth Cynllun Pensiwn hwn?
-pension.pensionSchemeTaxReference.error.noEntry.individual = Nodwch eich PSTR
-pension.pensionSchemeTaxReference.error.incorrectFormat.individual = Nodwch eich PSTR yn y fformat cywir
-pension.pensionSchemeTaxReference.error.noEntry.agent = Nodwch PSTR eich cleient
-pension.pensionSchemeTaxReference.error.incorrectFormat.agent = Nodwch PSTR eich cleient yn y fformat cywir
-
-
-#Pension Scheme Tax Reference Messages
-unauthorisedPayments.pension.pensionSchemeTaxReference = Cyfeirnod Treth y Cynllun Pensiwn (PSTR)
-unauthorisedPayments.pension.pensionSchemeTaxReference.paragraph1.individual = Gallwch gael yr wybodaeth hon oddi wrth ddarparwr eich pensiwn.
-unauthorisedPayments.pension.pensionSchemeTaxReference.paragraph1.agent = Gall eich cleient gael yr wybodaeth hon oddi wrth ei ddarparwr pensiwn.
-unauthorisedPayments.pension.pensionSchemeTaxReference.paragraph2.individual = Os cawsoch daliadau heb awdurdod gan fwy nag un darparwr pensiwn yn y DU, gallwch ychwanegu’r cyfeirnodau yn nes ymlaen.
-unauthorisedPayments.pension.pensionSchemeTaxReference.paragraph2.agent = Os cafodd eich cleient daliadau heb awdurdod gan fwy nag un darparwr pensiwn yn y DU, gallwch ychwanegu’r cyfeirnodau yn nes ymlaen.
-unauthorisedPayments.pension.pensionSchemeTaxReference.whatIsPSTR = Beth yw’r PSTR?
-unauthorisedPayments.pension.pensionSchemeTaxReference.error.incorrectFormat.individual = Nodwch Gyfeirnod Treth eich Cynllun Pensiwn yn y fformat cywir
-unauthorisedPayments.pension.pensionSchemeTaxReference.error.incorrectFormat.agent = Nodwch Gyfeirnod Treth Cynllun Pensiwn eich cleient yn y fformat cywir
-
-#Pension Scheme Tax Reference Summary Page
-
-annualAllowance.pstrSummary.title = Cynlluniau pensiwn a dalodd y dreth lwfans blynyddol neu a gytunodd i wneud hynny
 
 #################       INCOME FROM PENSIONS        ########################################
 
@@ -700,19 +685,6 @@ incomeFromPensions.schemeDetails.summary.tax = Treth:
 
 #################       Lifetime Allowance       ########################################
 
-#Did you get paid your pension as a lump sum
-lifetimeAllowance.pensionLumpSum.title.individual = A wnaethoch gymryd y swm sy’n uwch na’ch lwfans oes fel cyfandaliad?
-lifetimeAllowance.pensionLumpSum.title.agent = A wnaeth eich cleient gymryd y swm sy’n uwch na’u lwfans oes fel cyfandaliad?
-lifetimeAllowance.pensionLumpSum.error.noEntry.individual = Dewiswch ‘Iawn’ os wnaethoch gymryd y swm sy’n uwch na’ch lwfans oes fel cyfandaliad
-lifetimeAllowance.pensionLumpSum.error.noEntry.agent = Dewiswch ‘Iawn’ wnaeth eich cleient gymryd y swm sy’n uwch na’u lwfans oes fel cyfandaliad
-
-#Have you gone above your annual or lifetime allowance?
-lifetimeAllowance.aboveAnnualLifetimeAllowance.title.individual = Ydych chi wedi mynd dros eich lwfans oes?
-lifetimeAllowance.aboveAnnualLifetimeAllowance.title.agent = A yw eich cleient wedi mynd dros ei lwfans oes?
-lifetimeAllowance.aboveAnnualLifetimeAllowance.link = Dysgwch ragor am lwfans oes (yn agor tab newydd)
-lifetimeAllowance.aboveAnnualLifetimeAllowance.error.noEntry.individual = Dewiswch ‘Iawn’ os ydych wedi mynd yn uwch na’ch lwfans oes
-lifetimeAllowance.aboveAnnualLifetimeAllowance.error.noEntry.agent = Dewiswch ‘Iawn’ os yw’ch cleient wedi mynd yn uwch na’i lwfans oes
-
 #Annual Lifetime Allowance Gateway
 annualAndLifetimeAllowance.gateway.title.individual = A ydych wedi mynd yn uwch na’ch lwfans blynyddol neu lwfans oes?
 annualAndLifetimeAllowance.gateway.title.agent = A yw’ch cleient wedi mynd dros ei lwfans blynyddol neu lwfans oes?
@@ -723,14 +695,18 @@ annualAndLifetimeAllowance.gateway.line3.end = os oes angen i chi gyfrifo’ch l
 annualAndLifetimeAllowance.gateway.error.agent = Dewiswch ‘Iawn’ os yw’ch cleient wedi mynd dros ei lwfans blynyddol neu lwfans oes
 annualAndLifetimeAllowance.gateway.error.individual = Dewiswch ‘Iawn’ os ydych wedi mynd yn uwch na’ch lwfans blynyddol neu lwfans oes
 
-#Did you take the amount above your lifetime allowance another way
-lifetimeAllowance.lifetimeAllowanceAnotherWay.title.individual = A wnaethoch gymryd y swm sy’n uwch na’ch lwfans oes ffordd arall?
-lifetimeAllowance.lifetimeAllowanceAnotherWay.title.agent = A wnaeth eich cleient gymryd y swm sy’n uwch na’ch lwfans oes ffordd arall?
-lifetimeAllowance.lifetimeAllowanceAnotherWay.paragraph.line1 = Peidiwch â rhoi gwybod i ni am gyfandaliadau.
-lifetimeAllowance.lifetimeAllowanceAnotherWay.paragraph.line2.individual = Rhowch wybod i ni am unrhyw swm rydych wedi’i gymryd sy’n uwch na’ch lwfans oes mewn ffyrdd eraill. Gallai hyn fod yn daliadau rheolaidd neu’n tynnu’n ôl arian
-lifetimeAllowance.lifetimeAllowanceAnotherWay.paragraph.line2.agent = Rhowch wybod i ni am unrhyw swm y mae’ch cleient wedi’i gymryd sy’n uwch na’u lwfans oes mewn ffyrdd eraill. Gallai hyn fod yn daliadau rheolaidd neu’n tynnu’n ôl arian
-lifetimeAllowance.lifetimeAllowanceAnotherWay.error.noEntry.individual = Dewiswch ‘Iawn’ os wnaethoch gymryd y swm sy’n uwch na’ch lwfans oes mewn ffordd arall
-lifetimeAllowance.lifetimeAllowanceAnotherWay.error.noEntry.agent = Dewiswch ‘Iawn’ os wnaeth eich cleient gymryd y swm sy’n uwch na’ch lwfans oes mewn ffordd arall
+#Have you gone above your annual or lifetime allowance?
+lifetimeAllowance.aboveAnnualLifetimeAllowance.title.individual = Ydych chi wedi mynd dros eich lwfans oes?
+lifetimeAllowance.aboveAnnualLifetimeAllowance.title.agent = A yw eich cleient wedi mynd dros ei lwfans oes?
+lifetimeAllowance.aboveAnnualLifetimeAllowance.link = Dysgwch ragor am lwfans oes (yn agor tab newydd)
+lifetimeAllowance.aboveAnnualLifetimeAllowance.error.noEntry.individual = Dewiswch ‘Iawn’ os ydych wedi mynd yn uwch na’ch lwfans oes
+lifetimeAllowance.aboveAnnualLifetimeAllowance.error.noEntry.agent = Dewiswch ‘Iawn’ os yw’ch cleient wedi mynd yn uwch na’i lwfans oes
+
+#Did you get paid your pension as a lump sum
+lifetimeAllowance.pensionLumpSum.title.individual = A wnaethoch gymryd y swm sy’n uwch na’ch lwfans oes fel cyfandaliad?
+lifetimeAllowance.pensionLumpSum.title.agent = A wnaeth eich cleient gymryd y swm sy’n uwch na’u lwfans oes fel cyfandaliad?
+lifetimeAllowance.pensionLumpSum.error.noEntry.individual = Dewiswch ‘Iawn’ os wnaethoch gymryd y swm sy’n uwch na’ch lwfans oes fel cyfandaliad
+lifetimeAllowance.pensionLumpSum.error.noEntry.agent = Dewiswch ‘Iawn’ wnaeth eich cleient gymryd y swm sy’n uwch na’u lwfans oes fel cyfandaliad
 
 #Pension Lump Sum Details
 lifetimeAllowance.pensionLumpSumDetails.title.individual = Eich cyfandaliad pensiwn
@@ -745,6 +721,15 @@ lifetimeAllowance.pensionLumpSumDetails.beforeTax.error.incorrectFormat = Nodwch
 lifetimeAllowance.pensionLumpSumDetails.taxPaid.error.noEntry.individual = Nodwch swm y dreth lwfans oes a dalodd eich darparwr pensiwn neu a gytunwyd i dalu ar y cyfandaliad
 lifetimeAllowance.pensionLumpSumDetails.taxPaid.error.noEntry.agent = Nodwch swm y dreth lwfans oes a dalwyd gan ddarparwr pensiwn eich cleient, neu’r swm a gytunodd i’w dalu ar y cyfandaliad
 
+#Did you take the amount above your lifetime allowance another way
+lifetimeAllowance.lifetimeAllowanceAnotherWay.title.individual = A wnaethoch gymryd y swm sy’n uwch na’ch lwfans oes ffordd arall?
+lifetimeAllowance.lifetimeAllowanceAnotherWay.title.agent = A wnaeth eich cleient gymryd y swm sy’n uwch na’ch lwfans oes ffordd arall?
+lifetimeAllowance.lifetimeAllowanceAnotherWay.paragraph.line1 = Peidiwch â rhoi gwybod i ni am gyfandaliadau.
+lifetimeAllowance.lifetimeAllowanceAnotherWay.paragraph.line2.individual = Rhowch wybod i ni am unrhyw swm rydych wedi’i gymryd sy’n uwch na’ch lwfans oes mewn ffyrdd eraill. Gallai hyn fod yn daliadau rheolaidd neu’n tynnu’n ôl arian
+lifetimeAllowance.lifetimeAllowanceAnotherWay.paragraph.line2.agent = Rhowch wybod i ni am unrhyw swm y mae’ch cleient wedi’i gymryd sy’n uwch na’u lwfans oes mewn ffyrdd eraill. Gallai hyn fod yn daliadau rheolaidd neu’n tynnu’n ôl arian
+lifetimeAllowance.lifetimeAllowanceAnotherWay.error.noEntry.individual = Dewiswch ‘Iawn’ os wnaethoch gymryd y swm sy’n uwch na’ch lwfans oes mewn ffordd arall
+lifetimeAllowance.lifetimeAllowanceAnotherWay.error.noEntry.agent = Dewiswch ‘Iawn’ os wnaeth eich cleient gymryd y swm sy’n uwch na’ch lwfans oes mewn ffordd arall
+
 #Pension Taken In Another Way
 lifetimeAllowance.pensionTakenAnotherWay.title.individual = Eich pensiwn wedi’i gymryd mewn ffordd arall
 lifetimeAllowance.pensionTakenAnotherWay.title.agent = Pensiwn eich cleient wedi’i gymryd mewn ffordd arall
@@ -757,6 +742,8 @@ lifetimeAllowance.pensionTakenAnotherWay.beforeTax.error.noEntry.individual = No
 lifetimeAllowance.pensionTakenAnotherWay.beforeTax.error.noEntry.agent = Nodwch y swm a gymerodd eich cleient sy’n uwch na’u lwfans oes mewn ffordd arall
 lifetimeAllowance.pensionTakenAnotherWay.beforeTax.error.incorrectFormat.individual = Nodwch y swm a gymeroch sy’n uwch na’ch lwfans oes yn y fformat cywir
 lifetimeAllowance.pensionTakenAnotherWay.beforeTax.error.incorrectFormat.agent = Nodwch y swm a gymerodd eich cleient sy’n uwch na’u lwfans oes yn y fformat cywir
+lifetimeAllowance.pensionTakenAnotherWay.beforeTax.error.overMax.individual = The amount you took above your lifetime allowance must be less than £100,000,000,000
+lifetimeAllowance.pensionTakenAnotherWay.beforeTax.error.overMax.agent = The amount of lifetime allowance must be less than £100,000,000,000
 lifetimeAllowance.pensionTakenAnotherWay.taxPaid.error.noEntry.individual = Nodwch swm y dreth lwfans oes a dalodd eich darparwr pensiwn neu a gytunwyd i dalu ar y swm a gymerir mewn ffordd arall
 lifetimeAllowance.pensionTakenAnotherWay.taxPaid.error.noEntry.agent = Rhowch swm y dreth lwfans oes a dalodd darparwr pensiwn eich cleient neu a gytunwyd i dalu ar y swm a gymerwyd mewn ffordd arall
 
@@ -793,7 +780,6 @@ lifetimeAllowance.pstrSummary.title = Pension schemes that paid or agreed to pay
 #Pension scheme tax reference lifetime allowance
 lifetimeAllowance.pensionSchemeTaxReference.title = Rhowch wybod i ni’r cynllun pensiwn a dalodd neu a gytunwyd i dalu’r dreth
 lifetimeAllowance.pensionSchemeTaxReference.p1 = Os bydd mwy nag un cynllun pensiwn yn talu neu wedi cytuno i dalu’r dreth, gallwch eu hychwanegu nes ymlaen.
-lifetimeAllowance.pensionSchemeTaxReference.error.incorrectFormat = Nodwch gyfeirnod sydd ag 8 rhif a 2 lythyren, megis ‘12345678AB’
 
 #Surcharge Amount
 unauthorisedPayments.surchargeAmount.title = Y swm a wnaeth arwain at ordal
@@ -816,8 +802,17 @@ unauthorisedPayments.didYouPayNonUkTax.error.noEntry.agent = Dewiswch ‘Iawn’
 #Were any of the unauthorised payments from a UK pension scheme?
 unauthorisedPayments.wereAnyOfTheUnauthorisedPayments.title = A ddaeth unrhyw rai o’r taliadau heb awdurdod o gynllun pensiwn yn y DU?
 
-#payments into pensions CYA
+#Pension Scheme Tax Reference Messages
+unauthorisedPayments.pension.pensionSchemeTaxReference = Cyfeirnod Treth y Cynllun Pensiwn (PSTR)
+unauthorisedPayments.pension.pensionSchemeTaxReference.paragraph1.individual = Gallwch gael yr wybodaeth hon oddi wrth ddarparwr eich pensiwn.
+unauthorisedPayments.pension.pensionSchemeTaxReference.paragraph1.agent = Gall eich cleient gael yr wybodaeth hon oddi wrth ei ddarparwr pensiwn.
+unauthorisedPayments.pension.pensionSchemeTaxReference.paragraph2.individual = Os cawsoch daliadau heb awdurdod gan fwy nag un darparwr pensiwn yn y DU, gallwch ychwanegu’r cyfeirnodau yn nes ymlaen.
+unauthorisedPayments.pension.pensionSchemeTaxReference.paragraph2.agent = Os cafodd eich cleient daliadau heb awdurdod gan fwy nag un darparwr pensiwn yn y DU, gallwch ychwanegu’r cyfeirnodau yn nes ymlaen.
+unauthorisedPayments.pension.pensionSchemeTaxReference.whatIsPSTR = Beth yw’r PSTR?
+unauthorisedPayments.pension.pensionSchemeTaxReference.error.incorrectFormat.individual = Nodwch Gyfeirnod Treth eich Cynllun Pensiwn yn y fformat cywir
+unauthorisedPayments.pension.pensionSchemeTaxReference.error.incorrectFormat.agent = Nodwch Gyfeirnod Treth Cynllun Pensiwn eich cleient yn y fformat cywir
 
+#payments into pensions CYA
 unauthorisedPayments.cya.heading.individual = Gwirio’ch taliadau heb awdurdod
 unauthorisedPayments.cya.heading.agent = Gwirio taliadau’ch cleient a oedd heb awdurdod
 unauthorisedPayments.cya.amountSurcharged = Y swm y codwyd gordal arno
@@ -1183,7 +1178,7 @@ common.overseasPensions.providerName.error.incorrectFormat = Mae’n rhaid i enw
 common.overseasPensions.providerAddress.error.noEntry = Nodwch gyfeiriad y darparwr pensiwn
 common.overseasPensions.providerAddress.error.overCharLimit = Mae’n rhaid i gyfeiriad y darparwr pensiwn fod yn 250 o gymeriadau neu lai
 common.overseasPensions.schemeTaxRef.error.noEntry = Nodwch Gyfeirnod Treth y Cynllun Pensiwn
-common.overseasPensions.pstr.error.incorrectFormat = Nodwch Gyfeirnod Treth y Cynllun Pensiwn sy’n 8 rhif, wedyn y llythyren ‘R’, ac wedyn llythyren rhwng a-z (neu A-Z), megis 00123456RA
+common.overseasPensions.qopsRef.error.noEntry = Enter the Qualifying Overseas Pension Scheme Reference
 common.overseasPensions.qops.error.incorrectFormat = Nodwch rif chwe digid
 common.overseasPensions.country.error.noEntry = Nodwch y wlad
 

@@ -49,8 +49,8 @@ class PensionSchemeTaxReferenceController @Inject()(implicit val cc: MessagesCon
 
   private def prefillValue(pstrListOpt: Option[Seq[String]], pensionSchemeTaxReference: Option[Int], user: User): Form[String] = {
     val errorMsgDetails = (
-      s"pension.pensionSchemeTaxReference.error.noEntry.${if (user.isAgent) "agent" else "individual"}",
-      s"pension.pensionSchemeTaxReference.error.incorrectFormat.${if (user.isAgent) "agent" else "individual"}")
+      s"common.pensionSchemeTaxReference.error.noEntry.${if (user.isAgent) "agent" else "individual"}",
+      "common.pensionSchemeTaxReference.error.incorrectFormat")
     val emptyForm: Form[String] = PensionSchemeTaxReferenceForm.pensionSchemeTaxReferenceForm(errorMsgDetails._1, errorMsgDetails._2)
     (pstrListOpt, pensionSchemeTaxReference) match {
       case (Some(pstrList), Some(pstrIndex)) => emptyForm.fill(pstrList(pstrIndex))
@@ -85,8 +85,8 @@ class PensionSchemeTaxReferenceController @Inject()(implicit val cc: MessagesCon
   def submit(taxYear: Int, optIndex: Option[Int]): Action[AnyContent] = authAction.async {
     implicit request =>
       val errorMsgDetails = (
-        s"pension.pensionSchemeTaxReference.error.noEntry.${if (request.user.isAgent) "agent" else "individual"}",
-        s"pension.pensionSchemeTaxReference.error.incorrectFormat.${if (request.user.isAgent) "agent" else "individual"}")
+        s"common.pensionSchemeTaxReference.error.noEntry.${if (request.user.isAgent) "agent" else "individual"}",
+        "common.pensionSchemeTaxReference.error.incorrectFormat")
       pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
         case Some(data) =>
           PensionSchemeTaxReferenceForm.pensionSchemeTaxReferenceForm(errorMsgDetails._1, errorMsgDetails._2).bindFromRequest().fold(

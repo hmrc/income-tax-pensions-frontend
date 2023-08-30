@@ -42,10 +42,11 @@ object MappingUtil extends Formatters {
 
 
   def optionCurrency(requiredKey: String,
-               wrongFormatKey: String = "common.error.invalid_currency_format",
-               maxAmountKey: String = "common.error.amountMaxLimit", minAmountkey : String = "",
-               args: Seq[String] = Seq.empty[String]
-              ): FieldMapping[Option[BigDecimal]] = {
-    of(optionCurrencyFormatter(requiredKey, wrongFormatKey, maxAmountKey,minAmountkey, args))
+                     wrongFormatKey: String = "common.error.invalid_currency_format",
+                     maxAmountKey: String = "common.error.amountMaxLimit",
+                     minAmountKey: String = "",
+                     args: Seq[String] = Seq.empty[String]
+                    ): FieldMapping[Option[BigDecimal]] = {
+    of(optionCurrencyFormatter(requiredKey, wrongFormatKey, maxAmountKey, minAmountKey, args))
   }
 }

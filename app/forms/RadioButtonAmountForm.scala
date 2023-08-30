@@ -76,7 +76,7 @@ object RadioButtonAmountForm {
       val optionalCurrency: FieldMapping[Option[BigDecimal]] = optionCurrency(requiredKey = requiredKey,
         wrongFormatKey = wrongFormatKey,
         maxAmountKey = maxAmountKey,
-        minAmountkey = minAmountkey,
+        minAmountKey = minAmountkey,
         args = args)
 
       override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Option[BigDecimal]] = {
@@ -84,7 +84,7 @@ object RadioButtonAmountForm {
           case Some("true") => optionCurrency(requiredKey = requiredKey,
             wrongFormatKey = wrongFormatKey,
             maxAmountKey = maxAmountKey,
-            minAmountkey = minAmountkey,
+            minAmountKey = minAmountkey,
             args = args).binder.bind(key, data)
           case _ => Right(None)
         }

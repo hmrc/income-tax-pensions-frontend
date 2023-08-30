@@ -740,12 +740,12 @@ class OverseasTransferChargeControllerISpec
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "There is a problem",
-                      body = "Enter the amount on which you paid an overseas transfer charge in the correct format",
+                      body = "Enter the amount on which you paid an overseas transfer charge in pounds",
                       link = "#amount-2")
                   ),
                   errorAboveElementCheckSectionOpt = Some(
                     ErrorAboveElementCheckSection(
-                      title = "Error: Enter the amount on which you paid an overseas transfer charge in the correct format",
+                      title = "Error: Enter the amount on which you paid an overseas transfer charge in pounds",
                       idOpt = Some("amount-2")
                     )
                   )
@@ -771,12 +771,12 @@ class OverseasTransferChargeControllerISpec
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "Mae problem wedi codi",
-                      body = "Enter the amount on which you paid an overseas transfer charge in the correct format",
+                      body = "Enter the amount on which you paid an overseas transfer charge in pounds",
                       link = "#amount-2")
                   ),
                   errorAboveElementCheckSectionOpt = Some(
                     ErrorAboveElementCheckSection(
-                      title = "Error: Enter the amount on which you paid an overseas transfer charge in the correct format",
+                      title = "Error: Enter the amount on which you paid an overseas transfer charge in pounds",
                       idOpt = Some("amount-2")
                     )
                   )
@@ -802,12 +802,12 @@ class OverseasTransferChargeControllerISpec
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "There is a problem",
-                      body = "Enter the amount that resulted in a transfer charge in the correct format",
+                      body = "Enter the amount that resulted in a transfer charge in pounds",
                       link = "#amount-2")
                   ),
                   errorAboveElementCheckSectionOpt = Some(
                     ErrorAboveElementCheckSection(
-                      title = "Error: Enter the amount that resulted in a transfer charge in the correct format",
+                      title = "Error: Enter the amount that resulted in a transfer charge in pounds",
                       idOpt = Some("amount-2")
                     )
                   )
@@ -833,12 +833,12 @@ class OverseasTransferChargeControllerISpec
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "Mae problem wedi codi",
-                      body = "Enter the amount that resulted in a transfer charge in the correct format",
+                      body = "Enter the amount that resulted in a transfer charge in pounds",
                       link = "#amount-2")
                   ),
                   errorAboveElementCheckSectionOpt = Some(
                     ErrorAboveElementCheckSection(
-                      title = "Error: Enter the amount that resulted in a transfer charge in the correct format",
+                      title = "Error: Enter the amount that resulted in a transfer charge in pounds",
                       idOpt = Some("amount-2")
                     )
                   )

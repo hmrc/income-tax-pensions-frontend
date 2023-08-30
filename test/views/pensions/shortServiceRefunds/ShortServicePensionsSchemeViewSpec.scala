@@ -59,6 +59,7 @@ class ShortServicePensionsSchemeViewSpec extends ViewUnitTest {
     val providerAddressLabel: String
     val providerNameEmptyErrorText: String
     val refEmptyErrorText: String
+    val qopsEmptyErrorText: String
     val providerAddressEmptyErrorText: String
     val providerNameInvalidFormatErrorText: String
     val providerNameOverCharLimitErrorText: String
@@ -76,6 +77,7 @@ class ShortServicePensionsSchemeViewSpec extends ViewUnitTest {
     val providerAddressLabel: String = "Pension provider address"
     val providerNameEmptyErrorText: String = "Enter the name of the pension scheme"
     val refEmptyErrorText: String  = "Enter the Pension Scheme Tax Reference"
+    val qopsEmptyErrorText: String = "Enter the Qualifying Overseas Pension Scheme Reference"
     val providerAddressEmptyErrorText: String = "Enter the pension provider’s address"
     val providerNameInvalidFormatErrorText: String = "The pension scheme name must only include numbers 0-9, " +
       "letters a to z, hyphens, spaces, apostrophes, commas, full stops, round brackets and the special characters, &, /, @, £, *."
@@ -93,6 +95,7 @@ class ShortServicePensionsSchemeViewSpec extends ViewUnitTest {
     val providerAddressLabel: String = "Cyfeiriad y darparwr pensiwn"
     val providerNameEmptyErrorText: String = "Nodwch enw’r cynllun pensiwn"
     val refEmptyErrorText: String  = "Nodwch Gyfeirnod Treth y Cynllun Pensiwn"
+    val qopsEmptyErrorText: String  = "Enter the Qualifying Overseas Pension Scheme Reference"
     val providerAddressEmptyErrorText: String = "Nodwch gyfeiriad y darparwr pensiwn"
     val providerNameInvalidFormatErrorText: String = "Mae’n rhaid i enw’r cynllun pensiwn gynnwys y rhifau 0-9, " +
       "llythrennau a-z, cysylltnodau, bylchau, collnodau, comas, atalnodau llawn, cromfachau crwn a’r cymeriadau arbennig &, /, @, £,* yn unig."
@@ -211,6 +214,7 @@ class ShortServicePensionsSchemeViewSpec extends ViewUnitTest {
             val formMap = setFormData("", "", "", "")
             val htmlFormat = underTest(tcSsrPensionSchemeForm(agentOrIndividual, isUKCountry).bind(formMap), taxYearEOY, isUKCountry, 0)
             implicit val document: Document = Jsoup.parse(htmlFormat.body)
+            val referenceError = if (isUKCountry) refEmptyErrorText else qopsEmptyErrorText
 
             titleCheck(expectedErrorTitle, userScenario.isWelsh)
             checkCommonElements
@@ -218,14 +222,14 @@ class ShortServicePensionsSchemeViewSpec extends ViewUnitTest {
 
             val multiErrorList = List(
               (providerNameEmptyErrorText, providerNameErrorHref),
-              (refEmptyErrorText, refErrorHref),
+              (referenceError, refErrorHref),
               (providerAddressEmptyErrorText, providerAddressErrorHref)) ++
               (if (!isUKCountry) List((SER.get.countryIdEmptyErrorText, countryIdErrorHref)) else List[(String, String)]())
 
             multipleErrorCheck(multiErrorList, userScenario.isWelsh)
 
             errorAboveElementCheck(providerNameEmptyErrorText, Some(providerNameIF))
-            errorAboveElementCheck(refEmptyErrorText, Some(schemeRefIF))
+            errorAboveElementCheck(referenceError, Some(schemeRefIF))
             errorAboveElementCheck(providerAddressEmptyErrorText, Some(providerAddressIF))
             if (!isUKCountry) errorAboveElementCheck(SER.get.countryIdEmptyErrorText, Some(countryIF))
           }

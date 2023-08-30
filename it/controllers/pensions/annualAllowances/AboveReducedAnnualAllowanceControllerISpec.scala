@@ -113,7 +113,7 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
     val expectedReducedErrorTitle = s"Error: $expectedReducedTitle"
     val expectedNoEntryError = "Select yes if you have gone above your reduced annual allowance"
     val expectedNoAmountEntryError = "Enter the amount above your reduced annual allowance"
-    val expectedIncorrectFormatError = "Enter the amount above your reduced annual allowance in the correct format"
+    val expectedIncorrectFormatError = "Enter the amount above your reduced annual allowance in pounds and pence"
     val expectedOverMaxError = "The amount above your reduced annual allowance must be less than £100,000,000,000"
   }
 
@@ -131,7 +131,7 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
     val expectedReducedErrorTitle = s"Error: $expectedReducedTitle"
     val expectedNoEntryError = "Select yes if your client has gone above their reduced annual allowance"
     val expectedNoAmountEntryError = "Enter the amount above your client’s reduced annual allowance"
-    val expectedIncorrectFormatError = "Enter the amount above your client’s reduced annual allowance in the correct format"
+    val expectedIncorrectFormatError = "Enter the amount above your client’s reduced annual allowance in pounds and pence"
     val expectedOverMaxError = "The amount above your client’s reduced annual allowance must be less than £100,000,000,000"
   }
 

@@ -26,7 +26,7 @@ import javax.inject.Singleton
 
 @Singleton
 class FormsProvider() {
-  
+
   def reducedAnnualAllowanceForm(user: User): Form[Boolean] = {
     val agentOrIndividual = userType(user.isAgent)
     YesNoForm.yesNoForm(missingInputError = s"annualAllowance.reducedAnnualAllowance.error.noEntry.$agentOrIndividual")
@@ -118,10 +118,10 @@ class FormsProvider() {
     OptionalTupleAmountForm.amountForm(OptionalTupleAmountFormErrorMessage(
       emptyFieldKey1 = s"lifetimeAllowance.pensionTakenAnotherWay.beforeTax.error.noEntry.$agentOrIndividual",
       wrongFormatKey1 = s"lifetimeAllowance.pensionTakenAnotherWay.beforeTax.error.incorrectFormat.$agentOrIndividual",
-      exceedsMaxAmountKey1 = s"common.beforeTax.error.overMaximum",
+      exceedsMaxAmountKey1 = s"lifetimeAllowance.pensionTakenAnotherWay.beforeTax.error.overMax.$agentOrIndividual",
       emptyFieldKey2 = s"lifetimeAllowance.pensionTakenAnotherWay.taxPaid.error.noEntry.$agentOrIndividual",
-      wrongFormatKey2 = s"common.taxPaid.error.incorrectFormat",
-      exceedsMaxAmountKey2 = s"common.taxPaid.error.overMaximum"
+      wrongFormatKey2 = "common.taxPaid.error.incorrectFormat",
+      exceedsMaxAmountKey2 = "common.taxPaid.error.overMaximum"
     ))
   }
 
@@ -219,7 +219,8 @@ object FormsProvider {
       missingInputError = s"pensions.pensionsProviderPaidTax.error.noEntry.$agentOrIndividual",
       emptyFieldKey = s"pensions.pensionsProviderPaidTax.error.noAmount.$agentOrIndividual",
       wrongFormatKey = s"pensions.pensionsProviderPaidTax.error.incorrectFormat.$agentOrIndividual",
-      exceedsMaxAmountKey = s"common.pensions.error.amountMaxLimit.$agentOrIndividual"
+      exceedsMaxAmountKey = s"pensions.pensionsProviderPaidTax.error.overMaximum.$agentOrIndividual",
+      minAmountKey = "common.error.amountNotZero"
     )
   }
 }

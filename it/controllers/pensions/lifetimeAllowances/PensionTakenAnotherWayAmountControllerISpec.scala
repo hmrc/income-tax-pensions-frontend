@@ -77,7 +77,6 @@ class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with B
     val beforeTax: String
     val taxPaid: String
     val taxPaidParagraph: String
-    val beforeTaxErrorOverMaximum: String
     val taxPaidErrorIncorrectFormat: String
     val taxPaidErrorOverMaximum: String
   }
@@ -92,6 +91,7 @@ class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with B
     val checkThisWithProviderParagraph: String
     val beforeTaxParagraph: String
     val beforeTaxErrorIncorrectFormat: String
+    val beforeTaxErrorOverMaximum: String
 
   }
 
@@ -101,8 +101,7 @@ class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with B
     val buttonText = "Continue"
     val beforeTax = "Total amount before tax"
     val taxPaid = "Total tax paid"
-    val beforeTaxErrorOverMaximum = "The amount of lifetime allowance must be less than £100,000,000,000"
-    val taxPaidErrorIncorrectFormat = "Enter the amount of lifetime allowance tax in the correct format"
+    val taxPaidErrorIncorrectFormat = "Enter the amount of lifetime allowance tax in pounds"
     val taxPaidErrorOverMaximum = "The amount of lifetime allowance tax must be less than £100,000,000,000"
     val taxPaidParagraph = "If more than one pension scheme paid the lifetime allowance tax, give the total."
   }
@@ -113,7 +112,6 @@ class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with B
     val buttonText = "Yn eich blaen"
     val beforeTax = "Cyfanswm cyn treth"
     val taxPaid = "Cyfanswm y dreth a dalwyd"
-    val beforeTaxErrorOverMaximum = "Mae’n rhaid i swm y lwfans oes fod yn llai na £100,000,000,000"
     val taxPaidErrorIncorrectFormat = "Nodwch swm y dreth lwfans oes yn y fformat cywir"
     val taxPaidErrorOverMaximum = "Mae’n rhaid i swm y dreth lwfans oes fod yn llai na £100,000,000,000"
     val taxPaidParagraph = "Os oedd mwy nag un cynllun pensiwn yn talu’r dreth lwfans oes, rhowch y cyfanswm."
@@ -129,7 +127,8 @@ class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with B
     val amountAboveAllowanceParagraph =
       "Tell us the amount above your lifetime allowance you’ve taken in other ways. This could be regular payments or a cash withdrawal."
     val beforeTaxParagraph = "If you got payments from more than one pension scheme, give the total."
-    val beforeTaxErrorIncorrectFormat = "Enter the amount you took above your lifetime allowance in the correct format"
+    val beforeTaxErrorIncorrectFormat = "Enter the amount you took above your lifetime allowance in pounds"
+    val beforeTaxErrorOverMaximum = "The amount you took above your lifetime allowance must be less than £100,000,000,000"
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
@@ -142,6 +141,7 @@ class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with B
       "Rhowch wybod i ni’r swm sy’n uwch na’ch lwfans oes rydych wedi’i gymryd mewn ffyrdd eraill. Gallai hyn fod yn daliadau rheolaidd neu’n tynnu’n ôl arian."
     val beforeTaxParagraph = "Os oeddech yn cael taliadau o fwy nag un cynllun pensiwn, rhowch y cyfanswm."
     val beforeTaxErrorIncorrectFormat = "Nodwch y swm a gymeroch sy’n uwch na’ch lwfans oes yn y fformat cywir"
+    val beforeTaxErrorOverMaximum = "The amount you took above your lifetime allowance must be less than £100,000,000,000"
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
@@ -154,7 +154,8 @@ class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with B
       "Tell us the amount above your client’s lifetime allowance they’ve taken in other ways. This could be regular payments or a cash withdrawal."
     val checkThisWithProviderParagraph = "Your client can check with their pension provider if you’re unsure."
     val beforeTaxParagraph = "If your client got payments from more than one pension scheme, give the total."
-    val beforeTaxErrorIncorrectFormat = "Enter the amount your client took above their lifetime allowance in the correct format"
+    val beforeTaxErrorIncorrectFormat = "Enter the amount your client took above their lifetime allowance in pounds"
+    val beforeTaxErrorOverMaximum = "The amount of lifetime allowance must be less than £100,000,000,000"
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
@@ -169,6 +170,7 @@ class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with B
     val checkThisWithProviderParagraph = "Gall eich cleient wirio â’i ddarparwr pensiwn os nad ydych yn siŵr."
     val beforeTaxParagraph = "Os oedd eich cleient yn cael taliadau o fwy nag un cynllun pensiwn, rhowch y cyfanswm."
     val beforeTaxErrorIncorrectFormat = "Nodwch y swm a gymerodd eich cleient sy’n uwch na’u lwfans oes yn y fformat cywir"
+    val beforeTaxErrorOverMaximum = "The amount of lifetime allowance must be less than £100,000,000,000"
   }
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(
@@ -483,9 +485,9 @@ class PensionTakenAnotherWayAmountControllerISpec extends IntegrationTest with B
           buttonCheck(buttonText, continueButtonSelector)
           formPostLinkCheck(pensionTakenAnotherWayAmountUrl(taxYearEOY), formSelector)
           multipleSummaryErrorCheck(List(
-            (beforeTaxErrorOverMaximum, expectedAmount1ErrorHref),
+            (user.specificExpectedResults.get.beforeTaxErrorOverMaximum, expectedAmount1ErrorHref),
             (taxPaidErrorOverMaximum, expectedAmount2ErrorHref)))
-          errorAboveElementCheck(beforeTaxErrorOverMaximum, Some(amount1InputName))
+          errorAboveElementCheck(user.specificExpectedResults.get.beforeTaxErrorOverMaximum, Some(amount1InputName))
           errorAboveElementCheck(taxPaidErrorOverMaximum, Some(amount2InputName))
           welshToggleCheck(user.isWelsh)
         }
