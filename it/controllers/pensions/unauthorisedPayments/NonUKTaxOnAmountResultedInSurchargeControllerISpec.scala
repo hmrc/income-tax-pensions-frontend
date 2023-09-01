@@ -687,12 +687,12 @@ class NonUKTaxOnAmountResultedInSurchargeControllerISpec
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "There is a problem",
-                      body = "Enter the amount of non-UK tax in the correct format",
+                      body = "Enter the amount of non-UK tax in pounds",
                       link = "#amount-2")
                   ),
                   errorAboveElementCheckSectionOpt = Some(
                     ErrorAboveElementCheckSection(
-                      title = "Error: Enter the amount of non-UK tax in the correct format",
+                      title = "Error: Enter the amount of non-UK tax in pounds",
                       idOpt = Some("amount-2")
                     )
                   )
@@ -718,12 +718,12 @@ class NonUKTaxOnAmountResultedInSurchargeControllerISpec
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "Mae problem wedi codi",
-                      body = "Enter the amount of non-UK tax in the correct format",
+                      body = "Enter the amount of non-UK tax in pounds",
                       link = "#amount-2")
                   ),
                   errorAboveElementCheckSectionOpt = Some(
                     ErrorAboveElementCheckSection(
-                      title = "Error: Enter the amount of non-UK tax in the correct format",
+                      title = "Error: Enter the amount of non-UK tax in pounds",
                       idOpt = Some("amount-2")
                     )
                   )
@@ -749,12 +749,12 @@ class NonUKTaxOnAmountResultedInSurchargeControllerISpec
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "There is a problem",
-                      body = "Enter the amount of non-UK tax in the correct format",
+                      body = "Enter the amount of non-UK tax in pounds",
                       link = "#amount-2")
                   ),
                   errorAboveElementCheckSectionOpt = Some(
                     ErrorAboveElementCheckSection(
-                      title = "Error: Enter the amount of non-UK tax in the correct format",
+                      title = "Error: Enter the amount of non-UK tax in pounds",
                       idOpt = Some("amount-2")
                     )
                   )
@@ -780,12 +780,12 @@ class NonUKTaxOnAmountResultedInSurchargeControllerISpec
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "Mae problem wedi codi",
-                      body = "Enter the amount of non-UK tax in the correct format",
+                      body = "Enter the amount of non-UK tax in pounds",
                       link = "#amount-2")
                   ),
                   errorAboveElementCheckSectionOpt = Some(
                     ErrorAboveElementCheckSection(
-                      title = "Error: Enter the amount of non-UK tax in the correct format",
+                      title = "Error: Enter the amount of non-UK tax in pounds",
                       idOpt = Some("amount-2")
                     )
                   )

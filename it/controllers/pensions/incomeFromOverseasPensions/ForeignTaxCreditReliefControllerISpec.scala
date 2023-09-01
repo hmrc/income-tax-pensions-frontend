@@ -305,12 +305,12 @@ class ForeignTaxCreditReliefControllerISpec extends YesNoControllerSpec("/overse
           errorSummarySectionOpt = Some(
             ErrorSummarySection(
               title = "There is a problem",
-              body = "Enter yes or no if you are claiming Foreign Tax Credit Relief (FTCR)",
+              body = "Enter yes if you are claiming Foreign Tax Credit Relief (FTCR)",
               link = "#value")
           ),
           errorAboveElementCheckSectionOpt = Some(
             ErrorAboveElementCheckSection(
-              title = "Error: Enter yes or no if you are claiming Foreign Tax Credit Relief (FTCR)",
+              title = "Error: Enter yes if you are claiming Foreign Tax Credit Relief (FTCR)",
               idOpt = Some("value")
             )
           ),
@@ -321,9 +321,9 @@ class ForeignTaxCreditReliefControllerISpec extends YesNoControllerSpec("/overse
           title = "Error: Is your client claiming Foreign Tax Credit Relief (FTCR)?",
           header = "Is your client claiming Foreign Tax Credit Relief (FTCR)?",
           errorSummarySectionOpt = Some(ErrorSummarySection(
-            title = "There is a problem", body = "Enter yes or no if your client is claiming Foreign Tax Credit Relief (FTCR)", link = "#value")),
+            title = "There is a problem", body = "Enter yes if your client is claiming Foreign Tax Credit Relief (FTCR)", link = "#value")),
           errorAboveElementCheckSectionOpt = Some(ErrorAboveElementCheckSection(
-            title = "Error: Enter yes or no if your client is claiming Foreign Tax Credit Relief (FTCR)", idOpt = Some("value"))),
+            title = "Error: Enter yes if your client is claiming Foreign Tax Credit Relief (FTCR)", idOpt = Some("value"))),
         )
 
         def welshTitle(epc: ExpectedYesNoPageContents): Option[ErrorSummarySection] =

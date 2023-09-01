@@ -82,6 +82,7 @@ common.unauthorisedPaymentsFromPension.caption = Taliadau heb awdurdod o bensiyn
 common.unauthorisedPayments.Amount.Text = Cyfanswm y dreth a dalwyd y tu allan i’r DU mewn punnoedd
 common.unauthorisedPayments.error.Amount.incorrectFormat = Nodwch swm y dreth a dalwyd y tu allan i’r DU yn y fformat cywir
 common.unauthorisedPayments.error.checkbox.or.radioButton.noEntry = Dewiswch ‘Iawn’ os cawsoch daliad heb awdurdod o gynllun pensiwn
+common.unauthorisedPayments.error.checkbox.or.radioButton.noEntry.agent = Select yes if your client got an unauthorised payment from a pension scheme
 
 common.whereToFindInformation = Ble i ddod o hyd i’r wybodaeth hon
 common.FindInformation = Gallwch ddod o hyd i’r wybodaeth hon yn:
@@ -538,8 +539,7 @@ pensions.taxPaidOnStatePensionLumpSum.title.agent = A wnaeth eich cleient dalu t
 pensions.taxPaidOnStatePensionLumpSum.error.noEntry.agent = Dewiswch ‘Iawn’ os gwnaeth eich cleient dalu treth ar gyfandaliad Pensiwn y Wladwriaeth
 pensions.taxPaidOnStatePensionLumpSum.amount.error.noEntry.individual = Nodwch gyfanswm y dreth a dalwyd ar gyfandaliad Pensiwn y Wladwriaeth
 pensions.taxPaidOnStatePensionLumpSum.amount.error.noEntry.agent = Nodwch swm y dreth a dalodd eich cleient ar y cyfandaliad Pensiwn y Wladwriaeth
-pensions.taxPaidOnStatePensionLumpSum.amount.error.incorrectFormat.individual = Nodwch gyfanswm y dreth a dalwyd ar gyfandaliad Pensiwn y Wladwriaeth yn y fformat cywir
-pensions.taxPaidOnStatePensionLumpSum.amount.error.incorrectFormat.agent = Nodwch swm y dreth a dalodd eich cleient ar y cyfandaliad Pensiwn y Wladwriaeth yn y fformat cywir
+pensions.taxPaidOnStatePensionLumpSum.amount.error.incorrectFormat = Nodwch gyfanswm y dreth a dalwyd ar gyfandaliad Pensiwn y Wladwriaeth yn y fformat cywir
 pensions.taxPaidOnStatePensionLumpSum.amount.error.overMaximum.individual = Mae’n rhaid i swm y dreth a dalwyd ar gyfandaliad Pensiwn y Wladwriaeth fod yn llai na £100,000,000,000
 pensions.taxPaidOnStatePensionLumpSum.amount.error.overMaximum.agent = Mae’n rhaid i swm y dreth a dalodd eich cleient ar y cyfandaliad Pensiwn y Wladwriaeth fod yn llai na £100,000,000,000
 
@@ -564,11 +564,8 @@ pensions.statePension.title.individual = A ydych chi’n cael taliadau rheolaidd
 pensions.statePension.title.agent = A yw’ch cleient yn cael taliadau rheolaidd o Bensiwn y Wladwriaeth?
 pensions.statePension.error.noEntry.individual = Dewiswch ‘Iawn’ os cawsoch Bensiwn y Wladwriaeth y flwyddyn hon
 pensions.statePension.error.noEntry.agent = Dewiswch ‘Iawn’ os cafodd eich cleient Pensiwn y Wladwriaeth y flwyddyn hon
-pensions.statePension.amount.error.noEntry.individual = Nodwch swm eich Pensiwn y Wladwriaeth
-pensions.statePension.amount.error.incorrectFormat.individual = Nodwch swm eich Pensiwn y Wladwriaeth yn y fformat cywir
+pensions.statePension.amount.error.incorrectOrEmpty = Enter the total amount of State Pension payments in pounds
 pensions.statePension.amount.error.overMaximum.individual = Mae’n rhaid i swm eich Pensiwn y Wladwriaeth fod yn llai na £100,000,000,000
-pensions.statePension.amount.error.noEntry.agent = Nodwch swm Pensiwn y Wladwriaeth eich cleient
-pensions.statePension.amount.error.incorrectFormat.agent = Nodwch swm Pensiwn y Wladwriaeth eich cleient yn y fformat cywir
 pensions.statePension.amount.error.overMaximum.agent = Mae’n rhaid i swm Pensiwn y Wladwriaeth eich cleient fod yn llai na £100,000,000,000
 
 #state pension add to calculation
@@ -604,8 +601,8 @@ incomeFromPensions.incomeFromPensionsSummary.otherUkPensions = Pensiynau eraill 
 #Do You Get UK Pension Scheme Payments Messages
 pensions.ukPensionSchemePayments.title.individual = A ydych chi’n cael taliadau o gynlluniau pensiwn y DU?
 pensions.ukPensionSchemePayments.title.agent = A yw eich cleient yn cael taliadau o gynlluniau pensiwn y DU?
-pensions.ukPensionSchemePayments.error.noEntry.individual = Dewiswch Iawn os cawsoch daliadau o gynlluniau pensiwn y DU
-pensions.ukPensionSchemePayments.error.noEntry.agent = Dewiswch Iawn os cafodd eich cleient daliadau o gynlluniau pensiwn y DU
+pensions.ukPensionSchemePayments.error.noEntry.individual = Select yes if you get UK pension schemes payments
+pensions.ukPensionSchemePayments.error.noEntry.agent = Select yes if your client gets UK pension schemes payments
 
 #pension scheme income details
 incomeFromPensions.pensionSchemeDetails.title = Manylion y cynllun pensiwn
@@ -619,12 +616,15 @@ incomeFromPensions.pensionSchemeDetails.schemeRef.hint = Er enghraifft, 123/AB45
 incomeFromPensions.pensionSchemeDetails.pid.subheading = Rhif dynodydd pensiwn (PID)
 incomeFromPensions.pensionSchemeDetails.pid.hint.individual = Gwirio’ch datganiad pensiwn neu P60
 incomeFromPensions.pensionSchemeDetails.pid.hint.agent = Gwirio datganiad pensiwn neu P60 eich cleient
-incomeFromPensions.pensionSchemeDetails.providerName.error.noEntry = Nodwch enw’r darparwr pensiwn
-incomeFromPensions.pensionSchemeDetails.providerName.error.overCharLimit = Mae’n rhaid i enw’r darparwr pensiwn fod yn 74 o gymeriadau neu lai
+incomeFromPensions.pensionSchemeDetails.providerName.error.noEntry.individual = Enter the name of your pension scheme provider
+incomeFromPensions.pensionSchemeDetails.providerName.error.noEntry.agent = Enter the name of your client’s pension scheme provider
+incomeFromPensions.pensionSchemeDetails.providerName.error.overCharLimit.individual = The pension scheme name must be 74 characters or fewer
+incomeFromPensions.pensionSchemeDetails.providerName.error.overCharLimit.agent = The name of your client’s pension scheme must be 74 characters or fewer
 incomeFromPensions.pensionSchemeDetails.providerName.error.incorrectFormat = Mae’n rhaid i enw’r darparwr pensiwn gynnwys y rhifau 0 i 9, llythrennau a-z, cysylltnodau, bylchau, collnodau, comas, atalnodau llawn, cromfachau crwn a’r cymeriadau arbennig &\: yn unig
 incomeFromPensions.pensionSchemeDetails.schemeRef.error.noEntry = Nodwch gyfeirnod TWE y cynllun pensiwn
 incomeFromPensions.pensionSchemeDetails.schemeRef.error.incorrectFormat = Nodwch gyfeirnod TWE y cynllun pensiwn yn y fformat cywir
-incomeFromPensions.pensionSchemeDetails.pid.error.noEntry = Nodwch rif dynodydd y pensiwn (PID)
+incomeFromPensions.pensionSchemeDetails.pid.error.noEntry.individual = Enter your pension identification (PID)
+incomeFromPensions.pensionSchemeDetails.pid.error.noEntry.agent = Enter your client’s pension identification (PID)
 incomeFromPensions.pensionSchemeDetails.pid.error.overCharLimit = Mae’n rhaid i rif dynodydd y pensiwn (PID) fod yn 38 o gymeriadau neu lai
 incomeFromPensions.pensionSchemeDetails.pid.error.incorrectFormat = Mae’n rhaid i rif dynodydd y pensiwn gynnwys y rhifau 0 i 9, llythrennau a-z, cysylltnodau, bylchau, collnodau, comas, atalnodau llawn, cromfachau crwn a’r cymeriadau arbennig /=!"%&*;<>+:\? yn unig
 
@@ -636,12 +636,15 @@ pensions.ukPensionIncomeSummary.addPensionIncomeLink = Ychwanegu cynllun pensiwn
 pensions.pensionAmount.title.individual = Faint o bensiwn a gawsoch chi?
 pensions.pensionAmount.title.agent = Faint o bensiwn a gafodd eich cleient?
 pensions.pensionAmount.totalTax = Cyfanswm ar gyfer y flwyddyn dreth hon
-pensions.pensionAmount.totalTax.error.noEntry = Nodwch swm y pensiwn a dalwyd
-pensions.pensionAmount.totalTax.error.incorrectFormat = Nodwch swm y pensiwn a dalwyd, yn y fformat cywir
+pensions.pensionAmount.totalTax.error.noEntry.individual = Enter the total amount of your pension income
+pensions.pensionAmount.totalTax.error.noEntry.agent = Enter the total amount of your client’s pension income
+pensions.pensionAmount.totalTax.error.incorrectFormat = Enter the amount of pension paid in pounds
 pensions.pensionAmount.totalTax.error.overMaximum = Mae’n rhaid i swm y pensiwn a dalwyd fod yn llai na £100,000,000,000
 pensions.pensionAmount.taxPaid = Treth a dalwyd
-pensions.pensionAmount.taxPaid.error.noEntry = Nodwch swm y dreth a dalwyd
-pensions.pensionAmount.taxPaid.error.incorrectFormat = Nodwch swm y dreth a dalwyd yn y fformat cywir
+pensions.pensionAmount.taxPaid.error.noEntry.individual = Enter the amount of tax you paid
+pensions.pensionAmount.taxPaid.error.noEntry.agent = Enter the amount of tax paid by your client
+pensions.pensionAmount.taxPaid.error.incorrectFormat.individual = Enter the total amount of tax paid in pounds
+pensions.pensionAmount.taxPaid.error.incorrectFormat.agent = Enter the total amount of tax paid by your client in pounds
 pensions.pensionAmount.taxPaid.error.overMaximum = Mae’n rhaid i swm y dreth a dalwyd fod yn llai na £100,000,000,000
 
 #pension scheme start date
@@ -809,8 +812,6 @@ unauthorisedPayments.pension.pensionSchemeTaxReference.paragraph1.agent = Gall e
 unauthorisedPayments.pension.pensionSchemeTaxReference.paragraph2.individual = Os cawsoch daliadau heb awdurdod gan fwy nag un darparwr pensiwn yn y DU, gallwch ychwanegu’r cyfeirnodau yn nes ymlaen.
 unauthorisedPayments.pension.pensionSchemeTaxReference.paragraph2.agent = Os cafodd eich cleient daliadau heb awdurdod gan fwy nag un darparwr pensiwn yn y DU, gallwch ychwanegu’r cyfeirnodau yn nes ymlaen.
 unauthorisedPayments.pension.pensionSchemeTaxReference.whatIsPSTR = Beth yw’r PSTR?
-unauthorisedPayments.pension.pensionSchemeTaxReference.error.incorrectFormat.individual = Nodwch Gyfeirnod Treth eich Cynllun Pensiwn yn y fformat cywir
-unauthorisedPayments.pension.pensionSchemeTaxReference.error.incorrectFormat.agent = Nodwch Gyfeirnod Treth Cynllun Pensiwn eich cleient yn y fformat cywir
 
 #payments into pensions CYA
 unauthorisedPayments.cya.heading.individual = Gwirio’ch taliadau heb awdurdod
@@ -845,6 +846,8 @@ unauthorisedPayments.didYouGetAnUnauthorisedPayment = A gawsoch daliad heb awdur
 unauthorisedPayments.checkbox.text1 = Iawn, taliadau heb awdurdod a wnaeth arwain at ordal
 unauthorisedPayments.checkbox.text2 = Iawn, taliadau heb awdurdod na wnaethant arwain at ordal
 unauthorisedPayments.checkbox.hint = Dewiswch bob un sy’n berthnasol.
+unauthorisedPayments.didYouGetAnUnauthorisedPayment.error.noEntry.individual = Select yes if you got an unauthorised payment from a pension scheme
+unauthorisedPayments.didYouGetAnUnauthorisedPayment.error.noEntry.agent = Select yes if your client got an unauthorised payment from a pension scheme
 
 #Do you have an employer-financed retirement scheme?
 employerFinancedRetirementScheme.benefitsFromScheme.title = Cynlluniau buddiannau ymddeol a ariannwyd gan gyflogwyr
@@ -993,7 +996,8 @@ overseasPension.pensionReliefType.MMR = Rhyddhad aelod mudol
 overseasPension.pensionReliefType.DTR = Rhyddhad trethiant dwbl
 overseasPension.pensionReliefType.TCR = Rhyddhad cyfatebol trosiannol
 overseasPension.pensionReliefType.NoneOfThese = Dim un o’r rhain
-overseasPension.pensionReliefType.error.noEntry = Dewiswch y math o ryddhad treth, neu dewiswch ‘dim’
+overseasPension.pensionReliefType.error.noEntry.individual = Select the type of tax relief you got on payments into overseas pensions
+overseasPension.pensionReliefType.error.noEntry.agent = Select the type of tax relief your client got on payments into overseas pensions
 overseasPension.pensionReliefType.link = Dysgwch am y mathau o ryddhad treth ar gyfer taliadau cynlluniau pensiwn tramor
 
 #Pension Tax Relief Details

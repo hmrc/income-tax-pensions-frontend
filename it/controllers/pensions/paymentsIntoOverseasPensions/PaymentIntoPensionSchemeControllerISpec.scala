@@ -886,12 +886,12 @@ class PaymentIntoPensionSchemeControllerISpec
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "There is a problem",
-                      body = "Enter the amount you paid into overseas pension schemes in the correct format",
+                      body = "Enter the amount you paid into overseas pension schemes in pounds",
                       link = "#amount-2")
                   ),
                   errorAboveElementCheckSectionOpt = Some(
                     ErrorAboveElementCheckSection(
-                      title = "Error: Enter the amount you paid into overseas pension schemes in the correct format",
+                      title = "Error: Enter the amount you paid into overseas pension schemes in pounds",
                       idOpt = Some("amount-2")
                     )
                   )
@@ -928,12 +928,12 @@ class PaymentIntoPensionSchemeControllerISpec
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "Mae problem wedi codi",
-                      body = "Enter the amount you paid into overseas pension schemes in the correct format",
+                      body = "Enter the amount you paid into overseas pension schemes in pounds",
                       link = "#amount-2")
                   ),
                   errorAboveElementCheckSectionOpt = Some(
                     ErrorAboveElementCheckSection(
-                      title = "Error: Enter the amount you paid into overseas pension schemes in the correct format",
+                      title = "Error: Enter the amount you paid into overseas pension schemes in pounds",
                       idOpt = Some("amount-2")
                     )
                   )
@@ -970,12 +970,12 @@ class PaymentIntoPensionSchemeControllerISpec
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "There is a problem",
-                      body = "Enter the amount your client paid into overseas pension schemes in the correct format",
+                      body = "Enter the amount your client paid into overseas pension schemes in pounds",
                       link = "#amount-2")
                   ),
                   errorAboveElementCheckSectionOpt = Some(
                     ErrorAboveElementCheckSection(
-                      title = "Error: Enter the amount your client paid into overseas pension schemes in the correct format",
+                      title = "Error: Enter the amount your client paid into overseas pension schemes in pounds",
                       idOpt = Some("amount-2")
                     )
                   )
@@ -1012,12 +1012,12 @@ class PaymentIntoPensionSchemeControllerISpec
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "Mae problem wedi codi",
-                      body = "Enter the amount your client paid into overseas pension schemes in the correct format",
+                      body = "Enter the amount your client paid into overseas pension schemes in pounds",
                       link = "#amount-2")
                   ),
                   errorAboveElementCheckSectionOpt = Some(
                     ErrorAboveElementCheckSection(
-                      title = "Error: Enter the amount your client paid into overseas pension schemes in the correct format",
+                      title = "Error: Enter the amount your client paid into overseas pension schemes in pounds",
                       idOpt = Some("amount-2")
                     )
                   )
@@ -1056,12 +1056,12 @@ class PaymentIntoPensionSchemeControllerISpec
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "There is a problem",
-                      body = "The amount you paid into overseas pension schemes must be less than £100,000,000,000",
+                      body = "The amount your employers paid into overseas pension schemes must be less than £100,000,000,000",
                       link = "#amount-2")
                   ),
                   errorAboveElementCheckSectionOpt = Some(
                     ErrorAboveElementCheckSection(
-                      title = "Error: The amount you paid into overseas pension schemes must be less than £100,000,000,000",
+                      title = "Error: The amount your employers paid into overseas pension schemes must be less than £100,000,000,000",
                       idOpt = Some("amount-2")
                     )
                   )
@@ -1098,12 +1098,12 @@ class PaymentIntoPensionSchemeControllerISpec
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "Mae problem wedi codi",
-                      body = "The amount you paid into overseas pension schemes must be less than £100,000,000,000",
+                      body = "The amount your employers paid into overseas pension schemes must be less than £100,000,000,000",
                       link = "#amount-2")
                   ),
                   errorAboveElementCheckSectionOpt = Some(
                     ErrorAboveElementCheckSection(
-                      title = "Error: The amount you paid into overseas pension schemes must be less than £100,000,000,000",
+                      title = "Error: The amount your employers paid into overseas pension schemes must be less than £100,000,000,000",
                       idOpt = Some("amount-2")
                     )
                   )
@@ -1140,12 +1140,12 @@ class PaymentIntoPensionSchemeControllerISpec
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "There is a problem",
-                      body = "The amount your client paid into overseas pension schemes must be less than £100,000,000,000",
+                      body = "The amount your client’s employers paid into overseas pension schemes must be less than £100,000,000,000",
                       link = "#amount-2")
                   ),
                   errorAboveElementCheckSectionOpt = Some(
                     ErrorAboveElementCheckSection(
-                      title = "Error: The amount your client paid into overseas pension schemes must be less than £100,000,000,000",
+                      title = "Error: The amount your client’s employers paid into overseas pension schemes must be less than £100,000,000,000",
                       idOpt = Some("amount-2")
                     )
                   )
@@ -1182,12 +1182,12 @@ class PaymentIntoPensionSchemeControllerISpec
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "Mae problem wedi codi",
-                      body = "The amount your client paid into overseas pension schemes must be less than £100,000,000,000",
+                      body = "The amount your client’s employers paid into overseas pension schemes must be less than £100,000,000,000",
                       link = "#amount-2")
                   ),
                   errorAboveElementCheckSectionOpt = Some(
                     ErrorAboveElementCheckSection(
-                      title = "Error: The amount your client paid into overseas pension schemes must be less than £100,000,000,000",
+                      title = "Error: The amount your client’s employers paid into overseas pension schemes must be less than £100,000,000,000",
                       idOpt = Some("amount-2")
                     )
                   )

@@ -21,6 +21,7 @@ import config.{AppConfig, ErrorHandler}
 import controllers.pensions.unauthorisedPayments.routes.UnauthorisedPensionSchemeTaxReferenceController
 import controllers.predicates.actions.AuthorisedAction
 import forms.YesNoForm
+import models.User
 import models.mongo.PensionsCYAModel
 import models.pension.charges.UnauthorisedPaymentsViewModel
 import play.api.data.Form
@@ -48,8 +49,8 @@ class WereAnyOfTheUnauthorisedPaymentsController @Inject()(implicit val cc: Mess
                                                            clock: Clock) extends FrontendController(cc) with I18nSupport {
 
 
-  def yesNoForm(): Form[Boolean] = YesNoForm.yesNoForm(
-    missingInputError = s"common.unauthorisedPayments.error.checkbox.or.radioButton.noEntry"
+  def yesNoForm(user: User): Form[Boolean] = YesNoForm.yesNoForm(
+    missingInputError = s"common.unauthorisedPayments.error.checkbox.or.radioButton.noEntry.${if (user.isAgent) "agent" else "individual"}"
   )
 
   def show(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
@@ -60,15 +61,15 @@ class WereAnyOfTheUnauthorisedPaymentsController @Inject()(implicit val cc: Mess
         redirectBasedOnCurrentAnswers(taxYear, optData, cyaPageCall(taxYear))(checkRedirect) { data =>
 
           data.pensions.unauthorisedPayments.ukPensionSchemesQuestion match {
-            case Some(value) => Future.successful(Ok(view(yesNoForm().fill(value), taxYear)))
-            case None => Future.successful(Ok(view(yesNoForm(), taxYear)))
+            case Some(value) => Future.successful(Ok(view(yesNoForm(request.user).fill(value), taxYear)))
+            case None => Future.successful(Ok(view(yesNoForm(request.user), taxYear)))
           }
         }
     }
   }
 
   def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
-    yesNoForm().bindFromRequest().fold(
+    yesNoForm(request.user).bindFromRequest().fold(
       formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
       yesNo => {
         pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {

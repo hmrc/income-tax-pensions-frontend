@@ -17,13 +17,14 @@
 package forms
 
 import forms.validation.utils.ConstraintUtil.constraint
+import models.User
 import play.api.data.Form
 import play.api.data.Forms.{mapping, seq, text}
 import play.api.data.validation.{Constraint, Invalid, Valid}
 
 object UnAuthorisedPaymentsForm {
 
-  val yesSurchargeValue= "yesSurchargeValue"
+  val yesSurchargeValue = "yesSurchargeValue"
   val yesNotSurchargeValue = "yesNotSurchargeValue"
   val noValue = "noValue"
 
@@ -37,7 +38,7 @@ object UnAuthorisedPaymentsForm {
 
   val allEmpty: String => Constraint[UnAuthorisedPaymentsModel] = msgKey => constraint[UnAuthorisedPaymentsModel](
     unauthorisedPayments => {
-      if (!unauthorisedPayments.containsYesSurcharge & !unauthorisedPayments.containsYesNotSurcharge & !unauthorisedPayments.containsNoVal){
+      if (!unauthorisedPayments.containsYesSurcharge & !unauthorisedPayments.containsYesNotSurcharge & !unauthorisedPayments.containsNoVal) {
         Invalid(msgKey)
       }
       else {
@@ -46,11 +47,12 @@ object UnAuthorisedPaymentsForm {
     }
   )
 
-  def unAuthorisedPaymentsTypeForm(): Form[UnAuthorisedPaymentsModel] = Form[UnAuthorisedPaymentsModel](
-    mapping(
-      unauthorisedPaymentsType -> seq(text)
-    )(UnAuthorisedPaymentsModel.apply)(UnAuthorisedPaymentsModel.unapply).verifying(
-      allEmpty("common.unauthorisedPayments.error.checkbox.or.radioButton.noEntry")
+  def unAuthorisedPaymentsTypeForm(user: User): Form[UnAuthorisedPaymentsModel] = {
+    val agentIndividual = if (user.isAgent) "agent" else "individual"
+    Form[UnAuthorisedPaymentsModel](
+      mapping(unauthorisedPaymentsType -> seq(text))(UnAuthorisedPaymentsModel.apply)(UnAuthorisedPaymentsModel.unapply).verifying(
+        allEmpty(s"unauthorisedPayments.didYouGetAnUnauthorisedPayment.error.noEntry.$agentIndividual")
+      )
     )
-  )
+  }
 }

@@ -52,7 +52,7 @@ class PensionSchemeDetailsController @Inject()(implicit val mcc: MessagesControl
         indexCheckThenJourneyCheck(data, pensionSchemeIndex, PensionSchemeDetailsPage, taxYear) {
           data =>
             val pensionIncomesList: Seq[UkPensionIncomeViewModel] = data.pensions.incomeFromPensions.uKPensionIncomes
-            val form: Form[PensionSchemeDetailsModel] = PensionSchemeDetailsForm.pensionSchemeDetailsForm
+            val form: Form[PensionSchemeDetailsModel] = PensionSchemeDetailsForm.pensionSchemeDetailsForm(request.user)
 
             pensionSchemeIndex match {
               case Some(index) =>
@@ -70,7 +70,7 @@ class PensionSchemeDetailsController @Inject()(implicit val mcc: MessagesControl
   }
 
   def submit(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = authAction.async { implicit request =>
-    PensionSchemeDetailsForm.pensionSchemeDetailsForm.bindFromRequest().fold(
+    PensionSchemeDetailsForm.pensionSchemeDetailsForm(request.user).bindFromRequest().fold(
       formWithErrors => Future.successful(BadRequest(pensionSchemeDetailsView(formWithErrors, taxYear, pensionSchemeIndex))),
       formModel => {
         pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {

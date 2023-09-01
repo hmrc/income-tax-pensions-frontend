@@ -50,7 +50,7 @@ class UnauthorisedPensionSchemeTaxReferenceController @Inject()(implicit val cc:
 
     val errorMsgDetails = (
       s"common.pensionSchemeTaxReference.error.noEntry.${if (request.user.isAgent) "agent" else "individual"}",
-      s"unauthorisedPayments.pension.pensionSchemeTaxReference.error.incorrectFormat.${if (request.user.isAgent) "agent" else "individual"}"
+      "common.pensionSchemeTaxReference.error.incorrectFormat"
     )
     val emptyForm: Form[String] = PensionSchemeTaxReferenceForm.pensionSchemeTaxReferenceForm(errorMsgDetails._1, errorMsgDetails._2)
 
@@ -74,7 +74,7 @@ class UnauthorisedPensionSchemeTaxReferenceController @Inject()(implicit val cc:
   def submit(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = authAction.async { implicit request =>
     val errorMsgDetails = (
       s"common.pensionSchemeTaxReference.error.noEntry.${if (request.user.isAgent) "agent" else "individual"}",
-      s"unauthorisedPayments.pension.pensionSchemeTaxReference.error.incorrectFormat.${if (request.user.isAgent) "agent" else "individual"}"
+      "common.pensionSchemeTaxReference.error.incorrectFormat"
     )
 
     PensionSchemeTaxReferenceForm.pensionSchemeTaxReferenceForm(errorMsgDetails._1, errorMsgDetails._2).bindFromRequest().fold(

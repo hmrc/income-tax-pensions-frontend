@@ -50,13 +50,13 @@ class PensionsReliefViewSpec extends ViewUnitTest with FakeRequestProvider {
     val noneOfTheAbove: String
     val or: String
     val expectedLinkText: String
-    val expectedErrorText: String
     val continue: String
   }
 
   trait SpecificExpectedResults {
     val expectedTitle: String
     val expectedErrorTitle: String
+    val expectedErrorText: String
 
   }
 
@@ -68,7 +68,6 @@ class PensionsReliefViewSpec extends ViewUnitTest with FakeRequestProvider {
     override val noneOfTheAbove: String = "None of these"
     override val or: String = "or"
     override val expectedLinkText: String = "Find out about the types of tax relief for overseas pension scheme payments (opens in new tab)"
-    override val expectedErrorText: String = "Select the type of tax relief or select none"
     override val continue: String = "Continue"
 
   }
@@ -81,33 +80,34 @@ class PensionsReliefViewSpec extends ViewUnitTest with FakeRequestProvider {
     override val noneOfTheAbove: String = "Dim un o’r rhain"
     override val or: String = "neu"
     override val expectedLinkText: String = "Dysgwch am y mathau o ryddhad treth ar gyfer taliadau cynlluniau pensiwn tramor (yn agor tab newydd)"
-    override val expectedErrorText: String = "Dewiswch y math o ryddhad treth, neu dewiswch ‘dim’"
     override val continue: String = "Yn eich blaen"
   }
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
     override val expectedTitle: String = "What tax relief did you get on payments into overseas pensions?"
     override val expectedErrorTitle = s"Error: $expectedTitle"
+    override val expectedErrorText: String = "Select the type of tax relief you got on payments into overseas pensions"
 
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
     override val expectedTitle: String = "Pa ryddhad treth a gawsoch ar daliadau i mewn i bensiynau tramor?"
     override val expectedErrorTitle = s"Gwall: $expectedTitle"
+    override val expectedErrorText: String = "Select the type of tax relief you got on payments into overseas pensions"
 
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
     override val expectedTitle: String = "What tax relief did your client get on payments into overseas pensions?"
     override val expectedErrorTitle = s"Error: $expectedTitle"
+    override val expectedErrorText: String = "Select the type of tax relief your client got on payments into overseas pensions"
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
     override val expectedTitle: String = "Pa ryddhad treth a gafodd eich cleient ar daliadau i mewn i bensiynau tramor?"
     override val expectedErrorTitle = s"Gwall: $expectedTitle"
+    override val expectedErrorText: String = "Select the type of tax relief your client got on payments into overseas pensions"
   }
-
-
 
   override protected val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(
     UserScenario(isWelsh = false, isAgent = false, ExpectedCommonEN, Some(ExpectedIndividualEN)),
@@ -125,9 +125,11 @@ class PensionsReliefViewSpec extends ViewUnitTest with FakeRequestProvider {
           UserSessionDataRequest(aPensionsUserData.copy(
             pensions = aPensionsCYAEmptyModel.copy(paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel.
               copy(reliefs = Seq.empty[Relief]))),
-          if (userScenario.isAgent) anAgentUser else aUser,
-          if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest)
-        def form: Form[String] = new FormsProvider().overseasPensionsReliefTypeForm
+            if (userScenario.isAgent) anAgentUser else aUser,
+            if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest)
+
+        def form: Form[String] = new FormsProvider().overseasPensionsReliefTypeForm(aUser)
+
         implicit val document: Document = Jsoup.parse(underTest(form, taxYearEOY, Some(1)).body)
 
         captionCheck(userScenario.commonExpectedResults.expectedCaption(taxYearEOY), Selectors.captionSelector)
@@ -149,12 +151,12 @@ class PensionsReliefViewSpec extends ViewUnitTest with FakeRequestProvider {
           if (userScenario.isAgent) anAgentUser else aUser,
           if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest)
 
-        def form: Form[String] = new FormsProvider().overseasPensionsReliefTypeForm
+        def form: Form[String] = new FormsProvider().overseasPensionsReliefTypeForm(aUser)
 
         implicit val document: Document = Jsoup.parse(underTest(form.fill(
-            aPensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs.head.reliefType.get),
-            taxYearEOY,
-            Some(0)).body
+          aPensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs.head.reliefType.get),
+          taxYearEOY,
+          Some(0)).body
         )
 
         captionCheck(userScenario.commonExpectedResults.expectedCaption(taxYearEOY), Selectors.captionSelector)
@@ -172,20 +174,20 @@ class PensionsReliefViewSpec extends ViewUnitTest with FakeRequestProvider {
       }
 
       "render page with error text when no option was selected" which {
+        val user = if (userScenario.isAgent) anAgentUser else aUser
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
-        implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = UserSessionDataRequest(aPensionsUserData,
-          if (userScenario.isAgent) anAgentUser else aUser,
-          if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest)
+        implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = UserSessionDataRequest(
+          aPensionsUserData, user, if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest)
 
-        def form: Form[String] = new FormsProvider().overseasPensionsReliefTypeForm
+        def form: Form[String] = new FormsProvider().overseasPensionsReliefTypeForm(user)
 
         val htmlFormat = underTest(form.bind(Map(RadioButtonForm.value -> "")), taxYearEOY, Some(1))
 
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
         titleCheck(userScenario.specificExpectedResults.get.expectedErrorTitle, userScenario.isWelsh)
-        errorAboveElementCheck(userScenario.commonExpectedResults.expectedErrorText, Some("value"))
-        errorSummaryCheck(userScenario.commonExpectedResults.expectedErrorText, "#value")
+        errorAboveElementCheck(userScenario.specificExpectedResults.get.expectedErrorText, Some("value"))
+        errorSummaryCheck(userScenario.specificExpectedResults.get.expectedErrorText, "#value")
       }
     }
   }

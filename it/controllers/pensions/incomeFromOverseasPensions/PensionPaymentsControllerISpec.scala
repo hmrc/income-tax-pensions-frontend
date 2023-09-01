@@ -432,15 +432,15 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
             amountSection1 = ExpectedAmountSection("Amount before tax", "$342.23", Some("For example, £193.54")),
             amountSection2 = ExpectedAmountSection("Non-UK tax paid", "1,233.41", Some("For example, £193.54")),
             errorSummarySectionOpt = Some(ErrorSummarySection(
-              title = "There is a problem", body = "Enter an amount before tax in the correct format", link = "#amount-1")),
+              title = "There is a problem", body = "Enter an amount before tax in pounds", link = "#amount-1")),
             errorAboveElementCheckSectionOpt = Some(ErrorAboveElementCheckSection(
-              title = "Error: Enter an amount before tax in the correct format", idOpt = Some("amount-1")))
+              title = "Error: Enter an amount before tax in pounds", idOpt = Some("amount-1")))
           )
           val expPageContentsAgent = expPageContentsIndividual.copy(
             errorSummarySectionOpt = Some(ErrorSummarySection(
-              title = "There is a problem", body = "Enter the amount before tax in the correct format", link = "#amount-1")),
+              title = "There is a problem", body = "Enter the amount before tax in pounds", link = "#amount-1")),
             errorAboveElementCheckSectionOpt = Some(ErrorAboveElementCheckSection(
-              title = "Error: Enter the amount before tax in the correct format", idOpt = Some("amount-1")))
+              title = "Error: Enter the amount before tax in pounds", idOpt = Some("amount-1")))
           )
 
           scenarioNameForIndividualAndEnglish in {
@@ -478,9 +478,9 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
             amountSection1 = ExpectedAmountSection("Amount before tax", "1,231.26", Some("For example, £193.54")),
             amountSection2 = ExpectedAmountSection("Non-UK tax paid", "asd", Some("For example, £193.54")),
             errorSummarySectionOpt = Some(ErrorSummarySection(
-              title = "There is a problem", body = "Enter the amount of non-UK tax paid in the correct format", link = "#amount-2")),
+              title = "There is a problem", body = "Enter the amount of non-UK tax paid in pounds", link = "#amount-2")),
             errorAboveElementCheckSectionOpt = Some(ErrorAboveElementCheckSection(
-              title = "Error: Enter the amount of non-UK tax paid in the correct format", idOpt = Some("amount-2")))
+              title = "Error: Enter the amount of non-UK tax paid in pounds", idOpt = Some("amount-2")))
           )
 
           scenarioNameForIndividualAndEnglish in {
@@ -518,15 +518,15 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
             amountSection1 = ExpectedAmountSection("Amount before tax", "-1", Some("For example, £193.54")),
             amountSection2 = ExpectedAmountSection("Non-UK tax paid", "1,233.41", Some("For example, £193.54")),
             errorSummarySectionOpt = Some(ErrorSummarySection(
-              title = "There is a problem", body = "Enter an amount before tax in the correct format", link = "#amount-1")),
+              title = "There is a problem", body = "Enter an amount before tax in pounds", link = "#amount-1")),
             errorAboveElementCheckSectionOpt = Some(ErrorAboveElementCheckSection(
-              title = "Error: Enter an amount before tax in the correct format", idOpt = Some("amount-1")))
+              title = "Error: Enter an amount before tax in pounds", idOpt = Some("amount-1")))
           )
           val expPageContentsAgent = expPageContentsIndividual.copy(
             errorSummarySectionOpt = Some(ErrorSummarySection(
-              title = "There is a problem", body = "Enter the amount before tax in the correct format", link = "#amount-1")),
+              title = "There is a problem", body = "Enter the amount before tax in pounds", link = "#amount-1")),
             errorAboveElementCheckSectionOpt = Some(ErrorAboveElementCheckSection(
-              title = "Error: Enter the amount before tax in the correct format", idOpt = Some("amount-1")))
+              title = "Error: Enter the amount before tax in pounds", idOpt = Some("amount-1")))
           )
 
           scenarioNameForIndividualAndEnglish in {
@@ -564,9 +564,9 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
             amountSection1 = ExpectedAmountSection("Amount before tax", "1,231.26", Some("For example, £193.54")),
             amountSection2 = ExpectedAmountSection("Non-UK tax paid", "-1", Some("For example, £193.54")),
             errorSummarySectionOpt = Some(ErrorSummarySection(
-              title = "There is a problem", body = "Enter the amount of non-UK tax paid in the correct format", link = "#amount-2")),
+              title = "There is a problem", body = "Enter the amount of non-UK tax paid in pounds", link = "#amount-2")),
             errorAboveElementCheckSectionOpt = Some(ErrorAboveElementCheckSection(
-              title = "Error: Enter the amount of non-UK tax paid in the correct format", idOpt = Some("amount-2")))
+              title = "Error: Enter the amount of non-UK tax paid in pounds", idOpt = Some("amount-2")))
           )
 
           scenarioNameForIndividualAndEnglish in {

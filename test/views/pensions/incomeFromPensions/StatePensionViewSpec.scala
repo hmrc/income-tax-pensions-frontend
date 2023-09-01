@@ -40,15 +40,14 @@ class StatePensionViewSpec extends ViewUnitTest with FakeRequestProvider {
     val buttonText: String
     val amountSubheading: String
     val amountExample: String
+    val expectedIncorrectOrEmptyErrorMessage: String
   }
 
   trait SpecificExpectedResults {
     val expectedTitle: String
-    lazy val expectedHeading = expectedTitle
+    lazy val expectedHeading: String = expectedTitle
     val expectedErrorTitle: String
     val expectedNoEntryErrorMessage: String
-    val expectedNoAmountErrorMessage: String
-    val expectedIncorrectFormatErrorMessage: String
     val expectedOverMaximumErrorMessage: String
   }
 
@@ -59,7 +58,9 @@ class StatePensionViewSpec extends ViewUnitTest with FakeRequestProvider {
     val buttonText = "Continue"
     val amountSubheading = "Total amount this tax year"
     val amountExample = "For example, £193.54"
+    val expectedIncorrectOrEmptyErrorMessage = "Enter the total amount of State Pension payments in pounds"
   }
+
   object CommonExpectedCY extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Incwm o bensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
     val yesText = "Iawn"
@@ -67,39 +68,34 @@ class StatePensionViewSpec extends ViewUnitTest with FakeRequestProvider {
     val buttonText = "Yn eich blaen"
     val amountSubheading = "Cyfanswm ar gyfer y flwyddyn dreth hon"
     val amountExample = "Er enghraifft, £193.54"
+    val expectedIncorrectOrEmptyErrorMessage = "Enter the total amount of State Pension payments in pounds"
   }
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
     val expectedTitle = "Do you get regular State Pension payments?"
     val expectedErrorTitle = s"Error: $expectedTitle"
-    val expectedNoEntryErrorMessage = "Select yes if you got State Pension this year"
-    val expectedNoAmountErrorMessage = "Enter your State Pension amount"
-    val expectedIncorrectFormatErrorMessage = "Enter your State Pension amount in the correct format"
+    val expectedNoEntryErrorMessage = "Select yes if you got regular State Pension payments"
     val expectedOverMaximumErrorMessage = "Your State Pension amount must be less than £100,000,000,000"
   }
+
   object ExpectedIndividualCY extends SpecificExpectedResults {
     val expectedTitle = "A ydych chi’n cael taliadau rheolaidd o Bensiwn y Wladwriaeth?"
     val expectedErrorTitle = s"Gwall: $expectedTitle"
     val expectedNoEntryErrorMessage = "Dewiswch ‘Iawn’ os cawsoch Bensiwn y Wladwriaeth y flwyddyn hon"
-    val expectedNoAmountErrorMessage = "Nodwch swm eich Pensiwn y Wladwriaeth"
-    val expectedIncorrectFormatErrorMessage = "Nodwch swm eich Pensiwn y Wladwriaeth yn y fformat cywir"
     val expectedOverMaximumErrorMessage = "Mae’n rhaid i swm eich Pensiwn y Wladwriaeth fod yn llai na £100,000,000,000"
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
     val expectedTitle = "Does your client get regular State Pension payments?"
     val expectedErrorTitle = s"Error: $expectedTitle"
-    val expectedNoEntryErrorMessage = "Select yes if your client got State Pension this year"
-    val expectedNoAmountErrorMessage = "Enter your client’s State Pension amount"
-    val expectedIncorrectFormatErrorMessage = "Enter your client’s State Pension amount in the correct format"
+    val expectedNoEntryErrorMessage = "Select yes if your client got regular State Pension payments"
     val expectedOverMaximumErrorMessage = "Your client’s State Pension amount must be less than £100,000,000,000"
   }
+
   object ExpectedAgentCY extends SpecificExpectedResults {
     val expectedTitle = "A yw’ch cleient yn cael taliadau rheolaidd o Bensiwn y Wladwriaeth?"
     val expectedErrorTitle = s"Gwall: $expectedTitle"
     val expectedNoEntryErrorMessage = "Dewiswch ‘Iawn’ os cafodd eich cleient Pensiwn y Wladwriaeth y flwyddyn hon"
-    val expectedNoAmountErrorMessage = "Nodwch swm Pensiwn y Wladwriaeth eich cleient"
-    val expectedIncorrectFormatErrorMessage = "Nodwch swm Pensiwn y Wladwriaeth eich cleient yn y fformat cywir"
     val expectedOverMaximumErrorMessage = "Mae’n rhaid i swm Pensiwn y Wladwriaeth eich cleient fod yn llai na £100,000,000,000"
   }
 
@@ -131,6 +127,7 @@ class StatePensionViewSpec extends ViewUnitTest with FakeRequestProvider {
             if (userScenario.isAgent) anAgentUser else aUser,
             if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest)
         }
+
         def form: Form[(Boolean, Option[BigDecimal])] = new FormsProvider().statePensionForm(if (userScenario.isAgent) anAgentUser else aUser)
 
         val htmlFormat = underTest(form, taxYearEOY)
@@ -207,8 +204,8 @@ class StatePensionViewSpec extends ViewUnitTest with FakeRequestProvider {
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
         titleCheck(userScenario.specificExpectedResults.get.expectedErrorTitle, userScenario.isWelsh)
-        errorAboveElementCheck(userScenario.specificExpectedResults.get.expectedNoAmountErrorMessage, Some("amount-2"))
-        errorSummaryCheck(userScenario.specificExpectedResults.get.expectedNoAmountErrorMessage, "#amount-2")
+        errorAboveElementCheck(userScenario.commonExpectedResults.expectedIncorrectOrEmptyErrorMessage, Some("amount-2"))
+        errorSummaryCheck(userScenario.commonExpectedResults.expectedIncorrectOrEmptyErrorMessage, "#amount-2")
       }
 
       "render page with incorrect-format error when pension amount has wrong format" which {
@@ -226,8 +223,8 @@ class StatePensionViewSpec extends ViewUnitTest with FakeRequestProvider {
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
         titleCheck(userScenario.specificExpectedResults.get.expectedErrorTitle, userScenario.isWelsh)
-        errorAboveElementCheck(userScenario.specificExpectedResults.get.expectedIncorrectFormatErrorMessage, Some("amount-2"))
-        errorSummaryCheck(userScenario.specificExpectedResults.get.expectedIncorrectFormatErrorMessage, "#amount-2")
+        errorAboveElementCheck(userScenario.commonExpectedResults.expectedIncorrectOrEmptyErrorMessage, Some("amount-2"))
+        errorSummaryCheck(userScenario.commonExpectedResults.expectedIncorrectOrEmptyErrorMessage, "#amount-2")
       }
 
       "render page with over-maximum error when pension amount is greater than £100,000,000,000" which {

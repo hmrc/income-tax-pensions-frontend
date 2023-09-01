@@ -629,12 +629,12 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
               errorSummarySectionOpt = Some(
                 ErrorSummarySection(
                   title = "There is a problem",
-                  body = "Enter your Pension Scheme Tax Reference in the correct format",
+                  body = "Enter a reference with 8 numbers and 2 letters, such as ‘12345678AB’",
                   link = "#taxReferenceId")
               ),
               errorAboveElementCheckSectionOpt = Some(
                 ErrorAboveElementCheckSection(
-                  title = "Error: Enter your Pension Scheme Tax Reference in the correct format",
+                  title = "Error: Enter a reference with 8 numbers and 2 letters, such as ‘12345678AB’",
                   idOpt = Some("taxReferenceId")
                 )
               )
@@ -664,12 +664,12 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
               errorSummarySectionOpt = Some(
                 ErrorSummarySection(
                   title = "Mae problem wedi codi",
-                  body = "Enter your Pension Scheme Tax Reference in the correct format",
+                  body = "Enter a reference with 8 numbers and 2 letters, such as ‘12345678AB’",
                   link = "#taxReferenceId")
               ),
               errorAboveElementCheckSectionOpt = Some(
                 ErrorAboveElementCheckSection(
-                  title = "Error: Enter your Pension Scheme Tax Reference in the correct format",
+                  title = "Error: Enter a reference with 8 numbers and 2 letters, such as ‘12345678AB’",
                   idOpt = Some("taxReferenceId")
                 )
               )
@@ -699,12 +699,12 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
               errorSummarySectionOpt = Some(
                 ErrorSummarySection(
                   title = "There is a problem",
-                  body = "Enter your client’s Pension Scheme Tax Reference in the correct format",
+                  body = "Enter a reference with 8 numbers and 2 letters, such as ‘12345678AB’",
                   link = "#taxReferenceId")
               ),
               errorAboveElementCheckSectionOpt = Some(
                 ErrorAboveElementCheckSection(
-                  title = "Error: Enter your client’s Pension Scheme Tax Reference in the correct format",
+                  title = "Error: Enter a reference with 8 numbers and 2 letters, such as ‘12345678AB’",
                   idOpt = Some("taxReferenceId")
                 )
               )
@@ -734,12 +734,12 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
               errorSummarySectionOpt = Some(
                 ErrorSummarySection(
                   title = "Mae problem wedi codi",
-                  body = "Enter your client’s Pension Scheme Tax Reference in the correct format",
+                  body = "Enter a reference with 8 numbers and 2 letters, such as ‘12345678AB’",
                   link = "#taxReferenceId")
               ),
               errorAboveElementCheckSectionOpt = Some(
                 ErrorAboveElementCheckSection(
-                  title = "Error: Enter your client’s Pension Scheme Tax Reference in the correct format",
+                  title = "Error: Enter a reference with 8 numbers and 2 letters, such as ‘12345678AB’",
                   idOpt = Some("taxReferenceId")
                 )
               )

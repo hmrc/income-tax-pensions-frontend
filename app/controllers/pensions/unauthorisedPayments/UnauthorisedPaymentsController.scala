@@ -55,10 +55,10 @@ class UnauthorisedPaymentsController @Inject()(implicit val mcc: MessagesControl
           val surchargeQuestion: Option[Boolean] = data.pensions.unauthorisedPayments.surchargeQuestion
           val noSurchargeQuestion: Option[Boolean] = data.pensions.unauthorisedPayments.noSurchargeQuestion
           val noQuestion: Option[Boolean] = data.pensions.unauthorisedPayments.unauthorisedPaymentQuestion.map(!_)
-          val form = UnAuthorisedPaymentsForm.unAuthorisedPaymentsTypeForm()
+          val form = UnAuthorisedPaymentsForm.unAuthorisedPaymentsTypeForm(request.user)
           Future.successful(Ok(view(form, taxYear, surchargeQuestion, noSurchargeQuestion, noQuestion)))
         case None =>
-          val form = UnAuthorisedPaymentsForm.unAuthorisedPaymentsTypeForm()
+          val form = UnAuthorisedPaymentsForm.unAuthorisedPaymentsTypeForm(request.user)
           Future.successful(Ok(view(form, taxYear, None, None, None)))
       }
     }
@@ -67,7 +67,7 @@ class UnauthorisedPaymentsController @Inject()(implicit val mcc: MessagesControl
   def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
 
     def saveDataAndRedirect(pensionsCYAModel: PensionsCYAModel, isPriorSubmission: Boolean): Future[Result] = {
-      UnAuthorisedPaymentsForm.unAuthorisedPaymentsTypeForm().bindFromRequest().fold(
+      UnAuthorisedPaymentsForm.unAuthorisedPaymentsTypeForm(request.user).bindFromRequest().fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
         unauthorisedPaymentsSelection => {
           val unauthorisedPaymentsViewModel = pensionsCYAModel.unauthorisedPayments
@@ -80,7 +80,7 @@ class UnauthorisedPaymentsController @Inject()(implicit val mcc: MessagesControl
           }
           val redirectLocation =
             if (unauthorisedPaymentsSelection.containsYesSurcharge) {
-            SurchargeAmountController.show(taxYear)
+              SurchargeAmountController.show(taxYear)
             } else if (unauthorisedPaymentsSelection.containsYesNotSurcharge) {
               NoSurchargeAmountController.show(taxYear)
             } else {
