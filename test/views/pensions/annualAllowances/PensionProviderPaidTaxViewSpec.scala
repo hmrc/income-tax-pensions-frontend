@@ -102,7 +102,7 @@ class PensionProviderPaidTaxViewSpec extends ViewUnitTest {
     val expectedErrorSelectText = "Dewiswch ‘Iawn’ os gwnaeth eich darparwr pensiwn dalu treth neu gytuno i wneud hynny"
     val errorEmptyAmountText = s"Nodwch swm y dreth a dalwyd gan eich darparwr pensiwn, neu’r swm a gytunodd i’w dalu"
     val errorAmountFormatText = s"Nodwch swm y dreth a dalwyd gan eich darparwr pensiwn, neu’r swm a gytunodd i’w dalu, yn y fformat cywir"
-    val errorAmountLessThan = "The amount of tax your pension schemes paid or agreed to pay must be less than £100,000,000,000"
+    val errorAmountLessThan = "Mae’n rhaid i swm y dreth a dalwyd gan eich darparwr pensiwn, neu’r swm a gytunodd i’w dalu, fod yn llai na £100,000,000,000"
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
@@ -111,7 +111,7 @@ class PensionProviderPaidTaxViewSpec extends ViewUnitTest {
     val expectedErrorSelectText = "Dewiswch ‘Iawn’ os gwnaeth darparwr pensiwn eich cleient dalu treth neu gytuno i wneud hynny"
     val errorEmptyAmountText = "Nodwch swm y dreth a dalwyd gan ddarparwr pensiwn eich cleient, neu’r swm a gytunodd i’w dalu"
     val errorAmountFormatText = "Nodwch swm y dreth a dalwyd gan ddarparwr pensiwn eich cleient, neu’r swm a gytunodd i’w dalu, yn y fformat cywir"
-    val errorAmountLessThan = "The amount of tax your client’s pension provider paid or agreed to pay must be less than £100,000,000,000"
+    val errorAmountLessThan = "Mae’n rhaid i swm y dreth a dalwyd gan ddarparwr pensiwn eich cleient, neu’r swm a gytunodd i’w dalu, fod yn llai na £100,000,000,000"
   }
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(

@@ -461,7 +461,6 @@ pensions.pensionsProviderPaidTax.error.noAmount.individual = Nodwch swm y dreth 
 pensions.pensionsProviderPaidTax.error.noAmount.agent = Nodwch swm y dreth a dalwyd gan ddarparwr pensiwn eich cleient, neu’r swm a gytunodd i’w dalu
 pensions.pensionsProviderPaidTax.error.incorrectFormat.individual = Nodwch swm y dreth a dalwyd gan eich darparwr pensiwn, neu’r swm a gytunodd i’w dalu, yn y fformat cywir
 pensions.pensionsProviderPaidTax.error.incorrectFormat.agent = Nodwch swm y dreth a dalwyd gan ddarparwr pensiwn eich cleient, neu’r swm a gytunodd i’w dalu, yn y fformat cywir
-pensions.pensionsProviderPaidTax.error.overMaximum.individual = The amount of tax your pension schemes paid or agreed to pay must be less than £100,000,000,000
 
 #Pension Scheme Tax Reference Messages
 pension.pensionSchemeTaxReference.paragraph1 = Nodwch y cyfeirnod ar gyfer y cynllun pensiwn a dalodd y dreth.
