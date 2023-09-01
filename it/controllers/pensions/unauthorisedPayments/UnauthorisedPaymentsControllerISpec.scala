@@ -118,7 +118,7 @@ class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAnd
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
-    val noEntryErrorMessage = "Select yes if you got an unauthorised payment from a pension scheme"
+    val noEntryErrorMessage = "Dewiswch ‘Iawn’ os cawsoch daliad heb awdurdod o gynllun pensiwn"
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {

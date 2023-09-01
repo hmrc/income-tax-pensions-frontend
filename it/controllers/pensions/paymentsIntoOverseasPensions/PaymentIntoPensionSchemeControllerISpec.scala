@@ -1140,12 +1140,12 @@ class PaymentIntoPensionSchemeControllerISpec
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "There is a problem",
-                      body = "The amount your client’s employers paid into overseas pension schemes must be less than £100,000,000,000",
+                      body = "The total amount that your client’s employers paid into their overseas pension scheme must be less than £100,000,000,000",
                       link = "#amount-2")
                   ),
                   errorAboveElementCheckSectionOpt = Some(
                     ErrorAboveElementCheckSection(
-                      title = "Error: The amount your client’s employers paid into overseas pension schemes must be less than £100,000,000,000",
+                      title = "Error: The total amount that your client’s employers paid into their overseas pension scheme must be less than £100,000,000,000",
                       idOpt = Some("amount-2")
                     )
                   )

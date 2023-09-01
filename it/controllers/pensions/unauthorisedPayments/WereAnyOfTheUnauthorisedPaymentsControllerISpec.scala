@@ -52,7 +52,6 @@ class WereAnyOfTheUnauthorisedPaymentsControllerISpec extends IntegrationTest wi
     val expectedButtonText: String
     val yesText: String
     val noText: String
-    val noEntryErrorMessage: String
   }
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
@@ -66,7 +65,7 @@ class WereAnyOfTheUnauthorisedPaymentsControllerISpec extends IntegrationTest wi
     val expectedTitle = "A ddaeth unrhyw rai o’r taliadau heb awdurdod o gynllun pensiwn yn y DU?"
     val expectedHeading = "A ddaeth unrhyw rai o’r taliadau heb awdurdod o gynllun pensiwn yn y DU?"
     val expectedErrorTitle = s"Gwall: $expectedTitle"
-    val noEntryErrorMessage = "Select yes if you got an unauthorised payment from a pension scheme"
+    val noEntryErrorMessage = "Dewiswch ‘Iawn’ os cawsoch daliad heb awdurdod o gynllun pensiwn"
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
@@ -90,7 +89,6 @@ class WereAnyOfTheUnauthorisedPaymentsControllerISpec extends IntegrationTest wi
     val expectedHeading = "Were any of the unauthorised payments from a UK pension scheme?"
     val yesText = "Yes"
     val noText = "No"
-    val noEntryErrorMessage = "Select yes if you got an unauthorised payment from a pension scheme"
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
@@ -100,7 +98,6 @@ class WereAnyOfTheUnauthorisedPaymentsControllerISpec extends IntegrationTest wi
     val expectedHeading = "A ddaeth unrhyw rai o’r taliadau heb awdurdod o gynllun pensiwn yn y DU?"
     val yesText = "Iawn"
     val noText = "Na"
-    val noEntryErrorMessage = "Select yes if you got an unauthorised payment from a pension scheme"
   }
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(
