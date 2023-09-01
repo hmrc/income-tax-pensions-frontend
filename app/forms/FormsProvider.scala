@@ -131,7 +131,7 @@ class FormsProvider() {
     AmountForm.amountForm(
       emptyFieldKey = s"overseasPension.untaxedEmployerPayments.error.noEntry.$agentOrIndividual",
       wrongFormatKey = s"overseasPension.untaxedEmployerPayments.error.incorrectFormat.$agentOrIndividual",
-      exceedsMaxAmountKey = s"overseasPension.untaxedEmployerPayments.error.tooBig.$agentOrIndividual"
+      exceedsMaxAmountKey = s"common.overseas.pension.schemes.error.tooBig.$agentOrIndividual"
     )
   }
 
@@ -223,7 +223,7 @@ object FormsProvider {
       missingInputError = s"pensions.pensionsProviderPaidTax.error.noEntry.$agentOrIndividual",
       emptyFieldKey = s"pensions.pensionsProviderPaidTax.error.noAmount.$agentOrIndividual",
       wrongFormatKey = s"pensions.pensionsProviderPaidTax.error.incorrectFormat.$agentOrIndividual",
-      exceedsMaxAmountKey = s"pensions.pensionsProviderPaidTax.error.overMaximum.$agentOrIndividual",
+      exceedsMaxAmountKey = s"common.pensions.error.amountMaxLimit.$agentOrIndividual",
       minAmountKey = "common.error.amountNotZero"
     )
   }

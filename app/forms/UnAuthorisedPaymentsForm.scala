@@ -51,7 +51,7 @@ object UnAuthorisedPaymentsForm {
     val agentIndividual = if (user.isAgent) "agent" else "individual"
     Form[UnAuthorisedPaymentsModel](
       mapping(unauthorisedPaymentsType -> seq(text))(UnAuthorisedPaymentsModel.apply)(UnAuthorisedPaymentsModel.unapply).verifying(
-        allEmpty(s"unauthorisedPayments.didYouGetAnUnauthorisedPayment.error.noEntry.$agentIndividual")
+        allEmpty(s"common.unauthorisedPayments.error.checkbox.or.radioButton.noEntry.$agentIndividual")
       )
     )
   }

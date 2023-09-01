@@ -55,8 +55,8 @@ object MessageKeys {
           "overseasPension.paymentIntoOverseasPensionScheme.invalid.format.error.agent")
       override val amountIsExcessive: UserTypeMessage =
         UserTypeMessage(
-          "overseasPension.paymentIntoOverseasPensionScheme.maximum.error.individual",
-          "overseasPension.paymentIntoOverseasPensionScheme.maximum.error.agent")
+          "common.overseas.pension.schemes.error.tooBig.individual",
+          "common.overseas.pension.schemes.error.tooBig.agent")
     }
 
   }

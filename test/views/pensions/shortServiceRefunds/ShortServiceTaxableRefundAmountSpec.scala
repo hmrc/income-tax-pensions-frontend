@@ -74,9 +74,9 @@ class ShortServiceTaxableRefundAmountSpec extends ViewUnitTest with FakeRequestP
     override val expectedDetailsP2: String = "You might have got a short service refund if you paid into a scheme for less than 2 years. This depends on the type of pension scheme you have."
     override val h2: String = "Did you get a short service refund?"
     override val expectedNoEntryErrorText: String = "Select yes if you got a taxable short service refund from an overseas pension scheme"
-    override val expectedNoAmountEntryErrorText: String = "Enter the taxable short service refund amount"
-    override val expectedIncorrectFormatErrorText: String = "Enter the taxable short service refund amount in the correct format"
-    override val expectedTooBigErrorText: String = "The taxable short service refund amount must be less than £100,000,000,000"
+    override val expectedNoAmountEntryErrorText: String = "Enter your taxable short service refund amount"
+    override val expectedIncorrectFormatErrorText: String = "Enter the taxable short service refund amount in pounds"
+    override val expectedTooBigErrorText: String = "Your taxable short service refund amount must be less than £100,000,000,000"
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {

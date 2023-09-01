@@ -73,7 +73,7 @@ object WorkplaceAmountSpec {
     val expectedCaption: Int => String = (taxYear: Int) => s"Payments into pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
     val hintText = "For example, £193.52"
     val emptyErrorText = "Enter the amount paid into workplace pensions"
-    val invalidFormatErrorText = "Enter the amount paid into workplace pensions in the correct format"
+    val invalidFormatErrorText = "Enter the amount paid into workplace pensions in pounds"
     val maxAmountErrorText = "The amount paid into workplace pensions must be less than £100,000,000,000"
     val buttonText = "Continue"
     val expectedParagraph = "Only include payments:"

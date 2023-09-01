@@ -241,7 +241,7 @@ pensions.reliefAtSource.error.noEntry.agent = Select yes if your client paid int
 
 pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.title = Total payments into relief at source (RAS) pensions, plus basic rate tax relief
 pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.error.noEntry = Enter the total paid into RAS pensions, plus basic rate tax relief
-pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.error.invalidFormat = Enter the total paid into RAS pensions, plus basic rate tax relief, in the correct format
+pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.error.invalidFormat = Enter the total paid into RAS pensions, plus basic rate tax relief, in pounds
 pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.error.overMaximum = The total paid into RAS pensions, plus basic rate tax relief, must be less than £100,000,000,000
 
 pensions.reliefAtSourceTotalPaymentsAndTaxReliefAmount.whereToFind.individual = You can find the total amount you paid into RAS pensions, plus tax relief, on the pension certificate or receipt from your administrator.
@@ -269,7 +269,7 @@ paymentsIntoPensions.oneOffRasAmount.youToldUs.agent = You told us the total amo
 paymentsIntoPensions.oneOffRasAmount.workItOut = To work it out, divide your one-off payment amount by 80 and multiply the result by 100.
 paymentsIntoPensions.oneOffRasAmount.exampleCalculation = Emma made a one-off payment of £500. £500 divided by 80 and multiplied by 100 is £625. Her answer is £625.
 paymentsIntoPensions.oneOffRasAmount.error.noEntry = Enter the total amount of one-off payments paid into RAS pensions, plus basic rate tax relief
-paymentsIntoPensions.oneOffRasAmount.error.invalidFormat = Enter the total amount of one-off payments paid into RAS pensions, plus basic rate tax relief, in the correct format
+paymentsIntoPensions.oneOffRasAmount.error.invalidFormat = Enter the total amount of one-off payments paid into RAS pensions, plus basic rate tax relief, in pounds
 paymentsIntoPensions.oneOffRasAmount.error.overMaximum = The total amount of one-off payments paid into RAS pensions, plus basic rate tax relief, must be less than £100,000,000,000
 
 
@@ -321,7 +321,7 @@ pensions.retirementAnnuityAmount.title.agent = How much did your client pay into
 pensions.retirementAnnuityAmount.includes.individual = Only include payments your pension provider will not claim tax relief for. You can find this out from your pension provider.
 pensions.retirementAnnuityAmount.includes.agent = Only include payments your client’s pension provider will not claim tax relief for. You can find this out from your client’s pension provider.
 pensions.retirementAnnuityAmount.error.noEntry = Enter the amount paid into retirement annuity contracts
-pensions.retirementAnnuityAmount.error.incorrectFormat = Enter the amount paid into retirement annuity contracts in the correct format
+pensions.retirementAnnuityAmount.error.incorrectFormat = Enter the amount paid into retirement annuity contracts in pounds
 pensions.retirementAnnuityAmount.error.overMaximum = The amount paid into retirement annuity contracts must be less than £100,000,000,000
 
 
@@ -352,7 +352,7 @@ pensions.workplaceAmount.bullet2.agent = your client’s pension provider will n
 pensions.workplaceAmount.youCanFindThisOut.agent = Your client can find this out from their employer or pension provider.
 pensions.workplaceAmount.paragraph = Only include payments:
 pensions.workplaceAmount.error.noEntry = Enter the amount paid into workplace pensions
-pensions.workplaceAmount.error.incorrectFormat = Enter the amount paid into workplace pensions in the correct format
+pensions.workplaceAmount.error.incorrectFormat = Enter the amount paid into workplace pensions in pounds
 pensions.workplaceAmount.error.maxAmount = The amount paid into workplace pensions must be less than £100,000,000,000
 
 
@@ -435,13 +435,10 @@ pensions.reducedAnnualAllowanceAmount.nonReduced.title.individual = How much abo
 pensions.reducedAnnualAllowanceAmount.nonReduced.title.agent = How much above your client’s annual allowance are they?
 pensions.reducedAnnualAllowanceAmount.paragraph = This is the amount on which tax is due.
 pensions.reducedAnnualAllowanceAmount.reduced.error.noEntry.individual = Enter the amount above your reduced annual allowance
-pensions.reducedAnnualAllowanceAmount.reduced.error.incorrectFormat.individual = Enter the amount above your reduced annual allowance in the correct format
 pensions.reducedAnnualAllowanceAmount.reduced.error.overMaximum.individual = The amount above your reduced annual allowance must be less than £100,000,000,000
 pensions.reducedAnnualAllowanceAmount.reduced.error.noEntry.agent = Enter the amount above your client’s reduced annual allowance
-pensions.reducedAnnualAllowanceAmount.reduced.error.incorrectFormat.agent = Enter the amount above your client’s reduced annual allowance in the correct format
 pensions.reducedAnnualAllowanceAmount.reduced.error.overMaximum.agent = The amount above your client’s reduced annual allowance must be less than £100,000,000,000
 pensions.reducedAnnualAllowanceAmount.nonReduced.error.noEntry = Enter the amount above the annual allowance
-pensions.reducedAnnualAllowanceAmount.nonReduced.error.incorrectFormat = Enter the amount above the annual allowance in the correct format
 pensions.reducedAnnualAllowanceAmount.nonReduced.error.overMaximum = The amount above the annual allowance must be less than £100,000,000,000
 
 #####Above Reduced Annual Allowance ######
@@ -465,7 +462,6 @@ pensions.pensionsProviderPaidTax.error.noAmount.agent = Enter the amount of tax 
 pensions.pensionsProviderPaidTax.error.incorrectFormat.individual = Enter the amount of tax your pension schemes paid, or agreed to pay, in pounds and pence
 pensions.pensionsProviderPaidTax.error.incorrectFormat.agent = Enter the amount of tax your client’s pension provider paid, or agreed to pay, in pounds and pence
 pensions.pensionsProviderPaidTax.error.overMaximum.individual = The amount of tax your pension schemes paid or agreed to pay must be less than £100,000,000,000
-pensions.pensionsProviderPaidTax.error.overMaximum.agent = The amount of tax your client’s pension provider paid or agreed to pay must be less than £100,000,000,000
 
 #Pension Scheme Tax Reference Messages
 pension.pensionSchemeTaxReference.paragraph1 = Enter the reference for the pension scheme that paid the tax.
@@ -846,8 +842,6 @@ unauthorisedPayments.didYouGetAnUnauthorisedPayment = Did you get an unauthorise
 unauthorisedPayments.checkbox.text1 = Yes, unauthorised payments that resulted in a surcharge
 unauthorisedPayments.checkbox.text2 = Yes, unauthorised payments that did not result in a surcharge
 unauthorisedPayments.checkbox.hint = Select all that apply.
-unauthorisedPayments.didYouGetAnUnauthorisedPayment.error.noEntry.individual = Select yes if you got an unauthorised payment from a pension scheme
-unauthorisedPayments.didYouGetAnUnauthorisedPayment.error.noEntry.agent = Select yes if your client got an unauthorised payment from a pension scheme
 
 #Do you have an employer-financed retirement scheme?
 employerFinancedRetirementScheme.benefitsFromScheme.title = Employer-financed retirement benefits schemes
@@ -870,6 +864,8 @@ unauthorisedPayments.removePensionSchemeTaxReference.removeButton = Remove refer
 #################       Overseas Pension        ########################################
 common.overseas.pension.schemes = Overseas pension schemes
 common.overseas.pension.schemes.hidden = Change overseas pension schemes
+common.overseas.pension.schemes.error.tooBig.individual = The amount your employers paid into overseas pension schemes must be less than £100,000,000,000
+common.overseas.pension.schemes.error.tooBig.agent = The total amount that your client’s employers paid into their overseas pension scheme must be less than £100,000,000,000
 
 #Payments into overseas pension schemes page
 overseasPension.paymentIntoOverseasPensionScheme.title = Payments into overseas pension schemes
@@ -889,8 +885,6 @@ overseasPension.paymentIntoOverseasPensionScheme.no.entry.error.individual = Ent
 overseasPension.paymentIntoOverseasPensionScheme.no.entry.error.agent = Enter the amount your client paid into overseas pension schemes
 overseasPension.paymentIntoOverseasPensionScheme.invalid.format.error.individual = Enter the amount you paid into overseas pension schemes in pounds
 overseasPension.paymentIntoOverseasPensionScheme.invalid.format.error.agent = Enter the amount your client paid into overseas pension schemes in pounds
-overseasPension.paymentIntoOverseasPensionScheme.maximum.error.individual = The amount your employers paid into overseas pension schemes must be less than £100,000,000,000
-overseasPension.paymentIntoOverseasPensionScheme.maximum.error.agent = The amount your client’s employers paid into overseas pension schemes must be less than £100,000,000,000
 
 #Employer payment into overseas pension scheme page
 overseasPension.employerPayOverseasPension.title.individual = Did your employers pay into your overseas pension schemes?
@@ -948,8 +942,6 @@ overseasPension.untaxedEmployerPayments.question.individual = How much did your 
 overseasPension.untaxedEmployerPayments.question.agent = How much did your client’s employers pay into the overseas pension scheme?
 overseasPension.untaxedEmployerPayments.error.noEntry.individual = Enter the amount your employers paid into your overseas pension schemes
 overseasPension.untaxedEmployerPayments.error.noEntry.agent = Enter the amount that your client’s employer paid into their overseas pension scheme
-overseasPension.untaxedEmployerPayments.error.tooBig.individual = The amount your employers paid into overseas pension schemes must be less than £100,000,000,000
-overseasPension.untaxedEmployerPayments.error.tooBig.agent = The total amount that your client’s employers paid into their overseas pension scheme must be less than £100,000,000,000
 overseasPension.untaxedEmployerPayments.error.incorrectFormat.individual = Enter the amount your employers paid into overseas pension schemes in pounds
 overseasPension.untaxedEmployerPayments.error.incorrectFormat.agent = Enter the total amount that your client’s employers paid into their overseas pension scheme in pounds
 
@@ -1205,11 +1197,11 @@ shortServiceRefunds.taxableRefundAmount.h2.agent = Did your client get a short s
 shortServiceRefunds.taxableRefundAmount.amount.text = Total amount of short service refunds, in pounds
 shortServiceRefunds.taxableRefundAmount.error.noEntry.individual = Select yes if you got a taxable short service refund from an overseas pension scheme
 shortServiceRefunds.taxableRefundAmount.error.noEntry.agent = Select yes if your client got a taxable short service refund from an overseas pension scheme
-shortServiceRefunds.taxableRefundAmount.error.noAmountEntry.individual = Enter the taxable short service refund amount
+shortServiceRefunds.taxableRefundAmount.error.noAmountEntry.individual = Enter your taxable short service refund amount
 shortServiceRefunds.taxableRefundAmount.error.noAmountEntry.agent = Enter your client’s taxable short service refund amount
-shortServiceRefunds.taxableRefundAmount.error.incorrectFormat.individual = Enter the taxable short service refund amount in the correct format
+shortServiceRefunds.taxableRefundAmount.error.incorrectFormat.individual = Enter the taxable short service refund amount in pounds
 shortServiceRefunds.taxableRefundAmount.error.incorrectFormat.agent = Enter your client’s taxable short service refund amount in pounds
-shortServiceRefunds.taxableRefundAmount.error.tooBig.individual = The taxable short service refund amount must be less than £100,000,000,000
+shortServiceRefunds.taxableRefundAmount.error.tooBig.individual = Your taxable short service refund amount must be less than £100,000,000,000
 shortServiceRefunds.taxableRefundAmount.error.tooBig.agent = Your client’s taxable short service refund amount must be less than £100,000,000,000
 
 #Non UK Tax Refunds
@@ -1225,8 +1217,8 @@ shortServiceRefunds.nonUkTaxRefunds.error.noEntry.individual = Select yes if you
 shortServiceRefunds.nonUkTaxRefunds.error.noEntry.agent = Select yes if your client paid non-UK tax on this short service refund
 shortServiceRefunds.nonUkTaxRefunds.error.noAmountEntry.individual = Enter the amount of non-UK tax you paid on this short service refund
 shortServiceRefunds.nonUkTaxRefunds.error.noAmountEntry.agent = Enter the amount of non-UK tax your client paid on this short service refund
-shortServiceRefunds.nonUkTaxRefunds.error.incorrectFormat.individual = Enter the amount of non-UK tax you paid on this short service refund in the correct format
-shortServiceRefunds.nonUkTaxRefunds.error.incorrectFormat.agent = Enter the amount of non-UK tax your client paid on this short service refund in the correct format
+shortServiceRefunds.nonUkTaxRefunds.error.incorrectFormat.individual = Enter the amount of non-UK tax you paid on this short service refund in pounds
+shortServiceRefunds.nonUkTaxRefunds.error.incorrectFormat.agent = Enter the amount of non-UK tax your client paid on this short service refund in pounds
 shortServiceRefunds.nonUkTaxRefunds.error.tooBig.individual = The amount of non-UK tax you paid on this short service refund must be less than £100,000,000,000
 shortServiceRefunds.nonUkTaxRefunds.error.tooBig.agent = The amount of non-UK tax your client paid on this short service refund must be less than £100,000,000,000
 

@@ -81,7 +81,7 @@ unauthorisedPayments.common.ukPensionSchemes.hidden = Newid cynlluniau pensiwn y
 common.unauthorisedPaymentsFromPension.caption = Taliadau heb awdurdod o bensiynau ar gyfer 6 Ebrill {0} i 5 Ebrill {1}
 common.unauthorisedPayments.Amount.Text = Cyfanswm y dreth a dalwyd y tu allan i’r DU mewn punnoedd
 common.unauthorisedPayments.error.Amount.incorrectFormat = Nodwch swm y dreth a dalwyd y tu allan i’r DU yn y fformat cywir
-common.unauthorisedPayments.error.checkbox.or.radioButton.noEntry = Dewiswch ‘Iawn’ os cawsoch daliad heb awdurdod o gynllun pensiwn
+common.unauthorisedPayments.error.checkbox.or.radioButton.noEntry.individual = Dewiswch ‘Iawn’ os cawsoch daliad heb awdurdod o gynllun pensiwn
 common.unauthorisedPayments.error.checkbox.or.radioButton.noEntry.agent = Select yes if your client got an unauthorised payment from a pension scheme
 
 common.whereToFindInformation = Ble i ddod o hyd i’r wybodaeth hon
@@ -435,13 +435,10 @@ pensions.reducedAnnualAllowanceAmount.nonReduced.title.individual = Faint yn uwc
 pensions.reducedAnnualAllowanceAmount.nonReduced.title.agent = Faint yn uwch na’i lwfans blynyddol yw eich cleient?
 pensions.reducedAnnualAllowanceAmount.paragraph = Dyma’r swm y mae treth yn ddyledus arno.
 pensions.reducedAnnualAllowanceAmount.reduced.error.noEntry.individual = Nodwch y swm sydd uwchlaw’ch lwfans blynyddol wedi’i ostwng
-pensions.reducedAnnualAllowanceAmount.reduced.error.incorrectFormat.individual = Nodwch y swm sydd uwchlaw’ch lwfans blynyddol wedi’i ostwng yn y fformat cywir
 pensions.reducedAnnualAllowanceAmount.reduced.error.overMaximum.individual = Mae’n rhaid i’r swm sydd uwchlaw’ch lwfans blynyddol wedi’i ostwng fod yn llai na £100,000,000,000
 pensions.reducedAnnualAllowanceAmount.reduced.error.noEntry.agent = Nodwch y swm sydd uwchlaw lwfans blynyddol wedi’i ostwng eich cleient
-pensions.reducedAnnualAllowanceAmount.reduced.error.incorrectFormat.agent = Nodwch y swm sydd uwchlaw lwfans blynyddol wedi’i ostwng eich cleient yn y fformat cywir
 pensions.reducedAnnualAllowanceAmount.reduced.error.overMaximum.agent = Mae’n rhaid i’r swm sydd uwchlaw lwfans blynyddol wedi’i ostwng eich cleient fod yn llai na £100,000,000,000
 pensions.reducedAnnualAllowanceAmount.nonReduced.error.noEntry = Nodwch y swm sydd uwchlaw’r lwfans blynyddol
-pensions.reducedAnnualAllowanceAmount.nonReduced.error.incorrectFormat = Nodwch y swm sydd uwchlaw’r lwfans blynyddol yn y fformat cywir
 pensions.reducedAnnualAllowanceAmount.nonReduced.error.overMaximum = Mae’n rhaid i’r swm sydd uwchlaw’r lwfans blynyddol fod yn llai na £100,000,000,000
 
 ####### Above Reduced Annual Allowance ######
@@ -465,7 +462,6 @@ pensions.pensionsProviderPaidTax.error.noAmount.agent = Nodwch swm y dreth a dal
 pensions.pensionsProviderPaidTax.error.incorrectFormat.individual = Nodwch swm y dreth a dalwyd gan eich darparwr pensiwn, neu’r swm a gytunodd i’w dalu, yn y fformat cywir
 pensions.pensionsProviderPaidTax.error.incorrectFormat.agent = Nodwch swm y dreth a dalwyd gan ddarparwr pensiwn eich cleient, neu’r swm a gytunodd i’w dalu, yn y fformat cywir
 pensions.pensionsProviderPaidTax.error.overMaximum.individual = The amount of tax your pension schemes paid or agreed to pay must be less than £100,000,000,000
-pensions.pensionsProviderPaidTax.error.overMaximum.agent = The amount of tax your client’s pension provider paid or agreed to pay must be less than £100,000,000,000
 
 #Pension Scheme Tax Reference Messages
 pension.pensionSchemeTaxReference.paragraph1 = Nodwch y cyfeirnod ar gyfer y cynllun pensiwn a dalodd y dreth.
@@ -846,8 +842,6 @@ unauthorisedPayments.didYouGetAnUnauthorisedPayment = A gawsoch daliad heb awdur
 unauthorisedPayments.checkbox.text1 = Iawn, taliadau heb awdurdod a wnaeth arwain at ordal
 unauthorisedPayments.checkbox.text2 = Iawn, taliadau heb awdurdod na wnaethant arwain at ordal
 unauthorisedPayments.checkbox.hint = Dewiswch bob un sy’n berthnasol.
-unauthorisedPayments.didYouGetAnUnauthorisedPayment.error.noEntry.individual = Select yes if you got an unauthorised payment from a pension scheme
-unauthorisedPayments.didYouGetAnUnauthorisedPayment.error.noEntry.agent = Select yes if your client got an unauthorised payment from a pension scheme
 
 #Do you have an employer-financed retirement scheme?
 employerFinancedRetirementScheme.benefitsFromScheme.title = Cynlluniau buddiannau ymddeol a ariannwyd gan gyflogwyr
@@ -870,6 +864,8 @@ unauthorisedPayments.removePensionSchemeTaxReference.removeButton = Dileu cyfeir
 #################       Overseas Pension        ########################################
 common.overseas.pension.schemes = Cynllun pensiwn tramor
 common.overseas.pension.schemes.hidden = Change overseas pension schemes
+common.overseas.pension.schemes.error.tooBig.individual = The amount your employers paid into overseas pension schemes must be less than £100,000,000,000
+common.overseas.pension.schemes.error.tooBig.agent = The total amount that your client’s employers paid into their overseas pension scheme must be less than £100,000,000,000
 
 #Payments into overseas pension schemes page
 overseasPension.paymentIntoOverseasPensionScheme.title = Taliadau i gynlluniau pensiwn tramor
@@ -889,8 +885,6 @@ overseasPension.paymentIntoOverseasPensionScheme.no.entry.error.individual =Nodw
 overseasPension.paymentIntoOverseasPensionScheme.no.entry.error.agent = Nodwch y swm a dalodd eich cleient i mewn i gynlluniau pensiwn tramor
 overseasPension.paymentIntoOverseasPensionScheme.invalid.format.error.individual = Nodwch y swm a daloch i mewn i gynlluniau pensiwn tramor yn y fformat cywir
 overseasPension.paymentIntoOverseasPensionScheme.invalid.format.error.agent = Nodwch y swm a dalodd eich cleient i mewn i gynlluniau pensiwn tramor yn y fformat cywir
-overseasPension.paymentIntoOverseasPensionScheme.maximum.error.individual = Mae’n rhaid i’r swm a daloch i mewn i gynlluniau pensiwn tramor fod yn llai na £100,000,000,000
-overseasPension.paymentIntoOverseasPensionScheme.maximum.error.agent = Mae’n rhaid i’r swm a dalodd eich cleient i mewn i gynlluniau pensiwn tramor fod yn llai na £100,000,000,000
 
 #Employer payment into overseas pension scheme page
 overseasPension.employerPayOverseasPension.title.individual = A wnaeth eich cyflogwr dalu i mewn i’ch cynlluniau pensiwn tramor?
@@ -948,8 +942,6 @@ overseasPension.untaxedEmployerPayments.question.individual = Faint dalodd eich 
 overseasPension.untaxedEmployerPayments.question.agent = Faint dalodd cyflogwyr eich cleient i mewn i’r cynlluniau pensiwn tramor?
 overseasPension.untaxedEmployerPayments.error.noEntry.individual = Nodwch y swm y dalodd eich cyflogwyr i mewn i’ch cynlluniau pensiwn tramor
 overseasPension.untaxedEmployerPayments.error.noEntry.agent = Nodwch y swm y dalodd cyflogwr eich cleient i mewn i’w gynllun pensiwn tramor
-overseasPension.untaxedEmployerPayments.error.tooBig.individual = Mae’n rhaid i’r swm a dalodd eich cyflogwyr i mewn i gynlluniau pensiwn tramor fod yn llai na £100,000,000,000
-overseasPension.untaxedEmployerPayments.error.tooBig.agent = Mae’n rhaid i’r swm a dalodd cyflogwyr eich cleient i mewn i gynllun pensiwn tramor eich cleient fod yn llai na £100,000,000,000
 overseasPension.untaxedEmployerPayments.error.incorrectFormat.individual = Nodwch y swm a dalodd eich cyflogwyr i mewn i gynlluniau pensiwn tramor yn y fformat cywir
 overseasPension.untaxedEmployerPayments.error.incorrectFormat.agent = Nodwch y cyfanswm a dalodd cyflogwyr eich cleient i mewn i gynllun pensiwn tramor eich cleient yn y fformat cywir
 

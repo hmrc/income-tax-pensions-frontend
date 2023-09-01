@@ -73,7 +73,7 @@ class NonUkTaxRefundsViewSpec extends ViewUnitTest {
     val continue: String = "Continue"
     val errorMessage: String = "Select yes if you paid non-UK tax on this short service refund"
     val expectedNoAmountEntryErrorText: String = "Enter the amount of non-UK tax you paid on this short service refund"
-    val expectedIncorrectFormatErrorText: String = "Enter the amount of non-UK tax you paid on this short service refund in the correct format"
+    val expectedIncorrectFormatErrorText: String = "Enter the amount of non-UK tax you paid on this short service refund in pounds"
     val expectedTooBigErrorText: String = "The amount of non-UK tax you paid on this short service refund must be less than £100,000,000,000"
   }
 
@@ -91,7 +91,7 @@ class NonUkTaxRefundsViewSpec extends ViewUnitTest {
     val continue: String = "Continue"
     val errorMessage: String = "Select yes if your client paid non-UK tax on this short service refund"
     val expectedNoAmountEntryErrorText: String = "Enter the amount of non-UK tax your client paid on this short service refund"
-    val expectedIncorrectFormatErrorText: String = "Enter the amount of non-UK tax your client paid on this short service refund in the correct format"
+    val expectedIncorrectFormatErrorText: String = "Enter the amount of non-UK tax your client paid on this short service refund in pounds"
     val expectedTooBigErrorText: String = "The amount of non-UK tax your client paid on this short service refund must be less than £100,000,000,000"
   }
 
